@@ -1675,6 +1675,8 @@ QString Document::currentWord()
   int endPos = textLine.find(QRegExp("\\W"), col);
   if (startPos == -1)
      startPos = 0;
+  else
+      startPos++;
   if (endPos == -1)
      endPos = textLine.length();
   return textLine.mid(startPos, endPos - startPos);

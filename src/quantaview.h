@@ -229,10 +229,6 @@ private:
 protected:
   virtual void dropEvent(QDropEvent *e);
   virtual void dragEnterEvent(QDragEnterEvent *e);
-
-  /** Reimplemented, as we never should delete the ToolBarTabWidget singleton, which
-  might be the child of this view */
-  virtual void closeEvent(QCloseEvent *e);
 };
 
 #endif // QUANTAVIEW_H

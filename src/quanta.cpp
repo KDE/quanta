@@ -1552,7 +1552,8 @@ void QuantaApp::slotContextHelp()
            currentWord = w->currentWord();
         }
         QString *url = dTab->contextHelp(currentWord);
-        openDoc(*url);
+        if (url)
+            openDoc(*url);
     }
 }
 

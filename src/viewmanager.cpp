@@ -315,9 +315,9 @@ void ViewManager::closeAll(bool createNew)
       if (view)
       {
           Document *w = view->document();
-          if ( w)
+          if (w)
           {
-              if (view->saveModified())
+              if (view->mayRemove())
               {
                  w->closeTempFile();
                  if (!w->isUntitled() && w->url().isLocalFile())
@@ -327,8 +327,6 @@ void ViewManager::closeAll(bool createNew)
                    m_lastActiveEditorView = 0L;
                  if (view == m_lastActiveView)
                    m_lastActiveView = 0L;
-                 if (view == m_documentationView)
-                   m_documentationView = 0L;
                  quantaApp->closeWindow(view);
               } else
               {
@@ -339,6 +337,9 @@ void ViewManager::closeAll(bool createNew)
                }
           } else
           {
+              if (view == m_documentationView)
+                  m_documentationView = 0L;
+              view->mayRemove(); //unloads the plugin and reparents the custom widget
               quantaApp->closeWindow(view);
           }
       }
@@ -485,6 +486,14 @@ void ViewManager::slotDeleteFile()
 void ViewManager::slotCloseView()
 {
    removeView(m_contextView);
+}
+
+void ViewManager::slotCloseRequest(QWidget *widget)
+{
+  kdDebug(24000) << widget << endl;
+   QuantaView *view = static_cast<QuantaView *>(widget);
+   if (view)
+      removeView(view);
 }
 
 #include "viewmanager.moc"

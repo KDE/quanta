@@ -120,9 +120,11 @@ bool QuantaView::mayRemove()
        m_plugin->unload(false);
    } else
    {
-       parser->setSAParserEnabled(false);
-       if (!saveModified())
-           return false;
+     if (m_customWidget)
+         m_customWidget->reparent(0L, 0, QPoint(), false);
+     parser->setSAParserEnabled(false);
+     if (!saveModified())
+          return false;
       if (m_document)
       {
           m_document->closeTempFile();
@@ -613,35 +615,6 @@ void QuantaView::sourceUpdateTimerTimeout()
 #endif
 }
 
-
-void QuantaView::closeEvent(QCloseEvent *e)
-{
-  //be sure that ToolbarTabWidget is not a child of the view
-  ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
-  if (m_customWidget)
-     m_customWidget->reparent(0L, 0, QPoint(), false);
-  if (m_document)
-      quantaApp->guiFactory()->removeClient(m_document->view());
-  m_document = 0L;
-  emit documentClosed();
-  kdDebug(24000) << "Close event" << endl;
-  QuantaView *currentWindow = dynamic_cast<QuantaView*>(quantaApp->activeWindow());
-  if (m_plugin)
-    m_plugin->unload();
-  else
-  {
-    quantaApp->closeWindow(this); //important when the tab is closed with the close button
-  }
-  if (currentWindow == this)
-      currentWindow = dynamic_cast<QuantaView*>(quantaApp->activeWindow());
-  if (currentWindow)
-  {
-    currentWindow->activate();
-    currentWindow->activated();
-  }
-  e->accept();
-}
-
 void QuantaView::slotVPLLoadingError(Node *)
 {
    emit showProblemsView();
@@ -771,6 +744,8 @@ void QuantaView::activated(bool resizeView)
     quantaApp->slotReloadStructTreeView();
     if (m_plugin)
        quantaApp->partManager()->setActivePart(m_plugin->part(), m_plugin->widget());
+    if (resizeView)
+       resize(m_documentArea->width(), m_documentArea->height());
     return;
   }
   ToolbarTabWidget::ref()->reparent(this, 0, QPoint(), qConfig.enableDTDToolbar);

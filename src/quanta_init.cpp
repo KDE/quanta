@@ -167,10 +167,10 @@ void QuantaInit::initQuanta()
   m_quanta->createShellGUI(true);
 
   addToolTreeView(m_quanta->fTab, i18n("Files"), UserIcon("ftab"), KDockWidget::DockLeft);
+  addToolTreeView(m_quanta->dTab, i18n("Documentation"), BarIcon("contents"), KDockWidget::DockRight);
   addToolTreeView(m_quanta->aTab, i18n("Attribute Editor"), UserIcon("tag_misc"), KDockWidget::DockRight);
   addToolTreeView(ProjectTreeView::ref(), i18n("Project"), UserIcon("ptab"), KDockWidget::DockLeft);
   addToolTreeView(TemplatesTreeView::ref(), i18n("Templates"), UserIcon("ttab"), KDockWidget::DockLeft);
-  addToolTreeView(m_quanta->dTab, i18n("Documentation"), BarIcon("contents"), KDockWidget::DockLeft);
   addToolTreeView(StructTreeView::ref(), i18n("Document Structure"), BarIcon("view_sidetree"), KDockWidget::DockLeft);
   addToolTreeView(m_quanta->scriptTab, i18n("Scripts"), BarIcon("run"), KDockWidget::DockLeft);
   m_quanta->m_messageOutputView = addToolTreeView(m_quanta->m_messageOutput, i18n("Messages"), SmallIcon("openterm"), KDockWidget::DockBottom);
@@ -372,8 +372,10 @@ void QuantaInit::initView()
   if (m_quanta->tabWidget())
   {
       m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
-    connect( m_quanta->tabWidget(), SIGNAL( contextMenu( QWidget *, const QPoint & ) ), m_viewManager,
+      connect( m_quanta->tabWidget(), SIGNAL( contextMenu( QWidget *, const QPoint & ) ), m_viewManager,
            SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
+      connect( m_quanta->tabWidget(), SIGNAL( closeRequest( QWidget *) ), m_viewManager,
+           SLOT(slotCloseRequest( QWidget *) ) );
 
   }
   m_quanta->setTabWidgetVisibility(KMdi::AlwaysShowTabs);
