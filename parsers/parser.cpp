@@ -261,8 +261,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           const DTDStruct *dtd = DTDs::ref()->find(s);
           if (!dtd)
               dtd = m_dtd;
-          //a trick here: replace the node's DTD with this one
-          const DTDStruct *savedDTD = node->tag->dtd;
+          //a trick here: replace the node's DTD with this one //Note: with the new SAParser, the top level nodes must be Tag::ScriptTag-s!
+         // const DTDStruct *savedDTD = node->tag->dtd;
           node->tag->dtd = dtd;
           node->tag->type = Tag::ScriptTag;
           //now parse the special area
@@ -272,7 +272,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           area.eCol = endCol;
           currentNode = m_saParser->parseArea(area, "", "</"+tag->name+"\\s*>", node, false, true);
           //restore & set the new variables
-          node->tag->dtd = savedDTD;
+         // node->tag->dtd = savedDTD;
           line = m_saParser->lastParsedLine();
           textLine = ParserCommon::getLine(write, line, endLine, endCol);
           col = m_saParser->lastParsedColumn();
@@ -1177,6 +1177,7 @@ void Parser::clearGroups()
 
 void Parser::cleanGroups()
 {
+  kdDebug(24000) << "cleanGroups " << endl;
   GroupElementMapList::Iterator it;
   GroupElementList::Iterator elementIt;
   GroupElementList *list;

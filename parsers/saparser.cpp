@@ -34,7 +34,7 @@
 #include "quantacommon.h"
 #include "dtds.h"
 
-#undef DEBUG_PARSER
+//#undef DEBUG_PARSER
 
 extern GroupElementMapList globalGroupMap;
 
@@ -377,7 +377,6 @@ bool SAParser::slotParseOneLine()
                 s_currentNode = node;
 
                 if (m_synchronous)
-                  //slotParseOneLine();
                   return true;
                 else
                 {
@@ -466,7 +465,6 @@ bool SAParser::slotParseOneLine()
             else
             {
               s_currentNode = ParserCommon::createTextNode(m_write, s_currentNode, s_line, areaEndPos, s_parentNode);
-              parseForScriptGroup(s_currentNode);
             }
             s_currentNode->insideSpecial = true;
           }
@@ -498,6 +496,7 @@ bool SAParser::slotParseOneLine()
 #ifdef DEBUG_PARSER            
             kdDebug(24000) << "Calling slotParseForScriptGroup from slotParseOneLine." << endl;
 #endif            
+            m_lastGroupParsed = true;
             slotParseForScriptGroup();
           }
             
@@ -799,10 +798,13 @@ Node *SAParser::parsingDone()
     if (s_fullParse)
     {
         Node *n = m_lastParsedNode;
-        n->next = s_next;
-        if (s_next)
-          s_next->prev = n;
-        n->prev = s_parentNode; 
+        if (m_useNext)
+        {
+          n->next = s_next;
+          if (s_next)
+            s_next->prev = n;
+          n->prev = s_parentNode; 
+        }
         m_currentNode = n->nextSibling();
         if (m_currentNode)
         {
@@ -862,10 +864,13 @@ Node *SAParser::parsingDone()
   
   if (s_fullParse && m_currentNode)
   {
-      Node *n = s_currentNode;
-      n->next = s_next;
-      if (s_next)
-        s_next->prev = n;
+      if (m_useNext)
+      {
+        Node *n = s_currentNode;
+        n->next = s_next;
+        if (s_next)
+          s_next->prev = n;
+      }
       m_currentNode = m_currentNode->nextSibling();
       if (m_currentNode)
       {
@@ -891,7 +896,7 @@ Node *SAParser::parsingDone()
 void SAParser::parseInDetail(bool synchronous)
 {
   //synchronous = true; //for testing. Uncomment to test the parser in synchronous mode
-  //return; //for testing. Uncomment to disable the detailed parser
+//  return; //for testing. Uncomment to disable the detailed parser
 #ifdef DEBUG_PARSER  
   kdDebug(24000) << "parseInDetail. Enabled: " << m_parsingEnabled << endl; 
 #endif  
@@ -923,6 +928,7 @@ void SAParser::slotParseNodeInDetail()
       m_currentNode->child = 0L;
       AreaStruct area(m_currentNode->tag->area());
       s_next = 0L;
+      m_useNext = false;
       if (m_currentNode->next)
       {
         AreaStruct area2(m_currentNode->next->tag->area());
@@ -933,6 +939,7 @@ void SAParser::slotParseNodeInDetail()
         {
           m_currentNode->next->removeAll = false;
           delete m_currentNode->next;
+          m_useNext = true;
         } 
       } else
       {

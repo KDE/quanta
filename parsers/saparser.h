@@ -106,6 +106,7 @@ private:
   };  
   
   //private member variables
+  bool m_useNext;
   bool m_lastGroupParsed;
   bool m_parsingEnabled;  
   bool m_synchronous;
