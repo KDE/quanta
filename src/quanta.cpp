@@ -4451,7 +4451,7 @@ void QuantaApp::slotShowVPLOnly()
 
 void QuantaApp::initTabWidget(bool closeButtonsOnly)
 {
-#if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
+#if KDE_IS_VERSION(3,2,90) || defined(COMPAT_KMDI)
     KTabWidget *tab = tabWidget();
     if (tab)
     {
@@ -4459,9 +4459,7 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
         {
             tab->setTabPosition(QTabWidget::Bottom);
             connect(tab, SIGNAL( contextMenu( QWidget *, const QPoint & ) ), ViewManager::ref(), SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
-#ifdef COMPAT_KMDI
             setTabWidgetVisibility(KMdi::AlwaysShowTabs);
-#endif
         }
         if (qConfig.showCloseButtons == "ShowAlways")
         {
