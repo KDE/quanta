@@ -154,7 +154,7 @@
                         <number>0</number>
                     </property>
                     <property name="spacing">
-                        <number>6</number>
+                        <number>5</number>
                     </property>
                     <widget class="QLineEdit" row="0" column="7">
                         <property name="name">
@@ -237,7 +237,7 @@
                         <property name="sizePolicy">
                             <sizepolicy>
                                 <hsizetype>7</hsizetype>
-                                <vsizetype>7</vsizetype>
+                                <vsizetype>1</vsizetype>
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                             </sizepolicy>
