@@ -1,1 +1,1 @@
-SUBDIRS = images text documents binaries
+SUBDIRS = images text documents binaries pages scripts
