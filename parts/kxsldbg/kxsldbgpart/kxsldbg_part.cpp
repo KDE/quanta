@@ -55,7 +55,7 @@
 #include <kdebug.h>
 
 typedef KParts::GenericFactory<KXsldbgPart> KXsldbgPartFactory;
-K_EXPORT_COMPONENT_FACTORY( libkxsldbgpart, KXsldbgPartFactory );
+K_EXPORT_COMPONENT_FACTORY( libkxsldbgpart, KXsldbgPartFactory )
 
 KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char * /*widgetName*/,
                                   QObject *parent, const char *name,

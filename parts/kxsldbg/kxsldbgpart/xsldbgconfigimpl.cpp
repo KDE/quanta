@@ -31,7 +31,7 @@ LibxsltParam::LibxsltParam(QString name, QString value)
 {
 	_name = name;
  _value = value;
-};
+}
 
 
 LibxsltParam::~LibxsltParam()
@@ -42,7 +42,7 @@ LibxsltParam::~LibxsltParam()
 QString LibxsltParam::getName()
 {
  return _name;
-};
+}
 
 void LibxsltParam::setName(QString name)
 {
