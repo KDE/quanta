@@ -326,10 +326,10 @@ case "@widgetText" in
 	DTD="$xhtml1trans"
 ;; 
 "XHTML 1.0 Strict" ) 
-	DTD="$xhtml1trans"
+	DTD="$xhtml1strict"
 ;; 
 "XHTML 1.0 Frameset" ) 
-	DTD="$xhtml1trans"
+	DTD="$xhtml1frameset
 ;; 
 * ) 
 	echo "No Match"
