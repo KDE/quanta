@@ -1173,7 +1173,7 @@ void QuantaApp::initActions()
 #ifdef BUILD_KAFKAPART
     KToggleAction *ta;
       ta =
-      new KToggleAction( i18n( "&Source Editor") , "show_quanta_editor", ALT+Key_F9,
+      new KToggleAction( i18n( "&Source Editor"), UserIcon ("view_text"), ALT+Key_F9,
                          m_view, SLOT( slotShowQuantaEditor()),
                          ac, "show_quanta_editor");
       ta->setExclusiveGroup("view");
@@ -1185,7 +1185,7 @@ void QuantaApp::initActions()
      showKafkaAction->setExclusiveGroup("view");
 
      ta =
-      new KToggleAction( i18n("VPL && So&urce Editors"), "show_kafka_and_quanta", Key_F9,
+      new KToggleAction( i18n("VPL && So&urce Editors"), UserIcon ("vpl_text"), Key_F9,
                          m_view, SLOT( slotShowKafkaAndQuanta() ),
                           ac, "show_kafka_and_quanta");
      ta->setExclusiveGroup("view");
