@@ -133,6 +133,10 @@ int main(int argc, char *argv[])
     I18N_NOOP("Visual Page Layout part, new undo/redo system"),
     "nicolasdchd@ifrance.com");
 
+  aboutData.addCredit("Paulo Moura Guedes",
+    I18N_NOOP("Visual Page Layout part"),
+    "moura@caixamagica.pt");
+  
   aboutData.addCredit("Luciano Gulmini",
     I18N_NOOP("Frame wizard, CSS wizard"),
     "e.gulmini@tiscali.it");
