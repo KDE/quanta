@@ -15,7 +15,9 @@ public:
   ~Listener(){}
         
   int socket() { return listensock; }
+  TH_LIST* getthlist() { return &th_list; }
   void log(ListenerLogKind kind, char *message,...);
+  void destroy_client_p(ThreadBase *client) { client->destroy(); }
   
 protected:
   ThreadBase* create_client(int sock, sockaddr *client_addr);

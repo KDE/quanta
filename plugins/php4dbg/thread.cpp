@@ -20,8 +20,15 @@ DbgSiteBase* Thread::create_site()
 void Thread::close() 
 {
   IdeSite* site = (IdeSite*)fsite;
-  QObject::disconnect(site,SIGNAL(message(QString)),
-                      _dbg,SLOT(viewMessage(QString)));
+  
+  if (fsite) {
+    fsite->close();
+    QObject::disconnect(site,SIGNAL(message(QString)),
+                        _dbg,SLOT(viewMessage(QString)));
+    delete fsite;
+    fsite = NULL;
+  }
+  
   ThreadBase::close();
   flags|=DBGF_FINISHED;
 }

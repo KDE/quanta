@@ -47,14 +47,32 @@ void PHP4Debugger::activated(int)
 {
   QObject::disconnect(sn,SIGNAL(activated(int)),this,SLOT(activated(int)));
   
-  if (listener->numberofclients() <= 0) listener->peek();
+  listener->peek();
   if (listener->numberofclients() > 0 ) 
   {
-      Thread* cl = (Thread*)(listener->client(0));
-      cl->_dbg = this;
-      while (true) {
-        cl->process();
-        if (cl->isfinished()) break;
+      TH_LIST::iterator p;
+      TH_LIST* th_list = listener->getthlist();
+      
+      for (p = th_list->begin(); p!=th_list->end(); p++) 
+      {
+        Thread* cl = (Thread *)((*p).clientthread);
+        cl->_dbg = this;
+        while (true) 
+	{
+          cl->process();
+          if (cl->isfinished()) break;
+        }
+      }
+      for (p = th_list->begin(); p!=th_list->end(); p++) 
+      {
+        Thread* cl = (Thread *)((*p).clientthread);
+        if (cl->isfinished()) 
+	{
+          listener->destroy_client_p(cl);
+          th_list->erase(p);
+	  p = th_list->begin();
+	  if ( p==th_list->end() ) break;
+        }
       }
   }
   if (listener->error()) listener->logstatus();
