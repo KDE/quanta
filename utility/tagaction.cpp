@@ -496,7 +496,7 @@ void TagAction::execute()
     //To avoid lock-ups, start a timer.
       timer = new QTimer(this);
       connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
-      timer->start(10*1000, true);
+      timer->start(180*1000, true);
       QExtFileInfo internalFileInfo;
       loopStarted = true;
       internalFileInfo.enter_loop();
