@@ -49,13 +49,14 @@ Parser::~Parser()
 Node *Parser::parse(Document *w)
 {
   write = w;
-  m_dtdName = w->getDTDIdentifier();
+  m_dtdName = w->parsingDTD();
   m_dtd = dtds->find(m_dtdName);
   if (!m_dtd) m_dtd = dtds->find(qConfig.defaultDocType); //we should set this to projectDTD
   m_text = w->editIf->text();
 //  if (m_node) delete m_node;
   int line = 0;
   int col = 0;
+  maxLines = write->editIf->numLines();
   m_node = subParse(0L, line, col);
 
 //  coutTree(m_node,0); //debug printout
@@ -85,8 +86,6 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
   Node * node = 0L;
   Node * prevNode = 0L;
   Node * firstNode = 0L;
-  int maxLines = write->editIf->numLines();
-//  DTDStruct *dtd = write->currentDTD();
   while (line < maxLines)
   {
     Tag *tag = write->tagAt(m_dtd, line, col,true);
@@ -237,4 +236,9 @@ void Parser::nextPos(int &line, int &col)
       col = 0;
       line++;
   }
+}
+/** Clear the parser internal text, thus forcing the reparsing. */
+void Parser::clear()
+{
+  m_text = "";
 }

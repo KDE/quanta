@@ -39,6 +39,7 @@ typedef struct QConfig{
 
           //editor settings
           bool useAutoCompletion;
+          bool enableDTDToolbar;
           QString defaultEncoding;
 
           //parser options

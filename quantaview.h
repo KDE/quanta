@@ -157,7 +157,6 @@ class QuantaView : public QWidget
     void clearBookmarks();
     void gotoMark (KTextEditor::Mark *mark);
 
-
 //Settings
     void toggleIconBorder ();
     void toggleLineNumbers();

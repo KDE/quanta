@@ -20,6 +20,7 @@
 
 #include <qdict.h>
 #include <qwidget.h>
+#include <qevent.h>
 
 #include <kate/document.h>
 #include <kate/view.h>
@@ -54,6 +55,8 @@ public:
 	Document(const QString& basePath, KTextEditor::Document *doc, Project *project,
            QWidget *parent = 0, const char *name = 0, WFlags f=0);
 	~Document();
+
+  void resizeEvent(QResizeEvent* e);
 
 public:
 
@@ -136,6 +139,10 @@ work correctly. */
   void checkDirtyStatus();
   /** Save the document and reset the dirty status. */
   void save();
+  /** No descriptions */
+  QString parsingDTD();
+  /** No descriptions */
+  void setParsingDTD(const QString& dtdName);
 
   bool oldstat;
   bool busy;
@@ -208,6 +215,8 @@ protected: // Protected attributes
   /** True if the document is dirty (has been modified outside). */
   bool m_dirty;
   Project *m_project;
+  /** Parse the document according to this DTD. */
+  QString m_parsingDTD;
 };
 
 #endif

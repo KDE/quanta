@@ -32,7 +32,7 @@
 #include "../parser/node.h"
 #include "../parser/parser.h"
 #include "../document.h"
-#include "../quantacommon.h"
+#include "../resource.h"
 
 #include "structtreetag.h"
 #include "structtreeview.h"
@@ -76,8 +76,21 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 	RBMenuFile -> insertItem( i18n("Remove File From Project"), this, SLOT(slotRemoveFromProject()), 0, ID_PROJECT_REMOVE_FROM_PROJECT);
 */
 
+  dtdMenu = new QPopupMenu(this);
+  
+  QDictIterator<DTDStruct> it(*dtds);
+  int id = 0;
+  for( ; it.current(); ++it )
+  {
+    dtdMenu->insertItem(it.current()->nickName,id,-1);
+    id++;
+  }
+  connect(dtdMenu, SIGNAL(activated(int)), this, SLOT(slotDTDChanged(int)));
+
  	popupMenu = new QPopupMenu();
 
+  popupMenu -> insertItem( i18n("Parse As..."), dtdMenu);
+	popupMenu -> insertSeparator();
 	popupMenu -> insertItem( i18n("Select Tag Area"), this ,SLOT(slotSelectTag()));
 	popupMenu -> insertItem( i18n("Go To End Of Tag"), this ,SLOT(slotGotoClosingTag()));
 	popupMenu -> insertSeparator();
@@ -88,6 +101,7 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 	followCursorId = popupMenu -> insertItem( i18n("Follow Cursor"), this ,SLOT(changeFollowCursor()));
 
 	popupMenu -> setItemChecked ( followCursorId, followCursor() );
+
 
   connect( this, SIGNAL(mouseButtonClicked(int, QListViewItem*, const QPoint&, int)),
            this, SLOT  (slotMouseClicked(int, QListViewItem*, const QPoint&, int)));
@@ -452,4 +466,31 @@ void StructTreeView::slotCollapsed(QListViewItem *item)
 void StructTreeView::showEvent(QShowEvent* /*ev*/)
 {
  slotReparse();
+}
+
+/** The treeview DTD  has changed to id. */
+void StructTreeView::slotDTDChanged(int id)
+{
+  QString text = dtdMenu->text(id);
+  QDictIterator<DTDStruct> it(*dtds);
+  for( ; it.current(); ++it )
+  {
+    if (it.current()->nickName == text)
+    {
+      QString dtdName = QuantaCommon::getDTDNameFromNickName(text);
+      emit parsingDTDChanged(dtdName);
+      break;
+    }
+  }
+}
+/** Set the Parse As... menu to dtdName. */
+void StructTreeView::setParsingDTD(const QString dtdName)
+{
+  QDictIterator<DTDStruct> it(*dtds);
+  int index = 0;
+  for( ; it.current(); ++it )
+  {
+    dtdMenu->setItemChecked(index, it.current()->name == dtdName); 
+    index++;
+  }
 }

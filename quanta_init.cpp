@@ -99,6 +99,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   currentToolbarDTD = QString::null;
 
   qConfig.globalDataDir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png");
+  qConfig.enableDTDToolbar = true;
 
   setHighlight = 0;
   grepDialog  = 0L;
@@ -427,6 +428,7 @@ void QuantaApp::initView()
 //  connect( sTab, SIGNAL(onTag(const QString &)), SLOT( slotStatusHelpMsg(const QString &)));
   connect( sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
   connect( sTab, SIGNAL(needReparse()),    SLOT(reparse()));
+  connect( sTab, SIGNAL(parsingDTDChanged(QString)), SLOT(slotParsingDTDChanged(QString)));
   connect( dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
 
   connect(getView(), SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
@@ -466,6 +468,7 @@ void QuantaApp::saveOptions()
   config->writeEntry("Geometry", size());
 
   config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
+  config->writeEntry("Show DTD Toolbar", qConfig.enableDTDToolbar);
   config->writeEntry("Show Statusbar", statusBar()->isVisible());
 
   config->writeEntry("Html mask",   fileMaskHtml  );
@@ -572,6 +575,10 @@ void QuantaApp::readOptions()
  }
  showToolbarAction  ->setChecked(config->readBoolEntry("Show Toolbar",   true));
  showStatusbarAction->setChecked(config->readBoolEntry("Show Statusbar", true));
+ qConfig.enableDTDToolbar = config->readBoolEntry("Show DTD Toolbar",true);
+
+ slotToggleDTDToolbar(qConfig.enableDTDToolbar);
+ showDTDToolbar->setEnabled(qConfig.enableDTDToolbar);
 
   readDockConfig();
 
@@ -1341,6 +1348,10 @@ void QuantaApp::initActions()
     new KAction(i18n("&Add User Toolbar..."),  0, this, SLOT(slotAddToolbar()), actionCollection(), "toolbars_add");
     new KAction(i18n("&Remove User Toolbar..."),  0, this, SLOT(slotRemoveToolbar()), actionCollection(), "toolbars_remove");
     new KAction(i18n("Send Toolbar in E&mail..."),  0, this, SLOT(slotSendToolbar()), actionCollection(), "toolbars_send");
+
+    showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"),0, actionCollection(), "view_dtd_toolbar");//,view,SLOT(slotHideToolbar()),actionCollection(),"view_dtd_toolbar");
+    connect(showDTDToolbar, SIGNAL(toggled(bool)), this, SLOT(slotToggleDTDToolbar(bool)));
+    
 
     new KAction(i18n("Complete Text"),CTRL+Key_Space,this,SLOT(slotShowCompletion()),actionCollection(),"show_completion");
     new KAction(i18n("Completion Hints"),CTRL+SHIFT+Key_Space,this,SLOT(slotShowCompletionHint()),actionCollection(),"show_completion_hint");

@@ -110,6 +110,7 @@ public:
   int tagsMenuId() { return m_tagsMenuId;}
   void setTagsMenuId(int id) {m_tagsMenuId = id;}
   QPopupMenu *toolbarMenu(const QString& name) {return toolbarMenuList[name];}
+  KToggleAction *showDTDToolbar;
 
   MessageOutput *getMessages() { return messageOutput; }
 
@@ -261,6 +262,8 @@ public slots:
   void slotShowCompletion();
   /** No descriptions */
   void slotShowCompletionHint();
+  /** No descriptions */
+  void slotParsingDTDChanged(QString newDTDName);
 
 protected slots:
   void initToolBars();
@@ -268,6 +271,8 @@ protected slots:
   void slotMakeDonation();
   /** No descriptions */
   void slotHelpHomepage();
+  /** Show or hide the DTD toolbar */
+  void slotToggleDTDToolbar(bool show);
 
 protected:
   KParts::BrowserExtension *browserExtension()

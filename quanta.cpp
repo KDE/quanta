@@ -761,8 +761,18 @@ void QuantaApp::slotOptions()
   styleOptionsS->optionalTagAutoClose->setChecked( qConfig.closeOptionalTags );
   styleOptionsS->useAutoCompletion->setChecked( qConfig.useAutoCompletion );
 
+  // Environment options
+  //TODO FileMasks name is not good anymore
+  page=kd->addVBoxPage(i18n("Environment"), QString::null, BarIcon("files", KIcon::SizeMedium ) );
+  FileMasks *fileMasks = new FileMasks( (QWidget *)page );
+
+  fileMasks->lineHTML->setText( fileMaskHtml );
+  fileMasks->linePHP->setText( fileMaskPhp );
+  fileMasks->lineImages->setText( fileMaskImage );
+  fileMasks->lineText->setText( fileMaskText );
+
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
-  styleOptionsS->encodingCombo->insertStringList( availableEncodingNames );
+  fileMasks->encodingCombo->insertStringList( availableEncodingNames );
   QStringList::ConstIterator iter;
   int iIndex = -1;
   for (iter = availableEncodingNames.begin(); iter != availableEncodingNames.end(); ++iter)
@@ -770,19 +780,11 @@ void QuantaApp::slotOptions()
      ++iIndex;
      if ((*iter).lower() == qConfig.defaultEncoding.lower())
      {
-       styleOptionsS->encodingCombo->setCurrentItem(iIndex);
+       fileMasks->encodingCombo->setCurrentItem(iIndex);
        break;
      }
   }
-
-  // Files Masks options
-  page=kd->addVBoxPage(i18n("Files Masks"), QString::null, BarIcon("files", KIcon::SizeMedium ) );
-  FileMasks *fileMasks = new FileMasks( (QWidget *)page );
-
-  fileMasks->lineHTML->setText( fileMaskHtml );
-  fileMasks->linePHP->setText( fileMaskPhp );
-  fileMasks->lineImages->setText( fileMaskImage );
-  fileMasks->lineText->setText( fileMaskText );
+  fileMasks->hideDTDToolbar->setChecked(!qConfig.enableDTDToolbar);
 
   // Preview options
   page=kd->addVBoxPage(i18n("Preview"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
@@ -818,12 +820,15 @@ void QuantaApp::slotOptions()
     qConfig.closeTags = styleOptionsS->tagAutoClose->isChecked();
     qConfig.closeOptionalTags = styleOptionsS->optionalTagAutoClose->isChecked();
     qConfig.useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
-    qConfig.defaultEncoding = styleOptionsS->encodingCombo->currentText();
 
     fileMaskHtml = fileMasks->lineHTML->text()+" ";
   	fileMaskPhp  = fileMasks->linePHP->text()+" ";
 	  fileMaskImage= fileMasks->lineImages->text()+" ";
   	fileMaskText = fileMasks->lineText->text()+" ";
+    qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
+    qConfig.enableDTDToolbar = !fileMasks->hideDTDToolbar->isChecked();
+    showDTDToolbar->setEnabled(qConfig.enableDTDToolbar);
+    slotToggleDTDToolbar(showDTDToolbar->isChecked());
 
     qConfig.refreshFrequency = parserOptions->refreshFrequency->value();
     refreshTimer->changeInterval(qConfig.refreshFrequency*1000);
@@ -1003,6 +1008,7 @@ void QuantaApp::reparse()
       if (dtds->find(w->getDTDIdentifier()))
       {
         baseNode = parser->parse(w);
+        sTab->setParsingDTD(w->parsingDTD());
       }
     }
     sTab->deleteList();
@@ -1584,6 +1590,8 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
  pstr->append(name.lower());
  toolbarNames.insert(url.prettyURL(),pstr);
  toolbarURLs.insert(name.lower(), new KURL(url));
+
+ slotToggleDTDToolbar(toolbarNames.count() != 0);
 }
 
 /** Load an user toolbar from the disk. */
@@ -1807,6 +1815,7 @@ void QuantaApp::slotAddToolbar()
   QuantaCommon::setUrl(*url,tempFile->name());
   toolbarURLs.insert(name.lower(), url);
 
+  slotToggleDTDToolbar(toolbarNames.count() != 0);
  }
 }
 
@@ -2161,7 +2170,30 @@ void QuantaApp::removeToolbar(const QString& name)
      toolbarURLs.remove(s);
     }
   }
+
+  slotToggleDTDToolbar(toolbarNames.count() != 0);
 }
 
+/** Show or hide the DTD toolbar */
+void QuantaApp::slotToggleDTDToolbar(bool show)
+{
+  if (show && qConfig.enableDTDToolbar)
+  {
+    view->toolbarTab->show();
+  } else
+  {
+    view->toolbarTab->hide();
+  }
+  showDTDToolbar->setChecked(show);
+}
+
+
+/** No descriptions */
+void QuantaApp::slotParsingDTDChanged(QString newDTDName)
+{
+  view->write()->setParsingDTD(newDTDName);
+  parser->clear();
+  reparse();
+}
 
 #include "quanta.moc"

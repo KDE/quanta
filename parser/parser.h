@@ -44,6 +44,8 @@ public:
   void coutTree(Node *node, int indent);
   /** Delete the internal m_node */
   void deleteNode();
+  /** Clear the parser internal text, thus forcing the reparsing. */
+  void clear();
 
 	QString m_text;  //FIXME: having an internal copy of text is absolutely useless
 private:
@@ -52,6 +54,7 @@ private:
   QString m_dtdName;  //the DTD name of write
   DTDStruct *m_dtd; //the dtd used for main parsing
   Document *write;    //pointer to the parsed document
+  int maxLines; // how many lines are in the current document
 
   /** Recursive parsing algorithm. Actually this does the parsing and tree building. */
   Node * subParse( Node* parent , int &line, int &col);

@@ -47,6 +47,8 @@ public:
   void showTagAtPos(int x, int y);
   /** Delete the items */
   void deleteList();
+  /** Set the View as... menu to dtdName. */
+  void setParsingDTD(const QString dtdName);
 
 	StructTreeTag *top;
 	StructTreeTag *images;
@@ -85,6 +87,8 @@ signals:
   void selectArea(int col1, int row1, int col2, int row2 );
   void needReparse();
   void onTag( const QString &tag );
+  /** No descriptions */
+  void parsingDTDChanged(QString);
 
 private:
   /** create items in the level */
@@ -98,11 +102,15 @@ private:
   bool followCursorFlag;
 
   QPopupMenu *popupMenu;
+  QPopupMenu *dtdMenu;
   StructTreeTag *lastTag;
   KConfig *config;
 protected: // Protected methods
   /** Do a reparse before showing. */
   virtual void showEvent(QShowEvent*);
+protected slots: // Protected slots
+  /** The treeview DTD  has changed to id. */
+  void slotDTDChanged(int id);
 };
 
 #endif

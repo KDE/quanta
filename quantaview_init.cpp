@@ -84,7 +84,7 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 
 
   writeTab->show();
-  toolbarTab->show();
+//  toolbarTab->show();
 
 
   oldWrite = 0L;

@@ -61,7 +61,7 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc,
   m_view = (KTextEditor::View *)m_doc->createView(this, 0L);
   int w = parent->width() -5 ;
   int h = parent->height() - 35;
-   m_view->resize(w,h);
+  m_view->resize(w,h);
 //  m_view->setGeometry(parent->geometry());
   completionInProgress = false;
 
@@ -76,7 +76,7 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc,
   m_project = project;
   tempFile = 0;
   dtdName = project->defaultDTD();
-
+  m_parsingDTD = dtdName;
 
   connect( m_doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
            this,  SLOT(slotCharactersInserted(int ,int ,const QString&)) );
@@ -93,6 +93,15 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc,
 
 Document::~Document()
 {
+}
+
+void Document::resizeEvent(QResizeEvent *e)
+{
+  QWidget::resizeEvent(e);
+  QWidget *wd=dynamic_cast<QWidget*>(parent());
+  int w = wd->width() -5 ;
+  int h = wd->height() - 9;
+  m_view->resize(w,h);
 }
 
 void Document::setUntitledUrl(QString url)
@@ -1122,6 +1131,7 @@ QString Document::getDTDIdentifier()
 void Document::setDTDIdentifier(QString id)
 {
   dtdName = id;
+  m_parsingDTD = dtdName;
 }
 
 /** Get a pointer to the current active DTD. If fallback is true, this always gives back a valid and known DTD pointer: the active, the document specified and in last case the application default document type. */
@@ -1594,6 +1604,18 @@ void Document::save()
   m_doc->save();
   m_dirty = false;
   fileWatcher->startScan();
+}
+
+/** No descriptions */
+void Document::setParsingDTD(const QString& dtdName)
+{
+  m_parsingDTD = dtdName;
+}
+
+/** No descriptions */
+QString Document::parsingDTD()
+{
+ return m_parsingDTD;
 }
 
 #include "document.moc"

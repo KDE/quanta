@@ -26,6 +26,7 @@
 #include <qlineedit.h>
 #include <qclipboard.h>
 #include <qcheckbox.h>
+#include <qtabwidget.h>
 #include <qtextedit.h>
 #include <qtextcodec.h>
 
