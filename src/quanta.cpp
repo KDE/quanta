@@ -423,7 +423,6 @@ bool QuantaApp::slotFileSaveAs()
     }
     QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
 
-    QString saveAsPath;
     bool gotPath = false;
 
     KURL saveAsUrl;
@@ -432,35 +431,31 @@ bool QuantaApp::slotFileSaveAs()
     {
       saveAsUrl = ProjectTreeView::ref()->currentURL();
       if (ProjectTreeView::ref()->currentKFileTreeViewItem() && ProjectTreeView::ref()->currentKFileTreeViewItem()->isDir())
-        saveAsPath = saveAsUrl.url();
-      else
-        saveAsPath = saveAsUrl.directory();
+      {
+        saveAsUrl.adjustPath(+1);
+      }
       gotPath = true;
     }
     else if(fTab->isVisible())
     {
       saveAsUrl = fTab->currentURL();
       if (fTab->currentKFileTreeViewItem() && fTab->currentKFileTreeViewItem()->isDir())
-        saveAsPath = saveAsUrl.url();
-      else
-        saveAsPath = saveAsUrl.directory();
+      {
+        saveAsUrl.adjustPath(+1);
+      }
       gotPath = true;
     }
 
-    if (!gotPath || saveAsPath.isEmpty())
-      saveAsPath = Project::ref()->projectBaseURL().url();
+    if (!gotPath || saveAsUrl.isEmpty())
+      saveAsUrl = Project::ref()->projectBaseURL();
 
-    QString saveAsFileName = "";
-    if (!(oldURL.fileName()).isEmpty())
-      saveAsFileName = "/" + oldURL.fileName();
+    saveAsUrl.setFileName( oldURL.fileName() );
 
-    KURL saveUrl;
     KEncodingFileDialog::Result data;
-    data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsPath+saveAsFileName,
-            "all/allfiles text/plain", this, i18n("Save File"));
-    saveUrl = data.URLs[0];
-    QString encoding;
-    encoding = data.encoding;
+    data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsUrl.url(),
+             "all/allfiles text/plain", this, i18n("Save File"));
+    KURL saveUrl = data.URLs[0];
+    QString encoding = data.encoding;
     KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
     if (encodingIf)
        encodingIf->setEncoding(encoding);
