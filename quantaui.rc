@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32018">
+<kpartgui name="quanta" version="32019">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -218,6 +218,7 @@
     <Action name="tidy_check" />
     <Action name="KFileReplace" />
     <Action name="CVS Management (Cervisia)" />
+    <Action name="XSLT debugger" />
   </ToolBar>
 
   <ToolBar name="mainNaviToolBar" noMerge="1">

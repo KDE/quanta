@@ -1,5 +1,5 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
-lib_LTLIBRARIES = libkxsldbgpart.la
+kde_module_LTLIBRARIES = libkxsldbgpart.la
 
 
 ## INCLUDES were found outside kdevelop specific part
@@ -17,7 +17,7 @@ EXTRA_DIST = xsldbgbreakpoints.ui xsldbgcallstack.ui xsldbgconfig.ui xsldbgentit
 INCLUDES = $(XSLDBG_CFLAGS) -I.. $(all_includes)
 
 
-libkxsldbgpart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
+libkxsldbgpart_la_LDFLAGS = -module -no-undefined $(all_libraries) -version-info 1:0:0
 libkxsldbgpart_la_LIBADD  =  libxsldbg/libxsldbg.la libqtnotfier/libqtnotfier.la $(LIB_KPARTS) 
         
 

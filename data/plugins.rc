@@ -10,7 +10,7 @@ Type=KPart
 Input=3
 
 [General]
-Plugins=KFileReplace, kompare,CVS Management (Cervisia)
+Plugins=KFileReplace, kompare,CVS Management (Cervisia),XSLT debugger
 SearchPaths=
 
 [kompare]
@@ -32,4 +32,16 @@ OutputWindow=Editor Tab
 ReadOnly=true
 Standard=false
 Type=KPart
+
+[XSLT debugger]
+Arguments=
+FileName=kde3/libkxsldbgpart.so
+Icon=xsltproc.png
+Input=0
+Location=
+OutputWindow=Editor Tab
+ReadOnly=true
+Standard=false
+Type=KPart
+
 
