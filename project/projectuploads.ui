@@ -420,14 +420,15 @@
     <tabstop>comboProtocol</tabstop>
     <tabstop>port</tabstop>
     <tabstop>lineUser</tabstop>
+    <tabstop>linePasswd</tabstop>
     <tabstop>keepPasswd</tabstop>
     <tabstop>linePath</tabstop>
     <tabstop>buttonUpload</tabstop>
     <tabstop>buttonCancel</tabstop>
     <tabstop>buttonAll</tabstop>
-    <tabstop>buttonInvert</tabstop>
     <tabstop>buttonModified</tabstop>
     <tabstop>buttonClear</tabstop>
+    <tabstop>buttonInvert</tabstop>
     <tabstop>buttonExpand</tabstop>
     <tabstop>buttonCollapse</tabstop>
     <tabstop>buttonUpdate</tabstop>
