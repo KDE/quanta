@@ -3,26 +3,11 @@
 #### WARNING! All changes made in this part will be lost! ####
 ##############################################################
 
-noinst_LIBRARIES = libparser.a
+datadir = ${kde_libraries}/quanta/plugins
 
-
-
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/quanta/plugins/weblint\
-		-I$(top_srcdir)/quanta/kwrite
-DEFS = -I. -I$(srcdir) -I$(top_srcdir)
-libparser_a_METASOURCES = AUTO
-libparser_a_SOURCES = \
-		node.cpp\
-		parser.cpp\
-		tag.cpp
+data_DATA = weblint 
 EXTRA_DIST = \
-		node.cpp\
-		node.h\
-		parser.cpp\
-		parser.h\
-		tag.cpp\
-		tag.h
+		weblint
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

@@ -22,7 +22,8 @@ quanta_LDADD = \
 		$(LIB_KHTML) $(LIB_KFILE) -lkspell
 
 LDFLAGS =  -s -lktexteditor
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes)\
+		-I$(top_srcdir)/quanta/plugins/weblint
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 quanta_METASOURCES = AUTO
 quanta_SOURCES = \

@@ -156,6 +156,10 @@
 #define ID_PROJECT_RESCAN_FILES     17100
 
 ///////////////////////////////////////////////////////////////////
+// tools menu
+#define ID_TOOL_SYNTAX_CHECK        18010
+
+///////////////////////////////////////////////////////////////////
 // other-id entries
 #define ID_CONTEXT_HELP             30010
 #define ID_ATTRIB_POPUP             30020

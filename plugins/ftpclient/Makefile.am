@@ -9,7 +9,8 @@ lib_LTLIBRARIES =libproject.la
 
 libproject_la_LDFLAGS = -module 
 
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes)\
+		-I$(top_srcdir)/quanta/plugins/weblint
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libproject_la_METASOURCES = AUTO
 libproject_la_SOURCES = \

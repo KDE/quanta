@@ -20,6 +20,7 @@
 
 #include <qlistbox.h>
 
+class KProcess;
 
 /**class for displaing of
 weblint output
@@ -42,6 +43,11 @@ public slots:
 	void phpDebug(QString s);
 	void newPhpConnect();
 	void endPhpConnect();
+	
+	/** weblint stuff */
+	void processWebLint( KProcess *, char *, int );
+	void weblintFinished();
+	
 	
 public:
   uint maxItems() { return max_items; }	

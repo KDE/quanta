@@ -7,7 +7,8 @@ noinst_LIBRARIES = libwidgets.a
 
 
 
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes)\
+		-I$(top_srcdir)/quanta/plugins/weblint
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libwidgets_a_METASOURCES = AUTO
 libwidgets_a_SOURCES = \

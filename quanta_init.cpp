@@ -394,6 +394,7 @@ void QuantaApp::initMenuBar()
 
   toolMenu->insertItem(UserIcon("spellcheck"),i18n("Spe&lling..."),		ID_EDIT_SPELL);
   toolMenu->insertItem(UserIcon("ftpclient"),	i18n("&Ftp client..."),	ID_VIEW_FTP);
+  toolMenu->insertItem( 	i18n("&Syntax check..."),	ID_TOOL_SYNTAX_CHECK);
  
 
   ///////////////////////////////////////////////////////////////////

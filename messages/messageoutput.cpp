@@ -18,6 +18,7 @@
 #include "messageoutput.h"
 #include "messageitem.h"
 #include "messageitemphp.h"
+#include "messageitemweblint.h"
 
 MessageOutput::MessageOutput(QWidget *parent, const char *name )
   : QListBox(parent,name)
@@ -61,6 +62,7 @@ void MessageOutput::showMessage( QString message )
     message.remove(0,endPos+1);
   }
   insertItem( message );
+  setBottomItem(count()-1);
 }
 
 
@@ -99,7 +101,7 @@ void MessageOutput::phpDebug( QString s)
 
 void MessageOutput::newPhpConnect()
 {
-   insertItem(" PHP debugger started :");
+   insertItem("PHP debugger started");
 }
 
 void MessageOutput::endPhpConnect()
@@ -107,5 +109,36 @@ void MessageOutput::endPhpConnect()
    insertItem("");
 }
 
+// if p!=0 store output, else show it
+void MessageOutput::processWebLint( KProcess *p, char *buffer, int len )
+{
+  static QString s = "";
+  
+  if ( p ) {
+    QString text(buffer);
+    text.truncate(len);
+    s += text;
+  } 
+  else {
+    int endPos;
+    if ( s.right(1) == "\n" ) 
+      s.remove( s.length()-1,1 );
+    if ( s.left(1) == "\n" ) 
+      s.remove( 0,1 );
+    
+    while ( ( endPos = s.find('\n') ) != -1 ) {
+      new MessageItemWebLint( this, s.left(endPos) );
+      s.remove(0,endPos+1);
+    }
+    new MessageItemWebLint( this, s );
+   // setBottomItem(count()-1);
+    s = ""; 
+  }
+       
+}
 
-
+void MessageOutput::weblintFinished() 
+{
+   clear();
+   processWebLint(0,0,0); // show output
+}

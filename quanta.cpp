@@ -74,6 +74,8 @@
 #include "toolbar/toolbarconfigi.h"
 #include "toolbar/toolbars.h"
 
+#include "messages/messageoutput.h"
+
 
 /////////////////////////////////////////////////////////////////////
 // SLOT CALLBACK IMPLEMENTATION
@@ -253,7 +255,11 @@ void QuantaApp::commandCallback(int id_)
        
     case ID_VIEW_NEXT_FILE:
        slotFileNext();
-       break;    
+       break;
+           
+    case ID_TOOL_SYNTAX_CHECK:
+       slotToolSyntaxCheck();
+       break;
 
     case ID_PROJECT_NEW:
     		 project	-> newProject();
@@ -1489,4 +1495,24 @@ void QuantaApp::slotGoToError( QString fname, int line )
    if ( ! fname.isEmpty() )
      slotFileOpen( fname );
    setCursorPosition( line-1, 1 );
+}
+
+void QuantaApp::slotToolSyntaxCheck()
+{
+  slotFileSave();
+  if ( doc->write()->hasFileName() ) {
+    KProcess *p = new KProcess();
+    *p << "perl";
+    *p << locate("lib","quanta/plugins/weblint");
+    *p << "-x" << "Netscape";
+    *p << doc->write()->fileName();
+    
+    connect( p, SIGNAL(processExited(KProcess *)),
+             messageOutput, SLOT(weblintFinished()) );
+    connect( p, SIGNAL(receivedStdout(KProcess *, char *, int)),
+             messageOutput, SLOT( processWebLint(KProcess *, char *, int)) );
+
+    
+    p->start( KProcess::NotifyOnExit, KProcess::Stdout);
+  }
 }

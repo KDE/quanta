@@ -226,6 +226,8 @@ class QuantaApp : public KTMainWindow
     void slotEditUnindent();
     void slotEditCleanIndent();
     void slotEditGotoLine();
+    
+    void slotToolSyntaxCheck();
 
     /** open url in documentation window
      */

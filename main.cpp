@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
  	aboutData.addAuthor("Eric Laffoon",0, "sequitur@kde.org");
  	
  	aboutData.addCredit("Richard Moore",
-    "Tag dialog definition documentation",
+    "Coding and tag dialog definition documentation",
     "rich@kde.org");
     
   aboutData.addCredit("Matthew Colton",
