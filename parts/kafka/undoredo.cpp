@@ -207,7 +207,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSel
       kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node, modifs);
       goUp = false;
       kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp), modifs);
-      kafkaCommon::applyIndentation(node, 2, 0, modifs);
+      kafkaCommon::applyIndentation(node, 2, 0, modifs); // TODO GET indentation spaces from settings
     }
     node = node->nextSibling();
   }
@@ -1370,7 +1370,6 @@ void undoRedo::syncKafkaCursorAndSelection(NodeSelection *selection)
   {
     KafkaDocument::ref()->translateNodeIntoKafkaCursorPosition(selection->cursorNode(),
       selection->cursorOffset(), node, (long&)offset);
-    Node* nodeuh = selection->cursorNode();
     kafkaPart->setCurrentNode(node, offset);
   }
   else
