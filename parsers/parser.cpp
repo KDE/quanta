@@ -149,7 +149,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         currentNode = m_saParser->parseArea(area, foundText, "", node, false, true);
         line = m_saParser->lastParsedLine();
         textLine = ParserCommon::getLine(write, line, endLine, endCol);
-        col = m_saParser->lastParsedColumn();
+        col = m_saParser->lastParsedColumn() + 1;
         continue;
       } else
       //if we have found an XML tag start ("<")

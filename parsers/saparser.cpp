@@ -626,7 +626,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   if (s_line == s_endLine)
   {
     if (s_endCol > 0)
-      s_textLine.truncate(s_endCol);
+      s_textLine.truncate(s_endCol + 1);
     else
       s_textLine = "";
   }
@@ -749,7 +749,7 @@ Node *SAParser::parsingDone()
   }
 
   m_lastParsedLine = s_endLine;
-  m_lastParsedCol = s_endCol;
+  m_lastParsedCol = s_endCol + 1;
 
   if (s_fullParse && m_currentNode)
   {

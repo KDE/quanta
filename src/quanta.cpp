@@ -992,12 +992,14 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
     slotReloadStructTreeView();
     return;
   }
-  KTextEditor::View * oldView = newWrite->view();
-  m_partManager->setActivePart(newWrite->doc(), oldView);
 
   newWrite->checkDirtyStatus();
   if (newWrite != m_view->oldWrite)
+  {
+  KTextEditor::View * oldView = newWrite->view();
+  m_partManager->setActivePart(newWrite->doc(), oldView);
     StructTreeView::ref()->useOpenLevelSetting = true;
+   }
   parser->clearGroups();
   kdDebug(24000) << "Calling reparse from update " << endl;
   parser->setSAParserEnabled(true);
