@@ -1,7 +1,7 @@
 /***************************************************************************
                           projectnewgeneral.cpp  -  description
                              -------------------
-    begin                : Tue Aug 22 2000
+    begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
@@ -14,78 +14,68 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include "projectnewgeneral.h"
 
-// QT includes
+// qt includes
 #include <qdir.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
 
-// KDE includes
-#include <kiconloader.h>
+// kde includes
 #include <kfiledialog.h>
 
-ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name)
-	: QWidget(parent,name)
+#include "projectnewgeneral.h"
+
+ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
+	: ProjectNewGeneralS(parent,name)
 {
-	initDialog();
-	
-	buttonDir				->setPixmap( UserIcon("open") );
-	buttonImagesDir	->setPixmap( UserIcon("open") );
-	buttonCgiDir		->setPixmap( UserIcon("open") );
-	buttonScriptsDir->setPixmap( UserIcon("open") );
-	
-	connect( linePrjName, SIGNAL(textChanged(const QString&)),
-	         this, SLOT(slotNameChanged(const QString&)) );
-	connect( buttonDir,   			SIGNAL(clicked()), SLOT(slotDirChange()));
-	connect( buttonImagesDir,   SIGNAL(clicked()), SLOT(slotImagesDirChange()));
-	connect( buttonCgiDir,   		SIGNAL(clicked()), SLOT(slotCgiDirChange()));
-	connect( buttonScriptsDir,	SIGNAL(clicked()), SLOT(slotScriptsDirChange()));
-	
-	QString dir = QDir::homeDirPath()+"/";
-  linePrjDir ->setText( dir );
+	connect( linePrjFile, SIGNAL(textChanged(const QString &)),
+					 this,				SLOT(slotLinePrjFile(const QString &)));
+	connect( linePrjName, SIGNAL(textChanged(const QString &)),
+					 this,				SLOT(slotLinePrjFile(const QString &)));
+	connect( linePrjDir,  SIGNAL(textChanged(const QString &)),
+					 this,				SLOT(slotLinePrjFile(const QString &)));
+	connect( buttonDir,		SIGNAL(clicked()),
+					 this,				SLOT(slotButtonDir()));
+	connect( linePrjName, SIGNAL(textChanged(const QString &)),
+					 this,				SLOT(slotChangeNames(const QString &)));
 }
 
 ProjectNewGeneral::~ProjectNewGeneral(){
 }
 
-/** chenge file name of project */
-void ProjectNewGeneral::slotNameChanged(const QString &text)
+void ProjectNewGeneral::slotButtonDir()
 {
-  int pos;
-  QString name = linePrjName->text();
-  QString fname = name.lower();
-  while ( (pos = fname.find(' ')) >= 0) fname.remove(pos,1);
-  fname += ".webprj";
-  if ( fname != linePrjFile->text() ) linePrjFile->setText( fname );
+	linePrjDir->setText( KFileDialog::getExistingDirectory(
+		linePrjDir->text(),
+		this,
+		"Select project directory..."
+	));
 }
 
-/** change dir name */
-void ProjectNewGeneral::slotDirChange()
+void ProjectNewGeneral::slotLinePrjFile( const QString & )
 {
-  QString dir = linePrjDir->text();
-  dir = KFileDialog::getExistingDirectory( dir, this, "Select Directory");
-  linePrjDir->setText( dir );
+	if ( 	linePrjFile->text().isEmpty() ||
+				linePrjName->text().isEmpty() ||
+				linePrjDir ->text().isEmpty())
+				emit enableNextButton( this, false );
+	else	emit enableNextButton( this, true  );
 }
 
-/** change dir name */
-void ProjectNewGeneral::slotImagesDirChange()
+void ProjectNewGeneral::slotChangeNames( const QString &text )
 {
-  QString dir = lineImagesDir->text();
-  dir = KFileDialog::getExistingDirectory( dir, this, "Select Directory");
-  lineImagesDir->setText( dir );
+	int i;
+	QString fname = text.lower();
+	while( (i=fname.find(" ")) >=0 ) fname.remove(i,1);
+	
+	linePrjFile->setText( fname+".webprj" );
+	linePrjDir ->setText( QDir::homeDirPath()+"/"+fname );
 }
 
-/** change dir name */
-void ProjectNewGeneral::slotCgiDirChange()
+QString ProjectNewGeneral::type()
 {
-  QString dir = lineCgiDir->text();
-  dir = KFileDialog::getExistingDirectory( dir, this, "Select Directory");
-  lineCgiDir->setText( dir );
-}
-
-/** change dir name */
-void ProjectNewGeneral::slotScriptsDirChange()
-{
-  QString dir = lineScriptsDir->text();
-  dir = KFileDialog::getExistingDirectory( dir, this, "Select Directory");
-  lineScriptsDir->setText( dir );
+	if ( radioCvs  ->isChecked() ) return "CVS";
+	if ( radioLocal->isChecked() ) return "Local";
+	if ( radioWeb  ->isChecked() ) return "Web";
+  return "Local";
 }

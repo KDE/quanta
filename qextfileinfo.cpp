@@ -10,6 +10,7 @@
 
 #include "qextfileinfo.h"
 #include <iostream.h>
+#include <qdir.h>
 
 QExtFileInfo::QExtFileInfo(const char *file):QFileInfo(file)
 {
@@ -107,4 +108,46 @@ QString QExtFileInfo::toAbsolute( QString  fname, QString dir)
   }
 
   return cutdir+cutname;
+}
+/** all files in dir ( added yshurik, quanta team ) */
+QStringList QExtFileInfo::allFiles( QString path, QString mask, int level )
+{
+	QDir dir( path );
+	QStringList r;
+	
+	if ( level > 10        ) return r;
+	if ( !dir.isReadable() ) return r;
+  if ( !dir.exists()     ) return r;
+	
+	QStringList  dirList;
+	QStringList  fileList;
+  QStringList::Iterator it;
+	
+	dir.setFilter ( QDir::Dirs);
+	dirList = dir.entryList();
+		
+	dirList.remove(".");
+	dirList.remove("..");
+		
+	dir.setFilter( QDir::Files);
+	fileList = dir.entryList();
+	
+	for ( it = dirList.begin(); it != dirList.end(); ++it )
+	{
+		QString name = *it;
+	  if ( QFileInfo( dir, *it ).isSymLink() ) continue;
+		r += allFiles( path+name+"/", mask, level+1 );
+  }
+
+  for ( it = fileList.begin(); it != fileList.end(); ++it )
+	{
+	  QString name = *it;
+	
+	  QFileInfo fi( dir, *it );
+	  if ( fi.isSymLink() || !fi.isFile() ) continue;
+		
+	  if ( QDir::match( mask, name) ) r += (path+name);
+	}
+	
+	return r;
 }

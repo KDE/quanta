@@ -790,7 +790,8 @@ void QuantaApp::repaintPreview( bool clear )
 
 	part->closeURL();
 	part->begin( KURL( doc->basePath() ), xOffset, yOffset );
-  part->write( text.data() );
+  if ( text.isNull() )	part->write( "" );
+  else									part->write( text );
 	part->end();
 
   part->show();

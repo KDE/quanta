@@ -111,6 +111,8 @@ QString ProjectTreeView::currentFileName()
 void ProjectTreeView::slotMenu(QListViewItem *item, const QPoint& point, int)
 {
   if ( !item ) return;
+  if ( item == projectDir ) return;
+
 	setSelected(item, true);
 	
 	ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( item);
@@ -140,8 +142,6 @@ void ProjectTreeView::slotSelectFile(QListViewItem *item)
 	if ( dynamic_cast<ProjectTreeFolder *>(item) ) return;
 	
 	QString nameToOpen = currentFileName();
-	
-	debug( nameToOpen );
 	
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
@@ -194,6 +194,7 @@ void ProjectTreeView::slotReloadTree( QStringList fileList, bool newtree, bool o
 		projectDir -> setOpen( true );
 	}
 	
+	projectDir -> setOpen( false );
 	projectDir->setText( 0, projectName );
 	
 	int pos;
@@ -225,8 +226,6 @@ void ProjectTreeView::slotReloadTree( QStringList fileList, bool newtree, bool o
       if ( !newFolder )
       	newFolder = new ProjectTreeFolder( folder, dir);
       	
-      newFolder->setOpen( opened );
-
       folder = newFolder;
       fname.remove(0,pos+1);
     }
@@ -242,6 +241,7 @@ void ProjectTreeView::slotReloadTree( QStringList fileList, bool newtree, bool o
   }
 
   projectDir->sortChildItems(0,true);
+  projectDir->setOpen( true );
 }
 
 void ProjectTreeView::slotOpen()

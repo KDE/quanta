@@ -1,5 +1,5 @@
 /***************************************************************************
-                          projectnewgeneral.h  -  description
+                          projectnewlocal.h  -  description
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
@@ -15,26 +15,31 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PROJECTNEWGENERAL_H
-#define PROJECTNEWGENERAL_H
+#ifndef PROJECTNEWLOCAL_H
+#define PROJECTNEWLOCAL_H
+
+#include <qwidget.h>
+#include <qstringlist.h>
+#include <projectnewlocals.h>
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
 
-class ProjectNewGeneral : public ProjectNewGeneralS  {
+class ProjectNewLocal : public ProjectNewLocalS  {
    Q_OBJECT
 public: 
-	ProjectNewGeneral(QWidget *parent=0, const char *name=0);
-	~ProjectNewGeneral();
+	ProjectNewLocal(QWidget *parent=0, const char *name=0);
+	~ProjectNewLocal();
+	
+	QStringList files();
 	
 public slots:
-	void slotButtonDir();
-	void slotLinePrjFile(const QString &);
-	void slotChangeNames(const QString &);
-		
-signals:
-	void enableNextButton(QWidget *, bool);
+	void setFiles(bool);
+  void setDestDir(QWidget*,bool);
+
+private:
+	QString dir;
 };
 
 #endif

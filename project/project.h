@@ -18,23 +18,22 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
+#include <qdom.h>
 #include <qwidget.h>
-#include <qlist.h>
 #include <qstringlist.h>
 
 #include <kio/job.h>
-
-#include "projectitem.h"
 
 /**project
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
-class KConfig;
-class KWizard;
+class QWizard;
 class KProcess;
+class QWidgetStack;
 class ProjectNewGeneral;
-class ProjectNewGetFiles;
+class ProjectNewLocal;
+class ProjectNewWebS;
 
 class Project : public QWidget  {
    Q_OBJECT
@@ -43,85 +42,79 @@ public:
 	~Project();
 	
 	bool hasProject();
-  void loadProject(QString name);
-  void insertFilesRecursive( QString path, bool, int level = 0);
+	QStringList fileNameList();
+	
+  void insertFile ( QString name, bool repaint );
+  void insertFiles( QString path, QString mask );
+  void insertFiles( QStringList files );
 
-  QStringList fileNameList();
+  void createEmptyDom();
 
-public slots: // Public slots
-  void closeProject();
-  void openProject();
+public slots:
+
   void newProject();
+  void openProject();
   void saveProject();
+  void closeProject();
+  void loadProject(QString fname);
+
   void addFiles();
   void addDirectory();
-  void addDirectory(QString dir);
-  void slotInsertDirFinished( KIO::Job *);
+  void addDirectory(QString rdir);
+  void insertFile(QString name);
 
 	void slotRemoveFile(QString);
 	void slotRemoveFolder(QString);
 
+	void slotAcceptCreateProject();
+	
   void slotOpenedFiles(QStringList);
-  /**  */
-//  void insertFromTree(QListViewItem *item);
-  /**  */
-  void insertFile( ProjectItem *file );
-  void insertFile( QString name );
-  /** remove file from project */
-//  void removeFile(QListViewItem *);
-  /**  */
-//  void addFiles();
-//  void rescanDirectory();
-  /** upload current project */
-//  void uploadProject();
-  /** project properties */
-//  void properties();
-  /** setup properties */
-  /** for ok button on new project wizard */
-  void acceptNewPrj();
-//  void acceptProperties();
-  /**  */
-  void slotGetWgetExited(KProcess*);
+
+  void slotSelectProjectType(const QString &);
+
+  void slotGetWgetExited(KProcess *);
   void slotGetWgetOutput(KProcess *proc, char *buffer, int buflen);
+
 signals:
+	
+	void openFile				 ( QString );
+	void closeFiles			 ();
+	
 	void setBasePath		 ( QString );
 	void setProjectName	 ( QString );
+	
 	void reloadTree			 ( QStringList,bool,bool );
-	void openFile				 ( QString );
+	
   void addRecentProject( const QString &);
-  void messages				 ( QString );
-  void closeFiles			 ();
-  void requestOpenedFiles();
 
-  void selectMessageWidget();
-  void disableMessageWidget();
+  void requestOpenedFiles();
+  void setLocalFiles( bool );
+
+  void messages				 			( QString );
+  void selectMessageWidget	();
+  void disableMessageWidget	();
 
 public:
-  KConfig* projectFile;
-  /** list of ProjectFiles */
-  QList<ProjectItem> fileList;
-  /** base path of project files */
-  QString basePath;
-  QString baseURL;
-  QString host;
-  QString remoteDir;
-  QString login;
-  QString projectFileName;
+  QDomDocument dom;
+
   QString projectName;
+  QString projectFileName;
+
+  QString basePath;
+  QString remoteDir;
+
   QString email;
   QString author;
 
   QStringList openedFiles;
-  /** piece of properties dialog */
-//  PrjPropertiesMain *mainDlg;
-//  PrjPropertiesFTP  *ftpDlg;
-  /** wizard for new project */
-  KWizard *wizardNewPrj;
-  ProjectNewGeneral  *pageNewPrj1;
-  ProjectNewGetFiles *pageNewPrj2;
-//  PrjPropertiesFTP *pageNewPrj3;
+
 private:
-	QString tmppath;
+	QWizard *wiz;
+	QWidgetStack *stack;
+	
+	ProjectNewGeneral		*png;
+	ProjectNewLocal		  *pnl;
+	ProjectNewWebS			*pnw;
 };
 
 #endif

@@ -489,21 +489,22 @@ void QuantaApp::initMenuBar()
 
 void QuantaApp::initToolBar()
 {
-
   ///////////////////////////////////////////////////////////////////
   // TOOLBAR
   toolBar()->insertButton(UserIcon("new"),     ID_FILE_NEW,      true, i18n("New File"));
   toolBar()->insertButton(UserIcon("open"),    ID_FILE_OPEN,     true, i18n("Open File"));
   toolBar()->insertButton(UserIcon("openprj"), ID_PROJECT_OPEN,  true, i18n("Open Project"));
+
+  toolBar()->insertSeparator();
+
   toolBar()->insertButton(UserIcon("save"),    ID_FILE_SAVE,     true, i18n("Save File"));
   toolBar()->insertButton(UserIcon("save_all"),ID_FILE_SAVE_ALL, true, i18n("Save All Files"));
-//  toolBar()->insertButton(UserIcon("upload_file"),    ID_PROJECT_UPLOAD_FILE,     true, i18n("Upload File"));
-//  toolBar()->insertButton(BarIcon("fileprint"), ID_FILE_PRINT, true, i18n("Print"));
 
-  WToolBar::insertSeparator( toolBar() );
+  toolBar()->insertSeparator();
+  toolBar()->insertSeparator();
 
-  toolBar()->insertButton(UserIcon("cut"), ID_EDIT_CUT, true, i18n("Cut"));
-  toolBar()->insertButton(UserIcon("copy"), ID_EDIT_COPY, true, i18n("Copy"));
+  toolBar()->insertButton(UserIcon("cut"),   ID_EDIT_CUT, true, i18n("Cut"));
+  toolBar()->insertButton(UserIcon("copy"),  ID_EDIT_COPY, true, i18n("Copy"));
   toolBar()->insertButton(UserIcon("paste"), ID_EDIT_PASTE, true, i18n("Paste"));
 
   toolBar()->insertButton(UserIcon("undo"),   ID_EDIT_UNDO,   true, i18n("Undo"));
@@ -511,12 +512,14 @@ void QuantaApp::initToolBar()
 
   toolBar()->insertButton(UserIcon("spellcheck"),   ID_EDIT_SPELL,   true, i18n("Spell Checker"));
 
-  WToolBar::insertSeparator( toolBar() );
+  toolBar()->insertSeparator();
+  toolBar()->insertSeparator();
 
   toolBar()->insertButton(UserIcon("find"),  		ID_EDIT_SEARCH,  			true, i18n("Search"));
   toolBar()->insertButton(UserIcon("findnext"),	ID_EDIT_SEARCH_AGAIN, true, i18n("Search Again"));
 
-  WToolBar::insertSeparator( toolBar() );
+  toolBar()->insertSeparator();
+  toolBar()->insertSeparator();
 
   toolBar()->insertButton(UserIcon("tree_win"),   ID_VIEW_TREE,     true, i18n("View tree"));
   toolBar()->insertButton(UserIcon("preview"),    ID_VIEW_PREVIEW,  true, i18n("Preview"));
@@ -529,7 +532,8 @@ void QuantaApp::initToolBar()
   toolBar()->insertButton(UserIcon("forward"),   ID_VIEW_FORWARD, true, i18n("Forward"));
   toolBar()->insertButton(UserIcon("repaint"),   ID_VIEW_REPAINT, true, i18n("Refresh Preview"));
 
-  WToolBar::insertSeparator( toolBar() );
+  toolBar()->insertSeparator();
+  toolBar()->insertSeparator();
 
   toolBar()->insertButton(UserIcon("close"),    ID_FILE_CLOSE,  true, i18n("Close File"));
   toolBar()->alignItemRight(ID_FILE_CLOSE);
@@ -538,7 +542,6 @@ void QuantaApp::initToolBar()
   // CONNECT THE TOOLBAR SLOTS WITH SIGNALS - add new created toolbars by their according number
   // connect for invoking the slot actions
   connect(toolBar(), SIGNAL(clicked(int)), SLOT(commandCallback(int)));
-  // connect for the status help on holing icons pressed with the mouse button
   connect(toolBar(), SIGNAL(pressed(int)), SLOT(statusCallback(int)));
 }
 

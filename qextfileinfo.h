@@ -9,21 +9,23 @@
 */    
 
 #ifndef _QEXTFILEINFO_H_
-
 #define _QEXTFILEINFO_H_
 
 #include <qfileinfo.h>
+#include <qstringlist.h>
 
 class QExtFileInfo:public QFileInfo
 {
 public:
- QExtFileInfo(const char *file);
- bool convertToRelative(const char *baseDir);
+	QExtFileInfo(const char *file);
+	bool convertToRelative(const char *baseDir);
 
-  /** create to ralative short name */
- static QString toRelative(QString fname,QString dir);
+	/** create to ralative short name */
+	static QString toRelative(QString fname,QString dir);
   /** convert relative filename to absolute */
   static QString toAbsolute( QString  fname, QString dir);
+  /** recurse function for all files in dir */
+  static QStringList allFiles( QString path, QString mask, int level = 0 );
 };
 
 #endif

@@ -15,14 +15,19 @@
  *                                                                         *
  ***************************************************************************/
 #include "copyto.h"
+
+// qt includes
+#include <qdir.h>
+#include <qlineedit.h>
+
+// kde includes
+#include <kio/job.h>
 #include <kfiledialog.h>
 #include <kiconloader.h>
 
 CopyTo::CopyTo(QString dir, QWidget *parent, const char *name)
-    : QDialog(parent,name,true)
+    : CopyToS(parent,name,true)
 {
-  resize( 360,90 );
-	initDialog();
 	setCaption(name);
 	
 	lineDir->setText( dir.data() );
@@ -43,4 +48,47 @@ void CopyTo::slotDirChange()
   dir = KFileDialog::getExistingDirectory( dir, this);
   if ( !dir.isEmpty() )
       lineDir->setText( dir );
+}
+
+QString CopyTo::copy( QString rname )
+{
+	QString path = lineDir->text();
+
+  if ( path.right(1) != "/" ) path.append("/");
+
+  int i = 10;
+  QDir dir( path);
+  while ( !dir.exists() && i-- ) dir.mkdir( path);
+
+  QString sname = rname;
+  while ( ( i=sname.find('/')) >= 0 ) sname.remove(0,i+1);
+
+  QString fname = path + sname;
+  if ( rname != fname ) KIO::copy( KURL( rname ), KURL( fname ) );
+
+  return fname;
+}
+
+QStringList CopyTo::copy( QStringList rfiles )
+{
+	QString path = lineDir->text();
+
+  if ( path.right(1) != "/" ) path.append("/");
+
+  int i = 10;
+  QDir dir( path);
+  while ( !dir.exists() && i-- ) dir.mkdir( path);
+
+  QStringList::Iterator it;
+  QStringList sfiles = rfiles;
+
+  for ( it = sfiles.begin(); it != sfiles.end(); ++it )
+	{
+		while ( ( i=(*it).find('/')) >= 0 ) (*it).remove(0,i+1);
+		(*it) = path + (*it);
+	}
+
+  if ( rfiles != sfiles ) KIO::copy( KURL::List( rfiles ), KURL( path ) );
+
+  return sfiles;
 }

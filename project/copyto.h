@@ -18,38 +18,21 @@
 #ifndef COPYTO_H
 #define COPYTO_H
 
-//Generated area. DO NOT EDIT!!!(begin)
-#include <qwidget.h>
-#include <klineedit.h>
-#include <qpushbutton.h>
-//Generated area. DO NOT EDIT!!!(end)
-
-#include <qdialog.h>
-
 /**
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
-class CopyTo : public QDialog  {
+class CopyTo : public CopyToS  {
    Q_OBJECT
 public: 
 	CopyTo(QString dir, QWidget *parent=0, const char *name=0);
 	~CopyTo();
+	
+	QString copy( QString rname );
+	QStringList copy( QStringList rfiles );
 
 public slots: // Public slots
-  /** change dir */
   void slotDirChange();	
-	
-public:
-	void initDialog();
-	//Generated area. DO NOT EDIT!!!(begin)
-	KLineEdit *lineDir;
-	QPushButton *buttonDir;
-	QPushButton *buttonOk;
-	QPushButton *buttonCancel;
-	//Generated area. DO NOT EDIT!!!(end)
-	
-private: 
 };
 
 #endif

@@ -65,9 +65,9 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	bStandard->insertButton( UserIcon("tag_i"),		ID_TAG_I,    true, i18n("Italic"));
 	bStandard->insertButton( UserIcon("tag_u"),		ID_TAG_U,    true, i18n("Underline"));
   bStandard->insertSeparator();
-	bStandard->insertButton( UserIcon("tag_br"),  ID_TAG_BR,   true, i18n("New Line"));
   bStandard->insertButton( UserIcon("tag_p"),   ID_TAG_P,    true, i18n("Paragraph"));
-  bStandard->insertButton( UserIcon("tag_nbsp"),ID_TAG_NBSP, true, i18n("Non-Breaking Space"));
+  bStandard->insertButton( UserIcon("tag_br"),  ID_TAG_BR,   true, i18n("New line"));
+  bStandard->insertButton( UserIcon("tag_nbsp"),ID_TAG_NBSP, true, i18n("Non breaking space"));
   bStandard->insertSeparator();
   bStandard->insertButton( UserIcon("tag_a"),    ID_TAG_A,     true, i18n("Insert Anchor"));
   bStandard->insertButton( UserIcon("tag_image"),ID_TAG_IMAGE, true, i18n("Insert Image"));
@@ -80,7 +80,6 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
   bStandard->insertButton( UserIcon("div_justify"),ID_TAG_DIV_JUSTIFY,true, i18n("Align Justify"));
   bStandard->insertSeparator();
   bStandard->insertButton( UserIcon("css"),ID_TAG_CSS,true, i18n("CSS"));
-
 
   // Insert button in tool bars Fonts
 	bFonts->insertButton( UserIcon("tag_font"), ID_TAG_FONT, true, i18n("Font"));
