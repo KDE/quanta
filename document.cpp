@@ -1395,6 +1395,13 @@ void Document::slotTextChanged()
 {
   if (reparseEnabled)
   {
+    //delay the handling, otherwise we may get wrong values for (line,column)
+    QTimer::singleShot(0, this, SLOT(slotDelayedTextChanged()));
+  }
+}
+
+void Document::slotDelayedTextChanged()
+{
     uint line, column;
     QString oldNodeName = "";
     Node *node;
@@ -1403,6 +1410,7 @@ void Document::slotTextChanged()
     if (qConfig.updateClosingTags)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
+      kdDebug(24000) << "line: " << line << " column: " << column <<"\n";
       node = parser->nodeAt(line, column, false);
       if (node)
       {
@@ -1475,7 +1483,7 @@ void Document::slotTextChanged()
               } else
               {
                 editIf->insertText(bl, bc, newName.mid(1));
-                if (bl == line)
+                if (bl == (int)line)
                 {
                   column += (newName.length() - currentNode->tag->name.length());
                 }
@@ -1499,7 +1507,7 @@ void Document::slotTextChanged()
 
     if (qConfig.instantUpdate)
         quantaApp->sTab->slotReparse(this, baseNode , qConfig.expandLevel);
-  }
 }
+
 
 #include "document.moc"

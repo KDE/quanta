@@ -173,6 +173,8 @@ public slots:
   void slotCompletionAborted();
   /** No descriptions */
   void slotTextChanged();
+  /** No descriptions */
+  void slotDelayedTextChanged();
 
 private:
 
@@ -226,3 +228,4 @@ protected: // Protected methods
 };
 
 #endif
+
