@@ -70,7 +70,6 @@ void TeamMembersDlg::slotAddMember()
           QListViewItem *item = new QListViewItem(membersListView, name, memberDlg.emailEdit->text(), role, task);
           if (memberDlg.subprojectCombo->isEnabled())
             item->setText(4, subProject);
-          membersListView->insertItem(item);
           result = false;
         }
      }

@@ -144,6 +144,12 @@
       <envvar value="1" name="WANT_AUTOCONF_2_5" />
       <envvar value="1" name="WANT_AUTOMAKE_1_6" />
     </makeenvvars>
+    <subclassing>
+      <subclass uifile="/project/eventconfigurationdlgs.ui" sourcefile="/project/eventconfigurationdlg.cpp" />
+      <subclass uifile="/project/eventconfigurationdlgs.ui" sourcefile="/project/eventconfigurationdlg.h" />
+      <subclass uifile="/project/eventeditordlgs.ui" sourcefile="/project/eventeditordlg.cpp" />
+      <subclass uifile="/project/eventeditordlgs.ui" sourcefile="/project/eventeditordlg.h" />
+    </subclassing>
   </kdevautoproject>
   <kdevfileview>
     <groups>
@@ -237,10 +243,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="" ext="h" name="C++ header" create="template" >
+      <type icon="" ext="h" create="template" name="C++ header" >
         <descr>Quanta speicfic header</descr>
       </type>
-      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
         <descr>A new empty C++ file.</descr>
       </type>
     </filetypes>

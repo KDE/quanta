@@ -60,8 +60,13 @@ public:
       if (!m_ref) m_ref = new QPEvents(parent);
       return m_ref;
     }
-
     ~QPEvents();
+    QString fullEventName(const QString &name);
+    QString fullActionName(const QString &name);
+    QString eventName(const QString &fullName);
+    QString actionName(const QString &fullName);
+    QStringList eventNames();
+    QStringList actionNames();
 
 public slots:
  /** Called when an event has happened */
@@ -77,6 +82,8 @@ private:
  */
     bool handleEvent(const EventAction& ev);
 
+    QMap<QString, QString> m_eventNames;
+    QMap<QString, QString> m_actionNames;
 };
 
 #endif

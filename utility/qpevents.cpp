@@ -31,6 +31,19 @@
 QPEvents::QPEvents(QObject *parent, const char *name)
  : QObject(parent, name)
 {
+   m_eventNames["before_save"] = i18n("Before document save");
+   m_eventNames["after_save"] = i18n("After document save");
+   m_eventNames["after_open"] = i18n("After document opening");
+   m_eventNames["after_project_open"] = i18n("After project opening");
+   m_eventNames["after_project_save"] = i18n("After project save");
+   m_eventNames["before_upload"] = i18n("Before upload");
+   m_eventNames["after_upload"] = i18n("After upload");
+   m_eventNames["after_project_add"] = i18n("After addition to project");
+   m_eventNames["after_project_remove"] = i18n("After removal from project");
+   m_eventNames["after_commit"] = i18n("After comitting to CVS");
+
+   m_actionNames["email"] = i18n("Send email");
+   m_actionNames["log"] = i18n("Log event");
 }
 
 
@@ -108,5 +121,60 @@ bool QPEvents::handleEvent(const EventAction& ev)
   return false;
 }
 
+QString QPEvents::fullEventName(const QString &name)
+{
+   if (m_eventNames.contains(name))
+     return m_eventNames[name];
+   else
+     return name;
+}
+
+QString QPEvents::fullActionName(const QString& name)
+{
+   if (m_actionNames.contains(name))
+     return m_actionNames[name];
+   else
+     return name;
+}
+
+QString QPEvents::eventName(const QString &fullName)
+{
+   for (QMap<QString, QString>::ConstIterator it = m_eventNames.constBegin(); it != m_eventNames.constEnd(); ++it)
+  {
+    if (fullName  == it.data())
+      return it.key();
+  }
+  return fullName;
+}
+
+QString QPEvents::actionName(const QString &fullName)
+{
+   for (QMap<QString, QString>::ConstIterator it = m_actionNames.constBegin(); it != m_actionNames.constEnd(); ++it)
+  {
+    if (fullName  == it.data())
+      return it.key();
+  }
+  return fullName;
+}
+
+QStringList QPEvents::eventNames()
+{
+   QStringList names;
+   for (QMap<QString, QString>::ConstIterator it = m_eventNames.constBegin(); it != m_eventNames.constEnd(); ++it)
+  {
+    names << it.data();
+  }
+  return names;
+}
+
+QStringList QPEvents::actionNames()
+{
+   QStringList names;
+   for (QMap<QString, QString>::ConstIterator it = m_actionNames.constBegin(); it != m_actionNames.constEnd(); ++it)
+  {
+    names << it.data();
+  }
+  return names;
+}
 
 #include "qpevents.moc"

@@ -94,6 +94,7 @@
 #include "projectlist.h"
 #include "projectprivate.h"
 #include "teammembersdlg.h"
+#include "eventconfigurationdlg.h"
 #include "qpevents.h"
 
 extern QString simpleMemberStr;
@@ -1786,6 +1787,13 @@ void Project::slotOptions()
   }
   membersPage.mailingListEdit->setText(d->m_mailingList);
 
+//add the event configuration page
+  page = optionsDlg.addPage(i18n("Event Configuration"));
+  EventConfigurationDlg eventsPage(page);
+  topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
+  topLayout->addWidget(&eventsPage);
+  eventsPage.initEvents(d->m_events);
+
   if ( optionsDlg.exec() )
   {
     d->projectName = optionsPage.linePrjName->text();
@@ -1998,6 +2006,8 @@ void Project::slotOptions()
     el.setAttribute("address", membersPage.mailingListEdit->text());
     teamNode.appendChild(el);
     projectNode.appendChild(teamNode);
+
+    eventsPage.saveEvents(d->dom);
 
     d->m_modified = true;
     d->loadProjectXML();
@@ -2354,12 +2364,18 @@ TeamMember Project::teamLeader()
 
 TeamMember Project::subprojectLeader(const QString &name)
 {
-  return d->m_subprojectLeaders[name];
+  if (d->m_subprojectLeaders.contains(name))
+      return d->m_subprojectLeaders[name];
+  else
+      return TeamMember();
 }
 
 TeamMember Project::taskLeader(const QString &name)
 {
-  return d->m_taskLeaders[name];
+  if (d->m_taskLeaders.contains(name))
+    return d->m_taskLeaders[name];
+  else
+    return TeamMember();
 }
 
 QValueList<TeamMember> Project::simpleMembers()
@@ -2375,6 +2391,16 @@ QString Project::mailingList()
 QValueList<SubProject>* Project::subprojects()
 {
   return &d->m_subprojects;
+}
+
+QStringList Project::tasks()
+{
+   QStringList result;
+   for (QMap<QString, TeamMember>::ConstIterator it = d->m_taskLeaders.constBegin(); it != d->m_taskLeaders.constEnd(); ++it)
+   {
+      result << it.key();
+   }
+   return result;
 }
 
 QMap<QString, TeamMember> Project::allMembers()

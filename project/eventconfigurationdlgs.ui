@@ -1,0 +1,213 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>EventConfigurationDlgS</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>EventConfigurationDlgS</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>600</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string></string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Configured Events:</string>
+            </property>
+        </widget>
+        <widget class="KListView" row="1" column="0" rowspan="1" colspan="5">
+            <column>
+                <property name="text">
+                    <string>Event</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Action</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Argument 1</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Argument 2</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Argument 3</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Argument 4</string>
+                </property>
+                <property name="clickable">
+                    <bool>true</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property name="name">
+                <cstring>eventsListView</cstring>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="2" column="0">
+            <property name="name">
+                <cstring>addButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Add</string>
+            </property>
+            <property name="accel">
+                <string>Alt+A</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="2" column="2">
+            <property name="name">
+                <cstring>editButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Edit</string>
+            </property>
+            <property name="accel">
+                <string>Alt+E</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="2" column="4">
+            <property name="name">
+                <cstring>deleteButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Delete</string>
+            </property>
+            <property name="accel">
+                <string>Alt+D</string>
+            </property>
+        </widget>
+        <spacer row="2" column="3">
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>40</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="2" column="1">
+            <property name="name">
+                <cstring>spacer4</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>40</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<customwidgets>
+</customwidgets>
+<connections>
+    <connection>
+        <sender>addButton</sender>
+        <signal>clicked()</signal>
+        <receiver>EventConfigurationDlgS</receiver>
+        <slot>slotAddEvent()</slot>
+    </connection>
+    <connection>
+        <sender>deleteButton</sender>
+        <signal>clicked()</signal>
+        <receiver>EventConfigurationDlgS</receiver>
+        <slot>slotDeleteEvent()</slot>
+    </connection>
+    <connection>
+        <sender>editButton</sender>
+        <signal>clicked()</signal>
+        <receiver>EventConfigurationDlgS</receiver>
+        <slot>slotEditEvent()</slot>
+    </connection>
+    <connection>
+        <sender>eventsListView</sender>
+        <signal>doubleClicked(QListViewItem*)</signal>
+        <receiver>EventConfigurationDlgS</receiver>
+        <slot>slotEditEvent()</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>eventsListView</tabstop>
+    <tabstop>addButton</tabstop>
+    <tabstop>editButton</tabstop>
+    <tabstop>deleteButton</tabstop>
+</tabstops>
+<slots>
+    <slot>slotEditEvent()</slot>
+    <slot>slotAddEvent()</slot>
+    <slot>slotDeleteEvent()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klistview.h</includehint>
+</includehints>
+</UI>

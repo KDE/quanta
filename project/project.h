@@ -112,6 +112,7 @@ public:
   QValueList<TeamMember> simpleMembers();
   QString mailingList();
   QValueList<SubProject>* subprojects();
+  QStringList tasks();
   QMap<QString, TeamMember> allMembers();
 
   /** uploads the project file
