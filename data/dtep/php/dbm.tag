@@ -1,39 +1,39 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="dblist" type="function" returnType="string" langVersion="PHP 3, PHP 4 ">
+	<tag name="dblist" type="function" returnType="string" comment="PHP 3, PHP 4 ">
 	</tag>
-	<tag name="dbmclose" type="function" returnType="bool" langVersion="PHP 3, PHP 4 ">
+	<tag name="dbmclose" type="function" returnType="bool" comment="PHP 3, PHP 4 ">
 		<attr name="dbm_identifier" type="resource" status="required"></attr>
 	</tag>
-	<tag name="dbmdelete" type="function" returnType="bool" langVersion="PHP 3, PHP 4 ">
-		<attr name="dbm_identifier" type="resource" status="required"></attr>
-		<attr name="key" type="string" status="required"></attr>
-	</tag>
-	<tag name="dbmexists" type="function" returnType="bool" langVersion="PHP 3, PHP 4 ">
+	<tag name="dbmdelete" type="function" returnType="bool" comment="PHP 3, PHP 4 ">
 		<attr name="dbm_identifier" type="resource" status="required"></attr>
 		<attr name="key" type="string" status="required"></attr>
 	</tag>
-	<tag name="dbmfetch" type="function" returnType="string" langVersion="PHP 3, PHP 4 ">
+	<tag name="dbmexists" type="function" returnType="bool" comment="PHP 3, PHP 4 ">
 		<attr name="dbm_identifier" type="resource" status="required"></attr>
 		<attr name="key" type="string" status="required"></attr>
 	</tag>
-	<tag name="dbmfirstkey" type="function" returnType="string" langVersion="PHP 3, PHP 4 ">
+	<tag name="dbmfetch" type="function" returnType="string" comment="PHP 3, PHP 4 ">
+		<attr name="dbm_identifier" type="resource" status="required"></attr>
+		<attr name="key" type="string" status="required"></attr>
+	</tag>
+	<tag name="dbmfirstkey" type="function" returnType="string" comment="PHP 3, PHP 4 ">
 		<attr name="dbm_identifier" type="resource" status="required"></attr>
 	</tag>
-	<tag name="dbminsert" type="function" returnType="int" langVersion="PHP 3, PHP 4 ">
+	<tag name="dbminsert" type="function" returnType="int" comment="PHP 3, PHP 4 ">
 		<attr name="dbm_identifier" type="resource" status="required"></attr>
 		<attr name="key" type="string" status="required"></attr>
 		<attr name="value" type="string" status="required"></attr>
 	</tag>
-	<tag name="dbmnextkey" type="function" returnType="string" langVersion="PHP 3, PHP 4 ">
+	<tag name="dbmnextkey" type="function" returnType="string" comment="PHP 3, PHP 4 ">
 		<attr name="dbm_identifier" type="resource" status="required"></attr>
 		<attr name="key" type="string" status="required"></attr>
 	</tag>
-	<tag name="dbmopen" type="function" returnType="resource" langVersion="PHP 3, PHP 4 ">
+	<tag name="dbmopen" type="function" returnType="resource" comment="PHP 3, PHP 4 ">
 		<attr name="filename" type="string" status="required"></attr>
 		<attr name="flags" type="string" status="required"></attr>
 	</tag>
-	<tag name="dbmreplace" type="function" returnType="int" langVersion="PHP 3, PHP 4 ">
+	<tag name="dbmreplace" type="function" returnType="int" comment="PHP 3, PHP 4 ">
 		<attr name="dbm_identifier" type="resource" status="required"></attr>
 		<attr name="key" type="string" status="required"></attr>
 		<attr name="value" type="string" status="required"></attr>

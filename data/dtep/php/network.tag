@@ -1,99 +1,99 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="checkdnsrr" type="function" returnType="int" langVersion="PHP 3, PHP 4 , PHP 5">
+	<tag name="checkdnsrr" type="function" returnType="int" comment="PHP 3, PHP 4 , PHP 5">
 		<attr name="host" type="string" status="required"></attr>
 		<attr name="type" type="string" status="optional"></attr>
 	</tag>
-	<tag name="closelog" type="function" returnType="int" langVersion="PHP 3, PHP 4 , PHP 5">
+	<tag name="closelog" type="function" returnType="int" comment="PHP 3, PHP 4 , PHP 5">
 	</tag>
-	<tag name="debugger_off" type="function" returnType="int" langVersion="PHP 3">
+	<tag name="debugger_off" type="function" returnType="int" comment="PHP 3">
 	</tag>
-	<tag name="debugger_on" type="function" returnType="int" langVersion="PHP 3">
+	<tag name="debugger_on" type="function" returnType="int" comment="PHP 3">
 		<attr name="address" type="string" status="required"></attr>
 	</tag>
-	<tag name="define_syslog_variables" type="function" returnType="void" langVersion="PHP 3, PHP 4 , PHP 5">
+	<tag name="define_syslog_variables" type="function" returnType="void" comment="PHP 3, PHP 4 , PHP 5">
 	</tag>
-	<tag name="dns_check_record" type="function" returnType="int" langVersion="PHP 5">
+	<tag name="dns_check_record" type="function" returnType="int" comment="PHP 5">
 		<attr name="host" type="string" status="required"></attr>
 		<attr name="type" type="string" status="optional"></attr>
 	</tag>
-	<tag name="dns_get_mx" type="function" returnType="int" langVersion="PHP 5">
+	<tag name="dns_get_mx" type="function" returnType="int" comment="PHP 5">
 		<attr name="hostname" type="string" status="required"></attr>
 		<attr name="&amp;mxhosts" type="array" status="required"></attr>
 		<attr name="&amp;weight" type="array" status="optional"></attr>
 	</tag>
-	<tag name="dns_get_record" type="function" returnType="array" langVersion="PHP 5">
+	<tag name="dns_get_record" type="function" returnType="array" comment="PHP 5">
 		<attr name="hostname" type="string" status="required"></attr>
 		<attr name="type" type="int" status="optional"></attr>
 		<attr name="&amp;authns" type="array" status="optional"></attr>
 		<attr name="&amp;addtl" type="array" status="required"></attr>
 	</tag>
-	<tag name="fsockopen" type="function" returnType="resource" langVersion="PHP 3, PHP 4 , PHP 5">
+	<tag name="fsockopen" type="function" returnType="resource" comment="PHP 3, PHP 4 , PHP 5">
 		<attr name="target" type="string" status="required"></attr>
 		<attr name="port" type="int" status="required"></attr>
 		<attr name="&amp;errno" type="int" status="optional"></attr>
 		<attr name="&amp;errstr" type="string" status="optional"></attr>
 		<attr name="timeout" type="float" status="optional"></attr>
 	</tag>
-	<tag name="gethostbyaddr" type="function" returnType="string" langVersion="PHP 3, PHP 4 , PHP 5">
+	<tag name="gethostbyaddr" type="function" returnType="string" comment="PHP 3, PHP 4 , PHP 5">
 		<attr name="ip_address" type="string" status="required"></attr>
 	</tag>
-	<tag name="gethostbyname" type="function" returnType="string" langVersion="PHP 3, PHP 4 , PHP 5">
+	<tag name="gethostbyname" type="function" returnType="string" comment="PHP 3, PHP 4 , PHP 5">
 		<attr name="hostname" type="string" status="required"></attr>
 	</tag>
-	<tag name="gethostbynamel" type="function" returnType="array" langVersion="PHP 3, PHP 4 , PHP 5">
+	<tag name="gethostbynamel" type="function" returnType="array" comment="PHP 3, PHP 4 , PHP 5">
 		<attr name="hostname" type="string" status="required"></attr>
 	</tag>
-	<tag name="getmxrr" type="function" returnType="bool" langVersion="PHP 3, PHP 4 , PHP 5">
+	<tag name="getmxrr" type="function" returnType="bool" comment="PHP 3, PHP 4 , PHP 5">
 		<attr name="hostname" type="string" status="required"></attr>
 		<attr name="&amp;mxhosts" type="array" status="required"></attr>
 		<attr name="&amp;weight" type="array" status="optional"></attr>
 	</tag>
-	<tag name="getprotobyname" type="function" returnType="int" langVersion="PHP 4 , PHP 5">
+	<tag name="getprotobyname" type="function" returnType="int" comment="PHP 4 , PHP 5">
 		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="getprotobynumber" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
+	<tag name="getprotobynumber" type="function" returnType="string" comment="PHP 4 , PHP 5">
 		<attr name="number" type="int" status="required"></attr>
 	</tag>
-	<tag name="getservbyname" type="function" returnType="int" langVersion="PHP 4 , PHP 5">
+	<tag name="getservbyname" type="function" returnType="int" comment="PHP 4 , PHP 5">
 		<attr name="service" type="string" status="required"></attr>
 		<attr name="protocol" type="string" status="required"></attr>
 	</tag>
-	<tag name="getservbyport" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
+	<tag name="getservbyport" type="function" returnType="string" comment="PHP 4 , PHP 5">
 		<attr name="port" type="int" status="required"></attr>
 		<attr name="protocol" type="string" status="required"></attr>
 	</tag>
-	<tag name="inet_ntop" type="function" returnType="string" langVersion="">
+	<tag name="inet_ntop" type="function" returnType="string" comment="">
 		<attr name="in_addr" type="string" status="required"></attr>
 	</tag>
-	<tag name="inet_pton" type="function" returnType="string" langVersion="">
+	<tag name="inet_pton" type="function" returnType="string" comment="">
 		<attr name="address" type="string" status="required"></attr>
 	</tag>
-	<tag name="ip2long" type="function" returnType="int" langVersion="PHP 4 , PHP 5">
+	<tag name="ip2long" type="function" returnType="int" comment="PHP 4 , PHP 5">
 		<attr name="ip_address" type="string" status="required"></attr>
 	</tag>
-	<tag name="long2ip" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
+	<tag name="long2ip" type="function" returnType="string" comment="PHP 4 , PHP 5">
 		<attr name="proper_address" type="int" status="required"></attr>
 	</tag>
-	<tag name="openlog" type="function" returnType="int" langVersion="PHP 3, PHP 4 , PHP 5">
+	<tag name="openlog" type="function" returnType="int" comment="PHP 3, PHP 4 , PHP 5">
 		<attr name="ident" type="string" status="required"></attr>
 		<attr name="option" type="int" status="required"></attr>
 		<attr name="facility" type="int" status="required"></attr>
 	</tag>
-	<tag name="pfsockopen" type="function" returnType="resource" langVersion="PHP 3&gt;= 3.0.7, PHP 4 , PHP 5">
+	<tag name="pfsockopen" type="function" returnType="resource" comment="PHP 3&gt;= 3.0.7, PHP 4 , PHP 5">
 		<attr name="hostname" type="string" status="required"></attr>
 		<attr name="port" type="int" status="required"></attr>
 		<attr name="&amp;errno" type="int" status="optional"></attr>
 		<attr name="&amp;errstr" type="string" status="optional"></attr>
 		<attr name="timeout" type="int" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="" langVersion="; as the functiontable at ">
+	<tag name="" type="function" returnType="" comment="; as the functiontable at ">
 	</tag>
-	<tag name="" type="function" returnType="" langVersion="; as the functiontable at ">
+	<tag name="" type="function" returnType="" comment="; as the functiontable at ">
 	</tag>
-	<tag name="" type="function" returnType="" langVersion="; as the functiontable at ">
+	<tag name="" type="function" returnType="" comment="; as the functiontable at ">
 	</tag>
-	<tag name="syslog" type="function" returnType="int" langVersion="PHP 3, PHP 4 , PHP 5">
+	<tag name="syslog" type="function" returnType="int" comment="PHP 3, PHP 4 , PHP 5">
 		<attr name="priority" type="int" status="required"></attr>
 		<attr name="message" type="string" status="required"></attr>
 	</tag>

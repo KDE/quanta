@@ -1,230 +1,230 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="DomAttribute->name" type="function" returnType="string" langVersion="">
+	<tag name="DomAttribute->name" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomAttribute->specified" type="function" returnType="bool" langVersion="">
+	<tag name="DomAttribute->specified" type="function" returnType="bool" comment="">
 	</tag>
-	<tag name="DomAttribute->value" type="function" returnType="mixed" langVersion="">
+	<tag name="DomAttribute->value" type="function" returnType="mixed" comment="">
 	</tag>
-	<tag name="DomDocument->add_root" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->add_root" type="function" returnType="object" comment="">
 		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomDocument->create_attribute" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->create_attribute" type="function" returnType="object" comment="">
 		<attr name="name" type="string" status="required"></attr>
 		<attr name="value" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomDocument->create_cdata_section" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->create_cdata_section" type="function" returnType="object" comment="">
 		<attr name="content" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomDocument->create_comment" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->create_comment" type="function" returnType="object" comment="">
 		<attr name="content" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomDocument->create_element_ns" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->create_element_ns" type="function" returnType="object" comment="">
 		<attr name="uri" type="string" status="required"></attr>
 		<attr name="name" type="string" status="required"></attr>
 		<attr name="prefix" type="string" status="optional"></attr>
 	</tag>
-	<tag name="DomDocument->create_element" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->create_element" type="function" returnType="object" comment="">
 		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomDocument->create_entity_reference" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->create_entity_reference" type="function" returnType="object" comment="">
 		<attr name="content" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomDocument->create_processing_instruction" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->create_processing_instruction" type="function" returnType="object" comment="">
 		<attr name="content" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomDocument->create_text_node" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->create_text_node" type="function" returnType="object" comment="">
 		<attr name="content" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomDocument->doctype" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->doctype" type="function" returnType="object" comment="">
 	</tag>
-	<tag name="DomDocument->document_element" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->document_element" type="function" returnType="object" comment="">
 	</tag>
-	<tag name="DomDocument->dump_file" type="function" returnType="string" langVersion="">
+	<tag name="DomDocument->dump_file" type="function" returnType="string" comment="">
 		<attr name="filename" type="string" status="required"></attr>
 		<attr name="compressionmode" type="bool" status="optional"></attr>
 		<attr name="format" type="bool" status="optional"></attr>
 	</tag>
-	<tag name="DomDocument->dump_mem" type="function" returnType="string" langVersion="">
+	<tag name="DomDocument->dump_mem" type="function" returnType="string" comment="">
 		<attr name="format" type="bool" status="optional"></attr>
 		<attr name="encoding" type="string" status="optional"></attr>
 	</tag>
-	<tag name="DomDocument->get_element_by_id" type="function" returnType="object" langVersion="">
+	<tag name="DomDocument->get_element_by_id" type="function" returnType="object" comment="">
 		<attr name="id" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomDocument->get_elements_by_tagname" type="function" returnType="array" langVersion="">
+	<tag name="DomDocument->get_elements_by_tagname" type="function" returnType="array" comment="">
 		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomDocument->html_dump_mem" type="function" returnType="string" langVersion="">
+	<tag name="DomDocument->html_dump_mem" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomDocument->xinclude" type="function" returnType="int" langVersion="">
+	<tag name="DomDocument->xinclude" type="function" returnType="int" comment="">
 	</tag>
-	<tag name="DomDocumentType->entities" type="function" returnType="array" langVersion="">
+	<tag name="DomDocumentType->entities" type="function" returnType="array" comment="">
 	</tag>
-	<tag name="DomDocumentType->internal_subset" type="function" returnType="bool" langVersion="">
+	<tag name="DomDocumentType->internal_subset" type="function" returnType="bool" comment="">
 	</tag>
-	<tag name="DomDocumentType->name" type="function" returnType="string" langVersion="">
+	<tag name="DomDocumentType->name" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomDocumentType->notations" type="function" returnType="array" langVersion="">
+	<tag name="DomDocumentType->notations" type="function" returnType="array" comment="">
 	</tag>
-	<tag name="DomDocumentType->public_id" type="function" returnType="string" langVersion="">
+	<tag name="DomDocumentType->public_id" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomDocumentType->system_id" type="function" returnType="string" langVersion="">
+	<tag name="DomDocumentType->system_id" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomElement->get_attribute_node" type="function" returnType="object" langVersion="">
+	<tag name="DomElement->get_attribute_node" type="function" returnType="object" comment="">
 		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomElement->get_attribute" type="function" returnType="string" langVersion="">
+	<tag name="DomElement->get_attribute" type="function" returnType="string" comment="">
 		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomElement->get_elements_by_tagname" type="function" returnType="array" langVersion="">
+	<tag name="DomElement->get_elements_by_tagname" type="function" returnType="array" comment="">
 		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomElement->has_attribute" type="function" returnType="bool" langVersion="">
+	<tag name="DomElement->has_attribute" type="function" returnType="bool" comment="">
 		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomElement->remove_attribute" type="function" returnType="bool" langVersion="">
+	<tag name="DomElement->remove_attribute" type="function" returnType="bool" comment="">
 		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomElement->set_attribute_node" type="function" returnType="bool" langVersion="">
+	<tag name="DomElement->set_attribute_node" type="function" returnType="bool" comment="">
 		<attr name="attr" type="object" status="required"></attr>
 	</tag>
-	<tag name="DomElement->set_attribute" type="function" returnType="object" langVersion="">
+	<tag name="DomElement->set_attribute" type="function" returnType="object" comment="">
 		<attr name="name" type="string" status="required"></attr>
 		<attr name="value" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomElement->tagname" type="function" returnType="string" langVersion="">
+	<tag name="DomElement->tagname" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomNode->add_namespace" type="function" returnType="bool" langVersion="">
+	<tag name="DomNode->add_namespace" type="function" returnType="bool" comment="">
 		<attr name="uri" type="string" status="required"></attr>
 		<attr name="prefix" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomNode->append_child" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->append_child" type="function" returnType="object" comment="">
 		<attr name="newnode" type="object" status="required"></attr>
 	</tag>
-	<tag name="DomNode->append_sibling" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->append_sibling" type="function" returnType="object" comment="">
 		<attr name="newnode" type="object" status="required"></attr>
 	</tag>
-	<tag name="DomNode->attributes" type="function" returnType="array" langVersion="">
+	<tag name="DomNode->attributes" type="function" returnType="array" comment="">
 	</tag>
-	<tag name="DomNode->child_nodes" type="function" returnType="array" langVersion="">
+	<tag name="DomNode->child_nodes" type="function" returnType="array" comment="">
 	</tag>
-	<tag name="DomNode->clone_node" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->clone_node" type="function" returnType="object" comment="">
 	</tag>
-	<tag name="DomNode->dump_node" type="function" returnType="string" langVersion="">
+	<tag name="DomNode->dump_node" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomNode->first_child" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->first_child" type="function" returnType="object" comment="">
 	</tag>
-	<tag name="DomNode->get_content" type="function" returnType="string" langVersion="">
+	<tag name="DomNode->get_content" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomNode->has_attributes" type="function" returnType="bool" langVersion="">
+	<tag name="DomNode->has_attributes" type="function" returnType="bool" comment="">
 	</tag>
-	<tag name="DomNode->has_child_nodes" type="function" returnType="bool" langVersion="">
+	<tag name="DomNode->has_child_nodes" type="function" returnType="bool" comment="">
 	</tag>
-	<tag name="DomNode->insert_before" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->insert_before" type="function" returnType="object" comment="">
 		<attr name="newnode" type="object" status="required"></attr>
 		<attr name="refnode" type="object" status="required"></attr>
 	</tag>
-	<tag name="DomNode->is_blank_node" type="function" returnType="bool" langVersion="">
+	<tag name="DomNode->is_blank_node" type="function" returnType="bool" comment="">
 	</tag>
-	<tag name="DomNode->last_child" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->last_child" type="function" returnType="object" comment="">
 	</tag>
-	<tag name="DomNode->next_sibling" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->next_sibling" type="function" returnType="object" comment="">
 	</tag>
-	<tag name="DomNode->node_name" type="function" returnType="string" langVersion="">
+	<tag name="DomNode->node_name" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomNode->node_type" type="function" returnType="int" langVersion="">
+	<tag name="DomNode->node_type" type="function" returnType="int" comment="">
 	</tag>
-	<tag name="DomNode->node_value" type="function" returnType="string" langVersion="">
+	<tag name="DomNode->node_value" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomNode->owner_document" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->owner_document" type="function" returnType="object" comment="">
 	</tag>
-	<tag name="DomNode->parent_node" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->parent_node" type="function" returnType="object" comment="">
 	</tag>
-	<tag name="DomNode->prefix" type="function" returnType="string" langVersion="">
+	<tag name="DomNode->prefix" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomNode->previous_sibling" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->previous_sibling" type="function" returnType="object" comment="">
 	</tag>
-	<tag name="DomNode->remove_child" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->remove_child" type="function" returnType="object" comment="">
 		<attr name="oldchild" type="object" status="required"></attr>
 	</tag>
-	<tag name="DomNode->replace_child" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->replace_child" type="function" returnType="object" comment="">
 		<attr name="oldnode" type="object" status="required"></attr>
 		<attr name="newnode" type="object" status="required"></attr>
 	</tag>
-	<tag name="DomNode->replace_node" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->replace_node" type="function" returnType="object" comment="">
 		<attr name="newnode" type="object" status="required"></attr>
 	</tag>
-	<tag name="DomNode->set_content" type="function" returnType="bool" langVersion="">
+	<tag name="DomNode->set_content" type="function" returnType="bool" comment="">
 	</tag>
-	<tag name="DomNode->set_name" type="function" returnType="bool" langVersion="">
+	<tag name="DomNode->set_name" type="function" returnType="bool" comment="">
 	</tag>
-	<tag name="DomNode->set_namespace" type="function" returnType="void" langVersion="">
+	<tag name="DomNode->set_namespace" type="function" returnType="void" comment="">
 		<attr name="uri" type="string" status="required"></attr>
 		<attr name="prefix" type="string" status="optional"></attr>
 	</tag>
-	<tag name="DomNode->unlink_node" type="function" returnType="object" langVersion="">
+	<tag name="DomNode->unlink_node" type="function" returnType="object" comment="">
 	</tag>
-	<tag name="DomProcessingInstruction->data" type="function" returnType="string" langVersion="">
+	<tag name="DomProcessingInstruction->data" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomProcessingInstruction->target" type="function" returnType="string" langVersion="">
+	<tag name="DomProcessingInstruction->target" type="function" returnType="string" comment="">
 	</tag>
-	<tag name="DomXsltStylesheet->process" type="function" returnType="object" langVersion="">
+	<tag name="DomXsltStylesheet->process" type="function" returnType="object" comment="">
 		<attr name="DomDocument" type="object" status="required"></attr>
 		<attr name="xslt_parameters" type="array" status="optional"></attr>
 		<attr name="param_is_xpath" type="bool" status="optional"></attr>
 	</tag>
-	<tag name="DomXsltStylesheet->result_dump_file" type="function" returnType="string" langVersion="">
+	<tag name="DomXsltStylesheet->result_dump_file" type="function" returnType="string" comment="">
 		<attr name="DomDocument" type="object" status="required"></attr>
 		<attr name="filename" type="string" status="required"></attr>
 	</tag>
-	<tag name="DomXsltStylesheet->result_dump_mem" type="function" returnType="string" langVersion="">
+	<tag name="DomXsltStylesheet->result_dump_mem" type="function" returnType="string" comment="">
 		<attr name="DomDocument" type="object" status="required"></attr>
 	</tag>
-	<tag name="domxml_new_doc" type="function" returnType="object" langVersion="PHP 4 &gt;= 4.2.1">
+	<tag name="domxml_new_doc" type="function" returnType="object" comment="PHP 4 &gt;= 4.2.1">
 		<attr name="version" type="string" status="required"></attr>
 	</tag>
-	<tag name="domxml_open_file" type="function" returnType="object" langVersion="PHP 4 &gt;= 4.2.1">
+	<tag name="domxml_open_file" type="function" returnType="object" comment="PHP 4 &gt;= 4.2.1">
 		<attr name="filename" type="string" status="required"></attr>
 		<attr name="mode" type="int" status="optional"></attr>
 		<attr name="&amp;error" type="array" status="optional"></attr>
 	</tag>
-	<tag name="domxml_open_mem" type="function" returnType="object" langVersion="PHP 4 &gt;= 4.2.1">
+	<tag name="domxml_open_mem" type="function" returnType="object" comment="PHP 4 &gt;= 4.2.1">
 		<attr name="str" type="string" status="required"></attr>
 		<attr name="mode" type="int" status="optional"></attr>
 		<attr name="&amp;error" type="array" status="optional"></attr>
 	</tag>
-	<tag name="domxml_version" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.1.0">
+	<tag name="domxml_version" type="function" returnType="string" comment="PHP 4 &gt;= 4.1.0">
 	</tag>
-	<tag name="domxml_xmltree" type="function" returnType="object" langVersion="PHP 4 &gt;= 4.2.1">
+	<tag name="domxml_xmltree" type="function" returnType="object" comment="PHP 4 &gt;= 4.2.1">
 		<attr name="str" type="string" status="required"></attr>
 	</tag>
-	<tag name="domxml_xslt_stylesheet_doc" type="function" returnType="object" langVersion="PHP 4 &gt;= 4.2.0">
+	<tag name="domxml_xslt_stylesheet_doc" type="function" returnType="object" comment="PHP 4 &gt;= 4.2.0">
 		<attr name="DocDocument Object" type="object" status="required"></attr>
 	</tag>
-	<tag name="domxml_xslt_stylesheet_file" type="function" returnType="object" langVersion="PHP 4 &gt;= 4.2.0">
+	<tag name="domxml_xslt_stylesheet_file" type="function" returnType="object" comment="PHP 4 &gt;= 4.2.0">
 		<attr name="xsl file" type="string" status="required"></attr>
 	</tag>
-	<tag name="domxml_xslt_stylesheet" type="function" returnType="object" langVersion="PHP 4 &gt;= 4.2.0">
+	<tag name="domxml_xslt_stylesheet" type="function" returnType="object" comment="PHP 4 &gt;= 4.2.0">
 		<attr name="xsl document" type="string" status="required"></attr>
 	</tag>
-	<tag name="xpath_eval_expression" type="function" returnType="object" langVersion="PHP 4 &gt;= 4.0.4">
+	<tag name="xpath_eval_expression" type="function" returnType="object" comment="PHP 4 &gt;= 4.0.4">
 		<attr name="xpath_context" type="object" status="required"></attr>
 		<attr name="expression" type="string" status="required"></attr>
 	</tag>
-	<tag name="xpath_eval" type="function" returnType="array" langVersion="PHP 4 &gt;= 4.0.4">
+	<tag name="xpath_eval" type="function" returnType="array" comment="PHP 4 &gt;= 4.0.4">
 		<attr name="xpath context" type="object" status="required"></attr>
 		<attr name="xpath expression" type="string" status="required"></attr>
 		<attr name="contextnode" type="object" status="optional"></attr>
 	</tag>
-	<tag name="xpath_new_context" type="function" returnType="object" langVersion="PHP 4 &gt;= 4.0.4">
+	<tag name="xpath_new_context" type="function" returnType="object" comment="PHP 4 &gt;= 4.0.4">
 		<attr name="dom document" type="object" status="required"></attr>
 	</tag>
-	<tag name="xptr_eval" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.0.4">
+	<tag name="xptr_eval" type="function" returnType="int" comment="PHP 4 &gt;= 4.0.4">
 		<attr name="xpath_context" type="object" status="optional"></attr>
 		<attr name="eval_str" type="string" status="required"></attr>
 	</tag>
-	<tag name="xptr_new_context" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.0.4">
+	<tag name="xptr_new_context" type="function" returnType="string" comment="PHP 4 &gt;= 4.0.4">
 		<attr name="doc_handle" type="object" status="optional"></attr>
 	</tag>
 </tags>

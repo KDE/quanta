@@ -1,6 +1,6 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="tcpwrap_check" type="function" returnType="bool" langVersion="">
+	<tag name="tcpwrap_check" type="function" returnType="bool" comment="">
 		<attr name="daemon" type="string" status="required"></attr>
 		<attr name="address" type="string" status="required"></attr>
 		<attr name="user" type="string" status="optional"></attr>
