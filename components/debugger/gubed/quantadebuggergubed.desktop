@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Service
+Name=Gubed
+Comment=
+Icon=kdbg
+ServiceTypes=Quanta/Debugger
+X-KDE-Library=quantadebuggergubed
