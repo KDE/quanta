@@ -72,6 +72,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
+  configIf = dynamic_cast<KTextEditor::ConfigInterface*>(m_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(m_view);
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(m_view);
   baseURL = p_baseURL;
@@ -221,13 +222,13 @@ void Document::replaceSelected(QString s)
 void Document::readConfig(KConfig *config)
 {
   bool m = m_doc->isModified();
-  dynamic_cast<KTextEditor::ConfigInterface*>(m_doc)->readConfig( config );
+  configIf->readConfig( config );
   m_doc->setModified(m);
 }
 
 void Document::writeConfig(KConfig *config)
 {
-  dynamic_cast<KTextEditor::ConfigInterface*>(m_doc)->writeConfig( config );
+  configIf->writeConfig( config );
 }
 
 /** No descriptions */

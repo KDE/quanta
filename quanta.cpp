@@ -690,7 +690,6 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 
   loadToolbarForDTD(newWrite->getDTDIdentifier());
 
-  newWrite->readConfig(m_config);
   Document *currentWrite = m_view->write();
   currentWrite->view()->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
   m_view->oldWrite = currentWrite;

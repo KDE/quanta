@@ -911,7 +911,7 @@ void QuantaView::slotEditorOptions()
   if (writeExists())
   {
     KConfig *config = quantaApp->config();
-    dynamic_cast<KTextEditor::ConfigInterface *>(write()->doc())->configDialog();
+    write()->configIf->configDialog();
     write()->writeConfig(config);
     config->sync();
 

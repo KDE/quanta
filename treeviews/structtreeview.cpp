@@ -377,7 +377,7 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
   write = w;
   buildTree(node, openLevel);
 
-  kdDebug(24000) << "StructTreeView building: " << timer.elapsed() << " ms\n";
+ // kdDebug(24000) << "StructTreeView building: " << timer.elapsed() << " ms\n";
 
   for (uint i = 0; i < groupsCount; i++)
   {

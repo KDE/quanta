@@ -150,6 +150,7 @@ work correctly. */
   KTextEditor::SelectionInterface *selectionIf;
   KTextEditor::EditInterface *editIf;
   KTextEditor::CodeCompletionInterface *codeCompletionIf;
+  KTextEditor::ConfigInterface* configIf;
 
   Kate::Document *kate_doc;
   /** Hold the list of variables that are in the document (e.g $variable for PHP variables) */

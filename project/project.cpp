@@ -1459,7 +1459,7 @@ void Project::openCurrentView()
       el = nl.item(i).cloneNode().toElement();
       if (el.attribute("name") == currentProjectView)
       {
-        quantaApp->slotFileCloseAll(); //TODO: make a signal for closeAll
+        quantaApp->slotFileCloseAll();
         QDomNodeList itemNodes = el.childNodes();
         for (int j = itemNodes.count()-1; j >= 0 ; j--)
         {
@@ -1469,7 +1469,7 @@ void Project::openCurrentView()
           url = QExtFileInfo::toAbsolute(url, baseURL);
           if (el2.nodeName() == "viewitem")
           {
-            emit openFile(url, m_defaultEncoding);
+            quantaApp->slotFileOpen(url, m_defaultEncoding);
           }
           if (el2.nodeName() == "viewtoolbar")
           {

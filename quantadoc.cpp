@@ -119,9 +119,6 @@ bool QuantaDoc::newDocument( const KURL& url )
 
     // now we can create new kwrite
     w = newWrite( );
-    w->readConfig(quantaApp->config());
-
-    if ( newfile ) furl = w->url().url();
 
     quantaApp->view()->addWrite( w, w->url().url() );
 
@@ -448,7 +445,6 @@ Document* QuantaDoc::newWrite()
                                quantaApp->view->writeTab(), 0,
                                quantaApp->view->writeTab(), 0 );
 #endif
-  connect(doc, SIGNAL(completed()), SLOT(slotOpenCompleted()));
 
   Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->project(),
                              quantaApp->m_pluginInterface, quantaApp->view()->writeTab());
@@ -465,11 +461,6 @@ Document* QuantaDoc::newWrite()
   //[MB02] connect all kate views for drag and drop
   connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)quantaApp->gettTab(), SLOT(slotDragInsert(QDropEvent *)));
 
-  KConfig *config = quantaApp->config();
-  config->setGroup("Kate Document");
-  int tabWidth = config->readNumEntry("TabWidth",4);
-  config->writeEntry("TabWidth",tabWidth);
-  w->readConfig( config );
   w->setUntitledUrl( fname );
   Project *project = quantaApp->project();
   KTextEditor::HighlightingInterface *highlightinginterface = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
@@ -485,16 +476,7 @@ Document* QuantaDoc::newWrite()
 
   quantaApp->setFocusProxy(w->view());
   w->view()->setFocusPolicy(QWidget::WheelFocus);
-/*  quantaApp->setFocusPolicy(QWidget::StrongFocus);
-  */
   connect( v, SIGNAL(newStatus()),quantaApp, SLOT(slotNewStatus()));
-
-/* !!!!
-   connect( dynamic_cast<KTextEditor::UndoInterface *>(v), SIGNAL(undoChanged()),
-           quantaApp, SLOT(slotNewUndo()) );
-*/
-
-//   connect( w, SIGNAL(statusMsg(const QString &)),quantaApp, SLOT(slotStatusMsg(const QString &)));
 
   return w;
 }
@@ -699,11 +681,6 @@ Document* QuantaDoc::isOpened(const KURL& url)
     w = 0L;
   }
   return w;
-}
-
-
-void QuantaDoc::slotOpenCompleted()
-{
 }
 
 #include "quantadoc.moc"
