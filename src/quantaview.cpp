@@ -138,7 +138,7 @@ bool QuantaView::mayRemove()
      if (m_customWidget)
          m_customWidget->reparent(0L, 0, QPoint(), false);
      if (!saveModified())
-          return false;
+         return false;
      if (dynamic_cast<QuantaView *>(quantaApp->activeWindow()) == this)
      {
          parser->setSAParserEnabled(false);
