@@ -22,6 +22,7 @@ AreaBorders = <? ?>, <* *>, <% %>
 Tags = script(language)
 Comments = // EOL, /* */
 StructKeywords = for;foreach;if;else;elseif;while;do;switch;declare;function;class
+LocalScopeKeywords=function;class
 StructBeginStr = {
 StructEndStr = }
 StructRx = \\{|\\}

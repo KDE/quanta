@@ -2084,7 +2084,18 @@ void Parser::parseForScriptGroup(Node *node)
         {
           groupElement.parentNode = 0L;
         }
-        groupElement.global = false;
+        groupElement.global = true;
+        tmpNode = node;
+        while (tmpNode && tmpNode->tag->dtd == dtd)
+        {
+          if ( tmpNode->tag->type == Tag::ScriptStructureBegin && tmpNode->tag->dtd->localScopeKeywordsRx.search(tmpNode->tag->cleanStr) != -1)
+          {
+            groupElement.global = false;
+            break;
+          }
+          tmpNode = tmpNode->parent;
+        }
+
         groupElementList = & (m_groups[group.name+"|"+title]);
         node->groupElementLists.append(groupElementList);
         groupElementList->append(groupElement);

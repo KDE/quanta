@@ -169,6 +169,9 @@ typedef struct DTDStruct
 /* Regular experssion to match the possible keywords that can appear before
    a structure, like "function", "for", etc. */
      QRegExp structKeywordsRx;
+/* Regular expression containing the keywords that indicate that the groups
+defined in the structure after the keyword have local scope */
+     QRegExp localScopeKeywordsRx;
 
 /* A list of structure tree groups definition */
      QValueList<StructTreeGroup> structTreeGroups;

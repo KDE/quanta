@@ -897,13 +897,13 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
      QDomElement item = el.firstChild().toElement();
      while ( !item.isNull() )
      {
-		   if (item.tagName() == "child")
-			 {
-					QString childTag = item.attribute("name");
-					if (!tag->parentDTD->caseSensitive)
-							childTag = childTag.upper();
-					tag->childTags.insert(childTag, item.attribute("usage") == "required");
-			 }
+       if (item.tagName() == "child")
+       {
+          QString childTag = item.attribute("name");
+          if (!tag->parentDTD->caseSensitive)
+              childTag = childTag.upper();
+          tag->childTags.insert(childTag, item.attribute("usage") == "required");
+       }
        item = item.nextSibling().toElement();
      }
    }
@@ -917,7 +917,7 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
        {
          QString stopTag = item.attribute("name");
          if (!tag->parentDTD->caseSensitive)
-			      stopTag = stopTag.upper();
+            stopTag = stopTag.upper();
          tag->stoppingTags.append(stopTag);
        }
        item = item.nextSibling().toElement();
@@ -1319,6 +1319,22 @@ void QuantaApp::readTagDir(QString &dirName)
    tmpStr = "\\b[\\d\\S\\w]+\\b";
  }
  dtd->structKeywordsRx.setPattern(tmpStr);
+
+ structKeywords = dtdConfig->readListEntry("LocalScopeKeywords",';');
+ if (structKeywords.count() !=0 )
+ {
+    tmpStr = "\\b(";
+    for (uint i = 0; i < structKeywords.count(); i++)
+    {
+      tmpStr += structKeywords[i].stripWhiteSpace()+"|";
+    }
+    tmpStr.truncate(tmpStr.length()-1);
+    tmpStr += ")\\b";
+ } else
+ {
+   tmpStr = "\\b[\\d\\S\\w]+\\b";
+ }
+ dtd->localScopeKeywordsRx.setPattern(tmpStr);
 
  dtd->structRx.setPattern(dtdConfig->readEntry("StructRx","\\{|\\}").stripWhiteSpace());
  dtd->structBeginStr = dtdConfig->readEntry("StructBeginStr","{").stripWhiteSpace();
