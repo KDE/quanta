@@ -1100,6 +1100,29 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
   return completions;
 }
 
+bool Document::isDerivatedFrom(const QString& className, const QString &baseClass)
+{
+  if (className.isEmpty() || !completionDTD->classInheritance.contains(className))
+    return false;
+
+  QString parentClass = completionDTD->classInheritance[className];
+  bool found = false;
+  do {
+    if (parentClass == baseClass)
+      return true;
+    else
+    {
+      if (completionDTD->classInheritance.contains(parentClass))
+        parentClass = completionDTD->classInheritance[parentClass];
+      else
+        return false;
+    }
+  } while (!found);
+
+  return false;
+}
+
+
 /** Return a list of possible tag name completions */
 QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, int col)
 {
@@ -1157,19 +1180,22 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   QMap<QString, QString> comments;
   QString tagName;
   QDictIterator<QTag> it(*(completionDTD->tagsList));
+  int i = 0;
   for( ; it.current(); ++it )
   {
     QTag *tag = it.current();
-    if (tag->className == classStr || (!tag->className.isEmpty() && completionDTD->classInheritance.contains(classStr) && completionDTD->classInheritance[classStr].contains(tag->className)))
+    if (tag->className == classStr ||
+        isDerivatedFrom(classStr, tag->className))
     {
       tagName = tag->name();
       if (!tagName.isEmpty() && tagName.upper().startsWith(word))
       {
         if (!parentQTag || (parentQTag && parentQTag->isChild(tagName)))
         {
-          tagName = tag->name();
+          tagName = tag->name() + QString("%1").arg(i, 3);
           tagNameList += tagName;
           comments.insert(tagName, tag->comment);
+          i++;
         }
       }
     }
@@ -1180,9 +1206,10 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   {
     if (it2.current()->name().upper().startsWith(word))
     {
-      tagName = it2.current()->name();
+      tagName = it2.current()->name() + QString("%1").arg(i, 3);
       tagNameList += tagName;
       comments.insert(tagName, it2.current()->comment);
+      i++;
     }
   }
 
@@ -1190,6 +1217,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   for (uint i = 0; i < tagNameList.count(); i++)
   {
    completion.text = QuantaCommon::tagCase(tagNameList[i]);
+   completion.text = completion.text.left(completion.text.length() - 3);
    completion.comment = comments[tagNameList[i]];
    completions->append( completion );
   }

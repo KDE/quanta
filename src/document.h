@@ -309,6 +309,7 @@ private:
   /** Returns true if the number of " (excluding \") inside text is even. */
   bool evenQuotes(const QString &text);
   void handleCodeCompletion();
+  bool isDerivatedFrom(const QString& className, const QString &baseClass);
 };
 
 #endif
