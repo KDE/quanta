@@ -857,8 +857,27 @@ void QuantaApp::openLastFiles()
 
      if (!isPrj || originalVersion.isLocalFile())
      {
+       KIO::UDSEntry entry;
+       KIO::NetAccess::stat(originalVersion, entry);
+       KFileItem* item= new KFileItem(entry, originalVersion, false, true);
+       QString origTime = item->timeString();
+       KIO::filesize_t origSize = item->size();
+       delete item;
+       KIO::NetAccess::stat(autosavedVersion, entry);
+       item= new KFileItem(entry, autosavedVersion, false, true);
+       QString backupTime = item->timeString();
+       KIO::filesize_t backupSize = item->size();
+       delete item;
        if (QFileInfo(autosavedVersion.path()).exists() &&
-           KMessageBox::questionYesNo(this, i18n("<qt>A backup copy of the <b>%1</b> file was found.<br>Do you want to restore it and use the backup copy instead of the original one?</qt>").arg(originalVersion.prettyURL()), i18n("Restore file")) == KMessageBox::Yes)
+           KMessageBox::questionYesNo(this, i18n("<qt>A backup copy of a file was found:<br><br>"
+           "Original file: <b>%1</b><br>"
+           "Original file size: <b>%2</b><br>"
+           "Original file last modified on: <b>%3</b><br><br>"
+           "Backup file size: <b>%4</b><br>"
+           "Backup created on: <b>%5</b><br><br>"
+           "Do you want to restore it and use the backup copy instead of the original one?</qt>").arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
+           .arg(origSize).arg(origTime)
+           .arg(backupSize).arg(backupTime), i18n("Restore file")) == KMessageBox::Yes)
        {
           KURL backupURL = originalVersion;
           backupURL.setPath(backupURL.path()+".backup");

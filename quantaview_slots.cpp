@@ -386,7 +386,7 @@ void QuantaView::slotTagEditTable()
 {
   if (!writeExists()) return;
   Document *w = write();
-  QStringList list = w->tagAreas("table", true, true);
+  QStringList list = w->tagAreas("table", true, false);
   bool tableExists = false;
   uint line, col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
