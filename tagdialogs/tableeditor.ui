@@ -729,6 +729,7 @@
     <slot>slotAddRemoveCol( int num )</slot>
     <slot>slotRemoveRow()</slot>
     <slot>slotRemoveCol()</slot>
+    <slot>createNewTable( Document * write, DTDStruct * dtd )</slot>
 </slots>
 <functions>
     <function>init()</function>

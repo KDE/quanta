@@ -419,12 +419,24 @@ void QuantaView::slotTagEditTable()
   {
     editor.setBaseURL(baseURL());
     editor.setTableArea(bLine, bCol, eLine, eCol);
+  } else
+  {
+    Node *node = parser->nodeAt(line, col);
+    DTDStruct *dtd = w->defaultDTD();
+    if (node)
+      dtd = node->tag->dtd;
+    bLine = line;
+    bCol = col;
+    eLine = line;
+    eCol = col;
+    editor.createNewTable(w, dtd);
   }
   if (editor.exec())
   {
     QString tableString = editor.readModifiedTable();
     w->activateParser(false);
-    w->editIf->removeText(bLine, bCol, eLine, eCol + 1);
+    if (eLine != bLine || (eLine == bLine && eCol != bCol))
+      w->editIf->removeText(bLine, bCol, eLine, eCol + 1);
     w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
     w->insertText(tableString, false);
   }

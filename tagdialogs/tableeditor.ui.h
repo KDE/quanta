@@ -577,3 +577,22 @@ void TableEditor::slotRemoveCol()
 {
 
 }
+
+
+void TableEditor::createNewTable(Document *write, DTDStruct *dtd)
+{
+  m_write = write;
+  m_dtd = dtd;
+  m_table = new Tag();
+  m_table->parse("<table>", m_write);
+  m_thead = new Tag();
+  m_thead->parse("<thead>", m_write);
+  m_tfoot = new Tag();
+  m_tfoot->parse("<tfoot>", m_write);
+  m_tbody = new Tag();
+  m_tbody->parse("<tbody>", m_write);
+  //by default the current page is the data handling page
+  m_tableTags = m_tableDataTags;
+  m_tableRows = m_tableDataRows;
+  m_dataTable = tableData;
+}
