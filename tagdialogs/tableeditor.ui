@@ -699,6 +699,12 @@
         <receiver>TableEditor</receiver>
         <slot>slotTabChanged(QWidget*)</slot>
     </connection>
+    <connection>
+        <sender>buttonHelp</sender>
+        <signal>clicked()</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotHelpInvoked()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>rowSpinBox</tabstop>
@@ -789,6 +795,7 @@
     <slot>slotMergeCells()</slot>
     <slot>slotUnmergeCells()</slot>
     <slot>slotEditChildTable()</slot>
+    <slot access="protected">slotHelpInvoked()</slot>
 </slots>
 <functions>
     <function>init()</function>
@@ -802,7 +809,7 @@
     <function access="protected" returnType="QString">tagContent( Node * node )</function>
     <function>createNewTable( Document * write, DTDStruct * dtd )</function>
     <function access="protected">deleteList( QValueList&lt;TableNode&gt; * table )</function>
-    <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt; &gt; * matrix )</function>
+    <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt;&gt; * matrix )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

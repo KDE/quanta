@@ -56,6 +56,7 @@
 #include <kdockwidget.h>
 #include <kstatusbar.h>
 #include <kpopupmenu.h>
+#include <kpushbutton.h>
 #include <kprocess.h>
 #include <ktempfile.h>
 #include <kdebug.h>
@@ -2974,6 +2975,8 @@ void QuantaApp::slotShowCompletionHint()
 void QuantaApp::slotMakeDonation()
 {
  DonationDialog *dlg = new DonationDialog(this);
+ dlg->closeButton->setIconSet(SmallIconSet("fileclose"));
+ connect(dlg->closeButton, SIGNAL(clicked()), dlg, SLOT(accept()));
  dlg->exec();
  delete dlg;
 }

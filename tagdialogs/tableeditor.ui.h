@@ -17,6 +17,7 @@
 /* Copyright: (C) 2003 Andras Mantia <amantia@kde.org> */
 
 //kde includes
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
@@ -59,6 +60,10 @@ void TableEditor::init()
   m_popup->insertSeparator();
   m_popup->insertItem(i18n("Edit &Table Properties"), this, SLOT(slotEditTable()));
   m_editChildId = m_popup->insertItem(i18n("Edit Child Table"), this, SLOT(slotEditChildTable()));
+  
+  buttonOk->setIconSet(SmallIconSet("button_ok"));
+  buttonCancel->setIconSet(SmallIconSet("button_cancel"));
+  buttonHelp->setIconSet(SmallIconSet("help"));
 
   m_row = m_col = -1;
   m_tbody = 0L;
@@ -1051,4 +1056,11 @@ void TableEditor::slotEditChildTable()
       delete w;
     }
   }
+}
+
+
+void TableEditor::slotHelpInvoked()
+{
+//FIXME: "tag-mail" should be replaced with the real help section tag
+   kapp->invokeHelp("table-editor","quanta");
 }

@@ -65,7 +65,7 @@
 
 #include "tagdialogs/tagquicklistdlg.h"
 #include "tagdialogs/tagmaildlg.h"
-#include "tagdialogs/tagmiscdlg.h"
+#include "tagdialogs/tagmisc.h"
 #include "tagdialogs/tableeditor.h"
 
 #define NEW_CSS_EDITOR
@@ -348,15 +348,20 @@ void QuantaView::slotTagMisc()
  static QString element = "";
  static bool addClosingTag = true;
 
- TagMiscDlg *miscDlg = new TagMiscDlg(element, addClosingTag, this, i18n("Misc. Tag"));
+ KDialogBase miscDlg(this, 0L, true, i18n("Misc. Tag"), KDialogBase::Ok | KDialogBase::Cancel);
+ TagMisc *miscWidget = new TagMisc(&miscDlg);
+ miscDlg.setMainWidget(miscWidget);
+ miscWidget->addClosingTag->setChecked(addClosingTag);
+ miscWidget->elementName->setText(element);
 
-  if ( miscDlg->exec() ) {
+  if ( miscDlg.exec() )
+  {
     QString tag;
-    element = miscDlg->elementName->text();
+    element = miscWidget->elementName->text();
     if ( !element.isEmpty())
     {
       tag += "<" + QuantaCommon::attrCase(element)+">";
-        if ( (addClosingTag = miscDlg->addClosingTag->isChecked()) == true)
+        if ( (addClosingTag = miscWidget->addClosingTag->isChecked()) == true)
         {
           write()->insertTag(tag,QuantaCommon::tagCase( "</"+QuantaCommon::attrCase(element)+">"));
         } else
@@ -365,7 +370,6 @@ void QuantaView::slotTagMisc()
         }
     }
   }
-  delete miscDlg;
 }
 
 /** do quick list */

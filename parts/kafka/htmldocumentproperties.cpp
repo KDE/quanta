@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 
+#include <kiconloader.h>
 #include <klineedit.h>
 #include <klistview.h>
 #include <kpushbutton.h>
@@ -177,6 +178,9 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 			}
 		}
 	}
+
+        ok->setIconSet(SmallIconSet("button_ok"));
+        cancel->setIconSet(SmallIconSet("button_cancel"));
 
 	//connect buttons
 	connect(ok, SIGNAL(clicked()), this, SLOT(aboutToClose()));

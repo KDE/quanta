@@ -54,6 +54,11 @@
 ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool modal, WFlags fl, const QString& defaultAction )
     :ActionConfigDialogS( parent, name, modal, fl )
 {
+  buttonOk->setIconSet(SmallIconSet("button_ok"));
+  buttonCancel->setIconSet(SmallIconSet("button_cancel"));
+  buttonApply->setIconSet(SmallIconSet("apply"));
+  //buttonHelp->setIconSet(SmallIconSet("help"));
+
   currentAction = 0L;
 
   connect(actionTreeView, SIGNAL(contextMenu(KListView *,QListViewItem *,const QPoint &)),

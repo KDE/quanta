@@ -8,7 +8,7 @@
  *                                                                         *
  ***************************************************************************/
 </comment>
-<author>(C) 2002 Andras Mantia &lt;amantia@kde.org&gt;, (C) 2002 Eric Laffoon &lt;sequitur@kde.org&gt;</author>
+<author>(C) 2002, 2003 Andras Mantia &lt;amantia@kde.org&gt;, (C) 2002 Eric Laffoon &lt;sequitur@kde.org&gt;</author>
 <widget class="QDialog">
     <property name="name">
         <cstring>DonationDialog</cstring>
@@ -36,7 +36,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QPushButton" row="2" column="1">
+        <widget class="KPushButton" row="2" column="1">
             <property name="name">
                 <cstring>closeButton</cstring>
             </property>
