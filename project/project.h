@@ -100,7 +100,10 @@ public:
 
   void insertFile( const KURL& nameURL, bool repaint );
   void readConfig(KConfig *);
-  void readLastConfig(KConfig *c=0);
+  /** loads the last project again if reload == true
+      but checks in any case if there is a left over project from a crash
+  */
+  void loadLastProject(bool reload);
   void writeConfig(KConfig *);
   /** Returns the relative url with the prefix inserted. */
   KURL urlWithPrefix(const KURL& url);
@@ -138,8 +141,10 @@ public:
   QValueList<SubProject>* subprojects();
   QMap<QString, TeamMember> allMembers();
 
-  /** save project file */
-  bool slotSaveProject();
+  /** uploads the project file 
+      @return false if there was nothing to upload or an error occured during upload
+  */
+  bool uploadProjectFile();
 
 public slots:
 

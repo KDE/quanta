@@ -682,8 +682,7 @@ void QuantaInit::loadInitialProject(const QString& url)
     config->setGroup("General Options");
 
     // Reload last project if setting is enabled
-    if (config->readBoolEntry("Reload Project", true))
-      Project::ref()->readLastConfig();
+    Project::ref()->loadLastProject(config->readBoolEntry("Reload Project", true));
   }
   else
     Project::ref()->slotOpenProject(KURL( url ));

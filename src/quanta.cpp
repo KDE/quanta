@@ -252,6 +252,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
 
 QuantaApp::~QuantaApp()
 {
+  disconnect(this, SIGNAL(lastChildViewClosed()), ViewManager::ref(), SLOT(slotLastViewClosed()));
 // kdDebug(24000) << "QuantaApp::~QuantaApp" << endl;
 #ifdef ENABLE_CVSSERVICE
  delete CVSService::ref();
@@ -3960,32 +3961,20 @@ bool QuantaApp::queryClose()
   bool canExit = true;
   if (quantaStarted)
   {
-    saveOptions();
     exitingFlag = true;
     canExit = ViewManager::ref()->saveAll(false);
+    if (canExit && Project::ref()->hasProject())
+    {
+       canExit = Project::ref()->uploadProjectFile();
+       if (!canExit)
+       {
+           if (KMessageBox::warningYesNo(this, i18n("Saving of project failed. Do you want to continue with exit (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::Yes)
+             canExit = true;
+       }
+    }
+    saveOptions(); // after upload of project file
     if (canExit)
         canExit = removeToolbars();
-    if (canExit)
-    {
-      //avoid double question about saving files, so set the "modified"
-      //flags to "false". This is safe here, as exiting cannot be canceled anymore.
-      Document *w;
-      KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
-      QuantaView *view;
-      for (it->first(); !it->isDone(); it->next()) {
-          view = dynamic_cast<QuantaView*>(it->currentItem());
-          if (view && view->document())
-          {
-              w = view->document();
-              if (w)
-                w->setModified(false);
-           }
-      }
-      delete it;
-
-      ViewManager::ref()->closeAll(false);
-      disconnect(this, SIGNAL(lastChildViewClosed()), ViewManager::ref(), SLOT(slotLastViewClosed()));
-    }
   }
 
   return canExit;
@@ -4001,7 +3990,6 @@ void QuantaApp::saveOptions()
 
     m_config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
     m_config->writeEntry("Show DTD Toolbar", showDTDToolbar->isChecked());
-    m_config->writeEntry("Show Statusbar", statusBar()->isVisible());
 
     m_config->writeEntry("Markup mimetypes", qConfig.markupMimeTypes  );
     m_config->writeEntry("Script mimetypes", qConfig.scriptMimeTypes   );

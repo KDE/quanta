@@ -110,10 +110,13 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 
 QuantaView::~QuantaView()
 {
-   quantaApp->slotFileClosed();
+   // quantaApp is undefined if the destructor of QuantaApp is active
+   if (quantaApp)
+     quantaApp->slotFileClosed();
    if (m_document)
    {
-        m_document->view()->reparent(0L, 0, QPoint(), false);
+     m_document->view()->reparent(0L, 0, QPoint(), false);
+     if (quantaApp)
        emit documentClosed(m_document->url());
    }
    delete m_document;
@@ -497,6 +500,8 @@ void QuantaView::reloadUpdateTimers()
 
 void QuantaView::slotVPLGetFocus(bool focus)
 {
+  // is Quanta exiting?
+  if (!quantaApp) return;
 #ifdef BUILD_KAFKAPART
 #ifdef LIGHT_DEBUG
   kdDebug(25001)<< "slotVPLGetFocus(" << focus << ")" << endl;
@@ -564,6 +569,8 @@ void QuantaView::slotVPLGetFocus(bool focus)
 
 void QuantaView::slotSourceGetFocus()
 {
+  // is Quanta exiting?
+  if (!quantaApp) return;
 #ifdef BUILD_KAFKAPART
 #ifdef LIGHT_DEBUG
   kdDebug(25001)<< "slotSourceGetFocus(true)" << endl;
@@ -648,7 +655,7 @@ void QuantaView::reloadSourceView(bool force)
 void QuantaView::VPLUpdateTimerTimeout()
 {
 #ifdef BUILD_KAFKAPART
-  if(m_currentFocus == SourceFocus)
+  if(quantaApp && m_currentFocus == SourceFocus)
     reloadVPLView();
 #endif
 }
@@ -656,7 +663,7 @@ void QuantaView::VPLUpdateTimerTimeout()
 void QuantaView::sourceUpdateTimerTimeout()
 {
 #ifdef BUILD_KAFKAPART
-  if(m_currentFocus == VPLFocus)
+  if(quantaApp && m_currentFocus == VPLFocus)
     reloadSourceView();
 #endif
 }
@@ -842,13 +849,7 @@ void QuantaView::deactivated()
 {
   if (m_plugin)
   {
-      KToggleAction* showStatusbarAction = (KToggleAction *) quantaApp->actionCollection()->action("settings_statusbar");
-      if (showStatusbarAction->isChecked())
-      {
-        showStatusbarAction->setChecked(true);
-        quantaApp->statusBar()->changeItem("", IDS_STATUS);
-        quantaApp->statusBar()->show();
-      }
+    quantaApp->statusBar()->changeItem("", IDS_STATUS);
   }
   m_sourceUpdateTimer.stop();
   m_VPLUpdateTimer.stop();

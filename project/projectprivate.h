@@ -87,6 +87,10 @@ upload.*/
     *savePrjViewAction, *saveAsPrjViewAction;
 
    KSelectAction *openPrjViewAction, *deletePrjViewAction;
+  /** the filename of the local webprj file after download */
+  QString m_tmpProjectFile;
+  /** used for creating a new project */  
+  KTempFile *tempFile;
 
   /** setup of the actions */
   void initActions(KActionCollection *ac);
@@ -114,12 +118,25 @@ upload.*/
 
   bool createEmptyDom();
 
-  /** load project from file: name */
-  void slotLoadProject(const KURL &a_url);
-
+  /** load project file
+      @param url the url of the project file
+   */
+  void loadProject(const KURL &url);
+  
+  /** load project from temp file
+      @param url the url of the project file
+      @param tempFile the path of the already downloaded temp file
+   */
+  void loadProjectFromTemp(const KURL &url, const QString &tempFile);
+  
   void slotDeleteCopytoDlg(CopyTo *dlg);
 
   void getStatusFromTree();
+  
+  /** save project file to local file @ref tmpFileName
+      @return false if there was nothing to save or an error occured during save
+  */
+  bool saveProject();
 
 public slots:
 

@@ -96,10 +96,11 @@
 #include "teammembersdlg.h"
 
 ProjectPrivate::ProjectPrivate(Project *p)
-          : QObject()
+          : QObject(), config(0L), m_dirWatch(0L), tempFile(0L)
 {
   parent = p;
   m_projectFiles.setAutoDelete(true);
+  init();
 }
 
 
@@ -124,7 +125,7 @@ void ProjectPrivate::initActions(KActionCollection *ac)
                             ac, "project_open_recent");
   projectRecent->setText(i18n("Open Recent Project"));
 #if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
-   projectRecent->setIcon("folder_new");
+  projectRecent->setIcon("folder_new");
 #else
   projectRecent->setIcon("project_open");
 #endif
@@ -256,6 +257,13 @@ void ProjectPrivate::init()
   m_excludeCvsignore = false;
   currentProjectView = QString::null;
   m_projectFiles.clear();
+  m_mailingList = QString::null;
+  m_teamLeader.name = QString::null;
+  m_teamLeader.email = QString::null;
+  m_taskLeaders.clear();
+  m_subprojectLeaders.clear();
+  m_subprojects.clear();
+  m_simpleMembers.clear();
 }
 
 
@@ -782,7 +790,7 @@ void ProjectPrivate::slotAcceptCreateProject()
     parent->newProjectLoaded(projectName, baseURL, templateURL);
     m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx);
     parent->reloadTree( &(m_projectFiles), true, QStringList() );
-    parent->slotSaveProject();
+    saveProject();
   }
 }
 if (errorOccured)
@@ -909,14 +917,16 @@ bool ProjectPrivate::createEmptyDom()
 
   if (! projectURL.isLocalFile())
   {
-    KTempFile *tempFile = new KTempFile(tmpDir);
+    tempFile = new KTempFile(tmpDir); // tempFile will get deleted in slotProjectClose()
     tempFile->setAutoDelete(true);
     tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
     *(tempFile->textStream()) << str;
     tempFile->close();
     result = QExtFileInfo::createDir(baseURL);
-    if (result) result = KIO::NetAccess::upload(tempFile->name(), projectURL, m_parent);
-    delete tempFile;
+    if (result)
+      result = KIO::NetAccess::upload(tempFile->name(), projectURL, m_parent);
+    if (result)
+      m_tmpProjectFile = tempFile->name();
   } else
   {
     QFile f(projectURL.path());
@@ -925,6 +935,7 @@ bool ProjectPrivate::createEmptyDom()
       QTextStream fstream(&f);
       fstream.setEncoding(QTextStream::UnicodeUTF8);
       fstream << str;
+      m_tmpProjectFile = projectURL.path();  // we are local: the temp file and the projectURL are the same
     } else
     {
       result = false;
@@ -936,10 +947,11 @@ bool ProjectPrivate::createEmptyDom()
   {
     parent->hideSplash();
     KMessageBox::sorry(m_parent, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
+    delete tempFile;
+    tempFile = 0L;
     return false;
   }
 
-  //slotLoadProject( projectURL );
   dom.setContent( str);
   m_projectFiles.clear();
   return true;
@@ -1078,15 +1090,19 @@ void ProjectPrivate::slotNewProject()
 void ProjectPrivate::slotCloseProject()
 {
   if (!parent->hasProject()) return;
-  //fix: add save/no for remote
-  if (m_modified || baseURL.isLocalFile())  // save treestatus if local
-      parent->slotSaveProject();
-
+  if (!parent->uploadProjectFile())
+  {
+    if (KMessageBox::warningYesNo(m_parent, i18n("Saving of project failed. Do you want to continue with closing (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::No)
+      return;
+  }
+  // remember the none project in config
+  parent->writeConfig(config);
+  config->sync();
+  // empty dom tree
   dom.clear();
   parent->events()->clear();
   init();
   parent->closeFiles();
-
   parent->newProjectLoaded(projectName, baseURL, templateURL);
   parent->reloadTree( &(m_projectFiles), true, QStringList());
   adjustActions();
@@ -1103,60 +1119,100 @@ void ProjectPrivate::slotOpenProject()
 
   if( !url.isEmpty() )
   {
-    slotLoadProject ( url );
-
-    projectRecent->addURL( url );
+    loadProject ( url );
   }
-  parent->newStatus();
 }
 
 
-/** load project from file: name */
-void ProjectPrivate::slotLoadProject(const KURL &a_url)
+/* save project file */
+bool ProjectPrivate::saveProject()
 {
-  if (parent->hasProject()) slotCloseProject();
+  if ( !parent->hasProject() ) return false;
+  bool result = true;
+  // remove old opened files
+  QDomElement  el;
+  QDomNodeList nl = dom.firstChild().firstChild().childNodes();
 
-  KURL url = a_url;
-  projectURL = KURL();
-  projectName = QString::null;
-  currentProjectView = QString::null;
-
-  if (!url.isValid())
+  for ( unsigned int i = 0; i < nl.count(); i++ )
   {
-      parent->hideSplash();
-      KMessageBox::sorry(m_parent, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
+    el = nl.item(i).toElement();
+    if ( el.nodeName() == "openfile" )
+    {
+      el.parentNode().removeChild( el );
+      i--;
+    }
+  }
+  getStatusFromTree();
+  QFile f(m_tmpProjectFile);
+  if (f.open(IO_WriteOnly))
+  {
+    QTextStream stream( &f );
+    stream.setEncoding(QTextStream::UnicodeUTF8);
+    dom.save(stream, 2);
+    f.close();
+    m_modified = false;
+    parent->statusMsg(i18n( "Wrote project file %1" ).arg(m_tmpProjectFile));
   } else
   {
-    QString tmpName = QString::null;
-    if (KIO::NetAccess::download(url, tmpName, m_parent))
+    parent->hideSplash();
+    KMessageBox::error(m_parent, i18n("<qt>Cannot open the file <b>%1</b> for writing.</qt>").arg(m_tmpProjectFile));
+    result = false;
+  }
+  return result;
+}
+
+
+void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFile)
+{
+  projectURL = url;
+  QFile f(tempFile);
+  if (f.open(IO_ReadOnly))
+  {
+    baseURL = url;
+    baseURL.setPath(url.directory(true, true));
+    if (baseURL.isLocalFile())
     {
-      projectURL = url;
-      QFile f(tmpName);
-      if (f.open(IO_ReadOnly))
-      {
-        baseURL = url;
-        baseURL.setPath(url.directory(true, true));
-        if (baseURL.isLocalFile())
-        {
-          QDir dir(baseURL.path());
-          baseURL.setPath(dir.canonicalPath());
-          baseURL.adjustPath(-1);
-        }
-        dom.setContent( &f );
-        f.close();
-        loadProjectXML();
-        openCurrentView();
-      } else
-      {
-        parent->hideSplash();
-        KMessageBox::error(m_parent, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tmpName));
-      }
-      KIO::NetAccess::removeTempFile( tmpName);
-    } else
-    {
-      parent->hideSplash();
-      KMessageBox::error(m_parent, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+      QDir dir(baseURL.path());
+      baseURL.setPath(dir.canonicalPath());
+      baseURL.adjustPath(-1);
     }
+    dom.setContent( &f );
+    f.close();
+    loadProjectXML();
+    openCurrentView();
+    // remember the project in config
+    parent->writeConfig(config);
+    config->sync();
+  } else
+  {
+    parent->hideSplash();
+    KMessageBox::error(m_parent, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tempFile));
+  }
+}
+
+/** load project from file: url */
+void ProjectPrivate::loadProject(const KURL &url)
+{
+  if (!url.isValid())
+  {
+    parent->hideSplash();
+    KMessageBox::sorry(m_parent, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
+    return;
+  }
+  m_tmpProjectFile = QString::null;
+  // test if url is writeable and download to local file
+  if (KIO::NetAccess::exists(url, false, m_parent) &&
+      KIO::NetAccess::download(url, m_tmpProjectFile, m_parent))
+  {
+    if (parent->hasProject())
+    {
+      slotCloseProject();
+    }
+    loadProjectFromTemp(url, m_tmpProjectFile);
+  } else
+  {
+    parent->hideSplash();
+    KMessageBox::error(m_parent, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
   }
 }
 
@@ -1287,17 +1343,14 @@ Project::Project(KMainWindow *parent)
 {
   d = new ProjectPrivate(this);
   d->m_parent = parent;
-  d->config = 0L;
   keepPasswd = true;
-  d->m_dirWatch = 0L;
-  d->init();
   d->initActions(parent->actionCollection());
 }
 
 Project::~Project()
 {
   if (hasProject())
-    slotSaveProject();
+    uploadProjectFile();
   delete d;
   d = 0;
 }
@@ -1362,7 +1415,6 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
 }
 
 
-
 void Project::readConfig (KConfig *config)
 {
   d->config = config;
@@ -1371,24 +1423,31 @@ void Project::readConfig (KConfig *config)
   d->projectRecent->loadEntries(config, "RecentProjects");
 }
 
-void Project::readLastConfig(KConfig *c)
-{
-  KConfig *config;
-  if (c == 0)
-    config = d->config;
-  else
-    config = c;
 
-  config->setGroup("Projects");
-  QString urlPath = config->readPathEntry("Last Project");
+void Project::loadLastProject(bool reload)
+{
+  d->config->setGroup("Projects");
+  QString urlPath = d->config->readPathEntry("Last Project");
+  QString tempPath = d->config->readPathEntry("ProjectTempFile", "");
 
   KURL url;
   QuantaCommon::setUrl(url, urlPath);
-
-  d->slotCloseProject();
-  if ( !urlPath.isEmpty() && url.isValid())
+  // test if an unsaved remote project is available
+  if (! url.isLocalFile() && ! tempPath.isEmpty())
   {
-    d->slotLoadProject( url );
+    KURL tempURL = KURL().fromPathOrURL(tempPath);
+    if (reload ||
+        (KIO::NetAccess::exists(tempURL, false, d->m_parent) &&
+        KMessageBox::questionYesNo(d->m_parent, i18n("<qt>An unsaved project file was found.<br> Do you want to open it?</qt>") )
+        == KMessageBox::Yes))
+    {
+      d->m_tmpProjectFile = tempPath;
+      d->loadProjectFromTemp(url, d->m_tmpProjectFile);
+    }
+  }
+  if ( reload && (!urlPath.isEmpty() && url.isValid()))
+  {
+    d->loadProject( url );
   }
 }
 
@@ -1396,10 +1455,9 @@ void Project::writeConfig(KConfig *config)
 {
   config->setGroup  ("Projects");
   config->writePathEntry("Last Project", d->projectURL.url());
+  config->writePathEntry("ProjectTempFile", d->m_tmpProjectFile);
   config->deleteGroup("RecentProjects");
   d->projectRecent->saveEntries(config, "RecentProjects");
-
-//  slotSaveProject();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1422,8 +1480,7 @@ void Project::slotOpenProject(const KURL &url)
       }
     } else
     {
-      d->slotLoadProject ( url );
-      d->projectRecent->addURL( url );
+      d->loadProject ( url );
     }
   }
 }
@@ -2219,58 +2276,53 @@ QString Project::debuggerClient()
 }
 
 
-/** save project file */
-bool Project::slotSaveProject()
-{
-  int result = true;
-  if (hasProject())
-  {
-    // remove old opened files
-    QDomElement  el;
-    QDomNodeList nl = d->dom.firstChild().firstChild().childNodes();
-
-    for ( unsigned int i = 0; i < nl.count(); i++ )
-    {
-      el = nl.item(i).toElement();
-      if ( el.nodeName() == "openfile" )
-      {
-        el.parentNode().removeChild( el );
-        i--;
-      }
-    }
-    d->getStatusFromTree();
-    KTempFile *tmpFile = new KTempFile(tmpDir);
-    tmpFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
-    tmpFile->setAutoDelete(true);
-    d->dom.save(*(tmpFile->textStream()), 2);
-    tmpFile->close();
-    if (KIO::NetAccess::upload( tmpFile->name(), d->projectURL, d->m_parent))
-    {
-      emit statusMsg(i18n( "Wrote project %1..." ).arg( d->projectURL.prettyURL()));
-    }
-    else
-    {
-      emit statusMsg(QString::null );
-      KMessageBox::error(d->m_parent, KIO::NetAccess::lastErrorString() );
-      result = false;
-    }
-
-    delete tmpFile;
-    d->m_modified = false;
-  } else
-  {
-    result = false;
-  }
-if (result)
-      d->projectRecent->addURL( d->projectURL );
-return result;
-}
-
 void Project::setModified(bool b)
 {
   d->m_modified = b;
   if (b)
-    slotSaveProject();
+    d->saveProject();
+}
+
+
+/* uploads project file */
+bool Project::uploadProjectFile()
+{
+  if (d->m_tmpProjectFile == QString::null || !d->saveProject())
+    return false;
+  d->projectRecent->addURL(d->projectURL);
+  // no need to upload a local file because it is the same as the tempFile
+  if (d->projectURL.isLocalFile())
+  {
+    // delete all temp files we used
+    delete d->tempFile;
+    d->tempFile = 0L;
+    d->m_tmpProjectFile = QString::null;
+    return true;
+  }
+  if (KIO::NetAccess::upload(d->m_tmpProjectFile, d->projectURL, d->m_parent))
+  {
+    if (quantaApp)
+      emit statusMsg(i18n( "Uploaded project file %1" ).arg( d->projectURL.prettyURL()));
+    // delete all temp files we used
+    // first the one from creating a new project
+    delete d->tempFile;
+    d->tempFile = 0L;
+    // second the one from downloading a project
+    KIO::NetAccess::removeTempFile(d->m_tmpProjectFile);
+    // third if we recovered after crash
+    KIO::NetAccess::del(KURL().fromPathOrURL(d->m_tmpProjectFile), d->m_parent);
+    d->m_tmpProjectFile = QString::null;
+  }
+  else
+  {
+    if (quantaApp)
+    {
+      emit statusMsg(QString::null );
+      KMessageBox::error(d->m_parent, KIO::NetAccess::lastErrorString());
+    }
+    return false;
+  }
+  return true;
 }
 
 EventActions* Project::events()

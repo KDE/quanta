@@ -192,7 +192,8 @@ bool QuantaNetAccess::checkProjectRemove(const KURL& src, QWidget* window, bool 
     if ( !confirm ||
           KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") )
     {
-      Project::ref()->slotRemove(url);
+      if (remove)
+        Project::ref()->slotRemove(url);
     } else {
       return false;
     }

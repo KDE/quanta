@@ -170,6 +170,9 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
           this, SLOT(slotSelectFile(QListViewItem *)));
 
   restoreLayout(kapp->config(), className());
+  // the restored size of the first column might be too large for the current content
+  // we set it to 10 and the listview will adjust it to the size of the largest entry
+  setColumnWidth(0, 10); 
 }
 
 ProjectTreeView::~ProjectTreeView(){

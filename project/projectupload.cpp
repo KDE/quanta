@@ -87,7 +87,7 @@ ProjectUpload::ProjectUpload(const KURL& url, bool showOnlyProfiles, const char*
 
 ProjectUpload::~ProjectUpload()
 {
-  m_project->slotSaveProject();
+  m_project->setModified(true);
   delete baseUrl;
 }
 
