@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:number">
+<tag name="number">
 
     <label>
         <text>level</text>

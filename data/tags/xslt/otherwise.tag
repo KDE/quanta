@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:otherwise">
+<tag name="otherwise">
 
 </tag>
 </TAGS>

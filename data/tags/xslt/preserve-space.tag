@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:preserve-space">
+<tag name="preserve-space">
 
     <label>
         <text>elements</text>

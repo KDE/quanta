@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:fallback">
+<tag name="fallback">
 
 </tag>
 </TAGS>

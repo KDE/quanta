@@ -1,5 +1,5 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:choose">
+<tag name="choose">
 </tag>
 </TAGS>

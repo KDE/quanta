@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:value-of">
+<tag name="value-of">
 
     <label>
         <text>select</text>

@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:comment">
+<tag name="comment">
 
 </tag>
 </TAGS>

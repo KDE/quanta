@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:template">
+<tag name="template">
 
     <label>
         <text>match</text>

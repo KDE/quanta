@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:if">
+<tag name="if">
 
     <label>
         <text>test</text>

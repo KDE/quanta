@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:processing-instruction">
+<tag name="processing-instruction">
 
     <label>
         <text>name</text>

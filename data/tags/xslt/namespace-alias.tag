@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:namespace-alias">
+<tag name="namespace-alias">
 
     <label>
         <text>stylesheet-prefix</text>

@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:key">
+<tag name="key">
 
     <label>
         <text>name</text>

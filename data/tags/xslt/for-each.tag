@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:for-each">
+<tag name="for-each">
 
     <label>
         <text>select</text>

@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:stylesheet">
+<tag name="stylesheet">
 
     <label>
         <text>version</text>

@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:element">
+<tag name="element">
 
     <label>
         <text>name</text>

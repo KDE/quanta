@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:strip-space">
+<tag name="strip-space">
 
     <label>
         <text>elements</text>

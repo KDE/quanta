@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:copy-of">
+<tag name="copy-of">
 
     <label>
         <text>select</text>

@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:decimal-format">
+<tag name="decimal-format">
 
     <label>
         <text>name</text>

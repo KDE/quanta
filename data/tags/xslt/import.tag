@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:import">
+<tag name="import">
 
     <label>
         <text>href</text>

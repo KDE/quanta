@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:sort">
+<tag name="sort">
 
     <label>
         <text>select</text>

@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:transform">
+<tag name="transform">
 
 
     <label>

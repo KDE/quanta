@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:when">
+<tag name="when">
 
     <label>
         <text>test</text>

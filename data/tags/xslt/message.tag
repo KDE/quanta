@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:message">
+<tag name="message">
 
     <label>
         <text>terminate</text>

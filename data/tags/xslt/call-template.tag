@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:call-template">
+<tag name="call-template">
 
     <label>
         <text>name</text>

@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:with-param">
+<tag name="with-param">
 
     <label>
         <text>name</text>

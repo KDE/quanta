@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:text">
+<tag name="text">
 
     <label>
         <text>disable-output-escaping</text>

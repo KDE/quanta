@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:variable">
+<tag name="variable">
 
     <label>
         <text>name</text>

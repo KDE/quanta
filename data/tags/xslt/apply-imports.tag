@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:apply-imports">
+<tag name="apply-imports">
 
 </tag>
 </TAGS>

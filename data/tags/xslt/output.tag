@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="xsl:output">
+<tag name="output">
 
     <label>
         <text>method</text>
