@@ -72,7 +72,7 @@
                         <cstring>showHidden</cstring>
                     </property>
                     <property name="text">
-                        <string>Show hidden files in Files Tree (needs a restart to have effect)</string>
+                        <string>Show hidden files in files tree (needs a restart to have effect)</string>
                     </property>
                 </widget>
                 <widget class="QButtonGroup" row="1" column="0">
@@ -80,7 +80,7 @@
                         <cstring>buttonGroup3</cstring>
                     </property>
                     <property name="title">
-                        <string>Close buttons on tabs</string>
+                        <string>Close Buttons on Tabs</string>
                     </property>
                     <grid>
                         <property name="name">
@@ -161,7 +161,7 @@
                         <cstring>buttonGroup4</cstring>
                     </property>
                     <property name="title">
-                        <string>Toolview tabs</string>
+                        <string>Toolview Tabs</string>
                     </property>
                     <grid>
                         <property name="name">

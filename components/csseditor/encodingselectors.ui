@@ -40,7 +40,7 @@
                                 <cstring>textLabel1</cstring>
                             </property>
                             <property name="text">
-                                <string>Select Encoding</string>
+                                <string>Select encoding:</string>
                             </property>
                         </widget>
                         <widget class="QComboBox">
