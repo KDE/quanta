@@ -466,6 +466,8 @@ void SAParser::slotParseOneLine()
             
           m_lastParsedNode = node;
           s_useReturnVars = true;
+          if (!m_synchronous)
+            m_lastParsedNode = parsingDone();
           return;
         }
         if (s_contextFound)
@@ -728,11 +730,12 @@ Node *SAParser::parsingDone()
   {
     if (s_fullParse)
     {
-        Node *n = s_currentNode;
+        Node *n = m_lastParsedNode;
         n->next = s_next;
         if (s_next)
-          n->prev = m_currentNode;
-        m_currentNode = m_currentNode->nextSibling();
+          s_next->prev = n;
+        n->prev = m_currentNode; 
+        m_currentNode = n->nextSibling();
         if (m_currentNode)
         {
           kdDebug(24000) << "Calling slotParseNodeInDetail from place 1" << endl;
@@ -784,7 +787,9 @@ Node *SAParser::parsingDone()
       Node *n = s_currentNode;
       n->next = s_next;
       if (s_next)
-        n->prev = m_currentNode;
+        s_next->prev = n;
+      if (n->parent != m_currentNode)  
+        n->prev = m_currentNode; 
       m_currentNode = m_currentNode->nextSibling();
       if (m_currentNode)
       {
@@ -838,7 +843,7 @@ void SAParser::slotParseNodeInDetail()
         {
           m_currentNode->next->removeAll = false;
           delete m_currentNode->next;
-        }
+        } 
       } else
       {
         area.eLine = m_write->editIf->numLines() - 1;
@@ -848,8 +853,15 @@ void SAParser::slotParseNodeInDetail()
       parseArea(area, m_currentNode->tag->tagStr(), "", m_currentNode, true, m_synchronous); 
     } else
     {
-      kdDebug(24000) << "emit detailedParsingDone from place 3" << endl;
-      emit detailedParsingDone();
+      m_currentNode = m_currentNode->nextSibling();
+      if (m_currentNode)
+      {
+        QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
+      } else
+      {
+        kdDebug(24000) << "emit detailedParsingDone from place 3" << endl;
+        emit detailedParsingDone();
+      }
     }          
   }
 }
