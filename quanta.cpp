@@ -1464,8 +1464,9 @@ void QuantaApp::slotShowProjectTree()
 void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
 {
   Q_UNUSED(file);
-//  idleTimer->start(250, true);
-  slotIdleTimerExpired();
+  typingInProgress = true;
+  idleTimer->start(500, true);
+  updateTreeViews();
   QString linenumber;
   linenumber = i18n("Line: %1 Col: %2").arg(lineNumber).arg(columnNumber);
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
@@ -1478,7 +1479,7 @@ void QuantaApp::newDebuggerPosition(QString file, int lineNumber)
     newCursorPosition(file, lineNumber, 0);
 }
 
-void  QuantaApp::openFile(QString file, int lineNumber, int columnNumber)
+void QuantaApp::openFile(QString file, int lineNumber, int columnNumber)
 {
   gotoFileAndLine(file, lineNumber);
   setCursorPosition(lineNumber, columnNumber);
@@ -1487,8 +1488,9 @@ void  QuantaApp::openFile(QString file, int lineNumber, int columnNumber)
 
 void QuantaApp::slotNewLineColumn()
 {
-//  idleTimer->start(250, true);
-slotIdleTimerExpired();
+  typingInProgress = true;
+  idleTimer->start(500, true);
+  updateTreeViews();
   QString linenumber;
   oldCursorLine = cursorLine;
   oldCursorCol = cursorCol;
@@ -1497,7 +1499,7 @@ slotIdleTimerExpired();
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
 }
 
-void QuantaApp::slotIdleTimerExpired()
+void QuantaApp::updateTreeViews()
 {
   if (m_view->writeExists())
   {
@@ -1514,6 +1516,10 @@ void QuantaApp::slotIdleTimerExpired()
   }
 }
 
+void QuantaApp::slotIdleTimerExpired()
+{
+  typingInProgress = false;
+}
 
 void QuantaApp::slotReparse()
 {
@@ -1530,6 +1536,7 @@ void QuantaApp::reparse(bool force)
 {
   //temp
 //  if (!parser->activated()) return;
+  typingInProgress = false;
   if (m_view->writeExists())
   {
     Document *w = m_view->write();
@@ -3019,6 +3026,7 @@ void QuantaApp::processDTD(const QString& documentType)
       if (!found && qConfig.showDTDSelectDialog)
       {
         emit showSplash(false);
+        slotUpdateStatus(w);
         if (dlg.exec())
         {
           qConfig.showDTDSelectDialog = !dtdWidget->useClosestMatching->isChecked();

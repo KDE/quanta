@@ -429,7 +429,10 @@ void Document::insertText(const QString &text, bool adjustCursor, bool reparse)
   {
     baseNode = parser->rebuild(this);
     if (qConfig.instantUpdate && quantaApp->structTreeVisible())
-          quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+    {
+      typingInProgress = false;
+      quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+    }
   }
 }
 
@@ -858,7 +861,10 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
         reparseEnabled = true;
         baseNode = parser->rebuild(this);
         if (qConfig.instantUpdate && quantaApp->structTreeVisible())
-              quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+        {
+          typingInProgress = false;
+          quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+        }
       }
     }
     else if ( string == " " )
@@ -1171,9 +1177,9 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
         if (index != -1)
         {
           QString tmpStr = (*it).left(index);
-          if (tmpStr.isEmpty() || tagName.lower() == tmpStr)
+          if (tmpStr.isEmpty() || tagName.lower() == tmpStr || tmpStr == "*")
           {
-            values->append((*it).mid(index + 1));
+            values->append((*it).mid(index + 1).replace('.',' '));
           }
         }
       }
@@ -1959,7 +1965,10 @@ void Document::slotDelayedTextChanged()
 
     quantaApp->slotNewLineColumn();
     if (qConfig.instantUpdate && quantaApp->structTreeVisible())
-        quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+    {
+      typingInProgress = false;
+      quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+    }
 }
 
 /** Returns list of values for attribute */

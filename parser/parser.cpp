@@ -854,7 +854,7 @@ Node *Parser::rebuild(Document *w)
 #endif
 
 #ifdef BUILD_KAFKAPART
- kdDebug(24000)<< "Node *Parser::rebuild()" << endl;
+// kdDebug(24000)<< "Node *Parser::rebuild()" << endl;
  modifs->setIsModified(w->isModified());
 #endif
  /**kdDebug(24000)<< "************* Begin User Modification *****************" << endl;
@@ -1007,6 +1007,10 @@ Node *Parser::rebuild(Document *w)
           }
         }
       }
+      if (goUp && 
+          ( (m_dtd->caseSensitive && node->tag->name == node->parent->tag->name) ||
+            (!m_dtd->caseSensitive && node->tag->name.lower() == node->parent->tag->name.lower())) )
+          goUp = false; //it can happen that the tag closes the previous and not the parent  
 
     if (goUp) //lastnode closes the node->parent
     {

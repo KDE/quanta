@@ -64,6 +64,7 @@ QString toolbarExtension = ".toolbar.tgz";
 QRegExp newLineRx("\\n");
 QStringList charList; //hold the list of the &char; chars. See the data/chars file.
 QPtrList<KTempFile> tempFileList;
+bool typingInProgress;
 
 QuantaCommon::QuantaCommon(){
 }

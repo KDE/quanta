@@ -237,7 +237,7 @@ TagAttributeTree::~TagAttributeTree()
 
 void TagAttributeTree::setCurrentNode(Node *node)
 {
-  if(m_node == node)
+  if (m_node == node)
     return;
   m_node = node;
   emit newNodeSelected(node);
@@ -247,6 +247,8 @@ void TagAttributeTree::setCurrentNode(Node *node)
   m_parentItem = 0L;
   if (!node)
       return;
+  if (node && node->tag->type == Tag::Text)  
+    return;  
 #ifdef BUILD_KAFKAPART
 #ifdef HEAVY_DEBUG
   kafkaCommon::coutTree(baseNode, 2);

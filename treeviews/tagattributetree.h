@@ -103,7 +103,7 @@ signals:
   void newNodeSelected(Node *node);
 
 private:
-  Node *m_node;
+  Node* m_node;
   Node *m_newNode;
   bool rebuildEnabled;
   ParentItem *m_parentItem;

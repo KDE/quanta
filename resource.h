@@ -53,5 +53,6 @@ extern QPtrList<KTempFile> tempFileList;
 extern KProgress *progressBar;
 extern QuantaApp *quantaApp;
 extern const QString resourceDir;
+extern bool typingInProgress;
 
 #endif // RESOURCE_H

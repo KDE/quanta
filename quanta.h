@@ -459,6 +459,8 @@ protected:
   void layoutDockWidgets(const QString &layout);
   /** Removes the dtd from the memory */
   void removeDTD(DTDStruct *dtd);
+  /** Updates the structure and attribute treeview. */
+  void updateTreeViews();
 
 
 private:
