@@ -514,7 +514,7 @@ private:
     *openPrjViewAction, *savePrjViewAction, *saveAsPrjViewAction,
     *deletePrjViewAction;
 
-  KAction *bookmarkToggle, *bookmarkClear, *bookmarkPrev, *bookmarkNext;
+  KAction *bookmarkToggle, *bookmarkClear;
   KAction *editTagAction;
 
   //KToggleAction *viewFoldingMarkers;
