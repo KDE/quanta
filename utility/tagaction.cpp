@@ -337,9 +337,9 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
 void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 {
-  kdDebug(24000) << "Script output received." << endl;
   QCString tmp( buffer, buflen + 1 );
   QString text( QString::fromLocal8Bit(tmp) );
+  kdDebug(24000) << "Script output received: |" << text << "|" << endl;
   Document *w = m_view->write();
   if (!w)
   {

@@ -40,12 +40,13 @@
 #include <kmessagebox.h>
 #include <kurldrag.h>
 #include <kdeversion.h>
+
+#include <dom/dom_node.h>
 #ifdef BUILD_KAFKAPART
 #include <kconfig.h>
 #include "wkafkapart.h"
 #include "kafkacommon.h"
 #include "undoredo.h"
-#include <dom/dom_node.h>
 #include <dom/dom_string.h>
 #include <kate/view.h>
 #endif
