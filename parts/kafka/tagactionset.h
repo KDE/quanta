@@ -88,7 +88,9 @@ public slots:
 	void slotRemoveColumns();
 	void slotRemoveCells();
 	void slotRemoveCellsContent();
-
+    // Merge
+    void slotMergeSelectedCells();
+    
 protected:
     virtual void initActionMenus(QWidget* widget);
 
@@ -105,6 +107,8 @@ private:
 	bool canRemoveColumns() const;
 	bool canRemoveCells() const;
 	bool canRemoveCellsContent() const;
+    // Merge
+    bool canMergeSelectedCells() const;
 
     Node* tableStart() const;
     int numberOfColumns() const;

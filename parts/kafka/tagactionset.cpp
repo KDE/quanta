@@ -170,6 +170,14 @@ void TableTagActionSet::initActions(QWidget* parent)
     new KAction(i18n("Cell(s) content"), 0, this,
                 SLOT(slotRemoveCellsContent()),
                 ac, actionName);
+
+    // Merge___________________________________________________________________________
+
+    actionName = "merge_selected_cells";
+    //m_actionNames += actionName;
+    new KAction(i18n("Merge selected cells"), 0, this,
+                SLOT(slotMergeSelectedCells()),
+                ac, actionName);
 }
 
 bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& node)
@@ -317,7 +325,10 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
 
         //m_removeActionMenu_1->insert(m_separator);
     }
+    // Remove _____________________________________________________________________
 
+    // Merge
+//     bool emptyRemoveActionMenu_1 = true;
 
     // _____________________________________________________________________________
 
@@ -334,6 +345,20 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
         m_tableActionMenu_0->remove(m_removeActionMenu_1);
         if(!emptyRemoveActionMenu_1)
             m_tableActionMenu_0->insert(m_removeActionMenu_1);
+            
+        m_tableActionMenu_0->insert(m_separator);
+    }
+    // Merge selected cells
+    KAction* mergeSelectedCellsAction = ac->action("merge_selected_cells");
+    Q_ASSERT(mergeSelectedCellsAction);
+
+    m_tableActionMenu_0->remove(mergeSelectedCellsAction);
+    if(canMergeSelectedCells())
+    {
+        emptyTableActionMenu_0 = false;
+        m_tableActionMenu_0->insert(mergeSelectedCellsAction);
+
+//         m_removeActionMenu_1->insert(m_separator);
     }
 
     return true;
@@ -383,7 +408,7 @@ void TableTagActionSet::slotInsertRowAbove()
 
     view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-    kafkaCommon::coutTree(baseNode, 3);
+//     kafkaCommon::coutTree(baseNode, 3);
 }
 
 bool TableTagActionSet::canInsertRowBelow() const
@@ -416,7 +441,7 @@ void TableTagActionSet::slotInsertRowBelow()
 
     view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-    kafkaCommon::coutTree(baseNode, 3);
+//     kafkaCommon::coutTree(baseNode, 3);
 }
 
 bool TableTagActionSet::canInsertColumnLeft() const
@@ -470,7 +495,7 @@ void TableTagActionSet::slotInsertColumnLeft()
 
     view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-    kafkaCommon::coutTree(baseNode, 3);
+//     kafkaCommon::coutTree(baseNode, 3);
 }
 
 bool TableTagActionSet::canInsertColumnRight() const
@@ -524,7 +549,7 @@ void TableTagActionSet::slotInsertColumnRight()
 
     view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-    kafkaCommon::coutTree(baseNode, 3);
+//     kafkaCommon::coutTree(baseNode, 3);
 }
 
 // Remove ________________________________________________________________
@@ -547,7 +572,7 @@ void TableTagActionSet::slotRemoveTable()
 
     view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-    kafkaCommon::coutTree(baseNode, 3);
+//     kafkaCommon::coutTree(baseNode, 3);
 }
 
 bool TableTagActionSet::canRemoveRows() const
@@ -595,7 +620,7 @@ void TableTagActionSet::slotRemoveRows()
 
     view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-    kafkaCommon::coutTree(baseNode, 3);
+//     kafkaCommon::coutTree(baseNode, 3);
 }
 
 bool TableTagActionSet::canRemoveColumns() const
@@ -637,7 +662,7 @@ void TableTagActionSet::slotRemoveColumns()
 
     view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-    kafkaCommon::coutTree(baseNode, 3);
+//     kafkaCommon::coutTree(baseNode, 3);
 }
 
 bool TableTagActionSet::canRemoveCells() const
@@ -682,25 +707,77 @@ void TableTagActionSet::slotRemoveCellsContent()
         if(!startTd || !endTd)
             return;
             
-        Node* nodeIterator = startTd;
-        Node* stopNode = endTd->SNext();
-        while(nodeIterator && nodeIterator != stopNode)
-        {            
-            Node* aux = nodeIterator;
-                        
-            if(aux->nodeName().lower() == "td")
-            {
-                nodeIterator = nodeIterator->lastChild()->nextSibling();
-                clearCellContents(aux, modifs);
-            }
-            else
-                nodeIterator = nodeIterator->nextSibling();
-        }
     }
 
     view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-    kafkaCommon::coutTree(baseNode, 3);
+//     kafkaCommon::coutTree(baseNode, 3);
+}
+
+// Merge ________________________________________________________________
+
+bool TableTagActionSet::canMergeSelectedCells() const
+{
+    if(!KafkaDocument::ref()->getKafkaWidget()->hasSelection())
+        return false;
+        
+    NodeSelectionInd selection;
+    selection.fillWithVPLCursorSelection();
+    QValueList<int> start = selection.cursorNode();
+    QValueList<int> end = selection.cursorNodeEndSel();
+    
+    return start != end;
+}
+
+void TableTagActionSet::slotMergeSelectedCells()
+{
+    Q_ASSERT(m_currentNode);
+
+    QuantaView* view = ViewManager::ref()->activeView();
+    NodeModifsSet *modifs = new NodeModifsSet();
+
+    NodeSelectionInd selection;
+    selection.fillWithVPLCursorSelection();
+    
+    Q_ASSERT(selection.hasSelection());
+    
+    Node* startSelection = kafkaCommon::getNodeFromLocation(selection.cursorNode());
+    Node* endSelection = kafkaCommon::getNodeFromLocation(selection.cursorNodeEndSel());
+    
+    Node* startTd = parentTag(startSelection, "td");
+    Node* endTd = parentTag(endSelection, "td");
+    
+    Node* nodeIterator = startTd->SNext();
+    Node* stopNode = endTd->SNext();
+    int count = 1;
+    while(nodeIterator && nodeIterator != stopNode)
+    {            
+        Node* aux = nodeIterator;
+        nodeIterator = nodeIterator->SNext();
+        
+        Node* child = aux->firstChild();
+        while(child)
+        {
+            Node* next = child->next;
+            kafkaCommon::moveNode(child, startTd, 0, modifs);
+            child = next;
+        }
+        
+        //if(!aux->hasChildNodes())
+        kafkaCommon::extractAndDeleteNode(aux, modifs);
+        
+        ++count;
+    }
+    
+    if(count == 1)
+        return;
+
+    kafkaCommon::editNodeAttribute(startTd, "colspan", QString::number(count), modifs);
+    kafkaCommon::editNodeAttribute(startTd, "rowspan", "1", modifs);
+
+    view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+
+//     kafkaCommon::coutTree(baseNode, 3);
 }
 
 //_____________________________________________________________________________

@@ -1263,6 +1263,7 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
             node = parentNode;
             Node* aux = parentNode;
             parentNode = parentNode->parent;
+            // Remove node subtree if empty
             if(!aux->hasChildNodes())
                 extractAndDeleteNode(aux, modifs);
         }
