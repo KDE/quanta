@@ -106,7 +106,7 @@ bool Parser::scriptParser(Node *startNode)
         }
         //What is the closing string?
         specialEndStr = dtd->specialAreas[foundText];
-        pos2 = text.find(specialEndStr, pos);
+        pos2 = text.find(specialEndStr, pos + foundText.length());
         if (pos2 != -1)
         {
           //Calculate the end coordinates
@@ -1048,7 +1048,11 @@ Node* Parser::specialAreaParser(Node *startNode)
         }
 
       }
-    }
+    } else
+  {
+    eLine = el;
+    eCol = ec - specialEndStr.length();
+  }
   } else
   {
     eLine = el;
