@@ -267,9 +267,11 @@ AttributeUrlItem::~AttributeUrlItem()
 
 QString AttributeUrlItem::editorText()
 {
-  KURL url;
+  KURL url, baseURL;
   QuantaCommon::setUrl(url, urlRequester->url());
-  url = QExtFileInfo::toRelative(url, m_listView->node()->tag->write()->url());
+  baseURL = m_listView->node()->tag->write()->url();
+  baseURL.setPath(baseURL.directory());
+  url = QExtFileInfo::toRelative(url, baseURL);
   QString s = url.url();
   if (url.protocol() == m_listView->node()->tag->write()->url().protocol())
     s.remove(0, url.protocol().length() + 1);
@@ -280,9 +282,11 @@ void AttributeUrlItem::showEditor()
 {
   placeEditor(urlRequester);
   urlRequester->show();
-  KURL url;
+  KURL url, baseURL;
+  baseURL = m_listView->node()->tag->write()->url();
+  baseURL.setPath(baseURL.directory());
   QuantaCommon::setUrl(url, text(1));
-  url= QExtFileInfo::toAbsolute(url, m_listView->node()->tag->write()->url());
+  url= QExtFileInfo::toAbsolute(url, baseURL);
   urlRequester->setURL(url.url());
   urlRequester->setFocus();
 }
