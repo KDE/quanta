@@ -21,6 +21,8 @@
 
 #include <kuniqueapplication.h>
 
+class KCmdLineArgs;
+
 class KSplash : public QFrame
 {
   Q_OBJECT
@@ -41,6 +43,7 @@ class KQApplicationPrivate
     void init();
    
     KSplash *splash;
+    KCmdLineArgs *args;
 };
 
 class KQApplication : public KApplication, KQApplicationPrivate

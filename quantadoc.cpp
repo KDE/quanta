@@ -84,12 +84,15 @@ QuantaDoc::~QuantaDoc()
 KURL::List QuantaDoc::openedFiles(bool noUntitled)
 {
   KURL::List list;
-  QTabWidget *tab = quantaApp->getView()->writeTab;
-  for (int i = 0; i < tab->count(); i++) 
+  if (quantaApp->getView()) //need to check otherwise it may crash on exit
   {
-    Document *w = dynamic_cast<Document *>(tab->page(i));
-    if ( !w->isUntitled() || !noUntitled )
-      list.append( w->url() );
+    QTabWidget *tab = quantaApp->getView()->writeTab;
+    for (int i = 0; i < tab->count(); i++) 
+    {
+      Document *w = dynamic_cast<Document *>(tab->page(i));
+      if ( !w->isUntitled() || !noUntitled )
+        list.append( w->url() );
+    }
   }
 
   return list;

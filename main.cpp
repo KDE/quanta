@@ -23,7 +23,7 @@
 #include <kiconloader.h>
 #include <kcmdlineargs.h>
 #include <ksimpleconfig.h>
-#include <kdebug.h>
+//#include <kdebug.h>
 
 // qt includes
 #include <qpixmap.h>
@@ -128,8 +128,8 @@ int main(int argc, char *argv[])
   KApplication *app;
 
   if (isUnique) {
-	if (!KQUniqueApplication::start())
-		exit(0);
+//	if (!KQUniqueApplication::start())
+//		exit(0);
 	app = new KQUniqueApplication;
   } else {
 	app = new KQApplication;

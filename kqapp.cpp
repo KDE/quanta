@@ -24,6 +24,7 @@
 #include <kiconloader.h>
 #include <kstandarddirs.h>
 
+#include "quantacommon.h"
 #include "project/project.h"
 #include "quanta.h"
 #include "kqapp.h"
@@ -53,7 +54,7 @@ KSplash::~KSplash()
 KQApplication::KQApplication()
  : KApplication()
 {
-   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+   args = KCmdLineArgs::parsedArgs();
    splash = 0L;
 
    KGlobal::dirs()->addPrefix(PREFIX);
@@ -67,6 +68,7 @@ KQApplication::KQApplication()
    else
    {
      quantaApp = new QuantaApp();
+     setMainWidget(quantaApp);
      QTimer::singleShot(10, this, SLOT( slotInit()));
    }
 }
@@ -94,17 +96,23 @@ KQUniqueApplication::~KQUniqueApplication()
 
 int KQUniqueApplication::newInstance()
 {
+  args = KCmdLineArgs::parsedArgs();
   if (mainWidget())
   {
     KWin::setActiveWindow(mainWidget()->winId());
+    quantaApp = static_cast<QuantaApp*>(mainWidget());
+    for (int i = 0; i < args->count(); i++) 
+    {
+      quantaApp->slotFileOpen(args->url(i), quantaApp->defaultEncoding());  // load initial files
+    }
   }
   else
   {
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     splash = 0L;
     if (args->isSet("logo")) splash = new KSplash();
 
     quantaApp = new QuantaApp();
+    setMainWidget(quantaApp);
     QTimer::singleShot(10, this, SLOT( slotInit()));
   }
 
@@ -118,7 +126,6 @@ void KQUniqueApplication::slotInit()
 
 void KQApplicationPrivate::init()
 {
-  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   if (quantaApp->quantaStarted)
   {
     quantaApp->initQuanta();
@@ -140,8 +147,11 @@ void KQApplicationPrivate::init()
     if (!quantaApp->getProject()->hasProject())
     {
       for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-        quantaApp->slotFileOpen(KURL(*it), quantaApp->defaultEncoding());  // load initial files
-
+      {
+        KURL url;
+	QuantaCommon::setUrl(url, *it);
+        quantaApp->slotFileOpen(url, quantaApp->defaultEncoding());  // load initial files
+      }
       quantaApp->openLastFiles();
     }
   }
