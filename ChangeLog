@@ -45,6 +45,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
 	- don't show the Upload File item in the tab context menu if the current item is not part of a project.
 	- parse PHP statements ending with a one-line comment ( //comment ?>)
 	  correctly [#80289]
+        - correctly select modified files for upload [#94167]
 
 
   - behavioral/user interface changes:

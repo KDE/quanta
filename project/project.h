@@ -97,7 +97,7 @@ public:
   /** Returns the saved password for entry */
   QString password(const QString &entry);
   bool passwordSaved(const QString &entry);
-  void updateTimeStamp(const KURL& url, int modifiedTime);
+  void updateTimeStamp(const KURL& url, int modifiedTime, bool modifiedTimeOnly);
   QDomDocument *dom();
   QString debuggerClient();
   bool keepPasswd;
