@@ -1407,98 +1407,113 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
             lastAreaPos = areaPos2 + 1;
           }
           QuantaCommon::removeCommentsAndQuotes(foundStr, dtd);
-          //find the structure blocks and remove the text inside them
+          
+          QValueList<uint> structPositions;
           int structPos = 0;
           while (structPos !=-1)
           {
             structPos = foundStr.find(dtd->structBeginStr, structPos);
             if (structPos != -1)
             {
-              int openNum = 1;
-              int pos = structPos + dtd->structBeginStr.length();
-              while (openNum !=0 && pos != -1)
-              {
-                pos = dtd->structRx.search(foundStr, pos);
-                if (pos != -1)
-                {
-                  if (dtd->structRx.cap() == dtd->structBeginStr)
-                      openNum++;
-                  else
-                      openNum--;
-                  pos++;
-                }
-              }
-              if (pos == -1)
-                  pos = foundStr.length();
-              QString spaces;
-              spaces.fill(' ', pos - structPos + 1);
-              foundStr.replace(structPos, pos - structPos + 1, spaces);
-              int openBracketPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
-              openBracketPos = foundStr.find('(', openBracketPos);
-              openNum = 1;
-              if (openBracketPos != -1)
-              {
-                int closeBracketPos = openBracketPos;
-                while (closeBracketPos < structPos && openNum !=0)
-                {
-                  if (foundStr[closeBracketPos] == '(')
-                      openNum++;
-                  if (foundStr[closeBracketPos] == ')')
-                      openNum--;
-                  closeBracketPos++;
-                }
-                spaces.fill(' ', closeBracketPos - openBracketPos);
-                foundStr.replace(openBracketPos, closeBracketPos - openBracketPos, spaces);
-              }
-
-              structPos =  pos + 1;
+              structPositions.append(structPos);
+              structPos += dtd->structBeginStr.length();
             }
-          }
-          QValueList<StructTreeGroup>::ConstIterator it;
-          for (it = dtd->structTreeGroups.begin(); it != dtd->structTreeGroups.end(); ++it)
+          }          
+          
+          int structEndPosition = 0;
+          QString savedStr = foundStr;
+          for (uint i = 0; i < structPositions.count(); i++)
           {
-            group = *it;
-            if (!group.hasDefinitionRx)
-              continue;
-            int pos = 0;
-            while (pos != -1)
+            foundStr = savedStr;
+            uint structBeginPos = structPositions[i];
+            //find the structure blocks and remove the text inside them
+            structPos = structBeginPos;
+            int openNum = 1;
+            int pos = structPos + dtd->structBeginStr.length();
+            while (openNum !=0 && pos != -1)
             {
-              pos = group.definitionRx.search(foundStr, pos);
+              pos = dtd->structRx.search(foundStr, pos);
               if (pos != -1)
               {
-                int l;
-                if (group.definitionRx.pos(1) > pos)
-                {
-                  pos = group.definitionRx.pos(1);
-                  l = group.definitionRx.cap(1).length();
-                }
+                if (dtd->structRx.cap() == dtd->structBeginStr)
+                    openNum++;
                 else
-                {
-                  l = group.definitionRx.cap().length();
-                }
-                QString s = content.mid(areaPos + pos, l);
-                pos += l;
-                if (!(*elements)[group.name].contains(s))
-                {
-                  Tag *tag = new Tag();
-                  tag->name = s;
-                  tag->setDtd(dtd);
-                  QString s2 = content.left(areaPos + pos);
-                  int newLineNum = s2.contains('\n');
-                  int tmpCol = s2.length() - s2.findRev('\n') - 1;
-                  tag->setTagPosition(newLineNum, tmpCol - s.length(), newLineNum, tmpCol);
-                  Node *node = new Node(0L);
-                  node->tag = tag;
-                  node->fileName = fileName;
-                  GroupElement *groupElement = new GroupElement;
-                  groupElement->node = node;
-                  groupElement->parentNode = 0L;
-                  GroupElementList *groupElementList = &(*elements)[group.name][s];
-                  groupElementList->append(groupElement);
-                }
+                    openNum--;
+                pos++;
               }
             }
-          } //for
+            if (pos == -1)
+                pos = foundStr.length();
+            foundStr = foundStr.left(pos);
+            QString spaces;
+            spaces.fill(' ', pos - structPos + 1);
+            foundStr.replace(structPos, pos - structPos + 1, spaces);
+            int openBracketPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
+            openBracketPos = foundStr.find('(', openBracketPos);
+            openNum = 1;
+            if (openBracketPos != -1)
+            {
+              int closeBracketPos = openBracketPos;
+              while (closeBracketPos < structPos && openNum !=0)
+              {
+                if (foundStr[closeBracketPos] == '(')
+                    openNum++;
+                if (foundStr[closeBracketPos] == ')')
+                    openNum--;
+                closeBracketPos++;
+              }
+              spaces.fill(' ', closeBracketPos - openBracketPos);
+              foundStr.replace(openBracketPos, closeBracketPos - openBracketPos, spaces);
+            }
+
+            structPos =  pos + 1;
+            QValueList<StructTreeGroup>::ConstIterator it;
+            for (it = dtd->structTreeGroups.begin(); it != dtd->structTreeGroups.end(); ++it)
+            {
+              group = *it;
+              if (!group.hasDefinitionRx)
+                continue;
+              int pos = structEndPosition;
+              while (pos != -1)
+              {
+                pos = group.definitionRx.search(foundStr, pos);
+                if (pos != -1)
+                {
+                  int l;
+                  if (group.definitionRx.pos(1) > pos)
+                  {
+                    pos = group.definitionRx.pos(1);
+                    l = group.definitionRx.cap(1).length();
+                  }
+                  else
+                  {
+                    l = group.definitionRx.cap().length();
+                  }
+                  QString s = content.mid(areaPos + pos, l);
+                  pos += l;
+                  if (!(*elements)[group.name].contains(s))
+                  {
+                    Tag *tag = new Tag();
+                    tag->name = s;
+                    tag->setDtd(dtd);
+                    QString s2 = content.left(areaPos + pos);
+                    int newLineNum = s2.contains('\n');
+                    int tmpCol = s2.length() - s2.findRev('\n') - 1;
+                    tag->setTagPosition(newLineNum, tmpCol - s.length(), newLineNum, tmpCol);
+                    Node *node = new Node(0L);
+                    node->tag = tag;
+                    node->fileName = fileName;
+                    GroupElement *groupElement = new GroupElement;
+                    groupElement->node = node;
+                    groupElement->parentNode = 0L;
+                    GroupElementList *groupElementList = &(*elements)[group.name][s];
+                    groupElementList->append(groupElement);
+                  }
+                }
+              }
+            } //for
+            structEndPosition = structBeginPos + 1;
+          }
         } //if (areaPos != -1)
       }// while (areaPos != -1)
     }
