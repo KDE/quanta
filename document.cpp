@@ -1347,6 +1347,8 @@ bool Document::scriptAutoCompletion(int line, int column)
 {
  bool handled = false;
  Node *node = parser->nodeAt(line, column);
+ if (!node)
+    return;
  if (node->parent)
    node = node->parent;
  else if (node->prev)
