@@ -1320,9 +1320,9 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
               }
               if (pos == -1)
                   pos = foundStr.length();
-/*              kdDebug(24000) << "length: " << foundStr.length() << endl;    
-              kdDebug(24000) << "index: " << structPos << " length: " << pos - structPos + 1 << endl; */
-              foundStr.replace(structPos, pos - structPos + 1, &space, pos - structPos + 1);
+              QString spaces;
+              spaces.fill(' ', pos - structPos + 1);
+              foundStr.replace(structPos, pos - structPos + 1, spaces);
               int openBracketPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
               openBracketPos = foundStr.find('(', openBracketPos);
               openNum = 1;
@@ -1337,7 +1337,8 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                       openNum--;
                   closeBracketPos++;
                 }
-                foundStr.replace(openBracketPos, closeBracketPos - openBracketPos, &space, closeBracketPos - openBracketPos);
+                spaces.fill(' ', closeBracketPos - openBracketPos);
+                foundStr.replace(openBracketPos, closeBracketPos - openBracketPos, spaces);
               }
 
               structPos =  pos + 1;
