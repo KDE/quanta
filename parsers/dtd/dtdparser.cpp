@@ -77,7 +77,24 @@ bool DTDParser::parse()
   DTD::dtd_ptr = xmlParseDTD(NULL, xmlCharStrndup(fileName.utf8(), fileName.utf8().length()));
   if( DTD::dtd_ptr == NULL )
   {
-     KMessageBox::error(0, i18n("Error while parsing the DTD.\nThe error message is:\n%1").arg("x"));
+    QString errorStr = i18n("Unknown");
+    xmlErrorPtr errorPtr = xmlGetLastError();
+    if (errorPtr != NULL)
+    {
+      errorStr = QString::fromLatin1(errorPtr->message);
+      QString s;
+      s = QString::fromLatin1(errorPtr->str1);
+      if (!s.isEmpty())
+        errorStr += "<br>" + s;
+      s = QString::fromLatin1(errorPtr->str2);
+      if (!s.isEmpty())
+        errorStr += "<br>" + s;
+      s = QString::fromLatin1(errorPtr->str2);
+      if (!s.isEmpty())
+        errorStr += "<br>" + s;
+      xmlFreeFunc(errorPtr);
+    }
+    KMessageBox::error(0, i18n("<qt>Error while parsing the DTD.<br>The error message is:<br><i>%1</i></qt>").arg(errorStr));
      return false;
 //          xmlGenericError(xmlGenericErrorContext,                          "Could not parse %s\n", argv[1]);
   }
