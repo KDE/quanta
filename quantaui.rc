@@ -310,7 +310,7 @@
   <ActionProperties>
     <Action accel="Ctrl+Return" name="tag_br" />
     <Action accel="Ctrl+Minus"  name="tag_hr" />
-    <Action accel="Ctrl+Space"  name="tag_nbsp" />
+    <Action accel="Alt+Space"  name="tag_nbsp" />
   </ActionProperties>
 
 </kpartgui>

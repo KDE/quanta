@@ -274,6 +274,8 @@ class QuantaApp : public KDockMainWindow
   void slotLoadGlobalToolbar();
   /** No descriptions */
   void slotToolsChangeDTD();
+  /** No descriptions */
+  void slotShowCompletion();
 
  private slots:
 	
