@@ -212,6 +212,7 @@ void QuantaView::slotInsertCSS()
   w->viewCursorIf->cursorPositionReal(&line, &col);
   if (line == 0 && col == 0)
     col++;
+  parser->rebuild(w);  
   Node *node = parser->nodeAt(line, col, false);
   unsigned int lastLine = w->editIf->numLines() - 1;
   unsigned int lastCol = w->editIf->lineLength(lastLine);
