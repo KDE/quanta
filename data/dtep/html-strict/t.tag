@@ -190,8 +190,7 @@
         <items>
             <item>baseline</item>
             <item>bottom</item>
-            <item>bottom</item>
-            <item>center</item>
+            <item>middle</item>
             <item>top</item>
         </items>
         <location col="3" row="2" colspan="1" />
