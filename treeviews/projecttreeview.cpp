@@ -200,7 +200,8 @@ void ProjectTreeView::slotReloadTree( const KURL::List &urlList, bool buildNewTr
   {
     if (m_projectDir) removeBranch(m_projectDir);
     QString m_projectNameStr = m_projectName+" ";
-    if (m_projectName != i18n("No Project"))
+    bool hasProject = (m_projectName != i18n("No Project"));
+    if (hasProject)
     {
      if (m_baseURL.protocol() == "file")
      {
@@ -213,8 +214,9 @@ void ProjectTreeView::slotReloadTree( const KURL::List &urlList, bool buildNewTr
     m_projectDir =  new ProjectTreeBranch( this, m_baseURL, m_projectNameStr, UserIcon("ptab"));
     addBranch(m_projectDir);
     m_projectDir->urlList = m_urlList;  // set list for filter
-
-    if (m_projectName == i18n("No Project"))
+    if (hasProject)
+      m_projectDir->populate(m_projectDir->rootUrl(), m_projectDir->root());
+    else
       m_projectDir->root()->setEnabled(false);
 
     if ( m_urlList.isEmpty() )

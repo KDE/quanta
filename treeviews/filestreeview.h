@@ -100,20 +100,20 @@ public slots:
   virtual void slotPercent(KIO::Job *job, unsigned long value);
   virtual void slotInsertInProject();
   virtual void slotInsertDirInProject();
- /** Handles dropping  */
-//  void slotDragInsert(QDropEvent *);
-  /** No descriptions */
-  void contentsDragEnterEvent(QDragEnterEvent *event);
   void slotReturnPressed(QListViewItem *item);
+
+protected slots:
+  void slotDropped (KURL::List&, KURL&);
 
 protected:
   KFileTreeBranch* newBranch(const KURL& url);
   virtual void itemRenamed(const KURL& , const KURL& );
   void addFileInfoPage(KPropertiesDialog *propDlg);
   int denyBinaryInsert();
-  void contentsDropEvent(QDropEvent *event);
   /** expands an archiv, if possible */
   bool expandArchiv (KFileTreeViewItem *item);
+  bool acceptDrag(QDropEvent* e ) const;
+  void findDrop(const QPoint &pos, QListViewItem *&parent, QListViewItem *&after);
 
   KPopupMenu *m_fileMenu;
   KPopupMenu *m_folderMenu;

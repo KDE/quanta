@@ -118,6 +118,8 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   setLineWidth( 2 );
   setFocusPolicy(QWidget::ClickFocus);
   setAcceptDrops(true);
+  connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
+          this, SLOT(slotDropped(KURL::List&, KURL&)));
 
   topURLList = topList;
 
@@ -299,13 +301,21 @@ bool FilesTreeView::expandArchiv (KFileTreeViewItem *item)
 
   QString mimeType = KMimeType::findByURL(urlToOpen)->name();
 
-  if ( mimeType == "application/x-tgz" ) //it is an archiv
+  if ( mimeType == "application/x-tgz" ||
+       mimeType == "application/x-tbz" ||
+       mimeType == "application/x-tar" ) //it is an archiv
     urlToOpen.setProtocol("tar");
   else
     if ( mimeType == "application/x-zip" ) //it is an archiv
       urlToOpen.setProtocol("zip");
     else
       return false;
+
+  // change status if there is already a sub branch
+  if (item->isExpandable()) {
+    item->setOpen( ! item->isOpen());
+    return true;
+  };
 
   KFileTreeBranch *kftb = new FilesTreeBranch(this, urlToOpen, item->text(0), *(item->pixmap(0)), false, item);
   addBranch(kftb);  // connecting some signals
@@ -325,7 +335,7 @@ void FilesTreeView::slotAddToTop()
   {
     KURL url(currentURL().url());
     url.adjustPath(+1);
-    if ( curItem != curItem->branch()->root() ) //it is not a top folder
+    if ( curItem != curItem->branch()->root() )  //it is not a top folder
     { // add
       if (topURLList.findIndex(url) == -1)
       {
@@ -619,50 +629,39 @@ void FilesTreeView::slotJobFinished(KIO::Job *job)
 }
 
 
-/** No descriptions */
-void FilesTreeView::contentsDropEvent(QDropEvent *e)
-{
- KFileTreeViewItem *item = dynamic_cast <KFileTreeViewItem *> ( itemAt(contentsToViewport(e->pos())) );
-
- if ( ! item) return;
-
- KURL dest;
- if ( item->isDir() )
- {
-   dest = item->url();
- }
- else
- {
-   dest = item->url().directory(false);
- }
- if (KURLDrag::canDecode(e))
- {
-//     KURL source;
-     KURL::List fileList;
-
-     KURLDrag::decode(e, fileList);    //TODO: Make it workable for non local files
-     if(fileList.empty()) return;
-
-     KIO::Job *job = KIO::copy(fileList,dest);
-     connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
-     progressBar->setTotalSteps(100);
-     connect( job, SIGNAL( percent( KIO::Job *, unsigned long)),
-              this, SLOT( slotPercent( KIO::Job *, unsigned long)));
- }
-}
-
-/** No descriptions */
-void FilesTreeView::contentsDragEnterEvent(QDragEnterEvent *event)
-{
- if (KURLDrag::canDecode(event) )
- {
-    event->accept();
- }
-}
-
 void FilesTreeView::slotReturnPressed(QListViewItem *item)
 {
   emit executed (item);
+}
+
+
+bool FilesTreeView::acceptDrag(QDropEvent* e ) const
+{
+  return (KFileTreeView::acceptDrag(e));
+}
+
+void FilesTreeView::slotDropped (KURL::List& fileList, KURL& dest)
+{
+  if(fileList.empty()) return;
+
+  KIO::Job *job = KIO::copy(fileList,dest);
+  connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+  progressBar->setTotalSteps(100);
+  connect( job, SIGNAL( percent( KIO::Job *, unsigned long)),
+          this, SLOT( slotPercent( KIO::Job *, unsigned long)));
+}
+
+void FilesTreeView::findDrop(const QPoint &pos, QListViewItem *&parent, QListViewItem *&after)
+{
+  QPoint p (contentsToViewport(pos));
+  QListViewItem *atpos = itemAt(p);
+  if (atpos && atpos->parent()) {
+    after = atpos;
+    parent = atpos->parent();
+  } else {
+    after = atpos;
+    parent = atpos;
+  }
 }
 
 #include "filestreeview.moc"

@@ -126,17 +126,20 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
 
   setFocusPolicy(QWidget::ClickFocus);
 
-  connect(  this, SIGNAL(executed(QListViewItem *)),
-            this, SLOT(slotSelectFile(QListViewItem *)));
+  connect(this, SIGNAL(executed(QListViewItem *)),
+          this, SLOT(slotSelectFile(QListViewItem *)));
 
-  connect(  this, SIGNAL(returnPressed(QListViewItem *)),
-            this, SLOT(slotReturnPressed(QListViewItem *)));
+  connect(this, SIGNAL(returnPressed(QListViewItem *)),
+          this, SLOT(slotReturnPressed(QListViewItem *)));
 
-  connect( this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
-           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
+  connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
+          this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
 
-  connect(  this, SIGNAL(open(QListViewItem *)),
-            this,  SLOT(slotSelectFile(QListViewItem *)));
+  connect(this, SIGNAL(open(QListViewItem *)),
+          this,  SLOT(slotSelectFile(QListViewItem *)));
+
+  connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
+          this, SLOT(slotDropped(KURL::List&, KURL&)));
 
   setAcceptDrops(true);
   setSelectionMode(QListView::Single);
@@ -321,69 +324,52 @@ QDragObject * TemplatesTreeView::dragObject ()
 /** No descriptions */
 void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
 {
- QListViewItem *item = itemAt(contentsToViewport(e->pos()));
-
- if (item)
- {
-   KURL dest;
-   if ( currentKFileTreeViewItem()->isDir() )
-   {
-     dest = currentURL();
-   }
-   else
-   {
-     dest = currentURL().directory(false);
-   }
-   if (KURLDrag::canDecode(e))
-   {
-     KURL source;
-    // QTextDrag::decode(e,source);
-     KURL::List fileList;
-
-     KURLDrag::decode(e, fileList);    //TODO: Make it workable for non local files
-     if(fileList.empty()) return;
-
-     KIO::Job *job = KIO::copy(fileList, dest);
-     connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
-   } else
-     if (QTextDrag::canDecode(e))
-     {
-       QString content;
-       QTextDrag::decode(e, content);
-       KURL url =KURLRequesterDlg::getURL( dest.path() + "template.txt",
-                                           this, i18n("Save selection as template file: "));
-       if ( !url.isEmpty() )
-       {
-  //       KMessageBox::information(this,content, "Decode Drop" + dest);
-         //now save the file
-         KTempFile* tempFile = new KTempFile(tmpDir);
-         tempFile->setAutoDelete(true);
-          * (tempFile->textStream()) << content;
-         tempFile->close();
-         bool proceed = true;
-         if (QExtFileInfo::exists(url))
-         {
-           proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite")) == KMessageBox::Yes;
-         }
-         if (proceed)
-         {
-           if (!KIO::NetAccess::upload(tempFile->name(),  url))
-           {
-             KMessageBox::error(this,i18n("<qt>Couldn't write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
-           }
-         }
-         delete tempFile;
-       }
-     }
- }
-}
-/** No descriptions */
-void TemplatesTreeView::contentsDragEnterEvent(QDragEnterEvent *event)
-{
- if (KURLDrag::canDecode(event) || QTextDrag::canDecode(event))
- {
-    event->accept();
- }
+  if (KURLDrag::canDecode(e))
+  {
+    // handles url drops
+    FilesTreeView::contentsDropEvent(e);
+    return;
+  }
+  if (QTextDrag::canDecode(e))
+  {
+    QListViewItem *item = itemAt(contentsToViewport(e->pos()));
+    if (item)
+    {
+      KURL dest;
+      if ( currentKFileTreeViewItem()->isDir() )
+        dest = currentURL();
+      else
+        dest = currentURL().directory(false);
+      dest.adjustPath(+1);
+      QString content;
+      QTextDrag::decode(e, content);
+      KURL url =KURLRequesterDlg::getURL( dest.path() + "template.txt",
+                                          this, i18n("Save selection as template file: "));
+      if ( !url.isEmpty() )
+      {
+        //now save the file
+        KTempFile* tempFile = new KTempFile(tmpDir);
+        tempFile->setAutoDelete(true);
+        * (tempFile->textStream()) << content;
+        tempFile->close();
+        bool proceed = true;
+        if (QExtFileInfo::exists(url))
+        {
+          proceed = KMessageBox::warningYesNo(this, i18n("<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)),i18n("Overwrite")) == KMessageBox::Yes;
+        }
+        if (proceed)
+        {
+          if (!KIO::NetAccess::upload(tempFile->name(),  url))
+          {
+            KMessageBox::error(this,i18n("<qt>Couldn't write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+          }
+        }
+        delete tempFile;
+      }
+    }
+  }
+  // must be done to reset timer etc.
+  FilesTreeView::contentsDropEvent(e);
 }
 
 /** Reads a .dirinfo file from the selected item's path */
@@ -829,6 +815,11 @@ void TemplatesTreeView::slotSendInMail()
       kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, attachmentFile);
     }
     delete mailDlg;
+}
+
+bool TemplatesTreeView::acceptDrag(QDropEvent* e ) const
+{
+ return (FilesTreeView::acceptDrag(e) || QTextDrag::canDecode(e));
 }
 
 #include "templatestreeview.moc"

@@ -49,8 +49,6 @@ public slots:
   void slotNewDir();
  /** Handles dropping on the document from the template tree */
   void slotDragInsert(QDropEvent *);
-  /** No descriptions */
-  void contentsDragEnterEvent(QDragEnterEvent *event);
   /** packs and sends files or folders */
   void slotSendInMail();
   virtual void slotSelectFile(QListViewItem *item);
@@ -87,6 +85,7 @@ protected: // Protected methods
   /** No descriptions */
   void contentsDropEvent(QDropEvent *event);
   void writeTemplateInfo();
+  bool acceptDrag(QDropEvent* e ) const;
 };
 
 #endif
