@@ -372,7 +372,13 @@ void QuantaBookmarks::gotoLineNumber(int line)
   }
   if (doc)
   {
-    emit gotoFileAndLine(doc->url().url(), line, 0);
+    if (doc->isUntitled())
+    {
+       emit gotoFileAndLine("file:" + doc->url().path(), line, 0);
+    } else
+    {
+      emit gotoFileAndLine(doc->url().url(), line, 0);
+    }
   }     
 }
 

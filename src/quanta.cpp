@@ -1618,9 +1618,18 @@ void QuantaApp::setCursorPosition( int row, int col )
 
 void QuantaApp::gotoFileAndLine(const QString& filename, int line, int column)
 {
-  if ( !filename.isEmpty() )
-    m_doc->openDocument( KURL::fromPathOrURL( filename ) );
-
+  if (!filename.isEmpty())
+  {
+    QuantaView* view = ViewManager::ref()->isOpened(KURL::fromPathOrURL(filename));
+    if (view)
+    {
+      view->activate();
+      view->activated();      
+    } else
+    {
+      m_doc->openDocument( KURL::fromPathOrURL( filename ) );
+    }
+  }
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
