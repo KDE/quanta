@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="list">
@@ -20,5 +21,9 @@
    <whatsthis>Name of a built-in data type or simpleType. If the content contains a simpleType element, then itemType is not allowed, else itemType is required.</whatsthis>
    <location col="1" row="1"/>
   </attr>
+  <children>
+   <child name="annotation" />
+   <child name="simpleType" />
+  </children>
  </tag>
 </TAGS>

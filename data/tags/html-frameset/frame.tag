@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="frame" hasCore="1" single="1">
@@ -58,26 +59,6 @@
         </items>
     </attr>
 
-    <spacer orientation="h">
-        <location col="0" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="1" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="2" row="8" />
-    </spacer>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="3" />
-    </spacer>
-
-    <kafkainfos>
-        <rootnode canbedeleted="false" canbemodified="false" canhavecursorfocus="no" cursorcanenter="false">
-        </rootnode>
-    </kafkainfos>
 
 </tag>
 </TAGS>

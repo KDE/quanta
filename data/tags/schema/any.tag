@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="any">
@@ -55,5 +56,8 @@
    <whatsthis>How should the XML processor handle validation, in regard to elements specified by this element?</whatsthis>
    <location col="1" row="4"/>
   </attr>
+  <children>
+   <child name="annotation" />
+  </children>
  </tag>
 </TAGS>

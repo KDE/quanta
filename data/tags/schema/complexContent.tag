@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="complexContent">
@@ -24,5 +25,10 @@
    <whatsthis>true, if character data is allowed to appear between the child elements. Default is false.</whatsthis>
    <location col="1" row="1"/>
   </attr>
+  <children>
+   <child name="annotation" />
+   <child name="restriction" />
+   <child name="extension" />
+  </children>
  </tag>
 </TAGS>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="field">
@@ -20,5 +21,8 @@
    <whatsthis>Single element or attribute whose content or value is used for the constraint.</whatsthis>
    <location col="1" row="1"/>
   </attr>
+  <children>
+   <child name="annotation" />
+  </children>
  </tag>
 </TAGS>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="keyref">
@@ -30,5 +31,10 @@
    <whatsthis>Name of a key or unique element defined in this or another schema.</whatsthis>
    <location col="1" row="2"/>
   </attr>
+  <children>
+   <child name="annotation" />
+   <child name="selector" />
+   <child name="field" />
+  </children>
  </tag>
 </TAGS>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="attributeGroup">
@@ -41,5 +42,11 @@
    <stoppingtag name="element" />
    <stoppingtag name="notation" />
   </stoppingtags>
+  <children>
+   <child name="annotation" />
+   <child name="attribute" />
+   <child name="attributeGroup" />
+   <child name="anyAttribute" />
+  </children>
  </tag>
 </TAGS>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="basefont" single="1">
@@ -6,10 +7,6 @@
         <text>This tag is deprecated in HTML 4.0 </text>
         <location col="0" row="0" colspan="3" />
     </label>
-
-    <spacer orientation="h">
-        <location col="0" row="1" colspan="3" />
-    </spacer>
 
     <attr name="color" type="color">
         <text>Color</text>
@@ -40,28 +37,8 @@
         </items>
     </attr>
 
-    <attr name="id"> </attr>
+    <attr name="id" type="input" />
 
-    <spacer orientation="h">
-        <location col="0" row="5" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="1" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="2" row="8" />
-    </spacer>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="3" />
-    </spacer>
-
-    <kafkainfos>
-        <rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="false">
-        </rootnode>
-    </kafkainfos>
 
 </tag>
 </TAGS>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="selector">
@@ -20,5 +21,8 @@
    <whatsthis>An XPath expression, relative to the element being declared, that identifies the child elements to which the identity constraint applies.</whatsthis>
    <location col="1" row="1"/>
   </attr>
+  <children>
+   <child name="annotation" />
+  </children>
  </tag>
 </TAGS>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="a" hasCore="1" hasI18n="1" hasScript="1">
@@ -110,31 +111,152 @@
     <attr name="tabindex"> </attr>
     <attr name="shape"> </attr>
     <attr name="coords"> </attr>
-
-    <kafkainfos>
-        <rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
-        </rootnode>
-    </kafkainfos>
+<children>
+<child name="abbr" />
+<child name="acronym" />
+<child name="b" />
+<child name="bdo" />
+<child name="big" />
+<child name="br" />
+<child name="button" />
+<child name="cite" />
+<child name="code" />
+<child name="del" />
+<child name="dfn" />
+<child name="em" />
+<child name="i" />
+<child name="img" />
+<child name="input" />
+<child name="ins" />
+<child name="kbd" />
+<child name="label" />
+<child name="map" />
+<child name="object" />
+<child name="q" />
+<child name="samp" />
+<child name="script" />
+<child name="select" />
+<child name="small" />
+<child name="span" />
+<child name="strong" />
+<child name="sub" />
+<child name="sup" />
+<child name="textarea" />
+<child name="tt" />
+<child name="var" />
+</children>
 </tag>
 <tag name="abbr" hasCore="1" hasI18n="1" hasScript="1">
-	<kafkainfos>
-		<rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
-		</rootnode>
-	</kafkainfos>
+<children>
+<child name="a" />
+<child name="abbr" />
+<child name="acronym" />
+<child name="b" />
+<child name="bdo" />
+<child name="big" />
+<child name="br" />
+<child name="button" />
+<child name="cite" />
+<child name="code" />
+<child name="del" />
+<child name="dfn" />
+<child name="em" />
+<child name="i" />
+<child name="img" />
+<child name="input" />
+<child name="ins" />
+<child name="kbd" />
+<child name="label" />
+<child name="map" />
+<child name="object" />
+<child name="q" />
+<child name="samp" />
+<child name="script" />
+<child name="select" />
+<child name="small" />
+<child name="span" />
+<child name="strong" />
+<child name="sub" />
+<child name="sup" />
+<child name="textarea" />
+<child name="tt" />
+<child name="var" />
+</children>
 </tag>
 
 <tag name="acronym" hasCore="1" hasI18n="1" hasScript="1">
-	<kafkainfos>
-		<rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
-		</rootnode>
-	</kafkainfos>
+<children>
+<child name="a" />
+<child name="abbr" />
+<child name="acronym" />
+<child name="b" />
+<child name="bdo" />
+<child name="big" />
+<child name="br" />
+<child name="button" />
+<child name="cite" />
+<child name="code" />
+<child name="del" />
+<child name="dfn" />
+<child name="em" />
+<child name="i" />
+<child name="img" />
+<child name="input" />
+<child name="ins" />
+<child name="kbd" />
+<child name="label" />
+<child name="map" />
+<child name="object" />
+<child name="q" />
+<child name="samp" />
+<child name="script" />
+<child name="select" />
+<child name="small" />
+<child name="span" />
+<child name="strong" />
+<child name="sub" />
+<child name="sup" />
+<child name="textarea" />
+<child name="tt" />
+<child name="var" />
+</children>
 </tag>
-
 <tag name="address" hasCore="1" hasI18n="1" hasScript="1">
-	<kafkainfos>
-		<rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
-		</rootnode>
-	</kafkainfos>
+<children>
+<child name="a" />
+<child name="abbr" />
+<child name="acronym" />
+<child name="b" />
+<child name="bdo" />
+<child name="big" />
+<child name="br" />
+<child name="button" />
+<child name="cite" />
+<child name="code" />
+<child name="del" />
+<child name="dfn" />
+<child name="em" />
+<child name="i" />
+<child name="img" />
+<child name="input" />
+<child name="ins" />
+<child name="kbd" />
+<child name="label" />
+<child name="map" />
+<child name="object" />
+<child name="q" />
+<child name="samp" />
+<child name="script" />
+<child name="select" />
+<child name="small" />
+<child name="span" />
+<child name="strong" />
+<child name="sub" />
+<child name="sup" />
+<child name="textarea" />
+<child name="tt" />
+<child name="var" />
+</children>
 </tag>
 <tag name="area" hasScript="1" hasCore="1" hasI18n="1" single="1">
 
@@ -203,11 +325,6 @@
         <textlocation col="0" row="9" />
         <location col="1" row="9" colspan="2"/>
     </attr>
-
-    <kafkainfos>
-        <rootnode canbedeleted="false" canbemodified="false" canhavecursorfocus="no" cursorcanenter="false">
-        </rootnode>
-    </kafkainfos>
 
 </tag>
 </TAGS>

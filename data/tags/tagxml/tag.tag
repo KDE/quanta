@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="tag">
@@ -68,8 +69,5 @@
         </items>
     </attr>
 
-    <spacer orientation="v">
-        <location col="0" row="6" colspan="2" />
-    </spacer>
 </tag>
 </TAGS>

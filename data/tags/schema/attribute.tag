@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="attribute">
@@ -101,5 +102,9 @@
    <stoppingtag name="attribute" />
    <stoppingtag name="notation" />
   </stoppingtags>
+  <children>
+   <child name="annotation" />
+   <child name="simpleType" />
+  </children>
  </tag>
 </TAGS>

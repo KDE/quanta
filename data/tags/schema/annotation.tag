@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="annotation">
@@ -10,5 +11,9 @@
    <whatsthis>A unique ID for the element.</whatsthis>
    <location col="1" row="0"/>
   </attr>
+  <children>
+   <child name="appinfo" />
+   <child name="documentation" />
+  </children>
  </tag>
 </TAGS>

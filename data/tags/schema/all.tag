@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="all">
@@ -37,5 +38,9 @@
    <whatsthis>Maximum number of times the element can occur. The value must be 1.</whatsthis>
    <location col="1" row="2"/>
   </attr>
+  <children>
+   <child name="annotation" />
+   <child name="element" />
+  </children>
  </tag>
 </TAGS>

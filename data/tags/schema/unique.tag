@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="unique">
@@ -20,5 +21,10 @@
    <whatsthis>Name for the element. Usage is required.</whatsthis>
    <location col="1" row="1"/>
   </attr>
+  <children>
+   <child name="annotation" />
+   <child name="selector" />
+   <child name="field" />
+  </children>
  </tag>
 </TAGS>

@@ -1,22 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="caption" hasCore="1" hasI18n="1" hasScript="1">
-	<kafkainfos>
-		<rootnode canbedeleted="false" canbemodified="false" canhavecursorfocus="no" cursorcanenter="false">
-		</rootnode>
-	</kafkainfos>
+<children>
+<child name="a" />
+<child name="abbr" />
+<child name="acronym" />
+<child name="b" />
+<child name="bdo" />
+<child name="big" />
+<child name="br" />
+<child name="button" />
+<child name="cite" />
+<child name="code" />
+<child name="del" />
+<child name="dfn" />
+<child name="em" />
+<child name="i" />
+<child name="img" />
+<child name="input" />
+<child name="ins" />
+<child name="kbd" />
+<child name="label" />
+<child name="map" />
+<child name="object" />
+<child name="q" />
+<child name="samp" />
+<child name="script" />
+<child name="select" />
+<child name="small" />
+<child name="span" />
+<child name="strong" />
+<child name="sub" />
+<child name="sup" />
+<child name="textarea" />
+<child name="tt" />
+<child name="var" />
+</children>
 </tag>
 <tag name="cite" hasCore="1" hasI18n="1" hasScript="1">
-	<kafkainfos>
-		<rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
-		</rootnode>
-	</kafkainfos>
+<children>
+<child name="a" />
+<child name="abbr" />
+<child name="acronym" />
+<child name="b" />
+<child name="bdo" />
+<child name="big" />
+<child name="br" />
+<child name="button" />
+<child name="cite" />
+<child name="code" />
+<child name="del" />
+<child name="dfn" />
+<child name="em" />
+<child name="i" />
+<child name="img" />
+<child name="input" />
+<child name="ins" />
+<child name="kbd" />
+<child name="label" />
+<child name="map" />
+<child name="object" />
+<child name="q" />
+<child name="samp" />
+<child name="script" />
+<child name="select" />
+<child name="small" />
+<child name="span" />
+<child name="strong" />
+<child name="sub" />
+<child name="sup" />
+<child name="textarea" />
+<child name="tt" />
+<child name="var" />
+</children>
 </tag>
 <tag name="code" hasCore="1" hasI18n="1" hasScript="1">
-	<kafkainfos>
-		<rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
-		</rootnode>
-	</kafkainfos>
+<children>
+<child name="a" />
+<child name="abbr" />
+<child name="acronym" />
+<child name="b" />
+<child name="bdo" />
+<child name="big" />
+<child name="br" />
+<child name="button" />
+<child name="cite" />
+<child name="code" />
+<child name="del" />
+<child name="dfn" />
+<child name="em" />
+<child name="i" />
+<child name="img" />
+<child name="input" />
+<child name="ins" />
+<child name="kbd" />
+<child name="label" />
+<child name="map" />
+<child name="object" />
+<child name="q" />
+<child name="samp" />
+<child name="script" />
+<child name="select" />
+<child name="small" />
+<child name="span" />
+<child name="strong" />
+<child name="sub" />
+<child name="sup" />
+<child name="textarea" />
+<child name="tt" />
+<child name="var" />
+</children>
 </tag>
 <tag name="col" hasScript="1" hasCore="1" hasI18n="1" single="1">
 
@@ -81,14 +175,6 @@
         <location col="1" row="5" />
     </attr>
 
-    <spacer orientation="v">
-        <location col="0" row="6" colspan="4" />
-    </spacer>
-
-    <kafkainfos>
-        <rootnode canbedeleted="false" canbemodified="false" canhavecursorfocus="no" cursorcanenter="false">
-        </rootnode>
-    </kafkainfos>
 
 </tag>
 <tag name="colgroup" hasScript="1" hasCore="1" hasI18n="1" optional="1">
@@ -97,7 +183,7 @@
         <text>Width</text>
         <textlocation col="0" row="0" />
         <tooltip>use % for percent or it will set pixels
-	You can add multiple values with commas</tooltip>
+  You can add multiple values with commas</tooltip>
         <location col="1" row="0" />
     </attr>
 
@@ -155,15 +241,9 @@
         <tooltip>alignment character offset</tooltip>
         <location col="1" row="5" />
     </attr>
-
-    <spacer orientation="v">
-        <location col="0" row="6" colspan="4" />
-    </spacer>
-
-    <kafkainfos>
-        <rootnode canbedeleted="false" canbemodified="false" canhavecursorfocus="no" cursorcanenter="false">
-        </rootnode>
-    </kafkainfos>
+<children>
+<child name="col" usage="required" />
+</children>
 
 </tag>
 </TAGS>

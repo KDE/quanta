@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="sequence">
@@ -30,5 +31,13 @@
    <whatsthis>Maximum number of times the element can occur. Value can be >=0 or unbounded. Default is 1.</whatsthis>
    <location col="1" row="2"/>
   </attr>
+  <children>
+   <child name="annotation" />
+   <child name="element" />
+   <child name="group" />
+   <child name="choice" />
+   <child name="sequence" />
+   <child name="any" />
+  </children>
  </tag>
 </TAGS>

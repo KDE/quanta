@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="font" hasCore="1" hasI18n="1">
@@ -30,28 +31,48 @@
                 <item>-4</item>
         </items>
     </attr>
-
-    <spacer orientation="h">
-        <location col="0" row="5" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="1" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="2" row="8" />
-    </spacer>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="3" />
-    </spacer>
-
-    <kafkainfos>
-        <rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
-        </rootnode>
-    </kafkainfos>
-
+<children>
+<child name="a" />
+<child name="abbr" />
+<child name="acronym" />
+<child name="applet" />
+<child name="b" />
+<child name="basefont" />
+<child name="bdo" />
+<child name="big" />
+<child name="br" />
+<child name="button" />
+<child name="cite" />
+<child name="code" />
+<child name="del" />
+<child name="dfn" />
+<child name="em" />
+<child name="font" />
+<child name="i" />
+<child name="iframe" />
+<child name="img" />
+<child name="input" />
+<child name="ins" />
+<child name="kbd" />
+<child name="label" />
+<child name="map" />
+<child name="object" />
+<child name="q" />
+<child name="s" />
+<child name="samp" />
+<child name="script" />
+<child name="select" />
+<child name="small" />
+<child name="span" />
+<child name="strike" />
+<child name="strong" />
+<child name="sub" />
+<child name="sup" />
+<child name="textarea" />
+<child name="tt" />
+<child name="u" />
+<child name="var" />
+</children>
 </tag>
 </TAGS>
 

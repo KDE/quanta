@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="union">
@@ -20,5 +21,9 @@
    <whatsthis>List of built-in data types or simpleType elements defined in a schema.</whatsthis>
    <location col="1" row="1"/>
   </attr>
+  <children>
+   <child name="annotation" />
+   <child name="simpleType" />
+  </children>
  </tag>
 </TAGS>

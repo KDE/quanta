@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="schema">
@@ -84,5 +85,18 @@
   <attr name="finalDefault" type="input">
    <location col="1" row="7"/>
   </attr>
+  <children>
+   <child name="include" />
+   <child name="import" />
+   <child name="redefine" />
+   <child name="annotation" />
+   <child name="simpleType" />
+   <child name="complexType" />
+   <child name="group" />
+   <child name="attributeGroup" />
+   <child name="element" />
+   <child name="attribute" />
+   <child name="notation" />
+  </children>
  </tag>
 </TAGS>

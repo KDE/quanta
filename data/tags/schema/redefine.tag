@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="redefine">
@@ -29,5 +30,12 @@
    <stoppingtag name="attribute" />
    <stoppingtag name="notation" />
   </stoppingtags>
+  <children>
+   <child name="annotation" />
+   <child name="simpleType" />
+   <child name="complexType" />
+   <child name="group" />
+   <child name="attributeGroup" />
+  </children>
  </tag>
 </TAGS>

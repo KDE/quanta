@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="ul" hasScript="1" hasCore="1" hasI18n="1">
@@ -19,27 +20,8 @@
         <tooltip>Depricated in HTML 4.0</tooltip>
         <location col="0" row="2" colspan="2" />
     </attr>
-
-    <spacer orientation="h">
-        <location col="0" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="1" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="2" row="8" />
-    </spacer>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="3" />
-    </spacer>
-
-    <kafkainfos>
-        <rootnode canbedeleted="true" canbemodified="true" canhavecursorfocus="no" cursorcanenter="true">
-        </rootnode>
-    </kafkainfos>
-
+<children>
+<child name="li" />
+</children>
 </tag>
 </TAGS>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="extension">
@@ -20,5 +21,15 @@
    <whatsthis>Name of a built-in data type, simpleType, or complexType.</whatsthis>
    <location col="1" row="1"/>
   </attr>
+  <children>
+   <child name="annotation" />
+   <child name="group" />
+   <child name="all" />
+   <child name="choice" />
+   <child name="sequence" />
+   <child name="attribute" />
+   <child name="attributeGroup" />
+   <child name="anyAttribute" />
+  </children>
  </tag>
 </TAGS>

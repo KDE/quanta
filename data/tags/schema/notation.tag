@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
  <tag name="notation">
@@ -53,5 +54,8 @@
    <stoppingtag name="attribute" />
    <stoppingtag name="notation" />
   </stoppingtags>
+  <children>
+   <child name="annotation" />
+  </children>
  </tag>
 </TAGS>

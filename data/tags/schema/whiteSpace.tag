@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
- <tag name="whiteSpace" single="1">
+ <tag name="whiteSpace">
   <label>
    <text>value</text>
    <location col="0" row="0"/>
@@ -15,5 +16,8 @@
    <whatsthis>How white space (line feeds, tabs, spaces, and carriage returns) is handled.</whatsthis>
    <location col="1" row="0"/>
   </attr>
+  <children>
+   <child name="annotation" />
+  </children>
  </tag>
 </TAGS>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="attr">
@@ -28,10 +29,13 @@
             </items>
         <location col="1" row="1" />
     </attr>
-    
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="2" />
-    </spacer>
+
+<children>
+<child name="items" />
+<child name="tooltip" />
+<child name="location" />
+<child name="label" />
+</children>
 
 </tag>
 </TAGS>

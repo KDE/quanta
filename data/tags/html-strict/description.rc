@@ -29,13 +29,6 @@ Groups = Core, I18n
 Title = Events
 Groups = Script
 
-[Extra tags]
-List =!doctype,?
-
-!doctype=html,public,
-!doctype_options = single
-?_options = single
-
 [Extra rules]
 BooleanAttributes = simple
 Single Tag Style = html
