@@ -128,7 +128,9 @@ bool QuantaView::mayRemove()
           return false;
       if (m_document)
       {
-          m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
+        m_currentViewsLayout  = -1;
+        slotSetSourceLayout(); //set the layout to source only, otherwise it crashes...
+        m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
           m_document->closeTempFile();
           if (!m_document->isUntitled() && m_document->url().isLocalFile())
             fileWatcher->removeFile(m_document->url().path());
