@@ -225,3 +225,36 @@ Node* kafkaCommon::getNodeFromLocation(QValueList<int> loc)
 	return m;
 }
 
+int kafkaCommon::getNodeType(QString nodeName)
+{
+	nodeName = nodeName.lower();
+	if(nodeName == "html" || nodeName == "head" || nodeName == "meta" || nodeName == "title" ||
+		nodeName == "link" || nodeName == "style" || nodeName == "script" || nodeName == "option" ||
+		nodeName == "optgroup" || nodeName == "area" || nodeName == "param" || nodeName == "noframes")
+		return kafkaCommon::noneDisplay;
+	else if(nodeName == "body" || nodeName == "p" || nodeName == "div" || nodeName == "address" ||
+		nodeName == "blockquote" || nodeName == "iframe" || nodeName == "object" || nodeName == "applet" ||
+		nodeName == "center" || nodeName == "hr" || nodeName == "map" || nodeName == "h1" ||
+		nodeName == "h2" || nodeName == "h3" || nodeName == "h4" || nodeName == "h5" ||
+		nodeName == "h6" || nodeName == "table" || nodeName == "thead" || nodeName == "tbody" ||
+		nodeName == "tfoot" || nodeName == "" || nodeName == "col" || nodeName == "colgroup" ||
+		nodeName == "tr" || nodeName == "td" || nodeName == "th" || nodeName == "caption" ||
+		nodeName == "ul" || nodeName == "menu" || nodeName == "dir" || nodeName == "ol" ||
+		nodeName == "li" || nodeName == "ul" || nodeName == "dd" || nodeName == "dl" ||
+		nodeName == "dt" || nodeName == "form" || nodeName == "legend" || nodeName == "fieldset" ||
+		nodeName == "button" || nodeName == "pre" || nodeName == "input" || nodeName == "select" ||
+		nodeName == "frameset" || nodeName == "frame")
+		return kafkaCommon::blockDisplay;
+	else if(nodeName == "q" || nodeName == "u" || nodeName == "ins" || nodeName == "i" ||
+		nodeName == "cite" || nodeName == "em" || nodeName == "var" || nodeName == "address" ||
+		nodeName == "tt" || nodeName == "code" || nodeName == "kbd" || nodeName == "samp" ||
+		 nodeName == "big" || nodeName == "small" || nodeName == "s" || nodeName == "strike" ||
+		 nodeName == "del" || nodeName == "sub" || nodeName == "sup" || nodeName == "abbr" ||
+		 nodeName == "acronym" || nodeName == "a" || nodeName == "bdo")
+		 return kafkaCommon::inlineDisplay;
+	else
+	{
+		kdDebug(25001)<< "kafkaCommon::getNodeType() - ERROR node Name not found" << endl;
+		return kafkaCommon::noneDisplay;
+	}
+}

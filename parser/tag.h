@@ -139,6 +139,9 @@ public:
   //specifies if we need to build the clean tag string from the attrs
   // or the text without entities
   bool cleanStrBuilt;
+  //specifies if this tag are just here to provide a DOM::Node <-> Node correspondance
+  // but are not in the Node Tree.
+  bool notInTree;
 #endif
 
 private:

@@ -38,6 +38,7 @@ Tag::Tag()
   validXMLTag = true;
 #ifdef BUILD_KAFKAPART
   cleanStrBuilt = true;
+  notInTree = false;
 #endif
 }
 

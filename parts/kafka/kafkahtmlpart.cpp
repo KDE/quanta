@@ -222,11 +222,12 @@ bool KafkaHTMLPart::removeNode(DOM::Node node)
 
 void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position)
 {
+	kdDebug(25001)<< "KafkaHTMLPart::insertText text " << text << " pos " << position << endl;
 	int focus = w->getAttrs(node)->chCurFoc();
 	int cbModified = w->getAttrs(node)->cbMod();
 
 	if(position < 0) return;//nothing to do if something is selected
-	if(focus == kNodeAttrs::no || !cbModified) return;//can't add text in this Node.
+	//if(focus == kNodeAttrs::no || !cbModified) return;//can't add text in this Node.
 	if(focus == kNodeAttrs::textNode && node.nodeType() == DOM::Node::TEXT_NODE)
 	{
 		try
@@ -237,6 +238,23 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 			d->m_cursorOffset += text.length();
 			emit domNodeModified(node);
 			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text" << endl;
+		} catch(DOM::DOMException e)
+		{
+			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
+				"ERROR - code : " << e.code << endl;
+		}
+	}
+	else if(position == 0 && node.nodeName().string().lower() == "body")
+	{
+		//SPECIFIC HTML code!!!
+		try
+		{
+			DOM::Text textNode = document().createTextNode(text);
+			node.appendChild(textNode);
+			m_currentNode = textNode;
+			d->m_cursorOffset = text.length();
+			emit domNodeInserted(textNode, false);
+			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text - 1" << endl;
 		} catch(DOM::DOMException e)
 		{
 			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
@@ -862,9 +880,12 @@ bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 			default:
 				kdDebug(25001) << "KafkaHTMLPart::eventFilter() Text" << endl;
 				if(m_currentNode.isNull())
+				{
+					kdDebug(25001)<< "DOM::Node NULLLLLLLLLLLLLLLLLL" << endl;
 					break;
+				}
 				else if(w->getAttrs(m_currentNode)->chCurFoc() !=
-					kNodeAttrs::no)
+					kNodeAttrs::no || m_currentNode.nodeName().string().lower() == "body")
 				{
 					kdDebug(25001) << "KafkaHTMLPart::eventFilter() Text - " <<
 						keyevent->text() << endl;
@@ -873,6 +894,7 @@ bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 						insertText(keyevent->text(), -1);
 					makeCursorVisible();
 				}
+				kdDebug(25001)<< "NAMEEEEEEEEEEEEEEEEEE" << m_currentNode.nodeName().string().lower() << endl;
 				//if(keyevent->key() == Qt::Key_Space)
 				forgetEvent = true;
 				d->stuckCursorHorizontalPos = false;
@@ -1622,6 +1644,14 @@ void KafkaHTMLPart::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
 void KafkaHTMLPart::khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event)
 {
 	KHTMLPart::khtmlMouseReleaseEvent(event);
+	if(m_currentNode.isNull() || m_currentNode.nodeName().string().lower() == "#document")
+	{
+		m_currentNode = w->body;
+		d->m_cursorOffset = 0;
+		setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
+	}
+	if(quantaApp->aTab)
+		quantaApp->aTab->setCurrentNode(w->searchCorrespondingNode(event->innerNode()));
 	/**kNodeAttrs *attrs;
 	if(event->innerNode() == 0)
 	{
@@ -1771,8 +1801,6 @@ void KafkaHTMLPart::khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event)
 void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 {
 	KHTMLPart::khtmlMousePressEvent(event);
-	if(quantaApp->aTab)
-		quantaApp->aTab->setCurrentNode(w->searchCorrespondingNode(event->innerNode()));
 	/**m_currentNode = event->innerNode();
 
 	if(m_currentNode.nodeType() == DOM::Node::TEXT_NODE)

@@ -107,6 +107,22 @@ public:
 	static Node* getNodeFromLocation(QValueList<int> loc);
 
 	/**
+	 * Get the display type of a Node. NOT a official list, more a little hack to
+	 * handle the indentation.
+	 * @param nodeName The name of the Node.
+	 * @return Returns the type.
+	 */
+	static int getNodeType(QString nodeName);
+
+	//the enumeration of the different display types
+	enum nodeType
+	{
+		noneDisplay = 0,
+		inlineDisplay,
+		blockDisplay
+	};
+
+	/**
 	 * Prints in stdout the current Node tree.
 	 */
 	static void coutTree(Node *node, int indent);

@@ -124,23 +124,27 @@ void WKafkaPart::loadDocument(Document *doc)
 	node = new Node(0L);
 	tag = new Tag();
 	tag->name = "#document";
+	tag->notInTree = true;
 	node->tag = tag;
 	connectDomNodeToQuantaNode(_kafkaPart->document(), node);
 	node = new Node(0L);
 	tag = new Tag();
 	tag->name = "HTML";
+	tag->notInTree = true;
 	node->tag = tag;
 	connectDomNodeToQuantaNode(_kafkaPart->document().firstChild(), node);
 	html = _kafkaPart->document().firstChild();
 	node = new Node(0L);
 	tag = new Tag();
 	tag->name = "HEAD";
+	tag->notInTree = true;
 	node->tag = tag;
 	connectDomNodeToQuantaNode(_kafkaPart->document().firstChild().firstChild(), node);
 	head = _kafkaPart->document().firstChild().firstChild();
 	node = new Node(0L);
 	tag = new Tag();
 	tag->name = "BODY";
+	tag->notInTree = true;
 	node->tag = tag;
 	connectDomNodeToQuantaNode(_kafkaPart->document().firstChild().lastChild(), node);
 	body = _kafkaPart->document().firstChild().lastChild();
@@ -884,6 +888,11 @@ Node * WKafkaPart::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
 	{
 		//TODO
 	}
+
+	//if we want, for example, to add text to a body Node which is not in the Tree
+	//cf loadDocument, use 0L for the node's parent
+	if(_nodeParent->tag->notInTree)
+		_nodeParent = 0L;
 
 	_node->parent = _nodeParent;
 	if(_beginNode)
