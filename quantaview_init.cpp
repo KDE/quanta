@@ -58,25 +58,24 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	initActions();
 	
 	QGridLayout *layout = new QGridLayout( this );
-	
-  tabBar = new QTabBar( this);
-  toolbarStack = new QWidgetStack(this,"ToolBar stack");
-
-	tabBar 			-> setFocusPolicy(QWidget::NoFocus);
-	toolbarStack-> setFocusPolicy(QWidget::NoFocus);
 
   writeTab = new QTabWidget(this);
   writeTab ->setTabPosition( QTabWidget::Bottom );
   connect( writeTab,	SIGNAL(currentChanged(QWidget*)), app, SLOT(slotUpdateStatus(QWidget*)));
   connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(reparse()));
   writeTab ->setFocusPolicy( QWidget::NoFocus );
+
+  toolbarTab = new QTabWidget(this);
+  toolbarTab ->setTabPosition( QTabWidget::Top );
+  toolbarTab ->setFocusPolicy( QWidget::NoFocus );
+  toolbarTab->setFixedHeight(60);
              
-  layout->addWidget( tabBar       ,0,0);
-  layout->addWidget( toolbarStack ,1,0);
-  layout->addWidget( writeTab     ,2,0);
-  connect( tabBar,SIGNAL(selected(int)), toolbarStack, SLOT(raiseWidget(int)));
+  layout->addWidget( toolbarTab     ,0,0);
+  layout->addWidget( writeTab     ,1,0);
+
 
   writeTab->show();
+  toolbarTab->show();
   oldWrite = 0L;
 
   connect(this, SIGNAL(dragInsert(QDropEvent *)), getApp()->tTab, SLOT(slotDragInsert(QDropEvent *)));

@@ -157,7 +157,7 @@ void ActionEditDlg::loadAction( TagAction *a )
     tag->setText( eltag.text() );
       
     useTagClose->setChecked( elxtag.attribute("use","false") == "true" );
-    #warning   add insert in 1 line option
+//FIXME/TODO add insert in 1 line option
 //        insertInLine->setChecked( elxtag.attribute("inLine","true") == "true" );
     useActionDialog->setChecked( eltag.attribute("useDialog","false") == "true" );
       

@@ -22,7 +22,7 @@
         <cstring>Quick_Table</cstring>
     </property>
     <spacer>
-        <property name="name" stdset="0">
+        <property name="name">
             <cstring>Spacer3</cstring>
         </property>
         <property name="orientation">
@@ -34,8 +34,16 @@
         <property name="sizeHint">
             <size>
                 <width>20</width>
-                <height>20</height>
+                <height>0</height>
             </size>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>20</width>
+                <height>1</height>
+            </rect>
         </property>
     </spacer>
     <widget class="QLayoutWidget">
@@ -72,7 +80,7 @@
                 </property>
             </widget>
             <spacer>
-                <property name="name" stdset="0">
+                <property name="name">
                     <cstring>Horizontal Spacing2</cstring>
                 </property>
                 <property name="orientation">
@@ -84,7 +92,7 @@
                 <property name="sizeHint">
                     <size>
                         <width>20</width>
-                        <height>20</height>
+                        <height>0</height>
                     </size>
                 </property>
             </spacer>
@@ -138,7 +146,7 @@
                 <number>6</number>
             </property>
             <spacer row="1" column="0">
-                <property name="name" stdset="0">
+                <property name="name">
                     <cstring>Spacer4</cstring>
                 </property>
                 <property name="orientation">
@@ -149,7 +157,7 @@
                 </property>
                 <property name="sizeHint">
                     <size>
-                        <width>20</width>
+                        <width>0</width>
                         <height>20</height>
                     </size>
                 </property>
@@ -176,7 +184,7 @@
                 <height>16</height>
             </rect>
         </property>
-        <property name="frameShape" stdset="0">
+        <property name="frameShape">
             <enum>HLine</enum>
         </property>
         <property name="frameShadow">
@@ -202,109 +210,6 @@
             </rect>
         </property>
     </widget>
-    <widget class="QListView">
-        <column>
-            <property name="text">
-                <string>Columns</string>
-            </property>
-            <property name="clickable">
-                <bool>false</bool>
-            </property>
-            <property name="resizeable">
-                <bool>true</bool>
-            </property>
-        </column>
-        <column>
-            <property name="text">
-                <string>Width</string>
-            </property>
-            <property name="clickable">
-                <bool>false</bool>
-            </property>
-            <property name="resizeable">
-                <bool>true</bool>
-            </property>
-        </column>
-        <column>
-            <property name="text">
-                <string>Align</string>
-            </property>
-            <property name="clickable">
-                <bool>false</bool>
-            </property>
-            <property name="resizeable">
-                <bool>true</bool>
-            </property>
-        </column>
-        <column>
-            <property name="text">
-                <string>VAlign</string>
-            </property>
-            <property name="clickable">
-                <bool>false</bool>
-            </property>
-            <property name="resizeable">
-                <bool>true</bool>
-            </property>
-        </column>
-        <column>
-            <property name="text">
-                <string>CSS class</string>
-            </property>
-            <property name="clickable">
-                <bool>false</bool>
-            </property>
-            <property name="resizeable">
-                <bool>true</bool>
-            </property>
-        </column>
-    <item>
-        <property name="text">
-            <string>Column-1</string>
-        </property>
-        <property name="text">
-            <string></string>
-        </property>
-        <property name="text">
-            <string></string>
-        </property>
-        <property name="text">
-            <string></string>
-        </property>
-        <property name="text">
-            <string></string>
-        </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
-    </item>
-        <property name="name">
-            <cstring>ColumnsListView</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>140</x>
-                <y>35</y>
-                <width>325</width>
-                <height>250</height>
-            </rect>
-        </property>
-    </widget>
     <widget class="QLabel">
         <property name="name">
             <cstring>TextLabel1</cstring>
@@ -319,22 +224,6 @@
         </property>
         <property name="text">
             <string>Settings for COL - Double click to edit</string>
-        </property>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>editHeader</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>25</x>
-                <y>205</y>
-                <width>102</width>
-                <height>30</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>PushButton4</string>
         </property>
     </widget>
     <widget class="QLayoutWidget">
@@ -441,7 +330,7 @@
                 </property>
             </widget>
             <spacer>
-                <property name="name" stdset="0">
+                <property name="name">
                     <cstring>Spacer2</cstring>
                 </property>
                 <property name="orientation">
@@ -452,12 +341,115 @@
                 </property>
                 <property name="sizeHint">
                     <size>
-                        <width>20</width>
+                        <width>0</width>
                         <height>20</height>
                     </size>
                 </property>
             </spacer>
         </vbox>
+    </widget>
+    <widget class="QListView">
+        <column>
+            <property name="text">
+                <string>Columns</string>
+            </property>
+            <property name="clickable">
+                <bool>false</bool>
+            </property>
+            <property name="resizeable">
+                <bool>true</bool>
+            </property>
+        </column>
+        <column>
+            <property name="text">
+                <string>Width</string>
+            </property>
+            <property name="clickable">
+                <bool>false</bool>
+            </property>
+            <property name="resizeable">
+                <bool>true</bool>
+            </property>
+        </column>
+        <column>
+            <property name="text">
+                <string>Align</string>
+            </property>
+            <property name="clickable">
+                <bool>false</bool>
+            </property>
+            <property name="resizeable">
+                <bool>true</bool>
+            </property>
+        </column>
+        <column>
+            <property name="text">
+                <string>VAlign</string>
+            </property>
+            <property name="clickable">
+                <bool>false</bool>
+            </property>
+            <property name="resizeable">
+                <bool>true</bool>
+            </property>
+        </column>
+        <column>
+            <property name="text">
+                <string>CSS class</string>
+            </property>
+            <property name="clickable">
+                <bool>false</bool>
+            </property>
+            <property name="resizeable">
+                <bool>true</bool>
+            </property>
+        </column>
+    <item>
+        <property name="text">
+            <string>Column-1</string>
+        </property>
+        <property name="text">
+            <string></string>
+        </property>
+        <property name="text">
+            <string></string>
+        </property>
+        <property name="text">
+            <string></string>
+        </property>
+        <property name="text">
+            <string></string>
+        </property>
+        <property name="pixmap">
+            <pixmap></pixmap>
+        </property>
+        <property name="pixmap">
+            <pixmap></pixmap>
+        </property>
+        <property name="pixmap">
+            <pixmap></pixmap>
+        </property>
+        <property name="pixmap">
+            <pixmap></pixmap>
+        </property>
+        <property name="pixmap">
+            <pixmap></pixmap>
+        </property>
+    </item>
+        <property name="name">
+            <cstring>ColumnsListView</cstring>
+        </property>
+        <property name="enabled">
+            <bool>false</bool>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>140</x>
+                <y>35</y>
+                <width>325</width>
+                <height>250</height>
+            </rect>
+        </property>
     </widget>
 </widget>
 <connections>

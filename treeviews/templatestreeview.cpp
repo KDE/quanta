@@ -47,6 +47,7 @@ const QString binaryMenu = i18n("Insert link to file");
 const QString docMenu = i18n("New document based on this");
 
 TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *parent, const char *name )
+  : projectDir(0)
 {
     QListView::QListView(parent,name);
 
@@ -91,6 +92,7 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 	localDir->setPixmap( 0, SmallIcon("folder"));
 	localDir->setOpen( true );
 
+/*
 	if (! basePath.isEmpty())
 	{
  		projectDir = new FilesTreeFolder( this , i18n("Project templates"), basePath+"templates/");
@@ -100,6 +102,7 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 	{
 		projectDir = 0L;
 	}
+*/
 	
 	this->dirList = 0L;	
 	
@@ -144,10 +147,12 @@ void TemplatesTreeView::slotInsertInDocument()
 
  if (! mimetype.contains("text"))
  {
-   if (confirmInsert() != KMessageBox::Yes)
+/*   if (confirmInsert() != KMessageBox::Yes)
   {
     return;
-  }
+  } */
+   denyBinaryInsert();
+   return;
  }
 
  emit insertFile(currentFileName());
@@ -196,10 +201,12 @@ void TemplatesTreeView::slotNewDocument()
 
  if (! mimetype.contains("text"))
  {
-   if (confirmInsert() != KMessageBox::Yes)
+/*   if (confirmInsert() != KMessageBox::Yes)
   {
     return;
-  }
+  } */
+   denyBinaryInsert();
+   return;
  }
 
 	QListViewItem *item = currentItem();
@@ -208,8 +215,8 @@ void TemplatesTreeView::slotNewDocument()
   	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
 	  if ( !parent ) return;
 	  if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
-	  QString fileName = currentFileName(); // store, because openFile changes current item
-    emit openFile( KURL());
+    QString fileName = currentFileName(); // store, because openFile changes current item
+    emit openFile(KURL());
 	  emit insertFile(fileName);
 	}
 }
@@ -281,12 +288,21 @@ void TemplatesTreeView::slotNewDir()
   }
 }
 /** No descriptions */
-/*
+
 QDragObject * TemplatesTreeView::dragObject ()
 {
-  QDragObject *drag = new QTextDrag(currentFileName(), this);
-  return drag;
-} */
+  readDirInfo();
+  if(!dirInfo.mimeType.isEmpty()) // only drag when the template type is specified
+  {
+    QUriDrag *drag = new QUriDrag(this, 0);
+    QStringList uriList(currentFileName());
+    drag->setFileNames(uriList);
+    return drag;
+  }
+  return 0;
+}
+
+/*
 void TemplatesTreeView::startDrag()
 {
   QUriDrag *drag = new QUriDrag(this, 0);
@@ -294,7 +310,7 @@ void TemplatesTreeView::startDrag()
   drag->setFileNames(uriList);
   drag->drag();
  }
-
+*/
 
 /** No descriptions */
 void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
@@ -512,8 +528,6 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
   if(fileList.empty())
    return;
 
-  bool set = false;
-
   QString localFileName = fileList.front();
 
   readDirInfo(localFileName);
@@ -522,38 +536,61 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
   /* First, see if the type of the file is specified in the .dirinfo file */
   if(!dirInfo.mimeType.isEmpty())
   {
+    if(dirInfo.mimeType == "text/all") // default to inserting in document
+    {
+     if(!mimeType.contains("text", false))
+     {
+       denyBinaryInsert();
+       return;
+     }
+     emit insertFile(localFileName);
+    }
+
     if(dirInfo.mimeType == "file/all")
     {
       // whatever this is, insert it with a tag (image or link or prefix/postfix)
       emit insertTag(localFileName, dirInfo);
-      set = true;
     }
-    else if(dirInfo.mimeType == "template/all")
+    else
+    if(dirInfo.mimeType == "template/all")
     {
       if(!mimeType.contains("text", false))
-        if(confirmInsert() != KMessageBox::Yes)
-          return;
+      {
+/*        if(confirmInsert() != KMessageBox::Yes)
+          return;*/
+        denyBinaryInsert();
+        return;
+      }
       emit openFile(KURL());
       emit insertFile(localFileName);
-      set = true;
     }
-  }
-  if(dirInfo.mimeType.isEmpty() || !set) // default to inserting in document
-  {
-    if(!mimeType.contains("text", false))
-    {
-       if(confirmInsert() != KMessageBox::Yes)
-         return;
-    }
-    emit insertFile(localFileName);
   }
 }
-
-
-
 
 int TemplatesTreeView::confirmInsert()
 {
   return KMessageBox::questionYesNo(this,i18n("This file may be a binary file, thus cannot be \
 used as a base file correctly.\n Do you still want to continue?"),i18n("Wrong type")) ;
+}
+/** Sets the project template directory */
+void TemplatesTreeView::slotSetTemplateDir(const QString &Dir)
+{
+  if(projectDir)
+    delete projectDir;
+  projectDir = 0;
+
+  if(!Dir.isEmpty())
+  {
+    projectDir = new FilesTreeFolder(this, i18n("Project templates"), Dir);
+    projectDir->setPixmap(0, SmallIcon("folder"));
+    projectDir->setOpen(true);
+  }
+
+  slotReload();
+}
+/** No descriptions */
+int TemplatesTreeView::denyBinaryInsert()
+{
+  KMessageBox::sorry(this, "Can't insert binary file as text", "Wrong type",
+FALSE);
 }

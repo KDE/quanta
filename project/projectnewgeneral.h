@@ -37,6 +37,9 @@ public slots:
 	void slotButtonDir();
 	void slotLinePrjFile(const QString &);
 	void slotChangeNames(const QString &);
+  void slotButtonTmpl();
+  void slotLinePrjTmpl(const QString &);
+
 		
 signals:
   void setBasePath(QString);

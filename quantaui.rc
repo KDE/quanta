@@ -31,6 +31,7 @@
     <Action name="edit_find_next" />
     <Action name="edit_find_prev" />
     <Action name="edit_replace" />
+    <Action name="find_in_files"/>
     <Separator />
     <Action name="edit_indent" />
     <Action name="edit_unindent" />
@@ -38,6 +39,9 @@
     <Action name="edit_uncomment" />
     <Separator />
     <Action name="edit_apply_wordwrap"/>
+    <Action name="edit_goto_line"/>
+    <Action name="tools_spelling" />
+    <Separator/>
   </Menu>
 
   <Menu name="bookmarks"><text>&amp;Bookmarks</text>
@@ -47,14 +51,22 @@
   </Menu>
 
     <Menu name="tools" noMerge="1"><text>&amp;Tools</text>
-      <Action name="go_goto_line"/>
-      <Action name="find_in_files"/>
-      <Separator/>
       <Action name="edit_current_tag"/>
-      <Action name="context_help"/>
       <Separator/>
       <Action name="syntax_check"/>
-      <Action name="tools_spelling" />
+    </Menu>
+
+    <Menu name="toolbars" ><text>&amp;Toolbars</text>
+      <Action name="toolbars_load"/>
+      <Menu name="toolbars_save" ><text>&amp;Save Toolbars</text>
+       <Action name="toolbars_save_local"/>
+       <Action name="toolbars_save_project"/>
+      </Menu>
+      <Separator/>
+      <Action name="toolbars_add"/>
+      <Action name="toolbars_remove"/>
+      <Separator/>
+      <Action name="toolbars_send"/>
     </Menu>
 
     <Menu name="qinsert"><text>&amp;Insert</text>
@@ -194,6 +206,10 @@
       <Action name="set_eol"/>
       <Action name="set_highlight"/>
       <Action name="highlight_options"/>
+    </Menu>
+
+    <Menu name="help"><text>&amp;Help</text>
+      <Action name="context_help"/>
     </Menu>
     
   </MenuBar>
@@ -338,10 +354,6 @@
   <Menu name="popup_editor">
     <Action name="file_open"/>
     <Action name="file_save"/>
-      <Menu name="save_selection_as_template" append="save_merge"><text>Save selection as template</text>
-      	<Action name="save_selection_project_template"/>
-      	<Action name="save_selection_local_template"/>
-      </Menu>
     <Action name="file_close"/>
     <Action name="file_list"/>
     <Separator/>

@@ -38,8 +38,11 @@ public:
   void writeDirInfo(QString dirInfoFile="");
   /** Reads a .dirinfo file from the selected item's path */
   void readDirInfo(QString startDir = "");
+  
 
 public slots:
+  /** Sets the project template directory */
+  void slotSetTemplateDir(const QString &);
   /** No descriptions */
   void slotInsertInDocument();
   void slotMenu(QListViewItem *item, const QPoint &point, int);
@@ -54,9 +57,8 @@ public slots:
   virtual void slotProperties();
   /** Property application for template view */
   virtual void slotPropertiesApplied();
-  /** Handles dropping on the document from the template tree */
+ /** Handles dropping on the document from the template tree */
   void slotDragInsert(QDropEvent *);
-
   virtual void slotInsertTag();
   /** No descriptions */
   void contentsDragEnterEvent(QDragEnterEvent *event);
@@ -77,11 +79,12 @@ signals: // Signals
   void insertFile(QString);
 protected: // Protected methods
   /** No descriptions */
-//  virtual QDragObject * dragObject ();
-  virtual void startDrag();
+  virtual QDragObject * dragObject ();
+//  virtual void startDrag();
   /** No descriptions */
   void contentsDropEvent(QDropEvent *);
   int confirmInsert();
+  int denyBinaryInsert();
 };
 
 #endif

@@ -1,9 +1,9 @@
 /***************************************************************************
-                          tagquicktable.h  -  description
+                          toolbarsdlg.h  -  description
                              -------------------
-    begin                : Sun Nov 28 1999
-    copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+    begin                : Fri Jul 19 2002
+    copyright            : (C) 2002 by Andras Mantia
+    email                : amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,41 +15,20 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef TAGQUICKTABLE_H
-#define TAGQUICKTABLE_H
+#ifndef TOOLBARSDLG_H
+#define TOOLBARSDLG_H
 
-#include <qwidget.h>
-#include <qspinbox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qdialog.h>
-
-#include "quicktable.h"
+#include "edittoolbars.h"
 
 /**
-  *@author Dmitry Poplavsky & Yacovlev Alexander
+  *@author Andras Mantia
   */
 
-class Document;
-
-class TagQuickTable : public Quick_Table{
+class ToolBarsDlg : public EditToolbars  {
    Q_OBJECT
 public: 
-	TagQuickTable(Document *write, QWidget *parent=0, const char *name=0);
-	~TagQuickTable();
-
-public:
-
-private:
-  Document *write;
-
-public slots: // Public slots
-  /** No descriptions */
-  void slotChangeColumnNumber(int columnNum);
-  /** No descriptions */
-  void slotEditColumn(QListViewItem *item);
-  /** No descriptions */
-
+	ToolBarsDlg(QWidget *parent=0, const char *name=0);
+	~ToolBarsDlg();
 };
 
 #endif

@@ -373,6 +373,7 @@ void Project::closeProject()
 
   emit setBasePath		( basePath );
   emit setProjectName	( i18n( "No project" ) );
+  emit templateDirChanged(QString::null);
   emit reloadTree 		( fileNameList(), true, false );
 
   url  = KURL();
@@ -498,6 +499,11 @@ void Project::loadProjectXML()
   author = no.firstChild().nodeValue();
   no = dom.firstChild().firstChild().namedItem("email");
   email = no.firstChild().nodeValue();
+  no = dom.firstChild().firstChild().namedItem("templates");
+  if(no.isNull()) // compatability
+    templateDir = basePath + "templates";
+  else
+    templateDir = no.firstChild().nodeValue();
 		
   QDomNodeList nl = dom.firstChild().firstChild().childNodes();
 	
@@ -841,6 +847,7 @@ void Project::slotAcceptCreateProject()
   
   name     = png->linePrjName->text();
   basePath = png->linePrjDir ->text();
+  templateDir = png->linePrjTmpl->text();
   email    = png->lineEmail  ->text();
   author   = png->lineAuthor ->text();
   if ( basePath.right(1) != "/" )	basePath += "/";
@@ -867,6 +874,10 @@ void Project::slotAcceptCreateProject()
   dom.firstChild().firstChild().appendChild( el );
   el.appendChild( dom.createTextNode( email ) );
 
+  el = dom.createElement("templates");
+  dom.firstChild().firstChild().appendChild( el );
+  el.appendChild( dom.createTextNode( templateDir ) );
+
   QStringList list;
   if ( png->type() == "Local" ) list = pnl->files();
   if ( png->type() == "Web"   ) list = pnw->files();
@@ -880,9 +891,9 @@ void Project::slotAcceptCreateProject()
     dom.firstChild().firstChild().appendChild( el );
  }
 
- el = dom.createElement("item");
- el.setAttribute("url","templates/");
- dom.firstChild().firstChild().appendChild(el);
+// el = dom.createElement("item");
+// el.setAttribute("url","templates/");
+// dom.firstChild().firstChild().appendChild(el);
 //setup the templates directory
  bool  createTemplateDir = true;
  if (pnf->insertGlobalTemplates->isChecked())
@@ -898,8 +909,10 @@ void Project::slotAcceptCreateProject()
 
  if (createTemplateDir)
  {
- 	QDir dir(basePath);
- 	dir.mkdir("templates");
+// 	QDir dir(basePath);
+// 	dir.mkdir("templates");
+    QDir dir;
+    dir.mkdir(templateDir, true);
  }
 
 	
@@ -943,6 +956,7 @@ void Project::options()
 	png->linePrjDir ->setText( basePath );
 	png->linePrjName->setText( name );
 	png->linePrjFile->setText( url.url() );
+  png->linePrjTmpl->setText( templateDir );
 	png->lineAuthor ->setText( author );
 	png->lineEmail  ->setText( email );
 	
@@ -952,6 +966,7 @@ void Project::options()
 	if ( dlg->exec() )
 	{
 		name        	= png->linePrjName->text();
+    templateDir = png->linePrjTmpl->text();
 		author		= png->lineAuthor ->text();
 		email			= png->lineEmail	->text();
 		
@@ -990,10 +1005,23 @@ void Project::options()
  		{
  		  el.firstChild().setNodeValue(email);
  		}
+
+    el = dom.firstChild().firstChild().namedItem("templates").toElement();
+    if(el.isNull())
+    {
+      el = dom.createElement("templates");
+      dom.firstChild().firstChild().appendChild(el);
+      el.appendChild(dom.createTextNode(templateDir));
+    }
+    else
+    {
+      el.firstChild().setNodeValue(templateDir);
+    }
  		
  		modified = true;
 		
 		emit setProjectName( name );
+    emit templateDirChanged( templateDir );
 		emit newStatus();
 	}
 	

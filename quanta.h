@@ -31,6 +31,7 @@
 
 // include files for Qt
 #include <qstrlist.h>
+#include <qptrlist.h>
 
 // include files for KDE 
 #include <kapp.h>
@@ -38,6 +39,7 @@
 #include "kqapp.h"
 #include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
+#include <ktoolbar.h>
 #include <kate/document.h>
 #include <ktempfile.h>
 
@@ -69,7 +71,6 @@ class StructTreeView;
 class ProjectTreeView;
 class TemplatesTreeView;
 class Project;
-class ToolBars;
 class GrepDialog;
 class MessageOutput;
 class QDomDocument;
@@ -77,7 +78,6 @@ class ActionEditDlg;
 
 class PHP3Debugger;
 class PHP4Debugger;
-
 
 /**
   * The base class for Quanta application windows. 
@@ -235,6 +235,22 @@ class QuantaApp : public KDockMainWindow
   void slotInsertFile(QString);
   /** No descriptions */
   void slotSyntaxCheckDone();
+  /** Sends a toolbar in mail. */
+  void slotSendToolbar();
+  /** Removes a user toolbar from the toolbars. */
+  void slotRemoveToolbar();
+  /** Adds a new, empty toolbar. */
+  void slotAddToolbar();
+  /** Saves a toolbar as local or project specific. */
+  void slotSaveToolbar(bool localToolbar = true);
+  /** Saves a toolbar as local specific. */
+  void slotSaveLocalToolbar();
+  /** Saves a toolbar as project specific. */
+  void slotSaveProjectToolbar();
+  /** Load an user toolbar from the disk. */
+  void slotLoadToolbar();
+  /** No descriptions */
+  void slotNewToolbarConfig();
 
  private slots:
 	
@@ -302,8 +318,6 @@ class QuantaApp : public KDockMainWindow
     Node   *node;
     Parser *parser;
 
-    ToolBars *toolbars;
-    
     QTimer *statusbarTimer;
 
     // debugger
@@ -340,11 +354,14 @@ class QuantaApp : public KDockMainWindow
     QDomDocument *m_actions;
 
     QPtrList<KTextEditor::Mark> markList;
+    QPtrList<KTempFile> tempFileList;
+    QDict<KXMLGUIClient> toolbarGUIClientList;
+
+    uint userToolbarsCount;
   /**  */
   bool previewCopyMade;
   /**  */
   KTempFile *previewTmpFile;
-
 
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */

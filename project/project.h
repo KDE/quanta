@@ -132,6 +132,8 @@ signals:
   void removeFromProject(int);
   /** No descriptions */
   void newProjectLoaded();
+  /** No descriptions */
+  void templateDirChanged(const QString &);
 
 public:
   QDomDocument dom;
@@ -141,6 +143,7 @@ public:
 
   QString basePath;
   QString remoteDir;
+  QString templateDir;
 
   QString previewPrefix;
   bool usePreviewPrefix;

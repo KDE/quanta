@@ -23,7 +23,6 @@
 //app includes
 #include "tagquicktable.h"
 #include "tagquicktableitem.h"
-#include "quicktablecolumnedit.h"
 #include "tagdialog.h"
 #include "../document.h"
 
@@ -35,7 +34,6 @@ TagQuickTable::TagQuickTable(Document *write, QWidget *parent, const char *name)
 	setCaption(name);
   connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
 	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
-	connect( editHeader, SIGNAL(clicked()), SLOT(slotEditHeader()) );
   connect( SpinBoxCol, SIGNAL(valueChanged(int)), SLOT(slotChangeColumnNumber(int)));
   connect( ColumnsListView, SIGNAL(doubleClicked ( QListViewItem*)), SLOT(slotEditColumn(QListViewItem *)));
 }
@@ -72,24 +70,16 @@ void TagQuickTable::slotChangeColumnNumber(int columnNum)
 /** No descriptions */
 void TagQuickTable::slotEditColumn(QListViewItem *item)
 {
-  QuickTableColumnEdit *columnDlg = new QuickTableColumnEdit(this, i18n("Edit column"));
+  TagDialog *dlg = new TagDialog("col");
 
-  columnDlg->columnNum->setText(item->text(0).section("-",-1));
-  if (columnDlg->exec())
+  if (dlg->exec())
   {
-    item->setText(1, columnDlg->widthEdit->text());
-    item->setText(2, columnDlg->alignCombo->currentText());
-    item->setText(3, columnDlg->valignCombo->currentText());
-    item->setText(4, columnDlg->classEdit->text());
+    item->setText(1, dlg->getAttribute("width"));
+    item->setText(2, dlg->getAttribute("align"));
+    item->setText(3, dlg->getAttribute("valign"));
+    item->setText(4, dlg->getAttribute("class"));
   }
-}
 
-/** No descriptions */
-void TagQuickTable::slotEditHeader()
-{
-
-  TagDialog *dlg = new TagDialog("thead");
-  if (dlg->exec()) dlg->insertTag(write);
   delete dlg;
 }
 

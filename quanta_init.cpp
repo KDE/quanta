@@ -96,7 +96,9 @@ QDict <QStrList> *tagsDict;
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
-
+  tempFileList.setAutoDelete(true);
+  toolbarGUIClientList.setAutoDelete(true);
+  userToolbarsCount = 0;
   setHighlight = 0;
   grepDialog  = 0L;
   exitingFlag = false;
@@ -135,12 +137,13 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 
   setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
 
-  KParts::ReadOnlyPart *m_cervisia =  KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>( "libcervisia.so",this);
+//  KParts::ReadOnlyPart *m_cervisia =  KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>( "libcervisia.so",this);
 
 }
 
 QuantaApp::~QuantaApp()
 {
+ tempFileList.clear();
 }
 
 void QuantaApp::initStatusBar()
@@ -709,7 +712,7 @@ void QuantaApp::initActions()
 
 
 //Tools menu
-    KStdAction::gotoLine(view, SLOT(slotGotoLine()), actionCollection());
+    KStdAction::gotoLine(view, SLOT(slotGotoLine()), actionCollection(), "edit_goto_line");
     KStdAction::spelling(view, SLOT(slotSpellcheck()), actionCollection());
 
 //Bookmarks
@@ -944,4 +947,11 @@ void QuantaApp::initActions()
     KStdAction::configureToolbars( this, SLOT( slotOptionsConfigureToolbars() ), actionCollection(), "conf_toolbars" );
     KStdAction::preferences      ( this, SLOT( slotOptions() ),                  actionCollection(), "general_options" );
 
+    // Toolbars actions
+    new KAction(i18n("&Load User Toolbar"), 0, this, SLOT(slotLoadToolbar()), actionCollection(), "toolbars_load");
+    new KAction(i18n("Save As &Local Toolbar"),  0, this, SLOT(slotSaveLocalToolbar()), actionCollection(), "toolbars_save_local");
+    new KAction(i18n("Save As &Project Toolbar"),  0, this, SLOT(slotSaveProjectToolbar()), actionCollection(), "toolbars_save_project");
+    new KAction(i18n("&Add User Toolbar"),  0, this, SLOT(slotAddToolbar()), actionCollection(), "toolbars_add");
+    new KAction(i18n("&Remove User Toolbar"),  0, this, SLOT(slotRemoveToolbar()), actionCollection(), "toolbars_remove");
+    new KAction(i18n("Send Toolbar In E-&Mail"),  0, this, SLOT(slotSendToolbar()), actionCollection(), "toolbars_send");
 }

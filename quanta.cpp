@@ -31,6 +31,7 @@
 #include <qtimer.h>
 #include <qtextstream.h>
 #include <qiodevice.h>
+#include <qcombobox.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -76,6 +77,7 @@
 #include "dialogs/parseroptions.h"
 #include "dialogs/debuggeroptionss.h"
 #include "dialogs/grepdialog.h"
+#include "dialogs/toolbarsdlg.h"
 
 #include "treeviews/filestreeview.h"
 #include "treeviews/fileslistview.h"
@@ -92,10 +94,13 @@
 #include "messages/messageoutput.h"
 
 #include "toolbar/actioneditdlg.h"
+#include "toolbar/toolbarxmlgui.h"
 
 #include <kedittoolbar.h>
 #include <kaction.h>
 
+// from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
+static void silenceQToolBar(QtMsgType, const char *){}
 
 
 /////////////////////////////////////////////////////////////////////
@@ -194,7 +199,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
     if (projectTemplate)
     {
-  	  url = KFileDialog::getSaveURL(doc->basePath()+"templates/", QString::null, this);
+  	  url = KFileDialog::getSaveURL(project->templateDir, QString::null, this);
   	} else
   	{
   	  url = KFileDialog::getSaveURL(locateLocal("data","quanta/templates/"), QString::null, this);
@@ -202,7 +207,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
     if (url.isEmpty()) return;
 
-    if ( project->hasProject() )  projectTemplateDir = doc->basePath()+"templates/";
+    if ( project->hasProject() )  projectTemplateDir = project->templateDir;
     if ( ((projectTemplate) && (KURL(projectTemplateDir).isParentOf(url)) ) ||
           ((! projectTemplate) && (KURL(locateLocal("data","quanta/templates/")).isParentOf(url))) )
     {
@@ -566,21 +571,62 @@ void QuantaApp::slotOptionsConfigureKeys()
 
 void QuantaApp::slotOptionsConfigureToolbars()
 {
-    KEditToolbar dlg( actionCollection(), QString::null, true, this );
-    
-    if ( dlg.exec() ) {
-    
-      // clear tags toolbars
-      while ( view->tabBar->count() ) {
-      
-          int id = view->tabBar->currentTab();
-          
-          view->toolbarStack->removeWidget( view->toolbarStack->widget(id) );
-          view->tabBar->removeTab( view->tabBar->tab(id) );
-      }
+ saveMainWindowSettings( KGlobal::config(), "MainWindow" );
+ KEditToolbar dlg(factory(), this);
+ connect(&dlg,SIGNAL(newToolbarConfig()),this,SLOT(slotNewToolbarConfig()));
 
-      createGUI();
+/*    
+ KEditToolbar dlg(QString::null, true, this );
+ if ( dlg.exec() )
+ {
+  // clear tags toolbars
+  int tabNum = view->toolbarTab->count();
+  for (int i=0; i < tabNum; i++ )
+  {
+    view->toolbarTab->removePage( view->toolbarTab->page(0) );
+  }
+  createGUI();
+ }             */
+
+ if (dlg.exec())
+ {
+
+  KAction *action;
+  QString actionName;
+  QDomNodeList nodeList;
+
+  QDictIterator<KXMLGUIClient> it(toolbarGUIClientList);
+  for( ; it.current(); ++it )
+  {
+    //remove all inserted toolbars
+    factory()->removeClient(it.current());
+
+    nodeList = it.current()->domDocument().elementsByTagName("Action");
+    //clear all the actions
+    int actionCount = it.current()->actionCollection()->count();
+    for (int i = 0; i < actionCount; i++)
+    {
+     action = it.current()->actionCollection()->action(0);
+     it.current()->actionCollection()->take(action);
     }
+    //plug them in again
+    for (uint i = 0; i < nodeList.count(); i++)
+    {
+      actionName = nodeList.item(i).toElement().attribute("name");
+      action = actionCollection()->action(actionName);
+      if (action)
+      {
+        it.current()->actionCollection()->insert(action);
+      }
+    }
+
+    //and add them again. Is there a better way to do this?
+    factory()->addClient(it.current());
+   }
+
+//  view->toolbarTab->setCurrentPage(0);
+ }
+
 }
 
 void QuantaApp::slotOptionsConfigureActions()
@@ -1060,13 +1106,19 @@ if ( !doc->write()->isUntitled() )
     
 QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomElement &element, int &id )
 {
+
   QString tabname = element.attribute( "tabname", "" );
   
   if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty() ) {
-    KToolBar *tb = new KToolBar( view->toolbarStack );
-    tb->loadState( element );
-    view->toolbarStack->addWidget( tb, view->tabBar->addTab( new QTab( i18n( tabname ))));
-    
+//avoid QToolBar warning in the log
+    QtMsgHandler oldHandler = qInstallMsgHandler( silenceQToolBar );
+
+    KToolBar *tb = new KToolBar(view->toolbarTab);
+    tb->loadState(element);
+    tb->enableMoving(false);
+    view->toolbarTab->addTab(tb, i18n(tabname));
+
+    qInstallMsgHandler( oldHandler );
     return tb;
   }
   
@@ -1078,14 +1130,14 @@ void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElemen
 {
 //  debug( QString("name:") + container->parent()->name() );
   
-  if ( container->parent() && QString(container->parent()->name()) == QString("ToolBar stack") ) {
-/*    ((KToolBar*)container)->saveState( element );
+/*  if ( container->parent() && QString(container->parent()->name()) == QString("ToolBar stack") ) {
+    ((KToolBar*)container)->saveState( element );
     int id = view->toolbarStack->id( container );
     qDebug("id: %d",id);
     view->toolbarStack->removeWidget( container );
-    view->tabBar->removeTab( view->tabBar->tab(id) ); */
+    view->tabBar->removeTab( view->tabBar->tab(id) ); 
   }
-  else
+  else                                                */
     KMainWindow::removeContainer( container, parent, element, id );
 }
 
@@ -1171,6 +1223,8 @@ void QuantaApp::slotNewProjectLoaded()
   connect(tTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
 
   connect(getView(), SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *))); // [MB02]
+  connect(project, SIGNAL(templateDirChanged(const QString &)), tTab, SLOT(slotSetTemplateDir(const QString &)));
+  tTab->slotSetTemplateDir(project->templateDir);
 }
 
 /** No descriptions */
@@ -1219,9 +1273,6 @@ void QuantaApp::gotoBookmark (int n)
   view->gotoMark (markList.at(n));
 }
 
-
-
-#include "quanta.moc"
 /** No descriptions */
 void QuantaApp::slotSyntaxCheckDone()
 {
@@ -1244,3 +1295,261 @@ void QuantaApp::slotSyntaxCheckDone()
       delete doc2;
     }
 }
+/** Load an user toolbar from the disk. */
+void QuantaApp::slotLoadToolbar()
+{
+ KURL url;
+
+ url = KFileDialog::getOpenURL(doc->basePath(), QString::null, this);
+ if (url.isEmpty()) return;
+
+ ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(url.path());
+ QDomNodeList nodeList = toolbarGUI->domDocument().elementsByTagName("ToolBar");
+ QString name = nodeList.item(0).toElement().attribute("tabname");
+
+//search for another toolbar with the same name
+ QPtrList<KXMLGUIClient> xml_clients = factory()->clients();
+ bool found = false;
+ for (uint index = 0; index < xml_clients.count(); index++)
+ {
+   nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
+   for (uint i = 0; i < nodeList.count(); i++)
+   {
+    if ((nodeList.item(i).toElement().attribute("name") ) == name.lower())
+    {
+      QString newName;
+      do
+      {
+        KMessageBox::information(this,i18n("A toolbar with the same name already exists.\n Please rename the loaded toolbar."),i18n("Name conflict"));
+        ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Rename toolbar"));
+        dlg->nameEdit->setText(name);
+        if (dlg->exec())
+        {
+          newName =  dlg->nameEdit->text();
+        } else
+        {
+          KMessageBox::information(this,i18n("The rename was canceled.\n The toolbar won't be loaded."),i18n("Name conflict"));
+          delete toolbarGUI;
+          delete dlg;
+          return;
+        }
+        delete dlg;
+      } while (name == newName);
+      name = newName;
+      found = true;
+      break;
+    }
+   }
+  if (found) break;
+ }
+ userToolbarsCount++;
+
+//Change the name also in the XML File -> create a temp XML file
+ KTempFile* tempFile = new KTempFile();
+ tempFile->setAutoDelete(true);
+
+ nodeList = toolbarGUI->domDocument().elementsByTagName("ToolBar");
+ nodeList.item(0).toElement().setAttribute("name",name.lower());
+ nodeList.item(0).toElement().setAttribute("tabname",name);
+
+ * (tempFile->textStream()) << toolbarGUI->domDocument().toString();
+ tempFile->close();
+ delete toolbarGUI;
+//create the new toolbar GUI from the temp file
+ toolbarGUI = new ToolbarXMLGUI(tempFile->name());
+
+//Plug in the actions
+ KAction *action;
+ nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
+ for (uint i = 0; i < nodeList.count(); i++)
+ {
+    action = actionCollection()->action(nodeList.item(i).toElement().attribute("name") );
+    if (action)
+    {
+      toolbarGUI->actionCollection()->insert(action);
+    }
+ }
+
+ factory()->addClient(toolbarGUI);
+
+ view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
+
+ nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
+
+
+ tempFileList.append(tempFile);
+ toolbarGUIClientList.insert(name,toolbarGUI);
+}
+
+/** Saves a toolbar as local or project specific. */
+void QuantaApp::slotSaveToolbar(bool localToolbar)
+{
+  KURL url;
+  int query;
+  QString projectToolbarsDir;
+
+  QTabWidget *tb = view->toolbarTab;
+
+  ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Save toolbar"));
+  QComboBox * combo = new QComboBox(dlg);
+  dlg->nameEdit->hide();
+  combo->setGeometry(QRect(135,25,115,24));
+  for (int i = 0; i < tb->count(); i++)
+  {
+    combo->insertItem(tb->label(i));
+  }
+
+  if (! dlg->exec())
+  {
+    delete dlg;
+    return;
+  }
+  QString toolbarName = combo->currentText().lower();
+  delete dlg;
+ 
+
+  do {
+    query = KMessageBox::Yes;
+
+    if (localToolbar)
+    {
+  	  url = KFileDialog::getSaveURL(locateLocal("data","quanta/toolbars/"), QString::null, this);
+  	} else
+  	{
+  	  url = KFileDialog::getSaveURL(doc->basePath()+"toolbars/", QString::null, this);
+  	}
+
+    if (url.isEmpty()) return;
+
+    if ( project->hasProject() )  projectToolbarsDir = doc->basePath()+"toolbars/";
+    if ( ((!localToolbar) && (KURL(projectToolbarsDir).isParentOf(url)) ) ||
+          ((localToolbar) && (KURL(locateLocal("data","quanta/toolbars/")).isParentOf(url))) )
+    {
+    	query = doc->write()->checkOverwrite( url );
+    } else
+    {
+      KMessageBox::sorry(0,i18n("You must save the toolbars in one of the following directories: \n\n%1\n%2")
+      											 .arg(locateLocal("data","quanta/toolbars/")).arg(projectToolbarsDir));
+      query = KMessageBox::No;
+    }
+  } while (query != KMessageBox::Yes);
+
+  if( query == KMessageBox::Cancel ) return;
+
+  QFile file(url.path());
+  QDomNodeList nodeList;
+
+  if (file.open(IO_ReadWrite))
+  {
+    QTextStream str(&file);
+    str << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n");
+//look up the clients
+    QPtrList<KXMLGUIClient> xml_clients = factory()->clients();
+    for (uint index = 0; index < xml_clients.count(); index++)
+    {
+      nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
+      for (uint i = 0; i < nodeList.count(); i++)
+      {
+       if ((nodeList.item(i).toElement().attribute("name") ) == toolbarName)
+        {
+          nodeList.item(i).save(str,2);
+        }
+      }
+    }
+    str << QString("</kpartgui>");
+    file.close();
+  }
+}
+
+/** Saves a toolbar as localspecific. */
+void QuantaApp::slotSaveLocalToolbar()
+{
+  slotSaveToolbar(true);
+}
+/** Saves a toolbar as project specific. */
+void QuantaApp::slotSaveProjectToolbar()
+{
+  slotSaveToolbar(false);
+}
+
+/** Adds a new, empty toolbar. */
+void QuantaApp::slotAddToolbar()
+{
+ ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("New toolbar"));
+ userToolbarsCount++;
+ dlg->nameEdit->setText(i18n("User_%1").arg(userToolbarsCount));
+ if (dlg->exec())
+ {
+  QString name = dlg->nameEdit->text();
+
+
+  KTempFile* tempFile = new KTempFile();
+  tempFile->setAutoDelete(true);
+  * (tempFile->textStream()) << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n<ToolBar name=\"%1\" tabname=\"%2\">\n<text>%3</text>\n</ToolBar>\n</kpartgui>\n")\
+               .arg(name.lower()).arg(name).arg(name);
+  tempFile->close();
+
+  ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
+  factory()->addClient(toolbarGUI);
+  view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
+  tempFileList.append(tempFile);
+  toolbarGUIClientList.insert(name,toolbarGUI);
+ }
+
+ delete dlg;
+}
+
+
+/** Removes a user toolbar from the toolbars. */
+void QuantaApp::slotRemoveToolbar()
+{
+ QTabWidget *tb = view->toolbarTab;
+ int i;
+
+ ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Remove toolbar"));
+ QComboBox * combo = new QComboBox(dlg);
+ dlg->nameEdit->hide();
+ combo->setGeometry(QRect(135,25,115,24));
+ for (i = 0; i < tb->count(); i++)
+ {
+  if (toolbarGUIClientList[tb->label(i)]) combo->insertItem(tb->label(i));
+ }
+
+ if (dlg->exec())
+ {
+   i = 0;
+   while (combo->currentText() != tb->label(i))
+   {
+    i++;
+   }
+   tb->removePage(tb->page(i));
+//   delete tb->page(i); // not sure if we need to do this or not
+
+   KXMLGUIClient* toolbarGUI = toolbarGUIClientList[combo->currentText()];
+   if (toolbarGUI)
+   {
+    factory()->removeClient(toolbarGUI);
+    toolbarGUIClientList.remove(combo->currentText());
+   }
+ }
+
+ delete dlg;
+}
+
+
+/** Sends a toolbar in mail. */
+void QuantaApp::slotSendToolbar()
+{
+}
+
+/** No descriptions */
+void QuantaApp::slotNewToolbarConfig()
+{
+// applyMainWindowSettings( KGlobal::config());//, "MainWindow" );
+//search for another toolbar with the same name
+
+ view->toolbarTab->setCurrentPage(0);
+}
+
+
+#include "quanta.moc"

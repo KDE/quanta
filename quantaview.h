@@ -37,7 +37,6 @@ class Document;
 class QTabWidget;
 class KProcess;
 class KDockTabGroup;
-class ToolBars;
 class QTabBar;
 class QWidgetStack;
 class QDropEvent;
@@ -91,7 +90,6 @@ class QuantaView : public QWidget
   	/** convert attribute of tag to upper or lower case */
   	QString attrCase( const char*  attr);
   	
-  	void updateToolBars( ToolBars *);
   /** No descriptions */
   void resizeEvent (QResizeEvent *);
   /** Insert a new tag by bringing up the TagDialog. */
@@ -213,8 +211,7 @@ class QuantaView : public QWidget
   	QuantaApp *app;
   	QuantaDoc *doc;
   	
-  	QTabBar      *tabBar;
-  	QWidgetStack *toolbarStack;
+    QTabWidget *toolbarTab;
 
   	QTabWidget   *writeTab;
 
