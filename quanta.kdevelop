@@ -36,7 +36,7 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
       <envvars>
         <envvar value="1" name="WANT_AUTOCONF_2_5" />
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
@@ -48,7 +48,7 @@
     </compiler>
     <run>
       <mainprogram>quanta/src/quanta_be</mainprogram>
-      <programargs/>
+      <programargs></programargs>
       <terminal>false</terminal>
       <envvars/>
       <directoryradio>build</directoryradio>
@@ -90,20 +90,20 @@
         <ldflags/>
       </withkommander>
       <all>
-        <configargs>--enable-debug=full --with-kafkapart --prefix=/opt/kde3</configargs>
+        <configargs>--enable-debug=full --prefix=/opt/kde3</configargs>
         <builddir>/home/andris/development/build/kde-head/kdewebdev</builddir>
         <topsourcedir>/home/andris/development/sources/kde-head/kdewebdev</topsourcedir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
         <cflags>-DKDE_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT</cxxflags>
-        <f77flags/>
-        <cppflags/>
-        <ldflags/>
+        <f77flags></f77flags>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
       </all>
       <withoutkafka>
         <configargs>--enable-debug=full --without-kommander --without-kafkapart --prefix=/opt/kde3</configargs>
@@ -155,11 +155,10 @@
       <group pattern=".desktop" name="Desktop" />
       <group pattern=".tag" name="Tags" />
       <group pattern="*" name="Others" />
-      <hidenonprojectfiles>false</hidenonprojectfiles>
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns></hidepatterns>
+      <hidepatterns/>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -182,16 +181,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell/>
-      <programargs/>
+      <dbgshell></dbgshell>
+      <programargs></programargs>
       <gdbpath>/usr/bin/</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
     </general>
     <display>
       <staticmembers>false</staticmembers>
