@@ -1203,15 +1203,24 @@ void QuantaApp::slotNewLineColumn()
   oldCursorLine = cursorLine;
   oldCursorCol = cursorCol;
   m_view->write()->viewCursorIf->cursorPositionReal(&cursorLine, &cursorCol);
-  Node *node = parser->nodeAt(cursorLine, cursorCol);
-  if (node)
-  {
-    sTab->showTagAtPos(node);
-  }
-  aTab->setCurrentNode(node);
+  idleTimer->start(250, true);
   linenumber.sprintf(i18n("Line: %d Col: %d"),cursorLine+1,cursorCol+1);
 
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
+}
+
+void QuantaApp::slotIdleTimerExpired()
+{
+  if (m_view->writeExists())
+  {
+    m_view->write()->viewCursorIf->cursorPositionReal(&cursorLine, &cursorCol);
+    Node *node = parser->nodeAt(cursorLine, cursorCol);
+    if (node)
+    {
+      sTab->showTagAtPos(node);
+    }
+    aTab->setCurrentNode(node);
+  }
 }
 
 

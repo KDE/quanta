@@ -121,6 +121,8 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   exitingFlag = false;
   qConfig.spellConfig = new KSpellConfig();
   m_spellChecker = new SpellChecker();
+  idleTimer = new QTimer(this);
+  connect(idleTimer, SIGNAL(timeout()), SLOT(slotIdleTimerExpired()));
 }
 
 QuantaApp::~QuantaApp()

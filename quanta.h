@@ -341,6 +341,8 @@ protected slots:
   void slotOpenFileUnderCursor();
   void slotUploadFile();
   void slotUploadOpenedFiles();
+  /** Called after there was no user activity - cursor movement - for xx ms*/
+  void slotIdleTimerExpired();
 
 protected:
   WHTMLPart *htmlPart();
@@ -485,6 +487,9 @@ private:
 protected: // Protected attributes
   /** Timer to refresh the structure tree. */
   QTimer *refreshTimer;
+  /** Timer to detect idle periods. Every time the cursor moves the timer is
+  restarted.*/
+  QTimer *idleTimer;
   QString scriptBeginRxStr;
   QString scriptEndRxStr;
   /** The toolbars for this DTD are currently shown to the user. */
