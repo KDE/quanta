@@ -19,6 +19,7 @@
 #include <qfileinfo.h>
 #include <qlabel.h>
 #include <qlineedit.h>
+#include <qregexp.h>
 #include <qstring.h>
 
 //kde includes
@@ -90,7 +91,7 @@ bool DTDParser::parse()
   m_name = dlg.dtdName->text();
   m_nickName = dlg.nickName->text();
   m_doctype = dlg.doctype->text();
-  m_doctype.replace("<!doctype", "", false);
+  m_doctype.replace(QRegExp("<!doctype", false), "");
   m_doctype = m_doctype.left(m_doctype.findRev(">") - 1);
   m_dtdURLLine = dlg.dtdURL->text();
   m_defaultExtension = dlg.defaultExtension->text();
