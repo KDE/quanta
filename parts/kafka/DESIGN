@@ -14,9 +14,9 @@ Summary:
 If you find an error (shouldn't be so hard ;-), could you report me please?
 
 1) History
-In early 2003, i was looking for a good HTML WYSIWYG editor, and i didn't found what i wanted! So i decided to code one. After a quick search, i've found a dead project, Kafka, in kdenonbeta, which was supposed to become an full-featured WYSIWYG editor based on khtml. But at this time (2000-2001 i think) khtml wasn't ready. So it was abandonned.
-Meanwhile khtml have been greatly improved, partially thanks to the Apple Safari merging. Then i started to hack kafka a bit, adding basic cursor navigation, insertion/deletion, and so on... But i quickly realised that it would be too hard and too long for me alone to come to a decent editor. So i was looking to join an existing project, and i choose Quanta+, basically because it was (and still is, in my humble opinion) the best HTML editor in the KDE environnement.
-It seemed i came to Quanta+ exactly at the best time: they were considering to add WYSIWYG capabilities! So for now one year, i've been coded VPL during my free time, and i am not far from a stable status.
+In early 2003, I was looking for a good HTML WYSIWYG editor, and I didn't find what I wanted! So I decided to code one. After a quick search, I've found a dead project, Kafka, in kdenonbeta, which was supposed to become an full-featured WYSIWYG editor based on khtml. But at this time (2000-2001 I think) khtml wasn't ready. So it was abandonned.
+Meanwhile khtml have been greatly improved, partially thanks to the Apple Safari merging. Then I started to hack kafka a bit, adding basic cursor navigation, insertion/deletion, and so on... But I quickly realised that it would be too hard and too long for me alone to come to a decent editor. So I was looking to join an existing project, and I choose Quanta+, basically because it was (and still is, in my humble opinion) the best HTML editor in the KDE environnement.
+It seemed I came to Quanta+ exactly at the best time: they were considering to add WYSIWYG capabilities! So for now one year, I've been coded VPL during my free time, and I am not far from a stable status.
 
 
 2) Some definitions
@@ -41,12 +41,12 @@ HTML
       *-- IMG
            *-- attribute (name:href, value:boo)
 
-* DTEP : (stands for ??? I don't remember ^^) It is Quanta's way to store the DTD informations (see the .tag files in quanta/data/dtep). Why not using the DTD files directly? Because it doesn't contains all we want (no descriptions) and are written in a very odd way (just take a look... You will get sick soon :)
+* DTEP : (stands for Document Type Editing Package) It is Quanta's way to store the DTD information (and also includes supplemental elements like toolbars and more - see the .tag files in quanta/data/dtep). Why not use the DTD file directly? Because it doesn't contains all we want (no descriptions) and are written in a very odd way (just take a look... You will get sick soon :)
 
 
 
 3) A quick overview of the Quanta/KHTML stuff interacting with VPL.
-First, the most important thing: the parser. Defined in the quanta/parser/ directory, it is composed of the Node class, the Tag class, the Parser class and the QTag class. The parser reads and parses (Parser::parse) or rebuilds from an already parsed document (Parser::rebuild) a Node Tree, which is basically a DOM like representation of the documentation, but even closing Tags and empty text are represented. In fact, everything is put in the tree so that we can get back the original SGML/XML file from the tree. From now, i call it the Node tree. For example <html><body>text<img href="boo">  </body></html> has for Node tree:
+First, the most important thing: the parser. Defined in the quanta/parser/ directory, it is composed of the Node class, the Tag class, the Parser class and the QTag class. The parser reads and parses (Parser::parse) or rebuilds from an already parsed document (Parser::rebuild) a Node Tree, which is basically a DOM like representation of the document, but even closing Tags and empty text are represented (as well as server side scripting elements like PHP.) In fact, everything is put in the tree so that we can get back the original SGML/XML file from the tree. From now, I call it the Node tree. For example <html><body>text<img href="boo">  </body></html> has for Node tree:
 HTML
  *-- BODY
       *-- #text (text)
@@ -55,14 +55,14 @@ HTML
  *-- /BODY
 /HTML
 The Node class handle the pointers to the parent, next, previous and first child Node. *Each* Node has a valid pointer to a Tag. The Tag takes care to remember all the information concerning the Tag itself, like the attributes, the type, etc...)
-One QTag per Element is created from the .tag files when quanta is starting. Each QTag contains all the DTD informations about the Tag. E.g. the "IMG" Qtag says that it is a single Tag, and what are its attributes. You can get a QTag with QuantaCommon::tagFromDTD, but don't delete the QTag!
+One QTag per Element is created from the .tag files when Quanta is started. Each QTag contains all the DTD information about the Tag. E.g. the "IMG" Qtag says that it is a single Tag, and what are its attributes. You can get a QTag with QuantaCommon::tagFromDTD, but don't delete the QTag!
 
-Now to khtml. The class KHTMLPart is the HTML renderer widget of konqueror. It internally works with a Node Tree (another? Yep!) but these Nodes are real DOM::Nodes. (From now, i will call it the DOM::Node tree) Each of the DOM Node is khtml-internally linked to a rendering Node i.e. a change made to one DOM::Node will update the HTML rendering cf /path/to/kde/include/dom/*.h and also in the kdelibs cvs module, cf the nice kdelibs/khtml/DESIGN.html. WARNING about DOM::Nodes, they are just interfaces!!
+Now to khtml. The class KHTMLPart is the HTML renderer widget of konqueror. It internally works with a Node Tree (another? Yep!) but these Nodes are real DOM::Nodes. (From now, I will call it the DOM::Node tree) Each of the DOM Nodes is khtml-internally linked to a rendering Node i.e. a change made to one DOM::Node will update the HTML rendering cf /path/to/kde/include/dom/*.h and also in the kdelibs cvs module, cf the nice kdelibs/khtml/DESIGN.html. WARNING about DOM::Nodes, they are just interfaces!!
 
 
 
 4) Basic design and interaction with Quanta.
-Now we will enter VPL itself. VPL stands for Visual Page Layout, but you may as well call it WYSIWYG (What you See Is What You Get).
+Now we will enter VPL itself. VPL stands for Visual Page Layout, but you may as well call it WYSIWYG (What you See Is What You Get). (Eric's note: Except of course that HTML only suggests layout as opposed to a desktop publishing program unless you use absolute CSS very carefully. So WYSIWYG really is a ficticious misnomer with HTML.) ;-)
 First have in mind that when editing a HTML file in Quanta, the Node Tree is always up to date. Loading a new file/switching tabs calls Parser::parse, and typing a letter calls Parser::rebuild. Then we can see the VPL design as this:
 
 Source (XML file) <=> Node tree <=> DOM::Node tree.
@@ -71,7 +71,7 @@ Then when a change is made to the source file, Parser::rebuild is called and syn
 
 
 5) VPL classes.
-VPL has several classes, but note sometimes it is not really object oriented, but i will clean up soon.
+VPL has several classes, but note sometimes it is not really object oriented, but I will clean up soon.
 
 * KafkaWidget(kafkahtmlpart.[h|cpp]): Derived from KHTMLPart, it uses the caret mode implemented by Leo Savernik in khtml (that means we don't have to care about cursor navigation). It handles every keypress in order to edit the widget (backspace/delete/return/<insertion of a letter>) and modify only the DOM::Node tree (not the Node tree).
 
@@ -79,9 +79,9 @@ VPL has several classes, but note sometimes it is not really object oriented, bu
 
 * kafkaCommon(kafkacommon.[h|cpp]): A lot of usefull functions, some need to be moved... Everything for Node modification, Node tree modification, DOM::Node tree, DOM::Node modification is here.
 
-* undoRedo(undoredo.[h|cpp]): Not functionnal yet, but it is intended to provide undo/redo functionality to both VPL and quanta. But you are invited to use its structures. See section ? for more informations.
+* undoRedo(undoredo.[h|cpp]): Not functionnal yet, but it is intended to provide undo/redo functionality to both VPL and Quanta. But you are invited to use its structures. See section ? for more informations.
 
-* kNodeAttrs(nodeproperties.[h|cpp]): We can easily put a link to a DOM::Node from a Node in the Node class, but the opposite is impossible (we can't derivate them). So we have a link DOM::Node => kNodeAttrs => Node (thanks to a QPtrDict). And we also have some informations about the way to handle this node when editing VPL. (Be careful, one Node can be linked against several Nodes. See after.)
+* kNodeAttrs(nodeproperties.[h|cpp]): We can easily put a link to a DOM::Node from a Node in the Node class, but the opposite is impossible (we can't derive them). So we have a link DOM::Node => kNodeAttrs => Node (thanks to a QPtrDict). And we also have some informations about the way to handle this node when editing VPL. (Be careful, one Node can be linked against several Nodes. See after.)
 
 * NodeEnhancer(nodeenhancer.[h|cpp]): It is an interface class. Its aim it to "transform" or "enhance" DOM::Nodes when DOM::Nodes are synchronized from Nodes. Sometimes it is to add some style (e.g. adding a red dotted border to FORM elements) but sometimes it is essential (e.g. KHTML won't accept a TABLE without a TBODY even if it is DTD valid, so we had to manually add a TBODY. It explain why some Nodes can point to more than 1 Nodes.)
 
@@ -93,9 +93,9 @@ VPL has several classes, but note sometimes it is not really object oriented, bu
 6) Synchronizations
 So basically, we have the following design:
 In whatever views, changes are made. These changes are directly applied to the Node tree. But we will wait xxx ms before an update of the opposite view (configurable).
-In fact, it will *reload* the opposite view. Since the beginning, i wanted to update only the modified Nodes (UndoRedo's job) but i did some bad work and almost everything is commented now.
+In fact, it will *reload* the opposite view. Since the beginning, I wanted to update only the modified Nodes (UndoRedo's job) but I did some bad work and almost everything is commented now.
 
-So we are coming back to UndoRedo. Even if it is still not working, we should use it. You may have noticed that every function which modify the Node tree have a strange parameter, a NodeModifsSet.
+So we are coming back to UndoRedo. Even if it is still not working, we should use it. You may have noticed that every function which modifies the Node tree has a strange parameter, a NodeModifsSet.
 In fact, when you start modifying the Node tree, everything must be recorded. It has two aims:
 * To provide undo/redo capabilities.
 * To know which Nodes have been modified and thus when synchronizing a view from another, to update only the modified Nodes.
@@ -107,7 +107,7 @@ For text Nodes, if:
 Tag::cleanStrBuilt == false, the text contains no entities e.g. "boo a" as seen in the VPL view.
 Tag::cleanStrBuilt == true, the text is parsed e.g. "boo       &nbsp;a" as seen in the source view.
 
-Question: Why not (internally) directly modifying the source view in dialogs (e.g. reading and modifying the HTML markup)?
+Question: Why not (internally) directly modify the source view in dialogs (e.g. reading and modifying the HTML markup)?
 Answer: Because it will limit this dialog to the source view only! When editing the document in whatever view: VPL, source but also others like the node treeview we have at the upper left, the only thing always in synchronization is the Node tree!! A change made in the source calls Parser::rebuild, a change in VPL update the Node tree.
 So a dialog working on Nodes is nicer, because it will update the Node tree, and each view will be able to update itself from the Node Tree. For the moment, the only dialog working this way is the Document Properties Dialog. The Table editor dialog, for example, doesn't work in VPL because it is based on the source view.
 
