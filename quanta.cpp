@@ -222,7 +222,7 @@ void QuantaApp::slotFileSave()
       m_doc->saveDocument( w->url() );
 
     slotUpdateStatus(w);
-  Ú
+  }
 }
 
 bool QuantaApp::slotFileSaveAs()
