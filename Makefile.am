@@ -8,23 +8,26 @@ bin_PROGRAMS = quanta
 
 quanta_LDFLAGS = $(all_libraries)
 quanta_LDADD = \
-		$(top_srcdir)/quanta/kwrite/libkwrite.a\
-		$(top_srcdir)/quanta/kwrite/highlight/libhighlight.a\
-		$(top_srcdir)/quanta/dialogs/libdialogs.a\
-		$(top_srcdir)/quanta/parser/libparser.a\
-		$(top_srcdir)/quanta/project/libproject.a\
-		$(top_srcdir)/quanta/tagdialogs/libtagdialogs.a\
-		$(top_srcdir)/quanta/treeviews/libtreeviews.a\
-		$(top_srcdir)/quanta/widgets/libwidgets.a\
-		$(top_srcdir)/quanta/toolbar/libtoolbar.a\
-		$(top_srcdir)/quanta/messages/libmessages.a\
-		$(top_srcdir)/quanta/plugins/php4dbg/libphp4dbg.a\
-		$(top_srcdir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.a\
-		$(top_srcdir)/quanta/plugins/php3dbg/libphp3dbg.a\
+		$(top_builddir)/quanta/kwrite/libkwrite.a\
+		$(top_builddir)/quanta/kwrite/highlight/libhighlight.a\
+		$(top_builddir)/quanta/dialogs/libdialogs.a\
+		$(top_builddir)/quanta/parser/libparser.a\
+		$(top_builddir)/quanta/project/libproject.a\
+		$(top_builddir)/quanta/tagdialogs/libtagdialogs.a\
+		$(top_builddir)/quanta/treeviews/libtreeviews.a\
+		$(top_builddir)/quanta/widgets/libwidgets.a\
+		$(top_builddir)/quanta/toolbar/libtoolbar.a\
+		$(top_builddir)/quanta/messages/libmessages.a\
+		$(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.a\
+		$(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.a\
+		$(top_builddir)/quanta/plugins/php3dbg/libphp3dbg.a\
                 $(LIB_KDEUI) $(LIB_KFILE) $(LIB_KHTML) $(LIB_KSPELL) \
                 -lktexteditor
 
 INCLUDES = $(all_includes)\
+		-I$(top_builddir)/quanta/dialogs\
+		-I$(top_builddir)/quanta/tagdialogs\
+		-I$(top_builddir)/quanta/toolbar\
 		-I$(top_srcdir)/quanta/kwrite\
 		-I$(top_srcdir)/quanta/kwrite/highlight
 CXXFLAGS = -Wall 
