@@ -375,7 +375,7 @@ QString CSSSelectorEditor::code()
   return text;
 }
 
-/** From the code, insert the values on the widgets */;
+/** From the code, insert the values on the widgets */
 void CSSSelectorEditor::widgetFromCode(QString code)
 {
   QStringList values;
