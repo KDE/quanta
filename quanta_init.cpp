@@ -1584,6 +1584,10 @@ void QuantaApp::initActions()
                         this, SLOT( slotHelpHomepage() ),
                         ac, "help_homepage" );
 
+    (void) new KAction( i18n( "&User Mailing List" ), 0,
+                        this, SLOT( slotHelpUserList() ),
+                        ac, "help_userlist" );
+
     (void) new KAction( i18n( "Make &Donation" ), 0,
                         this, SLOT( slotMakeDonation() ),
                         ac, "help_donation" );

@@ -332,6 +332,8 @@ protected slots:
   void slotEmailDTD();
   /** Shows tip of the day */
   void slotHelpTip();
+  /** Show the user mailing list sign up */
+  void slotHelpUserList();
 
 protected:
   WHTMLPart *htmlPart();

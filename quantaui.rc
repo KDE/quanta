@@ -163,6 +163,7 @@
       <Action name="context_help"/>
       <Separator />
       <Action name="help_homepage" />
+      <Action name="help_userlist" />
       <Action name="help_donation"/>
       <Action name="help_report_bug" />
       <Action name="help_tip" />

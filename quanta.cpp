@@ -2683,6 +2683,12 @@ void QuantaApp::slotHelpHomepage()
   kapp->invokeBrowser("http://quanta.sourceforge.net");
 }
 
+/** No descriptions */
+void QuantaApp::slotHelpUserList()
+{
+  kapp->invokeBrowser("http://mail.kde.org/mailman/listinfo/quanta");
+}
+
 /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
 void QuantaApp::loadToolbarForDTD(const QString& dtdName)
 {
