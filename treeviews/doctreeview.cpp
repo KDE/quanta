@@ -45,7 +45,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( i18n("Name") );
+  addColumn( i18n("Name"), 600 );
 
   QStringList docDirs = KGlobal::instance()->dirs()->findDirs("appdata", "doc");
 

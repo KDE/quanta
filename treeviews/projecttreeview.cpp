@@ -47,15 +47,15 @@
 
 ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 {
-  QListView::QListView(parent, name);
+  KListView::KListView(parent, name);
   setRootIsDecorated( true );
-  header()->hide();
+ // header()->hide();
   setSorting( 0 );
   urlList.clear();
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( i18n("Name") );
+  addColumn( i18n("Project files"), 600 );
 
 	setFocusPolicy(QWidget::ClickFocus);
 	

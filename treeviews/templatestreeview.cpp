@@ -96,16 +96,16 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
 	localDir->setOpen( true );
 
 	setRootIsDecorated( true );
-  header()->hide();
+  //header()->hide();
   setSorting( 0 );
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( i18n("Name") );
+  addColumn( i18n("Templates"), 600 );
 
 	setFocusPolicy(QWidget::ClickFocus);
 
-	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
+	connect(  this, SIGNAL(executed(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
 	connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
 						this, SLOT(slotSelectImage(QListViewItem *)));
