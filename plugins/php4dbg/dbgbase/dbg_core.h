@@ -69,6 +69,9 @@
   #include <windef.h>
   #include <winsock.h>
 #else
+  #if defined(__FreeBSD__) || defined(__OpenBSD__)
+    #include <sys/types.h>
+  #endif        
   #include <sys/socket.h>
   #include <unistd.h>
   #include <netinet/in.h>

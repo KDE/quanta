@@ -1,4 +1,32 @@
+/***************************************************************************
+                          tagaction.cpp  -  description
+                             -------------------
+    begin                : ?
+    copyright            : (C) ? Dmitry Poplavsky, (C) 2002 by Andras Mantia
+    email                : amantia@freemail.hu
+ ***************************************************************************/
 
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+//qt includes
+#include <qdom.h>
+
+//kde includes
+#include <kprocess.h>
+#include <klocale.h>
+#include <ktexteditor/cursorinterface.h>
+#include <ktexteditor/viewcursorinterface.h>
+#include <ktexteditor/editinterface.h>
+#include <ktexteditor/selectioninterface.h>
+
+//app includes
 #include "tagaction.h"
 #include "../document.h"
 #include "../quantaview.h"
@@ -6,14 +34,8 @@
 #include "../quantadoc.h"
 #include "../tagdialogs/tagdialog.h"
 #include "../messages/messageoutput.h"
+#include "../quantacommon.h"
 
-#include <kprocess.h>
-#include <qdom.h>
-#include <klocale.h>
-#include <ktexteditor/cursorinterface.h>
-#include <ktexteditor/viewcursorinterface.h>
-#include <ktexteditor/editinterface.h>
-#include <ktexteditor/selectioninterface.h>
 
 TagAction::TagAction( QDomElement *element, QuantaView *view,KActionCollection *collection )
   : KAction( element->attribute("text"), 0, collection, element->attribute("name") ),
@@ -50,38 +72,40 @@ void TagAction::insertTag()
      QDomElement otag = (tag.namedItem("tag")).toElement();
      QDomElement xtag = (tag.namedItem("xtag")).toElement();
 
+     QString attr = otag.text();
+     if ( attr[0] == '<' )
+         attr.remove(0,1);
+     if ( attr.right(1) == ">" )
+         attr.remove( attr.length()-1, 1 );
+     attr = attr.stripWhiteSpace();
+     int i = 0;
+     while ( !attr[i].isSpace() && !attr[i].isNull() )	i++;
+     QString name = attr.left(i);
+     attr = attr.remove(0,i).stripWhiteSpace();
+
      if ( otag.attribute("useDialog","false") == "true" ) {
-         QString s = otag.text();
 
-         if ( s[0] == '<' )
-            s.remove(0,1);
-
-         if ( s.right(1) == ">" )
-            s.remove( s.length()-1, 1 );
-
-         s = s.stripWhiteSpace();
-
-         int i = 0;
-         while ( !s[i].isSpace() && !s[i].isNull() )	i++;
-
-         QString name = s.left(i);
-
-         s = s.remove(0,i).stripWhiteSpace();
-
-         view_->insertNewTag(name, s, xtag.attribute("inLine","true") == "true");
+         view_->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
 //         TagDialog *dlg = new TagDialog( view_->write(), name, s, xtag.attribute("inLine","true") == "true" );
 //         dlg->show();
 
      }
-     else {
-       if ( xtag.attribute("use","false") == "true" ) {
+     else
+     {
+       QString s1 = "<"+QuantaCommon::tagCase(name);
+       if (!attr.isEmpty())
+          s1 += " "+QuantaCommon::attrCase(attr);
+       s1 += ">";
+       QString s2 = "</" + QuantaCommon::tagCase(name) + ">";
+       if ( xtag.attribute("use","false") == "true" )
+       {
          if ( xtag.attribute("inLine","true") == "true" )
-           view_->write()->insertTag( otag.text(), xtag.text() );
+           view_->write()->insertTag( s1, s2 );
          else
-           view_->write()->insertTag( otag.text()+"\n"+space+"  ", "\n"+space+xtag.text() );
+           view_->write()->insertTag( s1+"\n"+space+"  ", "\n"+space+s2 );
        }
        else
-         view_->write()->insertTag( otag.text() );
+         view_->write()->insertTag( s1 );
      }
   }
 

@@ -1,3 +1,20 @@
+/***************************************************************************
+                          tagaction.h  -  description
+                             -------------------
+    begin                : ?
+    copyright            : (C) ? Dmitry Poplavsky, (C) 2002 by Andras Mantia
+    email                : amantia@freemail.hu
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
 #ifndef TAGACTION_H
 #define TAGACTION_H
 
@@ -13,6 +30,7 @@ class QDomElement;
  * An action for inserting an XML tag.
  *
  * @author Dmitry Poplavsky, dima@kde.org
+ *         Andras Mantia, amantia@freemail.hu
  */
 
 class TagAction : public KAction
