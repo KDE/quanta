@@ -122,6 +122,7 @@ public:
   int tagBeginX, tagBeginY, tagEndX, tagEndY;
 
   bool oldstat;
+  bool busy;
   
 private:
 

@@ -2309,6 +2309,8 @@ void KWrite::writeURL(const KURL &url, int ) {
       emit statusMsg( i18n( "Wrote %1" ).arg( url.fileName() ) );
       kWriteDoc->setNewDoc( false ); // File is not new anymore
   }
+  
+  emit finishSaveURL(this);
 }
 
 void KWrite::slotJobReadResult( KIO::Job *job )
@@ -2328,6 +2330,7 @@ void KWrite::slotJobReadResult( KIO::Job *job )
     else
         loadInternal( data, url, flags );
 #endif
+    emit finishLoadURL(this);
 }
 
 void KWrite::loadInternal( const QByteArray &data, const KURL &url, int flags )

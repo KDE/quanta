@@ -33,6 +33,7 @@
 // forward declaration of the Quanta classes
 class QuantaApp;
 class QuantaView;
+class KWrite;
 class Document;
 
 class KConfig;
@@ -85,6 +86,9 @@ class QuantaDoc : public QObject
   public slots:
     /** close documents. */
     void closeAll();
+    
+    void finishLoadURL(KWrite *);
+    void finishSaveURL(KWrite *);
 
     /** show popup menu with list of attributes for current tag */
     void slotInsertAttrib      ( int id );

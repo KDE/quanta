@@ -526,6 +526,9 @@ class KWrite : public KTextEditor::View, virtual public KWriteIface {
 
     // emitted when saving a remote URL with KIO::NetAccess. In that case we have to disable the UI.
     void enableUI( bool enable );
+    
+    void finishLoadURL(KWrite *);
+    void finishSaveURL(KWrite *);
 
   protected:
     virtual void keyPressEvent( QKeyEvent *ev );

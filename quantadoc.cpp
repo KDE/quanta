@@ -113,14 +113,14 @@ bool QuantaDoc::newDocument( const KURL& url )
     {
       // no modi and new -> we can remove
       if ( !write()->isModified() &&
-            write()->isUntitled() ) return true;
+            write()->isUntitled() && !write()->busy) return true;
     }
     // now we can create new kwrite
     Document *w = newWrite( app->view->writeTab );
     
     if ( newfile ) furl = w->url().url();
     
-  	app ->view  ->addWrite( w, QExtFileInfo::shortName(furl) );
+  	app ->view  ->addWrite( w, QExtFileInfo::shortName(w->url().url()) );
   	
   	docList->insert( w->url().url(), w );
   }
@@ -136,23 +136,36 @@ bool QuantaDoc::newDocument( const KURL& url )
 void QuantaDoc::openDocument(const KURL& url)
 {
   if ( !newDocument( url )) return;
-
-  QString defUrl = this->url().url();
-  
-  if ( !url.url().isEmpty()) 
-  {
+  if ( !url.url().isEmpty()) {
+    write()->busy = true;
     write()->loadURL( url );
-    app->fileRecent->addURL( url );
   }
-  
-  changeFileTabName(defUrl,url.url());
-  
   emit title( url.url() );
-  emit newStatus();
+}
+
+void QuantaDoc::finishLoadURL(KWrite *_w)
+{
+  Document *w = (Document *)_w;
+
+  QDictIterator<Document> it(*docList);
+
+ 	QString defUrl;
+ 	while ( it.current() )
+ 	{
+ 	  if ( w == it.current() ) defUrl = it.currentKey();
+ 	  ++it;
+ 	}
+ 	
+ 	app->view->writeTab->showPage(w);
+ 	
+ 	changeFileTabName(defUrl);
   
+  app->fileRecent->addURL( w->url() );
+  
+  emit newStatus();
   app->repaintPreview();
   
-  return;
+  w -> busy = false;
 }
 
 void QuantaDoc::saveDocument(const KURL& url)
@@ -161,15 +174,23 @@ void QuantaDoc::saveDocument(const KURL& url)
 
   if ( !url.url().isEmpty()) 
   {
+    write()->busy = true;
     write()->writeURL( url );
     write()->  setURL( url, false );
   }
   
-  changeFileTabName( defUrl );
+  // fix
+  if ( defUrl != url.url() ) changeFileTabName( defUrl );
   
   emit title( this->url().url() );
 
   return;
+}
+
+void QuantaDoc::finishSaveURL(KWrite *_w)
+{
+  Document *w = (Document *)_w;
+  w -> busy = false;
 }
 
 bool QuantaDoc::saveAll(bool dont_ask)
@@ -360,6 +381,10 @@ Document* QuantaDoc::newWrite(QWidget *parent)
  	connect( w, SIGNAL(newUndo      ()),app, SLOT(slotNewUndo      ()));
  	connect( w, SIGNAL(newMarkStatus()),app, SLOT(slotNewMarkStatus()));
  	connect( w, SIGNAL(statusMsg(const QString &)),app, SLOT(slotStatusMsg(const QString &)));
+ 	
+ 	connect( w, SIGNAL(finishLoadURL(KWrite *)), this, SLOT(finishLoadURL(KWrite *)));
+ 	connect( w, SIGNAL(finishSaveURL(KWrite *)), this, SLOT(finishSaveURL(KWrite *)));
+ 	
  	w->clearFocus();
  	w->setFocus();
  	
