@@ -1667,7 +1667,9 @@ void QuantaApp::slotContextHelp()
     if (w)
     {
         QString currentWord = "";
+        parser->setSAParserEnabled(false);
         reparse(true);
+        parser->setSAParserEnabled(true);
         uint line, col;
         w->viewCursorIf->cursorPositionReal(&line, &col);
         Node *node = parser->nodeAt(line, col);

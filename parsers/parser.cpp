@@ -14,6 +14,7 @@
  ***************************************************************************/
 
 //qt includes
+#include <qeventloop.h>
 #include <qstring.h>
 #include <qregexp.h>
 #include <qcstring.h>
@@ -1641,6 +1642,7 @@ void Parser::synchParseInDetail()
 void Parser::setSAParserEnabled(bool enabled)
 {
   m_saParser->setParsingEnabled(enabled);
+  kapp->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers); //this makes sure that the parsing is really disabled
 }
 
 #include "parser.moc"
