@@ -337,8 +337,9 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       dtd->specialAreaNames["<?xml"] = "XML PI";
       dtd->specialAreas["<!--"] = "-->";
       dtd->specialAreaNames["<!--"] = "comment";
-      dtd->specialAreas["<!"] = ">";
-      dtd->specialAreaNames["<!"] = "DTD";
+//      dtd->specialAreas["<!"] = ">";
+  //    dtd->specialAreaNames["<!"] = "DTD";
+      dtd->insideDTDs.append("dtd");
       tmpStr = "(<?xml)|(<!--)|(<!)|";
       rxStr = QuantaCommon::makeRxCompatible(tmpStr);
   }

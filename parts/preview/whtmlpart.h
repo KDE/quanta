@@ -18,8 +18,9 @@
 #ifndef WHTMLPART_H
 #define WHTMLPART_H
 
-#include <khtml_part.h>
 #include <qstrlist.h>
+
+#include <khtml_part.h>
 
 class KPopupMenu;
 /**

@@ -107,7 +107,6 @@ private:
   };
 
   //private member variables
-  bool m_parsingLastNode;
   bool m_useNext;
   bool m_parsingEnabled;
   bool m_synchronous;

@@ -375,7 +375,18 @@ bool SAParser::slotParseOneLine()
 //            slotParseForScriptGroup();
             if (!m_synchronous)
             {
-              SAGroupParser *groupParser = new SAGroupParser(this, write(), g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
+              bool parsingLastNode = true;
+              Node *n = g_endNode;
+              while (n)
+              {
+                n = n->nextSibling();
+                if (n && n->insideSpecial)
+                {
+                  parsingLastNode = false;
+                  break;
+                }
+              }
+              SAGroupParser *groupParser = new SAGroupParser(this, write(), g_node, g_endNode, m_synchronous, parsingLastNode, true);
               connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
               connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
               connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
@@ -782,7 +793,18 @@ Node *SAParser::parsingDone()
     //parse for groups only when doing aynchronous detailed parsing
     if (!m_synchronous)
     {
-            SAGroupParser *groupParser = new SAGroupParser(this, write(), g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
+      bool parsingLastNode = true;
+      Node *n = g_endNode;
+      while (n)
+      {
+        n = n->nextSibling();
+        if (n && n->insideSpecial)
+        {
+          parsingLastNode = false;
+          break;
+        }
+      }
+      SAGroupParser *groupParser = new SAGroupParser(this, write(), g_node, g_endNode, m_synchronous, parsingLastNode, true);
             connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
             connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
             connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
@@ -858,17 +880,6 @@ void SAParser::slotParseNodeInDetail()
         m_currentNode->tag->type != Tag::Text &&
         m_currentNode->tag->type != Tag::Empty)
     {
-      m_parsingLastNode = true;
-      Node *n = m_currentNode->nextSibling();
-      while (n)
-      {
-        n = n->nextSibling();
-        if (n && n->insideSpecial)
-        {
-          m_parsingLastNode = false;
-          break;
-        }
-      }
       delete m_currentNode->child;
       m_currentNode->child = 0L;
       AreaStruct area(m_currentNode->tag->area());

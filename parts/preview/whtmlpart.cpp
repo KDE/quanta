@@ -172,7 +172,7 @@ void WHTMLPart::popupMenu(const QString &/*url*/, const QPoint &point)
 }
 
 void WHTMLPart::slotViewSource()
-{
+{  
   KTempFile *tmpFile = new KTempFile(tmpDir, ".html");
   QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
   tmpFile->setAutoDelete(true);
