@@ -81,6 +81,7 @@ bool DTDParser::parse()
   if( DTD::dtd_ptr == NULL )
   {
     QString errorStr = i18n("Unknown");
+#ifndef LIBXML_2_5
     xmlErrorPtr errorPtr = xmlGetLastError();
     if (errorPtr != NULL)
     {
@@ -98,6 +99,7 @@ bool DTDParser::parse()
         errorStr += "<br>" + s;
       xmlResetError(errorPtr);
     }
+#endif    
     KMessageBox::error(0, i18n("<qt>Error while parsing the DTD.<br>The error message is:<br><i>%1</i></qt>").arg(errorStr));
     return false;
   }
