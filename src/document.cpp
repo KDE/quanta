@@ -589,6 +589,13 @@ int Document::createTempFile(bool dump)
     tempFile->unlink();
     QExtFileInfo::copy(url(), KURL::fromPathOrURL(m_tempFileName));
  }
+  KIO::UDSEntry entry;
+  if (KIO::NetAccess::stat(url(), entry, this))
+  {
+    KFileItem item(entry, url(), true);
+    int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
+    Project::ref()->updateTimeStamp(url(), modifiedTime, true);
+  }
 // kdDebug(24000) << "Creating tempfile " << m_tempFileName << " for " << url() << endl;
 return 1;
 }

@@ -1468,7 +1468,7 @@ void QuantaApp::restoreFromTempfile(Document *w)
   {
     KFileItem item(entry, origUrl, true);
     int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
-    Project::ref()->updateTimeStamp(origUrl, modifiedTime);
+    Project::ref()->updateTimeStamp(origUrl, modifiedTime, false);
   }
   if (origUrl.isLocalFile())
   {

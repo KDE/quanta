@@ -2230,13 +2230,18 @@ bool Project::contains(const KURL& url)
   return (d->m_projectFiles.contains(url) > 0);
 }
 
-void Project::updateTimeStamp(const KURL& url, int modifiedTime)
+void Project::updateTimeStamp(const KURL& url, int modifiedTime, bool modifiedTimeOnly)
 {
   ProjectURL *proUrl = d->m_projectFiles.find(url);
   if (! proUrl)
     return;
 
   QDomElement itemEl = proUrl->domElement;
+  if (modifiedTimeOnly)
+  {
+    itemEl.setAttribute("modified_time", modifiedTime);
+    return;
+  }
   int origModifTime = itemEl.attribute("modified_time","1").toInt();
   QString qurl = QuantaCommon::qUrl(d->m_projectFiles.toRelative(*proUrl));
 
