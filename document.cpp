@@ -211,6 +211,8 @@ void Document::changeTagAttribute(Tag *tag, const QString& attrName, const QStri
   {
     int endCol;
     value = tag->attributeValue(index);
+    if (value == attrValue)
+        return;
     int aLine, aCol;
     tag->attributeNamePos(index, aLine, aCol);
     tag->attributeValuePos(index, line, col);
@@ -251,7 +253,10 @@ void Document::changeTagAttribute(Tag *tag, const QString& attrName, const QStri
     viewCursorIf->setCursorPositionReal((uint)line, (uint)col);
     insertText(value);
   }
-  slotDelayedTextChanged();
+  quantaApp->slotNewLineColumn();
+
+  //else
+//  slotDelayedTextChanged();
 }
 
 /**  */
