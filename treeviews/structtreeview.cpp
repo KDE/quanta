@@ -565,7 +565,7 @@ void StructTreeView::slotSelectTag()
       emit openFile(url, quantaApp->defaultEncoding());
 
     }
-    emit selectArea( bLine, bCol, eLine, eCol+1);
+    emit selectArea( bLine, bCol, eLine, eCol + 1);
 
     setSelected(item, true);
     it->node->tag->write()->view()->setFocus();

@@ -167,6 +167,8 @@ public slots:
   user specified tag. */
   void slotTagMisc();
   void slotEditCurrentTag();
+  void slotSelectTagArea();
+  void slotSelectTagArea(Node *node);
 
   void slotInsertCSS();
   void slotFrameWizard();

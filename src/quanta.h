@@ -504,7 +504,7 @@ private:
     *deletePrjViewAction;
 
   KAction *bookmarkToggle, *bookmarkClear, *bookmarkPrev, *bookmarkNext;
-  KAction *editTagAction;
+  KAction *editTagAction, *selectTagAreaAction;
 
   //KToggleAction *viewFoldingMarkers;
   Kate::ActionMenu *setHighlight;

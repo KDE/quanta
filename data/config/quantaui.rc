@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32034">
+<kpartgui name="quanta" version="32035">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -250,6 +250,7 @@
     <Action name="edit_paste" />
     <Separator />
     <Action name="edit_current_tag"/>
+    <Action name="select_tag_area"/>
     <Action name="context_help"/>
     <Action name="open_file_under_cursor"/>
     <Separator/>

@@ -237,6 +237,7 @@ void QuantaApp::initQuanta()
 
   m_tagsMenu = new QPopupMenu(this);
   editTagAction->plug(m_tagsMenu);
+  selectTagAreaAction->plug(m_tagsMenu);
   m_tagsMenu->insertSeparator();
   menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,TAGS_MENU_PLACE);
 
@@ -930,6 +931,9 @@ void QuantaApp::initActions()
     editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         m_view, SLOT( slotEditCurrentTag() ),
                         ac, "edit_current_tag" );
+    selectTagAreaAction = new KAction( i18n( "&Select Current Tag Area" ), 0,
+                        m_view, SLOT( slotSelectTagArea() ),
+                        ac, "select_tag_area" );
     new KAction( i18n( "E&xpand Abbreviation" ), CTRL+Key_J,
                         this, SLOT( slotExpandAbbreviation() ),
                         ac, "expand_abbreviation" );

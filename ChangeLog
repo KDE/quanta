@@ -45,6 +45,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
       - list the opened files as bold in the treeviews
       - allow closing of opened files from the treeviews
       - add description field for project files
+      - Select Current Tag Area action created
     - enhancements:
       - improve document type recognition (treat escaped quote marks as normal quotes) [#61873]
       - improve namespace support in the autocompletion    

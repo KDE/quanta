@@ -112,6 +112,45 @@ void QuantaView::slotEditCurrentTag()
   }
 }
 
+void QuantaView::slotSelectTagArea(Node *node)
+{
+  int bLine, bCol, eLine, eCol;
+  Tag *tag = node->tag;
+  tag->beginPos(bLine, bCol);
+  if (tag->single || !node->next)
+  {
+    tag->endPos(eLine, eCol);
+  } else
+  if (tag->closingMissing && node->child)
+  {
+    Node *childNode = node->child;
+    while (childNode->child || childNode->next)
+    {
+      if (childNode->next)
+      {
+        childNode = childNode->next;
+      } else
+      {
+        childNode = childNode->child;
+      }
+    }
+    childNode->tag->endPos(eLine, eCol);
+  } else
+  {
+    node->next->tag->endPos(eLine, eCol);
+  }
+  quantaApp->selectArea(bLine, bCol, eLine, eCol + 1);
+}
+
+void QuantaView::slotSelectTagArea()
+{
+  if (!writeExists())
+      return;
+  uint line,col;
+  write()->viewCursorIf->cursorPositionReal(&line, &col); 
+  Node *node = parser->nodeAt(line, col);
+  slotSelectTagArea(node);
+}
 
 void QuantaView::slotFrameWizard()
 {
