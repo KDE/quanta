@@ -2,7 +2,12 @@ This files contains the changes since Quanta 2.0 until the current 3.4.x series.
 
 Version 3.4 (Release date: xx-03-2005; Started 20-08-2004):
   - bugfixes:
-      - VPL:
+        - Debugger
+          - Added full support for Gubeds conditional breakpoints
+          - Improved path mapping
+          - Fixed bug that objects appeared incorrectly in watch list
+          - Fixed lockup when watching large variables
+        - VPL:
           - enable VPL on KDE 3.3.x
           - Update cursor position in VPL when return key is pressed. [#94816]
           - Fix cursor disapearing. [#85292]
