@@ -81,7 +81,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
           action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
           if (action)
           {
-            oldActionItem = new KListViewItem(item, oldActionItem, action->text(), action->shortcut().toString(), "Amdrs");
+            oldActionItem = new KListViewItem(item, oldActionItem, action->text(), action->shortcut().toString(), action->name());
             oldActionItem->setPixmap(0, BarIcon(action->icon()) );
           }
         }
@@ -101,7 +101,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
   {
     action = quantaApp->actionCollection()->action(i);
-    item = new KListViewItem(allActionsItem, action->text().replace('&',""), action->shortcut().toString());
+    item = new KListViewItem(allActionsItem, action->text().replace('&',""), action->shortcut().toString(), action->name());
     item->setPixmap(0, BarIcon(action->icon()) );
   }
   allActionsItem->sortChildItems(0, true);
@@ -161,6 +161,39 @@ void ActionConfigDialog::slotRemoveToolbar()
 void ActionConfigDialog::slotEditToolbar()
 {
   quantaApp->slotOptionsConfigureToolbars();
+
+  //update the tree view
+  QListViewItem *oldItem, *item;
+  KAction *action;
+  QTabWidget *tb = quantaApp->view()->toolbarTab();
+  for (int i = 0; i < tb->count(); i++)
+  {
+    QString toolbarName = tb->label(i);
+    ToolbarEntry *p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+    if (p_toolbar)
+    {
+      oldItem = actionTreeView->findItem(toolbarName, 0);
+      item = new KListViewItem(actionTreeView, oldItem, toolbarName);
+      item->setOpen(oldItem->isOpen());
+      delete oldItem;
+      QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
+      while (!node.isNull())
+      {
+        if (node.nodeName() == "Action")
+        {
+          action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
+          if (action)
+          {
+            oldItem = new KListViewItem(item, oldItem, action->text(), action->shortcut().toString(), action->name());
+            oldItem->setPixmap(0, BarIcon(action->icon()));
+          }
+        }
+        node = node.nextSibling();
+      }
+    }
+  }
+  actionTreeView->setCurrentItem(allActionsItem);
+  actionTreeView->setSelected(allActionsItem, true);
 }
 
 void ActionConfigDialog::slotContextMenu(KListView *,QListViewItem *,const QPoint &point)
@@ -386,7 +419,7 @@ void ActionConfigDialog::saveCurrentAction()
   while (it.current())
   {
     listItem = it.current();
-    if (listItem->depth() > 0 && listItem->text(0) == oldText)
+    if (listItem->depth() > 0 && listItem->text(2) == currentAction->name())
     {
       listItem->setPixmap(0, BarIcon(actionIcon->icon()));
       listItem->setText(0, lineText->text());
@@ -525,7 +558,7 @@ void ActionConfigDialog::saveCurrentAction()
             {
               listItem = iter.current();
               if (listItem->depth() > 0 && listItem->parent()->text(0) == toolbarName
-                  && listItem->text(0) == el.attribute("text"))
+                  && listItem->text(2) == el.attribute("name"))
               {
                 delete listItem;
                 break;
@@ -555,7 +588,7 @@ void ActionConfigDialog::saveCurrentAction()
           {
             after = after->nextSibling();
           }
-          listItem = new KListViewItem(listItem, after, lineText->text(), currentAction->shortcut().toString());
+          listItem = new KListViewItem(listItem, after, lineText->text(), currentAction->shortcut().toString(), currentAction->name());
           listItem->setPixmap(0, BarIcon(actionIcon->icon()));
         }
       }
@@ -651,6 +684,7 @@ void ActionConfigDialog::slotNewAction()
   currentAction = new TagAction(&el, quantaApp->actionCollection());
   QListViewItem *currentItem = actionTreeView->currentItem();
   QListViewItem *item = new KListViewItem(allActionsItem);
+  item->setText(2, currentAction->name());
   item->setPixmap(0, BarIcon("ball"));
   allActionsItem->sortChildItems(0, true);
   if (!currentItem->parent() || currentItem->parent() == allActionsItem)
@@ -659,6 +693,7 @@ void ActionConfigDialog::slotNewAction()
   } else
   {
     item = new KListViewItem(currentItem->parent(), currentItem);
+    item->setText(2, currentAction->name());
     item->setPixmap(0, BarIcon("ball"));
     actionTreeView->setCurrentItem(item);
     toolbarListBox->insertItem(currentItem->parent()->text(0));
@@ -710,7 +745,7 @@ void ActionConfigDialog::slotDeleteAction()
     while (it.current())
     {
       listItem = it.current();
-      if (listItem->depth() > 0 && listItem->text(0) == text)
+      if (listItem->depth() > 0 && listItem->text(2) == actionName)
       {
         ++it;
         delete listItem;
