@@ -171,7 +171,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
             }
          default:
             {
-              if (!typingInProgress && node->tag->type == Tag::XmlTagEnd)
+              if (!typingInProgress && node->tag->type == Tag::XmlTagEnd && !node->tag->name.isEmpty())
               {
                 int line, col;
                 node->tag->beginPos(line, col);
