@@ -206,6 +206,9 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
   if (w && !w->isUntitled())
   {
     emit viewActivated(w->url());
+    
+    int flag = w->defaultDTD()->name.contains("HTML", false);
+    quantaApp->actionCollection()->action("apply_source_indentation")->setEnabled(flag);
   }
 }
 

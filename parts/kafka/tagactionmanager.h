@@ -42,6 +42,13 @@ public:
     static TagActionManager* self();
     ~TagActionManager();
 
+    
+    /**
+     * This method is used to fill context menus with apropriated actions for node.
+     * If you want to plug a single action to some widget use actionCollection().
+     * @param widget The widget in wich the actions will be pluged.
+     * @param node The context/current node.
+     */
     void fillWithTagActions(QWidget* widget, DOM::Node const& node);
 
     KActionCollection* actionCollection() const

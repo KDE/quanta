@@ -109,6 +109,8 @@
 #include "spellchecker.h"
 #include "qpevents.h"
 
+#include "tagactionmanager.h"
+
 QuantaInit::QuantaInit(QuantaApp * quantaApp)
         : QObject()
 {
@@ -674,7 +676,7 @@ void QuantaInit::initActions()
     KStdAction::cut(m_quanta, SLOT(slotCut()), ac);
     KStdAction::copy(m_quanta, SLOT(slotCopy()), ac) ;
     KStdAction::pasteText(m_quanta, SLOT(slotPaste()), ac);
-
+    
 //Tools menu
     KStdAction::spelling(m_quanta, SLOT(slotSpellcheck()), ac);
 
@@ -727,7 +729,10 @@ void QuantaInit::initActions()
                         SmallIcon("filefind"), CTRL+ALT+Key_F,
                         m_quanta, SLOT( slotEditFindInFiles() ),
                         ac, "find_in_files" );
-
+    
+    KAction* aux = TagActionManager::self()->actionCollection()->action("apply_source_indentation");
+    ac->insert(aux);
+    
     // Tool actions
 
     (void) new KAction( i18n( "&Context Help..." ), CTRL+Key_H,

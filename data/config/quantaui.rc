@@ -1,293 +1,283 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32065">
-  <MenuBar noMerge="1">
-
-    <Menu name="file" noMerge="1"><text>&amp;File</text>
-      <Action name="file_new"/>
-      <Action name="file_open"/>
-      <Action name="file_open_recent"/>
-      <Separator />
-      <Action name="file_save" />
-      <Action name="file_save_as" />
-      <Menu name="save_as_template" append="save_merge"><text>Save as Template</text>
-        <Action name="save_local_template"/>
-        <Action name="save_project_template"/>
-        <Separator />
-        <Action name="save_selection_local_template"/>
-        <Action name="save_selection_project_template" />
-      </Menu>
-      <Action name="file_save_all" append="save_merge"/>
-      <Action name="file_reload" />
-      <Action name="file_reload_all" />
-      <Separator />
-      <DefineGroup name="print_merge" />
-      <Separator />
-      <Action name="file_quit" />
+<kpartgui version="32065" name="quanta" >
+    <MenuBar noMerge="1" >
+        <Menu noMerge="1" name="file" >
+            <text>&amp;File</text>
+            <Action name="file_new" />
+            <Action name="file_open" />
+            <Action name="file_open_recent" />
+            <Separator/>
+            <Action name="file_save" />
+            <Action name="file_save_as" />
+            <Menu append="save_merge" name="save_as_template" >
+                <text>Save as Template</text>
+                <Action name="save_local_template" />
+                <Action name="save_project_template" />
+                <Separator/>
+                <Action name="save_selection_local_template" />
+                <Action name="save_selection_project_template" />
+            </Menu>
+            <Action append="save_merge" name="file_save_all" />
+            <Action name="file_reload" />
+            <Action name="file_reload_all" />
+            <Separator/>
+            <DefineGroup name="print_merge" />
+            <Separator/>
+            <Action name="file_quit" />
+        </Menu>
+        <Menu noMerge="1" name="edit" >
+            <text>&amp;Edit</text>
+            <Action name="edit_undo" />
+            <Action name="edit_redo" />
+            <DefineGroup name="edit_undo_merge" />
+            <Action name="edit_cut" />
+            <Action name="edit_copy" />
+            <Action name="edit_paste" />
+            <DefineGroup name="edit_paste_merge" />
+            <Menu name="paste_special" >
+                <text>Paste Special</text>
+                <Action name="edit_paste_html_quoted" />
+                <Action name="edit_paste_url_encoded" />
+            </Menu>
+            <Separator/>
+            <DefineGroup name="edit_select_merge" />
+            <DefineGroup name="edit_find_merge" />
+            <Action name="find_in_files" />
+            <Separator/>
+            <Action name="expand_abbreviation" />
+            <Separator/>
+            <Action name="apply_source_indentation" />
+        </Menu>
+        <Menu name="view" >
+            <text>&amp;View</text>
+            <Merge/>
+            <Separator/>
+            <Action name="show_quanta_editor" />
+            <Action name="show_kafka_view" />
+            <Action name="show_kafka_and_quanta" />
+            <Action name="show_preview" />
+            <Menu name="external_preview" >
+                <text>E&amp;xternal Preview</text>
+                <Action name="view_with_konqueror" />
+                <Action name="view_with_mozilla" />
+                <Action name="view_with_netscape" />
+                <Action name="view_with_opera" />
+                <Action name="view_with_lynx" />
+            </Menu>
+            <Separator/>
+            <Action name="reload" />
+            <Action name="w_back" />
+            <Action name="w_forward" />
+        </Menu>
+        <Menu noMerge="1" name="project" >
+            <text>&amp;Project</text>
+            <Action name="project_new" />
+            <Action name="project_open" />
+            <Action name="project_open_recent" />
+            <Action name="project_close" />
+            <Separator/>
+            <Action name="project_view_open" />
+            <Action name="project_view_save" />
+            <Action name="project_view_save_as" />
+            <Action name="project_view_delete" />
+            <Separator/>
+            <Action name="project_insert_file" />
+            <Action name="project_insert_directory" />
+            <Action name="project_rescan" />
+            <Separator/>
+            <Action name="project_upload" />
+            <Action name="project_options" />
+        </Menu>
+        <Menu noMerge="1" name="toolbars" >
+            <text>Too&amp;lbars</text>
+            <Menu name="toolbars_load" >
+                <text>&amp;Load Toolbars</text>
+                <Action name="toolbars_load_global" />
+                <Action name="toolbars_load_user" />
+                <Action name="toolbars_load_project" />
+            </Menu>
+            <Menu name="toolbars_save" >
+                <text>&amp;Save Toolbars</text>
+                <Action name="toolbars_save_local" />
+                <Action name="toolbars_save_project" />
+            </Menu>
+            <Separator/>
+            <Action name="toolbars_add" />
+            <Action name="toolbars_remove" />
+            <Action name="toolbars_rename" />
+            <Separator/>
+            <Action name="toolbars_send" />
+            <Action name="toolbars_download" />
+        </Menu>
+        <Menu name="dtds" >
+            <text>&amp;DTD</text>
+            <Action name="change_dtd" />
+            <Action name="load_dtd" />
+            <Separator/>
+            <Action name="load_dtep" />
+            <Action name="send_dtep" />
+            <Action name="download_dtep" />
+            <Action name="upload_dtep" />
+        </Menu>
+        <Menu name="tags" >
+            <text>&amp;Tags</text>
+            <Action name="edit_current_tag" />
+            <Action name="select_tag_area" />
+            <Action name="smart_tag_insertion" />
+            <Separator/>
+        </Menu>
+        <Menu name="plugins" >
+            <text>Plu&amp;gins</text>
+        </Menu>
+        <Merge/>
+        <Menu name="tools" >
+            <text>T&amp;ools</text>
+            <Merge/>
+            <Separator/>
+            <Action name="tools_document_properties" />
+            <Action name="tools_change_case" />
+            <Action name="tools_code_formatting" />
+            <Separator/>
+            <Action name="tools_spelling" />
+            <Action name="tidy_check" />
+            <Action name="kompare_script" />
+        </Menu>
+        <Menu noMerge="1" name="settings" >
+            <text>&amp;Settings</text>
+            <Merge name="StandardToolBarMenuHandler" />
+            <Action name="view_dtd_toolbar" />
+            <Action name="options_show_statusbar" />
+            <Separator/>
+            <Action name="general_options" />
+            <Action name="preview_options" />
+            <Action name="configure_actions" />
+            <Action name="configure_plugins" />
+            <Merge/>
+            <Separator/>
+            <Action name="options_configure_toolbars" />
+            <Action name="configure_shortcuts" />
+        </Menu>
+        <Menu noMerge="1" name="help" >
+            <text>&amp;Help</text>
+            <Action name="help_contents" />
+            <Action name="help_whats_this" />
+            <Separator/>
+            <Action name="context_help" />
+            <Separator/>
+            <Action name="help_homepage" />
+            <Action name="help_userlist" />
+            <Action name="help_donation" />
+            <Action name="help_reportbug" />
+            <Action name="help_tip" />
+            <Separator/>
+            <Action name="help_about_app" />
+            <Action name="help_about_kde" />
+        </Menu>
+    </MenuBar>
+    <ToolBar noMerge="1" name="mainToolBar" >
+        <text>Main Toolbar</text>
+        <Action name="file_new" />
+        <Action name="file_open_recent" />
+        <Action name="project_open_recent" />
+        <Separator/>
+        <Action name="file_save" />
+        <Action name="file_save_all" />
+    </ToolBar>
+    <ToolBar noMerge="1" name="mainEditToolBar" >
+        <text>Editor Toolbar</text>
+        <Action name="edit_cut" />
+        <Action name="edit_copy" />
+        <Action name="edit_paste" />
+        <Action name="edit_undo" />
+        <Action name="edit_redo" />
+        <Separator/>
+        <Action name="tools_spelling" />
+    </ToolBar>
+    <ToolBar noMerge="1" name="mainPluginsToolBar" >
+        <text>Plugins Toolbar</text>
+        <Action name="tidy_check" />
+        <Action name="KFileReplace" />
+        <Action name="CVS Management (Cervisia)" />
+        <Action name="XSLT Debugger" />
+    </ToolBar>
+    <ToolBar noMerge="1" name="mainNaviToolBar" >
+        <text>Navigation Toolbar</text>
+        <Action name="show_messages" />
+        <Action name="show_quanta_editor" />
+        <Action name="show_kafka_view" />
+        <Action name="show_kafka_and_quanta" />
+        <Action name="show_preview" />
+        <Action name="reload" />
+        <Separator/>
+        <Action name="w_back" />
+        <Action name="w_forward" />
+    </ToolBar>
+    <Menu name="popup_editor" >
+        <Action name="edit_cut" />
+        <Action name="edit_copy" />
+        <Action name="edit_paste" />
+        <Separator/>
+        <Action name="edit_current_tag" />
+        <Action name="select_tag_area" />
+        <Action name="context_help" />
+        <Action name="open_file_under_cursor" />
     </Menu>
-
-   <Menu name="edit" noMerge="1"><text>&amp;Edit</text>
-    <Action name="edit_undo" />
-    <Action name="edit_redo" />
-    <DefineGroup name="edit_undo_merge" />
-    <Action name="edit_cut" />
-    <Action name="edit_copy" />
-    <Action name="edit_paste" />
-    <DefineGroup name="edit_paste_merge" />
-    <Menu name="paste_special"><text>Paste Special</text>
-         <Action name="edit_paste_html_quoted"/>
-         <Action name="edit_paste_url_encoded"/>
-      </Menu>
-    <Separator />
-    <DefineGroup name="edit_select_merge" />
-    <DefineGroup name="edit_find_merge" />
-    <Action name="find_in_files"/>
-    <Separator />
-    <Action name="expand_abbreviation"/>
-  </Menu>
-
-    <Menu name="view"><text>&amp;View</text>
-      <Merge />
-      <Separator/>
-      <Action name="show_quanta_editor"/>
-      <Action name="show_kafka_view"/>
-      <Action name="show_kafka_and_quanta"/>
-      <Action name="show_preview"/>
-      <Menu name="external_preview"><text>E&amp;xternal Preview</text>
-          <Action name="view_with_konqueror"/>
-          <Action name="view_with_mozilla"/>
-          <Action name="view_with_netscape"/>
-          <Action name="view_with_opera"/>
-          <Action name="view_with_lynx"/>
-      </Menu>
-      <Separator/>
-      <Action name="reload"/>
-      <Action name="w_back"/>
-      <Action name="w_forward"/>
+    <Menu noMerge="1" name="debugger_menu" >
+        <text>&amp;Debug</text>
+        <Menu name="debug_session" >
+            <text>Session</text>
+            <Action name="debug_connect" />
+            <Action name="debug_disconnect" />
+        </Menu>
+        <Menu name="debug_execution" >
+            <text>&amp;Execution</text>
+            <Action name="debug_request" />
+            <Separator/>
+            <Action name="debug_pause" />
+            <Action name="debug_run" />
+            <Action name="debug_leap" />
+            <Separator/>
+            <Action name="debug_stepover" />
+            <Action name="debug_stepinto" />
+            <Action name="debug_stepout" />
+            <Action name="debug_skip" />
+            <Separator/>
+            <Action name="debug_kill" />
+        </Menu>
+        <Menu name="debug_breakpoints" >
+            <text>&amp;Breakpoints</text>
+            <Action name="debug_conditional_breakdialog" />
+            <Action name="debug_breakpoints_toggle" />
+            <Action name="debug_breakpoints_clear" />
+        </Menu>
+        <Menu name="debug_variables" >
+            <text>&amp;Variables</text>
+            <Action name="debug_addwatchdialog" />
+            <Action name="debug_variable_setdialog" />
+        </Menu>
     </Menu>
-
-  <Menu name="project" noMerge="1"><text>&amp;Project</text>
-      <Action name="project_new"/>
-      <Action name="project_open"/>
-      <Action name="project_open_recent"/>
-      <Action name="project_close"/>
-      <Separator/>
-      <Action name="project_view_open"/>
-      <Action name="project_view_save"/>
-      <Action name="project_view_save_as"/>
-      <Action name="project_view_delete"/>
-      <Separator/>
-      <Action name="project_insert_file"/>
-      <Action name="project_insert_directory"/>
-      <Action name="project_rescan"/>
-      <Separator/>
-      <Action name="project_upload"/>
-      <Action name="project_options"/>
-    </Menu>
-
-  <Menu name="toolbars" noMerge="1"><text>Too&amp;lbars</text>
-    <Menu name="toolbars_load"><text>&amp;Load Toolbars</text>
-      <Action name="toolbars_load_global"/>
-      <Action name="toolbars_load_user"/>
-      <Action name="toolbars_load_project"/>
-    </Menu>
-    <Menu name="toolbars_save" ><text>&amp;Save Toolbars</text>
-     <Action name="toolbars_save_local"/>
-     <Action name="toolbars_save_project"/>
-    </Menu>
-    <Separator/>
-    <Action name="toolbars_add"/>
-    <Action name="toolbars_remove"/>
-    <Action name="toolbars_rename"/>
-    <Separator/>
-    <Action name="toolbars_send"/>
-    <Action name="toolbars_download"/>
-  </Menu>
-
-  <Menu name="dtds"><text>&amp;DTD</text>
-    <Action name="change_dtd"/>
-    <Action name="load_dtd"/>
-    <Separator />
-    <Action name="load_dtep" />
-    <Action name="send_dtep"/>
-    <Action name="download_dtep" />
-    <Action name="upload_dtep" />
-  </Menu>
-
-  <Menu name="tags">
-  <text>&amp;Tags</text>
-  <Action name="edit_current_tag" />
-  <Action name="select_tag_area" />
-  <Action name="smart_tag_insertion"/>
-  <Separator />
-  </Menu>
-
-  <Menu name="plugins">
-  <text>Plu&amp;gins</text>
-  </Menu>
-
-  <Merge/>
-
-  <Menu name="tools"><text>T&amp;ools</text>
-    <Merge/>
-    <Separator/>
-    <Action name="tools_document_properties" />
-    <Action name="tools_change_case" />
-    <Action name="tools_code_formatting" />
-    <Separator/>
-    <Action name="tools_spelling"/>
-    <Action name="tidy_check" />
-    <Action name="kompare_script" />
-  </Menu>
-
-
-    <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
-      <Merge name="StandardToolBarMenuHandler" />
-      <Action name="view_dtd_toolbar"/>
-      <Action name="options_show_statusbar"/>
-      <Separator />
-      <Action name="general_options"/>
-      <Action name="preview_options"/>
-      <Action name="configure_actions"/>
-      <Action name="configure_plugins" />
-      <Merge/>
-      <Separator />
-      <Action name="options_configure_toolbars"/>
-      <Action name="configure_shortcuts"/>
-    </Menu>
-
-    <Menu name="help" noMerge="1"><text>&amp;Help</text>
-      <Action name="help_contents" />
-      <Action name="help_whats_this" />
-      <Separator />
-      <Action name="context_help"/>
-      <Separator />
-      <Action name="help_homepage" />
-      <Action name="help_userlist" />
-      <Action name="help_donation"/>
-      <Action name="help_reportbug" />
-      <Action name="help_tip" />
-      <Separator />
-      <Action name="help_about_app" />
-      <Action name="help_about_kde" />
-
-    </Menu>
-
-  </MenuBar>
-
-  <ToolBar name="mainToolBar" noMerge="1">
-  <text>Main Toolbar</text>
-    <Action name="file_new"     />
-    <Action name="file_open_recent"    />
-    <Action name="project_open_recent" />
-    <Separator/>
-    <Action name="file_save"    />
-    <Action name="file_save_all"     />
-  </ToolBar>
-
-  <ToolBar name="mainEditToolBar" noMerge="1">
-  <text>Editor Toolbar</text>
-    <Action name="edit_cut" />
-    <Action name="edit_copy" />
-    <Action name="edit_paste" />
-    <Action name="edit_undo" />
-    <Action name="edit_redo" />
-    <Separator/>
-    <Action name="tools_spelling"/>
-  </ToolBar>
-
-  <ToolBar name="mainPluginsToolBar" noMerge="1">
-    <text>Plugins Toolbar</text>
-    <Action name="tidy_check" />
-    <Action name="KFileReplace" />
-    <Action name="CVS Management (Cervisia)" />
-    <Action name="XSLT Debugger" />
-  </ToolBar>
-
-  <ToolBar name="mainNaviToolBar" noMerge="1">
-    <text>Navigation Toolbar</text>
-    <Action name="show_messages"/>
-    <Action name="show_quanta_editor"/>
-    <Action name="show_kafka_view"/>
-    <Action name="show_kafka_and_quanta"/>
-    <Action name="show_preview"/>
-    <Action name="reload"/>
-    <Separator/>
-    <Action name="w_back"/>
-    <Action name="w_forward"/>
-  </ToolBar>
-
-  <Menu name="popup_editor">
-    <Action name="edit_cut" />
-    <Action name="edit_copy" />
-    <Action name="edit_paste" />
-    <Separator/>
-    <Action name="edit_current_tag"/>
-    <Action name="select_tag_area"/>
-    <Action name="context_help"/>
-    <Action name="open_file_under_cursor"/>
-  </Menu>
-
-  <Menu name="debugger_menu" noMerge="1"><text>&amp;Debug</text>
-    <Menu name="debug_session"><text>Session</text>
-      <Action name="debug_connect" />
-      <Action name="debug_disconnect" />
-    </Menu>
-    <Menu name="debug_execution"><text>&amp;Execution</text>
-      <Action name="debug_request" />
-      <Separator />
-      <Action name="debug_pause" />
-      <Action name="debug_run" />
-      <Action name="debug_leap" />
-      <Separator />
-      <Action name="debug_stepover" />
-      <Action name="debug_stepinto" />
-      <Action name="debug_stepout" />
-      <Action name="debug_skip" />
-      <Separator />
-      <Action name="debug_kill" />
-    </Menu>
-    <Menu name="debug_breakpoints"><text>&amp;Breakpoints</text>
-      <Action name="debug_conditional_breakdialog" />
-      <Action name="debug_breakpoints_toggle" />
-      <Action name="debug_breakpoints_clear" />
-    </Menu>
-    <Menu name="debug_variables"><text>&amp;Variables</text>
-      <Action name="debug_addwatchdialog" />
-      <Action name="debug_variable_setdialog" />
-    </Menu>
-  </Menu>
-
-  <ToolBar name="debugger_toolbar" noMerge="1">
-    <text>Debugger Toolbar</text>
-    <Action name="debug_request" />
-    <Separator />
-    <Action name="debug_pause" />
-    <Action name="debug_run" />
-    <Action name="debug_leap" />
-    <Separator />
-    <Action name="debug_stepover" />
-    <Action name="debug_stepinto" />
-    <Action name="debug_stepout" />
-    <Action name="debug_skip" />
-    <Separator />
-    <Action name="debug_kill" />
-    <Separator />
-    <Action name="debug_breakpoints_toggle" />
-  </ToolBar>
-
-  <ToolBar name="project_toolbar" noMerge="1">
-    <text>Project Toolbar</text>
-    <Action name="project_view_open" />
-    <Action name="project_view_save" />
-    <Action name="project_view_save_as" />
-  </ToolBar>
-
-
-  <ActionProperties>
-    <Action accel="Ctrl+Return" name="tag_br" />
-    <Action accel="Ctrl+Minus"  name="tag_hr" />
-    <Action accel="Alt+Space"  name="tag_nbsp" />
-  </ActionProperties>
-
+    <ToolBar noMerge="1" name="debugger_toolbar" >
+        <text>Debugger Toolbar</text>
+        <Action name="debug_request" />
+        <Separator/>
+        <Action name="debug_pause" />
+        <Action name="debug_run" />
+        <Action name="debug_leap" />
+        <Separator/>
+        <Action name="debug_stepover" />
+        <Action name="debug_stepinto" />
+        <Action name="debug_stepout" />
+        <Action name="debug_skip" />
+        <Separator/>
+        <Action name="debug_kill" />
+        <Separator/>
+        <Action name="debug_breakpoints_toggle" />
+    </ToolBar>
+    <ToolBar noMerge="1" name="project_toolbar" >
+        <text>Project Toolbar</text>
+        <Action name="project_view_open" />
+        <Action name="project_view_save" />
+        <Action name="project_view_save_as" />
+    </ToolBar>
+    <ActionProperties/>
 </kpartgui>
-
