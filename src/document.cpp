@@ -1444,7 +1444,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
     }
   }
 
-  ssort(*completions, completions->count()); //quite slow...
+ // ssort(*completions, completions->count()); //quite slow...
   
   //now add the character codes
 
