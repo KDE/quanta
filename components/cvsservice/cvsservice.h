@@ -16,11 +16,16 @@
 #ifndef CVSSERVICE_H
 #define CVSSERVICE_H
 
+//qt includes
 #include <qobject.h>
 
+//kde includes
+#include <dcopref.h>
+
+//own includes
 #include "cvsservicedcopif.h"
 
-class QPopupMenu;
+class KPopupMenu;
 class KActionCollection;
 class CvsJob_stub;
 class CvsService_stub;
@@ -55,7 +60,7 @@ public:
   bool exists() {return !m_appId.isEmpty();}
   void setRepository(const QString &repository);
   void setCurrentFile(const QString &file) {m_defaultFile = file;}
-  QPopupMenu *menu() {return m_menu;}
+  KPopupMenu *menu() {return m_menu;}
 
 public slots:
   void slotUpdate();
@@ -77,7 +82,7 @@ private:
   void notInRepository();
 
   QCString m_appId;
-  QPopupMenu *m_menu;
+  KPopupMenu *m_menu;
   Repository_stub *m_repository;
   CvsJob_stub *m_cvsJob;
   CvsService_stub *m_cvsService;
@@ -86,6 +91,7 @@ private:
   QString m_cvsCommand;
   QStringList m_files;
   CVSCommitDlgS *m_commitDlg;
+  DCOPRef m_job;
 };
 
 #endif

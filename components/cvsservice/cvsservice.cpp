@@ -17,7 +17,6 @@
 #include <qtextedit.h>
 
 //kde includes
-#include <dcopref.h>
 #include <kaction.h>
 #include <kcombobox.h>
 #include <kdeversion.h>
@@ -111,13 +110,13 @@ void CVSService::slotUpdate(const QStringList &files)
       emit clearMessages();
       emit showMessage(i18n("Running CVS update..."), false);
       m_files = files;
-      DCOPRef job = m_cvsService->update(files, true, true, true, "");
+      m_job = m_cvsService->update(files, true, true, true, "");
       m_cvsCommand = "update";
-      m_cvsJob = new CvsJob_stub( job.app(), job.obj() );
+      m_cvsJob = new CvsJob_stub(m_job.app(), m_job.obj());
 
-      connectDCOPSignal(job.app(), job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
-      connectDCOPSignal(job.app(), job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
-      connectDCOPSignal(job.app(), job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
+      connectDCOPSignal(m_job.app(), m_job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
+      connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
+      connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
       m_cvsJob->execute();
    }
 }
@@ -152,13 +151,13 @@ void CVSService::slotCommit(const QStringList &files)
       emit clearMessages();
       emit showMessage(i18n("Running CVS commit..."), false);
       m_files = files;
-      DCOPRef job = m_cvsService->commit(files, message, true);
+      m_job = m_cvsService->commit(files, message, true);
       m_cvsCommand = "commit";
-      m_cvsJob = new CvsJob_stub( job.app(), job.obj() );
+      m_cvsJob = new CvsJob_stub(m_job.app(), m_job.obj());
 
-      connectDCOPSignal(job.app(), job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
-      connectDCOPSignal(job.app(), job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
-      connectDCOPSignal(job.app(), job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
+      connectDCOPSignal(m_job.app(), m_job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
+      connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
+      connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
       m_cvsJob->execute();
    }
 }
@@ -173,6 +172,9 @@ void CVSService::slotJobExited(bool normalExit, int exitStatus)
     {
         emit commandExecuted(m_cvsCommand, m_files);
     }
+    disconnectDCOPSignal(m_job.app(), m_job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)");
+    disconnectDCOPSignal(m_job.app(), m_job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)");
+    disconnectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)");
     delete m_cvsJob;
     m_cvsJob = 0L;
     emit showMessage(i18n("CVS command finished."), false);
