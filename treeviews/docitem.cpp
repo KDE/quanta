@@ -46,5 +46,5 @@ QString DocItem::text( int ) const
 {
   return name.data();
 }
+//#include "docitem.moc"
 
-#include "docitem.moc"
