@@ -119,6 +119,7 @@
 #include "toolbar/actioneditdlg.h"
 #include "toolbar/toolbarxmlgui.h"
 #include "toolbar/tagaction.h"
+#include "toolbar/toolbartabwidget.h"
 
 #include "dialogs/kategrepdialog.h"
 #include "dialogs/katefiledialog.h"
@@ -1256,11 +1257,12 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
   {
 //avoid QToolBar warning in the log
     QtMsgHandler oldHandler = qInstallMsgHandler( silenceQToolBar );
-    KToolBar *tb = new KToolBar(view->toolbarTab, 0, true, true);
+    QWidget *w = new QWidget(view->toolbarTab, "ToolbarHoldingWidget");
+    KToolBar *tb = new KToolBar(w, element.attribute("name"), true, true);
     tb->loadState(element);
-    tb->enableMoving(false);
-    tb->setEnableContextMenu(true);
-
+//    tb->enableMoving(false);
+//    tb->setEnableContextMenu(true);
+    tb->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     KAction *action;
     QDomNode node = element.firstChild();
     while (!node.isNull())
@@ -1282,7 +1284,10 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
         tb->insertLineSeparator();
       node = node.nextSibling();
     }
-    view->toolbarTab->addTab(tb, i18n(tabname));
+    tb->adjustSize();
+    view->toolbarTab->insertTab(tb, i18n(tabname));
+    view->toolbarTab->setFixedHeight(tb->minimumSizeHint().height()+
+                                     view->toolbarTab->tabHeight());
     qInstallMsgHandler( oldHandler );
     return tb;
   }
@@ -1293,16 +1298,11 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
 
 void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id )
 {
-//  debug( QString("name:") + container->parent()->name() );
-
-/*  if ( container->parent() && QString(container->parent()->name()) == QString("ToolBar stack") ) {
-    ((KToolBar*)container)->saveState( element );
-    int id = view->toolbarStack->id( container );
-    qDebug("id: %d",id);
-    view->toolbarStack->removeWidget( container );
-    view->tabBar->removeTab( view->tabBar->tab(id) );
+  if ( container->parent() &&  QString(container->parent()->name()) == "ToolbarHoldingWidget")
+  {
+    view->toolbarTab->removePage(container);
   }
-  else                                                */
+  else
     KMainWindow::removeContainer( container, parent, element, id );
 }
 
@@ -1741,7 +1741,7 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
 
   if (toolbarToSave.isEmpty())
   {
-    QTabWidget *tb = view->toolbarTab;
+    ToolbarTabWidget *tb = view->toolbarTab;
 
     QStringList lst;
     int current=0;
@@ -1851,7 +1851,7 @@ void QuantaApp::slotAddToolbar()
 /** Removes a user toolbar from the toolbars. */
 void QuantaApp::slotRemoveToolbar()
 {
- QTabWidget *tb = view->toolbarTab;
+ ToolbarTabWidget *tb = view->toolbarTab;
  int i;
 
  QStringList lst;
@@ -1879,7 +1879,7 @@ void QuantaApp::slotRemoveToolbar()
 /** Sends a toolbar in mail. */
 void QuantaApp::slotSendToolbar()
 {
-  QTabWidget *tb = view->toolbarTab;
+  ToolbarTabWidget *tb = view->toolbarTab;
 
   QStringList lst;
   int current = 0;

@@ -34,6 +34,7 @@ class KDockTabGroup;
 class QTabBar;
 class QWidgetStack;
 class QDropEvent;
+class ToolbarTabWidget;
 
 /** The QuantaView class provides the view widget for the QuantaApp
  * instance.  The View instance inherits QWidget as a base class and
@@ -56,7 +57,7 @@ class QuantaView : public QWidget
     QuantaView(QWidget *parent = 0, const char *name=0);
     ~QuantaView();
 
-    QTabWidget *getToolbarTab() const {return toolbarTab;}
+    ToolbarTabWidget *getToolbarTab() const {return toolbarTab;}
 
     /** return current KWrite class */
     Document* write();
@@ -75,7 +76,7 @@ class QuantaView : public QWidget
 	  void insertTag( const char *tag);
 	 	
   /** No descriptions */
-  void resizeEvent (QResizeEvent *);
+ // void resizeEvent (QResizeEvent *);
   /** Insert a new tag by bringing up the TagDialog. */
   void insertNewTag(QString tag, QString attr = QString::null,bool insertInLine = true);
   /** Returns the baseURL of the document. */
@@ -182,7 +183,7 @@ public: // Public attributes
   Document *oldWrite;
   /**  */
   QString dontShowSavePreview;
-  QTabWidget *toolbarTab;
+  ToolbarTabWidget *toolbarTab;
 protected:
   virtual void dropEvent(QDropEvent *e);
   virtual void dragEnterEvent(QDragEnterEvent *e);

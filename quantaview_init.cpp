@@ -47,6 +47,7 @@
 
 #include <kaction.h>
 #include "toolbar/tagaction.h"
+#include "toolbar/toolbartabwidget.h"
 
 QuantaView::QuantaView(QWidget *parent, const char *name )
 	: QWidget( parent, name)
@@ -60,23 +61,13 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   connect( writeTab,	SIGNAL(selected(const QString &)), quantaApp, SLOT(reparse()));
   writeTab ->setFocusPolicy( QWidget::NoFocus );
 
-  toolbarTab = new QTabWidget(this);
-  toolbarTab ->setTabPosition( QTabWidget::Top );
-  toolbarTab ->setFocusPolicy( QWidget::NoFocus );
+  toolbarTab = new ToolbarTabWidget(this);
 
-  KToolBar *tb = new KToolBar(toolbarTab);
-  tb->insertButton("aaa",1);
-  toolbarTab->addTab(tb, "xxx");
-//Find with this trick the correct needed size for the toolbar holding QTabWidget
-  toolbarTab->setMinimumHeight(tb->minimumSizeHint().height()+toolbarTab->height());
-  toolbarTab->removePage(tb);
-  delete tb;
-  
-	QGridLayout *layout = new QGridLayout( this );
-  layout->setRowStretch(0,0);
-  layout->setRowStretch(1,1);
-  layout->addWidget( toolbarTab     ,0,0);
-  layout->addWidget( writeTab     ,1,0);
+	QGridLayout *layout2 = new QGridLayout( this, 1, 2);
+  layout2->setRowStretch(0,0);
+  layout2->setRowStretch(1,1);
+  layout2->addWidget( toolbarTab     ,0,0);
+  layout2->addWidget( writeTab     ,1,0);
 
 
   writeTab->show();
@@ -213,12 +204,12 @@ void QuantaView::initActions()
 //    qDebug("ctrl+enter: " + QString::number(CTRL+Key_Enter) );
 }
 
-/** No descriptions */
+/** No descriptions 
 void QuantaView::resizeEvent (QResizeEvent *)
 {
   if (writeExists())
      write()->view()->resize(writeTab->size().width()-5, writeTab->size().height()-35);
-}
+}                   */
 
 void QuantaView::dragEnterEvent(QDragEnterEvent *e)
 {

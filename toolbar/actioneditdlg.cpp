@@ -42,6 +42,7 @@
 //app includes
 #include "actioneditdlg.h"
 #include "tagaction.h"
+#include "toolbartabwidget.h"
 #include "../tagdialogs/filecombo.h"
 #include "../quanta.h"
 #include "../quantadoc.h"
@@ -92,7 +93,7 @@ ActionEditDlg::ActionEditDlg( QWidget* parent, const char* name, bool modal, WFl
    }
    actionsList->sort();
 
-  QTabWidget *tb = quantaApp->getView()->getToolbarTab();
+  ToolbarTabWidget *tb = quantaApp->getView()->getToolbarTab();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarCombo->insertItem(tb->label(i));
@@ -305,7 +306,7 @@ void ActionEditDlg::saveAction( TagAction *a )
     QString tabName = toolbarCombo->currentText().lower();
     QPopupMenu *menu = quantaApp->toolbarMenu(tabName);
     a->plug(menu);
-    QTabWidget *tb = quantaApp->getView()->toolbarTab;
+    ToolbarTabWidget *tb = quantaApp->getView()->toolbarTab;
     int current = 0;
     for (int i = 0; i < tb->count(); i++)
     {
@@ -345,6 +346,20 @@ void ActionEditDlg::saveAction( TagAction *a )
       foundNode.appendChild(e);
       KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->localXMLFile());
     }
+    int currentPage = quantaApp->getView()->toolbarTab->currentPageIndex();
+  //reload the GUI clients
+    guiClients = quantaApp->factory()->clients();
+    guiClient = 0;
+    for (uint i = 1; i < guiClients.count(); i++)
+    {
+        guiClient = guiClients.at(i);
+        quantaApp->factory()->removeClient(guiClient);
+        guiClient ->setXMLGUIBuildDocument( QDomDocument() );
+        guiClient->reloadXML();
+        quantaApp->guiFactory()->addClient(guiClient);
+    }
+    quantaApp->getView()->toolbarTab->setCurrentPage(currentPage);
+    
   }
 }
 
