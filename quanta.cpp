@@ -1552,8 +1552,8 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
         tb->insertLineSeparator();
       node = node.nextSibling();
     }
-
-    if (tb->minimumSizeHint().height() > 20)
+    kdDebug(24000) << "QuantaToolBar minimumSizeHeight :" << tb->minimumSizeHint().height() << endl;
+    if (tb->minimumSizeHint().height() != 0)
     {
       if (toolbarTab->tabHeight() < 30)
         toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + 30);
@@ -1561,9 +1561,14 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
         toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + toolbarTab->tabHeight());
       tb->adjustSize();
       tb->setGeometry(0,0, toolbarTab->width(), tb->height());
-    } else
+    } else //this happens if the toolbar does not contain any buttons
     {
-      tb->setGeometry(0,0, toolbarTab->width(), toolbarTab->height() - toolbarTab->tabHeight());
+      tb->setGeometry(0,0, toolbarTab->width(), 22);
+      if (toolbarTab->tabHeight() < 30)
+        toolbarTab->setFixedHeight(tb->height() + 30);
+      else
+        toolbarTab->setFixedHeight(tb->height() + toolbarTab->tabHeight());
+
     }
     toolbarTab->insertTab(tb, i18n(tabname));
     qInstallMsgHandler( oldHandler );

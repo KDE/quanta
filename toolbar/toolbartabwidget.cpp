@@ -27,6 +27,7 @@
 #include <kpopupmenu.h>
 #include <ktoolbar.h>
 #include <ktoolbarbutton.h>
+#include <kdebug.h>
 
 //app includes
 #include "toolbartabwidget.h"
@@ -210,5 +211,6 @@ void QuantaToolBar::slotRemoveAction()
     emit removeAction(m_toolbarTab->tabUnderMouse, currentActionName);
   }
 }
+
 
 #include "toolbartabwidget.moc"
