@@ -1047,7 +1047,7 @@ void undoRedo::codeFormatting()
 {
   Node *node = baseNode;
 
-  while(node)
+  while (node)
   {
     node->tag->setCleanStrBuilt(false);
     node->tag->setIndentationDone(false);
