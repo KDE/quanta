@@ -22,6 +22,7 @@
 
 class Tag;
 class Node;
+class StructTreeView;
 /**tag in structure widget
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
@@ -38,6 +39,7 @@ public:
   bool hasOpenFileMenu;
   Tag* groupTag;
   QRegExp fileNameRx;
+  StructTreeView *parentTree;
 };
 
 #endif

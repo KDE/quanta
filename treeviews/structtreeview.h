@@ -27,13 +27,16 @@
   *@author Andras Mantia & Yacovlev Alexander & Dmitry Poplavsky
   */
 
+class KPopupMenu;
+class KConfig;
+class KURL;
+class QTime;
+
 class Node;
 class StructTreeTag;
 class Parser;
-class KPopupMenu;
-class QuantaApp;
-class KConfig;
-class QTime;
+class Document;
+struct DTDStruct;
 
 class StructTreeView : public KListView  {
    Q_OBJECT
@@ -62,7 +65,9 @@ public:
   /** Delete the items */
   void deleteList(bool groupOnly);
   void setParsingDTDs(const QStringList &parsingDTDList);
-
+  void showMessage(const QString& message);
+  
+  
   bool useOpenLevelSetting;
 
 public slots: // Public slots
@@ -97,6 +102,8 @@ signals:
   void showGroupsForDTEP(const QString& dtep, bool show);
   void openFile(const KURL&);
   void openImage(const KURL&);
+  void showProblemMessage(const QString&);
+  void clearProblemOutput();
 
 private:
 
@@ -133,6 +140,8 @@ private:
 protected: // Protected methods
   /** Do a reparse before showing. */
   virtual void showEvent(QShowEvent*);
+  /** Clear the problem output when hiding. */
+  virtual void hideEvent(QHideEvent*);
 
 protected slots: // Protected slots
   /** The treeview DTD  has changed to id. */
@@ -140,7 +149,7 @@ protected slots: // Protected slots
 
 protected: // Protected attributes
   Document *write;
-  QTime timer;
+  QTime *timer;
 };
 
 #endif

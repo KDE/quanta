@@ -3605,23 +3605,6 @@ int QuantaApp::currentEditorIfNum() const
   }
 }
 
-/** Return the URL of the currently active document */
-QString QuantaApp::currentURL() const
-{
-  Document *w = ViewManager::ref()->activeDocument();
-  if (w)
-  {
-    return w->url().url();
-  } else
-  {
-    QuantaView * view = ViewManager::ref()->lastActiveEditorView();
-    if (view)
-      return view->document()->url().url();
-    else
-      return "";
-  }
-}
-
 QString QuantaApp::projectURL() const
 {
   return Project::ref()->projectBaseURL().url();
@@ -4216,8 +4199,8 @@ void QuantaApp::slotInsertCSS()
     CSSSelector *dlg = new CSSSelector;
 
     dlg->setCallingFrom("XHTML");
-    QFileInfo fi(quantaApp->currentURL());
-    dlg->setFileToPreview(quantaApp->projectBaseURL().path() +  fi.baseName());
+    QFileInfo fi(ViewManager::ref()->currentURL());
+    dlg->setFileToPreview(projectBaseURL().path() +  fi.baseName());
 
 
     dlg->setHeader(header);
@@ -4261,8 +4244,8 @@ void QuantaApp::slotInsertCSS()
   {
         kdDebug(24000) << "[CSS editor] We will add a style attribute to: " << parentNode->tag->name << endl;
     CSSEditor *dlg = new CSSEditor(this);
-    QFileInfo fi(quantaApp->currentURL());
-    dlg->setFileToPreview(quantaApp->projectBaseURL().path() +  fi.baseName(),false);
+    QFileInfo fi(ViewManager::ref()->currentURL());
+    dlg->setFileToPreview(projectBaseURL().path() +  fi.baseName(),false);
 
 
     parentNode->tag->beginPos(bLine, bCol);
@@ -5005,6 +4988,11 @@ void QuantaApp::slotTabMoved(int from, int to)
 void QuantaApp::slotTabAboutToMove(int from, int to)
 {
   disconnect(this, SIGNAL(viewActivated (KMdiChildView *)), ViewManager::ref(), SLOT(slotViewActivated(KMdiChildView*)));  
+}
+
+QString QuantaApp::currentURL() const
+{
+  return ViewManager::ref()->currentURL();
 }
 
 #include "quanta.moc"

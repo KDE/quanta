@@ -38,6 +38,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kstandarddirs.h>
+#include <kmainwindow.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kcombobox.h>
@@ -55,15 +56,14 @@
 
 
 #include "templatestreeview.h"
-#include "newtemplatedirdlg.h"
-#include "quantapropertiespage.h"
-#include "tagaction.h"
 #include "copyto.h"
-#include "resource.h"
+#include "newtemplatedirdlg.h"
 #include "qextfileinfo.h"
-#include "quanta.h"
-#include "tagmaildlg.h"
 #include "quantanetaccess.h"
+#include "quantapropertiespage.h"
+#include "resource.h"
+#include "tagaction.h"
+#include "tagmaildlg.h"
 
 #define EXCLUDE ".*\\.tmpl$"
 #define TMPL ".tmpl"
@@ -129,8 +129,8 @@ KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *pa
 
 
 
-TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
-  : BaseTreeView(parent,name), m_projectDir(0)
+TemplatesTreeView::TemplatesTreeView(KMainWindow *parent, const char *name )
+  : BaseTreeView(parent,name), m_projectDir(0), m_mainWindow(parent)
 {
   typeToi18n["text/all"] = i18n("Text Snippet");
   typeToi18n["file/all"] = i18n("Binary File");
@@ -641,8 +641,9 @@ void TemplatesTreeView::slotProperties()
   uint j = 1;
   m_quantaProperties->actionCombo->insertItem(i18n(NONE));
   QString tmpStr;
-  KActionCollection *ac = quantaApp->actionCollection();
-  for (uint i = 0; i < ac->count(); i++)
+  KActionCollection *ac = m_mainWindow->actionCollection();
+  uint acCount = ac->count();
+  for (uint i = 0; i < acCount; i++)
   {
     TagAction *action = dynamic_cast<TagAction*>(ac->action(i));
     if (action)
@@ -898,9 +899,10 @@ KURL TemplatesTreeView::filterTemplate()
  config.setGroup("Filtering");
  name = config.readEntry("Action", NONE);
  TagAction *filterAction = 0L;
- KActionCollection *ac = quantaApp->actionCollection();
+ KActionCollection *ac = m_mainWindow->actionCollection();
+ uint acCount = ac->count();
  QString tmpStr;
- for (uint i = 0; i < ac->count(); i++)
+ for (uint i = 0; i < acCount; i++)
  {
    TagAction *action = dynamic_cast<TagAction*>(ac->action(i));
    if (action)

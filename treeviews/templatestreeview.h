@@ -22,6 +22,7 @@
 
 //forward declarations
 class QuantaPropertiesPage;
+class KMainWindow;
 
 class TemplatesTreeBranch : public BaseTreeBranch {
 
@@ -47,7 +48,7 @@ public:
    *  the parameter are only used at the first call to create the class
    *
    */
-  static TemplatesTreeView* const ref(QWidget *parent = 0L, const char *name = 0L)
+  static TemplatesTreeView* const ref(KMainWindow *parent = 0L, const char *name = 0L)
   {
     static TemplatesTreeView *m_ref;
     if (!m_ref) m_ref = new TemplatesTreeView (parent, name);
@@ -117,7 +118,7 @@ private:
    *  If you need the class use TemplatesTreeView::ref() for
    *  construction and reference
    */
-  TemplatesTreeView(QWidget *parent, const char *name = 0L);
+  TemplatesTreeView(KMainWindow *parent, const char *name = 0L);
   /** Filters the template through and action, and returns the modified/filtered
   template file */
   KURL filterTemplate();
@@ -136,6 +137,7 @@ private:
   KPopupMenu *m_fileMenu;
   KPopupMenu *m_folderMenu;
   KPopupMenu *m_emptyAreaMenu;
+  KMainWindow *m_mainWindow;
   DirInfo m_dirInfo;
   DirInfo m_parentDirInfo;
   int m_insertFileInProject;

@@ -37,12 +37,12 @@
 
 #include "document.h"
 #include "viewmanager.h"
-#include "quanta.h"
 #include "quantacommon.h"
 #include "resource.h"
 #include "undoredo.h"
 #include "node.h"
 #include "parser.h"
+#include "project.h"
 #include "tag.h"
 #include "nodeproperties.h"
 #include "htmlenhancer.h"
@@ -153,7 +153,7 @@ void KafkaDocument::loadDocument(Document *doc)
 #endif
 	m_currentDoc = doc;
 
-	(static_cast<HTMLEnhancer *>(mainEnhancer))->setBaseURL(quantaApp->projectBaseURL());
+	(static_cast<HTMLEnhancer *>(mainEnhancer))->setBaseURL(Project::ref()->projectBaseURL());
 
 	//create a empty document with a basic tree : HTML, HEAD, BODY
 	m_kafkaPart->newDocument();

@@ -22,8 +22,6 @@
 #include <kstandarddirs.h>
 #include <kconfig.h>
 
-#include "resource.h"
-#include "quanta.h"
 #include "quantacommon.h"
 #include "document.h"
 #include "tag.h"

@@ -32,17 +32,16 @@
 #include <dom/dom_exception.h>
 
 #include "document.h"
-#include "quanta.h"
+#include "node.h"
 #include "quantaview.h"
 #include "quantacommon.h"
-#include "viewmanager.h"
-#include "node.h"
-#include "tag.h"
 #include "resource.h"
+#include "tag.h"
+#include "viewmanager.h"
 #include "wkafkapart.h"
 #include "kafkacommon.h"
 #include "kafkaresource.h"
- #include "cursors.h"
+#include "cursors.h"
 
 #include "undoredo.h"
 

@@ -38,7 +38,6 @@
 #include "document.h"
 #include "resource.h"
 #include "qextfileinfo.h"
-#include "quanta.h"
 #include "quantacommon.h"
 #include "dtds.h"
 #include "viewmanager.h"
@@ -57,7 +56,7 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
   lastTag = 0L;
   groupsCount = 0;
   followCursorFlag = true;
-  config = quantaApp->config();
+  config = kapp->config();
 
   topOpened = true;
   useOpenLevelSetting = true;
@@ -114,12 +113,14 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
   connect(this, SIGNAL(collapsed(QListViewItem *)), SLOT(slotCollapsed(QListViewItem *)));
 
   write = 0L;
-  timer.start();
+  timer = new QTime();
+  timer->start();
   m_dirty = true;
 }
 
 
 StructTreeView::~StructTreeView(){
+  delete timer;
 }
 
 /** builds the structure tree */
@@ -128,7 +129,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel, bool groupOnly)
 #ifdef DEBUG_PARSER
   kdDebug(24000) << "Starting to rebuild the structure tree. Grouponly = " << groupOnly << endl;
 #endif
-  quantaApp->problemOutput()->clear();
+  emit clearProblemOutput();
   if (!groupOnly)
   {
       top = new StructTreeTag( this, i18n("Document Structure") );
@@ -357,7 +358,7 @@ void StructTreeView::deleteList(bool groupOnly)
 /** repaint document structure */
 void StructTreeView::slotReparse(Document *w, Node* node, int openLevel, bool groupOnly)
 {
-  timer.restart();
+  timer->restart();
   if (typingInProgress)
     return;
   deleteList(groupOnly);
@@ -367,7 +368,7 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel, bool gr
   write->clearErrorMarks();
   buildTree(node, openLevel, groupOnly);
 
-  kdDebug(24000) << "StructTreeView building: " << timer.elapsed() << " ms\n";
+  kdDebug(24000) << "StructTreeView building: " << timer->elapsed() << " ms\n";
 
   const DTDStruct *parsingDTD;
   int groupId = 0;
@@ -675,6 +676,12 @@ void StructTreeView::showEvent(QShowEvent* /*ev*/)
   slotReparseMenuItem();
 }
 
+/** Do a reparse before showing. */
+void StructTreeView::hideEvent(QHideEvent* /*ev*/)
+{
+  emit clearProblemOutput();
+}
+
 /** The treeview DTD  has changed to id. */
 void StructTreeView::slotDTDChanged(int id)
 {
@@ -736,4 +743,9 @@ void StructTreeView::slotOpenFile()
 void StructTreeView::slotNodeTreeChanged()
 {
   m_dirty = true;
+}
+
+void StructTreeView::showMessage(const QString& message)
+{
+  emit showProblemMessage(message);
 }

@@ -699,4 +699,22 @@ void ViewManager::slotDocumentClosed(const KURL& url)
   emit documentClosed(url);
 }
 
+/** Return the URL of the currently active document */
+QString ViewManager::currentURL()
+{
+  Document *w = activeDocument();
+  if (w)
+  {
+    return w->url().url();
+  } else
+  {
+    QuantaView * view = lastActiveEditorView();
+    if (view)
+      return view->document()->url().url();
+    else
+      return "";
+  }
+}
+
+
 #include "viewmanager.moc"

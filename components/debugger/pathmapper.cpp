@@ -19,8 +19,6 @@
 #include "pathmapperdialog.h"
 
 #include "quantacommon.h"
-#include "quanta.h"
-#include "resource.h"
 #include "project.h"
 
 #include <kdebug.h>

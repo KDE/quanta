@@ -24,6 +24,7 @@
 #include <qtextstream.h>
 #include <qfileinfo.h>
 
+#include <kapplication.h>
 #include <klocale.h>
 #include <khtml_part.h>
 #include <khtmlview.h>
@@ -35,10 +36,8 @@
 
 #include "propertysetter.h"
 #include "qmyhighlighter.h"
-#include "resource.h"
 #include "cssshpropertyparser.h"
 #include "shorthandformer.h"
-#include "quanta.h"
 #include "percentageeditor.h"
 #include "colorslider.h"
 #include "tlpeditors.h"
@@ -184,10 +183,10 @@ void CSSEditor::hidePreviewer(){
 
 void CSSEditor::initialize(){
 
-
+  m_config = kapp->config();     
   connect(pbOk, SIGNAL(clicked()), this, SLOT(toggleShortendForm()));
-  quantaApp->config()->setGroup("CSSEditor Options");
-  SHckb->setChecked(quantaApp->config()->readBoolEntry("Shorthand form enabled",false));
+  m_config->setGroup("CSSEditor Options");
+  SHckb->setChecked(m_config->readBoolEntry("Shorthand form enabled",false));
 
   QString configFile = locate("appdata", "csseditor/config.xml");
 
@@ -292,9 +291,9 @@ void CSSEditor::initialize(){
 
 void CSSEditor::toggleShortendForm()
 {
- quantaApp->config()->setGroup("CSSEditor Options");
- quantaApp->config()->writeEntry("Shorthand form enabled", SHckb->isChecked());
- quantaApp->config()->sync();
+ m_config->setGroup("CSSEditor Options");
+ m_config->writeEntry("Shorthand form enabled", SHckb->isChecked());
+ m_config->sync();
 }
 
 CSSEditor::CSSEditor(QListViewItem *i, QWidget *parent, const char *name) : CSSEditorS(parent, name){

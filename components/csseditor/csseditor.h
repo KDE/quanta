@@ -26,6 +26,7 @@
 #include <qsignal.h>
 
 class propertySetter;
+class KConfig;
 class KHTMLPart;
 class QListViewItem;
 class QDomNodeList;
@@ -71,8 +72,10 @@ class CSSEditor : public CSSEditorS
                  m_InlineStyleContent,
                  m_externalStyleSheetDefinition,
                  m_fileToPreview;
-      
-     bool m_isFileToPreviewExternal;                              
+           
+    bool m_isFileToPreviewExternal;                              
+    KConfig *m_config;
+     
             //sourceFileName;   
    
     void Connect();
@@ -94,7 +97,7 @@ class CSSEditor : public CSSEditorS
     
   public:
     
-    CSSEditor(QWidget* parent=0, const char *name=0): CSSEditorS(parent, name){}
+    CSSEditor(QWidget* parent=0, const char *name=0): CSSEditorS(parent, name), m_config(0L){}
     CSSEditor( QListViewItem * i, QWidget* parent=0, const char *name=0);
     ~CSSEditor(); 
     void initialize();

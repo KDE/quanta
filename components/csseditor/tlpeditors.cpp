@@ -30,8 +30,6 @@
 #include <kimagefilepreview.h>
 
 #include "qextfileinfo.h"
-#include "quanta.h"
-#include "resource.h"
 #include "tlpeditors.h"
 #include "fontfamilychooser.h"
 #include "project.h"
@@ -94,7 +92,7 @@ void URIEditor::setMode(const mode& m) {
 void URIEditor::selectedURI(const QString & s){
    KURL u;
    u.setPath(s);
-   emit valueChanged("url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
+   emit valueChanged("url(\'" + QExtFileInfo::toRelative(u, Project::ref()->projectBaseURL()).path() + "\')");
 }
 
 void URIEditor::selectedURIs(const QStringList& s){
@@ -103,7 +101,7 @@ void URIEditor::selectedURIs(const QStringList& s){
                      selectedFilesWithURLFormat;
   for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it ){      
     u.setPath(*it);   
-    selectedFilesWithURLFormat.append( "url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
+    selectedFilesWithURLFormat.append( "url(\'" + QExtFileInfo::toRelative(u, Project::ref()->projectBaseURL()).path() + "\')");
   }
   emit valueChanged(selectedFilesWithURLFormat.join(","));
 }
@@ -145,7 +143,7 @@ void URIEditor::openFileDialog(){
       KURL u;
       for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it ){      
         u.setPath(*it);   
-        m_sFiles.append( "url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
+      m_sFiles.append( "url(\'" + QExtFileInfo::toRelative(u, Project::ref()->projectBaseURL()).path() + "\')");
       }
       emit valueChanged(m_sFiles.join(","));*/
     }

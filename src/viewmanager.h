@@ -73,6 +73,9 @@ public:
 
   /** Returns the last active view which had an editor inside or 0 if there was no such view */
   QuantaView *lastActiveEditorView() {return m_lastActiveEditorView;}
+  
+  /** Return the URL of the currently active document */
+  QString currentURL();
 
 public slots:
   /**called when a new view was activated */

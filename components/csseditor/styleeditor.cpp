@@ -32,12 +32,12 @@
 #include "parser.h"
 #include "tag.h"
 #include "node.h"
+#include "project.h"
 #include "resource.h"
 #include "document.h"
 #include "styleeditor.h"
 #include "viewmanager.h"
 #include "csseditor.h"
-#include "quanta.h"
 
 StyleEditor::StyleEditor(QWidget *parent, const char* name) : TLPEditor(parent,name){
   connect(m_pb, SIGNAL(clicked()), this, SLOT(openCSSEditor()));
@@ -77,8 +77,8 @@ void StyleEditor::openCSSEditor(){
 
   if (styleNode && styleNode->tag->type == Tag::XmlTag) {
     CSSEditor *dlg = new CSSEditor(this);
-    QFileInfo fi(quantaApp->currentURL());
-    dlg->setFileToPreview(quantaApp->projectBaseURL().path() +  fi.baseName(),false);
+    QFileInfo fi(ViewManager::ref()->currentURL());
+    dlg->setFileToPreview(Project::ref()->projectBaseURL().path() +  fi.baseName(),false);
 
     styleNode->tag->beginPos(bLine, bCol);
     styleNode->tag->endPos(eLine, eCol);

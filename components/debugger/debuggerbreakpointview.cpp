@@ -26,8 +26,6 @@
 // Quanta includes
 #include "debuggerbreakpointview.h"
 #include "debuggerbreakpoint.h"
-#include "resource.h"
-#include "quanta.h"
 #include "debuggerclient.h"
 #include "debuggermanager.h"
 

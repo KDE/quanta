@@ -22,15 +22,14 @@
 #include <klocale.h>
 
 // app includes
+#include "structtreeview.h"
 #include "structtreetag.h"
 #include "messageoutput.h"
 #include "tag.h"
 #include "node.h"
-#include "resource.h"
-#include "quanta.h"
 #include "quantacommon.h"
 #include "document.h"
-
+#include "resource.h"
 
 StructTreeTag::StructTreeTag(QListView *parent, QString a_title)
   : KListViewItem(parent, a_title)
@@ -38,18 +37,19 @@ StructTreeTag::StructTreeTag(QListView *parent, QString a_title)
   node = 0L;
   hasOpenFileMenu = false;
   groupTag = 0L;
+  parentTree = static_cast<StructTreeView*>(parent);
 }
 
 StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString a_title,
                              QListViewItem *after )
 : KListViewItem(parent, after, a_title)
 {
+  parentTree = parent->parentTree;
   hasOpenFileMenu = false;
   groupTag = 0L;
   static const QString space = " ";
   static const QRegExp nbspRx("&nbsp;|\\n");
   node = a_node;
-  MessageOutput *appMessages = quantaApp->problemOutput();
   if (node)
   {
     Tag *tag = node->tag;
@@ -116,7 +116,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                 {
                   node->tag->write()->setErrorMark(line);
                   QString parentTagName = node->tag->dtd()->caseSensitive ? node->parent->tag->name : node->parent->tag->name.upper();
-                  appMessages->showMessage(i18n("Line %1: %2 is not a possible child of %3.\n").arg(line + 1).arg(qTagName).arg(parentTagName));
+                  parentTree->showMessage(i18n("Line %1: %2 is not a possible child of %3.\n").arg(line + 1).arg(qTagName).arg(parentTagName));
                 }
                 QString nextTagName;
                 if (node->next)
@@ -129,12 +129,12 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                     (!node->next || ( !node->getClosingNode()))  )
                 {
                   node->tag->write()->setErrorMark(line);
-                  appMessages->showMessage(i18n("Line %1, column %2: Closing tag for %3 is missing.").arg(line + 1).arg(col + 1).arg(qTagName));
+                  parentTree->showMessage(i18n("Line %1, column %2: Closing tag for %3 is missing.").arg(line + 1).arg(col + 1).arg(qTagName));
                 } else
                 if (!parentQTag && node->tag->name.upper() != "!DOCTYPE")
                 {
                   node->tag->write()->setErrorMark(line);
-                  appMessages->showMessage(i18n("Line %1, column %2: %3 is not part of %4.").arg(line + 1).arg(col + 1).arg(qTagName).arg(node->tag->dtd()->nickName));
+                  parentTree->showMessage(i18n("Line %1, column %2: %3 is not part of %4.").arg(line + 1).arg(col + 1).arg(qTagName).arg(node->tag->dtd()->nickName));
                 }
               }
               break;
@@ -182,7 +182,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                 if (!node->prev || qTagName != "/" + qPrevTagName)
                 {
                   node->tag->write()->setErrorMark(line);
-                  appMessages->showMessage(i18n("Line %1, column %2: Opening tag for %3 is missing.").arg(line + 1).arg(col + 1).arg(qTagName));
+                  parentTree->showMessage(i18n("Line %1, column %2: Opening tag for %3 is missing.").arg(line + 1).arg(col + 1).arg(qTagName));
                 }
               }
               title = tag->tagStr().left(70).stripWhiteSpace();
@@ -207,6 +207,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, QString a_title )
   node = 0L;
   hasOpenFileMenu = false;
   groupTag = 0L;
+  parentTree = parent->parentTree;
 }
 
 

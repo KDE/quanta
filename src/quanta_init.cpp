@@ -507,6 +507,10 @@ void QuantaInit::initView()
           m_quanta, SLOT  (slotFileOpen(const KURL &)));
   connect(sTab, SIGNAL(openImage  (const KURL&)),
           m_quanta, SLOT(slotImageOpen(const KURL&)));
+  connect(sTab, SIGNAL(showProblemMessage(const QString&)),
+          m_quanta->m_problemOutput, SLOT(showMessage(const QString&)));
+  connect(sTab, SIGNAL(clearProblemOutput()),
+          m_quanta->m_problemOutput, SLOT(clear()));
   connect(parser, SIGNAL(nodeTreeChanged()), sTab, SLOT(slotNodeTreeChanged()));
 
   connect(m_quanta->dTab, SIGNAL(openURL(const QString&)), m_quanta, SLOT(openDoc(const QString&)));

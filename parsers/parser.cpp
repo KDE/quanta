@@ -40,7 +40,6 @@
 #include "quantaview.h"
 #include "quantacommon.h"
 #include "document.h"
-#include "quanta.h"
 #include "qextfileinfo.h"
 #include "kafkacommon.h"
 #include "undoredo.h"

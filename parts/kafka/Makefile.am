@@ -17,6 +17,7 @@ kafkapart_DATA = entities
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/quanta/src \
+	-I$(top_srcdir)/quanta/project \
 	-I$(top_srcdir)/quanta/parsers \
 	-I$(top_srcdir)/quanta/treeviews \
 	-I$(top_srcdir)/lib \
