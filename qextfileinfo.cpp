@@ -340,7 +340,7 @@ void QExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsLis
   }
 }
 
-/** Timeout occured while waiting for some network function to return. */
+/** Timeout occurred while waiting for some network function to return. */
 void QExtFileInfo::slotTimeout()
 {
   bJobOK = false;

@@ -103,7 +103,7 @@ public:
 	 * This function build a kafka DOM:::Node from a Quanta Node.
 	 * @param _node The node from which we build the DOM::Node
 	 * @param insertNode Specifies if we should insert the Node.
-	 * @return Returns if the insertion was successfull if asked, else true.
+	 * @return Returns if the insertion was successful if asked, else true.
 	 */
 	bool buildKafkaNodeFromNode(Node *_node, bool insertNode = true);
 

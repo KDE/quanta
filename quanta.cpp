@@ -1664,7 +1664,7 @@ void QuantaApp::slotInsertFile(const KURL& url)
 }
 
 
-//Kate releated
+//Kate related
 void QuantaApp::setEOLMenuAboutToShow()
 {
   if (m_view->writeExists())

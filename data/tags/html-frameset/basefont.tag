@@ -3,7 +3,7 @@
 <tag name="basefont" single="1">
 
     <label>
-        <text>This tag is depricated in HTML 4.0 </text>
+        <text>This tag is deprecated in HTML 4.0 </text>
         <location col="0" row="0" colspan="3" />
     </label>
 

@@ -130,7 +130,7 @@ void ListenerBase::logstatus() {
 			break;
 		case LSTNRS_initerror:
 			oserrnostr(buf, sizeof(buf), _error);
-			snprintf(sbuf, sizeof(sbuf)-1, (char *)"Error '%s' (OSERR=%d) occured.", buf, _error);
+			snprintf(sbuf, sizeof(sbuf)-1, (char *)"Error '%s' (OSERR=%d) occurred.", buf, _error);
 			log(LSTNRL_error,sbuf);
 			break;
 		case LSTNRS_stopped:

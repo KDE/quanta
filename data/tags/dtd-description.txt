@@ -137,8 +137,8 @@ Comments = comma separated list of area borders for comments. EOL means end-of-l
     Eg: // EOL, /* */
 StructKeywords = ";" separated list of structure keywords. Structures are treated
     as new nodes in the structure tree.
-StructBeginStr = a string specifing the beginning of a structure (like {)
-StructEndStr = a string specifing the beginning of a structure (like })
+StructBeginStr = a string specifying the beginning of a structure (like {)
+StructEndStr = a string specifying the beginning of a structure (like })
 StructRx = regular experssion containing the beginning or the end of the structure
     area. Eg. \\{ | \\} (structure area border can be { or })
 MayContain = pseudo DTDs can contain other pseudo DTDs

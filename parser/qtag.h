@@ -141,7 +141,7 @@ typedef struct DTDStruct
    For each DTD specified here the definitionAreaBegin/definitionAreaEnd is
    copied to specialAreaBegin/specialAreaEnd (and the specialAreaStartRx is
    updated) and the definitionTags are added to the specialTags.
-   Basicly this means that we use the DTD definitions when building
+   Basically this means that we use the DTD definitions when building
    the special area and tag definitions.
 */
      QStringList insideDTDs;

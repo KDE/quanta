@@ -22,4 +22,4 @@
 
 2001-12-20 Joseph Wenninger <jowenn@kde.org>
 	* added test subdirectory		:for test of the library
-	* added kafkapropertyeditor.[h|cpp]	:not usefull (means not really working), just a preview)
+	* added kafkapropertyeditor.[h|cpp]	:not useful (means not really working), just a preview)

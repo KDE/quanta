@@ -114,7 +114,7 @@ void CSSEditor::slotRemoveSelector()
     return;
   }
   if (KMessageBox::warningYesNo (this,
-    i18n("Are you sure do you want to completly remove the current selector? "
+    i18n("Are you sure do you want to completely remove the current selector? "
     "There's no way to restore it."), i18n ("Remove selector warning"),
     KStdGuiItem::yes(), KStdGuiItem::no(), "css-remove-selector-warning")
     == KMessageBox::Yes) {

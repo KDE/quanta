@@ -131,7 +131,7 @@ public slots:
   void slotPasteURLEncoded();
   void slotInsertChar(const QString &selected);
 
-/** Kate releated slots */
+/** Kate related slots */
 //Edit
   void slotUndo ();
   void slotRedo ();

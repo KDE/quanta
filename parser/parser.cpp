@@ -1059,7 +1059,7 @@ Node* Parser::specialAreaParser(Node *startNode)
   eLine = eCol = -1;
   //create a node with the end of special area
   QString specialEndStr;
-  //explicitely check for existence here, otherwise the operator[]
+  //explicitly check for existence here, otherwise the operator[]
   //will insert a new item in the QMap with key="" and data="".
   //No need to do the same in other places, as the operator[] is
   //used only when count() > 0

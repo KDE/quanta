@@ -139,11 +139,11 @@ typedef struct {
 #define DBGC_REPLY			0x0000		/* reply to previous DBGA_REQUEST request */
 #define DBGC_STARTUP		0x0001		/* script startup */
 #define	DBGC_END			0x0002		/* script done */
-#define	DBGC_BREAKPOINT		0x0003		/* user definded breakpoint occured */
+#define	DBGC_BREAKPOINT		0x0003		/* user definded breakpoint occurred */
 #define	DBGC_STEPINTO_DONE	0x0004		/* step to the next statement is completed */
 #define	DBGC_STEPOVER_DONE	0x0005		/* step to the next statement is completed */
 #define	DBGC_STEPOUT_DONE	0x0006		/* step to the next statement is completed */
-#define	DBGC_ERROR			0x0010		/* error occured */
+#define	DBGC_ERROR			0x0010		/* error occurred */
 #define	DBGC_LOG			0x0011		/* logging support */
 
 #define	FRAME_STACK			"STK"		/* "call:stack" - e.g. backtrace */

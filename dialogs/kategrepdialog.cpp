@@ -371,7 +371,7 @@ void GrepDialog::slotSearch()
          SLOT(childExited()) );
     connect( childproc, SIGNAL(receivedStdout(KProcess *, char *, int)),
          SLOT(receivedOutput(KProcess *, char *, int)) );
-    // actually it should be checked whether the process was started succesfully
+    // actually it should be checked whether the process was started successfully
     /*bool success=*/childproc->start(KProcess::NotifyOnExit, KProcess::Stdout);
 }
 

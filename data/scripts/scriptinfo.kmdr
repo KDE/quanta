@@ -136,7 +136,7 @@
                             </stringlist>
                         </property>
                         <property name="toolTip" stdset="0">
-                            <string>Enter the script name without the extention</string>
+                            <string>Enter the script name without the extension</string>
                         </property>
                     </widget>
                     <widget class="LineEdit" row="4" column="1" rowspan="1" colspan="2">

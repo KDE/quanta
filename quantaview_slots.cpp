@@ -710,7 +710,7 @@ void QuantaView::slotPasteURLEncoded()
 }
 
 
-/** Kate releated slots. */
+/** Kate related slots. */
 
 void QuantaView::slotUndo ()
 {

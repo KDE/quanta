@@ -433,7 +433,7 @@ void TagAction::execute()
   delete timer;
 }
 
-/** Timeout occured while waiting for some network function to return. */
+/** Timeout occurred while waiting for some network function to return. */
 void TagAction::slotTimeout()
 {
   if (KMessageBox::warningYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(tag.attribute("text")), i18n("Action not responding")) == KMessageBox::Yes)

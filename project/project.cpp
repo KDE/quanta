@@ -793,7 +793,7 @@ void Project::slotRenameFinished( KIO::Job * job)
 {
   if ( job->error() )
   {
-    KMessageBox::error(this,i18n("An error occured while renaming \"%1\".\nThe error message was:\n\n%2")
+    KMessageBox::error(this,i18n("An error occurred while renaming \"%1\".\nThe error message was:\n\n%2")
                             .arg(oldURL.prettyURL()).arg(job->errorString()));
   } else
   {

@@ -507,7 +507,7 @@ public: //TODO: check if it's worth to make a read method for them
   KRecentFilesAction *fileRecent;
   /** plugin classes */
   QuantaPluginInterface *m_pluginInterface;
-  /** True when the whole quanta is initalized. */
+  /** True when the whole quanta is initialized. */
   bool quantaStarted;
 };
 
