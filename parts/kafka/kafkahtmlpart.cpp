@@ -1753,6 +1753,7 @@ void KafkaWidget::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
 		KApplication::setOverrideCursor(Qt::ibeamCursor);
 	else
 		KApplication::setOverrideCursor(Qt::arrowCursor);
+		
 	KHTMLPart::khtmlMouseMoveEvent(event);
 }
 

@@ -455,8 +455,9 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 		kdDebug(25001)<< "KafkaDocument::buildKafkaNodeFromNode() " << endl;
 #endif
 	DOM::Node newNode, newNode2, attr, nextNode, parentNode, *ptDomNode;
+	bool removeLeftWhitespaces, removeRightWhitespaces;
 	QString str, nodeValue;
-	Node *n;
+	Node *n, *parent;
 	int i;
 
 	if(node->tag->type == Tag::XmlTag || (node->tag->type == Tag::Text && !node->insideSpecial))
@@ -549,14 +550,65 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 		connectDomNodeToQuantaNode(newNode, node);
 		if(node->tag->type == Tag::Text)
 		{
+			//Now we get if the whitespaces at the left and right are kept or not.
+			//Left whitespaces are removed if:
+			//- It is the first child of a BLOCK
+			//- Previous Node(skipping inlines) is a text with spaces at the end
+			//Right whitespaces are removed if:
+			//- It is the last child of a BLOCK
+			removeLeftWhitespaces = false;
+			n = node;
+			parent = node->parent;
+			while(parent && parent->SFirstChild() == n)
+			{
+				if(!kafkaCommon::isInline(parent->tag->name))
+				{
+					removeLeftWhitespaces = true;
+					break;
+				}
+				n = parent;
+				parent = parent->parent;
+			}
+			if(!removeLeftWhitespaces)
+			{
+				n = node;
+				n = kafkaCommon::getPrevNodeNE(n);
+				while(n && (n->tag->type == Tag::XmlTagEnd || 
+					(kafkaCommon::isInline(n->tag->name) && !n->tag->single)))
+					n = kafkaCommon::getPrevNodeNE(n);
+				if(n && n->tag->type == Tag::Text)
+				{
+					nodeValue = n->tag->tagStr();
+					if(nodeValue.length() > 0 && nodeValue[nodeValue.length() - 1].isSpace())
+						removeLeftWhitespaces = true;
+				}
+				
+			}
+			
+			removeRightWhitespaces = false;
+			n = node;
+			parent = node->parent;
+			while(parent && parent->SLastChild() == n)
+			{
+				if(!kafkaCommon::isInline(parent->tag->name))
+				{
+					removeRightWhitespaces = true;
+					break;
+				}
+				n = parent;
+				parent = parent->parent;
+			}
+
 			nodeValue = node->tag->tagStr();
-				nodeValue = getDecodedText(nodeValue, !kafkaCommon::hasParent(node, "pre"));
+			nodeValue = getDecodedText(nodeValue, !kafkaCommon::hasParent(node, "pre"),
+				removeLeftWhitespaces, removeRightWhitespaces);
 			newNode.setNodeValue(nodeValue);
 		}
 
 		for(i = 0; i < node->tag->attrCount(); i++)
 		{
-			attr = kafkaCommon::createDomNodeAttribute(node, node->tag->attribute(i), m_kafkaPart->document());
+			attr = kafkaCommon::createDomNodeAttribute(node, node->tag->attribute(i),
+				m_kafkaPart->document());
 			if(!attr.isNull())
 			{
 				//TODO: create a createAttr function and add this (setNodeValue sometimes
@@ -741,7 +793,8 @@ QString KafkaDocument::getDecodedChar(const QString &encodedChar)
 	return it.data();
 }
 
-QString KafkaDocument::getDecodedText(const QString &a_encodedText, bool translateWhiteSpacesAndLineBreaks)
+QString KafkaDocument::getDecodedText(const QString &a_encodedText, bool translateWhiteSpacesAndLineBreaks,
+		bool removeLeftWhitespaces, bool removeRightWhitespaces)
 {
         QString encodedText = a_encodedText;
 	QString decodedChar;
@@ -780,6 +833,15 @@ QString KafkaDocument::getDecodedText(const QString &a_encodedText, bool transla
 			i = j + decodedChar.length() - 1;
 		}
 	}
+
+	if(translateWhiteSpacesAndLineBreaks && removeLeftWhitespaces && encodedText.length() > 0 &&
+		encodedText[0].isSpace())
+		encodedText.remove(0, 1);
+
+	if(translateWhiteSpacesAndLineBreaks && removeRightWhitespaces && encodedText.length() > 0 &&
+		encodedText[encodedText.length() - 1].isSpace())
+		encodedText.remove(encodedText.length() - 1, 1);
+
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "KafkaDocument::getDecodedText() - \"" << oldEncodedText << "\" -> \"" <<
 		encodedText << "\"" << endl;

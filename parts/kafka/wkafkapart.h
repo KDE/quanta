@@ -178,10 +178,15 @@ public:
 	 * This function returns the text decoded from its XML-encoded form.
 	 * @param encodedText The text to decode.
 	 * @param translateWhiteSpacesAndLineBreaks Specifies if whiteSpaces and line breaks should be
-	 * compressed. Set it to false for PRE tag.
+	 * compressed. Set it to false if we are inside PRE tag.
+	 * @param removeLeftWhitespaces Specify if we should remove ALL whitespaces at the left of the string
+	 * e.g. if the current text is the first child of a BLOCK Node (e.g. P)
+	 * @param removeLeftWhitespaces Specify if we should remove ALL whitespaces at the right of the string
+	 * e.g. if the current text is the last child of a BLOCK Node (e.g. P)
 	 * @return Returns the text decoded.
 	 */
-	QString getDecodedText(const QString &encodedText, bool translateWhiteSpacesAndLineBreaks = true);
+	QString getDecodedText(const QString &encodedText, bool translateWhiteSpacesAndLineBreaks = true,
+		bool removeLeftWhitespaces = false, bool removeRightWhitespaces = false);
 
 	/**
 	 * This function returns the XML-encoded character (e.g. &nbsp;)
