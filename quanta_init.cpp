@@ -236,6 +236,7 @@ void QuantaApp::initStatusBar()
   connect(statusbarTimer,SIGNAL(timeout()),this,SLOT(statusBarTimeout()));
 
   progressBar = new KProgress(statusBar());
+  progressBar->setMaximumHeight( fontMetrics().height() );
   progressBar->show();
   statusBar()->insertItem(i18n(IDS_DEFAULT),IDS_STATUS, 1);
   statusBar()->addWidget(progressBar);

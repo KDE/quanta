@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>424</width>
-            <height>329</height>
+            <width>410</width>
+            <height>252</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -29,42 +29,52 @@
     <property name="caption">
         <string>Form1</string>
     </property>
-    <widget class="QGroupBox">
+    <grid>
         <property name="name">
-            <cstring>GroupBox1</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>6</x>
-                <y>8</y>
-                <width>403</width>
-                <height>200</height>
-            </rect>
-        </property>
-        <property name="title">
-            <string>Mimetypes</string>
-        </property>
-        <widget class="QLayoutWidget">
+        <widget class="QComboBox" row="2" column="1">
             <property name="name">
-                <cstring>Layout4</cstring>
+                <cstring>newfileCombo</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>9</x>
-                    <y>20</y>
-                    <width>384</width>
-                    <height>160</height>
-                </rect>
+            <property name="toolTip" stdset="0">
+                <string>New files will have the extension and highlighting according to this setting</string>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="1" column="1">
+            <property name="name">
+                <cstring>encodingCombo</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Default character encoding:</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignLeft</set>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>TextLabel1_2_3</cstring>
+            </property>
+            <property name="text">
+                <string>Create new files as:</string>
+            </property>
+        </widget>
+        <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>GroupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>Mimetypes</string>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
                 </property>
                 <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
                     <property name="name">
@@ -159,7 +169,7 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>20</width>
+                            <width>211</width>
                             <height>20</height>
                         </size>
                     </property>
@@ -174,71 +184,24 @@
                 </widget>
             </grid>
         </widget>
-    </widget>
-    <widget class="QComboBox">
-        <property name="name">
-            <cstring>newfileCombo</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>216</x>
-                <y>251</y>
-                <width>188</width>
-                <height>29</height>
-            </rect>
-        </property>
-        <property name="toolTip" stdset="0">
-            <string>New files will have the extension and highlighting according to this setting</string>
-        </property>
-    </widget>
-    <widget class="QComboBox">
-        <property name="name">
-            <cstring>encodingCombo</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>216</x>
-                <y>216</y>
-                <width>188</width>
-                <height>29</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel1_2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>7</x>
-                <y>217</y>
-                <width>203</width>
-                <height>26</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Default character encoding:</string>
-        </property>
-        <property name="alignment">
-            <set>AlignVCenter|AlignLeft</set>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel1_2_3</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>7</x>
-                <y>249</y>
-                <width>203</width>
-                <height>26</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Create new files as:</string>
-        </property>
-    </widget>
+        <spacer row="3" column="0">
+            <property name="name">
+                <cstring>spacer12</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>21</width>
+                    <height>61</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
 </widget>
 <tabstops>
     <tabstop>lineMarkup</tabstop>

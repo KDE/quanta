@@ -21,10 +21,15 @@
 //kde includes
 #include <kprocess.h>
 #include <klocale.h>
+#include <kdeversion.h>
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
+
+#if (KDE_VERSION >= 309)
+#include <ktexteditor/selectioninterfaceext.h>
+#endif
 
 //app includes
 #include "tagaction.h"
@@ -187,8 +192,18 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   Document *w = m_view->write();
 
   if ( scriptOutputDest == "cursor" )
-      w->insertTag( text );
-
+  {
+     if ( firstOutput )
+     {
+#if (KDE_VERSION >= 309)
+       int line = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndLine();
+       int col = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndCol();
+       w->viewCursorIf->setCursorPositionReal(line, col);     
+#endif
+       dynamic_cast<KTextEditor::SelectionInterface*>(w->doc())->removeSelectedText();
+     }
+     w->insertTag( text );
+  }
   if ( scriptOutputDest == "replace" )
   {
     if ( firstOutput )
@@ -230,8 +245,9 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   }
 
   if ( scriptErrorDest == "cursor" )
+  {
      w->insertTag( text );
-
+  }
   if ( scriptErrorDest == "replace" )
   {
     if ( firstOutput )

@@ -8,121 +8,144 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>445</width>
-            <height>190</height>
+            <width>396</width>
+            <height>163</height>
         </rect>
     </property>
     <property name="caption">
         <string>DTD Selector</string>
     </property>
-    <widget class="QLayoutWidget">
+    <grid>
         <property name="name">
-            <cstring>Layout2</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>9</x>
-                <y>10</y>
-                <width>430</width>
-                <height>137</height>
-            </rect>
-        </property>
-        <grid>
+        <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="3">
             <property name="name">
-                <cstring>unnamed</cstring>
+                <cstring>Layout2</cstring>
             </property>
-            <property name="margin">
-                <number>0</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="QLabel" row="0" column="0">
+            <grid>
                 <property name="name">
-                    <cstring>messageLabel</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="text">
-                    <string>Dialog message:
-Dialog message2:</string>
+                <property name="margin">
+                    <number>0</number>
                 </property>
-                <property name="scaledContents">
-                    <bool>true</bool>
+                <property name="spacing">
+                    <number>6</number>
                 </property>
-                <property name="alignment">
-                    <set>WordBreak|AlignVCenter</set>
-                </property>
-            </widget>
-            <widget class="QLayoutWidget" row="1" column="0">
-                <property name="name">
-                    <cstring>Layout1</cstring>
-                </property>
-                <grid>
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>messageLabel</cstring>
                     </property>
-                    <property name="margin">
-                        <number>0</number>
+                    <property name="text">
+                        <string>Dialog message:
+Dialog message2:</string>
                     </property>
-                    <property name="spacing">
-                        <number>6</number>
+                    <property name="scaledContents">
+                        <bool>true</bool>
                     </property>
-                    <widget class="QComboBox" row="0" column="1">
+                    <property name="alignment">
+                        <set>WordBreak|AlignVCenter</set>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget" row="1" column="0">
+                    <property name="name">
+                        <cstring>Layout1</cstring>
+                    </property>
+                    <grid>
                         <property name="name">
-                            <cstring>dtdCombo</cstring>
+                            <cstring>unnamed</cstring>
                         </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>textLabel</cstring>
+                        <property name="margin">
+                            <number>0</number>
                         </property>
-                        <property name="text">
-                            <string>Current DTD:</string>
+                        <property name="spacing">
+                            <number>6</number>
                         </property>
-                    </widget>
-                    <widget class="QLabel" row="0" column="0">
-                        <property name="name">
-                            <cstring>comboLabel</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Select DTD:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="1" column="1">
-                        <property name="name">
-                            <cstring>currentDTD</cstring>
-                        </property>
-                        <property name="readOnly">
-                            <bool>true</bool>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
-            <widget class="QCheckBox" row="2" column="0">
-                <property name="name">
-                    <cstring>convertDTD</cstring>
-                </property>
-                <property name="text">
-                    <string>&amp;Convert the document to the selected DTD</string>
-                </property>
-            </widget>
-        </grid>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>okButton</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>180</x>
-                <y>152</y>
-                <width>90</width>
-                <height>30</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>&amp;OK</string>
-        </property>
-    </widget>
+                        <widget class="QComboBox" row="0" column="1">
+                            <property name="name">
+                                <cstring>dtdCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0">
+                            <property name="name">
+                                <cstring>textLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Current DTD:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>comboLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Select DTD:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit" row="1" column="1">
+                            <property name="name">
+                                <cstring>currentDTD</cstring>
+                            </property>
+                            <property name="readOnly">
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+                <widget class="QCheckBox" row="2" column="0">
+                    <property name="name">
+                        <cstring>convertDTD</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Convert the document to the selected DTD</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QPushButton" row="1" column="1">
+            <property name="name">
+                <cstring>okButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;OK</string>
+            </property>
+        </widget>
+        <spacer row="1" column="2">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>151</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="1" column="0">
+            <property name="name">
+                <cstring>spacer1_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>151</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
 </widget>
 <tabstops>
     <tabstop>dtdCombo</tabstop>

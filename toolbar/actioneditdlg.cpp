@@ -285,7 +285,13 @@ void ActionEditDlg::saveAction( TagAction *a )
     {
       el.setAttribute("type","script");
     }
-    replaceDomItem(el,"script", "\""+scriptPath->text() +"\"");
+    QString s = scriptPath->text();
+    if ( (s.startsWith("'") && s.endsWith("'")) ||
+         (s.startsWith("\"") && s.endsWith("\"")) )
+        s = s.mid(1, s.length() - 2);
+    s.prepend('\'');
+    s.append('\'');
+    replaceDomItem(el,"script", s);
     QDomElement script = el.namedItem("script").toElement();
 
     if ( inputNone       ->isChecked() ) script.setAttribute("input","none");
