@@ -1134,7 +1134,7 @@ void TableEditor::slotEditChildTable()
       }
       childTableNode->next->tag->endPos(table.eLine, table.eCol);
       TableEditor editor;
-      editor.setCaption("Child Table Editor");
+      editor.setCaption(i18n("Child Table Editor"));
       editor.setBaseURL(m_baseURL);
       editor.setTableArea(table.bLine, table.bCol, table.eLine, table.eCol, localParser);
       if (editor.exec()) {
