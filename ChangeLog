@@ -2,10 +2,13 @@ This files contains the changes since Quanta 2.0 until the current 3.3, which
 is still under heavy development.
 
 Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
-    - bufixes:
+    - bugfixes:
         - VPL:
             - put messageBoxes for cut/copy/paste/undo/redo instead of disabling the actions (was confusing)
             - fix editing in the attribute editor of tags which contain special areas
+            - show the parent tag in the tag attribute view when editing text
+            - stop inserting &nbsp; everywhere [#72535]
+            - fix some various crashes [#72532]
         - increase timeout for network operations to 60s [#73173]
         - don't crash on upload if the current tab holds a plugin [#72912]
         - don't try to copy the same file twice if it's dropped to the templates tree view
