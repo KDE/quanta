@@ -5,7 +5,7 @@
 SUBDIRS = 48x48 32x32 22x22 16x16 
 datadir = ${kde_datadir}/quanta/toolbar
 
-data_DATA = preview1.png preview2.png preview3.png preview4.png quantalogo.png wiznewprjweb.png wiznewprjglb.png 
+data_DATA = preview1.png preview2.png preview3.png preview4.png quantalogo.png wiznewprjweb.png wiznewprjglb.png wiznewprjfin.png wiznewprjloc.png 
 EXTRA_DIST = \
 		preview1.png\
 		preview2.png\
@@ -13,7 +13,9 @@ EXTRA_DIST = \
 		preview4.png\
 		quantalogo.png\
 		wiznewprjweb.png\
-		wiznewprjglb.png
+		wiznewprjglb.png\
+		wiznewprjfin.png\
+		wiznewprjloc.png
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$
