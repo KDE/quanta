@@ -268,7 +268,8 @@ class QuantaApp : public KDockMainWindow
     KRecentFilesAction *fileRecent;
     
     KToggleAction *verticalSelectAction, *showMessagesAction, *showTreeAction,
-      *showFTabAction,*showPTabAction,*showSTabAction,*showDTabAction;
+      *showFTabAction,*showPTabAction,*showSTabAction,*showDTabAction,
+      *showToolbarAction,*showStatusbarAction,*showPreviewAction;
     
     KSelectAction *eolSelectAction, *hlSelectAction;
     

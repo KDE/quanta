@@ -216,12 +216,28 @@ void QuantaApp::slotEditFindInFiles()
 
 void QuantaApp::slotViewToolBar()
 {
-#warning view tool bar  
+  QToolBar *mbar = toolBar("mainToolBar");
+  QToolBar *ebar = toolBar("mainEditToolBar");
+  QToolBar *nbar = toolBar("mainNaviToolBar");
+  
+  if(mbar->isVisible()) {
+    mbar->hide();
+    ebar->hide();
+    nbar->hide();
+  }
+  else {
+    nbar->show();
+    ebar->show();
+    mbar->show();
+  }
 }
 
 void QuantaApp::slotViewStatusBar()
 {
-#warning view status bar  
+  if (statusBar()->isVisible())
+    statusBar()->hide();
+  else
+    statusBar()->show();  
 }
 
 

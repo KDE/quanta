@@ -371,7 +371,9 @@ void QuantaApp::saveOptions()
   config->setGroup  ("General Options");
   
   config->writeEntry("Geometry", size());
-  config->writeEntry("Show Statusbar",statusBar()->isVisible());
+  
+  config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
+  config->writeEntry("Show Statusbar", statusBar()->isVisible());
 
   config->writeEntry("Html mask",   fileMaskHtml  );
   config->writeEntry("Images mask", fileMaskImage );
@@ -382,8 +384,6 @@ void QuantaApp::saveOptions()
   config->writeEntry("Capitals for tags",     tagsCapital);
   config->writeEntry("Capitals for attr",     attrCapital);
   config->writeEntry("Close tag if optional", useCloseTag);
-
-  config->writeEntry("Preview position", previewPosition);
 
   config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
 
@@ -429,8 +429,6 @@ void QuantaApp::readOptions()
   int mode = config->readNumEntry("Left panel mode", 0);
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
   
-#warning Check for statusbar  
-
   fileRecent ->loadEntries(config);
   
   doc    ->readConfig(config); // kwrites
@@ -440,7 +438,16 @@ void QuantaApp::readOptions()
   config->setGroup("General Options");
   resize( config->readSizeEntry("Geometry", &s));
   
+  if (!config->readBoolEntry("Show Toolbar",   true)) slotViewToolBar();
+  if (!config->readBoolEntry("Show Statusbar", true)) slotViewStatusBar();
+  
   readDockConfig();
+  
+  showToolbarAction  ->setChecked( toolBar("mainToolBar")->isVisible());
+  showStatusbarAction->setChecked( statusBar()->isVisible());
+  
+  showPreviewAction  ->setChecked( false );
+  showMessagesAction ->setChecked( bottdock->isVisible() );
 }
 
 void QuantaApp::openLastFiles()
@@ -455,8 +462,6 @@ void QuantaApp::openLastFiles()
     doc->openDocument( KURL(urls.current()) );
   }
 }
-
-#warning Check action for message output and tree
 
 bool QuantaApp::queryExit()
 {
@@ -661,15 +666,11 @@ void QuantaApp::initActions()
                          this, SLOT( slotShowBottDock() ),
                          actionCollection(), "show_messages" );
                            
-    KToggleAction *showPreviewAction = 
+    showPreviewAction = 
       new KToggleAction( i18n( "Pr&eview" ), "preview", Key_F6,
                          this, SLOT( slotShowPreview() ),
                          actionCollection(), "show_preview" );
     
-//    showTreeAction    ->setChecked( true );
-    showMessagesAction->setChecked( true );
-    showPreviewAction ->setChecked( false );
-                           
        backAction = KStdAction::back   ( this, SLOT( slotBack() ),    actionCollection(), "w_back" );
     forwardAction = KStdAction::forward( this, SLOT( slotForward() ), actionCollection(), "w_forward" );
 
@@ -738,8 +739,8 @@ void QuantaApp::initActions()
     
     // Options actions
     //
-    KStdAction::showToolbar  ( this, SLOT( slotViewToolBar() ),   actionCollection(), "view_toolbar" );
-    KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), actionCollection(), "view_statusbar" );
+    showToolbarAction   = KStdAction::showToolbar  ( this, SLOT( slotViewToolBar() ),   actionCollection(), "view_toolbar" );
+    showStatusbarAction = KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), actionCollection(), "view_statusbar" );
     
     (void) new KAction( i18n( "&Highlightings and Fonts" ), 0, 
                         doc, SLOT( highlightings() ),
