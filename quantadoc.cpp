@@ -39,6 +39,7 @@
 #include <ktexteditor/clipboardinterface.h>
 #include <ktexteditor/selectioninterface.h>
 
+#include <kparts/componentfactory.h>
 
 #include <klibloader.h>
 #include <ktrader.h>
@@ -448,17 +449,19 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 //  KService::Ptr service = *offers.begin();
 //  KLibFactory *factory = KLibLoader::self()->factory(service->library().latin1() );
 
-  KLibFactory *factory = KLibLoader::self()->factory( "libkatepart" );
+  KLibFactory *factory = KLibLoader::self()->factory( "katepart" );
 
-  KTextEditor::Document *doc =//(KTextEditor::Document *) factory->create (0L, "kate", "KTextEditor::Document");
-  static_cast<KTextEditor::Document *>(factory->create( this, 0, "KTextEditor::Document" ) );
+//  KTextEditor::Document *doc =//(KTextEditor::Document *) factory->create (0L, "kate", "KTextEditor::Document");
+//  static_cast<KTextEditor::Document *>(factory->create( this, 0, "KTextEditor::Document" ) );
 
+  
+KTextEditor::Document *doc=KParts::ComponentFactory::createPartInstanceFromLibrary<KTextEditor::Document>("katepart",_parent,0);
   Document  *w    = new Document (basePath(), doc, _parent);
   KTextEditor::View * v = w->view();
 
  	app-> config->setGroup("General Options");
 
-  dynamic_cast<KTextEditor::ConfigInterface *>(w->doc())->readConfig(app->config);
+//  static_cast<KTextEditor::Document*>(w->doc())->readConfig(app->config);
   w  -> readConfig      ( app->config );
 
 //FIXME:set to HTML
