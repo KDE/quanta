@@ -826,7 +826,7 @@ void QuantaApp::slotNewStatus()
       {
         wTab->changeTab(w, UserIcon("save_small"), urlStr + " " + i18n("[modified]"));
       }else
-      if (w->isModified() && label != urlStr)
+      if (!w->isModified() && label != urlStr)
       {
         wTab->changeTab(w, mimeIcon, urlStr);
       }

@@ -647,11 +647,11 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     m_config->writeEntry ("PHP Debugger style", debuggerStyle);
+    m_config->writeEntry("Show Close Buttons", qConfig.showCloseButtons);
 
     if (m_view->writeExists())
         m_view->write()->writeConfig(m_config);
 
-    m_config->writeEntry("Show Close Buttons", qConfig.showCloseButtons);
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);
 
