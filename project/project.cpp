@@ -579,7 +579,7 @@ void Project::slotCloseProject()
   m_projectFiles.clear();
   emit closeFiles();
 
-  emit newProjectLoaded(projectName, baseURL, templateURL, m_documentRootURL);
+  emit newProjectLoaded(projectName, baseURL, templateURL);
   emit reloadTree( m_projectFiles, true);
   adjustActions();
   emit newStatus();
@@ -668,13 +668,6 @@ void Project::loadProjectXML()
   if (m_defaultEncoding.isEmpty())
   {
     m_defaultEncoding = qConfig.defaultEncoding;
-  }
-  m_documentRootURL = baseURL;
-  m_documentRootURL.setPath("");
-  tmpString = projectNode.toElement().attribute("documentRoot");
-  if (!tmpString.isEmpty())
-  {
-    QuantaCommon::setUrl(m_documentRootURL, tmpString);
   }
   no = projectNode.namedItem("author");
   author = no.firstChild().nodeValue();
@@ -816,7 +809,6 @@ void Project::loadProjectXML()
   progressBar->setValue(0);
   progressBar->setTextEnabled(true);
   QString relTemplateUrlStr = QExtFileInfo::toRelative(templateURL, baseURL).url();
-  QString docRootUrlStr = m_documentRootURL.url();
   QString path;
   uint nlCount = nl.count();
   for ( uint i = 0; i < nlCount; i++ )
@@ -840,12 +832,13 @@ void Project::loadProjectXML()
       if (!excludeRx.exactMatch(path))
       {
         int defaultUploadStatus = 0;
-        if (url.url().startsWith(docRootUrlStr) || url.url().startsWith(relTemplateUrlStr) )
+        bool docFolder = (el.attribute("documentFolder", "false") == "true");
+        if (docFolder || url.url().startsWith(relTemplateUrlStr) )
           defaultUploadStatus = 1;
         int uploadStatus = el.attribute("uploadstatus", "-1").toInt();
         if (uploadStatus == -1)
           el.setAttribute("uploadstatus", defaultUploadStatus);
-        ProjectURL file(url, el.attribute("desc"), el.attribute("uploadstatus").toInt());
+        ProjectURL file(url, el.attribute("desc"), el.attribute("uploadstatus").toInt(), docFolder);
         if ( url.isLocalFile() )
         {
           QFileInfo fi( baseURL.path(1)+path);
@@ -883,7 +876,7 @@ void Project::loadProjectXML()
 
   emit statusMsg(QString::null);
 
-  emit newProjectLoaded(projectName, baseURL, templateURL, m_documentRootURL);
+  emit newProjectLoaded(projectName, baseURL, templateURL);
   emit reloadTree(m_projectFiles, true);
 
   emit showTree();
@@ -1354,7 +1347,7 @@ void Project::slotAcceptCreateProject()
      url = QExtFileInfo::toRelative(toolbarURL, baseURL);
      el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
 
-     emit newProjectLoaded(projectName, baseURL, templateURL, m_documentRootURL);
+     emit newProjectLoaded(projectName, baseURL, templateURL);
      fileNameList();
      emit reloadTree( m_projectFiles, true );
      emit showTree();
@@ -1679,7 +1672,7 @@ void Project::slotUploadURL(const KURL& urlToUpload)
 void Project::slotReloadProject()
 {
     loadProjectXML();
-    emit newProjectLoaded(projectName, baseURL, templateURL, m_documentRootURL);
+    emit newProjectLoaded(projectName, baseURL, templateURL);
     // exclude filter might have changed
     fileNameList(false);
     emit reloadTree( m_projectFiles, false );
@@ -1983,12 +1976,36 @@ void Project::slotUploadStatusChanged(const KURL& url, int status)
    }
 }
 
-void Project::slotDocumentRootChanged(const KURL &url)
+void Project::slotChangeDocumentFolderStatus(const KURL &url, bool status)
 {
-   KURL relUrl = QExtFileInfo::toRelative(url, baseURL);
-   dom.firstChild().firstChild().toElement().setAttribute("documentRoot", QuantaCommon::qUrl(relUrl));
-   m_documentRootURL = relUrl;
-   setModified(true);
+   QString urlStr = QExtFileInfo::toRelative(url, baseURL).url(1);
+   if (url == baseURL)
+     urlStr = "";
+   QString statusStr = "true";
+   if (!status)
+     statusStr = "false";
+   ProjectUrlList::Iterator it;
+   for (it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
+   {
+       if ((*it).url() == urlStr)
+       {
+         (*it).documentFolder = status;
+          QDomNodeList nl = dom.elementsByTagName("item");
+          QString qurl = QuantaCommon::qUrl(*it);
+          const uint nlCount = nl.count();
+          for (uint i = 0; i < nlCount; ++i)
+          {
+            QDomElement el = nl.item(i).toElement();
+            if (el.attribute("url") == qurl)
+            {
+              el.setAttribute("documentFolder", statusStr);
+              setModified(true);
+              break;
+            }
+          }
+          break;
+       }
+   }
 }
 
 
@@ -2051,6 +2068,25 @@ bool Project::passwordSaved(const QString &entry)
       QString passwd =  KStringHandler::obscure(config->readEntry(projectName + " | " + entry,""));
 //      QString passwd =  config->readEntry(projectName + " | " + entry,"");
       return !passwd.isEmpty();
+}
+
+KURL Project::documentFolderForURL(const KURL& url)
+{
+  KURL docFolderURL = baseURL;
+  KURL absURL;
+  QString urlStr = url.url();
+  QString absStr;
+  for (ProjectUrlList::ConstIterator it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it )
+  {
+    absURL = QExtFileInfo::toAbsolute(*it, baseURL);
+    absStr = absURL.url();
+    if (urlStr.startsWith(absStr) && (*it).documentFolder)
+    {
+      if (docFolderURL.url().length() <= absStr.length())
+        docFolderURL = absURL;
+    }
+  }
+  return docFolderURL;
 }
 
 #include "project.moc"

@@ -33,13 +33,14 @@ class ProjectURL : public KURL
 public:
   QString fileDesc;
   int uploadStatus; ///< The upload state, see UploadStatus
+  bool documentFolder;
 
   ProjectURL()
-    : KURL(), uploadStatus(1) {}
+    : KURL(), uploadStatus(1), documentFolder(false) {}
   ProjectURL(const KURL& url)
-    : KURL(url), uploadStatus(1) {}
-  ProjectURL(const KURL& url, const QString& desc, int status)
-    : KURL(url), fileDesc(desc), uploadStatus(status) {}
+    : KURL(url), uploadStatus(1), documentFolder(false) {}
+  ProjectURL(const KURL& url, const QString& desc, int status, bool docFolder)
+    : KURL(url), fileDesc(desc), uploadStatus(status), documentFolder(docFolder) {}
   virtual ~ProjectURL() {}
 
   /** The default state for a file when uploading */

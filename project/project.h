@@ -94,7 +94,7 @@ public:
    * and the base URL of the opened document, if it is saved somewhere.
    */
   KURL projectBaseURL();
-  KURL documentRootURL() {return m_documentRootURL;}
+  KURL documentFolderForURL(const KURL &url);
 
   /** Saves the password for entry into a list. Stores on disc if store == true */
   void savePassword(const QString& entry, const QString& passwd, bool store);
@@ -144,7 +144,7 @@ public slots:
   void slotDeleteProjectView();
   void slotFileDescChanged(const KURL& url, const QString& desc);
   void slotUploadStatusChanged(const KURL& url, int status);
-  void slotDocumentRootChanged(const KURL& url);
+  void slotChangeDocumentFolderStatus(const KURL& url, bool status);
 
   /** Debugger options */
   void slotDebuggerOptions();
@@ -168,7 +168,7 @@ signals:
   void newStatus();
   void statusMsg(const QString &);
   /** No descriptions */
-  void newProjectLoaded(const QString &, const KURL &, const KURL &, const KURL&);
+  void newProjectLoaded(const QString &, const KURL &, const KURL &);
   void hideSplash();
 
 public:
@@ -191,7 +191,6 @@ are treated as the actual documents belonging to the site. They are automaticall
 for upload, searching in project default to this directory, etc. Items outside of the
 document root are treated as external, control files and they are by default not selected for
 upload.*/
-  KURL m_documentRootURL;
 
   KURL previewPrefix;
   bool usePreviewPrefix;

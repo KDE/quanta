@@ -90,7 +90,7 @@ class DebuggerManager : public QObject
     void slotDebugEndSession();
 
     // Initiation
-    void slotNewProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &);
+    void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
 
   signals:
     void hideSplash();

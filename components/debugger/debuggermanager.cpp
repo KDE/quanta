@@ -52,7 +52,7 @@ DebuggerManager::DebuggerManager(QObject *myparent)
   m_client = NULL;
 }
 
-void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KURL &, const KURL &, const KURL &)
+void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KURL &, const KURL &)
 {
   if(m_client)
   {

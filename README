@@ -129,9 +129,26 @@ KDE tree, you should do:
 export KDEDIRS=$prefix-of-second-instace:$KDEDIRS
 export PATH=$prefix-of-second-instace/bin:$PATH
 export LD_LIBRARY_PATH=$prefix-of-second-instace/lib:$LD_LIBRARY_PATH
+export KDEHOME=home-for-second-version
 and run "quanta".
 
-NOTE: In case of the whole kdewebdev module, only the Quanta BE executable name is
+An example would be:
+./configure --prefix=/opt/new-quanta
+make
+make install
+mkdir ~/.new-quanta
+export KDEDIRS=/opt/new-quanta:$KDEDIRS
+export PATH=/opt/new-quanta/bin:$PATH
+export LD_LIBRARY_PATH=/opt/new-quanta/lib:$LD_LIBRARY_PATH
+export KDEHOME=~/.new-quanta
+quanta
+
+You can put the lines starting with the first "export" into a separate file,
+call it "new-quanta", make it executable, put it in your PATH and when you
+run "new-quanta" the version installed into /opt/new-quanta will be run.
+
+
+NOTE: In case of BE releases, only the Quanta BE executable name is
 different of the stable version, for the other applications when installing into the
 same directory as the old versions are, the old versions will be upgraded. To avoid this,
 use the way descibed above for the whole kdewebdev module.

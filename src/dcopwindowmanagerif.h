@@ -32,8 +32,9 @@ class DCOPWindowManagerIf : virtual public DCOPObject
   virtual QStringList tagAreas(const QString& tag, bool includeCoordinates, bool skipFoundContent) const = 0;
   virtual void newCursorPosition(QString file, int lineNumber, int columnNumber) = 0;
   virtual void newDebuggerPosition(QString file, int lineNumber) = 0;
-  virtual void openFile(QString file, int lineNumber, int columnNumber) = 0; 
+  virtual void openFile(QString file, int lineNumber, int columnNumber) = 0;
   virtual QString saveCurrentFile() = 0;
+  virtual QString documentFolderForURL(QString url) = 0;
 };
 
 #endif

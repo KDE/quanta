@@ -57,17 +57,14 @@ void ProjectTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
                                   int column, int width, int align)
 {
     QFont f = p->font();
-    ProjectTreeViewItem *item = ProjectTreeView::ref()->documentRootItem();
-    if (item == this || url() == ProjectTreeView::ref()->documentRootURL())
+    if (ProjectTreeView::ref()->isDocumentFolder(url()))
     {
        f.setItalic(true);
        if (text(1).isEmpty())
-         setText(1, i18n("Document root"));
-       if (!item)
-         ProjectTreeView::ref()->setDocumentRootItem(this);
+         setText(1, i18n("Document-base folder"));
     } else
     {
-      if (text(1) == i18n("Document root"))
+      if (text(1) == i18n("Document-base folder"))
           setText(1, "");
     }
     p->setFont(f);
@@ -129,7 +126,6 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_projectDir =  new ProjectTreeBranch( this, KURL(), i18n("No Project"), SmallIcon("ptab"), true);
   addBranch(m_projectDir);
   m_projectDir->root()->setEnabled(false);
-  m_documentRootItem = 0L;
 
   m_uploadStatusMenu = new KPopupMenu(this);
   m_alwaysUploadId = m_uploadStatusMenu->insertItem(i18n("&When Modified"), this, SLOT(slotAlwaysUpload()));
@@ -162,7 +158,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload Folder..."), this, SLOT(slotUploadSingleURL()));
   m_folderMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
   m_folderMenu->insertSeparator();
-  m_setDocumentRootId = m_folderMenu->insertItem(i18n("Set as document root"), this, SLOT(slotSetDocumentRoot()));
+  m_setDocumentRootId = m_folderMenu->insertItem(i18n("Document-base folder"), this, SLOT(slotChangeDocumentFolderStatus()));
   m_folderMenu->insertItem(i18n("Upload &status"), m_uploadStatusMenu);
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
 
@@ -172,7 +168,6 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_projectMenu->insertItem(i18n("Project &Properties..."), this, SLOT(slotOptions()));
   m_projectMenu->insertItem(i18n("&Reload"), this, SLOT(slotReload()));
   m_projectMenu->insertSeparator();
-  m_projectMenu->insertItem(i18n("Set as document root"), this, SLOT(slotSetDocumentRoot()));
   m_projectMenu->insertItem(i18n("Upload &status"), m_uploadStatusMenu);
 
 
@@ -218,21 +213,21 @@ void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const Q
     {
       if (!curItem->isDir())
       {
-        if (currentURL().fileName().endsWith(toolbarExtension))
+        if (url.fileName().endsWith(toolbarExtension))
         {
           m_fileMenu->setItemVisible(m_openInQuantaId, true);
         } else
         {
           m_fileMenu->setItemVisible(m_openInQuantaId, false);
         }
-        m_fileMenu->setItemVisible(m_menuClose, isFileOpen(currentURL()));
+        m_fileMenu->setItemVisible(m_menuClose, isFileOpen(url));
         m_fileMenu->popup(point);
       } else
       {
-        if (curItem == m_documentRootItem)
-          m_folderMenu->setItemVisible(m_setDocumentRootId, false);
+        if (m_documentFolderList.contains(url))
+          m_folderMenu->setItemChecked(m_setDocumentRootId, true);
         else
-          m_folderMenu->setItemVisible(m_setDocumentRootId, true);
+          m_folderMenu->setItemChecked(m_setDocumentRootId, false);
         m_folderMenu->popup(point);
       }
     }
@@ -285,7 +280,7 @@ void ProjectTreeView::reload()
 }
 
 /** Sets the project template directory */
-void ProjectTreeView::slotNewProjectLoaded(const QString &name, const KURL &baseURL, const KURL &, const KURL & documentRootURL)
+void ProjectTreeView::slotNewProjectLoaded(const QString &name, const KURL &baseURL, const KURL &)
 {
   m_baseURL = baseURL;
   m_projectName = name;
@@ -309,12 +304,14 @@ void ProjectTreeView::slotNewProjectLoaded(const QString &name, const KURL &base
     m_projectDir->root()->setText(1, "");
     setDragEnabled(false);
   }
-
-  m_documentRootURL = QExtFileInfo::toAbsolute(documentRootURL, m_baseURL);
+  m_documentFolderList.clear();
+  m_documentFolderList.append(m_baseURL);
 }
 
 void ProjectTreeView::slotReloadTree( const ProjectUrlList &fileList, bool buildNewTree)
 {
+  m_documentFolderList.clear();
+  m_documentFolderList.append(m_baseURL);
   m_projectFiles.clear();
   KURL url;
 
@@ -323,7 +320,9 @@ void ProjectTreeView::slotReloadTree( const ProjectUrlList &fileList, bool build
   {
     url = QExtFileInfo::toAbsolute(*it, m_baseURL);
     url.adjustPath(-1);
-    m_projectFiles.append(ProjectURL(url, (*it).fileDesc, (*it).uploadStatus));
+    m_projectFiles.append(ProjectURL(url, (*it).fileDesc, (*it).uploadStatus, (*it).documentFolder));
+    if ((*it).documentFolder)
+      m_documentFolderList.append(url);
   }
 
   if (buildNewTree)
@@ -591,20 +590,25 @@ void ProjectTreeView::slotUploadMenuAboutToShow()
     }
 }
 
-void ProjectTreeView::slotSetDocumentRoot()
+void ProjectTreeView::slotChangeDocumentFolderStatus()
 {
-    ProjectTreeViewItem * oldRootItem = m_documentRootItem;
-    m_documentRootItem = static_cast<ProjectTreeViewItem *>(currentKFileTreeViewItem());
-    if (oldRootItem)
+    KURL url = currentURL();
+    if (!m_documentFolderList.contains(url))
     {
-      if (oldRootItem->url() != m_baseURL)
-        setUploadStatus(oldRootItem->url(), ProjectURL::NeverUpload);
-      oldRootItem->repaint();
+      m_documentFolderList.append(url);
+      setUploadStatus(url, ProjectURL::AlwaysUpload);
+      emit changeDocumentFolderStatus(url, true);
+    } else
+    {
+      m_documentFolderList.remove(url);
+      emit changeDocumentFolderStatus(url, false);
     }
-    m_documentRootURL = currentURL();
-    setUploadStatus(m_documentRootURL, ProjectURL::AlwaysUpload);
-    emit changeDocumentRoot(m_documentRootURL);
+    currentItem()->repaint();
 }
 
+bool ProjectTreeView::isDocumentFolder(const KURL &url)
+{
+   return (m_documentFolderList.contains(url) > 0);
+}
 
 #include "projecttreeview.moc"

@@ -67,9 +67,7 @@ public:
   }
 
   virtual ~ProjectTreeView();
-  void setDocumentRootItem(ProjectTreeViewItem* item) {m_documentRootItem = item;}
-  ProjectTreeViewItem* documentRootItem() {return m_documentRootItem;}
-  KURL documentRootURL() {return m_documentRootURL;}
+  bool isDocumentFolder(const KURL &url);
   ProjectTreeBranch* rootBranch() {return m_projectDir;}
 
 public slots: // Public slots
@@ -80,7 +78,7 @@ public slots: // Public slots
   void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
   void slotReloadTree(const ProjectUrlList &a_fileList, bool buildNewtree);
   /** Sets new project informations */
-  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &);
+  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
   /** reloads the tree again with current settings */
   void slotReload();
   virtual void slotPopulateFinished(KFileTreeViewItem* );
@@ -97,7 +95,7 @@ signals: // Signals
   void uploadProject();
   void changeFileDescription(const KURL& url, const QString& desc);
   void changeUploadStatus(const KURL& url, int status);
-  void changeDocumentRoot(const KURL& url);
+  void changeDocumentFolderStatus(const KURL& url, bool status);
   void reloadProject();
 
 private:
@@ -113,8 +111,7 @@ private:
   KURL m_oldURL;
   KURL m_newURL;
   KURL m_baseURL;
-  KURL m_documentRootURL;
-  ProjectTreeViewItem *m_documentRootItem;
+  KURL::List m_documentFolderList;
   KPopupMenu *m_projectMenu;
   KPopupMenu *m_uploadStatusMenu;
   QString m_projectName;
@@ -146,7 +143,7 @@ private slots: // Private slots
   void slotNeverUpload();
   void slotConfirmUpload();
   void slotUploadMenuAboutToShow();
-  void slotSetDocumentRoot();
+  void slotChangeDocumentFolderStatus();
 };
 
 #endif

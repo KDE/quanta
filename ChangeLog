@@ -27,6 +27,8 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - make uploading of empty folders possible [#82127]
         - fix removal of action containing &
         - fix toolbar configuration and removal for non-English versions
+        - don't show the file changed dialog when previewing after Save All or Project Upload
+          was called
 
   - behavioral/user interface changes:
         - enable the configure toolbars item in the toolbar context menu [#80643]
@@ -51,16 +53,23 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
              - Confirm: the item is selected for upload if it was modified, but a second confirmation
                              is needed by the user.
           Implements wish #62721.
-        - introduce the concept of separate project and document root. Document root holds the
-          documents belonging to the actual project. Outside of the document root are project
-          administrative files, that usually are not uploaded. Files under document root are by
-          default uploaded (if they were modified), while files outside of the document root are
-          not marked to be uploaded, even if they are modified. Exception is the directory which
-          holds the project templates, which is marked to be uploaded. The user can override
-          the default setting both for files/folder inside and outside of document root. See above.
-          For old projects, the document root is the same as project root. The document root can be
-          changed from the project treeview context menu.
+        - introduce the concept of separate project root and document-base folders.
+          Document-base folders hold the documents belonging to the actual project.
+          Outside of the document-base folders are project  administrative files, that
+          usually are not uploaded. Files under document-base folders are by default
+          uploaded (if they were modified), while files outside of the document-base
+          folders are not marked to be uploaded, even if they are modified. Exception is
+          the directory which holds the project templates, which is marked to be uploaded.
+          The user can override the default setting both for files/folder inside and outside of
+          a document-base folder. See above.
+          For old projects, the project root is the only document folder. The document-base folder
+          status can be changed from the project treeview context menu.
+          There is a DCOP method to query the root (the document base folder) for a file from
+          inside the project: QString WindowManagerIf::documentFolderForURL(QString url).
           Implements wish #64742 (in somewhat different way, but the result is the same).
+          The main reasons of document-base folders is to make possible developing for multiple
+          subdomains inside the same project and to make a difference between administrative files
+          and real (user visible) documents.
         - dragging a tab holding a document puts the document URL in the drag object [#80649]
         - possibility of as-you-type replacing of accented chars [#23164]
         - add support for upload profiles [#54366]

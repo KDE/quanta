@@ -3692,6 +3692,12 @@ QStringList QuantaApp::tagAreas(const QString &tag, bool includeCoordinates, boo
     return QStringList();
 }
 
+QString QuantaApp::documentFolderForURL(QString url)
+{
+  KURL u = KURL::fromPathOrURL(url);
+  return Project::ref()->documentFolderForURL(u).url();
+}
+
 void QuantaApp::slotAutosaveTimer()
 {
   m_config->reparseConfiguration();

@@ -151,6 +151,7 @@ public:
   QStringList openedURLs() const;
   QString saveCurrentFile();
   QStringList tagAreas(const QString& name, bool includeCoordinates, bool skipFoundContent) const;
+  QString documentFolderForURL(QString url);
   /** Capture DCOP signals from KXsldbgPart or similar plugin */
   void newCursorPosition(QString file, int lineNumber, int columnNumber);
   void newDebuggerPosition(QString file, int lineNumber);

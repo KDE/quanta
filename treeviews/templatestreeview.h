@@ -106,7 +106,7 @@ public slots:
   virtual void slotInsertTag();
 
   /** Sets the project template directory */
-  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &, const KURL &);
+  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
 
 private:
 
