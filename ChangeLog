@@ -9,8 +9,12 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
           code itself [#87533]
         - possible crash on startup fixed
         - don't try to autofill a closing tag for non-xml tags [#89212]
-
-
+        - when opening a Quanta 3.2 project set the upload status of the files to
+          "When Modified" not to "Never" [#88232]
+        - when adding files to a project, use the upload status of the parent directory
+           for the newly added file
+        - fix the Save As.. behavior (it defaulted to some strange directories, depending
+          on the active treeview, selected directory, etc.)
 
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and

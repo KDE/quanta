@@ -79,13 +79,10 @@ bool ProjectList::readFromXML(QDomDocument &dom, const KURL &baseURL,
         i--;
       } else
       {
-        int defaultUploadStatus = 0;
         bool docFolder = (el.attribute("documentFolder", "false") == "true");
-        if (docFolder || url.url().startsWith(templateURL.url()) )
-          defaultUploadStatus = 1;
         int uploadStatus = el.attribute("uploadstatus", "-1").toInt();
         if (uploadStatus == -1)
-          el.setAttribute("uploadstatus", defaultUploadStatus);
+          el.setAttribute("uploadstatus", 1);
         //remove non-existent local files
         if ( url.isLocalFile() )
         {

@@ -1526,7 +1526,12 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
       el = d->dom.createElement("item");
       el.setAttribute("url", QuantaCommon::qUrl( QExtFileInfo::toRelative(url, d->baseURL) ));
       d->dom.firstChild().firstChild().appendChild( el );
-      d->m_projectFiles.insert( new ProjectURL(url, "", 1, false, el) );
+      KURL u = url.upURL();
+      ProjectURL *parentURL = d->m_projectFiles.find(u);
+      int uploadStatus = 1;
+      if (parentURL)
+        uploadStatus = parentURL->uploadStatus;
+      d->m_projectFiles.insert( new ProjectURL(url, "", uploadStatus, false, el) );
     }
     url.setPath(url.directory(false));
   }
