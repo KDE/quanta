@@ -2765,11 +2765,15 @@ void QuantaApp::slotRemoveAction(const QString& toolbarName, const QString& a_ac
   KAction *action = 0L;
   QString actionName = a_actionName;
   actionName.replace('&',"&&");
-  for (uint i = 0; i < actionCollection()->count(); i++)
+  KActionCollection *ac = actionCollection();
+  uint actionCount = ac->count();
+  QString str;
+  for (uint i = 0; i < actionCount; i++)
   {
-    if (actionCollection()->action(i)->text() == actionName)
+    str = ac->action(i)->text();
+    if (str == actionName || str.remove('&') == actionName)
     {
-      action = actionCollection()->action(i);
+      action = ac->action(i);
       break;
     }
   }
@@ -2777,11 +2781,11 @@ void QuantaApp::slotRemoveAction(const QString& toolbarName, const QString& a_ac
               //of the text when plugged into a toolbar.
   {
     actionName += "...";
-    for (uint i = 0; i < actionCollection()->count(); i++)
+    for (uint i = 0; i < actionCount; i++)
     {
-      if (actionCollection()->action(i)->text() == actionName)
+      if (ac->action(i)->text() == actionName)
       {
-        action = actionCollection()->action(i);
+        action = ac->action(i);
         break;
       }
     }
