@@ -3654,15 +3654,16 @@ void QuantaApp::slotDocumentProperties()
 void QuantaApp::documentProperties(bool forceInsertionOfMinimalTree)
 {
   Document *w = ViewManager::ref()->activeDocument();
-  if(w)
+  if (w)
   {
-    if(w->defaultDTD()->name.contains("HTML", false) == 0)
+    if (w->defaultDTD()->name.contains("HTML", false) == 0)
     {
       KMessageBox::information(this, i18n("The Document Properties Dialog is only for HTML and XHTML."));
       return;
     }
     htmlDocumentProperties htmlPropsDlg(this, forceInsertionOfMinimalTree);
     htmlPropsDlg.exec();
+    w->setModified(true);
   }
 }
 

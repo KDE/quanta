@@ -167,8 +167,7 @@ bool ViewManager::removeView(QuantaView *view, bool force)
         quantaApp->closeWindow(view);
         if (allEditorsClosed())
         {
-            createNewDocument();
-            quantaApp->slotNewStatus();
+            quantaApp->slotFileNew();
         }
         return true;
        }
@@ -543,8 +542,7 @@ QuantaView* ViewManager::documentationView(bool create)
 
 void ViewManager::slotLastViewClosed()
 {
-    createNewDocument();
-    quantaApp->slotNewStatus();
+  quantaApp->slotFileNew();
 }
 
 bool ViewManager::allEditorsClosed()
