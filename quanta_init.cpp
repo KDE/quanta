@@ -33,7 +33,8 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <khtmlview.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
+#include <kstatusbar.h>
 
 // application specific includes
 #include "quanta.h"

@@ -39,7 +39,8 @@
 #include <khtmlview.h>
 #include <kdialogbase.h>
 #include <kkeydialog.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
+#include <kstatusbar.h>
 #include <klibloader.h>
 
 // application specific includes

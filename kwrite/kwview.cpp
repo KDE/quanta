@@ -1966,6 +1966,10 @@ KWriteDoc *KWrite::doc() {
   return kWriteDoc;
 }
 
+KTextEditor::Document * KWrite::document() const {
+  return kWriteDoc;
+}
+
 KWriteView *KWrite::view() {
   return kWriteView;
 }

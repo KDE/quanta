@@ -37,7 +37,9 @@
 #include <kconfig.h>
 #include <kspell.h>
 #include <ksconfig.h>
-#include <ktexteditor.h>
+#include <kurl.h>
+#include <ktexteditor/view.h>
+#include <ktexteditor/document.h>
 #include "kwriteIface.h"
 
 class KAction;
@@ -48,7 +50,7 @@ class KSelectAction;
 // quanta add
 class Document;
 
-namespace KIO { class FileCopyJob; }
+namespace KIO { class FileCopyJob; class Job; }
 
 class KTempFile;
 class KWriteDoc;
@@ -383,6 +385,8 @@ class KWrite : public KTextEditor::View, virtual public KWriteIface {
 
     virtual bool isOverwriteMode() const;
     virtual void setOverwriteMode( bool b );
+
+    virtual KTextEditor::Document* document() const;
 
     void setupActions();
 //status and config functions

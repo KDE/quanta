@@ -33,7 +33,7 @@
 
 #include "kwview.h"
 #include "highlight.h"
-#include "ktexteditor.h"
+#include "ktexteditor/document.h"
 #include "kwbuffer.h"
 #include "kwtextline.h"
 
@@ -114,6 +114,7 @@ class KWriteDoc : public KTextEditor::Document {
     virtual bool saveFile();
 
     virtual KTextEditor::View *createView( QWidget *parent, const char *name );
+    virtual QPtrList<KTextEditor::View> views() const;
     virtual QString textLine( int line ) const;
 
     virtual void insertLine( const QString &s, int line = -1 );
@@ -334,6 +335,7 @@ class KWriteDoc : public KTextEditor::Document {
 
 // member variables
   protected:
+    QPtrList<KWrite> m_views;
     TextLine::List contents;
     KWBuffer *buffer;
     QColor colors[5];
@@ -356,7 +358,7 @@ protected:
 // end of quanta add
     int fontAscent;
 
-    QList<KWriteView> views;
+    QList<KWriteView> m_vviews;
     bool newDocGeometry;
 
     TextLine::Ptr longestLine;

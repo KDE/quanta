@@ -392,13 +392,13 @@ bool KWriteDoc::isReadWrite() const
 }
 
 void KWriteDoc::setReadOnly(bool m) {
-  KTextEditor::View *view;
+  KWrite *view;
 
   if (m != readOnly) {
     readOnly = m;
 //    if (readOnly) recordReset();
     for (view = m_views.first(); view != 0L; view = m_views.next() ) {
-      emit static_cast<KWrite *>( view )->newStatus();
+      emit view->newStatus();
     }
   }
 }
@@ -409,14 +409,14 @@ bool KWriteDoc::isReadOnly() const {
 
 void KWriteDoc::setNewDoc( bool m )
 {
-//  KTextEditor::View *view;
+//  KWrite *view;
 
   if ( m != newDoc )
   {
     newDoc = m;
 ////    if (readOnly) recordReset();
 //    for (view = m_views.first(); view != 0L; view = m_views.next() ) {
-//      emit static_cast<KWrite *>( view )->newStatus();
+//      emit view->newStatus();
 //    }
   }
 }
@@ -426,12 +426,12 @@ bool KWriteDoc::isNewDoc() const {
 }
 
 void KWriteDoc::setModified(bool m) {
-  KTextEditor::View *view;
+  KWrite *view;
 
   if (m != modified) {
     modified = m;
     for (view = m_views.first(); view != 0L; view = m_views.next() ) {
-      emit static_cast<KWrite *>( view )->newStatus();
+      emit view->newStatus();
     }
   }
 }
@@ -529,7 +529,7 @@ void KWriteDoc::updateFontData() {
   fontAscent = maxAscent;
   m_tabWidth = tabChars*(maxTabWidth + minTabWidth)/2;
 
-  for (view = views.first(); view != 0L; view = views.next() ) {
+  for (view = m_vviews.first(); view != 0L; view = m_vviews.next() ) {
     resizeBuffer(view,view->width(),fontHeight);
     view->tagAll();
     view->updateCursor();
@@ -541,35 +541,46 @@ void KWriteDoc::hlChanged() { //slot
   updateViews();
 }
 
+QPtrList<KTextEditor::View> KWriteDoc::views() const
+{
+  QPtrList<KTextEditor::View> result;
+  QPtrListIterator<KWrite> it(m_views);
+  for(;it.current(); ++it)
+     result.append(it.current());
+  return result;
+}
+
 
 void KWriteDoc::addView(KTextEditor::View *view) {
-  KWriteView *wview = static_cast<KWrite *>( view )->view();
-  views.append( wview );
-  KTextEditor::Document::addView( view );
+  KWrite *kw_view = static_cast<KWrite *>( view );
+  KWriteView *wview = kw_view->view();
+  m_vviews.append( wview );
+  m_views.append( kw_view );
   connect( wview, SIGNAL( destroyed() ), this, SLOT( slotViewDestroyed() ) );
 }
 
 void KWriteDoc::removeView(KTextEditor::View *view) {
 //  if (undoView == view) recordReset();
-  KWriteView *wview = static_cast<KWrite *>( view )->view();
+  KWrite *kw_view = static_cast<KWrite *>( view );
+  KWriteView *wview = kw_view->view();
   disconnect( wview, SIGNAL( destroyed() ), this, SLOT( slotViewDestroyed() ) );
-  views.removeRef( wview );
-  KTextEditor::Document::removeView( view );
+  m_vviews.removeRef( wview );
+  m_views.removeRef( kw_view );
 }
 
 void KWriteDoc::slotViewDestroyed()
 {
   const KWriteView *view = static_cast<const KWriteView *>( sender() );
-  views.removeRef( view );
+  m_vviews.removeRef( view );
 }
 
 bool KWriteDoc::ownedView(KWriteView *view) {
   // do we own the given view?
-  return (views.containsRef(view) > 0);
+  return (m_vviews.containsRef(view) > 0);
 }
 
 bool KWriteDoc::isLastView(int numViews) {
-  return ((int) views.count() == numViews);
+  return ((int) m_vviews.count() == numViews);
 }
 
 int KWriteDoc::textWidth(const TextLine::Ptr &textLine, int cursorX) {
@@ -1125,7 +1136,7 @@ void KWriteDoc::clear() {
 
   setPseudoModal(0L);
   cursor.x = cursor.y = 0;
-  for (view = views.first(); view != 0L; view = views.next() ) {
+  for (view = m_vviews.first(); view != 0L; view = m_vviews.next() ) {
     view->updateCursor(cursor);
     view->tagAll();
   }
@@ -1794,24 +1805,24 @@ void KWriteDoc::delMarkedText(VConfig &c/*, bool undo*/) {
 void KWriteDoc::tagLineRange(int line, int x1, int x2) {
   int z;
 
-  for (z = 0; z < (int) views.count(); z++) {
-    views.at(z)->tagLines(line, line, x1, x2);
+  for (z = 0; z < (int) m_vviews.count(); z++) {
+    m_vviews.at(z)->tagLines(line, line, x1, x2);
   }
 }
 
 void KWriteDoc::tagLines(int start, int end) {
   int z;
 
-  for (z = 0; z < (int) views.count(); z++) {
-    views.at(z)->tagLines(start, end, 0, 0xffffff);
+  for (z = 0; z < (int) m_vviews.count(); z++) {
+    m_vviews.at(z)->tagLines(start, end, 0, 0xffffff);
   }
 }
 
 void KWriteDoc::tagAll() {
   int z;
 
-  for (z = 0; z < (int) views.count(); z++) {
-    views.at(z)->tagAll();
+  for (z = 0; z < (int) m_vviews.count(); z++) {
+    m_vviews.at(z)->tagAll();
   }
 }
 
@@ -1877,7 +1888,7 @@ void KWriteDoc::updateViews(KWriteView *exclude) {
   bool markState = hasMarkedText();
 
   flags = (newDocGeometry) ? KWriteView::ufDocGeometry : 0;
-  for (view = views.first(); view != 0L; view = views.next() ) {
+  for (view = m_vviews.first(); view != 0L; view = m_vviews.next() ) {
     if (view != exclude) view->updateView(flags);
 
     // notify every view about the changed mark state....
@@ -2228,11 +2239,11 @@ void KWriteDoc::printTextLine(QPainter &paint, int line, int xEnd, int y) {
 void KWriteDoc::setURL( const KURL &url, bool updateHighlight )
 {
   int hl;
-  KTextEditor::View *view;
+  KWrite *view;
 
   m_url = url;
   for (view = m_views.first(); view != 0L; view = m_views.next() ) {
-    emit static_cast<KWrite *>( view )->fileChanged();
+    emit view->fileChanged();
   }
 
   if ( updateHighlight )
@@ -2271,12 +2282,12 @@ void KWriteDoc::setURL( const KURL &url, bool updateHighlight )
 }
 
 void KWriteDoc::clearFileName() {
-  KTextEditor::View *view;
+  KWrite *view;
 
   //  fName.truncate(fName.findRev('/') +1);
   m_url = KURL();
   for (view = m_views.first(); view != 0L; view = m_views.next() ) {
-    emit static_cast<KWrite *>( view )->fileChanged();
+    emit view->fileChanged();
   }
 }
 
@@ -2471,7 +2482,7 @@ void KWriteDoc::insLine(int line) {
   if (tagEnd >= line) tagEnd++;
 
   newDocGeometry = true;
-  for (view = views.first(); view != 0L; view = views.next() ) {
+  for (view = m_vviews.first(); view != 0L; view = m_vviews.next() ) {
     view->insLine(line);
   }
 }
@@ -2485,7 +2496,7 @@ void KWriteDoc::delLine(int line) {
   if (tagEnd >= line) tagEnd--;
 
   newDocGeometry = true;
-  for (view = views.first(); view != 0L; view = views.next() ) {
+  for (view = m_vviews.first(); view != 0L; view = m_vviews.next() ) {
     view->delLine(line);
   }
 }
@@ -2671,7 +2682,7 @@ void KWriteDoc::doKillLine(KWAction *a) {
 }
 
 void KWriteDoc::newUndo() {
-  KTextEditor::View *view;
+  KWrite *view;
   int state;
 
   state = 0;
@@ -2679,7 +2690,7 @@ void KWriteDoc::newUndo() {
   if (currentUndo < (int) undoList.count()) state |= 2;
   undoState = state;
   for (view = m_views.first(); view != 0L; view = m_views.next() ) {
-    emit static_cast<KWrite *>( view )->newUndo();
+    emit view->newUndo();
   }
 }
 
