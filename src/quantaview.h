@@ -206,7 +206,6 @@ private:
   int m_kafkaUpdateTimer;
   bool m_saveResult;
   bool m_eventLoopStarted;
-  bool m_guiAdded;
 
 protected:
   virtual void dropEvent(QDropEvent *e);

@@ -103,7 +103,6 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   m_viewLayout->addWidget( m_documentArea, 1, 0);
 
   m_documentArea->show();
-  m_guiAdded = false;
 
 //FIXME:
 /*
@@ -136,12 +135,7 @@ bool QuantaView::mayRemove()
           m_document->closeTempFile();
           if (!m_document->isUntitled() && m_document->url().isLocalFile())
             fileWatcher->removeFile(m_document->url().path());
-          if (m_guiAdded)
-          {
-            quantaApp->guiFactory()->removeClient(m_document->view());
-            kdDebug(24000) << "Gui removed for " << m_document->view() << endl;
-            m_guiAdded = false;
-          }
+          quantaApp->guiFactory()->removeClient(m_document->view());
       }
       kdDebug(24000) << "Calling reparse from close " << endl;
       parser->setSAParserEnabled(true);
@@ -696,12 +690,7 @@ void QuantaView::activated()
   ToolbarTabWidget::ref()->reparent(this, 0, QPoint(), qConfig.enableDTDToolbar);
   m_viewLayout->addWidget(ToolbarTabWidget::ref(), 0 , 0);
   //quantaApp->partManager()->setActivePart(m_document->doc(), m_document->view());
-  if (!m_guiAdded)
-  {
-    quantaApp->guiFactory()->addClient(m_document->view());
-    m_guiAdded = true;
-    kdDebug(24000) << "Gui added for " << m_document->view() << endl;
-  }
+  quantaApp->guiFactory()->addClient(m_document->view());
   m_document->checkDirtyStatus();
   StructTreeView::ref()->useOpenLevelSetting = true;
   quantaApp->loadToolbarForDTD(m_document->getDTDIdentifier());
@@ -721,12 +710,9 @@ void QuantaView::deactivated()
       }
       quantaApp->guiFactory()->removeClient(m_plugin->part());
   } else
-  if (m_document && m_guiAdded)
+  if (m_document)
   {
-    kdDebug(24000) << "Gui removed for " << m_document->view() << endl;
-//FIXME: Why does this crash???
     quantaApp->guiFactory()->removeClient(m_document->view());
-    m_guiAdded = false;
   }
 
 }
