@@ -17,6 +17,9 @@
 
 #include <klocale.h>
 #include <kdebug.h>
+#include <kapplication.h>
+#include <qpopupmenu.h>
+#include <qclipboard.h>
 
 #include "messageoutput.h"
 #include "messageitem.h"
@@ -24,7 +27,7 @@
 MessageOutput::MessageOutput(QWidget *parent, const char *name )
   : QListBox(parent,name)
 {
-  max_items = 200;
+  m_maxItems = 200;
 
   QPalette pal = palette();
   pal.setColor(QColorGroup::HighlightedText, pal.color(QPalette::Normal, QColorGroup::Text));
@@ -32,7 +35,13 @@ MessageOutput::MessageOutput(QWidget *parent, const char *name )
   setPalette(pal);
   setFocusPolicy( NoFocus );
 
+  m_popupMenu = new QPopupMenu(this);
+  m_popupMenu->insertItem( i18n("Copy"), this, SLOT(copyContent()) ) ;
+  
   connect( this, SIGNAL(selected(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
+  connect(this, SIGNAL(contextMenuRequested(QListBoxItem*, const QPoint&)),
+     this, SLOT(showMenu(QListBoxItem*, const QPoint&)));
+
 }
 
 MessageOutput::~MessageOutput()
@@ -78,7 +87,7 @@ void MessageOutput::showMessage(const QString& s)
 
 void MessageOutput::checkMaxItems()
 {
-  if ( count() >= max_items )
+  if ( count() >= m_maxItems )
     removeItem( index(firstItem()) );
 }
 
@@ -92,5 +101,17 @@ void MessageOutput::clickItem( QListBoxItem * l_item )
    }
 }
 
+void MessageOutput::showMenu( QListBoxItem*, const QPoint& l_point )
+{
+  m_popupMenu->exec(l_point);
+}
+
+void MessageOutput::copyContent()
+{
+  QString content;
+  for (int i=0; i<count(); i++)
+    content.append(text(i) + "\n");  
+  kapp->clipboard()->setText(content, QClipboard::Clipboard);
+}
 
 #include "messageoutput.moc"

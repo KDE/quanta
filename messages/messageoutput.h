@@ -21,6 +21,7 @@
 #include <qlistbox.h>
 
 class KProcess;
+class QPopupMenu;
 
 /**class for displaing of
 weblint output
@@ -32,6 +33,7 @@ class MessageOutput : public QListBox  {
 public:
   MessageOutput(QWidget *parent=0, const char *name=0);
   ~MessageOutput();
+  
 
 public slots:
   /**  */
@@ -39,11 +41,13 @@ public slots:
   /** insert message for each line of s */
   void showMessage(const QString& s );
   void addToLastItem(const QString& s );
+  // Copy message content to clipboard
+  void copyContent();
 
 public:
-  uint maxItems() const { return max_items; }
-  void setMaxItems( uint items ) {  max_items = items; }
-  /** remove first items , if count > max_items  */
+  uint maxItems() const { return m_maxItems; }
+  void setMaxItems( uint items ) {  m_maxItems = items; }
+  /** remove first items , if count > m_maxItem  */
   void checkMaxItems();
 
 signals:
@@ -51,9 +55,12 @@ signals:
 
 protected slots:
   void clickItem( QListBoxItem *);
+  // Show context menu
+  void showMenu(QListBoxItem*, const QPoint& );
 
 private:
-  uint max_items;
+  uint m_maxItems;
+  QPopupMenu* m_popupMenu;
 };
 
 #endif
