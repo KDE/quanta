@@ -432,13 +432,15 @@ Document* QuantaDoc::write() const
 Document* QuantaDoc::newWrite()
 {
   DTDStruct *dtd = dtds->find(quantaApp->project()->defaultDTD());
-//  if (!dtd) dtd = dtds->find(qConfig.newFileType);   //fallback, but not really needed
+  if (!dtd)
+      dtd = dtds->find(qConfig.newFileType);   //fallback, but not really needed
   int i = 1;
   while ( isOpened("file:/"+i18n("Untitled%1.").arg(i)+dtd->defaultExtension)) i++;
 
   QString fname = i18n("Untitled%1.").arg(i)+dtd->defaultExtension;
 
-  KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", this, "Kate::Document");
+  KTextEditor::Document *doc =
+  KTextEditor::createDocument ("katepart", quantaApp->view()->writeTab(), "KTextEditor::Document");
 /*                               KTextEditor::EditorChooser::createDocument(
                                 quantaApp->view->writeTab(),
                                 "KTextEditor::Document"
