@@ -1299,7 +1299,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
        node = node->prev;
      }
   } else
-  if (node && (el < line || (el == line && ec < col)) && !findDeepest)
+  if (node && (el < line || (el == line && ec < col)))
   {
     Node *n = node->nextSibling();
     if (n && n->nextSibling()) //don't set it to the last, always empty node

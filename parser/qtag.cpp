@@ -52,6 +52,7 @@ QTag::QTag( QTag &t)
   returnType = t.returnType;
   commonGroups = t.commonGroups;
   stoppingTags = t.stoppingTags;
+  childTags = t.childTags;
 
   for (int i=0; i < t.attributeCount(); i++)
   {

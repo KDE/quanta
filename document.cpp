@@ -954,7 +954,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
                  break;
   }
   Node *node = parser->nodeAt(line, col);
-  if (node)
+  if (node && node->tag->type != Tag::XmlTag)
       node = node->parent;
   if (node && node->tag->type != Tag::XmlTag)
       node = 0L;
