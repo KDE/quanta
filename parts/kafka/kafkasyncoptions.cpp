@@ -25,10 +25,10 @@
 #include "kafkasyncoptions.h"
 #include "kafkasyncoptions.moc"
 
-KafkaSyncOptions::KafkaSyncOptions( KConfig *config, QWidget* parent,  const char* name )
+KafkaSyncOptions::KafkaSyncOptions( KConfig *a_config, QWidget* parent,  const char* name )
     : KafkaSyncOptionsUI( parent, name )
 {
-	this->config = config;
+	config = a_config;
 
 	config->setGroup("HTML Enhancer");
 	bool showIcons  = config->readBoolEntry("Show Scripts Icons", true);

@@ -113,7 +113,7 @@ TagDialog::~TagDialog()
 }
 
 
-void TagDialog::init(QTag *dtdTag, KURL a_baseURL)
+void TagDialog::init(QTag *a_dtdTag, KURL a_baseURL)
 {
   setOkButton(KStdGuiItem::ok().text());
   setCancelButton(KStdGuiItem::cancel().text());
@@ -121,14 +121,14 @@ void TagDialog::init(QTag *dtdTag, KURL a_baseURL)
   connect( this, SIGNAL(applyButtonPressed()),  SLOT(slotAccept()) );
   connect( this, SIGNAL(cancelButtonPressed()), SLOT(reject()) );
 
-  if (!dtdTag)   //the tag is invalid, let's create a default one
+  if (!a_dtdTag)   //the tag is invalid, let's create a default one
   {
-    this->dtdTag = new QTag();
-    this->dtdTag->setName(i18n("Unknown tag"));
+    dtdTag = new QTag();
+    dtdTag->setName(i18n("Unknown tag"));
     deleteTag = true;
   } else
   {
-    this->dtdTag = dtdTag;
+    dtdTag = a_dtdTag;
     deleteTag = false;
   }
   dict = new QDict<QString>(1,false);
@@ -136,9 +136,9 @@ void TagDialog::init(QTag *dtdTag, KURL a_baseURL)
   m_baseURL = a_baseURL;
 
   QString caption = i18n("Tag Properties: ");
-  caption += this->dtdTag->name();
+  caption += dtdTag->name();
   setCaption( caption);
-  this->resize(420,400);
+  resize(420,400);
 }
 /**  */
 void TagDialog::parseTag()

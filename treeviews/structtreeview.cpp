@@ -57,7 +57,7 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
   lastTag = 0L;
   groupsCount = 0;
   followCursorFlag = true;
-  this->config = quantaApp->config();
+  config = quantaApp->config();
 
   topOpened = true;
   useOpenLevelSetting = true;

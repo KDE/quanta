@@ -25,10 +25,10 @@
  *  Constructs a ParserOptions which is a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'
  */
-ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* name )
+ParserOptions::ParserOptions( KConfig *a_config, QWidget* parent,  const char* name )
     : ParserOptionsUI( parent, name )
 {
-    this->config = config;
+    config = a_config;
     config->setGroup("Parser options");
 
     QString handleLBM = config->readEntry("LBM", i18n("Find Tag & Open Tree"));
