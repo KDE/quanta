@@ -718,7 +718,9 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 			if(!attr.isNull())
 			{
 				attr.setNodeValue(_node->tag->attributeValue(i));
-				newNode.attributes().setNamedItem(attr);
+				try{
+					newNode.attributes().setNamedItem(attr);
+				}catch(DOM::DOMException e){}
 				/**kdDebug(25001)<< "WKafkaPart::buildKafkaNodeFromNode() -  Attr added : " <<
 					_node->tag->attribute(i) <<
 					" value : " << _node->tag->attributeValue(i) << endl;*/
@@ -1565,6 +1567,8 @@ void WKafkaPart::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 
 void WKafkaPart::disconnectDomNodeFromQuantaNode(DOM::Node _domNode)
 {
+	if(_domNode.isNull())
+		return;
 	domNodeProps.remove(_domNode.handle());
 }
 

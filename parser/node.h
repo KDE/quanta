@@ -34,7 +34,7 @@ struct XMLStructGroup;
 
 #ifdef BUILD_KAFKAPART
 #include <dom/dom_node.h>
-
+//not used yet
 typedef struct domNodeStruct
    {
     int type;

@@ -629,15 +629,15 @@ void QuantaView::slotShowKafkaAndQuanta()
   {
     if(write()->view()->hasFocus())
     {
-      kafkaInterface->getKafkaPart()->view()->setFocus();
       kafkaInterface->getKafkaCursorPosition(node, offset);
       kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);
+      kafkaInterface->getKafkaPart()->view()->setFocus();
     }
     else if(kafkaInterface->getKafkaPart()->view()->hasFocus())
     {
-      write()->view()->setFocus();
       kafkaInterface->getQuantaCursorPosition(curLine, curCol);
       write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+      write()->view()->setFocus();
     }
   }
   currentViewsLayout = QuantaView::QuantaAndKafkaViews;
@@ -702,6 +702,9 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
 void QuantaView::timerEvent( QTimerEvent *e )
 {
   kdDebug(25001)<< "QuantaView::timerEvent" << endl;
+  int offset;
+  DOM::Node node;
+
   if (kafkaInterface->isLoaded() && currentViewsLayout == QuantaView::QuantaAndKafkaViews && writeExists())
   {
     if(e->timerId() == kafkaUpdateTimer && write()->view()->hasFocus())
@@ -709,6 +712,8 @@ void QuantaView::timerEvent( QTimerEvent *e )
       //Update kafka view
       //write()->docUndoRedo->syncKafkaView();
       write()->docUndoRedo->reloadKafkaEditor();
+      kafkaInterface->getKafkaCursorPosition(node, offset);
+      kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);
     }
     else if(e->timerId() == quantaUpdateTimer && kafkaInterface->getKafkaPart()->view()->hasFocus())
     {

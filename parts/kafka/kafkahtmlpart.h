@@ -219,6 +219,9 @@ public slots:
 	 */
 	void finishedLoading();
 
+
+	void slotNewCursorPos(const DOM::Node &domNode, long offset);
+
 signals:
 	/**
 	 * Category: HTML Editing Signal

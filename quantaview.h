@@ -84,7 +84,15 @@ public:
 
   /** Return the WKafkaPart */
   WKafkaPart *getKafkaInterface() {return kafkaInterface;}
-#endif
+
+  /** Tells which widget had the focus the more recently */
+  int hadLastFocus() {return currentFocus;}
+
+  enum focuses {
+    quantaFocus = 0,
+    kafkaFocus
+  };
+
   /** Return the curren views layout*/
   int getViewsLayout() {return currentViewsLayout;}
 
@@ -93,6 +101,7 @@ public:
     QuantaAndKafkaViews,
     KafkaViewOnly
   };
+#endif
 
   /** Resize the current view */
   void resize(int width, int height);
@@ -237,10 +246,6 @@ private:
   QSplitter *splitter;
   QValueList<int> _splittSizes;
   int currentFocus;
-  enum focuses {
-	  quantaFocus = 0,
-	  kafkaFocus
-  };
   int quantaUpdateTimer;
   int kafkaUpdateTimer;
   int curCol, curLine, curOffset;

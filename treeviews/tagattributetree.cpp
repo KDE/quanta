@@ -29,6 +29,17 @@
 #include "../parser/parser.h"
 #include "../quantacommon.h"
 #include "../document.h"
+#include "../quantaview.h"
+#ifdef BUILD_KAFKAPART
+#include "../resource.h"
+#include "../quanta.h"
+#include <dom/dom_node.h>
+#include "../parser/tag.h"
+#include "../parser/node.h"
+#include "../parts/kafka/wkafkapart.h"
+#include "../parts/kafka/kafkacommon.h"
+#include "../parts/kafka/undoredo.h"
+#endif
 
 TagAttributeTree::TagAttributeTree(QWidget *parent, const char *name)
 :KListView(parent, name)
@@ -61,6 +72,11 @@ void TagAttributeTree::setCurrentNode(Node *node)
   m_parentItem = 0L;
   if (!node)
       return;
+#ifdef BUILD_KAFKAPART
+#ifdef HEAVY_DEBUG
+  kafkaCommon::coutTree(baseNode, 2);
+#endif
+#endif
   AttributeItem *item = 0L;
   TopLevelItem *group = 0L;
   QString attrName;
@@ -165,7 +181,102 @@ void TagAttributeTree::editorContentChanged()
       m_node->tag->write()->changeTagNamespace(m_node->tag, item->editorText());
     } else
     {
+#ifdef BUILD_KAFKAPART
+    if(quantaApp->view()->hadLastFocus() == QuantaView::quantaFocus)
+    {
+#endif
       m_node->tag->write()->changeTagAttribute(m_node->tag, item->text(0), item->editorText());
+#ifdef BUILD_KAFKAPART
+    }
+    else
+    {
+      //edit only the tag and its corresponding DOM::Node
+      int i;
+      TagAttr attr;
+      DOM::Node domNode;
+      bool foundAttr = false, nodeModified= false;
+      NodeModifsSet modifs;
+      NodeModif modif;
+      modifs.cursorX = 0;
+      modifs.cursorY = 0;
+      modifs.cursorX2 = 0;
+      modifs.cursorY2 = 0;
+      modifs.isModified = true;//TODO:determine this
+      modif.type = undoRedo::NodeModified;
+      modif.tag = new Tag(*(m_node->tag));
+      modif.location = kafkaCommon::getLocation(m_node);
+      modif.node = 0L;
+
+      for(i = 0; i < m_node->tag->attrCount(); i++)
+      {
+        if(m_node->tag->attribute(i) == item->text(0))
+        {
+          foundAttr = true;
+#ifdef HEAVY_DEBUG
+          kdDebug(25001)<< "Attribute " << item->text(0) << " found!" << endl;
+#endif
+          if(m_node->tag->attributeValue(i) != item->editorText())
+          {
+#ifdef HEAVY_DEBUG
+          kdDebug(25001)<< "Different attribute value " << item->editorText() << ", deleting the attr." << endl;
+#endif
+            //delete the attribute in the Node
+            attr = m_node->tag->getAttribute((unsigned)i);
+            m_node->tag->deleteAttribute((unsigned)i);
+
+            m_node->tag->cleanStrBuilt = false;
+            nodeModified = true;
+          }
+          break;
+        }
+      }
+      if((!foundAttr && item->editorText() != "") ||
+        (foundAttr && item->editorText() != m_node->tag->attributeValue(i) && item->editorText() != ""))
+      {
+#ifdef HEAVY_DEBUG
+         kdDebug(25001)<< "(re)creating the attr." << endl;
+#endif
+         //(re)create the attr.
+         attr.name = item->text(0);
+         attr.value = item->editorText();
+         attr.quoted = true;
+         m_node->tag->addAttribute(attr);
+
+         m_node->tag->cleanStrBuilt = false;
+         nodeModified = true;
+      }
+      if(nodeModified)
+      {
+        //delete the corresponding DOM::Node.
+        domNode = m_node->_rootNode;
+        quantaApp->view()->getKafkaInterface()->disconnectDomNodeFromQuantaNode(domNode);
+        if(!domNode.isNull())
+          domNode.parentNode().removeChild(domNode);
+        if(m_node->_rootNode != m_node->_leafNode)
+        {
+          domNode = m_node->_leafNode;
+          quantaApp->view()->getKafkaInterface()->disconnectDomNodeFromQuantaNode(domNode);
+          if(!domNode.isNull())
+            domNode.parentNode().removeChild(domNode);
+        }
+        m_node->_rootNode = 0L;
+        m_node->_leafNode = 0L;
+
+        quantaApp->view()->getKafkaInterface()->buildKafkaNodeFromNode(m_node, true);
+        if(!domNode.isNull() && !m_node->_leafNode.isNull())
+        {
+           while(!domNode.firstChild().isNull())
+             m_node->_leafNode.appendChild(domNode.firstChild());
+        }
+
+        modifs.NodeModifList.append(modif);
+        quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, true);
+      }
+#ifdef HEAVY_DEBUG
+        kafkaCommon::coutTree(baseNode, 2);
+#endif
+      }
+#endif
     }
     rebuildEnabled = true;
   }
