@@ -1,1 +1,0 @@
-You can put common Javascripts in this dir.
