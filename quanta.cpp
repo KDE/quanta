@@ -1326,7 +1326,6 @@ void QuantaApp::slotShowPreviewWidget(bool show)
       previousWidgetList.push_back(id);
       s->raiseWidget(1);
     }
-//    showPreviewAction->setChecked(true);
     m_previewVisible = true;
   } else
   {
@@ -1337,9 +1336,9 @@ void QuantaApp::slotShowPreviewWidget(bool show)
       previousWidgetList.pop_back();
     }
     s->raiseWidget(id);
-//    showPreviewAction->setChecked(false);
     m_previewVisible = false;
     m_noFramesPreview = false;
+    m_view->write()->view()->setFocus();
   }
 }
 
@@ -1348,26 +1347,23 @@ void QuantaApp::slotShowPreview()
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (!s)
   {
-   // showPreviewAction->setChecked(!showPreviewAction->isChecked());
     m_previewVisible = false;
     return;
   }
   int id = s->id(s->visibleWidget());
   if (id == 2)
   {
-    //showPreviewAction->setChecked(!showPreviewAction->isChecked());
     m_previewVisible = false;
     return;
   }
   if (!m_view->writeExists())
   {
-    //showPreviewAction->setChecked(!showPreviewAction->isChecked());
     m_previewVisible = false;
     return;
   }
   Document *w = m_view->write();
 
-//  if (showPreviewAction->isChecked())
+
   if (!m_previewVisible)
   {
     if ( qConfig.previewPosition == "Bottom" )

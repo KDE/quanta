@@ -777,7 +777,6 @@ void QuantaApp::readOptions()
 
   m_previewVisible = false;
   m_noFramesPreview = false;
-//  showPreviewAction  ->setChecked( false );
   #ifdef BUILD_KAFKAPART
   showKafkaAction    ->setChecked( false );
   #endif
@@ -1931,7 +1930,6 @@ void QuantaApp::initActions()
       new KToolBarPopupAction( i18n( "Pr&eview" ), "preview", Key_F6,
                          this, SLOT( slotShowPreview() ),
                          ac, "show_preview" );
-//     showPreviewAction->setExclusiveGroup("view");
 
      showPreviewAction->popupMenu()->insertItem(i18n("Preview Without Frames"), 0);
      connect(showPreviewAction->popupMenu(), SIGNAL(activated(int)),
