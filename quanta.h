@@ -172,7 +172,7 @@ public slots:
   void slotFileOpen();
   void slotFileOpen( const KURL &, const QString& );
   void slotFileSave    ();
-  void slotFileSaveAs  ();
+  bool slotFileSaveAs  ();
   void slotFileSaveAsLocalTemplate ();
   void slotFileSaveAsProjectTemplate ();
   void slotFileSaveSelectionAsLocalTemplate ();

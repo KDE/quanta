@@ -200,6 +200,7 @@ void QuantaApp::slotFileSave()
 
 void QuantaApp::slotFileSaveAs()
 {
+  bool result = false;
   Document *w = view->write();
   KURL oldURL = w->url();
   w->checkDirtyStatus();
@@ -222,8 +223,10 @@ void QuantaApp::slotFileSaveAs()
       doc->changeFileTabName();
     }
     slotUpdateStatus(w);
+    result = true;
   }
   fileWatcher->startScan();
+  return result;
 }
 
 void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)

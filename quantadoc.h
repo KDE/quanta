@@ -20,7 +20,7 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif 
+#endif
 
 // include files for QT
 #include <qptrlist.h>
@@ -37,7 +37,7 @@ class Document;
 
 class KConfig;
 class KDirWatch;
-             
+
 class QuantaDoc : public QObject
 {
   Q_OBJECT
@@ -46,12 +46,12 @@ friend class QuantaApp;
 friend class QuantaView;
 
 public:
-    
+
   QuantaDoc( QWidget *parent, const char *name=0);
   ~QuantaDoc();
 
   void openDocument (const KURL&, QString encoding = QString::null);
-  void saveDocument (const KURL&);
+  bool saveDocument (const KURL&);
   void closeDocument();
 
   void prevDocument();
@@ -63,24 +63,24 @@ public:
 
   /// "save modified" - asks the user
   /// for saving if the document is modified
-  bool saveModified();	
+  bool saveModified();
   bool saveAll(bool dont_ask=true);
 
   Document *write();
   Document *newWrite();
-		
+
 	// for kwrites
 	void  readConfig( KConfig * );
 	void writeConfig( KConfig * );
-		
+
 	KURL::List openedFiles(bool noUntitled=true);
   void changeFileTabName(KURL newURL = KURL() );
-		
+
 private:
   bool newDocument (const KURL&);
   /** Check if url is opened or not. */
   Document* isOpened(const KURL& url);
-	
+
 public slots:
   /** close documents. */
   void closeAll();
@@ -92,7 +92,7 @@ public slots:
   void invertSelect();
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
- 	
+
 signals:
   void newStatus();
   void title(QString);

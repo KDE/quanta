@@ -87,7 +87,7 @@ KURL::List QuantaDoc::openedFiles(bool noUntitled)
   if (quantaApp->getView()) //need to check otherwise it may crash on exit
   {
     QTabWidget *tab = quantaApp->getView()->writeTab;
-    for (int i = 0; i < tab->count(); i++) 
+    for (int i = 0; i < tab->count(); i++)
     {
       Document *w = dynamic_cast<Document *>(tab->page(i));
       if ( !w->isUntitled() || !noUntitled )
@@ -200,19 +200,20 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
 
       write()->createTempFile();
       emit title( write()->url().prettyURL() );
-      write()->view()->setFocus();     
-    } 
+      write()->view()->setFocus();
+    }
   }
  if (!loaded && !url.isEmpty()) //the open of the document has failed
  {
    KMessageBox::error(quantaApp, i18n("Cannot open document \"%1\".").arg(url.prettyURL()));
    closeDocument();
  }
- 
+
 }
 
-void QuantaDoc::saveDocument(const KURL& url)
+bool QuantaDoc::saveDocument(const KURL& url)
 {
+  bool result = true;
   Document *w = write();
   KURL oldURL = w->url();
 
@@ -222,6 +223,7 @@ void QuantaDoc::saveDocument(const KURL& url)
     if (!w->doc()->saveAs( url ))
     {
       KMessageBox::error(quantaApp, i18n("Saving of the document\n%1\nfailed.\nMaybe you should try to save in another directory.").arg(url.prettyURL()));
+      result = false;
     }
     w->closeTempFile();
     w->createTempFile();
@@ -240,7 +242,7 @@ void QuantaDoc::saveDocument(const KURL& url)
 
   emit title( w->url().url() );
 
-  return;
+  return result;
 }
 
 bool QuantaDoc::saveAll(bool dont_ask)
@@ -251,7 +253,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
 
   QTabWidget *docTab =quantaApp->getView()->writeTab;
   Document *w;
-  for (int i = docTab->count() -1; i >=0; i--) 
+  for (int i = docTab->count() -1; i >=0; i--)
   {
     w = dynamic_cast<Document*>(docTab->page(i));
     if ( w->isModified() )
@@ -268,7 +270,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
       }
       else
       	if ( !saveModified() ) flagsave = false;
-       
+
       if (w->url().isLocalFile()) fileWatcher->addFile(w->url().path());
     }
   }
@@ -359,14 +361,13 @@ bool QuantaDoc::saveModified()
       case KMessageBox::Yes :
            if ( write()->isUntitled() )
            {
-             quantaApp->slotFileSaveAs();
+             completed = quantaApp->slotFileSaveAs();
            }
            else
            {
-             saveDocument( write()->url());
+             completed = saveDocument( write()->url());
        	   };
 
-           completed=true;
            break;
 
       case KMessageBox::No :
@@ -432,7 +433,7 @@ Document* QuantaDoc::newWrite()
    i++;
   }
   QString fname = QString("Untitled%1.").arg(i)+dtd->defaultExtension;
-  
+
   KTextEditor::Document *doc = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
 													     QString::null,
 													     quantaApp->view->writeTab, 0,
@@ -644,7 +645,7 @@ void QuantaDoc::invertSelect(){/*write()->invertSelection();*/}
 void QuantaDoc::slotFileDirty(const QString& fileName)
 {
   Document *w;
-  
+
   QTabWidget *tab = quantaApp->view->writeTab;
   for( int i = 0; i < tab->count(); i++)
   {
@@ -672,7 +673,7 @@ Document* QuantaDoc::isOpened(const KURL& url)
     {
       w = dynamic_cast<Document*>(tab->page(i));
       break;
-    } 
+    }
   }
   return w;
 }
