@@ -16,9 +16,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifdef BUILD_KAFKAPART
-#include <dom/dom_node.h>
-#endif
 #include "node.h"
 
 Node::Node( Node *parent )
@@ -114,6 +111,10 @@ Node *Node::previousSibling()
 int Node::size()
 {
   int l = tag->size();
+#ifdef BUILD_KAFKAPART
+  l += 4*sizeof(Node*) + sizeof(QListViewItem*) + sizeof(Tag*) + 2*sizeof(DOM::Node);
+#else
   l += 4*sizeof(Node*) + sizeof(QListViewItem*) + sizeof(Tag*);
+#endif
   return l;
 }

@@ -67,7 +67,7 @@ class QPopupMenu;
 class WHTMLPart;
 class KHTMLView;
 
-class KafkaHTMLPart;
+class WKafkaPart;
 
 class KAction;
 class KToggleAction;
@@ -315,11 +315,6 @@ public slots:
   void slotForceReparse();
 
   void slotExpandAbbreviation();
-  #ifdef BUILD_KAFKAPART
-  //void slotKafkaNodeCreated(DOM::Node _node);
-  //void slotKafkaNodeModified(DOM::Node _node);
-  //void slotKafkaNodeAboutToBeDeleted(DOM::Node _node);
-  #endif
 
 protected slots:
   /** No descriptions */
@@ -418,7 +413,7 @@ private:
   WHTMLPart *htmlPartDoc;
 
   /** KafkaHTMLPart widget */
-  KafkaHTMLPart *kafkaPart;
+  WKafkaPart *kafkaPart;
 
   /** Grep window */
   GrepDialog *grepDialog;

@@ -1,0 +1,112 @@
+/***************************************************************************
+                               wkafkapart.h
+                             -------------------
+
+    copyright            : (C) 2003 - Nicolas Deschildre
+    email                : nicolasdchd@ifrance.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+#ifndef WKAFKAPART_H
+#define WKAFKAPART_H
+
+namespace DOM
+{
+	class Node;
+}
+class KafkaHTMLPart;
+class Document;
+class Node;
+class Parser;
+
+#include <qobject.h>
+
+#include "kafkahtmlpart.h"
+
+/**
+ * This class assures the synchronisation of the two trees : the quanta and the
+ * kafka tree.
+ */
+class WKafkaPart : public QObject
+{
+Q_OBJECT
+public:
+	WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name);
+	~WKafkaPart();
+
+	/**
+	 * Builds kafka's own tree from the Quanta tree.
+	 * If the current Document is empty, it will create a minimum tree.
+	 * @param the Document we want to load.
+	 */
+	void loadDocument(Document *doc);
+
+	/**
+	 * Unloads kafka tree.
+	 */
+	void unloadDocument();
+
+	/**
+	 * Called to get WKafkaPart's state.
+	 * @return Returns true if WKafkaPart is loaded.
+	 */
+	bool isLoaded() {return _docLoaded;}
+
+	/**
+	 * @return Returns the current KafkaHTMLPart.
+	 */
+	KafkaHTMLPart *getKafkaPart() {return _kafkaPart;}
+
+	/**
+	 * @return Returns the current Document.
+	 */
+	Document *getCurrentDoc() {return _currentDoc;}
+
+public slots:
+	/**
+	 * Updates the Kafka tree when possible from the modified Quanta tree,
+	 * else reloads the kafka tree.
+	 * @param tryToUpdate Specifies wheter or not we should try to update
+	 * the Kafka tree instead of rebuilding it from scratch.
+	 */
+	void slotUpdateKafkaTree(bool tryToUpdate = true);
+
+	/**
+	 * Updates the Quanta tree from the modified Kafka tree.
+	 */
+	void slotUpdateQuantaTree();
+
+	/**
+	 * Called by Kafka whenever a DOM::Node is created.
+	 */
+	void slotDomNodeCreated(DOM::Node *_node);
+
+	/**
+	 * Called by Kafka whenever a DOM::Node is modified.
+	 */
+	void slotDomNodeModified(DOM::Node *_node);
+
+	/**
+	 * Called by Kafka whenever a DOM::Node is about to be deleted.
+	 */
+	void slotDomNodeAboutToBeDeleted(DOM::Node *_node);
+
+private:
+	KafkaHTMLPart *_kafkaPart;
+	Document *_currentDoc;
+	Node *_rootNode;
+	Parser *_parser;
+	bool _docLoaded;
+	void synchronizeXMLTag(Node* _node);
+	void synchronizeTextTag(Node* _node);
+};
+
+#endif

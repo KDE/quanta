@@ -70,7 +70,7 @@
 #include "widgets/whtmlpart.h"
 #include "messages/messageoutput.h"
 #ifdef BUILD_KAFKAPART
-#include "parts/kafka/kafkahtmlpart.h"
+#include "parts/kafka/wkafkapart.h"
 #endif
 
 #include "toolbar/tagaction.h"
@@ -406,14 +406,14 @@ void QuantaApp::initView()
   htmlpart = new WHTMLPart(rightWidgetStack,"rightHTML");
   htmlPartDoc = new WHTMLPart(rightWidgetStack, "docHTML");
   #ifdef BUILD_KAFKAPART
-  kafkaPart = new KafkaHTMLPart(rightWidgetStack,rightWidgetStack, "KafkaHTMLPart");
+  kafkaPart = new WKafkaPart(rightWidgetStack,rightWidgetStack, "KafkaHTMLPart");
   #endif
 
   rightWidgetStack->addWidget(m_view, 0);
   rightWidgetStack->addWidget(htmlpart->view(), 1);
   rightWidgetStack->addWidget(htmlPartDoc->view(), 2);
   #ifdef BUILD_KAFKAPART
-  rightWidgetStack->addWidget(kafkaPart->view(), 4);
+  rightWidgetStack->addWidget(kafkaPart->getKafkaPart()->view(), 4);
   #endif
   rightWidgetStack->raiseWidget(0);
 
@@ -511,7 +511,7 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
     s->addWidget( htmlpart->view(), 1 );
     s->addWidget( htmlPartDoc->view(), 2 );
     #ifdef BUILD_KAFKAPART
-    s->addWidget( kafkaPart->view(), 4);
+    s->addWidget( kafkaPart->getKafkaPart()->view(), 4);
     #endif
   }
 
