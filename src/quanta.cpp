@@ -1709,6 +1709,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
       node = node.nextSibling();
     }
 #endif
+  //kdDebug(24000) << "tb->iconSize() " << tb->iconSize() << endl;
    if (tb->iconText() == KToolBar::IconTextBottom)
    {
       tb->setGeometry(0,0, toolbarTab->width(), tb->iconSize() + QFontMetrics(KGlobalSettings::toolBarFont()).height() + 10);
@@ -1718,6 +1719,11 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
       tb->setGeometry(0,0, toolbarTab->width(), tb->iconSize() + 10);
       toolbarTab->setFixedHeight(toolbarTab->tabHeight() + tb->height() + 3);
    }
+/*
+   kdDebug(24000) << "tb->height() " << tb->height() << endl;
+   kdDebug(24000) << "toolbarTab->height() " << toolbarTab->height() << endl;
+   kdDebug(24000) << "toolbarTab->tabHeight() " << toolbarTab->tabHeight() << endl;
+*/
     toolbarTab->insertTab(tb, tabname);
     qInstallMsgHandler( oldHandler );
 

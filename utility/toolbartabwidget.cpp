@@ -20,6 +20,7 @@
 #include <qtabbar.h>
 #include <qwidgetstack.h>
 #include <qtabwidget.h>
+#include <qfontmetrics.h>
 
 //kde includes
 #include <kaction.h>
@@ -29,6 +30,7 @@
 #include <ktoolbar.h>
 #include <ktoolbarbutton.h>
 #include <kdebug.h>
+#include <kglobalsettings.h>
 
 //app includes
 #include "quanta.h"
@@ -163,7 +165,12 @@ void ToolbarTabWidget::resizeEvent(QResizeEvent *e)
 
 int ToolbarTabWidget::tabHeight() const
 {
-  return tabBar()->height();
+  int height = tabBar()->height();
+  if (height < 2)
+  {
+      height = QFontMetrics(KGlobalSettings::generalFont()).height() + 12;
+  }
+  return height;
 }
 
 
