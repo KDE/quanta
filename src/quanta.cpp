@@ -3902,9 +3902,11 @@ void QuantaApp::slotEditCurrentTag()
 {
   Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
-
   if (parser->parsingNeeded())
     baseNode = parser->rebuild(w);
+  //avoid reparsing while the dialog is shown
+  typingInProgress = true;
+  enableIdleTimer(false);
   uint line,col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
   Node *node = parser->nodeAt(line, col, false);
@@ -3926,6 +3928,8 @@ void QuantaApp::slotEditCurrentTag()
       delete dlg;
     }
   }
+  typingInProgress = false;
+  enableIdleTimer(true);
   if (isUnknown)
   {
     QString message = i18n("Unknown tag: %1").arg(tagName);
