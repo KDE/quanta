@@ -88,8 +88,7 @@ void TagDialog::init(QTag *dtdTag, KURL a_baseURL)
   if (!dtdTag)   //the tag is invalid, let's create a default one
   {
     this->dtdTag = new QTag();
-    QString s = i18n("Unknown tag");
-    this->dtdTag->setName(s);
+    this->dtdTag->setName(i18n("Unknown tag"));
     deleteTag = true;
   } else
   {
@@ -200,7 +199,7 @@ void TagDialog::parseTag()
 /** Insert an attribute to dict*/
 void TagDialog::insertAttribute(QString *attr, QString *value)
 {
- dict->insert( *attr , value );
+  dict->insert( *attr , value );
 }
 
 
@@ -263,12 +262,16 @@ QString TagDialog::getAttribute(QString attr)
 void TagDialog::slotAccept()
 {
 
-  if ( mainDlg )   ((Tagxml *)mainDlg)->readAttributes( dict );
-  for (uint i = 0; i < extraPageList->count(); i++)
+  if (dtdTag->name() != i18n("Unknown tag"))
   {
-    extraPageList->at(i)->readAttributes( dict );
+    if ( mainDlg )
+       ((Tagxml *)mainDlg)->readAttributes( dict );
+    for (uint i = 0; i < extraPageList->count(); i++)
+    {
+      extraPageList->at(i)->readAttributes( dict );
+    }
+    delete extraPageList;
   }
-  delete extraPageList;
   accept();
 }
 
@@ -341,35 +344,38 @@ void TagDialog::parseAttributes( QString attrs )
 /** Insert the new tag into the Document*/
 void TagDialog::insertTag(Document *w, bool insertInLine)
 {
-   QString newTag = getAttributeString();
-   newTag = QString("<")+QuantaCommon::tagCase(dtdTag->name())+newTag;
+  if (dtdTag->name() != i18n("Unknown tag"))
+  {
+    QString newTag = getAttributeString();
+    newTag = QString("<")+QuantaCommon::tagCase(dtdTag->name())+newTag;
 
-   if ( dtdTag->parentDTD->singleTagStyle == "xml" &&
-        (dtdTag->isSingle() || (!qConfig.closeOptionalTags && dtdTag->isOptional()))
-      )  
-   {
-    newTag.append(" /");
-   }
-   newTag.append(">");
+    if ( dtdTag->parentDTD->singleTagStyle == "xml" &&
+          (dtdTag->isSingle() || (!qConfig.closeOptionalTags && dtdTag->isOptional()))
+        )
+    {
+      newTag.append(" /");
+    }
+    newTag.append(">");
 
-   QString secondPartOfTag = QString("</")+QuantaCommon::tagCase(dtdTag->name())+">";
+    QString secondPartOfTag = QString("</")+QuantaCommon::tagCase(dtdTag->name())+">";
 
-   if ( !insertInLine )
-   {
-    QString space="";
-    space.fill( ' ',w->viewCursorIf->cursorColumnReal() );
-    newTag += "\n" + space + "  ";
-    secondPartOfTag = "\n" + space + secondPartOfTag;
-   }
+    if ( !insertInLine )
+    {
+      QString space="";
+      space.fill( ' ',w->viewCursorIf->cursorColumnReal() );
+      newTag += "\n" + space + "  ";
+      secondPartOfTag = "\n" + space + secondPartOfTag;
+    }
 
-   if ( (!qConfig.closeTags && !dtdTag->isSingle()) ||
-        (dtdTag->isSingle()) ||
-        (!qConfig.closeOptionalTags && dtdTag->isOptional()) )
-   {
-    secondPartOfTag = "";
-   }
+    if ( (!qConfig.closeTags && !dtdTag->isSingle()) ||
+          (dtdTag->isSingle()) ||
+          (!qConfig.closeOptionalTags && dtdTag->isOptional()) )
+    {
+      secondPartOfTag = "";
+    }
 
-   w->insertTag( newTag, secondPartOfTag);
+    w->insertTag( newTag, secondPartOfTag);
+  }
 }
 
 

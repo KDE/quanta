@@ -39,14 +39,14 @@
 #include "../resource.h"
 
 TagAction::TagAction( QDomElement *element, KActionCollection *parent)
-  : KAction( element->attribute("text"), element->attribute("shortcut"), 0, 0, parent, element->attribute("name") ),
-    tag(*element)
+  : KAction( element->attribute("text"), element->attribute("shortcut"), 0, 0, parent, element->attribute("name") )
 {
-   m_view = quantaApp->view();
-   setIcon( tag.attribute("icon","") );
+  tag = *element;
+  m_view = quantaApp->view();
+  setIcon( tag.attribute("icon","") );
 
-   if ( m_view )
-        connect( this, SIGNAL(activated()), SLOT(insertTag()) );
+  if ( m_view )
+      connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }
 
 TagAction::~TagAction()
@@ -82,10 +82,9 @@ void TagAction::insertTag()
      QString name = attr.left(i);
      attr = attr.remove(0,i).stripWhiteSpace();
 
-     if ( otag.attribute("useDialog","false") == "true" )
+     if ( otag.attribute("useDialog","false") == "true" && QuantaCommon::isKnownTag(w->defaultDTD()->name, name))
      {
-
-         m_view->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
+       m_view->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
      }
      else
      {

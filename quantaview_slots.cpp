@@ -956,7 +956,7 @@ void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
     TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), attr, baseURL());
     if (dlg->exec())
     {
-    dlg->insertTag(w, insertInLine);
+      dlg->insertTag(w, insertInLine);
     }
 
     delete dlg;

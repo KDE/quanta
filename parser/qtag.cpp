@@ -26,7 +26,7 @@ QTag::QTag()
  m_fileName = "";
  type = "xmltag";
  returnType = "";
-
+ parentDTD = 0L;
 }
 
 QTag::QTag( QTag &t)

@@ -412,7 +412,7 @@ void ActionConfigDialog::saveCurrentAction()
   if ( !item.isNull() )
       el.removeChild(item);
 //add the new detailed settings
-  QDomDocument document = el.ownerDocument();
+  QDomDocument document = QDomDocument();
   int type = typeCombo->currentItem();
   switch (type)
   {
@@ -636,11 +636,12 @@ void ActionConfigDialog::accept()
 
 void ActionConfigDialog::slotNewAction()
 {
-  QDomElement el;
+  QDomDocument doc;
+  QDomElement el = doc.createElement("action");
   el.setAttribute( "name", "user_"+KApplication::randomString(10) );
   el.setAttribute( "icon", "ball" );
 
-  new TagAction(&el, quantaApp->actionCollection());
+  currentAction = new TagAction(&el, quantaApp->actionCollection());
   QListViewItem *currentItem = actionTreeView->currentItem();
   QListViewItem *item = new KListViewItem(allActionsItem);
   item->setPixmap(0, BarIcon("ball"));
