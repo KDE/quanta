@@ -221,7 +221,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
     QString tagName = n->tag->name.lower();
     if (tagName == "table")
     {
-      if (m_table) //nested table!
+      if (m_table && m_dataTable && nRow > 0 && nCol > 0) //nested table!
       {
         int line, col;
         n->tag->beginPos(line, col);

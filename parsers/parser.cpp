@@ -949,7 +949,7 @@ Node *Parser::rebuild(Document *w)
       )
    {
 #ifdef BUILD_KAFKAPART
-     logReparse(modifs, w);
+ //    logReparse(modifs, w);
 #endif
      return parse(w);
    }
