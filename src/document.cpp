@@ -134,7 +134,7 @@ Document::Document(KTextEditor::Document *doc,
 
   a = m_view->actionCollection()->action( "edit_copy" );
   if (a)
-    m_view->actionCollection()->take(a);
+  m_view->actionCollection()->take(a);
   a = m_view->actionCollection()->action( "edit_cut" );
   if (a)
     m_view->actionCollection()->take(a);

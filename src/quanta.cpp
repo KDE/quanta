@@ -4651,12 +4651,26 @@ void QuantaApp::slotCopy()
     KafkaDocument::ref()->slotCopy();
     return;
   }
-  if(w)
+  if (w)
   {
     KTextEditor::ClipboardInterface* clip = dynamic_cast<KTextEditor::ClipboardInterface*>(w->view());
-    if(clip)
+    if (clip)
       clip->copy();
   }
+  if (m_htmlPart->view()->hasFocus())
+  {
+    QString selection = m_htmlPart->selectedText();
+    QClipboard *cb = QApplication::clipboard();
+    cb->setText(selection, QClipboard::Clipboard);
+  }
+  else
+  if (m_htmlPartDoc->view()->hasFocus())
+  {
+    QString selection = m_htmlPartDoc->selectedText();
+    QClipboard *cb = QApplication::clipboard();
+    cb->setText(selection, QClipboard::Clipboard);
+  }
+
 }
 
 void QuantaApp::slotPaste()
