@@ -1,8 +1,8 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="p">
+<tag name="p" hasCore="1">
 
-    <attr name="align" type="list">
+    <attr name="align" defaultValue="left" type="list">
         <text>Alignment</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" />
@@ -13,7 +13,7 @@
         </items>
     </attr>
 
-    <attr name="mode" type="list">
+    <attr name="mode" status="implied" type="list">
         <text>Text wrap mode</text>
         <textlocation col="0" row="1" />
         <location col="1" row="1" />
@@ -23,15 +23,11 @@
         </items>
     </attr>
 
-    <attr name="xml:lang" type="input">
+    <attr name="xml:lang" status="implied" type="input">
         <text>Override xml:lang</text>
         <textlocation col="0" row="2" />
         <location col="1" row="2" />
     </attr>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="2" />
-    </spacer>
 
 </tag>
 </TAGS>

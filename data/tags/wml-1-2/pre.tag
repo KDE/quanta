@@ -1,9 +1,9 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="pre">
+<tag name="pre" hasCore="1">
 
-    <attr name="xml:space" type="input">
-        <text>Enter "preserve" here</text>
+    <attr name="xml:space" status="required" defaultValue="preserve" type="input">
+        <text>Fixed as "preserve"</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" />
     </attr>

@@ -1,14 +1,14 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="timer" single="1">
+<tag name="timer" hasCore="1" single="1">
     
-    <attr name="name" type="input">
+    <attr name="name" status="implied" type="input">
         <text>Name</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" />
     </attr>
 
-    <attr name="value" type="input">
+    <attr name="value" status="required" type="input">
         <text>Value in 0.1 second units</text>
         <textlocation col="0" row="1" />
         <location col="1" row="1" />
