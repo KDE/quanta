@@ -112,6 +112,7 @@
 #include "treeviews/doctreeview.h"
 #include "treeviews/templatestreeview.h"
 #include "treeviews/tagattributetree.h"
+#include "treeviews/projecttreeview.h"
 
 #include "tagdialogs/listdlg.h"
 #include "tagdialogs/tagmaildlg.h"
@@ -237,7 +238,44 @@ bool QuantaApp::slotFileSaveAs()
     fileWatcher->stopScan();
     QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
 
-    KateFileDialog dialog(projectBaseURL().url(), myEncoding, this, i18n ("Save File"), KateFileDialog::saveDialog);
+    QString saveAsPath;
+    bool gotPath = false;
+
+    KURL saveAsUrl;
+    if(ptabdock->isVisible())
+    {
+      saveAsUrl = pTab->currentURL();
+      saveAsPath = saveAsUrl.url();
+      gotPath = true;
+    }
+    else if(ftabdock->isVisible())
+    {
+      saveAsUrl = fTab->currentURL();
+      saveAsPath = saveAsUrl.url();
+      gotPath = true;
+    }
+
+    if(gotPath)
+    {
+      if(saveAsPath.isEmpty())
+        saveAsPath = projectBaseURL().url();
+      else
+      {
+        QFileInfo saveAsPathInfo = QFileInfo(saveAsPath);
+        if(saveAsPathInfo.isFile())
+          saveAsPath = saveAsUrl.directory();
+      }
+    }
+    else
+    {
+      saveAsPath = projectBaseURL().url();
+    }
+
+    QString saveAsFileName = "";
+    if (!(oldURL.fileName()).isEmpty())
+      saveAsFileName = "/" + oldURL.fileName();
+
+    KateFileDialog dialog(saveAsPath+saveAsFileName, myEncoding, this, i18n ("Save File"), KateFileDialog::saveDialog);
     KateFileDialogData data = dialog.exec();
     if (w->checkOverwrite(data.url) == KMessageBox::Yes && m_doc->saveDocument(data.url))
     {

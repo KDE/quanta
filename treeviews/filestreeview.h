@@ -44,11 +44,11 @@ class FilesTreeView : public FileManage  {
 public:
   FilesTreeView(QWidget *parent=0L, const char *name=0L):FileManage(parent,name){};
   FilesTreeView(KURL::List topList, QWidget *parent=0L, const char *name=0L);
-  ~FilesTreeView();
+  virtual ~FilesTreeView();
+  virtual KURL currentURL();
 
   /** No descriptions */
   void readDir(const KURL& url);
-  virtual KURL currentURL();
   /** Get a list of items for whom the url == p_url. */
   QPtrList<QListViewItem> getItems(const KURL& p_url);
 

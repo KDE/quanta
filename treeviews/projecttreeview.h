@@ -41,9 +41,9 @@ class ProjectTreeView : public FilesTreeView  {
 public:
   ProjectTreeView(QWidget *parent=0, const char *name=0);
   virtual ~ProjectTreeView();
+  virtual KURL currentURL();
   /** Open a subfolder. */
   void openFolder(ProjectTreeFolder *folder);
-  virtual KURL currentURL();
 
 
 public slots: // Public slots
