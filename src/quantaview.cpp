@@ -225,6 +225,10 @@ void QuantaView::slotSetSourceLayout()
    emit hidePreview();
    if (m_currentViewsLayout == SourceOnly || !m_document)
      return;
+
+   if(m_currentViewsLayout == SourceAndVPL)
+     m_splitterSizes = m_splitter->sizes();
+
    KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
    if (ta)
       ta->setChecked(true);
@@ -290,6 +294,7 @@ void QuantaView::slotSetSourceAndVPLLayout()
     m_splitter->moveToFirst(m_kafkaDocument->getKafkaWidget()->view());
     m_document->view()->reparent(m_splitter, 0, QPoint(), true);
     m_viewLayout->addWidget(m_splitter, 1, 0);
+    m_splitter->setSizes(m_splitterSizes);
     m_splitter->show();
 
     reloadUpdateTimers();
@@ -311,6 +316,9 @@ void QuantaView::slotSetVPLOnlyLayout()
    emit hidePreview();
    if (m_currentViewsLayout == VPLOnly || !m_document)
      return;
+
+   if(m_currentViewsLayout == SourceAndVPL)
+     m_splitterSizes = m_splitter->sizes();
 
    KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_view" );
 
@@ -628,7 +636,10 @@ void QuantaView::resize(int width, int height)
     m_kafkaDocument->getKafkaWidget()->view()->resize(width,height);
   else
   if (m_currentViewsLayout == SourceAndVPL)
+  {
     m_splitter->resize(width, height);
+    m_splitterSizes = m_splitter->sizes();
+  }
 #endif
 }
 

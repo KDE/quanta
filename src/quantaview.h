@@ -189,7 +189,7 @@ private:
 
 #ifdef BUILD_KAFKAPART
 /** Kafka stuff */
-  QValueList<int> _splittSizes;
+  QValueList<int> m_splitterSizes;
   int m_curCol, m_curLine, m_curOffset;
   DOM::Node curNode;
   bool m_kafkaReloadingEnabled, m_quantaReloadingEnabled;
