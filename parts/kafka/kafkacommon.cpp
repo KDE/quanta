@@ -1440,7 +1440,8 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
             //we'll catch this later.
             if(endNode == commonParentEndChild)
                 commonParentEndChild = commonParentEndChild->previousSibling();
-            endNode = endNode->previousSibling();
+            if (endNode->previousSibling())
+              endNode = endNode->previousSibling();
         }
     }
 
