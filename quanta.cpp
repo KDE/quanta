@@ -81,6 +81,10 @@
 
 #include <kate/view.h>
 
+#if KDE_IS_VERSION(3,1,90)
+#include <ktabwidget.h>
+#endif
+
 // application specific includes
 #include "document.h"
 #include "quanta.h"
@@ -769,20 +773,31 @@ void QuantaApp::slotNewStatus()
     viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
     if (setHighlight) setHighlight->updateMenu (w->kate_doc);
 
-    QIconSet floppyIcon( UserIcon("save_small"));
-
     QTabWidget *wTab = m_view->writeTab();
     w = static_cast<Document*>(wTab->currentPage());
     // try to set the icon from mimetype
     QIconSet mimeIcon (KMimeType::pixmapForURL(w->url(), 0, KIcon::Small));
     if (mimeIcon.isNull())
       mimeIcon = QIconSet(SmallIcon("document"));
-
-    if ( w->isModified() )
-      wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
-    else
-      wTab->changeTab( w,  mimeIcon,  wTab->tabLabel(w));
-
+#if KDE_IS_VERSION(3,1,90)
+    if (qConfig.showCloseButtons)
+    {
+      wTab->changeTab(w, SmallIcon("fileclose"), "");
+      if (w->isModified())
+      {
+        wTab->changeTab( w, QExtFileInfo::shortName(w->url().path()) + "[!]");
+      } else
+      {
+        wTab->changeTab( w, QExtFileInfo::shortName(w->url().path()));
+      }
+    } else
+#endif
+    {
+      if ( w->isModified() )
+        wTab->changeTab( w,   UserIcon("save_small"), wTab->tabLabel(w));
+      else
+        wTab->changeTab( w,  mimeIcon,  wTab->tabLabel(w));
+    }
 //This is a really dirty fix for the QTabWidget problem. After the changeTab call,
 //it will reset itself and you will see the first tabs, even if the actual page is on
 //a tab eg. at the end, and it won't be visible now. This is really confusing.
@@ -1049,6 +1064,11 @@ void QuantaApp::slotOptions()
        break;
      }
   }
+#if KDE_IS_VERSION(3,1,90)
+  fileMasks->showCloseButton->setChecked(qConfig.showCloseButtons);
+#else
+  fileMasks->showCloseButton->setShown(false);
+#endif
 
 
   // Preview options
@@ -1148,6 +1168,18 @@ void QuantaApp::slotOptions()
     m_config->writeEntry("Show Splash", fileMasks->showSplash->isChecked());
 
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
+#if KDE_IS_VERSION(3,1,90)
+    qConfig.showCloseButtons = fileMasks->showCloseButton->isChecked();
+    KTabWidget *tab = static_cast<KTabWidget*>(m_view->writeTab());
+    if (qConfig.showCloseButtons)
+    {
+      tab->setHoverCloseButton(true);
+      tab->setHoverCloseButtonDelayed(false);
+    } else
+    {
+      tab->setHoverCloseButton(false);
+    }
+#endif
 
     qConfig.showEmptyNodes = parserOptions->showEmptyNodes->isChecked();
     qConfig.showClosingTags = parserOptions->showClosingTags->isChecked();

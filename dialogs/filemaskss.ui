@@ -18,7 +18,7 @@
             <x>0</x>
             <y>0</y>
             <width>536</width>
-            <height>388</height>
+            <height>394</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -199,23 +199,6 @@
                 </widget>
             </grid>
         </widget>
-        <spacer row="7" column="0">
-            <property name="name">
-                <cstring>spacer2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
         <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>warnBinaryOpening</cstring>
@@ -240,7 +223,24 @@
                 <string>Show splashscreen on startup</string>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="6" column="0">
+        <spacer row="8" column="0">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>25</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLayoutWidget" row="7" column="0">
             <property name="name">
                 <cstring>layout2</cstring>
             </property>
@@ -279,6 +279,14 @@
                     </property>
                 </widget>
             </hbox>
+        </widget>
+        <widget class="QCheckBox" row="6" column="0">
+            <property name="name">
+                <cstring>showCloseButton</cstring>
+            </property>
+            <property name="text">
+                <string>Show close button on the tabs</string>
+            </property>
         </widget>
     </grid>
 </widget>

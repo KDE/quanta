@@ -66,14 +66,13 @@
 #include "toolbar/tagaction.h"
 #include "toolbar/toolbartabwidget.h"
 
-    QuantaView::QuantaView(QWidget *parent, const char *name )
+QuantaView::QuantaView(QWidget *parent, const char *name )
   : QWidget( parent, name)
 {
   doc = quantaApp->doc();
   initActions();
 #if KDE_IS_VERSION(3,1,90)
   m_writeTab = new KTabWidget(this);
-  static_cast<KTabWidget*>(m_writeTab)->setHoverCloseButton(true);
   connect(m_writeTab, SIGNAL(closeRequest(QWidget *)), quantaApp, SLOT(slotClosePage(QWidget *)));
 #else
   m_writeTab = new QTabWidget(this);

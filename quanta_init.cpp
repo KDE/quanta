@@ -55,6 +55,9 @@
 #include <kspell.h>
 #include <ktip.h>
 #include <kio/netaccess.h>
+#if KDE_IS_VERSION(3,1,90)
+#include <ktabwidget.h>
+#endif
 
 // application specific includes
 
@@ -623,6 +626,7 @@ void QuantaApp::saveOptions()
     if (m_view->writeExists())
         m_view->write()->writeConfig(m_config);
 
+    m_config->writeEntry("Show Close Buttons", qConfig.showCloseButtons);
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);
 
@@ -707,6 +711,20 @@ void QuantaApp::readOptions()
   showToolbarAction  ->setChecked(m_config->readBoolEntry("Show Toolbar",   true));
   qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
   showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
+  qConfig.showCloseButtons = m_config->readBoolEntry("Show Close Buttons", true);
+#if KDE_IS_VERSION(3,1,90)
+  KTabWidget *tab = static_cast<KTabWidget*>(m_view->writeTab());
+  if (qConfig.showCloseButtons)
+  {
+    tab->setHoverCloseButton(true);
+    tab->setHoverCloseButtonDelayed(false);
+  } else
+  {
+    tab->setHoverCloseButton(false);
+  }
+#else
+  qConfig.showCloseButtons = false;
+#endif
 
   fileRecent ->loadEntries(m_config);
 

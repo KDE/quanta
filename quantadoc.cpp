@@ -658,12 +658,12 @@ void QuantaDoc::changeFileTabName(const KURL &newURL)
     tab->setTabToolTip( w, url.prettyURL() );
   }
 
-  // try to set the icon from mimetype
+/*  // try to set the icon from mimetype
   QIconSet mimeIcon (KMimeType::pixmapForURL(url, 0, KIcon::Small));
   if (mimeIcon.isNull())
     mimeIcon = QIconSet(SmallIcon("document"));
 
-  tab->setTabIconSet( w, mimeIcon);
+  tab->setTabIconSet( w, mimeIcon);*/
 }
 
 /// SLOTS
