@@ -331,7 +331,8 @@ void QuantaApp::slotFileOpen()
  }
  m_doc->blockSignals(false);
  w = ViewManager::ref()->activeDocument();
- setCaption(w->url().prettyURL() );
+ if (w)
+   setCaption(w->url().prettyURL() );
  //slotUpdateStatus(w);//FIXME:
 }
 
