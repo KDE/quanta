@@ -32,5 +32,5 @@ rcdir = $(kde_datadir)/quanta
 rc_DATA = quantaui.rc
 
 
-INCLUDES = $(all_includes) -I$(top_builddir)/quanta/dialogs -I$(top_builddir)/quanta/tagdialogs -I$(top_builddir)/quanta/toolbar
+INCLUDES = $(all_includes) -I$(top_builddir)/quanta/dialogs -I$(top_builddir)/quanta/tagdialogs -I$(top_builddir)/quanta/toolbar -I$(top_builddir)/quanta/plugins
 

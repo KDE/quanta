@@ -2,8 +2,9 @@
                           projectfile.h  -  description
                              -------------------
     begin                : Wed Mar 15 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
+                           (C) 2001, 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -29,10 +30,10 @@ class ProjectTreeFolder;
 class ProjectTreeFile : public FilesTreeFile  {
 friend class Project;
 public: 
-	ProjectTreeFile( ProjectTreeFolder *parent, const char *name, const char *filename = 0L);
+	ProjectTreeFile( ProjectTreeFolder *parent,  QString name, const KURL& p_url);
 	~ProjectTreeFile();
   /**  */
-  void setIcon(QString name);
+  void setIcon(const KURL& url);
   /** used for sorting */
 //  virtual QString key ( int column, bool ascending ) const;
   virtual void paintCell( QPainter *, const QColorGroup &, int, int, int);

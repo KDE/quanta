@@ -1,7 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 noinst_LIBRARIES = libproject.a
 
-INCLUDES = $(all_includes)
 
 libproject_a_METASOURCES = AUTO
 
@@ -11,3 +10,5 @@ libproject_a_SOURCES = projectnewgenerals.ui projectnewgeneral.cpp projectnewloc
 EXTRA_DIST = projectnewweb.cpp projectnewwebs.ui projectnewweb.h rescanprj.h project.cpp projectupload.cpp projectnewfinal.cpp projectuploads.ui projectnewfinals.ui rescanprjdir.ui projectnewgeneral.h projectnewlocal.h projectnewfinal.h rescanprj.cpp projectnewlocal.cpp projectnewlocals.ui project.h projectnewgeneral.cpp projectnewgenerals.ui projectupload.h 
 
 ####### kdevelop will overwrite this part!!! (end)############
+
+INCLUDES = $(all_includes) -I$(top_builddir)/quanta/dialogs

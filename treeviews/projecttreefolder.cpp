@@ -22,67 +22,54 @@
 #include "projecttreefile.h"
 #include "projecttreefolder.h"
 
-ProjectTreeFolder::ProjectTreeFolder( ProjectTreeFolder *parent, const char *name)
-  : FilesTreeFolder( parent, name )
+ProjectTreeFolder::ProjectTreeFolder( ProjectTreeFolder *parent, const KURL& p_url)
+  : FilesTreeFolder(0, parent, p_url )     
 {
-  fileList.setAutoDelete( true );
+  filesTreeList.setAutoDelete( true );
 
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
 	else                    setPixmap( 0, SmallIcon("folder") );
   
   QString fname = name;
 
-  if ( fname == "..")
-  {
-    path = parent->path;
-    path.remove( path.length()-1, 1 );
-    path.remove( path.findRev('/')+1 , 1000);
-  }
-  else {
-    path = parent->path + fname;
-    path += "/";
-  }
+  url = p_url;
+  url.adjustPath(1);
 }
 
-ProjectTreeFolder::ProjectTreeFolder( QListView *parent, const char *name, const char *dir)
-    : FilesTreeFolder( parent, name, dir)
+ProjectTreeFolder::ProjectTreeFolder( QListView *parent, const QString &name, const KURL &p_url)
+    : FilesTreeFolder( parent, name, p_url)
 {
-  fileList.setAutoDelete( true );
+  filesTreeList.setAutoDelete( true );
 
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
 	else                    setPixmap( 0, SmallIcon("folder") );
 
-  path = dir;
+  url = p_url;
+  url.adjustPath(1);
 }
 
 ProjectTreeFolder::~ProjectTreeFolder(){
 }
 
-/** return fullname of child element item */
-QString ProjectTreeFolder::fullName(QListViewItem *item)
-{
-  if ( !item ) return 0;
-  return path;
-}
-
 /** insert item in file list */
-void ProjectTreeFolder::insertItem(ProjectTreeFile *item, QString name){
-  fileList.append( item );
-  item->fname = name;
+void ProjectTreeFolder::insertItem(ProjectTreeFile *item, const KURL& url)
+{
+  filesTreeList.append( item );
+  item->url = url;
 }
 
-void ProjectTreeFolder::setOpen( bool o )
+void ProjectTreeFolder::setOpen( bool open )
 {
-  QListViewItem::setOpen( o );
+  QListViewItem::setOpen( open );
   
-  if (o)
+  if (open)
     setPixmap( 0, SmallIcon("folder_open") );
   else
     setPixmap( 0, SmallIcon("folder") );
   	
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
   	
-  opened = o;
+  opened = open;
 }
 
 
@@ -94,13 +81,18 @@ void ProjectTreeFolder::setup()
 }
 
 /**  */
-int ProjectTreeFolder::find(QString name)
+bool ProjectTreeFolder::contains(const KURL& url)
 {
-  for ( fileList.first();fileList.current();fileList.next() ) {
-    QString fname = fileList.current()->fname;
-    if ( fname == name ) return 1;
+  bool result = false;
+  for ( uint i = 0;i < filesTreeList.count(); i++ )
+  {
+    if ( filesTreeList.at(i)->url == url )
+    {
+      result = true;
+      break;
+    }
   }
-  return 0;
+  return result;
 }
 
 void ProjectTreeFolder::paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int alignment)

@@ -8,28 +8,32 @@
 #include <kio/job.h>
 
 #include "rescanprjdir.h"
+#include "../treeviews/uploadtreeview.h"
+
 
 class RescanPrj : public RescanPrjDir  {
    Q_OBJECT
 public: 
-	RescanPrj(QStringList, QString, QWidget *parent=0, const char *name=0, bool modal = true);
+	RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent=0, const char *name=0, bool modal = true);
 	~RescanPrj();
 	
 public slots:
   void slotSelect();
   void slotDeselect();
   void slotInvert();
+  void slotExpand();
+  void slotCollapse();
   
   virtual void resizeEvent( QResizeEvent * );
 
-  QStringList files();
+  KURL::List files();
   
   void addEntries(KIO::Job *,const KIO::UDSEntryList &);
   
 private:
-  QString basePath;
-  QStringList list;
-  QStringList prjFileList;
+  KURL baseURL;
+  KURL::List list;
+  KURL::List prjFileList;
 };
 
 #endif

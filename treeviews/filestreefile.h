@@ -19,9 +19,9 @@
 #define FILESTREEFILE_H
 
 #include <qlistview.h>
+#include <kurl.h>
 
 class FilesTreeFolder;
-
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
@@ -29,8 +29,8 @@ class FilesTreeFolder;
 class FilesTreeFile : public QListViewItem
 {
 public: 
-	FilesTreeFile( FilesTreeFolder *parent, QString name, QString filename);
-	FilesTreeFile( QListView *parent, QString name, QString filename);
+	FilesTreeFile( FilesTreeFolder *parent, QString name, const KURL& p_url);
+	FilesTreeFile( QListView *parent, QString name, const KURL& p_url);
 	~FilesTreeFile();
 	
 	/** set icon for the item */
@@ -43,7 +43,7 @@ public:
 //  virtual QString key ( int column, bool ascending ) const;
 
 public:
-	QString fname;
+	KURL url;
 	bool isDir;
 };
 

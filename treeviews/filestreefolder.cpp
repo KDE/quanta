@@ -1,9 +1,10 @@
 /***************************************************************************
-                          dirview.cpp  -  description
+                          filestreefolder.cpp  -  description
                              -------------------
     begin                : Mon Feb 21 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski
-    email                : pdima@mail.univ.kiev.ua
+                           (C) 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,11 +16,6 @@
  *                                                                         *
  ***************************************************************************/
 
-// app includes
-#include "filestreefile.h"
-#include "filestreefolder.h"
-#include "../resource.h"
-
 // QT includes
 #include <qdir.h>
 #include <qdragobject.h>
@@ -27,117 +23,82 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qpixmap.h>
+#include <qstringlist.h>
 
 // KDE includes
 #include <kiconloader.h>
+#include <kurl.h>
+#include <kdirlister.h>
 
+// app includes
+#include "filestreefolder.h"
+#include "filestreefile.h"
+#include "filestreeview.h"
+#include "../resource.h"
 
-FilesTreeFolder::FilesTreeFolder( FilesTreeFolder * parent, QString name )
-    : QListViewItem( parent ), file( name ), folderName( name )
+FilesTreeFolder::FilesTreeFolder(QListView* parentListView, FilesTreeFolder *parent, const KURL& p_url)
+    : QListViewItem( parent )
 {
-    parentFolder 	= parent;
-
-    readable 	= true;
-    opened 		= false;
-    showall 	= true;
-
-    setDragEnabled(true);
-    setDropEnabled(true);
+  parentView = dynamic_cast<FilesTreeView*>(parentListView);
+  parentFolder 	= parent;
+  opened 		= false;
+  name = p_url.fileName();
+  url = p_url;
+  init();
 }
 
 
-FilesTreeFolder::FilesTreeFolder( QListView * parent, QString name, const QString & _dir )
-    : QListViewItem( parent ), file(name), folderName(_dir)
+FilesTreeFolder::FilesTreeFolder( QListView * parentListView, const QString &p_name, const KURL& p_url)
+    : QListViewItem( parentListView, 0L )
 {
-    parentFolder = 0L;
-
-    readable 	= true;
-    showall 	= true;
-
-    setDragEnabled(true);
-    setDropEnabled(true);
+  parentView = dynamic_cast<FilesTreeView*>(parentListView);
+  parentFolder = 0L;
+  name = p_name;
+  url = p_url;
+  init();
 }
+
+FilesTreeFolder::~FilesTreeFolder()
+{
+}
+
+/** No descriptions */
+void FilesTreeFolder::init()
+{
+  readable 	= true;
+  showall 	= true;
+  setDragEnabled(true);
+  setDropEnabled(true);
+  url.adjustPath(1);   //add an ending "/" to the directory urls
+}
+
 
 
 void FilesTreeFolder::setOpen( bool open )
 {
-/*	QString fileMask = QString("*.webprj ")	+fileMaskHtml
-																					+fileMaskText
-								 													+fileMaskImage;
- */
-	QDir thisDir( fullName() );
 
-  // exists ?
-  if ( !thisDir.exists())	return;
-  // readable ?
-  if ( !thisDir.isReadable() )
+  if (open)
   {
-	  readable = false;
-	  setExpandable( false );
-
-	  setPixmap( 0, SmallIcon("folder_locked") );
-	  return;
-	}
-
-  if ( open && !childCount() )
-  {
-		thisDir.setSorting( QDir::Name);
-		thisDir.setFilter ( QDir::Dirs);
-
-		QStringList::Iterator it;
-
-		QStringList dirList =  thisDir.entryList();
-
-		dirList.remove(".");
-		dirList.remove("..");
-
-		FilesTreeFolder *ditem;
-
-		for ( it = dirList.begin(); it != dirList.end(); ++it )
-		{
-		  ditem = new FilesTreeFolder( this, *it );
-		  ditem->setPixmap( 0, SmallIcon("folder") );
-		}
-
-		thisDir.setFilter( QDir::Files);
-
-		QStringList fileList = thisDir.entryList();
-
-		FilesTreeFile* item;
-
-		for ( it = fileList.begin(); it != fileList.end(); ++it )
-	//	  if ( QDir::match( fileMask, *it ) )
-		  {
-			  item = new FilesTreeFile( this, *it, fullName()+(*it) );
-			  item->setIcon( *it );
-			}
+    parentView->readDir(url);
   }
 
-  if ( parentFolder)
-  {
-  	  if ( open ) setPixmap( 0, SmallIcon("folder_open") );
-  	  else        setPixmap( 0, SmallIcon("folder") );
-  }
-
-  opened = open;
-
-  QListViewItem::setOpen( open );
+  QListViewItem::setOpen(open);
 }
 
 /** retun full name of the folder */
 QString FilesTreeFolder::fullName()
 {
-	QString s="";
-
+  QString s="";
+	
 //  if (!item) item = this;
 
   if ( parentFolder )
   {
 		s = parentFolder->fullName();
-		s += file.name()+"/";
+		s += url.path(1);
   }
   else {
-		s = folderName;
+		s = url.path(1);
   }
 
   return s;
@@ -146,20 +107,20 @@ QString FilesTreeFolder::fullName()
 /** return column text */
 QString FilesTreeFolder::text( int ) const
 {
-	return file.name();
+	return name;
 }
 
 /** setup */
 void FilesTreeFolder::setup()
 {
-    setExpandable( true );
-    QListViewItem::setup();
+ setExpandable( true );
+ QListViewItem::setup();
 }
 
 /** reload file list */
 void FilesTreeFolder::reloadList()
 {
-  saveOpenStatus();
+//  saveOpenStatus();
   setOpen( false );
 
   QListViewItem *child;
@@ -167,7 +128,7 @@ void FilesTreeFolder::reloadList()
     removeItem( child );
 
   setOpen( true );
-  restoreOpenStatus();
+//  restoreOpenStatus();
 }
 
 /** need for sorting */
@@ -176,9 +137,7 @@ QString FilesTreeFolder::key ( int, bool ) const
   return " 0"+text(0);
 }
 
-FilesTreeFolder::~FilesTreeFolder()
-{
-}
+
 /** No descriptions */
 void FilesTreeFolder::saveOpenStatus()
 {
@@ -243,3 +202,4 @@ void FilesTreeFolder::sortChildItems(int column, bool ascending)
 {
   QListViewItem::sortChildItems(column, ascending);
 }
+

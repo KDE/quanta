@@ -22,6 +22,7 @@
 // kde includes
 #include <kio/job.h>
 #include <kio/jobclasses.h>
+#include <kio/netaccess.h>
 #include <kfiledialog.h>
 #include <kiconloader.h>
 #include <kurlrequester.h>
@@ -29,15 +30,16 @@
 //app includes
 #include "copyto.h"
 #include "../quantacommon.h"
+#include "../qextfileinfo.h"
 
-CopyTo::CopyTo(QString dir, QWidget *parent, const char *name)
+CopyTo::CopyTo(const KURL& dirURL, QWidget *parent, const char *name)
     : CopyToS(parent,name,true)
 {
 
-	mInitialDir = dir;
+	mInitialDirUrl = dirURL;
 
 	urlRequester->setMode( KFile::Directory | KFile::ExistingOnly);
-	urlRequester->setURL( dir );
+	urlRequester->setURL( dirURL.prettyURL() );
 	urlRequester->setFocus();
 	
 	connect( buttonOk,    SIGNAL(clicked()), SLOT(accept()) );
@@ -47,72 +49,80 @@ CopyTo::CopyTo(QString dir, QWidget *parent, const char *name)
 CopyTo::~CopyTo(){
 }
 
-QString CopyTo::copy( QString rname )
+KURL CopyTo::copy(const KURL& urlToCopy)
 {
+  KURL targetDirURL = KURL();
   if ( urlRequester->url().isEmpty() )
-	  urlRequester->setURL(mInitialDir);
-	
-  QString path = urlRequester->url();
-
-  if ( path.right(1) != "/" ) path.append("/");
-
-  int i = 10;
-  QDir dir( path);
-  while ( !dir.exists() && i-- ) dir.mkdir( path);
-
-  QString sname = rname;
-  while ( ( i=sname.find('/')) >= 0 ) sname.remove(0,i+1);
-
-  fname = path + sname;
-  if ( rname != fname ) 
   {
-    KURL sourceUrl, destUrl;
-    QuantaCommon::setUrl(sourceUrl, rname);
-    QuantaCommon::setUrl(destUrl, fname);
-    KIO::CopyJob *job = KIO::copy( sourceUrl, destUrl, true );
-    connect( job, SIGNAL(result( KIO::Job *)),
-                 SLOT  (slotResult( KIO::Job *)));
+    targetDirURL = mInitialDirUrl;
+  } else
+  {
+	  QuantaCommon::setUrl(targetDirURL, urlRequester->url());
+  }
+  targetDirURL.adjustPath(1);
+
+  bool doCopy = true;
+  if (!QExtFileInfo::exists(targetDirURL))
+  {
+    doCopy = QExtFileInfo::createDir(targetDirURL);
   }
 
-  return fname;
+  KURL destURL;
+  if (doCopy)
+  {
+    destURL = targetDirURL;
+    destURL.setPath(destURL.path(1)+urlToCopy.fileName());
+
+    KIO::CopyJob *job = KIO::copy( urlToCopy, destURL, true );
+    connect( job, SIGNAL(result( KIO::Job *)),
+                  SLOT  (slotResult( KIO::Job *)));
+
+    copiedURL = destURL;
+  }
+  
+  return destURL;
 }
 
 void CopyTo::endCopy( KIO::Job *,const KURL&,const KURL&, bool, bool)
 {
-  emit addFilesToProject(fname,this);
+  emit addFilesToProject(copiedURL,this);
 }
 
 void CopyTo::slotResult( KIO::Job *)
 {
-  emit addFilesToProject(fname,this);
+  emit addFilesToProject(copiedURL,this);
 }
 
-QStringList CopyTo::copy( QStringList rfiles )
+KURL::List CopyTo::copy( KURL::List sourceList )
 {
-  QString path = urlRequester->url();
-
-  if ( path.right(1) != "/" ) path.append("/");
-
-  int i = 10;
-  QDir dir( path);
-  while ( !dir.exists() && i-- ) dir.mkdir( path);
-
-  QStringList::Iterator it;
-  QStringList sfiles = rfiles;
-
-  for ( it = sfiles.begin(); it != sfiles.end(); ++it )
-	{
-		while ( ( i=(*it).find('/')) >= 0 ) (*it).remove(0,i+1);
-		(*it) = path + (*it);
-	}
-
-  if ( rfiles != sfiles ) 
+  KURL targetDirURL = KURL();
+  if ( urlRequester->url().isEmpty() )
   {
-    KURL pathUrl;
-    QuantaCommon::setUrl(pathUrl, path);
-    KIO::copy( KURL::List( rfiles ), pathUrl, true );
+    targetDirURL = mInitialDirUrl;
+  } else
+  {
+	  QuantaCommon::setUrl(targetDirURL, urlRequester->url());
+  }
+  bool doCopy = true;
+  if (!QExtFileInfo::exists(targetDirURL))
+  {
+    doCopy = QExtFileInfo::createDir(targetDirURL);
   }
 
-  return sfiles;
+  KURL::List destList;
+  if (doCopy)
+  {
+    destList = sourceList;
+    KURL::List::iterator it;
+    for (it = destList.begin(); it != destList.end(); ++it)
+    {
+      (*it).setPath(targetDirURL.path(1)+(*it).fileName());
+    }
+
+    KIO::copy(sourceList, targetDirURL, true);
+  }
+  
+  return destList;
+
 }
 #include "copyto.moc"

@@ -20,7 +20,7 @@
 
 #include <qwidget.h>
 #include <qlistview.h>
-#include <qstringlist.h>
+#include <qvaluelist.h>
 
 #include <kurl.h>
 
@@ -41,7 +41,6 @@ public:
 	ProjectTreeView(QWidget *parent=0, const char *name=0);
 	virtual ~ProjectTreeView();
 	
-	QString currentFileName();
 	
 public slots: // Public slots
 	void slotOpen();
@@ -49,39 +48,39 @@ public slots: // Public slots
 	void slotOpenInQuanta();
 	void slotRemove();
 	void slotRemoveFromProject(int askForRemove=1);
-	void slotUploadSingleFile();
-	void slotUploadSingleFolder();
-	void slotRenameFile();
-	void slotRenameFolder();
+	void slotUploadSingleURL();
+	void slotRename();
 	
   void slotMenu(QListViewItem*, const QPoint&, int);
-  void slotFileTag();
-  void slotReloadTree( QStringList, bool newtree, bool opened = false );
-  void slotSetBasePath( QString dir );
+  void slotReloadTree(const KURL::List &a_urlList, bool buildNewtree);
+  void slotSetBaseURL( const KURL& url );
   void slotSetProjectName( QString name );
+  /** No descriptions */
+  void slotRescan();
 
 signals: // Signals
 	void open( QListViewItem *name );
  // void insertTag( QString );
-  void renameFileInProject( QString );
-  void renameFolderInProject( QString );
-  void removeFileFromProject( QString );
-  void removeFolderFromProject( QString );
-  void uploadSingleFile( QString );
-  void uploadSingleFolder( QString );
+  void renameInProject( const KURL& );
+  void removeFromProject( const KURL& );
+  /** No descriptions */
+  void rescanProjectDir();
+  void uploadSingleURL( const KURL& );
   void loadToolbarFile( const KURL& );
 
 public:
   ProjectTreeFolder *projectDir;
 
 private:
-	QString basePath;
+	KURL baseURL;
 	QString projectName;
 	
-	QPopupMenu *fileMenu;
-	QPopupMenu *folderMenu;
-
   int openInQuantaId;
+
+protected:
+  virtual void itemRenamed(const KURL& , const KURL& ) {};
+	virtual KURL currentURL();
+
 };
 
 #endif

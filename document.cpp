@@ -50,8 +50,7 @@
 #include <cctype>
 
 #define STEP 1
-
-Document::Document(const QString& basePath, KTextEditor::Document *doc,
+Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
                    Project *project, QWidget *parent,
                    const char *name, WFlags f, QuantaPluginInterface *a_pIf )
   : QWidget(parent, name, f)
@@ -74,7 +73,7 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc,
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(m_view);
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(m_view);
-  this->basePath = basePath;
+  baseURL = p_baseURL;
   m_project = project;
   tempFile = 0;
   dtdName = project->defaultDTD();
@@ -627,18 +626,19 @@ void Document::writeConfig(KConfig *config)
 }
 
 /** No descriptions */
-void Document::insertFile(QString fileName)
+void Document::insertFile(const KURL& url)
 {
-  QFile file(fileName);
+  if (url.isLocalFile())
+  {
+    QFile file(url.path());
+    file.open(IO_ReadOnly);
 
-  file.open(IO_ReadOnly);
+    QTextStream stream( &file );
+  //  kate_view->insertText(stream.read());
+    insertText(stream.read());
 
-  QTextStream stream( &file );
-
-//  kate_view->insertText(stream.read());
-  insertText(stream.read());
-
-  file.close();
+    file.close();
+  }
 }
 
 /** Inserts text at the current cursor position */

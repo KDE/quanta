@@ -38,22 +38,23 @@
 #include "projecttreeview.h"
 #include "filestreeview.h"
 #include "../quantacommon.h"
+#include "../qextfileinfo.h"
 #include "../resource.h"
 
 ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   //: QListView(parent,name)
 {
-    setRootIsDecorated( true );
-    header()->hide();
-    setSorting( 0 );
+  setRootIsDecorated( true );
+  header()->hide();
+  setSorting( 0 );
 
-    setFrameStyle( Panel | Sunken );
-    setLineWidth( 2 );
-    addColumn( i18n("Name") );
+  setFrameStyle( Panel | Sunken );
+  setLineWidth( 2 );
+  addColumn( "Name" );
 
-    setFocusPolicy(QWidget::ClickFocus);
-
-    projectDir =  new ProjectTreeFolder( this, i18n("No project"), basePath);
+	setFocusPolicy(QWidget::ClickFocus);
+	
+	projectDir =  new ProjectTreeFolder( this, "No project", baseURL);
 	projectDir -> setPixmap( 0, SmallIcon("folder"));
 	projectDir -> setOpen( true );
 
@@ -65,11 +66,13 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem(	UserIcon("delete"),i18n("Remove From Disc (and project)..."), this, SLOT(slotRemove()));
 	fileMenu -> insertItem( i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
-	fileMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRenameFile()));
+	fileMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
 	fileMenu -> insertSeparator();
-	fileMenu -> insertItem( i18n("Upload File..."), this, SLOT(slotUploadSingleFile()));
+	fileMenu -> insertItem( i18n("Upload File..."), this, SLOT(slotUploadSingleURL()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
+	fileMenu -> insertSeparator();
+	fileMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
 
 	folderMenu = new QPopupMenu();
 
@@ -77,19 +80,21 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
  	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( UserIcon("delete"),i18n("Remove From Disc (and project)..."), this, SLOT(slotRemove()));
 	folderMenu -> insertItem( i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
- 	folderMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRenameFolder()));
+ 	folderMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
 	folderMenu -> insertSeparator();
-	folderMenu -> insertItem( i18n("Upload Folder..."), this, SLOT(slotUploadSingleFolder()));
+	folderMenu -> insertItem( i18n("Upload Folder..."), this, SLOT(slotUploadSingleURL()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
+	folderMenu -> insertSeparator();
+	folderMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
 
 
-	connect(this, SIGNAL(doubleClicked(QListViewItem *)),
-            this, SLOT  (slotSelectFile(QListViewItem *)));
-	connect(this, SIGNAL(selectionChanged(QListViewItem *)),
-            this, SLOT  (slotSelectImage(QListViewItem *)));
-	connect(this, SIGNAL(returnPressed(QListViewItem *)),
-            this, SLOT  (slotSelectFile(QListViewItem *)));
+  connect(this, SIGNAL(doubleClicked(QListViewItem *)),
+          this, SLOT  (slotSelectFile(QListViewItem *)));
+  connect(this, SIGNAL(selectionChanged(QListViewItem *)),
+          this, SLOT  (slotSelectImage(QListViewItem *)));
+  connect(this, SIGNAL(returnPressed(QListViewItem *)),
+          this, SLOT  (slotSelectFile(QListViewItem *)));
 
 	connect(this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
             this, SLOT  (slotMenu(QListViewItem*, const QPoint&, int)));
@@ -101,280 +106,282 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 ProjectTreeView::~ProjectTreeView(){
 }
 
-QString ProjectTreeView::currentFileName()
+KURL ProjectTreeView::currentURL()
 {
-	if ( !currentItem() ) return "";
+  KURL url;
 	QListViewItem *item = currentItem();
-	ProjectTreeFolder *parent = dynamic_cast<ProjectTreeFolder *> (item->parent());
-
-	if ( !parent ) // top level element
-		return ((ProjectTreeFolder *)item)->path;
-
-	ProjectTreeFolder *f = dynamic_cast<ProjectTreeFolder *>(item);
-
-	if ( f ) return f->path;
-	else		 return parent->path + ((ProjectTreeFile *)item)->fname;
+ 	ProjectTreeFolder *folderItem = dynamic_cast<ProjectTreeFolder *> (item);
+  if ( folderItem )
+  {
+    url = folderItem->url;
+  } else
+  {
+   	ProjectTreeFile *fileItem = dynamic_cast<ProjectTreeFile *> (item);
+    if ( fileItem )
+    {
+      url = fileItem->url;
+    }
+  }
+  url = QExtFileInfo::toAbsolute(url, baseURL);
+  return url;
 }
 
-/** slot for right utton menu */
+/** slot for right button menu */
 void ProjectTreeView::slotMenu(QListViewItem *item, const QPoint& point, int)
 {
-  if ( !item ) return;
-  if ( item == projectDir ) return;
-
-	setSelected(item, true);
-
-	ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( item);
-	if ( f )
+  if ( item && item != projectDir )
   {
-    if (QFileInfo(currentFileName()).extension() == "toolbar.tgz")
+    setSelected(item, true);
+    ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( item);
+    if ( f )
     {
-     fileMenu->changeItem(openInQuantaId, i18n("Load Toolbar File"));
+      if (currentURL().fileName().endsWith(toolbarExtension))
+      {
+        fileMenu->changeItem(openInQuantaId, i18n("Load Toolbar File"));
+      } else
+      {
+        fileMenu->changeItem(openInQuantaId, i18n("Open in Quanta"));
+      }
+      fileMenu->popup( point);
+    }	
+    ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( item);
+    if ( d )
+    {
+      if ( d->text(0) != "CVS") folderMenu->popup( point);
     }
-    fileMenu->popup( point);
   }
-
-	ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( item);
-	if ( d )
-	  if ( d->text(0) != "CVS") folderMenu->popup( point);
 }
 
-void ProjectTreeView::slotFileTag()
+void ProjectTreeView::slotSetBaseURL( const KURL& url )
 {
-  ProjectTreeFile 	*f = (ProjectTreeFile 	*)currentItem();
-  ProjectTreeFolder *d = (ProjectTreeFolder *)(f->parent());
-
-	QString name = d->path + f->text(0);
-
-  emit insertTag( name, dirInfo );
-}
-
-void ProjectTreeView::slotSetBasePath( QString dir )
-{
-	basePath = dir;
+	baseURL = url;
 }
 
 void ProjectTreeView::slotSetProjectName( QString name )
 {
 	projectName = name;
-	projectDir -> setText( 0, name);
+	projectDir->setText( 0, name);
 }
 
-void ProjectTreeView::slotReloadTree( QStringList fileList, bool newtree, bool )
+void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNewTree)
 {
-	if ( newtree )
-	{
-		if ( projectDir ) delete projectDir;
-		projectDir =  new ProjectTreeFolder( this, projectName, basePath);
-		projectDir -> setPixmap( 0, SmallIcon("folder"));
-		projectDir -> setOpen( true );
-	}
+  if (buildNewTree)
+  {
+    if (projectDir) delete projectDir;
+    QString projectNameStr = projectName+" ";
+    if (projectName != i18n("No Project"))
+    {
+     if (baseURL.protocol() == "file")
+     {
+       projectNameStr += i18n("[local disk]");
+     } else
+     {
+       projectNameStr += "["+baseURL.protocol()+"://"+baseURL.user()+"@"+baseURL.host()+"]";
+     }
+    }
+    projectDir = new ProjectTreeFolder(this, projectNameStr, baseURL);
+    projectDir->setPixmap( 0, UserIcon("mini-modules") );
+    projectDir->setOpen( true );  
+  }
 
-	projectDir -> setOpen( false );
-	projectDir->setText( 0, projectName );
-
+//first add all the new files to the treeview
 	int pos;
-	QString fname;
 
 	ProjectTreeFolder *newFolder = 0L;
 	ProjectTreeFolder *folder = projectDir;
 
-	QStringList::Iterator it;
-
-  for ( it = fileList.begin(); it != fileList.end(); ++it )
+  KURL::List urlList = a_urlList;
+	KURL url;
+	KURL::List::Iterator it;
+  for ( it = urlList.begin(); it != urlList.end(); ++it )
 	{
     folder = projectDir;
-    fname = *it;
-    while ( ( pos = fname.find('/')) > 0 )
+    url = *it;
+    QString path = url.path();
+    //insert first the directories
+    while ( ( pos = path.find('/')) > 0 )
     {
-      QString dir = fname.left(pos);
-
+      QString dir = path.left(pos);
       newFolder = 0L;
       QListViewItem *item = folder->firstChild();
-
       while( item )
       {
-        if ( dir == item->text(0) )
+        if ( dir == item->text(0) ) //get the correct dir to insert into
+        {
         	newFolder = dynamic_cast<ProjectTreeFolder *>(item);
+        }
         item = item->nextSibling();
       }
 
       if ( !newFolder )
-      	newFolder = new ProjectTreeFolder( folder, dir);
+      {
+      	newFolder = new ProjectTreeFolder( folder, url); //no dir was found, so create it
+      }
 
       folder = newFolder;
-      fname.remove(0,pos+1);
-    }
-    QListViewItem *item = folder->firstChild();
-    bool neednew = true;
+      path.remove(0,pos+1);
+    } //while
 
-    if (folder->text(0) == "CVS") neednew = false;
-
-    while( item )
+    if (!path.isEmpty())
     {
-      if ( fname == item->text(0) ) neednew = false;
-      item = item->nextSibling();
-    }
-    if (fname.isEmpty()) neednew = false;
-    if ( neednew ) new ProjectTreeFile( folder, fname, fname );
-  }
+      QListViewItem *item = folder->firstChild();
+      bool neednew = true;
+      while( item )
+      {
+        if ( path == item->text(0) ) neednew = false; //it is already present
+        item = item->nextSibling();
+      }
+      if (folder->text(0) == "CVS") neednew = false;
+  //    if (fname.isEmpty()) neednew = false;
 
-  projectDir->sortChildItems(0,true);
-  projectDir->setOpen( true );
+      if ( neednew )
+      {
+        new ProjectTreeFile( folder, path, url );
+      }
+    }
+  }
+    
+//now remove all the invalid items for the treeview
+
+ ProjectTreeFolder *folderItem;
+ ProjectTreeFile *fileItem;
+ QListViewItem *item;
+ 
+ QListViewItemIterator iter(this);
+ for ( ; iter.current(); ++iter )
+ {
+   item = iter.current();
+   folderItem = dynamic_cast<ProjectTreeFolder *> (item);
+   if ( folderItem )
+   {
+     url = folderItem->url;
+   } else
+   {
+     fileItem = dynamic_cast<ProjectTreeFile *> (item);
+     if ( fileItem )
+     {
+       url = fileItem->url;
+     }
+   }
+   if (!urlList.contains(url) && item != projectDir)
+   {
+     delete item;
+   }
+ }
+
+ projectDir->sortChildItems(0,true);
 }
 
 void ProjectTreeView::slotOpen()
 {
-	if ( !currentItem() ) return;
-
 	QListViewItem *item =  currentItem();
-
-	if ( !item ) return;
-	if ( !currentItem() ) return;
-
 	ProjectTreeFolder *f = dynamic_cast<ProjectTreeFolder *>(item);
-	if ( f ) return;
 
-	QString nameToOpen = currentFileName();
-
-	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
-	{
-		KURL url(nameToOpen);
-		emit openFile( url, qConfig.defaultEncoding );
-		return;
-	}
-	else if ( QDir::match( fileMaskImage, nameToOpen) )
-	{
-		emit activatePreview();
-		emit openImage( nameToOpen );
-		return;
-	}
-
- if (isText(nameToOpen))
- {
-		KURL url(nameToOpen);
-		emit openFile( url, qConfig.defaultEncoding );
- } else
- {
-   if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
-       Do you want to open with an external program or run it?"),i18n("Unknown type")) == KMessageBox::Yes)
+	if (item && !f)
   {
-   KFileOpenWithHandler fowh;
-	 new KRun( KURL(nameToOpen), 0, true );
-  }
+   	KURL urlToOpen = currentURL();
+
+   	if ( QuantaCommon::checkMimeGroup(urlToOpen,"text" ) )
+   	{
+   		emit openFile( urlToOpen, qConfig.defaultEncoding );
+   	}
+   	else if ( QuantaCommon::checkMimeGroup(urlToOpen,"image" ) )
+   	{
+   		emit activatePreview();
+   		emit openImage( urlToOpen ); 
+   	} else
+      if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
+          Do you want to open with an external program or run it?"),i18n("Unknown type")) == KMessageBox::Yes)
+      {
+         KFileOpenWithHandler fowh;
+        new KRun( urlToOpen, 0, true );
+      }
  }
 }
 
 void ProjectTreeView::slotOpenWith()
 {
-	if ( !currentItem() ) return;
+	if (currentItem())
+  {
+   	KURL::List list;
+  	KURL urlToOpen = currentURL();
+  	list.append( urlToOpen );
 
-	QStringList list;
-	QString fileToOpen = currentFileName();
-	list.append( fileToOpen );
-
-	KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
-
-	kfowh -> displayOpenWithDialog( KURL::List( list ) );
+  	KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
+  	kfowh -> displayOpenWithDialog( list);
+  }
 }
 
 void ProjectTreeView::slotOpenInQuanta()
 {
- if ( !currentItem() ) return;
-
- KURL url(currentFileName());
-
- if (QFileInfo(currentFileName()).extension() == "toolbar.tgz")
+ if (currentItem())
  {
-  emit loadToolbarFile(KURL(currentFileName()));
-  return;
- }
+   KURL urlToOpen = currentURL();
+   if (urlToOpen.fileName().endsWith(toolbarExtension)) 
+   {
+      emit loadToolbarFile(urlToOpen);
+      return;
+   }
 
- QString mimetype = KMimeType::findByFileContent(currentFileName())->name();
-
- if (! mimetype.contains("text"))
- {
-   if (KMessageBox::questionYesNo(this,i18n("This file may be a binary file, thus cannot be opened \
-    in Quanta correctly.\n Do you still want to open it?"),i18n("Wrong Type")) != KMessageBox::Yes)
-  {
-    return;
-  }
+   if (QuantaCommon::checkMimeGroup(urlToOpen,"text"))
+   {
+     emit openFile( urlToOpen, qConfig.defaultEncoding );
+   } else
+   {
+     denyBinaryInsert();
+   }
  }
- emit openFile( url, qConfig.defaultEncoding );
 }
 
 void ProjectTreeView::slotRemove()
 {
-	if ( !currentItem() ) return;
-
-  if ( KMessageBox::warningYesNo(this,i18n("Do you really want to remove \n%1\nfrom disk ?").arg(currentFileName())) != KMessageBox::Yes )
-	  return;
-
-
-  KURL url;
-  QuantaCommon::setUrl(url,currentFileName());
-
-	ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( currentItem() );
-	if ( d ) {
-		KIO::del( url );
-		emit removeFolderFromProject( currentFileName() );
-		delete( d );
-		return;
-	}
-
-	ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( currentItem() );
-	if ( f ) {
-		KIO::del( url );
-		emit removeFileFromProject( currentFileName() );
-		delete( f );
-		return;
-	}
+  KURL url = currentURL();
+  QListViewItem *item = currentItem();
+	if ( item &&
+       KMessageBox::warningYesNo(this,i18n("Do you really want to remove \n%1\nfrom disk ?")
+                                      .arg(url.prettyURL()))== KMessageBox::Yes )
+  {
+    KIO::del( url );
+    emit removeFromProject( url);
+  }
 }
 
 void ProjectTreeView::slotRemoveFromProject(int askForRemove)
 {
-	if ( !currentItem() ) return;
-
-	if ( (askForRemove) &&
-	      ( KMessageBox::warningYesNo(this,i18n("Do you really want to remove \n%1\nfrom project ?").arg(currentFileName())) != KMessageBox::Yes ) )
-		return;
-
-	ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( currentItem() );
-	if ( d ) {
-		emit removeFolderFromProject( currentFileName() );
-		delete( d );
-		return;
-	}
-
-	ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( currentItem() );
-	if ( f ) {
-		emit removeFileFromProject( currentFileName() );
-		delete( f );
-		return;
-	}
+  KURL url = currentURL();
+  QListViewItem *item = currentItem();
+  if (item)
+  {
+    if ( !askForRemove ||
+         KMessageBox::warningYesNo(this,i18n("Do you really want to remove \n%1\nfrom project ?")
+                                        .arg(url.prettyURL())) == KMessageBox::Yes )
+    {
+      emit removeFromProject(url);
+    }
+  }
 }
 
-void ProjectTreeView::slotUploadSingleFile()
+void ProjectTreeView::slotRename()
 {
-	if ( !currentItem() ) return;
-	emit uploadSingleFile( currentFileName() );
+  if ( currentItem() )
+  {
+    emit renameInProject(currentURL());
+  }
 }
 
-void ProjectTreeView::slotRenameFile()
+
+void ProjectTreeView::slotUploadSingleURL()
 {
-  if ( !currentItem() ) return;
-  emit renameFileInProject(currentFileName());
+	if (currentItem())
+  {
+	  emit uploadSingleURL(currentURL());
+  }
 }
 
-void ProjectTreeView::slotRenameFolder()
+/** No descriptions */
+void ProjectTreeView::slotRescan()
 {
-  if ( !currentItem() ) return;
-  emit renameFolderInProject(currentFileName());
+  emit rescanProjectDir();
 }
 
-void ProjectTreeView::slotUploadSingleFolder()
-{
-	if ( !currentItem() ) return;
-	emit uploadSingleFolder( currentFileName() );
-}
 #include "projecttreeview.moc"

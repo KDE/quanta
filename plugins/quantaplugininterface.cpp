@@ -24,6 +24,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qapplication.h>
+#include <qfileinfo.h>
 
 /* OTHER INCLUDES */
 #include "quantaplugininterface.h"

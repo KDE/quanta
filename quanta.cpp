@@ -186,15 +186,15 @@ void QuantaApp::slotFileSave()
   if ( w->isUntitled() )
   	slotFileSaveAs();
   else
-  	doc->saveDocument( doc->url() );
+  	doc->saveDocument( w->url() );
 
   slotUpdateStatus(w);
 }
 
 void QuantaApp::slotFileSaveAs()
 {
-  QString oldUrl = doc->url().url();
   Document *w = view->write();
+  KURL oldURL = w->url();
   w->checkDirtyStatus();
   fileWatcher->stopScan();
   if (w->kate_view->saveAs() == Kate::View::SAVE_OK)
@@ -206,13 +206,13 @@ void QuantaApp::slotFileSaveAs()
     if ( ( project->hasProject() ) &&
          ( KMessageBox::Yes == KMessageBox::questionYesNo(0,"Add file\n " +url.url()+"\n to project ? ")) )
     {
-      project->insertFile(url.url(),true);
+      project->insertFile(url,true);
     }
 
-    if ( oldUrl != url.url() )
+    if ( oldURL != url )
     {
-      doc->changeFileTabName( oldUrl );
-      doc->docList()->remove(oldUrl);
+      doc->changeFileTabName( oldURL );
+      doc->docList()->remove(oldURL.url());
       doc->docList()->insert(url.url(), w);
     }
     slotUpdateStatus(w);
@@ -222,18 +222,20 @@ void QuantaApp::slotFileSaveAs()
 
 void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 {
+//TODO: Saving is limited to local files...
   KURL url;
   int query;
-  QString projectTemplateDir;
+  KURL projectTemplateURL;
   Document *w = view->write();
   w->checkDirtyStatus();
+  QString localTemplateDir = locateLocal("data","quanta/templates/");
 
   do {
     query = KMessageBox::Yes;
 
     if (projectTemplate)
     {
-  	  url = KFileDialog::getSaveURL(project->templateDir, QString::null, this);
+  	  url = KFileDialog::getSaveURL(project->templateURL.url(), QString::null, this);
   	} else
   	{
   	  url = KFileDialog::getSaveURL(locateLocal("data","quanta/templates/"), QString::null, this);
@@ -241,15 +243,16 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
     if (url.isEmpty()) return;
 
-    if ( project->hasProject() )  projectTemplateDir = project->templateDir;
-    if ( ((projectTemplate) && (KURL(projectTemplateDir).isParentOf(url)) ) ||
-          ((! projectTemplate) && (KURL(locateLocal("data","quanta/templates/")).isParentOf(url))) )
+    if ( project->hasProject() )  projectTemplateURL = project->templateURL;
+    if ( ((projectTemplate) && (projectTemplateURL.isParentOf(url)) ) ||
+          ((! projectTemplate) && (KURL(localTemplateDir).isParentOf(url))) )
     {
     	query = w->checkOverwrite( url );
     } else
     {
-      KMessageBox::sorry(0,i18n("You must save the templates in one of the following directories: \n\n%1\n%2")
-      											 .arg(locateLocal("data","quanta/templates/")).arg(projectTemplateDir));
+      if (projectTemplate) localTemplateDir = projectTemplateURL.path(1);
+      KMessageBox::sorry(this,i18n("You must save the templates in the following directory: \n\n%1")
+                                   .arg(localTemplateDir));
       query = KMessageBox::No;
     }
   } while (query != KMessageBox::Yes);
@@ -312,7 +315,7 @@ void QuantaApp::slotFileClose()
   doc->closeDocument();
 
   htmlPart()->closeURL();
-  htmlPart()->begin( KURL( doc->basePath() ));
+  htmlPart()->begin(projectBaseURL());
   htmlPart()->write( "" );
  	htmlPart()->end();
 
@@ -324,7 +327,7 @@ void QuantaApp::slotFileCloseAll()
   doc->closeAll();
 
   htmlPart()->closeURL();
-  htmlPart()->begin( KURL( doc->basePath() ));
+  htmlPart()->begin(projectBaseURL());
  	htmlPart()->write( "" );
  	htmlPart()->end();
 
@@ -441,20 +444,20 @@ void QuantaApp::repaintPreview( bool clear )
   KParts::URLArgs  args(true, browserExtension()->xOffset(), browserExtension()->yOffset());
   browserExtension()->setURLArgs( args );
 
-  QString url;
+  KURL url;
   Document *w = view->write();
   if (!w->isUntitled())
   {
 //if it's	not untitled, than it was loaded from somewhere. In this case show it from that place
-	  url = w->url().url();
+	  url = w->url();
 
 	  if ( doc->isModified() ) //doc->saveDocument( doc->url() );
          w->saveIt();
 
-	  url = project->urlWithPrefix(w->url());
+	  url = project->urlWithPrefix(url);
 
 	  part->begin(url, xOffset, yOffset );
-	  part->openURL( KURL(url) );
+	  part->openURL( url );
   } else  //the document is Untitled, preview the text from it
  {
   	QString text = w->editIf->text();
@@ -464,14 +467,14 @@ void QuantaApp::repaintPreview( bool clear )
     	text = i18n( "<center><h3>The current document is empty...</h3></center>" );
   	}
     oldtext = text;
-	  part->begin( KURL( doc->basePath() ), xOffset, yOffset );
+	  part->begin( projectBaseURL(), xOffset, yOffset );
     part->write( text );
  }
  part->end();
 }
 
 /** view image in preview */
-void QuantaApp::slotImageOpen(QString url)
+void QuantaApp::slotImageOpen(const KURL& url)
 {
   if ( previewPosition == "Disabled" )
      return;
@@ -488,11 +491,11 @@ void QuantaApp::slotImageOpen(QString url)
 	ta->setChecked(true);
 
 	QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
-	text += url;
+	text += url.path(); //TODO
 	text += "\">\n</div>\n</body>\n</html>\n";
 
 	part->closeURL();
-	part->begin( KURL( doc->basePath() ) );
+	part->begin( projectBaseURL() );
   part->write( text.data() );
   part->end();
 
@@ -501,31 +504,34 @@ void QuantaApp::slotImageOpen(QString url)
 
 
 /** insert <img> tag for images or <a> for other */
-void QuantaApp::slotInsertTag(QString url, DirInfo dirInfo)
+void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 {
- 	QImage img(url);
-
-  QString furl = QExtFileInfo::toRelative( url, doc->basePath() );
+  KURL relURL = QExtFileInfo::toRelative( url,projectBaseURL());
   Document *w = view->write();
-
-  if (!(dirInfo.preText.isEmpty()) || !(dirInfo.postText.isEmpty()))
+  bool isImage = false;
+  
+  if (!dirInfo.preText.isEmpty() || !dirInfo.postText.isEmpty())
   {
-	   w->insertTag(dirInfo.preText+furl+dirInfo.postText);
+	   w->insertTag(dirInfo.preText+relURL.url()+dirInfo.postText);
   } else
   {
-
-   if ( !img.isNull() )
-   {
-     QString width,height;
-     width.setNum( img.width () );
-	   height.setNum( img.height() );
-
- 	   w->insertTag("<img src=\""+furl+"\" width=\""+width+"\" height=\""+height+"\" border=\"0\">");
-   }
-   else
-     w->insertTag( "<a href=\""+furl+"\">","</a>");
+    if (url.isLocalFile())
+    {
+     	QImage img(url.path());
+      if ( !img.isNull() )
+      {
+        QString width,height;
+        width.setNum( img.width () );
+    	  height.setNum( img.height() );
+        w->insertTag("<img src=\""+relURL.url()+"\" width=\""+width+"\" height=\""+height+"\" border=\"0\">");
+        isImage = true;
+      }
+    }
+    if (!isImage)
+    {
+      w->insertTag( "<a href=\""+relURL.url()+"\">","</a>");
+    }
   }
-
   w->view()->setFocus();
 }
 
@@ -538,7 +544,7 @@ void QuantaApp::slotNewStatus()
   if (view->writeExists())
   {
     Document *w = view->write();
-    setTitle( doc->url().prettyURL() );
+    setTitle( w->url().prettyURL() );
 
   /*  int  config   = w->config();
     bool readOnly = w->isReadOnly();
@@ -564,12 +570,12 @@ void QuantaApp::slotNewStatus()
 
     if (projectExists)
     {
-      QStringList toolbarList = QExtFileInfo::allFiles(project->toolbarDir+"/", "*.toolbar.tgz");
+      KURL::List toolbarList = QExtFileInfo::allFiles(project->toolbarURL, "*"+toolbarExtension);
       projectToolbarFiles->setMaxItems(toolbarList.count());
       for (uint i = 0; i < toolbarList.count(); i++)
       {
-        if (QFileInfo(toolbarList[i]).isFile())
-          projectToolbarFiles->addURL(KURL(toolbarList[i]));
+        if (toolbarList[i].isLocalFile()) //TODO: only local toolbar files are handled
+          projectToolbarFiles->addURL(toolbarList[i]);
       }
     } else
     {
@@ -589,21 +595,21 @@ void QuantaApp::slotNewStatus()
     QTabWidget *wTab = view->writeTab;
     w = static_cast<Document*>(wTab->currentPage());
 
-   if ( w->isModified() )
-  	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
-   else
-  	wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
+    if ( w->isModified() )
+   	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
+    else
+   	wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
 
-  //This is a really dirty fix for the QTabWidget problem. After the changeTab call,
-  //it will reset itself and you will see the first tabs, even if the actual page is on
-  //a tab eg. at the end, and it won't be visible now. This is really confusing.
-  //I thought it is fixed in QT 3.x, but it is not. :-(
-          int pageId = wTab->currentPageIndex();
-      bool block=wTab->signalsBlocked();
-      wTab->blockSignals(true);
-      wTab->setCurrentPage(pageId-1);
-      wTab->setCurrentPage(pageId);
-      wTab->blockSignals(block);
+//This is a really dirty fix for the QTabWidget problem. After the changeTab call,
+//it will reset itself and you will see the first tabs, even if the actual page is on
+//a tab eg. at the end, and it won't be visible now. This is really confusing.
+//I thought it is fixed in QT 3.x, but it is not. :-(
+        int pageId = wTab->currentPageIndex();
+    bool block=wTab->signalsBlocked();
+    wTab->blockSignals(true);
+    wTab->setCurrentPage(pageId-1);
+    wTab->setCurrentPage(pageId);
+    wTab->blockSignals(block);
 
     w->oldstat = w->isModified();
  }
@@ -871,7 +877,7 @@ void QuantaApp::slotOptions()
   	previewPosition = previewOptions->position();
 
   	htmlpart->closeURL();
-  	htmlpart->begin( KURL( doc->basePath() ));
+  	htmlpart->begin( projectBaseURL());
   	htmlpart->write( "" );
   	htmlpart->end();
 
@@ -1194,11 +1200,11 @@ void QuantaApp::settingsMenuAboutToShow()
 
 void QuantaApp::viewMenuAboutToShow()
 {
-  showFTabAction    ->setChecked( ftabdock->isVisible() );
-  showPTabAction    ->setChecked( ptabdock->isVisible() );
-  showTTabAction    ->setChecked( ttabdock->isVisible() );
-  showSTabAction    ->setChecked( stabdock->isVisible() );
-  showDTabAction    ->setChecked( dtabdock->isVisible() );
+  showFTabAction->setChecked( ftabdock->isVisible() );
+  showPTabAction->setChecked( ptabdock->isVisible() );
+  showTTabAction->setChecked( ttabdock->isVisible() );
+  showSTabAction->setChecked( stabdock->isVisible() );
+  showDTabAction->setChecked( dtabdock->isVisible() );
 }
 
 void QuantaApp::slotToolSyntaxCheck()
@@ -1311,64 +1317,66 @@ void QuantaApp::autoComplete()
 
 void QuantaApp::slotShowOpenFileList()
 {
-  QStringList fileList;
+  KURL::List fileList;
   QStringList openList;
-  QString tmpString;
+  KURL url;
+  KURL baseURL = projectBaseURL();
   fileList = view->doc->openedFiles(false);
 
 //A little trick. I fill in the list in reversed order.
   for (int i = fileList.count()-1;  i >=0 ; i--)
   {
-     tmpString = KURL(fileList[i]).prettyURL();
+/*     tmpString = KURL(fileList[i]).prettyURL();
      if (tmpString.left(5) == "file:") tmpString.remove(0,5);
      if (tmpString.left(1) == "/")
     {
-       	tmpString = QExtFileInfo::toRelative(tmpString,doc->basePath());
+       	tmpString = QExtFileInfo::toRelative(tmpString,projectBaseURL());
        	if (tmpString.contains("../"))
        	{
         	tmpString.replace(QRegExp("\\.\\./"),"");
         	tmpString = ".../"+tmpString;
        	}
      }
-  	openList.append(tmpString);
+  	openList.append(tmpString);*/
+    url = QExtFileInfo::toRelative(fileList[i], baseURL);
+    openList.append(url.url());
   }
 
   ListDlg listDlg(openList);
-  if (!listDlg.exec()) return;
+  if (listDlg.exec())
+  {
+  //This "complex" read-out is due to the reversed list.
+    QString docName= fileList[openList.count() - listDlg.getEntryNum() - 1].url();
 
-//This "complex" read-out is due to the reversed list.
-  QString docName= fileList[openList.count() - listDlg.getEntryNum() - 1];
-
-  view->writeTab->showPage(doc->docList()->find(docName));
+    view->writeTab->showPage(doc->docList()->find(docName));
+  }
 }
 
 /** No descriptions */
 void QuantaApp::slotNewProjectLoaded()
 {
   delete tTab;
-  tTab = new TemplatesTreeView( project->basePath, ttabdock );
-  ttabdock ->setWidget( tTab );
-  tTab  ->setFocusPolicy(QWidget::NoFocus);
-  connect(   tTab, SIGNAL(openFile  (const KURL &, const QString&)),
-            this, SLOT(slotFileOpen(const KURL &, const QString&)));
-  connect(   tTab, SIGNAL(insertFile  (QString)),
-            this, SLOT(slotInsertFile(QString)));
-  connect(   tTab,SIGNAL(insertTag(QString, DirInfo)),
-            this, SLOT(slotInsertTag(QString, DirInfo)));
-  connect(this, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
-  connect(fTTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
-  connect(tTab, SIGNAL(reloadTreeviews()), fTTab, SLOT (slotReload()));
-  connect(tTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
+  tTab = new TemplatesTreeView( project->baseURL, ttabdock );
+  ttabdock->setWidget( tTab );
+  tTab->setFocusPolicy(QWidget::NoFocus);
+  connect( tTab, SIGNAL(openFile(const KURL &, const QString&)),
+           this, SLOT(slotFileOpen(const KURL &, const QString&)));
+  connect( tTab, SIGNAL(insertFile(const KURL &)),
+           this, SLOT(slotInsertFile(const KURL &)));
+  connect( tTab, SIGNAL(insertTag(const KURL &, DirInfo)),
+           this, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(getView(), SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *))); // [MB02]
-  connect(project, SIGNAL(templateDirChanged(const QString &)), tTab, SLOT(slotSetTemplateDir(const QString &)));
-  tTab->slotSetTemplateDir(project->templateDir);
+  connect( getView(), SIGNAL(dragInsert(QDropEvent *)),
+           tTab, SLOT(slotDragInsert(QDropEvent *))); // [MB02]
+  connect( project, SIGNAL(templateURLChanged(const KURL &)),
+           tTab, SLOT(slotSetTemplateURL(const KURL &)));
+  tTab->slotSetTemplateURL(project->templateURL);
 }
 
 /** No descriptions */
-void QuantaApp::slotInsertFile(QString fileName)
+void QuantaApp::slotInsertFile(const KURL& url)
 {
-  view->write()->insertFile(fileName);
+  view->write()->insertFile(url);
 }
 
 
@@ -1448,163 +1456,137 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
  QTextStream str;
  QString fileName = url.path();
 
- if ( (fileName.find(".toolbar.tgz") != -1) )
+ if ( url.fileName().endsWith(toolbarExtension) )
  {
 //extract the files from the archives
-  KTar tar(fileName);
-  if (tar.open(IO_ReadOnly))
-  {
-    QString base = QFileInfo(fileName).baseName();
-    KArchiveFile* file = (KArchiveFile *) tar.directory()->entry(base+".toolbar");
-    if (file)
+   KTar tar(fileName);
+   if (tar.open(IO_ReadOnly))
+   {
+     QString base = QFileInfo(fileName).baseName();
+     KArchiveFile* file = (KArchiveFile *) tar.directory()->entry(base+".toolbar");
+     if (file)
+     {
+      toolbarDom->setContent(file->device());
+     }
+     file = (KArchiveFile *) tar.directory()->entry(base+".actions");
+     if (file)
+     {
+      actionDom.setContent(file->device());
+     }
+
+     tar.close();
+   }
+   if ( (toolbarDom->toString().isEmpty()) ) //|| (actionContent.isEmpty()))
+   {
+     KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin as the archive name!"));
+     return;
+   }
+
+   QDomNodeList nodeList = toolbarDom->elementsByTagName("ToolBar");
+   QString name = nodeList.item(0).cloneNode().toElement().attribute("tabname");
+
+   //search for another toolbar with the same name
+   QPtrList<KXMLGUIClient> xml_clients = factory()->clients();
+   bool found = false;
+   for (uint index = 0; index < xml_clients.count(); index++)
+   {
+    nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
+    for (uint i = 0; i < nodeList.count(); i++)
     {
-     toolbarDom->setContent(file->device());
-    }
-    file = (KArchiveFile *) tar.directory()->entry(base+".actions");
-    if (file)
-    {
-     actionDom.setContent(file->device());
-    }
+      if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
+      {
+        QString newName;
+        do
+        {
+          KMessageBox::information(this,i18n("A toolbar called \"%1\" already exists.\n Please rename the loaded toolbar.").arg(name),i18n("Name conflict"));
 
-    tar.close();
-  }
-  if ( (toolbarDom->toString().isEmpty()) ) //|| (actionContent.isEmpty()))
-  {
-    KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin as the archive name!"));
-    return;
-  }
-
- } else //to support loading of separate .toolbar, .action files
- {
-   //Load the actions from the associated .action file
-   QString actionFile;
-   if (QFileInfo(fileName).extension(false) != "toolbar")
-   {
-     actionFile = fileName + ".actions";
-   }else
-   {
-     actionFile = QFileInfo(fileName).dirPath() + "/"+QFileInfo(fileName).baseName()+".actions";
+          KLineEditDlg dlg(i18n("Enter toolbar name:"), name, this);
+          dlg.setCaption(i18n("Rename Toolbar"));
+          if (dlg.exec())
+          {
+            newName =  dlg.text();
+          } else
+          {
+            KMessageBox::information(this,i18n("The rename was canceled.\n The toolbar won't be loaded."),i18n("Name conflict"));
+            return;
+          }
+        } while (name == newName);
+        name = newName;
+        found = true;
+        break;
+      }
+     }
+     if (found) break;
    }
-   QFile f(fileName);
-   if ( f.open( IO_ReadOnly ) )
-   {
-     toolbarDom->setContent(&f);
-   }
-   f.close();
 
-   f.setName(actionFile);
-   if ( f.open( IO_ReadOnly ) )
-   {
-      actionDom.setContent(&f);
-   }
-   f.close();
- }
+   QDomDocument *dom = new QDomDocument();
+   dom->setContent(toolbarDom->toString());
+   toolbarDomList.insert(name.lower(), dom);
 
-
- QDomNodeList nodeList = toolbarDom->elementsByTagName("ToolBar");
- QString name = nodeList.item(0).cloneNode().toElement().attribute("tabname");
-
-//search for another toolbar with the same name
- QPtrList<KXMLGUIClient> xml_clients = factory()->clients();
- bool found = false;
- for (uint index = 0; index < xml_clients.count(); index++)
- {
-   nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
+   //setup the actions
+   nodeList = actionDom.elementsByTagName("action");
    for (uint i = 0; i < nodeList.count(); i++)
    {
-    if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
+    QDomNode node = nodeList.item(i).cloneNode();
+    QDomElement el = node.toElement();
+    cout << el.text() << "\n";
+    QString actionName = el.attribute("name");
+    //if there is no such action yet, add to the available actions
+    if (! actionCollection()->action(actionName))
     {
-      QString newName;
-      do
-      {
-        KMessageBox::information(this,i18n("A toolbar called \"%1\" already exists.\n Please rename the loaded toolbar.").arg(name),i18n("Name conflict"));
-
-        KLineEditDlg dlg(i18n("Enter toolbar name:"), name, this);
-        dlg.setCaption(i18n("Rename Toolbar"));
-        if (dlg.exec())
-        {
-          newName =  dlg.text();
-        } else
-        {
-          KMessageBox::information(this,i18n("The rename was canceled.\n The toolbar won't be loaded."),i18n("Name conflict"));
-          return;
-        }
-      } while (name == newName);
-      name = newName;
-      found = true;
-      break;
+      m_actions->firstChild().appendChild(el);
+      TagAction *a = new TagAction(&el, view, actionCollection() );
+      actionCollection()->insert(a);
     }
    }
-  if (found) break;
- }
 
- QDomDocument *dom = new QDomDocument();
- dom->setContent(toolbarDom->toString());
- toolbarDomList.insert(name.lower(), dom);
+   userToolbarsCount++;
 
-//setup the actions
- nodeList = actionDom.elementsByTagName("action");
- for (uint i = 0; i < nodeList.count(); i++)
- {
-   QDomNode node = nodeList.item(i).cloneNode();
-   QDomElement el = node.toElement();
-   cout << el.text() << "\n";
-   QString actionName = el.attribute("name");
-   //if there is no such action yet, add to the available actions
-   if (! actionCollection()->action(actionName))
+   //Change the name also in the XML File -> create a temp XML file
+   KTempFile* tempFile = new KTempFile();
+   tempFile->setAutoDelete(true);
+
+   nodeList = toolbarDom->elementsByTagName("ToolBar");
+   nodeList.item(0).toElement().setAttribute("name",name.lower());
+   nodeList.item(0).toElement().setAttribute("tabname",name);
+   nodeList = toolbarDom->elementsByTagName("text");
+   nodeList.item(0).toElement().firstChild().setNodeValue(name);
+
+   * (tempFile->textStream()) << toolbarDom->toString();
+   tempFile->close();
+
+   //create the new toolbar GUI from the temp file
+   ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
+
+   //Plug in the actions & build the menu
+   QPopupMenu *menu = new QPopupMenu;
+   KAction *action;
+   nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
+   for (uint i = 0; i < nodeList.count(); i++)
    {
-     m_actions->firstChild().appendChild(el);
-     TagAction *a = new TagAction(&el, view, actionCollection() );
-     actionCollection()->insert(a);
+     action = actionCollection()->action(nodeList.item(i).cloneNode().toElement().attribute("name") );
+     if (action)
+     {
+       toolbarGUI->actionCollection()->insert(action);
+       action->plug(menu);
+     }
    }
+   m_tagsMenu->insertItem(name,menu);
+   toolbarMenuList.insert(name.lower(),menu);
+
+   factory()->addClient(toolbarGUI);
+
+   view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
+
+   tempFileList.append(tempFile);
+   toolbarGUIClientList.insert(name.lower(),toolbarGUI);
+   QString *pstr = new QString();
+   pstr->append(name.lower());
+   toolbarNames.insert(url.prettyURL(),pstr);
+   toolbarURLs.insert(name.lower(), new KURL(url));
+
+   slotToggleDTDToolbar(toolbarNames.count() != 0);
  }
-
- userToolbarsCount++;
-
-//Change the name also in the XML File -> create a temp XML file
- KTempFile* tempFile = new KTempFile();
- tempFile->setAutoDelete(true);
-
- nodeList = toolbarDom->elementsByTagName("ToolBar");
- nodeList.item(0).toElement().setAttribute("name",name.lower());
- nodeList.item(0).toElement().setAttribute("tabname",name);
- nodeList = toolbarDom->elementsByTagName("text");
- nodeList.item(0).toElement().firstChild().setNodeValue(name);
-
- * (tempFile->textStream()) << toolbarDom->toString();
- tempFile->close();
-
-//create the new toolbar GUI from the temp file
- ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
-
-//Plug in the actions & build the menu
- QPopupMenu *menu = new QPopupMenu;
- KAction *action;
- nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
- for (uint i = 0; i < nodeList.count(); i++)
- {
-    action = actionCollection()->action(nodeList.item(i).cloneNode().toElement().attribute("name") );
-    if (action)
-    {
-      toolbarGUI->actionCollection()->insert(action);
-      action->plug(menu);
-    }
- }
- m_tagsMenu->insertItem(name,menu);
- toolbarMenuList.insert(name.lower(),menu);
-
- factory()->addClient(toolbarGUI);
-
- view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
-
- tempFileList.append(tempFile);
- toolbarGUIClientList.insert(name.lower(),toolbarGUI);
- QString *pstr = new QString();
- pstr->append(name.lower());
- toolbarNames.insert(url.prettyURL(),pstr);
- toolbarURLs.insert(name.lower(), new KURL(url));
-
- slotToggleDTDToolbar(toolbarNames.count() != 0);
 }
 
 /** Load an user toolbar from the disk. */
@@ -1612,7 +1594,7 @@ void QuantaApp::slotLoadToolbar()
 {
  KURL url;
 
- url = KFileDialog::getOpenURL(locateLocal("data","quanta/toolbars/"), "*.toolbar.tgz\n*", this);
+ url = KFileDialog::getOpenURL(locateLocal("data","quanta/toolbars/"), "*"+toolbarExtension, this);
  if (! url.isEmpty())
  {
    slotLoadToolbarFile(url.path());
@@ -1625,7 +1607,7 @@ void QuantaApp::slotLoadGlobalToolbar()
 {
  KURL url;
 
- url = KFileDialog::getOpenURL(qConfig.globalDataDir +"quanta/toolbars/", "*.toolbar.tgz\n*", this);
+ url = KFileDialog::getOpenURL(qConfig.globalDataDir +"quanta/toolbars/", "*."+toolbarExtension+"\n*", this);
  if (! url.isEmpty())
  {
    slotLoadToolbarFile(url.path());
@@ -1633,14 +1615,13 @@ void QuantaApp::slotLoadGlobalToolbar()
 
 }
 
-QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
+KURL QuantaApp::saveToolBar(const QString& toolbarName, const KURL& destFile)
 {
+  KURL tarFile = destFile;
 
-  QString tarFile = destFile;
-
-  if (QFileInfo(destFile).extension() != "toolbar.tgz")
+  if (! destFile.fileName().endsWith(toolbarExtension))
   {
-   tarFile = destFile + ".toolbar.tgz";
+    tarFile.setFileName(destFile.fileName() + toolbarExtension);
   }
 
   QBuffer buffer;
@@ -1712,10 +1693,11 @@ QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
   buffer.close();
   buffer2.close();
 
-  KTar tar(tarFile, "application/x-gzip");
+//TODO: Implement saving in non-local dirs (firs in a temp file, than copy it to the dest)
+  KTar tar(tarFile.path(), "application/x-gzip");
   tar.open(IO_WriteOnly);
-  tar.writeFile(QFileInfo(tarFile).baseName()+".toolbar", "user", "group", buffer.buffer().size(), buffer.buffer().data());
-  tar.writeFile(QFileInfo(tarFile).baseName()+".actions", "user", "group", buffer2.buffer().size(), buffer2.buffer().data());
+  tar.writeFile(QFileInfo(tarFile.path()).baseName()+".toolbar", "user", "group", buffer.buffer().size(), buffer.buffer().data());
+  tar.writeFile(QFileInfo(tarFile.path()).baseName()+".actions", "user", "group", buffer2.buffer().size(), buffer2.buffer().data());
   tar.close();
 
   return tarFile;
@@ -1724,10 +1706,11 @@ QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
 /** Saves a toolbar as local or project specific. */
 void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
 {
-  KURL url;
   int query;
-  QString projectToolbarsDir;
+  KURL url;
+  KURL projectToolbarsURL;
   QString toolbarName;
+  QString localToolbarsDir = locateLocal("data","quanta/toolbars/");
 
   if (toolbarToSave.isEmpty())
   {
@@ -1760,33 +1743,33 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
 
     if (localToolbar)
     {
-  	  url = KFileDialog::getSaveURL(locateLocal("data","quanta/toolbars/"), "*.toolbar.tgz\n*", this);
+  	  url = KFileDialog::getSaveURL(localToolbarsDir, "*"+toolbarExtension, this);
   	} else
   	{
-  	  url = KFileDialog::getSaveURL(project->toolbarDir, "*.toolbar.tgz\n*", this);
+  	  url = KFileDialog::getSaveURL(project->toolbarURL.url(), "*"+toolbarExtension, this);
   	}
 
     if (url.isEmpty()) return;
 
-    if ( project->hasProject() )  projectToolbarsDir = project->toolbarDir;
-    if ( ((!localToolbar) && (KURL(projectToolbarsDir).isParentOf(url)) ) ||
-          ((localToolbar) && (KURL(locateLocal("data","quanta/toolbars/")).isParentOf(url))) )
+    if ( project->hasProject() )  projectToolbarsURL = project->toolbarURL;
+    if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
+          ((localToolbar) && (KURL(localToolbarsDir).isParentOf(url))) )
     {
     	query = doc->write()->checkOverwrite( url );
     } else
     {
-      QString dirStr = locateLocal("data","quanta/toolbars/");
-      if (!localToolbar) dirStr = projectToolbarsDir;
+      if (!localToolbar) localToolbarsDir = projectToolbarsURL.prettyURL();
       KMessageBox::sorry(0,i18n("You must save the toolbars in the following directory: \n\n%1")
-      											 .arg(dirStr));
+                                .arg(localToolbarsDir));
       query = KMessageBox::No;
     }
   } while (query != KMessageBox::Yes);
 
-  if( query == KMessageBox::Cancel ) return;
-
-  QString tarName = saveToolBar(toolbarName, url.path());
-  if (!localToolbar) project->insertFile(tarName, true);
+  if( query != KMessageBox::Cancel )
+  {          
+    KURL tarName = saveToolBar(toolbarName, url);
+    if (!localToolbar) project->insertFile(tarName, true);
+  }
 }
 
 /** Saves a toolbar as localspecific. */
@@ -1892,10 +1875,11 @@ void QuantaApp::slotSendToolbar()
   QStringList toolbarFile;
 
   QString prefix="quanta";
-  QString extension=".toolbar.tgz";
-  KTempFile* tempFile = new KTempFile(locateLocal("tmp", prefix), extension);;
+  KTempFile* tempFile = new KTempFile(locateLocal("tmp", prefix), toolbarExtension);;
   tempFile->setAutoDelete(true);
-  saveToolBar(toolbarName, tempFile->name());
+  KURL tempURL;
+  tempURL.setPath(tempFile->name());
+  saveToolBar(toolbarName, tempURL);
   tempFile->close();
   tempFileList.append(tempFile);
 
@@ -2212,5 +2196,24 @@ void QuantaApp::slotParsingDTDChanged(QString newDTDName)
   parser->clear();
   reparse();
 }
+
+/** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
+KURL QuantaApp::projectBaseURL()
+{
+  KURL result;
+  if  ( project->hasProject())
+  {
+     result = project->baseURL;
+  } else
+  {
+  	if  ( !view->writeExists() || view->write()->isUntitled() )
+  	{
+    	result = QExtFileInfo::home();
+  	} else
+  	{
+  		result = QExtFileInfo::path(view->write()->url());
+  	}
+  }
+  return result;}
 
 #include "quanta.moc"

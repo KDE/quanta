@@ -18,11 +18,16 @@
 #include <qstring.h>
 #include <qdict.h>
 #include <qdir.h>
+#include <qwidget.h>
 
 //kde includes
 #include <kurl.h>
 #include <kdirwatch.h>
+#include <kmimetype.h>
 #include <kstandarddirs.h>
+#include <kmessagebox.h>
+#include <klocale.h>
+
 
 #include "quantacommon.h"
 
@@ -42,12 +47,10 @@ QRegExp scriptEndRx;
 
 Node *baseNode;
 Parser *parser;
-
-#if 0 // Not needed in our new plugin arch [MB]
-QValueList<QString> pluginsList; //holds the names of available plugins
-#endif
-
 KDirWatch *fileWatcher;
+KProgress *progressBar;
+
+const QString toolbarExtension = ".toolbar.tgz";
 
 QuantaCommon::QuantaCommon(){
 }
@@ -86,9 +89,10 @@ QString QuantaCommon::attrCase( const QString attr)
 /** Set's up the url correctly from urlString. */
 void QuantaCommon::setUrl(KURL &url, QString urlString)
 {
- if (urlString.at(0) == '/')
+ if (urlString.find(":") == -1)
  {
    url.setPath(urlString);
+   if (url.protocol().isEmpty()) url.setProtocol("file");
  }
  else
  {
@@ -244,7 +248,7 @@ QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, QStr
           if (attr->type == "url") {
             Project *project = quantaApp->getProject();
             if (project->hasProject()) {
-              values = new QStringList(project->fileNameList(true));
+              values = new QStringList(project->fileNameList(true).toStringList());
               values->append("mailto:" + project->email);
             } else {
               QDir dir = QDir(quantaApp->getDoc()->write()->url().directory());
@@ -314,21 +318,6 @@ int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, i
  return pos;
 }
 
-
-#if 0 // Redundant in new plugin architecture, use QuantaPluginInterface::pluginAvailable
-/** Read property of QDict<bool> pluginsAvailable. */
-bool QuantaCommon::pluginAvailable(const QString& name)
-{
-	bool result = false;
-  for (uint i=0; i < pluginsList.count(); i++)
-  {
-    if (pluginsList[i] == name) result = true;
-  }
-
-  return result;
-}
-#endif
-
 /** Returns a pointer to a KStandardDirs object usable for plugin searchup. type is the plugin binary type (exe or lib). The returned 
 pointer must be deleted by the caller!! */
 KStandardDirs* QuantaCommon::pluginDirs(const char *type)
@@ -340,4 +329,106 @@ KStandardDirs* QuantaCommon::pluginDirs(const char *type)
    dirs->addResourceDir(type, qConfig.pluginSearchPaths[i]);
  }
  return dirs;
+}
+/** Return true, if the url belong to the mimetype group. */
+bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
+{
+ KMimeType::List list = KMimeType::allMimeTypes();
+ KMimeType::List::iterator it;
+ bool status = false;
+ QString mimetype;
+
+ if (url.isLocalFile())
+ {
+   mimetype = KMimeType::findByFileContent(url.path())->name();
+   mimetype = mimetype.section('/',-1);
+   for ( it = list.begin(); it != list.end(); ++it )
+   {
+      if ( ((*it)->name().contains(group)) && ((*it)->name().find(mimetype) != -1) )
+      {
+        status = true;
+        break;
+      }
+   }
+ } else
+ {
+   mimetype = KMimeType::findByURL(url)->name();
+   mimetype = mimetype.section('/',-1);
+   for ( it = list.begin(); it != list.end(); ++it )
+   {
+      if ( ((*it)->name().contains(group)) && ((*it)->name().find(mimetype) != -1) )
+      {
+        status = true;
+        break;
+      }
+   }
+ }
+
+ return status;
+}
+
+/** Return true, if the url has the mimetype type. */
+bool QuantaCommon::checkMimeType(const KURL& url, const QString& type)
+{
+ bool status = false;
+ QString mimetype;
+
+ if (url.isLocalFile())
+ {
+   mimetype = KMimeType::findByFileContent(url.path())->name();
+   mimetype = mimetype.section('/',-1);
+   if (mimetype == type) status = true;
+ } else
+ {
+   mimetype = KMimeType::findByURL(url)->name();
+   mimetype = mimetype.section('/',-1);
+   if (mimetype == type) status = true;
+ }
+
+ return status;
+}
+
+/** Return true, if the url has exactly the mimetype type. */
+bool QuantaCommon::checkExactMimeType(const KURL& url, const QString& type)
+{
+ bool status = false;
+ QString mimetype;
+
+ if (url.isLocalFile())
+ {
+   mimetype = KMimeType::findByFileContent(url.path())->name();
+   if (mimetype == type) status = true;
+ } else
+ {
+   mimetype = KMimeType::findByURL(url)->name();
+   if (mimetype == type) status = true;
+ }
+
+ return status;
+}
+/** Returns the url without the filename. */
+KURL QuantaCommon::convertToPath(const KURL& url)
+{
+ KURL result = url;
+ result.adjustPath(1);
+ result.setFileName("");
+ return result;
+}
+
+/** Return a string to be used when an url is saved to the project file.
+    Returns url.url() if it's an absolute url and
+    url.path() if the url is relative */
+QString QuantaCommon::qUrl(const KURL &url)
+{
+  QString result = url.path();
+  if (url.path().startsWith("/")) result = url.url();
+
+  return result;
+}
+/** No descriptions */
+void QuantaCommon::dirCreationError(QWidget *widget, const KURL& url)
+{
+  KMessageBox::error(widget, i18n("Can't create directory %1.\nCheck that you have write permission in the parent directory or\nthat the connection to\n\"%2\" is valid!")
+                           .arg(url.prettyURL())
+                           .arg(url.protocol()+"://"+url.user()+"@"+url.host()));
 }

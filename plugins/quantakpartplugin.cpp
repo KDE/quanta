@@ -27,6 +27,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qobject.h>
+#include <qfileinfo.h>
 
 /* OTHER INCLUDES */
 #include "quantakpartplugin.h"

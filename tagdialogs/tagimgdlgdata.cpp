@@ -9,7 +9,9 @@
 **********************************************************************/
 #include <kapp.h>
 #include <klocale.h>
+#include <kurl.h>
 #include <knumvalidator.h>
+
 #include <qspinbox.h>
 #include "pictureview.h"
 #include "tagimgdlg.h"

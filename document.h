@@ -53,7 +53,7 @@ class Document : public QWidget{
    Q_OBJECT
 
 public: 
-	Document(const QString& basePath, KTextEditor::Document *doc, Project *project,
+	Document(const KURL& p_baseURL, KTextEditor::Document *doc, Project *project,
            QWidget *parent = 0, const char *name = 0, WFlags f=0, QuantaPluginInterface * =0);
 	~Document();
 
@@ -83,7 +83,7 @@ public:
   /** add attrib to end of current tag */
   void insertAttrib(QString attr);
   /** No descriptions */
-  void insertFile(QString fileName);
+  void insertFile(const KURL& url);
   /** Inserts text at the current cursor position */
   void insertText(QString, bool=true);
 
@@ -158,7 +158,7 @@ work correctly. */
 
   bool oldstat;
   bool busy;
-  QString basePath;
+  KURL baseURL;
 
   KTextEditor::ViewCursorInterface *viewCursorIf;
   KTextEditor::SelectionInterface *selectionIf;

@@ -5,6 +5,8 @@
     Copyright (c) 1999-2001 the KNode authors.
     See file AUTHORS for details
 
+    Rewritten for Quanta Plus: (C) 2002 Andras Mantia <amantia@freemail.hu>
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -25,7 +27,7 @@
 #include "quanta.h"
 #include "kqapp.h"
 
-QuantaApp *quanta = 0L;
+//QuantaApp *quanta = 0L;
 
 KSplash::KSplash()
  : QFrame( 0L, QString("Quanta")+VERSION,
@@ -50,13 +52,11 @@ KQApplication::KQApplication()
  : KApplication()
 {
    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-   KSplash *splash ;
+   splash = 0L;
 
    KGlobal::dirs()->addPrefix(PREFIX);
 
-   bool showSplash = args->isSet("logo");
-
-   if (showSplash) splash = new KSplash();
+   if (args->isSet("logo")) splash = new KSplash();
 
    if (isRestored())
    {
@@ -64,37 +64,15 @@ KQApplication::KQApplication()
    }
    else
    {
-     QuantaApp *quanta;
-
      quanta = new QuantaApp();
-     if (quanta->quantaStarted)
-     {
-       quanta ->show();
-
-       QString initialProject;
-       QStringList initialFiles;
-
-       for (int i = 0; i < args->count(); i++ )
-       {
-         QString arg = args->url(i).url();
-
-         if(arg.findRev(QRegExp(QString(".+\\.webprj"))) != -1)
-           initialProject = arg;
-         else
-           initialFiles += arg;
-       }
-       quanta->loadInitialProject(initialProject); // open initial project
-
-       for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-         quanta->slotFileOpen(KURL(*it), qConfig.defaultEncoding);  // load initial files
-
-       QTimer::singleShot(10,quanta,SLOT(openLastFiles())); // load files from previous session
-     }
+     QTimer::singleShot(10, this, SLOT( slotInit()));
    }
-   args->clear();
-   if (showSplash) delete splash;
 }
 
+void KQApplication::slotInit()
+{
+  KQApplicationPrivate::init();
+}
 
 KQApplication::~KQApplication()
 {
@@ -120,42 +98,51 @@ int KQUniqueApplication::newInstance()
   }
   else
   {
-    KSplash *splash = new KSplash();
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    splash = 0L;
+    if (args->isSet("logo")) splash = new KSplash();
 
     quanta = new QuantaApp();
-
-    if (quanta->quantaStarted)
-    {
-      setMainWidget(quanta);
-      quanta->show();
-
-      KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-
-      QString initialProject;
-      QStringList initialFiles;
-      for (int i = 0; i < args->count(); i++ )
-      {
-        QString arg = args->url(i).url();
-
-        if(arg.findRev(QRegExp(QString(".+\\.webprj"))) != -1)
-          initialProject = arg;
-        else
-          initialFiles += arg;
-      }
-
-      quanta->loadInitialProject(initialProject);
-
-      for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-             QTimer::singleShot(10,quanta,SLOT(openLastFiles()));
-
-      quanta ->openLastFiles();
-    }
-    delete splash;
+    QTimer::singleShot(10, this, SLOT( slotInit()));
   }
 
   return 0;
 }
 
-//--------------------------------
+void KQUniqueApplication::slotInit()
+{
+  KQApplicationPrivate::init();
+}
+
+void KQApplicationPrivate::init()
+{
+  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+  if (quanta->quantaStarted)
+  {
+    quanta->initQuanta();
+    quanta->show();
+
+    QString initialProject;
+    QStringList initialFiles;
+    for (int i = 0; i < args->count(); i++ )
+    {
+      QString arg = args->url(i).url();
+
+      if(arg.findRev(QRegExp(QString(".+\\.webprj"))) != -1)
+        initialProject = arg;
+      else
+        initialFiles += arg;
+    }
+
+    quanta->loadInitialProject(initialProject);
+
+    for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
+      quanta->slotFileOpen(KURL(*it), qConfig.defaultEncoding);  // load initial files
+
+    quanta->openLastFiles();
+  }
+  args->clear();
+  if (splash) delete splash;
+}
 
 #include "kqapp.moc"

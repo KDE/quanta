@@ -31,7 +31,6 @@
 #include <qstringlist.h>
 #include <qregexp.h>
 #include <qlabel.h>
-#include <qprogressbar.h>
 #include <qcombobox.h>
 #include <qurl.h>
 #include <qcheckbox.h>
@@ -46,15 +45,18 @@
 #include <klocale.h>
 #include <klineedit.h>
 #include <kcompletion.h>
+#include <kprogress.h>
 
 
-ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const char* name, bool modal, WFlags fl)
+ProjectUpload::ProjectUpload(const KURL& url, Project* prg, QWidget *parent, const char* name, bool modal, WFlags fl)
   :ProjectUploadS( parent, name, modal, fl)
 {
+    QString file = url.path(); //TODO
+    
     initProjectInfo(prg);
-
-    QFileInfo fi( p->basePath + file );
-
+	
+    QFileInfo fi( p->baseURL.path(1) + file ); //TODO
+  
     if (fi.isDir())
     {
 	   	kdDebug() << file << " is a directory" << endl;
@@ -72,7 +74,7 @@ ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const 
     				if (url.contains(file) > 0)
     				{
     					files.append( url );
-    					QFileInfo fi( p->basePath + url );
+    					QFileInfo fi( p->baseURL.path(1) + url ); //TODO
 
     					QString size;
     					size.sprintf( "%i", fi.size() );
@@ -145,8 +147,8 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 	      	QString url = el.attribute("url");
 
 	        files.append( url );
-
-	      	QFileInfo fi( p->basePath + url );
+	      
+	      	QFileInfo fi( p->baseURL.path(1) + url ); //TODO
 	        QString size;
 	      	size.sprintf( "%i", fi.size() );
 
@@ -320,7 +322,7 @@ void ProjectUpload::upload()
 			//list->ensureItemVisible(it);
 
 			KURL from;
-			from.setPath( p->basePath + currentFile );
+			from.setPath( p->baseURL.path(1)  + currentFile ); //TODO
 			to = *baseUrl;
 			to.addPath( currentFile );
 			if (to.fileName(false).isEmpty()) dir = to;

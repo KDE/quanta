@@ -3,8 +3,8 @@
                              -------------------
     begin                : Thu Mar 16 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-    								  (C) 2001 by Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+                           (C) 2001, 2002 by Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,7 +27,7 @@
 #include <kio/job.h>
 
 /**project
-  *@author Yacovlev Alexander & Dmitry Poplavsky
+  *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
 
 class QWizard;
@@ -51,22 +51,22 @@ public:
 	~Project();
 	
 	bool hasProject();
-	QStringList fileNameList(bool check = false);
+	KURL::List fileNameList(bool check = false);
 	void loadProjectXML();
 	
-  void insertFile ( QString name, bool repaint );
-  void insertFiles( QString path, QString mask );
-  void insertFiles( QStringList files );
+  void insertFile( const KURL& nameURL, bool repaint );
+  void insertFiles( const KURL& pathURL, const QString& mask );
+  void insertFiles( KURL::List files );
 
-  void createEmptyDom();
+  bool createEmptyDom();
 
-  void  readConfig(KConfig *);
+  void readConfig(KConfig *);
   void readLastConfig(KConfig *c=0);
   void writeConfig(KConfig *);
   /** No descriptions */
   bool isModified() {return modified;}
   /** Returns the relative url with the prefix inserted. */
-  QString urlWithPrefix(const KURL& url);
+  KURL urlWithPrefix(const KURL& url);
   /** Write property of QString defaultDTD. */
   virtual void setDefaultDTD( const QString& p_defaultDTD);
   /** Read property of QString defaultDTD. */
@@ -74,28 +74,25 @@ public:
   
 public slots:
 
-  void newProject();
-  void openProject();
-  void openProject(const KURL&);
-  bool saveProject();
-  void closeProject();
-  void loadProject(const KURL &url);
-  void options();
-  void upload();
-  void uploadFile(QString);
+  void slotNewProject();
+  void slotOpenProject();
+  void slotOpenProject(const KURL&);
+  bool slotSaveProject();
+  void slotCloseProject();
+  void slotLoadProject(const KURL &a_url);
+  void slotOptions();
+  void slotUpload();
+  void slotUploadURL(const KURL &urlToUpload);
 
-  void addFiles();
-  void addDirectory();
-  void addDirectory(QString rdir);
-  void addDirectory(QString rdir, bool showDlg);
-  void insertFile(QString name);
-  void insertFilesAfterCopying(QString,CopyTo*);
-  void renameFinished();
+  void slotAddFiles();
+  void slotAddDirectory();
+  void slotAddDirectory(const KURL& dirURL, bool showDlg = true);
+  void slotInsertFile(const KURL& url);
+  void slotInsertFilesAfterCopying(const KURL& url, CopyTo*);
+  void slotRenameFinished( KIO::Job *);
 
-	void slotRenameFile(QString);
-	void slotRenameFolder(QString);
-	void slotRemoveFile(QString);
-	void slotRemoveFolder(QString);
+	void slotRename(const KURL& url);
+	void slotRemove(const KURL& urlToRemove);
 
 	void slotAcceptCreateProject();
 	
@@ -107,26 +104,22 @@ public slots:
   
   void slotRescanPrjDir();
   
-  void slotProjectReadFinish(KIO::Job *);
-  void slotProjectReadData  (KIO::Job *,const QByteArray &);
-
-  
 signals:
 	
-	void openFile				 ( const KURL&, const QString& );
-	void closeFiles			 ();
+	void openFile( const KURL&, const QString& );
+	void closeFiles();
 	
-	void setBasePath		 ( QString );
-	void setProjectName	 ( QString );
+	void setBaseURL( const KURL& url );
+	void setProjectName( QString );
 	
-	void   showTree      ();
-	void reloadTree			 ( QStringList,bool,bool );
+	void showTree();
+	void reloadTree(const KURL::List&, bool);
 	
-  void setLocalFiles   ( bool );
+  void setLocalFiles( bool );
 
-  void messages				 			( QString );
-  void selectMessageWidget	();
-  void disableMessageWidget	();
+  void messages( QString );
+  void selectMessageWidget();
+  void disableMessageWidget();
 
   void saveAllFiles();
   void newStatus();
@@ -137,20 +130,20 @@ signals:
   /** No descriptions */
   void newProjectLoaded();
   /** No descriptions */
-  void templateDirChanged(const QString &);
+  void templateURLChanged(const KURL &);
 
 public:
   QDomDocument dom;
 
-  KURL    url;
-  QString name;
+  KURL    projectURL;
+  QString projectName;
 
-  QString basePath;
-  QString remoteDir;
-  QString templateDir;
-  QString toolbarDir;
+  KURL baseURL;
+  KURL remoteDir;
+  KURL templateURL;
+  KURL toolbarURL;
 
-  QString previewPrefix;
+  KURL previewPrefix;
   bool usePreviewPrefix;
 
   QString email;
@@ -181,6 +174,10 @@ private:
 protected: // Protected attributes
   /** Default DTD for this project. */
   QString m_defaultDTD;
+  /** The old name of the url. (Used when renaming/removing an url from the project). */
+  KURL oldURL;
+  /** The new name of the url (used when renaming an url). */
+  KURL newURL;
 };
 
 #endif

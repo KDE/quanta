@@ -22,11 +22,17 @@
 #include <config.h>
 #endif
 
+//qt includes
 #include <qstring.h>
-#include <klineedit.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qdom.h>
+
+//kde includes
+#include <klineedit.h>
+#include <kurl.h>
+
+//app includes
 #include "colorcombo.h"
 #include "filecombo.h"
 

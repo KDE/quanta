@@ -3,7 +3,8 @@
                              -------------------
     begin                : Thu Jun 1 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+                           (C) 2001,2002 Andras Mantia
+    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -19,12 +20,15 @@
 #define FILESTREEVIEW_H
 
 #include <qwidget.h>
-#include <qstringlist.h>
+#include <qvaluelist.h>
+#include <qptrlist.h>
 
 #include <kconfig.h>
 #include <kpropertiesdialog.h>
 
 #include "filemanage.h"
+
+class KURL;
 
 class FilesTreeFolder;
 class QuantaPropertiesPageDlg;
@@ -36,41 +40,46 @@ class QuantaPropertiesPageDlg;
 
 class FilesTreeView : public FileManage  {
    Q_OBJECT
-public:
-    FilesTreeView();
-	FilesTreeView( QString dir, QStringList topList, QWidget *parent=0L, const char *name=0L);
-	~FilesTreeView();
-  void addFileInfoPage(KPropertiesDialog *propDlg);
 
+public:
+  FilesTreeView(QWidget *parent=0L, const char *name=0L):FileManage(parent,name){};
+	FilesTreeView(KURL::List topList, QWidget *parent=0L, const char *name=0L);
+	~FilesTreeView();
+
+  /** No descriptions */
+  void readDir(const KURL& url);
+  /** Get a list of items for whom the url == p_url. */
+  QPtrList<QListViewItem> getItems(const KURL& p_url);
+
+  KURL::List topURLList;
+	
 public slots:
 	void slotMenu(QListViewItem *, const QPoint &, int);
-
 	void slotSelectFile   (QListViewItem *);
 	void slotSelectAnyFile(QListViewItem *);
 	void slotSelectImage  (QListViewItem *);
 	void slotAddToTop     ();
-
 	void slotNewMode();
   /** No descriptions */
   virtual void slotInsertTag();
 	virtual void slotReload();
   virtual void slotProperties();
+		
+protected:
+	virtual KURL currentURL();
+  virtual void itemRenamed(const KURL& , const KURL& ) {};
+  void addFileInfoPage(KPropertiesDialog *propDlg);
+
+protected slots: // Private slots
+  /** No descriptions */
+  virtual void slotDirListNewItems(const KFileItemList& items);
+  /** No descriptions */
+  virtual void slotDirListDeleteItem(KFileItem *item);
 
 signals:
 	void activatePreview();
-	void openFile ( const KURL&, const QString& );
-	void openImage( QString fileToOpen );
-
-protected:
-	virtual QString currentFileName();
-  /** Return true, if the file is a text file. */
-  bool isText(QString fileName);
-
-public:
-	FilesTreeFolder *homeDir;
-    FilesTreeFolder *rootDir;
-
-    QStringList dirList;
+	void openFile(const KURL&, const QString& );
+	void openImage(const KURL&);
 };
 
 #endif

@@ -56,7 +56,12 @@ typedef struct QConfig{
 class QuantaApp;
 class QString;
 class KURL;
-class KStandardDirs; 
+class KStandardDirs;
+class QWidget;
+
+/**Some common, mostly static functions.
+  *@author Andras Mantia
+  */
 
 class QuantaCommon {
 public: 
@@ -92,14 +97,24 @@ public:
   /** Returns 0 if the (line,col) is inside the area specified by the other arguments,
       -1 if it is before the area and 1 if it is after. */
   static int isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol);
-#if 0 // Redundant in new plugin architecture [MB]
-  /** Check if plugin is available or not. */
-  static bool pluginAvailable(const QString& name);
-#endif
   /** Returns a pointer to a KStandardDirs object usable for plugin searchup. type is the plugin binary type (exe or lib). The returned 
 pointer must be deleted by the caller!! */
   static KStandardDirs* pluginDirs(const char *type);
 
+  /** Return true, if the url has the mimetype starting with type. */
+  static bool checkMimeGroup(const KURL& url, const QString& type);
+  /** Return true, if the url has the mimetype type. */
+  static bool checkMimeType(const KURL& url, const QString& type);
+  /** Return true, if the url has exactly the mimetype type. */
+  static bool checkExactMimeType(const KURL& url, const QString& type);
+  /** Returns the url without the filename. */
+  static KURL convertToPath(const KURL& url);
+  /** Return a string to be used when an url is saved to the project file.
+      Returns url.url() if it's an absolute url and
+      url.path() if the url is relative */
+  static QString qUrl(const KURL& url);
+  /** No descriptions */
+  static void dirCreationError(QWidget *widget, const KURL& url);
 
 public: // Public attributes
   /**  */

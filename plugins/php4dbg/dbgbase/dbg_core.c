@@ -13,7 +13,6 @@
 
 #include "dbg_core.h"
 #include <string.h>
-#include <malloc.h>
 #include <stdlib.h>
 
 #ifdef DBG_USE_STDALLOCA

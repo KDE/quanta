@@ -79,6 +79,7 @@ QuantaDoc::~QuantaDoc()
 {
 }
 
+/*
 KURL QuantaDoc::url()
 {
   KURL furl;
@@ -89,33 +90,34 @@ KURL QuantaDoc::url()
   return furl;
 }
 
-QString QuantaDoc::basePath()
+KURL QuantaDoc::baseURL()
 {
+  KURL result;
   if  ( app->project->hasProject())
   {
-     return  app->project->basePath;
+     result = app->project->baseURL;
   } else
   {
   	if  ( !app->view->writeExists() || write()->isUntitled() )
   	{
-    	return QExtFileInfo::home();
+    	result = QExtFileInfo::home();
   	} else
   	{
-	   	KURL furl = url();
-  		return  QExtFileInfo::path( furl );
+  		result =  QExtFileInfo::path( url() );
   	}
   }
-}
+  return result;
+}                */
 
-QStringList QuantaDoc::openedFiles(bool noUntitled)
+KURL::List QuantaDoc::openedFiles(bool noUntitled)
 {
-  QStringList list;
+  KURL::List list;
   QDictIterator<Document> it( *m_docList );
 
   while ( Document *w = it.current() )
   {
     if ( !w->isUntitled() || !noUntitled )
-      list.append( it.currentKey() );
+      list.append( w->url() );
     ++it;
   }
 
@@ -238,31 +240,34 @@ void QuantaDoc::finishLoadURL(KWrite *_w)
 
 void QuantaDoc::saveDocument(const KURL& url)
 {
-	QString oldUrl = this->url().url();
   Document *w = write();
+  KURL oldURL = w->url();
 
-  if ( !url.url().isEmpty())
+  if ( !url.isEmpty())
   {
-    fileWatcher->removeFile(w->url().path());
+    fileWatcher->removeFile(oldURL.path());
     if (!w->doc()->saveAs( url ))
     {
-      KMessageBox::error(app, i18n("Saving of the document failed.\nMaybe you should try to save in another directory."));
+      KMessageBox::error(app, i18n("Saving of the document\n%1\nfailed.\nMaybe you should try to save in another directory.").arg(url.prettyURL()));
     }
     w->closeTempFile();
     w->createTempFile();
     w->setDirtyStatus(false);
-    if (w->url().isLocalFile()) fileWatcher->addFile(w->url().path());
+    if (w->url().isLocalFile())
+    {
+      fileWatcher->addFile(w->url().path());
+    }
   }
 
   // fix
-  if ( oldUrl != url.url() )
+  if ( oldURL != url )
   {
-    changeFileTabName( oldUrl );
-    m_docList->remove(oldUrl);
+    changeFileTabName( oldURL );
+    m_docList->remove(oldURL.url());
     m_docList->insert(url.url(), w);
   }
 
-  emit title( this->url().url() );
+  emit title( w->url().url() );
 
   return;
 }
@@ -284,7 +289,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
     w = dynamic_cast<Document*>(docTab->currentPage());
     if ( w->isModified() )
     {
-      fileWatcher->removeFile(w->url().path());
+      if (!w->url().path().isEmpty()) fileWatcher->removeFile(w->url().path());
       app->view->writeTab->showPage( w );
       if ( dont_ask && !w->isUntitled())
       {
@@ -306,28 +311,38 @@ bool QuantaDoc::saveAll(bool dont_ask)
 
 void QuantaDoc::closeDocument()
 {
-	if ( !saveModified() ) return;
-  write()->closeTempFile();
-  fileWatcher->removeFile(write()->url().path());
-	m_docList->remove( url().url() );
-	if ( !app->view->removeWrite()) openDocument( KURL() );
+	if (saveModified())
+  {
+    Document *w = write();
+    w->closeTempFile();
+    if (!w->url().path().isEmpty()) fileWatcher->removeFile(w->url().path());
+  	m_docList->remove( w->url().url() );
+  	if ( !app->view->removeWrite()) openDocument( KURL() );
+  }
 }
 
 void QuantaDoc::closeAll()
 {
+  Document *w;
   do
   {
     if (app->view->writeExists())
     {
-	    if ( !saveModified() ) return;
-      write()->closeTempFile();
-      fileWatcher->removeFile(write()->url().path());
-		  m_docList->remove( url().url() );
+	    if (saveModified() )
+      {
+        w = write();
+        w->closeTempFile();
+        if (!w->url().path().isEmpty()) fileWatcher->removeFile(w->url().path());
+  		  m_docList->remove( w->url().url() );
+      } else
+      {
+        return; //save failed, so don't close anything
+      }
     }
 	}
 	while ( app->view->removeWrite());
 
-  // so we remove all kwrites
+  //all documents were removed, so open an empty one
 	openDocument( KURL() );
 }
 
@@ -379,7 +394,7 @@ bool QuantaDoc::saveModified()
            }
            else
            {
-             saveDocument( url());
+             saveDocument( write()->url());
        	   };
 
            completed=true;
@@ -450,7 +465,7 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 													      _parent, 0,
 													      this, 0 );
 
-  Document  *w    = new Document (basePath(), doc, app->getProject(), _parent, 0, 0, app->m_pluginInterface);
+  Document  *w    = new Document (app->projectBaseURL(), doc, app->getProject(), _parent, 0, 0, app->m_pluginInterface);
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
@@ -652,22 +667,30 @@ void QuantaDoc::nextDocument()
  	tab->showPage( new_d );
 }
 
-void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
+void QuantaDoc::changeFileTabName(const KURL& oldURL, KURL newURL)
 {
-	if ( newUrl.isNull() ) newUrl = url().url();
-
-	if ( app->view->writeTab->tabToolTip(write()) != newUrl )
-	{
-    app->view->writeTab->changeTab( write(), QExtFileInfo::shortName( newUrl));
-    app->view->writeTab->setTabToolTip( write(), newUrl );
-  }
-
-  if ( oldUrl != newUrl )
+  Document *w = write();
+  
+	if (newURL.isEmpty())
   {
-    m_docList->remove( oldUrl );
-    m_docList->insert( newUrl, write() );
+    newURL = w->url();
   }
 
+	if ( app->view->writeTab->tabToolTip(w) != newURL.prettyURL() )
+	{
+    app->view->writeTab->changeTab( w, QExtFileInfo::shortName(newURL.path()) );
+    app->view->writeTab->setTabToolTip( w, newURL.prettyURL() );
+  }
+
+  if ( oldURL != newURL )
+  {
+    m_docList->remove( oldURL.url() );
+    m_docList->insert( newURL.url(), w );
+  }
+
+
+  //TODO Why is this useful??
+/*  
   QDictIterator<Document> it1(*m_docList);
 // QDictIterator<Document> it2(*m_docList);
 
@@ -675,7 +698,6 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
  	while ( it1.current() )
  	{
  		QString name1 = it1.currentKey();
- /*
  		len = 0;
  		i = name1.findRev( '/' );
 
@@ -698,12 +720,12 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
  			}
  			++it2;
  		}
- 		QString shortUrl = name1.right( len );   */
+ 		QString shortUrl = name1.right( len );  
   	 QString shortUrl = KURL(name1).prettyURL();
   	 if (shortUrl.left(5) == "file:") shortUrl.remove(0,5);
      if (shortUrl.left(1) == "/")
     {
-       	shortUrl = QExtFileInfo::toRelative(shortUrl,basePath());
+       	shortUrl = QExtFileInfo::toRelative(shortUrl,baseURL());
         if (shortUrl.contains("../"))
         {
           shortUrl.replace(QRegExp("\\.\\./"),"");
@@ -715,9 +737,10 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
     {
  		  app->view->writeTab->changeTab( it1.current() , shortUrl.section("/",-1) );
  		  app->view->writeTab->setTabToolTip( it1.current() , shortUrl );
-    }
+    }                                       
  		++it1;
  	}
+  */
 }
 
 /// SLOTS

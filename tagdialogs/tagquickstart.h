@@ -3,7 +3,8 @@
                              -------------------
     begin                : Sat Nov 27 1999
     copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+                           (C) 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,14 +21,16 @@
 
 #include "tagquickstarts.h"
 
+class KURL;
+
 class TagQuickStart : public TagQuickStartS  {
    Q_OBJECT
 public: 
-	TagQuickStart( QString basePath, QWidget *parent=0, const char *name=0);
+	TagQuickStart( const KURL& a_baseURL, QWidget *parent=0, const char *name=0);
 	~TagQuickStart();
 
 private:
-	QString basePath;
+	KURL baseURL;
 	
 public slots: // Public slots
   

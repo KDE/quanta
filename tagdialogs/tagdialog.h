@@ -35,6 +35,7 @@ class TagWidget;
 class Tagxml;
 class QTag;
 class Tag;
+class KURL;
 
 class TagDialog : public QTabDialog  {
    Q_OBJECT
@@ -49,15 +50,15 @@ public:
                </a>
 
   */
-	TagDialog(QTag* dtdTag, Tag* tag, QString base = QString::null);
-	TagDialog(QTag* dtdTag, QString attrs=QString::null, QString base = QString::null);
+	TagDialog(QTag* dtdTag, Tag* tag, KURL a_baseURL = KURL());
+	TagDialog(QTag* dtdTag, QString attrs=QString::null, KURL a_baseURL = KURL());
 	~TagDialog();
   /** Insert an attribute to dict*/
   void insertAttribute(QString *attr, QString *value);
 	/**  */
   void parseTag();
   /** returen doc path */
-	QString getBasePath();
+	KURL baseURL();
 
 
   /** Return the attributes in QDict<QString> format*/
@@ -71,10 +72,10 @@ public:
 
 public:
 
-  QWidget 				*mainDlg;
+  QWidget *mainDlg;
 
   QDict<QString> *dict;
-  QString basePath;
+  KURL m_baseURL;
 
 public slots: // Public slots
   void slotAccept();
@@ -86,7 +87,7 @@ private:
 
   QPtrList<Tagxml> *extraPageList;
 
-  void init(QTag* dtdTag, QString base);
+  void init(QTag* dtdTag, KURL a_baseURL);
   void parseAttributes( QString attrs );
 };
 

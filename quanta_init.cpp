@@ -47,6 +47,7 @@
 #include <kaction.h>
 #include <kstdaction.h>
 #include <kparts/componentfactory.h>
+#include <kprogress.h>
 
 // application specific includes
 
@@ -121,10 +122,6 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   setHighlight = 0;
   grepDialog  = 0L;
   exitingFlag = false;
-
-  initQuanta();
-
-//  QTimer::singleShot(10,this, SLOT(initQuanta()));
 }
 
 QuantaApp::~QuantaApp()
@@ -143,6 +140,7 @@ void QuantaApp::initQuanta()
 {
   parser = new Parser();
 
+
   initTagDict  ();
   initStatusBar();
   initDocument ();
@@ -150,6 +148,7 @@ void QuantaApp::initQuanta()
   initProject  ();
 
   initActions();
+
   readOptions();
 
 //Check for an existing quanatui.rc
@@ -190,7 +189,7 @@ void QuantaApp::initQuanta()
   pm_bookmark  = (QPopupMenu*)guiFactory()->container("bookmarks", this);
   connect(pm_bookmark, SIGNAL(aboutToShow()), this, SLOT(bookmarkMenuAboutToShow()));
 
-  QPopupMenu* pm_view = (QPopupMenu*)guiFactory()->container("qview", this);
+  QPopupMenu* pm_view = (QPopupMenu*)guiFactory()->container("view", this);
   connect(pm_view,SIGNAL(aboutToShow()), this, SLOT(viewMenuAboutToShow()));
 
   connect( messageOutput, SIGNAL(clicked(QString,int)),
@@ -221,7 +220,10 @@ void QuantaApp::initStatusBar()
   statusbarTimer = new QTimer(this);
   connect(statusbarTimer,SIGNAL(timeout()),this,SLOT(statusBarTimeout()));
 
+  progressBar = new KProgress(statusBar());
+  progressBar->show();
   statusBar()->insertItem(i18n(IDS_DEFAULT),IDS_STATUS, 1);
+  statusBar()->addWidget(progressBar);
   statusBar()->insertFixedItem(" XXX ",     IDS_INS_OVR  );
   statusBar()->insertFixedItem(" * ",       IDS_MODIFIED );
   statusBar()->insertFixedItem(i18n("Line: 00000 Col: 000"), IDS_STATUS_CLM, true);
@@ -249,10 +251,10 @@ void QuantaApp::initProject()
 
   connect(project,  SIGNAL(openFile    (const KURL &, const QString&)),
           this,     SLOT  (slotFileOpen(const KURL &, const QString&)));
-  connect(project,  SIGNAL(reloadTree(QStringList,bool,bool)),
-          pTab,     SLOT  (slotReloadTree(QStringList,bool,bool)));
-  connect(project,  SIGNAL(setBasePath(QString)),
-          pTab,     SLOT  (slotSetBasePath(QString)));
+  connect(project,  SIGNAL(reloadTree(const KURL::List& ,bool)),
+          pTab,     SLOT  (slotReloadTree(const KURL::List&,bool)));
+  connect(project,  SIGNAL(setBaseURL(const KURL&)),
+          pTab,     SLOT  (slotSetBaseURL(const KURL&)));
   connect(project,  SIGNAL(setProjectName(QString)),
           pTab,     SLOT  (slotSetProjectName(QString)));
   connect(project,  SIGNAL(closeFiles()),
@@ -262,28 +264,24 @@ void QuantaApp::initProject()
   connect(project,  SIGNAL(removeFromProject(int)),
           pTab,     SLOT  (slotRemoveFromProject(int)));
 
-  connect(fLTab,    SIGNAL(insertDirInProject(QString)),
-          project,  SLOT  (addDirectory(QString)));
-  connect(fTTab,    SIGNAL(insertDirInProject(QString)),
-          project,  SLOT  (addDirectory(QString)));
-
-  connect(fLTab,    SIGNAL(insertFileInProject(QString)),
-          project,  SLOT  (insertFile(QString)));
-  connect(fTTab,    SIGNAL(insertFileInProject(QString)),
-          project,  SLOT  (insertFile(QString)));
-
-  connect(pTab,     SIGNAL(renameFileInProject(QString)),
-          project,  SLOT  (slotRenameFile(QString)));
-  connect(pTab,     SIGNAL(renameFolderInProject(QString)),
-          project,  SLOT  (slotRenameFolder(QString)));
-  connect(pTab,     SIGNAL(removeFileFromProject(QString)),
-          project,  SLOT  (slotRemoveFile(QString)));
-  connect(pTab,     SIGNAL(removeFolderFromProject(QString)),
-          project,  SLOT  (slotRemoveFolder(QString)));
-  connect(pTab,     SIGNAL(uploadSingleFile(QString)),
-          project,  SLOT  (uploadFile(QString)));
-  connect(pTab,     SIGNAL(uploadSingleFolder(QString)),
-          project,  SLOT  (uploadFile(QString)));
+  connect(fLTab,    SIGNAL(insertDirInProject(const KURL&)),
+          project,  SLOT  (slotAddDirectory(const KURL&)));
+  connect(fTTab,    SIGNAL(insertDirInProject(const KURL&)),
+          project,  SLOT  (slotAddDirectory(const KURL&)));
+          
+  connect(fLTab,    SIGNAL(insertFileInProject(const KURL&)),
+          project,  SLOT  (slotInsertFile(const KURL&)));
+  connect(fTTab,    SIGNAL(insertFileInProject(const KURL&)),
+          project,  SLOT  (slotInsertFile(const KURL&)));
+          
+  connect(pTab,     SIGNAL(renameInProject(const KURL&)),
+          project,  SLOT  (slotRename(const KURL&)));
+  connect(pTab,     SIGNAL(removeFromProject(const KURL&)),
+          project,  SLOT  (slotRemove(const KURL&)));
+  connect(pTab,     SIGNAL(uploadSingleURL(const KURL&)),
+          project,  SLOT  (slotUploadURL(const KURL&)));
+  connect(pTab,     SIGNAL(rescanProjectDir()),
+          project,  SLOT  (slotRescanPrjDir()));
 
   connect(project,  SIGNAL(selectMessageWidget()),
           this,     SLOT  (slotMessageWidgetEnable()));
@@ -323,12 +321,26 @@ void QuantaApp::initView()
   dtabdock = createDockWidget( i18n("Docs"), BarIcon ("contents2"),    0L, "");
   dtabdock->setToolTipString(i18n("Documentation"));
 
+  QStringList topStrList;
   config->setGroup("General Options");
-  QStringList topList(config->readListEntry("Top folders"));
+  topStrList = config->readListEntry("Top folders");
+  KURL::List topList;
+  KURL url;
+  for (uint i = 0; i < topStrList.count(); i++)
+  {
+    url = KURL();
+    QuantaCommon::setUrl(url, topStrList[i]);
+    topList.append(url);
+  }
+  url = KURL();
+  url.setPath("/");
+  topList.append(url);
+  url = KURL();
+  url.setPath(QDir::homeDirPath()+"/");
+  topList.append(url);
 
   fTab = new QWidgetStack( ftabdock );
-
-  fTTab = new FilesTreeView( QDir::homeDirPath()+"/" , topList, fTab );
+  fTTab = new FilesTreeView(topList, fTab );
   fLTab = new FilesListView( QDir::homeDirPath()+"/" , 0L, fTab );
 
   fTab -> addWidget( fTTab, 0 );
@@ -385,12 +397,12 @@ void QuantaApp::initView()
             this, SLOT(slotFileOpen(const KURL &, const QString&)));
   connect(   fLTab,SIGNAL(openFile  (const KURL &, const QString&)),
             this, SLOT(slotFileOpen(const KURL &, const QString&)));
-
-  connect(   fTTab,SIGNAL(openImage(QString)),
-            this, SLOT  (slotImageOpen(QString)));
-  connect(   fLTab,SIGNAL(openImage(QString)),
-            this, SLOT  (slotImageOpen(QString)));
-
+            
+  connect(   fTTab,SIGNAL(openImage(const KURL&)),
+            this, SLOT  (slotImageOpen(const KURL&)));
+  connect(   fLTab,SIGNAL(openImage(const KURL&)),
+            this, SLOT  (slotImageOpen(const KURL&)));
+            
   connect(  fLTab,SIGNAL(changeMode()),
             this, SLOT(slotSwapLeftPanelMode()));
   connect(  fTTab,SIGNAL(changeMode()),
@@ -398,43 +410,34 @@ void QuantaApp::initView()
 
   connect(   pTab, SIGNAL(openFile  (const KURL &, const QString&)),
             this, SLOT(slotFileOpen(const KURL &, const QString&)));
-  connect(   pTab, SIGNAL(openImage  (QString)),
-            this, SLOT(slotImageOpen(QString)));
+  connect(   pTab, SIGNAL(openImage  (const KURL&)),
+            this, SLOT(slotImageOpen(const KURL&)));
   connect(   pTab, SIGNAL(loadToolbarFile  (const KURL&)),
             this, SLOT(slotLoadToolbarFile(const KURL&)));
 
-  connect(   tTab, SIGNAL(openImage  (QString)),
-            this, SLOT(slotImageOpen(QString)));
+  connect(   tTab, SIGNAL(openImage  (const KURL&)),
+            this, SLOT(slotImageOpen(const KURL&)));
   connect(   tTab, SIGNAL(openFile  (const KURL &, const QString&)),
             this, SLOT(slotFileOpen(const KURL &, const QString&)));
-  connect(   tTab, SIGNAL(insertFile  (QString)),
-            this, SLOT(slotInsertFile(QString)));
-  connect(   tTab,SIGNAL(insertTag(QString, DirInfo)),
-            this, SLOT(slotInsertTag(QString, DirInfo)));
+  connect(   tTab, SIGNAL(insertFile  (const KURL &)),
+            this, SLOT(slotInsertFile(const KURL &)));
+  connect(   tTab,SIGNAL(insertTag(const KURL &, DirInfo)),
+            this, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(   fTTab,SIGNAL(insertTag(QString, DirInfo)),
-            this, SLOT(slotInsertTag(QString, DirInfo)));
-  connect(   fLTab,SIGNAL(insertTag(QString, DirInfo)),
-            this, SLOT(slotInsertTag(QString, DirInfo)));
-  connect(   pTab,SIGNAL(insertTag(QString, DirInfo)),
-            this, SLOT(slotInsertTag(QString, DirInfo)));
-
+  connect(   fTTab,SIGNAL(insertTag(const KURL &, DirInfo)),
+            this, SLOT(slotInsertTag(const KURL &, DirInfo)));
+  connect(   fLTab,SIGNAL(insertTag(const KURL &, DirInfo)),
+            this, SLOT(slotInsertTag(const KURL &, DirInfo)));
+  connect(   pTab,SIGNAL(insertTag(const KURL &, DirInfo)),
+            this, SLOT(slotInsertTag(const KURL &, DirInfo)));
+            
   connect(   fLTab,SIGNAL(activatePreview()),
             this, SLOT(slotActivatePreview()));
   connect(   fTTab,SIGNAL(activatePreview()),
             this, SLOT(slotActivatePreview()));
   connect(   pTab, SIGNAL(activatePreview()),
             this, SLOT(slotActivatePreview()));
-
-  connect(this, SIGNAL(reloadTreeviews()), fTTab, SLOT (slotReload()));
 //  connect(this, SIGNAL(reloadTreeviews()), pTab, SLOT (slotReload()));
-  connect(this, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
-
-  connect(fTTab, SIGNAL(reloadTreeviews()), fTTab, SLOT (slotReload()));
-  connect(fTTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
-  connect(tTab, SIGNAL(reloadTreeviews()), fTTab, SLOT (slotReload()));
-  connect(tTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
-
 
   connect(  htmlpart,       SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
   connect(  htmlPartDoc,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
@@ -511,27 +514,18 @@ void QuantaApp::saveOptions()
     config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
 
     config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
-
     config->writeEntry("Follow Cursor", sTab->followCursor() );
-
     config->writeEntry("PHP Debugger Port", phpDebugPort );
-
-    config->writeEntry("Top folders", fTTab->dirList);
-    config->writeEntry("List of opened files", doc->openedFiles());
-
+//    config->writeEntry("Top folders", fTTab->dirList);
+    config->writeEntry("List of opened files", doc->openedFiles().toStringList());
     config->writeEntry ("Version", VERSION); // version
-
     doc    ->writeConfig(config); // kwrites
     project->writeConfig(config); // project
-
     config->setGroup  ("General Options");
-
     fileRecent->saveEntries(config);
     config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     config->writeEntry ("PHP Debugger style", debuggerStyle);
-
     writeDockConfig();
-
     saveMainWindowSettings(config);
   }
 }
@@ -690,7 +684,7 @@ void QuantaApp::loadInitialProject(QString url)
   if(url.isNull())
     project->readLastConfig();
   else
-    project->openProject(url);
+    project->slotOpenProject(url);
 }
 
 
@@ -705,10 +699,12 @@ bool QuantaApp::queryExit()
     canExit = doc->saveAll(false);
     if (canExit)
     {
+      Document *w;
       do
       {
-        view->write()->closeTempFile();
-    	  doc->docList()->remove( doc->url().url() );
+        w = view->write();
+        w->closeTempFile();
+    	  doc->docList()->remove(w->url().url() );
   	  }while (view->removeWrite());
     }
   }
@@ -902,13 +898,16 @@ void QuantaApp::readTagDir(QString &dirName)
  QTagList *tagList = new QTagList(119, false); //max 119 tag in a DTD
  tagList->setAutoDelete(true);
  //read all the tag files
- QStringList files = QExtFileInfo::allFilesRelative(dirName, "*.tag");
- for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+ KURL dirURL;
+ QuantaCommon::setUrl(dirURL, dirName);
+ dirURL.adjustPath(1);
+ KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*.tag");
+ for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
  {
-   QString name = QFileInfo(*it_f).baseName();
+   QString name = (*it_f).fileName();
    if (! name.isEmpty())
    {
-     QString fname = dirName + *it_f ;
+     QString fname = dirName + (*it_f).fileName() ;
      numOfTags += readTagFile(fname,dtd, tagList);
    }
  }
@@ -923,7 +922,7 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->toolbars = dtdConfig->readListEntry("Names");
  for (uint i = 0; i < dtd->toolbars.count(); i++)
  {
-   dtd->toolbars[i] = toolbarsLocation + dtd->toolbars[i].stripWhiteSpace() +".toolbar.tgz";
+   dtd->toolbars[i] = toolbarsLocation + dtd->toolbars[i].stripWhiteSpace() + toolbarExtension;
  }
 
  //read the extra tags and their attributes
@@ -1303,15 +1302,15 @@ void QuantaApp::initActions()
     // Project actions
     //
     newPrjAction = new KAction( i18n( "&New Project..." ), 0,
-                        project, SLOT( newProject() ),
+                        project, SLOT( slotNewProject() ),
                         actionCollection(), "new_project" );
 
     openPrjAction = new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
-                        project, SLOT( openProject() ),
+                        project, SLOT( slotOpenProject() ),
                         actionCollection(), "open_project" );
 
     project -> projectRecent =
-      KStdAction::openRecent(project, SLOT(openProject(const KURL&)),
+      KStdAction::openRecent(project, SLOT(slotOpenProject(const KURL&)),
                              actionCollection(), "project_open_recent");
 
     connect(project,                SIGNAL(checkOpenAction(bool)),
@@ -1322,19 +1321,19 @@ void QuantaApp::initActions()
             project->projectRecent, SLOT(setEnabled(bool)));
 
     saveprjAction =  new KAction( i18n( "&Save Project" ), SmallIcon("save"), 0,
-                         project, SLOT( saveProject() ),
+                         project, SLOT( slotSaveProject() ),
                          actionCollection(), "save_project" );
 
     closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0,
-                         project, SLOT( closeProject() ),
+                         project, SLOT( slotCloseProject() ),
                          actionCollection(), "close_project" );
 
     insertFileAction = new KAction( i18n( "&Insert Files..." ), 0,
-                        project, SLOT( addFiles() ),
+                        project, SLOT( slotAddFiles() ),
                         actionCollection(), "insert_file" );
 
     insertDirAction = new KAction( i18n( "&Insert Directory..." ), 0,
-                        project, SLOT( addDirectory() ),
+                        project, SLOT( slotAddDirectory() ),
                         actionCollection(), "insert_directory" );
 
     rescanPrjDirAction = new KAction( i18n( "&Rescan Project Directory" ), SmallIcon("reload"), 0,
@@ -1342,11 +1341,11 @@ void QuantaApp::initActions()
                         actionCollection(), "rescan_prjdir" );
 
     uploadProjectAction = new KAction( i18n( "&Upload Project..." ), Key_F8,
-                        project, SLOT( upload() ),
+                        project, SLOT( slotUpload() ),
                         actionCollection(), "upload_project" );
 
     projectOptionAction = new KAction( i18n( "&Project Options..." ), Key_F7,
-                        project, SLOT( options() ),
+                        project, SLOT( slotOptions() ),
                         actionCollection(), "project_options" );
 
     // Options actions
@@ -1386,19 +1385,6 @@ void QuantaApp::initActions()
 /** Initialize the plugin architecture. */
 void QuantaApp::initPlugins()
 {
-#if 0
- KConfig *config = new KConfig(locate("appdata","plugins.rc"));
- config->setGroup("General");
- QStrList pList;
- config->readListEntry("Plugins",pList);
- for (uint i = 0; i < pList.count(); i++)
- {
-   QString name = pList.at(i);
-   if (locate("exe",name) != QString::null)
-      pluginsList.append(name);
- }
- delete config;
-#else
   m_pluginInterface = new QuantaPluginInterface(this);
   // TODO : read option from plugins.rc to see if we should validate the plugins
 
@@ -1408,7 +1394,6 @@ void QuantaApp::initPlugins()
   connect(m_pluginMenu, SIGNAL(activated(int)), this, SLOT(slotPluginRun(int)));
 
   menuBar()->insertItem(i18n("P&lugins"), m_pluginMenu, -1, 6);
-#endif
 }
 
 /** Builds the plugins menu dynamically */

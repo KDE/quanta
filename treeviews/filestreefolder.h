@@ -1,9 +1,10 @@
 /***************************************************************************
-                          dirview.h  -  description
+                          filestreefolder.h  -  description
                              -------------------
     begin                : Mon Feb 21 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski
-    email                : pdima@mail.univ.kiev.ua
+                           (C) 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,44 +16,49 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef FILESVIEW_H
-#define FILESVIEW_H
+#ifndef FILESTREEFOLDER_H
+#define FILESTREEFOLDER_H
 
 #include <qlistview.h>
-#include <qpopupmenu.h>
-#include <qstring.h>
 #include <qstringlist.h>
-#include <qfile.h>
 
-class FilesTreeFolder: public QListViewItem
-{
+#include <kurl.h>
+
+class QMimeSource;
+class QDropEvent;
+class FilesTreeView;
+
+
+class FilesTreeFolder:public QListViewItem{
 public:
-    FilesTreeFolder( FilesTreeFolder * parent, QString name );
-    FilesTreeFolder( QListView * parent, QString name, const QString & _dir);
-    virtual ~FilesTreeFolder();
+  FilesTreeFolder( QListView * parentListView, FilesTreeFolder * parent, const KURL& p_url);
+  FilesTreeFolder( QListView * parentListView, const QString &p_name, const KURL& p_url);
+  virtual ~FilesTreeFolder();
 
-    QString text( int column ) const;
+  /** Open a directory node and read the subdir */
+  virtual void setOpen( bool );
+  virtual QString fullName();
 
-  	/** used for sorting */
-  	virtual QString key ( int column, bool ascending ) const;
-    virtual QString fullName();
 
-    virtual void setOpen( bool );
-    void setup();
+  QString text( int column ) const;
+
+ 	/** used for sorting */
+ 	virtual QString key ( int column, bool ascending ) const;
+
+  void setup();
   /** No descriptions */
   virtual bool acceptDrop(const QMimeSource *mime) const;
   /** No descriptions */
   virtual void sortChildItems(int column, bool ascending);
 
-public:
-    QFile file;
-    FilesTreeFolder * parentFolder;
-    QString folderName;
-    QStringList openedList;
+  FilesTreeFolder * parentFolder;
+  QString name;
+  KURL url;
+  QStringList openedList;
 
-    bool readable;
-    bool opened;
-    bool showall;
+  bool readable;
+  bool opened;
+  bool showall;
 
 public slots: // Public slots
   	/** reload file list */
@@ -66,6 +72,12 @@ private: // Private methods
 protected: // Protected methods
   /** No descriptions */
   virtual void dropped(QDropEvent *e);
+  /** No descriptions */
+  void init();
+
+  FilesTreeView* parentView;
+
+
 };
 
 

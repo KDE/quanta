@@ -86,8 +86,8 @@ class QuantaView : public QWidget
   void resizeEvent (QResizeEvent *);
   /** Insert a new tag by bringing up the TagDialog. */
   void insertNewTag(QString tag, QString attr = QString::null,bool insertInLine = true);
-  /** Returns the basePath of the document. */
-  QString basePath();
+  /** Returns the baseURL of the document. */
+  KURL baseURL();
   /** True if a Document object exists, false otherwise. */
   bool writeExists();
 
@@ -107,7 +107,7 @@ class QuantaView : public QWidget
     
     void slotEditCurrentTag();
     
-    void slotInsertTagFromTree(QString name);
+//    void slotInsertTagFromTree(QString name);
      
     void slotViewInKFM();
     void slotViewInNetscape();

@@ -3,7 +3,8 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+                           (C) 2002 Andras Mantia
+    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,15 +22,19 @@
 #include <qpushbutton.h>
 #include <qstringlist.h>
 #include <qlistview.h>
+#include <qfileinfo.h>
 
 // kde includes
 #include <klocale.h>
 #include <kprocess.h>
 #include <kiconloader.h>
+#include <kio/job.h>
+#include <kmessagebox.h>
 
 // app includes
 #include "projectnewweb.h"
 #include "../qextfileinfo.h"
+#include "../quantacommon.h"
 
 ProjectNewWeb::ProjectNewWeb(QWidget *parent, const char *name )
 	: ProjectNewWebS(parent,name)
@@ -72,10 +77,10 @@ void ProjectNewWeb::setCommandL(const QString& url)
   commandLine->setText("wget -c -np -r --level=5 -nH "+siteurl);
 }
 
-void ProjectNewWeb::setBasePath(QString path)
+void ProjectNewWeb::setBaseURL(const KURL& a_baseURL)
 {
-  this->basePath = path;
-  if ( basePath.right(1) != "/" )	basePath += "/";
+  baseURL = a_baseURL;
+  baseURL.adjustPath(1);
 }
 
 void ProjectNewWeb::slotStart()
@@ -84,32 +89,48 @@ void ProjectNewWeb::slotStart()
   {
     emit enableMessages();
 
-    QExtFileInfo::createDir( basePath );
-
-    chdir( basePath );
-
-    proc = new KProcess();
-    proc ->clearArguments();
-
-    QStringList list = QStringList::split (" ", commandLine->text());
-
-    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+    if (QExtFileInfo::createDir( baseURL))
     {
-      *proc << *it;
-    }
+      if (baseURL.protocol() == "file")
+      {
+        chdir( baseURL.path(1));
 
-    connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
-                   SLOT(  slotGetWgetOutput(KProcess*,char*,int)));
-    connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
-                   SLOT(  slotGetWgetOutput(KProcess*,char*,int)));
-    connect( proc, SIGNAL(processExited(    KProcess *)), this,
-                   SLOT(  slotGetWgetExited(KProcess *)));
+        proc = new KProcess();
+        proc ->clearArguments();
 
-    proc->start(KProcess::NotifyOnExit, KProcess::AllOutput);
+        QStringList list = QStringList::split (" ", commandLine->text());
 
-    start = true;
-    button->setText( i18n("Stop") );
-  	emit enableNextButton((QWidget *)this->parent(),false);
+        for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+        {
+          *proc << *it;
+        }
+
+        connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
+                       SLOT(  slotGetWgetOutput(KProcess*,char*,int)));
+        connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
+                       SLOT(  slotGetWgetOutput(KProcess*,char*,int)));
+        connect( proc, SIGNAL(processExited(    KProcess *)), this,
+                       SLOT(  slotGetWgetExited(KProcess *)));
+
+        proc->start(KProcess::NotifyOnExit, KProcess::AllOutput);
+
+        start = true;
+        button->setText( i18n("Stop") );
+      	emit enableNextButton((QWidget *)this->parent(),false);
+      } else
+      {
+        KMessageBox::sorry(this,i18n("This feature is available, only if the project lies on a local disk!"));
+        start = false;
+        button->setText( i18n("Start") );
+        emit enableNextButton((QWidget *)this->parent(),true);
+      }
+   } else
+   {
+     QuantaCommon::dirCreationError(this, baseURL);
+     start = false;
+     button->setText( i18n("Start") );
+     emit enableNextButton((QWidget *)this->parent(),true);
+   }
   } else {
 
     // STOPPING !!!
@@ -138,6 +159,7 @@ void ProjectNewWeb::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
   emit messages(output);
 
   int pos;
+  QString basePath = baseURL.path(1);
   while ( (pos = output.find("saved")) != -1 )
   {
     int begName = output.findRev('`',pos);
@@ -159,7 +181,7 @@ void ProjectNewWeb::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
 
     textFromTo->setText( siteUrl->text()+" -->> "+basePath+fileName );
 
-    filesList.append( basePath+fileName );
+    filesList.append( basePath + fileName );
 
     QFileInfo fi( basePath+fileName );
     QString size;

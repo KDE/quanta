@@ -3,7 +3,8 @@
                              -------------------
     begin                : Wed Sep 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+                           (C) 2002 Andras Mantia
+    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,15 +24,16 @@
 // KDE includes
 #include <klocale.h>
 #include <kfiledialog.h>
+#include <kurl.h>
 
 // app include
 #include "filecombo.h"
 #include "../qextfileinfo.h"
 
-FileCombo::FileCombo(QString basePath, QWidget *parent, const char *name )
+FileCombo::FileCombo(const KURL& a_baseURL, QWidget *parent, const char *name )
   :QWidget(parent,name)
 {
-  this->basePath = basePath;
+  baseURL = a_baseURL;
   m_absolutePath = false;
 
   QHBoxLayout *layout = new QHBoxLayout(this);
@@ -51,7 +53,7 @@ FileCombo::FileCombo(QString basePath, QWidget *parent, const char *name )
 FileCombo::FileCombo( QWidget *parent, const char *name )
    :QWidget( parent, name )
 {
-  this->basePath = ".";
+  baseURL.setPath(".");
 
   QHBoxLayout *layout = new QHBoxLayout(this);
 
@@ -82,28 +84,26 @@ void FileCombo::setText( QString _txt )
 
 void FileCombo::slotFileSelect()
 {
- 		QString fileName = KFileDialog::getOpenFileName(
- 		  basePath, i18n("*|All files"));
+//TODO: This still works only for local files, but it may be enough
+  KURL url = KFileDialog::getOpenURL(baseURL.url(), i18n("*|All files"));
 
-		if ( fileName.isEmpty() ) return;
-
-		QExtFileInfo file(fileName);
-		if (!m_absolutePath) file.convertToRelative( basePath );
-
-		QString text = file.filePath();
-		combo  ->setEditText( text );
+  if ( !url.isEmpty() )
+  {
+    if (!m_absolutePath) url = QExtFileInfo::toRelative(url, baseURL);
+    combo->setEditText( url.path() );
+  }
 }
 
 /** No descriptions */
-void FileCombo::setBasePath(const QString& p_basePath)
+void FileCombo::setBaseURL(const KURL& a_baseURL)
 {
- basePath = p_basePath;
+ baseURL = a_baseURL;
 }
 
 /** No descriptions */
 void FileCombo::setReturnAbsolutePath(bool absolutePath)
 {
- m_absolutePath = true;
+ m_absolutePath = absolutePath;
 }
 
 #include "filecombo.moc"

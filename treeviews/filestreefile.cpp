@@ -28,20 +28,20 @@
 #include "filestreefolder.h"
 #include "../resource.h"
 
-FilesTreeFile::FilesTreeFile( FilesTreeFolder *parent, QString name, QString filename)
+FilesTreeFile::FilesTreeFile( FilesTreeFolder *parent, QString name, const KURL& p_url)
     : QListViewItem( parent, name )
 {
-	fname = filename;
+	url = p_url;
 	isDir = false;
 
   setDragEnabled(true);
   setDropEnabled(true);
 }
 
-FilesTreeFile::FilesTreeFile( QListView *parent, QString name, QString filename)
+FilesTreeFile::FilesTreeFile( QListView *parent, QString name, const KURL& p_url)
     : QListViewItem( parent, name )
 {
-	fname = filename;
+	url = p_url;
 	isDir = false;
   setDragEnabled(true);
   setDropEnabled(true);

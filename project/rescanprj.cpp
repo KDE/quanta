@@ -2,54 +2,36 @@
 #include "rescanprj.moc"
 // qt includes
 #include <qlistview.h>
-#include <qstringlist.h>
 #include <qpushbutton.h>
 
 // kde includes
+#include <kurl.h>
+#include <klocale.h>
 
 // app includes
 #include "rescanprj.h"
 #include "../qextfileinfo.h"
+#include "../quantacommon.h"
 
-RescanPrj::RescanPrj(QStringList prjFileList, QString basePath, QWidget *parent, const char *name, bool modal )
+//TODO Redo with KURLs and KDIRLister.
+
+RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent, const char *name, bool modal )
 	: RescanPrjDir(parent,name,modal)
 {
   setCaption(name);
 
-  listView->setColumnAlignment(1,Qt::AlignRight);
+  listView->setColumnText(1, i18n("Add"));
+  listView->removeColumn(3); //TODO: Date column removed as date is not read...
+  baseURL = p_baseURL;
+  baseURL.adjustPath(1);
 
-  if ( basePath.right(1) != "/" ) basePath += "/";
+  prjFileList = p_prjFileList;
 
-  KURL bu(basePath);
-  this->basePath = basePath;
-  this->prjFileList = prjFileList;
+  KIO::ListJob *job = KIO::listRecursive( baseURL, false );
 
-  if ( bu.isLocalFile() )
-  {
-    QStringList::Iterator it;
-  	QStringList r = QExtFileInfo::allFilesRelative( basePath, "*");
+  connect( job, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
+           this,SLOT  (addEntries(KIO::Job *,const KIO::UDSEntryList &)));
 
-  	for ( it = r.begin(); it != r.end(); ++it )
-  	{
-  	  if ( prjFileList.findIndex(*it) == -1 )
-  	  {
-  	    list.append( *it );
-  	    QFileInfo fi( basePath+*it );
-
-  	    QString size;
-        size.sprintf( "%i", fi.size() );
-
-  	    new QListViewItem(listView, *it, size);
-  	  }
-  	}
-	}
-	else
-	{
-	  KIO::ListJob *job = KIO::listRecursive( bu, false );
-
-    connect( job, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
-             this,SLOT  (addEntries(KIO::Job *,const KIO::UDSEntryList &)));
-	}
 
 	connect( buttonSelect,   SIGNAL(clicked()),
 	         this,           SLOT(slotSelect()));
@@ -57,6 +39,10 @@ RescanPrj::RescanPrj(QStringList prjFileList, QString basePath, QWidget *parent,
 	         this,           SLOT(slotDeselect()));
 	connect( buttonInvert,   SIGNAL(clicked()),
 	         this,           SLOT(slotInvert()));
+	connect( buttonExpand,   SIGNAL(clicked()),
+	         this,           SLOT(slotExpand()));
+	connect( buttonCollapse, SIGNAL(clicked()),
+	         this,           SLOT(slotCollapse()));
 }
 
 RescanPrj::~RescanPrj(){
@@ -72,9 +58,10 @@ void RescanPrj::addEntries(KIO::Job *,const KIO::UDSEntryList &list)
     KIO::UDSEntry::ConstIterator it2 = (*it).begin();
 
     bool isDir;
-    QString name;
+    QString name;    
     unsigned long size = 0L;
 
+    //TODO: Get also the file date
     for( ; it2 != (*it).end(); it2++ )
     {
       switch( (*it2).m_uds ) {
@@ -92,62 +79,73 @@ void RescanPrj::addEntries(KIO::Job *,const KIO::UDSEntryList &list)
       }
     }
 
+    KURL u = baseURL;
+    QuantaCommon::setUrl(u, name);
     if ( !isDir && name != QString::fromLatin1("..") &&
-         prjFileList.findIndex(name) == -1 )
+         prjFileList.findIndex(u) == -1 )
     {
-	    this->list.append(name);
+	    this->list.append(u);
 
-  	  QString s;
-      s.sprintf( "%i", size );
+  	  QString s = QString("%1").arg( size );
 
-  	  new QListViewItem(listView, name, s);
+      
+//  	  new QListViewItem(listView, name, s);
+      listView->addItem(name, s, "");
     }
   }
+
+  slotSelect();
 }
 
 void RescanPrj::resizeEvent ( QResizeEvent *t )
 {
   RescanPrjDir::resizeEvent(t);
-  listView->setColumnWidth(0,listView->width()-listView->columnWidth(1)-20);
+//  listView->setColumnWidth(0,listView->width()-listView->columnWidth(1)-20);
 }
 
 void RescanPrj::slotSelect()
 {
-  QListViewItem *item;
-
-  for ( item = listView->firstChild(); item; item = item->nextSibling())
-  {
-    listView->setSelected( item, true );
-  }
+  listView->selectAll(true);
+  listView->slotSelectFile();
 }
 
 void RescanPrj::slotDeselect()
 {
-  listView->clearSelection();
+  listView->selectAll(false);
+  listView->slotSelectFile();
 }
 
 void RescanPrj::slotInvert()
 {
-  QListViewItem *item;
-
-  for ( item = listView->firstChild(); item; item = item->nextSibling())
-  {
-    listView->setSelected( item, !listView->isSelected( item ));
-  }
+  listView->invertAll();
+  listView->slotSelectFile();
 }
 
-QStringList RescanPrj::files()
+void RescanPrj::slotExpand()
 {
-	QStringList r;
+  listView->expandAll();
+}
+
+void RescanPrj::slotCollapse()
+{
+  listView->collapseAll();
+}
+
+KURL::List RescanPrj::files()
+{
+	KURL::List r;
 
   QListViewItem *item;
-
-  for ( item = listView->firstChild(); item; item = item->nextSibling())
+  QListViewItemIterator it(listView);
+  for ( ; it.current(); ++it )
   {
-    if ( listView->isSelected( item ))
-    {
-      r.append( basePath+item->text(0) );
-    }
+   item = it.current();
+   if ( listView->isSelected( item ))
+   {
+     KURL u = baseURL;
+     u.setPath(baseURL.path(1)+item->text(0));
+     r.append(u);
+   }
   }
   return r;
 }

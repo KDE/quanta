@@ -1,6 +1,7 @@
 /*
     From WebMaker - KDE HTML Editor
     Copyright (C) 1998, 1999 Alexei Dets <dets@services.ru>
+    Rewritten for Quanta Plus: (C) 2002 Andras Mantia <amantia@freemail.hu>
 	
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -11,30 +12,56 @@
 #ifndef _QEXTFILEINFO_H_
 #define _QEXTFILEINFO_H_
 
+#include <kio/global.h>
+#include <kio/job.h>
 #include <kurl.h>
+#include <kfileitem.h>
 
-#include <qfileinfo.h>
-#include <qstringlist.h>
+#include <qobject.h>
+#include <qptrlist.h>
+#include <qregexp.h>
 
-class QExtFileInfo:public QFileInfo
+class QExtFileInfo:public QObject
 {
+ Q_OBJECT
 public:
-	QExtFileInfo(const char *file);
-	bool convertToRelative(const char *baseDir);
-
+  QExtFileInfo() {};
+  ~QExtFileInfo() {};
+  
 	/** create to ralative short name */
-	static QString toRelative(QString fname,QString dir);
+	static KURL toRelative(const KURL& urlToConvert,const KURL& baseURL);
   /** convert relative filename to absolute */
-  static QString toAbsolute( QString  fname, QString dir);
+  static KURL toAbsolute(const KURL& urlToConvert,const KURL& baseURL);
   /** recurse function for all files in dir */
-  static QStringList allFiles( QString path, QString mask, int level = 0 );
-  static QStringList allFilesRelative( QString path, QString mask, int level = 0 );
+  static KURL::List allFiles( const KURL& path, const QString &mask);
+  static KURL::List allFilesRelative( const KURL& path, const QString &mask);
   /** create dir if don't exists */
-  static QString cdUp(QString &dir);
-  static void    createDir ( QString path );
-  static QString shortName ( QString fname );
-  static QString path      ( KURL &);
-  static QString home      ();
+  static bool createDir(const KURL & path );
+  static KURL cdUp(const KURL &dir);
+  static QString shortName(const QString &fname );
+  static KURL path(const KURL &);
+  static KURL home();
+  static bool exists(const KURL& url);
+
+private:
+  bool internalExists(const KURL& url);
+
+  bool bJobOK;
+  static QString* lastErrorMsg;
+  KIO::UDSEntry m_entry;
+  KURL::List dirListItems;
+  QPtrList<QRegExp> lstFilters;
+
+  void enter_loop();
+  /** No descriptions */
+  KURL::List allFilesInternal(const KURL& startURL, const QString& mask);
+
+//  friend class I_like_this_class;
+
+private slots:
+   void slotResult( KIO::Job * job );
+   void slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList);
 };
+
 
 #endif

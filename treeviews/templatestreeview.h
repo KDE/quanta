@@ -28,11 +28,12 @@
   */
 
 class FilesTreeFolder;
+class KURL;
 
 class TemplatesTreeView : public FilesTreeView  {
    Q_OBJECT
 public: 
-	TemplatesTreeView(const QString& projectBasePath,QWidget *parent=0, const char *name=0);
+	TemplatesTreeView(const KURL& projectBaseURL,QWidget *parent=0, const char *name=0);
 	~TemplatesTreeView();
   /** Writes a .dirinfo file from the selected item's path */
   void writeDirInfo(QString dirInfoFile="");
@@ -42,7 +43,7 @@ public:
 
 public slots:
   /** Sets the project template directory */
-  void slotSetTemplateDir(const QString &);
+  void slotSetTemplateURL(const KURL& newTemplateURL);
   /** No descriptions */
   void slotInsertInDocument();
   void slotMenu(QListViewItem *item, const QPoint &point, int);
@@ -64,7 +65,7 @@ public slots:
   void contentsDragEnterEvent(QDragEnterEvent *event);
 
 private:
-	QString basePath;
+	KURL baseURL;
 	
 	FilesTreeFolder *globalDir;
   	FilesTreeFolder *localDir;
@@ -76,7 +77,7 @@ private:
 	
 signals: // Signals
   /** No descriptions */
-  void insertFile(QString);
+  void insertFile(const KURL &);
 protected: // Protected methods
   /** No descriptions */
   virtual QDragObject * dragObject ();
@@ -84,7 +85,6 @@ protected: // Protected methods
   /** No descriptions */
   void contentsDropEvent(QDropEvent *);
   int confirmInsert();
-  int denyBinaryInsert();
 };
 
 #endif

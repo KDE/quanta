@@ -18,19 +18,18 @@
 // QT includes
 #include <qstringlist.h>
 #include <qregexp.h>
+#include <qlabel.h>
+#include <qcheckbox.h>
+#include <qradiobutton.h>
 
 // KDE includes
 #include <klocale.h>
 #include <kapp.h>
 #include <kdebug.h>
-
-// QT & KDE widget includes
+#include <kurl.h>
 #include <kpushbutton.h>
 #include <klineedit.h>
 #include <kcombobox.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qradiobutton.h>
 
 // App includes
 #include "cssselectoreditor.h"

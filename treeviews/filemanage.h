@@ -19,10 +19,13 @@
 #define FILEMANAGE_H
 
 #include <qlistview.h>
+
+#include <kfileitem.h>
 #include <kio/job.h>
 
 
 class QPopupMenu;
+class KDirLister;
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
@@ -40,9 +43,13 @@ typedef struct DirInfo{
 class FileManage : public QListView {
 Q_OBJECT
 public:
-    FileManage();
+  FileManage();
 	FileManage( QWidget *parent, const char *name );
 	~FileManage();
+
+	QPopupMenu *fileMenu;
+  QPopupMenu *folderMenu;
+  KDirLister *dirLister;
 
 public slots:	
 	void slotOpen();
@@ -63,29 +70,39 @@ public slots:
   /** No descriptions */
   virtual void slotPropertiesApplied();
 	
+protected slots: // Private slots
+  /** No descriptions */
+  virtual void slotDirListNewItems(const KFileItemList& items);
+  /** No descriptions */
+  virtual void slotDirListRefreshItesm(const KFileItemList& items);
+  /** No descriptions */
+  virtual void slotDirListDeleteItem(KFileItem *item);
+  /** No descriptions */
+  virtual void slotDirListClear();
+  /** No descriptions */
+  virtual void slotDirListCompleted(const KURL& _url);
+  /** No descriptions */
+  virtual void slotDirListClearURL(const KURL& _url);
+
+protected:
+	virtual KURL currentURL();
+  int denyBinaryInsert();
+  DirInfo dirInfo;
+
 signals:
 	void open( QListViewItem *name );
 	void openInQuanta( QListViewItem *name );
 	
-	void insertDirInProject( QString );
-	void insertFileInProject( QString );
+	void insertDirInProject( const KURL& );
+	void insertFileInProject( const KURL& );
 	
-	void insertTag(QString, DirInfo);
+	void insertTag(const KURL &, DirInfo);
 	
 	void jobFinished();
 	void changeMode();
 
   /** No descriptions */
   void reloadTreeviews();
-	
-public:
-	QPopupMenu *fileMenu;
-  QPopupMenu *folderMenu;
-
-protected:
-	virtual QString currentFileName();
-  DirInfo dirInfo;
-
 };
 
 #endif

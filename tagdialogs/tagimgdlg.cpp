@@ -3,7 +3,8 @@
                              -------------------
     begin                : Sat Nov 27 1999
     copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+                           (C) 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -14,19 +15,24 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include "tagimgdlg.h"
-#include "tagimgdlg.moc"
+
+//qt includes
 #include <qspinbox.h>
 
+//kde includes
 #include <kapplication.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kfiledialog.h>
+#include <kurl.h>
 
+//app includes
 #include "pictureview.h"
 #include "../qextfileinfo.h"
-
+#include "../quantacommon.h"
 #include "tagdialog.h"
+#include "tagimgdlg.h"
+#include "tagimgdlg.moc"
 
 static const char *align[] = { "", "left", "right", "top", "bottom", "middle",0};
 
@@ -50,21 +56,24 @@ TagImgDlg::~TagImgDlg(){
 }
 
 /** Choose new image */
-void TagImgDlg::slotImageSet( QString file){
+void TagImgDlg::slotImageSet(const KURL& imageURL)
+{
+//TODO: Make it work with non local files
+ if (imageURL.isLocalFile())
+ {
+  QString file = imageURL.path();
 	widgetImg->slotSetImage( file);
 
 	img = new QImage(file);
-//	QString filename = file;
-	if ( img->isNull() ) {
-		return;
-	}
-
-	QString s;
-	s.setNum( img->width() );
-	lineWidth->setText( s );
-	s.setNum( img->height() );
-	lineHeight->setText( s );
-
+	if ( !img->isNull() )
+  {
+    QString s;
+    s.setNum( img->width() );
+    lineWidth->setText( s );
+    s.setNum( img->height() );
+    lineHeight->setText( s );
+  }
+ }
 }
 
 /** recalculate image size */
@@ -82,19 +91,21 @@ void TagImgDlg::slotRecalcImgSize()
 /** select image */
 void TagImgDlg::slotFileSelect()
 {
-		QString fileName = KFileDialog::getOpenFileName( basePath, i18n("*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP|Image files\n*|All files"));
-		if (fileName.isEmpty()) return;
-
-		QExtFileInfo file(fileName);
-		file.convertToRelative( basePath );
-		QString shortName = file.filePath();
-		lineImgSource->setText(shortName);
-
-		slotImageSet( fileName );
+//TODO: Implemented only for local files, but maybe it is enough
+ KURL url = KFileDialog::getOpenURL( baseURL.url(), i18n("*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP|Image files\n*|All files"));
+ if ( !url.isEmpty() )
+  {
+    url = QExtFileInfo::toRelative(url, baseURL);
+    lineImgSource->setText( url.path() );
+    slotImageSet( url );
+  }
 }
 
-void TagImgDlg::slotLineFileSelect(){
-		slotImageSet( lineImgSource->text() );
+void TagImgDlg::slotLineFileSelect()
+{
+  KURL url;
+  QuantaCommon::setUrl(url, lineImgSource->text());
+  slotImageSet(url);
 }
 
 void TagImgDlg::readAttributes( QDict<QString> *d )
@@ -116,9 +127,12 @@ void TagImgDlg::writeAttributes( QDict<QString> *d )
   dict = d;
   QString *t; // value of attr.
 
-  if (( t=d->find("src") ))     {
-    lineImgSource   ->setText(*t);
-    slotImageSet( basePath  + "/" + *t );
+  if (( t=d->find("src") ))
+  {
+    lineImgSource->setText(*t);
+    KURL url = baseURL;
+    url.setPath(url.path(1) + *t);
+    slotImageSet( url );
   }
   if (( t=d->find("alt") ))     setValue(*t, lineAltText);
   if (( t=d->find("width") ))   setValue(*t, lineWidth);

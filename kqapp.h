@@ -5,6 +5,8 @@
     Copyright (c) 1999-2001 the KNode authors.
     See file AUTHORS for details
 
+    Rewritten for Quanta Plus: (C) 2002 Andras Mantia <amantia@freemail.hu>
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -19,6 +21,7 @@
 
 #include <kuniqueapplication.h>
 
+class QuantaApp;
 
 class KSplash : public QFrame
 {
@@ -30,19 +33,33 @@ class KSplash : public QFrame
 
 };
 
-class KQApplication : public KApplication
+class KQApplicationPrivate
+{
+  public:
+    KQApplicationPrivate() {};
+    ~KQApplicationPrivate() {};
+    
+  protected:
+    void init();
+   
+    QuantaApp *quanta;
+    KSplash *splash;
+};
+
+class KQApplication : public KApplication, KQApplicationPrivate
 {
   Q_OBJECT
 
   public:
     KQApplication();
     ~KQApplication();
-  /** No descriptions */
-  void init();
+  public slots:  
+    /** No descriptions */
+    void slotInit();
 
 };
 
-class KQUniqueApplication : public KUniqueApplication
+class KQUniqueApplication : public KUniqueApplication, KQApplicationPrivate
 {
   Q_OBJECT
 
@@ -50,9 +67,12 @@ class KQUniqueApplication : public KUniqueApplication
     KQUniqueApplication();
     ~KQUniqueApplication();
 
-    /** Create new instance of KNode. Make the existing
-        main window active if KNode is already running */
+    /** Create new instance of Quanta. Make the existing
+        main window active if Quanta is already running */
     int newInstance();
+  public slots:
+    /** No descriptions */
+    void slotInit();
 
 };
 

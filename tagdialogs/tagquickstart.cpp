@@ -3,7 +3,8 @@
                              -------------------
     begin                : Sat Nov 27 1999
     copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+                           (C) 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -17,11 +18,6 @@
 
 #include <stdio.h>
 
-// quanta app
-#include "colorcombo.h"
-#include "tagquickstart.h"
-#include "../qextfileinfo.h"
-
 // qt includes
 #include <qcolor.h>
 #include <qlineedit.h>
@@ -30,11 +26,18 @@
 // kde includes
 #include <kfiledialog.h>
 #include <klocale.h>
+#include <kurl.h>
 
-TagQuickStart::TagQuickStart(QString basePath, QWidget *parent, const char *name)
+// quanta app
+#include "colorcombo.h"
+#include "tagquickstart.h"
+#include "../qextfileinfo.h"
+
+
+TagQuickStart::TagQuickStart(const KURL& a_baseURL, QWidget *parent, const char *name)
     : TagQuickStartS(parent,name,true)
 {
-	this->basePath = basePath;
+	baseURL = a_baseURL;
 	setCaption(name);
 
 	colorBG   ->setColor("#ffffff");
@@ -67,15 +70,14 @@ TagQuickStart::~TagQuickStart(){
 /** select BG Image */
 void TagQuickStart::slotFileSelect()
 {
-	QString fileName = KFileDialog::getOpenFileName( basePath, i18n("*.gif *.png *.jpg| Image files\n*|All files"));
 
-	if (fileName.isEmpty()) return;
+	KURL url = KFileDialog::getOpenURL( baseURL.url(), i18n("*.gif *.png *.jpg| Image files\n*|All files"));
 
-	QExtFileInfo file(fileName);
-	file.convertToRelative( basePath );
-	QString shortName = file.filePath();
-
-	lineBGImage->setText(shortName);
+  if ( !url.isEmpty() )
+  {
+    url = QExtFileInfo::toRelative(url, baseURL);
+    lineBGImage->setText( url.path() );
+  }
 }
 
 void TagQuickStart::slotBGColor(const QColor &)

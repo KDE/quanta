@@ -131,6 +131,8 @@ public:
   void removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id );
   /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
   void processDTD(QString documentType = QString::null);
+  /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
+  KURL projectBaseURL();
 
 public slots:
 
@@ -151,9 +153,9 @@ public slots:
 	void slotFilePrev    ();
   void slotFileQuit    ();
 
-  void slotImageOpen        (QString);
+  void slotImageOpen        (const KURL&);
   void slotFileOpenRecent   (const KURL&);
-  void slotInsertTag        (QString, DirInfo);
+  void slotInsertTag        (const KURL&, DirInfo);
 
   void slotEditFindInFiles   ();
 
@@ -241,7 +243,7 @@ public slots:
   /** No descriptions */
   void slotNewProjectLoaded();
   /** No descriptions */
-  void slotInsertFile(QString);
+  void slotInsertFile(const KURL&);
   /** No descriptions */
   void slotSyntaxCheckDone();
   /** Sends a toolbar in mail. */
@@ -316,7 +318,7 @@ protected:
   virtual bool queryExit();
   void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
   /* Saves the toolbar and the actions. Returns the name of the actions file*/
-  QString saveToolBar(QString& toolbarName, QString destFile);
+  KURL saveToolBar(const QString& toolbarName,const KURL& destFile);
   /** Initialize the plugin architecture. */
   void initPlugins();
   /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
@@ -401,7 +403,7 @@ private:
   KAction *saveAction, *saveAllAction, *undoAction, *redoAction,
     *backAction, *forwardAction,
     *saveprjAction, *closeprjAction, *insertFileAction, *insertDirAction,
-    *newPrjAction, *openPrjAction, *rescanPrjDirAction, *uploadProjectAction,
+    *newPrjAction, *openPrjAction,  *uploadProjectAction,  *rescanPrjDirAction,
     *projectOptionAction, *saveAsLocalTemplateAction, *saveAsProjectTemplateAction,
     *saveSelectionAsLocalTemplateAction, *saveSelectionAsProjectTemplateAction;
 

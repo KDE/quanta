@@ -25,9 +25,9 @@
 #include <kstandarddirs.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <kconfig.h>
+#include <kurl.h>
 
 #include "tagdialog.h"
-
 #include "tagwidget.h"
 #include "tagimgdlg.h"
 #include "tagxml.h"
@@ -38,10 +38,10 @@
 #include "../resource.h"
 #include "../parser/qtag.h"
 
-TagDialog::TagDialog(QTag* dtdTag, Tag *tag, QString base)
+TagDialog::TagDialog(QTag* dtdTag, Tag *tag, KURL a_baseURL)
     : QTabDialog( 0L, "tagdialog", true)
 {
-  init(dtdTag, base);
+  init(dtdTag, a_baseURL);
 
   m_tag = tag;
   for (int i = 0; i < m_tag->attrCount; i++)
@@ -54,10 +54,10 @@ TagDialog::TagDialog(QTag* dtdTag, Tag *tag, QString base)
 
 }
 
-TagDialog::TagDialog(QTag* dtdTag, QString attrs, QString base)
+TagDialog::TagDialog(QTag* dtdTag, QString attrs, KURL a_baseURL)
     : QTabDialog( 0L, "tagdialog", true)
 {
-  init(dtdTag, base);
+  init(dtdTag, a_baseURL);
   if ( !attrs.isNull() )
   {
     parseAttributes(attrs);
@@ -77,7 +77,7 @@ TagDialog::~TagDialog()
 }
 
 
-void TagDialog::init(QTag *dtdTag, QString base)
+void TagDialog::init(QTag *dtdTag, KURL a_baseURL)
 {
   setOkButton(i18n("&OK"));
   setCancelButton(i18n("&Cancel"));
@@ -98,7 +98,7 @@ void TagDialog::init(QTag *dtdTag, QString base)
   }
   dict = new QDict<QString>(1,false);
   dict->setAutoDelete(true);
-  basePath = base;
+  m_baseURL = a_baseURL;
 
   QString caption = i18n("Tag Properties: ");
   caption += this->dtdTag->name();
@@ -273,9 +273,9 @@ void TagDialog::slotAccept()
 }
 
 /** return document path */
-QString TagDialog::getBasePath()
+KURL TagDialog::baseURL()
 {
- return basePath;
+ return m_baseURL;
 }
 
 

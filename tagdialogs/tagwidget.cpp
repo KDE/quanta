@@ -24,6 +24,7 @@
 
 // KDE files
 #include <kcolorbutton.h>
+#include <kurl.h>
 
 // application's headers
 #include "tagwidget.h"
@@ -31,7 +32,7 @@
 
 TagWidget::TagWidget(QObject *parent, const char *)
 {
-	this->basePath = ((TagDialog *)parent)->getBasePath();
+	baseURL = ((TagDialog *)parent)->baseURL();
 }
 
 TagWidget::~TagWidget(){

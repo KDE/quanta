@@ -19,6 +19,7 @@
 
 //kde includes
 #include <klocale.h>
+#include <kurl.h>
 
 //app includes
 #include "tagquicktable.h"

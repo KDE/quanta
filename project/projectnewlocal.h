@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    								  (C) 2001 by Andras Mantia
+                           (C) 2001, 2002 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -20,11 +20,11 @@
 #define PROJECTNEWLOCAL_H
 
 #include <qwidget.h>
-#include <qstringlist.h>
+#include <kurl.h>
 #include <projectnewlocals.h>
 
 /**
-  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
 
 class ProjectTreeFolder;
@@ -36,24 +36,24 @@ public:
 	ProjectNewLocal(QWidget *parent=0, const char *name=0);
 	~ProjectNewLocal();
 	
-	QStringList files();
-	QStringList projectFiles(bool relative=false);
+	KURL::List files();
+	KURL::List projectFiles(bool relative=false);
 	
 public slots:
-  void setFiles(bool);
-  void setDestDir(QWidget*,bool);
-  void slotReloadTree( QStringList, bool newtree);
+  void slotSetFiles(bool);
+  void slotSetDestDir(QWidget*,bool);
+  void slotReloadTree( KURL::List, bool newtree);
   void slotAddFolder();
   void slotAddFiles();
   void slotClearList();
-  void insertFilesAfterCopying(QString,CopyTo*);
+  void slotInsertFilesAfterCopying(const KURL&,CopyTo*);
 
   virtual void resizeEvent( QResizeEvent * );
 
 private:
-	QString dir;
-	QStringList fileList;
-    ProjectTreeFolder *projectDirTree;
+	KURL dir;
+	KURL::List fileList;
+  ProjectTreeFolder *projectDirTree;
 };
 
 #endif

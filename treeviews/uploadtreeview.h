@@ -42,6 +42,7 @@ public:
   void expandAll( QListViewItem * = 0 );
   void collapseAll( QListViewItem * = 0 );
   void invertAll( QListViewItem * = 0 );
+  virtual void selectAll( bool select);
 
 public slots:
   void slotSelectFile( QListViewItem * );

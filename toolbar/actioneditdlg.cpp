@@ -13,7 +13,7 @@
     email                : dima@kde.org
  ***************************************************************************/
 
-
+//qt includes
 #include <qlistbox.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
@@ -25,6 +25,7 @@
 #include <qptrlist.h>
 #include <qpopupmenu.h>
 
+//kde includes
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kaction.h>
@@ -34,7 +35,9 @@
 #include <kdebug.h>
 #include <kxmlguiclient.h>
 #include <kmenubar.h>
+#include <kurl.h>
 
+//app includes
 #include "actioneditdlg.h"
 #include "tagaction.h"
 #include "../tagdialogs/filecombo.h"
@@ -72,7 +75,7 @@ ActionEditDlg::ActionEditDlg( QuantaApp *a, QWidget* parent, const char* name, b
      action(0),
      app(a)
 {
-   scriptPath->setBasePath(app->getDoc()->basePath());
+   scriptPath->setBaseURL(app->projectBaseURL());
    scriptPath->setReturnAbsolutePath(true);
    actionIcon->setIconType(KIcon::User,KIcon::Any,true);
 

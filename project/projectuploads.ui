@@ -40,14 +40,14 @@
     </property>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout14</cstring>
+            <cstring>Layout5</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>5</x>
-                <y>0</y>
+                <y>5</y>
                 <width>430</width>
-                <height>511</height>
+                <height>510</height>
             </rect>
         </property>
         <grid>
@@ -60,102 +60,34 @@
             <property name="spacing">
                 <number>6</number>
             </property>
-            <widget class="QLayoutWidget" row="1" column="1">
+            <widget class="UploadTreeView" row="1" column="0">
                 <property name="name">
-                    <cstring>Layout10</cstring>
+                    <cstring>list</cstring>
                 </property>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <property name="margin">
-                        <number>0</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QPushButton" row="3" column="0">
-                        <property name="name">
-                            <cstring>buttonInvert</cstring>
-                        </property>
-                        <property name="text">
-                            <string>I&amp;nvert</string>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton" row="5" column="0">
-                        <property name="name">
-                            <cstring>buttonCollapse</cstring>
-                        </property>
-                        <property name="text">
-                            <string>C&amp;ollapse All</string>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton" row="4" column="0">
-                        <property name="name">
-                            <cstring>buttonExpand</cstring>
-                        </property>
-                        <property name="text">
-                            <string>E&amp;xpand All</string>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton" row="0" column="0">
-                        <property name="name">
-                            <cstring>buttonAll</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;All</string>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton" row="6" column="0">
-                        <property name="name">
-                            <cstring>buttonUpdate</cstring>
-                        </property>
-                        <property name="text">
-                            <string>U&amp;pdate All</string>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton" row="1" column="0">
-                        <property name="name">
-                            <cstring>buttonModified</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Modified</string>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton" row="2" column="0">
-                        <property name="name">
-                            <cstring>buttonClear</cstring>
-                        </property>
-                        <property name="text">
-                            <string>C&amp;lear</string>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton" row="7" column="0">
-                        <property name="name">
-                            <cstring>buttonUpload</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Upload</string>
-                        </property>
-                        <property name="autoDefault">
-                            <bool>true</bool>
-                        </property>
-                        <property name="default">
-                            <bool>true</bool>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton" row="8" column="0">
-                        <property name="name">
-                            <cstring>buttonCancel</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Cancel</string>
-                        </property>
-                        <property name="autoDefault">
-                            <bool>true</bool>
-                        </property>
-                    </widget>
-                </grid>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>7</hsizetype>
+                        <vsizetype>7</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+            </widget>
+            <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>labelCurFile</cstring>
+                </property>
+                <property name="text">
+                    <string>Current:</string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>totalText</cstring>
+                </property>
+                <property name="text">
+                    <string>Total:</string>
+                </property>
             </widget>
             <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="2">
                 <property name="name">
@@ -273,22 +205,14 @@
                     </widget>
                 </grid>
             </widget>
-            <widget class="UploadTreeView" row="1" column="0">
+            <widget class="KProgress" row="3" column="0" rowspan="1" colspan="2">
                 <property name="name">
-                    <cstring>list</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>7</hsizetype>
-                        <vsizetype>7</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
+                    <cstring>currentProgress</cstring>
                 </property>
             </widget>
-            <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
+            <widget class="QLayoutWidget" row="1" column="1">
                 <property name="name">
-                    <cstring>Layout15</cstring>
+                    <cstring>Layout10</cstring>
                 </property>
                 <grid>
                     <property name="name">
@@ -300,33 +224,93 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QLabel" row="2" column="0">
+                    <widget class="QPushButton" row="3" column="0">
                         <property name="name">
-                            <cstring>totalText</cstring>
+                            <cstring>buttonInvert</cstring>
                         </property>
                         <property name="text">
-                            <string>Total:</string>
+                            <string>I&amp;nvert</string>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="0" column="0">
+                    <widget class="QPushButton" row="5" column="0">
                         <property name="name">
-                            <cstring>labelCurFile</cstring>
+                            <cstring>buttonCollapse</cstring>
                         </property>
                         <property name="text">
-                            <string>Current:</string>
+                            <string>C&amp;ollapse All</string>
                         </property>
                     </widget>
-                    <widget class="QProgressBar" row="3" column="0">
+                    <widget class="QPushButton" row="4" column="0">
                         <property name="name">
-                            <cstring>totalProgress</cstring>
+                            <cstring>buttonExpand</cstring>
+                        </property>
+                        <property name="text">
+                            <string>E&amp;xpand All</string>
                         </property>
                     </widget>
-                    <widget class="QProgressBar" row="1" column="0">
+                    <widget class="QPushButton" row="0" column="0">
                         <property name="name">
-                            <cstring>currentProgress</cstring>
+                            <cstring>buttonAll</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;All</string>
+                        </property>
+                    </widget>
+                    <widget class="QPushButton" row="6" column="0">
+                        <property name="name">
+                            <cstring>buttonUpdate</cstring>
+                        </property>
+                        <property name="text">
+                            <string>U&amp;pdate All</string>
+                        </property>
+                    </widget>
+                    <widget class="QPushButton" row="1" column="0">
+                        <property name="name">
+                            <cstring>buttonModified</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Modified</string>
+                        </property>
+                    </widget>
+                    <widget class="QPushButton" row="2" column="0">
+                        <property name="name">
+                            <cstring>buttonClear</cstring>
+                        </property>
+                        <property name="text">
+                            <string>C&amp;lear</string>
+                        </property>
+                    </widget>
+                    <widget class="QPushButton" row="7" column="0">
+                        <property name="name">
+                            <cstring>buttonUpload</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Upload</string>
+                        </property>
+                        <property name="autoDefault">
+                            <bool>true</bool>
+                        </property>
+                        <property name="default">
+                            <bool>true</bool>
+                        </property>
+                    </widget>
+                    <widget class="QPushButton" row="8" column="0">
+                        <property name="name">
+                            <cstring>buttonCancel</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Cancel</string>
+                        </property>
+                        <property name="autoDefault">
+                            <bool>true</bool>
                         </property>
                     </widget>
                 </grid>
+            </widget>
+            <widget class="KProgress" row="5" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>totalProgress</cstring>
+                </property>
             </widget>
         </grid>
     </widget>

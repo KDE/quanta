@@ -293,5 +293,18 @@ void UploadTreeView::invertAll( QListViewItem *it )
   }
 }
 
+void UploadTreeView::selectAll( bool select )
+{
+  QListViewItemIterator it(this);
+
+  for ( ; it.current(); ++it )
+  {
+    if ( dynamic_cast<UploadTreeFile *>(it.current()) )
+    {
+      it.current()->setSelected( select);
+    }
+  }
+}
+
 
 #include "uploadtreeview.moc"

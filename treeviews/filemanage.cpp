@@ -32,6 +32,8 @@
 #include <kpropsdlg.h>
 #include <kopenwith.h>
 #include <kmessagebox.h>
+#include <kurl.h>
+#include <kdirlister.h>
 
 // Application includes
 #include "filemanage.h"
@@ -73,10 +75,19 @@ FileManage::FileManage( QWidget *parent, const char *name)
 	folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 
 	//setShowSortIndicator(true);
+  dirLister = new KDirLister();
+  dirLister->setShowingDotFiles(false);
+  connect(dirLister, SIGNAL(clear()),SLOT(slotDirListClear()));
+  connect(dirLister, SIGNAL(completed(const KURL&)),SLOT(slotDirListCompleted(const KURL&)));
+  connect(dirLister, SIGNAL(newItems( const KFileItemList&)),SLOT(slotDirListNewItems(const KFileItemList&)));
+  connect(dirLister, SIGNAL(deleteItem( KFileItem *)),SLOT(slotDirListDeleteItem(KFileItem *)));
+  connect(dirLister, SIGNAL(refreshItems( const KFileItemList&)),SLOT(slotDirListRefreshItesm(const KFileItemList&)));
+  connect(dirLister, SIGNAL(clear(const KURL&)),SLOT(slotDirListClearURL(const KURL&)));
 }
 
 FileManage::~FileManage()
 {
+//  delete dirLister;
 }
 
 // virtual method
@@ -85,110 +96,119 @@ void FileManage::slotReload()
 }
 
 // virtual method
-QString FileManage::currentFileName()
+KURL FileManage::currentURL()
 {
-	return("");
+	return KURL();
 }
 
 void FileManage::slotOpen()
 {
-	if ( !currentItem() ) return;
-	emit open( currentItem() );
+	if (currentItem())
+  {
+	  emit open( currentItem() );
+  }
 }
 
 void FileManage::slotOpenInQuanta()
 {
-	if ( !currentItem() ) return;
-	emit openInQuanta( currentItem() );
+	if (currentItem() )
+  {
+	  emit openInQuanta( currentItem() );
+  }
 }
 
 void FileManage::slotOpenWith()
 {
-	if ( !currentItem() ) return;
+	if (currentItem())
+  {
+  	KURL::List list;
+	  KURL urlToOpen = currentURL();
+	  list.append( urlToOpen );
 	
-	QStringList list;
-	QString fileToOpen = currentFileName();
-	list.append( fileToOpen );
-	
-	KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
-	
-	kfowh -> displayOpenWithDialog( KURL::List( list ) );
+	  KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
+  	kfowh->displayOpenWithDialog( list );
+    delete kfowh;
+  }
 }
 
 void FileManage::slotCopy()
 {
-   if ( !currentItem() ) return;
-   QClipboard *cb = QApplication::clipboard();
-   cb->setText( currentFileName() );
+   if (currentItem())
+   {
+     QClipboard *cb = QApplication::clipboard();
+     cb->setText( currentURL().prettyURL() );
+   }
 }
 
 void FileManage::slotPaste()
 {
-	if ( !currentItem() ) return;
+	if (currentItem())
+  {
+    QClipboard *cb = QApplication::clipboard();
+    KURL::List list( QStringList::split( QChar('\n'), cb->text() ) );
 
-  QClipboard *cb = QApplication::clipboard();
-
-  QFileInfo cfile( currentFileName() );
-
-  KURL::List list( QStringList::split( QChar('\n'), cb->text() ) );
-
-  KURL url;
-  QuantaCommon::setUrl(url,cfile.dirPath());
-  KIO::Job *job = KIO::copy( list, url);
-  connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+    KURL url = currentURL();
+    KIO::Job *job = KIO::copy( list, url);
+    connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+  }
 }
 
 void FileManage::slotDelete()
 {
-  if ( !currentItem() ) return;
-  
-  if ( KMessageBox::warningYesNo(this,i18n("Do you really want to delete file \n%1 ?\n").arg(currentFileName())) == KMessageBox::Yes ) {
-
-
-  KURL url;
-  QuantaCommon::setUrl(url,currentFileName());
-  KIO::Job *job = KIO::del(url);
-   connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+  if (currentItem())
+  {
+    KURL url = currentURL();
+    if ( KMessageBox::warningYesNo(this,i18n("Do you really want to delete file \n%1 ?\n").arg(url.path())) == KMessageBox::Yes )
+    {
+      KIO::Job *job = KIO::del(url);
+      connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+    }
   }
 }
 
 void FileManage::slotProperties()
 {
-  if ( !currentItem() ) return;
-
-  KPropertiesDialog *propDlg = new KPropertiesDialog( KURL(currentFileName()), this, 0L, true  );
-
-  connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied()) );
+  if (currentItem())
+  {
+    KPropertiesDialog *propDlg = new KPropertiesDialog(currentURL(), this, 0L, true  );
+    connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied()) );
+  }
 }
 
 
 void FileManage::slotJobFinished( KIO::Job *)
 {
 //  slotReload();
- emit reloadTreeviews();
+// emit reloadTreeviews();
 }
 
 void FileManage::slotInsertInProject()
 {
-	if ( !currentItem() ) return;
-	emit insertFileInProject( currentFileName() );
+	if (currentItem() )
+  {
+	  emit insertFileInProject( currentURL());
+  }
 }
 
 void FileManage::slotInsertDirInProject()
 {
-	if ( !currentItem() ) return;
-	emit insertDirInProject( currentFileName() );
+	if ( currentItem() )
+  {
+	  emit insertDirInProject( currentURL() );
+  }
 }
 
 void FileManage::slotInsertTag() 
 {
-  if ( !currentItem() ) return;
-  DirInfo dirInfo;
+  if (currentItem() )
+  {
+    DirInfo dirInfo;
 
-  dirInfo.mimeType = "";
-  dirInfo.preText = "";
-  dirInfo.postText = "";
-  emit insertTag( currentFileName(), dirInfo );
+    dirInfo.mimeType = "";
+    dirInfo.preText = "";
+    dirInfo.postText = "";
+    emit insertTag( currentURL(), dirInfo );
+  }
 }
 
 /** No descriptions */
@@ -196,5 +216,35 @@ void FileManage::slotPropertiesApplied()
 {
 
 }
+
+/** No descriptions */
+int FileManage::denyBinaryInsert()
+{
+  KMessageBox::sorry(this, i18n("Can't insert binary file as text"), i18n("Wrong type"),
+FALSE);
+
+ return 1; //not used yet
+}
+
+/** No descriptions */
+void FileManage::slotDirListClear(){
+}
+/** No descriptions */
+void FileManage::slotDirListCompleted(const KURL&){
+}
+/** No descriptions */
+void FileManage::slotDirListNewItems(const KFileItemList& )
+{
+}
+/** No descriptions */
+void FileManage::slotDirListDeleteItem(KFileItem*){
+}
+/** No descriptions */
+void FileManage::slotDirListRefreshItesm(const KFileItemList& ){
+}
+/** No descriptions */
+void FileManage::slotDirListClearURL(const KURL& ){
+}
+
 
 #include "filemanage.moc"

@@ -45,7 +45,7 @@ bool CervisiaPlugin::run()
 
   if(isLoaded())
   {
-    m_part->openURL(m_app->getDoc()->basePath());
+    m_part->openURL(m_app->projectBaseURL());
     m_app->guiFactory()->addClient(m_part);
     QWidgetStack *stack = m_app->widgetStackOfHtmlPart();
     stack->raiseWidget(m_part->widget());

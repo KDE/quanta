@@ -28,25 +28,28 @@
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
+class KURL;
+
 class CopyTo : public CopyToS  {
 Q_OBJECT
 public: 
-	CopyTo(QString dir, QWidget *parent=0, const char *name=0);
+	CopyTo(const KURL& dirURL, QWidget *parent=0, const char *name=0);
 	~CopyTo();
 
-	QString copy( QString rname );
-	QStringList copy( QStringList rfiles );
-	QString fname; 
+	KURL copy( const KURL& sourceURL);
+	KURL::List copy( KURL::List sourceList );
+
+	KURL copiedURL;
 
 public slots: // Public slots
 	void endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool);
 	void slotResult( KIO::Job *);
 
 signals:
-	void addFilesToProject(QString,CopyTo*);
+	void addFilesToProject(const KURL&,CopyTo*);
 
 private:
-	QString mInitialDir;
+	KURL mInitialDirUrl;
 };
 
 #endif

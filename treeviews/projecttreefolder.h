@@ -31,23 +31,21 @@ class ProjectTreeFolder : public FilesTreeFolder  {
 friend class Project;
 
 public:
-	ProjectTreeFolder( ProjectTreeFolder *parent, const char *);
-	ProjectTreeFolder( QListView *parent, const char *, const char *);
+	ProjectTreeFolder( ProjectTreeFolder *parent, const KURL& p_url);
+	ProjectTreeFolder( QListView *parent, const QString& name, const KURL& p_url);
 	~ProjectTreeFolder();
 	
-  virtual void setOpen( bool );
+  virtual void setOpen( bool open);
   void setup();
 	
-  /** return fullname of child element item */
-  QString fullName(QListViewItem *item = 0);
   /** insert item in file list */
-  void insertItem(ProjectTreeFile *item, QString name);
+  void insertItem(ProjectTreeFile *item, const KURL& url);
   /**  */
-  int find(QString name);
+  bool contains(const KURL& url);
   virtual void paintCell( QPainter *, const QColorGroup &, int, int, int);
   
 public:
-  QList<ProjectTreeFile> fileList;
+  QPtrList<ProjectTreeFile> filesTreeList;
   /**  */
   QString path;
 };

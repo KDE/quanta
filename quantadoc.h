@@ -56,10 +56,10 @@ public:
 
   void prevDocument();
   void nextDocument();
-
+/*
   KURL    url();
-	QString basePath();
-
+	KURL baseURL();
+*/
   bool isModified();
   bool isModifiedAll();
   void setModified(bool flag = true);
@@ -76,10 +76,10 @@ public:
 	void  readConfig( KConfig * );
 	void writeConfig( KConfig * );
 		
-	QStringList openedFiles(bool noUntitled=true);
+	KURL::List openedFiles(bool noUntitled=true);
   /** No descriptions */
   QDict<Document> *docList() {return m_docList;}
-  void changeFileTabName(QString oldUrl, QString newUrl = QString::null );
+  void changeFileTabName(const KURL& oldURL, KURL newURL = KURL() );
 		
 private:
   bool newDocument (const KURL&);

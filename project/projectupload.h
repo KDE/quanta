@@ -28,10 +28,13 @@
   *@author Dmitry Poplavsky & Alexander Yakovlev
   */
 
-class ProjectUpload : public ProjectUploadS  {
-Q_OBJECT
+class KURL;
+  
+class ProjectUpload : public ProjectUploadS
+{
+  Q_OBJECT
 public:
-  ProjectUpload(QString file, Project* p, QWidget *parent = 0, const char * name = 0, bool modal = FALSE, WFlags fl = 0 );
+  ProjectUpload(const KURL& url, Project* p, QWidget *parent = 0, const char * name = 0, bool modal = FALSE, WFlags fl = 0 );
   ProjectUpload( Project* , QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
   ~ProjectUpload();
 

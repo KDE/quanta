@@ -3,7 +3,8 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+                           (C) 2002 Andras Mantia
+    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,15 +19,19 @@
 #ifndef PROJECTNEWWEB_H
 #define PROJECTNEWWEB_H
 
+//qt includes
 #include <qwidget.h>
 #include <qstringlist.h>
-#include <projectnewwebs.h>
+
+//app includes
+#include "projectnewwebs.h"
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
   
 class KProcess;
+class KURL;
 
 class ProjectNewWeb : public ProjectNewWebS  {
    Q_OBJECT
@@ -37,7 +42,7 @@ public:
 public slots:
   void enableStart(const QString&);
 	void setCommandL(const QString&);
-	void setBasePath(QString);
+	void setBaseURL(const KURL& a_baseURL);
 	
 	void slotStart();
 	
@@ -58,7 +63,7 @@ signals:
   void enableNextButton(QWidget *,bool);
 
 private:
-  QString basePath;
+  KURL baseURL;
   
   bool start;
   

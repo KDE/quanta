@@ -180,7 +180,7 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
         if ( type == "url" )
         {
-        	 FileCombo *w = new FileCombo(basePath, this);
+        	 FileCombo *w = new FileCombo(baseURL, this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
 
              if ( tip != QString::null )

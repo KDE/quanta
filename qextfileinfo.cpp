@@ -1,6 +1,8 @@
 /*
     From WebMaker - KDE HTML Editor
     Copyright (C) 1998, 1999 Alexei Dets <dets@services.ru>
+
+    Rewritten for Quanta Plus: (C) 2002 Andras Mantia <amantia@freemail.hu>
 	
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -8,167 +10,109 @@
     (at your option) any later version.
 */    
 
-#include <qdir.h>
-#include <kurl.h>
 #include <iostream.h>
+
+//qt includes
+#include <qdir.h>
+#include <qapplication.h>
+#include <qptrlist.h>
+#include <qstringlist.h>
+#include <qregexp.h>
+
+//kde includes
+#include <kurl.h>
+#include <kio/job.h>
+#include <kio/netaccess.h>
+#include <kdirlister.h>
+#include <kfileitem.h>
+#include <kglobal.h>
+
+//app includes
 #include "qextfileinfo.h"
 
-QExtFileInfo::QExtFileInfo(const char *file):QFileInfo(file)
-{
-		QString temp=filePath();
-		//This hack is needed because of bug in QFileInfo::fileName
-		//Otherwise, directories ended with "/" will have no filename
-		if (temp.right(1)=="/" && temp.length()>1)
-				setFile(temp.left(temp.length()-1));
-		
-							
-}
+QString * QExtFileInfo::lastErrorMsg = 0L;
 
-bool QExtFileInfo::convertToRelative(const char *baseDir)
+/** create a relative short url based in baseURL*/
+KURL QExtFileInfo::toRelative(const KURL& urlToConvert,const KURL& baseURL)
 {
- QString path=dirPath(TRUE);
- QString basePath=baseDir;
-
- path = QDir::cleanDirPath(path);
- path.remove(0, 1);
- path.append("/");
- basePath = QDir::cleanDirPath(basePath);
- basePath.remove(0, 1);
- basePath.append("/");
- int pos=0;
- int pos1=0;
- for (;;)
+  KURL resultURL = urlToConvert;
+  if (urlToConvert.protocol() == baseURL.protocol())
   {
-   pos=path.find("/");
-   pos1=basePath.find("/");
-   if (pos<0 || pos1<0) break;
-   if (path.left(pos+1)==basePath.left(pos1+1))
+    QString path = urlToConvert.path();
+    QString basePath = baseURL.path(1);
+    if (path.startsWith("/"))
     {
-     path.remove(0, pos+1);
-     basePath.remove(0, pos1+1);
+      path.remove(0, 1);
+      basePath.remove(0, 1);
+      if ( basePath.right(1) != "/" ) basePath.append("/");
+
+      int pos=0;
+      int pos1=0;
+      for (;;)
+      {
+        pos=path.find("/");
+        pos1=basePath.find("/");
+        if ( pos<0 || pos1<0 ) break;
+        if ( path.left(pos+1 ) == basePath.left(pos1+1) )
+        {
+          path.remove(0, pos+1);
+          basePath.remove(0, pos1+1);
+        }
+        else
+          break;
+      };
+
+      if ( basePath == "/" ) basePath="";
+      int level = basePath.contains("/");
+      for (int i=0; i<level; i++)
+      {
+        path="../"+path;
+      };
     }
-   else
-    break;
-  };
- if (basePath=="/") basePath="";
- int level=basePath.contains("/");
- for (int i=0; i<level; i++)
-  {
-   path="../"+path;
-  };
 
-	if (isFile())
-			setFile(path+fileName());
-	else
-			setFile(path+fileName()+"/");     //it is good to have trailing / on the web
- return TRUE;
-}
-
-/** create to ralative short name */
-QString QExtFileInfo::toRelative(QString fname,QString dir)
-{
-  QString path = fname;
-  QString basePath = dir;
-
-  if ( basePath.left(5) == "file:" ) basePath.remove(0,5);
-  if ( path.left(5) == "file:" ) path.remove(0,5);
-
-  path.remove(0, 1);
-  basePath.remove(0, 1);
-  if ( basePath.right(1) != "/" ) basePath.append("/");
-
-  int pos=0;
-  int pos1=0;
-
-  for (;;)
-  {
-    pos=path.find("/");
-    pos1=basePath.find("/");
-    if ( pos<0 || pos1<0 ) break;
-    if ( path.left(pos+1 ) == basePath.left(pos1+1) )
-    {
-      path.remove(0, pos+1);
-      basePath.remove(0, pos1+1);
-    }
-    else
-      break;
-  };
-
-  if ( basePath == "/" ) basePath="";
-  int level = basePath.contains("/");
-  for (int i=0; i<level; i++)
-  {
-    path="../"+path;
-  };
-
-  return path;
-}
-/** convert relative filename to absolute */
-QString QExtFileInfo::toAbsolute( QString  fname, QString dir)
-{
-  int pos;
-  QString cutname = fname;
-  QString cutdir = dir;
-  while ( (pos = cutname.find("../")) >=0 ) {
-     cutname.remove( 0, pos+3 );
-     cutdir.remove( cutdir.length()-1, 1 );
-     cutdir.remove( cutdir.findRev('/')+1 , 1000);
+    resultURL.setPath(path);
   }
 
-  return cutdir+cutname;
+  return resultURL;
 }
-/** all files in dir ( added yshurik, quanta team ).
-	The return will also contain the name of the subdirectories.
-	This is needed for empty directory adding/handling. (Andras)*/
-QStringList QExtFileInfo::allFiles( QString path, QString mask, int level )
+/** convert relative filename to absolute */
+KURL QExtFileInfo::toAbsolute(const KURL& urlToConvert,const KURL& baseURL)
 {
-	QStringList r;
-		
-	QDir dir( path );
-	
-	if ( level > 10        ) return r;
-	if ( !dir.isReadable() ) return r;
-    if ( !dir.exists()     ) return r;
-	
-	QStringList  dirList;
-	QStringList  fileList;
-    QStringList::Iterator it;
-		
-	dir.setFilter ( QDir::Dirs);
-	dirList = dir.entryList();
-		
-	dirList.remove(".");
-	dirList.remove("..");
-		
-	dir.setFilter( QDir::Files | QDir::Hidden | QDir::System);
-	fileList = dir.entryList();
-	
-	for ( it = dirList.begin(); it != dirList.end(); ++it )
-	{
-		QString name = *it;
-	  if ( QFileInfo( dir, *it ).isSymLink() ) continue;
-	    r += path+name+"/";
-		r += allFiles( path+name+"/", mask, level+1 );
+  KURL resultURL = urlToConvert;
+  if (urlToConvert.protocol() == baseURL.protocol())
+  {
+    int pos;
+    QString cutname = urlToConvert.path();
+    QString cutdir = baseURL.path(1);
+    while ( (pos = cutname.find("../")) >=0 )
+    {
+       cutname.remove( 0, pos+3 );
+       cutdir.remove( cutdir.length()-1, 1 );
+       cutdir.remove( cutdir.findRev('/')+1 , 1000);
     }
+    resultURL.setPath(cutdir+cutname);
+  }
 
-    for ( it = fileList.begin(); it != fileList.end(); ++it )
-	{
-	  QString name = *it;
-	
-	  QFileInfo fi( dir, *it );
-	  if ( fi.isSymLink() || !fi.isFile() ) continue;
-		
-	  if ( QDir::match( mask, name) ) r += (path+name);
-	}
-	
-	return r;
+  return resultURL;
 }
 
-QStringList QExtFileInfo::allFilesRelative( QString path, QString mask, int level )
+/** All files in a dir.
+	The return will also contain the name of the subdirectories.
+	This is needed for empty directory adding/handling. (Andras)
+  Currently works only for local directories
+*/
+KURL::List QExtFileInfo::allFiles( const KURL& path, const QString& mask)
 {
-	QStringList::Iterator it;
-	QStringList r = QExtFileInfo::allFiles( path, mask, level );
+  QExtFileInfo internalFileInfo;
+  return internalFileInfo.allFilesInternal(path, mask);
+}
+
+KURL::List QExtFileInfo::allFilesRelative( const KURL& path, const QString& mask)
+{
+  QExtFileInfo internalFileInfo;
+	KURL::List r = internalFileInfo.allFilesInternal( path, mask);
 	
+	KURL::List::Iterator it;
 	for ( it = r.begin(); it != r.end(); ++it )
 	{
 		*it = QExtFileInfo::toRelative( *it, path );
@@ -177,47 +121,177 @@ QStringList QExtFileInfo::allFilesRelative( QString path, QString mask, int leve
 	return r;
 }
 
-void QExtFileInfo::createDir( QString path )
+bool QExtFileInfo::createDir( const KURL& path )
 {
-	QDir dir;
 	int i=0;
-	while ( !dir.exists(path) && i<20 )
+  bool result;
+	while ( !exists(path) && i<20 )
 	{
-		QString d1(path);
-		QString d2(path);
-		
-		d1=cdUp(d1);
-		while ( !dir.exists(d1) && !d1.isEmpty() )
-			{ d1=cdUp(d1);d2=cdUp(d2);debug(d1);}
-		
-		dir.mkdir(d2);
+    KURL dir1 = path;
+    KURL dir2 = path;
+
+		dir1=cdUp(dir1);
+		while ( !exists(dir1) && dir1.path() != "/" )
+		{
+      dir1=cdUp(dir1);
+      dir2=cdUp(dir2);
+    //  debug(d1);
+    }
+  //  dir2.setPath(dir2.path(-1));
+		result = KIO::NetAccess::mkdir(dir2);
 		i++;
 	}
+ result = exists(path); 
 }
 
-QString QExtFileInfo::cdUp(QString &dir)
+KURL QExtFileInfo::cdUp(const KURL &url)
 {
-	if ( dir.right(1) == "/" ) dir.remove( dir.length()-1,1);
-	while ( dir.right(1) != "/" ) dir.remove( dir.length()-1,1);
-	return dir;
+  KURL u = url;
+  QString dir = u.path(-1);
+	while ( !dir.isEmpty() && dir.right(1) != "/" )
+  {
+    dir.remove( dir.length()-1,1);
+  }
+  u.setPath(dir);
+	return u;
 }
 
-QString QExtFileInfo::shortName(QString fileName)
+QString QExtFileInfo::shortName(const QString &fname)
 {
-  return fileName.section("/",-1);
+  return fname.section("/",-1);
 }
 
-QString QExtFileInfo::path( KURL &url )
+KURL QExtFileInfo::path( const KURL &url )
 {
-  QString furl = url.url();
-  int i = furl.findRev('/');
-  
-  if ( i != -1 ) return furl.left(i+1);
-  
-  return QString::null;
+  return url.directory(false,false);
 }
 
-QString QExtFileInfo::home()
+KURL QExtFileInfo::home()
 {
-  return QDir::currentDirPath()+"/";
+  KURL url;
+  url.setPath(QDir::currentDirPath()+"/");
+  return url;
+}
+
+
+bool QExtFileInfo::exists(const KURL& a_url)
+{
+ if ( a_url.isLocalFile() )
+ {
+    return QFile::exists( a_url.path() );
+ } else
+ {
+  KURL url = a_url;
+  if (a_url.path().endsWith("/")) url.setPath(a_url.path()+"dummy_file");
+  QExtFileInfo internalFileInfo;
+  return internalFileInfo.internalExists(url);
+ }
+}
+
+/** No descriptions */
+KURL::List QExtFileInfo::allFilesInternal(const KURL& startURL, const QString& mask)
+{
+  dirListItems.clear();
+
+  if (internalExists(startURL))
+  {
+    lstFilters.setAutoDelete(true);
+    lstFilters.clear();
+    // Split on white space
+    QStringList list = QStringList::split( ' ', mask );
+    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+       lstFilters.append( new QRegExp(*it, false, true ) );
+    
+    bJobOK = true;
+    KIO::ListJob *job = KIO::listRecursive(startURL, false, true);
+    connect(job, SIGNAL(entries(KIO::Job *, const KIO::UDSEntryList&)),
+            this, SLOT(slotNewEntries(KIO::Job *, const KIO::UDSEntryList&)));
+    connect( job, SIGNAL( result (KIO::Job *) ),
+             this, SLOT( slotResult (KIO::Job *) ) );
+            
+//    cout << "Now listing: " << startURL.url() << "\n";
+    enter_loop();
+    lstFilters.clear();
+    if (!bJobOK)
+    {
+      cerr << "Error while listing "<< startURL.url() << "\n";
+      dirListItems.clear();
+    }
+  }
+  return dirListItems;
+}
+
+
+//Some hackery from KIO::NetAccess as they do not do exactly what we want
+/* return true if the url exists*/
+bool QExtFileInfo::internalExists(const KURL& url)
+{
+  bJobOK = true;
+  KIO::Job * job = KIO::stat( url, false);
+  connect( job, SIGNAL( result (KIO::Job *) ),
+           this, SLOT( slotResult (KIO::Job *) ) );
+  enter_loop();
+  return bJobOK; 
+}
+
+void qt_enter_modal( QWidget *widget );
+void qt_leave_modal( QWidget *widget );
+
+void QExtFileInfo::enter_loop()
+{
+  QWidget dummy(0,0,WType_Dialog | WShowModal);
+  qt_enter_modal(&dummy);
+  qApp->enter_loop();
+  qt_leave_modal(&dummy);
+}
+
+void QExtFileInfo::slotResult( KIO::Job * job )
+{
+  bJobOK = !job->error();
+  if ( !bJobOK )
+  {
+    if ( !lastErrorMsg )
+      lastErrorMsg = new QString;
+    *lastErrorMsg = job->errorString();
+  }
+  if ( job->isA("KIO::StatJob") )
+    m_entry = static_cast<KIO::StatJob *>(job)->statResult();
+  qApp->exit_loop();
+}
+
+void QExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList)
+{
+  KURL url = static_cast<KIO::ListJob *>(job)->url();
+  url.adjustPath(-1);
+  // avoid creating these QStrings again and again
+  static const QString& dot = KGlobal::staticQString(".");
+  static const QString& dotdot = KGlobal::staticQString("..");
+
+  KIO::UDSEntryListConstIterator it = udsList.begin();
+  KIO::UDSEntryListConstIterator end = udsList.end();
+  KURL itemURL;
+  for ( ; it != end; ++it )
+  {
+    QString name;
+
+    // find out about the name
+    KIO::UDSEntry::ConstIterator entit = (*it).begin();
+    for( ; entit != (*it).end(); ++entit )
+      if ( (*entit).m_uds == KIO::UDS_NAME )
+      {
+        name = (*entit).m_str;
+        break;
+      }
+
+    if ( ! name.isEmpty() && name != dot && name != dotdot)
+    {
+      KFileItem* item = new KFileItem( *it, url, false, true );
+      itemURL = item->url();
+      if (item->isDir()) itemURL.adjustPath(1);
+      for ( QPtrListIterator<QRegExp> filterIt( lstFilters ); filterIt.current(); ++filterIt )
+      if ( filterIt.current()->exactMatch( item->text() ) )
+           dirListItems.append(itemURL);
+      delete item;
+    }
+  }
 }

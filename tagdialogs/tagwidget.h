@@ -26,6 +26,7 @@ class QLineEdit;
 class QSpinBox;
 class QCheckBox;
 class KColorButton;
+class KURL;
 
 /**base class for tag widgets
   *@author Yacovlev Alexander & Dmitry Poplavsky
@@ -51,7 +52,7 @@ public:
 
 protected:
   QDict<QString> *dict; // dictionary of attributes and values
-  QString basePath;
+  KURL baseURL;
 };
 
 #endif

@@ -3,7 +3,8 @@
                              -------------------
     begin                : Wed Sep 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+                           (C) 2002 Andras Mantia
+    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -19,37 +20,38 @@
 #define FILECOMBO_H
 
 #include <qwidget.h>
+#include <kurl.h>
 
 /**
-  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
 
 class QComboBox;
 class QPushButton;
+class KURL;
 
 class FileCombo : public QWidget  {
    Q_OBJECT
 public: 
-	FileCombo(QString basePath, QWidget *parent=0, const char *name=0);
+	FileCombo(const KURL& a_baseURL, QWidget *parent=0, const char *name=0);
 	FileCombo(QWidget *parent=0, const char *name=0);
 	~FileCombo();
 	
 	QString text();
 	void setText( QString );
-  /** No descriptions */
-  void setBasePath(const QString& p_basePath);
-  /** No descriptions */
-  void setReturnAbsolutePath(bool absolutPath);
+  /** The select URL dialogs shows this URL, and the returned value is relative to this */
+  void setBaseURL(const KURL& a_baseURL);
+  /** The selected URL will be stored with absolute path if absolutePath is true */
+  void setReturnAbsolutePath(bool absolutePath);
 
 public slots:
   void slotFileSelect();
 		
 protected:
-  QString     basePath;
-  QComboBox   *combo;
-private: // Private attributes
-  /**  */
+  KURL baseURL;
   bool m_absolutePath;
+
+  QComboBox *combo;
   QPushButton *button;
 
 };

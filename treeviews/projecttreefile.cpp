@@ -3,7 +3,8 @@
                              -------------------
     begin                : Wed Mar 15 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+                          (C) 2001, 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -26,24 +27,28 @@
 #include "projecttreefile.h"
 #include "projecttreefolder.h"
 #include "../resource.h"
+#include "../quantacommon.h"
 
-ProjectTreeFile::ProjectTreeFile( ProjectTreeFolder *parent, const char *name, const char *filename)
-    : FilesTreeFile( parent, name, filename )
+ProjectTreeFile::ProjectTreeFile( ProjectTreeFolder *parent, QString name, const KURL& p_url)
+    : FilesTreeFile( parent, name, p_url )
 {
-  fname = filename;
-  setIcon( filename );
+  url = p_url;
+  setIcon( url );
 }
 
 ProjectTreeFile::~ProjectTreeFile(){
 }
 
 /**  */
-void ProjectTreeFile::setIcon(QString name)
+void ProjectTreeFile::setIcon(const KURL& url)
 {
-  if ( QDir::match( fileMaskHtml,  name) ) setPixmap( 0, SmallIcon("www")   );
-  if ( QDir::match( fileMaskText,  name) ) setPixmap( 0, SmallIcon("txt")   );
-  if ( QDir::match( fileMaskImage, name) ) setPixmap( 0, SmallIcon("image") );
-  if ( QDir::match( fileMaskJava,  name) ) setPixmap( 0, SmallIcon("info")  );
+//TODO
+  if (QuantaCommon::checkMimeType(url,"html")) setPixmap( 0, SmallIcon("www"));
+  else
+    if (QuantaCommon::checkMimeType(url,"x-java") ) setPixmap( 0, SmallIcon("info"));
+    else
+      if (QuantaCommon::checkMimeGroup(url,"text")) setPixmap( 0, SmallIcon("txt"));
+      else  if (QuantaCommon::checkMimeGroup(url,"image")) setPixmap( 0, SmallIcon("image") );
 }
 
 /** used for sorting */

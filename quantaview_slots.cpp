@@ -83,7 +83,7 @@ void QuantaView::slotEditCurrentTag()
     if ( QuantaCommon::isKnownTag(dtd->name,tagName) )
     {
       isUnknown = false;
-      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtd,tagName), tag, basePath() );
+      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtd,tagName), tag, baseURL() );
       if (dlg->exec())
       {
        w->changeTag(tag, dlg->getAttributes() );
@@ -237,7 +237,7 @@ void QuantaView::slotTagMisc()
 
 /** quick html text generate */
 void QuantaView::slotTagQuickStart(){
-	TagQuickStart *quickDlg = new TagQuickStart( doc->basePath(), this, i18n("Generate HTML Text"));
+	TagQuickStart *quickDlg = new TagQuickStart( app->projectBaseURL(), this, i18n("Generate HTML Text"));
 
   if ( quickDlg->exec() ) {
     const QString chset = QTextCodec::codecForLocale()->mimeName();
@@ -432,9 +432,9 @@ void QuantaView::slotViewInNetscape()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    QString url = app->project->urlWithPrefix(w->url());
+    KURL url = app->project->urlWithPrefix(w->url());
 
-    *show << "netscape" << "-remote" << QString(QString("openURL(")+url+")").data();
+    *show << "netscape" << "-remote" << QString(QString("openURL(")+url.url()+")").data();
     connect( show, SIGNAL(processExited(KProcess *)), this, SLOT(slotNetscapeStatus(KProcess *)));
     show->start( KProcess::NotifyOnExit );
   }
@@ -466,8 +466,8 @@ void QuantaView::slotViewInKFM()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    QString url = app->project->urlWithPrefix(w->url());
-    *show << "kfmclient" << "exec" << url;
+    KURL url = app->project->urlWithPrefix(w->url());
+    *show << "kfmclient" << "exec" << url.url();
     show->start( KProcess::DontCare );
   }
 }
@@ -498,7 +498,7 @@ void QuantaView::slotViewInLynx()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    QString url = app->project->urlWithPrefix(w->url());
+    KURL url = app->project->urlWithPrefix(w->url());
     *show << "konsole"
           << "--nohist"
           << "--notoolbar"
@@ -506,7 +506,7 @@ void QuantaView::slotViewInLynx()
           << "Lynx Preview - Quanta"
           << "-e"
           << "lynx"
-          << url;
+          << url.url();
     show->start( KProcess::DontCare );
   }
 }
@@ -517,13 +517,14 @@ void QuantaView::slotNetscapeStatus(KProcess *proc)
   if ( proc->exitStatus() )
   {
     KProcess *show = new KProcess();
-    QString url = app->project->urlWithPrefix(write()->url());
-    *show << "netscape" << url;
+    KURL url = app->project->urlWithPrefix(write()->url());
+    *show << "netscape" << url.url();
     show->start( KProcess::DontCare );
   }
 }
 
 /** insert tags from tree view */
+/*
 void QuantaView::slotInsertTagFromTree(QString name)
 {
 	QExtFileInfo file( name );
@@ -537,7 +538,7 @@ void QuantaView::slotInsertTagFromTree(QString name)
 	else {
 	  write()->insertTag( QuantaCommon::tagCase("<a")+QuantaCommon::attrCase(" href=\"")+shortName+"\">",QuantaCommon::tagCase("</a>"));
 	}
-}
+} */
 
 /**  */
 void QuantaView::slotNewCurPos()
@@ -818,7 +819,7 @@ void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
 
   Document *w = write();
 
-  TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), attr, basePath());
+  TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), attr, baseURL());
   if (dlg->exec())
   {
    dlg->insertTag(w, insertInLine);
@@ -826,21 +827,20 @@ void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
 
   delete dlg;
 }
-/** Returns the basePath of the document. */
-QString QuantaView::basePath()
+/** Returns the baseURL of the document. */    
+KURL QuantaView::baseURL()
 {
   Document *w = write();
-  QString base;
+  KURL base;
 	if ( !w->isUntitled() )
 	{
-		QString name = w->url().prettyURL();
-		if ( name.left(5) == "file:" ) name.remove(0,5);
-		QFileInfo fileInfo( name );
-		base = fileInfo.dirPath()+"/";
+    base = QuantaCommon::convertToPath(w->url());
 	} else
 	{
-    base = w->basePath;
+    base = w->baseURL;
 	}
 
   return base;
 }
+
+

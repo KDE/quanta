@@ -19,6 +19,7 @@
 #include <qdir.h>
 #include <qpixmap.h>
 #include <qheader.h>
+#include <qpopupmenu.h>
 
 // KDE includes
 #include <krun.h>
@@ -31,7 +32,10 @@
 #include "fileslistview.h"
 #include "fileslistview.moc"
 #include "../resource.h"
+#include "../quantacommon.h"
 
+
+//TODO Rewrite this class
 FilesListView::FilesListView( QString dir, QStringList dirList, QWidget *parent, const char *name)
 	: FileManage(parent,name)
 {
@@ -182,20 +186,21 @@ void FilesListView::slotSelectFile(QListViewItem *item)
 	if ( !currentItem() ) return;
 
 	QString nameToOpen = currentFileName();
+  KURL url;
+  QuantaCommon::setUrl(url,nameToOpen);
 
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
-		KURL url(nameToOpen);
 		emit openFile( url, qConfig.defaultEncoding );
 		return;
 	}
 	else if ( QDir::match( fileMaskImage, nameToOpen) )
 	{
 		emit activatePreview();
-		emit openImage( nameToOpen );
+		emit openImage( url );
 		return;
 	}
-	new KRun( KURL(nameToOpen), 0, true );
+	new KRun( url, 0, true );
 }
 
 void FilesListView::slotSelectAnyFile(QListViewItem *item)
@@ -219,9 +224,10 @@ void FilesListView::slotSelectImage(QListViewItem *item)
 	if ( !currentItem() ) return;
 
 	QString nameToOpen = currentFileName();
-
+  KURL url;
+  QuantaCommon::setUrl(url, nameToOpen);
 	if ( QDir::match( fileMaskImage, nameToOpen) )
 	{
-		emit openImage( nameToOpen );
+		emit openImage( url );
 	}
 }
