@@ -530,9 +530,25 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
     {
       if (node->child)
       {
-        node = node->child;
+   /*     int nodeEl, nodeEc, childBl, childBc;
+        node->tag->endPos(nodeEl, nodeEc);
+        node->child->tag->beginPos(childBl, childBc);
+        if ( nodeEl < childBl || 
+             (nodeEl == childBl && nodeEc < childBc)) */
+          node = node->child;
+        //else
+          //break;  
       } else
       {
+        if (node->parent)
+        {
+          int parentEl, parentEc;
+          node->parent->tag->endPos(parentEl, parentEc);
+          if (QuantaCommon::isBetween(line, col, bl, bc, parentEl, parentEc) == 0)
+          {
+              node = node->parent;      
+          }               
+        }            
         break; //we found the node
       }
     } else
@@ -542,7 +558,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
       break; //we found the node
     } else
     {
-      node = node->next;
+       node = node->next;
     }
   }
 

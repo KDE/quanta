@@ -135,7 +135,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
       pos++;
     }
     attr.name = m_tagStr.mid(sPos, pos - sPos);
-    if (attr.name.endsWith(">"))
+    if (attr.name.endsWith(">") && pos == strLength)
     {
       attr.name = attr.name.left(attr.name.length() - 1).lower();
       if (!attr.name.stripWhiteSpace().isEmpty())
@@ -171,6 +171,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
       attr.valueCol = attr.nameCol;
       attr.valueLine = attr.nameLine;
       attr.quoted = false;
+      pos--;
     } else
     {
       pos++;
