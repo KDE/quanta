@@ -865,7 +865,7 @@ void QuantaApp::loadInitialProject(const QString& url)
       Project::ref()->readLastConfig();
   }
   else
-    Project::ref()->slotOpenProject(url);
+    Project::ref()->slotOpenProject(KURL( url ));
 }
 
 

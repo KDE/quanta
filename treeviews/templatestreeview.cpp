@@ -618,7 +618,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
    if(m_dirInfo.mimeType.isEmpty())
    {
      // no .dirinfo file present, so we insert it as tag
-     emit insertTag(localFileName, m_dirInfo);
+     emit insertTag(KURL::fromPathOrURL( localFileName ), m_dirInfo);
    } else
    {
      if(m_dirInfo.mimeType == "text/all") // default to inserting in document
@@ -627,13 +627,13 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
       {
         return;
       }
-      emit insertFile(localFileName);
+      emit insertFile(KURL::fromPathOrURL( localFileName ));
      }
 
      if(m_dirInfo.mimeType == "file/all")
      {
        // whatever this is, insert it with a tag (image or link or prefix/postfix)
-       emit insertTag(localFileName, m_dirInfo);
+       emit insertTag(KURL::fromPathOrURL( localFileName ), m_dirInfo);
      }
      else
      if(m_dirInfo.mimeType == "template/all")
@@ -643,7 +643,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
          return;
        }
        emit openFile(KURL(), quantaApp->defaultEncoding());
-       emit insertFile(localFileName);
+       emit insertFile(KURL::fromPathOrURL( localFileName ));
      }
    }
  } else
@@ -797,7 +797,7 @@ void TemplatesTreeView::slotSendInMail()
     for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
     {
       if ( (*it_f).fileName(false) != "" ) {
-        url = QExtFileInfo::toRelative( (*it_f).path(), dirURL) ;
+        url = QExtFileInfo::toRelative( (*it_f), dirURL) ;
 
         QFile file((*it_f).path());
         file.open(IO_ReadOnly);

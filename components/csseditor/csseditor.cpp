@@ -133,7 +133,7 @@ void CSSEditor::buildListView(QDomNodeList l, QListView *lv){
 } 
 
 void CSSEditor::activatePreview() { 
-  m_previewer->openURL(m_testFile->name()); 
+  m_previewer->openURL(KURL( m_testFile->name() )); 
 }
 
 void CSSEditor::setCurrentPropOn(const QString& s){
@@ -223,7 +223,7 @@ void CSSEditor::initialize()
   m_testFile = new QFile(m_testFileName);
   m_testFile->open(IO_WriteOnly);   
   
-  m_previewer->openURL(m_testFile->name());
+  m_previewer->openURL(KURL( m_testFile->name() ));
 
   QBoxLayout *fEditingLayout = new QBoxLayout(fEditing,QBoxLayout::LeftToRight);
   

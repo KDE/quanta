@@ -411,7 +411,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
     fileName = url.path();
   }
 
-  if (projectTemplate) Project::ref()->insertFile(fileName, true);
+  if (projectTemplate) Project::ref()->insertFile(KURL::fromPathOrURL( fileName ), true);
 #ifdef BUILD_KAFKAPART
   view()->write()->docUndoRedo->fileSaved();
 #endif
@@ -1558,7 +1558,7 @@ void QuantaApp::setCursorPosition( int row, int col )
 
 void QuantaApp::gotoFileAndLine(const QString& filename, int line )
 {
-  if ( !filename.isEmpty() ) m_doc->openDocument( filename );
+  if ( !filename.isEmpty() ) m_doc->openDocument( KURL::fromPathOrURL( filename ) );
 
   if (m_view->writeExists())
   {
@@ -2329,7 +2329,7 @@ void QuantaApp::slotLoadToolbar()
  url = KFileDialog::getOpenURL(locateLocal("data",resourceDir + "toolbars/"), "*"+toolbarExtension, this);
  if (! url.isEmpty())
  {
-   slotLoadToolbarFile(url.path());
+   slotLoadToolbarFile(url);
  }
 }
 
@@ -2341,7 +2341,7 @@ void QuantaApp::slotLoadGlobalToolbar()
  url = KFileDialog::getOpenURL(qConfig.globalDataDir +resourceDir + "toolbars/", "*"+toolbarExtension+"\n*", this);
  if (! url.isEmpty())
  {
-   slotLoadToolbarFile(url.path());
+   slotLoadToolbarFile(url);
  }
 }
 

@@ -58,7 +58,7 @@ void WHTMLPart::forward()
 {
   if ( forwardEnable() ) {
     hpos++;
-    openURL( history.at(hpos) );
+    openURL( KURL( history.at(hpos) ) );
 
     emit updateStatus( backEnable() , forwardEnable() );
   }
@@ -69,7 +69,7 @@ void WHTMLPart::back()
 {
   if ( backEnable() ) {
     hpos--;
-    openURL( history.at(hpos) );
+    openURL( KURL( history.at(hpos) ) );
 
     emit updateStatus( backEnable() , forwardEnable() );
   }

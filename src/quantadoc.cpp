@@ -108,11 +108,10 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
 {
   quantaApp->slotShowMainDock(true);
   bool newfile = false;
-  QString furl = url.url();
-  if ( furl.isEmpty() ) newfile = true;
+  if ( url.url().isEmpty() ) newfile = true;
   Document *w;
 
-  if (!isOpened(furl) || newfile)
+  if (!isOpened(url) || newfile)
   {
     // no modi and new -> we can remove                           !!!!
     if (quantaApp->view()->writeExists())
@@ -152,7 +151,7 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
   else // select opened
   if (switchToExisting)
   {
-    w = isOpened(furl);
+    w = isOpened(url);
     w->checkDirtyStatus();
     quantaApp->view()->writeTab()->showPage( w );
     return false; // don't need loadURL
@@ -508,7 +507,7 @@ Document* QuantaDoc::newWrite()
       dtd = DTDs::ref()->find(qConfig.defaultDocType);   //fallback, but not really needed
   int i = 1;
   //while ( isOpened("file:/"+i18n("Untitled%1.").arg(i)+dtd->defaultExtension)) i++;
-  while ( isOpened("file:/"+i18n("Untitled%1").arg(i))) i++;
+  while ( isOpened(KURL("file:/"+i18n("Untitled%1").arg(i)))) i++;
 
 //  QString fname = i18n("Untitled%1.").arg(i)+dtd->defaultExtension;
   QString fname = i18n("Untitled%1").arg(i);

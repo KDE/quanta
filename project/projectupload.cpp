@@ -313,7 +313,7 @@ void ProjectUpload::upload()
         madeDirs.append( dir );
         if (!QExtFileInfo::createDir(dir))
         {
-          QuantaCommon::dirCreationError(this, dir.prettyURL(0, KURL::StripFileProtocol));
+          QuantaCommon::dirCreationError(this, KURL( dir.prettyURL(0, KURL::StripFileProtocol) ));
           return;
         }
       }

@@ -442,7 +442,7 @@ const FileInfoDlg* FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
             if (position!=-1) imgname=imgname.left(position);
             if (!quantaFileProperties->imageList->findItem(imgname,Qt::ExactMatch))     //check if image was already counted
             {
-              KURL v(path,imgname);
+              KURL v(KURL::fromPathOrURL( path ),imgname);
               imgpath=v.path();
               QFile qimage(imgpath);
               if (qimage.exists() && v.isLocalFile())
