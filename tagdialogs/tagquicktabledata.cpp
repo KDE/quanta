@@ -33,7 +33,7 @@ void  TagQuickTable::initDialog()
   QLabel_2= new QLabel(this,"NoName");
   QLabel_2->setGeometry(10,40,100,30);
   QLabel_2->setMinimumSize(0,0);
-  QLabel_2->setText(i18n("Num of Collums"));
+  QLabel_2->setText(i18n("Num of Columns"));
 
   buttonOk= new QPushButton(this,"NoName");
   buttonOk->setGeometry(10,80,100,30);

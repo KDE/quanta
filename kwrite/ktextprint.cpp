@@ -1037,7 +1037,7 @@ QGroupBox *KTextPrintDialog::setupOptions(QWidget *parent) {
   m_lines = new QSpinBox(10, 1000, 5, group);
 
   vl = new QVBoxLayout(hl);
-  label = new QLabel(m_cols, i18n("Colums:"), group);
+  label = new QLabel(m_cols, i18n("Columns:"), group);
   vl->addWidget(label);
   vl->addWidget(m_cols);
   label = new QLabel(m_rows, i18n("Rows:"), group);

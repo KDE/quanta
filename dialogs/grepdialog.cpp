@@ -155,7 +155,7 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     layout->activate();
 
     QWhatsThis::add(pattern_edit,
-		    i18n("<qt><p>Enter the regular expression you want to search for here.</p>"
+		    i18n("<qt><p>Enter the regular expression for which you want to search.</p>"
 			 "Possible meta characters are:<br/>"
              "<ul>"
 			 "<li><b>.</b> - Matches any character.</li>"
@@ -175,15 +175,15 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
 			 "<li><b>{<i>n</i>,<i>m</i>}</b> - The preceding item is matched at least <i>n</i>,"
 			 " but at most <i>m</i> times.</li>"
 			 "</ul>"
-			 "<p>Furthermore, backreferences to bracketed subexpressions are"
+			 "<p>Furthermore, back-references to bracketed subexpressions are "
 			 "available via the notation \\\\<i>n</i>.</p></qt>"
 			 ));
     QWhatsThis::add(files_combo,
-		    i18n("<qt>Enter the file name pattern of the files to search here. "
+		    i18n("<qt>Enter the file name pattern of the files to search. "
 			 "You may give several patterns separated by commas.</qt>"));
     QWhatsThis::add(resultbox,
 		    i18n("<qt>The results of the grep run are listed here. Select a "
-			 "filename/line number combination and press Enter or doubleclick "
+			 "filename/line number combination and press Enter or double-click "
 			 "on the item to show the respective line in the editor.</qt>"));
 
     connect( dir_button, SIGNAL(clicked()),

@@ -248,7 +248,7 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     grid_3->addWidget( TextLabel5, 3, 0 );
 
     TextLabel6 = new QLabel( widget_2, "TextLabel6" );
-    TextLabel6->setText( i18n( "Background Attacment"  ) );
+    TextLabel6->setText( i18n( "Background Attachment"  ) );
 
     grid_3->addWidget( TextLabel6, 4, 0 );
 

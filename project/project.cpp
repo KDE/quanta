@@ -398,9 +398,9 @@ void Project::loadProject(const KURL &url)
     basePath = fi.dirPath();
     if ( basePath.right(1) != "/" )	basePath += "/";
 
-    if ( !f.exists() )          { KMessageBox::sorry( this, i18n("File %1 does not exist").arg(fn) );return;}
-    if ( !f.open(IO_ReadOnly))  { KMessageBox::sorry( this, i18n("Can't open %1 for IO_ReadOnly").arg(fn) );return;}
-    if ( !dom.setContent( &f )) { KMessageBox::sorry( this, i18n("Not found XML info in file %1").arg(fn) );return;}
+    if ( !f.exists() )          { KMessageBox::sorry( this, i18n("File %1 does not exist.").arg(fn) );return;}
+    if ( !f.open(IO_ReadOnly))  { KMessageBox::sorry( this, i18n("Can't open %1 for IO_ReadOnly.").arg(fn) );return;}
+    if ( !dom.setContent( &f )) { KMessageBox::sorry( this, i18n("XML info not found in file %1.").arg(fn) );return;}
 
     this->url = u;
 
@@ -415,7 +415,7 @@ void Project::slotProjectReadFinish(KIO::Job *job)
 
   QString s(buff.buffer());
 
-  if ( !dom.setContent( s )) { KMessageBox::sorry( this, i18n("Not found XML info in file") );return;}
+  if ( !dom.setContent( s )) { KMessageBox::sorry( this, i18n("XML info not found in file.") );return;}
 
   loadProjectXML();
 
@@ -635,7 +635,7 @@ void Project::newProject()
 	stack->addWidget( pnl, 0);
 	stack->addWidget( pnw, 1 );
 
-	wiz->addPage( png,   i18n("<b>General setting of project...</b>"));
+	wiz->addPage( png,   i18n("<b>General settings of project...</b>"));
 	wiz->addPage( stack, i18n("<b>Insert files in project...</b>"));
 	wiz->addPage( pnf,   i18n("<b>Some settings of project...</b>"));
 

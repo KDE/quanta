@@ -228,7 +228,7 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
     grid_9->addWidget( outputNone, 0, 0 );
 
     outputCursor = new QRadioButton( ButtonGroup35, "outputCursor" );
-    outputCursor->setText( i18n( "Inser in cursor position"  ) );
+    outputCursor->setText( i18n( "Insert at cursor position"  ) );
 
     grid_9->addWidget( outputCursor, 1, 0 );
 
@@ -272,7 +272,7 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
     grid_11->addWidget( errorNone, 0, 0 );
 
     errorCursor = new QRadioButton( ButtonGroup35_2, "errorCursor" );
-    errorCursor->setText( i18n( "Inser in cursor position"  ) );
+    errorCursor->setText( i18n( "Insert at cursor position"  ) );
 
     grid_11->addWidget( errorCursor, 1, 0 );
 

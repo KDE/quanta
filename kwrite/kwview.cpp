@@ -2142,11 +2142,11 @@ bool KWrite::loadFile(const QString &name, int flags) {
   QFileInfo info(name);
   if (!info.exists()) {
     if (flags & KWriteView::lfNewFile) return true;
-    KMessageBox::sorry(this, i18n("The specified File does not exist"));
+    KMessageBox::sorry(this, i18n("The specified file does not exist."));
     return false;
   }
   if (info.isDir()) {
-    KMessageBox::sorry(this, i18n("You have specified a directory"));
+    KMessageBox::sorry(this, i18n("You have specified a directory."));
     return false;
   }
   if (!info.isReadable()) {
@@ -2386,7 +2386,7 @@ bool KWrite::canDiscard() {
 
   if (isModified()) {
     query = KMessageBox::warningYesNoCancel(this,
-      i18n("The current Document has been modified.\nWould you like to save it?"));
+      i18n("The current document has been modified.\nWould you like to save it?"));
     switch (query) {
       case KMessageBox::Yes: //yes
         if (save() == CANCEL) return false;
@@ -2471,7 +2471,7 @@ int KWrite::checkOverwrite( KURL u )
     info.setFile( name );
     if( info.exists() )
       query = KMessageBox::warningYesNoCancel( this,
-        i18n( "A Document with this Name already exists.\nDo you want to overwrite it?" ) );
+        i18n( "A Document with this name already exists.\nDo you want to overwrite it?" ) );
   }
   return query;
 }
