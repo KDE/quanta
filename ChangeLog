@@ -33,6 +33,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - any action can be assigned to an event, not just the user defined script actions
 	- possibility to disable the event actions added (without the need to remove them
 	  one by one)
+        - support loading of more than one toolbar at a time
 
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and

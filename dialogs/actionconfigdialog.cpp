@@ -259,7 +259,6 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
     {
       KAction *a = quantaApp->actionCollection()->action(i);
       QString actionName = a->name();
-      //actionText.replace(QRegExp("\\&(?!\\&)"),"");
       if (a && actionName == item->text(2) && a->inherits("TagAction"))
       {
         action = static_cast<TagAction*>(a);
