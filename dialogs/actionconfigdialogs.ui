@@ -538,7 +538,7 @@
                                                         </sizepolicy>
                                                     </property>
                                                     <property name="text">
-                                                        <string>&amp;Input::</string>
+                                                        <string>&amp;Input:</string>
                                                     </property>
                                                     <property name="buddy" stdset="0">
                                                         <cstring>inputBox</cstring>
