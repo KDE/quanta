@@ -665,7 +665,8 @@ void QuantaApp::slotOptionsConfigureToolbars()
 
  int result = dlg.exec();
 
- menuBar()->removeItem(m_tagsMenuId);
+ menuBar()->removeItem(quantaApp->menuBar()->idAt(TAGS_MENU_PLACE));
+ menuBar()->removeItem(quantaApp->menuBar()->idAt(PLUGINS_MENU_PLACE));
  QString actionName;
  QString name;
 // QDictIterator<KXMLGUIClient> it(toolbarGUIClientList);
@@ -675,15 +676,21 @@ void QuantaApp::slotOptionsConfigureToolbars()
  QPtrList<KXMLGUIClient> guiClients = factory()->clients();
  for (uint i = 0; i < guiClients.count(); i++)
  {
+    bool clientRemoved;
     guiClient = guiClients.at(i);
     if (result == QDialog::Accepted)
     {
       nodeList = guiClient->domDocument().elementsByTagName("ToolBar");
       name = nodeList.item(0).cloneNode().toElement().attribute("tabname");
-      toolbarMenuList.remove(name.lower());
-      menu = new QPopupMenu;
-      //remove all inserted toolbars
-      factory()->removeClient(guiClient);
+      clientRemoved = toolbarMenuList.remove(name.lower());
+      if (clientRemoved)
+      {
+        menu = new QPopupMenu(m_tagsMenu);
+        //remove all inserted toolbars
+         factory()->removeClient(guiClient);
+  //      cout << "REMOVED: --------------------------------------------\n";
+   //     cout << guiClient->domDocument().toString() << "\n";
+      }
     }
     //plug the actions in again
     nodeList = guiClient->domDocument().elementsByTagName("Action");
@@ -698,7 +705,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
       }
     }
     //and add them again. Is there a better way to do this?
-    if (result == QDialog::Accepted)
+    if (result == QDialog::Accepted && clientRemoved)
     {
       guiFactory()->addClient(guiClient);
       if (!name.isEmpty())
@@ -712,9 +719,8 @@ void QuantaApp::slotOptionsConfigureToolbars()
     }
  }
 
- m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,5);
- menuBar()->removeItem(menuBar()->idAt(menuBar()->count()-1));
- menuBar()->insertItem(i18n("P&lugins"), m_pluginMenu, -1, 6);
+ menuBar()->insertItem(i18n("P&lugins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
+ menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);
  view->toolbarTab->setCurrentPage(currentPageIndex);
 }
 

@@ -1,6 +1,6 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
 <kpartgui name="quanta" version="3.1-CVS-1">
-  <MenuBar>
+  <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
       <Action name="file_new"/>    
@@ -111,30 +111,31 @@
       <Action name="project_upload"/>
       <Action name="project_options"/>
     </Menu>
-    
-    <Menu name="tools" noMerge="1"><text>T&amp;ools</text>
-      <Action name="tools_change_dtd"/>
-      <Action name="edit_current_tag"/>
-      <Separator/>
-      <Action name="syntax_check"/>
-    </Menu>
 
-    <Menu name="toolbars" noMerge="1"><text>Too&amp;lbars</text>
-      <Menu name="toolbars_load"><text>&amp;Load Toolbars</text>
-        <Action name="toolbars_load_global"/>
-        <Action name="toolbars_load_user"/>
-        <Action name="toolbars_load_project"/>
-      </Menu>
-      <Menu name="toolbars_save" ><text>&amp;Save Toolbars</text>
-       <Action name="toolbars_save_local"/>
-       <Action name="toolbars_save_project"/>
-      </Menu>
-      <Separator/>
-      <Action name="toolbars_add"/>
-      <Action name="toolbars_remove"/>
-      <Separator/>
-      <Action name="toolbars_send"/>
+  <Menu name="toolbars" noMerge="1"><text>Too&amp;lbars</text>
+    <Menu name="toolbars_load"><text>&amp;Load Toolbars</text>
+      <Action name="toolbars_load_global"/>
+      <Action name="toolbars_load_user"/>
+      <Action name="toolbars_load_project"/>
     </Menu>
+    <Menu name="toolbars_save" ><text>&amp;Save Toolbars</text>
+     <Action name="toolbars_save_local"/>
+     <Action name="toolbars_save_project"/>
+    </Menu>
+    <Separator/>
+    <Action name="toolbars_add"/>
+    <Action name="toolbars_remove"/>
+    <Separator/>
+    <Action name="toolbars_send"/>
+  </Menu>
+
+  <Menu name="tools"><text>T&amp;ools</text>
+    <Action name="tools_change_dtd"/>
+    <Action name="edit_current_tag"/>
+    <Separator/>
+    <Action name="syntax_check"/>
+  </Menu>
+
 
     <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
       <Action name="general_options"/>

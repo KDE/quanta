@@ -130,7 +130,6 @@ void QuantaApp::initQuanta()
 {
   parser = new Parser();
 
-
   initTagDict  ();
   initStatusBar();
   initDocument ();
@@ -164,12 +163,12 @@ void QuantaApp::initQuanta()
   }
 
 
-  createGUI( QString::null, false );
+  createGUI();
 
   initPlugins  ();
   
   m_tagsMenu = new QPopupMenu(this);
-  m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,5);                                                                     
+  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,TAGS_MENU_PLACE);                                                                     
 
   pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
@@ -1388,7 +1387,7 @@ void QuantaApp::initPlugins()
   connect(m_pluginMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPluginMenu()));
   connect(m_pluginMenu, SIGNAL(activated(int)), this, SLOT(slotPluginRun(int)));
 
-  menuBar()->insertItem(i18n("P&lugins"), m_pluginMenu, -1, 6);
+  menuBar()->insertItem(i18n("P&lugins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
 }
 
 /** Builds the plugins menu dynamically */

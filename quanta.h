@@ -110,8 +110,7 @@ public:
   Project *getProject()  { return project; };
   QDomDocument *actions() { return m_actions; }
   QPopupMenu *tagsMenu() { return m_tagsMenu;}
-  int tagsMenuId() { return m_tagsMenuId;}
-  void setTagsMenuId(int id) {m_tagsMenuId = id;}
+  QPopupMenu *pluginMenu() { return m_pluginMenu;}
   QPopupMenu *toolbarMenu(const QString& name) {return toolbarMenuList[name];}
   KToggleAction *showDTDToolbar;
   /** True when the whole quanta is initalized. */
@@ -341,7 +340,8 @@ private:
   /** plugin classes */
   QuantaPluginInterface *m_pluginInterface;
   QPopupMenu *m_pluginMenu;
-  
+  QPopupMenu *m_tagsMenu;
+    
   /** project class */
   Project *project;
 
@@ -435,13 +435,8 @@ private:
   KURL::List m_userToolbarFileList; //contains the filenames of user (non DTD) toolbars
 
   uint userToolbarsCount;
-  /**  */
   bool previewCopyMade;
-  /**  */
   KTempFile *previewTmpFile;
-  /**  */
-  QPopupMenu * m_tagsMenu;
-  int m_tagsMenuId;
 
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */

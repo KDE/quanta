@@ -44,6 +44,7 @@
 #include "../quanta.h"
 #include "../quantadoc.h"
 #include "../quantaview.h"
+#include "../quantacommon.h"
 
 class ActionListItem : public QListBoxPixmap {
 private:
@@ -282,7 +283,7 @@ void ActionEditDlg::saveAction( TagAction *a )
     {
       el.setAttribute("type","script");
     }
-    replaceDomItem(el,"script", scriptPath->text() );
+    replaceDomItem(el,"script", "\""+scriptPath->text() +"\"");
     QDomElement script = el.namedItem("script").toElement();
 
     if ( inputNone       ->isChecked() ) script.setAttribute("input","none");
@@ -326,6 +327,8 @@ void ActionEditDlg::saveAction( TagAction *a )
      i++;
     } while ( (!guiClient) && (i < guiClients.count()) );
 
+    quantaApp->menuBar()->removeItem(quantaApp->menuBar()->idAt(TAGS_MENU_PLACE));
+    quantaApp->menuBar()->removeItem(quantaApp->menuBar()->idAt(PLUGINS_MENU_PLACE));
     // modify the client's XML
     if (guiClient)
     {
@@ -347,9 +350,8 @@ void ActionEditDlg::saveAction( TagAction *a )
       }
     }
 
-    quantaApp->menuBar()->removeItem(quantaApp->tagsMenuId());
-    int id = quantaApp->menuBar()->insertItem(i18n("&Tags"),quantaApp->tagsMenu(),-1,5);
-    quantaApp->setTagsMenuId(id);
+    quantaApp->menuBar()->insertItem(i18n("P&lugins"), quantaApp->pluginMenu(), -1, PLUGINS_MENU_PLACE);
+    quantaApp->menuBar()->insertItem(i18n("&Tags"),quantaApp->tagsMenu(),-1,TAGS_MENU_PLACE);
   }
 
 }
