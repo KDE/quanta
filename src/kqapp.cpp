@@ -84,6 +84,7 @@ KQApplication::KQApplication()
      if (layout == "Default" || args->isSet("resetlayout"))
      {
          mdiMode = KMdi::IDEAlMode;
+         config->writeEntry("MDI mode", KMdi::IDEAlMode);
          config->writeEntry("Window layout", "Default");
      }
      quantaApp = new QuantaApp(mdiMode);
@@ -157,6 +158,7 @@ int KQUniqueApplication::newInstance()
     {
         mdiMode = KMdi::IDEAlMode;
         config->writeEntry("Window layout", "Default");
+        config->writeEntry("MDI mode", KMdi::IDEAlMode);
     }
     quantaApp = new QuantaApp(mdiMode);
     config->setGroup("General Options");
