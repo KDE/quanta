@@ -1654,6 +1654,13 @@ void Project::slotSaveAsProjectView(bool askForName)
     for (int i = 0; i < tab->count(); i++)
     {
       Document *w = dynamic_cast<Document *>(tab->page(i));
+      if (!w) {
+        /* This is a tab which contains a KPart. We can't get an URL out of w, because
+        * the dynamic_cast<> will return NULL. Skip the other code in this iteration.
+        * Patch provided by Mathieu Kooiman - Thanks!
+        */
+        continue;
+      }
       KURL url = w->url();
       url = QExtFileInfo::toRelative(url, baseURL);
       if (!w->isUntitled() && fileList.contains(url))
