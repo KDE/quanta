@@ -1,50 +1,59 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="any">
+ <tag name="any">
   <label>
-    <text>id</text>
-    <location col="0" row="0"/>
+   <text>id</text>
+   <location col="0" row="0"/>
   </label>
   <attr name="id" type="input">
-    <location col="1" row="0"/>
+   <tooltip>A unique ID for the element.</tooltip>
+   <whatsthis>A unique ID for the element.</whatsthis>
+   <location col="1" row="0"/>
   </attr>
 
   <label>
-    <text>minOccurs</text>
-    <location col="0" row="1"/>
+   <text>minOccurs</text>
+   <location col="0" row="1"/>
   </label>
   <attr name="minOccurs" type="input">
-    <location col="1" row="1"/>
+   <tooltip>Minimum number of times the element can occur. Value can be >=0. Default is 1.</tooltip>
+   <whatsthis>Minimum number of times the element can occur. Value can be >=0. Default is 1.</whatsthis>
+   <location col="1" row="1"/>
   </attr>
 
   <label>
-    <text>maxOccurs</text>
-    <location col="0" row="2"/>
+   <text>maxOccurs</text>
+   <location col="0" row="2"/>
   </label>
   <attr name="maxOccurs" type="input">
-    <location col="1" row="2"/>
+   <tooltip>Maximum number of times the element can occur. Value can be >=0 or unbounded. Default is 1.</tooltip>
+   <whatsthis>Maximum number of times the element can occur. Value can be >=0 or unbounded. Default is 1.</whatsthis>
+   <location col="1" row="2"/>
   </attr>
 
   <label>
-    <text>namespace</text>
-    <location col="0" row="3"/>
+   <text>namespace</text>
+   <location col="0" row="3"/>
   </label>
-  <attr name="namespace" type="url">
-    <location col="1" row="3"/>
+  <attr name="namespace" type="input">
+   <tooltip>Namespaces containing the elements that can be used.</tooltip>
+   <whatsthis>Namespaces containing the elements that can be used.</whatsthis>
+   <location col="1" row="3"/>
   </attr>
 
   <label>
-    <text>processContents</text>
-    <location col="0" row="4"/>
+   <text>processContents</text>
+   <location col="0" row="4"/>
   </label>
   <attr name="processContents" type="list">
-    <items>
-      <item>lax</item>
-      <item>skip</item>
-      <item>strict</item>
-    </items>
-    <location col="1" row="4"/>
+   <items>
+    <item>lax</item>
+    <item>skip</item>
+    <item>strict</item>
+   </items>
+   <tooltip>How should the XML processor handle validation, in regard to elements specified by this element?</tooltip>
+   <whatsthis>How should the XML processor handle validation, in regard to elements specified by this element?</whatsthis>
+   <location col="1" row="4"/>
   </attr>
-
-</tag>
+ </tag>
 </TAGS>

@@ -1,21 +1,24 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="documentation">
+ <tag name="documentation">
   <label>
-    <text>source</text>
-    <location col="0" row="0"/>
+   <text>source</text>
+   <location col="0" row="0"/>
   </label>
-  <attr name="source" type="url">
-    <location col="1" row="0"/>
+  <attr name="source" type="string">
+   <tooltip>Source of the application information.</tooltip>
+   <whatsthis>Source of the application information.</whatsthis>
+   <location col="1" row="0"/>
   </attr>
 
   <label>
-    <text>xml:lang</text>
-    <location col="0" row="1"/>
+   <text>xml:lang</text>
+   <location col="0" row="1"/>
   </label>
   <attr name="xml:lang" type="input">
-    <location col="1" row="1"/>
+   <tooltip>Language used.</tooltip>
+   <whatsthis>Language used.</whatsthis>
+   <location col="1" row="1"/>
   </attr>
-
-</tag>
+ </tag>
 </TAGS>

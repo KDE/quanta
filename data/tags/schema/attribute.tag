@@ -1,78 +1,105 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="attribute">
+ <tag name="attribute">
   <label>
-    <text>id</text>
-    <location col="0" row="0"/>
+   <text>id</text>
+   <location col="0" row="0"/>
   </label>
   <attr name="id" type="input">
-    <location col="1" row="0"/>
+   <tooltip>A unique ID for the element.</tooltip>
+   <whatsthis>A unique ID for the element.</whatsthis>
+   <location col="1" row="0"/>
   </attr>
 
   <label>
-    <text>name</text>
-    <location col="0" row="1"/>
+   <text>name</text>
+   <location col="0" row="1"/>
   </label>
   <attr name="name" type="input">
-    <location col="1" row="1"/>
+   <tooltip>Name of the attribute. Cannot be present if ref is used.</tooltip>
+   <whatsthis>Name of the attribute. Cannot be present if ref is used.</whatsthis>
+   <location col="1" row="1"/>
   </attr>
 
   <label>
-    <text>ref</text>
-    <location col="0" row="2"/>
+   <text>ref</text>
+   <location col="0" row="2"/>
   </label>
   <attr name="ref" type="input">
-    <location col="1" row="2"/>
+   <tooltip>Reference to a named attribute. Cannot be present if name is used.</tooltip>
+   <whatsthis>Reference to a named attribute. Cannot be present if name is used.</whatsthis>
+   <location col="1" row="2"/>
   </attr>
 
   <label>
-    <text>type</text>
-    <location col="0" row="3"/>
+   <text>type</text>
+   <location col="0" row="3"/>
   </label>
-  <attr name="type" type="url">
-    <location col="1" row="3"/>
+  <attr name="type" type="input">
+   <tooltip>Built-in data type or a simple type. If a simpleType element is present, then type cannot be used.</tooltip>
+   <whatsthis>Built-in data type or a simple type. If a simpleType element is present, then type cannot be used.</whatsthis>
+   <location col="1" row="3"/>
   </attr>
 
   <label>
-    <text>default</text>
-    <location col="0" row="4"/>
+   <text>default</text>
+   <location col="0" row="4"/>
   </label>
   <attr name="default" type="input">
-    <location col="1" row="4"/>
+   <tooltip>Default value for the attribute. Cannot be present if fixed is used.</tooltip>
+   <whatsthis>Default value for the attribute. Cannot be present if fixed is used.</whatsthis>
+   <location col="1" row="4"/>
   </attr>
 
   <label>
-    <text>fixed</text>
-    <location col="0" row="5"/>
+   <text>fixed</text>
+   <location col="0" row="5"/>
   </label>
-  <attr name="fixed" type="url">
-    <location col="1" row="5"/>
+  <attr name="fixed" type="input">
+   <tooltip>Fixed value for the attribute. Cannot be present if default is used.</tooltip>
+   <whatsthis>Fixed value for the attribute. Cannot be present if default is used.</whatsthis>
+   <location col="1" row="5"/>
   </attr>
 
   <label>
-    <text>form</text>
-    <location col="0" row="6"/>
+   <text>form</text>
+   <location col="0" row="6"/>
   </label>
   <attr name="form" type="list">
-    <items>
-      <item>qualified</item>
-      <item>unqualified</item>
-    </items>
-    <location col="1" row="6"/>
+   <items>
+    <item>qualified</item>
+    <item>unqualified</item>
+   </items>
+   <tooltip>Form for the attribute. Default value is specified by the attributeFormDefault attribute in the schema element.</tooltip>
+   <whatsthis>Form for the attribute. Default value is specified by the attributeFormDefault attribute in the schema element.</whatsthis>
+   <location col="1" row="6"/>
   </attr>
 
   <label>
-    <text>use</text>
-    <location col="0" row="7"/>
+   <text>use</text>
+   <location col="0" row="7"/>
   </label>
   <attr name="use" type="list">
-    <items>
-      <item>optional</item>
-      <item>prohibited</item>
-      <item>required</item>
-    </items>
-    <location col="1" row="7"/>
+   <items>
+    <item>optional</item>
+    <item>required</item>
+    <item>prohibited</item>
+   </items>
+   <tooltip>Specifies usage of the attribute.</tooltip>
+   <whatsthis>Specifies usage of the attribute.</whatsthis>
+   <location col="1" row="7"/>
   </attr>
 
-</tag>
+  <stoppingtags>
+   <stoppingtag>include</stoppingtag>
+   <stoppingtag>import</stoppingtag>
+   <stoppingtag>redefine</stoppingtag>
+   <stoppingtag>complexType</stoppingtag>
+   <stoppingtag>group</stoppingtag>
+   <stoppingtag>attributeGroup</stoppingtag>
+   <stoppingtag>element</stoppingtag>
+   <stoppingtag>attribute</stoppingtag>
+   <stoppingtag>notation</stoppingtag>
+  </stoppingtags>
+ </tag>
 </TAGS>

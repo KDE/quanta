@@ -1,45 +1,67 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="group">
+ <tag name="group">
   <label>
-    <text>id</text>
-    <location col="0" row="0"/>
+   <text>id</text>
+   <location col="0" row="0"/>
   </label>
   <attr name="id" type="input">
-    <location col="1" row="0"/>
+   <tooltip>A unique ID for the element.</tooltip>
+   <whatsthis>A unique ID for the element.</whatsthis>
+   <location col="1" row="0"/>
   </attr>
 
   <label>
-    <text>name</text>
-    <location col="0" row="1"/>
+   <text>name</text>
+   <location col="0" row="1"/>
   </label>
   <attr name="name" type="input">
-    <location col="1" row="1"/>
+   <tooltip>Name for the group. Only usable when used as a child element to schema and ref is not used.</tooltip>
+   <whatsthis>Name for the group. Only usable when used as a child element to schema and ref is not used.</whatsthis>
+   <location col="1" row="1"/>
   </attr>
 
   <label>
-    <text>ref</text>
-    <location col="0" row="2"/>
+   <text>ref</text>
+   <location col="0" row="2"/>
   </label>
   <attr name="ref" type="input">
-    <location col="1" row="2"/>
+   <tooltip>Reference to a named group. Cannot be present when name is.</tooltip>
+   <whatsthis></whatsthis>
+   <location col="1" row="2"/>
   </attr>
 
   <label>
-    <text>minOccurs</text>
-    <location col="0" row="3"/>
+   <text>minOccurs</text>
+   <location col="0" row="3"/>
   </label>
   <attr name="minOccurs" type="input">
-    <location col="1" row="3"/>
+   <tooltip>Minimum number of times the element can occur. Value can be >=0. Default is 1. Only usable with ref.</tooltip>
+   <whatsthis>Minimum number of times the element can occur. Value can be >=0. Default is 1. Only usable with ref.</whatsthis>
+   <location col="1" row="3"/>
   </attr>
 
   <label>
-    <text>maxOccurs</text>
-    <location col="0" row="4"/>
+   <text>maxOccurs</text>
+   <location col="0" row="4"/>
   </label>
   <attr name="maxOccurs" type="input">
-    <location col="1" row="4"/>
+   <tooltip>Maximum number of times the element can occur. Value can be >=0 or unbounded. Default is 1. Only usable with ref.</tooltip>
+   <whatsthis>Maximum number of times the element can occur. Value can be >=0 or unbounded. Default is 1. Only usable with ref.</whatsthis>
+   <location col="1" row="4"/>
   </attr>
 
-</tag>
+  <stoppingtags>
+   <stoppingtag>include</stoppingtag>
+   <stoppingtag>import</stoppingtag>
+   <stoppingtag>redefine</stoppingtag>
+   <stoppingtag>simpleType</stoppingtag>
+   <stoppingtag>complexType</stoppingtag>
+   <stoppingtag>group</stoppingtag>
+   <stoppingtag>attributeGroup</stoppingtag>
+   <stoppingtag>element</stoppingtag>
+   <stoppingtag>attribute</stoppingtag>
+   <stoppingtag>notation</stoppingtag>
+  </stoppingtags>
+ </tag>
 </TAGS>

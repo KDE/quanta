@@ -1,21 +1,24 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="field">
+ <tag name="field">
   <label>
-    <text>id</text>
-    <location col="0" row="0"/>
+   <text>id</text>
+   <location col="0" row="0"/>
   </label>
   <attr name="id" type="input">
-    <location col="1" row="0"/>
+   <tooltip>A unique ID for the element.</tooltip>
+   <whatsthis>A unique ID for the element.</whatsthis>
+   <location col="1" row="0"/>
   </attr>
 
   <label>
-    <text>xpath</text>
-    <location col="0" row="1"/>
+   <text>xpath</text>
+   <location col="0" row="1"/>
   </label>
   <attr name="xpath" type="input">
-    <location col="1" row="1"/>
+   <tooltip>Single element or attribute whose content or value is used for the constraint.</tooltip>
+   <whatsthis>Single element or attribute whose content or value is used for the constraint.</whatsthis>
+   <location col="1" row="1"/>
   </attr>
-
-</tag>
+ </tag>
 </TAGS>

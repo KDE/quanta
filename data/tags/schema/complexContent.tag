@@ -1,25 +1,28 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="complexContent">
+ <tag name="complexContent">
   <label>
-    <text>id</text>
-    <location col="0" row="0"/>
+   <text>id</text>
+   <location col="0" row="0"/>
   </label>
   <attr name="id" type="input">
-    <location col="1" row="0"/>
+   <tooltip>A unique ID for the element.</tooltip>
+   <whatsthis>A unique ID for the element.</whatsthis>
+   <location col="1" row="0"/>
   </attr>
 
   <label>
-    <text>mixed</text>
-    <location col="0" row="1"/>
+   <text>mixed</text>
+   <location col="0" row="1"/>
   </label>
   <attr name="mixed" type="list">
-    <items>
-      <item>false</item>
-      <item>true</item>
-    </items>
-    <location col="1" row="1"/>
+   <items>
+    <item>true</item>
+    <item>false</item>
+   </items>
+   <tooltip>true, if character data is allowed to appear between the child elements. Default is false.</tooltip>
+   <whatsthis>true, if character data is allowed to appear between the child elements. Default is false.</whatsthis>
+   <location col="1" row="1"/>
   </attr>
-
-</tag>
+ </tag>
 </TAGS>

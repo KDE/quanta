@@ -1,21 +1,24 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="extension">
+ <tag name="extension">
   <label>
-    <text>id</text>
-    <location col="0" row="0"/>
+   <text>id</text>
+   <location col="0" row="0"/>
   </label>
   <attr name="id" type="input">
-    <location col="1" row="0"/>
+   <tooltip>A unique ID for the element.</tooltip>
+   <whatsthis>A unique ID for the element.</whatsthis>
+   <location col="1" row="0"/>
   </attr>
 
   <label>
-    <text>base</text>
-    <location col="0" row="1"/>
+   <text>base</text>
+   <location col="0" row="1"/>
   </label>
   <attr name="base" type="input">
-    <location col="1" row="1"/>
+   <tooltip>Name of a built-in data type, simpleType, or complexType.</tooltip>
+   <whatsthis>Name of a built-in data type, simpleType, or complexType.</whatsthis>
+   <location col="1" row="1"/>
   </attr>
-
-</tag>
+ </tag>
 </TAGS>

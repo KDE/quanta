@@ -1,13 +1,14 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="maxInclusive">
+ <tag name="maxInclusive" single="1">
   <label>
-    <text>value</text>
-    <location col="0" row="0"/>
+   <text>value</text>
+   <location col="0" row="0"/>
   </label>
   <attr name="value" type="input">
-    <location col="1" row="0"/>
+   <tooltip>Upper bounds for numeric values.</tooltip>
+   <whatsthis>Upper bounds for numeric values.</whatsthis>
+   <location col="1" row="0"/>
   </attr>
-
-</tag>
+ </tag>
 </TAGS>
