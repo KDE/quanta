@@ -120,20 +120,27 @@ void TagDialog::parseTag()
     else if (QFileInfo(dtdTag->fileName()).exists())
     {
       QFile f( dtdTag->fileName() );
-     f.open( IO_ReadOnly );
-     if ( doc.setContent( &f ) )
-     {
+       f.open( IO_ReadOnly );
+       if ( doc.setContent( &f ) )
+       {
+       QString tagName = dtdTag->name();
        for ( QDomNode n = doc.firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
        {
-          if (n.nodeName() == "tag" && n.toElement().attribute("name") == dtdTag->name()) //read a tag
+          if (n.nodeName() == "tag")
           {
-             mainDlg = new Tagxml( n, dtdTag->parentDTD, this );
-             ((Tagxml    *)mainDlg)->writeAttributes( dict );
-             break;
+            QString nodeTagName = n.toElement().attribute("name");
+            if (!dtdTag->parentDTD->caseSensitive)
+                nodeTagName = nodeTagName.upper();
+            if (nodeTagName == tagName) //read a tag
+            {
+              mainDlg = new Tagxml( n, dtdTag->parentDTD, this );
+              ((Tagxml    *)mainDlg)->writeAttributes( dict );
+              break;
+            }
           }
        }
-     }
-     f.close();
+       }
+       f.close();
     }
     else
     {
