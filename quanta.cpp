@@ -948,14 +948,8 @@ void QuantaApp::slotActivatePreview()
   WHTMLPart *part = htmlPart();
   if ( !part ) return;
   QWidgetStack *s = widgetStackOfHtmlPart();
-/*
-  enableCommand(ID_VIEW_BACK);
-  enableCommand(ID_VIEW_FORWARD);
-  enableCommand(ID_VIEW_REPAINT);
-*/
-  s->raiseWidget( 1 );
-
-//  checkCommand( ID_VIEW_PREVIEW, true );
+  previousWidgetId = s->id(s->visibleWidget());
+  s->raiseWidget(1);
 }
 
 void QuantaApp::slotShowPreview()
@@ -972,12 +966,9 @@ void QuantaApp::slotShowPreview()
   KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
   bool stat = !ta->isChecked();
 
-  if ( stat ) {
-//    disableCommand(ID_VIEW_BACK);
-//    disableCommand(ID_VIEW_FORWARD);
-//    disableCommand(ID_VIEW_REPAINT);
-
-    s   ->raiseWidget( 0 );
+  if ( stat )
+  {
+    s->raiseWidget(previousWidgetId);
 
 //FIXME:
 //Restore the original doc from the temp file.
@@ -999,22 +990,18 @@ void QuantaApp::slotShowPreview()
       delete doc2;
     }
     fileWatcher->startScan();
-//    w->view()->setFocus();
   }
-  else {
-//    enableCommand(ID_VIEW_BACK);
-//    enableCommand(ID_VIEW_FORWARD);
-//    enableCommand(ID_VIEW_REPAINT);
-
+  else
+  {
     if ( qConfig.previewPosition == "Bottom" )
     {
+      //TODO: ???
     }
 
-    s->raiseWidget( 1 );
+    previousWidgetId = s->id(s->visibleWidget());
+    s->raiseWidget(1);
     repaintPreview(false);
   }
-//  checkCommand( ID_VIEW_PREVIEW, !stat );
-
 }
 
 void QuantaApp::slotShowProjectTree()
@@ -1115,13 +1102,12 @@ void QuantaApp::slotDockChanged()
 {
   static bool docTabOpened = false;
 
-//  if ( stabdock->isVisible() && baseNode) reparse();
-
+  QWidgetStack *s = widgetStackOfHtmlPart();
   if ( dtabdock->isVisible() )
   {
     static bool first = true;
-//    rightWidgetStack -> raiseWidget(2);
-    widgetStackOfHtmlPart()->raiseWidget(2);
+    previousWidgetId = s->id(s->visibleWidget());
+    s->raiseWidget(2);
     if ( first )
     {
       openDoc( locate("appdata","doc/intro.html") );
@@ -1132,9 +1118,8 @@ void QuantaApp::slotDockChanged()
   else {
     if ( docTabOpened )
     {
-  //    rightWidgetStack -> raiseWidget(0);
-      widgetStackOfHtmlPart()->raiseWidget(0);
-       docTabOpened = false;
+      s->raiseWidget(previousWidgetId);
+      docTabOpened = false;
     }
     if ( !exitingFlag )
     {
@@ -1194,12 +1179,11 @@ void QuantaApp::slotContextHelp()
 {
   int id_w = rightWidgetStack->id( rightWidgetStack->visibleWidget());
 
+  QWidgetStack *s = widgetStackOfHtmlPart();
   if (  id_w == 1 || id_w == 2 )
   {
     if ( !m_oldTreeViewWidget->isVisible() ) m_oldTreeViewWidget->changeHideShowState();
-      widgetStackOfHtmlPart()->raiseWidget(0);
-//    rightWidgetStack->raiseWidget(0);
-//    view->write()->view()->setFocus();
+      s->raiseWidget(previousWidgetId);
   }
   else
   {
@@ -1213,10 +1197,10 @@ void QuantaApp::slotContextHelp()
       if (ttabdock->isVisible()) m_oldTreeViewWidget = ttabdock;
       if (stabdock->isVisible()) m_oldTreeViewWidget = stabdock;
       if (dtabdock->isVisible()) m_oldTreeViewWidget = dtabdock;
-      if ( !dtabdock->isVisible() ) dtabdock->changeHideShowState();
+      if (!dtabdock->isVisible()) dtabdock->changeHideShowState();
 
-//      rightWidgetStack->raiseWidget(2);
-      widgetStackOfHtmlPart()->raiseWidget(2);
+      previousWidgetId = s->id(s->visibleWidget());
+      s->raiseWidget(2);
       htmlPartDoc->view()->setFocus();
 
       openDoc(*url);

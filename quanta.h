@@ -114,6 +114,7 @@ friend class ActionEditDlg;
 public:
   StructTreeView *sTab;
   QWidgetStack *rightWidgetStack;
+  QWidgetStack *bottomWidgetStack;
 
   QuantaApp();
   ~QuantaApp();
@@ -396,8 +397,6 @@ private:
   FilesListView    *fLTab;
   TemplatesTreeView   *tTab;
 
-  QWidgetStack *bottomWidgetStack;
-
   KDockWidget *leftdock;
   KDockWidget *maindock;
   KDockWidget *bottdock;
@@ -485,6 +484,9 @@ protected: // Protected attributes
   SpellChecker *spellChecker;
 
   KDockWidget *m_oldTreeViewWidget;
+
+  /** The id of the widget visible before doing the preview */
+  int previousWidgetId;
 };
  
 #endif // QUANTA_H

@@ -3,6 +3,7 @@
                              -------------------
     begin                : Tue Sep 17 2002
     copyright            : (C) 2002 by Marc Britton
+                           (C) 2003 by Andras Mantia
     email                : consume@optushome.com.au
  ***************************************************************************/
 
@@ -37,6 +38,8 @@ public:
   QuantaKPartPlugin();
   ~QuantaKPartPlugin();
   void showGui(bool show);
+  virtual void addWidget();
+  virtual void removeWidget();
 public slots:
   virtual bool load();
   virtual bool run();
