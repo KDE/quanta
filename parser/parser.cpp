@@ -915,6 +915,7 @@ Node* Parser::specialAreaParser(Node *startNode)
   s = write->text(bl, bc, bLine, bCol - 1);
   startNode->tag->setTagPosition(bl, bc, bLine, bCol - 1);
   startNode->tag->setStr(s);
+  startNode->tag->type = Tag::ScriptTag;
 
   eLine = eCol = -1;
   //create a node with the end of special area
@@ -951,8 +952,6 @@ Node* Parser::specialAreaParser(Node *startNode)
 
       }
     }
-    if (!tag)
-      kdDebug(24000) << "tag is empty!\n";
   } else
   {
     eLine = el;
@@ -1145,7 +1144,8 @@ Node *Parser::rebuild(Document *w)
      node->tag->endPos(el, ec);
      text = w->text(bl, bc, el, ec);
      tagStr = node->tag->tagStr();
-     if (tagStr != text || node->tag->type == Tag::Empty)
+     if (tagStr != text || node->tag->type == Tag::Empty ||
+          node->tag->type == Tag::ScriptTag)
      {
        node = node->previousSibling();
      } else
@@ -1327,7 +1327,8 @@ Node *Parser::rebuild(Document *w)
         {
           lastNode->tag->type = Tag::Empty;
         }
-
+        if (lastInserted->parent && lastInserted->parent->child == lastInserted)
+            lastInserted->parent->child = lastInserted->next;
         lastInserted->removeAll = false;
         delete lastInserted;
         lastInserted = lastNode;
