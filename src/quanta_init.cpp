@@ -98,11 +98,13 @@
 #include "dirtydialog.h"
 
 #include "dcopsettings.h"
+#include "dcopquanta.h"
 #include "dtds.h"
 
 QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KDockMainWindow(0L,"Quanta")
 {
   dcopSettings = new DCOPSettings;
+  dcopQuanta = new DCOPQuanta;
   quantaStarted = true;
   tempFileList.setAutoDelete(true);
   toolbarList.setAutoDelete(true);
@@ -166,6 +168,8 @@ QuantaApp::~QuantaApp()
 
  delete m_execCommandPS;
  m_execCommandPS = 0L;
+ delete dcopSettings;
+ delete dcopQuanta;
 }
 
 

@@ -15,19 +15,26 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "tagattr.h"
 
+//kde includes
+#include <dcopref.h>
+#include <kapplication.h> 
 #include <kdebug.h>
 #include <klineedit.h>
 
+//qt includes
+#include <qdom.h>
+#include <qtextstream.h>
+
+//system includes
+#include <sys/types.h> 
+#include <unistd.h> 
+
+//app includes
+#include "tagattr.h"
 #include "node.h"
 #include "colorcombo.h"
 #include "qtag.h"
-
-
-#include <qdom.h>
-
-extern GroupElementMapList globalGroupMap;
 
 QString Attr::attrName() const
 {
@@ -41,32 +48,53 @@ Attr_list::Attr_list( QDomElement *el, QWidget *w, QTag *dtdTag )
    combo = (QComboBox *)w;
    
    QString source = el->attribute("source");
-   if (!source.isEmpty())
+   if (source == "dcop") //fill the list with a result of a DCOP call
    {
-      GroupElementMapList::Iterator it;
-      for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
-      {
-        QString key = it.key();
-        if (key.startsWith("Selectors|"))
-        {
-          QString selectorName = key.mid(10);
-          kdDebug() << "selector = " << selectorName << endl;
-          QString tmpStr;
-          int index = selectorName.find(QRegExp("\\.|\\#|\\:"));          
-          if (index != -1)
-          {
-            tmpStr = selectorName.left(index).lower();
-          } else
-          {
-            tmpStr = selectorName;
-          }
-            kdDebug() << "tmpStr = " << tmpStr << " name = " << m_dtdTag->name().lower() << endl;
-            if (tmpStr.isEmpty() || m_dtdTag->name().lower() == tmpStr || tmpStr == "*")
-            {
-              combo->insertItem(selectorName.mid(index + 1).replace('.',' '));
-            }
-         }
-       }
+     QString method = el->attribute("method");
+     QString interface = el->attribute("interface", "QuantaIf");
+     QString arguments = el->attribute("arguments");
+     QStringList argumentList = QStringList::split(",", arguments, true);
+     for ( QStringList::Iterator it = argumentList.begin(); it != argumentList.end(); ++it ) 
+     {
+        (*it).replace("%tagname%", m_dtdTag->name());
+     }
+     QString app = "quanta";
+     if (!kapp->inherits("KUniqueApplication"))
+     {
+       pid_t pid = ::getpid();
+       app += QString("-%1").arg(pid);
+     }
+     DCOPRef quantaRef(app.utf8(), interface.utf8());
+     DCOPReply reply;
+     int argumentCount = argumentList.count();
+     if (argumentCount == 0)
+     {
+       reply = quantaRef.call(method.utf8());
+     }
+     else if (argumentCount == 1)
+     {
+       reply = quantaRef.call(method.utf8(), argumentList[0]);
+     }
+     else if (argumentCount == 2)
+       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1]);
+     else if (argumentCount == 3)
+       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2]);
+     else if (argumentCount == 4)
+       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3]);
+     else if (argumentCount == 5)
+       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4]);
+     else if (argumentCount == 6)
+       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5]);
+     else if (argumentCount == 7)
+       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5], argumentList[6]);
+     else if (argumentCount == 8)
+       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5], argumentList[6], argumentList[7]);
+      
+     if (reply.isValid())
+     {
+        QStringList list = reply;
+        combo->insertStringList(list);
+     }
    }
       
    for ( QDomElement n = el->firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {

@@ -139,6 +139,7 @@
 #include "toolbarxmlgui.h"
 #include "tagaction.h"
 #include "toolbartabwidget.h"
+#include "dcopquanta.h"
 
 #include "kategrepdialog.h"
 
@@ -4057,6 +4058,11 @@ void QuantaApp::slotReportBug()
   KAboutData aboutData( "quanta", I18N_NOOP("Quanta"), VERSION);
   KBugReport bugReportDlg(this, true, &aboutData);
   bugReportDlg.exec();
+}
+
+QStringList QuantaApp::selectors(const QString &tag)
+{
+  return dcopQuanta->selectors(tag);
 }
 
 #include "quanta.moc"

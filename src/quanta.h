@@ -46,6 +46,7 @@
 
 // forward declaration
 class DCOPSettings;
+class DCOPQuanta;
 
 class QuantaPluginInterface;
 
@@ -181,6 +182,8 @@ public:
   void execCommandPS(const QString& cmd);
   /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
   void loadToolbarForDTD(const QString& dtdName);
+  
+  QStringList selectors(const QString& tag);
   
     /** tabs for left panel */
   ProjectTreeView *pTab;
@@ -548,6 +551,7 @@ protected: // Protected attributes
   KURL urlUnderCursor;
   QTimer *autosaveTimer;
   DCOPSettings *dcopSettings; 
+  DCOPQuanta *dcopQuanta; 
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;

@@ -1176,26 +1176,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
   {
     if (!values)
     {
-      values = new QStringList();
+      values = new QStringList(quantaApp->selectors(tagName));
       deleteValues = true;
-      GroupElementMapList::Iterator it;
-      for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
-      {
-        QString key = it.key();
-        if (key.startsWith("Selectors|"))
-        {
-          QString selectorName = key.mid(10);
-          int index = selectorName.find('.');
-          if (index != -1)
-          {
-            QString tmpStr = selectorName.left(index);
-            if (tmpStr.isEmpty() || tagName.lower() == tmpStr || tmpStr == "*")
-            {
-              values->append(selectorName.mid(index + 1).replace('.',' '));
-            }
-          }
-         }
-       }
     }
   }
   if (values)

@@ -222,7 +222,12 @@ void TagDialog::parseTag()
               {
                 QDomElement el = n.toElement();               
                 str.reset();
-                str << "<attr name=\"" << el.attribute("name") << "\" type=\""<< el.attribute("type", "input") << "\" source=\"" << el.attribute("source") << "\">" << endl;
+                str << "<attr name=\"" << el.attribute("name") << "\" type=\"" << el.attribute("type", "input");
+                str << "\" source=\"" << el.attribute("source");
+                str << "\" interface=\"" << el.attribute("interface");
+                str << "\" method=\"" << el.attribute("method");
+                str << "\" arguments=\"" << el.attribute("arguments");
+                str << "\">" << endl;
                 str << "    <text>" << el.attribute("name") << "</text>" << endl;
                 str << "    <textlocation col=\"0\" row=\"" << row << "\" />" << endl;
                 str << "    <location col=\"1\" row=\"" << row << "\" />" << endl;
