@@ -651,7 +651,6 @@ void QuantaApp::readOptions()
   qConfig.enableDTDToolbar = config->readBoolEntry("Show DTD Toolbar",true);
 
   slotToggleDTDToolbar(qConfig.enableDTDToolbar);
-  showDTDToolbar->setEnabled(qConfig.enableDTDToolbar);
 
   config->setGroup("Kate View");
   qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);

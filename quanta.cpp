@@ -815,7 +815,6 @@ void QuantaApp::slotOptions()
        break;
      }
   }
-  fileMasks->hideDTDToolbar->setChecked(!qConfig.enableDTDToolbar);
 
   // Preview options
   page=kd->addVBoxPage(i18n("Preview"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
@@ -871,9 +870,6 @@ void QuantaApp::slotOptions()
   	qConfig.textMimeTypes = fileMasks->lineText->text();
    
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
-    qConfig.enableDTDToolbar = !fileMasks->hideDTDToolbar->isChecked();
-    showDTDToolbar->setEnabled(qConfig.enableDTDToolbar);
-    slotToggleDTDToolbar(showDTDToolbar->isChecked());
 
     qConfig.refreshFrequency = parserOptions->refreshFrequency->value();
     if (qConfig.refreshFrequency > 0)
@@ -2295,14 +2291,13 @@ void QuantaApp::removeToolbar(const QString& name)
 /** Show or hide the DTD toolbar */
 void QuantaApp::slotToggleDTDToolbar(bool show)
 {
-  if (show && qConfig.enableDTDToolbar)
+  if (show)
   {
     view->toolbarTab->show();
   } else
   {
     view->toolbarTab->hide();
   }
-  showDTDToolbar->setChecked(show);
 }
 
 
@@ -2418,7 +2413,8 @@ ToolbarEntry *QuantaApp::toolbarByURL(const KURL& url)
 /** Returns true if all toolbars are hidden, false otherwise. */
 bool QuantaApp::allToolbarsHidden()
 {
-
+  bool result = true;
+  showDTDToolbar->setEnabled(false);
   ToolbarEntry *p_toolbar = 0L;
   QDictIterator<ToolbarEntry> iter(toolbarList);
   for( ; iter.current(); ++iter )
@@ -2426,11 +2422,14 @@ bool QuantaApp::allToolbarsHidden()
     p_toolbar = iter.current();
     if (p_toolbar->visible)
     {
-       return false;
+       showDTDToolbar->setEnabled(true);
+       result = false;;
     }
   }
 
-  return true;
+  if (!showDTDToolbar->isChecked())
+      result = true;
+  return result;
 }
 
 /** No descriptions */
