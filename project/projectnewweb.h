@@ -1,5 +1,5 @@
 /***************************************************************************
-                          projectnewgeneral.h  -  description
+                          projectnewweb.h  -  description
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
@@ -15,31 +15,55 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PROJECTNEWGENERAL_H
-#define PROJECTNEWGENERAL_H
+#ifndef PROJECTNEWWEB_H
+#define PROJECTNEWWEB_H
 
-#include "projectnewgenerals.h"
+#include <qwidget.h>
+#include <qstringlist.h>
+#include <projectnewwebs.h>
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
+  
+class KProcess;
 
-class ProjectNewGeneral : public ProjectNewGeneralS  {
+class ProjectNewWeb : public ProjectNewWebS  {
    Q_OBJECT
 public: 
-	ProjectNewGeneral(QWidget *parent=0, const char *name=0);
-	~ProjectNewGeneral();
-	
-	QString type();
+	ProjectNewWeb(QWidget *parent=0, const char *name=0);
+	~ProjectNewWeb();
 	
 public slots:
-	void slotButtonDir();
-	void slotLinePrjFile(const QString &);
-	void slotChangeNames(const QString &);
-		
+  void enableStart(const QString&);
+	void setCommandL(const QString&);
+	void setBasePath(QString);
+	
+	void slotStart();
+	
+	QStringList files();
+	
+	void slotGetWgetExited(KProcess *);
+  void slotGetWgetOutput(KProcess *proc, char *buffer, int buflen);
+	
+  virtual void resizeEvent( QResizeEvent * );
+  
 signals:
-  void setBasePath(QString);
-	void enableNextButton(QWidget *, bool);
+
+  void enableMessages();
+  void disableMessages();
+  
+  void messages( QString );
+
+private:
+  QString basePath;
+  
+  bool start;
+  
+  KProcess *proc;
+  
+  QStringList filesList;
+  
 };
 
 #endif

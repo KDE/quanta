@@ -17,6 +17,7 @@
 
 // qt includes
 #include <qdir.h>
+#include <qlabel.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
@@ -29,6 +30,8 @@
 ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
 	: ProjectNewGeneralS(parent,name)
 {
+	imagelabel->setPixmap( UserIcon("wiznewprjglb") );
+	
 	connect( linePrjFile, SIGNAL(textChanged(const QString &)),
 					 this,				SLOT(slotLinePrjFile(const QString &)));
 	connect( linePrjName, SIGNAL(textChanged(const QString &)),
@@ -70,6 +73,8 @@ void ProjectNewGeneral::slotChangeNames( const QString &text )
 	
 	linePrjFile->setText( fname+".webprj" );
 	linePrjDir ->setText( QDir::homeDirPath()+"/"+fname );
+	
+	emit setBasePath(linePrjDir->text());
 }
 
 QString ProjectNewGeneral::type()

@@ -9,8 +9,7 @@ lib_LTLIBRARIES =libftpclient.la
 
 libftpclient_la_LDFLAGS = -module 
 
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/quanta/plugins/weblint
+INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libftpclient_la_METASOURCES = AUTO
 libftpclient_la_SOURCES = \

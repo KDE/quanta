@@ -362,7 +362,7 @@ void QuantaApp::initMenuBar()
   fileMenu->insertItem(UserIcon("open"), i18n("&Open..."), ID_FILE_OPEN);
   fileMenu->insertItem(i18n("Open &recent"), recentFilesMenu, ID_FILE_OPEN_RECENT);
 
-  fileMenu->insertItem(i18n("&Close"), 		ID_FILE_CLOSE);
+  fileMenu->insertItem(SmallIcon("fileclose"), i18n("&Close"), 		ID_FILE_CLOSE);
   fileMenu->insertItem(i18n("Close All"), ID_FILE_CLOSE_ALL);
   fileMenu->insertSeparator();
 
@@ -462,10 +462,10 @@ void QuantaApp::initMenuBar()
   ///////////////////////////////////////////////////////////////////
   // menuBar entry projectMenu
   projectMenu = new QPopupMenu();
-  projectMenu->insertItem(i18n("&New Project..."),    ID_PROJECT_NEW);
+  projectMenu->insertItem(SmallIcon("idea"),      i18n("&New Project..."),   ID_PROJECT_NEW);
   projectMenu->insertItem(UserIcon("openprj"),    i18n("&Open Project..."),  ID_PROJECT_OPEN);
   projectMenu->insertItem(i18n("Open &Recent Project"),recentProjectsMenu, ID_PROJECT_OPEN_RECENT);
-  projectMenu->insertItem(i18n("&Close Project"),         ID_PROJECT_CLOSE);
+  projectMenu->insertItem(SmallIcon("fileclose"), i18n("&Close Project"),         ID_PROJECT_CLOSE);
   projectMenu->insertSeparator();
   projectMenu->insertItem(i18n("&Insert File(s)..."),   ID_PROJECT_ADD_FILE);
   projectMenu->insertItem(i18n("Insert &Directory..."), ID_PROJECT_ADD_DIRECTORY);
@@ -702,8 +702,9 @@ void QuantaApp::initProject()
 					this,			SLOT  (slotSelectMessageWidget()));
 	connect(project,	SIGNAL(disableMessageWidget()),
 					this,			SLOT  (slotDisableMessageWidget()));
+					
 	connect(project,	SIGNAL(messages(QString)),
-					messageOutput, SLOT(insertItem(QString)));
+					messageOutput, SLOT(showMessage(QString)));
 
 	connect(project,	SIGNAL(saveAllFiles()),
 					this, SLOT(slotFileSaveAll()));					

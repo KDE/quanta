@@ -6,7 +6,7 @@ SUBDIRS = plugins messages phpdebug toolbar data widgets treeviews tagdialogs pr
 bin_PROGRAMS = quanta
 
 
-quanta_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+quanta_LDFLAGS = $(all_libraries)
 quanta_LDADD = \
 		$(top_builddir)/quanta/kwrite/libkwrite.a\
 		$(top_builddir)/quanta/kwrite/highlight/libhighlight.a\
@@ -19,12 +19,17 @@ quanta_LDADD = \
 		$(top_builddir)/quanta/toolbar/libtoolbar.a\
 		$(top_builddir)/quanta/phpdebug/libphpdebug.a\
 		$(top_builddir)/quanta/messages/libmessages.a\
-		$(LIB_KHTML) $(LIB_KFILE) -lkspell
-
-LDFLAGS =  -lktexteditor
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/quanta/plugins/weblint
-
+		-lSM -lICE\
+		-lX11 $\
+		-lpng -lz -lm\
+		-ljpeg\
+		-lqt $ $ -lXext $ $\
+		-lkdeui\
+		-lkfile\
+		-lkhtml\
+		-lkspell
+LDFLAGS =  -s -lktexteditor
+INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 quanta_METASOURCES = AUTO
 quanta_SOURCES = \
@@ -36,8 +41,7 @@ quanta_SOURCES = \
 		quantadoc.cpp\
 		quantaview.cpp\
 		quantaview_init.cpp\
-		quantaview_slots.cpp\
-		quanta_actions.cpp
+		quantaview_slots.cpp
 EXTRA_DIST = \
 		document.cpp\
 		document.h\

@@ -7,8 +7,7 @@ noinst_LIBRARIES = libtoolbar.a
 
 
 
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/quanta/plugins/weblint
+INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libtoolbar_a_METASOURCES = AUTO
 libtoolbar_a_SOURCES = \

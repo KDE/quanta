@@ -29,11 +29,10 @@
   */
 
 class QWizard;
-class KProcess;
 class QWidgetStack;
 class ProjectNewGeneral;
 class ProjectNewLocal;
-class ProjectNewWebS;
+class ProjectNewWeb;
 class ProjectNewFinalS;
 
 class Project : public QWidget  {
@@ -75,9 +74,10 @@ public slots:
 
   void slotSelectProjectType(const QString &);
 
-  void slotGetWgetExited(KProcess *);
-  void slotGetWgetOutput(KProcess *proc, char *buffer, int buflen);
-
+  void slotEnableMessages();
+  void slotDisableMessages();
+  void slotGetMessages(QString);
+  
 signals:
 	
 	void openFile				 ( QString );
@@ -121,7 +121,7 @@ private:
 	
 	ProjectNewGeneral		*png;
 	ProjectNewLocal		  *pnl;
-	ProjectNewWebS			*pnw;
+	ProjectNewWeb 			*pnw;
 	ProjectNewFinalS		*pnf;
 };
 

@@ -7,45 +7,44 @@ noinst_LIBRARIES = libproject.a
 
 
 
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/quanta/plugins/weblint
+INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libproject_a_METASOURCES = AUTO
 libproject_a_SOURCES = \
 		copyto.cpp\
-		copytos.cpp\
 		project.cpp\
 		projectnewfinals.cpp\
 		projectnewgeneral.cpp\
-		projectnewgenerals.cpp\
 		projectnewlocal.cpp\
 		projectnewlocals.cpp\
-		projectnewwebs.cpp\
 		projectupload.cpp\
-		projectuploads.cpp
+		projectuploads.cpp\
+		projectnewweb.cpp\
+		projectnewwebs.ui\
+		copytos.ui\
+		projectnewgenerals.ui
 EXTRA_DIST = \
 		copyto.cpp\
 		copyto.h\
-		copytos.cpp\
-		copytos.h\
 		project.cpp\
 		project.h\
 		projectnewfinals.cpp\
 		projectnewfinals.h\
 		projectnewgeneral.cpp\
 		projectnewgeneral.h\
-		projectnewgenerals.cpp\
-		projectnewgenerals.h\
 		projectnewlocal.cpp\
 		projectnewlocal.h\
 		projectnewlocals.cpp\
 		projectnewlocals.h\
-		projectnewwebs.cpp\
-		projectnewwebs.h\
 		projectupload.cpp\
 		projectupload.h\
 		projectuploads.cpp\
-		projectuploads.h
+		projectuploads.h\
+		projectnewweb.cpp\
+		projectnewweb.h\
+		projectnewwebs.ui\
+		copytos.ui\
+		projectnewgenerals.ui
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

@@ -40,8 +40,6 @@
 #include <kfile.h>
 #include <kwizard.h>
 #include <klocale.h>
-#include <kprocess.h>
-#include <kio/job.h>
 #include <kfiledialog.h>
 
 // application headers
@@ -49,7 +47,7 @@
 #include "../qextfileinfo.h"
 #include "projectnewgeneral.h"
 #include "projectnewlocal.h"
-#include "projectnewwebs.h"
+#include "projectnewweb.h"
 #include "projectnewfinals.h"
 #include "projectupload.h"
 
@@ -425,13 +423,14 @@ void Project::slotOpenedFiles(QStringList list)
 void Project::newProject()
 {
 	wiz = new QWizard( 0, "new", true);
+	wiz ->resize(500,300);
 	
 	png = new ProjectNewGeneral( wiz );
 	
 	stack = new QWidgetStack( wiz );
 	
 	pnl = new ProjectNewLocal( stack );
-	pnw = new ProjectNewWebS ( stack );
+	pnw = new ProjectNewWeb  ( stack );
 	
 	pnf = new ProjectNewFinalS( wiz );
 	
@@ -452,11 +451,20 @@ void Project::newProject()
 					 wiz, SLOT(setNextEnabled(QWidget*,bool)));
 	connect( png, SIGNAL(enableNextButton(QWidget *,bool)),
 					 pnl, SLOT(setDestDir(QWidget*,bool)));
+	connect( png, SIGNAL(setBasePath(QString)),
+					 pnw, SLOT(  setBasePath(QString)));
 	connect( this,SIGNAL(setLocalFiles(bool)),
 					 pnl, SLOT(setFiles(bool)));	
 	
 	connect( wiz, SIGNAL(selected(const QString &)),
 					this, SLOT  (slotSelectProjectType(const QString &)));
+					
+	connect( pnw, SIGNAL(enableMessages()),
+					this, SLOT  (slotEnableMessages()));
+  connect( pnw, SIGNAL(disableMessages()),
+					this, SLOT  (slotDisableMessages()));
+	connect( pnw, SIGNAL(messages(QString)),
+					this, SLOT  (slotGetMessages(QString)));
 
 	if ( wiz->exec() ) slotAcceptCreateProject();
 	
@@ -513,6 +521,7 @@ void Project::slotAcceptCreateProject()
 
   QStringList list;
   if ( png->type() == "Local" ) list = pnl->files();
+  if ( png->type() == "Web"   ) list = pnw->files();
 
   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
 	{
@@ -599,41 +608,17 @@ void Project::upload()
 	delete dlg;
 }
 
-void Project::slotGetWgetExited(KProcess*)
+void Project::slotEnableMessages()
 {
-	emit disableMessageWidget();
+  emit selectMessageWidget();
 }
 
-void Project::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
+void Project::slotDisableMessages()
 {
-  QString output = buffer;
-  output = output.left( buflen );
-
-  emit messages(output);
-  
-  int pos;
-  while ( (pos = output.find("saved")) != -1 )
-  {
-    int begName = output.findRev('`',pos);
-    if ( begName == -1 ) {
-      output = output.remove(0,pos+1);
-      continue;
-    }
-    
-    int endName = output.find('\'',begName);
-    if ( endName == -1 || endName > pos ) {
-      output = output.remove(0,pos+1);
-      continue;
-    }
-  
-    QString fileName = output.left(endName);
-    fileName = fileName.right( endName - begName-1);
-  
-    insertFile( basePath+fileName );
-  
-    output = output.remove(0,pos+1);
-  }
-
-  emit reloadTree( fileNameList(), false, true );
+  emit disableMessageWidget();
 }
 
+void Project::slotGetMessages(QString data)
+{
+  emit messages(data);
+}

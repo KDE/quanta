@@ -7,8 +7,7 @@ noinst_LIBRARIES = libmessages.a
 
 
 
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/quanta/plugins/weblint
+INCLUDES = $(all_includes)
 CXXFLAGS = -g3 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libmessages_a_METASOURCES = AUTO
