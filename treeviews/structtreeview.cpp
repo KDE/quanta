@@ -403,7 +403,7 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
     kdDebug(24000) << "Node type: " << tag->type << endl;
     kdDebug(24000) << "Node str: " << tag->tagStr() << endl;
     kdDebug(24000) << "Node cleanstr: " << tag->cleanStr << endl; */
-    emit newCursorPosition( line, col);
+    emit newCursorPosition(line, col + 1);
     if (quantaApp->view()->writeExists())
       quantaApp->view()->write()->view()->setFocus();
     delete tag;
