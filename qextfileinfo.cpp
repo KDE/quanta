@@ -167,3 +167,28 @@ QStringList QExtFileInfo::allFilesRelative( QString path, QString mask, int leve
 	
 	return r;
 }
+
+void QExtFileInfo::createDir( QString path )
+{
+	QDir dir;
+	int i=0;
+	while ( !dir.exists(path) && i<20 )
+	{
+		QString d1(path);
+		QString d2(path);
+		
+		d1=cdUp(d1);
+		while ( !dir.exists(d1) && !d1.isEmpty() )
+			{ d1=cdUp(d1);d2=cdUp(d2);debug(d1);}
+		
+		dir.mkdir(d2);
+		i++;
+	}
+}
+
+QString QExtFileInfo::cdUp(QString &dir)
+{
+	if ( dir.right(1) == "/" ) dir.remove( dir.length()-1,1);
+	while ( dir.right(1) != "/" ) dir.remove( dir.length()-1,1);
+	return dir;
+}

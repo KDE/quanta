@@ -259,6 +259,10 @@ void QuantaApp::commandCallback(int id_)
     case ID_PROJECT_PROPERTIES:
     		 project  -> options();
     		 break;
+    		
+    case ID_PROJECT_UPLOAD_PROJECT:
+    		 project  -> upload();
+    		 break;
 
     case ID_OPTIONS:
     		 slotOptions();

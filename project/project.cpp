@@ -50,6 +50,7 @@
 #include "projectnewlocal.h"
 #include "projectnewwebs.h"
 #include "projectnewfinals.h"
+#include "projectuploads.h"
 
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
@@ -273,6 +274,7 @@ void Project::loadProject(QString fname)
 	if ( (projectName=n_prj.toElement().attribute("name")).isNull() ) return;
 	
 	previewPrefix = n_prj.toElement().attribute("preview");
+	if ( previewPrefix.right(1) != "/" ) previewPrefix+="/";
 		
 	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
 	
@@ -479,11 +481,15 @@ void Project::slotAcceptCreateProject()
 	basePath = png->linePrjDir->text();
 	if ( basePath.right(1) != "/" )	basePath += "/";
 	
+	QExtFileInfo::createDir( basePath );
+	
 	projectName = png->linePrjName->text();
 	projectFileName = basePath+png->linePrjFile->text();
 	
-	if ( pnf->checkPrefix->isChecked() )
+	if ( pnf->checkPrefix->isChecked() ) {
 		previewPrefix = pnf->linePrefix->text();
+		if ( previewPrefix.right(1) != "/" ) previewPrefix+="/";
+	}
 	else
 		previewPrefix = QString::null;
 	
@@ -524,6 +530,8 @@ void Project::slotAcceptCreateProject()
 
 void Project::options()
 {
+	if ( !hasProject() ) return;
+	
 	QTabDialog *dlg = new QTabDialog(0L, i18n("Project options"), true);
 
 	png = new ProjectNewGeneral( dlg );
@@ -545,14 +553,79 @@ void Project::options()
 	png->linePrjName->setText( projectName );
 	png->linePrjFile->setText( projectFileName );
 	
+	pnf->linePrefix ->setText( previewPrefix );
+	
 	if ( dlg->exec() )
 	{
-		projectName = png->linePrjName->text();
+		projectName 	= png->linePrjName->text();
+		
+		if ( pnf->checkPrefix->isChecked() && !pnf->linePrefix ->text().isEmpty() )
+		{
+			previewPrefix = pnf->linePrefix ->text();
+			if ( previewPrefix.right(1) != "/") previewPrefix+="/";
+		}
+		else
+			previewPrefix = QString::null;
+		
+		QDomElement el;
+
+  	el = dom.firstChild().firstChild().toElement();
+  	el.setAttribute("name",    projectName );
+  	
+  	el.setAttribute("preview", previewPrefix );
 		
 		emit setProjectName( projectName );
 	}
 	
 	delete dlg;
+}
+
+void Project::upload()
+{
+	if ( !hasProject() ) return;
+	
+	ProjectUploadS *dlg = new ProjectUploadS(0,i18n("Upload project's files..."), true);
+	
+	QStringList::Iterator it;
+	QStringList files = fileNameList();
+	
+	dlg->list->setMultiSelection(true);
+		
+ 	for ( it = files.begin(); it != files.end(); ++it )
+	{
+		new QListViewItem( dlg->list, *it );
+	}
+	
+	dlg->lineUrl->setText("ftp://ftp.somesrver.net/");
+	dlg->lineUser->setText("anonymous");
+	
+	if (dlg->exec())
+	{
+		QStringList uploadList;
+		QListViewItemIterator it( dlg->list );
+		
+    for ( ; it.current(); ++it )
+    {	
+			if ( it.current()->isSelected() )
+				uploadList.append( basePath+it.current()->text(0));
+		}
+		
+		QUrl url( dlg->lineUrl->text() );
+		url.setUser( dlg->lineUser->text() );
+		url.setPassword( dlg->linePasswd->text() );
+		url.setProtocol( "ftp" );
+		url.setPort(21);
+		
+		KURL::List list( uploadList );
+		KIO ::Job *job = KIO::copy( list, KURL( url ) );
+  	connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotUploadFinished( KIO::Job *) ) );
+	}
+	
+	delete dlg;
+}
+
+void Project::slotUploadFinished( KIO::Job *)
+{
 }
 
 void Project::slotGetWgetExited(KProcess*)

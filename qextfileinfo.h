@@ -27,6 +27,9 @@ public:
   /** recurse function for all files in dir */
   static QStringList allFiles( QString path, QString mask, int level = 0 );
   static QStringList allFilesRelative( QString path, QString mask, int level = 0 );
+  /** create dir if don't exists */
+  static QString cdUp(QString &dir);
+  static void createDir( QString path );
 };
 
 #endif
