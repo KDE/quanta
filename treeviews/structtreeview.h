@@ -114,6 +114,7 @@ private:
   bool followCursorFlag;
 
   KPopupMenu *popupMenu;
+  KPopupMenu *emptyAreaMenu;
   KPopupMenu *dtdMenu;
   StructTreeTag *lastTag;
   KConfig *config;

@@ -83,6 +83,10 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
   }
 
   connect(dtdMenu, SIGNAL(activated(int)), this, SLOT(slotDTDChanged(int)));
+  
+  emptyAreaMenu = new KPopupMenu(this);
+  emptyAreaMenu->insertItem(i18n("Show Groups For"), dtdMenu);
+  emptyAreaMenu->insertItem(SmallIcon("reload"), i18n("&Reparse"),     this, SLOT(slotReparseMenuItem()));
 
   popupMenu = new KPopupMenu(this);
 
@@ -453,39 +457,40 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
       {
         popupMenu->setItemVisible(openFileMenuId, static_cast<StructTreeTag*>(item)->hasOpenFileMenu);
       }
-      popupMenu->popup( point);
+      popupMenu->popup(point);
       return;
     }
 
-    if ( button == Qt::LeftButton )
+    if (button == Qt::LeftButton)
     {
-      if ( handleLBM == i18n("Find Tag && Open Tree"))
-           setOpen( item, ! isOpen(item) );
+      if (handleLBM == i18n("Find Tag && Open Tree"))
+           setOpen(item, !isOpen(item));
       setSelected(item, true);
       slotGotoTag(item);
     }
 
-    if ( button == Qt::MidButton )
+    if (button == Qt::MidButton)
     {
-      if ( handleMBM == i18n("nothing"))
+      if (handleMBM == i18n("nothing"))
            return;
 
-      if ( handleMBM == i18n("Find Tag && Open Tree"))
+      if (handleMBM == i18n("Find Tag && Open Tree"))
       {
-        setOpen( item, ! isOpen(item) );
+        setOpen(item, !isOpen(item));
         setSelected(item, true);
         slotGotoTag(item);
       }
 
-      if ( handleMBM == i18n("Select Tag Area"))
+      if (handleMBM == i18n("Select Tag Area"))
            slotSelectTag();
 
-      if ( handleMBM == i18n("Go to End of Tag"))
+      if (handleMBM == i18n("Go to End of Tag"))
           slotGotoClosingTag();
 
       setSelected(item, true);
     }
-  }
+  } else
+    emptyAreaMenu->popup(point);
 }
 
 
@@ -633,7 +638,7 @@ void StructTreeView::showTagAtPos(Node *node)
 void StructTreeView::setFollowCursor(bool follow)
 {
    followCursorFlag = follow;
-   popupMenu -> setItemChecked ( followCursorId, follow );
+   popupMenu->setItemChecked(followCursorId, follow);
 }
 
 /** No descriptions */
