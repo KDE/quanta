@@ -9,15 +9,9 @@ EXTRA_DIST = main.cpp quanta.cpp quanta.h quantadoc.cpp quantadoc.h quantaview.c
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/Applications/
 	$(INSTALL_DATA) $(srcdir)/quanta.desktop $(kde_appsdir)/Applications/quanta.desktop
-	$(mkinstalldirs) $(kde_icondir)/locolor/32x32/apps/
-	$(INSTALL_DATA) quanta.xpm $(kde_icondir)/locolor/32x32/apps/quanta.xpm
-	$(mkinstalldirs) $(kde_icondir)/locolor/16x16/apps/
-	$(INSTALL_DATA) mini-quanta.xpm $(kde_icondir)/locolor/16x16/apps/quanta.xpm
 
 uninstall-local:
 	-rm -f $(kde_appsdir)/Applications/quanta.desktop
-	-rm -f $(kde_icondir)/locolor/32x32/apps/quanta.xpm
-	-rm -f $(kde_icondir)/locolor/16x16/apps/quanta.xpm
 
 # set the include path for X, qt and KDE
 INCLUDES= $(all_includes)
