@@ -23,12 +23,14 @@
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
+#include <qcombobox.h>
 
 // kde includes
 #include <kfiledialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kurl.h>
+#include <kprotocolinfo.h>
 
 //app includes
 #include "projectnewgeneral.h"
@@ -39,7 +41,25 @@ ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
 {
 	imagelabel->setPixmap( UserIcon("wiznewprjglb") );
 	linePrjName->setFocus();
-	
+
+	QStringList protocols = KProtocolInfo::protocols();
+  protocols.sort();
+	for ( uint i=0; i<protocols.count(); i++ )
+	{
+		QString p = protocols[i];
+		if ( KProtocolInfo::supportsWriting(p) &&
+		     KProtocolInfo::supportsMakeDir(p) &&
+		     KProtocolInfo::supportsDeleting(p) &&
+         p != "file" )
+		{
+			comboProtocol->insertItem(p);
+		}
+	}
+  comboProtocol->setCurrentItem(0);
+
+  slotProtocolChanged(i18n("Local"));
+
+	connect(comboProtocol, SIGNAL(activated(const QString&)), SLOT(slotProtocolChanged(const QString &)));
 	connect( linePrjFile, SIGNAL(textChanged(const QString &)),
 					 this,				SLOT(slotLinePrjFile(const QString &)));
 	connect( linePrjName, SIGNAL(textChanged(const QString &)),
@@ -79,7 +99,23 @@ void ProjectNewGeneral::slotLinePrjFile( const QString & )
         linePrjTmpl->text().isEmpty() ||
         linePrjToolbar->text().isEmpty())
 				emit enableNextButton( this, false );
-	else	emit enableNextButton( this, true  );
+	else
+  {
+    KURL url;
+    url.setHost(lineHost->text());
+    url.setUser(lineUser->text());
+    url.setPass(linePasswd->text());
+    url.setPort(linePort->text().toInt());
+    url.setProtocol(comboProtocol->currentText());
+    if (url.protocol() == i18n("Local")) url.setProtocol("file");
+    QuantaCommon::setUrl(url, linePrjDir->text());
+    url.adjustPath(1);
+    if (!url.path().startsWith("/")) url.setPath("/"+url.path());
+
+  	emit setBaseURL(url);
+ }
+
+  emit enableNextButton( this, true  );
 }
 
 void ProjectNewGeneral::slotChangeNames( const QString &text )
@@ -89,16 +125,29 @@ void ProjectNewGeneral::slotChangeNames( const QString &text )
 	while( (i=fname.find(" ")) >=0 ) fname.remove(i,1);
 
 	linePrjFile->setText( fname+".webprj" );
-	linePrjDir ->setText( QDir::homeDirPath()+"/"+fname );
 
-  KURL url;
-  QuantaCommon::setUrl( url, linePrjDir->text());
-	emit setBaseURL(url);
+  QString dir = "";
+  QString oldDir = linePrjDir->text();
+  QString homeDir = QDir::homeDirPath()+"/";
+  if (oldDir. startsWith(homeDir))
+  {
+    oldDir.remove(0, homeDir.length());
+  }
+  
+  if (comboProtocol->currentText() == i18n("Local"))
+  {
+    dir =  homeDir+oldDir;
+  }  else
+  {
+    dir = oldDir;
+  }
+  
+	linePrjDir ->setText(dir);
 }
 
 QString ProjectNewGeneral::type()
 {
-	if ( radioCvs  ->isChecked() ) return "CVS";
+//	if ( radioCvs  ->isChecked() ) return "CVS";
 	if ( radioLocal->isChecked() ) return "Local";
 	if ( radioWeb  ->isChecked() ) return "Web";
   return "Local";
@@ -135,6 +184,21 @@ void ProjectNewGeneral::slotLinePrjTmpl(const QString &Str)
   linePrjTmpl->setText(Str + "/templates");
 }
 
+/** No descriptions */
+void ProjectNewGeneral::slotProtocolChanged(const QString& protocol)
+{
+ bool status = true;
+ if (protocol == i18n("Local"))
+ {
+   status = false;
+ }
+ lineHost->setEnabled(status);
+ lineUser->setEnabled(status);
+ linePasswd->setEnabled(status);
+ linePort->setEnabled(status);
+ radioWeb->setEnabled(!status);
+ slotChangeNames(linePrjName->text());
+}
 
 #include "projectnewgeneral.moc"
 

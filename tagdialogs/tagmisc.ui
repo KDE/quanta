@@ -86,7 +86,7 @@
                 <number>6</number>
             </property>
             <spacer row="0" column="1">
-                <property name="name">
+                <property name="name" stdset="0">
                     <cstring>Spacer4</cstring>
                 </property>
                 <property name="orientation">
@@ -94,6 +94,12 @@
                 </property>
                 <property name="sizeType">
                     <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
                 </property>
             </spacer>
             <widget class="QPushButton" row="0" column="3">
@@ -126,5 +132,12 @@
         </grid>
     </widget>
 </widget>
+<tabstops>
+    <tabstop>elementName</tabstop>
+    <tabstop>addClosingTag</tabstop>
+    <tabstop>buttonOk</tabstop>
+    <tabstop>buttonCancel</tabstop>
+    <tabstop>buttonHelp</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

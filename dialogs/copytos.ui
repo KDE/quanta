@@ -45,7 +45,7 @@
             </property>
         </widget>
         <spacer row="1" column="0">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer1</cstring>
             </property>
             <property name="orientation">
@@ -53,6 +53,12 @@
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
             </property>
         </spacer>
         <widget class="KURLRequester" row="0" column="0" rowspan="1" colspan="3">
@@ -63,6 +69,7 @@
     </grid>
 </widget>
 <tabstops>
+    <tabstop>urlRequester</tabstop>
     <tabstop>buttonOk</tabstop>
     <tabstop>buttonCancel</tabstop>
 </tabstops>

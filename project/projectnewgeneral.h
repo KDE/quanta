@@ -44,6 +44,7 @@ public slots:
   void slotButtonToolbar();
   void slotLinePrjTmpl(const QString &);
   void slotLinePrjToolbar(const QString &);
+  void slotProtocolChanged(const QString& protocol);
 
 		
 signals:

@@ -127,10 +127,11 @@ bool QExtFileInfo::createDir( const KURL& path )
 {
 	int i=0;
   bool result;
+  KURL dir1, dir2;
 	while ( !exists(path) && i < 2 )
 	{
-    KURL dir1 = path;
-    KURL dir2 = path;
+    dir1 = path;
+    dir2 = path;
 
 		dir1=cdUp(dir1);
 		while ( !exists(dir1) && dir1.path() != "/" )

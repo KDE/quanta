@@ -267,6 +267,11 @@
     </widget>
 </widget>
 <tabstops>
+    <tabstop>lineMarkup</tabstop>
+    <tabstop>lineScript</tabstop>
+    <tabstop>lineImage</tabstop>
+    <tabstop>lineText</tabstop>
+    <tabstop>buttonDefault</tabstop>
     <tabstop>encodingCombo</tabstop>
     <tabstop>hideDTDToolbar</tabstop>
 </tabstops>

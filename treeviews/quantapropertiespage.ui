@@ -76,7 +76,7 @@
                 </property>
             </widget>
             <spacer>
-                <property name="name">
+                <property name="name" stdset="0">
                     <cstring>Spacer1</cstring>
                 </property>
                 <property name="orientation">
@@ -85,6 +85,12 @@
                 <property name="sizeType">
                     <enum>Expanding</enum>
                 </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
             </spacer>
             <widget class="KComboBox">
                 <property name="name">
@@ -92,7 +98,7 @@
                 </property>
             </widget>
             <spacer>
-                <property name="name">
+                <property name="name" stdset="0">
                     <cstring>Spacer2</cstring>
                 </property>
                 <property name="orientation">
@@ -101,11 +107,17 @@
                 <property name="sizeType">
                     <enum>Expanding</enum>
                 </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
             </spacer>
         </hbox>
     </widget>
     <spacer>
-        <property name="name">
+        <property name="name" stdset="0">
             <cstring>Spacer6</cstring>
         </property>
         <property name="orientation">
@@ -114,13 +126,11 @@
         <property name="sizeType">
             <enum>Expanding</enum>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
+        <property name="sizeHint">
+            <size>
                 <width>20</width>
                 <height>20</height>
-            </rect>
+            </size>
         </property>
     </spacer>
     <widget class="QCheckBox">
@@ -156,7 +166,7 @@
         </property>
     </widget>
     <spacer>
-        <property name="name">
+        <property name="name" stdset="0">
             <cstring>Spacer5</cstring>
         </property>
         <property name="orientation">
@@ -165,13 +175,11 @@
         <property name="sizeType">
             <enum>Expanding</enum>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
+        <property name="sizeHint">
+            <size>
                 <width>20</width>
                 <height>20</height>
-            </rect>
+            </size>
         </property>
     </spacer>
     <widget class="QTextEdit">
@@ -243,5 +251,12 @@
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>typesCombo</tabstop>
+    <tabstop>parentAttr</tabstop>
+    <tabstop>usePrePostText</tabstop>
+    <tabstop>preTextEdit</tabstop>
+    <tabstop>postTextEdit</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -27,7 +27,6 @@
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
 
-class ProjectTreeFolder;
 class CopyTo;
 
 class ProjectNewLocal : public ProjectNewLocalS  {
@@ -37,12 +36,11 @@ public:
 	~ProjectNewLocal();
 	
 	KURL::List files();
-	KURL::List projectFiles(bool relative=false);
+	KURL::List projectFiles();
 	
 public slots:
   void slotSetFiles(bool);
-  void slotSetDestDir(QWidget*,bool);
-  void slotReloadTree( KURL::List, bool newtree);
+  void setBaseURL(const KURL& a_baseURL);
   void slotAddFolder();
   void slotAddFiles();
   void slotClearList();
@@ -51,9 +49,8 @@ public slots:
   virtual void resizeEvent( QResizeEvent * );
 
 private:
-	KURL dir;
+	KURL baseURL;
 	KURL::List fileList;
-  ProjectTreeFolder *projectDirTree;
 };
 
 #endif

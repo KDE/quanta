@@ -199,8 +199,8 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
     projectDir = new ProjectTreeFolder(this, projectNameStr, KURL());
     projectDir->setPixmap( 0, UserIcon("mini-modules") );
   }
-  projectDir->setOpen( false );
   urlList = a_urlList;
+  projectDir->setOpen( false );
 
   if (!buildNewTree) slotRemoveDeleted();
 

@@ -19,6 +19,7 @@
 #include "../qextfileinfo.h"
 #include "../quantacommon.h"
 #include "../treeviews/uploadtreefolder.h"
+#include "../treeviews/uploadtreeview.h"
 #include "../resource.h"
 
 RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent, const char *name, bool modal )

@@ -22,7 +22,7 @@
         <cstring>Quick_Table</cstring>
     </property>
     <spacer>
-        <property name="name">
+        <property name="name" stdset="0">
             <cstring>Spacer3</cstring>
         </property>
         <property name="orientation">
@@ -31,13 +31,11 @@
         <property name="sizeType">
             <enum>Expanding</enum>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
+        <property name="sizeHint">
+            <size>
                 <width>20</width>
-                <height>1</height>
-            </rect>
+                <height>20</height>
+            </size>
         </property>
     </spacer>
     <widget class="QLayoutWidget">
@@ -74,7 +72,7 @@
                 </property>
             </widget>
             <spacer>
-                <property name="name">
+                <property name="name" stdset="0">
                     <cstring>Horizontal Spacing2</cstring>
                 </property>
                 <property name="orientation">
@@ -82,6 +80,12 @@
                 </property>
                 <property name="sizeType">
                     <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
                 </property>
             </spacer>
             <widget class="QPushButton">
@@ -134,7 +138,7 @@
                 <number>6</number>
             </property>
             <spacer row="1" column="0">
-                <property name="name">
+                <property name="name" stdset="0">
                     <cstring>Spacer4</cstring>
                 </property>
                 <property name="orientation">
@@ -142,6 +146,12 @@
                 </property>
                 <property name="sizeType">
                     <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
                 </property>
             </spacer>
             <widget class="QCheckBox" row="0" column="0">
@@ -166,7 +176,7 @@
                 <height>16</height>
             </rect>
         </property>
-        <property name="frameShape">
+        <property name="frameShape" stdset="0">
             <enum>HLine</enum>
         </property>
         <property name="frameShadow">
@@ -312,7 +322,7 @@
                 </property>
             </widget>
             <spacer>
-                <property name="name">
+                <property name="name" stdset="0">
                     <cstring>Spacer2</cstring>
                 </property>
                 <property name="orientation">
@@ -320,6 +330,12 @@
                 </property>
                 <property name="sizeType">
                     <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
                 </property>
             </spacer>
         </vbox>
@@ -442,5 +458,18 @@
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>SpinBoxCol</tabstop>
+    <tabstop>SpinBoxRow</tabstop>
+    <tabstop>useCols</tabstop>
+    <tabstop>useTHead</tabstop>
+    <tabstop>useTFoot</tabstop>
+    <tabstop>ColumnsListView</tabstop>
+    <tabstop>useCaption</tabstop>
+    <tabstop>CaptionTextEdit</tabstop>
+    <tabstop>buttonHelp</tabstop>
+    <tabstop>buttonOk</tabstop>
+    <tabstop>buttonCancel</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

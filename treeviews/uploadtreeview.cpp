@@ -214,23 +214,26 @@ UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString
   KURL u;
 	while ( ( i = item.find('/', col) ) >= 0 )
 	{
-		UploadTreeFolder *itTemp = findFolder(it, item.mid(col, i - col));
-		if ( itTemp == 0 )
-		{
-      u = a_url;
-      QuantaCommon::setUrl(u,item.left(i)+"/");
-			if ( it == 0 )
-			{
-				it = new UploadTreeFolder(u, this, "");
-			}
-			else {
-				it = new UploadTreeFolder(u, it, "");
-			}
-		}
-		else
-		{
-			it = itTemp;
-		}
+    if ( i!=0 )
+    {
+  		UploadTreeFolder *itTemp = findFolder(it, item.mid(col, i - col));
+  		if ( itTemp == 0 )
+  		{
+        u = a_url;
+        QuantaCommon::setUrl(u,item.left(i)+"/");
+  			if ( it == 0 )
+  			{
+  				it = new UploadTreeFolder(u, this, "");
+  			}
+  			else {
+  				it = new UploadTreeFolder(u, it, "");
+  			}
+  		}
+  		else
+  		{
+  			it = itTemp;
+  		}
+    }
     col = i + 1;
 	}
   UploadTreeFile *file = 0;

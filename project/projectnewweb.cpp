@@ -23,6 +23,7 @@
 #include <qstringlist.h>
 #include <qlistview.h>
 #include <qfileinfo.h>
+#include <qcombobox.h>
 
 // kde includes
 #include <klocale.h>
@@ -30,11 +31,13 @@
 #include <kiconloader.h>
 #include <kio/job.h>
 #include <kmessagebox.h>
+#include <kled.h>
 
 // app includes
 #include "projectnewweb.h"
 #include "../qextfileinfo.h"
 #include "../quantacommon.h"
+#include "../treeviews/uploadtreeview.h"
 
 ProjectNewWeb::ProjectNewWeb(QWidget *parent, const char *name )
 	: ProjectNewWebS(parent,name)
@@ -43,8 +46,9 @@ ProjectNewWeb::ProjectNewWeb(QWidget *parent, const char *name )
   siteUrl->setFocus();
 
   imagelabel->setPixmap( UserIcon("wiznewprjweb") );
-
-  listFiles->setColumnAlignment(1,Qt::AlignRight);
+  listView->removeColumn(1);
+  listView->removeColumn(1);
+  listView->removeColumn(1);
 
   connect( commandLine, SIGNAL(textChanged(const QString&)),
            this,        SLOT  (enableStart(const QString&)));
@@ -52,9 +56,13 @@ ProjectNewWeb::ProjectNewWeb(QWidget *parent, const char *name )
            this,        SLOT  (setCommandL(const QString&)));
   connect( button,      SIGNAL(clicked()),
            this,        SLOT  (slotStart()));
+  connect( protocolCombo,SIGNAL(highlighted(const QString&)),
+           this,         SLOT  (setProtocol(const QString&)));
 
   start = false;
   filesList.clear();
+  KLed1->setState(KLed::Off);
+  KLed2->setState(KLed::Off);
 }
 
 ProjectNewWeb::~ProjectNewWeb(){
@@ -70,12 +78,16 @@ void ProjectNewWeb::setCommandL(const QString& url)
 {
   QString siteurl = url;
 
-  if ( url.left(6) != "ftp://" && url.left(7) != "http://" )
-  {
-    siteurl = QString("http://")+url;
-  }
-  commandLine->setText("wget -c -np -r --level=5 -nH "+siteurl);
+  commandLine->setText("wget -c -np -r --level=5 -nH "+ protocolCombo->currentText().lower()+ "://"+siteurl);
 }
+
+/** No descriptions */
+void ProjectNewWeb::setProtocol(const QString& protocol)
+{
+  commandLine->setText("wget -c -np -r --level=5 -nH "+ protocol.lower()+ "://"+siteUrl->text());
+}
+
+
 
 void ProjectNewWeb::setBaseURL(const KURL& a_baseURL)
 {
@@ -145,6 +157,8 @@ void ProjectNewWeb::slotStart()
 
 void ProjectNewWeb::slotGetWgetExited(KProcess*)
 {
+  KLed2->setState(KLed::Off);
+  KLed1->setState(KLed::Off);
 	start = false;
     button->setText( i18n("Start") );
     emit messages(i18n("wget finished...\n"));
@@ -162,6 +176,15 @@ void ProjectNewWeb::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
   QString basePath = baseURL.path(1);
   while ( (pos = output.find("saved")) != -1 )
   {
+    if (KLed1->state() == KLed::Off)
+    {
+      KLed1->setState(KLed::On);
+      KLed2->setState(KLed::Off);
+    } else
+    {
+      KLed2->setState(KLed::On);
+      KLed1->setState(KLed::Off);
+    }
     int begName = output.findRev('`',pos);
     if ( begName == -1 ) {
       output = output.remove(0,pos+1);
@@ -179,16 +202,11 @@ void ProjectNewWeb::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
 
     output = output.remove(0,pos+1);
 
-    textFromTo->setText( siteUrl->text()+" -->> "+basePath+fileName );
-
     filesList.append( basePath + fileName );
 
-    QFileInfo fi( basePath+fileName );
-    QString size;
-    size.sprintf( "%i", fi.size() );
-
-    new QListViewItem(listFiles, fileName, size );
-    listFiles->setColumnWidth(0,listFiles->width()-listFiles->columnWidth(1)-20);
+    KURL u = baseURL;
+    QuantaCommon::setUrl(u, fileName);
+    listView->addItem(u, "", "");
   }
 }
 
@@ -200,6 +218,7 @@ QStringList ProjectNewWeb::files()
 void ProjectNewWeb::resizeEvent ( QResizeEvent *t )
 {
   ProjectNewWebS::resizeEvent(t);
-  listFiles->setColumnWidth(0,listFiles->width()-listFiles->columnWidth(1)-20);
+ // listView->setColumnWidth(0,listView->width()-listView->columnWidth(1)-20);
 }
+
 #include "projectnewweb.moc"

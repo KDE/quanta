@@ -109,17 +109,26 @@ KURL::List CopyTo::copy( KURL::List sourceList )
     doCopy = QExtFileInfo::createDir(targetDirURL);
   }
 
+  KIO::UDSEntry entry;
   KURL::List destList;
   if (doCopy)
   {
-    destList = sourceList;
-    KURL::List::iterator it;
-    for (it = destList.begin(); it != destList.end(); ++it)
+    for (uint i = 0; i < sourceList.count(); i++)
     {
-      (*it).setPath(targetDirURL.path(1)+(*it).fileName());
+      KURL srcURL = sourceList[i];
+      KIO::NetAccess::stat(srcURL, entry);
+      KFileItem item(entry, srcURL, false, true);
+      KURL u = targetDirURL;
+      u.setPath(targetDirURL.path(1)+srcURL.fileName());
+      if (item.isDir()) u.adjustPath(1);
+      destList.append(u);
     }
 
-    KIO::copy(sourceList, targetDirURL, true);
+    KIO::CopyJob *job = KIO::copy(sourceList, targetDirURL, true);
+    connect( job, SIGNAL(result( KIO::Job *)),
+                  SLOT  (slotResult( KIO::Job *)));
+
+    copiedURL = targetDirURL;
   }
   
   return destList;

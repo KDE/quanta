@@ -208,10 +208,10 @@
 </widget>
 <tabstops>
     <tabstop>buttonCompare</tabstop>
-    <tabstop>buttonLoad</tabstop>
-    <tabstop>buttonIgnore</tabstop>
     <tabstop>okButton</tabstop>
     <tabstop>cancelButton</tabstop>
+    <tabstop>buttonIgnore</tabstop>
+    <tabstop>buttonLoad</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

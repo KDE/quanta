@@ -288,8 +288,8 @@
                     </property>
                     <property name="geometry">
                         <rect>
-                            <x>13</x>
-                            <y>28</y>
+                            <x>6</x>
+                            <y>27</y>
                             <width>90</width>
                             <height>128</height>
                         </rect>

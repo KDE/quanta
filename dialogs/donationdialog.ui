@@ -87,6 +87,11 @@
 </widget>
 <connections>
 </connections>
+<tabstops>
+    <tabstop>KTextBrowser5</tabstop>
+    <tabstop>KTextBrowser2</tabstop>
+    <tabstop>closeButton</tabstop>
+</tabstops>
 <includes>
     <include location="local" impldecl="in implementation">donationdialog.ui.h</include>
 </includes>

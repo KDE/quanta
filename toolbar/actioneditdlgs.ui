@@ -684,6 +684,8 @@
             <verstretch>0</verstretch>
         </sizepolicy>
         <pixmap>image0</pixmap>
+        <slot access="public" specifier="">slotFileSelect()</slot>
+        <property type="String">text</property>
     </customwidget>
     <customwidget>
         <class>KIconButton</class>
@@ -761,6 +763,8 @@
     <tabstop>lineText</tabstop>
     <tabstop>lineToolTip</tabstop>
     <tabstop>lineStatusText</tabstop>
+    <tabstop>placeOnToolbar</tabstop>
+    <tabstop>toolbarCombo</tabstop>
     <tabstop>actionTab</tabstop>
     <tabstop>tag</tabstop>
     <tabstop>useTagClose</tabstop>

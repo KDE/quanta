@@ -237,5 +237,17 @@
         </grid>
     </widget>
 </widget>
+<tabstops>
+    <tabstop>linePrjName</tabstop>
+    <tabstop>linePrjTmpl</tabstop>
+    <tabstop>buttonTmpl</tabstop>
+    <tabstop>linePrjToolbar</tabstop>
+    <tabstop>buttonToolbar</tabstop>
+    <tabstop>lineAuthor</tabstop>
+    <tabstop>lineEmail</tabstop>
+    <tabstop>dtdCombo</tabstop>
+    <tabstop>encodingCombo</tabstop>
+    <tabstop>viewCombo</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

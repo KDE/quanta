@@ -255,7 +255,8 @@ bool Project::createEmptyDom()
     return false;
   }
 
-  slotLoadProject( projectURL );
+  //slotLoadProject( projectURL );
+  dom.setContent( str);
   return true;
 }
 
@@ -453,7 +454,7 @@ void Project::slotLoadProject(const KURL &a_url)
 }
 
 void Project::loadProjectXML()
-{         
+{
   QDomNode    no;
   QDomElement el;
   KURL url;
@@ -631,15 +632,27 @@ void Project::slotAddFiles()
       if ( dlg->exec() )
       {
         list = dlg->copy( list );
+        connect(dlg, SIGNAL(addFilesToProject(const KURL&, CopyTo*)),
+                     SLOT  (slotInsertFilesAfterCopying(const KURL&, CopyTo*)));
+        return;
       }
       else {
       	delete dlg;
         return;
       }
-      delete dlg;
   	}
   	
-  	insertFiles( list );
+   insertFiles( list );
+   //Take care also of the selected dirs
+   KURL dirURL;
+   for (uint i = 0; i < list.count(); i++)
+   {
+     dirURL = list[i];
+     if (dirURL.path().endsWith("/"))
+     {     
+       insertFiles( dirURL, "*" );
+     }
+   }
   	
   	emit reloadTree( fileNameList(), false);
   }
@@ -693,10 +706,10 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
 
 void Project::slotInsertFilesAfterCopying(const KURL& p_url,CopyTo* dlg)
 {
+  KURL url = p_url;
 //The CopyTo dlg is deleted only here!!
   delete dlg;	
-  KURL url = p_url;
-  url.setPath(url.path(1));
+  url.adjustPath(1);
   insertFiles( url, "*" );
   emit reloadTree( fileNameList(), false );
 }
@@ -811,8 +824,8 @@ void Project::slotRemove(const KURL& urlToRemove)
 void Project::slotNewProject()
 {
 	wiz = new QWizard( 0, "new", true);
-	wiz->setMinimumSize(500,500);
-	wiz->setMaximumSize(500,500);
+	wiz->setMinimumSize(620,440);
+	wiz->setMaximumSize(620,440);
 	wiz->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
 
 	png = new ProjectNewGeneral( wiz );
@@ -838,8 +851,8 @@ void Project::slotNewProject()
 
 	connect( png, SIGNAL(enableNextButton(QWidget *,bool)),
 					 wiz, SLOT(setNextEnabled(QWidget*,bool)));
-	connect( png, SIGNAL(enableNextButton(QWidget *,bool)),
-					 pnl, SLOT(slotSetDestDir(QWidget*,bool)));
+	connect( png, SIGNAL(setBaseURL(const KURL&)),
+					 pnl, SLOT(  setBaseURL(const KURL&)));
 	connect( png, SIGNAL(setBaseURL(const KURL&)),
 					 pnw, SLOT(  setBaseURL(const KURL&)));
 	connect( this,SIGNAL(setLocalFiles(bool)),
@@ -885,7 +898,7 @@ void Project::slotNewProject()
      }
   }
   
-           
+  png->linePrjName->setFocus();         
 	if ( wiz->exec() ) slotAcceptCreateProject();
 
 	delete wiz;
@@ -910,8 +923,16 @@ void Project::slotAcceptCreateProject()
   QString basePath = png->linePrjDir ->text();
 
   KURL oldBaseURL = baseURL;
+  baseURL = KURL();
+  baseURL.setHost(png->lineHost->text());
+  baseURL.setUser(png->lineUser->text());
+  baseURL.setPass(png->linePasswd->text());
+  baseURL.setPort(png->linePort->text().toInt());
+  baseURL.setProtocol(png->comboProtocol->currentText());
+  if (baseURL.protocol() == i18n("Local")) baseURL.setProtocol("file");
   QuantaCommon::setUrl(baseURL, basePath);
   baseURL.adjustPath(1);
+  if (!baseURL.path().startsWith("/")) baseURL.setPath("/"+baseURL.path());
   if (!QExtFileInfo::createDir( baseURL ))
   {
     QuantaCommon::dirCreationError(this, baseURL);

@@ -22,6 +22,7 @@
 #include <qlistview.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
+#include <qradiobutton.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
 
@@ -29,27 +30,30 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kfiledialog.h>
+#include <kprogress.h>
+#include <kmimetype.h>
 
+//app includes
 #include "projectnewlocal.h"
 #include "projectnewgeneral.h"
 #include "../dialogs/copyto.h"
 #include "../qextfileinfo.h"
-#include "../treeviews/projecttreefolder.h"
-#include "../treeviews/projecttreefile.h"
+#include "../treeviews/uploadtreefolder.h"
+#include "../treeviews/uploadtreeview.h"
 #include "../resource.h"
 #include "../quantacommon.h"
 
-//TODO: Redo this, using KURLs and possibly the ProjectTreeView code.
 ProjectNewLocal::ProjectNewLocal(QWidget *parent, const char *name )
 	: ProjectNewLocalS(parent,name)
 {
 	imagelabel->setPixmap( UserIcon("wiznewprjloc") );
 
-	listFiles->setColumnAlignment(1,Qt::AlignRight);
+//	listView->setColumnAlignment(1,Qt::AlignRight);
+  listView->setColumnText(1, i18n("Add"));
+  listView->removeColumn(2);
+  listView->removeColumn(2);
 
 	mask->setText("*");
-
-	projectDirTree = 0L;
 
 	checkInsertWeb->setChecked( true );
 
@@ -65,76 +69,133 @@ ProjectNewLocal::ProjectNewLocal(QWidget *parent, const char *name )
 ProjectNewLocal::~ProjectNewLocal(){
 }
 
-void ProjectNewLocal::slotSetDestDir(QWidget *w,bool)
+void ProjectNewLocal::setBaseURL(const KURL& a_baseURL)
 {
-	ProjectNewGeneral *png = (ProjectNewGeneral *)w;
-	
-	QString dirName = png->linePrjDir->text();
-  dir = KURL();
-  QuantaCommon::setUrl(dir, dirName);
-  dir.setPath(dir.path(1));
-	
-	checkInsert->setText(i18n("Insert files from %1").arg(dirName));
+  baseURL = a_baseURL;
+  baseURL.adjustPath(1);
+	checkInsert->setText(i18n("Insert files from \"%1\"").arg(baseURL.prettyURL()));
+  listView->clear();
+  fileList.clear();
+  checkInsert->setChecked(false);
 }
 
 KURL::List ProjectNewLocal::files()
 {
-  return fileList;
+  //return fileList;
+	KURL::List r;
+
+  QListViewItem *item;
+  QListViewItemIterator it(listView);
+  for ( ; it.current(); ++it )
+  {
+   item = it.current();
+   if ( listView->isSelected( item ))
+   {
+     KURL u;
+     if (dynamic_cast<UploadTreeFolder*>(item))
+     {
+      u = dynamic_cast<UploadTreeFolder*>(item)->url();
+     } else
+     {
+      u = dynamic_cast<UploadTreeFile*>(item)->url();
+     }
+
+     if (!u.isEmpty()) r.append(u);
+   }
+  }
+  return r;
 }
 
-KURL::List ProjectNewLocal::projectFiles(bool relative)
+KURL::List ProjectNewLocal::projectFiles()
 {
 	KURL::List list;
-	
-	QFileInfo fi( dir.path() ); //TODO
-	if ( !fi.exists() || !fi.isDir() || !checkInsert->isChecked() ) return list;
+
+  if (!QExtFileInfo::exists(baseURL) ||
+      !baseURL.path().endsWith("/")  ||
+      !checkInsert->isChecked() ) return list;
 
 	QString fmask = "*";
-//	if ( checkInsertWeb->isChecked() ) fmask = webmask->text();
-	if ( checkInsertWithMask->isChecked() ) fmask = mask->text();
+  if ( checkInsertWeb->isChecked() )
+  {
+    KMimeType::List list = KMimeType::allMimeTypes();
+    KMimeType::List::iterator it;
+    QString name;
+    fmask = "";
+    for ( it = list.begin(); it != list.end(); ++it )
+    {
+      name = (*it)->name();
+      if (qConfig.markupMimeTypes.contains(name) ||
+          qConfig.scriptMimeTypes.contains(name) ||
+          qConfig.imageMimeTypes.contains(name))
+      {
+        QStringList patterns = (*it)->patterns();
+        for (uint i = 0 ; i < patterns.count(); i++)
+        {
+          fmask = fmask+patterns[i]+" ";
+        }
+      }
+    }
+  } else
+  {
+    fmask = mask->text();
+  }
 
-    if (relative) list = QExtFileInfo::allFilesRelative( dir, fmask);
-		else          list = QExtFileInfo::allFiles( dir, fmask);
+	list = QExtFileInfo::allFilesRelative( baseURL, fmask);
 
 	return list;
 }
 
 void ProjectNewLocal::slotSetFiles(bool)
 {
-	if ( !checkInsert->isChecked() ) return;
-	KURL::List files = projectFiles(false);
-	for (uint i = 0; i < files.count(); i++)
-	{
-	   if (fileList.find(files[i]) == fileList.end()) fileList.append(files[i]);
-	 }
-	slotReloadTree(fileList,true);
+	if ( checkInsert->isChecked() )
+  {
+  	KURL::List files = projectFiles();
+    progressBar->setTotalSteps(files.count()-1);
+    progressBar->setTextEnabled(true);
+	  for (uint i = 0; i < files.count(); i++)
+  	{
+	     if ( !fileList.contains(files[i]) )
+       {
+         fileList.append(files[i]);
+         QListViewItem *it = listView->addItem(files[i], "", "");
+         if (it)  it->setSelected(true);
+         progressBar->setValue(i);
+       }
+	  }
+    progressBar->setValue(0);
+    progressBar->setTextEnabled(false);
+  }
 }
 
 void ProjectNewLocal::resizeEvent ( QResizeEvent *t )
 {
   ProjectNewLocalS::resizeEvent(t);
-  listFiles->setColumnWidth(0,listFiles->width()-listFiles->columnWidth(1)-20);
+  listView->setColumnWidth(0,listView->width()-listView->columnWidth(1)-20);
 }
 
 /** No descriptions */
 void ProjectNewLocal::slotAddFiles()
 {
+  QExtFileInfo::createDir( baseURL );
 	KURL::List list = KFileDialog::getOpenURLs(
-		dir.url(),	i18n("*"), this, i18n("Insert Files in Project"));
+		baseURL.url(),	i18n("*"), this, i18n("Insert Files in Project"));
 
 	if ( !list.isEmpty() )
   {
   	KURL u = list.first();
 
-  	u = QExtFileInfo::toRelative( u, dir );
+  	u = QExtFileInfo::toRelative( u, baseURL );
 
   	if ( u.path().startsWith("..") || u.path().startsWith("/"))
   	{
-  		CopyTo *dlg = new CopyTo( dir, this, i18n("Files: copy to project...") );
+  		CopyTo *dlg = new CopyTo( baseURL, this, i18n("Files: copy to project...") );
 
       	if ( dlg->exec() )
       	{
          		list = dlg->copy( list );
+            connect(dlg, SIGNAL(addFilesToProject(const KURL&,CopyTo*)),
+                         SLOT(slotInsertFilesAfterCopying(const KURL&,CopyTo*)));
+            return;
        	} else
        	{
       		delete dlg;
@@ -142,41 +203,50 @@ void ProjectNewLocal::slotAddFiles()
        	}
        	delete dlg;
   	}
-  	
+
+    progressBar->setTotalSteps(list.count()-1);
+    progressBar->setTextEnabled(true);
   	for (uint i = 0; i < list.count(); i++)
   	{
-  	   if (fileList.find(list[i]) == fileList.end())
+       list[i] = QExtFileInfo::toRelative(list[i], baseURL);
+  	   if (!fileList.contains(list[i]))
        {
          fileList.append(list[i]);
+         QListViewItem *it = listView->addItem(list[i], "", "");
+         if (it)  it->setSelected(true);
+         progressBar->setValue(i);
        }
   	}
-    slotReloadTree(fileList,false);	
+   progressBar->setValue(0);
+   progressBar->setTextEnabled(false);
+
   }
 }
 
 /** No descriptions */
 void ProjectNewLocal::slotAddFolder()
 {
+//TODO/FIXME: This returns null if the selected directory is not on the local disk.
+//I think this is a KDE bug
+  QExtFileInfo::createDir( baseURL );
 	QString dirName = KFileDialog::getExistingDirectory(
-		dir.prettyURL(), this, i18n("Insert Directory in Project"));
-	
+		baseURL.url(),  this, i18n("Insert Directory in Project"));
+
 	if ( !dirName.isEmpty() )
   {
-	  KURL dirURL;
+	  KURL dirURL ;
     QuantaCommon::setUrl(dirURL, dirName);
     dirURL.adjustPath(1);
-	
+
    	KURL sdir = dirURL;
-    sdir = QExtFileInfo::toRelative( sdir, dir);
-	
+    sdir = QExtFileInfo::toRelative( sdir, baseURL);
+
     if ( sdir.path().startsWith("..") || sdir.path().startsWith("/") )
     {
-  	  CopyTo *dlg = new CopyTo( dir, this, i18n("%1: copy to project...").arg(dirName) );
+  	  CopyTo *dlg = new CopyTo( baseURL, this, i18n("%1: copy to project...").arg(dirName) );
 
       if ( dlg->exec() )
       {
-//      	if ( dirName.right(1) == "/" ) dirName.remove( dirName.length()-1,1);
-//        dirName = dlg->copy( dirName );
         dirURL = dlg->copy(dirURL);
         connect(dlg, SIGNAL(addFilesToProject(const KURL&,CopyTo*)),
                      SLOT(slotInsertFilesAfterCopying(const KURL&,CopyTo*)));
@@ -189,105 +259,40 @@ void ProjectNewLocal::slotAddFolder()
       delete dlg;
     }
 
-    KURL::List files = QExtFileInfo::allFiles( dirURL, "*");	
-    for (uint i = 0; i < files.count(); i++)
-	  {
-	    if (fileList.find(files[i]) == fileList.end()) fileList.append(files[i]);
-	  }
-    slotReloadTree(fileList,false);	
+    slotInsertFilesAfterCopying(dirURL, 0);
   }
 }
 
 void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL& rdir,CopyTo* dlg)
 {
-//The CopyTo dlg is deleted only here!!
-  delete dlg;	
   KURL dirURL = rdir;
+//The CopyTo dlg is deleted only here!!
+  if (dlg) delete dlg;
   dirURL.adjustPath(1);
-  KURL::List files = QExtFileInfo::allFiles( dirURL, "*");	
+  KURL::List files = QExtFileInfo::allFilesRelative( dirURL, "*");
+  progressBar->setTotalSteps(files.count()-1);
+  progressBar->setTextEnabled(true);
   for (uint i = 0; i < files.count(); i++)
-  {
-    if (fileList.find(files[i]) == fileList.end()) fileList.append(files[i]);
+	{
+     if ( !fileList.contains(files[i]) )
+     {
+       fileList.append(files[i]);
+       QListViewItem *it = listView->addItem(files[i], "", "");
+       if (it)  it->setSelected(true); 
+       progressBar->setValue(i);
+     }
   }
-  slotReloadTree(fileList,false);	
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(false);
 }
 
 /** No descriptions */
 void ProjectNewLocal::slotClearList()
 {
-  if (projectDirTree != 0L) delete projectDirTree;
-  listFiles->clear();
+  KIO::del( baseURL );
+  listView->clear();
   fileList.clear();
   checkInsert->setChecked(false);
-  projectDirTree = 0L;
 }
-
-void ProjectNewLocal::slotReloadTree( KURL::List fileList, bool newtree)
-{
-	QString projectName = QFileInfo(dir.path(-1)).fileName();
-	if ( (projectDirTree == 0L) || ( newtree )  )
-	{
-		if ( projectDirTree !=0L ) delete projectDirTree;
-		projectDirTree =  new ProjectTreeFolder( listFiles, projectName, KURL(dir));//TODO
-		projectDirTree -> setPixmap( 0, SmallIcon("folder"));
-		projectDirTree -> setOpen( true );
-	}
-
-	projectDirTree -> setOpen( false );
-	projectDirTree->setText( 0, projectName );
-
-	int pos;
-	QString fname;
-
-	ProjectTreeFolder *newFolder = 0L;
-	ProjectTreeFolder *folder = projectDirTree;
-	
-	KURL::List::Iterator it;
-
-  for ( it = fileList.begin(); it != fileList.end(); ++it )
-	{
-    folder = projectDirTree;
-    fname = QExtFileInfo::toRelative(*it,dir).path(1); //TODO
-    fname.replace(QRegExp("\\.\\./"),"");
-    while ( ( pos = fname.find('/')) > 0 )
-    {
-      QString dir = fname.left(pos);
-
-      newFolder = 0L;
-      QListViewItem *item = folder->firstChild();
-
-      while( item )
-      {
-        if ( dir == item->text(0) )
-        	newFolder = dynamic_cast<ProjectTreeFolder *>(item);
-        item = item->nextSibling();
-      }
-
-      if ( !newFolder )
-      	newFolder = new ProjectTreeFolder(listFiles, folder, KURL(dir)); //TODO
-      	
-      folder = newFolder;
-      fname.remove(0,pos+1);
-    }
-    QListViewItem *item = folder->firstChild();
-    bool neednew = true;
-
-    if (folder->text(0) == "CVS") neednew = false;
-
-    while( item )
-    {
-      if ( fname == item->text(0) ) neednew = false;
-      item = item->nextSibling();
-    }
-    if (fname.isEmpty()) neednew = false;
-    if ( neednew )
-    {
-      ProjectTreeFile *item = new ProjectTreeFile( folder, fname, KURL(fname) ); //TODO
-      item->setIcon(KURL(fname)); //TODO
-    }
-  }
-
-  projectDirTree->sortChildItems(0,true);
-  projectDirTree->setOpen( true );
-}
+   
 #include "projectnewlocal.moc"

@@ -8,7 +8,7 @@
 #include <kio/job.h>
 
 #include "rescanprjdir.h"
-#include "../treeviews/uploadtreeview.h"
+
 
 
 struct URLListEntry{

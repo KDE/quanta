@@ -92,6 +92,7 @@ void  ProjectUpload::initProjectInfo(Project *prg)
 	}
 
 	QStringList protocols = KProtocolInfo::protocols();
+  protocols.sort();
 	for ( uint i=0; i<protocols.count(); i++ )
 	{
 		QString p = protocols[i];
@@ -428,4 +429,6 @@ void ProjectUpload::reject()
 
   QDialog::reject();
 }
+
+
 #include "projectupload.moc"

@@ -74,6 +74,7 @@ private slots: // Private slots
   /** No descriptions */
   void slotUploadNext();
 
+
 signals: // Signals
   /** No descriptions */
   void uploadNext();

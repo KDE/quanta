@@ -71,6 +71,9 @@ private:
   
   QStringList filesList;
   
+private slots: // Private slots
+  /** No descriptions */
+  void setProtocol(const QString& protocol);
 };
 
 #endif
