@@ -196,4 +196,6 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, QString a_title )
 
 
 StructTreeTag::~StructTreeTag(){
+  if (node)
+    node->listItem = 0L;
 }
