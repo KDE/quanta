@@ -1475,6 +1475,10 @@ void Document::slotTextChanged()
               } else
               {
                 editIf->insertText(bl, bc, newName.mid(1));
+                if (bl == line)
+                {
+                  column += (newName.length() - currentNode->tag->name.length());
+                }
               }
               viewCursorIf->setCursorPositionReal(bl, bc);
               baseNode = parser->rebuild(this);
