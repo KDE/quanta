@@ -116,6 +116,7 @@ void MessageOutput::phpDebug( QString s)
 void MessageOutput::php4Debug( QString s)
 {
   new MessageItemPHP4( this, s );
+  setBottomItem(count()-1);
 }
 
 void MessageOutput::newPhpConnect()
@@ -155,6 +156,7 @@ void MessageOutput::processWebLint( KProcess *p, char *buffer, int len )
    // setBottomItem(count()-1);
     s = ""; 
   }
+  setBottomItem(count()-1);
        
 }
 
