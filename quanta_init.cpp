@@ -797,7 +797,7 @@ void QuantaApp::initActions()
 
     undoRedo->setGroup( "edit_undo_merge" ); */
 
-    (void) new KAction( i18n( "Find in Files" ),
+    (void) new KAction( i18n( "Find in Files..." ),
                         UserIcon("find"), CTRL+ALT+Key_F,
                         this, SLOT( slotEditFindInFiles() ),
                         actionCollection(), "find_in_files" );

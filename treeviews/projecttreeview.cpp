@@ -63,28 +63,28 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	fileMenu = new QPopupMenu();
 	
 	fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
-	fileMenu -> insertItem(					  			   i18n("Open with..."), 		this ,SLOT(slotOpenWith()));
+	fileMenu -> insertItem(					  			   i18n("Open With..."), 		this ,SLOT(slotOpenWith()));
 	openInQuantaId = fileMenu -> insertItem(					  			   i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
 	fileMenu -> insertSeparator();
-	fileMenu -> insertItem(	UserIcon("delete"),i18n("Remove From Disc (and project)"), 	 this ,SLOT(slotRemove()));
-	fileMenu -> insertItem(					  			   i18n("Remove From Project"),this ,SLOT(slotRemoveFromProject(int)));
-	fileMenu -> insertItem( i18n("Rename"),   this ,SLOT(slotRenameFile()));
+	fileMenu -> insertItem(	UserIcon("delete"),i18n("Remove From Disc (and project)..."), 	 this ,SLOT(slotRemove()));
+	fileMenu -> insertItem(					  			   i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
+	fileMenu -> insertItem( i18n("Rename..."),   this ,SLOT(slotRenameFile()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem(i18n("Upload File..."),this,SLOT(slotUploadSingleFile()));
 	fileMenu -> insertSeparator();
-	fileMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
+	fileMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
 
 	folderMenu = new QPopupMenu();
 	
 	folderMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
  	folderMenu -> insertSeparator();
-	folderMenu -> insertItem(	UserIcon("delete"),i18n("Remove From Ddisc (and project)"), 	 this ,SLOT(slotRemove()));
-	folderMenu -> insertItem(					  			   i18n("Remove From Project"),this ,SLOT(slotRemoveFromProject(int)));
- 	folderMenu -> insertItem( i18n("Rename"),   this ,SLOT(slotRenameFolder()));
+	folderMenu -> insertItem(	UserIcon("delete"),i18n("Remove From Disc (and project)..."), 	 this ,SLOT(slotRemove()));
+	folderMenu -> insertItem(					  			   i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
+ 	folderMenu -> insertItem( i18n("Rename..."),   this ,SLOT(slotRenameFolder()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem(i18n("Upload Folder..."),this,SLOT(slotUploadSingleFolder()));
 	folderMenu -> insertSeparator();
-	folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
+	folderMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
 
 
 	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
