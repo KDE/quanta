@@ -21,7 +21,7 @@ AttributeSeparator = ,
 TagSeparator = ;
 
 [Parsing rules]
-Tags = style(type)
+Tags = style(type[text/css])
 Comments = /* */
 StructKeywords =
 StructBeginStr = {

@@ -265,7 +265,17 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           if (!rootNode)
               rootNode = node;
           //find the DTD that needs to be used for the special area
-          QString s = tag->attributeValue(m_dtd->specialTags[tag->name.lower()]);
+          QString tmpStr = m_dtd->specialTags[tag->name.lower()];
+          int defPos = tmpStr.find('[');
+          QString defValue;
+          if (defPos != 0)
+          {
+            defValue = tmpStr.mid(defPos+1, tmpStr.findRev(']')-defPos-1).stripWhiteSpace();
+            tmpStr = tmpStr.left(defPos);
+          }
+          QString s = tag->attributeValue(tmpStr);
+          if (s.isEmpty())
+            s = defValue;
           const DTDStruct *dtd = DTDs::ref()->find(s);
           if (!dtd)
               dtd = m_dtd;
