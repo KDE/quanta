@@ -195,7 +195,7 @@ signals: // Signals
   /** signal used to hide the splash screen */
   void showSplash(bool);
   void debuggerAddWatch(const QString &);
-  
+
 public slots:
   void slotFileNew();
   void slotFileOpen();
@@ -456,7 +456,7 @@ private:
   // Debugger
   DebuggerManager *m_debugger;
   QString popupWord;
-  
+
   QuantaPluginInterface *m_pluginInterface;
 
   QPopupMenu *m_tagsMenu;

@@ -1018,7 +1018,6 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
  connect( dlg, SIGNAL( newToolbarConfig() ), SLOT( slotNewToolbarConfig() ) );
  dlg->exec();
  delete dlg;
-
  QPopupMenu *menu = 0L;
  QString toolbarName;
  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
@@ -1622,7 +1621,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
 
   QString tabname = element.attribute( "i18ntabname", "" );
 
-  if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty() )
+  if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty())
   {
 //avoid QToolBar warning in the log
     QtMsgHandler oldHandler = qInstallMsgHandler( silenceQToolBar );
@@ -1689,7 +1688,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
 
 void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id )
 {
-  if ( container->parent() &&  QString(container->parent()->name()) == "ToolbarHoldingWidget" + element.attribute("name"))
+  if (dynamic_cast<QuantaToolBar*>(container))
   {
     ToolbarTabWidget::ref()->removePage(container);
   }
