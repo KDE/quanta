@@ -1852,6 +1852,10 @@ bool Document::eventFilter(QObject *object, QEvent *event)
 {
         if(event->type() == QEvent::Paint && !repaintEnabled)
                 return true;
+        else if(event->type() == QEvent::FocusIn )
+		kdDebug(24000)<< "focusin" << endl;
+	else if(event->type() == QEvent::FocusOut)
+		kdDebug(24000)<< "focusout" << endl;
         else
                 return false;
 }

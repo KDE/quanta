@@ -1784,8 +1784,8 @@ void QuantaApp::initActions()
       ta->setExclusiveGroup("view");
 
      showKafkaAction =
-      new KToggleAction( i18n( "&VPL editor (experimental)"), "show_kafka_view", CTRL+SHIFT+Key_F9,
-                         m_view, SLOT( slotShowKafkaPart() ),
+      new KToggleAction( i18n( "&VPL editor (experimental)"), UserIcon ("vpl"), CTRL+SHIFT+Key_F9,
+      m_view, SLOT( slotShowKafkaPart() ),
                           ac, "show_kafka_view");
      showKafkaAction->setExclusiveGroup("view");
 

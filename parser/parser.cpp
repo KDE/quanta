@@ -1336,7 +1336,7 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo.addNewModifsSet(modifs);
+   w->docUndoRedo.addNewModifsSet(modifs, false);
    return parse(w);
  } else
  {
@@ -1450,7 +1450,7 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo.addNewModifsSet(modifs);
+   w->docUndoRedo.addNewModifsSet(modifs, false);
    return parse(w);
 
    }
@@ -1599,7 +1599,7 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo.addNewModifsSet(modifs);
+   w->docUndoRedo.addNewModifsSet(modifs, false);
    return parse(w);
 
    }
@@ -1644,7 +1644,7 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo.addNewModifsSet(modifs);
+   w->docUndoRedo.addNewModifsSet(modifs, false);
    return parse(w);
    }
 
@@ -1689,7 +1689,7 @@ Node *Parser::rebuild(Document *w)
         modifs.NodeModifList.append(modif);
         modif.location =  w->docUndoRedo.getLocation(lastNode);
         modif.type = undoRedo::NodeModified;
-       modif.node = 0L;
+        modif.node = 0L;
         modif.tag = _tag;
         modifs.NodeModifList.append(modif);
         //delete lastInserted;
@@ -1782,7 +1782,7 @@ Node *Parser::rebuild(Document *w)
    /**kdDebug(24000)<< "END"<< endl;
    coutTree(baseNode,  2);
    kdDebug(24000)<< "************* End User Modification *****************" << endl;*/
-   w->docUndoRedo.addNewModifsSet(modifs);
+   w->docUndoRedo.addNewModifsSet(modifs, false);
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
 //  t.restart();

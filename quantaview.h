@@ -71,7 +71,7 @@ public:
 #ifdef BUILD_KAFKAPART
 
   /** Return the WKafkaPart */
-  WKafkaPart *getkafkaPart() {return kafkaInterface;}
+  WKafkaPart *getKafkaInterface() {return kafkaInterface;}
 #endif
   /** Return the curren views layout*/
   int getViewsLayout() {return currentViewsLayout;}

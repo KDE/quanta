@@ -22,6 +22,10 @@
 
 #include <kdebug.h>
 #include <kiconloader.h>
+#ifdef BUILD_KAFKAPART
+#include <dom/dom_node.h>
+#include <dom/dom_exception.h>
+#endif
 
 #include "document.h"
 #include "quanta.h"
@@ -29,6 +33,9 @@
 #include "parser/node.h"
 #include "parser/tag.h"
 #include "resource.h"
+#ifdef BUILD_KAFKAPART
+#include "parts/kafka/wkafkapart.h"
+#endif
 
 #include "undoredo.h"
 
@@ -44,8 +51,10 @@ undoRedo::undoRedo(Document *doc)
 	modifs.cursorX = 0;
 	modifs.cursorY = 0;
 	modifs.isModified = false;
-	addNewModifsSet(modifs);
+	//don't call addNewModifsSet(modifs); otherwise it will delete it as it is empty
+	append(modifs);
 	editorIterator = begin();
+	kafkaIterator = begin();
 }
 
 undoRedo::~undoRedo()
@@ -53,8 +62,9 @@ undoRedo::~undoRedo()
 
 }
 
-void undoRedo::addNewModifsSet(NodeModifsSet modifs)
+void undoRedo::addNewModifsSet(NodeModifsSet modifs, bool kafkaModifSet)
 {
+	kdDebug(24000)<< "undoRedo::addNewModifsSet" << endl;
 	QValueList<NodeModifsSet>::iterator it;
 	QValueList<NodeModif>::iterator it2, it3, it4;
 	NodeModifsSet modifications;
@@ -64,8 +74,8 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 	bool noMerge = false;
 	bool textTyped;
 
-/**#ifdef RELEASE*/
-	//for the release
+#ifndef BUILD_KAFKAPART
+	//Delete the modifs
 	for(it2 = modifs.NodeModifList.begin(); it2 != modifs.NodeModifList.end(); it2++)
 	{
 		if((*it2).type == undoRedo::NodeRemoved || (*it2).type ==
@@ -76,7 +86,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 			delete (*it2).tag;
 	}
 	return;
-/**#endif*/
+#endif
 
 	if(_mergeNext)
 	{
@@ -144,6 +154,8 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 		else
 			break;
 	}
+	if(modifs.NodeModifList.empty())
+		return;
 
 	//Now merging, if possible, this NodeModifsSet. != of the first merging.
 	//adding a text => 1*undoRedo::NodeAdded, modifying a text => 1*undoRedo::NodeRemoved + 1*undoRedo::NodeAdded
@@ -280,7 +292,10 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 			}
 			remove(begin());
 		}
-		editorIterator = fromLast();
+		if(kafkaModifSet)
+			kafkaIterator = fromLast();
+		else
+			editorIterator = fromLast();
 	}
 
 	/** A lot more to do:
@@ -297,6 +312,7 @@ bool undoRedo::undo(bool kafkaUndo)
 	QTime t;
 	QValueList<NodeModif>::iterator it;
 	bool success = true;
+	bool updateClosing = qConfig.updateClosingTags;
 
 	t.start();
 	kdDebug(24000)<< "************* Begin Undo *****************" << endl;
@@ -305,43 +321,18 @@ bool undoRedo::undo(bool kafkaUndo)
 	it = (*editorIterator).NodeModifList.fromLast();
 	_doc->activateParser(false);
 	_doc->activateRepaintView(false);
+	qConfig.updateClosingTags = false;
 	while(1)
 	{
-		if(!UndoNodeModif(*it, kafkaUndo))
+		if(!UndoNodeModif(*it))
 		{
 			//one undo has failed, trying to recover (hope that the undo has done nothing).
 			kdDebug(24000)<< "Undo failed, trying to recover." << endl;
 			it++;
 			while(it != (*editorIterator).NodeModifList.end() && success)
 			{
-				if((*it).type == undoRedo::NodeTreeAdded)
-					(*it).type = undoRedo::NodeTreeRemoved;
-				else if((*it).type == undoRedo::NodeAndChildsAdded)
-					(*it).type = undoRedo::NodeAndChildsRemoved;
-				else if((*it).type == undoRedo::NodeAdded)
-					(*it).type = undoRedo::NodeRemoved;
-				else if((*it).type == undoRedo::NodeRemoved)
-					(*it).type = undoRedo::NodeAdded;
-				else if((*it).type == undoRedo::NodeAndChildsRemoved)
-					(*it).type = undoRedo::NodeAndChildsAdded;
-				else if((*it).type == undoRedo::NodeTreeRemoved)
-					(*it).type = undoRedo::NodeTreeAdded;
-
-				success = UndoNodeModif(*it, kafkaUndo);
+				success = RedoNodeModif(*it);
 				kdDebug(24000) << "NodeModif type :" << (*it).type <<" redoed!" << endl;
-
-				if((*it).type == undoRedo::NodeTreeRemoved)
-					(*it).type = undoRedo::NodeTreeAdded;
-				else if((*it).type == undoRedo::NodeAndChildsRemoved)
-					(*it).type = undoRedo::NodeAndChildsAdded;
-				else if((*it).type == undoRedo::NodeRemoved)
-					(*it).type = undoRedo::NodeAdded;
-				else if((*it).type == undoRedo::NodeAdded)
-					(*it).type = undoRedo::NodeRemoved;
-				else if((*it).type == undoRedo::NodeAndChildsAdded)
-					(*it).type = undoRedo::NodeAndChildsRemoved;
-				else if((*it).type == undoRedo::NodeTreeAdded)
-					(*it).type = undoRedo::NodeTreeRemoved;
 				it++;
 			}
 			return false;
@@ -374,6 +365,7 @@ bool undoRedo::undo(bool kafkaUndo)
 	}
 	//We need to update the internal pointer of baseNode in the parser.
 	parser->setM_node(baseNode);
+	qConfig.updateClosingTags = updateClosing;
 	_doc->activateRepaintView(true);
 	_doc->activateParser(true);
 	kdDebug(24000)<< "************* End Undo *****************" << endl;
@@ -387,6 +379,7 @@ bool undoRedo::redo(bool kafkaUndo)
 	QValueList<NodeModif>::iterator it;
 	QTime t;
 	bool success;
+	bool updateClosing = qConfig.updateClosingTags;
 
 	t.start();
 	kdDebug(24000)<< "************* Begin Redo *****************" << endl;
@@ -395,37 +388,18 @@ bool undoRedo::redo(bool kafkaUndo)
 	editorIterator++;
 	_doc->activateParser(false);
 	_doc->activateRepaintView(false);
+	qConfig.updateClosingTags = false;
 	for(it = (*editorIterator).NodeModifList.begin(); it != (*editorIterator).NodeModifList.end(); it++)
 	{
-		/** Redoing is the opposite of Undoing ... */
-		if((*it).type == undoRedo::NodeTreeAdded)
-			(*it).type = undoRedo::NodeTreeRemoved;
-		else if((*it).type == undoRedo::NodeAndChildsAdded)
-			(*it).type = undoRedo::NodeAndChildsRemoved;
-		else if((*it).type == undoRedo::NodeAdded)
-			(*it).type = undoRedo::NodeRemoved;
-		else if((*it).type == undoRedo::NodeRemoved)
-			(*it).type = undoRedo::NodeAdded;
-		else if((*it).type == undoRedo::NodeAndChildsRemoved)
-			(*it).type = undoRedo::NodeAndChildsAdded;
-		else if((*it).type == undoRedo::NodeTreeRemoved)
-			(*it).type = undoRedo::NodeTreeAdded;
-
-		success = UndoNodeModif(*it, kafkaUndo);
+		success = RedoNodeModif(*it);
+		if(!success)
+		{
+			kdDebug(24000)<< "Redo failed!" << endl;
+			_doc->activateRepaintView(true);
+			_doc->activateParser(true);
+			return false;
+		}
 		kdDebug(24000) << "NodeModif type :" << (*it).type <<" redoed!" << endl;
-
-		if((*it).type == undoRedo::NodeTreeRemoved)
-			(*it).type = undoRedo::NodeTreeAdded;
-		else if((*it).type == undoRedo::NodeAndChildsRemoved)
-			(*it).type = undoRedo::NodeAndChildsAdded;
-		else if((*it).type == undoRedo::NodeRemoved)
-			(*it).type = undoRedo::NodeAdded;
-		else if((*it).type == undoRedo::NodeAdded)
-			(*it).type = undoRedo::NodeRemoved;
-		else if((*it).type == undoRedo::NodeAndChildsAdded)
-			(*it).type = undoRedo::NodeAndChildsRemoved;
-		else if((*it).type == undoRedo::NodeTreeAdded)
-			(*it).type = undoRedo::NodeTreeRemoved;
 	}
 	_doc->viewCursorIf->setCursorPositionReal((*editorIterator).cursorY2, (*editorIterator).cursorX2);
 	if(quantaApp->view()->writeExists())
@@ -448,6 +422,7 @@ bool undoRedo::redo(bool kafkaUndo)
 	}
 	//We need to update the internal pointer of baseNode in the parser.
 	parser->setM_node(baseNode);
+	qConfig.updateClosingTags = updateClosing;
 	_doc->activateRepaintView(true);
 	_doc->activateParser(true);
 	kdDebug(24000)<< "************* End Redo *****************" << endl;
@@ -456,20 +431,23 @@ bool undoRedo::redo(bool kafkaUndo)
 	return !(editorIterator == fromLast());
 }
 
-bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool kafkaUndo)
+bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool generateText)
 {
 	Node *_node = 0L, *_nodeNext = 0L, *n = 0L, *m = 0L, *newNode = 0L;
-	int bLine, bCol, eLine, eCol, bLine2, bCol2, eLine2, eCol2, bLine3, bCol3, i;
+	int bLine, bCol, eLine, eCol, bLine2, bCol2, eLine2, eCol2, bLine3, bCol3, eLine3, eCol3, i, j;
 	bool b;
 	QValueList<int> loc;
 	Tag *_tag;
 	QString text, totalText;
+	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
+	KafkaHTMLPart *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaPart();
 
 	if(_nodeModif.type == undoRedo::NodeTreeAdded)
 	{
 		/** Remove all the text and set baseNode to 0L */
-		_doc->editIf->removeText(0, 0, _doc->editIf->numLines() - 1,
-			_doc->editIf->lineLength(_doc->editIf->numLines() - 1));
+		if(undoTextModifs)
+			_doc->editIf->removeText(0, 0, _doc->editIf->numLines() - 1,
+				_doc->editIf->lineLength(_doc->editIf->numLines() - 1));
 		_nodeModif.node = baseNode;
 		baseNode = 0L;
 	}
@@ -502,7 +480,7 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool kafkaUndo)
 			if(_node->closesPrevious && _node->next)
 			{
 				/** If _node close the previous Node, it means that all the node next to _node
-				  * will be moved next to the last child of _node->prev (need to be updated) */
+				  * will be moved next to the last child of _node->prev TODO:(need to be updated) */
 				n = _node->prev;
 				if(!n)
 				{
@@ -594,8 +572,11 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool kafkaUndo)
 			_node->child = 0L;
 			_nodeModif.childsNumber = i;
 		}
-		fitsNodesPosition(_nodeNext, bCol - eCol - 1, bLine - eLine);
-		_doc->editIf->removeText(bLine, bCol, eLine, eCol + 1);
+		if(undoTextModifs)
+		{
+			fitsNodesPosition(_nodeNext, bCol - eCol - 1, bLine - eLine);
+			_doc->editIf->removeText(bLine, bCol, eLine, eCol + 1);
+		}
 	}
 	else if(_nodeModif.type == undoRedo::NodeModified)
 	{
@@ -614,70 +595,72 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool kafkaUndo)
 		_node->tag->beginPos(bLine, bCol);
 		_node->tag->endPos(eLine, eCol);
 		_node->tag = _tag;
-		text = _node->tag->tagStr();
-		if(kafkaUndo)
+		if(undoTextModifs)
 		{
-			bLine2 = bLine;
-			bCol2 = bCol;
-			eLine2 = bLine2;
-			eCol2 = bCol2;
-			for(i = 0; (unsigned)i < text.length(); i++)
+			text = _node->tag->tagStr();
+			if(generateText)
 			{
-				if(text[i] != QChar(Qt::Key_Return))
-					eCol2++;
+				bLine2 = bLine;
+				bCol2 = bCol;
+				eLine2 = bLine2;
+				eCol2 = bCol2;
+				if(_node->tag->type == Tag::Text)
+					text = kafkaInterface->getEncodedText(text, bLine2, bCol2, eLine2, eCol2);
+				else if(_node->tag->type == Tag::XmlTag || _node->tag->type == Tag::XmlTagEnd)
+					text = kafkaInterface->generateCodeFromNode(_node, bLine2, bCol2, eLine2, eCol2);
+				else
+					kdDebug(25001)<< "undoRedo::UndoNodeModif - ERROR can't generate text for type "
+						<< _node->tag->type << endl;
+				_node->tag->setStr(text);
+				_node->tag->setTagPosition(bLine2, bCol2, eLine2, eCol2);
+			}
+			else
+			{
+				if(_node->prev)
+				{
+					m = _node->prev;
+					while(m->child)
+					{
+						m = m->child;
+						while(m->next)
+							m = m->next;
+					}
+					m->tag->endPos(bLine3, bCol3);
+				}
+				else if(_node->parent)
+					_node->parent->tag->endPos(bLine3, bCol3);
 				else
 				{
-					eLine2++;
-					eCol2 = 0;
+					bCol3 = -1;
+					bLine3 = 0;
 				}
-			}
-			_node->tag->setTagPosition(bLine2, bCol2, eLine2, eCol2);
-		}
-		else
-		{
-			if(_node->prev)
-			{
-				m = _node->prev;
-				while(m->child)
+				bCol3++;
+				_node->tag->beginPos(bLine2, bCol2);
+				_node->tag->endPos(eLine2, eCol2);
+				if(bCol2 == -1)
 				{
-					m = m->child;
-					while(m->next)
-						m = m->next;
+					bCol3 = -1;
+					bLine3++;
 				}
-				m->tag->endPos(bLine3, bCol3);
+				if((eLine2 - bLine2) == 0)
+					_node->tag->setTagPosition(bLine3, bCol3, bLine3, bCol3 + (eCol2 - bCol2));
+				else
+					_node->tag->setTagPosition(bLine3, bCol3, bLine3 + (eLine2 - bLine2), eCol2);
 			}
-			else if(_node->parent)
-				_node->parent->tag->endPos(bLine3, bCol3);
-			else
-			{
-				bCol3 = -1;
-				bLine3 = 0;
-			}
-			bCol3++;
+			_doc->editIf->removeText(bLine, bCol, eLine, eCol + 1);
+			_doc->editIf->insertText(bLine, bCol, _node->tag->tagStr());
 			_node->tag->beginPos(bLine2, bCol2);
 			_node->tag->endPos(eLine2, eCol2);
-			if(bCol2 == -1)
-			{
-				bCol3 = -1;
-				bLine3++;
-			}
-			if((eLine2 - bLine2) == 0)
-				_node->tag->setTagPosition(bLine3, bCol3, bLine3, bCol3 + (eCol2 - bCol2));
-			else
-				_node->tag->setTagPosition(bLine3, bCol3, bLine3 + (eLine2 - bLine2), eCol2);
+			fitsNodesPosition(_nodeNext, (eCol2 - bCol2) - (eCol - bCol),
+				(eLine2 - bLine2) - (eLine - bLine));
 		}
-		_doc->editIf->removeText(bLine, bCol, eLine, eCol + 1);
-		_doc->editIf->insertText(bLine3, bCol3, _node->tag->tagStr());
-		_node->tag->beginPos(bLine2, bCol2);
-		_node->tag->endPos(eLine2, eCol2);
-		fitsNodesPosition(_nodeNext, (eCol2 - bCol2) - (eCol - bCol),
-			(eLine2 - bLine2) - (eLine - bLine));
 	}
 	else if(_nodeModif.type == undoRedo::NodeRemoved ||
 		_nodeModif.type == undoRedo::NodeAndChildsRemoved)
 	{
 		/** Adding the node */
 		newNode = _nodeModif.node;
+		_nodeModif.node = 0L;
 		_node = getNodeFromLocation(_nodeModif.location);
 		if(!_node)
 		{
@@ -809,94 +792,159 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool kafkaUndo)
 			}
 			_nodeNext = _node;
 		}
-		if(newNode->prev)
-		{
-			m = newNode->prev;
-			while(m->child)
-			{
-				m = m->child;
-				while(m->next)
-					m = m->next;
-			}
-			m->tag->endPos(bLine, bCol);
-		}
-		else if(newNode->parent)
-			newNode->parent->tag->endPos(bLine, bCol);
-		else
-		{
-			bCol = -1;
-			bLine = 0;
-		}
-		bCol++;
-
-		_nodeModif.node = 0L;
 		if(newNode->next && ("/" + newNode->tag->name.lower() == newNode->next->tag->name.lower()))
 			newNode->next->closesPrevious = true;
-		eCol = bCol;
-		eLine = bLine;
 		n = newNode;
-		b = false;
-		newNode->tag->beginPos(bLine2, bCol2);
-		if(bCol2 == -1)
-		{
-			bCol = -1;
-			bLine++;
-		}
 		while(n)
 		{
-			text = n->tag->tagStr();
 			//remove any reference to a now deleted QListViewItem
 			n->listItem = 0L;
-			if(kafkaUndo)
+			n = getNextNode(n, b, newNode);
+		}
+		if(undoTextModifs)
+		{
+			if(newNode->prev)
 			{
-				bLine2 = eLine;
-				bCol2 = eCol;
-				for(i = 0; (unsigned)i < text.length(); i++)
+				m = newNode->prev;
+				while(m->child)
 				{
-					if(text[i] != QChar(Qt::Key_Return))
-						eCol++;
-					else
-					{
-						eLine++;
-						eCol = 0;
-					}
+					m = m->child;
+					while(m->next)
+						m = m->next;
 				}
-				n->tag->setTagPosition(bLine2, bCol2, eLine, eCol);
+				m->tag->endPos(bLine, bCol);
 			}
+			else if(newNode->parent)
+				newNode->parent->tag->endPos(bLine, bCol);
 			else
 			{
-				n->tag->beginPos(bLine2, bCol2);
-				n->tag->endPos(eLine2, eCol2);
-				if((eLine2 - bLine2) == 0)
-				{
-					n->tag->setTagPosition(eLine, eCol, eLine, eCol + (eCol2 - bCol2));
-					eCol += (eCol2 - bCol2);
-				}
-				else
-				{
-					n->tag->setTagPosition(eLine, eCol, eLine + (eLine2 - bLine2), eCol2);
-					eCol = eCol2;
-				}
-				eLine += (eLine2 - bLine2);
+				bCol = -1;
+				bLine = 0;
 			}
-			totalText += text;
-			if(_nodeModif.type == undoRedo::NodeRemoved)
-				break;
-			n = getNextNode(n, b, newNode);
-			if(n)
+			bCol++;
+			eCol = bCol;
+			eLine = bLine;
+			n = newNode;
+			b = false;
+			newNode->tag->beginPos(bLine2, bCol2);
+			if(bCol2 == -1)
 			{
-				n->tag->beginPos(bLine3, bCol3);
-				if(bCol3 == -1)
+				bCol = -1;
+				bLine++;
+			}
+			while(n)
+			{
+				text = n->tag->tagStr();
+				if(generateText)
 				{
-					eLine++;
-					eCol = -1;
+					//determine the depth of the node
+					m = n;
+					i = 0;
+					while(m->parent)
+					{
+						i++;
+						m = m->parent;
+					}
+					bLine2 = eLine;
+					bCol2 = eCol;
+					if(n->tag->type == Tag::Text)
+					{
+						text = "\n";
+						bLine3 = bLine2;
+						bCol3 = bCol2;
+						bLine3++;
+						bCol3 = -1;
+						j = i;
+						while(j != 0)
+						{
+							text += "  ";
+							bCol3++;
+							j--;
+						}
+						text += kafkaInterface->getEncodedText(text, bLine3, bCol3 + 1, eLine, eCol);
+					}
+					else if(n->tag->type == Tag::XmlTag || n->tag->type == Tag::XmlTagEnd)
+					{
+						//set the empty tag if present
+						m = n->previousSibling();
+						if(m && m->tag->type == Tag::Empty)
+						{
+							m->tag->setTagPosition(bLine2, bCol2 - 1, bLine2 + 1, 2*i - 1);
+							text = "\n";
+							j = i;
+							while(j != 0)
+							{
+								text += "  ";
+								j--;
+							}
+							m->tag->setStr(text);
+							bLine2++;
+							eLine++;
+							bCol2 = 2*i;
+							eCol = 2*i;
+						}
+						else if(m && m->tag->type == Tag::Text)
+						{
+							m->tag->beginPos(bLine3, bCol3);
+							m->tag->endPos(eLine3, eCol3);
+							text = m->tag->tagStr();
+							text += "\n";
+							eLine3++;
+							eCol3 = -1;
+							j = i;
+							while(j != 0)
+							{
+								text += "  ";
+								j--;
+								eCol3 += 2;
+							}
+							m->tag->setStr(text);
+							m->tag->setTagPosition(bLine3, bCol3, eLine3, eCol3);
+							bLine2++;
+							eLine++;
+							bCol2 = 2*i;
+							eCol = 2*i;
+						}
+						text = kafkaInterface->generateCodeFromNode(n, bLine2, bCol2, eLine, eCol);
+					}
+					n->tag->setStr(text);
+					n->tag->setTagPosition(bLine2, bCol2, eLine, eCol);
 				}
 				else
-					eCol++;
+				{
+					n->tag->beginPos(bLine2, bCol2);
+					n->tag->endPos(eLine2, eCol2);
+					if((eLine2 - bLine2) == 0)
+					{
+						n->tag->setTagPosition(eLine, eCol, eLine, eCol + (eCol2 - bCol2));
+						eCol += (eCol2 - bCol2);
+					}
+					else
+					{
+						n->tag->setTagPosition(eLine, eCol, eLine + (eLine2 - bLine2), eCol2);
+						eCol = eCol2;
+					}
+					eLine += (eLine2 - bLine2);
+				}
+				totalText += text;
+				if(_nodeModif.type == undoRedo::NodeRemoved)
+					break;
+				n = getNextNode(n, b, newNode);
+				if(n)
+				{
+					n->tag->beginPos(bLine3, bCol3);
+					if(bCol3 == -1)
+					{
+						eLine++;
+						eCol = -1;
+					}
+					else
+						eCol++;
+				}
 			}
+			_doc->editIf->insertText(bLine, bCol, totalText);
+			fitsNodesPosition(_nodeNext, eCol - bCol + 1, eLine - bLine);
 		}
-		_doc->editIf->insertText(bLine, bCol, totalText);
-		fitsNodesPosition(_nodeNext, eCol - bCol + 1, eLine - bLine);
 	}
 	else if(_nodeModif.type == undoRedo::NodeTreeRemoved)
 	{
@@ -909,10 +957,33 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool kafkaUndo)
 		{
 			//remove any reference to a now deleted QListViewItem
 			n->listItem = 0L;
-			totalText += n->tag->tagStr();
+			/**if(generateText) <== Shouldn't be called
+			{
+				if(n->tag->type == Tag::Text)
+				{
+					bCol = eCol + 1;
+					bLine = eLine;
+					text = n->tag->tagStr();
+					text = kafkaInterface->getEncodedText(text, bLine, bCol, eLine, eCol);
+				}
+				else if(n->tag->type == Tag::XmlTag || n->tag->type == Tag::XmlTagEnd)
+				{
+					bCol = eCol + 1;
+					bLine = eLine;
+					text = kafkaInterface->generateCodeFromNode(n, bLine, bCol, eLine, eCol);
+				}
+				else
+				kdDebug(25001) <<"undoRedo::UndoNodeModif - ERROR2 can't generate text for type "
+					<< n->tag->type << endl;
+				n->tag->setStr(text);
+				n->tag->setTagPosition(bLine, bCol, eLine, eCol);
+			}
+			else*/
+				totalText += n->tag->tagStr();
 			n = getNextNode(n, b);
 		}
-		_doc->editIf->insertText(0, 0, totalText);
+		if(undoTextModifs)
+			_doc->editIf->insertText(0, 0, totalText);
 	}
 	else if(_nodeModif.type == undoRedo::NodeMoved ||
 		_nodeModif.type == undoRedo::NodeAndChildsMoved)
@@ -922,6 +993,587 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool kafkaUndo)
 
 	return true;
 }
+
+bool undoRedo::RedoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool generateText)
+{
+	bool success;
+	if(_nodeModif.type == undoRedo::NodeTreeAdded)
+		_nodeModif.type = undoRedo::NodeTreeRemoved;
+	else if(_nodeModif.type == undoRedo::NodeAndChildsAdded)
+		_nodeModif.type = undoRedo::NodeAndChildsRemoved;
+	else if(_nodeModif.type == undoRedo::NodeAdded)
+		_nodeModif.type = undoRedo::NodeRemoved;
+	else if(_nodeModif.type == undoRedo::NodeRemoved)
+		_nodeModif.type = undoRedo::NodeAdded;
+	else if(_nodeModif.type == undoRedo::NodeAndChildsRemoved)
+		_nodeModif.type = undoRedo::NodeAndChildsAdded;
+	else if(_nodeModif.type == undoRedo::NodeTreeRemoved)
+		_nodeModif.type = undoRedo::NodeTreeAdded;
+
+	success = UndoNodeModif(_nodeModif, undoTextModifs, generateText);
+
+	if(_nodeModif.type == undoRedo::NodeTreeRemoved)
+		_nodeModif.type = undoRedo::NodeTreeAdded;
+	else if(_nodeModif.type == undoRedo::NodeAndChildsRemoved)
+		_nodeModif.type = undoRedo::NodeAndChildsAdded;
+	else if(_nodeModif.type == undoRedo::NodeRemoved)
+		_nodeModif.type = undoRedo::NodeAdded;
+	else if(_nodeModif.type == undoRedo::NodeAdded)
+		_nodeModif.type = undoRedo::NodeRemoved;
+	else if(_nodeModif.type == undoRedo::NodeAndChildsAdded)
+		_nodeModif.type = undoRedo::NodeAndChildsRemoved;
+	else if(_nodeModif.type == undoRedo::NodeTreeAdded)
+		_nodeModif.type = undoRedo::NodeTreeRemoved;
+	return success;
+}
+
+#ifdef BUILD_KAFKAPART
+bool undoRedo::UndoNodeModifInKafka(NodeModif &_nodeModif)
+{
+	Node *_node, *n;
+	Tag *_tag;
+	DOM::Node domNode, domNode2, dn, dm;
+	bool goUp;
+	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
+	KafkaHTMLPart *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaPart();
+
+	if(_nodeModif.type == undoRedo::NodeTreeAdded)
+	{
+		//clear the kafkaPart
+		kafkaInterface->disconnectAllDomNodes();
+		while(kafkaPart->document().hasChildNodes())
+		{
+			try{
+				kafkaPart->document().removeChild(kafkaPart->document().firstChild());
+			} catch(DOM::DOMException e) {kafkaSyncError();}
+		}
+		//reload the minimum tree
+		domNode = kafkaPart->document().createElement("HTML");
+		kafkaPart->document().appendChild(domNode);
+		_node = new Node(0L);
+		_tag = new Tag();
+		_tag->name = "HTML";
+		_node->tag = _tag;
+		kafkaInterface->connectDomNodeToQuantaNode(kafkaPart->document().firstChild(), _node);
+		kafkaInterface->html = kafkaPart->document().firstChild();
+		domNode = kafkaPart->document().createElement("HEAD");
+		kafkaPart->document().firstChild().appendChild(domNode);
+		_node = new Node(0L);
+		_tag = new Tag();
+		_tag->name = "HEAD";
+		_node->tag = _tag;
+		kafkaInterface->connectDomNodeToQuantaNode(kafkaPart->document().firstChild().firstChild(), _node);
+		kafkaInterface->head = kafkaPart->document().firstChild().firstChild();
+		domNode = kafkaPart->document().createElement("BODY");
+		kafkaPart->document().firstChild().appendChild(domNode);
+		_node = new Node(0L);
+		_tag = new Tag();
+		_tag->name = "BODY";
+		_node->tag = _tag;
+		kafkaInterface->connectDomNodeToQuantaNode(kafkaPart->document().firstChild().lastChild(), _node);
+		kafkaInterface->body = kafkaPart->document().firstChild().lastChild();
+	}
+	else if(_nodeModif.type == undoRedo::NodeAndChildsAdded ||
+		_nodeModif.type == undoRedo::NodeAdded)
+	{
+		//removing the Kakfa node and moving others nodes.
+		_node = getNodeFromLocation(_nodeModif.location);
+		if(!_node)
+		{
+			kdDebug(25001)<< "undoRedo::UndoNodeModifInKafka() - ERROR1" << endl;
+			return false;
+		}
+		if(_node->_rootNode.isNull())
+			return true;//no kafka node here, due to an invalid pos.
+		domNode = _node->_rootNode;
+		domNode2 = _node->_leafNode;
+		kafkaInterface->disconnectDomNodeFromQuantaNode(domNode);
+		if(_node->tag->type == Tag::XmlTag || _node->tag->type == Tag::Text)
+		{
+			if(_nodeModif.type == undoRedo::NodeAdded && _node->child)
+			{
+				n = _node->child;
+				while(n)
+				{
+					if(!n->_rootNode.isNull())
+					{
+						try
+						{
+							dn = n->_rootNode.parentNode().removeChild(n->_rootNode);
+						} catch(DOM::DOMException e) {kafkaSyncError();}
+						try{
+							domNode.parentNode().insertBefore(dn, domNode);
+						} catch(DOM::DOMException e) {}
+					}
+					else if(n->tag->type == Tag::XmlTag || n->tag->type == Tag::Text)
+						kafkaInterface->buildKafkaNodeFromNode(n, true);
+					n = n->next;
+				}
+				if(domNode.hasChildNodes() && domNode != domNode2)
+				{
+					//HTML Specific to handle one specific case!!
+					kafkaInterface->disconnectDomNodeFromQuantaNode(domNode.firstChild());
+					try{
+						domNode.removeChild(domNode.firstChild());
+					} catch(DOM::DOMException e) {kafkaSyncError();}
+				}
+			}
+			else if(domNode.hasChildNodes())
+			{
+				dm = domNode.firstChild();
+				goUp = false;
+				while(!dm.isNull())
+				{
+					kafkaInterface->disconnectDomNodeFromQuantaNode(dm);
+					dm = kafkaPart->getNextNode(dm, goUp, true, true, domNode);
+				}
+			}
+			try{
+				domNode.parentNode().removeChild(domNode);
+			} catch(DOM::DOMException e) {kafkaSyncError();}
+		}
+		else if(_node->tag->type == Tag::XmlTagEnd && _node->closesPrevious &&
+			!domNode.nextSibling().isNull())
+		{
+			n = _node->prev;
+			if(!n)
+			{
+				kdDebug(24000)<< "undoRedo::UndoNodeModifInKafka() - ERROR2" << endl;
+				return false;
+			}
+			domNode2 = n->_leafNode;
+			if(domNode2.isNull())
+				return true;
+			if(n->child)
+			{
+				while(n->child)
+				{
+					n = n->child;
+					while(n->next)
+						n = n->next;
+				}
+				if(n->parent->_leafNode.isNull())
+				{
+					dm = domNode.nextSibling();
+					goUp = false;
+					while(!dm.isNull())
+					{
+						kafkaInterface->disconnectDomNodeFromQuantaNode(dm);
+						try{
+							dm.parentNode().removeChild(dm);
+						} catch(DOM::DOMException e) {kafkaSyncError();}
+						dm = kafkaPart->getNextNode(dm, goUp, true, true, domNode.parentNode());
+					}
+				}
+				else
+				{
+					domNode2 = n->parent->_leafNode;
+					while(!domNode.nextSibling().isNull())
+					{
+						try{
+							dn = domNode.parentNode().removeChild(domNode.nextSibling());
+						} catch(DOM::DOMException e) {kafkaSyncError();}
+						try{
+							domNode2.appendChild(dn);
+						} catch(DOM::DOMException e) {}
+					}
+				}
+			}
+			else
+			{
+				while(!domNode.nextSibling().isNull())
+				{
+					try{
+						dn = domNode.parentNode().removeChild(domNode.nextSibling());
+					} catch(DOM::DOMException e) {kafkaSyncError();}
+					try{
+						domNode2.appendChild(dn);
+					} catch(DOM::DOMException e) {}
+				}
+			}
+		}
+	}
+	else if(_nodeModif.type == undoRedo::NodeModified)
+	{
+		//reload the kafka Node
+		_node = getNodeFromLocation(_nodeModif.location);
+		if(!_node)
+		{
+			kdDebug(25001)<< "undoRedo::UndoNodeModifInKafka() - ERROR4" << endl;
+			return false;
+		}
+		if(_node->_rootNode.isNull())
+			return true;//no kafka node here, due to an invalid pos.
+		domNode = _node->_rootNode;
+		try{
+			domNode.parentNode().removeChild(domNode);
+		} catch(DOM::DOMException e) {kafkaSyncError();}
+		kafkaInterface->disconnectDomNodeFromQuantaNode(domNode);
+		kafkaInterface->buildKafkaNodeFromNode(_node);
+	}
+	else if(_nodeModif.type == undoRedo::NodeRemoved ||
+		_nodeModif.type == undoRedo::NodeAndChildsRemoved)
+	{
+		//adding a kafka Node and moving the others.
+		_node = getNodeFromLocation(_nodeModif.location);
+		if(!_node)
+		{
+			kdDebug(25001)<< "undoRedo::UndoNodeModifInKafka() - ERROR1" << endl;
+			return false;
+		}
+		if(_node->tag->type == Tag::XmlTag || _node->tag->type == Tag::Text)
+		{
+			kafkaInterface->buildKafkaNodeFromNode(_node, true);
+			domNode = _node->_leafNode;
+			if(!domNode.isNull() && _node->child)
+			{
+				n = _node->child;
+				while(n)
+				{
+					if(!n->_rootNode.isNull())
+					{
+						try{
+							dn = n->_rootNode.parentNode().removeChild(n->_rootNode);
+						} catch(DOM::DOMException e) {kafkaSyncError();}
+						try{
+							domNode.appendChild(dn);
+						} catch(DOM::DOMException e) {}
+					}
+					else if(n->tag->type == Tag::XmlTag || n->tag->type == Tag::Text)
+						kafkaInterface->buildKafkaNodeFromNode(n, true);
+					n = n->next;
+				}
+			}
+		}
+		else if(_node->tag->type == Tag::XmlTagEnd && _node->closesPrevious && _node->next)
+		{
+			n = _node->next;
+			while(n)
+			{
+				if(!n->_rootNode.isNull())
+				{
+					try{
+						dn = n->_rootNode.parentNode().removeChild(n->_rootNode);
+					} catch(DOM::DOMException e) {kafkaSyncError();}
+					try{
+						domNode.parentNode().appendChild(dn);
+					} catch(DOM::DOMException e) {}
+				}
+				else if(n->tag->type == Tag::XmlTag || n->tag->type == Tag::Text)
+					kafkaInterface->buildKafkaNodeFromNode(n, true);
+				n = n->next;
+			}
+		}
+	}
+	else if(_nodeModif.type == undoRedo::NodeTreeRemoved)
+	{
+		//fill the kafka tree.
+		goUp = false;
+		_node = baseNode;
+		while(_node)
+		{
+			if(!goUp)
+				kafkaInterface->buildKafkaNodeFromNode(_node);
+			_node = getNextNode(_node, goUp);
+		}
+	}
+
+	return true;
+}
+#endif
+#ifdef BUILD_KAFKAPART
+void kafkaSyncError()
+{
+	kdDebug(25001)<< "Kafka Sync ERROR. Reloading kafka." << endl;
+	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
+	Document *_doc = kafkaInterface->getCurrentDoc();
+	kafkaInterface->unloadDocument();
+	kafkaInterface->loadDocument(_doc);
+}
+#endif
+
+#ifdef BUILD_KAFKAPART
+bool undoRedo::RedoNodeModifInKafka(NodeModif &_nodeModif)
+{
+	bool success;
+	if(_nodeModif.type == undoRedo::NodeTreeAdded)
+		_nodeModif.type = undoRedo::NodeTreeRemoved;
+	else if(_nodeModif.type == undoRedo::NodeAndChildsAdded)
+		_nodeModif.type = undoRedo::NodeAndChildsRemoved;
+	else if(_nodeModif.type == undoRedo::NodeAdded)
+		_nodeModif.type = undoRedo::NodeRemoved;
+	else if(_nodeModif.type == undoRedo::NodeRemoved)
+		_nodeModif.type = undoRedo::NodeAdded;
+	else if(_nodeModif.type == undoRedo::NodeAndChildsRemoved)
+		_nodeModif.type = undoRedo::NodeAndChildsAdded;
+	else if(_nodeModif.type == undoRedo::NodeTreeRemoved)
+		_nodeModif.type = undoRedo::NodeTreeAdded;
+
+	success = UndoNodeModifInKafka(_nodeModif);
+
+	if(_nodeModif.type == undoRedo::NodeTreeRemoved)
+		_nodeModif.type = undoRedo::NodeTreeAdded;
+	else if(_nodeModif.type == undoRedo::NodeAndChildsRemoved)
+		_nodeModif.type = undoRedo::NodeAndChildsAdded;
+	else if(_nodeModif.type == undoRedo::NodeRemoved)
+		_nodeModif.type = undoRedo::NodeAdded;
+	else if(_nodeModif.type == undoRedo::NodeAdded)
+		_nodeModif.type = undoRedo::NodeRemoved;
+	else if(_nodeModif.type == undoRedo::NodeAndChildsAdded)
+		_nodeModif.type = undoRedo::NodeAndChildsRemoved;
+	else if(_nodeModif.type == undoRedo::NodeTreeAdded)
+		_nodeModif.type = undoRedo::NodeTreeRemoved;
+	return success;
+}
+#endif
+
+#ifdef BUILD_KAFKAPART
+ bool undoRedo::syncKafkaView()
+ {
+	kdDebug(25001)<< "undoRedo::syncKafkaView()" << endl;
+	QValueList<NodeModifsSet>::iterator it;
+	QValueList<NodeModif>::iterator it2;
+	bool undoKafkaView = true, success;
+
+	if(kafkaIterator == editorIterator)
+		return true;
+	it = kafkaIterator;
+	while(it != end())
+	{
+		if(it == editorIterator)
+		{
+			undoKafkaView = false;
+			break;
+		}
+		it++;
+	}
+
+	it = editorIterator;
+	if(!undoKafkaView)
+	{
+		//changes have been made to quanta, syncing the kafka view
+		//First undo all the node modifs made after the last update
+		//needed to have the right context to update the kafka tree.
+		while(it != kafkaIterator)
+		{
+			it2 = (*it).NodeModifList.fromLast();
+			while(it2 != (*it).NodeModifList.end())
+			{
+				if(!UndoNodeModif((*it2), false))
+				{
+					kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 1" << endl;
+					return false;
+				}
+				kdDebug(25001)<< "undoRedo::syncKafkaView() - Nodes without text undoed!" << endl;
+				if(it2 == (*it).NodeModifList.begin())
+					break;
+				it2--;
+			}
+			it--;
+		}
+		//then for each NodeModif, it is redoed, and the kafka Nodes are build/deleted/modified
+		while(kafkaIterator != editorIterator)
+		{
+			kafkaIterator++;
+			for (it2 = (*kafkaIterator).NodeModifList.begin(); it2 != (*kafkaIterator).NodeModifList.end(); it2++)
+			{
+				if((*it2).type == undoRedo::NodeTreeAdded || (*it2).type == undoRedo::NodeAndChildsAdded ||
+					(*it2).type == undoRedo::NodeAdded || (*it2).type == undoRedo::NodeModified)
+				{
+					if(!RedoNodeModif((*it2), false))
+					{
+						kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 2" << endl;
+						return false;
+					}
+					if(!RedoNodeModifInKafka(*it2))
+					{
+						kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 3" << endl;
+						return false;
+					}
+				}
+				else
+				{
+					if(!RedoNodeModifInKafka(*it2))
+					{
+						kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 4" << endl;
+						return false;
+					}
+					if(!RedoNodeModif((*it2), false))
+					{
+						kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 5" << endl;
+						return false;
+					}
+				}
+				kdDebug(25001)<< "undoRedo::syncKafkaView() - Nodes without text, and kafka Nodes redoed!" << endl;
+			}
+		}
+	}
+	else
+	{
+		//undo operations have been done in the quanta view
+		//First redo all the Node modifs made after the last update.
+		//This might be called when an user action occurs after undoing : we must sync before the
+		//deletion of part of the undo stack.
+		while(it != kafkaIterator)
+		{
+			it++;
+			for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); it2++)
+			{
+				if(!RedoNodeModif((*it2), false))
+				{
+					kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 6" << endl;
+					return false;
+				}
+				kdDebug(25001)<< "undoRedo::syncKafkaView() - Nodes without text redoed!" << endl;
+			}
+		}
+		//then for each NodeModif, Nodes are undoed, and the kafka Nodes are build/deleted/modified
+		while(kafkaIterator != editorIterator)
+		{
+			it2 = (*kafkaIterator).NodeModifList.fromLast();
+			while(it2 != (*kafkaIterator).NodeModifList.end())
+			{
+				if((*it2).type == undoRedo::NodeTreeAdded || (*it2).type == undoRedo::NodeAndChildsAdded ||
+					(*it2).type == undoRedo::NodeAdded || (*it2).type == undoRedo::NodeModified)
+				{
+					if(!UndoNodeModifInKafka(*it2))
+					{
+						kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 8" << endl;
+						return false;
+					}
+					if(!UndoNodeModif((*it2), false))
+					{
+						kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 7" << endl;
+						return false;
+					}
+				}
+				else
+				{
+					if(!UndoNodeModif((*it2), false))
+					{
+						kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 10" << endl;
+						return false;
+					}
+					if(!UndoNodeModifInKafka(*it2))
+					{
+						kdDebug(25001)<< "undoRedo::syncKafkaView() - ERROR 9" << endl;
+						return false;
+					}
+				}
+				kdDebug(25001)<< "undoRedo::syncKafkaView() - Nodes without text, and kafka Nodes undoed!" << endl;
+				if(it2 == (*kafkaIterator).NodeModifList.begin())
+					break;
+				it2--;
+			}
+			kafkaIterator--;
+		}
+	}
+	kafkaIterator = editorIterator;
+	return true;
+ }
+ #endif
+
+#ifdef BUILD_KAFKAPART
+ bool undoRedo::syncQuantaView()
+ {
+	kdDebug(25001)<< "undoRedo::syncQuantaView()" << endl;
+	QValueList<NodeModifsSet>::iterator it;
+	QValueList<NodeModif>::iterator it2;
+	bool undoQuantaView = true, success;
+
+	if(kafkaIterator == editorIterator)
+		return true;
+	it = editorIterator;
+	while(it != end())
+	{
+		if(it == kafkaIterator)
+		{
+			undoQuantaView = false;
+			break;
+		}
+		it++;
+	}
+
+	it = kafkaIterator;
+	if(!undoQuantaView)
+	{
+		//changes have been made to kafka, syncing the quanta view
+		//First undo all the node modifs made after the last update
+		//needed to have the right context to update the quanta tree.
+		while(it != editorIterator)
+		{
+			it2 = (*it).NodeModifList.fromLast();
+			while(it2 != (*it).NodeModifList.end())
+			{
+				if(!UndoNodeModif((*it2), false))
+				{
+					kdDebug(25001)<< "undoRedo::syncQuantaView() - ERROR 1" << endl;
+					return false;
+				}
+				kdDebug(25001)<< "undoRedo::syncQuantaView() - Nodes without text undoed!" << endl;
+				if(it2 == (*it).NodeModifList.begin())
+					break;
+				it2--;
+			}
+			it--;
+		}
+		//then for each NodeModif, Nodes are redoed, and the tags text is generated and inserted.
+		while(editorIterator != kafkaIterator)
+		{
+			editorIterator++;
+			for (it2 = (*editorIterator).NodeModifList.begin(); it2 != (*editorIterator).NodeModifList.end(); it2++)
+			{
+				if(!RedoNodeModif((*it2), true, true))
+				{
+					kdDebug(25001)<< "undoRedo::syncQuantaView() - ERROR 2" << endl;
+					return false;
+				}
+				kdDebug(25001)<< "undoRedo::syncQuantaView() - Nodes and text redoed!" << endl;
+			}
+		}
+	}
+	else
+	{
+		//undo operations have been done in the kafka view
+		//First redo all the Node modifs made after the last update.
+		//This might be called when an user action occurs after undoing : we must sync before the
+		//deletion of part of the undo stack.
+		while(it != editorIterator)
+		{
+			it++;
+			for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); it2++)
+			{
+				if(!RedoNodeModif((*it2), false))
+				{
+					kdDebug(25001)<< "undoRedo::syncQuantaView() - ERROR 3" << endl;
+					return false;
+				}
+				kdDebug(25001)<< "undoRedo::syncQuantaView() - Nodes without text redoed!" << endl;
+			}
+		}
+		//then for each NodeModif, Nodes are undoed, and the tags text is generated and inserted.
+		while(editorIterator != kafkaIterator)
+		{
+			it2 = (*editorIterator).NodeModifList.fromLast();
+			while(it2 != (*editorIterator).NodeModifList.end())
+			{
+				if(!UndoNodeModif((*it2), true, true))
+				{
+					kdDebug(25001)<< "undoRedo::syncQuantaView() - ERROR 4" << endl;
+					return false;
+				}
+				kdDebug(25001)<< "undoRedo::syncQuantaView() - Nodes and text undoed!" << endl;
+				if(it2 == (*editorIterator).NodeModifList.begin())
+					break;
+				it2--;
+			}
+			editorIterator--;
+		}
+	}
+	editorIterator = kafkaIterator;
+	return true;
+ }
+#endif
 
 void undoRedo::debugOutput()
 {
@@ -1039,7 +1691,7 @@ Node * undoRedo::getNodeFromLocation(QValueList<int> loc)
 {
 	QValueList<int>::iterator it;
 	Node *_node = baseNode;
-	Node *m;
+	Node *m = 0L;
 	int i;
 
 	if(!_node) return 0L;
@@ -1077,6 +1729,13 @@ void undoRedo::fileSaved()
 		it++;
 	}
 }
+
+#ifdef BUILD_KAFKAPART
+void undoRedo::kafkaLoaded()
+{
+	kafkaIterator = editorIterator;
+}
+#endif
 
 void undoRedo::fitsNodesPosition(Node* _startNode, int colMovement, int lineMovement, int colEnd, int lineEnd)
 {

@@ -65,7 +65,8 @@ typedef struct NodeModifsSet
 };
 
 /**
- * A new Node-based undo/redo system.
+ * This class, basically a new undo/redo system, also help WKafkaPart to synchronize the
+ * kafka and quanta view.
  */
 class undoRedo : public QValueList<NodeModifsSet>
 {
@@ -82,8 +83,9 @@ public:
 	 * Adds a new set of Node modification. This should be called whenever
 	 * the kafka/quanta editor is modified.
 	 * @param modifs The new modification set to add to the undo/redo stack.
+	 * @param kafkaModifSet Specifies if the ModifSet comes from kafka.
 	 */
-	void addNewModifsSet(NodeModifsSet modifs);
+	void addNewModifsSet(NodeModifsSet modifs, bool kafkaModifSet);
 
 	/**
 	 * Ignores the ModifSet that will come in the number'th position. Useful when
@@ -112,6 +114,23 @@ public:
 	 * @return Returns true if a next redo operation is available.
 	 */
 	bool redo(bool kafkaUndo);
+
+#ifdef BUILD_KAFKAPART
+	/**
+	 * Synchronize the kafka view with the quanta view by applying the NodeModifs
+	 * which have occured since the last synchronization.
+	 * @return Returns if the synchronization was successful.
+	 */
+	 bool syncKafkaView();
+
+	/**
+	 * Synchronize the quanta view with the kafka view by applying the NodeModifs
+	 * which have occured since the last synchronization.
+	 * @return Returns if the synchronization was successful.
+	 */
+	 bool syncQuantaView();
+
+#endif
 
 	/**
 	  * Gets the location of a Node in a pointer-independant suit of ints e.g. 1,3,5 means
@@ -156,22 +175,59 @@ public:
 		NodeAndChildsMoved
 	};
 
+public slots:
+
 	/**
 	 * Called by quantaApp whenever the current file is saved. The isModified
 	 * flag of each NodeModisSet is updated.
 	 */
 	void fileSaved();
 
+#ifdef BUILD_KAFKAPART
+	/**
+	 * Called when the kafkaPart is loaded.
+	 */
+	 void kafkaLoaded();
+#endif
+
 private:
 
 	/**
-	 * This is the main function which apply the changes needed to undo a nodeModif.
+	 * This is one of the main functions which apply the changes needed to undo a nodeModif
+	 * in the text and in the Node tree.
 	 * @param _nodeModif The nodeModif to undo.
-	 * @param Specifies if the undo operation is done in the kafka view. This implies some
-	 * additionnal tasks like tag String generation.
+	 * @param undoTextModifs Specifies if the undo operation should undo the text modifications.
+	 * @param generateText Specifies if the text of the Tags should be generated.
 	 * @return Returns true if the undo has correctly worked.
 	 */
-	bool UndoNodeModif(NodeModif &_nodeModif, bool kafkaUndo);
+	bool UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs = true, bool generateText = false);
+
+	/**
+	 * Convenient function which call UndoNodeModif,
+	 * while changing the type of the NodeModifs to make them redo.
+	 */
+	bool RedoNodeModif(NodeModif &_nodeModif, bool undoTextModifs = true, bool generateText = false);
+
+#ifdef BUILD_KAFKAPART
+	/**
+	 * This is one of the main functions which apply the changes needed to undo a nodeModif
+	 * in the kafka tree.
+	 * @param _nodeModif The nodeModif to undo.
+	 * @return Returns true if the undo has correctly worked.
+	 */
+	bool UndoNodeModifInKafka(NodeModif &_nodeModif);
+
+	/**
+	 * Convenient function which call UndoNodeModifInKafka,
+	 * while changing the type of the NodeModifs to make them redo.
+	 */
+	bool RedoNodeModifInKafka(NodeModif &_nodeModif);
+
+	/**
+	 * Called whenever a kafka synchronization error occured. Reload kafka.
+	 */
+	 void kafkaSyncError();
+#endif
 
 	/**
 	 * Fits the Nodes position when a change occurs in the kafka tree.
