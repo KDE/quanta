@@ -40,7 +40,12 @@ class ProjectUpload : public ProjectUploadS
 {
   Q_OBJECT
 public:
-  ProjectUpload(const KURL& url, bool showOnlyProfiles = false, const char * name = 0);
+  /** Initializes the dialog. If showOnlyProfiles is true, the dialog
+  displays only the list of profiles, no real upload can be performed.
+  If quickUpload is true, the upload starts immediately without checking
+  for modifications or confirmation from the user. The url will be
+  uploaded to the default profile */
+  ProjectUpload(const KURL& url, bool showOnlyProfiles = false, bool quickUpload = false, const char * name = 0);
   ~ProjectUpload();
   QString defaultProfile();
 
@@ -107,6 +112,7 @@ private:
   QDomDocument m_uploadStatusDom;
   QMap<QString, int> m_uploadTimeList;
   bool m_profilesOnly;
+  bool m_quickUpload;
 };
 
 #endif

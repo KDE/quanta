@@ -3597,7 +3597,7 @@ void QuantaApp::slotUploadFile(QuantaView *view)
 {
   if (!view)
     view = ViewManager::ref()->activeView();
-  Project::ref()->slotUploadURL(view->document()->url());
+  Project::ref()->slotUploadURL(view->document()->url(), true);
 }
 
 

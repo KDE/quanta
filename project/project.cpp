@@ -766,19 +766,19 @@ void Project::slotUpload()
   if (! ViewManager::ref()->saveAll())
     return;
 
-  ProjectUpload *dlg = new ProjectUpload(KURL(), false, i18n("Upload project items..."));
+  ProjectUpload *dlg = new ProjectUpload(KURL(), false, false, i18n("Upload project items..."));
   connect(dlg, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
   dlg->show();
 }
 
-void Project::slotUploadURL(const KURL& urlToUpload)
+void Project::slotUploadURL(const KURL& urlToUpload, bool quickUpload)
 {
   if (!ViewManager::ref()->saveAll())
     return;
 
   KURL url = QExtFileInfo::toRelative( urlToUpload, d->baseURL);
 
-  ProjectUpload *dlg = new ProjectUpload(url, false, i18n("Upload project items..."));
+  ProjectUpload *dlg = new ProjectUpload(url, false, quickUpload, i18n("Upload project items..."));
   connect(dlg, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
   dlg->show();
 }

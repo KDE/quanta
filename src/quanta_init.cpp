@@ -381,8 +381,8 @@ void QuantaInit::initProject()
           m_project, SLOT(slotInsertFile(const KURL&)));
   connect(pTab, SIGNAL(removeFromProject(const KURL&)),
           m_project, SLOT(slotRemove(const KURL&)));
-  connect(pTab, SIGNAL(uploadSingleURL(const KURL&)),
-          m_project, SLOT(slotUploadURL(const KURL&)));
+  connect(pTab, SIGNAL(uploadSingleURL(const KURL&, bool)),
+          m_project, SLOT(slotUploadURL(const KURL&, bool)));
   connect(pTab, SIGNAL(rescanProjectDir()), m_project, SLOT(slotRescanPrjDir()));
   connect(pTab, SIGNAL(showProjectOptions()), m_project, SLOT(slotOptions()));
   connect(pTab, SIGNAL(uploadProject()), m_project, SLOT(slotUpload()));

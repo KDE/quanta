@@ -103,8 +103,8 @@ signals: // Signals
   /** No descriptions */
   void showProjectOptions();
   void insertToProject(const KURL&);
-  void uploadSingleURL( const KURL& );
-  void loadToolbarFile( const KURL& );
+  void uploadSingleURL(const KURL&, bool);
+  void loadToolbarFile(const KURL&);
   void uploadProject();
   void changeFileDescription(const KURL& url, const QString& desc);
   void changeUploadStatus(const KURL& url, int status);
@@ -165,6 +165,7 @@ private slots: // Private slots
   void slotRescan();
   void slotRemoveFromProject(int askForRemove = 1);
   void slotUploadSingleURL();
+  void slotQuickUploadURL();
   void slotAlwaysUpload();
   void slotNeverUpload();
   void slotConfirmUpload();

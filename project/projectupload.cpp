@@ -61,9 +61,10 @@
 #include "qextfileinfo.h"
 #include "resource.h"
 
-ProjectUpload::ProjectUpload(const KURL& url, bool showOnlyProfiles, const char* name)
+ProjectUpload::ProjectUpload(const KURL& url, bool showOnlyProfiles, bool quickUpload, const char* name)
   :ProjectUploadS( 0L, name, false, Qt::WDestructiveClose)
 {
+    m_quickUpload = quickUpload;
     m_profilesOnly = showOnlyProfiles;
     list->hide();
     m_project = Project::ref();
@@ -189,9 +190,9 @@ void ProjectUpload::slotBuildTree()
        int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
        el.setAttribute("modified_time", modifiedTime);
        int uploadStatus = el.attribute("uploadstatus", "1").toInt();
-       if (forceUpload && uploadStatus == 0)
+       if (m_quickUpload || (forceUpload && uploadStatus == 0))
         uploadStatus = 1;
-       if (uploadedTime != modifiedTime && uploadStatus != 0)
+       if (m_quickUpload || (uploadedTime != modifiedTime && uploadStatus != 0))
        {
          modified.append( u );
          it->setSelected(true);
@@ -215,6 +216,8 @@ void ProjectUpload::slotBuildTree()
  //hack to force repainting of the treeview
  resize(width() + 1, height());
  resize(width() - 1, height());
+ if (m_quickUpload)
+   startUpload();
 }
 
 
@@ -529,7 +532,7 @@ void ProjectUpload::slotUploadNext()
   {
     totalProgress->setProgress(totalProgress->progress()+1);
    // QListViewItem *it = list->findItem( currentURL.path() );
-   QListViewItem *it = currentItem;
+    QListViewItem *it = currentItem;
     if (it)
     {
      it->setSelected(false);

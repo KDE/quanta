@@ -129,7 +129,7 @@ public slots:
   void slotOpenProject(const KURL&);
   void slotOptions();
   void slotUpload();
-  void slotUploadURL(const KURL &urlToUpload);
+  void slotUploadURL(const KURL &urlToUpload, bool quickUpload);
 
   void slotAddDirectory(const KURL& dirURL, bool showDlg = true);
   void slotInsertFile(const KURL& url);
