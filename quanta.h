@@ -42,6 +42,7 @@
 #include <kparts/browserextension.h>
 #include <kate/document.h>
 #include <ktempfile.h>
+#include <kprocess.h>
 
 //app includes
 #include "parser/qtag.h"
@@ -173,9 +174,15 @@ public:
     //return the old Cursor position
   void oldCursorPos(uint &line, uint &col) {line = oldCursorLine; col = oldCursorCol;}
   /** search for s in autosaveUrls and return a file path */
-  QString searchPathListEntry(const QString& s, const QString& autosaveUrls);
-  /** if there are backup files, ask user whether wants to restore them or to mantain the originals */
-  void recoverCrashed();
+  QString searchPathListEntry(const QString& backedUpUrl, const QString& autosavedUrls);
+  /** if there are backup files, asks user whether wants to restore them or to mantain the originals instead*/
+  void recoverCrashed(QStringList& recoveredFileNameList);
+  /** Obtains PID from file extension */
+  QString retrievePID(const QString& filename);
+  /** Retrieves hashed path from the name of a backup file */
+  QString retrieveHashedPath(const QString& filename);
+  /** Retrieves the non hashed part of the name of a backup file */
+  QString retrieveBaseFileName(const QString& filename);
 
     /** tabs for left panel */
   ProjectTreeView *pTab;
@@ -349,15 +356,21 @@ public slots:
 
   void slotExpandAbbreviation();
 
-  void slotFind ();
-  void slotFindAgain ();
-  void slotFindAgainB ();
-  void slotReplace ();
+  void slotFind();
+  void slotFindAgain();
+  void slotFindAgainB();
+  void slotReplace();
 
   /** Show the Document Properties Dialog */
   void slotDocumentProperties();
   /** No descriptions */
   void slotAutosaveTimer();
+  /** Get script output */
+  void slotGetScriptOutput(KProcess*, char*, int);
+  /** Get script error */
+  void slotGetScriptError(KProcess*, char*, int);
+  /** Notify when process exits */
+  void slotProcessExited(KProcess*);
   /** Load a DTD and convert to a DTEP */
   void slotLoadDTD();
 
@@ -535,6 +548,10 @@ private:
   uint oldCursorCol;
   bool m_previewVisible;
   bool m_noFramesPreview;
+  
+  KProcess* m_execCommandPS;
+  QString m_scriptOutput;
+  
 protected: // Protected attributes
   /** Timer to refresh the structure tree. */
   QTimer *refreshTimer;

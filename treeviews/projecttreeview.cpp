@@ -344,5 +344,14 @@ void ProjectTreeView::slotRemoveDeleted()
       return QExtFileInfo::toAbsolute(url, m_baseURL);;
   }
 
+void ProjectTreeView::itemRenamed(const KURL& oldUrl, const KURL& newUrl )
+{
+  // simply undo the renaming, user must use rbm menu for a save rename,
+  // because project musst be changed also
+  KIO::SimpleJob *job = KIO::rename( newUrl, oldUrl, true );
+  Q_UNUSED(job);
+}
+
+
 
 #include "projecttreeview.moc"

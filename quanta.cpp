@@ -1190,8 +1190,8 @@ void QuantaApp::slotOptions()
     qConfig.imageMimeTypes = fileMasks->lineImage->text();
     qConfig.textMimeTypes = fileMasks->lineText->text();
     qConfig.showDTDSelectDialog = fileMasks->showDTDSelectDialog->isChecked();
-    qConfig.autosaveInterval =  fileMasks->sbAutoSave->value();
-    autosaveTimer->start( 60000*qConfig.autosaveInterval, false );
+    qConfig.autosaveInterval =  QString::number(fileMasks->sbAutoSave->value(), 10);
+    autosaveTimer->start(60000 * qConfig.autosaveInterval.toInt(), false);
     m_config->setGroup("Notification Messages");
     m_config->writeEntry("Open Everything", fileMasks->warnBinaryOpening->isChecked() ? "" : "Yes");
     m_config->setGroup("General Options");
@@ -1395,7 +1395,7 @@ void QuantaApp::slotShowProjectTree()
 }
 
 void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
-{
+{      
   idleTimer->start(250, true);
   QString linenumber;
   linenumber = i18n("Line: %1 Col: %2").arg(lineNumber).arg(columnNumber);
@@ -3718,37 +3718,94 @@ QStringList QuantaApp::tagAreas(const QString &tag, bool includeCoordinates, boo
 
 void QuantaApp::slotAutosaveTimer()
 {
-
+  m_config->reparseConfiguration();
   QTabWidget *docTab = view()->writeTab();
   Document *w;
 
-  for (int i = docTab->count() -1; i >=0; i--)
+  for (int i = docTab->count() -1; i >= 0; i--)
   {
     w = dynamic_cast<Document*>(docTab->page(i));
-    if (w)
+    if (w) 
       w->createBackup(m_config);
   }
-
 }
 
-QString QuantaApp::searchPathListEntry(const QString& s, const QString& autosaveUrls)
+/** Get script output */
+void QuantaApp::slotGetScriptOutput(KProcess* ,char* buf,int buflen)
 {
-KURL k(s);
-
- QStringList urls=QStringList::split(",",autosaveUrls);
- QStringList::Iterator it;
- for ( it = urls.begin(); it != urls.end(); ++it )
-  {
-   QString HashedPath;
-   int posHashedPath = (*it).findRev(".",(*it).length()-1);
-   HashedPath = (*it).right((*it).length() - posHashedPath -1);
-   if(Document::hashedFilePath(k.path()) == HashedPath) return (*it);
-  }
-
-  return QString::null;
+ QCString tmp( buf, buflen + 1 );
+ m_scriptOutput = QString::null;
+ m_scriptOutput = QString::fromLocal8Bit(tmp).remove(" ");
 }
 
-void QuantaApp::layoutDockWidgets(const QString &layout)
+/** Get script error*/
+void QuantaApp::slotGetScriptError(KProcess* ,char* buf,int buflen)
+{
+//TODO: Implement some error handling?
+ Q_UNUSED(buf);
+ Q_UNUSED(buflen);
+}
+/** Notify when process exits*/
+void QuantaApp::slotProcessExited(KProcess* )
+{
+}
+
+QString QuantaApp::searchPathListEntry(const QString& backedUpUrl,const QString& autosavedUrls)
+{
+  KURL k(backedUpUrl);
+  QStringList autosavedUrlsList = QStringList::split(",", autosavedUrls);
+  QStringList::Iterator autosavedUrlsIt;
+  for ( autosavedUrlsIt = autosavedUrlsList.begin(); 
+        autosavedUrlsIt != autosavedUrlsList.end(); 
+	++autosavedUrlsIt )
+  {
+   QString quPID = retrievePID((*autosavedUrlsIt));
+ 
+   QStringList PIDlist = QStringList::split("\n", m_scriptOutput);
+   
+   QStringList::Iterator PIDIt;
+   bool isOrphan = true;
+   for ( PIDIt = PIDlist.begin(); PIDIt != PIDlist.end(); ++PIDIt )
+   { 
+    if((*PIDIt) == quPID && qConfig.quantaPID != quPID) 
+    {
+     isOrphan = false;
+     break;
+    }
+   }
+   if(isOrphan)
+   {
+    if(retrieveHashedPath(Document::hashedFilePath(k.path())) == retrieveHashedPath((*autosavedUrlsIt))) 
+      return (*autosavedUrlsIt); 
+   }
+  }
+  return QString::null; 
+}
+
+/** Retrieves PID from the name of a backup file */
+QString QuantaApp::retrievePID(const QString& filename)
+{
+ QString strPID = QString::null;
+ strPID = filename.right(filename.length() - filename.findRev("P") - 1);
+ 
+ if (strPID.isEmpty()) 
+   strPID = filename.right(filename.length() - filename.findRev("N") - 1);
+ 
+ return strPID;
+}
+/** Retrieves hashed path from the name of a backup file */
+QString QuantaApp::retrieveHashedPath(const QString& filename)
+{
+ return filename.mid(filename.findRev(".") + 1,
+                     filename.findRev("P") - 1 - filename.findRev("."));
+}
+/** Retrieves the non hashed part of the name of a backup file */
+QString QuantaApp::retrieveBaseFileName(const QString& filename)
+{
+ return filename.left(filename.findRev("."));
+}
+
+void QuantaApp::layoutDockWidgets(const QString& layout)
 {
   if (layout == "Default")
   {

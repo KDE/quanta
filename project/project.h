@@ -207,6 +207,9 @@ protected: // Protected attributes
   KURL::List m_projectFiles; //stores the last result of fileNameList call
 
   void openCurrentView();
+  /** pre-sets some variables */
+  void init();
+
 };
 
 #endif

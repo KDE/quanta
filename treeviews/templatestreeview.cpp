@@ -440,8 +440,9 @@ void TemplatesTreeView::writeDirInfo(const QString& m_dirInfoFile)
 void TemplatesTreeView::slotProperties()
 {
   if ( !currentItem() ) return;
+  KURL url = currentURL();
 
-  KPropertiesDialog *propDlg = new KPropertiesDialog( currentURL(), this, 0L, false, false);
+  KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false);
 
 //Always add the Quanta directory page
   QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta Template"));
@@ -459,11 +460,11 @@ void TemplatesTreeView::slotProperties()
   QString startDir = "";
   if (  !currentKFileTreeViewItem()->isDir() )
   {
-   startDir = currentURL().path();
+   startDir = url.path();
    m_quantaProperties->prePostGroup->hide();
   } else
   {
-   startDir = currentURL().path() + "/dummy_file";
+   startDir = url.path() + "/dummy_file";
   }
   QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
   if (!dotFileInfo.exists()) m_quantaProperties->parentAttr->setChecked(true);
@@ -484,7 +485,7 @@ void TemplatesTreeView::slotProperties()
    topLayout->addWidget( m_quantaProperties );
    connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied()) );
 
-  QString name = currentURL().path() + TMPL;
+  QString name = url.path() + TMPL;
   KConfig config(name);
   config.setGroup("Filtering");
   name = config.readEntry("Action", NONE);
@@ -516,6 +517,10 @@ void TemplatesTreeView::slotProperties()
   addFileInfoPage(propDlg);
   if (propDlg->exec() == QDialog::Accepted)
    {
+    if (url != propDlg->kurl())
+    {
+      itemRenamed(url, propDlg->kurl());
+    }
     slotPropertiesApplied();
     slotReload();
    }
@@ -631,11 +636,15 @@ void TemplatesTreeView::slotSetTemplateURL(const KURL& newTemplateURL)
   {
     m_projectDir =new FilesTreeBranch(this, newTemplateURL, i18n("Project Templates"), SmallIcon("ptab"));
     addBranch(m_projectDir);
-
-    QDir dir (newTemplateURL.path(), "", QDir::All & !QDir::Hidden);
-    m_projectDir->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
-
+        if (newTemplateURL.isLocalFile())
+    {
+      QDir dir (newTemplateURL.path(), "", QDir::All & !QDir::Hidden);
+      m_projectDir->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
+    } else {
+      m_projectDir->root()->setExpandable(true);     //   we assume there is something
+    }
     m_projectDir->excludeFilterRx.setPattern(EXCLUDE);
+
   }
   slotReload();
 }

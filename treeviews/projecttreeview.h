@@ -86,7 +86,7 @@ private:
   int m_openInQuantaId;
 
 protected:
-  virtual void itemRenamed(const KURL& , const KURL& ) {};
+  virtual void itemRenamed(const KURL& , const KURL& );
 
 private slots: // Private slots
   /** No descriptions */

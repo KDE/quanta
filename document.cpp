@@ -104,12 +104,10 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
   //need access to plugin interface. and we can't get to app from here ..
   m_pluginInterface = a_pIf;
-  //???
-  m_backupCreated = false;
   //each document remember wheter it has a entry in quantarc
   m_backupEntry = false;
   //path of the backup copy file of the document
-  autosaveDocumentEntryValue = QString::null;
+  m_backupPathValue = QString::null;
 
   connect( m_doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
            this,  SLOT(slotCharactersInserted(int ,int ,const QString&)) );
@@ -2055,13 +2053,10 @@ void Document::clearErrorMarks()
 }
 
 /** if exists an entry for this document then return true */
-bool Document::existsBackupEntry()
+bool Document::existsBackupEntry(const QString& autosavedFilesEntryList)
 {
- if(qConfig.autosaveEntryList.isEmpty())
-    return false;
-
- QStringList entryList = QStringList::split(",",qConfig.autosaveEntryList);
- if(entryList.contains(autosaveDocumentEntryValue))
+ QStringList entryList = QStringList::split(",", autosavedFilesEntryList);
+ if(entryList.contains(m_backupPathValue))
     return true;
  else
     return false;
@@ -2078,68 +2073,70 @@ void Document::createBackup(KConfig* config)
 {
     if(isModified())
     {
-
-     //thanks for the hint Andras & Fredi :-)
-     QString backupPath = KGlobal::instance()->dirs()->saveLocation("data", "quanta/backups/");
-
-     autosaveDocumentEntryValue = backupPath+url().fileName()+"."+hashedFilePath(url().path());
-
+     m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashedFilePath(url().path());
      //creates an entry string in quantarc if it does not exist yet
-     if(!existsBackupEntry())
+     QString autosavedFilesEntryList = config->readEntry("List of autosaved files");
+     QString backedupFilesEntryList = config->readEntry("List of backedup files");
+     if(!existsBackupEntry(autosavedFilesEntryList))
      {
        config->setGroup("General Options");
-       QStringList entryList = QStringList::split(",",qConfig.autosaveEntryList);
-       entryList.append(autosaveDocumentEntryValue);
-       qConfig.autosaveEntryList = entryList.join(",");
-       config->writeEntry("Autosave List",qConfig.autosaveEntryList);
-       QStringList bkEntryList = QStringList::split(",",qConfig.backedupFilesEntryList);
-       bkEntryList.append(url().path());
-       qConfig.backedupFilesEntryList = bkEntryList.join(",");
-       config->writeEntry("List of backedup files",qConfig.backedupFilesEntryList);
+       QStringList entryList = QStringList::split(",", autosavedFilesEntryList);
+       entryList.append(m_backupPathValue);
+       autosavedFilesEntryList = entryList.join(", ");
+       config->writeEntry("List of autosaved files", autosavedFilesEntryList);
+       backedupFilesEntryList = config->readEntry("List of backedup files");
+       QStringList bkEntryList = QStringList::split(",", backedupFilesEntryList);
+       bkEntryList.append(url().path() + "." + qConfig.quantaPID);
+       backedupFilesEntryList = bkEntryList.join(", ");
+       config->writeEntry("List of backedup files", backedupFilesEntryList);
        config->sync();
        setBackupEntry(true);
      }
-
-     //create a copy of this specific document
-     QFile file (autosaveDocumentEntryValue);
+     //creates a copy of this specific document
+     QFile file(m_backupPathValue);
      if(file.open(IO_WriteOnly))
      {
-      QTextStream stream( &file );
+      QTextStream stream(&file);
       stream << editIf->text();
       file.close();
      }
 
     }
 }
-QString Document::getAutosaveDocumentEntryValue()
+QString Document::getBackupPathEntryValue()
 {
-   return autosaveDocumentEntryValue;
+  return m_backupPathValue;
 }
 
-void Document::setAutosaveDocumentEntryValue(const QString& ev )
+void Document::setBackupPathEntryValue(const QString& ev)
 {
-   autosaveDocumentEntryValue = ev;
+  m_backupPathValue = ev;
 }
 
 /** if there is no more need of a backup copy then remove it */
 void Document::removeBackup(KConfig *config)
 {
- config->setGroup("General Options");
- QStringList entryList = QStringList::split(",",qConfig.autosaveEntryList);
- entryList.remove(autosaveDocumentEntryValue);
- qConfig.autosaveEntryList = entryList.join(",");
- config->writeEntry("Autosave List",qConfig.autosaveEntryList);
+  config->reparseConfiguration();
+  config->setGroup("General Options");
+ 
+  QString autosavedFilesEntryList = config->readEntry("List of autosaved files");
+  QString backedupFilesEntryList = config->readEntry("List of backedup files");
+  QStringList entryList = QStringList::split(",",autosavedFilesEntryList);
+  entryList.remove(m_backupPathValue);
+  autosavedFilesEntryList = entryList.join(",");
+  config->writeEntry("List of autosaved files",autosavedFilesEntryList);
 
- QStringList bkEntryList = QStringList::split(",",qConfig.backedupFilesEntryList);
- bkEntryList.remove(url().path());
- qConfig.backedupFilesEntryList = bkEntryList.join(",");
- config->writeEntry("List of backedup files",qConfig.backedupFilesEntryList);
- config->sync();
+  backedupFilesEntryList = config->readEntry("List of backedup files");
+  QStringList bkEntryList = QStringList::split(",",backedupFilesEntryList);
+  bkEntryList.remove(url().path()+"."+qConfig.quantaPID);
+  backedupFilesEntryList = bkEntryList.join(",");
+  config->writeEntry("List of backedup files",backedupFilesEntryList);
+  config->sync();
 
- setBackupEntry(false);
+  setBackupEntry(false);
 
- if(QFile::exists(autosaveDocumentEntryValue))
-    QFile::remove(autosaveDocumentEntryValue);
+  if(QFile::exists(m_backupPathValue))
+    QFile::remove(m_backupPathValue);
 }
 /** creates a string by hashing a bit the path string of this document */
 QString Document::hashedFilePath(const QString& p)
@@ -2148,25 +2145,27 @@ QString Document::hashedFilePath(const QString& p)
  {
   case 1: {
            int c = int(p[0]);
-           return QString::number(c,10)+"P";
+           return QString::number(c, 10) + "P" + qConfig.quantaPID;
           }
 
   case 2: {
-           int c = int(p[1])*2;
-           return QString::number(c,10)+"P";
+           int c = int(p[1]) * 2;
+           return QString::number(c, 10) + "P" + qConfig.quantaPID;
           }
 
   default:{
            uint i;
            int sign = 1,
 	       sum = 0;
-           for (i = 0; i < (p.length()-1); i++)
+           for (i = 0; i < (p.length() - 1); i++)
            {
-            sum += int(p[i]) + int(p[i+1])*sign;
+            sum += int(p[i]) + int(p[i + 1]) * sign;
             sign *= -1;
            }
-           if( sum >= 0 ) return QString::number(sum,10)+"P";
-           else                 return QString::number(sum*(-1),10)+"n";
+           if( sum >= 0 ) 
+	     return QString::number(sum, 10) + "P" + qConfig.quantaPID;
+           else 
+	     return QString::number(sum*(-1), 10) + "N" + qConfig.quantaPID;
           }
  }
 

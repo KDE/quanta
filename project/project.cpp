@@ -92,18 +92,27 @@
 Project::Project( QWidget *, const char *name )
         : QWidget(0L,name)
 {
-  projectName = QString::null;
   config = 0L;
-  m_modified=false;
-  usePreviewPrefix=false;
-  m_defaultDTD = qConfig.defaultDocType;
-  excludeRx.setPattern(".*~$");
-  excludeList.append("*~");
+  init();
 }
 
 Project::~Project()
 {
   if (hasProject()) slotSaveProject();
+}
+
+void Project::init()
+{
+  projectURL  = KURL();
+  projectName = QString::null;
+  m_modified=false;
+  m_defaultDTD = qConfig.defaultDocType;
+  excludeRx.setPattern(".*~$");
+  excludeList.clear();
+  excludeList.append("*~");
+  passwd = "";
+  usePreviewPrefix=false;
+  previewPrefix = KURL();
 }
 
 bool Project::hasProject()
@@ -452,8 +461,7 @@ void Project::slotCloseProject()
 
   dom.clear();
 
-  projectName = QString::null;
-  m_defaultDTD = qConfig.defaultDocType;
+  init();
   currentProjectView = QString::null;
   m_projectFiles.clear();
   emit closeFiles();
@@ -462,13 +470,6 @@ void Project::slotCloseProject()
   emit setProjectName( i18n( "No Project" ) );
   emit templateURLChanged(KURL());
   emit reloadTree( m_projectFiles, true);
-
-  projectURL  = KURL();
-  m_modified = false;
-  passwd = "";
-  usePreviewPrefix = false;
-  previewPrefix = KURL();
-
   emit newStatus();
 }
 
@@ -1248,7 +1249,7 @@ void Project::slotAcceptCreateProject()
      url = QExtFileInfo::toRelative(toolbarURL, baseURL);
      el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
 
-     emit closeFiles();
+//     emit closeFiles();   already done in closeProject at the begining
      emit setBaseURL( baseURL );
      emit setProjectName( projectName );
      emit reloadTree( fileNameList(), true );

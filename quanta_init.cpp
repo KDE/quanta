@@ -131,7 +131,9 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   // connect up signals from KXXsldbgPart
   connectDCOPSignal(0, 0, "debuggerPositionChangedQString,int)", "newDebuggerPosition(QString,int)", false );
   connectDCOPSignal(0, 0, "editorPositionChanged(QString,int,int)", "newCursorPosition(QString,int,int)", false );
-  connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false);
+  connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false); 
+  
+  m_execCommandPS = 0L;
 }
 
 QuantaApp::~QuantaApp()
@@ -159,6 +161,12 @@ QuantaApp::~QuantaApp()
  }
  QDir dir;
  dir.rmdir(tmpDir + "quanta");
+ 
+ if(m_execCommandPS) 
+ {
+  delete m_execCommandPS;
+  m_execCommandPS = 0L;
+ }
 }
 
 
@@ -252,26 +260,25 @@ void QuantaApp::initQuanta()
   slotFileNew();
   initToolBars();
   KTipDialog::showTip(this);
-
-  autosaveTimer = new QTimer( this );
-  connect(autosaveTimer, SIGNAL(timeout()), SLOT(slotAutosaveTimer()));
-  autosaveTimer->start( 60000*qConfig.autosaveInterval, false );
-
+  
+  //get the PID of this running instance
+  qConfig.quantaPID = QString::number(int(getpid()), 10);
+  qConfig.backupDirPath = KGlobal::instance()->dirs()->saveLocation("data", "quanta/backups/");
+  
   m_config->setGroup("General Options");
 
-  if(!m_config->hasKey("Autosave List"))
-  {
-   m_config->writeEntry("Autosave List",QString::null);
-   m_config->sync();
-  }
-  qConfig.autosaveEntryList = m_config->readEntry("Autosave List",qConfig.autosaveEntryList);
-
+  if(!m_config->hasKey("List of autosaved files"))
+    m_config->writeEntry("List of autosaved files", QString::null); 
+   
   if(!m_config->hasKey("List of backedup files"))
-  {
-   m_config->writeEntry("List of backedup files",QString::null);
-   m_config->sync();
-  }
-  qConfig.backedupFilesEntryList = m_config->readEntry("List of backedup files",qConfig.backedupFilesEntryList);
+    m_config->writeEntry("List of backedup files", QString::null);
+    
+  m_config->sync();
+  
+ // qConfig.autosaveInterval = "1";
+  autosaveTimer = new QTimer( this );
+  connect(autosaveTimer, SIGNAL(timeout()), SLOT(slotAutosaveTimer()));
+  autosaveTimer->start(qConfig.autosaveInterval.toInt() * 60000, false);
 
   connect(m_doc, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
   connect(m_project, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
@@ -703,7 +710,7 @@ void QuantaApp::readOptions()
 
   QSize s(800,580);
   resize( m_config->readSizeEntry("Geometry", &s));
-  qConfig.autosaveInterval = m_config->readNumEntry("Autosave interval", 10);
+  qConfig.autosaveInterval = m_config->readEntry("Autosave interval");
 
   KToggleAction *showToolbarAction = (KToggleAction *) actionCollection()->action( "view_toolbar" );
   if (!m_config->readBoolEntry("Show Toolbar",true))
@@ -2192,7 +2199,7 @@ void QuantaApp::slotPluginsValidate()
   }
   statusBar()->message(i18n("All plugins validated successfully."));
 }
-void QuantaApp::recoverCrashed()
+void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
 {
   m_config->setGroup  ("Projects");
   QString pu = m_config->readPathEntry("Last Project");
@@ -2205,30 +2212,53 @@ void QuantaApp::recoverCrashed()
   if (!u.isValid())
      isPrj = false;
 
+  m_config->reparseConfiguration();
   m_config->setGroup("General Options");
 
 #if KDE_IS_VERSION(3,1,3)
-  QStringList urls = m_config->readPathListEntry("List of backedup files");
-  QStringList autosaveUrls = m_config->readPathListEntry("Autosave List");
+  QStringList backedUpUrlsList = m_config->readPathListEntry("List of backedup files");
+  QStringList autosavedUrlsList = m_config->readPathListEntry("List of autosaved files");
 #else
-  QStringList urls = m_config->readListEntry("List of backedup files");
-  QStringList autosaveUrls = m_config->readListEntry("Autosave List");
+  QStringList backedUpUrlsList = m_config->readListEntry("List of backedup files");
+  QStringList autosavedUrlsListList = m_config->readListEntry("List of autosaved files");
 #endif
   m_doc->blockSignals(true);
   m_view->writeTab()->blockSignals(true);
-
-  for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
+  
+  //We create a KProcess that executes the "ps" unix command to get the PIDs of the
+  //other instances of quanta actually running
+  m_execCommandPS = new KProcess(); 
+  *m_execCommandPS << QStringList::split(" ","ps -C quanta -o pid --no-headers");
+  
+  connect( m_execCommandPS, SIGNAL(receivedStdout(KProcess*,char*,int)),
+           this, SLOT(slotGetScriptOutput(KProcess*,char*,int)));
+  connect( m_execCommandPS, SIGNAL(receivedStderr(KProcess*,char*,int)), 
+           this, SLOT(slotGetScriptError(KProcess*,char*,int)));
+  connect( m_execCommandPS, SIGNAL(processExited(KProcess*)), 
+           this, SLOT(slotProcessExited(KProcess*))); 
+	   
+  //if KProcess fails I think a message box is needed... I will fix it	   
+  if (!m_execCommandPS->start(KProcess::NotifyOnExit,KProcess::All)) 
+    kdError() << "Failed to query for running Quanta instances!" << endl;
+    //TODO: Replace the above error with a real messagebox after the message freeze is over
+  else 
+    m_execCommandPS->wait();
+  
+  for ( QStringList::Iterator backedUpUrlsIt = backedUpUrlsList.begin(); 
+        backedUpUrlsIt != backedUpUrlsList.end(); 
+	++backedUpUrlsIt )
   {
-   // when quanta crash and file autoreloading option is on
-    // then if user restart quanta, the backup copies will reload
-   QString autosavePath = searchPathListEntry((*it),autosaveUrls.join(","));
+   // when quanta crashes and file autoreloading option is on
+    // then if user restarts quanta, the backup copies will reload
+   QString backedUpFileName = retrieveBaseFileName((*backedUpUrlsIt));
+   QString autosavedPath = searchPathListEntry( backedUpFileName, autosavedUrlsList.join(",") );
 
-    if(!autosavePath.isEmpty())
+    if(!autosavedPath.isEmpty())
     {
      KURL originalVersion;
-     QuantaCommon::setUrl(originalVersion, *it);
+     QuantaCommon::setUrl(originalVersion, backedUpFileName );
      KURL autosavedVersion;
-     QuantaCommon::setUrl(autosavedVersion,autosavePath);
+     QuantaCommon::setUrl(autosavedVersion,autosavedPath);
 
      if (!isPrj || originalVersion.isLocalFile())
      {
@@ -2280,19 +2310,48 @@ void QuantaApp::recoverCrashed()
           //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
           //is dropped
             QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
-
+            
+	    //we save a list of autosaved file names so "KQApplicationPrivate::init()" 
+	    //can open them
+	    recoveredFileNameList += originalVersion.path();    
             //slotFileOpenRecent(originalVersion);
           }
           delete dlg;
        }
      }
-     if(QFile::exists(autosavedVersion.path())) QFile::remove(autosavedVersion.path());
+     //now we remove the autosaved copiy and clean the quantarc up
+     if(QFile::exists(autosavedVersion.path())) 
+     {
+      QFile::remove(autosavedVersion.path());
+      QString autosavedFilesEntryList = QString::null,
+              backedupFilesEntryList = QString::null;
+      m_config->setGroup("General Options");
+      
+      autosavedFilesEntryList = m_config->readEntry("List of autosaved files");
+      
+      QStringList entryList = QStringList::split(",",autosavedFilesEntryList);
+      QStringList::Iterator entryIt;
+      
+      for ( entryIt = entryList.begin(); entryIt != entryList.end(); ++entryIt )
+       if ((*entryIt) == autosavedVersion.path()) 
+         entryIt = entryList.remove(entryIt);
+      
+      autosavedFilesEntryList = entryList.join(",");
+      
+      m_config->writeEntry("List of autosaved files",autosavedFilesEntryList);
+      
+      backedupFilesEntryList = m_config->readEntry("List of backedup files");
+      
+      entryList = QStringList::split(",",backedupFilesEntryList);
+      
+      for ( entryIt = entryList.begin(); entryIt != entryList.end(); ++entryIt )
+       if ((*entryIt) == (*backedUpUrlsIt)) entryIt = entryList.remove(entryIt);
+      
+      backedupFilesEntryList = entryList.join(",");
+      
+      m_config->writeEntry("List of backedup files",backedupFilesEntryList);
+     }
     }
   }
-  m_config->setGroup("General Options");
-  m_config->writeEntry("Autosave List",QString::null);
-  m_config->writeEntry("List of backedup files",QString::null);
-  qConfig.autosaveEntryList = "";
-}
-
-
+ }
+ 

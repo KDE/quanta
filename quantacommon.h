@@ -75,10 +75,10 @@ typedef struct QConfig{
 
 #ifdef BUILD_KAFKAPART
          //kafka sync options
-        bool quantaRefreshOnFocus;
-        int quantaRefreshDelay;
-        bool kafkaRefreshOnFocus;
-        int kafkaRefreshDelay;
+          bool quantaRefreshOnFocus;
+          int quantaRefreshDelay;
+          bool kafkaRefreshOnFocus;
+          int kafkaRefreshDelay;
 #endif
 
           //environment options
@@ -90,9 +90,9 @@ typedef struct QConfig{
           QString textMimeTypes;
           QString previewPosition;
           QString windowLayout;
-	  int autosaveInterval;
-          QString autosaveEntryList;
-	  QString backedupFilesEntryList;
+	  QString autosaveInterval;
+	  QString backupDirPath;
+	  QString quantaPID;
 
           //spelling options
           KSpellConfig *spellConfig;

@@ -209,8 +209,13 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
   return newBrnch;
 }
 
-void FilesTreeView::itemRenamed(const KURL& , const KURL& )
+void FilesTreeView::itemRenamed(const KURL& , const KURL& newURL )
 {
+  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  if ( ! curItem) return;
+  KFileItem *fItem = curItem->fileItem();
+  fItem->setURL(newURL);
+  curItem->setText( 0, fItem->text());
 }
 
 /** RMB pressed, bring up the menu */

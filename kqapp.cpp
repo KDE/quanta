@@ -163,11 +163,13 @@ void KQApplicationPrivate::init()
         initialFiles += arg;
     }
     quantaApp->loadInitialProject(initialProject);
-    quantaApp->recoverCrashed();
+    //recoverCrashed manages the autosaved copies
+    quantaApp->recoverCrashed(initialFiles);
+      
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
     {
       KURL url;
-      QuantaCommon::setUrl(url, *it);
+      QuantaCommon::setUrl(url, (*it));
       quantaApp->slotFileOpen(url, quantaApp->defaultEncoding());  // load initial files
     }
     quantaApp->openLastFiles();
