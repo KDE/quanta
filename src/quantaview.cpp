@@ -61,6 +61,7 @@
 #include "quanta.h"
 #include "quantacommon.h"
 #include "qextfileinfo.h"
+#include "viewmanager.h"
 
 #include "tagaction.h"
 #include "toolbartabwidget.h"
@@ -485,10 +486,12 @@ void QuantaView::slotSetVPLOnlyLayout()
 void QuantaView::reloadUpdateTimers()
 {
 #ifdef BUILD_KAFKAPART
+    QuantaView* view=ViewManager::ref()->activeView();
+    
     m_sourceUpdateTimer.stop();
     m_VPLUpdateTimer.stop();
 
-   if (m_kafkaDocument->isLoaded() && m_currentViewsLayout == SourceAndVPL)
+   if (m_kafkaDocument->isLoaded() && m_currentViewsLayout == SourceAndVPL && view && view == this)
    {
        if (m_currentFocus == VPLFocus && !qConfig.quantaRefreshOnFocus)
           m_sourceUpdateTimer.start(qConfig.quantaRefreshDelay);
