@@ -1,11 +1,8 @@
 /***************************************************************************
-                          grepdialog.cpp  -  grep frontend                              
-                             -------------------                                         
+                          grepdialog.cpp  -  grep frontend
+                             -------------------
     copyright            : (C) 1999 by Bernd Gehrmann
     email                : bernd@physik.hu-berlin.de
-
-    Modifications for Quanta: (c) 2000 by Richard Moore, rich@kde.org
-
  ***************************************************************************/
 
 /***************************************************************************
@@ -13,38 +10,61 @@
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   * 
+ *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
 
 
 #include "grepdialog.h"
 #include <qlayout.h>
-#include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
+#include <qlabel.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qlistbox.h>
 #include <qregexp.h>
-#include <qlabel.h>
 #include <qwhatsthis.h>
-
 #include <kbuttonbox.h>
 #include <kfiledialog.h>
-#include <kiconloader.h>
 #include <kprocess.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <klocale.h>
+#include <kiconloader.h>
+#include <kwin.h>
+#include <kurlrequester.h>
+#include <kurlcompletion.h>
+#include <kcombobox.h>
 
-enum quoteEnum { NO_QUOTE=0, SINGLE_QUOTE, DOUBLE_QUOTE };
+const char *template_desc[] = {
+    "normal",
+    "assignment",
+    "->MEMBER(",
+    "class::MEMBER(",
+    "OBJECT->member(",
+    0
+};
 
-GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name)
-    : QDialog( parent, name, false ), 
-    childproc(0)
+const char *template_str[] = {
+    "%s",
+    "\\<%s\\>[\t ]*=[^=]",
+    "\\->[\\t ]*\\<%s\\>[\\t ]*(",
+    "[a-z0-9_$]\\+[\\t ]*::[\\t ]*\\<%s\\>[\\t ]*(",
+    "\\<%s\\>[\\t ]*\\->[\\t ]*[a-z0-9_$]\\+[\\t ]*(",
+    0
+};
+
+
+GrepDialog::GrepDialog(QString dirname, QWidget *parent, const char *name)
+    : KDialog(parent, name, false), childproc(0)
 {
-    setCaption(i18n("Search in Files"));
-    
+    setCaption(i18n("Find in Files"));
+    KWin::setType(winId(),NET::Tool);
+    config = KGlobal::config();
+    config->setGroup("GrepDialog");
+    lastSearchItems = config->readListEntry("LastSearchItems");
+    lastSearchPaths = config->readListEntry("LastSearchPaths");
+
     QGridLayout *layout = new QGridLayout(this, 6, 3, 10, 4);
     layout->setColStretch(0, 10);
     layout->addColSpacing(1, 10);
@@ -55,7 +75,7 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     layout->setRowStretch(2, 10);
     layout->addRowSpacing(4, 10);
     layout->setRowStretch(4, 0);
-    
+
     QGridLayout *input_layout = new QGridLayout(4, 2, 4);
     layout->addLayout(input_layout, 0, 0);
     input_layout->setColStretch(0, 0);
@@ -65,12 +85,34 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     pattern_label->setFixedSize(pattern_label->sizeHint());
     input_layout->addWidget(pattern_label, 0, 0, AlignRight | AlignVCenter);
 
-    pattern_edit = new QLineEdit(this);
-    pattern_label->setBuddy(pattern_edit);
-    pattern_edit->setFocus();
-    pattern_edit->setMinimumSize(pattern_edit->sizeHint());
-    input_layout->addWidget(pattern_edit, 0, 1);
-    
+    pattern_combo = new QComboBox(true, this);
+    pattern_combo->insertStringList(lastSearchItems);
+    pattern_combo->setEditText(QString::null);
+    pattern_combo->setInsertionPolicy(QComboBox::NoInsertion);
+    pattern_label->setBuddy(pattern_combo);
+    pattern_combo->setFocus();
+    pattern_combo->setMinimumSize(pattern_combo->sizeHint());
+    input_layout->addWidget(pattern_combo, 0, 1);
+
+    QLabel *template_label = new QLabel(i18n("&Template:"), this);
+    template_label->setFixedSize(template_label->sizeHint());
+    input_layout->addWidget(template_label, 1, 0, AlignRight | AlignVCenter);
+
+    QBoxLayout *template_layout = new QHBoxLayout(4);
+    input_layout->addLayout(template_layout, 1, 1);
+
+    template_edit = new QLineEdit(this);
+    template_label->setBuddy(template_edit);
+    template_edit->setText(template_str[0]);
+    template_edit->setMinimumSize(template_edit->sizeHint());
+    template_layout->addWidget(template_edit);
+
+    QComboBox *template_combo = new QComboBox(false, this);
+    template_combo->insertStrList(template_desc);
+    template_combo->adjustSize();
+    template_combo->setFixedSize(template_combo->size());
+    template_layout->addWidget(template_combo);
+
     QLabel *files_label = new QLabel(i18n("&Files:"), this);
     files_label->setFixedSize(files_label->sizeHint());
     input_layout->addWidget(files_label, 2, 0, AlignRight | AlignVCenter);
@@ -78,10 +120,9 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     files_combo = new QComboBox(true, this);
     files_label->setBuddy(files_combo->focusProxy());
     files_combo->setMinimumSize(files_combo->sizeHint());
-    files_combo->insertItem("*.html,*.htm,*.shtml,*.HTML,*.HTM,*.css,*.js,*.jsp,*.asp");
-    files_combo->insertItem("*.html,*.htm,*.shtml,*.HTML,*.HTM");
-    files_combo->insertItem("*.css,*.js");
-    files_combo->insertItem("*.js,*.jsp,*.asp");
+    files_combo->insertItem("*.h,*.hxx,*.cpp,*.cc,*.C,*.cxx,*.idl,*.c");
+    files_combo->insertItem("*.cpp,*.cc,*.C,*.cxx,*.c");
+    files_combo->insertItem("*.h,*.hxx,*.idl");
     files_combo->insertItem("*");
     input_layout->addWidget(files_combo, 2, 1);
 
@@ -89,34 +130,46 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     dir_label->setFixedSize(dir_label->sizeHint());
     input_layout->addWidget(dir_label, 3, 0, AlignRight | AlignVCenter);
 
-    QBoxLayout *dir_layout = new QHBoxLayout(4);
+    QBoxLayout *dir_layout = new QHBoxLayout(3);
     input_layout->addLayout(dir_layout, 3, 1);
-    
-    dir_edit = new QLineEdit(this);
-    dir_label->setBuddy(dir_edit);
-    dir_edit->setText(dirname);
-    dir_edit->setMinimumSize(dir_edit->sizeHint());
-    dir_layout->addWidget(dir_edit, 10);
+/*
+    dir_combo = new QComboBox(true, this);
+    dir_combo->insertStringList(lastSearchPaths);
+    dir_combo->setInsertionPolicy(QComboBox::NoInsertion);
+    dir_combo->setEditText(dirname);
+    dir_combo->setMinimumSize(dir_combo->sizeHint());
+    dir_label->setBuddy(dir_combo);
+    dir_layout->addWidget(dir_combo, 10);
 
     QPushButton *dir_button = new QPushButton(this, "dirButton");
-    dir_button->setPixmap( UserIcon("open") );
-    dir_button->setFixedHeight(dir_edit->sizeHint().height());
+		QPixmap pix = SmallIcon("fileopen");
+    dir_button->setPixmap(pix);
+    dir_button->setFixedHeight(dir_combo->sizeHint().height());
     dir_button->setFixedWidth(30);
     dir_layout->addWidget(dir_button);
-    
+*/
+    // anders: KDE is an amazing tool:)
+    dir_combo = new KURLRequester( new KComboBox(true, this), this, "dir combo" );
+    dir_combo->completionObject()->setMode(KURLCompletion::DirCompletion);
+    dir_combo->comboBox()->insertStringList(lastSearchPaths);
+    dir_layout->addWidget(dir_combo);
+    dir_label->setBuddy(dir_combo);
+
     recursive_box = new QCheckBox(i18n("&Recursive"), this);
     recursive_box->setMinimumWidth(recursive_box->sizeHint().width());
     recursive_box->setChecked(true);
     dir_layout->addSpacing(10);
     dir_layout->addWidget(recursive_box);
 
-    KButtonBox *actionbox = new KButtonBox(this, KButtonBox::Vertical);
+    KButtonBox *actionbox = new KButtonBox(this, Qt::Vertical);
     layout->addWidget(actionbox, 0, 2);
     actionbox->addStretch();
     search_button = actionbox->addButton(i18n("&Search"));
     search_button->setDefault(true);
-    stop_button = actionbox->addButton(i18n("S&top"));
-    stop_button->setEnabled(false);
+    cancel_button = actionbox->addButton(i18n("Cancel"));
+    cancel_button->setEnabled(false);
+    QPushButton *clear_button = actionbox->addButton(i18n("Clear"));
+    QPushButton *done_button = actionbox->addButton(i18n("Done"));
     actionbox->addStretch();
     actionbox->layout();
 
@@ -144,223 +197,246 @@ GrepDialog::GrepDialog(const QString &dirname, QWidget *parent, const char *name
     status_frame->setMinimumSize(status_frame->size());
     layout->addMultiCellWidget(status_frame, 3, 3, 0, 2);
 
-    KButtonBox *buttonbox = new KButtonBox(this);
-    layout->addMultiCellWidget(buttonbox, 5, 5, 0, 2);
-    QPushButton *clear_button = buttonbox->addButton(i18n("Clear"));
-    buttonbox->addStretch();
-    QPushButton *done_button = buttonbox->addButton(i18n("Done"));
-    buttonbox->layout();
-
     layout->activate();
 
-    QWhatsThis::add(pattern_edit,
-		    i18n("<qt><p>Enter the regular expression you want to search for here.</p>"
-			 "Possible meta characters are:<br/>"
-             "<ul>"
-			 "<li><b>.</b> - Matches any character.</li>"
-			 "<li><b>^</b> - Matches the beginning of a line.</li>"
-			 "<li><b>$</b> - Matches the end of a line.</li>"
-             "<li><b>\\\\\\&lt;</b> - Matches the beginning of a word.</li>"
-             "<li><b>\\\\\\&gt;</b> - Matches the end of a word.</li>"
-			 "</ul>"
-			 "The following repetition operators exist:<br/>"
-             "<ul>"
-			 "<li><b>?</b> - The preceding item is matches at most once.</li>"
-			 "<li><b>*</b> - The preceding item is matched zero or more times.</li>"
-			 "<li><b>+</b> - The preceding item is matched once or more times.</li>"
-			 "<li><b>{<i>n</i>}</b> - The preceding item is matched exactly <i>n</i> times.</li>"
-			 "<li><b>{<i>n</i>,}</b> - The preceding item is matched <i>n</i> or more times.</li>"
-			 "<li><b>{,<i>n</i>}</b> - The preceding item is matched at most <i>n</i> times.</li>"
-			 "<li><b>{<i>n</i>,<i>m</i>}</b> - The preceding item is matched at least <i>n</i>,"
-			 " but at most <i>m</i> times.</li>"
-			 "</ul>"
-			 "<p>Furthermore, backreferences to bracketed subexpressions are"
-			 "available via the notation \\\\<i>n</i>.</p></qt>"
+    QWhatsThis::add(pattern_combo,
+		    i18n("Enter the regular expression you want to search for here.<br>"
+			 "Possible meta characters are:<br>"
+			 "<b>.</b> - Matches any character<br>"
+			 "<b>^</b> - Matches the beginning of a line<br>"
+			 "<b>$</b> - Matches the end of a line<br>"
+	                 "<b>\\\\\\&lt;</b> - Matches the beginning of a word<br>"
+                         "<b>\\\\\\&gt;</b> - Matches the end of a word<br>"
+			 "<br>"
+			 "The following repetition operators exist:<br>"
+			 "<b>?</b> - The preceding item is matched at most once<br>"
+			 "<b>*</b> - The preceding item is matched zero or more times<br>"
+			 "<b>+</b> - The preceding item is matched one or more times<br>"
+			 "<b>{<i>n</i>}</b> - The preceding item is matched exactly <i>n</i> times<br>"
+			 "<b>{<i>n</i>,}</b> - The preceding item is matched <i>n</i> or more times<br>"
+			 "<b>{,<i>n</i>}</b> - The preceding item is matched at most <i>n</i> times<br>"
+			 "<b>{<i>n</i>,<i>m</i>}</b> - The preceding item is matched at least <i>n</i>,<br>"
+			 "   but at most <i>m</i> times.<br>"
+			 "<br>"
+			 "Furthermore, backreferences to bracketed subexpressions are<br>"
+			 "available via the notation \\\\<i>n</i>."
 			 ));
     QWhatsThis::add(files_combo,
-		    i18n("<qt>Enter the file name pattern of the files to search here. "
-			 "You may give several patterns separated by commas.</qt>"));
+		    i18n("Enter the file name pattern of the files to search here.\n"
+			 "You may give several patterns separated by commas"));
+    QWhatsThis::add(template_edit,
+		    i18n("You can choose a template for the pattern from the combo box\n"
+			 "and edit it here. The string %s in the template is replaced\n"
+			 "by the pattern input field, resulting in the regular expression\n"
+			 "to search for."));
+    QWhatsThis::add(dir_combo,
+		    i18n("Enter the directory which contains the files you want to search in."));
+    QWhatsThis::add(recursive_box,
+		    i18n("Check this box to search in all subdirectories."));
     QWhatsThis::add(resultbox,
-		    i18n("<qt>The results of the grep run are listed here. Select a "
-			 "filename/line number combination and press Enter or doubleclick "
-			 "on the item to show the respective line in the editor.</qt>"));
+		    i18n("The results of the grep run are listed here. Select a\n"
+			 "filename/line number combination and press Enter or doubleclick\n"
+			 "on the item to show the respective line in the editor."));
 
-    connect( dir_button, SIGNAL(clicked()),
-	     SLOT(dirButtonClicked()) );
-    connect( resultbox, SIGNAL(selected(const QString &)),
-	     SLOT(itemSelected(const QString &)) );
+    connect( template_combo, SIGNAL(activated(int)),
+	     SLOT(templateActivated(int)) );
+/*    connect( dir_button, SIGNAL(clicked()),
+	     SLOT(dirButtonClicked()) );*/
+    connect( resultbox, SIGNAL(selected(const QString&)),
+	     SLOT(itemSelected(const QString&)) );
     connect( search_button, SIGNAL(clicked()),
 	     SLOT(slotSearch()) );
-    connect( stop_button, SIGNAL(clicked()),
-	     SLOT(slotStop()) );
+    connect( cancel_button, SIGNAL(clicked()),
+	     SLOT(slotCancel()) );
     connect( clear_button, SIGNAL(clicked()),
 	     SLOT(slotClear()) );
     connect( done_button, SIGNAL(clicked()),
-	     SLOT(accept()) );
+        SLOT(accept()) );
+    connect ( pattern_combo->lineEdit(), SIGNAL(textChanged ( const QString & )),
+	      SLOT( patternTextChanged( const QString & )));
+    patternTextChanged( pattern_combo->lineEdit()->text());
 }
 
 
 GrepDialog::~GrepDialog()
 {
-    if (childproc)
-      delete childproc;
+    delete childproc;
 }
 
+void GrepDialog::patternTextChanged( const QString & _text)
+{
+    search_button->setEnabled( !_text.isEmpty() );
+}
 
+/*
 void GrepDialog::dirButtonClicked()
 {
-    dir_edit->setText(KFileDialog::getExistingDirectory(dir_edit->text()));
+    dir_combo->setEditText(KFileDialog::getExistingDirectory(dir_combo->currentText()));
+}
+*/
+
+void GrepDialog::templateActivated(int index)
+{
+    template_edit->setText(template_str[index]);
 }
 
-void GrepDialog::itemSelected(const QString &item)
+
+void GrepDialog::itemSelected(const QString& item)
 {
-  int pos;
-  QString filename, linenumber;
-  
-  QString str = item;
-  if ( (pos = str.find(':')) != -1)
+    int pos;
+    QString filename, linenumber;
+
+    QString str = item;
+    if ( (pos = str.find(':')) != -1)
     {
-      filename = str.left(pos);
-      str = str.right(str.length()-1-pos);
-      if ( (pos = str.find(':')) != -1)
-	{
-	  linenumber = str.left(pos);
-	  emit itemSelected(filename,linenumber.toInt()-1);
-	  //		    cout << "Selected file " << filename << ", line " << linenumber << endl;
-	}
+        filename = str.left(pos);
+        str = str.right(str.length()-1-pos);
+        if ( (pos = str.find(':')) != -1)
+        {
+            linenumber = str.left(pos);
+            emit itemSelected(filename,linenumber.toInt()-1);
+            //	kdDebug() << "Selected file " << filename << ", line " << linenumber << endl;
+        }
     }
 }
 
 
 void GrepDialog::processOutput()
 {
-  int pos;
-  while ( (pos = buf.find('\n')) != -1)
+    int pos;
+    while ( (pos = buf.find('\n')) != -1)
     {
-      QString item = buf.left(pos);
-      if (!item.isEmpty())
-	resultbox->insertItem(item);
-      buf = buf.right(buf.length()-pos-1);
+        QString item = buf.left(pos);
+        if (!item.isEmpty())
+  	        resultbox->insertItem(item);
+        buf = buf.right(buf.length()-pos-1);
     }
-  
-  QString str;
-  str.setNum(resultbox->count());
-  str += i18n(" matches");
-  matches_label->setText(str);
+
+    QString str;
+    str.setNum(resultbox->count());
+    str += i18n(" matches");
+    matches_label->setText(str);
 }
 
 
 void GrepDialog::slotSearch()
 {
-  search_button->setEnabled(false);
-  stop_button->setEnabled(true);
-  resultbox->clear();
-  
-  //
-  // Build the find command string
-  //
-  QString files_temp = files_combo->currentText();
-  if ( files_temp.right(1) != "," ) { 
-      files_temp = files_temp + ",";
-  }
+    if (pattern_combo->currentText().isEmpty())
+        return;
 
-  QString files = " -name ";
-  StringTokenizer tokener;
-  tokener.tokenize(files_temp,",");
+    search_button->setEnabled(false);
+    cancel_button->setEnabled(true);
 
-  if ( tokener.hasMoreTokens() ) {
-    files = files + " '" + QString( tokener.nextToken() ) + "'" ;
-  }
-  while( tokener.hasMoreTokens() ) {
-    files = files + " -o -name " + "'" + QString( tokener.nextToken() ) + "'";
-  }
+    QString files;
+    QString files_temp = files_combo->currentText();
+    if (files_temp.right(1) != ",")
+        files_temp = files_temp + ",";
 
-  QString findCommand = "find '";
-  findCommand += dir_edit->text();
-  findCommand += "'";
+    QStringList tokens = QStringList::split ( ",", files_temp, FALSE );
+    QStringList::Iterator it = tokens.begin();
+    if (it != tokens.end())
+        files = " '"+(*it++)+"'" ;
 
-  if ( !recursive_box->isChecked() )
-      findCommand += " -maxdepth 1";
-  findCommand += files;
+    for ( ; it != tokens.end(); it++ )
+        files = files + " -o -name " + "'"+(*it)+ "'";
 
-  //  warning( "Find command: %s\n", (const char *) findCommand );
+    status_label->setText(i18n("Searching..."));
 
-  //
-  // Build the main search command line
-  //
+    QString pattern = template_edit->text();
+    pattern.replace(QRegExp("%s"), pattern_combo->currentText());
+    pattern.replace(QRegExp("'"), "'\\''");
 
-  QString pattern = pattern_edit->text();
-  QString commandLine = "%1 | xargs -i grep -n -H -i -e '%2' \"{}\"";
-  commandLine = commandLine.arg( findCommand ).arg( pattern );
+    QString filepattern = "`find '";
+    filepattern += dir_combo->/*currentText*/url();
+    filepattern += "'";
+    if (!recursive_box->isChecked())
+        filepattern += " -maxdepth 1";
+    filepattern += " \\( -name ";
+    filepattern += files;
+    filepattern += " \\) -print";
+    filepattern += "`";
 
-  //  warning( "Command line: %s\n", (const char *) commandLine );
+    childproc = new KShellProcess();
+    *childproc << "grep";
+    *childproc << "-n";
+    *childproc << (QString("-e '") + pattern + "'");
+    *childproc << filepattern;
+    *childproc << "/dev/null";
 
-  //
-  // Invoke the command
-  //
-
-  childproc = new KShellProcess("/bin/sh");
-  *childproc << commandLine;
-
-  connect( childproc, SIGNAL(processExited(KProcess *)),
-           SLOT(childExited()) );
-  connect( childproc, SIGNAL(receivedStdout(KProcess *, char *, int)),
-           SLOT(receivedOutput(KProcess *, char *, int)) );
-
-  status_label->setText(i18n("Searching..."));
-  childproc->start(KProcess::NotifyOnExit, KProcess::Stdout);
+    connect( childproc, SIGNAL(processExited(KProcess *)),
+         SLOT(childExited()) );
+    connect( childproc, SIGNAL(receivedStdout(KProcess *, char *, int)),
+         SLOT(receivedOutput(KProcess *, char *, int)) );
+    // actually it should be checked whether the process was started succesfully
+    /*bool success=*/childproc->start(KProcess::NotifyOnExit, KProcess::Stdout);
 }
 
-void GrepDialog::slotSearchFor(const QString &pattern){
-		slotClear();
-		pattern_edit->clear();
-		pattern_edit->setText(pattern);
-		slotSearch();
+void GrepDialog::slotSearchFor(QString pattern){
+    slotClear();
+    pattern_combo->setEditText(pattern);
+    slotSearch();
 }
 
 void GrepDialog::finish()
 {
     search_button->setEnabled(true);
-    stop_button->setEnabled(false);
+    cancel_button->setEnabled(false);
 
     buf += '\n';
     processOutput();
-    if (childproc)
-      delete childproc;
+    delete childproc;
     childproc = 0;
+
+    config->setGroup("GrepDialog");
+    if (lastSearchItems.contains(pattern_combo->currentText()) == 0) {
+        pattern_combo->insertItem(pattern_combo->currentText(), 0);
+        lastSearchItems.prepend(pattern_combo->currentText());
+        if (lastSearchItems.count() > 10) {
+            lastSearchItems.remove(lastSearchItems.fromLast());
+            pattern_combo->removeItem(pattern_combo->count() - 1);
+        }
+        config->writeEntry("LastSearchItems", lastSearchItems);
+    }
+    if (lastSearchPaths.contains(dir_combo->/*currentText*/url()) == 0) {
+        dir_combo->comboBox()->insertItem(dir_combo->/*currentText*/url(), 0);
+        lastSearchPaths.prepend(dir_combo->/*currentText*/url());
+        if (lastSearchPaths.count() > 10) {
+            lastSearchPaths.remove(lastSearchPaths.fromLast());
+            dir_combo->comboBox()->removeItem(dir_combo->comboBox()->count() - 1);
+        }
+        config->writeEntry("LastSearchPaths", lastSearchPaths);
+    }
 }
 
 
-void GrepDialog::slotStop()
+void GrepDialog::slotCancel()
 {
     finish();
 
-    status_label->setText(i18n("Stopped"));
+    status_label->setText(i18n("Canceled"));
 }
 
 
 void GrepDialog::childExited()
 {
-    if ( childproc->normalExit() ) {
-        int status = childproc->exitStatus();   
-        finish();
+    int status = childproc->exitStatus();
 
-        status_label->setText( (status == 1)? i18n("No matches found")
-                              : (status == 2)? i18n("Syntax error in pattern")
-                               : i18n("Ready") );
-        if (status != 0)
-            matches_label->setText("");
-    }
-    else {
-        finish();
-        status_label->setText( i18n("Child process died unexpectedly") );
-    }
+    finish();
+
+    status_label->setText( (status == 1)
+                              ? i18n("No matches found")
+                              : (status == 2)
+                                  ? i18n("Syntax error in pattern")
+                                  : i18n("Ready") );
+    if (status != 0)
+	      matches_label->setText("");
+
 }
 
 
 void GrepDialog::receivedOutput(KProcess */*proc*/, char *buffer, int buflen)
 {
-    buf += QString::fromLocal8Bit(buffer, buflen+1);
+    buf += QCString(buffer, buflen+1);
     processOutput();
 }
 
@@ -375,86 +451,8 @@ void GrepDialog::slotClear()
 }
 
 
-void  GrepDialog::setDirName(const QString &dir){
-  dir_edit->setText(dir);
+void  GrepDialog::setDirName(QString dir){
+//    dir_combo->setEditText(dir);
+    dir_combo->setURL(dir);
 }
-
-
-StringTokenizer::StringTokenizer()
-{
-    buffer = 0;
-    pos    = 0;
-    end    = 0;
-    bufLen = 0;
-}
-
-void StringTokenizer::tokenize( const char *str, const char *_separators )
-{
-    if ( *str == '\0' )
-    {
-	pos = 0;
-	return;
-    }
-
-    int strLength = strlen( str ) + 1;
-
-    if ( bufLen < strLength )
-    {
-	delete [] buffer;
-	buffer = new char[ strLength ];
-	bufLen = strLength;
-    }
-
-    const char *src = str;
-    end = buffer;
-    int quoted = NO_QUOTE;
-    
-    for ( ; *src != '\0'; src++ )
-    {
-	char *x = strchr( _separators, *src );
-        if (( *src == '\"' ) && !quoted)
-           quoted = DOUBLE_QUOTE;
-        else if (( *src == '\'') && !quoted)
-           quoted = SINGLE_QUOTE;
-        else if ( (( *src == '\"') && (quoted == DOUBLE_QUOTE)) ||
-                 (( *src == '\'') && (quoted == SINGLE_QUOTE)))
-           quoted = NO_QUOTE;
-	else if ( x && !quoted )
-	    *end++ = 0;
-	else
-	    *end++ = *src;
-    }
-
-    *end = 0;
-
-    if ( end - buffer <= 1 )
-	pos = 0;	// no tokens
-    else
-	pos = buffer;
-}
-
-const char* StringTokenizer::nextToken()
-{
-    if ( pos == 0 )
-	return 0;
-
-    char *ret = pos;
-    pos += strlen( ret ) + 1;
-    if ( pos >= end )
-	pos = 0;
-
-    return ret;
-}
-
-StringTokenizer::~StringTokenizer()
-{
-    if ( buffer != 0 )
-	delete [] buffer;
-}
-
-
-
-
-
-
 #include "grepdialog.moc"

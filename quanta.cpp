@@ -338,11 +338,12 @@ void QuantaApp::slotFileQuit()
 void QuantaApp::slotEditFindInFiles()
 {
   if (!grepDialog) {
-      grepDialog = new GrepDialog( ".", this, "grep_dialog" );
-      connect( grepDialog, SIGNAL( itemSelected   (const QString &, int)),
-               this,       SLOT  ( gotoFileAndLine(const QString &, int)));
+      grepDialog = new GrepDialog( QDir::homeDirPath(), this, "grep_dialog" );
+      connect( grepDialog, SIGNAL( itemSelected   (QString , int)),
+               this,       SLOT  ( gotoFileAndLine(QString , int)));
   }
   grepDialog->show();
+  grepDialog->raise();
 }
 
 
@@ -917,7 +918,7 @@ void QuantaApp::setCursorPosition( int row, int col )
   view->write()->view()->setFocus();
 }
 
-void QuantaApp::gotoFileAndLine( const QString &filename, int line )
+void QuantaApp::gotoFileAndLine(QString filename, int line )
 {
   if ( !filename.isEmpty() ) doc->openDocument( filename );
   

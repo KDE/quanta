@@ -127,8 +127,8 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 
   readOptions();
 
-  connect( messageOutput, SIGNAL(clicked(const QString&,int)),
-           this,          SLOT(gotoFileAndLine(const QString&,int)));
+  connect( messageOutput, SIGNAL(clicked(QString,int)),
+           this,          SLOT(gotoFileAndLine(QString,int)));
 
   QTimer *t = new QTimer( this );
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );

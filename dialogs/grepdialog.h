@@ -1,10 +1,8 @@
 /***************************************************************************
-                          grepdialog.h  -  grep frontend                              
-                             -------------------                                         
+                          grepdialog.h  -  grep frontend
+                             -------------------
     copyright            : (C) 1999 by Bernd Gehrmann
     email                : bernd@physik.hu-berlin.de
-
-    Modifications for Quanta: (c) 2000 by Richard Moore, rich@kde.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -12,7 +10,7 @@
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   * 
+ *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
 
@@ -20,7 +18,8 @@
 #ifndef _GREPDIALOG_H_
 #define _GREPDIALOG_H_
 
-#include <qdialog.h>
+#include <kdialog.h>
+#include <qstringlist.h>
 
 class QLineEdit;
 class QComboBox;
@@ -29,72 +28,52 @@ class QListBox;
 class QPushButton;
 class QLabel;
 class KProcess;
+class KConfig;
+class KURLRequester;
 
-/**
- * A dialog that puts a front end on grep and provides recursive searches using
- * find.
- *
- * @version $Id$
- */
-class GrepDialog : public QDialog
+class GrepDialog : public KDialog
 {
     Q_OBJECT
 
 public:
-    GrepDialog(const QString &dirname, QWidget *parent=0, const char *name=0);
-    ~GrepDialog();
-    void  setDirName(const QString &);
+    GrepDialog(QString dirname, QWidget *parent=0, const char *name=0);
+  ~GrepDialog();
+  void  setDirName(QString);
 
 signals:
-    void itemSelected(const QString &abs_filename, int line);
+    void itemSelected(QString abs_filename, int line);
     
 public slots:
-    void slotSearchFor(const QString &pattern);
+		void slotSearchFor(QString pattern);
 		
 private slots:
-    void dirButtonClicked();
+    //void dirButtonClicked();
+    void templateActivated(int index);
     void childExited();
     void receivedOutput(KProcess *proc, char *buffer, int buflen);
-    void itemSelected(const QString &item);
+    void itemSelected(const QString&);
     void slotSearch();
-    void slotStop();
+    void slotCancel();
     void slotClear();
-
+    void patternTextChanged( const QString &);
 private:
     void processOutput();
     void finish();
     
-    QLineEdit *pattern_edit, *dir_edit;
-    QComboBox *files_combo;
+    QLineEdit *template_edit;
+    QComboBox *files_combo, *pattern_combo/*, *dir_combo*/;
+    KURLRequester *dir_combo;
     QCheckBox *recursive_box;
     QListBox *resultbox;
-    QPushButton *search_button, *stop_button;
+    QPushButton *search_button, *cancel_button;
     QLabel *status_label, *matches_label;
     KProcess *childproc;
     QString buf;
+    KConfig* config;
+    QStringList lastSearchItems;
+    QStringList lastSearchPaths;
 };
 
-/**
- * Used internally by the grep results parser.
- *
- * @internal
- */
-class StringTokenizer
-{
-public:
-    StringTokenizer();
-    ~StringTokenizer();
-
-    void tokenize( const char *, const char * );
-    const char* nextToken();
-    bool hasMoreTokens() { return ( pos != 0 ); }
-
-protected:
-    char *pos;
-    char *end;
-    char *buffer;
-    int  bufLen;
-};
 
 #endif
 
