@@ -71,7 +71,7 @@ TagQuickStart::~TagQuickStart(){
 void TagQuickStart::slotFileSelect()
 {
 
-  KURL url = KFileDialog::getOpenURL( baseURL.url(), i18n("*.gif *.png *.jpg| Image files\n*|All files"));
+  KURL url = KFileDialog::getOpenURL( baseURL.url(), i18n("*.gif *.png *.jpg| Image Files\n*|All Files"));
 
   if ( !url.isEmpty() )
   {

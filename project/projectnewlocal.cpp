@@ -193,7 +193,7 @@ void ProjectNewLocal::slotAddFiles()
     if ( u.path().startsWith("..") || u.path().startsWith("/"))
     {
       KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
-      urlRequesterDlg->setCaption(i18n("Files: copy to project..."));
+      urlRequesterDlg->setCaption(i18n("Files: Copy to Project"));
       urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg->exec();
       KURL destination = urlRequesterDlg->selectedURL();
@@ -258,7 +258,7 @@ void ProjectNewLocal::slotAddFolder()
     {
 
       KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
-      urlRequesterDlg->setCaption(i18n("%1: copy to project...").arg(dirURL.prettyURL()));
+      urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL()));
       urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg->exec();
       KURL destination = urlRequesterDlg->selectedURL();

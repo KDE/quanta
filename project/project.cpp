@@ -145,7 +145,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
   if ( relNameURL.path().startsWith("/") || relNameURL.path().startsWith(".")  )
   {
     KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
-    urlRequesterDlg->setCaption(i18n("%1: copy to project...").arg(nameURL.prettyURL()));
+    urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(nameURL.prettyURL()));
     urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
     urlRequesterDlg->exec();
     KURL destination = urlRequesterDlg->selectedURL();
@@ -330,7 +330,7 @@ void Project::writeConfig(KConfig *config)
 void Project::slotOpenProject()
 {
   KURL url = KFileDialog::getOpenURL( QString::null,
-                       "*.wpj *.webprj"+i18n("|Project files\n*|All files"), this);
+                       "*.wpj *.webprj"+i18n("|Project files\n*|All Files"), this);
 
   if( !url.isEmpty() )
   {
@@ -350,7 +350,7 @@ void Project::slotOpenProject(const KURL &url)
     if ( !QExtFileInfo::exists(url) )
     {
       if (KMessageBox::questionYesNo( this,
-           i18n("The file %1 does not exist.\n Do you want to remove from the list?").arg(url.prettyURL()) )
+           i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(url.prettyURL()) )
            == KMessageBox::Yes)
       {
         projectRecent->removeURL(url);
@@ -682,7 +682,7 @@ void Project::slotAddFiles()
     if ( firstURL.path().startsWith("/") || firstURL.path().startsWith("."))
     {
       KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
-      urlRequesterDlg->setCaption(i18n("Files: copy to project..."));
+      urlRequesterDlg->setCaption(i18n("Files: Copy to Project"));
       urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg->exec();
       KURL destination = urlRequesterDlg->selectedURL();
@@ -744,7 +744,7 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
     if ( relURL.path().startsWith("/") || relURL.path().startsWith("."))
     {
       KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
-      urlRequesterDlg->setCaption(i18n("%1: copy to project...").arg(dirURL.prettyURL()));
+      urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL()));
       urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg->exec();
       KURL destination = urlRequesterDlg->selectedURL();

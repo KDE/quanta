@@ -162,7 +162,7 @@ void FileManage::slotDelete()
   if (currentItem())
   {
     KURL url = currentURL();
-    if ( KMessageBox::warningYesNo(this,i18n("Do you really want to delete file \n%1 ?\n").arg(url.path())) == KMessageBox::Yes )
+    if ( KMessageBox::warningYesNo(this,i18n("Do you really want to delete file \n%1?\n").arg(url.path())) == KMessageBox::Yes )
     {
       KIO::Job *job = KIO::del(url);
       connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );

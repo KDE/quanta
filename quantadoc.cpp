@@ -75,7 +75,7 @@ QuantaDoc::QuantaDoc(QWidget *parent, const char *name) : QObject(parent, name)
   fileWatcher = new KDirWatch(this);
   connect(fileWatcher, SIGNAL(dirty(const QString&)),SLOT(slotFileDirty(const QString&)));
 
-  attribMenu = new KPopupMenu(i18n("Tag :"));
+  attribMenu = new KPopupMenu(i18n("Tag"));
   connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
 }
 
@@ -604,7 +604,7 @@ void QuantaDoc::slotInsertAttrib( int id )
     }
 
     delete attribMenu;
-    attribMenu = new KPopupMenu(i18n("Tag :"));
+    attribMenu = new KPopupMenu(i18n("Tag"));
     connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
   }
 }

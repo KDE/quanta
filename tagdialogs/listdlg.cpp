@@ -33,7 +33,7 @@ ListDlg::ListDlg(QStringList &entryList,QWidget* parent, const char *name )
    setMainWidget(listbox);
    showButtonApply(false);
    enableButtonSeparator(true);
-   setCaption(i18n("Opened files"));
+   setCaption(i18n("Opened Files"));
 
    listbox->clear();
    listbox->insertStringList(entryList);

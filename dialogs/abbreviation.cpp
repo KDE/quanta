@@ -156,7 +156,7 @@ void Abbreviation::saveTemplates()
       f.close();
     } else
     {
-      KMessageBox::error(this, i18n("<qt>Cannot open the file <b>%1</b> for writing!\nModified abbreviations will be lost when you quit Quanta</qt>"));
+      KMessageBox::error(this, i18n("<qt>Cannot open the file <b>%1</b> for writing!\nModified abbreviations will be lost when you quit Quanta.</qt>"));
     }
   }
 }

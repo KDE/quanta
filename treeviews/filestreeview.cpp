@@ -299,7 +299,7 @@ void FilesTreeView::slotAddToTop()
 
 void FilesTreeView::slotNewTopFolder()
 {
-  KURL url = KFileDialog::getExistingURL(QString::null, this, i18n("Choose a local or remote directory"));
+  KURL url = KFileDialog::getExistingURL(QString::null, this, i18n("Choose Local or Remote Directory"));
   if (topURLList.findIndex(url) == -1)
   {
     url.setPath(url.path(-1));

@@ -718,7 +718,7 @@ void QuantaApp::enablePhp3Debug(bool enable)
     if ( !dbg3->ok() )
         messageOutput->insertItem(i18n("Can't bind port %1, PHP3 debugger disabled").arg(phpDebugPort));
     else
-        messageOutput->insertItem(i18n("PHP3 Debugger listens at port %1").arg(phpDebugPort));
+        messageOutput->insertItem(i18n("PHP3 debugger listens at port %1").arg(phpDebugPort));
     debuggerStyle = "PHP3";
   } else delete dbg3;
 }
@@ -1657,7 +1657,7 @@ void QuantaApp::initActions()
 
     #ifdef BUILD_KAFKAPART
     showKafkaAction =
-      new KToggleAction( i18n( "&Visual editor (experimental)"), "kafka_view", Key_F12,
+      new KToggleAction( i18n( "&Visual Editor (experimental)"), "kafka_view", Key_F12,
                          this, SLOT( slotShowKafkaPart() ),
                          ac, "show_kafka_view");
     #endif

@@ -37,7 +37,7 @@ TagAttributeTree::TagAttributeTree(QWidget *parent, const char *name)
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
   setFocusPolicy(QWidget::ClickFocus);
-  addColumn(i18n("Attribute name"));
+  addColumn(i18n("Attribute Name"));
   addColumn(i18n("Value"));
   setResizeMode(QListView::LastColumn);
   m_node = 0L;

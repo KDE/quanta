@@ -238,7 +238,7 @@ bool QuantaApp::slotFileSaveAs()
     if (m_doc->saveDocument(data.url))
     {
       if ( ( m_project->hasProject() ) &&
-          ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project ?").arg(data.url.prettyURL())) )
+          ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project?").arg(data.url.prettyURL())) )
         )
       {
         m_project->insertFile(data.url, true);
@@ -2307,7 +2307,7 @@ void QuantaApp::slotRenameToolbar(const QString& name)
   if (p_toolbar)
   {
     KLineEditDlg dlg(i18n("Enter the new name:"), p_toolbar->name, this);
-    dlg.setCaption(i18n("Rename toolbar"));
+    dlg.setCaption(i18n("Rename Toolbar"));
     if (dlg.exec() && dlg.text() != p_toolbar->name)
     {
       toolbarList.take(name.lower());
@@ -2536,7 +2536,7 @@ void QuantaApp::processDTD(const QString& documentType)
         }
       }
 
-//    dlg->dtdCombo->insertItem(i18n("Create new DTD info."));
+//    dlg->dtdCombo->insertItem(i18n("Create New DTD Info"));
       dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
       dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(foundName));
       QString projectDTDNickName = QuantaCommon::getDTDNickNameFromName(projectDTD);

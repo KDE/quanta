@@ -125,9 +125,9 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   allActionsItem->sortChildItems(0, true);
 
   treeMenu = new KPopupMenu(actionTreeView);
-  treeMenu->insertItem(i18n("&Add new toolbar"), this, SLOT(slotAddToolbar()));
-  treeMenu->insertItem(i18n("&Remove toolbar"), this, SLOT(slotRemoveToolbar()));
-  treeMenu->insertItem(i18n("&Edit toolbar"), this, SLOT(slotEditToolbar()));
+  treeMenu->insertItem(i18n("&Add New Toolbar"), this, SLOT(slotAddToolbar()));
+  treeMenu->insertItem(i18n("&Remove Toolbar"), this, SLOT(slotRemoveToolbar()));
+  treeMenu->insertItem(i18n("&Edit Toolbar"), this, SLOT(slotEditToolbar()));
 
   globalShortcuts = KGlobal::config()->entryMap( "Global Shortcuts" );
 }
