@@ -31,9 +31,16 @@ public:
   QString position();
   QString layout();
   QString closeButtons();
-  void setPosition(const QString& );
-  void setWindowLayout(const QString& );
-  void setCloseButtons(const QString& );
+  QString docPosition();
+  uint toolviewTabs();
+  void setPosition(const QString&);
+  void setWindowLayout(const QString&);
+  void setCloseButtons(const QString&);
+  void setToolviewTabs(uint);
+  void setDocPosition(const QString&);
+
+private:
+  uint m_toolviewTabs;
 };
 
 #endif

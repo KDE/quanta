@@ -366,9 +366,11 @@ void QuantaInit::initView()
    m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
    loadVPLConfig();
    (void) ToolbarTabWidget::ref(quantaApp);
+   m_config->setGroup  ("General Options");
+   qConfig.toolviewTabs = m_config->readNumEntry("MDI style", 3);
+   m_quanta->setIDEAlModeStyle(qConfig.toolviewTabs);
 
 #if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
-  m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3ICON);
   if (m_quanta->tabWidget())
   {
       m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
@@ -380,8 +382,6 @@ void QuantaInit::initView()
 
   }
   m_quanta->setTabWidgetVisibility(KMdi::AlwaysShowTabs);
-#else
-  m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3);
 #endif
 
   m_quanta->setStandardMDIMenuEnabled(false);
@@ -531,6 +531,7 @@ void QuantaInit::readOptions()
   StructTreeView::ref()->setFollowCursor( m_config->readBoolEntry("Follow Cursor", true));
 
   qConfig.previewPosition   = m_config->readEntry("Preview area","Editor");
+  qConfig.docPosition   = m_config->readEntry("Documentation area","Tab");
 
   QSize s(800,580);
   m_quanta->resize( m_config->readSizeEntry("Geometry", &s));

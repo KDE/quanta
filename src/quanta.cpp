@@ -237,6 +237,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_oldContextPaste = 0L;
   m_oldKTextEditor = 0L;
   m_previewToolView = 0L;
+  m_documentationToolView = 0L;
 }
 
 QuantaApp::~QuantaApp()
@@ -1107,11 +1108,13 @@ void QuantaApp::slotOptions()
   }
   // Preview options
   page=kd->addVBoxPage(i18n("User Interface"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
-  PreviewOptions *previewOptions = new PreviewOptions( (QWidget *)page );
+  PreviewOptions *uiOptions = new PreviewOptions( (QWidget *)page );
 
-  previewOptions->setPosition(qConfig.previewPosition);
-  previewOptions->setWindowLayout(qConfig.windowLayout);
-  previewOptions->setCloseButtons(qConfig.showCloseButtons);
+  uiOptions->setPosition(qConfig.previewPosition);
+  uiOptions->setDocPosition(qConfig.docPosition);
+  uiOptions->setWindowLayout(qConfig.windowLayout);
+  uiOptions->setCloseButtons(qConfig.showCloseButtons);
+  uiOptions->setToolviewTabs(qConfig.toolviewTabs);
 
 #ifdef BUILD_KAFKAPART
   //kafka options
@@ -1185,7 +1188,8 @@ void QuantaApp::slotOptions()
     m_config->writeEntry("Reload Files", fileMasks->reloadFiles->isChecked());
 
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
-    qConfig.showCloseButtons = previewOptions->closeButtons();
+    qConfig.showCloseButtons = uiOptions->closeButtons();
+    qConfig.toolviewTabs = uiOptions->toolviewTabs();
 #if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
     KTabWidget *tab = tabWidget();
     if (tab)
@@ -1246,8 +1250,9 @@ void QuantaApp::slotOptions()
     qConfig.spellConfig->setClient(spellOptions->client());
 
     slotShowPreviewWidget(false);
-    qConfig.previewPosition = previewOptions->position();
-    qConfig.windowLayout = previewOptions->layout();
+    qConfig.previewPosition = uiOptions->position();
+    qConfig.docPosition = uiOptions->docPosition();
+    qConfig.windowLayout = uiOptions->layout();
 
     m_htmlPart->closeURL();
     m_htmlPart->begin( Project::ref()->projectBaseURL());
@@ -1279,10 +1284,6 @@ void QuantaApp::slotShowPreviewWidget(bool show)
       view->addCustomWidget(m_htmlPart->view(), QString::null);
     } else
     {
-      if (!m_previewToolView)
-        m_previewToolView = addToolWindow(m_htmlPart->view(), KDockWidget::DockBottom, getMainDockWidget());
-      m_htmlPart->view()->show();
-      m_previewToolView->show();
     }
     m_previewVisible = true;
   } else
@@ -1525,8 +1526,22 @@ void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
 
 void QuantaApp::openDoc(const QString& url)
 {
-  QuantaView *docView = ViewManager::ref()->documentationView();
-  docView->activate();
+  if (qConfig.docPosition == "Tab")
+  {
+      QuantaView *docView = ViewManager::ref()->documentationView();
+      delete m_documentationToolView;
+      m_documentationToolView = 0L;
+      docView->activate();
+  } else
+  {
+      QuantaView *docView = ViewManager::ref()->documentationView(false);
+      if (docView)
+          ViewManager::ref()->removeView(docView);
+      if (!m_documentationToolView)
+        m_documentationToolView= addToolWindow(m_htmlPartDoc->view(), KDockWidget::DockBottom, getMainDockWidget());
+      m_htmlPartDoc->view()->show();
+      m_documentationToolView->show();
+  }
   m_htmlPartDoc->view()->setFocus();  // activates the part
 
   QString urlStr = url;
@@ -3673,6 +3688,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Default DTD", qConfig.defaultDocType);
 
     m_config->writeEntry("Preview area", qConfig.previewPosition);
+    m_config->writeEntry("Documentation area", qConfig.docPosition);
     m_config->writeEntry("Window layout", qConfig.windowLayout);
     m_config->writeEntry("Follow Cursor", StructTreeView::ref()->followCursor() );
     //If user choose the timer interval, it needs to restart the timer too
@@ -3687,6 +3703,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry("Close Buttons", qConfig.showCloseButtons);
     m_config->writeEntry("MDI mode", mdiMode());
+    m_config->writeEntry("MDI style", qConfig.toolviewTabs);
 
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);

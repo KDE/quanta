@@ -40,12 +40,12 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
             - editor context menu: Close/Close Other Tabs/Reload/Upload/Delete File moved to the
                         tab context menu
             - new tab context menu containing the above and Close All/Switch To...
-      - some dialogs were restructued:
+      - some dialogs were restructured:
             - Configure Quanta: Environment->Show close buttons on tabs moved to User Interface
                                           Layout renamed to User Interface
                                           Layout->Window Layout replaced with Reset window layout to the default...
       - new MDI modes: Toplevel / Childframe / Tab Page (like the old one ) and the new default IDEAl mode
-
+      - documentation can appear in a new tab or a separate toolview
 
     - new features:
       - Next / Previous Bookmark actions
@@ -67,7 +67,7 @@ Version 3.2.2 (Release data: xx-xx-2004; Started 01-03-2004):
         - make removal of top folders added with "New Top Folder" possible [#76498, #76573]
         - never crash when invoking the CSS editor on an empty document
         - don't crash when invoking the CSS editor after a <style> without the closing </style>
-        - other CSS editor invokation fixes
+        - other CSS editor invocation fixes
         - don't change the tab name if saving under a new name failed (needs KDE 3.2.2 or later)
         - use the correct quotation and case when inserting a link to a file from the treeviews [#76663]
         - fix preview when preview prefix is used
@@ -162,7 +162,7 @@ correctly, or to work at all.
     - input source setting for KPart plugins
     - readonly setting for KPart plugins added
     - entering "/" after "<" fills up the correct closing tag name
-    - parse the included files in pseduo DTD's for structure groups
+    - parse the included files in pseudo DTD's for structure groups
     - fix disappearing status bar bug after switching away from a plugin
     - new Attribute Tree View added. You can view/edit the attributes of a tag
       here.
@@ -185,7 +185,7 @@ correctly, or to work at all.
     - a lot of script helping XML development
     - XSLT debugger: kxsldbg by Keith Isdale
     - KFileReplace: search & replace in files
-    - new DTD menu with the followinf new items:
+    - new DTD menu with the following new items:
       - DTD->DTEP converter
       - Load DTEP
       - Send DTEP in Email
@@ -193,7 +193,7 @@ correctly, or to work at all.
     - added the possibility of changing the case of tags/attributes
     - preview the NOFRAMES area of a document
 
-  - usability enhanchements:
+  - usability enhancements:
     - added KTip dialog on start up and help menu
     - new Output Window options for KPart plugins:
         - Editor Tab
@@ -226,7 +226,7 @@ correctly, or to work at all.
   - synched the File and Grep dialog code with Kate
   - learning of unknown, user entered tags (and functions)
   - enhanced structure tree building; more general code
-  - changed desciption.rc structure
+  - changed description.rc structure
   - the treeviews look and behave the same as the rest of KDE
   - using KDevelop 3.0 (Gideon) for developing
   - sort DTD lists in selection combo boxes
@@ -234,7 +234,7 @@ correctly, or to work at all.
   - completely new parsing routine (faster, better, nicer)
   - copyright dates and information updated
   - updated README
-  - UML diagramm file added to repository (quanta_uml.xmi)
+  - UML diagram file added to repository (quanta_uml.xmi)
   - TODO file added
 
 
@@ -315,14 +315,14 @@ Version 3.1.1 (Release date: 17-03-2003)
 NOTE: Released together with KDE 3.1.1.
   - bugfixes:
     - insert valid DTD definitions [#53274]
-    - Select Tag Area behaviour fixed for optional tags
+    - Select Tag Area behavior fixed for optional tags
     - insert non-translated string in CSS code parts
     - honor the View Default settings from Settings->Configure Editor [#53569]
     - be less braindead regarding the Show DTD Toolbar setting [#53739]
     - don't quote the script line more than once in the action configuration dialog
     - memory leak: editor parts were not deleted when a file was closed
     - fix insertion of img tags in HTML documents
-    - upload/rescan project/add to new project tree view behaviour fixed (really)
+    - upload/rescan project/add to new project tree view behavior fixed (really)
     - fix renaming of file in the Project Tree, when a file with the new name was
       already present in the project
     - use the correct encoding for newly created files
@@ -344,7 +344,7 @@ NOTE: Released together with KDE 3.1.1.
     - fix "mainwindow is not resizeable due to large toolbars" bug [#53230]
     - bring up the file changed dialog, only when the file content has really changed [#55678]
     - be able to run Quanta in every case by several users on the same machine
-  - usability enhanchements:
+  - usability enhancements:
     - show the tag attributes (Alt-Down) menu lower than the current line
     - the dialog layouts are corrected, so they should be usable with
       every language. Should fix #51438, #53410, #53544, #54910.
@@ -370,7 +370,7 @@ Version 3.1 (Release date: 14-01-2003 (?); Started: 29-10-2002)
     - corrected the handling of the Show Line Number and Show Icon Borders setting
     - Edit Current Tag menu item re-added to popup menu
     - Remove Folder From Top was not removing the folders permanently
-    - Fix behaviour when using the "--unique" switch (SF #635850)
+    - Fix behavior when using the "--unique" switch (SF #635850)
     - possible crash when using broken script DTDs fixed
   - Top Folders show the location of the folder near the name
   - added a Dynamic Word Wrap item to View menu
@@ -392,13 +392,13 @@ Version 3.1-RC-1 (Release date: 28-10-2002; Started 27-09-2002)
     - remove the invalid files from the recent menu lists correctly
     - add the projects to the recent project list correctly
     - possibility to select project default DTD on creation now is possible
-    - Alt-Left and Alt-Right behaviour corrected
+    - Alt-Left and Alt-Right behavior corrected
     - Insert Files in project bugfix when the selection contained directories [#48959]
     - script actions located under paths containing spaced were not working correctly
     - saving of project toolbars corrected
     - line numbers and icon border setting is valid for all documents and saved correctly
     - menu shortcuts fixed
-    - config saving on non-english platforms saved
+    - config saving on non-English platforms saved
     - bug fixed when uploading in a non-existent dir structure
     - no error was displayed if wget was missing [#49463]
     - frames in preview were not working correctly [#49502]
@@ -413,7 +413,7 @@ Version 3.1-RC-1 (Release date: 28-10-2002; Started 27-09-2002)
     - redesigned New Project wizard
     - adding of non-local directories is possible [requires KDE 3.1 (beta2 is not enough)]
  - new features:
-    - plugins can be accesssed via actions (so you can put them on toolbars)
+    - plugins can be accessed via actions (so you can put them on toolbars)
     - Kommander script dialog builder/executor tool added to Quanta.
       Use --without-kommander to disable it's compilation.
     - the Files and Templates tree view updates itself automatically if the listed
@@ -431,7 +431,7 @@ Version 3.1-RC-1 (Release date: 28-10-2002; Started 27-09-2002)
     - new items in the Project Tree View RMB menu
     - project default language encoding setting added
     - Clean Indentation menu item re-added
-    - basic DTD tag inheritence added (see the html-frameset directory)
+    - basic DTD tag inheritance added (see the html-frameset directory)
     - URL information supported in the DTD definition file
     - Send DTD in E-Mail menu
  - new DTD's added:
@@ -441,7 +441,7 @@ Version 3.1-RC-1 (Release date: 28-10-2002; Started 27-09-2002)
  - updated README file
  - lots of code cleanup
  - spellchecker updated to work with KDE 3.1
- - Files List View disabled for now (it was not workig correctly)
+ - Files List View disabled for now (it was not working correctly)
 
 Version 3.0 (Release date: 27-09-2002 ; Started at: 12-09-2002)
  - bugfixes:
@@ -454,9 +454,9 @@ Version 3.0 (Release date: 27-09-2002 ; Started at: 12-09-2002)
     - toolbars were not saved and loaded correctly
     - Save All functionality corrected
     - save an action's correctly
- - editor enhanchements:
+ - editor enhancements:
     - updated "Find in Files" dialog
-    - auto-completion enhanchements and fixes:
+    - auto-completion enhancements and fixes:
         - variable autocompletion for PHP
  - new features:
     - Help->Quanta Homepage menu
@@ -467,7 +467,7 @@ Version 3.0 (Release date: 27-09-2002 ; Started at: 12-09-2002)
         - default encoding selection combo box
         - always hide DTD toolbar setting
     - Parse As... menu for Structure Tree View
-    - warning and reload/merge possiblity if a document was changed outside of Quanta
+    - warning and reload/merge possibility if a document was changed outside of Quanta
     - new FTP upload dialog
     - dynamic, DTD dependent toolbars
     - project default DTD setting
@@ -514,7 +514,7 @@ Version 3.0 pr2 (Release date: 09-09-2002; Started at: 01-08-2002):
     - editing toolbars after deleting an action crashed Quanta. It's fixed now.
     - Find in File function fixes
     - editor options related fixes
-    - the behaviour of the editor tabs is fixed (same QT bug as in 2.0pr2)
+    - the behavior of the editor tabs is fixed (same QT bug as in 2.0pr2)
     - XML commenting fix
     - fix for external filter "eating" characters [SF #492587]
     - fix for wrong inserting of tags when indentation with TAB was used [SF #601865]
@@ -582,7 +582,7 @@ Version 2.0 (Release date: 06-12-2001; Started at: 23-11-2001):
 Changes made since Quanta+ 2.0-PR2 (by Andras Mantia):
  - rename possibility of files/folders in the project tree view added
  - mailto inserting dialog added (with KAB support)
- - CSS syntax higlighting added
+ - CSS syntax highlighting added
  - tooltips added for the tree views
  - inserting of empty directories is possible
  - improved  "New project" wizard
@@ -591,11 +591,11 @@ Changes made since Quanta+ 2.0-PR2 (by Andras Mantia):
  - you can select the active opened file also from a list
  - it's possible to use KDE (e.g. KDevelop) style tabbars. Use the --with-ktabbar switch
  when you configure Quanta
- - the behaviour of the tabbar is somewhat fixed
+ - the behavior of the tabbar is somewhat fixed
  - handling of directories with spaces in the name is fixed
- - Open recent project list menu behaviour fixed
- - Show toolbar/statusbar/message output menu behaviour fixed
- - Save All behaviour fixed
+ - Open recent project list menu behavior fixed
+ - Show toolbar/statusbar/message output menu behavior fixed
+ - Save All behavior fixed
  - links/images are inserted with correct relative paths
  - compilation error fixes (mainly for Solaris)
  - other possible crash fixes

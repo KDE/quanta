@@ -437,6 +437,7 @@ private:
   KMdiToolViewAccessor* m_messageOutputView;
   KMdiToolViewAccessor* m_problemsOutputView;
   KMdiToolViewAccessor* m_previewToolView;
+  KMdiToolViewAccessor* m_documentationToolView;
 
   // Debugger
   PHPDebuggerInterface *m_debugger;

@@ -70,6 +70,7 @@ typedef struct QConfig{
           uint expandLevel;
           bool showDTDSelectDialog;
           QString showCloseButtons; ///< can be Disabled, ShowAlways or ShowDelayed
+          uint toolviewTabs; ///< how does the toolview tabs look like
 
 #ifdef BUILD_KAFKAPART
          //kafka sync options
@@ -87,6 +88,7 @@ typedef struct QConfig{
           QString imageMimeTypes;
           QString textMimeTypes;
           QString previewPosition;
+          QString docPosition;
           QString windowLayout;
           uint autosaveInterval;
           QString backupDirPath;

@@ -19,8 +19,9 @@
 // qt includes
 #include <qradiobutton.h>
 #include <qcheckbox.h>
-
 // kde includes
+#include <klocale.h>
+#include <kmessagebox.h>
 
 PreviewOptions::PreviewOptions(QWidget *parent, const char *name)
   : PreviewOptionsS(parent,name)
@@ -39,20 +40,28 @@ void PreviewOptions::setWindowLayout(const QString& layout )
 void PreviewOptions::setPosition(const QString& position )
 {
   radioEditor->setChecked(true);
-
-  if ( position == "Editor") radioEditor->setChecked(true);
   if ( position == "Toolview"  ) radioToolview->setChecked(true);
 }
 
 QString PreviewOptions::position()
 {
-  QString position = "Bottom";
-
-  if ( radioEditor->isChecked() )
-      position = "Editor";
+  QString position = "Editor";
   if ( radioToolview->isChecked() )
       position = "Toolview";
   return position;
+}
+
+void PreviewOptions::setDocPosition(const QString &position)
+{
+    radioNewDocTab->setChecked(true);
+    if (position == "Toolview") radioSeparateDocView->setChecked(true);
+}
+
+QString PreviewOptions::docPosition()
+{
+   QString position = "Tab";
+   if (radioSeparateDocView->isChecked()) position = "Toolview";
+   return position;
 }
 
 QString PreviewOptions::layout()
@@ -80,3 +89,20 @@ void PreviewOptions::setCloseButtons(const QString &state)
    if (state == "Disabled")  radioNoCloseButtons->setChecked(true);
 }
 
+void PreviewOptions::setToolviewTabs(uint state)
+{
+   radioIcon->setChecked(true);
+   if (state == 3) radioIconText->setChecked(true);
+   if (state == 1) radioText->setChecked(true);
+   m_toolviewTabs = state;
+}
+
+uint PreviewOptions::toolviewTabs()
+{
+  uint state = 0;
+  if (radioIconText->isChecked()) state = 3;
+  if (radioText->isChecked()) state = 1;
+  if (state != m_toolviewTabs)
+    KMessageBox::information(this, i18n("Changes made to the toolview tab style take effect only on the next startup."), i18n("Warning"), "TabStyleChangeWarning");
+  return state;
+}
