@@ -753,9 +753,9 @@ bool QuantaApp::queryClose()
       //avoid double question about saving files, so set the "modified"
       //flags to "false". This is safe here.
       Document *w;
-      for (int i = m_view->m_writeTab->count() -1; i >=0; i--)
+      for (int i = m_view->writeTab()->count() -1; i >=0; i--)
       {
-        w = dynamic_cast<Document*>(m_view->m_writeTab->page(i));
+        w = dynamic_cast<Document*>(m_view->writeTab()->page(i));
         if (w)
            w->setModified(false);
       }

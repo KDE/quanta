@@ -623,7 +623,7 @@ void QuantaApp::slotNewStatus()
     QIconSet floppyIcon( UserIcon("save_small"));
     QIconSet  emptyIcon( UserIcon("empty1x16" ));
 
-    QTabWidget *wTab = m_view->m_writeTab;
+    QTabWidget *wTab = m_view->writeTab();
     w = static_cast<Document*>(wTab->currentPage());
 
     if ( w->isModified() )
@@ -658,7 +658,7 @@ void QuantaApp::slotNewUndo()
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
 //remove the GUI of the plugin, if the last visible tab was a plugin
-  QString tabTitle =m_view->m_writeTab->tabLabel(m_view->oldTab);
+  QString tabTitle =m_view->writeTab()->tabLabel(m_view->oldTab);
   QuantaKPartPlugin *plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
   if (plugin)
     plugin->showGui(false);
@@ -668,7 +668,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   if (!newWrite)
   {
 //add the GUI for the currently visible plugin
-    tabTitle = m_view->m_writeTab->tabLabel(w);
+    tabTitle = m_view->writeTab()->tabLabel(w);
     plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
     if (plugin)
        plugin->showGui(true);
@@ -687,7 +687,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 
   newWrite->readConfig(m_config);
   Document *currentWrite = m_view->write();
-  currentWrite->view()->resize(m_view->m_writeTab->size().width()-5, m_view->m_writeTab->size().height()-35);
+  currentWrite->view()->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
   m_view->oldWrite = currentWrite;
   currentWrite->kate_view->setIconBorder(qConfig.iconBar);
   currentWrite->kate_view->setLineNumbersOn(qConfig.lineNumbers);
@@ -715,7 +715,7 @@ void QuantaApp::slotOptionsConfigureKeys()
 
 void QuantaApp::configureToolbars(const QString& defaultToolbar)
 {
- int currentPageIndex = m_view->m_toolbarTab->currentPageIndex();
+ int currentPageIndex = m_view->toolbarTab()->currentPageIndex();
 
  QDomNodeList nodeList;
  ToolbarEntry *p_toolbar = 0L;
@@ -791,7 +791,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
 void QuantaApp::slotNewToolbarConfig()
 {
  applyMainWindowSettings(KGlobal::config(), autoSaveGroup());
- m_view->toolbarTab()->setCurrentPage(m_view->m_toolbarTab->currentPageIndex());
+ m_view->toolbarTab()->setCurrentPage(m_view->toolbarTab()->currentPageIndex());
 }
 
 void QuantaApp::slotOptionsConfigureActions()
@@ -1456,7 +1456,7 @@ void QuantaApp::slotShowOpenFileList()
   {
   //This "complex" read-out is due to the reversed list.
     KURL docURL= fileList[openList.count() - listDlg.getEntryNum() - 1];
-    m_view->m_writeTab->showPage(m_doc->isOpened(docURL));
+    m_view->writeTab()->showPage(m_doc->isOpened(docURL));
   }
 }
 
@@ -1678,7 +1678,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    }
 
    guiFactory()->addClient(toolbarGUI);
-   m_view->toolbarTab()->setCurrentPage(m_view->m_toolbarTab->count()-1);
+   m_view->toolbarTab()->setCurrentPage(m_view->toolbarTab()->count()-1);
 
    m_tagsMenu->insertItem(name,menu);
    p_toolbar->menu = menu;
@@ -1931,7 +1931,7 @@ void QuantaApp::slotAddToolbar()
 
   ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
   factory()->addClient(toolbarGUI);
-  m_view->toolbarTab()->setCurrentPage(m_view->m_toolbarTab->count()-1);
+  m_view->toolbarTab()->setCurrentPage(m_view->toolbarTab()->count()-1);
   tempFileList.append(tempFile);
   ToolbarEntry *p_toolbar = new ToolbarEntry;
   p_toolbar->guiClient = toolbarGUI;
