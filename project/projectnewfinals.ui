@@ -1,0 +1,346 @@
+<!DOCTYPE UI><UI>
+<class>ProjectNewFinalS</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>ProjectNewFinalS</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>449</width>
+            <height>348</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form1</string>
+    </property>
+    <property>
+        <name>layoutMargin</name>
+    </property>
+    <property>
+        <name>layoutSpacing</name>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>0</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>0</number>
+        </property>
+        <widget row="0"  column="0" >
+            <class>QLayoutWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Layout4</cstring>
+            </property>
+            <hbox>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>0</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget>
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>imagelabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string></string>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>7</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>minimumSize</name>
+                        <size>
+                            <width>120</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                    <property stdset="1">
+                        <name>maximumSize</name>
+                        <size>
+                            <width>120</width>
+                            <height>32767</height>
+                        </size>
+                    </property>
+                    <property stdset="1">
+                        <name>alignment</name>
+                        <set>AlignTop|AlignLeft</set>
+                    </property>
+                    <property>
+                        <name>vAlign</name>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QLayoutWidget</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Layout3</cstring>
+                    </property>
+                    <grid>
+                        <property stdset="1">
+                            <name>margin</name>
+                            <number>0</number>
+                        </property>
+                        <property stdset="1">
+                            <name>spacing</name>
+                            <number>6</number>
+                        </property>
+                        <widget row="0"  column="0" >
+                            <class>QCheckBox</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>checkPublishing</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Project publishing</string>
+                            </property>
+                            <property stdset="1">
+                                <name>checked</name>
+                                <bool>true</bool>
+                            </property>
+                        </widget>
+                        <widget row="1"  column="0" >
+                            <class>QLabel</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>TextLabel3</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Server url</string>
+                            </property>
+                        </widget>
+                        <widget row="8"  column="0" >
+                            <class>QLabel</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>TextLabel7</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Filter app</string>
+                            </property>
+                        </widget>
+                        <widget row="8"  column="1" >
+                            <class>QLineEdit</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>lineFilter</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>enabled</name>
+                                <bool>false</bool>
+                            </property>
+                        </widget>
+                        <widget row="6"  column="1"  rowspan="1"  colspan="2" >
+                            <class>QLineEdit</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>linePrefix</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>enabled</name>
+                                <bool>false</bool>
+                            </property>
+                        </widget>
+                        <widget row="8"  column="2" >
+                            <class>QPushButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>buttonFilter</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>...</string>
+                            </property>
+                            <property stdset="1">
+                                <name>sizePolicy</name>
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>1</vsizetype>
+                                </sizepolicy>
+                            </property>
+                            <property stdset="1">
+                                <name>maximumSize</name>
+                                <size>
+                                    <width>32</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property stdset="1">
+                                <name>enabled</name>
+                                <bool>false</bool>
+                            </property>
+                        </widget>
+                        <widget row="4"  column="0"  rowspan="1"  colspan="3" >
+                            <class>Line</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>Line1</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>orientation</name>
+                                <enum>Horizontal</enum>
+                            </property>
+                        </widget>
+                        <spacer row="9"  column="1" >
+                            <property>
+                                <name>name</name>
+                                <cstring>Spacer1</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>orientation</name>
+                                <enum>Vertical</enum>
+                            </property>
+                            <property stdset="1">
+                                <name>sizeType</name>
+                                <enum>Expanding</enum>
+                            </property>
+                            <property>
+                                <name>sizeHint</name>
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget row="1"  column="1"  rowspan="1"  colspan="2" >
+                            <class>QLineEdit</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>lineUrl</cstring>
+                            </property>
+                        </widget>
+                        <widget row="3"  column="1"  rowspan="1"  colspan="2" >
+                            <class>QLineEdit</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>linePasswd</cstring>
+                            </property>
+                        </widget>
+                        <widget row="2"  column="1"  rowspan="1"  colspan="2" >
+                            <class>QLineEdit</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>lineUser</cstring>
+                            </property>
+                        </widget>
+                        <widget row="7"  column="0"  rowspan="1"  colspan="3" >
+                            <class>QCheckBox</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>checkFilter</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use filter for preview</string>
+                            </property>
+                        </widget>
+                        <widget row="6"  column="0" >
+                            <class>QLabel</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>TextLabel6</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Preview prefix</string>
+                            </property>
+                        </widget>
+                        <widget row="3"  column="0" >
+                            <class>QLabel</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>TextLabel5</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Password</string>
+                            </property>
+                        </widget>
+                        <widget row="5"  column="0"  rowspan="1"  colspan="3" >
+                            <class>QCheckBox</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>checkPrefix</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>Use preview prefix ( for use PHP etc )</string>
+                            </property>
+                        </widget>
+                        <widget row="2"  column="0" >
+                            <class>QLabel</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>TextLabel4</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>User name</string>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+            </hbox>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>checkPublishing</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>lineUrl</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>checkPrefix</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>linePrefix</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>checkFilter</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>lineFilter</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>checkPublishing</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>lineUser</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>checkPublishing</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>linePasswd</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>checkFilter</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>buttonFilter</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+</UI>

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 // qt includes
+#include <qlabel.h>
 #include <qfileinfo.h>
 #include <qlistview.h>
 #include <qlineedit.h>
@@ -23,6 +24,7 @@
 
 // kde includes
 #include <klocale.h>
+#include <kiconloader.h>
 
 #include "projectnewlocal.h"
 #include "projectnewgeneral.h"
@@ -36,6 +38,8 @@ extern QString fileMaskImage;
 ProjectNewLocal::ProjectNewLocal(QWidget *parent, const char *name )
 	: ProjectNewLocalS(parent,name)
 {
+	imagelabel->setPixmap( UserIcon("wiznewprjloc") );
+	
 	mask->setText("*");
 	webmask->setText( fileMaskPhp+
 										fileMaskHtml+

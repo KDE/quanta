@@ -11,9 +11,13 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>482</width>
+            <width>474</width>
             <height>357</height>
         </rect>
+    </property>
+    <property stdset="1">
+        <name>enabled</name>
+        <bool>true</bool>
     </property>
     <property stdset="1">
         <name>caption</name>
@@ -79,6 +83,13 @@
                             <width>120</width>
                             <height>0</height>
                         </size>
+                    </property>
+                    <property stdset="1">
+                        <name>alignment</name>
+                        <set>AlignTop|AlignLeft</set>
+                    </property>
+                    <property>
+                        <name>vAlign</name>
                     </property>
                 </widget>
                 <widget>
@@ -339,6 +350,10 @@
                                             <property stdset="1">
                                                 <name>text</name>
                                                 <string>CVS project</string>
+                                            </property>
+                                            <property stdset="1">
+                                                <name>enabled</name>
+                                                <bool>false</bool>
                                             </property>
                                         </widget>
                                     </vbox>

@@ -13,29 +13,25 @@ libproject_a_METASOURCES = AUTO
 libproject_a_SOURCES = \
 		copyto.cpp\
 		project.cpp\
-		projectnewfinals.cpp\
 		projectnewgeneral.cpp\
 		projectnewlocal.cpp\
-		projectnewlocals.cpp\
 		projectupload.cpp\
 		projectuploads.cpp\
 		projectnewweb.cpp\
 		projectnewwebs.ui\
 		copytos.ui\
-		projectnewgenerals.ui
+		projectnewgenerals.ui\
+		projectnewlocals.ui\
+		projectnewfinals.ui
 EXTRA_DIST = \
 		copyto.cpp\
 		copyto.h\
 		project.cpp\
 		project.h\
-		projectnewfinals.cpp\
-		projectnewfinals.h\
 		projectnewgeneral.cpp\
 		projectnewgeneral.h\
 		projectnewlocal.cpp\
 		projectnewlocal.h\
-		projectnewlocals.cpp\
-		projectnewlocals.h\
 		projectupload.cpp\
 		projectupload.h\
 		projectuploads.cpp\
@@ -44,7 +40,9 @@ EXTRA_DIST = \
 		projectnewweb.h\
 		projectnewwebs.ui\
 		copytos.ui\
-		projectnewgenerals.ui
+		projectnewgenerals.ui\
+		projectnewlocals.ui\
+		projectnewfinals.ui
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

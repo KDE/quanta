@@ -24,6 +24,7 @@
 // include QT files
 #include <qdir.h>
 #include <qdom.h>
+#include <qlabel.h>
 #include <qcheckbox.h>
 #include <qfileinfo.h>
 #include <qtabdialog.h>
@@ -423,7 +424,7 @@ void Project::slotOpenedFiles(QStringList list)
 void Project::newProject()
 {
 	wiz = new QWizard( 0, "new", true);
-	wiz ->resize(500,300);
+	wiz ->resize(500,400);
 	
 	png = new ProjectNewGeneral( wiz );
 	
@@ -433,6 +434,7 @@ void Project::newProject()
 	pnw = new ProjectNewWeb  ( stack );
 	
 	pnf = new ProjectNewFinalS( wiz );
+	pnf ->imagelabel->setPixmap( UserIcon("wiznewprjfin") );
 	
 	stack->addWidget( pnl, 0);
 	stack->addWidget( pnw, 1 );
