@@ -61,7 +61,7 @@ ActionEditDlg::ActionEditDlg( QuantaApp *a, QWidget* parent, const char* name, b
      action(0),
      app(a)
 {
-   actionIcon->setIconType(KIcon::User,0,true);
+   actionIcon->setIconType(KIcon::User,KIcon::Any,true);
 
    QValueList<KAction*> actions = app->actionCollection()->actions();
 
