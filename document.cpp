@@ -415,7 +415,7 @@ int Document::checkOverwrite(KURL u)
     info.setFile( name );
     if( info.exists() )
       query = KMessageBox::warningYesNoCancel( this,
-              i18n( "A document with this name already exists.\nDo you want to overwrite it?" ) );
+              i18n( "A Document with this name already exists.\nDo you want to overwrite it?" ) );
   }
   return query;
 }
@@ -1589,7 +1589,7 @@ void Document::slotDelayedTextChanged()
     if (qConfig.updateClosingTags && currentNode)
     {
       node = parser->nodeAt(line, column, false);
-      if (node && (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) && node->tag->validXMLTag)
+      if (node && node->tag->name != currentNode->tag->name && (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) && node->tag->validXMLTag)
       {
         int bl, bc, bl2, bc2;
         node->tag->beginPos(bl, bc);
