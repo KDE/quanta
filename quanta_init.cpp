@@ -857,11 +857,19 @@ void QuantaApp::openLastFiles()
 
      if (!isPrj || originalVersion.isLocalFile())
      {
-       if (QFileInfo(autosavedVersion.path()).exists())
+       if (QFileInfo(autosavedVersion.path()).exists() &&
+           KMessageBox::questionYesNo(this, i18n("<qt>A backup copy of the <b>%1</b> file was found.<br>Do you want to restore it and use the backup copy instead of the original one?</qt>").arg(originalVersion.prettyURL()), i18n("Restore file")) == KMessageBox::Yes)
        {
+          KURL backupURL = originalVersion;
+          backupURL.setPath(backupURL.path()+".backup");
+         //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support
+//is dropped
+          QExtFileInfo::copy(originalVersion, backupURL, -1, true, false, this);
          //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
 //is dropped
           QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
+          QFile::remove(autosavedVersion.path());
+
        }
      }
      m_config->setGroup("General Options");
