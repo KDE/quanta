@@ -121,3 +121,22 @@ location_options = single
 [Extra rules]
 BooleanAttributes = simple
 Single Tag Style = XML
+StructGroupsCount = 2
+
+[Parsing rules]
+SpecialAreas = <!-- -->
+SpecialAreaNames = comment
+SpecialTags = script(language)
+MayContain = php
+
+[StructGroup_1]
+Name = Images
+No_Name = No Images
+Icon = image
+Tag = img(src)
+
+[StructGroup_2]
+Name = Links
+No_Name = No Links
+Icon = www
+Tag = a(name,href)
