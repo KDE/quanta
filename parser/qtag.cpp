@@ -34,6 +34,10 @@ QTag::QTag( QTag &t)
   optional = t.optional;
   m_fileName = t.m_fileName;
   parentDTD = t.parentDTD;
+  type = t.type;
+  returnType = t.returnType;
+  commonGroups = t.commonGroups;
+  stoppingTags = t.stoppingTags;
 	
 	for (int i=0; i < t.attributeCount(); i++)
   {
@@ -121,6 +125,10 @@ QTag QTag::operator = (QTag &t)
   optional = t.optional;
   m_fileName = t.m_fileName;
   parentDTD = t.parentDTD;
+  type = t.type;
+  returnType = t.returnType;
+  commonGroups = t.commonGroups;
+  stoppingTags = t.stoppingTags;
 	
 	for (int i=0; i < t.attributeCount(); i++)
   {

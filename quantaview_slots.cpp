@@ -756,8 +756,13 @@ void QuantaView::slotGotoLine ()
 
 void QuantaView::slotSpellcheck ()
 {
-//  write()->kate_doc->spellcheck();
-  quantaApp->spellChecker->spellCheck(write()->doc());
+  if (KDE_VERSION >=308)
+  {
+    quantaApp->spellChecker->spellCheck(write()->doc());
+  } else
+  {
+    write()->kate_doc->spellcheck();
+  }
 }
 
 void QuantaView::toggleBookmark ()

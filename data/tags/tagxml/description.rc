@@ -1,13 +1,13 @@
 [General]
-Name = XML
-DefaultExtension = xml
-NickName = XML 1.0
+Name = TAGS
+DefaultExtension = tag
+NickName = Quanta tag files
 NumOfPages = 0
 CaseSensitive = true
 
 [Toolbars]
-Location = xml
-Names = fonts
+Location = tagxml
+Names = 
 
 [Extra tags]
 

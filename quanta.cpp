@@ -827,9 +827,12 @@ void QuantaApp::slotOptions()
   if (debuggerStyle=="PHP3") debuggerOptions->radioPhp3->setChecked(true);
   if (debuggerStyle=="None") debuggerOptions->checkDebugger->setChecked(false);
 
+  if (KDE_VERSION >= 308)
+  {
 //Spelling options  
-  page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
-  KSpellConfig *spellingOptions = new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
+    page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
+    new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
+  }
      
   if ( kd->exec() )
   {

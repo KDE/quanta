@@ -877,6 +877,8 @@ void QuantaApp::readTagDir(QString &dirName)
  bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
  dtd->name = dtdName.lower();
  dtd->nickName = dtdConfig->readEntry("NickName", dtdName);
+ dtd->inheritsTagsFrom = dtdConfig->readEntry("Inherits");
+
  dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");
  dtd->caseSensitive = caseSensitive;
  dtd->family = dtdConfig->readNumEntry("Family", Xml);
@@ -1080,6 +1082,30 @@ void QuantaApp::initTagDict()
   {
     readTagDir(*it);
   }
+
+//Now resolve the inheritence
+  QDictIterator<DTDStruct> it(*dtds);
+  for( ; it.current(); ++it )
+  {
+    DTDStruct* dtd = it.current();
+    if (!dtd->inheritsTagsFrom.isEmpty())
+    {
+      DTDStruct *parent = dtds->find(dtd->inheritsTagsFrom);
+      QDictIterator<QTag> tag_it(*(parent->tagsList));
+      for ( ; tag_it.current(); ++tag_it)
+      {
+        QTag *tag = tag_it.current();
+        QString searchForTag = (dtd->caseSensitive) ? tag->name() : tag->name().upper();
+        if (!dtd->tagsList->find(searchForTag))
+        {
+          QTag *newTag = new QTag(*tag);
+          dtd->tagsList->insert(searchForTag, newTag);
+        }
+      }
+    }
+  }
+    
+  
   scriptBeginRx.setCaseSensitive(false);
   scriptBeginRx.setPattern(scriptBeginRxStr);
   scriptEndRx.setCaseSensitive(false);

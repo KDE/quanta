@@ -55,6 +55,7 @@ typedef struct DTDStruct
     {
      QString name;                    //DTD name
      QString nickName;                //DTD nickname
+     QString inheritsTagsFrom;        //Inherited DTD name
      QString defaultExtension;        //default extension when creating new files
      bool caseSensitive;              //the tags&attributes in DTD are case sensitive or not
      int family;                      //xml, script type
