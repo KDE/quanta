@@ -41,7 +41,6 @@ class TagActionManager
 public:
     static TagActionManager* self();
     ~TagActionManager();
-
     
     /**
      * This method is used to fill context menus with apropriated actions for node.
@@ -50,6 +49,8 @@ public:
      * @param node The context/current node.
      */
     void fillWithTagActions(QWidget* widget, DOM::Node const& node);
+    
+    static bool canIndentDTD(QString const& dtd);
 
     KActionCollection* actionCollection() const
     {

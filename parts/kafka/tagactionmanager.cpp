@@ -74,3 +74,9 @@ void TagActionManager::fillWithTagActions(QWidget* widget, DOM::Node const& node
     for(tagActionSet = m_tagActionSets.first(); tagActionSet; tagActionSet = m_tagActionSets.next())
         tagActionSet->fillWithTagActions(widget, node);
 }
+
+bool TagActionManager::canIndentDTD(QString const& dtd)
+{
+    return (dtd.contains("HTML", false) ||
+            dtd.contains("XML", false));
+}

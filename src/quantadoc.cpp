@@ -73,6 +73,7 @@
 //#include "dtds.h"
 
 #include "undoredo.h"
+#include "tagactionmanager.h"
 
 QuantaDoc::QuantaDoc(QWidget *parent, const char *name) : QObject(parent, name)
 {
@@ -229,6 +230,9 @@ void QuantaDoc::slotOpeningCompleted(const KURL &url)
   quantaApp->debugger()->fileOpened(url.prettyURL(0, KURL::StripFileProtocol));
   quantaApp->slotNewStatus();
   emit eventHappened("after_open", url.url(), QString::null);
+  
+  bool flag = TagActionManager::canIndentDTD(ViewManager::ref()->activeDocument()->defaultDTD()->name);
+  quantaApp->actionCollection()->action("apply_source_indentation")->setEnabled(flag);
 }
 
 /** show popup menu with list of attributes for current tag */

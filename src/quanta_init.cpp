@@ -731,6 +731,7 @@ void QuantaInit::initActions()
                         ac, "find_in_files" );
     
     KAction* aux = TagActionManager::self()->actionCollection()->action("apply_source_indentation");
+    aux->setEnabled(false);
     ac->insert(aux);
     
     // Tool actions

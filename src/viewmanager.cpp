@@ -33,6 +33,7 @@
 //app includes
 #include "undoredo.h"
 #include "wkafkapart.h"
+#include "tagactionmanager.h"
 
 #include "whtmlpart.h"
 #include "document.h"
@@ -207,7 +208,7 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
   {
     emit viewActivated(w->url());
     
-    int flag = w->defaultDTD()->name.contains("HTML", false);
+    bool flag = TagActionManager::canIndentDTD(w->defaultDTD()->name);
     quantaApp->actionCollection()->action("apply_source_indentation")->setEnabled(flag);
   }
 }
