@@ -501,7 +501,6 @@ bool SAParser::slotParseOneLine()
 #endif            
             slotParseForScriptGroup();
           }
-          kdDebug(24000) << "tagStr(2) " << tag->tagStr() << " next: " << node->next << " prev:" << node->prev << endl;
             
           m_lastParsedNode = node;
           s_useReturnVars = true;
