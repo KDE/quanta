@@ -1,3 +1,4 @@
+LIBXSLT_REQUIRED_VERSION="1.0.18"
 
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h stdlib.h paths.h stdarg.h)
 AC_CHECK_FUNCS(usleep)
@@ -50,6 +51,7 @@ dnl how are we to invoke xsldbg, or the other stylesheet processor (xsltproc?)
 dnl
 
 AC_DEFINE(XSLDBG_BIN, "xsldbg")
+
 
 dnl
 dnl The following new parameters were added to offer
