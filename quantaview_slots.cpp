@@ -200,7 +200,7 @@ void QuantaView::slotTagMail()
   	{
   		tag += QuantaCommon::attrCase(" href=\"")+"mailto:"+mailDlg->lineEmail->text();
   	  	if ( !QString(mailDlg->lineSubject->text()).isEmpty())
-	   		tag += "?subject="+mailDlg->lineSubject->text();
+	   		tag += "?subject="+KURL::encode_string(mailDlg->lineSubject->text());
   	   	tag += "\"";
   	}
 
