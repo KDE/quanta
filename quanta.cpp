@@ -467,7 +467,7 @@ void QuantaApp::slotNewStatus()
   viewBorder->setChecked(view->write()->kate_view->iconBorder());
   viewLineNumbers->setChecked(view->write()->kate_view->lineNumbersOn());
 
-  setHighlight->updateMenu (view->write()->kate_doc);
+  if (setHighlight) setHighlight->updateMenu (view->write()->kate_doc);
 
   QIconSet floppyIcon( UserIcon("save_small"));
   QIconSet  emptyIcon( UserIcon("empty1x16" ));

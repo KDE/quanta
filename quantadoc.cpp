@@ -157,8 +157,8 @@ bool QuantaDoc::newDocument( const KURL& url )
     if ( write() ) // check if first kwrite exists
     {
       // no modi and new -> we can remove                           !!!!
-/*      if ( !write()->isModified() &&
-            write()->isUntitled() && !write()->busy) return true; */
+      if ( !write()->isModified() &&
+            write()->isUntitled() && !write()->busy) return true;
     }
     // now we can create new kwrite
     Document *w = newWrite( app->view->writeTab);
@@ -454,36 +454,35 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
   
 //  KTextEditor::Document *doc = KTextEditor::createDocument("katepart");
 
-
   KTextEditor::Document *doc = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
 													      QString::null,
 													      _parent, 0,
 													      this, 0 );
 
-
-  
-//  KTextEditor::Document *doc=KParts::ComponentFactory::createPartInstanceFromLibrary<KTextEditor::Document>("katepart",_parent,0);
-
   Document  *w    = new Document (basePath(), doc, _parent);
   KTextEditor::View * v = w->view();
 
  	app-> config->setGroup("General Options");
+  w->readConfig( app->config );
+ 	w->setUntitledUrl( fname );
+  w->kate_view->installPopup((QPopupMenu *)app->factory()->container("popup_editor", app));
 
-//  static_cast<KTextEditor::Document*>(w->doc())->readConfig(app->config);
-  w  -> readConfig      ( app->config );
+  for (unsigned int i=0; i< w->kate_doc->hlModeCount(); i++)
+  {
+    if (w->kate_doc->hlModeName(i).contains("HTML"))
+    {
+      w->kate_doc->setHlMode(i);
+    }
+  }
 
 //FIXME:set to HTML
-//  dynamic_cast<KTextEditor::HighlightingInterface *>(w->doc())->setHlMode(11);
-  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)app->factory()->container("popup_editor", app));
+//  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)app->factory()->container("popup_editor", app));
 //  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)app->factory()->container("rb_popup", app));
-
-
- 	w  -> setUntitledUrl  ( fname );
-// 	w  -> installPopup( (QPopupMenu *)app->factory()->container("popup_editor", app));
 
  	w->parentWidget()->setFocusProxy(w);
 
  	connect( v, SIGNAL(newStatus()),app, SLOT(slotNewStatus()));
+
 /* !!!!
  	connect( dynamic_cast<KTextEditor::UndoInterface *>(v), SIGNAL(undoChanged()),
            app, SLOT(slotNewUndo()) );

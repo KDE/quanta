@@ -94,6 +94,7 @@ QDict <QStrList> *tagsDict;
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
+  setHighlight = 0;
   grepDialog  = 0L;
   exitingFlag = false;
 

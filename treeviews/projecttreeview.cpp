@@ -283,7 +283,22 @@ void ProjectTreeView::slotOpen()
 		emit openImage( nameToOpen );
 		return;
 	}
-	new KRun( KURL(nameToOpen), 0, true );
+
+ QString mimetype = KMimeType::findByFileContent(nameToOpen)->name();
+
+ if (mimetype.contains("text"))
+ {
+		KURL url(nameToOpen);
+		emit openFile( url );
+ } else
+ {
+   if (KMessageBox::questionYesNo(this,"This file cannot be opened in Quanta. \n \
+       Do you want to open with an external program or run it?","Unknown type") == KMessageBox::Yes)
+  {
+   KFileOpenWithHandler fowh;
+	 new KRun( KURL(nameToOpen), 0, true );
+  }
+ }
 }
 
 void ProjectTreeView::slotOpenWith()
@@ -301,11 +316,21 @@ void ProjectTreeView::slotOpenWith()
 
 void ProjectTreeView::slotOpenInQuanta()
 {
-	if ( !currentItem() ) return;
+ if ( !currentItem() ) return;
 	
-	KURL url(currentFileName());
-	
-	emit openFile( url );
+ KURL url(currentFileName());
+
+ QString mimetype = KMimeType::findByFileContent(currentFileName())->name();
+
+ if (! mimetype.contains("text"))
+ {
+   if (KMessageBox::questionYesNo(this,"This file may be a binary file, thus cannot be opened \
+    in Quanta correctly.\n Do you still want to open it?","Wrong type") != KMessageBox::Yes)
+  {
+    return;
+  }
+ }
+ emit openFile( url );
 }
 
 void ProjectTreeView::slotRemove()

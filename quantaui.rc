@@ -224,7 +224,6 @@
     <Action name="edit_find_next"/>
     <Separator/>
     <Action name="tools_spelling"/>
-    <Separator/>
   </ToolBar>
 
   <ToolBar name="mainNaviToolBar" noMerge="1">
@@ -351,9 +350,12 @@
     <Separator/>
     <Action name="edit_current_tag"/>
     <Separator/>
-    <Action name="text_spelling"/>
+    <Action name="tools_spelling"/>
     <Action name="syntax_check"/>
     <Action name="context_help"/>
+    <Separator/>
+    <Action name="set_eol"/>
+    <Action name="set_highlight"/>
   </Menu>
   
   <ActionProperties>

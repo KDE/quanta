@@ -25,6 +25,8 @@
 #include <kiconloader.h>
 #include <kopenwith.h>
 #include <kstddirs.h>
+#include <kmimetype.h>
+#include <kmessagebox.h>
 
 #include "templatestreeview.h"
 #include "filestreefolder.h"
@@ -119,7 +121,18 @@ TemplatesTreeView::~TemplatesTreeView()
 /** No descriptions */
 void TemplatesTreeView::slotInsertInDocument()
 {
-  emit insertFile(currentFileName());
+ QString mimetype = KMimeType::findByFileContent(currentFileName())->name();
+
+ if (! mimetype.contains("text"))
+ {
+   if (KMessageBox::questionYesNo(this,"This file may be a binary file, thus cannot be \
+inserted correctly.\n Do you still want to insert it?","Wrong type") != KMessageBox::Yes)
+  {
+    return;
+  }
+ }
+
+ emit insertFile(currentFileName());
 }
 
 void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
@@ -144,14 +157,25 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 /** No descriptions */
 void TemplatesTreeView::slotNewDocument()
 {
+ QString mimetype = KMimeType::findByFileContent(currentFileName())->name();
+
+ if (! mimetype.contains("text"))
+ {
+   if (KMessageBox::questionYesNo(this,"This file may be a binary file, thus cannot be \
+used as a base file correctly.\n Do you still want to continue?","Wrong type") != KMessageBox::Yes)
+  {
+    return;
+  }
+ }
+
 	QListViewItem *item = currentItem();
-	if (item )
+  if (item )
 	{
-  		FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
-		if ( !parent ) return;
-		if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
-	    emit openFile( KURL());
-	    emit insertFile(currentFileName());
+  	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
+	  if ( !parent ) return;
+	  if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
+	  emit openFile( KURL());
+	  emit insertFile(currentFileName());
 	}
 }
 #include "templatestreeview.moc"
