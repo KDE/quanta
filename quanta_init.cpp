@@ -723,6 +723,158 @@ void QuantaApp::setAttributes(QDomDocument *dom, QTag* tag)
 // return attrs;
 }
 
+/** Reads the tag files and the description.rc from tagDir in order to
+    build up the internal DTD and tag structures. */
+void QuantaApp::readTagDir(QString &dirName)
+{
+ //read the general DTD info
+ DTDStruct *dtd = new DTDStruct;
+ dtd->fileName = dirName + "description.rc";
+ dtd->commonAttrs = new AttributeListDict();
+ dtd->commonAttrs->setAutoDelete(true);
+
+ KConfig *dtdConfig = new KConfig(dtd->fileName);
+ dtdConfig->setGroup("General");
+ QString dtdName = dtdConfig->readEntry("Name", "Unknown");
+ bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
+ dtd->name = dtdName;
+ dtd->caseSensitive = caseSensitive;
+ int numOfTags = 0;
+
+ //read the attributes for each common group
+ QStrList * groupList = new QStrList();
+ dtdConfig->readListEntry("Groups", *groupList); //read the common groups
+ for (uint i = 0; i < groupList->count(); i++)
+ {
+   AttributeList *commonAttrList = new AttributeList;      //no need to delete it
+   commonAttrList->setAutoDelete(true);
+   QString groupName = QString(groupList->at(i)).stripWhiteSpace();
+
+   dtdConfig->setGroup(groupName);
+   QStrList *attrList = new QStrList();
+   dtdConfig->readListEntry("Attributes", * attrList);
+   for (uint j = 0; j < attrList->count(); j++)
+   {
+     Attribute *attr = new Attribute;                                  //no need to delete it
+     attr->name = QString(attrList->at(j)).stripWhiteSpace();
+     attr->type = "input";
+     attr->defaultValue = "";
+     attr->status = "optional";
+     commonAttrList->append(attr);
+   }
+   delete attrList;
+
+   dtd->commonAttrs->insert(groupName, commonAttrList);
+ }
+ delete groupList;
+
+ QTagList *tagList = new QTagList(119, false); //max 119 tag in a DTD
+ tagList->setAutoDelete(true);
+ //read all the tag files
+ QStringList files = QExtFileInfo::allFilesRelative(dirName, "*.tag");
+ for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+ {
+   QString name = QFileInfo(*it_f).baseName();
+   if (! name.isEmpty())
+   {
+     QString fname = dirName + *it_f ;
+     QFile f( fname );
+     f.open( IO_ReadOnly );
+     QDomDocument *doc = new QDomDocument();
+     doc->setContent( &f );
+     f.close();
+
+     QTag *tag = new QTag();
+     tag->setName(name);
+     tag->setFileName(fname);
+     tag->parentDTD = dtd;
+     setAttributes(doc, tag);
+     if (caseSensitive)
+     {
+       tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
+     } else
+     {
+       tagList->insert(tag->name().upper(),tag);
+     }
+     delete doc;
+     numOfTags++;
+   }
+ }
+ //read the extra tags and their attributes
+ dtdConfig->setGroup("Extra tags");
+ QStrList extraTagsList;
+ dtdConfig->readListEntry("List",extraTagsList);
+ for (uint i = 0 ; i < extraTagsList.count(); i++)
+ {
+   QTag *tag = new QTag();
+   tag->setName(QString(extraTagsList.at(i)).stripWhiteSpace());
+
+   QString searchForTag = (dtd->caseSensitive) ? tag->name() : tag->name().upper();
+   if (tagList->find(searchForTag)) //the tag is already defined in a .tag file
+   {
+     delete tag;
+     continue; //skip this tag
+   }
+   tag->parentDTD = dtd;
+   //read the possible stopping tags
+   QStrList stoppingTags;
+   dtdConfig->readListEntry(tag->name() + "_stoppingtags",stoppingTags);
+   for (uint j = 0; j < stoppingTags.count(); j++)
+   {
+     QString stopTag = QString(stoppingTags.at(j)).stripWhiteSpace();
+     if (!dtd->caseSensitive) stopTag = stopTag.upper();
+     tag->stoppingTags.append(stopTag);
+   }
+   QStrList optionsList;
+   //read the possible tag options
+   dtdConfig->readListEntry(tag->name() + "_options",optionsList);
+   for (uint j = 0; j < optionsList.count(); j++)
+   {
+     QString option = QString(optionsList.at(j)).stripWhiteSpace();
+     QDictIterator<AttributeList> it(*(dtd->commonAttrs));
+     for( ; it.current(); ++it )
+     {
+       QString lookForAttr = "has"+QString(it.currentKey()).stripWhiteSpace();
+       if (option == lookForAttr)
+       {
+         tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
+       }
+     }
+     if (option == "single")
+     {
+       tag->setSingle(true);
+     }
+     if (option == "optional")
+     {
+        tag->setOptional(true);
+     }
+   }
+   QStrList attrList;
+   dtdConfig->readListEntry(tag->name(), attrList);
+   for (uint j = 0; j < attrList.count(); j++)
+   {
+     Attribute* attr = new Attribute;
+     attr->name = QString(attrList.at(j)).stripWhiteSpace();
+     attr->type = "input"; //NOTE: We can read this and the others also from the dtdConfig in the future
+     tag->addAttribute(attr);
+     delete attr;
+   }
+   if (caseSensitive)
+   {
+     tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
+   } else
+   {
+     tagList->insert(tag->name().upper(),tag);
+   }
+ }
+
+ dtd->tagsList = tagList;
+ dtds->insert(dtdName, dtd);//insert the taglist into the full list7
+
+ delete dtdConfig;
+}
+
+
 /**
   read dictionary of known tags and attributes from tags.rc file.
 */
@@ -732,9 +884,6 @@ void QuantaApp::initTagDict()
   dtds = new QDict<DTDStruct>(119, false); //max 119 DTD is supported
   dtds->setAutoDelete(true);
 
-  KConfig *dtdConfig;
-
-  int numOfTags = 0;
   QStringList tagsResourceDirs = KGlobal::instance()->dirs()->findDirs("appdata", "tags");
   QStringList tagsDirs;
   for ( QStringList::Iterator it = tagsResourceDirs.begin(); it != tagsResourceDirs.end(); ++it )
@@ -750,222 +899,8 @@ void QuantaApp::initTagDict()
   }
   for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
   {
-    QString dirName = *it;
-    dirName = QFileInfo(dirName.left(dirName.length()-1)).fileName();
-    //read the general DTD info
-    DTDStruct *dtd = new DTDStruct;
-    dtd->fileName = *it + "description.rc";
-    dtd->commonAttrs = new AttributeListDict();
-    dtd->commonAttrs->setAutoDelete(true);
-
-    dtdConfig = new KConfig(dtd->fileName);
-    dtdConfig->setGroup("General");
-    QString dtdName = dtdConfig->readEntry("Name", "Unknown");
-    bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
-    dtd->name = dtdName;
-    dtd->caseSensitive = caseSensitive;
-
-    //read the attributes for each common group
-    QStrList * groupList = new QStrList();
-    dtdConfig->readListEntry("Groups", *groupList); //read the common groups
-    for (uint i = 0; i < groupList->count(); i++)
-    {
-      AttributeList *commonAttrList = new AttributeList;      //no need to delete it
-      commonAttrList->setAutoDelete(true);
-      QString groupName = QString(groupList->at(i)).stripWhiteSpace();
-
-      dtdConfig->setGroup(groupName);
-      QStrList *attrList = new QStrList();
-      dtdConfig->readListEntry("Attributes", * attrList);
-      for (uint j = 0; j < attrList->count(); j++)
-      {
-       Attribute *attr = new Attribute;                                  //no need to delete it
-       attr->name = QString(attrList->at(j)).stripWhiteSpace();
-       attr->type = "input";
-       attr->defaultValue = "";
-       attr->status = "optional";
-       commonAttrList->append(attr);
-      }
-      delete attrList;
-
-      dtd->commonAttrs->insert(groupName, commonAttrList);
-    }
-    delete groupList;
-
-    QTagList *tagList = new QTagList(119, false); //max 119 tag in a DTD
-    tagList->setAutoDelete(true);
-    //read all the tag files
-  	QStringList files = QExtFileInfo::allFilesRelative(*it, "*.tag");
-  	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
-    {
-      QString name = QFileInfo(*it_f).baseName();
-      if (! name.isEmpty())
-      {
-        QString fname = *it + *it_f ;
-        QFile f( fname );
-        f.open( IO_ReadOnly );
-		    QDomDocument *doc = new QDomDocument();
-		    doc->setContent( &f );
-        f.close();
-
-        QTag *tag = new QTag();
-        tag->setName(name);
-        tag->setFileName(fname);
-        tag->parentDTD = dtd;
-        setAttributes(doc, tag);
-        if (caseSensitive)
-        {
-          tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
-        } else
-        {
-          tagList->insert(tag->name().upper(),tag);
-        }
-
-        delete doc;
-        numOfTags++;
-
-      }
-    }
-    //read the extra tags and their attributes
-    dtdConfig->setGroup("Extra tags");
-    QStrList extraTagsList;
-    dtdConfig->readListEntry("List",extraTagsList);
-    for (uint i = 0 ; i < extraTagsList.count(); i++)
-    {
-      QTag *tag = new QTag();
-      tag->setName(QString(extraTagsList.at(i)).stripWhiteSpace());
-
-      QString searchForTag = (dtd->caseSensitive) ? tag->name() : tag->name().upper();
-      if (tagList->find(searchForTag)) //the tag is already defined in a .tag file
-      {
-        delete tag;
-        continue; //skip this tag
-      }
-      tag->parentDTD = dtd;
-      //read the possible stopping tags
-      QStrList stoppingTags;
-      dtdConfig->readListEntry(tag->name() + "_stoppingtags",stoppingTags);
-      for (uint j = 0; j < stoppingTags.count(); j++)
-      {
-       QString stopTag = QString(stoppingTags.at(j)).stripWhiteSpace();
-       if (!dtd->caseSensitive) stopTag = stopTag.upper();
-       tag->stoppingTags.append(stopTag);
-      }
-      QStrList optionsList;
-      //read the possible tag options
-      dtdConfig->readListEntry(tag->name() + "_options",optionsList);
-      for (uint j = 0; j < optionsList.count(); j++)
-      {
-       QString option = QString(optionsList.at(j)).stripWhiteSpace();
-       QDictIterator<AttributeList> it(*(dtd->commonAttrs));
-       for( ; it.current(); ++it )
-       {
-         QString lookForAttr = "has"+QString(it.currentKey()).stripWhiteSpace();
-         if (option == lookForAttr)
-         {
-           tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
-         }
-       }
-
-       if (option == "single")
-       {
-         tag->setSingle(true);
-       }
-
-       if (option == "optional")
-       {
-          tag->setOptional(true);
-       }
-      }
-      QStrList attrList;
-      dtdConfig->readListEntry(tag->name(), attrList);
-      for (uint j = 0; j < attrList.count(); j++)
-      {
-        Attribute* attr = new Attribute;
-        attr->name = QString(attrList.at(j)).stripWhiteSpace();
-        attr->type = "input"; //NOTE: We can read this and the others also from the dtdConfig in the future
-        tag->addAttribute(attr);
-        delete attr;
-      }
-      if (caseSensitive)
-      {
-        tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
-      } else
-      {
-        tagList->insert(tag->name().upper(),tag);
-      }
-    }
-
-   dtd->tagsList = tagList;
-   dtds->insert(dtdName, dtd);//insert the taglist into the full list7
+    readTagDir(*it);
   }
-
-  delete dtdConfig;
-
- /*
-  QStrList *tList = new QStrList();
-  quotedAttribs = new QStrList();
-  lCore         = new QStrList();
-  lI18n         = new QStrList();
-  lScript       = new QStrList();
-  singleTags    = new QStrList();
-  optionalTags  = new QStrList();
-
-
-  KConfig *config = new KConfig( locate("appdata","tagdata.rc") );
-
-  config->setGroup("Tags");
-
-  config->readListEntry("Quoted Attribs", *quotedAttribs);
-  config->readListEntry("Core",    *lCore);
-  config->readListEntry("I18n",    *lI18n);
-  config->readListEntry("Scripts", *lScript);
-
-  QPtrList<QDomDocument> domList;
-  domList.setAutoDelete(true);
-
-  int numOfTags = 0;
-  QStringList tagsDirs = KGlobal::instance()->dirs()->findDirs("appdata", "tags");
-  for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
-  {
-  	QStringList files = QExtFileInfo::allFilesRelative(*it, "*.tag");
-  	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
-    {
-      QString name = QFileInfo(*it_f).baseName();
-      if (! name.isEmpty())
-      {
-        tList->append(name);
-
-        QString fname = *it + *it_f ;
-        QFile f( fname );
-        f.open( IO_ReadOnly );
-		    QDomDocument *doc = new QDomDocument();
-		    doc->setContent( &f );
-        domList.append(doc);
-        f.close();
-
-        numOfTags++;
-      }
-    }
-  }
-
-  tagsDict = new QDict<AttributeList>(numOfTags,false);
-  tagsList = new QDict<QString>(numOfTags, false);
-
-  tagsList->setAutoDelete(true);
-  tagsDict->setAutoDelete(true);
-
-  for ( uint i = 0; i < tList->count(); i++)
-  {
-    AttributeList *attrList = getAttributes(domList.at(i));
-    QString *tag = new QString(tList->at(i));
-    tagsList->insert(QString(tList->at(i)).upper(), tag);
-    tagsDict->insert(QString(tList->at(i)).upper(), attrList);
-  }                                 
-
-  domList.clear();
-  delete tList;
-   */
 }
 
 void QuantaApp::initActions()

@@ -245,5 +245,13 @@
         </property>
     </widget>
 </widget>
+<tabstops>
+    <tabstop>comboLBM</tabstop>
+    <tabstop>comboMBM</tabstop>
+    <tabstop>comboRBM</tabstop>
+    <tabstop>comboDoubleClick</tabstop>
+    <tabstop>dtdName</tabstop>
+    <tabstop>spinExpand</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -110,6 +110,11 @@ Dialog message2:</string>
 </widget>
 <connections>
 </connections>
+<tabstops>
+    <tabstop>dtdCombo</tabstop>
+    <tabstop>currentDTD</tabstop>
+    <tabstop>okButton</tabstop>
+</tabstops>
 <includes>
     <include location="local" impldecl="in implementation">dtdselectdialog.ui.h</include>
 </includes>

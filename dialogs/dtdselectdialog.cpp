@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Sat Aug 24 15:27:53 2002
+** Created: Sun Aug 25 00:17:23 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -69,6 +69,10 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
     okButton->setText( tr2i18n( "&OK" ) );
 
     // signals and slots connections
+
+    // tab order
+    setTabOrder( dtdCombo, currentDTD );
+    setTabOrder( currentDTD, okButton );
     init();
 }
 

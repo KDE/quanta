@@ -287,6 +287,8 @@ class QuantaApp : public KDockMainWindow
     }
   /** Ask for save all the modified user toolbars. */
   void saveModifiedToolbars();
+  /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. */
+  void readTagDir(QString &dirName);
 	
   private:
     /** project class */

@@ -1886,34 +1886,40 @@ void QuantaApp::processDTD(QString documentType)
       }
    } while ((!found) && (++i <= w->editIf->numLines()));
 
-   DTDSelectDialog *dlg = new DTDSelectDialog(this);
-   QDictIterator<DTDStruct> it(*dtds);
-   found = false;
-   for( ; it.current(); ++it )
+   if (found)   //!DOCTYPE found in file
    {
+    DTDSelectDialog *dlg = new DTDSelectDialog(this);
+    QDictIterator<DTDStruct> it(*dtds);
+    found = false;
+    for( ; it.current(); ++it )
+    {
      dlg->dtdCombo->insertItem(it.current()->name);
      if (it.current()->name == foundName)
      {
        w->dtdName = foundName;
        found =true;
-      }
-   }
-   dlg->dtdCombo->insertItem(i18n("Create new DTD info."));
-   if (foundName.isEmpty())
-   {
-    dlg->messageLabel->setText(i18n("No DTD info was found. Choose a DTD or create a new one."));
-    dlg->currentDTD->setText(i18n("Not found"));
-   } else
-   {
-    dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
-    dlg->currentDTD->setText(foundName);
-   }
-   if (!found && dlg->exec())
-   {
+     }
+    }
+    dlg->dtdCombo->insertItem(i18n("Create new DTD info."));
+    if (foundName.isEmpty())
+    {
+      dlg->messageLabel->setText(i18n("No DTD info was found. Choose a DTD or create a new one."));
+      dlg->currentDTD->setText(i18n("Not found"));
+    } else
+    {
+      dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
+      dlg->currentDTD->setText(foundName);
+    }
+    if (!found && dlg->exec())
+    {
       w->dtdName = dlg->dtdCombo->currentText();
-   }
-   delete dlg;
- } else
+    }
+    delete dlg;
+  } else //DOCTYPE not found in file
+  {
+    w->dtdName = defaultDocType;
+  }
+ } else //dtdName is read from the method's parameter
  {
    w->dtdName = documentType;
  }
@@ -1935,7 +1941,7 @@ void QuantaApp::slotToolsChangeDTD()
   }
 
   dlg->dtdCombo->setCurrentItem(pos);
-  dlg->messageLabel->setText(i18n("Change the current DTD"));
+  dlg->messageLabel->setText(i18n("Change the current DTD."));
   dlg->currentDTD->setText(w->dtdName);
   if (dlg->exec())
   {
