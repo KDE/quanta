@@ -957,7 +957,8 @@ void QuantaApp::initActions()
 
 
     KStdAction::find(this, SLOT(slotFind()), ac);
-    KStdAction::findNext(this, SLOT(slotFindAgain()), ac);
+    new KAction(i18n("Find &Next"), "findnext", KStdAccel::shortcut(KStdAccel::FindNext), this, 
+                 SLOT(slotFindAgain()), ac, "edit_find_next");
     KStdAction::findPrev(this, SLOT(slotFindAgainB()), ac, "edit_find_prev");
     KStdAction::replace(this, SLOT(slotReplace()), ac);
 

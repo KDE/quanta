@@ -18,6 +18,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
         - don't crash when setting table/body/header/footer attributes for newly created tables [#74949]
         - make the spellchecker actually replace the wrongly spelled words [#75106]
         - don't switch to the parent node when clicking on a node in the structure tree and Follow Cursor is enabled [#75332]
+        - don't crash when trying to drag the No Project text in the project tree
         - various parsing fixes        
         - report bugs for "quanta" module, not for "quanta_be"        
     - performance:
