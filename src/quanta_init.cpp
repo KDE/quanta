@@ -936,6 +936,8 @@ void QuantaInit::initActions()
     new KAction(i18n("&Remove User Toolbar..."), 0, m_quanta, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
     new KAction(i18n("Re&name User Toolbar..."), 0, m_quanta, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
     new KAction(i18n("Send Toolbar in E-&Mail..."), 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");
+    new KAction(i18n("&Download Toolbar..." ), 0, m_quanta, SLOT(slotDownloadToolbar()), ac, "toolbars_download" );
+
 
     m_quanta->showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
 

@@ -54,6 +54,7 @@ class QuantaPluginInterface;
 class QuantaDoc;
 class QuantaView;
 class QNewDTEPStuff;
+class QNewToolbarStuff;
 
 class QTabWidget;
 class QWidgetStack;
@@ -387,6 +388,8 @@ protected slots:
   void slotDownloadDTEP();
   /** Uploads a DTEP to the main server */
   void slotUploadDTEP();
+  /** Downloads a toolbar from the main server */
+  void slotDownloadToolbar();
   /** Shows tip of the day */
   void slotHelpTip();
   /** Show the user mailing list sign up */
@@ -557,6 +560,7 @@ protected: // Protected attributes
   QGuardedPtr<KTextEditor::View> m_oldKTextEditor;  ///< remembers the last activated GUI
   int m_cvsMenuId;
   QNewDTEPStuff *m_newDTEPStuff;
+  QNewToolbarStuff *m_newToolbarStuff;
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;

@@ -197,6 +197,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   userToolbarsCount = 0;
   baseNode = 0L;
   m_newDTEPStuff = 0L;
+  m_newToolbarStuff = 0L;
   currentToolbarDTD = QString::null;
   m_config=kapp->config();
   idleTimer = new QTimer(this);
@@ -3549,6 +3550,13 @@ void QuantaApp::slotDownloadDTEP()
 
 void QuantaApp::slotUploadDTEP()
 {
+}
+
+void QuantaApp::slotDownloadToolbar()
+{
+    if (!m_newToolbarStuff)
+      m_newToolbarStuff = new QNewToolbarStuff("quanta/toolbar", this);
+    m_newToolbarStuff->download();
 }
 
 void QuantaApp::slotDocumentProperties()

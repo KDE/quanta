@@ -883,7 +883,7 @@ void SAParser::slotParseNodeInDetail()
     {
       Node *node = m_currentNode;
       m_currentNode = m_currentNode->nextSibling();
-      if (node->tag->type == Tag::Comment)
+      if (node && node->tag && node->tag->type == Tag::Comment) //node and node->tag might be 0 when closing the document...
       {
          Node *commentNode = new Node(node);
          int line, col;

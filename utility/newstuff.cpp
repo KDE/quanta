@@ -12,6 +12,9 @@
  *   the Free Software Foundation; version 2 of the License.               *
  *                                                                         *
  ***************************************************************************/
+ //qt includes
+ #include <qfileinfo.h>
+
 //kde includes
 #include <kglobal.h>
 #include <klocale.h>
@@ -23,6 +26,9 @@
 #include "newstuff.h"
 #include "dtds.h"
 #include "resource.h"
+#include "quanta.h"
+#include "quantacommon.h"
+#include "qextfileinfo.h"
 
 void QNewDTEPStuff::installResource()
 {
@@ -46,6 +52,26 @@ void QNewDTEPStuff::installResource()
         ok = false;
     if (!ok)
         KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded DTEP tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("DTEP Installation Error"));
+}
+
+void QNewToolbarStuff::installResource()
+{
+    KURL destURL = KURL::fromPathOrURL(KGlobal::dirs()->saveLocation("data") + resourceDir + "toolbars/" + QFileInfo(m_tarName).fileName());
+    bool ok;
+    if (QuantaCommon::checkOverwrite(destURL))
+    {
+        if (!QExtFileInfo::copy(KURL::fromPathOrURL(m_tarName), destURL, -1, true, false, parentWidget()))
+          ok = false;
+        else
+        {
+           if (KMessageBox::questionYesNo(parentWidget(), i18n("Do you want to load the newly downloaded toolbar?"), i18n("Load Toolbar")) == KMessageBox::Yes)
+           {
+              quantaApp->slotLoadToolbarFile(destURL);
+           }
+        }
+        if (!ok)
+            KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded toolbar tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("Toolbar Installation Error"));
+     }
 }
 
 #include "newstuff.moc"

@@ -23,7 +23,7 @@
 #include "qnewstuff.h"
 
 /**
-Makes possible downloading and installing DTEP resource files from a server
+Makes possible downloading and installing a DTEP resource files from a server.
 
 @author Andras Mantia
 */
@@ -35,6 +35,24 @@ public:
     QNewDTEPStuff(const QString &type,  QWidget *parentWidget=0)
       :QNewStuff(type, parentWidget){};
     ~QNewDTEPStuff() {};
+
+private:
+     virtual void installResource();
+};
+
+/**
+Makes possible downloading and installing a Toolbar resource files from a server.
+
+@author Andras Mantia
+*/
+class QNewToolbarStuff: public QNewStuff
+{
+   Q_OBJECT
+
+public:
+    QNewToolbarStuff(const QString &type,  QWidget *parentWidget=0)
+      :QNewStuff(type, parentWidget){};
+    ~QNewToolbarStuff() {};
 
 private:
      virtual void installResource();
