@@ -74,7 +74,7 @@
 
 #include "tagdialog.h"
 
-QuantaView::QuantaView(QWidget *parent, const char *name )
+QuantaView::QuantaView(QWidget *parent, const char *name, const QString &caption )
   : KMdiChildView(parent, name)
   , m_document(0L)
   , m_plugin(0L)
@@ -82,6 +82,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   , m_kafkaDocument(0L)
   , m_currentFocus(SourceFocus)
 {
+  setMDICaption(caption);
 //Connect the VPL update timers
   connect(&m_sourceUpdateTimer, SIGNAL(timeout()), this, SLOT(sourceUpdateTimerTimeout()));
   connect(&m_VPLUpdateTimer, SIGNAL(timeout()), this, SLOT(VPLUpdateTimerTimeout()));

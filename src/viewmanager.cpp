@@ -80,9 +80,9 @@ ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, na
     m_separatorVisible = false;
 }
 
-QuantaView* ViewManager::createView()
+QuantaView* ViewManager::createView(const QString &caption)
 {
-    QuantaView *view = new QuantaView(quantaApp);
+    QuantaView *view = new QuantaView(quantaApp, "", caption);
     quantaApp->addWindow(view);
     connect(view, SIGNAL(cursorPositionChanged()), quantaApp, SLOT(slotNewLineColumn()));
     connect(view, SIGNAL(title(const QString &)), quantaApp, SLOT(slotNewLineColumn()));
@@ -98,10 +98,10 @@ QuantaView* ViewManager::createView()
 
 void ViewManager::createNewDocument()
 {
-  QuantaView *view = createView();
   int i = 1;
   while (isOpened(KURL("file:"+i18n("Untitled%1").arg(i)))) i++;
   QString fname = i18n("Untitled%1").arg(i);
+  QuantaView *view = createView(fname);
 
 #ifdef ENABLE_EDITORS
   KTextEditor::Document *doc =

@@ -66,7 +66,7 @@ class QuantaView : public KMdiChildView
 
 public:
 
-  QuantaView(QWidget *parent = 0, const char *name=0);
+  QuantaView(QWidget *parent = 0, const char *name=0, const QString &caption = QString::null);
   ~QuantaView();
 
   /** returns true if the view can be removed, false otherwise */

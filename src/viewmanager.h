@@ -43,7 +43,7 @@ public:
   virtual ~ViewManager(){};
 
   /** Creates a QuantaView object */
-  QuantaView *createView();
+  QuantaView *createView(const QString &caption = QString::null);
   /** Removes a QuantaView object. Returns false on failure (eg. the view was not saved and it refused
   the delete itself.) If force is true, the view is removed without asking for save.
   */
