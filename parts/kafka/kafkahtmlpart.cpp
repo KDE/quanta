@@ -52,6 +52,7 @@
 #include "tagactionset.h"
 #include "document.h"
 #include "resource.h"
+#include "quantacommon.h"
 #include "quanta.h"
 #include "quantaview.h"
 #include "tagattributetree.h"
@@ -660,7 +661,7 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
         }
 
         //Submit the modifs to the undoRedo system.
-        ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(m_modifs, undoRedo::KafkaModif);
+        ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(m_modifs, undoRedo::KafkaModif, 0, qConfig.replaceAccented);
         m_modifs = 0L;
     }
 
