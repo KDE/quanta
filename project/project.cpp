@@ -383,24 +383,25 @@ void Project::slotRemoveFile(QString fname)
 {
 	QDomElement el;
 	
-	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-	
-	for ( unsigned int i=0; i<nl.count(); i++ )
-  {
-		el = nl.item(i).toElement();
-		if ( el.nodeName() == "item" )
-    	if ( fname == (basePath+el.attribute("url")))
-    	{
-    		el.parentNode().removeChild( el );
-    		return;
-    	}
-  }
+  	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
+   	
+  	for ( unsigned int i=0; i<nl.count(); i++ ) 
+  	{
+  		el = nl.item(i).toElement();
+  		if ( el.nodeName() == "item" )
+      	if ( fname == (basePath+el.attribute("url")))
+      	{
+      		el.parentNode().removeChild( el );
+      		return;
+      	}
+   }
 }
 
 void Project::slotRemoveFolder(QString fname)
 {
 	QDomElement  el;
 	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
+	
 	
 	for ( unsigned int i=0; i<nl.count(); i++ )
   {

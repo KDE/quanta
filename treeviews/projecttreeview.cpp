@@ -28,6 +28,7 @@
 #include <kio/job.h>
 #include <kopenwith.h>
 #include <kiconloader.h>
+#include <kmessagebox.h>
 
 // app includes
 #include "projecttreefile.h"
@@ -294,6 +295,10 @@ void ProjectTreeView::slotRemove()
 {
 	if ( !currentItem() ) return;
 	
+  if ( KMessageBox::warningYesNo(this,"Do you really want to remove \n"+currentFileName()+"\nfrom disk ?") != KMessageBox::Yes ) 
+	  return;
+
+	
 	ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( currentItem() );
 	if ( d ) {
 		KIO::del( KURL( currentFileName() ) );
@@ -314,6 +319,9 @@ void ProjectTreeView::slotRemove()
 void ProjectTreeView::slotRemoveFromProject()
 {
 	if ( !currentItem() ) return;
+	
+	if ( KMessageBox::warningYesNo(this,"Do you really want to remove \n"+currentFileName()+"\nfrom project ?") != KMessageBox::Yes ) 
+	  return;
 	
 	ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( currentItem() );
 	if ( d ) {

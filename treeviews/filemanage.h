@@ -46,6 +46,8 @@ public slots:
 	void slotInsertInProject();
 	void slotInsertDirInProject();
 	
+	void slotInsertTag();
+	
 	virtual void slotReload();
 	void slotJobFinished( KIO::Job *);
 	
@@ -55,6 +57,8 @@ signals:
 	
 	void insertDirInProject( QString );
 	void insertFileInProject( QString );
+	
+	void insertTag(QString);
 	
 	void jobFinished();
 	void changeMode();

@@ -31,6 +31,7 @@
 #include <kio/job.h>
 #include <kpropsdlg.h>
 #include <kopenwith.h>
+#include <kmessagebox.h>
 
 // Application includes
 #include "filemanage.h"
@@ -43,6 +44,7 @@ FileManage::FileManage( QWidget *parent, const char *name)
 	fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
 	fileMenu -> insertItem(					  			   i18n("Open with..."), 		this ,SLOT(slotOpenWith()));
 	fileMenu -> insertItem(					  			   i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
+	fileMenu -> insertItem(					  			   i18n("Insert tag"), 	this ,SLOT(slotInsertTag()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem(					  			   i18n("Insert in project"),this ,SLOT(slotInsertInProject()));
 	fileMenu -> insertSeparator();
@@ -131,9 +133,12 @@ void FileManage::slotPaste()
 void FileManage::slotDelete()
 {
   if ( !currentItem() ) return;
-
-  KIO::Job *job = KIO::del( KURL( currentFileName() ) );
-  connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+  
+  if ( KMessageBox::warningYesNo(this,"Do you really want to delete file \n"+currentFileName()+" ?\n") == KMessageBox::Yes ) {
+  
+    KIO::Job *job = KIO::del( KURL( currentFileName() ) );
+    connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+  }
 }
 
 void FileManage::slotProperties()
@@ -162,3 +167,10 @@ void FileManage::slotInsertDirInProject()
 	if ( !currentItem() ) return;
 	emit insertDirInProject( currentFileName() );
 }
+
+void FileManage::slotInsertTag() 
+{
+  if ( !currentItem() ) return;
+  emit insertTag( currentFileName() );
+}
+
