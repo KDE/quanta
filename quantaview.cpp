@@ -21,6 +21,7 @@
 
 // application specific includes
 #include "quantaview.h"
+#include "quantaview.moc"
 #include "quantadoc.h"
 #include "quanta.h"
 #include "document.h"

@@ -43,6 +43,7 @@
 
 // application specific includes
 #include "quanta.h"
+#include "quanta.moc"
 #include "quantaview.h"
 #include "quantadoc.h"
 #include "document.h"
@@ -98,7 +99,7 @@ void QuantaApp::slotFileNew()
 void QuantaApp::slotFileOpen()
 {
   KURL url = KFileDialog::getOpenURL( QString::null, QString::null, this);
-    
+
   if ( !url.url().isEmpty() ) slotFileOpen( url );
 }
 
@@ -127,20 +128,20 @@ void QuantaApp::slotFileSaveAs()
 
   do {
     query = KMessageBox::Yes;
-    
+
     url = KFileDialog::getSaveURL(doc->basePath(), QString::null, this);
-    
+
     if (url.isEmpty()) return;
 
     query = doc->write()->checkOverwrite( url );
-  } 
+  }
   while (query != KMessageBox::Yes);
 
   if( query == KMessageBox::Cancel ) return;
-                            
+
   doc->saveDocument( url );
-    
-  if ( project->hasProject() ) 
+
+  if ( project->hasProject() )
     if ( KMessageBox::Yes == KMessageBox::questionYesNo(0,"Add file\n " +url.url()+"\n to project ? "))
       project->insertFile(url.url(),true);
 }
@@ -158,7 +159,7 @@ void QuantaApp::slotFileClose()
   htmlPart()->begin( KURL( doc->basePath() ));
   htmlPart()->write( "" );
  	htmlPart()->end();
-  
+
   slotNewStatus();
 }
 
@@ -170,7 +171,7 @@ void QuantaApp::slotFileCloseAll()
   htmlPart()->begin( KURL( doc->basePath() ));
  	htmlPart()->write( "" );
  	htmlPart()->end();
-  
+
   slotNewStatus();
 }
 
@@ -199,7 +200,7 @@ void QuantaApp::slotFileQuit()
     {
       if(!w->close()) break;
     }
-  }	
+  }
 }
 
 
@@ -219,7 +220,7 @@ void QuantaApp::slotViewToolBar()
   QToolBar *mbar = toolBar("mainToolBar");
   QToolBar *ebar = toolBar("mainEditToolBar");
   QToolBar *nbar = toolBar("mainNaviToolBar");
-  
+
   if(mbar->isVisible()) {
     mbar->hide();
     ebar->hide();
@@ -237,7 +238,7 @@ void QuantaApp::slotViewStatusBar()
   if (statusBar()->isVisible())
     statusBar()->hide();
   else
-    statusBar()->show();  
+    statusBar()->show();
 }
 
 
@@ -259,30 +260,30 @@ void QuantaApp::repaintPreview( bool clear )
 {
   WHTMLPart *part = htmlPart();
 	QWidgetStack *s = widgetStackOfHtmlPart();
-	
+
 	if ( !s ) return;
 	if ( !part ) return;
   if ( !s->id( s ->visibleWidget()) ) return;
-	  
+
   static QString oldtext = "";
   if ( clear )   oldtext = "";
 
   // check use prefix for preview or not
   QString url;
 	bool    usePrefix = false;
-	
+
 	if ( project->hasProject() && !project->previewPrefix.isEmpty() )
 	{
 		static QString oldUrl = "";
 		if ( clear )   oldUrl = "";
-		
+
 		url = doc->write()->url().url();
 		url = QExtFileInfo::toRelative( url, project->basePath );
-		
+
 		if ( url.left(2) != ".." ) usePrefix = true;
-		
+
 		if ( url == oldUrl && !doc->isModified() ) return;
-		
+
 		else oldUrl = url;
 	}
 
@@ -290,7 +291,7 @@ void QuantaApp::repaintPreview( bool clear )
   QString text = doc->write()->text();
   if ( !qstrcmp( text, oldtext ) && !usePrefix ) return;
 
-  if ( text.isEmpty() ) 
+  if ( text.isEmpty() )
   {
     text = i18n( "<center><h3>The current document is empty...</h3></center>" );
   }
@@ -300,16 +301,16 @@ void QuantaApp::repaintPreview( bool clear )
   int xOffset = html->contentsX(), yOffset = html->contentsY();
 
   part->closeURL();
-		
-	KParts::URLArgs 
+
+	KParts::URLArgs
 	  args(true, browserExtension()->xOffset(), browserExtension()->yOffset());
- 	
+
  	browserExtension()->setURLArgs( args );
 
 	if ( usePrefix )
 	{
    	if ( doc->isModified() ) doc->saveDocument( doc->url() );
-		
+
 		part->begin( project->previewPrefix+url, xOffset, yOffset );
 		part->openURL( KURL( project->previewPrefix+url ) );
 		part->end();
@@ -331,7 +332,7 @@ void QuantaApp::slotImageOpen(QString url)
 
   WHTMLPart *part = htmlPart();
   QWidgetStack *s = widgetStackOfHtmlPart();
-  
+
   if ( !s ) return;
   if ( !part ) return;
 
@@ -340,7 +341,7 @@ void QuantaApp::slotImageOpen(QString url)
 	QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
 	text += url;
 	text += "\">\n</div>\n</body>\n</html>\n";
-	
+
 	part->closeURL();
 	part->begin( KURL( doc->basePath() ) );
   part->write( text.data() );
@@ -354,11 +355,11 @@ void QuantaApp::slotImageOpen(QString url)
 void QuantaApp::slotInsertTag(QString url)
 {
  	QImage img;
-  
+
   QString furl = QExtFileInfo::toRelative( url, doc->basePath() );
-  
-   if ( img.load(url) )  
-   { 
+
+   if ( img.load(url) )
+   {
      QString w,h;
      w.setNum( img.width () );
 	   h.setNum( img.height() );
@@ -412,10 +413,10 @@ void QuantaApp::slotNewStatus()
 	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
   else
 	  wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
-      
+
   w->oldstat = w->isModified();
-  
-/*  
+
+/*
   while ( Document *w = it.current() )
   {
     if ( w->isModified() != w->oldstat );
@@ -424,13 +425,13 @@ void QuantaApp::slotNewStatus()
     	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
       else
     	  wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
-      
+
       w->oldstat = w->isModified();
     }
 
     ++it;
   }
-*/  
+*/
 }
 
 /** slot for new undo flag */
@@ -468,14 +469,14 @@ void QuantaApp::slotOptionsConfigureKeys()
 void QuantaApp::slotOptionsConfigureToolbars()
 {
     KEditToolbar dlg( actionCollection(), QString::null, true, this );
-    
+
     if ( dlg.exec() ) {
-    
+
       // clear tags toolbars
       while ( view->tabBar->count() ) {
-      
+
           int id = view->tabBar->currentTab();
-          
+
           view->toolbarStack->removeWidget( view->toolbarStack->widget(id) );
           view->tabBar->removeTab( view->tabBar->tab(id) );
       }
@@ -487,7 +488,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
 void QuantaApp::slotOptionsConfigureActions()
 {
     ActionEditDlg dlg( this, this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
-    
+
     if ( dlg.exec() ) {
     QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
     f.open( IO_ReadWrite | IO_Truncate );
@@ -506,7 +507,7 @@ void QuantaApp::slotOptions()
 				    i18n("Configure Quanta"),
 				    KDialogBase::Ok | KDialogBase::Cancel,
 				    KDialogBase::Ok, this, "tabdialog");
-				
+
 	// Tag Style options
   QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, BarIcon("kwrite", KIcon::SizeMedium ) );
   StyleOptionsS *styleOptionsS = new StyleOptionsS( (QWidget *)page );
@@ -533,13 +534,13 @@ void QuantaApp::slotOptions()
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
-  
+
   page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
   DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)page );
 
   if (debuggerStyle=="PHP3") debuggerOptions->radioPhp3->setChecked(true);
   if (debuggerStyle=="None") debuggerOptions->checkDebugger->setChecked(false);
-  
+
   if ( kd->exec() )
   {
     tagsCapital = styleOptionsS->checkTagsCapital->isChecked();
@@ -566,7 +567,7 @@ void QuantaApp::slotOptions()
       if (!(debuggerStyle=="PHP4")) enablePhp4Debug(true);
       debuggerStyle="PHP4";
     }
-    
+
     QWidgetStack *s;
     if ( htmlPart() )
     {
@@ -576,12 +577,12 @@ void QuantaApp::slotOptions()
 //    checkCommand( ID_VIEW_PREVIEW, false );
 
   	previewPosition = previewOptions->position();
-  	
+
   	htmlpart->closeURL();
   	htmlpart->begin( KURL( doc->basePath() ));
   	htmlpart->write( "" );
   	htmlpart->end();
-  	
+
   	repaintPreview(true);
   }
 
@@ -599,12 +600,12 @@ void QuantaApp::slotSwapLeftPanelMode()
 	{
 		FilesTreeFolder *p = dynamic_cast<FilesTreeFolder *>(fTTab->currentItem()->parent());
 		if (!p) return;
-		
+
 		QString dir = p->fullName();
-		
+
 		fLTab->dir = dir;
 		fLTab->slotReload();
-		
+
 		fTab->raiseWidget(1);
 	}
 	else if ( fTab->id( fTab->visibleWidget() ) == 1 ) fTab->raiseWidget(0);
@@ -616,13 +617,13 @@ void QuantaApp::slotActivatePreview()
 	WHTMLPart *part = htmlPart();
 	if ( !part ) return;
 	QWidgetStack *s = widgetStackOfHtmlPart();
-/*	
+/*
 	enableCommand(ID_VIEW_BACK);
   enableCommand(ID_VIEW_FORWARD);
 	enableCommand(ID_VIEW_REPAINT);
-*/	
+*/
 	s->raiseWidget( 1 );
-	
+
 //	checkCommand( ID_VIEW_PREVIEW, true );
 }
 
@@ -630,7 +631,7 @@ void QuantaApp::slotShowPreview()
 {
 	WHTMLPart *part = htmlPart();
 	QWidgetStack *s = widgetStackOfHtmlPart();
-	
+
 	if ( !s ) return;
 	if ( !part ) return;
 
@@ -641,7 +642,7 @@ void QuantaApp::slotShowPreview()
 //		disableCommand(ID_VIEW_BACK);
 //		disableCommand(ID_VIEW_FORWARD);
 //		disableCommand(ID_VIEW_REPAINT);
-		
+
 		s   ->raiseWidget( 0 );
 		doc ->write()->setFocus();
 	}
@@ -649,11 +650,11 @@ void QuantaApp::slotShowPreview()
 //		enableCommand(ID_VIEW_BACK);
 //		enableCommand(ID_VIEW_FORWARD);
 //		enableCommand(ID_VIEW_REPAINT);
-		
+
 	  if ( previewPosition == "Bottom" )
 	  {
 	  }
-		
+
 		s->raiseWidget( 1 );
 		repaintPreview(false);
 	}
@@ -690,9 +691,9 @@ void QuantaApp::reparse()
 		  int expandLevel = config->readNumEntry("Expand level",8);
 		  if ( expandLevel == 0 )
 		  	expandLevel = 40;
-		  	
+
 		  sTab->slotReparse( node , expandLevel );
-		  
+
 	    int y = view->write()->currentLine();
       int x = view->write()->currentColumn();
 
@@ -705,26 +706,26 @@ void QuantaApp::reparse()
 
 void QuantaApp::setCursorPosition( int row, int col )
 {
-  
+
   int numLines = view->write()->numLines();
-  
+
   if ( row < numLines )
     view->write()->setCursorPosition( row, col );
   else
     view->write()->setCursorPosition( numLines-1, col );
-  
+
   view->write()->view()->setFocus();
 }
 
 void QuantaApp::gotoFileAndLine( const QString &filename, int line )
 {
   if ( !filename.isEmpty() ) doc->openDocument( filename );
-  
+
   if ( view->write()->numLines() > line && line >= 0 )
   {
     view->write()->setCursorPosition( line, 0 );
   }
-  
+
   view->write()->view()->setFocus();
 }
 
@@ -733,10 +734,10 @@ void QuantaApp::gotoFileAndLine( const QString &filename, int line )
 void QuantaApp::slotDockChanged()
 {
   static bool docTabOpened = false;
-  
+
   if ( stabdock->isVisible() ) reparse();
-  
-  if ( dtabdock->isVisible() ) 
+
+  if ( dtabdock->isVisible() )
   {
     static bool first = true;
   	rightWidgetStack -> raiseWidget(2);
@@ -760,13 +761,13 @@ void QuantaApp::slotDockChanged()
 void QuantaApp::selectArea(int col1, int row1, int col2, int row2)
 {
   int numLines = view->write()->numLines();
-  
+
   if ( row1 > numLines-1 )
     row1 = numLines-1;
-    
+
   if ( row2 > numLines-1 )
     row2 = numLines-1;
-    
+
   setCursorPosition( row2, col2 );
   view->write()->selectText(col1,row1,col2,row2);
 }
@@ -776,50 +777,50 @@ void QuantaApp::openDoc( QString url )
    static QString oldUrl("");
 
    if ( url == oldUrl ) return;
-     		
+
    htmlPartDoc->closeURL();
    htmlPartDoc->openURL(url);
 	 htmlPartDoc->show();
 	 htmlPartDoc->addToHistory(url);
-	 
+
 	 oldUrl = url;
 }
 
 void QuantaApp::updateNavButtons( bool back, bool forward )
 {
-/*   
+/*
    if ( back )
    	  enableCommand(ID_VIEW_BACK);
    else
    		disableCommand(ID_VIEW_BACK);
-   		
+
    if ( forward )
    	  enableCommand(ID_VIEW_FORWARD);
    else
    		disableCommand(ID_VIEW_FORWARD);
-*/   		
+*/
 }
 
 void QuantaApp::contextHelp()
 {
   int id_w = rightWidgetStack->id( rightWidgetStack->visibleWidget());
-  
+
   if (  id_w == 1 || id_w == 2 )
   {
     rightWidgetStack->raiseWidget(0);
     doc ->write()->setFocus();
   }
-  else 
+  else
   {
     QString *url = dTab->contextHelp( view->write()->currentWord());
-  
-    if ( url ) 
+
+    if ( url )
     {
       if ( !dtabdock->isVisible() ) dtabdock->changeHideShowState();
-      
+
       rightWidgetStack->raiseWidget(2);
       htmlPartDoc->view()->setFocus();
-      
+
   		openDoc(*url);
     }
   }
@@ -827,18 +828,18 @@ void QuantaApp::contextHelp()
 
 void QuantaApp::slotFtpClient()
 {
-/*	
+/*
 	bool stat = toolMenu -> isItemChecked( ID_VIEW_FTP );
 	toolMenu->setItemChecked(ID_VIEW_FTP, !stat);
-	
+
 	// get the library loader instance
   KLibLoader *loader = KLibLoader::self();
-  
+
   QString lib_name = "quanta/plugins/libftpclient.so";
-  
-  KLibrary *lib = 
+
+  KLibrary *lib =
     loader->library(QFile::encodeName( lib_name ));
-  
+
   if (lib)
 	{
 	  // get the init_ function
@@ -846,19 +847,19 @@ void QuantaApp::slotFtpClient()
 	  void *init = lib->symbol(funcname.utf8());
 	  if (init)
 	  {
-	    QDialog* (*func)(QWidget *, const char *); 
+	    QDialog* (*func)(QWidget *, const char *);
 	    func = (QDialog* (*)(QWidget *, const char *))init;
       QDialog *dlg = func(0,"Small Ftp Client");
-      
+
       dlg->exec();
-      
+
       delete dlg;
-      
+
       loader->unloadLibrary(QFile::encodeName( lib_name ));
 	  }
 	}
 	else debug("Library not found");
-*/	
+*/
 }
 
 void QuantaApp::slotShowLeftDock() {  }
@@ -866,8 +867,8 @@ void QuantaApp::slotShowFTabDock() { ftabdock->changeHideShowState();}
 void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
-void QuantaApp::slotShowBottDock() 
-{ 
+void QuantaApp::slotShowBottDock()
+{
   if ( bottdock->parent() == 0L )
        bottdock->manualDock(maindock, KDockWidget::DockBottom, 80);
   else bottdock->changeHideShowState();
@@ -889,23 +890,23 @@ void QuantaApp::viewMenuAboutToShow()
 void QuantaApp::slotToolSyntaxCheck()
 {
   slotFileSave();
-  if ( !doc->write()->isUntitled() ) 
+  if ( !doc->write()->isUntitled() )
   {
     QString fname = doc->write()->url().url();
     if ( fname.left(5) == "file:" ) fname.remove(0,5);
-    
+
     KProcess *p = new KProcess();
     *p << "perl";
     *p << locate("lib","quanta/plugins/weblint");
     *p << "-x" << "Netscape";
     *p << fname;
-    
+
     connect( p, SIGNAL(processExited(KProcess *)),
              messageOutput, SLOT(weblintFinished()) );
     connect( p, SIGNAL(receivedStdout(KProcess *, char *, int)),
              messageOutput, SLOT( processWebLint(KProcess *, char *, int)) );
 
-    
+
     p->start( KProcess::NotifyOnExit, KProcess::Stdout);
   }
 }
@@ -914,27 +915,27 @@ void QuantaApp::slotSpellCheck() {
    view->write()->slotSpellCheck();
 }
 
-    
+
 QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomElement &element, int &id )
 {
   QString tabname = element.attribute( "tabname", "" );
-  
+
   if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty() ) {
     KToolBar *tb = new KToolBar( view->toolbarStack );
     tb->loadState( element );
     view->toolbarStack->addWidget( tb, view->tabBar->addTab( new QTab( i18n( tabname ))));
-    
+
     return tb;
   }
-  
+
   return KMainWindow::createContainer( parent, index, element, id );
-  
+
 }
 
 void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id )
 {
 //  debug( QString("name:") + container->parent()->name() );
-  
+
   if ( container->parent() && QString(container->parent()->name()) == QString("ToolBar stack") ) {
 /*    ((KToolBar*)container)->saveState( element );
     int id = view->toolbarStack->id( container );
@@ -974,6 +975,6 @@ void QuantaApp::slotMessageWidgetDisable()
 
 void QuantaApp::autoComplete()
 {
-   
+
 
 }

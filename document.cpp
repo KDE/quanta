@@ -26,7 +26,7 @@
 #include <kspell.h>
 
 #include "document.h"
-
+#include "document.moc"
 #include "kwrite/kwdoc.h"
 #include "kwrite/kwdialog.h"
 #include "kwrite/highlight/highlight.h"
@@ -70,7 +70,7 @@ void Document::insertTag(QString s1,QString s2)
 	int line,col; // cursor position
 	VConfig c;
 
-		
+
   if ( !s2.isEmpty() ) { // use 2 tags
   	// QString marked = markedText();
   	if ( !hasMarkedText() ) {
@@ -83,7 +83,7 @@ void Document::insertTag(QString s1,QString s2)
 		  kWriteDoc->insert( c, s1);
 		  paste();
   	}
-  	
+
   	col = currentColumn();
   	line = currentLine();
   	kWriteView ->getVConfig(c);
@@ -195,7 +195,7 @@ void Document::parseTagAttr( QString t, int &x, int &y)
   tagAttrNum++;
 
 	while ( t[x].isSpace() ) x++;
-	
+
   if ( t[x]!='=' || x>=(int)t.length() ) return;
 
   x++;
@@ -235,7 +235,7 @@ void Document::parseTag()
   {
     if ( t.isNull() )
     	break;
-    	
+
     parseTagAttr( t, x, y);
 
     if ( x>=(int)t.length() )
@@ -269,22 +269,22 @@ QString Document::getTagAttrValue(int i)
 QString Document::currentTag()
 {
   tagAttrNum = 0;
-  
+
   int y = currentLine();
   int ox = currentColumn(); // need to reorganise ;)
-  
+
   QString t = getLine(y);
   int x=0, i=0;
-  
+
   int tab = kWriteDoc->tabWidth();
-  
-  while (i<ox) 
+
+  while (i<ox)
   {
     if (t[x] == '\t' ) i = ((i+tab)/tab)*tab;
     else               i++;
     x++;
   }
-  
+
 
   QString begTag = findBeginOfTag( QString(""), x, y); // find begin
   QString endTag = findEndOfTag(   QString(""), x, y); // end
@@ -414,7 +414,7 @@ QString Document::tagCase( QString  tag)
 QString Document::attrCase( QString  attr)
 {
   QString sAttr = attr;
-  
+
   if ( attrCapital )
     sAttr = sAttr.upper();
   else
@@ -443,7 +443,7 @@ void Document::selectText(int x1, int y1, int x2, int y2 )
   end.y = y2;
 
 	doc()->selectTo( c,end,0);
-	
+
 	view()->repaint();
 }
 
@@ -529,16 +529,16 @@ void Document::slotSpellGo(KSpell *)
 {
 	if ( spell->status() == KSpell::Running )
 	{
-		
+
 		spellMoved = 0;
 		createSpellList();
-		
+
 		connect( spell, SIGNAL(misspelling(QString, QStringList *, unsigned)), this, SLOT(slotSpellMis(QString, QStringList *, unsigned)));
 	  connect( spell, SIGNAL(corrected(QString, QString, unsigned)), this, SLOT(slotSpellCorrect(QString, QString, unsigned)));
 	  connect( spell, SIGNAL(done(bool)), this, SLOT(slotSpellResult(bool)));
-	  		
+
 		spell->check( spellText );
-		
+
 	}
 	else {
     warning(i18n("Error starting KSpell. Please make sure you have ISpell properly configured."));
@@ -550,15 +550,15 @@ void Document::createSpellList()
 {
 	unsigned int pos = 0;
 	int wordBeg, wordEnd;
-	
+
 	spellPos = new QValueList<int>();
 	//spellLen = new QValueList<int>();
 	//spellList = new QStringList();
-	
+
 	spellText = "";
-	
+
 	QString s = text();
-	
+
 	while ( pos < s.length() )
 	{
 	  if ( s.mid(pos,7).lower() == "<script" )
@@ -566,23 +566,23 @@ void Document::createSpellList()
 	  	while ( s.mid(pos,9).lower() != "</script>" ) pos++;
 	  	pos += 9;
 	  }
-	
+
 	  if ( s.mid(pos,2).lower() == "<?" )
 	  {
 	  	while ( s.mid(pos,2).lower() != "?>" ) pos++;
 	  	pos += 2;
 	  }
-	
+
 	  if ( s[pos] == '<') while ( s[pos] != '>') pos++;
-	
+
 		if ( s[pos].isLetter() )
 		{
 			wordBeg = pos;
 			while ( s[pos].isLetter() ) pos++;
 			wordEnd = pos;
-			
+
 		  //qDebug( "%s %d %d ",s.mid( wordBeg, wordEnd-wordBeg ).data(), wordBeg, wordEnd );
-			
+
 			//spellList -> append( s.mid( wordBeg, wordEnd-wordBeg ) );
 			spellText += s.mid( wordBeg, wordEnd-wordBeg ) + "\n";
 			spellPos  -> append( wordBeg );
@@ -604,7 +604,7 @@ void Document::slotSpellMis(QString originalword, QStringList *, unsigned pos)
   	if ( spellText[i] == '\n' ) {
   	   posTab++;
   	}
-  	
+
   int posText = (*spellPos)[ posTab ] + spellMoved;
 
   int x = pos2x(posText);
@@ -625,12 +625,12 @@ void Document::slotSpellCorrect( QString originalword, QString newword, unsigned
 		return;
 
 	replaceSelected( newword );
-	
+
 	spellMoved += newword.length() - originalword.length();
-	
+
 //	for (unsigned int i=pos+1; i< spellPos->count(); i++)
 //		(*spellPos)[i] += newword.length() - originalword.length();
-		
+
 }
 
 /** spell check result */
@@ -639,7 +639,7 @@ void Document::slotSpellResult(bool)
   spell->hide();
 	view()->repaint();
 	spell->cleanUp();
-	
+
 	slotSpellDone();
 }
 
@@ -659,7 +659,7 @@ int Document::pos2y( int pos )
 	QString s = text();
 	int endLineCount = 0;
 	if ( pos<0 ) pos = 0;
-	
+
 	for (int i=0; i<=pos && !s[i].isNull(); i++)
 		if (s[i]=='\n')
 			endLineCount++;
@@ -692,7 +692,7 @@ int Document::xy2pos( int x, int y )
   	pos+=x;
   else
   	pos+=len;
-  	
+
 	return (pos);
 }
 
@@ -700,12 +700,12 @@ void Document::readConfig(KConfig *config)
 {
   KWrite::readConfig( config );
   doc() ->readConfig( config );
-  
+
   HlManager *hlManager = doc()->hlManager;
-  
+
   ItemFont      defaultFont;
   ItemStyleList defaultStyleList;
-  
+
   hlManager->getDefaults(defaultStyleList,defaultFont);
   hlManager->setDefaults(defaultStyleList,defaultFont);
 }
