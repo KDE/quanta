@@ -610,7 +610,8 @@ void QuantaView::slotShowKafkaPart()
     splitter->reparent(0, 0, QPoint(), false);
     splitter->hide();
   }
-  if(oldViewsLayout == QuantaView::QuantaViewOnly && (!baseNode || baseNode->tag->type == Tag::Empty))
+  if(oldViewsLayout == QuantaView::QuantaViewOnly && (!baseNode || (baseNode->tag->type == Tag::Empty &&
+    !baseNode->next && !baseNode->child)))
   {
     quantaApp->slotDocumentProperties();
   }
@@ -683,7 +684,8 @@ void QuantaView::slotShowKafkaAndQuanta()
       kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
     else if(currentFocus == QuantaView::kafkaFocus && !qConfig.quantaRefreshOnFocus)
       quantaUpdateTimer = startTimer(qConfig.quantaRefreshDelay);
-    if(oldViewsLayout == QuantaView::QuantaViewOnly && (!baseNode || baseNode->tag->type == Tag::Empty))
+    if(oldViewsLayout == QuantaView::QuantaViewOnly && (!baseNode || (baseNode->tag->type == Tag::Empty &&
+      !baseNode->next && !baseNode->child)))
     {
       quantaApp->slotDocumentProperties();
     }
