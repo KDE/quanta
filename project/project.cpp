@@ -1169,6 +1169,7 @@ bool ProjectPrivate::saveProject()
 
 void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFile)
 {
+  m_tmpProjectFile = tempFile;
   projectURL = url;
   QFile f(tempFile);
   if (f.open(IO_ReadOnly))
@@ -1198,22 +1199,24 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
 /** load project from file: url */
 void ProjectPrivate::loadProject(const KURL &url)
 {
+  if (projectURL == url)
+    return;
   if (!url.isValid())
   {
     parent->hideSplash();
     KMessageBox::sorry(m_parent, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
     return;
   }
-  m_tmpProjectFile = QString::null;
+  QString tmpFile = QString::null;
   // test if url is writeable and download to local file
   if (KIO::NetAccess::exists(url, false, m_parent) &&
-      KIO::NetAccess::download(url, m_tmpProjectFile, m_parent))
+      KIO::NetAccess::download(url, tmpFile, m_parent))
   {
     if (parent->hasProject())
     {
       slotCloseProject();
     }
-    loadProjectFromTemp(url, m_tmpProjectFile);
+    loadProjectFromTemp(url, tmpFile);
   } else
   {
     parent->hideSplash();
