@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Files: Copy to project...</string>
+        <string>Files: Copy to Project</string>
     </property>
     <grid>
         <property name="name">
@@ -30,7 +30,7 @@
                 <cstring>buttonCancel</cstring>
             </property>
             <property name="text">
-                <string>Cancel</string>
+                <string>&amp;Cancel</string>
             </property>
         </widget>
         <widget class="QPushButton" row="1" column="1">

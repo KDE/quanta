@@ -132,7 +132,7 @@
                             <cstring>TextLabel1</cstring>
                         </property>
                         <property name="text">
-                            <string>Project name</string>
+                            <string>Project name:</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="1" column="0">
@@ -140,7 +140,7 @@
                             <cstring>TextLabel2</cstring>
                         </property>
                         <property name="text">
-                            <string>Project destination</string>
+                            <string>Project destination:</string>
                         </property>
                     </widget>
                     <widget class="QLineEdit" row="3" column="1">
@@ -178,7 +178,7 @@
                             <cstring>TextLabel1_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Project templates</string>
+                            <string>Project templates:</string>
                         </property>
                     </widget>
                     <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
@@ -191,7 +191,7 @@
                             <cstring>TextLabel3</cstring>
                         </property>
                         <property name="text">
-                            <string>Project source file</string>
+                            <string>Project source file:</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="4" column="0">
@@ -199,7 +199,7 @@
                             <cstring>TextLabel1_2_2</cstring>
                         </property>
                         <property name="text">
-                            <string>Project toolbars</string>
+                            <string>Project toolbars:</string>
                         </property>
                     </widget>
                     <widget class="QPushButton" row="4" column="2">
@@ -256,7 +256,7 @@
                     <cstring>bGroupSources</cstring>
                 </property>
                 <property name="title">
-                    <string>Project sources</string>
+                    <string>Project Sources</string>
                 </property>
                 <grid>
                     <property name="name">
@@ -309,7 +309,7 @@
                                     <bool>false</bool>
                                 </property>
                                 <property name="text">
-                                    <string>Get files from CVS repository ( cvs checkout )</string>
+                                    <string>Get files from CVS repository (cvs checkout)</string>
                                 </property>
                             </widget>
                         </vbox>
@@ -352,7 +352,7 @@
                             <cstring>TextLabel5</cstring>
                         </property>
                         <property name="text">
-                            <string>E-mail</string>
+                            <string>Email:</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="0" column="0">
@@ -360,7 +360,7 @@
                             <cstring>TextLabel4</cstring>
                         </property>
                         <property name="text">
-                            <string>Author</string>
+                            <string>Author:</string>
                         </property>
                     </widget>
                     <widget class="QLineEdit" row="1" column="1">

@@ -1,13 +1,10 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>DebuggerOptionsS</class>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>DebuggerOptionsS</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -15,128 +12,96 @@
             <height>211</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Form1</string>
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="0"  column="0" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QCheckBox" row="0" column="0">
+            <property name="name">
                 <cstring>checkDebugger</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Enable Debugger</string>
+            <property name="text">
+                <string>Enable debugger</string>
             </property>
-            <property stdset="1">
-                <name>checked</name>
+            <property name="checked">
                 <bool>true</bool>
             </property>
         </widget>
-        <widget row="1"  column="0" >
-            <class>QButtonGroup</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QButtonGroup" row="1" column="0">
+            <property name="name">
                 <cstring>ButtonGroup1</cstring>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>7</hsizetype>
                     <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string></string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QRadioButton" row="0" column="0">
+                    <property name="name">
                         <cstring>radioPhp3</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>PHP3 Listener</string>
+                    <property name="text">
+                        <string>PHP3 listener</string>
                     </property>
                 </widget>
-                <widget row="1"  column="0" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QRadioButton" row="1" column="0">
+                    <property name="name">
                         <cstring>radioPhp4</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>PHP4 Debugger</string>
+                    <property name="text">
+                        <string>PHP4 debugger</string>
                     </property>
-                    <property stdset="1">
-                        <name>checked</name>
+                    <property name="checked">
                         <bool>true</bool>
                     </property>
                 </widget>
-                <spacer row="0"  column="1"  rowspan="2"  colspan="1" >
-                    <property>
-                        <name>name</name>
+                <spacer row="0" column="1" rowspan="2" colspan="1">
+                    <property name="name">
                         <cstring>Spacer6</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>orientation</name>
+                    <property name="orientation">
                         <enum>Horizontal</enum>
                     </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
+                    <property name="sizeType">
                         <enum>Expanding</enum>
-                    </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
                     </property>
                 </spacer>
             </grid>
         </widget>
-        <spacer row="2"  column="0" >
-            <property>
-                <name>name</name>
+        <spacer row="2" column="0">
+            <property name="name">
                 <cstring>Spacer2</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Vertical</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
             </property>
         </spacer>
     </grid>
@@ -149,4 +114,5 @@
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

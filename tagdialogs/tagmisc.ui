@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Misc. tag</string>
+        <string>Misc. Tag</string>
     </property>
     <widget class="QLayoutWidget">
         <property name="name">

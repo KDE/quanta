@@ -42,7 +42,7 @@
                     <cstring>AddressLabel</cstring>
                 </property>
                 <property name="text">
-                    <string>E-mail address</string>
+                    <string>Email address:</string>
                 </property>
             </widget>
             <widget class="QLabel">
@@ -50,7 +50,7 @@
                     <cstring>SubjectLabel</cstring>
                 </property>
                 <property name="text">
-                    <string>Subject</string>
+                    <string>Subject:</string>
                 </property>
             </widget>
             <widget class="QLabel">
@@ -58,7 +58,7 @@
                     <cstring>TitleLabel</cstring>
                 </property>
                 <property name="text">
-                    <string>Title</string>
+                    <string>Title:</string>
                 </property>
             </widget>
         </vbox>
@@ -120,7 +120,7 @@
                     <cstring>buttonHelp</cstring>
                 </property>
                 <property name="text">
-                    <string>Help</string>
+                    <string>&amp;Help</string>
                 </property>
             </widget>
             <spacer>
@@ -132,12 +132,6 @@
                 </property>
                 <property name="sizeType">
                     <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>0</height>
-                    </size>
                 </property>
             </spacer>
             <widget class="QPushButton">
@@ -156,7 +150,7 @@
                     <cstring>buttonCancel</cstring>
                 </property>
                 <property name="text">
-                    <string>Cancel</string>
+                    <string>&amp;Cancel</string>
                 </property>
             </widget>
         </hbox>
