@@ -2125,7 +2125,7 @@ void Document::slotDelayedTextChanged(bool forced)
 #ifdef BUILD_KAFKAPART
                 docUndoRedo->mergeNextModifsSet();
 #endif
-                baseNode = parser->rebuild(this);
+                baseNode = parser->parse(this, true);
                 viewCursorIf->setCursorPositionReal(line, column);
                 reparseEnabled = true;
                 break;

@@ -175,6 +175,7 @@ Node* createScriptTagNode(Document *write, const AreaStruct &area, const QString
       tag->setDtd(dtd);
   tag->name = i18n("%1 block").arg(dtd->specialAreaNames[areaName].upper());
   tag->type = Tag::ScriptTag;
+  tag->validXMLTag = false;
 
   Node *node = new Node(parentNode);
   nodeNum++;
