@@ -1656,7 +1656,9 @@ void Project::slotSaveAsProjectView(bool askForName)
     for (uint i =0 ; i < toolbarList.count(); i++)
     {
       item = dom.createElement("viewtoolbar");
-      item.setAttribute("url", QuantaCommon::qUrl(toolbarList[i]) );
+      KURL url = toolbarList[i];
+      url = QExtFileInfo::toRelative(url, baseURL);
+      item.setAttribute("url", QuantaCommon::qUrl(url) );
       el.appendChild(item);
     }
 
