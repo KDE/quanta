@@ -24,7 +24,8 @@
 class QLineEdit;
 class QComboBox;
 class QCheckBox;
-class QListBox;
+class QListView;
+class QListViewItem;
 class QPushButton;
 class QLabel;
 class KProcess;
@@ -42,7 +43,7 @@ public:
 
 signals:
     void itemSelected(QString abs_filename, int line);
-    
+
 public slots:
 		void slotSearchFor(QString pattern);
 		
@@ -51,7 +52,7 @@ private slots:
     void templateActivated(int index);
     void childExited();
     void receivedOutput(KProcess *proc, char *buffer, int buflen);
-    void itemSelected(const QString&);
+    void itemSelected(QListViewItem *);
     void slotSearch();
     void slotCancel();
     void slotClear();
@@ -64,7 +65,7 @@ private:
     QComboBox *files_combo, *pattern_combo/*, *dir_combo*/;
     KURLRequester *dir_combo;
     QCheckBox *recursive_box;
-    QListBox *resultbox;
+    QListView *resultbox;
     QPushButton *search_button, *cancel_button;
     QLabel *status_label, *matches_label;
     KProcess *childproc;

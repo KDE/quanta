@@ -57,62 +57,64 @@ ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const 
     if (fi.isDir())
     {
 	   	kdDebug() << file << " is a directory" << endl;
-		QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
+  		QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
 
-		QDateTime stime;
-		stime.setTime_t(1);	
-		
-		for ( unsigned int i=0; i<nl.count(); i++ )
-		{
-		    QDomElement el = nl.item(i).toElement();
-	    	if ( el.nodeName() == "item" )	
-	    	{
-				QString url = el.attribute("url");
-				if (url.contains(file) > 0)
-				{
-		    		files.append( url );
-				    QFileInfo fi( p->basePath + url );
-		    		
-		    		QString size;
-		    		size.sprintf( "%i", fi.size() );
-		    
-		    		QDate d = fi.lastModified().date();
-		    		QString date;
-		   			date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
-		    		date.replace( QRegExp(" "), "0" );
-		    
-		    		QListViewItem *it = new QListViewItem( list, url, date, size );
-		    
-		    		int uploadTime = el.attribute("upload_time","1").toInt();
-		    		int modifiedTime = stime.secsTo( fi.lastModified() );
-		    
-		    		if ( uploadTime < modifiedTime )
-		    		{
-						modified.append( url );
-						it->setSelected(true);
-		    		}
-				}	
-	    	}
-		} //for		
+  		QDateTime stime;
+  		stime.setTime_t(1);	
+  		
+  		for ( unsigned int i=0; i<nl.count(); i++ )
+  		{
+  		    QDomElement el = nl.item(i).toElement();
+  	    	if ( el.nodeName() == "item" )	
+  	    	{
+    				QString url = el.attribute("url");
+    				if (url.contains(file) > 0)
+    				{
+    					files.append( url );
+    					QFileInfo fi( p->basePath + url );
+
+    					QString size;
+    					size.sprintf( "%i", fi.size() );
+
+    					QDate d = fi.lastModified().date();
+    					QString date;
+    					date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
+    					date.replace( QRegExp(" "), "0" );
+
+    					//QListViewItem *it = new QListViewItem( list, url, date, size );
+    					QListViewItem *it = list->addItem( url, size, date );
+
+    					int uploadTime = el.attribute("upload_time","1").toInt();
+    					int modifiedTime = stime.secsTo( fi.lastModified() );
+
+    					if ( uploadTime < modifiedTime )
+    					{
+    						modified.append( url );
+    						it->setSelected(true);
+    	    		}
+    		    }	
+  	    	}
+  		} //for		
     } else  //it is not a directory
     {
- 		kdDebug() << file << " is a file" << endl;
+   		kdDebug() << file << " is a file" << endl;
 
-        files.append( file );
-	
-		QString size;
-		size.sprintf( "%i", fi.size() );
-  
-		QDate d = fi.lastModified().date();
-		QString date;
-		date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
-		date.replace( QRegExp(" "), "0" );
-		
-		QListViewItem *it = new QListViewItem( list, file, date, size );
-		
-		modified.append( file );
-		it->setSelected(true);
+          files.append( file );
+  	
+  		QString size;
+  		size.sprintf( "%i", fi.size() );
+
+  		QDate d = fi.lastModified().date();
+  		QString date;
+  		date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
+  		date.replace( QRegExp(" "), "0" );
+  		
+  		QListViewItem *it = new QListViewItem( list, file, size, date );
+  		
+  		modified.append( file );
+  		it->setSelected(true);
     }
+ list->slotSelectFile();
 }
 
 
@@ -121,6 +123,8 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 {
 	
 	initProjectInfo(prg);
+
+  //list->addDir(p->basePath);
 
 	QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
 
@@ -145,18 +149,21 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 	      	date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
 	      	date.replace( QRegExp(" "), "0" );
 	      
-	      	QListViewItem *it = new QListViewItem( list, url, date, size );
-	      
-	      	int uploadTime = el.attribute("upload_time","1").toInt();
-	      	int modifiedTime = stime.secsTo( fi.lastModified() );
-	      
+					QListViewItem *it = list->addItem( url, size, date );
+
+					int uploadTime = el.attribute("upload_time","1").toInt();
+					int modifiedTime = stime.secsTo( fi.lastModified() );
+	
 	      	if ( uploadTime < modifiedTime )
 	      	{
-				modified.append( url );
-				it->setSelected(true);
-	      	 }	
+						modified.append( url );
+						it->setSelected(true);
+						// Find this node and highlight it.
+						//UploadTreeFile *it = list->getNode
+          }	
 	    }
 	} //for
+ list->slotSelectFile();
 }
 
 ProjectUpload::~ProjectUpload()
@@ -217,6 +224,36 @@ void  ProjectUpload::initProjectInfo(Project *prg)
   lineHost->setFocus();
 }
 
+int ProjectUpload::selectedItemCount( QListViewItem *item, int numSelected )
+{
+  for ( QListViewItem *it = item; it; it = it->nextSibling() ) {
+    if ( it->childCount() > 0 ) {
+      numSelected += selectedItemCount( it->firstChild(), numSelected );
+    }
+    else {
+      if ( it->isSelected() ) numSelected++;
+    }
+  }
+  return numSelected;
+}
+
+void ProjectUpload::buildSelectedItemList( QListViewItem *item, QString curPath )
+{
+	for ( QListViewItem *it = item; it; it = it->nextSibling() ) {
+	if ( it->childCount() > 0 ) {
+			if ( curPath == "" ) buildSelectedItemList( it->firstChild(), it->text(0) );
+			else buildSelectedItemList( it->firstChild(), curPath + "/" + it->text(0) );
+		}
+		else {
+			if ( it->isSelected() )
+			{
+				if ( curPath == "" ) toUpload.append( it->text(0) );
+				else toUpload.append( curPath + "/" + it->text(0) );
+			}
+		}
+	}
+}
+
 
 void ProjectUpload::startUpload()
 {
@@ -244,11 +281,10 @@ void ProjectUpload::startUpload()
 	   p->passwd = "";
 	}
 
-	int selectedNum = 0;
-    for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() )
-    {
-  		if ( it->isSelected() ) selectedNum++;
-  	}  				
+	int selectedNum = selectedItemCount( list->firstChild());
+
+	buildSelectedItemList( list->firstChild(), "" );
+
 	totalProgress->setProgress(0);
 	totalProgress->setTotalSteps(selectedNum);
 	uploadInProgress = true;
@@ -263,66 +299,67 @@ void ProjectUpload::upload()
 	QString user = lineUser->text();
 	QString dirStr;
 	int pos;
-    KURL dir;
-    KURL to;
+  KURL dir;
+  KURL to;
             	
-  	for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() )
-  	{
-  		if ( it->isSelected() )
-  		{	
-  			currentFile = it->text(0);
-  			list->ensureItemVisible(it);                                               		
-  			
-  			KURL from; 
-  			from.setPath(p->basePath + currentFile);		
-      		to = *baseUrl ;
-      		to.addPath( currentFile );
-      		if (to.fileName(false).isEmpty()) dir = to;	
-            else dir = to.upURL() ;
-      	
-      		to.setUser( user );
-      		to.setPass( pass );
+//	for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() )
+	for ( QStringList::Iterator file = toUpload.begin(); file != toUpload.end(); ++file )
+	{
+			//These files are already selected, so we don't have to check for ->isSelected().
+			//currentFile = it->text(0);
+			currentFile = *file;
+			// :TODO: Duplicate this function on the tree structure.
+			//list->ensureItemVisible(it);
 
-        	dir.setUser( user );
-      		dir.setPass( pass );
+			KURL from;
+			from.setPath( p->basePath + currentFile );
+			to = *baseUrl;
+			to.addPath( currentFile );
+			if (to.fileName(false).isEmpty()) dir = to;
+			else dir = to.upURL() ;
 
-      		dirStr = dir.url();
+			to.setUser( user );
+			to.setPass( pass );
+
+			dir.setUser( user );
+			dir.setPass( pass );
+			dirStr = dir.url();
+
 			if ( !madeDirs.contains(dirStr) )
-  			{
-  				madeDirs.append( dirStr );
-  				pos = dirStr.find("/",1);
-         		while ( pos != -1)
-         		{
-           			KIO::NetAccess::mkdir(dirStr.left(pos));
-           			pos = dirStr.find("/",pos+1);
-         		}
-         		KIO::NetAccess::mkdir(dirStr); 				
-  			}
-  			
-  			//qDebug("%s -> %s", from.url().data(), to.url().data() );
-  	 		if (!from.fileName(false).isEmpty())		
-  	 		{
-        		KIO::FileCopyJob *job = KIO::file_copy( from, to, -1, true, false, false );
-      
-  				connect( job, SIGNAL( result( KIO::Job * ) ),this,
-  		    		                     SLOT( uploadFinished( KIO::Job * ) ) );
-        		connect( job, SIGNAL( percent( KIO::Job *,unsigned long ) ),
-            		            this, SLOT( uploadProgress( KIO::Job *,unsigned long ) ) );
-        		connect( job, SIGNAL( infoMessage( KIO::Job *,const QString& ) ),
-            	    	        this, SLOT( uploadMessage( KIO::Job *,const QString& ) ) );
- 			    	
-  	    		labelCurFile->setText(i18n("Current: %1").arg(currentFile));
-  				currentProgress->setProgress( 0 );
+			{
+				madeDirs.append( dirStr );
+				pos = dirStr.find("/",1);
+				while ( pos != -1)
+				{
+					KIO::NetAccess::mkdir(dirStr.left(pos));
+					pos = dirStr.find("/",pos+1);
+				}
+				KIO::NetAccess::mkdir(dirStr);
+			}
+
+			//qDebug("%s -> %s", from.url().data(), to.url().data() );
+			if (!from.fileName(false).isEmpty())
+			{
+				KIO::FileCopyJob *job = KIO::file_copy( from, to, -1, true, false, false );
+
+				connect( job, SIGNAL( result( KIO::Job * ) ),this,
+				                  SLOT( uploadFinished( KIO::Job * ) ) );
+				connect( job, SIGNAL( percent( KIO::Job *,unsigned long ) ),
+				            this, SLOT( uploadProgress( KIO::Job *,unsigned long ) ) );
+				connect( job, SIGNAL( infoMessage( KIO::Job *,const QString& ) ),
+				            this, SLOT( uploadMessage( KIO::Job *,const QString& ) ) );
+
+				labelCurFile->setText(i18n("Current: %1").arg(currentFile));
+				currentProgress->setProgress( 0 );
 				return;
-	 		} else  //it is a dir, so just go to the next item
-	 		{
-	   			emit uploadNext();
-	   			return;
-		 	}
-  		} //if isSelected()
-  }
-  uploadInProgress = false;
-  reject();
+			} else  //it is a dir, so just go to the next item
+			{
+				emit uploadNext();
+				return;
+			}
+	}
+	uploadInProgress = false;
+	reject();
 }
 
 void ProjectUpload::uploadFinished( KIO::Job *job )
@@ -351,17 +388,24 @@ void ProjectUpload::uploadMessage ( KIO::Job *, const QString & msg )
 void ProjectUpload::selectAll()
 {
 	list->selectAll(true);
+  list->slotSelectFile();
 }
 
 void ProjectUpload::selectModified()
 {
-	for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() )
-		it->setSelected( modified.contains(it->text(0)) );
+	for ( QStringList::Iterator file = modified.begin(); file != modified.end(); ++file )
+	{
+		QListViewItem *it = list->findItem( *file );
+		it->setSelected(true);
+		it->repaint();
+	}
+  list->slotSelectFile();
 }
 
 void ProjectUpload::clearSelection()
 {
 	list->selectAll(false);
+  list->slotSelectFile();
 }
 
 void ProjectUpload::resizeEvent ( QResizeEvent *t )
@@ -373,31 +417,28 @@ void ProjectUpload::resizeEvent ( QResizeEvent *t )
 /** No descriptions */
 void ProjectUpload::slotUploadNext()
 {
-   if (suspendUpload) return;
+  if (!suspendUpload)
+  {
+    totalProgress->setProgress(totalProgress->progress()+1);
+  	QListViewItem *it = list->findItem( currentFile );
+  	it->setSelected(false);
+  	it->repaint();
+    toUpload.remove( currentFile );
 
-   totalProgress->setProgress(totalProgress->progress()+1);
-   for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() )
-   {
-    	if ( it->text(0) == currentFile )
-    	{
-    		it->setSelected(false);
-    		it->repaint();
-      			
-    		//update upload time
-    		QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
-    		for ( unsigned int i=0; i<nl.count(); i++ )
-    		{
-				QDomElement el = nl.item(i).toElement();
-				if ( el.nodeName() == "item"  &&  el.attribute("url") == currentFile )
-				{
-					QDateTime stime;
-					stime.setTime_t(1);
-					el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
-				}
-			}
-    	}
-    }
-   upload();
+  	//update upload time
+  	QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
+  	for ( unsigned int i=0; i<nl.count(); i++ )
+  	{
+  		QDomElement el = nl.item(i).toElement();
+  		if ( el.nodeName() == "item"  &&  el.attribute("url") == currentFile )
+  		{
+  			QDateTime stime;
+  			stime.setTime_t(1);
+  			el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
+  		}
+  	}
+  	upload();
+  }
 }
 
 void ProjectUpload::reject()

@@ -1,5 +1,6 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>ProjectUploadS</class>
+<include>../treeviews/uploadtreeview.h</include>
 <widget class="QDialog">
     <property name="name">
         <cstring>ProjectUploadS</cstring>
@@ -252,7 +253,7 @@
                     </widget>
                 </grid>
             </widget>
-            <widget class="QListView" row="1" column="0">
+            <widget class="UploadTreeView" row="1" column="0">
                 <column>
                     <property name="text">
                         <string>File Name</string>

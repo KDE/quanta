@@ -1114,29 +1114,32 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
         if ( (pos != -1) && ( ((int)line != i) || (pos < (int) col) )) //script tag found
         {
           Tag *tag2 = findXMLTag(i, pos-1, true);
-          QString s2 = tag2->attributeValue("language");
-          if (s2.lower() == dtd->scriptName)
+          if (tag2)
           {
-            //now check if we are after the closing tag
-            bool afterClosingTag = false;
-            int j = i;
-            while (j != startLine - dir)
+            QString s2 = tag2->attributeValue("language");
+            if (s2.lower() == dtd->scriptName)
             {
-              s2 = editIf->textLine(j);
-              pos = s2.find("</script",false);
-              if ( (pos != -1) && ( ((int)line != j) || (pos < (int)col) ) )
+              //now check if we are after the closing tag
+              bool afterClosingTag = false;
+              int j = i;
+              while (j != startLine - dir)
               {
-               afterClosingTag = true;
-               break;
+                s2 = editIf->textLine(j);
+                pos = s2.find("</script",false);
+                if ( (pos != -1) && ( ((int)line != j) || (pos < (int)col) ) )
+                {
+                 afterClosingTag = true;
+                 break;
+                }
+                j -= dir;
               }
-              j -= dir;
-            }
-            if (!afterClosingTag)
-            {
-              foundName = dtd->name;
-              break;
-            }
-          } //if this script was found
+              if (!afterClosingTag)
+              {
+                foundName = dtd->name;
+                break;
+              }
+            } //if this script was found
+          } //if (tag2)
         } //if script tag was found
       } //if it has a scriptName
 

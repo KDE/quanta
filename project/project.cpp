@@ -1099,11 +1099,13 @@ void Project::options()
 void Project::upload()
 {
 	emit saveAllFiles();
-	
-	ProjectUpload *dlg = new ProjectUpload(this, 0,i18n("Upload project's files..."), true);
-	dlg->exec();
-	delete dlg;
-}
+
+  ProjectUpload *dlg = new ProjectUpload(this, 0,i18n("Upload project's files..."), false, Qt::WDestructiveClose);
+  dlg->show();
+  //ProjectUpload *dlg = new ProjectUpload(this, 0,i18n("Upload project's files..."), true);
+  //dlg->exec();
+  //delete dlg;
+ }
 
 void Project::uploadFile(QString file)
 {
@@ -1111,8 +1113,10 @@ void Project::uploadFile(QString file)
 	QString fname = QExtFileInfo::toRelative( file, basePath);
 	
 	ProjectUpload *dlg = new ProjectUpload(fname, this, 0, i18n("Upload project's files..."));
-	dlg->exec();
-	delete dlg;
+  dlg->show();
+  //ProjectUpload *dlg = new ProjectUpload(fname, this, 0, i18n("Upload project's files..."));
+  //dlg->exec();
+  //delete dlg;
 }
 
 void Project::slotEnableMessages()

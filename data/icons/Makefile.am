@@ -1,8 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = 16x16 22x22 32x32 48x48 
-
-EXTRA_DIST = wiznewprjweb.png wiznewprjloc.png quantalogo.png wiznewprjfin.png wiznewprjglb.png preview1.png preview2.png preview3.png preview4.png 
+SUBDIRS = 48x48 32x32 22x22 16x16 
 
 ####### kdevelop will overwrite this part!!! (end)############
 datadir = ${kde_datadir}/quanta/toolbar

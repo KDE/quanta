@@ -1,8 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
 
-EXTRA_DIST = quanta.png mini-book1.png mini-book2.png tag_font_small.png empty16x16.png tag_hr_small.png mini-modules.png java.png delete.png empty1x16.png tag_br_small.png save_small.png 
-
 ####### kdevelop will overwrite this part!!! (end)############
 
 datadir = ${kde_datadir}/quanta/toolbar

@@ -22,6 +22,7 @@
 #include "project.h"
 #include <qstringlist.h>
 #include <kio/job.h>
+#include "../treeviews/uploadtreeview.h"
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev
@@ -49,23 +50,26 @@ protected slots:
 	virtual void reject();
   	
 private:	
-  QStringList files;    // list of all files
-  QStringList modified; // modified files
-  QStringList toUpload; // list of files , still didn't uploaded
-  QString currentFile;  // file in progress of upload
-  QStringList madeDirs;
-  Project *p;
-  KURL *baseUrl;
-  bool stopUpload;
-  /**  */
-  bool uploadInProgress;
-  /**  */
-  bool suspendUpload;
+	int selectedItemCount( QListViewItem *, int = 0 );
+	void buildSelectedItemList( QListViewItem *, QString );
 
-  void initProjectInfo(Project *p);
+	QStringList files;    // list of all files
+	QStringList modified; // modified files
+	QStringList toUpload; // list of files , still didn't uploaded
+	QString currentFile;  // file in progress of upload
+	QStringList madeDirs;
+	Project *p;
+	KURL *baseUrl;
+	bool stopUpload;
+	bool uploadInProgress;
+	bool suspendUpload;
+
+	void initProjectInfo(Project *p);
+
 private slots: // Private slots
   /** No descriptions */
   void slotUploadNext();
+
 signals: // Signals
   /** No descriptions */
   void uploadNext();

@@ -1,8 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
 
-EXTRA_DIST = quanta.png 
-
 ####### kdevelop will overwrite this part!!! (end)############
 
 datadir = ${kde_datadir}/quanta/toolbar
