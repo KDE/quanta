@@ -299,7 +299,8 @@ int Tag::valueIndexAtPos(int line, int col)
  uint i = 0;
  do
  {
-   if (attrs[i].valueLine == line)
+   if  (attrs[i].valueLine == line &&
+       (attrs[i].valueLine != attrs[i].nameLine || attrs[i].valueCol != attrs[i].nameCol))
    {
      if (attrs[i].valueCol <= col &&
          (int) (attrs[i].valueCol + attrs[i].value.length()) >=col)

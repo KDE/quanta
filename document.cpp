@@ -742,8 +742,10 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
           //suggest attribute completions
           if (showAttributes)
           {
-            int pos = node->tag->tagStr().findRev(' ');
-            QString s = node->tag->tagStr().mid(pos).stripWhiteSpace();
+            QString s =  node->tag->tagStr().section(' ', -1);
+            if (s.endsWith(">"))
+                s = s.left(s.length() - 1);
+            s = s.stripWhiteSpace();
             if (s.contains("="))
                 s = "";
             showCodeCompletions( getAttributeCompletions(tagName, s) );
@@ -1452,7 +1454,8 @@ bool Document::xmlCodeCompletion(int line, int col)
            s = tag->attribute(index).left(col - bCol);
           } else
           {
-            s="";
+            s = text(line, 0, line, col -1);
+            s = s.section(' ', -1);
           }
           showCodeCompletions( getAttributeCompletions(tagName, s) );
           handled = true;
