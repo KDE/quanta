@@ -3716,7 +3716,7 @@ void QuantaApp::slotDeleteFile(QuantaView *view)
   w->setModified(false); //don't ask for save
   if (QuantaNetAccess::del(url, this, true))
   {
-    slotFileClose();
+    ViewManager::ref()->removeView(view);
   } else
     w->setModified(modified);
 }
