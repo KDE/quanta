@@ -88,6 +88,7 @@
 #include <ktexteditor/popupmenuinterface.h>
 #include <ktexteditor/dynwordwrapinterface.h>
 #include <ktexteditor/encodinginterface.h>
+#include <ktexteditor/undointerface.h>
 
 #include <kio/netaccess.h>
 
@@ -1416,7 +1417,7 @@ void QuantaApp::reparse(bool force)
       uint line, col;
       w->viewCursorIf->cursorPositionReal(&line, &col);
       Node *node = parser->nodeAt(line, col);
-      if (/*stabdock->isVisible() && */node)
+      if (StructTreeView::ref()->isVisible() && node)
          StructTreeView::ref()->showTagAtPos(node);
       aTab->setCurrentNode(node);
     }
@@ -3124,14 +3125,6 @@ QString QuantaApp::defaultEncoding()
   return encoding;
 }
 
-// QPopupMenu *QuantaApp::toolbarMenu(const QString& name)
-// {
-//   QPopupMenu *menu = 0L;
-//   ToolbarEntry* p_toolbar = toolbarList[name.lower()];
-//   if (p_toolbar) menu = p_toolbar->menu;
-//   return menu;
-// }
-
 KURL::List QuantaApp::userToolbarFiles()
 {
   KURL::List list;
@@ -3537,7 +3530,7 @@ void QuantaApp::slotConvertCase()
 void QuantaApp::slotReloadStructTreeView()
 {
   Document *w = ViewManager::ref()->activeDocument();
-   if (/*stabdock->isVisible() &&*/ w)
+   if (StructTreeView::ref()->isVisible() && w)
   {
     StructTreeView::ref()->setParsingDTD(w->parsingDTD());
     int expandLevel = qConfig.expandLevel;
@@ -4296,7 +4289,9 @@ void QuantaApp::slotUndo ()
 //#ifdef BUILD_KAFKAPART
 //    write()->docUndoRedo.undo(false);
 //#else
-    dynamic_cast<KTextEditor::UndoInterface*>(w->doc())->undo();
+    KTextEditor::UndoInterface* undoIf = dynamic_cast<KTextEditor::UndoInterface*>(w->doc());
+    if (undoIf)
+      undoIf->undo();
 //#endif
     qConfig.updateClosingTags = updateClosing;
   }
@@ -4320,7 +4315,9 @@ void QuantaApp::slotRedo ()
 //#ifdef BUILD_KAFKAPART
 //    write()->docUndoRedo.redo(false);
 //#else
-    dynamic_cast<KTextEditor::UndoInterface*>(w->doc())->redo();
+    KTextEditor::UndoInterface* undoIf = dynamic_cast<KTextEditor::UndoInterface*>(w->doc());
+    if (undoIf)
+      undoIf->redo();
 //#endif
     qConfig.updateClosingTags = updateClosing;
   }

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Tue Jun 6 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
-                           (C) 2001-2003 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,41 +20,39 @@
 
 #include <qdict.h>
 #include <qwidget.h>
-#include <qevent.h>
 
-#include <kate/document.h>
-#include <kate/view.h>
-
-
-#include <ktexteditor/document.h>
-#include <ktexteditor/view.h>
-#include <ktexteditor/viewcursorinterface.h>
-#include <ktexteditor/editinterface.h>
-
-#include <ktexteditor/cursorinterface.h>
-#include <ktexteditor/selectioninterface.h>
-#include <ktexteditor/codecompletioninterface.h>
-#include <ktexteditor/markinterface.h>
-
-
-#ifdef BUILD_KAFKAPART
-#include <ktexteditor/editinterfaceext.h>
-#endif
 #include "qtag.h"
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
 
+class QEvent;
+class QFocusEvent;
 class KConfig;
 class QStringList;
 class KTempFile;
+class KURL;
 class Tag;
 class Node;
 class Project;
 class undoRedo;
 struct AreaStruct;
 struct DTDStruct;
+
+namespace KTextEditor
+{
+  class CodeCompletionInterface;
+  class CompletionEntry;
+  class ConfigInterface;
+  class Document;
+  class EditInterface;
+  class EditInterfaceExt;
+  class MarkInterface;
+  class SelectionInterface;
+  class View;
+  class ViewCursorInterface;
+}
 
 class Document : public QWidget{
    Q_OBJECT
@@ -63,8 +61,6 @@ public:
   Document(KTextEditor::Document *doc,
            QWidget *parent = 0, const char *name = 0, WFlags f=0);
   ~Document();
-
-  bool eventFilter ( QObject * watched, QEvent * e );
 
   KURL url();
 
@@ -183,7 +179,6 @@ work correctly. */
 #ifdef BUILD_KAFKAPART
   KTextEditor::EditInterfaceExt *editIfExt;
 #endif
-  KTextEditor::CursorInterface *cursorIf;
   KTextEditor::CodeCompletionInterface *codeCompletionIf;
   KTextEditor::ConfigInterface* configIf;
   KTextEditor::MarkInterface* markIf;
@@ -225,6 +220,10 @@ public slots:
   void slotDelayedTextChanged(bool forced = false);
   void slotDelayedScriptAutoCompletion();
   void slotDelayedShowCodeCompletion();
+
+signals:
+ /** Emitted when the internal text editor got the focus */
+  void editorGotFocus();
 
 private:
 

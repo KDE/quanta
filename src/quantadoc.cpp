@@ -37,6 +37,7 @@
 #include <kdebug.h>
 #include <kiconloader.h>
 
+#include <ktexteditor/view.h>
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/popupmenuinterface.h>
@@ -261,7 +262,7 @@ void QuantaDoc::slotAttribPopup()
         attribMenu->setActiveItem( 0);
 
         QPoint globalPos = w->mapToGlobal(w->viewCursorIf->cursorCoordinates());
-        quantaApp->config()->setGroup("Kate Document");
+        quantaApp->config()->setGroup("Kate Document"); //FIXME: Read from some general (not Kate specific) location.
         QFont font;
         font.fromString(quantaApp->config()->readEntry("Font"));
         globalPos.setY(globalPos.y() + QFontMetrics(font).height());

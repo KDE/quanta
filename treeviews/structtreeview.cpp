@@ -28,6 +28,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <ktexteditor/view.h>
 
 // app includes
 #include "messageoutput.h"

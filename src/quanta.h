@@ -37,7 +37,6 @@
 #include <kdockwidget.h>
 #include "kqapp.h"
 #include <kparts/browserextension.h>
-#include <kate/document.h>
 #include <kparts/dockmainwindow.h>
 
 #include <kmdimainfrm.h>
@@ -89,6 +88,11 @@ class KToolBarPopupAction;
 class KTempFile;
 class KParts::Part;
 class KParts::PartManager;
+namespace KTextEditor
+{
+  class Mark;
+  class View;
+}
 
 class SpellChecker;
 struct DirInfo;
@@ -126,10 +130,6 @@ public:
 
   PHPDebuggerInterface *debugger() const {return m_debugger;}
   KParts::PartManager *partManager() {return m_partManager;}
-/*  QPopupMenu *toolbarMenu(const QString& name);*/
-
-  /** Returns the output dock widget */
-//   KDockWidget *outputDockWidget() const { return bottdock; }
 
   QWidget* createContainer(QWidget *parent, int index, const QDomElement &element, int &id );
   void removeContainer(QWidget *container, QWidget *parent, QDomElement &element, int id );
@@ -383,7 +383,6 @@ protected slots:
   void slotPasteURLEncoded();
   void slotInsertChar(const QString &selected);
 
-/** Kate related slots */
 //Edit
   void slotUndo ();
   void slotRedo ();

@@ -35,10 +35,11 @@
 #include <kshortcut.h>
 #include <kstandarddirs.h>
 #include <ktempfile.h>
-#include <ktexteditor/cursorinterface.h>
+#include <ktexteditor/document.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/selectioninterfaceext.h>
 
 //app includes
 #include "tagaction.h"

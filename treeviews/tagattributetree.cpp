@@ -28,6 +28,7 @@
 #include <kstringhandler.h>
 #include <kdebug.h>
 #include <kiconloader.h>
+#include <ktexteditor/viewcursorinterface.h>
 
 //app includes
 #include "tagattributetree.h"

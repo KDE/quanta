@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Jun 1 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2001-2003 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -83,8 +83,7 @@ class FilesTreeView : public KFileTreeView {
 
 public:
   FilesTreeView(QWidget *parent = 0L, const char *name = 0L);
-  FilesTreeView(KConfig *config, KActionCollection *ac,
-                QWidget *parent, const char *name = 0L);
+  FilesTreeView(KConfig *config, QWidget *parent, const char *name = 0L);
   virtual ~FilesTreeView();
   KURL::List topURLList;
 
@@ -121,10 +120,6 @@ public slots:
 
 protected slots:
   void slotDropped (KURL::List&, KURL&);
-  void slotToggleShow()
-  {
-//    if (m_dock) m_dock->changeHideShowState();
-  };
 
 protected:
   virtual KFileTreeBranch* newBranch(const KURL& url);
@@ -149,10 +144,6 @@ protected:
   KConfig *m_config;
   /** this is mainly for project and template tree to reduce includes there */
   bool isFileOpen(const KURL &url);
-  KToggleAction *m_action;
-  void showEvent ( QShowEvent * );
-  void hideEvent ( QHideEvent * );
-  KDockWidget *m_dock;
 
 signals:
   void showPreviewWidget(bool);

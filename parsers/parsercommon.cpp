@@ -19,10 +19,11 @@
 
 //kde includes
 #include "klocale.h"
+#include <ktexteditor/editinterface.h>
 
 //own includes
 #include "parsercommon.h"
-#include "node.h" 
+#include "node.h"
 #include "document.h"
 #include "qtag.h"
 #include "quantacommon.h"
@@ -32,12 +33,12 @@
 class KDirWatch;
 
 int nodeNum; //for memory debugging - remove if not needed
- 
+
 namespace ParserCommon {
  QStringList includedFiles;
- QPtrList<const DTDStruct> includedFilesDTD; 
- KDirWatch *includeWatch; 
- 
+ QPtrList<const DTDStruct> includedFilesDTD;
+ KDirWatch *includeWatch;
+
  //common methods.
 QString getLine(Document *write, int line, int endLine, int endCol)
 {

@@ -22,6 +22,7 @@
 #include <kdirwatch.h>
 #include <klocale.h>
 #include <kurl.h>
+#include <ktexteditor/editinterface.h>
 
 //own includes
 #include "saparser.h"

@@ -22,6 +22,7 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <ktexteditor/editinterface.h>
+#include <ktexteditor/selectioninterface.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
 //#include <kglobal.h>

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Jun 1 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2001-2003 Andras Mantia <amantoa@kde.org>
+                           (C) 2001-2004 Andras Mantia <amantoa@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,7 +28,6 @@
 #include <qlineedit.h>
 #include <qfont.h>
 #include <qpainter.h>
-#include <qevent.h>
 
 
 // KDE includes
@@ -150,17 +149,11 @@ KFileTreeViewItem* FilesTreeBranch::createTreeViewItem( KFileTreeViewItem *paren
 FilesTreeView::FilesTreeView(QWidget *parent, const char *name)
 : KFileTreeView(parent, name)
 {
-  m_dock = 0L;
-  m_action = 0L;
 }
 
-FilesTreeView::FilesTreeView(KConfig *config, KActionCollection *ac, QWidget *parent, const char *name)
+FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   : KFileTreeView(parent, name)
 {
-//  m_dock = parent;
-  m_action = new KToggleAction( i18n("Show Files Tree"), UserIcon("ftab"), 0,
-                                this, SLOT( slotToggleShow() ),
-                                ac, "show_ftab_tree" );
   setRootIsDecorated( true );
   setSorting(0);
   setFrameStyle( Panel | Sunken );
@@ -798,17 +791,6 @@ bool FilesTreeView::isPathInClipboard()
   else
     return QExtFileInfo::exists(url);
 }
-
-void FilesTreeView::showEvent ( QShowEvent * )
-{
-  if (m_action) m_action->setChecked(true);
-};
-
-void FilesTreeView::hideEvent ( QHideEvent * )
-{
-  if (m_action) m_action->setChecked(false);
-};
-
 
 void FilesTreeView::slotDocumentClosed()
 {

@@ -18,12 +18,14 @@
 #include <qpainter.h>
 #include "tableitem.h"
 
+#if KDE_IS_VERSION(3,2,0)
 TableItem::TableItem(QTable* table, EditType et) : QTableItem(table, et)
 {
   setReplaceable(false);
   m_halign = Qt::AlignLeft;
   m_valign = Qt::AlignVCenter;
 }
+#endif
 
 TableItem::TableItem(QTable* table, EditType et, const QString& text) : QTableItem(table, et, text)
 {
@@ -71,7 +73,7 @@ void TableItem::paint(QPainter* p, const QColorGroup& cg, const QRect& cr, bool 
    cr0.setTop(0);
    cr0.setLeft(0);
    if (selected) {
-     p->fillRect(cr0, cg.brush(QColorGroup::Highlight));  
+     p->fillRect(cr0, cg.brush(QColorGroup::Highlight));
      p->setPen(cg.highlightedText());
    }
    else {
@@ -82,7 +84,7 @@ void TableItem::paint(QPainter* p, const QColorGroup& cg, const QRect& cr, bool 
      p->drawPixmap(4, 4, pixmap());
      p->drawText(6 + pixmap().width(), 4, cr.width()-8, cr.height()-8, m_halign | m_valign | WordBreak, text());
    }
-   else 
+   else
      p->drawText(4, 4, cr.width()-8, cr.height()-8, m_halign | m_valign | WordBreak, text());
 }
 

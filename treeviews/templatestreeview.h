@@ -2,7 +2,7 @@
                           templatestreeview.h  -  description
                              -------------------
     begin                : Thu Dec 20 2001
-    copyright            : (C) 2001-2003 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2001-2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -47,11 +47,10 @@ public:
    *  the parameter are only used at the first call to create the class
    *
    */
-  static TemplatesTreeView* const ref(KActionCollection *ac = 0L,
-                                      QWidget *parent = 0L, const char *name = 0L)
+  static TemplatesTreeView* const ref(QWidget *parent = 0L, const char *name = 0L)
   {
     static TemplatesTreeView *m_ref;
-    if (!m_ref) m_ref = new TemplatesTreeView (ac, parent, name);
+    if (!m_ref) m_ref = new TemplatesTreeView (parent, name);
     return m_ref;
   }
 
@@ -115,8 +114,7 @@ private:
    *  If you need the class use TemplatesTreeView::ref() for
    *  construction and reference
    */
-  TemplatesTreeView(KActionCollection *ac,
-                    QWidget *parent, const char *name = 0L);
+  TemplatesTreeView(QWidget *parent, const char *name = 0L);
   FilesTreeBranch *m_projectDir;
   int m_deleteMenuId;
   int m_openId;

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Tue Mar 14 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2001-2003 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -51,11 +51,10 @@ public:
    *  the parameters are only used at the first call to create the class
    *
    */
-  static ProjectTreeView* const ref(KActionCollection *ac = 0L,
-                                    QWidget *parent = 0L, const char *name = 0L)
+  static ProjectTreeView* const ref(QWidget *parent = 0L, const char *name = 0L)
   {
     static ProjectTreeView *m_ref;
-    if (!m_ref) m_ref = new ProjectTreeView (ac, parent, name);
+    if (!m_ref) m_ref = new ProjectTreeView(parent, name);
     return m_ref;
   }
 
@@ -90,8 +89,7 @@ private:
    *  If you need the class use ProjectTreeView::ref() for
    *  construction and reference
    */
-  ProjectTreeView(KActionCollection *ac,
-                  QWidget *parent, const char *name);
+  ProjectTreeView(QWidget *parent, const char *name);
 
   ProjectTreeBranch *m_projectDir;
   KURL m_oldURL;

@@ -18,6 +18,7 @@
 #define TABLEITEM_H
 
 #include <qtable.h>
+#include <kdeversion.h>
 
 class TableItem : public QTableItem
 {
@@ -26,8 +27,10 @@ private:
   Qt::AlignmentFlags m_valign;
   bool m_header;
 public:
-  // Standard constructors copied from QTableItem 
+  // Standard constructors copied from QTableItem
+#if KDE_IS_VERSION(3, 2, 0)
   TableItem(QTable* table, EditType et);
+#endif
   TableItem(QTable* table, EditType et, const QString& text);
   TableItem (QTable* table, EditType et, const QString& text, const QPixmap& p);
   // Use QTextEdit instead of standard QLineEdit

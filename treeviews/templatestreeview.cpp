@@ -2,7 +2,7 @@
                           templatestreeview.cpp  -  description
                              -------------------
     begin                : Thu Dec 20 2001
-    copyright            : (C) 2001-2003 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2001-2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -107,14 +107,9 @@ KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *pa
 
 
 
-TemplatesTreeView::TemplatesTreeView(KActionCollection *ac,
-                                     QWidget *parent, const char *name )
+TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name), m_projectDir(0)
 {
-//  m_dock = parent;
-  m_action = new KToggleAction( i18n("Show Templates Tree"), UserIcon("ttab"), 0,
-                                this, SLOT( slotToggleShow() ),
-                                ac, "show_ttab_tree" );
   m_fileMenu = new KPopupMenu();
 
   m_openId = m_fileMenu->insertItem(i18n("Open"), this ,SLOT(slotInsert()));

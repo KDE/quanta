@@ -2,7 +2,7 @@
                           scripttreeview.cpp  -  description
                              -------------------
     begin                : Thu Sep 16 2003
-    copyright            : (C) 2003 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2003-2004  by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -44,14 +44,9 @@
 #include "quantacommon.h"
 #include "tagmaildlg.h"
 
-ScriptTreeView::ScriptTreeView(KActionCollection *ac,
-                               QWidget *parent, const char *name )
+ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name)
 {
-//  m_dock = parent;
-  m_action = new KToggleAction( i18n("Show Scripts Tree"), SmallIcon("run"), 0,
-                                this, SLOT( slotToggleShow() ),
-                                ac, "show_scripttab_tree" );
   setRootIsDecorated( true );
   //header()->hide();
   setSorting( 0 );

@@ -46,10 +46,7 @@ namespace DOM
 {
   class Node;
 }
-namespace Kate
-{
-  class View;
-}
+
 namespace KTextEditor
 {
   class Mark;
@@ -152,7 +149,7 @@ public slots:
   /**
    * Called whenever the KTextEditor::View widget get the focus.
    */
-  void slotSourceGetFocus(Kate::View *view);
+  void slotSourceGetFocus();
 
   /**
    * Called when we want to set the Quanta cursor.

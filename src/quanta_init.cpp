@@ -344,11 +344,6 @@ void QuantaInit::initProject()
 void QuantaInit::initView()
 {
   ////////////////////////////////////////////////////////////////////
-  // create the main widget here that is managed by KTMainWindow's view-region and
-  // connect the widget to your document to display document contents.
-/*
-  m_quanta->m_oldTreeViewWidget = m_quanta->ptabdock;
-*/
   ViewManager *m_viewManager = ViewManager::ref(m_quanta);
   connect(m_quanta, SIGNAL(viewActivated (KMdiChildView *)), m_viewManager, SLOT(slotViewActivated(KMdiChildView*)));
 //   connect(m_quanta, SIGNAL(viewDeactivated(KMdiChildView *)), m_viewManager, SLOT(slotViewDeactivated(KMdiChildView*)));
@@ -374,16 +369,16 @@ void QuantaInit::initView()
   pMDICover->show();
 
 */
-  m_quanta->fTab = new FilesTreeView(m_config, m_quanta->actionCollection(), m_quanta, "filestree");
+  m_quanta->fTab = new FilesTreeView(m_config,  m_quanta, "filestree");
   addToolTreeView(m_quanta->fTab, i18n("Files"), UserIcon("ftab"), KDockWidget::DockLeft);
 
   m_quanta->aTab = new EnhancedTagAttributeTree(m_quanta, "TagAttributes");
   addToolTreeView(m_quanta->aTab, i18n("Attribute Editor"), UserIcon("tag_misc"), KDockWidget::DockRight);
 
-  pTab = ProjectTreeView::ref(m_quanta->actionCollection(), m_quanta, "Project");
+  pTab = ProjectTreeView::ref(m_quanta, "Project");
   addToolTreeView(pTab, i18n("Project"), UserIcon("ptab"), KDockWidget::DockLeft);
 
-  tTab = TemplatesTreeView::ref(m_quanta->actionCollection(), m_quanta, "Templates");  // creates the treeview
+  tTab = TemplatesTreeView::ref(m_quanta, "Templates");  // creates the treeview
   addToolTreeView(tTab, i18n("Templates"), UserIcon("ttab"), KDockWidget::DockLeft);
 
   m_quanta->dTab = new DocTreeView(m_quanta, "Docs");
@@ -392,7 +387,7 @@ void QuantaInit::initView()
   StructTreeView *sTab = StructTreeView::ref(m_quanta ,"Struct");
   addToolTreeView(sTab, i18n("Document Structure"), BarIcon("view_sidetree"), KDockWidget::DockLeft);
 
-  scriptTab = new ScriptTreeView(m_quanta->actionCollection(), m_quanta, "Scripts");
+  scriptTab = new ScriptTreeView(m_quanta, "Scripts");
   addToolTreeView(scriptTab, i18n("Scripts"), BarIcon("run"), KDockWidget::DockLeft);
 
 
@@ -573,7 +568,6 @@ void QuantaInit::readOptions()
 #ifdef BUILD_KAFKAPART
   m_quanta->showKafkaAction->setChecked( false );
 #endif
-//  m_quanta->showMessagesAction->setChecked( m_quanta->bottdock->parent() != 0L );
 
   Project::ref()->readConfig(m_config); // project
 

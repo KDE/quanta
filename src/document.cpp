@@ -45,12 +45,21 @@
 #include <kio/netaccess.h>
 #include <kstandarddirs.h>
 
+#include <ktexteditor/document.h>
+#include <ktexteditor/view.h>
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
+#include <ktexteditor/codecompletioninterface.h>
 #include <ktexteditor/configinterface.h>
+#include <ktexteditor/editinterface.h>
+#include <ktexteditor/editinterfaceext.h>
 #include <ktexteditor/encodinginterface.h>
+#include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/wordwrapinterface.h>
 #include <ktexteditor/markinterfaceextension.h>
+
+#include <kate/view.h>
 
 #include "tag.h"
 #include "quantacommon.h"
@@ -114,14 +123,13 @@ Document::Document(KTextEditor::Document *doc,
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
 #ifdef BUILD_KAFKAPART
   editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
-  cursorIf = dynamic_cast<KTextEditor::CursorInterface *>(m_doc);
 #endif
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
   configIf = dynamic_cast<KTextEditor::ConfigInterface*>(m_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(m_view);
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(m_view);
   markIf = dynamic_cast<KTextEditor::MarkInterface *>(m_doc);
-  KTextEditor::MarkInterfaceExtension* iface = dynamic_cast<KTextEditor::MarkInterfaceExtension*>( m_doc );
+  KTextEditor::MarkInterfaceExtension* iface = dynamic_cast<KTextEditor::MarkInterfaceExtension*>(m_doc);
   if (iface)
   {
     iface->setPixmap(KTextEditor::MarkInterface::markType10, SmallIcon("stop"));
@@ -162,9 +170,8 @@ Document::Document(KTextEditor::Document *doc,
            this,  SLOT(  slotFilterCompletion(KTextEditor::CompletionEntry*,QString *)) );
   connect( m_doc, SIGNAL(textChanged()), SLOT(slotTextChanged()));
 
- // installEventFilter(this);
+  connect(m_view, SIGNAL(gotFocus(Kate::View*)), SIGNAL(editorGotFocus()));
 
-//  setFocusProxy(m_view);
 }
 
 Document::~Document()
@@ -179,21 +186,6 @@ Document::~Document()
  delete m_view;
  delete m_doc;
 }
-
-bool Document::eventFilter ( QObject * watched, QEvent * e )
-{
-  Q_UNUSED(watched)
-  if ( e->type() == QEvent::AccelOverride)
-  {
-    QKeyEvent *ke = (QKeyEvent*) e;
-    kdDebug(24000) << "eventFilter : AccelOverride : " << ke->key() << endl;
-//    kdDebug(24000) << "              type          : " << ke->type() << endl;
-//    kdDebug(24000) << "              state         : " << ke->state() << endl;
-    typingInProgress = true;
-  }
-  return false;
-}
-
 
 void Document::setUntitledUrl(QString url)
 {
@@ -399,7 +391,7 @@ void Document::insertText(const QString &text, bool adjustCursor, bool reparse)
   // calculate new cursor position
   // counts the words and whitespace of the text so we can place the
   // cursor correctly and quickly with the viewCursorInterace, avoiding
-  // the Kate::View::insertText method
+  // the KTexEditor::insertText method
   if(adjustCursor)
   {
     unsigned textLength = text.length();

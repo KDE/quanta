@@ -54,6 +54,8 @@
 #include "wkafkapart.h"
 #endif
 
+#include <ktexteditor/document.h>
+#include <ktexteditor/view.h>
 #include <ktexteditor/viewcursorinterface.h>
 
 // application specific includes
@@ -104,15 +106,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 
   m_documentArea->show();
 
-//FIXME:
-/*
-  oldWrite = 0L;
-  oldTab = 0L;
-
-  currentViewsLayout = QuantaView::QuantaViewOnly;//TODO: load it from the config
-*/
   setAcceptDrops(TRUE); // [MB02] Accept drops on the view
-
 }
 
 QuantaView::~QuantaView()
@@ -148,8 +142,8 @@ void QuantaView::addDocument(Document *document)
    if (!document)
      return;
    m_document = document;
-   connect(m_document->view(), SIGNAL(gotFocus(Kate::View *)),
-                  this, SLOT(slotSourceGetFocus(Kate::View *)));
+   connect(m_document, SIGNAL(editorGotFocus()),
+                  this, SLOT(slotSourceGetFocus()));
     connect(m_document->view(), SIGNAL(cursorPositionChanged()), this, SIGNAL(cursorPositionChanged()));
 
 
@@ -176,7 +170,6 @@ void QuantaView::addDocument(Document *document)
 #endif
 
    m_currentViewsLayout = -1; //force loading of this layout
-//   int currentViewsLayout = quantaApp->currentLayoutSetting(); FIXME:
    int currentViewsLayout = SourceOnly;
    switch (currentViewsLayout)
    {
@@ -443,12 +436,13 @@ void QuantaView::slotVPLGetFocus(bool focus)
 #endif
 }
 
-void QuantaView::slotSourceGetFocus(Kate::View *)
+void QuantaView::slotSourceGetFocus()
 {
 #ifdef BUILD_KAFKAPART
 #ifdef LIGHT_DEBUG
   kdDebug(25001)<< "slotSourceGetFocus(true)" << endl;
 #endif
+  kdDebug(24000)<< "slotSourceGetFocus(true)" << endl;
   KAction *action;
 
   //We reload the quanta view from the Node Tree.
@@ -692,7 +686,7 @@ void QuantaView::activated()
   if (!m_document)
   {
     parser->setSAParserEnabled(false);
-    quantaApp->slotReloadStructTreeView(); //FIXME
+    quantaApp->slotReloadStructTreeView();
     if (m_plugin)
        quantaApp->partManager()->setActivePart(m_plugin->part(), m_plugin->widget());
     return;

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include <ktexteditor/document.h>
+#include <ktexteditor/markinterface.h>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Tue Mar 14 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2001-2003 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -77,14 +77,9 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
 }
 
 //ProjectTreeView implementation
-ProjectTreeView::ProjectTreeView(KActionCollection *ac,
-                                 QWidget *parent, const char *name )
+ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name)
 {
-//  m_dock = parent;
-  m_action = new KToggleAction( i18n("Show Project Tree"), UserIcon("ptab"), 0,
-                                this, SLOT( slotToggleShow() ),
-                                ac, "show_ptab_tree" );
   setRootIsDecorated(false);
  // header()->hide();
   setSorting( 0 );

@@ -22,6 +22,10 @@
 
 #include <kdebug.h>
 #include <kiconloader.h>
+#include <ktexteditor/editinterface.h>
+#include <ktexteditor/editinterfaceext.h>
+#include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/viewcursorinterface.h>
 #include <dom/dom_node.h>
 #include <dom/dom_exception.h>
 

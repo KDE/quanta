@@ -19,8 +19,11 @@
 #include <klocale.h>
 #include <kmdimainfrm.h>
 #include <kurl.h>
+#include <ktexteditor/view.h>
 #include <ktexteditor/encodinginterface.h>
+#include <ktexteditor/popupmenuinterface.h>
 #include <ktexteditor/editorchooser.h>
+
 
 //app includes
 #ifdef BUILD_KAFKAPART
@@ -82,7 +85,7 @@ void ViewManager::createNewDocument()
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
-  connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *) TemplatesTreeView::ref(), SLOT(slotDragInsert(QDropEvent *)));
+  connect(w->view(), SIGNAL(dropEventPass(QDropEvent *)), TemplatesTreeView::ref(), SLOT(slotDragInsert(QDropEvent *)));
 
   w->setUntitledUrl( fname );
   KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view());

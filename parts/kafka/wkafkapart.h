@@ -23,10 +23,7 @@ namespace DOM
 {
 	class Node;
 }
-namespace Kate
-{
-	class View;
-}
+
 class Document;
 class Node;
 class Parser;

@@ -56,6 +56,8 @@
 #include <kdirwatch.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <ktexteditor/editinterface.h>
+#include <ktexteditor/viewcursorinterface.h>
 
 extern GroupElementMapList globalGroupMap;
 static const QChar space(' ');
