@@ -697,7 +697,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
 }
 
 /** Return a list of possible variable name completions */
-QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(const QString& groupName, int line, int col)
+QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(const StructTreeGroup& group, int line, int col)
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
   KTextEditor::CompletionEntry completion;
@@ -706,12 +706,14 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(const QS
 
   QString textLine = editIf->textLine(line).left(col);
   QString word = findWordRev(textLine);
+  if (!group.removeFromAutoCompleteWordRx.pattern().isEmpty())
+      word.remove(group.removeFromAutoCompleteWordRx);
   completion.userdata = word;
-  GroupElementMapList map = parser->m_groups[groupName];
+  GroupElementMapList map = parser->m_groups[group.name];
   GroupElementMapList::Iterator it;
   for ( it = map.begin(); it != map.end(); ++it )
   {
-    if (it.key().startsWith(word))
+    if (it.key().startsWith(word) && it.key() != word)
     {
       completion.text = it.key();
       completions->append( completion );
@@ -1005,6 +1007,7 @@ bool Document::scriptAutoCompletion(int line, int column)
 {
  bool handled = false;
  QString s = editIf->textLine(line).left(column + 1);
+ QString s2 = s;
  int i = column;
  while (i > 0 && s[i].isSpace())
    i--;
@@ -1074,9 +1077,12 @@ bool Document::scriptAutoCompletion(int line, int column)
    for (uint j = 0; j < completionDTD->structTreeGroups.count(); j++)
    {
      group = completionDTD->structTreeGroups[j];
-     if (s[i] == group.autoCompleteAfter)
+     if (!group.autoCompleteAfterRx.pattern().isEmpty() &&
+         ( group.autoCompleteAfterRx.exactMatch(s2) ||
+           group.autoCompleteAfterRx.exactMatch(s) ) )
      {
-       showCodeCompletions(getGroupCompletions(group.name, line, column + 1));
+       showCodeCompletions(getGroupCompletions(group, line, column + 1));
+       handled = true;
        break;
      }
    }

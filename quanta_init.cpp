@@ -1286,8 +1286,10 @@ void QuantaApp::readTagDir(QString &dirName)
    else if (tagStr == "ScriptStructureEnd")
        group.tagType = Tag::ScriptStructureEnd;
    else group.tagType = -1;
-   group.autoCompleteAfter = dtdConfig->readEntry("AutoCompleteAfter").stripWhiteSpace().at(0);
-
+   tmpStr = dtdConfig->readEntry("AutoCompleteAfter").stripWhiteSpace();
+   group.autoCompleteAfterRx.setPattern(tmpStr);
+   tmpStr = dtdConfig->readEntry("RemoveFromAutoCompleteWord").stripWhiteSpace();
+   group.removeFromAutoCompleteWordRx.setPattern(tmpStr);
    dtd->structTreeGroups.append(group);
  }
 

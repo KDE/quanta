@@ -57,7 +57,8 @@ typedef struct StructTreeGroup{
         QString tag;         //tags belonging to this group - for real DTDs
         int tagType;     //the tag type for which this is valid
         QStringList attributes; //the attributes of the above tag to be displayed - for real DTDs
-        QChar autoCompleteAfter;  //holds the char after the autocompletion box should be shown for this group elements. Null, if autocompletion shouldn't be used
+        QRegExp autoCompleteAfterRx;  //holds the char after the autocompletion box should be shown for this group elements. Null, if autocompletion shouldn't be used
+        QRegExp removeFromAutoCompleteWordRx;
       };
 
 typedef QPtrList<Attribute> AttributeList;
