@@ -574,7 +574,8 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 				n = node;
 				n = kafkaCommon::getPrevNodeNE(n);
 				while(n && (n->tag->type == Tag::XmlTagEnd || 
-					(kafkaCommon::isInline(n->tag->name) && !n->tag->single)))
+					(n->tag->type != Tag::XmlTag && kafkaCommon::isInline(n->tag->name) &&
+                                        !n->tag->single)))
 					n = kafkaCommon::getPrevNodeNE(n);
 				if(n && n->tag->type == Tag::Text)
 				{
