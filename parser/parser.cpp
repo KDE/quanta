@@ -717,11 +717,11 @@ Node *Parser::parse(Document *w)
   parsingEnabled = true;
   if (maxLines >= 0)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
-  kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
+  kdDebug(24000) << "Parsing time ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
 //  t.restart();
   t.restart();
   parseIncludedFiles();
-  kdDebug(24000) << "External parser " << t.elapsed() << " ms\n";
+  kdDebug(24000) << "External parser: " << t.elapsed() << " ms\n";
  /*
  treeSize = 0;
  coutTree(m_node, 2);
@@ -2091,6 +2091,7 @@ void Parser::parseForScriptGroup(Node *node)
           if ( tmpNode->tag->type == Tag::ScriptStructureBegin && tmpNode->tag->dtd->localScopeKeywordsRx.search(tmpNode->tag->cleanStr) != -1)
           {
             groupElement.global = false;
+            groupElement.parentNode = tmpNode;
             break;
           }
           tmpNode = tmpNode->parent;
