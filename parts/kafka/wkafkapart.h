@@ -116,6 +116,11 @@ public slots:
 	 */
 	void slotdomNodeNewCursorPos(DOM::Node _domNode, int offset);
 
+	/**
+	 * Called whenever the kafkaHTMLPart widget get/lost the focus.
+	 */
+	 void slotGetFocus(bool focus);
+
 signals:
 	/**
 	 * Called whenever a DOM::Node get the focus
@@ -129,16 +134,10 @@ signals:
 
 private:
 	/**
-	 * Loads one kafka XML DOM::Node from a quanta XML Node
-	 * @param _node The Node we build a DOM::Node.
+	 * This function build a kafka DOM:::Node from a Quanta Node.
+	 * @param _node The node from which we build the DOM::Node
 	 */
-	void synchronizeXMLTag(Node* _node);
-
-	/**
-	 * Loads one kafka Text DOM::Node from a quanta Text Node
-	 * @param _node The Node we build a DOM::Node.
-	 */
-	void synchronizeTextTag(Node* _node);
+	void buildKafkaNodeFromNode(Node *_node);
 
 	/**
 	 * This function returns the special XML character (e.g. space, �...)
@@ -264,6 +263,7 @@ private:
 	KafkaHTMLPart *_kafkaPart;
 	Document *_currentDoc;
 	Node *_rootNode;
+	DOM::Node html, body, head;
 
 	bool _docLoaded;
 

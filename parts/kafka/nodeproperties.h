@@ -40,15 +40,15 @@ public:
 	void setCHCursorFocus(int _chCursorFocus) {chCursorFocus = _chCursorFocus;}
 	void setCCEnter(bool _ccEnter) {ccEnter = _ccEnter;}
 
-enum cursorFocus {
-	no = 0,
-	left,
-	right,
-	leftAndRight,
-	singleNode,
-	singleNodeAndItself,
-	textNode
-};
+	enum cursorFocus {
+		no = 0,
+		left,
+		right,
+		leftAndRight,
+		singleNode,
+		singleNodeAndItself,
+		textNode
+	};
 
 private:
 	int type;

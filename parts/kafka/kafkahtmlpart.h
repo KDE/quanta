@@ -255,6 +255,13 @@ signals:
 	 */
 	void domNodeNewCursorPos(DOM::Node _domNode, int offset);
 
+	/**
+	 * Category: Widget Signal
+	 * Is emitted whenever the KafkaHTMLPart widget get or lost the focus
+	 * @param focus True if it has got the focus, false otherwise.
+	 */
+	 void hasFocus(bool focus);
+
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
 

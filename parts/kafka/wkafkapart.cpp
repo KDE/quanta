@@ -74,28 +74,59 @@ WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 
 	connect(_kafkaPart, SIGNAL(domNodeNewCursorPos(DOM::Node, int)),
 		this, SLOT(slotdomNodeNewCursorPos(DOM::Node, int)));
+	connect(_kafkaPart, SIGNAL(hasFocus(bool)),
+		this, SLOT(slotGetFocus(bool)));
 }
 
 WKafkaPart::~WKafkaPart()
 {
-
+	//delete the empty node linked to the DOM::Node #document
+	disconnectDomNodeFromQuantaNode(_kafkaPart->document());
 }
 
 void WKafkaPart::loadDocument(Document *doc)
 {
+	Node *node;
+	Tag *tag;
 	kdDebug(25001) << "WKafkaPart::loadDocument()" << endl;
 	if(!_kafkaPart) return;
 	if(!doc) return;
 	QTime t;
 	t.start();
 	_currentDoc = doc;
-	if(_currentDoc->editIf->text().stripWhiteSpace() == "")
+	/**if(_currentDoc->editIf->text().stripWhiteSpace() == "")
 	{//set a minimum Nodes to be able to write if the document is empty
 		_kafkaPart->newDocument();
-		_kafkaPart->finishedLoading();
 		return;
-	}
+	}*/
+	//create a empty document with a basic tree : HTML, HEAD, BODY
+	_kafkaPart->newDocument();
+	/** creating and linking an empty node to the root DOM::Node (#document) and to HEAD, HTML, BODY*/
+	node = new Node(0L);
+	tag = new Tag();
+	tag->name = "#document";
+	node->tag = tag;
+	connectDomNodeToQuantaNode(_kafkaPart->document(), node);
+	node = new Node(0L);
+	tag = new Tag();
+	tag->name = "HTML";
+	node->tag = tag;
+	connectDomNodeToQuantaNode(_kafkaPart->document().firstChild(), node);
+	html = _kafkaPart->document().firstChild();
+	node = new Node(0L);
+	tag = new Tag();
+	tag->name = "HEAD";
+	node->tag = tag;
+	connectDomNodeToQuantaNode(_kafkaPart->document().firstChild().firstChild(), node);
+	head = _kafkaPart->document().firstChild().firstChild();
+	node = new Node(0L);
+	tag = new Tag();
+	tag->name = "BODY";
+	node->tag = tag;
+	connectDomNodeToQuantaNode(_kafkaPart->document().firstChild().lastChild(), node);
+	body = _kafkaPart->document().firstChild().lastChild();
 
+	//TODO:use the current Node tree.
 	_rootNode = parser->parse(_currentDoc );
 
 	//load the nodes
@@ -103,10 +134,10 @@ void WKafkaPart::loadDocument(Document *doc)
 	Node* _node = _rootNode;
 	while(_node)
 	{
-		kdDebug(25001) << "WKafkaPart::loadDocument - Node name :" <<
+		/**kdDebug(25001) << "WKafkaPart::loadDocument - Node name :" <<
 			_node->tag->name.upper() << "; type : " <<
 			_node->tag->type << "; tagstr : " << _node->tag->tagStr() <<
-			" is opened :" << _node->opened << endl;
+			" is opened :" << _node->opened << endl;*/
 		if(!goingUp)
 		{
 			switch(_node->tag->type)
@@ -115,14 +146,16 @@ void WKafkaPart::loadDocument(Document *doc)
 				break;
 
 				case Tag::XmlTag:
-					synchronizeXMLTag(_node);
+//					synchronizeXMLTag(_node);
+					buildKafkaNodeFromNode(_node);
 				break;
 
 				case Tag::XmlTagEnd:
 				break;
 
 				case Tag::Text:
-					synchronizeTextTag(_node);
+//					synchronizeTextTag(_node);
+					buildKafkaNodeFromNode(_node);
 				break;
 
 				case Tag::Comment:
@@ -202,7 +235,8 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode, bool insertChilds)
 	QTime t;
 
 	t.start();
-	if(!_rootNode)
+	if(_currentDoc->editIf->text().stripWhiteSpace() == "" && !(_domNode.nodeType() == DOM::Node::TEXT_NODE &&
+		_domNode.nodeValue() == ""))
 	{//we are in the case when a minimal kafka tree has been set
 		_rootNode = buildNodeFromKafkaNode(_kafkaPart->htmlDocument().firstChild(),
 			0L, 0L);
@@ -267,7 +301,7 @@ void WKafkaPart::slotDomNodeModified(DOM::Node _domNode)
 	QTime t;
 
 	t.start();
-	if(!_rootNode)
+	if(_currentDoc->editIf->text().stripWhiteSpace() == "")
 	{//we are in the case when a minimal kafka tree has been set
 		DOM::Node domNode;
 		bool b = false;
@@ -499,23 +533,94 @@ void WKafkaPart::slotdomNodeNewCursorPos(DOM::Node _domNode, int offset)
 	emit newCursorPosition(line, col);
 }
 
-void WKafkaPart::synchronizeXMLTag(Node* _node)
+void WKafkaPart::buildKafkaNodeFromNode(Node *_node)
 {
-	DOM::Node newNode, newNode2;
-	DOM::Node attr;
+	DOM::Node newNode, newNode2, attr;
+	QString str, nodeValue;
+	bool insertNode = true;
 	int i;
 
 	if(!_node->tag->single && _node->next && _node->next->tag->type != Tag::XmlTagEnd)
 	{
 		//TODO: ERROR missing closing tags, set the kafka behavior according to this
-		kdDebug(25001)<< "WKafkaPart::synchronizeXMLTag() - Node missing closing Tag"
-			<< endl;
+		kdDebug(25001)<< "WKafkaPart::buildKafkaNodeFromNode() - Node missing closing Tag" <<
+			endl;
 	}
 
-	newNode = _kafkaPart->createNode(_node->tag->name);
-	if (newNode.nodeName().string().upper() != _node->tag->name.upper())
-		return;
+	if(!_node->parent)
+	{//FIXME:html, head and body are HTML-specific tag, for others DTDs it might result to some pbs.
+		str = _node->tag->name.lower();
+		if(str == "html")
+		{
+			if(!html.isNull())//delete the empty Node
+				disconnectDomNodeFromQuantaNode(html);
+			newNode = html;
+			insertNode = false;
+		}
+		else if(str == "body")
+		{
+			if(!body.isNull())
+				disconnectDomNodeFromQuantaNode(body);
+			newNode = body;
+			insertNode = false;
+		}
+		else if(str == "head")
+		{
+			if(!head.isNull())
+				disconnectDomNodeFromQuantaNode(head);
+			newNode = head;
+			insertNode = false;
+		}
+		else
+		{
+			if(_node->tag->type == Tag::Text)
+			{
+				newNode = _kafkaPart->createNode("TEXT");
+			}
+			else
+			{
+				newNode = _kafkaPart->createNode(_node->tag->name);
+				if (newNode.nodeName().string().upper() != _node->tag->name.upper())
+					return;
+			}
+		}
+	}
+	else if(str == "body" && _node->parent && !_node->parent->parent)
+	{
+		if(!body.isNull())
+			disconnectDomNodeFromQuantaNode(body);
+		newNode = body;
+		insertNode = false;
+	}
+	else if(str == "head" && _node->parent && !_node->parent->parent)
+	{
+		if(!head.isNull())
+			disconnectDomNodeFromQuantaNode(head);
+		newNode = head;
+		insertNode = false;
+	}
+/**	else if(node->parent->tag->str == "html")*/
+	else
+	{
+		if(_node->tag->type == Tag::Text)
+		{
+			newNode = _kafkaPart->createNode("TEXT");
+		}
+		else
+		{
+			newNode = _kafkaPart->createNode(_node->tag->name);
+			if (newNode.nodeName().string().upper() != _node->tag->name.upper())
+				return;
+		}
+	}
+
 	connectDomNodeToQuantaNode(newNode, _node);
+	if(_node->tag->type == Tag::Text)
+	{
+		nodeValue = _node->tag->tagStr();
+		nodeValue = getDecodedText(nodeValue);
+		newNode.setNodeValue(nodeValue);
+	}
 
 	for(i = 0; i < _node->tag->attrCount(); i++)
 	{
@@ -524,116 +629,73 @@ void WKafkaPart::synchronizeXMLTag(Node* _node)
 		{
 			attr.setNodeValue(_node->tag->attributeValue(i));
 			newNode.attributes().setNamedItem(attr);
-			kdDebug(25001)<< "WKafkaPart::synchronizeXMLTag() -  Attr added : " <<
+			/**kdDebug(25001)<< "WKafkaPart::buildKafkaNodeFromNode() -  Attr added : " <<
 				_node->tag->attribute(i) <<
-				" value : " << _node->tag->attributeValue(i) << endl;
+				" value : " << _node->tag->attributeValue(i) << endl;*/
 		}
 	}
 
 	if(_node->next && _node->next->tag && _node->next->tag->name ==
 		("/" + _node->tag->name))
 	{
-		kdDebug(25001)<< "WKafkart::synchronizeXMLTag()" <<
-			"_node->_closingNode set." << endl;
+		/**kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode()" <<
+			"_node->_closingNode set." << endl;*/
 		_node->_closingNode = _node->next;
 	}
 
-	if(_node->parent && !_node->parent->_leafNode.isNull())
+	if(insertNode)
 	{
-		try
+		_node->_rootNode = newNode;
+		if(_node->parent && !_node->parent->_leafNode.isNull())
 		{
-			newNode = _node->parent->_leafNode.appendChild(newNode);
-		} catch(DOM::DOMException e)
-		{kdDebug(25001)<< "WKafkart::synchronizeXMLTag() *ERROR* - code : " <<
-			e.code << endl;}
-		if(newNode.nodeName().string().upper() == "TABLE")
-		{
-			newNode2 = _kafkaPart->createNode("TBODY");
-			connectDomNodeToQuantaNode(newNode2, _node);
 			try
 			{
-				newNode2 = newNode.appendChild(newNode2);
+				newNode = _node->parent->_leafNode.appendChild(newNode);
 			} catch(DOM::DOMException e)
-			{kdDebug(25001)<< "WKafkart::synchronizeXMLTag() *ERROR2* - code : " <<
-				e.code << endl;}
-			_node->_leafNode = newNode2;
-		}
-		else
-			_node->_leafNode = newNode;
+			{
+				kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode() *ERROR* - code : " <<
+					e.code << endl;
+			}
+			if(newNode.nodeName().string().upper() == "TABLE")//FIXME:HTML specific
+			{
+				newNode2 = _kafkaPart->createNode("TBODY");
+				connectDomNodeToQuantaNode(newNode2, _node);
+				try
+				{
+					newNode2 = newNode.appendChild(newNode2);
+				} catch(DOM::DOMException e)
+				{
+					kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode() *ERROR2* - code : " <<
+						e.code << endl;
+				}
+				_node->_leafNode = newNode2;
+			}
+			else
+				_node->_leafNode = newNode;
 
-	}
-	else//we suppose it is on the top of the tree
-	{
-		try
+		}
+		else//we suppose it is on the top of the tree
 		{
-			newNode = _kafkaPart->document().appendChild(newNode);
-		} catch(DOM::DOMException e)
-		{kdDebug(25001)<< "WKafkart::synchronizeXMLTag() *ERROR3* - code : " <<
-			e.code << endl;}
-		kdDebug(25001)<< "WKafkaPart::synchronizeXMLTag() *WARNING* - adding" <<
-		" node to the root node" << endl;
+			try
+			{
+				newNode = body.appendChild(newNode);
+			} catch(DOM::DOMException e)
+			{
+				kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode() *ERROR3* - code : " <<
+					e.code << endl;
+			}
+			kdDebug(25001)<< "WKafkaPart::buildKafkaNodeFromNode() *WARNING* - adding" <<
+			" node to the body (root) node" << endl;
+			_node->_leafNode = newNode;
+		}
+	}
+	else
+	{
+		_node->_rootNode = newNode;
 		_node->_leafNode = newNode;
 	}
-	_node->_rootNode = newNode;
-
-	if(_node->parent)
-	kdDebug(25001)<< "WKafkaPart::synchronizeXMLTag() - Added DOM::Node : " <<
-		_node->_rootNode.nodeName().string() <<
-		" - Node : " << _node->tag->tagStr() <<
-		" - parent DOM::Node : " <<
-			_node->parent->_leafNode.nodeName().string() <<
-		" - parent Node : " << _node->parent->tag->tagStr() << endl;
-	else
-	kdDebug(25001)<< "WKafkaPart::synchronizeXMLTag() - Added DOM::Node : " <<
-		_node->_rootNode.nodeName().string() <<
-		" - Node : " << _node->tag->tagStr() << endl;
 }
 
-void WKafkaPart::synchronizeTextTag(Node* _node)
-{
-	DOM::Node newNode;
-	QString nodeValue;
-	DOM::Node _nextNode;
-
-	newNode = _kafkaPart->createNode("TEXT");
-	if (newNode.isNull())
-	{
-		kdDebug(25001)<< "WKafkaPart::synchronizeTextTag() - *ERROR* : null Node"
-			<< endl;
-		return;
-	}
-	connectDomNodeToQuantaNode(newNode, _node);
-	nodeValue = _node->tag->tagStr();
-	nodeValue = getDecodedText(nodeValue);
-	newNode.setNodeValue(nodeValue);
-
-
-	if(_node->parent && !_node->parent->_leafNode.isNull())
-	{
-		try
-		{
-			_node->parent->_leafNode.appendChild(newNode);
-		} catch(DOM::DOMException e)
-		{kdDebug(25001)<< "WKafkart::synchronizeTextTag() *ERROR* - code : " <<
-			e.code << endl;}
-		_node->parent->_leafNode.applyChanges();
-	}
-	else//we suppose it is on the top of the tree
-	{
-		try
-		{
-			newNode = _kafkaPart->htmlDocument().appendChild(newNode);
-		} catch(DOM::DOMException e)
-		{kdDebug(25001)<< "WKafkart::synchronizeTextTag() *ERROR2* - code : " <<
-			e.code << endl;}
-		kdDebug(25001)<< "WKafkaPart::synchronizeTextTag() *WARNING* - adding" <<
-			" node to the root node" << endl;
-	}
-	_node->_rootNode = newNode;
-	_node->_leafNode = newNode;
-	kdDebug(25001)<< "WKafkaPart::synchronizeTextTag() - Added text DOM::Node : " <<
-		newNode.nodeName().string() << endl;
-}
 
 QString WKafkaPart::getDecodedChar(QString encodedChar)
 {
@@ -749,8 +811,8 @@ Node *WKafkaPart::searchCorrespondingNode(DOM::Node _domNode)
 	kdDebug(25001)<< "WKafkaPart::searchCorrespondingNode()" << endl;
 	if(_domNode.isNull() || _domNode.nodeName().string() == "#document")
 	{
-		kdDebug(25001)<< "WKafkaPart::searchCorrespondingNode() - Bad Node given"
-			<< endl;
+		kdDebug(25001)<< "WKafkaPart::searchCorrespondingNode() - Bad Node given" <<
+			endl;
 		return 0L;
 	}
 	kdDebug(25001)<< "WKafkaPart::searchCorrespondingNode() - current DOM::Node :" <<
@@ -1148,8 +1210,7 @@ void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
 	_kafkaPart->getCurrentNode(_currentDomNode, offset);
 	if(_currentDomNode.isNull())
 	{
-		kdDebug(25001)<< "WKafkaPart::getQuantaCursorPosition() - DOM::Node not found!"
-			<< endl;
+		kdDebug(25001)<< "WKafkaPart::getQuantaCursorPosition() - DOM::Node not found!" << endl;
 		line = 0;
 		col = 0;
 		return;
@@ -1158,8 +1219,7 @@ void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
 	_currentNode = searchCorrespondingNode(_currentDomNode);
 	if(!_currentNode)
 	{
-		kdDebug(25001)<< "WKafkaPart::getQuantaCursorPosition() - Node not found!"
-			<< endl;
+		kdDebug(25001)<< "WKafkaPart::getQuantaCursorPosition() - Node not found!" << endl;
 		line = 0;
 		col = 0;
 		return;
@@ -1295,4 +1355,10 @@ void WKafkaPart::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 void WKafkaPart::disconnectDomNodeFromQuantaNode(DOM::Node _domNode)
 {
 	domNodeProps.remove(_domNode.handle());
+}
+
+void WKafkaPart::slotGetFocus(bool focus)
+{
+	kdDebug(25001)<< "WKafkaPart::slotGetFocus(" << focus << ")" << endl;
+	_currentDoc->activateParser(!focus);
 }

@@ -106,10 +106,8 @@ void KafkaHTMLPart::newDocument()
  //-->No need for that: Quotations aren't stored in the DOM::Nodes
 	QString newPageHTMLCode = "<html>\n"
 		"<head>\n"
-		"<title>" + i18n("New Homepage") + "</title>\n"
-  		"<meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"
 		"</head>\n"
-		"<body bgColor=\"#FFFFFF\" text=\"#000000\">\n"
+		"<body>\n"
 		"</body>\n"
 		"</html>\n";
 
@@ -224,8 +222,11 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 			d->m_cursorOffset += text.length();
 			emit domNodeModified(node);
 			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text" << endl;
-		} catch(DOM::DOMException e){kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-			"ERROR - code : " << e.code << endl;}
+		} catch(DOM::DOMException e)
+		{
+			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
+				"ERROR - code : " << e.code << endl;
+		}
 	}
 	else if(position == 0)
 	{
@@ -238,8 +239,11 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 			d->m_cursorOffset = text.length();
 			emit domNodeInserted(textNode, false);
 			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text - 2" << endl;
-		} catch(DOM::DOMException e){kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-			"ERROR - code : " << e.code << endl;}
+		} catch(DOM::DOMException e)
+		{
+			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
+				"ERROR - code : " << e.code << endl;
+		}
 	}
 	else if(position == 3 || (position == 1 && (focus == kNodeAttrs::singleNode ||
 		focus == kNodeAttrs::singleNodeAndItself)))
@@ -253,8 +257,11 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 			d->m_cursorOffset = text.length();
 			emit domNodeInserted(textNode, false);
 			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text - 3" << endl;
-		} catch(DOM::DOMException e){kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-			"ERROR - code : " << e.code << endl;}
+		} catch(DOM::DOMException e)
+		{
+			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
+				"ERROR - code : " << e.code << endl;
+		}
 	}
 	else if(position == 1)
 	{
@@ -269,8 +276,11 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 			d->m_cursorOffset = text.length();
 			emit domNodeInserted(textNode, false);
 			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text - 4" << endl;
-		} catch(DOM::DOMException e){kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-			"ERROR - code : " << e.code << endl;}
+		} catch(DOM::DOMException e)
+		{
+			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
+				"ERROR - code : " << e.code << endl;
+		}
 	}
 	else if(position == 2)
 	{
@@ -282,8 +292,11 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 			d->m_cursorOffset = text.length();
 			emit domNodeInserted(textNode, false);
 			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text - 5" << endl;
-		} catch(DOM::DOMException e){kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-			"ERROR - code : " << e.code << endl;}
+		} catch(DOM::DOMException e)
+		{
+			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
+				"ERROR - code : " << e.code << endl;
+		}
 	}
 	emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 }
@@ -354,15 +367,15 @@ void KafkaHTMLPart::keyRight()
 
 	if(!_nodeCursor.isNull())
 	{
-		kdDebug(25001)<< "KafkaHTMLPart::keyRight() - _nodeCursor = "
-			<< _nodeCursor.nodeName().string() <<  endl;
+		kdDebug(25001)<< "KafkaHTMLPart::keyRight() - _nodeCursor = " <<
+			_nodeCursor.nodeName().string() <<  endl;
 		d->m_cursorOffset = 1;
 		m_currentNode = _nodeCursor;
 		postprocessCursorPosition();
 		emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 	}
-	kdDebug(25001)<< "KafkaHTMLPart::keyRight() - new cursorNode = "
-		<< m_currentNode.nodeName().string() << endl;
+	kdDebug(25001)<< "KafkaHTMLPart::keyRight() - new cursorNode = " <<
+		m_currentNode.nodeName().string() << endl;
 }
 
 
@@ -429,8 +442,8 @@ void KafkaHTMLPart::keyLeft()
 
 	if(!_nodeCursor.isNull())
 	{
-		kdDebug(25001)<< "KafkaHTMLPart::keyLeft() - _nodeCursor = "
-			<< _nodeCursor.nodeName().string() << endl;
+		kdDebug(25001)<< "KafkaHTMLPart::keyLeft() - _nodeCursor = " <<
+			_nodeCursor.nodeName().string() << endl;
 		if(focus == kNodeAttrs::textNode)
 			d->m_cursorOffset =
 				(static_cast<DOM::CharacterData>(_nodeCursor)).length() - 1;
@@ -443,8 +456,8 @@ void KafkaHTMLPart::keyLeft()
 		postprocessCursorPosition();
 		emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 	}
-	kdDebug(25001)<< "KafkaHTMLPart::keyLeft() - new cursorNode = "
-		<< m_currentNode.nodeName().string() << endl;
+	kdDebug(25001)<< "KafkaHTMLPart::keyLeft() - new cursorNode = " <<
+		m_currentNode.nodeName().string() << endl;
 
 }
 
@@ -696,6 +709,7 @@ bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 	if(event->type() == QEvent::FocusIn)
 	{
 		kdDebug(25001) << "KafkaHTMLPart::eventFilter() FocusIn" << endl;
+		emit hasFocus(true);
 		if(!d->cursorTimer)
 			{
 				d->cursorTimer = startTimer(500);
@@ -707,6 +721,7 @@ bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 	if(event->type() == QEvent::FocusOut)
 	{
 		kdDebug(25001) << "KafkaHTMLPart::eventFilter() FocusOut" << endl;
+		emit hasFocus(false);
 		if(d->cursorTimer)
 		{
 			killTimer(d->cursorTimer);
@@ -1056,8 +1071,7 @@ void KafkaHTMLPart::keyBackspace()
 	{//if we delete ourselves, which node will be m_currentNode??
 		if(!attrs->cbDel())
 			return;
-		kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting a TagDeletable - 2" <<
-			endl;
+		kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting a TagDeletable - 2" << endl;
 		DOM::Node _node = m_currentNode;
 		bool b = false;
 		while(1)
@@ -1418,8 +1432,8 @@ void KafkaHTMLPart::postprocessCursorPosition()
 					d->m_cursorOffset = (static_cast<DOM::CharacterData>(_nextNode)).length();
 					emit domNodeNewCursorPos(m_currentNode,
 						d->m_cursorOffset);
-					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition()" " - new currentNode :"
-						<< m_currentNode.nodeName().string() << endl;
+					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition()" <<
+						" - new currentNode :" << m_currentNode.nodeName().string() << endl;
 					break;
 				}
 				else if(attrs2->chCurFoc() == kNodeAttrs::singleNode ||
@@ -1429,8 +1443,8 @@ void KafkaHTMLPart::postprocessCursorPosition()
 					m_currentNode = _nextNode;
 					d->m_cursorOffset = 1;
 					emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
-					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition() - new currentNode :"
-						<< m_currentNode.nodeName().string() << endl;
+					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition()" <<
+						" - new currentNode :" << m_currentNode.nodeName().string() << endl;
 					break;
 				}
 				else
@@ -1455,8 +1469,8 @@ void KafkaHTMLPart::postprocessCursorPosition()
 					m_currentNode = _nextNode;
 					d->m_cursorOffset = 0;
 					emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
-					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition() - new currentNode :"
-						<< m_currentNode.nodeName().string() << endl;
+					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition() " <<
+						"- new currentNode :" << m_currentNode.nodeName().string() << endl;
 					break;
 				}
 				else
@@ -1573,8 +1587,8 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 			m_currentNode = _node;
 			d->m_cursorOffset = 1;
 		}
-		kdDebug(25001)<< "KafkaHTMLPart::khtmlMousePressEvent() - CursorNode : "
-			<< m_currentNode.nodeName().string() << endl;
+		kdDebug(25001)<< "KafkaHTMLPart::khtmlMousePressEvent() - CursorNode : " <<
+			m_currentNode.nodeName().string() << endl;
 	}
 	//these nodes can't have the cursor focus : using Pythagore to get the
 	//nearest node that can have the cursor focus
@@ -1584,6 +1598,7 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 		if(!m_currentNode.hasChildNodes())
 		{
 			m_currentNode.appendChild(document().createTextNode(""));
+			emit domNodeInserted(m_currentNode.firstChild(), false);
 			m_currentNode = m_currentNode.firstChild();
 		}
 		else
@@ -1620,23 +1635,21 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 				_node = _tmp;
 			}
 			m_currentNode = _node;
-			kdDebug(25001)<< "KafkaHTMLPart::khtmlMousePressEvent() - new" <<
-				" CursorNode : " <<
-			m_currentNode.nodeName().string() << endl;
 		}
+		kdDebug(25001)<< "KafkaHTMLPart::khtmlMousePressEvent() - new" <<
+			" CursorNode : " <<
+			m_currentNode.nodeName().string() << endl;
 	}
 	if(m_currentNode.isNull())
 	{
-		kdDebug(25001)<< "KafkaHTMLPart::khtmlMousePressEvent() - NULL DOM::NODE!" <<
-			endl;
+		kdDebug(25001)<< "KafkaHTMLPart::khtmlMousePressEvent() - NULL DOM::NODE!" << endl;
 		return;
 	}
 
 	attrs = w->getAttrs(m_currentNode);
 	if(attrs->chCurFoc() == kNodeAttrs::singleNodeAndItself)
 	{//TODO:allow the resizing of theses nodes
-		kdDebug(25001)<< "KafkaHTMLPart::khtmlMousePressEvent() - upcoming selection"
-			<< endl;
+		kdDebug(25001)<< "KafkaHTMLPart::khtmlMousePressEvent() - upcoming selection" << endl;
 		d->m_cursorOffset = -1;
 	}
 	//if our node is a text, find out which offset is the better one
@@ -1756,7 +1769,8 @@ void KafkaHTMLPart::paintCursor(QPainter *p)
 	attrs = w->getAttrs(m_currentNode);
 	if(attrs->chCurFoc() != kNodeAttrs::no)
 	kdDebug(25001) << "KafkaHTMLPart::paintCursor() - Node:" <<
-		m_currentNode.nodeName().string() << ":" << (static_cast<DOM::CharacterData>(m_currentNode)).length() <<
+		m_currentNode.nodeName().string() << ":" <<
+		(static_cast<DOM::CharacterData>(m_currentNode)).length() <<
 		" ; offset :" << d->m_cursorOffset << endl;
 	if(d->drawCursor)
 	{
