@@ -614,7 +614,6 @@ void QuantaApp::slotFileCloseAll()
   //kafkaPart->unloadDocument();
 #endif
   ViewManager::ref()->closeAll();
-
   WHTMLPart *part = m_htmlPart;
   part->closeURL();
   part->begin(Project::ref()->projectBaseURL());
@@ -4481,6 +4480,26 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
         }
     }
 #endif
+}
+
+void QuantaApp::slotFileClosed()
+{
+   QPopupMenu *popup = static_cast<QPopupMenu*>(factory()->container("popup_editor",this));
+   if (popup)
+   {
+      if (m_oldContextCut) {
+          m_oldContextCut->unplug(popup);
+      }
+      if (m_oldContextCopy) {
+          m_oldContextCopy->unplug(popup);
+      }
+        if (m_oldContextPaste) {
+          m_oldContextPaste->unplug(popup);
+      }
+   }
+   m_oldContextCopy = 0L;
+   m_oldContextCut = 0L;
+   m_oldContextPaste = 0L;
 }
 
 //overridden KMdiMainFrm slots

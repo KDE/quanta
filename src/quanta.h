@@ -188,6 +188,9 @@ public:
   FilesTreeView *filesToolView() {return fTab;}
   bool enableIdleTimer(bool enable);
 
+  /** Called when a document was closed. Resets some variables. */
+  void slotFileClosed();
+
 signals: // Signals
   /** signal used to hide the splash screen */
   void showSplash(bool);
