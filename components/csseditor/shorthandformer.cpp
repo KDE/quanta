@@ -424,216 +424,75 @@ QString ShorthandFormer::compressImplementation2( QString prop, QString after, Q
 }  
 
 QString ShorthandFormer::compressImplementation( QString prop, QString t, QString b, QString r, QString l, QString defValue){
-unsigned int boxSide = 0;
  QString props, 
               top(t.stripWhiteSpace()),
               bottom(b.stripWhiteSpace()),
               left(l.stripWhiteSpace()),
-              right(r.stripWhiteSpace());   
-   if( !top.isEmpty() )
-     boxSide += 1;  
-   if( !bottom.isEmpty() )
-     boxSide += 2;
-   if( !left.isEmpty() )
-     boxSide += 4;
-   if( !right.isEmpty() )
-     boxSide += 8;    
-        
-   switch(boxSide) {
-     case 1: if( top != defValue ) 
-                    props   += ( prop +" : " + top + " " + defValue + " " + defValue+"; "); 
-                  break; 
-     
-     case 2: if( bottom != defValue )
-                    props   += ( prop + " : " + defValue + " " + defValue + " " + bottom + "; "); 
-                  break; 
-     
-     case 3: if( top != bottom )
-                    props   += ( prop +" : " + top + " " + defValue + " " + bottom + "; ");
-                  else
-                    if( top!=defValue && top == bottom  )    
-                      props   += ( prop +" : " + top + " " + defValue +"; "); 
-                  break;
-     
-     case 4: if( left != defValue )
-                    props   += ( prop +" : " + defValue + " " + defValue + " " + defValue +" " + left + "; "); 
-                  break; 
-     
-     case 5: if( left == defValue && top != defValue)
-                    props   += ( prop +" : " + top + " " + defValue + " " + defValue+ "; ");
-                  else
-                    if( left != defValue )    
-                      props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + left + "; "); 
-                  break;
-     
-     case 6: if( left == defValue && bottom != defValue)
-                    props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + "; ");   
-                  else
-                    if( left != defValue )    
-                      props   += ( prop +" : " + defValue + " " +defValue + " " + bottom + " " + left + "; ");
-                  break;
-     
-     case 7: if( left != defValue ) 
-                      props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + left + "; ");
-                  else 
-                     if( top != defValue && top == bottom ) 
-                       props   += ( prop +" : " + top + " " + defValue + "; "); 
-                     else
-                       if( top != defValue || bottom != defValue )
-                         props   += ( prop +" : " + top + " " + defValue + " " + bottom  + "; "); 
-                  break;
-     
-     case 8: if( right != defValue )
-                    props   += ( prop +" : " + defValue + " " + right + " " + defValue + " " + defValue + "; "); 
-                  break; 
-     
-     case 9: if( right == defValue && top != defValue)
-                    props   += ( prop +" : " + top + " " + defValue + " " + defValue + "; ");
-                  else
-                    if( right != defValue )    
-                      props   += ( prop +" : " + top + " " + right + " " + defValue + " " + defValue + "; "); 
-                  break;
-     
-     case 10: if( right == defValue && bottom != defValue)
-                      props += ( prop +" : " + defValue + " " + defValue + " " + bottom +"; ");
-                    else
-                      if( right !=defValue)  
-                        props += ( prop +" : " + defValue + " " + right + " " + bottom + " " + defValue + "; ");  
-                    break;
-     
-     case 11: if( right != defValue ) 
-                      props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue + "; ");
-                  else 
-                     if( top != defValue && top == bottom ) 
-                       props   += ( prop +" : " + top + " " + defValue + "; "); 
-                     else
-                       if( top != defValue || bottom != defValue )
-                         props   += ( prop +" : " + top + " " + defValue + " " + bottom  + "; "); 
-                  break;
-     
-     case 12: if( right != left )
-                      props += ( prop +" : " + defValue +" " + right + " " + defValue + " " + left +"; "); 
-                    else
-                      if( right != defValue && left == right )
-                        props += ( prop +" : " + defValue + " " + right + "; " ); 
-                    break;
-    
-     case 13: if( right != defValue && right == left ) 
-                      props   += ( prop +" : " + top + " " +right + " " + defValue +"; ");
-                    else 
-                      if( right != defValue ||  left != defValue ) 
-                       props   += ( prop +" : " + top + " " + right + " " + defValue + " " + left +"; "); 
-                    break;
-     
-     case 14: if( right != defValue && right == left ) 
-                      props   += ( prop +" : " + defValue + " " +right + " " + bottom +"; ");
-                    else 
-                      if( right != defValue ||  left != defValue ) 
-                       props   += ( prop +" : " + defValue + " " + right + " " +bottom + " " + left +"; "); 
-                    break;
-     
-     case 15: { unsigned int defaultValueOccurence = 0;
-                      if( top == defValue )
-                        defaultValueOccurence += 1;  
-                      if( bottom == defValue )
-                        defaultValueOccurence += 2;
-                      if( left == defValue )
-                        defaultValueOccurence += 4;
-                      if( right == defValue )
-                        defaultValueOccurence += 8; 
-                      switch( defaultValueOccurence ) {
-                      case 1: if( left == right )
-                                     props   += ( prop +" : " + defValue + " "+ right + " " + bottom + "; "); 
-                                   else
-                                     props   += ( prop +" : " + right + " " +bottom + " " + left +"; ");  
-                                   break;
-                      case 2: if( left == right )
-                                     props   += ( prop +" : " + top + " " + right + " " + defValue + "; "); 
-                                   else
-                                     props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue +"; ");  
-                                   break;
-                      case 3: if( left == right )
-                                     props   += ( prop +" : " + defValue +" " + right + "; "); 
-                                   else
-                                     props   += ( prop +" : " + defValue + " " + right + " " + defValue + " " + left +"; ");  
-                                   break;
-                      case 4: props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue + "; ");break;
-                      case 5: props   += ( prop +" : " + defValue + " " + right + " " + bottom + " " + defValue + "; ");break;
-                      case 6: props   += ( prop +" : " + top+ " " + right + " " + defValue + " " + defValue + "; ");break;
-                      case 7: props   += ( prop +" : " + defValue + " " + right + " " + defValue  + " " + defValue + "; ");break;
-                      case 8: props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + left +"; ");break;
-                      case 9: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + " " + left +"; ");break;
-                      case 10: props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + left +"; ");break;
-                      case 11: props   += ( prop +" : " + defValue + " " + defValue + " " + defValue + " " + left +"; ");break;
-                      case 12:if( top == bottom )
-                                     props   += ( prop +" : " + top + " " + defValue + "; "); 
-                                   else
-                                     props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + defValue+ "; ");  
-                                   break;
-                      case 13: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + " " + defValue + "; ");break;
-                      case 14: props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + defValue +"; ");break;
-                      case 15:;break;
-                      default:break;
-                      }                        
-                        }
-                        break;
-     
-     default:break; 
-   }
-   return props;
+              right(r.stripWhiteSpace());  
+               
+  unsigned int defaultValueOccurence = 0;
+
+  if( top == defValue ) defaultValueOccurence += 1;  
+  if( bottom == defValue ) defaultValueOccurence += 2;
+  if( left == defValue ) defaultValueOccurence += 4;
+  if( right == defValue ) defaultValueOccurence += 8; 
+  
+  switch( defaultValueOccurence ) {
+    case 1: if( left == right ) props   += ( prop +" : " + defValue + " "+ right + " " + bottom + "; "); 
+                 else props   += ( prop +" : " + right + " " +bottom + " " + left +"; ");  
+                 break;
+    case 2: if( left == right ) props   += ( prop +" : " + top + " " + right + " " + defValue + "; "); 
+                 else props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue +"; ");  
+                 break;
+    case 3: if( left == right ) props   += ( prop +" : " + defValue +" " + right + "; "); 
+                 else props   += ( prop +" : " + defValue + " " + right + " " + defValue + " " + left +"; ");  
+                 break;
+    case 4: props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue + "; ");break;
+    case 5: props   += ( prop +" : " + defValue + " " + right + " " + bottom + " " + defValue + "; ");break;
+    case 6: props   += ( prop +" : " + top+ " " + right + " " + defValue + " " + defValue + "; ");break;
+    case 7: props   += ( prop +" : " + defValue + " " + right + " " + defValue  + " " + defValue + "; ");break;
+    case 8: props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + left +"; ");break;
+    case 9: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + " " + left +"; ");break;
+    case 10: props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + left +"; ");break;
+    case 11: props   += ( prop +" : " + defValue + " " + defValue + " " + defValue + " " + left +"; ");break;
+    case 12: if( top == bottom ) props   += ( prop +" : " + top + " " + defValue + "; "); 
+                   else props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + defValue+ "; ");  
+                   break;
+    case 13: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + " " + defValue + "; ");break;
+    case 14: props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + defValue +"; ");break;
+    case 15: break;
+    default: if( !left.isEmpty() && !right.isEmpty() && !top.isEmpty() && !bottom.isEmpty())
+                   if( left == right && right == bottom && bottom == top  ) props   += ( prop +" : " + top +"; ");
+                   else
+                      if(  (top == bottom) && (left == right)) props   += ( prop +" : " + top + " " + right +"; ");
+                      else 
+                         if( (left == right) ) props  += ( prop + " : " + top + " " + right + " " + bottom + "; ");
+                         else props  += ( prop +" : " + top + " " + right + " " + bottom + " " + left +"; ");
+                   break;
+  }                        
+  return props;
 }
 
 QMap<QString,QString> ShorthandFormer::expand( QString propertyName, QString propertyValue ){
   CSSSHPropertyParser parser(propertyValue);
   QStringList foundValues = parser.parse();
    
-  if( propertyName == "cue" ) 
-       return expandCueProp(foundValues);
-  else
-  if( propertyName == "pause")
-       return expandPauseProp(foundValues);
-  else  
-  if( propertyName == "background")
-       return expandBackgroundProp(foundValues);
-  else   
-  if( propertyName == "border-color")
-       return expandBox("color", foundValues);
-  else
-  if( propertyName == "border-style")
-       return expandBox("style", foundValues);
-  else
-  if( propertyName == "border-width")
-       return expandBox("width", foundValues);  
-  else
-  if( propertyName == "font")
-       return  expandFontProp(foundValues);
-  else
-  if( propertyName == "outline")
-       return  expandOutlineProp(foundValues);
-  else
-  if( propertyName == "list-style")
-       return  expandListstyleProp(foundValues);
-  else
-  if( propertyName == "border-bottom")
-       return  expandBoxSide("bottom",foundValues);
-  else
-  if( propertyName == "border-top")
-       return  expandBoxSide("top",foundValues);
-  else
-  if( propertyName == "border-left")
-       return  expandBoxSide("left",foundValues);
-  else
-  if( propertyName == "border-right")
-       return  expandBoxSide("right",foundValues); 
-  else
-  if( propertyName == "border")
-       return  expandBorderProp(foundValues); 
-  else
-  if( propertyName == "padding")
-       return  expandPaddingProp(foundValues); 
-  else
-  if( propertyName == "margin")
-       return  expandMarginProp(foundValues);  
+  if( propertyName == "cue" ) return expandCueProp(foundValues);  
+  if( propertyName == "pause") return expandPauseProp(foundValues);
+  if( propertyName == "background") return expandBackgroundProp(foundValues);    
+  if( propertyName == "border-color") return expandBox("color", foundValues); 
+  if( propertyName == "border-style") return expandBox("style", foundValues);  
+  if( propertyName == "border-width") return expandBox("width", foundValues);    
+  if( propertyName == "font") return  expandFontProp(foundValues);  
+  if( propertyName == "outline") return  expandOutlineProp(foundValues);  
+  if( propertyName == "list-style") return  expandListstyleProp(foundValues);  
+  if( propertyName == "border-bottom") return  expandBoxSide("bottom",foundValues); 
+  if( propertyName == "border-top") return  expandBoxSide("top",foundValues);  
+  if( propertyName == "border-left") return  expandBoxSide("left",foundValues); 
+  if( propertyName == "border-right") return  expandBoxSide("right",foundValues);   
+  if( propertyName == "border") return  expandBorderProp(foundValues);  
+  if( propertyName == "padding") return  expandPaddingProp(foundValues);   
+  if( propertyName == "margin") return  expandMarginProp(foundValues);  
 }
 
 QMap<QString,QString> ShorthandFormer::expandCueProp(QStringList l){

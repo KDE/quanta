@@ -35,12 +35,11 @@ class CSSSelector : public CSSSelectorS {
     QString m_header,
                  m_footer,
                  m_initialPreviewText,
-                 currentDocumentDTD;  
+                 m_currentDocumentDTD;  
     //QString m_sourceFileName;             
      
     void Connect();   
-    void setCurrentItem(QListViewItem* i) { m_currentItem = i; }
-    void setCurrentListView(QWidget*);
+    
             
   public: 
     CSSSelector(QString dtd=QString::null, QWidget *parent=0, const char* name=0);
@@ -52,10 +51,11 @@ class CSSSelector : public CSSSelectorS {
     void setForInitialPreview(const QString& s) { m_initialPreviewText = s;}   
     void setHeader(const QString& h) { m_header = h; }
     void setFooter(const QString& f) { m_footer = f; }
-    QString generateStyleSection();           
+    QString generateStyleSection();  
+    QString generateFormattedStyleSection();         
     //void setSourceFileName(const QString& n) { m_sourceFileName = n; }
     //QString SourceFileName() const { return m_sourceFileName; }    
-    void setCurrentDocumentDTD(const QString& s){ currentDocumentDTD = s; }
+    void setCurrentDocumentDTD(const QString& s){ m_currentDocumentDTD = s; }
     void setDTDTags(const QString&);
     
   private slots: 
@@ -66,6 +66,8 @@ class CSSSelector : public CSSSelectorS {
     void addPseudo();
     void removeAll();
     void removeSelected();     
+    void setCurrentItem(QListViewItem* i) { m_currentItem = i; }
+    void setCurrentListView(QWidget*);
 };
 
 #endif

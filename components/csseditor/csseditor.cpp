@@ -105,8 +105,7 @@ void myCheckListItem::stateChange (bool b){
      }
    }
     else {
-      if(parent())
-        static_cast<myCheckListItem*>(parent())->addCheckedChild(); 
+      if(parent()) static_cast<myCheckListItem*>(parent())->addCheckedChild(); 
     }  
 } 
 
@@ -168,7 +167,8 @@ void CSSEditor::setCurrentPropOn(const QString& s){
 
 void CSSEditor::initialize()
 {   
-  m_testFileName = quantaApp->projectBaseURL().path() + "quanta_test_file.html";
+  QFileInfo fi(quantaApp->currentURL());
+  m_testFileName = ( quantaApp->projectBaseURL().path()+ "quanta_test_file_of_" + fi.baseName() +"."+ fi.extension());
   QString configFile = locate("appdata", "csseditor/config.xml");    
 
   m_myhi = new QMyHighlighter(display);
@@ -219,7 +219,6 @@ void CSSEditor::initialize()
   } // end while  
 
   Connect();
-  //TODO : substitue the extension with the proper one
   m_testFile = new QFile(m_testFileName);
   m_testFile->open(IO_WriteOnly);   
   
@@ -351,41 +350,15 @@ void CSSEditor::setMiniEditors(QListViewItem* i)
               m_ps->ComboBox()->lineEdit()->clear();
             }
                 
-            if( typeName == "length") {
-              m_ps->setLengthEditor();
-            }
-                
-            if( typeName == "percentage") {
-              m_ps->setPercentageEditor();
-            }
-                
-            if( typeName == "doubleLength") {
-              m_ps->setDoubleLengthEditor();
-            }
-                
-            if( typeName == "doublePercentage") {
-              m_ps->setDoublePercentageEditor();
-            }
-                
-            if( typeName == "integer") {
-              m_ps->setSpinBox();
-            }
-                
-            if( typeName == "number") {
-              m_ps->setLineEdit();
-            }
-                
-            if( typeName == "frequency") {
-              m_ps->setFrequencyEditor();
-            }
-                
-            if( typeName == "time") {
-              m_ps->setTimeEditor();
-            }
-                
-            if( typeName == "angle") {
-              m_ps->setAngleEditor();
-            }              
+            if( typeName == "length") m_ps->setLengthEditor(); 
+            if( typeName == "percentage") m_ps->setPercentageEditor();
+            if( typeName == "doubleLength") m_ps->setDoubleLengthEditor();     
+            if( typeName == "doublePercentage") m_ps->setDoublePercentageEditor();
+            if( typeName == "integer") m_ps->setSpinBox();        
+            if( typeName == "number") m_ps->setLineEdit();  
+            if( typeName == "frequency") m_ps->setFrequencyEditor();           
+            if( typeName == "time") m_ps->setTimeEditor();               
+            if( typeName == "angle") m_ps->setAngleEditor();                         
           }
         }  
         else
@@ -415,25 +388,11 @@ void CSSEditor::setMiniEditors(QListViewItem* i)
               m_ps->ComboBox()->lineEdit()->clear();
             }
             
-            if( typeName == "color") {
-              m_ps->setColorRequester();
-            }
-            
-            if( typeName == "predefinedColorList") {
-              m_ps->setPredefinedColorListEditor();
-            }
-            
-            if( typeName == "fontDialog" ){
-              m_ps->setFontEditor();
-            }
-              
+            if( typeName == "color") m_ps->setColorRequester();
+            if( typeName == "predefinedColorList") m_ps->setPredefinedColorListEditor();
+            if( typeName == "fontDialog" ) m_ps->setFontEditor();                
           }
 
-          /*if(curr.firstChild().toElement().attribute("type") == "edit"){
-            m_ps->ComboBox()->setEditable(true);
-            m_ps->ComboBox()->lineEdit()->clear();
-             kdDebug(24000)<<"\n\n\nEDIT2"<<endl;
-              }*/
             }
             else
           if(curr.tagName()=="doubleSelectable")
@@ -519,7 +478,6 @@ void CSSEditor::updateTestFile()
   m_testFile=0L;
   m_testFile = new QFile(m_testFileName);
   m_testFile->open(IO_WriteOnly);
-  //TODO : substitue the extension with the proper one
   
   QString testFileHeader(m_Header);
   QString testFileFooter;
@@ -566,6 +524,5 @@ void CSSEditor::updateDisplay()
     toDisplay+="}";
   display->setText(toDisplay);
 }
-
 
 #include "csseditor.moc"

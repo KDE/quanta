@@ -35,7 +35,7 @@
 //#include "resource.h"
 //#include "quanta.h"
 
-CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSelectorS (parent,name), currentDocumentDTD(dtd) {
+CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSelectorS (parent,name), m_currentDocumentDTD(dtd) {
   
   m_currentItem = 0L;
 
@@ -90,11 +90,11 @@ CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSe
     n = n.nextSibling();
   }
     
-  if( !currentDocumentDTD.isEmpty() ) {
-    if( dtdNames.contains( currentDocumentDTD ) ) {
+  if( !m_currentDocumentDTD.isEmpty() ) {
+    if( dtdNames.contains( m_currentDocumentDTD ) ) {
       n = docElem.firstChild();
       while( !n.isNull() ) {
-        if( n.toElement().attribute("name") == currentDocumentDTD ){
+        if( n.toElement().attribute("name") == m_currentDocumentDTD ){
           break;
         }
         n = n.nextSibling();
@@ -411,6 +411,86 @@ QString CSSSelector::generateStyleSection(){
     styleSection+=(temp->text(0)+" { "+temp->text(1)+" } \n\t");
     temp = temp->nextSibling();
     }
+
+  styleSection.truncate(styleSection.length()-1); //we elminate the last \t
+
+  return QString("\n\t")+styleSection;
+}
+
+QString CSSSelector::generateFormattedStyleSection(){
+
+  QListViewItem *temp;
+  QString styleSection,tmpStr;
+  unsigned int indentWidth,
+                      indentDisplacement = 10;
+
+  temp = lvTags->firstChild();
+  while(temp){
+    styleSection += ("\n"+temp->text(0));
+    styleSection += " {\n";
+    indentWidth = ( temp->text(0).length() + indentDisplacement );
+    QStringList props = QStringList::split(";",temp->text(1));
+    for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
+      QString indentStr;
+      indentStr.fill(' ',indentWidth);
+      if((*it).startsWith(" ")) tmpStr += ( indentStr + (*it).remove(0,1) + ";\n");
+      else tmpStr += (indentStr + (*it) + ";\n");
+    }
+    styleSection += ( tmpStr + "\t}\n\t");
+    tmpStr = QString::null;
+    temp = temp->nextSibling();
+  }
+
+  temp = lvIDs->firstChild();
+  while(temp){
+    styleSection += ("\n"+temp->text(0));
+    styleSection += " {\n";
+    indentWidth = ( temp->text(0).length() + indentDisplacement );
+    QStringList props = QStringList::split(";",temp->text(1));
+    for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
+      QString indentStr;
+      indentStr.fill(' ',indentWidth);
+      if((*it).startsWith(" ")) tmpStr += ("\t\t" + (*it).remove(0,1) + ";\n");
+      else tmpStr += ("\t\t" + (*it) + ";\n");
+    }
+    styleSection += ( tmpStr + "\t}\n\t");
+    tmpStr = QString::null;
+    temp = temp->nextSibling();   
+  }
+
+  temp = lvClasses->firstChild();
+  while(temp){
+    styleSection += ("\n"+temp->text(0));
+    styleSection += " {\n";
+    indentWidth = ( temp->text(0).length() + indentDisplacement );
+    QStringList props = QStringList::split(";",temp->text(1));
+    for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
+      QString indentStr;
+      indentStr.fill(' ',indentWidth);
+      if((*it).startsWith(" ")) tmpStr += ("\t\t" + (*it).remove(0,1) + ";\n");
+      else tmpStr += ("\t\t" + (*it) + ";\n");
+    }
+    styleSection += ( tmpStr + "\t}\n\t");
+    tmpStr = QString::null;
+    temp = temp->nextSibling();   
+  }
+
+  temp = lvPseudo->firstChild();
+  while(temp){
+    styleSection += ("\n"+temp->text(0));
+    styleSection += " {\n";
+    indentWidth = ( temp->text(0).length() + indentDisplacement );
+    QStringList props = QStringList::split(";",temp->text(1));
+    for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
+      QString indentStr;
+      indentStr.fill(' ',indentWidth);
+      if((*it).startsWith(" ")) tmpStr += ("\t\t" + (*it).remove(0,1) + ";\n");
+      else tmpStr += ("\t\t" + (*it) + ";\n");
+    }
+    styleSection += ( tmpStr + "\t}\n\t");
+    tmpStr = QString::null;
+    temp = temp->nextSibling();    
+  }
 
   styleSection.truncate(styleSection.length()-1); //we elminate the last \t
 
