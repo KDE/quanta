@@ -491,7 +491,7 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
   }
   if (completion.type == "attributeValue")
   {
-    viewCursorIf->setCursorPositionReal(line,col+1);
+    viewCursorIf->setCursorPositionReal(line, col);
   }
   if (completion.type == "doctypeList")
   {
@@ -499,7 +499,7 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
   }
   if (completion.type == "script")
   {
-    viewCursorIf->setCursorPositionReal(line,col+1);
+    viewCursorIf->setCursorPositionReal(line,col);
     if (dtd) scriptAutoCompletion(line, col-1, completionDTD->attrAutoCompleteAfter);
   }
 }
@@ -515,6 +515,10 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
   completion->userdata.remove(0,pos+1);
   string->remove(0, s.length());
 
+  if ( completion->type == "attributeValue")
+  {
+    string->append(completionDTD->attributeSeparator);
+  }
   if ( completion->type == "attribute" )
   {
     string->append("=\"\"");
@@ -965,9 +969,15 @@ QString Document::findDTDName(Tag **tag)
 bool Document::scriptAutoCompletion(int line, int column, const QString& string)
 {
  bool handled = false;
- if (string == completionDTD->attrAutoCompleteAfter)  //if we need to list the arguments of a function
+ QString s = editIf->textLine(line).left(column);
+ int i = column - 1;
+ while (i > 0 && s[i].isSpace())
+   i--;
+ s = s.left(i + 1);
+ if (
+     s.endsWith(completionDTD->attrAutoCompleteAfter) ) //if we need to list the arguments of a function
  {
-   QString textLine = editIf->textLine(line).left(column);
+   QString textLine = editIf->textLine(line).left(i);
    QString word = findWordRev(textLine, completionDTD);
    QTag *tag = completionDTD->tagsList->find(word);
    if (!tag) tag = userTagList.find(word.lower());
@@ -975,20 +985,30 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& string)
    {
      QStringList argList;
      QString arguments;
-     for (int i =0; i < tag->attributeCount(); i++)
+     if (tag->type != "property")
      {
-       Attribute* attr = tag->attributeAt(i);
-       if (attr->status == "optional")
-       {
-         arguments = arguments + "["+attr->type +" "+attr->name +"],";
-       } else
-       {
-         arguments = arguments + attr->type +" "+attr->name +",";
-       }
+      for (int i =0; i < tag->attributeCount(); i++)
+      {
+        Attribute* attr = tag->attributeAt(i);
+        if (attr->status == "optional")
+        {
+          arguments = arguments + "["+attr->type +" "+attr->name +"],";
+        } else
+        {
+          arguments = arguments + attr->type +" "+attr->name +",";
+        }
+      }
+      arguments = tag->returnType +" "+tag->name() + "("+arguments.left(arguments.length()-1)+")";
+      argList.append(arguments);
+      codeCompletionIf->showArgHint(argList, "()" , completionDTD->attributeSeparator);
+     } else
+     {
+       arguments = tag->name() + ": " + tag->attributeAt(0)->name + ";";
+       argList.append(arguments);
+       codeCompletionIf->showArgHint(argList, ":;" , completionDTD->attributeSeparator);
+       showCodeCompletions( getAttributeValueCompletions(tag->name(), tag->attributeAt(0)->name, ""));
      }
-     arguments = tag->returnType +" "+tag->name() + "("+arguments.left(arguments.length()-1)+")";
-     argList.append(arguments);
-     codeCompletionIf->showArgHint(argList, "()" , completionDTD->attributeSeparator);
+
      handled = true;
    }
  }
@@ -1261,10 +1281,9 @@ bool Document::scriptCodeCompletion(int line, int col)
 {
  bool handled = false;
  QString s = text(line, 0,line, col).section(completionDTD->attrAutoCompleteAfter,-1);
- int i = s.length();
  if (s.stripWhiteSpace().isEmpty())
  {
-   scriptAutoCompletion(line, col - i - completionDTD->attrAutoCompleteAfter.length(), completionDTD->attrAutoCompleteAfter);
+   scriptAutoCompletion(line, col, completionDTD->attrAutoCompleteAfter);
    handled = true;
  } else
  {

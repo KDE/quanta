@@ -9,6 +9,10 @@ Family = 2
 
 [Extra rules]
 StructGroupsCount = 1
+MinusAllowedInWord = true
+TagAutoCompleteAfter = {
+AttributeAutoCompleteAfter = :
+AttributeSeparator = ;
 
 [Parsing rules]
 Tags = style(type)

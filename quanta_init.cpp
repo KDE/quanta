@@ -1154,7 +1154,11 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->minusAllowedInWord = dtdConfig->readBoolEntry("MinusAllowedInWord", false);
  dtd->tagAutoCompleteAfter = dtdConfig->readEntry("TagAutoCompleteAfter").stripWhiteSpace();
  dtd->attrAutoCompleteAfter = dtdConfig->readEntry("AttributeAutoCompleteAfter","(").stripWhiteSpace();
- dtd->attributeSeparator = dtdConfig->readEntry("AttributeSeparator",",").stripWhiteSpace();
+ dtd->attributeSeparator = dtdConfig->readEntry("AttributeSeparator").stripWhiteSpace();
+ if (dtd->attributeSeparator.isEmpty())
+ {
+   dtd->attributeSeparator = (dtd->family == Xml) ? "\"" : ",";
+ }
  dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
  if (!dtd->scriptName.isEmpty())
  {
