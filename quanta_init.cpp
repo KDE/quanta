@@ -1935,7 +1935,7 @@ void QuantaApp::initActions()
                         this, SLOT( slotViewRepaint() ),
                         ac, "reload" );
 
-    (void) new KAction( i18n( "View with &Net&cape" ), "netscape", CTRL+ALT+Key_F6,
+    (void) new KAction( i18n( "View with &Netscape" ), "netscape", CTRL+ALT+Key_F6,
                         m_view, SLOT( slotViewInNetscape() ),
                         ac, "view_with_netscape" );
     (void) new KAction( i18n( "View with Mo&zilla" ), "mozilla", ALT+Key_F6,
