@@ -650,16 +650,19 @@ void QuantaApp::slotViewToolBar()
   QToolBar *mbar = toolBar("mainToolBar");
   QToolBar *ebar = toolBar("mainEditToolBar");
   QToolBar *nbar = toolBar("mainNaviToolBar");
+  QToolBar *pbar = toolBar("mainPluginsToolBar");
 
   if(mbar->isVisible()) {
     mbar->hide();
     ebar->hide();
     nbar->hide();
+    pbar->hide();
   }
   else {
     nbar->show();
     ebar->show();
     mbar->show();
+    pbar->show();
   }
 }
 

@@ -189,6 +189,26 @@ void QuantaInit::initQuanta()
       m_quanta->switchToChildframeMode();
       QTimer::singleShot(0, m_quanta, SLOT(switchToToplevelMode()));
   }
+
+  //restore shown/hidden state of the toolbars
+  m_config->setGroup  ("General Options");
+  KToggleAction *showToolbarAction = (KToggleAction *) m_quanta->actionCollection()->action( "view_toolbar" );
+  if (!m_config->readBoolEntry("Show Toolbar",true))
+  {
+    m_quanta->toolBar("mainToolBar")->hide();
+    m_quanta->toolBar("mainEditToolBar")->hide();
+    m_quanta->toolBar("mainNaviToolBar")->hide();
+    m_quanta->toolBar("mainPluginsToolBar")->hide();
+    showToolbarAction->setChecked(false);
+  } else
+  {
+    m_quanta->toolBar("mainToolBar")->show();
+    m_quanta->toolBar("mainEditToolBar")->show();
+    m_quanta->toolBar("mainNaviToolBar")->show();
+    m_quanta->toolBar("mainPluginsToolBar")->show();
+    showToolbarAction->setChecked(true);
+  }
+
   m_quanta->menuBar()->insertItem(i18n("Plu&gins"), m_quanta->m_pluginInterface->pluginMenu(),
                                   -1, PLUGINS_MENU_PLACE);
 
@@ -523,19 +543,6 @@ void QuantaInit::readOptions()
   m_quanta->resize( m_config->readSizeEntry("Geometry", &s));
   qConfig.autosaveInterval = m_config->readNumEntry("Autosave interval", 1);
 
-  KToggleAction *showToolbarAction = (KToggleAction *) m_quanta->actionCollection()->action( "view_toolbar" );
-  if (!m_config->readBoolEntry("Show Toolbar",true))
-  {
-    m_quanta->toolBar("mainToolBar")->hide();
-    m_quanta->toolBar("mainEditToolBar")->hide();
-    m_quanta->toolBar("mainNaviToolBar")->hide();
-    showToolbarAction->setChecked(false);
-  } else
-  {
-    m_quanta->toolBar("mainToolBar")->show();
-    m_quanta->toolBar("mainEditToolBar")->show();
-    m_quanta->toolBar("mainNaviToolBar")->show();
-  }
   if (!m_config->readBoolEntry("Show Statusbar", true))
   {
      m_quanta->showStatusbarAction->setChecked(false);
@@ -544,7 +551,6 @@ void QuantaInit::readOptions()
      m_quanta->showStatusbarAction->setChecked(true);
   }
   m_quanta->slotViewStatusBar();
-  showToolbarAction  ->setChecked(m_config->readBoolEntry("Show Toolbar",   true));
   qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
   m_quanta->showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
   qConfig.showCloseButtons = m_config->readEntry("Close Buttons", "ShowAlways");
