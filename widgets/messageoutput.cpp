@@ -20,7 +20,9 @@
 MessageOutput::MessageOutput(QWidget *parent, const char *name )
   : KEdit(parent,name)
 {
+  insertAtEnd( "Message window...\n\n" );
 }
+
 MessageOutput::~MessageOutput(){
 }
 
