@@ -32,7 +32,6 @@ class QListViewItem;
 class QDomNodeList;
 class QVariant;
 class QMyHighlighter;
-class QFile;
 
 
 class myCheckListItem : public QCheckListItem
@@ -58,7 +57,6 @@ class CSSEditor : public CSSEditorS
 {
   Q_OBJECT
   private:
-    QFile *m_testFile;
     QMyHighlighter *m_myhi;
     propertySetter *m_ps;
     myCheckListItem *m_currentProp;
@@ -70,15 +68,13 @@ class CSSEditor : public CSSEditorS
                  m_Selectors,
                  m_Header,
                  m_Footer,
-                 m_InlineStyleContent,
-                 m_testFileName,
-                 m_initialPreviewText;            
+                 m_InlineStyleContent;
+                        
             //sourceFileName;   
    
     void Connect();
     void appendSub(QDomNodeList, myCheckListItem *);
     void buildListView(QDomNodeList, QListView *);
-    void updateTestFile();
     void updateDisplay();    
     void activatePreview();
     void setCurrentPropOn(const QString& s);
@@ -102,7 +98,7 @@ class CSSEditor : public CSSEditorS
     void setHeader( const QString& s) { m_Header = s; }
     void setFooter( const QString& s) { m_Footer = s;}
     void setInlineStyleContent( const QString& s){ m_InlineStyleContent = s; }
-    void setForInitialPreview(const QString& s) { m_initialPreviewText = s; } 
+    void setForInitialPreview(const QString& s) { } 
     QString generateProperties();
     // void setSourceFileName(const QString& n) { sourceFileName = n; }
     void hidePreviewer();

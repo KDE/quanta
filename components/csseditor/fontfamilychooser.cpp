@@ -29,7 +29,7 @@
 #include <qregexp.h>
 #include <qlineedit.h>
 
-//#include<kdebug.h>
+#include<kdebug.h>
 
 fontFamilyChooser::fontFamilyChooser(QWidget* parent, const char *name) : fontFamilyChooserS(parent,name){
 

@@ -54,7 +54,6 @@ class CSSSelector : public CSSSelectorS {
     QString generateFormattedStyleSection();         
     //void setSourceFileName(const QString& n) { m_sourceFileName = n; }
     //QString sourceFileName() const { return m_sourceFileName; }    
-    void setDTDTags(const QString&);
     void hideEditorPreviewer(bool b){ m_hideEditorPreviewer = b; }
     
   private slots: 
@@ -67,6 +66,7 @@ class CSSSelector : public CSSSelectorS {
     void removeSelected();     
     void setCurrentItem(QListViewItem* i) { m_currentItem = i; }
     void setCurrentListView(QWidget*);
+    void setDTDTags(const QString&);
 };
 
 #endif

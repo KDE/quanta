@@ -29,7 +29,7 @@
 #include <qfileinfo.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
-//#include <kdebug.h>
+#include <kdebug.h>
 
 CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (parent,name) {
 

@@ -32,7 +32,7 @@
 #include <khtml_part.h>
 #include <khtmlview.h>
 #include <kstandarddirs.h>
-//#include <kdebug.h>
+#include <kdebug.h>
 
 #include "propertysetter.h"
 #include "qmyhighlighter.h"
@@ -131,10 +131,6 @@ void CSSEditor::buildListView(QDomNodeList l, QListView *lv){
   }
 }
 
-void CSSEditor::activatePreview() {
-  m_previewer->openURL(KURL( m_testFile->name() ));
-}
-
 void CSSEditor::setCurrentPropOn(const QString& s){
  if( (m_currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( s,0 )) )) 
     m_currentProp->setOn(true);
@@ -163,7 +159,7 @@ void CSSEditor::setCurrentPropOn(const QString& s){
 
  void CSSEditor::addAndSetPropertyOn(const QString& property, const QString& value){
    addProperty(property,value);
-   setCurrentPropOn(property);
+   setCurrentPropOn(property);   
  }
 
  void CSSEditor::hidePreviewer(){ 
@@ -173,8 +169,6 @@ void CSSEditor::setCurrentPropOn(const QString& s){
  
 void CSSEditor::initialize()
 {
-  QFileInfo fi(quantaApp->currentURL());
-  m_testFileName = ( quantaApp->projectBaseURL().path()+ "quanta_test_file_of_" + fi.baseName() +"."+ fi.extension());
   QString configFile = locate("appdata", "csseditor/config.xml");
 
   m_myhi = new QMyHighlighter(display);
@@ -225,11 +219,7 @@ void CSSEditor::initialize()
   } // end while
 
   Connect();
-  m_testFile = new QFile(m_testFileName);
-  m_testFile->open(IO_WriteOnly);
-
-  m_previewer->openURL(KURL( m_testFile->name() ));
-
+  
   QBoxLayout *fEditingLayout = new QBoxLayout(fEditing,QBoxLayout::LeftToRight);
 
   m_ps = new propertySetter(fEditing);
@@ -239,13 +229,11 @@ void CSSEditor::initialize()
   QStringList props;
   QString temp;
   bool normalMode = true;
-  QTextStream stream( m_testFile );
 
   if( !m_selectorName.isEmpty() ){ //the cssselector has been called
      m_initialProperties = m_initialProperties.stripWhiteSpace();
      props=QStringList::split(";",m_initialProperties);
      temp=(m_selectorName + " {\n\t");
-     stream << ( m_Header + m_selectorName + " { " + m_initialProperties + " } "+ m_Selectors + m_Footer);
    }
 
   else {
@@ -253,9 +241,7 @@ void CSSEditor::initialize()
     normalMode = false;
     props=QStringList::split(";",m_InlineStyleContent);
     temp="\n\t";
-    stream << m_initialPreviewText;
   }
-  m_testFile->close();
 
   for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
        const QString propertyName((*it).section(":",0,0).stripWhiteSpace());
@@ -280,7 +266,7 @@ void CSSEditor::initialize()
     if(normalMode)//normal mode editing
       temp+="}";
     display->setText(temp);
-    
+    activatePreview();
 }
 
 CSSEditor::CSSEditor(QListViewItem *i, QWidget *parent, const char *name) : CSSEditorS(parent, name){
@@ -296,11 +282,6 @@ CSSEditor::~CSSEditor() {
     delete m_myhi;
     delete m_ps;
     delete m_previewer;
-    if(m_testFile){
-      delete m_testFile;
-      m_testFile=0L;
-    }
-    if(QFile::exists(m_testFileName)) QFile::remove(m_testFileName);
 }
 
 void CSSEditor::setMiniEditors(QListViewItem* i){
@@ -475,15 +456,10 @@ QString CSSEditor::generateProperties(){
   QMap<QString,QString>::Iterator it;
   if(!SHckb->isChecked()) {
     for ( it = m_properties.begin(); it != m_properties.end(); ++it ) props+=( it.key() + " : " + it.data().stripWhiteSpace() + "; " );
-    props.truncate(props.length()-1);//the last white space creates some problem: better remove it
+    props.truncate(props.length()-1);//the last white space creates some problems: better remove it
     return props;
   }
-  else {
-    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) {
-     
-    
-    }
-    
+  else {    
     ShorthandFormer sf(m_properties);
     return sf.compress();
   }
@@ -491,42 +467,35 @@ QString CSSEditor::generateProperties(){
 
 void CSSEditor::updatePreview()
 {
-    updateTestFile();
     updateDisplay();
     activatePreview();
 }
 
-void CSSEditor::updateTestFile()
-{
-  QMap<QString,QString> dummyProperties = m_properties;
+void CSSEditor::activatePreview() {
 
-  delete m_testFile;
-  m_testFile=0L;
-  m_testFile = new QFile(m_testFileName);
-  m_testFile->open(IO_WriteOnly);
-
-  QString testFileHeader(m_Header);
-  QString testFileFooter;
+  QString testHeader,
+               testFooter,
+               testBody;
 
   if(!m_selectorName.isEmpty()) {
-    testFileHeader += (  m_selectorName + " { \n " );
-    testFileFooter = ( "}"  + m_Selectors );
+    testHeader += (  m_selectorName + " { \n " );
+    testFooter = ( "}"  + m_Selectors );
   }
   else {
-    testFileHeader += (" style=\"" );
-    testFileFooter = "\"" ;
+    testHeader += (" style=\"" );
+    testFooter = "\"" ;
   }
-  testFileFooter += m_Footer ;
-
-  QTextStream stream( m_testFile );
-  stream << testFileHeader;
+  
   QMap<QString,QString>::Iterator it;
-  for ( it = dummyProperties.begin(); it != dummyProperties.end(); ++it ) {
+  for ( it = m_properties.begin(); it != m_properties.end(); ++it ) {
     QString s( it.key() + " : " + it.data() + ";");
-    stream << s;
-   }
-   stream << testFileFooter;
-   m_testFile->close();
+    testBody+= s;
+   } 
+
+ QFileInfo fi(quantaApp->currentURL());
+ m_previewer->begin( KURL(quantaApp->projectBaseURL().path() +  fi.baseName() ) );
+ m_previewer->write( m_Header + testHeader + testBody + testFooter + m_Footer);
+ m_previewer->end(); 
 }
 
 void CSSEditor::updateDisplay()

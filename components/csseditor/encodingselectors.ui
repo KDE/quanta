@@ -40,7 +40,7 @@
                                 <cstring>textLabel1</cstring>
                             </property>
                             <property name="text">
-                                <string>Select encoding:</string>
+                                <string>Select Encoding</string>
                             </property>
                         </widget>
                         <widget class="QComboBox">
@@ -64,6 +64,9 @@
                             </property>
                             <property name="text">
                                 <string>&amp;Ok</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+O</string>
                             </property>
                         </widget>
                         <spacer>
@@ -89,6 +92,9 @@
                             </property>
                             <property name="text">
                                 <string>&amp;Cancel</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+C</string>
                             </property>
                         </widget>
                     </hbox>

@@ -25,7 +25,7 @@
 
  QRegExp globalPercentagePattern("\\d%"),
                           globalLengthPattern("\\dex|em|px|cm|pt|pc|in|mm"),
-                          globalColorPattern("#([\\w\\d]{6})|([\\w\\d]{3})"),
+                          globalColorPattern("#[\\w\\d]*"),
                           globalNumberPattern("\\d*");
                 
 static const QString borderStyleValueString("none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit");               
@@ -537,7 +537,7 @@ QMap<QString,QString>  ShorthandFormer::expandBackgroundProp(QStringList l){
       else
       if( temp == "top" or temp == "center" or temp == "bottom" or temp == "left" or temp == "right" or (*it).contains(globalPercentagePattern) or (*it).contains(globalLengthPattern) or temp == "inherit"){
         if( expandedProps.contains("background-position") )
-          expandedProps["background-position"] = ( expandedProps["background-position"] + " " + ((*it)) );
+          expandedProps["background-position"] = ( expandedProps["background-position"] + " " + (*it) );
         else    
           expandedProps["background-position"] = (*it);
       }
