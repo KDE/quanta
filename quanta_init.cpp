@@ -114,6 +114,8 @@ QuantaApp::QuantaApp()
     
   connect( debugger,      SIGNAL(data(QString)),
            messageOutput, SLOT(phpDebug(QString)) );
+  connect( messageOutput, SIGNAL(clicked(QString,int)),
+           this,          SLOT(slotGoToError(QString,int)));
            
   if ( !debugger->ok() ) {
     QString s;

@@ -1483,3 +1483,10 @@ void QuantaApp::slotViewMessages()
   
   viewMenu->setItemChecked(ID_VIEW_MES, !stat);
 }
+
+void QuantaApp::slotGoToError( QString fname, int line ) 
+{
+   if ( ! fname.isEmpty() )
+     slotFileOpen( fname );
+   setCursorPosition( line-1, 1 );
+}

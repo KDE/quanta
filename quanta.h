@@ -302,6 +302,8 @@ class QuantaApp : public KTMainWindow
 	  void slotSelectMessageWidget();
 	  void slotDisableMessageWidget();
 	  
+	  void slotGoToError( QString fname, int line );
+	  
 	protected:
 	  KParts::BrowserExtension *browserExtension() {
       return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)htmlPart())->child( 0L, "KParts::BrowserExtension" ));

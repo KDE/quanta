@@ -24,6 +24,15 @@ MessageOutput::MessageOutput(QWidget *parent, const char *name )
 {
   insertItem( "Message window..." );
   max_items = 200;
+  
+  QPalette pal = palette();
+  pal.setColor(QColorGroup::HighlightedText, pal.color(QPalette::Normal, QColorGroup::Text));
+  pal.setColor(QColorGroup::Highlight,       pal.color(QPalette::Normal, QColorGroup::Mid));
+  setPalette(pal);
+  setFocusPolicy( NoFocus );
+  
+  connect( this, SIGNAL(clicked(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
+  
 }
 
 MessageOutput::~MessageOutput()
@@ -34,6 +43,7 @@ void MessageOutput::insertItem(QString s)
 {
   checkMaxItems();
   new MessageItem(this,s);
+  setBottomItem(count()-1);
 }
 
 void MessageOutput::showMessage( QString message ) 
@@ -64,7 +74,7 @@ void MessageOutput::clickItem( QListBoxItem * l_item )
 {
    MessageItem *item = dynamic_cast<MessageItem*>(l_item);
    if ( item )  {
-     if ( (item->fileName() != QString::null) && (item->line()!=-1) )
+     if ( item->line() != -1  )
        emit clicked( item->fileName(), item->line() );  
    }
 }
@@ -84,6 +94,7 @@ void MessageOutput::phpDebug( QString s)
      if ( (pos1=res.find(") start: ")) != -1  )
        res.remove(0,pos1-1 );
      new MessageItemPHP( this, res );
+     setBottomItem(count()-1);
    }
    
 }

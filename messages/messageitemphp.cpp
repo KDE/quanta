@@ -30,6 +30,23 @@ void MessageItemPHP::parseData(QString text)
    l3.remove(0,10);
    
    l1 = l1.stripWhiteSpace();
+   l3 = l3.stripWhiteSpace();
+   
+   int sepPos = l3.find(":"); // separatorof fname and line
+   if ( sepPos != -1 ) {
+      QString fname = l3.left(sepPos);
+      QString sline = l3.mid(sepPos+1,100);
+      if ( fname.find("(null)") == -1 )
+        setFileName(fname);
+      bool ok = true;
+      int line = sline.toInt(&ok);
+      if ( ok )
+        setLine(line);
+//      debug("fname:"+fname);
+//      debug("line:"+sline);
+      
+   }
+   
    
    stype = l1;
    type = E_UNKNOWN;
