@@ -148,6 +148,7 @@ void QuantaDoc::openDocument(const KURL& url)
   changeFileTabName(defUrl);
   
   emit title( this->url().url() );
+  emit newStatus();
   
   app->repaintPreview();
   
@@ -357,6 +358,7 @@ Document* QuantaDoc::newWrite(QWidget *parent)
  	connect( w, SIGNAL(newStatus    ()),app, SLOT(slotNewStatus    ()));
  	connect( w, SIGNAL(newUndo      ()),app, SLOT(slotNewUndo      ()));
  	connect( w, SIGNAL(newMarkStatus()),app, SLOT(slotNewMarkStatus()));
+ 	connect( w, SIGNAL(statusMsg(const QString &)),app, SLOT(slotStatusMsg(const QString &)));
  	
  	return w;
 }
@@ -559,7 +561,13 @@ void QuantaDoc::find()        {write()->find();}
 void QuantaDoc::findAgain()   {write()->findAgain();}
 void QuantaDoc::replace()     {write()->replace();}
 void QuantaDoc::invertSelect(){write()->invertSelection();}
-                                       
+void QuantaDoc::indent()      {write()->indent();}
+void QuantaDoc::unindent()    {write()->unIndent();}
+void QuantaDoc::cleanIndent() {write()->cleanIndent();}
+void QuantaDoc::gotoLine()    {write()->gotoLine();}
+void QuantaDoc::setHl(int _hl)  {write()->setHl(_hl);}
+void QuantaDoc::setEol(int _eol){write()->setEol(_eol);}
+
 void QuantaDoc::verticalSelect()
 {
   QDictIterator<Document> it( *docList );
@@ -570,4 +578,3 @@ void QuantaDoc::verticalSelect()
     ++it;
   }
 }
-

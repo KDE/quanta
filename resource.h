@@ -22,17 +22,6 @@
 #include <config.h>
 #endif
 
-///////////////////////////////////////////////////////////////////
-// resource.h  -- contains macros used for commands
-
-///////////////////////////////////////////////////////////////////
-// General application values
-#define ID_STATUS_MSG               1001
-#define ID_STATUS_CLM               1002
-
-#define IDS_STATUS_DEFAULT          "Ready."
-
-
 class QStrList;
 
 extern QStrList *tagsList; // list of known tags

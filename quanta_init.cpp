@@ -24,6 +24,8 @@
 #include <qlayout.h>
 #include <qtoolbutton.h>
 
+#include <qprogressbar.h>
+
 // include files for KDE
 #include <kiconloader.h>
 #include <kmessagebox.h>
@@ -95,7 +97,7 @@ QuantaApp::QuantaApp()
   config=kapp->config();
 
   parser = new Parser();
-
+  
   initTagDict  ();
   initStatusBar();
   initDocument ();
@@ -141,11 +143,32 @@ QuantaApp::~QuantaApp()
 
 void QuantaApp::initStatusBar()
 {
-  statusBar()->insertItem(i18n(IDS_STATUS_DEFAULT), ID_STATUS_MSG, 1);
-  statusBar()->setItemAlignment( ID_STATUS_MSG, AlignLeft );
+  statusbarTimer = new QTimer(this);
+  connect(statusbarTimer,SIGNAL(timeout()),this,SLOT(statusBarTimeout()));
   
-  statusBar()->insertFixedItem(i18n("Line: 00000 Col: 000"), ID_STATUS_CLM, true);
-  statusBar()->changeItem("", ID_STATUS_CLM);
+//  int h = statusBar()->fontMetrics().height();
+  
+//  QProgressBar *progressBar = new QProgressBar();
+  
+//  progressBar->setProgress(100);
+//  progressBar->setMinimumSize(QSize(200,h));
+//  progressBar->setMaximumSize(QSize(200,h));
+  
+  statusBar()->insertItem(i18n(IDS_DEFAULT),IDS_STATUS, 1);
+//  statusBar()->addWidget(progressBar);
+  statusBar()->insertFixedItem(" XXX ",     IDS_INS_OVR  );
+  statusBar()->insertFixedItem(" * ",       IDS_MODIFIED );
+  statusBar()->insertFixedItem(i18n("Line: 00000 Col: 000"), IDS_STATUS_CLM, true);
+  
+  statusBar()->changeItem("", IDS_INS_OVR);
+  statusBar()->changeItem("", IDS_MODIFIED);
+  statusBar()->changeItem("", IDS_STATUS_CLM);
+  statusBar()->setItemAlignment(IDS_STATUS, AlignLeft);
+}
+
+void QuantaApp::statusBarTimeout() 
+{
+  statusBar()->changeItem("", IDS_STATUS);
 }
 
 void QuantaApp::initContextMenu()
@@ -157,7 +180,7 @@ void QuantaApp::initContextMenu()
 void QuantaApp::initDocument()
 {
   doc = new QuantaDoc(this,this);
-//  connect(doc, SIGNAL(title(QString)), this,  SLOT(setTitle(QString)));
+  connect(doc, SIGNAL(newStatus()),    this, SLOT(slotNewStatus()));
 }
 
 void QuantaApp::initProject()
@@ -174,6 +197,8 @@ void QuantaApp::initProject()
 					pTab, 		SLOT  (slotSetProjectName(QString)));
 	connect(project,	SIGNAL(closeFiles()),
 					doc,			SLOT	(closeAll()));
+	connect(project,  SIGNAL(showTree()),
+	        this,     SLOT  (slotShowProjectTree()));
 					
 	connect(fLTab,		SIGNAL(insertDirInProject(QString)),
 					project,	SLOT	(addDirectory(QString)));
@@ -653,19 +678,19 @@ void QuantaApp::initActions()
     // Tool actions
     //
     (void) new KAction( i18n( "&Go To Line..." ), CTRL+Key_G, 
-                        this, SLOT( slotEditGotoLine() ),
+                        doc, SLOT( gotoLine() ),
                         actionCollection(), "goto_line" );
 
     (void) new KAction( i18n( "&Indent" ), ALT+SHIFT+Key_Right, 
-                        this, SLOT( slotEditIndent() ),
+                        doc, SLOT( indent() ),
                         actionCollection(), "indent" );
                         
     (void) new KAction( i18n( "&Unindent" ), ALT+SHIFT+Key_Left, 
-                        this, SLOT( slotEditUnindent() ),
+                        doc, SLOT( unindent() ),
                         actionCollection(), "unindent" );
                         
     (void) new KAction( i18n( "&Clean Indentation" ), 0, 
-                        this, SLOT( slotEditCleanIndent() ),
+                        doc, SLOT( cleanIndent() ),
                         actionCollection(), "clean_indentation" );
 
     (void) new KAction( i18n( "Context &Help..." ), CTRL+Key_H, 
@@ -788,26 +813,27 @@ void QuantaApp::initActions()
                         doc, SLOT( highlightings() ),
                         actionCollection(), "highlight_options" );
                         
-    KSelectAction *setHighlight =
+    hlSelectAction =
       new KSelectAction(i18n("Highlight &Mode"), 0, actionCollection(), "set_highlight");
       
     QStringList list;
     for (int z = 0; z < HlManager::self()->highlights(); z++)
         list.append(i18n(HlManager::self()->hlName(z)));
         
-    setHighlight->setItems(list);
+    hlSelectAction->setItems(list);
       
-    KSelectAction *setEndOfLine = 
+    eolSelectAction = 
       new KSelectAction(i18n("&End Of Line"),    0, actionCollection(), "set_eol");
     
     list.clear();
     list.append("&Unix");
     list.append("&Macintosh");
     list.append("&Windows/Dos");
-    setEndOfLine->setItems(list);
+    
+    eolSelectAction->setItems(list);
         
-    connect(setEndOfLine, SIGNAL(activated(int)), this, SLOT(slotSetEol(int)));  
-    connect(setHighlight, SIGNAL(activated(int)), this, SLOT(slotSetHl (int)));
+    connect(eolSelectAction, SIGNAL(activated(int)), doc, SLOT(setEol(int)));  
+    connect(hlSelectAction,  SIGNAL(activated(int)), doc, SLOT(setHl (int)));
     
     (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0, 
                         doc, SLOT( editorOptions() ),

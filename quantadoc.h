@@ -108,9 +108,16 @@ class QuantaDoc : public QObject
     void replace();
     void invertSelect();
     void verticalSelect();
+    void indent();
+    void unindent();
+    void cleanIndent();
+    void gotoLine();
 
+    void setHl (int);
+    void setEol(int);
  	
   signals:
+    void newStatus();
     void title(QString);
 
   private:

@@ -95,6 +95,7 @@ signals:
 	void setBasePath		 ( QString );
 	void setProjectName	 ( QString );
 	
+	void   showTree      ();
 	void reloadTree			 ( QStringList,bool,bool );
 	
   void setLocalFiles   ( bool );

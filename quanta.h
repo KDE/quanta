@@ -22,6 +22,12 @@
   #define VERSION "2"
 #endif
 
+#define IDS_STATUS      1
+#define IDS_INS_OVR     2
+#define IDS_MODIFIED    3
+#define IDS_STATUS_CLM  4
+#define IDS_DEFAULT     "Ready."
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -42,13 +48,14 @@ class QuantaView;
 class WSplitter;
 class QTabWidget;
 class QWidgetStack;
+class QListViewItem;
 
 class WHTMLPart;
 class KHTMLView;
 
 class KAction;
 class KToggleAction;
-class QListViewItem;
+class KSelectAction;
 class KRecentFilesAction;
 
 class Node;
@@ -129,10 +136,6 @@ class QuantaApp : public KMainWindow
     void slotInsertTag        (QString);
 
     void slotEditFindInFiles   ();
-    void slotEditIndent        ();
-    void slotEditUnindent      ();
-    void slotEditCleanIndent   ();
-    void slotEditGotoLine      ();
     
     void slotToolSyntaxCheck();
 
@@ -146,6 +149,7 @@ class QuantaApp : public KMainWindow
     void slotViewToolBar  ();
     void slotViewStatusBar();
     
+    void statusBarTimeout ();
     void slotStatusMsg    (const QString &text);
     
     void slotNewUndo      ();
@@ -164,6 +168,8 @@ class QuantaApp : public KMainWindow
     void slotShowPreview();
     
     void slotShowLeftPanel();
+    
+    void slotShowProjectTree();
 
     void slotFtpClient();
 
@@ -177,17 +183,9 @@ class QuantaApp : public KMainWindow
 
     /** options slots */
     void slotOptions();
-
-    /** configure keybindings */
     void slotOptionsConfigureKeys();
-
     void slotOptionsConfigureToolbars();
-    
     void slotOptionsConfigureActions();
-
-    /** set highlight and eol */
-    void slotSetHl(int);
-    void slotSetEol(int);
 
     /** reparse current document and initialize node. */
 	  void reparse();
@@ -201,7 +199,8 @@ class QuantaApp : public KMainWindow
 	  void slotDisableMessageWidget();
 	  
 	  void setTitle(QString);
-	  
+
+	  	  
 	protected:
 	  KParts::BrowserExtension *browserExtension() {
       return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)htmlPart())->child( 0L, "KParts::BrowserExtension" ));
@@ -261,6 +260,8 @@ class QuantaApp : public KMainWindow
     Parser *parser;
 
     ToolBars *toolbars;
+    
+    QTimer *statusbarTimer;
 
     int phpDebugPort;
     
@@ -268,6 +269,8 @@ class QuantaApp : public KMainWindow
     KRecentFilesAction *fileRecent;
     
     KToggleAction *verticalSelectAction;
+    
+    KSelectAction *eolSelectAction, *hlSelectAction;
     
     KAction *saveAction, *saveAllAction, *undoAction, *redoAction,
       *cutAction, *copyAction, *findNextAction, *backAction, *forwardAction,

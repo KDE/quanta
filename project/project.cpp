@@ -306,6 +306,8 @@ void Project::closeProject()
 /** load project from file: name */
 void Project::loadProject(QString fname)
 {
+  if ( fname.left(5) == "file:" ) fname.remove(0,5);
+  
   QFile f( fname );
   QFileInfo fi( fname );
   QDomNode n_prj;
@@ -350,6 +352,7 @@ void Project::loadProject(QString fname)
   emit setBasePath		( basePath );
   emit setProjectName	( projectName );
 	emit reloadTree 		( fileNameList(true), true, false );
+	emit   showTree     ();
 }
 
 // slot for insert file
@@ -596,6 +599,7 @@ void Project::slotAcceptCreateProject()
 	emit setBasePath( basePath );
 	emit setProjectName( projectName );
 	emit reloadTree( fileNameList(), true, false );
+	emit   showTree();
 	
 	saveProject();
 }

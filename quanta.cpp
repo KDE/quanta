@@ -206,37 +206,14 @@ void QuantaApp::slotFileQuit()
 
 void QuantaApp::slotEditFindInFiles()
 {
-  slotStatusMsg(i18n("Search in Files..."));
-
   if (!grepDialog) {
       grepDialog = new GrepDialog( ".", this, "grep_dialog" );
-      connect( grepDialog, SIGNAL( itemSelected( const QString &, int ) ),
-               this, SLOT( gotoFileAndLine( const QString &, int ) ) );
+      connect( grepDialog, SIGNAL( itemSelected   (const QString &, int)),
+               this,       SLOT  ( gotoFileAndLine(const QString &, int)));
   }
   grepDialog->show();
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
-void QuantaApp::slotEditIndent()
-{
-  doc->write()->indent();
-}
-
-void QuantaApp::slotEditUnindent()
-{
-  doc->write()->unIndent();
-}
-
-void QuantaApp::slotEditCleanIndent()
-{
-  doc->write()->cleanIndent();
-}
-
-void QuantaApp::slotEditGotoLine()
-{
-  doc->write()->gotoLine();
-}
 
 void QuantaApp::slotViewToolBar()
 {
@@ -249,9 +226,11 @@ void QuantaApp::slotViewStatusBar()
 }
 
 
-void QuantaApp::slotStatusMsg(const QString &text)
+void QuantaApp::slotStatusMsg(const QString &msg)
 {
-  statusBar()->changeItem(text, ID_STATUS_MSG);
+  statusbarTimer->stop();
+  statusBar()   ->changeItem(" " + msg, IDS_STATUS);
+  statusbarTimer->start(10000, true);
 }
 
 /** Repaint preview */
@@ -381,21 +360,25 @@ void QuantaApp::slotInsertTag(QString url)
 /** slot for new modify flag */
 void QuantaApp::slotNewStatus()
 {
-/*	
-  if ( doc->isModified() )
-  {
-    enableCommand(ID_FILE_SAVE);
-    enableCommand(ID_FILE_SAVE_ALL);
-  }
-  else {
-    disableCommand(ID_FILE_SAVE);
-
-    if ( !doc->isModifiedAll() ) {
-      disableCommand(ID_FILE_SAVE_ALL);
-    }
-    else enableCommand(ID_FILE_SAVE_ALL);
-  }
-*/	
+  setTitle( doc->url().url() );
+  
+  int  config   = doc->write()->config();
+  bool readOnly = doc->write()->isReadOnly();
+  
+  if (readOnly) statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
+  else          statusBar()->changeItem(config & KWriteView::cfOvr ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
+  
+  statusBar()->changeItem(doc->write()->isModified() ? " * " : "",IDS_MODIFIED);
+  
+  saveAction   ->setEnabled(doc->isModified());
+  saveAllAction->setEnabled(doc->isModified());
+  
+  int eol = doc->write()->getEol()-1;
+  eol = eol>=0? eol: 0;
+  
+  eolSelectAction->setCurrentItem(eol);
+  hlSelectAction ->setCurrentItem(doc->write()->getHl ());
+  
   QDictIterator<Document> it( *(doc->docList) );
 
   QIconSet floppyIcon( UserIcon("save_small"));
@@ -417,34 +400,19 @@ void QuantaApp::slotNewStatus()
 /** slot for new undo flag */
 void QuantaApp::slotNewUndo()
 {
-//	int state = doc->write()->undoState();
-	// undo/redo
-#warning need rewrite statuses	
-/*  
-  if(state & 1)
- 		enableCommand( ID_EDIT_UNDO);
-  else
-		disableCommand(ID_EDIT_UNDO);
-  if(state & 2)
-    enableCommand( ID_EDIT_REDO);
-  else
-    disableCommand(ID_EDIT_REDO);
-*/
+	int state = doc->write()->undoState();
+  
+  undoAction->setEnabled(state & 1);
+  redoAction->setEnabled(state & 2);
 }
 
 /** slot for new mark flag */
 void QuantaApp::slotNewMarkStatus()
 {
-/*  
-	if ( doc->write()->hasMarkedText() ) {
-		enableCommand(ID_EDIT_CUT);
-    enableCommand(ID_EDIT_COPY);
-	}
-	else {
-		disableCommand(ID_EDIT_CUT);
-    disableCommand(ID_EDIT_COPY);
-	}
-*/	
+  bool stat = doc->write()->hasMarkedText();
+		
+  cutAction ->setEnabled(stat);
+  copyAction->setEnabled(stat);
 }
 
 void QuantaApp::slotUpdateStatus(const QString &)
@@ -664,6 +632,11 @@ void QuantaApp::slotShowLeftPanel()
 //	checkCommand( ID_VIEW_TREE, !stat );
 }
 
+void QuantaApp::slotShowProjectTree()
+{
+  leftPanel->showPage((QWidget *)pTab);
+}
+
 void QuantaApp::slotNewLineColumn()
 {
   QString linenumber;
@@ -674,7 +647,7 @@ void QuantaApp::slotNewLineColumn()
 
   linenumber.sprintf(i18n("Line: %d Col: %d"),y,x);
 
-  statusBar()->changeItem(linenumber.data(), ID_STATUS_CLM);
+  statusBar()->changeItem(linenumber.data(), IDS_STATUS_CLM);
 }
 
 /** reparse current document and initialize node. */
@@ -704,7 +677,7 @@ void QuantaApp::setCursorPosition( int row, int col )
 
 void QuantaApp::gotoFileAndLine( const QString &filename, int line )
 {
-  doc->openDocument( filename );
+  if ( !filename.isEmpty() ) doc->openDocument( filename );
   
   if ( view->write()->numLines() > line && line >= 0 )
   {
@@ -808,16 +781,6 @@ void QuantaApp::contextHelp()
    }
 }
 
-void QuantaApp::slotSetHl( int _hl )
-{
-  doc->write()->setHl(_hl);
-}
-
-void QuantaApp::slotSetEol( int _eol )
-{
-  doc->write()->setEol(_eol);
-}
-
 void QuantaApp::slotFtpClient()
 {
 /*	
@@ -876,11 +839,14 @@ void QuantaApp::slotToolSyntaxCheck()
   slotFileSave();
   if ( !doc->write()->isUntitled() ) 
   {
+    QString fname = doc->write()->url().url();
+    if ( fname.left(5) == "file:" ) fname.remove(0,5);
+    
     KProcess *p = new KProcess();
     *p << "perl";
     *p << locate("lib","quanta/plugins/weblint");
     *p << "-x" << "Netscape";
-    *p << doc->write()->url().url();
+    *p << fname;
     
     connect( p, SIGNAL(processExited(KProcess *)),
              messageOutput, SLOT(weblintFinished()) );

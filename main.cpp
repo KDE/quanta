@@ -98,6 +98,9 @@ int main(int argc, char *argv[])
      
     quanta = new QuantaApp();
     quanta ->show();
+    
+    delete f;
+    
     quanta ->openLastFiles();
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -109,7 +112,7 @@ int main(int argc, char *argv[])
 		}
 		args->clear();
   }
-  delete f;
+  
 
   return app.exec();
 }
