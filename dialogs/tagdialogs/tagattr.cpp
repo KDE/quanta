@@ -39,17 +39,17 @@ QString Attr::attrName() const
 }
 
 
-Attr_list::Attr_list( QDomElement *el, QWidget *w, QTag *dtdTag )
+Attr_list::Attr_list( QDomElement const& el, QWidget *w, QTag *dtdTag )
   : Attr(el, w, dtdTag)
 {
    combo = (QComboBox *)w;
    
-   QString source = el->attribute("source");
+   QString source = el.attribute("source");
    if (source == "dcop") //fill the list with a result of a DCOP call
    {
-     QString method = el->attribute("method");
-     QString interface = el->attribute("interface", "QuantaIf");
-     QString arguments = el->attribute("arguments");
+     QString method = el.attribute("method");
+     QString interface = el.attribute("interface", "QuantaIf");
+     QString arguments = el.attribute("arguments");
      arguments.replace("%tagname%", m_dtdTag->name());
      DCOPReply reply = QuantaCommon::callDCOPMethod(interface, method, arguments);
      if (reply.isValid())
@@ -59,7 +59,7 @@ Attr_list::Attr_list( QDomElement *el, QWidget *w, QTag *dtdTag )
      }
    }
       
-   for ( QDomElement n = el->firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
+   for ( QDomElement n = el.firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
       if ( n.tagName() == "items" ) {
          QDomElement item = n.firstChild().toElement();
          while ( !item.isNull() ) {

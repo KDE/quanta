@@ -4673,8 +4673,12 @@ Node *QuantaApp::showTagDialogAndReturnNode(const QString &tag, const QString &a
   if(view && view->document())
   {
     Document *w = view->document();
-
-    TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), attr, ViewManager::ref()->activeView()->baseURL());
+    
+    QString selection;
+    if(view->hadLastFocus() == QuantaView::VPLFocus)
+        selection = KafkaDocument::ref()->getKafkaWidget()->selectedText();
+    
+    TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), selection, attr, ViewManager::ref()->activeView()->baseURL());
     if (dlg->exec())
     {
       n= dlg->buildNode(w);

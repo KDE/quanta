@@ -51,7 +51,9 @@ public:
 
   */
   TagDialog(QTag* dtdTag, Tag* tag, KURL a_baseURL = KURL());
+  TagDialog(QTag* dtdTag, Tag* tag, const QString& selection, KURL a_baseURL = KURL());
   TagDialog(QTag* dtdTag, QString attrs=QString::null, KURL a_baseURL = KURL());
+  TagDialog(QTag* dtdTag, const QString& selection, QString attrs=QString::null, KURL a_baseURL = KURL());
   ~TagDialog();
   /** Insert an attribute to dict*/
   void insertAttribute(QString *attr, QString *value);
@@ -89,6 +91,7 @@ private:
   bool deleteTag;
   Tag *m_tag;
   QTag* dtdTag;
+  QString m_selection;
 
   QPtrList<Tagxml> *extraPageList;
 

@@ -31,6 +31,7 @@ class Tagxml : public QWidget, TagWidget {
   public:
     /** construtor */
     Tagxml(QDomNode &d, QTag *dtdTag, QWidget* parent=0, const char *name=0);
+    Tagxml(QDomNode &d, QTag *dtdTag, const QString& selection, QWidget* parent=0, const char *name=0);
     /** destructor */
     ~Tagxml();
 
@@ -41,11 +42,13 @@ class Tagxml : public QWidget, TagWidget {
     void focusToFirstItem();
 
   private:
+    void initialize(QDomNode &d, QTag *dtdTag);
+      
     QDomNode doc;
     const DTDStruct *m_dtd;
     QWidget *m_firstItem;
     QTag *m_dtdTag;
-
+    QString m_selection;
 };
 
 

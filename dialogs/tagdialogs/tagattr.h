@@ -43,16 +43,19 @@ QDomNode findChild( QDomNode &parent, QString name );
 class Attr
 {
   public:
-    Attr( QDomElement *el, QWidget *, QTag *dtdTag ){ domEl = el; name = domEl->attribute("name",""); m_dtdTag = dtdTag;}
-    virtual ~Attr(){ delete domEl; }
+    Attr( QDomElement const& el, QWidget *, QTag *dtdTag ) 
+    : domEl(el), name(domEl.attribute("name","")), m_dtdTag(dtdTag) {}
+    //{ domEl = el; name = domEl->attribute("name",""); m_dtdTag = dtdTag;}
+    virtual ~Attr(){}
 
     virtual QString value()=0;
     virtual void setValue( QString )=0;
 
     QString attrName() const;
+    QDomElement const& domElement() const { return domEl; }
 
   protected:
-     QDomElement *domEl;
+     QDomElement domEl;
      QString name;
      QTag *m_dtdTag;
 };
@@ -64,7 +67,7 @@ class Attr_line : public Attr
     QLineEdit *line;
 
   public:
-    Attr_line( QDomElement *el, QWidget *w, QTag *dtdTag ) : Attr(el, w, dtdTag)
+    Attr_line( QDomElement const& el, QWidget *w, QTag *dtdTag ) : Attr(el, w, dtdTag)
         {  line = (QLineEdit *)w; }
     virtual ~Attr_line(){};
 
@@ -79,7 +82,7 @@ class Attr_color : public Attr
     ColorCombo *color;
 
   public:
-    Attr_color( QDomElement *el, QWidget *w, QTag *dtdTag ) : Attr(el, w, dtdTag)
+    Attr_color( QDomElement const& el, QWidget *w, QTag *dtdTag ) : Attr(el, w, dtdTag)
         { color = (ColorCombo *)w; }
     virtual ~Attr_color(){};
 
@@ -93,7 +96,7 @@ class Attr_file : public Attr
     FileCombo *file;
 
   public:
-    Attr_file( QDomElement *el, QWidget *w , QTag * dtdTag ) : Attr(el, w, dtdTag)
+    Attr_file( QDomElement const& el, QWidget *w , QTag * dtdTag ) : Attr(el, w, dtdTag)
         { file = (FileCombo *)w; }
     virtual ~Attr_file(){};
 
@@ -107,7 +110,7 @@ class Attr_list : public Attr
     QComboBox *combo;
 
   public:
-    Attr_list( QDomElement *el, QWidget *w, QTag *dtdTag );
+    Attr_list( QDomElement const& el, QWidget *w, QTag *dtdTag );
     virtual ~Attr_list(){};
 
     virtual QString value() { return combo->currentText(); }
@@ -121,7 +124,7 @@ class Attr_check : public Attr
     QCheckBox *check;
 
   public:
-    Attr_check( QDomElement *el, QWidget *w, QTag *dtdTag ) : Attr(el, w, dtdTag)
+    Attr_check( QDomElement const& el, QWidget *w, QTag *dtdTag ) : Attr(el, w, dtdTag)
         { check = (QCheckBox *)w; }
     virtual ~Attr_check(){};
 

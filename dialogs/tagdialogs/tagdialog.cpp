@@ -60,6 +60,23 @@ TagDialog::TagDialog(QTag* dtdTag, Tag *tag, KURL a_baseURL)
 
 }
 
+TagDialog::TagDialog(QTag* dtdTag, Tag *tag, const QString& selection, KURL a_baseURL)
+    : QTabDialog( 0L, "tagdialog", true), m_selection(selection)
+{
+    init(dtdTag, a_baseURL);
+
+    m_tag = tag;
+    if (m_tag)
+    {
+        for (int i = 0; i < m_tag->attrCount(); i++)
+        {
+            dict->insert(m_tag->attribute(i), new QString(m_tag->attributeValue(i)));
+        }
+    }
+    mainDlg = 0L;
+    parseTag();
+}
+
 TagDialog::TagDialog(QTag* dtdTag, QString attrs, KURL a_baseURL)
     : QTabDialog( 0L, "tagdialog", true)
 {
@@ -71,6 +88,19 @@ TagDialog::TagDialog(QTag* dtdTag, QString attrs, KURL a_baseURL)
   mainDlg = 0L;
   m_tag = 0L;
   parseTag();
+}
+
+TagDialog::TagDialog(QTag* dtdTag, const QString& selection, QString attrs, KURL a_baseURL)
+    : QTabDialog( 0L, "tagdialog", true), m_selection(selection)
+{
+    init(dtdTag, a_baseURL);
+    if ( !attrs.isNull() )
+    {
+        parseAttributes(attrs);
+    }
+    mainDlg = 0L;
+    m_tag = 0L;
+    parseTag();
 }
 
 TagDialog::~TagDialog()
@@ -138,7 +168,7 @@ void TagDialog::parseTag()
               nodeTagName = nodeTagName.upper();
           if (nodeTagName == tagName && n.toElement().elementsByTagName("attr").count() > 0) //read a tag
           {
-            mainDlg = new Tagxml( n, dtdTag, this );
+            mainDlg = new Tagxml( n, dtdTag, m_selection, this );
             ((Tagxml    *)mainDlg)->writeAttributes( dict );
             break;
           }
@@ -154,7 +184,7 @@ void TagDialog::parseTag()
       docString += "</tag>\n</TAGS>\n";
       doc.setContent(docString);
       QDomNode domNode2 = doc.firstChild().firstChild();
-      mainDlg = new Tagxml( domNode2, dtdTag, this );
+      mainDlg = new Tagxml( domNode2, dtdTag, m_selection, this );
     }
 
   if ( mainDlg )
@@ -242,7 +272,7 @@ void TagDialog::parseTag()
     {
       extraDoc.setContent(docString);
       QDomNode domNode = extraDoc.firstChild().firstChild();
-      extraPage = new Tagxml( domNode, dtdTag, this );
+      extraPage = new Tagxml( domNode, dtdTag, m_selection, this );
       extraPage->writeAttributes( dict );
       addTab( extraPage, i18n(title.utf8()) );
       extraPageList->append(extraPage);
