@@ -180,7 +180,7 @@ void QuantaInit::initQuanta()
   int mdiMode = m_config->readNumEntry("MDI mode", -1);
   if (mdiMode != -1 && layout != "Default")
       m_quanta->readDockConfig(m_config); //FIXME: This causes the visible widget construction on startup, but is needed to restore the window layout...
-  m_quanta->setToolviewStyle(qConfig.toolviewTabs);
+//  m_quanta->setToolviewStyle(qConfig.toolviewTabs);
   qConfig.windowLayout = "Custom";
   //FIXME: This is a hack to workaround the starting problem when we are in Toplevel mode.
   //Without this, the editor becomes the child of the widget holding the menus and toolbars...
