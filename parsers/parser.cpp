@@ -1245,6 +1245,7 @@ void Parser::clearGroups()
 #ifdef DEBUG_PARSER
       kdDebug(24001) << "GroupElement deleted: " <<groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
 #endif
+      //kdDebug(24000) << "usertagcount: " << groupElement->tag->write()->userTagList.count() << endl;
       groupElement->tag->write()->userTagList.remove(groupElement->tag->name.lower());
       if (!groupElement->deleted)
       {
@@ -1310,7 +1311,7 @@ void Parser::cleanGroups()
 #ifdef DEBUG_PARSER
       kdDebug(24000) << count << "GroupElement deleted (cleanGroups)." << endl;
 #endif
-  if (m_parseIncludedFiles)
+  if (m_parseIncludedFiles && ParserCommon::includedFiles.count() > 0)
   {
       delete ParserCommon::includeWatch;
       ParserCommon::includeWatch = new KDirWatch();
