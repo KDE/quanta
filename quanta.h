@@ -211,6 +211,7 @@ public slots:
   void slotNewLineColumn();
   void slotUpdateStatus(QWidget*);
 
+  void slotDockStatusChanged();
   void slotDockChanged();
 
   /** repaint preview */
@@ -381,6 +382,7 @@ protected:
   /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
   void loadToolbarForDTD(const QString& dtdName);
   void setTitle(const QString&);
+  void connectDockSignals(QObject *obj);
 
 private:
   /** Messaage output window */

@@ -25,15 +25,18 @@ class KConfig;
 
 class PreviewOptions : public PreviewOptionsS  {
    Q_OBJECT
-public: 
+public:
   PreviewOptions(QWidget *parent=0, const char *name=0);
   ~PreviewOptions();
 
   QString position();
-  void setPosition( QString );
-  
+  QString layout();
+  void setPosition(const QString& );
+  void setWindowLayout(const QString& );
+
 public slots:
-  void slotToggle();
+  void slotToggleWindowLayout();
+  void slotTogglePreview();
 };
 
 #endif

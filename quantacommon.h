@@ -77,6 +77,7 @@ typedef struct QConfig{
           QString imageMimeTypes;
           QString textMimeTypes;
           QString previewPosition;
+          QString windowLayout;
 
           //spelling options
           KSpellConfig *spellConfig;

@@ -28,19 +28,32 @@ PreviewOptions::PreviewOptions(QWidget *parent, const char *name)
   : PreviewOptionsS(parent,name)
 {
   connect(radioBottom, SIGNAL(toggled(bool)),
-          this,  SLOT(slotToggle()));
+          this,  SLOT(slotTogglePreview()));
   connect(radioRight, SIGNAL(toggled(bool)),
-          this,  SLOT(slotToggle()));
+          this,  SLOT(slotTogglePreview()));
   connect(radioDisabled, SIGNAL(toggled(bool)),
-          this,  SLOT(slotToggle()));
+          this,  SLOT(slotTogglePreview()));
   connect(radioFullworkspace, SIGNAL(toggled(bool)),
-          this,  SLOT(slotToggle()));
+          this,  SLOT(slotTogglePreview()));
+  connect(radioDefault, SIGNAL(toggled(bool)),
+          this,  SLOT(slotToggleWindowLayout()));
+  connect(radioTabbed, SIGNAL(toggled(bool)),
+          this,  SLOT(slotToggleWindowLayout()));
+  connect(radioCustom, SIGNAL(toggled(bool)),
+          this,  SLOT(slotToggleWindowLayout()));
 }
 
 PreviewOptions::~PreviewOptions(){
 }
 
-void PreviewOptions::setPosition( QString position )
+void PreviewOptions::setWindowLayout(const QString& layout )
+{
+  if ( layout == "Default") radioDefault->setChecked(true);
+  if ( layout == "Tabbed" ) radioTabbed->setChecked(true);
+  if ( layout == "Custom") radioCustom->setChecked(true);
+}
+
+void PreviewOptions::setPosition(const QString& position )
 {
   radioBottom->setChecked(true);
 
@@ -54,18 +67,48 @@ QString PreviewOptions::position()
 {
   QString position = "Bottom";
 
-  if ( radioBottom->isChecked()         ) position = "Bottom";
-  if ( radioRight->isChecked()          ) position = "Right";
-  if ( radioFullworkspace->isChecked()   ) position = "FWSpace";
-  if ( radioDisabled->isChecked()        ) position = "Disabled";
+  if ( radioBottom->isChecked() )
+      position = "Bottom";
+  if ( radioRight->isChecked() )
+      position = "Right";
+  if ( radioFullworkspace->isChecked() )
+      position = "FWSpace";
+  if ( radioDisabled->isChecked() )
+      position = "Disabled";
 
   return position;
 }
 
-void PreviewOptions::slotToggle()
+QString PreviewOptions::layout()
 {
-  if ( radioBottom->isChecked()         ) pixmap->setPixmap( UserIcon("preview1") );
-  if ( radioRight->isChecked()          ) pixmap->setPixmap( UserIcon("preview2") );
-  if ( radioFullworkspace->isChecked()   ) pixmap->setPixmap( UserIcon("preview3") );
-  if ( radioDisabled->isChecked()        ) pixmap->setPixmap( UserIcon("preview4") );
+  QString layout = "Custom";
+  if ( radioDefault->isChecked() )
+      layout = "Default";
+  if ( radioTabbed->isChecked() )
+      layout = "Tabbed";
+
+  return layout;
 }
+
+void PreviewOptions::slotTogglePreview()
+{
+  if ( radioBottom->isChecked() )
+      pixmap->setPixmap( UserIcon("preview1") );
+  if ( radioRight->isChecked() )
+      pixmap->setPixmap( UserIcon("preview2") );
+  if ( radioFullworkspace->isChecked() )
+      pixmap->setPixmap( UserIcon("preview3") );
+  if ( radioDisabled->isChecked() )
+      pixmap->setPixmap( UserIcon("preview4") );
+}
+
+void PreviewOptions::slotToggleWindowLayout()
+{
+  if ( radioDefault->isChecked() )
+      windowPixmap->setPixmap( UserIcon("layout1") );
+  if ( radioTabbed->isChecked() )
+      windowPixmap->setPixmap( UserIcon("layout2") );
+  if ( radioCustom->isChecked() )
+      windowPixmap->setPixmap( UserIcon("customlayout") );
+}
+

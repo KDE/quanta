@@ -901,10 +901,11 @@ void QuantaApp::slotOptions()
   }
 
   // Preview options
-  page=kd->addVBoxPage(i18n("Preview"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
+  page=kd->addVBoxPage(i18n("Layout"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
   PreviewOptions *previewOptions = new PreviewOptions( (QWidget *)page );
 
-  previewOptions->setPosition( qConfig.previewPosition );
+  previewOptions->setPosition(qConfig.previewPosition);
+  previewOptions->setWindowLayout(qConfig.windowLayout);
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( m_config, (QWidget *)page );
@@ -1024,6 +1025,31 @@ void QuantaApp::slotOptions()
 //    checkCommand( ID_VIEW_PREVIEW, false );
 
     qConfig.previewPosition = previewOptions->position();
+
+    QString layout = previewOptions->layout();
+    if (layout == "Default")
+    {
+      ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
+      bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
+
+      ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+      ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+      dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+      KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+      atabdock->manualDock(w, KDockWidget::DockBottom, 70);
+    } else
+    if (layout == "Tabbed")
+    {
+      ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
+      bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
+
+      ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+      ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+      dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+      stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+      atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    }
+    qConfig.windowLayout = layout;
 
     htmlpart->closeURL();
     htmlpart->begin( projectBaseURL());
@@ -1238,11 +1264,14 @@ void QuantaApp::gotoFileAndLine(const QString& filename, int line )
 }
 
 
-//void QuantaApp::slotLeftTabChanged(QWidget *)
+void QuantaApp::slotDockStatusChanged()
+{
+  qConfig.windowLayout = "Custom";
+}
+
 void QuantaApp::slotDockChanged()
 {
   static bool docTabOpened = false;
-
   QWidgetStack *s = widgetStackOfHtmlPart();
   if ( dtabdock->isVisible() )
   {

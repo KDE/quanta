@@ -490,17 +490,35 @@ void QuantaApp::initView()
   ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
   bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
 
-  atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   atabdock->manualDock(w, KDockWidget::DockBottom, 70);
-
+  qConfig.windowLayout = "Default";
   KDockManager *mng = ftabdock->dockManager();
   connect(mng, SIGNAL(change()), this, SLOT(slotDockChanged()));
+
+//signal docking ststus changes
+  connectDockSignals(maindock);
+  connectDockSignals(bottdock);
+  connectDockSignals(ftabdock);
+  connectDockSignals(ptabdock);
+  connectDockSignals(ttabdock);
+  connectDockSignals(stabdock);
+  connectDockSignals(dtabdock);
+  connectDockSignals(atabdock);
 }
 
+void QuantaApp::connectDockSignals(QObject *obj)
+{
+  connect(obj, SIGNAL(docking(KDockWidget*, KDockWidget::DockPosition)), SLOT(slotDockStatusChanged()));
+  connect(obj, SIGNAL( setDockDefaultPos()), SLOT(slotDockStatusChanged()));
+  connect(obj, SIGNAL( headerCloseButtonClicked()), SLOT(slotDockStatusChanged()));
+  connect(obj, SIGNAL( headerDockbackButtonClicked()), SLOT(slotDockStatusChanged()));
+  connect(obj, SIGNAL( iMBeingClosed()), SLOT(slotDockStatusChanged()));
+  connect(obj, SIGNAL( hasUndocked()), SLOT(slotDockStatusChanged()));
+}
 
 WHTMLPart * QuantaApp::htmlPart()
 {
@@ -561,7 +579,8 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Default encoding", qConfig.defaultEncoding);
     m_config->writeEntry("Default DTD", qConfig.defaultDocType);
 
-    m_config->writeEntry("Preview position",qConfig.previewPosition);
+    m_config->writeEntry("Preview position", qConfig.previewPosition);
+    m_config->writeEntry("Window layout", qConfig.windowLayout);
     m_config->writeEntry("Follow Cursor", sTab->followCursor() );
     m_config->writeEntry("PHP Debugger Port", phpDebugPort );
     m_config->writeEntry("Top folders", fTab->topURLList.toStringList());
@@ -701,6 +720,33 @@ void QuantaApp::readOptions()
 
   m_spellChecker->readConfig(m_config);
   readDockConfig(m_config);
+
+  m_config->setGroup  ("General Options");
+  QString layout = m_config->readEntry("Window layout", "Custom");
+  if (layout == "Default")
+  {
+    ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
+    bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
+
+    ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    atabdock->manualDock(w, KDockWidget::DockBottom, 70);
+  } else
+  if (layout == "Tabbed")
+  {
+    ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
+    bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
+
+    ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+  }
+  qConfig.windowLayout = layout;
+
 }
 
 void QuantaApp::enablePhp3Debug(bool enable)
