@@ -147,6 +147,8 @@ public slots:
   void slotFilterCompletion(KTextEditor::CompletionEntry*,QString *);
   /* Called whenever a user inputs text */
   void slotCharactersInserted(int ,int ,const QString&);
+  /** No descriptions */
+  void slotCompletionAborted();
 
 private:
 
@@ -187,6 +189,9 @@ private:
   QString findWordRev(const QString& textToSearch);
   /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
   void xmlCodeCompletion(DTDStruct *dtd, int line, int col);
+protected: // Protected attributes
+  /**  */
+  bool completionInProgress;
 };
 
 #endif

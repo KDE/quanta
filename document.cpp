@@ -55,6 +55,7 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget 
   int h = parent->height() - 35;
    _view->resize(w,h);
 //  _view->setGeometry(parent->geometry());
+  completionInProgress = false;
 
   kate_doc = dynamic_cast<Kate::Document*>(_doc);
   kate_view = dynamic_cast<Kate::View*>(_view);
@@ -70,6 +71,9 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget 
 
   connect( _doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
            this,  SLOT(slotCharactersInserted(int ,int ,const QString&)) );
+
+  connect( _view, SIGNAL(completionAborted()),
+           this,  SLOT(  slotCompletionAborted()) );
 
   connect( _view, SIGNAL(completionDone(KTextEditor::CompletionEntry)),
            this,  SLOT(  slotCompletionDone(KTextEditor::CompletionEntry)) );
@@ -768,6 +772,7 @@ void Document::showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *co
 void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
 {
   unsigned int line,col;
+  completionInProgress = false;
   viewCursorIf->cursorPositionReal(&line,&col);
   DTDStruct* dtd = dtds->find(findDTDName(line, 0));
   if (!dtd) dtd = dtds->find(dtdName);
@@ -829,20 +834,26 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
  if (useAutoCompletion)
  {
-  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
-  if (!dtd) dtd = dtds->find(dtdName);
-  if (!dtd) dtd = dtds->find(defaultDocType);
-  if (dtd)
+  if (completionInProgress)
   {
-    if (dtd->family == Xml)
+    codeCompletionRequested();
+  } else
+  {
+    DTDStruct* dtd = dtds->find(findDTDName(line, 0));
+    if (!dtd) dtd = dtds->find(dtdName);
+    if (!dtd) dtd = dtds->find(defaultDocType);
+    if (dtd)
     {
-      xmlAutoCompletion(dtd, line, column, string);
-    }
-    if (dtd->family == Script)
-    {
-      scriptAutoCompletion(dtd, line, column, string);
-    }
-  } //if (dtd)
+      if (dtd->family == Xml)
+      {
+        xmlAutoCompletion(dtd, line, column, string);
+      }
+      if (dtd->family == Script)
+      {
+        scriptAutoCompletion(dtd, line, column, string);
+      }
+    } //if (dtd)
+  }
  }
 }
 
@@ -1302,6 +1313,7 @@ void Document::codeCompletionRequested()
     {
       scriptCodeCompletion(dtd, line, col);
     }
+    completionInProgress = true;
   } //if (dtd)
 }
 
@@ -1401,4 +1413,9 @@ void Document::scriptCodeCompletion(DTDStruct *dtd, int line, int col)
  {
    showCodeCompletions(getTagCompletions(dtd, line, col));
  }
+}
+/** No descriptions */
+void Document::slotCompletionAborted()
+{
+ completionInProgress = false;
 }
