@@ -114,6 +114,9 @@
                         <property name="text">
                             <string>U&amp;pdate All</string>
                         </property>
+                        <property name="toolTip" stdset="0">
+                            <string>This will cause all files to appear already uploaded</string>
+                        </property>
                     </widget>
                     <widget class="QPushButton" row="1" column="0">
                         <property name="name">
