@@ -489,12 +489,6 @@ void Project::loadProjectXML()
     m_defaultEncoding = qConfig.defaultEncoding;
   }
 
-  m_newFileType = projectNode.toElement().attribute("newfiles");
-  if (m_newFileType.isEmpty())
-  {
-    m_newFileType = qConfig.newFileType;
-  }
-
   no = projectNode.namedItem("author");
   author = no.firstChild().nodeValue();
   no = projectNode.namedItem("email");
@@ -916,10 +910,7 @@ void Project::slotNewProject()
     {
       if (name.lower() == qConfig.defaultDocType) index = 0;
       pnf->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
-      index = -1;
     }
-    if (name.lower() == qConfig.newFileType) index = 0;
-    pnf->newfileCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
   }
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
@@ -987,8 +978,7 @@ void Project::slotAcceptCreateProject()
       author = pnf->lineAuthor ->text();
       m_defaultDTD = QuantaCommon::getDTDNameFromNickName(pnf->dtdCombo->currentText());
       m_defaultEncoding  = pnf->encodingCombo->currentText();
-      m_newFileType  = QuantaCommon::getDTDNameFromNickName(pnf->newfileCombo->currentText());
-      
+
       QuantaCommon::setUrl(previewPrefix, pnf->linePrefix->text());
       previewPrefix.adjustPath(1);
 
@@ -1003,7 +993,6 @@ void Project::slotAcceptCreateProject()
       el.setAttribute("previewPrefix", previewPrefix.url() );
       el.setAttribute("usePreviewPrefix",usePreviewPrefix);
       el.setAttribute("encoding", m_defaultEncoding);
-      el.setAttribute("newfiles", m_newFileType);
 
       el = dom.createElement("author");
       dom.firstChild().firstChild().appendChild( el );
@@ -1132,10 +1121,7 @@ void Project::slotOptions()
     {
       if (name.lower() == m_defaultDTD) index = 0;
       optionsPage->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
-      index = -1;
     }
-    if (name.lower() == m_newFileType) index = 0;
-    optionsPage->newfileCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
   }
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
@@ -1189,7 +1175,6 @@ void Project::slotOptions()
 		email			= optionsPage->lineEmail	->text();
     m_defaultDTD = QuantaCommon::getDTDNameFromNickName(optionsPage->dtdCombo->currentText()).lower();
     m_defaultEncoding  = optionsPage->encodingCombo->currentText();
-    m_newFileType  = QuantaCommon::getDTDNameFromNickName(optionsPage->newfileCombo->currentText());
 
     QuantaCommon::setUrl(templateURL, optionsPage->linePrjTmpl->text());
     templateURL.adjustPath(1);
@@ -1218,7 +1203,6 @@ void Project::slotOptions()
  		el.setAttribute("previewPrefix", previewPrefix.url() );
  		el.setAttribute("usePreviewPrefix", usePreviewPrefix );
     el.setAttribute("encoding", m_defaultEncoding);
-    el.setAttribute("newfiles", m_newFileType);
 
  		el = dom.firstChild().firstChild().namedItem("author").toElement();
  		if (el.isNull())

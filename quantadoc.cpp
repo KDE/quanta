@@ -421,7 +421,7 @@ Document* QuantaDoc::write()
 
 Document* QuantaDoc::newWrite()
 {
-  DTDStruct *dtd = dtds->find(quantaApp->newFileType());
+  DTDStruct *dtd = dtds->find(quantaApp->project->defaultDTD());
 //  if (!dtd) dtd = dtds->find(qConfig.newFileType);   //fallback, but not really needed
   int i = 1;
   QString fname;
@@ -465,7 +465,7 @@ Document* QuantaDoc::newWrite()
 
   for (unsigned int i=0; i< dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->hlModeCount(); i++)
   {
-    if (quantaApp->newFileType().contains(dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->hlModeName(i).lower()))
+    if (quantaApp->project->defaultDTD().contains(dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->hlModeName(i).lower()))
     {
       dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->setHlMode(i);
       break;
@@ -498,7 +498,6 @@ void QuantaDoc::slotAttribPopup()
   uint line, col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
 
-  quantaApp->reparse(true);
   Node *node = parser->nodeAt(line, col, false);
   if (node && node->tag)
   {

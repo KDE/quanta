@@ -85,6 +85,4 @@ void ParserOptions::updateConfig()
 		config->writeEntry("LBM",comboLBM->currentText());
 		config->writeEntry("RBM",comboRBM->currentText());
 		config->writeEntry("Double click",comboDoubleClick->currentText());
-		config->writeEntry("Expand level", spinExpand->text().toInt() );
-
 }

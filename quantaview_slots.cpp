@@ -82,7 +82,6 @@ void QuantaView::slotEditCurrentTag()
   Document *w = write();
   uint line,col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
-  quantaApp->reparse(true);
   Node *node = parser->nodeAt(line, col, false);
   bool isUnknown = true;
   QString tagName;
@@ -96,35 +95,12 @@ void QuantaView::slotEditCurrentTag()
       TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(tag->dtd,tagName), tag, baseURL() );
       if (dlg->exec())
       {
-       w->changeTag(tag, dlg->getAttributes() );
+        w->changeTag(tag, dlg->getAttributes() );
       }
 
       delete dlg;
     }
   }
-/*
-  if (isUnknown)
-  {
-    DTDStruct *dtd = w->defaultDTD();
-    Tag *tag = w->tagAt(dtd, line, col, false, true);
-    if (tag)
-    {
-      tagName = tag->name;
-      if ( QuantaCommon::isKnownTag(dtd->name,tagName) )
-      {
-        isUnknown = false;
-        TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtd,tagName), tag );
-
-        if (dlg->exec())
-        {
-         w->changeTag(tag, dlg->getAttributes() );
-        }
-        delete dlg;
-      }
-      delete tag;
-    }
-  }
-*/
   if (isUnknown)
   {
     QString message = i18n("Unknown tag: %1").arg(tagName);

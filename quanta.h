@@ -156,7 +156,6 @@ public:
   QString defaultEncoding();
   /** Returns the project (if there is one loaded) or global new file type. */
   int currentEditorIfNum() const;
-  QString newFileType();
 
   /** reparse current document and initialize node. */
   void reparse(bool force);

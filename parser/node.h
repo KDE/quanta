@@ -46,6 +46,7 @@ public:
  bool closesPrevious; //this node "closes" the tag from previous node
  bool opened;
  bool removeAll; //set to false if you don't want to remove the "next" and "child" when deleting the node.
+ bool insideSpecial; //true if the node is part of a special area
 };
 
 #endif

@@ -218,7 +218,7 @@ void QuantaApp::initQuanta()
   refreshTimer = new QTimer( this );
   connect(refreshTimer, SIGNAL(timeout()), SLOT(slotReparse()));
   refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
-  if (qConfig.refreshFrequency == 0)
+  if (qConfig.instantUpdate || qConfig.refreshFrequency == 0)
   {
     refreshTimer->stop();
   } 
@@ -550,15 +550,12 @@ void QuantaApp::saveOptions()
     config->writeEntry("Close tag if optional", qConfig.closeOptionalTags);
     config->writeEntry("Close tags", qConfig.closeTags);
     config->writeEntry("Auto completion", qConfig.useAutoCompletion);
+    config->writeEntry("Update Closing Tags", qConfig.updateClosingTags);
 
 //    config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
 
     config->writeEntry("Default encoding", qConfig.defaultEncoding);
     config->writeEntry("Default DTD", qConfig.defaultDocType);
-    config->writeEntry("New File Type", qConfig.newFileType);
-    config->writeEntry("Use MimeTypes", qConfig.useMimeTypes);
-
-    config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
 
     config->writeEntry("Preview position",qConfig.previewPosition);
     config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
@@ -571,6 +568,14 @@ void QuantaApp::saveOptions()
     config->writeEntry ("PHP Debugger style", debuggerStyle);
     config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(config);
+
+    config->setGroup("Parser Options");
+    config->writeEntry("Instant Update", qConfig.instantUpdate);
+    config->writeEntry("Show Empty Nodes", qConfig.showEmptyNodes);
+    config->writeEntry("Show Closing Tags", qConfig.showClosingTags);
+    config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
+    config->writeEntry("Expand Level", qConfig.expandLevel);
+
     config->setGroup("Quanta View");
     config->writeEntry("LineNumbers", qConfig.lineNumbers);
     config->writeEntry("Iconbar", qConfig.iconBar);
@@ -601,19 +606,13 @@ void QuantaApp::readOptions()
   qConfig.closeOptionalTags = config->readBoolEntry("Close tag if optional", true);
   qConfig.closeTags = config->readBoolEntry("Close tags", true);
   qConfig.useAutoCompletion = config->readBoolEntry("Auto completion",true);
+  qConfig.updateClosingTags = config->readBoolEntry("Update Closing Tags", true);
 
   qConfig.defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
   if (! dtds->find(qConfig.defaultDocType))
      qConfig.defaultDocType = DEFAULT_DTD;
 
-  qConfig.newFileType = config->readEntry("New File Type", qConfig.defaultDocType);
-  if (! dtds->find(qConfig.newFileType))
-     qConfig.newFileType = qConfig.defaultDocType;
-
   qConfig.defaultEncoding = config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
-  qConfig.useMimeTypes = config->readBoolEntry("Use MimeTypes", false);
-
-  qConfig.refreshFrequency = config->readNumEntry("Refresh frequency",5);
 
   phpDebugPort = config->readNumEntry("PHP Debugger Port", 7869);
 
@@ -655,6 +654,14 @@ void QuantaApp::readOptions()
   showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
 
   fileRecent ->loadEntries(config);
+
+  config->setGroup("Parser Options");
+  qConfig.showEmptyNodes = config->readBoolEntry("Show Empty Nodes", false);
+  qConfig.showClosingTags = config->readBoolEntry("Show Closing Tags", false);
+  qConfig.instantUpdate = config->readBoolEntry("Instant Update", false);
+  qConfig.refreshFrequency = config->readNumEntry("Refresh frequency",5);
+  qConfig.expandLevel = config->readNumEntry("Expand Level", 4);
+
   config->setGroup("Quanta View");
   qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);
   qConfig.iconBar = config->readBoolEntry("Iconbar", false);
@@ -1411,7 +1418,7 @@ void QuantaApp::initActions()
                         SLOT(toggleLineNumbers()), actionCollection(), "view_line_numbers");
 
 //help
-   KAction* actionHelpTip = new KAction(i18n("Ti&p of the day"), "idea", "", this,
+   (void) new KAction(i18n("Ti&p of the day"), "idea", "", this,
       SLOT(slotHelpTip()), actionCollection(), "help_tip");
 
   #if (KDE_VERSION > 308)

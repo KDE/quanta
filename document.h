@@ -216,6 +216,7 @@ private:
 protected: // Protected attributes
   /**  */
   bool completionInProgress;
+  bool reparseEnabled;
   /** True if the document is dirty (has been modified outside). */
   bool m_dirty;
   Project *m_project;

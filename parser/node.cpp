@@ -27,6 +27,7 @@ Node::Node( Node *parent )
   opened = false;
   removeAll = true;
   closesPrevious = false;
+  insideSpecial = false;
 }
 
 

@@ -44,6 +44,7 @@ typedef struct QConfig{
           QString attrValueQuotation;
           bool closeOptionalTags;
           bool closeTags;
+          bool updateClosingTags;
 
           //editor settings
           bool useAutoCompletion;
@@ -54,11 +55,13 @@ typedef struct QConfig{
           bool dynamicWordWrap;
 
           //parser options
-          bool useMimeTypes;
+          bool instantUpdate;
+          bool showEmptyNodes;
+          bool showClosingTags;
           uint refreshFrequency;
           QString defaultDocType;
-          QString newFileType;
-
+          uint expandLevel;
+          
           //environment options
           QString globalDataDir;         //not stored, initialized on app startup
           QStringList pluginSearchPaths; //global but read from plugins.rc

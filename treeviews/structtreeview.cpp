@@ -146,9 +146,11 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       item = new StructTreeTag(parentItem, currentNode, title, currentItem);
       item->setOpen(level < openLevel);
 
-      if (currentNode->tag->type == Tag::Empty)
+      if ( (!qConfig.showEmptyNodes && currentNode->tag->type == Tag::Empty) ||
+           (!qConfig.showClosingTags && currentNode->tag->type == Tag::XmlTagEnd ||
+            currentNode->tag->type == Tag::ScriptStructureEnd) )
       {
-          item->setVisible(false);
+        item->setVisible(false);
       }
 
       if (m_parsingDTD->family == Xml)
@@ -289,6 +291,10 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
             if (currentNode->parent)  
             {
               parentItem = dynamic_cast<StructTreeTag*>(currentNode->parent->listItem);
+              if (!parentItem)
+              {
+                parentItem = top;
+              }
             }
             else  
             {

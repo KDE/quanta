@@ -128,7 +128,8 @@ bool Parser::scriptParser(Node *startNode)
           tag->structBeginStr = foundText;
           Node *node = new Node(startNode);
           node->tag = tag;
-          node->tag->type = Tag::ScriptTag;
+          node->tag->type = Tag::NeedsParsing;
+          node->insideSpecial = true;
           //Insert the node into the tree under startNode
           if (!currentNode)
           {
@@ -169,14 +170,20 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   Node *rootNode = 0L;
   Node *parentNode = a_node;
   Node *currentNode = a_node;
-  if (currentNode && currentNode->tag->type != Tag::XmlTag)
+  if (currentNode && (currentNode->tag->type != Tag::XmlTag ||
+			currentNode->tag->single))
       parentNode = currentNode->parent;
   Tag *tag;
   textLine.append(write->text(startLine, startCol, startLine, write->editIf->lineLength(startLine)));
   while (line <= endLine)
   {
     if (line == endLine)
-        textLine.truncate(endCol);
+		{
+			if (endCol > 0) 
+				textLine.truncate(endCol);
+			else
+				textLine = "";
+		}
     nodeFound = false;
     goUp = false;
     tagStartPos = textLine.find('<', col);
@@ -190,16 +197,23 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       int pos = specialStartPos + foundText.length();
       tagEndCol = lastLineLength;
       tagEndLine = endLine;
+      bool endFound = false;
       while (line <= endLine)
       {
         textLine = write->editIf->textLine(line);
         if (line == endLine)
-            textLine.truncate(endCol);
+				{
+					if (endCol >0)
+						textLine.truncate(endCol);
+					else
+						textLine = "";
+				}
         pos = textLine.find(specialEndStr, pos);
         if (pos != -1)
         {
           tagEndLine = line;
           tagEndCol = pos + specialEndStr.length() - 1;
+          endFound = true;
           break;
         } else
         {
@@ -207,6 +221,9 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           pos = 0;
         }
       }
+      if (a_node && !endFound)
+          return 0L;
+
       tagStartCol = specialStartPos;
       col = tagEndCol;
       nodeFound = true;
@@ -239,25 +256,42 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       int firstStartCol = lastLineLength + 1;
       int firstStartLine = endLine;
       bool firstOpenFound = false;
+      bool insideSingleQuotes = false;
+      bool insideDoubleQuotes = false;
       while (line <= endLine && openNum > 0)
       {
         textLine = write->editIf->textLine(line);
         if (line == endLine)
+				{
+					if (endCol > 0)
             textLine.truncate(endCol);
+					else
+						textLine = "";
+				}
         for (uint i = sCol; i < textLine.length(); i++)
         {
-           if (textLine[i] == '<')
+           if (i > 0 && textLine[i-1] != '\\')
            {
-             openNum++;
-             if (!firstOpenFound)
-             {
-               firstStartCol = i;
-               firstStartLine = line;
-               firstOpenFound = true;
-             }
+             if (textLine[i] == '\'' && !insideDoubleQuotes)
+               insideSingleQuotes = !insideSingleQuotes;
+             if (textLine[i] == '"' && !insideSingleQuotes)
+               insideDoubleQuotes = !insideDoubleQuotes;
+           }
+           if (!insideSingleQuotes && !insideDoubleQuotes)
+           {
+              if (textLine[i] == '<')
+              {
+                openNum++;
+                if (!firstOpenFound)
+                {
+                  firstStartCol = i;
+                  firstStartLine = line;
+                  firstOpenFound = true;
+                }
 
-           } else
-           if (textLine[i] == '>') openNum--;
+              } else
+              if (textLine[i] == '>') openNum--;
+           }
            if (openNum == 0)
            {
              tagEndCol = i;
@@ -333,6 +367,10 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           line = tagEndLine;
           col = tagEndCol;
           textLine = write->editIf->textLine(line);
+        } else
+        {
+          if (a_node)
+              return 0L;
         }
 
       }
@@ -369,13 +407,14 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       {
         currentNode->tag->endPos(el, ec);
       }
-      QString s = write->text(el, ec + 1, tagStartLine, tagStartPos -1);
+      tagStartPos--;
+      QString s = write->text(el, ec + 1, tagStartLine, tagStartPos);
 
       if (el !=0 || ec !=0)
       {
         textTag = new Tag();
         textTag->setStr(s);
-        textTag->setTagPosition(el, ec+1, tagStartLine, tagStartPos -1);
+        textTag->setTagPosition(el, ec+1, tagStartLine, tagStartPos);
         textTag->setWrite(write);
         textTag->single = true;
         textTag->dtd = m_dtd;
@@ -401,8 +440,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
                  currentNode->tag->type == Tag::Text) )     //merge two consquenttext or empty nodes
           {
             currentNode->tag->beginPos(el, ec);
-            currentNode->tag->setTagPosition(el, ec, tagStartLine, tagStartPos -1);
-            s = write->text(el, ec, tagStartLine, tagStartPos -1);
+            currentNode->tag->setTagPosition(el, ec, tagStartLine, tagStartPos);
+            s = write->text(el, ec, tagStartLine, tagStartPos);
             currentNode->tag->setStr(s);
             if (s.simplifyWhiteSpace().isEmpty())
             {
@@ -775,6 +814,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         currentNode->next = node;
       }
       node->tag = tag;
+      node->insideSpecial = true;
       if (goUp)
       {
         node->closesPrevious = true;
@@ -856,6 +896,7 @@ Node* Parser::specialAreaParser(Node *startNode)
           currentNode->next = node;
         }
         node->tag = tag;
+        node->insideSpecial = true;
         if (goUp)
             node->closesPrevious = true;
 
@@ -885,7 +926,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         node->next = nextToRoot;
         nextToRoot->tag = tag;
         nextToRoot->closesPrevious = true;
-
+        nextToRoot->insideSpecial = true;
 
         currentNode = node;
         rootNode = node;
@@ -932,6 +973,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         currentNode->next = node;
       }
       node->tag = tag;
+      node->insideSpecial = true;
       if (goUp)
           node->closesPrevious = true;
       currentNode = node;
@@ -939,6 +981,8 @@ Node* Parser::specialAreaParser(Node *startNode)
   }
 
   rootNode = startNode;
+
+
   int bl, bc;
   startNode->tag->beginPos(bLine, bCol);
   startNode->tag->endPos(el, ec);
@@ -956,7 +1000,6 @@ Node* Parser::specialAreaParser(Node *startNode)
   s = write->text(bl, bc, bLine, bCol - 1);
   startNode->tag->setTagPosition(bl, bc, bLine, bCol - 1);
   startNode->tag->setStr(s);
-  startNode->tag->type = Tag::ScriptTag;
 
   eLine = eCol = -1;
   //create a node with the end of special area
@@ -1011,6 +1054,7 @@ Node* Parser::specialAreaParser(Node *startNode)
 
     node = new Node(startNode->parent);
     node->tag = tag;
+    node->insideSpecial = true;
     node->closesPrevious = true;
     node->prev = startNode;
     startNode->next = node;
@@ -1031,6 +1075,7 @@ Node* Parser::specialAreaParser(Node *startNode)
     node = new Node(startNode);
     startNode->child = node;
     node->tag = tag;
+    node->insideSpecial = true;
     tag->dtd = dtd;
   } else
   {
@@ -1047,6 +1092,8 @@ Node* Parser::specialAreaParser(Node *startNode)
     currentNode->tag->setTagPosition(bLine, bCol, eLine, eCol);
   }
 
+  startNode->tag->type = Tag::ScriptTag;
+  startNode->insideSpecial = true;
   return rootNode;
 }
 
@@ -1185,8 +1232,19 @@ Node *Parser::rebuild(Document *w)
      node->tag->endPos(el, ec);
      text = w->text(bl, bc, el, ec);
      tagStr = node->tag->tagStr();
-     if (tagStr != text || node->tag->type == Tag::Empty ||
-          node->tag->type == Tag::ScriptTag)
+
+ /*    if (node->parent)
+     {
+       node->parent->tag->endPos(bl, bc);
+     }*/
+     if ( tagStr != text ||
+          node->tag->type == Tag::Empty ||
+          node->insideSpecial
+          /*||
+          ( node->tag->type == Tag::ScriptTag &&
+            (el < bl || (el == bl && ec < bc)) ) */
+
+        )
      {
        node = node->previousSibling();
      } else
@@ -1207,20 +1265,19 @@ Node *Parser::rebuild(Document *w)
      {
         text = w->text(bl + lineDiff, bc, el + lineDiff, ec);
         tagStr = node->tag->tagStr();
-        if (tagStr == text && node->tag->type != Tag::Empty)
+        if (tagStr == text && node->tag->type != Tag::Empty && !node->insideSpecial)
         {
-            if (!lastNode)
-                lastNode = node;
+          if (!lastNode)
+              lastNode = node;
 
-            if (lineDiff != 0)
-            {
-              moveNodes = true;
-              node->tag->setTagPosition(bl + lineDiff, bc, el + lineDiff, ec);
-            } else
-            {
-              break;
-            }
-
+          if (lineDiff != 0)
+          {
+            moveNodes = true;
+            node->tag->setTagPosition(bl + lineDiff, bc, el + lineDiff, ec);
+          } else
+          {
+            break;
+          }
         }
      } else
      {
@@ -1235,7 +1292,7 @@ Node *Parser::rebuild(Document *w)
    if (lastNode)
    {
      lastNode->tag->beginPos(eLine, eCol);
-     //eCol--;
+     eCol--;
    }
 
    //delete all the nodes between the firstNode and lastNode
@@ -1345,6 +1402,21 @@ Node *Parser::rebuild(Document *w)
    Node *lastInserted = 0L;
    node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
 
+   //another stange case: the parsed area contains a special area without end
+   if (!node)
+   {
+      if (lastNode)
+      {
+        if (lastNode->prev)
+          lastNode->prev->next = 0L;
+        if (lastNode->parent && lastNode->parent->child == lastNode)
+            lastNode->parent->child = 0L;
+        delete lastNode;
+        lastNode = 0L;
+      }
+      return parse(w);
+   }
+
    bool goUp;
    if (lastNode && lastInserted)
    {
@@ -1453,10 +1525,9 @@ Node *Parser::rebuild(Document *w)
 
     }
    }
- }
-
- coutTree(m_node, 2);
- cout << "\n";
+ }  
+ //coutTree(m_node, 2);
+ //cout << "\n";
  kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
  return m_node;
 }

@@ -73,7 +73,6 @@ public:
   /** Read property of QString defaultDTD. */
   virtual const QString& defaultDTD();
   virtual const QString& defaultEncoding() {return m_defaultEncoding;}
-  virtual const QString& newFileType() {return m_newFileType;}
 
 public slots:
 
@@ -185,7 +184,6 @@ protected: // Protected attributes
   /** Default DTD for this project. */
   QString m_defaultDTD;
   QString m_defaultEncoding;
-  QString m_newFileType;
   /** The old name of the url. (Used when renaming/removing an url from the project). */
   KURL oldURL;
   /** The new name of the url (used when renaming an url). */

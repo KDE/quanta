@@ -15,14 +15,14 @@ apache_lookup_uri = filename
 
 [Extra rules]
 ScriptName = php
-ScriptTagBorders = <? ?>, <* *>
+ScriptTagBorders = <? ?>, <* *>, <% %>
 
-ScriptRegExp = (<\?.+\?>) | (<\*.+\*>)
+ScriptRegExp = (<\?.+\?>) | (<\*.+\*>) | (<\%.+\%>)
 
 StructGroupsCount = 5
 
 [Parsing rules]
-AreaBorders = <? ?>, <* *>
+AreaBorders = <? ?>, <* *>, <% %>
 Tags = script(language)
 Comments = // EOL, /* */
 StructKeywords = for;foreach;if;else;elseif;while;do;switch;declare;function;class

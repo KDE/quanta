@@ -805,6 +805,7 @@ void QuantaApp::slotOptions()
   styleOptionsS->tagAutoClose->setChecked( qConfig.closeTags );
   styleOptionsS->optionalTagAutoClose->setChecked( qConfig.closeOptionalTags );
   styleOptionsS->useAutoCompletion->setChecked( qConfig.useAutoCompletion );
+  styleOptionsS->tagUpdateClosing->setChecked(qConfig.updateClosingTags);
 
   // Environment options
   //TODO FileMasks name is not good anymore
@@ -848,15 +849,15 @@ void QuantaApp::slotOptions()
     if (it.current()->family == Xml)
     {
       if (name.lower() == qConfig.defaultDocType.lower()) index = 0;
-      parserOptions->dtdName->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
-      index = -1;
+      fileMasks->defaultDTDCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
     }
-    if (name.lower() == qConfig.newFileType.lower()) index = 0;
-    fileMasks->newfileCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
   }
 
   parserOptions->refreshFrequency->setValue(qConfig.refreshFrequency);
-  parserOptions->useMimeTypes->setChecked(qConfig.useMimeTypes);
+  parserOptions->instantUpdate->setChecked(qConfig.instantUpdate);
+  parserOptions->showEmptyNodes->setChecked(qConfig.showEmptyNodes);
+  parserOptions->showClosingTags->setChecked(qConfig.showClosingTags);
+  parserOptions->spinExpand->setValue(qConfig.expandLevel);
   page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
   DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)page );
 
@@ -869,7 +870,7 @@ void QuantaApp::slotOptions()
     page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
     new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
   }
-
+  kd->adjustSize();
   if ( kd->exec() )
   {
     qConfig.tagCase = styleOptionsS->tagCase->currentItem();
@@ -877,6 +878,7 @@ void QuantaApp::slotOptions()
     qConfig.closeTags = styleOptionsS->tagAutoClose->isChecked();
     qConfig.closeOptionalTags = styleOptionsS->optionalTagAutoClose->isChecked();
     qConfig.useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
+    qConfig.updateClosingTags = styleOptionsS->tagUpdateClosing->isChecked();
 
     qConfig.markupMimeTypes = fileMasks->lineMarkup->text();
     qConfig.scriptMimeTypes  = fileMasks->lineScript->text();
@@ -885,19 +887,20 @@ void QuantaApp::slotOptions()
 
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
 
+    qConfig.showEmptyNodes = parserOptions->showEmptyNodes->isChecked();
+    qConfig.showClosingTags = parserOptions->showClosingTags->isChecked();
+    qConfig.instantUpdate = parserOptions->instantUpdate->isChecked();
     qConfig.refreshFrequency = parserOptions->refreshFrequency->value();
-    if (qConfig.refreshFrequency > 0)
+    if (!qConfig.instantUpdate && qConfig.refreshFrequency > 0)
     {
       refreshTimer->changeInterval(qConfig.refreshFrequency*1000);
     } else
     {
       refreshTimer->stop();
     }
-    qConfig.useMimeTypes = parserOptions->useMimeTypes->isChecked();
-
+    qConfig.expandLevel = parserOptions->spinExpand->value();
     parserOptions->updateConfig();
-    qConfig.defaultDocType = QuantaCommon::getDTDNameFromNickName(parserOptions->dtdName->currentText());
-    qConfig.newFileType = QuantaCommon::getDTDNameFromNickName(fileMasks->newfileCombo->currentText());
+    qConfig.defaultDocType = QuantaCommon::getDTDNameFromNickName(fileMasks->defaultDTDCombo->currentText());
 
     if (!debuggerOptions->checkDebugger->isChecked()) {
       if (debuggerStyle=="PHP3") enablePhp3Debug(false);
@@ -1056,8 +1059,7 @@ void QuantaApp::slotNewLineColumn()
 
 void QuantaApp::slotReparse()
 {
-//  baseNode = parser->parse(view->write());
-  reparse(true);
+  reparse(false);
 }
 
 void QuantaApp::slotForceReparse()
@@ -1071,28 +1073,27 @@ void QuantaApp::reparse(bool force)
   if (view->writeExists())
   {
     Document *w = view->write();
-//  w->parseVariables();
+    w->parseVariables();
     if (force)
     {
       baseNode = parser->parse(w);
     } else
     {
-      baseNode = parser->rebuild(w);
+//      baseNode = parser->rebuild(w);
     }
     sTab->setParsingDTD(w->parsingDTD());
-//TODO: Do not delete the list, but modify it
-    sTab->deleteList();
-//TODO: Store the expandLevel in qConfig, don't read so often from disk
-    config->setGroup("Parser options");
-    int expandLevel = config->readNumEntry("Expand level",8);
-    if ( expandLevel == 0 ) expandLevel = 40;
-    
-    sTab->slotReparse(w, baseNode , expandLevel );
+    int expandLevel = qConfig.expandLevel;
+    if (expandLevel == 0)
+        expandLevel = 40;
+    sTab->slotReparse(w, baseNode , qConfig.expandLevel );
 
-    uint line;
-    uint col;
-    w->viewCursorIf->cursorPositionReal(&line, &col);
-    sTab->showTagAtPos(line,col);
+    if (force)
+    {
+      uint line;
+      uint col;
+      w->viewCursorIf->cursorPositionReal(&line, &col);
+      sTab->showTagAtPos(line,col);
+    }
   }
 
   return;
@@ -2325,7 +2326,7 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
 void QuantaApp::slotParsingDTDChanged(QString newDTDName)
 {
   view->write()->setParsingDTD(newDTDName);
-  reparse(true);
+  reparse(false);
 }
 
 /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
@@ -2374,17 +2375,6 @@ QString QuantaApp::defaultEncoding()
     encoding = project->defaultEncoding();
   } 
   return encoding;
-}
-
-/** Returns the project (if there is one loaded) or global new file type. */
-QString QuantaApp::newFileType()
-{
-  QString type = qConfig.newFileType;
-  if (project && project->hasProject())
-  {
-    type = project->newFileType();
-  }
-  return type;
 }
 
 QPopupMenu *QuantaApp::toolbarMenu(const QString& name)

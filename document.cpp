@@ -54,6 +54,7 @@
 #include "treeviews/structtreeview.h"
 
 #define STEP 1
+
 Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
                    Project *project, QuantaPluginInterface *a_pIf,
                    QWidget *parent, const char *name, WFlags f )
@@ -82,6 +83,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   tempFile = 0;
   dtdName = project->defaultDTD();
   m_parsingDTD = dtdName;
+  reparseEnabled = true;
 
   //need access to plugin interface. and we can't get to app from here ..
   m_pluginInterface = a_pIf;
@@ -648,12 +650,12 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
       //we need to complete a tag name
       showCodeCompletions( getTagCompletions(dtd, line, column) );
       handled = true;
-    }
+    } else
     if ( string == "&")
     {
           //complete character codes
           //showCodeCompletions( getCharacterCompletions() );
-    }
+    } else
     if (string == ">" && tagName[0] != '/' && qConfig.closeTags
         && currentDTD(true)->family == Xml) //close unknown tags
     {
@@ -663,7 +665,6 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
       viewCursorIf->setCursorPositionReal( line, column );
       handled = true;
     }
-
   }
   else  // we are inside of a tag
   {
@@ -692,14 +693,14 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
           //suggest attribute completions
           showCodeCompletions( getAttributeCompletions(dtd, tagName) );
          }
-         else if ( string == "\"" )
-              {
-               //we need to find the attribute name
-               QString textLine = editIf->textLine(line).left(column-1);
-               QString attribute = textLine.mid(textLine.findRev(' ')+1);
-               showCodeCompletions( getAttributeValueCompletions(dtd, tagName, attribute) );
-               handled = true;
-              }
+    else if ( string == "\"" )
+          {
+          //we need to find the attribute name
+          QString textLine = editIf->textLine(line).left(column-1);
+          QString attribute = textLine.mid(textLine.findRev(' ')+1);
+          showCodeCompletions( getAttributeValueCompletions(dtd, tagName, attribute) );
+          handled = true;
+          }
   } // else - we are inside of a tag
 
  return handled;
@@ -1439,14 +1440,80 @@ void Document::parseVariables()
 /** No descriptions */
 void Document::slotTextChanged()
 {
-  return;
-
-  baseNode = parser->rebuild(this);
-  //if (baseNode)
+  if (reparseEnabled)
   {
-    quantaApp->sTab->slotReparse(this, baseNode , 2);
+    uint line, column;
+    QString oldNodeName = "";
+		bool updateClosing = false;
+		Node *node;
+    if (qConfig.updateClosingTags)
+		{
+			viewCursorIf->cursorPositionReal(&line, &column);
+			node = parser->nodeAt(line, column);
+			if (node->tag->type != Tag::XmlTag && node->tag->type != Tag::XmlTagEnd)
+				node = node->previousSibling();
+			if (node && !node->tag->single && !node->tag->closingMissing 
+					&& node->tag->type == Tag::XmlTag)
+			{
+				oldNodeName = "/"+node->tag->name;
+				updateClosing = true;
+			}
+			if (node && node->tag->type == Tag::XmlTagEnd)
+			{
+				oldNodeName = node->tag->name.mid(1);
+				updateClosing = false;
+			}
+		}
+    baseNode = parser->rebuild(this);
+		if (qConfig.updateClosingTags)
+		{
+			node = parser->nodeAt(line, column); 
+			QString newNodeName = node->tag->name;
+			if (!oldNodeName.isEmpty() && 
+					( (oldNodeName != "/"+newNodeName && updateClosing) ||
+						("/"+oldNodeName != newNodeName && !updateClosing)))
+			{
+				if (updateClosing)
+					node = node->nextSibling();
+				else
+					node = node->previousSibling();
+				while (node)
+				{
+					if (node->tag->name == oldNodeName)
+					{
+            reparseEnabled = false;
+						int bl, bc, el, ec;
+						node->tag->beginPos(bl, bc);
+						node->tag->endPos(el, ec);
+						if (updateClosing)
+						{
+		  				editIf->removeText(bl, bc, el, ec);
+  						viewCursorIf->setCursorPositionReal(bl, bc);
+							insertText("</"+newNodeName, false);
+						}
+						else
+						{	
+							newNodeName[0] = '<';																					
+						  editIf->removeText(bl, bc, bl, bc + oldNodeName.length());
+  						viewCursorIf->setCursorPositionReal(bl, bc);
+							insertText(newNodeName, false);
+						}
+						baseNode = parser->rebuild(this);
+						viewCursorIf->setCursorPositionReal(line, column);
+            reparseEnabled = true;
+						break;
+					}
+					if (updateClosing)
+						node = node->nextSibling();
+					else
+						node = node->previousSibling();
+				}
+			}
+    }
+
+    if (qConfig.instantUpdate)
+        quantaApp->sTab->slotReparse(this, baseNode , 2);
   }
-  
 }
 
 #include "document.moc"
