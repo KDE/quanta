@@ -2145,7 +2145,13 @@ void KafkaWidget::removeSelection()
     
     QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
     
+    NodeSelection* cursorPos = new NodeSelection();
+    cursorPos->setCursorNode(cursorNode);
+    cursorPos->setCursorOffset(cursorOffset);
+    
     ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(m_modifs, undoRedo::NodeTreeModif);
+
+    delete cursorPos;
 
     makeCursorVisible();
 }

@@ -2182,7 +2182,15 @@ Node* kafkaCommon::DTDExtractNodeSubtree(Node *startNode, int startOffset, Node 
     if(startNode == endNode)
     {
         Q_ASSERT(startNode->tag->type == Tag::Text || startNode->tag->type == Tag::Empty);
-        return extractNode(startNode, modifs);
+        
+        Node* prev = startNode->prev;
+        Node* next = startNode->next;
+        
+        Node* aux = extractNode(startNode, modifs);
+        
+        mergeInlineNode(prev, next, cursorNode, cursorOffset, modifs);
+                
+        return aux;
     }
 
     // now let us extract the subtree
@@ -2816,6 +2824,20 @@ bool kafkaCommon::mergeNodes(Node *n, Node *n2, NodeModifsSet *modifs, bool merg
             modif->setTag(tag);
             modif->setLocation(getLocation(n));
             modifs->addNodeModif(modif);
+        }
+        
+        // have in consideration two spaces in a row
+        QString nStr(n->tag->tagStr());
+        QString n2Str(n2->tag->tagStr());
+        if(nStr[nStr.length() - 1] == ' ' && n2Str[0] == ' ')
+        {
+            nStr = nStr.left(nStr.length() - 1);
+            nStr.append("&nbsp;");
+            n->tag->setStr(nStr);
+            
+            n2Str = n2Str.right(n2Str.length() - 1);
+            n2Str.prepend("&nbsp;");            
+            n2->tag->setStr(n2Str);
         }
 
         if((n->tag->type == Tag::Text && n2->tag->type == Tag::Text) ||
