@@ -858,6 +858,7 @@ void TableEditor::slotRemoveRow()
   }
   m_tableTags->erase(it2);
   m_dataTable->removeRow(m_row);
+  m_rowSpin->setValue(m_dataTable->numRows());
 }
 
 
@@ -885,6 +886,7 @@ void TableEditor::slotRemoveCol()
     (*it).erase(it2);
   }
  m_dataTable->removeColumn(m_col);
+ m_colSpin->setValue(m_dataTable->numCols());
 }
 
 
