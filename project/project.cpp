@@ -193,7 +193,7 @@ void Project::createEmptyDom()
   QFile f(sf);
   if ( !f.open( IO_WriteOnly ) )
   {
-    KMessageBox::sorry(this, i18n("Can't open file %s for IO_WriteOnly").arg(sf));
+    KMessageBox::sorry(this, i18n("Can't open file %1 for IO_WriteOnly").arg(sf));
     return;
   }
 
@@ -366,7 +366,7 @@ void Project::loadProject(const KURL &url)
 
   if ( !u.isLocalFile() )
   {
-    emit statusMsg(i18n("Loading project %s").arg(u.url()));
+    emit statusMsg(i18n("Loading project %1").arg(u.url()));
     emit checkOpenAction(false);
     // clear
     QByteArray b;
@@ -396,9 +396,9 @@ void Project::loadProject(const KURL &url)
     basePath = fi.dirPath();
     if ( basePath.right(1) != "/" )	basePath += "/";
     
-    if ( !f.exists() )          { KMessageBox::sorry( this, i18n("File %s don't exists").arg(fn) );return;}
-    if ( !f.open(IO_ReadOnly))  { KMessageBox::sorry( this, i18n("Can't open %s for IO_ReadOnly").arg(fn) );return;}
-    if ( !dom.setContent( &f )) { KMessageBox::sorry( this, i18n("Not found XML info in file %s").arg(fn) );return;}
+    if ( !f.exists() )          { KMessageBox::sorry( this, i18n("File %1 does not exist").arg(fn) );return;}
+    if ( !f.open(IO_ReadOnly))  { KMessageBox::sorry( this, i18n("Can't open %1 for IO_ReadOnly").arg(fn) );return;}
+    if ( !dom.setContent( &f )) { KMessageBox::sorry( this, i18n("Not found XML info in file %1").arg(fn) );return;}
   
     this->url = u;
     
