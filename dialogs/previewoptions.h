@@ -1,7 +1,7 @@
 /***************************************************************************
                           previewoptions.h  -  description
                              -------------------
-    begin                : Wed Nov 1 2000
+    begin                : Fri Aug 4 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
@@ -20,15 +20,19 @@
 
 #include "previewoptionss.h"
 
-/**
-  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-  */
+class KConfig;
 
 class PreviewOptions : public PreviewOptionsS  {
    Q_OBJECT
 public: 
 	PreviewOptions(QWidget *parent=0, const char *name=0);
 	~PreviewOptions();
+
+	QString position();
+	void setPosition( QString );
+	
+public slots:
+	void slotToggle();
 };
 
 #endif
