@@ -86,9 +86,9 @@ public slots:
 	void slotUpdateQuantaTree();
 
 	/**
-	 * Called whenever a DOM::Node is created.
+	 * Called whenever a DOM::Node is inserted in the Quanta tree.
 	 */
-	void slotDomNodeCreated(DOM::Node _domNode);
+	void slotDomNodeInserted(DOM::Node _domNode);
 
 	/**
 	 * Called whenever DOM::Node's attributes are modified.
@@ -96,9 +96,9 @@ public slots:
 	void slotDomNodeModified(DOM::Node _domNode);
 
 	/**
-	 * Called whenever a DOM::Node is about to be deleted.
+	 * Called whenever a DOM::Node is about to be removed from the Quanta tree.
 	 */
-	void slotDomNodeAboutToBeDeleted(DOM::Node _domNode);
+	void slotDomNodeAboutToBeRemoved(DOM::Node _domNode);
 
 	/**
 	 * Called whenever a DOM::Node get the focus
@@ -113,13 +113,13 @@ signals:
 
 private:
 	QString getSpecialChar(QString encodedChar);
-	QString getEncodedChar(QString specialChar);
+	QString getEncodedChar(QString specialChar, bool encodeWhiteSpaces = true);
 	QMap<QString, QString> specialChars;
 	QMap<QString, QString> encodedChars;
 	KafkaHTMLPart *_kafkaPart;
 	Document *_currentDoc;
 	Node *_rootNode;
-	Parser *_parser;
+	void coutTree(Node *node, int indent);
 	bool _docLoaded;
 	void synchronizeXMLTag(Node* _node);
 	void synchronizeTextTag(Node* _node);

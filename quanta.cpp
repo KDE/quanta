@@ -343,6 +343,9 @@ void QuantaApp::slotFileSaveAll()
 void QuantaApp::slotFileClose()
 {
 //[MB]  QWidget *activeWidget = rightWidgetStack->visibleWidget();
+#ifdef BUILD_KAFKAPART
+  kafkaPart->unloadDocument();
+#endif
   m_doc->closeDocument();
   WHTMLPart *part = htmlPart();
   part->closeURL();
@@ -355,6 +358,9 @@ void QuantaApp::slotFileClose()
 
 void QuantaApp::slotFileCloseAll()
 {
+#ifdef BUILD_KAFKAPART
+  kafkaPart->unloadDocument();
+#endif
   m_doc->closeAll();
 
   WHTMLPart *part = htmlPart();
@@ -712,7 +718,6 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
     kafkaPart->getCurrentDoc()->url() != m_view->write()->url())
    {
      kafkaPart->unloadDocument();
-     kafkaPart->loadDocument(m_view->write());
    }
   #endif
 

@@ -20,15 +20,18 @@
 
  #include <dom/dom_node.h>
 
+ class Node;
+
  class kNodeProperties
  {
  public:
- 	kNodeProperties(){}
- 	~kNodeProperties(){}
+ 	kNodeProperties();
+ 	~kNodeProperties();
 
 	//temporary, will change with multi-DTD support
 	DOM::Node _rootNode;
 	DOM::Node _leafNode;
+	Node* _closingNode;
 
  };
 

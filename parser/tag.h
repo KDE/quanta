@@ -68,6 +68,10 @@ public:
   QString attributeValue(uint index);
   /** Return the value of attr*/
   QString attributeValue(QString attr);
+  /** Add an attribute */
+  void addAttribute(TagAttr _attr) {attrs.append(_attr);}
+  /** Get the attribute number index */
+  TagAttr getAttribute(uint index) {return attrs[index];}
   /** Returns the quotation status of the attribute */
   bool isQuotedAttribute(int index) {return attrs[index].quoted;}
   /** Check if this tag has the attr attribute defined */

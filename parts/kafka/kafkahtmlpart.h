@@ -179,6 +179,7 @@ public slots:
 	* structure (e.g., elements, comments, processing instructions, CDATA
 	* sections, and entity references) separates Text nodes, i.e., there are
 	* neither adjacent Text nodes nor empty Text nodes.
+	* Should be used instead of DOM::Node::normalize().
 	* @param _node This node is the parent node of the childs normalized
 	*/
 	void normalize(DOM::Node _node);
@@ -192,15 +193,16 @@ signals:
 	/**
 	 * Category: HTML Editing Signal
 	 * Is emitted whenever the DOM tree has changed
+	 * Not yet implemented
 	 */
 	void domChanged();
 
 	/**
 	 * Category: HTML Editing Signal
-	 * Is emitted whenever a dom Node is created
+	 * Is emitted whenever a dom Node is inserted to the tree
 	 * @param _node is the node created
 	 */
-	void domNodeCreated(DOM::Node _node);
+	void domNodeInserted(DOM::Node _node);
 
 	/**
 	 * Category: HTML Editing Signal
@@ -211,10 +213,10 @@ signals:
 
 	/**
 	 * Category: HTML Editing Signal
-	 * Is emitted whenever a DOM node is about to be deleted
+	 * Is emitted whenever a DOM node is about to be removed from the tree
 	 * @param _node is the node to be deleted
 	 */
-	void domNodeIsAboutToBeDeleted(DOM::Node _node);
+	void domNodeIsAboutToBeRemoved(DOM::Node _node);
 
 protected:
 	bool eventFilter(QObject *object, QEvent *event);

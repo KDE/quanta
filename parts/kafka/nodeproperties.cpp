@@ -15,5 +15,16 @@
  *                                                                         *
  ***************************************************************************/
 
+ #include "../../parser/node.h"
+
  #include "nodeproperties.h"
 
+kNodeProperties::kNodeProperties()
+{
+	_closingNode = 0L;
+}
+
+kNodeProperties::~kNodeProperties()
+{
+
+}
