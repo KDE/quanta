@@ -429,7 +429,7 @@ bool QuantaApp::slotFileSaveAs(QuantaView *viewToSave)
     if (!w->isUntitled() && oldURL.isLocalFile())
     {
       fileWatcher->removeFile(oldURL.path());
-      kdDebug(24000) << "removeFile[slotFileSaveAs]: " << oldURL.path() << endl;
+//      kdDebug(24000) << "removeFile[slotFileSaveAs]: " << oldURL.path() << endl;
     }
     QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
 
@@ -505,7 +505,7 @@ bool QuantaApp::slotFileSaveAs(QuantaView *viewToSave)
     if (oldURL.isLocalFile())
     {
         fileWatcher->addFile(oldURL.path());
-        kdDebug(24000) << "addFile[slotFileSaveAs]: " << oldURL.path() << endl;
+//        kdDebug(24000) << "addFile[slotFileSaveAs]: " << oldURL.path() << endl;
     }
   }
   return result;

@@ -1233,6 +1233,9 @@ Node *Parser::rebuild(Document *w)
 
 void Parser::clearGroups()
 {
+#ifdef DEBUG_PARSER
+  kdDebug(24000) << "clearGroups " << endl;
+#endif
   GroupElementMapList::Iterator it;
   GroupElementList::Iterator elementIt;
   GroupElementList *list;
@@ -1281,7 +1284,9 @@ void Parser::clearGroups()
 
 void Parser::cleanGroups()
 {
+#ifdef DEBUG_PARSER
   kdDebug(24000) << "cleanGroups " << endl;
+#endif
   GroupElementMapList::Iterator it;
   GroupElementList::Iterator elementIt;
   GroupElementList *list;

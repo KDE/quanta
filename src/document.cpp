@@ -2106,18 +2106,18 @@ void Document::save()
     QString fileName;
     fileName = url().path();
     fileWatcher->removeFile(fileName);
-    kdDebug(24000) << "removeFile[save]: " << fileName << endl;
+//    kdDebug(24000) << "removeFile[save]: " << fileName << endl;
     m_doc->save();
     m_dirty = false;
     m_modifTime = QFileInfo(fileName).lastModified();
     fileWatcher->addFile(fileName);
-    kdDebug(24000) << "addFile[save]: " << fileName << endl;
+//    kdDebug(24000) << "addFile[save]: " << fileName << endl;
   } else
   {
     m_doc->save();
     m_dirty = false;
   }
-  kdDebug(24000) << "Document " << url() << " saved." << endl;
+//  kdDebug(24000) << "Document " << url() << " saved." << endl;
 }
 
 void Document::enableGroupsForDTEP(const QString& dtepName, bool enable)
@@ -2669,7 +2669,7 @@ void Document::slotOpeningCompleted()
   {
       fileWatcher->addFile(u.path());
       m_modifTime = QFileInfo(u.path()).lastModified();
-      kdDebug(24000) << "addFile[Document::open]: " << u.path() << endl;
+//      kdDebug(24000) << "addFile[Document::open]: " << u.path() << endl;
   }
   disconnect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
   disconnect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
