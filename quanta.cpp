@@ -669,7 +669,14 @@ void QuantaApp::reparse()
 
 void QuantaApp::setCursorPosition( int row, int col )
 {
-  view->write()->setCursorPosition( row, col );
+  
+  int numLines = view->write()->numLines();
+  
+  if ( row < numLines )
+    view->write()->setCursorPosition( row, col );
+  else
+    view->write()->setCursorPosition( numLines-1, col );
+  
   view->write()->view()->setFocus();
 }
 
@@ -717,6 +724,14 @@ void QuantaApp::slotDockChanged()
 
 void QuantaApp::selectArea(int col1, int row1, int col2, int row2)
 {
+  int numLines = view->write()->numLines();
+  
+  if ( row1 > numLines-1 )
+    row1 = numLines-1;
+    
+  if ( row2 > numLines-1 )
+    row2 = numLines-1;
+    
   setCursorPosition( row2, col2 );
   view->write()->selectText(col1,row1,col2,row2);
 }
