@@ -139,10 +139,10 @@ Dialog message2:</string>
         </widget>
         <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>useClosestMtaching</cstring>
+                <cstring>useClosestMatching</cstring>
             </property>
             <property name="text">
-                <string>Don't show this dialog, use the closes matching DTD</string>
+                <string>Don't show this dialog, use the closest matching DTD</string>
             </property>
         </widget>
         <spacer row="5" column="1">
@@ -168,7 +168,7 @@ Dialog message2:</string>
     <tabstop>dtdCombo</tabstop>
     <tabstop>currentDTD</tabstop>
     <tabstop>convertDTD</tabstop>
-    <tabstop>useClosestMtaching</tabstop>
+    <tabstop>useClosestMatching</tabstop>
     <tabstop>okButton</tabstop>
 </tabstops>
 <slots>

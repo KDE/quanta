@@ -831,6 +831,7 @@ void QuantaApp::slotOptions()
   fileMasks->lineScript->setText( qConfig.scriptMimeTypes );
   fileMasks->lineImage->setText( qConfig.imageMimeTypes );
   fileMasks->lineText->setText( qConfig.textMimeTypes );
+  fileMasks->showDTDSelectDialog->setChecked(qConfig.showDTDSelectDialog);
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
   fileMasks->encodingCombo->insertStringList( availableEncodingNames );
@@ -912,9 +913,10 @@ void QuantaApp::slotOptions()
     qConfig.updateClosingTags = styleOptionsS->tagUpdateClosing->isChecked();
 
     qConfig.markupMimeTypes = fileMasks->lineMarkup->text();
-    qConfig.scriptMimeTypes  = fileMasks->lineScript->text();
-    qConfig.imageMimeTypes= fileMasks->lineImage->text();
+    qConfig.scriptMimeTypes = fileMasks->lineScript->text();
+    qConfig.imageMimeTypes = fileMasks->lineImage->text();
     qConfig.textMimeTypes = fileMasks->lineText->text();
+    qConfig.showDTDSelectDialog = fileMasks->showDTDSelectDialog->isChecked();
 
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
 
@@ -2242,6 +2244,55 @@ void QuantaApp::processDTD(const QString& documentType)
         }
       }
 
+      if (!dtds->find(foundName.lower()))
+      {
+        //try to find the closest matching DTD
+        QString s = foundName.lower();
+        uint spaceNum = s.contains(' ');
+        QStringList dtdList;
+        QStringList lastDtdList;
+        QDictIterator<DTDStruct> it(*dtds);
+        for (;it.current(); ++it)
+        {
+          dtdList += it.currentKey();
+        }
+        for (uint i = 0; i <= spaceNum && !dtdList.empty(); i++)
+        {
+          lastDtdList = dtdList;
+          QStringList::Iterator strIt = dtdList.begin();
+          while (strIt != dtdList.end())
+          {
+            if (!(*strIt).startsWith(s.section(' ', 0, i)))
+            {
+              strIt = dtdList.remove(strIt);
+            } else
+            {
+              ++strIt;
+            }
+          }
+        }
+        dtdList = lastDtdList;
+        for (uint i = 0; i <= spaceNum && !dtdList.empty(); i++)
+        {
+          lastDtdList = dtdList;
+          QStringList::Iterator strIt = dtdList.begin();
+          while (strIt != dtdList.end())
+          {
+            if (!(*strIt).endsWith(s.section(' ', -(i+1), -1)))
+            {
+              strIt = dtdList.remove(strIt);
+            } else
+            {
+              ++strIt;
+            }
+          }
+        }
+        if (lastDtdList.count() == 1 || lastDtdList[0].startsWith(s.section(' ', 0, 0)))
+        {
+          projectDTD = lastDtdList[0];
+        }
+      }
+
 //    dlg->dtdCombo->insertItem(i18n("Create new DTD info."));
       dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
       dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(foundName));
@@ -2254,8 +2305,9 @@ void QuantaApp::processDTD(const QString& documentType)
           break;
         }
       }
-      if (!found && dlg->exec())
+      if (!found && qConfig.showDTDSelectDialog && dlg->exec())
       {
+        qConfig.showDTDSelectDialog = !dlg->useClosestMatching->isChecked();
         w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
         if (dlg->convertDTD->isChecked())
         {
@@ -2284,7 +2336,6 @@ void QuantaApp::processDTD(const QString& documentType)
 
   if (!w->isUntitled())
   {
-    messageOutput->showMessage("\n");
     messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".").arg(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL()));
   }
   loadToolbarForDTD(w->getDTDIdentifier());

@@ -529,6 +529,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Show Closing Tags", qConfig.showClosingTags);
     m_config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
     m_config->writeEntry("Expand Level", qConfig.expandLevel);
+    m_config->writeEntry("Show DTD Select Dialog", qConfig.showDTDSelectDialog);
 
     m_config->setGroup("Quanta View");
     m_config->writeEntry("LineNumbers", qConfig.lineNumbers);
@@ -610,6 +611,7 @@ void QuantaApp::readOptions()
   qConfig.instantUpdate = m_config->readBoolEntry("Instant Update", false);
   qConfig.refreshFrequency = m_config->readNumEntry("Refresh frequency",5);
   qConfig.expandLevel = m_config->readNumEntry("Expand Level", 4);
+  qConfig.showDTDSelectDialog = m_config->readBoolEntry("Show DTD Select Dialog", true);
 
   m_config->setGroup("Quanta View");
   qConfig.lineNumbers = m_config->readBoolEntry("LineNumbers", false);

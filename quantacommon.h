@@ -67,7 +67,8 @@ typedef struct QConfig{
           uint refreshFrequency;
           QString defaultDocType;
           uint expandLevel;
-          
+          bool showDTDSelectDialog;
+
           //environment options
           QString globalDataDir;         //not stored, initialized on app startup
           QStringList pluginSearchPaths; //global but read from plugins.rc
@@ -125,7 +126,7 @@ public:
   /** Returns 0 if the (line,col) is inside the area specified by the other arguments,
       -1 if it is before the area and 1 if it is after. */
   static int isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol);
-  /** Returns a pointer to a KStandardDirs object usable for plugin searchup. type is the plugin binary type (exe or lib). The returned 
+  /** Returns a pointer to a KStandardDirs object usable for plugin searchup. type is the plugin binary type (exe or lib). The returned
 pointer must be deleted by the caller!! */
   static KStandardDirs* pluginDirs(const char *type);
 

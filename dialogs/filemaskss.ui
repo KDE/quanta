@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>414</width>
+            <width>521</width>
             <height>359</height>
         </rect>
     </property>
@@ -190,7 +190,7 @@
                 </widget>
             </grid>
         </widget>
-        <spacer row="3" column="0">
+        <spacer row="4" column="0">
             <property name="name">
                 <cstring>spacer2</cstring>
             </property>
@@ -207,6 +207,14 @@
                 </size>
             </property>
         </spacer>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>showDTDSelectDialog</cstring>
+            </property>
+            <property name="text">
+                <string>Show the DTD selection dialog when loading files with unknown DTD</string>
+            </property>
+        </widget>
     </grid>
 </widget>
 <tabstops>
