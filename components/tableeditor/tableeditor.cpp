@@ -1122,7 +1122,7 @@ void TableEditor::slotEditChildTable()
       }
       Node *childTableNode = localParser->nodeAt(table.bLine, table.bCol);
       if (!childTableNode->next || !QuantaCommon::closesTag(childTableNode->tag, childTableNode->next->tag)) {
-        KMessageBox::error(this, i18n("Cannot find the closing tag of the child table. Most probably you've introduced unclosed tags in the table and have broken its consistency."), i18n("Cannot Read Table"));
+        KMessageBox::error(this, i18n("Cannot find the closing tag of the child table; you have probably introduced unclosed tags in the table and have broken its consistency."), i18n("Cannot Read Table"));
         error = true;
         errorIt = it;
         break;

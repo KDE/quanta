@@ -116,7 +116,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                 {
                   node->tag->write()->setErrorMark(line);
                   QString parentTagName = node->tag->dtd()->caseSensitive ? node->parent->tag->name : node->parent->tag->name.upper();
-                  appMessages->showMessage(i18n("Line %1: %2 isn't a possible child of %3.\n").arg(line + 1).arg(qTagName).arg(parentTagName));
+                  appMessages->showMessage(i18n("Line %1: %2 is not a possible child of %3.\n").arg(line + 1).arg(qTagName).arg(parentTagName));
                 }
                 QString nextTagName;
                 if (node->next)

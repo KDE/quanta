@@ -636,7 +636,7 @@ void FilesTreeView::slotDelete()
     QString msg;
     if (m_projectBaseURL.isParentOf(url))
     {
-      msg = i18n("<qt><b>%1</b> might be part of your project! Do you really want to delete it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
+      msg = i18n("<qt><b>%1</b> might be part of your project; do you really want to delete it?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
     } else
     {
       if ( currentKFileTreeViewItem()->isDir() )
