@@ -218,7 +218,7 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
       } else
       {
         customShortcut->setChecked(true);
-        shortcutKeyButton->setShortcut(KShortcut(shortcutText));
+        shortcutKeyButton->setShortcut(action->shortcut(), false);
         shortcutKeyButton->setText(shortcutText);
       }
 
@@ -569,6 +569,13 @@ void ActionConfigDialog::saveCurrentAction()
 void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
 {
   QString shortcutText = shortcut.toString();
+  QString shortcutText2;
+  int pos = shortcutText.find(';');
+  if (pos != -1)
+  {
+    shortcutText2 = shortcutText.mid(pos + 1);
+    shortcutText = shortcutText.left(pos);
+  }
   QString global;
 //check for conflicting global shortcuts
   QMap<QString, QString>::Iterator it;
@@ -576,6 +583,12 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
   {
     if (it.data().contains(shortcutText))
     {
+      global = it.key();
+      break;
+    }
+    if (!shortcutText2.isEmpty() && it.data().contains(shortcutText2))
+    {
+      shortcutText = shortcutText2;
       global = it.key();
       break;
     }
@@ -588,6 +601,12 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
       KAction *action = quantaApp->actionCollection()->action(i);
       if (action->shortcut().toString().contains(shortcutText))
       {
+        global = action->text();
+        break;
+      }
+      if (!shortcutText2.isEmpty() && action->shortcut().toString().contains(shortcutText))
+      {
+        shortcutText = shortcutText2;
         global = action->text();
         break;
       }
@@ -606,7 +625,6 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
                 "Please choose a unique key combination.").
                 arg(shortcutText).arg(global);
     KMessageBox::sorry( this, s, i18n("Conflicting Shortcuts"));
-    shortcutKeyButton->animateClick();
   }
 }
 
