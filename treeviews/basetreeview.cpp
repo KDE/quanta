@@ -990,10 +990,12 @@ void BaseTreeView::saveLayout(KConfig *config, const QString &group)
 void BaseTreeView::restoreLayout(KConfig *config, const QString &group)
 {
   KListView::restoreLayout(config, group);
+  KConfigGroupSaver saver(config, group);
+  setShowToolTips( config->readBoolEntry("ShowToolTips", true) );
+  
   if (! m_saveOpenFolder || ! qConfig.saveTrees)
     return;
 
-  KConfigGroupSaver saver(config, group);
   BaseTreeBranch *btb;
   KFileTreeBranchIterator it( branches() );
   int maxBranch = config->readNumEntry("NumOpenFolderList", 0);

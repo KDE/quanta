@@ -93,7 +93,6 @@ ServerTreeView::ServerTreeView(KConfig *config, QWidget *parent, const KURL &url
 {
   setAcceptDrops(true);
   setDragEnabled(true);
-  setSaveOpenFolder(true);
 
   m_config = config;
   m_config->setGroup("General Options");
@@ -134,7 +133,7 @@ ServerTreeView::ServerTreeView(KConfig *config, QWidget *parent, const KURL &url
   connect(Project::ref(), SIGNAL(reloadTree(ProjectList *, bool, const QStringList &)),
           this, SLOT(slotReloadTree(ProjectList *, bool, const QStringList &)));
 
-  restoreLayout(m_config, className());
+  restoreLayout(m_config, "UploadTreeView");  // a fixed name only for the tooltip configuration
   // the restored size of the first column might be too large for the current content
   // we set it to 10 and the listview will adjust it to the size of the largest entry
   setColumnWidth(0, 10);
