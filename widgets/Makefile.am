@@ -1,7 +1,7 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
 
-EXTRA_DIST = wtoolbar.h wtoolbar.cpp whtmlpart.h whtmlpart.cpp 
+EXTRA_DIST = whtmlpart.h whtmlpart.cpp 
 
 ####### kdevelop will overwrite this part!!! (end)############
 noinst_LIBRARIES = libwidgets.a

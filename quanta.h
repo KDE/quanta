@@ -335,8 +335,11 @@ protected:
   void setAttributes(QDomNode *dom, QTag *tag);
   virtual bool queryExit();
   void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
-  /* Saves the toolbar and the actions. Returns the name of the actions file*/
+  /** Saves the toolbar and the actions. Returns the name of the actions file*/
   KURL saveToolBar(const QString& toolbarName,const KURL& destFile);
+  /** Show the toolbar which is in url. If it was not loaded yet, it loads the
+      toolbar from the file */
+  void showToolbarFile(const KURL &url);
   /** Initialize the plugin architecture. */
   void initPlugins();
   /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
@@ -358,6 +361,8 @@ private:
   Project *project;
 
   WHTMLPart    *htmlPart();
+  /** Returns true if all toolbars are hidden, false otherwise. */
+  bool allToolbarsHidden();
 
   // config
   KConfig *config;

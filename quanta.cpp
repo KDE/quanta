@@ -311,11 +311,11 @@ void QuantaApp::slotFileClose()
 {
 //[MB]  QWidget *activeWidget = rightWidgetStack->visibleWidget();
   doc->closeDocument();
-
-  htmlPart()->closeURL();
-  htmlPart()->begin(projectBaseURL());
-  htmlPart()->write( "" );
- 	htmlPart()->end();
+  WHTMLPart *part = htmlPart();
+  part->closeURL();
+  part->begin(projectBaseURL());
+  part->write( "" );
+ 	part->end();
 
   slotUpdateStatus(view->write());
 }
@@ -324,10 +324,11 @@ void QuantaApp::slotFileCloseAll()
 {
   doc->closeAll();
 
-  htmlPart()->closeURL();
-  htmlPart()->begin(projectBaseURL());
- 	htmlPart()->write( "" );
- 	htmlPart()->end();
+  WHTMLPart *part = htmlPart();
+  part->closeURL();
+  part->begin(projectBaseURL());
+  part->write( "" );
+ 	part->end();
 
   slotNewStatus();
 }
@@ -1570,8 +1571,43 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    p_toolbar->user = true; //TODO  
    toolbarList.insert(name.lower(), p_toolbar);
 
-   slotToggleDTDToolbar(toolbarList.count() != 0);
+   slotToggleDTDToolbar(!allToolbarsHidden());
  }
+}
+
+/** Show the toolbar which is in url. If it was not loaded yet, it loads the
+    toolbar from the file */
+void QuantaApp::showToolbarFile(const KURL &url)
+{
+  ToolbarEntry *p_toolbar = toolbarByURL(url);
+  if (!p_toolbar)
+  {
+    slotLoadToolbarFile(url);
+    p_toolbar = toolbarByURL(url);
+    if (p_toolbar)
+    {
+      p_toolbar->user = false;
+      userToolbarsCount--;
+    }
+  } else
+  {
+    QDomNodeList nodeList;
+    QPopupMenu *menu = new QPopupMenu;
+    KAction *action;
+    nodeList = p_toolbar->dom->elementsByTagName("Action");
+    for (uint i = 0; i < nodeList.count(); i++)
+    {
+      action = actionCollection()->action(nodeList.item(i).cloneNode().toElement().attribute("name") );
+      if (action)
+      {
+        action->plug(menu);
+      }
+    }
+    m_tagsMenu->insertItem(p_toolbar->name,menu);
+    p_toolbar->menu = menu;
+    factory()->addClient(p_toolbar->guiClient);
+    p_toolbar->visible = true;
+  }
 }
 
 /** Load an user toolbar from the disk. */
@@ -1793,7 +1829,7 @@ void QuantaApp::slotAddToolbar()
   p_toolbar->menu = 0L; //TODO
   toolbarList.insert(name.lower(), p_toolbar);
   
-  slotToggleDTDToolbar(toolbarList.count() != 0);
+  slotToggleDTDToolbar(!allToolbarsHidden());
  }
 }
 
@@ -2118,11 +2154,15 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
           p_toolbar = iter.current();
           if (p_toolbar->url == url || p_toolbar->url == urlLocal)
           {
-            removeToolbar(iter.currentKey());
+       //     removeToolbar(iter.currentKey());
+            factory()->removeClient(p_toolbar->guiClient);
+            p_toolbar->visible = false;
+            delete p_toolbar->menu;
             break;          
           }         
        }
      }
+     slotToggleDTDToolbar(!allToolbarsHidden());
    }
 
    //Load the toolbars for dtdName   
@@ -2134,26 +2174,14 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
       QuantaCommon::setUrl(url, fileName);
       if (QExtFileInfo::exists(url))
       {
-         if (!toolbarByURL(url))
-        {
-          slotLoadToolbarFile(url);
-          p_toolbar = toolbarByURL(url);
-          p_toolbar->user = false;
-          userToolbarsCount--;
-        }
+        showToolbarFile(url);
       } else
       {
         fileName = qConfig.globalDataDir + "quanta/toolbars/"+newDtd->toolbars[i];
         QuantaCommon::setUrl(url, fileName);
         if (QExtFileInfo::exists(url))
         {
-          if (!toolbarByURL(url))
-          {
-            slotLoadToolbarFile(url);
-            p_toolbar = toolbarByURL(url);
-            p_toolbar->user = false;
-            userToolbarsCount--;
-          }
+          showToolbarFile(url);
         }
       }
    }
@@ -2196,7 +2224,7 @@ void QuantaApp::removeToolbar(const QString& name)
     }
   }
 
-  slotToggleDTDToolbar(toolbarList.count() != 0);
+  slotToggleDTDToolbar(!allToolbarsHidden());
 }
 
 /** Show or hide the DTD toolbar */
@@ -2321,5 +2349,23 @@ ToolbarEntry *QuantaApp::toolbarByURL(const KURL& url)
   return 0L;
 }
 
+
+/** Returns true if all toolbars are hidden, false otherwise. */
+bool QuantaApp::allToolbarsHidden()
+{
+
+  ToolbarEntry *p_toolbar = 0L;
+  QDictIterator<ToolbarEntry> iter(toolbarList);
+  for( ; iter.current(); ++iter )
+  {
+    p_toolbar = iter.current();
+    if (p_toolbar->visible)
+    {
+       return false;
+    }
+  }
+
+  return true;
+}
 
 #include "quanta.moc"

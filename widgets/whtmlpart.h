@@ -48,7 +48,11 @@ signals:
 
 protected:	
 	virtual void urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs args = KParts::URLArgs());
-	
+	virtual KParts::ReadOnlyPart *createPart( QWidget *parentWidget, const char *widgetName,
+                                            QObject *parent, const char *name,
+                                            const QString &mimetype, QString &serviceName,
+                                            QStringList &serviceTypes, const QStringList &params);
+
 private:
 	QStrList history;	
 	unsigned int hpos;

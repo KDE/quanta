@@ -26,8 +26,6 @@
 #include <qwidget.h>
 #include <qlist.h>
 
-class WToolBar;
-
 class QuantaDoc;
 class Document;
 class QTabWidget;

@@ -61,7 +61,6 @@
 
 #include "project/project.h"
 
-#include "widgets/wtoolbar.h"
 #include "widgets/whtmlpart.h"
 #include "messages/messageoutput.h"
 

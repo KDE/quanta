@@ -45,8 +45,6 @@
 #include "quanta.h"
 #include "treeviews/templatestreeview.h"
 
-#include "widgets/wtoolbar.h"
-
 #include <kaction.h>
 #include "toolbar/tagaction.h"
 
