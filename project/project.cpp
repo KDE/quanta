@@ -187,8 +187,10 @@ void Project::insertFiles( QStringList files )
 
 void Project::createEmptyDom()
 {
-#warning fix  
-  QFile f( url.url() );
+  QString s(url.url());
+  if (s.left(5) == "file:" ) s.remove(0,5);
+  
+  QFile f(s);
   if ( !f.open( IO_WriteOnly ) )
   {
     KMessageBox::sorry(this, i18n("Can't open file %s for IO_WriteOnly").arg(url.url()));

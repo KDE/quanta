@@ -423,9 +423,6 @@ void QuantaApp::readOptions()
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
   
   fileRecent ->loadEntries(config);
-  
-  doc    ->readConfig(config); // kwrites
-  project->readConfig(config); // project
 
   QSize s(800,580);
   config->setGroup("General Options");
@@ -445,6 +442,9 @@ void QuantaApp::readOptions()
   
   showPreviewAction  ->setChecked( false );
   showMessagesAction ->setChecked( bottdock->isVisible() );
+  
+  doc    ->readConfig(config); // kwrites
+  project->readConfig(config); // project
 }
 
 void QuantaApp::openLastFiles()
