@@ -57,6 +57,8 @@ Name = Functions
 No_Name = No Functions
 Icon = mini-modules
 DefinitionRx = \bfunction[\\s]+([0-9a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1})
+AppendToTags = true
+ParentGroup = Classes
 
 [StructGroup_4]
 Name = Classes

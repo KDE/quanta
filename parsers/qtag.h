@@ -57,6 +57,8 @@ class XMLStructGroup {
     QStringList attributes; ///<the attributes of the above tag to be displayed
     bool hasFileName;     ///<the group contains filename(s)
     QRegExp fileNameRx;   ///<delete the matches of this regexp to obtain a filename (eg. linked, included file name)
+    bool appendToTags; ///<true if the group elements must be used as normal tags in autocompletion
+    QString parentGroup; ///<if the group element can be a child of another group (eg. member function of a class), holds the parent name. Makes sense only if appentToTags is true
 };
 
 

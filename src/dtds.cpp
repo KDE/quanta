@@ -490,6 +490,8 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         group.typeRx.setPattern(tmpStr);
         group.hasDefinitionRx = !group.definitionRx.pattern().isEmpty();
         group.isMinimalDefinitionRx = dtdConfig->readBoolEntry("SearchRx_Minimal", false);
+        group.appendToTags = dtdConfig->readBoolEntry("AppendToTags", false);
+        group.parentGroup = dtdConfig->readEntry("ParentGroup").stripWhiteSpace();
         tagStr = dtdConfig->readEntry("TagType", "Text").stripWhiteSpace();
         if (tagStr == "XmlTag")
             group.tagType = Tag::XmlTag;
@@ -529,6 +531,8 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         group.name = dtdConfig->readEntry("Name").stripWhiteSpace();
         group.noName = dtdConfig->readEntry("No_Name").stripWhiteSpace();
         group.icon = dtdConfig->readEntry("Icon").stripWhiteSpace();
+        group.appendToTags = dtdConfig->readBoolEntry("AppendToTags", false);
+        group.parentGroup = dtdConfig->readEntry("ParentGroup").stripWhiteSpace();
         QString tagStr = dtdConfig->readEntry("Tag").stripWhiteSpace();
         if (!tagStr.isEmpty())
         {

@@ -197,7 +197,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
           tmpNode = tmpNode->parent;
         }
 
-        if (dtd->name == "PHP" && group.name == "Functions")
+        if (group.appendToTags)
         {
           QTag *qTag = m_parent->write()->userTagList.find(s.lower());
           if (!qTag)
@@ -208,9 +208,8 @@ void SAGroupParser::parseForScriptGroup(Node *node)
             {
               for (QValueList<GroupElement *>::ConstIterator it = groupElement->parentNode->m_groupElements.constBegin(); it != groupElement->parentNode->m_groupElements.constEnd(); ++it)
               {
-                if ((*it)->group->name == "Classes")
+                if ((*it)->group->name == group.parentGroup)
                 {
-                  kdDebug(24000) << "Functions parent: " << (*it)->tag->name << endl;
                   qTag->className = (*it)->tag->name;
                 }
               }
