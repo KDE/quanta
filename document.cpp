@@ -1327,6 +1327,7 @@ QString Document::findDTDName(Tag **tag)
      text = this->text(bl, bc, el, ec);
      (*tag)->parse(text, this);
      (*tag)->type = Tag::XmlTag;
+     text.replace("\\\"", "\"");
      pos = text.find("public",0,false);
      if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
      {
