@@ -37,8 +37,10 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
           bug described in #88892.
         - don't try to add a newly created action to a non-existent All toolbar.
         - don't crash on exit if the user removed an action
-	- enable full copy/paste from documentation and preview. Until now it worked 
+	- enable full copy/paste from documentation and preview. Until now it worked
 	  only with the mouse through the selection. [#92936]
+	- don't show directories that were removed from the project in the upload
+	  dialog [#87186]
 
 
   - behavioral/user interface changes:
