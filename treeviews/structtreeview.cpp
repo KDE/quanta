@@ -405,7 +405,7 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
     kdDebug(24000) << "Node cleanstr: " << tag->cleanStr << endl;
 */
     emit newCursorPosition(line, col + 1);
-    Document *w = ViewManager::ref()->activeView()->document();
+    Document *w = ViewManager::ref()->activeDocument();
     if (w)
       w->view()->setFocus();
     delete tag;

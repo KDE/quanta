@@ -62,6 +62,7 @@ QuantaPlugin::QuantaPlugin()
 
 QuantaPlugin::~QuantaPlugin()
 {
+   unload();
 }
 
 /** Sets the superficial name of the plugin */
@@ -307,6 +308,7 @@ bool QuantaPlugin::unload()
 
   emit pluginStopped();
 
+  m_action->setChecked(false);
   return true;
 }
 
@@ -407,6 +409,11 @@ QWidget *QuantaPlugin::widget()
   } else {
     return NULL;
   }
+}
+
+void QuantaPlugin::plugAction(QPopupMenu *menu)
+{
+  m_action->plug(menu);
 }
 
 #include "quantaplugin.moc"

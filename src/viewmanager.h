@@ -41,12 +41,16 @@ public:
   /** Creates a QuantaView object */
   QuantaView *createView();
   /** Removes a QuantaView object. Returns false on failure (eg. the view was not saved and it refused
-  the delete itself.) */
-  bool removeView(QuantaView *view);
-  /** Removes the active view */
-  void removeActiveView();
+  the delete itself.) If force is true, the view is removed without asking for save.*/
+  bool removeView(QuantaView *view, bool force = false);
+  /** Removes the active view Returns false on failure (eg. the view was not saved and it refused the delete itself.) */
+  bool removeActiveView()  {
+      return removeView(activeView());
+   };
   /** Returns the active view */
   QuantaView *activeView();
+  /** Returns the active document or 0L */
+  Document *activeDocument();
   /** Returns the view holding the document loaded from url. */
   QuantaView *isOpened(const KURL &url);
 

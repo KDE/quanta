@@ -120,10 +120,8 @@ QuantaView::~QuantaView()
     if (m_plugin)
     {
       m_plugin->unload();
-      m_plugin->m_action->setChecked(false);
     }
     delete m_document;
-    delete m_plugin;
 }
 
 bool QuantaView::mayRemove()
@@ -131,7 +129,6 @@ bool QuantaView::mayRemove()
    if (m_plugin)
    {
        m_plugin->unload();
-       m_plugin->m_action->setChecked(false);
    } else
    {
        parser->setSAParserEnabled(false);

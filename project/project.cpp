@@ -1763,7 +1763,7 @@ void Project::openCurrentView()
       }
    }
    doc->blockSignals(false);
-   Document *w = ViewManager::ref()->activeView()->document();
+   Document *w = ViewManager::ref()->activeDocument();
    quantaApp->setCaption(w->url().prettyURL() );
    //FIXME: quantaApp->slotUpdateStatus(w);
  }
@@ -1955,7 +1955,7 @@ KURL Project::projectBaseURL()
      result = baseURL;
   } else
   {
-    Document *w = ViewManager::ref()->activeView()->document();
+    Document *w = ViewManager::ref()->activeDocument();
     if  ( !w || w->isUntitled() )
     {
       result = QExtFileInfo::home();

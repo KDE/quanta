@@ -79,7 +79,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 	QWidget::setTabOrder(ok, cancel);
 
 	//set the current DTD name
-	currentDTD->setText(ViewManager::ref()->activeView()->document()->defaultDTD()->nickName);
+	currentDTD->setText(ViewManager::ref()->activeDocument()->defaultDTD()->nickName);
 
 	//set the metaItems DualEditableTree
 	metaItems->addColumn("name");
@@ -214,7 +214,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 				if(index != -1)
 				{
 					cssStylesheet->setMode(KFile::File | KFile::ExistingOnly );
-					baseURL.setPath(ViewManager::ref()->activeView()->document()->url().directory());
+					baseURL.setPath(ViewManager::ref()->activeDocument()->url().directory());
 					QuantaCommon::setUrl(url, linkNode->tag->attributeValue(index));
 					url = QExtFileInfo::toAbsolute(url, baseURL);
 					cssStylesheet->setURL(url.url());
@@ -554,7 +554,7 @@ void htmlDocumentProperties::addBasicCssNodes(NodeModifsSet *modifs)
 	if(CSSNode || !htmlNode || !headNode)
 		return;
 	//TODO:quick hack, modify createAndInsertNode
-	CSSNode = kafkaCommon::createAndInsertNode("style", "", Tag::XmlTag, ViewManager::ref()->activeView()->document(),
+	CSSNode = kafkaCommon::createAndInsertNode("style", "", Tag::XmlTag, ViewManager::ref()->activeDocument(),
 		headNode, 0L, 0L, modifs);
 }
 

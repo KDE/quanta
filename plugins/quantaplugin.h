@@ -60,7 +60,8 @@ public:
   QWidget *widget();
   KParts::ReadOnlyPart *part() {return m_part;}
   QString name() {return m_name;}
-  KToggleAction *m_action;
+  /** plugs action into menu */
+  void plugAction(QPopupMenu *menu);
 public slots:
   /** Sets whether the plugin is running or not */
   virtual void setRunning(bool);
@@ -115,6 +116,7 @@ protected:
   KParts::ReadOnlyPart *m_part;
   bool m_readOnlyPart;
   QuantaView *m_view;
+  KToggleAction *m_action;
 private: // Private attributes
   /**  */
   QString m_standardName;

@@ -88,25 +88,27 @@ void ViewManager::createNewDocument()
   view->addDocument(w);
 }
 
-bool ViewManager::removeView(QuantaView *view)
+bool ViewManager::removeView(QuantaView *view, bool force)
 {
-    if (view->mayRemove())
+    if (view)
     {
-       quantaApp->closeWindow(view);
-       if (!quantaApp->activeWindow())
-       {
-           createNewDocument();
+       if (force || view->mayRemove())
+      {
+        quantaApp->closeWindow(view);
+        if (!quantaApp->activeWindow())
+        {
+            createNewDocument();
+        }
+        return true;
        }
-       return true;
-    } else
-       return false;
+    }
+    return false;
 }
 
-void ViewManager::removeActiveView()
+Document *ViewManager::activeDocument()
 {
-   QuantaView *view = dynamic_cast<QuantaView *>(quantaApp->activeWindow());
-   if (view)
-       removeView(view);
+  QuantaView *view = activeView();
+  return view ? view->document() : 0L;
 }
 
 QuantaView* ViewManager::activeView()
@@ -148,7 +150,7 @@ void ViewManager::slotCloseOtherTabs()
   for (it->first(); !it->isDone(); it->next())
   {
       view = it->currentItem();
-      if (view = currentView)
+      if (view != currentView)
       {
           if (dynamic_cast<QuantaView*>(view) && !static_cast<QuantaView*>(view)->mayRemove() )
               continue;

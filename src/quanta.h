@@ -512,9 +512,6 @@ protected: // Protected attributes
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;
-  KToggleAction *viewBorder;
-  KToggleAction *viewLineNumbers;
-  KToggleAction *viewDynamicWordWrap;
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
   KQRecentFilesAction *fileRecent;
 #else

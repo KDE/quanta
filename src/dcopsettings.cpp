@@ -35,7 +35,7 @@ QString DCOPSettings::encoding()
 
 QString DCOPSettings::dtep()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
     return w->defaultDTD()->nickName;
   else

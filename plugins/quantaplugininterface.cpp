@@ -224,7 +224,7 @@ void QuantaPluginInterface::buildPluginMenu()
 //         int id = m_pluginMenu->insertItem(curPlugin->pluginName());
 //         if(curPlugin->isRunning())
 //           m_pluginMenu->setItemChecked(id, TRUE);
-           curPlugin->m_action->plug(m_pluginMenu);
+           curPlugin->plugAction(m_pluginMenu);
        }
   }
 }

@@ -281,7 +281,7 @@ void QuantaApp::slotFileOpen()
 {
  QString myEncoding = defaultEncoding();
  QString startDir;
- Document *w = ViewManager::ref()->activeView()->document();
+ Document *w = ViewManager::ref()->activeDocument();
  if (w && !w->isUntitled())
      startDir = w->url().url();
  else
@@ -311,7 +311,7 @@ void QuantaApp::slotFileOpen()
      slotFileOpen( *i , encoding);
  }
  m_doc->blockSignals(false);
- w = ViewManager::ref()->activeView()->document();
+ w = ViewManager::ref()->activeDocument();
  setCaption(w->url().prettyURL() );
  //slotUpdateStatus(w);//FIXME:
 }
@@ -348,7 +348,7 @@ void QuantaApp::slotFileOpenRecent(const KURL &url)
     m_doc->openDocument(url);
   }
   fileRecent->setCurrentItem(-1);
-  ViewManager::ref()->activeView()->document()->view()->setFocus();
+  ViewManager::ref()->activeDocument()->view()->setFocus();
 }
 
 void QuantaApp::slotFileSave()
@@ -695,7 +695,7 @@ return;
   if ( !part ) return;
   if ( !s->id( s ->visibleWidget()) ) return;
 
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
 
   previewCopyMade = false;
@@ -808,7 +808,7 @@ void QuantaApp::slotImageOpen(const KURL& url)
 /** insert <img> tag for images or <a> for other */
 void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     KURL baseURL ;
@@ -874,7 +874,7 @@ void QuantaApp::slotNewStatus()
 {
   fileRecent->setEnabled(true);
   Project::ref()->projectRecent->setEnabled(true);
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     setTitle( w->url().prettyURL() );
@@ -1157,7 +1157,7 @@ void QuantaApp::slotOptions()
   lst = DTDs::ref()->nickNameList();
   uint abbrevDTDPos = 0;
   QString defaultDTDNickName;
-  Document *w  = ViewManager::ref()->activeView()->document();
+  Document *w  = ViewManager::ref()->activeDocument();
   if (w)
       defaultDTDNickName = w->defaultDTD()->nickName;
   for (uint i = 0; i < lst.count(); i++)
@@ -1309,7 +1309,7 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     s->raiseWidget(id);
     m_previewVisible = false;
     m_noFramesPreview = false;
-    ViewManager::ref()->activeView()->document()->setFocus();
+    ViewManager::ref()->activeDocument()->setFocus();
   }
 
 #ifdef BUILD_KAFKAPART
@@ -1349,7 +1349,7 @@ void QuantaApp::slotShowPreview()
   else if(id == 0)
     //quanta/kafka/quanta-kafka view was loaded and hasn't changed m_previewVisible
     m_previewVisible = false;
-  Document *w  =ViewManager::ref()->activeView()->document();
+  Document *w  =ViewManager::ref()->activeDocument();
   if (!w)
   {
     m_previewVisible = false;
@@ -1421,7 +1421,7 @@ void QuantaApp::slotNewLineColumn()
   QString linenumber;
   oldCursorLine = cursorLine;
   oldCursorCol = cursorCol;
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
     w->viewCursorIf->cursorPositionReal(&cursorLine, &cursorCol);
   linenumber = i18n("Line: %1 Col: %2").arg(cursorLine+1).arg(cursorCol+1);
@@ -1469,7 +1469,7 @@ void QuantaApp::reparse(bool force)
   //temp
 //  if (!parser->activated()) return;
   typingInProgress = false;
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     if (force)
@@ -1498,7 +1498,7 @@ void QuantaApp::reparse(bool force)
 
 void QuantaApp::setCursorPosition( int row, int col )
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     int numLines = w->editIf->numLines();
@@ -1514,7 +1514,7 @@ void QuantaApp::gotoFileAndLine(const QString& filename, int line, int column)
 {
   if ( !filename.isEmpty() ) m_doc->openDocument( KURL::fromPathOrURL( filename ) );
 
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     int numLines = w->editIf->numLines();
@@ -1527,7 +1527,7 @@ void QuantaApp::gotoFileAndLine(const QString& filename, int line, int column)
 
 void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     int numLines = w->editIf->numLines();
@@ -1753,7 +1753,7 @@ void QuantaApp::slotShowOpenFileList()
 /** No descriptions */
 void QuantaApp::slotInsertFile(const KURL& url)
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     w->insertFile(url);
@@ -1762,7 +1762,7 @@ void QuantaApp::slotInsertFile(const KURL& url)
 
 void QuantaApp::slotContextMenuAboutToShow()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     QPopupMenu *popup = static_cast<QPopupMenu*>(factory()->container("popup_editor",this));
@@ -1903,7 +1903,7 @@ void QuantaApp::slotOpenFileUnderCursor()
 /** No descriptions */
 void QuantaApp::slotSyntaxCheckDone()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     if (w->isModified())
@@ -2309,7 +2309,7 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
       if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
             ((localToolbar) && (KURL(localToolbarsDir).isParentOf(url))) )
       {
-        query =   ViewManager::ref()->activeView()->document()->checkOverwrite( url );
+        query =   ViewManager::ref()->activeDocument()->checkOverwrite( url );
       } else
       {
         if (!localToolbar)
@@ -2708,7 +2708,7 @@ void QuantaApp::slotAssignActionToScript(const KURL& a_scriptURL, const QString&
 /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
 void QuantaApp::processDTD(const QString& documentType)
 {
- Document *w = ViewManager::ref()->activeView()->document();
+ Document *w = ViewManager::ref()->activeDocument();
  QString foundName;
  QString projectDTD = Project::ref()->defaultDTD();
  w->setDTDIdentifier(projectDTD);
@@ -2836,7 +2836,7 @@ void QuantaApp::processDTD(const QString& documentType)
 /** No descriptions */
 void QuantaApp::slotChangeDTD()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     KDialogBase dlg(this, 0L, true, i18n("DTD Selector"), KDialogBase::Ok | KDialogBase::Cancel);
@@ -2902,7 +2902,7 @@ void QuantaApp::slotChangeDTD()
 void QuantaApp::focusInEvent(QFocusEvent* e)
 {
  KDockMainWindow::focusInEvent(e);
- Document *w = ViewManager::ref()->activeView()->document();
+ Document *w = ViewManager::ref()->activeDocument();
  w->view()->setFocus();
  w->checkDirtyStatus();
 }
@@ -2910,14 +2910,14 @@ void QuantaApp::focusInEvent(QFocusEvent* e)
 /** No descriptions */
 void QuantaApp::slotShowCompletion()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   w->codeCompletionRequested();
 }
 
 /** No descriptions */
 void QuantaApp::slotShowCompletionHint()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   w->codeCompletionHintRequested();
 }
 
@@ -3168,7 +3168,7 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
 /** No descriptions */
 void QuantaApp::slotParsingDTDChanged(const QString& newDTDName)
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     w->setParsingDTD(newDTDName);
@@ -3279,7 +3279,7 @@ bool QuantaApp::allToolbarsHidden() const
 /** No descriptions */
 void QuantaApp::slotEmailDTEP()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     QStringList lst(DTDs::ref()->nickNameList());
@@ -3367,7 +3367,7 @@ void QuantaApp::slotEmailDTEP()
 void QuantaApp::slotDocumentProperties()
 {
 #ifdef BUILD_KAFKAPART
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if(w)
   {
     if(w->defaultDTD()->name.contains("HTML", false) == 0)
@@ -3384,7 +3384,7 @@ void QuantaApp::slotDocumentProperties()
 /** Returns the interface number for the currently active editor. */
 int QuantaApp::currentEditorIfNum() const
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     return w->editIf->editInterfaceNumber();
@@ -3397,7 +3397,7 @@ int QuantaApp::currentEditorIfNum() const
 /** Return the URL of the currently active document */
 QString QuantaApp::currentURL() const
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     return w->url().url();
@@ -3437,7 +3437,7 @@ QStringList QuantaApp::openedURLs() const
 
 void QuantaApp::slotExpandAbbreviation()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     const DTDStruct *dtd = w->currentDTD();
@@ -3483,7 +3483,7 @@ void QuantaApp::slotExpandAbbreviation()
 
 void QuantaApp::slotUploadFile()
 {
-  Project::ref()->slotUploadURL(ViewManager::ref()->activeView()->document()->url());
+  Project::ref()->slotUploadURL(ViewManager::ref()->activeDocument()->url());
 }
 
 
@@ -3493,7 +3493,7 @@ void QuantaApp::slotUploadOpenedFiles()
 
 void QuantaApp::slotDeleteFile()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   KURL url = w->url();
   if (KMessageBox::questionYesNo(this,
                    i18n("<qt>Do you really want to delete the file <b>%1</b> ?</qt>")
@@ -3518,7 +3518,7 @@ bool QuantaApp::structTreeVisible() const
 
 QStringList QuantaApp::tagAreas(const QString &tag, bool includeCoordinates, bool skipFoundContent) const
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
     return w->tagAreas(tag, includeCoordinates, skipFoundContent);
   else
@@ -3613,7 +3613,7 @@ void QuantaApp::layoutDockWidgets(const QString& layout)
 
 void QuantaApp::slotConvertCase()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
      w->convertCase();
@@ -3622,7 +3622,7 @@ void QuantaApp::slotConvertCase()
 
 void QuantaApp::slotReloadStructTreeView()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
    if (/*stabdock->isVisible() &&*/ w)
   {
     StructTreeView::ref()->setParsingDTD(w->parsingDTD());
@@ -3636,7 +3636,7 @@ void QuantaApp::slotReloadStructTreeView()
 
 QString QuantaApp::saveCurrentFile()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w)
     return QString::null;
   if (w->isModified())
@@ -3762,7 +3762,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry("Show Close Buttons", qConfig.showCloseButtons);
 
-    Document *w = ViewManager::ref()->activeView()->document();
+    Document *w = ViewManager::ref()->activeDocument();
      if (w)
         w->writeConfig(m_config);
 
@@ -3825,7 +3825,7 @@ QStringList QuantaApp::selectors(const QString &tag)
 
 void QuantaApp::slotEditCurrentTag()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
 
   if (parser->parsingNeeded())
@@ -3890,7 +3890,7 @@ void QuantaApp::slotSelectTagArea(Node *node)
 
 void QuantaApp::slotSelectTagArea()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w)
       return;
   uint line,col;
@@ -3901,7 +3901,7 @@ void QuantaApp::slotSelectTagArea()
 
 void QuantaApp::slotFrameWizard()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w)
       return;
   QStringList list = w->tagAreas("frameset", true, true);
@@ -3950,7 +3950,7 @@ QString("\n")+dlg.generateFramesetStructure()+QString("\n");
 /** edit/insert CSS */
 void QuantaApp::slotInsertCSS()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
 
   uint line, col;
@@ -4074,7 +4074,7 @@ void QuantaApp::slotInsertCSS()
 /** for <a href=mailto> tag  */
 void QuantaApp::slotTagMail()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
 
   TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Email Link (mailto)"));
@@ -4102,7 +4102,7 @@ void QuantaApp::slotTagMail()
 user specified tag. */
 void QuantaApp::slotTagMisc()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
 
  static QString element = "";
@@ -4138,7 +4138,7 @@ void QuantaApp::slotTagMisc()
 void QuantaApp::slotTagQuickList()
 {
   QString space =" " ;
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
 
   TagQuickListDlg *listDlg = new TagQuickListDlg(this,i18n("Generate List"));
@@ -4168,7 +4168,7 @@ void QuantaApp::slotTagQuickList()
 
 void QuantaApp::slotTagEditTable()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
   baseNode = parser->rebuild(w);
   QStringList list = w->tagAreas("table", true, false);
@@ -4246,7 +4246,7 @@ void QuantaApp::slotTagEditTable()
 /** Open color Dialog and insert color in the text */
 void QuantaApp::slotTagColor()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
   QColor color;
 
@@ -4262,7 +4262,7 @@ void QuantaApp::slotTagColor()
 /** insert date */
 void QuantaApp::slotTagDate()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
   time_t tektime;
   time( &tektime);
@@ -4274,14 +4274,14 @@ void QuantaApp::slotTagDate()
 /** for select form */
 void QuantaApp::slotTagSelect()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
   w->insertTag(QuantaCommon::tagCase("<select")+ QuantaCommon::attrCase("name")+QuantaCommon::tagCase("=\"\"><option>"),QuantaCommon::tagCase("</select>"));
 }
 
 void QuantaApp::slotViewInKFM()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
   if (w->isModified())
   {
@@ -4316,7 +4316,7 @@ void QuantaApp::slotViewInKFM()
 
 void QuantaApp::slotViewInLynx()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
   if (w->isModified())
   {
@@ -4358,7 +4358,7 @@ void QuantaApp::slotViewInLynx()
 /** insert clipboard contents (but quote them for HTML first) */
 void QuantaApp::slotPasteHTMLQuoted()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     QClipboard *cb = qApp->clipboard();
@@ -4380,7 +4380,7 @@ void QuantaApp::slotPasteHTMLQuoted()
 /** insert clipboard contents (but quote them as a URL first) */
 void QuantaApp::slotPasteURLEncoded()
 {
- Document *w = ViewManager::ref()->activeView()->document();
+ Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     QClipboard *cb = qApp->clipboard();
@@ -4409,7 +4409,7 @@ void QuantaApp::slotUndo ()
     return;
   }
 #endif
- Document *w = ViewManager::ref()->activeView()->document();
+ Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     bool updateClosing = qConfig.updateClosingTags;
@@ -4433,7 +4433,7 @@ void QuantaApp::slotRedo ()
     return;
   }
 #endif
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     bool updateClosing = qConfig.updateClosingTags;
@@ -4449,7 +4449,7 @@ void QuantaApp::slotRedo ()
 
 void QuantaApp::slotSpellcheck ()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     SpellChecker::ref(this)->spellCheck(w->doc());
@@ -4459,7 +4459,7 @@ void QuantaApp::slotSpellcheck ()
 /** insert special character */
 void QuantaApp::slotInsertChar(const QString &selected)
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     int begin = selected.find("(&")+1;
@@ -4496,7 +4496,7 @@ Node *QuantaApp::showTagDialogAndReturnNode(const QString &tag, const QString &a
 
 void QuantaApp::debugToggleBreakpoint ()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     KTextEditor::MarkInterface *markIf = dynamic_cast<KTextEditor::MarkInterface*>(w->doc());
@@ -4517,7 +4517,7 @@ void QuantaApp::debugToggleBreakpoint ()
 }
 void QuantaApp::debugClearBreakpoints ()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     KTextEditor::Mark* mark;
@@ -4532,7 +4532,7 @@ void QuantaApp::debugClearBreakpoints ()
 }
 void QuantaApp::debugGotoBreakpoint (KTextEditor::Mark *mark)
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
     if (mark->type == KTextEditor::MarkInterface::markType02)

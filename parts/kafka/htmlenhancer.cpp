@@ -65,7 +65,7 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 		domNode = node->rootNode()->attributes().getNamedItem("src");
 		if(!domNode.isNull())
 		{
-			baseURL.setPath(ViewManager::ref()->activeView()->document()->url().directory());
+			baseURL.setPath(ViewManager::ref()->activeDocument()->url().directory());
 			QuantaCommon::setUrl(url, domNode.nodeValue().string());
 			url = QExtFileInfo::toAbsolute(url, baseURL);
 			domNode.setNodeValue(url.url());

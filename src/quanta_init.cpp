@@ -622,7 +622,7 @@ void QuantaInit::openLastFiles()
   }
   m_config->sync();
   m_quanta->m_doc->blockSignals(false);
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (w) //w==0 might happen on quick close on startup
   {
     m_quanta->setCaption(w->url().prettyURL() );

@@ -99,8 +99,7 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
   if (!view || newfile)
   {
     // no modi and new -> we can remove                           !!!!
-    if (ViewManager::ref()->activeView())
-      w = ViewManager::ref()->activeView()->document();
+    w = ViewManager::ref()->activeDocument();
     if (w && !w->isModified() &&
          w->isUntitled() && !w->busy)
          return true;
@@ -134,7 +133,7 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
   QString encoding = a_encoding;
   if (!newDocument(url, switchToExisting))
       return;
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   bool loaded = false;
   if ( !url.isEmpty() && QExtFileInfo::exists(url))
   {
@@ -178,7 +177,7 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
 
 void QuantaDoc::slotOpeningCompleted()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   w->setDirtyStatus(false);
   //  kdDebug(24000) << "Text: " << w->editIf->text() << endl;
 
@@ -236,7 +235,7 @@ void QuantaDoc::writeConfig( KConfig *config )
 /** show popup menu with list of attributes for current tag */
 void QuantaDoc::slotAttribPopup()
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w)  return;
 
   attribMenu->clear();
@@ -311,7 +310,7 @@ void QuantaDoc::slotAttribPopup()
 
 void QuantaDoc::slotInsertAttrib( int id )
 {
-  Document *w = ViewManager::ref()->activeView()->document();
+  Document *w = ViewManager::ref()->activeDocument();
   if (!w)  return;
   uint line, col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
@@ -443,7 +442,7 @@ void QuantaDoc::slotFileDirty(const QString& fileName)
             if ( w && w->url().path() == fileName && !w->dirty())
             {
               w->setDirtyStatus(true);
-              Document *activeW = ViewManager::ref()->activeView()->document();
+              Document *activeW = ViewManager::ref()->activeDocument();
               if (activeW && w == activeW)
               {
                   w->checkDirtyStatus();

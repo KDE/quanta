@@ -865,7 +865,7 @@ void DTDs::slotLoadDTD()
       if (readTagDir(dirName))
       {
           QString family = dtdcfg.readEntry("Family", "1");
-          Document *w = ViewManager::ref()->activeView()->document();
+          Document *w = ViewManager::ref()->activeDocument();
           if (family == "1" && w &&
               KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
           {
@@ -910,7 +910,7 @@ void DTDs::slotLoadDTEP()
         target.setPath(destDir + src.fileName());
         KIO::copy( src, target, false); //don't care about the result
       }
-      Document *w = ViewManager::ref()->activeView()->document();
+      Document *w = ViewManager::ref()->activeDocument();
       if (family == "1" && w &&
           KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
       {
