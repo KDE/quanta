@@ -862,8 +862,6 @@ void Project::slotNewProject()
 {
 	wiz = new QWizard( 0, "new", true);
 	wiz->setMinimumSize(620,440);
-	wiz->setMaximumSize(620,440);
-	wiz->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
 
 	png = new ProjectNewGeneral( wiz );
 

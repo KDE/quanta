@@ -32,6 +32,7 @@
 #include <qtimer.h>
 
 //kde includes
+#include <kapplication.h>
 #include <kurl.h>
 #include <kio/job.h>
 #include <kmessagebox.h>
@@ -158,8 +159,9 @@ void ProjectUpload::slotBuildTree()
      }
    }
  }
+ totalText->setText(i18n("Building the tree..."));
+ kapp->processEvents();
  list->checkboxTree();
- treeText->hide();
  list->show();
  totalText->setText(i18n("Total:"));
  totalProgress->setValue(0);

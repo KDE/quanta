@@ -529,7 +529,6 @@ void QuantaApp::saveOptions()
     config->writeEntry("Default encoding", qConfig.defaultEncoding);
     config->writeEntry("Default DTD", qConfig.defaultDocType);
     config->writeEntry("New File Type", qConfig.newFileType);
-    config->writeEntry("Use MimeTypes", qConfig.useMimeTypes);
 
     config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
 
@@ -595,7 +594,6 @@ void QuantaApp::readOptions()
      qConfig.newFileType = qConfig.defaultDocType;
 
   qConfig.defaultEncoding = config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
-  qConfig.useMimeTypes = config->readBoolEntry("Use MimeTypes", false);
 
   qConfig.refreshFrequency = config->readNumEntry("Refresh frequency",5);
 

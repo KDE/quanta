@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>StyleOptionsS</class>
 <widget class="QWidget">
     <property name="name">
@@ -29,141 +29,139 @@
     <property name="caption">
         <string>Form2</string>
     </property>
-    <widget class="QLayoutWidget">
+    <grid>
         <property name="name">
-            <cstring>Layout7</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>7</x>
-                <y>7</y>
-                <width>393</width>
-                <height>182</height>
-            </rect>
-        </property>
-        <grid>
+        <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>unnamed</cstring>
+                <cstring>useAutoCompletion</cstring>
             </property>
-            <property name="margin">
-                <number>0</number>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
-            <property name="spacing">
-                <number>6</number>
+            <property name="text">
+                <string>Use &amp;auto-completion</string>
             </property>
-            <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>useAutoCompletion</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>1</hsizetype>
-                        <vsizetype>0</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>tagAutoClose</cstring>
+            </property>
+            <property name="text">
+                <string>Auto-&amp;close non single and non optional tags</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>optionalTagAutoClose</cstring>
+            </property>
+            <property name="text">
+                <string>Auto-close &amp;optional tags</string>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="2" column="1">
+            <item>
                 <property name="text">
-                    <string>Use &amp;auto-completion</string>
+                    <string>Double Quotes</string>
                 </property>
-            </widget>
-            <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>tagAutoClose</cstring>
-                </property>
+            </item>
+            <item>
                 <property name="text">
-                    <string>Auto-&amp;close non single and non optional tags</string>
+                    <string>Single Quotes</string>
                 </property>
-            </widget>
-            <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>optionalTagAutoClose</cstring>
-                </property>
+            </item>
+            <property name="name">
+                <cstring>attributeQuotation</cstring>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="0" column="1">
+            <item>
                 <property name="text">
-                    <string>Auto-close &amp;optional tags</string>
+                    <string>Default Case</string>
                 </property>
-            </widget>
-            <widget class="QComboBox" row="2" column="1">
-                <item>
-                    <property name="text">
-                        <string>Double Quotes</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Single Quotes</string>
-                    </property>
-                </item>
-                <property name="name">
-                    <cstring>attributeQuotation</cstring>
-                </property>
-            </widget>
-            <widget class="QComboBox" row="0" column="1">
-                <item>
-                    <property name="text">
-                        <string>Default Case</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Lower Case</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Upper Case</string>
-                    </property>
-                </item>
-                <property name="name">
-                    <cstring>tagCase</cstring>
-                </property>
-            </widget>
-            <widget class="QLabel" row="0" column="0">
-                <property name="name">
-                    <cstring>TextLabel1</cstring>
-                </property>
+            </item>
+            <item>
                 <property name="text">
-                    <string>Tag case:</string>
+                    <string>Lower Case</string>
                 </property>
-            </widget>
-            <widget class="QLabel" row="1" column="0">
-                <property name="name">
-                    <cstring>TextLabel2</cstring>
-                </property>
+            </item>
+            <item>
                 <property name="text">
-                    <string>Attribute case:</string>
+                    <string>Upper Case</string>
                 </property>
-            </widget>
-            <widget class="QComboBox" row="1" column="1">
-                <item>
-                    <property name="text">
-                        <string>Default Case</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Lower Case</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Upper Case</string>
-                    </property>
-                </item>
-                <property name="name">
-                    <cstring>attributeCase</cstring>
-                </property>
-            </widget>
-            <widget class="QLabel" row="2" column="0">
-                <property name="name">
-                    <cstring>TextLabel3</cstring>
-                </property>
+            </item>
+            <property name="name">
+                <cstring>tagCase</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Tag case:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>TextLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Attribute case:</string>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="1" column="1">
+            <item>
                 <property name="text">
-                    <string>Attribute quotation:</string>
+                    <string>Default Case</string>
                 </property>
-            </widget>
-        </grid>
-    </widget>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Lower Case</string>
+                </property>
+            </item>
+            <item>
+                <property name="text">
+                    <string>Upper Case</string>
+                </property>
+            </item>
+            <property name="name">
+                <cstring>attributeCase</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>TextLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>Attribute quotation:</string>
+            </property>
+        </widget>
+        <spacer row="6" column="0">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
 </widget>
 <tabstops>
     <tabstop>tagCase</tabstop>

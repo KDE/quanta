@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>410</width>
-            <height>252</height>
+            <width>415</width>
+            <height>308</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -65,6 +65,23 @@
                 <string>Create new files as:</string>
             </property>
         </widget>
+        <spacer row="3" column="0">
+            <property name="name">
+                <cstring>spacer12</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>21</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
         <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>GroupBox1</cstring>
@@ -184,23 +201,6 @@
                 </widget>
             </grid>
         </widget>
-        <spacer row="3" column="0">
-            <property name="name">
-                <cstring>spacer12</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>21</width>
-                    <height>61</height>
-                </size>
-            </property>
-        </spacer>
     </grid>
 </widget>
 <tabstops>

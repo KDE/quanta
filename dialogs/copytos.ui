@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>CopyToS</class>
 <widget class="QDialog">
     <property name="name">
@@ -45,7 +45,7 @@
             </property>
         </widget>
         <spacer row="1" column="0">
-            <property name="name" stdset="0">
+            <property name="name">
                 <cstring>Spacer1</cstring>
             </property>
             <property name="orientation">
@@ -74,4 +74,9 @@
     <tabstop>buttonCancel</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kurlrequester.h</includehint>
+    <includehint>klineedit.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
 </UI>

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>TagQuickStartS</class>
 <widget class="QDialog">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>429</width>
-            <height>325</height>
+            <width>566</width>
+            <height>332</height>
         </rect>
     </property>
     <property name="caption">
@@ -25,224 +25,7 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QLayoutWidget" row="0" column="0">
-            <property name="name">
-                <cstring>Layout8</cstring>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLabel" row="4" column="0">
-                    <property name="name">
-                        <cstring>TextLabel5</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Link color:</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>lineTitle</cstring>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="2" column="1">
-                    <property name="name">
-                        <cstring>comboBGColor</cstring>
-                    </property>
-                    <property name="editable">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="4" column="1">
-                    <property name="name">
-                        <cstring>comboLinkColor</cstring>
-                    </property>
-                    <property name="editable">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget" row="1" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>Layout7</cstring>
-                    </property>
-                    <property name="layoutSpacing" stdset="0">
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QLineEdit">
-                            <property name="name">
-                                <cstring>lineBGImage</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>buttonFileSelect</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>0</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>32</width>
-                                    <height>32767</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string>...</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="ColorCombo" row="6" column="2">
-                    <property name="name">
-                        <cstring>colorVLink</cstring>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>80</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>TextLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Text color:</string>
-                    </property>
-                </widget>
-                <widget class="ColorCombo" row="2" column="2">
-                    <property name="name">
-                        <cstring>colorBG</cstring>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>80</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>TextLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>BG image:</string>
-                    </property>
-                </widget>
-                <widget class="ColorCombo" row="4" column="2">
-                    <property name="name">
-                        <cstring>colorLink</cstring>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>80</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </widget>
-                <widget class="ColorCombo" row="5" column="2">
-                    <property name="name">
-                        <cstring>colorALink</cstring>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>80</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="6" column="1">
-                    <property name="name">
-                        <cstring>comboVLinkColor</cstring>
-                    </property>
-                    <property name="editable">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="5" column="1">
-                    <property name="name">
-                        <cstring>comboALinkColor</cstring>
-                    </property>
-                    <property name="editable">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="ColorCombo" row="3" column="2">
-                    <property name="name">
-                        <cstring>colorText</cstring>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>80</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>TextLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Bg color:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="6" column="0">
-                    <property name="name">
-                        <cstring>TextLabel7</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Visited link color:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="5" column="0">
-                    <property name="name">
-                        <cstring>TextLabel6</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Active link color:</string>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="3" column="1">
-                    <property name="name">
-                        <cstring>comboTextColor</cstring>
-                    </property>
-                    <property name="editable">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Title:</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QLayoutWidget" row="2" column="0">
+        <widget class="QLayoutWidget" row="8" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>Layout9</cstring>
             </property>
@@ -274,6 +57,12 @@
                     <property name="sizeType">
                         <enum>Expanding</enum>
                     </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
                 </spacer>
                 <widget class="QPushButton">
                     <property name="name">
@@ -293,7 +82,7 @@
                 </widget>
             </hbox>
         </widget>
-        <spacer row="1" column="0">
+        <spacer row="7" column="1">
             <property name="name">
                 <cstring>Spacer2</cstring>
             </property>
@@ -303,7 +92,196 @@
             <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
         </spacer>
+        <widget class="QLabel" row="4" column="0">
+            <property name="name">
+                <cstring>TextLabel5</cstring>
+            </property>
+            <property name="text">
+                <string>Link color:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lineTitle</cstring>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="2" column="1">
+            <property name="name">
+                <cstring>comboBGColor</cstring>
+            </property>
+            <property name="editable">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="4" column="1">
+            <property name="name">
+                <cstring>comboLinkColor</cstring>
+            </property>
+            <property name="editable">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="ColorCombo" row="6" column="2">
+            <property name="name">
+                <cstring>colorVLink</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </widget>
+        <widget class="QLabel" row="3" column="0">
+            <property name="name">
+                <cstring>TextLabel4</cstring>
+            </property>
+            <property name="text">
+                <string>Text color:</string>
+            </property>
+        </widget>
+        <widget class="ColorCombo" row="2" column="2">
+            <property name="name">
+                <cstring>colorBG</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>TextLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>BG image:</string>
+            </property>
+        </widget>
+        <widget class="ColorCombo" row="4" column="2">
+            <property name="name">
+                <cstring>colorLink</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </widget>
+        <widget class="ColorCombo" row="5" column="2">
+            <property name="name">
+                <cstring>colorALink</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="6" column="1">
+            <property name="name">
+                <cstring>comboVLinkColor</cstring>
+            </property>
+            <property name="editable">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="5" column="1">
+            <property name="name">
+                <cstring>comboALinkColor</cstring>
+            </property>
+            <property name="editable">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="ColorCombo" row="3" column="2">
+            <property name="name">
+                <cstring>colorText</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>80</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>TextLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>Bg color:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="6" column="0">
+            <property name="name">
+                <cstring>TextLabel7</cstring>
+            </property>
+            <property name="text">
+                <string>Visited link color:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="5" column="0">
+            <property name="name">
+                <cstring>TextLabel6</cstring>
+            </property>
+            <property name="text">
+                <string>Active link color:</string>
+            </property>
+        </widget>
+        <widget class="QComboBox" row="3" column="1">
+            <property name="name">
+                <cstring>comboTextColor</cstring>
+            </property>
+            <property name="editable">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Title:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="1" column="1">
+            <property name="name">
+                <cstring>lineBGImage</cstring>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="1" column="2">
+            <property name="name">
+                <cstring>buttonFileSelect</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32</width>
+                    <height>32767</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>...</string>
+            </property>
+        </widget>
     </grid>
 </widget>
 <customwidgets>
@@ -322,6 +300,10 @@
             <verstretch>0</verstretch>
         </sizepolicy>
         <pixmap>image0</pixmap>
+        <signal>activated(const QColor&amp;)</signal>
+        <signal>highlighted(const QColor&amp;)</signal>
+        <slot access="public" specifier="">slotActivated(int)</slot>
+        <slot access="public" specifier="">slotHighlighted(int)</slot>
     </customwidget>
 </customwidgets>
 <images>
@@ -343,4 +325,11 @@
     <tabstop>buttonHelp</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>colorcombo.h</includehint>
+    <includehint>colorcombo.h</includehint>
+    <includehint>colorcombo.h</includehint>
+    <includehint>colorcombo.h</includehint>
+    <includehint>colorcombo.h</includehint>
+</includehints>
 </UI>

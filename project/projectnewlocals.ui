@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>ProjectNewLocalS</class>
 <widget class="QWidget">
     <property name="name">
@@ -8,14 +8,14 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>620</width>
-            <height>410</height>
+            <width>715</width>
+            <height>411</height>
         </rect>
     </property>
     <property name="sizePolicy">
         <sizepolicy>
-            <hsizetype>0</hsizetype>
-            <vsizetype>0</vsizetype>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
         </sizepolicy>
@@ -28,8 +28,8 @@
     </property>
     <property name="maximumSize">
         <size>
-            <width>620</width>
-            <height>410</height>
+            <width>32000</width>
+            <height>32000</height>
         </size>
     </property>
     <property name="caption">
@@ -39,267 +39,216 @@
     </property>
     <property name="layoutSpacing" stdset="0">
     </property>
-    <widget class="QLayoutWidget">
+    <grid>
         <property name="name">
-            <cstring>Layout120</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>5</x>
-                <y>5</y>
-                <width>611</width>
-                <height>400</height>
-            </rect>
-        </property>
-        <grid>
+        <widget class="QLabel" row="0" column="0" rowspan="5" colspan="1">
             <property name="name">
-                <cstring>unnamed</cstring>
+                <cstring>imagelabel</cstring>
             </property>
-            <property name="margin">
-                <number>0</number>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
-            <property name="spacing">
-                <number>6</number>
+            <property name="minimumSize">
+                <size>
+                    <width>120</width>
+                    <height>0</height>
+                </size>
             </property>
-            <widget class="QLabel" row="0" column="0">
+            <property name="maximumSize">
+                <size>
+                    <width>120</width>
+                    <height>32767</height>
+                </size>
+            </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="scaledContents">
+                <bool>true</bool>
+            </property>
+            <property name="alignment">
+                <set>AlignTop|AlignLeft</set>
+            </property>
+            <property name="vAlign" stdset="0">
+            </property>
+        </widget>
+        <spacer row="3" column="1">
+            <property name="name">
+                <cstring>Spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>16</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QCheckBox" row="0" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>checkInsert</cstring>
+            </property>
+            <property name="text">
+                <string>Insert files from</string>
+            </property>
+        </widget>
+        <widget class="QButtonGroup" row="1" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>ButtonGroup12</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="title">
+                <string>Filters</string>
+            </property>
+            <grid>
                 <property name="name">
-                    <cstring>imagelabel</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>0</hsizetype>
-                        <vsizetype>7</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
+                <property name="margin">
+                    <number>11</number>
                 </property>
-                <property name="minimumSize">
-                    <size>
-                        <width>120</width>
-                        <height>0</height>
-                    </size>
+                <property name="spacing">
+                    <number>6</number>
                 </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>120</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="text">
-                    <string></string>
-                </property>
-                <property name="scaledContents">
-                    <bool>true</bool>
-                </property>
-                <property name="alignment">
-                    <set>AlignTop|AlignLeft</set>
-                </property>
-                <property name="vAlign" stdset="0">
-                </property>
-            </widget>
-            <widget class="QLayoutWidget" row="0" column="1">
-                <property name="name">
-                    <cstring>Layout119</cstring>
-                </property>
-                <grid>
+                <widget class="QRadioButton" row="1" column="0">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>checkInsertWithMask</cstring>
                     </property>
-                    <property name="margin">
-                        <number>0</number>
+                    <property name="text">
+                        <string>Insert files with the following &amp;mask:</string>
                     </property>
-                    <property name="spacing">
-                        <number>6</number>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>mask</cstring>
                     </property>
-                    <widget class="UploadTreeView" row="3" column="1" rowspan="1" colspan="3">
-                        <property name="name">
-                            <cstring>listView</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>7</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                    </widget>
-                    <widget class="QLayoutWidget" row="4" column="2">
-                        <property name="name">
-                            <cstring>Layout16</cstring>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>0</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QPushButton" row="0" column="0">
-                                <property name="name">
-                                    <cstring>addFiles</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Add Files...</string>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton" row="0" column="1">
-                                <property name="name">
-                                    <cstring>addFolder</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>A&amp;dd Folder...</string>
-                                </property>
-                            </widget>
-                            <widget class="QPushButton" row="0" column="2">
-                                <property name="name">
-                                    <cstring>clearList</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Clear List</string>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget class="QLabel" row="2" column="0" rowspan="1" colspan="4">
-                        <property name="name">
-                            <cstring>TextLabel8</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Included files:</string>
-                        </property>
-                    </widget>
-                    <spacer row="3" column="0">
-                        <property name="name" stdset="0">
-                            <cstring>Spacer3</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Fixed</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>16</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="4">
-                        <property name="name">
-                            <cstring>checkInsert</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Insert files from</string>
-                        </property>
-                    </widget>
-                    <spacer row="4" column="3">
-                        <property name="name" stdset="0">
-                            <cstring>Spacer4_2</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Fixed</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>89</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <spacer row="4" column="0" rowspan="1" colspan="2">
-                        <property name="name" stdset="0">
-                            <cstring>Spacer4</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Fixed</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>85</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QButtonGroup" row="1" column="0" rowspan="1" colspan="4">
-                        <property name="name">
-                            <cstring>ButtonGroup12</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="title">
-                            <string>Filters</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>11</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QLayoutWidget" row="0" column="0">
-                                <property name="name">
-                                    <cstring>Layout118</cstring>
-                                </property>
-                                <grid>
-                                    <property name="name">
-                                        <cstring>unnamed</cstring>
-                                    </property>
-                                    <property name="margin">
-                                        <number>0</number>
-                                    </property>
-                                    <property name="spacing">
-                                        <number>6</number>
-                                    </property>
-                                    <widget class="QRadioButton" row="1" column="0">
-                                        <property name="name">
-                                            <cstring>checkInsertWithMask</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>Insert files with the following &amp;mask:</string>
-                                        </property>
-                                    </widget>
-                                    <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
-                                        <property name="name">
-                                            <cstring>checkInsertWeb</cstring>
-                                        </property>
-                                        <property name="text">
-                                            <string>&amp;Insert only markup, script and image files</string>
-                                        </property>
-                                        <property name="checked">
-                                            <bool>true</bool>
-                                        </property>
-                                    </widget>
-                                    <widget class="QLineEdit" row="1" column="1">
-                                        <property name="name">
-                                            <cstring>mask</cstring>
-                                        </property>
-                                        <property name="enabled">
-                                            <bool>false</bool>
-                                        </property>
-                                    </widget>
-                                </grid>
-                            </widget>
-                        </grid>
-                    </widget>
-                </grid>
-            </widget>
-        </grid>
-    </widget>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>checkInsertWeb</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Insert only markup, script and image files</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLayoutWidget" row="4" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>layout5</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer4</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>85</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>addFiles</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Add Files...</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>addFolder</cstring>
+                    </property>
+                    <property name="text">
+                        <string>A&amp;dd Folder...</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>clearList</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Clear List</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer4_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>89</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+        <widget class="UploadTreeView" row="3" column="2">
+            <property name="name">
+                <cstring>listView</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>TextLabel8</cstring>
+            </property>
+            <property name="text">
+                <string>Included files:</string>
+            </property>
+        </widget>
+    </grid>
 </widget>
 <customwidgets>
     <customwidget>
@@ -347,4 +296,7 @@
     <tabstop>clearList</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>uploadtreeview.h</includehint>
+</includehints>
 </UI>

@@ -846,7 +846,6 @@ void QuantaApp::slotOptions()
   }
 
   parserOptions->refreshFrequency->setValue(qConfig.refreshFrequency);
-  parserOptions->useMimeTypes->setChecked(qConfig.useMimeTypes);
   page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
   DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)page );
 
@@ -883,8 +882,6 @@ void QuantaApp::slotOptions()
     {
       refreshTimer->stop();
     }
-    qConfig.useMimeTypes = parserOptions->useMimeTypes->isChecked();
-
     parserOptions->updateConfig();
     qConfig.defaultDocType = QuantaCommon::getDTDNameFromNickName(parserOptions->dtdName->currentText());
     qConfig.newFileType = QuantaCommon::getDTDNameFromNickName(fileMasks->newfileCombo->currentText());
@@ -1945,7 +1942,7 @@ void QuantaApp::slotSendToolbar()
   QString titleStr;
   QString subjectStr;
 
-  mailDlg->TitleLabel->setText(i18n("Content"));
+  mailDlg->TitleLabel->setText(i18n("Content")+":");
   mailDlg->titleEdit->setFixedHeight(60);
   mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
   mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
@@ -2503,7 +2500,7 @@ void QuantaApp::slotEmailDTD()
   QString titleStr;
   QString subjectStr;
 
-  mailDlg->TitleLabel->setText(i18n("Content"));
+  mailDlg->TitleLabel->setText(i18n("Content")+":");
   mailDlg->titleEdit->setFixedHeight(60);
   mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
   mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
