@@ -88,9 +88,9 @@ QuantaView* ViewManager::createView()
 
 void ViewManager::createNewDocument()
 {
-   QuantaView *view = createView();
-   int i = 1;
-   while ( isOpened(KURL("file:/"+i18n("Untitled%1").arg(i)))) i++;
+  QuantaView *view = createView();
+  int i = 1;
+  while (isOpened(KURL("file:"+i18n("Untitled%1").arg(i)))) i++;
   QString fname = i18n("Untitled%1").arg(i);
 
 #ifdef ENABLE_EDITORS
