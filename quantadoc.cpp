@@ -440,7 +440,7 @@ Document* QuantaDoc::newWrite()
   QString fname = i18n("Untitled%1.").arg(i)+dtd->defaultExtension;
 
   KTextEditor::Document *doc =
-  KTextEditor::createDocument ("katepart", quantaApp->view()->writeTab(), "KTextEditor::Document");
+  KTextEditor::createDocument ("libkatepart", quantaApp->view()->writeTab(), "KTextEditor::Document");
 /*                               KTextEditor::EditorChooser::createDocument(
                                 quantaApp->view->writeTab(),
                                 "KTextEditor::Document"
