@@ -72,6 +72,8 @@ public slots:
   void slotUpdateToHead(const QStringList &files);
   void slotCommit();
   void slotCommit(const QStringList &files);
+  void slotRevert();
+  void slotRevert(const QStringList &files);
 
   virtual void slotJobExited(bool normalExit, int exitStatus);
   virtual void slotReceivedStdout(QString output);
