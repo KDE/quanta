@@ -121,7 +121,7 @@ echo '&lt;/table&gt;'
                         <cstring>TextLabel1</cstring>
                     </property>
                     <property name="text">
-                        <string>Colums</string>
+                        <string>Columns</string>
                     </property>
                 </widget>
                 <widget class="SpinBoxInt" row="1" column="2">
