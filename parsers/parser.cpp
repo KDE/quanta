@@ -55,6 +55,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <ktexteditor/editinterface.h>
+#include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 
 extern GroupElementMapList globalGroupMap;
@@ -1311,13 +1312,12 @@ void Parser::cleanGroups()
 #ifdef DEBUG_PARSER
       kdDebug(24000) << count << "GroupElement deleted (cleanGroups)." << endl;
 #endif
-  if (m_parseIncludedFiles && ParserCommon::includedFiles.count() > 0)
+  if (m_parseIncludedFiles)
   {
       delete ParserCommon::includeWatch;
       ParserCommon::includeWatch = new KDirWatch();
       connect(ParserCommon::includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
       parseIncludedFiles();
-      m_parseIncludedFiles = false;
   }
 }
 
@@ -1353,6 +1353,8 @@ void Parser::parseIncludedFiles()
     {
       parseIncludedFile(ParserCommon::includedFiles[i], ParserCommon::includedFilesDTD.at(i));
     }
+    if (listCount > 0)
+      m_parseIncludedFiles = false;
   }
   emit rebuildStructureTree(true);
 }
@@ -1369,7 +1371,11 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
   {
     IncludedGroupElements *elements = &includedMap[fileName];
     QTextStream str(&file);
-    str.setEncoding(QTextStream::UnicodeUTF8);
+    if (write->encodingIf)
+      encoding = write->encodingIf->encoding();
+    if (write->encoding.isEmpty())
+      encoding = "utf8";  //final fallback
+    str.setCodec(QTextCodec::codecForName(encoding));
     content = str.read();
     file.close();
     if (dtd->specialAreas.count())
