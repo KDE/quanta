@@ -184,6 +184,8 @@ public:
   /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
   void loadToolbarForDTD(const QString& dtdName);
   
+  QStringList selectors(const QString& tag);
+  
     /** tabs for left panel */
   ProjectTreeView *pTab;
   DocTreeView *dTab;

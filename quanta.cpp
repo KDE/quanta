@@ -150,6 +150,8 @@
 #include "quantaplugininterface.h"
 #include "dtds.h"
 
+extern GroupElementMapList globalGroupMap;
+
 const QString resourceDir = QString(PACKAGE) + "/";
 
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
@@ -626,12 +628,13 @@ void QuantaApp::slotRepaintPreview()
   int xOffset = html->contentsX(), yOffset = html->contentsY();
 
   part->closeURL();
-
-  KParts::URLArgs  args(true, browserExtension()->xOffset(), browserExtension()->yOffset());
-  browserExtension()->setURLArgs( args );
+  KParts::BrowserExtension *browserExtension = KParts::BrowserExtension::childObject(part);
+  KParts::URLArgs  args(true, browserExtension->xOffset(), browserExtension->yOffset());
+  browserExtension->setURLArgs( args );
 
   KURL url;
   Document *w = m_view->write();
+  part->setEncoding(dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding(), true);
   QStringList list;
   if (m_noFramesPreview)
   {
@@ -659,6 +662,7 @@ void QuantaApp::slotRepaintPreview()
       else
         part->begin( w->url(), xOffset, yOffset );
       part->write(noFramesText);
+      part->end();
     }
   }
 
@@ -674,7 +678,6 @@ void QuantaApp::slotRepaintPreview()
 
       url = Project::ref()->urlWithPrefix(url);
 
-      part->begin(url, xOffset, yOffset);
       part->openURL(url);
     } else  //the document is Untitled, preview the text from it
     {
@@ -688,10 +691,10 @@ void QuantaApp::slotRepaintPreview()
       }
       part->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
       part->write( text );
+      part->end();
     }
    }
- part->end();
- part->setEncoding(dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding(), true);
+// part->end();
  part->show();
 }
 
@@ -921,9 +924,12 @@ void QuantaApp::slotClosePage(QWidget *w)
     QWidget *oldPage = writeTab->currentPage();
     if (oldPage != w)
         writeTab->showPage(w);
+    parser->setSAParserEnabled(false);    
     m_doc->closeDocument();
     if (oldPage != w)
         writeTab->showPage(oldPage);
+    kdDebug(24000) << "Calling reparse from close " << endl;    
+    parser->setSAParserEnabled(true);    
     reparse(true);
   }
   if (!writeTab->currentPage())
@@ -961,6 +967,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
        plugin->showGui(true);
     m_view->oldTab = w;
     m_view->toolbarTab()->hide();
+    parser->setSAParserEnabled(false);
+    slotReloadStructTreeView();
     return;
   }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
@@ -968,6 +976,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   if (newWrite != m_view->oldWrite)
     StructTreeView::ref()->useOpenLevelSetting = true;
   parser->clearGroups();
+  kdDebug(24000) << "Calling reparse from update " << endl;
+  parser->setSAParserEnabled(true);
   reparse(true);
   slotNewStatus();
   slotNewLineColumn();
@@ -1762,7 +1772,7 @@ void QuantaApp::slotShowSTabDock()
 
 void QuantaApp::slotShowATabDock() 
 { 
- atabdock->changeHideShowState();
+  atabdock->changeHideShowState();
 }
 
 void QuantaApp::slotShowDTabDock() 
@@ -3460,13 +3470,13 @@ QString QuantaApp::defaultEncoding()
   return encoding;
 }
 
-QPopupMenu *QuantaApp::toolbarMenu(const QString& name)
-{
-  QPopupMenu *menu = 0L;
-  ToolbarEntry* p_toolbar = toolbarList[name.lower()];
-  if (p_toolbar) menu = p_toolbar->menu;
-  return menu;
-}
+// QPopupMenu *QuantaApp::toolbarMenu(const QString& name)
+// {
+//   QPopupMenu *menu = 0L;
+//   ToolbarEntry* p_toolbar = toolbarList[name.lower()];
+//   if (p_toolbar) menu = p_toolbar->menu;
+//   return menu;
+// }
 
 KURL::List QuantaApp::userToolbarFiles()
 {
@@ -4029,8 +4039,9 @@ void QuantaApp::slotReloadStructTreeView()
     int expandLevel = qConfig.expandLevel;
     if (expandLevel == 0)
         expandLevel = 40;
-    StructTreeView::ref()->slotReparse(w, baseNode , expandLevel );
-  }
+    StructTreeView::ref()->slotReparse(w, baseNode, expandLevel);
+  } else
+    StructTreeView::ref()->slotReparse(0L, 0L, 0); //delete the tree
 }
 
 QString QuantaApp::saveCurrentFile()
@@ -4063,5 +4074,34 @@ QString QuantaApp::saveCurrentFile()
   KURL url = Project::ref()->urlWithPrefix(w->url());
   return url.url();
 }
+
+QStringList QuantaApp::selectors(const QString &tag)
+{
+  QStringList selectorList;
+  GroupElementMapList::Iterator it;
+  for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
+  {
+    QString key = it.key();
+    if (key.startsWith("Selectors|"))
+    {
+      QString selectorName = key.mid(10);
+      QString tmpStr;
+      int index = selectorName.find(QRegExp("\\.|\\#|\\:"));          
+      if (index != -1)
+      {
+        tmpStr = selectorName.left(index).lower();
+      } else
+      {
+        tmpStr = selectorName;
+      }
+      if (tmpStr.isEmpty() || tag.lower() == tmpStr || tmpStr == "*")
+      {
+        selectorList << selectorName.mid(index + 1).replace('.',' ');
+      }
+     }
+  }
+  return selectorList;
+}
+
 
 #include "quanta.moc"
