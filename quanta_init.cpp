@@ -1699,7 +1699,8 @@ void QuantaApp::initActions()
 
 
     KStdAction::find(this, SLOT(slotFind()), ac);
-    KStdAction::findNext(this, SLOT(slotFindAgain()), ac);
+    new KAction(i18n("Find &Next"), "findnext", KStdAccel::shortcut(KStdAccel::FindNext), this, 
+                 SLOT(slotFindAgain()), ac, "edit_find_next");
     KStdAction::findPrev(this, SLOT(slotFindAgainB()), ac, "edit_find_prev");
     KStdAction::replace(this, SLOT(slotReplace()), ac);
 
@@ -1921,7 +1922,7 @@ void QuantaApp::initActions()
 #ifdef BUILD_KAFKAPART
     KToggleAction *ta;
       ta =
-      new KToggleAction( i18n( "&Source Editor") , "show_quanta_editor", ALT+Key_F9,
+      new KToggleAction( i18n( "&Source Editor") , UserIcon("view_text"), ALT+Key_F9,
                          m_view, SLOT( slotShowQuantaEditor()),
                          ac, "show_quanta_editor");
       ta->setExclusiveGroup("view");
@@ -1933,7 +1934,7 @@ void QuantaApp::initActions()
      showKafkaAction->setExclusiveGroup("view");
 
      ta =
-      new KToggleAction( i18n("VPL && So&urce Editors"), "show_kafka_and_quanta", Key_F9,
+      new KToggleAction( i18n("VPL && So&urce Editors"), UserIcon("vpl_text"), Key_F9,
                          m_view, SLOT( slotShowKafkaAndQuanta() ),
                           ac, "show_kafka_and_quanta");
      ta->setExclusiveGroup("view");
