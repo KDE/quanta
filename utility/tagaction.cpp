@@ -756,7 +756,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
                   view->document()->viewCursorIf->setCursorPositionReal(line, col);
                 }
                 if(!nodeTreeModified)
-                  quantaApp->slotStatusMsg(i18n("Can't insert the tag : Invalid location."));
+                  quantaApp->slotStatusMsg(i18n("Cannot insert the tag: invalid location."));
 
         }
         else
