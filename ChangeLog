@@ -28,7 +28,7 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - rename Edit Toolbar to Configure Toolbars...
         - KFileReplace is used for "Find in Files"
 
-  - enhancements:
+  - enhancements/new features:
         - warn about missing runtime dependencies
         - make the browser part configuration available from the Settings menu
         - faster switching between documents
@@ -45,6 +45,7 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
              - Never: the item is never selected for upload
              - Confirm: the item is selected for upload if it was modified, but a second confirmation
                              is needed by the user.
+        - dragging a tab holding a document put the document URL in the drag object [#80649]
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:

@@ -19,6 +19,7 @@
 
 // include files for QT
 #include <qaction.h>
+#include <qdragobject.h>
 #include <qdir.h>
 #include <qprinter.h>
 #include <qpainter.h>
@@ -226,6 +227,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   connect(m_partManager, SIGNAL(activePartChanged(KParts::Part * )),
           this, SLOT(slotActivePartChanged(KParts::Part * )));
    connect(this, SIGNAL(dockWidgetHasUndocked(KDockWidget *)), this, SLOT(slotDockWidgetHasUndocked(KDockWidget *)));
+  connect(tabWidget(), SIGNAL(initiateDrag(QWidget *)), this, SLOT(slotTabDragged(QWidget*)));
 
   m_oldContextCut = 0L;
   m_oldContextCopy = 0L;
@@ -4714,6 +4716,17 @@ void QuantaApp::slotDockWidgetHasUndocked(KDockWidget *widget)
 {
    if (m_previewToolView && m_previewToolView->wrapperWidget() == widget)
        slotPreviewBeingClosed();
+}
+
+void QuantaApp::slotTabDragged(QWidget *widget)
+{
+   QuantaView *view = dynamic_cast<QuantaView*>(widget);
+   if (view && view->document())
+   {
+     QString url = view->document()->url().url();
+     QDragObject *d = new QTextDrag( url, this );
+     d->dragCopy();
+   }
 }
 
 #include "quanta.moc"

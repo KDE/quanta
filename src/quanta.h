@@ -428,6 +428,7 @@ protected slots:
   void slotShowSourceEditor();
   void slotShowVPLAndSourceEditor();
   void slotShowVPLOnly();
+  void slotTabDragged(QWidget *widget);
 
 protected:
   /** Ask for save all the modified user toolbars. */
