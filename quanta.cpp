@@ -394,10 +394,15 @@ void QuantaApp::slotNewStatus()
   
   while ( Document *w = it.current() )
   {
-    if ( w->isModified())
-    	wTab->changeTab( w,  floppyIcon,  wTab->tabLabel(w) );
-    else
-    	wTab->changeTab( w,  emptyIcon,   wTab->tabLabel(w) );
+    if ( w->isModified() != w->oldstat );
+    {
+      if ( w->isModified() ) 
+    	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
+      else
+    	  wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
+    
+      w->oldstat = w->isModified();
+    }
 
     ++it;
   }
@@ -840,6 +845,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
     KToolBar *tb = new KToolBar( view->toolbarStack );
     tb->loadState( element );
     view->toolbarStack->addWidget( tb, view->tabBar->addTab( new QTab( i18n( tabname ))));
+    
     return tb;
   }
   
@@ -860,4 +866,18 @@ void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElemen
   }
   else
     KMainWindow::removeContainer( container, parent, element, id );
+}
+
+void QuantaApp::slotBack()
+{
+  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 0 ) slotFilePrev();
+  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlpart->back();
+  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlPartDoc->back();
+}
+
+void QuantaApp::slotForward()
+{
+  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 0 ) slotFileNext();
+  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlpart->forward();
+  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlPartDoc->forward();
 }

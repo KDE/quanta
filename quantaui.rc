@@ -129,12 +129,12 @@
       <Separator/>
       <Action name="show_preview"/>
       <Separator/>
-      <Action name="doc_back"/>
-      <Action name="doc_forward"/>
+      <Action name="w_back"/>
+      <Action name="w_forward"/>
       <Action name="reload"/>
       <Separator/>
-      <Action name="view_with_konqueror"/>
       <Action name="view_with_netscape"/>
+      <Action name="view_with_konqueror"/>
       <Action name="view_with_lynx"/>
       <Separator/>
       <Action name="previous_file"/>
@@ -205,8 +205,8 @@
     <Action name="show_tree"/>
     <Action name="show_preview"/>
     <Action name="show_messages"/>
-    <Action name="doc_back"/>
-    <Action name="doc_forward"/>
+    <Action name="w_back"/>
+    <Action name="w_forward"/>
     <Action name="reload"/>
     <Separator/>
   </ToolBar>
@@ -326,5 +326,11 @@
     <Action name="context_help"/>
   </Menu>
   
+  <ActionProperties>
+    <Action accel="Ctrl+Return" name="tag_br" />
+    <Action accel="Ctrl+Minus"  name="tag_hr" />
+    <Action accel="Ctrl+Space"  name="tag_nbsp" />
+  </ActionProperties>
+ 
 </kpartgui>
 

@@ -35,6 +35,7 @@
 Document::Document( KWriteDoc *doc, QWidget *parent, const char *name)
 	:	KWrite( doc, parent, name)
 {
+  oldstat = false;
 }
 
 Document::~Document()

@@ -141,6 +141,9 @@ class QuantaApp : public KDockMainWindow
 
     void contextHelp();
 
+    void slotBack();
+    void slotForward();
+    
     void slotViewToolBar  ();
     void slotViewStatusBar();
     

@@ -121,6 +121,8 @@ public:
   int tagAttrNum;
   int tagBeginX, tagBeginY, tagEndX, tagEndY;
 
+  bool oldstat;
+  
 private:
 
   QString untitledUrl;

@@ -91,7 +91,7 @@ QDict <QStrList> *tagsDict;
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
-  grepDialog	= 0;
+  grepDialog	= 0L;
 
   config=kapp->config();
 
@@ -545,7 +545,7 @@ void QuantaApp::initActions()
     
     KStdAction::saveAs( this, SLOT( slotFileSaveAs() ), actionCollection() );
 
-    saveAllAction = new KAction( i18n( "Save All..." ), UserIcon("save_all"), 0,
+    saveAllAction = new KAction( i18n( "Save All..." ), UserIcon("save_all"), SHIFT+KStdAccel::key(KStdAccel::Save),
                         this, SLOT( slotFileSaveAll() ),
                         actionCollection(), "save_all" );
 
@@ -595,11 +595,11 @@ void QuantaApp::initActions()
     //
     KStdAction::gotoLine( doc, SLOT( gotoLine() ), actionCollection(), "goto_line" );
 
-    (void) new KAction( i18n( "&Indent" ), ALT+SHIFT+Key_Right, 
+    (void) new KAction( i18n( "&Indent" ), CTRL+Key_I, 
                         doc, SLOT( indent() ),
                         actionCollection(), "indent" );
                         
-    (void) new KAction( i18n( "&Unindent" ), ALT+SHIFT+Key_Left, 
+    (void) new KAction( i18n( "&Unindent" ), CTRL+Key_U, 
                         doc, SLOT( unindent() ),
                         actionCollection(), "unindent" );
                         
@@ -669,31 +669,31 @@ void QuantaApp::initActions()
     showMessagesAction->setChecked( true );
     showPreviewAction ->setChecked( false );
                            
-       backAction = KStdAction::back   ( htmlPartDoc, SLOT( back() ),    actionCollection(), "doc_back" );
-    forwardAction = KStdAction::forward( htmlPartDoc, SLOT( forward() ), actionCollection(), "doc_forward" );
+       backAction = KStdAction::back   ( this, SLOT( slotBack() ),    actionCollection(), "w_back" );
+    forwardAction = KStdAction::forward( this, SLOT( slotForward() ), actionCollection(), "w_forward" );
 
     (void) new KAction( i18n( "&Reload preview" ), "reload",
                         KStdAccel::key(KStdAccel::Reload),
                         this, SLOT( slotViewRepaint() ),
                         actionCollection(), "reload" );
                         
-    (void) new KAction( i18n( "View With Net&scape" ), "netscape", 0,
+    (void) new KAction( i18n( "View With Net&scape" ), "netscape", ALT+Key_F6,
                         view, SLOT( slotViewInNetscape() ),
                         actionCollection(), "view_with_netscape" );
                         
-    (void) new KAction( i18n( "View With &Konqueror" ), "konqueror", 0,
+    (void) new KAction( i18n( "View With &Konqueror" ), "konqueror", CTRL+Key_F6,
                         view, SLOT( slotViewInKFM() ),
                         actionCollection(), "view_with_konqueror" );
                         
-    (void) new KAction( i18n( "View With L&ynx" ), "terminal", 0,
+    (void) new KAction( i18n( "View With L&ynx" ), "terminal", SHIFT+Key_F6,
                         view, SLOT( slotViewInLynx() ),
                         actionCollection(), "view_with_lynx" );
 
-    (void) new KAction( i18n( "&Previous File" ), "1leftarrow", CTRL+ALT+Key_Right,
+    (void) new KAction( i18n( "&Previous File" ), "1leftarrow", KStdAccel::back(),
                         this, SLOT( slotFilePrev() ),
                         actionCollection(), "previous_file" );
                         
-    (void) new KAction( i18n( "&Next File" ), "1rightarrow", CTRL+ALT+Key_Left,
+    (void) new KAction( i18n( "&Next File" ), "1rightarrow", KStdAccel::forward(),
                         this, SLOT( slotFileNext() ),
                         actionCollection(), "next_file" );
 
