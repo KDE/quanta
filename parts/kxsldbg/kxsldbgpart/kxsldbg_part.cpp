@@ -639,15 +639,12 @@ KXsldbgPart::lineNoChanged(QString fileName, int lineNumber, bool breakpoint)
 
 void KXsldbgPart::editWidget_cursorPositionChanged( int lineNumber, int columnNumber)
 {
-  if ((currentLineNo != lineNumber + 1) || (columnNumber != currentColumnNo )) {
     currentLineNo = lineNumber + 1;
     currentColumnNo = columnNumber;
     QByteArray params;
     QDataStream stream(params, IO_WriteOnly);
     stream << currentFileName << lineNumber << columnNumber;
     emitDCOPSignal("editorPositionChanged(QString,int,int)", params);
-  }
-
 }
 
 void  KXsldbgPart::addBreakPoint(int lineNumber)
