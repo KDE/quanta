@@ -78,11 +78,11 @@ void MessageOutput::addToLastItem(const QString& s)
 }
 
 
-void MessageOutput::showMessage(const QString& s)
+void MessageOutput::showMessage(const QString& s, bool append)
 {
   QString message = s;
   int endPos;
-  if ( !count() )
+  if ( !count() || (!append && !text(count()-1).stripWhiteSpace().isEmpty()) )
     insertItem("");
   while ( ( endPos = message.find('\n') ) != -1 ) {
     addToLastItem( message.left(endPos) );

@@ -40,7 +40,7 @@ public slots:
   /**  */
   void insertItem(const QString& s );
   /** insert message for each line of s */
-  void showMessage(const QString& s );
+  void showMessage(const QString& s, bool append = true);
   void addToLastItem(const QString& s );
   // Copy message content to clipboard
   void copyContent();
@@ -60,7 +60,7 @@ signals:
 protected slots:
   void clickItem( QListBoxItem *);
   // Show context menu
-  void showMenu(QListBoxItem*, const QPoint& );
+  void showMenu(QListBoxItem*, const QPoint&);
 
 private:
   uint m_maxItems;
