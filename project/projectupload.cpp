@@ -31,6 +31,7 @@
 #include <qcheckbox.h>
 #include <qtimer.h>
 #include <qframe.h>
+#include <qtooltip.h>
 
 //kde includes
 #include <kapplication.h>
@@ -46,6 +47,7 @@
 #include <kcombobox.h>
 #include <kprogress.h>
 #include <kpassdlg.h>
+#include <kpushbutton.h>
 
 //standard includes
 #include <time.h>
@@ -135,9 +137,11 @@ void  ProjectUpload::initProjectInfo()
       }
       comboProfile->setCurrentItem(defaultIdx);
   }
+  buttonRemoveProfile->setEnabled(comboProfile->count() > 1);
   keepPasswords->setChecked(m_project->keepPasswd);
   uploadInProgress = false;
   connect( this, SIGNAL( uploadNext() ), SLOT( slotUploadNext() ) );
+  setProfileTooltip();
 }
 
 /** No descriptions */
@@ -557,9 +561,11 @@ void ProjectUpload::slotNewProfile()
      m_profilesNode.appendChild(m_currentProfileElement);
      m_project->setModified(true);
      comboProfile->insertItem(m_currentProfileElement.attribute("name"), 0);
+     setProfileTooltip();
   } else
     m_currentProfileElement = el;
   delete profileDlg;
+  buttonRemoveProfile->setEnabled(comboProfile->count() > 1);
 }
 
 void ProjectUpload::slotEditProfile()
@@ -571,6 +577,7 @@ void ProjectUpload::slotEditProfile()
     readProfileDlg(profileDlg);
     m_project->setModified(true);
     comboProfile->changeItem(profileDlg->lineProfileName->text(), comboProfile->currentItem());
+    setProfileTooltip();
   }
   delete profileDlg;
 }
@@ -603,6 +610,7 @@ void ProjectUpload::slotRemoveProfile()
           m_project->setModified(true);
        }
    }
+  buttonRemoveProfile->setEnabled(comboProfile->count() > 1);
 }
 
 void ProjectUpload::fillProfileDlg(UploadProfileDlgS *profileDlg)
@@ -676,6 +684,7 @@ void ProjectUpload::slotNewProfileSelected(const QString& profileName)
       }
   }
   m_project->setModified(true);
+  setProfileTooltip();
 }
 
 QString ProjectUpload::defaultProfile()
@@ -700,5 +709,22 @@ void ProjectUpload::reject()
   QDialog::reject();
 }
 
+
+void ProjectUpload::setProfileTooltip()
+{
+  QString tip = m_currentProfileElement.attribute("remote_protocol","ftp") + "://";
+  QString user = m_currentProfileElement.attribute("user","");
+  if (! user.isEmpty()) {
+    tip += user + "@";
+  }
+  tip += m_currentProfileElement.attribute("remote_host","");
+  QString port = m_currentProfileElement.attribute("remote_port","");
+  if (! port.isEmpty()) {
+    tip += ":" + port;
+  }
+  tip += m_currentProfileElement.attribute("remote_path","");
+
+  QToolTip::add(comboProfile, tip);
+}
 
 #include "projectupload.moc"

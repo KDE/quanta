@@ -71,6 +71,7 @@ private:
   void buildSelectedItemList();
   void fillProfileDlg(UploadProfileDlgS *profileDlg);
   void readProfileDlg(UploadProfileDlgS *profileDlg);
+  void setProfileTooltip();
 
   KURL::List modified; // modified files
   QValueList<QListViewItem*> needsConfirmation;
