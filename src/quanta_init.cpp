@@ -2009,7 +2009,7 @@ void QuantaApp::initActions()
                         m_project, SLOT( slotUpload() ),
                         ac, "project_upload" );
 
-    projectOptionAction = new KAction( i18n( "&Project Options" ), Key_F7,
+    projectOptionAction = new KAction( i18n( "&Project Properties..." ), Key_F7,
                         m_project, SLOT( slotOptions() ),
                         ac, "project_options" );
 

@@ -1287,7 +1287,7 @@ void Project::slotAcceptCreateProject()
 void Project::slotOptions()
 {
   KURL url;
-  KDialogBase optionsDlg(this, "project_options", true, i18n("Project Options"), KDialogBase::Ok | KDialogBase::Cancel);
+  KDialogBase optionsDlg(this, "project_options", true, i18n("Project Properties"), KDialogBase::Ok | KDialogBase::Cancel);
   ProjectOptions optionsPage(&optionsDlg);
   optionsDlg.setMainWidget(&optionsPage);
 
