@@ -828,12 +828,11 @@ QString Document::getTagNameAt(DTDStruct *dtd, int line, int col )
      QString s = tag->tagStr();
      int pos = s.find("<");
      if (pos !=-1)
-     {
-       s.remove(0,pos - 1);
-       Tag *tag2 = new Tag();
-       tag2->parse(s, this);
-       name = tag2->name;
-       delete tag2;
+     {   
+       s.remove(0,pos);
+       pos = 0;
+       while (pos < s.length() && !s[pos].isSpace()) pos++;
+       name = s.mid(1, pos -1).stripWhiteSpace();
      } else
      {
        name = "";
@@ -913,6 +912,23 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
+ QString word;
+ QDictIterator<DTDStruct> it(*dtds);
+ QString text = editIf->textLine(line).left(column);
+ for( ; it.current(); ++it )
+ {
+   DTDStruct *dtd = it.current();
+   for (uint i = 0; i < dtd->scriptTagStart.count(); i++)
+   {
+     if ( text.endsWith(dtd->scriptTagStart[i]) || text.endsWith(dtd->scriptTagEnd[i]) )
+     {
+        //KMessageBox::error(this, dtd->name);
+        parser->parseForDTD(this, true);
+        break;
+     }
+   }
+ }
+
  bool handled = false;
  if (qConfig.useAutoCompletion)
  {
@@ -1737,6 +1753,12 @@ void Document::parseVariables()
  }
 
  variableList.sort();
+}
+
+/** No descriptions */
+void Document::slotTextChanged()
+{
+  parser->parseForDTD(this);
 }
 
 #include "document.moc"

@@ -180,6 +180,8 @@ public slots:
   void slotCharactersInserted(int ,int ,const QString&);
   /** No descriptions */
   void slotCompletionAborted();
+  /** No descriptions */
+  void slotTextChanged();
 
 private:
 

@@ -410,8 +410,8 @@ bool QuantaCommon::checkExactMimeType(const KURL& url, const QString& type)
 KURL QuantaCommon::convertToPath(const KURL& url)
 {
  KURL result = url;
- result.adjustPath(1);
  result.setFileName("");
+ result.adjustPath(1);
  return result;
 }
 

@@ -168,7 +168,8 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
 //  Document *ww = write();
   //kdDebug() << k_funcinfo << "Encoding is: " << encoding << endl;
   if ( !newDocument( url )) return;
-  if ( !url.url().isEmpty())
+  bool loaded = false;
+  if ( !url.isEmpty() && QExtFileInfo::exists(url))
   {
 //    write()->busy = true;
 
@@ -203,11 +204,18 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
 
       quantaApp->processDTD();
       quantaApp->reparse();
-    }
-  }
-  write()->createTempFile();
 
-  emit title( url.url() );
+      loaded = true;
+      write()->createTempFile();
+      emit title( write()->url().prettyURL() );
+    } 
+  }
+ if (!loaded && !url.isEmpty()) //the open of the document has failed
+ {
+   KMessageBox::error(quantaApp, i18n("Cannot open document \"%1\".").arg(url.prettyURL()));
+   closeDocument();
+ }
+ 
 }
 
 /*!!!!

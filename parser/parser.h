@@ -65,7 +65,7 @@ public:
   /** Clear the parser internal text, thus forcing the reparsing. */
   void clear();
   /** Builds an internal tree to reflect the areas where each real & pseudo dtd is active. */
-  void parseForDTD(Document *w);
+  void parseForDTD(Document *w, bool force = false);
   /** No descriptions */
   DTDStruct * currentDTD(int line, int col);
 
@@ -77,6 +77,7 @@ private:
   DTDStruct *m_dtd; //the dtd used for main parsing
   Document *write;    //pointer to the parsed document
   int maxLines; // how many lines are in the current document
+  int oldMaxLines;
   QValueList<DTDListNode> dtdList;
 
   /** Recursive parsing algorithm. Actually this does the parsing and tree building. */
@@ -85,6 +86,7 @@ private:
   /** Go to the next column, or to the next line if we are at the end of line */
   void nextPos(int &line, int &col);
   DTDNode *subParseForDTD(DTDNode *parent, int& line, int& col);
+  void rebuildDTDList();
 };
 
 #endif
