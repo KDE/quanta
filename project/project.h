@@ -93,7 +93,7 @@ public slots:
   void slotAddDirectory();
   void slotAddDirectory(const KURL& dirURL, bool showDlg = true);
   void slotInsertFile(const KURL& url);
-  void slotInsertFilesAfterCopying(const KURL& url);
+  void slotInsertFilesAfterCopying(const KURL::List& a_url);
   void slotDeleteCopytoDlg(CopyTo *);
   void slotRenameFinished( KIO::Job *);
 

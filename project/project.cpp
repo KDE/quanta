@@ -742,8 +742,8 @@ void Project::slotAddFiles()
         CopyTo *dlg = new CopyTo( baseURL);
         connect(dlg, SIGNAL(deleteDialog(CopyTo*)),
                      SLOT  (slotDeleteCopytoDlg(CopyTo*)));
-        connect(dlg, SIGNAL(addFilesToProject(const KURL&)),
-                     SLOT  (slotInsertFilesAfterCopying(const KURL&)));
+        connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)),
+                     SLOT  (slotInsertFilesAfterCopying(const KURL::List&)));
         list = dlg->copy( list, destination );
         return;
       }
@@ -798,8 +798,8 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
             (!destination.isEmpty()) )
       {
         CopyTo *dlg = new CopyTo( baseURL);
-        connect(dlg, SIGNAL(addFilesToProject(const KURL&)),
-                     SLOT  (slotInsertFilesAfterCopying(const KURL&)));
+        connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)),
+                     SLOT  (slotInsertFilesAfterCopying(const KURL::List&)));
         connect(dlg, SIGNAL(deleteDialog(CopyTo *)),
                      SLOT  (slotDeleteCopytoDlg(CopyTo *)));
         //if ( rdir.right(1) == "/" ) rdir.remove( rdir.length()-1,1);
@@ -819,11 +819,16 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
   }
 }
 
-void Project::slotInsertFilesAfterCopying(const KURL& a_url)
+void Project::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
 {
-  KURL url = a_url;
-  url.adjustPath(1);
-  insertFiles( url, "*" );
+  KURL::List::ConstIterator it;
+  KURL url;
+  for (it = a_urlList.begin(); it != a_urlList.end(); ++it)
+  {
+    url = *it;
+    //url.adjustPath(1);
+    insertFiles( url, "*" );
+  }
   emit reloadTree( m_projectFiles, false );
 }
 

@@ -202,10 +202,10 @@ void ProjectNewLocal::slotAddFiles()
       if ( !destination.isEmpty())
       {
         CopyTo *dlg = new CopyTo( baseURL);
-        connect(dlg, SIGNAL(addFilesToProject(const KURL&)),
-                     SLOT  (slotInsertFilesAfterCopying(const KURL&)));
+        connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)),
+                     SLOT  (slotInsertFilesAfterCopying(const KURL::List&)));
         connect(dlg, SIGNAL(deleteDialog(CopyTo *)),
-                     SLOT  (slotDeleteCopytoDlg(CopyTo *)));
+                     SLOT  (slotDeleteCopyToDlg(CopyTo *)));
         list = dlg->copy( list, destination );
         return;
       } else
@@ -263,10 +263,10 @@ void ProjectNewLocal::slotAddFolder()
       if ( !destination.isEmpty())
       {
         CopyTo *dlg = new CopyTo( baseURL);
-        connect(dlg, SIGNAL(addFilesToProject(const KURL&)),
-                     SLOT  (slotInsertFilesAfterCopying(const KURL&)));
+        connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)),
+                     SLOT  (slotInsertFilesAfterCopying(const KURL::List&)));
         connect(dlg, SIGNAL(deleteDialog(CopyTo *)),
-                     SLOT  (slotDeleteCopytoDlg(CopyTo *)));
+                     SLOT  (slotDeleteCopyToDlg(CopyTo *)));
         dirURL = dlg->copy(dirURL, destination);
         return;
       } else
@@ -285,26 +285,31 @@ void ProjectNewLocal::slotDeleteCopyToDialog(CopyTo* dlg)
   if (dlg) delete dlg;
 }
 
-void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL& rdir)
+void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
 {
-  KURL dirURL = rdir;
-  dirURL.adjustPath(1);
-  KURL::List files = QExtFileInfo::allFilesRelative( dirURL, "*");
-  progressBar->setTotalSteps(files.count()-1);
-  progressBar->setTextEnabled(true);
-  for (uint i = 0; i < files.count(); i++)
+  KURL::List::ConstIterator it;
+  KURL dirURL;
+  for (it = a_urlList.begin(); it != a_urlList.end(); ++it)
   {
-     if ( !fileList.contains(files[i]) )
-     {
-       fileList.append(files[i]);
-       QListViewItem *it = listView->addItem(files[i], KFileItem(KFileItem::Unknown , KFileItem::Unknown, KURL()));
-       if (it)  it->setSelected(true);
-       progressBar->setValue(i);
-     }
+    dirURL = *it;
+   // dirURL.adjustPath(1);
+    KURL::List files = QExtFileInfo::allFilesRelative( dirURL, "*");
+    progressBar->setTotalSteps(files.count()-1);
+    progressBar->setTextEnabled(true);
+    for (uint i = 0; i < files.count(); i++)
+    {
+      if ( !fileList.contains(files[i]) )
+      {
+        fileList.append(files[i]);
+        QListViewItem *it = listView->addItem(files[i], KFileItem(KFileItem::Unknown , KFileItem::Unknown, KURL()));
+        if (it)  it->setSelected(true);
+        progressBar->setValue(i);
+      }
+    }
+    //listView->selectAll(false);
+    progressBar->setValue(0);
+    progressBar->setTextEnabled(false);
   }
-  //listView->selectAll(false);
-  progressBar->setValue(0);
-  progressBar->setTextEnabled(false);
 }
 
 /** No descriptions */

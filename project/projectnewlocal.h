@@ -44,7 +44,7 @@ public slots:
   void slotAddFolder();
   void slotAddFiles();
   void slotClearList();
-  void slotInsertFilesAfterCopying(const KURL&);
+  void slotInsertFilesAfterCopying(const KURL::List&);
   void slotDeleteCopyToDialog(CopyTo*);
 
   virtual void resizeEvent( QResizeEvent * );

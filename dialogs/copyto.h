@@ -38,18 +38,17 @@ public:
   KURL copy( const KURL& sourceURL, const KURL &destination);
   KURL::List copy( KURL::List sourceList, const KURL &destination );
 
-  KURL copiedURL;
-
 public slots: // Public slots
-  void endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool);
   void slotResult( KIO::Job *);
 
 signals:
-  void addFilesToProject(const KURL&);
+  void addFilesToProject(const KURL::List&);
   void deleteDialog(CopyTo*);
 
 private:
-  KURL mInitialDirUrl;
+  KURL m_InitialDirUrl;
+  bool m_listCopy;
+  KURL::List m_destList;
 };
 
 #endif

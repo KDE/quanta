@@ -27,8 +27,7 @@
 
 CopyTo::CopyTo(const KURL& dirURL)
 {
-
-  mInitialDirUrl = dirURL;
+  m_InitialDirUrl = dirURL;
 }
 
 CopyTo::~CopyTo(){
@@ -36,10 +35,11 @@ CopyTo::~CopyTo(){
 
 KURL CopyTo::copy(const KURL& urlToCopy, const KURL& destination)
 {
+  m_destList.clear();
   KURL targetDirURL = KURL();
   if ( destination.isEmpty() )
   {
-    targetDirURL = mInitialDirUrl;
+    targetDirURL = m_InitialDirUrl;
   } else
   {
    targetDirURL = destination;
@@ -55,37 +55,38 @@ KURL CopyTo::copy(const KURL& urlToCopy, const KURL& destination)
   KURL destURL;
   if (doCopy)
   {
+    KIO::UDSEntry entry;
+    KIO::NetAccess::stat(urlToCopy, entry);
+    KFileItem item(entry, urlToCopy, false, true);
     destURL = targetDirURL;
     destURL.setPath(destURL.path(1)+urlToCopy.fileName());
+    if (item.isDir())
+        destURL.adjustPath(1);
 
     KIO::CopyJob *job = KIO::copy( urlToCopy, destURL, true );
     connect( job, SIGNAL(result( KIO::Job *)),
                   SLOT  (slotResult( KIO::Job *)));
 
-    copiedURL = destURL;
+    m_destList.append(destURL);
   }
 
   return destURL;
 }
 
-void CopyTo::endCopy( KIO::Job *,const KURL&,const KURL&, bool, bool)
-{
-  emit addFilesToProject(copiedURL);
-  emit deleteDialog(this);
-}
-
 void CopyTo::slotResult( KIO::Job *)
 {
-  emit addFilesToProject(copiedURL);
+  emit addFilesToProject(m_destList);
   emit deleteDialog(this);
 }
 
 KURL::List CopyTo::copy( KURL::List sourceList, const KURL& destination )
 {
+  m_listCopy = true;
+  m_destList.clear();
   KURL targetDirURL = KURL();
   if ( destination.isEmpty() )
   {
-    targetDirURL = mInitialDirUrl;
+    targetDirURL = m_InitialDirUrl;
   } else
   {
     targetDirURL = destination;
@@ -97,7 +98,6 @@ KURL::List CopyTo::copy( KURL::List sourceList, const KURL& destination )
   }
 
   KIO::UDSEntry entry;
-  KURL::List destList;
   if (doCopy)
   {
     for (uint i = 0; i < sourceList.count(); i++)
@@ -107,18 +107,17 @@ KURL::List CopyTo::copy( KURL::List sourceList, const KURL& destination )
       KFileItem item(entry, srcURL, false, true);
       KURL u = targetDirURL;
       u.setPath(targetDirURL.path(1)+srcURL.fileName());
-      if (item.isDir()) u.adjustPath(1);
-      destList.append(u);
+      if (item.isDir())
+         u.adjustPath(1);
+      m_destList.append(u);
     }
 
     KIO::CopyJob *job = KIO::copy(sourceList, targetDirURL, true);
     connect( job, SIGNAL(result( KIO::Job *)),
                   SLOT  (slotResult( KIO::Job *)));
-
-    copiedURL = targetDirURL;
   }
 
-  return destList;
+  return m_destList;
 
 }
 #include "copyto.moc"
