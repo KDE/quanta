@@ -1,0 +1,18 @@
+[General]
+Name = Relax NG
+NickName = Relax NG 1.0
+DefaultExtension = rng
+NumOfPages = 0
+CaseSensitive = true
+Family = 1
+
+[Toolbars]
+Location = none
+Names = blah
+
+[Extra rules]
+Single Tag Style = XML
+
+[Parsing rules]
+SpecialAreas = <!-- -->
+SpecialAreaNames = comment
