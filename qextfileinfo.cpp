@@ -116,8 +116,9 @@ QString QExtFileInfo::toAbsolute( QString  fname, QString dir)
 /** all files in dir ( added yshurik, quanta team ) */
 QStringList QExtFileInfo::allFiles( QString path, QString mask, int level )
 {
-	QDir dir( path );
 	QStringList r;
+	
+	QDir dir( path );
 	
 	if ( level > 10        ) return r;
 	if ( !dir.isReadable() ) return r;

@@ -20,23 +20,35 @@ RescanPrj::RescanPrj(QStringList prjFileList, QString basePath, QWidget *parent,
   
   if ( basePath.right(1) != "/" ) basePath += "/";
   
+  KURL bu(basePath);
   this->basePath = basePath;
+  this->prjFileList = prjFileList;
   
-  QStringList::Iterator it;
-	QStringList r = QExtFileInfo::allFilesRelative( basePath, "*");
-	
-	for ( it = r.begin(); it != r.end(); ++it )
+  if ( bu.isLocalFile() )
+  {
+    QStringList::Iterator it;
+  	QStringList r = QExtFileInfo::allFilesRelative( basePath, "*");
+  	
+  	for ( it = r.begin(); it != r.end(); ++it )
+  	{
+  	  if ( prjFileList.findIndex(*it) == -1 )
+  	  {
+  	    list.append( *it );
+  	    QFileInfo fi( basePath+*it );
+  	    
+  	    QString size;
+        size.sprintf( "%i", fi.size() );
+  	    
+  	    new QListViewItem(listView, *it, size);
+  	  }
+  	}
+	}
+	else
 	{
-	  if ( prjFileList.findIndex(*it) == -1 )
-	  {
-	    list.append( *it );
-	    QFileInfo fi( basePath+*it );
-	    
-	    QString size;
-      size.sprintf( "%i", fi.size() );
-	    
-	    new QListViewItem(listView, *it, size);
-	  }
+	  KIO::ListJob *job = KIO::listRecursive( bu, false );
+
+    connect( job, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)), 
+             this,SLOT  (addEntries(KIO::Job *,const KIO::UDSEntryList &)));
 	}
 	
 	connect( buttonSelect,   SIGNAL(clicked()),
@@ -48,6 +60,49 @@ RescanPrj::RescanPrj(QStringList prjFileList, QString basePath, QWidget *parent,
 }
 
 RescanPrj::~RescanPrj(){
+}
+
+void RescanPrj::addEntries(KIO::Job *,const KIO::UDSEntryList &list)
+{
+  KIO::UDSEntryListConstIterator it  = list.begin();
+  KIO::UDSEntryListConstIterator end = list.end();
+  
+  for (; it != end; ++it) 
+  {
+    KIO::UDSEntry::ConstIterator it2 = (*it).begin();
+    
+    bool isDir;
+    QString name;
+    unsigned long size = 0L;
+    
+    for( ; it2 != (*it).end(); it2++ ) 
+    {
+      switch( (*it2).m_uds ) {
+        case KIO::UDS_NAME:
+          name = (*it2).m_str;
+          break;
+        case KIO::UDS_SIZE:
+          size = ((*it2).m_long);
+          break;
+        case KIO::UDS_FILE_TYPE:
+          isDir = S_ISDIR((*it2).m_long);
+          break;
+        default:
+          break;
+      }
+    }
+    
+    if ( !isDir && name != QString::fromLatin1("..") && 
+         prjFileList.findIndex(name) == -1 )
+    {
+	    this->list.append(name);
+  	    
+  	  QString s;
+      s.sprintf( "%i", size );
+  	    
+  	  new QListViewItem(listView, name, s);
+    }
+  }
 }
 
 void RescanPrj::resizeEvent ( QResizeEvent *t )

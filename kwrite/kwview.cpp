@@ -2237,6 +2237,7 @@ void KWrite::loadURL(const KURL &url, int flags) {
         kWriteDoc->setNewDoc( true ); // File is new, check for overwrite!
       }
     }
+    emit finishLoadURL(this);
   }
 }
 

@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>442</width>
-            <height>371</height>
+            <width>569</width>
+            <height>476</height>
         </rect>
     </property>
     <property stdset="1">
@@ -80,8 +80,11 @@
                                 <cstring>Line2</cstring>
                             </property>
                             <property stdset="1">
-                                <name>orientation</name>
-                                <enum>Horizontal</enum>
+                                <name>minimumSize</name>
+                                <size>
+                                    <width>0</width>
+                                    <height>4</height>
+                                </size>
                             </property>
                             <property stdset="1">
                                 <name>maximumSize</name>
@@ -91,11 +94,8 @@
                                 </size>
                             </property>
                             <property stdset="1">
-                                <name>minimumSize</name>
-                                <size>
-                                    <width>0</width>
-                                    <height>4</height>
-                                </size>
+                                <name>orientation</name>
+                                <enum>Horizontal</enum>
                             </property>
                         </widget>
                         <widget>

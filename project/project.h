@@ -141,6 +141,10 @@ private:
 	ProjectNewWeb 			*pnw;
 	ProjectNewFinal 		*pnf;
 	
+	KConfig *config;
+	
+	bool modified;
+	
   QBuffer buff;
 };
 

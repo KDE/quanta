@@ -5,6 +5,8 @@
 #include <config.h>
 #endif
 
+#include <kio/job.h>
+
 #include "rescanprjdir.h"
 
 class RescanPrj : public RescanPrjDir  {
@@ -22,9 +24,12 @@ public slots:
 
   QStringList files();
   
+  void addEntries(KIO::Job *,const KIO::UDSEntryList &);
+  
 private:
   QString basePath;
   QStringList list;
+  QStringList prjFileList;
 };
 
 #endif

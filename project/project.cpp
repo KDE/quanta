@@ -68,6 +68,8 @@ Project::Project( QWidget *, const char *name )
         : QWidget(0L,name)
 {
   this->name=QString::null;
+  this->config = 0L;
+  this->modified=false;
 }
 
 Project::~Project()
@@ -138,6 +140,7 @@ void Project::insertFile( QString rname, bool repaint )
   el.setAttribute("url", fname );
 
   dom.firstChild().firstChild().appendChild( el );
+  modified = true;
 
   if ( repaint ) emit reloadTree( fileNameList(), false, false );
 }
@@ -175,6 +178,7 @@ void Project::insertFiles( QStringList files )
   	el = dom.createElement("item");
   	el.setAttribute("url", *it );
   	dom.firstChild().firstChild().appendChild( el );
+  	modified = true;
   }
 
   emit reloadTree( fileNameList(), true, false );
@@ -205,6 +209,8 @@ void Project::createEmptyDom()
 
 void Project::readConfig (KConfig *config)
 {
+  this->config = config;
+  
   config->setGroup  ("Projects");
   QString url = config->readEntry("Last Project");
   projectRecent->loadEntries(config, "RecentProjects");
@@ -323,7 +329,7 @@ bool Project::saveProject()
 void Project::closeProject()
 {
   //fix: add save/no for remote
-  saveProject();
+  if (modified) saveProject();
 
   dom.clear();
 
@@ -335,6 +341,7 @@ void Project::closeProject()
 
   url  = KURL();
   name = QString::null;
+  modified = false;
   
   emit newStatus();
 }
@@ -405,6 +412,23 @@ void Project::slotProjectReadFinish(KIO::Job *job)
   if ( !dom.setContent( s )) { KMessageBox::sorry( this, i18n("Not found XML info in file") );return;}
   
   loadProjectXML();
+  
+  // we finish load project
+  // and now very cool if we load
+  // remote "last opened" files
+  // for this ftp session
+  config->setGroup("General Options");
+
+  QStrList urls;
+   config->readListEntry("List of opened files", urls);
+
+  for ( urls.last();urls.current();urls.prev() )
+  {
+    KURL fu(urls.current());
+    
+    if ( !fu.isLocalFile() ) 
+      emit openFile( fu );
+  }
 }
 
 void Project::slotProjectReadData(KIO::Job *,const QByteArray &data)
@@ -458,6 +482,8 @@ void Project::loadProjectXML()
   
   emit showTree();
   emit newStatus();
+  
+  modified = false;
 }
 
 // slot for insert file
@@ -559,6 +585,7 @@ void Project::slotRemoveFile(QString fname)
       	if ( fname == (basePath+el.attribute("url")))
       	{
       		el.parentNode().removeChild( el );
+      		modified = true;
       		return;
       	}
    }
@@ -577,6 +604,7 @@ void Project::slotRemoveFolder(QString fname)
     	if ( !qstrncmp( fname, basePath+el.attribute("url"), fname.length() ) )
     	{
     		el.parentNode().removeChild( el );
+    		modified = true;
     		i--;
     	}
   }
@@ -704,6 +732,8 @@ void Project::slotAcceptCreateProject()
 	emit reloadTree( fileNameList(), true, false );
 	emit   showTree();
 	
+	modified = true;
+	
 	saveProject();
 }
 
@@ -731,8 +761,6 @@ void Project::options()
 	png->linePrjDir ->setEnabled( false );
 	png->linePrjFile->setEnabled( false );
 	png->buttonDir  ->setEnabled( false );
-	
-	
 	
 	png->linePrjDir ->setText( basePath );
 	png->linePrjName->setText( name );

@@ -374,7 +374,7 @@ void QuantaApp::saveOptions()
   
   config->writeEntry("Geometry", size());
   
-  config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
+  config->writeEntry("Show Toolbar",   toolBar("mainToolBar")->isVisible());
   config->writeEntry("Show Statusbar", statusBar()->isVisible());
 
   config->writeEntry("Html mask",   fileMaskHtml  );
@@ -440,13 +440,17 @@ void QuantaApp::readOptions()
   config->setGroup("General Options");
   resize( config->readSizeEntry("Geometry", &s));
   
-  if (!config->readBoolEntry("Show Toolbar",   true)) slotViewToolBar();
-  if (!config->readBoolEntry("Show Statusbar", true)) slotViewStatusBar();
+  if (!config->readBoolEntry("Show Toolbar",   true)) {
+    toolBar("mainToolBar")    ->hide();
+    toolBar("mainEditToolBar")->hide();
+    toolBar("mainNaviToolBar")->hide();
+  }
+  if (!config->readBoolEntry("Show Statusbar", true)) statusBar()->hide();
   
   readDockConfig();
   
-  showToolbarAction  ->setChecked( toolBar("mainToolBar")->isVisible());
-  showStatusbarAction->setChecked( statusBar()->isVisible());
+  showToolbarAction  ->setChecked(config->readBoolEntry("Show Toolbar",   true));
+  showStatusbarAction->setChecked(config->readBoolEntry("Show Statusbar", true));
   
   showPreviewAction  ->setChecked( false );
   showMessagesAction ->setChecked( bottdock->isVisible() );
@@ -454,6 +458,17 @@ void QuantaApp::readOptions()
 
 void QuantaApp::openLastFiles()
 {
+  // we need to check config
+  // because project now can be 
+  // in load stage ( remote prj )
+  config->setGroup  ("Projects");
+  QString pu = config->readEntry("Last Project");
+  
+  KURL u(pu);
+  bool isPrj = true;
+  if ( pu.isEmpty())    isPrj = false;
+  if ( u.isMalformed()) isPrj = false;
+  
   config->setGroup("General Options");
 
   QStrList urls;
@@ -461,7 +476,10 @@ void QuantaApp::openLastFiles()
 
   for ( urls.last();urls.current();urls.prev() )
   {
-    doc->openDocument( KURL(urls.current()) );
+    KURL fu(urls.current());
+    
+    if ( !isPrj || fu.isLocalFile() ) 
+      doc->openDocument( fu );
   }
 }
 
