@@ -42,9 +42,11 @@ Node::Node( Node *parent )
 
 Node::~Node()
 {
-  for (uint i = 0; i < groupElementLists.count(); i++)
+  QPtrListIterator<GroupElementList> iter(groupElementLists);
+  GroupElementList *groupElementList;
+  while ((groupElementList = iter.current()) != 0)
   {
-    GroupElementList *groupElementList = groupElementLists.at(i);
+    ++iter;
     GroupElementList::Iterator it = groupElementList->begin();
     while (it != groupElementList->end())
     {

@@ -75,8 +75,7 @@ ParentItem::ParentItem(TagAttributeTree *listView, QListViewItem* parent)
 : KListViewItem(parent)
 {
   m_listView = listView;
-  combo = new QComboBox( m_listView->viewport() );
-  QObject::connect(combo, SIGNAL(activated(int)), m_listView, SLOT(slotParentSelected(int)));
+  combo = new QComboBox(false, m_listView->viewport() );
   QRect r = m_listView->itemRect( this );
   if ( !r.size().isValid() )
   {
@@ -88,7 +87,6 @@ ParentItem::ParentItem(TagAttributeTree *listView, QListViewItem* parent)
   r = QRect( m_listView->viewportToContents( r.topLeft() ), r.size() );
   combo->resize( r.size() );
   m_listView->moveChild( combo, r.x(), r.y() );
-  combo->show();
 }
 
 ParentItem::~ParentItem()
@@ -128,9 +126,15 @@ Node* ParentItem::node(int index)
 void ParentItem::showCombo(bool show)
 {
   if (show)
+	{
       combo->show();
+      QObject::connect(combo, SIGNAL(activated(int)), m_listView, SLOT(slotParentSelected(int)));
+	}
   else
+	{
       combo->hide();
+      QObject::disconnect(combo, SIGNAL(activated(int)), m_listView, SLOT(slotParentSelected(int)));
+	}
 }
 
 //Generic attribute item

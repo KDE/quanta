@@ -56,8 +56,8 @@ void TagAttributeTree::setCurrentNode(Node *node)
   emit newNodeSelected(node);
   if (!rebuildEnabled)
       return;
-  m_parentItem = 0L;
   clear();
+  m_parentItem = 0L;
   if (!node)
       return;
   AttributeItem *item = 0L;
@@ -78,6 +78,8 @@ void TagAttributeTree::setCurrentNode(Node *node)
     }
     n = n->parent;
   }
+  if (m_parentItem)
+	    m_parentItem->showCombo(true);
   if (group)
      group->setOpen(true);
 //  if (!node->tag->nameSpace.isEmpty())
