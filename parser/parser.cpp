@@ -61,6 +61,7 @@ Parser::Parser()
   m_groups.clear();
   m_quotesRx = QRegExp("\"|'");
   m_parsingEnabled = true;
+  m_parsingNeeded = true;
 }
 
 Parser::~Parser()
@@ -433,6 +434,7 @@ Node *Parser::parse(Document *w)
   t.restart();
   parseIncludedFiles();
   kdDebug(24000) << "External parser: " << t.elapsed() << " ms\n";
+  m_parsingNeeded = false;
  /*
  treeSize = 0;
  coutTree(m_node, 2);
@@ -530,14 +532,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
     {
       if (node->child)
       {
-   /*     int nodeEl, nodeEc, childBl, childBc;
-        node->tag->endPos(nodeEl, nodeEc);
-        node->child->tag->beginPos(childBl, childBc);
-        if ( nodeEl < childBl || 
-             (nodeEl == childBl && nodeEc < childBc)) */
-          node = node->child;
-        //else
-          //break;  
+        node = node->child;
       } else
       {
         if (node->parent)
@@ -546,7 +541,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
           node->parent->tag->endPos(parentEl, parentEc);
           if (QuantaCommon::isBetween(line, col, bl, bc, parentEl, parentEc) == 0)
           {
-              node = node->parent;      
+            node = node->parent;      
           }               
         }            
         break; //we found the node
@@ -879,7 +874,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
  //   kdDebug(24000)<< "Node removed!" << endl;
 //    coutTree(m_node, 2);
   }
-  coutTree(m_node, 2);
+//  coutTree(m_node, 2);
 #ifndef BUILD_KAFKAPART
   Q_UNUSED(modifs);
 #endif
@@ -1109,6 +1104,7 @@ Node *Parser::rebuild(Document *w)
 // cout << "\n";
 
  emit nodeTreeChanged();
+ m_parsingNeeded = false;
  return m_node;
 }
 
@@ -2190,6 +2186,5 @@ Node* Parser::createScriptTagNode(const AreaStruct &area, const QString &areaNam
   }
   return node;
 }
-
 
 #include "parser.moc"

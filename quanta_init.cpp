@@ -269,7 +269,7 @@ void QuantaApp::initQuanta()
 
   connect(m_doc, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
   connect(m_project, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
-}
+  }
 
 
 void QuantaApp::initToolBars()

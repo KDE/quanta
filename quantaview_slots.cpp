@@ -79,9 +79,11 @@
 
 void QuantaView::slotEditCurrentTag()
 {
-  if (!writeExists()) return;
-
+  if (!writeExists()) 
+    return;
   Document *w = write();
+  if (parser->parsingNeeded())
+    baseNode = parser->rebuild(w);
   uint line,col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
   Node *node = parser->nodeAt(line, col, false);

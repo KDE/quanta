@@ -26,7 +26,6 @@
 #include "tag.h"
 #include "qtag.h"
 
-
 /**
   *@author Andras Mantia
   */
@@ -69,7 +68,9 @@ public:
 
   /** Enable/Disable parsing. */
   void setParsingEnabled(bool enabled) {m_parsingEnabled = enabled;}
-  bool IsparsingEnabled() {return m_parsingEnabled;}
+  bool isParsingEnabled() {return m_parsingEnabled;}
+  void setParsingNeeded(bool needed) {m_parsingNeeded = needed;}
+  bool parsingNeeded() {return m_parsingNeeded;}
   /**
    * This function is ESSENTIAL : when one modify baseNode, one MUST use
    * this function to set the internal parser RootNode pointer to the same Node as
@@ -108,6 +109,7 @@ private:
   QMap<QString, XMLStructGroup>::ConstIterator xmlGroupIt;
   QRegExp m_quotesRx;
   bool m_parsingEnabled;
+  bool m_parsingNeeded;
 
   void parseIncludedFile(const QString &fileName, DTDStruct *dtd);
   /** Searches for scripts inside the text from startNode. It looks only for the
