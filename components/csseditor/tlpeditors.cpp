@@ -85,14 +85,14 @@ void URIEditor::openFileDialog(){
   KFileDialog* fd = new KFileDialog( Project::ref()->projectBaseURL().url(), "*.*", this, "file dialog", TRUE );
   switch(m_resourceType) {
     case image :   {
-                             fd->setFilter( "*.png *.gif *.jpg *.mng|" + i18n("Image files (*.png *.gif *.jpg *.mng)") +"\n*.*|" + i18n("All files (*.*)") );
+                             fd->setFilter( "*.png *.gif *.jpg *.mng|" + i18n("Image Files (*.png *.gif *.jpg *.mng)") +"\n*|" + i18n("All Files") );
                              KImageFilePreview *ip = new KImageFilePreview( fd );
                              fd->setPreviewWidget( ip );
                             } 
                              break;
-    case audio :  fd->setFilter( "*.au *.aiff *.wav|" + i18n("Audio files (*.au *.aiff *.wav)")+"\n*.*|" + i18n("All files (*.*)") );break;
-    //case mousePointer :   fd->setFilter( "*.|" + i18n("Mouse Pointers (*.)")+"\n*.*|" + i18n("All files (*.*)") );break;
-    case mousePointer :   fd->setFilter( "*.*|" + i18n("All files (*.*)") );break;
+    case audio :  fd->setFilter( "*.au *.aiff *.wav|" + i18n("Audio Files (*.au *.aiff *.wav)")+"\n*|" + i18n("All Files") );break;
+    //case mousePointer :   fd->setFilter( "*.|" + i18n("Mouse Pointers (*.)")+"\n*|" + i18n("All Files") );break;
+    case mousePointer :   fd->setFilter( "*|" + i18n("All Files") );break;
     
     default:;
   }

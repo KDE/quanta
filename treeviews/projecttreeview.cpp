@@ -152,7 +152,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(i18n("Create Site &Template..."), this, SLOT(slotCreateSiteTemplate()));
   m_folderMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
   m_folderMenu->insertSeparator();
-  m_setDocumentRootId = m_folderMenu->insertItem(i18n("Document-&base folder"), this, SLOT(slotChangeDocumentFolderStatus()));
+  m_setDocumentRootId = m_folderMenu->insertItem(i18n("Document-&Base Folder"), this, SLOT(slotChangeDocumentFolderStatus()));
   m_folderMenu->insertItem(i18n("Upload &status"), m_uploadStatusMenu);
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
 

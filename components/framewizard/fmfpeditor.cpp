@@ -37,7 +37,7 @@ fmFPeditor::fmFPeditor() : fmFPeditorS (){
   QString phpFiles = i18n("*.php|PHP Files"); 
   QString xmlFiles = i18n("*.xml|XML Files"); 
   QString xhtmlFiles = i18n("*xhtml|XHTML Files");
-  QString allFiles = i18n("*.*|All Files"); 
+  QString allFiles = i18n("*|All Files"); 
   
   fc->setFilter(htmlFiles+"\n"+phpFiles+"\n"+xmlFiles+"\n"+xhtmlFiles+"\n"+allFiles);
 

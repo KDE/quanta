@@ -426,7 +426,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
       QString content;
       QTextDrag::decode(e, content);
       KURL url =KURLRequesterDlg::getURL( dest.path() + "template.txt",
-                                          this, i18n("Save selection as template file: "));
+                                          this, i18n("Save selection as template file:"));
       if ( !url.isEmpty() )
       {
         //now save the file

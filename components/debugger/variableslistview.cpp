@@ -390,7 +390,7 @@ void VariablesListView::slotVariableSetValue()
     default:
       newvalue = "";
   }
-  newvalue = KInputDialog::getText(i18n("Set variable"), i18n("New value"), newvalue, 0, this);
+  newvalue = KInputDialog::getText(i18n("Set Variable"), i18n("New value:"), newvalue, 0, this);
   if(newvalue.isNull())
     return;
 

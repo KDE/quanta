@@ -143,7 +143,7 @@ void Project::initActions(KActionCollection *ac)
   projectRecent->setText(i18n("Open Recent Project"));
   projectRecent->setIcon("folder_new");
   projectRecent->setMaxItems(32);
-  projectRecent->setToolTip(i18n("Open / Open Recent Project"));
+  projectRecent->setToolTip(i18n("Open/Open recent project"));
   connect(projectRecent, SIGNAL(activated()),
             this, SLOT(slotOpenProject()));
 

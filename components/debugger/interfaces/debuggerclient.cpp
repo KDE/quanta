@@ -44,48 +44,48 @@ bool DebuggerClient::isActive()
 // Unimplemented defaults - Pause execution
 void DebuggerClient::pause()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Pause")), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Pause")), i18n("Unsupported Debugger Function"));
 
 }
 
 // Unimplemented defaults - step over
 void DebuggerClient::stepOver()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Over")), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Over")), i18n("Unsupported Debugger Function"));
 
 }
 
 // Unimplemented defaults - step out
 void DebuggerClient::stepOut()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Out")), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Out")), i18n("Unsupported Debugger Function"));
 
 }
 
 // Unimplemented defaults - run
 void DebuggerClient::run()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Run")), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Run")), i18n("Unsupported Debugger Function"));
 }
 // Unimplemented defaults - leap
 void DebuggerClient::leap()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Leap")), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Leap")), i18n("Unsupported Debugger Function"));
 }
 // Unimplemented defaults - skip
 void DebuggerClient::skip()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Skip")), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Skip")), i18n("Unsupported Debugger Function"));
 }
 // Unimplemented defaults - stepInto
 void DebuggerClient::stepInto()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Into")), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Into")), i18n("Unsupported Debugger Function"));
 }
 // Unimplemented defaults - kill
 void DebuggerClient::kill()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Kill")), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Kill")), i18n("Unsupported Debugger Function"));
 
 }
 
@@ -98,14 +98,14 @@ void DebuggerClient::fileOpened(QString)
 // Unimplemented defaults
 void DebuggerClient::addBreakpoint(DebuggerBreakpoint*)
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Set Breakpoint")), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Set Breakpoint")), i18n("Unsupported Debugger Function"));
 
 } 
 
 // Unimplemented defaults
 void DebuggerClient::removeBreakpoint(DebuggerBreakpoint*)
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Remove Breakpoint")), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Remove Breakpoint")), i18n("Unsupported Debugger Function"));
 }
 
 
@@ -124,18 +124,18 @@ void DebuggerClient::readConfig(QDomNode)
 //  Unimplemented defaults: add watch
 void DebuggerClient::addWatch(const QString &)
 {
-  KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Unsupported Debugger Function"));
 }
    
 //  Unimplemented defaults: Remove watch
 void DebuggerClient::removeWatch(DebuggerVariable *)
 {
   // Giving an error seems pointless, since you shouldnt be able to add a watch in the first place...
-  KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("%1 does not support watches.").arg(this->getName()), i18n("Unsupported Debugger Function"));
 }
  
 // Unimplemented defaults: set value of varialbe
 void DebuggerClient::variableSetValue(DebuggerVariable *)
 {
-  KMessageBox::error(NULL, i18n("%1 does not support setting the value of variables.").arg(this->getName()), i18n("Unsupported debugger function"));
+  KMessageBox::error(NULL, i18n("%1 does not support setting the value of variables.").arg(this->getName()), i18n("Unsupported Debugger Function"));
 }

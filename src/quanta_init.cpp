@@ -871,9 +871,9 @@ void QuantaInit::initActions()
      ta->setExclusiveGroup("view");
     /**kafkaSelectAction = new KSelectAction(i18n("Main &View"), 0, ac,"show_kafka");
     QStringList list2;
-    list2.append(i18n("&Source editor"));
-    list2.append(i18n("&VPL editor (experimental)"));
-    list2.append(i18n("&Both editors"));
+    list2.append(i18n("&Source Editor"));
+    list2.append(i18n("&VPL Editor (experimental)"));
+    list2.append(i18n("&Both Editors"));
     kafkaSelectAction->setItems(list2);
     connect(kafkaSelectAction, SIGNAL(activated(int)), m_quanta, SLOT(slotShowKafkaPartl(int)));*/
 #endif
@@ -1354,7 +1354,7 @@ void QuantaInit::checkRuntimeDependencies()
   {
       m_quanta->slotHideSplash();
       errorStr[errorStr.length() - 1] = '.';
-      KMessageBox::information(m_quanta, "<qt>" + i18n("Some applications required for full functionality are missing:<br>") + errorStr + "<br><br>You may download the applications from the specified locations.</qt>", i18n("Missing applications"), "RuntimeDependencyCheck");
+      KMessageBox::information(m_quanta, "<qt>" + i18n("Some applications required for full functionality are missing:<br>") + errorStr + "<br><br>You may download the applications from the specified locations.</qt>", i18n("Missing Applications"), "RuntimeDependencyCheck");
   }
 }
 
