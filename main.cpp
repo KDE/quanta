@@ -61,10 +61,10 @@ int main(int argc, char *argv[])
 
 	//aboutData.otherText(&othertext);
 
- 	aboutData.addAuthor("Dmitry Poplavsky","Inactive - left for commerical version", "dima@kde.org");
- 	aboutData.addAuthor("Alexander Yakovlev","Inactive - left for commerical version", "yshurik@kde.org");
  	aboutData.addAuthor("Eric Laffoon","Project Lead - public liason", "sequitur@kde.org");
  	aboutData.addAuthor("Andras Mantia","Program Lead - bug squisher", "amantia@freemail.hu");
+ 	aboutData.addAuthor("Dmitry Poplavsky","Inactive - left for commerical version", "dima@kde.org");
+ 	aboutData.addAuthor("Alexander Yakovlev","Inactive - left for commerical version", "yshurik@kde.org");
 
  	aboutData.addCredit("Richard Moore",
     "Coding and tag dialog definition documentation and more",

@@ -94,6 +94,7 @@ QDict <QStrList> *tagsDict;
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
+
   setHighlight = 0;
   grepDialog  = 0L;
   exitingFlag = false;
@@ -435,6 +436,8 @@ void QuantaApp::saveOptions()
   config->writeEntry ("PHP Debugger style", debuggerStyle);
   
   writeDockConfig();
+
+  saveMainWindowSettings(config);
 }
 
 
@@ -512,6 +515,8 @@ void QuantaApp::readOptions()
     if (config->readEntry("PHP Debugger style","PHP4") == "PHP4") 
          enablePhp4Debug(true);
     else enablePhp3Debug(true);
+
+  applyMainWindowSettings(config);
 }
 
 void QuantaApp::enablePhp3Debug(bool enable)

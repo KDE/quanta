@@ -18,6 +18,7 @@
 #include <kcmdlineargs.h>
 #include <kurl.h>
 #include <kiconloader.h>
+#include <kstandarddirs.h>
 
 #include "quanta.h"
 #include "kqapp.h"
@@ -48,6 +49,8 @@ KQApplication::KQApplication()
 {
    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
    KSplash *splash ;
+
+   KGlobal::dirs()->addPrefix(PREFIX);
 
    bool showSplash = args->isSet("logo");
 
@@ -83,6 +86,7 @@ KQApplication::~KQApplication()
 KQUniqueApplication::KQUniqueApplication()
  : KUniqueApplication()
 {
+  KGlobal::dirs()->addPrefix(PREFIX);
 }
 
 

@@ -65,7 +65,7 @@
    </tooltip>
   </action>
 
-  <action icon="tag_hr" type="tag" name="tag_hr" text="Horisontal rule" >
+  <action icon="tag_hr" type="tag" name="tag_hr" text="Horizontal Rule" >
    <tag>&lt;hr></tag>
    <tooltip>The &lt;b>HR&lt;/b> element defines a &lt;i>horizontal rule&lt;/i> for visual browsers.
      While this element is inherently presentational, it can be used structurally as a section divider.
@@ -206,22 +206,22 @@
    <xtag use="true" inLine="false" >&lt;/table></xtag>
   </action>
 
-  <action icon="table_head" type="tag" name="tag_table_head" text="Table head ( with dialog )" >
+  <action icon="table_head" type="tag" name="tag_table_head" text="Table head (with dialog)" >
    <tag useDialog="true" >&lt;th></tag>
    <xtag use="true" inLine="true" >&lt;/th></xtag>
   </action>
 
-  <action icon="tag_table_body" type="tag" name="tag_table_body" text="Table body ( with dialog )" >
+  <action icon="tag_table_body" type="tag" name="tag_table_body" text="Table body (with dialog)" >
    <tag useDialog="true" >&lt;tbody></tag>
    <xtag use="true" inLine="true" >&lt;/tbody></xtag>
   </action>
 
-  <action icon="tag_table_row" type="tag" name="tag_table_row" text="Table row ( with dialog )" >
+  <action icon="tag_table_row" type="tag" name="tag_table_row" text="Table row (with dialog)" >
    <tag useDialog="true" >&lt;tr></tag>
    <xtag use="true" inLine="false" >&lt;/tr></xtag>
   </action>
 
-  <action icon="table_data" type="tag" name="tag_table_data" text="Table data ( with dialog )" >
+  <action icon="table_data" type="tag" name="tag_table_data" text="Table data (with dialog)" >
    <tag useDialog="true" >&lt;td></tag>
    <xtag use="true" inLine="true" >&lt;/td></xtag>
   </action>
@@ -251,7 +251,7 @@
    <xtag use="true" inLine="true" >&lt;/caption></xtag>
   </action>
 
-  <action icon="tag_ul" type="tag" name="tag_ul" text="Unordered list" >
+  <action icon="tag_ul" type="tag" name="tag_ul" text="Unordered List" >
    <tag useDialog="false" >&lt;ul></tag>
    <xtag use="true" inLine="false" >&lt;/ul></xtag>
   </action>
