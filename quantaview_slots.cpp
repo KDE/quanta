@@ -462,6 +462,7 @@ void QuantaView::slotTagEditTable()
     w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
     w->insertText(tableString, false);
     w->viewCursorIf->setCursorPositionReal(line, col);
+    quantaApp->reparse(true);
   }
 }
 

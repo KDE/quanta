@@ -20,8 +20,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>682</width>
-            <height>697</height>
+            <width>695</width>
+            <height>759</height>
         </rect>
     </property>
     <property name="caption">
@@ -124,7 +124,7 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QLabel" row="3" column="0" rowspan="1" colspan="4">
+                    <widget class="QLabel" row="3" column="0" rowspan="1" colspan="5">
                         <property name="name">
                             <cstring>textLabel5</cstring>
                         </property>
@@ -135,63 +135,17 @@
                             <cstring>tableData</cstring>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="2" column="0">
-                        <property name="name">
-                            <cstring>textLabel3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>C&amp;aption:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>captionText</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>textLabel2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Co&amp;lumns:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>colSpinBox</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="0" column="0">
-                        <property name="name">
-                            <cstring>textLabel1</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Rows:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>rowSpinBox</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="3">
-                        <property name="name">
-                            <cstring>captionText</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QSpinBox" row="1" column="1">
-                        <property name="name">
-                            <cstring>colSpinBox</cstring>
-                        </property>
-                        <property name="value">
-                            <number>0</number>
-                        </property>
-                    </widget>
-                    <widget class="QSpinBox" row="0" column="1">
-                        <property name="name">
-                            <cstring>rowSpinBox</cstring>
-                        </property>
-                        <property name="value">
-                            <number>0</number>
-                        </property>
-                    </widget>
-                    <widget class="QTable" row="4" column="0" rowspan="1" colspan="4">
+                    <widget class="QTable" row="4" column="0" rowspan="1" colspan="5">
                         <property name="name">
                             <cstring>tableData</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>7</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
                         </property>
                         <property name="resizePolicy">
                             <enum>Default</enum>
@@ -218,14 +172,14 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>315</width>
+                                <width>276</width>
                                 <height>20</height>
                             </size>
                         </property>
                     </spacer>
                     <spacer row="1" column="2">
                         <property name="name">
-                            <cstring>spacer1_2</cstring>
+                            <cstring>spacer1_2_2</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Horizontal</enum>
@@ -235,17 +189,33 @@
                         </property>
                         <property name="sizeHint">
                             <size>
-                                <width>315</width>
+                                <width>276</width>
                                 <height>20</height>
                             </size>
                         </property>
                     </spacer>
-                    <widget class="KPushButton" row="0" column="3">
+                    <widget class="QSpinBox" row="0" column="1">
                         <property name="name">
-                            <cstring>pushButton7</cstring>
+                            <cstring>rowSpinBox</cstring>
+                        </property>
+                        <property name="value">
+                            <number>0</number>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel2</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Table Properties</string>
+                            <string>Co&amp;lumns:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>colSpinBox</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>captionText</cstring>
                         </property>
                     </widget>
                     <widget class="KPushButton" row="1" column="3">
@@ -254,6 +224,52 @@
                         </property>
                         <property name="text">
                             <string>&amp;Body Properties</string>
+                        </property>
+                    </widget>
+                    <widget class="KPushButton" row="0" column="3">
+                        <property name="name">
+                            <cstring>pushButton7</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Table Properties</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel3</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>1</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>C&amp;aption:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>captionText</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel1</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Rows:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>rowSpinBox</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QSpinBox" row="1" column="1">
+                        <property name="name">
+                            <cstring>colSpinBox</cstring>
+                        </property>
+                        <property name="value">
+                            <number>0</number>
                         </property>
                     </widget>
                 </grid>
@@ -685,6 +701,28 @@
         <slot>slotTabChanged(QWidget*)</slot>
     </connection>
 </connections>
+<tabstops>
+    <tabstop>rowSpinBox</tabstop>
+    <tabstop>colSpinBox</tabstop>
+    <tabstop>pushButton7</tabstop>
+    <tabstop>pushButton7_2</tabstop>
+    <tabstop>captionText</tabstop>
+    <tabstop>tableData</tabstop>
+    <tabstop>buttonHelp</tabstop>
+    <tabstop>buttonOk</tabstop>
+    <tabstop>buttonCancel</tabstop>
+    <tabstop>headerCheckBox</tabstop>
+    <tabstop>pushButton7_3</tabstop>
+    <tabstop>headerRowSpinBox</tabstop>
+    <tabstop>headerColSpinBox</tabstop>
+    <tabstop>headerTableData</tabstop>
+    <tabstop>footerCheckBox</tabstop>
+    <tabstop>pushButton7_4</tabstop>
+    <tabstop>footerRowSpinBox</tabstop>
+    <tabstop>footerColSpinBox</tabstop>
+    <tabstop>footerTableData</tabstop>
+    <tabstop>tabWidget</tabstop>
+</tabstops>
 <includes>
     <include location="local" impldecl="in declaration">kurl.h</include>
     <include location="local" impldecl="in declaration">qvaluelist.h</include>
@@ -697,6 +735,7 @@
     <forward>class Document</forward>
     <forward>class Node</forward>
     <forward>typedef struct TableNode {   Node *node; bool merged; int mergedRow; int mergedCol; }  </forward>
+    <forward>typedef struct NestedTable{ Node *node; int row; int col; int bLine; int bCol; int eLine; int eCol; QString nestedData;}</forward>
 </forwards>
 <variables>
     <variable>QValueList&lt;Tag*&gt; m_colTags;</variable>
@@ -727,6 +766,9 @@
     <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableDataTags;</variable>
     <variable>QValueList&lt;TableNode&gt; *m_tableDataRows;</variable>
     <variable>QTable *m_dataTable;</variable>
+    <variable>int m_bLine, m_bCol, m_eLine, m_eCol;</variable>
+    <variable>QValueList&lt;NestedTable&gt; m_nestedTables;</variable>
+    <variable>int m_editChildId;</variable>
 </variables>
 <slots>
     <slot>slotContextMenuRequested( int row, int col, const QPoint &amp; pos )</slot>
@@ -744,9 +786,9 @@
     <slot>slotAddRemoveCol( int num )</slot>
     <slot>slotRemoveRow()</slot>
     <slot>slotRemoveCol()</slot>
-    <slot>createNewTable( Document * write, DTDStruct * dtd )</slot>
     <slot>slotMergeCells()</slot>
     <slot>slotUnmergeCells()</slot>
+    <slot>slotEditChildTable()</slot>
 </slots>
 <functions>
     <function>init()</function>
@@ -758,6 +800,7 @@
     <function access="protected" returnType="QString">cellValue( int row, int col )</function>
     <function access="protected" returnType="QString">tableToString()</function>
     <function access="protected" returnType="QString">tagContent( Node * node )</function>
+    <function>createNewTable( Document * write, DTDStruct * dtd )</function>
     <function access="protected">deleteList( QValueList&lt;TableNode&gt; * table )</function>
     <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt; &gt; * matrix )</function>
 </functions>

@@ -20,11 +20,13 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <kiconloader.h>
 
 //qt includes
 #include <qpoint.h>
 #include <qrect.h>
 #include <qstring.h>
+#include <qiconset.h>
 
 //own includes
 #include "tagdialog.h"
@@ -54,6 +56,8 @@ void TableEditor::init()
   m_popup->insertItem(i18n("Remove Column"), this, SLOT(slotRemoveCol()));
   m_popup->insertSeparator();
   m_popup->insertItem(i18n("Edit &Table Properties"), this, SLOT(slotEditTable()));
+  m_editChildId = m_popup->insertItem(i18n("Edit Child Table"), this, SLOT(slotEditChildTable()));
+
   m_row = m_col = -1;
   m_tbody = 0L;
   m_thead = 0L;
@@ -104,6 +108,7 @@ void TableEditor::slotContextMenuRequested( int row, int col, const QPoint & pos
     TableNode tableNode = (*m_tableTags)[m_row][m_col];
     m_popup->setItemVisible(m_mergeSeparatorId, false);
     m_popup->setItemVisible(m_mergeCellsId, false);
+     m_popup->setItemVisible(m_editChildId, false);
     if (tableNode.merged) {
       m_popup->setItemVisible(m_unmergeCellsId, true);
       m_popup->setItemVisible(m_mergeSeparatorId, true);
@@ -114,6 +119,9 @@ void TableEditor::slotContextMenuRequested( int row, int col, const QPoint & pos
     if (rect.isValid() && (rect.width() > 1 || rect.height() > 1) && rect.contains(m_row, m_col)) {
        m_popup->setItemVisible(m_mergeCellsId, true);
        m_popup->setItemVisible(m_mergeSeparatorId, true);
+    }
+    if (!m_dataTable->item(m_row, m_col)->pixmap().isNull()) {
+       m_popup->setItemVisible(m_editChildId, true);
     }
   }
   m_popup->popup(pos);
@@ -169,6 +177,10 @@ void TableEditor::slotEditTableBody()
 
 bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
 {
+  m_bLine = bLine;
+  m_bCol = bCol;
+  m_eLine = eLine;
+  m_eCol = eCol;
   m_createNodes = false; //don't create the cell and row content when adding a new cell/row
   Node *node = parser->nodeAt(bLine, bCol + 1);
   Node *lastNode = parser->nodeAt(eLine, eCol);
@@ -204,6 +216,21 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
     {
       if (m_table) //nested table!
       {
+        int line, col;
+        n->tag->beginPos(line, col);
+        NestedTable table;
+        table.row = nRow -1;
+        table.col = nCol - 1;
+        table.bLine = line;
+        table.bCol = col;
+        if (n->next && QuantaCommon::closesTag(n->tag, n->next->tag)) {
+          n->next->tag->endPos(table.eLine, table.eCol);
+          table.node = n;
+          table.nestedData = m_write->text(table.bLine, table.bCol, table.eLine, table.eCol);
+          m_nestedTables.append(table);
+          m_dataTable->item(nRow -1, nCol -1)->setPixmap(QIconSet(UserIcon("quick_table")).pixmap());
+          m_dataTable->updateCell(nRow - 1, nCol - 1);
+        }
         n = n->next;
       } else
       {
@@ -699,10 +726,10 @@ void TableEditor::slotInsertCol()
       } else {
         tableNode.node->tag->parse("<td>", m_write);
       }
-      (*it).append(tableNode);      
+      (*it).append(tableNode);
     }
   }
-  colSpinBox->setValue(num + 1);  
+  colSpinBox->setValue(num + 1);
 }
 
 
@@ -802,6 +829,7 @@ void TableEditor::createNewTable(Document *write, DTDStruct *dtd)
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
   m_dataTable = tableData;
+  m_bLine = m_bCol = m_eLine = m_eCol = 0;
 }
 
 
@@ -929,4 +957,36 @@ void TableEditor::slotUnmergeCells()
       delete tmpNode.node;
       newNum--;
     }
+}
+
+
+
+void TableEditor::slotEditChildTable()
+{
+  for (QValueList<NestedTable>::Iterator it = m_nestedTables.begin(); it != m_nestedTables.end(); ++it) {
+    NestedTable table = *it;
+    if (table.row == m_row  && table.col == m_col) {
+      QString cellData = m_dataTable->text(table.row, table.col);
+      int pos = cellData.find(table.nestedData);
+      if (pos == -1) {
+        KMessageBox::error(this, i18n("Cannot edit the child table. Most probably you modified the cell containing the table manually."), i18n("Cannot read table"));
+        m_nestedTables.erase(it);
+        return;
+      }
+      TableEditor editor;
+      editor.setBaseURL(m_baseURL);
+      editor.setTableArea(table.bLine, table.bCol, table.eLine, table.eCol);
+      if (editor.exec()) {
+       int length = table.nestedData.length();
+       (*it).nestedData =  editor.readModifiedTable();
+       cellData.replace(pos, length, (*it).nestedData);
+       m_dataTable->setText(table.row, table.col, cellData);
+
+       m_nestedTables.erase(it);
+       m_dataTable->item(table.row, table.col)->setPixmap(QPixmap());
+       m_dataTable->updateCell(table.row, table.col);
+     }
+      break;
+    }
+  }
 }
