@@ -1919,7 +1919,8 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
     {
       for ( attr = attrs->first(); attr; attr = attrs->next() )
       {
-        QString attrName = (dtd->caseSensitive) ? attr->name : attr->name.upper();        if (attrName == searchForAttr)
+        QString attrName = (dtd->caseSensitive) ? attr->name : attr->name.upper();
+        if (attrName == searchForAttr)
         {
           if (attr->type == "url") {
             Project *project = quantaApp->project();

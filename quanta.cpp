@@ -529,16 +529,7 @@ void QuantaApp::slotFilePrint()
 
 void QuantaApp::slotFileQuit()
 {
-  saveOptions();
-  if(memberList)
-  {
-    for(unsigned int i= 0; i< memberList->count(); i++)
-    {
-      memberList->at(i)->close();
-    }
-  }
-
-  removeToolbars();
+  close();
 }
 
 
