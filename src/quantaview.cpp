@@ -79,8 +79,8 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   , m_document(0L)
   , m_plugin(0L)
   , m_customWidget(0L)
-  , m_currentFocus(SourceFocus)
   , m_kafkaDocument(0L)
+  , m_currentFocus(SourceFocus)
 {
 //Connect the VPL update timers
   connect(&m_sourceUpdateTimer, SIGNAL(timeout()), this, SLOT(sourceUpdateTimerTimeout()));

@@ -517,7 +517,7 @@ bool SAParser::slotParseOneLine()
         int pos = s_textLine.find(s_dtd->comments[s_currentContext.startString], s_col);
         if (pos == -1 && s_dtd->comments[s_currentContext.startString] == "\n")
         {
-          int pos2 = s_textLine.find(s_areaEndString);
+          int pos2 = s_textLine.find(s_areaEndString, s_col);
           if (pos2 != -1)
           {
             pos = pos2 - 1;
