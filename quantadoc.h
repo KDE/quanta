@@ -23,10 +23,12 @@
 #endif 
 
 // include files for QT
-#include <qobject.h>
-#include <qstring.h>
 #include <qlist.h>
 #include <qdict.h>
+#include <qobject.h>
+#include <qstring.h>
+
+#include <kurl.h>
 
 // forward declaration of the Quanta classes
 class QuantaApp;
@@ -82,29 +84,23 @@ class QuantaDoc : public QObject
     bool saveAll(bool dont_ask=true);
     /** deletes the document's contents */
     void deleteContents();
-    /** initializes the document generally */
-    bool newDocument( const char* name = 0L);
-    /** closes the acutal document */
-    void closeDocument();
-    /** loads the document by filename and format and emits the updateViews() signal */
-    bool openDocument(const QString &filename, const char *format=0);
-    /** saves the document under filename and format.*/	
-    bool saveDocument(const QString &filename, const char *format=0);
-    /** returns the pathname of the current document file*/
-        /** navigation between opened files */
+    
+    
+    bool openDocument (const KURL&);
+    bool saveDocument (const QString &filename, const char *format=0);
+    void closeDocument();    
+        
     void nextDocument();
     void prevDocument();
 
     QString getAbsFilePath();
-    /** sets the filename of the document */
+    
     void setTitle(const QString &_t);
-    /** returns the title of the document */
     QString getTitle();
-    /** returns the kwrite document */
+    
     Document *write();
-    /** create new write classa */
 		Document *newWrite(QWidget *parent);
-		/** base path of document */
+		
 		QString basePath();
 		/** return bool need repaint preview or not */
 		bool needRepaintPreview();
@@ -118,6 +114,9 @@ class QuantaDoc : public QObject
 		/** set RB menu for KWrite */
 		void setRBMenu( QPopupMenu * rbMenu ) { this->rbMenu = rbMenu; }
 
+  private:
+    
+    bool newDocument (const KURL&);
 	
   public slots:
     /** calls repaint() on all views connected to the document object
@@ -131,8 +130,8 @@ class QuantaDoc : public QObject
     void slotRequestOpenedFiles();
 
     /** show popup menu with list of attributes for current tag */
-    void slotInsertAttrib( int id );
-    void slotInsertCoreAttrib( int id );
+    void slotInsertAttrib      ( int id );
+    void slotInsertCoreAttrib  ( int id );
     void slotInsertEventsAttrib( int id );
     void slotAttribPopup();
     
@@ -141,12 +140,8 @@ class QuantaDoc : public QObject
   signals:
   	void openedFiles(QStringList);
 
-  public:	
-    /** the list of the views currently connected to the document */
-    static QList<QuantaView> *pViewList;	
-
   private:
-  	/** Quanta classes */
+  	
   	QuantaApp *app;
   	/** doc's attributes */
     QString title;

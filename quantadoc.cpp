@@ -28,9 +28,11 @@
 #include <kpopupmenu.h>
 
 // application specific includes
-#include "quantadoc.h"
 #include "quanta.h"
+#include "quantadoc.h"
 #include "quantaview.h"
+
+#include "qextfileinfo.h"
 
 #include "resource.h"
 
@@ -46,15 +48,9 @@ extern QDict <QStrList> *tagsDict;
 QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObject(parent, name)
 {
 	this->app = app;	
-
-  if(!pViewList)
-  {
-    pViewList = new QList<QuantaView>();
-  }
-
+	
   docList = new QDict<Document>(1);
 
-  pViewList->setAutoDelete(true);
   rbMenu = 0L;
 
   attribMenu = new KPopupMenu("Tag :");
@@ -79,19 +75,9 @@ QuantaDoc::~QuantaDoc()
 {
 }
 
-void QuantaDoc::addView(QuantaView *view)
-{
-  pViewList->append(view);
-}
-
-void QuantaDoc::removeView(QuantaView *view)
-{
-  pViewList->remove(view);
-}
-
 QString QuantaDoc::getAbsFilePath()
 {
-  QString fname = write()->fileName();
+  QString fname = write()->url().url();
 
   if ( fname.left(5) == "file:" ) fname.remove(0,5);
 
@@ -111,35 +97,24 @@ QString QuantaDoc::getTitle()
 		return title;
 }
 
-void QuantaDoc::slotUpdateAllViews(QuantaView *sender)
-{
-  QuantaView *w;
-  if(pViewList)
-  {
-    for(w=pViewList->first(); w!=0; w=pViewList->next())
-    {
-      if(w!=sender)
-        w->repaint();
-    }
-  }
-
-}
-
 /** change file name in dict and tabbar  from old ones to current */
 void QuantaDoc::changeFileName( QString oldname )
 {
-	QString newname = write()->fileName();
-  if ( newname.left(5) == "file:" ) newname.remove(0,5);
-  if ( oldname.left(5) == "file:" ) oldname.remove(0,5);
+	QString newname = write()->url().url();
 
-  docList->remove( oldname );
-  docList->insert( newname, write() );
-
+	app->view->writeTab->changeTab( write(), QExtFileInfo::shortName( newname ));
+	
+  if ( oldname != newname )
+  {
+    docList->remove( oldname );
+    docList->insert( newname, write() );
+  }
+  
   QDictIterator<Document> it1(*docList);
   QDictIterator<Document> it2(*docList);
 
  	int i,len;
- 	while ( it1.current() )
+ 	while ( it1.current() && it1.current() != it2.current() )
  	{
  		QString name1 = it1.currentKey();
  		
@@ -150,12 +125,13 @@ void QuantaDoc::changeFileName( QString oldname )
  		else		 		 len = name1.length();
  		
  		it2.toFirst();
- 		while ( it2.current() && i != -1)
+ 		while ( it2.current() && i != -1 && it1.current() != it2.current() )
  		{
  			QString name2 = it2.currentKey();
+ 			
  			if ( name1 != name2 )
  			{
- 				while ( name1.right( len ) == name2.right( len ) && i != -1)
+ 				while ( name1.right( len ) == name2.right( len ) && i != -1 && len>=0 )
  				{
  					i = name1.findRev( '/', i-1 );
  					len = name1.length()-i-1;
@@ -179,24 +155,23 @@ bool QuantaDoc::saveAll(bool dont_ask){
 
   QDictIterator<Document> it( *docList ); // iterator for dict
 
-  while ( Document *twrite = it.current() ) {
+  while ( Document *w = it.current() ) 
+  {
     ++it;
 
-    if ( twrite->isModified() ) {
-      app->view->writeTab->showPage(twrite);
+    if ( w->isModified() ) {
+      app->view->writeTab->showPage(w);
 
-      QString oldname = twrite->fileName();
+      QString oldname = w->url().url();
 
       if ( dont_ask ) {
-      	twrite->save();
-      	if ( twrite->isModified() ) flagsave = false;
+      	w->save();
+      	if ( w->isModified() ) flagsave = false;
       }
       else
       	if ( !saveModified() ) flagsave = false;
 
       changeFileName( oldname );
-
-
     }
   }
 
@@ -230,13 +205,13 @@ bool QuantaDoc::saveModified()
     switch(want_save)
     {
       case KMessageBox::Yes :
-           if ( !write()->hasFileName() )
+           if ( write()->isUntitled() )
            {
              win->slotFileSaveAs();
            }
            else
            {
-             saveDocument( write()->fileName() );
+             saveDocument( write()->url().url() );
        	   };
 
        	   deleteContents();
@@ -264,47 +239,22 @@ bool QuantaDoc::saveModified()
 
 void QuantaDoc::closeDocument()
 {
-	
-	if ( !saveModified() )
-	  return;
-	
-	QString fname = write()->fileName();
-	
-	if ( fname.left(5) == "file:" ) fname.remove(0,5);
-	
-	docList->remove( fname );
-	
-	if ( !( app->view->removeWrite() ) )
-    newDocument();
-
- 	fname = write()->fileName();
- 	
-  QFileInfo fileInfo(fname);
-  title=fileInfo.fileName();
+	if ( !saveModified() ) return;
+	docList->remove( write()->url().url() );
+	if ( !app->view->removeWrite()) openDocument( KURL() );
 }
 
 void QuantaDoc::closeAll()
 {
-	QDictIterator<Document> it( *docList ); // iterator for dict
-
-	QString fname;
-	
   do
   {
   	if ( !saveModified() ) return;
-  	
-  	fname = write()->fileName();
-		if ( fname.left(5) == "file:" ) fname.remove(0,5);
-		docList->remove( fname );
+		docList->remove( write()->url().url() );
 	}
-	while ( app->view->removeWrite() ) ;
-
-	newDocument();
+	while ( app->view->removeWrite());
 	
-	fname = write()->fileName();
- 	
-  QFileInfo fileInfo(fname);
-  title=fileInfo.fileName();	
+  // so we remove all kwrites
+	openDocument( KURL() );
 }
 
 bool QuantaDoc::isModified()
@@ -326,85 +276,63 @@ bool QuantaDoc::isModifiedAll()
   return modified;
 }
 
-
 void QuantaDoc::setModified(bool _m)
 {
 	write()->setModified(_m);
 };
 
-bool QuantaDoc::newDocument( const char* name )
+bool QuantaDoc::newDocument( const KURL& url )
 {
-  QString fileName;
-
-  bool fnew = false;
-  if ( !name ) {
-    fileName = "Untitled1.html";
-    fnew = true;
-  }
-  else fileName = name;
-
-  if ( fileName.left(5) == "file:" ) fileName.remove(0,5);
-
-  if ( !docList->find( fileName ) || fnew )
+  bool newfile = false;
+  QString furl = url.url();
+  if ( furl.isEmpty() ) newfile = true;
+  
+  if ( !docList->find( furl ) || newfile ) // open new
   {
-  	if ( write() )
- 	    if ( !write()->hasFileName() && !write()->isModified() && !fnew )
- 	    {
- 	    	QString t = write()->fileName();
- 	    	docList->remove( t );
- 	      app->view->removeWrite();
- 	  }
-
-  	Document *w = newWrite( app->view->writeTab );
-  	fileName = w->fileName();
-  	if ( fileName.left(5) == "file:" ) fileName.remove(0,5);
+    if ( write() ) // check if first kwrite exists
+    {
+      // no modi and new -> we can remove
+      if ( !write()->isModified() &&
+            write()->isUntitled() )
+      {
+        //QString wurl = write()->url().url();
+        
+        //docList   ->remove( wurl );
+        //app->view ->removeWrite( );
+        return true;
+      }
+    }
+    // now we can create new kwrite
+    Document *w = newWrite( app->view->writeTab );
+    
+    if ( newfile ) furl = w->url().url();
+    
+  	app ->view  ->addWrite( w, QExtFileInfo::shortName(furl) );
   	
-  	QString shortName = fileName;
-  	int pos;
-    while ( (pos = (int)shortName.find('/')) != -1 )
-       shortName.remove(0,pos+1);
-  	
-  	app->view->addWrite( w, shortName );
-  	
-  	docList->insert( fileName, w );
-  	
-  	setModified( false );
+  	docList->insert( w->url().url(), w );
   }
-  else {
-  	Document *w = docList->find( fileName );
-  	app->view->writeTab->showPage( w );
-  }
-
-  setTitle( fileName );
-
+  else // select opened
+  {
+  	Document *w = docList->find( furl );
+  	app ->view->writeTab->showPage( w );
+  	return false;
+  }    
+ 	
   return true;
 }
 
-bool QuantaDoc::openDocument(const QString &filename, const char *)
+bool QuantaDoc::openDocument(const KURL& url)
 {
-  QString name = filename;
-  if ( name.left(5) == "file:" ) name.remove(0,5);
+  if ( !newDocument( url )) return true;
 
-  QFileInfo fi( name );
-  title	= fi.fileName();
-
-  if ( fi.exists() && fi.isReadable() && fi.isFile() )
-  {
-    newDocument( filename );
-
-    title = fi.fileName();
-
-    QString oldName = write()->fileName();
-    write()->loadURL( filename );
-    changeFileName(oldName);
-  }
-  else return false;
-
-  write()->repaint();
-
+  QString defUrl = write()->url().url();
+  
+  if ( !url.url().isEmpty()) write()->loadURL( url );
+  
+  changeFileName(defUrl);
+  
   app->repaintPreview();
-	
-  setModified( false );
+  
   return true;
 }
 
@@ -416,7 +344,7 @@ bool QuantaDoc::saveDocument(const QString &filename, const char *)
   QFileInfo fileInfo( name );
   title=fileInfo.fileName();
 
-  QString oldName = write()->fileName();
+  QString oldName = write()->url().url();
   write()->writeURL( filename );
   write()->doc()->setURL( filename, false );
   changeFileName( oldName );
@@ -448,9 +376,9 @@ void QuantaDoc::editorOptions()
 /** returns the kwrite document */
 QString QuantaDoc::basePath()
 {
-	if ( write()->hasFileName() )
+	if ( !write()->isUntitled() )
 	{
-		QString name = write()->fileName();
+		QString name = write()->url().url();
 		if ( name.left(5) == "file:" ) name.remove(0,5);
 		QFileInfo fileInfo( name );
 		return fileInfo.dirPath()+"/";
@@ -459,30 +387,30 @@ QString QuantaDoc::basePath()
 	return QDir::currentDirPath()+"/";
 }
 
-/** create new write classa */
+/** create new write class */
 Document* QuantaDoc::newWrite(QWidget *parent)
 {
-  Document *write;
-  HlManager *hl = new HlManager();
-  KWriteDoc *writeDoc = new KWriteDoc( hl);
-
-  // find first free Untitledxx.html
   int i = 1;
   QString fname;
-  while ( docList->find( fname = fname.sprintf("Untitled%i.html",i) ) )
-    i++;
-
- 	write = new Document( writeDoc, parent, "write" , fname);
- 	app->config->setGroup("General Options");
- 	write -> readConfig( app->config );
- 	write -> setHl( hl->nameFind( "HTML"));
- 	write -> installPopup( rbMenu );
-
- 	connect( write, SIGNAL(newStatus()), 		app, SLOT(slotNewStatus()));
- 	connect( write, SIGNAL(newUndo()),   		app, SLOT(slotNewUndo()));
- 	connect( write, SIGNAL(newMarkStatus()),app, SLOT(slotNewMarkStatus()));
+  while ( docList->find( fname.sprintf("Untitled%i.html",i) ) ) i++;
+  
+  HlManager *hl   = new HlManager();
+  KWriteDoc *wDoc = new KWriteDoc(hl);
+  Document  *w    = new Document (wDoc, parent );
+  
+ 	app-> config->setGroup("General Options");
+ 	w  -> readConfig( app->config );
+ 	w  -> setHl     ( hl->nameFind( "HTML"));
+ 	w  -> setUntitledUrl( fname );
  	
- 	return write;
+#warning need convert to xml gui 	
+ 	w  -> installPopup( rbMenu );
+
+ 	connect( w, SIGNAL(newStatus    ()),app, SLOT(slotNewStatus    ()));
+ 	connect( w, SIGNAL(newUndo      ()),app, SLOT(slotNewUndo      ()));
+ 	connect( w, SIGNAL(newMarkStatus()),app, SLOT(slotNewMarkStatus()));
+ 	
+ 	return w;
 }
 
 /** return bool need repaint preview or not */
@@ -626,7 +554,6 @@ void QuantaDoc::nextDocument()
   	  new_d = it.current();
  		++it;
  	}
- 	
  	
   it.toFirst();
 

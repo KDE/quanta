@@ -83,7 +83,7 @@ public slots:
   
 signals:
 	
-	void openFile				 ( QString );
+	void openFile				 ( KURL& );
 	void closeFiles			 ();
 	
 	void setBasePath		 ( QString );

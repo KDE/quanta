@@ -103,12 +103,12 @@ QuantaApp::QuantaApp()
   initView     ();
   initProject  ();
   
-  doc->newDocument();
-
   initActions();
   createGUI( QString::null, false );
   
   initContextMenu();
+  
+  doc->openDocument( KURL() );
   
   readOptions();
   
@@ -164,8 +164,8 @@ void QuantaApp::initProject()
 {
 	project = new Project(this);
 	
-	connect(project, 	SIGNAL(openFile(QString)),
-					this, 		SLOT  (slotFileOpen(QString)));
+	connect(project, 	SIGNAL(openFile    (KURL &)),
+					this, 		SLOT  (slotFileOpen(KURL &)));
 	connect(project, 	SIGNAL(reloadTree(QStringList,bool,bool)),
 					pTab, 		SLOT  (slotReloadTree(QStringList,bool,bool)));
 	connect(project, 	SIGNAL(setBasePath(QString)),
@@ -279,7 +279,7 @@ void QuantaApp::initView()
   rightWidgetStack  ->setMinimumHeight( 1 );
 	hSplit	 					->setMinimumHeight( 1 );
 
-  vSplit->setPos( 25);
+  vSplit->setPos( 25 );
   hSplit->setPos( 100);
 
   htmlPartRight	 = new WHTMLPart( rightWidgetStack,  "rightHTML");
@@ -300,14 +300,10 @@ void QuantaApp::initView()
   topWidgetStack->addWidget( htmlPartTop->view(), 1 );
   topWidgetStack->raiseWidget(0);
 
-  doc->addView    ( view );
-  setCentralWidget( topWidgetStack );
-  setCaption      ( doc->getTitle());
-
-  connect( 	fTTab,SIGNAL(openFile(QString)),
-  					this, SLOT(slotFileOpen(QString)));
-  connect( 	fLTab,SIGNAL(openFile(QString)),
-  					this, SLOT(slotFileOpen(QString)));
+  connect( 	fTTab,SIGNAL(openFile  (KURL &)),
+  					this, SLOT(slotFileOpen(KURL &)));
+  connect( 	fLTab,SIGNAL(openFile  (KURL &)),
+  					this, SLOT(slotFileOpen(KURL &)));
   					
   connect( 	fTTab,SIGNAL(openImage(QString)),
   					this, SLOT(slotImageOpen(QString)));
@@ -319,9 +315,9 @@ void QuantaApp::initView()
   connect(	fTTab,SIGNAL(changeMode()),
   					this, SLOT(slotSwapLeftPanelMode()));
   					
-  connect( 	pTab, SIGNAL(openFile(QString)),
-  					this, SLOT(slotFileOpen(QString)));
-  connect( 	pTab, SIGNAL(openImage(QString)),
+  connect( 	pTab, SIGNAL(openFile  (KURL &)),
+  					this, SLOT(slotFileOpen(KURL &)));
+  connect( 	pTab, SIGNAL(openImage  (QString)),
   					this, SLOT(slotImageOpen(QString)));
   					
   connect( 	fTTab,SIGNAL(insertTag(QString)),
@@ -355,6 +351,9 @@ void QuantaApp::initView()
   connect( dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
 
   connect( leftPanel, SIGNAL(currentChanged(QWidget*)), this, SLOT( slotLeftTabChanged(QWidget*)));
+  
+  // Main function for insert view
+  setCentralWidget( topWidgetStack );
 }
 
 
@@ -395,6 +394,7 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
 
 void QuantaApp::addRecentFile(const QString &file)
 {
+/*  
   if(recentFiles.find(file) == -1)
   {
     if( recentFiles.count() < 5)
@@ -406,18 +406,18 @@ void QuantaApp::addRecentFile(const QString &file)
       recentFiles.remove(4);
       recentFiles.insert(0, file);
     }
-/*    
     recentFilesMenu->clear();
     for ( int i=0 ; i < (int) recentFiles.count(); i++)
     {
       recentFilesMenu->insertItem(recentFiles.at(i));
     }
-*/    
   }
+*/    
 }
 
 void QuantaApp::addRecentProject(const QString &file)
 {
+/*  
   if(recentProjects.find(file) == -1)
   {
     if( recentProjects.count() < 5)
@@ -429,29 +429,15 @@ void QuantaApp::addRecentProject(const QString &file)
       recentProjects.remove(4);
       recentProjects.insert(0, file);
     }
-/*    
+    
     recentProjectsMenu->clear();
     for ( int i=0 ; i < (int) recentProjects.count(); i++)
     {
       recentProjectsMenu->insertItem(recentProjects.at(i));
     }
-*/    
+    
   }
-}
-
-void QuantaApp::openDocumentFile(const char* _cmdl)
-{
-  slotStatusMsg(i18n("Opening file..."));
-
-  doc->openDocument(_cmdl);
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-
-QuantaDoc *QuantaApp::getDocument() const
-{
-  return doc;
+*/  
 }
 
 void QuantaApp::saveOptions()
@@ -461,8 +447,10 @@ void QuantaApp::saveOptions()
   config->writeEntry("Geometry", size());
 
   config->writeEntry("Show Statusbar",statusBar()->isVisible());
-  config->writeEntry("Recent Files", recentFiles);
-  config->writeEntry("Recent Projects", recentProjects);
+  
+  fileRecent->saveEntries(config);
+#warning fix   
+  //config->writeEntry("Recent Projects", recentProjects);
 
   config->writeEntry("Html mask", fileMaskHtml );
   config->writeEntry("Images mask", fileMaskImage );
@@ -490,9 +478,9 @@ void QuantaApp::saveOptions()
   QStrList fileList;
   QDictIterator<Document> it( *(doc->docList) ); // iterator for dict
 
-  while ( Document *twrite = it.current() ) {
-    if ( twrite->hasFileName() )
-    	fileList.append( twrite->fileName() );
+  while ( Document *w = it.current() ) 
+  {
+    if ( !w->isUntitled() ) fileList.append(w->url().url());
     ++it;
   }
 
@@ -555,18 +543,13 @@ void QuantaApp::readOptions()
 //    enableStatusBar(KStatusBar::Hide);
   }
 
-  // initialize the recent file list
-  recentFiles.setAutoDelete(true);
-  config->readListEntry("Recent Files", recentFiles);
-	
-  recentProjects.setAutoDelete(true);
-  config->readListEntry("Recent Projects", recentProjects);
+//  recentProjects.setAutoDelete(true);
+//  config->readListEntry("Recent Projects", recentProjects);
 
-#warning TODO reading recent files
+
+  fileRecent->loadEntries(config);
+#warning TODO reading recent projects  
 /*
-  for (int i=0; i < (int) recentFiles.count(); i++)
-    recentFilesMenu->insertItem(recentFiles.at(i));
-
   for (int i=0; i < (int) recentProjects.count(); i++)
     recentProjectsMenu->insertItem(recentProjects.at(i));
 */
@@ -591,8 +574,8 @@ void QuantaApp::openLastFiles()
 	  QStrList fileList;
   	config->readListEntry("List of opened files",fileList);
 
-	  for ( fileList.last();fileList.current();fileList.prev() )
-      doc->openDocument( fileList.current() );
+//	  for ( fileList.last();fileList.current();fileList.prev() )
+//      doc->openDocument( QString(fileList.current()) );
   }
   else {
   	project->loadProject( projectFileName );
@@ -697,7 +680,10 @@ void QuantaApp::initActions()
                         this, SLOT( slotFileOpen() ),
                         actionCollection(), "file_open" );
                         
-#warning TODO recent files
+    fileRecent =
+      KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
+                             actionCollection(), "file_open_recent");
+                        
     KStdAction::close  ( this, SLOT( slotFileClose()), actionCollection() );
 
     (void) new KAction( i18n( "Close All" ), 0, this, 
@@ -872,7 +858,9 @@ void QuantaApp::initActions()
                         project, SLOT( openProject() ),
                         actionCollection(), "open_project" );
 
-#warning TODO: Recent projects
+    projectRecent =
+      KStdAction::openRecent(this, SLOT(slotProjectOpenRecent(const KURL&)),
+                             actionCollection(), "project_open_recent");
     
     (void) new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0, 
                         project, SLOT( closeProject() ),

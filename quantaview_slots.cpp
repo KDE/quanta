@@ -377,31 +377,34 @@ void QuantaView::slotTagSelect(){
   write()->insertTag(tagCase("<select")+ attrCase("name")+tagCase("=\"\"><option>"),tagCase("</select>"));
 }
 
-/** view in external browser netscape */
-void QuantaView::slotViewInNetscape(){
+void QuantaView::slotViewInNetscape()
+{
   write()->save();
-  if ( write()->hasFileName() ) {
+  if ( !write()->isUntitled() ) 
+  {
     KProcess *show = new KProcess();
-    *show << "netscape" << "-remote" << QString(QString("openURL(")+write()->fileName()+")").data();
+    *show << "netscape" << "-remote" << QString(QString("openURL(")+write()->url().url()+")").data();
     connect( show, SIGNAL(processExited(KProcess *)), this, SLOT(slotNetscapeStatus(KProcess *)));
     show->start( KProcess::NotifyOnExit );
   }
 }
 
-/** view in KFM */
-void QuantaView::slotViewInKFM(){
+void QuantaView::slotViewInKFM()
+{
   write()->save();
-  if ( write()->hasFileName() ) {
+  if ( !write()->isUntitled() ) 
+  {
     KProcess *show = new KProcess();
-    *show << "kfmclient" << "exec" << write()->fileName();
+    *show << "kfmclient" << "exec" << write()->url().url();
     show->start( KProcess::DontCare );
   }
 }
 
-/** view in KFM */
-void QuantaView::slotViewInLynx(){
+void QuantaView::slotViewInLynx()
+{
   write()->save();
-  if ( write()->hasFileName() ) {
+  if ( !write()->isUntitled() ) 
+  {
     KProcess *show = new KProcess();
     *show << "konsole" 
           << "--nohist" 
@@ -410,16 +413,18 @@ void QuantaView::slotViewInLynx(){
           << "Lynx Preview - Quanta"
           << "-e"
           << "lynx"
-          << write()->fileName();
+          << write()->url().url();
     show->start( KProcess::DontCare );
   }
 }
 
 /** check netscape status */
-void QuantaView::slotNetscapeStatus(KProcess *proc){
-  if ( proc->exitStatus() ) {
+void QuantaView::slotNetscapeStatus(KProcess *proc)
+{
+  if ( proc->exitStatus() ) 
+  {
     KProcess *show = new KProcess();
-    *show << "netscape" << write()->fileName();
+    *show << "netscape" << write()->url().url();
     show->start( KProcess::DontCare );
   }
 }
@@ -468,13 +473,15 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
       app->messageOutput->showMessage(output);
   }	
 
-  if ( scriptOutputDest == "new" ) {
+  if ( scriptOutputDest == "new" ) 
+  {
 		 if ( beginOfScriptOutput )
-        doc->newDocument();
+        doc->openDocument( KURL() );
      write()->insertTag(output);
   }
 
-  if ( scriptOutputDest == "replace" ) {
+  if ( scriptOutputDest == "replace" ) 
+  {
 		 if ( beginOfScriptOutput )
         write()->setText("");
      write()->insertTag(output);
@@ -511,13 +518,15 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
       app->messageOutput->showMessage( output );  	
   }	
 
-  if ( scriptErrorDest == "new" ) {
+  if ( scriptErrorDest == "new" ) 
+  {
 		 if ( beginOfScriptError )
-        doc->newDocument();
+        doc->openDocument( KURL() );
      write()->insertTag(output);
   }
 
-  if ( scriptErrorDest == "replace" ) {
+  if ( scriptErrorDest == "replace" ) 
+  {
 		 if ( beginOfScriptError )
         write()->setText("");
      write()->insertTag(output);

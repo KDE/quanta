@@ -263,9 +263,9 @@ QString TagDialog::attrCase( QString  attr)
 /** return document path */
 QString TagDialog::basePath()
 {
-	if ( write->hasFileName() )
+	if ( !write->isUntitled() )
 	{
-		QString name = write->fileName();
+		QString name = write->url().url();
 		if ( name.left(5) == "file:" ) name.remove(0,5);
 		QFileInfo fileInfo( name );
 		return fileInfo.dirPath()+"/";

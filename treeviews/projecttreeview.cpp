@@ -144,7 +144,8 @@ void ProjectTreeView::slotSelectFile(QListViewItem *item)
 	
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
-		emit openFile( nameToOpen );
+		KURL url(nameToOpen);
+		emit openFile( url );
 		return;
 	}
 	else if ( QDir::match( fileMaskImage, nameToOpen) )
@@ -260,7 +261,8 @@ void ProjectTreeView::slotOpen()
 	
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
-		emit openFile( nameToOpen );
+		KURL url(nameToOpen);
+		emit openFile( url );
 		return;
 	}
 	else if ( QDir::match( fileMaskImage, nameToOpen) )
@@ -288,7 +290,10 @@ void ProjectTreeView::slotOpenWith()
 void ProjectTreeView::slotOpenInQuanta()
 {
 	if ( !currentItem() ) return;
-	emit openFile( currentFileName() );
+	
+	KURL url(currentFileName());
+	
+	emit openFile( url );
 }
 
 void ProjectTreeView::slotRemove()

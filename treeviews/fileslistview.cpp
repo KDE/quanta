@@ -188,7 +188,8 @@ void FilesListView::slotSelectFile(QListViewItem *item)
 	
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
-		emit openFile( nameToOpen );
+		KURL url(nameToOpen);
+		emit openFile( url );
 		return;
 	}
 	else if ( QDir::match( fileMaskImage, nameToOpen) )
@@ -207,7 +208,9 @@ void FilesListView::slotSelectAnyFile(QListViewItem *item)
 	if ( file->isDir ) return;
 	if ( !currentItem() ) return;
 	
-	emit openFile( currentFileName() );
+	KURL url(currentFileName());
+	
+	emit openFile( url );
 }
 
 

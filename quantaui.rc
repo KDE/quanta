@@ -167,6 +167,7 @@
     <Menu name="qproject"><text>&amp;Project</text>
       <Action name="new_project"/>
       <Action name="open_project"/>
+      <Action name="project_open_recent"/>
       <Action name="close_project"/>
       <Separator/>
       <Action name="insert_file"/>

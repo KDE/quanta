@@ -192,3 +192,13 @@ QString QExtFileInfo::cdUp(QString &dir)
 	while ( dir.right(1) != "/" ) dir.remove( dir.length()-1,1);
 	return dir;
 }
+
+QString QExtFileInfo::shortName(QString fileName)
+{
+  int pos;
+  QString fname = fileName;
+  while ( (pos = (int)fname.find('/')) != -1 )
+    fname.remove(0,pos+1);
+  
+  return fname;
+}

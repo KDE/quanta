@@ -92,8 +92,9 @@ void QuantaScriptAction::runScript()
     //
     QString command = filename_;
 
-    if ( view_->write()->hasFileName() ) {
-      QString docname = view_->write()->fileName();
+    if ( !view_->write()->isUntitled() ) 
+    {
+      QString docname = view_->write()->url().url();
       if ( docname.left(5) == "file:" )
         docname.remove(0,5);
       command.replace( QRegExp("%f"), docname );
@@ -166,7 +167,7 @@ void QuantaScriptAction::slotGetScriptOutput( KProcess *, char *buffer, int bufl
         break;
     case NewDocument:
         if ( firstOutput )
-            view_->getDocument()->newDocument();
+            view_->getDoc()->openDocument( KURL() );
         view_->write()->insertTag( text );
         break;
     case MessageWindow:
@@ -205,7 +206,7 @@ void QuantaScriptAction::slotGetScriptError( KProcess *, char *buffer, int bufle
         break;
     case NewDocument:
         if ( firstError )
-            view_->getDocument()->newDocument();
+            view_->getDoc()->openDocument( KURL() );
         view_->write()->insertTag( text );
         break;
     case MessageWindow:

@@ -98,67 +98,47 @@ void QuantaApp::slotFileNewWindow()
 
 void QuantaApp::slotFileNew()
 {
-  slotStatusMsg(i18n("Creating new document..."));
-
-  doc->newDocument();		
-
-  setCaption(doc->getTitle());
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+//doc->openDocument( KURL() );
 }
 
 void QuantaApp::slotFileOpen()
 {
-  slotStatusMsg(i18n("Opening file..."));
-
-  QString fileToOpen=KFileDialog::getOpenFileName(QDir::homeDirPath(),
-                                                    i18n("*|All files"), this, i18n("Open File..."));
-  slotFileOpen( fileToOpen );
+  KURL url = KURL( KFileDialog::getOpenURL( QDir::homeDirPath(), 
+                   i18n("*|All files"), this, i18n("Open File...")));
+  slotFileOpen( url );
 }
 
-void QuantaApp::slotFileOpen( QString fileToOpen )
+void QuantaApp::slotFileOpen( KURL &url )
 {
-  slotStatusMsg(i18n("Opening file..."));
-	
-  if(!fileToOpen.isEmpty())
-  {
-    doc->openDocument(fileToOpen);
-    setCaption(doc->getTitle());
-    addRecentFile(fileToOpen);
-  }
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
-}
-
-void QuantaApp::slotFileOpenRecent(int id_)
-{
-  slotStatusMsg(i18n("Opening file..."));
-#warning open recent file
-//  doc->openDocument(recentFilesMenu->text(id_));
+  if( url.path().isEmpty() ) return;
+  
+  doc->openDocument( url );
+  
   setCaption(doc->getTitle());
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+  
+//  addRecentFile(fileToOpen);
 }
 
-void QuantaApp::slotProjectOpenRecent(int id_)
+void QuantaApp::slotFileOpenRecent(const KURL &url )
 {
-  slotStatusMsg(i18n("Opening project..."));
-	
+  doc->openDocument( url );
+}
+
+void QuantaApp::slotProjectOpenRecent(const KURL&)
+{
   project->closeProject();
 #warning open project recent  
 //  project->loadProject (recentProjectsMenu->text(id_));
   leftPanel-> showPage( (QWidget *)pTab );
 
   setCaption(doc->getTitle());
-
-  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotFileSave()
 {
   slotStatusMsg(i18n("Saving file..."));
 	
-  if ( !doc->write()->hasFileName() )
+  if ( doc->write()->isUntitled() )
   	slotFileSaveAs();
   else
   	doc->saveDocument( doc->getAbsFilePath() );
@@ -527,7 +507,7 @@ void QuantaApp::repaintPreview( bool clear )
 		static QString oldname = "";
 		if ( clear )   oldname = "";
 		
-		fname = doc->write()->fileName();
+		fname = doc->write()->url().url();
 		fname = QExtFileInfo::toRelative( fname, project->basePath );
 		if ( fname.left(2) != ".." ) usePrefix = true;
 		
@@ -662,7 +642,7 @@ void QuantaApp::slotNewStatus()
 /** slot for new undo flag */
 void QuantaApp::slotNewUndo()
 {
-	int state = doc->write()->undoState();
+//	int state = doc->write()->undoState();
 	// undo/redo
 #warning need rewrite statuses	
 /*  
@@ -847,7 +827,7 @@ void QuantaApp::slotShowPreview()
 	if ( !part ) return;
 
 	static int hSplitPos = 1000;
-	static int vSplitPos = 250;
+//	static int vSplitPos = 250;
 
   KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
 	bool stat = !ta->isChecked();
@@ -1113,12 +1093,13 @@ void QuantaApp::slotViewMessages()
 void QuantaApp::slotToolSyntaxCheck()
 {
   slotFileSave();
-  if ( doc->write()->hasFileName() ) {
+  if ( !doc->write()->isUntitled() ) 
+  {
     KProcess *p = new KProcess();
     *p << "perl";
     *p << locate("lib","quanta/plugins/weblint");
     *p << "-x" << "Netscape";
-    *p << doc->write()->fileName();
+    *p << doc->write()->url().url();
     
     connect( p, SIGNAL(processExited(KProcess *)),
              messageOutput, SLOT(weblintFinished()) );

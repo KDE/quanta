@@ -28,8 +28,7 @@
 
 // include files for KDE 
 #include <kapp.h>
-#include <ktmainwindow.h>
-#include <kaccel.h>
+#include <kmainwindow.h>
 #include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
 
@@ -43,6 +42,7 @@ class QWidgetStack;
 class WHTMLPart;
 class KHTMLView;
 class QListViewItem;
+class KRecentFilesAction;
 
 class Node;
 class Parser;
@@ -70,15 +70,8 @@ class QuantaApp : public KMainWindow
     QuantaApp();
     ~QuantaApp();
     
-    /** opens a file specified by commandline option
-     */
-    void openDocumentFile(const char *_cmdl=0);
-    /** returns a pointer to the current document connected to the KTMainWindow instance and is used by
-     * the View class to access the document object's methods
-     */	
-    QuantaDoc *getDocument() const;
-    QuantaDoc *getDoc()   { return doc; };
-    QuantaView *getView() { return view;};
+    QuantaDoc  *getDoc()   { return doc; };
+    QuantaView *getView()  { return view;};
 
     MessageOutput *getMessages() { return messageOutput; }
 
@@ -118,7 +111,7 @@ class QuantaApp : public KMainWindow
     
     void slotFileNew ();
     void slotFileOpen();
-    void slotFileOpen ( QString fileToOpen );
+    void slotFileOpen( KURL & );
     void slotFileSave    ();
     void slotFileSaveAs  ();
     void slotFileSaveAll ();
@@ -130,8 +123,8 @@ class QuantaApp : public KMainWindow
     void slotFileQuit    ();
     
     void slotImageOpen( QString fileToOpen );
-    void slotFileOpenRecent   (int id_);
-    void slotProjectOpenRecent(int id_);
+    void slotFileOpenRecent   (const KURL&);
+    void slotProjectOpenRecent(const KURL&);
 
 
     void slotEditCut           ();
@@ -163,20 +156,10 @@ class QuantaApp : public KMainWindow
 
     void contextHelp();
 
-    /** toggles the toolbar
-     */
-    void slotViewToolBar();
-    /** toggles the statusbar
-     */
+    void slotViewToolBar  ();
     void slotViewStatusBar();
-    /** changes the statusbar contents for the standard label permanently, used to indicate current actions.
-     * @param text the text that is displayed in the statusbar
-     */
-    void slotStatusMsg(const QString &text);
-    /** changes the status message of the whole statusbar for two seconds, then restores the last status. This is used to display
-     * statusbar messages that give information about actions for toolbar icons and menuentries.
-     * @param text the text that is displayed in the statusbar
-     */
+    
+    void slotStatusMsg    (const QString &text);
     void slotStatusHelpMsg(const QString &text);
     
     void slotNewUndo      ();
@@ -245,9 +228,9 @@ class QuantaApp : public KMainWindow
     QWidgetStack *widgetStackOfHtmlPart();
 
     /** contains the recently used filenames */
-    QStrList recentFiles;
-    QStrList recentProjects;
-
+    KRecentFilesAction *fileRecent;
+    KRecentFilesAction *projectRecent;
+    
     // CONFIG
     KConfig *config;
 
@@ -286,7 +269,7 @@ class QuantaApp : public KMainWindow
     QTabWidget *leftPanel;
     
     // DOC & VIEW
-    QuantaDoc *doc;
+    QuantaDoc  *doc;
     QuantaView *view;
 
     /** parsered tree of document  */

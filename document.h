@@ -46,8 +46,9 @@ class Document : public KWrite  {
    friend KWrite;
    friend KWriteDoc;
    friend KWriteView;
+   
 public: 
-	Document( KWriteDoc *doc, QWidget *parent=0, const char *name=0, QString fname = "");
+	Document( KWriteDoc *doc, QWidget *parent=0, const char *name=0);
 	~Document();
 
 public:
@@ -55,62 +56,59 @@ public:
   // configure dialog
   void editorOptions();
 
-  bool hasFileName();
-  QString fileName();
-
+  KURL url();
+  bool isUntitled();
+  void setUntitledUrl(QString);
+  
   /** return qstring with current tag for parse */
   QString currentTag();
-  /**  */
+  
   void selectText(int x1, int y1, int x2, int y2 );
-  /**  */
+  
   void replaceSelected(QString s);
 
-  /** Insert tag in cursor position and set cursor between s1 and s2 */
-//  void insert_Tag( char * s1,  char * s2 = 0L );
   /** insert tag in document  */
   void insertTag( QString s1,QString s2 = "" );
 
   /** add attrib to end of current tag */
   void insertAttrib(QString attr);
 
-	int xy2pos( int x, int y );
-	int pos2y(int pos);
-	int pos2x(int pos);
-
-
-
+	int pos2y (int pos);
+	int pos2x (int pos);
+	int xy2pos(int x, int y );
 
 public slots:
-
-  // Spell checked related slots
-
-  void slotSpellCheck();
-  void slotSpellGo(KSpell *);
-  void slotSpellResult(bool);
+  
+  void slotSpellCheck  ();
+  void slotSpellGo     (KSpell *);
+  void slotSpellResult (bool);
   void slotSpellCorrect( QString originalword, QString newword, unsigned pos);
-  void slotSpellMis( QString originalword, QStringList *suggestions, unsigned pos);
-  void slotSpellDone();
-  void createSpellList();
+  void slotSpellMis    ( QString originalword, QStringList *suggestions, unsigned pos);
+  void slotSpellDone   ();
+  void createSpellList ();
 
 public:
 
-  void readConfig(KConfig *);
+  void readConfig (KConfig *);
   void writeConfig(KConfig *);
-  //bool hasFileName() { return (fileName() != 0 ); };
 
   QString findBeginOfTag( QString tag, int x, int y);
-  QString findEndOfTag( QString tag, int x, int y);
-  void parseTag();
+  QString findEndOfTag  ( QString tag, int x, int y);
+  
+  void parseTag    ();
   void parseTagAttr( QString t,int &x,int &y);
-  //const char *parseTagAttrValue(const char *t,int &x,int &y);
-  QString getLine(int y);
-  QString getTagAttr(int i);
+  
+  QString getLine        (int y);
+  QString getTagAttr     (int i);
   QString getTagAttrValue(int i);
+  
   void changeCurrentTag( QDict<QString> *dict );
+  
   QPoint getGlobalCursorPos();
 
   /** convert tag to upper or lower case */
   QString tagCase( QString  tag);
+  
   /** convert attribute of tag to upper or lower case */
   QString attrCase( QString  attr);
 
@@ -118,16 +116,15 @@ public:
   int tagAttrNum;
   int tagBeginX, tagBeginY, tagEndX, tagEndY;
 
-  QString filename;
+private:
 
-  KSpell *spell;
- 	/** spell lists */
+  QString untitledUrl;
+
+  KSpell          *spell;
+  QString         spellText;
 	QValueList<int> *spellPos;
-//	QValueList<int> *spellLen;
-//	QStringList     *spellList;
-	QString  spellText;
+	
 	int spellMoved;
-
 };
 
 #endif

@@ -16,7 +16,6 @@
  ***************************************************************************/
 #include <list>
 
-// QT includes
 // KDE includes
 #include <kapp.h>
 #include <kwin.h>
@@ -31,30 +30,32 @@
 #include "kwrite/kwdialog.h"
 #include "kwrite/highlight/highlight.h"
 
-Document::Document( KWriteDoc *doc, QWidget *parent, const char *name , QString fname)
-	:	KWrite( doc, parent, name),filename(fname)
+
+Document::Document( KWriteDoc *doc, QWidget *parent, const char *name)
+	:	KWrite( doc, parent, name)
 {
- 
 }
 
 Document::~Document()
 {
 }
 
-bool Document::hasFileName()
+void Document::setUntitledUrl(QString url)
 {
-  if ( kWriteDoc->url().path().isEmpty() ) return false;
-  return true;
+  untitledUrl = url;
 }
 
-QString Document::fileName()
+bool Document::isUntitled()
 {
-  if ( hasFileName() )
-  	return kWriteDoc->url().path();
-  else
-  	return filename;
+  return ( kWriteDoc->url().url().isEmpty() ) ? true : false;
 }
 
+KURL Document::url()
+{
+  return ( isUntitled() ) ? KURL(untitledUrl) : kWriteDoc->url();
+}
+
+// kwrite addons
 
 void Document::insertTag(QString s1,QString s2)
 {

@@ -19,12 +19,13 @@
 #define PROJECTTREEVIEW_H
 
 #include <qwidget.h>
+#include <qlistview.h>
 #include <qstringlist.h>
 
-#include <qlistview.h>
+#include <kurl.h>
 
-class ProjectTreeFolder;
 class QPopupMenu;
+class ProjectTreeFolder;
 
 /**
   *@author Yacovlev Alexander & Dmitry Poplavsky
@@ -59,7 +60,7 @@ public slots: // Public slots
 signals: // Signals
 	void activatePreview();
 	void open( QListViewItem *name );
-  void openFile ( QString );
+  void openFile ( KURL& );
   void openImage( QString );
   void insertTag( QString );
   void removeFileFromProject( QString );

@@ -184,7 +184,7 @@ void Project::createEmptyDom()
   QFile f( projectFileName );
   if ( !f.open( IO_WriteOnly ) )
   {
-    QMessageBox::critical( this, i18n( "ERROR" ), i18n("Can't open file for IO_ReadWrite | IO_Truncate"));
+    QMessageBox::critical( this, i18n( "ERROR" ), i18n("Can't open file for IO_WriteOnly"));
     return;
   }
 
@@ -304,8 +304,11 @@ void Project::loadProject(QString fname)
   {
 		el = nl.item(i).toElement();
 		
-  	if ( el.nodeName() == "openfile" )
-  		emit openFile( el.attribute("url") );
+  	if ( el.nodeName() == "openfile" ) 
+  	{
+  		KURL url(el.attribute("url"));
+  		emit openFile( url );
+  	}
   		
   	if ( el.nodeName() == "item" )
   	{

@@ -160,7 +160,8 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
 	
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
-		emit openFile( nameToOpen );
+		KURL url(nameToOpen);
+		emit openFile( url );
 		return;
 	}
 	else if ( QDir::match( fileMaskImage, nameToOpen) )
@@ -180,7 +181,9 @@ void FilesTreeView::slotSelectAnyFile(QListViewItem *item)
 	if ( !parent ) return;
 	if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
 	
-	emit openFile( currentFileName() );
+	KURL url(currentFileName());
+	
+	emit openFile( url );
 }
 
 void FilesTreeView::slotSelectImage(QListViewItem *item)

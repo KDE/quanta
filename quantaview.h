@@ -55,44 +55,35 @@ class QuantaView : public QWidget
   friend class QuantaDoc;
 
   public:
-    /** Constructor for the main view */
+  
     QuantaView( QuantaApp *app, QWidget *parent = 0, const char *name=0);
-    //QuantaView( QWidget *parent,  const char* name);
-    /** Destructor for the main view */
     ~QuantaView();
 
-    /** returns a pointer to the document connected to the view
-     * instance. Mind that this method requires a QuantaApp instance
-     * as a parent widget to get to the window document pointer by
-     * calling the QuantaApp::getDocument() method.
-     *
-     * @see QuantaApp#getDocument */
-    QuantaDoc *getDocument() const;
-
     QuantaApp *getApp() const { return app; }
+    QuantaDoc *getDoc() const { return app->getDoc(); }
 
     /** contains the implementation for printing functionality */
     void print(QPrinter *pPrinter);
 
-
-    /** repaint preview */
-    //void repaintPreview( bool scroll = true);
     /** return current KWrite class */
     Document* write();
+    
     /** Add new kwrite class to writeStack and return id in stack */
 		void addWrite( Document* w , QString label );
+		
     /** remove KWrite class from stack, return id of new KWrite */
     Document* removeWrite();
+    
 	  /** initialise tags menu */
 	  void initMenu();
 
-      void initActions();
+    void initActions();
 
-	  /**  */
 	  void insertTag( const char *tag);
 	
 	  /** convert tag to upper or lower case */
 	  QString tagCase( const char*  tag);
+	  
   	/** convert attribute of tag to upper or lower case */
   	QString attrCase( const char*  attr);
   	
@@ -100,61 +91,61 @@ class QuantaView : public QWidget
 
 	public slots:
 
-  void slotTagImg();
-  void slotTagA();
-  void slotTagMail();
-  void slotTagQuickStart();
-  void slotTagFont();
-  void slotTagBaseFont();
-  void slotTagTable();
-  void slotTagQuickList();
-  void slotTagQuickTable();
-  void slotTagTableRow();
-  void slotTagTableHead();
-  void slotTagTableBody();
-  void slotTagTableData();
-  void slotTagColor();
-  void slotTagFormRadio();
-  void slotTagFormTextArea();
-  void slotTagForm();
-  void slotTagFormCheck();
-  void slotTagFormPas();
-  void slotTagFormLineEdit();
-  void slotTagFormReset();
-  void slotTagFormSubmit();
-  void slotTagNbsp();
-  void slotTagSzlig();
-  void slotTagauml();
-  void slotTaguuml();
-  void slotTagouml();
-  void slotTagAuml();
-  void slotTagUuml();
-  void slotTagOuml();
-  void slotTagAmp();
-  void slotTagLt();
-  void slotTagGt();
-  void slotTagBr();
-  void slotTagDate();
-  void slotTagSelect();
+    void slotTagImg();
+    void slotTagA();
+    void slotTagMail();
+    void slotTagQuickStart();
+    void slotTagFont();
+    void slotTagBaseFont();
+    void slotTagTable();
+    void slotTagQuickList();
+    void slotTagQuickTable();
+    void slotTagTableRow();
+    void slotTagTableHead();
+    void slotTagTableBody();
+    void slotTagTableData();
+    void slotTagColor();
+    void slotTagFormRadio();
+    void slotTagFormTextArea();
+    void slotTagForm();
+    void slotTagFormCheck();
+    void slotTagFormPas();
+    void slotTagFormLineEdit();
+    void slotTagFormReset();
+    void slotTagFormSubmit();
+    void slotTagNbsp();
+    void slotTagSzlig();
+    void slotTagauml();
+    void slotTaguuml();
+    void slotTagouml();
+    void slotTagAuml();
+    void slotTagUuml();
+    void slotTagOuml();
+    void slotTagAmp();
+    void slotTagLt();
+    void slotTagGt();
+    void slotTagBr();
+    void slotTagDate();
+    void slotTagSelect();
+    
+    void slotInsertCSS();
+    
+    void slotNewCurPos();
+    
+    void slotEditCurrentTag();
+    
+    void slotInsertTagFromTree(QString name);
+     
+    void slotViewInKFM();
+    void slotViewInNetscape();
+    void slotNetscapeStatus(KProcess *proc);
+    void slotViewInLynx();
   
-  void slotInsertCSS();
+    void slotGetScriptOutput(KProcess *proc, char *buffer, int buflen);
+    void slotGetScriptError (KProcess *proc, char *buffer, int buflen);
   
-  void slotNewCurPos();
-  
-  void slotEditCurrentTag();
-  
-  void slotInsertTagFromTree(QString name);
-   
-  void slotViewInKFM();
-  void slotViewInNetscape();
-  void slotNetscapeStatus(KProcess *proc);
-  void slotViewInLynx();
-
-  void slotGetScriptOutput(KProcess *proc, char *buffer, int buflen);
-  void slotGetScriptError (KProcess *proc, char *buffer, int buflen);
-
-  void slotPasteHTMLQuoted();
-  void slotPasteURLEncoded();
+    void slotPasteHTMLQuoted();
+    void slotPasteURLEncoded();
 
 
   signals:
@@ -168,7 +159,7 @@ class QuantaView : public QWidget
   	QuantaApp *app;
   	QuantaDoc *doc;
   	
-  	QTabBar *tabBar;
+  	QTabBar      *tabBar;
   	QWidgetStack *toolbarStack;
   	
   	QTabWidget   *writeTab;

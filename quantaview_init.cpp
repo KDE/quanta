@@ -77,13 +77,6 @@ QuantaView::~QuantaView()
 {
 }
 
-QuantaDoc *QuantaView::getDocument() const
-{
-  QuantaApp *theApp=(QuantaApp *) parentWidget();
-
-  return theApp->getDocument();
-}
-
 void QuantaView::print(QPrinter *pPrinter)
 {
   QPainter printpainter;
@@ -105,7 +98,7 @@ void QuantaView::addWrite( Document* w , QString label )
 {
 	QIconSet emptyIcon ( UserIcon("empty1x16"));
 	
-	writeTab->addTab( w,  emptyIcon,  label );
+	writeTab->addTab  ( w,  emptyIcon,  label );
 	writeTab->showPage( w );
 	
 	connect( w, SIGNAL(newCurPos()), this, SLOT(slotNewCurPos()));

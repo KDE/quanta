@@ -97,26 +97,21 @@ int main(int argc, char *argv[])
   }
   else
   {
-    QuantaApp *quanta = new QuantaApp();
-
-    quanta->show();
-    
-    delete f;
-    
-    quanta->openLastFiles();
+    QuantaApp *quanta;
+     
+    quanta = new QuantaApp();
+    quanta ->show();
+    quanta ->openLastFiles();
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 		
 		if (args->count())
 		{
-        quanta->openDocumentFile(args->arg(0));
-		}
-		else
-		{
-		  quanta->openDocumentFile();
+      quanta->slotFileOpen( KURL(args->arg(0)) );
 		}
 		args->clear();
   }
+  delete f;
 
   return app.exec();
 }
