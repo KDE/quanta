@@ -25,6 +25,7 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/head.tag $(kde_datadir)/quanta/tags/head.tag
 	$(INSTALL_DATA) $(srcdir)/hr.tag $(kde_datadir)/quanta/tags/hr.tag
 	$(INSTALL_DATA) $(srcdir)/html.tag $(kde_datadir)/quanta/tags/html.tag
+	$(INSTALL_DATA) $(srcdir)/input.tag $(kde_datadir)/quanta/tags/input.tag
 	$(INSTALL_DATA) $(srcdir)/isindex.tag $(kde_datadir)/quanta/tags/isindex.tag
 	$(INSTALL_DATA) $(srcdir)/link.tag $(kde_datadir)/quanta/tags/link.tag
 	$(INSTALL_DATA) $(srcdir)/li.tag $(kde_datadir)/quanta/tags/li.tag
@@ -38,6 +39,7 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/table.tag $(kde_datadir)/quanta/tags/table.tag
 	$(INSTALL_DATA) $(srcdir)/tbody.tag $(kde_datadir)/quanta/tags/tbody.tag
 	$(INSTALL_DATA) $(srcdir)/td.tag $(kde_datadir)/quanta/tags/td.tag
+	$(INSTALL_DATA) $(srcdir)/textarea.tag $(kde_datadir)/quanta/tags/textarea.tag
 	$(INSTALL_DATA) $(srcdir)/th.tag $(kde_datadir)/quanta/tags/th.tag
 	$(INSTALL_DATA) $(srcdir)/thead.tag $(kde_datadir)/quanta/tags/thead.tag
 	$(INSTALL_DATA) $(srcdir)/tr.tag $(kde_datadir)/quanta/tags/tr.tag
