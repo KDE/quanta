@@ -11,7 +11,6 @@ MessageItem::MessageItem( QListBox * listbox, const QString &text, int line, con
   
 int MessageItem::line()
 {
-  debug("line");
   if ( lineDefined ) {
     return lineNumber;
   }
@@ -24,8 +23,14 @@ int MessageItem::line()
     while ( s[pos2].isDigit() ) pos2++;
     
     QString snum = s.mid( pos, pos2-pos );
-    debug("snum:\""+snum+"\"");
     return snum.toInt();
     
   }
 }
+
+
+void MessageItem::addText( QString t )
+{
+   setText( text() + t );
+}
+

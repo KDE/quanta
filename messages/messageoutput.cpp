@@ -50,8 +50,13 @@ void MessageOutput::insertItem(QString s)
 void MessageOutput::addToLastItem(QString s)
 {
   int ind = count()-1;
-  if ( ind != -1 ) 
-    changeItem( text( ind )+s, ind );
+  if ( ind != -1 ) {
+    MessageItem *it = dynamic_cast<MessageItem*>( item(ind) );
+    if ( it )
+      it->addText( s );
+    else
+      changeItem( text( ind )+s, ind );
+  }
 }
 
 
