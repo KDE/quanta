@@ -1479,7 +1479,6 @@ void QuantaApp::updateTreeViews()
 
 void QuantaApp::slotIdleTimerExpired()
 {
-  kdDebug(24000) << "slotIdleTimerExpired" << endl;
   if (idleTimer)
   {
     typingInProgress = false;
@@ -3701,8 +3700,6 @@ void QuantaApp::slotProcessTimeout()
     m_loopStarted = false;
   }
 }
-
-KParts::Part *oldPart = 0L;
 
 void QuantaApp::slotActivePartChanged(KParts::Part * part)
 {
