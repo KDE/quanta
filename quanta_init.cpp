@@ -44,7 +44,6 @@
 #include "document.h"
 
 #include "kwrite/kwdoc.h"
-#include "kwrite/kwview.h"
 
 #include "project/project.h"
 
@@ -129,6 +128,20 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 
 QuantaApp::~QuantaApp()
 {
+  delete parser;
+
+  delete tagsList;
+  delete tagsCore;
+  delete tagsI18n;
+  delete tagsScript;
+  delete quotedAttribs;
+  delete lCore;
+  delete lI18n;
+  delete lScript;
+  delete singleTags;
+  delete optionalTags;
+ 
+  delete tagsDict;
 }
 
 void QuantaApp::initStatusBar()
@@ -470,7 +483,11 @@ void QuantaApp::enablePhp3Debug(bool enable)
         s.sprintf("%i",phpDebugPort)+"" );
     }
     debuggerStyle = "PHP3";
-  } else delete dbg3;
+  } 
+  else {
+    delete dbg3;
+    dbg3 = 0L;
+  }
 }
 
 void QuantaApp::enablePhp4Debug(bool enable)
@@ -481,7 +498,11 @@ void QuantaApp::enablePhp4Debug(bool enable)
              messageOutput, SLOT(php4Debug(QString)) );
     dbg4->init();
     debuggerStyle = "PHP4";
-  } else delete dbg4;
+  } 
+  else {
+    delete dbg4;
+    dbg4 = 0L;
+  }
 }
 
 void QuantaApp::openLastFiles()
@@ -536,6 +557,7 @@ void QuantaApp::initTagDict()
   optionalTags  = new QStrList();
 
   tagsDict = new QDict <QStrList>(233,false);
+  tagsDict->setAutoDelete( true );
 
   KConfig *config = new KConfig( locate("appdata","tagdata.rc") );
 
@@ -575,6 +597,8 @@ void QuantaApp::initTagDict()
 
     tagsDict->insert(tag, attrList);
   }
+
+  delete config;
 }
 
 void QuantaApp::initActions()
