@@ -13,6 +13,8 @@ install-data-local:
 	$(mkinstalldirs) ${kde_datadir}/quanta/toolbars/schema/
 	$(INSTALL_DATA) $(srcdir)/facets.toolbar.tgz ${kde_datadir}/quanta/toolbars/schema/facets.toolbar.tgz
 	$(mkinstalldirs) ${kde_datadir}/quanta/toolbars/schema/
+	$(INSTALL_DATA) $(srcdir)/main.toolbar.tgz ${kde_datadir}/quanta/toolbars/schema/main.toolbar.tgz
+	$(mkinstalldirs) ${kde_datadir}/quanta/toolbars/schema/
 	$(INSTALL_DATA) $(srcdir)/misc.toolbar.tgz ${kde_datadir}/quanta/toolbars/schema/misc.toolbar.tgz
 	$(mkinstalldirs) ${kde_datadir}/quanta/toolbars/schema/
 	$(INSTALL_DATA) $(srcdir)/simple.toolbar.tgz ${kde_datadir}/quanta/toolbars/schema/simple.toolbar.tgz
