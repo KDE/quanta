@@ -193,6 +193,7 @@ public:
   KURL baseURL();
 
   bool enableIdleTimer(bool enable);
+  void startIdleTimer();
 
   /** Called when a document was closed. Resets some variables. */
   void slotFileClosed();

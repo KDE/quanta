@@ -1455,8 +1455,7 @@ void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber
 {
   Q_UNUSED(file);
   typingInProgress = true;
-  if (m_idleTimerEnabled && idleTimer)
-    idleTimer->start(500, true);
+  startIdleTimer();
  // updateTreeViews();
   QString linenumber;
   linenumber = i18n("Line: %1 Col: %2").arg(lineNumber).arg(columnNumber);
@@ -1479,8 +1478,7 @@ void QuantaApp::openFile(QString file, int lineNumber, int columnNumber)
 void QuantaApp::slotNewLineColumn()
 {
   typingInProgress = true;
-  if (m_idleTimerEnabled)
-    idleTimer->start(500, true);
+  startIdleTimer();
  // updateTreeViews();
   QString linenumber;
   oldCursorLine = cursorLine;
@@ -1520,11 +1518,17 @@ void QuantaApp::slotIdleTimerExpired()
   }
 }
 
+void QuantaApp::startIdleTimer()
+{
+  if (m_idleTimerEnabled && idleTimer)
+      idleTimer->start(500, true);
+}
+
 bool QuantaApp::enableIdleTimer(bool enable)
 {
    bool status = m_idleTimerEnabled;
    if (enable)
-     idleTimer->start(500, true);
+     startIdleTimer();
    else
      idleTimer->stop();
    m_idleTimerEnabled = enable;
