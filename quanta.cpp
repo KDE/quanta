@@ -1858,28 +1858,23 @@ void QuantaApp::processDTD(QString documentType)
 
  if (documentType.isEmpty())
  {
-   QDomDocument doc;
-   doc.setContent(w->editIf->text());
-   QDomDocumentType docType = doc.doctype();
-   QString type = docType.name() ;
    //Do some magic to find the document type
    bool found = false;
-   if (type.isEmpty())
+   uint i=0;
+   int pos = 0;
+   do
    {
-     uint i=0;
-     int pos = 0;
-     do {
       QString s = w->editIf->textLine(i);
-      pos = s.find("doctype",0,false);
-      if (pos != -1)
+      pos = s.find("!doctype",0,false);
+      if (pos != -1) //parse the found !DOCTYPE tag
       {
         s = w->tagAt(i,pos);
         pos = s.find("public",0,false);
-        if (pos == -1)
+        if (pos == -1) //if no PUBLIC info, use the word after !DOCTYPE as the doc.type
         {
           foundName = w->getTagAttr(1);
         } else
-        {
+        {             //use the quoted string after PUBLIC as doc. type
           pos = s.find("\"", pos+1);
           if (pos !=-1)
           {
@@ -1889,29 +1884,35 @@ void QuantaApp::processDTD(QString documentType)
          }
         found = true;
       }
-     } while ((!found) && (++i <= w->editIf->numLines()));
-   }
-   if (docType.name().isEmpty() )
+   } while ((!found) && (++i <= w->editIf->numLines()));
+
+   DTDSelectDialog *dlg = new DTDSelectDialog(this);
+   QDictIterator<DTDStruct> it(*dtds);
+   found = false;
+   for( ; it.current(); ++it )
    {
-    DTDSelectDialog *dlg = new DTDSelectDialog(this);
-    QDictIterator<DTDStruct> it(*dtds);
-    found = false;
-    for( ; it.current(); ++it )
-    {
-      dlg->dtdCombo->insertItem(it.current()->name);
-      if (it.current()->name == foundName)
-      {
+     dlg->dtdCombo->insertItem(it.current()->name);
+     if (it.current()->name == foundName)
+     {
        w->dtdName = foundName;
        found =true;
       }
-    }
-
-    if (!found && dlg->exec())
-    {
-      w->dtdName = dlg->dtdCombo->currentText();
-    }
-    delete dlg;
    }
+   dlg->dtdCombo->insertItem(i18n("Create new DTD info."));
+   if (foundName.isEmpty())
+   {
+    dlg->messageLabel->setText(i18n("No DTD info was found. Choose a DTD or create a new one."));
+    dlg->currentDTD->setText(i18n("Not found"));
+   } else
+   {
+    dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
+    dlg->currentDTD->setText(foundName);
+   }
+   if (!found && dlg->exec())
+   {
+      w->dtdName = dlg->dtdCombo->currentText();
+   }
+   delete dlg;
  } else
  {
    w->dtdName = documentType;
@@ -1934,6 +1935,8 @@ void QuantaApp::slotToolsChangeDTD()
   }
 
   dlg->dtdCombo->setCurrentItem(pos);
+  dlg->messageLabel->setText(i18n("Change the current DTD"));
+  dlg->currentDTD->setText(w->dtdName);
   if (dlg->exec())
   {
     w->dtdName = dlg->dtdCombo->currentText();

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Fri Aug 23 22:11:02 2002
+** Created: Sat Aug 24 15:12:58 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -16,6 +16,7 @@ class QHBoxLayout;
 class QGridLayout; 
 class QComboBox;
 class QLabel;
+class QLineEdit;
 class QPushButton;
 
 class DTDSelectDialog : public QDialog
@@ -26,15 +27,19 @@ public:
     DTDSelectDialog( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~DTDSelectDialog();
 
-    QLabel* TextLabel1;
-    QPushButton* cancelButton;
-    QPushButton* okButton;
+    QLabel* messageLabel;
     QComboBox* dtdCombo;
+    QLabel* TextLabel1_2;
+    QLabel* TextLabel1;
+    QLineEdit* currentDTD;
+    QPushButton* okButton;
 
 
 public slots:
     virtual void init();
 
+protected:
+    QGridLayout* Layout1;
 };
 
 #endif // DTDSELECTDIALOG_H

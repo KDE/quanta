@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Fri Aug 23 22:11:02 2002
+** Created: Sat Aug 24 15:12:59 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -12,6 +12,7 @@
 #include <qvariant.h>
 #include <qcombobox.h>
 #include <qlabel.h>
+#include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
 #include <qtooltip.h>
@@ -30,23 +31,41 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
 {
     if ( !name )
 	setName( "DTDSelectDialog" );
-    resize( 332, 116 ); 
+    resize( 337, 130 ); 
     setCaption( tr2i18n( "Form1" ) );
 
-    TextLabel1 = new QLabel( this, "TextLabel1" );
-    TextLabel1->setGeometry( QRect( 20, 25, 59, 12 ) ); 
+    messageLabel = new QLabel( this, "messageLabel" );
+    messageLabel->setGeometry( QRect( 15, 10, 295, 16 ) ); 
+    messageLabel->setText( tr2i18n( "Dialog message:" ) );
+    messageLabel->setScaledContents( TRUE );
+    messageLabel->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter ) );
+
+    QWidget* privateLayoutWidget = new QWidget( this, "Layout1" );
+    privateLayoutWidget->setGeometry( QRect( 10, 35, 315, 48 ) ); 
+    Layout1 = new QGridLayout( privateLayoutWidget, 1, 1, 0, 6, "Layout1"); 
+
+    dtdCombo = new QComboBox( FALSE, privateLayoutWidget, "dtdCombo" );
+
+    Layout1->addWidget( dtdCombo, 0, 1 );
+
+    TextLabel1_2 = new QLabel( privateLayoutWidget, "TextLabel1_2" );
+    TextLabel1_2->setText( tr2i18n( "Current DTD:" ) );
+
+    Layout1->addWidget( TextLabel1_2, 1, 0 );
+
+    TextLabel1 = new QLabel( privateLayoutWidget, "TextLabel1" );
     TextLabel1->setText( tr2i18n( "Select DTD:" ) );
 
-    cancelButton = new QPushButton( this, "cancelButton" );
-    cancelButton->setGeometry( QRect( 185, 80, 80, 22 ) ); 
-    cancelButton->setText( tr2i18n( "&Cancel" ) );
+    Layout1->addWidget( TextLabel1, 0, 0 );
+
+    currentDTD = new QLineEdit( privateLayoutWidget, "currentDTD" );
+    currentDTD->setReadOnly( TRUE );
+
+    Layout1->addWidget( currentDTD, 1, 1 );
 
     okButton = new QPushButton( this, "okButton" );
-    okButton->setGeometry( QRect( 80, 80, 80, 22 ) ); 
+    okButton->setGeometry( QRect( 135, 95, 80, 22 ) ); 
     okButton->setText( tr2i18n( "&OK" ) );
-
-    dtdCombo = new QComboBox( FALSE, this, "dtdCombo" );
-    dtdCombo->setGeometry( QRect( 85, 20, 230, 20 ) ); 
 
     // signals and slots connections
     init();

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>332</width>
-            <height>116</height>
+            <width>337</width>
+            <height>132</height>
         </rect>
     </property>
     <property name="caption">
@@ -17,35 +17,79 @@
     </property>
     <widget class="QLabel">
         <property name="name">
-            <cstring>TextLabel1</cstring>
+            <cstring>messageLabel</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>20</x>
-                <y>25</y>
-                <width>59</width>
-                <height>12</height>
+                <x>15</x>
+                <y>10</y>
+                <width>295</width>
+                <height>25</height>
             </rect>
         </property>
         <property name="text">
-            <string>Select DTD:</string>
+            <string>Dialog message:
+Dialog message2:</string>
+        </property>
+        <property name="scaledContents">
+            <bool>true</bool>
+        </property>
+        <property name="alignment">
+            <set>WordBreak|AlignVCenter</set>
         </property>
     </widget>
-    <widget class="QPushButton">
+    <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>cancelButton</cstring>
+            <cstring>Layout1</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>185</x>
-                <y>80</y>
-                <width>80</width>
-                <height>22</height>
+                <x>10</x>
+                <y>40</y>
+                <width>315</width>
+                <height>48</height>
             </rect>
         </property>
-        <property name="text">
-            <string>&amp;Cancel</string>
-        </property>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QComboBox" row="0" column="1">
+                <property name="name">
+                    <cstring>dtdCombo</cstring>
+                </property>
+            </widget>
+            <widget class="QLabel" row="1" column="0">
+                <property name="name">
+                    <cstring>TextLabel1_2</cstring>
+                </property>
+                <property name="text">
+                    <string>Current DTD:</string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property name="text">
+                    <string>Select DTD:</string>
+                </property>
+            </widget>
+            <widget class="QLineEdit" row="1" column="1">
+                <property name="name">
+                    <cstring>currentDTD</cstring>
+                </property>
+                <property name="readOnly">
+                    <bool>true</bool>
+                </property>
+            </widget>
+        </grid>
     </widget>
     <widget class="QPushButton">
         <property name="name">
@@ -53,27 +97,14 @@
         </property>
         <property name="geometry">
             <rect>
-                <x>80</x>
-                <y>80</y>
+                <x>135</x>
+                <y>100</y>
                 <width>80</width>
                 <height>22</height>
             </rect>
         </property>
         <property name="text">
             <string>&amp;OK</string>
-        </property>
-    </widget>
-    <widget class="QComboBox">
-        <property name="name">
-            <cstring>dtdCombo</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>85</x>
-                <y>20</y>
-                <width>230</width>
-                <height>20</height>
-            </rect>
         </property>
     </widget>
 </widget>

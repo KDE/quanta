@@ -9,5 +9,4 @@
 void DTDSelectDialog::init()
 {
  connect(okButton,SIGNAL(clicked()),SLOT(accept()));
- connect(cancelButton,SIGNAL(clicked()),SLOT(reject()));
 }
