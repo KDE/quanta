@@ -28,12 +28,15 @@ Node::Node( Node *parent )
   removeAll = true;
   closesPrevious = false;
   insideSpecial = false;
-  marked = false;
 }
 
 
 Node::~Node()
 {
+  if (prev)
+      prev->next = 0L;
+  if (parent && parent->child == this)
+      parent->child = 0L;
   if (removeAll)
   {
    if (child) { delete child; child = 0L;}

@@ -1397,88 +1397,100 @@ void Document::slotTextChanged()
   {
     uint line, column;
     QString oldNodeName = "";
-    bool updateClosing = true;
     Node *node;
+    Node *currentNode = 0L; //holds a copy of the node which is at (line,column)
+    Node *previousNode = 0L;//holds a copy of the node before currentNode
     if (qConfig.updateClosingTags)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
       node = parser->nodeAt(line, column, false);
       if (node)
       {
-        if (node->tag->type != Tag::XmlTag && node->tag->type != Tag::XmlTagEnd)
-          //node = node->previousSibling();
-          node = 0L;
-        if (node && !node->tag->single && !node->tag->closingMissing
-            && node->tag->type == Tag::XmlTag)
+        Tag *tag;
+        tag = new Tag(*node->tag);
+        currentNode = new Node(0L);
+        currentNode->removeAll = false;
+        currentNode->tag = tag;
+
+        node = node->previousSibling();
+        if (node)
         {
-          oldNodeName = "/"+node->tag->name;
-          if (node->next && node->next->tag->name.lower() == "/"+node->tag->name.lower())
-              node->next->marked = true;
-          else
-              node = 0L;
-          updateClosing = true;
-        }
-        if (node && node->tag->type == Tag::XmlTagEnd)
-        {
-          oldNodeName = node->tag->name.mid(1);
-          if (node->prev && node->tag->name.lower() == "/"+node->prev->tag->name.lower())
-              node->prev->marked = true;
-          else
-              node = 0L;
-          updateClosing = false;
+          tag = new Tag(*node->tag);
+          previousNode = new Node(0L);
+          previousNode->removeAll = false;
+          previousNode->tag = tag;
         }
       }
-        if (node && node->next && node->next)
-           node->next->marked = true;
     }
+
     baseNode = parser->rebuild(this);
-    if (qConfig.updateClosingTags && node)
+    if (qConfig.updateClosingTags && currentNode)
     {
       node = parser->nodeAt(line, column, false);
       if (node)
       {
-        QString newNodeName = node->tag->name;
-        if (!oldNodeName.isEmpty() &&
-            ( (oldNodeName != "/"+newNodeName && updateClosing) ||
-              ("/"+oldNodeName != newNodeName && !updateClosing)))
+        int bl, bc, bl2, bc2;
+        node->tag->beginPos(bl, bc);
+        currentNode->tag->beginPos(bl2,bc2);
+        if ( (bl != bl2 || bc !=bc2) && previousNode)
         {
+          previousNode->tag->beginPos(bl2, bc2);
+          delete currentNode;
+          currentNode = previousNode;
+        } else
+        if (previousNode)
+        {
+          delete previousNode;
+          previousNode = 0L;
+        }
+        if (bl == bl2 && bc == bc2 &&
+           (currentNode->tag->type == Tag::XmlTag || currentNode->tag->type == Tag::XmlTagEnd))
+        {
+          bool updateClosing = (currentNode->tag->type == Tag::XmlTag);
+          int num = 1;
+          QString newName = node->tag->name;
           if (updateClosing)
             node = node->nextSibling();
           else
             node = node->previousSibling();
           while (node)
           {
-//            if (node->tag->name == oldNodeName)
-            if (node->marked)
+            if (node->tag->name == currentNode->tag->name)
+            {
+              num++;
+            }
+            if ( (updateClosing && node->tag->name == "/"+currentNode->tag->name) ||
+                 (!updateClosing && "/"+node->tag->name == currentNode->tag->name) )
+            {
+              num--;
+            }
+            if (num == 0)
             {
               reparseEnabled = false;
-              int bl, bc;
               node->tag->namePos(bl, bc);
               editIf->removeText(bl, bc, bl, bc + node->tag->name.length());
               if (updateClosing)
               {
-                editIf->insertText(bl, bc, "/"+newNodeName);
-              }
-              else
+                editIf->insertText(bl, bc, "/"+newName);
+              } else
               {
-                editIf->insertText(bl, bc, newNodeName.mid(1));
-                if (bl == (int) line)
-                    column += (newNodeName.length() - oldNodeName.length() - 1);
+                editIf->insertText(bl, bc, newName.mid(1));
               }
-              node->marked = false;
               viewCursorIf->setCursorPositionReal(bl, bc);
               baseNode = parser->rebuild(this);
               viewCursorIf->setCursorPositionReal(line, column);
               reparseEnabled = true;
               break;
             }
+
             if (updateClosing)
               node = node->nextSibling();
             else
               node = node->previousSibling();
           }
+          delete currentNode;
         }
-       }
+      }
     }
 
     if (qConfig.instantUpdate)
