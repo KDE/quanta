@@ -853,7 +853,7 @@ void QuantaInit::initActions()
     new KAction(i18n("Load &Local Toolbar..."), 0, m_quanta, SLOT(slotLoadToolbar()), ac, "toolbars_load_user");
     new KAction(i18n("Save as &Local Toolbar..."), 0, m_quanta, SLOT(slotSaveLocalToolbar()), ac, "toolbars_save_local");
     new KAction(i18n("Save as &Project Toolbar..."), 0, m_quanta, SLOT(slotSaveProjectToolbar()), ac, "toolbars_save_project");
-    new KAction(i18n("&Add User Toolbar..."),  0, m_quanta, SLOT(slotAddToolbar()), ac, "toolbars_add");
+    new KAction(i18n("&New User Toolbar..."),  0, m_quanta, SLOT(slotAddToolbar()), ac, "toolbars_add");
     new KAction(i18n("&Remove User Toolbar..."), 0, m_quanta, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
     new KAction(i18n("Re&name User Toolbar..."), 0, m_quanta, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
     new KAction(i18n("Send Toolbar in E&mail..."), "mail_send", 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");

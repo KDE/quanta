@@ -649,7 +649,7 @@ void QuantaView::reloadBothViews(bool force)
 /** reload the Kafka view from the Node Tree. Set force to true if you want to reload even if not necessary. */
 void QuantaView::reloadVPLView(bool force)
 {
-  if (m_kafkaReloadingEnabled || force)
+  if (m_document && (m_kafkaReloadingEnabled || force))
       m_document->docUndoRedo->reloadKafkaEditor(force);
 }
 
