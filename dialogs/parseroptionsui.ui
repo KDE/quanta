@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>350</width>
-            <height>247</height>
+            <height>250</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -38,7 +38,7 @@
                 <x>10</x>
                 <y>10</y>
                 <width>330</width>
-                <height>130</height>
+                <height>150</height>
             </rect>
         </property>
         <property name="title">
@@ -53,7 +53,7 @@
                     <x>5</x>
                     <y>15</y>
                     <width>320</width>
-                    <height>100</height>
+                    <height>128</height>
                 </rect>
             </property>
             <grid>
@@ -171,34 +171,48 @@
             </grid>
         </widget>
     </widget>
-    <widget class="QComboBox">
+    <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>dtdName</cstring>
+            <cstring>Layout3</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>180</x>
-                <y>145</y>
-                <width>155</width>
-                <height>20</height>
+                <x>20</x>
+                <y>170</y>
+                <width>310</width>
+                <height>29</height>
             </rect>
         </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel3</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>17</x>
-                <y>147</y>
-                <width>150</width>
-                <height>20</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Default DTD:</string>
-        </property>
+        <hbox>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel3</cstring>
+                </property>
+                <property name="maximumSize">
+                    <size>
+                        <width>32767</width>
+                        <height>32767</height>
+                    </size>
+                </property>
+                <property name="text">
+                    <string>Default DTD:</string>
+                </property>
+            </widget>
+            <widget class="QComboBox">
+                <property name="name">
+                    <cstring>dtdName</cstring>
+                </property>
+            </widget>
+        </hbox>
     </widget>
     <widget class="QLayoutWidget">
         <property name="name">
@@ -206,9 +220,9 @@
         </property>
         <property name="geometry">
             <rect>
-                <x>15</x>
-                <y>180</y>
-                <width>315</width>
+                <x>20</x>
+                <y>200</y>
+                <width>310</width>
                 <height>40</height>
             </rect>
         </property>
