@@ -411,16 +411,11 @@ void QuantaView::slotTagEditTable()
   }
 
   TableEditor *editor = new TableEditor();
-  //editor->setTableContent(l2);
   if (tableExists)
   {
-      Node *node = parser->nodeAt(bl, bc + 1);
-      Node *lastNode = parser->nodeAt(el, ec);
-      if (node)
-      kdDebug(24000) << "node = " << node->tag->name << endl;
-      if (lastNode)
-      kdDebug(24000) << "lastnode = " << lastNode->tag->name << endl;
-      kdDebug(24000) << "L2 = " << l2 << endl;
+    editor->setDTD(w->defaultDTD());
+    editor->setBaseURL(baseURL());
+    editor->setTableArea(bl, bc, el, ec);
   }
   editor->exec();
 }
