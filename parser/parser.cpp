@@ -1222,6 +1222,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
   while (node)
   {
     node->tag->beginPos(bl, bc);
+    bc++;
     if (node->next)
     {
       node->next->tag->beginPos(el, ec);
