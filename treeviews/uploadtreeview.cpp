@@ -41,7 +41,7 @@ UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
 
   connect( this, SIGNAL(selectionChanged()), SLOT(slotSelectFile()));
   connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
-            this, SLOT(slotSelectFile(QListViewItem *))); 
+            this, SLOT(slotSelectFile(QListViewItem *)));
 
 }
 
@@ -52,7 +52,7 @@ UploadTreeView::~UploadTreeView()
 int UploadTreeView::checkboxTree( QListViewItem *it )
 {
   parentWidget()->setCursor(KCursor::workingCursor());
-  
+
   QListViewItem *itIter = it ? it->firstChild() : firstChild();
 
   // bitFlag structure: (0/1)all children exist (0/1)no children exist.
@@ -107,10 +107,27 @@ int UploadTreeView::checkboxTree( QListViewItem *it )
       }
     }
     retVal = bitFlags;
-  } 
+  } else
+  {
+    if ( dynamic_cast<UploadTreeFolder *>(it) )
+    {
+        UploadTreeFolder *itF = static_cast<UploadTreeFolder *>(it);
+        if ( itF->isSelected() )
+        {
+          itF->setWhichPixmap("check");
+          retVal = 2;
+        }
+        else
+        {
+          itF->setWhichPixmap("check_clear");
+          retVal = 1;
+        }
+
+    }
+  }
 
   parentWidget()->setCursor(KCursor::arrowCursor());
- 
+
   return retVal;
 }
 
@@ -135,6 +152,7 @@ void UploadTreeView::slotSelectFile( QListViewItem *it )
   // This need a bit of special behavior for clicking on directories.
   if ( itF )
   {
+    itF->setSelected(it->isSelected());
     selectAllUnderNode( it, it->isSelected() );
   }
 
@@ -323,7 +341,7 @@ UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString
       file = new UploadTreeFile(it, a_url, date, size);
     }
   }
-  return file; 
+  return file;
 }
 
 void UploadTreeView::expandAll( QListViewItem *it )
@@ -366,7 +384,9 @@ void UploadTreeView::invertAll( QListViewItem *it )
 
   for( ; itIter != 0; itIter = itIter->nextSibling() )
   {
-    if ( dynamic_cast<UploadTreeFile *>(itIter) )
+    if ( dynamic_cast<UploadTreeFile *>(itIter) ||
+       ( dynamic_cast<UploadTreeFolder *>(itIter) &&
+         !itIter->firstChild()) )
     {
       itIter->setSelected( !itIter->isSelected() );
     }
@@ -384,6 +404,11 @@ void UploadTreeView::selectAll( bool select )
   for ( ; it.current(); ++it )
   {
     if ( dynamic_cast<UploadTreeFile *>(it.current()) )
+    {
+      it.current()->setSelected( select);
+    } else
+    if ( dynamic_cast<UploadTreeFolder *>(it.current()) &&
+         !it.current()->firstChild() )
     {
       it.current()->setSelected( select);
     }
