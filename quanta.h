@@ -71,6 +71,7 @@ class KAction;
 class KToggleAction;
 class KSelectAction;
 class KRecentFilesAction;
+class KToolBarPoupAction;
 
 class Node;
 class Parser;
@@ -249,6 +250,9 @@ public slots:
   void slotShowSTabDock();
   void slotShowATabDock();
   void slotShowDTabDock();
+
+  void slotOpenRecentMenuAboutToShow();
+  void slotOpenRecentMenuItemActivated(int id);
 
   void viewMenuAboutToShow();
   void settingsMenuAboutToShow();
@@ -462,7 +466,7 @@ private:
     *showSTabAction, *showATabAction, *showDTabAction,
     *showStatusbarAction, *showPreviewAction,
     *showKafkaAction, *showDTDToolbar;
-
+  KToolBarPopupAction *fileOpenRecent;
   KSelectAction *setEndOfLine;
 
   KAction *saveAction, *saveAllAction,

@@ -50,6 +50,7 @@
 #include <kaction.h>
 #include <kstdaction.h>
 #include <kparts/componentfactory.h>
+#include <kpopupmenu.h>
 #include <kprogress.h>
 #include <kspell.h>
 #include <ktip.h>
@@ -1700,6 +1701,20 @@ void QuantaApp::initActions()
     fileRecent =  KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
                                          ac, "file_open_recent");
     fileRecent->setMaxItems(32);
+
+    fileOpenRecent = new KToolBarPopupAction(i18n("Open"),
+       "fileopen", KStdAccel::shortcut(KStdAccel::Open), this,
+       SLOT(slotFileOpen()), ac, "file_open_recent_2");
+    connect( fileOpenRecent->popupMenu(),
+             SIGNAL(aboutToShow()),
+             this,
+             SLOT(slotOpenRecentMenuAboutToShow()) );
+
+    connect( fileOpenRecent->popupMenu(),
+              SIGNAL(activated(int)),
+              this,
+              SLOT(slotOpenRecentMenuItemActivated(int)) );
+
 
     (void) new KAction( i18n( "Close All" ), 0, this,
                         SLOT( slotFileCloseAll() ),
