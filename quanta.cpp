@@ -704,7 +704,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   {
    repaintPreview(true);
   }
-  
+
   emit reloadTreeviews();
 }
 
@@ -713,7 +713,7 @@ void QuantaApp::slotOptionsConfigureKeys()
   KKeyDialog::configureKeys( actionCollection(), xmlFile(), true, this );
 }
 
-void QuantaApp::slotOptionsConfigureToolbars()
+void QuantaApp::configureToolbars(const QString& defaultToolbar)
 {
  int currentPageIndex = m_view->m_toolbarTab->currentPageIndex();
 
@@ -734,14 +734,24 @@ void QuantaApp::slotOptionsConfigureToolbars()
         p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
 }
  saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
- KEditToolbar dlg(factory(), this);
+KEditToolbar *dlg;
+#if defined(KDE_MAKE_VERSION)
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
+  dlg = new KEditToolbar(factory(), this);
+#else
+  dlg = new KEditToolbar(defaultToolbar, factory(), this);
+#endif
+#else
+  dlg = new KEditToolbarfactory(), this);
+#endif
 
  //remove the manually added menus BEFORE the dlg shows up
  menuBar()->removeItem(menuBar()->idAt(TAGS_MENU_PLACE));
  menuBar()->removeItem(menuBar()->idAt(PLUGINS_MENU_PLACE));
 
- connect( &dlg, SIGNAL( newToolbarConfig() ), SLOT( slotNewToolbarConfig() ) );
- dlg.exec();
+ connect( dlg, SIGNAL( newToolbarConfig() ), SLOT( slotNewToolbarConfig() ) );
+ dlg->exec();
+ delete dlg;
 
  QPopupMenu *menu = 0L;
  QString toolbarName;
@@ -771,6 +781,11 @@ void QuantaApp::slotOptionsConfigureToolbars()
  menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);
  m_view->m_toolbarTab->setCurrentPage(currentPageIndex);
+}
+
+void QuantaApp::slotOptionsConfigureToolbars()
+{
+  configureToolbars();
 }
 
 void QuantaApp::slotNewToolbarConfig()
@@ -1573,44 +1588,36 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    //search for another toolbar with the same name
    QPtrList<KXMLGUIClient> xml_clients = guiFactory()->clients();
    QString newName = name;
+   QString origName = name;
    bool found;
+   int count = 2;
    do
    {
-    uint index = 0;
-    do
-    {
-      name = newName;
-      if (index == 0)
+     uint index = 0;
+     do
+     {
+       name = newName;
+       if (index == 0)
          found = false;
-      nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
-      for (uint i = 0; i < nodeList.count(); i++)
-      {
-        if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
-        {
-          KMessageBox::information(this,i18n("A toolbar called \"%1\" already exists.\n Please rename the loaded toolbar.").arg(name),i18n("Name conflict"));
-
-          KLineEditDlg dlg(i18n("Enter toolbar name:"), name, this);
-          dlg.setCaption(i18n("Rename Toolbar"));
-          if (dlg.exec())
-          {
-            newName =  dlg.text();
-          } else
-          {
-            KMessageBox::information(this,i18n("The rename was canceled.\n The toolbar won't be loaded."),i18n("Name conflict"));
-            return;
-          }
-          found = true;
-          break;
-        }
-      }
-      if (found)
-      {
-        index = 0;
-      } else
-      {
-        index++;
-      }
-    } while (index < xml_clients.count());
+       nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
+       for (uint i = 0; i < nodeList.count(); i++)
+       {
+         if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
+         {
+           newName = origName + QString(" (%1)").arg(count);
+           count++;
+           found = true;
+           break;
+         }
+       }
+       if (found)
+       {
+         index = 0;
+       } else
+       {
+         index++;
+       }
+     } while (index < xml_clients.count());
    } while (name == newName && found);
    name = newName;
 

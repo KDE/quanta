@@ -160,40 +160,48 @@ void ActionConfigDialog::slotRemoveToolbar()
 
 void ActionConfigDialog::slotEditToolbar()
 {
-  quantaApp->slotOptionsConfigureToolbars();
-
-  //update the tree view
-  QListViewItem *oldItem, *item;
-  KAction *action;
-  QTabWidget *tb = quantaApp->view()->toolbarTab();
-  for (int i = 0; i < tb->count(); i++)
+  QString toolbarName;
+  QListViewItem *oldItem;
+  QListViewItem *item = actionTreeView->currentItem();
+  if (item->parent())
+     item = item->parent();
+  toolbarName = item->text(0);
+  if ( toolbarName != i18n("All"))
   {
-    QString toolbarName = tb->label(i);
-    ToolbarEntry *p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
-    if (p_toolbar)
+    quantaApp->configureToolbars(toolbarName +" <quanta>");
+
+    //update the tree view
+    KAction *action;
+    QTabWidget *tb = quantaApp->view()->toolbarTab();
+    for (int i = 0; i < tb->count(); i++)
     {
-      oldItem = actionTreeView->findItem(toolbarName, 0);
-      item = new KListViewItem(actionTreeView, oldItem, toolbarName);
-      item->setOpen(oldItem->isOpen());
-      delete oldItem;
-      QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
-      while (!node.isNull())
+      toolbarName = tb->label(i);
+      ToolbarEntry *p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+      if (p_toolbar)
       {
-        if (node.nodeName() == "Action")
+        oldItem = actionTreeView->findItem(toolbarName, 0);
+        item = new KListViewItem(actionTreeView, oldItem, toolbarName);
+        item->setOpen(oldItem->isOpen());
+        delete oldItem;
+        QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
+        while (!node.isNull())
         {
-          action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
-          if (action)
+          if (node.nodeName() == "Action")
           {
-            oldItem = new KListViewItem(item, oldItem, action->text(), action->shortcut().toString(), action->name());
-            oldItem->setPixmap(0, BarIcon(action->icon()));
+            action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
+            if (action)
+            {
+              oldItem = new KListViewItem(item, oldItem, action->text(), action->shortcut().toString(), action->name());
+              oldItem->setPixmap(0, BarIcon(action->icon()));
+            }
           }
+          node = node.nextSibling();
         }
-        node = node.nextSibling();
       }
     }
+    actionTreeView->setCurrentItem(allActionsItem);
+    actionTreeView->setSelected(allActionsItem, true);
   }
-  actionTreeView->setCurrentItem(allActionsItem);
-  actionTreeView->setSelected(allActionsItem, true);
 }
 
 void ActionConfigDialog::slotContextMenu(KListView *,QListViewItem *,const QPoint &point)

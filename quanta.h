@@ -157,6 +157,8 @@ public:
   void reparse(bool force);
   /** Remove the toolbar named "name". */
   void removeToolbar(const QString& name);
+  /** Configure toolbars, show defaultToolbar by default */
+  void configureToolbars(const QString& defaultToolbar = QString::null);
 
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */
@@ -322,9 +324,9 @@ protected:
   void initToolBars();
   /** Ask for save all the modified user toolbars. */
   void removeToolbars();
-  /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. */
   /** Returns true if all toolbars are hidden, false otherwise. */
   bool allToolbarsHidden();
+  /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. */
   void readTagDir(QString &dirName);
   /** No descriptions */
   virtual void focusInEvent(QFocusEvent*);
