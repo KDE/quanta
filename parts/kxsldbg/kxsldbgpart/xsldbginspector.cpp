@@ -24,6 +24,8 @@
 #include <qpixmap.h>
 #include <qiconset.h>
 
+#include <kpushbutton.h>
+#include <kstdguiitem.h>
 #include "xsldbgdebugger.h"
 #include "xsldbgbreakpointsimpl.h"
 #include "xsldbglocalvariablesimpl.h"
@@ -115,23 +117,20 @@ XsldbgInspector::XsldbgInspector( XsldbgDebugger *debugger, QWidget* parent,
     XsldbgInspectorLayout->addWidget( tabWidget, 0, 1 );
     Layout1 = new QHBoxLayout( 0, 0, 6, "Layout1");
 
-    buttonHelp = new QPushButton( this, "buttonHelp" );
-    buttonHelp->setText( i18n( "Help" ) );
+    buttonHelp = new KPushButton( KStdGuiItem::help(), this, "buttonHelp" );
     buttonHelp->setAccel( 4144 );
     buttonHelp->setAutoDefault( TRUE );
     Layout1->addWidget( buttonHelp );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     Layout1->addItem( spacer );
 
-    buttonOk = new QPushButton( this, "buttonOk" );
-    buttonOk->setText( i18n( "&OK" ) );
+    buttonOk = new KPushButton( KStdGuiItem::ok(), this, "buttonOk" );
     buttonOk->setAccel( 0 );
     buttonOk->setAutoDefault( TRUE );
     buttonOk->setDefault( TRUE );
     Layout1->addWidget( buttonOk );
 
-    buttonApply = new QPushButton( this, "buttonApply" );
-    buttonApply->setText( i18n( "&Apply" ) );
+    buttonApply = new KPushButton( KStdGuiItem::apply(), this, "buttonApply" );
     QToolTip::add(buttonApply, i18n("Apply changes to xsldbg after restarting execution"));
     buttonApply->setAccel( 0 );
     buttonApply->setAutoDefault( TRUE );
@@ -146,8 +145,7 @@ XsldbgInspector::XsldbgInspector( XsldbgDebugger *debugger, QWidget* parent,
     buttonRefresh->setDefault( TRUE );
     Layout1->addWidget( buttonRefresh );
 
-    buttonCancel = new QPushButton( this, "buttonCancel" );
-    buttonCancel->setText( i18n( "&Cancel" ) );
+    buttonCancel = new KPushButton( KStdGuiItem::cancel(), this, "buttonCancel" );
     buttonCancel->setAccel( 0 );
     buttonCancel->setAutoDefault( TRUE );
     Layout1->addWidget( buttonCancel );
