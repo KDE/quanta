@@ -1344,6 +1344,10 @@ void KafkaWidget::keyBackspace()
                 nodeText.split((static_cast<DOM::CharacterData>(_nodePrev)).length() - 1);
                 _nodePrev.setNodeValue(nodeText);
                 _nodePrev.parentNode().applyChanges();
+                
+                m_currentNode = _nodePrev;
+                d->m_cursorOffset = (static_cast<DOM::CharacterData>(_nodePrev)).length();
+                                
                 postprocessCursorPosition();
                 emit domNodeModified(_nodePrev, m_modifs);
                 return;
