@@ -497,7 +497,6 @@ Node *Parser::parse(Document *w, bool force)
  coutTree(m_node, 2);
  kdDebug(24000) << "Size of tree: " << treeSize << endl;
 */
-
 //FIXME: What is the use of two pointer to the same Node???
  baseNode = m_node;
  m_saParser->init(m_node, w);

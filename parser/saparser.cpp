@@ -517,11 +517,13 @@ bool SAParser::slotParseOneLine()
             node->tag = tag;
             node->insideSpecial = true;
             node->specialInsideXml = m_specialInsideXml;
-            if (s_currentNode)
+            if (s_currentNode && s_currentNode != node->parent)
             {
               s_currentNode->next = node;
               node->prev = s_currentNode;
-            }
+            } else
+            if (!node->parent->child)
+              node->parent->child = node;
             s_currentNode = node;
           }
           s_previousContext = s_contextStack.pop();
@@ -788,7 +790,7 @@ Node *SAParser::parsingDone()
 void SAParser::parseInDetail(bool synchronous)
 {
  //synchronous = true; //for testing. Uncomment to test the parser in synchronous mode
-//  return; //for testing. Uncomment to disable the detailed parser
+ // return; //for testing. Uncomment to disable the detailed parser
 #ifdef DEBUG_PARSER
   kdDebug(24001) << "parseInDetail. Enabled: " << m_parsingEnabled << endl;
 #endif
