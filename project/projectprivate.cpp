@@ -89,14 +89,14 @@ void ProjectPrivate::initActions(KActionCollection *ac)
   (void) new KAction( i18n( "&Open Project..." ), "project_open", 0,
                         this, SLOT( slotOpenProject() ),
                         ac, "project_open" );
-  projectRecent =
+  m_projectRecent =
       KStdAction::openRecent(parent, SLOT(slotOpenProject(const KURL&)),
                             ac, "project_open_recent");
-  projectRecent->setText(i18n("Open Recent Project"));
-  projectRecent->setIcon("project_open");
-  projectRecent->setMaxItems(32);
-  projectRecent->setToolTip(i18n("Open/Open recent project"));
-  connect(projectRecent, SIGNAL(activated()), this, SLOT(slotOpenProject()));
+  m_projectRecent->setText(i18n("Open Recent Project"));
+  m_projectRecent->setIcon("project_open");
+  m_projectRecent->setMaxItems(32);
+  m_projectRecent->setToolTip(i18n("Open/Open recent project"));
+  connect(m_projectRecent, SIGNAL(activated()), this, SLOT(slotOpenProject()));
 
   closeprjAction =  new KAction( i18n( "&Close Project" ), "fileclose", 0,
                         this, SLOT( slotCloseProject() ),
@@ -775,7 +775,8 @@ void ProjectPrivate::slotAcceptCreateProject()
     m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx);
     parent->reloadTree( &(m_projectFiles), true, QStringList() );
     saveProject();
-    projectRecent->addURL(projectURL);
+    m_projectRecent->addURL(projectURL);
+    m_projectRecent->setCurrentItem(0);
     // remember the project in config
     writeConfig();
   }
@@ -1095,6 +1096,7 @@ void ProjectPrivate::slotCloseProject()
   parent->newProjectLoaded(projectName, baseURL, templateURL);
   parent->reloadTree( &(m_projectFiles), true, QStringList());
   adjustActions();
+  m_projectRecent->setCurrentItem(-1);
   parent->newStatus();
   kapp->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
 }
@@ -1171,7 +1173,8 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
     f.close();
     loadProjectXML();
     openCurrentView();
-    projectRecent->addURL(url);
+    m_projectRecent->addURL(url);
+    m_projectRecent->setCurrentItem(0);
     // remember the project in config
     writeConfig();
   } else
@@ -1353,7 +1356,7 @@ void ProjectPrivate::writeConfig()
   }
   // save recent projects
   config->deleteGroup("RecentProjects");
-  projectRecent->saveEntries(config, "RecentProjects");
+  m_projectRecent->saveEntries(config, "RecentProjects");
   config->sync();
 }
 

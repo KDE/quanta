@@ -103,6 +103,7 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
 ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   : BaseTreeView(parent,name), m_projectFiles(0)
 {
+  //setSelectionModeExt(KListView::Extended);
   setRootIsDecorated(false);
   addColumn(i18n("Project Files"), -1);
   addColumn(i18n("Description"), -1);

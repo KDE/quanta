@@ -69,7 +69,7 @@ upload.*/
   KURL previewPrefix;
   bool usePreviewPrefix;
   QString author;
-  KRecentFilesAction *projectRecent;
+  KRecentFilesAction *m_projectRecent;
 
   ProjectNewGeneral    *png;
   ProjectNewLocal      *pnl;

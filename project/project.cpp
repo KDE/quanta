@@ -148,7 +148,7 @@ void Project::readConfig (KConfig *config)
   d->config = config;
 
   config->setGroup  ("Projects");
-  d->projectRecent->loadEntries(config, "RecentProjects");
+  d->m_projectRecent->loadEntries(config, "RecentProjects");
 }
 
 
@@ -227,8 +227,9 @@ void Project::slotOpenProject(const KURL &url)
            i18n("<qt>The file <b>%1</b> does not exist.<br> Do you want to remove it from the list?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)) )
            == KMessageBox::Yes)
       {
-        d->projectRecent->removeURL(url);
+        d->m_projectRecent->removeURL(url);
       }
+      d->m_projectRecent->setCurrentItem(0);
     } else
     {
       d->loadProject ( url );
