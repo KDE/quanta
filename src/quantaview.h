@@ -22,6 +22,7 @@
 #include <qwidget.h>
 #include <qptrlist.h>
 #include <qvaluelist.h>
+#include <qtimer.h>
 
 //kde includes
 #include <kmdichildview.h>
@@ -167,6 +168,18 @@ public slots:
 private slots:
   void slotSavingCompleted();
   void slotSavingFailed(const QString& error);
+#ifdef BUILD_KAFKAPART
+
+  /**
+   * Called to update VPL.
+   */
+  void VPLUpdateTimerTimeout();
+
+  /**
+   * Called to update the source.
+   */
+  void sourceUpdateTimerTimeout();
+#endif
 
 signals:
   /** emitted when a file from the template view is dropped on the view */
@@ -193,6 +206,7 @@ private:
   int m_curCol, m_curLine, m_curOffset;
   DOM::Node curNode;
   bool m_kafkaReloadingEnabled, m_quantaReloadingEnabled;
+  QTimer m_sourceUpdateTimer, m_VPLUpdateTimer;
 #endif
 
   QWidget *m_documentArea;///< the area of the view which can be used to show the source/VPL
@@ -204,8 +218,6 @@ private:
   QGridLayout *m_viewLayout;
   int m_currentViewsLayout; ///< holds the current layout, which can be SourceOnly, VPLOnly or SourceAndVPL
   int m_currentFocus;
-  int m_quantaUpdateTimer;
-  int m_kafkaUpdateTimer;
   bool m_saveResult;
   bool m_eventLoopStarted;
 
@@ -214,11 +226,6 @@ protected:
   virtual void dragEnterEvent(QDragEnterEvent *e);
 
 #ifdef BUILD_KAFKAPART
-  /**
-   * The timer event, called by the kafkaUpdateTimer and quantaTimerUpdate which
-   * triggers the update of the other view.
-   */
-  virtual void timerEvent(QTimerEvent *e );
   /** Reimplemented, as we never should delete the ToolBarTabWidget singleton, which
   might be the child of this view */
   virtual void closeEvent(QCloseEvent *e);
