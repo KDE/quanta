@@ -26,24 +26,14 @@
 #include <qdom.h>
 #include <qtabwidget.h>
 #include <qobjectlist.h>
-#include <qregexp.h>
 #include <qfileinfo.h>
-#include <qfiledialog.h> 
 #include <kstandarddirs.h>
 #include <klocale.h>
-#include <kdebug.h>
-#include "csseditor_globals.h"
-//#include "resource.h"
-//#include "quanta.h"
+//#include <kdebug.h>
 
 CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSelectorS (parent,name), m_currentDocumentDTD(dtd) {
   
   m_currentItem = 0L;
-
-  lvTags->setAllColumnsShowFocus(true);
-  lvClasses->setAllColumnsShowFocus(true);
-  lvIDs->setAllColumnsShowFocus(true);
-  lvPseudo->setAllColumnsShowFocus(true);
   
   Connect();
   QString configDir = locate("appdata", "csseditor/config.xml");
@@ -106,10 +96,7 @@ CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSe
       cbDTD->setDisabled(true);
     }
   }
-  else { 
-    cbDTD->insertStringList( dtdNickNames );
-    }
-
+  else  cbDTD->insertStringList( dtdNickNames );   
 }
 
 CSSSelector::~CSSSelector(){
@@ -154,7 +141,6 @@ void CSSSelector::setDTDTags(const QString& s){
 
   QDomDocument doc;
  
-
   QFile file( configDir+"dtdTags.xml" );
   if ( !file.open( IO_ReadOnly ) )
     return;
@@ -203,55 +189,43 @@ void CSSSelector::addPseudo(){
 }
 
 void CSSSelector::openCSSEditor(QListViewItem * i){
-  CSSEditor *dlg = new CSSEditor(i);
-
-  //dlg->setSourceFileName(sourceFileName);
-
   QListView *lv = i->listView();
   QListViewItem *temp;
   QString s;
+  
+  QObjectList *l = queryList( "QListView" );
+  QObjectListIt it( *l ); // iterate over the listviews
+  QObject *obj;
 
-  if(lv != lvTags){
-    temp = lvTags->firstChild();
-    while(temp){
-      if(temp) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
-      temp = temp->nextSibling();
+  while ( (obj = it.current()) != 0 ) { 
+    QListView *lvTemp = (QListView*)obj;
+    if( lv != lvTemp){
+      temp = lvTemp->firstChild();
+      while(temp){
+        s+=(temp->text(0)+" { "+temp->text(1)+" } ");
+        temp = temp->nextSibling();
+      }
     }
-
+    ++it; 
   }
-
-  if(lv != lvIDs){
-    temp = lvIDs->firstChild();
-    while(temp){
-      if(temp) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
-      temp = temp->nextSibling();
-    }
-  }
-
-  if(lv != lvClasses){
-    temp = lvClasses->firstChild();
-    while(temp){
-      if(temp) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
-      temp = temp->nextSibling();
-    }
-  }
-
-  if(lv != lvPseudo){
-    temp = lvPseudo->firstChild();
-    while(temp){
-      if(temp) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
-      temp = temp->nextSibling();
-    }
-  }
-
+  delete l; // delete the list, not the objects  
+  
   temp = lv->firstChild();
-
 
   while(temp){
     if(temp != i) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
     temp = temp->nextSibling();
   }
 
+  temp = lv->firstChild();
+
+  while(temp){
+    if(temp != i) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
+    temp = temp->nextSibling();
+  }
+
+  CSSEditor *dlg = new CSSEditor(i);
+  //dlg->setSourceFileName(sourceFileName);
   dlg->setForInitialPreview(m_initialPreviewText);
   
   dlg->setHeader(m_header);
@@ -380,30 +354,20 @@ QString CSSSelector::generateStyleSection(){
 
   QListViewItem *temp;
   QString styleSection;
+  
+  QObjectList *l = queryList( "QListView" );
+  QObjectListIt it( *l ); // iterate over the listviews
+  QObject *obj;
 
-  temp = lvTags->firstChild();
-  while(temp){
+  while ( (obj = it.current()) != 0 ) { 
+    temp = ((QListView*)obj)->firstChild();
+    while(temp){
     styleSection+=(temp->text(0)+" { "+temp->text(1)+" } \n\t");
     temp = temp->nextSibling();
     }
-
-  temp = lvIDs->firstChild();
-  while(temp){
-    styleSection+=(temp->text(0)+" { "+temp->text(1)+" } \n\t");
-    temp = temp->nextSibling();
-    }
-
-  temp = lvClasses->firstChild();
-  while(temp){
-    styleSection+=(temp->text(0)+" { "+temp->text(1)+" } \n\t");
-    temp = temp->nextSibling();
-    }
-
-  temp = lvPseudo->firstChild();
-  while(temp){
-    styleSection+=(temp->text(0)+" { "+temp->text(1)+" } \n\t");
-    temp = temp->nextSibling();
-    }
+    ++it; 
+  }
+  delete l; // delete the list, not the objects  
 
   styleSection.truncate(styleSection.length()-1); //we elminate the last \t
 
@@ -416,80 +380,33 @@ QString CSSSelector::generateFormattedStyleSection(){
   QString styleSection,tmpStr;
   unsigned int indentWidth,
                       indentDisplacement = 10;
+                      
+  QObjectList *l = queryList( "QListView" );
+  QObjectListIt it( *l ); // iterate over the listviews
+  QObject *obj;
 
-  temp = lvTags->firstChild();
-  while(temp){
-    styleSection += ("\n"+temp->text(0));
-    styleSection += " {\n";
-    indentWidth = ( temp->text(0).length() + indentDisplacement );
-    QStringList props = QStringList::split(";",temp->text(1));
-    for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
-      QString indentStr;
-      indentStr.fill(' ',indentWidth);
-      if((*it).startsWith(" ")) tmpStr += ( indentStr + (*it).remove(0,1) + ";\n");
-      else tmpStr += (indentStr + (*it) + ";\n");
-    }
-    styleSection += ( tmpStr + "\t}\n\t");
-    tmpStr = QString::null;
-    temp = temp->nextSibling();
+  while ( (obj = it.current()) != 0 ) { 
+    temp = ((QListView*)obj)->firstChild();
+    while(temp){
+      styleSection += temp->text(0);
+      styleSection += " {\n";
+      indentWidth = ( temp->text(0).length() + indentDisplacement );
+      QStringList props = QStringList::split(";",temp->text(1));
+      for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
+        QString indentStr;
+        indentStr.fill(' ',indentWidth);
+        if((*it).startsWith(" ")) tmpStr += ( indentStr + (*it).remove(0,1) + ";\n");
+        else tmpStr += (indentStr + (*it) + ";\n");
+      }
+      styleSection += ( tmpStr + "\t}\n\n");
+      tmpStr = QString::null;
+      temp = temp->nextSibling();
+    }   
+    ++it; 
   }
+    delete l; // delete the list, not the objects                    
 
-  temp = lvIDs->firstChild();
-  while(temp){
-    styleSection += ("\n"+temp->text(0));
-    styleSection += " {\n";
-    indentWidth = ( temp->text(0).length() + indentDisplacement );
-    QStringList props = QStringList::split(";",temp->text(1));
-    for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
-      QString indentStr;
-      indentStr.fill(' ',indentWidth);
-      if((*it).startsWith(" ")) tmpStr += ("\t\t" + (*it).remove(0,1) + ";\n");
-      else tmpStr += ("\t\t" + (*it) + ";\n");
-    }
-    styleSection += ( tmpStr + "\t}\n\t");
-    tmpStr = QString::null;
-    temp = temp->nextSibling();   
-  }
-
-  temp = lvClasses->firstChild();
-  while(temp){
-    styleSection += ("\n"+temp->text(0));
-    styleSection += " {\n";
-    indentWidth = ( temp->text(0).length() + indentDisplacement );
-    QStringList props = QStringList::split(";",temp->text(1));
-    for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
-      QString indentStr;
-      indentStr.fill(' ',indentWidth);
-      if((*it).startsWith(" ")) tmpStr += ("\t\t" + (*it).remove(0,1) + ";\n");
-      else tmpStr += ("\t\t" + (*it) + ";\n");
-    }
-    styleSection += ( tmpStr + "\t}\n\t");
-    tmpStr = QString::null;
-    temp = temp->nextSibling();   
-  }
-
-  temp = lvPseudo->firstChild();
-  while(temp){
-    styleSection += ("\n"+temp->text(0));
-    styleSection += " {\n";
-    indentWidth = ( temp->text(0).length() + indentDisplacement );
-    QStringList props = QStringList::split(";",temp->text(1));
-    for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
-      QString indentStr;
-      indentStr.fill(' ',indentWidth);
-      if((*it).startsWith(" ")) tmpStr += ("\t\t" + (*it).remove(0,1) + ";\n");
-      else tmpStr += ("\t\t" + (*it) + ";\n");
-    }
-    styleSection += ( tmpStr + "\t}\n\t");
-    tmpStr = QString::null;
-    temp = temp->nextSibling();    
-  }
-
-  styleSection.truncate(styleSection.length()-1); //we elminate the last \t
-
-  return QString("\n\t")+styleSection;
+  return "\n"+styleSection;
 }
-
-
 
 #include "cssselector.moc"

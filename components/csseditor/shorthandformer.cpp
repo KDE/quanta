@@ -20,12 +20,12 @@
 #include "shorthandformer.h"
 #include <qstringlist.h>
 #include "cssshpropertyparser.h"
-#include <kdebug.h>
+//#include <kdebug.h>
 #include "csseditor_globals.h" 
 
  QRegExp globalPercentagePattern("\\d%"),
                           globalLengthPattern("\\dex|em|px|cm|pt|pc|in|mm"),
-                          globalColorPattern("#[\\w\\d]{6}"),
+                          globalColorPattern("#[\\w\\d]{6}|{3}"),
                           globalNumberPattern("\\d*");
                 
 static const QString borderStyleValueString("none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit");               
@@ -430,125 +430,54 @@ QString ShorthandFormer::compressImplementation2( QString prop, QString after, Q
 }  
 
 QString ShorthandFormer::compressImplementation( QString prop, QString t, QString b, QString r, QString l, QString defValue){
-  unsigned int boxSide = 0;
   QString props, 
                top(t.stripWhiteSpace()),
                bottom(b.stripWhiteSpace()),
                left(l.stripWhiteSpace()),
                right(r.stripWhiteSpace());   
-              
-  if( !top.isEmpty() ) boxSide += 1;  
-  if( !bottom.isEmpty() ) boxSide += 2;
-  if( !left.isEmpty() ) boxSide += 4;
-  if( !right.isEmpty() ) boxSide += 8;    
-        
-  switch(boxSide) {
-    case 1: if( top != defValue ) props   += ( prop +" : " + top + " " + defValue + " " + defValue + "; "); 
-                 break; 
-     
-    case 2: if( bottom != defValue ) props   += ( prop + " : " + defValue + " " + defValue + " " + bottom + "; "); 
-                 break; 
-     
-    case 3: if( top != bottom ) props   += ( prop +" : " + top + " " + defValue + " " + bottom + "; ");
-                 else
-                    if( top!=defValue and top == bottom  ) props   += ( prop +" : " + top + " " + defValue +"; "); 
-                 break;
-     
-    case 4: if( left != defValue ) props   += ( prop +" : " + defValue + " " + defValue + " " + defValue +" " + left + "; "); 
-                 break; 
-     
-    case 5: if( left == defValue and top != defValue) props   += ( prop +" : " + top + " " + defValue + " " + defValue+ "; ");
-                 else
-                    if( left != defValue ) props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + left + "; "); 
-                 break;
-     
-    case 6: if( left == defValue and bottom != defValue) props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + "; ");   
-                 else
-                    if( left != defValue ) props   += ( prop +" : " + defValue + " " +defValue + " " + bottom + " " + left + "; ");
-                 break;
-     
-    case 7: if( left != defValue ) props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + left + "; ");
-                 else 
-                    if( top != defValue and top == bottom ) props   += ( prop +" : " + top + " " + defValue + "; "); 
-                    else
-                       if( top != defValue or bottom != defValue ) props   += ( prop +" : " + top + " " + defValue + " " + bottom  + "; "); 
-                 break;
-     
-    case 8: if( right != defValue ) props   += ( prop +" : " + defValue + " " + right + " " + defValue + " " + defValue + "; "); 
-                 break; 
-     
-    case 9: if( right == defValue and top != defValue) props   += ( prop +" : " + top + " " + defValue + " " + defValue + "; ");
-                 else
-                    if( right != defValue ) props   += ( prop +" : " + top + " " + right + " " + defValue + " " + defValue + "; "); 
-                 break;
-     
-    case 10: if( right == defValue and bottom != defValue) props += ( prop +" : " + defValue + " " + defValue + " " + bottom +"; ");
-                   else
-                      if( right !=defValue) props += ( prop +" : " + defValue + " " + right + " " + bottom + " " + defValue + "; ");  
-                   break;
-     
-    case 11: if( right != defValue ) 
-                      props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue + "; ");
-                  else 
-                     if( top != defValue and top == bottom ) props   += ( prop +" : " + top + " " + defValue + "; "); 
-                     else
-                       if( top != defValue or bottom != defValue ) props   += ( prop +" : " + top + " " + defValue + " " + bottom  + "; "); 
-                  break;
-     
-    case 12: if( right != left ) props += ( prop +" : " + defValue +" " + right + " " + defValue + " " + left +"; "); 
-                   else
-                      if( right != defValue and left == right ) props += ( prop +" : " + defValue + " " + right + "; " ); 
-                    break;
-    
-    case 13: if( right != defValue and right == left ) props   += ( prop +" : " + top + " " +right + " " + defValue +"; ");
-                   else 
-                      if( right != defValue or  left != defValue ) props   += ( prop +" : " + top + " " + right + " " + defValue + " " + left +"; "); 
-                    break;
-     
-    case 14: if( right != defValue and right == left ) props   += ( prop +" : " + defValue + " " +right + " " + bottom +"; ");
-                   else 
-                      if( right != defValue or  left != defValue ) props   += ( prop +" : " + defValue + " " + right + " " +bottom + " " + left +"; "); 
-                    break;
-     
-    case 15: { 
-                      unsigned int defaultValueOccurence = 0;
-
-                      if( top == defValue ) defaultValueOccurence += 1;  
-                      if( bottom == defValue ) defaultValueOccurence += 2;
-                      if( left == defValue ) defaultValueOccurence += 4;
-                      if( right == defValue ) defaultValueOccurence += 8; 
+               
+  if( top.isEmpty() ) top = defValue;  
+  if( bottom.isEmpty() ) bottom  = defValue;
+  if( left.isEmpty() ) left  = defValue;
+  if( right.isEmpty() ) right  = defValue;  
   
-                      switch( defaultValueOccurence ) {
-                        case 1: if( left == right ) props   += ( prop +" : " + defValue + " "+ right + " " + bottom + "; "); 
-                                     else props   += ( prop +" : " + defValue + " " + right + " " +bottom + " " + left +"; ");  
-                                     break;
-                        case 2: if( left == right ) props   += ( prop +" : " + top + " " + right + " " + defValue + "; "); 
-                                     else props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue +"; ");  
-                                     break;
-                        case 3: if( left == right ) props   += ( prop +" : " + defValue +" " + right + "; "); 
-                                     else props   += ( prop +" : " + defValue + " " + right + " " + defValue + " " + left +"; ");
-                                     break;
-                        case 4: props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue + "; ");break;
-                        case 5: props   += ( prop +" : " + defValue + " " + right + " " + bottom + " " + defValue + "; ");break;
-                        case 6: props   += ( prop +" : " + top+ " " + right + " " + defValue + " " + defValue + "; ");break;
-                        case 7: props   += ( prop +" : " + defValue + " " + right + " " + defValue  + " " + defValue + "; ");break;
-                        case 8: props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + left +"; ");break;
-                        case 9: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + " " + left +"; ");break;
-                        case 10: props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + left +"; ");break;
-                        case 11: props   += ( prop +" : " + defValue + " " + defValue + " " + defValue + " " + left +"; ");break;
-                        case 12: if( top == bottom ) props   += ( prop +" : " + top + " " + defValue + "; "); 
-                                       else props   += ( prop +" : " + top + " " + defValue + " " + bottom +  "; ");  
-                                       break;
-                        case 13: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom +  "; ");break;
-                        case 14: props   += ( prop +" : " + top + " " + defValue + " " + defValue + "; ");break;
-                        case 15: break;
-                      default:break;
-                      }                        
-              }break;
-     
-     default:break; 
-   }
-   return props;
+  unsigned int defaultValueOccurence = 0;
+
+  if( top == defValue ) defaultValueOccurence += 1;  
+  if( bottom == defValue ) defaultValueOccurence += 2;
+  if( left == defValue ) defaultValueOccurence += 4;
+  if( right == defValue ) defaultValueOccurence += 8; 
+  
+  switch( defaultValueOccurence ) {
+    case 0: props += ( top + " "+ right + " " + bottom + " " + left ); break;
+    case 1: if( left == right ) props   += ( defValue + " "+ right + " " + bottom ); 
+                 else props   += ( defValue + " " + right + " " +bottom + " " + left );  
+                 break;
+    case 2: if( left == right ) props   += ( top + " " + right + " " + defValue ); 
+                 else props   += ( top + " " + right + " " + bottom + " " + defValue );  
+                 break;
+    case 3: if( left == right ) props   += ( defValue + " " + right ); 
+                 else props   += ( defValue + " " + right + " " + defValue + " " + left );
+                 break;
+    case 4: 
+    case 5: 
+    case 6: 
+    case 7:
+    case 8: 
+    case 9: 
+    case 10: 
+    case 11: props   += ( top + " " + right + " " + bottom + " " + left );break;
+    case 12: if( top == bottom ) props   += ( top + " " + defValue ); 
+                   else props   += ( top + " " + defValue + " " + bottom );  
+                   break;
+    case 13: 
+    case 14: props   += ( top + " " + defValue + " " + bottom);break;
+    case 15: break;
+    default:break;
+  }   
+                 
+  if(props.isEmpty()) return QString::null;
+  else return ( prop +" : " + props + "; ");
 }
 
 
@@ -717,14 +646,37 @@ QMap<QString,QString>  ShorthandFormer::expandFontProp(QStringList l){
 
 QMap<QString,QString> ShorthandFormer::expandListstyleProp( QStringList l){
   QMap<QString,QString> expandedProps;
-  QStringList::Iterator it = l.begin();
+  if(l.count() == 1 ){
+    if(l[0] == "inherit"){
+      expandedProps["list-style-image"] ="inherit";
+      expandedProps["list-style-type"] ="inherit";
+      expandedProps["list-style-position"] ="inherit";
+      return expandedProps;
+    }
+    if(l[0] == "none"){
+      expandedProps["list-style-image"] ="none";
+      expandedProps["list-style-type"] ="none";
+      return expandedProps;
+    }    
+  }
+  
+  QStringList::Iterator it = l.begin(); 
     while (  it != l.end() ) { 
       QString temp((*it).stripWhiteSpace());
-      if( (*it).contains("url(") or temp == "none" or temp == "inherit" ) expandedProps["list-style-image"] = (*it);
+      if( borderStyleValueList.contains(temp)!=0) {
+        expandedProps["list-style-type"] = (*it) ; 
+        l.remove((*it));
+      }
       else
-      if( borderStyleValueList.contains(temp)!=0) expandedProps["list-style-type"] = (*it) ;           
-      else
-      if( temp == "inside" or temp == "outside" or temp == "inherit") expandedProps["list-style-position"] = (*it);     
+        if( temp == "inside" or temp == "outside" or temp == "inherit") {
+          expandedProps["list-style-position"] = (*it); 
+          l.remove((*it));
+        }    
+        else
+          if( (*it).contains("url(") or temp == "none" or temp == "inherit" ) {
+            expandedProps["list-style-image"] = (*it);
+            l.remove((*it));
+          }
       ++it;  
     }  
   return expandedProps;

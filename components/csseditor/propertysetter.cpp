@@ -20,32 +20,20 @@
 #include <qlineedit.h>
 #include <qcombobox.h>
 #include <qspinbox.h>
-//#include <qiconset.h>
-//#include <qpixmap.h>
-#include <qptrlist.h>
-#include <qfiledialog.h>
 #include <qlabel.h>
-#include <qfontdatabase.h> 
 #include <qtooltip.h>
 #include <qregexp.h>
 
 #include <kpushbutton.h>
-#include <kstandarddirs.h>
-#include <kdebug.h>
-#include <kurl.h>
+//#include <kdebug.h>
 #include <kdialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
 
-#include "qextfileinfo.h"
-#include "resource.h"
-#include "quanta.h"
-#include "fontfamilychooser.h"
 #include "colorrequester.h"
 #include "specialsb.h"
 #include "csseditor_globals.h"
-
-
+#include "tlpeditors.h"
 
 propertySetter::propertySetter(QWidget *parent, const char *name ) : QHBox(parent,name) {
   m_ind = 0;
@@ -74,12 +62,11 @@ propertySetter::~propertySetter(){
 }
 
 void propertySetter::reset(){
-  if(!m_list.isEmpty())
-    m_list.clear();
+  if(!m_list.isEmpty()) m_list.clear();
   if(m_pb) {
     delete m_pb;
     m_pb=0L;
-   }
+  }
   m_ind=0;
 }
 
@@ -115,12 +102,10 @@ void propertySetter::setLineEdit()
 
 void propertySetter::setLengthEditor(QString s){
   m_lE = new lengthEditor(this);
-  QRegExp pattern("\\d"+m_lE->cbValueList().join("|"));
-  
-  if(s.contains(pattern)) {
+  QRegExp pattern("\\d("+m_lE->cbValueList().join("|")+")");
+  if(s.contains(pattern) > 0  ) {
     QString temp1(s.stripWhiteSpace()),
-                 temp2(s.stripWhiteSpace());
-  
+                 temp2(s.stripWhiteSpace());  
     m_lE->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
   }
   connect(m_lE, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
@@ -140,7 +125,7 @@ void propertySetter::setDoubleLengthEditor(QString s){
 
 void propertySetter::setFrequencyEditor(QString s){
   m_fe = new frequencyEditor(this);
-  QRegExp pattern("\\d"+m_fe->cbValueList().join("|"));
+  QRegExp pattern("\\d("+m_fe->cbValueList().join("|")+")");
   
   if(s.contains(pattern)) {
     QString temp1(s.stripWhiteSpace()),
@@ -154,7 +139,7 @@ void propertySetter::setFrequencyEditor(QString s){
 
 void propertySetter::setTimeEditor(QString s){
   m_te = new timeEditor(this);
-  QRegExp pattern("\\d"+m_te->cbValueList().join("|"));
+  QRegExp pattern("\\d("+m_te->cbValueList().join("|")+")");
   
   if(s.contains(pattern)) {
     QString temp1(s.stripWhiteSpace()),
@@ -168,7 +153,7 @@ void propertySetter::setTimeEditor(QString s){
 
 void propertySetter::setAngleEditor(QString s){
   m_ae = new angleEditor(this);
-  QRegExp pattern("\\d"+m_ae->cbValueList().join("|"));
+  QRegExp pattern("\\d("+m_ae->cbValueList().join("|")+")");
   
   if(s.contains(pattern)) {
     QString temp1(s.stripWhiteSpace()),
@@ -255,92 +240,7 @@ void propertySetter::addButton(){
   m_pb->hide();
   connect(m_pb, SIGNAL(clicked()), this ,SLOT(Show()));
 }
-
-
-     
-TLPEditor::TLPEditor(QWidget *parent, const char* name) : QHBox(parent,name){
-  m_label = new QLabel(this);
-  m_le = new QLineEdit(this);
-  m_pb = new KPushButton(this);
-  setSpacing( KDialog::spacingHint() );
-}
-
-TLPEditor::~TLPEditor(){
-  delete m_label;
-  delete m_le;
-  delete m_pb;
-}
-
-void TLPEditor::setButtonIcon(QString s){
-  QIconSet iconSet =  SmallIconSet(QString::fromLatin1(s));
-  QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
-  m_pb->setIconSet(iconSet);
-  m_pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
-}
-
-void TLPEditor::setLabelText(QString s){
-  m_label->setText(s);
-}
-
-void TLPEditor::setToolTip(QString s){
-  QToolTip::add(m_pb, i18n( s ));
-}
-
-URIEditor::URIEditor(QWidget *parent, const char* name) : TLPEditor(parent,name)
-{
-  m_Mode = single;
-  setLabelText(" Uri  :");
-  setButtonIcon("fileopen");
-  setToolTip("Open the URI selector");
-
-  if( m_Mode == single )
-    connect(m_le, SIGNAL(textChanged ( const QString & )), this, SLOT(URI(const QString&)));
-  connect(m_pb, SIGNAL(clicked()), this, SLOT(openFileDialog()));  
-}
-
-void URIEditor::URI(const QString & s)
- {
-   KURL u;
-   u.setPath(s);
-   emit valueChanged("url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
- }
-
-void URIEditor::openFileDialog(){
-  QFileDialog* fd = new QFileDialog( this, "file dialog", TRUE );
-  switch(m_resourceType) {
-    case image :   fd->setFilter( i18n("Image")+" (*.png *.gif *.jpg *.mng)" );break;
-    case audio :  fd->setFilter( i18n("Audio")+" (*.au *.aiff *.wav)" );break;
-    case mousePointer :   fd->setFilter( i18n("Mouse Pointer")+" (*.cur)" );break;
-    default:;
-  }
-
-  bool multi=false;
-  
-  if( m_Mode == single){
-    fd->setMode(QFileDialog::ExistingFile);
-  }
-  else {
-    fd->setMode(QFileDialog::ExistingFiles);
-    multi=true;
-  }
-  
-  if( fd->exec() == QDialog::Accepted ){
-    if( !multi)
-      URI( fd->selectedFile() );
-    else {
-      QStringList selectedFiles = fd->selectedFiles();
-      KURL u;
-      for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it )
-      {      
-        u.setPath(*it);   
-        m_sFiles.append( "url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
-      }
-      emit valueChanged(m_sFiles.join(","));
-    }
-  }
-  delete fd;
-}
-
+    
 percentageEditor::percentageEditor(const QString& initialValue, QWidget *parent, const char *name) : QHBox(parent,name)
 {
   QString temp(initialValue);
@@ -355,23 +255,5 @@ percentageEditor::~percentageEditor()
   delete m_sb;
 }
 
-fontEditor::fontEditor(QWidget *parent, const char* name) : TLPEditor(parent,name)
-{
-  setLabelText(" Font  :");
-  setButtonIcon("fonts");
-  setToolTip("Open font family chooser");
-  
-  connect(m_pb, SIGNAL(clicked()), this, SLOT(openFontChooser()));
-  connect(m_le, SIGNAL(textChanged ( const QString & )), this, SIGNAL( valueChanged( const QString& ) ) );
-}
-
-void fontEditor::openFontChooser(){
-  fontFamilyChooser *dlg = new fontFamilyChooser( this );
-  
-  if( dlg->exec() == QDialog::Accepted ){
-    emit valueChanged( dlg->fontList().join(", "));
-  }
-  delete dlg;
-}
 
 #include "propertysetter.moc"

@@ -26,6 +26,7 @@
 #include <qregexp.h>
 #include <qtextstream.h>
 #include <qmap.h>
+#include <qfileinfo.h>
 
 #include <klocale.h>
 #include <khtml_part.h>
@@ -40,6 +41,7 @@
 #include "shorthandformer.h"
 #include "resource.h"
 #include "quanta.h"
+#include "tlpeditors.h"
 
    
 myCheckListItem::myCheckListItem(QListView * parent, const QString & text):QCheckListItem(parent, text, QCheckListItem::CheckBox),m_checkedChildren(0){
