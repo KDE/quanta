@@ -70,6 +70,7 @@ ActionEditDlg::ActionEditDlg( QuantaApp *a, QWidget* parent, const char* name, b
       if ( action->inherits("TagAction")) 
           actionsList->insertItem( new ActionListItem(action) );
    }
+   actionsList->sort();
 
 }
 
