@@ -99,6 +99,8 @@
 #include <kinputdialog.h>
 #endif
 
+#include <time.h>
+
 // application specific includes
 #include "document.h"
 #include "quanta.h"
