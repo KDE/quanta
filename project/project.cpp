@@ -70,8 +70,8 @@
 
 #if KDE_IS_VERSION(3, 1, 90)
 #include <kinputdialog.h>
-#endif
 #include <kactioncollection.h>
+#endif
 #include <kiconloader.h>
 
 // application headers

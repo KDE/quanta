@@ -444,6 +444,7 @@ void QuantaView::slotSourceGetFocus()
 #endif
   KAction *action;
 
+  quantaApp->partManager()->setActivePart(m_document->doc(), m_document->view());
   //We reload the quanta view from the Node Tree.
   if (m_currentViewsLayout == SourceAndVPL && m_currentFocus == VPLFocus)
   {
@@ -560,6 +561,16 @@ void QuantaView::closeEvent(QCloseEvent *e)
      m_customWidget->reparent(0L, 0, QPoint(), false);
   m_document = 0L;
   emit documentClosed();
+  kdDebug(24000) << "Close event" << endl;
+  QuantaView *currentWindow = dynamic_cast<QuantaView*>(quantaApp->activeWindow());
+  quantaApp->closeWindow(this); //important when the tab is closed with the close button
+  if (currentWindow == this)
+      currentWindow = dynamic_cast<QuantaView*>(quantaApp->activeWindow());
+  if (currentWindow)
+  {
+    currentWindow->activate();
+    currentWindow->activated();
+  }
   e->accept();
 }
 

@@ -71,22 +71,25 @@ public:
   QuantaView *lastActiveEditorView() {return m_lastActiveEditorView;}
 
 public slots:
-  void slotViewDeactivated(KMdiChildView *view);
   void slotViewActivated(KMdiChildView *view);
 
   /** closes all the other but active tabs */
   void slotCloseOtherTabs();
   /** closes all views. If createNew is true, it creates a new view after closing the others. */
   void closeAll(bool createNew = true);
+  /** called when the last view is closed */
+  void slotLastViewClosed();
 
 signals:
   /** emitted when a file from the template view is dropped on a view */
   void dragInsert(QDropEvent *);
 
-
 private:
- /** Private constructor for the singleton object. */
+  /** Private constructor for the singleton object. */
   ViewManager(QObject * parent = 0, const char * name = 0);
+  /** Returns true if there isn't any opened view holding an editor */
+  bool allEditorsClosed();
+
   QuantaView *m_lastActiveView; ///< Holds the last active view. Used to deactivate it when a new view is selected
   QuantaView *m_lastActiveEditorView; ///< Contains the last active view which has an editor inside
   QuantaView *m_documentationView; ///< Contains the view which holds the documentation browser

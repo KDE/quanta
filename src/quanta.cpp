@@ -232,6 +232,7 @@ QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta"
           this, SLOT(slotActivePartChanged(KParts::Part * )));
 
   m_oldKTextEditor = 0L;
+  m_previewToolView = 0L;
 }
 
 QuantaApp::~QuantaApp()
@@ -265,11 +266,6 @@ QuantaApp::~QuantaApp()
  delete m_partManager;
  quantaApp = 0L;
 }
-
-
-/////////////////////////////////////////////////////////////////////
-// SLOT IMPLEMENTATION
-/////////////////////////////////////////////////////////////////////
 
 void QuantaApp::setTitle(const QString& title)
 {
@@ -1245,9 +1241,10 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     {
       m_htmlPart->view()->setIcon(UserIcon("preview"));
       m_htmlPart->view()->setCaption(i18n("Preview"));
-      KMdiToolViewAccessor* p = addToolWindow(m_htmlPart->view(), KDockWidget::DockBottom, getMainDockWidget());
+      if (!m_previewToolView)
+        m_previewToolView = addToolWindow(m_htmlPart->view(), KDockWidget::DockBottom, getMainDockWidget());
       m_htmlPart->view()->show();
-      p->show();
+      m_previewToolView->show();
     }
     m_previewVisible = true;
   } else
@@ -1259,13 +1256,13 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     m_noFramesPreview = false;
     if (qConfig.previewPosition == "Editor")
     {
-      view->addCustomWidget(0L, QString::null);
+        view->addCustomWidget(0L, QString::null);
     } else
     {
-      deleteToolWindow(m_htmlPart->view());
+        delete m_previewToolView;
+        m_previewToolView = 0L;
     }
-    if (view)
-      view->document()->setFocus();
+    view->document()->setFocus();
   }
 
 #ifdef BUILD_KAFKAPART
@@ -3626,6 +3623,7 @@ bool QuantaApp::queryClose()
 
       Project::ref()->slotCloseProject();
       ViewManager::ref()->closeAll(false);
+      disconnect(this, SIGNAL(lastChildViewClosed()), ViewManager::ref(), SLOT(slotLastViewClosed()));
     }
   }
 

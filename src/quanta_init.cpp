@@ -337,6 +337,7 @@ void QuantaInit::initView()
 {
   ViewManager *m_viewManager = ViewManager::ref(m_quanta);
   connect(m_quanta, SIGNAL(viewActivated (KMdiChildView *)), m_viewManager, SLOT(slotViewActivated(KMdiChildView*)));
+  connect(m_quanta, SIGNAL(lastChildViewClosed()), m_viewManager, SLOT(slotLastViewClosed()));
 //   connect(m_quanta, SIGNAL(viewDeactivated(KMdiChildView *)), m_viewManager, SLOT(slotViewDeactivated(KMdiChildView*)));
    KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
    m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
@@ -387,6 +388,8 @@ void QuantaInit::initView()
   m_quanta->m_htmlPart = new WHTMLPart(m_quanta, "rightHTML");
   m_quanta->m_htmlPart->view()->resize(0, 0);
   m_quanta->slotNewPart(m_quanta->m_htmlPart, false);
+
+
   m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta, "docHTML");
   m_quanta->m_htmlPartDoc->view()->resize(0, 0);
   m_quanta->slotNewPart(m_quanta->m_htmlPartDoc, false);

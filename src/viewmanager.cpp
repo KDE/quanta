@@ -125,9 +125,10 @@ bool ViewManager::removeView(QuantaView *view, bool force)
             m_lastActiveEditorView = 0L;
         ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
         quantaApp->closeWindow(view);
-        if (!quantaApp->activeWindow())
+        if (allEditorsClosed())
         {
             createNewDocument();
+            quantaApp->slotNewStatus();
         }
         return true;
        }
@@ -144,15 +145,6 @@ Document *ViewManager::activeDocument()
 QuantaView* ViewManager::activeView()
 {
     return dynamic_cast<QuantaView *>(quantaApp->activeWindow());
-}
-
-void ViewManager::slotViewDeactivated(KMdiChildView * /*view*/)
-{
-//This seems to be not called when a view is deactivated...
-/*
-   QuantaView *qView = dynamic_cast<QuantaView*>(view);
-   if (qView)
-     qView->deactivated(); */
 }
 
 void ViewManager::slotViewActivated(KMdiChildView *view)
@@ -277,6 +269,8 @@ bool ViewManager::saveAll(bool dont_ask)
 void ViewManager::closeAll(bool createNew)
 {
   disconnect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
+  disconnect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
+
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   QuantaView *view;
   ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
@@ -312,6 +306,7 @@ void ViewManager::closeAll(bool createNew)
               } else
               {
                connect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
+               connect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
                view->activated();
                 return;
                }
@@ -322,8 +317,12 @@ void ViewManager::closeAll(bool createNew)
       }
   }
   connect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
+  connect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
   if (createNew)
+  {
       createNewDocument();
+      quantaApp->slotNewStatus();
+   }
 }
 
 bool ViewManager::isOneModified()
@@ -358,5 +357,27 @@ QuantaView* ViewManager::documentationView(bool create)
     return m_documentationView;
 }
 
+void ViewManager::slotLastViewClosed()
+{
+    createNewDocument();
+    quantaApp->slotNewStatus();
+}
+
+bool ViewManager::allEditorsClosed()
+{
+  KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
+  QuantaView *view;
+  for (it->first(); !it->isDone(); it->next())
+  {
+      view = dynamic_cast<QuantaView*>(it->currentItem());
+      if (view && view->document())
+      {
+         delete it;
+         return false;
+      }
+  }
+  delete it;
+  return true;
+}
 
 #include "viewmanager.moc"
