@@ -84,9 +84,11 @@ void FileCombo::setText( QString _txt )
 
 void FileCombo::slotFileSelect()
 {
-//TODO: This still works only for local files, but it may be enough
-  KURL url = KFileDialog::getOpenURL(baseURL.url(), i18n("*|All files"));
-
+  KFileDialog *dlg = new KFileDialog(baseURL.url(), i18n("*|All files"), this, "", true);
+  dlg->setMode(KFile::File | KFile::Directory | KFile::ExistingOnly);
+  dlg->exec();
+  KURL url = dlg->selectedURL();
+  delete dlg;
   if ( !url.isEmpty() )
   {
     if (!m_absolutePath) url = QExtFileInfo::toRelative(url, baseURL);
