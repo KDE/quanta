@@ -268,6 +268,7 @@ void QuantaApp::initQuanta()
   }
 
   slotFileNew();
+  slotNewStatus();
   initToolBars();
   KTipDialog::showTip(this);
 
