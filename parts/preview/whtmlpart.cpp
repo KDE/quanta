@@ -17,6 +17,7 @@
 //kde includes
 #include <khtmlview.h>
 #include <kconfig.h>
+#include <kdebug.h>
 #include <khtml_settings.h>
 
 //app includes
@@ -27,6 +28,7 @@ WHTMLPart::WHTMLPart(QWidget *parentWidget, const char *widgetName,
             QObject *parent, const char *name, GUIProfile prof)
   : KHTMLPart(parentWidget, widgetName, parent, name, prof)
 {
+  //kdDebug(24000) << "WHTMLPart: " << parentWidget << " " << widgetName << " " << parent << " " << name << this << endl;
    hpos = 0;
    // get settings from konq.
    KConfig konqConfig("konquerorrc");
@@ -66,13 +68,14 @@ bool WHTMLPart::openURL(const KURL& url)
     return KHTMLPart::openURL(url);
 }
 
-void  WHTMLPart::urlSelected ( const QString &url, int button, int state, const QString &_target, KParts::URLArgs args)
+void  WHTMLPart::urlSelected ( const QString &url, int button, int state, const QString &target, KParts::URLArgs args)
 {
-  KHTMLPart::urlSelected (url, button, state,_target, args);
+  KHTMLPart::urlSelected (url, button, state, target, args);
   KURL cURL = completeURL( url );
 //  alternative not tested but used in kdevelop !
 //  KURL cURL=KURL(baseURL(),url);
-  openURL( cURL ) ;
+  if (target.isEmpty() || (target == "_self") || (target == "_top") || (target == "_blank") || (target == "_parent") )
+    openURL( cURL ) ;
   addToHistory( cURL.url() );
 }
 
@@ -133,6 +136,7 @@ KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget * parentWidget, const char 
                                             const QString &, QString &,
                                             QStringList &, const QStringList &)
 {
+  //kdDebug(24000) << "Create WHTMLPart: " << parentWidget << " " << widgetName << " " << parent << " " << name << endl;
   return new WHTMLPart(parentWidget, widgetName, parent, name);
 }
 
