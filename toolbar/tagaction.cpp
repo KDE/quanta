@@ -22,6 +22,7 @@
 //kde includes
 #include <kprocess.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/editinterface.h>
@@ -161,24 +162,28 @@ void TagAction::insertTag()
     connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
                  SLOT(  slotGetScriptError(KProcess*,char*,int)));
 
-    proc->start(KProcess::NotifyOnExit, KProcess::All);
+    if (proc->start(KProcess::NotifyOnExit, KProcess::All))
+    {
+      QString buffer;
 
-    QString buffer;
+      QString inputType = script.attribute("input","none");
+      scriptOutputDest = script.attribute("output","none");
+      scriptErrorDest  = script.attribute("error","none");
 
-    QString inputType = script.attribute("input","none");
-    scriptOutputDest = script.attribute("output","none");
-    scriptErrorDest  = script.attribute("error","none");
+      if ( inputType == "current" ) {
+        buffer = w->editIf->text();
+        proc->writeStdin( buffer.local8Bit(), buffer.length() );
+      }
 
-    if ( inputType == "current" ) {
-      buffer = w->editIf->text();
-      proc->writeStdin( buffer.local8Bit(), buffer.length() );
+      if ( inputType == "selected" ) {
+        buffer = w->selectionIf->selection();
+        proc->writeStdin( buffer.local8Bit(), buffer.length() );
+      }
+      proc->closeStdin();
+    } else
+    {
+      KMessageBox::error(quantaApp, i18n("There was an error running \"%1\".\nCheck that you have the executable installed and in the PATH!").arg(command + " " + args), i18n("Script not found"));
     }
-
-    if ( inputType == "selected" ) {
-      buffer = w->selectionIf->selection();
-      proc->writeStdin( buffer.local8Bit(), buffer.length() );
-    }
-    proc->closeStdin();
   }
 
 }

@@ -543,12 +543,12 @@
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Selected text</string>
+                                                            <string>Current document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Current document</string>
+                                                            <string>Selected text</string>
                                                         </property>
                                                     </item>
                                                     <property name="name">
@@ -928,6 +928,12 @@
         <receiver>shortcutKeyButton</receiver>
         <slot>animateClick()</slot>
     </connection>
+    <connection>
+        <sender>actionIcon</sender>
+        <signal>clicked()</signal>
+        <receiver>ActionConfigDialogS</receiver>
+        <slot>slotTextChanged()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>actionTreeView</tabstop>
@@ -965,11 +971,11 @@
     <slot>slotRemoveContainerToolbar()</slot>
     <slot>slotApply()</slot>
     <slot>lineText_selectionChanged()</slot>
-    <slot>slotTextChanged()</slot>
     <slot>typeCombo_activated(const QString&amp;)</slot>
     <slot>slotTextChanged(const QString&amp;)</slot>
     <slot>shortcutKeyButton_toggled(bool)</slot>
     <slot>slotToggled(bool)</slot>
+    <slot>slotTextChanged()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

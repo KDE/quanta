@@ -31,6 +31,7 @@ public:
 
 public slots:
   virtual void accept();
+  virtual void reject();
   void slotToggled(bool);
   void slotTextChanged();
   void slotTextChanged(const QString&);

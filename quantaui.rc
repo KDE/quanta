@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32002">
+<kpartgui name="quanta" version="32003">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -197,6 +197,7 @@
     <Action name="edit_find_next"/>
     <Separator/>
     <Action name="tools_spelling"/>
+    <Action name="tidy_check" />
   </ToolBar>
 
   <ToolBar name="mainNaviToolBar" noMerge="1">
@@ -227,6 +228,7 @@
     <Separator/>
     <Action name="tools_spelling"/>
     <Action name="syntax_check"/>
+    <Action name="tidy_check"/>
     <Action name="context_help"/>
     <Separator/>
     <Action name="set_eol"/>
