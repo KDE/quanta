@@ -433,8 +433,7 @@ void SAParser::slotParseOneLine()
             else
             {
               s_currentNode = ParserCommon::createTextNode(m_write, s_currentNode, s_line, areaEndPos, s_parentNode);
-  //            if (!s_fullParse)
-  //              parseForScriptGroup(s_currentNode);
+              parseForScriptGroup(s_currentNode);
             }
             s_currentNode->insideSpecial = true;
           }
@@ -748,10 +747,15 @@ Node *SAParser::parsingDone()
     }
     return m_lastParsedNode;
   }
-  if (!s_currentNode || (s_parentNode && !s_parentNode->child))
+  if (!s_currentNode)
   {
     s_currentNode = ParserCommon::createTextNode(m_write, s_parentNode, s_endLine, s_endCol, s_parentNode);
     s_currentNode->insideSpecial = true;
+  } 
+  else if (s_parentNode && !s_parentNode->next)
+  {
+    s_currentNode = ParserCommon::createTextNode(m_write, s_currentNode, s_endLine, s_endCol, s_parentNode);
+    s_currentNode->insideSpecial = true;  
   }
   if (s_fullParse)
   {
