@@ -174,6 +174,8 @@ public slots:
   void slotTextChanged();
   /** No descriptions */
   void slotDelayedTextChanged();
+  void slotDelayedScriptAutoCompletion();
+  void slotDelayedShowCodeCompletion();
 
 private:
 
@@ -194,8 +196,6 @@ private:
   /*The DTD valid in the place where the completion was invoked.*/
   DTDStruct *completionDTD;
 
-  /** Brings up list of code completions */
-  void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
   /** Get list of possibile variable name completions */
   QValueList<KTextEditor::CompletionEntry>* getVariableCompletions(int line, int col);
   /** Get list of possibile tag name completions */
@@ -206,16 +206,20 @@ private:
   QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions(const QString& tagName, const QString& attribute, const QString& startsWith=QString::null);
   /** Get list of possibile completions in normal text input (nt creating a tag) */
   QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
-  /** Called whenever a user inputs text in an XML type document. */
-  bool xmlAutoCompletion(int , int , const QString & );
-  /** Called whenever a user inputs text in a script type document. */
-  bool scriptAutoCompletion(int , int , const QString & );
   /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
   bool xmlCodeCompletion(int line, int col);
   /** Code completion is manually invoked for script type languages. */
   bool scriptCodeCompletion(int line, int col);
   /** Returns list of values for attribute */
   QStringList* tagAttributeValues(const QString& dtdName, const QString& tag, const QString& attribute);
+  /** Brings up list of code completions */
+  void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
+  /** Called whenever a user inputs text in an XML type document. */
+  bool xmlAutoCompletion(int , int , const QString & );
+  /** Called whenever a user inputs text in a script type document. */
+  bool scriptAutoCompletion(int line, int col, const QString &completeAfter );
+
+
 protected: // Protected attributes
   /**  */
   bool completionInProgress;
@@ -225,6 +229,12 @@ protected: // Protected attributes
   Project *m_project;
   /** Parse the document according to this DTD. */
   QString m_parsingDTD;
+  //stores the data after an autocompletion. Used when bringing up the
+  //autocompletion box delayed with the singleshot timer (workaround for
+  //a bug: the box is not showing up if it is called from slotCompletionDone)
+  int m_lastLine, m_lastCol;
+  QString m_lastCompletionAfter;
+  QValueList<KTextEditor::CompletionEntry>* m_lastCompletionList;
 protected: // Protected methods
   /** Returns true if the number of " (excluding \") inside text is even. */
   bool evenQuotes(const QString &text);

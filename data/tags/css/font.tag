@@ -1,7 +1,7 @@
 <!DOCTYPE tags>
 <tags>
   <tag name="font-family" type="property">
-     <attr name="[[<family-name> | <generic-family>],]* [<family-name> | <generic-family>]" type="list">
+     <attr name="[[family-name | generic-family],]* [family-name | generic-family]" type="list">
        <items>
          <item>serif</item>
          <item>sans-serif</item>
@@ -52,7 +52,7 @@
   </tag>
 
   <tag name="font-size" type="property">
-     <attr name="<absolute-size> | <relative-size> | <length> | <percentage>" type="list">
+     <attr name="absolute-size | relative-size | length | percentage" type="list">
        <items>
          <item>xx-small</item>
          <item>x-small</item>

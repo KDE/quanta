@@ -488,7 +488,8 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
       QTag *tag = QuantaCommon::tagFromDTD(dtd,completion.userdata);
       if (tag)
       {
-        showCodeCompletions( getAttributeValueCompletions(tag->name(), completion.text) );
+        m_lastCompletionList = getAttributeValueCompletions(tag->name(), completion.text);
+        QTimer::singleShot(0, this, SLOT(slotDelayedShowCodeCompletion()));
       }
     }
   }
@@ -503,8 +504,24 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
   if (completion.type == "script")
   {
     viewCursorIf->setCursorPositionReal(line,col);
-    if (dtd) scriptAutoCompletion(line, col-1, completionDTD->attrAutoCompleteAfter);
+    if (dtd)
+    {
+      m_lastLine = line;
+      m_lastCol = col - 1;
+      m_lastCompletionAfter = completionDTD->attrAutoCompleteAfter;
+      QTimer::singleShot(0, this, SLOT(slotDelayedScriptAutoCompletion()));
+    }
   }
+}
+
+void Document::slotDelayedScriptAutoCompletion()
+{
+  scriptAutoCompletion(m_lastLine, m_lastCol, m_lastCompletionAfter);
+}
+
+void Document::slotDelayedShowCodeCompletion()
+{
+  showCodeCompletions(m_lastCompletionList);
 }
 
 /** This is called when the user selects a completion. We
@@ -974,8 +991,8 @@ QString Document::findDTDName(Tag **tag)
 bool Document::scriptAutoCompletion(int line, int column, const QString& string)
 {
  bool handled = false;
- QString s = editIf->textLine(line).left(column);
- int i = column - 1;
+ QString s = editIf->textLine(line).left(column + 1);
+ int i = column;
  while (i > 0 && s[i].isSpace())
    i--;
  s = s.left(i + 1);

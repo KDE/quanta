@@ -196,7 +196,7 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QPushButton" row="1" column="2">
+                    <widget class="KPushButton" row="1" column="2">
                         <property name="name">
                             <cstring>buttonOk</cstring>
                         </property>

@@ -399,15 +399,17 @@ void ProjectUpload::slotUploadNext()
       QDomElement el = nl.item(i).toElement();
       if ( el.nodeName() == "item"  &&  el.attribute("url") == QuantaCommon::qUrl(currentURL) )
       {
-        //QDateTime stime;
-        //stime.setTime_t(1);
-        //el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
-        time_t stime;
-        time(&stime);
-        el.setAttribute( "upload_time", (int)stime);
+        QDateTime stime;
+        stime.setTime_t(1);
+        el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
+        kdDebug(24000) << "Upload time for " << el.attribute("url") << " is: " << el.attribute("upload_time") << "\n";
+//        time_t stime;
+//        time(&stime);
+//        el.setAttribute( "upload_time", (int)stime);
         break;
       }
     }
+
     upload();
   }
 }
@@ -436,8 +438,8 @@ void ProjectUpload::reject()
     if (KMessageBox::questionYesNo(this,i18n("Do you really want to cancel the upload?"),
                                    i18n("Cancel upload")) == KMessageBox::No)
     {
-        suspendUpload = false;
-        emit uploadNext();
+      suspendUpload = false;
+      emit uploadNext();
       return;
     }
   }

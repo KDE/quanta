@@ -908,32 +908,29 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
 /** Reads the tags for the tag files. Returns the number of read tags. */
 uint QuantaApp::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList)
 {
- int numOfTags = 0;
 
  QFile f( fileName );
  f.open( IO_ReadOnly );
  QDomDocument *m_doc = new QDomDocument();
  m_doc->setContent( &f );
  f.close();
-
- for ( QDomNode n = m_doc->firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
+ QDomNodeList nodeList = m_doc->elementsByTagName("tag");
+ uint numOfTags = nodeList.count();
+ for (uint i = 0; i < numOfTags; i++)
  {
-   if (n.nodeName() == "tag") //read a tag
-   {
-     QTag *tag = new QTag();
-     tag->setName(n.toElement().attribute("name"));
-     tag->setFileName(fileName);
-     tag->parentDTD = parentDTD;
-     setAttributes(&n, tag);
-     if (parentDTD->caseSensitive)
-     {
-       tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
-     } else
-     {
-       tagList->insert(tag->name().upper(),tag);
-     }
-     numOfTags++;
-   }
+    QDomNode n = nodeList.item(i);
+    QTag *tag = new QTag();
+    tag->setName(n.toElement().attribute("name"));
+    tag->setFileName(fileName);
+    tag->parentDTD = parentDTD;
+    setAttributes(&n, tag);
+    if (parentDTD->caseSensitive)
+    {
+      tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
+    } else
+    {
+      tagList->insert(tag->name().upper(),tag);
+    }
  }
 
  delete m_doc;
