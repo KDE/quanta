@@ -40,6 +40,7 @@ Node::Node( Node *parent )
   #ifdef BUILD_KAFKAPART
   _closingNode = 0L;
   #endif
+  groupElementLists.clear();
 }
 
 

@@ -167,7 +167,7 @@ void TableEditor::slotEditTableBody()
 }
 
 
-void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
+bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
 {
   m_createNodes = false; //don't create the cell and row content when adding a new cell/row
   Node *node = parser->nodeAt(bLine, bCol + 1);
@@ -177,13 +177,17 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
   if (lastNode)
     kdDebug(24000) << "lastnode = " << lastNode->tag->name << endl;
   if (!node || !lastNode)
-    return;
+    return false;
   m_write = node->tag->write();
   m_dtd = node->tag->dtd;
+  if ((m_dtd->caseSensitive && "/" + node->tag->name != lastNode->tag->name) ||
+       (!m_dtd->caseSensitive && "/" + node->tag->name.lower() != lastNode->tag->name.lower()) ) {
+    return false;
+  }
   int nCol, nRow, maxCol;
   nCol = nRow = maxCol = 0;
   bool countRows = false;
-  int tableArea = -1; //0 = thead, 1 = tbody, 2 = tfoot; -1 = invalid
+  bool missingBody = false;
   QSpinBox *rowSpin = 0L;
   QSpinBox *colSpin = 0L;
   m_dataTable = 0L;
@@ -217,7 +221,6 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       m_dataTable= headerTableData;
       m_tableTags = m_tableHeaderTags;
       m_tableRows = m_tableHeaderRows;
-      tableArea = 0;
       if (m_thead) { //there was already a <thead> tag in the area
         nRow = m_dataTable->numRows();
       } else {
@@ -234,7 +237,6 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       rowSpin = 0L;
       colSpin = 0L;
       m_dataTable = 0L;
-      tableArea = -1;
     }
     else if (tagName == "tfoot")
     {
@@ -245,7 +247,6 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       m_tableRows = m_tableFooterRows;
       m_dataTable = footerTableData;
       countRows = true;
-      tableArea = 2;
       if (m_tfoot) { //there was already a <tfoot> tag in the area
         nRow = m_dataTable->numRows();
       } else {
@@ -262,7 +263,6 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       rowSpin = 0L;
       colSpin = 0L;
       m_dataTable = 0L;
-      tableArea = -1;
     }
     else if (tagName == "tbody")
     {
@@ -272,7 +272,6 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       m_tableRows = m_tableDataRows;
       m_dataTable = tableData;
       countRows = true;
-      tableArea = 1;
       m_tbody = new Tag(*(n->tag));
       newNum++;
     }
@@ -287,22 +286,31 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       rowSpin = 0L;
       colSpin = 0L;
       m_dataTable = 0L;
-      tableArea = -1;
     }
     else if (tagName == "tr")
     {
-      if (countRows)
+      if (!countRows)
       {
-        tableRowTags.clear();
-        nRow++;
-        rowSpin->setValue(nRow);
-        nCol = 0;
-        tableNode.node = new Node(0L);
-        tableNode.node->tag = new Tag(*(n->tag));
+        missingBody = true;
+        rowSpin = rowSpinBox;
+        colSpin = colSpinBox;
+        m_tableTags = m_tableDataTags;
+        m_tableRows = m_tableDataRows;
+        m_dataTable = tableData;
+        countRows = true;
+        m_tbody = new Tag();
         newNum++;
-        tableNode.merged = false;
-        m_tableRows->append(tableNode);
+        m_tbody->parse("<tbody>", m_write);
       }
+      tableRowTags.clear();
+      nRow++;
+      rowSpin->setValue(nRow);
+      nCol = 0;
+      tableNode.node = new Node(0L);
+      tableNode.node->tag = new Tag(*(n->tag));
+      newNum++;
+      tableNode.merged = false;
+      m_tableRows->append(tableNode);
     }
     else if (tagName == "/tr")
     {
@@ -410,11 +418,16 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
     }
     n = n->nextSibling();
   }
-
+  if (missingBody) {
+      rowSpinBox->setValue(nRow);
+      colSpinBox->setValue(maxCol);
+  }
   //by default the current page is the data handling page
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
   m_dataTable = tableData;
+  rowSpin = rowSpinBox;
+  colSpin = colSpinBox;
 
   //create the thead, tbody, tfoot tags if they were not present in the parsed area
   if (!m_thead) {
@@ -427,12 +440,8 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
     newNum++;
     m_tfoot->parse("<tfoot>", m_write);
   }
-  if (!m_tbody) {
-    m_tbody = new Tag();
-    newNum++;
-    m_tbody->parse("<tbody>", m_write);
-  }
   m_createNodes = true; //enable cell/row creation
+  return true;
 }
 
 
@@ -616,7 +625,7 @@ QString TableEditor::tagContent(Node *node)
   {
     Node *n = node->nextSibling();
     if (n) {
-      node->next->tag->beginPos(el, ec);
+      n->tag->beginPos(el, ec);
       ec--;
     } else {
       return QString::null;

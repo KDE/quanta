@@ -432,10 +432,15 @@ void QuantaView::slotTagEditTable()
   }
 
   TableEditor editor;
+  bool tableRead = true;
   if (tableExists)
   {
     editor.setBaseURL(baseURL());
-    editor.setTableArea(bLine, bCol, eLine, eCol);
+    tableRead = editor.setTableArea(bLine, bCol, eLine, eCol);
+    if (!tableRead)
+    {
+      KMessageBox::error(this, i18n("The table structure is invalid. Most probably you forgot to close some tags."), i18n("Cannot read the table"));
+    }
   } else
   {
     Node *node = parser->nodeAt(line, col);
@@ -448,7 +453,7 @@ void QuantaView::slotTagEditTable()
     eCol = col;
     editor.createNewTable(w, dtd);
   }
-  if (editor.exec())
+  if (tableRead && editor.exec())
   {
     QString tableString = editor.readModifiedTable();
     w->activateParser(false);
