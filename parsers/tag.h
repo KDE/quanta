@@ -136,12 +136,12 @@ public:
 
   enum TokenType {
     Unknown = 0,
-    XmlTag, //1
-    XmlTagEnd, //2
-    Text, //3
-    Comment, //4
+    XmlTag, //1 Represent a Tag e.g. <tag>, <tag />
+    XmlTagEnd, //2 Represent a closing tag e.g. <tag/>
+    Text, //3 Represent a portion of text. There can't be two adjacent Texts.
+    Comment, //4 Represent a XML comment : "<!--", "-->" is a XmlTagEnd (not sure, please correct).
     CSS, //5
-    ScriptTag, //6
+    ScriptTag, //6 Represent a Script e.g. "<?php", "?>" is a XmlTagEnd (not sure, please correct).
     ScriptStructureBegin, //7
     ScriptStructureEnd, //8
     LocalVariable, //9

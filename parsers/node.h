@@ -51,6 +51,17 @@ struct GroupElement{
 typedef QValueList<GroupElement> GroupElementList;
 typedef QMap<QString, GroupElementList> GroupElementMapList;
 
+/**
+ * A Node is a basic unit of a Tree. It keeps track of his parent, his left neighbour, his right neighbour
+ * and his first child. 
+ * It contains some functions to navigate through the tree, but some more are located at kafkacommon.h
+ * (and should be moved here...)
+ * It also contains a pointer to a Tag object which contains informations about the contents of the Node.
+ * We use this class to represent the XML/SGML document as a tree ( a DOM like tree) when each Node represent
+ * a part of the document ( A tag, a text, ... see tag.h)
+ * The tree is built with the parser (see parser.h)
+ */
+
 class Node {
 
 public:
@@ -134,17 +145,20 @@ public:
 
 #ifdef BUILD_KAFKAPART
 //set/get the corresponding DOM::Node of this node.
-// A node can correspont to several DOM::Node so we keep a pointer to the root Node
-// and the leaf Node.
+//See more informations about rootNode/leafNode below.
  DOM::Node* rootNode() {return m_rootNode;}
  DOM::Node* leafNode() { return m_leafNode;}
  void setRootNode(DOM::Node *rootNode) {m_rootNode = rootNode;}
  void setLeafNode(DOM::Node *leafNode) {m_leafNode = leafNode;}
  Node* _closingNode;
 #endif
+ /**
+  * The contents of the Node is inside the Tag. Should _never_ be null.
+  */
+ Tag *tag;
+ 
  QValueList<QListViewItem *> listItems; ///<points to the listview items which represents this node in the structure tree
  QListViewItem *mainListItem; ///< the main listview item (from under the root node) associated with this node
- Tag *tag;
  bool closesPrevious; //this node "closes" the tag from previous node
  bool opened;
  bool removeAll; //set to false if you don't want to remove the "next" and "child" when deleting the node.
@@ -166,6 +180,12 @@ public:
 
  #ifdef BUILD_KAFKAPART
 private:
+  /**
+   * For VPL use.
+   * Usually for a XmlTag or Text Node there is one corresponding DOM::Node. But sdmetimes there are more 
+   * e.g. in the DOM::Node tree the TABLE DOM::Node require the TBODY DOM::Node even if not necessary according
+   * to the specs. So m_rootNode points to the TABLE DOM::Node and m_leafNode points to the TBODY DOM::Node.
+   */
   DOM::Node *m_rootNode, *m_leafNode;
 #endif
 };
