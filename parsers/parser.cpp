@@ -391,7 +391,10 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     if (ec == -1)
         ec = 0;
     AreaStruct area(el, ec, endLine, endCol);
+    cleanGroups();
+    m_saParser->setParsingEnabled(true);
     currentNode = m_saParser->parseArea(area, "", "", parentNode, true, true); //TODO: don't parse in detail here
+    m_saParser->setParsingEnabled(false);
     el = m_saParser->lastParsedLine();
     ec = m_saParser->lastParsedColumn();
   } else
