@@ -1,16 +1,22 @@
-
-highlight.cpp : highlight.moc
-
-#highlight.moc : highlight.h
-#	$(MOC) ./highlight.h -o highlight.moc
-
-
-INCLUDES = $(all_includes)
-
-libhighlight_a_METASOURCES = AUTO
+#1########################################################!@#$
+####   Makefile.am generated automatically by KDEStudio   ####
+#### WARNING! All changes made in this part will be lost! ####
+##############################################################
 
 noinst_LIBRARIES = libhighlight.a
 
-libhighlight_a_SOURCES = highlight.cpp 
 
-EXTRA_DIST = highlight.cpp highlight.h 
+
+INCLUDES = $(all_includes)\
+		-I$(top_srcdir)/quanta/kwrite
+CXXFLAGS = -g -O2 -Wall 
+DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+libhighlight_a_METASOURCES = AUTO
+libhighlight_a_SOURCES = \
+		highlight.cpp
+EXTRA_DIST = \
+		highlight.cpp\
+		highlight.h
+##############################################################
+####                  END KDEStudio part                  ####
+#2########################################################!@#$

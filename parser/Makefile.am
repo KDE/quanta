@@ -1,14 +1,29 @@
-####### kdevelop will overwrite this part!!! (begin)##########
-
-INCLUDES = $(all_includes)
-
-libparser_a_METASOURCES = AUTO
+#1########################################################!@#$
+####   Makefile.am generated automatically by KDEStudio   ####
+#### WARNING! All changes made in this part will be lost! ####
+##############################################################
 
 noinst_LIBRARIES = libparser.a
 
-libparser_a_SOURCES = tag.cpp parser.cpp node.cpp 
 
 
-EXTRA_DIST = node.cpp node.h parser.cpp parser.h tag.cpp tag.h 
-
-####### kdevelop will overwrite this part!!! (end)############
+INCLUDES = $(all_includes)\
+		-I$(top_srcdir)/quanta\
+		-I$(top_srcdir)/quanta/kwrite
+CXXFLAGS = -g -O2 -Wall 
+DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+libparser_a_METASOURCES = AUTO
+libparser_a_SOURCES = \
+		node.cpp\
+		parser.cpp\
+		tag.cpp
+EXTRA_DIST = \
+		node.cpp\
+		node.h\
+		parser.cpp\
+		parser.h\
+		tag.cpp\
+		tag.h
+##############################################################
+####                  END KDEStudio part                  ####
+#2########################################################!@#$

@@ -1,14 +1,57 @@
-####### kdevelop will overwrite this part!!! (begin)##########
-
-INCLUDES = $(all_includes)
-
-libtreeviews_a_METASOURCES = AUTO
-
+#1########################################################!@#$
+####   Makefile.am generated automatically by KDEStudio   ####
+#### WARNING! All changes made in this part will be lost! ####
+##############################################################
+SUBDIRS = pix 
 noinst_LIBRARIES = libtreeviews.a
 
-libtreeviews_a_SOURCES = structtreeview.cpp structtreetag.cpp filemanage.cpp fileslistview.cpp filestreeview.cpp filestreefile.cpp filestreefolder.cpp projecttreeview.cpp projecttreefolder.cpp projecttreefile.cpp doctreeview.cpp docitem.cpp docfolder.cpp 
 
 
-EXTRA_DIST = docfolder.cpp docfolder.h docitem.cpp docitem.h doctreeview.cpp doctreeview.h projecttreefile.cpp projecttreefile.h projecttreefolder.cpp projecttreefolder.h projecttreeview.cpp projecttreeview.h filestreefolder.h filestreefolder.cpp filestreefile.cpp filestreefile.h filestreeview.cpp filestreeview.h fileslistview.cpp fileslistview.h filemanage.cpp filemanage.h structtreetag.cpp structtreetag.h structtreeview.cpp structtreeview.h 
-
-####### kdevelop will overwrite this part!!! (end)############
+INCLUDES = $(all_includes)
+CXXFLAGS = -g -Wall 
+DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+libtreeviews_a_METASOURCES = AUTO
+libtreeviews_a_SOURCES = \
+		docfolder.cpp\
+		docitem.cpp\
+		doctreeview.cpp\
+		filemanage.cpp\
+		fileslistview.cpp\
+		filestreefile.cpp\
+		filestreefolder.cpp\
+		filestreeview.cpp\
+		projecttreefile.cpp\
+		projecttreefolder.cpp\
+		projecttreeview.cpp\
+		structtreetag.cpp\
+		structtreeview.cpp
+EXTRA_DIST = \
+		docfolder.cpp\
+		docfolder.h\
+		docitem.cpp\
+		docitem.h\
+		doctreeview.cpp\
+		doctreeview.h\
+		filemanage.cpp\
+		filemanage.h\
+		fileslistview.cpp\
+		fileslistview.h\
+		filestreefile.cpp\
+		filestreefile.h\
+		filestreefolder.cpp\
+		filestreefolder.h\
+		filestreeview.cpp\
+		filestreeview.h\
+		projecttreefile.cpp\
+		projecttreefile.h\
+		projecttreefolder.cpp\
+		projecttreefolder.h\
+		projecttreeview.cpp\
+		projecttreeview.h\
+		structtreetag.cpp\
+		structtreetag.h\
+		structtreeview.cpp\
+		structtreeview.h
+##############################################################
+####                  END KDEStudio part                  ####
+#2########################################################!@#$

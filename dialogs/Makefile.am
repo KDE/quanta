@@ -1,14 +1,44 @@
-####### kdevelop will overwrite this part!!! (begin)##########
-
-INCLUDES = $(all_includes)
-
-libdialogs_a_METASOURCES = AUTO
+#1########################################################!@#$
+####   Makefile.am generated automatically by KDEStudio   ####
+#### WARNING! All changes made in this part will be lost! ####
+##############################################################
 
 noinst_LIBRARIES = libdialogs.a
 
-libdialogs_a_SOURCES = parseroptions.cpp previewoptions.cpp previewoptionss.cpp styleoptionss.cpp filemasks.cpp filemaskss.cpp grepdialog.cpp
 
 
-EXTRA_DIST = filemasks.cpp filemasks.h filemaskss.cpp filemaskss.h styleoptionss.cpp styleoptionss.h previewoptions.h previewoptions.cpp previewoptionss.h previewoptionss.cpp parseroptions.cpp parseroptions.h grepdialog.h
-
-####### kdevelop will overwrite this part!!! (end)############
+INCLUDES = $(all_includes)
+CXXFLAGS = -g -Wall 
+DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+libdialogs_a_METASOURCES = AUTO
+libdialogs_a_SOURCES = \
+		filemasks.cpp\
+		filemaskss.cpp\
+		grepdialog.cpp\
+		parseroptions.cpp\
+		previewfontoptions.cpp\
+		previewoptions.cpp\
+		previewoptionss.cpp\
+		styleoptionss.cpp
+EXTRA_DIST = \
+		filemasks.cpp\
+		filemasks.h\
+		filemaskss.cpp\
+		filemaskss.h\
+		filesmask.moc.cpp\
+		grepdialog.cpp\
+		grepdialog.h\
+		parseroptions.cpp\
+		parseroptions.h\
+		previewfontoptions.cpp\
+		previewfontoptions.h\
+		previewoptions.cpp\
+		previewoptions.h\
+		previewoptionss.cpp\
+		previewoptionss.h\
+		styleoptions.moc.cpp\
+		styleoptionss.cpp\
+		styleoptionss.h
+##############################################################
+####                  END KDEStudio part                  ####
+#2########################################################!@#$
