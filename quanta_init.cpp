@@ -1621,7 +1621,11 @@ void QuantaApp::initActions()
 
     KStdAction::cut(m_view, SLOT(slotCut()), ac);
     KStdAction::copy(m_view, SLOT(slotCopy()), ac) ;
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+    (void) new KPasteAction(i18n("Paste"), "editpaste", KStdAccel::shortcut(KStdAccel::Paste), m_view, SLOT(slotPaste()), ac, "edit_paste");
+#else
     KStdAction::paste(m_view, SLOT(slotPaste()), ac);
+#endif
 
     KStdAction::selectAll(m_view, SLOT(slotSelectAll()), ac);
     KStdAction::deselect(m_view, SLOT(slotDeselectAll()), ac);

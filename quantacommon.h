@@ -42,6 +42,11 @@ class KStandardDirs;
 class QWidget;
 class KSpellConfig;
 
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+#include <kaction.h>
+class KPopupMenu;
+#endif
+
 //Quanta main configuration structure
 typedef struct QConfig{
           //Tag style options
@@ -167,5 +172,29 @@ pointer must be deleted by the caller!! */
 /** No descriptions */
   static void normalizeStructure(QString f,QStringList& l);
 };
+
+
+#ifdef KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+//backported classes from CVS HEAD. I just don't want to create new files for
+//this temporary present classes.
+class KPasteAction: public KAction
+{
+    Q_OBJECT
+public:
+    KPasteAction( const QString& text, const QString& icon, const KShortcut& cut,
+                  const QObject* receiver, const char* slot,
+                  QObject* parent = 0, const char* name = 0 );
+
+    virtual ~KPasteAction();
+    virtual int plug( QWidget *widget, int index = -1 );
+
+protected slots:
+    void menuAboutToShow();
+    void menuItemActivated( int id);
+
+private:
+    KPopupMenu *m_popup;
+};
+#endif
 
 #endif

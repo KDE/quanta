@@ -31,6 +31,18 @@
 #include <kprogress.h>
 #include <ktempfile.h>
 
+//remove the below ones when KPasteAction is removed
+#include <dcopclient.h>
+#include <kdebug.h>
+#include <kpopupmenu.h>
+#include <ktoolbar.h>
+#include <ktoolbarbutton.h>
+#include <kapplication.h>
+#include <qwhatsthis.h>
+#include <qtimer.h>
+#include <qclipboard.h>
+#include <qdatastream.h>
+
 #include "quantacommon.h"
 
 //#include "resource.h"
@@ -490,3 +502,116 @@ void QuantaCommon::normalizeStructure(QString f,QStringList& l)
      l.append(z);
   }
 }
+
+#ifdef KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+KPasteAction::KPasteAction( const QString& text,
+                            const QString& icon,
+                            const KShortcut& cut,
+                            const QObject* receiver,
+                            const char* slot, QObject* parent,
+                            const char* name)
+  : KAction( text, icon, cut, receiver, slot, parent, name )
+{
+  m_popup = new KPopupMenu;
+  connect(m_popup, SIGNAL(aboutToShow()), this, SLOT(menuAboutToShow()));
+  connect(m_popup, SIGNAL(activated(int)), this, SLOT(menuItemActivated(int)));
+  m_popup->setCheckable(true);
+}
+
+KPasteAction::~KPasteAction()
+{
+}
+
+int KPasteAction::plug( QWidget *widget, int index )
+{
+  if (kapp && !kapp->authorizeKAction(name()))
+    return -1;
+  // This is very related to KActionMenu::plug.
+  // In fact this class could be an interesting base class for KActionMenu
+  if ( widget->inherits( "KToolBar" ) )
+  {
+    KToolBar *bar = (KToolBar *)widget;
+
+    int id_ = KAction::getToolButtonID();
+
+    KInstance * instance;
+    if ( m_parentCollection )
+        instance = m_parentCollection->instance();
+    else
+        instance = KGlobal::instance();
+
+    bar->insertButton( icon(), id_, SIGNAL( clicked() ), this,
+                       SLOT( slotActivated() ), isEnabled(), plainText(),
+                       index, instance );
+
+    addContainer( bar, id_ );
+
+    connect( bar, SIGNAL( destroyed() ), this, SLOT( slotDestroyed() ) );
+
+    bar->setDelayedPopup( id_, m_popup, true );
+
+    if ( !whatsThis().isEmpty() )
+        QWhatsThis::add( bar->getButton( id_ ), whatsThisWithIcon() );
+
+    return containerCount() - 1;
+  }
+
+  return KAction::plug( widget, index );
+}
+
+void KPasteAction::menuAboutToShow()
+{
+    m_popup->clear();
+    QStringList list;
+    DCOPClient *client = kapp->dcopClient();
+    if (!client->isAttached()) {
+      (client->attach());
+    }
+    if (client->isAttached()){
+        if (client->isApplicationRegistered("klipper")) {
+          QByteArray data;
+          QCString replyType;
+          QByteArray replyData;
+          if (client->call("klipper", "klipper", "getClipboardHistoryMenu()", data, replyType, replyData, false, 100)) {
+            QDataStream replyStream(replyData, IO_ReadOnly);
+            replyStream >> list;
+          }
+        }
+    }
+    QString clipboardText = qApp->clipboard()->text(QClipboard::Clipboard);
+    if (list.isEmpty())
+        list << clipboardText;
+    bool found = false;
+    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+    {
+      int id = m_popup->insertItem(*it);
+      if (!found && *it == clipboardText)
+      {
+        m_popup->setItemChecked(id, true);
+        found = true;
+      }
+    }
+}
+
+void KPasteAction::menuItemActivated( int id)
+{
+    DCOPClient *client = kapp->dcopClient();
+    if (!client->isAttached()) {
+      (client->attach());
+    }
+    if (client->isAttached()){
+         if (client->isApplicationRegistered("klipper")) {
+           QByteArray data;
+           QDataStream arg(data, IO_WriteOnly);
+           arg << m_popup->text(id);
+           QCString replyType;
+           QByteArray replyData;
+           if (client->send("klipper", "klipper", "setClipboardContents(QString)", data)) {
+             kdDebug(129) << "Clipboard: " << qApp->clipboard()->text(QClipboard::Clipboard) << endl;
+           }
+         }
+      }
+    QTimer::singleShot(20, this, SLOT(slotActivated()));
+}
+
+#endif
