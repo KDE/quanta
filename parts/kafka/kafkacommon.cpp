@@ -224,7 +224,9 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
     //First remove all the indentation
     if(node->tag->type == Tag::Text)
         node->tag->setStr(removeUnnecessaryWhitespaces(node->tag->tagStr()));
-    if(prev)
+    //Remove all indentation at the end of the prev and at the beginning of the next
+    //TODO: UNNECESSARY?
+    /**if(prev)
     {
         if(prev->tag->type == Tag::Empty)
             prev->tag->setStr("");
@@ -260,7 +262,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
                 next->tag->setStr(removeUnnecessaryWhitespaces(text, false, true) +
                                   text.mid(i + 1));
         }
-    }
+    }*/
 
     //compute the "non-inline depth" of the Node and of the next NE (not Empty) Node
     // i.e. we count how many non-inline parent they have.
