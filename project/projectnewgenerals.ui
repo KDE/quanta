@@ -44,9 +44,6 @@
             <height>32000</height>
         </size>
     </property>
-    <property name="caption">
-        <string>Form2</string>
-    </property>
     <property name="layoutMargin" stdset="0">
     </property>
     <property name="layoutSpacing" stdset="0">
