@@ -1151,27 +1151,15 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
     }
 
     // look for commonParent
-    Node* commonParent = startNode->parent;
-    Node* commonParentStartChild = 0;
-    Node* commonParentEndChild = 0;
-    //If commonParent isn't inline, move commonParent to the closest non inline node
-    if(commonParent && (isInline(commonParent->tag->name) ||
-                        commonParent->tag->type == Tag::Text || commonParent->tag->type == Tag::Empty))
-    {
-        Node* oldCommonParent = commonParent;
-        commonParent = commonParent->parent;
-        while(commonParent && isInline(commonParent->tag->name))
-        {
-            oldCommonParent = commonParent;
-            commonParent = commonParent->parent;
-        }
-        commonParentStartChild = oldCommonParent;
-        commonParentEndChild = oldCommonParent;
-    }
-    //startNode or endNode can't be the commonParent.
-    else if(startNode == commonParent)
-        commonParent = commonParent->parent;
     
+    QValueList<int> commonParentStartChildLocation;
+    QValueList<int> commonParentEndChildLocation;
+
+    Node* commonParent = DTDGetNonInlineCommonParent(startNode, startNode, 
+            commonParentStartChildLocation, commonParentEndChildLocation, 0);
+
+    Node* commonParentStartChild = getNodeFromLocation(commonParentStartChildLocation);
+        
     //OK now, we are sure the node can be inserted. Start the work by splitting
     //startNode if necessary
     if(cursorOffset != 0)
