@@ -71,7 +71,7 @@ public:
   void changeFileTabName(const KURL& newURL = KURL());
 
 private:
-  Document *write();
+  Document *write() const;
   Document *newWrite();
 
 public slots:

@@ -103,17 +103,17 @@ void ColorCombo::setColor( const QColor &col )
 /**
    Returns the currently selected color
  */
-QColor ColorCombo::color() {
+QColor ColorCombo::color() const {
   return internalcolor;
 }
 
 
-bool ColorCombo::hasColor() {
+bool ColorCombo::hasColor() const{
   return hascolor;
 }
 
 
-void ColorCombo::setColorName( QString color )
+void ColorCombo::setColorName( const QString &color )
 {
 
   QColor c(color);

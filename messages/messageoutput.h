@@ -56,7 +56,7 @@ public slots:
 
 
 public:
-  uint maxItems() { return max_items; }
+  uint maxItems() const { return max_items; }
   void setMaxItems( uint items ) {  max_items = items; }
   /** remove first items , if count > max_items  */
   void checkMaxItems();

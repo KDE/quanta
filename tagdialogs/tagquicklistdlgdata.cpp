@@ -11,6 +11,10 @@
 #include <klocale.h>
 #include <qbuttongroup.h>
 #include "tagquicklistdlg.h"
+#include <qspinbox.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
 
 void  TagQuickListDlg::initDialog()
 {

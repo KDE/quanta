@@ -45,14 +45,14 @@ public:
   ~ColorCombo();
 
   void setColor( const QColor &col );
-  void setColorName(QString color);
+  void setColorName(const QString &color);
   QString colorName();
   /**
    * Retrieve the currently selected color.
    **/
-  QColor color();
+  QColor color() const;
 
-  bool hasColor();
+  bool hasColor() const;
 
 public slots:
   void slotActivated( int index );

@@ -69,7 +69,7 @@ public:
   QString getTagNameAt(int line, int col );
 
   void selectText(int x1, int y1, int x2, int y2 );
-  void replaceSelected(QString s);
+  void replaceSelected(const QString &s);
 
   /** insert tag in document  */
   void insertTag( QString s1,QString s2 = "" );
@@ -80,7 +80,7 @@ public:
   /** No descriptions */
   void insertFile(const KURL& url);
   /** Inserts text at the current cursor position */
-  void insertText(QString, bool=true);
+  void insertText(const QString &, bool=true);
 
   void readConfig (KConfig *);
   void writeConfig(KConfig *);
@@ -129,7 +129,7 @@ work correctly. */
   /** Bring up the code completion tooltip. */
   void codeCompletionHintRequested();
   /** No descriptions */
-  bool dirty() {return m_dirty;};
+  bool dirty() const {return m_dirty;};
   void setDirtyStatus(bool status) {m_dirty = status;};
   /** Ask for user confirmation if the file was changed outside. */
   void checkDirtyStatus();

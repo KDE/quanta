@@ -29,6 +29,8 @@
 #include <qtabwidget.h>
 #include <qtextedit.h>
 #include <qtextcodec.h>
+#include <qspinbox.h>
+#include <qradiobutton.h>
 
 // include files for KDE
 #include <kconfig.h>

@@ -113,20 +113,20 @@ public:
   QuantaApp();
   ~QuantaApp();
 
-  QuantaDoc  *doc() {return m_doc; }
-  QuantaView *view(){return m_view;}
-  Project *project(){return m_project; }
-  QPopupMenu *tagsMenu(){return m_tagsMenu;}
-  QPopupMenu *pluginMenu() {return m_pluginMenu;}
-  KConfig *config() {return m_config;}
-  QWidgetStack *rightWidget() {return rightWidgetStack;}
-  QWidgetStack *bottomWidget() {return bottomWidgetStack;}
+  QuantaDoc  *doc() const {return m_doc; }
+  QuantaView *view() const {return m_view;}
+  Project *project() const {return m_project; }
+  QPopupMenu *tagsMenu() const {return m_tagsMenu;}
+  QPopupMenu *pluginMenu() const {return m_pluginMenu;}
+  KConfig *config() const {return m_config;}
+  QWidgetStack *rightWidget() const {return rightWidgetStack;}
+  QWidgetStack *bottomWidget() const {return bottomWidgetStack;}
 
 //TODO: check if we really need these "get" methods (and get rid o get)
-  SpellChecker *spellChecker() {return m_spellChecker;}
-  TemplatesTreeView *gettTab() {return tTab;}
-  StructTreeView *getsTab() {return sTab;}
-  MessageOutput *getMessageOutput() {return messageOutput;}
+  SpellChecker *spellChecker() const {return m_spellChecker;}
+  TemplatesTreeView *gettTab() const {return tTab;}
+  StructTreeView *getsTab() const {return sTab;}
+  MessageOutput *getMessageOutput() const {return messageOutput;}
 
   QPopupMenu *toolbarMenu(const QString& name);
   ToolbarEntry *toolbarByURL(const KURL& url);
@@ -349,7 +349,7 @@ protected:
   /** Ask for save all the modified user toolbars. */
   void removeToolbars();
   /** Returns true if all toolbars are hidden, false otherwise. */
-  bool allToolbarsHidden();
+  bool allToolbarsHidden() const;
   /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. */
   void readTagDir(QString &dirName);
   /** No descriptions */

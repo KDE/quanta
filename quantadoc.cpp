@@ -424,7 +424,7 @@ void QuantaDoc::setModified(bool flag)
   write()->setModified(flag);
 }
 
-Document* QuantaDoc::write()
+Document* QuantaDoc::write() const
 {
   return quantaApp->view()->write();
 }

@@ -54,9 +54,9 @@ public:
     TagAction( QDomElement *element, KActionCollection *parent);
     virtual ~TagAction();
 
-    QDomElement data() { return tag; }
+    QDomElement data() const { return tag; }
     void setModified(bool modified) { m_modified = modified;}
-    bool isModified() {return m_modified;}
+    bool isModified() const {return m_modified;}
     void setOutputFile(QFile* file);
     void setInputFileName(const QString& fileName);
     void execute();

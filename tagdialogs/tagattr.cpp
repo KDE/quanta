@@ -24,7 +24,7 @@
 #include <qdom.h>
 
 
-QString Attr::attrName()
+QString Attr::attrName() const
 {
   return name;
 }
@@ -34,8 +34,8 @@ Attr_list::Attr_list( QDomElement *el, QWidget *w )
   : Attr(el,w)
 {
    combo = (QComboBox *)w;
-  
-       
+
+
    for ( QDomElement n = el->firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
       if ( n.tagName() == "items" ) {
          QDomElement item = n.firstChild().toElement();
@@ -43,7 +43,7 @@ Attr_list::Attr_list( QDomElement *el, QWidget *w )
              combo->insertItem( item.text() );
              item = item.nextSibling().toElement();
          }
-    
+
       }
    }
 
@@ -52,16 +52,16 @@ Attr_list::Attr_list( QDomElement *el, QWidget *w )
 
 void Attr_list::setValue( QString s )
 {
-  
+
   for ( int i=0; i<combo->count(); i++ )
     if ( s == combo->text(i) ) {
       combo->setCurrentItem(i);
       return;
     }
-    
+
   combo->insertItem(s);
   combo->setCurrentItem( combo->count() - 1 );
-  
+
 }
 
 
@@ -69,7 +69,7 @@ QDomNode findChild( QDomNode &parent, QString name )
 {
   for ( QDomNode n = parent.firstChild(); !n.isNull(); n = n.nextSibling() )
     if ( n.nodeName() == name )
-         return n;    
+         return n;
   return QDomNode();
 }
 

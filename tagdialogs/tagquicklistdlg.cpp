@@ -17,6 +17,11 @@
 #include "tagquicklistdlg.h"
 #include "tagquicklistdlg.moc"
 #include <qbuttongroup.h>
+#include <qlabel.h>
+#include <qspinbox.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qgroupbox.h>
 
 TagQuickListDlg::TagQuickListDlg(QWidget *parent, const char *name)
     : QDialog(parent,name,true)

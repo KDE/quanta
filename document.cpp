@@ -252,7 +252,7 @@ void Document::selectText(int x1, int y1, int x2, int y2 )
 }
 
 
-void Document::replaceSelected(QString s)
+void Document::replaceSelected(const QString &s)
 {
  unsigned int line, col;
 
@@ -293,7 +293,7 @@ void Document::insertFile(const KURL& url)
 }
 
 /** Inserts text at the current cursor position */
-void Document::insertText(QString text, bool adjustCursor)
+void Document::insertText(const QString &text, bool adjustCursor)
 {
   if(text.isEmpty())
     return;

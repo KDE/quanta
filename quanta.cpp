@@ -2987,7 +2987,7 @@ ToolbarEntry *QuantaApp::toolbarByURL(const KURL& url)
 
 
 /** Returns true if all toolbars are hidden, false otherwise. */
-bool QuantaApp::allToolbarsHidden()
+bool QuantaApp::allToolbarsHidden() const
 {
   bool result = true;
   showDTDToolbar->setEnabled(false);

@@ -79,12 +79,12 @@ FileCombo::FileCombo( QWidget *parent, const char *name )
 FileCombo::~FileCombo(){
 }
 
-QString FileCombo::text()
+QString FileCombo::text() const
 {
   return combo->currentText();
 }
 
-void FileCombo::setText( QString _txt )
+void FileCombo::setText( const QString &_txt )
 {
   combo ->setEditText( _txt );
 }

@@ -21,6 +21,11 @@
 #include <klocale.h>
 #include <kurl.h>
 
+#include <qspinbox.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
+#include <qdialog.h>
+
 //app includes
 #include "tagquicktable.h"
 #include "tagquicktableitem.h"

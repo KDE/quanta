@@ -19,10 +19,6 @@
 #define TAGQUICKTABLE_H
 
 #include <qwidget.h>
-#include <qspinbox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qdialog.h>
 
 #include "quicktable.h"
 
@@ -34,7 +30,7 @@ class Document;
 
 class TagQuickTable : public Quick_Table{
    Q_OBJECT
-public: 
+public:
   TagQuickTable(Document *write, QWidget *parent=0, const char *name=0);
   ~TagQuickTable();
 
