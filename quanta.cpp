@@ -3069,70 +3069,83 @@ void QuantaApp::slotHelpUserList()
 /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
 void QuantaApp::loadToolbarForDTD(const QString& dtdName)
 {
- DTDStruct *oldDtd = dtds->find(currentToolbarDTD);
- if (!oldDtd && !currentToolbarDTD.isEmpty())
-    oldDtd = dtds->find(m_project->defaultDTD());
+  DTDStruct *oldDtd = dtds->find(currentToolbarDTD);
+  if (!oldDtd && !currentToolbarDTD.isEmpty())
+      oldDtd = dtds->find(m_project->defaultDTD());
 
- QString fileName;
- DTDStruct *newDtd = dtds->find(dtdName);
- if (!newDtd)
- {
-    newDtd = dtds->find(m_project->defaultDTD());
-    if (!newDtd)
-        newDtd = dtds->find(qConfig.defaultDocType); //extreme case
- }
+  QString fileName;
+  DTDStruct *newDtd = dtds->find(dtdName);
+  if (!newDtd)
+  {
+      newDtd = dtds->find(m_project->defaultDTD());
+      if (!newDtd)
+          newDtd = dtds->find(qConfig.defaultDocType); //extreme case
+  }
 
- ToolbarEntry *p_toolbar;
- if (newDtd != oldDtd)
- {
-   //remove the toolbars of the oldDtdName
-   if (!currentToolbarDTD.isEmpty())
-   {
-     for (uint i = 0; i < oldDtd->toolbars.count(); i++)
-     {
-       KURL url;
-       QString fileName = qConfig.globalDataDir + "quanta/toolbars/"+oldDtd->toolbars[i];
-       QuantaCommon::setUrl(url, fileName);
-       KURL urlLocal;
-       fileName = locateLocal("data", "quanta/toolbars/"+oldDtd->toolbars[i]);
-       QuantaCommon::setUrl(urlLocal, fileName);
-       QDictIterator<ToolbarEntry> iter(toolbarList);
-       for( ; iter.current(); ++iter )
-       {
-          p_toolbar = iter.current();
-          if (p_toolbar->url == url || p_toolbar->url == urlLocal)
-          {
-            guiFactory()->removeClient(p_toolbar->guiClient);
-            p_toolbar->visible = false;
-            delete p_toolbar->menu;
-            p_toolbar->menu = 0L;
-            break;
-          }
-       }
-     }
-   }
-
-   //Load the toolbars for dtdName
-   for (uint i = 0; i < newDtd->toolbars.count(); i++)
-   {
+  ToolbarEntry *p_toolbar;
+  if (newDtd != oldDtd)
+  {
+    KURL::List newToolbars;
+    for (uint i = 0; i < newDtd->toolbars.count(); i++)
+    {
       KURL url;
       //first load the local version if it exists
       fileName = locateLocal("data", "quanta/toolbars/"+newDtd->toolbars[i]);
       QuantaCommon::setUrl(url, fileName);
       if (QExtFileInfo::exists(url))
       {
-        showToolbarFile(url);
+        //showToolbarFile(url);
+        newToolbars += url;
       } else
       {
         fileName = qConfig.globalDataDir + "quanta/toolbars/"+newDtd->toolbars[i];
         QuantaCommon::setUrl(url, fileName);
         if (QExtFileInfo::exists(url))
         {
-          showToolbarFile(url);
+          newToolbars += url;//  showToolbarFile(url);
         }
       }
-   }
-   m_view->toolbarTab()->setCurrentPage(0);
+    }
+    //remove the toolbars of the oldDtdName
+    if (!currentToolbarDTD.isEmpty())
+    {
+      for (uint i = 0; i < oldDtd->toolbars.count(); i++)
+      {
+        KURL url;
+        QString fileName = qConfig.globalDataDir + "quanta/toolbars/"+oldDtd->toolbars[i];
+        QuantaCommon::setUrl(url, fileName);
+        KURL urlLocal;
+        fileName = locateLocal("data", "quanta/toolbars/"+oldDtd->toolbars[i]);
+        QuantaCommon::setUrl(urlLocal, fileName);
+        if (newToolbars.contains(url) == 0)
+        {
+          QDictIterator<ToolbarEntry> iter(toolbarList);
+          for( ; iter.current(); ++iter )
+          {
+            p_toolbar = iter.current();
+            if (p_toolbar->url == url || p_toolbar->url == urlLocal)
+            {
+              guiFactory()->removeClient(p_toolbar->guiClient);
+              p_toolbar->visible = false;
+              delete p_toolbar->menu;
+              p_toolbar->menu = 0L;
+              break;
+            }
+          }
+        } else
+        {
+          newToolbars.remove(url);
+        }
+      }
+    }
+
+    //Load the toolbars for dtdName
+    KURL::List::Iterator it;
+    for (it = newToolbars.begin(); it != newToolbars.end(); ++it)
+    {
+      showToolbarFile(*it);
+    }
+    m_view->toolbarTab()->setCurrentPage(0);
  }
 
  currentToolbarDTD = newDtd->name;
