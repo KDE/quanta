@@ -478,7 +478,7 @@ void QuantaApp::slotFileClose()
     WHTMLPart *part = m_htmlPart;
     part->closeURL();
     part->begin(Project::ref()->projectBaseURL());
-    part->write( "" );
+    part->write(" ");
     part->end();
 
     slotUpdateStatus(m_view->writeTab()->currentPage());
@@ -518,7 +518,7 @@ void QuantaApp::slotFileCloseAll()
   WHTMLPart *part = m_htmlPart;
   part->closeURL();
   part->begin(Project::ref()->projectBaseURL());
-  part->write( "" );
+  part->write(" ");
   part->end();
 
   slotNewStatus();
@@ -1318,7 +1318,7 @@ void QuantaApp::slotOptions()
 
     m_htmlPart->closeURL();
     m_htmlPart->begin( Project::ref()->projectBaseURL());
-    m_htmlPart->write( "" );
+    m_htmlPart->write(" ");
     m_htmlPart->end();
 
     slotRepaintPreview();
