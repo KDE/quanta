@@ -272,6 +272,33 @@ void BaseTreeBranch::reopenFolder()
 }
 
 
+void BaseTreeBranch::updateOpenFolder()
+{
+  KFileTreeViewItem *newItem;
+  KFileTreeViewItem *item = root();
+  while (item) {
+    if (item->isDir() && item->isOpen()) {
+      updateDirectory( item->url() );
+      kapp->processEvents();
+      // dive into the tree first
+      newItem = dynamic_cast<KFileTreeViewItem *>(item->firstChild());
+      if (newItem) {
+        // found child go ahead
+        item = newItem;
+        continue;
+      };
+    };
+    // go up if no sibling available
+    if (! item->nextSibling())
+      item = dynamic_cast<KFileTreeViewItem *>(item->parent());
+    if (item == root())
+      break;
+    if (item)
+      item = dynamic_cast<KFileTreeViewItem *>(item->nextSibling());
+  };
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 //
 //               BaseTreeView implementation
@@ -710,19 +737,20 @@ void BaseTreeView::slotReload()
 
 void BaseTreeView::reload(BaseTreeBranch *btb)
 {
-  if (! btb)
-    return;
-  // remember the old status
-  QStringList folderToOpen;
-  btb->addOpenFolder(&folderToOpen);
-  KURL url = btb->rootUrl();
-  // remove and open again
-  removeBranch(btb);
-  btb = dynamic_cast<BaseTreeBranch *>(newBranch(url));
-  if (btb) {
-    btb->folderToOpen = folderToOpen;
-    btb->reopenFolder();
-  }
+  if (btb)
+    btb->updateOpenFolder();
+
+//   // remember the old status
+//   QStringList folderToOpen;
+//   btb->addOpenFolder(&folderToOpen);
+//   KURL url = btb->rootUrl();
+//   // remove and open again
+//   removeBranch(btb);
+//   btb = dynamic_cast<BaseTreeBranch *>(newBranch(url));
+//   if (btb) {
+//     btb->folderToOpen = folderToOpen;
+//     btb->reopenFolder();
+//   }
 }
 
 

@@ -113,6 +113,9 @@ public:
   /** list of folders to open */
   QStringList folderToOpen;
   
+  /** inform the dirwatcher to update all open folders */
+  void updateOpenFolder();
+
 private slots:  
   // TODO drop this if support for KDE 3.2 is dropped
   void slotRefreshItems(const KFileItemList&);
