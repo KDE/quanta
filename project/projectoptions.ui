@@ -9,7 +9,7 @@
  *                                                                         *
  ***************************************************************************/
 </comment>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>ProjectOptions</cstring>
     </property>
@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>860</width>
-            <height>688</height>
+            <width>719</width>
+            <height>516</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -31,8 +31,8 @@
     </property>
     <property name="minimumSize">
         <size>
-            <width>480</width>
-            <height>420</height>
+            <width>640</width>
+            <height>500</height>
         </size>
     </property>
     <property name="caption">
@@ -107,50 +107,6 @@
                         <property name="name">
                             <cstring>unnamed</cstring>
                         </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>spacer3</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>573</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>pushButton3</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>5</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>&amp;OK</string>
-                            </property>
-                            <property name="default">
-                                <bool>true</bool>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>pushButton3_2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Cancel</string>
-                            </property>
-                        </widget>
                     </hbox>
                 </widget>
                 <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
@@ -529,18 +485,6 @@ is obscured, saving the password in any file is a security risk. Use this option
         <signal>toggled(bool)</signal>
         <receiver>ProjectOptions</receiver>
         <slot>keepPasswdToggled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>pushButton3</sender>
-        <signal>clicked()</signal>
-        <receiver>ProjectOptions</receiver>
-        <slot>accept()</slot>
-    </connection>
-    <connection>
-        <sender>pushButton3_2</sender>
-        <signal>clicked()</signal>
-        <receiver>ProjectOptions</receiver>
-        <slot>reject()</slot>
     </connection>
 </connections>
 <tabstops>

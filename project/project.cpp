@@ -67,6 +67,10 @@
 #include <kstringhandler.h>
 #include <kdeversion.h>
 
+#if KDE_IS_VERSION(3, 1, 90)
+#include <kinputdialog.h>
+#endif
+
 // application headers
 #include "../dialogs/copyto.h"
 #include "../dialogs/dtdselectdialog.h"
@@ -1255,7 +1259,9 @@ void Project::slotAcceptCreateProject()
 void Project::slotOptions()
 {
   KURL url;
-  ProjectOptions optionsPage(quantaApp, "project_options", true );
+  KDialogBase optionsDlg(this, "project_options", true, i18n("Project Options"), KDialogBase::Ok | KDialogBase::Cancel);
+  ProjectOptions optionsPage(&optionsDlg);
+  optionsDlg.setMainWidget(&optionsPage);
 
   optionsPage.linePrjName->setText( projectName );
   url = QExtFileInfo::toRelative(templateURL, baseURL);
@@ -1379,7 +1385,7 @@ void Project::slotOptions()
   }
 
   optionsPage.checkPrefix->setChecked(usePreviewPrefix);
-  if ( optionsPage.exec() )
+  if ( optionsDlg.exec() )
   {
     projectName = optionsPage.linePrjName->text();
     author    = optionsPage.lineAuthor ->text();
@@ -1675,10 +1681,15 @@ void Project::slotOpenProjectView()
   list.sort();
 
   bool ok = FALSE;
+#if KDE_IS_VERSION(3, 1, 90)
+  QString res = KInputDialog::getItem(
+                  i18n("Open Project View"),
+                  i18n("Select a project view to open."), list, 0, FALSE, &ok, this );
+#else
   QString res = QInputDialog::getItem(
                   i18n("Open Project View"),
                   i18n("Select a project view to open."), list, 0, FALSE, &ok, this );
-
+#endif
   if ( ok)
   {
     currentProjectView = res;
@@ -1697,7 +1708,7 @@ void Project::slotSaveAsProjectView(bool askForName)
     if (askForName) currentProjectView = dlg.text().lower();
     else
     {
-      if (KMessageBox::questionYesNo(this, i18n("Do you want to overwrite the project view named \"%1\"?").arg(currentProjectView))
+      if (KMessageBox::questionYesNo(this, i18n("<qt>Do you want to overwrite the <b>%1</b> project view?</qt>").arg(currentProjectView))
           == KMessageBox::No) return;
     }
     QDomNodeList nl = dom.elementsByTagName("projectview");
@@ -1707,7 +1718,7 @@ void Project::slotSaveAsProjectView(bool askForName)
       if (node.toElement().attribute("name") == currentProjectView)
       {
         if (!askForName ||
-            KMessageBox::questionYesNo(this, i18n("A project view named \"%1\" already exists.\nDo you want to overwrite it?")
+            KMessageBox::questionYesNo(this, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
                                              .arg(currentProjectView)) == KMessageBox::Yes)
         {
           node.parentNode().removeChild(node);
@@ -1759,6 +1770,42 @@ void Project::slotSaveAsProjectView(bool askForName)
 void Project::slotSaveProjectView()
 {
   slotSaveAsProjectView(currentProjectView.isEmpty());
+}
+
+void Project::slotDeleteProjectView()
+{
+  QStringList list;
+  QDomNodeList nl = dom.elementsByTagName("projectview");
+  QDomElement el;
+  for (uint i = 0; i < nl.count(); i++)
+  {
+    el = nl.item(i).cloneNode().toElement();
+    list += el.attribute("name");
+  }
+  list.sort();
+
+  bool ok = FALSE;
+#if KDE_IS_VERSION(3, 1, 90)
+  QString res = KInputDialog::getItem(
+                  i18n("Delete Project View"),
+                  i18n("Select a project view to delete."), list, 0, FALSE, &ok, this );
+#else
+  QString res = QInputDialog::getItem(
+                  i18n("Delete Project View"),
+                  i18n("Select a project view to delete."), list, 0, FALSE, &ok, this );
+#endif
+  if ( ok)
+  {
+    for (uint i = 0; i < nl.count(); i++)
+    {
+      el = nl.item(i).cloneNode().toElement();
+      if (el.attribute("name") == res)
+      {
+        el.parentNode().removeChild(el);
+        break;
+      }
+    }
+  }
 }
 
 void Project::setModified(bool modified)

@@ -118,6 +118,8 @@ public slots:
   void slotOpenProjectView();
   /** Saves a project view (group of files & toolbars) without asking for a name. */
   void slotSaveProjectView();
+  /** Deletes a project view */
+  void slotDeleteProjectView();
 
 signals:
 

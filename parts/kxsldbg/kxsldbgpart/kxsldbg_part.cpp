@@ -302,11 +302,19 @@ void KXsldbgPart::lookupSystemID( QString systemID)
      return;
 
    if (systemID.isEmpty()){
+#if KDE_IS_VERSION(3, 1, 90)
+     systemID = KInputDialog::getText(
+			      i18n( "Lookup SystemID" ),
+			      i18n( "Please enter SystemID to find:" ),
+			      QString::null, &ok,
+			      m_editWidget);
+#else
      systemID = QInputDialog::getText(
 			      i18n( "Lookup SystemID" ),
 			      i18n( "Please enter SystemID to find:" ),
 			      QLineEdit::Normal, QString::null, &ok,
 			      m_editWidget);
+#endif
    }else{
      ok = TRUE;
    }
@@ -326,10 +334,17 @@ void KXsldbgPart::lookupPublicID(QString publicID)
      return;
 
    if (publicID.isEmpty()){
+#if KDE_IS_VERSION(3, 1, 90)
+     publicID = KInputDialog::getText(
+			      i18n( "Lookup PulicID" ),
+			      i18n( "Please enter PublicID to find:" ),
+			      QString::null, &ok, m_editWidget );
+#else
      publicID = QInputDialog::getText(
 			      i18n( "Lookup PulicID" ),
 			      i18n( "Please enter PublicID to find:" ),
 			      QLineEdit::Normal, QString::null, &ok, m_editWidget );
+#endif
    }else{
      ok = TRUE;
    }

@@ -35,6 +35,11 @@
 #include <kpopupmenu.h>
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
+#include <kdeversion.h>
+
+#if KDE_IS_VERSION(3, 1, 90)
+#include <kinputdialog.h>
+#endif
 
 //app includes
 #include "../resource.h"
@@ -805,9 +810,15 @@ void ActionConfigDialog::slotAddContainerToolbar()
   if (lst.count() > 0)
   {
     bool ok = FALSE;
+#if KDE_IS_VERSION(3, 1, 90)
+    QString res = KInputDialog::getItem(
+                    i18n( "Add Action to Toolbar" ),
+                    i18n( "Please select a toolbar:" ), lst, 0, FALSE, &ok, this );
+#else
     QString res = QInputDialog::getItem(
                     i18n( "Add Action to Toolbar" ),
                     i18n( "Please select a toolbar:" ), lst, 0, FALSE, &ok, this );
+#endif
 
     if (ok)
     {

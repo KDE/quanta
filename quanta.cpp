@@ -83,6 +83,7 @@
 
 #if KDE_IS_VERSION(3,1,90)
 #include <ktabwidget.h>
+#include <kinputdialog.h>
 #endif
 
 // application specific includes
@@ -754,6 +755,7 @@ void QuantaApp::slotNewStatus()
     openPrjViewAction  ->setEnabled(projectExists);
     savePrjViewAction  ->setEnabled(projectExists);
     saveAsPrjViewAction->setEnabled(projectExists);
+    deletePrjViewAction->setEnabled(projectExists);
 
     insertFileAction   ->setEnabled(projectExists);
     insertDirAction    ->setEnabled(projectExists);
@@ -2308,9 +2310,15 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
     }
 
     bool ok = FALSE;
+#if KDE_IS_VERSION(3, 1, 90)
+    QString res = KInputDialog::getItem(
+                    i18n( "Save Toolbar" ),
+                    i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+#else
     QString res = QInputDialog::getItem(
                     i18n( "Save Toolbar" ),
                     i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+#endif
     if ( !ok )
       return false;
 
@@ -2437,9 +2445,15 @@ bool QuantaApp::slotRemoveToolbar()
  }
 
  bool ok = FALSE;
+#if KDE_IS_VERSION(3, 1, 90)
+ QString res = KInputDialog::getItem(
+                 i18n( "Remove Toolbar" ),
+                 i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+#else
  QString res = QInputDialog::getItem(
                  i18n( "Remove Toolbar" ),
                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+#endif
 
  if (ok)
  {
@@ -2464,9 +2478,15 @@ void QuantaApp::slotSendToolbar()
   }
 
   bool ok = FALSE;
+#if KDE_IS_VERSION(3, 1, 90)
+  QString res = KInputDialog::getItem(
+                  i18n( "Send Toolbar" ),
+                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+#else
   QString res = QInputDialog::getItem(
                   i18n( "Send Toolbar" ),
                   i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+#endif
 
   if (!ok)
     return;
@@ -2530,10 +2550,15 @@ void QuantaApp::slotRenameToolbar()
   }
 
   bool ok = FALSE;
+#if KDE_IS_VERSION(3, 1, 90)
+  QString res = KInputDialog::getItem(
+                  i18n( "Rename Toolbar" ),
+                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+#else
   QString res = QInputDialog::getItem(
                   i18n( "Rename Toolbar" ),
                   i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
-
+#endif
   if (ok)
   {
     slotRenameToolbar(res.lower());
@@ -3312,10 +3337,15 @@ void QuantaApp::slotEmailDTEP()
     }
     lst.sort();
     bool ok = FALSE;
+#if KDE_IS_VERSION(3, 1, 90)
+    QString res = KInputDialog::getItem(
+                    i18n( "Send DTD" ),
+                    i18n( "Please select a DTD:" ), lst, current, FALSE, &ok, this );
+#else
     QString res = QInputDialog::getItem(
                     i18n( "Send DTD" ),
                     i18n( "Please select a DTD:" ), lst, current, FALSE, &ok, this );
-
+#endif
     if (!ok)
       return;
 

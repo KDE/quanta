@@ -499,7 +499,8 @@ private:
     *uploadProjectAction,  *rescanPrjDirAction,
     *projectOptionAction, *saveAsProjectTemplateAction,
     *saveSelectionAsProjectTemplateAction,
-    *openPrjViewAction, *savePrjViewAction, *saveAsPrjViewAction;
+    *openPrjViewAction, *savePrjViewAction, *saveAsPrjViewAction,
+    *deletePrjViewAction;
 
   KAction *bookmarkToggle, *bookmarkClear;
   KAction *editTagAction;

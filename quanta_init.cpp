@@ -1975,6 +1975,9 @@ void QuantaApp::initActions()
     saveAsPrjViewAction = new KAction( i18n( "Save Project View As..." ), 0,
                         m_project, SLOT( slotSaveAsProjectView() ),
                         ac, "project_view_save_as" );
+    deletePrjViewAction = new KAction( i18n( "Delete Project View..." ), 0,
+                        m_project, SLOT( slotDeleteProjectView() ),
+                        ac, "project_view_delete" );
 
 
 
