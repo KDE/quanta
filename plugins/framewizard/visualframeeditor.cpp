@@ -16,20 +16,22 @@
  ***************************************************************************/
 
 #include "visualframeeditor.h"
+#include <qdom.h>
+#include <qfile.h>
+#include <qstring.h>
 
 VisualFrameEditor::VisualFrameEditor(QWidget * parent, const char * name) : QHBox(parent,name){
   t = new tree;
-  splitterList = new QPtrList<QSplitter>;
-  splitterList->setAutoDelete(true);
-
-  STBList = new QPtrList<SelectableArea>;
-  STBList->setAutoDelete(true);
+  splitterList.setAutoDelete(true);
+  SAList.setAutoDelete(true);
 }
 VisualFrameEditor::~VisualFrameEditor(){
+  if(t) delete t;
+  t = 0;
 }
 
-void VisualFrameEditor::setNodeSplitMode(QString n,QString m){
-  t->findNode(n)->setSplit(m);
+void VisualFrameEditor::setNodeSplitMode(QString node,QString mode){
+  t->findNode(node)->setSplit(mode);
 }
 
 void VisualFrameEditor::split(QString l, int n, QString type) {
@@ -47,16 +49,10 @@ void VisualFrameEditor::split(QString l, int n, QString type) {
                                   t->addChildNode(l);
           }
          else {
-               if(parentLabel!=t->getRoot()->getLabel()) {
-                 t->removeChildNode(parentLabel,l);
-                 for(int i = 1; i<=n; i++)
-                   t->addChildNode(parentLabel);
-                  }
-               else {
-                  t->getRoot()->removeChildNode(l);
-                  for(int i = 1; i<=n; i++)
-                    t->addChildNode(parentLabel);
-                    }
+               t->getRoot()->removeChildNode(l);
+               for(int i = 1; i<=n; i++)
+                 t->addChildNode(parentLabel);
+
          }
      }
 }
@@ -67,9 +63,9 @@ void VisualFrameEditor::draw(){
 
 void VisualFrameEditor::paintEvent ( QPaintEvent * ){
   hide();
-  splitterList->clear();
-  STBList->clear();
-  t->draw(t->getRoot(),this,form,splitterList,STBList);
+  splitterList.clear();
+  SAList.clear();
+  draw2(t->getRoot(),this);
   show();
 }
 
@@ -84,3 +80,30 @@ void VisualFrameEditor::removeNode(QString l){
      }
   }
 }
+
+
+void VisualFrameEditor::draw2(treeNode *n, QWidget* parent){
+
+    if(n->hasChildren()) {
+        QSplitter *splitter = new QSplitter(parent);
+        splitterList.append(splitter);
+	if(n->getSplit() == "v") splitter->setOrientation(QSplitter::Horizontal);
+	if(n->getSplit() == "h") splitter->setOrientation(QSplitter::Vertical);
+	n->firstChild();
+	while(n->getCurrentChild()){
+	    draw2(n->getCurrentChild(),splitter);
+	    n->nextChild();
+	}
+    }
+    else{
+	SelectableArea *te=new SelectableArea(parent);
+        SAList.append(te);
+        te->setIdLabel( n->getLabel() );
+        te->setMinimumSize(QSize(20,25));
+        te->setSource(n->getAtts()->getSrc());
+
+        QObject::connect(te, SIGNAL(Resized(QRect)), n->getAtts(), SLOT(setGeometry(QRect)));
+	QObject::connect(te, SIGNAL(selected(QString)),form, SLOT(catchSelectedArea(QString)));
+    }
+}
+

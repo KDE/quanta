@@ -8,35 +8,34 @@
 *****************************************************************************/
 #include "fmrceditor.h"
 #include "fmfpeditor.h"
-#include <qmessagebox.h>
+#include <kmessagebox.h>
 
-
-
-
+const static QString info1="You must select an area!",
+                     info2="No structure will be created!";
 void FrameWizard::init()
-{
+{   
     splitted=false;
     vfe->setupForm(this);
     vfe->draw();
-    currSTB=vfe->initSTB();
-    hasSelected = false;
+    currSA=vfe->initSA();
+    hasSelected = false;   
     connect(this, SIGNAL(launchDraw()), this, SLOT(draw()));
 }
 
 void FrameWizard::catchSelectedArea( QString id )
 {
-    currSTB = id; //is the current SelectableTextBrowser selected
-    hasSelected = true;
+    currSA = id; //is the current SelectableArea selected
+    hasSelected = true;// a SelectableArea has been selected
 }
 
 void FrameWizard::split()
 {
     if(hasSelected) {
 	int split = 0;
-	QString currNodeLabel = currSTB;
+	QString currNodeLabel = currSA;
 	QString senderName=sender()->name();
 	if(senderName=="pbHorizontal"){
-	    split = showRCeditorDlg("Enter the desidered number of rows");
+	    split = showRCeditorDlg("Enter the desidered number of rows");                  	
 	    if(split>=2)
 		vfe->split(currNodeLabel,split,"h");
 	    }
@@ -47,7 +46,7 @@ void FrameWizard::split()
 	}
 	emit launchDraw();
     }
-     else QMessageBox::warning( this, "Warning","You must select an area!" , "Ok");
+     else KMessageBox::information( this, info1, "Warning" );
      hasSelected=false;
      splitted=true;
 }
@@ -74,14 +73,14 @@ void FrameWizard::showFrameEditorDlg()
 {
     if(hasSelected) {
 	fmFPeditor *dlg = new fmFPeditor;
-	dlg->setup(vfe->getAttributeMap(currSTB));
+	dlg->setup(vfe->getAttributeMap(currSA));
 	if(dlg->exec()) {
-	    vfe->setAllAttribute(currSTB,dlg->getAttributeMap());
+	    vfe->setAllAttribute(currSA,dlg->getAttributeMap());
 	    vfe->draw();
 	}
 	delete dlg;
     }
-    else QMessageBox::warning( this, "Warning","You must select an area!" , "Ok");
+    else KMessageBox::information( this, info1, "Warning" );
     hasSelected=false;
 }
 
@@ -94,17 +93,18 @@ void FrameWizard::reset(){
 void FrameWizard::generate(){
     if(splitted) {
 	vfe->framesetStructure();}
-    else{
-	QMessageBox::warning( this, "Warning","No structure will be created!" , "Ok");
-    }
+    else KMessageBox::information( this, info2, "Warning" );
 }
 
 void FrameWizard::remove()
 {
     if(hasSelected) {
-	vfe->removeNode(currSTB);
+	vfe->removeNode(currSA);
 	draw();
     }
-    else QMessageBox::warning( this, "Warning","You must select an area!" , "Ok");
-     hasSelected=false;
+    else KMessageBox::information( this, info1, "Warning" );
+    hasSelected=false;
 }
+
+
+

@@ -19,7 +19,7 @@
 #include <qframe.h>
 
 SelectableArea::SelectableArea(QWidget *parent, const char *name ) : QTextBrowser(parent,name) {
-
+    setFrameShape(QFrame::NoFrame);
 }
 SelectableArea::~SelectableArea(){
 }
@@ -37,13 +37,21 @@ void SelectableArea::mousePressEvent( QMouseEvent * )
 void SelectableArea::focusOutEvent ( QFocusEvent * )
 {
     setFrameShape(QFrame::NoFrame);
-    setLineWidth(1);
 }
 
-void SelectableArea::resizeEvent ( QResizeEvent * )
+
+void SelectableArea::resizeEvent ( QResizeEvent * e)
 {
-  repaint();
+  QTextBrowser::resizeEvent(e);
+  //QString dim="Width : "+QString::number(frameGeometry().width(),10)+"\nHeight : "+QString::number(frameGeometry().height(),10);
+  //setText(dim);
   emit Resized(geometry());
 }
 
 #include "selectablearea.moc"
+
+
+
+
+
+

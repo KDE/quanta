@@ -21,14 +21,18 @@
 #include <qfile.h> 
 #include <qtextstream.h>
 #include <math.h>
+#include <qmap.h>
 
-treeNode::treeNode(QString l,QString pl){
-  label = l;
-  parentLabel = pl;
-  split = "n";
+const int SIZE = 101;
+
+treeNode::treeNode(QString l,QString pl) : label(l), parentLabel(pl), split("n"){
   childrenList.setAutoDelete(true);
-  }
+  atts = new areaAttribute;
+}
+
 treeNode::~treeNode(){
+  if(atts) delete atts;
+  atts = 0;
 }
 
 void treeNode::addChildNode(QString l){
@@ -67,13 +71,8 @@ tree::tree(){
   root = new treeNode(QString::number(nodeId,10));
   //nodeList.insert(QString::number(nodeId,10),root);
   //nodeList.setAutoDelete(true);
-  int SIZE = 101;
+
   nodeList.resize(SIZE);
-  db.resize(SIZE);
-  areaAttribute *atts = new areaAttribute;
-  db.insert(QString::number(nodeId,10),atts);
-  db.setAutoDelete(true);
-  structure="";
 }
 
 
@@ -82,159 +81,128 @@ tree::~tree(){
   root =  0;
 }
 
-QString tree::RCvalue(treeNode *n)
-{
-
-    QString s="";
-
-    int child_number = n->countChildren();
-
-
-
-    int i;
-     if(n->getSplit()=="v") {
-      //we gain "excedeed_pixels" pixels
-      int excedeed_pixels = 100 % child_number;
-      for(i=1;i<=child_number;++i){
-        //we get width in percentage terms of a single frame
-        double percent_width=(db.find(n->getChildrenList().at(i-1)->getLabel())->getGeometry().width()*100.0)/500.0;
-        //we correct a little bit the previous "WIDTH"
-	double d=ceil(percent_width);
-        (d-int(d))>0.5 ? d-=0.5 : d+=0.5;
-        //we add a pixel to each of the first "excedeed_pixels" frames, to compensate.
-        if (excedeed_pixels > 0) d+=1;
-
-        excedeed_pixels--;
-
-        s+=QString::number(int(d),10);
-
-        if(i == child_number) s+="%";
-        else s+="%,";
-          }
-         }
-      else
-      if(n->getSplit()=="h") {
-       //we gain "excedeed_pixels" pixels
-       int excedeed_pixels = (100 % (child_number));
-       for(i=1;i<=child_number;++i){
-        //we get width in percentage terms of a single frame
-        double percent_height=((db.find(n->getChildrenList().at(i-1)->getLabel())->getGeometry().height()+0.9)*100.0)/400.0;
-        //we correct a little bit the previous "HEIGHT"
-	double d=ceil(percent_height);
-
-
-        excedeed_pixels--;
-
-        s+=QString::number(int(d),10);
-
-        if(i == child_number) s+="%";
-        else s+="%,";
-          }
-         }
-
-        return s;
+int proxInt(double d){
+  if((d-int(d))>= 0.5 ) return int(d)+1;
+  return int(d);
 }
 
-QString tree::createFrameTag(QString l){
-  QString src = findAreaAttribute(l)->getSrc(),
-          longdesc = findAreaAttribute(l)->getLongdesc(),
-          name = findAreaAttribute(l)->getName(),
-          scrolling = findAreaAttribute(l)->getScrolling(),
-          id = findAreaAttribute(l)->getId(),
-          style = findAreaAttribute(l)->getStyle(),
-          title = findAreaAttribute(l)->getTitle(),
-          Class = findAreaAttribute(l)->getClass(),
-          noresize = findAreaAttribute(l)->getNoresize(),
-          frameborder = findAreaAttribute(l)->getFrameborder(),
-          marginwidth = findAreaAttribute(l)->getMarginwidth(),
-          marginheight = findAreaAttribute(l)->getMarginheight();
+QString tree::RCvalue(treeNode *n)
+{  
+  QString s="";
+  QMap<int,int> dimMap;
+  double percentage = 0.0;
+  int child_number = n->countChildren();
+  int lostPixels=2;
+  if(child_number > 2) lostPixels = (6*(child_number-1)); // empiric formula
 
+  if(n->getSplit()=="v") {
+    percentage=100.0/n->getAtts()->getGeometry().width();
+    for(int i=1;i<=child_number;++i){
+      dimMap[i]=n->getChildrenList().at(i-1)->getAtts()->getGeometry().width();
+      }
+    }
+  else
+  if(n->getSplit()=="h") {
+    percentage=100.0/n->getAtts()->getGeometry().height();
+    for(int i=1;i<=child_number;++i){
+      dimMap[i]=n->getChildrenList().at(i-1)->getAtts()->getGeometry().height();
+      }
+   }
 
+   while( lostPixels > 0)
+        {
+          for(int i=1;i<=child_number;++i){
+            dimMap[i]+=1;
+            lostPixels--;
+            if(lostPixels == 0) break;
+           }
+         }
+      for(int i=1;i<=child_number-1;++i){
+            s+=QString::number(proxInt(dimMap[i]*percentage),10);
+            s+="%,";
+           }
+
+   return s+="*";
+}
+
+QString tree::createFrameTag(areaAttribute *a){
+
+  QString Src =          a->getAttributeValue("src"),
+          Longdesc =     a->getAttributeValue("longdesc"),
+          Name =         a->getAttributeValue("name"),
+          Scrolling =    a->getAttributeValue("scrolling"),
+          Id =           a->getAttributeValue("id"),
+          Style =        a->getAttributeValue("style"),
+          Title =        a->getAttributeValue("title"),
+          Class =        a->getAttributeValue("class"),
+          Noresize =     a->getAttributeValue("noresize"),
+          Frameborder =  a->getAttributeValue("frameborder");
+          //Marginwidth =  a->getAttributeValue("marginwidth"),
+          //Marginheight = a->getAttributeValue("marginheight");
 
   QString tagBegin="<frame",
           tagEnd=">\n",
           tagMiddle="";
 
-  if(!src.isEmpty()) tagMiddle+=(" src=\""+src+"\"");
-  if(!longdesc.isEmpty()) tagMiddle+=(" longdesc=\""+longdesc+"\"");
-  if(!name.isEmpty()) tagMiddle+=(" name=\""+name+"\"");
-  if(scrolling!="auto") tagMiddle+=(" scrolling=\""+scrolling+"\"");
-  if(!id.isEmpty()) tagMiddle+=(" id=\""+id+"\"");
-  if(!style.isEmpty()) tagMiddle+=(" style=\""+style+"\"");
-  if(!title.isEmpty()) tagMiddle+=(" title=\""+title+"\"");
-  if(!Class.isEmpty()) tagMiddle+=(" class=\""+Class+"\"");
-  if(noresize=="noresize") tagMiddle+=(" "+noresize);
-  if(frameborder!="0") tagMiddle+=(" frameborder=\""+frameborder+"\"");
-  if(!marginwidth.isEmpty()) tagMiddle+=(" marginwidth=\""+marginwidth+"\"");
-  if(!marginheight.isEmpty()) tagMiddle+=(" marginheight=\""+marginheight+"\"");
-  
- return tagBegin+tagMiddle+tagEnd;
+  if( !Src.isEmpty() )       tagMiddle+=(" src=\""+a->getAttributeValue("src")+"\"");
+  if( !Longdesc.isEmpty() )  tagMiddle+=(" longdesc=\""+a->getAttributeValue("longdesc")+"\"");
+  if( !Name.isEmpty() )      tagMiddle+=(" name=\""+a->getAttributeValue("name")+"\"");
+  if( Scrolling!="auto" )    tagMiddle+=(" scrolling=\""+a->getAttributeValue("scrolling")+"\"");
+  if( !Id.isEmpty() )        tagMiddle+=(" id=\""+a->getAttributeValue("id")+"\"");
+  if( !Style.isEmpty() )     tagMiddle+=(" style=\""+a->getAttributeValue("style")+"\"");
+  if( !Title.isEmpty() )     tagMiddle+=(" title=\""+a->getAttributeValue("title")+"\"");
+  if( !Class.isEmpty() )     tagMiddle+=(" class=\""+a->getAttributeValue("class")+"\"");
+  if( Noresize=="noresize" ) tagMiddle+=(" "+a->getAttributeValue("noresize"));
+  if( Frameborder=="0" )     tagMiddle+=(" frameborder=\""+a->getAttributeValue("frameborder")+"\"");
+  //if(!marginwidth.isEmpty())
+  tagMiddle+=(" marginwidth=\""+a->getAttributeValue("marginwidth")+"\"");
+  //if(!marginheight.isEmpty())
+  tagMiddle+=(" marginheight=\""+a->getAttributeValue("marginheight")+"\"");
 
+ return tagBegin+tagMiddle+tagEnd;
 }
 
 
 
 int tree::tabNum = 0; // number of tabulation character used to indent the frame structure
 
-void tree::createStructure(treeNode* n, QString last){
- if(n->hasChildren()) {
- QString lastChildLabel=n->getLastChild()->getLabel();
+
+
+void tree::createStructure(treeNode* n){
+
+if(n->hasChildren()) {
+
         if(n->getSplit()=="v")
-          structure+=("<frameset cols=\""+RCvalue(n)+"\">\n");
-        else if(n->getSplit()=="h")
-               structure+=("<frameset rows=\""+RCvalue(n)+"\">\n");
-        tabNum++;
-        for(int i=1;i<=tabNum;i++)
-          structure+=("\t");
+          nonFormattedStructure.append("<frameset cols=\""+RCvalue(n)+"\">\n");
+        else 
+        if(n->getSplit()=="h")
+          nonFormattedStructure.append("<frameset rows=\""+RCvalue(n)+"\">\n");
         n->firstChild();
 	while(n->getCurrentChild()){
-	    createStructure(n->getCurrentChild(),lastChildLabel);
+	    createStructure(n->getCurrentChild());
 	    n->nextChild();
-            last = n->getLastChild()->getLabel();
 	}
-     
-
-           --tabNum;
-           for(int i=1;i<=tabNum;i++)
-                 structure+=("\t");
-           structure+="</frameset>\n";
-
-           for(int i=1;i<=tabNum;i++)
-                 structure+=("\t");
-
-
+          nonFormattedStructure.append("</frameset>\n");
     }
-    else{
-         /*areaAttributeDBIterator it( db );
-         areaAttribute *a;
-         while ( (a = it.current()) != 0 ) {
-           if( a->getLabel() == n->getLabel()) break;
-         ++it;
-
-         }*/
-         if(n->getLabel() == last){
-           structure+=createFrameTag(n->getLabel());
-         //  --tabNum;
-          /* for(int i=1;i<=tabNum;i++)
-                 structure+=("\t");
-           structure+="</frameset>\n";*/
-
-          /* for(int i=1;i<=tabNum;i++)
-                 structure+=("\t");*/
-         }
-         else {
-               structure+=createFrameTag(n->getLabel());
-               for(int i=1;i<=tabNum;i++)
-                 structure+=("\t");
-               }
-
-            }
+    else
+      nonFormattedStructure.append(createFrameTag(n->getAtts()));
 }
 
-
+QString tree::formatStructure(){
+  QString s="";
+  createStructure(root);
+  for ( QStringList::Iterator it = nonFormattedStructure.begin(); it != nonFormattedStructure.end(); ++it ) {
+        if((*it).contains("<frameset")) tabNum++;
+        else if((*it).contains("</frameset>")) {tabNum--;s.truncate(s.length()-1);}
+        s+=*it;
+        for(int i=1;i<=tabNum;i++)
+          s+='\t';
+    }
+  return s;
+}
 
 QString tree::framesetStructure() {
-  createStructure(root,root->getLastChild()->getLabel());
+
   //the code between comments it's only for demonstration purpose ******************************
   QString header="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Frameset//EN\" \"http://www.w3.org/TR/html4/frameset.dtd\"><html><title>Test page</title><head></head>\n",
           footer="</html>";
@@ -242,11 +210,11 @@ QString tree::framesetStructure() {
     if ( file.open( IO_WriteOnly ) ) {
         QTextStream stream( &file );
 
-            stream << (header+structure+footer);
+            stream << (header+formatStructure()+footer);
         file.close();
     }
   //********************************************************************************************
-  return structure;
+  return formatStructure();
 }
 
 treeNode* tree::findNode(QString l){
@@ -261,8 +229,6 @@ void tree::addChildNode(QString l){
       treeNode *newNode = new treeNode(QString::number(nodeId,10),node->getLabel());
       node->addChildNode(newNode);
       nodeList.insert(QString::number(nodeId,10),newNode);
-      areaAttribute *atts = new areaAttribute;
-      db.insert(QString::number(nodeId,10),atts);
    }
 }
 
@@ -270,44 +236,9 @@ void tree::reinitialize(){
   nodeId = 1;
   root->removeChildren();
   nodeList.clear();
-  db.clear();
-  areaAttribute *atts = new areaAttribute;
-  db.insert(root->getLabel(),atts);
-
-}
-
-static int splitterIdNumber=0;
-
-
-
-void tree::draw(treeNode *n, QWidget* parent, QWidget *form, QPtrList<QSplitter>* ls,QPtrList<SelectableArea>* stb){
-   
-    if(n->hasChildren()) {
-        QString splitterId="splitter"+QString::number(splitterIdNumber,10);
-        splitterIdNumber++;
-	QSplitter *splitter = new QSplitter(parent,splitterId);
-        ls->append(splitter);
-	if(n->getSplit() == "v") splitter->setOrientation(QSplitter::Horizontal);
-	if(n->getSplit() == "h") splitter->setOrientation(QSplitter::Vertical);
-	n->firstChild();
-	while(n->getCurrentChild()){
-	    draw(n->getCurrentChild(),splitter,form,ls,stb);
-	    n->nextChild();
-	}
-    }
-    else{
-	SelectableArea *te=new SelectableArea(parent);
-        stb->append(te);
-        te->setIdLabel( n->getLabel() );
-        te->setMinimumSize(QSize(20,25));
-        te->setSource(db.find(n->getLabel())->getSrc());
-        QObject::connect(te, SIGNAL(Resized(QRect)), db.find(n->getLabel()), SLOT(setGeometry(QRect)));
-	QObject::connect(te, SIGNAL(selected(QString)),form, SLOT(catchSelectedArea(QString)));
-    }
 }
 
 void tree::removeChildNode(QString l,QString ll){
   findNode(l)->removeChildNode(ll);
-  db.remove(l);
 }
 

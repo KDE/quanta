@@ -5,7 +5,7 @@
 ** update this file, preserving your code. Create an init() slot in place of
 ** a constructor, and a destroy() slot in place of a destructor.
 *****************************************************************************/
-
+#include <kurlrequester.h>
 QString fmFPeditor::getIdValue()
 {
     return leId->text();
@@ -14,7 +14,7 @@ QString fmFPeditor::getIdValue()
 
 QString fmFPeditor::getSrcValue()
 {
-    return fc->fileName();
+    return fc->url();
 }
 
 
@@ -64,7 +64,7 @@ QString fmFPeditor::getMarginheightValue() {
 
 void fmFPeditor::setup(QMap<QString,QString> m){
     leId->setText(m["id"]);
-    fc->setFileName(m["src"]);
+    fc->setURL(m["src"]);
     leClass->setText(m["class"]);
     leLongdesc->setText(m["longdesc"]);
     leTitle->setText(m["title"]);

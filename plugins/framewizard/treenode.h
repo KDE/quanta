@@ -20,11 +20,11 @@
 #include <qstring.h>
 #include <qptrlist.h>
 #include <qsplitter.h>
+#include <qdict.h>
+#include <qstringlist.h>
+
 #include "areaattributedb.h"
 #include "selectablearea.h"
-#include <qdict.h>
-
-
 /**a node in the tree
   *@author gulmini luciano
   */
@@ -34,27 +34,30 @@ class treeNode {
           parentLabel,
           split;
   QPtrList<treeNode> childrenList;
+  areaAttribute *atts;
   public: 
 	treeNode(QString l="",QString pl="");
 	~treeNode();
-  void addChildNode(QString);
-  void addChildNode(treeNode*);
-  void removeChildNode(QString);
-  void setSplit(QString s) { split = s; }
-  void setLabel(QString l) { label = l; }
-  void removeChildren(){ childrenList.clear(); }
-  QString getLabel() const { return label; }
-  QString getParentLabel() const { return parentLabel; }
-  QString getSplit() const { return split; }
-  QPtrList<treeNode> getChildrenList() const { return childrenList; }
-  treeNode* firstChild() { return childrenList.first(); }
-  treeNode* nextChild() { return childrenList.next(); }
-  treeNode* lastChild() { return childrenList.last(); }
-  treeNode* getCurrentChild()  { return childrenList.current(); }
-  treeNode* getLastChild()  { return childrenList.getLast(); }
-  int countChildren() const { return childrenList.count(); }
-  bool hasChildren() const { return !childrenList.isEmpty(); }
-  treeNode* findChild(QString);
+        void addChildNode(QString);
+        void addChildNode(treeNode*);
+        void removeChildNode(QString);
+        void setSplit(QString s) { split = s; }
+        void setLabel(QString l) { label = l; }
+        void removeChildren(){ childrenList.clear(); }
+
+        QString getLabel() const { return label; }
+        QString getParentLabel() const { return parentLabel; }
+        QString getSplit() const { return split; }
+        QPtrList<treeNode> getChildrenList() const { return childrenList; }
+        treeNode* firstChild() { return childrenList.first(); }
+        treeNode* nextChild() { return childrenList.next(); }
+        treeNode* lastChild() { return childrenList.last(); }
+        treeNode* getCurrentChild()  { return childrenList.current(); }
+        treeNode* getLastChild()  { return childrenList.getLast(); }
+        areaAttribute* getAtts() { return atts; }
+        int countChildren() const { return childrenList.count(); }
+        bool hasChildren() const { return !childrenList.isEmpty(); }
+        treeNode* findChild(QString);
 
 
 };
@@ -65,9 +68,11 @@ class tree{
   private:
     treeNode *root;
     QDict<treeNode> nodeList;
-    QString structure;
-    areaAttributeDB db;
-    void createStructure(treeNode*,QString);
+    void createStructure(treeNode*);
+    QString RCvalue(treeNode *n);
+    QString formatStructure();
+    QString createFrameTag(areaAttribute*);
+    QStringList nonFormattedStructure;
     static int nodeId;
     static int tabNum;
   public:
@@ -77,13 +82,10 @@ class tree{
     void addChildNode(QString l);
     void removeChildNode(QString,QString);//parent node,child node
     treeNode* findNode(QString);
-    areaAttribute* findAreaAttribute(QString l){ return db.find(l); };
-    areaAttributeDB getDB() { return db; }
-    QString createFrameTag(QString);
-    void draw(treeNode*,QWidget*,QWidget*,QPtrList<QSplitter>*,QPtrList<SelectableArea>*);
+    areaAttribute* findAreaAttribute(QString l){ return findNode(l)->getAtts(); };
     void reinitialize();
     QString framesetStructure();
-    QString RCvalue(treeNode *n);
+
 };
 
 #endif

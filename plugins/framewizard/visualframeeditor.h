@@ -22,7 +22,6 @@
 #include "selectablearea.h"
 #include <qmap.h>
 #include <qhbox.h>
-
 /**
   *@author gulmini luciano
   */
@@ -31,23 +30,24 @@ class VisualFrameEditor : public QHBox  {
 private:
   tree *t;
   QWidget *form;
-  QPtrList<QSplitter>* splitterList;
-  QPtrList<SelectableArea>* STBList;
-
+  QPtrList<QSplitter> splitterList;
+  QPtrList<SelectableArea> SAList;
+  void draw2(treeNode *n, QWidget* parent);
 public:
 	VisualFrameEditor( QWidget * parent = 0, const char * name = 0);
 	~VisualFrameEditor();
         void setupForm(QWidget *f){ form = f; }
         void draw();
-        void framesetStructure(){ t->framesetStructure(); }
+        QString framesetStructure(){ return t->framesetStructure(); }
         void setNodeSplitMode(QString,QString);//node,mode
         void reset(){ t->reinitialize(); }
         void removeNode(QString l);
         void split(QString,int,QString);
         void setAllAttribute(QString l,QMap<QString,QString> map) { (t->findAreaAttribute(l)->setAllAttribute(map)); }
-        virtual void paintEvent ( QPaintEvent * );
         QMap<QString,QString> getAttributeMap(QString l) { return t->findAreaAttribute(l)->getAttributeMap(); }
-        QString initSTB() const { return t->getRoot()->getLabel(); }
+        QString initSA() const { return t->getRoot()->getLabel(); }
+protected:
+        virtual void paintEvent ( QPaintEvent * );
 };
 
 #endif

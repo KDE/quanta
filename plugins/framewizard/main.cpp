@@ -47,11 +47,14 @@ int main(int argc, char *argv[])
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
   KApplication a;
-
   FrameWizard* fw=new FrameWizard;
   a.setMainWidget(fw);
-  fw->show();
-  int result = a.exec();
+  int result = fw->exec();
+  if(result){
+    fw->generate();
+  }
+//  int result = a.exec();
+
   delete fw;
 
   return result;
