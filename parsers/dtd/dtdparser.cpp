@@ -40,6 +40,7 @@
 #include <libxml/valid.h>
 
 //own includes
+#include "dtepeditdlg.h"
 #include "dtdparser.h"
 #include "qtag.h"
 #include "dtepcreationdlg.h"
@@ -154,7 +155,17 @@ bool DTDParser::parse()
   }  
   xmlFreeDtd(DTD::dtd_ptr);
   writeDescriptionRC();
-
+  if (w.fineTune->isChecked())
+  {
+    KDialogBase editDlg(0L, "edit_dtep", true, i18n("Configure DTEP"), KDialogBase::Ok | KDialogBase::Cancel);
+    DTEPEditDlg dtepDlg(DTD::dirName + "description.rc", &editDlg);
+    editDlg.setMainWidget(&dtepDlg);
+    if (editDlg.exec())
+    {
+      dtepDlg.saveResult();
+    }
+    
+  }
   return true;
 }
 

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>DTEPCreationDlg</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -18,7 +18,7 @@
             <x>0</x>
             <y>0</y>
             <width>500</width>
-            <height>201</height>
+            <height>285</height>
         </rect>
     </property>
     <property name="minimumSize">
@@ -37,12 +37,12 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="2" column="1">
             <property name="name">
                 <cstring>nickName</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="4" column="1" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="4" column="1">
             <property name="name">
                 <cstring>dtdURL</cstring>
             </property>
@@ -71,17 +71,17 @@
                 <string>!DOCTYPE definition line:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="0" column="1">
             <property name="name">
                 <cstring>directory</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="3" column="1">
             <property name="name">
                 <cstring>doctype</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="1" column="1">
             <property name="name">
                 <cstring>dtdName</cstring>
             </property>
@@ -110,6 +110,11 @@
                 <string>Default extension:</string>
             </property>
         </widget>
+        <widget class="QLineEdit" row="5" column="1">
+            <property name="name">
+                <cstring>defaultExtension</cstring>
+            </property>
+        </widget>
         <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>caseSensitive</cstring>
@@ -121,9 +126,18 @@
                 <bool>true</bool>
             </property>
         </widget>
-        <widget class="QLineEdit" row="5" column="1" rowspan="1" colspan="2">
+        <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>defaultExtension</cstring>
+                <cstring>fineTune</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Fine-tune the DTEP after conversion</string>
+            </property>
+            <property name="accel">
+                <string>Alt+F</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
             </property>
         </widget>
     </grid>
