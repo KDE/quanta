@@ -49,7 +49,6 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
   m_debuggerBreakpointView->setIcon(SmallIcon("debug_breakpoint"));
   m_debuggerBreakpointView->setCaption(i18n("Breakpoints"));
   m_debuggerBreakpointViewTVA = quantaApp->addToolWindow(m_debuggerBreakpointView, quantaApp->prevDockPosition(m_debuggerBreakpointView, KDockWidget::DockBottom), quantaApp->getMainDockWidget());
-  showMenu();
 
   // Debug HTML preview
   m_preview = new WHTMLPart(quantaApp, "debug_output");
@@ -64,6 +63,7 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
   connect(m_variablesListView, SIGNAL(removeVariable(DebuggerVariable* )), parent, SLOT(slotRemoveVariable(DebuggerVariable* )));
 
   connect(m_debuggerBreakpointView, SIGNAL(removeBreakpoint(DebuggerBreakpoint* )), parent, SLOT(slotRemoveBreakpoint(DebuggerBreakpoint* )));
+  showMenu();
 }
 
 DebuggerUI::~DebuggerUI()
@@ -86,7 +86,18 @@ void DebuggerUI::showMenu()
 {
   QPopupMenu* debuggerMenu = (QPopupMenu*)(quantaApp->guiFactory())->container("debugger_menu", quantaApp);
   if(debuggerMenu)
+  {
+    //hiding and showing the menubar is ugly, but unfortunately
+    //QMenuBar simply crashes if a new item is added while a submenu
+    //is opened.
+    KMenuBar *mb = quantaApp->menuBar();
+    bool visible = mb->isVisible();
+    if (visible)
+      mb->hide();
     m_debuggerMenuID = quantaApp->menuBar()->insertItem(i18n("Deb&ug"), debuggerMenu, -1, 5);
+    if (visible)
+      mb->show();
+  }
   else
     m_debuggerMenuID  = 0;
 }
