@@ -303,6 +303,9 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
        status = true;
  }
 
+ if (!status && mimetype == "x-zerosize")
+    status = true;
+
 
  return status;
 }
@@ -418,7 +421,5 @@ Format QuantaCommon::findFormatByFileContent( const QString &fileName )
      if ((l > 2) && (buf[0] == GZIP_MAGIC1) && (buf[1] == GZIP_MAGIC2))
         result.compression = Format::GZipCompression;
   }
-  if ((ulong) f.size() == 0)
-    result.text = true;
   return result;
 }
