@@ -92,7 +92,9 @@
 #include "project/project.h"
 
 #include "widgets/whtmlpart.h"
+#ifdef BUILD_KAFKAPART
 #include "parts/kafka/kafkahtmlpart.h"
+#endif
 
 #include "dialogs/abbreviation.h"
 #include "dialogs/filemasks.h"
@@ -1071,6 +1073,7 @@ void QuantaApp::slotShowPreview()
 
 void QuantaApp::slotShowKafkaPart()
 {
+  #ifdef BUILD_KAFKAPART
   QWidgetStack *s = widgetStackOfHtmlPart();
   if(!kafkaPart) return;
   if(!s) return;
@@ -1095,7 +1098,7 @@ void QuantaApp::slotShowKafkaPart()
     previousWidgetList.push_back(s->id(s->visibleWidget()));
     s->raiseWidget(3);
   }
-
+  #endif
 }
 
 void QuantaApp::slotShowProjectTree()

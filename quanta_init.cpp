@@ -69,7 +69,9 @@
 
 #include "widgets/whtmlpart.h"
 #include "messages/messageoutput.h"
+#ifdef BUILD_KAFKAPART
 #include "parts/kafka/kafkahtmlpart.h"
+#endif
 
 #include "toolbar/tagaction.h"
 
@@ -399,13 +401,16 @@ void QuantaApp::initView()
 
   htmlpart = new WHTMLPart(rightWidgetStack,"rightHTML");
   htmlPartDoc = new WHTMLPart(rightWidgetStack, "docHTML");
-
+  #ifdef BUILD_KAFKAPART
   kafkaPart = new KafkaHTMLPart(rightWidgetStack,rightWidgetStack, "KafkaHTMLPart");
+  #endif
 
   rightWidgetStack->addWidget(m_view, 0);
   rightWidgetStack->addWidget(htmlpart->view(), 1);
   rightWidgetStack->addWidget(htmlPartDoc->view(), 2);
+  #ifdef BUILD_KAFKAPART
   rightWidgetStack->addWidget(kafkaPart->view(), 3);
+  #endif
   rightWidgetStack->raiseWidget(0);
 
   messageOutput = new MessageOutput(bottomWidgetStack);
@@ -501,7 +506,9 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
   {
     s->addWidget( htmlpart->view(), 1 );
     s->addWidget( htmlPartDoc->view(), 2 );
+    #ifdef BUILD_KAFKAPART
     s->addWidget( kafkaPart->view(), 3);
+    #endif
   }
 
   return s;
@@ -650,7 +657,9 @@ void QuantaApp::readOptions()
   readDockConfig(m_config);
 
   showPreviewAction  ->setChecked( false );
+  #ifdef BUILD_KAFKAPART
   showKafkaAction    ->setChecked( false );
+  #endif
   showMessagesAction ->setChecked( bottdock->parent() != 0L );
 
   m_doc    ->readConfig(m_config); // kwrites
@@ -1610,10 +1619,12 @@ void QuantaApp::initActions()
                          this, SLOT( slotShowPreview() ),
                          actionCollection(), "show_preview" );
 
+    #ifdef BUILD_KAFKAPART
     showKafkaAction =
       new KToggleAction( i18n( "&Visual editor (experimental)"), "kafka_view", Key_F12,
                          this, SLOT( slotShowKafkaPart() ),
                          actionCollection(), "show_kafka_view");
+    #endif
 
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),
