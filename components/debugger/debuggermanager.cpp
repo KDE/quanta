@@ -20,6 +20,7 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <kdebug.h>
 #include <klocale.h>
+#include <kcombobox.h>
 #include <kparts/componentfactory.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
@@ -40,7 +41,9 @@
 #include "viewmanager.h"
 #include "quantaview.h"
 #include "debuggerui.h"
+#include "debuggervariable.h"
 #include "pathmapper.h"
+#include "conditionalbreakpointdialog.h"
 
 // dialogs
 #include "debuggervariablesets.h"
@@ -294,6 +297,8 @@ void DebuggerManager::slotAddWatch()
   quantaApp->popupWord = "";
   if(!watch.isEmpty())
   {
+    DebuggerVariable *var = new DebuggerVariable(watch, "", DebuggerVariableTypes::Undefined);
+    m_debuggerui->addVariable(var);
     m_client->addWatch(watch);
   }
 }
@@ -319,18 +324,36 @@ void DebuggerManager::slotVariableSet()
 
 void DebuggerManager::slotConditionalBreakpoint()
 {
+  QString file;
+  
   kdDebug(24002) << "DebuggerManager::slotConditionalBreakpoint() " << quantaApp->popupWord << endl;
   if(!m_client)
     return;
 
-  QString condition = KInputDialog::getText(i18n("Add Conditional Breakpoint"), i18n("Specify expression to break at (when true):"), quantaApp->popupWord);
+  Document *w = ViewManager::ref()->activeDocument();
+  if (w)
+    file = w->url().prettyURL(0, KURL::StripFileProtocol);
+
+  ConditionalBreakpointDialog dlg(quantaApp->popupWord, file, "", "");
+  quantaApp->popupWord = "";
+  if(dlg.exec() == QDialog::Accepted)
+  {
+    DebuggerBreakpoint * bp = dlg.breakpoint();
+    if(bp)
+    {
+      m_client->addBreakpoint(bp);
+      m_breakpointList->add(bp);
+    }
+  }
+    
+  /*QString condition = KInputDialog::getText(i18n("Add Conditional Breakpoint"), i18n("Specify expression to break at (when true):"), quantaApp->popupWord);
   quantaApp->popupWord = "";
   if(!condition.isEmpty())
   {
     DebuggerBreakpoint * bp = new DebuggerBreakpoint("", 0, condition);
     m_client->addBreakpoint(bp);
     m_breakpointList->add(bp);
-  }
+  }*/
 }
 
 void DebuggerManager::slotDebugStartSession()

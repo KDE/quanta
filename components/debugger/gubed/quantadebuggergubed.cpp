@@ -39,7 +39,7 @@
 K_EXPORT_COMPONENT_FACTORY( quantadebuggergubed,
                             KGenericFactory<QuantaDebuggerGubed>("quantadebuggergubed"))
 
-const char QuantaDebuggerGubed::protocolversion[] = "0.0.10";
+const char QuantaDebuggerGubed::protocolversion[] = "0.0.11";
 
 QuantaDebuggerGubed::QuantaDebuggerGubed (QObject *parent, const char* name, const QStringList&)
     : DebuggerClient (parent, name)
@@ -476,7 +476,7 @@ void QuantaDebuggerGubed::processCommand(const QString& data)
   else if(m_command == "conditionalbreak")
   {
     setExecutionState(Pause);
-    debuggerInterface()->showStatus(i18n("Conditional breakpoint fulfilled: %1").arg(data), true);
+    debuggerInterface()->showStatus(i18n("Conditional breakpoint fulfilled"), true);
   }
   // There is a breakpoint set in this file/line
   else if(m_command == "breakpoint")
@@ -669,12 +669,23 @@ void QuantaDebuggerGubed::pause()
 // Add a breakpoint
 void QuantaDebuggerGubed::addBreakpoint (DebuggerBreakpoint* breakpoint)
 {
-  if(breakpoint->condition().isEmpty())
+  if(breakpoint->type() == DebuggerBreakpoint::LineBreakpoint)
     sendCommand("breakpoint", mapLocalPathToServer(breakpoint->filePath()) + ":" + QString::number(breakpoint->line()));
   else
   {
-    sendCommand("conditionalbreakpoint", breakpoint->condition());
+    sendCommand("conditionalbreakpoint",
+        bpToGubed(breakpoint)
+      );
   }
+}
+
+QString QuantaDebuggerGubed::bpToGubed(DebuggerBreakpoint* breakpoint)
+{
+  return QString("^" + mapLocalPathToServer(breakpoint->filePath()) +
+      "^" + breakpoint->inClass() +
+      "^" + breakpoint->inFunction() +
+      "^" + (breakpoint->type() == DebuggerBreakpoint::ConditionalTrue ? "true" : "change") +
+      "^" + breakpoint->condition());
 }
 
 // Clear a breakpoint
@@ -683,7 +694,7 @@ void QuantaDebuggerGubed::removeBreakpoint(DebuggerBreakpoint* breakpoint)
   if(breakpoint->condition().isEmpty())
     sendCommand("clearpoint", mapLocalPathToServer(breakpoint->filePath()) + ":" + QString::number(breakpoint->line()));
   else
-    sendCommand("clearconditionalbreakpoint", breakpoint->condition());
+    sendCommand("clearconditionalbreakpoint", bpToGubed(breakpoint));
 }
 
 // A file was opened...
@@ -710,22 +721,39 @@ void QuantaDebuggerGubed::removeWatch(DebuggerVariable *variable)
 // Show conditional breakpoint state
 void QuantaDebuggerGubed::showCondition(const QString &expression)
 {
-  QString condition = expression.left(expression.find(":"));
-  QString value = expression.mid(expression.find(":") + 1);
+  // First we have filepath
+  QString filepath = expression.mid(1);
+  filepath = filepath.left(filepath.find('^'));
+  QString value = expression.mid(filepath.length() + 2);
+  filepath = mapServerPathToLocal(filepath);
+  
+  // Then class
+  QString inClass = value.left(value.find('^'));
+  value = value.mid(inClass.length() + 1);
+  
+  // Then function 
+  QString inFunction = value.left(value.find('^'));
+  value = value.mid(inFunction.length() + 1);
 
+  // Then type 
+  QString type = value.left(value.find('^'));
+  value = value.mid(type.length() + 1);
+  
+  // Then condition ans value
+  QString condition = value.left(value.find('^'));
+  value = value.mid(condition.length() + 1);
+  
   DebuggerBreakpoint *bp = debuggerInterface()->newDebuggerBreakpoint();
+  bp->setType(type == "true" ? DebuggerBreakpoint::ConditionalTrue : DebuggerBreakpoint::ConditionalChange);
   bp->setCondition(condition);
-  bp->setLine(0);
-  bp->setFilePath("");
-
-  if(value == "F")
-    bp->setState(DebuggerBreakpointStates::Unfulfilled);
-  else if(value == "T")
-    bp->setState(DebuggerBreakpointStates::Fulfilled);
-  else if(value == "-")
-    bp->setState(DebuggerBreakpointStates::Error);
-  else
-    bp->setState(DebuggerBreakpointStates::Undefined);
+  bp->setFilePath(filepath);
+  bp->setClass(inClass);
+  bp->setFunction(inFunction);
+  bp->setValue(value);
+      
+  kdDebug(24002) << k_funcinfo << type << ", " << condition << ", " << filepath << ", " << inClass << ", " << inFunction << ", " << value << endl;
+  
+  bp->setState(DebuggerBreakpoint::Undefined);
 
   debuggerInterface()->showBreakpoint(*bp);
 }

@@ -19,20 +19,28 @@
 #include <kdebug.h>
 
 DebuggerBreakpoint::DebuggerBreakpoint()
-    : m_line(1), m_state(0), m_isTemp(false), m_hitCount(0), m_skipHits(0)
+    : m_line(1)//, m_state(0)
 {}
 
-DebuggerBreakpoint::DebuggerBreakpoint(const QString& filePath
-                                       , int line, const QString& conditionExpr
-                                       , int state, bool isTemp, int hitCount, int skipHits)
+DebuggerBreakpoint::DebuggerBreakpoint(const QString& filePath, int line)
 {
-  m_filePath      = filePath;
-  m_line          = line;
+  m_filePath = filePath;
+  m_line     = line;
+  m_type     = DebuggerBreakpoint::LineBreakpoint;
+  m_state    = DebuggerBreakpoint::Undefined;
+}
+
+DebuggerBreakpoint::DebuggerBreakpoint(const Types type,
+                                       const QString& conditionExpr, const QString& filePath, 
+                                       const QString& inClass, const QString& inFunction)
+{
   m_conditionExpr = conditionExpr;
-  m_state         = state;
-  m_isTemp        = isTemp;
-  m_hitCount      = hitCount;
-  m_skipHits      = skipHits;
+  m_filePath = filePath;
+  m_class = inClass;
+  m_function = inFunction;
+  m_line     = 0;
+  m_type     = type;
+  m_state    = DebuggerBreakpoint::Undefined;
 }
 
 DebuggerBreakpoint::~DebuggerBreakpoint()
@@ -41,6 +49,16 @@ DebuggerBreakpoint::~DebuggerBreakpoint()
 void DebuggerBreakpoint::setFilePath(const QString& filePath)
 {
   m_filePath = filePath;
+}
+
+void DebuggerBreakpoint::setClass(const QString& newclass)
+{
+  m_class = newclass;
+}
+
+void DebuggerBreakpoint::setFunction(const QString& function)
+{
+  m_function = function;
 }
 
 void DebuggerBreakpoint::setLine(int line)
@@ -53,29 +71,43 @@ void DebuggerBreakpoint::setCondition(const QString& expression)
   m_conditionExpr = expression;
 }
 
+void DebuggerBreakpoint::setValue(const QString& value)
+{
+  m_value = value;
+}
+
 void DebuggerBreakpoint::setState(int state)
 {
   m_state = state;
 }
 
-void DebuggerBreakpoint::setTemporary(bool temp)
+void DebuggerBreakpoint::setType(DebuggerBreakpoint::Types type )
 {
-  m_isTemp = temp;
-}
-
-void DebuggerBreakpoint::setHitCount(int hitCount)
-{
-  m_hitCount = hitCount;
-}
-
-void DebuggerBreakpoint::setSkipHits(int skipHits)
-{
-  m_skipHits = skipHits;
+  m_type = type;
 }
 
 const QString& DebuggerBreakpoint::filePath() const
 {
   return m_filePath;
+}
+
+const QString& DebuggerBreakpoint::value() const
+{
+  return m_value;
+}
+
+const QString& DebuggerBreakpoint::inClass() const
+{
+  return m_class;
+}
+const QString& DebuggerBreakpoint::inFunction() const
+{
+  return m_function;
+}
+
+DebuggerBreakpoint::Types DebuggerBreakpoint::type() const
+{
+  return m_type;
 }
 
 int DebuggerBreakpoint::line() const
@@ -91,19 +123,4 @@ const QString& DebuggerBreakpoint::condition() const
 int DebuggerBreakpoint::state() const
 {
   return m_state;
-}
-
-bool DebuggerBreakpoint::isTemp() const
-{
-  return m_isTemp;
-}
-
-int DebuggerBreakpoint::hitCount() const
-{
-  return m_hitCount;
-}
-
-int DebuggerBreakpoint::skipHits() const
-{
-  return m_skipHits;
 }

@@ -56,6 +56,9 @@ QString PathMapper::translate(const QString & path, const QString & from, const 
 
 QString PathMapper::mapLocalPathToServer(const QString &localpath)
 {
+  if(localpath.isEmpty())
+    return localpath;
+    
   QString newpath = translate(localpath, m_localBasedir, m_serverBasedir);
   
   // If no translation occurred, check and see if some of the other translations does
@@ -88,13 +91,17 @@ QString PathMapper::mapLocalPathToServer(const QString &localpath)
       
       return newpath;
     }
+    return localpath;
   }
-  return localpath;
+  return newpath;
 }
 
 QString PathMapper::mapServerPathToLocal(const QString &serverpath)
 {
   QString newpath;
+  if(serverpath.isEmpty())
+    return serverpath;
+
   newpath = translate(serverpath, m_serverBasedir, m_localBasedir);
   
   // Check if this dir is matched by the basedirs

@@ -9,7 +9,8 @@ libdebuggermanager_la_LIBADD = interfaces/libdebuggerinterface.la
 libdebuggermanager_la_SOURCES = debuggermanager.cpp debuggerbreakpoint.cpp \
 	quantadebuggerinterface.cpp debuggervariable.cpp debuggerui.cpp variableslistview.cpp \
 	debuggerbreakpointlist.cpp debuggervariablesets.ui debuggerbreakpointview.cpp pathmapper.cpp \
-	pathmapperdialogs.ui pathmapperdialog.cpp pathmapperdialog.h
+	pathmapperdialogs.ui pathmapperdialog.cpp pathmapperdialog.h conditionalbreakpointdialogs.ui \
+	conditionalbreakpointdialog.cpp conditionalbreakpointdialog.h
 
 AM_CPPFLAGS =  -I$(top_srcdir)/quanta/components/debuggerquanta \
 	-I$(top_srcdir)/quanta/components/debugger/interfaces  \

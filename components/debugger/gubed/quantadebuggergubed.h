@@ -123,6 +123,7 @@ class QuantaDebuggerGubed : public DebuggerClient
     QString mapServerPathToLocal(const QString& serverpath);
     QString mapLocalPathToServer(const QString& localpath);
     void showWatch(const QString& data);
+    QString bpToGubed(DebuggerBreakpoint* breakpoint);
 
   public slots:
     // Socket slots

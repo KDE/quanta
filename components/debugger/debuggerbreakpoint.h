@@ -19,52 +19,60 @@
 #define DEBUGGERBREAKPOINT_H
 #include <qstring.h>
 
-namespace DebuggerBreakpointStates
-{
-  enum States
-  {
-    Undefined = 0,
-    Unfulfilled,
-    Fulfilled,
-    Error
-  };
-}
-
 
 class DebuggerBreakpoint
 {
   public:
+    enum Types
+    {
+      LineBreakpoint = 0,
+      ConditionalTrue,
+      ConditionalChange
+    };
+  
+    enum States
+    {
+      Undefined = 0,
+      Unfulfilled,
+      Fulfilled,
+      Error
+    };
+    
     DebuggerBreakpoint();
-    DebuggerBreakpoint(const QString& filePath, int line,
-                       const QString& conditionExpr = "", int state = DebuggerBreakpointStates::Undefined,
-                       bool isTemp = false, int hitCount = 0, int skipHits = 0);
+    DebuggerBreakpoint(const QString& filePath, int line); // Line BP
+    DebuggerBreakpoint(const DebuggerBreakpoint::Types type,                   // Any kind
+                       const QString& conditionExpr, const QString& filePath = "", 
+                       const QString& inClass = "", const QString& inFunction = "");
 
     virtual ~DebuggerBreakpoint();
 
+    virtual void setFunction(const QString& filePath);
+    virtual void setClass(const QString& filePath);
     virtual void setFilePath(const QString& filePath);
     virtual void setLine(int line);
     virtual void setCondition(const QString& expression);
     virtual void setState(int state);
-    virtual void setTemporary(bool temp);
-    virtual void setHitCount(int hitCount);
-    virtual void setSkipHits(int skipHits);
+    virtual void setType(Types type);
+    virtual void setValue(const QString& value);
 
     virtual const QString& filePath() const;
+    virtual const QString& inClass() const;
+    virtual const QString& inFunction() const;
     virtual int line() const;
     virtual const QString& condition() const;
     virtual int state() const;
-    virtual bool isTemp() const;
-    virtual int hitCount() const;
-    virtual int skipHits() const;
+    virtual DebuggerBreakpoint::Types type() const;
+    virtual const QString& value() const;
 
   protected:
     QString m_filePath;
+    QString m_class;
+    QString m_function;
     int     m_line;
     QString m_conditionExpr;
     int     m_state;
-    bool    m_isTemp;
-    int     m_hitCount;
-    int     m_skipHits;
+    Types   m_type;
+    QString m_value;
 };
 
 #endif

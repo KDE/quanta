@@ -37,8 +37,10 @@ namespace DebuggerBreakpointViewColumns
   // If you change here, change the column adding
   enum Columns
   {
-    File = 0,
-    Expression,
+    Expression = 0,
+    File,
+    Class,
+    Function,
     Line,
     Value
   };
@@ -48,10 +50,12 @@ DebuggerBreakpointView::DebuggerBreakpointView(QWidget *parent, const char *name
     : KListView(parent, name)
 {
   // If you change here, change the DebuggerBreakpointViewColumns enums above
-  addColumn(i18n("File"));
   addColumn(i18n("Expression"));
+  addColumn(i18n("File"));
+  addColumn(i18n("Class"));
+  addColumn(i18n("Function"));
   addColumn(i18n("Line"));
-  addColumn(i18n("State"));
+  addColumn(i18n("Value"));
 
   setResizeMode(QListView::AllColumns);
   setAllColumnsShowFocus(true);
@@ -82,29 +86,21 @@ void DebuggerBreakpointView::showBreakpoint(const DebuggerBreakpoint &bp)
   if(!item)
     return;
 
-  if(bp.condition().isEmpty())
+  if(bp.type() == DebuggerBreakpoint::LineBreakpoint)
+  {
     item->setText(DebuggerBreakpointViewColumns::Value, "");
+    item->setText(DebuggerBreakpointViewColumns::Line, QString::number(bp.line()));
+  }
   else
-    switch(bp.state())
-    {
-      case DebuggerBreakpointStates::Fulfilled:
-        item->setText(DebuggerBreakpointViewColumns::Value, i18n("Fulfilled"));
-        break;
-
-      case DebuggerBreakpointStates::Error:
-        item->setText(DebuggerBreakpointViewColumns::Value, i18n("Error"));
-        break;
-
-      case DebuggerBreakpointStates::Unfulfilled:
-        item->setText(DebuggerBreakpointViewColumns::Value, "");
-        break;
-
-      default:
-        item->setText(DebuggerBreakpointViewColumns::Value, i18n("Undefined"));
-    }
+  {
+    item->setText(DebuggerBreakpointViewColumns::Value, bp.value());
+    item->setText(DebuggerBreakpointViewColumns::Line, "");
+  }
   item->setText(DebuggerBreakpointViewColumns::File, bp.filePath());
   item->setText(DebuggerBreakpointViewColumns::Expression, bp.condition());
-  item->setText(DebuggerBreakpointViewColumns::Line, (bp.condition().isEmpty() ? QString::number((bp.line())) : QString()));
+  item->setText(DebuggerBreakpointViewColumns::Class, bp.inClass());
+  item->setText(DebuggerBreakpointViewColumns::Function, bp.inFunction());
+  
 
 }
 
@@ -116,7 +112,9 @@ QListViewItem* DebuggerBreakpointView::findBreakpoint(const DebuggerBreakpoint& 
   {
     if(item->text(DebuggerBreakpointViewColumns::File) == bp.filePath()
     && item->text(DebuggerBreakpointViewColumns::Expression) == bp.condition()
-    && item->text(DebuggerBreakpointViewColumns::Line) == (bp.condition().isEmpty() ? QString::number(bp.line()) : QString())
+    && item->text(DebuggerBreakpointViewColumns::Class) == bp.inClass()
+    && item->text(DebuggerBreakpointViewColumns::Function) == bp.inFunction()
+    && item->text(DebuggerBreakpointViewColumns::Line) == (bp.type() == DebuggerBreakpoint::LineBreakpoint ? QString::number(bp.line()) : QString(""))
     )
       break;
 
@@ -141,8 +139,8 @@ DebuggerBreakpoint* DebuggerBreakpointView::selected()
 
   DebuggerBreakpoint* bp = new DebuggerBreakpoint(
     selectedItem()->text(DebuggerBreakpointViewColumns::File),
-    selectedItem()->text(DebuggerBreakpointViewColumns::Line).toInt(),
-    selectedItem()->text(DebuggerBreakpointViewColumns::Expression));
+    selectedItem()->text(DebuggerBreakpointViewColumns::Line).toInt());
+    bp->setCondition(selectedItem()->text(DebuggerBreakpointViewColumns::Expression));
   return bp;
 }
 

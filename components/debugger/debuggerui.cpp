@@ -40,7 +40,7 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
   m_variablesListView = new VariablesListView(quantaApp->getMainDockWidget(), "debuggerVariables");
   m_variablesListView->setIcon(SmallIcon("math_brace"));
   m_variablesListView->setCaption(i18n("Variables"));
-  m_variableListViewTVA = quantaApp->addToolWindow(m_variablesListView, KDockWidget::DockLeft, quantaApp->getMainDockWidget());
+  m_variableListViewTVA = quantaApp->addToolWindow(m_variablesListView,  KDockWidget::DockLeft, quantaApp->getMainDockWidget());
 
   // Breakpointlist
   m_debuggerBreakpointView = new DebuggerBreakpointView(quantaApp->getMainDockWidget(), "debuggerBreakpoints");
