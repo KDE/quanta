@@ -85,9 +85,11 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   , m_currentFocus(SourceFocus)
 #endif
 {
+#ifdef BUILD_KAFKAPART
 //Connect the VPL update timers
   connect(&m_sourceUpdateTimer, SIGNAL(timeout()), this, SLOT(sourceUpdateTimerTimeout()));
   connect(&m_VPLUpdateTimer, SIGNAL(timeout()), this, SLOT(VPLUpdateTimerTimeout()));
+#endif
 
 //create the source and VPL holding widgets
   m_documentArea = new QWidget(this);
@@ -256,9 +258,11 @@ void QuantaView::slotSetSourceLayout()
 
    m_currentViewsLayout = SourceOnly;
 
+#ifdef BUILD_KAFKAPART
 //update timers are not needed in source only mode
    m_sourceUpdateTimer.stop();
    m_VPLUpdateTimer.stop();
+#endif
 }
 
 
