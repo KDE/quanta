@@ -1059,7 +1059,7 @@ void ProjectPrivate::slotNewProject()
   delete wiz;
 
   adjustActions();
-  parent->newStatus();
+  emit parent->newStatus();
 }
 
 
@@ -1077,6 +1077,7 @@ void ProjectPrivate::slotCloseProject()
   // empty dom tree
   dom.clear();
   m_events->clear();
+  config->setGroup("Projects");
   config->writePathEntry("Last Project", QString::null);
   init();
   parent->closeFiles();

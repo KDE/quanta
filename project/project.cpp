@@ -1139,6 +1139,7 @@ bool Project::queryClose()
   if (hasProject())
   {
     emit eventHappened("before_project_close", d->baseURL.url(), QString::null);
+    d->config->setGroup("Projects");
     d->config->writePathEntry("Last Project", d->projectURL.url());
     canExit = d->uploadProjectFile();
     if (! canExit)
