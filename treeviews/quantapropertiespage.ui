@@ -64,9 +64,6 @@
                         <property name="text">
                             <string>&amp;Inherit type from parent (nothing)</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+I</string>
-                        </property>
                     </widget>
                     <widget class="QLabel" row="0" column="0">
                         <property name="name">
