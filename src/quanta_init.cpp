@@ -151,6 +151,7 @@ void QuantaInit::initQuanta()
    
   DTDs::ref();  // create the class, must be before readOptions() !
   readOptions();
+  initPlugins(); // needs to be before createGUI because some actions are created inside
 
   m_quanta->createGUI( QString::null, false /* conserveMemory */ );
    
@@ -175,7 +176,6 @@ void QuantaInit::initQuanta()
   }
 
 //  applyMainWindowSettings(m_config);
-  initPlugins  ();
 
   m_quanta->m_tagsMenu = new QPopupMenu(m_quanta);
   m_quanta->editTagAction->plug(m_quanta->m_tagsMenu);
@@ -1373,4 +1373,4 @@ QString QuantaInit::retrieveBaseFileName(const QString& filename)
  return filename.left(filename.findRev("."));
 }
 
-#include "quanta_init.moc"
+//#include "quanta_init.moc"
