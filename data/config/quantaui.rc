@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32058">
+<kpartgui name="quanta" version="32061">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -124,7 +124,11 @@
   <text>Plu&amp;gins</text>
   </Menu>
 
+  <Merge/>
+  
   <Menu name="tools"><text>T&amp;ools</text>
+    <Merge/>
+    <Separator/>
     <Action name="tools_document_properties" />
     <Action name="tools_change_case" />
     <Separator/>

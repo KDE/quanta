@@ -183,7 +183,6 @@
 #include "newstuff.h"
 #include "quantanetaccess.h"
 
-#define BOOKMARK_MENU_POSITION 3
 const QString resourceDir = QString(QUANTA_PACKAGE) + "/";
 
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
@@ -1070,17 +1069,6 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
     m_debugger->UI()->showMenu();
  }
  tb->setCurrentPage(currentPageIndex);
-
- Document *w = ViewManager::ref()->activeDocument();
- if (w)
- {
-    KAction *bookmarkAction = w->view()->actionCollection()->action("bookmarks");
-    if (bookmarkAction)
-    {
-      bookmarkAction->unplug(menuBar());
-      bookmarkAction->plug(menuBar(), BOOKMARK_MENU_POSITION);
-    }
- }
 }
 
 void QuantaApp::slotOptionsConfigureToolbars()
@@ -3884,14 +3872,6 @@ void QuantaApp::slotActivePartChanged(KParts::Part * part)
     m_oldKTextEditor = dynamic_cast<KTextEditor::View *>(activeWid);
     if (m_oldKTextEditor)
       guiFactory()->addClient(m_oldKTextEditor);
-      KAction *bookmarkAction = m_oldKTextEditor->actionCollection()->action("bookmarks");
-      if (bookmarkAction)
-      {
-        KMenuBar *mb = menuBar();
-        mb->activateItemAt(-1);
-        bookmarkAction->unplug(mb);
-        bookmarkAction->plug(mb, BOOKMARK_MENU_POSITION);
-      }
   }
 }
 
