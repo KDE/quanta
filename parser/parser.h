@@ -60,9 +60,9 @@ public:
   /** Parses the found special (like script, css and such) areas.*/
   void specialAreaParser(Node *startNode);
 
-  /** Print the doc structure tree to the standard output.
-      Only for debugging purposes. */
-  void coutTree(Node *node, int indent);
+  /** Returns the node for position (line, column). As more than one node can
+  contain the same area, it return the "deepest" node. */
+  Node *nodeAt(int line, int col);
 
   /** Clear the parser internal text, thus forcing the reparsing. */
   void clear();
@@ -84,6 +84,9 @@ private:
   int oldMaxLines;
   QValueList<DTDListNode> dtdList;
 
+  /** Print the doc structure tree to the standard output.
+      Only for debugging purposes. */
+  void coutTree(Node *node, int indent);
   void rebuildDTDList();
 };
 

@@ -451,13 +451,13 @@ Node *Parser::parse(Document *w)
   {
     currentNode->tag->endPos(el, ec);
   }
-  QString s = w->text(el, ec + 1, tagStartLine, tagStartPos -1);
+  QString s = w->text(el, ec + 1, maxLine, lastLineLength);
   if (!s.simplifyWhiteSpace().isEmpty() &&
       (el !=0 || ec !=0) )
   {
     textTag = new Tag();
     textTag->setStr(s);
-    textTag->setTagPosition(el, ec+1, tagStartLine, tagStartPos -1);
+    textTag->setTagPosition(el, ec+1, maxLine, lastLineLength);
     textTag->setWrite(w);
     textTag->type = Tag::Text;
     textTag->single = true;
@@ -1000,3 +1000,40 @@ DTDStruct * Parser::currentDTD(int line, int col)
 
   return dtd; */
 }
+
+/** Returns the node for position (line, column). As more than one node can
+contain the same area, it return the "deepest" node. */
+Node *Parser::nodeAt(int line, int col)
+{
+  Node *node = m_node;
+  int bl, bc, el, ec;
+
+  while (node)
+  {
+    node->tag->beginPos(bl, bc);
+    if (node->next)
+    {
+      node->next->tag->beginPos(el, ec);
+    } else
+    {
+      el = write->editIf->numLines();
+      ec = 0;
+    }
+    if (QuantaCommon::isBetween(line, col, bl, bc, el, ec) == 0)
+    {
+      if (node->child)
+      {
+        node = node->child;
+      } else
+      {
+        break; //we found the node
+      }
+    } else
+    {
+      node = node->next;
+    }
+  }
+
+  return node;
+}
+

@@ -593,6 +593,7 @@ void StructTreeView::showTagAtPos(int x, int y)
       }
     } //for
 
+  //  StructTreeTag *curTag = dynamic_cast<StructTreeTag *>(parser->nodeAt(x, y)->listItem);
     if ( curTag )
     {
       ensureItemVisible(curTag);
