@@ -21,7 +21,6 @@
 #include <qdir.h>
 #include <qpixmap.h>
 #include <qheader.h>
-#include <qdragobject.h>
 #include <qpoint.h>
 #include <qlayout.h>
 #include <qtextedit.h>
@@ -41,6 +40,7 @@
 #include <kurlrequesterdlg.h>
 #include <ktempfile.h>
 #include <kio/netaccess.h>
+#include <kurldrag.h>
 
 #include "templatestreeview.h"
 #include "templatestreeview.moc"
@@ -277,23 +277,11 @@ QDragObject * TemplatesTreeView::dragObject ()
   readDirInfo();
   if(!dirInfo.mimeType.isEmpty()) // only drag when the template type is specified
   {
-    QUriDrag *drag = new QUriDrag(this, 0);
-    QStringList uriList(currentURL().path()); //TODO: Make it working with non local files
-    drag->setFileNames(uriList);
+    KURLDrag *drag = KURLDrag::newDrag(KURL::List(currentURL()), this);
     return drag;
   }
   return 0;
 }
-
-/*
-void TemplatesTreeView::startDrag()
-{
-  QUriDrag *drag = new QUriDrag(this, 0);
-  QStringList uriList(currentFileName());
-  drag->setFileNames(uriList);
-  drag->drag();
- }
-*/
 
 /** No descriptions */
 void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
@@ -312,13 +300,13 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
    {
      dest = parent->fullName()+item->text(0);
    }
-   if (QUriDrag::canDecode(e))
+   if (KURLDrag::canDecode(e))
    {
-     QString source;
+     KURL source;
     // QTextDrag::decode(e,source);
-     QStringList fileList;
+     KURL::List fileList;
 
-     QUriDrag::decodeLocalFiles(e, fileList);    //TODO: Make it workable for non local files
+     KURLDrag::decode(e, fileList);    //TODO: Make it workable for non local files
      if(fileList.empty()) return;
 
      source = fileList.front();
@@ -361,7 +349,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
 /** No descriptions */
 void TemplatesTreeView::contentsDragEnterEvent(QDragEnterEvent *event)
 {
- if (QUriDrag::canDecode(event) || QTextDrag::canDecode(event))
+ if (KURLDrag::canDecode(event) || QTextDrag::canDecode(event))
  {
     event->accept();
  }
@@ -563,15 +551,19 @@ void TemplatesTreeView::slotInsertTag()
 
 void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 {
- if (QUriDrag::canDecode(e))
+ if (KURLDrag::canDecode(e))
  {
-   QStringList fileList;
-   QUriDrag::decodeLocalFiles(e, fileList);
+   KURL::List fileList;
+   KURLDrag::decode(e, fileList);
 
    if(fileList.empty())
     return;
 
-   QString localFileName = fileList.front();
+   KURL url = fileList.front();
+   if(!url.isLocalFile())
+    return;
+
+   QString localFileName = url.path();
 
    readDirInfo(localFileName);
    QString mimeType = KMimeType::findByPath(localFileName)->name();

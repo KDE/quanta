@@ -27,7 +27,6 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qevent.h>
-#include <qdragobject.h>
 #include <qwidget.h>
 
 // include files for KDE
@@ -37,6 +36,7 @@
 #include <kmenubar.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <kurldrag.h>
 
 #include <ktexteditor/viewcursorinterface.h>
 
@@ -204,7 +204,7 @@ void QuantaView::resizeEvent (QResizeEvent *e)
 
 void QuantaView::dragEnterEvent(QDragEnterEvent *e)
 {
-  e->accept(QUriDrag::canDecode(e));
+  e->accept(KURLDrag::canDecode(e));
 }
 
 void QuantaView::dropEvent(QDropEvent *e)
