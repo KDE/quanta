@@ -233,9 +233,15 @@ QString PHPDebuggerInterface::mapServerPathToLocal(QString serverpath)
 QString PHPDebuggerInterface::mapLocalPathToServer(QString localpath)
 {
    // Translate filename from local to server
+#if KDE_IS_VERSION(3,2,0)   
    if(localpath.startsWith(Project::ref()->debugLocalBasedir, false))
       localpath.remove(0, Project::ref()->debugLocalBasedir.length());
-
+#else
+   QString lPath = localpath.lower();
+   QString lBaseDir = Project::ref()->debugLocalBasedir.lower();
+   if(lPath.startsWith(lBaseDir))
+      localpath.remove(0, Project::ref()->debugLocalBasedir.length());
+#endif
    return Project::ref()->debugServerBasedir + localpath;
 }
 
