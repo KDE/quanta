@@ -47,7 +47,7 @@ private:
   bool internalExists(const KURL& url);
 
   bool bJobOK;
-  static QString* lastErrorMsg;
+  static QString lastErrorMsg;
   KIO::UDSEntry m_entry;
   KURL::List dirListItems;
   QPtrList<QRegExp> lstFilters;

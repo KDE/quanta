@@ -30,7 +30,7 @@
 //app includes
 #include "qextfileinfo.h"
 
-QString * QExtFileInfo::lastErrorMsg = 0L;
+QString QExtFileInfo::lastErrorMsg = "";
 
 /** create a relative short url based in baseURL*/
 KURL QExtFileInfo::toRelative(const KURL& urlToConvert,const KURL& baseURL)
@@ -127,7 +127,7 @@ bool QExtFileInfo::createDir( const KURL& path )
 {
 	int i=0;
   bool result;
-	while ( !exists(path) && i<20 )
+	while ( !exists(path) && i < 2 )
 	{
     KURL dir1 = path;
     KURL dir2 = path;
@@ -254,8 +254,7 @@ void QExtFileInfo::slotResult( KIO::Job * job )
   if ( !bJobOK )
   {
     if ( !lastErrorMsg )
-      lastErrorMsg = new QString;
-    *lastErrorMsg = job->errorString();
+     lastErrorMsg = job->errorString();
   }
   if ( job->isA("KIO::StatJob") )
     m_entry = static_cast<KIO::StatJob *>(job)->statResult();

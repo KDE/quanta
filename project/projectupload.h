@@ -34,8 +34,7 @@ class ProjectUpload : public ProjectUploadS
 {
   Q_OBJECT
 public:
-  ProjectUpload(const KURL& url, Project* p, QWidget *parent = 0, const char * name = 0, bool modal = FALSE, WFlags fl = 0 );
-  ProjectUpload( Project* , QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+  ProjectUpload(Project* p,const KURL& url, QWidget *parent = 0, const char * name = 0, bool modal = FALSE, WFlags fl = 0 );
   ~ProjectUpload();
 
 protected slots:
@@ -57,14 +56,11 @@ protected slots:
   virtual void reject();
 
 private:	
-  int selectedItemCount( QListViewItem *, int = 0 );
-  void buildSelectedItemList( QListViewItem *, QString );
-
-  QStringList files;    // list of all files
-  QStringList modified; // modified files
-  QStringList toUpload; // list of files , still didn't uploaded
-  QString currentFile;  // file in progress of upload
-  QStringList madeDirs;
+  void buildSelectedItemList();
+  KURL::List modified; // modified files
+  KURL::List toUpload; // list of files , still didn't uploaded
+  KURL currentURL;
+  KURL::List madeDirs;
   Project *p;
   KURL *baseUrl;
   bool stopUpload;

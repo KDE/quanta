@@ -60,7 +60,6 @@ bool QuantaKPartPlugin::load()
   QString loc = location();
   if(loc.isEmpty())
   {
-    const char *fn = fileName().latin1();
     KStandardDirs *dirs = QuantaCommon::pluginDirs("lib");
     loc = dirs->findResource("lib", fileName());
     delete dirs;

@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>440</width>
-            <height>520</height>
+            <height>540</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -23,13 +23,13 @@
     <property name="minimumSize">
         <size>
             <width>440</width>
-            <height>520</height>
+            <height>540</height>
         </size>
     </property>
     <property name="maximumSize">
         <size>
             <width>440</width>
-            <height>520</height>
+            <height>540</height>
         </size>
     </property>
     <property name="caption">
@@ -47,7 +47,7 @@
                 <x>5</x>
                 <y>5</y>
                 <width>430</width>
-                <height>510</height>
+                <height>529</height>
             </rect>
         </property>
         <grid>
@@ -77,8 +77,20 @@
                 <property name="name">
                     <cstring>labelCurFile</cstring>
                 </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>5</hsizetype>
+                        <vsizetype>0</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
                 <property name="text">
-                    <string>Current:</string>
+                    <string>Current:
+[none]</string>
+                </property>
+                <property name="alignment">
+                    <set>WordBreak|AlignVCenter</set>
                 </property>
             </widget>
             <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
@@ -162,8 +174,17 @@
                         <property name="name">
                             <cstring>linePasswd</cstring>
                         </property>
+                        <property name="font">
+                            <font>
+                                <family>Lucida Console [Xft]</family>
+                                <pointsize>10</pointsize>
+                            </font>
+                        </property>
                         <property name="echoMode">
                             <enum>Password</enum>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignAuto</set>
                         </property>
                     </widget>
                     <widget class="QLineEdit" row="2" column="1">

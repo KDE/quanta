@@ -69,10 +69,9 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem(	UserIcon("delete"),i18n("Remove From Disc (and project)..."), this, SLOT(slotRemove()));
 	fileMenu -> insertItem( i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
-	fileMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
-	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( i18n("Upload File..."), this, SLOT(slotUploadSingleURL()));
 	fileMenu -> insertSeparator();
+	fileMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
 	fileMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
@@ -84,19 +83,18 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
  	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( UserIcon("delete"),i18n("Remove From Disc (and project)..."), this, SLOT(slotRemove()));
 	folderMenu -> insertItem( i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
- 	folderMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
-	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( i18n("Upload Folder..."), this, SLOT(slotUploadSingleURL()));
 	folderMenu -> insertSeparator();
+ 	folderMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
 	folderMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
 	folderMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
 
   projectMenu = new QPopupMenu(this);
+	projectMenu -> insertItem( i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
 	projectMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
 	projectMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
-	projectMenu -> insertItem( i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
   
 
 
@@ -215,7 +213,7 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
   KURL::List urlList = a_urlList;
 	KURL url;
 	KURL::List::Iterator it;
-  int col;
+  uint col;
   for ( it = urlList.begin(); it != urlList.end(); ++it )
 	{
     folder = projectDir;

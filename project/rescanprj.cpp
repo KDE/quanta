@@ -23,7 +23,6 @@ RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *p
   setCaption(name);
 
   listView->setColumnText(1, i18n("Add"));
-  listView->removeColumn(3); //TODO: Date column removed as date is not read...
   baseURL = p_baseURL;
   baseURL.adjustPath(1);
 
@@ -73,7 +72,6 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
          name = (*entit).m_str;
          break;
        }
-     //TODO: Get also the file date
      if ( ! name.isEmpty() && name != dot && name != dotdot) 
      {
        KFileItem* item = new KFileItem( *it, url, false, true );
@@ -84,56 +82,12 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
        {
          QString s = QString("%1").arg( (long int)item->size() );
          this->list.append(itemURL);
-         listView->addItem(itemURL, s, "");
+         listView->addItem(itemURL, s, item->timeString());
        }
        delete item;
      }
    }
-/*
-  for (; it != end; ++it)
-  {
-    KIO::UDSEntry::ConstIterator it2 = (*it).begin();
-
-    bool isDir;
-    QString name;    
-    unsigned long size = 0L;
-
-    //TODO: Get also the file date
-    for( ; it2 != (*it).end(); it2++ )
-    {
-      switch( (*it2).m_uds ) {
-        case KIO::UDS_NAME:
-          name = (*it2).m_str;
-          break;
-        case KIO::UDS_SIZE:
-          size = ((*it2).m_long);
-          break;
-        case KIO::UDS_FILE_TYPE:
-          isDir = S_ISDIR((*it2).m_long);
-          break;
-        default:
-          break;
-      }
-    }
-
-    KURL u = baseURL;
-    QuantaCommon::setUrl(u, name);
-    if ( name != QString::fromLatin1("..") &&
-         name != QString::fromLatin1(".") &&
-         prjFileList.findIndex(u) == -1 )
-    {
-      if (isDir)
-      {
-        u.adjustPath(1);
-        name += "/";
-      }
-	    this->list.append(u);
-
-  	  QString s = QString("%1").arg( size );
-      listView->addItem(u, s, "");
-    }
-  }
-*/
+   
   slotSelect();
 }
 
@@ -183,8 +137,9 @@ KURL::List RescanPrj::files()
    item = it.current();
    if ( listView->isSelected( item ))
    {
-     KURL u = baseURL;
-     u.setPath(baseURL.path(1)+item->text(0));
+      KURL u;
+ //    KURL u = baseURL;
+//     u.setPath(baseURL.path(1)+item->text(0));
      if (dynamic_cast<UploadTreeFolder*>(item))
      {
       u = dynamic_cast<UploadTreeFolder*>(item)->url();
@@ -192,8 +147,8 @@ KURL::List RescanPrj::files()
      {
       u = dynamic_cast<UploadTreeFile*>(item)->url();
      }
-     
-     r.append(u);
+
+     if (!u.isEmpty()) r.append(u);
    }
   }
   return r;

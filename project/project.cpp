@@ -724,12 +724,13 @@ void Project::slotRenameFinished( KIO::Job * job)
     QDomElement el;
     QDomNodeList nl = dom.elementsByTagName("item");
     QString tmpString;
-
+    QString oldStr = QuantaCommon::qUrl(oldURL);
+    QString newStr = QuantaCommon::qUrl(newURL);
     for (uint i = 0; i < nl.count(); i++ )
     {
       el = nl.item(i).toElement();
       tmpString = el.attribute("url");    
-      tmpString = tmpString.replace(QRegExp(oldURL.path()),newURL.path());
+      tmpString = tmpString.replace(QRegExp(oldStr),newStr);
       el.setAttribute("url",tmpString);
     }
     oldURL = KURL();
@@ -1197,7 +1198,7 @@ void Project::slotUpload()
 {
   emit saveAllFiles();
 
-  ProjectUpload *dlg = new ProjectUpload(this, 0,i18n("Upload project items..."), false, Qt::WDestructiveClose);
+  ProjectUpload *dlg = new ProjectUpload(this, KURL(), 0, i18n("Upload project items..."), false, Qt::WDestructiveClose);
   dlg->show();
 }
 
@@ -1206,7 +1207,7 @@ void Project::slotUploadURL(const KURL& urlToUpload)
   emit saveAllFiles();
   KURL url = QExtFileInfo::toRelative( urlToUpload, baseURL);
 
-  ProjectUpload *dlg = new ProjectUpload(url, this, 0, i18n("Upload project items..."), false, Qt::WDestructiveClose); 
+  ProjectUpload *dlg = new ProjectUpload(this, url, 0, i18n("Upload project items..."), false, Qt::WDestructiveClose); 
   dlg->show();
 }
 
