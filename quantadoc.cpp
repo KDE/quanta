@@ -422,8 +422,11 @@ Document* QuantaDoc::newWrite()
   DTDStruct *dtd = dtds->find(quantaApp->newFileType());
 //  if (!dtd) dtd = dtds->find(qConfig.newFileType);   //fallback, but not really needed
   int i = 1;
-  QString fname;
-  while ( isOpened(fname.sprintf("Untitled%i."+dtd->defaultExtension,i))) i++;
+  while ( isOpened(KURL("file:/"+QString("Untitled%1.").arg(i)+dtd->defaultExtension)))
+  {
+   i++;
+  }
+  QString fname = QString("Untitled%1.").arg(i)+dtd->defaultExtension;
   
   KTextEditor::Document *doc = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
 													     QString::null,
@@ -448,7 +451,7 @@ Document* QuantaDoc::newWrite()
   int tabWidth = quantaApp->config->readNumEntry("TabWidth",4);
   quantaApp->config->writeEntry("TabWidth",tabWidth);
   w->readConfig( quantaApp->config );
- 	w->setUntitledUrl( fname );
+ 	w->setUntitledUrl( fname);
 
   for (unsigned int i=0; i< dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->hlModeCount(); i++)
   {
