@@ -445,6 +445,11 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
     }    
     return true;
 }
+#else
+ // hack to compile. moc doesn't check the "#ifdef" at the declaration and the compiler complains 
+ // of no matching function.
+bool TagAction::slotActionActivated(KAction::ActivationReason /*reason*/, Qt::ButtonState /*state*/)
+{return true;}
 #endif
 
 bool TagAction::slotActionActivated()

@@ -27,6 +27,7 @@
 #include <qdom.h>
 
 class KMainWindow;
+enum KAction::ActivationReason;
 class QuantaView;
 class KProcess;
 class QDomElement;
