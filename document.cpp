@@ -455,15 +455,15 @@ bool Document::insertChildTags(QTag *tag, QTag *lastTag)
            ( childTag->isSingle() ||
             (childTag->isOptional() && !qConfig.closeOptionalTags)) )
       {
-        insertText("\n<" +tagStr + "/>", true, false);
+        insertText("<" +tagStr + "/>", true, false);
       } else
       {
-        insertText("\n<" +tagStr + ">", true, false);
+        insertText("<" +tagStr + ">", true, false);
       }
       QString closingStr;
       if (insertChildTags(childTag, tag))
       {
-        closingStr = "\n";
+        closingStr = "";
       }
       if ( (!childTag->isSingle() && !childTag->isOptional() && qConfig.closeTags) ||
            (childTag->isOptional() && qConfig.closeOptionalTags) )
@@ -856,7 +856,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       if (!tag->childTags.isEmpty())
       {
         reparseEnabled = false;
-        insertText("\n", false, false);
+ //       insertText("\n", false, false);
         insertChildTags(tag);
         reparseEnabled = true;
         baseNode = parser->rebuild(this);
