@@ -26,6 +26,7 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <kconfig.h>
 #include <kurl.h>
+#include <kstdguiitem.h>
 
 #include "tagdialog.h"
 #include "tagwidget.h"
@@ -84,8 +85,8 @@ TagDialog::~TagDialog()
 
 void TagDialog::init(QTag *dtdTag, KURL a_baseURL)
 {
-  setOkButton(i18n("&OK"));
-  setCancelButton(i18n("&Cancel"));
+    setOkButton(KStdGuiItem::ok().text());
+  setCancelButton(KStdGuiItem::cancel().text());
 
   connect( this, SIGNAL(applyButtonPressed()),  SLOT(slotAccept()) );
   connect( this, SIGNAL(cancelButtonPressed()), SLOT(reject()) );

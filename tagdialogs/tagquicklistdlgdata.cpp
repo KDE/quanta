@@ -15,6 +15,7 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
+#include <kstdguiitem.h>
 
 void  TagQuickListDlg::initDialog()
 {
@@ -43,7 +44,7 @@ void  TagQuickListDlg::initDialog()
   buttonCancel= new QPushButton(this,"NoName");
   buttonCancel->setGeometry(120,110,100,30);
   buttonCancel->setMinimumSize(0,0);
-  buttonCancel->setText(i18n("&Cancel"));
+  buttonCancel->setText(KStdGuiItem::cancel().text());
 
   groupBox= new QButtonGroup(this,"NoName");
   groupBox->setGeometry(120,40,100,60);
