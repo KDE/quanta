@@ -51,12 +51,12 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 
   QWidgetStack *toolbarStack = new QWidgetStack(this);
 
-  bStandard = new WToolBar( toolbarStack );
-	bFonts    = new WToolBar( toolbarStack );
-	bTables   = new WToolBar( toolbarStack );
-	bForms    = new WToolBar( toolbarStack );
-	bLists    = new WToolBar( toolbarStack );
-	bUser     = new WToolBar( toolbarStack );
+  bStandard = new WToolBar( app );
+	bFonts    = new WToolBar( app );
+	bTables   = new WToolBar( app );
+	bForms    = new WToolBar( app );
+	bLists    = new WToolBar( app );
+	bUser     = new WToolBar( app );
 	
   // Insert button in tool bars Standard
 	bStandard->insertButton( UserIcon("quick_start"), ID_TAG_QUICKSTART, true, i18n("Quick Start"));
@@ -78,6 +78,9 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
   bStandard->insertButton( UserIcon("div_center"), ID_TAG_DIV_CENTER, true, i18n("Align center"));
   bStandard->insertButton( UserIcon("div_right"),  ID_TAG_DIV_RIGHT,  true, i18n("Align right"));
   bStandard->insertButton( UserIcon("div_justify"),ID_TAG_DIV_JUSTIFY,true, i18n("Align justify"));
+  bStandard->insertSeparator();
+  bStandard->insertButton( UserIcon("css"),ID_TAG_CSS,true, i18n("CSS"));
+
 
   // Insert button in tool bars Fonts
 	bFonts->insertButton( UserIcon("tag_font"), ID_TAG_FONT, true, i18n("Font"));
@@ -229,6 +232,9 @@ void QuantaView::slotToolbarCallback( int id ){
          break;
     case ID_VIEW_IN_KFM2:
          slotViewInKFM();
+         break;
+    case ID_TAG_CSS:
+         slotInsertCSS();
          break;
     case ID_TAG_BOLD:
     		 insertTag("b");
@@ -472,6 +478,11 @@ void QuantaView::initMenu()
   mStandard->insertItem( UserIcon("div_center"), i18n("Align center"),  ID_TAG_DIV_CENTER);
   mStandard->insertItem( UserIcon("div_right"),  i18n("Align right"),   ID_TAG_DIV_RIGHT);
   mStandard->insertItem( UserIcon("div_justify"),i18n("Align justify"), ID_TAG_DIV_JUSTIFY);
+
+  mStandard->insertSeparator();
+
+  mStandard->insertItem( i18n("CSS"), ID_TAG_CSS );
+
 
   	
 	// Insert button in menu Fonts

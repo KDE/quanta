@@ -75,7 +75,7 @@ void ToolBarItem::setIcon( QString fname )
 void ToolBarItem::setText( QString text )
 {
    data.name = text;
-   QListViewItem::setText( 0,text.data() );
+   QListViewItem::setText( 0,text );
 }
 
 void ToolBarItem::setText ( int i, const char * text)

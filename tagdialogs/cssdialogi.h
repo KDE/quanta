@@ -1,7 +1,7 @@
 /***************************************************************************
-                          whtmlpart.h  -  description
+                          cssdialogi.h  -  description
                              -------------------
-    begin                : Fri Aug 18 2000
+    begin                : Thu Oct 5 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
@@ -14,45 +14,20 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+#ifndef CSSDIALOGI_H
+#define CSSDIALOGI_H
+#include "cssdialog.h"
 
-#ifndef WHTMLPART_H
-#define WHTMLPART_H
+class CSSDialogI : public CSSDialog
+{ 
+    Q_OBJECT
 
-#include <khtml_part.h>
-#include <qstrlist.h>
+public:
+    CSSDialogI( QString basePath, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+    ~CSSDialogI();
 
-/**
-  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-  */
+    QString data();
 
-class WHTMLPart : public KHTMLPart  {
-   Q_OBJECT
-public: 
-	WHTMLPart(QWidget *parent, const char *name=0);
-	~WHTMLPart();
-	
-	bool backEnable();
-	bool forwardEnable();
-
-public slots:
-
-/** back(), forward() - navigation, using history.
- */
-	void forward();		
-	void back();
-	
-	void addToHistory( QString url );
-	
-signals:
-	void updateStatus( bool back, bool forward );
-
-protected:	
-	virtual void urlSelected( const QString &url, int button = 0, int state = 0, const QString &_target = QString::null );
-	
-private:
-	QStrList history;	
-	unsigned int hpos;
-		
 };
 
-#endif
+#endif // CSSDIALOGI_H

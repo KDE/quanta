@@ -1543,7 +1543,7 @@ KWrite::KWrite(KWriteDoc *doc, QWidget *parent, const char * name, bool HandleOw
 }
 
 KWrite::~KWrite() {
-   kdDebug() << "KWrite::~KWrite" << endl;
+  // kdDebug() << "KWrite::~KWrite" << endl;
   QMap<KIO::Job *, NetData>::Iterator it = m_mapNetData.begin();
   while ( it != m_mapNetData.end() )
   {

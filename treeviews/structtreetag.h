@@ -29,9 +29,9 @@
 class StructTreeTag : public QListViewItem  {
 
 public: 
-	StructTreeTag(QListView *parent, const char *name = 0 );
-	StructTreeTag(StructTreeTag *parent, Tag *tag, const char *name = 0 );
-	StructTreeTag(StructTreeTag *parent, const char *name = 0 );
+	StructTreeTag(QListView *parent, QString name = QString::null );
+	StructTreeTag(StructTreeTag *parent, Tag *tag, QString name = QString::null );
+	StructTreeTag(StructTreeTag *parent, QString name = QString::null );
 	~StructTreeTag();
 	
 	int pos1,pos2;

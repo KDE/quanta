@@ -66,9 +66,9 @@ public:
   void replaceSelected(QString s);
 
   /** Insert tag in cursor position and set cursor between s1 and s2 */
-  void insert_Tag( char * s1,  char * s2 = 0L );
+//  void insert_Tag( char * s1,  char * s2 = 0L );
   /** insert tag in document  */
-  void insertTag(QString s1,QString s2="");
+  void insertTag( QString s1,QString s2 = "" );
 
   /** add attrib to end of current tag */
   void insertAttrib(QString attr);
@@ -110,9 +110,9 @@ public:
   QPoint getGlobalCursorPos();
 
   /** convert tag to upper or lower case */
-  QString tagCase( const char*  tag);
+  QString tagCase( QString  tag);
   /** convert attribute of tag to upper or lower case */
-  QString attrCase( const char*  attr);
+  QString attrCase( QString  attr);
 
   TagAttr tagAttr[50];
   int tagAttrNum;

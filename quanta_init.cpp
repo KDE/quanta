@@ -125,6 +125,8 @@ QuantaApp::QuantaApp()
   disableCommand(ID_BOOKMARKS_SET);
   disableCommand(ID_BOOKMARKS_ADD);
   disableCommand(ID_BOOKMARKS_CLEAR);
+
+	doc->newDocument();
 }
 
 QuantaApp::~QuantaApp()
@@ -691,10 +693,10 @@ void QuantaApp::initView()
   hSplit->setPos( 100);
 
 
-  htmlPartRight	 = new WHTMLPart( rightWidgetStack );
-  htmlPartBottom = new WHTMLPart( bottomWidgetStack );
-  htmlPartTop    = new WHTMLPart( topWidgetStack );
-  htmlPartDoc 	 = new WHTMLPart( rightWidgetStack );
+  htmlPartRight	 = new WHTMLPart( rightWidgetStack,  "rightHTML");
+  htmlPartBottom = new WHTMLPart( bottomWidgetStack, "bottomHTML");
+  htmlPartTop    = new WHTMLPart( topWidgetStack, 	 "topHTML");
+  htmlPartDoc 	 = new WHTMLPart( rightWidgetStack,  "docHTML");
 
   bottomWidgetStack->addWidget( messageOutput, 0 );
   bottomWidgetStack->addWidget( htmlPartBottom->view(), 1 );
@@ -985,8 +987,6 @@ void QuantaApp::readOptions()
 
 void QuantaApp::openLastFiles()
 {
-	doc->newDocument();
-
   config->setGroup("General Options");
 
   QString projectFileName = config->readEntry("Last Project");

@@ -210,6 +210,7 @@
 #define ID_TAG_LINEPAS							20090
 #define ID_TAG_SUBMIT               20100
 #define ID_TAG_RESET                20110
+#define ID_TAG_CSS									20120
 
 ///////////////////////////////////////////////////////////////////
 // Help-menu entries

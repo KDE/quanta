@@ -19,7 +19,7 @@
 #define PARSER_H
 
 #include <qdict.h>
-#include <qstrlist.h>
+#include <qstringlist.h>
 
 #include "node.h"
 #include "tag.h"
@@ -70,7 +70,7 @@ private:
 //  QStrList tagsList;
 //  QStrList tagsSingle; // single tags, like <img>
 //  QStrList tagsDouble; // tags with end part, <b> </b>
-  QDict<QStrList> tagsStop; // list of tag, can stop area of curren tag ( <tr> stop <td> )
+  QDict<QStringList> tagsStop; // list of tag, can stop area of curren tag ( <tr> stop <td> )
 
 };
 

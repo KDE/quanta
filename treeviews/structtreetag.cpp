@@ -23,14 +23,14 @@
 #include "../parser/tag.h"
 
 
-StructTreeTag::StructTreeTag(QListView *parent, const char *name )
+StructTreeTag::StructTreeTag(QListView *parent, QString name )
 	: QListViewItem(parent,name)
 {
 	pos1 = pos2 = 1;
 	
 }
 
-StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag *tag, const char *name )
+StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag *tag, QString name )
 	: QListViewItem(parent,name)
 {
 	pos1 = pos2 = 1;
@@ -80,7 +80,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag *tag, const char *name )
 	}
 }
 
-StructTreeTag::StructTreeTag(StructTreeTag *parent, const char *name )
+StructTreeTag::StructTreeTag(StructTreeTag *parent, QString name )
 	: QListViewItem(parent,name)
 {
   pos1 = pos2 = 1;

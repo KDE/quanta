@@ -584,4 +584,3 @@ void QuantaDoc::slotInsertEventsAttrib( int id )
 	write()->insertAttrib( lScript->at(id) );
 //  write()->insertTag( QString(" ")+lScript->at(id)+"=\"","\"" );
 }
-

@@ -48,6 +48,8 @@
 #include "tagdialogs/tagquickstart.h"
 #include "tagdialogs/tagquicklistdlg.h"
 #include "tagdialogs/tagquicktable.h"
+#include "tagdialogs/cssdialogi.h"
+
 
 //#include "dialogs/toolbarconfig.h"
 
@@ -68,6 +70,20 @@ void QuantaView::slotEditCurrentTag()
     message += tag;
     app->slotStatusMsg( message.data() );
   }
+}
+
+/** edit tag */
+void QuantaView::slotInsertCSS()
+{
+
+  Document *w = write();
+
+  CSSDialogI *dlg = new CSSDialogI( doc->basePath(), 0L, "CSS dialog", true );
+  if ( dlg->exec() ) {
+    w->insertTag( dlg->data() );
+  }
+
+  delete (dlg);
 }
 
 
@@ -243,7 +259,7 @@ void QuantaView::slotTagQuickList(){
     	tag += QString("</ol>");
     else tag += QString("</ul>");
 
-    write()->insertTag( tagCase(tag.data()));
+    write()->insertTag( tagCase(tag));
   }
   delete(listDlg);
 }
@@ -269,7 +285,7 @@ void QuantaView::slotTagQuickTable()
  	  }
  	  tag += QString("</table>");
   	
- 	  write()->insertTag( tagCase(tag.data()) );
+ 	  write()->insertTag( tagCase(tag) );
   }
   delete( quickDlg);
 }

@@ -21,6 +21,24 @@ uninstall-local:
 	-rm -f $(kde_icondir)/locolor/16x16/apps/quanta.xpm
 
 ####### kdevelop will overwrite this part!!! (end)############
+bin_PROGRAMS = quanta
+quanta_SOURCES = qextfileinfo.cpp quantaview_slots.cpp document.cpp quantaview_init.cpp quanta_init.cpp quantaview.cpp quantadoc.cpp quanta.cpp main.cpp 
+quanta_LDADD   = ./widgets/libwidgets.a ./kwrite/libkwrite.a ./treeviews/libtreeviews.a ./kwrite/highlight/libhighlight.a ./tagdialogs/libtagdialogs.a ./dialogs/libdialogs.a ./parser/libparser.a ./project/libproject.a -lkparts -lkhtml -lkjs -lktexteditor -lkspell -lkfile -lkdeui -lkdecore -lqt -lXext -lX11 $(LIBSOCKET)
+
+SUBDIRS = icons widgets kwrite treeviews tagdialogs data dialogs parser project 
+
+EXTRA_DIST = main.cpp quanta.cpp quanta.h quantadoc.cpp quantadoc.h quantaview.cpp quantaview.h resource.h quanta.desktop quanta_init.cpp quantaview_init.cpp document.cpp document.h quantaview_slots.cpp qextfileinfo.cpp qextfileinfo.h 
+
+install-data-local:
+	$(mkinstalldirs) $(kde_appsdir)/Applications/
+	$(INSTALL_DATA) quanta.desktop $(kde_appsdir)/Applications/quanta.desktop
+	$(mkinstalldirs) $(kde_icondir)/locolor/32x32/apps/
+
+uninstall-local:
+	-rm -f $(kde_appsdir)/Applications/quanta.desktop
+	-rm -f $(kde_icondir)/locolor/32x32/apps/quanta.xpm
+	-rm -f $(kde_icondir)/locolor/16x16/apps/quanta.xpm
+
 # this 10 paths are KDE specific. Use them:
 # kde_htmldir       Where your docs should go to. (contains lang subdirs)
 # kde_appsdir       Where your application file (.kdelnk) should go to. 

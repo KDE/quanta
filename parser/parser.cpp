@@ -23,6 +23,7 @@
 #include <qregexp.h>
 #include <qcstring.h>
 #include <qstringlist.h>
+#include <qstrlist.h>
 
 #include <stdio.h>
 #include <ctype.h>
@@ -39,7 +40,7 @@ Parser::Parser()
 
   textChanged = true;
 
-  QStrList * list = new QStrList();
+  QStringList * list = new QStringList();
   list->append("p");
   list->append("li");
   list->append("td");
@@ -49,31 +50,31 @@ Parser::Parser()
   list->append("dd");
   tagsStop.insert("p",list);
 
-  list = new QStrList();
+  list = new QStringList();
   list->append("li");
   tagsStop.insert("li",list);
   
-  list = new QStrList();
+  list = new QStringList();
   list->append("select");
   tagsStop.insert("select",list);
 
-  list = new QStrList();
+  list = new QStringList();
   list->append("td");
   list->append("tr");
   list->append("th");
   tagsStop.insert("td",list);
 
-  list = new QStrList();
+  list = new QStringList();
   list->append("tr");
   list->append("tfoot");
   tagsStop.insert("tr",list);
 
-  list = new QStrList();
+  list = new QStringList();
   list->append("dt");
   list->append("dd");
   tagsStop.insert("dt",list);
 
-  list = new QStrList();
+  list = new QStringList();
   list->append("dt");
   list->append("dd");
   tagsStop.insert("dd",list);
@@ -149,9 +150,9 @@ Node * Parser::subParse( Node * parent, QString tag )
         Tag *tagData = parseTag();
 
         if ( !tag.isEmpty() ) {  // check if this tag stop area of previous
-          QStrList *list = tagsStop[tag];
+          QStringList *list = tagsStop[tag];
           if ( list )
-            if ( list->find( tagData->name.lower() ) != -1 ) {
+            if ( list->contains( tagData->name.lower() ) ) {
               pos = oldpos;  // return to pos before tag
               delete (tagData);
               return firstNode;
@@ -172,7 +173,7 @@ Node * Parser::subParse( Node * parent, QString tag )
         prevNode = tnode;
 
         if ( singleTags->find(tagData->name.upper()) == -1 ) { // not single tag
-          tnode->child = subParse( tnode , tagData->name );
+          tnode->child = subParse( tnode , tagData->name.lower() );
 
         	tnode->endContext = pos-1;
         	tnode->end = pos-1;
@@ -320,7 +321,7 @@ void Parser::parseComment()
   int len = s.length();
   static QString str1("-->");
   while ( s.mid(pos,3) != str1 && pos < len ) pos++;
-  if ( s < len )
+  if ( pos < len )
     pos+=3;
 }
 
@@ -330,7 +331,7 @@ void Parser::parsePHP()
 
   static QString str1("?>");
   while ( s.mid(pos,2) != str1 && pos < len ) pos++;
-  if ( s < len )
+  if ( pos < len )
     pos+=2;
 }
 

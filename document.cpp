@@ -56,7 +56,7 @@ QString Document::fileName()
 }
 
 /** Insert tag in cursor position and set cursor between s1 and s2 */
-void Document::insert_Tag( char* s1,  char * s2 ){
+/*void Document::insert_Tag( char* s1,  char * s2 ){
 	int line,col; // cursor position
 	VConfig c;
 
@@ -89,13 +89,43 @@ void Document::insert_Tag( char* s1,  char * s2 ){
   kWriteDoc->updateViews();
 	
 }
+*/
 /** insert tag in document  */
 
-void Document::insertTag(QString s1,QString s2){
-	if ( !s2.isEmpty() )
-		insert_Tag( const_cast<char*>(s1.data()), const_cast<char*>(s2.data()) );
-	else
-		insert_Tag( const_cast<char*>(s1.data()) );
+void Document::insertTag(QString s1,QString s2)
+{
+	int line,col; // cursor position
+	VConfig c;
+
+		
+  if ( !s2.isEmpty() ) { // use 2 tags
+  	// QString marked = markedText();
+  	if ( !hasMarkedText() ) {
+  		kWriteView ->getVConfig(c);
+		  kWriteDoc->insert( c, s1);
+  	}
+  	else {
+  		cut();
+  		kWriteView ->getVConfig(c);
+		  kWriteDoc->insert( c, s1);
+		  paste();
+  	}
+  	
+  	col = currentColumn();
+  	line = currentLine();
+  	kWriteView ->getVConfig(c);
+	  kWriteDoc->insert( c, s2);
+	  setCursorPosition(line,col);
+  }
+  else {  // using only 1 tag
+  	kWriteView ->getVConfig(c);
+	  kWriteDoc->insert( c, s1);
+  }
+
+
+  kWriteDoc->updateViews();
+	
+
 }
 
 QString Document::getLine(int y)
@@ -384,7 +414,7 @@ QPoint Document::getGlobalCursorPos()
 
 extern bool tagsCapital, attrCapital;
 
-QString Document::tagCase( const char*  tag)
+QString Document::tagCase( QString  tag)
 {
   QString sTag = tag;
 
@@ -397,7 +427,7 @@ QString Document::tagCase( const char*  tag)
 }
 
 /** convert attr of tag to upper or lower case */
-QString Document::attrCase( const char*  attr)
+QString Document::attrCase( QString  attr)
 {
   QString sAttr = attr;
 
@@ -482,7 +512,9 @@ void Document::editorOptions()
 
   kwin.setIcons(kd->winId(), kapp->icon(), kapp->miniIcon());
 
- if (kd->exec()) {
+  kd -> setMinimumHeight(350);
+
+  if (kd->exec()) {
     // color options
     colorConfig->getColors(colors);
     this->applyColors();

@@ -71,7 +71,7 @@ ColorCombo::ColorCombo( QWidget *parent, const char *name )
 	customColor.setRgb( 255, 255, 255 );
 	internalcolor.setRgb( 255, 255, 255 );
 	
-	hascolor = true;
+	hascolor = false;
 
 	createStandardPalette();
 

@@ -33,7 +33,6 @@
 
 #include "tagwidget.h"
 
-#include "tagadlg.h"
 #include "tagfontdlg.h"
 #include "tagform.h"
 #include "tagformbutton.h"
@@ -147,7 +146,6 @@ void TagDialog::parseTag()
 
 
   if ( !findXMLConfig ) {
-     if ( t == "a" )         mainDlg = new TagADlg( this);
      if ( t == "font" )      mainDlg = new TagFontDlg( this);
      if ( t == "basefont" )  mainDlg = new TagFontDlg( this);
      if ( t == "form" )      mainDlg = new TagForm( this);

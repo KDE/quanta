@@ -710,7 +710,7 @@ void KWriteDoc::readConfig(KConfig *config) {
   int z;
   char s[16];
 
-  setTabWidth(config->readNumEntry("TabWidth", 8));
+  setTabWidth(config->readNumEntry("TabWidth", 2));
   setUndoSteps(config->readNumEntry("UndoSteps", 50));
   m_singleSelection = config->readBoolEntry("SingleSelection", false);
   for (z = 0; z < 5; z++) {
@@ -1022,7 +1022,12 @@ void KWriteDoc::loadFile(QIODevice &dev) {
       stream >> ch;
       s = ch.latin1();
       if (ch.isPrint() || s == '\t') {
-        textLine->append(&ch, 1);
+        if ( s == '\t' ) {
+          ch = ' ';
+          for (int i=0;i<tabChars;i++)
+            textLine->append( &ch, 1);
+        }
+        else             textLine->append( &ch, 1);
       } else if (s == '\n' || s == '\r') {
         if (last != '\r' || s != '\n') {
           textLine = new TextLine();

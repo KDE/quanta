@@ -59,9 +59,9 @@ void TagImgDlg::slotImageSet( const char * file){
 	
 	QString s;
 	s.setNum( img->width() );
-	lineWidth->setText( s.data() );
+	lineWidth->setText( s );
 	s.setNum( img->height() );
-	lineHeight->setText( s.data() );
+	lineHeight->setText( s );
 	
 }
 
@@ -71,9 +71,9 @@ void TagImgDlg::slotRecalcImgSize()
   if ( img ) {
     QString s;
 	  s.setNum( img->width() );
-	  lineWidth->setText( s.data() );
+	  lineWidth->setText( s );
 	  s.setNum( img->height() );
-	  lineHeight->setText( s.data() );
+	  lineHeight->setText( s );
 	}
 }
 

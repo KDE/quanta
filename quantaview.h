@@ -166,7 +166,10 @@ insert color in the text */
   void slotNetscapeStatus(KProcess *proc);
   /** insert tags from tree view */
   void slotInsertTagFromTree(QString name);
+
   /**  */
+  void slotInsertCSS();
+
   void slotNewCurPos();
   /** edit tag */
   void slotEditCurrentTag();

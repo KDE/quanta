@@ -1599,44 +1599,62 @@ HtmlHighlight::~HtmlHighlight() {
 
 void HtmlHighlight::createItemData(ItemDataList &list) {
 
-  list.append(new ItemData(I18N_NOOP("Normal Text"),dsNormal));
+  list.append(new ItemData(I18N_NOOP("Normal Text"),dsNormal));                                         //0
   list.append(new ItemData(I18N_NOOP("Char"       ),dsChar,Qt::darkGreen,Qt::green,false,false));
   list.append(new ItemData(I18N_NOOP("Comment"    ),dsComment));
   list.append(new ItemData(I18N_NOOP("Tag Text"   ),dsOthers,Qt::black,Qt::white,true,false));
   list.append(new ItemData(I18N_NOOP("Tag"        ),dsKeyword,Qt::darkMagenta,Qt::magenta,true,false));
-  list.append(new ItemData(I18N_NOOP("Tag Value"  ),dsDecVal,Qt::darkCyan,Qt::cyan,false,false));
+  list.append(new ItemData(I18N_NOOP("Tag Value"  ),dsDecVal,Qt::darkCyan,Qt::cyan,false,false));       //5
+// ********************************************************
+// quanta highlighting
+// ********************************************************
+  list.append(new ItemData("Tag Attribute",dsDecVal,Qt::darkBlue,Qt::green,false,false));     //6
+  list.append(new ItemData("js Keyword",dsKeyword));                                          //7
+  list.append(new ItemData("js Data Type",dsDataType));                                       //8
+  list.append(new ItemData("js Decimal",dsDecVal));                                           //9
+  list.append(new ItemData("js Octal",dsBaseN));                                              //10
+  list.append(new ItemData("js Hex",dsBaseN));                                                //11
+  list.append(new ItemData("js Float",dsFloat));                                              //12
+  list.append(new ItemData("js Char",dsChar));                                                //13
+  list.append(new ItemData("js String",dsString));                                            //14
+  list.append(new ItemData("js String Char",dsChar));                                         //15
+  list.append(new ItemData("Unknown Tag",dsComment,Qt::red,Qt::red,false,false));             //16
+  list.append(new ItemData("Unknown Tag Attribute",dsComment,Qt::gray,Qt::gray,false,false)); //17
+// ********************************************************
+// end of quanta highlighting
+// ********************************************************
 }
 
 void HtmlHighlight::makeContextList() {
   HlContext *c;
 
-  contextList[0] = c = new HlContext(0,0);
-    c->items.append(new HlRangeDetect(1,0, '&', ';'));
+  contextList[0] = c = new HlContext(0,0); // text
+    c->items.append(new HlRangeDetect (1,0,'&', ';'));
     c->items.append(new HlStringDetect(2,1,"<!--"));
     c->items.append(new HlStringDetect(2,2,"<COMMENT>"));
-    c->items.append(new HlCharDetect(3,3,'<'));
-  contextList[1] = c = new HlContext(2,1);
+    c->items.append(new HlCharDetect  (3,3,'<'));
+
+  contextList[1] = c = new HlContext(2,1); // <!-- -->
     c->items.append(new HlStringDetect(2,0,"-->"));
-  contextList[2] = c = new HlContext(2,2);
+
+  contextList[2] = c = new HlContext(2,2); // <comment />
     c->items.append(new HlStringDetect(2,0,"</COMMENT>"));
-  contextList[3] = c = new HlContext(3,3);
-    c->items.append(new HlHtmlTag(4,3));
-    c->items.append(new HlHtmlValue(5,3));
-    c->items.append(new HlCharDetect(3,0,'>'));
-    
+
+  contextList[3] = c = new HlContext(3,3); // tag
+    c->items.append(new HlCharDetect(3,3,' '));
 // ********************************************************
 // quanta highlighting
 // ********************************************************
     HlKeyword *keyword, *dataType;    
 
-    c->items.append(new HlStringDetect(4,20,"script"));
-    c->items.append(new HlStringDetect(4,20,"SCRIPT"));
-    c->items.append(new HlHtmlValue(5,3));
-    c->items.append(new HlHtmlTag(4,3));
-    c->items.append(new HlHtmlTagUnknown(16,3));
-    c->items.append(new HlHtmlAttrib(15,3));
+    c->items.append(new HlStringDetect     (4,20,"script"));
+    c->items.append(new HlStringDetect     (4,20,"SCRIPT"));
+    c->items.append(new HlHtmlValue        (5,3));
+    c->items.append(new HlHtmlTag          (4,3));
+    c->items.append(new HlHtmlAttrib       (6,3));
+    c->items.append(new HlHtmlTagUnknown   (16,3));
     c->items.append(new HlHtmlAttribUnknown(17,3));
-    c->items.append(new HlCharDetect(3,0,'>'));
+    c->items.append(new HlCharDetect       (3,0,'>'));
 
   //JavaScript
   contextList[20] = c = new HlContext(3,20);
@@ -1644,37 +1662,43 @@ void HtmlHighlight::makeContextList() {
     c->items.append(new HlCharDetect(3,21,'>'));
 
   contextList[21] = c = new HlContext(0,21);
-    c->items.append(keyword = new HlKeyword(6,21));
-    c->items.append(dataType = new HlKeyword(7,21));
+    c->items.append(keyword = new HlKeyword(7,21));
+    c->items.append(dataType = new HlKeyword(8,21));
     c->items.append(new HlStringDetect(4,0,"</SCRIPT>"));
     c->items.append(new HlStringDetect(4,0,"</script>"));
     c->items.append(new HlStringDetect(2,21,"<!--"));
     c->items.append(new HlStringDetect(2,21,"-->"));
     c->items.append(new HlCFloat(11,21));
-    c->items.append(new HlCOct(9,21));
-    c->items.append(new HlCHex(10,21));
-    c->items.append(new HlCInt(8,21));
-    c->items.append(new HlCChar(12,21));
-    c->items.append(new HlCharDetect(13,22,'"'));
+    c->items.append(new HlCOct(10,21));
+    c->items.append(new HlCHex(11,21));
+    c->items.append(new HlCInt(9,21));
+    c->items.append(new HlCChar(13,21));
+    c->items.append(new HlCharDetect(14,22,'"'));
     c->items.append(new Hl2CharDetect(2,23,'/','/'));
     c->items.append(new Hl2CharDetect(2,24,'/','*'));
-//    c->items.append(new HlCPrep(11,25));
-  contextList[22] = c = new HlContext(13,21);
-    c->items.append(new HlLineContinue(13,27));
-    c->items.append(new HlCStringChar(14,22));
-    c->items.append(new HlCharDetect(13,21,'"'));
+
+  contextList[22] = c = new HlContext(14,21);
+    c->items.append(new HlLineContinue(14,27));
+    c->items.append(new HlCStringChar(15,22));
+    c->items.append(new HlCharDetect(14,21,'"'));
+
   contextList[23] = new HlContext(2,21);
+
   contextList[24] = c = new HlContext(2,24);
     c->items.append(new Hl2CharDetect(2,21,'*','/'));
-  contextList[25] = c = new HlContext(11,21);
-    c->items.append(new HlLineContinue(11,28));
-    c->items.append(new HlRangeDetect(12,25,'"','"'));
-    c->items.append(new HlRangeDetect(12,25,'<','>'));
+
+  contextList[25] = c = new HlContext(12,21);
+    c->items.append(new HlLineContinue(12,28));
+    c->items.append(new HlRangeDetect(13,25,'"','"'));
+    c->items.append(new HlRangeDetect(13,25,'<','>'));
     c->items.append(new Hl2CharDetect(2,23,'/','/'));
     c->items.append(new Hl2CharDetect(2,26,'/','*'));
+
   contextList[26] = c = new HlContext(2,26);
     c->items.append(new Hl2CharDetect(2,25,'*','/'));
+
   contextList[27] = new HlContext(0,22);
+
   contextList[28] = new HlContext(0,25);
 
   setKeywords(keyword, dataType);
@@ -2424,7 +2448,7 @@ void PhpHighlight::createItemData(ItemDataList &list) {
   list.append(new ItemData("Tag Attribute",dsDecVal,Qt::darkBlue,Qt::green,false,false)); //16
   list.append(new ItemData("Unknown Tag",dsComment,Qt::red,Qt::red,false,false)); //17
   list.append(new ItemData("Unknown Tag Attribute",dsComment,Qt::gray,Qt::gray,false,false)); //18
-  list.append(new ItemData("Php Variable in Strings",dsOthers,Qt::darkGreen,Qt::green,false,false)); // 19
+  list.append(new ItemData("Php Variable in Strings",dsOthers,Qt::red,Qt::green,false,false)); // 19
 
 // end (pdima)
 
@@ -2544,6 +2568,7 @@ void PhpHighlight::makeContextList() {
   contextList[7] = new HlContext(0,2);
   contextList[8] = new HlContext(0,5);
   contextList[9] = c = new HlContext(15,1);
+    c->items.append(new HlCharDetect(0,1,'{'));
     c->items.append(new HlPhpVar(15,1));
   contextList[10] = c = new HlContext(19,1);
     c->items.append(new HlPhpVar(19,2));
@@ -2988,16 +3013,16 @@ void HlManager::getDefaults(ItemStyleList &list, ItemFont &font) {
 
   list.setAutoDelete(true);
   //ItemStyle(color, selected color, bold, italic)
-  list.append(new ItemStyle(black,white,false,false));     //normal
-  list.append(new ItemStyle(black,white,true,false));      //keyword
-  list.append(new ItemStyle(darkRed,white,false,false));   //datatype
-  list.append(new ItemStyle(blue,cyan,false,false));       //decimal/value
-  list.append(new ItemStyle(darkCyan,cyan,false,false));   //base n
-  list.append(new ItemStyle(darkMagenta,cyan,false,false));//float
-  list.append(new ItemStyle(magenta,magenta,false,false)); //char
-  list.append(new ItemStyle(red,red,false,false));         //string
-  list.append(new ItemStyle(darkGray,gray,false,true));    //comment
-  list.append(new ItemStyle(darkGreen,green,false,false)); //others
+  list.append(new ItemStyle(black       ,white  ,false,false));//normal
+  list.append(new ItemStyle(darkYellow  ,white  ,true ,false));//keyword
+  list.append(new ItemStyle(darkBlue    ,white  ,false,false));//datatype
+  list.append(new ItemStyle(blue        ,cyan   ,false,false));//decimal/value
+  list.append(new ItemStyle(darkCyan    ,cyan   ,false,false));//base n
+  list.append(new ItemStyle(darkMagenta ,cyan   ,false,false));//float
+  list.append(new ItemStyle(magenta     ,magenta,false,false));//char
+  list.append(new ItemStyle(darkGreen   ,red    ,false,false));//string
+  list.append(new ItemStyle(darkGray    ,gray   ,false,true)); //comment
+  list.append(new ItemStyle(darkGreen   ,green  ,false,false));//others
 
   config = kapp->config();
   config->setGroup("Default Item Styles");

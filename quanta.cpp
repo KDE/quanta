@@ -454,6 +454,7 @@ void QuantaApp::slotFileClose()
 	
   doc->closeDocument();
 
+  htmlPart()->closeURL();
   htmlPart()->begin( KURL( doc->basePath() ));
  	htmlPart()->write( "" );
  	htmlPart()->end();
@@ -471,6 +472,7 @@ void QuantaApp::slotFileCloseAll()
 	
   doc->closeAll();
 
+  htmlPart()->closeURL();
   htmlPart()->begin( KURL( doc->basePath() ));
  	htmlPart()->write( "" );
  	htmlPart()->end();
@@ -762,8 +764,9 @@ void QuantaApp::repaintPreview( bool clear )
 
   int xOffset = html->contentsX(), yOffset = html->contentsY();
 
+	part->closeURL();
 	part->begin( KURL( doc->basePath() ), xOffset, yOffset );
-  part->write(text);
+  part->write( text.data() );
 	part->end();
 
   part->show();
@@ -789,8 +792,9 @@ void QuantaApp::slotImageOpen( QString fileToOpen )
 	text += fileToOpen;
 	text += "\">\n</div>\n</body>\n</html>\n";
 	
+	part->closeURL();
 	part->begin( KURL( doc->basePath() ) );
-  part->write(text);
+  part->write( text.data() );
   part->end();
 
   part->show();
@@ -949,14 +953,17 @@ void QuantaApp::slotOptions()
 
   	previewPosition = previewOptions->position();
   	
+  	htmlPartTop->closeURL();
   	htmlPartTop->begin( KURL( doc->basePath() ));
   	htmlPartTop->write( "" );
   	htmlPartTop->end();
   	
+  	htmlPartRight->closeURL();
   	htmlPartRight->begin( KURL( doc->basePath() ));
   	htmlPartRight->write( "" );
   	htmlPartRight->end();
   	
+  	htmlPartBottom->closeURL();
   	htmlPartBottom->begin( KURL( doc->basePath() ));
   	htmlPartBottom->write( "" );
   	htmlPartBottom->end();
@@ -1182,6 +1189,7 @@ void QuantaApp::selectArea(int col1, int row1, int col2, int row2)
 
 void QuantaApp::openDoc( QString url )
 {
+   htmlPartDoc->closeURL();
    htmlPartDoc->openURL(url);
 	 htmlPartDoc->show();
 	 htmlPartDoc->addToHistory(url);

@@ -28,7 +28,7 @@
 class WToolBar : public KToolBar {
    Q_OBJECT
 public: 
-	WToolBar(QWidget *parent=0, const char *name=0);
+	WToolBar(QWidget *parent, const char *name=0);
 	~WToolBar();
 	
 	void fixingSize();

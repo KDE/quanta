@@ -43,7 +43,7 @@ DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QStr
 
   QStrList list;
 
-  config->readListEntry( name.data(), list );
+  config->readListEntry( name, list );
 
   char *item;
 
@@ -72,7 +72,7 @@ DocFolder::DocFolder(QListView *parent, QString _name, KConfig *config, QString 
   topLevel = false;
   QStrList list;
 
-  config->readListEntry( name.data(), list );
+  config->readListEntry( name, list );
 
   char *item;
 

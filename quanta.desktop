@@ -3,9 +3,9 @@
 Type=Application
 Exec=quanta -caption "%c" %i %m  
 Icon=quanta.xpm
-MiniIcon=quanta.xpm
+MiniIcon=quanta.png
 DocPath=quanta/index.html
-Comment=
+Comment=Powerful HTML-editor
 Comment[de]=
 Terminal=0
 Name=Quanta
