@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>578</width>
-            <height>571</height>
+            <height>573</height>
         </rect>
     </property>
     <property name="caption">
@@ -87,7 +87,7 @@ instances of Quanta running.</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
-                                        <string></string>
+                                        <string>0</string>
                                         <string></string>
                                         <string>1</string>
                                     </stringlist>
@@ -298,7 +298,7 @@ instances of Quanta running.</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
-                                        <string></string>
+                                        <string>0</string>
                                         <string></string>
                                         <string>1</string>
                                     </stringlist>
@@ -313,7 +313,7 @@ instances of Quanta running.</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
-                                        <string></string>
+                                        <string>0</string>
                                         <string></string>
                                         <string>1</string>
                                     </stringlist>
@@ -358,7 +358,7 @@ instances of Quanta running.</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
-                                        <string></string>
+                                        <string>0</string>
                                         <string></string>
                                         <string>1</string>
                                     </stringlist>
@@ -373,7 +373,7 @@ instances of Quanta running.</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
-                                        <string></string>
+                                        <string>0</string>
                                         <string></string>
                                         <string>1</string>
                                     </stringlist>
@@ -412,7 +412,7 @@ instances of Quanta running.</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
-                                        <string></string>
+                                        <string>0</string>
                                         <string></string>
                                         <string>1</string>
                                     </stringlist>
@@ -427,7 +427,7 @@ instances of Quanta running.</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
-                                        <string></string>
+                                        <string>0</string>
                                         <string></string>
                                         <string>1</string>
                                     </stringlist>
@@ -460,7 +460,7 @@ instances of Quanta running.</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
-                                        <string></string>
+                                        <string>0</string>
                                         <string></string>
                                         <string>1</string>
                                     </stringlist>
@@ -505,7 +505,7 @@ instances of Quanta running.</string>
                                 </property>
                                 <property name="associations" stdset="0">
                                     <stringlist>
-                                        <string></string>
+                                        <string>0</string>
                                         <string></string>
                                         <string>1</string>
                                     </stringlist>
@@ -962,7 +962,7 @@ accessibility-check		Integer   	0, 1, 2, ...
 [ 0 -lt @ParseAccess ] &amp;&amp; tidyargs="$tidyargs -access @ParseAccess"
 
 if [ @GUseDCOP -eq 1 ]; then
-	dcopid=`dcop |grep quanta`
+	dcopid=`dcop quanta*`
 	ifstr="EditInterface#"`dcop $dcopid WindowManagerIf currentEditorIfNum`
 	dcop $dcopid $ifstr text | $tidyargs
 else
