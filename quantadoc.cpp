@@ -120,6 +120,19 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
 
     quantaApp->processDTD(quantaApp->project()->defaultDTD());
 
+    /*KToggleAction *a;
+    a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("view_border"));
+    if (a)
+    {
+      a->setChecked(qConfig.iconBar);
+      a->activate();
+    }
+    a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("view_line_numbers"));
+    if (a)
+    {
+      a->setChecked(qConfig.lineNumbers);
+      a->activate();
+    }*/
     w->kate_view->setIconBorder(qConfig.iconBar);
     w->kate_view->setLineNumbersOn(qConfig.lineNumbers);
     quantaApp->viewBorder->setChecked(qConfig.iconBar);
@@ -176,11 +189,11 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
 
       quantaApp->slotRepaintPreview();
 
-      w->kate_view->setIconBorder(qConfig.iconBar);
+ /*     w->kate_view->setIconBorder(qConfig.iconBar);
       w->kate_view->setLineNumbersOn(qConfig.lineNumbers);
       quantaApp->viewBorder->setChecked(qConfig.iconBar);
       quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
-
+*/
       dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
       quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
 
@@ -713,7 +726,7 @@ void QuantaDoc::slotFileDirty(const QString& fileName)
   for( int i = 0; i < tab->count(); i++)
   {
     w = dynamic_cast<Document*>(tab->page(i));
-    if ( w && w->url().path() == fileName )
+    if ( w && w->url().path() == fileName && !w->dirty())
     {
       w->setDirtyStatus(true);
       if (quantaApp->view()->writeExists() && w == write())

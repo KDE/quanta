@@ -76,6 +76,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   addColumn(i18n("Project Files"), -1);
   addColumn("");
   setFullWidth(true);
+  setDragEnabled(true);
 
   setFocusPolicy(QWidget::ClickFocus);
 
@@ -198,7 +199,8 @@ void ProjectTreeView::slotReloadTree( const KURL::List &urlList, bool buildNewTr
 
   if (buildNewTree)
   {
-    if (m_projectDir) removeBranch(m_projectDir);
+    if (m_projectDir) 
+      removeBranch(m_projectDir);
     QString m_projectNameStr = m_projectName+" ";
     bool hasProject = (m_projectName != i18n("No Project"));
     if (hasProject)
@@ -285,7 +287,9 @@ void ProjectTreeView::slotRename()
 {
   if ( currentItem() )
   {
-    emit renameInProject(currentURL());
+    KURL url = currentURL();
+    if ( currentKFileTreeViewItem()->isDir() ) url.adjustPath(+1);
+    emit renameInProject(url);
   }
 }
 

@@ -828,6 +828,10 @@ void QuantaApp::enablePhp4Debug(bool enable)
 
 void QuantaApp::openLastFiles()
 {
+
+  // Reload previously opened files only if setting allows
+  m_config->setGroup("General Options");
+
   // we need to check config
   // because project now can be
   // in load stage ( remote prj )
@@ -875,7 +879,14 @@ void QuantaApp::openLastFiles()
 void QuantaApp::loadInitialProject(const QString& url)
 {
   if(url.isNull())
+  {
+    // Get config
+    KConfig *config = quantaApp->config();
+    config->setGroup("General Options");
+
+    // Reload last project if setting is enabled
     m_project->readLastConfig();
+  }
   else
     m_project->slotOpenProject(url);
 }

@@ -131,6 +131,8 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   setFocusPolicy(QWidget::ClickFocus);
   setAcceptDrops(true);
   setShowSortIndicator(true);
+  setDragEnabled(true);
+  
   connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
           this, SLOT(slotDropped(KURL::List&, KURL&)));
 
@@ -621,8 +623,7 @@ void FilesTreeView::slotReload()
     {
       kftvi = dynamic_cast<KFileTreeViewItem*> (it.current());
       if ( kftvi && kftvi->isDir() && kftvi->isOpen()) {
-        kftvi->setListed( false ); // force re-read
-        kftvi->branch()->populate(kftvi->url(), kftvi);
+        kftvi->branch()->updateDirectory(kftvi->url());
       }
     }
 }

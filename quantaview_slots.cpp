@@ -1,4 +1,4 @@
-/***************************************************************************
+/**************************************************************************
                           quantaview_slots.cpp  -  description
                              -------------------
     begin                : Thu Mar 9 2000
@@ -32,6 +32,7 @@
 #include <qradiobutton.h>
 
 // include files for KDE
+#include <kaction.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -499,7 +500,7 @@ void QuantaView::slotViewInKFM()
   {
     KProcess *show = new KProcess();
     KURL url = quantaApp->project()->urlWithPrefix(w->url());
-    *show << "kfmclient" << "exec" << url.url();
+    *show << "kfmclient" << "openURL" << url.url();
     show->start( KProcess::DontCare );
   }
 }
@@ -765,15 +766,21 @@ void QuantaView::toggleInsert()
   if (writeExists())
   {
     Document *w = write();
-    w->kate_view->setOverwriteMode(!w->kate_view->isOverwriteMode());
-    quantaApp->statusBar()->changeItem(w->kate_view->isOverwriteMode() ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR); }
+    KToggleAction *a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("set_insert"));
+    if (a)
+    {
+      a->activate();
+      quantaApp->statusBar()->changeItem(a->isChecked() ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR); }
+    }
 }
 
 void QuantaView::slotIndent()
 {
   if (writeExists())
   {
-    write()->kate_view->indent();
+    KAction *a = write()->view()->actionCollection()->action("tools_indent");
+    if (a)
+      a->activate();
   }
 }
 
@@ -781,7 +788,9 @@ void QuantaView::slotUnIndent()
 {
   if (writeExists())
   {
-    write()->kate_view->unIndent();
+    KAction *a = write()->view()->actionCollection()->action("tools_unindent");
+    if (a)
+      a->activate();
   }
 }
 
@@ -789,7 +798,9 @@ void QuantaView::slotCleanIndent()
 {
   if (writeExists())
   {
-    write()->kate_view->cleanIndent();
+    KAction *a = write()->view()->actionCollection()->action("tools_cleanIndent");
+    if (a)
+      a->activate();
   }
 }
 
@@ -797,7 +808,9 @@ void QuantaView::slotComment ()
 {
   if (writeExists())
   {
-    write()->kate_view->comment(); //this is not working correctly in KATE 3.0.x
+    KAction *a = write()->view()->actionCollection()->action("tools_comment");
+    if (a)
+      a->activate();
   }
 }
 
@@ -805,7 +818,9 @@ void QuantaView::slotUnComment ()
 {
   if (writeExists())
   {
-    write()->kate_view->uncomment();
+    KAction *a = write()->view()->actionCollection()->action("tools_uncomment");
+    if (a)
+      a->activate();
   }
 }
 
@@ -814,7 +829,9 @@ void QuantaView::slotApplyWordWrap ()
 {
   if (writeExists())
   {
-    write()->kate_doc->applyWordWrap();
+    KAction *a = write()->view()->actionCollection()->action("tools_apply_wordwrap");
+    if (a)
+      a->activate();
   }
 }
 
@@ -822,7 +839,9 @@ void QuantaView::slotGotoLine ()
 {
   if (writeExists())
   {
-    write()->kate_view->gotoLine();
+    KAction *a = write()->view()->actionCollection()->action("go_goto_line");
+    if (a)
+      a->activate();
   }
 }
 
@@ -856,7 +875,13 @@ void QuantaView::clearBookmarks ()
 {
   if (writeExists())
   {
-    dynamic_cast<KTextEditor::MarkInterface*>(write()->doc())->clearMarks();
+    KTextEditor::Mark* mark;
+    KTextEditor::MarkInterface *markinterface = dynamic_cast<KTextEditor::MarkInterface*>(write()->doc());
+    QPtrList<KTextEditor::Mark> marks= dynamic_cast<KTextEditor::MarkInterface*>(write()->doc())->marks();
+    for ( mark = marks.first(); mark; mark = marks.next() )
+    {
+      markinterface->removeMark(mark->line,  KTextEditor::MarkInterface::markType01);
+    }
   }
 }
 
@@ -876,8 +901,12 @@ void QuantaView::toggleIconBorder ()
 {
   if (writeExists())
   {
-    write()->kate_view->toggleIconBorder ();
-    qConfig.iconBar = quantaApp->viewBorder->isChecked();
+    KToggleAction *a = dynamic_cast<KToggleAction*>(write()->view()->actionCollection()->action("view_border"));
+    if (a)
+    {
+      a->activate();
+      qConfig.iconBar = a->isChecked();
+    }
   }
 }
 
@@ -894,8 +923,12 @@ void QuantaView::toggleLineNumbers()
 {
   if (writeExists())
   {
-    write()->kate_view->toggleLineNumbersOn();
-    qConfig.lineNumbers = quantaApp->viewLineNumbers->isChecked();
+    KToggleAction *a = dynamic_cast<KToggleAction*>(write()->view()->actionCollection()->action("view_line_numbers"));
+    if (a)
+    {
+      a->activate();
+      qConfig.lineNumbers = a->isChecked();
+    }
   }
 }
 
@@ -929,7 +962,13 @@ void QuantaView::setEol(int which)
 {
   if (writeExists())
   {
-    write()->kate_view->setEol( which );
+    KSelectAction *a = dynamic_cast<KSelectAction*>(write()->view()->actionCollection()->action("set_eol"));
+    if (a)
+    {
+      a->setCurrentItem(which);
+      a->activate();
+      write()->setModified(true);
+    }
   }
 }
 

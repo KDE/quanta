@@ -32,6 +32,7 @@
   */
 
 class KURL;
+class Project;
 
 class ProjectUpload : public ProjectUploadS
 {
@@ -73,8 +74,9 @@ private:
   bool suspendUpload;
   QString password;
   QString user;
+  Project *m_project;
 
-  void initProjectInfo(Project *p);
+  void initProjectInfo();
 
 private slots: // Private slots
   /** No descriptions */

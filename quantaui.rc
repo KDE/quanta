@@ -224,7 +224,7 @@
     <Action name="tidy_check" />
     <Action name="KFileReplace" />
     <Action name="CVS Management (Cervisia)" />
-    <Action name="XSLT debugger" />
+    <Action name="XSLT Debugger" />
   </ToolBar>
 
   <ToolBar name="mainNaviToolBar" noMerge="1">

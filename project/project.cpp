@@ -944,7 +944,7 @@ void Project::slotRenameFinished( KIO::Job * job)
     newURL = KURL();
     m_modified = true;
 
-    emit reloadTree(m_projectFiles, true);
+    emit reloadTree(m_projectFiles, false);
     emit newStatus();
   }
 }
@@ -1616,7 +1616,7 @@ void Project::slotRescanPrjDir()
   if ( dlg->exec() )
   {
     insertFiles( dlg->files() );
-    emit reloadTree( fileNameList(true), false );
+    emit reloadTree( fileNameList(true), true );
   }
   delete dlg;
 }

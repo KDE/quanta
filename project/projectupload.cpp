@@ -59,7 +59,8 @@ ProjectUpload::ProjectUpload(Project* prg, const KURL& url, QWidget *parent, con
   :ProjectUploadS( parent, name, modal, fl)
 {
     list->hide();
-    initProjectInfo(prg);
+    m_project = prg;
+    initProjectInfo();
     startUrl = url;
     QTimer::singleShot(10, this, SLOT(slotBuildTree()));
 }
@@ -67,13 +68,14 @@ ProjectUpload::ProjectUpload(Project* prg, const KURL& url, QWidget *parent, con
 
 ProjectUpload::~ProjectUpload()
 {
+  m_project->setModified(true);
   delete baseUrl;
 }
 
-void  ProjectUpload::initProjectInfo(Project *prg)
+void  ProjectUpload::initProjectInfo()
 {
 
-  p = prg;
+  p = m_project;
 
   baseUrl = new KURL();
 
@@ -417,11 +419,12 @@ void ProjectUpload::slotUploadNext()
     toUpload.remove( it );
 
     //update upload time
-    QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
-    for ( unsigned int i = 0; i < nl.count(); i++ )
+    QDomNodeList nl = p->dom.elementsByTagName("item");
+    QDomElement el;
+    for ( uint i = 0; i < nl.count(); i++ )
     {
-      QDomElement el = nl.item(i).toElement();
-      if ( el.nodeName() == "item"  &&  el.attribute("url") == QuantaCommon::qUrl(currentURL) )
+      el = nl.item(i).toElement();
+      if ( el.attribute("url") == QuantaCommon::qUrl(currentURL) )
       {
         el.setAttribute( "upload_time", el.attribute("modified_time") );
       //  kdDebug(24000) << "Upload time for " << el.attribute("url") << " is: " << el.attribute("upload_time") << "\n";

@@ -774,7 +774,13 @@ void QuantaApp::slotNewStatus()
     setTitle( w->url().prettyURL() );
 
     if (w->doc()->isReadWrite())
-        statusBar()->changeItem(w->kate_view->isOverwriteMode() ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
+    {
+      KToggleAction *a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("set_insert"));
+      if (a)
+      {
+        statusBar()->changeItem(a->isChecked() ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR); 
+      }
+    }        
     else
         statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
     statusBar()->changeItem(w->isModified() ? " * " : "",IDS_MODIFIED);
@@ -802,8 +808,17 @@ void QuantaApp::slotNewStatus()
     actionCollection()->action("toolbars_load_project")->setEnabled(projectExists);
     actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
 
-    viewBorder->setChecked(w->kate_view->iconBorder());
-    viewLineNumbers->setChecked(w->kate_view->lineNumbersOn());
+    KToggleAction *a;
+    a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("view_border"));
+    if (a)
+    {
+      viewBorder->setChecked(a->isChecked());
+    }
+    a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("view_line_numbers"));
+    if (a)
+    {
+      viewLineNumbers->setChecked(a->isChecked());
+    }
 
      //viewFoldingMarkers->setChecked(w->kate_view->lineNumbersOn());
     viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
@@ -955,7 +970,6 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   m_view->updateViews();
 #endif
   m_view->oldTab = w;
-  slotNewLineColumn();
 
   emit reloadTreeviews();
 }
@@ -1425,7 +1439,8 @@ void QuantaApp::slotShowProjectTree()
 void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
 {
   Q_UNUSED(file);
-  idleTimer->start(250, true);
+//  idleTimer->start(250, true);
+  slotIdleTimerExpired();
   QString linenumber;
   linenumber = i18n("Line: %1 Col: %2").arg(lineNumber).arg(columnNumber);
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
@@ -1447,8 +1462,8 @@ void  QuantaApp::openFile(QString file, int lineNumber, int columnNumber)
 
 void QuantaApp::slotNewLineColumn()
 {
-  idleTimer->start(250, true);
-
+//  idleTimer->start(250, true);
+slotIdleTimerExpired();
   QString linenumber;
   oldCursorLine = cursorLine;
   oldCursorCol = cursorCol;
@@ -3720,61 +3735,60 @@ void QuantaApp::slotDeleteFile()
 //be the performance impact. This is a must to do in 3.3!!
 void QuantaApp::slotFind()
 {
+  KAction *a = 0L;
   int id = 0;
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (s)
     id = s->id(s->visibleWidget());
   if (id == 0 && m_view->writeExists())
   {
-    m_view->write()->kate_view->find();
+    a = m_view->write()->view()->actionCollection()->action("edit_find");
   } else
   if (id == 1)
   {
-    KAction *a = m_htmlPart->actionCollection()->action("find");
-    if (a)
-      a->activate();
+    a = m_htmlPart->actionCollection()->action("find");
   } else
   if (id == 2)
   {
-    KAction *a = m_htmlPartDoc->actionCollection()->action("find");
-    if (a)
-      a->activate();
+    a = m_htmlPartDoc->actionCollection()->action("find");
   }
+  if (a)
+    a->activate();
 }
 
 void QuantaApp::slotFindAgain ()
 {
+  KAction *a = 0L;
   int id = 0;
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (s)
     id = s->id(s->visibleWidget());
   if (id == 0 && m_view->writeExists())
   {
-    m_view->write()->kate_view->findAgain(false);
+    a = m_view->write()->view()->actionCollection()->action("edit_find_next");
   } else
   if (id == 1)
   {
-    KAction *a = m_htmlPartDoc->actionCollection()->action("findNext");
-    if (a)
-      a->activate();
+    a = m_htmlPartDoc->actionCollection()->action("findNext");
   } else
   if (id == 2)
   {
-    KAction *a = m_htmlPartDoc->actionCollection()->action("findNext");
-    if (a)
-      a->activate();
+    a = m_htmlPartDoc->actionCollection()->action("findNext");
   }
+  if (a)
+    a->activate();
 }
 
 void QuantaApp::slotFindAgainB ()
 {
+  KAction *a = 0L;
   int id = 0;
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (s)
     id = s->id(s->visibleWidget());
   if (id == 0 && m_view->writeExists())
   {
-    m_view->write()->kate_view->findPrev();
+    a = m_view->write()->view()->actionCollection()->action("edit_find_prev");
   } else
   if (id == 1)
   {
@@ -3782,18 +3796,23 @@ void QuantaApp::slotFindAgainB ()
   if (id == 2)
   {
   }
+  if (a)
+    a->activate();
 }
 
 void QuantaApp::slotReplace ()
 {
+  KAction *a = 0L;
   int id = 0;
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (s)
     id = s->id(s->visibleWidget());
   if (id == 0 && m_view->writeExists())
   {
-    m_view->write()->kate_view->replace();
+    a = m_view->write()->view()->actionCollection()->action("edit_replace");
   }
+  if (a)
+    a->activate();
 }
 
 void QuantaApp::slotSelectAll ()

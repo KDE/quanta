@@ -1708,7 +1708,6 @@ void Document::checkDirtyStatus()
       fileName = url().path();
   if (m_dirty)
   {
-    fileWatcher->removeFile(fileName);
     if (url().isLocalFile())
     {
       //check if the file is changed, also by file content. Might help to reduce
@@ -1753,8 +1752,6 @@ void Document::checkDirtyStatus()
       delete dlg;
     }
     m_dirty = false;
-    if (!fileName.isEmpty())
-        fileWatcher->addFile(fileName);
   }
 }
 

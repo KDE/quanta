@@ -578,7 +578,9 @@ void TemplatesTreeView::slotInsertTag()
   emit insertTag( url, m_dirInfo);
  }
 }
-
+/*
+  Attention, this is called whenever a drop on a kate window happens!
+*/
 void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 {
  if (KURLDrag::canDecode(e))
@@ -599,7 +601,11 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
    QString mimeType = KMimeType::findByPath(localFileName)->name();
 
    /* First, see if the type of the file is specified in the .dirinfo file */
-   if(!m_dirInfo.mimeType.isEmpty())
+   if(m_dirInfo.mimeType.isEmpty())
+   {
+     // no .dirinfo file present, so we insert it as tag
+     emit insertTag(localFileName, m_dirInfo);
+   } else
    {
      if(m_dirInfo.mimeType == "text/all") // default to inserting in document
      {
