@@ -145,6 +145,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
    {
      if (currentNode->tag->type == Tag::XmlTag)
      {
+       //if the xml tag is part of a group, show it under the group
        QString groupTagName;
        for (uint i = 0; i < groupsCount; i++)     
        {
@@ -164,10 +165,33 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
            }
            text = text.left(text.length()-3);
            item = new StructTreeTag(groups[i], currentNode, text);
-         }
-         
+         }         
        }
-      item = new StructTreeTag( parent, currentNode, currentNode->tag->name );
+       /*
+       //add the new xml tags to the userTagList       
+       if (! QuantaCommon::isKnownTag(m_parsingDTD->name, currentNode->tag->name))
+       {
+         Document *w = currentNode->tag->write();       
+         QTag *newTag = w->userTagList.find(currentNode->tag->name);
+         bool insertNew = !newTag;     
+         if (insertNew)
+         {
+           newTag = new QTag();
+           newTag->setName(currentNode->tag->name);
+           newTag->parentDTD = m_parsingDTD;
+         }
+         for (int i = 0; i < currentNode->tag->attrCount; i++)
+         {
+           Attribute *attr = new Attribute;
+           attr->name = currentNode->tag->attribute(i);
+           attr->values.append(currentNode->tag->attributeValue(i));
+           newTag->addAttribute(attr);
+           delete attr;
+         }
+         if (insertNew)
+             w->userTagList.insert(currentNode->tag->name, newTag);                 
+       }*/
+       item = new StructTreeTag( parent, currentNode, currentNode->tag->name );
      }
 
       if ( currentNode->tag->type == Tag::Text )
@@ -217,7 +241,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
         ( currentNode->tag->type == Tag::Text ||
           currentNode->tag->type == Tag::ScriptStructureBegin) )
     {
-      //parse the node for function/variable/inclusion/etc. definitions
+      //parse the node for groups (function/variable/inclusion/etc.) definitions
       QString text;
       QString tagStr = currentNode->tag->tagStr();       
       QRegExp rx;
@@ -332,7 +356,6 @@ void StructTreeView::deleteList()
 void StructTreeView::slotReparse(Node* node, int openLevel)
 {
   deleteList();
-//	imagesCount = linksCount = 0;
   write = node->tag->write();
 	createList(node,0L,openLevel);
   for (uint i = 0; i < groupsCount; i++)

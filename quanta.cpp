@@ -373,10 +373,14 @@ void QuantaApp::slotFileQuit()
 
 void QuantaApp::slotEditFindInFiles()
 {
-  if (!grepDialog) {
-      grepDialog = new GrepDialog( QDir::homeDirPath(), this, "grep_dialog" );
-      connect( grepDialog, SIGNAL( itemSelected   (QString , int)),
-               this,       SLOT  ( gotoFileAndLine(QString , int)));
+  if (!grepDialog) 
+  {
+    QString startDir = QDir::homeDirPath();
+    KURL pBase = projectBaseURL();
+    if (pBase.isLocalFile()) startDir = pBase.path(1);
+    grepDialog = new GrepDialog( startDir, this, "grep_dialog" );
+    connect( grepDialog, SIGNAL( itemSelected   (QString , int)),
+             this,       SLOT  ( gotoFileAndLine(QString , int)));
   }
   grepDialog->show();
   grepDialog->raise();

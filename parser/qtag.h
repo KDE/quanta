@@ -60,7 +60,7 @@ typedef struct DTDStruct
      QString defaultExtension;        //default extension when creating new files
      bool caseSensitive;              //the tags&attributes in DTD are case sensitive or not
      int family;                      //xml, script type
-     QTagList* tagsList;              //the list of all tags in the DTD
+     QTagList* tagsList;              //the list of all defined tags in the DTD
      QString fileName;                //the DTD decription.rc with path
      AttributeListDict* commonAttrs;  //the attributes of the common groups
      QString scriptName;              //the name that can be the value of <script language=""> attribute

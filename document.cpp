@@ -400,7 +400,7 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
         }
         if (insertNew)
             userTagList.insert(tag->name, newTag);
-      }
+      } 
   }
 
   return tag;

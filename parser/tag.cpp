@@ -36,6 +36,7 @@ Tag::Tag( const Tag &t)
 {
 	name = t.name;
 	single = t.single;
+  closingMissing = t.closingMissing;
   beginLine = t.beginLine;
   beginCol = t.beginCol;
   endLine = t.endLine;
