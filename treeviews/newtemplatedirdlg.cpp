@@ -17,6 +17,7 @@
 
 #include <qpushbutton.h>
 #include "newtemplatedirdlg.h"
+#include "newtemplatedirdlg.moc"
 
 NewTemplateDirDlg::NewTemplateDirDlg(QWidget *parent, const char *name ) : TemplateDirForm(parent,name)
 {
