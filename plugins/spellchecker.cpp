@@ -17,6 +17,7 @@
 #include <qstringlist.h>
 
 //kde includes
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kspell.h>
 #include <klocale.h>
@@ -174,6 +175,7 @@ void SpellChecker::corrected( const QString& originalword, const QString& newwor
         if (editIfExt)
           editIfExt->editEnd();
 #endif
+  kapp->processEvents();
 //        m_currentDoc->removeText( line, col, line, col + originalword.length() );
 //        m_currentDoc->insertText( line, col, newword );
 }

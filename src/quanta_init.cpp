@@ -189,8 +189,15 @@ void QuantaApp::initQuanta()
   scriptBeginRx.setPattern("(<script)");
   scriptEndRx.setCaseSensitive(false);
   scriptEndRx.setPattern("(/script>)");
-
+  
   initStatusBar();
+  
+  //defaultDocType must be read before the Project object is created!!
+  m_config->setGroup("General Options");
+  qConfig.defaultDocType = m_config->readEntry("Default DTD",DEFAULT_DTD);
+  if (! DTDs::ref()->find(qConfig.defaultDocType))
+     qConfig.defaultDocType = DEFAULT_DTD;
+
   initDocument ();
   initView     ();
   initProject  ();
@@ -703,10 +710,6 @@ void QuantaApp::readOptions()
   qConfig.closeTags = m_config->readBoolEntry("Close tags", true);
   qConfig.useAutoCompletion = m_config->readBoolEntry("Auto completion",true);
   qConfig.updateClosingTags = m_config->readBoolEntry("Update Closing Tags", true);
-
-  qConfig.defaultDocType = m_config->readEntry("Default DTD",DEFAULT_DTD);
-  if (! DTDs::ref()->find(qConfig.defaultDocType))
-     qConfig.defaultDocType = DEFAULT_DTD;
 
   qConfig.defaultEncoding = m_config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
 

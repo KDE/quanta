@@ -34,6 +34,8 @@
 #include "quantacommon.h"
 #include "dtds.h"
 
+#undef DEBUG_PARSER
+
 extern GroupElementMapList globalGroupMap;
 
 SAParser::SAParser()
