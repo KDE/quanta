@@ -22,6 +22,7 @@
 
 #include <klocale.h>
 #include <kaction.h>
+#include <kdebug.h>
 #include <kpopupmenu.h>
 #include <kstringhandler.h>
 #include <ktexteditor/markinterface.h>
@@ -138,10 +139,10 @@ void QuantaBookmarks::clearBookmarks ()
   }
 }
 
-void QuantaBookmarks::insertBookmarks( QPopupMenu& menu )
+int QuantaBookmarks::insertBookmarks(QPopupMenu& menu, Document *doc, bool insertNavigationItems )
 {
-  Document *doc = m_viewManager->activeDocument();
-  if (doc && doc->markIf)
+  int insertedItems = 0;
+  if (doc->markIf)
   {
     uint line = doc->viewCursorIf->cursorLine();
     const QRegExp re("&(?!&)");
@@ -175,7 +176,8 @@ void QuantaBookmarks::insertBookmarks( QPopupMenu& menu )
   
         menu.insertItem(
             QString("%1 - \"%2\"").arg( (*it)->line+1 ).arg( bText ),
-            this, SLOT(gotoLineNumber(int)), 0, (*it)->line, idx );
+             0, (*it)->line, idx );
+        insertedItems++;
   
         if ( (*it)->line < line )
         {
@@ -190,44 +192,74 @@ void QuantaBookmarks::insertBookmarks( QPopupMenu& menu )
         }
       }
     }
-  
-    idx = ++old_menu_count;
-    if ( next )
+ 
+    if (insertNavigationItems) 
     {
-      m_goNext->setText( i18n("&Next: %1 - \"%2\"").arg( next->line + 1 )
-          .arg( KStringHandler::rsqueeze( doc->editIf->textLine( next->line ), 24 ) ) );
-      m_goNext->plug( &menu, idx );
-      idx++;
+      idx = ++old_menu_count;
+      if ( next )
+      {
+        m_goNext->setText( i18n("&Next: %1 - \"%2\"").arg( next->line + 1 )
+            .arg( KStringHandler::rsqueeze( doc->editIf->textLine( next->line ), 24 ) ) );
+        m_goNext->plug( &menu, idx );
+        idx++;
+      }
+      if ( prev )
+      {
+        m_goPrevious->setText( i18n("&Previous: %1 - \"%2\"").arg(prev->line + 1 )
+            .arg( KStringHandler::rsqueeze( doc->editIf->textLine( prev->line ), 24 ) ) );
+        m_goPrevious->plug( &menu, idx );
+        idx++;
+      }
+      if ( next || prev )
+        menu.insertSeparator( idx );
     }
-    if ( prev )
-    {
-      m_goPrevious->setText( i18n("&Previous: %1 - \"%2\"").arg(prev->line + 1 )
-          .arg( KStringHandler::rsqueeze( doc->editIf->textLine( prev->line ), 24 ) ) );
-      m_goPrevious->plug( &menu, idx );
-      idx++;
-    }
-    if ( next || prev )
-      menu.insertSeparator( idx );
+    connect(&menu, SIGNAL(activated(int)), this, SLOT(gotoLineNumber(int)));
   }
+  return insertedItems;
 }
 
 void QuantaBookmarks::bookmarkMenuAboutToShow()
 {
+  for (uint i = 0; i < m_othersMenuList.count(); i++)
+  {
+    delete m_othersMenuList[i];
+  }
+  m_othersMenuList.clear();
+  m_others.clear();
+  m_bookmarksMenu->clear();
+  
   Document *doc = m_viewManager->activeDocument();
+  QValueList<Document*> openedDocuments = m_viewManager->openedDocuments();
   if (doc && doc->markIf)
   {
     QPtrList<KTextEditor::Mark> m = doc->markIf->marks();
   
-    m_bookmarksMenu->clear();
     m_bookmarkToggle->setChecked( doc->markIf->mark( doc->viewCursorIf->cursorLine() )
                                   & KTextEditor::MarkInterface::markType01 );
     m_bookmarkToggle->plug( m_bookmarksMenu );
     m_bookmarkClear->plug( m_bookmarksMenu );
   
   
-    insertBookmarks(*m_bookmarksMenu);
-  } else
-    m_bookmarksMenu->clear();
+    insertBookmarks(*m_bookmarksMenu, doc);
+    if (openedDocuments.count() > 1)
+      m_bookmarksMenu->insertSeparator();
+  } 
+  int i = 0;
+  for (QValueList<Document*>::Iterator it = openedDocuments.begin(); it != openedDocuments.end(); ++it)
+  {
+    if (*it != doc)
+    {
+      QPopupMenu *menu = new QPopupMenu(m_bookmarksMenu);
+      m_bookmarksMenu->insertItem((*it)->url().fileName(), menu);
+      if (insertBookmarks(*menu, *it, false) > 0)
+      {        
+        m_othersMenuList.append(menu);
+        m_others.append(*it);
+        i++;
+      } else
+        delete menu;
+    }     
+  }
 }
 
 /*
@@ -288,6 +320,15 @@ void QuantaBookmarks::goPrevious()
 void QuantaBookmarks::gotoLineNumber(int line)
 {
   Document *doc = m_viewManager->activeDocument();
+  const QObject *s = sender();
+  for (uint i = 0; i < m_othersMenuList.count(); i++)
+  {
+    if (s == m_othersMenuList[i])
+    {
+      doc = m_others[i];
+      break;
+    }
+  }
   if (doc)
   {
     emit gotoFileAndLine(doc->url().url(), line, 0);

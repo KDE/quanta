@@ -30,6 +30,7 @@ Quanta, so it works over multiple document */
 namespace KTextEditor { class Mark; }
 
 class ViewManager;
+class Document;
 
 class KAction;
 class KToggleAction;
@@ -54,7 +55,7 @@ class QuantaBookmarks : public QObject
     void setSorting( Sorting s ) { m_sorting = s; };
 
   protected:
-    void insertBookmarks( QPopupMenu& menu);
+    int insertBookmarks(QPopupMenu& menu, Document *doc, bool insertNavigationItems = true);
 
   private slots:
     void toggleBookmark();
@@ -80,6 +81,8 @@ class QuantaBookmarks : public QObject
 
     Sorting                      m_sorting;
     QPopupMenu*          m_bookmarksMenu;
+    QValueList<QPopupMenu*> m_othersMenuList;
+    QValueList<Document*> m_others;
     ViewManager*  m_viewManager;
 
     uint _tries;

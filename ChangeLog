@@ -72,6 +72,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
             View with Opera: Alt+F6 (was Ctrl+Shift+F6)
             View with Lynx: None (was Shift+F6)
         - Warning Messages can be configured on the User Interface page
+        - support bookmarks spanning multiple files [#79297]
 
   - enhancements/new features:
         - VPL:

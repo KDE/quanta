@@ -334,6 +334,25 @@ KURL::List ViewManager::openedFiles(bool noUntitled)
   return list;
 }
 
+QValueList<Document*> ViewManager::openedDocuments()
+{
+  QValueList<Document*> list;
+  KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
+  QuantaView *view;
+  for (it->first(); !it->isDone(); it->next())
+  {
+    view = dynamic_cast<QuantaView*>(it->currentItem());
+    if (view)
+    {
+      Document *w = view->document();
+      if (w)
+        list.append(w);
+    }
+  }
+  delete it;
+  return list;
+}
+
 bool ViewManager::saveAll()
 {
   bool flagsave = true;

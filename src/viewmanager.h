@@ -63,6 +63,8 @@ public:
   void createNewDocument();
 /** Returns a list with the URLs of the opened documents */
   KURL::List openedFiles(bool noUntitled=true);
+  /** Returns a list with the Document* object of the opened documents */
+  QValueList<Document*> openedDocuments();
 
   /** Returns the view holding the documentation widget. If create is true and there is no such view yet,
   it creates one. */
