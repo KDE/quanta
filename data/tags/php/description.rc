@@ -31,10 +31,12 @@ ControlStructures = while, if, elseif, for, foreach, switch, declare
 Expr = (%text%)
 Statement = %text%;
 
-StructGroups = Inclusions/No Inclusions//; Variables/No Variables/abs/; Functions/No Functions/mini-modules/
+StructGroups = Inclusions/No Inclusions//; Variables/No Variables/abs/; Functions/No Functions/mini-modules/; Classes/No Classes//
 RegExp0 = (?:include|require|include_once|require_once)[\\s]+(?:(?:(?:\(|\"|\')+[^\)]*(?:\)|\"|\')+)|(?:\$.*))
 RegExp0_clear = \n
 RegExp1 = \$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*
 RegExp1_clear = \$
-RegExp2 = function[\s]+[a-zA-Z_\x7f-\xff]*[\s]*(?:\(.*\)){0,1}
-RegExp2_clear = function[\s]+
+RegExp2 = function[\\s]+[a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1}
+RegExp2_clear = function[\\s]+
+RegExp3 = class[\\s]+[a-zA-Z_\x7f-\xff]*[\\s]*
+RegExp3_clear = (?:class[\s]+|\n)

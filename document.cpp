@@ -168,7 +168,7 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
   if (dtd->family == Script)
   {
     //TODO: The keyword shouldn't be hardcoded but read from description.rc
-    QRegExp keywordRx("\\b(for|foreach|if|else|elseif|while|do|switch|declare|function)\\b");
+    QRegExp keywordRx("\\b(for|foreach|if|else|elseif|while|do|switch|declare|function|class)\\b");
 
     if (!tag) tag = findScriptText(line, col, keywordRx);
     if (!tag) tag = findStruct(line, col, keywordRx);
