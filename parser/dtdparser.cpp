@@ -32,7 +32,10 @@
 #include <kio/netaccess.h>
 
 //other includes
+#ifdef LIBXML_2_5
 #include <libxml/hash.h>
+#endif
+
 #include <libxml/parser.h>
 #include <libxml/valid.h>
 

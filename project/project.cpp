@@ -303,6 +303,7 @@ bool Project::createEmptyDom()
 
   if (!result)
   {
+    emit hideSplash();
     KMessageBox::sorry(this, i18n("<qt>Can't open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
     return false;
   }
