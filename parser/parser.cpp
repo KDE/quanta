@@ -1269,7 +1269,7 @@ Node *Parser::rebuild(Document *w)
      {
         text = w->text(bl + lineDiff, bc, el + lineDiff, ec);
         tagStr = node->tag->tagStr();
-        if (tagStr == text && node->tag->type != Tag::Empty && !node->insideSpecial && node->tag->validXMLTag)
+        if (tagStr == text && node->tag->type != Tag::Empty && !node->insideSpecial && !node->tag->validXMLTag)
         {
           if (!lastNode)
               lastNode = node;
