@@ -1573,6 +1573,10 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
     QString searchForAttr = (dtd->caseSensitive) ? attribute : attribute.upper();
     AttributeList* attrs = QuantaCommon::tagAttributes(dtdName, tag);
     Attribute *attr;
+    KURL u;
+    KURL base = QExtFileInfo::toRelative(url(), baseURL);
+    base.setPath("/"+base.directory(false, false));
+    QString s;
     if (attrs)
     {
       for ( attr = attrs->first(); attr; attr = attrs->next() )
@@ -1584,6 +1588,13 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
             if (project->hasProject())
             {
               values = new QStringList(project->fileNameList(true).toStringList());
+              for (uint i = 0; i < values->count(); i++)
+              {
+                u = (*values)[i];
+                u.setPath("/"+u.path());
+                u = QExtFileInfo::toRelative(u, base);
+                (*values)[i] = u.path();
+              }
               values->append("mailto:" + project->email);
             } else
             {
