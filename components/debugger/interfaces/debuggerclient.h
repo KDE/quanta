@@ -27,6 +27,35 @@ class DebuggerInterface;
 class DebuggerBreakpoint;
 class DebuggerVariable;
 
+namespace DebuggerClientCapabilities 
+{
+  enum Capabilities 
+  {
+    // Session related
+    StartSession = 1000,
+    EndSession,
+    
+    // Breakpoint related
+    LineBreakpoints = 2000,
+    ConditionalBreakpoints,
+    ClearAllBreakpoints,
+    
+    // Variable related
+    Watches = 4000,
+    VariableSetValue,
+    
+    // Execution related
+    Run = 5000,
+    RunDisplay,
+    Pause,
+    Kill,
+    StepInto,
+    StepOver,
+    StepOut,
+    Skip
+  };
+}
+
 class DebuggerClient : public QObject
 {
   private:
@@ -35,27 +64,8 @@ class DebuggerClient : public QObject
 
     bool m_active;
     
-  public:
-     enum Capabilities {
-      StartSession = 1000,
-      EndSession,
-      LineBreakpoints = 2000,
-      ConditionalBreakpoints,
-      ClearAllBreakpoints,
-      
-      Watches = 4000,
-      
-      Run = 5000,
-      RunDisplay,
-      Pause,
-      Kill,
-      StepInto,
-      StepOver,
-      StepOut,
-      Skip
-    };
-     
-    virtual const uint supports(DebuggerClient::Capabilities) = 0;
+  public:     
+    virtual const uint supports(DebuggerClientCapabilities::Capabilities) = 0;
     virtual void startSession() = 0;
     virtual void endSession() = 0;
     virtual QString getName() = 0;
@@ -80,6 +90,7 @@ class DebuggerClient : public QObject
     virtual void removeBreakpoint(DebuggerBreakpoint* breakpoint);
     virtual void addWatch(const QString &);
     virtual void removeWatch(DebuggerVariable*);
+    virtual void variableSetValue(DebuggerVariable *variable);
     
     bool isActive();    
     DebuggerInterface *debuggerInterface();

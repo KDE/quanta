@@ -50,6 +50,7 @@ class DebuggerManager : public QObject {
 
     // Access to memebers
     DebuggerUI * UI() { return m_debuggerui; };
+    DebuggerClient * client() { return m_client; };
 
     // Breakpoints
     void haveBreakpoint (QString file, int line);

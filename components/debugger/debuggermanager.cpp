@@ -167,9 +167,9 @@ void DebuggerManager::initClientActions()
   if(m_client)
   {
     // Get actioncollection and add appropriate actions depending on capabilities of the debugger
-    if(!m_client->supports(DebuggerClient::LineBreakpoints))
+    if(!m_client->supports(DebuggerClientCapabilities::LineBreakpoints))
       enableAction("debug_breakpoints_toggle", false);
-    if(!m_client->supports(DebuggerClient::ClearAllBreakpoints))
+    if(!m_client->supports(DebuggerClientCapabilities::ClearAllBreakpoints))
       enableAction("debug_breakpoints_clear", false);
 
     enableAction("*", false);

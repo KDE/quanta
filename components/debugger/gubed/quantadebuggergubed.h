@@ -33,7 +33,7 @@ class QuantaDebuggerGubed : public DebuggerClient {
     ~QuantaDebuggerGubed();
     
     // Manager interaction
-    const uint supports(DebuggerClient::Capabilities);
+    const uint supports(DebuggerClientCapabilities::Capabilities);
     
     // Execution control
     void run();
@@ -64,6 +64,7 @@ class QuantaDebuggerGubed : public DebuggerClient {
     // Variables
     void addWatch(const QString &variable);
     void removeWatch(DebuggerVariable *var);
+    void variableSetValue(DebuggerVariable *variable);
     
   private:
     QSocket *m_socket;

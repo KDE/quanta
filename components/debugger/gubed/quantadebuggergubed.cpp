@@ -83,20 +83,21 @@ void QuantaDebuggerGubed::endSession()
 }
 
 // Return capabilities of gubed
-const uint QuantaDebuggerGubed::supports(DebuggerClient::Capabilities cap)
+const uint QuantaDebuggerGubed::supports(DebuggerClientCapabilities::Capabilities cap)
 {
   switch(cap)
   {
-    case DebuggerClient::LineBreakpoints:
-    case DebuggerClient::StartSession:
-    case DebuggerClient::EndSession:
-    case DebuggerClient::Kill:
-    case DebuggerClient::Pause:
-    case DebuggerClient::Run:
-    case DebuggerClient::RunDisplay:
-    case DebuggerClient::Skip:
-    case DebuggerClient::StepInto:
-    case DebuggerClient::Watches:
+    case DebuggerClientCapabilities::LineBreakpoints:
+    case DebuggerClientCapabilities::StartSession:
+    case DebuggerClientCapabilities::EndSession:
+    case DebuggerClientCapabilities::Kill:
+    case DebuggerClientCapabilities::Pause:
+    case DebuggerClientCapabilities::Run:
+    case DebuggerClientCapabilities::RunDisplay:
+    case DebuggerClientCapabilities::Skip:
+    case DebuggerClientCapabilities::StepInto:
+    case DebuggerClientCapabilities::Watches:
+    case DebuggerClientCapabilities::VariableSetValue:
       return true;
       
     default: 
@@ -429,6 +430,11 @@ QString QuantaDebuggerGubed::mapLocalPathToServer(QString localpath)
       localpath.remove(0, localBasedir.length());
 #endif
    return serverBasedir + localpath;
+}
+
+void QuantaDebuggerGubed::variableSetValue(DebuggerVariable *variable)
+{
+  sendCommand("setvariable", variable->name() + "=" + variable->value());
 }
 
 #include "quantadebuggergubed.moc"

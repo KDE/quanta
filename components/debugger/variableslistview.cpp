@@ -18,11 +18,16 @@
 // KDE Includes
 #include <klocale.h>
 #include <kdebug.h>
+#include <kiconloader.h>
+#include <kinputdialog.h>
 
 // Quanta includes
 #include "variableslistview.h"
 #include "debuggervariable.h"
-
+#include "resource.h"
+#include "quanta.h"
+#include "debuggerclient.h"
+#include "debuggermanager.h"
 
 namespace VariablesListViewColumns
 {
@@ -47,11 +52,47 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
   addColumn(i18n("Type"));
   addColumn(i18n("Size"));
   setRootIsDecorated(true);
+  
+  m_variablePopup = new KPopupMenu(this);
+  m_variablePopup->insertItem(SmallIcon("editdelete"), i18n("&Remove"), this, SLOT(slotRemoveSelected()));
+  
+  if(quantaApp->debugger()->client()->supports(DebuggerClientCapabilities::VariableSetValue))
+    m_variablePopup->insertItem(SmallIcon("edit"), i18n("&Set value"), this, SLOT(slotVariableSetValue()));
+  
+  connect(this, SIGNAL( contextMenu( KListView *, QListViewItem *, const QPoint & ) ), this, SLOT(slotVariableContextMenu(KListView *, QListViewItem *, const QPoint &)));
 }
 
 
 VariablesListView::~VariablesListView()
 {
+}
+
+DebuggerVariable* VariablesListView::selected()
+{
+  if(!selectedItem())
+    return NULL;
+    
+  DebuggerVariable* v;
+  for( v = m_variablesList.first(); v; v = m_variablesList.next())
+  {
+    if(v->item() == selectedItem())
+    {
+      return v;
+    }
+  }
+  return NULL;
+}
+
+void VariablesListView::slotRemoveSelected()
+{   
+  DebuggerVariable* v = selected();
+  
+  if(!v)
+    return;
+    
+  emit removeVariable(v);
+  m_variablesList.remove(v);
+  delete v;
 }
 
 void VariablesListView::keyPressEvent(QKeyEvent *e)
@@ -62,20 +103,14 @@ void VariablesListView::keyPressEvent(QKeyEvent *e)
     return;
   }
   
-  if(!selectedItem())
+  DebuggerVariable* v = selected();
+  
+  if(!v)
     return;
     
-  DebuggerVariable* v;
-  for( v = m_variablesList.first(); v; v = m_variablesList.next())
-  {
-    if(v->item() == selectedItem())
-    {
-      emit removeVariable(v);
-      m_variablesList.remove(v);
-      delete v;
-      return;
-    }
-  }
+  emit removeVariable(v);
+  m_variablesList.remove(v);
+  delete v;
 }
 
 void VariablesListView::addVariable(DebuggerVariable* variable)
@@ -316,5 +351,45 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str) {
       m_variablesList.remove();
     }
 }*/
+
+void VariablesListView::slotVariableContextMenu(KListView *, QListViewItem *, const QPoint& point)
+{
+  if(!selectedItem())
+    return;
+      
+  m_variablePopup->exec(point);
+}
+
+void VariablesListView::slotVariableSetValue()
+{
+  DebuggerVariable* v = selected();
+  
+  if(!v)
+    return;
+  
+  QString newvalue;
+  switch(v->type()) 
+  {
+    case DebuggerVariableTypes::String:
+      newvalue = "\"" + v->value() + "\"";
+      break;
+        
+    case DebuggerVariableTypes::Float:
+    case DebuggerVariableTypes::Boolean:
+    case DebuggerVariableTypes::Integer:
+      newvalue = v->value();
+      break;
+    
+    default:
+      newvalue = "";      
+  }
+  newvalue = KInputDialog::getText(i18n("Set variable"), i18n("New value"), newvalue, 0, this);
+  if(newvalue.isNull())
+    return;
+  
+  v->setValue(newvalue);
+  quantaApp->debugger()->client()->variableSetValue(v);
+  
+}
 
 #include "variableslistview.moc"

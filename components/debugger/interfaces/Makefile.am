@@ -2,7 +2,7 @@
 METASOURCES = AUTO
 
 noinst_LTLIBRARIES =  libdebuggerinterface.la
-libdebuggerinterface_la_LDFLAGS = $(all_libraries)  -version-info 0:0:0
+libdebuggerinterface_la_LDFLAGS = $(all_libraries)
 libdebuggerinterface_la_SOURCES = debuggerinterface.cpp debuggerclient.cpp
 
 
