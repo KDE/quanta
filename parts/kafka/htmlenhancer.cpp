@@ -152,6 +152,23 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 			node->_leafNode = domNode;
 		}
 	}
+
+	//THEN add a red dotted border to FORM tags.
+	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "form")
+	{
+		attr = m_wkafkapart->getKafkaPart()->htmlDocument().createAttribute("style");
+		attr.setNodeValue("border: 1px dotted red");
+		node->_rootNode.attributes().setNamedItem(attr);
+	}
+
+	//THEN add a blue dotted border to DL tags
+	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "dl")
+	{
+		attr = m_wkafkapart->getKafkaPart()->htmlDocument().createAttribute("style");
+		attr.setNodeValue("border: 1px dotted blue");
+		node->_rootNode.attributes().setNamedItem(attr);
+	}
+
 	return true;
 }
 

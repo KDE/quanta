@@ -1849,10 +1849,18 @@ void KafkaHTMLPart::timerEvent( QTimerEvent *e )
 DOM::Node KafkaHTMLPart::createNode(QString NodeName)
 {
 	//this will change with the futur DTDs support
+	DOM::Node dn;
         DOM::DOMString _nodename(NodeName);
 	if(NodeName == "TEXT")
 		return document().createTextNode("");
-	return document().createElement(_nodename);
+	try
+	{
+		dn =  document().createElement(_nodename);
+	} catch(DOM::DOMException e)
+	{
+		return DOM::Node();
+	}
+	return dn;
 }
 
 void KafkaHTMLPart::showDomTree()
