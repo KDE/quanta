@@ -325,7 +325,7 @@ breakPointActiveBreakPoint(void)
  * Depreciated
  */
 void
-breakPointSetActiveBreakPoint(breakPointPtr breakPtr)
+breakPointSetActiveBreakPoint(breakPointPtr breakPtr ATTRIBUTE_UNUSED)
 {
     /*
      * activeBreakPointItem = breakPtr;

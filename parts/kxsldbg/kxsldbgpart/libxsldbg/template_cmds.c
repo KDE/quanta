@@ -312,7 +312,7 @@ xslDbgShellPrintStylesheetsHelper2(void *payload,
  *         0 otherwise
  */
 int
-xslDbgShellPrintStyleSheets(xmlChar * arg)
+xslDbgShellPrintStyleSheets(xmlChar * arg ATTRIBUTE_UNUSED)
 {
     printCounter = 0;
     if (getThreadStatus() == XSLDBG_MSG_THREAD_RUN) {

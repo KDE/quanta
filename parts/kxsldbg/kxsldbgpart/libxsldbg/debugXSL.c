@@ -1018,7 +1018,7 @@ addCallStackItems(void)
 int
 updateSearchData(xsltTransformContextPtr styleCtxt ATTRIBUTE_UNUSED,
                  xsltStylesheetPtr style,
-                 void *data, VariableTypeEnum variableTypes)
+                 void *data, VariableTypeEnum variableTypes ATTRIBUTE_UNUSED)
 {
     int result = 0;
 

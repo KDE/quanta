@@ -27,7 +27,7 @@ XsldbgNotifier::~XsldbgNotifier(void)
 }
 
 
-void XsldbgNotifier::doNotify(XsldbgMessageEnum type, const void *data)
+void XsldbgNotifier::doNotify(XsldbgMessageEnum /*type*/, const void * /*data*/)
 {
 }
 

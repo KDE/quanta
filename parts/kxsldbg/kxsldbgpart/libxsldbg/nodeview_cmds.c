@@ -20,11 +20,11 @@
 #undef VERSION
 #endif
 
+#include "xsldbg.h"
 #include <libxml/xpathInternals.h>
 #include <libxml/HTMLparser.h>
 #include <libxml/HTMLtree.h>
 #include <ctype.h>              /* for isspace*/
-#include "xsldbg.h"
 #include "debugXSL.h"
 #include "arraylist.h"
 #include "breakpoint.h"

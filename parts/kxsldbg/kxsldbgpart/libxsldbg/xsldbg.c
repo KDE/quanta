@@ -1373,7 +1373,7 @@ char msgBuffer[4000];
  *  running as a thread otherwise send to stderr
  */
 void
-xsldbgGenericErrorFunc(void *ctx, const char *msg, ...)
+xsldbgGenericErrorFunc(void *ctx ATTRIBUTE_UNUSED, const char *msg, ...)
 {
     va_list args;
 

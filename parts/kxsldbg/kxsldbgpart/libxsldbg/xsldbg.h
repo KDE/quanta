@@ -31,6 +31,24 @@
  */
 #endif
 
+/* We want skip most of these includes when building documentation */
+#ifndef BUILD_DOCS
+#ifndef __riscos
+#  ifndef WIN32
+#     include "config.h"
+      /* we don't need to use dll declares for *nix based machines */
+#     define XSLDBG_SO_API
+#  else
+      /* dll declares get defined in xsldbgwin32config.h *nix based machines */
+#    include "xsldbgwin32config.h"
+#  endif
+#else
+   /* we don't need to use dll declares for risc_os*/
+#  define XSLDBG_SO_API
+#  include "config_riscos.h"
+#  include "libxml/riscos.h"
+#endif
+
 #include <libxslt/xsltconfig.h>
 
 
@@ -64,39 +82,6 @@
 
 #endif /* end of WITH_XSL_DEBUG */
 
-/**
- * ATTRIBUTE_UNUSED:
- *
- * This macro is used to flag unused function parameters to GCC
- */
-#ifdef __GNUC__
-#ifdef HAVE_ANSIDECL_H
-#include <ansidecl.h>
-#endif
-#ifndef ATTRIBUTE_UNUSED
-#define ATTRIBUTE_UNUSED
-#endif
-#else
-#define ATTRIBUTE_UNUSED
-#endif
-
-/* We want skip most of these includes when building documentation */
-#ifndef BUILD_DOCS
-#ifndef __riscos
-#  ifndef WIN32
-#     include "config.h"
-      /* we don't need to use dll declares for *nix based machines */
-#     define XSLDBG_SO_API
-#  else
-      /* dll declares get defined in xsldbgwin32config.h *nix based machines */
-#    include "xsldbgwin32config.h"
-#  endif
-#else
-   /* we don't need to use dll declares for risc_os*/
-#  define XSLDBG_SO_API
-#  include "config_riscos.h"
-#  include "libxml/riscos.h"
-#endif
 
 #include <libxslt/xslt.h>
 #include <libexslt/exslt.h>

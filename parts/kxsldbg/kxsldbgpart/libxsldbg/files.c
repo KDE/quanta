@@ -23,6 +23,7 @@
 /* We want skip most of these includes when building documentation */
 #ifndef BUILD_DOCS
 
+#include "xsldbg.h"
 #include <stdio.h>
 #include <libxml/entities.h>
 #include <libxml/tree.h>
@@ -30,7 +31,6 @@
 #include <libxml/parserInternals.h>
 #include <libxml/encoding.h>    /* needed by filesTranslate, filesEncoding functions */
 #include <libxml/uri.h>    /* needed for  xmlURIUnescapeString */
-#include "xsldbg.h"
 #include "debugXSL.h"
 #include "files.h"
 #include "utils.h"
@@ -125,7 +125,7 @@ FILE *terminalIO;
 /* No longer needed
    static FILE *oldStdin, *oldStdout, *oldStderr;*/
 
-static char *ttyName;           /* what is the name of the default terminal */
+static char *ttyName = NULL;           /* what is the name of the default terminal */
 static char *termName = NULL;   /* what is the name of terminal we are redirected to */
 
 
@@ -965,11 +965,11 @@ filesSetBaseUri(xmlNodePtr node, const xmlChar * uri)
         return result;
     else {
         if (node->type == XML_ELEMENT_NODE){
-            xmlChar *xsldbgUrl = xmlGetProp(node, BAD_CAST "xsldbg:uri");
-            if (!xsldbgUrl)
+            xmlChar *xsldbgUrlCopy = xmlGetProp(node, BAD_CAST "xsldbg:uri");
+            if (!xsldbgUrlCopy)
                 xmlNewProp(node, BAD_CAST "xsldbg:uri", uri);
             else
-                xmlFree(xsldbgUrl);
+                xmlFree(xsldbgUrlCopy);
         }
         result = 1;
     }

@@ -359,6 +359,7 @@ xslDbgShellBreak(xmlChar * arg, xsltStylesheetPtr style,
     long lineNo = -1;
     xmlChar *url = NULL;
     int orphanedBreakPoint = 0;
+    breakPointPtr breakPtr;
 
     static const xmlChar *errorPrompt =
         (xmlChar *) "Failed to add break point\n";
@@ -414,7 +415,6 @@ xslDbgShellBreak(xmlChar * arg, xsltStylesheetPtr style,
 						DEBUG_BREAK_DATA);
 			    }
 			}else{
-			    breakPointPtr brk;
 			    if (filesIsSourceFile(url)) {
 				result =
 				    breakPointAdd(url, lineNo, NULL, NULL,
@@ -424,9 +424,9 @@ xslDbgShellBreak(xmlChar * arg, xsltStylesheetPtr style,
 				    breakPointAdd(url, lineNo, NULL, NULL,
 					    DEBUG_BREAK_DATA);
 			    }
-			    brk = breakPointGet(url, lineNo);
-			    if (brk){
-				brk->flags |= BREAKPOINT_ORPHANED;
+			    breakPtr = breakPointGet(url, lineNo);
+			    if (breakPtr){
+				breakPtr->flags |= BREAKPOINT_ORPHANED;
 			    }else{
 				xsltGenericError(xsltGenericErrorContext,
 					"Error: Unable to find added breakpoint");
@@ -441,7 +441,6 @@ xslDbgShellBreak(xmlChar * arg, xsltStylesheetPtr style,
     } else {
         /* add breakpoint at specified template names */
         xmlChar *opts[2];
-	xmlChar *qName[3];
         xmlChar *name = NULL, *nameURI = NULL, *mode = NULL, *modeURI = NULL;
 	xmlChar *templateName = NULL, *modeName = NULL;
 	xmlChar *tempUrl = NULL; /* we must use a non-const xmlChar *
@@ -458,13 +457,12 @@ xslDbgShellBreak(xmlChar * arg, xsltStylesheetPtr style,
 	if (orphanedBreakPoint || !ctxt){
 	    /* Add an orphaned template breakpoint we will need to call this function later to 
 		activate the breakpoint */
-	    breakPointPtr brk;
 		result =
 		    breakPointAdd(orphanedTemplateURL, orphanedTemplateLineNo, arg, NULL,
 			    DEBUG_BREAK_SOURCE);
-	    brk = breakPointGet(orphanedTemplateURL, orphanedTemplateLineNo++);
-	    if (brk){
-		brk->flags |= BREAKPOINT_ORPHANED;
+	    breakPtr = breakPointGet(orphanedTemplateURL, orphanedTemplateLineNo++);
+	    if (breakPtr){
+		breakPtr->flags |= BREAKPOINT_ORPHANED;
 	    }else{
 		xsltGenericError(xsltGenericErrorContext,
 			"Error: Unable to find added breakpoint");
@@ -990,7 +988,6 @@ static int validateBreakPoint(breakPointPtr breakPtr, breakPointPtr copy)
 static int validateTemplateBreakPoint(breakPointPtr breakPtr, breakPointPtr copy, xsltTransformContextPtr ctxt)
 {
     int result = 0;
-    int lastCounter = breakPointCounter;
     if (!breakPtr || !copy || !ctxt){
 	xsltGenericError(xsltGenericErrorContext,
 		"Warning: NULL arguments passed to validateTemplateBreakPoint\n");

@@ -121,7 +121,6 @@ int
 helpTop(const xmlChar * args ATTRIBUTE_UNUSED)
 {
     int result = 0;
-    xmlChar buff[500];
     const char *docTextFile = "xsldoc.txt";
     const char *docsDirPath =
         (char *) optionsGetStringOption(OPTIONS_DOCS_PATH);

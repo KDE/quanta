@@ -15,7 +15,7 @@
 #include <kiconloader.h>
 #include <qmessagebox.h>
 #include <klocale.h>
-#include <klineeditdlg.h>
+#include <kinputdialog.h>
 
 // Qxsldbg specific includes
 #include <qvariant.h>
@@ -532,7 +532,7 @@ void KXsldbgPart::breakCmd_activated()
 
 void KXsldbgPart::evaluateCmd_activated()
 {
-  QString expression = KLineEditDlg::getText("Evalute expression", "XPath:");
+  QString expression = KInputDialog::getText("Evalute expression", "XPath:");
   if (checkDebugger()  && (expression.length() > 0)){
     debugger->slotCatCmd( expression);
   }
@@ -540,7 +540,7 @@ void KXsldbgPart::evaluateCmd_activated()
 
 void KXsldbgPart::gotoXPathCmd_activated()
 {
-  QString xpath = KLineEditDlg::getText("Goto XPath", "XPath:");
+  QString xpath = KInputDialog::getText("Goto XPath", "XPath:");
   if (checkDebugger() && xpath.length() > 0){
     debugger->slotCdCmd( xpath );
   }
@@ -582,7 +582,7 @@ KXsldbgPart::lineNoChanged(QString fileName, int lineNumber, bool breakpoint)
   m_editWidget->setCursorPosition( lineNumber, 0 );
 }
 
-void KXsldbgPart::editWidget_cursorPositionChanged( int lineNumber, int column)
+void KXsldbgPart::editWidget_cursorPositionChanged( int lineNumber, int /*column*/)
 {
   if (currentLineNo != lineNumber + 1) {
     currentLineNo = lineNumber + 1;
