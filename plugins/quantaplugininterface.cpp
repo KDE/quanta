@@ -32,7 +32,6 @@
 #include "quantaplugininterface.h"
 #include "quantakpartplugin.h"
 #include "quantacmdplugin.h"
-#include "cervisiaplugin.h"
 #include "../resource.h"
 #include "../quanta.h"
 
@@ -83,10 +82,6 @@ void QuantaPluginInterface::readConfig()
     if (isStandard)
     {
       QString stdName = config->readEntry("Standard Name");
-      if (stdName == "cervisia_kpart")
-      {
-        newPlugin = new CervisiaPlugin();
-      }
       if (newPlugin)
       {
         newPlugin->setStandardName(stdName);
@@ -95,7 +90,7 @@ void QuantaPluginInterface::readConfig()
     {
       if(pluginType == i18n("KPart"))
         newPlugin = new QuantaKPartPlugin();
-      else if(pluginType == "Command Line")
+      else if(pluginType == i18n("Command Line"))
         newPlugin = new QuantaCmdPlugin();
     }
     if (!newPlugin)
@@ -117,6 +112,7 @@ void QuantaPluginInterface::readConfig()
     if (type == "Message Window") type = i18n("Message Window");
     if (type == "Konsole") type = i18n("Konsole");
     newPlugin->setOutputWindow(type);
+    newPlugin->setInput(config->readNumEntry("Input"));
 
     m_plugins.insert(newPlugin->pluginName(), newPlugin);
   }
@@ -157,6 +153,7 @@ void QuantaPluginInterface::writeConfig()
       if (type == i18n("Message Window")) type = "Message Window";
       if (type == i18n("Konsole")) type = "Konsole";
       config->writeEntry("OutputWindow", type);
+      config->writeEntry("Input", curPlugin->input());
       config->writeEntry("Standard", curPlugin->isStandard());
       if (curPlugin->isStandard()) config->writeEntry("Standard Name", curPlugin->standardName());
     }

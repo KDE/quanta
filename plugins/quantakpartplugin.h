@@ -34,7 +34,7 @@ class QWidget;
 class QuantaKPartPlugin : public QuantaPlugin
 {
   Q_OBJECT
-public: 
+public:
   QuantaKPartPlugin();
   ~QuantaKPartPlugin();
   void showGui(bool show);
@@ -48,6 +48,7 @@ public slots:
   virtual bool isLoaded();
 protected:
   KParts::ReadOnlyPart *m_part;
+  bool guiVisible;
 };
 
 #endif

@@ -34,7 +34,7 @@ class KToggleAction;
 class QuantaPlugin : public QObject
 {
   Q_OBJECT
-public: 
+public:
   QuantaPlugin();
   QuantaPlugin(const QString &, const QString &, const QString &, const QString &, const QString &, const QString &, const QString &);
   ~QuantaPlugin();
@@ -85,6 +85,8 @@ public slots:
   virtual void setFileName(const QString &);
   /** Returns the file name of the plugin */
   virtual QString fileName() const;
+  virtual int input() {return m_input;}
+  virtual void setInput(int a_input) { m_input = a_input;}
   /** Returns whether the plugin is loaded or not */
   virtual bool isLoaded();
   /** No descriptions */
@@ -107,6 +109,7 @@ protected:
   QString m_icon;
   QString m_arguments;
   QString m_outputWindow;
+  int m_input;
   /** True, if it is not a user added plugin. Special handling code may be necessary for standard plugins. */
   bool m_standard;
   bool m_isRunning;

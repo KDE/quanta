@@ -140,6 +140,7 @@ void QuantaPluginEditor::configurePlugin()
     configDlg->location->setText(curPlugin->location());
     configDlg->arguments->setText(curPlugin->arguments());
     configDlg->iconButton->setIcon(curPlugin->icon());
+    configDlg->inputBox->setCurrentItem(curPlugin->input());
 
     if(configDlg->exec())
     {
@@ -150,6 +151,7 @@ void QuantaPluginEditor::configurePlugin()
       curPlugin->setArguments(configDlg->arguments->text());
       curPlugin->setOutputWindow(configDlg->outputWindow->currentText());
       curPlugin->setIcon(configDlg->iconButton->icon());
+      curPlugin->setInput(configDlg->inputBox->currentItem());
     }
 
     delete configDlg;

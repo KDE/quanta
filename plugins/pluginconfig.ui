@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>550</width>
-            <height>323</height>
+            <width>561</width>
+            <height>368</height>
         </rect>
     </property>
     <property name="caption">
@@ -106,41 +106,12 @@
                         <string>Name:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="4" column="1" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>arguments</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>pluginFileName</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The plugin executable or library name (with extension).</string>
-                    </property>
-                </widget>
                 <widget class="QLabel" row="1" column="0">
                     <property name="name">
                         <cstring>TextLabel4</cstring>
                     </property>
                     <property name="text">
                         <string>Type:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="5" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Output window:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0">
-                    <property name="name">
-                        <cstring>TextLabel5</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Program arguments:</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="2" column="0">
@@ -151,14 +122,6 @@
                         <string>Location:</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>TextLabel4_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>File name:</string>
-                    </property>
-                </widget>
                 <widget class="QLineEdit" row="0" column="1">
                     <property name="name">
                         <cstring>pluginName</cstring>
@@ -167,7 +130,7 @@
                         <string>The plugin name as it appears in the Plugins menu.</string>
                     </property>
                 </widget>
-                <widget class="KIconButton" row="0" column="2" rowspan="1" colspan="2">
+                <widget class="KIconButton" row="0" column="2">
                     <property name="name">
                         <cstring>iconButton</cstring>
                     </property>
@@ -208,19 +171,6 @@
                         </sizepolicy>
                     </property>
                 </widget>
-                <widget class="QComboBox" row="5" column="1" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>outputWindow</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                </widget>
                 <widget class="QPushButton" row="2" column="3">
                     <property name="name">
                         <cstring>locationButton</cstring>
@@ -241,6 +191,126 @@
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>The exact location of the plugin. If not set the global search paths setting is used.</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="5" column="1" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>outputWindow</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="5" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Output window:</string>
+                    </property>
+                </widget>
+                <widget class="QWidgetStack" row="4" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>widgetStack</cstring>
+                    </property>
+                    <widget class="QWidget">
+                        <property name="name">
+                            <cstring>page</cstring>
+                        </property>
+                        <attribute name="id">
+                            <number>0</number>
+                        </attribute>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>0</number>
+                            </property>
+                            <widget class="QLineEdit" row="0" column="1">
+                                <property name="name">
+                                    <cstring>arguments</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel5</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Program arguments:</string>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QWidget">
+                        <property name="name">
+                            <cstring>page</cstring>
+                        </property>
+                        <attribute name="id">
+                            <number>1</number>
+                        </attribute>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>0</number>
+                            </property>
+                            <widget class="QComboBox" row="0" column="1">
+                                <item>
+                                    <property name="text">
+                                        <string>none</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Current File</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Current File Path</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property name="text">
+                                        <string>Project Directory</string>
+                                    </property>
+                                </item>
+                                <property name="name">
+                                    <cstring>inputBox</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>textLabel1</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Input:</string>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                </widget>
+                <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>pluginFileName</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The plugin executable or library name (with extension).</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>TextLabel4_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>File name:</string>
                     </property>
                 </widget>
             </grid>
@@ -267,8 +337,6 @@
     <tabstop>pluginType</tabstop>
     <tabstop>location</tabstop>
     <tabstop>locationButton</tabstop>
-    <tabstop>pluginFileName</tabstop>
-    <tabstop>arguments</tabstop>
     <tabstop>outputWindow</tabstop>
     <tabstop>validateCheckBox</tabstop>
     <tabstop>PushButton9</tabstop>
@@ -277,8 +345,12 @@
 <includes>
     <include location="global" impldecl="in implementation">kicondialog.h</include>
 </includes>
+<slots>
+    <slot>pluginType_highlighted(const QString&amp;)</slot>
+    <slot>slotPluginTypeHighlighted(const QString&amp;)</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kiconbutton.h</includehint>
+    <includehint>kicondialog.h</includehint>
 </includehints>
 </UI>

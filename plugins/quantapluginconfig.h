@@ -29,7 +29,7 @@ class QString;
 class QuantaPluginConfig : public PluginConfig
 {
   Q_OBJECT
-public: 
+public:
   QuantaPluginConfig(QWidget *, const char *);
   ~QuantaPluginConfig();
 public slots:

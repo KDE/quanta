@@ -39,13 +39,16 @@
 #include "quantaplugin.h"
 #include "../quanta.h"
 #include "../quantaview.h"
+#include "../document.h"
 #include "../quantacommon.h"
 #include "../resource.h"
 #include "../messages/messageoutput.h"
+#include "../project/project.h"
 
 QuantaKPartPlugin::QuantaKPartPlugin()
   : QuantaPlugin(), m_part(0)
 {
+  guiVisible = false;
 }
 
 QuantaKPartPlugin::~QuantaKPartPlugin()
@@ -117,6 +120,39 @@ bool QuantaKPartPlugin::run()
 
   if(isLoaded())
   {
+    if (quantaApp->view()->writeExists())
+    {
+      switch (m_input)
+      {
+        case 1: { m_part->openURL(quantaApp->view()->write()->url());
+                  break;
+                }
+        case 2: { KURL url = quantaApp->view()->write()->url();
+                  url.setPath(url.directory());
+                  url.adjustPath(1);
+                  m_part->openURL(url);
+                  break;
+                }
+        case 3: { KURL url;
+                  if (quantaApp->project()->hasProject() &&
+                      quantaApp->project()->contains(quantaApp->view()->write()->url()))
+                      url = quantaApp->projectBaseURL();
+                  else
+                  {
+                    url = quantaApp->view()->write()->url();
+                    url.setPath(url.directory());
+                    url.adjustPath(1);
+                  }
+                  m_part->openURL(url);
+                  break;
+                }
+        default: ;
+      }
+    } else
+    {
+      if (m_input == 3 && quantaApp->project()->hasProject()) //open project dir
+          m_part->openURL(quantaApp->projectBaseURL());
+    }
     showGui(true);
     addWidget();
     setRunning(true);
@@ -193,11 +229,13 @@ void QuantaKPartPlugin::showGui(bool show)
 {
   if (show)
   {
-    quantaApp->guiFactory()->addClient(m_part);
+    if (!guiVisible)
+       quantaApp->guiFactory()->addClient(m_part);
   } else
   {
     quantaApp->guiFactory()->removeClient(m_part);
   }
+  guiVisible = show;
 }
 
 #include "quantakpartplugin.moc"

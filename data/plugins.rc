@@ -7,6 +7,7 @@ OutputWindow=Editor View
 Standard=true
 Standard Name=cervisia_kpart
 Type=KPart
+Input=3
 
 [General]
 Plugins=Kompare,CVS Management (Cervisia)

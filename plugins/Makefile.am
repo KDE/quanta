@@ -5,7 +5,7 @@ INCLUDES = $(all_includes)
 
 libplugins_a_METASOURCES = AUTO
 
-libplugins_a_SOURCES = spellchecker.cpp cervisiaplugin.cpp quantaplugininterface.cpp quantaplugineditor.cpp quantapluginconfig.cpp quantaplugin.cpp quantakpartplugin.cpp quantacmdplugin.cpp plugineditor.ui pluginconfig.ui 
+libplugins_a_SOURCES = spellchecker.cpp quantaplugininterface.cpp quantaplugineditor.cpp quantapluginconfig.cpp quantaplugin.cpp quantakpartplugin.cpp quantacmdplugin.cpp plugineditor.ui pluginconfig.ui
 
 SUBDIRS = weblint php3dbg php4dbg framewizard
 
