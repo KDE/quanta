@@ -4,8 +4,8 @@ NickName = XHTML 1.1
 URL = http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd
 DoctypeString = HTML PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
 DefaultExtension = html
-Groups = Core, I18n, Script
-NumOfPages = 2
+Groups = Core, I18n, Script,Focus
+NumOfPages = 3
 CaseSensitive = true
 
 [Toolbars]
@@ -21,6 +21,9 @@ Attributes = xml:lang, dir
 [Script]
 Attributes = onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,onmouseout,onkeypress,onkeydown,onkeyup
 
+[Focus]
+Attributes = accesskey,tabindex,onfocus,onblur
+
 [Page1]
 Title = Core and i18n
 Groups = Core, I18n
@@ -29,14 +32,9 @@ Groups = Core, I18n
 Title = Events
 Groups = Script
 
-[Extra tags]
-
-List =!doctype,?
-
-!doctype=html,public,
-!doctype_options = single
-?=version,encoding
-?_options = single
+[Page3]
+Title = Focus
+Groups = Focus
 
 [Extra rules]
 BooleanAttributes = simple

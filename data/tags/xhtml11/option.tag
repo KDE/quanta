@@ -1,29 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="option" hasScript="1" hasCore="1" hasI18n="1">
+<tag name="option" hasFocus="1" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="value" type="input">
-        <text>Value</text>
+        <text>value</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" />
     </attr>
 
     <attr name="selected" type="check">
-        <text>Selected</text>
+        <text>selected</text>
         <location col="1" row="1" />
     </attr>
 
     <attr name="disabled" type="check">
-        <text>Disabled</text>
+        <text>disabled</text>
         <location col="1" row="2" />
     </attr>
 
     <attr name="label" type="input">
-        <text>Label</text>
+        <text>label</text>
         <textlocation col="0" row="3" />
         <location col="1" row="3" />
     </attr>
-  
+
     <stoppingtags>
 	<stoppingtag name="option" />
     </stoppingtags>

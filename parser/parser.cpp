@@ -719,8 +719,6 @@ Node *Parser::parse(Document *w)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
 //  t.restart();
-//  parseForGroups();
-//  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
   t.restart();
   parseIncludedFiles();
   kdDebug(24000) << "External parser " << t.elapsed() << " ms\n";
@@ -1755,9 +1753,6 @@ Node *Parser::rebuild(Document *w)
    w->docUndoRedo.addNewModifsSet(modifs, false);
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
-//  t.restart();
-//  parseForGroups();
-//  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
  /*
  treeSize = 0;
  coutTree(m_node, 2);
@@ -1788,100 +1783,6 @@ void Parser::clearGroups()
   includeWatch = new KDirWatch();
   connect(includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
 }
-
-void Parser::parseForGroups()
-{
-/*
-  clearGroups();
-  KURL baseURL = QExtFileInfo::path(write->url());
-  GroupElementList* groupElementList;
-  GroupElementMapList* groupElementMapList;
-  DTDStruct *dtd;
-  QString str;
-  QString tagStr;
-  QString tmpStr;
-  QString title;
-  GroupElement groupElement;
-  StructTreeGroup group;
-  int bl, bc, el, ec;
-  int pos;
-  Node *currentNode = m_node;
-  Node *node;
-  while (currentNode)
-  {
-    currentNode->tag->beginPos(bl, bc);
-    str = currentNode->tag->cleanStr;
-    tagStr = currentNode->tag->tagStr();
-    dtd = currentNode->tag->dtd;
-    if (dtd->family == Script)
-    {
-      for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
-      {
-        group = dtd->structTreeGroups[i];
-        if (!group.hasSearchRx)
-          continue;
-        groupElementMapList = &m_groups[group.name];
-        pos = 0;
-        while (pos != -1)
-        {
-          pos = group.searchRx.search(str, pos);
-          if (pos != -1)
-          {
-            title = tagStr.mid(pos, group.searchRx.matchedLength());
-            Tag *newTag = new Tag(*currentNode->tag);
-            newTag->beginPos(bl, bc);
-            tmpStr = tagStr.left(pos);
-            int newLines = tmpStr.contains('\n');
-            bl += newLines;
-            int l = tmpStr.findRev('\n'); //the last EOL
-            bc = (l == -1) ? bc+pos : pos - l - 1;
-            newLines = title.contains('\n');
-            l = title.length();
-            el = bl + newLines;
-            ec = (newLines > 0) ? l - title.findRev('\n') : bc + l - 1;
-            newTag->setTagPosition(bl, bc, el, ec);
-            newTag->setStr(title);
-            pos += l;
-            title.remove(group.clearRx);
-            newTag->name = title;
-            node = new Node(0L);
-            node->tag = newTag;
-            groupElement.node = node;
-            groupElement.originalNode = currentNode;
-            node = groupElement.originalNode;
-            while (node && node->tag->dtd == dtd && node->tag->type != Tag::ScriptStructureBegin)
-            {
-              node = node->parent;
-            }
-            if (node && node->tag->type == Tag::ScriptStructureBegin)
-            {
-              groupElement.parentNode = node;
-            } else
-            {
-              groupElement.parentNode = 0L;
-            }
-            groupElement.global = false;
-            groupElementList = & (*groupElementMapList)[title];
-            groupElementList->append(groupElement);
-            if (group.hasFileName && group.parseFile)
-            {
-              title.remove(group.fileNameRx);
-              KURL url;
-              QuantaCommon::setUrl(url, title.stripWhiteSpace());
-              url = QExtFileInfo::toAbsolute(url, baseURL);
-              includedFiles += url.path();
-              includedFilesDTD.append(dtd);
-              includeWatch->addFile(url.path());
-            }
-          }
-        }
-      }
-    }
-    //Go to the next node
-    currentNode = currentNode->nextSibling();
-  } */
-}
-
 
 void Parser::parseIncludedFiles()
 {
