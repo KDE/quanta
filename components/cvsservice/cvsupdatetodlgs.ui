@@ -61,7 +61,7 @@
                         <cstring>tagRadioButton</cstring>
                     </property>
                     <property name="text">
-                        <string>Update to &amp;tag/barch:</string>
+                        <string>Update to &amp;tag/branch:</string>
                     </property>
                     <property name="accel">
                         <string>Alt+T</string>

@@ -274,8 +274,7 @@ void CVSService::slotCommit(const QStringList &files)
    {
       QString message = m_commitDlg->logEdit->text();
       if (message != m_commitDlg->messageCombo->currentText())
-          m_commitDlg->messageCombo->insertItem(message, 0);
-      emit clearMessages();
+          m_commitDlg->messageCombo->insertItem(message, 0);      emit clearMessages();
       emit showMessage(i18n("Running CVS commit..."), false);
       m_files = files;
       m_job = m_cvsService->commit(files, message, true);
@@ -375,7 +374,7 @@ void CVSService::slotRemove()
 
 void CVSService::slotRemove(const QStringList &files)
 {
-  if (m_repository && !m_appId.isEmpty() && (KMessageBox::warningContinueCancelList(0, i18n("<qt>Remove the following files to repository?<br>This will remove your <b>working copy</b> as well!</qt>"), files, i18n("CVS Remove")) == KMessageBox::Continue))
+  if (m_repository && !m_appId.isEmpty() && (KMessageBox::warningContinueCancelList(0, i18n("<qt>Remove the following files to repository?<br>This will remove your <b>working copy</b> as well.</qt>"), files, i18n("CVS Remove")) == KMessageBox::Continue))
   {
     emit clearMessages();
     emit showMessage(i18n("Removing files from the repository..."), false);
