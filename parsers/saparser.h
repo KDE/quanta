@@ -78,7 +78,7 @@ public:
 
 private slots:
   /** Parses one line and calls itself with a singleshot timer to parse the next line. */
-  void slotParseOneLine();
+  bool slotParseOneLine();
   void slotParseForScriptGroup();
   void slotParseNodeInDetail();
   

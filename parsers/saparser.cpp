@@ -191,12 +191,12 @@ void SAParser::parseForScriptGroup(Node *node)
      kdDebug(24000) << "Done: " << t.elapsed() << endl;
 }
 
-void SAParser::slotParseOneLine()
+bool SAParser::slotParseOneLine()
 {
   if (!m_parsingEnabled && !m_synchronous)
   {
-    kdDebug(24000) << "slotParseOneLine - interrupted" << endl;
-    return;
+    kdDebug(24000) << "slotParseOneLine - interrupted" << endl;   
+    return false;
   }
  // kdDebug(24000) << "slotSpecialAreaLineParser, line:" << s_line << " full: " << s_fullParse << endl;
   if (s_line <= s_endLine)
@@ -300,20 +300,22 @@ void SAParser::slotParseOneLine()
                 s_currentContext.area.bCol = s_col;
                 s_currentContext.type = Group;
                 if (m_synchronous)
-                  slotParseOneLine();
+                  //slotParseOneLine();
+                  return true;
                 else
                   QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
-                return;  
+                return true;  
               } else  //it's a closing group structure element (like "}")
               {
                 if (s_currentContext.type != Group)
                 {
                   s_col = groupKeywordPos + foundText.length();
                   if (m_synchronous)
-                    slotParseOneLine();
+                    //slotParseOneLine();
+                    return true;
                   else
                     QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
-                  return;
+                  return true;
                 }
                 s_currentContext.area.eLine = s_line;
                 s_currentContext.area.eCol = groupKeywordPos - 1;
@@ -361,10 +363,11 @@ void SAParser::slotParseOneLine()
                 s_currentNode = node;
 
                 if (m_synchronous)
-                  slotParseOneLine();
+                  //slotParseOneLine();
+                  return true;
                 else
                   QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
-                return;
+                return true;
               }
             }
           }
@@ -401,7 +404,9 @@ void SAParser::slotParseOneLine()
               s_textLine = ParserCommon::getLine(m_write, s_line, s_endLine, s_endCol);
               s_col++;
               if (m_synchronous)
-                slotParseOneLine();
+              {
+                //slotParseOneLine();
+              }
               else
                 QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
             }
@@ -469,7 +474,7 @@ void SAParser::slotParseOneLine()
           s_useReturnVars = true;
           if (!m_synchronous)
             m_lastParsedNode = parsingDone();
-          return;
+          return false; //parsing finished
         }
         if (s_contextFound)
         {
@@ -625,13 +630,17 @@ void SAParser::slotParseOneLine()
       }
    }
     if (m_synchronous)
-      slotParseOneLine();
+    {
+      //slotParseOneLine();
+    }
     else
       QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
   } else
   {
     parsingDone();
+    return false; //parsing finished
   }
+  return true;
 }
 
 Node* SAParser::parseArea(const AreaStruct &specialArea,
@@ -704,7 +713,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   {
     if (m_synchronous)
     {
-      slotParseOneLine(); //actually this parses the whole area, as synchronous == true
+      while (slotParseOneLine()); //actually this parses the whole area, as synchronous == true
       if (s_useReturnVars) //this is true if the special area end was found
       {
         return m_lastParsedNode;
@@ -877,7 +886,7 @@ void SAParser::slotParseForScriptGroup()
   }  
   if (g_node && g_node != g_endNode )
   {
-    if (g_node->tag->type == Tag::Text || g_node->tag->type == Tag::ScriptStructureBegin)
+    if (g_node->tag && (g_node->tag->type == Tag::Text || g_node->tag->type == Tag::ScriptStructureBegin))
       parseForScriptGroup(g_node);
     g_node = g_node->nextSibling();
     if (m_synchronous)

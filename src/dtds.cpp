@@ -145,6 +145,15 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
     QStringList tmpStrList = QStringList::split(" ", definitionAreaBorders[i].stripWhiteSpace());
     dtd->definitionAreas[tmpStrList[0].stripWhiteSpace()] = tmpStrList[1].stripWhiteSpace();
   }
+  //Read the tags that define this DTD
+  QStringList tmpStrList = dtdConfig->readListEntry("Tags");
+  for (uint i = 0; i < tmpStrList.count(); i++)
+  {
+    tmpStr = tmpStrList[i].stripWhiteSpace();
+    int pos = tmpStr.find('(');
+    dtd->definitionTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
+  }
+  
     
   m_dict->insert(dtdName.lower(), dtd); //insert the structure into the dictionary
   delete dtdConfig;
@@ -399,15 +408,6 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     dtd->comments[tmpStr] = tmpStr2;
   }
   dtd->commentsStartRx.setPattern(rxStr.left(rxStr.length()-1));
-  
-  //Read the tags that define this DTD
-  tmpStrList = dtdConfig->readListEntry("Tags");
-  for (uint i = 0; i < tmpStrList.count(); i++)
-  {
-    tmpStr = tmpStrList[i].stripWhiteSpace();
-    int pos = tmpStr.find('(');
-    dtd->definitionTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
-  }
   
   /**** End of code for the new parser *****/
   
