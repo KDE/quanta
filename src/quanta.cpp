@@ -193,7 +193,6 @@ static void silenceQToolBar(QtMsgType, const char *){}
 
 QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta", (KMdi::MdiMode) mdiMode)
 {
-  this->installEventFilter(this);
   setStandardToolBarMenuEnabled( true );
   createStandardStatusBarAction();
   m_quantaInit = new QuantaInit(this);
@@ -4736,29 +4735,6 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
     if (!closeButtonsOnly)
       setToolviewStyle(qConfig.toolviewTabs);
 #endif
-}
-
-bool QuantaApp::eventFilter(QObject *obj, QEvent *event)
-{
-  //Smart Tag insertion : toggle the smart Tag insertion if the control key is pressed/released
-  if(obj == this && (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) &&
-    ViewManager::ref()->activeDocument() && ViewManager::ref()->activeView() &&
-    ViewManager::ref()->activeDocument()->defaultDTD()->name.contains("HTML", false) != 0)
-  {
-    QKeyEvent *keyevent = static_cast<QKeyEvent *>(event);
-    if(keyevent->key() == Key_Control)
-    {
-      KAction *action = actionCollection()->action("smart_tag_insertion");
-      if(!action)
-        return KMdiMainFrm::eventFilter(obj, event);
-
-      qConfig.smartTagInsertion = !qConfig.smartTagInsertion;
-      (static_cast<KToggleAction* >(action))->setChecked(qConfig.smartTagInsertion);
-
-    }
-  }
-
-  return KMdiMainFrm::eventFilter(obj, event);
 }
 
 void QuantaApp::slotFileClosed()

@@ -495,8 +495,6 @@ protected:
 
   void resetDockLayout();
 
-  bool eventFilter(QObject *object, QEvent *event);
-
   ScriptTreeView *scriptTab;
 
 private:
