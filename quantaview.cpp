@@ -334,6 +334,10 @@ void QuantaView::initActions()
                         this, SLOT( slotTagQuickTable() ),
                         actionCollection, "tag_quick_table" );
 
+    (void) new KAction( i18n( "Edit Table..." ), "quick_table", 0,
+                        this, SLOT( slotTagEditTable() ),
+                        actionCollection, "tag_edit_table" );
+
     (void) new KAction( i18n( "Quick List..." ), "quick_list", 0,
                         this, SLOT( slotTagQuickList() ),
                         actionCollection, "tag_quick_list" );

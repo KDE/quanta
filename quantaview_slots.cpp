@@ -67,6 +67,7 @@
 #include "tagdialogs/tagquicktable.h"
 #include "tagdialogs/tagmaildlg.h"
 #include "tagdialogs/tagmiscdlg.h"
+#include "tagdialogs/tableeditor.h"
 
 //#define NEW_CSS_EDITOR
 
@@ -378,6 +379,12 @@ void QuantaView::slotTagQuickList()
     write()->insertTag( QuantaCommon::tagCase(tag));
   }
   delete(listDlg);
+}
+
+void QuantaView::slotTagEditTable()
+{
+  TableEditor *editor = new TableEditor();
+  editor->exec();
 }
 
 /** for quick create table */
