@@ -67,6 +67,7 @@ typedef struct DTDStruct
      QString booleanAttributes;       //simple or extended <tag booleanAttr> or <tag booleanAttr="1">
      QString booleanTrue;             //"true" or "1" or whatever
      QString booleanFalse;            //"false" or "0" or whatever
+     QString singleTagStyle;          //"xml" or "html" (<tag/> or <tag>)
      QString defaultAttrType;         //"input", "string" or whatever
 
      QStringList toolbars;

@@ -37,18 +37,29 @@ void QuantaView::insertTag( const char *tag)
 {
 
   Document *w = write();
-  QString startTag = QuantaCommon::tagCase(tag);
-  bool single = QuantaCommon::isSingleTag(w->getDTDIdentifier(), startTag);
-  bool optional = QuantaCommon::isOptionalTag(w->getDTDIdentifier(), startTag);
+  QString tagStr = QuantaCommon::tagCase(tag);
+  DTDStruct *dtd = w->currentDTD(true);
+  bool single = QuantaCommon::isSingleTag(dtd->name, tagStr);
+  bool optional = QuantaCommon::isOptionalTag(dtd->name, tagStr);
 
+  QString startTag = tagStr;
+  startTag.prepend("<");
+  if ( dtd->singleTagStyle == "xml" &&
+       ( single || (optional && !qConfig.closeOptionalTags))
+     )
+  {
+    startTag.append(" /");
+  }
+  startTag.append(">");
+  
   if ( (qConfig.closeTags && !single && !optional) ||
        (qConfig.closeOptionalTags && optional) )
   {
-    w->insertTag( QString("<")+QuantaCommon::tagCase(startTag)+">", QString("</")+QuantaCommon::tagCase(startTag)+">");
+    w->insertTag( startTag, QString("</")+tagStr+">");
   }
   else
   {
-    w->insertTag( QString("<")+QuantaCommon::tagCase(startTag)+">" );
+    w->insertTag(startTag);
   }
 }
 #include "quantaview.moc"

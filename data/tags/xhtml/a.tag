@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="a" hasCore="1" hasI18n="1" hasScript="1">
+<tag name="a" hasCore="1" hasI18n="1" hasScript="1" hasFocus="1">
 
     <attr name="href" type="url">
         <text>HREF</text> 

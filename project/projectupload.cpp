@@ -31,7 +31,6 @@
 #include <qstringlist.h>
 #include <qregexp.h>
 #include <qlabel.h>
-#include <qlistview.h>
 #include <qprogressbar.h>
 #include <qcombobox.h>
 #include <qurl.h>

@@ -266,7 +266,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
   QFile templateFile(fileName);
   templateFile.open(IO_WriteOnly);
   QTextStream stream(&templateFile);
-  stream << selection;
+  stream << content;
   templateFile.flush();
   templateFile.close();
 

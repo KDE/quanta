@@ -528,11 +528,19 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
   QDictIterator<QString> it( *dict ); // iterator for dict
   QDict<QString> oldAttr(1,false);
   QString tagStr = "";
+  QTag *qTag = QuantaCommon::tagFromDTD(currentDTD(true), tag->name);
+
   while ( it.current() )  // for insert new attr
   {
-    QString attr = QuantaCommon::attrCase(it.currentKey());
     QString val = *(it.current());
+    QString attr = QuantaCommon::attrCase(it.currentKey());
     QString attrval;
+
+    if (qTag && qTag->parentDTD->singleTagStyle == "xml" && attr=="/")
+    {
+     ++it;
+     continue;
+    }
 
     if ( val.isEmpty() )  // for checkboxes ( without val) don't print =""
         attrval = QString(" ")+attr;
@@ -546,7 +554,16 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
     tagStr = attrval + tagStr;
     ++it;
   }
-  tagStr = "<"+QuantaCommon::tagCase(tag->name)+tagStr+">";
+  tagStr = "<"+QuantaCommon::tagCase(tag->name)+tagStr;
+
+  if ( qTag && qTag->parentDTD->singleTagStyle == "xml" &&
+       (qTag->isSingle() || (!qConfig.closeOptionalTags && qTag->isOptional()))
+     )
+  {
+    tagStr.append(" /");
+  }
+  tagStr.append(">");
+  
   int bLine, bCol, eLine, eCol;
   tag->beginPos(bLine,bCol);
   tag->endPos(eLine,eCol);
@@ -936,16 +953,25 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
   }
   else  // we are inside of a tag
   {
-    if ( string == ">" && tagName[0] != '/' &&
-         tag &&
-         ( ( !tag->isSingle() && !tag->isOptional() && qConfig.closeTags) ||
-           ( tag->isOptional() && qConfig.closeOptionalTags )) )
+    if ( string == ">" && tagName[0] != '/' && tag)
     {
-      //add closing tag if wanted
-      column++;
-      editIf->insertText(line, column, "</" + tagName + ">");
-      viewCursorIf->setCursorPositionReal( line, column );
-      handled = true;
+      if ( tag->parentDTD->singleTagStyle == "xml" &&
+           (tag->isSingle() || (!qConfig.closeOptionalTags && tag->isOptional()))
+         )
+      {
+        editIf->insertText(line, column, " /");
+        viewCursorIf->setCursorPositionReal( line, column+3 );
+        handled = true;
+      }
+      if ( ( !tag->isSingle() && !tag->isOptional() && qConfig.closeTags) ||
+           ( tag->isOptional() && qConfig.closeOptionalTags ) )
+      {
+        //add closing tag if wanted
+        column++;
+        editIf->insertText(line, column, "</" + tagName + ">");
+        viewCursorIf->setCursorPositionReal( line, column );
+        handled = true;
+      }
     }
     else if ( string == " " )
          {

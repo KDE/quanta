@@ -1006,6 +1006,7 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
  dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
+ dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
 
  dtds->insert(dtdName, dtd);//insert the taglist into the full list
 

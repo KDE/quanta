@@ -342,7 +342,15 @@ void TagDialog::parseAttributes( QString attrs )
 void TagDialog::insertTag(Document *w, bool insertInLine)
 {
    QString newTag = getAttributeString();
-   newTag = QString("<")+QuantaCommon::tagCase(dtdTag->name())+newTag+">";
+   newTag = QString("<")+QuantaCommon::tagCase(dtdTag->name())+newTag;
+
+   if ( dtdTag->parentDTD->singleTagStyle == "xml" &&
+        (dtdTag->isSingle() || (!qConfig.closeOptionalTags && dtdTag->isOptional()))
+      )  
+   {
+    newTag.append(" /");
+   }
+   newTag.append(">");
 
    QString secondPartOfTag = QString("</")+QuantaCommon::tagCase(dtdTag->name())+">";
 
