@@ -989,7 +989,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         goUp = true;
       }
       node = new Node(rootNode);
-      if (rootNode && !rootNode->child)
+      if (!rootNode->child)
       {
         rootNode->child = node;
       } else
@@ -1065,11 +1065,18 @@ Node* Parser::specialAreaParser(Node *startNode)
           if (n >0)
           {
             eCol -= s.findRev('\n');
-            eCol -=2;
+            eCol -= 2;
           }
         }
 
       }
+    }
+  } else
+  {
+    if (currentNode->tag->tagStr().endsWith(specialEndStr))
+    {
+      eLine = el;
+      eCol = ec - specialEndStr.length();
     }
   }
   if (eLine != -1)
@@ -1094,10 +1101,25 @@ Node* Parser::specialAreaParser(Node *startNode)
     parseForScriptGroup(node);
     rootNode = node;
   }
-  else
+  else //special tag without valid special end string. Create an empty node instead of the closing tag
   {
+    Tag *tag = new Tag();
+    tag->setTagPosition(el, ec, el, ec);
+    tag->setStr("");
+    tag->single = true;
+    tag->type = Tag::Empty;
+    tag->dtd = dtd;
+    tag->setWrite(write);
+    node = new Node(startNode->parent);
+    node->tag = tag;
+    node->insideSpecial = true;
+    node->closesPrevious = true;
+    node->prev = startNode;
+    startNode->next = node;
+    startNode->tag->single = false;
+    rootNode = node;
     eLine = el;
-    eCol = ec - specialEndStr.length();
+    eCol = ec;
   }
 
 //if the block has no nodes inside, create a Text node with its content.

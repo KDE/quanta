@@ -70,6 +70,8 @@ void Abbreviation::slotDTDChanged(const QString& newDTDName)
 
 void Abbreviation::slotTemplateSelectionChanged(QListViewItem* item)
 {
+  if (!item)
+      return;
   //QListViewItem *oldItem = templatesList->currentItem();
   if (oldItem)
   {
@@ -110,6 +112,7 @@ void Abbreviation::slotRemoveTemplate()
     m_dtd->abbreviations.remove(item->text(0)+" "+item->text(1));
     delete item;
     oldItem = 0L;
+    slotTemplateSelectionChanged(templatesList->currentItem());
   }
 }
 
