@@ -154,6 +154,17 @@ Node* kafkaCommon::DTDGetNonInlineCommonParent(Node* startNode, Node* endNode,
         itEnd++;
         locOffset++;
     }
+    
+    //look for commonParentStartChild and commonParentEndChild
+    if(itStart != startNodeLocation.end())
+        commonParentStartChild = getNodeFromSubLocation(startNodeLocation, locOffset, nodeSubtree);
+    else
+        commonParentStartChild = commonParent;
+    
+    if(itEnd != endNodeLocation.end())
+        commonParentEndChild = getNodeFromSubLocation(endNodeLocation, locOffset, nodeSubtree);
+    else
+        commonParentEndChild = commonParent;
 
     //If commonParent isn't inline, move commonParent to the closest non inline node
     if(commonParent && (isInline(commonParent->tag->name) ||
