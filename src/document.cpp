@@ -1436,6 +1436,9 @@ bool Document::scriptAutoCompletion(int line, int column)
  Node *node = parser->nodeAt(line, column);
  if (!node) //happens in some cases in CSS
    return false;
+ if (node->tag->type == Tag::Comment)
+   return true; //nothing to do
+ const DTDStruct *dtd = node->tag->dtd();
  if (node->parent)
    node = node->parent;
  else if (node->prev)
@@ -1443,6 +1446,8 @@ bool Document::scriptAutoCompletion(int line, int column)
  int bl, bc;
  node->tag->beginPos(bl, bc);
  QString s = text(bl, bc, line, column);
+ if (QuantaCommon::insideCommentsOrQuotes(s.length() -1, s, dtd))
+   return true; //again, nothing to do
  QString s2 = s;
  int i = s.length() - 1;
  while (i > 0 && s[i].isSpace())
