@@ -36,7 +36,7 @@
 
 // app includes
 #include "kqapp.h"
-#include "config.h"
+#include "quanta.h"
 
 static const char *description =
   I18N_NOOP("Quanta Plus Web Development Environment");
@@ -59,11 +59,12 @@ static KCmdLineOptions options[] =
   // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
 
+#define PA
 int main(int argc, char *argv[])
 {
   KAboutData
-    aboutData( PACKAGE, I18N_NOOP("Quanta"),
-    VERSION, description, KAboutData::License_GPL_V2,
+    aboutData( QUANTA_PACKAGE, I18N_NOOP("Quanta"),
+    QUANTA_VERSION, description, KAboutData::License_GPL_V2,
     "(c) 2000, 2001, 2002, 2003, 2004",
     othertext,
     "http://quanta.sourceforge.net"
@@ -197,7 +198,7 @@ int main(int argc, char *argv[])
               QString s = args->url(i).url();
               DCOPRef("quanta", "WindowManagerIf").call("openFile(QString, int, int)", s, 1, 1); // Activate it
           }
-          DCOPRef("quanta", PACKAGE).call("newInstance()");
+          DCOPRef("quanta", QUANTA_PACKAGE).call("newInstance()");
           exit(0);
       }
 //  if (!KQUniqueApplication::start())

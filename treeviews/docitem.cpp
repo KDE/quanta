@@ -15,9 +15,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "qstrlist.h"
+#include <qstrlist.h>
 
-#include "kconfig.h"
+#include <kconfig.h>
 
 #include "docitem.h"
 

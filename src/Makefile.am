@@ -8,12 +8,12 @@ CVSSERVICE_INCLUDE = -I$(top_srcdir)/quanta/components/cvsservice
 LIB_CVSSERVICE = $(top_builddir)/quanta/components/cvsservice/libcvsservice.la -lcvsservice
 endif
 
-bin_PROGRAMS = quanta_be
+bin_PROGRAMS = quanta
 
-quanta_be_SOURCES = quanta_init.cpp quantaview.cpp quantadoc.cpp main.cpp document.cpp kqapp.cpp quanta.cpp dcopwindowmanagerif.skel dcopsettingsif.skel dcopquantaif.skel dcopsettings.cpp dtds.cpp dcopquanta.cpp viewmanager.cpp
+quanta_SOURCES = quanta_init.cpp quantaview.cpp quantadoc.cpp main.cpp document.cpp kqapp.cpp quanta.cpp dcopwindowmanagerif.skel dcopsettingsif.skel dcopquantaif.skel dcopsettings.cpp dtds.cpp dcopquanta.cpp viewmanager.cpp
 
 
-quanta_be_LDADD = $(top_builddir)/quanta/project/libproject.la \
+quanta_LDADD = $(top_builddir)/quanta/project/libproject.la \
 	$(top_builddir)/quanta/plugins/libplugins.la \
 	$(top_builddir)/quanta/parsers/libparser.la \
 	$(top_builddir)/quanta/parsers/dtd/libdtdparser.la \
@@ -31,7 +31,7 @@ quanta_be_LDADD = $(top_builddir)/quanta/project/libproject.la \
 	$(top_builddir)/lib/libquantamodule.la \
 	-lkatepartinterfaces $(LIB_KAFKA) $(LIB_CVSSERVICE) \
 	$(LIB_KMDI) $(LIBXML_LIBS) $(LIBXSLT_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
-#	$(top_builddir)/lib/compatibility/libcompat.la 
+#       $(top_builddir)/lib/compatibility/libcompat.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_srcdir)/quanta/plugins \
@@ -58,22 +58,22 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_builddir)/quanta/components/tableeditor \
 	-I$(top_builddir)/quanta/plugins \
 	$(KAFKAINCLUDE) $(CVSSERVICE_INCLUDE) $(KMDI_INCLUDES) $(all_includes)
-#	-I$(top_srcdir)/lib/compatibility 
+#       -I$(top_srcdir)/lib/compatibility
 
-quanta_be_METASOURCES = AUTO
+quanta_METASOURCES = AUTO
 
 # the library search path.
-quanta_be_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+quanta_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 # some parts got own messages targets. No need to duplicate their messages
 messages: rc.cpp
 	find . -type d | grep -v CVS | sed -e 's,$$,/,' > dirs
 	mfs=`find . -name Makefile.am | xargs egrep -l '^messages:'` ;\
 	for dir in $$mfs; do \
-	  if test ! "$$dir" = "./Makefile.am"; then \
-	    dir=`dirname $$dir` ;\
+	    if test ! "$$dir" = "./Makefile.am"; then \
+		dir=`dirname $$dir` ;\
 	    egrep -v "^$$dir" dirs > dirs.new && mv dirs.new dirs ;\
-	  fi ;\
+	    fi ;\
 	done
 	egrep -v "/tests" dirs > dirs.new && mv dirs.new dirs ;\
 	dirs=`cat dirs` ;\
@@ -82,7 +82,7 @@ messages: rc.cpp
 	find $$dirs -maxdepth 1 -name "*.h" -print >> files ;\
 	toolbars=`find . -name "*.toolbar.tgz"`;\
 	for toolbar in $$toolbars; do \
-	 tar Oxfz $$toolbar  >> extrafiles; \
+	    tar Oxfz $$toolbar  >> extrafiles; \
 	done ;\
 	cat ../data/config/actions.rc >> extrafiles; \
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.ui"` >> rc.cpp ;\
@@ -97,7 +97,7 @@ messages: rc.cpp
 
 # this is where the kdelnk file will go
 kdelnkdir = $(kde_appsdir)/Development
-kdelnk_DATA = quanta_be.desktop
+kdelnk_DATA = quanta.desktop
 
 kdemimedir = $(kde_mimedir)/application
 kdemime_DATA = x-webprj.desktop

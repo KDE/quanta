@@ -18,6 +18,9 @@
 #ifndef QUANTA_H
 #define QUANTA_H
 
+#define QUANTA_PACKAGE "quanta"
+#define QUANTA_VERSION "3.2.90 (3.3 Alpha1, 2004-05-24)"
+
 #define IDS_STATUS      1
 #define IDS_INS_OVR     2
 #define IDS_MODIFIED    3

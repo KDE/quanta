@@ -28,18 +28,17 @@
 #include <kglobalsettings.h>
 #include <dcopclient.h>
 
+#include "config.h"
 #include "quantacommon.h"
 #include "project.h"
 #include "quanta.h"
 #include "quanta_init.h"
 #include "kqapp.h"
 
-#include "config.h"
-
 QuantaApp *quantaApp = 0L; //global pointer to the main application object
 
 KSplash::KSplash()
- : QFrame( 0L, QString("Quanta")+VERSION,
+ : QFrame( 0L, QString("Quanta")+QUANTA_VERSION,
    QWidget::WStyle_NoBorder | QWidget::WStyle_Customize | WX11BypassWM)
 {
    QPixmap pm( UserIcon("quantalogo_be") );

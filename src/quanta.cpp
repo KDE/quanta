@@ -166,7 +166,6 @@
 
 #include <kencodingfiledialog.h>
 
-#include "config.h"
 #include "quantaplugininterface.h"
 #include "quantaplugin.h"
 #include "dtds.h"
@@ -177,7 +176,7 @@
 #include "debuggerui.h"
 
 
-const QString resourceDir = QString(PACKAGE) + "/";
+const QString resourceDir = QString(QUANTA_PACKAGE) + "/";
 
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}
@@ -199,7 +198,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   if (qConfig.globalDataDir.isEmpty())
   {
     quantaStarted = false;
-    kdWarning() << "***************************************************************************" << endl
+    kdWarning() <<  "***************************************************************************" << endl
                 << i18n("Quanta data files were not found.\nYou may have forgotten to run \"make install\","
                         "or your KDEDIR, KDEDIRS or PATH are not set correctly.") << endl
                 << "***************************************************************************" << endl;
@@ -3792,7 +3791,7 @@ QString QuantaApp::saveCurrentFile()
 
 void QuantaApp::slotReportBug()
 {
-  KAboutData aboutData( "quanta", I18N_NOOP("Quanta"), VERSION);
+  KAboutData aboutData( "quanta", I18N_NOOP("Quanta"), QUANTA_VERSION);
   KBugReport bugReportDlg(this, true, &aboutData);
   bugReportDlg.exec();
 }
@@ -3877,7 +3876,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Autosave interval", qConfig.autosaveInterval);
     m_config->writePathEntry("Top folders", fTab->topURLList.toStringList());
     m_config->writePathEntry("List of opened files", ViewManager::ref()->openedFiles().toStringList());
-    m_config->writeEntry("Version", VERSION); // version
+    m_config->writeEntry("Version", QUANTA_VERSION); // version
     m_config->writeEntry("Close Buttons", qConfig.showCloseButtons);
     m_config->writeEntry("MDI mode", mdiMode());
     m_config->writeEntry("MDI style", qConfig.toolviewTabs);
