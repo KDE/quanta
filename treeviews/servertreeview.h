@@ -26,6 +26,7 @@ class QListViewItem;
 class QPoint;
 class KPopupMenu;
 class KURL;
+class ProjectList;
 
 /**
       TreeViewItem with special painter
@@ -62,11 +63,13 @@ class ServerTreeView : public BaseTreeView {
 public:
   ServerTreeView(KConfig *config, QWidget *parent, const KURL &url, const char *name = 0L);
   virtual ~ServerTreeView();
-  KURL::List topURLList;
 
 protected slots:
 
   void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
+  
+  /** repaints the treeview items, because they might be added to or removed from the project*/
+  void slotReloadTree( ProjectList *fileList, bool buildNewTree, const QStringList &folderToOpen);
   
 protected:
   KFileTreeBranch* newBranch(const KURL& url);

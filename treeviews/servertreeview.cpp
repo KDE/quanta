@@ -131,6 +131,8 @@ ServerTreeView::ServerTreeView(KConfig *config, QWidget *parent, const KURL &url
           this, SLOT(slotSelectFile(QListViewItem *)));
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
+  connect(Project::ref(), SIGNAL(reloadTree(ProjectList *, bool, const QStringList &)),
+          this, SLOT(slotReloadTree(ProjectList *, bool, const QStringList &)));
 
   restoreLayout(m_config, className());
   // the restored size of the first column might be too large for the current content
@@ -178,5 +180,18 @@ void ServerTreeView::slotMenu(KListView* listView, QListViewItem *item, const QP
  }
 }
 
+
+void ServerTreeView::slotReloadTree( ProjectList *fileList, bool buildNewTree, const QStringList &folderToOpen)
+{
+  Q_UNUSED(fileList);
+  Q_UNUSED(buildNewTree);
+  Q_UNUSED(folderToOpen);
+  
+  QListViewItemIterator iter(this);
+  for ( ; iter.current(); ++iter )
+  {
+    iter.current()->repaint();
+  }
+}
 
 #include "servertreeview.moc"
