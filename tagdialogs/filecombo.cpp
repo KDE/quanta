@@ -3,7 +3,7 @@
                              -------------------
     begin                : Wed Sep 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2002 Andras Mantia
+                           (C) 2002-2003 Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
@@ -48,6 +48,7 @@ FileCombo::FileCombo(const KURL& a_baseURL, QWidget *parent, const char *name )
   layout  ->addWidget( button );
 
   connect( button, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
+  setFocusProxy(combo);
 }
 
 FileCombo::FileCombo( QWidget *parent, const char *name )
@@ -67,6 +68,7 @@ FileCombo::FileCombo( QWidget *parent, const char *name )
   layout  ->addWidget( button );
 
   connect( button, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
+  setFocusProxy(combo);
 }
 
 FileCombo::~FileCombo(){

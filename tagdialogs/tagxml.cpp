@@ -3,7 +3,7 @@
                              -------------------
     begin                : Пнд Сен 25 14:34:07 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2002 by Andras Mantia
+                           (C) 2002-2003 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
@@ -34,7 +34,7 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
    QGridLayout *grid = new QGridLayout( this );
    grid->setSpacing( 13 );
    grid->setMargin( 11 );
-
+   m_firstItem = 0L;
 //parse the tag XML file, in order to build up the dialog
    for ( QDomNode n = d.firstChild().firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
    {
@@ -130,6 +130,8 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
         	 Attr_line *attr = new Attr_line(&el,w);
         	 attributes.append(attr);
+           if (!m_firstItem)
+              m_firstItem = w;
         }
 
         if ( type == "check" )
@@ -148,6 +150,8 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
         	 Attr_check *attr = new Attr_check(&el,w);
         	 attributes.append(attr);
+           if (!m_firstItem)
+              m_firstItem = w;
         }
 
         if ( type == "list" )
@@ -162,6 +166,8 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
         	 Attr_list *attr = new Attr_list(&el,w);
         	 attributes.append(attr);
+           if (!m_firstItem)
+              m_firstItem = w;
         }
 
         if ( type == "color" )
@@ -176,6 +182,8 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
         	 Attr_color *attr = new Attr_color(&el,w);
         	 attributes.append(attr);
+           if (!m_firstItem)
+              m_firstItem = w;
         }
 
         if ( type == "url" )
@@ -190,6 +198,8 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
         	 Attr_file *attr = new Attr_file(&el,w);
         	 attributes.append(attr);
+           if (!m_firstItem)
+              m_firstItem = w;
         }
 
      	
@@ -278,8 +288,11 @@ void Tagxml::writeAttributes( QDict<QString> *d )
  	   	
 	  attr = attributes.next();
   }
+}
 
-
+void Tagxml::focusToFirstItem()
+{
+  m_firstItem->setFocus();
 }
 
 #include "tagxml.moc"

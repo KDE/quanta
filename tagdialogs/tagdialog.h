@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Apr 1 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 by Andras Mantia
+                           (C) 2002-2003 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -79,6 +79,10 @@ public:
 
 public slots: // Public slots
   void slotAccept();
+
+protected slots:
+  virtual void showEvent(QShowEvent *ev);
+  
 
 private:
   bool deleteTag;

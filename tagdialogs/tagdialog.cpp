@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Apr 1 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                           (C) 2002 by Andras Mantia
+                           (C) 2002-2003 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -372,5 +372,11 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
    w->insertTag( newTag, secondPartOfTag);
 }
 
+void TagDialog::showEvent(QShowEvent *ev)
+{
+  QTabDialog::showEvent(ev);
+  if (dynamic_cast<Tagxml*>(mainDlg))
+     static_cast<Tagxml*>(mainDlg)->focusToFirstItem();
+}
 
 #include "tagdialog.moc"

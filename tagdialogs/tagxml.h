@@ -3,6 +3,7 @@
                              -------------------
     begin                : Пнд Сен 25 14:34:07 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+                           (C) 2003 by Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -43,11 +44,13 @@ class Tagxml : public QWidget, TagWidget {
 
    	void readAttributes( QDict<QString> *d);
     void writeAttributes( QDict<QString> *d );
+    void focusToFirstItem();
 
 
   private:
     QDomDocument doc;
     DTDStruct *m_dtd;
+    QWidget *m_firstItem;
 
 };
 
