@@ -587,7 +587,7 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
     if (completionDTD->family == Script)
     {
       handled = scriptAutoCompletion(line, column);
-      //handled = true;
+      handled = true;
     }
 
     if (!handled)
@@ -686,7 +686,11 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
            }
           //suggest attribute completions
           if (showAttributes)
-              showCodeCompletions( getAttributeCompletions(tagName) );
+          {
+            int pos = node->tag->tagStr().findRev(' ');
+            QString s = node->tag->tagStr().mid(pos).stripWhiteSpace();
+            showCodeCompletions( getAttributeCompletions(tagName, s) );
+          }
          }
     else if ( string[0] == qConfig.attrValueQuotation )
           {
@@ -1243,23 +1247,25 @@ void Document::codeCompletionRequested()
   if (completionDTD->family == Script)
   {
     handled = scriptAutoCompletion(line, col - 1);
-    if (!handled)
+/*    if (!handled)
     {
-      QString s = text(line, 0, line, col);
-      if (s.findRev("<") == -1)
+      completionDTD = defaultDTD();
+      QString s = text(line, 0, line, col).stripWhiteSpace();
+      if (s.findRev("<") != -1)
       {
-        showCodeCompletions(getTagCompletions(line, col + 1));
+        //showCodeCompletions(getTagCompletions(line, col + 1));
+
         handled = true;
       }
-    }
+    }*/
   }
   if (!handled)
   {
     completionDTD = defaultDTD();
     if (completionDTD->family == Xml)
     {
-      xmlCodeCompletion(line, col);
-
+    //  xmlCodeCompletion(line, col);
+      xmlAutoCompletion(line, col, " ");
     }
   }
 

@@ -1211,7 +1211,11 @@ void QuantaApp::readTagDir(QString &dirName)
 
  dtdConfig->setGroup("Extra rules");
  dtd->minusAllowedInWord = dtdConfig->readBoolEntry("MinusAllowedInWord", false);
- dtd->tagAutoCompleteAfter = dtdConfig->readEntry("TagAutoCompleteAfter", "<").stripWhiteSpace().at(0);
+ tmpStr = dtdConfig->readEntry("TagAutoCompleteAfter", "<").stripWhiteSpace();
+ if (tmpStr.upper() == "NONE")
+    dtd->tagAutoCompleteAfter = '\0';
+ else
+    dtd->tagAutoCompleteAfter = tmpStr.at(0);
  dtd->attrAutoCompleteAfter = dtdConfig->readEntry("AttributeAutoCompleteAfter","(").stripWhiteSpace().at(0);
  dtd->attributeSeparator = dtdConfig->readEntry("AttributeSeparator").stripWhiteSpace().at(0);
  if (dtd->attributeSeparator.isNull())

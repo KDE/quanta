@@ -20,6 +20,7 @@ ScriptTagBorders = <? ?>, <* *>, <% %>
 ScriptRegExp = (<\?.+\?>) | (<\*.+\*>) | (<\%.+\%>)
 
 StructGroupsCount = 5
+TagAutoCompleteAfter = none
 
 [Parsing rules]
 AreaBorders = <? ?>, <* *>, <% %>
@@ -30,7 +31,6 @@ StructBeginStr = {
 StructEndStr = }
 StructRx = \\{|\\}
 MayContain = php
-
 
 [StructGroup_1]
 Name = Inclusions
