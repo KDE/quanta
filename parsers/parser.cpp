@@ -1339,6 +1339,7 @@ void Parser::parseIncludedFiles()
         for (uint i = 0 ; i < listCount; i++)
         {
           delete it.data()[i]->node;
+          delete it.data()[i];
         }
       }
     }
@@ -1357,6 +1358,9 @@ void Parser::parseIncludedFiles()
 
 void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
 {
+#ifdef DEBUG_PARSER
+  kdDebug(24000) << "parseIncludedFile: " << fileName << endl;
+#endif  
   StructTreeGroup group;
   QString content;
   QFile file(fileName);
@@ -1498,6 +1502,20 @@ void Parser::slotIncludedFileChanged(const QString& fileName)
     const DTDStruct *dtd = ParserCommon::includedFilesDTD.at(pos);
     if (dtd)
     {
+      IncludedGroupElements::Iterator elementsIt;
+      for (elementsIt = includedMap[fileName].begin(); elementsIt != includedMap[fileName].end(); ++elementsIt)
+      {
+        GroupElementMapList::Iterator it;
+        for (it = elementsIt.data().begin(); it != elementsIt.data().end(); ++it)
+        {
+          uint listCount = it.data().count();
+          for (uint i = 0 ; i < listCount; i++)
+          {
+            delete it.data()[i]->node;
+            delete it.data()[i];
+          }
+        }
+      }
       includedMap[fileName].clear();
       parseIncludedFile(fileName, dtd);
     }

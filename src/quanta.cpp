@@ -274,6 +274,8 @@ QuantaApp::~QuantaApp()
  parser = 0L;
  delete idleTimer;
  idleTimer = 0L;
+ delete m_actions;
+ m_actions = 0L;
  tempFileList.clear();
  for (uint i = 0; i < tempDirList.count(); i++)
  {
