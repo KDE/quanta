@@ -396,8 +396,8 @@ void QuantaApp::initView()
   htmlPartDoc    = new WHTMLPart( rightWidgetStack,  "docHTML");
 
   rightWidgetStack->addWidget( view, 0 );
-//  rightWidgetStack->addWidget( htmlpart   ->view(), 1 );
-//  rightWidgetStack->addWidget( htmlPartDoc->view(), 2 );
+  rightWidgetStack->addWidget( htmlpart   ->view(), 1 );
+  rightWidgetStack->addWidget( htmlPartDoc->view(), 2 );
   rightWidgetStack->raiseWidget(0);
 
   messageOutput = new MessageOutput( bottomWidgetStack );

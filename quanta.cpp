@@ -2207,7 +2207,6 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
           }         
        }
      }
-     slotToggleDTDToolbar(!allToolbarsHidden());
    }
 
    //Load the toolbars for dtdName   
@@ -2235,6 +2234,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
  }
 
  currentToolbarDTD = newDtd->name;
+ slotToggleDTDToolbar(!allToolbarsHidden());
 }
 
 /** Remove the toolbar named "name". */

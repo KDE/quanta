@@ -37,12 +37,14 @@
 #include "filecombo.h"
 
 
-CSSSelectorEditor::CSSSelectorEditor(QString code, bool inlin,
+CSSSelectorEditor::CSSSelectorEditor(QString code, bool editSelector,
 	QWidget *parent, const char *name)
-	: CSSEditSelectorS (parent, name), code_inline (inlin)
+	: CSSEditSelectorS (parent, name)
 {
 	// UI things
 	setCaption(name);
+    
+    lineSelector->setEnabled (editSelector);
 
 	connect(buttonOk, SIGNAL(clicked()), SLOT(accept()));
 	connect(buttonCancel, SIGNAL(clicked()), SLOT(reject()));
@@ -80,7 +82,8 @@ QString CSSSelectorEditor::code()
 		if (f_weight != "normal" && f_weight != "")
 			temp += " " + f_weight;
 
-		// If the previous properties aren't set, and the size and the family are blank or the
+		// If the previous properties aren't set, and the size and the family are 
+		//blank or the
 		// default, we don't insert the font rule at all
 		if ((f_size == "normal" || f_size == "") && f_family == "" && temp == "font:")
 			temp = "";
@@ -116,7 +119,15 @@ QString CSSSelectorEditor::code()
 
 	// Create the background position, but leave it empty if it is the default
 	QString b_pos = "";
-	if ( b_pos_x != "" && b_pos_x != "left" && b_pos_x != "0" && b_pos_x != "0 %" ) {
+	if ( b_pos_x != "" && b_pos_x != "left" && b_pos_x != "0" && b_pos_x != "0 %" ) 
+
+
+
+
+
+
+
+{
 		b_pos += b_pos_y + " " + b_pos_x;
 	}
 
@@ -161,10 +172,10 @@ QString CSSSelectorEditor::code()
 		properties += "letter-spacing: " + t;
 	t = comboTextDecoration->currentText();
 	if (t != "none" && t != "")
-		properties += " text-decoration: " + t;
+		properties += "text-decoration: " + t;
 	t = comboTextTransform->currentText();
 	if (t != "none" && t != "")
-		properties += " text-transform: " + t;
+		properties += "text-transform: " + t;
 	t = comboTextAlign->currentText();
 	if (t != "left" && t != "")
 		properties += "text-align: " + t;
@@ -296,7 +307,8 @@ QString CSSSelectorEditor::code()
 		properties += "float: " + comboFloat->currentText();
 	if (comboClear->currentText() != "none" && comboClear->currentText() != "")
 		properties += "clear: " + comboClear->currentText();
-	if (comboDisplay->currentText() != "block" && comboDisplay->currentText() != "")
+	if (comboDisplay->currentText() != "block" && comboDisplay->currentText() != 
+"")
 		properties += "display: " + comboDisplay->currentText();
 	if (comboWhiteSpace->currentText() != "normal" &&
 		comboWhiteSpace->currentText() != "")
@@ -336,27 +348,25 @@ QString CSSSelectorEditor::code()
 	if (properties.size() == 0)
 		return "";
 	QString text="";
-	if (!code_inline) {
-		bool ind = checkCodeInline->isChecked();
+	if (lineSelector->isEnabled()) {
+		bool inlin = checkCodeInline->isChecked();
 
-		text = lineSelector->text() + "{";
-		if (ind)
+		text = lineSelector->text() + " {";
+		if (! inlin)
 			text += "\n";
-		for (QStringList::Iterator it = properties.begin();
-			it != properties.end(); it++) {
-			if (ind)
+		for (QStringList::Iterator it = properties.begin(); it != properties.end(); 
+			it++) 
+   		{
+			if (! inlin)
 				text += "\t";
 			text += *it;
-			if (ind)
-      {
-				text += "\n";
-      } else
-      {
-        text += "; ";
-      }
+			if (! inlin)
+      			text += ";\n";
+			else
+      			text += "; ";
 		}
 		text += "}";
-		if (ind)
+		if (! inlin)
 			text += "\n";
 	} else {
 		for (QStringList::Iterator it = properties.begin();
@@ -371,17 +381,17 @@ QString CSSSelectorEditor::code()
 void CSSSelectorEditor::widgetFromCode(QString code)
 {
 	QStringList values;
-	if (code_inline) {
+	if (lineSelector->isEnabled()) {
 		// Parse the selector name
 		QString sel = code;
 		sel.truncate(sel.find("{"));
 		lineSelector->setText(sel.simplifyWhiteSpace());
 
 		// Split the code into a list of pairs property: value
-		QString values_code = code.mid(sel.length() + 1, code.find("}") - 1).simplifyWhiteSpace();
+		QString values_code = code.mid(sel.length() + 1, code.find("}") - 
+1).simplifyWhiteSpace();
 		values = QStringList::split( ";", values_code);
 	} else {
-		lineSelector->setEnabled (false);
 		values = QStringList::split( ";", code);
 	}
 
