@@ -712,7 +712,7 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
 
 void Document::slotDelayedScriptAutoCompletion()
 {
-  scriptAutoCompletion(m_lastLine, m_lastCol);
+  scriptAutoCompletion(m_lastLine, m_lastCol, "");
 }
 
 void Document::slotDelayedShowCodeCompletion()
@@ -817,7 +817,7 @@ void Document::slotCharactersInserted(int line, int column, const QString& strin
     }
     if (completionDTD->family == Script)
     {
-      handled = scriptAutoCompletion(line, column);
+      handled = scriptAutoCompletion(line, column, string);
       if (!handled && string == ">")
       {
          Node *node = parser->nodeAt(line, column, false);
@@ -1579,7 +1579,7 @@ QString Document::findDTDName(Tag **tag)
 }
 
 /** Called whenever a user inputs text in a script type document. */
-bool Document::scriptAutoCompletion(int line, int column)
+bool Document::scriptAutoCompletion(int line, int column, const QString& insertedString)
 {
  bool handled = false;
  Node *node = parser->nodeAt(line, column);
@@ -1615,7 +1615,7 @@ bool Document::scriptAutoCompletion(int line, int column)
  if (s[i] == completionDTD->tagSeparator)
  {
   while (i > 0 && s[i] != completionDTD->tagAutoCompleteAfter)
-    i--;
+    i--;  
   s = s.left(i + 1);
  }
 
@@ -1661,10 +1661,13 @@ bool Document::scriptAutoCompletion(int line, int column)
       argHintVisible = true;
      } else
      {
-       arguments = tag->name() + ": " + tag->attributeAt(0)->name + ";";
-       argList.append(arguments);
-       codeCompletionIf->showArgHint(argList, ":;" , completionDTD->attributeSeparator);
-       showCodeCompletions( getAttributeValueCompletions(tag->name(), tag->attributeAt(0)->name, startStr));
+       if (hintRequested)
+       {
+         arguments = tag->name() + ": " + tag->attributeAt(0)->name + ";";
+         argList.append(arguments);
+         codeCompletionIf->showArgHint(argList, ":;" , completionDTD->attributeSeparator);
+       } else
+         showCodeCompletions( getAttributeValueCompletions(tag->name(), tag->attributeAt(0)->name, startStr));
      }
 
      handled = true;
@@ -1686,7 +1689,11 @@ bool Document::scriptAutoCompletion(int line, int column)
      }
    }
  }
- if ( !handled && (completionRequested || s[i] == completionDTD->tagAutoCompleteAfter || completionDTD->tagAutoCompleteAfter == '\1' || completionDTD->memberAutoCompleteAfter.searchRev(s) != -1) && !argHintVisible)
+ if ( !handled && !argHintVisible && 
+      (completionRequested || 
+       (s[i] == completionDTD->tagAutoCompleteAfter && (insertedString == " " || insertedString[0] == completionDTD->tagAutoCompleteAfter)) || 
+       completionDTD->tagAutoCompleteAfter == '\1' || (!completionDTD->memberAutoCompleteAfter.pattern().isEmpty() && completionDTD->memberAutoCompleteAfter.searchRev(s) != -1))
+       )
  {
    showCodeCompletions(getTagCompletions(line, column + 1));
    handled = true;
@@ -1843,6 +1850,7 @@ void Document::codeCompletionRequested()
   completionRequested = true;
   completionInProgress = false;
   argHintVisible = false;
+  hintRequested = false; 
   handleCodeCompletion();
   completionRequested = false;
 }
@@ -1862,7 +1870,7 @@ void Document::handleCodeCompletion()
   {
     if (completionDTD->tagAutoCompleteAfter == '\0')
         completionDTD->tagAutoCompleteAfter = '\1';
-    handled = scriptAutoCompletion(line, col - 1);
+    handled = scriptAutoCompletion(line, col - 1, "");
     if (completionDTD->tagAutoCompleteAfter == '\1')
         completionDTD->tagAutoCompleteAfter = '\0';
 /*    if (!handled)
@@ -1904,7 +1912,8 @@ void Document::codeCompletionHintRequested()
 //    int pos = textLine.findRev("(");
 //    int pos2 = textLine.findRev(")");
     //if (pos > pos2 )
-       scriptAutoCompletion(line, col - 1);
+    hintRequested = true; 
+    scriptAutoCompletion(line, col - 1, "");
   }
   completionRequested = false;
 }

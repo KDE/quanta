@@ -269,6 +269,7 @@ private:
   bool completionInProgress;
   bool completionRequested; ///< true if the code completion was explicitely requested by the user
   bool argHintVisible;
+  bool hintRequested;
   bool reparseEnabled;
   bool repaintEnabled;
   /** True if the document is dirty (has been modified outside). */
@@ -303,7 +304,7 @@ private:
   /** Called whenever a user inputs text in an XML type document. */
   bool xmlAutoCompletion(int , int , const QString & );
   /** Called whenever a user inputs text in a script type document. */
-  bool scriptAutoCompletion(int line, int col);
+  bool scriptAutoCompletion(int line, int col, const QString &insertedString);
   /** Returns true if the number of " (excluding \") inside text is even. */
   bool evenQuotes(const QString &text);
   void handleCodeCompletion();
