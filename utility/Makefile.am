@@ -3,7 +3,8 @@ noinst_LTLIBRARIES = libutility.la
 METASOURCES = AUTO
 
 libutility_la_SOURCES = quantacommon.cpp tagaction.cpp toolbartabwidget.cpp \
-			toolbarxmlgui.cpp newstuff.cpp quantanetaccess.cpp qpevents.cpp quantabookmarks.cpp
+				toolbarxmlgui.cpp newstuff.cpp quantanetaccess.cpp qpevents.cpp quantabookmarks.cpp \
+	tagactionmanager.cpp tagactionset.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \
 	-I$(top_srcdir)/quanta/parsers \
@@ -16,4 +17,4 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \
 	$(KMDI_INCLUDES) $(all_includes)
 
 libutility_la_LDFLAGS = $(all_libraries)
-noinst_HEADERS = qpevents.h
+noinst_HEADERS = qpevents.h tagactionmanager.h tagactionset.h
