@@ -2,8 +2,8 @@
                           tagxml.h  -  description
                              -------------------
     begin                : Пнд Сен 25 14:34:07 EEST 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev
-    email                : pdima@users.sourceforge.net,yshurik@linuxfan.com
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev <pdima@users.sourceforge.net,yshurik@linuxfan.com>
+                           (C) 2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -38,6 +38,7 @@
 
 class QDomElement;
 class QWidget;
+class QTag;
 
 
 QDomNode findChild( QDomNode &parent, QString name );
@@ -46,18 +47,18 @@ QDomNode findChild( QDomNode &parent, QString name );
 class Attr
 {
   public:
-    Attr( QDomElement *el, QWidget * ){ domEl = el; name = domEl->attribute("name",""); };
+    Attr( QDomElement *el, QWidget *, QTag *dtdTag ){ domEl = el; name = domEl->attribute("name",""); m_dtdTag = dtdTag;};
     virtual ~Attr(){};
 
     virtual QString value()=0;
-     virtual void setValue( QString )=0;
+    virtual void setValue( QString )=0;
 
-     QString attrName() const;
-
-
+    QString attrName() const;
+  
   protected:
      QDomElement *domEl;
      QString name;
+     QTag *m_dtdTag;
 };
 
 
@@ -67,12 +68,12 @@ class Attr_line : public Attr
     QLineEdit *line;
 
   public:
-    Attr_line( QDomElement *el, QWidget *w ) : Attr(el,w)
+    Attr_line( QDomElement *el, QWidget *w, QTag *dtdTag ) : Attr(el, w, dtdTag)
         {  line = (QLineEdit *)w; }
     virtual ~Attr_line(){};
 
     virtual QString value() { return line->text(); }
-     virtual void setValue( QString s ) { line->setText(s); }
+    virtual void setValue( QString s ) { line->setText(s); }
 };
 
 
@@ -82,12 +83,12 @@ class Attr_color : public Attr
     ColorCombo *color;
 
   public:
-    Attr_color( QDomElement *el, QWidget *w ) : Attr(el,w)
+    Attr_color( QDomElement *el, QWidget *w, QTag *dtdTag ) : Attr(el, w, dtdTag)
         { color = (ColorCombo *)w; }
     virtual ~Attr_color(){};
 
     virtual QString value() {  return color->colorName(); }
-     virtual void setValue( QString s ) { color->setColorName(s); }
+    virtual void setValue( QString s ) { color->setColorName(s); }
 };
 
 class Attr_file : public Attr
@@ -96,12 +97,12 @@ class Attr_file : public Attr
     FileCombo *file;
 
   public:
-    Attr_file( QDomElement *el, QWidget *w ) : Attr(el,w)
+    Attr_file( QDomElement *el, QWidget *w , QTag * dtdTag ) : Attr(el, w, dtdTag)
         { file = (FileCombo *)w; }
     virtual ~Attr_file(){};
 
     virtual QString value() {  return file->text(); }
-     virtual void setValue( QString s ) { file->setText(s); }
+    virtual void setValue( QString s ) { file->setText(s); }
 };
 
 class Attr_list : public Attr
@@ -110,12 +111,11 @@ class Attr_list : public Attr
     QComboBox *combo;
 
   public:
-    Attr_list( QDomElement *el, QWidget *w );
+    Attr_list( QDomElement *el, QWidget *w, QTag *dtdTag );
     virtual ~Attr_list(){};
 
     virtual QString value() { return combo->currentText(); }
-     virtual void setValue( QString s );
-
+    virtual void setValue( QString s );
 };
 
 
@@ -125,13 +125,12 @@ class Attr_check : public Attr
     QCheckBox *check;
 
   public:
-    Attr_check( QDomElement *el, QWidget *w ) : Attr(el,w)
+    Attr_check( QDomElement *el, QWidget *w, QTag *dtdTag ) : Attr(el, w, dtdTag)
         { check = (QCheckBox *)w; }
     virtual ~Attr_check(){};
 
     virtual QString value() { return check->isChecked() ? "checked" : "unchecked" ; }
-     virtual void setValue( QString s ) { check->setChecked( !s.isEmpty() ); }
-
+    virtual void setValue( QString s ) { check->setChecked( !s.isEmpty() ); }
 };
 
 

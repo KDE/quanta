@@ -4,7 +4,7 @@
 <tag name="Core" common="yes">
  <attr name="id" type="input">
  </attr>
- <attr name="class" type="input">
+ <attr name="class" type="list" source="selectors">
  </attr>
  <attr name="style" type="input">
  </attr>

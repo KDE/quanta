@@ -2,8 +2,8 @@
                           tagxml.cpp  -  description
                              -------------------
     begin                : Пнд Сен 25 14:34:07 EEST 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev
-    email                : pdima@users.sourceforge.net,yshurik@linuxfan.com
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev <pdima@users.sourceforge.net,yshurik@linuxfan.com>
+                           (C) 2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -17,12 +17,17 @@
 
 #include "tagattr.h"
 
+#include <kdebug.h>
 #include <klineedit.h>
+
+#include "node.h"
 #include "colorcombo.h"
+#include "qtag.h"
 
 
 #include <qdom.h>
 
+extern GroupElementMapList globalGroupMap;
 
 QString Attr::attrName() const
 {
@@ -30,12 +35,40 @@ QString Attr::attrName() const
 }
 
 
-Attr_list::Attr_list( QDomElement *el, QWidget *w )
-  : Attr(el,w)
+Attr_list::Attr_list( QDomElement *el, QWidget *w, QTag *dtdTag )
+  : Attr(el, w, dtdTag)
 {
    combo = (QComboBox *)w;
-
-
+   
+   QString source = el->attribute("source");
+   if (!source.isEmpty())
+   {
+      GroupElementMapList::Iterator it;
+      for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
+      {
+        QString key = it.key();
+        if (key.startsWith("Selectors|"))
+        {
+          QString selectorName = key.mid(10);
+          kdDebug() << "selector = " << selectorName << endl;
+          QString tmpStr;
+          int index = selectorName.find(QRegExp("\\.|\\#|\\:"));          
+          if (index != -1)
+          {
+            tmpStr = selectorName.left(index).lower();
+          } else
+          {
+            tmpStr = selectorName;
+          }
+            kdDebug() << "tmpStr = " << tmpStr << " name = " << m_dtdTag->name().lower() << endl;
+            if (tmpStr.isEmpty() || m_dtdTag->name().lower() == tmpStr || tmpStr == "*")
+            {
+              combo->insertItem(selectorName.mid(index + 1).replace('.',' '));
+            }
+         }
+       }
+   }
+      
    for ( QDomElement n = el->firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
       if ( n.tagName() == "items" ) {
          QDomElement item = n.firstChild().toElement();
@@ -43,8 +76,7 @@ Attr_list::Attr_list( QDomElement *el, QWidget *w )
              combo->insertItem( item.text() );
              item = item.nextSibling().toElement();
          }
-
-      }
+      } 
    }
 
    setValue("");

@@ -3,7 +3,7 @@
                              -------------------
     begin                : � � 25 14:34:07 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
-                           (C) 2003 by Andras Mantia <amantia@kde.org>
+                           (C) 2003, 2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -32,7 +32,7 @@ class Tagxml : public QWidget, TagWidget {
   Q_OBJECT
   public:
     /** construtor */
-    Tagxml(QDomNode &d, const DTDStruct *dtd, QWidget* parent=0, const char *name=0);
+    Tagxml(QDomNode &d, QTag *dtdTag, QWidget* parent=0, const char *name=0);
     /** destructor */
     ~Tagxml();
 
@@ -46,6 +46,7 @@ class Tagxml : public QWidget, TagWidget {
     QDomNode doc;
     const DTDStruct *m_dtd;
     QWidget *m_firstItem;
+    QTag *m_dtdTag;
 
 };
 

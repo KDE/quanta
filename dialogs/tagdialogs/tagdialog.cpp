@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Apr 1 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2002-2003 by Andras Mantia <amantia@kde.org>
+                           (C) 2002-2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,7 +27,9 @@
 #include <kconfig.h>
 #include <kurl.h>
 #include <kstdguiitem.h>
+#include <kdebug.h>
 
+#include "tagattr.h"
 #include "tagdialog.h"
 #include "tagwidget.h"
 #include "tagimgdlg.h"
@@ -85,7 +87,7 @@ TagDialog::~TagDialog()
 
 void TagDialog::init(QTag *dtdTag, KURL a_baseURL)
 {
-    setOkButton(KStdGuiItem::ok().text());
+  setOkButton(KStdGuiItem::ok().text());
   setCancelButton(KStdGuiItem::cancel().text());
 
   connect( this, SIGNAL(applyButtonPressed()),  SLOT(slotAccept()) );
@@ -132,13 +134,13 @@ void TagDialog::parseTag()
        QDomNodeList nodeList = doc.elementsByTagName("tag");
        for ( uint i = 0; i < nodeList.count(); i++)
        {
-           QDomNode n = nodeList.item(i);
+          QDomNode n = nodeList.item(i);
           QString nodeTagName = n.toElement().attribute("name");
           if (!dtdTag->parentDTD->caseSensitive)
               nodeTagName = nodeTagName.upper();
           if (nodeTagName == tagName) //read a tag
           {
-            mainDlg = new Tagxml( n, dtdTag->parentDTD, this );
+            mainDlg = new Tagxml( n, dtdTag, this );
             ((Tagxml    *)mainDlg)->writeAttributes( dict );
             break;
           }
@@ -154,7 +156,7 @@ void TagDialog::parseTag()
       docString += "</tag>\n</TAGS>\n";
       doc.setContent(docString);
       QDomNode domNode2 = doc.firstChild().firstChild();
-      mainDlg = new Tagxml( domNode2, dtdTag->parentDTD, this );
+      mainDlg = new Tagxml( domNode2, dtdTag, this );
     }
 
   if ( mainDlg )
@@ -178,7 +180,7 @@ void TagDialog::parseTag()
     bool addPage = false;
     QString docString = "<!DOCTYPE TAGS>\n<TAGS>\n";
     docString += QString("<tag name=\"Page%1\">\n").arg(i);
-    AttributeList *attrs = new AttributeList;
+/*    AttributeList *attrs = new AttributeList;
     for (uint j = 0; j < groupList.count(); j++)
     {
       QString groupName = QString(groupList.at(j)).stripWhiteSpace();
@@ -192,18 +194,69 @@ void TagDialog::parseTag()
         addPage = true;
       }
     }
-    docString += QuantaCommon::xmlFromAttributes(attrs);
+    docString += QuantaCommon::xmlFromAttributes(attrs); */
+    
+    QDomDocument commonDoc;
+    QString commonFileName = QFileInfo(dtdTag->fileName()).dirPath() + "/common.tag";
+    if (QFile(commonFileName).exists())
+    {
+      QFile commonFile(commonFileName);
+      commonFile.open(IO_ReadOnly);
+      if (doc.setContent(&commonFile))
+      {
+        int row = 0;
+        QDomNodeList nodeList = doc.elementsByTagName("tag");
+        for ( uint j = 0; j < nodeList.count(); j++)
+        {
+          QDomNode node = nodeList.item(j);
+          QString nodeTagName = node.toElement().attribute("name");         
+          if (groupList.contains(nodeTagName)) //add the attributes of this common tag to a new tab
+          {
+            QString s;
+            QTextStream str(&s, IO_ReadWrite);
+            QString s2;
+            QTextStream str2(&s2, IO_ReadWrite);
+            for ( QDomNode n = node.firstChild(); !n.isNull(); n = n.nextSibling() )
+            {
+              if (n.nodeName() == "attr")
+              {
+                QDomElement el = n.toElement();               
+                str.reset();
+                str << "<attr name=\"" << el.attribute("name") << "\" type=\""<< el.attribute("type", "input") << "\" source=\"" << el.attribute("source") << "\">" << endl;
+                str << "    <text>" << el.attribute("name") << "</text>" << endl;
+                str << "    <textlocation col=\"0\" row=\"" << row << "\" />" << endl;
+                str << "    <location col=\"1\" row=\"" << row << "\" />" << endl;
+                QDomNodeList childNodes = n.childNodes();
+                for ( uint k = 0; k < childNodes.count(); k++)
+                {
+                  QDomNode childNode = childNodes.item(j);
+                  childNode.save(str2, 2);
+                  str << s2;
+                }  
+                str << "</attr>" << endl;
+                row++;
+              }
+              
+            }
+            docString += s;
+          }
+          addPage = true;
+        }
+        commonFile.close();
+      }
+    }
+    
     docString += "</tag>\n</TAGS>\n";
     if (addPage)
     {
       extraDoc.setContent(docString);
       QDomNode domNode = extraDoc.firstChild().firstChild();
-      extraPage = new Tagxml( domNode, dtdTag->parentDTD, this );
+      extraPage = new Tagxml( domNode, dtdTag, this );
       extraPage->writeAttributes( dict );
       addTab( extraPage, i18n(title.utf8()) );
       extraPageList->append(extraPage);
     }
-    delete attrs;
+//    delete attrs;
   }
  }
 }

@@ -3,7 +3,7 @@
                              -------------------
     begin                : � � 25 14:34:07 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
-                           (C) 2002-2003 by Andras Mantia
+                           (C) 2002-2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -26,10 +26,11 @@
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 
-Tagxml::Tagxml( QDomNode &d, const DTDStruct *dtd, QWidget *parent, const char *name)
+Tagxml::Tagxml( QDomNode &d, QTag *dtdTag, QWidget *parent, const char *name)
   :QWidget(parent,name), TagWidget(parent,name), doc(d)
 {
-   m_dtd = dtd;
+   m_dtd = dtdTag->parentDTD;
+   m_dtdTag = dtdTag;
    QGridLayout *grid = new QGridLayout( this );
    grid->setSpacing( 13 );
    grid->setMargin( 11 );
@@ -76,11 +77,6 @@ Tagxml::Tagxml( QDomNode &d, const DTDStruct *dtd, QWidget *parent, const char *
          }
      }
 
- //    warning( "quanta: tooltip '%s'\n", (const char *) tip );
- //    warning( "quanta: whatsthis '%s'\n", (const char *) whatsThis );
-    kdDebug() << "quanta: tooltip - " << tip << "\n";
-    kdDebug() << "quanta: whatsthis - "<< whatsThis << "\n";
-
      if ( n.nodeName() == "label" ) //a static label
      {
          QLabel *label = new QLabel(this);
@@ -103,10 +99,10 @@ Tagxml::Tagxml( QDomNode &d, const DTDStruct *dtd, QWidget *parent, const char *
          QString type = el.attribute("type","input");
 
          QDomElement ltext = findChild(n,"text").toElement();
-         if ( !ltext.isNull() && (type!="check") ) //if there is a text label for the attribute
+         if ( !ltext.isNull() && (type != "check") ) //if there is a text label for the attribute
         {
-           QLabel *label = new QLabel(this);
-           label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text()+":") );
+          QLabel *label = new QLabel(this);
+          label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text()+":") );
 
           if ( !tip.isNull() )
               QToolTip::add( label, tip );
@@ -122,80 +118,72 @@ Tagxml::Tagxml( QDomNode &d, const DTDStruct *dtd, QWidget *parent, const char *
            KLineEdit *w = new KLineEdit(this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
 
-             if ( !tip.isNull() )
-                 QToolTip::add( w, tip );
-             if ( !whatsThis.isNull() )
-                 QWhatsThis::add( w, whatsThis );
+           if ( !tip.isNull() )
+               QToolTip::add( w, tip );
+           if ( !whatsThis.isNull() )
+               QWhatsThis::add( w, whatsThis );
 
-           Attr_line *attr = new Attr_line(&el,w);
+           Attr_line *attr = new Attr_line(&el, w, m_dtdTag);
            attributes.append(attr);
            if (!m_firstItem)
               m_firstItem = w;
-        }
-
+        } else
         if ( type == "check" )
         {
            QCheckBox *w = new QCheckBox(this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
 
            QDomElement ltext = findChild(n,"text").toElement();
-            if ( !ltext.isNull() )
-              w->setText( ltext.text() );
+           if ( !ltext.isNull() )
+             w->setText( ltext.text() );
+           if ( !tip.isNull() )
+               QToolTip::add( w, tip );
+           if ( !whatsThis.isNull() )
+                QWhatsThis::add( w, whatsThis );
 
-             if ( !tip.isNull() )
-                 QToolTip::add( w, tip );
-             if ( !whatsThis.isNull() )
-                 QWhatsThis::add( w, whatsThis );
-
-           Attr_check *attr = new Attr_check(&el,w);
+           Attr_check *attr = new Attr_check(&el, w, m_dtdTag);
            attributes.append(attr);
            if (!m_firstItem)
               m_firstItem = w;
-        }
-
+        } else
         if ( type == "list" )
         {
-           QComboBox *w = new QComboBox(true,this);
+           QComboBox *w = new QComboBox(true, this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
-
-             if ( !tip.isNull() )
-                 QToolTip::add( w, tip );
-             if ( !whatsThis.isNull() )
-                 QWhatsThis::add( w, whatsThis );
-
-           Attr_list *attr = new Attr_list(&el,w);
+           if ( !tip.isNull() )
+               QToolTip::add( w, tip );
+           if ( !whatsThis.isNull() )
+               QWhatsThis::add( w, whatsThis );
+           Attr_list *attr = new Attr_list(&el, w, dtdTag);
            attributes.append(attr);
            if (!m_firstItem)
               m_firstItem = w;
-        }
-
+        } else
         if ( type == "color" )
         {
            ColorCombo *w = new ColorCombo(this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
 
-             if ( !tip.isNull() )
-                 QToolTip::add( w, tip );
-             if ( !whatsThis.isNull() )
-                 QWhatsThis::add( w, whatsThis );
+           if ( !tip.isNull() )
+               QToolTip::add( w, tip );
+           if ( !whatsThis.isNull() )
+               QWhatsThis::add( w, whatsThis );
 
-           Attr_color *attr = new Attr_color(&el,w);
+           Attr_color *attr = new Attr_color(&el, w, m_dtdTag);
            attributes.append(attr);
            if (!m_firstItem)
               m_firstItem = w;
-        }
-
+        } else
         if ( type == "url" )
         {
            FileCombo *w = new FileCombo(baseURL, this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
 
-             if ( !tip.isNull() )
-                 QToolTip::add( w, tip );
-             if ( !whatsThis.isNull() )
-                 QWhatsThis::add( w, whatsThis );
-
-           Attr_file *attr = new Attr_file(&el,w);
+           if ( !tip.isNull() )
+             QToolTip::add( w, tip );
+           if ( !whatsThis.isNull() )
+             QWhatsThis::add( w, whatsThis );
+           Attr_file *attr = new Attr_file(&el, w, m_dtdTag);
            attributes.append(attr);
            if (!m_firstItem)
               m_firstItem = w;

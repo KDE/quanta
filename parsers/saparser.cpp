@@ -34,7 +34,7 @@
 #include "quantacommon.h"
 #include "dtds.h"
 
-//#undef DEBUG_PARSER
+#undef DEBUG_PARSER
 
 extern GroupElementMapList globalGroupMap;
 
@@ -923,6 +923,17 @@ void SAParser::slotParseNodeInDetail()
   {
     if (m_currentNode->tag->type == Tag::ScriptTag)
     {
+      m_parsingLastNode = true;
+      Node *n = m_currentNode->nextSibling();
+      while (n)
+      {
+        n = n->nextSibling();
+        if (n && n->tag->type == Tag::ScriptTag)
+        {
+          m_parsingLastNode = false;
+          break;
+        }
+      }
       delete m_currentNode->child;
       m_currentNode->child = 0L;
       AreaStruct area(m_currentNode->tag->area());
@@ -972,6 +983,7 @@ void SAParser::slotParseNodeInDetail()
 #ifdef DEBUG_PARSER      
         kdDebug(24000) << "Emitting rebuildStructureTree from slotParseNodeInDetail." << endl;
 #endif        
+        emit cleanGroups();
         emit rebuildStructureTree();
       }
     }          
@@ -1012,7 +1024,7 @@ void SAParser::slotParseForScriptGroup()
 #ifdef DEBUG_PARSER  
     kdDebug(24000) << "slotParseForScriptGroup done." << endl;
 #endif    
-    if (m_lastGroupParsed && !m_synchronous)
+    if (m_lastGroupParsed && m_parsingLastNode && !m_synchronous)
     {
 #ifdef DEBUG_PARSER
       kdDebug(24000) << "Emitting rebuildStructureTree from slotParseForScriptGroup." << endl;
