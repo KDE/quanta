@@ -1064,6 +1064,12 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
     else
         startNode = *cursorNode;
     
+    if(!startNode)
+    {
+      kdError() << "NULL startNode in kafkaCommon::DTDInsertNodeSubtree given by NodeSelectionInd::cursorNode()" << endl;
+      return 0;
+    }
+
     Node* endNode = 0;
     if(!cursorNode)
         return 0;
