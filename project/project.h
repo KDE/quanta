@@ -78,6 +78,8 @@ public slots:
   void slotDisableMessages();
   void slotGetMessages(QString);
   
+  void slotRescanPrjDir();
+  
 signals:
 	
 	void openFile				 ( QString );

@@ -298,6 +298,10 @@ void QuantaApp::commandCallback(int id_)
     		 project  -> addDirectory();
     		 leftPanel-> showPage( (QWidget *)pTab );
     		 break;
+    		 
+    case ID_PROJECT_RESCAN_FILES:
+       project  -> slotRescanPrjDir();
+       break;
     		
     case ID_PROJECT_PROPERTIES:
     		 project  -> options();

@@ -51,6 +51,7 @@
 #include "projectnewweb.h"
 #include "projectnewfinals.h"
 #include "projectupload.h"
+#include "rescanprj.h"
 
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
@@ -623,4 +624,16 @@ void Project::slotDisableMessages()
 void Project::slotGetMessages(QString data)
 {
   emit messages(data);
+}
+
+void Project::slotRescanPrjDir()
+{
+  if ( !hasProject() ) return;
+	
+	RescanPrj *dlg = new RescanPrj( fileNameList(), basePath, this, i18n("Upload project's files..."));
+	if ( dlg->exec() )
+	{
+	  insertFiles( dlg->files() );
+	}
+	delete dlg;
 }
