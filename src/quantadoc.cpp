@@ -208,7 +208,10 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
     blockSignals(signalStatus);
   }
   if (url.isEmpty())
+  {
+    quantaApp->processDTD();
     quantaApp->reparse(true);
+  }
 }
 
 void QuantaDoc::slotOpeningCompleted()

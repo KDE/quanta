@@ -217,10 +217,13 @@ void QuantaView::slotInsertCSS()
   unsigned int lastLine = w->editIf->numLines() - 1;
   unsigned int lastCol = w->editIf->lineLength(lastLine);
   Node *styleNode = node;
+
   if (styleNode->tag->type == Tag::XmlTagEnd && styleNode->prev)
     styleNode = styleNode->prev;
-  while (styleNode && styleNode->parent && styleNode->tag->dtd->name == "text/css")
+
+  while (styleNode && styleNode->parent && styleNode->tag->name.lower() != "style" && styleNode->tag->dtd->name == "text/css") 
     styleNode = styleNode->parent;
+
   Node *parentNode = node;
   if (parentNode->tag->type == Tag::XmlTagEnd && parentNode->prev)
     parentNode = parentNode->prev;
@@ -229,7 +232,13 @@ void QuantaView::slotInsertCSS()
            parentNode->tag->type != Tag::XmlTag)
       parentNode = parentNode->parent;
   QString fullDocument = w->editIf->text().stripWhiteSpace();
-
+  
+  if (styleNode->tag->name.lower() == "comment block" && styleNode->parent) {
+    if (styleNode->parent->tag->name.lower() == "style") {
+      styleNode = styleNode->parent;
+    }
+  }
+  
   if (styleNode && styleNode->tag->name.lower() == "style" && styleNode->next)  //inside <style> invoke the selector editor
   {
     styleNode->tag->endPos(bLine, bCol);
@@ -239,7 +248,7 @@ void QuantaView::slotInsertCSS()
 
     styleNode->next->tag->beginPos(eLine, eCol);
     QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1).remove("<!--").remove("-->"));// <style></style> block content
-
+	kdDebug(24000) << "Style tag contains: " << endl << styleTagContent << endl;
     CSSSelector *dlg = new CSSSelector;
 
     dlg->setForInitialPreview(fullDocument);
@@ -259,10 +268,11 @@ void QuantaView::slotInsertCSS()
     }
     delete dlg;
 
-  } else
-  if (!node || fullDocument.isEmpty() ||
+  } else if (!node || fullDocument.isEmpty() ||
       w->currentDTD(true)->name == "text/css") //empty document or pure CSS file, invoke the selector editor
   {
+	kdDebug(24000) << "[CSS editor] This is a pure CSS document";
+
     CSSSelector *dlg = new CSSSelector;
     dlg->setForInitialPreview(QString::null);
     if (!fullDocument.isEmpty())
@@ -278,6 +288,7 @@ void QuantaView::slotInsertCSS()
   } else
   if (parentNode && parentNode->tag->type == Tag::XmlTag)
   {
+	kdDebug(24000) << "[CSS editor] We will add a style attribute to: " << parentNode->tag->name << endl;
     CSSEditor *dlg = new CSSEditor(this);
     dlg->setForInitialPreview(fullDocument);
 
