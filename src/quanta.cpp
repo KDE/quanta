@@ -2205,10 +2205,11 @@ void QuantaApp::showToolbarFile(const KURL &url)
     QDomNodeList nodeList;
     QPopupMenu *menu = new QPopupMenu;
     KAction *action;
+    KActionCollection *ac = actionCollection();
     nodeList = p_toolbar->dom->elementsByTagName("Action");
     for (uint i = 0; i < nodeList.count(); i++)
     {
-      action = actionCollection()->action(nodeList.item(i).cloneNode().toElement().attribute("name") );
+      action = ac->action(nodeList.item(i).toElement().attribute("name") );
       if (action)
       {
         action->plug(menu);
@@ -3148,6 +3149,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
   if (m_debugger->UI())
   {
       showToolbarFile(KURL().fromPathOrURL(qConfig.globalDataDir +resourceDir + "toolbars/debug.toolbar.tgz"));
+      ToolbarTabWidget::ref()->setCurrentPage(0);
   }
  currentToolbarDTD = newDtd->name;
  slotToggleDTDToolbar(!allToolbarsHidden());
