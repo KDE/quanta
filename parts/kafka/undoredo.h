@@ -297,15 +297,25 @@ public:
 	 * @param syncKafkaCursor If set to true, it will try to sync the kafka cursor from the
 	 * quanta one.
 	 */
-	 void reloadKafkaEditor(bool force = false, bool syncKafkaCursor = true);
+	void reloadKafkaEditor(bool force = false, bool syncKafkaCursor = true);
 
 	/**
 	 * Reload the quanta editor from kafka.
 	 * @param force If set to true, it will reload quanta even if it is already up to date.
 	 * @param syncQuantaCursor If set to true, it will try to sync the quanta cursor from
 	 * the kafka one.
+         * @param encodeText Usually when a Text Node has the dirty flag (cleanStrBuilt), it means that
+         * it was modified in VPL and thus it contains some unencoded text : we have to encode it. (e.g.
+         * whitespace => &nbsp;) But some functions calling this function might not want that because
+         * the text is already encoded e.g. codeFormatting().
 	 */
-	void reloadQuantaEditor(bool force = false, bool syncQuantaCursor = true);
+	void reloadQuantaEditor(bool force = false, bool syncQuantaCursor = true, bool encodeText = true);
+        
+        /**
+         * Format the code of the document. It simply call reloadQuantaEditor() after having
+         * set the dirty flag to every Node.
+         */
+        void codeFormatting();
 
 public slots:
 

@@ -1269,7 +1269,7 @@ void undoRedo::reloadKafkaEditor(bool force, bool syncKafkaCursor)
                 syncKafkaCursorAndSelection();
 }
 
-void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
+void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor, bool encodeText)
 {
         QString text, allText;
         Node *node = baseNode, *child;
@@ -1303,22 +1303,23 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
         {
                 if(!node->tag->cleanStrBuilt)
                 {
-                        //FIXME FIXME FIXME KafkaDocument::translateKafkaIntoNodeCursorPosition() set the
-                        //clean string but does not touch the position!!! FIXME FIXME FIXME
-                        node->tag->setStr(kafkaInterface->generateCodeFromNode(node, 0, 0, eLine, eCol));
-                        //node->tag->setTagPosition(bLine, bCol, eLine, eCol);
-                        //kdDebug(25001)<< "POS1 " << bLine <<  " " <<  bCol << " " << eLine << " " << eCol << endl;
                         if(node->tag->type != Tag::ScriptTag && !node->insideSpecial)
                         {
-                                kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node);
-                                goUp = false;
-                                kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp));
-                                kafkaCommon::applyIndentation(node, 2, 0);
+                          //Xml formatting
+                          //FIXME FIXME FIXME KafkaDocument::translateKafkaIntoNodeCursorPosition() set the
+                          //clean string but does not touch the position!!! FIXME FIXME FIXME
+                          node->tag->setStr(kafkaInterface->generateCodeFromNode(node, 0, 0, eLine, eCol, encodeText));
+                          //node->tag->setTagPosition(bLine, bCol, eLine, eCol);
+                          kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node);
+                          goUp = false;
+                          kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp));
+                          kafkaCommon::applyIndentation(node, 2, 0);
                         }
-                        //int a, b, c, d;
-                        //_node->tag->beginPos(a,b);
-                        //_node->tag->endPos(c,d);
-                        //kdDebug(25001)<< "POS2 " << a <<  " " <<  b << " " << c << " " << d << endl;
+                        else
+                        {
+                          //Script formatting
+                        
+                        }
                         node->tag->cleanStrBuilt = true;
                 }
                 //_node->tag->beginPos(bLine, bCol);
@@ -1410,6 +1411,18 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
         qConfig.updateClosingTags = updateClosing;
         m_doc->activateRepaintView(true);
         m_doc->activateParser(true);
+}
+
+void undoRedo::codeFormatting()
+{
+  Node *node = baseNode;
+  
+  while(node)
+  {
+    node->tag->cleanStrBuilt = false;
+    node = node->nextSibling();
+  }
+  reloadQuantaEditor(true, false, false);
 }
 
 bool undoRedo::RedoNodeModifInKafka(NodeModif &/**_nodeModif*/)

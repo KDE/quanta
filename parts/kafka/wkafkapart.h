@@ -224,9 +224,12 @@ public:
 	 * @param bCol The start col of the returned generated code.
 	 * @param eLine Returns the end line of the returned generated code.
 	 * @param eCol Returns the end col of the return generated code.
+         * @param encodeText Specify, if node is a Text Node, if we should encode the text 
+         * (e.g. whitespace => &nbsp;)
 	 * @return Returns the code.
 	 */
-	QString generateCodeFromNode(Node *node, int bLine, int bCol, int &eLine, int &eCol);
+	QString generateCodeFromNode(Node *node, int bLine, int bCol, int &eLine, int &eCol, 
+          bool encodeText = true);
 
 
 	/* ------------------------- KAFKA<->QUANTA POSITION TRANSLATION -------------------------------*/

@@ -345,6 +345,8 @@ public slots:
 
   void slotExpandAbbreviation();
 
+  /** Format the code of the document */
+  void slotCodeFormatting();
   /** Show the Document Properties Dialog */
   void slotDocumentProperties();
   /** No descriptions */

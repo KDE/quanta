@@ -786,6 +786,10 @@ void QuantaInit::initActions()
     (void) new KAction( i18n( "&Document Properties" ), 0,
                         m_quanta, SLOT( slotDocumentProperties() ),
                         ac, "tools_document_properties" );
+                        
+    (void) new KAction ( i18n ("F&ormat Code"), 0, 
+                        m_quanta, SLOT( slotCodeFormatting() ),
+                        ac, "tools_code_formatting");
 #endif
 
     (void) new KAction( i18n( "&Convert Tag && Attribute Case..."), 0,

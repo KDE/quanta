@@ -913,12 +913,13 @@ QString KafkaDocument::getEncodedText(const QString& decodedText)
 	return getEncodedText(decodedText, a, b, c, d);
 }
 
-QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int &eLine, int &eCol)
+QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int &eLine, int &eCol, bool encodeText)
 {
 	QString text, _char;
 	Node *openingNode;
 	int bLineAttr, bColAttr;
 	int j = 0;
+        bool hasPreParent;
 
 	if(!node) return "";
 
@@ -981,14 +982,15 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 	else if(node->tag->type == Tag::XmlTagEnd)
 	{
 		openingNode = node->getOpeningNode();
-		if(openingNode && openingNode->tag->type == Tag::ScriptTag &&
-			(openingNode->tag->name.contains("XML PI block") ||
-			openingNode->tag->name.contains("DTD block")))
+		if(openingNode && openingNode->tag->type == Tag::ScriptTag)
 		{
-			if(openingNode->tag->name.contains("XML PI block"))
-				text = "?>";
-			else if(openingNode->tag->name.contains("DTD block"))
-				text = ">";
+                  if(openingNode->tag->name.contains("XML PI") || 
+                    openingNode->tag->name.contains("PHP"))
+                    text = "?>";
+                  else if(openingNode->tag->name.contains("DTD"))
+                    text = ">";
+                  else
+                    text = ">";
 		}
 		else
 			text = "<" + QuantaCommon::tagCase(node->tag->name) + ">";
@@ -998,10 +1000,16 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 	}
 	else if(node->tag->type == Tag::Text)
 	{
-		text = getEncodedText(node->tag->tagStr(), bLine, bCol, eLine, eCol,
-			!kafkaCommon::hasParent(node, "pre"));
-		/** Can't use KGlobal::charsets()->toEntity() :
-		 * It translate all chars into entities! */
+          hasPreParent = kafkaCommon::hasParent(node, "pre");
+          if(encodeText)
+            text = getEncodedText(node->tag->tagStr(), bLine, bCol, eLine, eCol,
+              !hasPreParent);
+            /** Can't use KGlobal::charsets()->toEntity() :
+             * It translate all chars into entities! */
+          else if(!hasPreParent)
+            text = node->tag->tagStr().replace(QRegExp("\\s+"), " ");
+          else
+            text = node->tag->tagStr();
 	}
 	else if(node->tag->type == Tag::ScriptTag)
 	{

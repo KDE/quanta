@@ -131,6 +131,7 @@
     <Separator/>
     <Action name="tools_document_properties" />
     <Action name="tools_change_case" />
+    <Action name="tools_code_formatting" />
     <Separator/>
     <Action name="tools_spelling"/>
     <Action name="tidy_check" />

@@ -3461,6 +3461,19 @@ void QuantaApp::slotDownloadScript()
     m_newScriptStuff->download();
 }
 
+void QuantaApp::slotCodeFormatting()
+{
+#ifdef BUILD_KAFKAPART
+  QuantaView *view = ViewManager::ref()->activeView();
+  if(!view || !view->document() || (view->currentViewsLayout() != QuantaView::SourceOnly &&
+    view->hadLastFocus() == QuantaView::VPLFocus))
+  {
+    KMessageBox::error(this, i18n("Code formatting can only be done in the source view."));
+    return;
+  }
+  view->document()->docUndoRedo->codeFormatting();
+#endif
+}
 
 void QuantaApp::slotDocumentProperties()
 {
