@@ -150,6 +150,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertSeparator();
   m_setDocumentRootId = m_folderMenu->insertItem(i18n("Document &Base Folder"), this, SLOT(slotChangeDocumentFolderStatus()));
   m_folderMenu->insertItem(i18n("Upload &Status"), m_uploadStatusMenu);
+  m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
 
   m_projectMenu = new KPopupMenu(this);
   m_projectMenu->insertItem(SmallIcon("folder_new"), i18n("&Create Folder..."), this, SLOT(slotCreateFolder()));
