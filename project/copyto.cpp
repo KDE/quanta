@@ -22,6 +22,7 @@
 
 // kde includes
 #include <kio/job.h>
+#include <kio/jobclasses.h>
 #include <kfiledialog.h>
 #include <kiconloader.h>
 
@@ -63,10 +64,20 @@ QString CopyTo::copy( QString rname )
   QString sname = rname;
   while ( ( i=sname.find('/')) >= 0 ) sname.remove(0,i+1);
 
-  QString fname = path + sname;
-  if ( rname != fname ) KIO::copy( KURL( rname ), KURL( fname ) );
+  fname = path + sname;
+  if ( rname != fname ) 
+  {
+    KIO::CopyJob *job = KIO::copy( KURL( rname ), KURL( fname ), true );
+    connect( job, SIGNAL(copyingDone( KIO::Job *,const KURL&,const KURL&,bool,bool)),
+                  SLOT  (endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool)));
+  }
 
   return fname;
+}
+
+void CopyTo::endCopy( KIO::Job *,const KURL&,const KURL&, bool, bool)
+{
+  emit addFilesToProject(fname);
 }
 
 QStringList CopyTo::copy( QStringList rfiles )
@@ -88,7 +99,10 @@ QStringList CopyTo::copy( QStringList rfiles )
 		(*it) = path + (*it);
 	}
 
-  if ( rfiles != sfiles ) KIO::copy( KURL::List( rfiles ), KURL( path ) );
+  if ( rfiles != sfiles ) 
+  {
+    KIO::copy( KURL::List( rfiles ), KURL( path ), true );
+  }
 
   return sfiles;
 }

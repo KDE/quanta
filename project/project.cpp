@@ -35,6 +35,7 @@
 #include <qwidgetstack.h>
 #include <qbuttongroup.h>
 #include <qurloperator.h>
+#include <qmessagebox.h>
 
 // include files for KDE
 #include <kurl.h>
@@ -72,7 +73,7 @@ bool Project::hasProject(){
   return ( !projectFileName.isNull() );
 }
 
-QStringList Project::fileNameList()
+QStringList Project::fileNameList(bool check)
 {
 	QStringList list;
 		
@@ -81,7 +82,14 @@ QStringList Project::fileNameList()
 	for ( unsigned int i=0; i<nl.count(); i++ )
   {
 		QDomElement el = nl.item(i).toElement();
-		if ( el.nodeName() == "item" )	list.append( el.attribute("url") );
+		if ( el.nodeName() == "item" )	{
+		  if ( !check )
+		    list.append( el.attribute("url") );
+		  else {
+		    QFileInfo fi( basePath + el.attribute("url") );
+		    if ( fi.exists() ) list.append( el.attribute("url") );
+		  }
+		}
   }
 	return list;
 }
@@ -97,7 +105,11 @@ void Project::insertFile( QString rname, bool repaint )
   {
     CopyTo *dlg = new CopyTo( basePath, this, rname+": copy to project..." );
 
-    if ( dlg->exec() ) fname = dlg->copy( rname );
+    if ( dlg->exec() ) 
+    {
+      fname = dlg->copy( rname );
+      fname = QExtFileInfo::toRelative( fname, basePath);
+    }
     else {
     	delete dlg;
       return;
@@ -170,7 +182,11 @@ void Project::createEmptyDom()
 	if ( !hasProject()  ) return;
 
   QFile f( projectFileName );
-  f.open( IO_ReadWrite | IO_Truncate );
+  if ( !f.open( IO_WriteOnly ) )
+  {
+    QMessageBox::critical( this, i18n( "ERROR" ), i18n("Can't open file for IO_ReadWrite | IO_Truncate"));
+    return;
+  }
 
   QTextStream qts( &f );
 
@@ -181,7 +197,7 @@ void Project::createEmptyDom()
   qts << "</webproject>" << endl;
 
   f.close();
-
+  
   loadProject( projectFileName );
 }
 
@@ -205,12 +221,15 @@ void Project::openProject()
 }
 
 /** save project file */
-void Project::saveProject()
+bool Project::saveProject()
 {
   if ( !hasProject()  ) return;
 
   QFile f( projectFileName );
-  f.open( IO_ReadWrite | IO_Truncate );
+  if ( !f.open( IO_ReadWrite | IO_Truncate ) )
+  {
+    return false;
+  }
 
   QTextStream qts( &f );
 
@@ -240,6 +259,7 @@ void Project::saveProject()
 	}
 	
   dom.save( qts, 0);
+  return true;
 }
 
 /** close project and edited files */
@@ -269,11 +289,11 @@ void Project::loadProject(QString fname)
   basePath = fi.dirPath();
   if ( basePath.right(1) != "/" )	basePath += "/";
 
-  if ( !f.exists() ) return;
-	if ( !f.open(IO_ReadOnly) ) return;
-	if ( !dom.setContent( &f ) ) return;
-	if ( (n_prj=dom.firstChild().firstChild()).isNull() )	return;
-	if ( (projectName=n_prj.toElement().attribute("name")).isNull() ) return;
+  if ( !f.exists() ) { QMessageBox::critical( this, i18n( "ERROR" ), i18n("File don't exists") );return;}
+	if ( !f.open(IO_ReadOnly) ) { QMessageBox::critical( this, i18n( "ERROR" ), i18n("Can't open for IO_ReadOnly") );return;}
+	if ( !dom.setContent( &f ) ) { QMessageBox::critical( this, i18n( "ERROR" ), i18n("Not found XML info in file") );return;}
+	if ( (n_prj=dom.firstChild().firstChild()).isNull() )	{ QMessageBox::critical( this, i18n( "ERROR" ), i18n("Wrong project's file") );return;}
+	if ( (projectName=n_prj.toElement().attribute("name")).isNull() ) { QMessageBox::critical( this, i18n( "ERROR" ), i18n("Wrong project's file") );return;}
 	
 	previewPrefix = n_prj.toElement().attribute("preview");
 	if ( previewPrefix.right(1) != "/" && !previewPrefix.isEmpty() ) previewPrefix+="/";
@@ -301,7 +321,7 @@ void Project::loadProject(QString fname)
 
   emit setBasePath		( basePath );
   emit setProjectName	( projectName );
-	emit reloadTree 		( fileNameList(), true, false );
+	emit reloadTree 		( fileNameList(true), true, false );
 }
 
 // slot for insert file
@@ -358,24 +378,39 @@ void Project::addDirectory(QString rdir)
 	if ( !hasProject() ) return;
 	if ( rdir.isEmpty() ) return;
 	
+	if ( rdir.left(5) == "file:" ) rdir.remove(0,5);
+	if ( rdir.right(1) != "/" ) rdir += "/";
+	
 	QString sdir = rdir;
-	if ( sdir.left(5) == "file:" ) sdir.remove(0,5);
-
   sdir = QExtFileInfo::toRelative( sdir, basePath);
 	
   if ( sdir.left(2) == ".." )
   {
   	CopyTo *dlg = new CopyTo( basePath, this, rdir+i18n(": copy to project...") );
 
-    if ( dlg->exec() ) rdir = dlg->copy( rdir );
+    if ( dlg->exec() )
+    { 
+      if ( rdir.right(1) == "/" ) rdir.remove( rdir.length()-1,1);
+      rdir = dlg->copy( rdir );
+      connect(dlg, SIGNAL(addFilesToProject(QString)),
+                   SLOT  (insertFilesAfterCopying(QString)));
+      return;
+    }
     else {
     	delete dlg;
       return;
     }
     delete dlg;
   }
+  
   if ( rdir.right(1) != "/" ) rdir += "/";
 
+  insertFiles( rdir, "*" );
+}
+
+void Project::insertFilesAfterCopying(QString rdir)
+{
+  if ( rdir.right(1) != "/" ) rdir += "/";
   insertFiles( rdir, "*" );
 }
 
@@ -484,6 +519,8 @@ void Project::slotSelectProjectType(const QString &title)
 
 void Project::slotAcceptCreateProject()
 {
+  closeProject();
+  
   projectName = png->linePrjName->text();
 	projectFileName = basePath+png->linePrjFile->text();
 
@@ -500,7 +537,8 @@ void Project::slotAcceptCreateProject()
 	projectName = png->linePrjName->text();
 	projectFileName = basePath+png->linePrjFile->text();
 	
-	if ( pnf->checkPrefix->isChecked() ) {
+	if ( pnf->checkPrefix->isChecked() ) 
+	{
 		previewPrefix = pnf->linePrefix->text();
 		if ( previewPrefix.right(1) != "/" ) previewPrefix+="/";
 	}
@@ -631,7 +669,7 @@ void Project::slotRescanPrjDir()
 {
   if ( !hasProject() ) return;
 	
-	RescanPrj *dlg = new RescanPrj( fileNameList(), basePath, this, i18n("Upload project's files..."));
+	RescanPrj *dlg = new RescanPrj( fileNameList(), basePath, this, i18n("New files in project's dir..."));
 	if ( dlg->exec() )
 	{
 	  insertFiles( dlg->files() );

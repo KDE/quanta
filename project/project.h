@@ -42,7 +42,7 @@ public:
 	~Project();
 	
 	bool hasProject();
-	QStringList fileNameList();
+	QStringList fileNameList(bool check = false);
 	
   void insertFile ( QString name, bool repaint );
   void insertFiles( QString path, QString mask );
@@ -54,7 +54,7 @@ public slots:
 
   void newProject();
   void openProject();
-  void saveProject();
+  bool saveProject();
   void closeProject();
   void loadProject(QString fname);
   void options();
@@ -64,6 +64,7 @@ public slots:
   void addDirectory();
   void addDirectory(QString rdir);
   void insertFile(QString name);
+  void insertFilesAfterCopying(QString);
 
 	void slotRemoveFile(QString);
 	void slotRemoveFolder(QString);

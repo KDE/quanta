@@ -171,8 +171,6 @@ QuantaApp::QuantaApp()
   disableCommand(ID_VIEW_FORWARD);
   disableCommand(ID_VIEW_REPAINT);
 
-  disableCommand(ID_OPTIONS_COLORS); // don't working kwrite bug
-
   disableCommand(ID_BOOKMARKS_SET);
   disableCommand(ID_BOOKMARKS_ADD);
   disableCommand(ID_BOOKMARKS_CLEAR);

@@ -120,7 +120,6 @@
 // options-menu entries
 #define ID_OPTIONS                  14000
 #define ID_OPTIONS_EDITOR           14010
-#define ID_OPTIONS_COLORS           14030
 #define ID_OPTIONS_HIGHLIGHT        14040
 #define ID_OPTIONS_TOOLBARS         14050
 #define ID_OPTIONS_KEYS		          14060

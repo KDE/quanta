@@ -18,6 +18,10 @@
 #ifndef COPYTO_H
 #define COPYTO_H
 
+// kde includes
+#include <kio/jobclasses.h>
+
+// app includes
 #include "copytos.h"
 /**
   *@author Yacovlev Alexander & Dmitry Poplavsky
@@ -34,6 +38,15 @@ public:
 
 public slots: // Public slots
   void slotDirChange();	
+  
+  void endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool);
+
+signals:
+  void addFilesToProject(QString); 
+  
+public:
+  QString fname; 
+
 };
 
 #endif
