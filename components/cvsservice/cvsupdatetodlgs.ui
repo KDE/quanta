@@ -52,9 +52,6 @@
                     <property name="text">
                         <string>Update to &amp;date ('yyyy-mm-dd'):</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+D</string>
-                    </property>
                 </widget>
                 <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
                     <property name="name">
@@ -62,9 +59,6 @@
                     </property>
                     <property name="text">
                         <string>Update to &amp;tag/branch:</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+T</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -142,9 +136,6 @@
                     <property name="text">
                         <string>&amp;Cancel</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+C</string>
-                    </property>
                 </widget>
                 <spacer row="0" column="0">
                     <property name="name">
@@ -177,9 +168,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;OK</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+O</string>
                     </property>
                     <property name="autoDefault">
                         <bool>true</bool>
