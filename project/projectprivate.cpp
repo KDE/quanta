@@ -127,7 +127,7 @@ void ProjectPrivate::initActions(KActionCollection *ac)
                         this, SLOT( slotAddFiles() ),
                         ac, "project_insert_file" );
 
-  insertDirAction = new KAction( i18n( "Inser&t Directory..." ), 0,
+  insertDirAction = new KAction( i18n( "Inser&t Folder..." ), 0,
                         this, SLOT( slotAddDirectory() ),
                         ac, "project_insert_directory" );
 

@@ -241,7 +241,7 @@ void ProjectNewLocal::slotAddFolder()
   QExtFileInfo::createDir( baseURL );
   KURL dirURL ;
   dirURL = KFileDialog::getExistingURL(
-           baseURL.url(),  this, i18n("Insert Directory in Project"));
+           baseURL.url(),  this, i18n("Insert Folder in Project"));
 
   if ( !dirURL.isEmpty() )
   {

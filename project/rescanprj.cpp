@@ -52,7 +52,7 @@ RescanPrj::RescanPrj(const ProjectList &p_prjFileList, const KURL& p_baseURL, co
   prjFileList = p_prjFileList;
   excludeRx = p_excludeRx;
 
-  progressText->setText(i18n("Reading directory:"));
+  progressText->setText(i18n("Reading folder:"));
   KIO::ListJob *job = KIO::listRecursive( baseURL, false );
   m_listJobCount = 1;
 

@@ -2487,7 +2487,7 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
       {
         if (!localToolbar)
             localToolbarsDir = projectToolbarsURL.prettyURL();
-        KMessageBox::sorry(0,i18n("<qt>You must save the toolbars in the following directory: <br><br><b>%1</b></qt>")
+        KMessageBox::sorry(0,i18n("<qt>You must save the toolbars to the following folder: <br><br><b>%1</b></qt>")
                                   .arg(localToolbarsDir));
         query = KMessageBox::No;
       }

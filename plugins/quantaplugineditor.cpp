@@ -100,7 +100,7 @@ void QuantaPluginEditor::addPlugin()
 void QuantaPluginEditor::addSearchPath()
 {
   // Get a dir and append it to the line edit
-  QString appendDir = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select Directory"));
+  QString appendDir = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select Folder"));
   if(!appendDir.isNull())
   {
     m_pluginEditorWidget->searchPaths->setText(m_pluginEditorWidget->searchPaths->text()+appendDir+":");
