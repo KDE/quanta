@@ -1249,16 +1249,20 @@ void Parser::clearGroups()
       if (!groupElement->deleted)
       {
         Node *n = groupElement->node;
+        kdDebug(24000) << "clear " << &(n->m_groupElements) << endl;
         n->m_groupElements.clear();
       }
+      groupElement->group = 0L;
       delete groupElement->tag;
-      delete groupElement;
+      groupElement->tag = 0L;
       elementIt = list->erase(elementIt);
+      delete groupElement;
+      groupElement = 0L;
       count++;
     }
   }
 #ifdef DEBUG_PARSER
-      kdDebug(24000) << count << " GroupElement deleted." << endl;
+      kdDebug(24000) << count << " GroupElement deleted (clearGroups)." << endl;
 #endif
   globalGroupMap.clear();
   ParserCommon::includedFiles.clear();
@@ -1291,9 +1295,12 @@ void Parser::cleanGroups()
          kdDebug(24001) << "GroupElement deleted: " <<groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
 #endif
          groupElement->tag->write()->userTagList.remove(groupElement->tag->name.lower());
+         groupElement->group = 0L;
          delete groupElement->tag;
-         delete groupElement;
+         groupElement->tag = 0L;
          elementIt = list->erase(elementIt);
+         delete groupElement;
+         groupElement = 0L;
          count++;
        } else
        {
@@ -1302,7 +1309,7 @@ void Parser::cleanGroups()
     }
   }
 #ifdef DEBUG_PARSER
-      kdDebug(24000) << count << "GroupElement deleted." << endl;
+      kdDebug(24000) << count << "GroupElement deleted (cleanGroups)." << endl;
 #endif
   if (m_parseIncludedFiles)
   {

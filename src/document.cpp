@@ -643,7 +643,10 @@ QString Document::getTagNameAt(int line, int col )
 
 /** Show the code completions passed in as an argument */
 void Document::showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions ) {
+  bool reparse = reparseEnabled;
+  reparseEnabled = false;
   codeCompletionIf->showCompletionBox( *completions, false );
+  reparseEnabled = reparse;
   argHintVisible = false;
   delete completions;
 }
@@ -1113,21 +1116,24 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
             //at this position.
             SAGroupParser *gParser = new SAGroupParser(0L, this, n, n->nextSibling(), true, false, false);
             gParser->slotParseForScriptGroup();
-            for (GroupElementList::Iterator it = n->m_groupElements.begin(); it != n->m_groupElements.end(); ++it)
+            GroupElementList::Iterator it = n->m_groupElements.begin();
+            while (it != n->m_groupElements.end())
             {
-//               GroupElement *e = *it;
-              if (parentGroupStr.isEmpty() && (*it)->group->appendToTags)
+              GroupElement *e = *it;
+              if (parentGroupStr.isEmpty() && e->group->appendToTags)
               {
-                parentGroupStr = (*it)->group->parentGroup;
+                parentGroupStr = e->group->parentGroup;
               }
-              if (!parentGroupStr.isEmpty() && (*it)->group->name == parentGroupStr)
+              if (!parentGroupStr.isEmpty() && e->group->name == parentGroupStr)
               {
-                classStr = (*it)->tag->name;
+                classStr = e->tag->name;
                 classFound = true;
               }
               //detach the groupelement from the node
-              (*it)->node = 0L;
-              (*it)->deleted = true;
+              e->node = 0L;
+              e->group = 0L;
+              e->deleted = true;
+              it = n->m_groupElements.erase(it);
             }
             delete gParser;
             n = n->parent;
