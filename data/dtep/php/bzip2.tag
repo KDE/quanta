@@ -1,40 +1,40 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="bzclose" type="function" returnType="int">
-		<attr name="bz" type="resource"></attr>
+	<tag name="bzclose" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="bz" type="resource" status="required"></attr>
 	</tag>
-	<tag name="bzcompress" type="function" returnType="string">
-		<attr name="source" type="string"></attr>
+	<tag name="bzcompress" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="source" type="string" status="required"></attr>
 		<attr name="blocksize" type="int" status="optional"></attr>
 		<attr name="workfactor" type="int" status="optional"></attr>
 	</tag>
-	<tag name="bzdecompress" type="function" returnType="string">
-		<attr name="source" type="string"></attr>
+	<tag name="bzdecompress" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="source" type="string" status="required"></attr>
 		<attr name="small" type="int" status="optional"></attr>
 	</tag>
-	<tag name="bzerrno" type="function" returnType="int">
-		<attr name="bz" type="resource"></attr>
+	<tag name="bzerrno" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="bz" type="resource" status="required"></attr>
 	</tag>
-	<tag name="bzerror" type="function" returnType="array">
-		<attr name="bz" type="resource"></attr>
+	<tag name="bzerror" type="function" returnType="array" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="bz" type="resource" status="required"></attr>
 	</tag>
-	<tag name="bzerrstr" type="function" returnType="string">
-		<attr name="bz" type="resource"></attr>
+	<tag name="bzerrstr" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="bz" type="resource" status="required"></attr>
 	</tag>
-	<tag name="bzflush" type="function" returnType="int">
-		<attr name="bz" type="resource"></attr>
+	<tag name="bzflush" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="bz" type="resource" status="required"></attr>
 	</tag>
-	<tag name="bzopen" type="function" returnType="resource">
-		<attr name="filename" type="string"></attr>
-		<attr name="mode" type="string"></attr>
+	<tag name="bzopen" type="function" returnType="resource" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="filename" type="string" status="required"></attr>
+		<attr name="mode" type="string" status="required"></attr>
 	</tag>
-	<tag name="bzread" type="function" returnType="string">
-		<attr name="bz" type="resource"></attr>
+	<tag name="bzread" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="bz" type="resource" status="required"></attr>
 		<attr name="length" type="int" status="optional"></attr>
 	</tag>
-	<tag name="bzwrite" type="function" returnType="int">
-		<attr name="bz" type="resource"></attr>
-		<attr name="data" type="string"></attr>
+	<tag name="bzwrite" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="bz" type="resource" status="required"></attr>
+		<attr name="data" type="string" status="required"></attr>
 		<attr name="length" type="int" status="optional"></attr>
 	</tag>
 </tags>

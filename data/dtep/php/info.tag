@@ -1,118 +1,118 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="assert_options" type="function" returnType="mixed">
-		<attr name="what" type="int"></attr>
+	<tag name="assert_options" type="function" returnType="mixed" langVersion="PHP 4 , PHP 5">
+		<attr name="what" type="int" status="required"></attr>
 		<attr name="value" type="mixed" status="optional"></attr>
 	</tag>
-	<tag name="assert" type="function" returnType="int">
-		<attr name="assertion" type="mixed"></attr>
+	<tag name="assert" type="function" returnType="int" langVersion="PHP 4 , PHP 5">
+		<attr name="assertion" type="mixed" status="required"></attr>
 	</tag>
-	<tag name="dl" type="function" returnType="int">
-		<attr name="library" type="string"></attr>
+	<tag name="dl" type="function" returnType="int" langVersion="PHP 3, PHP 4 , PHP 5">
+		<attr name="library" type="string" status="required"></attr>
 	</tag>
-	<tag name="extension_loaded" type="function" returnType="bool">
-		<attr name="name" type="string"></attr>
+	<tag name="extension_loaded" type="function" returnType="bool" langVersion="PHP 3&gt;= 3.0.10, PHP 4 , PHP 5">
+		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="get_cfg_var" type="function" returnType="string">
-		<attr name="varname" type="string"></attr>
+	<tag name="get_cfg_var" type="function" returnType="string" langVersion="PHP 3, PHP 4 , PHP 5">
+		<attr name="varname" type="string" status="required"></attr>
 	</tag>
-	<tag name="get_current_user" type="function" returnType="string">
+	<tag name="get_current_user" type="function" returnType="string" langVersion="PHP 3, PHP 4 , PHP 5">
 	</tag>
-	<tag name="get_defined_constants" type="function" returnType="array">
+	<tag name="get_defined_constants" type="function" returnType="array" langVersion="PHP 4 &gt;= 4.1.0, PHP 5">
 		<attr name="categorize" type="mixed" status="optional"></attr>
 	</tag>
-	<tag name="get_extension_funcs" type="function" returnType="array">
-		<attr name="module_name" type="string"></attr>
+	<tag name="get_extension_funcs" type="function" returnType="array" langVersion="PHP 4 , PHP 5">
+		<attr name="module_name" type="string" status="required"></attr>
 	</tag>
-	<tag name="get_include_path" type="function" returnType="string">
+	<tag name="get_include_path" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
 	</tag>
-	<tag name="get_included_files" type="function" returnType="array">
+	<tag name="get_included_files" type="function" returnType="array" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="get_loaded_extensions" type="function" returnType="array">
+	<tag name="get_loaded_extensions" type="function" returnType="array" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="get_magic_quotes_gpc" type="function" returnType="int">
+	<tag name="get_magic_quotes_gpc" type="function" returnType="int" langVersion="PHP 3&gt;= 3.0.6, PHP 4 , PHP 5">
 	</tag>
-	<tag name="get_magic_quotes_runtime" type="function" returnType="int">
+	<tag name="get_magic_quotes_runtime" type="function" returnType="int" langVersion="PHP 3&gt;= 3.0.6, PHP 4 , PHP 5">
 	</tag>
-	<tag name="" type="function" returnType="">
+	<tag name="" type="function" returnType="" langVersion="; as the functiontable at ">
 	</tag>
-	<tag name="getenv" type="function" returnType="string">
-		<attr name="varname" type="string"></attr>
+	<tag name="getenv" type="function" returnType="string" langVersion="PHP 3, PHP 4 , PHP 5">
+		<attr name="varname" type="string" status="required"></attr>
 	</tag>
-	<tag name="getlastmod" type="function" returnType="int">
+	<tag name="getlastmod" type="function" returnType="int" langVersion="PHP 3, PHP 4 , PHP 5">
 	</tag>
-	<tag name="getmygid" type="function" returnType="int">
+	<tag name="getmygid" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.1.0, PHP 5">
 	</tag>
-	<tag name="getmyinode" type="function" returnType="int">
+	<tag name="getmyinode" type="function" returnType="int" langVersion="PHP 3, PHP 4 , PHP 5">
 	</tag>
-	<tag name="getmypid" type="function" returnType="int">
+	<tag name="getmypid" type="function" returnType="int" langVersion="PHP 3, PHP 4 , PHP 5">
 	</tag>
-	<tag name="getmyuid" type="function" returnType="int">
+	<tag name="getmyuid" type="function" returnType="int" langVersion="PHP 3, PHP 4 , PHP 5">
 	</tag>
-	<tag name="getopt" type="function" returnType="array">
-		<attr name="options" type="string"></attr>
+	<tag name="getopt" type="function" returnType="array" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
+		<attr name="options" type="string" status="required"></attr>
 		<attr name="longopts" type="array" status="optional"></attr>
 	</tag>
-	<tag name="getrusage" type="function" returnType="array">
+	<tag name="getrusage" type="function" returnType="array" langVersion="PHP 3&gt;= 3.0.7, PHP 4 , PHP 5">
 		<attr name="who" type="int" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="">
+	<tag name="" type="function" returnType="" langVersion="; as the functiontable at ">
 	</tag>
-	<tag name="ini_get_all" type="function" returnType="array">
+	<tag name="ini_get_all" type="function" returnType="array" langVersion="PHP 4 &gt;= 4.2.0, PHP 5">
 		<attr name="extension" type="string" status="optional"></attr>
 	</tag>
-	<tag name="ini_get" type="function" returnType="string">
-		<attr name="varname" type="string"></attr>
+	<tag name="ini_get" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
+		<attr name="varname" type="string" status="required"></attr>
 	</tag>
-	<tag name="ini_restore" type="function" returnType="void">
-		<attr name="varname" type="string"></attr>
+	<tag name="ini_restore" type="function" returnType="void" langVersion="PHP 4 , PHP 5">
+		<attr name="varname" type="string" status="required"></attr>
 	</tag>
-	<tag name="ini_set" type="function" returnType="string">
-		<attr name="varname" type="string"></attr>
-		<attr name="newvalue" type="string"></attr>
+	<tag name="ini_set" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
+		<attr name="varname" type="string" status="required"></attr>
+		<attr name="newvalue" type="string" status="required"></attr>
 	</tag>
-	<tag name="" type="function" returnType="">
+	<tag name="" type="function" returnType="" langVersion="; as the functiontable at ">
 	</tag>
-	<tag name="memory_get_usage" type="function" returnType="int">
+	<tag name="memory_get_usage" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.3.2, PHP 5">
 	</tag>
-	<tag name="php_ini_scanned_files" type="function" returnType="string">
+	<tag name="php_ini_scanned_files" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
 	</tag>
-	<tag name="php_logo_guid" type="function" returnType="string">
+	<tag name="php_logo_guid" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="php_sapi_name" type="function" returnType="string">
+	<tag name="php_sapi_name" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.0.1, PHP 5">
 	</tag>
-	<tag name="php_uname" type="function" returnType="string">
+	<tag name="php_uname" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.0.2, PHP 5">
 		<attr name="mode" type="string" status="optional"></attr>
 	</tag>
-	<tag name="phpcredits" type="function" returnType="void">
+	<tag name="phpcredits" type="function" returnType="void" langVersion="PHP 4 , PHP 5">
 		<attr name="flag" type="int" status="optional"></attr>
 	</tag>
-	<tag name="phpinfo" type="function" returnType="int">
+	<tag name="phpinfo" type="function" returnType="int" langVersion="PHP 3, PHP 4 , PHP 5">
 		<attr name="what" type="int" status="optional"></attr>
 	</tag>
-	<tag name="phpversion" type="function" returnType="string">
+	<tag name="phpversion" type="function" returnType="string" langVersion="PHP 3, PHP 4 , PHP 5">
 	</tag>
-	<tag name="putenv" type="function" returnType="void">
-		<attr name="setting" type="string"></attr>
+	<tag name="putenv" type="function" returnType="void" langVersion="PHP 3, PHP 4 , PHP 5">
+		<attr name="setting" type="string" status="required"></attr>
 	</tag>
-	<tag name="restore_include_path" type="function" returnType="void">
+	<tag name="restore_include_path" type="function" returnType="void" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
 	</tag>
-	<tag name="set_include_path" type="function" returnType="string">
-		<attr name="new_include_path" type="string"></attr>
+	<tag name="set_include_path" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
+		<attr name="new_include_path" type="string" status="required"></attr>
 	</tag>
-	<tag name="set_magic_quotes_runtime" type="function" returnType="bool">
-		<attr name="new_setting" type="int"></attr>
+	<tag name="set_magic_quotes_runtime" type="function" returnType="bool" langVersion="PHP 3&gt;= 3.0.6, PHP 4 , PHP 5">
+		<attr name="new_setting" type="int" status="required"></attr>
 	</tag>
-	<tag name="set_time_limit" type="function" returnType="void">
-		<attr name="seconds" type="int"></attr>
+	<tag name="set_time_limit" type="function" returnType="void" langVersion="PHP 3, PHP 4 , PHP 5">
+		<attr name="seconds" type="int" status="required"></attr>
 	</tag>
-	<tag name="version_compare" type="function" returnType="int">
-		<attr name="version1" type="string"></attr>
-		<attr name="version2" type="string"></attr>
+	<tag name="version_compare" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.1.0, PHP 5">
+		<attr name="version1" type="string" status="required"></attr>
+		<attr name="version2" type="string" status="required"></attr>
 		<attr name="operator" type="string" status="optional"></attr>
 	</tag>
-	<tag name="zend_logo_guid" type="function" returnType="string">
+	<tag name="zend_logo_guid" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="zend_version" type="function" returnType="string">
+	<tag name="zend_version" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
 	</tag>
 </tags>

@@ -1,46 +1,46 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="flush" type="function" returnType="void">
+	<tag name="flush" type="function" returnType="void" langVersion="PHP 3, PHP 4 , PHP 5">
 	</tag>
-	<tag name="ob_clean" type="function" returnType="void">
+	<tag name="ob_clean" type="function" returnType="void" langVersion="PHP 4 &gt;= 4.2.0, PHP 5">
 	</tag>
-	<tag name="ob_end_clean" type="function" returnType="bool">
+	<tag name="ob_end_clean" type="function" returnType="bool" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="ob_end_flush" type="function" returnType="bool">
+	<tag name="ob_end_flush" type="function" returnType="bool" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="ob_flush" type="function" returnType="void">
+	<tag name="ob_flush" type="function" returnType="void" langVersion="PHP 4 &gt;= 4.2.0, PHP 5">
 	</tag>
-	<tag name="ob_get_clean" type="function" returnType="string">
+	<tag name="ob_get_clean" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
 	</tag>
-	<tag name="ob_get_contents" type="function" returnType="string">
+	<tag name="ob_get_contents" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="ob_get_flush" type="function" returnType="string">
+	<tag name="ob_get_flush" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
 	</tag>
-	<tag name="ob_get_length" type="function" returnType="int">
+	<tag name="ob_get_length" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.0.2, PHP 5">
 	</tag>
-	<tag name="ob_get_level" type="function" returnType="int">
+	<tag name="ob_get_level" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.2.0, PHP 5">
 	</tag>
-	<tag name="ob_get_status" type="function" returnType="array">
+	<tag name="ob_get_status" type="function" returnType="array" langVersion="PHP 4 &gt;= 4.2.0, PHP 5">
 		<attr name="full_status" type="bool" status="optional"></attr>
 	</tag>
-	<tag name="ob_gzhandler" type="function" returnType="string">
-		<attr name="buffer" type="string"></attr>
-		<attr name="mode" type="int"></attr>
+	<tag name="ob_gzhandler" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
+		<attr name="buffer" type="string" status="required"></attr>
+		<attr name="mode" type="int" status="required"></attr>
 	</tag>
-	<tag name="ob_implicit_flush" type="function" returnType="void">
+	<tag name="ob_implicit_flush" type="function" returnType="void" langVersion="PHP 4 , PHP 5">
 		<attr name="flag" type="int" status="optional"></attr>
 	</tag>
-	<tag name="ob_list_handlers" type="function" returnType="array">
+	<tag name="ob_list_handlers" type="function" returnType="array" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
 	</tag>
-	<tag name="ob_start" type="function" returnType="bool">
+	<tag name="ob_start" type="function" returnType="bool" langVersion="PHP 4 , PHP 5">
 		<attr name="output_callback" type="callback" status="optional"></attr>
 		<attr name="chunk_size" type="int" status="optional"></attr>
 		<attr name="erase" type="bool" status="optional"></attr>
 	</tag>
-	<tag name="output_add_rewrite_var" type="function" returnType="bool">
-		<attr name="name" type="string"></attr>
-		<attr name="value" type="string"></attr>
+	<tag name="output_add_rewrite_var" type="function" returnType="bool" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
+		<attr name="name" type="string" status="required"></attr>
+		<attr name="value" type="string" status="required"></attr>
 	</tag>
-	<tag name="output_reset_rewrite_vars" type="function" returnType="bool">
+	<tag name="output_reset_rewrite_vars" type="function" returnType="bool" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
 	</tag>
 </tags>

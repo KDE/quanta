@@ -1,26 +1,26 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="header" type="function" returnType="void">
-		<attr name="string" type="string"></attr>
+	<tag name="header" type="function" returnType="void" langVersion="PHP 3, PHP 4 , PHP 5">
+		<attr name="string" type="string" status="required"></attr>
 		<attr name="replace" type="bool" status="optional"></attr>
 		<attr name="http_response_code" type="int" status="optional"></attr>
 	</tag>
-	<tag name="headers_list" type="function" returnType="array">
+	<tag name="headers_list" type="function" returnType="array" langVersion="PHP 5">
 	</tag>
-	<tag name="headers_sent" type="function" returnType="bool">
+	<tag name="headers_sent" type="function" returnType="bool" langVersion="PHP 3&gt;= 3.0.8, PHP 4 , PHP 5">
 		<attr name="&amp;file" type="string" status="optional"></attr>
 		<attr name="&amp;line" type="int" status="optional"></attr>
 	</tag>
-	<tag name="setcookie" type="function" returnType="bool">
-		<attr name="name" type="string"></attr>
+	<tag name="setcookie" type="function" returnType="bool" langVersion="PHP 3, PHP 4 , PHP 5">
+		<attr name="name" type="string" status="required"></attr>
 		<attr name="value" type="string" status="optional"></attr>
 		<attr name="expire" type="int" status="optional"></attr>
 		<attr name="path" type="string" status="optional"></attr>
 		<attr name="domain" type="string" status="optional"></attr>
 		<attr name="secure" type="bool" status="optional"></attr>
 	</tag>
-	<tag name="setrawcookie" type="function" returnType="bool">
-		<attr name="name" type="string"></attr>
+	<tag name="setrawcookie" type="function" returnType="bool" langVersion="PHP 5">
+		<attr name="name" type="string" status="required"></attr>
 		<attr name="value" type="string" status="optional"></attr>
 		<attr name="expire" type="int" status="optional"></attr>
 		<attr name="path" type="string" status="optional"></attr>

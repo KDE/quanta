@@ -1,64 +1,64 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="session_cache_expire" type="function" returnType="int">
+	<tag name="session_cache_expire" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.2.0, PHP 5">
 		<attr name="new_cache_expire" type="int" status="optional"></attr>
 	</tag>
-	<tag name="session_cache_limiter" type="function" returnType="string">
+	<tag name="session_cache_limiter" type="function" returnType="string" langVersion="PHP 4 &gt;= 4.0.3, PHP 5">
 		<attr name="cache_limiter" type="string" status="optional"></attr>
 	</tag>
-	<tag name="" type="function" returnType="">
+	<tag name="" type="function" returnType="" langVersion="; as the functiontable at ">
 	</tag>
-	<tag name="session_decode" type="function" returnType="bool">
-		<attr name="data" type="string"></attr>
+	<tag name="session_decode" type="function" returnType="bool" langVersion="PHP 4 , PHP 5">
+		<attr name="data" type="string" status="required"></attr>
 	</tag>
-	<tag name="session_destroy" type="function" returnType="bool">
+	<tag name="session_destroy" type="function" returnType="bool" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="session_encode" type="function" returnType="string">
+	<tag name="session_encode" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="session_get_cookie_params" type="function" returnType="array">
+	<tag name="session_get_cookie_params" type="function" returnType="array" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="session_id" type="function" returnType="string">
+	<tag name="session_id" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
 		<attr name="id" type="string" status="optional"></attr>
 	</tag>
-	<tag name="session_is_registered" type="function" returnType="bool">
-		<attr name="name" type="string"></attr>
+	<tag name="session_is_registered" type="function" returnType="bool" langVersion="PHP 4 , PHP 5">
+		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="session_module_name" type="function" returnType="string">
+	<tag name="session_module_name" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
 		<attr name="module" type="string" status="optional"></attr>
 	</tag>
-	<tag name="session_name" type="function" returnType="string">
+	<tag name="session_name" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
 		<attr name="name" type="string" status="optional"></attr>
 	</tag>
-	<tag name="session_regenerate_id" type="function" returnType="bool">
+	<tag name="session_regenerate_id" type="function" returnType="bool" langVersion="PHP 4 &gt;= 4.3.2, PHP 5">
 	</tag>
-	<tag name="session_register" type="function" returnType="bool">
-		<attr name="name" type="mixed"></attr>
+	<tag name="session_register" type="function" returnType="bool" langVersion="PHP 4 , PHP 5">
+		<attr name="name" type="mixed" status="required"></attr>
 		<attr name="..." type="mixed" status="optional"></attr>
 	</tag>
-	<tag name="session_save_path" type="function" returnType="string">
+	<tag name="session_save_path" type="function" returnType="string" langVersion="PHP 4 , PHP 5">
 		<attr name="path" type="string" status="optional"></attr>
 	</tag>
-	<tag name="session_set_cookie_params" type="function" returnType="void">
-		<attr name="lifetime" type="int"></attr>
+	<tag name="session_set_cookie_params" type="function" returnType="void" langVersion="PHP 4 , PHP 5">
+		<attr name="lifetime" type="int" status="required"></attr>
 		<attr name="path" type="string" status="optional"></attr>
 		<attr name="domain" type="string" status="optional"></attr>
 		<attr name="secure" type="bool" status="optional"></attr>
 	</tag>
-	<tag name="session_set_save_handler" type="function" returnType="bool">
-		<attr name="open" type="string"></attr>
-		<attr name="close" type="string"></attr>
-		<attr name="read" type="string"></attr>
-		<attr name="write" type="string"></attr>
-		<attr name="destroy" type="string"></attr>
-		<attr name="gc" type="string"></attr>
+	<tag name="session_set_save_handler" type="function" returnType="bool" langVersion="PHP 4 , PHP 5">
+		<attr name="open" type="string" status="required"></attr>
+		<attr name="close" type="string" status="required"></attr>
+		<attr name="read" type="string" status="required"></attr>
+		<attr name="write" type="string" status="required"></attr>
+		<attr name="destroy" type="string" status="required"></attr>
+		<attr name="gc" type="string" status="required"></attr>
 	</tag>
-	<tag name="session_start" type="function" returnType="bool">
+	<tag name="session_start" type="function" returnType="bool" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="session_unregister" type="function" returnType="bool">
-		<attr name="name" type="string"></attr>
+	<tag name="session_unregister" type="function" returnType="bool" langVersion="PHP 4 , PHP 5">
+		<attr name="name" type="string" status="required"></attr>
 	</tag>
-	<tag name="session_unset" type="function" returnType="void">
+	<tag name="session_unset" type="function" returnType="void" langVersion="PHP 4 , PHP 5">
 	</tag>
-	<tag name="session_write_close" type="function" returnType="void">
+	<tag name="session_write_close" type="function" returnType="void" langVersion="PHP 4 &gt;= 4.0.4, PHP 5">
 	</tag>
 </tags>

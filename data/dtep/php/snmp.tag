@@ -1,65 +1,65 @@
 <!DOCTYPE tags>
 <tags>
-	<tag name="snmp_get_quick_print" type="function" returnType="bool">
+	<tag name="snmp_get_quick_print" type="function" returnType="bool" langVersion="PHP 3&gt;= 3.0.8, PHP 4 , PHP 5">
 	</tag>
-	<tag name="snmp_get_valueretrieval" type="function" returnType="int">
+	<tag name="snmp_get_valueretrieval" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.3.3, PHP 5">
 	</tag>
-	<tag name="snmp_read_mib" type="function" returnType="int">
-		<attr name="filename" type="string"></attr>
+	<tag name="snmp_read_mib" type="function" returnType="int" langVersion="PHP 5">
+		<attr name="filename" type="string" status="required"></attr>
 	</tag>
-	<tag name="snmp_set_enum_print" type="function" returnType="void">
-		<attr name="enum_print" type="int"></attr>
+	<tag name="snmp_set_enum_print" type="function" returnType="void" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
+		<attr name="enum_print" type="int" status="required"></attr>
 	</tag>
-	<tag name="snmp_set_oid_numeric_print" type="function" returnType="void">
-		<attr name="oid_numeric_print" type="int"></attr>
+	<tag name="snmp_set_oid_numeric_print" type="function" returnType="void" langVersion="PHP 4 &gt;= 4.3.0, PHP 5">
+		<attr name="oid_numeric_print" type="int" status="required"></attr>
 	</tag>
-	<tag name="snmp_set_quick_print" type="function" returnType="void">
-		<attr name="quick_print" type="bool"></attr>
+	<tag name="snmp_set_quick_print" type="function" returnType="void" langVersion="PHP 3&gt;= 3.0.8, PHP 4 , PHP 5">
+		<attr name="quick_print" type="bool" status="required"></attr>
 	</tag>
-	<tag name="snmp_set_valueretrieval" type="function" returnType="int">
-		<attr name="method" type="int"></attr>
+	<tag name="snmp_set_valueretrieval" type="function" returnType="int" langVersion="PHP 4 &gt;= 4.3.3, PHP 5">
+		<attr name="method" type="int" status="required"></attr>
 	</tag>
-	<tag name="snmpget" type="function" returnType="string">
-		<attr name="hostname" type="string"></attr>
-		<attr name="community" type="string"></attr>
-		<attr name="object_id" type="string"></attr>
+	<tag name="snmpget" type="function" returnType="string" langVersion="PHP 3, PHP 4 , PHP 5">
+		<attr name="hostname" type="string" status="required"></attr>
+		<attr name="community" type="string" status="required"></attr>
+		<attr name="object_id" type="string" status="required"></attr>
 		<attr name="timeout" type="int" status="optional"></attr>
 		<attr name="retries" type="int" status="optional"></attr>
 	</tag>
-	<tag name="snmpgetnext" type="function" returnType="string">
-		<attr name="host" type="string"></attr>
-		<attr name="community" type="string"></attr>
-		<attr name="object_id" type="string"></attr>
+	<tag name="snmpgetnext" type="function" returnType="string" langVersion="PHP 5">
+		<attr name="host" type="string" status="required"></attr>
+		<attr name="community" type="string" status="required"></attr>
+		<attr name="object_id" type="string" status="required"></attr>
 		<attr name="timeout" type="int" status="optional"></attr>
 		<attr name="retries" type="int" status="optional"></attr>
 	</tag>
-	<tag name="snmprealwalk" type="function" returnType="array">
-		<attr name="host" type="string"></attr>
-		<attr name="community" type="string"></attr>
-		<attr name="object_id" type="string"></attr>
+	<tag name="snmprealwalk" type="function" returnType="array" langVersion="PHP 3&gt;= 3.0.8, PHP 4 , PHP 5">
+		<attr name="host" type="string" status="required"></attr>
+		<attr name="community" type="string" status="required"></attr>
+		<attr name="object_id" type="string" status="required"></attr>
 		<attr name="timeout" type="int" status="optional"></attr>
 		<attr name="retries" type="int" status="optional"></attr>
 	</tag>
-	<tag name="snmpset" type="function" returnType="bool">
-		<attr name="hostname" type="string"></attr>
-		<attr name="community" type="string"></attr>
-		<attr name="object_id" type="string"></attr>
-		<attr name="type" type="string"></attr>
-		<attr name="value" type="mixed"></attr>
+	<tag name="snmpset" type="function" returnType="bool" langVersion="PHP 3&gt;= 3.0.12, PHP 4 , PHP 5">
+		<attr name="hostname" type="string" status="required"></attr>
+		<attr name="community" type="string" status="required"></attr>
+		<attr name="object_id" type="string" status="required"></attr>
+		<attr name="type" type="string" status="required"></attr>
+		<attr name="value" type="mixed" status="required"></attr>
 		<attr name="timeout" type="int" status="optional"></attr>
 		<attr name="retries" type="int" status="optional"></attr>
 	</tag>
-	<tag name="snmpwalk" type="function" returnType="array">
-		<attr name="hostname" type="string"></attr>
-		<attr name="community" type="string"></attr>
-		<attr name="object_id" type="string"></attr>
+	<tag name="snmpwalk" type="function" returnType="array" langVersion="PHP 3, PHP 4 , PHP 5">
+		<attr name="hostname" type="string" status="required"></attr>
+		<attr name="community" type="string" status="required"></attr>
+		<attr name="object_id" type="string" status="required"></attr>
 		<attr name="timeout" type="int" status="optional"></attr>
 		<attr name="retries" type="int" status="optional"></attr>
 	</tag>
-	<tag name="snmpwalkoid" type="function" returnType="array">
-		<attr name="hostname" type="string"></attr>
-		<attr name="community" type="string"></attr>
-		<attr name="object_id" type="string"></attr>
+	<tag name="snmpwalkoid" type="function" returnType="array" langVersion="PHP 3&gt;= 3.0.8, PHP 4 , PHP 5">
+		<attr name="hostname" type="string" status="required"></attr>
+		<attr name="community" type="string" status="required"></attr>
+		<attr name="object_id" type="string" status="required"></attr>
 		<attr name="timeout" type="int" status="optional"></attr>
 		<attr name="retries" type="int" status="optional"></attr>
 	</tag>
