@@ -245,7 +245,7 @@
     <Action name="debug_kill" />
     <Separator />
     <Action name="debug_breakpoints_toggle" />
-  </Toolbar>
+  </ToolBar>
 
   <ActionProperties>
     <Action accel="Ctrl+Return" name="tag_br" />
