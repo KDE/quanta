@@ -128,7 +128,7 @@ void SCOPELIST::assign(SCOPELIST *pscopelist) {
 	clear();
 	if (pscopelist) {
 		for (it = pscopelist->begin(); it != pscopelist->end(); it++) {
-			item = it;
+			item = &(*it);
 			memcpy(&newitem, item, sizeof(newitem));
 			newitem.scope_descr = (item->scope_descr) ? strdup(item->scope_descr) : NULL;
 			push_back(newitem);
@@ -154,7 +154,7 @@ void BREAKPOINTLIST::assign(BREAKPOINTLIST *list) {
 	clear();
 	if (!list) return;
 	for (it = list->begin(); it != list->end(); it++) {
-		ititem = it;
+		ititem = &(*it);
 		memcpy(&item, ititem, sizeof(item));
 		item.mod_name = (ititem->mod_name) ? strdup(ititem->mod_name) : NULL;
 		push_back(item);
@@ -195,7 +195,7 @@ void BREAKPOINTLIST::add(const BPOINTITEM bpm, const char *mod_name) {
 		if (it->mod_no == bpitem.mod_no &&
 			strcmp(it->mod_name, bpitem.mod_name) == 0 &&
 			it->line_no == bpitem.line_no) {
-			pbpitem = it;
+			pbpitem = &(*it);
 			found = true;
 			break;
 		}
@@ -225,7 +225,7 @@ void DOCLIST::assign(DOCLIST *list) {
 	clear();
 	if (!list) return;
 	for (it = list->begin(); it != list->end(); it++) {
-		ititem = it;
+		ititem = &(*it);
 		memcpy(&item, ititem, sizeof(item));
 		item.mod_name = (ititem->mod_name) ? strdup(ititem->mod_name) : NULL;
 		push_back(item);
@@ -280,7 +280,7 @@ void LINESINFOLIST::assign(LINESINFOLIST *li) {
 	clear();
 	if (!li) return;
 	for (it = li->begin(); it != li->end(); it++) {
-		ititem = it;
+		ititem = &(*it);
 		memcpy(&item, ititem, sizeof(item));		
 		push_back(item);
 	}
