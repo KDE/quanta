@@ -791,7 +791,7 @@ void QuantaInit::initActions()
                         m_quanta, SLOT( slotDocumentProperties() ),
                         ac, "tools_document_properties" );
                         
-    (void) new KAction ( i18n ("F&ormat Code"), 0, 
+    (void) new KAction ( i18n ("F&ormat XML Code"), 0, 
                         m_quanta, SLOT( slotCodeFormatting() ),
                         ac, "tools_code_formatting");
 #endif
