@@ -88,6 +88,8 @@ class QuantaView : public QWidget
   void insertNewTag(QString tag, QString attr = QString::null,bool insertInLine = true);
   /** Returns the basePath of the document. */
   QString basePath();
+  /** True if a Document object exists, false otherwise. */
+  bool writeExists();
 
 	public slots:
 

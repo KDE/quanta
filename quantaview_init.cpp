@@ -33,6 +33,7 @@
 #include <kstddirs.h>
 #include <kmenubar.h>
 #include <kiconloader.h>
+#include <kmessagebox.h>
 
 #include <ktexteditor/viewcursorinterface.h>
 
@@ -99,7 +100,13 @@ QuantaView::~QuantaView()
 /** return current KWrite class */
 Document* QuantaView::write()
 {
-  return dynamic_cast<Document *>(writeTab->currentPage());
+  Document *w = dynamic_cast<Document *>(writeTab->currentPage());
+  if (!w)
+  {
+    KMessageBox::error(this, i18n("If you see this, you are in big trouble as Quanta may crash."));
+  }
+
+  return w;
 }
 
 /** Add new kwrite class to writeStack and return id in stack */
@@ -115,9 +122,12 @@ void QuantaView::addWrite( Document* w , QString label )
 /** remove KWrite class from stack, return id of new KWrite */
 Document* QuantaView::removeWrite()
 {
-  Document *w = write();
-  writeTab->removePage( w );
-  return write();
+  if (writeExists())
+  {
+    Document *w = write();
+    writeTab->removePage( w );
+  }
+  return dynamic_cast<Document *>(writeTab->currentPage()); //don't call write() here
 }
 
 void QuantaView::initActions()
@@ -208,8 +218,8 @@ void QuantaView::initActions()
 /** No descriptions */
 void QuantaView::resizeEvent (QResizeEvent *)
 {
- if (write() !=0)
-   write()->view()->resize(writeTab->size().width()-5, writeTab->size().height()-35);
+  if (writeExists())
+     write()->view()->resize(writeTab->size().width()-5, writeTab->size().height()-35);
 }
 
 void QuantaView::dragEnterEvent(QDragEnterEvent *e)
@@ -220,4 +230,9 @@ void QuantaView::dragEnterEvent(QDragEnterEvent *e)
 void QuantaView::dropEvent(QDropEvent *e)
 {
   emit dragInsert(e);
+}
+/** True if a Document object exists, false otherwise. */
+bool QuantaView::writeExists()
+{
+ return (dynamic_cast<Document *>(writeTab->currentPage()))?true:false;
 }

@@ -63,7 +63,8 @@ void TagAction::insertTag()
   QString space="";
   unsigned int line, col;
 
-  dynamic_cast<KTextEditor::ViewCursorInterface *> (view_->write()->view())->cursorPosition(&line, &col);
+  Document *w = view_->write();
+  dynamic_cast<KTextEditor::ViewCursorInterface *> (w->view())->cursorPosition(&line, &col);
 	space.fill( ' ', col);
 
   QString type = tag.attribute("type","");
@@ -84,12 +85,9 @@ void TagAction::insertTag()
      attr = attr.remove(0,i).stripWhiteSpace();
 
      if ( otag.attribute("useDialog","false") == "true" )
-    {
+     {
 
          view_->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
-//         TagDialog *dlg = new TagDialog( view_->write(), name, s, xtag.attribute("inLine","true") == "true" );
-//         dlg->show();
-
      }
      else
      {
@@ -106,20 +104,20 @@ void TagAction::insertTag()
        {
          if ( xtag.attribute("inLine","true") == "true" )
          {
-           view_->write()->insertTag( s1, s2 );
+           w->insertTag( s1, s2 );
          }
          else
          {
-           view_->write()->insertTag( s1+"\n"+space+"  ", "\n"+space+s2 );
+           w->insertTag( s1+"\n"+space+"  ", "\n"+space+s2 );
          }
        }
        else
-         view_->write()->insertTag( s1 );
+         w->insertTag( s1 );
      }
   }
 
   if ( type == "text" )
-    view_->write()->insertTag( tag.namedItem("text").toElement().text() );
+    w->insertTag( tag.namedItem("text").toElement().text() );
 
   if ( type == "script" ) {
 
@@ -130,8 +128,8 @@ void TagAction::insertTag()
     QString command = script.text();
 
 
-    if ( !view_->write()->isUntitled() ) {
-      QString fname = view_->write()->url().url();
+    if ( !w->isUntitled() ) {
+      QString fname = w->url().url();
       if ( fname.left(5) == "file:")
         fname.remove(0,5);
       command.replace( QRegExp("%f"), fname );
@@ -158,12 +156,12 @@ void TagAction::insertTag()
     scriptErrorDest  = script.attribute("error","none");
 
     if ( inputType == "current" ) {
-    	buffer = dynamic_cast<KTextEditor::EditInterface*> (view_->write()->doc())->text();
+    	buffer = dynamic_cast<KTextEditor::EditInterface*> (w->doc())->text();
       proc->writeStdin( buffer.local8Bit(), buffer.length() );
     }
 
     if ( inputType == "selected" ) {
-    	buffer = dynamic_cast<KTextEditor::SelectionInterface*>(view_->write()->doc())->selection();
+    	buffer = dynamic_cast<KTextEditor::SelectionInterface*>(w->doc())->selection();
       proc->writeStdin( buffer.local8Bit(), buffer.length() );
     }
     proc->closeStdin();
@@ -173,74 +171,82 @@ void TagAction::insertTag()
 
 void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 {
-    QCString tmp( buffer, buflen + 1 );
-    QString text( tmp );
+  QCString tmp( buffer, buflen + 1 );
+  QString text( tmp );
+  Document *w = view_->write();
 
+  if ( scriptOutputDest == "cursor" )
+      w->insertTag( text );
 
-    if ( scriptOutputDest == "cursor" )
-        view_->write()->insertTag( text );
+  if ( scriptOutputDest == "replace" )
+  {
+    if ( firstOutput )
+       dynamic_cast<KTextEditor::EditInterface*>(w->doc())->clear();
+    w->insertTag( text );
+  }
 
-    if ( scriptOutputDest == "replace" ) {
-        if ( firstOutput )
-            dynamic_cast<KTextEditor::EditInterface*>(view_->write()->doc())->clear();
-        view_->write()->insertTag( text );
+  if ( scriptOutputDest == "new" )
+  {
+    if ( firstOutput )
+        view_->getDoc()->openDocument( KURL() );
+    w->insertTag( text );
+  }
+
+  if ( scriptOutputDest == "message" )
+  {
+    MessageOutput *appMessages = view_->getApp()->getMessages();
+    if ( firstOutput )
+    {
+      appMessages->clear();
+      appMessages->insertItem( i18n( "Script output:\n" ) );
     }
+    appMessages->showMessage( text );
+  }
 
-    if ( scriptOutputDest == "new" ) {
-        if ( firstOutput )
-            view_->getDoc()->openDocument( KURL() );
-        view_->write()->insertTag( text );
-    }
-
-    if ( scriptOutputDest == "message" ) {
-        if ( firstOutput ) {
-            view_->getApp()->getMessages()->clear();
-            view_->getApp()->getMessages()->insertItem( i18n( "Script output:\n" ) );
-        }
-
-        view_->getApp()->getMessages()->showMessage( text );
-    }
-
-    firstOutput = false;
+  firstOutput = false;
 }
 
 void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
 {
-    QCString tmp( buffer, buflen + 1 );
-    QString text( tmp );
+  Document *w = view_->write();
+  QCString tmp( buffer, buflen + 1 );
+  QString text( tmp );
 
-    if ( scriptErrorDest == "merge" ) {
-       	scriptErrorDest = scriptOutputDest;
-  	      firstError = firstOutput;
+  if ( scriptErrorDest == "merge" )
+  {
+    scriptErrorDest = scriptOutputDest;
+    firstError = firstOutput;
+  }
+
+  if ( scriptErrorDest == "cursor" )
+     w->insertTag( text );
+
+  if ( scriptErrorDest == "replace" )
+  {
+    if ( firstOutput )
+       dynamic_cast<KTextEditor::EditInterface*>(w->doc())->clear();
+    w->insertTag( text );
+  }
+
+  if ( scriptErrorDest == "new" )
+  {
+    if ( firstOutput )
+       view_->getDoc()->openDocument( KURL() );
+    w->insertTag( text );
+  }
+
+  if ( scriptErrorDest == "message" )
+  {
+    MessageOutput *appMessages = view_->getApp()->getMessages();
+    if ( firstError )
+    {
+      appMessages->clear();
+      appMessages->insertItem( i18n( "Script output:\n" ) );
     }
+    appMessages->showMessage( text );
+  }
 
-    if ( scriptErrorDest == "cursor" )
-        view_->write()->insertTag( text );
-
-    if ( scriptErrorDest == "replace" ) {
-        if ( firstOutput )
-            dynamic_cast<KTextEditor::EditInterface*>(view_->write()->doc())->clear();
-        view_->write()->insertTag( text );
-    }
-
-    if ( scriptErrorDest == "new" ) {
-        if ( firstOutput )
-            view_->getDoc()->openDocument( KURL() );
-        view_->write()->insertTag( text );
-    }
-
-    if ( scriptErrorDest == "message" ) {
-        if ( firstError ) {
-            view_->getApp()->getMessages()->clear();
-            view_->getApp()->getMessages()->insertItem( i18n( "Script output:\n" ) );
-        }
-
-        view_->getApp()->getMessages()->showMessage( text );
-    }
-
-
-
-    firstError = false;
+  firstError = false;
 }
 
 void TagAction::scriptDone()

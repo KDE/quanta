@@ -70,17 +70,19 @@ class QuantaDoc : public QObject
     bool saveAll(bool dont_ask=true);
 
     Document *write();
+    Document *newWrite(QWidget *parent);
 		
 		// for kwrites
 		void  readConfig( KConfig * );
 		void writeConfig( KConfig * );
 		
 		QStringList openedFiles(bool noUntitled=true);
-    void changeFileTabName(QString oldUrl, QString newUrl = QString::null );
+  /** No descriptions */
+   QDict<Document> *docList() {return m_docList;}
+   void changeFileTabName(QString oldUrl, QString newUrl = QString::null );
 		
   private:
     bool newDocument (const KURL&);
-    Document *newWrite(QWidget *parent);
 	
   public slots:
     /** close documents. */
@@ -104,7 +106,7 @@ class QuantaDoc : public QObject
   	
   	QuantaApp *app;
     /** list with documents( kwrites ) */
-    QDict<Document> *docList;
+    QDict<Document> *m_docList;
     /** manager for bookmarks */
     //KWriteManager *writeManager;
 

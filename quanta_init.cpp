@@ -128,7 +128,6 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );
   t->start( 2000, false );
   QTimer::singleShot(10,this, SLOT(slotFileNew()) );
-//  setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
 
 //  KParts::ReadOnlyPart *m_cervisia =  KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>( "libcervisia.so",this);
 
@@ -526,13 +525,11 @@ void QuantaApp::readOptions()
 
   doc    ->readConfig(config); // kwrites
   project->readConfig(config); // project
-  if (doc->write() !=0 )
+
+  if (view->writeExists() && view->write()->isUntitled())
   {
-    if (doc->write()->isUntitled())
-    {
-       doc->closeDocument();
-      doc->newDocument(KURL());
-    }
+    doc->closeDocument();
+    doc->newDocument(KURL());
   }
 
   debuggerStyle = "None";
@@ -630,11 +627,8 @@ bool QuantaApp::queryExit()
   {
     do
     {
-      if (view->write() !=0)
-      {
-        view->write()->closeTempFile();
-	  	  doc->docList->remove( doc->url().url() );
-      }
+      view->write()->closeTempFile();
+  	  doc->docList()->remove( doc->url().url() );
 	  }while (view->removeWrite());
   }
   return canExit;
@@ -873,7 +867,7 @@ void QuantaApp::readTagDir(QString &dirName)
 
  dtdConfig->setGroup("Extra rules");
  dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
- int startEndVariations = dtdConfig->readNumEntry("Start/end variations");
+ uint startEndVariations = dtdConfig->readNumEntry("Start/end variations");
  for (uint i = 0 ; i < startEndVariations; i++)
  {
    dtd->startTags.append(dtdConfig->readEntry(QString("Start%1").arg(i)));

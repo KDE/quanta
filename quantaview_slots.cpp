@@ -172,11 +172,11 @@ void QuantaView::slotTagMisc()
   		tag += "<" + QuantaCommon::attrCase(element)+">";
   	  	if ( (addClosingTag = miscDlg->addClosingTag->isChecked()) == true)
         {
-           	write()->insertTag(tag,QuantaCommon::tagCase( "</"+QuantaCommon::attrCase(element)+">"));
-         } else
-         {
-		    write()->insertTag(tag,QuantaCommon::tagCase(""));
-         }
+          write()->insertTag(tag,QuantaCommon::tagCase( "</"+QuantaCommon::attrCase(element)+">"));
+        } else
+        {
+		      write()->insertTag(tag,QuantaCommon::tagCase(""));
+        }
   	}  	
   }
   delete miscDlg;
@@ -321,9 +321,9 @@ void QuantaView::slotTagQuickTable()
  	 	tag += "  </tbody>\n";
  	 	tag += QString("</table>");
   	
- 	  	write()->insertTag( QuantaCommon::tagCase(tag) );
+  	write()->insertTag( QuantaCommon::tagCase(tag) );
   }
-  delete( quickDlg);
+  delete quickDlg;
 }
 
 /** Open color Dialog and insert color in the text */
@@ -355,30 +355,31 @@ void QuantaView::slotTagSelect(){
 
 void QuantaView::slotViewInNetscape()
 {
-  if (write()->isModified())
+  Document *w = write();
+  if (w->isModified())
   {
     dontShowSavePreview = "AskForSaveBeforePreview";
     if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
          Do you want to save and preview?"),i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
-      if (write()->isUntitled())
+      if (w->isUntitled())
       {
        getApp()->slotFileSaveAs();
       }
       else
       {
-       write()->doc()->save();
+       w->doc()->save();
       }
     } else
     {
       return;
     }
   }
-  if ( !write()->isUntitled() )
+  if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    QString url = app->project->urlWithPrefix(write()->url());
+    QString url = app->project->urlWithPrefix(w->url());
 
     *show << "netscape" << "-remote" << QString(QString("openURL(")+url+")").data();
     connect( show, SIGNAL(processExited(KProcess *)), this, SLOT(slotNetscapeStatus(KProcess *)));
@@ -388,30 +389,31 @@ void QuantaView::slotViewInNetscape()
 
 void QuantaView::slotViewInKFM()
 {
-  if (write()->isModified())
+  Document *w = write();
+  if (w->isModified())
   {
     dontShowSavePreview = "AskForSaveBeforePreview";
     if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
          Do you want to save and preview?"),i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
-      if (write()->isUntitled())
+      if (w->isUntitled())
       {
        getApp()->slotFileSaveAs();
       }
       else
       {
-       write()->doc()->save();
+       w->doc()->save();
       }
     } else
     {
       return;
     }
   }
-  if ( !write()->isUntitled() )
+  if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    QString url = app->project->urlWithPrefix(write()->url());
+    QString url = app->project->urlWithPrefix(w->url());
     *show << "kfmclient" << "exec" << url;
     show->start( KProcess::DontCare );
   }
@@ -419,30 +421,31 @@ void QuantaView::slotViewInKFM()
 
 void QuantaView::slotViewInLynx()
 {
-  if (write()->isModified())
+  Document *w = write();
+  if (w->isModified())
   {
     dontShowSavePreview = "AskForSaveBeforePreview";
     if ( KMessageBox::questionYesNo(this,i18n("The file must be saved before external preview.\n \
          Do you want to save and preview?"),i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
-      if (write()->isUntitled())
+      if (w->isUntitled())
       {
        getApp()->slotFileSaveAs();
       }
       else
       {
-       write()->doc()->save();
+       w->doc()->save();
       }
     } else
     {
       return;
     }
   }
-  if ( !write()->isUntitled() )
+  if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    QString url = app->project->urlWithPrefix(write()->url());
+    QString url = app->project->urlWithPrefix(w->url());
     *show << "konsole"
           << "--nohist"
           << "--notoolbar"
@@ -492,12 +495,13 @@ void QuantaView::slotNewCurPos()
 /** get output */
 void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
 {
+  Document *w = write();
 
   QString output(buffer);
   output.truncate(buflen);
 
   if ( scriptOutputDest == "cursor" )
-  	write()->insertTag(output);
+  	w->insertTag(output);
 
   if ( scriptOutputDest == "message" ) {
 
@@ -515,13 +519,13 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
   {
 		 if ( beginOfScriptOutput )
         doc->openDocument( KURL() );
-     write()->insertTag(output);
+     w->insertTag(output);
   }
 
   if ( scriptOutputDest == "replace" ) 
   {
-		 if ( beginOfScriptOutput ) write()->editIf->clear();
-     write()->insertTag(output);
+		 if ( beginOfScriptOutput ) w->editIf->clear();
+     w->insertTag(output);
   }
 
   beginOfScriptOutput = false;
@@ -531,6 +535,7 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
 /** get output */
 void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
 {
+  Document *w = write();
 
   QString output(buffer);
   output.truncate(buflen);
@@ -541,7 +546,7 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
   }
 
   if ( scriptErrorDest == "cursor" )
-  	write()->insertTag(output);
+  	w->insertTag(output);
 
   if ( scriptErrorDest == "message" ) {
 
@@ -559,13 +564,13 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
   {
 		 if ( beginOfScriptError )
         doc->openDocument( KURL() );
-     write()->insertTag(output);
+     w->insertTag(output);
   }
 
   if ( scriptErrorDest == "replace" ) 
   {
 		 if ( beginOfScriptError ) write()->editIf->clear();
-     write()->insertTag(output);
+     w->insertTag(output);
   }
 
   beginOfScriptError = false;
@@ -575,31 +580,35 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
 /** insert clipboard contents (but quote them for HTML first) */
 void QuantaView::slotPasteHTMLQuoted()
 {
-    QClipboard *cb = qApp->clipboard();
-    QString text = cb->text();
+  Document *w = write();
+  QClipboard *cb = qApp->clipboard();
+  QString text = cb->text();
 
-    if ( ( !text.isNull() ) && (!text.isEmpty() ) ) {
-        text.replace( QRegExp( I18N_NOOP( "&" ) ), I18N_NOOP( "&amp;" ) );
-        text.replace( QRegExp( I18N_NOOP( "<" ) ), I18N_NOOP( "&lt;" ) );
-        text.replace( QRegExp( I18N_NOOP( "\"" ) ), I18N_NOOP( "&quot;" ) );
-        unsigned int line, col;
-        write()->viewCursorIf->cursorPosition(&line, &col);
-        write()->editIf->insertText(line, col, text );
-    }
+  if ( ( !text.isNull() ) && (!text.isEmpty() ) )
+  {
+    text.replace( QRegExp( I18N_NOOP( "&" ) ), I18N_NOOP( "&amp;" ) );
+    text.replace( QRegExp( I18N_NOOP( "<" ) ), I18N_NOOP( "&lt;" ) );
+    text.replace( QRegExp( I18N_NOOP( "\"" ) ), I18N_NOOP( "&quot;" ) );
+    unsigned int line, col;
+    w->viewCursorIf->cursorPosition(&line, &col);
+    w->editIf->insertText(line, col, text );
+  }
 }
 
 /** insert clipboard contents (but quote them as a URL first) */
 void QuantaView::slotPasteURLEncoded()
 {
-    QClipboard *cb = qApp->clipboard();
-    QString text = cb->text();
+  Document *w = write();
+  QClipboard *cb = qApp->clipboard();
+  QString text = cb->text();
 
-    if ( ( !text.isNull() ) && (!text.isEmpty() ) ) {
-        text = KURL::encode_string( text );
-        unsigned int line, col;
-        write()->viewCursorIf->cursorPosition(&line, &col);
-        write()->editIf->insertText(line, col, text );
-    }
+  if ( ( !text.isNull() ) && (!text.isEmpty() ) )
+  {
+    text = KURL::encode_string( text );
+    unsigned int line, col;
+    w->viewCursorIf->cursorPosition(&line, &col);
+    w->editIf->insertText(line, col, text );
+  }
 }
 
 
@@ -742,11 +751,12 @@ void QuantaView::setEol(int which)
 }
 
 /** insert special character */
-void QuantaView::slotInsertChar(const QString &selected){
+void QuantaView::slotInsertChar(const QString &selected)
+{
 	int begin = selected.find("(")+1;
-    int length = selected.find(")") - begin;
+  int length = selected.find(")") - begin;
 	QString part = selected.mid(begin, length);
-    write()->insertTag(part);
+  write()->insertTag(part);
 }
 
 /** Insert a new tag by bringing up the TagDialog. */
@@ -756,7 +766,6 @@ void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
   Document *w = write();
 
   TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), attr, basePath());
-//  dlg->setBasePath(w); //It is very important to call this function!!!
   if (dlg->exec())
   {
    dlg->insertTag(w, insertInLine);

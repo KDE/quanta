@@ -67,7 +67,7 @@ QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObje
 {
 	this->app = app;
 
-  docList = new QDict<Document>(1);
+  m_docList = new QDict<Document>(1);
 
 
   attribMenu = new KPopupMenu(i18n("Tag :"));
@@ -80,48 +80,35 @@ QuantaDoc::~QuantaDoc()
 
 KURL QuantaDoc::url()
 {
-  KURL furl = write()->url();
-  
+  KURL furl = "Untitled1.html";
+
+  if (app->view->writeExists()) furl = write()->url();
+
   return furl;
 }
 
 QString QuantaDoc::basePath()
 {
-/*	 if (write()->isUntitled())
-	 {
-	   if ( app->project->hasProject())
-	   {
-	     return  app->project->basePath;
-	   } else
-	   {
-	   	return QExtFileInfo::home();
-	   }
-	 }  else
-	 {
-	 	return QExtFileInfo::path( furl );
-	 }*/
   if  ( app->project->hasProject())
   {
      return  app->project->basePath;
   } else
   {
-  	if  ( (write() == 0L) ||  (write()->isUntitled()) )
+  	if  ( !app->view->writeExists() || write()->isUntitled() )
   	{
     	return QExtFileInfo::home();
   	} else
   	{
-		KURL furl = url();
+	   	KURL furl = url();
   		return  QExtFileInfo::path( furl );
   	}
   }
-
-//	return (write()->isUntitled()) ? ( app->project->hasProject()?app->project->basePath:QExtFileInfo::home() ) : QExtFileInfo::path( furl );
 }
 
 QStringList QuantaDoc::openedFiles(bool noUntitled)
 {
   QStringList list;
-  QDictIterator<Document> it( *docList );
+  QDictIterator<Document> it( *m_docList );
   
   while ( Document *w = it.current() )
   {
@@ -138,29 +125,32 @@ bool QuantaDoc::newDocument( const KURL& url )
   bool newfile = false;
   QString furl = url.url();
   if ( furl.isEmpty() ) newfile = true;
+  Document *w;
   
-  if ( !docList->find( furl ) || newfile ) // open new
+  if ( !m_docList->find( furl ) || newfile ) // open new
   {
-    if ( write() ) // check if first kwrite exists
+    // no modi and new -> we can remove                           !!!!
+    if (app->view->writeExists())
     {
-      // no modi and new -> we can remove                           !!!!
-      if ( !write()->isModified() &&
-            write()->isUntitled() && !write()->busy) return true;
+      w = write();
+      if ( !w->isModified() &&
+            w->isUntitled() && !w->busy) return true;
     }
+
     // now we can create new kwrite
-    Document *w = newWrite( app->view->writeTab);
+    w = newWrite( app->view->writeTab);
 
     if ( newfile ) furl = w->url().url();
 
-  	app ->view  ->addWrite( w, QExtFileInfo::shortName(w->url().url()) );
+  	app ->view->addWrite( w, QExtFileInfo::shortName(w->url().url()) );
 
     app->processDTD(defaultDocType);
   	
-  	docList->insert( w->url().url(), w );
+  	m_docList->insert( w->url().url(), w );
   }
   else // select opened
   {
-  	 Document *w = docList->find( furl );	
+    w = m_docList->find( furl );	
     app ->view->writeTab->showPage( w );
   	return false; // don't need loadURL
   }
@@ -170,42 +160,35 @@ bool QuantaDoc::newDocument( const KURL& url )
 
 void QuantaDoc::openDocument(const KURL& url)
 {
-  Document *ww = write();
+//  Document *ww = write();
   if ( !newDocument( url )) return;
-  if ( !url.url().isEmpty()) {
+  if ( !url.url().isEmpty())
+  {
 //    write()->busy = true;
 
-    if (write()->doc()->openURL( url ))
+    Document *w = write();
+    if (w->doc()->openURL( url ))
     {
-      Document *w = write();
+      QDictIterator<Document> it(*m_docList);
 
-      QDictIterator<Document> it(*docList);
+   	  QString defUrl;
+   	  while ( it.current() )
+   	  {
+        if ( w == it.current() ) defUrl = it.currentKey();
+  	    ++it;
+   	  }
 
-    	QString defUrl;
-    	while ( it.current() )
-    	{
- 	      if ( w == it.current() ) defUrl = it.currentKey();
-    	  ++it;
-    	}
- 	
+    app ->view->writeTab->showPage( w );
+    changeFileTabName(defUrl);
+    app->fileRecent->addURL( w->url() );
 
-     app ->view->writeTab->showPage( w );
-  	
-     changeFileTabName(defUrl);
+    emit newStatus();
+    app->repaintPreview();
 
-     app->fileRecent->addURL( w->url() );
-
-
-     emit newStatus();
-     app->repaintPreview();
-
-     app->processDTD();
-
-     app->reparse();
+    app->processDTD();
+    app->reparse();
     }
-
   }
-  ww = write();
   write()->createTempFile();
 
   emit title( url.url() );
@@ -216,7 +199,7 @@ void QuantaDoc::finishLoadURL(KWrite *_w)
 {
   Document *w = (Document *)_w;
 
-  QDictIterator<Document> it(*docList);
+  QDictIterator<Document> it(*m_docList);
 
  	QString defUrl;
  	while ( it.current() )
@@ -241,16 +224,17 @@ void QuantaDoc::finishLoadURL(KWrite *_w)
 void QuantaDoc::saveDocument(const KURL& url)
 {
 	QString defUrl = this->url().url();
+  Document *w = write();
 
   if ( !url.url().isEmpty())
   {
-    if (!write()->doc()->saveAs( url ))
+    if (!w->doc()->saveAs( url ))
     {
       KMessageBox::error(app, i18n("Saving of the document failed.\nMaybe you should try to save in another directory."));
     }
-    write()->closeTempFile();
-    write()->createTempFile();
-//    write()->setURL( url, false );
+    w->closeTempFile();
+    w->createTempFile();
+//  w->setURL( url, false );
   }
 
   // fix
@@ -274,7 +258,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
 //FIXME: I don't like the switching through the pages... We must optimize this. (Andras)
  Document *currentDoc = static_cast<Document*>(app ->view->writeTab->currentPage());
 
-  QDictIterator<Document> it( *docList );
+  QDictIterator<Document> it( *m_docList );
 
   while ( Document *w = it.current() ) 
   {
@@ -306,7 +290,7 @@ void QuantaDoc::closeDocument()
 {
 	if ( !saveModified() ) return;
   write()->closeTempFile();
-	docList->remove( url().url() );
+	m_docList->remove( url().url() );
 	if ( !app->view->removeWrite()) openDocument( KURL() );
 }
 
@@ -314,11 +298,11 @@ void QuantaDoc::closeAll()
 {
   do
   {
-    if (app->view->write() !=0)
+    if (app->view->writeExists())
     {
-  	  if ( !saveModified() ) return;
-      app->view->write()->closeTempFile();
-		  docList->remove( url().url() );
+	    if ( !saveModified() ) return;
+      write()->closeTempFile();
+		  m_docList->remove( url().url() );
     }
 	}
 	while ( app->view->removeWrite());
@@ -331,7 +315,7 @@ void QuantaDoc::readConfig( KConfig *config )
 {
   config -> sync();
 
-  QDictIterator<Document> it( *docList );
+  QDictIterator<Document> it( *m_docList );
 
   while ( Document *w = it.current() ) 
   {
@@ -398,7 +382,7 @@ bool QuantaDoc::saveModified()
 
 bool QuantaDoc::isModified()
 {
-  if (write() != 0)
+  if (app->view->writeExists())
   {
     return write()->isModified();
   } else
@@ -411,10 +395,10 @@ bool QuantaDoc::isModifiedAll()
 {
   bool modified = false;
 
-  QDictIterator<Document> it( *docList );
+  QDictIterator<Document> it( *m_docList );
 
-  while ( Document *twrite = it.current() ) {
-    if ( twrite->isModified() ) modified = true;
+  while ( Document *w = it.current() ) {
+    if ( w->isModified() ) modified = true;
     ++it;
   }
 
@@ -436,7 +420,7 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 {
   int i = 1;
   QString fname;
-  while ( docList->find( fname.sprintf("Untitled%i.html",i) ) ) i++;
+  while ( m_docList->find( fname.sprintf("Untitled%i.html",i) ) ) i++;
   
 //  KTextEditor::Document *doc = KTextEditor::createDocument("katepart");
 
@@ -491,22 +475,23 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 /** show popup menu with list of attributes for current tag */
 void QuantaDoc::slotAttribPopup()
 {
-  attribMenu->clear();
+  Document *w = write();
 
-  write()->currentTag();
-  QString tag = write()->getTagAttr(0);
+  attribMenu->clear();
+  w->currentTag();
+  QString tag = w->getTagAttr(0);
   QStrIList attrList = QStrIList();
   QString name;
 
-  for (int i=1; i < write()->tagAttrNum; i++ )
-      attrList.append( write()->getTagAttr(i) );
+  for (int i=1; i < w->tagAttrNum; i++ )
+      attrList.append( w->getTagAttr(i) );
 
-  if ( QuantaCommon::isKnownTag(write()->getDTDIdentifier(),tag) )
+  if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tag) )
   {
     QString caption = QString(i18n("Attributes of <"))+tag+">";
     attribMenu->setTitle( caption );
 
-    AttributeList *list = QuantaCommon::tagAttributes(write()->getDTDIdentifier(),tag );
+    AttributeList *list = QuantaCommon::tagAttributes(w->getDTDIdentifier(),tag );
     uint menuId = 0;
     for ( uint i = 0; i < list->count(); i++ )
     {
@@ -519,7 +504,7 @@ void QuantaDoc::slotAttribPopup()
       menuId++;
     }
 
-    QTag* qtag = QuantaCommon::tagFromDTD(write()->getDTDIdentifier(), tag);
+    QTag* qtag = QuantaCommon::tagFromDTD(w->getDTDIdentifier(), tag);
     for (QStringList::Iterator it = qtag->commonGroups.begin(); it != qtag->commonGroups.end(); ++it)
     {
      QPopupMenu* popUpMenu = new QPopupMenu(attribMenu, (*it).latin1());
@@ -541,7 +526,7 @@ void QuantaDoc::slotAttribPopup()
     {
       attribMenu->setActiveItem( 0);
 
-      QPoint globalPos = write()->getGlobalCursorPos();
+      QPoint globalPos = w->getGlobalCursorPos();
       attribMenu->exec( globalPos );
     }
   }
@@ -554,13 +539,14 @@ void QuantaDoc::slotAttribPopup()
 
 void QuantaDoc::slotInsertAttrib( int id )
 {
-  write()->currentTag();
-  QString tag = write()->getTagAttr(0);
+  Document *w = write();
+  w->currentTag();
+  QString tag = w->getTagAttr(0);
   
-  if ( QuantaCommon::isKnownTag(write()->getDTDIdentifier(),tag) )
+  if ( QuantaCommon::isKnownTag(w->getDTDIdentifier(),tag) )
   {
     int menuId;
-    AttributeList *list = QuantaCommon::tagAttributes(write()->getDTDIdentifier(),tag.data() );
+    AttributeList *list = QuantaCommon::tagAttributes(w->getDTDIdentifier(),tag.data() );
     menuId = list->count();
     QString attrStr;
     if (id <= menuId)
@@ -568,7 +554,7 @@ void QuantaDoc::slotInsertAttrib( int id )
       attrStr = list->at(id)->name;
     } else
     {
-      QTag* qtag = QuantaCommon::tagFromDTD(write()->getDTDIdentifier(), tag);
+      QTag* qtag = QuantaCommon::tagFromDTD(w->getDTDIdentifier(), tag);
       for (QStringList::Iterator it = qtag->commonGroups.begin(); it != qtag->commonGroups.end(); ++it)
       {
         AttributeList *attrs = qtag->parentDTD->commonAttrs->find(*it);
@@ -580,7 +566,7 @@ void QuantaDoc::slotInsertAttrib( int id )
         }
       }
     }
-    write()->insertAttrib( attrStr);
+    w->insertAttrib( attrStr);
   }
 
   delete attribMenu;
@@ -595,7 +581,7 @@ void QuantaDoc::prevDocument()
 
   Document *new_d;
 
-  QDictIterator<Document> it(*docList);
+  QDictIterator<Document> it(*m_docList);
 
   new_d = it.toFirst();
 
@@ -618,7 +604,7 @@ void QuantaDoc::nextDocument()
 
   Document *new_d = 0 , *prev = 0;
 
-  QDictIterator<Document> it(*docList);
+  QDictIterator<Document> it(*m_docList);
 
   while ( it.current() ) {
   	new_d = it.current();
@@ -647,12 +633,12 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
 	
   if ( oldUrl != newUrl )
   {
-    docList->remove( oldUrl );
-    docList->insert( newUrl, write() );
+    m_docList->remove( oldUrl );
+    m_docList->insert( newUrl, write() );
   }
   
-  QDictIterator<Document> it1(*docList);
-// QDictIterator<Document> it2(*docList);
+  QDictIterator<Document> it1(*m_docList);
+// QDictIterator<Document> it2(*m_docList);
 
 // 	int i,len;
  	while ( it1.current() )
@@ -705,5 +691,6 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
                                
 void QuantaDoc::undoHistory() {/*write()->undoHistory();*/}
 void QuantaDoc::invertSelect(){/*write()->invertSelection();*/}
+
 
 #include "quantadoc.moc"
