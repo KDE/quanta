@@ -373,6 +373,8 @@ public slots:
 
   /** Reload the tree of the StructTreeView */
   void slotReloadStructTreeView();
+  
+  void slotReportBug();
 
 protected slots:
   /** No descriptions */

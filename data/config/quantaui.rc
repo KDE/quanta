@@ -181,7 +181,7 @@
       <Action name="help_homepage" />
       <Action name="help_userlist" />
       <Action name="help_donation"/>
-      <Action name="help_report_bug" />
+      <Action name="help_reportbug" />
       <Action name="help_tip" />
       <Separator />
       <Action name="help_about_app" />

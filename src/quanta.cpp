@@ -42,6 +42,8 @@
 #include <qclipboard.h>
 
 // include files for KDE
+#include <kaboutdata.h>
+#include <kbugreport.h>
 #include <kcombobox.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
@@ -4168,6 +4170,13 @@ QString QuantaApp::saveCurrentFile()
   }
   KURL url = project()->urlWithPrefix(w->url());
   return url.url();
+}
+
+void QuantaApp::slotReportBug()
+{
+  KAboutData aboutData( "quanta", I18N_NOOP("Quanta"), VERSION);
+  KBugReport bugReportDlg(this, true, &aboutData);
+  bugReportDlg.exec();
 }
 
 #include "quanta.moc"

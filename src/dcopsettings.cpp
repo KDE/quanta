@@ -27,7 +27,9 @@ DCOPSettings::DCOPSettings() : DCOPObject("SettingsIf")
  
 QString DCOPSettings::encoding()
 {
-  return quantaApp->defaultEncoding();
+  QString encoding = quantaApp->defaultEncoding();
+  encoding.replace("iso ", "iso-"); //it's said that "iso-8859-x" is the valid format
+  return encoding;
 }
 
 QString DCOPSettings::dtep()

@@ -36,7 +36,7 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin></makebin>
+      <makebin/>
       <envvars>
         <envvar value="1" name="WANT_AUTOCONF_2_5" />
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
@@ -48,7 +48,7 @@
     </compiler>
     <run>
       <mainprogram>quanta/src/quanta_be</mainprogram>
-      <programargs></programargs>
+      <programargs/>
       <terminal>false</terminal>
       <envvars/>
       <directoryradio>build</directoryradio>
@@ -63,15 +63,15 @@
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary></ccompilerbinary>
-        <cxxcompilerbinary></cxxcompilerbinary>
-        <f77compilerbinary></f77compilerbinary>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
         <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cxxflags>
-        <f77flags></f77flags>
+        <f77flags/>
         <topsourcedir>/home/andris/development/sources/kde-head/kdewebdev</topsourcedir>
-        <cppflags></cppflags>
-        <ldflags></ldflags>
+        <cppflags/>
+        <ldflags/>
       </default>
       <withkommander>
         <configargs>--enable-debug=full --prefix=/opt/kde3</configargs>
@@ -166,16 +166,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell></dbgshell>
-      <programargs></programargs>
+      <dbgshell/>
+      <programargs/>
       <gdbpath>/usr/bin/</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
     </general>
     <display>
       <staticmembers>false</staticmembers>

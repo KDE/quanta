@@ -1631,7 +1631,7 @@ void QuantaApp::initTagDict()
 
 void QuantaApp::initActions()
 {
-  KActionCollection *ac = actionCollection();
+    KActionCollection *ac = actionCollection();
 
     editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         m_view, SLOT( slotEditCurrentTag() ),
@@ -1640,6 +1640,7 @@ void QuantaApp::initActions()
                         this, SLOT( slotExpandAbbreviation() ),
                         ac, "expand_abbreviation" );
 
+    new KAction(i18n("&Report Bug..."), 0, this, SLOT(slotReportBug()), ac, "help_reportbug"); //needed, because quanta_be bugs should be reported for quanta
     //Kate actions
 
 //Edit menu

@@ -9,7 +9,8 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
         - increase timeout for network operations to 60s [#73173]
         - don't crash on upload if the current tab holds a plugin [#72912]
         - always enable the Open and Open Project buttons
-        - various parsing fixes
+        - various parsing fixes        
+        - report bugs for "quanta" module, not for "quanta_be"        
     - performance:
         - delayed parsing: reparse only if there was no keypress for some time
     - behavioral changes:

@@ -28,6 +28,8 @@
 #include <qregexp.h>
 #include <qradiobutton.h>
 
+#include <qclipboard.h>
+
 // KDE includes
 #include <kapplication.h>
 #include <kwin.h>
@@ -2053,6 +2055,7 @@ void Document::setChanged(bool newStatus)
 void Document::paste()
 {
   reparseEnabled = false;
+  kdDebug(24000) << "Clipboard: " << kapp->clipboard()->text(QClipboard::Clipboard) << endl;
   dynamic_cast<KTextEditor::ClipboardInterface*>(view())->paste();
   reparseEnabled = true;
   baseNode = parser->rebuild(this);
