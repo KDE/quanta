@@ -1,7 +1,7 @@
 /***************************************************************************
                           quantadoc.h  -  description
                              -------------------
-    begin                : Втр Май  9 13:29:57 EEST 2000
+    begin                : О©╫О©╫О©╫О©╫ 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
                            (C) 2001-2003 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
@@ -43,8 +43,6 @@ public slots:
   void slotInsertAttrib( int id );
   void slotAttribPopup();
 
-  /** Called when a file on the disk has changed. */
-  void slotFileDirty(const QString& fileName);
   void slotOpeningCompleted(const KURL &url);
   void slotOpeningFailed(const KURL &url);
 

@@ -236,6 +236,8 @@ private slots:
   void slotReplaceChar();
   void slotOpeningCompleted();
   void slotOpeningFailed(const QString &errorMessage);
+  /** Called when a file on the disk has changed. */
+  void slotFileDirty(const QString& fileName);
 
 private:
 

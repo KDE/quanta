@@ -79,7 +79,6 @@
 QuantaDoc::QuantaDoc(QWidget *parent, const char *name) : QObject(parent, name)
 {
   fileWatcher = new KDirWatch(this);
-  connect(fileWatcher, SIGNAL(dirty(const QString&)),SLOT(slotFileDirty(const QString&)));
 
   attribMenu = new KPopupMenu();
   attribMenu->insertTitle(i18n("Tag"));
@@ -164,7 +163,6 @@ bool switchToExisting)
      return;
   }
   Document *w = ViewManager::ref()->activeDocument();
-  bool loaded = false;
   if (!url.isEmpty())
   {
     if (QExtFileInfo::exists(url))
@@ -213,6 +211,7 @@ bool switchToExisting)
 
 void QuantaDoc::slotOpeningFailed(const KURL &url)
 {
+    Q_UNUSED(url);
     bool signalStatus = signalsBlocked();
     blockSignals(false);
     emit hideSplash();
@@ -356,32 +355,5 @@ void QuantaDoc::slotInsertAttrib( int id )
   }
 }
 
-/// SLOTS
-
-/** Called when a file on the disk has changed. */
-void QuantaDoc::slotFileDirty(const QString& fileName)
-{
-    Document *w;
-    KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
-    QuantaView *view;
-    for (it->first(); !it->isDone(); it->next())
-    {
-        view = dynamic_cast<QuantaView*>(it->currentItem());
-        if (view)
-        {
-            w = view->document();
-            if ( w && w->url().path() == fileName && !w->dirty())
-            {
-              w->setDirtyStatus(true);
-              Document *activeW = ViewManager::ref()->activeDocument();
-              if (activeW && w == activeW)
-              {
-                  w->checkDirtyStatus();
-              }
-            }
-        }
-    }
-    delete it;
-}
 
 #include "quantadoc.moc"

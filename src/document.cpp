@@ -201,6 +201,7 @@ Document::Document(KTextEditor::Document *doc,
 
   connect(m_view, SIGNAL(gotFocus(Kate::View*)), SIGNAL(editorGotFocus()));
 
+  connect(fileWatcher, SIGNAL(dirty(const QString&)), SLOT(slotFileDirty(const QString&)));
 }
 
 Document::~Document()
@@ -2641,5 +2642,18 @@ void Document::processDTD(const QString& documentType)
   delete tag;
 }
 
+
+/** Called when a file on the disk has changed. */
+void Document::slotFileDirty(const QString& fileName)
+{
+  if ( url().path() == fileName && !dirty() )
+  {
+    setDirtyStatus(true);
+    if (this == ViewManager::ref()->activeDocument())
+    {
+      checkDirtyStatus();
+    }
+  }
+}
 
 #include "document.moc"
