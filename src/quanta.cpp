@@ -532,7 +532,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
     stream << content;
     tempFile->file()->flush();
     tempFile->close();
-    if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), url, -1, true, this))
+    if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), url, -1, true, false,  this))
       KMessageBox::error(this, i18n("<qt>There was an error while creating the template file.<br>Check that you have write access to <i>%1</i>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Template Creation Error"));
     delete tempFile;
   } else
@@ -2398,7 +2398,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   if (!tar.writeFile(QFileInfo(tarFile.path()).baseName()+".actions", "user", "group", buffer2.buffer().size(), buffer2.buffer().data()))
       return KURL();
   tar.close();
-  if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), tarFile, -1, true, this))
+  if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), tarFile, -1, true, false, this))
       KMessageBox::error(this, i18n("<qt>There was an error while creating the toolbar file.<br>Check that you have write access to <i>%1</i>.</qt>").arg(tarFile.prettyURL(0, KURL::StripFileProtocol)), i18n("Toolbar Saving Error"));
 
   return tarFile;

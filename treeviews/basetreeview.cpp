@@ -896,7 +896,7 @@ void BaseTreeView::slotCreateSiteTemplate()
       tar.close();
    } else
       error = true;
-   if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), targetURL, -1, true, this))
+   if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), targetURL, -1, true, false, this))
      error = true;
 
    if (error)
