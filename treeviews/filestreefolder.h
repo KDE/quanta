@@ -19,7 +19,7 @@
 #ifndef FILESTREEFOLDER_H
 #define FILESTREEFOLDER_H
 
-#include <qlistview.h>
+#include <klistview.h>
 #include <qstringlist.h>
 
 #include <kurl.h>
@@ -29,7 +29,7 @@ class QDropEvent;
 class FilesTreeView;
 
 
-class FilesTreeFolder:public QListViewItem{
+class FilesTreeFolder:public KListViewItem{
 public:
   FilesTreeFolder( QListView * parentListView, FilesTreeFolder * parent, const KURL& p_url);
   FilesTreeFolder( QListView * parentListView, const QString &p_name, const KURL& p_url);

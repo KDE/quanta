@@ -100,7 +100,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   
 
 
-  connect(this, SIGNAL(doubleClicked(QListViewItem *)),
+  connect(this, SIGNAL(executed(QListViewItem *)),
           this, SLOT  (slotSelectFile(QListViewItem *)));
   connect(this, SIGNAL(selectionChanged(QListViewItem *)),
           this, SLOT  (slotSelectImage(QListViewItem *)));

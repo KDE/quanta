@@ -19,7 +19,8 @@
 #define DOCFOLDER_H
 
 #include <qwidget.h>
-#include <qlistview.h>
+
+#include <klistview.h>
 
 /**
 Class for forlder for
@@ -30,7 +31,7 @@ Doc tree
 
 class KConfig;
 
-class DocFolder : public QListViewItem  {
+class DocFolder : public KListViewItem  {
 //   Q_OBJECT
 public:
 	DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath);

@@ -24,7 +24,7 @@
 #include "../quantacommon.h"
 
 UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
-	QListView(parent, name)
+	KListView(parent, name)
 {
 	setRootIsDecorated( true );
 	setSorting( 0 );
@@ -40,7 +40,7 @@ UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
 
 	connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
-	connect(  this, SIGNAL(clicked(QListViewItem *)),
+	connect(  this, SIGNAL(executed(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
 }
 

@@ -20,7 +20,8 @@
 #define STRUCTTREETAG_H
 
 #include <qwidget.h>
-#include <qlistview.h>
+
+#include <klistview.h>
 
 class Tag;
 class Node;
@@ -28,7 +29,7 @@ class Node;
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
 
-class StructTreeTag : public QListViewItem  {
+class StructTreeTag : public KListViewItem  {
 
 public: 
 	StructTreeTag(QListView *parent, QString name = QString::null );

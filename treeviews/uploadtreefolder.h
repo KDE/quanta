@@ -18,11 +18,12 @@
 #ifndef UPLOADTREEFOLDER_H
 #define UPLOADTREEFOLDER_H
 
-#include <qlistview.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qstring.h>
 #include <qstringlist.h>
+
+#include <klistview.h>
 
 /**
   *@author Andras Mantia
@@ -30,7 +31,7 @@
 
 class KURL;
   
-class UploadTreeFolder : public QListViewItem  {
+class UploadTreeFolder : public KListViewItem  {
 public:
 	UploadTreeFolder( const KURL &a_url, QListView * parent, const char * name);
 	UploadTreeFolder( const KURL &a_url, UploadTreeFolder * parent, const char * name );

@@ -20,7 +20,8 @@
 #define STRUCTTREEVIEW_H
 
 #include <qwidget.h>
-#include <qlistview.h>
+
+#include <klistview.h>
 
 /**view class of document structure
   *@author Andras Mantia & Yacovlev Alexander & Dmitry Poplavsky
@@ -33,7 +34,7 @@ class QPopupMenu;
 class QuantaApp;
 class KConfig;
 
-class StructTreeView : public QListView  {
+class StructTreeView : public KListView  {
    Q_OBJECT
 friend class QuantaApp;
 public: 
@@ -58,8 +59,6 @@ public:
 
 	bool topOpened;
   bool groupOpened[5];
-//	bool imagesOpened;
-//	bool linksOpened;
   bool useOpenLevelSetting;
 
 
@@ -98,8 +97,6 @@ private:
   /** Do the recursive opening or closing of the trees */
   void setOpenSubTree( QListViewItem *it, bool open);
 
-  //int imagesCount; // to check if there are images
-  //int linksCount;	
   int followCursorId;
   bool followCursorFlag;
 

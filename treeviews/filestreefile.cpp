@@ -29,7 +29,7 @@
 #include "../resource.h"
 
 FilesTreeFile::FilesTreeFile( FilesTreeFolder *parent, QString name, const KURL& p_url)
-    : QListViewItem( parent, name )
+    : KListViewItem( parent, name )
 {
 	url = p_url;
 	isDir = false;
@@ -39,7 +39,7 @@ FilesTreeFile::FilesTreeFile( FilesTreeFolder *parent, QString name, const KURL&
 }
 
 FilesTreeFile::FilesTreeFile( QListView *parent, QString name, const KURL& p_url)
-    : QListViewItem( parent, name )
+    : KListViewItem( parent, name )
 {
 	url = p_url;
 	isDir = false;

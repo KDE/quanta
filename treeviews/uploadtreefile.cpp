@@ -29,7 +29,7 @@
 #include "../resource.h"
 
 UploadTreeFile::UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QString date, QString size )
-    : QListViewItem( parent, a_url.fileName(), "", date, size )
+    : KListViewItem( parent, a_url.fileName(), "", date, size )
 {
 	m_url = a_url;
 	isDir = false;
@@ -39,7 +39,7 @@ UploadTreeFile::UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QSt
 }
 
 UploadTreeFile::UploadTreeFile( QListView *parent, const KURL &a_url, QString date, QString size )
-    : QListViewItem( parent, a_url.fileName(), "", date, size )
+    : KListViewItem( parent, a_url.fileName(), "", date, size )
 {
 	m_url = a_url;
 	isDir = false;

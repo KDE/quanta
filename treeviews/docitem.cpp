@@ -15,19 +15,21 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "docitem.h"
-#include "kconfig.h"
 #include "qstrlist.h"
 
+#include "kconfig.h"
+
+#include "docitem.h"
+
 DocItem::DocItem(QListViewItem *parent, QString _name, QString _url)
-  : QListViewItem(parent)
+  : KListViewItem(parent)
 {
   url = _url;
   name = _name;
 }
 
 DocItem::DocItem(QListView *parent, QString _name, QString _url)
-  : QListViewItem(parent)
+  : KListViewItem(parent)
 {
   url = _url;
   name = _name;

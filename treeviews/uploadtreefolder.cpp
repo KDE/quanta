@@ -32,7 +32,7 @@
 #include "../resource.h"
 
 UploadTreeFolder::UploadTreeFolder(const KURL &a_url, UploadTreeFolder * parent, const char * name )
-    : QListViewItem( parent, name, "", "", "" )
+    : KListViewItem( parent, name, "", "", "" )
 {
 	parentFolder = parent;
   m_url = a_url;
@@ -45,7 +45,7 @@ UploadTreeFolder::UploadTreeFolder(const KURL &a_url, UploadTreeFolder * parent,
 }
 
 UploadTreeFolder::UploadTreeFolder(const KURL &a_url, QListView * parent, const char * name )
-    : QListViewItem( parent, name, "", "", "" )
+    : KListViewItem( parent, name, "", "", "" )
 {
 	parentFolder = 0L;
   m_url = a_url;

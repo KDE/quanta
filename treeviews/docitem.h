@@ -19,7 +19,8 @@
 #define DOCITEM_H
 
 #include <qwidget.h>
-#include <qlistview.h>
+
+#include <klistview.h>
 
 class KConfig;
 
@@ -27,7 +28,7 @@ class KConfig;
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
-class DocItem : public QListViewItem  {
+class DocItem : public KListViewItem  {
 //   Q_OBJECT
 public: 
 	DocItem(QListViewItem *parent, QString _name, QString _url);

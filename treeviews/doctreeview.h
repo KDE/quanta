@@ -18,8 +18,9 @@
 #ifndef DOCTREEVIEW_H
 #define DOCTREEVIEW_H
 
-#include <qlistview.h>
 #include <qdict.h>
+
+#include <klistview.h>
 
 class DocFolder;
 
@@ -28,7 +29,7 @@ class DocFolder;
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
-class DocTreeView : public QListView  {
+class DocTreeView : public KListView  {
    Q_OBJECT
 public: 
 	DocTreeView(QWidget *parent=0, const char *name=0);

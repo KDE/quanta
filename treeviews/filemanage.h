@@ -18,7 +18,7 @@
 #ifndef FILEMANAGE_H
 #define FILEMANAGE_H
 
-#include <qlistview.h>
+#include <klistview.h>
 
 #include <kfileitem.h>
 #include <kio/job.h>
@@ -40,7 +40,7 @@ typedef struct DirInfo{
       bool    usePrePostText;
     };
 
-class FileManage : public QListView {
+class FileManage : public KListView {
 Q_OBJECT
 public:
   FileManage();

@@ -75,7 +75,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
 */  
 	folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
 
-	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
+	connect(  this, SIGNAL(executed(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
 	connect(	this, SIGNAL(returnPressed(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));

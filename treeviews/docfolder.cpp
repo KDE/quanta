@@ -31,7 +31,7 @@
 #include "docfolder.moc"
 
 DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath)
-  : QListViewItem(parent)
+  : KListViewItem(parent)
 {
   name = _name;
   topLevel = false;
@@ -65,7 +65,7 @@ DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QStr
 }
 
 DocFolder::DocFolder(QListView *parent, QString _name, KConfig *config, QString basePath)
-  : QListViewItem(parent)
+  : KListViewItem(parent)
 {
   name = _name;
   topLevel = false;

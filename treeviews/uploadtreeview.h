@@ -31,7 +31,7 @@
   *@author George Vilches
   */
 
-class UploadTreeView : public QListView {
+class UploadTreeView : public KListView {
   Q_OBJECT
 public:
   UploadTreeView( QWidget *parent, const char *name=0L );

@@ -18,7 +18,7 @@
 #ifndef FILESTREEFILE_H
 #define FILESTREEFILE_H
 
-#include <qlistview.h>
+#include <klistview.h>
 #include <kurl.h>
 
 class FilesTreeFolder;
@@ -26,7 +26,7 @@ class FilesTreeFolder;
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
 
-class FilesTreeFile : public QListViewItem
+class FilesTreeFile : public KListViewItem
 {
 public: 
 	FilesTreeFile( FilesTreeFolder *parent, QString name, const KURL& p_url);

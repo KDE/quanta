@@ -40,7 +40,7 @@
 #include "structtreeview.moc"
 
 StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent, const char *name )
-		: QListView(parent,name)
+		: KListView(parent,name)
 {
 	top = 0L;
 //	images = 0L;
@@ -174,15 +174,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 
       if ( currentNode->tag->type == Tag::Text )
       {
-        QString text = currentNode->tag->tagStr();
-/*        QRegExp inclRx = QRegExp("(include|require)[\\s]+[^;]*(;|\\?>)");
-        if (inclRx.search(text) != -1)
-        {
-          text = inclRx.cap(0);
-          text = text.left(text.find(QRegExp("\\n|\\?>")));
-          item = new StructTreeTag( links, currentNode, text);
-          linksCount++;
-        } else */        
+        QString text = currentNode->tag->tagStr();      
         text = text.left(70).stripWhiteSpace();
         text.replace( QRegExp("&nbsp;|\\n")," ");
         item = new StructTreeTag(parent,currentNode,text);
@@ -212,13 +204,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
       if ( currentNode->tag->type == Tag::ScriptStructureBegin )
       {
         QString text = currentNode->tag->name;
-        /*QRegExp fnRx = QRegExp("function[\\s]*",false);
-        if (text.contains(fnRx))\\$+[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*f
-        {
-          text.replace(fnRx,"");
-          item = new StructTreeTag( links, currentNode, text.stripWhiteSpace());
-          linksCount++;
-        }*/
+
         item = new StructTreeTag(parent,currentNode,currentNode->tag->name);
       }
       if ( m_parsingDTD->family == Script &&
@@ -293,18 +279,6 @@ void StructTreeView::deleteList()
 		delete top;
 		top = 0L;
 	}
-
-/*	if ( images ) {
-		imagesOpened = images->isOpen();
-		delete images;
-		images = 0L;
-	}
-
-	if ( links ) {
-		linksOpened = links->isOpen();
-		delete links;
-		links = 0L;
-	}*/
   for (uint i = 0; i < groupsCount; i++)
   {
     groupOpened[i] = groups[i]->isOpen();
@@ -330,30 +304,6 @@ void StructTreeView::slotReparse(Node* node, int openLevel)
       groups[i]->setText(0, i18n(noGroup));
     }
   }
-/*  
-  if (m_parsingDTD->nickName.find("html", 0, false) != -1)
-  {
-  	if ( !imagesCount )
-  	  images->setText(0, i18n("No Images"));
-  	if ( !linksCount )
-  	  links->setText(0, i18n("No Links"));
-  } else
-    if (m_parsingDTD->family == Script)
-    {
-    	if ( !linksCount )
-    	  links->setText(0, i18n("No Functions"));
-
-     if ( write->variableList.count() )
-     {
-       for (int i = write->variableList.count()-1; i >=0; i--)
-       {
-         new StructTreeTag( images, write->variableList[i] );
-       }
-     } else
-     {
-       images->setText(0, i18n("No Variables"));
-     }
-    }  */
   useOpenLevelSetting = false;
 }
 

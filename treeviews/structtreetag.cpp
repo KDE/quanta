@@ -28,14 +28,14 @@
 
 
 StructTreeTag::StructTreeTag(QListView *parent, QString name )
-	: QListViewItem(parent,name)
+	: KListViewItem(parent,name)
 {
 	node = 0L;
 	
 }
 
 StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *p_node, QString name )
-	: QListViewItem(parent,name)
+	: KListViewItem(parent,name)
 {
 	node = p_node;
 	
@@ -105,7 +105,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *p_node, QString name )
 }
 
 StructTreeTag::StructTreeTag(StructTreeTag *parent, QString name )
-	: QListViewItem(parent,name)
+	: KListViewItem(parent,name)
 {
   node = 0L;
 }

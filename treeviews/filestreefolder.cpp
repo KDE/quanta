@@ -37,7 +37,7 @@
 #include "../resource.h"
 
 FilesTreeFolder::FilesTreeFolder(QListView* parentListView, FilesTreeFolder *parent, const KURL& p_url)
-    : QListViewItem( parent )
+    : KListViewItem( parent )
 {
   parentView = dynamic_cast<FilesTreeView*>(parentListView);
   parentFolder 	= parent;
@@ -49,7 +49,7 @@ FilesTreeFolder::FilesTreeFolder(QListView* parentListView, FilesTreeFolder *par
 
 
 FilesTreeFolder::FilesTreeFolder( QListView * parentListView, const QString &p_name, const KURL& p_url)
-    : QListViewItem( parentListView, 0L )
+    : KListViewItem( parentListView, 0L )
 {
   parentView = dynamic_cast<FilesTreeView*>(parentListView);
   parentFolder = 0L;

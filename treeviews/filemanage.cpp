@@ -44,7 +44,7 @@ FileManage::FileManage()
 }
 
 FileManage::FileManage( QWidget *parent, const char *name)
-	: QListView( parent, name )
+	: KListView( parent, name )
 {
 	fileMenu = new QPopupMenu();
 	

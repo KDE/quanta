@@ -18,14 +18,14 @@
 #ifndef UPLOADTREEFILE_H
 #define UPLOADTREEFILE_H
 
-#include <qlistview.h>
+#include <klistview.h>
 #include "uploadtreefolder.h"
 
 /**
   *@author George Vilches
   */
 
-class UploadTreeFile : public QListViewItem  {
+class UploadTreeFile : public KListViewItem  {
 public: 
 	UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QString, QString);
 	UploadTreeFile( QListView *parent, const KURL &a_url, QString, QString );
