@@ -19,6 +19,7 @@
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <kicondialog.h>
 
 /* QT INCLUDES */
 #include <qpushbutton.h>
@@ -45,6 +46,9 @@ QuantaPluginConfig::QuantaPluginConfig(QWidget *a_parent, const char *a_name)
  
   pluginType->insertStringList(QuantaPluginInterface::pluginTypes());
   updateWindows(pluginType->currentText()); //force an update
+
+  iconButton->setStrictIconSize(false);
+//  iconButton->
 }
 
 QuantaPluginConfig::~QuantaPluginConfig()

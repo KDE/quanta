@@ -40,6 +40,7 @@ public slots:
   virtual bool load();
   virtual bool run();
   virtual bool unload();
+  virtual bool toggle() {return QuantaPlugin::toggle();}
   virtual bool isLoaded();
 protected:
   KParts::ReadOnlyPart *m_part;

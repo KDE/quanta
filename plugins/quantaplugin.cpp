@@ -18,6 +18,8 @@
 /* KDE INCLUDES */
 #include <kstandarddirs.h>
 #include <klocale.h>
+#include <kiconloader.h>
+#include <kaction.h>
 
 /* QT INCLUDES */
 #include <qstring.h>
@@ -27,22 +29,26 @@
 /* OTHER INCLUDES */
 #include "quantaplugin.h"
 #include "../resource.h"
+#include "../quanta.h"
 
 QuantaPlugin::QuantaPlugin()
  : m_isRunning(false)
 {
+ m_action = 0L;
+ m_icon = "";
 }
 
 QuantaPlugin::QuantaPlugin(const QString &a_name, const QString &a_type,
   const QString &a_location, const QString &a_fileName, const QString &a_arguments,
-    const QString &a_outputWindow)
+    const QString &a_outputWindow, const QString &a_icon)
 {
   setPluginName(a_name);
+  setIcon(a_icon);
   setType(a_type);
   setLocation(a_location);
   setFileName(a_fileName);  
   setArguments(a_arguments);
-  setOutputWindow(a_outputWindow);  
+  setOutputWindow(a_outputWindow);
   m_standard = false;
   load();
 }
@@ -55,6 +61,11 @@ QuantaPlugin::~QuantaPlugin()
 void QuantaPlugin::setPluginName(const QString &a_name)
 {
   m_name = a_name;
+  if (!m_action)
+  {
+    m_action = new KToggleAction(i18n(a_name), 0, this, SLOT(toggle()), quantaApp->actionCollection(), a_name);
+  }
+  m_action->setText(a_name);
 }
 
 QString QuantaPlugin::pluginName() const
@@ -81,6 +92,18 @@ bool QuantaPlugin::run()
 {
 		return FALSE;
 }
+
+bool QuantaPlugin::toggle()
+{
+  if (isLoaded())
+  {
+    return unload();
+  } else
+  {
+    return run();
+  }
+}
+
   
 /** Sets the plugin's type */
 void QuantaPlugin::setType(const QString &a_type)
@@ -140,8 +163,8 @@ bool QuantaPlugin::validatePlugin(QuantaPlugin *a_plugin)
 }
 
 /** Returns true if the information of a plugin is valid, otherwise false */
-bool QuantaPlugin::validatePluginInfo(const QString &a_name, const QString &a_type,
-    const QString &a_location, const QString &a_fileName, const QString &a_arguments, const QString &a_outputWindow)
+bool QuantaPlugin::validatePluginInfo(const QString & /*a_name*/, const QString &a_type,
+    const QString &a_location, const QString &a_fileName, const QString &/*a_arguments*/, const QString &/*a_outputWindow*/)
 {
   bool valid = true;
   // look the file up if location is null
@@ -180,7 +203,7 @@ bool QuantaPlugin::validatePluginInfo(const QString &a_name, const QString &a_ty
 }
 
 /** Returns whether the plugin is loaded or not */
-bool QuantaPlugin::isLoaded() const
+bool QuantaPlugin::isLoaded()
 {
   return FALSE;
 }
@@ -221,4 +244,15 @@ QString QuantaPlugin::standardName()
 void QuantaPlugin::setStandardName(const QString& a_stdName)
 {
  m_standardName = a_stdName;
+}
+/** No descriptions */
+QString QuantaPlugin::icon()
+{
+  return m_icon;
+}
+/** No descriptions */
+void QuantaPlugin::setIcon(const QString& a_icon)
+{
+  m_icon = a_icon;
+  if (m_action) m_action->setIcon(a_icon);
 }

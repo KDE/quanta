@@ -108,6 +108,7 @@ void QuantaPluginInterface::readConfig()
     newPlugin->setLocation(config->readEntry("Location"));
     newPlugin->setType(pluginType);
     newPlugin->setArguments(config->readEntry("Arguments"));
+    newPlugin->setIcon(config->readEntry("Icon"));
     QString type = config->readEntry("OutputWindow");
     if (type == "Editor View") type = i18n("Editor View");
     if (type == "Message Window") type = i18n("Message Window");
@@ -145,6 +146,7 @@ void QuantaPluginInterface::writeConfig()
       config->writeEntry("Type", type);
       config->writeEntry("Location", curPlugin->location());
       config->writeEntry("Arguments", curPlugin->arguments());
+      config->writeEntry("Icon", curPlugin->icon());
       type = curPlugin->outputWindow();
       if (type == i18n("Editor View")) type = "Editor View";
       if (type == i18n("Message Window")) type = "Message Window";

@@ -1,6 +1,7 @@
 [CVS management (Cervisia)]
 Arguments=
 FileName=libcervisia.so
+Icon=cervisia
 Location=
 OutputWindow=Editor View
 Standard=true
@@ -14,6 +15,7 @@ SearchPaths=
 [kompare]
 Arguments=
 FileName=kompare
+Icon=kompare
 Location=
 OutputWindow=Message Window
 Standard=false

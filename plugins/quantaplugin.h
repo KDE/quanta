@@ -29,12 +29,14 @@
   *@author Marc Britton
   */
 
+class KToggleAction;
+
 class QuantaPlugin : public QObject
 {
   Q_OBJECT
 public: 
   QuantaPlugin();
-  QuantaPlugin(const QString &, const QString &, const QString &, const QString &, const QString &, const QString &);
+  QuantaPlugin(const QString &, const QString &, const QString &, const QString &, const QString &, const QString &, const QString &);
   ~QuantaPlugin();
   virtual bool isRunning() const;
   /** Gets the superficial plugin name */
@@ -54,6 +56,8 @@ public:
   /** Returns true if the options of a plugin are valid, otherwise false */
   static bool validatePluginInfo(const QString &, const QString &, const QString &,
               const QString &, const QString &, const QString &);
+
+  KToggleAction *m_action;
 public slots:
   /** Sets whether the plugin is running or not */
   virtual void setRunning(bool);
@@ -63,6 +67,8 @@ public slots:
   virtual bool unload();
   /** Runs the plugin */
   virtual bool run();
+  /** Runs the plugin if it's not running yet, unloads otherwise.*/
+  virtual bool toggle();
   /** Sets the superficial name of the plugin */
   virtual void setPluginName(const QString &);
   /** Sets the output window */
@@ -80,7 +86,11 @@ public slots:
   /** Returns the file name of the plugin */
   virtual QString fileName() const;
   /** Returns whether the plugin is loaded or not */
-  virtual bool isLoaded() const;
+  virtual bool isLoaded();
+  /** No descriptions */
+  void setIcon(const QString& a_icon);
+  /** No descriptions */
+  QString icon();
   /** No descriptions */
   void setStandardName(const QString& a_stdName);
   /** No descriptions */
@@ -91,6 +101,7 @@ protected:
   QString m_name;
   QString m_location;
   QString m_type;
+  QString m_icon;
   QString m_arguments;
   QString m_outputWindow;
   /** True, if it is not a user added plugin. Special handling code may be necessary for standard plugins. */

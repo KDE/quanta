@@ -45,7 +45,8 @@ public slots:
   virtual bool unload();
   virtual bool load();
   virtual bool run();
-  virtual bool isLoaded() const;
+  virtual bool toggle() {return QuantaPlugin::toggle();}
+  virtual bool isLoaded();
   /** Does post process cleanup */
   void cleanupProcess(KProcess *);
   /** Writes (inserts or appends) process' output */

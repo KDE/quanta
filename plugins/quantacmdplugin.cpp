@@ -49,7 +49,7 @@ QuantaCmdPlugin::~QuantaCmdPlugin()
     unload();
 }
 
-bool QuantaCmdPlugin::isLoaded() const
+bool QuantaCmdPlugin::isLoaded() 
 {
   return m_process != 0;
 }

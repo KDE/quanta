@@ -2175,7 +2175,8 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
        //     removeToolbar(iter.currentKey());
             factory()->removeClient(p_toolbar->guiClient);
             p_toolbar->visible = false;
-            delete p_toolbar->menu;
+            if (p_toolbar->menu) delete p_toolbar->menu;
+            p_toolbar->menu = 0L;
             break;          
           }         
        }

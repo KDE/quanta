@@ -105,13 +105,12 @@ bool WHTMLPart::forwardEnable()
    return hpos < history.count()-1;
 }
 
-KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget *, const char *,
-                                            QObject *, const char *,
+KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget *parentWidget, const char *widgetName,
+                                            QObject *parent, const char *name,
                                             const QString &, QString &,
                                             QStringList &, const QStringList &)
 {
-//TODO: Where should I delete this???? I have no idea...
-   return new WHTMLPart(widget());
+   return new WHTMLPart(parentWidget, widgetName);
 }                                            
 
 

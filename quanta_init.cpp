@@ -170,6 +170,8 @@ void QuantaApp::initQuanta()
   }
 
 
+  m_pluginInterface = new QuantaPluginInterface();
+
   createGUI( QString::null, false /* conserveMemory */ );
 
   initPlugins  ();
@@ -1427,7 +1429,6 @@ void QuantaApp::initActions()
 /** Initialize the plugin architecture. */
 void QuantaApp::initPlugins()
 {
-  m_pluginInterface = new QuantaPluginInterface();
   // TODO : read option from plugins.rc to see if we should validate the plugins
 
   m_pluginMenu = new QPopupMenu(this);
@@ -1458,9 +1459,10 @@ void QuantaApp::slotBuildPluginMenu()
 
        if(curPlugin)
        {
-         int id = m_pluginMenu->insertItem(curPlugin->pluginName());
-         if(curPlugin->isRunning())
-           m_pluginMenu->setItemChecked(id, TRUE);
+//         int id = m_pluginMenu->insertItem(curPlugin->pluginName());
+//         if(curPlugin->isRunning())
+//           m_pluginMenu->setItemChecked(id, TRUE);
+         curPlugin->m_action->plug(m_pluginMenu);
        }
   }
 }

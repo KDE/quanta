@@ -20,6 +20,7 @@
 #include <kiconloader.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kicondialog.h>
 
 /* QT INCLUDES */
 #include <qwidget.h>
@@ -101,7 +102,7 @@ void QuantaPluginEditor::addPlugin()
     newPlugin->setArguments(configDlg->arguments->text());
     newPlugin->setOutputWindow(configDlg->outputWindow->currentText());
     newPlugin->setStandard(false);
-
+    newPlugin->setIcon(configDlg->iconButton->icon());
 	  QString pluginName = newPlugin->pluginName();
     m_plugins.insert(pluginName, newPlugin);
     emit pluginsChanged();
@@ -139,6 +140,7 @@ void QuantaPluginEditor::configurePlugin()
     configDlg->pluginFileName->setText(curPlugin->fileName());        
     configDlg->location->setText(curPlugin->location());
     configDlg->arguments->setText(curPlugin->arguments());
+    configDlg->iconButton->setIcon(curPlugin->icon());
 
     if(configDlg->exec())
     {
@@ -147,7 +149,8 @@ void QuantaPluginEditor::configurePlugin()
       curPlugin->setType(configDlg->pluginType->currentText());
       curPlugin->setLocation(configDlg->location->text());
       curPlugin->setArguments(configDlg->arguments->text());
-      curPlugin->setOutputWindow(configDlg->outputWindow->currentText());      
+      curPlugin->setOutputWindow(configDlg->outputWindow->currentText());
+      curPlugin->setIcon(configDlg->iconButton->icon());      
     }
     
     delete configDlg;
