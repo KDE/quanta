@@ -707,7 +707,8 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
     tag->returnType = el.attribute("returnType","");
     tag->comment = el.attribute("comment", "");
     if (!tag->comment.isEmpty())
-      tag->comment = i18n(tag->comment);
+      tag->comment = " [" + i18n(tag->comment) + "] ";
+    tag->comment.prepend(el.attribute("version"));
  } else
  {
    common = true;
