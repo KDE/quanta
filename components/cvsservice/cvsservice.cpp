@@ -85,9 +85,9 @@ CVSService::CVSService(KActionCollection *ac)
   action = new KAction(i18n("&Remove from Repository..."), "vcs_remove", 0, this, SLOT(slotRemove()), ac);
 #endif
   action->plug(m_menu);
-  action = new KAction(i18n("Add to .cvs&ignore"), 0, this, SLOT(slotAddToCVSIgnore()), ac);
+  action = new KAction(i18n("&Ignore in CVS Operations"), 0, this, SLOT(slotAddToCVSIgnore()), ac);
   action->plug(m_menu);
-  action = new KAction(i18n("Re&move from .cvsignore"), 0, this, SLOT(slotRemoveFromCVSIgnore()), ac);
+  action = new KAction(i18n("Do &Not Ignore in CVS Operations"), 0, this, SLOT(slotRemoveFromCVSIgnore()), ac);
   action->plug(m_menu);
   
   m_menu->insertSeparator();
