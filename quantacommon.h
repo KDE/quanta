@@ -133,6 +133,8 @@ pointer must be deleted by the caller!! */
   Adds the backslash before the special chars (like ?, *, . ) so the returned string can be used in regular expressions.
   */
   static QString makeRxCompatible(const QString s);
+  /** Returns the translated a_str in English. A "back-translation" useful e.g in case of CSS elements selected from a listbox. */
+  static QString i18n2normal(const QString& a_str);
 
 };
 

@@ -35,6 +35,7 @@
 #include "cssselectoreditor.h"
 #include "colorcombo.h"
 #include "filecombo.h"
+#include "../quantacommon.h"
 
 
 CSSSelectorEditor::CSSSelectorEditor(QString code, bool editSelector,
@@ -65,11 +66,11 @@ QString CSSSelectorEditor::code()
 	QStringList properties;
 
 	// Font
-	QString f_family = comboFontFamily->currentText();
-	QString f_size = comboFontSize->currentText();
-	QString f_style = comboFontStyle->currentText();
-	QString f_variant = comboFontVariant->currentText();
-	QString f_weight = comboFontWeight->currentText();
+	QString f_family = QuantaCommon::i18n2normal(comboFontFamily->currentText());
+	QString f_size = QuantaCommon::i18n2normal(comboFontSize->currentText());
+	QString f_style = QuantaCommon::i18n2normal(comboFontStyle->currentText());
+	QString f_variant = QuantaCommon::i18n2normal(comboFontVariant->currentText());
+	QString f_weight = QuantaCommon::i18n2normal(comboFontWeight->currentText());
 
 	if ( checkFontInline->isChecked() ) {
 		// Special case for inline rule
@@ -112,22 +113,15 @@ QString CSSSelectorEditor::code()
 	// Background
 	QString b_color = ccomboBGColor->colorName();
 	QString b_img = fcomboBGImage->text();
-	QString b_repeat = comboBGRepeat->currentText();
-	QString b_att = comboBGAttachment->currentText();
-	QString b_pos_x = comboBGPositionLeft->currentText();
-	QString b_pos_y = comboBGPositionTop->currentText();
+	QString b_repeat = QuantaCommon::i18n2normal(comboBGRepeat->currentText());
+	QString b_att = QuantaCommon::i18n2normal(comboBGAttachment->currentText());
+	QString b_pos_x = QuantaCommon::i18n2normal(comboBGPositionLeft->currentText());
+	QString b_pos_y = QuantaCommon::i18n2normal(comboBGPositionTop->currentText());
 
 	// Create the background position, but leave it empty if it is the default
 	QString b_pos = "";
 	if ( b_pos_x != "" && b_pos_x != "left" && b_pos_x != "0" && b_pos_x != "0 %" ) 
-
-
-
-
-
-
-
-{
+  {
 		b_pos += b_pos_y + " " + b_pos_x;
 	}
 
@@ -164,36 +158,36 @@ QString CSSSelectorEditor::code()
 
 	// Let's add some others text properties
 	QString t;
-	t = comboWordSpacing->currentText();
+	t = QuantaCommon::i18n2normal(comboWordSpacing->currentText());
 	if (t != "normal" && t != "")
 		properties +=  "word-spacing: " + t;
-	t = comboLetterSpacing->currentText();
+	t = QuantaCommon::i18n2normal(comboLetterSpacing->currentText());
 	if (t != "normal" && t != "")
 		properties += "letter-spacing: " + t;
-	t = comboTextDecoration->currentText();
+	t = QuantaCommon::i18n2normal(comboTextDecoration->currentText());
 	if (t != "none" && t != "")
 		properties += "text-decoration: " + t;
-	t = comboTextTransform->currentText();
+	t = QuantaCommon::i18n2normal(comboTextTransform->currentText());
 	if (t != "none" && t != "")
 		properties += "text-transform: " + t;
-	t = comboTextAlign->currentText();
+	t = QuantaCommon::i18n2normal(comboTextAlign->currentText());
 	if (t != "left" && t != "")
 		properties += "text-align: " + t;
-	t = comboVerticalAlign->currentText();
+	t = QuantaCommon::i18n2normal(comboVerticalAlign->currentText());
 	if (t != "baseline" && t != "")
 		properties += "vertical-align: " + t;
-	t = comboTextIndent->currentText();
+	t = QuantaCommon::i18n2normal(comboTextIndent->currentText());
 	if (t != "0" && t != "")
 		properties += "text-indent: " + t;
-	t = comboLineHeight->currentText();
+	t = QuantaCommon::i18n2normal(comboLineHeight->currentText());
 	if (t != "normal" && t != "")
 		properties += "line-height: " + t;
 
 	// Now, let's add the margin
-	QString mt = comboTopMargin->currentText();
-	QString mr = comboRightMargin->currentText();
-	QString mb = comboBottomMargin->currentText();
-	QString ml = comboLeftMargin->currentText();
+	QString mt = QuantaCommon::i18n2normal(comboTopMargin->currentText());
+	QString mr = QuantaCommon::i18n2normal(comboRightMargin->currentText());
+	QString mb = QuantaCommon::i18n2normal(comboBottomMargin->currentText());
+	QString ml = QuantaCommon::i18n2normal(comboLeftMargin->currentText());
 	if ( checkMarginInline->isChecked() ) {
 		QString temp = "margin: " + mt + " " + mr + " " + mb + " " + ml;
 		temp = " " + temp.simplifyWhiteSpace();
@@ -220,10 +214,10 @@ QString CSSSelectorEditor::code()
 	}
 
 	// The padding
-	QString pt = comboTopPadding->currentText();
-	QString pr = comboRightPadding->currentText();
-	QString pb = comboBottomPadding->currentText();
-	QString pl = comboLeftPadding->currentText();
+	QString pt = QuantaCommon::i18n2normal(comboTopPadding->currentText());
+	QString pr = QuantaCommon::i18n2normal(comboRightPadding->currentText());
+	QString pb = QuantaCommon::i18n2normal(comboBottomPadding->currentText());
+	QString pl = QuantaCommon::i18n2normal(comboLeftPadding->currentText());
 	if ( checkPaddingInline->isChecked() ) {
 		QString temp = "padding: " + pt + " " + pr + " " + pb + " " + pl;
 		temp = temp.simplifyWhiteSpace();
@@ -247,15 +241,15 @@ QString CSSSelectorEditor::code()
 	}
 
 	//Now is the time to insert the border
-	QString b_w_t = comboBorderTopWidth->currentText();
-	QString b_w_r = comboBorderRightWidth->currentText();
-	QString b_w_b = comboBorderBottomWidth->currentText();
-	QString b_w_l = comboBorderLeftWidth->currentText();
+	QString b_w_t = QuantaCommon::i18n2normal(comboBorderTopWidth->currentText());
+	QString b_w_r = QuantaCommon::i18n2normal(comboBorderRightWidth->currentText());
+	QString b_w_b = QuantaCommon::i18n2normal(comboBorderBottomWidth->currentText());
+	QString b_w_l = QuantaCommon::i18n2normal(comboBorderLeftWidth->currentText());
 
-	QString b_s_t = comboBorderTopStyle->currentText();
-	QString b_s_r = comboBorderRightStyle->currentText();
-	QString b_s_b = comboBorderBottomStyle->currentText();
-	QString b_s_l = comboBorderLeftStyle->currentText();
+	QString b_s_t = QuantaCommon::i18n2normal(comboBorderTopStyle->currentText());
+	QString b_s_r = QuantaCommon::i18n2normal(comboBorderRightStyle->currentText());
+	QString b_s_b = QuantaCommon::i18n2normal(comboBorderBottomStyle->currentText());
+	QString b_s_l = QuantaCommon::i18n2normal(comboBorderLeftStyle->currentText());
 
 	QString b_c_t = ccomboBorderTopColor->colorName();
 	QString b_c_r = ccomboBorderRightColor->colorName();
@@ -299,29 +293,33 @@ QString CSSSelectorEditor::code()
 	}
 
 	// Some others properties
-	if (comboWidth->currentText() != "auto" && comboWidth->currentText() != "")
-		properties += "width: " + comboWidth->currentText();
-	if (comboHeight->currentText() != "auto" && comboHeight->currentText() != "")
-		properties += "height: " + comboHeight->currentText();
-	if (comboFloat->currentText() != "none" && comboFloat->currentText() != "")
-		properties += "float: " + comboFloat->currentText();
-	if (comboClear->currentText() != "none" && comboClear->currentText() != "")
-		properties += "clear: " + comboClear->currentText();
-	if (comboDisplay->currentText() != "block" && comboDisplay->currentText() != 
-"")
-		properties += "display: " + comboDisplay->currentText();
-	if (comboWhiteSpace->currentText() != "normal" &&
-		comboWhiteSpace->currentText() != "")
-		properties += "white-space: " + comboWhiteSpace->currentText();
+	if (QuantaCommon::i18n2normal(comboWidth->currentText()) != "auto" &&
+      !comboWidth->currentText().isEmpty())
+		properties += "width: " + QuantaCommon::i18n2normal(comboWidth->currentText());
+	if (QuantaCommon::i18n2normal(comboHeight->currentText()) != "auto" &&
+      !comboHeight->currentText().isEmpty())
+		properties += "height: " + QuantaCommon::i18n2normal(comboHeight->currentText());
+	if (QuantaCommon::i18n2normal(comboFloat->currentText()) != "none" &&
+      !comboFloat->currentText().isEmpty())
+		properties += "float: " + QuantaCommon::i18n2normal(comboFloat->currentText());
+	if (QuantaCommon::i18n2normal(comboClear->currentText()) != "none" &&
+      !comboClear->currentText().isEmpty())
+    properties += "clear: " + QuantaCommon::i18n2normal(comboClear->currentText());
+	if (QuantaCommon::i18n2normal(comboDisplay->currentText()) != "block" &&
+      !comboDisplay->currentText().isEmpty())
+		properties += "display: " + QuantaCommon::i18n2normal(comboDisplay->currentText());
+	if (QuantaCommon::i18n2normal(comboWhiteSpace->currentText()) != "normal" &&
+      !comboWhiteSpace->currentText().isEmpty())
+    properties += "white-space: " + QuantaCommon::i18n2normal(comboWhiteSpace->currentText());
 
 	// List style
 	if ( checkListStyleInline->isChecked() ) {
 		// All in one rule
 		QString temp, t;
-		t = comboListStyleType->currentText();
+		t = QuantaCommon::i18n2normal(comboListStyleType->currentText());
 		if (t != "disc" && t != "")
 			temp += " " + t;
-		t = comboListStylePosition->currentText();
+		t = QuantaCommon::i18n2normal(comboListStylePosition->currentText());
 		if (t != "outside" && t != "")
 			temp += " " + t;
 		t = fcomboListStyleImage->text();
@@ -333,10 +331,10 @@ QString CSSSelectorEditor::code()
 	} else {
 		// 3 rules
 		QString t;
-		t = comboListStyleType->currentText();
+		t = QuantaCommon::i18n2normal(comboListStyleType->currentText());
 		if (t != "disc" && t != "")
 			properties += "list-style-type: " + t;
-		t = comboListStylePosition->currentText();
+		t = QuantaCommon::i18n2normal(comboListStylePosition->currentText());
 		if (t != "outside" && t != "")
 			properties += "list-style-position: " + t;
 		t = fcomboListStyleImage->text();
