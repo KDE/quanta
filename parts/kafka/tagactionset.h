@@ -28,6 +28,7 @@ class KActionSeparator;
 class QWidget;
 
 class Node;
+class NodeModifsSet;
 
 /**
 @author Paulo Moura Guedes
@@ -75,32 +76,51 @@ public:
     virtual void unplugAllActions(QWidget* widget) const;
 
 public slots:
+	// Insert
     void slotInsertTable();
     void slotInsertRowAbove();
     void slotInsertRowBellow();
     void slotInsertColumnLeft();
     void slotInsertColumnRight();
+    // Remove
+	void slotRemoveTable();
+	void slotRemoveRows();
+	void slotRemoveColumns();
+	void slotRemoveCells();
+	void slotRemoveCellsContent();
 
 protected:
     virtual void initActionMenus(QWidget* widget);
 
 private:
+	// Insert
     bool canInsertTable() const;
     bool canInsertRowAbove() const;
     bool canInsertRowBellow() const;
     bool canInsertColumnLeft() const;
     bool canInsertColumnRight() const;
+    // Remove
+    bool canRemoveTable() const;
+	bool canRemoveRows() const;
+	bool canRemoveColumns() const;
+	bool canRemoveCells() const;
+	bool canRemoveCellsContent() const;
 
     Node* tableStart() const;
     int numberOfColumns() const;
     int currentColumnIndex() const;
+    int columnIndex(Node* node) const;
     Node* buildEmptyRowSubtree() const;
     Node* buildEmptyTBodyCellSubtree() const;
     Node* buildEmptyTHeadCellSubtree() const;
     
+    void removeColumn(int index, NodeModifsSet* modifs);
+    void clearCellContents(Node* tdNode, NodeModifsSet* modifs);
+    
 private:
     KActionMenu* m_tableActionMenu_0;
     KActionMenu* m_insertActionMenu_1;
+    KActionMenu* m_removeActionMenu_1;
 };
 
 #endif
