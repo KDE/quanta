@@ -26,7 +26,7 @@
 
 
 #include "rescanprjdir.h"
-#include "project_url.h"
+#include "projecturl.h"
 
 class KFileItem;
 

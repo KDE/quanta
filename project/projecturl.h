@@ -1,5 +1,5 @@
 /***********************************************************************
-                          project_url.h  -  ProjectURL class definition
+                          projecturl.h  -  ProjectURL class definition
                              -------------------
     begin                : Wed Feb 18 2004
     copyright            : (C) 2004 by Andrei Berezin <aberezin@comcast.net>
