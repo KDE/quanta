@@ -522,7 +522,7 @@ bool SAParser::slotParseOneLine()
               s_currentNode->next = node;
               node->prev = s_currentNode;
             } else
-            if (!node->parent->child)
+            if (node->parent && !node->parent->child)
               node->parent->child = node;
             s_currentNode = node;
           }

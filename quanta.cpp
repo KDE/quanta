@@ -325,8 +325,13 @@ bool QuantaApp::slotFileSaveAs()
       oldURL = saveUrl;
       if (  Project::ref()->hasProject() && !Project::ref()->contains(saveUrl)  &&
            KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("<qt>Do you want to add the<br><b>%1</b><br>file to project?</qt>").arg(saveUrl.prettyURL(0, KURL::StripFileProtocol)))
-        )
+        )	
       {
+        if (saveUrl.isLocalFile())
+        {
+          QDir dir(saveUrl.path());
+          saveUrl.setPath(dir.canonicalPath());
+        }        
         Project::ref()->insertFile(saveUrl, true);
       }
 #ifdef BUILD_KAFKAPART

@@ -778,12 +778,18 @@ void QuantaDoc::slotFileDirty(const QString& fileName)
 /** Check if url is opened or not. */
 Document* QuantaDoc::isOpened(const KURL& url)
 {
+  KURL url2 = url;
+  if (url2.isLocalFile())
+  {
+      QDir dir(url2.path());
+      url2.setPath(dir.canonicalPath());
+  }
   Document *w = 0L;
   QTabWidget *tab = quantaApp->view()->writeTab();
   for (int i = 0; i < tab->count(); i++)
   {
     w = dynamic_cast<Document*>(tab->page(i));
-    if (w && w->url() == url)
+    if (w && w->url() == url2)
     {
       break;
     }
