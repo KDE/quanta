@@ -1428,6 +1428,9 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                 {
                   Tag *tag = new Tag();
                   tag->name = s;
+                  tag->dtd = dtd;
+                  if (!tag->dtd)
+                    kdDebug(24000) << "parser:1433: dtd is 0L!!! for " << s << endl;
                   QString s2 = content.left(areaPos + pos);
                   int newLineNum = s2.contains('\n');
                   int tmpCol = s2.length() - s2.findRev('\n') - 1;

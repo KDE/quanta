@@ -19,6 +19,8 @@
 #include <qstring.h>
 #include <qcstring.h>
 
+#include <kdebug.h>
+
 #include "tag.h"
 #include "document.h"
 #include "quantacommon.h"
@@ -34,6 +36,8 @@ Tag::Tag(const AreaStruct &area, Document *write, const DTDStruct *dtd, bool doP
   init();
   QString s = write->text(area);
   m_area = area;
+  if (!dtd)
+  kdDebug(24000) << "Tag::Tag: dtd is 0L!!! for " << s << endl;
   this->dtd = dtd;
   if (doParse)
   {
@@ -215,7 +219,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
           pos++;
     sPos = pos++;
  }
- 
+
  //add the tag to the document usertag list if it's not present in the dtd
   if (m_tagStr.startsWith("<") && m_tagStr.endsWith(">") && dtd)
   {

@@ -2841,7 +2841,6 @@ void QuantaApp::processDTD(const QString& documentType)
             w->editIf->removeText(bLine, bCol, eLine, eCol+1);
             w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
             w->insertText("<!DOCTYPE" + dtd->doctypeStr +">");
-            delete tag;
           }
         }
       }
@@ -2865,6 +2864,7 @@ void QuantaApp::processDTD(const QString& documentType)
   }
   loadToolbarForDTD(w->getDTDIdentifier());
   StructTreeView::ref()->useOpenLevelSetting = true;
+  delete tag;
 }
 
 /** No descriptions */

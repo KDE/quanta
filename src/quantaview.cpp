@@ -125,7 +125,12 @@ bool QuantaView::mayRemove()
    {
      if (m_customWidget)
          m_customWidget->reparent(0L, 0, QPoint(), false);
-     parser->setSAParserEnabled(false);
+     if (dynamic_cast<QuantaView *>(quantaApp->activeWindow()) == this)
+     {
+         parser->setSAParserEnabled(false);
+         delete baseNode;
+         baseNode = 0L;
+     }
      if (!saveModified())
           return false;
       if (m_document)
@@ -140,9 +145,9 @@ bool QuantaView::mayRemove()
             fileWatcher->removeFile(m_document->url().path());
           quantaApp->guiFactory()->removeClient(m_document->view());
       }
-      kdDebug(24000) << "Calling reparse from close " << endl;
+/*      kdDebug(24000) << "Calling reparse from close " << endl;
       parser->setSAParserEnabled(true);
-      quantaApp->reparse(true);
+      quantaApp->reparse(true);*/
    }
    return true;
 }

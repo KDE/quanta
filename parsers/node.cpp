@@ -17,6 +17,8 @@
 //qt includes
 #include <qlistview.h>
 
+#include <kdebug.h>
+
 #include "node.h"
 #include "tag.h"
 #include "qtag.h"
@@ -173,6 +175,7 @@ void Node::setNodeValue(QString value)
   if(!tag)
     tag = new Tag();
   tag->setStr(value);
+  kdDebug(24000) << "Node::setNodeValue: dtd is 0L for " << value << endl;
 }
 
 Node* Node::lastChild()
