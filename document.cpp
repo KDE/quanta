@@ -25,7 +25,7 @@
 #include <qdatetime.h>
 
 // KDE includes
-#include <kapp.h>
+#include <kapplication.h>
 #include <kwin.h>
 #include <klocale.h>
 #include <kaction.h>

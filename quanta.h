@@ -35,7 +35,7 @@
 #include <qptrlist.h>
 
 // include files for KDE 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdockwidget.h>
 #include "kqapp.h"
 #include "widgets/whtmlpart.h"

@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 // QT clases
+#include <qlistview.h>
 #include <qstrlist.h>
 #include <qheader.h>
 #include <qpixmap.h>
@@ -25,16 +26,17 @@
 #include <kconfig.h>
 #include <kapplication.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kiconloader.h>
 
 // application clases
 #include "doctreeview.h"
+#include "doctreeview.moc"
 #include "docfolder.h"
 #include "docitem.h"
 
 DocTreeView::DocTreeView(QWidget *parent, const char *name )
-  : KListView(parent,name)
+  : QListView(parent,name)
 {
 
   contextHelpDict = new QDict <QString> ( 101, false );
@@ -83,7 +85,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
   setFocusPolicy(QWidget::ClickFocus);
 
-  connect( this, SIGNAL(executed(QListViewItem *)), SLOT(clickItem(QListViewItem *)) );
+  connect( this, SIGNAL(clicked(QListViewItem *)), SLOT(clickItem(QListViewItem *)) );
 }
 
 
@@ -113,5 +115,3 @@ QString * DocTreeView::contextHelp( QString keyword )
 {
 	return contextHelpDict->find( keyword );
 }
-
-#include "doctreeview.moc"

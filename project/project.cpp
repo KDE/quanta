@@ -51,7 +51,7 @@
 #include <kaction.h>
 #include <ktempfile.h>
 #include <kstdaction.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kfiledialog.h>
 #include <klineeditdlg.h>
 #include <kmessagebox.h>

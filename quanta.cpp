@@ -48,7 +48,7 @@
 #include <khtmlview.h>
 #include <kdialogbase.h>
 #include <kkeydialog.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klibloader.h>
 #include <klineeditdlg.h>
 #include <kdockwidget.h>

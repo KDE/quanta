@@ -18,7 +18,7 @@
 // QT includes
 #include <qpopupmenu.h>
 #include <qclipboard.h>
-#include <qapp.h>
+#include <qapplication.h>
 #include <qfileinfo.h>
 #include <qstringlist.h>
 
@@ -44,7 +44,7 @@ FileManage::FileManage()
 }
 
 FileManage::FileManage( QWidget *parent, const char *name)
-	: KListView( parent, name )
+	: QListView( parent, name )
 {
 	fileMenu = new QPopupMenu();
 	

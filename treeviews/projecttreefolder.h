@@ -19,7 +19,7 @@
 #ifndef ProjectTreeFolder_H
 #define ProjectTreeFolder_H
 
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include "filestreefolder.h"
 #include "projecttreefile.h"

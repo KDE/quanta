@@ -22,7 +22,7 @@
 #include <qregexp.h>
 
 // KDE headers
-#include <kapp.h>
+#include <kapplication.h>
 #include <kiconloader.h>
 #include <kpopupmenu.h>
 #include <klocale.h>

@@ -20,9 +20,9 @@
 #include <qpixmap.h>
 
 // KDE includes
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kiconloader.h>
 
 // app includes
@@ -31,7 +31,7 @@
 #include "docfolder.moc"
 
 DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath)
-  : KListViewItem(parent)
+  : QListViewItem(parent)
 {
   name = _name;
   topLevel = false;
@@ -65,7 +65,7 @@ DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QStr
 }
 
 DocFolder::DocFolder(QListView *parent, QString _name, KConfig *config, QString basePath)
-  : KListViewItem(parent)
+  : QListViewItem(parent)
 {
   name = _name;
   topLevel = false;

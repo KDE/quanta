@@ -26,12 +26,10 @@
 #include <qwidget.h>
 #include <qobject.h>
 #include <qdict.h>
-#include <qlistview.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qcombobox.h>
-#include <qlistview.h>
 
 /* OTHER INCLUDES */
 #include "quantaplugineditor.h"

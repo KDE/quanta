@@ -1,4 +1,3 @@
-#include "rescanprj.h"
 #include "rescanprj.moc"
 // qt includes
 #include <qlistview.h>
@@ -15,7 +14,6 @@
 #include <kprogress.h>
 
 // app includes
-#include "rescanprj.h"
 #include "../qextfileinfo.h"
 #include "../quantacommon.h"
 #include "../treeviews/uploadtreefolder.h"

@@ -30,7 +30,7 @@
 #include <kdialogbase.h>
 #include <qframe.h>
 #include <qpixmap.h>
-#include <kcolordlg.h>
+#include <kcolordialog.h>
 #include "kselect.h"
 
 

@@ -31,11 +31,11 @@
 #include <qtextcodec.h>
 
 // include files for KDE
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kprocess.h>
-#include <kcolordlg.h>
+#include <kcolordialog.h>
 #include <kmessagebox.h>
 #include <kdeversion.h>
 
