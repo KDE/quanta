@@ -189,7 +189,6 @@ static void silenceQToolBar(QtMsgType, const char *){}
 
 QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta", (KMdi::MdiMode) mdiMode)
 {
-  setXMLFile("quanta_beui.rc");
   m_quantaInit = new QuantaInit(this);
   dcopSettings = new DCOPSettings;
   dcopQuanta = new DCOPQuanta;
@@ -4467,6 +4466,17 @@ void QuantaApp::slotShowVPLAndSourceEditor()
 void QuantaApp::slotShowVPLOnly()
 {
    ViewManager::ref()->activeView()->slotSetVPLOnlyLayout();
+}
+
+//overridden KMdiMainFrm slots
+void QuantaApp::closeActiveView()
+{
+   ViewManager::ref()->removeActiveView();
+}
+
+void QuantaApp::closeAllViews()
+{
+   ViewManager::ref()->closeAll();
 }
 
 #include "quanta.moc"

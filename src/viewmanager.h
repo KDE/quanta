@@ -80,6 +80,8 @@ public slots:
   /** called when the last view is closed */
   void slotLastViewClosed();
 
+  /** called when the context menu was invoked on a tab */
+  void slotTabContextMenu(QWidget *widget, const QPoint & point);
 signals:
   /** emitted when a file from the template view is dropped on a view */
   void dragInsert(QDropEvent *);

@@ -330,6 +330,10 @@ public slots:
   /** registers a new part in the partmanager */
   void slotNewPart(KParts::Part *newPart, bool setActiv);
 
+//Overridden KMdiMainFrm slots
+  virtual void closeAllViews();
+  virtual void closeActiveView();
+
 protected slots:
   /** No descriptions */
   void slotMakeDonation();

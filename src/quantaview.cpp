@@ -603,6 +603,8 @@ void QuantaView::closeEvent(QCloseEvent *e)
   ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
   if (m_customWidget)
      m_customWidget->reparent(0L, 0, QPoint(), false);
+  if (m_document)
+      quantaApp->guiFactory()->removeClient(m_document->view());
   m_document = 0L;
   emit documentClosed();
   kdDebug(24000) << "Close event" << endl;
@@ -610,7 +612,9 @@ void QuantaView::closeEvent(QCloseEvent *e)
   if (m_plugin)
     m_plugin->unload();
   else
+  {
     quantaApp->closeWindow(this); //important when the tab is closed with the close button
+  }
   if (currentWindow == this)
       currentWindow = dynamic_cast<QuantaView*>(quantaApp->activeWindow());
   if (currentWindow)

@@ -13,6 +13,7 @@
  ***************************************************************************/
 
 //qt includes
+#include <qpopupmenu.h>
 
 //kde includes
 #include <kdirwatch.h>
@@ -385,6 +386,11 @@ bool ViewManager::allEditorsClosed()
   }
   delete it;
   return true;
+}
+
+void ViewManager::slotTabContextMenu(QWidget *widget, const QPoint& point)
+{
+  //quantaApp->taskBarPopup(activeView(), true)->exec(point);
 }
 
 #include "viewmanager.moc"

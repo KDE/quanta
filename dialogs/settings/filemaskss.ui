@@ -243,17 +243,6 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QCheckBox" row="8" column="0">
-            <property name="name">
-                <cstring>showCloseButton</cstring>
-            </property>
-            <property name="text">
-                <string>Show close &amp;button on the tabs</string>
-            </property>
-            <property name="accel">
-                <string>Alt+B</string>
-            </property>
-        </widget>
         <widget class="QLayoutWidget" row="9" column="0">
             <property name="name">
                 <cstring>layout2</cstring>
@@ -329,7 +318,6 @@
     <tabstop>showDTDSelectDialog</tabstop>
     <tabstop>warnBinaryOpening</tabstop>
     <tabstop>showSplash</tabstop>
-    <tabstop>showCloseButton</tabstop>
     <tabstop>sbAutoSave</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>

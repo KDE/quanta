@@ -370,7 +370,12 @@ void QuantaInit::initView()
 #if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3ICON);
   if (m_quanta->tabWidget())
+  {
       m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
+    connect( m_quanta->tabWidget(), SIGNAL( contextMenu( QWidget *, const QPoint & ) ), m_viewManager,
+           SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
+
+  }
   m_quanta->setTabWidgetVisibility(KMdi::AlwaysShowTabs);
 #else
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3);

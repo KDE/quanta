@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32040">
+<kpartgui name="quanta" version="32041">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -21,9 +21,6 @@
       <Action name="file_reload_all" />
       <Separator />
       <DefineGroup name="print_merge" />
-      <Separator />
-      <Action name="file_close" />
-      <Action name="file_close_all" append="close_merge"/>
       <Separator />
       <Action name="file_quit" />
     </Menu>
