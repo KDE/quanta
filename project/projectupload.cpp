@@ -63,6 +63,7 @@ ProjectUpload::ProjectUpload(const KURL& url, const char* name)
     initProjectInfo();
     startUrl = url;
     QTimer::singleShot(10, this, SLOT(slotBuildTree()));
+    currentItem = 0L;
 }
 
 
@@ -133,7 +134,7 @@ void ProjectUpload::slotBuildTree()
  totalText->setText(i18n("Scanning project files..."));
 
  QDict<KFileItem> projectDirFiles = QExtFileInfo::allFilesDetailed(m_project->baseURL, "*");
- 
+
  KURL u = m_project->baseURL;
  KURL absUrl = u;
  for (uint i = 0; i < nl.count(); i++)
@@ -146,7 +147,7 @@ void ProjectUpload::slotBuildTree()
      absUrl.setPath(m_project->baseURL.path(1)+u.path());
      KFileItem *p_item = projectDirFiles.find(absUrl.url());
      if (!p_item)
-       continue;       
+       continue;
      KFileItem item(*p_item);
      /*
      KIO::NetAccess::stat(absUrl, entry);
@@ -254,14 +255,17 @@ void ProjectUpload::startUpload()
   if (QExtFileInfo::exists(u))
   {
     upload();
+    return;
   } else
   {
     if (KMessageBox::warningYesNo(this, i18n("<qt><b>%1</b> seems to be unaccessible.<br>Do you want to proceed with upload?</qt>")
                                          .arg(u.prettyURL(0, KURL::StripFileProtocol))) == KMessageBox::Yes)
     {
       upload();
+      return;
     }
   }
+  uploadInProgress = false;
 }
 
 void ProjectUpload::upload()
