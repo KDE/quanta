@@ -62,6 +62,9 @@ bool QExtFileInfo::convertToRelative(const char *baseDir)
 /** create to ralative short name */
 QString QExtFileInfo::toRelative(QString fname,QString dir)
 {
+  if ( dir.left(5) == "file:" ) dir.remove(0,5);
+  if ( fname.left(5) == "file:" ) fname.remove(0,5);
+
   QString path = fname;
   QString basePath = dir;
 

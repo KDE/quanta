@@ -43,6 +43,7 @@
 #include "quantaview.h"
 #include "quantadoc.h"
 #include "document.h"
+#include "qextfileinfo.h"
 #include "resource.h"
 
 #include "project/project.h"
@@ -800,10 +801,29 @@ void QuantaApp::repaintPreview( bool clear )
   int xOffset = html->contentsX(), yOffset = html->contentsY();
 
 	part->closeURL();
-	part->begin( KURL( doc->basePath() ), xOffset, yOffset );
-  if ( text.isNull() )	part->write( "" );
-  else									part->write( text );
-	part->end();
+	
+	QString fname;
+	bool usePrefix = false;
+	
+	if ( project->hasProject() && !project->previewPrefix.isEmpty() )
+	{
+		fname = doc->write()->fileName();
+		fname = QExtFileInfo::toRelative( fname, project->basePath );
+		if ( fname.left(2) != ".." ) usePrefix = true;
+	}
+	
+	if ( usePrefix )
+	{
+		part->begin( project->previewPrefix+fname, xOffset, yOffset );
+		part->openURL( KURL( project->previewPrefix+fname ) );
+		part->end();
+	}
+	else {
+		part->begin( KURL( doc->basePath() ), xOffset, yOffset );
+  	if ( text.isNull() )	part->write( "" );
+  	else									part->write( text );
+		part->end();
+	}
 
   part->show();
 

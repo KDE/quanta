@@ -64,7 +64,7 @@ void ProjectNewLocal::setDestDir(QWidget *w,bool)
 	checkInsert->setText(i18n("Insert files from ")+dir);
 }
 
-QStringList ProjectNewLocal::files()
+QStringList ProjectNewLocal::files(bool relative)
 {
 	QStringList list;
 	
@@ -75,18 +75,19 @@ QStringList ProjectNewLocal::files()
 	if ( checkInsertWeb->isChecked() ) fmask = webmask->text();
 	if ( checkInsertWithMask->isChecked() ) fmask = mask->text();
 	
-	list = QExtFileInfo::allFilesRelative( dir, fmask);
+	if (relative) list = QExtFileInfo::allFilesRelative( dir, fmask);
+	else          list = QExtFileInfo::allFiles( dir, fmask);
 	
 	return list;
 }
 
-void ProjectNewLocal::setFiles(bool status)
+void ProjectNewLocal::setFiles(bool)
 {
 	listFiles->clear();
 	
 	if ( !checkInsert->isChecked() ) return;
 	
-	QStringList list = files();
+	QStringList list = files(true);
 	for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
 	{
 		listFiles->insertItem( new QListViewItem( listFiles, *it ) );

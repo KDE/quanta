@@ -32,7 +32,7 @@ public:
 	ProjectNewLocal(QWidget *parent=0, const char *name=0);
 	~ProjectNewLocal();
 	
-	QStringList files();
+	QStringList files(bool relative=false);
 	
 public slots:
 	void setFiles(bool);

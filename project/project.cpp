@@ -47,6 +47,7 @@
 #include "projectnewgeneral.h"
 #include "projectnewlocal.h"
 #include "projectnewwebs.h"
+#include "projectnewfinals.h"
 
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
@@ -268,6 +269,8 @@ void Project::loadProject(QString fname)
 	if ( !dom.setContent( &f ) ) return;
 	if ( (n_prj=dom.firstChild().firstChild()).isNull() )	return;
 	if ( (projectName=n_prj.toElement().attribute("name")).isNull() ) return;
+	
+	previewPrefix = n_prj.toElement().attribute("preview");
 		
 	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
 	
@@ -423,15 +426,21 @@ void Project::newProject()
 	pnl = new ProjectNewLocal( stack );
 	pnw = new ProjectNewWebS ( stack );
 	
+	pnf = new ProjectNewFinalS( wiz );
+	
 	stack->addWidget( pnl, 0);
 	stack->addWidget( pnw, 1 );
 	
 	wiz->addPage( png,   i18n("General setting of project..."));
 	wiz->addPage( stack, i18n("Insert files in project..."));
+	wiz->addPage( pnf,  i18n("Some settings of project..."));
 	
 	wiz->setNextEnabled  ( png,   false );
 	wiz->setBackEnabled  ( stack, true  );
+	wiz->setNextEnabled  ( stack, true  );
 	wiz->setFinishEnabled( stack, true  );
+	wiz->setNextEnabled  ( pnf, 	false );
+	wiz->setFinishEnabled( pnf, 	true  );
 	
 	connect( png, SIGNAL(enableNextButton(QWidget *,bool)),
 					 wiz, SLOT(setNextEnabled(QWidget*,bool)));
@@ -470,11 +479,17 @@ void Project::slotAcceptCreateProject()
 	projectName = png->linePrjName->text();
 	projectFileName = basePath+png->linePrjFile->text();
 	
+	if ( pnf->checkPrefix->isChecked() )
+		previewPrefix = pnf->linePrefix->text();
+	else
+		previewPrefix = QString::null;
+	
   QDomElement el;
 
   el = dom.firstChild().firstChild().toElement();
   el.setAttribute("type", png->type());
   el.setAttribute("name", projectName );
+  el.setAttribute("preview", previewPrefix );
 
   el = dom.createElement("author");
   dom.firstChild().firstChild().appendChild( el );

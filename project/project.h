@@ -34,6 +34,7 @@ class QWidgetStack;
 class ProjectNewGeneral;
 class ProjectNewLocal;
 class ProjectNewWebS;
+class ProjectNewFinalS;
 
 class Project : public QWidget  {
    Q_OBJECT
@@ -103,6 +104,8 @@ public:
   QString basePath;
   QString remoteDir;
 
+  QString previewPrefix;
+
   QString email;
   QString author;
 
@@ -115,6 +118,7 @@ private:
 	ProjectNewGeneral		*png;
 	ProjectNewLocal		  *pnl;
 	ProjectNewWebS			*pnw;
+	ProjectNewFinalS		*pnf;
 };
 
 #endif
