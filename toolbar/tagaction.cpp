@@ -163,6 +163,8 @@ void TagAction::insertTag()
     connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
                  SLOT(  slotGetScriptError(KProcess*,char*,int)));
 
+    scriptOutputDest = script.attribute("output","none");
+    scriptErrorDest  = script.attribute("error","none");
     if (scriptOutputDest == "message" || scriptErrorDest == "message")
     {
       quantaApp->slotShowBottDock(true);
@@ -173,8 +175,6 @@ void TagAction::insertTag()
       QString buffer;
 
       QString inputType = script.attribute("input","none");
-      scriptOutputDest = script.attribute("output","none");
-      scriptErrorDest  = script.attribute("error","none");
 
       if ( inputType == "current" ) {
         buffer = w->editIf->text();
