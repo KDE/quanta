@@ -1,8 +1,8 @@
 /***************************************************************************
-                             dtds.cpp  
+                             dtds.cpp
                              -------------------
     begin                : 12.02.2004  (extract from quanta_init and others)
-    
+
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev <pdima@users.sourceforge.net,yshurik@linuxfan.com>
                            (C) 2001-2003 by Andras Mantia <amantia@kde.org>
                            (C) 2000, 2003 by Eric Laffoon <sequitur@kde.org>
@@ -48,7 +48,7 @@
 const QString m_rcFilename("description.rc");
 
 /**
-  This constructor reads the dictionary of known dtd's, the attributes and tags will be loaded 
+  This constructor reads the dictionary of known dtd's, the attributes and tags will be loaded
   on the first access to one dtd.
 */
 DTDs::DTDs()
@@ -92,13 +92,13 @@ DTDs::~DTDs()
   delete m_doc;
 }
 
-  
 
-void DTDs::removeDTD(DTDStruct *dtd) 
+
+void DTDs::removeDTD(DTDStruct *dtd)
 {
   if (dtd)
   {
-    delete dtd->tagsList; 
+    delete dtd->tagsList;
     dtd->tagsList = 0L;
     delete dtd->commonAttrs;
     dtd->commonAttrs = 0L;
@@ -121,7 +121,7 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
   if (m_dict->find(dtdName.lower()))
   {
     delete dtdConfig;
-    kdDebug(24000) << "dtds::readTagDir from " << dirName 
+    kdDebug(24000) << "dtds::readTagDir from " << dirName
                    << " canceled, DTD " << dtdName << " found in memory" << endl;
     return false;
   }
@@ -154,41 +154,41 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
     int pos = tmpStr.find('(');
     dtd->definitionTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
   }
-  
-    
+
+
   m_dict->insert(dtdName.lower(), dtd); //insert the structure into the dictionary
   delete dtdConfig;
- 
-  if (!loadAll) 
+
+  if (!loadAll)
   {
     dtd->loaded = false;
     return true;
-  }  
-  
+  }
+
   dtd->loaded = readTagDir2(dtd);
   return dtd->loaded;
 }
 
 
 /** Reads the tag files and the description.rc from dtd in order to
-    build up the internal DTD and tag structures.     
+    build up the internal DTD and tag structures.
     */
 bool DTDs::readTagDir2(DTDStruct *dtd)
 {
 //  kdDebug(24000) << "dtds::readTagDir2:" << dtd->name << " at " << dtd->fileName << endl;
-    
+
   if (!QFile::exists(dtd->fileName)) return false;
 
   kapp->setOverrideCursor( QCursor(Qt::WaitCursor) );
   quantaApp->slotStatusMsg(i18n("Loading DTD's..."));
 
   KConfig *dtdConfig = new KConfig(dtd->fileName, true);
-  
+
   //read the general DTD info
   dtdConfig->setGroup("General");
   dtd->commonAttrs = new AttributeListDict();
   dtd->commonAttrs->setAutoDelete(true);
-  
+
   bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
   dtd->url = dtdConfig->readEntry("URL");
   dtd->doctypeStr = dtdConfig->readEntry("DoctypeString");
@@ -200,7 +200,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   dtd->doctypeStr.prepend(' ');
   dtd->inheritsTagsFrom = dtdConfig->readEntry("Inherits").lower();
-  
+
   dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");
   dtd->caseSensitive = caseSensitive;
   int numOfTags = 0;
@@ -224,7 +224,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         numOfTags += readTagFile(tmpStr, dtd, tagList);
     }
   }
-  
+
   //read the toolbars
   dtdConfig->setGroup("Toolbars");
   tmpStr = dtdConfig->readPathEntry("Location"); //holds the location of the toolbars
@@ -237,7 +237,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   {
     dtd->toolbars[i] = tmpStr + dtd->toolbars[i].stripWhiteSpace() + toolbarExtension;
   }
-  
+
   //read the extra tags and their attributes
   dtdConfig->setGroup("Extra tags");
   dtd->defaultAttrType = dtdConfig->readEntry("DefaultAttrType","input");
@@ -250,7 +250,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   {
     QTag *tag = new QTag();
     tag->setName(QString(extraTagsList.at(i)).stripWhiteSpace());
-  
+
     tmpStr = (dtd->caseSensitive) ? tag->name() : tag->name().upper();
     if (tagList->find(tmpStr)) //the tag is already defined in a .tag file
     {
@@ -311,10 +311,10 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   dtd->tagsList = tagList;
   dtd->tagsList->setAutoDelete(true);
-  
-  
+
+
   /**** Code for the new parser *****/
-  
+
   dtdConfig->setGroup("Parsing rules");
   //Which DTD can be present in this one?
   dtd->insideDTDs = dtdConfig->readListEntry("MayContain");
@@ -365,7 +365,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     int pos = tmpStr.find('(');
     dtd->specialTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
   }
-  
+
   //static const QString quotationStr = "\\\\\"|\\\\'";
   rxStr = "\\\\\"|\\\\'|";
   QStringList commentsList = dtdConfig->readListEntry("Comments");
@@ -384,9 +384,9 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     dtd->comments[tmpStr] = tmpStr2;
   }
   dtd->commentsStartRx.setPattern(rxStr.left(rxStr.length()-1));
-  
+
   /**** End of code for the new parser *****/
-  
+
   //read the definition of a structure, and the structure keywords
   QStringList structKeywords = dtdConfig->readListEntry("StructKeywords",';');
   if (structKeywords.count() !=0 )
@@ -403,7 +403,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     tmpStr = "\\b[\\d\\S\\w]+\\b";
   }
   dtd->structKeywordsRx.setPattern(tmpStr);
-  
+
   structKeywords = dtdConfig->readListEntry("LocalScopeKeywords",';');
   if (structKeywords.count() !=0 )
   {
@@ -419,12 +419,12 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     tmpStr = "\\b[\\d\\S\\w]+\\b";
   }
   dtd->localScopeKeywordsRx.setPattern(tmpStr);
-  
+
   dtd->structRx.setPattern(dtdConfig->readEntry("StructRx","\\{|\\}").stripWhiteSpace());
   dtd->structBeginStr = dtdConfig->readEntry("StructBeginStr","{").stripWhiteSpace();
   dtd->structEndStr = dtdConfig->readEntry("StructEndStr","}").stripWhiteSpace();
-  
-  
+
+
   dtdConfig->setGroup("Extra rules");
   dtd->minusAllowedInWord = dtdConfig->readBoolEntry("MinusAllowedInWord", false);
   tmpStr = dtdConfig->readEntry("TagAutoCompleteAfter", "<").stripWhiteSpace();
@@ -444,18 +444,18 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   dtd->tagSeparator = dtdConfig->readEntry("TagSeparator").stripWhiteSpace().at(0);
   if (dtd->tagSeparator.isNull())
       dtd->tagSeparator = dtd->attributeSeparator;
-  
+
   dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
   dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
   dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
   dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
-  
+
   //read the definition of different structure groups, like links, images, functions
   //classes, etc.
   uint structGroupsCount = dtdConfig->readNumEntry("StructGroupsCount", 0);
   if (structGroupsCount > MAX_STRUCTGROUPSCOUNT)
       structGroupsCount = MAX_STRUCTGROUPSCOUNT; //max. 10 groups
-  
+
   if (dtd->family == Script)
   {
       StructTreeGroup group;
@@ -562,7 +562,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     abbrevFile.append("abbreviations");
     if (!QFile::exists(abbrevFile))
         abbrevFile = dirName + "abbreviations";
-  
+
   QFile f(abbrevFile);
   if (f.open(IO_ReadOnly))
   {
@@ -579,7 +579,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   delete dtdConfig;
   dtd->loaded = true;
-  resolveInherited(dtd); 
+  resolveInherited(dtd);
   quantaApp->slotStatusMsg("");
   kapp->restoreOverrideCursor();
   return true;
@@ -587,7 +587,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
 
 
 void DTDs::resolveInherited (DTDStruct *dtd)
-{  
+{
   //Resolve the inheritence
   if (!dtd->inheritsTagsFrom.isEmpty())
   {
@@ -638,21 +638,21 @@ void DTDs::resolveInherited (DTDStruct *dtd)
     }
   dtd->specialAreaStartRx.setPattern(specialAreaStartRxStr.left(specialAreaStartRxStr.length() - 1));
   };
-}  
+}
 
- 
+
 
 /** Reads the tags for the tag files. Returns the number of read tags. */
 uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList)
 {
 //  kdDebug(24000) << "dtds::readTagFile:" << fileName << endl;
  QFile f(fileName);
- if (! f.exists()) 
+ if (! f.exists())
    kdDebug(24000) << "dtds::readTagFile file does not exist:" << fileName << endl;
  else
  {
    bool result = f.open( IO_ReadOnly );
-   if (! result) kdDebug(24000) << "dtds::readTagFile unable to open:" << fileName 
+   if (! result) kdDebug(24000) << "dtds::readTagFile unable to open:" << fileName
                                 << " Status: " << f.status() << endl;
  }
  QString errorMsg;
@@ -712,7 +712,7 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
 
  QDomElement el = dom->toElement();
  QString tmpStr;
- 
+
  tmpStr = el.attribute("common");
  if ((tmpStr != "1" && tmpStr != "yes")) //in case of common tags, we are not interested in these options
  {
@@ -726,19 +726,19 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
         tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
       }
     }
-    
+
     tmpStr = el.attribute("single");
     if (tmpStr == "1" || tmpStr == "yes")
     {
       tag->setSingle(true);
     }
-    
+
     tmpStr = el.attribute("optional");
     if (tmpStr == "1" || tmpStr == "yes")
     {
       tag->setOptional(true);
     }
-    
+
     tag->type = el.attribute("type","xmltag");
     tag->returnType = el.attribute("returnType","");
  } else
@@ -754,14 +754,15 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
      QDomElement item = el.firstChild().toElement();
      while ( !item.isNull() )
      {
-       if (tmpStr == "child")
-       {
-          QString childTag = item.attribute("name");
-          if (!tag->parentDTD->caseSensitive)
-              childTag = childTag.upper();
-          tag->childTags.insert(childTag, item.attribute("usage") == "required");
-       }
-       item = item.nextSibling().toElement();
+        tmpStr = item.nodeName();
+        if (tmpStr == "child")
+        {
+            QString childTag = item.attribute("name");
+            if (!tag->parentDTD->caseSensitive)
+                childTag = childTag.upper();
+            tag->childTags.insert(childTag, item.attribute("usage") == "required");
+        }
+        item = item.nextSibling().toElement();
      }
    } else
    if (tmpStr == "stoppingtags") //read what tag can act as closing tag
@@ -789,7 +790,7 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
      attr->interface = el.attribute("interface");
      attr->method = el.attribute("method");
      attr->arguments = el.attribute("arguments");
-          
+
      attr->type = el.attribute("type",tag->parentDTD->defaultAttrType);
      attr->defaultValue = el.attribute("defaultValue");
      attr->status = el.attribute("status");
@@ -943,13 +944,13 @@ QStringList DTDs::nickNameList(bool topLevelOnly)
   for( ; it.current(); ++it )
   {
     if (!topLevelOnly || it.current()->toplevel)
-    {  
+    {
       nickList << it.current()->nickName;
     }
   }
   nickList.sort();
   return nickList;
-}  
+}
 
 
 /** returns the known names */
@@ -960,18 +961,18 @@ QStringList DTDs::nameList(bool topLevelOnly)
   for( ; it.current(); ++it )
   {
     if (!topLevelOnly || it.current()->toplevel)
-    {  
+    {
       nameList << it.current()->name;
     }
   }
   nameList.sort();
   return nameList;
-}  
+}
 
 
 /** find a DTD for a given mimetype */
 const DTDStruct * DTDs::DTDfromMimeType(const QString &mimetype)
-{  
+{
   QDictIterator<DTDStruct> it(*m_dict);
   for( ; it.current(); ++it )
   {
