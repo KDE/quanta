@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #include "wtoolbar.h"
-
+#include "wtoolbar.moc"
 // QT includes
 #include <qframe.h>
 #include <qsizepolicy.h>
@@ -36,22 +36,22 @@ WToolBar::~WToolBar()
 
 void WToolBar::fixingSize()
 {
-	setBarPos( Floating);	
+	setBarPos( Floating);
 	setBarPos( Top);
-	
+
 	//enableMoving(false);
 	//enableFloating(false);
-	
+
 	setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Minimum ) );
 }
 
 void WToolBar::insertSeparator()
-{  
+{
 #ifdef OLD_SEPARATORS
 	QFrame *f  = new QFrame (this);
 	QWidget *w1= new QWidget(this);
 	QWidget *w2= new QWidget(this);
-	
+
   f -> setFrameStyle( QFrame::VLine | QFrame::Sunken );
   w1-> setMinimumWidth( 7 );
   w2-> setMinimumWidth( 7 );
@@ -61,5 +61,5 @@ void WToolBar::insertSeparator()
   insertWidget( 7,0,  w2);
 #else
   insertLineSeparator();
-#endif 
+#endif
 }

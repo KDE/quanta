@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "whtmlpart.h"
+#include "whtmlpart.moc"
 #include <kconfig.h>
 #include <khtml_settings.h>
 
@@ -25,13 +26,13 @@ WHTMLPart::WHTMLPart(QWidget *parent, const char *name )
    hpos = 0;
    // get settings from konq.
    KConfig konqConfig("konquerorrc");
-   
+
    konqConfig.setGroup("HTML Settings");
-   
-   const KHTMLSettings * set = settings(); 
-   
+
+   const KHTMLSettings * set = settings();
+
    ( const_cast<KHTMLSettings *>(set) )->init( &konqConfig, false );
-   
+
 //   setCharset( konqConfig.readEntry("DefaultEncoding") );
 //   setEncoding( konqConfig.readEntry("DefaultEncoding") );
 //   setStandardFont( konqConfig.readEntry("StandardFont") );
@@ -56,7 +57,7 @@ void WHTMLPart::forward()
   if ( forwardEnable() ) {
   	hpos++;
   	openURL( history.at(hpos) );
-  	
+
   	emit updateStatus( backEnable() , forwardEnable() );
   }
 }
@@ -67,7 +68,7 @@ void WHTMLPart::back()
   if ( backEnable() ) {
   	hpos--;
   	openURL( history.at(hpos) );
-  	
+
   	emit updateStatus( backEnable() , forwardEnable() );
   }
 }
@@ -77,9 +78,9 @@ void WHTMLPart::addToHistory( QString url )
 {
 
    if ( history.count() > 0 )
-	   while ( hpos < history.count()-1  )	
+	   while ( hpos < history.count()-1  )
   	 		history.removeLast();
-   		
+
    if ( !history.isEmpty() ) hpos++;
 
    history.append(url);
@@ -96,7 +97,7 @@ bool WHTMLPart::backEnable()
    return hpos > 0;
 }
 
-	
+
 bool WHTMLPart::forwardEnable()
 {
    return hpos < history.count()-1;
