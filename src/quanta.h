@@ -335,7 +335,6 @@ public slots:
   void slotReloadStructTreeView();
 
   void slotReportBug();
-  void slotHelpContents();
   /** registers a new part in the partmanager */
   void slotNewPart(KParts::Part *newPart, bool setActiv);
 
