@@ -516,9 +516,10 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
   {
     node->tag->beginPos(bl, bc);
     bc++;
-    if (node->nextNotChild())
+    Node *n = node->nextNotChild();
+    if (n && n->tag)
     {
-      node->nextNotChild()->tag->beginPos(el, ec);
+      n->tag->beginPos(el, ec);
     } else
     {
        el = write->editIf->numLines();
@@ -731,7 +732,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
       next->prev = prev;
     if (prev && prev->next == node)
     {
-        prev->next = next;
+      prev->next = next;
     }
     if (next && next->closesPrevious)
       next->closesPrevious = false;
@@ -740,7 +741,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     modif = new NodeModif();
     modif->setType(NodeModif::NodeRemoved);
     modif->setLocation(kafkaCommon::getLocation(node));
-    if(prev)
+    if (prev && prev->next == node)
       prev->next = 0L;
     if(parent && parent->child == node)
       parent->child = 0L;
@@ -755,8 +756,9 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     node = 0L;
     i = 0;
     j = 0;
-    if (child)
+    if (!closesPrevious)
     {
+      //move the children up one level
       Node *n = child;
       Node *m = child;
       while (n)
@@ -766,12 +768,119 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
         n = n->next;
         i++;
       }
+      //connect the first child to the tree (after prev, or as the first child of the parent)
+      if (prev && child)
+      {
+        prev->next = child;
+        child->prev = prev;
+      } else
+      {
+        if (!child)      //when there is no child, connect the next as the first child of the parent
+          child = next;
+        if (parent)
+          parent->child = child;
+      }      
+    } else
+    {
+      //change the parent of children, so the prev will be the new parent
+      if (child)
+      {
+        Node *n = child;
+        Node *m = child;
+        while (n)
+        {
+          m = n;
+          n->parent = prev;
+          n = n->next;
+          i++;
+        }      
+        if (prev->child)
+        {
+          n = prev;
+          while (n->child)
+          {
+            n = n->child;
+            while (n->next)
+              n = n->next;
+          }
+          n->next = child;
+          child->prev = n;
+        } else
+        {
+          prev->child = child;
+        }
+      }
+      //move down the nodes starting with next one level and append to the list of children of prev
+      if (next)
+      {
+        if (prev->child) //if the previous node has a child, append the next node after the last child
+        {
+            Node *n = prev;
+            while (n->child)
+            {
+              n = n->child;
+              while (n->next)
+                n = n->next;
+            }
+            next->prev = n;
+            n->next = next;
+        } else // else append it as the first child of the previous
+        {
+          prev->child = next;
+          next->prev = 0L;
+        }
+        //all the nodes after the previous are going UNDER the previous, as the one closing node was deleted
+        //and the tree starting with next is moved under prev (see the above lines)
+        prev->next = 0L;
+        Node *n = next;
+        while (n)
+        {
+          n->parent = prev;
+          n = n->next;
+          j++;
+        }
+        
+      }
+    }
+/*    
+    if (child)
+    {
+      Node *par = parent;
+      if (closesPrevious)
+        par = prev;
+      Node *n = child;
+      Node *m = child;
+      while (n)
+      {
+        m = n;
+        n->parent = par;
+        n = n->next;
+        i++;
+      }
       if (prev)
       {
         if (!closesPrevious)
         {
           child->prev = prev;
           prev->next = child;
+        } else
+        {
+          n = prev;
+          while (n->child)
+          {
+            n = n->child;
+            while (n->next)
+                  n = n->next;
+          }
+          if (prev->child)
+          {
+            child->prev = n;
+            n->next = child;
+          } else
+          {
+            prev->child = child;
+          }
+          m = prev;
         }
       } else
       {
@@ -830,18 +939,18 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
       node = parent;
       if (node)
           node->child = next;
-    }
+    } */
 #ifdef BUILD_KAFKAPART
     modif->setChildrenMovedUp(i);
     modif->setNeighboursMovedDown(j);
     modifs->addNodeModif(modif);
 #endif
     node = nextNode;
-/*
+
     kdDebug(24000)<< "Node removed!" << endl;
-    coutTree(m_node, 2);
-*/
+coutTree(m_node, 2);
   }
+  coutTree(m_node, 2);
 #ifndef BUILD_KAFKAPART
   Q_UNUSED(modifs);
 #endif
@@ -917,20 +1026,20 @@ Node *Parser::rebuild(Document *w)
    //another stange case: the parsed area contains a special area without end
    if (!node)
    {
-      if (lastNode)
-      {
-        if (lastNode->prev )
-            lastNode->prev->next = 0L;
-        if (lastNode->parent && lastNode->parent->child == lastNode)
-            lastNode->parent->child = 0L;
-      }
+     if (lastNode)
+     {
+       if (lastNode->prev )
+           lastNode->prev->next = 0L;
+       if (lastNode->parent && lastNode->parent->child == lastNode)
+           lastNode->parent->child = 0L;
+     }
      delete lastNode;
      nodeNum--;
      lastNode = 0L;
 #ifdef BUILD_KAFKAPART
-   logReparse(modifs, w);
+     logReparse(modifs, w);
 #endif
-   return parse(w);
+     return parse(w);
    }
 
    bool goUp;
