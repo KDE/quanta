@@ -1870,6 +1870,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   }
   toolStr << QString("\n</kpartgui>");
   actStr << QString("\n</actions>");
+  buffer.flush();
 
   ToolbarEntry *p_toolbar = toolbarList[toolbarName.lower()];
   if (p_toolbar->dom) delete p_toolbar->dom;
