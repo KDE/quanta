@@ -109,7 +109,6 @@
 #include "dialogs/filemasks.h"
 #include "dialogs/styleoptionss.h"
 #include "dialogs/previewoptions.h"
-#include "dialogs/previewfontoptions.h"
 #include "dialogs/parseroptions.h"
 #include "dialogs/debuggeroptionss.h"
 #include "dialogs/dtdselectdialog.h"
