@@ -1880,8 +1880,6 @@ void Document::slotDelayedTextChanged(bool forced)
      reparseEnabled = false;
      return;
    }
-   if (!baseNode)
-     baseNode = parser->parse(this, true);
    
     uint line, column;
     QString oldNodeName = "";
