@@ -692,7 +692,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
    KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
         p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
  }
- saveMainWindowSettings(KGlobal::config(), autoSaveGroup());
+ saveMainWindowSettings(KGlobal::config(), "Appearance");
  KEditToolbar dlg(factory(), this);
 
  //remove the manually added menus BEFORE the dlg shows up
@@ -734,7 +734,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
 
 void QuantaApp::slotNewToolbarConfig()
 {
- applyMainWindowSettings(KGlobal::config(), autoSaveGroup());
+ applyMainWindowSettings(KGlobal::config(), "Appearance");
  view->toolbarTab->setCurrentPage(view->toolbarTab->currentPageIndex());
 }
 
@@ -1288,7 +1288,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
     QWidget *w = new QWidget(view->toolbarTab, "ToolbarHoldingWidget");
     KToolBar *tb = new KToolBar(w, element.attribute("name"), true, true);
     tb->loadState(element);
-    tb->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+    tb->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum));
     KAction *action;
     QDomNode node = element.firstChild();
     while (!node.isNull())

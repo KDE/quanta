@@ -763,7 +763,7 @@ void Project::slotRenameFinished( KIO::Job * job)
       if (tmpString.startsWith(oldStr))
       {
         oldString = tmpString;
-        tmpString = tmpString.replace(oldStr,newStr);
+        tmpString = tmpString.replace(QRegExp(oldStr),newStr);
         if (oldString != tmpString )
         {
           el.setAttribute("url",tmpString);

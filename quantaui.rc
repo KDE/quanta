@@ -1,11 +1,11 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="31002">
+<kpartgui name="quanta" version="31003">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
       <Action name="file_new"/>    
-      <Action name="qfile_open"/>    
-      <Action name="qfile_open_recent"/>    
+      <Action name="file_open"/>    
+      <Action name="file_open_recent"/>    
       <Separator />
       <Action name="file_save" />
       <Action name="file_save_as" />
@@ -16,12 +16,12 @@
         <Action name="save_selection_local_template"/>
         <Action name="save_selection_project_template" />
       </Menu>
-      <Action name="save_all" append="save_merge"/>
+      <Action name="file_save_all" append="save_merge"/>
       <Separator />
       <Action name="file_print" />
       <Separator />
       <Action name="file_close" />
-      <Action name="close_all" append="close_merge"/>
+      <Action name="file_close_all" append="close_merge"/>
       <Separator />
       <Action name="file_quit" />
     </Menu>
