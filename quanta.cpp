@@ -225,7 +225,7 @@ void QuantaApp::slotFileOpenRecent(const KURL &url)
   if ((url.isLocalFile()) && (!QFileInfo(fn).exists()))
   {
     if (KMessageBox::questionYesNo( this,
-        i18n("The file %1 does not exist.\n Do you want to remove from the list?").arg(fn) )
+        i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(fn) )
         == KMessageBox::Yes)
     {
       fileRecent->removeURL(url);
@@ -2187,7 +2187,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    }
    if ( (toolbarDom->toString().isEmpty()) ) //|| (actionContent.isEmpty()))
    {
-     KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin as the archive name!"));
+     KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin with the archive name!"));
      return;
    }
 
@@ -3328,12 +3328,12 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
       int result;
       if (p_toolbar->url.isEmpty())
       {
-         result = KMessageBox::questionYesNoCancel(this, i18n("<qt>Toolbar <b>%1/<b> is new and unsaved. Do you want to save before remove?</qt>").arg(p_toolbar->name),
+         result = KMessageBox::questionYesNoCancel(this, i18n("<qt>Toolbar <b>%1/<b> is new and unsaved. Do you want to save it before it is removed?</qt>").arg(p_toolbar->name),
               i18n("Save Toolbar"));
       } else
       {
          FourButtonMessageBox dlg(this, 0, true);
-         dlg.textLabel->setText(i18n("<qt>The toolbar <b>%1</b> was modified. Do you want to save before remove?</qt>").arg(p_toolbar->name));
+         dlg.textLabel->setText(i18n("<qt>The toolbar <b>%1</b> was modified. Do you want to save it before it is removed?</qt>").arg(p_toolbar->name));
          dlg.setCaption(i18n("Save Toolbar"));
          dlg.pixmapLabel->setPixmap(BarIcon("messagebox_info", KIcon::SizeMedium));
          dlg.exec();

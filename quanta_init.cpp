@@ -113,7 +113,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   {
     quantaStarted = false;
     kdWarning() << "***************************************************************************" << endl
-                << i18n("Quanta data files were not found.\nYou may forgot to run \"make install\","
+                << i18n("Quanta data files were not found.\nYou might forgot to run \"make install\","
                         "or your KDEDIR, KDEDIRS or PATH is not set correctly.!") << endl
                 << "***************************************************************************" << endl;
     QTimer::singleShot(20, kapp, SLOT(quit()));
