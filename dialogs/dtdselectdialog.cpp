@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Tue Oct 8 16:33:18 2002
+** Created: Wed Oct 9 12:43:08 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -35,8 +35,12 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
     resize( 445, 190 ); 
     setCaption( tr2i18n( "DTD Selector" ) );
 
+    okButton = new QPushButton( this, "okButton" );
+    okButton->setGeometry( QRect( 190, 160, 80, 22 ) ); 
+    okButton->setText( tr2i18n( "&OK" ) );
+
     QWidget* privateLayoutWidget = new QWidget( this, "Layout2" );
-    privateLayoutWidget->setGeometry( QRect( 10, 10, 430, 137 ) ); 
+    privateLayoutWidget->setGeometry( QRect( 9, 10, 430, 137 ) ); 
     Layout2 = new QGridLayout( privateLayoutWidget, 1, 1, 0, 6, "Layout2"); 
 
     messageLabel = new QLabel( privateLayoutWidget, "messageLabel" );
@@ -72,13 +76,8 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
 
     convertDTD = new QCheckBox( privateLayoutWidget, "convertDTD" );
     convertDTD->setText( tr2i18n( "&Convert the document to the selected DTD" ) );
-    convertDTD->setChecked( TRUE );
 
     Layout2->addWidget( convertDTD, 2, 0 );
-
-    okButton = new QPushButton( this, "okButton" );
-    okButton->setGeometry( QRect( 190, 160, 80, 22 ) ); 
-    okButton->setText( tr2i18n( "&OK" ) );
 
     // signals and slots connections
 

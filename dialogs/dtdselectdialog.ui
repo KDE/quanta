@@ -15,13 +15,29 @@
     <property name="caption">
         <string>DTD Selector</string>
     </property>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>okButton</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>190</x>
+                <y>160</y>
+                <width>80</width>
+                <height>22</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;OK</string>
+        </property>
+    </widget>
     <widget class="QLayoutWidget">
         <property name="name">
             <cstring>Layout2</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>10</x>
+                <x>9</x>
                 <y>10</y>
                 <width>430</width>
                 <height>137</height>
@@ -104,27 +120,8 @@ Dialog message2:</string>
                 <property name="text">
                     <string>&amp;Convert the document to the selected DTD</string>
                 </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
             </widget>
         </grid>
-    </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>okButton</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>190</x>
-                <y>160</y>
-                <width>80</width>
-                <height>22</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>&amp;OK</string>
-        </property>
     </widget>
 </widget>
 <connections>

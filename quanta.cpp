@@ -532,7 +532,7 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
       w->insertTag( "<a href=\""+relURL.url()+"\">","</a>");
     }
   }
-  w->view()->setFocus();
+//  w->view()->setFocus();
 }
 
 ////////////////////////
@@ -557,7 +557,7 @@ void QuantaApp::slotNewStatus()
     saveAction   ->setEnabled(doc->isModified());
     saveAllAction->setEnabled(doc->isModifiedAll());
     saveprjAction->setEnabled(project->isModified());
-
+   
     bool projectExists = project->hasProject();
     closeprjAction     ->setEnabled(projectExists);
     openPrjViewAction  ->setEnabled(projectExists);
@@ -572,19 +572,6 @@ void QuantaApp::slotNewStatus()
     saveAsProjectTemplateAction->setEnabled(projectExists);
     saveSelectionAsProjectTemplateAction->setEnabled(projectExists);
 
-    if (projectExists)
-    {
-      KURL::List toolbarList = QExtFileInfo::allFiles(project->toolbarURL, "*"+toolbarExtension);
-      projectToolbarFiles->setMaxItems(toolbarList.count());
-      for (uint i = 0; i < toolbarList.count(); i++)
-      {
-        if (toolbarList[i].isLocalFile()) //TODO: only local toolbar files are handled
-          projectToolbarFiles->addURL(toolbarList[i]);
-      }
-    } else
-    {
-      projectToolbarFiles->clearURLList();
-    }
     actionCollection()->action("toolbars_load_project")->setEnabled(projectExists);
     actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
 
@@ -646,7 +633,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   Document *currentWrite = view->write();
   currentWrite->view()->resize(view->writeTab->size().width()-5, view->writeTab->size().height()-35);
   view->oldWrite = currentWrite;
-  currentWrite->view()->setFocus();
+//  currentWrite->view()->setFocus();
 
 
   emit reloadTreeviews();
@@ -959,7 +946,7 @@ void QuantaApp::slotShowPreview()
       delete doc2;
     }
     fileWatcher->startScan();
-	  w->view()->setFocus();
+//	  w->view()->setFocus();
 	}
 	else {
 //		enableCommand(ID_VIEW_BACK);
@@ -1049,7 +1036,7 @@ void QuantaApp::setCursorPosition( int row, int col )
   else
     w->viewCursorIf->setCursorPositionReal(numLines - 1, col);
 
-  w->view()->setFocus();
+//  w->view()->setFocus();
 }
 
 void QuantaApp::gotoFileAndLine(QString filename, int line )
@@ -1063,7 +1050,7 @@ void QuantaApp::gotoFileAndLine(QString filename, int line )
     w->viewCursorIf->setCursorPositionReal(line, 0);
   }
 
-  w->view()->setFocus();
+//  w->view()->setFocus();
 }
 
 
@@ -1093,7 +1080,7 @@ void QuantaApp::slotDockChanged()
     }
     if ( !exitingFlag )
     {
-      if (view->writeExists()) doc ->write()->setFocus();
+      if (view->writeExists()) view->write()->view()->setFocus();
     }
   }
 }
@@ -1149,7 +1136,7 @@ void QuantaApp::contextHelp()
   if (  id_w == 1 || id_w == 2 )
   {
     rightWidgetStack->raiseWidget(0);
-    view->write()->view()->setFocus();
+//    view->write()->view()->setFocus();
   }
   else
   {
@@ -2222,6 +2209,24 @@ KURL QuantaApp::projectBaseURL()
   	}
   }
   return result;
+}
+
+/** No descriptions */
+void QuantaApp::slotBuildPrjToolbarsMenu()
+{
+    if (project && project->hasProject())
+    {
+      KURL::List toolbarList = QExtFileInfo::allFiles(project->toolbarURL, "*"+toolbarExtension);
+      projectToolbarFiles->setMaxItems(toolbarList.count());
+      for (uint i = 0; i < toolbarList.count(); i++)
+      {
+       // if (toolbarList[i].isLocalFile()) //TODO: only local toolbar files are handled
+          projectToolbarFiles->addURL(toolbarList[i]);
+      }
+    } else
+    {
+      projectToolbarFiles->clearURLList();
+    }
 }
 
 #include "quanta.moc"

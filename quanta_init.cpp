@@ -189,6 +189,9 @@ void QuantaApp::initQuanta()
   QPopupMenu* pm_view = (QPopupMenu*)guiFactory()->container("view", this);
   connect(pm_view,SIGNAL(aboutToShow()), this, SLOT(viewMenuAboutToShow()));
 
+  QPopupMenu *toolbarsMenu  = (QPopupMenu*)guiFactory()->container("toolbars_load", this);
+  connect(toolbarsMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPrjToolbarsMenu()));
+
   connect( messageOutput, SIGNAL(clicked(QString,int)),
            this,          SLOT(gotoFileAndLine(QString,int)));
 
@@ -260,7 +263,9 @@ void QuantaApp::initProject()
           this,     SLOT  (slotShowProjectTree()));
   connect(project,  SIGNAL(removeFromProject(int)),
           pTab,     SLOT  (slotRemoveFromProject(int)));
-
+  connect(project,  SIGNAL(templateURLChanged(const KURL &)),
+          tTab,     SLOT  (slotSetTemplateURL(const KURL &)));
+          
   connect(fLTab,    SIGNAL(insertDirInProject(const KURL&)),
           project,  SLOT  (slotAddDirectory(const KURL&)));
   connect(fTTab,    SIGNAL(insertDirInProject(const KURL&)),

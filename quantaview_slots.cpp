@@ -18,6 +18,7 @@
 
 // standard header
 #include <time.h>
+#include <iostream.h>
 
 // include files for QT
 #include <qdir.h>
@@ -237,7 +238,8 @@ void QuantaView::slotTagMisc()
 void QuantaView::slotTagQuickStart(){
 	TagQuickStart *quickDlg = new TagQuickStart( quantaApp->projectBaseURL(), this, i18n("Generate HTML Text"));
 
-  if ( quickDlg->exec() ) {
+  if ( quickDlg->exec() )
+   {
     const QString chset = QTextCodec::codecForLocale()->mimeName();
   	QString tag = QString("<!DOCTYPE HTML PUBLIC \""+DEFAULT_DTD+"\">\n")+QuantaCommon::tagCase("<html>\n")
   	                  +space+QuantaCommon::tagCase("<head>\n")+space+QuantaCommon::tagCase("  <title>");

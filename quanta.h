@@ -183,7 +183,7 @@ public slots:
   void slotNewUndo      ();
   void slotNewStatus    ();
   void slotNewLineColumn();
-  //void slotUpdateStatus (const QString &);
+
   void slotUpdateStatus (QWidget*);
 
   void slotDockChanged();
@@ -281,6 +281,8 @@ public slots:
   void slotPluginsEdit();
   /** Validates the currently loaded plugins */
   void slotPluginsValidate();
+  /** No descriptions */
+  void slotBuildPrjToolbarsMenu();
 
 protected slots:
   void initToolBars();

@@ -77,7 +77,7 @@
 Project::Project( QWidget *, const char *name )
         : QWidget(0L,name)
 {
-  projectName=QString::null;
+  projectName = QString::null;
   config = 0L;
   modified=false;
   olfwprj=false;
@@ -126,7 +126,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
 {
   KURL relNameURL = QExtFileInfo::toRelative( nameURL, baseURL);
 
-  if ( relNameURL.path().startsWith("/") )
+  if ( relNameURL.path().startsWith("/") || relNameURL.path().startsWith(".")  )
   {
     CopyTo *dlg = new CopyTo( baseURL, this, i18n("%1: copy to project...").arg(nameURL.prettyURL()) );
 
@@ -322,7 +322,6 @@ void Project::slotOpenProject()
   {
     slotCloseProject();
     slotLoadProject ( url );
-    emit closeFiles();
 
     projectRecent->addURL( url );
   }
@@ -346,7 +345,6 @@ void Project::slotOpenProject(const KURL &url)
     {
     	slotCloseProject();
     	slotLoadProject ( url );
-    	emit closeFiles();
     	projectRecent->addURL( url );
     }
   }
@@ -447,6 +445,7 @@ void Project::slotLoadProject(const KURL &a_url)
         baseURL = url;
         baseURL.setPath(url.directory(true, true));
         dom.setContent( &f );
+        f.close();
         loadProjectXML();
         openCurrentView();
         emit newProjectLoaded();
@@ -454,7 +453,6 @@ void Project::slotLoadProject(const KURL &a_url)
       {
         KMessageBox::error(this, i18n("Cannot open the file %1 for reading").arg(tmpName));
       }
-      f.close();
       KIO::NetAccess::removeTempFile( tmpName);
     } else
     {
@@ -464,14 +462,14 @@ void Project::slotLoadProject(const KURL &a_url)
 }
 
 void Project::loadProjectXML()
-{
+{         
   QDomNode    no;
   QDomElement el;
-  QDomNode projectNode;
   KURL url;
+  QDomNode projectNode = dom.firstChild().firstChild();
+  projectName = projectNode.toElement().attribute("name");
 	
-  if ( (projectNode = dom.firstChild().firstChild()).isNull() ||
-       (projectName = projectNode.toElement().attribute("name")).isNull() )
+  if ( projectNode.isNull() || projectName.isEmpty() )
   {
     KMessageBox::sorry( this, i18n("Invalid project file.") );
     return;
@@ -499,7 +497,7 @@ void Project::loadProjectXML()
 
   no = projectNode.namedItem("autoload");
   currentProjectView = no.toElement().attribute("projectview");
-    
+            
   no = projectNode.namedItem("templates");
   tmpString = no.firstChild().nodeValue();
   templateURL = baseURL;
@@ -577,11 +575,6 @@ void Project::loadProjectXML()
         modified = true;
       }
     }
-  	if ( el.nodeName() == "openfile" ) 
-  	{
-  		emit openFile( url, qConfig.defaultEncoding );
-  	}
-
   	if ( el.nodeName() == "item" )
   	{
       //remove non-existent local files
@@ -613,9 +606,9 @@ void Project::loadProjectXML()
   emit reloadTree( fileList, true);
 
   emit showTree();
-  emit newStatus();
-
-  passwd = "";
+  emit newStatus();                  
+  
+  passwd = "";   
 }
 
 // slot for insert file
@@ -635,7 +628,7 @@ void Project::slotAddFiles()
   	KURL firstURL = list.first();
   	firstURL = QExtFileInfo::toRelative( firstURL, baseURL );
   	
-  	if ( firstURL.path().startsWith("/") )
+  	if ( firstURL.path().startsWith("/") || firstURL.path().startsWith("."))
   	{
   		CopyTo *dlg = new CopyTo( baseURL, this, i18n("Files: copy to project...") );
 
@@ -674,7 +667,7 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
     dirURL.adjustPath(1);
   	KURL relURL = QExtFileInfo::toRelative(dirURL, baseURL);
 
-    if ( relURL.path().startsWith("/") )
+    if ( relURL.path().startsWith("/") || relURL.path().startsWith("."))
     {
     	CopyTo *dlg = new CopyTo( baseURL, this, i18n("%1: copy to project...").arg(dirURL.prettyURL()) );
 

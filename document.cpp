@@ -94,6 +94,8 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   connect( m_view, SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString *)),
            this,  SLOT(  slotFilterCompletion(KTextEditor::CompletionEntry*,QString *)) );
   connect( m_doc, SIGNAL(textChanged()), SLOT(slotTextChanged()));
+
+//  setFocusProxy(m_view);
 }
 
 Document::~Document()

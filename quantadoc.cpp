@@ -438,8 +438,10 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 //  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
 //  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)quantaApp->factory()->container("rb_popup", quantaApp));
 
- 	w->parentWidget()->setFocusProxy(w);
-
+/* 	quantaApp->setFocusProxy(w);
+  w->setFocusPolicy(QWidget::StrongFocus);
+  quantaApp->setFocusPolicy(QWidget::StrongFocus);
+  */
  	connect( v, SIGNAL(newStatus()),quantaApp, SLOT(slotNewStatus()));
 
 /* !!!!
@@ -449,8 +451,7 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 
 // 	connect( w, SIGNAL(statusMsg(const QString &)),quantaApp, SLOT(slotStatusMsg(const QString &)));
 
-// 	w->clearFocus();
-// 	w->setFocus();
+  //w->g
 
  	return w;
 }

@@ -132,7 +132,7 @@ void ProjectNewLocal::slotAddFiles()
 
   	u = QExtFileInfo::toRelative( u, dir );
 
-  	if ( u.path().left(2)=="..")
+  	if ( u.path().startsWith("..") || u.path().startsWith("/"))
   	{
   		CopyTo *dlg = new CopyTo( dir, this, i18n("Files: copy to project...") );
 
@@ -173,7 +173,7 @@ void ProjectNewLocal::slotAddFolder()
    	KURL sdir = dirURL;
     sdir = QExtFileInfo::toRelative( sdir, dir);
 	
-    if ( sdir.path().left(2) == ".." )
+    if ( sdir.path().startsWith("..") || sdir.path().startsWith("/") )
     {
   	  CopyTo *dlg = new CopyTo( dir, this, i18n("%1: copy to project...").arg(dirName) );
 
