@@ -41,7 +41,6 @@ public slots:
 
 signals:
   void openFileInPreview(const KURL&);
-  void hidePreview();
   void assignActionToScript(const KURL&, const QString&);
 
 private:

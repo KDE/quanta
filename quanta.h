@@ -234,10 +234,9 @@ public slots:
 
   /** repaint preview */
   void repaintPreview( bool clear = false);
-  void slotActivatePreview();
-  void slotHidePreview();
   /** show preview ( F6 )*/
   void slotShowPreview();
+  void slotShowPreviewWidget(bool show);
   void slotShowProjectTree();
   /** Repaint preview ( slot ) */
   void slotViewRepaint();
@@ -458,22 +457,22 @@ private:
   // ACTIONS
   KRecentFilesAction *projectToolbarFiles;
 
-  KToggleAction *showMessagesAction, *showTreeAction, *showScriptTabAction,
-    *showFTabAction,*showPTabAction,*showTTabAction,*showSTabAction,*showATabAction,
-    *showDTabAction, *showToolbarAction,*showStatusbarAction,*showPreviewAction,
-    *showKafkaAction;
-  KToggleAction *showDTDToolbar;
+  KToggleAction *showMessagesAction, *showScriptTabAction,
+    *showFTabAction, *showPTabAction, *showTTabAction,
+    *showSTabAction, *showATabAction, *showDTabAction,
+    *showStatusbarAction, *showPreviewAction,
+    *showKafkaAction, *showDTDToolbar;
 
   KSelectAction *setEndOfLine;
 
-  KAction *saveAction, *saveAllAction, *undoAction, *redoAction,
+  KAction *saveAction, *saveAllAction,
     *closeprjAction, *insertFileAction, *insertDirAction,
-    *newPrjAction, *openPrjAction,  *uploadProjectAction,  *rescanPrjDirAction,
-    *projectOptionAction, *saveAsLocalTemplateAction, *saveAsProjectTemplateAction,
-    *saveSelectionAsLocalTemplateAction, *saveSelectionAsProjectTemplateAction,
+    *uploadProjectAction,  *rescanPrjDirAction,
+    *projectOptionAction, *saveAsProjectTemplateAction,
+    *saveSelectionAsProjectTemplateAction,
     *openPrjViewAction, *savePrjViewAction, *saveAsPrjViewAction;
 
-  KAction *editUndo, *editRedo, *bookmarkToggle, *bookmarkClear;
+  KAction *bookmarkToggle, *bookmarkClear;
   KAction *editTagAction;
 
   //KToggleAction *viewFoldingMarkers;

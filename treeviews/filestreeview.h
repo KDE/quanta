@@ -77,7 +77,7 @@ protected slots: // Private slots
   virtual void slotDirListDeleteItem(KFileItem *item);
 
 signals:
-  void activatePreview();
+  void showPreviewWidget(bool);
   void openFile(const KURL&, const QString& );
   void openImage(const KURL&);
 };

@@ -93,7 +93,7 @@ signals:
   void parsingDTDChanged(const QString&);
   void openFile(const KURL&, const QString& );
   void openImage(const KURL&);
-  void activatePreview();
+  void showPreviewWidget(bool);
 
 private:
   /** builds the structure tree */

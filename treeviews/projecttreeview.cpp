@@ -237,7 +237,6 @@ void ProjectTreeView::slotOpen()
      }
      else if ( QuantaCommon::checkMimeGroup(urlToOpen,"image" ) )
      {
-       emit activatePreview();
        emit openImage( urlToOpen );
      } else
       if (denyBinaryInsert() == KMessageBox::Yes)

@@ -1644,14 +1644,17 @@ void Document::slotCompletionAborted()
 /** Ask for user confirmation if the file was changed outside. */
 void Document::checkDirtyStatus()
 {
-  fileWatcher->stopScan();
+  QString fileName;
+  if (url().isLocalFile())
+      fileName = url().path();
   if (m_dirty)
   {
+    fileWatcher->removeFile(fileName);
     if (url().isLocalFile())
     {
       //check if the file is changed, also by file content. Might help to reduce
       //unwanted warning on NFS
-      QFile f(url().path());
+      QFile f(fileName);
       if (f.open(IO_ReadOnly))
       {
         QString content;
@@ -1683,17 +1686,27 @@ void Document::checkDirtyStatus()
       delete dlg;
     }
     m_dirty = false;
+    if (!fileName.isEmpty())
+        fileWatcher->addFile(fileName);
   }
-  fileWatcher->startScan();
 }
 
 /** Save the document and reset the dirty status. */
 void Document::save()
 {
-  fileWatcher->stopScan();
-  m_doc->save();
-  m_dirty = false;
-  fileWatcher->startScan();
+  if (url().isLocalFile())
+  {
+    QString fileName;
+    fileName = url().path();
+    fileWatcher->removeFile(fileName);
+    m_doc->save();
+    m_dirty = false;
+    fileWatcher->addFile(fileName);
+  } else
+  {
+    m_doc->save();
+    m_dirty = false;
+  }
 }
 
 /** No descriptions */

@@ -210,7 +210,6 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
         }
         else if ( QuantaCommon::checkMimeGroup(urlToOpen, "image") ) //it may be an image
              {
-                emit activatePreview();
                 emit openImage( urlToOpen );
              } else //it is an unknown type, maybe binary
              {

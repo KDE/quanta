@@ -120,7 +120,7 @@ void ScriptTreeView::slotEditDescription()
   if (f)
   {
     KURL urlToOpen = infoFile(currentURL());
-    emit hidePreview();
+    emit showPreviewWidget(false);
     emit openFile(urlToOpen, quantaApp->defaultEncoding());
   }
 }
@@ -130,7 +130,7 @@ void ScriptTreeView::slotEditScript()
   FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(currentItem());
   if (f)
   {
-    emit hidePreview();
+    emit showPreviewWidget(false);
     KURL urlToOpen = currentURL();
     KURL infoUrl = infoFile(urlToOpen);
     QString editApp = infoOptionValue(infoUrl, "editor");
@@ -176,7 +176,7 @@ void ScriptTreeView::slotEditInQuanta()
   if (f)
   {
     KURL urlToOpen = currentURL();
-    emit hidePreview();
+    emit showPreviewWidget(false);
     emit openFile(urlToOpen, quantaApp->defaultEncoding());
   }
 }

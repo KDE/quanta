@@ -235,7 +235,8 @@ bool QuantaApp::slotFileSaveAs()
     Document *w = m_view->write();
     KURL oldURL = w->url();
     w->checkDirtyStatus();
-    fileWatcher->stopScan();
+    if (oldURL.isLocalFile())
+        fileWatcher->removeFile(oldURL.path());
     QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
 
     QString saveAsPath;
@@ -279,6 +280,7 @@ bool QuantaApp::slotFileSaveAs()
     KateFileDialogData data = dialog.exec();
     if (w->checkOverwrite(data.url) == KMessageBox::Yes && m_doc->saveDocument(data.url))
     {
+      oldURL = data.url;
       if ( ( m_project->hasProject() ) &&
           ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project?").arg(data.url.prettyURL())) )
         )
@@ -291,7 +293,8 @@ bool QuantaApp::slotFileSaveAs()
       slotUpdateStatus(w);
       result = true;
     }
-    fileWatcher->startScan();
+    if (oldURL.isLocalFile())
+        fileWatcher->addFile(oldURL.path());
   }
   return result;
 }
@@ -538,10 +541,7 @@ void QuantaApp::slotViewRepaint()
 /** repaint preview */
 void QuantaApp::repaintPreview( bool clear )
 {
-  if (!m_view->writeExists()) return;
   static QString oldtext = "";
-
-  previewCopyMade = false;
 
   WHTMLPart *part = htmlPart();
   QWidgetStack *s = widgetStackOfHtmlPart();
@@ -549,6 +549,9 @@ void QuantaApp::repaintPreview( bool clear )
   if ( !s ) return;
   if ( !part ) return;
   if ( !s->id( s ->visibleWidget()) ) return;
+  if (!m_view->writeExists()) return;
+
+  previewCopyMade = false;
 
   if ( clear )
  {
@@ -593,35 +596,14 @@ void QuantaApp::repaintPreview( bool clear )
  part->show();
 }
 
-void QuantaApp::slotHidePreview()
-{
-  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
-  if (ta->isChecked())
-  {
-    ta->setChecked(false);
-    int id = 0;
-    if (!previousWidgetList.empty())
-    {
-      id = previousWidgetList.last();
-      previousWidgetList.pop_back();
-    }
-    QWidgetStack *s = widgetStackOfHtmlPart();
-    s->raiseWidget(id);
-  }
-}
-
 void QuantaApp::slotOpenFileInPreview(const KURL& a_url)
 {
   if ( qConfig.previewPosition == "Disabled" )
      return;
-  slotActivatePreview();
   WHTMLPart *part = htmlPart();
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if ( !s || !part  )
+  if ( !part  )
      return;
-  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
-  if (!ta->isChecked())
-      ta->setChecked(true);
+  slotShowPreviewWidget(true);
   part->openURL(a_url);
   part->show();
 }
@@ -632,15 +614,8 @@ void QuantaApp::slotImageOpen(const KURL& url)
   if ( qConfig.previewPosition == "Disabled" )
      return;
 
+  slotShowPreviewWidget(true);
   WHTMLPart *part = htmlPart();
-  QWidgetStack *s = widgetStackOfHtmlPart();
-
-  if ( !s || !part || !s->id( s ->visibleWidget()) ) return;
-
-  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
-  if (!ta->isChecked())
-      ta->setChecked(true);
-
   QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
   text += url.path(); //TODO
   text += "\">\n</div>\n</body>\n</html>\n";
@@ -795,9 +770,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   QuantaKPartPlugin *plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
   if (plugin)
   {
-    bool statusBarVisible = showStatusbarAction->isChecked();
     plugin->showGui(false);
-    if (statusBarVisible)
+    if (showStatusbarAction->isChecked())
     {
       showStatusbarAction->setChecked(true);
       statusBar()->changeItem("", IDS_STATUS);
@@ -1210,34 +1184,21 @@ void QuantaApp::slotOptions()
   delete kd;
 }
 
-void QuantaApp::slotActivatePreview()
+void QuantaApp::slotShowPreviewWidget(bool show)
 {
-  WHTMLPart *part = htmlPart();
-  if ( !part ) return;
   QWidgetStack *s = widgetStackOfHtmlPart();
-  int id = s->id(s->visibleWidget());
-  if (id != 1)
+  if (!s)
+      return;
+  if (show)
   {
-    previousWidgetList.push_back(id);
-    s->raiseWidget(1);
-  }
-}
-
-void QuantaApp::slotShowPreview()
-{
-  if (!m_view->writeExists()) return;
-  WHTMLPart *part = htmlPart();
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  Document *w = m_view->write();
-
-  if ( !s ) return;
-  if ( !part ) return;
-
-
-  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
-  bool stat = !ta->isChecked();
-
-  if ( stat )
+    int id = s->id(s->visibleWidget());
+    if (id != 1)
+    {
+      previousWidgetList.push_back(id);
+      s->raiseWidget(1);
+    }
+    showPreviewAction->setChecked(true);
+  } else
   {
     int id = 0;
     if (!previousWidgetList.empty())
@@ -1246,30 +1207,39 @@ void QuantaApp::slotShowPreview()
       previousWidgetList.pop_back();
     }
     s->raiseWidget(id);
-
-    fileWatcher->stopScan();
-    if (m_doc->isModified())
-    {
-
-      KURL origUrl = w->url();
-      KURL tempUrl;
-      tempUrl.setPath(w->tempFileName());
-//TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
-//is dropped
-      QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
-    }
-    fileWatcher->startScan();
+    showPreviewAction->setChecked(false);
   }
-  else
+}
+
+void QuantaApp::slotShowPreview()
+{
+  if (!m_view->writeExists()) return;
+  Document *w = m_view->write();
+
+  if (showPreviewAction->isChecked())
   {
     if ( qConfig.previewPosition == "Bottom" )
     {
       //TODO: ???
     }
-
-    previousWidgetList.push_back(s->id(s->visibleWidget()));
-    s->raiseWidget(1);
+    slotShowPreviewWidget(true);
     repaintPreview(false);
+  } else
+  {
+    slotShowPreviewWidget(false);
+    if (m_doc->isModified())
+    {
+      KURL origUrl = w->url();
+      if (origUrl.isLocalFile())
+          fileWatcher->removeFile(origUrl.path());
+      KURL tempUrl;
+      tempUrl.setPath(w->tempFileName());
+//TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
+//is dropped
+      QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
+      if (origUrl.isLocalFile())
+          fileWatcher->addFile(origUrl.path());
+    }
   }
 }
 
@@ -1879,7 +1849,7 @@ void QuantaApp::slotOpenFileUnderCursor()
   }
   else if ( QuantaCommon::checkMimeGroup(urlUnderCursor,"image" ) )
   {
-    slotActivatePreview();
+    slotShowPreviewWidget(true);
     slotImageOpen( urlUnderCursor );
   }
 
@@ -1926,18 +1896,19 @@ void QuantaApp::slotSyntaxCheckDone()
   if (m_view->writeExists())
   {
     Document *w = m_view->write();
-
-    fileWatcher->stopScan();
     if (m_doc->isModified())
     {
       KURL origUrl = w->url();
+      if (origUrl.isLocalFile())
+          fileWatcher->removeFile(origUrl.path());
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());
 //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
 //is dropped
       QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
+      if (origUrl.isLocalFile())
+          fileWatcher->addFile(origUrl.path());
     }
-    fileWatcher->startScan();
   }
 }
 

@@ -452,8 +452,8 @@ void QuantaApp::initView()
           this, SLOT(slotFileOpen(const KURL &, const QString&)));
   connect(scriptTab, SIGNAL(openFileInPreview(const KURL &)),
           this, SLOT(slotOpenFileInPreview(const KURL &)));
-  connect(scriptTab, SIGNAL(hidePreview()),
-          this, SLOT(slotHidePreview()));
+  connect(scriptTab, SIGNAL(showPreviewWidget(bool)),
+          this, SLOT(slotShowPreviewWidget(bool)));
   connect(scriptTab, SIGNAL(assignActionToScript(const KURL &, const QString&)),
           this, SLOT(slotAssignActionToScript(const KURL &, const QString&)));
 
@@ -463,10 +463,10 @@ void QuantaApp::initView()
   connect(pTab, SIGNAL(insertTag(const KURL &, DirInfo)),
           this, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(fTab, SIGNAL(activatePreview()),
-          this, SLOT(slotActivatePreview()));
-  connect(pTab, SIGNAL(activatePreview()),
-          this, SLOT(slotActivatePreview()));
+  connect(fTab, SIGNAL(showPreviewWidget(bool)),
+          this, SLOT(slotShowPreviewWidget(bool)));
+  connect(pTab, SIGNAL(showPreviewWidget(bool)),
+          this, SLOT(slotShowPreviewWidget(bool)));
 
   connect(htmlpart, SIGNAL(onURL(const QString&)),
               this, SLOT(slotStatusMsg(const QString&)));
@@ -483,8 +483,8 @@ void QuantaApp::initView()
           this, SLOT  (slotFileOpen(const KURL &, const QString&)));
   connect(sTab, SIGNAL(openImage  (const KURL&)),
           this, SLOT(slotImageOpen(const KURL&)));
-  connect(sTab, SIGNAL(activatePreview()),
-          this, SLOT(slotActivatePreview()));
+  connect(sTab, SIGNAL(showPreviewWidget(bool)),
+          this, SLOT(slotShowPreviewWidget(bool)));
 
   connect(dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
 
@@ -663,6 +663,7 @@ void QuantaApp::readOptions()
   QSize s(800,580);
   resize( m_config->readSizeEntry("Geometry", &s));
 
+  KToggleAction *showToolbarAction = (KToggleAction *) actionCollection()->action( "view_toolbar" );
   if (!m_config->readBoolEntry("Show Toolbar",true))
   {
     toolBar("mainToolBar")->hide();
@@ -1614,8 +1615,8 @@ void QuantaApp::initActions()
     //Kate actions
 
 //Edit menu
-    editUndo = KStdAction::undo(m_view, SLOT(slotUndo()), ac);
-    editRedo = KStdAction::redo(m_view, SLOT(slotRedo()), ac);
+    KStdAction::undo(m_view, SLOT(slotUndo()), ac);
+    KStdAction::redo(m_view, SLOT(slotRedo()), ac);
 
     KStdAction::cut(m_view, SLOT(slotCut()), ac);
     KStdAction::copy(m_view, SLOT(slotCopy()), ac) ;
@@ -1716,14 +1717,14 @@ void QuantaApp::initActions()
 //    (void)  new KAction(i18n("Reload All "), 0, 0, this,
 //                        SLOT(slotFileReloadAll()), ac, "file_reload_all");
 
-    saveAsLocalTemplateAction = new KAction( i18n( "Save as Local Template..." ), 0,
+    (void) new KAction( i18n( "Save as Local Template..." ), 0,
                         this, SLOT( slotFileSaveAsLocalTemplate() ),
                         ac, "save_local_template" );
     saveAsProjectTemplateAction = new KAction( i18n( "Save as Project Template..." ), 0,
                         this, SLOT( slotFileSaveAsProjectTemplate() ),
                         ac, "save_project_template" );
 
-    saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection to Local Template File..." ), 0,
+    (void) new KAction( i18n( "Save Selection to Local Template File..." ), 0,
                         this, SLOT( slotFileSaveSelectionAsLocalTemplate() ),
                         ac, "save_selection_local_template" );
     saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection to Project Template File..." ), 0,
@@ -1882,11 +1883,11 @@ void QuantaApp::initActions()
 
     // Project actions
     //
-    newPrjAction = new KAction( i18n( "&New Project..." ), 0,
+    (void) new KAction( i18n( "&New Project..." ), 0,
                         m_project, SLOT( slotNewProject() ),
                         ac, "project_new" );
 
-    openPrjAction = new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
+    (void) new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
                         m_project, SLOT( slotOpenProject() ),
                         ac, "project_open" );
 
@@ -1937,7 +1938,7 @@ void QuantaApp::initActions()
 
     // Options actions
     //
-    showToolbarAction   = KStdAction::showToolbar  ( this, SLOT( slotViewToolBar() ), ac, "view_toolbar" );
+    KStdAction::showToolbar  ( this, SLOT( slotViewToolBar() ), ac, "view_toolbar" );
     showStatusbarAction = KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), ac, "view_statusbar" );
 
 

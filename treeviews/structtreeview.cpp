@@ -715,7 +715,6 @@ void StructTreeView::slotOpenFile()
     }
     else if ( QuantaCommon::checkMimeGroup(url,"image" ) )
     {
-      emit activatePreview();
       emit openImage( url );
     }
   }
