@@ -20,51 +20,59 @@
 #include <kdebug.h>
 #include <kurl.h>
 #include <khtmlview.h>
+#include "fwglobal.h"
 
-const QString blankpagePosition = "file:blankpage.html";
+
 
 SelectableArea::SelectableArea(QWidget *parent, const char *name ) : KHTMLPart(parent,name) {
     view()->setFrameShape(QFrame::NoFrame);
+    view()->setMinimumSize(QSize(1,1));
+    view()->installEventFilter(this);
 }
+
 SelectableArea::~SelectableArea(){
 }
 
 
-
-void SelectableArea::khtmlMousePressEvent( khtml::MousePressEvent *event ){
-  KHTMLPart::khtmlMousePressEvent( event );
-  view()->setFrameShape(QFrame::Box);
-  view()->setFrameShadow ( QFrame::Plain );
-  view()->setLineWidth(2);
-  emit selected(idLabel);
+bool SelectableArea::eventFilter(QObject *o, QEvent *event)
+{
+   switch ( event->type() ) {
+      case QEvent::FocusIn : {
+                           view()->setFrameShape(QFrame::Box);
+                           view()->setFrameShadow ( QFrame::Plain );
+                           view()->setLineWidth(2);
+                           emit selected(idLabel);
+                           return true;
+                           }
+                           break;
+      case QEvent::FocusOut : {
+                           view()->setFrameShape(QFrame::NoFrame);
+                           return true;
+                           }
+                           break;
+      case QEvent::Resize : {
+                             emit Resized( view()->geometry(),idLabel );
+                             emit Resized();
+                             view()->hide();
+                             view()->show();
+                             return true;
+                             }
+                             break;
+      default: return KHTMLPart::eventFilter( o, event );
+   }
 
 }
-
-/*void SelectableArea::focusOutEvent ( QFocusEvent * )
-{
-    setFrameShape(QFrame::NoFrame);
-}*/
-
-
-/*void SelectableArea::resizeEvent ( QResizeEvent * e)
-{
-  QTextBrowser::resizeEvent(e);
-  //QString dim="Width : "+QString::number(frameGeometry().width(),10)+"\nHeight : "+QString::number(frameGeometry().height(),10);
-  //setText(dim);
-  emit Resized(geometry());
-}
-*/
 
 void SelectableArea::setSource(const QString& s){
   if(!s.isEmpty()) openURL( KURL(s) );
   else openURL(blankpagePosition);
 }
 
-
-
-
-
 #include "selectablearea.moc"
+
+
+
+
 
 
 

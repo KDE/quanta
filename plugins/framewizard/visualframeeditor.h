@@ -30,30 +30,33 @@
   */
 
 class VisualFrameEditor : public QHBox  {
-private:
-  tree *t;
-  QWidget *form;
-  QPtrList<QSplitter> splitterList;
-  QPtrList<SelectableArea> SAList;
-  QValueList< QValueList<int> > SIZES;
+   private:
+      tree *t;
+      QWidget *form;
+  
+      QPtrList<QSplitter> splitterList;
+      QPtrList<SelectableArea> SAList;
+      QStringList existingStructure;
+      void build(QString);
+      void setGeometries(QString);
+      void draw2(treeNode *n, QWidget* parent);
+   public:
+	   VisualFrameEditor( QWidget * parent = 0, const char * name = 0);
+	   ~VisualFrameEditor();
+      void setupForm(QWidget *f){ form = f; }
+      void draw() { repaint(); }
+	   void loadExistingStructure(const QStringList&);
+      QString framesetStructure(){ return t->framesetStructure(); }
+      void setNodeSplitMode(QString,QString);//node,mode
+      void reset(){ t->reinitialize(); }
+      void removeNode(QString l);
+      void split(QString,int,QString);
+      void setAllAttributes(QString l,QMap<QString,QString> map) { (t->findAreaAttribute(l)->setAllAttributes(map)); }
+      QMap<QString,QString> getAttributeMap(QString l) { return t->findAreaAttribute(l)->getAttributeMap(); }
+      QString initSA() const { return t->getRoot()->getLabel(); }
 
-  void draw2(treeNode *n, QWidget* parent);
-public:
-	VisualFrameEditor( QWidget * parent = 0, const char * name = 0);
-	~VisualFrameEditor();
-        void setupForm(QWidget *f){ form = f; }
-        void draw();
-        QString framesetStructure(){ return t->framesetStructure(); }
-        void setNodeSplitMode(QString,QString);//node,mode
-        void reset(){ t->reinitialize(); }
-        void removeNode(QString l);
-        void split(QString,int,QString);
-        void setAllAttribute(QString l,QMap<QString,QString> map) { (t->findAreaAttribute(l)->setAllAttribute(map)); }
-        QMap<QString,QString> getAttributeMap(QString l) { return t->findAreaAttribute(l)->getAttributeMap(); }
-        QString initSA() const { return t->getRoot()->getLabel(); }
-
-protected:
-        virtual void paintEvent ( QPaintEvent * );
+   protected:
+      virtual void paintEvent ( QPaintEvent * );
 };
 
 #endif

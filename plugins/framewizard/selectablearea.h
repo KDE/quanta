@@ -20,30 +20,35 @@
 
 #include <qwidget.h>
 #include <khtml_part.h>
+#include <khtmlview.h>
 
 /**a QTextBrowser that can be selected
   *@author gulmini luciano
   */
 
+
 class SelectableArea : public KHTMLPart  {
    Q_OBJECT
-    public :
-	SelectableArea(QWidget *parent=0, const char *name=0);
-	~SelectableArea();
-	QString getIdLabel() const { return idLabel; }
-        void setIdLabel(QString i) { idLabel = i; }
-	void setSource(const QString&);
-	void khtmlMousePressEvent( khtml::MousePressEvent * );
-    protected :
-           // virtual void focusOutEvent ( QFocusEvent * );
-            //virtual void resizeEvent ( QResizeEvent * );
 
-    private :
+   public :
+	   SelectableArea(QWidget *parent=0, const char *name=0);
+	   ~SelectableArea();
+	   QString getIdLabel() const { return idLabel; }
+      void setIdLabel(QString i) { idLabel = i; }
+	   void setSource(const QString&);
 
-            QString idLabel;
+   protected :
+            virtual bool eventFilter(QObject*, QEvent*);
+
+   private :
+      QString idLabel;
+
     signals :
 	   void selected(QString);
-           void Resized(QRect);
+      void Resized(QRect,QString);
+      void Resized();
 };
+
+
 
 #endif

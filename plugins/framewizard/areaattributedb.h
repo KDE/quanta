@@ -36,14 +36,17 @@ class areaAttribute : public QObject{
       areaAttribute();
       areaAttribute(areaAttribute* a){ attributeMap = a->getAttributeMap(); }
       ~areaAttribute(){};
-      void setAllAttribute(QMap<QString,QString> map){ attributeMap = map; }
+      void setAttribute(const QString& name, const QString& value){ attributeMap[name] = value; }
+      void setAllAttributes(QMap<QString,QString> map){ attributeMap = map; }
+      void resetAttributes();
       QRect getGeometry() const { return geometry; }
       QString getSrc() const{ return attributeMap["src"]; }
       QString getAttributeValue(QString l) { return getAttributeMap()[l];}
       QMap<QString,QString> getAttributeMap() { return attributeMap; }
-    
-    public slots:
       void setGeometry(QRect g) { geometry = g; }
+
+    public slots:
+      void setGeometry(QRect g,QString l) { geometry = g; }
 };
 
 #endif

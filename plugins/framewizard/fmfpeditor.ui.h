@@ -80,7 +80,7 @@ void fmFPeditor::setup(QMap<QString,QString> m){
      if(m["frameborder"]=="0") bgBorder->setButton(1);
     	   
     sbLeft->setValue(m["marginwidth"].toInt());
-    sbTop->setValue(m["marginheight"].toInt());  
+    sbTop->setValue(m["marginheight"].toInt());
      
 }
 
@@ -105,7 +105,8 @@ QMap<QString,QString> fmFPeditor::getAttributeMap(){
 
 void fmFPeditor::init()
 {
-     
+   sbLeft->setWrapping(true);
+   sbTop->setWrapping(true);
 }
 
 

@@ -11,16 +11,19 @@
 #include <kmessagebox.h>
 #include <kdebug.h>
 
+
 static const QString info1="You must select an area!",
-info2="No structure will be created!";
+                     info2="No structure will be created!";
+
 void FrameWizard::init()
 {   
     splitted=false;
+    hasModified = false;
     vfe->setupForm(this);
-    vfe->draw();
     currSA=vfe->initSA();
-    hasSelected = false;   
+    hasSelected = false;
     connect(this, SIGNAL(launchDraw()), this, SLOT(draw()));
+
 }
 
 void FrameWizard::catchSelectedArea( QString id )
@@ -36,9 +39,9 @@ void FrameWizard::split()
 	QString currNodeLabel = currSA;
 	QString senderName=sender()->name();
 	if(senderName=="pbHorizontal"){
-	    split = showRCeditorDlg("Enter the desidered number of rows");                  	
+	    split = showRCeditorDlg("Enter the desidered number of rows");
 	    if(split>=2)
-		vfe->split(currNodeLabel,split,"h");
+		   vfe->split(currNodeLabel,split,"h");
 	}
 	else if(senderName=="pbVertical"){
 	    split = showRCeditorDlg("Enter the desidered number of columns");
@@ -76,8 +79,9 @@ void FrameWizard::showFrameEditorDlg()
 	fmFPeditor *dlg = new fmFPeditor;
 	dlg->setup(vfe->getAttributeMap(currSA));
 	if(dlg->exec()) {
-	    vfe->setAllAttribute(currSA,dlg->getAttributeMap());
+	    vfe->setAllAttributes(currSA,dlg->getAttributeMap());
 	    vfe->draw();
+	    hasModified = true;
 	}
 	delete dlg;
     }
@@ -91,8 +95,10 @@ void FrameWizard::reset(){
     draw();
 }
 
+
+
 void FrameWizard::generate(){
-    if(splitted) {
+    if(splitted || hasModified) {
 	vfe->framesetStructure();}
     else KMessageBox::information( this, info2, "Warning" );
 }
@@ -100,11 +106,18 @@ void FrameWizard::generate(){
 void FrameWizard::remove()
 {
     if(hasSelected) {
-	vfe->removeNode(currSA);
-	draw();
-    }
+	   vfe->removeNode(currSA);
+      hasModified = true;
+	   draw();
+      }
     else KMessageBox::information( this, info1, "Warning" );
     hasSelected=false;
 }
 
 
+
+
+void FrameWizard::SAResized()
+{
+    hasModified=true;
+}

@@ -16,9 +16,9 @@
  ***************************************************************************/
 
 #include "treenode.h"
-#include "selectablearea.h"
+#include "fwglobal.h"
 #include <qobject.h>
-#include <qfile.h> 
+#include <qfile.h>
 #include <qtextstream.h>
 #include <math.h>
 #include <qmap.h>
@@ -30,27 +30,18 @@ treeNode::treeNode(QString l,QString pl) : label(l), parentLabel(pl), split("n")
   atts = new areaAttribute;
 }
 
+
+
 treeNode::~treeNode(){
-  if(atts) delete atts;
-  atts = 0;
+   if(atts) delete atts;
+   atts = 0;
 }
 
-void treeNode::addChildNode(QString l){
-  QString parentLabel = label;
-  childrenList.append(new treeNode(l,parentLabel));
-  
+
+void treeNode::addChildNode(QString l) {
+   QString parentLabel = label;
+   childrenList.append( new treeNode(l,parentLabel) );
 }
-
-void treeNode::addChildNode(treeNode *n){
-  childrenList.append(n);
-
-}
-
-void treeNode::removeChildNode(QString l){
-   childrenList.remove(findChild(l));
-
-}
-
 
 treeNode* treeNode::findChild(QString l){
 
@@ -81,30 +72,71 @@ tree::~tree(){
   root =  0;
 }
 
-int proxInt(double d){
-  if((d-int(d))>= 0.5 ) return int(d)+1;
-  return int(d);
+
+
+
+
+void tree::refreshGeometries(treeNode *n){
+   int dim = -6;// so we won't add exceeding pixels
+   if(n->hasChildren()){
+
+      n->firstChild();
+	   while(n->getCurrentChild()){
+	      refreshGeometries(n->getCurrentChild());
+	      n->nextChild();
+       }
+      QPtrList<treeNode> list=n->getChildrenList();
+      QPtrListIterator<treeNode> it( list );
+      treeNode *node= it.current();
+      QRect newGeometry = n->getAtts()->getGeometry();
+      if(n->getSplit()=="v"){
+            newGeometry.setHeight(node->getAtts()->getGeometry().height());
+            while ( (node = it.current()) != 0 ) {
+               ++it;
+               dim += node->getAtts()->getGeometry().width();
+               dim += 6;
+         }
+
+       newGeometry.setWidth(dim);
+      }
+       else
+       if(n->getSplit()=="h"){
+         newGeometry.setWidth(node->getAtts()->getGeometry().width());
+         while ( (node = it.current()) != 0 ) {
+            ++it;
+            dim += node->getAtts()->getGeometry().height();
+            dim += 6;
+         }
+
+       newGeometry.setHeight(dim);
+
+            }
+   n->getAtts()->setGeometry( newGeometry );
+   }
+
+
 }
 
-/*
+
+
 QString tree::RCvalue(treeNode *n)
-{  
+{
   QString s="";
   QMap<int,int> dimMap;
-  double percentage = 0.0;
+  double percentage = 100.0;
+  int remainingPercentage=100;
   int child_number = n->countChildren();
-  int lostPixels=2;
-  if(child_number > 2) lostPixels = (6*(child_number-1)); // empiric formula
+  int lostPixels = (6*(child_number-1)); // 6 pixels are lost every time a splitter is drawn
 
   if(n->getSplit()=="v") {
-    percentage=100.0/n->getAtts()->getGeometry().width();
+    percentage/=n->getAtts()->getGeometry().width();
     for(int i=1;i<=child_number;++i){
       dimMap[i]=n->getChildrenList().at(i-1)->getAtts()->getGeometry().width();
       }
     }
   else
   if(n->getSplit()=="h") {
-    percentage=100.0/n->getAtts()->getGeometry().height();
+    percentage/=n->getAtts()->getGeometry().height();
     for(int i=1;i<=child_number;++i){
       dimMap[i]=n->getChildrenList().at(i-1)->getAtts()->getGeometry().height();
       }
@@ -119,27 +151,13 @@ QString tree::RCvalue(treeNode *n)
            }
          }
       for(int i=1;i<=child_number-1;++i){
+            remainingPercentage-=proxInt(dimMap[i]*percentage);
             s+=QString::number(proxInt(dimMap[i]*percentage),10);
             s+="%,";
            }
 
-   return s+="*";
-}*/
-
-
-QString tree::RCvalue(treeNode *n)
-{
-  QString s="";
-  int v=100/n->countChildren();
-  for(int i=1;i<n->countChildren();i++){
-    s+=QString::number(v,10);
-            s+="%,";
-   }
-   return s+="*";
+   return s+=(QString::number(remainingPercentage,10)+"%");
 }
-
-
-
 
 QString tree::createFrameTag(areaAttribute *a){
 
@@ -152,9 +170,9 @@ QString tree::createFrameTag(areaAttribute *a){
           Title =        a->getAttributeValue("title"),
           Class =        a->getAttributeValue("class"),
           Noresize =     a->getAttributeValue("noresize"),
-          Frameborder =  a->getAttributeValue("frameborder");
-          //Marginwidth =  a->getAttributeValue("marginwidth"),
-          //Marginheight = a->getAttributeValue("marginheight");
+          Frameborder =  a->getAttributeValue("frameborder"),
+          Marginwidth =  a->getAttributeValue("marginwidth"),
+          Marginheight = a->getAttributeValue("marginheight");
 
   QString tagBegin="<frame",
           tagEnd=">\n",
@@ -162,18 +180,17 @@ QString tree::createFrameTag(areaAttribute *a){
 
   if( !Src.isEmpty() )       tagMiddle+=(" src=\""+a->getAttributeValue("src")+"\"");
   if( !Longdesc.isEmpty() )  tagMiddle+=(" longdesc=\""+a->getAttributeValue("longdesc")+"\"");
-  if( !Name.isEmpty() )      tagMiddle+=(" name=\""+a->getAttributeValue("name")+"\"");
-  if( Scrolling!="auto" )    tagMiddle+=(" scrolling=\""+a->getAttributeValue("scrolling")+"\"");
+  //if( !Name.isEmpty() )
+  tagMiddle+=(" name=\""+a->getAttributeValue("name")+"\"");
+  if( Scrolling!="auto" && !Scrolling.isEmpty() )    tagMiddle+=(" scrolling=\""+a->getAttributeValue("scrolling")+"\"");
   if( !Id.isEmpty() )        tagMiddle+=(" id=\""+a->getAttributeValue("id")+"\"");
   if( !Style.isEmpty() )     tagMiddle+=(" style=\""+a->getAttributeValue("style")+"\"");
   if( !Title.isEmpty() )     tagMiddle+=(" title=\""+a->getAttributeValue("title")+"\"");
   if( !Class.isEmpty() )     tagMiddle+=(" class=\""+a->getAttributeValue("class")+"\"");
   if( Noresize=="noresize" ) tagMiddle+=(" "+a->getAttributeValue("noresize"));
   if( Frameborder=="0" )     tagMiddle+=(" frameborder=\""+a->getAttributeValue("frameborder")+"\"");
-  //if(!marginwidth.isEmpty())
-  tagMiddle+=(" marginwidth=\""+a->getAttributeValue("marginwidth")+"\"");
-  //if(!marginheight.isEmpty())
-  tagMiddle+=(" marginheight=\""+a->getAttributeValue("marginheight")+"\"");
+  if( Marginwidth!="0" && !Marginwidth.isEmpty() )     tagMiddle+=(" marginwidth=\""+a->getAttributeValue("marginwidth")+"\"");
+  if( Marginheight!="0" && !Marginheight.isEmpty())    tagMiddle+=(" marginheight=\""+a->getAttributeValue("marginheight")+"\"");
 
  return tagBegin+tagMiddle+tagEnd;
 }
@@ -206,6 +223,7 @@ if(n->hasChildren()) {
 
 QString tree::formatStructure(){
   QString s="";
+  refreshGeometries(root);
   createStructure(root);
   for ( QStringList::Iterator it = nonFormattedStructure.begin(); it != nonFormattedStructure.end(); ++it ) {
         if((*it).contains("<frameset")) tabNum++;
@@ -238,23 +256,40 @@ treeNode* tree::findNode(QString l){
  return nodeList.find(l);
 }
 
-void tree::addChildNode(QString l){
+QString tree::addChildNode(QString l){
     treeNode *node;
     if( (node = findNode(l)) != 0) {
       ++nodeId;
       treeNode *newNode = new treeNode(QString::number(nodeId,10),node->getLabel());
+      newNode->setAtts( "src",node->getAtts()->getSrc() );
       node->addChildNode(newNode);
       nodeList.insert(QString::number(nodeId,10),newNode);
    }
+   return QString::number(nodeId,10);
+}
+
+bool tree::insertChildNode(QString l){
+   QString parent = findNode(l)->getParentLabel();
+   int pos=findNode( parent )->childPosition( findNode(l) );
+   ++nodeId;
+   treeNode *newNode = new treeNode(QString::number(nodeId,10),parent);
+   newNode->setAtts( "src",findNode(l)->getAtts()->getSrc() );
+   nodeList.insert(QString::number(nodeId,10),newNode);
+   return findNode( parent )->insertChild(pos,newNode);
 }
 
 void tree::reinitialize(){
   nodeId = 1;
   root->removeChildren();
+  root->getAtts()->resetAttributes();
   nodeList.clear();
 }
 
 void tree::removeChildNode(QString l,QString ll){
   findNode(l)->removeChildNode(ll);
 }
+
+
+
+
 

@@ -8,9 +8,29 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>641</width>
-            <height>470</height>
+            <width>640</width>
+            <height>480</height>
         </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>640</width>
+            <height>480</height>
+        </size>
+    </property>
+    <property name="maximumSize">
+        <size>
+            <width>640</width>
+            <height>480</height>
+        </size>
     </property>
     <property name="caption">
         <string>Frame Wizard</string>
@@ -382,6 +402,7 @@
     <variable>tree *t;</variable>
     <variable>bool hasSelected;</variable>
     <variable>bool splitted;</variable>
+    <variable>bool hasModified;</variable>
 </variables>
 <signals>
     <signal>launchRCeditorDlg(QString)</signal>
@@ -397,6 +418,7 @@
     <slot>reset()</slot>
     <slot>generate()</slot>
     <slot>remove()</slot>
+    <slot>SAResized()</slot>
 </slots>
 <pixmapinproject/>
 <layoutdefaults spacing="6" margin="11"/>

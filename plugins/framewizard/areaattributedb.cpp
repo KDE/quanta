@@ -18,6 +18,10 @@
 #include "areaattributedb.h"
 
 areaAttribute::areaAttribute(){
+   resetAttributes();
+}
+
+void areaAttribute::resetAttributes(){
   attributeMap["name"] = "";
   attributeMap["longdesc"] = "";
   attributeMap["src"] = "";
