@@ -216,6 +216,7 @@ bool QuantaDoc::saveDocument(const KURL& url)
       result = false;
     }
     w->closeTempFile();
+    w->doc()->openURL(url);
     w->createTempFile();
     w->setDirtyStatus(false);
     if (w->url().isLocalFile())
