@@ -34,6 +34,7 @@
 #include <kmessagebox.h>
 #include <ktempfile.h>
 #include <kdirwatch.h>
+#include <kdebug.h>
 
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
@@ -147,6 +148,16 @@ void Document::insertTag(QString s1,QString s2)
     according to dtd. If forwardOnly is true, the text is parsed from (p_line,p_col) forward.*/
 Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bool useSimpleRx )
 {
+  Node *node = parser->nodeAt(p_line, p_col);
+  if (node)
+  {
+    return new Tag(*node->tag);
+  } else
+  {
+    kdDebug(24000) << "tagAt: Node is NULL!" << endl;
+    return new Tag(*baseNode->tag);
+  }
+
   uint line;
   uint col;
 
@@ -922,6 +933,7 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
     if (dtd->family == Script)
     {
       handled = scriptAutoCompletion(dtd, line, column, string);
+      //handled = true;
     }
 
     if (!handled)
@@ -931,10 +943,12 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
       {
         xmlAutoCompletion(dtd, line, column, string);
       }
+/*TODO: Can the default DTD be a script?
       if (dtd->family == Script)
       {
         scriptAutoCompletion(dtd, line, column, string);
       }
+*/
     }
   }
  }
@@ -966,7 +980,8 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
           //complete character codes
           //showCodeCompletions( getCharacterCompletions() );
     }
-    if (string == ">" && tagName[0] != '/') //close unknown tags
+    if (string == ">" && tagName[0] != '/' && qConfig.closeTags
+        && currentDTD(true)->family == Xml) //close unknown tags
     {
       //add closing tag if wanted
       column++;
@@ -974,7 +989,7 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
       viewCursorIf->setCursorPositionReal( line, column );
       handled = true;
     }
-         
+
   }
   else  // we are inside of a tag
   {
@@ -1471,11 +1486,14 @@ void Document::codeCompletionRequested()
       xmlCodeCompletion(dtd, line, col);
 
     }
+/* TODO: Can the default DTD be a script??
     if (dtd->family == Script)
     {
       scriptCodeCompletion(dtd, line, col);
-    }             
+    }
+*/
   }
+
   completionInProgress = true;
 }
 
@@ -1714,6 +1732,8 @@ void Document::parseVariables()
 /** No descriptions */
 void Document::slotTextChanged()
 {
+ return;
+
  //TODO: This can be made even faster. The idea is to force the reparsing only when it
  //is necessary. It shouldn't be done when no dtd definition beginning or end was moved!
  //Currently it is forced for every change when the current line contains a dtd

@@ -20,6 +20,7 @@
 
 // KDE includes
 #include <kiconloader.h>
+#include <klocale.h>
 
 // app includes
 #include "structtreetag.h"
@@ -116,6 +117,11 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
          case Tag::ScriptTag:
             {
               title = tag->name;
+              break;
+            }
+         case Tag::Empty:
+            {
+              title = i18n("Empty tag");
               break;
             }
          default:

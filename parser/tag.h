@@ -97,7 +97,7 @@ public:
   /** Return the index of attr. */
   int attributeIndex(QString attr);
 	
-  enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, CSS, ScriptTag, ScriptStructureBegin, ScriptStructureEnd, NeedsParsing = 500, Skip = 1000 }; // types of token
+  enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, CSS, ScriptTag, ScriptStructureBegin, ScriptStructureEnd, NeedsParsing = 500, Empty, Skip = 1000 }; // types of token
 
   //TODO: write setting/retrieving methods for the below attributes, and add
   //them the m_ prefix

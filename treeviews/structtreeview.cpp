@@ -143,20 +143,22 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     int count = 1;
     while (currentNode)
     {
+      /*
       if (timer.elapsed() > 20*count)
       {
-        //kapp->processEvents();
+        kapp->processEvents();
         count++;
       }
-
+      */
       title = "";
       item = new StructTreeTag(parentItem, currentNode, title, currentItem);
       item->setOpen(level < openLevel);
 
-      if (currentNode->tag->type == Tag::XmlTagEnd)
+      if (currentNode->tag->type == Tag::Empty)
       {
           item->setVisible(false);
       }
+
       if (m_parsingDTD->family == Xml)
       {
         for (uint i = 0; i < groupsCount; i++)
@@ -574,30 +576,15 @@ void StructTreeView::showTagAtPos(int x, int y)
 {
   if ( followCursorFlag )
   {
-    QListViewItemIterator it(this);
-    StructTreeTag *curTag = 0L, *item;
-    for ( ; it.current(); ++it )
+    Node *node = parser->nodeAt(x, y);
+    if (node)
     {
-      item = dynamic_cast<StructTreeTag *>(it.current());
-      if ( item  && item->node && item->node->tag)
+      StructTreeTag *curTag = dynamic_cast<StructTreeTag *>(node->listItem);
+      if ( curTag )
       {
-       QString s = item->text(0);
-        Tag *tag = item->node->tag;
-        int bLine, bCol, eLine, eCol;
-        tag->beginPos(bLine,bCol);
-        tag->endPos(eLine, eCol);
-        if (QuantaCommon::isBetween(x,y,bLine,bCol+1,eLine,eCol) == 0)
-        {
-         curTag = item;
-        }
+        ensureItemVisible(curTag);
+        setSelected(curTag, true);
       }
-    } //for
-
-  //  StructTreeTag *curTag = dynamic_cast<StructTreeTag *>(parser->nodeAt(x, y)->listItem);
-    if ( curTag )
-    {
-      ensureItemVisible(curTag);
-      setSelected(curTag, true);
     }
   } //if (followCursorFlag)
 }

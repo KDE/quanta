@@ -2086,7 +2086,7 @@ void QuantaApp::processDTD(QString documentType)
   loadToolbarForDTD(w->getDTDIdentifier());
   sTab->useOpenLevelSetting = true;
 
-  parser->parseForDTD(w, true);
+//  parser->parseForDTD(w, true);
 }
 
 /** No descriptions */
@@ -2154,7 +2154,7 @@ void QuantaApp::slotToolsChangeDTD()
 
   loadToolbarForDTD(w->getDTDIdentifier());
   reparse();
-  parser->parseForDTD(w, true);
+//  parser->parseForDTD(w, true);
 
   delete dlg;
 }

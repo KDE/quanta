@@ -180,11 +180,13 @@ Node *Parser::parse(Document *w)
   int count = 1;
   while (line < maxLine)
   {
+/*
     if (t.elapsed() > 20*count)
     {
-      //kapp->processEvents();
+      kapp->processEvents();
       count++;
     }
+*/
     nodeFound = false;
     goUp = false;
     tagStartPos = textLine.find('<', col);
@@ -333,7 +335,7 @@ Node *Parser::parse(Document *w)
           }
         }
       }
-      
+
     }
 
     col++;
@@ -349,16 +351,22 @@ Node *Parser::parse(Document *w)
         currentNode->tag->endPos(el, ec);
       }
       QString s = w->text(el, ec + 1, tagStartLine, tagStartPos -1);
-      if (!s.simplifyWhiteSpace().isEmpty() &&
-          (el !=0 || ec !=0) )
+
+      if (el !=0 || ec !=0)
       {
         textTag = new Tag();
         textTag->setStr(s);
         textTag->setTagPosition(el, ec+1, tagStartLine, tagStartPos -1);
         textTag->setWrite(w);
-        textTag->type = Tag::Text;
         textTag->single = true;
         textTag->dtd = m_dtd;
+        if (s.simplifyWhiteSpace().isEmpty())
+        {
+          textTag->type = Tag::Empty;
+        } else
+        {
+          textTag->type = Tag::Text;
+        }
 
         if (parentNode && parentNode->tag->single)
         {
@@ -412,7 +420,7 @@ Node *Parser::parse(Document *w)
           parentNode = node;
 
       node->tag = tag;
-      
+
       if (tag->type == Tag::NeedsParsing)
       {
         if (tag->name.lower().startsWith("comment"))
@@ -452,17 +460,21 @@ Node *Parser::parse(Document *w)
     currentNode->tag->endPos(el, ec);
   }
   QString s = w->text(el, ec + 1, maxLine, lastLineLength);
-  if (!s.simplifyWhiteSpace().isEmpty() &&
-      (el !=0 || ec !=0) )
+  if (el !=0 || ec !=0)
   {
     textTag = new Tag();
     textTag->setStr(s);
     textTag->setTagPosition(el, ec+1, maxLine, lastLineLength);
     textTag->setWrite(w);
-    textTag->type = Tag::Text;
     textTag->single = true;
     textTag->dtd = m_dtd;
-
+    if (s.simplifyWhiteSpace().isEmpty()) //create a node with Empty tag type
+    {
+      textTag->type = Tag::Empty;
+    } else
+    {
+      textTag->type = Tag::Text;
+    }
     if (parentNode && parentNode->tag->single)
     {
       node = new Node(parentNode->parent);
@@ -610,15 +622,15 @@ void Parser::specialAreaParser(Node *startNode)
     if (pos != -1)
     {
       if (dtd->structRx.cap() == dtd->structBeginStr)
-      {   
+      {
         startPos = dtd->structKeywordsRx.searchRev(str, pos);
         findStruct = true;
-      } else 
+      } else
       {
         startPos = -1;
         findStruct = false;
       }
-      if (startPos == -1 || startPos <= lastPos) 
+      if (startPos == -1 || startPos <= lastPos)
           startPos = pos;
       //create a Text node from the string between lastPos and pos
       s = tagStr.mid(lastPos, startPos - lastPos);
@@ -631,36 +643,40 @@ void Parser::specialAreaParser(Node *startNode)
       {
         eCol = startPos - n - 2 - lastPos;
       }
-      if (!s.simplifyWhiteSpace().isEmpty())
+      tag = new Tag();
+      tag->setStr(s);//s.replace(dtd->commentsRx,"").stripWhiteSpace());
+      tag->cleanStr = str.mid(lastPos, startPos - lastPos);
+      tag->setWrite(write);
+      tag->setTagPosition(bLine, bCol, eLine, eCol);
+      if (s.simplifyWhiteSpace().isEmpty())
       {
-        tag = new Tag();
-        tag->setStr(s);//s.replace(dtd->commentsRx,"").stripWhiteSpace());
-        tag->cleanStr = str.mid(lastPos, startPos - lastPos);
-        tag->setWrite(write);
-        tag->setTagPosition(bLine, bCol, eLine, eCol);
+        tag->type = Tag::Empty;
+      } else
+      {
         tag->type = Tag::Text;
-        tag->single = true;
-        tag->dtd = dtd;
-
-        while ( bLine > el ||               //the beginning of the tag is after the end of the
-              (bLine == el && bCol > ec) ) //root, so go up one level
-        {
-          currentNode = rootNode;
-          rootNode = rootNode->parent;
-          rootNode->tag->endPos(el, ec); //get the end coordinates for the new root node
-        }
-        node = new Node(rootNode);
-        if (!rootNode->child)
-        {
-          rootNode->child = node;
-        } else
-        {
-          node->prev = currentNode;
-          currentNode->next = node;
-        }
-        node->tag = tag;
-        currentNode = node;
       }
+      tag->single = true;
+      tag->dtd = dtd;
+
+      while ( bLine > el ||               //the beginning of the tag is after the end of the
+            (bLine == el && bCol > ec) ) //root, so go up one level
+      {
+        currentNode = rootNode;
+        rootNode = rootNode->parent;
+        rootNode->tag->endPos(el, ec); //get the end coordinates for the new root node
+      }
+      node = new Node(rootNode);
+      if (!rootNode->child)
+      {
+        rootNode->child = node;
+      } else
+      {
+        node->prev = currentNode;
+        currentNode->next = node;
+      }
+      node->tag = tag;
+      currentNode = node;
+
       lastPos = pos + 1;
       name = "";
       bLine = eLine;
@@ -736,6 +752,41 @@ void Parser::specialAreaParser(Node *startNode)
       }
 
       bCol += name.length() + 1;
+    } else    //create a text node from the last structure until the end of special area
+    {
+      startNode->tag->endPos(eLine, eCol);
+      tag = new Tag();
+      tag->setStr(tagStr.mid(lastPos));//s.replace(dtd->commentsRx,"").stripWhiteSpace());
+      tag->cleanStr = str.mid(lastPos);
+      tag->setWrite(write);
+      tag->setTagPosition(bLine, bCol, eLine, eCol);
+      if (s.simplifyWhiteSpace().isEmpty())
+      {
+        tag->type = Tag::Empty;
+      } else
+      {
+        tag->type = Tag::Text;
+      }
+      tag->single = true;
+      tag->dtd = dtd;
+      while ( bLine > el ||               //the beginning of the tag is after the end of the
+            (bLine == el && bCol > ec) ) //root, so go up one level
+      {
+        currentNode = rootNode;
+        rootNode = rootNode->parent;
+        rootNode->tag->endPos(el, ec); //get the end coordinates for the new root node
+      }
+      node = new Node(rootNode);
+      if (!rootNode->child)
+      {
+        rootNode->child = node;
+      } else
+      {
+        node->prev = currentNode;
+        currentNode->next = node;
+      }
+      node->tag = tag;
+      currentNode = node;
     }
   }
 
@@ -973,7 +1024,7 @@ void Parser::parseForDTD(Document *w, bool force)
 /** No descriptions */
 DTDStruct * Parser::currentDTD(int line, int col)
 {
-
+/*
   DTDStruct *dtd = 0L;
   DTDListNode dtdNode;
   for (uint i = 0; i < dtdList.count(); i++)
@@ -986,19 +1037,16 @@ DTDStruct * Parser::currentDTD(int line, int col)
   }
 
   return dtd;
-  /*
+*/
 
-  DTDStruct *dtd;
-  Node *node = m_node;
-  uint bl, bc, el, ec;
-  while (node)
+  DTDStruct *dtd = m_dtd;
+  Node *node = nodeAt(line, col);
+  if (node)
   {
-    node->tag->endPos(el, ec);
-    node->tag->beginPos(bl,bc);
-    if (el > line)
+    dtd = node->tag->dtd;
   }
 
-  return dtd; */
+  return dtd;
 }
 
 /** Returns the node for position (line, column). As more than one node can
@@ -1007,6 +1055,7 @@ Node *Parser::nodeAt(int line, int col)
 {
   Node *node = m_node;
   int bl, bc, el, ec;
+  int result;
 
   while (node)
   {
@@ -1019,7 +1068,8 @@ Node *Parser::nodeAt(int line, int col)
       el = write->editIf->numLines();
       ec = 0;
     }
-    if (QuantaCommon::isBetween(line, col, bl, bc, el, ec) == 0)
+    result = QuantaCommon::isBetween(line, col, bl, bc, el, ec);
+    if ( result == 0)
     {
       if (node->child)
       {
@@ -1029,11 +1079,27 @@ Node *Parser::nodeAt(int line, int col)
         break; //we found the node
       }
     } else
+    if (result == -1)
+    {
+      node = node->parent;
+      break; //we found the node
+    } else
     {
       node = node->next;
     }
   }
 
+  if (node && node->tag->type == Tag::Empty)
+  {
+     if (node->parent)
+     {
+       node = node->parent;
+     } else
+     if (node->prev)
+     {
+       node = node->prev;
+     }
+  }
   return node;
 }
 
