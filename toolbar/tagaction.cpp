@@ -142,9 +142,9 @@ void TagAction::insertTag()
   if ( type == "text" )
     w->insertTag( tag.namedItem("text").toElement().text() );
 
-  if ( type == "script" ) {
-
-     KProcess *proc = new KProcess();
+  if ( type == "script" )
+  {
+    KProcess *proc = new KProcess();
     proc ->clearArguments();
 
     QDomElement script = tag.namedItem("script").toElement();
@@ -158,8 +158,14 @@ void TagAction::insertTag()
       command.replace( QRegExp("%f"), fname );
     }
 
-    *proc << "sh";
-    *proc << "-c" << command;
+    int pos = command.find(' ');
+    QString args;
+    if (pos != -1)
+    {
+      args = command.mid(pos+1);
+      command = command.left(pos);
+    }
+    *proc << command << args;
 
     firstOutput = true;
     firstError  = true;
@@ -222,7 +228,11 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   if ( scriptOutputDest == "new" )
   {
     if ( firstOutput )
+    {
         quantaApp->getDoc()->openDocument( KURL() );
+        m_view = quantaApp->getView();
+        w = m_view->write();
+    }
     w->insertTag( text );
   }
 
@@ -265,7 +275,11 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   if ( scriptErrorDest == "new" )
   {
     if ( firstOutput )
-       quantaApp->getDoc()->openDocument( KURL() );
+    {
+        quantaApp->getDoc()->openDocument( KURL() );
+        m_view = quantaApp->getView();
+        w = m_view->write();
+    }
     w->insertTag( text );
   }
 
