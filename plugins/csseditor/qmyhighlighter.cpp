@@ -36,22 +36,22 @@ int QMyHighlighter::highlightParagraph( const QString & text, int endStateOfLast
 
   if( pos== -1)
     pos = 0;
-  
+
   const int npos = pos+l;
-  
+
   pattern.setPattern("\\s*([\\s\\w\\d-]*)\\s*:");
   pos=npos;
   while ( pos >= 0 ) {
         pos = pattern.search( text, pos );
         if ( pos > -1 ) {
             l = pattern.matchedLength();
-            
+
             setFormat(pos,l,QColor("mediumvioletred"));
             pos  += pattern.matchedLength();
         }
-    }               
+    }
 
-  pattern.setPattern(":\\s*([\\.\/#\\w\\s\\d-\\(\\)\"]*)\\s*;");
+  pattern.setPattern(":\\s*([\\.\\#\\w\\s\\d-\\(\\)\"]*)\\s*;");
   pos=npos;
   while ( pos >= 0 ) {
         pos = pattern.search( text, pos );
@@ -62,7 +62,7 @@ int QMyHighlighter::highlightParagraph( const QString & text, int endStateOfLast
         }
     }
 
-   //qWarning("stato del paragrafo %d",endStateOfLastPara);                              
+   //qWarning("stato del paragrafo %d",endStateOfLastPara);
    return 0;
 }
 

@@ -43,7 +43,7 @@
 #include <qtimer.h>
 #include <qclipboard.h>
 #include <qdatastream.h>
-
+#include <kaction.h>
 #include "quantacommon.h"
 
 //#include "resource.h"
@@ -604,3 +604,5 @@ void KPasteAction::menuItemActivated( int id)
 }
 
 #endif
+
+#include "quantacommon.moc"
