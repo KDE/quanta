@@ -2254,10 +2254,11 @@ QString Document::hashFilePath(const QString& p)
   default: {
              int sign = 1,
                  sum = 0;
-             for (uint i = 0; i < (p.length() - 1); i++)
+	     uint plen = p.length();
+             for (uint i = 0; i+1 < plen; i++)
              {
-              sum += int(p[i]) + int(p[i + 1]) * sign;
-              sign *= -1;
+               sum += int(p[i]) + int(p[i + 1]) * sign;
+               sign *= -1;
              }
              if( sum >= 0 )
                return QString::number(sum, 10) + "P" + qConfig.quantaPID;

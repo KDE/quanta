@@ -220,10 +220,9 @@ QuantaApp::~QuantaApp()
  for( ; iter.current(); ++iter )
  {
    p_toolbar = iter.current();
-   if (p_toolbar->dom) delete p_toolbar->dom;
-   if (p_toolbar->menu)
-     delete p_toolbar->menu;
-   if (p_toolbar->guiClient) delete p_toolbar->guiClient;
+   delete p_toolbar->dom;
+   delete p_toolbar->menu;
+   delete p_toolbar->guiClient;
  }
 
  toolbarList.clear();

@@ -282,7 +282,7 @@ void ProjectNewLocal::slotAddFolder()
 void ProjectNewLocal::slotDeleteCopyToDialog(CopyTo* dlg)
 {
 //The CopyTo dlg is deleted only here!!
-  if (dlg) delete dlg;
+  delete dlg;
 }
 
 void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL::List& a_urlList)
