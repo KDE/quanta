@@ -37,7 +37,7 @@ KSplash::KSplash()
  : QFrame( 0L, QString("Quanta")+VERSION,
    QWidget::WStyle_NoBorder | QWidget::WStyle_Customize)
 {
-   QPixmap pm( UserIcon("quantalogo") );
+   QPixmap pm( UserIcon("quantalogo32") );
 
    setBackgroundPixmap(pm);
 #if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)

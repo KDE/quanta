@@ -1,6 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = html xml wml-1-2 tagxml schema
+SUBDIRS = html xml wml-1-2 tagxml schema cfml
 
 EXTRA_DIST = docbook.toolbar.tgz kde_docbook.toolbar.tgz 
 
