@@ -1093,13 +1093,16 @@ void QuantaApp::readTagDir(QString &dirName)
  QString specialAreaStartRxStr;
  for (uint i = 0; i < tagBorders.count(); i++)
  {
-   QString s;
-   QStringList slist = QStringList::split(" ",tagBorders[i].stripWhiteSpace());
-   s = slist[0].stripWhiteSpace();
-   dtd->specialAreaBegin.append(s);
-   specialAreaStartRxStr.append("(?:"+QuantaCommon::makeRxCompatible(s)+")|");
-   s = slist[1].stripWhiteSpace();
-   dtd->specialAreaEnd.append(s);   
+   if (!tagBorders[i].stripWhiteSpace().isEmpty())
+   {
+    QString s;
+    QStringList slist = QStringList::split(" ",tagBorders[i].stripWhiteSpace());
+    s = slist[0].stripWhiteSpace();
+    dtd->specialAreaBegin.append(s);
+    specialAreaStartRxStr.append("(?:"+QuantaCommon::makeRxCompatible(s)+")|");
+    s = slist[1].stripWhiteSpace();
+    dtd->specialAreaEnd.append(s);   
+   }
  }
  dtd->specialAreaStartRx.setPattern(specialAreaStartRxStr.left(specialAreaStartRxStr.length() - 1));
 
@@ -1120,7 +1123,7 @@ void QuantaApp::readTagDir(QString &dirName)
    dtd->specialTagNames.append(s.mid(pos+1, s.findRev(')')-pos-1).lower());
  }
  
- dtd->commentsRxStr = dtdConfig->readEntry("CommentsRx").stripWhiteSpace().replace(QRegExp("\\"),"\\\\");
+ dtd->commentsRxStr = dtdConfig->readEntry("CommentsRx","<!--.*-->").stripWhiteSpace().replace(QRegExp("\\"),"\\\\");
  //dtd->commentsRxStr = dtdConfig->readEntry("CommentsRx").stripWhiteSpace();
 /**** End of code for the new parser *****/
   

@@ -66,7 +66,7 @@ Node *Parser::newParse(Document *w)
   int tagStartPos, specialStartPos;
   int maxLine = w->editIf->numLines() - 1;
   int lastLineLength = w->editIf->lineLength(maxLine);
-  int parsingDTDIndex; //the index inside specialAreaNames or specialTagNames
+  int parsingDTDIndex = -1; //the index inside specialAreaNames or specialTagNames
   bool nodeFound = false;
   bool goUp;
   Node *rootNode = 0;
@@ -95,6 +95,7 @@ Node *Parser::newParse(Document *w)
           break;
         }
       }
+      
       int pos = specialStartPos + foundText.length();
       tagEndCol = lastLineLength;
       while (line < maxLine)
