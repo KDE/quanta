@@ -129,6 +129,7 @@ void TagImgDlg::writeAttributes( QDict<QString> *d )
 
   if (( t=d->find("src") ))
   {
+    lineImgSource->setText(*t);
     KURL url;
     QuantaCommon::setUrl(url, *t);
     url = QExtFileInfo::toAbsolute(url, baseURL);
