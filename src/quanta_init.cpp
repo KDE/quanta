@@ -153,6 +153,7 @@ void QuantaInit::initQuanta()
   qConfig.defaultDocType = m_config->readEntry("Default DTD",DEFAULT_DTD);
   if (! DTDs::ref()->find(qConfig.defaultDocType))
      qConfig.defaultDocType = DEFAULT_DTD;
+  DTDs::ref()->find("dtd"); //load on startup
 
   initView();
   initDocument();  // after initView because of init of treeViews
