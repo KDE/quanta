@@ -1684,7 +1684,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
 
 void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id )
 {
-  if ( container->parent() &&  QString(container->parent()->name()) == "ToolbarHoldingWidget")
+  if ( container->parent() &&  QString(container->parent()->name()) == "ToolbarHoldingWidget" + element.attribute("name"))
   {
     ToolbarTabWidget::ref()->removePage(container);
   }
@@ -3582,10 +3582,6 @@ KParts::Part *oldPart = 0L;
 
 void QuantaApp::slotActivePartChanged(KParts::Part * part)
 {
-  if (oldPart)
-    guiFactory()->removeClient(part);
-  guiFactory()->addClient(part);
-  oldPart = part;
   return;
   if (m_oldKTextEditor && part) // if part == 0L the pointer m_oldKTextEditor is not useable
   {

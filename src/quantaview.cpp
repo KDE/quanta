@@ -103,6 +103,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   m_viewLayout->addWidget( m_documentArea, 1, 0);
 
   m_documentArea->show();
+  m_guiAdded = false;
 
 //FIXME:
 /*
@@ -139,7 +140,11 @@ bool QuantaView::mayRemove()
           m_document->closeTempFile();
           if (!m_document->isUntitled() && m_document->url().isLocalFile())
             fileWatcher->removeFile(m_document->url().path());
-          quantaApp->guiFactory()->removeClient(m_document->view());
+          if (m_guiAdded)
+          {
+            quantaApp->guiFactory()->removeClient(m_document->view());
+            m_guiAdded = false;
+          }
       }
       kdDebug(24000) << "Calling reparse from close " << endl;
       parser->setSAParserEnabled(true);
@@ -698,6 +703,7 @@ void QuantaView::activated()
   m_viewLayout->addWidget(ToolbarTabWidget::ref(), 0 , 0);
   //quantaApp->partManager()->setActivePart(m_document->doc(), m_document->view());
   quantaApp->guiFactory()->addClient(m_document->view());
+  m_guiAdded = true;
   m_document->checkDirtyStatus();
   StructTreeView::ref()->useOpenLevelSetting = true;
   quantaApp->loadToolbarForDTD(m_document->getDTDIdentifier());
@@ -717,9 +723,10 @@ void QuantaView::deactivated()
       }
       quantaApp->guiFactory()->removeClient(m_plugin->part());
   } else
-  if (m_document)
+  if (m_document && m_guiAdded)
   {
     quantaApp->guiFactory()->removeClient(m_document->view());
+    m_guiAdded = false;
   }
 
 }
