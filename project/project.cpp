@@ -183,11 +183,20 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
   QDomElement  el;
   QDomNodeList nl = dom.elementsByTagName("item");
 
-  for ( uint i = 0; i < nl.count(); i++ )
+  if (m_projectFiles.contains(relNameURL))
+    return;
+  KURL url = relNameURL;
+  url.setPath(relNameURL.directory(false));
+  while (!url.path().isEmpty())  
   {
-    el = nl.item(i).toElement();
-    if ( el.attribute("url") == relNameURL.url() )
-        return;                                          //already present
+    if (!m_projectFiles.contains(url))
+    {
+      el = dom.createElement("item");
+      el.setAttribute("url", QuantaCommon::qUrl(url));      
+      dom.firstChild().firstChild().appendChild( el );
+      m_projectFiles.append(url);
+    }      
+    url.setPath(url.directory(false));
   }
 
   el = dom.createElement("item");
@@ -236,34 +245,33 @@ void Project::insertFiles( KURL::List files )
     }
     progressBar->advance(1);
   }
-
-/*
-  for ( uint i = 0; i < nl.count(); i++ )
-  {
-    el = nl.item(i).toElement();
-    KURL url = baseURL;
-    QuantaCommon::setUrl(url,el.attribute("url"));
-    if ( files.contains(url))
-    {
-      files.remove(url.url());
-      progressBar->advance(1);
-    }
-    progressBar->advance(1);
-  }
-*/
   for ( it = files.begin(); it != files.end(); ++it )
   {
     if (! (*it).isEmpty())
     {
-        el = dom.createElement("item");
-        KURL url = *it;
-        if (!excludeRx.exactMatch(url.path()))
+      KURL url = *it;
+      url.setPath(url.directory(false));
+      while (!url.path().isEmpty())  
+      {
+        if (!m_projectFiles.contains(url))
         {
+          el = dom.createElement("item");
           el.setAttribute("url", QuantaCommon::qUrl(url));
-          dom.firstChild().firstChild().appendChild( el );
+          dom.firstChild().firstChild().appendChild( el );   
           m_projectFiles.append(url);
           m_modified = true;
-        }
+        }      
+        url.setPath(url.directory(false));
+      }
+      el = dom.createElement("item");
+      url = *it;
+      if (!excludeRx.exactMatch(url.path()))
+      {
+        el.setAttribute("url", QuantaCommon::qUrl(url));
+        dom.firstChild().firstChild().appendChild( el );
+        m_projectFiles.append(url);
+        m_modified = true;
+      }
      }
      progressBar->advance(1);
   }
@@ -820,7 +828,7 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
       if ( (showDlg == false) ||
             (!destination.isEmpty()) )
       {
-        CopyTo *dlg = new CopyTo( baseURL);
+        CopyTo *dlg = new CopyTo(baseURL);
         connect(dlg, SIGNAL(addFilesToProject(const KURL::List&)),
                      SLOT  (slotInsertFilesAfterCopying(const KURL::List&)));
         connect(dlg, SIGNAL(deleteDialog(CopyTo *)),

@@ -78,7 +78,7 @@ void CopyTo::slotResult( KIO::Job *)
   emit deleteDialog(this);
 }
 
-KURL::List CopyTo::copy( KURL::List sourceList, const KURL& destination )
+KURL::List CopyTo::copy(const KURL::List& sourceList, const KURL& destination )
 {
   m_listCopy = true;
   m_destList.clear();

@@ -35,7 +35,7 @@ public:
   ~CopyTo();
 
   KURL copy( const KURL& sourceURL, const KURL &destination);
-  KURL::List copy( KURL::List sourceList, const KURL &destination );
+  KURL::List copy(const KURL::List& sourceList, const KURL &destination );
 
 public slots: // Public slots
   void slotResult( KIO::Job *);
