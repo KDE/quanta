@@ -608,6 +608,8 @@ void QuantaApp::slotNewUndo()
 
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
+  if (dynamic_cast<Document *>(w) != view->oldWrite)
+    sTab->useOpenLevelSetting = true;
   reparse();
 	slotNewUndo();
 	slotNewStatus();
@@ -925,14 +927,18 @@ void QuantaApp::reparse()
   if (view->writeExists())
   {
     Document *w = view->write();
-    if (baseNode)
+    QString s = w->editIf->text();
+    if (s != parser->m_text)
     {
-      delete baseNode;
-      baseNode = 0L;
-    }
-    if (dtds->find(w->getDTDIdentifier()))
-    {
-      baseNode = parser->parse(w);
+      if (baseNode)
+      {
+        delete baseNode;
+        baseNode = 0L;
+      }
+      if (dtds->find(w->getDTDIdentifier()))
+      {
+        baseNode = parser->parse(w);
+      }
     }
     sTab->deleteList();
 	  if ( stabdock->isVisible() && baseNode)

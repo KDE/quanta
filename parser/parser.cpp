@@ -51,12 +51,13 @@ Node *Parser::parse(Document *w)
 {
   write = w;
   m_dtdName = w->getDTDIdentifier();
+  m_text = w->editIf->text();
 //  if (m_node) delete m_node;
   int line = 0;
   int col = 0;
   m_node = subParse(0L, line, col);
 
-  coutTree(m_node,0); //debug printout
+//  coutTree(m_node,0); //debug printout
 
   return m_node;
 }
