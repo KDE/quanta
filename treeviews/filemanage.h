@@ -50,7 +50,7 @@ public:
   ~FileManage();
 
 public slots:
-  void slotOpen();
+  virtual void slotOpen();
   void slotOpenWith();
   void slotOpenInQuanta();
   void slotCopy();

@@ -37,9 +37,9 @@ public:
   TemplatesTreeView(const KURL& projectBaseURL,QWidget *parent=0, const char *name=0);
   ~TemplatesTreeView();
   /** Writes a .dirinfo file from the selected item's path */
-  void writeDirInfo(QString dirInfoFile="");
+  void writeDirInfo(const QString& dirInfoFile="");
   /** Reads a .dirinfo file from the selected item's path */
-  void readDirInfo(QString startDir = "");
+  void readDirInfo(const QString& dir = "");
 
 
 public slots:
@@ -52,6 +52,8 @@ public slots:
   void slotNewDocument();
   /** Insert the template as text, image, new document. */
   void slotInsert();
+  virtual void slotSelectFile(QListViewItem *);
+  virtual void slotOpen();
   /** No descriptions */
   void slotNewDir();
   virtual void slotReload();

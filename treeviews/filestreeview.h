@@ -55,7 +55,7 @@ public:
 
 public slots:
   void slotMenu(QListViewItem *, const QPoint &, int);
-  void slotSelectFile(QListViewItem *);
+  virtual void slotSelectFile(QListViewItem *);
   void slotSelectAnyFile(QListViewItem *);
   void slotSelectImage(QListViewItem *);
   void slotAddToTop();

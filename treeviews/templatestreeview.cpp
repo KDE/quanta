@@ -222,6 +222,27 @@ void TemplatesTreeView::slotInsert()
  if (menuText == i18n(docMenu)) slotNewDocument();
 }
 
+void TemplatesTreeView::slotSelectFile(QListViewItem *item)
+{
+  FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(item);
+  if (f)
+  {
+    readDirInfo();
+    if (dirInfo.mimeType.upper().contains("TEXT"))
+        slotInsertInDocument();
+    if (dirInfo.mimeType.upper().contains("FILE"))
+        slotInsertTag();
+    if (dirInfo.mimeType.upper().contains("TEMPLATE"))
+        slotNewDocument();
+
+  }
+}
+
+void TemplatesTreeView::slotOpen()
+{
+  FilesTreeView::slotSelectFile(currentItem());
+}
+
 /** No descriptions */
 void TemplatesTreeView::slotNewDir()
 {
@@ -357,8 +378,9 @@ void TemplatesTreeView::contentsDragEnterEvent(QDragEnterEvent *event)
 }
 
 /** Reads a .dirinfo file from the selected item's path */
-void TemplatesTreeView::readDirInfo(QString startDir)
+void TemplatesTreeView::readDirInfo(const QString& dir)
 {
+  QString startDir = dir;
   QListViewItem *item = currentItem();
 
   if (startDir.isEmpty())
@@ -390,7 +412,7 @@ void TemplatesTreeView::readDirInfo(QString startDir)
 }
 
 /** Writes a .dirinfo file from the selected item's path */
-void TemplatesTreeView::writeDirInfo(QString dirInfoFile)
+void TemplatesTreeView::writeDirInfo(const QString& dirInfoFile)
 {
   QListViewItem *item = currentItem();
   QString startDir = "";

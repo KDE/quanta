@@ -25,6 +25,7 @@
 #include <qregexp.h>
 
 // KDE includes
+#include <kdebug.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kio/jobclasses.h>
@@ -110,17 +111,20 @@ KURL FileManage::currentURL()
 
 void FileManage::slotOpen()
 {
-  if (currentItem())
+  QListViewItem *item = currentItem();
+  if (item)
   {
-    emit open( currentItem() );
+    emit open(item);
   }
 }
 
 void FileManage::slotOpenInQuanta()
 {
-  if (currentItem() )
+  QListViewItem *item = currentItem();
+  if (item)
   {
-    emit openInQuanta( currentItem() );
+    kdDebug(24000) << "Open In Quanta: " << endl;
+    emit openInQuanta(item);
   }
 }
 
