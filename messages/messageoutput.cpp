@@ -166,3 +166,5 @@ void MessageOutput::weblintFinished()
    processWebLint(0,0,0); // show output
    new MessageItemWebLint( this, i18n("Syntax check done.") );
 }
+
+#include "messageoutput.moc"
