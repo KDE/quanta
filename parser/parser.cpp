@@ -698,6 +698,9 @@ Node* Parser::specialAreaParser(Node *startNode)
   Node *node;
   Node *currentNode = startNode->child;
   Node *rootNode = startNode;
+  Node *nextToRoot = rootNode;
+  if (rootNode->next)
+      nextToRoot = rootNode->next;
   bool findStruct; //true if there is a need to search for the structure end
 
   if (currentNode)
@@ -711,7 +714,7 @@ Node* Parser::specialAreaParser(Node *startNode)
   {
     goUp = false;
     pos  = dtd->structRx.search(str, lastPos);
-    rootNode->tag->endPos(el, ec);
+    nextToRoot->tag->endPos(el, ec);
     if (pos != -1)
     {
       if (dtd->structRx.cap() == dtd->structBeginStr)
@@ -754,9 +757,12 @@ Node* Parser::specialAreaParser(Node *startNode)
       while ( bLine > el ||               //the beginning of the tag is after the end of the
             (bLine == el && bCol > ec) ) //root, so go up one level
       {
-        currentNode = rootNode;
+        currentNode = nextToRoot;
         rootNode = rootNode->parent;
-        rootNode->tag->endPos(el, ec); //get the end coordinates for the new root node
+        nextToRoot = rootNode;
+        if (rootNode->next)
+          nextToRoot = rootNode->next;
+        nextToRoot->tag->endPos(el, ec); //get the end coordinates for the new root node
         goUp = true;
       }
       node = new Node(rootNode);
@@ -808,7 +814,8 @@ Node* Parser::specialAreaParser(Node *startNode)
             lastPos2 = str.length();
 
         tag = new Tag();
-        s = tagStr.mid(startPos, lastPos2 - startPos);
+        //s = tagStr.mid(startPos, lastPos2 - startPos);
+        s = str.mid(startPos, lastPos - startPos - 1);
         eLine = bLine + s.contains('\n');
         n = s.findRev('\n');
         if (n == -1)
@@ -825,15 +832,17 @@ Node* Parser::specialAreaParser(Node *startNode)
         tag->setWrite(write);
         tag->setTagPosition(bLine, bCol, eLine, eCol);
         tag->type = Tag::ScriptStructureBegin;
-        tag->single = true;
+        //tag->single = true;
         tag->dtd = dtd;
 
         bLine += name.contains("\n");
         if ( bLine > el ||                //the beginning of the tag is after the end of the
             (bLine == el && bCol > ec) )  //root, so go up one level
         {
-          currentNode = rootNode;
+          currentNode = nextToRoot;
           rootNode = rootNode->parent;
+          if (rootNode->next)
+              nextToRoot = rootNode->next;
           goUp = true;
         }
 
@@ -850,8 +859,37 @@ Node* Parser::specialAreaParser(Node *startNode)
         if (goUp)
             node->closesPrevious = true;
 
+
+        s = tagStr.mid(startPos, lastPos2 - startPos);
+        eLine = bLine + s.contains('\n');
+        n = s.findRev('\n');
+        if (n == -1)
+        {
+          eCol = lastPos2 - startPos + bCol - 1;
+        } else
+        {
+          eCol = lastPos2 - n - 2 - startPos;
+        }
+        tag = new Tag();
+        tag->type = Tag::ScriptStructureEnd;
+        n = dtd->structEndStr.length();
+        s = s.right(n);
+        tag->setStr(s);
+        tag->setTagPosition(eLine, eCol - n + 1, eLine, eCol);
+        tag->setWrite(write);
+        tag->dtd = dtd;
+        tag->single = true;
+
+        nextToRoot = new Node(rootNode);
+        nextToRoot->prev = node;
+        node->next = nextToRoot;
+        nextToRoot->tag = tag;
+        nextToRoot->closesPrevious = true;
+
+
         currentNode = node;
         rootNode = node;
+
       }
 
       bCol += name.length() + 1;
@@ -876,9 +914,12 @@ Node* Parser::specialAreaParser(Node *startNode)
       while ( bLine > el ||               //the beginning of the tag is after the end of the
             (bLine == el && bCol > ec) ) //root, so go up one level
       {
-        currentNode = rootNode;
+        currentNode = nextToRoot;
         rootNode = rootNode->parent;
-        rootNode->tag->endPos(el, ec); //get the end coordinates for the new root node
+        nextToRoot = rootNode;
+        if (rootNode->next)
+            nextToRoot = rootNode->next;
+        nextToRoot->tag->endPos(el, ec); //get the end coordinates for the new root node
         goUp = true;
       }
       node = new Node(rootNode);
@@ -957,7 +998,7 @@ Node* Parser::specialAreaParser(Node *startNode)
     eLine = el;
     eCol = ec - specialEndStr.length();
   }
-  if (eCol !=-1 && eLine != -1)
+  if (eLine != -1)
   {
     Tag *tag = new Tag();
     s = write->text(eLine, eCol+1, el, ec);
