@@ -389,21 +389,20 @@ bool QuantaApp::slotFileSaveAs()
     bool gotPath = false;
 
     KURL saveAsUrl;
-//FIXME:
-/*
-    if(ptabdock->isVisible())
+
+    if(ProjectTreeView::ref()->isVisible())
     {
       saveAsUrl = ProjectTreeView::ref()->currentURL();
       saveAsPath = saveAsUrl.url();
       gotPath = true;
     }
-    else if(ftabdock->isVisible())
+    else if(fTab->isVisible())
     {
       saveAsUrl = fTab->currentURL();
       saveAsPath = saveAsUrl.url();
       gotPath = true;
     }
-*/
+
     if (gotPath)
     {
       if (saveAsPath.isEmpty())
@@ -883,13 +882,10 @@ void QuantaApp::slotNewStatus()
     actionCollection()->action("toolbars_load_project")->setEnabled(projectExists);
     actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
 
-    //FIXME:
-
     // try to set the icon from mimetype
     QIconSet mimeIcon (KMimeType::pixmapForURL(w->url(), 0, KIcon::Small));
     if (mimeIcon.isNull())
       mimeIcon = QIconSet(SmallIcon("document"));
-   // QString label = wTab->tabLabel(w);
     QString urlStr = QExtFileInfo::shortName(w->url().path());
     QuantaView *view = ViewManager::ref()->activeView();
     if (w->isModified())
