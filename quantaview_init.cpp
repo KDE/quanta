@@ -166,7 +166,7 @@ void QuantaView::initActions()
                         this, SLOT( slotTagMail() ),
                         actionCollection, "tag_mail" );
 
-    (void) new KAction( i18n( "Misc. Tag..." ), "tag_misc", CTRL+Key_T,
+    (void) new KAction( i18n( "Misc. Tag..." ), "tag_misc", CTRL+SHIFT+Key_T,
                         this, SLOT( slotTagMisc() ),
                         actionCollection, "tag_misc" );
 
