@@ -71,6 +71,9 @@ public:
 
 private:
   QImage *img;
+  QString imgFileName;
+  bool isTmpFile;
+
 public slots: // Public slots
   /** Choose new image */
   void slotImageSet( const KURL& imageURL);

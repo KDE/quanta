@@ -39,7 +39,7 @@ public:
   DocTreeView(QWidget *parent=0, const char *name=0);
   ~DocTreeView();
 
-  QString *contextHelp(QString keyword);
+  QString *contextHelp(const QString &keyword);
 
 public slots:
   void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);

@@ -1,7 +1,7 @@
 /***************************************************************************
                           tagxml.cpp  -  description
                              -------------------
-    begin                : � � 25 14:34:07 EEST 2000
+    begin                : ï¿½ ï¿½ 25 14:34:07 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
                            (C) 2002-2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
@@ -328,8 +328,8 @@ void Tagxml::writeAttributes( QDict<QString> *d )
         {
             value = "";
         
-            Attribute* attr = m_dtdTag->attributeAt(count);
-            if(attr && attr->source.lower() == "selection")
+            Attribute* attrib = m_dtdTag->attribute(name);
+            if(attrib && attrib->source.lower() == "selection")
                 value = m_selection;
         }
 

@@ -840,9 +840,12 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
       w->insertTag(dirInfo.preText+urlStr+dirInfo.postText);
     } else
     {
-      if (url.isLocalFile())
+      QString mimetype = KMimeType::findByURL(url)->name();
+      if (mimetype.contains("image"))
       {
-        QImage img(url.path());
+        QString imgFileName;  
+        KIO::NetAccess::download(url, imgFileName, this); 
+        QImage img(imgFileName);
         if (!img.isNull())
         {
           QString width,height;
@@ -861,6 +864,7 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
           w->insertTag(imgTag);
           isImage = true;
         }
+        KIO::NetAccess::removeTempFile(imgFileName);
       }
       if (!isImage)
       {
@@ -1700,7 +1704,8 @@ void QuantaApp::slotContextHelp()
         {
            currentWord = w->currentWord();
         }
-        QString *url = dTab->contextHelp(currentWord);
+        const DTDStruct *dtd = w->currentDTD(true);
+        QString *url = dTab->contextHelp(dtd->documentation + "|" + currentWord);
         if (url)
             openDoc(*url);
     }

@@ -99,7 +99,7 @@ bool DTDParser::parse()
         errorStr += "<br>" + s;
       xmlResetError(errorPtr);
     }
-#endif    
+#endif
     KMessageBox::error(0, i18n("<qt>Error while parsing the DTD.<br>The error message is:<br><i>%1</i></qt>").arg(errorStr));
     return false;
   }

@@ -765,19 +765,20 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
     return;
 
    KURL url = fileList.front();
-   if(!url.isLocalFile())
-    return;
 
-   QString localFileName = url.path();
-
-   m_dirInfo = readDirInfo(localFileName);
-   QString mimeType = KMimeType::findByPath(localFileName)->name();
+   QString localFileName;
+   if (url.isLocalFile()) 
+   {
+     localFileName = url.path();
+     m_dirInfo = readDirInfo(localFileName);
+   }
+   QString mimeType = KMimeType::findByURL(url)->name();
 
    /* First, see if the type of the file is specified in the .dirinfo file */
    if(m_dirInfo.mimeType.isEmpty())
    {
      // no .dirinfo file present, so we insert it as tag
-     emit insertTag(KURL::fromPathOrURL( localFileName ), m_dirInfo);
+     emit insertTag(url, m_dirInfo);
    } else
    {
      if(m_dirInfo.mimeType == "text/all") // default to inserting in document

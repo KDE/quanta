@@ -162,7 +162,7 @@ void CVSService::slotUpdate(const QStringList &files)
    if (m_repository && !m_appId.isEmpty())
    {
       emit clearMessages();
-      emit showMessage(i18n("Running CVS update..."), false);
+      emit showMessage(i18n("Running CVS update...") + "\n", false);
       m_files = files;
       m_job = m_cvsService->update(files, true, true, true, "");
       m_cvsCommand = "update";
@@ -208,7 +208,7 @@ void CVSService::slotUpdateToTag(const QStringList &files)
       commandStr = i18n("Updating to the version from %1 ...").arg(+ m_updateToDlg->dateLineEdit->text());
     }
     emit clearMessages();
-    emit showMessage(commandStr, false);
+    emit showMessage(commandStr + "\n", false);
     m_files = files;
     m_job = m_cvsService->update(files, true, true, true, extraOpts);
     m_cvsCommand = "update";
@@ -243,7 +243,7 @@ void CVSService::slotUpdateToHead(const QStringList &files)
   if (m_repository && !m_appId.isEmpty())
   {
     emit clearMessages();
-    emit showMessage(i18n("Updating to HEAD..."), false);
+    emit showMessage(i18n("Updating to HEAD...") + "\n", false);
     m_files = files;
     m_job = m_cvsService->update(files, true, true, true, "-A");
     m_cvsCommand = "update";
@@ -288,7 +288,7 @@ void CVSService::slotCommit(const QStringList &files)
       if (message != m_commitDlg->messageCombo->currentText())
           m_commitDlg->messageCombo->insertItem(message, 0);
       emit clearMessages();
-      emit showMessage(i18n("Running CVS commit..."), false);
+      emit showMessage(i18n("Running CVS commit...") + "\n", false);
       m_files = files;
       m_job = m_cvsService->commit(files, message, true);
       m_cvsCommand = "commit";
@@ -323,7 +323,7 @@ void CVSService::slotRevert(const QStringList &files)
   if (m_repository && !m_appId.isEmpty())
   {
     emit clearMessages();
-    emit showMessage(i18n("Reverting to the version from the repository..."), false);
+    emit showMessage(i18n("Reverting to the version from the repository...") + "\n", false);
     m_files = files;
     m_job = m_cvsService->update(files, true, true, true, "-C");
     m_cvsCommand = "update";
@@ -358,7 +358,7 @@ void CVSService::slotAdd(const QStringList &files)
   if (m_repository && !m_appId.isEmpty() && (KMessageBox::questionYesNoList(0, i18n("Add the following files to repository?"), files, i18n("CVS Add")) == KMessageBox::Yes))
   {
     emit clearMessages();
-    emit showMessage(i18n("Adding file to the repository..."), false);
+    emit showMessage(i18n("Adding file to the repository...") + "\n", false);
     m_files = files;
     m_job = m_cvsService->add(files, false);
     m_cvsCommand = "add";
@@ -393,7 +393,7 @@ void CVSService::slotRemove(const QStringList &files)
   if (m_repository && !m_appId.isEmpty() && (KMessageBox::warningContinueCancelList(0, i18n("<qt>Remove the following files from the repository?<br>This will remove your <b>working copy</b> as well.</qt>"), files, i18n("CVS Remove")) == KMessageBox::Continue))
   {
     emit clearMessages();
-    emit showMessage(i18n("Removing files from the repository..."), false);
+    emit showMessage(i18n("Removing files from the repository...") + "\n", false);
     m_files = files;
     m_job = m_cvsService->remove(files, true);
     m_cvsCommand = "remove";
@@ -417,7 +417,7 @@ void CVSService::slotBrowseLog()
       if (m_repository && !m_appId.isEmpty() )
       {
         emit clearMessages();
-        emit showMessage(i18n("Showing CVS log..."), false);
+        emit showMessage(i18n("Showing CVS log...") + "\n", false);
         m_files += file;
         m_job = m_cvsService->log(file);
         m_cvsCommand = "log";
@@ -455,7 +455,7 @@ void CVSService::slotAddToCVSIgnore()
           line = str.readLine().stripWhiteSpace();
           if (line == fInfo.fileName())
           {
-            emit showMessage(i18n("\"%1\" is already in the CVS ignore list.").arg(fInfo.fileName()), false);
+            emit showMessage(i18n("\"%1\" is already in the CVS ignore list.").arg(fInfo.fileName()) + "\n", false);
             found = true;
             break;
           }
@@ -463,7 +463,7 @@ void CVSService::slotAddToCVSIgnore()
         if (!found)
         {
           str << fInfo.fileName() << endl;
-          emit showMessage(i18n("\"%1\" added to the CVS ignore list.").arg(fInfo.fileName()), false);
+          emit showMessage(i18n("\"%1\" added to the CVS ignore list.").arg(fInfo.fileName()) + "\n", false);
         }
         f.close();
       }
@@ -502,7 +502,7 @@ void CVSService::slotRemoveFromCVSIgnore()
         }       
         if (!found)
         {
-          emit showMessage(i18n("\"%1\" is not in the CVS ignore list.").arg(fInfo.fileName()), false);
+          emit showMessage(i18n("\"%1\" is not in the CVS ignore list.").arg(fInfo.fileName()) + "\n", false);
         }
         f.close();
       }
@@ -511,7 +511,7 @@ void CVSService::slotRemoveFromCVSIgnore()
         QTextStream str(&f);
         str.setEncoding(QTextStream::UnicodeUTF8);
         str << content;
-        emit showMessage(i18n("\"%1\" removed from the CVS ignore list.").arg(fInfo.fileName()), false);
+        emit showMessage(i18n("\"%1\" removed from the CVS ignore list.").arg(fInfo.fileName()) + "\n", false);
         f.close();
       }
       
@@ -543,18 +543,18 @@ void CVSService::slotJobExited(bool normalExit, int exitStatus)
 
 void CVSService::slotReceivedStdout(QString output)
 {
-  emit showMessage(output, false);
+  emit showMessage(output, true);
 }
 
 void CVSService::slotReceivedStderr(QString output)
 {
-  emit showMessage(output, false);
+  emit showMessage(output, true);
 }
 
 void CVSService::notInRepository()
 {
   emit clearMessages();
-  emit showMessage(i18n("Error: \"%1\" is not part of the\n\"%2\" repository.").arg(m_defaultFile).arg(m_repositoryPath), false);
+  emit showMessage(i18n("Error: \"%1\" is not part of the\n\"%2\" repository.").arg(m_defaultFile).arg(m_repositoryPath) + "\n", false);
 }
 
 void CVSService::startService()
