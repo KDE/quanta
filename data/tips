@@ -150,9 +150,23 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 </html>
 </tip>
 
+<tip category="Project">
+<html>
+<p>...that you can set a project root below your document root and then upload database password files and libraries where they can only be accessed by your user account.
+</p>
+</html>
+</tip>
+
 <tip category="Application">
 <html>
-<p>...that you can use quanta to enable new DTDs using our <b>tagxml DTD</b>? Quanta can even import a DTD for you.
+<p>...that you can use Quanta to enable new DTDs using our <b>tagxml DTD</b>? Quanta can even import a DTD for you.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can now edit and create Quanta <b>Document Type Editing Packages</b> from a dialog? Use DTD>Edit DTD settings to access this.
 </p>
 </html>
 </tip>
@@ -160,6 +174,13 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 <tip category="Application">
 <html>
 <p>...that you can use <b>Kommander</b> to create custom dialogs for Quanta? Open the editor with <i>kmdr-editor</i> or run a dialog with <i>kmdr-executor mydialog.kmdr</i>.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that <b>bookmarks are now be saved</b>?.
 </p>
 </html>
 </tip>
@@ -174,6 +195,13 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 <tip category="Project">
 <html>
 <p>...that you can save <b>file descriptions</b> that appear in the project tree? Right click on a project file, select <i>Properties</i> and go to the <i>Quanta File Info</i> tab.
+</p>
+</html>
+</tip>
+
+<tip category="Project">
+<html>
+<p>...that you can set the <b>Upload Status</b> of files and folders in the project tree? Right click on a project file or folder and select <i>Upload Status</i> and set the appropriate actions. This enables you to set a project root below the document root and prevent support files from uploading while requiring confirmation on sensitive data files.
 </p>
 </html>
 </tip>
@@ -201,6 +229,13 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 
 <tip category="Application">
 <html>
+<p>...that Quanta can convert <b>tag and attribute case</b> for you? It's on the Tools menu.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
 <p>...that Quanta comes with a number of applications that run a plug ins? Quanta can also load other programs if they are installed including HTML Tidy, Cervisia and Kompare. Make sure you have HTML Tidy and the kdesdk module installed to use them all.
 </p>
 </html>
@@ -208,7 +243,14 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 
 <tip category="Application">
 <html>
-<p>...that you can use Cervisia to manage CVS from inside Quanta? <b>Click on the Cervisia icon</b> and and it will load up the current project directory (if it is CVS). If you have never used CVS before Cervisia has great help files and setting up a local repository is easy.
+<p>...that you can use Cervisia to manage CVS from inside Quanta? <b>Click on the Cervisia icon</b> and it will load up the current project directory (if it is CVS). If you have never used CVS before Cervisia has great help files and setting up a local repository is easy.
+</p>
+</html>
+</tip>
+
+<tip category="Project">
+<html>
+<p>...that common CVS commands are available in the project context menu inside Quanta? <b>Open the project tree and right click on a file or folder.</b> This functionality uses the DCOP services of Cervisia so you must have it installed. It will also support any versioning system supported by Cervisia.
 </p>
 </html>
 </tip>
@@ -237,6 +279,13 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 <tip category="Application">
 <html>
 <p>...that you can visually check the status of your links from within Quanta? <b>Select KLinkStatus from the Plugins menu</b> and Quanta will load a visual link checker.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can view the HTML source when using project preview with PHP (or other server side scripting) in Quanta? <b>right click on a preview and select View Document Source</b> and Quanta will load a tab with the rendered HTML.
 </p>
 </html>
 </tip>
