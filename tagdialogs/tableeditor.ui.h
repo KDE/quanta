@@ -60,7 +60,7 @@ void TableEditor::init()
   m_popup->insertSeparator();
   m_popup->insertItem(i18n("Edit &Table Properties"), this, SLOT(slotEditTable()));
   m_editChildId = m_popup->insertItem(i18n("Edit Child Table"), this, SLOT(slotEditChildTable()));
-  
+
   buttonOk->setIconSet(SmallIconSet("button_ok"));
   buttonCancel->setIconSet(SmallIconSet("button_cancel"));
   buttonHelp->setIconSet(SmallIconSet("help"));
@@ -127,7 +127,7 @@ void TableEditor::slotContextMenuRequested( int row, int col, const QPoint & pos
        m_popup->setItemVisible(m_mergeCellsId, true);
        m_popup->setItemVisible(m_mergeSeparatorId, true);
     }
-    if (!m_dataTable->item(m_row, m_col)->pixmap().isNull()) {
+    if (m_dataTable->item(m_row, m_col) && !m_dataTable->item(m_row, m_col)->pixmap().isNull()) {
        m_popup->setItemVisible(m_editChildId, true);
     }
   }
