@@ -2888,20 +2888,25 @@ void QuantaApp::processDTD(const QString& documentType)
           break;
         }
       }
-      if (!found && qConfig.showDTDSelectDialog && dlg.exec())
+
+      if (!found && qConfig.showDTDSelectDialog)
       {
-        qConfig.showDTDSelectDialog = !dtdWidget->useClosestMatching->isChecked();
-        w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
-        DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
-        if (dtdWidget->convertDTD->isChecked() && dtd->family == Xml)
+        emit showSplash(false);
+        if (dlg.exec())
         {
-          int bLine, bCol, eLine, eCol;
-          tag->beginPos(bLine,bCol);
-          tag->endPos(eLine,eCol);
-          w->editIf->removeText(bLine, bCol, eLine, eCol+1);
-          w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
-          w->insertText("<!DOCTYPE" + dtd->doctypeStr +">");
-          delete tag;
+          qConfig.showDTDSelectDialog = !dtdWidget->useClosestMatching->isChecked();
+          w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
+          DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+          if (dtdWidget->convertDTD->isChecked() && dtd->family == Xml)
+          {
+            int bLine, bCol, eLine, eCol;
+            tag->beginPos(bLine,bCol);
+            tag->endPos(eLine,eCol);
+            w->editIf->removeText(bLine, bCol, eLine, eCol+1);
+            w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
+            w->insertText("<!DOCTYPE" + dtd->doctypeStr +">");
+            delete tag;
+          }
         }
       }
    } else //DOCTYPE not found in file
