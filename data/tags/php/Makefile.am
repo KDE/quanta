@@ -1,5 +1,5 @@
 # generated
-data_DATA = description.rc \
+quanta_DATA = description.rc \
 apache.tag \
 array.tag \
 aspell.tag \
@@ -112,5 +112,5 @@ yaz.tag \
 zip.tag \
 zlib.tag
 
-datadir = ${kde_datadir}/quanta/dtep/php
+quantadir = ${kde_datadir}/quanta/dtep/php
 
