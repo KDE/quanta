@@ -638,6 +638,16 @@ void QuantaInit::readOptions()
   m_quanta->showKafkaAction->setChecked( false );
 #endif
 
+//KNewStuff config
+   m_config->setGroup("KNewStuff");
+   QString str = m_config->readEntry("ProvidersUrl");
+   if (str.isEmpty())
+   {
+      m_config->writeEntry( "ProvidersUrl", "http://quanta.kdewebdev.org/newstuff/providers.xml" );
+      m_config->sync();
+   }
+
+
   Project::ref()->readConfig(m_config); // project
   SpellChecker::ref()->readConfig(m_config);
 }
@@ -810,13 +820,21 @@ void QuantaInit::initActions()
                         ac, "load_dtd" );
 
     (void) new KAction( i18n( "Load DTD &Package (DTEP)..." ), 0,
-                        DTDs::ref(), SLOT( slotLoadDTEP() ),
+                        m_quanta, SLOT( slotLoadDTEP() ),
                         ac, "load_dtep" );
 
     (void) new KAction( i18n( "Send DTD Package (DTEP) in E&mail..." ), 0,
                         m_quanta, SLOT( slotEmailDTEP() ),
                         ac, "send_dtep" );
 
+    (void) new KAction( i18n( "&Download DTD Package (DTEP)..." ), 0,
+                        m_quanta, SLOT( slotDownloadDTEP() ),
+                        ac, "download_dtep" );
+/*
+    (void) new KAction( i18n( "&Upload DTD Package (DTEP)..." ), 0,
+                        m_quanta, SLOT( slotUploadDTEP() ),
+                        ac, "send_dtep" );
+*/
 #ifdef BUILD_KAFKAPART
     (void) new KAction( i18n( "&Document Properties" ), 0,
                         m_quanta, SLOT( slotDocumentProperties() ),

@@ -19,7 +19,7 @@
 #define QUANTA_H
 
 #define QUANTA_PACKAGE "quanta"
-#define QUANTA_VERSION "3.2.90 (post-3.3 Alpha1, 2004-05-26)"
+#define QUANTA_VERSION "3.2.90 (Beta1, 2004-06-23)"
 
 #define IDS_STATUS      1
 #define IDS_INS_OVR     2
@@ -53,6 +53,7 @@ class QuantaPluginInterface;
 
 class QuantaDoc;
 class QuantaView;
+class QNewDTEPStuff;
 
 class QTabWidget;
 class QWidgetStack;
@@ -378,8 +379,14 @@ protected slots:
   void slotHelpHomepage();
   /** Show or hide the DTD toolbar */
   void slotToggleDTDToolbar(bool show);
-  /** No descriptions */
+  /** Loads a DTEP*/
+  void slotLoadDTEP();
+  /** Sends a DTEP in email */
   void slotEmailDTEP();
+  /** Downloads a DTEP from the main server */
+  void slotDownloadDTEP();
+  /** Uploads a DTEP to the main server */
+  void slotUploadDTEP();
   /** Shows tip of the day */
   void slotHelpTip();
   /** Show the user mailing list sign up */
@@ -546,6 +553,7 @@ protected: // Protected attributes
   KParts::PartManager *m_partManager;  ///< the pointer to the part manager
   QGuardedPtr<KTextEditor::View> m_oldKTextEditor;  ///< remembers the last activated GUI
   int m_cvsMenuId;
+  QNewDTEPStuff *m_newDTEPStuff;
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;

@@ -176,6 +176,7 @@
 #include "quanta_init.h"
 #include "viewmanager.h"
 #include "debuggerui.h"
+#include "qnewdtepstuff.h"
 
 
 #define BOOKMARK_MENU_POSITION 3
@@ -194,6 +195,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   toolbarList.setAutoDelete(true);
   userToolbarsCount = 0;
   baseNode = 0L;
+  m_newDTEPStuff = 0L;
   currentToolbarDTD = QString::null;
   m_config=kapp->config();
 
@@ -2637,9 +2639,7 @@ void QuantaApp::slotSendToolbar()
       return;
     }
 
-    QString nullString="";
-    kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, toolbarFile);
-
+    kapp->invokeMailer(toStr, QString::null, QString::null, subjectStr, message, QString::null, toolbarFile);
   }
   delete mailDlg;
 }
@@ -3449,7 +3449,16 @@ bool QuantaApp::allToolbarsHidden() const
   return result;
 }
 
-/** No descriptions */
+
+void QuantaApp::slotLoadDTEP()
+{
+  QString dirName = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select DTEP Directory"));
+  if (!dirName.isEmpty())
+  {
+     DTDs::ref()->slotLoadDTEP(dirName, true);
+  }
+}
+
 void QuantaApp::slotEmailDTEP()
 {
   Document *w = ViewManager::ref()->activeDocument();
@@ -3524,11 +3533,21 @@ void QuantaApp::slotEmailDTEP()
         return;
       }
 
-      QString nullString="";
-      kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, dtdFile);
+      kapp->invokeMailer(toStr, QString::null, QString::null, subjectStr, message, QString::null, dtdFile);
     }
     delete mailDlg;
   }
+}
+
+void QuantaApp::slotDownloadDTEP()
+{
+    if (!m_newDTEPStuff)
+      m_newDTEPStuff = new QNewDTEPStuff("quanta/dtep", this);
+    m_newDTEPStuff->download();
+}
+
+void QuantaApp::slotUploadDTEP()
+{
 }
 
 void QuantaApp::slotDocumentProperties()

@@ -271,9 +271,7 @@ void ScriptTreeView::slotSendScriptInMail()
         delete mailDlg;
         return;
       }
-
-      QString nullString="";
-      kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, attachmentFile);
+      kapp->invokeMailer(toStr, QString::null, QString::null, subjectStr, message, QString::null, attachmentFile);
     }
     delete mailDlg;
 

@@ -139,8 +139,13 @@ public slots:
   /** Load a DTD and convert to a DTEP */
   void slotLoadDTD();
 
-  /** Load a DTEP*/
-  void slotLoadDTEP();
+  /** Loads a DTEP from a directory
+   *  @param dirName The directory containing the DTEP
+   *  @param askForAutoLoad if true and the user answer with yes to the autoload question
+   *                the DTEP will be copied to the local resource directory and will be autoloaded on
+   *                startup
+  */
+  void slotLoadDTEP(const QString& dirName, bool askForAutoLoad);
 
 signals:
   /** used to hide the splash screen */

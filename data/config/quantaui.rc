@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32053">
+<kpartgui name="quanta" version="32054">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -105,8 +105,11 @@
   <Menu name="dtds"><text>&amp;DTD</text>
     <Action name="change_dtd"/>
     <Action name="load_dtd"/>
+    <Separator />
     <Action name="load_dtep" />
     <Action name="send_dtep"/>
+    <Action name="download_dtep" />
+    <Action name="upload_dtep" />
   </Menu>
 
   <Menu name="tags">

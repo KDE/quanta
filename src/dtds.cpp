@@ -840,46 +840,44 @@ void DTDs::slotLoadDTD()
   }
 }
 
-void DTDs::slotLoadDTEP()
+void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
 {
-  QString dirName = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select DTEP Directory"));
-  if (!dirName.isEmpty())
-  {
+  QString dirName = _dirName;
+  if (!dirName.endsWith("/"))
     dirName += "/";
-    KConfig dtdcfg(dirName+m_rcFilename, true);
-    dtdcfg.setGroup("General");
-    QString dtdName = dtdcfg.readEntry("Name");
-    QString nickName = dtdcfg.readEntry("NickName", dtdName);
-    DTDStruct * dtd = m_dict->find(dtdName) ;
-    if ( dtd &&
-        KMessageBox::questionYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
+  KConfig dtdcfg(dirName + m_rcFilename, true);
+  dtdcfg.setGroup("General");
+  QString dtdName = dtdcfg.readEntry("Name");
+  QString nickName = dtdcfg.readEntry("NickName", dtdName);
+  DTDStruct * dtd = m_dict->find(dtdName) ;
+  if ( dtd &&
+      KMessageBox::questionYesNo(0L, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
+  {
+    return;
+  }
+  removeDTD(dtd);
+  if (!readTagDir(dirName))
+  {
+    KMessageBox::error(0L, i18n("<qt>Cannot read the DTEP from <b>%1</b>. Check that the directory contains a valid DTEP (<i>description.rc and *.tag files</i>).</qt>").arg(dirName), i18n("Error loading DTEP"));
+  } else
+  {
+    QString family = dtdcfg.readEntry("Family", "1");
+    if (askForAutoload && KMessageBox::questionYesNo(0L, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>").arg(nickName)) == KMessageBox::Yes)
     {
-      return;
+      KURL src;
+      src.setPath(dirName);
+      KURL target;
+      QString destDir = KGlobal::dirs()->saveLocation("data") + resourceDir + "dtep/";
+      target.setPath(destDir + src.fileName());
+      KIO::copy( src, target, false); //don't care about the result
     }
-    removeDTD(dtd);
-    if (!readTagDir(dirName))
+    Document *w = ViewManager::ref()->activeDocument();
+    if (family == "1" && w &&
+        KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
     {
-      KMessageBox::error(0L, i18n("<qt>Cannot read the DTEP from <b>%1</b>. Check that the directory contains a valid DTEP (<i>description.rc and *.tag files</i>).</qt>").arg(dirName), i18n("Error loading DTEP"));
-    } else
-    {
-      QString family = dtdcfg.readEntry("Family", "1");
-      if (KMessageBox::questionYesNo(0L, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>").arg(nickName)) == KMessageBox::Yes)
-      {
-        KURL src;
-        src.setPath(dirName);
-        KURL target;
-        QString destDir = KGlobal::dirs()->saveLocation("data") + resourceDir + "dtep/";
-        target.setPath(destDir + src.fileName());
-        KIO::copy( src, target, false); //don't care about the result
-      }
-      Document *w = ViewManager::ref()->activeDocument();
-      if (family == "1" && w &&
-          KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
-      {
-        w->setDTDIdentifier(dtdName);
-        quantaApp->loadToolbarForDTD(w->getDTDIdentifier()); //fixme: make signal no direct call
-        emit forceReparse();
-      }
+      w->setDTDIdentifier(dtdName);
+      quantaApp->loadToolbarForDTD(w->getDTDIdentifier()); //fixme: make signal no direct call
+      emit forceReparse();
     }
   }
 }
