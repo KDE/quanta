@@ -229,7 +229,7 @@ void VisualFrameEditor::build(QString parent, QString path){
       KURL pathToConvert, basePath;
       pathToConvert.setPath(srcPattern.cap(1));
       basePath.setPath(path);
-      attributeMap["src"] = QExtFileInfo::toAbsolute( pathToConvert, basePath ).url();
+      attributeMap["src"] = QExtFileInfo::toAbsolute( pathToConvert, basePath ).path();
       line.remove(srcPattern);//we don't need to operate on this anymore
     }
 
