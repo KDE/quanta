@@ -2228,6 +2228,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
       }
     } else
     {
+ //      kdDebug(24000) << "The action " << actionName << " is already present!" << endl;
        TagAction *tagAction = dynamic_cast<TagAction*>(actionCollection()->action(actionName));
        if (tagAction)
           tagAction->setModified(true);

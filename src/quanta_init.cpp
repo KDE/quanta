@@ -242,7 +242,7 @@ void QuantaInit::initQuanta()
   }
   KActionMenu *toolviewMenu = (KActionMenu*)(m_quanta->actionCollection()->action("kmdi_toolview_menu"));
   if (toolviewMenu)
-  toolviewMenu->plug(m_quanta->windowMenu());
+     toolviewMenu->plug(m_quanta->windowMenu());
 
   QPopupMenu *toolbarsMenu  = (QPopupMenu*)(m_quanta->guiFactory())->container("toolbars_load", m_quanta);
   connect(toolbarsMenu, SIGNAL(aboutToShow()), m_quanta, SLOT(slotBuildPrjToolbarsMenu()));

@@ -17,6 +17,8 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
           on the active treeview, selected directory, etc.)
         - update the modified status text/icon when using Save All  [#87196]
         - better, more stable switching between the different MDI modes [#89295]
+        - always find the right action to edit, even if there are more actions with the same
+           user visible name
 
   - behavioral/user interface changes:
         - Toolbars->Add User Toolbar renamed to New User Toolbar
