@@ -36,11 +36,7 @@
 #include "../qextfileinfo.h"
 #include "../treeviews/projecttreefolder.h"
 #include "../treeviews/projecttreefile.h"
-
-extern QString fileMaskPhp;
-extern QString fileMaskHtml;
-extern QString fileMaskJava;
-extern QString fileMaskImage;
+#include "../resource.h"
 
 ProjectNewLocal::ProjectNewLocal(QWidget *parent, const char *name )
 	: ProjectNewLocalS(parent,name)

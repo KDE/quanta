@@ -91,9 +91,6 @@ class QuantaDoc : public QObject
 
     /** show popup menu with list of attributes for current tag */
     void slotInsertAttrib      ( int id );
-    void slotInsertCoreAttrib  ( int id );
-    void slotInsertI18nAttrib  ( int id );
-    void slotInsertEventsAttrib( int id );
     void slotAttribPopup();
 
     void undoHistory();
@@ -112,9 +109,6 @@ class QuantaDoc : public QObject
     //KWriteManager *writeManager;
 
     KPopupMenu *attribMenu;
-    QPopupMenu *attribCoreMenu;
-    QPopupMenu *attribI18nMenu;
-    QPopupMenu *attribEventsMenu;
 
 
 };

@@ -25,6 +25,7 @@
 #include "tagquicktableitem.h"
 #include "tagdialog.h"
 #include "../document.h"
+#include "../quantacommon.h"
 
 
 TagQuickTable::TagQuickTable(Document *write, QWidget *parent, const char *name)
@@ -70,7 +71,8 @@ void TagQuickTable::slotChangeColumnNumber(int columnNum)
 /** No descriptions */
 void TagQuickTable::slotEditColumn(QListViewItem *item)
 {
-  TagDialog *dlg = new TagDialog("col");
+//FIXME: hardcoded DTD name
+  TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD("HTML 4.0","col"));
 
   if (dlg->exec())
   {

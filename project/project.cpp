@@ -65,12 +65,10 @@
 #include "projectupload.h"
 #include "rescanprj.h"
 #include "../quantacommon.h"
+#include "../resource.h"
+
 
 extern QString globalDataDir;
-extern QString fileMaskHtml;
-extern QString fileMaskJava;
-extern QString fileMaskText;
-extern QString fileMaskImage;
 
 Project::Project( QWidget *, const char *name )
         : QWidget(0L,name)

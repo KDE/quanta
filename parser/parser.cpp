@@ -28,9 +28,8 @@
 #include <stdio.h>
 #include <ctype.h>
 
-extern QDict<QString> *tagsList;
-extern QStrList *singleTags;
-extern QStrList *optionalTags;
+#include "../resource.h"
+#include "../quantacommon.h"
 
 Parser::Parser()
 {
@@ -178,7 +177,8 @@ Node * Parser::subParse( Node * parent, QString tag )
           prevNode->next = tnode;
         prevNode = tnode;
 
-        if ( !tagData->single && singleTags->find(tagData->name.upper()) == -1 ) { // not single tag
+//FIXME: Hardcoded DTD
+        if ( !tagData->single && !QuantaCommon::isSingleTag("HTML 4.0", tagData->name) ) { // not single tag
           tnode->child = subParse( tnode , tagData->name.lower() );
 
         	tnode->endContext = pos-1;

@@ -24,11 +24,9 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <ktexteditor/viewcursorinterface.h>
+#include <kconfig.h>
 
 #include "tagdialog.h"
-
-#include "corewidgetdlg.h"
-#include "eventswidgetdlg.h"
 
 #include "tagwidget.h"
 #include "tagimgdlg.h"
@@ -37,27 +35,20 @@
 #include "../document.h"
 #include "../qextfileinfo.h"
 #include "../quantacommon.h"
+#include "../resource.h"
+#include "../parser/qtag.h"
 
-
-extern QDict<QString> *tagsList; // list of known tags
-extern QStrList *quotedAttribs; // list of attribs, that have quoted values ( alt, src ... )
-extern QStrList *lCore;          // list of core attributes ( id, class, style ... )
-extern QStrList *lI18n;
-extern QStrList *lScript;
-extern QStrList *singleTags; // tags without end  part </ >
-extern QStrList *optionalTags; // tags with optional end part
-
-extern uint tagsCase; // use capital for tags
-extern uint attrsCase; // use capital letters for attributes of tag
-extern bool useCloseTag; // use close tag if optional
-
-
-TagDialog::TagDialog(QString tag ,QString attr, QString base)
-    : QTabDialog( 0L, tag, true)
+TagDialog::TagDialog(QTag* tag ,QString attr, QString base)
+    : QTabDialog( 0L, tag->name(), true)
 {
   dict = new QDict<QString>(1,false);
   this->tag = tag;
   basePath = base;
+
+  QString caption = i18n("Tag Properties: ");
+  caption += this->tag->name();
+  setCaption( caption);
+  this->resize(420,400);
 
   if ( !attr.isNull() )
   {
@@ -66,19 +57,6 @@ TagDialog::TagDialog(QString tag ,QString attr, QString base)
 
   mainDlg = 0L;
   parseTag();
-
-  if ( coreDlg )   coreDlg->  writeAttributes( dict );
-  if ( eventsDlg ) eventsDlg->writeAttributes( dict );
-
-  QString caption = i18n("Tag Properties: ");
-  caption += this->tag;
-  setCaption( caption);
-
-  this->resize(420,400);
-
-  if ( mainDlg )  addTab( mainDlg,    i18n("Main") );
-  if ( coreDlg )  addTab( coreDlg,    i18n("Core && i18n") );
-  if ( eventsDlg )addTab( eventsDlg,  i18n("Events") );
 
   setOkButton(i18n("&OK"));
   setCancelButton(i18n("&Cancel"));
@@ -93,72 +71,76 @@ TagDialog::~TagDialog(){
 /**  */
 void TagDialog::parseTag()
 {
-  QString t = tag.lower();
-
-  bool findXMLConfig = false;
-
-  QStringList tagsDirs = KGlobal::instance()->dirs()->findDirs("appdata", "tags");
   QDomDocument doc;
-
-  for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
+  //read the tag file it is available
+  if (QFileInfo(tag->fileName()).exists())
   {
-  	QString tagDir = *it;
-//  	QDir dir(tagDir, "*.tag");
-//  	QStringList files = dir.entryList();
-  	QStringList files = QExtFileInfo::allFilesRelative(tagDir, "*.tag");
-  	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+ 		 QFile f( tag->fileName() );
+		 f.open( IO_ReadOnly );
+	   if ( doc.setContent( &f ) )
+     {
+       mainDlg = new Tagxml( doc, this );
+       ((Tagxml    *)mainDlg)->writeAttributes( dict );
+     }
+     f.close();
+  }
+  else
+  {
+    if (tag->name().lower() == "img") //NOTE: HTML specific code!
     {
-  	   if ( QFileInfo(*it_f).baseName() != t)
-         continue;
-  	
-  		 QString fname = tagDir + *it_f ;
-  		 QFile f( fname );
-			 f.open( IO_ReadOnly );
-		   if ( doc.setContent( &f ) )
-       {
-         mainDlg = new Tagxml( doc, this );
-  		   findXMLConfig = true;
-         f.close();
-  		   break;
-       }
-       f.close();
-  	}
-  	
-  	if ( findXMLConfig )
-  		break;
+       mainDlg = new TagImgDlg( this);
+       ((TagImgDlg *)mainDlg)->writeAttributes( dict );
+    }
   }
 
-
-  if ( !findXMLConfig )
+  if ( mainDlg )
   {
-    if ( t == "img" ) mainDlg = new TagImgDlg( this);
+    addTab( mainDlg, i18n("Main") );
   }
 
-  t = t.upper();
-  coreDlg   = 0L;
-  eventsDlg = 0L;
-
-  QDomElement el = doc.firstChild().firstChild().toElement();
-  bool hasCore = (el.attribute("hasCore") == "1");
-  bool hasI18n = (el.attribute("hasI18n") == "1");
-  bool hasScript = (el.attribute("hasScript") == "1");
-
-  if ( hasCore  || hasI18n )
+  KConfig *dtdConfig = new KConfig(tag->parentDTD->fileName);
+  dtdConfig->setGroup("General");
+  int numOfPages = dtdConfig->readNumEntry("NumOfPages");
+  extraPageList = new QPtrList<Tagxml>();
+  extraPageList->setAutoDelete(true);
+  for (int i = 1; i <= numOfPages; i++)
   {
-    coreDlg   = new CoreWidgetDlg( this);
-
-    if ( !hasCore )
-      coreDlg->disableCoreAttribs();
-    if ( !hasI18n )
-      coreDlg->disableI18nAttribs();
+    Tagxml *extraPage = 0L;
+    dtdConfig->setGroup(QString("Page%1").arg(i));
+    QString title = dtdConfig->readEntry("Title");
+    QStrList groupList;
+    dtdConfig->readListEntry("Groups", groupList);
+    QDomDocument extraDoc; //build an internal tag XML for the groups
+    bool addPage = false;
+    QString docString = "<!DOCTYPE TAGS>\n<TAGS>\n";
+    docString += QString("<tag name=\"Page%1\">\n").arg(i);
+    AttributeList *attrs = new AttributeList;
+    for (uint j = 0; j < groupList.count(); j++)
+    {
+      QString groupName = QString(groupList.at(j)).stripWhiteSpace();
+      if (tag->commonGroups.contains(groupName)) //add the attributes of this common tag to a new tab
+      {
+        AttributeList *groupAttrs = tag->parentDTD->commonAttrs->find(groupName);
+        for (uint k = 0; k < groupAttrs->count(); k++)
+        {
+          attrs->append(groupAttrs->at(k));
+        }
+        addPage = true;
+      }
+    }
+    docString += QuantaCommon::xmlFromAttributes(attrs);
+    docString += "</tag>\n</TAGS>\n";
+    if (addPage)
+    {
+      extraDoc.setContent(docString);
+      extraPage = new Tagxml( extraDoc, this );
+      extraPage->writeAttributes( dict );
+      addTab( extraPage, i18n(title) );
+      extraPageList->append(extraPage);
+    }
+    delete attrs;
   }
 
-  if ( hasScript )
-    eventsDlg = new EventsWidgetDlg( this);
-
-  if ( !findXMLConfig ) {
-  if ( t.lower() == "img" ) ((TagImgDlg *)mainDlg)->writeAttributes( dict ); }
-  else 											((Tagxml    *)mainDlg)->writeAttributes( dict );
 }
 
 /** Insert an attribute to dict*/
@@ -228,9 +210,11 @@ void TagDialog::slotAccept()
 {
 
   if ( mainDlg )   ((Tagxml *)mainDlg)->readAttributes( dict );
-  if ( coreDlg )   coreDlg->readAttributes( dict );
-  if ( eventsDlg ) eventsDlg->readAttributes( dict );
-
+  for (uint i = 0; i < extraPageList->count(); i++)
+  {
+    extraPageList->at(i)->readAttributes( dict );
+  }
+  delete extraPageList;
   accept();
 }
 
@@ -304,9 +288,9 @@ void TagDialog::parseAttributes( QString attrs )
 void TagDialog::insertTag(Document *w, bool insertInLine)
 {
    QString newTag = getAttributeString();
-   newTag = QString("<")+QuantaCommon::tagCase(tag)+newTag+">";
+   newTag = QString("<")+QuantaCommon::tagCase(tag->name())+newTag+">";
 
-   QString secondPartOfTag = QString("</")+QuantaCommon::tagCase(tag)+">";
+   QString secondPartOfTag = QString("</")+QuantaCommon::tagCase(tag->name())+">";
 
    if ( !insertInLine )
    {
@@ -316,13 +300,19 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
     secondPartOfTag = "\n" + space + secondPartOfTag;
    }
 
+   if ( (!useCloseTag) || (tag->isSingle()) )
+   {
+    secondPartOfTag = "";
+   }
+
+/*
    if ( ( singleTags->find( tag.upper() )!= -1 ) ||
 //      ( ( optionalTags->find(tag.upper())!= -1 ) && (!useCloseTag)))
          (!useCloseTag) )
    {
      secondPartOfTag = "";
    }
-
+    */
    w->insertTag( newTag, secondPartOfTag);
 }
 

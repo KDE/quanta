@@ -24,18 +24,16 @@
 #include <qdict.h>
 #include <qstrlist.h>
 
+#include "../resource.h"
+
 /**class for insert/edit tags
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
 
 class Document;
 class TagWidget;
-class CoreWidgetDlg;
-class EventsWidgetDlg;
-
-extern QDict<QString> *tagsList; // list of known tags
-extern QStrList *quotedAttribs; // list of attribs, that have quoted values ( alt, src ... )
-
+class Tagxml;
+class QTag;
 
 class TagDialog : public QTabDialog  {
    Q_OBJECT
@@ -50,7 +48,7 @@ public:
                </a>
 
   */
-	TagDialog(QString tag = QString::null, QString attr = QString::null, QString base = QString::null);
+	TagDialog(QTag* tag, QString attr = QString::null, QString base = QString::null);
 	~TagDialog();
   /** Insert an attribute to dict*/
   void insertAttribute(QString *attr, QString *value);
@@ -71,18 +69,17 @@ public:
 
 public:
 
-  CoreWidgetDlg 	*coreDlg;
-  EventsWidgetDlg *eventsDlg;
   QWidget 				*mainDlg;
 
   QDict<QString> *dict;
-  QString tag;
+  QTag* tag;
   QString basePath;
 
 public slots: // Public slots
   void slotAccept();
 
 private:
+  QPtrList<Tagxml> *extraPageList;
   void parseAttributes( QString attrs );
 };
 

@@ -30,10 +30,7 @@
 #include "filestreefolder.h"
 #include "fileslistview.h"
 #include "fileslistview.moc"
-extern QString fileMaskHtml;
-extern QString fileMaskJava;
-extern QString fileMaskText;
-extern QString fileMaskImage;
+#include "../resource.h"
 
 FilesListView::FilesListView( QString dir, QStringList dirList, QWidget *parent, const char *name)
 	: FileManage(parent,name)

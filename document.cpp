@@ -43,9 +43,6 @@
 
 #include <cctype>
 
-extern QDict<AttributeList> *tagsDict;
-extern uint tagsCase, attrsCase;
-
 Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget *parent,
                    const char *name, WFlags f ) : QWidget(parent, name, f)
 {
@@ -296,8 +293,6 @@ QString Document::getTagAttrValue(int i)
   return val;
 }
 
-#include <cctype>
-
 /** return qstring with current tag for parse */
 QString Document::currentTag()
 {
@@ -330,16 +325,19 @@ QString Document::currentTag()
   QString begTag = findBeginOfTag( QString(""), x, y); // find begin
   QString endTag = findEndOfTag(   QString(""), x, y); // end
 
-  if ( begTag.isEmpty() || endTag.isEmpty() ) {
+  QString tag = "";
+  if ( begTag.isEmpty() || endTag.isEmpty() )
+  {
     tagBeginY = origTagBeginY;
     tagBeginX = origTagBeginX;
     tagEndY = origTagEndY;
     tagEndX = origTagEndX;
-    return QString("");
   } else {
     parseTag(); // if have tag parse it
-    return begTag+endTag;
+    tag = begTag+endTag;
   }
+
+  return tag;
 }
 
 void Document::changeCurrentTag( QDict<QString> *dict )
@@ -350,8 +348,8 @@ void Document::changeCurrentTag( QDict<QString> *dict )
   for ( int i=1; i<tagAttrNum; i++ )
     oldAttr.insert( getTagAttr(i), new QString(getTagAttrValue(i)) );
 
-  while ( it.current() ) { // for insert new attr
-
+  while ( it.current() )  // for insert new attr
+  {
     QString attr = QuantaCommon::attrCase(it.currentKey());
     QString *val = it.current();
 
@@ -401,10 +399,13 @@ void Document::changeCurrentTag( QDict<QString> *dict )
       editIf->insertText(y, x1, t);
     }
     else {
-      if ( i ) { // remove attr
+      if ( i )  // remove attr
+      {
         // delete attribute
         editIf->removeText(y, x1-1, y, x2);
-      } else { // insert tag name
+      }
+      else
+      { // insert tag name
         editIf->removeText(y, x1, y, x2);
         editIf->insertText(y, x1, attr);
       }
@@ -607,10 +608,11 @@ KTextEditor::Document* Document::doc()
 /** Returns true if the document was modified. */
 bool Document::isModified()
 {
+  bool modified = false;
   if ( _doc )	
-   return _doc->isModified();
-  else
-   return false;	  
+   modified = _doc->isModified();
+
+  return modified;	
 }
 /** Sets the modifiedFlag value. */
 void Document::setModified(bool flag)
@@ -733,24 +735,29 @@ void Document::showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *co
 */
 void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
 {
-  if (completion.type == "attribute") {
+  if (completion.type == "attribute")
+  {
     unsigned int row,col;
     viewCursorIf->cursorPositionReal(&row,&col);
     viewCursorIf->setCursorPositionReal(row,col-1);
     showCodeCompletions( getAttributeValueCompletions(completion.userdata, completion.text) );
-  } else if (completion.type == "attributeValue") {
-    unsigned int row,col;
-    viewCursorIf->cursorPositionReal(&row,&col);
-    viewCursorIf->setCursorPositionReal(row,col+1);
   }
+  else if (completion.type == "attributeValue")
+       {
+         unsigned int row,col;
+         viewCursorIf->cursorPositionReal(&row,&col);
+         viewCursorIf->setCursorPositionReal(row,col+1);
+       }
 }
 
 /** This is called when the user selects a completion. We
     can filter this completion to allow more intelligent
     code compeltions
 */
-void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,QString *string ) {
-  if ( completion->type == "attribute" ) {
+void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,QString *string )
+{
+  if ( completion->type == "attribute" )
+  {
     string->append("=\"\"");
   }
 }
@@ -777,7 +784,11 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
       //showCodeCompletions( getCharacterCompletions() );
     }
   } else {
-    if ( string == ">" && tag[0] != '/' && tagsList->find(tag.upper()) && singleTags->find(tag.upper()) == -1 && ( optionalTags->find(tag.upper()) != -1 || useCloseTag )) {
+//    if ( string == ">" && tag[0] != '/' && tagsList->find(tag.upper()) && singleTags->find(tag.upper()) == -1 && ( optionalTags->find(tag.upper()) != -1 || useCloseTag )) {
+    if ( string == ">" && tag[0] != '/' &&
+         QuantaCommon::isKnownTag(dtdName, tag) &&
+         !QuantaCommon::isSingleTag(dtdName, tag) &&
+         ( QuantaCommon::isOptionalTag(dtdName, tag) || useCloseTag )) {
       //add closing tag if wanted
       column++;
       editIf->insertText(line, column, "</" + tag + ">");
@@ -801,10 +812,11 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions()
   KTextEditor::CompletionEntry completion;
   completion.type = "tag";
 
-  QDictIterator<QString> it(*tagsList);
+  DTDStruct* dtd = dtds->find(dtdName);
+  QDictIterator<QTag> it(* dtd->tagsList);
   for( ; it.current(); ++it )
   {
-    completion.text = QuantaCommon::tagCase( * it.current() );
+    completion.text = QuantaCommon::tagCase( it.current()->name() );
     completions->append( completion );
   }
 
@@ -819,9 +831,9 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( QSt
   completion.type = "attribute";
   completion.userdata = tag;
 
-  if ( tagsList->find( tag.upper()) )
+  if ( QuantaCommon::isKnownTag(dtdName,tag) )
   {
-    AttributeList *list = tagsDict->find( tag );
+    AttributeList *list = QuantaCommon::tagAttributes(dtdName,tag);
     for (uint i = 0; i < list->count(); i++)
     {
       QString item = list->at(i)->name;

@@ -46,11 +46,7 @@
 #include "filestreefolder.h"
 #include "filestreeview.h"
 #include "fileinfodlg.h"
-
-extern QString fileMaskHtml;
-extern QString fileMaskJava;
-extern QString fileMaskText;
-extern QString fileMaskImage;
+#include "../resource.h"
 
 FilesTreeView::FilesTreeView()
 {

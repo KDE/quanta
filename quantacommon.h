@@ -18,22 +18,13 @@
 #ifndef QUANTACOMMON_H
 #define QUANTACOMMON_H
 
-#include <qptrlist.h>
+#include "parser/qtag.h"
 
 class QString;
 class KURL;
 /**Some common, mostly static functions.
   *@author Andras Mantia
   */
-
-typedef struct Attribute{
-        QString name;
-        QString type;
-        QString defaultValue;
-        QString status; // "optional", "required","implied"
-      };
-
-typedef QPtrList<Attribute> AttributeList;
 
 class QuantaCommon {
 public: 
@@ -46,6 +37,18 @@ public:
   static QString attrCase( const QString attr);
   /** Set's up the url correctly from urlString. */
   static void setUrl(KURL &url, QString urlString);
+  /** No descriptions */
+  static bool isSingleTag(QString dtdName, QString tag);
+  /** No descriptions */
+  static bool isOptionalTag(QString dtdName, QString tag);
+  /** No descriptions */
+  static bool isKnownTag(QString dtdName, QString tag);
+  /** No descriptions */
+  static AttributeList*  tagAttributes(QString dtdName, QString tag);
+  /** Returns the QTag object for the tag "tag" from the DTD named "dtdname". */
+  static QTag* tagFromDTD(QString dtdName, QString tag);
+  /** Returns an XML style string containing the GUI for attributes. */
+  static QString xmlFromAttributes(AttributeList* attributes);
 
 };
 

@@ -159,6 +159,8 @@ public:
 
   Kate::Document *kate_doc;
   Kate::View *kate_view;
+
+  QString dtdName;
   
 public slots:
 

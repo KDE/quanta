@@ -68,7 +68,7 @@ void QuantaView::slotEditCurrentTag()
   w->currentTag();
   QString tag = w->getTagAttr(0);
 
-  if ( tagsList->find( tag.upper()) )
+  if ( QuantaCommon::isKnownTag(write()->dtdName,tag) )
   {
     QString attrs = "";
     for (int i=1; i < w->tagAttrNum; i++ )
@@ -79,7 +79,7 @@ void QuantaView::slotEditCurrentTag()
      attrs += QString(w->getTagAttr(i)) + "=" + QString(w->getTagAttrValue(i)) + " ";
     }
 
-    TagDialog *dlg = new TagDialog( tag, attrs );
+    TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(write()->dtdName,tag), attrs );
 
 
     if (dlg->exec())
@@ -827,12 +827,12 @@ void QuantaView::slotUnIndent()
 
 void QuantaView::slotComment ()
 {
-   write()->kate_view->comment();
+  write()->kate_view->comment(); //this is not working correctly in KATE 3.0.x
 }
 
 void QuantaView::slotUnComment ()
 {
-   write()->kate_view->uncomment();
+  write()->kate_view->uncomment();
 }
 
 
@@ -843,12 +843,12 @@ void QuantaView::slotApplyWordWrap ()
 
 void QuantaView::slotGotoLine ()
 {
-   write()->kate_view->gotoLine();
+  write()->kate_view->gotoLine();
 }
 
 void QuantaView::slotSpellcheck ()
 {
-   write()->kate_doc->spellcheck();
+  write()->kate_doc->spellcheck();
 }
 
 void QuantaView::toggleBookmark ()
@@ -858,7 +858,7 @@ void QuantaView::toggleBookmark ()
 
 void QuantaView::clearBookmarks ()
 {
-   write()->kate_doc->clearMarks();
+  write()->kate_doc->clearMarks();
 }
 
 void QuantaView::gotoMark (KTextEditor::Mark *mark)
@@ -884,7 +884,7 @@ void QuantaView::editorOptions()
 
 void QuantaView::setEol(int which)
 {
-   write()->kate_view->setEol( which );
+  write()->kate_view->setEol( which );
 }
 
 /** insert special character */
@@ -901,7 +901,7 @@ void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
 
   Document *w = write();
 
-  TagDialog *dlg = new TagDialog(tag, attr, basePath());
+  TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->dtdName,tag), attr, basePath());
 //  dlg->setBasePath(w); //It is very important to call this function!!!
   if (dlg->exec())
   {

@@ -63,35 +63,15 @@
 
 #include "project/project.h"
 
-extern QDict<AttributeList> *tagsDict;
-
 QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObject(parent, name)
 {
 	this->app = app;
 
   docList = new QDict<Document>(1);
 
+
   attribMenu = new KPopupMenu(i18n("Tag :"));
   connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
-
-  attribCoreMenu = new QPopupMenu();
-  char *attr;
-  for ( attr = lCore->first(); lCore->current(); attr = lCore->next() )
-    attribCoreMenu->insertItem( attr, lCore->at() );
-
-  connect( attribCoreMenu, SIGNAL(activated(int)), this, SLOT(slotInsertCoreAttrib(int)));
-
-  attribI18nMenu = new QPopupMenu();
-  for ( attr = lI18n->first(); lI18n->current(); attr = lI18n->next() )
-    attribI18nMenu->insertItem( attr, lI18n->at() );
-
-  connect( attribI18nMenu, SIGNAL(activated(int)), this, SLOT(slotInsertI18nAttrib(int)));
-
-  attribEventsMenu = new QPopupMenu();
-  for ( attr = lScript->first(); lScript->current(); attr = lScript->next() )
-    attribEventsMenu->insertItem( attr, lScript->at() );
-
-  connect( attribEventsMenu, SIGNAL(activated(int)), this, SLOT(slotInsertEventsAttrib(int)));
 }
 
 QuantaDoc::~QuantaDoc()
@@ -205,15 +185,20 @@ void QuantaDoc::openDocument(const KURL& url)
     	  ++it;
     	}
  	
+
      app ->view->writeTab->showPage( w );
   	
      changeFileTabName(defUrl);
 
      app->fileRecent->addURL( w->url() );
 
+
      emit newStatus();
      app->repaintPreview();
 
+     app->processDTD();
+
+     write()->dtdName = "HTML 4.0"; //FIXME: This is hardcoded for testing...
      app->reparse();
     }
 
@@ -510,57 +495,54 @@ void QuantaDoc::slotAttribPopup()
   write()->currentTag();
   QString tag = write()->getTagAttr(0);
   QStrIList attrList = QStrIList();
+  QString name;
 
   for (int i=1; i < write()->tagAttrNum; i++ )
       attrList.append( write()->getTagAttr(i) );
 
-  if ( tagsList->find( tag.upper()) )
+  if ( QuantaCommon::isKnownTag(write()->dtdName,tag) )
   {
     QString caption = QString(i18n("Attributes of <"))+tag+">";
     attribMenu->setTitle( caption );
 
-    AttributeList *list = tagsDict->find( tag );
-    bool haveAttributes = false; // if popup memu haven't members, dont show it
-    bool hasCore = false;
-    bool hasI18n = false;
-    bool hasScript = false;
+    AttributeList *list = QuantaCommon::tagAttributes(write()->dtdName,tag );
+    uint menuId = 0;
     for ( uint i = 0; i < list->count(); i++ )
     {
-      QString name = list->at(i)->name;
-      //insert the non core/i18n/script attributes
-      if ( !((lCore->find(name)!=-1) || (lI18n->find(name)!=-1) || (lScript->find(name)!=-1)))
+      name = list->at(i)->name;
+      attribMenu->insertItem( name , i);//list->findIndex(*item) );
+      if (attrList.contains(name))
       {
-        attribMenu->insertItem( name , i);//list->findIndex(*item) );
         attribMenu->setItemEnabled( i , false );
       }
-      if (lCore->find(name) != -1) hasCore = true;
-      if (lScript->find(name) != -1) hasScript = true;
-      if (lI18n->find(name) != -1) hasI18n = true;
-      haveAttributes = true;
+      menuId++;
     }
 
-    if ( hasCore)
+    QTag* qtag = QuantaCommon::tagFromDTD(write()->dtdName, tag);
+    for (QStringList::Iterator it = qtag->commonGroups.begin(); it != qtag->commonGroups.end(); ++it)
     {
-      attribMenu->insertItem("Core", attribCoreMenu, -2);
+     QPopupMenu* popUpMenu = new QPopupMenu(attribMenu, (*it).latin1());
+     AttributeList *attrs = qtag->parentDTD->commonAttrs->find(*it);
+     for (uint j = 0; j < attrs->count(); j++)
+     {
+      name = attrs->at(j)->name;
+      popUpMenu->insertItem(name, ++menuId);
+      if (attrList.contains(name))
+      {
+        popUpMenu->setItemEnabled( menuId , false );
+      }
+     }
+     connect( popUpMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
+     attribMenu->insertItem(*it, popUpMenu);
     }
-    
-    if ( hasI18n )
+
+    if (menuId > 0)    // don't show empty menu, may be core dumped
     {
-      attribMenu->insertItem("I18n", attribI18nMenu, -2);
+      attribMenu->setActiveItem( 0);
+
+      QPoint globalPos = write()->getGlobalCursorPos();
+      attribMenu->exec( globalPos );
     }
-    
-    if ( hasScript )
-    {
-      attribMenu->insertItem("Script", attribEventsMenu, -2);
-    }
-
-    if ( !haveAttributes )
-      return;              // don't show empty menu, may be core dumped
-
-    attribMenu->setActiveItem( 0);
-
-    QPoint globalPos = write()->getGlobalCursorPos();
-    attribMenu->exec( globalPos );
   }
   else {
     QString message = i18n("Unknown tag: ");
@@ -574,28 +556,35 @@ void QuantaDoc::slotInsertAttrib( int id )
   write()->currentTag();
   QString tag = write()->getTagAttr(0);
   
-  if ( tagsList->find( tag.upper()) ) 
+  if ( QuantaCommon::isKnownTag(write()->dtdName,tag) )
   {
-
-    AttributeList *list = tagsDict->find( tag.data() );
-
-    write()->insertAttrib( list->at(id)->name );
+    int menuId;
+    AttributeList *list = QuantaCommon::tagAttributes(write()->dtdName,tag.data() );
+    menuId = list->count();
+    QString attrStr;
+    if (id <= menuId)
+    {
+      attrStr = list->at(id)->name;
+    } else
+    {
+      QTag* qtag = QuantaCommon::tagFromDTD(write()->dtdName, tag);
+      for (QStringList::Iterator it = qtag->commonGroups.begin(); it != qtag->commonGroups.end(); ++it)
+      {
+        AttributeList *attrs = qtag->parentDTD->commonAttrs->find(*it);
+        menuId += attrs->count();
+        if (id <= menuId)
+        {
+          attrStr = attrs->at(id - (menuId - attrs->count()) -1)->name;
+          break;
+        }
+      }
+    }
+    write()->insertAttrib( attrStr);
   }
-}
 
-void QuantaDoc::slotInsertCoreAttrib( int id )
-{
-  write()->insertAttrib( lCore->at(id) );
-}
-
-void QuantaDoc::slotInsertI18nAttrib( int id )
-{
-  write()->insertAttrib( lI18n->at(id) );
-}
-
-void QuantaDoc::slotInsertEventsAttrib( int id )
-{
-	write()->insertAttrib( lScript->at(id) );
+  delete attribMenu;
+  attribMenu = new KPopupMenu(i18n("Tag :"));
+  connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
 }
 
 void QuantaDoc::prevDocument()

@@ -22,15 +22,19 @@
 #include <config.h>
 #endif
 
-class QStrList;
+#include <qdict.h>
+#include "parser/qtag.h"
 
+       /*
 extern QDict<QString> *tagsList; // list of known tags
 extern QStrList *quotedAttribs; // list of attribs, that have quoted values ( alt, src ... )
 extern QStrList *lCore;          // list of core attributes ( id, class, style ... )
 extern QStrList *lI18n;
 extern QStrList *lScript;
 extern QStrList *singleTags; // tags without end  part </ >
-extern QStrList *optionalTags; // tags with optional end part
+extern QStrList *optionalTags; // tags with optional end part */
+
+extern QDict<DTDStruct> *dtds;
 
 extern uint tagsCase; // use capital for tags
 extern uint attrsCase; // use capital letters for attributes of tag

@@ -25,12 +25,7 @@
 // app includes
 #include "projecttreefile.h"
 #include "projecttreefolder.h"
-
-extern QString fileMaskHtml;
-extern QString fileMaskText;
-extern QString fileMaskJava;
-extern QString fileMaskImage;
-
+#include "../resource.h"
 
 ProjectTreeFile::ProjectTreeFile( ProjectTreeFolder *parent, const char *name, const char *filename)
     : FilesTreeFile( parent, name, filename )

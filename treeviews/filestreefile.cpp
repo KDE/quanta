@@ -26,11 +26,7 @@
 // app includes
 #include "filestreefile.h"
 #include "filestreefolder.h"
-
-extern QString fileMaskHtml;
-extern QString fileMaskText;
-extern QString fileMaskJava;
-extern QString fileMaskImage;
+#include "../resource.h"
 
 FilesTreeFile::FilesTreeFile( FilesTreeFolder *parent, QString name, QString filename)
     : QListViewItem( parent, name )

@@ -38,9 +38,10 @@ void QuantaView::insertTag( const char *tag)
 
   QString startTag = QuantaCommon::tagCase(tag);
 
-  if ( ( singleTags->find( startTag.upper() )!= -1 ) ||
+//  if ( ( singleTags->find( startTag.upper() )!= -1 ) ||
 //     ( ( optionalTags->find(startTag.upper())!= -1 ) && (!useCloseTag)))
-     (!useCloseTag))
+//     (!useCloseTag))
+  if ( (!useCloseTag) || QuantaCommon::isSingleTag(write()->dtdName, startTag) )
   {
       write()->insertTag( QString("<")+QuantaCommon::tagCase(startTag)+">" );
   }

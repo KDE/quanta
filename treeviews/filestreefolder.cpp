@@ -18,6 +18,7 @@
 // app includes
 #include "filestreefile.h"
 #include "filestreefolder.h"
+#include "../resource.h"
 
 // QT includes
 #include <qdir.h>
@@ -30,9 +31,6 @@
 // KDE includes
 #include <kiconloader.h>
 
-extern QString fileMaskHtml;
-extern QString fileMaskText;
-extern QString fileMaskImage;
 
 FilesTreeFolder::FilesTreeFolder( FilesTreeFolder * parent, const char * name )
     : QListViewItem( parent ), file( name ), folderName( name )

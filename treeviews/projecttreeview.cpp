@@ -38,11 +38,7 @@
 #include "projecttreeview.h"
 #include "filestreeview.h"
 #include "../quantacommon.h"
-
-extern QString fileMaskHtml;
-extern QString fileMaskJava;
-extern QString fileMaskText;
-extern QString fileMaskImage;
+#include "../resource.h"
 
 ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   //: QListView(parent,name)

@@ -44,9 +44,12 @@
 #include <ktempfile.h>
 
 //app includes
+#include "parser/qtag.h"
 #include "treeviews/filestreeview.h"
 #include "quantacommon.h"
 #include "qextfileinfo.h"
+#include "resource.h"
+
 
 // forward declaration
 class QuantaDoc;
@@ -81,8 +84,6 @@ class ActionEditDlg;
 class PHP3Debugger;
 class PHP4Debugger;
 
-extern QDict <AttributeList> *tagsDict;
-
 /**
   * The base class for Quanta application windows. 
   */
@@ -113,6 +114,9 @@ class QuantaApp : public KDockMainWindow
      */
     QWidget* createContainer( QWidget *parent, int index, const QDomElement &element, int &id );  
     void removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id );
+    /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
+    void processDTD();
+
 
   protected:
   
@@ -130,7 +134,7 @@ class QuantaApp : public KDockMainWindow
     /**
       Parse the dom document and retrieve the tag attributes
     */
-    AttributeList* getAttributes(QDomDocument *dom);
+    void setAttributes(QDomDocument *dom, QTag *tag);
     
     virtual bool queryExit();
     void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
@@ -196,8 +200,6 @@ class QuantaApp : public KDockMainWindow
     
     void slotShowProjectTree();
     void slotShowTemplatesTree();
-
-    void slotFtpClient();
 
     /** Repaint preview ( slot ) */
     void slotViewRepaint();

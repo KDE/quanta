@@ -35,9 +35,7 @@
 #include "../tagdialogs/tagdialog.h"
 #include "../messages/messageoutput.h"
 #include "../quantacommon.h"
-
-
-extern bool useCloseTag;
+#include "../resource.h"
 
 TagAction::TagAction( QDomElement *element, QuantaView *view,KActionCollection *collection )
   : KAction( element->attribute("text"), 0, collection, element->attribute("name") ),
@@ -85,7 +83,8 @@ void TagAction::insertTag()
      QString name = attr.left(i);
      attr = attr.remove(0,i).stripWhiteSpace();
 
-     if ( otag.attribute("useDialog","false") == "true" ) {
+     if ( otag.attribute("useDialog","false") == "true" )
+    {
 
          view_->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
 //         TagDialog *dlg = new TagDialog( view_->write(), name, s, xtag.attribute("inLine","true") == "true" );
@@ -94,13 +93,15 @@ void TagAction::insertTag()
      }
      else
      {
-       QString s1 = "<"+QuantaCommon::tagCase(name);
+       QString s1 = QuantaCommon::tagCase(name);
+       if (otag.text().left(1) == "<") s1 = "<"+s1;
        if (!attr.isEmpty())
           s1 += " "+QuantaCommon::attrCase(attr);
-       s1 += ">";
+       if (otag.text().right(1) == ">") s1 += ">";
+
        QString s2;
        if (useCloseTag)
-          s2 = "</" + QuantaCommon::tagCase(name) + ">";
+          s2 = QuantaCommon::tagCase(xtag.text());
        if ( xtag.attribute("use","false") == "true" )
        {
          if ( xtag.attribute("inLine","true") == "true" )

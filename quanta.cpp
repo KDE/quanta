@@ -35,6 +35,7 @@
 #include <qiodevice.h>
 #include <qcombobox.h>
 #include <qdockarea.h>
+#include <qdom.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -55,6 +56,8 @@
 #include <ktempfile.h>
 #include <kdebug.h>
 #include <ktar.h>
+#include <kedittoolbar.h>
+#include <kaction.h>
 
 #include <kparts/componentfactory.h>
 
@@ -84,6 +87,7 @@
 #include "dialogs/debuggeroptionss.h"
 #include "dialogs/grepdialog.h"
 #include "dialogs/katefiledialog.h"
+#include "dialogs/dtdselectdialog.h"
 
 #include "treeviews/filestreeview.h"
 #include "treeviews/fileslistview.h"
@@ -97,6 +101,7 @@
 #include "tagdialogs/tagmaildlg.h"
 
 #include "parser/parser.h"
+#include "parser/dtd.h"
 
 #include "messages/messageoutput.h"
 
@@ -104,8 +109,6 @@
 #include "toolbar/toolbarxmlgui.h"
 #include "toolbar/tagaction.h"
 
-#include <kedittoolbar.h>
-#include <kaction.h>
 
 
 extern QString globalDataDir;
@@ -571,6 +574,17 @@ void QuantaApp::slotNewStatus()
  else 	
 	wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
 
+//This is a really dirty fix for the QTabWidget problem. After the changeTab call,
+//it will reset itself and you will see the first tabs, even if the actual page is on
+//a tab eg. at the end, and it won't be visible now. This is really confusing.
+//I thought it is fixed in QT 3.x, but it is not. :-(
+        int pageId = wTab->currentPageIndex();
+    bool block=wTab->signalsBlocked();
+    wTab->blockSignals(true);
+    wTab->setCurrentPage(pageId-1);
+    wTab->setCurrentPage(pageId);
+    wTab->blockSignals(block);
+
   w->oldstat = w->isModified();
 }
 
@@ -728,10 +742,10 @@ void QuantaApp::slotOptions()
     useCloseTag = styleOptionsS->checkEndTag->isChecked();
     useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
 
-    fileMaskHtml = fileMasks->lineHTML->text();
-  	fileMaskPhp  = fileMasks->linePHP->text();
-	  fileMaskImage= fileMasks->lineImages->text();
-  	fileMaskText = fileMasks->lineText->text();
+    fileMaskHtml = fileMasks->lineHTML->text()+" ";
+  	fileMaskPhp  = fileMasks->linePHP->text()+" ";
+	  fileMaskImage= fileMasks->lineImages->text()+" ";
+  	fileMaskText = fileMasks->lineText->text()+" ";
 
     parserOptions->updateConfig();
 
@@ -1039,42 +1053,6 @@ void QuantaApp::contextHelp()
   		openDoc(*url);
     }
   }
-}
-
-void QuantaApp::slotFtpClient()
-{
-/*	
-	bool stat = toolMenu -> isItemChecked( ID_VIEW_FTP );
-	toolMenu->setItemChecked(ID_VIEW_FTP, !stat);
-	
-	// get the library loader instance
-  KLibLoader *loader = KLibLoader::self();
-  
-  QString lib_name = "quanta/plugins/libftpclient.so";
-  
-  KLibrary *lib = 
-    loader->library(QFile::encodeName( lib_name ));
-  
-  if (lib)
-	{
-	  // get the init_ function
-	  QString funcname = QString("create_ftpclient");
-	  void *init = lib->symbol(funcname.utf8());
-	  if (init)
-	  {
-	    QDialog* (*func)(QWidget *, const char *); 
-	    func = (QDialog* (*)(QWidget *, const char *))init;
-      QDialog *dlg = func(0,"Small Ftp Client");
-      
-      dlg->exec();
-      
-      delete dlg;
-      
-      loader->unloadLibrary(QFile::encodeName( lib_name ));
-	  }
-	}
-	else debug("Library not found");
-*/	
 }
 
 void QuantaApp::slotShowLeftDock() {  }
@@ -1863,6 +1841,24 @@ void QuantaApp::saveModifiedToolbars()
    }
    toolbarDomList.remove(it.currentKey());
  }
+}
+
+#include <iostream.h>
+/** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
+void QuantaApp::processDTD()
+{     /*
+ QDomDocument doc;
+ doc.setContent(view->write()->editIf->text());
+ QDomDocumentType docType = doc.doctype();
+ cout << doc.toString() << endl;
+ if (docType.name().isEmpty())
+ {
+  // KMessageBox::error(this, i18n("There is no DOCTYPE element in the document."));
+  DTDSelectDialog *dlg = new DTDSelectDialog;
+  dlg->exec();
+  delete dlg;
+ }
+        */
 }
 
 #include "quanta.moc"
