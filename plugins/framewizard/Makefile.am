@@ -5,5 +5,5 @@ framewizard_SOURCES = areaattributedb.cpp areaattributedb.h fmfpeditor.ui fmrced
 
 INCLUDES = -I$(top_srcdir)/quanta/plugins/framewizard -I$(top_builddir)/quanta/plugins/framewizard $(all_includes)
 
-framewizard_LDADD = $(LIB_KDECORE) $(LIB_KDEUI)  $(LIB_KFILE) 
+framewizard_LDADD = $(LIB_KDECORE) $(LIB_KDEUI)  $(LIB_KFILE) $(LIB_KHTML)
 framewizard_LDFLAGS = $(all_libraries)

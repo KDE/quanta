@@ -19,26 +19,28 @@
 #define SELECTABLEAREA_H
 
 #include <qwidget.h>
-#include <qtextbrowser.h>
+#include <khtml_part.h>
 
 /**a QTextBrowser that can be selected
   *@author gulmini luciano
   */
 
-class SelectableArea : public QTextBrowser  {
+class SelectableArea : public KHTMLPart  {
    Q_OBJECT
     public :
 	SelectableArea(QWidget *parent=0, const char *name=0);
 	~SelectableArea();
 	QString getIdLabel() const { return idLabel; }
         void setIdLabel(QString i) { idLabel = i; }
+	void setSource(const QString&);
+	void khtmlMousePressEvent( khtml::MousePressEvent * );
     protected :
-            virtual void focusOutEvent ( QFocusEvent * );
-            virtual void resizeEvent ( QResizeEvent * );
+           // virtual void focusOutEvent ( QFocusEvent * );
+            //virtual void resizeEvent ( QResizeEvent * );
+
     private :
+
             QString idLabel;
-    private slots:
-            void slotClicked(int para, int pos);
     signals :
 	   void selected(QString);
            void Resized(QRect);

@@ -19,11 +19,14 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qstring.h>
-#include <qobjectlist.h>
+#include <qobjectlist.h>// forse non serve
 #include <kdebug.h>
+#include <khtmlview.h>
 
 VisualFrameEditor::VisualFrameEditor(QWidget * parent, const char * name) : QHBox(parent,name){
   t = new tree;
+  splitterList.setAutoDelete(true);
+  SAList.setAutoDelete(true);
 }
 VisualFrameEditor::~VisualFrameEditor(){
   if(t) delete t;
@@ -63,16 +66,8 @@ void VisualFrameEditor::draw(){
 
 void VisualFrameEditor::paintEvent ( QPaintEvent * ){
   hide();
-  QObjectList* ch = queryList("SelectableArea");
-  for (uint i = 0; i < ch->count(); i++)
-  {
-    removeChild(ch->at(i));
-  }
-  ch = queryList("QSplitter");
-  for (uint i = 0; i < ch->count(); i++)
-  {
-    removeChild(ch->at(i));
-  }
+  SAList.clear();
+  splitterList.clear();
   draw2(t->getRoot(),this);
   show();
 }
@@ -82,9 +77,16 @@ void VisualFrameEditor::removeNode(QString l){
   else
   {
    QString parentLabel=t->findNode(l)->getParentLabel();
-   if(t->findNode(parentLabel)->countChildren()>=2)
+   if(t->findNode(parentLabel)->countChildren()>=3)
     {
      t->removeChildNode(parentLabel,l);
+     }
+   else
+     {
+      t->removeChildNode(parentLabel,l);
+      areaAttribute *tmp = new areaAttribute(t->findNode(parentLabel)->firstChild()->getAtts());
+      t->findNode(parentLabel)->removeChildren();
+      t->findNode(parentLabel)->setAtts(tmp);
      }
   }
 }
@@ -94,6 +96,7 @@ void VisualFrameEditor::draw2(treeNode *n, QWidget* parent){
 
     if(n->hasChildren()) {
         QSplitter *splitter = new QSplitter(parent);
+	splitterList.append(splitter);
 	if(n->getSplit() == "v") splitter->setOrientation(QSplitter::Horizontal);
 	if(n->getSplit() == "h") splitter->setOrientation(QSplitter::Vertical);
 	n->firstChild();
@@ -104,11 +107,11 @@ void VisualFrameEditor::draw2(treeNode *n, QWidget* parent){
     }
     else{
 	SelectableArea *te=new SelectableArea(parent);
+	SAList.append(te);
         te->setIdLabel( n->getLabel() );
-       // te->setMinimumSize(QSize(20,25));
+        //te->view()->setMinimumSize(QSize(20,25));
         te->setSource(n->getAtts()->getSrc());
-	te->show();
-        QObject::connect(te, SIGNAL(Resized(QRect)), n->getAtts(), SLOT(setGeometry(QRect)));
+        //QObject::connect(te, SIGNAL(Resized(QRect)), n->getAtts(), SLOT(setGeometry(QRect)));
 	QObject::connect(te, SIGNAL(selected(QString)),form, SLOT(catchSelectedArea(QString)));
     }
 }

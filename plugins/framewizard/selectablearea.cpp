@@ -18,37 +18,51 @@
 #include "selectablearea.h"
 #include <qframe.h>
 #include <kdebug.h>
+#include <kurl.h>
+#include <khtmlview.h>
 
-SelectableArea::SelectableArea(QWidget *parent, const char *name ) : QTextBrowser(parent,name) {
-    setFrameShape(QFrame::NoFrame);
-    connect(this, SIGNAL(clicked(int, int)), SLOT(slotClicked(int, int)));
+const QString blankpagePosition = "file:blankpage.html";
 
+SelectableArea::SelectableArea(QWidget *parent, const char *name ) : KHTMLPart(parent,name) {
+    view()->setFrameShape(QFrame::NoFrame);
 }
 SelectableArea::~SelectableArea(){
 }
 
-void SelectableArea::slotClicked(int, int)
-{
-    setFrameShape(QFrame::Box);
-    setFrameShadow ( QFrame::Plain );
-    setLineWidth(2);
-    emit selected(idLabel);                             // the widget has been selected
+
+
+void SelectableArea::khtmlMousePressEvent( khtml::MousePressEvent *event ){
+  KHTMLPart::khtmlMousePressEvent( event );
+  view()->setFrameShape(QFrame::Box);
+  view()->setFrameShadow ( QFrame::Plain );
+  view()->setLineWidth(2);
+  emit selected(idLabel);
 
 }
 
-void SelectableArea::focusOutEvent ( QFocusEvent * )
+/*void SelectableArea::focusOutEvent ( QFocusEvent * )
 {
     setFrameShape(QFrame::NoFrame);
-}
+}*/
 
 
-void SelectableArea::resizeEvent ( QResizeEvent * e)
+/*void SelectableArea::resizeEvent ( QResizeEvent * e)
 {
   QTextBrowser::resizeEvent(e);
   //QString dim="Width : "+QString::number(frameGeometry().width(),10)+"\nHeight : "+QString::number(frameGeometry().height(),10);
   //setText(dim);
   emit Resized(geometry());
 }
+*/
+
+void SelectableArea::setSource(const QString& s){
+  if(!s.isEmpty()) openURL( KURL(s) );
+  else openURL(blankpagePosition);
+}
+
+
+
+
 
 #include "selectablearea.moc"
 

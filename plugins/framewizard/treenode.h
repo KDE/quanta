@@ -55,6 +55,7 @@ class treeNode {
         treeNode* getCurrentChild()  { return childrenList.current(); }
         treeNode* getLastChild()  { return childrenList.getLast(); }
         areaAttribute* getAtts() { return atts; }
+	void setAtts(areaAttribute *a) { atts = a; }
         int countChildren() const { return childrenList.count(); }
         bool hasChildren() const { return !childrenList.isEmpty(); }
         treeNode* findChild(QString);

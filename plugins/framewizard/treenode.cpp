@@ -86,6 +86,7 @@ int proxInt(double d){
   return int(d);
 }
 
+/*
 QString tree::RCvalue(treeNode *n)
 {  
   QString s="";
@@ -123,7 +124,22 @@ QString tree::RCvalue(treeNode *n)
            }
 
    return s+="*";
+}*/
+
+
+QString tree::RCvalue(treeNode *n)
+{
+  QString s="";
+  int v=100/n->countChildren();
+  for(int i=1;i<n->countChildren();i++){
+    s+=QString::number(v,10);
+            s+="%,";
+   }
+   return s+="*";
 }
+
+
+
 
 QString tree::createFrameTag(areaAttribute *a){
 
