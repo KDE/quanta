@@ -1271,6 +1271,8 @@ void QuantaApp::slotShowPreviewWidget(bool show)
   {
     if (qConfig.previewPosition == "Editor")
     {
+      delete m_previewToolView;
+      m_previewToolView = 0L;
       view->addCustomWidget(m_htmlPart->view(), QString::null);
     } else
     {
@@ -1282,18 +1284,21 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     m_previewVisible = true;
   } else
   {
-    m_htmlPart->view()->reparent(this, 0, QPoint(), false);
-    m_htmlPart->view()->resize(0, 0);
-    m_htmlPart->view()->hide();
     m_previewVisible = false;
     m_noFramesPreview = false;
     if (qConfig.previewPosition == "Editor")
     {
+        delete m_previewToolView;
+        m_previewToolView = 0L;
+        m_htmlPart->view()->reparent(this, 0, QPoint(), false);
+        m_htmlPart->view()->resize(0, 0);
+        m_htmlPart->view()->hide();
         view->addCustomWidget(0L, QString::null);
     } else
     {
-        delete m_previewToolView;
-        m_previewToolView = 0L;
+      //hiding the preview when it's in a toolview means that the current tab has changed,
+      //so we just repaint the content.
+        slotRepaintPreview();
     }
     if (view->document())
         view->document()->setFocus();
