@@ -413,16 +413,18 @@ void QuantaApp::initView()
     topList.append(url);
   }
 
-//always add the HOME and rootd directory to the treeview
-  url = KURL();
-  url.setPath("/");
-  if (!topList.contains(url))
-      topList.append(url);
-  url = KURL();
-  url.setPath(QDir::homeDirPath()+"/");
-  if (!topList.contains(url))
-      topList.append(url);
-
+  m_config->setGroup("General Options");
+  if (m_config->readBoolEntry("Home-Root Folder On", true))
+  {
+    url = KURL();
+    url.setPath("/");
+    if (!topList.contains(url))
+        topList.append(url);
+    url = KURL();
+    url.setPath(QDir::homeDirPath()+"/");
+    if (!topList.contains(url))
+        topList.append(url);
+  }
   fTab = new FilesTreeView(topList, ftabdock);
   aTab = new EnhancedTagAttributeTree(atabdock);
   pTab = new ProjectTreeView(ptabdock );
