@@ -1166,12 +1166,12 @@ void Project::slotAcceptCreateProject()
 
 void Project::slotOptions()
 {
-  QTabDialog *dlg = new QTabDialog(quantaApp, i18n("Project Options"), true);
+  QDialog *dlg = new QDialog(quantaApp, i18n("Project Options"), true);
   KURL url;
 
   ProjectOptions* optionsPage = new ProjectOptions(dlg );
 
-  dlg->addTab( optionsPage, i18n("General") );
+  //dlg->addTab( optionsPage, i18n("General") );
 
   dlg->setOkButton();
   dlg->setCancelButton();

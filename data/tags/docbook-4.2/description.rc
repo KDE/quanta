@@ -10,7 +10,7 @@ CaseSensitive = true
 
 [Toolbars]
 Location = docbook
-Names = standard, fonts, tables, lists, forms, other
+Names = xmltools
 
 [Core]
 Attributes=arch,condition,conformance,id,lang,os,remap,role,revision,revisionflag,security,userlevel,vendor,xreflabel
