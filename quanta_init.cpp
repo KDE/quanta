@@ -644,14 +644,13 @@ void QuantaApp::readOptions()
   }
   if (!m_config->readBoolEntry("Show Statusbar", true))
   {
-     statusBar()->hide();
+     showStatusbarAction->setChecked(false);
   } else
   {
-     statusBar()->show();
      showStatusbarAction->setChecked(true);
   }
+  slotViewStatusBar();
   showToolbarAction  ->setChecked(m_config->readBoolEntry("Show Toolbar",   true));
-  showStatusbarAction->setChecked(m_config->readBoolEntry("Show Statusbar", true));
   qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
   showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
 

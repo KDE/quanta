@@ -442,10 +442,10 @@ void QuantaApp::slotViewToolBar()
 
 void QuantaApp::slotViewStatusBar()
 {
-  if (statusBar()->isVisible())
-    statusBar()->hide();
-  else
+  if (showStatusbarAction->isChecked())
     statusBar()->show();
+  else
+    statusBar()->hide();
 }
 
 void QuantaApp::slotHelpTip()
@@ -674,7 +674,15 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   QString tabTitle =m_view->writeTab()->tabLabel(m_view->oldTab);
   QuantaKPartPlugin *plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
   if (plugin)
+  {
+    bool statusBarVisible = showStatusbarAction->isChecked();
     plugin->showGui(false);
+    if (statusBarVisible)
+    {
+      showStatusbarAction->setChecked(true);
+      statusBar()->show();
+    }
+  }
   m_view->oldTab = w;
 
   Document *newWrite = dynamic_cast<Document *>(w);
