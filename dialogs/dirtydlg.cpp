@@ -78,7 +78,6 @@ void DirtyDlg::slotCompareDone(KProcess* proc)
 /** No descriptions */
 void DirtyDlg::slotResult(KIO::Job *)
 {
- KIO::chmod(m_src, m_permissions);
  m_busy = false;
  accept();
 }

@@ -77,6 +77,7 @@ bool QuantaCmdPlugin::load()
   m_process->setUseShell(true);
 
   QString args = arguments();
+  
   if (!args.isEmpty())
   {
     //FIXME: This will not work if the arguments contain spaces, but will
