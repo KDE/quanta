@@ -73,9 +73,13 @@ bool QuantaCmdPlugin::load()
   if(isLoaded())
     return FALSE;
 
+// Still using KShellProcess to keep it runnable under KDE 3.0.x
   m_process = new KShellProcess;
 
   QString args = arguments();
+  if (!args.isEmpty())
+     args = KShellProcess::quote(args);
+  
 
   /* TODO
   QString text = quantaApp->getDoc()->write()->editIf->text();
@@ -86,7 +90,7 @@ bool QuantaCmdPlugin::load()
   QString loc = location(); // locate first if location not specified
   if(loc.isEmpty())
   {
-    const char *fn = QFile::encodeName(fileName());
+    QString fn = fileName();
     KStandardDirs *dirs = QuantaCommon::pluginDirs("exe");
     loc = dirs->findResource("exe", fn);
     delete dirs;
@@ -100,12 +104,12 @@ bool QuantaCmdPlugin::load()
   if(ow == i18n("Konsole"))
   {
     QString kon = locate("exe", "konsole");
-    *m_process << kon << "-e" << loc;
+    *m_process << kon << "-e " << KShellProcess::quote(loc);
     *m_process << args; // FIXME : Do we need to tokenize arguments here?
   }
   else if(ow == i18n("Message Window"))
   {
-    *m_process << loc << args;
+    *m_process << KShellProcess::quote(loc) << args;
   }
   else
     qWarning("Unknown output window %s", ow.latin1());
