@@ -102,8 +102,8 @@ StructGroupsCount = 2
 [Parsing rules]
 SpecialAreas = <!-- -->
 SpecialAreaNames = comment
-SpecialTags = script(language), style(type)
-MayContain = php
+SpecialTags = script(language)
+MayContain = php, css
 
 [StructGroup_1]
 Name = Images
