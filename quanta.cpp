@@ -3626,23 +3626,29 @@ void QuantaApp::slotLoadDTD()
     DTDParser dtdParser(url, KGlobal::dirs()->saveLocation("data") + "quanta/dtep");
     if (dtdParser.parse())
     {
-     QString dirName = dtdParser.dirName();
-     if (readTagDir(dirName))
-     {
-        KConfig dtdcfg(dirName+"description.rc");
-        dtdcfg.setGroup("General");
-        QString dtdName = dtdcfg.readEntry("Name");
-        dtdName = dtdcfg.readEntry("NickName", dtdName);
-        QString family = dtdcfg.readEntry("Family", "1");
-        if (family == "1" && m_view->writeExists() &&
-            KMessageBox::questionYesNo(this, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(dtdName), i18n("Change DTD")) == KMessageBox::Yes)
-        {
-          Document *w = m_view->write();
-          w->setDTDIdentifier(dtdcfg.readEntry("Name"));
-          loadToolbarForDTD(w->getDTDIdentifier());
-          reparse(true);
-        }
-     }
+      QString dirName = dtdParser.dirName();
+      KConfig dtdcfg(dirName + "description.rc");
+      dtdcfg.setGroup("General");
+      QString dtdName = dtdcfg.readEntry("Name");
+      QString nickName = dtdcfg.readEntry("NickName", dtdName);
+      if (dtds->find(dtdName.lower()) &&
+          KMessageBox::questionYesNo(this, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
+      {
+        return;
+      }
+      removeDTD(dtds->find(dtdName.lower()));
+      if (readTagDir(dirName))
+      {
+          QString family = dtdcfg.readEntry("Family", "1");
+          if (family == "1" && m_view->writeExists() &&
+              KMessageBox::questionYesNo(this, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
+          {
+            Document *w = m_view->write();
+            w->setDTDIdentifier(dtdName);
+            loadToolbarForDTD(w->getDTDIdentifier());
+            reparse(true);
+          }
+      }
     }
   }
 }
@@ -3653,17 +3659,23 @@ void QuantaApp::slotLoadDTEP()
   if (!dirName.isEmpty())
   {
     dirName += "/";
-    if (!readTagDir(dirName ))
+    KConfig dtdcfg(dirName+"description.rc");
+    dtdcfg.setGroup("General");
+    QString dtdName = dtdcfg.readEntry("Name");
+    QString nickName = dtdcfg.readEntry("NickName", dtdName);
+    if (dtds->find(dtdName.lower()) &&
+        KMessageBox::questionYesNo(this, i18n("<qt>Do you want to replace the existing <b>%1</b> DTD?</qt>").arg(nickName)) == KMessageBox::No)
+    {
+      return;
+    }
+    removeDTD(dtds->find(dtdName.lower()));
+    if (!readTagDir(dirName))
     {
       KMessageBox::error(this, i18n("<qt>Cannot read the DTEP from <b>%1</b>. Check that the directory contains a valid DTEP (<i>description.rc and *.tag files</i>).</qt>").arg(dirName), i18n("Error loading DTEP"));
     } else
     {
-      KConfig dtdcfg(dirName+"description.rc");
-      dtdcfg.setGroup("General");
-      QString dtdName = dtdcfg.readEntry("Name");
-      dtdName = dtdcfg.readEntry("NickName", dtdName);
       QString family = dtdcfg.readEntry("Family", "1");
-      if (KMessageBox::questionYesNo(this, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>").arg(dtdName)) == KMessageBox::Yes)
+      if (KMessageBox::questionYesNo(this, i18n("<qt>Autoload the <b>%1</b> DTD in the feature?</qt>").arg(nickName)) == KMessageBox::Yes)
       {
         KURL src;
         src.setPath(dirName);
@@ -3673,10 +3685,10 @@ void QuantaApp::slotLoadDTEP()
         KIO::copy( src, target, false); //don't care about the result
       }
       if (family == "1" && m_view->writeExists() &&
-          KMessageBox::questionYesNo(this, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(dtdName), i18n("Change DTD")) == KMessageBox::Yes)
+          KMessageBox::questionYesNo(this, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
       {
         Document *w = m_view->write();
-        w->setDTDIdentifier(dtdcfg.readEntry("Name"));
+        w->setDTDIdentifier(dtdName);
         loadToolbarForDTD(w->getDTDIdentifier());
         reparse(true);
       }
@@ -3684,6 +3696,16 @@ void QuantaApp::slotLoadDTEP()
   }
 }
 
+void QuantaApp::removeDTD(DTDStruct *dtd)
+{
+  if (dtd)
+  {
+    delete dtd->tagsList;
+    dtd->tagsList = 0L;
+    delete dtd->commonAttrs;
+    dtd->commonAttrs = 0L;
+    dtds->remove(dtd->name.lower());
+  }
+}
+
 #include "quanta.moc"
-
-

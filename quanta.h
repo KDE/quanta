@@ -427,6 +427,8 @@ protected:
   void setTitle(const QString&);
   void connectDockSignals(QObject *obj);
   void layoutDockWidgets(const QString &layout);
+  /** Removes the dtd from the memory */
+  void removeDTD(DTDStruct *dtd);
 
 
 private:

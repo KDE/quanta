@@ -1231,6 +1231,7 @@ bool QuantaApp::readTagDir(QString &dirName)
    }
  }
  dtd->tagsList = tagList;
+ dtd->tagsList->setAutoDelete(true);
 
 
 /**** Code for the new parser *****/

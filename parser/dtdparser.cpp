@@ -200,10 +200,11 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
           xmlElementPtr child_ptr = xmlGetDtdElementDesc(DTD::dtd_ptr, list_ptr[i]);
           if (child_ptr && child_ptr->content && child_ptr->content->ocur)
           {
-            if (child_ptr->content->ocur == XML_ELEMENT_CONTENT_PLUS)
+            /*if (child_ptr->content->ocur == XML_ELEMENT_CONTENT_PLUS)
             {
               stream << " usage=\"required\"";
-            }
+            }*/
+            stream << " usage=\"" << QString("%1").arg(child_ptr->content->ocur) << "\"";
           }
           stream << " />" << endl;
         }

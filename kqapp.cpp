@@ -18,6 +18,7 @@
 
 #include <qtimer.h>
 
+#include <kdebug.h>
 #include <kwin.h>
 #include <kcmdlineargs.h>
 #include <kurl.h>
