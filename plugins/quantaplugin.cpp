@@ -364,8 +364,13 @@ void QuantaPlugin::addWidget()
   } else if (ow == i18n("Editor Tab"))
   {
     QuantaView *view = quantaApp->view();
-    view->addWrite(m_part->widget(), m_name);
-    view->writeTab()->showPage(m_part->widget());
+    QWidget *w = m_part->widget();
+    view->addWrite(w, m_name);
+    if (qConfig.showCloseButtons)
+      view->writeTab()->changeTab(w, SmallIcon("fileclose"), m_name);
+    else
+      view->writeTab()->changeTab(w, UserIcon(m_icon), m_name);
+    view->writeTab()->showPage(w);
   }
 
   m_part->widget()->show();

@@ -125,6 +125,7 @@ void QuantaView::slotFrameWizard()
   QStringList list = w->tagAreas("frameset", true, true);
   bool framesetExists = !list.isEmpty();
   int bl, bc, el, ec;
+  bl = bc = el = ec = 0;
   QStringList l;
   QStringList l2;
   QuantaCommon::normalizeStructure(list[0],l2);
@@ -407,6 +408,7 @@ void QuantaView::slotTagEditTable()
   w->viewCursorIf->cursorPositionReal(&line, &col);
   int bl, bc, el, ec;
   int bLine, bCol, eLine, eCol;
+  bLine = bCol = eLine = eCol = 0;
   QStringList l;
   QStringList l2;
   for (QStringList::Iterator it = list.begin(); it != list.end(); ++it)
@@ -1054,6 +1056,9 @@ Node *QuantaView::showTagDialogAndReturnNode(QString tag, QString attr)
     delete dlg;
   }
   return n;
+#else
+  Q_UNUSED(tag);
+  Q_UNUSED(attr);
 #endif
 }
 

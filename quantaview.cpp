@@ -65,6 +65,8 @@
 
 #include "toolbar/tagaction.h"
 #include "toolbar/toolbartabwidget.h"
+#include "plugins/quantaplugin.h"
+#include "plugins/quantaplugininterface.h"
 
 QuantaView::QuantaView(QWidget *parent, const char *name )
   : QWidget( parent, name)
@@ -140,7 +142,6 @@ void QuantaView::addWrite( QWidget* w , QString label )
 
   int oldLayout;
 
-  oldTab = w;
   oldLayout = currentViewsLayout;
   currentViewsLayout = QuantaView::QuantaViewOnly;
   if(oldLayout == QuantaView::QuantaAndKafkaViews)
@@ -233,10 +234,15 @@ QWidget* QuantaView::removeWrite()
     delete w;
   } else
   {
-    //m_writeTab->removePage( m_writeTab->currentPage() );
+    QString tabTitle = m_writeTab->tabLabel(m_writeTab->currentPage());
+    QuantaPlugin *plugin = quantaApp->m_pluginInterface->plugin(tabTitle);
+    if (plugin)
+    {
+      plugin->unload();
+      plugin->m_action->setChecked(false);
+    }
   }
 #ifdef BUILD_KAFKAPART
-  oldTab = m_writeTab->currentPage();
   if(!writeExists())
   {
   //no more view, going back to the quanta editor view
@@ -262,8 +268,9 @@ QWidget* QuantaView::removeWrite()
     }
   }
 #endif
-  oldWrite = dynamic_cast<Document*>(m_writeTab->currentPage()); //don't call write() here
-  return oldWrite;
+  oldTab = m_writeTab->currentPage();
+  oldWrite = dynamic_cast<Document*>(oldTab); //don't call write() here
+  return oldTab;
 }
 
 void QuantaView::updateViews()

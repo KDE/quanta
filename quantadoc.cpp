@@ -317,7 +317,20 @@ void QuantaDoc::closeDocument()
       if (!w->isUntitled())
         fileWatcher->removeFile(w->url().path());
     }
-    if ( !quantaApp->view()->removeWrite())
+    quantaApp->view()->removeWrite();
+    bool lastDocClosed = true;
+    QTabWidget *docTab = quantaApp->view()->writeTab();
+    Document *w;
+    for (int i = docTab->count() -1; i >=0; i--)
+    {
+      w = dynamic_cast<Document*>(docTab->page(i));
+      if (w)
+      {
+        lastDocClosed = false;
+        break;
+      }
+    }
+    if (lastDocClosed)
     {
       openDocument( KURL() );
     }
@@ -345,8 +358,7 @@ void QuantaDoc::closeAll()
         return; //save failed, so don't close anything
       }
     }
-  }
-  while (  view->removeWrite());
+  } while (view->removeWrite());
   connect( view->writeTab(), SIGNAL(currentChanged(QWidget*)), quantaApp,   SLOT(slotUpdateStatus(QWidget*)));
 
   //all documents were removed, so open an empty one
@@ -658,12 +670,28 @@ void QuantaDoc::changeFileTabName(const KURL &newURL)
     tab->setTabToolTip( w, url.prettyURL() );
   }
 
-/*  // try to set the icon from mimetype
+    // try to set the icon from mimetype
   QIconSet mimeIcon (KMimeType::pixmapForURL(url, 0, KIcon::Small));
   if (mimeIcon.isNull())
     mimeIcon = QIconSet(SmallIcon("document"));
-
-  tab->setTabIconSet( w, mimeIcon);*/
+#if KDE_IS_VERSION(3,1,90)
+  if (qConfig.showCloseButtons)
+  {
+    if (w->isModified())
+    {
+      tab->changeTab( w, SmallIcon("fileclose"), tab->tabLabel(w) + "[!]");
+    } else
+    {
+      tab->changeTab( w, SmallIcon("fileclose"), tab->tabLabel(w));
+    }
+  } else
+#endif
+  {
+    if ( w->isModified() )
+      tab->changeTab( w, UserIcon("save_small"), tab->tabLabel(w));
+    else
+      tab->changeTab( w, mimeIcon,  tab->tabLabel(w));
+  }
 }
 
 /// SLOTS

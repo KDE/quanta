@@ -48,7 +48,7 @@ protected slots:
 
   /** Place all the selector contained in the string list into the list box */
   void slotShowSelectors ();
-  
+
 protected:
   /** All the parsed selectors, in the form "Selector { css code } */
   QStringList selectors;

@@ -782,21 +782,20 @@ void QuantaApp::slotNewStatus()
 #if KDE_IS_VERSION(3,1,90)
     if (qConfig.showCloseButtons)
     {
-      wTab->changeTab(w, SmallIcon("fileclose"), "");
       if (w->isModified())
       {
-        wTab->changeTab( w, QExtFileInfo::shortName(w->url().path()) + "[!]");
+        wTab->changeTab( w, SmallIcon("fileclose"), QExtFileInfo::shortName(w->url().path()) + "[!]");
       } else
       {
-        wTab->changeTab( w, QExtFileInfo::shortName(w->url().path()));
+        wTab->changeTab( w, SmallIcon("fileclose"), QExtFileInfo::shortName(w->url().path()));
       }
     } else
 #endif
     {
       if ( w->isModified() )
-        wTab->changeTab( w,   UserIcon("save_small"), wTab->tabLabel(w));
+        wTab->changeTab( w, UserIcon("save_small"), wTab->tabLabel(w));
       else
-        wTab->changeTab( w,  mimeIcon,  wTab->tabLabel(w));
+        wTab->changeTab( w, mimeIcon,  wTab->tabLabel(w));
     }
 //This is a really dirty fix for the QTabWidget problem. After the changeTab call,
 //it will reset itself and you will see the first tabs, even if the actual page is on
@@ -850,6 +849,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
       statusBar()->changeItem("", IDS_STATUS);
       statusBar()->show();
     }
+    if (qConfig.enableDTDToolbar)
+        m_view->toolbarTab()->show();
   }
 
   Document *newWrite = dynamic_cast<Document *>(w);
@@ -861,6 +862,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
     if (plugin)
        plugin->showGui(true);
     m_view->oldTab = w;
+    m_view->toolbarTab()->hide();
     return;
   }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
@@ -896,8 +898,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   }
   #ifdef BUILD_KAFKAPART
   m_view->updateViews();
-  m_view->oldTab = w;
   #endif
+  m_view->oldTab = w;
   slotNewLineColumn();
 
   emit reloadTreeviews();
