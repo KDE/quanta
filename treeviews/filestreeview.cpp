@@ -99,7 +99,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
     if (url.isLocalFile() && url.path() == "/")
     {
       FilesTreeFolder *dir = new FilesTreeFolder( this, i18n("Root directory"), url);
-    	dir->setPixmap( 0, SmallIcon("folder"));
+    	dir->setPixmap( 0, SmallIcon("folder_red"));
    	  dir->setOpen( false);
     } else
       if (url.isLocalFile() && url.path() == QDir::homeDirPath()+"/")
@@ -114,7 +114,11 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
     	  dir->setOpen( false);
       }
 	}
-
+/*  
+  topFolders = new FilesTreeFolder(this, i18n("Top folders"), KURL());
+  topFolders->setPixmap( 0, SmallIcon("folder"));
+  topFolders->setOpen( false);
+*/  
 }
 
 FilesTreeView::~FilesTreeView()
@@ -283,7 +287,7 @@ void FilesTreeView::slotAddToTop()
       if (topURLList.findIndex(url) == -1)
       {
         url.setPath(url.path(-1));
-  	    FilesTreeFolder *dir = new FilesTreeFolder( this , url.fileName() +" ["+url.path()+"]", url); //FIXME: Why doesn't add to the TOP as the first item??
+  	    FilesTreeFolder *dir = new FilesTreeFolder(this , url.fileName() +" ["+url.path()+"]", url); //FIXME: Why doesn't add to the TOP as the first item??
    	    dir->setPixmap( 0, SmallIcon("kdisknav") );
   	    dir->setOpen( false);
   	    topURLList.append(url);

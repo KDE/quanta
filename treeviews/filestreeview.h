@@ -70,6 +70,8 @@ protected:
   virtual void itemRenamed(const KURL& , const KURL& ) {};
   void addFileInfoPage(KPropertiesDialog *propDlg);
 
+  //FilesTreeFolder *topFolders;
+  
 protected slots: // Private slots
   /** No descriptions */
   virtual void slotDirListNewItems(const KFileItemList& items);

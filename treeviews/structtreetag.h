@@ -33,7 +33,7 @@ class StructTreeTag : public KListViewItem  {
 
 public: 
 	StructTreeTag(QListView *parent, QString name = QString::null );
-	StructTreeTag(StructTreeTag *parent, Node *p_node, QString name = QString::null );
+	StructTreeTag(StructTreeTag *parent, Node *p_node, QString name = QString::null, QListViewItem *after = 0L);
 	StructTreeTag(StructTreeTag *parent, QString name = QString::null );
 	~StructTreeTag();
 	
