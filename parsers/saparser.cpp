@@ -461,13 +461,25 @@ bool SAParser::slotParseOneLine()
       }
      case QuotedString:
       {
-       //TODO: find a better, faster solution...
-        QRegExp endQuotationRx("[^\\\\]" + s_currentContext.startString +"|^" + s_currentContext.startString);
-        QString s = s_textLine.mid(s_col);
-        int pos = s.find(endQuotationRx);
+        int pos = -1;
+        int p = s_col;
+        int l = s_textLine.length();
+        while (p < l)
+        {
+          p = s_textLine.find(s_currentContext.startString, p);
+          if (p != -1)
+          {
+            if (p == 0 || (p > 0 && s_textLine[p-1] != '\\'))
+            {
+              pos = p;
+              break;  
+            }
+          } else
+            break;
+          p++;
+        }
         if (pos != -1)
         {
-          pos += s_col;
           if (pos != 0)
             pos++;
           s_currentContext.area.eLine = s_line;
