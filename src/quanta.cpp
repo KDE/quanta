@@ -3675,21 +3675,13 @@ void QuantaApp::slotDeleteFile(QuantaView *view)
     view = ViewManager::ref()->activeView();
   Document *w = view->document();
   KURL url = w->url();
-/*  if (KMessageBox::questionYesNo(this,
-                   i18n("<qt>Do you really want to delete the file <b>%1</b>?</qt>")
-                   .arg(url.prettyURL(0, KURL::StripFileProtocol)),
-                   i18n("Delete File")) == KMessageBox::Yes)
+  bool modified = w->isModified();
+  w->setModified(false); //don't ask for save
+  if (QuantaNetAccess::del(url, this, true))
   {
-    if (KIO::NetAccess::del(url, this))
-    {
-      if (Project::ref()->hasProject())
-        Project::ref()->slotRemove(url);
-    }*/
-  if ( QuantaNetAccess::del(url, this, true) )
-  {
-    w->setModified(false); //don't ask for save
     slotFileClose();
-  }
+  } else
+    w->setModified(modified);
 }
 
 

@@ -542,7 +542,7 @@ KTextEditor::Document* Document::doc()
 bool Document::isModified()
 {
   bool modified = false;
-  if ( m_doc )
+  if (m_doc)
    modified = m_doc->isModified();
 
   return modified;
@@ -550,7 +550,8 @@ bool Document::isModified()
 /** Sets the modifiedFlag value. */
 void Document::setModified(bool flag)
 {
-  m_doc->setModified(flag);
+  if (m_doc)
+    m_doc->setModified(flag);
 }
 
 /** Creates a temporary file where the url is backed up. */
