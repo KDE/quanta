@@ -161,17 +161,14 @@ public:
   QString structBeginStr; //if it's a special block, contains the block beginning definition string (like <? or <style language="foo">)
   bool validXMLTag; //false if the closing ">" was not found
 
-#ifdef BUILD_KAFKAPART
   bool cleanStrBuilt() {return m_cleanStrBuilt;}
   void setCleanStrBuilt(bool cleanStrBuilt) {m_cleanStrBuilt = cleanStrBuilt;}
   bool indentationDone() {return m_indentationDone;}
   void setIndentationDone(bool indentationDone) {m_indentationDone = indentationDone;}
   bool notInTree() {return m_notInTree;}
   void setNotInTree(bool notInTree) {m_notInTree = notInTree;}
-#endif
   
 private:
-#ifdef BUILD_KAFKAPART
   //specifies if we need to build the clean tag string from the attrs
   // or the text without entities. This "clean" string will be inserted in the source view.
   // if true, the markup is already generated.
@@ -184,7 +181,6 @@ private:
   
   // specifies if this tag is just conencted to a DOM::Node but isn't part of the Node tree.
   bool m_notInTree;
-#endif
 
 
   void init();

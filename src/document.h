@@ -183,19 +183,15 @@ work correctly. */
   KTextEditor::SelectionInterface *selectionIf;
   KTextEditor::SelectionInterfaceExt *selectionIfExt;
   KTextEditor::EditInterface *editIf;
-#ifdef BUILD_KAFKAPART
   KTextEditor::EditInterfaceExt *editIfExt;
-#endif
   KTextEditor::CodeCompletionInterface *codeCompletionIf;
   KTextEditor::ConfigInterface* configIf;
   KTextEditor::MarkInterface* markIf;
 
   /** Hold the list of user tags (real or not, like functions) that are in the document*/
   QTagList userTagList;
-#ifdef BUILD_KAFKAPART
   /** The undo/redo stack */
   undoRedo *docUndoRedo;
-#endif
 
   bool isBackedUp();
   /** Creates an automatic backup copy for the crash recovering mechanism */

@@ -25,9 +25,7 @@
 #include <kdeversion.h>
 
 #include <ktexteditor/editinterface.h>
-#ifdef BUILD_KAFKAPART
 #include <ktexteditor/editinterfaceext.h>
-#endif
 #include <ktexteditor/selectioninterface.h>
 
 //app includes
@@ -149,9 +147,7 @@ void SpellChecker::misspelling( const QString& origword, const QStringList&, uin
 void SpellChecker::corrected( const QString& originalword, const QString& newword, uint pos )
 {
         KTextEditor::EditInterface* editIf = dynamic_cast<KTextEditor::EditInterface*>(m_currentDoc);
-#ifdef BUILD_KAFKAPART
         KTextEditor::EditInterfaceExt* editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt*>(m_currentDoc);
-#endif
         m_replaceCount++;
 
         uint line, col;
@@ -161,16 +157,12 @@ void SpellChecker::corrected( const QString& originalword, const QString& newwor
         lineText.remove(col,originalword.length());
         lineText.insert(col, newword);
         m_currentDoc->setReadWrite(true);
-#ifdef BUILD_KAFKAPART
         if (editIfExt)
           editIfExt->editBegin();
-#endif
         editIf->removeLine(line);
         editIf->insertLine(line, lineText);
-#ifdef BUILD_KAFKAPART
         if (editIfExt)
           editIfExt->editEnd();
-#endif
         m_currentDoc->setReadWrite(false);
 }
 

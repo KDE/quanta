@@ -45,10 +45,8 @@
 #include <kparts/partmanager.h>
 #include <kstatusbar.h>
 
-#ifdef BUILD_KAFKAPART
 #include "undoredo.h"
 #include "wkafkapart.h"
-#endif
 
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
@@ -80,15 +78,11 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   , m_document(0L)
   , m_plugin(0L)
   , m_customWidget(0L)
-#ifdef BUILD_KAFKAPART
   , m_currentFocus(SourceFocus)
-#endif
 {
-#ifdef BUILD_KAFKAPART
 //Connect the VPL update timers
   connect(&m_sourceUpdateTimer, SIGNAL(timeout()), this, SLOT(sourceUpdateTimerTimeout()));
   connect(&m_VPLUpdateTimer, SIGNAL(timeout()), this, SLOT(VPLUpdateTimerTimeout()));
-#endif
 
 //create the source and VPL holding widgets
   m_documentArea = new QWidget(this);
@@ -150,10 +144,8 @@ bool QuantaView::mayRemove()
         KURL url = m_document->url();
         emit eventHappened("before_close", url.url(), QString::null);
         m_currentViewsLayout  = -1;
-#ifdef BUILD_KAFKAPART
         slotSetSourceLayout(); //set the layout to source only, otherwise it crashes...
         m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
-#endif
           m_document->closeTempFile();
           if (!m_document->isUntitled() && url.isLocalFile())
           {
@@ -181,7 +173,6 @@ void QuantaView::addDocument(Document *document)
     connect(m_document->view(), SIGNAL(cursorPositionChanged()), this, SIGNAL(cursorPositionChanged()));
 
 
-#ifdef BUILD_KAFKAPART
    m_kafkaDocument =KafkaDocument::ref();
 
   connect(m_kafkaDocument->getKafkaWidget(), SIGNAL(hasFocus(bool)),
@@ -196,13 +187,10 @@ void QuantaView::addDocument(Document *document)
    m_curCol = m_curLine = m_curOffset = 0;
 
 //init the VPL part
-#ifdef BUILD_KAFKAPART
   m_currentViewsLayout = SourceOnly;//to correctly reload the timers.
 
   reloadUpdateTimers();
-#endif
 
-#endif
 
    m_currentViewsLayout = -1; //force loading of this layout
    int currentViewsLayout = SourceOnly;
@@ -357,16 +345,13 @@ void QuantaView::slotSetSourceLayout()
    if (m_currentViewsLayout == SourceOnly || !m_document)
      return;
 
-#ifdef BUILD_KAFKAPART
    if(m_currentViewsLayout == SourceAndVPL)
      m_splitterSizes = m_splitter->sizes();
-#endif
 
    KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
    if (ta)
       ta->setChecked(true);
 
-#ifdef BUILD_KAFKAPART
    //hide the VPL widget, reload the source if necessary
    if ((m_currentViewsLayout == SourceAndVPL && m_kafkaDocument->getKafkaWidget()->view()->hasFocus()) ||
      m_currentViewsLayout == VPLOnly)
@@ -376,7 +361,6 @@ void QuantaView::slotSetSourceLayout()
    if (m_kafkaDocument->isLoaded())
        m_kafkaDocument->unloadDocument();
       
-#endif
 //show the document if full size
    m_splitter->hide();
    m_document->view()->reparent(m_documentArea, 0, QPoint(), true);
@@ -386,17 +370,14 @@ void QuantaView::slotSetSourceLayout()
 
    m_currentViewsLayout = SourceOnly;
 
-#ifdef BUILD_KAFKAPART
 //update timers are not needed in source only mode
    m_sourceUpdateTimer.stop();
    m_VPLUpdateTimer.stop();
-#endif
 }
 
 
 void QuantaView::slotSetSourceAndVPLLayout()
 {
-#ifdef BUILD_KAFKAPART
    emit hidePreview();
    if (m_currentViewsLayout == SourceAndVPL  || !m_document)
      return;
@@ -439,12 +420,10 @@ void QuantaView::slotSetSourceAndVPLLayout()
    m_currentViewsLayout = SourceAndVPL;
 
    reloadUpdateTimers();
-#endif
 }
 
 void QuantaView::slotSetVPLOnlyLayout()
 {
-#ifdef BUILD_KAFKAPART
    emit hidePreview();
    if (m_currentViewsLayout == VPLOnly || !m_document)
      return;
@@ -488,12 +467,10 @@ void QuantaView::slotSetVPLOnlyLayout()
     m_sourceUpdateTimer.stop();
     m_VPLUpdateTimer.stop();
 
-#endif
 }
 
 void QuantaView::reloadUpdateTimers()
 {
-#ifdef BUILD_KAFKAPART
     QuantaView* view=ViewManager::ref()->activeView();
 
     m_sourceUpdateTimer.stop();
@@ -506,14 +483,12 @@ void QuantaView::reloadUpdateTimers()
        if (m_currentFocus == SourceFocus && !qConfig.kafkaRefreshOnFocus)
           m_VPLUpdateTimer.start(qConfig.kafkaRefreshDelay);
    }
-#endif
 }
 
 void QuantaView::slotVPLGetFocus(bool focus)
 {
   // is Quanta exiting?
   if (!quantaApp) return;
-#ifdef BUILD_KAFKAPART
 #ifdef LIGHT_DEBUG
   kdDebug(25001)<< "slotVPLGetFocus(" << focus << ")" << endl;
 #endif
@@ -577,14 +552,12 @@ void QuantaView::slotVPLGetFocus(bool focus)
     m_currentFocus = VPLFocus;
     reloadUpdateTimers();
  }
-#endif
 }
 
 void QuantaView::slotSourceGetFocus()
 {
   // is Quanta exiting?
   if (!quantaApp) return;
-#ifdef BUILD_KAFKAPART
 #ifdef LIGHT_DEBUG
   kdDebug(25001)<< "slotSourceGetFocus(true)" << endl;
 #endif
@@ -640,10 +613,7 @@ void QuantaView::slotSourceGetFocus()
     //TEMPORARY: Disable VPL undo/redo logging
     m_document->docUndoRedo->turnOn(false);
 
-#endif
 }
-
-#ifdef BUILD_KAFKAPART
 
 /** Reloads both views ONLY when changes have been made to the Node tree ONLY. */
 void QuantaView::reloadBothViews(bool force)
@@ -666,22 +636,17 @@ void QuantaView::reloadSourceView(bool force)
       m_document->docUndoRedo->reloadQuantaEditor(force);
 }
 
-#endif
 
 void QuantaView::VPLUpdateTimerTimeout()
 {
-#ifdef BUILD_KAFKAPART
   if(quantaApp && m_currentFocus == SourceFocus)
     reloadVPLView();
-#endif
 }
 
 void QuantaView::sourceUpdateTimerTimeout()
 {
-#ifdef BUILD_KAFKAPART
   if(quantaApp && m_currentFocus == VPLFocus)
     reloadSourceView();
-#endif
 }
 
 void QuantaView::slotVPLLoadingError(Node *)
@@ -692,12 +657,10 @@ void QuantaView::slotVPLLoadingError(Node *)
 
 void QuantaView::slotSetCursorPositionInSource(int col, int line)
 {
-#ifdef BUILD_KAFKAPART
   m_curCol = col;
   m_curLine = line;
   if (m_currentViewsLayout == SourceAndVPL || m_currentViewsLayout == SourceOnly)
     m_document->viewCursorIf->setCursorPositionReal(line, col);
-#endif
 }
 
 void QuantaView::dragEnterEvent(QDragEnterEvent *e)
@@ -732,7 +695,6 @@ void QuantaView::resize(int width, int height)
       return;
   if (m_currentViewsLayout == SourceOnly)
     m_document->view()->resize(width, height);
-#ifdef BUILD_KAFKAPART
   else
   if (m_currentViewsLayout == VPLOnly)
     m_kafkaDocument->getKafkaWidget()->view()->resize(width,height);
@@ -742,7 +704,6 @@ void QuantaView::resize(int width, int height)
     m_splitter->resize(width, height);
     m_splitterSizes = m_splitter->sizes();
   }
-#endif
 }
 
 void QuantaView::insertTag(const char *tag)
@@ -877,10 +838,8 @@ void QuantaView::deactivated()
   {
     quantaApp->statusBar()->changeItem("", IDS_STATUS);
   }
-#ifdef BUILD_KAFKAPART
   m_sourceUpdateTimer.stop();
   m_VPLUpdateTimer.stop();
-#endif
 }
 
 bool QuantaView::saveModified()

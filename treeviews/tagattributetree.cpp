@@ -44,13 +44,11 @@
 #include "tag.h"
 #include "resource.h"
 #include "quanta.h"
-#ifdef BUILD_KAFKAPART
 #include <dom/dom_node.h>
 #include <kaction.h>
 #include "wkafkapart.h"
 #include "kafkacommon.h"
 #include "undoredo.h"
-#endif
 
 #include "viewmanager.h"
 
@@ -256,11 +254,9 @@ void TagAttributeTree::setCurrentNode(Node *node)
     m_node = node = node->parent;
   if (!node)
       return;
-#ifdef BUILD_KAFKAPART
 #ifdef HEAVY_DEBUG
   kafkaCommon::coutTree(baseNode, 2);
   KafkaDocument::ref()->coutLinkTree(baseNode, 2);
-#endif
 #endif
   AttributeItem *item = 0L;
   TopLevelItem *group = 0L;
@@ -391,12 +387,9 @@ void TagAttributeTree::editorContentChanged()
       m_node->tag->write()->changeTagNamespace(m_node->tag, nameSpace);
     } else
     {
-#ifdef BUILD_KAFKAPART
     if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::SourceFocus)
     {
-#endif
       m_node->tag->write()->changeTagAttribute(m_node->tag, item->text(0), item->editorText());
-#ifdef BUILD_KAFKAPART
     }
     else
     {
@@ -486,7 +479,6 @@ void TagAttributeTree::editorContentChanged()
         kafkaCommon::coutTree(baseNode, 2);
 #endif
       }
-#endif
     }
     rebuildEnabled = true;
   }
@@ -616,7 +608,6 @@ void EnhancedTagAttributeTree::deleteSubTree()
   QuantaView *view = ViewManager::ref()->activeView();
   if(!curNode || !view->document())
     return;
-#ifdef BUILD_KAFKAPART
   Node *oldCurNode;
   NodeModifsSet *modifs;
   int curLine, curCol, offset;
@@ -661,32 +652,6 @@ void EnhancedTagAttributeTree::deleteSubTree()
     KafkaDocument::ref()->getKafkaWidget()->document());
     KafkaDocument::ref()->getKafkaWidget()->setCurrentNode(domNode, offset);
   }
-
-#else
-
-  //Quick code for the 3.1.x users
-
-  Node *oldNode;
-  int bCol, bLine, eCol, eLine;
-  oldNode = curNode;
-  curNode = 0L;
-  attrTree->setCurrentNode(curNode);
-
-  oldNode->tag->beginPos(bLine, bCol);
-  if(oldNode->tag->type == Tag::XmlTag && !oldNode->tag->single)
-  {
-    if(oldNode->getClosingNode())
-      oldNode->getClosingNode()->tag->endPos(eLine, eCol);
-    else if(oldNode->child)
-      oldNode->lastChild()->tag->endPos(eLine, eCol);
-    else
-      oldNode->tag->endPos(eLine, eCol);
-  }
-  else
-    oldNode->tag->endPos(eLine, eCol);
-
-  view->document()->editIf->removeText(bLine, bCol, eLine, eCol+1);
-#endif
 }
 
 void EnhancedTagAttributeTree::deleteNode()
@@ -695,7 +660,6 @@ void EnhancedTagAttributeTree::deleteNode()
   if(!curNode || !view->document())
     return;
 
-#ifdef BUILD_KAFKAPART
   Node *oldCurNode, *oldCurNodeParent, *child;
   QTag *oldCurNodeParentQTag;
   int curLine, curCol, offset;
@@ -764,28 +728,6 @@ void EnhancedTagAttributeTree::deleteNode()
     KafkaDocument::ref()->getKafkaWidget()->setCurrentNode(domNode, offset);
   }
 
-#else
-  //Quick code for 3.1.x users
-  //Without kafka, all is more text-based, so we can avoid removing Nodes with wrong DTD relationship.
-
-  Node *oldNode;
-  int bCol, bLine, eCol, eLine;
-  oldNode = curNode;
-  curNode = 0L;
-  attrTree->setCurrentNode(curNode);
-
-  if(oldNode->tag->type == Tag::XmlTag && !oldNode->tag->single && oldNode->getClosingNode())
-  {
-    oldNode->getClosingNode()->tag->beginPos(bLine, bCol);
-    oldNode->getClosingNode()->tag->endPos(eLine, eCol);
-    view->document()->editIf->removeText(bLine, bCol, eLine, eCol+1);
-  }
-
-  oldNode->tag->beginPos(bLine, bCol);
-  oldNode->tag->endPos(eLine, eCol);
-  view->document()->editIf->removeText(bLine, bCol, eLine, eCol+1);
-
-#endif
 }
 
 #include "tagattributetree.moc"

@@ -72,9 +72,7 @@
 #include "project.h"
 //#include "dtds.h"
 
-#ifdef BUILD_KAFKAPART
 #include "undoredo.h"
-#endif
 
 QuantaDoc::QuantaDoc(QWidget *parent, const char *name) : QObject(parent, name)
 {

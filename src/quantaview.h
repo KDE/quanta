@@ -27,9 +27,7 @@
 //kde includes
 #include <kmdichildview.h>
 
-#ifdef BUILD_KAFKAPART
 #include <dom/dom_node.h>
-#endif
 
 class QuantaDoc;
 class Document;
@@ -96,7 +94,6 @@ public:
   /** Returns the baseURL of the document. */
   KURL baseURL();
 
-#ifdef BUILD_KAFKAPART
   /** Tells which widget had the focus the more recently */
   int hadLastFocus() {return m_currentFocus;}
   /** Reloads both views ONLY when changes have been made to the Node tree ONLY.
@@ -108,7 +105,6 @@ public:
   void reloadSourceView(bool force = false);
   /** Return the curren views layout*/
   int currentViewsLayout() {return m_currentViewsLayout;}
-#endif
 
  /** Called when this view become the active one */
   void activated();
@@ -202,14 +198,12 @@ signals:
   void eventHappened(const QString&, const QString&, const QString& );
 
 private:
-#ifdef BUILD_KAFKAPART
 /** Kafka stuff */
   QValueList<int> m_splitterSizes;
   int m_curCol, m_curLine, m_curOffset;
   DOM::Node curNode;
   bool m_kafkaReloadingEnabled, m_quantaReloadingEnabled;
   QTimer m_sourceUpdateTimer, m_VPLUpdateTimer;
-#endif
 
   QWidget *m_documentArea;///< the area of the view which can be used to show the source/VPL
   Document *m_document;

@@ -40,9 +40,7 @@
 #include "quantacommon.h"
 #include "resource.h"
 #include "qtag.h"
-#ifdef BUILD_KAFKAPART
 #include "kafkacommon.h"
-#endif
 
 TagDialog::TagDialog(QTag* dtdTag, Tag *tag, KURL a_baseURL)
     : QTabDialog( 0L, "tagdialog", true)
@@ -430,7 +428,6 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
   }
 }
 
-#ifdef BUILD_KAFKAPART
 Node *TagDialog::buildNode(Document *w)
 {
 	Node *node;
@@ -448,7 +445,6 @@ Node *TagDialog::buildNode(Document *w)
 
 	return node;
 }
-#endif
 
 void TagDialog::showEvent(QShowEvent *ev)
 {

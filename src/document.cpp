@@ -61,9 +61,7 @@
 #include <ktexteditor/wordwrapinterface.h>
 #include <ktexteditor/markinterfaceextension.h>
 
-#ifdef BUILD_KAFKAPART
 #include <ktexteditor/editinterfaceext.h>
-#endif
 
 
 #include <kate/view.h>
@@ -85,9 +83,7 @@
 #include "viewmanager.h"
 #include "messageoutput.h"
 
-#ifdef BUILD_KAFKAPART
 #include "undoredo.h"
-#endif
 
 #include "dtds.h"
 
@@ -151,9 +147,7 @@ Document::Document(KTextEditor::Document *doc,
     viewborderAction->setShortcut(Qt::SHIFT + Qt::Key_F9);
 
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
-#ifdef BUILD_KAFKAPART
   editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
-#endif
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
   selectionIfExt = dynamic_cast<KTextEditor::SelectionInterfaceExt *>(m_doc);
   configIf = dynamic_cast<KTextEditor::ConfigInterface*>(m_doc);
@@ -179,9 +173,7 @@ Document::Document(KTextEditor::Document *doc,
   m_parsingDTD = dtdName;
   reparseEnabled = true;
   repaintEnabled = true;
-#ifdef BUILD_KAFKAPART
   docUndoRedo = new undoRedo(this);
-#endif
 
   //each document remember wheter it has a entry in quantarc
   m_backupEntry = false;
@@ -935,9 +927,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       //add closing tag if wanted
       column++;
       editIf->insertText(line, column, "</" + tagName + ">");
-#ifdef BUILD_KAFKAPART
       docUndoRedo->dontAddModifsSet(2);
-#endif
       viewCursorIf->setCursorPositionReal( line, column );
       handled = true;
     } else
@@ -954,9 +944,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
             if (!node->tag->nameSpace.isEmpty())
               name.prepend(node->tag->nameSpace + ":");
             editIf->insertText(line, column + 1, name + ">");
-#ifdef BUILD_KAFKAPART
             docUndoRedo->dontAddModifsSet(2);
-#endif
             viewCursorIf->setCursorPositionReal( line, column + name.length() + 2);
             handled = true;
         }
@@ -973,9 +961,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
          )
       {
         editIf->insertText(line, column, " /");
-#ifdef BUILD_KAFKAPART
         docUndoRedo->dontAddModifsSet(2);
-#endif
         viewCursorIf->setCursorPositionReal( line, column+3 );
         handled = true;
       }
@@ -990,9 +976,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
                 tagName.prepend(node->tag->nameSpace + ":");
             column++;
             editIf->insertText(line, column, "</" + tagName + ">");
-#ifdef BUILD_KAFKAPART
             docUndoRedo->dontAddModifsSet(2);
-#endif
             viewCursorIf->setCursorPositionReal( line, column );
             handled = true;
         }
@@ -2098,10 +2082,8 @@ void Document::slotDelayedTextChanged(bool forced)
                 reparseEnabled = false;
                 node->tag->beginPos(bl, bc);
                 bc++;
-#ifdef BUILD_KAFKAPART
                 if(editIfExt)
                   editIfExt->editBegin();
-#endif
                 int len = node->tag->name.length();
                 if (!node->tag->nameSpace.isEmpty())
                   len += 1 + node->tag->nameSpace.length();
@@ -2117,14 +2099,10 @@ void Document::slotDelayedTextChanged(bool forced)
                     column += (newName.length() - currentNode->tag->name.length());
                   }
                 }
-#ifdef BUILD_KAFKAPART
                 if(editIfExt)
                   editIfExt->editEnd();
-#endif
                 viewCursorIf->setCursorPositionReal(bl, bc);
-#ifdef BUILD_KAFKAPART
                 docUndoRedo->mergeNextModifsSet();
-#endif
                 baseNode = parser->parse(this, true);
                 viewCursorIf->setCursorPositionReal(line, column);
                 reparseEnabled = true;
@@ -2451,10 +2429,8 @@ void Document::convertCase()
       {
         if (tagCase !=0)
         {
-#ifdef BUILD_KAFKAPART
           if(editIfExt)
             editIfExt->editBegin();
-#endif
           node->tag->namePos(bl, bc);
           ec = bc + node->tag->name.length();
           editIf->removeText(bl, bc, bl, ec);
@@ -2465,20 +2441,16 @@ void Document::convertCase()
           else if (tagCase == 2)
             newName = newName.upper();
           editIf->insertText(bl, bc, newName);
-#ifdef BUILD_KAFKAPART
           if(editIfExt)
             editIfExt->editEnd();
-#endif
         }
         if (attrCase != 0)
         {
           QString newName;
           for (int i = 0; i < node->tag->attrCount(); i++)
           {
-#ifdef BUILD_KAFKAPART
           if(editIfExt)
             editIfExt->editBegin();
-#endif
             node->tag->attributeNamePos(i, bl, bc);
             newName = node->tag->attribute(i);
             ec = bc + newName.length();
@@ -2488,10 +2460,8 @@ void Document::convertCase()
             else if (attrCase == 2)
               newName = newName.upper();
             editIf->insertText(bl, bc, newName);
-#ifdef BUILD_KAFKAPART
           if(editIfExt)
             editIfExt->editEnd();
-#endif
           }
         }
       }

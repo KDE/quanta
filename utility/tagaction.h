@@ -64,13 +64,11 @@ public:
      * Remove accelerator from tag action name *
      */
     QString actionText();
-#ifdef BUILD_KAFKAPART
     /**
      * This function take the output of the TagAction, parse it into Nodes and insert it
      * in the Node tree. Then kafka will take care of updating itself from the Node Tree.
      */
     void insertOutputInTheNodeTree(QString str1, QString str2 = "", Node *node = 0L);
-#endif
 
 public slots:
     virtual bool insertTag(bool inputFromFile = false, bool outputToFile = false);

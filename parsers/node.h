@@ -31,9 +31,7 @@ class Tag;
 class QListViewItem;
 struct XMLStructGroup;
 
-#ifdef BUILD_KAFKAPART
 #include <dom/dom_node.h>
-#endif
 
 class Node;
 
@@ -103,10 +101,8 @@ public:
  bool hasChildNodes() {return child;}
 
  /** Others functions. */
-#ifdef BUILD_KAFKAPART
  // check if Node has node in its child subtree (and grand-child,...)
  bool hasForChild(Node *node);
-#endif
  void setParent(Node *nodeParent) {parent = nodeParent;}
  //If Node is of type XmlTag or ScriptTag, return the corresponding XmlTagEnd if available
  Node *getClosingNode();
@@ -143,7 +139,6 @@ public:
 
  int size();
 
-#ifdef BUILD_KAFKAPART
 //set/get the corresponding DOM::Node of this node.
 //See more informations about rootNode/leafNode below.
  DOM::Node* rootNode() {return m_rootNode;}
@@ -151,7 +146,7 @@ public:
  void setRootNode(DOM::Node *rootNode) {m_rootNode = rootNode;}
  void setLeafNode(DOM::Node *leafNode) {m_leafNode = leafNode;}
  Node* _closingNode;
-#endif
+ 
  /**
   * The contents of the Node is inside the Tag. Should _never_ be null.
   */
@@ -178,7 +173,7 @@ public:
 // globalGroupMap
  QPtrList<GroupElementList> groupElementLists;
 
- #ifdef BUILD_KAFKAPART
+ 
 private:
   /**
    * For VPL use.
@@ -187,7 +182,6 @@ private:
    * to the specs. So m_rootNode points to the TABLE DOM::Node and m_leafNode points to the TBODY DOM::Node.
    */
   DOM::Node *m_rootNode, *m_leafNode;
-#endif
 };
 
 #endif

@@ -41,10 +41,8 @@
 #include "document.h"
 #include "quanta.h"
 #include "qextfileinfo.h"
-#ifdef BUILD_KAFKAPART
 #include "kafkacommon.h"
 #include "undoredo.h"
-#endif
 #include "dtds.h"
 #include "structtreetag.h"
 
@@ -481,11 +479,9 @@ Node *Parser::parse(Document *w, bool force)
   QTime t;
   t.start();
  QuantaView *view = ViewManager::ref()->activeView();
-#ifdef BUILD_KAFKAPART
   //If VPL is loaded, there shouldn't be any rebuild
   if(view && view->hadLastFocus() == QuantaView::VPLFocus && !force)
     return m_node;
-#endif
 
   if(!m_parsingEnabled && !force)
     return baseNode;
@@ -525,12 +521,10 @@ Node *Parser::parse(Document *w, bool force)
  baseNode = m_node;
  m_saParser->init(m_node, w);
 
-#ifdef BUILD_KAFKAPART
  //We need to reload Kafka to refresh the DOM::Node->Node links.
  //FIXME: make a function which only update the DOM::Node->Node links.
   if (view)
     view->reloadVPLView(true);
-#endif
 
  emit nodeTreeChanged();
  if (saParserEnabled)
@@ -673,7 +667,6 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest, bool exact)
 }
 void Parser::logReparse(NodeModifsSet *modifs, Document *w)
 {
-#ifdef BUILD_KAFKAPART
   NodeModif *modif;
   if (baseNode)
   {
@@ -693,10 +686,6 @@ void Parser::logReparse(NodeModifsSet *modifs, Document *w)
   modif->setType(NodeModif::NodeTreeAdded);
   modifs->addNodeModif(modif);
   w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
-#else
-  Q_UNUSED(modifs);
-  Q_UNUSED(w);
-#endif
 }
 
 bool Parser::invalidArea(Document *w, AreaStruct &area, Node **firstNode, Node **lastNode)
@@ -816,9 +805,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
   int i, j;
   Node *node = firstNode;
   bool closesPrevious = false;
-#ifdef BUILD_KAFKAPART
   NodeModif *modif;
-#endif
   //delete all the nodes between the firstNode and lastNode
   while (node && node != lastNode )
   {
@@ -842,7 +829,6 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     if (next && next->closesPrevious)
       next->closesPrevious = false;
 
-#ifdef BUILD_KAFKAPART
     modif = new NodeModif();
     modif->setType(NodeModif::NodeRemoved);
     modif->setLocation(kafkaCommon::getLocation(node));
@@ -855,10 +841,6 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     node->prev = 0L;
     node->detachNode();
     modif->setNode(node);
-#else
-    delete node;
-    nodeNum--;
-#endif
     node = 0L;
     i = 0;
     j = 0;
@@ -964,20 +946,15 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
 
       }
     }
-#ifdef BUILD_KAFKAPART
     modif->setChildrenMovedUp(i);
     modif->setNeighboursMovedDown(j);
     modifs->addNodeModif(modif);
-#endif
     node = nextNode;
 
  //   kdDebug(24000)<< "Node removed!" << endl;
 //    coutTree(m_node, 2);
   }
 //  coutTree(m_node, 2);
-#ifndef BUILD_KAFKAPART
-  Q_UNUSED(modifs);
-#endif
 }
 
 Node *Parser::rebuild(Document *w)
@@ -987,27 +964,23 @@ Node *Parser::rebuild(Document *w)
  t.start();
  bool saParserEnabled = m_saParser->parsingEnabled();
 
-#ifdef BUILD_KAFKAPART
   //If VPL is loaded, there shouldn't be any rebuild
   if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
     return m_node;
 
  NodeModifsSet *modifs = new NodeModifsSet();
  NodeModif *modif;
-#endif
 
-#ifdef BUILD_KAFKAPART
+
 // kdDebug(24000)<< "Node *Parser::rebuild()" << endl;
  modifs->setIsModified(w->isModified());
-#endif
+
  //**kdDebug(24000)<< "************* Begin User Modification *****************" << endl;
   //debug!
   //coutTree(m_node, 2);//*/
  if (w != write || !m_node) //the document has changed or the top node does not exists => parse completely
  {
-#ifdef BUILD_KAFKAPART
   logReparse(modifs, w);
-#endif
    return parse(w);
  } else
  {
@@ -1026,20 +999,15 @@ Node *Parser::rebuild(Document *w)
         (area.eLine < area.bLine || (area.eLine == area.bLine && area.eCol <= area.bCol)) //something strange has happened, like moving text with D&D inside the editor
       )
    {
-#ifdef BUILD_KAFKAPART
      logReparse(modifs, w);
-#endif
      m_saParser->setParsingEnabled(saParserEnabled);
      return parse(w);
    }
 
    kdDebug(24000) << QString("Invalid area: %1,%2,%3,%4").arg(area.bLine).arg(area.bCol).arg(area.eLine).arg(area.eCol) << "\n";
 
-#ifdef BUILD_KAFKAPART
    deleteNodes(firstNode->nextSibling(), lastNode, modifs);
-#else
-   deleteNodes(firstNode->nextSibling(), lastNode, 0L);
-#endif
+
 
    firstNode->child = 0L;
    Node *lastInserted = 0L;
@@ -1051,7 +1019,6 @@ Node *Parser::rebuild(Document *w)
    }
    node = parseArea(area.bLine, area.bCol, area.eLine, area.eCol, &lastInserted, firstNode);
 
-#ifdef BUILD_KAFKAPART
    Node *swapNode = firstNode->nextSibling();
    Node *p = (lastInserted)?lastInserted->nextSibling():lastInserted;
    while(swapNode != p)
@@ -1062,7 +1029,6 @@ Node *Parser::rebuild(Document *w)
       modifs->addNodeModif(modif);
       swapNode = swapNode->nextSibling();
    }
-#endif
    //another stange case: the parsed area contains a special area without end
    if (!node)
    {
@@ -1076,9 +1042,7 @@ Node *Parser::rebuild(Document *w)
      delete lastNode;
      nodeNum--;
      lastNode = 0L;
-#ifdef BUILD_KAFKAPART
      logReparse(modifs, w);
-#endif
      m_saParser->setParsingEnabled(saParserEnabled);
      return parse(w);
    }
@@ -1098,9 +1062,7 @@ Node *Parser::rebuild(Document *w)
         lastNode->parent = lastInserted->parent;
         lastInserted->tag->beginPos(area.bLine, area.bCol);
         lastNode->tag->endPos(area.eLine, area.eCol);
-#ifdef BUILD_KAFKAPART
         Tag *_tag = new Tag(*(lastNode->tag));
-#endif
         lastNode->tag->setTagPosition(area);
         QString s = write->text(area);
         lastNode->tag->setStr(s);
@@ -1114,7 +1076,7 @@ Node *Parser::rebuild(Document *w)
         if (lastInserted->parent && lastInserted->parent->child == lastInserted)
             //lastInserted->parent->child = lastInserted->next; lastInserted has no next!
            lastInserted->parent->child = lastNode;
-#ifdef BUILD_KAFKAPART
+           
         //here, lastNode is at the pos of lastInserted.
         modif = new NodeModif();
         modif->setType(NodeModif::NodeRemoved);
@@ -1136,11 +1098,7 @@ Node *Parser::rebuild(Document *w)
         modif->setLocation(kafkaCommon::getLocation(lastNode));
         modif->setTag(_tag);
         modifs->addNodeModif(modif);
-#else
-        lastInserted->removeAll = false;
-        delete lastInserted;
-        nodeNum--;
-#endif
+
         lastInserted = lastNode;
         lastNode = lastNode->nextNotChild();
       }
@@ -1237,9 +1195,7 @@ Node *Parser::rebuild(Document *w)
 /*   kdDebug(24000)<< "END"<< endl;
    coutTree(baseNode,  2);
    kdDebug(24000)<< "************* End User Modification *****************" << endl;*/
-#ifdef BUILD_KAFKAPART
    w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
-#endif
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
 /*

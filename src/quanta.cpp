@@ -130,11 +130,9 @@
 #include "donationdialog.h"
 #include "fourbuttonmessagebox.h"
 #include "specialchardialog.h"
-#ifdef BUILD_KAFKAPART
 #include "kafkasyncoptions.h"
 #include "htmldocumentproperties.h"
 #include "undoredo.h"
-#endif
 
 #include "filestreeview.h"
 #include "structtreeview.h"
@@ -396,15 +394,11 @@ void QuantaApp::slotFileSave()
       slotFileSaveAs();
     else
     {
-#ifdef BUILD_KAFKAPART
       if(ViewManager::ref()->activeView() &&
             ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
         w->docUndoRedo->reloadQuantaEditor();
-#endif
       view->saveDocument(w->url());
-#ifdef BUILD_KAFKAPART
       w->docUndoRedo->fileSaved();
-#endif
     }
   }
 }
@@ -481,13 +475,11 @@ bool QuantaApp::slotFileSaveAs()
         }
         Project::ref()->insertFile(saveUrl, true);
       }
-#ifdef BUILD_KAFKAPART
       if(ViewManager::ref()->activeView() &&
             ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
         w->docUndoRedo->reloadQuantaEditor();
 
       w->docUndoRedo->fileSaved();
-#endif
 //      slotUpdateStatus(w); //FIXME:
       result = true;
     }
@@ -564,13 +556,11 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
   if (projectTemplate)
       Project::ref()->insertFile(url, true);
-#ifdef BUILD_KAFKAPART
   if(ViewManager::ref()->activeView() &&
         ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
     w->docUndoRedo->reloadQuantaEditor();
 
   w->docUndoRedo->fileSaved();
-#endif
 }
 
 void QuantaApp::slotFileSaveAsLocalTemplate()
@@ -640,9 +630,7 @@ void QuantaApp::slotFileClose(const KURL &url)
 
 void QuantaApp::slotFileCloseAll()
 {
-#ifdef BUILD_KAFKAPART
-  //kafkaPart->unloadDocument();
-#endif
+
   ViewManager::ref()->closeAll();
   WHTMLPart *part = m_htmlPart;
   part->closeURL();
@@ -1179,11 +1167,9 @@ void QuantaApp::slotOptions()
   uiOptions->setHiddenFiles(qConfig.showHiddenFiles);
   uiOptions->setSaveTrees(qConfig.saveTrees);
 
-#ifdef BUILD_KAFKAPART
   //kafka options
   page = kd->addVBoxPage(i18n("VPL View"), QString::null, UserIcon("vpl_text", KIcon::SizeMedium));
   KafkaSyncOptions *kafkaOptions = new KafkaSyncOptions( m_config, (QWidget *)page );
-#endif
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( m_config, (QWidget *)page );
@@ -1262,7 +1248,7 @@ void QuantaApp::slotOptions()
     }
     qConfig.expandLevel = parserOptions->spinExpand->value();
     parserOptions->updateConfig();
-#ifdef BUILD_KAFKAPART
+
     kafkaOptions->updateConfig();
     qConfig.quantaRefreshOnFocus = kafkaOptions->sourceFocusRefresh->isChecked();
     qConfig.quantaRefreshDelay = kafkaOptions->sourceDelay->value();
@@ -1274,7 +1260,7 @@ void QuantaApp::slotOptions()
     /**(static_cast<HTMLEnhancer *>(quantaApp->view()->getKafkaInterface()->mainEnhancer))->
       showIconsForScripts(kafkaOptions->showScriptsIcon->isChecked());*/
 
-#endif
+
     qConfig.defaultDocType = DTDs::ref()->getDTDNameFromNickName(fileMasks->defaultDTDCombo->currentText());
 
     abbreviationOptions->saveTemplates();
@@ -1369,11 +1355,9 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     }
   }
 
-#ifdef BUILD_KAFKAPART
+
   int viewLayout = view->currentViewsLayout();
-#else
-  int viewLayout = QuantaView::SourceOnly;
-#endif
+
    KToggleAction *ta = 0L;
 
   if (viewLayout == QuantaView::SourceOnly)
@@ -1528,9 +1512,7 @@ void QuantaApp::updateTreeViews()
     {
       StructTreeView::ref()->showTagAtPos(node);
     }
-#ifdef BUILD_KAFKAPART
     if(view->hadLastFocus() == QuantaView::SourceFocus)
-#endif
     aTab->setCurrentNode(node);
   }
 }
@@ -3478,7 +3460,6 @@ void QuantaApp::slotDownloadToolbar()
 
 void QuantaApp::slotSmartTagInsertion()
 {
-#ifdef BUILD_KAFKAPART
   KAction *action = actionCollection()->action("smart_tag_insertion");
   if(!action)
     return;
@@ -3491,7 +3472,6 @@ void QuantaApp::slotSmartTagInsertion()
     return;
   }
   qConfig.smartTagInsertion = (static_cast<KToggleAction* >(action))->isChecked();
-#endif
 }
 
 void QuantaApp::slotDownloadTemplate()
@@ -3510,7 +3490,6 @@ void QuantaApp::slotDownloadScript()
 
 void QuantaApp::slotCodeFormatting()
 {
-#ifdef BUILD_KAFKAPART
   QuantaView *view = ViewManager::ref()->activeView();
   if(!view || !view->document() || (view->currentViewsLayout() != QuantaView::SourceOnly &&
     view->hadLastFocus() == QuantaView::VPLFocus))
@@ -3519,12 +3498,10 @@ void QuantaApp::slotCodeFormatting()
     return;
   }
   view->document()->docUndoRedo->codeFormatting();
-#endif
 }
 
 void QuantaApp::slotDocumentProperties()
 {
-#ifdef BUILD_KAFKAPART
   Document *w = ViewManager::ref()->activeDocument();
   if(w)
   {
@@ -3536,7 +3513,6 @@ void QuantaApp::slotDocumentProperties()
     htmlDocumentProperties htmlPropsDlg(this);
     htmlPropsDlg.exec();
   }
-#endif
 }
 
 /** Returns the interface number for the currently active editor. */
@@ -4548,7 +4524,6 @@ void QuantaApp::slotPasteURLEncoded()
 void QuantaApp::slotUndo ()
 {
   Document *w = ViewManager::ref()->activeDocument();
-#ifdef BUILD_KAFKAPART
   if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus && w)
   {
     /**MessageBox::information(this, i18n("VPL does not support this functionality yet."),
@@ -4556,7 +4531,6 @@ void QuantaApp::slotUndo ()
     w->docUndoRedo->undo();
     return;
   }
-#endif
   if (w)
   {
     bool updateClosing = qConfig.updateClosingTags;
@@ -4575,7 +4549,6 @@ void QuantaApp::slotUndo ()
 void QuantaApp::slotRedo ()
 {
   Document *w = ViewManager::ref()->activeDocument();
-#ifdef BUILD_KAFKAPART
   if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
   {
     /**KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
@@ -4583,7 +4556,6 @@ void QuantaApp::slotRedo ()
     w->docUndoRedo->redo();
     return;
   }
-#endif
   if (w)
   {
     bool updateClosing = qConfig.updateClosingTags;
@@ -4624,14 +4596,12 @@ void QuantaApp::slotCut()
 {
   QuantaView* view = ViewManager::ref()->activeView();
   Document *w = ViewManager::ref()->activeDocument();
-#ifdef BUILD_KAFKAPART
   if(view && view->hadLastFocus() == QuantaView::VPLFocus)
   {
     KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
       QString::null, "show cut unavailable");
     return;
   }
-#endif
   if(w)
   {
     KTextEditor::ClipboardInterface* clip = dynamic_cast<KTextEditor::ClipboardInterface*>(w->view());
@@ -4644,14 +4614,12 @@ void QuantaApp::slotCopy()
 {
   QuantaView* view = ViewManager::ref()->activeView();
   Document *w = ViewManager::ref()->activeDocument();
-#ifdef BUILD_KAFKAPART
   if(view && view->hadLastFocus() == QuantaView::VPLFocus)
   {
     KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
       QString::null, "show copy unavailable");
     return;
   }
-#endif
   if(w)
   {
     KTextEditor::ClipboardInterface* clip = dynamic_cast<KTextEditor::ClipboardInterface*>(w->view());
@@ -4664,14 +4632,12 @@ void QuantaApp::slotPaste()
 {
   QuantaView* view = ViewManager::ref()->activeView();
   Document *w = ViewManager::ref()->activeDocument();
-#ifdef BUILD_KAFKAPART
   if(view && view->hadLastFocus() == QuantaView::VPLFocus)
   {
     KMessageBox::information(this, i18n("Sorry, VPL does not support this functionality yet."),
       QString::null, "show paste unavailable");
     return;
   }
-#endif
   if(w)
   {
     KTextEditor::ClipboardInterface* clip = dynamic_cast<KTextEditor::ClipboardInterface*>(w->view());
@@ -4682,7 +4648,6 @@ void QuantaApp::slotPaste()
 
 Node *QuantaApp::showTagDialogAndReturnNode(const QString &tag, const QString &attr)
 {
-#ifdef BUILD_KAFKAPART
   Node *n = 0L;
   QuantaView *view = ViewManager::ref()->activeView();
   if(view && view->document())
@@ -4698,11 +4663,6 @@ Node *QuantaApp::showTagDialogAndReturnNode(const QString &tag, const QString &a
     delete dlg;
   }
   return n;
-#else
-  Q_UNUSED(tag);
-  Q_UNUSED(attr);
-  return 0L;
-#endif
 }
 
 

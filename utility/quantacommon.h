@@ -74,13 +74,11 @@ public:
           QString showCloseButtons; ///< can be Disabled, ShowAlways or ShowDelayed
           uint toolviewTabs; ///< how does the toolview tabs look like
 
-#ifdef BUILD_KAFKAPART
          //kafka sync options
           bool quantaRefreshOnFocus;
           int quantaRefreshDelay;
           bool kafkaRefreshOnFocus;
           int kafkaRefreshDelay;
-#endif
 
           //environment options
           QString globalDataDir;         //not stored, initialized on app startup

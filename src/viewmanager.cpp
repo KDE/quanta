@@ -30,10 +30,8 @@
 
 
 //app includes
-#ifdef BUILD_KAFKAPART
 #include "undoredo.h"
 #include "wkafkapart.h"
-#endif
 
 #include "whtmlpart.h"
 #include "document.h"
@@ -291,9 +289,7 @@ bool ViewManager::saveAll(bool dont_ask)
               if (dont_ask && !w->isUntitled())
               {
                   emit eventHappened("before_save", w->url().url(), QString::null);
-#ifdef BUILD_KAFKAPART
                   w->docUndoRedo->fileSaved();
-#endif
                   w->save();
                   w->closeTempFile();
                   w->createTempFile();

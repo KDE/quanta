@@ -71,11 +71,9 @@ Tag::Tag( const Tag &t)
   m_nameCol = t.m_nameCol;
   attrs = t.attrs;
   validXMLTag = t.validXMLTag;
-#ifdef BUILD_KAFKAPART
   m_cleanStrBuilt = t.m_cleanStrBuilt;
   m_indentationDone = t.m_indentationDone;
   m_notInTree = t.m_notInTree;
-#endif
 }
 
 Tag::~Tag()
@@ -95,11 +93,9 @@ void Tag::init()
   m_nameLine = -1;
   m_nameCol = -1;
   validXMLTag = true;
-#ifdef BUILD_KAFKAPART
   m_cleanStrBuilt = true;
   m_indentationDone = true;
   m_notInTree = false;
-#endif
 }
 
 void Tag::parse(const QString &p_tagStr, Document *p_write)

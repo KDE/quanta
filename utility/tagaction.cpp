@@ -53,13 +53,11 @@
 #include "quantacommon.h"
 #include "resource.h"
 #include "qextfileinfo.h"
-#ifdef BUILD_KAFKAPART
 #include "kafkacommon.h"
 #include "kafkahtmlpart.h"
 #include "wkafkapart.h"
 #include "undoredo.h"
 #include "tag.h"
-#endif
 #include "project.h"
 
 #include "viewmanager.h"
@@ -107,9 +105,7 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
      return false;
 
   QString space="";
-#ifdef BUILD_KAFKAPART
   QString output;
-#endif
   unsigned int line, col;
 
   Document *w = view->document();
@@ -135,16 +131,11 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
      if (otag.attribute("useDialog","false") == "true" && QuantaCommon::isKnownTag(w->defaultDTD()->name, name))
      {
-#ifdef BUILD_KAFKAPART
        if (view->hadLastFocus() == QuantaView::VPLFocus || (view->hadLastFocus() == QuantaView::SourceFocus &&
          qConfig.smartTagInsertion))
          insertOutputInTheNodeTree("", "", quantaApp->showTagDialogAndReturnNode(name, attr));
        else
          view->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
-#else
-       view->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
-       //FIXME: get the output
-#endif
      }
      else
      {
@@ -172,35 +163,22 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
             s2 = QuantaCommon::tagCase(xtag.text());
          if ( xtag.attribute("inLine","true") == "true" )
          {
-#ifdef BUILD_KAFKAPART
            /** FIXME this is quick and temporary */
            insertOutputInTheNodeTree(s1, s2);
-#else
-           w->insertTag( s1, s2 );
-#endif
          }
          else
          {
-#ifdef BUILD_KAFKAPART
            insertOutputInTheNodeTree(s1, s2);
-#else
-           w->insertTag( s1+"\n"+space+"  ", "\n"+space+s2 );
-#endif
          }
        }
        else
-#ifdef BUILD_KAFKAPART
          insertOutputInTheNodeTree(s1, s2);
-#else
-         w->insertTag( s1 );
-#endif
      }
   }
 
-#ifdef BUILD_KAFKAPART
   if (view->hadLastFocus() != QuantaView::VPLFocus)
   {
-#endif
+
 
   if ( type == "text" )
     w->insertTag( tag.namedItem("text").toElement().text() );
@@ -362,9 +340,7 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
       return false;
     }
   }
-#ifdef BUILD_KAFKAPART
  }
-#endif
   return true;
 }
 
@@ -563,7 +539,6 @@ void TagAction::slotTimeout()
   timer->start(180*1000, true);
 }
 
-#ifdef BUILD_KAFKAPART
 void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node)
 {
         QuantaView *view = ViewManager::ref()->activeView();
@@ -764,7 +739,6 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
           view->document()->insertTag(str1, str2);
         }
 }
-#endif
 
 #include "tagaction.moc"
 #include "myprocess.moc"

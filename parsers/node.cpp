@@ -24,9 +24,7 @@
 #include "qtag.h"
 #include "quantacommon.h"
 #include "structtreetag.h"
-#ifdef BUILD_KAFKAPART
 #include "kafkacommon.h"
-#endif
 
 GroupElementMapList globalGroupMap;
 
@@ -42,23 +40,20 @@ Node::Node( Node *parent )
   removeAll = true;
   closesPrevious = false;
   insideSpecial = false;
-#ifdef BUILD_KAFKAPART
   _closingNode = 0L;
   m_rootNode = 0L;
   m_leafNode = 0L;
-#endif
   groupElementLists.clear();
 }
 
 
 Node::~Node()
 {
-#ifdef BUILD_KAFKAPART
   //It has no use, except to know when it crash why it has crashed.
   //If it has crashed here, the Node doesn't exist anymore.
   // If it has crashed the next line, it is a GroupElements bug.
   tag->setCleanStrBuilt(false);
-#endif
+
   detachNode();
   if (prev && prev->next == this)
       prev->next = 0L;
@@ -76,10 +71,8 @@ Node::~Node()
   tag = 0L;
   delete groupTag;
   groupTag = 0L;
-#ifdef BUILD_KAFKAPART
   delete m_rootNode;
   delete m_leafNode;
-#endif
 }
 
 Node *Node::nextSibling()
@@ -318,7 +311,6 @@ Node *Node::SLastChild()
   return node;
 }
 
-#ifdef BUILD_KAFKAPART
 bool Node::hasForChild(Node *node)
 {
   //TODO: NOT EFFICIENT AT ALL!! Change by using kafkaCommon::getLocation() and compare!
@@ -338,7 +330,6 @@ bool Node::hasForChild(Node *node)
   }
   return false;
 }
-#endif
 
 Node *Node::getClosingNode()
 {
@@ -371,11 +362,7 @@ Node *Node::getOpeningNode()
 int Node::size()
 {
   int l = tag->size();
-#ifdef BUILD_KAFKAPART
   l += 5*sizeof(Node*) + sizeof(QListViewItem*) + 2*sizeof(Tag*) + 2*sizeof(DOM::Node);
-#else
-  l += 4*sizeof(Node*) + sizeof(QListViewItem*) + 2*sizeof(Tag*);
-#endif
   return l;
 }
 
@@ -390,10 +377,8 @@ void Node::operator =(Node* node)
   groupElementLists.clear();
   group = 0L;
   groupTag = 0L;
-#ifdef BUILD_KAFKAPART
   setRootNode(0L);
   setLeafNode(0L);
-#endif
   tag = new Tag(*(node->tag));
 }
 

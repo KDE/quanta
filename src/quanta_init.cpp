@@ -59,12 +59,10 @@
 #include <ktabwidget.h>
 #include <kmultitabbar.h>
 
-#ifdef BUILD_KAFKAPART
 #include "wkafkapart.h"
 #include "kafkacommon.h"
 #include "undoredo.h"
 #include <dom/dom_string.h>
-#endif
 
 // application specific includes
 
@@ -428,12 +426,10 @@ void QuantaInit::initView()
   connect(m_quanta, SIGNAL(viewActivated (KMdiChildView *)), m_viewManager, SLOT(slotViewActivated(KMdiChildView*)));
   connect(m_quanta, SIGNAL(lastChildViewClosed()), m_viewManager, SLOT(slotLastViewClosed()));
 //   connect(m_quanta, SIGNAL(viewDeactivated(KMdiChildView *)), m_viewManager, SLOT(slotViewDeactivated(KMdiChildView*)));
-#ifdef BUILD_KAFKAPART
    KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
    m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
    m_kafkaDocument->readConfig(quantaApp->config());
    loadVPLConfig();
-#endif
   (void) ToolbarTabWidget::ref(quantaApp);
   //set the toolview and close button style before the GUI is created
   m_config->setGroup  ("General Options");
@@ -570,9 +566,9 @@ void QuantaInit::readOptions()
 
   m_quanta->m_previewVisible = false;
   m_quanta->m_noFramesPreview = false;
-#ifdef BUILD_KAFKAPART
+
   m_quanta->showKafkaAction->setChecked( false );
-#endif
+
 
 //KNewStuff config
    m_config->setGroup("KNewStuff");
@@ -775,7 +771,6 @@ void QuantaInit::initActions()
                         m_quanta, SLOT( slotUploadDTEP() ),
                         ac, "send_dtep" );
 */
-#ifdef BUILD_KAFKAPART
     (void) new KAction( i18n( "&Document Properties" ), 0,
                         m_quanta, SLOT( slotDocumentProperties() ),
                         ac, "tools_document_properties" );
@@ -783,7 +778,6 @@ void QuantaInit::initActions()
     (void) new KAction ( i18n ("F&ormat XML Code"), 0,
                         m_quanta, SLOT( slotCodeFormatting() ),
                         ac, "tools_code_formatting");
-#endif
 
     (void) new KAction( i18n( "&Convert Tag && Attribute Case..."), 0,
                         m_quanta, SLOT(slotConvertCase()),
@@ -791,7 +785,7 @@ void QuantaInit::initActions()
 
     // View actions
 
-#ifdef BUILD_KAFKAPART
+
     KToggleAction *ta;
       ta =
       new KToggleAction( i18n( "&Source Editor"), UserIcon ("view_text"), ALT+Key_F9,
@@ -817,7 +811,7 @@ void QuantaInit::initActions()
     list2.append(i18n("&Both Editors"));
     kafkaSelectAction->setItems(list2);
     connect(kafkaSelectAction, SIGNAL(activated(int)), m_quanta, SLOT(slotShowKafkaPartl(int)));*/
-#endif
+
 
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),
@@ -859,10 +853,8 @@ void QuantaInit::initActions()
     new KAction(i18n("Send Toolbar in E&mail..."), "mail_send", 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");
     new KAction(i18n("&Download Toolbar..." ), "network", 0, m_quanta, SLOT(slotDownloadToolbar()), ac, "toolbars_download" );
 
-#ifdef BUILD_KAFKAPART
     KToggleAction *toggle = new KToggleAction( i18n("Smart Tag Insertion"), 0, ac, "smart_tag_insertion");
     connect(toggle, SIGNAL(toggled(bool)), m_quanta, SLOT(slotSmartTagInsertion()));
-#endif
 
     m_quanta->showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
 
@@ -1263,7 +1255,6 @@ QString QuantaInit::retrieveBaseFileName(const QString& filename)
 
 void QuantaInit::loadVPLConfig()
 {
-#ifdef BUILD_KAFKAPART
   //load the VPL options
   m_config->setGroup("Kafka Synchronization options");
   qConfig.quantaRefreshOnFocus = (m_config->readEntry("Source refresh", "delay") == "focus");
@@ -1271,7 +1262,6 @@ void QuantaInit::loadVPLConfig()
   qConfig.kafkaRefreshOnFocus = (m_config->readEntry("Kafka refresh", "focus") == "focus");
   qConfig.kafkaRefreshDelay = m_config->readNumEntry("Kafka refresh delay", 4000);
   /**reloadUpdateTimers();*/
-#endif
 }
 
 void QuantaInit::checkRuntimeDependencies()

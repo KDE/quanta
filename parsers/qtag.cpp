@@ -16,9 +16,7 @@
 #include "qtag.h"
 #include "node.h"
 #include "tag.h"
-#ifdef BUILD_KAFKAPART
 #include <kdebug.h>
-#endif
 
 QTag::QTag()
 {
