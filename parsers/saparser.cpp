@@ -480,8 +480,7 @@ bool SAParser::slotParseOneLine()
         }
         if (pos != -1)
         {
-          if (pos != 0)
-            pos++;
+      //    if (pos != 0) pos++;
           s_currentContext.area.eLine = s_line;
           s_currentContext.area.eCol = pos;
           //kdDebug(24000) << QString("Quoted String s_context: %1, %2, %3, %4").arg( s_currentContext.bLine).arg(s_currentContext.bCol).arg(s_currentContext.eLine).arg(s_currentContext.eCol) << endl;
