@@ -35,13 +35,14 @@
 #include <khtmlview.h>
 #include <kstandarddirs.h>
 #include <kstatusbar.h>
+#include <kstdaccel.h>
 
 // application specific includes
+#include "document.h"
 #include "quanta.h"
 #include "quantaview.h"
 #include "quantadoc.h"
 #include "resource.h"
-#include "document.h"
 
 #include "kwrite/kwdoc.h"
 

@@ -29,6 +29,10 @@
 #include <kmessagebox.h>
 
 // application specific includes
+#include "document.h"
+#include "kwrite/kwdoc.h"
+#include "kwrite/highlight/highlight.h"
+
 #include "quanta.h"
 #include "quantadoc.h"
 #include "quantadoc.moc"
@@ -38,9 +42,6 @@
 
 #include "resource.h"
 
-#include "document.h"
-#include "kwrite/kwdoc.h"
-#include "kwrite/highlight/highlight.h"
 
 #include "project/project.h"
 

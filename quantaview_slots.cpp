@@ -32,11 +32,11 @@
 #include <kcolordlg.h>
 
 // application specific includes
+#include "document.h"
 #include "quanta.h"
 #include "quantadoc.h"
 #include "quantaview.h"
 #include "resource.h"
-#include "document.h"
 #include "qextfileinfo.h"
 #include "project/project.h"
 #include "messages/messageoutput.h"

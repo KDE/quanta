@@ -44,11 +44,11 @@
 #include <klibloader.h>
 
 // application specific includes
+#include "document.h"
 #include "quanta.h"
 #include "quanta.moc"
 #include "quantaview.h"
 #include "quantadoc.h"
-#include "document.h"
 #include "qextfileinfo.h"
 #include "resource.h"
 

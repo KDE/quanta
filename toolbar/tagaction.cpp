@@ -1,10 +1,10 @@
 
 #include "tagaction.h"
 #include "tagaction.moc"
+#include "../document.h"
 #include "../quantaview.h"
 #include "../quanta.h"
 #include "../quantadoc.h"
-#include "../document.h"
 #include "../tagdialogs/tagdialog.h"
 #include "../messages/messageoutput.h"
 

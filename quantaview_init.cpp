@@ -33,10 +33,10 @@
 
 // application specific includes
 #include "resource.h"
+#include "document.h"
 #include "quantaview.h"
 #include "quantadoc.h"
 #include "quanta.h"
-#include "document.h"
 
 #include "widgets/wtoolbar.h"
 #include "kwrite/kwview.h"

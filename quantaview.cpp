@@ -20,11 +20,11 @@
 #include <qpainter.h>
 
 // application specific includes
+#include "document.h"
 #include "quantaview.h"
 #include "quantaview.moc"
 #include "quantadoc.h"
 #include "quanta.h"
-#include "document.h"
 #include "resource.h"
 
 /////////////////////////////////////////////////////////////////////

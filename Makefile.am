@@ -21,16 +21,9 @@ quanta_LDADD = \
 		$(top_srcdir)/quanta/plugins/php4dbg/libphp4dbg.a\
 		$(top_srcdir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.a\
 		$(top_srcdir)/quanta/plugins/php3dbg/libphp3dbg.a\
-		-lSM -lICE\
-		-lX11 $\
-		-lpng -lz -lm\
-		-ljpeg\
-		-lqt $ $ -lXext $ $\
-		-lkdeui\
-		-lkfile\
-		-lkhtml\
-		-lkspell
-LDFLAGS =   -lktexteditor
+                $(LIB_KDEUI) $(LIB_KFILE) $(LIB_KHTML) $(LIB_KSPELL) \
+                -lktexteditor
+
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/kwrite\
 		-I$(top_srcdir)/quanta/kwrite/highlight
