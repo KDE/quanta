@@ -49,6 +49,7 @@
 #include <qclipboard.h>
 #include <qdatastream.h>
 
+#include "qextfileinfo.h"
 #include "quantacommon.h"
 #include "tag.h"
 #include "dtds.h"
@@ -668,3 +669,16 @@ int QuantaCommon::denyBinaryInsert()
  return result;
 }
 
+bool QuantaCommon::checkOverwrite(const KURL& url)
+{
+  bool result = true;
+
+  if (QExtFileInfo::exists(url))
+  {
+    if (KMessageBox::warningYesNo(0L,
+            i18n( "<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>" ).arg(url.prettyURL(0, KURL::StripFileProtocol))) == KMessageBox::No)
+            result = false;
+  }
+
+  return result;
+}

@@ -449,7 +449,7 @@ bool QuantaApp::slotFileSaveAs()
     if (encodingIf)
        encodingIf->setEncoding(encoding);
 
-    if (w->checkOverwrite(saveUrl) == KMessageBox::Yes && view->saveDocument(saveUrl))
+    if (QuantaCommon::checkOverwrite(saveUrl) && view->saveDocument(saveUrl))
     {
       oldURL = saveUrl;
       if (  Project::ref()->hasProject() && !Project::ref()->contains(saveUrl)  &&
@@ -480,8 +480,6 @@ bool QuantaApp::slotFileSaveAs()
 
 void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 {
-//TODO: Saving is limited to local files...
-
   QuantaView *view = ViewManager::ref()->activeView();
   Document *w = view->document();
   if (!w) return;
@@ -500,51 +498,53 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
       url = KFileDialog::getSaveURL(Project::ref()->templateURL.url(), QString::null, this);
     } else
     {
-      url = KFileDialog::getSaveURL(locateLocal("data",resourceDir + "templates/"), QString::null, this);
+      url = KFileDialog::getSaveURL(locateLocal("data", resourceDir + "templates/"), QString::null, this);
     }
 
     if (url.isEmpty()) return;
 
-    if ( Project::ref()->hasProject() )  projectTemplateURL = Project::ref()->templateURL;
+    if (Project::ref()->hasProject())
+        projectTemplateURL = Project::ref()->templateURL;
     if ( ((projectTemplate) && (projectTemplateURL.isParentOf(url)) ) ||
           ((! projectTemplate) && (KURL(localTemplateDir).isParentOf(url))) )
     {
-      query = w->checkOverwrite( url );
+      if (!QuantaCommon::checkOverwrite(url))
+        query = KMessageBox::No;
     } else
     {
-      if (projectTemplate) localTemplateDir = projectTemplateURL.path(1);
-      KMessageBox::sorry(this,i18n("You must save the templates in the following directory: \n\n%1")
-                                   .arg(localTemplateDir));
+      if (projectTemplate)
+          localTemplateDir = projectTemplateURL.path(1);
+      KMessageBox::sorry(this,i18n("You must save the templates in the following folder: \n\n%1").arg(localTemplateDir));
       query = KMessageBox::No;
     }
   } while (query != KMessageBox::Yes);
 
   if( query == KMessageBox::Cancel ) return;
 
-  QString fileName;
+  KTempFile *tempFile = new KTempFile(tmpDir);
+  tempFile->setAutoDelete(true);
   if (selectionOnly)
   {
     QString content;
     content = w->selectionIf->selection();
-    fileName = url.directory(false)+url.fileName();
-    QFile templateFile(fileName);
-    templateFile.open(IO_WriteOnly);
-    QTextStream stream(&templateFile);
+    QTextStream stream(tempFile->file());
     stream.setEncoding(QTextStream::UnicodeUTF8);
     stream << content;
-    templateFile.flush();
-    templateFile.close();
+    tempFile->file()->flush();
+    tempFile->close();
+    if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), url, -1, true, this))
+      KMessageBox::error(this, i18n("<qt>There was an error while creating the template file.<br>Check that you have write access to <i>%1</i>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Template Creation Error"));
+    delete tempFile;
   } else
   {
-    view->saveDocument( url );
-    fileName = url.path();
+    view->saveDocument(url);
   }
 
-  if (projectTemplate) Project::ref()->insertFile(KURL::fromPathOrURL( fileName ), true);
+  if (projectTemplate)
+      Project::ref()->insertFile(url, true);
 #ifdef BUILD_KAFKAPART
   w->docUndoRedo->fileSaved();
 #endif
-//  slotUpdateStatus(w);//FIXME:
 }
 
 void QuantaApp::slotFileSaveAsLocalTemplate()
@@ -2387,8 +2387,10 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   buffer.close();
   buffer2.close();
 
-//TODO: Implement saving in non-local dirs (first in a temp file, than copy it to the dest)
-  KTar tar(tarFile.path(), "application/x-gzip");
+  KTempFile *tempFile = new KTempFile(tmpDir);
+  tempFile->setAutoDelete(true);
+  tempFile->close();
+  KTar tar(tempFile->name(), "application/x-gzip");
   if (!tar.open(IO_WriteOnly))
       return KURL();
   if (!tar.writeFile(QFileInfo(tarFile.path()).baseName()+".toolbar", "user", "group", buffer.buffer().size(), buffer.buffer().data()))
@@ -2396,6 +2398,8 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   if (!tar.writeFile(QFileInfo(tarFile.path()).baseName()+".actions", "user", "group", buffer2.buffer().size(), buffer2.buffer().data()))
       return KURL();
   tar.close();
+  if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), tarFile, -1, true, this))
+      KMessageBox::error(this, i18n("<qt>There was an error while creating the toolbar file.<br>Check that you have write access to <i>%1</i>.</qt>").arg(tarFile.prettyURL(0, KURL::StripFileProtocol)), i18n("Toolbar Saving Error"));
 
   return tarFile;
 }
@@ -2455,7 +2459,8 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
       if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
             ((localToolbar) && (KURL(localToolbarsDir).isParentOf(url))) )
       {
-        query =   ViewManager::ref()->activeDocument()->checkOverwrite( url );
+        if (!QuantaCommon::checkOverwrite(url))
+          query = KMessageBox::No;
       } else
       {
         if (!localToolbar)

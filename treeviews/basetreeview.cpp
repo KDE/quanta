@@ -42,7 +42,6 @@
 #include <kstandarddirs.h>
 #include <kurldrag.h>
 #include <kurl.h>
-#include <kurlrequesterdlg.h>
 #include <ktar.h>
 #include <ktempfile.h>
 #include <kapplication.h>
@@ -846,14 +845,12 @@ void BaseTreeView::slotCreateSiteTemplate()
      startDir = locateLocal("data", resourceDir + "templates/");
    }
    KURL targetURL;
-
-   KURLRequesterDlg urlRequester(startDir, i18n("Site template file"), this, "req", true);
    bool valid;
    do {
      valid = false;
-     if (!urlRequester.exec())
+     targetURL = KFileDialog::getSaveURL(startDir, "*.tgz", this, i18n("Create Site Template File"));
+     if (targetURL.isEmpty())
        return;
-     targetURL = urlRequester.selectedURL();
      if (targetURL.url().startsWith(KURL::fromPathOrURL(locateLocal("data", resourceDir + "templates/")).url()))
        valid = true;
     if (Project::ref()->hasProject() && targetURL.url().startsWith(Project::ref()->templateURL.url()))
@@ -908,4 +905,3 @@ void BaseTreeView::slotCreateSiteTemplate()
 }
 
 #include "basetreeview.moc"
-

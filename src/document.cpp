@@ -543,22 +543,6 @@ void Document::setModified(bool flag)
   m_doc->setModified(flag);
 }
 
-/** No descriptions */
-int Document::checkOverwrite(const KURL& u)
-{
-  int query = KMessageBox::Yes;
-
-  if (QExtFileInfo::exists(u))
-  {
-    QString s = (u.isLocalFile()) ? u.path(): u.prettyURL();
-    query = KMessageBox::warningYesNo( this,
-            i18n( "<qt>The file <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>" ).arg(s) );
-
-  }
-
-  return query;
-}
-
 /** Creates a temporary file where the url is backed up. */
 int Document::createTempFile()
 {

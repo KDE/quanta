@@ -100,8 +100,6 @@ public:
   void setModified(bool flag);
   /** Returns true if the document was modified. */
   bool isModified();
-  /** No descriptions */
-  int checkOverwrite(const KURL& u);
 
   /** Creates a temporary file where the url is backed up. */
   int createTempFile();

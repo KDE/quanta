@@ -188,6 +188,11 @@ pointer must be deleted by the caller!! */
   * @return the return value of the DCOP caller
   */
   static DCOPReply callDCOPMethod(const QString& interface, const QString& method, const QString& arguments);
+  /** Checks if url exists and shows a question about overwriting it.
+  *  @param url the url to check
+  *  @return true if the user answered yes, false otherwise.
+  */
+  static bool checkOverwrite(const KURL& url);
 };
 
 #endif
