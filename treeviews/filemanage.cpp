@@ -142,7 +142,7 @@ void FileManage::slotDelete()
 {
   if ( !currentItem() ) return;
   
-  if ( KMessageBox::warningYesNo(this,"Do you really want to delete file \n"+currentFileName()+" ?\n") == KMessageBox::Yes ) {
+  if ( KMessageBox::warningYesNo(this,i18n("Do you really want to delete file \n%1 ?\n").arg(currentFileName())) == KMessageBox::Yes ) {
 
 
   KURL url;

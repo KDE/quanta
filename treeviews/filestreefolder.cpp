@@ -61,10 +61,10 @@ FilesTreeFolder::FilesTreeFolder( QListView * parent, const char * name, const c
 
 void FilesTreeFolder::setOpen( bool open )
 {
-	QString fileMask = QString("*.webprj ")	+fileMaskHtml
+/*	QString fileMask = QString("*.webprj ")	+fileMaskHtml
 																					+fileMaskText
 								 													+fileMaskImage;
-
+ */
 	QDir thisDir( fullName() );
 	
   // exists ?
@@ -103,17 +103,10 @@ void FilesTreeFolder::setOpen( bool open )
 		
 		QStringList fileList = thisDir.entryList();
 		
-		if ( showall )
-		{
-      for ( it = fileList.begin(); it != fileList.end(); ++it )
-			  if ( !QDir::match( fileMask, *it ) )
-				  new FilesTreeFile( this, *it, fullName()+(*it) );
-		}
-		
 		FilesTreeFile* item;
 		
 		for ( it = fileList.begin(); it != fileList.end(); ++it )
-		  if ( QDir::match( fileMask, *it ) )
+	//	  if ( QDir::match( fileMask, *it ) )
 		  {
 			  item = new FilesTreeFile( this, *it, fullName()+(*it) );
 			  item->setIcon( *it );
