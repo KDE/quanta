@@ -631,12 +631,18 @@ void QuantaView::slotPasteURLEncoded()
 
 void QuantaView::slotUndo ()
 {
+  bool updateClosing = qConfig.updateClosingTags;
+  qConfig.updateClosingTags = false;
   dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->undo();
+  qConfig.updateClosingTags = updateClosing;
 }
 
 void QuantaView::slotRedo ()
 {
+  bool updateClosing = qConfig.updateClosingTags;
+  qConfig.updateClosingTags = false;
   dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->redo();
+  qConfig.updateClosingTags = updateClosing;
 }
 
 void QuantaView::slotCut ()

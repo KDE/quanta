@@ -1225,7 +1225,7 @@ Node *Parser::rebuild(Document *w)
      bCol = bc;
    }
 
-   Node *firstNode = node;
+   Node *firstNode = 0L;
    Node *lastNode = 0L;
 //find the first unchanged (non empty) node and store it as firstNode
    while (node)
