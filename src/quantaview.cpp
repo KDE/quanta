@@ -3,7 +3,7 @@
                              -------------------
     begin                : ���� 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2001-2004 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -47,16 +47,14 @@
 #include <kstatusbar.h>
 
 #include "undoredo.h"
+#include "kafkacommon.h"
 #include "wkafkapart.h"
 
 #include <ktexteditor/document.h>
 #include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/selectioninterfaceext.h>
 #include <ktexteditor/view.h>
 #include <ktexteditor/viewcursorinterface.h>
-
-#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90) // TODO: remove if support for 3.2 is dropped
-#include <kdirnotify_stub.h>
-#endif
 
 // application specific includes
 #include "document.h"
@@ -748,18 +746,227 @@ void QuantaView::insertNewTag(const QString &tag, const QString &attr, bool inse
 {
   if (m_document)
   {
-    QString selection;
-    if (m_document->selectionIf)  
-      selection = m_document->selectionIf->selection();
-    TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(m_document->getDTDIdentifier(), tag), selection, attr, baseURL());
-    if (dlg->exec())
+    if (m_currentFocus == QuantaView::VPLFocus || 
+        (m_currentFocus == QuantaView::SourceFocus && qConfig.smartTagInsertion))
+      insertOutputInTheNodeTree("", "", quantaApp->showTagDialogAndReturnNode(tag, attr));
+    else
     {
-      dlg->insertTag(m_document, insertInLine);
+      QString selection;
+      if (m_document->selectionIf)  
+        selection = m_document->selectionIf->selection();
+      TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(m_document->getDTDIdentifier(), tag), selection, attr, baseURL());
+      if (dlg->exec())
+      {
+        dlg->insertTag(m_document, insertInLine);
+      }
+  
+      delete dlg;
     }
-
-    delete dlg;
   }
 }
+
+void QuantaView::insertOutputInTheNodeTree(const QString &str1, const QString &str2, Node *node)
+{
+  if (!m_document)
+    return;
+#ifdef LIGHT_DEBUG
+  if (node)
+    kdDebug(25001)<< "QuantaView::insertOutputInTheNodeTree() - node : " << node->tag->name <<
+      " - type : " << node->tag->type << endl;
+  else
+    kdDebug(25001)<< "QuantaView::insertOutputInTheNodeTree() - str1 : " << str1 <<
+                " - str2 : " << str2 << endl;
+#endif
+  KafkaWidget *kafkaPart = m_kafkaDocument->getKafkaWidget();
+  NodeModifsSet *modifs;
+  DOM::Node domNode, domStartContainer, domEndContainer;
+  QString tagName;
+  QTag *nodeQTag, *qTag, *nodeParentQTag;
+  Node *nodeCursor, *startContainer, *endContainer, *nodeParent, *dummy;
+  QPtrList<QTag> qTagList;
+  int nodeOffset, domNodeOffset, startCol, startLine, endCol, endLine;
+  bool specialTagInsertion = false;
+  long startOffset, endOffset, longDomNodeOffset;
+  QValueList<int> loc;
+  uint line, col;
+  bool smartTagInsertion, hasSelection, nodeTreeModified;
+
+  if (!node && str1.isEmpty() || node && !str1.isEmpty())
+      return;
+
+        //Three cases :
+        //- Tag insertion in VPL
+        //- Normal tag insertion in kate
+        //- Smart tag insertion in kate
+  smartTagInsertion = (m_currentFocus == QuantaView::SourceFocus && qConfig.smartTagInsertion);
+
+  if (m_currentFocus == QuantaView::VPLFocus || smartTagInsertion)
+  {
+    modifs = new NodeModifsSet();
+    if (!node && !str1.isEmpty())
+    {
+      //We build the node from the str1
+      node = kafkaCommon::createNode("", "", Tag::XmlTag, m_document);
+      node->tag->parse(str1, m_document);
+      node->tag->name = QuantaCommon::tagCase(node->tag->name);
+      node->tag->single = QuantaCommon::isSingleTag(m_document->defaultDTD()->name,
+              node->tag->name);
+    }
+    if (m_currentFocus == QuantaView::VPLFocus)
+    {
+      kafkaPart->getCurrentNode(domNode, domNodeOffset);
+      nodeCursor = m_kafkaDocument->getNode(domNode);
+    }
+    else
+    {
+      m_document->viewCursorIf->cursorPositionReal(&line, &col);
+      nodeCursor = parser->nodeAt(line, col, false);
+    }
+
+    if (!nodeCursor)
+        return;
+
+    nodeParent = nodeCursor;
+    if (nodeParent->tag->type == Tag::Text)
+        nodeParent = nodeParent->parent;
+
+  //Checking if at least one parent of node can have a Text Node as child, otherwise
+  //it is impossible for the
+  //user to add this node. In that case, try to insert the Node in the closest parent accepting it.
+  //e.g. TR : a normal insertion would require to have the caret in the TABLE Node, but it is
+              //impossible
+    nodeQTag = QuantaCommon::tagFromDTD(m_document->defaultDTD(),
+                                        node->tag->name);
+
+    if (!nodeQTag)
+        return;
+
+    qTagList = nodeQTag->parents();
+#ifdef HEAVY_DEBUG
+    kdDebug(25001)<< "nodeQTag name : " << nodeQTag->name() << endl;
+    /**kdDebug(25001)<< nodeQTag->isChild("#text", false) << endl;
+    kdDebug(25001)<< nodeQTag->isChild("#text", true) << endl;*/
+#endif
+    for (qTag = qTagList.first(); qTag; qTag = qTagList.next())
+    {
+      if (qTag->isChild("#text", false))
+          break;
+      if (qTag == qTagList.getLast())
+          specialTagInsertion = true;
+    }
+
+    if (m_currentFocus == QuantaView::VPLFocus)
+    {
+      m_kafkaDocument->translateKafkaIntoNodeCursorPosition(domNode, domNodeOffset, &dummy, nodeOffset);
+      kafkaPart->selection(domStartContainer, startOffset, domEndContainer, endOffset);
+      m_kafkaDocument->translateKafkaIntoNodeCursorPosition(domStartContainer, startOffset,
+              &startContainer, (int&)startOffset);
+      m_kafkaDocument->translateKafkaIntoNodeCursorPosition(domEndContainer, endOffset,
+              &endContainer, (int&)endOffset);
+      hasSelection = kafkaPart->hasSelection();
+    }
+      else
+      if (m_document->selectionIfExt)
+      {
+        m_kafkaDocument->translateQuantaIntoNodeCursorPosition(line, col, &dummy, nodeOffset);
+        startCol = m_document->selectionIfExt->selStartCol();
+        startLine = m_document->selectionIfExt->selStartLine();
+        endCol = m_document->selectionIfExt->selEndCol();
+        endLine = m_document->selectionIfExt->selEndLine();
+        m_kafkaDocument->translateQuantaIntoNodeCursorPosition((unsigned)startLine, (unsigned)startCol,
+                &startContainer, (int&)startOffset);
+        m_kafkaDocument->translateQuantaIntoNodeCursorPosition((unsigned)endLine, (unsigned)endCol,
+                &endContainer, (int&)endOffset);
+        hasSelection = m_document->selectionIf->hasSelection();
+        if (startContainer == endContainer && startContainer->tag->type == Tag::Empty)
+        {
+          hasSelection = false;
+        }
+        if (endContainer && endContainer->tag->type == Tag::XmlTag && endOffset < (signed)endContainer->tag->tagStr().length())
+        {
+          endContainer = endContainer->previousSibling();
+          endOffset = (endContainer)?endContainer->tag->tagStr().length():0;
+        }
+     /**else
+        {
+          if (startContainer && startContainer->tag->type == Tag::Empty)
+            startContainer = startContainer->nextNE();
+          if (endContainer && endContainer->tag->type == Tag::Empty)
+            endContainer = endContainer->prevNE();
+        }*/
+      }
+
+      nodeTreeModified = false;
+      if (specialTagInsertion)
+      {
+        //let's try to insert this node in the closest parent accepting it.
+        while (nodeParent)
+        {
+          nodeParentQTag =
+                  QuantaCommon::tagFromDTD(m_document->defaultDTD(),
+                  nodeParent->tag->name);
+          if (nodeParentQTag && nodeParentQTag->isChild(node))
+          {
+            nodeCursor = kafkaCommon::createMandatoryNodeSubtree(node,
+                    m_document);
+            nodeOffset = 0;
+            kafkaCommon::insertNodeSubtree(node, nodeParent, 0L, 0L, modifs);
+            nodeTreeModified = true;
+            break;
+          }
+          nodeParent = nodeParent->parent;
+        }
+      }
+      else if (hasSelection && !nodeQTag->isSingle())
+      {
+        //If some text is selected in kafka, surround the selection with the new Node.
+        if(!startContainer || !endContainer)
+            return;
+        nodeTreeModified = kafkaCommon::DTDinsertRemoveNode(node, startContainer, (int)startOffset,
+                endContainer, (int)endOffset, m_document, &nodeCursor,
+                nodeOffset, modifs);
+      }
+      else
+      {
+        //Nothing is selected, simply inserting the Node if it is not an inline.
+/*            if(!kafkaCommon::isInline(node->tag->name) || nodeQTag->isSingle())
+          {*/
+        nodeTreeModified = kafkaCommon::DTDinsertRemoveNode(node, nodeCursor, (int)nodeOffset, nodeCursor,
+                (int)nodeOffset, m_document, &nodeCursor, nodeOffset, modifs);
+//             }
+      }
+
+      m_document->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+      if (m_currentFocus == QuantaView::VPLFocus)
+      {
+                //view->reloadVPLView();
+                //Now update the VPL cursor position
+        m_kafkaDocument->translateNodeIntoKafkaCursorPosition(nodeCursor, nodeOffset, domNode,
+                longDomNodeOffset);
+        if (!domNode.isNull() && domNode.nodeType() != DOM::Node::TEXT_NODE &&
+            !domNode.firstChild().isNull() && domNode.firstChild().nodeType() ==
+            DOM::Node::TEXT_NODE)
+            domNode = domNode.firstChild();
+        if (!domNode.isNull())
+            kafkaPart->setCurrentNode(domNode, (int)longDomNodeOffset);
+      }
+      else
+      {
+        //view->reloadSourceView();
+        //Now update the source cursor position
+        m_kafkaDocument->translateNodeIntoQuantaCursorPosition(nodeCursor, nodeOffset, line, col);
+        m_document->viewCursorIf->setCursorPositionReal(line, col);
+      }
+      if (!nodeTreeModified)
+          quantaApp->slotStatusMsg(i18n("Cannot insert the tag: invalid location."));
+
+    }
+    else
+    {
+      m_document->insertTag(str1, str2);
+    }
+}
+
 
 /** Returns the baseURL of the document. */
 KURL QuantaView::baseURL()

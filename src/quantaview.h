@@ -3,7 +3,7 @@
                              -------------------
     begin                : ���� 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2001-2004 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -127,6 +127,11 @@ public:
 
   /** Insert a new tag by bringing up the TagDialog. */
   void insertNewTag(const QString &tag, const QString &attr = QString::null, bool insertInLine = true);
+  /**
+    * This function take the output of the TagAction, parse it into Nodes and insert it
+    * in the Node tree. Then kafka will take care of updating itself from the Node Tree.
+    */
+  void insertOutputInTheNodeTree(const QString &str1, const QString &str2 = QString::null, Node *node = 0L);
 
   enum ViewFocus {
     SourceFocus = 0,

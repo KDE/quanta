@@ -67,11 +67,6 @@ public:
      * Remove accelerator from tag action name *
      */
     QString actionText();
-    /**
-     * This function take the output of the TagAction, parse it into Nodes and insert it
-     * in the Node tree. Then kafka will take care of updating itself from the Node Tree.
-     */
-    void insertOutputInTheNodeTree(const QString &str1, const QString &str2 = QString::null, Node *node = 0L);
 
 protected slots:
     virtual void slotGetScriptOutput( KProcess *, char *buffer, int buflen );
