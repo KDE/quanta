@@ -47,7 +47,7 @@
 #include "filestreefolder.h"
 #include "filestreefile.h"
 #include "newtemplatedirdlg.h"
-#include "quantapropertiespagedlg.h"
+#include "quantapropertiespage.h"
 #include "../toolbar/tagaction.h"
 #include "../dialogs/copyto.h"
 #include "../resource.h"
@@ -431,7 +431,7 @@ void TemplatesTreeView::slotProperties()
 //Always add the Quanta directory page
   QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta Template"));
   QVBoxLayout *topLayout = new QVBoxLayout( quantaDirPage);
-  quantaProperties = new QuantaPropertiesPageDlg( quantaDirPage, i18n("Quanta") );
+  quantaProperties = new QuantaPropertiesPage( quantaDirPage, i18n("Quanta") );
 
   quantaProperties->typesCombo->insertItem("text/all");
   quantaProperties->typesCombo->insertItem("file/all");

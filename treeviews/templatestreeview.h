@@ -29,6 +29,7 @@
 
 class FilesTreeFolder;
 class KURL;
+class QuantaPropertiesPage;
 
 class TemplatesTreeView : public FilesTreeView  {
    Q_OBJECT
@@ -75,7 +76,7 @@ private:
   int deleteMenuId;
   int openId;
   FilesTreeFolder *projectDir;
-  QuantaPropertiesPageDlg *quantaProperties;
+  QuantaPropertiesPage *quantaProperties;
   /** Filters the template through and action, and returns the modified/filtered
   template file */
   KURL filterTemplate();
