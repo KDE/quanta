@@ -89,7 +89,7 @@
                                         <cstring>TextLabel3_2</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Name</string>
+                                        <string>Name:</string>
                                     </property>
                                 </widget>
                                 <widget class="QLabel">
@@ -97,7 +97,7 @@
                                         <cstring>TextLabel4</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Type</string>
+                                        <string>Type:</string>
                                     </property>
                                 </widget>
                                 <widget class="QLabel">
@@ -105,7 +105,7 @@
                                         <cstring>TextLabel3</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Location</string>
+                                        <string>Location:</string>
                                     </property>
                                 </widget>
                                 <widget class="QLabel">
@@ -113,7 +113,7 @@
                                         <cstring>TextLabel4_2</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>File Name</string>
+                                        <string>File name:</string>
                                     </property>
                                 </widget>
                                 <widget class="QLabel">
@@ -121,7 +121,7 @@
                                         <cstring>TextLabel5</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Program Arguments</string>
+                                        <string>Program arguments:</string>
                                     </property>
                                 </widget>
                                 <widget class="QLabel">
@@ -129,7 +129,7 @@
                                         <cstring>TextLabel1</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>Output Window</string>
+                                        <string>Output window:</string>
                                     </property>
                                 </widget>
                             </vbox>
@@ -324,7 +324,7 @@
                         <cstring>validateCheckBox</cstring>
                     </property>
                     <property name="text">
-                        <string>Validate Plugin</string>
+                        <string>Validate plugin</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>

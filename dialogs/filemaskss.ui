@@ -174,7 +174,7 @@
                                 <cstring>buttonDefault</cstring>
                             </property>
                             <property name="text">
-                                <string>Reset To &amp;Default</string>
+                                <string>Reset to &amp;Default</string>
                             </property>
                         </widget>
                         <widget class="QLabel" row="3" column="0">

@@ -58,7 +58,7 @@
                                 <cstring>TextLabel6</cstring>
                             </property>
                             <property name="text">
-                                <string>Search Paths</string>
+                                <string>Search paths:</string>
                             </property>
                         </widget>
                         <widget class="QLineEdit">

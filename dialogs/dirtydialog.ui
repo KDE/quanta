@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>File changed</string>
+        <string>File Changed</string>
     </property>
     <widget class="QLayoutWidget">
         <property name="name">

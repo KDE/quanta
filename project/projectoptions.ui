@@ -221,7 +221,7 @@
                     <cstring>GroupBox5</cstring>
                 </property>
                 <property name="title">
-                    <string>Project defaults</string>
+                    <string>Project Defaults</string>
                 </property>
                 <widget class="QLayoutWidget">
                     <property name="name">

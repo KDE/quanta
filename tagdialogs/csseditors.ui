@@ -31,7 +31,7 @@
                 <cstring>labelCss</cstring>
             </property>
             <property name="text">
-                <string>Current modified elements / classes / ids:</string>
+                <string>Current modified elements/classes/ids:</string>
             </property>
         </widget>
         <widget class="QLayoutWidget">
@@ -78,7 +78,7 @@
                                 <cstring>buttonAdd</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Add selector</string>
+                                <string>&amp;Add Selector</string>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>Add a new empty selector and call the Edit dialog to modify that</string>
@@ -92,7 +92,7 @@
                                 <cstring>buttonEdit</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Edit selector</string>
+                                <string>&amp;Edit Selector</string>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>Call the Edit dialog to change some property of the current selector</string>
@@ -106,7 +106,7 @@
                                 <cstring>buttonCopy</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Copy selector</string>
+                                <string>&amp;Copy Selector</string>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>Make a copy of the current selector</string>
@@ -120,7 +120,7 @@
                                 <cstring>buttonRemove</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Remove selctor</string>
+                                <string>&amp;Remove Selector</string>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>Remove the current selector</string>
@@ -183,7 +183,7 @@
                         <cstring>buttonSave</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Save modify and close</string>
+                        <string>&amp;Save Modify &amp;&amp; Close</string>
                     </property>
                     <property name="default">
                         <bool>true</bool>

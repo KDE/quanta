@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Edit CSS selector</string>
+        <string>Edit CSS Selector</string>
     </property>
     <property name="sizeGripEnabled">
         <bool>true</bool>
@@ -1608,7 +1608,7 @@ verdana, sans-serif</string>
                             <cstring>bgroupBorder</cstring>
                         </property>
                         <property name="title">
-                            <string>Insert mode</string>
+                            <string>Insert Mode</string>
                         </property>
                         <vbox>
                             <property name="name">

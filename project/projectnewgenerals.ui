@@ -128,7 +128,7 @@
                             <cstring>GroupBox2</cstring>
                         </property>
                         <property name="title">
-                            <string>Server settings</string>
+                            <string>Server Settings</string>
                         </property>
                         <widget class="QLayoutWidget">
                             <property name="name">
@@ -337,7 +337,7 @@
                             <cstring>GroupBox3</cstring>
                         </property>
                         <property name="title">
-                            <string>Directory settings</string>
+                            <string>Directory Settings</string>
                         </property>
                         <widget class="QLayoutWidget">
                             <property name="name">
