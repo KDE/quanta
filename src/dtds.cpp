@@ -720,23 +720,27 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag)
  Attribute *attr;
 
  QDomElement el = dom->toElement();
+ QString tmpStr;
 
  QDictIterator<AttributeList> it(*(tag->parentDTD->commonAttrs));
  for( ; it.current(); ++it )
  {
-   QString lookForAttr = "has"+QString(it.currentKey()).stripWhiteSpace();
-   if (el.attribute(lookForAttr) == "1")
+   QString lookForAttr = "has" + QString(it.currentKey()).stripWhiteSpace();
+   tmpStr = el.attribute(lookForAttr);
+   if (tmpStr == "1" || tmpStr == "yes")
    {
     tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
    }
  }
 
- if (el.attribute("single") == "1")
+ tmpStr = el.attribute("single");
+ if (tmpStr == "1" || tmpStr == "yes")
  {
   tag->setSingle(true);
  }
 
- if (el.attribute("optional") == "1")
+ tmpStr = el.attribute("optional");
+ if (tmpStr == "1" || tmpStr == "yes")
  {
   tag->setOptional(true);
  }
