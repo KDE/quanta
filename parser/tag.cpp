@@ -79,6 +79,11 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
  uint strLength = m_tagStr.length();
  cleanStr = m_tagStr;
  m_write = p_write;
+ if (!m_tagStr.startsWith("<"))
+ {
+   type = Text;
+   return;
+ }
  m_nameLine = beginLine;
  m_nameCol = beginCol + 1;
  uint pos = 1;

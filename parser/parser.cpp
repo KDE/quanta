@@ -1790,7 +1790,6 @@ Node *Parser::rebuild(Document *w)
     }
     node = lastNode;
     lastNode = lastNode->nextNotChild();
-    coutTree(m_node, 2);
    }
  }
 /*   kdDebug(24000)<< "END"<< endl;

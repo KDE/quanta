@@ -558,6 +558,10 @@ QString Document::getTagNameAt(int line, int col )
    int bl, bc;
    uint el, ec;
    node->tag->beginPos(bl, bc);
+   int el2, ec2;
+   node->tag->endPos(el2, ec2);
+   if (el2 == line && ec2 + 1 == col && node->tag->tagStr().endsWith(">"))
+     return name;
    viewCursorIf->cursorPositionReal(&el, &ec);
    ec--;
    tag->setTagPosition(bl, bc, el, ec);
@@ -835,7 +839,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
     }
     else if ( string == " " )
          {
-            kdDebug(24000) << "TagName: " << tagName << endl;
+           kdDebug(24000) << "TagName: " << tagName << endl;
            bool showAttributes = true;
            Node *node = parser->nodeAt(line, column);
            if (node)
@@ -847,8 +851,21 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
           //suggest attribute completions
           if (node && showAttributes)
           {
+            int bl, bc;
+            node->tag->beginPos(bl, bc);
             QString s;
             if (node->tag->attrCount() > 0)
+            {
+              s = editIf->text(bl, bc, line, column);
+              if (s.contains(' ') != 0)
+                s = s.section(' ', -1);
+              else
+                s = "";
+              if (s.contains("="))
+                  s = "";
+            }
+            kdDebug(24000) << "s: " << s << endl;
+/*            if (node->tag->attrCount() > 0)
             {
               s =  node->tag->tagStr().section(' ', -1);
               if (s.endsWith(">"))
@@ -858,7 +875,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
               s = s.stripWhiteSpace();
               if (s.contains("="))
                   s = "";
-            }
+            } */
             showCodeCompletions( getAttributeCompletions(tagName, s) );
           }
          }
