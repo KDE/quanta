@@ -104,6 +104,7 @@ public slots:
 //  void slotDragInsert(QDropEvent *);
   /** No descriptions */
   void contentsDragEnterEvent(QDragEnterEvent *event);
+  void slotReturnPressed(QListViewItem *item);
 
 protected:
   KFileTreeBranch* newBranch(const KURL& url);
@@ -111,12 +112,16 @@ protected:
   void addFileInfoPage(KPropertiesDialog *propDlg);
   int denyBinaryInsert();
   void contentsDropEvent(QDropEvent *event);
+  /** expands an archiv, if possible */
+  bool expandArchiv (KFileTreeViewItem *item);
 
   KPopupMenu *m_fileMenu;
   KPopupMenu *m_folderMenu;
   KPopupMenu *m_emptyMenu;
   int m_insertFileInProject;
   int m_insertFolderInProject;
+  // config
+  KConfig *m_config;
 
 signals:
   void showPreviewWidget(bool);

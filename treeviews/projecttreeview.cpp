@@ -128,7 +128,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
           this, SLOT  (slotSelectFile(QListViewItem *)));
 
   connect(this, SIGNAL(returnPressed(QListViewItem *)),
-          this, SLOT  (slotSelectFile(QListViewItem *)));
+          this, SLOT  (slotReturnPressed(QListViewItem *)));
 
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));

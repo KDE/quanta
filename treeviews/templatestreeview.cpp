@@ -130,7 +130,7 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
             this, SLOT(slotSelectFile(QListViewItem *)));
 
   connect(  this, SIGNAL(returnPressed(QListViewItem *)),
-            this, SLOT(slotSelectFile(QListViewItem *)));
+            this, SLOT(slotReturnPressed(QListViewItem *)));
 
   connect( this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
            this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
@@ -235,7 +235,11 @@ void TemplatesTreeView::slotSelectFile(QListViewItem *item)
 {
   if ( !item ) return;
 
-  if ( !currentKFileTreeViewItem()->isDir() )
+  KFileTreeViewItem *kftvItem = currentKFileTreeViewItem();
+
+  if (expandArchiv(kftvItem)) return;
+
+  if ( !kftvItem->isDir() )
   {
     readDirInfo();
     if (m_dirInfo.mimeType.upper().contains("TEXT"))

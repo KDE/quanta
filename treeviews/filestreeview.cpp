@@ -121,6 +121,8 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
 
   topURLList = topList;
 
+  m_config = quantaApp->config();
+
   m_fileMenu = new KPopupMenu();
 
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
@@ -160,7 +162,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   connect(this, SIGNAL(executed(QListViewItem *)),
           this, SLOT(slotSelectFile(QListViewItem *)));
   connect(this, SIGNAL(returnPressed(QListViewItem *)),
-          this, SLOT(slotSelectFile(QListViewItem *)));
+          this, SLOT(slotReturnPressed(QListViewItem *)));
   connect(this, SIGNAL(open(QListViewItem *)),
           this, SLOT(slotSelectFile(QListViewItem *)));
   connect(this, SIGNAL(openInQuanta(QListViewItem *)),
@@ -231,14 +233,21 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
     {
       m_fileMenu->popup( point);
     } else {
+      m_folderMenu ->setItemEnabled( m_menuDel, true );
+      m_folderMenu ->setItemEnabled( m_menuTop, true );
       if ( curItem == curItem->branch()->root() )
       {
         m_folderMenu ->setItemEnabled( m_menuDel, false);
         m_folderMenu ->changeItem( m_menuTop, i18n("Remove From Top"));
+
+        m_config->setGroup("General Options");
+        QString text = curItem->url().path();
+        if ((text == "/" || text == QDir::homeDirPath()+"/") &&
+            m_config->readBoolEntry("Home-Root Folder On", true) )
+          m_folderMenu ->setItemEnabled(m_menuTop, false);
       }
       else
       {
-        m_folderMenu ->setItemEnabled( m_menuDel, true );
         m_folderMenu ->changeItem( m_menuTop, i18n("Add Folder to Top"));
       }
       m_folderMenu->popup( point);
@@ -251,7 +260,9 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
 /** Called for: double click, return, Open */
 void FilesTreeView::slotSelectFile(QListViewItem *item)
 {
-  KFileTreeViewItem* kftvi = dynamic_cast <KFileTreeViewItem*> (item);
+  Q_UNUSED(item);
+
+  KFileTreeViewItem* kftvi = currentKFileTreeViewItem();
   if (!kftvi || kftvi->isDir() ) return;
 
   KURL urlToOpen = kftvi->url();
@@ -262,18 +273,47 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
       emit openFile( urlToOpen, quantaApp->defaultEncoding() );
     }
     else if ( QuantaCommon::checkMimeGroup(urlToOpen, "image") ) //it may be an image
-         {
-            emit openImage( urlToOpen );
-         } else //it is an unknown type, maybe binary
-         {
-           if (denyBinaryInsert() == KMessageBox::Yes)
-           {
-             emit openFile( urlToOpen, quantaApp->defaultEncoding() );
-           }
-         }
+      {
+         emit openImage( urlToOpen );
+      }
+      else if ( expandArchiv(kftvi) ) //it may be an archiv
+        {
+        }
+        else //it is an unknown type, maybe binary
+        {
+          if (denyBinaryInsert() == KMessageBox::Yes)
+          {
+            emit openFile( urlToOpen, quantaApp->defaultEncoding() );
+          }
+        }
    }
 }
 
+
+/** expands an archiv, if possible */
+bool FilesTreeView::expandArchiv (KFileTreeViewItem *item)
+{
+  KURL urlToOpen = item->url();
+
+  if ( ! urlToOpen.isLocalFile()) return false;
+
+  QString mimeType = KMimeType::findByURL(urlToOpen)->name();
+
+  if ( mimeType == "application/x-tgz" ) //it is an archiv
+    urlToOpen.setProtocol("tar");
+  else
+    if ( mimeType == "application/x-zip" ) //it is an archiv
+      urlToOpen.setProtocol("zip");
+    else
+      return false;
+
+  KFileTreeBranch *kftb = new FilesTreeBranch(this, urlToOpen, item->text(0), *(item->pixmap(0)), false, item);
+  addBranch(kftb);  // connecting some signals
+  kftb->populate(urlToOpen, item);
+  item->setExpandable(true);
+  item->setOpen(true);
+  return true;
+}
 
 /** Add or remove folders to/from the top list */
 void FilesTreeView::slotAddToTop()
@@ -493,7 +533,8 @@ void FilesTreeView::slotOpenInQuanta()
 }
 void FilesTreeView::slotPopulateFinished(KFileTreeViewItem *item)
 {
-  progressBar->reset();
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(false);
 
   if ( !item ) return;
 
@@ -617,6 +658,11 @@ void FilesTreeView::contentsDragEnterEvent(QDragEnterEvent *event)
  {
     event->accept();
  }
+}
+
+void FilesTreeView::slotReturnPressed(QListViewItem *item)
+{
+  emit executed (item);
 }
 
 #include "filestreeview.moc"
