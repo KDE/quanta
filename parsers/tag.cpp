@@ -41,7 +41,7 @@ Tag::Tag(const AreaStruct &area, Document *write, const DTDStruct *dtd, bool doP
   init();
   QString s = write->text(area);
   m_area = area;
-  assert(dtd);
+//  assert(dtd);
   m_dtd = dtd;
   if (doParse)
   {
