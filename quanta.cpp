@@ -681,10 +681,8 @@ void QuantaApp::slotRepaintPreview()
       if ( text.isEmpty() )
       {
         text = i18n( "<center><h3>The current document is empty...</h3></center>" );
-      } else
-      if (m_noFramesPreview)
-      {
-      }
+      } 
+      part->closeURL();
       part->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
       part->write( text );
       part->end();
