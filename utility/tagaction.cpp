@@ -330,6 +330,7 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
     } else
     {
       KMessageBox::error(quantaApp, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
+      ViewManager::ref()->activeView()->setFocus();
       return false;
     }
   }
