@@ -57,7 +57,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_builddir)/quanta/components/framewizard \
 	-I$(top_builddir)/quanta/components/tableeditor \
 	-I$(top_builddir)/quanta/plugins \
-	$(KAFKAINCLUDE) $(CVSSERVICE_INCLUDE) $(KMDI_INCLUDES) $(all_includes)
+	$(KAFKAINCLUDE) $(CVSSERVICE_INCLUDE) $(KMDI_INCLUDES) $(KNEWSTUFF_INCLUDES) $(all_includes)
 #       -I$(top_srcdir)/lib/compatibility
 
 quanta_METASOURCES = AUTO
