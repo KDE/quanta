@@ -1,6 +1,5 @@
 <!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>ProjectUploadS</class>
-<include>../treeviews/uploadtreeview.h</include>
 <widget class="QDialog">
     <property name="name">
         <cstring>ProjectUploadS</cstring>
@@ -8,9 +7,9 @@
     <property name="geometry">
         <rect>
             <x>0</x>
-            <y>0</y>
+            <y>8</y>
             <width>440</width>
-            <height>470</height>
+            <height>500</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -24,13 +23,13 @@
     <property name="minimumSize">
         <size>
             <width>440</width>
-            <height>470</height>
+            <height>500</height>
         </size>
     </property>
     <property name="maximumSize">
         <size>
             <width>440</width>
-            <height>470</height>
+            <height>500</height>
         </size>
     </property>
     <property name="caption">
@@ -48,7 +47,7 @@
                 <x>5</x>
                 <y>5</y>
                 <width>425</width>
-                <height>460</height>
+                <height>487</height>
             </rect>
         </property>
         <grid>
@@ -132,7 +131,7 @@
                         </property>
                     </widget>
                     <spacer>
-                        <property name="name">
+                        <property name="name" stdset="0">
                             <cstring>Spacer1</cstring>
                         </property>
                         <property name="orientation">
@@ -140,6 +139,12 @@
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
                         </property>
                     </spacer>
                     <widget class="QPushButton">
@@ -285,44 +290,6 @@
                     </widget>
                 </grid>
             </widget>
-            <widget class="UploadTreeView" row="1" column="0">
-                <column>
-                    <property name="text">
-                        <string>File Name</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizeable">
-                        <bool>true</bool>
-                    </property>
-                </column>
-                <column>
-                    <property name="text">
-                        <string>Date</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizeable">
-                        <bool>true</bool>
-                    </property>
-                </column>
-                <column>
-                    <property name="text">
-                        <string>Size</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizeable">
-                        <bool>true</bool>
-                    </property>
-                </column>
-                <property name="name">
-                    <cstring>list</cstring>
-                </property>
-            </widget>
             <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
                 <property name="name">
                     <cstring>Layout15</cstring>
@@ -431,7 +398,6 @@
     <tabstop>linePasswd</tabstop>
     <tabstop>comboProtocol</tabstop>
     <tabstop>port</tabstop>
-    <tabstop>list</tabstop>
     <tabstop>buttonAll</tabstop>
     <tabstop>buttonModified</tabstop>
     <tabstop>buttonClear</tabstop>
@@ -442,6 +408,9 @@
     <tabstop>buttonUpload</tabstop>
     <tabstop>buttonCancel</tabstop>
 </tabstops>
+<includes>
+    <include location="global" impldecl="in declaration">../treeviews/uploadtreeview.h</include>
+</includes>
 <slots>
     <slot>clearSelection()</slot>
     <slot>startUpload()</slot>
