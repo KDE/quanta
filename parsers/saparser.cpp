@@ -811,14 +811,14 @@ void SAParser::slotParseNodeInDetail()
 #endif
   if (m_currentNode && m_parsingEnabled)
   {
-    if (m_currentNode->tag->type == Tag::ScriptTag)
+    if (m_currentNode->insideSpecial)
     {
       m_parsingLastNode = true;
       Node *n = m_currentNode->nextSibling();
       while (n)
       {
         n = n->nextSibling();
-        if (n && n->tag->type == Tag::ScriptTag)
+        if (n && n->insideSpecial)
         {
           m_parsingLastNode = false;
           break;

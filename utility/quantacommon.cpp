@@ -14,8 +14,8 @@
  ***************************************************************************/
 
 //system includes
-#include <sys/types.h> 
-#include <unistd.h> 
+#include <sys/types.h>
+#include <unistd.h>
 
 //qt includes
 #include <qstringlist.h>
@@ -485,7 +485,7 @@ void QuantaCommon::removeCommentsAndQuotes(QString &str, const DTDStruct *dtd)
  }
 
  //Now replace the quoted strings with spaces
- const QRegExp strRx("(\"[^\"]*\"|'[^']*')");
+ QRegExp strRx("(\"[^\"]*\"|'[^']*')");
  pos = 0;
  while (pos != -1)
  {
@@ -505,7 +505,7 @@ void QuantaCommon::removeCommentsAndQuotes(QString &str, const DTDStruct *dtd)
 
 bool QuantaCommon::insideCommentsOrQuotes(int position, const QString &string, const DTDStruct *dtd)
 {
- //Return true if position is inside a commented or quoted string 
+ //Return true if position is inside a commented or quoted string
  QString str = string;
  int pos = 0;
  int l;
@@ -595,7 +595,7 @@ DCOPReply QuantaCommon::callDCOPMethod(const QString& interface, const QString& 
     reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5], argumentList[6]);
   else if (argumentCount == 8)
     reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5], argumentList[6], argumentList[7]);
-  
+
   return reply;
 }
 

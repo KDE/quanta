@@ -1001,6 +1001,7 @@ Node *Parser::rebuild(Document *w)
 #ifdef BUILD_KAFKAPART
      logReparse(modifs, w);
 #endif
+     m_saParser->setParsingEnabled(saParserEnabled);
      return parse(w);
    }
 
@@ -1044,6 +1045,7 @@ Node *Parser::rebuild(Document *w)
 #ifdef BUILD_KAFKAPART
      logReparse(modifs, w);
 #endif
+     m_saParser->setParsingEnabled(saParserEnabled);
      return parse(w);
    }
 

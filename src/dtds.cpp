@@ -754,7 +754,7 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
      QDomElement item = el.firstChild().toElement();
      while ( !item.isNull() )
      {
-        tmpStr = item.nodeName();
+        tmpStr = item.tagName();
         if (tmpStr == "child")
         {
             QString childTag = item.attribute("name");
