@@ -60,6 +60,7 @@
 #include "undoredo.h"
 #include "tag.h"
 #endif
+#include "project.h"
 
 #include "viewmanager.h"
 
@@ -291,7 +292,15 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
    //       kdDebug(24000) << "Modified argument list: " << args << endl;
         }
       }
-      int pos = args.find("%userarguments");
+      int pos = args.find("%projectbase");
+      if (pos != -1)
+      {
+          QString s;
+          if (Project::ref()->hasProject())
+            s = Project::ref()->projectBaseURL().url();
+          args.replace("%projectbase", s);
+      }
+      pos = args.find("%userarguments");
       if (pos != -1)
       {
          QString s = m_argsList.join(" ");

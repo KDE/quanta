@@ -21,6 +21,7 @@
 
 //kde includes
 #include <kapplication.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -34,6 +35,7 @@
 #include "quanta.h"
 #include "tagaction.h"
 
+//TODO: Better create a class for each internal event action
 QPEvents::QPEvents(QObject *parent, const char *name)
  : QObject(parent, name)
 {
@@ -116,35 +118,30 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
             {
               ev.arguments << i18n("Document saved");
               ev.arguments << relativePath;
-              ev.arguments <<  url.path();
               handleEvent(ev);
             } else
             if (name == "before_save")
             {
               ev.arguments << i18n("About to save a document");
               ev.arguments << relativePath;
-              ev.arguments <<  url.path();
               handleEvent(ev);
             } else
             if (name == "after_open")
             {
               ev.arguments << i18n("Document opened");
               ev.arguments << relativePath;
-              ev.arguments <<  url.path();
               handleEvent(ev);
             } else
             if (name == "after_close")
             {
               ev.arguments << i18n("Document closed");
               ev.arguments << relativePath;
-              ev.arguments <<  url.path();
               handleEvent(ev);
             } else
             if (name == "before_close")
             {
               ev.arguments << i18n("About to close a document");
               ev.arguments << relativePath;
-              ev.arguments <<  url.path();
               handleEvent(ev);
             } else
             if (name == "after_project_open")
@@ -177,14 +174,12 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
       {
         ev.arguments << i18n("Document committed");
         ev.arguments << argument1;
-        ev.arguments << Project::ref()->projectBaseURL().path();
         handleEvent(ev);
       } else
       if (name == "after_update")
       {
         ev.arguments << i18n("Document updated");
         ev.arguments << argument1;
-        ev.arguments << Project::ref()->projectBaseURL().path();
         handleEvent(ev);
       } else
       if (name == "quanta_start")
@@ -214,7 +209,25 @@ bool QPEvents::handleEvent(const EventAction& ev)
        if (receiver == "teamleader")
          member = Project::ref()->teamLeader();
        else if (receiver.startsWith("subprojectleader-"))
-         member = Project::ref()->subprojectLeader(receiver.remove("subprojectleader-"));
+       {
+         QString s = receiver.remove("subprojectleader-");
+         member = Project::ref()->subprojectLeader(s);
+         SubProject subProject;
+         QValueList<SubProject> *subprojects = Project::ref()->subprojects();
+         for (uint i = 0 ; i < subprojects->count(); i++)
+         {
+           if ((*subprojects)[i].name == s)
+           {
+              subProject = (*subprojects)[i];
+              break;
+           }
+         }
+         if (!subProject.location.isEmpty() && !ev.arguments[2].startsWith(subProject.location))
+         {
+            kdDebug(24000) << ev.arguments[2] << " is not part of the " << subProject.name << "subproject \"" << subProject.location << "\". " << endl;
+            return true;
+         }
+       }
        else if (receiver.startsWith("taskleader-"))
          member = Project::ref()->taskLeader(receiver.remove("taskleader-"));
 

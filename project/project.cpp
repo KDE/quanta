@@ -603,9 +603,8 @@ void ProjectPrivate::loadProjectXML()
     for (uint j = 0; j < nl2.count(); j++)
     {
       QString s = nl2.item(j).toElement().text();
-      if (s == "--not set--")
-        s = "";
-      ev.arguments << s;
+      if (s != "--not set--" && !s.isEmpty())
+          ev.arguments << s;
     }
     m_events->insert(el.attribute("name"), ev);
   }
