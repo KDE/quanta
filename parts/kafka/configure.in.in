@@ -12,14 +12,14 @@ KDE_VERSION=""
 AC_MSG_CHECKING(for KDE version)
 KDE_VERSION=`kde-config --version | grep KDE`
 AC_MSG_RESULT("$KDE_VERSION")
-if test "x`echo $KDE_VERSION | grep 3.1.92`" = "x"; then
+if test "x`echo $KDE_VERSION | grep 3.1.9`" = "x"; then
     echo "The KDE version is too old, WYSIWYG mode disabled!"
     build_wysiwyg="no"
-fi    
+fi
 
 if test "$build_wysiwyg" = "yes"; then
   CXXFLAGS="$CXXFLAGS -DBUILD_KAFKAPART"
 fi
 
   AM_CONDITIONAL(BUILD_WYSIWYG, test "$build_wysiwyg" = "yes")
-  
+

@@ -957,7 +957,7 @@ void QuantaView::toggleBookmark ()
     uint line, col;
     write()->viewCursorIf->cursorPositionReal(&line, &col);
     int mark = markIf->mark(line);
-    if (mark == KTextEditor::MarkInterface::markType01)
+    if (mark & KTextEditor::MarkInterface::markType01)
     {
       markIf->removeMark(line, mark);
     } else
@@ -979,7 +979,7 @@ void QuantaView::gotoMark (KTextEditor::Mark *mark)
 {
   if (writeExists())
   {
-    if (mark->type == KTextEditor::MarkInterface::markType01)
+    if (mark->type & KTextEditor::MarkInterface::markType01)
     {
       Document *w = write();
       w->viewCursorIf->setCursorPositionReal(mark->line, 0);

@@ -1998,7 +1998,7 @@ QStringList Document::tagAreas(const QString& tag, bool includeCoordinates, bool
 
 void Document::setErrorMark(int line)
 {
-  markIf->setMark(line, KTextEditor::MarkInterface::markType10);
+  markIf->addMark(line, KTextEditor::MarkInterface::markType10);
 }
 
 void Document::clearErrorMarks()
@@ -2007,7 +2007,7 @@ void Document::clearErrorMarks()
   KTextEditor::Mark* mark;
   for (mark = marks.first(); mark; mark = marks.next())
   {
-    if (mark->type == KTextEditor::MarkInterface::markType10)
+    if (mark->type & KTextEditor::MarkInterface::markType10)
         markIf->removeMark(mark->line, KTextEditor::MarkInterface::markType10);
   }
 }

@@ -861,8 +861,8 @@ void QuantaApp::openLastFiles()
     KURL fu;
     QuantaCommon::setUrl(fu, *it);
 
-    if (!isPrj || fu.isLocalFile())
-        m_doc->openDocument(fu, QString::null, false);
+    if (!m_doc->isOpened(fu) && (!isPrj || fu.isLocalFile()))
+      m_doc->openDocument(fu, QString::null, false);
  //   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
   }
   m_config->sync();
