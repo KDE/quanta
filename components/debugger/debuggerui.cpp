@@ -53,7 +53,7 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
   m_preview = new WHTMLPart(quantaApp, "debug_output");
   //m_preview->view()->resize(0, 0);
   m_preview->view()->setIcon(UserIcon("debug_run"));
-  m_preview->view()->setCaption(i18n("Debug output"));
+  m_preview->view()->setCaption(i18n("Debug Output"));
   m_previewTVA = quantaApp->addToolWindow(m_preview->view(), KDockWidget::DockBottom, quantaApp->getMainDockWidget());
 
   // Show debugger toolbar

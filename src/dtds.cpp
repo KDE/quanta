@@ -891,7 +891,7 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
   removeDTD(dtd);
   if (!readTagDir(dirName))
   {
-    KMessageBox::error(0L, i18n("<qt>Cannot read the DTEP from <b>%1</b>. Check that the folder contains a valid DTEP (<i>description.rc and *.tag files</i>).</qt>").arg(dirName), i18n("Error loading DTEP"));
+    KMessageBox::error(0L, i18n("<qt>Cannot read the DTEP from <b>%1</b>. Check that the folder contains a valid DTEP (<i>description.rc and *.tag files</i>).</qt>").arg(dirName), i18n("Error Loading DTEP"));
   } else
   {
     QString family = dtdcfg.readEntry("Family", "1");

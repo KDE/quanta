@@ -103,7 +103,7 @@ void TagActionSet::initActions(QWidget* /*parent*/)
     KActionCollection* ac(TagActionManager::self()->actionCollection());
 
     QString actionName = "apply_source_indentation";
-    new KAction(i18n("Apply source indentation"), 0, this,
+    new KAction(i18n("Apply Source Indentation"), 0, this,
                 SLOT(slotApplySourceIndentation()),
                 ac, actionName);
 
@@ -306,13 +306,13 @@ void TableTagActionSet::initActions(QWidget* parent)
 
     actionName = "insert_row_above";
     //m_actionNames += actionName;
-    new KAction(i18n("Row above"), 0, this,
+    new KAction(i18n("Row Above"), 0, this,
                 SLOT(slotInsertRowAbove()),
                 ac, actionName);
 
     actionName = "insert_row_below";
     //m_actionNames += actionName;
-    new KAction(i18n("Row below"), 0, this,
+    new KAction(i18n("Row Below"), 0, this,
                 SLOT(slotInsertRowBelow()),
                 ac, actionName);
 
@@ -356,7 +356,7 @@ void TableTagActionSet::initActions(QWidget* parent)
 
     actionName = "remove_cells_content";
     //m_actionNames += actionName;
-    new KAction(i18n("Cell(s) content"), 0, this,
+    new KAction(i18n("Cell(s) Content"), 0, this,
                 SLOT(slotRemoveCellsContent()),
                 ac, actionName);
 
@@ -364,7 +364,7 @@ void TableTagActionSet::initActions(QWidget* parent)
 
     actionName = "merge_selected_cells";
     //m_actionNames += actionName;
-    new KAction(i18n("Merge selected cells"), 0, this,
+    new KAction(i18n("Merge Selected Cells"), 0, this,
                 SLOT(slotMergeSelectedCells()),
                 ac, actionName);
 }

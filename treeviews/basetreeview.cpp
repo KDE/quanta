@@ -1204,7 +1204,7 @@ void BaseTreeView::slotCreateFile()
       url.setPath(url.directory() + "/" + fileName);
     if (QExtFileInfo::exists(url))
     {
-      KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>").arg(fileName), i18n("Error creating file"));
+      KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>").arg(fileName), i18n("Error Creating File"));
       return;
     }
     KTempFile *tempFile = new KTempFile(tmpDir);
