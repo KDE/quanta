@@ -309,8 +309,6 @@ public slots:
   void slotShowCompletionHint();
   /** No descriptions */
   void slotParsingDTDChanged(const QString& newDTDName);
-  /** Runs the plugin specified by id */
-  void slotPluginRun(int);
   /** Builds the plugins menu dynamically */
   void slotBuildPluginMenu();
   /** Brings up the plugin editor menu */

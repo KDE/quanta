@@ -10,7 +10,7 @@ Type=KPart
 Input=3
 
 [General]
-Plugins=Kompare,CVS Management (Cervisia)
+Plugins=KFileReplace, Kompare,CVS Management (Cervisia)
 SearchPaths=
 
 [Kompare]
@@ -21,4 +21,15 @@ Location=
 OutputWindow=Message Window
 Standard=false
 Type=Command Line
+
+[KFileReplace]
+Arguments=
+FileName=kde3/libkfilereplacepart.so
+Icon=kfilereplace
+Input=3
+Location=
+OutputWindow=Editor Tab
+ReadOnly=true
+Standard=false
+Type=KPart
 

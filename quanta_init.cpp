@@ -1991,7 +1991,6 @@ void QuantaApp::initPlugins()
   m_pluginMenu = new QPopupMenu(this);
   m_pluginMenu->setCheckable(TRUE);
   connect(m_pluginMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPluginMenu()));
-  connect(m_pluginMenu, SIGNAL(activated(int)), this, SLOT(slotPluginRun(int)));
 
   menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
 }
@@ -2021,45 +2020,6 @@ void QuantaApp::slotBuildPluginMenu()
        }
   }
 }
-
-/** Runs the plugin specified by id */
-void QuantaApp::slotPluginRun(int a_id)
-{
-  QString pluginName = m_pluginMenu->text(a_id);
-  if(pluginName.isEmpty() || pluginName == i18n("&Edit") || pluginName == i18n("&Validate"))
-    return;
-
-  if(!pluginName.isNull())
-  {
-    QuantaPlugin *plugin = m_pluginInterface->plugin(pluginName);
-    if(plugin)
-    {
-      if(plugin->type() == i18n("KPart")) // special case
-      {
-        /*
-         Currently there's no easy way to determine when a KPart has been closed
-         by the user, so they have to manually stop it by unchecking it in the
-         plugins menu
-        */
-        if(m_pluginMenu->isItemChecked(a_id))
-        {
-          plugin->unload();
-        }
-        else
-        {
-          plugin->load();
-          plugin->run();
-        }
-        m_pluginMenu->setItemChecked(a_id, TRUE);
-        return;
-      }
-      plugin->load();
-      plugin->run();
-    }
-  }
-}
-
-
 
 void QuantaApp::slotPluginsEdit()
 {

@@ -1,3 +1,4 @@
 if BUILD_WYSIWYG
- SUBDIRS=kafka
+ KAFKA_SUBDIR=kafka
 endif
+SUBDIRS= kfilereplace $(KAFKA_SUBDIR)

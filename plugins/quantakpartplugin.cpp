@@ -24,6 +24,7 @@
 #include <kstandarddirs.h>
 #include <kdockwidget.h>
 #include <kdebug.h>
+#include <kmessagebox.h>
 
 /* QT INCLUDES */
 #include <qwidget.h>
@@ -124,17 +125,18 @@ bool QuantaKPartPlugin::run()
 
   if(isLoaded())
   {
+    bool result = true;
     if (quantaApp->view()->writeExists())
     {
       switch (m_input)
       {
-        case 1: { m_part->openURL(quantaApp->view()->write()->url());
+        case 1: { result = m_part->openURL(quantaApp->view()->write()->url());
                   break;
                 }
         case 2: { KURL url = quantaApp->view()->write()->url();
                   url.setPath(url.directory());
                   url.adjustPath(1);
-                  m_part->openURL(url);
+                  result = m_part->openURL(url);
                   break;
                 }
         case 3: { KURL url;
@@ -147,7 +149,7 @@ bool QuantaKPartPlugin::run()
                     url.setPath(url.directory());
                     url.adjustPath(1);
                   }
-                  m_part->openURL(url);
+                  result = m_part->openURL(url);
                   break;
                 }
         default: ;
@@ -155,7 +157,12 @@ bool QuantaKPartPlugin::run()
     } else
     {
       if (m_input == 3 && quantaApp->project()->hasProject()) //open project dir
-          m_part->openURL(quantaApp->projectBaseURL());
+          result = m_part->openURL(quantaApp->projectBaseURL());
+    }
+    if (!result)
+    {
+      unload();
+      return false;
     }
     showGui(true);
     addWidget();

@@ -1522,7 +1522,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
         tb->insertLineSeparator();
       node = node.nextSibling();
     }
-    kdDebug(24000) << "QuantaToolBar minimumSizeHeight :" << tb->minimumSizeHint().height() << endl;
+    //kdDebug(24000) << "QuantaToolBar minimumSizeHeight :" << tb->minimumSizeHint().height() << endl;
     if (tb->minimumSizeHint().height() != 0)
     {
       if (toolbarTab->tabHeight() < 30)

@@ -510,6 +510,8 @@ void QuantaView::slotShowKafkaAndQuanta()
 
 void QuantaView::resize(int width, int height)
 {
+  if (!writeExists())
+      return;
   if(currentViewsLayout == QuantaView::QuantaViewOnly)
     write()->view()->resize(width,height);
 #ifdef BUILD_KAFKAPART

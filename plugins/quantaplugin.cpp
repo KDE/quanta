@@ -46,7 +46,7 @@ QuantaPlugin::QuantaPlugin(const QString &a_name, const QString &a_type,
   setIcon(a_icon);
   setType(a_type);
   setLocation(a_location);
-  setFileName(a_fileName);  
+  setFileName(a_fileName);
   setArguments(a_arguments);
   setOutputWindow(a_outputWindow);
   m_standard = false;
@@ -87,7 +87,7 @@ bool QuantaPlugin::load()
 {
     return FALSE;
 }
-  
+
 bool QuantaPlugin::run()
 {
     return FALSE;
@@ -100,11 +100,18 @@ bool QuantaPlugin::toggle()
     return unload();
   } else
   {
-    return run();
+    bool result = run();
+    if (!result)
+    {
+      m_action->blockSignals(true);
+      m_action->setChecked(false);
+      m_action->blockSignals(false);
+    }
+    return result;
   }
 }
 
-  
+
 /** Sets the plugin's type */
 void QuantaPlugin::setType(const QString &a_type)
 {
@@ -114,7 +121,7 @@ void QuantaPlugin::setType(const QString &a_type)
 /** Gets the plugin's type */
 QString QuantaPlugin::type() const
 {
-  return m_type;  
+  return m_type;
 }
 
 void QuantaPlugin::setArguments(const QString &a_arguments)
@@ -188,7 +195,7 @@ bool QuantaPlugin::validatePluginInfo(const QString & /*a_name*/, const QString 
     else
     {
       qWarning("QuantaPlugin::validatePluginInfo - Tried to lookup invalid plugin type \'%s\'", a_type.latin1());
-      valid = false;  
+      valid = false;
     }
 
     if (valid)
@@ -196,7 +203,7 @@ bool QuantaPlugin::validatePluginInfo(const QString & /*a_name*/, const QString 
       KStandardDirs *dirs = QuantaCommon::pluginDirs(lookupType);
       if(dirs->findResource(lookupType, a_fileName).isNull())
         valid = false;
-      delete dirs;         
+      delete dirs;
     }
   }
   return valid; // past all tests, valid

@@ -48,6 +48,7 @@ public slots:
   virtual bool isLoaded();
   void setReadOnlyPart(bool a_readOnlyPart) {m_readOnlyPart = a_readOnlyPart;}
   bool readOnlyPart() {return m_readOnlyPart;}
+
 protected:
   KParts::ReadOnlyPart *m_part;
   bool guiVisible;
