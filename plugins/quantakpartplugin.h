@@ -46,9 +46,12 @@ public slots:
   virtual bool unload();
   virtual bool toggle() {return QuantaPlugin::toggle();}
   virtual bool isLoaded();
+  void setReadOnlyPart(bool a_readOnlyPart) {m_readOnlyPart = a_readOnlyPart;}
+  bool readOnlyPart() {return m_readOnlyPart;}
 protected:
   KParts::ReadOnlyPart *m_part;
   bool guiVisible;
+  bool m_readOnlyPart;
 };
 
 #endif

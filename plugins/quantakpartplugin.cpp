@@ -49,6 +49,7 @@ QuantaKPartPlugin::QuantaKPartPlugin()
   : QuantaPlugin(), m_part(0)
 {
   guiVisible = false;
+  m_readOnlyPart = true;
 }
 
 QuantaKPartPlugin::~QuantaKPartPlugin()
@@ -104,7 +105,10 @@ bool QuantaKPartPlugin::load()
     kdWarning() << "QuantaKPartPlugin::load - Unknown output window:" << ow << "!\n";
     return false;
   }
-  m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), targetWidget, 0, targetWidget, 0, QStringList(arguments()));
+  if (m_readOnlyPart)
+    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), targetWidget, 0, targetWidget, 0, QStringList(arguments()));
+  else
+    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadWritePart>(partInfo.baseName().latin1(), targetWidget, 0, targetWidget, 0, QStringList(arguments()));
   if(!m_part)
   {
     kdDebug(24000) << "Failed to create KPart\n";

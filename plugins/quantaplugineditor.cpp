@@ -141,6 +141,8 @@ void QuantaPluginEditor::configurePlugin()
     configDlg->arguments->setText(curPlugin->arguments());
     configDlg->iconButton->setIcon(curPlugin->icon());
     configDlg->inputBox->setCurrentItem(curPlugin->input());
+    if (curPlugin->isA("QuantaKPartPlugin"))
+        configDlg->readOnlyBox->setChecked(static_cast<QuantaKPartPlugin*>(curPlugin)->readOnlyPart());
 
     if(configDlg->exec())
     {
@@ -152,6 +154,8 @@ void QuantaPluginEditor::configurePlugin()
       curPlugin->setOutputWindow(configDlg->outputWindow->currentText());
       curPlugin->setIcon(configDlg->iconButton->icon());
       curPlugin->setInput(configDlg->inputBox->currentItem());
+      if (curPlugin->isA("QuantaKPartPlugin"))
+          static_cast<QuantaKPartPlugin*>(curPlugin)->setReadOnlyPart(configDlg->readOnlyBox->isChecked());
     }
 
     delete configDlg;

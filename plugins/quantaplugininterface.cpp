@@ -112,7 +112,9 @@ void QuantaPluginInterface::readConfig()
     if (type == "Message Window") type = i18n("Message Window");
     if (type == "Konsole") type = i18n("Konsole");
     newPlugin->setOutputWindow(type);
-    newPlugin->setInput(config->readNumEntry("Input"));
+    newPlugin->setInput(config->readNumEntry("Input", 0));
+    if (newPlugin->isA("QuantaKPartPlugin"))
+        static_cast<QuantaKPartPlugin*>(newPlugin)->setReadOnlyPart(config->readBoolEntry("ReadOnly", true));
 
     m_plugins.insert(newPlugin->pluginName(), newPlugin);
   }
@@ -156,6 +158,8 @@ void QuantaPluginInterface::writeConfig()
       config->writeEntry("Input", curPlugin->input());
       config->writeEntry("Standard", curPlugin->isStandard());
       if (curPlugin->isStandard()) config->writeEntry("Standard Name", curPlugin->standardName());
+      if (curPlugin->isA("QuantaKPartPlugin"))
+          config->writeEntry("ReadOnly", static_cast<QuantaKPartPlugin*>(curPlugin)->readOnlyPart());
     }
   }
   config->sync();
