@@ -452,7 +452,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
   dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
   dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
-  dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
+  dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "xml").lower();
 
   //read the definition of different structure groups, like links, images, functions
   //classes, etc.
