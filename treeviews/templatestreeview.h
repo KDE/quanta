@@ -126,6 +126,7 @@ private:
   int m_deleteMenuId;
   int m_openId;
   int m_reloadMenuId;
+  int m_downloadMenuId;
   QuantaPropertiesPage *m_quantaProperties;
   QString m_projectName;
   KURL localURL;
@@ -141,6 +142,7 @@ private:
 signals: // Signals
   /** No descriptions */
   void insertFile(const KURL &);
+  void downloadTemplate();
 
 protected: // Protected methods
   KFileTreeBranch* newBranch(const KURL& url);

@@ -74,4 +74,24 @@ void QNewToolbarStuff::installResource()
      }
 }
 
+void QNewTemplateStuff::installResource()
+{
+    KURL destURL = KURL::fromPathOrURL(KGlobal::dirs()->saveLocation("data") + resourceDir + "templates/" + QFileInfo(m_tarName).fileName());
+    bool ok;
+    if (QuantaCommon::checkOverwrite(destURL))
+    {
+        if (!QExtFileInfo::copy(KURL::fromPathOrURL(m_tarName), destURL, -1, true, false, parentWidget()))
+          ok = false;
+        else
+        {
+           if (KMessageBox::questionYesNo(parentWidget(), i18n("Do you want to open the newly downloaded template?"), i18n("Open Template")) == KMessageBox::Yes)
+           {
+              quantaApp->slotFileOpen(destURL);
+           }
+        }
+        if (!ok)
+            KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded template tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("Template Installation Error"));
+     }
+}
+
 #include "newstuff.moc"

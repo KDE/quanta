@@ -3582,6 +3582,13 @@ void QuantaApp::slotDownloadToolbar()
     m_newToolbarStuff->download();
 }
 
+void QuantaApp::slotDownloadTemplate()
+{
+    if (!m_newTemplatteStuff)
+      m_newTemplatteStuff = new QNewTemplateStuff("quanta/template", this);
+    m_newTemplatteStuff->download();
+}
+
 void QuantaApp::slotDocumentProperties()
 {
 #ifdef BUILD_KAFKAPART

@@ -58,4 +58,22 @@ private:
      virtual void installResource();
 };
 
+/**
+Makes possible downloading and installing a template resource files from a server.
+
+@author Andras Mantia
+*/
+class QNewTemplateStuff: public QNewStuff
+{
+   Q_OBJECT
+
+public:
+    QNewTemplateStuff(const QString &type,  QWidget *parentWidget=0)
+      :QNewStuff(type, parentWidget){};
+    ~QNewTemplateStuff() {};
+
+private:
+     virtual void installResource();
+};
+
 #endif

@@ -152,6 +152,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
   m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("reload"), i18n("&Reload"), this, SLOT(slotReload()));
+  m_downloadMenuId = m_folderMenu->insertItem(i18n("Do&wnload Template..."), this, SIGNAL(downloadTemplate()));
 
   addColumn(i18n("Templates"), -1);
   addColumn(i18n("Group"), -1);
@@ -247,10 +248,12 @@ void TemplatesTreeView::slotMenu(KListView*, QListViewItem *item, const QPoint &
     {
       m_folderMenu ->setItemVisible(m_deleteMenuId, false);
       m_folderMenu ->setItemVisible(m_reloadMenuId, true);
+      m_folderMenu ->setItemVisible(m_downloadMenuId, true);
     } else
     {
       m_folderMenu ->setItemVisible(m_deleteMenuId, true);
       m_folderMenu ->setItemVisible(m_reloadMenuId, false);
+      m_folderMenu ->setItemVisible(m_downloadMenuId, false);
     }
     m_folderMenu ->popup(point);
   } else
