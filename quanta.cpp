@@ -76,12 +76,7 @@
 
 #include "messages/messageoutput.h"
 
-//
-// Enable this define to test the KAction/XMLGUI code (Rich).
-//
-//#define NEW_STUFF
-//
-
+#include "newstuff.h"
 #ifdef NEW_STUFF
 
 #include <kedittoolbar.h>

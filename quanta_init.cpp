@@ -88,12 +88,7 @@ QDict <QStrList> *tagsDict;
 
 // extern KGuiCmdManager cmdMngr;
 
-//
-// Enable this define to test the KAction/XMLGUI code (Rich).
-//
-//#define NEW_STUFF
-//
-
+#include "newstuff.h"
 #ifdef NEW_STUFF
 
 #include <kaction.h>

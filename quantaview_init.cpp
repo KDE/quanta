@@ -40,12 +40,7 @@
 #include "kwrite/highlight/highlight.h"
 #include "toolbar/toolbars.h"
 
-//
-// Enable this define to test the KAction/XMLGUI code (Rich).
-//
-//#define NEW_STUFF
-//
-
+#include "newstuff.h"
 #ifdef NEW_STUFF
 
 #include <kaction.h>

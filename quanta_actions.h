@@ -76,12 +76,13 @@ class QuantaScriptAction : public KAction
     Q_PROPERTY( QString script READ script WRITE setScript DESIGNABLE true )
     Q_PROPERTY( ScriptInput input READ input WRITE setInput DESIGNABLE true )
     Q_PROPERTY( ScriptOutput output READ output WRITE setOutput DESIGNABLE true )
+    Q_PROPERTY( ScriptOutput error READ error WRITE setError DESIGNABLE true )
     Q_ENUMS( ScriptInput )
     Q_ENUMS( ScriptOutput )
 
 public:
     /**
-     * What we send to the filter.
+     * What we send to the script.
      */
     enum ScriptInput {
         NoInput,
@@ -117,17 +118,30 @@ public:
 
     virtual ~QuantaScriptAction();
 
-    QString script() const { return filename_; }
+    /**
+     * Set the command to be executed. If the string <i>%f</i> is in the
+     * command, it will be expanded to the filename to be processed.
+     */
     void setScript( const QString &file ) { filename_ = file; }
+    QString script() const { return filename_; }
 
-    ScriptInput input() const { return input_; }
+    /**
+     * Set the data that should be sent to the script.
+     */
     void setInput( const ScriptInput in ) { this->input_ = in; }
+    ScriptInput input() const { return input_; }
 
-    ScriptOutput output() const { return output_; }
+    /**
+     * Specify what should be done with the output of the script.
+     */
     void setOutput( const ScriptOutput out ) { this->output_ = out; }
+    ScriptOutput output() const { return output_; }
 
-    ScriptOutput error() const { return error_; }
+    /**
+     * Specify what should be done with error messages from the script.
+     */
     void setError( const ScriptOutput err ) { this->error_ = err; }
+    ScriptOutput error() const { return error_; }
 
 protected slots:
     virtual void runScript();
