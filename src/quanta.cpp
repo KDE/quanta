@@ -2268,7 +2268,7 @@ void QuantaApp::showToolbarFile(const KURL &url)
     QPopupMenu *menu = new QPopupMenu;
     KAction *action;
     KActionCollection *ac = actionCollection();
-    nodeList = p_toolbar->dom->elementsByTagName("Action");
+    nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("Action");
     for (uint i = 0; i < nodeList.count(); i++)
     {
       action = ac->action(nodeList.item(i).toElement().attribute("name") );
@@ -2279,6 +2279,7 @@ void QuantaApp::showToolbarFile(const KURL &url)
     }
     m_tagsMenu->insertItem(i18n(p_toolbar->name.utf8()),menu);
     p_toolbar->menu = menu;
+    p_toolbar->guiClient->reloadXML();
     guiFactory()->addClient(p_toolbar->guiClient);
     p_toolbar->visible = true;
   }
