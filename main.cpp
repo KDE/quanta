@@ -15,10 +15,16 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kcmdlineargs.h>
-#include <kaboutdata.h>
+// kde includes
 #include <klocale.h>
+#include <kaboutdata.h>
+#include <kiconloader.h>
+#include <kcmdlineargs.h>
 
+// qt includes
+#include <qpixmap.h>
+
+// app includes
 #include "quanta.h"
 #include "kwrite/kwview.h"
 
@@ -45,8 +51,21 @@ int main(int argc, char *argv[])
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
-  KApplication app;
+	KApplication app;
+	
+	QFrame *f = new QFrame( 0L, QString("Quanta")+VERSION,
+													QWidget::WStyle_NoBorder | QWidget::WStyle_Customize );
 
+  QPixmap pm( UserIcon("quantalogo") );
+
+  f->setBackgroundPixmap(pm);
+  f->setGeometry(	QApplication::desktop()->width ()/2-160,
+  						    QApplication::desktop()->height()/2-120,
+  						    320, 240 );
+  f->setLineWidth(0);
+  						
+  f->show();
+	
   if (app.isRestored())
   {
     RESTORE(QuantaApp);
@@ -54,6 +73,9 @@ int main(int argc, char *argv[])
   else
   {
     QuantaApp *quanta = new QuantaApp();
+
+    delete f;
+
     quanta->show();
     quanta->openLastFiles();
 
