@@ -55,7 +55,7 @@ public:
 	~htmlDocumentProperties();
 	
 protected slots:	
-	virtual void aboutToClose();
+	virtual void aboutToClose() {};
 
 private slots:
 	virtual void accept();
