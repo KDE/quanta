@@ -123,7 +123,7 @@ class Attr_check : public Attr
 				{ check = (QCheckBox *)w; }
 		virtual ~Attr_check(){};
 	
-		virtual QString value() { return check->isChecked() ? "checked" : "" ; }
+		virtual QString value() { return check->isChecked() ? "checked" : "unchecked" ; }
 	 	virtual void setValue( QString s ) { check->setChecked( !s.isEmpty() ); }
 		
 };

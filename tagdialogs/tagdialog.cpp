@@ -97,7 +97,7 @@ void TagDialog::parseTag()
 		 f.open( IO_ReadOnly );
 	   if ( doc.setContent( &f ) )
      {
-       mainDlg = new Tagxml( doc, this );
+       mainDlg = new Tagxml( doc, tag->parentDTD, this );
        ((Tagxml    *)mainDlg)->writeAttributes( dict );
      }
      f.close();
@@ -115,7 +115,7 @@ void TagDialog::parseTag()
         docString += QuantaCommon::xmlFromAttributes(tag->attributes());
         docString += "</tag>\n</TAGS>\n";
         doc.setContent(docString);
-        mainDlg = new Tagxml( doc, this );
+        mainDlg = new Tagxml( doc, tag->parentDTD, this );
       }
     }
 
@@ -159,7 +159,7 @@ void TagDialog::parseTag()
     if (addPage)
     {
       extraDoc.setContent(docString);
-      extraPage = new Tagxml( extraDoc, this );
+      extraPage = new Tagxml( extraDoc, tag->parentDTD, this );
       extraPage->writeAttributes( dict );
       addTab( extraPage, i18n(title) );
       extraPageList->append(extraPage);

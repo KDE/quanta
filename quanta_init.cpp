@@ -879,7 +879,9 @@ void QuantaApp::readTagDir(QString &dirName)
    dtd->startTags.append(dtdConfig->readEntry(QString("Start%1").arg(i)));
    dtd->endTags.append(dtdConfig->readEntry(QString("End%1").arg(i)));
  }
-
+ dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
+ dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
+ dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
 
  dtds->insert(dtdName, dtd);//insert the taglist into the full list7
 

@@ -29,12 +29,13 @@
 
 #include "tagattr.h"
 #include "tagwidget.h"
+#include "../parser/qtag.h"
 
 class Tagxml : public QWidget, TagWidget {
   Q_OBJECT 
   public:
     /** construtor */
-    Tagxml(QDomDocument &d, QWidget* parent=0, const char *name=0);
+    Tagxml(QDomDocument &d, DTDStruct *dtd, QWidget* parent=0, const char *name=0);
     /** destructor */
     ~Tagxml();
 
@@ -46,6 +47,7 @@ class Tagxml : public QWidget, TagWidget {
 
   private:
     QDomDocument doc;
+    DTDStruct *m_dtd;
 
 };
 

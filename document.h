@@ -150,8 +150,8 @@ public:
 
   /** Sets the DTD identifier */
   void setDTDIdentifier(QString id);
-  /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1. */
-  QString findDTDName(int startLine, int endLine);
+  /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1.*/
+  QString findDTDName(int startLine, int endLine, bool checkCursorPos = true);
   /** No descriptions */
   QString getTagAttrValueByName(QString attr);
 

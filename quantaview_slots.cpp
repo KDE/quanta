@@ -65,10 +65,13 @@ void QuantaView::slotEditCurrentTag()
 {
 
   Document *w = write();
+  uint line,col;
+  w->viewCursorIf->cursorPosition(&line, &col);
+  QString dtdName = w->findDTDName(line, 0); //call currentTag, so should be before
+
   w->currentTag();
   QString tag = w->getTagAttr(0);
-
-  if ( QuantaCommon::isKnownTag(write()->getDTDIdentifier(),tag) )
+  if ( QuantaCommon::isKnownTag(dtdName,tag) )
   {
     QString attrs = "";
     for (int i=1; i < w->tagAttrNum; i++ )
@@ -79,7 +82,7 @@ void QuantaView::slotEditCurrentTag()
      attrs += QString(w->getTagAttr(i)) + "=" + QString(w->getTagAttrValue(i)) + " ";
     }
 
-    TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(write()->getDTDIdentifier(),tag), attrs );
+    TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtdName,tag), attrs );
 
 
     if (dlg->exec())

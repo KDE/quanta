@@ -104,3 +104,5 @@ LOCATION_options = single
 OPTION_options = optional
 
 [Extra rules]
+BooleanAttributes = simple
+

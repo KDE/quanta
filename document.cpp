@@ -916,7 +916,7 @@ void Document::setDTDIdentifier(QString id)
 }
 
 /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1. */
-QString Document::findDTDName(int startLine, int endLine)
+QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
 {
  //Do some magic to find the document type
  if ( (startLine == -1) && (endLine == -1) )
@@ -990,7 +990,7 @@ QString Document::findDTDName(int startLine, int endLine)
      for ( QStringList::Iterator tagIt = dtd->startTags.begin(); tagIt != dtd->startTags.end(); ++tagIt )
      {
        pos = s.find(*tagIt,false);
-       if ( (pos != -1) && ( (line != i) || (pos < col) )) //start tag found
+       if ( (pos != -1) && ( !checkCursorPos || (line != i) || (pos < col) )) //start tag found
        {
          //now check if we are after the closing tag
          bool afterClosingTag = false;
@@ -999,7 +999,7 @@ QString Document::findDTDName(int startLine, int endLine)
          {
            QString s2 = editIf->textLine(j);
            pos = s2.find(dtd->endTags[dtd->startTags.findIndex(*tagIt)],false);
-           if ( (pos != -1) && ( (line != j) || (pos < col) ) )
+           if ( (pos != -1) && (!checkCursorPos || (line != j) || (pos < col) ) )
            {
              afterClosingTag = true;
              break;

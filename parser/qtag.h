@@ -56,6 +56,9 @@ typedef struct DTDStruct
      QString scriptName;              //the name that can be the value of <script language=""> attribute
      QStringList startTags;
      QStringList endTags;
+     QString booleanAttributes;       //simple or extended <tag booleanAttr> or <tag booleanAttr="1">
+     QString booleanTrue;             //"true" or "1" or whatever
+     QString booleanFalse;            //"false" or "0" or whatever
     };
 
 class QTag {

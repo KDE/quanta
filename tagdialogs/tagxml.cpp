@@ -27,9 +27,10 @@
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 
-Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
+Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *name)
 	:QWidget(parent,name), TagWidget(parent,name), doc(d)
 {
+   m_dtd = dtd;
    QGridLayout *grid = new QGridLayout( this );
    grid->setSpacing( 13 );
    grid->setMargin( 11 );
@@ -228,7 +229,22 @@ void Tagxml::readAttributes( QDict<QString> *d )
  	  if ( value.isEmpty() ) d->remove(name);
     else {
       if ( dynamic_cast<Attr_check *>(attr) ) // checkbox
-      	d->replace(name, new QString("") );
+      {
+      	if (m_dtd->booleanAttributes == "simple")
+        {
+          if (value == "checked")
+          {
+            d->replace(name, new QString("") );
+          } else
+          {
+            d->remove(name);
+          }
+        } else
+        {
+          value = (value == "checked")?m_dtd->booleanTrue:m_dtd->booleanFalse;
+          d->replace(name, new QString(value));
+        }
+      }
       else
 	      d->replace(name, new QString(value) );
     }
