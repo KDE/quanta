@@ -65,7 +65,7 @@ rc_DATA = quantaui.rc
 
 if QUANTAUIRC_HOOK
 install-data-hook:
-	@mv $(DESTDIR)$(rcdir)/quantaui.rc $(DESTDIR)$(rcdir)/$(PACKAGE)ui.rc
+	mv $(DESTDIR)$(rcdir)/quantaui.rc $(DESTDIR)$(rcdir)/$(PACKAGE)ui.rc || true
 else
 install-data-hook:
 #no hook        
