@@ -377,7 +377,7 @@ bool FilesTreeView::expandArchiv (KFileTreeViewItem *item)
     return true;
   };
 
-  KFileTreeBranch *kftb = new FilesTreeBranch(this, urlToOpen, item->text(0), *(item->pixmap(0)), false, item);
+  KFileTreeBranch *kftb = new FilesTreeBranch(this, urlToOpen, item->text(0), *(item->pixmap(0)), true, item);
   addBranch(kftb);  // connecting some signals
   kftb->populate(urlToOpen, item);
   item->setExpandable(true);

@@ -28,17 +28,20 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
         - make autocompletion work correctly with namespaced tags
         - don't insert boolean attributes with false as value in the tags
         - fix XML style tag editing (don't make tags look like <foo /="true">)
+        - make insertion and renaming in the project tree view work as expected
+	- make the New Project wizard usable on lower resolutions [#75192]
         - various parsing fixes        
         - report bugs for "quanta" module, not for "quanta_be"        
     - performance:
-        - delayed parsing: reparse only if there was no keypress for some time
-        - background parsing: allow user input while parsing
-        - load DTEPs only on demand: improves startup performance
+        - delayed parsing: reparse only if there was no keypress for some time [#63000 and its duplicates]
+        - background parsing: allow user input while parsing [#63000 and its duplicates]
+        - load DTEPs only on demand: improves startup performance, uses less memory
     - behavioral changes:
     - new features:
       - Next / Previous Bookmark actions
       - add a toolbar for CSS
       - list the opened files as bold in the treeviews
+      - allow closing of opened files from the treeviews
       - add description field for project files
 
 Version 3.2-CVS-1 (Release Date: xx-xx-200x; Started: 25-11-2002)

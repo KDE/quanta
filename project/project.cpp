@@ -989,8 +989,8 @@ void Project::slotNewProject()
 {
   wiz = new QWizard(quantaApp, "new", true);
   wiz->setCaption(i18n("New Project Wizard"));
-  //wiz->setMinimumSize(620,440);
-
+  wiz->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  
   png = new ProjectNewGeneral( wiz );
 
   stack = new QWidgetStack( wiz );

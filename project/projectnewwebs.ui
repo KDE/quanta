@@ -18,13 +18,13 @@
             <x>0</x>
             <y>0</y>
             <width>620</width>
-            <height>411</height>
+            <height>418</height>
         </rect>
     </property>
     <property name="sizePolicy">
         <sizepolicy>
             <hsizetype>5</hsizetype>
-            <vsizetype>5</vsizetype>
+            <vsizetype>1</vsizetype>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
         </sizepolicy>
@@ -52,7 +52,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLabel" row="0" column="0" rowspan="6" colspan="1">
+        <widget class="QLabel" row="0" column="0" rowspan="2" colspan="1">
             <property name="name">
                 <cstring>imagelabel</cstring>
             </property>
@@ -82,169 +82,172 @@
             <property name="vAlign" stdset="0">
             </property>
         </widget>
-        <spacer row="5" column="3" rowspan="1" colspan="3">
+        <widget class="QLayoutWidget" row="1" column="1">
             <property name="name">
-                <cstring>Spacer8</cstring>
+                <cstring>layout7</cstring>
             </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>309</width>
-                    <height>16</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="KLed" row="5" column="1">
-            <property name="name">
-                <cstring>KLed1</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="shape">
-                <enum>Circular</enum>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="5" column="6">
-            <property name="name">
-                <cstring>button</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>Start</string>
-            </property>
-        </widget>
-        <spacer row="3" column="4">
-            <property name="name">
-                <cstring>Spacer7</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>19</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="KLed" row="5" column="2">
-            <property name="name">
-                <cstring>KLed2</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="shape">
-                <enum>Circular</enum>
-            </property>
-            <property name="look">
-                <enum>Raised</enum>
-            </property>
-        </widget>
-        <widget class="UploadTreeView" row="4" column="1" rowspan="1" colspan="6">
-            <property name="name">
-                <cstring>listView</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>7</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-        </widget>
-        <widget class="QComboBox" row="1" column="4">
-            <item>
-                <property name="text">
-                    <string>HTTP</string>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
                 </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>FTP</string>
+                <spacer row="1" column="2">
+                    <property name="name">
+                        <cstring>Spacer8</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Fixed</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>309</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KLed" row="1" column="0">
+                    <property name="name">
+                        <cstring>KLed1</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="shape">
+                        <enum>Circular</enum>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="1" column="3">
+                    <property name="name">
+                        <cstring>button</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Start</string>
+                    </property>
+                </widget>
+                <widget class="UploadTreeView" row="0" column="0" rowspan="1" colspan="4">
+                    <property name="name">
+                        <cstring>listView</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>3</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="KLed" row="1" column="1">
+                    <property name="name">
+                        <cstring>KLed2</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="shape">
+                        <enum>Circular</enum>
+                    </property>
+                    <property name="look">
+                        <enum>Raised</enum>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLayoutWidget" row="0" column="1">
+            <property name="name">
+                <cstring>layout6</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
                 </property>
-            </item>
-            <property name="name">
-                <cstring>protocolCombo</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="2" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>TextLabel10</cstring>
-            </property>
-            <property name="text">
-                <string>wget's command line:</string>
-            </property>
-        </widget>
-        <spacer row="1" column="5" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>Spacer5</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>228</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QLabel" row="0" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>TextLabel9</cstring>
-            </property>
-            <property name="text">
-                <string>Site source:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="2" column="4" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>commandLine</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>TextLabel1</cstring>
-            </property>
-            <property name="text">
-                <string>Protocol:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="0" column="4" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>siteUrl</cstring>
-            </property>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel10</cstring>
+                    </property>
+                    <property name="text">
+                        <string>wget's command line:</string>
+                    </property>
+                </widget>
+                <spacer row="1" column="2">
+                    <property name="name">
+                        <cstring>Spacer5</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>228</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QComboBox" row="1" column="1">
+                    <item>
+                        <property name="text">
+                            <string>HTTP</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>FTP</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>protocolCombo</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>siteUrl</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Protocol:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>commandLine</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel9</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Site source:</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
     </grid>
 </widget>
@@ -280,7 +283,7 @@
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kled.h</includehint>
-    <includehint>kled.h</includehint>
     <includehint>uploadtreeview.h</includehint>
+    <includehint>kled.h</includehint>
 </includehints>
 </UI>
