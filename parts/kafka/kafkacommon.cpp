@@ -2335,45 +2335,12 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
 
     if(!startNode || !endNode)
         return 0;
-
-    // Look for common_parent
-    Node* commonParent = 0;
-    int locOffset = 1;
-
-    QValueList<int> startNodeLocation = getLocation(startNode);
-    QValueList<int> endNodeLocation = getLocation(endNode);
-    QValueList<int>::iterator itStart = startNodeLocation.begin();
-    QValueList<int>::iterator itEnd = endNodeLocation.begin();
-
-    while(itStart != startNodeLocation.end() && itEnd != endNodeLocation.end() &&
-            (*itStart) == (*itEnd))
-    {
-        commonParent = getNodeFromSubLocation(startNodeLocation, locOffset);
-        ++itStart;
-        ++itEnd;
-        ++locOffset;
-    }
-
-    //If common_parent isn't inline, move commonParent to the closest non inline node
-    Node* oldCommonParent = 0;
-    Node* commonParentStartChild = 0;
-    Node* commonParentEndChild = 0;
-    if(commonParent && (isInline(commonParent->tag->name) ||
-                        commonParent->tag->type == Tag::Text || commonParent->tag->type == Tag::Empty))
-    {
-        oldCommonParent = commonParent;
-        commonParent = commonParent->parent;
-        while(commonParent && isInline(commonParent->tag->name))
-        {
-            oldCommonParent = commonParent;
-            commonParent = commonParent->parent;
-        }
-        commonParentStartChild = oldCommonParent;
-        commonParentEndChild = oldCommonParent;
-    }
-    //startNode or endNode can't be the commonParent.
-    else if(itStart == startNodeLocation.end() || itEnd == endNodeLocation.end())
-        commonParent = commonParent->parent;
+    
+    QValueList<int> commonParentStartChildLocation;
+    QValueList<int> commonParentEndChildLocation;
+    
+    Node* commonParent = DTDGetNonInlineCommonParent(startNode, endNode,
+            commonParentStartChildLocation, commonParentEndChildLocation, 0);
 
     // get the subtree to operate
     Node* newStartNode = 0;
@@ -2381,6 +2348,7 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
 
     Node* newCommonParent = duplicateNodeSubtree(commonParent);
 
+    QValueList<int> const startNodeLocation = getLocation(startNode);
     QValueList<int> const commonParentLocation = getLocation(commonParent);
     uint const commonParentDepth = commonParentLocation.size();
     uint const newStartNodeDepth = startNodeLocation.size() - commonParentDepth + 1;
@@ -2393,6 +2361,7 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
     for(uint i = 1; i != newStartNodeDepth; ++i)
         newStartNodeLocation.push_back(startNodeLocation[i + commonParentDepth - 1]);
 
+    QValueList<int> const endNodeLocation = getLocation(endNode);
     for(uint i = 1; i != newEndNodeDepth; ++i)
         newEndNodeLocation.push_back(endNodeLocation[i + commonParentDepth - 1]);
 
