@@ -1076,7 +1076,7 @@ bool Document::scriptAutoCompletion(int line, int column)
      handled = true;
    }
  } else
- if ( s[i] == completionDTD->tagAutoCompleteAfter )
+ if ( s[i] == completionDTD->tagAutoCompleteAfter || completionDTD->tagAutoCompleteAfter == '\1')
  {
    showCodeCompletions(getTagCompletions(line, column + 1));
    handled = true;
@@ -1246,7 +1246,11 @@ void Document::codeCompletionRequested()
   }
   if (completionDTD->family == Script)
   {
+    if (completionDTD->tagAutoCompleteAfter == '\0')
+        completionDTD->tagAutoCompleteAfter = '\1';
     handled = scriptAutoCompletion(line, col - 1);
+    if (completionDTD->tagAutoCompleteAfter == '\1')
+        completionDTD->tagAutoCompleteAfter = '\0';
 /*    if (!handled)
     {
       completionDTD = defaultDTD();
