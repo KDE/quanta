@@ -2140,7 +2140,6 @@ void Document::setChanged(bool newStatus)
 void Document::paste()
 {
   reparseEnabled = false;
-  kdDebug(24000) << "Clipboard: " << kapp->clipboard()->text(QClipboard::Clipboard) << endl;
   dynamic_cast<KTextEditor::ClipboardInterface*>(view())->paste();
   reparseEnabled = true;
   baseNode = parser->rebuild(this);

@@ -396,7 +396,7 @@ bool QuantaApp::slotFileSaveAs()
   {
     KURL oldURL = w->url();
     w->checkDirtyStatus();
-    if (oldURL.isLocalFile())
+    if (!w->isUntitled() && oldURL.isLocalFile())
     {
         fileWatcher->removeFile(oldURL.path());
 //        kdDebug(24000) << "removeFile: " << oldURL.path() << endl;
@@ -1429,7 +1429,7 @@ void QuantaApp::restoreFromTempfile(Document *w)
   if (!w) return;
 
   KURL origUrl = w->url();
-  if (origUrl.isLocalFile())
+  if (!w->isUntitled() && origUrl.isLocalFile())
   {
       fileWatcher->removeFile(origUrl.path());
 //      kdDebug(24000) << "removeFile: " << origUrl.path() << endl;
@@ -2032,7 +2032,7 @@ void QuantaApp::slotSyntaxCheckDone()
     if (w->isModified())
     {
       KURL origUrl = w->url();
-      if (origUrl.isLocalFile())
+      if (!w->isUntitled() && origUrl.isLocalFile())
           fileWatcher->removeFile(origUrl.path());
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());

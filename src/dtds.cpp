@@ -610,11 +610,12 @@ uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *
 //  kdDebug(24000) << "dtds::readTagFile:" << fileName << endl;
  QFile f(fileName);
  if (! f.exists())
-   kdDebug(24000) << "dtds::readTagFile file does not exist:" << fileName << endl;
+   kdError() << "dtds::readTagFile file does not exist:" << fileName << endl;
  else
  {
    bool result = f.open( IO_ReadOnly );
-   if (! result) kdDebug(24000) << "dtds::readTagFile unable to open:" << fileName
+   if (! result)
+     kdError() << "dtds::readTagFile unable to open:" << fileName
                                 << " Status: " << f.status() << endl;
  }
  QString errorMsg;

@@ -907,7 +907,7 @@ bool QuantaView::saveDocument(const KURL& url)
 
   m_saveResult = true;
   KURL oldURL = m_document->url();
-  if (oldURL.isLocalFile())
+  if (!m_document->isUntitled() && oldURL.isLocalFile())
   {
     fileWatcher->removeFile(oldURL.path());
 //    kdDebug(24000) << "removeFile: " << oldURL.path() << endl;

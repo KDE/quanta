@@ -189,7 +189,6 @@ bool switchToExisting)
     KTextEditor::HighlightingInterface* highlightIf = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
     if (highlightIf)
     {
-      kdDebug(24000) << highlightIf->hlMode() << endl;
       QString hlName;
       int htmlIdx, xmlIdx;
       for (uint i = 0; i < highlightIf->hlModeCount(); i++)
