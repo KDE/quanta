@@ -13,8 +13,11 @@ Version 3.3.2 (Release date: xx-10-2004; Started 07-10-2004):
 	- disable Proceed button in the upload dialog once the upload is started. Fixes
 	  various problems like non-responding Quanta after upload and possibly the
 	  bug described in #88892.
-        - don't try to add a newly created action to a non-existent All toolbar.
-	- don't crash on exist if the user removed an action
+        - don't try to add a newly created action to a non-existent All toolbar
+	- don't crash on exit if the user removed an action
+        - enable full copy/paste from documentation and preview. Until now it worked
+          only with the mouse through the selection. [#92936]
+
 
   - improvements:
   	 - recognize one-line PHP comments starting with #
