@@ -1695,28 +1695,16 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
       node = node.nextSibling();
     }
 #endif
-    //kdDebug(24000) << "QuantaToolBar minimumSizeHeight :" << tb->minimumSizeHint().height() << endl;
-    if (tb->minimumSizeHint().height() > 30)
-    {
-      if (toolbarTab->tabHeight() < 30)
-        toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + 30);
-      else
-        toolbarTab->setFixedHeight(tb->minimumSizeHint().height() + toolbarTab->tabHeight());
-      tb->adjustSize();
-      tb->setGeometry(0,0, toolbarTab->width(), tb->height());
-    } else //this happens if the toolbar does not contain any buttons
-    {
-      tb->setGeometry(0,0, toolbarTab->width(), 30);
-      if (toolbarTab->tabHeight() < 30)
-        toolbarTab->setFixedHeight(tb->height() + 30);
-      else
-        toolbarTab->setFixedHeight(tb->height() + toolbarTab->tabHeight());
-
-    }
+   if (tb->iconText() == KToolBar::IconTextBottom)
+   {
+      tb->setGeometry(0,0, toolbarTab->width(), tb->iconSize() + QFontMetrics(KGlobalSettings::toolBarFont()).height() + 10);
+      toolbarTab->setFixedHeight(toolbarTab->tabHeight() + tb->height() + 3);
+   } else
+   {
+      tb->setGeometry(0,0, toolbarTab->width(), tb->iconSize() + 10);
+      toolbarTab->setFixedHeight(toolbarTab->tabHeight() + tb->height() + 3);
+   }
     toolbarTab->insertTab(tb, tabname);
-//   tb->setGeometry(0,0, tb->width(),w->height());
-  // w->setCaption(element.attribute("name"));
-  // addToolWindow(w, KDockWidget::DockTop, getMainDockWidget());
     qInstallMsgHandler( oldHandler );
 
     connect(tb, SIGNAL(removeAction(const QString&, const QString&)),
