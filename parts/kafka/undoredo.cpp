@@ -1,7 +1,7 @@
 /***************************************************************************
                                 undoredo.cpp
                              -------------------
- 
+
     copyright            : (C) 2003, 2004 - Nicolas Deschildre
     email                : ndeschildre@kdewebdev.org
  ***************************************************************************/
@@ -220,7 +220,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
   nodeSelection = modifs->selectionAfter();
   if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
     nodeSelection->fillWithVPLCursorSelection();
-  
+
   //If the previous NodeModifsSet contains some text insertion/deletion and if
   //the current one is doing the same thing, compress the two NodeModifsSet : delete modifs
   if(modifs->nodeModifList().count() >= 1 && modifs->indentationStartOffset() == 1  &&
@@ -1076,7 +1076,7 @@ bool undoRedo::syncKafkaView()
   /**     QValueList<NodeModifsSet>::iterator it;
           QValueList<NodeModif>::iterator it2;
           bool undoKafkaView = true;
-   
+
           if(kafkaIterator == sourceIterator)
                   return true;
           it = kafkaIterator;
@@ -1087,9 +1087,9 @@ bool undoRedo::syncKafkaView()
                           undoKafkaView = false;
                           break;
                   }
-                  it++;
+                  ++it;
           }
-   
+
           it = sourceIterator;
           if(!undoKafkaView)
           {
@@ -1119,7 +1119,7 @@ bool undoRedo::syncKafkaView()
                   while(kafkaIterator != sourceIterator)
                   {
                           kafkaIterator++;
-                          for (it2 = (*kafkaIterator).NodeModifList.begin(); it2 != (*kafkaIterator).NodeModifList.end(); it2++)
+                          for (it2 = (*kafkaIterator).NodeModifList.begin(); it2 != (*kafkaIterator).NodeModifList.end(); ++it2)
                           {
                                   if((*it2).type == undoRedo::NodeTreeAdded || (*it2).type == undoRedo::NodeAndChildsAdded ||
                                           (*it2).type == undoRedo::NodeAdded || (*it2).type == undoRedo::NodeModified)
@@ -1162,8 +1162,8 @@ bool undoRedo::syncKafkaView()
                   //deletion of part of the undo stack.
                   while(it != kafkaIterator)
                   {
-                          it++;
-                          for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); it2++)
+                          ++it;
+                          for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); ++it2)
                           {
                                   if(!redoNodeModif((*it2), false))
                                   {
@@ -1241,7 +1241,7 @@ bool undoRedo::syncQuantaView()
                   undoQuantaView = false;
                   break;
           }
-          it++;
+          ++it;
   }
 
   it = kafkaIterator;
@@ -1273,7 +1273,7 @@ bool undoRedo::syncQuantaView()
           while(sourceIterator != kafkaIterator)
           {
                   sourceIterator++;
-                  for (it2 = (*sourceIterator).NodeModifList.begin(); it2 != (*sourceIterator).NodeModifList.end(); it2++)
+                  for (it2 = (*sourceIterator).NodeModifList.begin(); it2 != (*sourceIterator).NodeModifList.end(); ++it2)
                   {
                           if(!redoNodeModif((*it2), true, true))
                           {
@@ -1294,8 +1294,8 @@ bool undoRedo::syncQuantaView()
           //deletion of part of the undo stack.
           while(it != sourceIterator)
           {
-                  it++;
-                  for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); it2++)
+                  ++it;
+                  for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); ++it2)
                   {
                           if(!redoNodeModif((*it2), false))
                           {
@@ -1492,11 +1492,11 @@ void undoRedo::fileSaved()
                   (*it).isModified = true;
           }
           it = sourceIterator;
-          it++;
+          ++it;
           while(it != end())
           {
                   (*it).isModified = true;
-                  it++;
+                  ++it;
           }*/
 }
 

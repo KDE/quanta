@@ -558,7 +558,7 @@ void QuantaDebuggerGubed::sendBreakpoints()
 }
 void QuantaDebuggerGubed::sendWatches()
 {
-  for(QValueList<QString>::iterator it = m_watchlist.begin(); it != m_watchlist.end(); it++)
+  for(QValueList<QString>::iterator it = m_watchlist.begin(); it != m_watchlist.end(); ++it)
     sendCommand("getwatch", (*it));
   sendCommand("sentwatches", "");
 }
