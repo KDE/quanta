@@ -704,7 +704,6 @@ KURL TemplatesTreeView::filterTemplate()
  if (filterAction)
  {
    KTempFile* tempFile = new KTempFile(tmpDir);
-   tempFile->setAutoDelete(true);
    filterAction->setOutputFile(tempFile->file());
    filterAction->setInputFileName(url.path());
    filterAction->execute();

@@ -230,10 +230,15 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
 void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 {
+  kdDebug(24000) << "Script output received." << endl;
   QCString tmp( buffer, buflen + 1 );
   QString text( QString::fromLocal8Bit(tmp) );
   Document *w = m_view->write();
-  kdDebug(24000) << "Script output received." << endl;
+  if (!w)
+  {
+    kdDebug(24000) << "Document not found!" << endl;
+    return;
+  }
   if ( scriptOutputDest == "cursor" )
   {
      w->insertTag( text );
@@ -277,6 +282,8 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   } else
   if ( scriptOutputDest == "file" )
   {
+    if (!m_file->isOpen())
+       m_file->open(IO_ReadWrite);
     m_file->writeBlock(buffer, buflen);
   }
 
@@ -367,13 +374,13 @@ void TagAction::execute()
 {
   insertTag(true, true);
  //To avoid lock-ups, start a timer.
-  QTimer* timer = new QTimer(this);
+/*  QTimer* timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
-  timer->start(10*1000, true);
+  timer->start(10*1000, true);  */
   QExtFileInfo internalFileInfo;
   loopStarted = true;
   internalFileInfo.enter_loop();
-  delete timer;
+//  delete timer;
 }
 
 /** Timeout occured while waiting for some network function to return. */
