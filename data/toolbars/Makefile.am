@@ -1,6 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = default 
+SUBDIRS = html xml 
 
 EXTRA_DIST = docbook.toolbar.tgz kde_docbook.toolbar.tgz 
 

@@ -4,6 +4,10 @@ NickName = XML 1.0
 NumOfPages = 0
 CaseSensitive = true
 
+[Toolbars]
+Location = xml
+Names = fonts
+
 [Extra tags]
 
 

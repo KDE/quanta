@@ -6,6 +6,10 @@ NumOfPages = 2
 QuotedAttributes=src,href,color,bgcolor,background,text,link,vlink,alink,rows,cols,name,type,title,face
 CaseSensitive = false
 
+[Toolbars]
+Location = html
+Names = standard, fonts, tables, lists, forms, others
+
 [Core]
 Attributes = id, class, style, title
 

@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Tue Sep 17 13:34:29 2002
+** Created: Wed Sep 18 16:52:28 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -31,11 +31,15 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
 {
     if ( !name )
 	setName( "DTDSelectDialog" );
-    resize( 337, 145 ); 
+    resize( 337, 157 ); 
     setCaption( tr2i18n( "DTD Selector" ) );
 
+    okButton = new QPushButton( this, "okButton" );
+    okButton->setGeometry( QRect( 130, 130, 80, 22 ) ); 
+    okButton->setText( tr2i18n( "&OK" ) );
+
     QWidget* privateLayoutWidget = new QWidget( this, "Layout1" );
-    privateLayoutWidget->setGeometry( QRect( 10, 40, 315, 60 ) ); 
+    privateLayoutWidget->setGeometry( QRect( 10, 60, 315, 60 ) ); 
     Layout1 = new QGridLayout( privateLayoutWidget, 1, 1, 0, 6, "Layout1"); 
 
     dtdCombo = new QComboBox( FALSE, privateLayoutWidget, "dtdCombo" );
@@ -57,12 +61,8 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
 
     Layout1->addWidget( currentDTD, 1, 1 );
 
-    okButton = new QPushButton( this, "okButton" );
-    okButton->setGeometry( QRect( 130, 110, 80, 22 ) ); 
-    okButton->setText( tr2i18n( "&OK" ) );
-
     messageLabel = new QLabel( this, "messageLabel" );
-    messageLabel->setGeometry( QRect( 15, 10, 295, 25 ) ); 
+    messageLabel->setGeometry( QRect( 15, 10, 310, 40 ) ); 
     messageLabel->setText( tr2i18n( "Dialog message:\n"
 "Dialog message2:" ) );
     messageLabel->setScaledContents( TRUE );

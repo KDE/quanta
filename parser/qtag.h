@@ -68,6 +68,8 @@ typedef struct DTDStruct
      QString booleanTrue;             //"true" or "1" or whatever
      QString booleanFalse;            //"false" or "0" or whatever
      QString defaultAttrType;         //"input", "string" or whatever
+
+     QStringList toolbars;
     };
 
 class QTag {

@@ -300,6 +300,10 @@ protected:
   QString saveToolBar(QString& toolbarName, QString destFile);
   /** Initialize the plugin architecture. */
   void initPlugins();
+  /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
+  void loadToolbarForDTD(const QString& dtdName, QString oldDtdName = QString::null);
+  /** Remove the toolbar named "name". */
+  void removeToolbar(const QString& name);
 
 private:
   /** project class */
@@ -394,6 +398,7 @@ private:
   QDict<KXMLGUIClient> toolbarGUIClientList;
   QDict<QDomDocument> toolbarDomList;
   QDict<QPopupMenu> toolbarMenuList;
+  QDict<QString> toolbarNames; //list of toolbar names according to their filename
 
   uint userToolbarsCount;
   /**  */

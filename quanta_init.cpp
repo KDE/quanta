@@ -92,6 +92,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   toolbarGUIClientList.setAutoDelete(true);
   toolbarDomList.setAutoDelete(true);
   toolbarMenuList.setAutoDelete(true);
+  toolbarNames.setAutoDelete(true);
   userToolbarsCount = 0;
   baseNode = 0L;
 
@@ -110,6 +111,10 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 QuantaApp::~QuantaApp()
 {
  tempFileList.clear();
+ toolbarGUIClientList.clear();
+ toolbarDomList.clear();
+ toolbarMenuList.clear();
+ toolbarNames.clear();
 }
 
 
@@ -185,15 +190,8 @@ void QuantaApp::initQuanta()
 
 void QuantaApp::initToolBars()
 {
-  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/standard.toolbar.tgz");
-  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/fonts.toolbar.tgz");
-  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/tables.toolbar.tgz");
-  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/lists.toolbar.tgz");
-  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/forms.toolbar.tgz");
-  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/other.toolbar.tgz");
-
-  view->toolbarTab->setCurrentPage(0);
-
+  if (toolbarNames.count() == 0)
+     loadToolbarForDTD(defaultDocType);
 }
 
 void QuantaApp::initStatusBar()
@@ -878,6 +876,20 @@ void QuantaApp::readTagDir(QString &dirName)
      numOfTags += readTagFile(fname,dtd, tagList);
    }
  }
+
+ //read the toolbars
+ dtdConfig->setGroup("Toolbars");
+ QString toolbarsLocation = dtdConfig->readEntry("Location");
+ if (!toolbarsLocation.endsWith("/") && !toolbarsLocation.isEmpty())
+ {
+   toolbarsLocation.append("/");
+ }
+ dtd->toolbars = dtdConfig->readListEntry("Names");
+ for (uint i = 0; i < dtd->toolbars.count(); i++)
+ {
+   dtd->toolbars[i] = toolbarsLocation + dtd->toolbars[i].stripWhiteSpace() +".toolbar.tgz";
+ }
+
  //read the extra tags and their attributes
  dtdConfig->setGroup("Extra tags");
  dtd->defaultAttrType = dtdConfig->readEntry("DefaultAttrType","input");

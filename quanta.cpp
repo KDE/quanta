@@ -621,6 +621,11 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 	slotNewStatus();
 	slotNewLineColumn();
 
+  if (view->oldWrite && newWrite)
+  {
+    loadToolbarForDTD(newWrite->getDTDIdentifier(), view->oldWrite->getDTDIdentifier());
+  }
+
 
 //Add the Kate menus
 /*
@@ -638,6 +643,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   currentWrite->view()->resize(view->writeTab->size().width()-5, view->writeTab->size().height()-35);
   view->oldWrite = currentWrite;
   currentWrite->view()->setFocus();
+
 
   emit reloadTreeviews();
 }
@@ -1571,6 +1577,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
 
  tempFileList.append(tempFile);
  toolbarGUIClientList.insert(name.lower(),toolbarGUI);
+ toolbarNames.insert(url.prettyURL(),new QString(name.lower()));
 }
 
 /** Load an user toolbar from the disk. */
@@ -1819,28 +1826,7 @@ void QuantaApp::slotRemoveToolbar()
 
  if (ok)
  {
-
-   KXMLGUIClient* toolbarGUI = toolbarGUIClientList[res.lower()];
-
-   if (toolbarGUI)
-   {
-    //check if the toolbar's XML GUI was modified or not
-    QString s1 = toolbarDomList[res.lower()]->toString();
-    QString s2 = toolbarGUI->domDocument().toString();
-    if ( s1 != s2 )
-    {
-     if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(res),
-             i18n("Save Toolbar")) == KMessageBox::Yes)
-     {
-       slotSaveToolbar(true, res.lower() );
-     }
-    }
-
-    factory()->removeClient(toolbarGUI);
-    toolbarGUIClientList.remove(res.lower());
-    toolbarDomList.remove(res.lower());
-    toolbarMenuList.remove(res.lower());
-   }
+   removeToolbar(res.lower());
  }
 
 }
@@ -1935,7 +1921,7 @@ void QuantaApp::saveModifiedToolbars()
        }
      }
    }
-   toolbarDomList.remove(it.currentKey());
+ //  toolbarDomList.remove(it.currentKey());
  }
 }
 
@@ -1998,8 +1984,10 @@ void QuantaApp::processDTD(QString documentType)
   }
  } else //dtdName is read from the method's parameter
  {
-   w->setDTDIdentifier(documentType);w->setDTDIdentifier(documentType);
+   w->setDTDIdentifier(documentType);
  }
+
+ // loadToolbarForDTD(w->getDTDIdentifier());
   sTab->useOpenLevelSetting = true;
 }
 
@@ -2012,12 +2000,14 @@ void QuantaApp::slotToolsChangeDTD()
   int pos = -1;
   QDictIterator<DTDStruct> it(*dtds);
   int defaultIndex = 0;
+  QString oldDtdName = w->getDTDIdentifier();
+
   for( ; it.current(); ++it )
   {
     if (it.current()->family == Xml)
     {
       dlg->dtdCombo->insertItem(it.current()->nickName);
-      if (it.current()->name == w->getDTDIdentifier()) pos = i;
+      if (it.current()->name == oldDtdName) pos = i;
       if (it.current()->name == defaultDocType) defaultIndex = i;
       i++;
     }
@@ -2031,6 +2021,7 @@ void QuantaApp::slotToolsChangeDTD()
     w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
   }
 
+  loadToolbarForDTD(w->getDTDIdentifier(), oldDtdName);
   reparse();
 
   delete dlg;
@@ -2069,6 +2060,97 @@ void QuantaApp::slotMakeDonation()
 void QuantaApp::slotHelpHomepage()
 {
   kapp->invokeBrowser("http://quanta.sourceforge.net");
+}
+
+/** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
+void QuantaApp::loadToolbarForDTD(const QString& dtdName, QString oldDtdName)
+{
+ DTDStruct *oldDtd = dtds->find(oldDtdName);
+ if (!oldDtd && !oldDtdName.isEmpty()) oldDtd = dtds->find(defaultDocType);
+
+ DTDStruct *newDtd = dtds->find(dtdName);
+ if (!newDtd) newDtd = dtds->find(defaultDocType);
+
+ if (newDtd != oldDtd)
+ {
+   //remove the toolbars of the oldDtdName
+   if (!oldDtdName.isEmpty())
+   {
+     for (uint i = 0; i < oldDtd->toolbars.count(); i++)
+     {
+       KURL url;
+       QString fileName = globalDataDir + "quanta/toolbars/"+oldDtd->toolbars[i];
+       QuantaCommon::setUrl(url, fileName);
+       QString *toolbarName = toolbarNames[url.prettyURL()];
+       if (toolbarName) removeToolbar(*toolbarName);
+       fileName = locateLocal("data", "quanta/toolbars/"+oldDtd->toolbars[i]);
+       QuantaCommon::setUrl(url, fileName);
+       toolbarName = toolbarNames[url.prettyURL()];
+       if (toolbarName) removeToolbar(*toolbarName);
+     }
+   }
+
+   //Load the toolbars for dtdName
+   for (uint i = 0; i < newDtd->toolbars.count(); i++)
+   {
+      QString fileName = globalDataDir + "quanta/toolbars/"+newDtd->toolbars[i];
+      if (QFileInfo(fileName).exists())
+      {
+        KURL url;
+        QuantaCommon::setUrl(url, fileName);
+        if (!toolbarNames[url.prettyURL()]) slotLoadToolbarFile(url);
+      } else
+      {
+        fileName = locateLocal("data", "quanta/toolbars/"+newDtd->toolbars[i]);
+        if (QFileInfo(fileName).exists())
+        {
+          KURL url;
+          QuantaCommon::setUrl(url, fileName);
+          if (!toolbarNames[url.prettyURL()]) slotLoadToolbarFile(url);
+        }
+      }
+   }
+  
+   view->toolbarTab->setCurrentPage(0);
+ }
+}
+
+/** Remove the toolbar named "name". */
+void QuantaApp::removeToolbar(const QString& name)
+{
+  if (!name.isEmpty())
+  {
+    KXMLGUIClient* toolbarGUI = toolbarGUIClientList[name];
+
+    if (toolbarGUI)
+    {
+     //check if the toolbar's XML GUI was modified or not
+     QString s1 = toolbarDomList[name]->toString();
+     QString s2 = toolbarGUI->domDocument().toString();
+     if ( s1 != s2 )
+     {
+      if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(name),
+              i18n("Save Toolbar")) == KMessageBox::Yes)
+      {
+        slotSaveToolbar(true, name);
+      }
+     }
+
+     factory()->removeClient(toolbarGUI);
+     toolbarGUIClientList.remove(name);
+     toolbarDomList.remove(name);
+     toolbarMenuList.remove(name);
+     QDictIterator<QString> it(toolbarNames);
+     for( ; it.current(); ++it )
+     {
+       if (*(it.current()) == name )
+       {
+         toolbarNames.remove(it.currentKey());
+         break;
+       }
+     }
+    }
+  }
 }
 
 #include "quanta.moc"
