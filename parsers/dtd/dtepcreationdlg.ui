@@ -133,9 +133,6 @@
             <property name="text">
                 <string>&amp;Fine-tune the DTEP after conversion</string>
             </property>
-            <property name="accel">
-                <string>Alt+F</string>
-            </property>
             <property name="checked">
                 <bool>true</bool>
             </property>

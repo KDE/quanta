@@ -1607,9 +1607,6 @@ Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
                         <property name="text">
                             <string>&amp;Add</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+A</string>
-                        </property>
                     </widget>
                     <widget class="KPushButton" row="2" column="1">
                         <property name="name">
@@ -1618,9 +1615,6 @@ Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
                         <property name="text">
                             <string>&amp;Edit</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+E</string>
-                        </property>
                     </widget>
                     <widget class="KPushButton" row="2" column="2">
                         <property name="name">
@@ -1628,9 +1622,6 @@ Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
                         </property>
                         <property name="text">
                             <string>&amp;Delete</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+D</string>
                         </property>
                     </widget>
                     <widget class="QListBox" row="1" column="0" rowspan="1" colspan="3">
