@@ -757,7 +757,7 @@ void Project::loadProjectXML()
   {
     excludeStr = excludeList[i].stripWhiteSpace();
     if (!excludeStr.endsWith("*"))
-      excludeStr.append("$");
+      excludeStr = excludeStr + "/*|"+ excludeStr + "$";
     if (!excludeStr.startsWith("*"))
       excludeStr.prepend("^");
     excludeStr.replace(".","\\.");
@@ -796,7 +796,7 @@ void Project::loadProjectXML()
             line = stream.readLine().stripWhiteSpace();
             line.prepend(tmpString);
             if (!line.endsWith("*"))
-              line.append("$");
+              line = line + "/*|"+ line + "$";
             if (!line.startsWith("*"))
               line.prepend("^");
             line.replace(".","\\.");
