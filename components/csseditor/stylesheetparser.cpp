@@ -19,7 +19,7 @@
 #include <klocale.h>
 #include <kdebug.h>
 
-static const QString msg1(i18n("hasn't been closed")),
+static const QString msg1(i18n("has not been closed")),
                      msg2(i18n("needs an opening parenthesis "));
 
 stylesheetParser::stylesheetParser(const QString& s){ 

@@ -69,7 +69,7 @@ void TLPEditor::setWhatsThis(QString s){
 }
 
 URIEditor::URIEditor(QWidget *parent, const char* name) : TLPEditor(parent,name){
-  QString whatsthis =i18n("WIth this line edit you can insert the URI of the resource you want to reach");  
+  QString whatsthis =i18n("With this line edit you can insert the URI of the resource you want to reach");  
   setWhatsThis(whatsthis);
   setLabelText(" Uri  :");
   setButtonIcon("fileopen");
