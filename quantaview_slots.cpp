@@ -65,10 +65,18 @@
 
 #include "tagdialogs/tagquicklistdlg.h"
 #include "tagdialogs/tagquicktable.h"
-#include "tagdialogs/csseditor.h"
-#include "tagdialogs/cssselectoreditor.h"
 #include "tagdialogs/tagmaildlg.h"
 #include "tagdialogs/tagmiscdlg.h"
+
+//#define NEW_CSS_EDITOR
+
+#ifdef NEW_CSS_EDITOR
+#include "plugins/csseditor/csseditor.h"
+#include "plugins/csseditor/cssselector.h"
+#else
+#include "tagdialogs/csseditor.h"
+#include "tagdialogs/cssselectoreditor.h"
+#endif
 
 #include "plugins/spellchecker.h"
 #include "plugins/framewizard/framewizard.h"
@@ -158,6 +166,74 @@ QString("\n")+dlg->generateFramesetStructure()+QString("\n");
 
 
 /** edit/insert CSS */
+#ifdef NEW_CSS_EDITOR
+void QuantaView::slotInsertCSS()
+{
+  if (!writeExists()) return;
+
+  Document *w = write();
+
+  uint line, col;
+  w->viewCursorIf->cursorPositionReal(&line, &col);
+  Node * node = parser->nodeAt(line, col);
+  int bLine, bCol, eLine, eCol;
+  node->tag->endPos(bLine,bCol);
+  node->next->tag->endPos(eLine,eCol);
+
+  const QString header(w->text(0, 0,bLine, bCol));// beginning part of the file
+  const QString footer("</style>"+w->text(eLine, eCol+1,200,200)); // ending part of the file
+
+  node->tag->endPos(bLine,bCol);
+
+  if(node->tag->name.contains("style")) {
+    node->next->tag->beginPos(eLine,eCol);
+    QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1));// <style></style> block content
+
+    CSSSelector *dlg = new CSSSelector;
+
+    //dlg->setSourceFileName(w->url().path());
+
+    dlg->setHeader(header);
+    dlg->setFooter(footer);
+
+    dlg->loadExistingStyleSection(styleTagContent);
+    if( dlg->exec() ){
+
+    //Need to find the text rectangle betweeen <style ...> and </style> and replace with the new one
+
+      w->activateParser(false);
+      node->next->tag->beginPos(eLine,eCol);
+      w->editIf->removeText(bLine, bCol+1, eLine, eCol);
+      w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol+1);
+      w->activateParser(true);
+      w->insertTag(dlg->generateStyleSection());
+
+
+    }
+    delete dlg;
+
+  }
+  else {
+    CSSEditor *dlg = new CSSEditor(this);
+
+    dlg->setInlineHeader(w->text(0, 0,bLine, bCol-1));
+    node->tag->endPos(eLine,eCol);
+    dlg->setInlineSelector(w->text(bLine, bCol, eLine, eCol));
+
+    dlg->initialize();
+    if( dlg->exec() ){
+
+      QDict<QString> attr;
+      //need to read other tag attributes and add style
+      attr.insert("style",new QString( dlg->generateProperties() ) );
+
+      w->changeTag(node->tag, &attr);
+    }
+    delete dlg;
+   }
+
+}
+#else
 void QuantaView::slotInsertCSS()
 {
   if (!writeExists()) return;
@@ -205,6 +281,7 @@ void QuantaView::slotInsertCSS()
   }
 
 }
+#endif
 
 /** for <a href=mailto> tag  */
 void QuantaView::slotTagMail()
