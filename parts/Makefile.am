@@ -1,5 +1,2 @@
-if BUILD_WYSIWYG
- KAFKA_SUBDIR=kafka
-endif
-SUBDIRS = preview $(KAFKA_SUBDIR)
+SUBDIRS = preview kafka
 
