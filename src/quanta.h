@@ -483,6 +483,8 @@ protected slots:
   void slotShowVPLAndSourceEditor();
   void slotShowVPLOnly();
   void slotTabDragged(QWidget *widget);
+  void slotTabMoved(int from, int to);
+  void slotTabAboutToMove(int from, int to);
 
 protected:
   /** Create a DTEP tarball which can be uploaded or sent in email. Returns

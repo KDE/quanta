@@ -781,7 +781,13 @@ void QuantaView::refreshWindow()
        resize(width(), height());
   } else
   {
-    if (m_documentArea->height() + ToolbarTabWidget::ref()->height() > height() && !ToolbarTabWidget::ref()->isHidden()) //don't use isVisible alone instead of isHidden!
+    /*
+    kdDebug(24000) << "m_documentArea->height(): " << m_documentArea->height() << endl;
+    kdDebug(24000) << "ToolbarTabWidget::ref()->height(): " << ToolbarTabWidget::ref()->height() << " hidden: " << ToolbarTabWidget::ref()->isHidden() << " visible: " << ToolbarTabWidget::ref()->isVisible() << endl;
+    kdDebug(24000) <<"sum: " << m_documentArea->height() + ToolbarTabWidget::ref()->height() << endl;
+    kdDebug(24000) << "height(): " << height() << endl;
+    */
+    if (m_documentArea->height() + ToolbarTabWidget::ref()->height() - 1 > height() && !ToolbarTabWidget::ref()->isHidden()) //don't use isVisible alone instead of isHidden!
         resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
       else if (ToolbarTabWidget::ref()->isHidden())
         resize(width(), height());
@@ -952,13 +958,13 @@ bool QuantaView::saveDocument(const KURL& url)
       }
       return false;
     }
-    #if KDE_VERSION < KDE_MAKE_VERSION(3,2,90) // TODO: remove if support for 3.2 is dropped
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90) // TODO: remove if support for 3.2 is dropped
     // notify the treeviews
     KDirNotify_stub allDirNotify("*", "KDirNotify*");
     KURL dirUrl( url );
     dirUrl.setPath( dirUrl.directory() );
     allDirNotify.FilesAdded( dirUrl );
-    #endif
+#endif
   }
   // everything went fine
   if (oldURL != m_document->url())

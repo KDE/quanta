@@ -4815,7 +4815,7 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
             tab->setTabReorderingEnabled(true);
             tab->setTabPosition(QTabWidget::Bottom);
             connect(tab, SIGNAL( contextMenu( QWidget *, const QPoint & ) ), ViewManager::ref(), SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
-            setTabWidgetVisibility(KMdi::AlwaysShowTabs);
+            connect(tab, SIGNAL(initiateTabMove(int, int)), this, SLOT(slotTabAboutToMove(int, int)));                        connect(tab, SIGNAL(movedTab(int, int)), this, SLOT(slotTabMoved(int, int)));            setTabWidgetVisibility(KMdi::AlwaysShowTabs);
         }
     }
     if (!closeButtonsOnly)
@@ -4980,5 +4980,17 @@ void QuantaApp::slotHTMLPartDeleted(QObject *object)
      createDocPart();
 }
 
+void QuantaApp::slotTabMoved(int from, int to)
+{
+  KMdiChildView *view = m_pDocumentViews->at(from);
+  m_pDocumentViews->remove(from);
+  m_pDocumentViews->insert(to, view);
+  connect(this, SIGNAL(viewActivated (KMdiChildView *)), ViewManager::ref(), SLOT(slotViewActivated(KMdiChildView*)));  
+}
+
+void QuantaApp::slotTabAboutToMove(int from, int to)
+{
+  disconnect(this, SIGNAL(viewActivated (KMdiChildView *)), ViewManager::ref(), SLOT(slotViewActivated(KMdiChildView*)));  
+}
 
 #include "quanta.moc"
