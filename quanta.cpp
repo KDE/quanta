@@ -182,6 +182,7 @@ void QuantaApp::slotFileOpenRecent(const KURL &url )
   {
   	doc->openDocument( url );
   }
+  fileRecent->setCurrentItem(-1);
   view->write()->view()->setFocus();
 }
 
