@@ -2,8 +2,8 @@
                           propertysetter.cpp  -  description
                              -------------------
     begin                : gio lug 24 2003
-    copyright            : (C) 2003 by simone
-    email                : simone@localhost
+    copyright            : (C) 2003 by gulmini luciano
+    email                : gulmini.luciano@student.unife.it
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,8 +20,8 @@
 #include <qlineedit.h>
 #include <qcombobox.h>
 #include <qspinbox.h>
-#include <qiconset.h>
-#include <qpixmap.h>
+//#include <qiconset.h>
+//#include <qpixmap.h>
 #include <qptrlist.h>
 #include <qfiledialog.h>
 #include <qlabel.h>
@@ -30,7 +30,7 @@
 
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
-#include <kdebug.h>
+//#include <kdebug.h>
 #include <kurl.h>
 #include <kdialog.h>
 #include <kiconloader.h>
@@ -98,7 +98,7 @@ void propertySetter::setComboBox()
 
 void propertySetter::setSpinBox(const QString& min, const QString& max, const QString& s)
 {
-  m_sb = new QSpinBox(min.toInt(), max.toInt(), 1, this);
+  m_sb = new mySpinBox(min.toInt(), max.toInt(), 1, this);
   m_sb->setSuffix(s);
   m_sb->setValue(0);
   connect(m_sb, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
@@ -204,6 +204,7 @@ void propertySetter::Show(){
 void propertySetter::addButton(){
 
   m_pb = new KPushButton(this);
+  QToolTip::add(m_pb, i18n( "More..." ));
   //pb->hide();
   QIconSet iconSet = SmallIconSet(QString::fromLatin1("2rightarrow"));
   QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
@@ -265,7 +266,7 @@ void URIEditor::URI(const QString & s)
 void URIEditor::openFileDialog(){
   QFileDialog* fd = new QFileDialog( this, "file dialog", TRUE );
   switch(m_resourceType) {
-    case image :   fd->setFilter( i18n("Image")+" (*.png *.gif *.jpg)" );break;
+    case image :   fd->setFilter( i18n("Image")+" (*.png *.gif *.jpg *.mng)" );break;
     case audio :  fd->setFilter( i18n("Audio")+" (*.au *.aiff *.wav)" );break;
     case mousePointer :   fd->setFilter( i18n("Mouse Pointer")+" (*.cur)" );break;
     default:;
@@ -300,14 +301,14 @@ void URIEditor::openFileDialog(){
 
 percentageEditor::percentageEditor(QWidget *parent, const char *name) : QHBox(parent,name)
 {
-  sb = new QSpinBox(0,9999,1,this);
-  sb->setSuffix("%");
-  connect(sb, SIGNAL(valueChanged ( const QString & )), this, SIGNAL(valueChanged(const QString&)));
+  m_sb = new mySpinBox(0,9999,1,this);
+  m_sb->setSuffix("%");
+  connect(m_sb, SIGNAL(valueChanged ( const QString & )), this, SIGNAL(valueChanged(const QString&)));
 }
 
 percentageEditor::~percentageEditor()
 {
-  delete sb;
+  delete m_sb;
 }
 
 fontEditor::fontEditor(QWidget *parent, const char* name) : TLPEditor(parent,name)
@@ -328,8 +329,5 @@ void fontEditor::openFontChooser(){
   }
   delete dlg;
 }
-
-
-
 
 #include "propertysetter.moc"

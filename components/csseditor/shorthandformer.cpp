@@ -28,174 +28,172 @@ QStringList HTMLColorList(QStringList::split(",",HTMLColors));
 
 ShorthandFormer::ShorthandFormer(){}
 
-ShorthandFormer::ShorthandFormer( QMap<QString,QString> m)
-{
+ShorthandFormer::ShorthandFormer( QMap<QString,QString> m){
   m_properties = m;
-   if(m_properties.contains("cue-after")){
-                      cue_after= m_properties["cue-after"];
-                      m_properties.remove("cue-after");
-                   }
-                   if(m_properties.contains("cue-before")){
-                     cue_before = m_properties["cue-before"];
-                     m_properties.remove("cue-before");
-                   }
-                   if(m_properties.contains("pause-before")){
-                      pause_before= m_properties["pause-before"];
-                      m_properties.remove("pause-before");
-                   }
-                   if(m_properties.contains("pause-after")){
-                     pause_after = m_properties["pause-after"];
-                     m_properties.remove("pause-after");
-                   }
-                   if(m_properties.contains("background-color")){
-                     background_color = m_properties["background-color"];
-                     m_properties.remove("background-color");
-                   }
-                   if(m_properties.contains("background-image")){
-                     background_image = m_properties["background-image"];
-                     m_properties.remove("background-image");
-                   }
-                   if(m_properties.contains("background-repeat")){
-                     background_repeat = m_properties["background-repeat"];
-                     m_properties.remove("background-repeat");
-                   }
-                   if(m_properties.contains("background-attachment")){
-                     background_attachment = m_properties["background-attachment"];
-                     m_properties.remove("background-attachment");
-                   }
-                   if(m_properties.contains("background-position")){
-                     background_position = m_properties["background-position"];
-                     m_properties.remove("background-position");
-                   }
-                   if(m_properties.contains("border-top-style")){
-                     border_top_style = m_properties["border-top-style"];
-                     m_properties.remove("border-top-style");
-                   }
-                   if(m_properties.contains("border-top-color")){
-                     border_top_color = m_properties["border-top-color"];
-                     m_properties.remove("border-top-color");
-                   }
-                   if(m_properties.contains("border-top-width")){
-                     border_top_width = m_properties["border-top-width"];
-                     m_properties.remove("border-top-width");
-                   }
-                   if(m_properties.contains("border-left-style")){
-                     border_left_style = m_properties["border-left-style"];
-                     m_properties.remove("border-left-style");
-                   }
-                   if(m_properties.contains("border-left-color")){
-                     border_left_color = m_properties["border-left-color"];
-                     m_properties.remove("border-left-color");
-                   }
-                   if(m_properties.contains("border-left-width")){
-                     border_left_width = m_properties["border-left-width"];
-                     m_properties.remove("border-left-width");
-                   }
-                   if(m_properties.contains("border-right-style")){
-                     border_right_style = m_properties["border-right-style"];
-                     m_properties.remove("border-right-style");
-                   }
-                   if(m_properties.contains("border-right-color")){
-                     border_right_color = m_properties["border-right-color"];
-                     m_properties.remove("border-right-color");
-                   }
-                   if(m_properties.contains("border-right-width")){
-                     border_right_width= m_properties["border-right-width"];
-                     m_properties.remove("border-right-width");
-                   }
-                   if(m_properties.contains("border-bottom-style")){
-                     border_bottom_style = m_properties["border-bottom-style"];
-                     m_properties.remove("border-bottom-style");
-                   }
-                   if(m_properties.contains("border-bottom-color")){
-                     border_bottom_color = m_properties["border-bottom-color"];
-                     m_properties.remove("border-bottom-color");
-                   }
-                   if(m_properties.contains("border-bottom-width")){
-                     border_bottom_width = m_properties["border-bottom-width"];
-                     m_properties.remove("border-bottom-width");
-                   }
-                   if(m_properties.contains("outline-style")){
-                     outline_style = m_properties["outline-style"];
-                     m_properties.remove("outline-style");
-                   }
-                   if(m_properties.contains("outline-color")){
-                     outline_color = m_properties["outline-color"];
-                     m_properties.remove("outline-color");
-                   }
-                   if(m_properties.contains("outline-width")){
-                     outline_width = m_properties["outline-width"];
-                     m_properties.remove("outline-width");
-                   }
-                   if(m_properties.contains("list-style-type")){
-                     list_style_type= m_properties["list-style-type"];
-                     m_properties.remove("list-style-type");
-                   }
-                   if(m_properties.contains("list-style-image")){
-                     list_style_image = m_properties["list-style-image"];
-                     m_properties.remove("list-style-image");
-                   }
-                   if(m_properties.contains("list-style-position")){
-                     list_style_position = m_properties["list-style-position"];
-                     m_properties.remove("list-style-position");
-                   }
-                   if(m_properties.contains("font-style")){
-                     font_style = m_properties["font-style"];
-                     m_properties.remove("font-style");
-                   }
-                   if(m_properties.contains("font-variant")){
-                     font_variant = m_properties["font-variant"];
-                     m_properties.remove("font-variant");
-                   }
-                   if(m_properties.contains("font-weight")){
-                     font_weight = m_properties["font-weight"];
-                     m_properties.remove("font-weight");
-                   }
-                   if(m_properties.contains("font-size")){
-                     font_size = m_properties["font-size"];
-                     m_properties.remove("font-size");
-                   }
-                   if(m_properties.contains("line-height")){
-                     line_height= m_properties["line-height"];
-                     m_properties.remove("line-height");
-                   }
-                   if(m_properties.contains("font-family")){
-                     font_family = m_properties["font-family"];
-                     m_properties.remove("font-family");
-                   }
-                   if(m_properties.contains("margin-top")){
-                     margin_top = m_properties["margin-top"];
-                     m_properties.remove("margin-top");
-                   }
-                   if(m_properties.contains("margin-bottom")){
-                     margin_bottom = m_properties["margin-bottom"];
-                     m_properties.remove("margin-bottom");
-                   }
-                   if(m_properties.contains("margin-left")){
-                     margin_left = m_properties["margin-left"];
-                     m_properties.remove("margin-left");
-                   }
-                   if(m_properties.contains("margin-right")){
-                     margin_right = m_properties["margin-right"];
-                     m_properties.remove("margin-right");
-                   }
-                   if(m_properties.contains("padding-top")){
-                     padding_top = m_properties["padding-top"];
-                     m_properties.remove("padding-top");
-                   }
-                   if(m_properties.contains("padding-bottom")){
-                     padding_bottom = m_properties["padding-bottom"];
-                     m_properties.remove("padding-bottom");
-                   }
-                   if(m_properties.contains("padding-left")){
-                     padding_left = m_properties["padding-left"];
-                     m_properties.remove("padding-left");
-                   }
-                   if(m_properties.contains("padding-right")){
-                     padding_right = m_properties["padding-right"];
-                     m_properties.remove("padding-right");
-                   }
-                
+  if(m_properties.contains("cue-after")){
+    cue_after= m_properties["cue-after"];
+    m_properties.remove("cue-after");
+  }
+  if(m_properties.contains("cue-before")){
+    cue_before = m_properties["cue-before"];
+    m_properties.remove("cue-before");
+  }
+  if(m_properties.contains("pause-before")){
+    pause_before= m_properties["pause-before"];
+    m_properties.remove("pause-before");
+  }
+  if(m_properties.contains("pause-after")){
+    pause_after = m_properties["pause-after"];
+    m_properties.remove("pause-after");
+  }
+  if(m_properties.contains("background-color")){
+    background_color = m_properties["background-color"];
+    m_properties.remove("background-color");
+  }
+  if(m_properties.contains("background-image")){
+    background_image = m_properties["background-image"];
+    m_properties.remove("background-image");
+  }
+  if(m_properties.contains("background-repeat")){
+    background_repeat = m_properties["background-repeat"];
+    m_properties.remove("background-repeat");
+  }
+  if(m_properties.contains("background-attachment")){
+    background_attachment = m_properties["background-attachment"];
+    m_properties.remove("background-attachment");
+  }
+  if(m_properties.contains("background-position")){
+    background_position = m_properties["background-position"];
+    m_properties.remove("background-position");
+  }
+  if(m_properties.contains("border-top-style")){
+    border_top_style = m_properties["border-top-style"];
+    m_properties.remove("border-top-style");
+  }
+  if(m_properties.contains("border-top-color")){
+    border_top_color = m_properties["border-top-color"];
+    m_properties.remove("border-top-color");
+  }
+  if(m_properties.contains("border-top-width")){
+    border_top_width = m_properties["border-top-width"];
+    m_properties.remove("border-top-width");
+  }
+  if(m_properties.contains("border-left-style")){
+    border_left_style = m_properties["border-left-style"];
+    m_properties.remove("border-left-style");
+  }
+  if(m_properties.contains("border-left-color")){
+    border_left_color = m_properties["border-left-color"];
+    m_properties.remove("border-left-color");
+  }
+  if(m_properties.contains("border-left-width")){
+    border_left_width = m_properties["border-left-width"];
+    m_properties.remove("border-left-width");
+  }
+  if(m_properties.contains("border-right-style")){
+    border_right_style = m_properties["border-right-style"];
+    m_properties.remove("border-right-style");
+  }
+  if(m_properties.contains("border-right-color")){
+    border_right_color = m_properties["border-right-color"];
+    m_properties.remove("border-right-color");
+  }
+  if(m_properties.contains("border-right-width")){
+    border_right_width= m_properties["border-right-width"];
+    m_properties.remove("border-right-width");
+  }
+  if(m_properties.contains("border-bottom-style")){
+    border_bottom_style = m_properties["border-bottom-style"];
+    m_properties.remove("border-bottom-style");
+  }
+  if(m_properties.contains("border-bottom-color")){
+    border_bottom_color = m_properties["border-bottom-color"];
+    m_properties.remove("border-bottom-color");
+  }
+  if(m_properties.contains("border-bottom-width")){
+    border_bottom_width = m_properties["border-bottom-width"];
+    m_properties.remove("border-bottom-width");
+  }
+  if(m_properties.contains("outline-style")){
+    outline_style = m_properties["outline-style"];
+    m_properties.remove("outline-style");
+  }
+  if(m_properties.contains("outline-color")){
+    outline_color = m_properties["outline-color"];
+    m_properties.remove("outline-color");
+  }
+  if(m_properties.contains("outline-width")){
+    outline_width = m_properties["outline-width"];
+    m_properties.remove("outline-width");
+  }
+  if(m_properties.contains("list-style-type")){
+    list_style_type= m_properties["list-style-type"];
+    m_properties.remove("list-style-type");
+  }
+  if(m_properties.contains("list-style-image")){
+    list_style_image = m_properties["list-style-image"];
+    m_properties.remove("list-style-image");
+  }
+  if(m_properties.contains("list-style-position")){
+    list_style_position = m_properties["list-style-position"];
+    m_properties.remove("list-style-position");
+  }
+  if(m_properties.contains("font-style")){
+    font_style = m_properties["font-style"];
+    m_properties.remove("font-style");
+  }
+  if(m_properties.contains("font-variant")){
+    font_variant = m_properties["font-variant"];
+    m_properties.remove("font-variant");
+  }
+  if(m_properties.contains("font-weight")){
+    font_weight = m_properties["font-weight"];
+    m_properties.remove("font-weight");
+  }
+  if(m_properties.contains("font-size")){
+    font_size = m_properties["font-size"];
+    m_properties.remove("font-size");
+  }
+  if(m_properties.contains("line-height")){
+    line_height= m_properties["line-height"];
+    m_properties.remove("line-height");
+  }
+  if(m_properties.contains("font-family")){
+    font_family = m_properties["font-family"];
+    m_properties.remove("font-family");
+  }
+  if(m_properties.contains("margin-top")){
+    margin_top = m_properties["margin-top"];
+    m_properties.remove("margin-top");
+  }
+  if(m_properties.contains("margin-bottom")){
+    margin_bottom = m_properties["margin-bottom"];
+    m_properties.remove("margin-bottom");
+  }
+  if(m_properties.contains("margin-left")){
+    margin_left = m_properties["margin-left"];
+    m_properties.remove("margin-left");
+  }
+  if(m_properties.contains("margin-right")){
+    margin_right = m_properties["margin-right"];
+    m_properties.remove("margin-right");
+  }
+  if(m_properties.contains("padding-top")){
+    padding_top = m_properties["padding-top"];
+    m_properties.remove("padding-top");
+  }
+  if(m_properties.contains("padding-bottom")){
+    padding_bottom = m_properties["padding-bottom"];
+    m_properties.remove("padding-bottom");
+  }
+  if(m_properties.contains("padding-left")){
+    padding_left = m_properties["padding-left"];
+    m_properties.remove("padding-left");
+  }
+  if(m_properties.contains("padding-right")){
+    padding_right = m_properties["padding-right"];
+    m_properties.remove("padding-right");
+  }
 }
 
 ShorthandFormer::~ShorthandFormer()
@@ -361,19 +359,12 @@ QString ShorthandFormer::compressPauseProp(){
 
 QString ShorthandFormer::compressBackgroundProp(){
   QString backgroundProp;
-  if( !background_color.isEmpty() ) 
-    backgroundProp += (" " + background_color );
-  if( !background_image.isEmpty() )
-    backgroundProp += (" " + background_image );       
-  if( !background_repeat.isEmpty() ) 
-    backgroundProp += (" " + background_repeat );
-  if( !background_attachment.isEmpty() ) 
-    backgroundProp += (" " + background_attachment );
-  if( !background_position.isEmpty() )                      
-    backgroundProp += (" " + background_position );   
-  if( !backgroundProp.isEmpty() )
-    return ( "background :" + backgroundProp + "; ");
-    
+  if( !background_color.isEmpty() ) backgroundProp += (" " + background_color );
+  if( !background_image.isEmpty() ) backgroundProp += (" " + background_image );       
+  if( !background_repeat.isEmpty() ) backgroundProp += (" " + background_repeat );
+  if( !background_attachment.isEmpty() ) backgroundProp += (" " + background_attachment );
+  if( !background_position.isEmpty() ) backgroundProp += (" " + background_position );   
+  if( !backgroundProp.isEmpty() ) return ( "background :" + backgroundProp + "; ");   
   return QString::null;    
 }    
 
@@ -382,7 +373,7 @@ QString ShorthandFormer::compressPaddingProp(){
 }
 
 QString ShorthandFormer::compressMarginProp(){  
- return compressImplementation( "margin" ,margin_top, margin_bottom, margin_right, margin_left, "0");  
+  return compressImplementation( "margin" ,margin_top, margin_bottom, margin_right, margin_left, "0");  
 }
 
 QString ShorthandFormer::compressOutlineProp(){
@@ -439,13 +430,13 @@ QString ShorthandFormer::compressImplementation( QString prop, QString t, QStrin
   
   switch( defaultValueOccurence ) {
     case 1: if( left == right ) props   += ( prop +" : " + defValue + " "+ right + " " + bottom + "; "); 
-                 else props   += ( prop +" : " + right + " " +bottom + " " + left +"; ");  
+                 else props   += ( prop +" : " + defValue + " " + right + " " +bottom + " " + left +"; ");  
                  break;
     case 2: if( left == right ) props   += ( prop +" : " + top + " " + right + " " + defValue + "; "); 
                  else props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue +"; ");  
                  break;
     case 3: if( left == right ) props   += ( prop +" : " + defValue +" " + right + "; "); 
-                 else props   += ( prop +" : " + defValue + " " + right + " " + defValue + " " + left +"; ");  
+                 else props   += ( prop +" : " + defValue + " " + right + " " + defValue + " " + left +"; ");
                  break;
     case 4: props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue + "; ");break;
     case 5: props   += ( prop +" : " + defValue + " " + right + " " + bottom + " " + defValue + "; ");break;
@@ -456,19 +447,24 @@ QString ShorthandFormer::compressImplementation( QString prop, QString t, QStrin
     case 10: props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + left +"; ");break;
     case 11: props   += ( prop +" : " + defValue + " " + defValue + " " + defValue + " " + left +"; ");break;
     case 12: if( top == bottom ) props   += ( prop +" : " + top + " " + defValue + "; "); 
-                   else props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + defValue+ "; ");  
+                   else props   += ( prop +" : " + top + " " + defValue + " " + bottom +  "; ");  
                    break;
-    case 13: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + " " + defValue + "; ");break;
-    case 14: props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + defValue +"; ");break;
+    case 13: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom +  "; ");break;
+    case 14: props   += ( prop +" : " + top + " " + defValue + " " + defValue + "; ");break;
     case 15: break;
-    default: if( !left.isEmpty() && !right.isEmpty() && !top.isEmpty() && !bottom.isEmpty())
-                   if( left == right && right == bottom && bottom == top  ) props   += ( prop +" : " + top +"; ");
-                   else
-                      if(  (top == bottom) && (left == right)) props   += ( prop +" : " + top + " " + right +"; ");
-                      else 
-                         if( (left == right) ) props  += ( prop + " : " + top + " " + right + " " + bottom + "; ");
-                         else props  += ( prop +" : " + top + " " + right + " " + bottom + " " + left +"; ");
-                   break;
+    default: if( !left.isEmpty() or !right.isEmpty() or !top.isEmpty() or !bottom.isEmpty())
+                  if( left == right && right == bottom && bottom == top  ) props   += ( prop +" : " + top +"; ");
+                  else
+                     if(  (top == bottom) && (left == right)) {
+                       if(left.isEmpty()) props   += ( prop +" : " + top + " " + defValue + " " + bottom +"; ");  
+                       else
+                         if(top.isEmpty()) props   += ( prop +" : " + defValue + " "+ left +"; ");  
+                           else props   += ( prop +" : " + top + " " + right +"; ");                   
+                     }
+                     else 
+                       if( (left == right) ) props  += ( prop + " : " + top + " " + right + " " + bottom + "; ");
+                       else props  += ( prop +" : " + top + " " + right + " " + bottom + " " + left +"; ");
+                    break;
   }                        
   return props;
 }
@@ -493,6 +489,7 @@ QMap<QString,QString> ShorthandFormer::expand( QString propertyName, QString pro
   if( propertyName == "border") return  expandBorderProp(foundValues);  
   if( propertyName == "padding") return  expandPaddingProp(foundValues);   
   if( propertyName == "margin") return  expandMarginProp(foundValues);  
+  return QMap<QString,QString>();//dummy instruction avoiding a pedantic warning; can never be reached
 }
 
 QMap<QString,QString> ShorthandFormer::expandCueProp(QStringList l){
@@ -535,26 +532,26 @@ QMap<QString,QString>  ShorthandFormer::expandBackgroundProp(QStringList l){
     QStringList::Iterator it = l.begin();
 
     while (  it != l.end() ) {  
-      if( (*it).contains("url(") || ((*it).stripWhiteSpace()) == "none" || ((*it).stripWhiteSpace()) == "inherit" ){
+      if( (*it).contains("url(") or ((*it).stripWhiteSpace()) == "none" or ((*it).stripWhiteSpace()) == "inherit" ){
         expandedProps["background-image"] = (*it);
       }
       else
-      if( ((*it).stripWhiteSpace()) == "repeat" || ((*it).stripWhiteSpace()) == "repeat-x" || ((*it).stripWhiteSpace()) == "repeat-y" || ((*it).stripWhiteSpace()) == "no-repeat" || ((*it).stripWhiteSpace()) == "inherit" ) {
+      if( ((*it).stripWhiteSpace()) == "repeat" or ((*it).stripWhiteSpace()) == "repeat-x" or ((*it).stripWhiteSpace()) == "repeat-y" or ((*it).stripWhiteSpace()) == "no-repeat" or ((*it).stripWhiteSpace()) == "inherit" ) {
         expandedProps["background-repeat"] = (*it);
       }
       else
-      if( ((*it).stripWhiteSpace()) == "scroll" || ((*it).stripWhiteSpace()) == "fixed" || ((*it).stripWhiteSpace()) == "inherit"){
+      if( ((*it).stripWhiteSpace()) == "scroll" or ((*it).stripWhiteSpace()) == "fixed" or ((*it).stripWhiteSpace()) == "inherit"){
         expandedProps["background-attachment"] = (*it);
       }
       else
-      if( ((*it).stripWhiteSpace()) == "top" || ((*it).stripWhiteSpace()) == "center" || ((*it).stripWhiteSpace()) == "bottom" || ((*it).stripWhiteSpace()) == "left" || ((*it).stripWhiteSpace()) == "right" || (*it).contains(percentagePattern) || (*it).contains(lengthPattern) || ((*it).stripWhiteSpace()) == "inherit"){
+      if( ((*it).stripWhiteSpace()) == "top" or ((*it).stripWhiteSpace()) == "center" or ((*it).stripWhiteSpace()) == "bottom" or ((*it).stripWhiteSpace()) == "left" or ((*it).stripWhiteSpace()) == "right" or (*it).contains(percentagePattern) or (*it).contains(lengthPattern) or ((*it).stripWhiteSpace()) == "inherit"){
         if( expandedProps.contains("background-position") )
           expandedProps["background-position"] = ( expandedProps["background-position"] + " " + ((*it)) );
         else    
           expandedProps["background-position"] = (*it);
       }
       else
-      if( (*it).contains(colorPattern) || HTMLColorList.contains((*it))!=0 || ((*it).stripWhiteSpace()) == "transparent" || ((*it).stripWhiteSpace()) == "inherit" ){
+      if( (*it).contains(colorPattern) or HTMLColorList.contains((*it))!=0 or ((*it).stripWhiteSpace()) == "transparent" or ((*it).stripWhiteSpace()) == "inherit" ){
         expandedProps["background-color"] = (*it);
       }  
       ++it;  
@@ -612,23 +609,23 @@ QMap<QString,QString>  ShorthandFormer::expandFontProp(QStringList l){
    else {               
    QStringList::Iterator it = l.begin();
     while (  it != l.end() ) { 
-      if( ((*it).stripWhiteSpace()) == "oblique" || ((*it).stripWhiteSpace()) == "italic" || ((*it).stripWhiteSpace()) == "normal" || ((*it).stripWhiteSpace()) == "inherit" ){
+      if( ((*it).stripWhiteSpace()) == "oblique" or ((*it).stripWhiteSpace()) == "italic" or ((*it).stripWhiteSpace()) == "normal" or ((*it).stripWhiteSpace()) == "inherit" ){
         expandedProps["font-style"] = (*it);
       }       
       else
-      if( ((*it).stripWhiteSpace()) == "normal" || ((*it).stripWhiteSpace()) == "small-caps" || ((*it).stripWhiteSpace()) == "inherit"){
+      if( ((*it).stripWhiteSpace()) == "normal" or ((*it).stripWhiteSpace()) == "small-caps" or ((*it).stripWhiteSpace()) == "inherit"){
           expandedProps["font-variant"] = (*it) ;
       }      
       else
-      if( ((*it).stripWhiteSpace()) == "900" || ((*it).stripWhiteSpace()) == "800" || ((*it).stripWhiteSpace()) == "700" || ((*it).stripWhiteSpace()) == "600" || ((*it).stripWhiteSpace()) == "500" || ((*it).stripWhiteSpace()) == "400" || ((*it).stripWhiteSpace()) == "300" || ((*it).stripWhiteSpace()) == "200" || ((*it).stripWhiteSpace()) == "100" || ((*it).stripWhiteSpace()) == "lighter" || ((*it).stripWhiteSpace()) == "bolder" || ((*it).stripWhiteSpace()) == "normal" || ((*it).stripWhiteSpace()) == "bold" || ((*it).stripWhiteSpace()) == "inherit"){
+      if( ((*it).stripWhiteSpace()) == "900" or ((*it).stripWhiteSpace()) == "800" or ((*it).stripWhiteSpace()) == "700" or ((*it).stripWhiteSpace()) == "600" or ((*it).stripWhiteSpace()) == "500" or ((*it).stripWhiteSpace()) == "400" or ((*it).stripWhiteSpace()) == "300" or ((*it).stripWhiteSpace()) == "200" or ((*it).stripWhiteSpace()) == "100" or ((*it).stripWhiteSpace()) == "lighter" or ((*it).stripWhiteSpace()) == "bolder" or ((*it).stripWhiteSpace()) == "normal" or ((*it).stripWhiteSpace()) == "bold" or ((*it).stripWhiteSpace()) == "inherit"){
         expandedProps["font-weight"] = (*it);
       }
       else
-      if( ((*it).stripWhiteSpace()) == "smaller" || ((*it).stripWhiteSpace()) == "larger" || ((*it).stripWhiteSpace()) == "xx-large" || ((*it).stripWhiteSpace()) == "x-large" || ((*it).stripWhiteSpace()) == "large" || ((*it).stripWhiteSpace()) == "medium" || ((*it).stripWhiteSpace()) == "small" || ((*it).stripWhiteSpace()) == "x-small" || ((*it).stripWhiteSpace()) == "xx-small" || ((*it).stripWhiteSpace()) == "inherit" ){
+      if( ((*it).stripWhiteSpace()) == "smaller" or ((*it).stripWhiteSpace()) == "larger" or ((*it).stripWhiteSpace()) == "xx-large" or ((*it).stripWhiteSpace()) == "x-large" or ((*it).stripWhiteSpace()) == "large" or ((*it).stripWhiteSpace()) == "medium" or ((*it).stripWhiteSpace()) == "small" or ((*it).stripWhiteSpace()) == "x-small" or ((*it).stripWhiteSpace()) == "xx-small" or ((*it).stripWhiteSpace()) == "inherit" ){
         expandedProps["font-size"] = (*it);
       }
       else
-      if( (*it).contains(percentagePattern) || (*it).contains(numberPattern) || (*it).contains(lengthPattern) || (*it).stripWhiteSpace() == "/normal" || (*it).stripWhiteSpace() == "/inherit" ) {
+      if( (*it).contains(percentagePattern) or (*it).contains(numberPattern) or (*it).contains(lengthPattern) or (*it).stripWhiteSpace() == "/normal" or (*it).stripWhiteSpace() == "/inherit" ) {
         expandedProps["line-height"] = ((*it).remove('/'));
       }
       else
@@ -643,15 +640,15 @@ QMap<QString,QString> ShorthandFormer::expandListstyleProp( QStringList l){
   QMap<QString,QString> expandedProps;
   QStringList::Iterator it = l.begin();
      while (  it != l.end() ) { 
-      if( (*it).contains("url(") || ((*it).stripWhiteSpace()) == "none" || ((*it).stripWhiteSpace()) == "inherit" ){
+      if( (*it).contains("url(") or ((*it).stripWhiteSpace()) == "none" or ((*it).stripWhiteSpace()) == "inherit" ){
         expandedProps["list-style-image"] = (*it);
       }       
       else
-      if( ((*it).stripWhiteSpace()) == "disc" || ((*it).stripWhiteSpace()) == "circle" || ((*it).stripWhiteSpace()) == "square" || ((*it).stripWhiteSpace()) == "decimal" || ((*it).stripWhiteSpace()) == "decimal-leading-zero" || ((*it).stripWhiteSpace()) == "lower-roman" || ((*it).stripWhiteSpace()) == "upper-roman" || ((*it).stripWhiteSpace()) == "lower-greek" || ((*it).stripWhiteSpace()) == "lower-alpha" || ((*it).stripWhiteSpace()) == "lower-latin" || ((*it).stripWhiteSpace()) == "upper-alpha" || ((*it).stripWhiteSpace()) == "upper-latin" || ((*it).stripWhiteSpace()) == "hebrew" || ((*it).stripWhiteSpace()) == "armenian" || ((*it).stripWhiteSpace()) == "georgian" || ((*it).stripWhiteSpace()) == "cjk-ideographic" || ((*it).stripWhiteSpace()) == "hiragana" || ((*it).stripWhiteSpace()) == "katakana" || ((*it).stripWhiteSpace()) == "hiragana-iroha" || ((*it).stripWhiteSpace()) == "katakana-iroha" || ((*it).stripWhiteSpace()) == "none" || ((*it).stripWhiteSpace()) == "inherit"){
+      if( ((*it).stripWhiteSpace()) == "disc" or ((*it).stripWhiteSpace()) == "circle" or ((*it).stripWhiteSpace()) == "square" or ((*it).stripWhiteSpace()) == "decimal" or ((*it).stripWhiteSpace()) == "decimal-leading-zero" or ((*it).stripWhiteSpace()) == "lower-roman" or ((*it).stripWhiteSpace()) == "upper-roman" or ((*it).stripWhiteSpace()) == "lower-greek" or ((*it).stripWhiteSpace()) == "lower-alpha" or ((*it).stripWhiteSpace()) == "lower-latin" or ((*it).stripWhiteSpace()) == "upper-alpha" or ((*it).stripWhiteSpace()) == "upper-latin" or ((*it).stripWhiteSpace()) == "hebrew" or ((*it).stripWhiteSpace()) == "armenian" or ((*it).stripWhiteSpace()) == "georgian" or ((*it).stripWhiteSpace()) == "cjk-ideographic" or ((*it).stripWhiteSpace()) == "hiragana" or ((*it).stripWhiteSpace()) == "katakana" or ((*it).stripWhiteSpace()) == "hiragana-iroha" or ((*it).stripWhiteSpace()) == "katakana-iroha" or ((*it).stripWhiteSpace()) == "none" or ((*it).stripWhiteSpace()) == "inherit"){
           expandedProps["list-style-type"] = (*it) ;
       }      
       else
-      if( ((*it).stripWhiteSpace()) == "inside" || ((*it).stripWhiteSpace()) == "outside" || ((*it).stripWhiteSpace()) == "inherit"){
+      if( ((*it).stripWhiteSpace()) == "inside" or ((*it).stripWhiteSpace()) == "outside" or ((*it).stripWhiteSpace()) == "inherit"){
         expandedProps["list-style-position"] = (*it);
       }
       ++it;  
@@ -665,25 +662,25 @@ QMap<QString,QString>  ShorthandFormer::expandOutlineProp( QStringList l){
                     colorPattern("#[\\w\\d]{6}");
   QStringList::Iterator it = l.begin();
      while (  it != l.end() ) { 
-      if( ((*it).stripWhiteSpace()) == "none" || 
-      ((*it).stripWhiteSpace()) == "hidden" || 
-      ((*it).stripWhiteSpace()) == "dotted" || 
-      ((*it).stripWhiteSpace()) == "dashed" || 
-      ((*it).stripWhiteSpace()) == "solid" || 
-      ((*it).stripWhiteSpace()) == "double" || 
-      ((*it).stripWhiteSpace()) == "groove" ||
-      ((*it).stripWhiteSpace()) == "ridge" ||
-      ((*it).stripWhiteSpace()) == "inset" ||
-      ((*it).stripWhiteSpace()) == "outset" ||    
+      if( ((*it).stripWhiteSpace()) == "none" or 
+      ((*it).stripWhiteSpace()) == "hidden" or 
+      ((*it).stripWhiteSpace()) == "dotted" or 
+      ((*it).stripWhiteSpace()) == "dashed" or 
+      ((*it).stripWhiteSpace()) == "solid" or 
+      ((*it).stripWhiteSpace()) == "double" or 
+      ((*it).stripWhiteSpace()) == "groove" or
+      ((*it).stripWhiteSpace()) == "ridge" or
+      ((*it).stripWhiteSpace()) == "inset" or
+      ((*it).stripWhiteSpace()) == "outset" or    
       ((*it).stripWhiteSpace()) == "inherit" ){
         expandedProps["outline-style"] = (*it);
       }       
       else
-      if(  (*it).contains(colorPattern) || HTMLColorList.contains((*it))!=0 || ((*it).stripWhiteSpace()) == "invert" || ((*it).stripWhiteSpace()) == "inherit"){
+      if(  (*it).contains(colorPattern) or HTMLColorList.contains((*it))!=0 or ((*it).stripWhiteSpace()) == "invert" or ((*it).stripWhiteSpace()) == "inherit"){
           expandedProps["outline-color"] = (*it) ;
       }      
       else
-      if( (*it).contains(lengthPattern) || ((*it).stripWhiteSpace()) == "thin" || ((*it).stripWhiteSpace()) == "medium" || ((*it).stripWhiteSpace()) == "thick" || ((*it).stripWhiteSpace()) == "inherit"){
+      if( (*it).contains(lengthPattern) or ((*it).stripWhiteSpace()) == "thin" or ((*it).stripWhiteSpace()) == "medium" or ((*it).stripWhiteSpace()) == "thick" or ((*it).stripWhiteSpace()) == "inherit"){
         expandedProps["outline-width"] = (*it);
       }
       ++it;  
@@ -697,25 +694,25 @@ QMap<QString,QString>  ShorthandFormer::expandBoxSide(QString subPropName, QStri
                     colorPattern("#[\\w\\d]{6}");
   QStringList::Iterator it = l.begin();                  
      while (  it != l.end() ) { 
-      if( ((*it).stripWhiteSpace()) == "none" || 
-      ((*it).stripWhiteSpace()) == "hidden" || 
-      ((*it).stripWhiteSpace()) == "dotted" || 
-      ((*it).stripWhiteSpace()) == "dashed" || 
-      ((*it).stripWhiteSpace()) == "solid" || 
-      ((*it).stripWhiteSpace()) == "double" || 
-      ((*it).stripWhiteSpace()) == "groove" ||
-      ((*it).stripWhiteSpace()) == "ridge" ||
-      ((*it).stripWhiteSpace()) == "inset" ||
-      ((*it).stripWhiteSpace()) == "outset" ||    
+      if( ((*it).stripWhiteSpace()) == "none" or 
+      ((*it).stripWhiteSpace()) == "hidden" or 
+      ((*it).stripWhiteSpace()) == "dotted" or 
+      ((*it).stripWhiteSpace()) == "dashed" or 
+      ((*it).stripWhiteSpace()) == "solid" or 
+      ((*it).stripWhiteSpace()) == "double" or 
+      ((*it).stripWhiteSpace()) == "groove" or
+      ((*it).stripWhiteSpace()) == "ridge" or
+      ((*it).stripWhiteSpace()) == "inset" or
+      ((*it).stripWhiteSpace()) == "outset" or    
       ((*it).stripWhiteSpace()) == "inherit" ){
         expandedProps[subPropName + "-style"] = (*it);
       }       
       else
-      if(  (*it).contains(colorPattern) || HTMLColorList.contains((*it))!=0 || ((*it).stripWhiteSpace()) == "transparent" || ((*it).stripWhiteSpace()) == "inherit"){
+      if(  (*it).contains(colorPattern) or HTMLColorList.contains((*it))!=0 or ((*it).stripWhiteSpace()) == "transparent" or ((*it).stripWhiteSpace()) == "inherit"){
           expandedProps[subPropName + "-color"] = (*it) ;
       }      
       else
-      if( (*it).contains(lengthPattern) || ((*it).stripWhiteSpace()) == "thin" || ((*it).stripWhiteSpace()) == "medium" || ((*it).stripWhiteSpace()) == "thick" || ((*it).stripWhiteSpace()) == "inherit"){
+      if( (*it).contains(lengthPattern) or ((*it).stripWhiteSpace()) == "thin" or ((*it).stripWhiteSpace()) == "medium" or ((*it).stripWhiteSpace()) == "thick" or ((*it).stripWhiteSpace()) == "inherit"){
         expandedProps[subPropName + "-width"] = (*it);
       }
       ++it;  
@@ -729,16 +726,16 @@ QMap<QString,QString>  ShorthandFormer::expandBorderProp(QStringList l){
                     colorPattern("#[\\w\\d]{6}");
   QStringList::Iterator it = l.begin();                  
      while (  it != l.end() ) { 
-      if( ((*it).stripWhiteSpace()) == "none" || 
-      ((*it).stripWhiteSpace()) == "hidden" || 
-      ((*it).stripWhiteSpace()) == "dotted" || 
-      ((*it).stripWhiteSpace()) == "dashed" || 
-      ((*it).stripWhiteSpace()) == "solid" || 
-      ((*it).stripWhiteSpace()) == "double" || 
-      ((*it).stripWhiteSpace()) == "groove" ||
-      ((*it).stripWhiteSpace()) == "ridge" ||
-      ((*it).stripWhiteSpace()) == "inset" ||
-      ((*it).stripWhiteSpace()) == "outset" ||    
+      if( ((*it).stripWhiteSpace()) == "none" or 
+      ((*it).stripWhiteSpace()) == "hidden" or 
+      ((*it).stripWhiteSpace()) == "dotted" or 
+      ((*it).stripWhiteSpace()) == "dashed" or 
+      ((*it).stripWhiteSpace()) == "solid" or 
+      ((*it).stripWhiteSpace()) == "double" or 
+      ((*it).stripWhiteSpace()) == "groove" or
+      ((*it).stripWhiteSpace()) == "ridge" or
+      ((*it).stripWhiteSpace()) == "inset" or
+      ((*it).stripWhiteSpace()) == "outset" or    
       ((*it).stripWhiteSpace()) == "inherit" ){
         expandedProps["border-top-style"] = (*it);
         expandedProps["border-left-style"] = (*it);
@@ -746,14 +743,18 @@ QMap<QString,QString>  ShorthandFormer::expandBorderProp(QStringList l){
         expandedProps["border-bottom-style"] = (*it);
       }       
       else
-      if(  (*it).contains(colorPattern) || HTMLColorList.contains((*it))!=0 || ((*it).stripWhiteSpace()) == "transparent" || ((*it).stripWhiteSpace()) == "inherit"){
+      if(  (*it).contains(colorPattern) or 
+           HTMLColorList.contains((*it))!=0 or 
+           ((*it).stripWhiteSpace()) == "transparent" or 
+           ((*it).stripWhiteSpace()) == "inherit")
+           {
           expandedProps["border-top-color"] = (*it);
           expandedProps["border-left-color"] = (*it);
           expandedProps["border-right-color"] = (*it);
           expandedProps["border-bottom-color"] = (*it);
       }      
       else
-      if( (*it).contains(lengthPattern) || ((*it).stripWhiteSpace()) == "thin" || ((*it).stripWhiteSpace()) == "medium" || ((*it).stripWhiteSpace()) == "thick" || ((*it).stripWhiteSpace()) == "inherit"){
+      if( (*it).contains(lengthPattern) or ((*it).stripWhiteSpace()) == "thin" or ((*it).stripWhiteSpace()) == "medium" or ((*it).stripWhiteSpace()) == "thick" or ((*it).stripWhiteSpace()) == "inherit"){
         expandedProps["border-top-width"] = (*it);
         expandedProps["border-left-width"] = (*it);
         expandedProps["border-right-width"] = (*it);

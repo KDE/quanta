@@ -31,6 +31,7 @@
 #include <qfiledialog.h> 
 #include <kstandarddirs.h>
 #include <klocale.h>
+#include <kdebug.h>
 #include "csseditor_globals.h"
 //#include "resource.h"
 //#include "quanta.h"
@@ -213,8 +214,7 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
   if(lv != lvTags){
     temp = lvTags->firstChild();
     while(temp){
-      if(temp)
-        s+=(temp->text(0)+" { "+temp->text(1)+" } ");
+      if(temp) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
       temp = temp->nextSibling();
     }
 
@@ -223,8 +223,7 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
   if(lv != lvIDs){
     temp = lvIDs->firstChild();
     while(temp){
-      if(temp)
-        s+=(temp->text(0)+" { "+temp->text(1)+" } ");
+      if(temp) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
       temp = temp->nextSibling();
     }
   }
@@ -232,8 +231,7 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
   if(lv != lvClasses){
     temp = lvClasses->firstChild();
     while(temp){
-      if(temp)
-        s+=(temp->text(0)+" { "+temp->text(1)+" } ");
+      if(temp) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
       temp = temp->nextSibling();
     }
   }
@@ -241,8 +239,7 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
   if(lv != lvPseudo){
     temp = lvPseudo->firstChild();
     while(temp){
-      if(temp)
-        s+=(temp->text(0)+" { "+temp->text(1)+" } ");
+      if(temp) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
       temp = temp->nextSibling();
     }
   }
@@ -251,9 +248,7 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
 
 
   while(temp){
-    if(temp != i) {
-      s+=(temp->text(0)+" { "+temp->text(1)+" } ");
-    }
+    if(temp != i) s+=(temp->text(0)+" { "+temp->text(1)+" } ");
     temp = temp->nextSibling();
   }
 
@@ -263,9 +258,7 @@ void CSSSelector::openCSSEditor(QListViewItem * i){
   dlg->setSelectors(s);
   dlg->setFooter(m_footer);
   dlg->initialize();
-  if(dlg->exec()){
-     i->setText(1,dlg->generateProperties());
-  }
+  if(dlg->exec())  i->setText(1,dlg->generateProperties());
   delete dlg;
 }
 

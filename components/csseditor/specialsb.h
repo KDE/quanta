@@ -2,8 +2,8 @@
                           specialsb.h  -  description
                              -------------------
     begin                : dom ago 3 2003
-    copyright            : (C) 2003 by simone
-    email                : simone@localhost
+    copyright            : (C) 2003 by Gulmini Luciano
+    email                : gulmini.luciano@student.unife.it
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,17 +20,17 @@
 
 #include <qhbox.h>
 #include <qcombobox.h>
+class mySpinBox;
 
 /**
-  *@author simone
+  *@author gulmini luciano
   */
-class QSpinBox;
-  
+ 
 class specialSB : public QHBox {
     Q_OBJECT
   protected:
     QComboBox *m_cb;
-    QSpinBox  *m_sb;
+    mySpinBox  *m_sb;
  
   private:
     QString m_cbValue,
@@ -40,9 +40,11 @@ class specialSB : public QHBox {
            specialSB(QWidget *parent=0, const char *name=0);
            ~specialSB();
      void insertItem(QString s){ m_cb->insertItem(s); }
+     
    public slots:
      void cbValueSlot(const QString&);
      void sbValueSlot(const QString&);
+     
    signals:
      void valueChanged(const QString&);
 

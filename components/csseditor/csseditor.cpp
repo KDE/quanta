@@ -20,11 +20,9 @@
 #include <qtabwidget.h>
 #include <qfile.h>
 #include <qpushbutton.h>
-#include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qtextedit.h>
-#include <qhbox.h>
 #include <qregexp.h>
 #include <qtextstream.h>
 #include <qmap.h>
@@ -33,7 +31,6 @@
 #include <khtml_part.h>
 #include <khtmlview.h>
 #include <kstandarddirs.h>
-#include <ktempfile.h>
 
 #include "propertysetter.h"
 #include "qmyhighlighter.h"
@@ -263,10 +260,11 @@ void CSSEditor::initialize()
       ShorthandFormer decompressor;
       QMap<QString,QString> expandedProperties = decompressor.expand(propertyName, propertyValue );
       QMap<QString,QString>::Iterator it;
-      for ( it = expandedProperties.begin(); it != expandedProperties.end(); ++it ) {
-        addAndSetPropertyOn( it.key(), it.data() );
-        temp += ( it.key() + " : " + it.data() + ";\n\t");      
-      }
+      
+        for ( it = expandedProperties.begin(); it != expandedProperties.end(); ++it ) {
+          addAndSetPropertyOn( it.key(), it.data() );
+          temp += ( it.key() + " : " + it.data() + ";\n\t");      
+        }
     }    
     }  
     temp.truncate(temp.length()-1);
@@ -451,9 +449,7 @@ QString CSSEditor::generateProperties(){
   QString props;
   QMap<QString,QString>::Iterator it;
   if(!SHckb->isChecked()) {
-    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) {
-       props+=( it.key() + " : " + it.data() + "; " );
-    }
+    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) props+=( it.key() + " : " + it.data() + "; " );    
     props.truncate(props.length()-1);//the last white space creates some problem: better remove it
     return props;  
   }  

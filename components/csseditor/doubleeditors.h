@@ -2,8 +2,8 @@
                           doubleeditors.h  -  description
                              -------------------
     begin                : dom ago 3 2003
-    copyright            : (C) 2003 by simone
-    email                : simone@localhost
+    copyright            : (C) 2003 by gulmini luciano
+    email                : gulmini.luciano@student.unife.it
  ***************************************************************************/
 
 /***************************************************************************
@@ -17,6 +17,8 @@
  #ifndef DOUBLEEDITORS_H
  #define DOUBLEEDITORS_H
  #include <qhbox.h>
+ 
+ class mySpinBox;
  class specialSB;
  class QSpinBox;
  class QComboBox;
@@ -26,6 +28,7 @@ class doubleEditorBase : public QHBox {
   protected:
     QString   m_sxValue,
                    m_dxValue;
+                   
   public:
     doubleEditorBase(QWidget *parent=0, const char *name=0);
     virtual ~doubleEditorBase(){}
@@ -41,8 +44,9 @@ class doubleEditorBase : public QHBox {
 class doublePercentageEditor : public doubleEditorBase {
     Q_OBJECT
   private:
-    QSpinBox  *m_sbSx,
+    mySpinBox  *m_sbSx,
                       *m_sbDx;
+                      
   public:
     doublePercentageEditor(QWidget *parent=0, const char *name=0);
     virtual ~doublePercentageEditor();
@@ -53,6 +57,7 @@ class doubleComboBoxEditor : public doubleEditorBase {
   private:
     QComboBox *m_cbSx,
                          *m_cbDx;
+                         
   public:
     doubleComboBoxEditor(QWidget *parent=0, const char *name=0);
     virtual ~doubleComboBoxEditor();

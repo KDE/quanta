@@ -2,8 +2,8 @@
                           doubleeditors.cpp  -  description
                              -------------------
     begin                : dom ago 3 2003
-    copyright            : (C) 2003 by simone
-    email                : simone@localhost
+    copyright            : (C) 2003 by gulmini luciano
+    email                : gulmini.luciano@student.unife.it
  ***************************************************************************/
 
 /***************************************************************************
@@ -17,7 +17,7 @@
  #include "doubleeditors.h"
  #include "specialsb.h"
  #include <qcombobox.h>
- #include <qspinbox.h>
+ #include "csseditor_globals.h"
  
 doubleEditorBase::doubleEditorBase(QWidget *parent, const char *name) : QHBox(parent,name){
 }
@@ -32,8 +32,7 @@ void doubleEditorBase::dxValueSlot(const QString& v){
   emit valueChanged( m_sxValue +" " + m_dxValue);
 } 
  
- doubleLengthEditor::doubleLengthEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name)
-{
+ doubleLengthEditor::doubleLengthEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name){
   m_ssbSx = new specialSB(this);
   m_ssbSx->insertItem("cm");
   m_ssbSx->insertItem("em");
@@ -58,38 +57,33 @@ void doubleEditorBase::dxValueSlot(const QString& v){
   connect(m_ssbDx, SIGNAL(valueChanged(const QString&)), this, SLOT(dxValueSlot(const QString&)));
 }
 
-doubleLengthEditor::~doubleLengthEditor()
-{
+doubleLengthEditor::~doubleLengthEditor(){
   delete m_ssbSx;
   delete m_ssbDx;
 }
 
-doubleComboBoxEditor::doubleComboBoxEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name)
-{
+doubleComboBoxEditor::doubleComboBoxEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name){
   m_cbSx = new QComboBox(this);
   m_cbDx = new QComboBox(this);
   connect(m_cbSx, SIGNAL(activated ( const QString & )), this, SLOT(sxValueSlot(const QString&)));
   connect(m_cbDx, SIGNAL(activated ( const QString & )), this, SLOT(dxValueSlot(const QString&)));
 }
 
-doubleComboBoxEditor::~doubleComboBoxEditor()
-{
+doubleComboBoxEditor::~doubleComboBoxEditor(){
   delete m_cbSx;
   delete m_cbDx;
 }
 
-doublePercentageEditor::doublePercentageEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name)
-{
-  m_sbSx = new QSpinBox(this);
-  m_sbDx = new QSpinBox(this);
+doublePercentageEditor::doublePercentageEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name){
+  m_sbSx = new mySpinBox(this);
+  m_sbDx = new mySpinBox(this);
   m_sbSx->setSuffix("%");
   m_sbDx->setSuffix("%");
   connect(m_sbSx,SIGNAL(valueChanged(const QString&)),this,SLOT(sxValueSlot(const QString&)));
   connect(m_sbDx,SIGNAL(valueChanged(const QString&)),this,SLOT(dxValueSlot(const QString&)));
 }
 
-doublePercentageEditor::~doublePercentageEditor()
-{
+doublePercentageEditor::~doublePercentageEditor(){
   delete m_sbSx;
   delete m_sbDx;
 }

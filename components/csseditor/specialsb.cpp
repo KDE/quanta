@@ -2,8 +2,8 @@
                           specialsb.cpp  -  description
                              -------------------
     begin                : dom ago 3 2003
-    copyright            : (C) 2003 by simone
-    email                : simone@localhost
+    copyright            : (C) 2003 by gulmini luciano
+    email                : gulmini.luciano@student.unife.it
  ***************************************************************************/
 
 /***************************************************************************
@@ -16,15 +16,13 @@
  ***************************************************************************/
 
 #include "specialsb.h"
-#include <qcombobox.h>
-#include <qspinbox.h>
+#include "csseditor_globals.h"
 
 specialSB::specialSB(QWidget *parent, const char *name ) : QHBox(parent,name) {
-  m_sb=new QSpinBox(this);
+  m_sb=new mySpinBox(this);
   m_cb=new QComboBox(this);
   connect(m_cb, SIGNAL(activated ( const QString & )), this, SLOT(cbValueSlot(const QString&)));
   connect(m_sb, SIGNAL(valueChanged ( const QString & )), this, SLOT(sbValueSlot(const QString&)));
-
 }
 
 specialSB::~specialSB(){
@@ -33,44 +31,43 @@ specialSB::~specialSB(){
 }
 
 void specialSB::cbValueSlot(const QString& s){
-  m_cbValue=s;
-  emit valueChanged( m_sbValue + m_cbValue );
+  emit valueChanged( m_sb->text() +s );
 }
+
 void specialSB::sbValueSlot(const QString& s){
-  m_sbValue=s;
-  emit valueChanged( m_sbValue + m_cbValue);
+  emit valueChanged( s + m_cb->currentText());
 }
 
 frequencyEditor::frequencyEditor(QWidget *parent, const char *name ) : specialSB(parent,name) {
-  /*getComboBox()*/m_cb->insertItem("Hz");
-  /*getComboBox()*/m_cb->insertItem("kHz");
-  /*getSpinBox()*/m_sb->setMaxValue(9999);
+  m_cb->insertItem("Hz");
+  m_cb->insertItem("kHz");
+  m_sb->setMaxValue(9999);
 }
 
 angleEditor::angleEditor(QWidget *parent, const char *name) : specialSB(parent,name){
-  /*getComboBox()*/m_cb->insertItem("deg");
-  /*getComboBox()*/m_cb->insertItem("grad");
-  /*getComboBox()*/m_cb->insertItem("rad");
-  /*getSpinBox()*/m_sb->setMaxValue(-360);
-  /*getSpinBox()*/m_sb->setMaxValue(360);
+  m_cb->insertItem("deg");
+  m_cb->insertItem("grad");
+  m_cb->insertItem("rad");
+  m_sb->setMaxValue(-400);
+  m_sb->setMaxValue(400);
 }
 
 timeEditor::timeEditor(QWidget *parent, const char *name ) : specialSB(parent,name) {
-  /*getComboBox()*/m_cb->insertItem("ms");
-  /*getComboBox()*/m_cb->insertItem("s");
-  /*getSpinBox()*/m_sb->setMaxValue(99999);
+  m_cb->insertItem("ms");
+  m_cb->insertItem("s");
+  m_sb->setMaxValue(99999);
 }
 
 lengthEditor::lengthEditor(QWidget *parent, const char *name ) : specialSB(parent,name) {
-  /*getComboBox()*/m_cb->insertItem("px");
-  /*getComboBox()*/m_cb->insertItem("em");
-  /*getComboBox()*/m_cb->insertItem("ex");
-  /*getComboBox()*/m_cb->insertItem("in");
-  /*getComboBox()*/m_cb->insertItem("cm");
-  /*getComboBox()*/m_cb->insertItem("mm");
-  /*getComboBox()*/m_cb->insertItem("pt");
-  /*getComboBox()*/m_cb->insertItem("pc");
-  /*getSpinBox()*/m_sb->setMaxValue(99999);
+  m_cb->insertItem("px");
+  m_cb->insertItem("em");
+  m_cb->insertItem("ex");
+  m_cb->insertItem("in");
+  m_cb->insertItem("cm");
+  m_cb->insertItem("mm");
+  m_cb->insertItem("pt");
+  m_cb->insertItem("pc");
+  m_sb->setMaxValue(99999);
 }
 
 

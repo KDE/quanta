@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 #include "qmyhighlighter.h"
-#include <qtextedit.h>
 #include <qregexp.h>
 QMyHighlighter::QMyHighlighter(QTextEdit* Qtxt):QSyntaxHighlighter(Qtxt){
 }

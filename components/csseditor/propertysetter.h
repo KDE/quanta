@@ -2,8 +2,8 @@
                           propertysetter.h  -  description
                              -------------------
     begin                : gio lug 24 2003
-    copyright            : (C) 2003 by simone
-    email                : simone@localhost
+    copyright            : (C) 2003 by gulmini luciano
+    email                : gulmini.luciano@student.unife.it
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,7 +18,6 @@
 #ifndef PROPERTYSETTER_H
 #define PROPERTYSETTER_H
 
-#include <qwidget.h>
 #include <qhbox.h>
 #include <kurlrequester.h>
 #include <qptrlist.h>
@@ -26,7 +25,7 @@
 #include <qcombobox.h>
 class QLabel;
 class QLineEdit;
-class QSpinBox;
+class mySpinBox;
 class QStringList;
 class KPushButton;
 class angleEditor;
@@ -95,15 +94,13 @@ class URIEditor : public TLPEditor {
 class percentageEditor : public QHBox  {
      Q_OBJECT
    private:
-     QSpinBox *sb;
+     mySpinBox *m_sb;
    public:
            percentageEditor(QWidget *parent=0, const char *name=0);
            ~percentageEditor();
    signals:
      void valueChanged(const QString&);  
 };
-
-
 
 class propertySetter : public QHBox  {
   Q_OBJECT
@@ -113,7 +110,7 @@ class propertySetter : public QHBox  {
     QPtrList<QWidget> m_list;
     QComboBox *m_cb;
     QLineEdit *m_le;
-    QSpinBox  *m_sb;
+    mySpinBox  *m_sb;
     lengthEditor *m_lE;
     doubleLengthEditor *m_dlE;
     doublePercentageEditor *m_dpe;

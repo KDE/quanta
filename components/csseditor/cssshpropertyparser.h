@@ -23,21 +23,19 @@
 /**
 @author Gulmini Luciano
 */
-#include <qstring.h>
 #include <qstringlist.h>
 
 class CSSSHPropertyParser{
-public:
 
+  public:
     CSSSHPropertyParser(const QString& s);
     ~CSSSHPropertyParser();
     QStringList parse();
 
-
-private:
+  private:
     QString m_propertyToParse;
 
-private:
+  private:
     QString extractURIList();
     QString extractFunctionList();
     QString extractQuotedStringList();

@@ -35,15 +35,10 @@ class fontFamilyChooser : public fontFamilyChooserS
     void addFont();
     void removeFont();
     
-  public:
-    
+  public:    
     fontFamilyChooser(QWidget* parent, const char *name=0);
     ~fontFamilyChooser(); 
     QStringList fontList();
-
-  signals:
-    //void selectedFont(const QString&);
-
 };
 
 #endif

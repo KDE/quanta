@@ -46,10 +46,9 @@ fontFamilyChooser::fontFamilyChooser(QWidget* parent, const char *name) : fontFa
     if( (*it).contains('[') !=0  ) 
       it = families.remove(it);
   }
-  if( families.count() != 0 )
-  {
-    lbAvailable->insertStringList(families);
-  }
+  
+  if( families.count() != 0 ) lbAvailable->insertStringList(families);
+  
        
   QIconSet iconSet = SmallIconSet(QString::fromLatin1("1rightarrow"));
   QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
@@ -94,11 +93,9 @@ void fontFamilyChooser::removeFont(){
 QStringList fontFamilyChooser::fontList(){
   QStringList list;
   QListBoxItem *item = lbSelected->firstItem();
-  while( item != 0L ){
-    if( item->text().contains( QRegExp("\\W") ) )
-      list.append( "'" + item->text() + "'" );
-    else 
-      list.append( item->text() );
+  while( item != 0 ){
+    if( item->text().contains( QRegExp("\\W") ) ) list.append( "'" + item->text() + "'" );
+    else list.append( item->text() );
     item = item->next();  
   }
   return list;
