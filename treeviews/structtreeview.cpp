@@ -423,6 +423,11 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
       QuantaCommon::setUrl(url, it->node->fileName);
       emit openFile(url, quantaApp->defaultEncoding());
     }
+    int el, ec;
+    it->node->tag->endPos(el, ec);
+    kdDebug(24000) << "Node area: " << line << ", " << col << ", " << el << ", " << ec << endl;
+    kdDebug(24000) << "Node type: " << it->node->tag->type << endl;
+    kdDebug(24000) << "Node str: " << it->node->tag->tagStr() << endl;
     emit newCursorPosition( line, col);
   }
 }

@@ -885,10 +885,10 @@ Node* Parser::specialAreaParser(Node *startNode)
         n = s.findRev('\n');
         if (n == -1)
         {
-          eCol = lastPos2 - startPos + bCol - 1;
+          eCol = lastPos - startPos + bCol - 2 + dtd->structBeginStr.length();
         } else
         {
-          eCol = lastPos2 - n - 2 - startPos;
+          eCol = lastPos - n - 2 - startPos + dtd->structBeginStr.length();
         }
         tag->name = name.stripWhiteSpace();
         //tag->setStr(name);
