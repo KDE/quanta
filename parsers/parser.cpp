@@ -1269,6 +1269,30 @@ void Parser::clearGroups()
       kdDebug(24000) << count << " GroupElement deleted (clearGroups)." << endl;
 #endif
   globalGroupMap.clear();
+  
+  IncludedGroupElementsMap::Iterator includedMapIt;
+  uint listCount;
+  for (includedMapIt = includedMap.begin(); includedMapIt != includedMap.end(); ++includedMapIt)
+  {
+    IncludedGroupElements::Iterator elementsIt;
+    for (elementsIt = includedMapIt.data().begin(); elementsIt != includedMapIt.data().end(); ++elementsIt)
+    {
+      GroupElementMapList::Iterator it;
+      for (it = elementsIt.data().begin(); it != elementsIt.data().end(); ++it)
+      {
+        listCount = it.data().count();
+        for (uint i = 0 ; i < listCount; i++)
+        {
+          GroupElement *groupElement = it.data()[i];
+          groupElement->node->tag->write()->userTagList.remove(groupElement->node->tag->name.lower());
+          delete it.data()[i]->node;
+          delete it.data()[i];
+        }
+      }
+    }
+  }
+  includedMap.clear();
+  
   ParserCommon::includedFiles.clear();
   ParserCommon::includedFilesDTD.clear();
   delete ParserCommon::includeWatch;

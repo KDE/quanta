@@ -212,6 +212,7 @@ Document::Document(KTextEditor::Document *doc,
 
 Document::~Document()
 {
+  parser->clearGroups();
 //  kdDebug(24000) << "Document::~ Document: " << this << endl;
  m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
  delete m_doc;

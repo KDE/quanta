@@ -48,7 +48,7 @@ public:
   /** Removes a QuantaView object. Returns false on failure (eg. the view was not saved and it refused
   the delete itself.) If force is true, the view is removed without asking for save.
   */
-  bool removeView(QuantaView *view, bool force = false);
+  bool removeView(QuantaView *view, bool force = false, bool createNew = true);
   /** Returns the active view */
   QuantaView *activeView();
   /** Returns the active document or 0L */
@@ -82,7 +82,7 @@ public slots:
   void slotViewActivated(KMdiChildView *view);
 
   /** Removes the active view Returns false on failure (eg. the view was not saved and it refused the delete itself.) */
-  bool removeActiveView()  { return removeView(activeView()); }
+  bool removeActiveView(bool createNew = true)  { return removeView(activeView(), false, createNew); }
   /** closes all the other but active tabs */
   void slotCloseOtherTabs();
   /** closes all views. If createNew is true, it creates a new view after closing the others. Return true if all documents were closed.*/

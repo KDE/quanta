@@ -148,7 +148,7 @@ void ViewManager::createNewDocument()
   quantaApp->newCursorPosition("", 1 , 1);
 }
 
-bool ViewManager::removeView(QuantaView *view, bool force)
+bool ViewManager::removeView(QuantaView *view, bool force, bool createNew)
 {
     if (!view) return false;
     bool mayRemove = view->mayRemove();
@@ -164,11 +164,17 @@ bool ViewManager::removeView(QuantaView *view, bool force)
             m_lastActiveEditorView = 0L;
         if (view == activeView())
             ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
+        if (!createNew)
+          disconnect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
         quantaApp->closeWindow(view);
-        if (allEditorsClosed())
+        if (createNew)
         {
+          if (allEditorsClosed())
+          {
             quantaApp->slotFileNew();
-        }
+          }
+        } else
+          connect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
         return true;
        }
     }

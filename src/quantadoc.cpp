@@ -108,7 +108,7 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
     //selected and new content is loaded, the highlighting is reset to None. To avoid this
     //remove the untitled document and create a new one, where we don't set the
     //highlighting
-    ViewManager::ref()->removeActiveView();
+    ViewManager::ref()->removeActiveView(false);
     w = ViewManager::ref()->activeDocument();
     /*
     KTextEditor::HighlightingInterface* highlightIf = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
