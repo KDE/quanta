@@ -15,7 +15,7 @@ apache_lookup_uri = filename
 
 [Extra rules]
 StructGroupsCount = 5
-TagAutoCompleteAfter = none
+TagAutoCompleteAfter = @
 
 [Parsing rules]
 AreaBorders = <? ?>, <* *>, <% %>
