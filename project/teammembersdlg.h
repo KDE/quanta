@@ -34,6 +34,14 @@ public slots:
     void slotAddMember();
     void slotEditMember();
     void slotDeleteMember();
+
+private:
+   /** Check if the selected role conflicts with an already existing role or not, for
+   example a Team Leader is selected, while a team leader already exists. In case
+   of  duplicate entries, it shows a dialog and if the user answer yes, the old
+   teamleader is set to Simple Member and the new member is set to teamleader
+   and the method returns true, otherwise it returns false. */
+    bool checkDuplicates(const QString &role, const QString &task, const QString &subProject);
 };
 
 #endif

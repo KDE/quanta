@@ -27,13 +27,13 @@ class MemberEditDlg : public MemberEditDlgS
 Q_OBJECT
 public:
     MemberEditDlg(QWidget *parent = 0, const char *name = 0);
-
     ~MemberEditDlg();
+    void selectMember(const QString &name);
 
 public slots:
     void slotRoleSelected(const QString& roleName);
     void slotEditSubprojects();
-    void slotSelectMember();
+    void slotMemberSelected();
 };
 
 #endif

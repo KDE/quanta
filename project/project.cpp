@@ -95,6 +95,11 @@
 #include "projectprivate.h"
 #include "teammembersdlg.h"
 
+extern QString simpleMemberStr;
+extern QString taskLeaderStr;
+extern QString teamLeaderStr;
+extern QString subprojectLeaderStr;
+
 ProjectPrivate::ProjectPrivate(Project *p)
           : QObject(), config(0L), m_dirWatch(0L), tempFile(0L)
 {
@@ -1917,7 +1922,7 @@ void Project::slotOptions()
     {
         item = it.current();
         QString role = item->text(2);
-        if (role == i18n("Team Leader"))
+        if (role == i18n(teamLeaderStr.utf8()))
         {
            QDomElement leaderEl = d->dom.createElement("leader");
            teamNode.appendChild(leaderEl);
@@ -1928,7 +1933,7 @@ void Project::slotOptions()
            leaderEl.appendChild(el);
            el.appendChild(d->dom.createTextNode(item->text(1)));
         } else
-        if (role == i18n("Subproject Leader"))
+        if (role == i18n(subprojectLeaderStr.utf8()))
         {
            QString prjName = item->text(4);
            savedSubprojects.append(prjName);
@@ -1948,7 +1953,7 @@ void Project::slotOptions()
            el.setAttribute("email", item->text(1));
            subEl.appendChild(el);
         } else
-        if (role == i18n("Task Leader"))
+        if (role == i18n(taskLeaderStr.utf8()))
         {
            el = d->dom.createElement("projecttask");
            el.setAttribute("tasklead", item->text(0));
@@ -1956,7 +1961,7 @@ void Project::slotOptions()
            el.setAttribute("task", item->text(3));
            taskLeadersNode.appendChild(el);
         } else
-        if (role == i18n("Simple Member"))
+        if (role == i18n(simpleMemberStr.utf8()))
         {
            QDomElement memberEl = d->dom.createElement("member");
            memberEl.setAttribute("task", item->text(3));

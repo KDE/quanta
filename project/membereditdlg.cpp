@@ -29,9 +29,33 @@
 #include "subprojecteditdlgs.h"
 #include "project.h"
 
+QString simpleMemberStr = I18N_NOOP("Simple Member");
+QString taskLeaderStr = I18N_NOOP("Task Leader");
+QString teamLeaderStr = I18N_NOOP("Team Leader");
+QString subprojectLeaderStr = I18N_NOOP("Subproject Leader");
+
+
 MemberEditDlg::MemberEditDlg(QWidget *parent, const char *name)
  : MemberEditDlgS(parent, name)
 {
+   QValueList<SubProject> *subprojects = Project::ref()->subprojects();
+   for (QValueList<SubProject>::ConstIterator it = subprojects->constBegin(); it != subprojects->constEnd(); ++it)
+     subprojectCombo->insertItem((*it).name);
+   subprojectCombo->setEnabled(false);
+   editSubprojectsButton->setEnabled(false);
+
+  QMap<QString, TeamMember> members = Project::ref()->allMembers();
+  QStringList items;
+  for (QMap<QString, TeamMember>::ConstIterator it = members.constBegin(); it != members.constEnd(); ++it)
+  {
+     nameCombo->insertItem(it.key());
+  }
+  nameCombo->insertItem(QString::null, 0);
+
+  roleCombo->insertItem(i18n(teamLeaderStr.utf8()));
+  roleCombo->insertItem(i18n(subprojectLeaderStr.utf8()));
+  roleCombo->insertItem(i18n(taskLeaderStr.utf8()));
+  roleCombo->insertItem(i18n(simpleMemberStr.utf8()));
 }
 
 
@@ -41,7 +65,7 @@ MemberEditDlg::~MemberEditDlg()
 
 void MemberEditDlg::slotRoleSelected(const QString &roleName)
 {
-   if (roleName != i18n("Subproject Leader"))
+   if (roleName != i18n(subprojectLeaderStr.utf8()))
    {
      subprojectCombo->setEnabled(false);
      editSubprojectsButton->setEnabled(false);
@@ -89,20 +113,32 @@ void MemberEditDlg::slotEditSubprojects()
    }
 }
 
-void MemberEditDlg::slotSelectMember()
+void MemberEditDlg::slotMemberSelected()
 {
+  QString name = nameCombo->currentText();
   QMap<QString, TeamMember> members = Project::ref()->allMembers();
-  QStringList items;
-  for (QMap<QString, TeamMember>::ConstIterator it = members.constBegin(); it != members.constEnd(); ++it)
+  if (members.contains(name))
   {
-     items.append(it.key());
-  }
-  bool ok;
-  QString name = KInputDialog::getItem(i18n("Select Member"), i18n("Name:"), items, 0, false, &ok);
-  if (ok)
-  {
-     nameEdit->setText(name);
      emailEdit->setText(members[name].email);
+  }
+}
+
+void MemberEditDlg::selectMember(const QString &name)
+{
+  bool found = false;
+  for (int i = 0; i < nameCombo->count(); i++)
+  {
+     if (nameCombo->text(i) == name)
+     {
+        nameCombo->setCurrentItem(i);
+        found = true;
+        break;
+     }
+  }
+  if (!found)
+  {
+     nameCombo->insertItem(name, 1);
+     nameCombo->setCurrentItem(1);
   }
 }
 
