@@ -968,22 +968,11 @@ void QuantaInit::initActions()
                         ac, "insert_css" );
 
     // special-character combo
-    KSelectAction* char_action = new KSelectAction(
-                        i18n( "Insert Special Character" ), 0,
+    KAction* char_action = new KAction(
+                        i18n( "Insert Special Character" ), "charset", 0,
                         ac, "insert_char" );
-    connect( char_action, SIGNAL(activated(const QString &)),
-             m_quanta, SLOT(slotInsertChar(const QString &)) );
-    QFile file( locate("appdata","chars") );
-    if ( file.open(IO_ReadOnly) ) {    // file opened successfully
-        QTextStream t( &file );        // use a text stream
-        t.setEncoding(QTextStream::UnicodeUTF8);
-        QString s;
-        while ( !t.eof() ) {           // until end of file...
-            charList << i18n(t.readLine().utf8()); // line excluding '\n'
-        }
-        file.close();
-    }
-    char_action->setItems(charList);
+    connect( char_action, SIGNAL(activated()),
+             m_quanta, SLOT(slotInsertChar()) );
 }
 
 /** Initialize the plugin architecture. */

@@ -127,6 +127,7 @@
 #include "dtdselectdialog.h"
 #include "donationdialog.h"
 #include "fourbuttonmessagebox.h"
+#include "specialchardialog.h"
 #ifdef BUILD_KAFKAPART
 #include "kafkasyncoptions.h"
 #include "htmldocumentproperties.h"
@@ -4404,15 +4405,14 @@ void QuantaApp::slotSpellcheck ()
 }
 
 /** insert special character */
-void QuantaApp::slotInsertChar(const QString &selected)
+void QuantaApp::slotInsertChar()
 {
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
-    int begin = selected.find("(&")+1;
-    int length = selected.find(";)") - begin + 1;
-    QString part = selected.mid(begin, length);
-    w->insertTag(part);
+    SpecialCharDialog S( this, "special_char" );
+    if (S.exec())
+      w->insertTag(S.selection());
   }
 }
 

@@ -395,7 +395,7 @@ protected slots:
 
   void slotPasteHTMLQuoted();
   void slotPasteURLEncoded();
-  void slotInsertChar(const QString &selected);
+  void slotInsertChar();
 
 //Edit
   void slotUndo ();
