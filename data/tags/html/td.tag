@@ -1,23 +1,17 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="td">
-
-    <label>
-        <text>Width</text>
-        <location col="0" row="0" />
-    </label>
+<tag name="td" hasScript="1" hasCore="1" hasI18n="1" optional="1">
 
     <attr name="width" type="input">
+        <text>Width</text>
+        <textlocation col="0" row="0" />
         <tooltip>use % for percent or it will set pixels</tooltip>
         <location col="1" row="0" />
     </attr>
 
-    <label>
-        <text>Col span</text>
-        <location col="2" row="0" />
-    </label>
-
     <attr name="colspan" type="list">
+        <text>Col span</text>
+        <textlocation col="2" row="0" />
         <items>
             <item>1</item>
             <item>2</item>
@@ -32,22 +26,16 @@
         <location col="3" row="0" />
     </attr>
 
-    <label>
-        <text>Height</text>
-        <location col="0" row="1" />
-    </label>
-
     <attr name="height" type="input">
-        <tooltip>Depricated in HTML 4.0 - not used in IE 5</tooltip>
+        <text>Height</text>
+        <textlocation col="0" row="1" />
+        <tooltip>Deprecated in HTML 4.0 - not used in IE 5</tooltip>
         <location col="1" row="1" />
     </attr>
 
-    <label>
-        <text>Row span</text>
-        <location col="2" row="1" />
-    </label>
-
     <attr name="rowspan" type="list">
+        <text>Row span</text>
+        <textlocation col="2" row="1" />
         <items>
             <item>1</item>
             <item>2</item>
@@ -62,12 +50,9 @@
         <location col="3" row="1" />
     </attr>
 
-    <label>
-        <text>Align</text>
-        <location col="0" row="2" />
-    </label>
-
     <attr name="align" type="list">
+        <text>Align</text>
+        <textlocation col="0" row="2" />
         <items>
             <item>left</item>
             <item>center</item>
@@ -76,12 +61,9 @@
         <location col="1" row="2" colspan="1" />
     </attr>
 
-    <label>
-        <text>VAlign</text>
-        <location col="2" row="2"  />
-    </label>
-
     <attr name="valign" type="list">
+        <text>VAlign</text>
+        <textlocation col="2" row="2"  />
         <items>
             <item>baseline</item>
             <item>bottom</item>
@@ -96,12 +78,9 @@
         <location col="0" row="5" colspan="4" />
     </spacer>
 
-    <label>
-        <text>Bg color</text>
-        <location col="0" row="5"  />
-    </label>
-
     <attr name="bgcolor" type="color">
+        <text>Bg color</text>
+        <textlocation col="0" row="5"  />
         <location col="1" row="5" colspan="1" />
         <tooltip>Depricated in HTML 4.0</tooltip>
     </attr>
@@ -115,8 +94,14 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="4" />
     </spacer>
-
-
+    
+    <attr name="headers"> </attr>
+    <attr name="abbr"> </attr>
+    <attr name="scope"> </attr>
+    <attr name="axis"> </attr>
+    <attr name="char"> </attr>
+    <attr name="charoff"> </attr>
+    <attr name="background"> </attr>
 
 </tag>
 </TAGS>

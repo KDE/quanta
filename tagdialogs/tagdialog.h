@@ -33,10 +33,7 @@ class TagWidget;
 class CoreWidgetDlg;
 class EventsWidgetDlg;
 
-extern QStrList *tagsList; // list of known tags
-extern QStrList *tagsCore; // list of tags, allowed core attributes ( id, class, id, title )
-extern QStrList *tagsI18n; // list of tags, allowed i18 attribs.
-extern QStrList *tagsScript; // list of tags, allowed script attribs ( onClicl, omMouseOver... )
+extern QDict<QString> *tagsList; // list of known tags
 extern QStrList *quotedAttribs; // list of attribs, that have quoted values ( alt, src ... )
 
 
@@ -87,11 +84,6 @@ public slots: // Public slots
   void slotAccept();
 
 private:
-  /** convert tag to upper or lower case */
-  QString tagCase( QString tag);
-  /** convert attribute of tag to upper or lower case */
-  QString attrCase( QString  attr);
-
   void parseAttributes( QString attrs );
 };
 

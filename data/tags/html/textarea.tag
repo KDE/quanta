@@ -1,40 +1,28 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="textarea">
-
-    <label>
-      <text>Name</text>
-      <location col="0" row="0" colspan="1" />
-    </label>
+<tag name="textarea" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="name" type="input">
+      <text>Name</text>
+      <textlocation col="0" row="0" colspan="1" />
       <location col="1" row="0" colspan="4" />
     </attr>
 
-    <label>
-      <text>Columns</text>
-      <location col="0" row="1" colspan="1" />
-    </label>
-
     <attr name="cols" type="input">
+      <text>Columns</text>
+      <textlocation col="0" row="1" colspan="1" />
       <location col="1" row="1" colspan="1" />
     </attr>
 
-    <label>
-      <text>Rows</text>
-      <location col="2" row="1" colspan="1" />
-    </label>
-
     <attr name="rows" type="input">
+      <text>Rows</text>
+      <textlocation col="2" row="1" colspan="1" />
       <location col="3" row="1" colspan="1" />
     </attr>
 
-    <label>
-      <text>Tab index</text>
-      <location col="0" row="2" colspan="1" />
-    </label>
-
     <attr name="tabindex" type="input">
+      <text>Tab index</text>
+      <textlocation col="0" row="2" colspan="1" />
       <location col="1" row="2" colspan="1" />
     </attr>
 
@@ -56,5 +44,11 @@
       <location col="0" row="9" colspan="4" />
     </spacer>
 
+    <attr name="accesskey"> </attr>
+    <attr name="tab"> </attr>
+    <attr name="onfocus"> </attr>
+    <attr name="onblur"> </attr>
+    <attr name="onselect"> </attr>
+    <attr name="onchange"> </attr>
 </tag>
 </TAGS>

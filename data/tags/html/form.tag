@@ -1,38 +1,16 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="form">
-
-    <label>
-        <text>Action</text>
-        <location col="0" row="0" />
-    </label>
-
-    <label>
-        <text>Method</text>
-        <location col="0" row="1" />
-    </label>
-
-    <label>
-        <text>Enctype</text>
-        <location col="0" row="2" />
-    </label>
-
-    <label>
-        <text>Target</text>
-        <location col="0" row="3" />
-    </label>
-
-    <label>
-        <text>Accept charset</text>
-        <location col="2" row="3" />
-    </label>
-
-
+<tag name="form" hasScript="1" hasCore="1" hasI18n="1">
+    
     <attr name="action" type="input">
+        <text>Action</text>
+        <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="3" />
     </attr>
 
     <attr name="method" type="list">
+        <text>Method</text>
+        <textlocation col="0" row="1" />
         <location col="1" row="1"/>
         <items>
                 <item>GET</item>
@@ -41,6 +19,8 @@
     </attr>
 
     <attr name="enctype" type="list">
+        <text>Enctype</text>
+        <textlocation col="0" row="2" />
         <location col="1" row="2" colspan="3"/>
         <items>
            <item>application/x-www-form-urlencoded</item>
@@ -50,6 +30,8 @@
 
 
     <attr name="target" type="list">
+        <text>Target</text>
+        <textlocation col="0" row="3" />
         <location col="1" row="3" />
         <items>
                 <item>_blank</item>
@@ -60,15 +42,18 @@
     </attr>
 
     <attr name="accept-charset" type="input">
+        <text>Accept charset</text>
+        <textlocation col="2" row="3" />
         <location col="3" row="3"/>
     </attr>
 
+    <attr name="name"> </attr>
+    <attr name="onsubmit"> </attr>
+    <attr name="onreset"> </attr>
 
     <spacer orientation="v">
         <location col="0" row="9" colspan="3" />
     </spacer>
-
-
 
 </tag>
 </TAGS>

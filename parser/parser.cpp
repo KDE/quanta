@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
-extern QStrList *tagsList;
+extern QDict<QString> *tagsList;
 extern QStrList *singleTags;
 extern QStrList *optionalTags;
 

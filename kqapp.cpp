@@ -67,12 +67,24 @@ KQApplication::KQApplication()
      quanta = new QuantaApp();
      quanta ->show();
 
-     quanta ->openLastFiles();
+     QString initialProject;
+     QStringList initialFiles;
 
      for (int i = 0; i < args->count(); i++ )
      {
-       quanta->slotFileOpen( args->url(i) );
+       QString arg = args->url(i).url();
+
+       if(arg.findRev(QRegExp(QString(".+\\.webprj"))) != -1)
+         initialProject = arg;
+       else
+         initialFiles += arg;
      }
+     quanta->loadInitialProject(initialProject); // open initial project
+
+     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
+       quanta->slotFileOpen(KURL(*it));  // load initial files
+
+     quanta ->openLastFiles(); // load files from previous session
    }
    args->clear();
    if (showSplash) delete splash;
@@ -97,24 +109,39 @@ KQUniqueApplication::~KQUniqueApplication()
 
 int KQUniqueApplication::newInstance()
 {
-  if (mainWidget()) {
+  if (mainWidget())
+  {
     KWin::setActiveWindow(mainWidget()->winId());
-  } else {
-	KSplash *splash = new KSplash();
-
-	quanta = new QuantaApp;
-	setMainWidget(quanta);
-	quanta->show();
-	quanta->openLastFiles();
-    delete splash;
-
   }
+  else
+  {
+    KSplash *splash = new KSplash();
 
-  // process URLs...
-  QuantaApp *mainWin = static_cast<QuantaApp*>(mainWidget());
-  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  for (int i = 0; i < args->count(); i++) {
-    mainWin->slotFileOpen(args->url(i));
+    quanta = new QuantaApp;
+    setMainWidget(quanta);
+    quanta->show();
+
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+    QString initialProject;
+    QStringList initialFiles;
+    for (int i = 0; i < args->count(); i++ )
+    {
+      QString arg = args->url(i).url();
+
+      if(arg.findRev(QRegExp(QString(".+\\.webprj"))) != -1)
+        initialProject = arg;
+      else
+        initialFiles += arg;
+    }
+
+    quanta->loadInitialProject(initialProject);
+
+    for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
+      quanta->slotFileOpen(KURL(*it));
+
+    quanta ->openLastFiles();
+    delete splash;
   }
 
   return 0;

@@ -68,28 +68,21 @@
 #include "parser/parser.h"
 
 
+extern QString globalDataDir;
+
 QString fileMaskHtml   = "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* *.xml *.XML";
 QString fileMaskPhp   = "*.*PHP* *.*php* ";
 QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";
 QString fileMaskText  = "*.txt; *.TXT";
 QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.xpm *.GIF *.JPG *.PNG *.JPEG *.BMP ";
 
-QStrList *tagsList; // list of known tags
-QStrList *tagsCore; // list of tags, allowed core attributes ( id, class, id, title )
-QStrList *tagsI18n; // list of tags, allowed i18 attribs.
-QStrList *tagsScript; // list of tags, allowed script attribs ( onClicl, omMouseOver... )
+QDict<QString> *tagsList; // list of known tags
 QStrList *quotedAttribs; // list of attribs, that have quoted values ( alt, src ... )
 QStrList *lCore;          // list of core attributes ( id, class, style ... )
 QStrList *lI18n;
 QStrList *lScript;
 QStrList *singleTags; // tags without end  part </ >
 QStrList *optionalTags; // tags with optional end part
-
-bool tagsCapital;
-bool attrCapital;
-bool useCloseTag;
-
-QDict <QStrList> *tagsDict;
 
 #include <kaction.h>
 #include <kstdaction.h>
@@ -100,6 +93,8 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   toolbarGUIClientList.setAutoDelete(true);
   toolbarDomList.setAutoDelete(true);
   userToolbarsCount = 0;
+
+  globalDataDir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png");
 
   setHighlight = 0;
   grepDialog  = 0L;
@@ -116,7 +111,10 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   initProject  ();
   
   initActions();
+
   createGUI( QString::null, false );
+
+  initToolBars();
 
   pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
@@ -146,6 +144,19 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 QuantaApp::~QuantaApp()
 {
  tempFileList.clear();
+}
+
+void QuantaApp::initToolBars()
+{
+  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/standard.toolbar.tgz");
+  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/fonts.toolbar.tgz");
+  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/tables.toolbar.tgz");
+  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/lists.toolbar.tgz");
+  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/forms.toolbar.tgz");
+  slotLoadToolbarFile(globalDataDir + "quanta/toolbars/default/other.toolbar.tgz");
+
+  view->toolbarTab->setCurrentPage(0);
+ 
 }
 
 void QuantaApp::initStatusBar()
@@ -426,8 +437,8 @@ void QuantaApp::saveOptions()
   config->writeEntry("Java mask",   fileMaskJava  );
   config->writeEntry("Text mask",   fileMaskText  );
 
-  config->writeEntry("Capitals for tags",     tagsCapital);
-  config->writeEntry("Capitals for attr",     attrCapital);
+  config->writeEntry("Capitals for tags",     tagsCase);
+  config->writeEntry("Capitals for attr",     attrsCase);
   config->writeEntry("Close tag if optional", useCloseTag);
 
   config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
@@ -467,8 +478,8 @@ void QuantaApp::readOptions()
   fileMaskJava  = config->readEntry("Java mask",   fileMaskJava)  +" ";
   fileMaskText  = config->readEntry("Text mask",   fileMaskText)  +" ";
 
-  tagsCapital = config->readBoolEntry("Capitals for tags",     false);
-  attrCapital = config->readBoolEntry("Capitals for attr",     false);
+  tagsCase = config->readNumEntry("Capitals for tags",     0);
+  attrsCase = config->readNumEntry("Capitals for attr",     0);
   useCloseTag = config->readBoolEntry("Close tag if optional", true);
 
   previewPosition   = config->readEntry("Preview position","Right");
@@ -598,6 +609,16 @@ void QuantaApp::openLastFiles()
   }
 }
 
+/** Loads the initial project */
+void QuantaApp::loadInitialProject(QString url)
+{
+  if(url.isNull())
+    project->readLastConfig();
+  else
+    project->openProject(url);
+}
+
+
 bool QuantaApp::queryExit()
 {
   exitingFlag = true;
@@ -619,15 +640,93 @@ bool QuantaApp::queryExit()
 }
 
 /**
+ Parse the dom document and retrieve the tag attributes
+*/
+AttributeList* QuantaApp::getAttributes(QDomDocument *dom)
+{
+ AttributeList* attrs = new AttributeList;
+ Attribute *attr;
+ attrs->setAutoDelete(true);
+
+ QDomElement el = dom->firstChild().firstChild().toElement();
+
+ if (el.attribute("hasCore") == "1")
+ {
+   for ( QString item = lCore->first(); lCore->current(); item = lCore->next() )
+   {
+      attr = new Attribute;
+      attr->name = item;
+      attr->type = "input";
+      attr->defaultValue = "";
+      attr->status = "optional";
+      attrs->append(attr);
+   }
+ }
+
+ if (el.attribute("hasI18n") == "1")
+ {
+   for ( QString item = lI18n->first(); lI18n->current(); item = lI18n->next() )
+   {
+      attr = new Attribute;
+      attr->name = item;
+      attr->type = "input";
+      attr->defaultValue = "";
+      attr->status = "optional";
+      attrs->append(attr);
+   }
+ }
+
+ if (el.attribute("hasScript") == "1")
+ {
+   for ( QString item = lScript->first(); lScript->current(); item = lScript->next() )
+   {
+      attr = new Attribute;
+      attr->name = item;
+      attr->type = "input";
+      attr->defaultValue = "";
+      attr->status = "optional";
+      attrs->append(attr);
+   }
+ }
+
+ if (el.attribute("single") == "1")
+ {
+  singleTags->append(el.attribute("name").upper());
+ }
+
+ if (el.attribute("optional") == "1")
+ {
+  optionalTags->append(el.attribute("name").upper());
+ }
+
+ for ( QDomNode n = dom->firstChild().firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
+ {
+   if ( n.nodeName() == "attr" ) //an attribute
+   {
+     attr = new Attribute;
+     attr->name = n.toElement().attribute("name");
+     attr->type = n.toElement().attribute("type","input");
+     attr->defaultValue = n.toElement().attribute("defaultValue");
+     attr->status = n.toElement().attribute("status");
+
+     if (!attr->name.isEmpty())
+     {
+       attrs->append(attr);
+     }
+   }
+ }
+
+ return attrs;
+}
+
+/**
   read dictionary of known tags and attributes from tags.rc file.
 */
 
 void QuantaApp::initTagDict()
 {
-  tagsList      = new QStrList();
-  tagsCore      = new QStrList();
-  tagsI18n      = new QStrList();
-  tagsScript    = new QStrList();
+
+  QStrList *tList = new QStrList();
   quotedAttribs = new QStrList();
   lCore         = new QStrList();
   lI18n         = new QStrList();
@@ -635,46 +734,61 @@ void QuantaApp::initTagDict()
   singleTags    = new QStrList();
   optionalTags  = new QStrList();
 
-  tagsDict = new QDict <QStrList>(233,false);
 
   KConfig *config = new KConfig( locate("appdata","tagdata.rc") );
 
   config->setGroup("Tags");
 
-  config->readListEntry("TagsCore",       *tagsCore);
-  config->readListEntry("TagsI18n",       *tagsI18n);
-  config->readListEntry("TagsScript",     *tagsScript);
   config->readListEntry("Quoted Attribs", *quotedAttribs);
-
   config->readListEntry("Core",    *lCore);
   config->readListEntry("I18n",    *lI18n);
   config->readListEntry("Scripts", *lScript);
 
-  config->readListEntry("TagsList", *tagsList);
+  QPtrList<QDomDocument> domList;
+  domList.setAutoDelete(true);
 
-  config->readListEntry("Single tags",   *singleTags);
-  config->readListEntry("Optional tags", *optionalTags);
-
-  char *tag, *t;
-  for ( tag = tagsList->first(); tag; tag = tagsList->next() )
+  int numOfTags = 0;
+  QStringList tagsDirs = KGlobal::instance()->dirs()->findDirs("appdata", "tags");
+  for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
   {
-    QStrList *attrList = new QStrList();
-    config->readListEntry(tag, *attrList);
+  	QStringList files = QExtFileInfo::allFilesRelative(*it, "*.tag");
+  	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+    {
+      QString name = QFileInfo(*it_f).baseName();
+      if (! name.isEmpty())
+      {
+        tList->append(name);
 
-    if ( tagsCore->find(tag) != -1 )
-      for ( t = lCore->first(); t; t = lCore->next() )
-        attrList->append(t);
+        QString fname = *it + *it_f ;
+        QFile f( fname );
+        f.open( IO_ReadOnly );
+		    QDomDocument *doc = new QDomDocument();
+		    doc->setContent( &f );
+        domList.append(doc);
+        f.close();
 
-    if ( tagsI18n->find(tag) != -1 )
-      for ( t = lI18n->first(); t; t = lI18n->next() )
-        attrList->append(t);
-
-    if ( tagsScript->find(tag) != -1 )
-      for ( t = lScript->first(); t; t = lScript->next() )
-        attrList->append(t);
-
-    tagsDict->insert(tag, attrList);
+        numOfTags++;
+      }
+    }
   }
+
+  tagsDict = new QDict<AttributeList>(numOfTags,false);
+  tagsList = new QDict<QString>(numOfTags, false);
+
+  tagsList->setAutoDelete(true);
+  tagsDict->setAutoDelete(true);
+
+  for ( uint i = 0; i < tList->count(); i++)
+  {
+    AttributeList *attrList = getAttributes(domList.at(i));
+    QString *tag = new QString(tList->at(i));
+    tagsList->insert(QString(tList->at(i)).upper(), tag);
+    tagsDict->insert(QString(tList->at(i)).upper(), attrList);
+  }                                 
+
+  domList.clear();
+  delete tList;
+
 }
 
 void QuantaApp::initActions()

@@ -61,6 +61,7 @@ public:
   void createEmptyDom();
 
   void  readConfig(KConfig *);
+  void readLastConfig(KConfig *c=0);
   void writeConfig(KConfig *);
   /** No descriptions */
   bool isModified() {return modified;}

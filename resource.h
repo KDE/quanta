@@ -24,10 +24,7 @@
 
 class QStrList;
 
-extern QStrList *tagsList; // list of known tags
-extern QStrList *tagsCore; // list of tags, allowed core attributes ( id, class, id, title )
-extern QStrList *tagsI18n; // list of tags, allowed i18 attribs.
-extern QStrList *tagsScript; // list of tags, allowed script attribs ( onClicl, omMouseOver... )
+extern QDict<QString> *tagsList; // list of known tags
 extern QStrList *quotedAttribs; // list of attribs, that have quoted values ( alt, src ... )
 extern QStrList *lCore;          // list of core attributes ( id, class, style ... )
 extern QStrList *lI18n;
@@ -35,8 +32,8 @@ extern QStrList *lScript;
 extern QStrList *singleTags; // tags without end  part </ >
 extern QStrList *optionalTags; // tags with optional end part
 
-extern bool tagsCapital; // use capital for tags
-extern bool attrCapital; // use capital letters for attributes of tag
+extern uint tagsCase; // use capital for tags
+extern uint attrsCase; // use capital letters for attributes of tag
 extern bool useCloseTag; // use close tag if optional
 
 extern QString fileMaskHtml;

@@ -34,6 +34,7 @@
 #include <qtextedit.h>
 #include <qiodevice.h>
 #include <qcombobox.h>
+#include <qdockarea.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -105,6 +106,8 @@
 #include <kedittoolbar.h>
 #include <kaction.h>
 
+
+extern QString globalDataDir;
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}
 
@@ -678,8 +681,8 @@ void QuantaApp::slotOptions()
   QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, BarIcon("kwrite", KIcon::SizeMedium ) );
   StyleOptionsS *styleOptionsS = new StyleOptionsS( (QWidget *)page );
 
-  styleOptionsS->checkTagsCapital->setChecked( tagsCapital);
-  styleOptionsS->checkAttrCapital->setChecked( attrCapital);
+  styleOptionsS->tagCase->setCurrentItem( tagsCase);
+  styleOptionsS->attributeCase->setCurrentItem( attrsCase);
   styleOptionsS->checkEndTag->setChecked( useCloseTag );
 
 
@@ -709,8 +712,8 @@ void QuantaApp::slotOptions()
   
   if ( kd->exec() )
   {
-    tagsCapital = styleOptionsS->checkTagsCapital->isChecked();
-    attrCapital = styleOptionsS->checkAttrCapital->isChecked();
+    tagsCase = styleOptionsS->tagCase->currentItem();
+    attrsCase = styleOptionsS->attributeCase->currentItem();
     useCloseTag = styleOptionsS->checkEndTag->isChecked();
 
     fileMaskHtml = fileMasks->lineHTML->text();
@@ -1134,12 +1137,20 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
   if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty() ) {
 //avoid QToolBar warning in the log
     QtMsgHandler oldHandler = qInstallMsgHandler( silenceQToolBar );
-
-    KToolBar *tb = new KToolBar(view->toolbarTab);
+/*
+    QDockArea *dockArea = new QDockArea(Qt::Horizontal, QDockArea::Normal, view->toolbarTab);
+    KToolBar *tb = new KToolBar( dockArea,0,true,true);
+*/
+    KToolBar *tb = new KToolBar(view->toolbarTab, 0, true, true);
     tb->loadState(element);
     tb->enableMoving(false);
+    tb->setEnableContextMenu(true);
+/*
+    tb->undock();
+    dockArea->moveDockWindow(tb);
+    view->toolbarTab->addTab(dockArea, i18n(tabname));
+*/
     view->toolbarTab->addTab(tb, i18n(tabname));
-
     qInstallMsgHandler( oldHandler );
     return tb;
   }
@@ -1321,57 +1332,33 @@ void QuantaApp::slotSyntaxCheckDone()
 /** Load an user toolbar file from the disk. */
 void QuantaApp::slotLoadToolbarFile(const KURL& url)
 {
- QString toolbarContent;
- QString actionContent;
+ QDomDocument actionDom;
+ QDomDocument *toolbarDom = new QDomDocument();
+
  QTextStream str;
  QString fileName = url.path();
 
  if ( (fileName.find(".toolbar.tgz") != -1) )
  {
-  QBuffer* buffer;
-
 //extract the files from the archives
   KTar tar(fileName);
-  tar.open(IO_ReadOnly);
-
-//FIXME: This is weird. The first time it read uncorrectly the data:
-//  <DOCTYPE ... instead of <!DOCTYPE ...
-// What to do? Re-read again... ;-)
-  QString base = QFileInfo(fileName).baseName();
-  KArchiveFile* file = (KArchiveFile *) tar.directory()->entry(base+".actions");
-  if (file)
+  if (tar.open(IO_ReadOnly))
   {
-    buffer = (QBuffer*) file->device();
-    str.setDevice(buffer);
-    actionContent = str.read();
-    buffer->close();
+    QString base = QFileInfo(fileName).baseName();
+    KArchiveFile* file = (KArchiveFile *) tar.directory()->entry(base+".toolbar");
+    if (file)
+    {
+     toolbarDom->setContent(file->device());
+    }
+    file = (KArchiveFile *) tar.directory()->entry(base+".actions");
+    if (file)
+    {
+     actionDom.setContent(file->device());
+    }
+
+    tar.close();
   }
-
-//read the toolbar file
-  file = (KArchiveFile *) tar.directory()->entry(base+".toolbar");
-  if (file)
-  {
-    buffer = (QBuffer*) file->device();
-    str.setDevice(buffer);
-    toolbarContent = str.read();
-    buffer->close();
-    delete buffer;
-  }
-
-//read the action file
-  file = (KArchiveFile *) tar.directory()->entry(QFileInfo(fileName).baseName()+".actions");
-  if (file)
-  {
-    buffer = (QBuffer*) file->device();
-    str.setDevice(buffer);
-    actionContent = str.read();
-    buffer->close();
-    delete buffer;
-  }
-
-  tar.close();
-
-  if ( (toolbarContent.isEmpty()) || (actionContent.isEmpty()))
+  if ( (toolbarDom->toString().isEmpty()) ) //|| (actionContent.isEmpty()))
   {
     KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin as the archive name!"));
     return;
@@ -1391,24 +1378,20 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    QFile f(fileName);
    if ( f.open( IO_ReadOnly ) )
    {
-    str.setDevice(&f);
-    toolbarContent = str.read();
+     toolbarDom->setContent(&f);
    }
    f.close();
 
    f.setName(actionFile);
    if ( f.open( IO_ReadOnly ) )
    {
-    str.setDevice(&f);
-    actionContent = str.read();
+      actionDom.setContent(&f);
    }
    f.close();
  }
 
 
- QDomDocument toolbarDom;
- toolbarDom.setContent(toolbarContent);
- QDomNodeList nodeList = toolbarDom.elementsByTagName("ToolBar");
+ QDomNodeList nodeList = toolbarDom->elementsByTagName("ToolBar");
  QString name = nodeList.item(0).toElement().attribute("tabname");
 
 //search for another toolbar with the same name
@@ -1446,12 +1429,10 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
  }
 
  QDomDocument *dom = new QDomDocument();
- dom->setContent(toolbarContent);
+ dom->setContent(toolbarDom->toString());
  toolbarDomList.insert(name.lower(), dom);
 
 //setup the actions
- QDomDocument actionDom;
- actionDom.setContent(actionContent);
  nodeList = actionDom.elementsByTagName("action");
  for (uint i = 0; i < nodeList.count(); i++)
  {
@@ -1472,13 +1453,13 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
  KTempFile* tempFile = new KTempFile();
  tempFile->setAutoDelete(true);
 
- nodeList = toolbarDom.elementsByTagName("ToolBar");
+ nodeList = toolbarDom->elementsByTagName("ToolBar");
  nodeList.item(0).toElement().setAttribute("name",name.lower());
  nodeList.item(0).toElement().setAttribute("tabname",name);
- nodeList = toolbarDom.elementsByTagName("text");
+ nodeList = toolbarDom->elementsByTagName("text");
  nodeList.item(0).toElement().firstChild().setNodeValue(name);
 
- * (tempFile->textStream()) << toolbarDom.toString();
+ * (tempFile->textStream()) << toolbarDom->toString();
  tempFile->close();
 
 //create the new toolbar GUI from the temp file
@@ -1525,7 +1506,7 @@ void QuantaApp::slotLoadGlobalToolbar()
 {
  KURL url;
 
- url = KFileDialog::getOpenURL(KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png")+"quanta/toolbars/", "*.toolbar.tgz\n*", this);
+ url = KFileDialog::getOpenURL(globalDataDir +"quanta/toolbars/", "*.toolbar.tgz\n*", this);
  if (! url.isEmpty())
  {
    slotLoadToolbarFile(url.path());

@@ -1,14 +1,10 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="br">
-
-    <label>
-        <text>Clear</text>
-        <location col="0" row="0" />
-    </label>
-
-
+<tag name="br" hasCore="1" single="1">
+    
     <attr name="clear" type="list">
+        <text>Clear</text>
+        <textlocation col="0" row="0" />
         <tooltip>Depricated in HTML 4.0</tooltip>
         <location col="1" row="0" />
         <items>
@@ -23,8 +19,6 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="2" />
     </spacer>
-
-
 
 </tag>
 </TAGS>

@@ -1,62 +1,28 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="frame">
-
-    <label>
-        <text>Name</text>
-        <location col="0" row="0" />
-    </label>
-
-    <label>
-        <text>Src</text>
-        <location col="0" row="1" />
-    </label>
-
-    <label>
-        <text>Long desc</text>
-        <location col="0" row="3" />
-    </label>
-
-    <label>
-        <text>Frame border</text>
-        <location col="0" row="4" />
-    </label>
-
-    <label>
-        <text>Margin width</text>
-        <location col="0" row="5" />
-    </label>
-
-    <label>
-        <text>Margin height</text>
-        <location col="0" row="6" />
-    </label>
-
-    <label>
-        <text><!-- No Resize --> </text>
-        <location col="0" row="7" />
-    </label>
-
-    <label>
-        <text>Scrolling</text>
-        <location col="0" row="8" />
-    </label>
-
-
+<tag name="frame" hasCore="1" single="1">
 
     <attr name="name" type="input">
+        <text>Name</text>
+        <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2"/>
     </attr>
 
     <attr name="src" type="url">
+        <text>Src</text>
+        <textlocation col="0" row="1" />
         <location col="1" row="1"  colspan="2"/>
     </attr>
 
     <attr name="longdesc" type="url">
+        <text>Long desc</text>
+        <textlocation col="0" row="3" />
         <location col="1" row="3"  colspan="2"/>
     </attr>
 
     <attr name="frameborder" type="list">
+        <text>Frame border</text>
+        <textlocation col="0" row="4" />
         <location col="1" row="4"  colspan="2"/>
         <items>
                 <item>yes</item>
@@ -65,10 +31,14 @@
     </attr>
 
     <attr name="marginwidth" type="input">
+        <text>Margin width</text>
+        <textlocation col="0" row="5" />
         <location col="1" row="5" colspan="2"/>
     </attr>
 
     <attr name="marginheight" type="input">
+        <text>Margin height</text>
+        <textlocation col="0" row="6" />
         <location col="1" row="6" colspan="2"/>
     </attr>
 
@@ -78,6 +48,8 @@
     </attr>
 
     <attr name="scrolling" type="list">
+        <text>Scrolling</text>
+        <textlocation col="0" row="8" />
         <location col="1" row="8" colspan="2"/>
         <items>
                 <item>auto</item>

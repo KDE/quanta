@@ -1,48 +1,9 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="base">
-
-    <label>
-        <text>Rel</text>
-        <location col="0" row="0" />
-    </label>
-
-    <label>
-        <text>Rev</text>
-        <location col="0" row="1" />
-    </label>
-
-    <label>
-        <text>href</text>
-        <location col="0" row="2" />
-    </label>
-
-    <label>
-        <text>Type</text>
-        <location col="0" row="3" />
-    </label>
-
-    <label>
-        <text>Target</text>
-        <location col="0" row="4" />
-    </label>
-
-    <label>
-        <text>Media</text>
-        <location col="0" row="5" />
-    </label>
-
-    <label>
-        <text>href lang.</text>
-        <location col="0" row="6" />
-    </label>
-
-    <label>
-        <text>Charset</text>
-        <location col="0" row="7" />
-    </label>
-
+<tag name="base" hasScript="1" hasCore="1" hasI18n="1" single="1">
     <attr name="rel" type="list">
+        <text>Rel</text>
+        <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2"  />
         <items>
                 <item>Alternate</item>
@@ -65,6 +26,8 @@
     </attr>
 
     <attr name="rev" type="list">
+        <text>Rev</text>
+        <textlocation col="0" row="1" />
         <location col="1" row="1" colspan="2" />
         <items>
                 <item>Alternate</item>
@@ -87,10 +50,14 @@
     </attr>
 
     <attr name="href" type="url">
+        <text>HREF</text>
+        <textlocation col="0" row="2" />
         <location col="1" row="2" colspan="2" />
     </attr>
 
     <attr name="type" type="list">
+        <text>Type</text>
+        <textlocation col="0" row="3" />
         <location col="1" row="3" colspan="2" />
         <items>
                 <item>text/html</item>
@@ -106,6 +73,8 @@
     </attr>
 
     <attr name="target" type="list">
+        <text>Target</text>
+        <textlocation col="0" row="4" />
         <location col="1" row="4" colspan="2"  />
         <items>
                 <item>_blank</item>
@@ -116,6 +85,8 @@
     </attr>
 
     <attr name="media" type="list">
+        <text>Media</text>
+        <textlocation col="0" row="5" />
         <location col="1" row="5" colspan="2" />
         <items>
                 <item>screen</item>
@@ -131,10 +102,14 @@
     </attr>
 
     <attr name="hreflang" type="input">
+        <text>HREF lang</text>
+        <textlocation col="0" row="6" />
         <location col="1" row="6" colspan="2" />
     </attr>
 
     <attr name="charset" type="input">
+        <text>Charset</text>
+        <textlocation col="0" row="7" />
         <location col="1" row="7" colspan="2" />
     </attr>
 

@@ -3,7 +3,8 @@
                              -------------------
     begin                : Пнд Сен 25 14:34:07 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
+                           (C) 2002 by Andras Mantia
+    email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -33,6 +34,7 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
    grid->setSpacing( 13 );
    grid->setMargin( 11 );
 
+//parse the tag XML file, in order to build up the dialog
    for ( QDomNode n = d.firstChild().firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
    {
      QDomNode location = findChild(n,"location");
@@ -47,6 +49,13 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
      int col = el.attribute("col","0").toInt();
      int colspan = el.attribute("colspan","1").toInt()-1;
      int rowspan = el.attribute("rowspan","1").toInt()-1;
+
+     location = findChild(n,"textlocation");
+     el = location.toElement();
+     int textrow = el.attribute("row","0").toInt();
+     int textcol = el.attribute("col","0").toInt();
+     int textcolspan = el.attribute("colspan","1").toInt()-1;
+     int textrowspan = el.attribute("rowspan","1").toInt()-1;
 
      // qDebug("%s col:%d row:%d cs:%d, rs:%d", n.nodeName().data(), col,row,colspan,rowspan );
 
@@ -72,7 +81,8 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
 		kdDebug() << "quanta: tooltip - " << tip << "\n";
 		kdDebug() << "quanta: whatsthis - "<< whatsThis << "\n";
 
-     if ( n.nodeName() == "label" ) {
+     if ( n.nodeName() == "label" ) //a static label
+     {
      	  QLabel *label = new QLabel(this);
      	  QDomElement ltext = findChild(n,"text").toElement();
      	  if ( !ltext.isNull() )
@@ -86,12 +96,28 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
      	  grid->addMultiCellWidget( label, row, row+rowspan, col,  col+colspan );
      }
 
-     if ( n.nodeName() == "attr" ) {
+     if ( n.nodeName() == "attr" ) //an attribute
+     {
+
+     	  QDomElement ltext = findChild(n,"text").toElement();
+     	  if ( !ltext.isNull() ) //if there is a text label for the attribute
+        {
+     	    QLabel *label = new QLabel(this);
+     	  	label->setText( ltext.text() );
+
+          if ( tip != QString::null )
+              QToolTip::add( label, tip );
+          if ( whatsThis != QString::null )
+              QWhatsThis::add( label, whatsThis );
+          grid->addMultiCellWidget( label, textrow, textrow+textrowspan, textcol,  textcol+textcolspan );
+        }
 
      		QDomElement el = n.toElement();
         QString type = el.attribute("type","input");
 
-        if ( type == "input" ) {
+        //look for the different attribute types
+        if ( type == "input" )
+        {
         	 KLineEdit *w = new KLineEdit(this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
 
@@ -104,7 +130,8 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
         	 attributes.append(attr);
         }
 
-        if ( type == "check" ) {
+        if ( type == "check" )
+        {
         	 QCheckBox *w = new QCheckBox(this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
         	
@@ -121,7 +148,8 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
         	 attributes.append(attr);
         }
 
-        if ( type == "list" ) {
+        if ( type == "list" )
+        {
         	 QComboBox *w = new QComboBox(true,this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
         	
@@ -134,7 +162,8 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
         	 attributes.append(attr);
         }
 
-        if ( type == "color" ) {
+        if ( type == "color" )
+        {
         	 ColorCombo *w = new ColorCombo(this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
         	
@@ -147,7 +176,8 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
         	 attributes.append(attr);
         }
 
-        if ( type == "url" ) {
+        if ( type == "url" )
+        {
         	 FileCombo *w = new FileCombo(basePath, this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
 
@@ -163,7 +193,8 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
      	
      }
 
-     if ( n.nodeName() == "spacer") {
+     if ( n.nodeName() == "spacer")
+     {
      	 QDomElement el = n.toElement();
      	
      	 QSpacerItem* spacer;

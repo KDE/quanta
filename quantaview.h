@@ -84,13 +84,7 @@ class QuantaView : public QWidget
       void initActions();
 
 	  void insertTag( const char *tag);
-	
-	  /** convert tag to upper or lower case */
-	  QString tagCase( const char*  tag);
-	  
-  	/** convert attribute of tag to upper or lower case */
-  	QString attrCase( const char*  attr);
-  	
+	 	
   /** No descriptions */
   void resizeEvent (QResizeEvent *);
   /** Insert a new tag by bringing up the TagDialog. */

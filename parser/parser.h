@@ -67,9 +67,6 @@ private:
   int lasttype;
   Node* node;
 
-//  QStrList tagsList;
-//  QStrList tagsSingle; // single tags, like <img>
-//  QStrList tagsDouble; // tags with end part, <b> </b>
   QDict<QStringList> tagsStop; // list of tag, can stop area of curren tag ( <tr> stop <td> )
 
 };

@@ -1,14 +1,10 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="p">
-
-    <label>
-        <text>Alignment</text>
-        <location col="0" row="0" />
-    </label>
-
+<tag name="p" hasScript="1" hasCore="1" hasI18n="1" optional="1">
 
     <attr name="align" type="list">
+        <text>Alignment</text>
+        <textlocation col="0" row="0" />
         <location col="1" row="0" />
         <items>
                 <item>left</item>

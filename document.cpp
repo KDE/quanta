@@ -37,12 +37,14 @@
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/wordwrapinterface.h>
 
+#include "quantacommon.h"
 #include "document.h"
 #include "resource.h"
 
 #include <cctype>
 
-extern QDict <QStrList> *tagsDict;
+extern QDict<AttributeList> *tagsDict;
+extern uint tagsCase, attrsCase;
 
 Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget *parent,
                    const char *name, WFlags f ) : QWidget(parent, name, f)
@@ -350,7 +352,7 @@ void Document::changeCurrentTag( QDict<QString> *dict )
 
   while ( it.current() ) { // for insert new attr
 
-    QString attr = attrCase(it.currentKey());
+    QString attr = QuantaCommon::attrCase(it.currentKey());
     QString *val = it.current();
 
     if ( ! oldAttr.find(attr) ) // insert this attr. in end of tag
@@ -375,9 +377,9 @@ void Document::changeCurrentTag( QDict<QString> *dict )
     QString attr;
 
     if ( i )
-      attr = attrCase( getTagAttr(i) );
+      attr = QuantaCommon::attrCase( getTagAttr(i) );
     else
-      attr = tagCase( getTagAttr(i) );
+      attr = QuantaCommon::tagCase( getTagAttr(i) );
 
     QString *val   = dict->find(attr);
 
@@ -416,39 +418,10 @@ QPoint Document::getGlobalCursorPos()
   return kate_view->mapToGlobal(viewCursorIf->cursorCoordinates());
 }
 
-
-extern bool tagsCapital, attrCapital;
-
-QString Document::tagCase( QString  tag)
-{
-  QString sTag = tag;
-
-  if ( tagsCapital )
-    sTag = sTag.upper();
-  else
-    sTag = sTag.lower();
-
-  return sTag;
-}
-
-/** convert attr of tag to upper or lower case */
-QString Document::attrCase( QString  attr)
-{
-  QString sAttr = attr;
-  
-  if ( attrCapital )
-    sAttr = sAttr.upper();
-  else
-    sAttr = sAttr.lower();
-
-  return sAttr;
-}
-
-
 void Document::insertAttrib(QString attr)
 {
    viewCursorIf->setCursorPosition( tagEndY, tagEndX );
-   insertTag( QString(" ") + attrCase(attr) + "=\"", QString( "\"" ) );
+   insertTag( QString(" ") + QuantaCommon::attrCase(attr) + "=\"", QString( "\"" ) );
 }
 
 /**  */
@@ -556,8 +529,10 @@ void Document::insertText(QString text, bool adjustCursor)
   // the Kate::View::insertText method
   if(adjustCursor)
   {
-    unsigned textLength = text.length(), wordWrapAt = kate_doc->wordWrapAt();
-    int i=0, j=0, wordLength;
+    unsigned textLength = text.length();
+    unsigned int wordWrapAt = kate_doc->wordWrapAt();
+    uint i=0, j=0;
+    int wordLength;
     bool noWordWrap = !(kate_doc->wordWrap());
     const char *ascii = text.latin1(); // use ascii for maximum speed
     bool lineLock =false;
@@ -683,6 +658,8 @@ int Document::closeTempFile()
    delete tempFile;
    tempFile = 0;
  }
+
+ return 1; //not used yet
 }
 /** No descriptions */
 void Document::clearTempFile()
@@ -703,6 +680,8 @@ bool Document::saveIt()
  bool modifyStatus = _doc->isModified();
  _doc->save();
  _doc->setModified(modifyStatus);
+
+ return true;   //not used yet
 }
 
 /** This will return the current tag name at the given position.
@@ -796,7 +775,7 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
       //showCodeCompletions( getCharacterCompletions() );
     }
   } else {
-    if ( string == ">" && tag[0] != '/' && tagsList->find(tag.upper()) != -1 && singleTags->find(tag.upper()) == -1 && ( optionalTags->find(tag.upper()) != -1 || useCloseTag )) {
+    if ( string == ">" && tag[0] != '/' && tagsList->find(tag.upper()) && singleTags->find(tag.upper()) == -1 && ( optionalTags->find(tag.upper()) != -1 || useCloseTag )) {
       //add closing tag if wanted
       column++;
       editIf->insertText(line, column, "</" + tag + ">");
@@ -819,9 +798,10 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions()
   KTextEditor::CompletionEntry completion;
   completion.type = "tag";
 
-  QString item;
-  for ( item = tagsList->first(); tagsList->current(); item = tagsList->next() ) {
-    completion.text = tagCase( item );
+  QDictIterator<QString> it(*tagsList);
+  for( ; it.current(); ++it )
+  {
+    completion.text = QuantaCommon::tagCase( * it.current() );
     completions->append( completion );
   }
 
@@ -836,37 +816,14 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( QSt
   completion.type = "attribute";
   completion.userdata = tag;
 
-  if ( tagsList->find( tag.upper()) != -1 )
+  if ( tagsList->find( tag.upper()) )
   {
-    QStrList *list = tagsDict->find( tag );
-    QString item = list->first();
-    while ( item ) {
-      if ( !((lCore->find(item)!=-1) || (lI18n->find(item)!=-1) || (lScript->find(item)!=-1))) {
-        completion.text = item;
-        completions->append( completion );
-      }
-      item = list->next();
-    }
-
-    if ( tagsCore->find(tag.upper()) != -1 ) {
-      for ( item = lCore->first(); lCore->current(); item = lCore->next() ) {
-        completion.text = item;
-        completions->append( completion );
-      }
-    }
-
-    if ( tagsI18n->find(tag.upper()) != -1 ) {
-      for ( item = lI18n->first(); lI18n->current(); item = lI18n->next() ) {
-        completion.text = item;
-        completions->append( completion );
-      }
-    }
-
-    if ( tagsScript->find(tag.upper()) != -1 ) {
-      for ( item = lScript->first(); lScript->current(); item = lScript->next() ) {
-        completion.text = item;
-        completions->append( completion );
-      }
+    AttributeList *list = tagsDict->find( tag );
+    for (uint i = 0; i < list->count(); i++)
+    {
+      QString item = list->at(i)->name;
+      completion.text = item;
+      completions->append( completion );
     }
   }
 

@@ -25,43 +25,18 @@
 #include "quantadoc.h"
 #include "quanta.h"
 #include "resource.h"
+#include "quantacommon.h"
 
 
 /////////////////////////////////////////////////////////////////////
 // SLOT CALLBACK IMPLEMENTATION
 /////////////////////////////////////////////////////////////////////
 
-/** convert tag to upper or lower case */
-QString QuantaView::tagCase( const char*  tag)
-{
-  QString sTag = tag;
-
-  if ( tagsCapital )
-    sTag = sTag.upper();
-  else
-    sTag = sTag.lower();
-
-  return sTag;
-}
-
-/** convert attr of tag to upper or lower case */
-QString QuantaView::attrCase( const char*  attr)
-{
-  QString sAttr = attr;
-
-  if ( attrCapital )
-    sAttr = sAttr.upper();
-  else
-    sAttr = sAttr.lower();
-
-  return sAttr;
-}
-
 /**  */
 void QuantaView::insertTag( const char *tag)
 {
 
-  QString startTag = tagCase(tag);
+  QString startTag = QuantaCommon::tagCase(tag);
 
   if ( ( singleTags->find( startTag.upper() )!= -1 ) ||
      ( ( optionalTags->find(startTag.upper())!= -1 ) && (!useCloseTag)))

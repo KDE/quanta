@@ -65,6 +65,7 @@
 #include "projectupload.h"
 #include "rescanprj.h"
 
+extern QString globalDataDir;
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
 extern QString fileMaskText;
@@ -232,15 +233,36 @@ void Project::readConfig (KConfig *config)
   this->config = config;
   
   config->setGroup  ("Projects");
-  QString url = config->readEntry("Last Project");
   projectRecent->loadEntries(config, "RecentProjects");
   
+  /*
+  QString url = config->readEntry("Last Project")
   KURL u(url);
   if ( url.isEmpty())   return;
   if ( u.isMalformed()) return;
   
   closeProject();
   loadProject ( url );
+  */
+}
+
+void Project::readLastConfig(KConfig *c)
+{
+  KConfig *config;
+  if(c == 0)
+    config = this->config;
+  else
+    config = c;
+
+  config->setGroup("Projects");
+  QString url = config->readEntry("Last Project");
+
+  KURL u(url);
+  if ( url.isEmpty())   return;
+  if ( u.isMalformed()) return;
+
+   closeProject();
+   loadProject ( url );
 }
 
 void Project::writeConfig(KConfig *config)
@@ -918,7 +940,7 @@ void Project::slotAcceptCreateProject()
  bool  createTemplateDir = true;
  if (pnf->insertGlobalTemplates->isChecked())
  {
-   addDirectory(KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png")+"quanta/templates/", false);
+   addDirectory(globalDataDir+"quanta/templates/", false);
    createTemplateDir = false;
  }
  if (pnf->insertLocalTemplates->isChecked())

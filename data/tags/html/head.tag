@@ -1,13 +1,10 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="html">
-
-    <label>
-        <text>Profile</text>
-        <location col="0" row="0" />
-    </label>
-
+<tag name="html" hasI18n="1">
+    
     <attr name="profile" type="url">
+        <text>Profile</text>
+        <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
     </attr>
 
@@ -26,7 +23,6 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="3" />
     </spacer>
-
 
 </tag>
 </TAGS>

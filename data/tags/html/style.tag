@@ -1,23 +1,10 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="script">
-
-    <label>
-        <text>Type</text>
-        <location col="0" row="0" />
-    </label>
-
-    <label>
-        <text>Media</text>
-        <location col="0" row="1" />
-    </label>
-
-    <label>
-        <text>Title</text>
-        <location col="0" row="2" />
-    </label>
+<tag name="script" hasI18n="1">
 
     <attr name="type" type="list">
+        <text>Type</text>
+        <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
         <items>
                 <item>text/css</item>
@@ -25,6 +12,8 @@
     </attr>
 
     <attr name="media" type="list">
+        <text>Media</text>
+        <textlocation col="0" row="1" />
         <location col="1" row="1" colspan="2" />
         <items>
                 <item>screen</item>
@@ -39,13 +28,11 @@
         </items>
     </attr>
 
-
-
-    <attr name="charset" type="input">
+    <attr name="title" type="input">
+        <text>Title</text>
+        <textlocation col="0" row="2" />
         <location col="1" row="2" colspan="2" />
     </attr>
-
-
 
     <spacer orientation="h">
         <location col="0" row="8" />

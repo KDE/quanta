@@ -1,13 +1,10 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="ol">
-
-    <label>
-        <text>Type</text>
-        <location col="0" row="0" />
-    </label>
+<tag name="ol" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="type" type="list">
+        <text>Type</text>
+        <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
         <items>
             <item>disk</item>
@@ -18,7 +15,7 @@
 
 
     <attr name="compact" type="check">
-        <text>compact</text>
+        <text>Compact</text>
         <tooltip>Depricated in HTML 4.0</tooltip>
         <location col="0" row="2" colspan="2" />
     </attr>

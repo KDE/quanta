@@ -1,23 +1,10 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="hr">
-
-    <label>
-        <text>Alignment</text>
-        <location col="0" row="0" />
-    </label>
-
-    <label>
-        <text>Line height</text>
-        <location col="0" row="1" />
-    </label>
-
-    <label>
-        <text>Line width</text>
-        <location col="0" row="2" />
-    </label>
+<tag name="hr" hasScript="1" hasCore="1" single="1">
 
     <attr name="align" type="list">
+        <text>Alignment</text>
+        <textlocation col="0" row="0" />
         <tooltip>Depricated in HTML 4.0 </tooltip>
         <location col="1" row="0" colspan="2" />
         <items>
@@ -28,10 +15,14 @@
     </attr>
 
     <attr name="size" type="input">
+        <text>Line height</text>
+        <textlocation col="0" row="1" />
         <location col="1" row="1" colspan="2" />
     </attr>
 
     <attr name="width" type="input">
+        <text>Line width</text>
+        <textlocation col="0" row="2" />
         <location col="1" row="2" colspan="2" />
     </attr>
 
@@ -41,8 +32,6 @@
         <text>No shade (solid line)</text>
         <location col="0" row="3"/>
     </attr>
-
-
 
     <spacer orientation="h">
         <location col="0" row="8" />
@@ -59,8 +48,6 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="3" />
     </spacer>
-
-
 
 </tag>
 </TAGS>

@@ -45,6 +45,8 @@
 
 //app includes
 #include "treeviews/filestreeview.h"
+#include "quantacommon.h"
+#include "qextfileinfo.h"
 
 // forward declaration
 class QuantaDoc;
@@ -79,6 +81,8 @@ class ActionEditDlg;
 class PHP3Debugger;
 class PHP4Debugger;
 
+extern QDict <AttributeList> *tagsDict;
+
 /**
   * The base class for Quanta application windows. 
   */
@@ -100,8 +104,11 @@ class QuantaApp : public KDockMainWindow
     MessageOutput *getMessages() { return messageOutput; }
 
     void openLastFiles();
+    /** Loads the initial project */
+    void loadInitialProject(QString url="");
+
     
-    /** from @see KXMLGUIBuilder, for tollbars in tabbar ( tags,... )
+    /** from @see KXMLGUIBuilder, for toolbars in tabbar ( tags,... )
      *
      */
     QWidget* createContainer( QWidget *parent, int index, const QDomElement &element, int &id );  
@@ -118,6 +125,12 @@ class QuantaApp : public KDockMainWindow
     void initView();
     void initProject();
     void initTagDict();
+    void initToolBars();
+
+    /**
+      Parse the dom document and retrieve the tag attributes
+    */
+    AttributeList* getAttributes(QDomDocument *dom);
     
     virtual bool queryExit();
     void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);

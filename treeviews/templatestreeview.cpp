@@ -42,7 +42,8 @@
 #include "newtemplatedirdlg.h"
 #include "quantapropertiespagedlg.h"
 
-const QString textMenu = i18n("Insert as Aext");
+extern QString globalDataDir;
+const QString textMenu = i18n("Insert as Text");
 const QString binaryMenu = i18n("Insert Link to File");
 const QString docMenu = i18n("New Document Based on This");
 
@@ -82,7 +83,7 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 
-	QString dir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png")+"quanta/templates/";
+	QString dir = globalDataDir +"quanta/templates/";
  	globalDir = new FilesTreeFolder( this , i18n("Global Templates"), dir);
 	globalDir->setPixmap( 0, SmallIcon("folder"));
 	globalDir->setOpen( true );

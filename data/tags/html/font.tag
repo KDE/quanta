@@ -1,32 +1,23 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="font">
-
-    <label>
-        <text>Color</text>
-        <location col="0" row="2" />
-    </label>
-
+<tag name="font" hasCore="1" hasI18n="1">
+    
     <attr name="color" type="color">
+        <text>Color</text>
+        <textlocation col="0" row="2" />
         <tooltip>Font color</tooltip>
         <location col="1" row="2"  />
     </attr>
-
-    <label>
-        <text>Face</text>
-        <location col="0" row="3" />
-    </label>
-
+    
     <attr name="face" type="input">
+        <text>Face</text>
+        <textlocation col="0" row="3" />
         <location col="1" row="3" colspan="2" />
     </attr>
-
-    <label>
-        <text>Size</text>
-        <location col="0" row="4" />
-    </label>
-
+    
     <attr name="size" type="list">
+        <text>Size</text>
+        <textlocation col="0" row="4" />
         <location col="1" row="4"/>
         <items>
                 <item>+1</item>
@@ -39,8 +30,6 @@
                 <item>-4</item>
         </items>
     </attr>
-
-
 
     <spacer orientation="h">
         <location col="0" row="5" />
@@ -57,8 +46,6 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="3" />
     </spacer>
-
-
 
 </tag>
 </TAGS>

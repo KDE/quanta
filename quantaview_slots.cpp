@@ -39,6 +39,7 @@
 
 
 // application specific includes
+#include "quantacommon.h"
 #include "document.h"
 #include "quanta.h"
 #include "quantadoc.h"
@@ -67,7 +68,7 @@ void QuantaView::slotEditCurrentTag()
   w->currentTag();
   QString tag = w->getTagAttr(0);
 
-  if ( tagsList->find( tag.upper()) != -1 )
+  if ( tagsList->find( tag.upper()) )
   {
     QString attrs = "";
     for (int i=1; i < w->tagAttrNum; i++ )
@@ -218,20 +219,20 @@ void QuantaView::slotTagMail()
 	TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Email Link (mailto)"));
 
   if ( mailDlg->exec() ) {
-  	QString tag = QString(tagCase("<a"));
+  	QString tag = QString(QuantaCommon::tagCase("<a"));
   	
   	if ( !QString(mailDlg->lineEmail->text()).isEmpty())
   	{
-  		tag += attrCase(" href=\"")+"mailto:"+mailDlg->lineEmail->text();
+  		tag += QuantaCommon::attrCase(" href=\"")+"mailto:"+mailDlg->lineEmail->text();
   	  	if ( !QString(mailDlg->lineSubject->text()).isEmpty())
 	   		tag += "?subject="+mailDlg->lineSubject->text();
   	   	tag += "\"";
   	}
   	
   	if ( !QString(mailDlg->titleEdit->text()).isEmpty())
-	   		tag += attrCase(" title=\"")+mailDlg->titleEdit->text()+"\"";
+	   		tag += QuantaCommon::attrCase(" title=\"")+mailDlg->titleEdit->text()+"\"";
     tag += QString(">");
-    write()->insertTag(tag,tagCase("</a>"));
+    write()->insertTag(tag,QuantaCommon::tagCase("</a>"));
   }
   delete mailDlg;
 }
@@ -252,13 +253,13 @@ void QuantaView::slotTagMisc()
   	element = miscDlg->elementName->text();
   	if ( !element.isEmpty())
   	{
-  		tag += "<" + attrCase(element)+">";
+  		tag += "<" + QuantaCommon::attrCase(element)+">";
   	  	if ( (addClosingTag = miscDlg->addClosingTag->isChecked()) == true)
         {
-           	write()->insertTag(tag,tagCase( "</"+attrCase(element)+">"));
+           	write()->insertTag(tag,QuantaCommon::tagCase( "</"+QuantaCommon::attrCase(element)+">"));
          } else
          {
-		    write()->insertTag(tag,tagCase(""));
+		    write()->insertTag(tag,QuantaCommon::tagCase(""));
          }
   	}  	
   }
@@ -271,25 +272,28 @@ void QuantaView::slotTagQuickStart(){
 	TagQuickStart *quickDlg = new TagQuickStart( doc->basePath(), this, i18n("Generate HTML Text"));
 
   if ( quickDlg->exec() ) {
-  	QString tag = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n")+tagCase("<html>\n")
-  	                  +space+tagCase("<head>\n")+space+tagCase("  <title>");
+  	QString tag = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n")+QuantaCommon::tagCase("<html>\n")
+  	                  +space+QuantaCommon::tagCase("<head>\n")+space+QuantaCommon::tagCase("  <title>");
   	if ( !QString(quickDlg->lineTitle->text()).isEmpty())
 	   		tag += quickDlg->lineTitle->text();
-    tag += tagCase("</title>\n")+space+"  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n"+space+"  <meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"+space+tagCase("</head>\n")+space+tagCase("<body");
+    tag += QuantaCommon::tagCase("</title>\n")+space+
+           "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n"+
+           space+"  <meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"+space+
+           QuantaCommon::tagCase("</head>\n")+space+QuantaCommon::tagCase("<body");
     if ( !QString(quickDlg->lineBGImage->text()).isEmpty())
-	   		tag += attrCase(" background=\"")+quickDlg->lineBGImage->text()+"\"";
+	   		tag += QuantaCommon::attrCase(" background=\"")+quickDlg->lineBGImage->text()+"\"";
 	  if ( !QString(quickDlg->comboBGColor->currentText()).isEmpty())
-	   		tag += attrCase(" bgcolor=\"")+quickDlg->comboBGColor->currentText()+"\"";
+	   		tag += QuantaCommon::attrCase(" bgcolor=\"")+quickDlg->comboBGColor->currentText()+"\"";
 	  if ( !QString(quickDlg->comboTextColor->currentText()).isEmpty())
-	   		tag += attrCase(" text=\"")+quickDlg->comboTextColor->currentText()+"\"";
+	   		tag += QuantaCommon::attrCase(" text=\"")+quickDlg->comboTextColor->currentText()+"\"";
 	  if ( !QString(quickDlg->comboLinkColor->currentText()).isEmpty())
-	   		tag += attrCase(" link=\"")+quickDlg->comboLinkColor->currentText()+"\"";
+	   		tag += QuantaCommon::attrCase(" link=\"")+quickDlg->comboLinkColor->currentText()+"\"";
 	  if ( !QString(quickDlg->comboALinkColor->currentText()).isEmpty())
-	   		tag += attrCase(" alink=\"")+quickDlg->comboALinkColor->currentText()+"\"";
+	   		tag += QuantaCommon::attrCase(" alink=\"")+quickDlg->comboALinkColor->currentText()+"\"";
 	  if ( !QString(quickDlg->comboVLinkColor->currentText()).isEmpty())
-	   		tag += attrCase(" vlink=\"")+quickDlg->comboVLinkColor->currentText()+"\"";
+	   		tag += QuantaCommon::attrCase(" vlink=\"")+quickDlg->comboVLinkColor->currentText()+"\"";
     tag += QString(">\n")+space+QString("  ");
-    write()->insertTag(tag,QString("\n")+space+tagCase("</body>\n")+space+tagCase("</html>"));
+    write()->insertTag(tag,QString("\n")+space+QuantaCommon::tagCase("</body>\n")+space+QuantaCommon::tagCase("</html>"));
   }
   delete quickDlg;
 }
@@ -316,7 +320,7 @@ void QuantaView::slotTagQuickList(){
     	tag += QString("</ol>");
     else tag += QString("</ul>");
 
-    write()->insertTag( tagCase(tag));
+    write()->insertTag( QuantaCommon::tagCase(tag));
   }
   delete(listDlg);
 }
@@ -401,7 +405,7 @@ void QuantaView::slotTagQuickTable()
  	 	tag += "  </tbody>\n";
  	 	tag += QString("</table>");
   	
- 	  	write()->insertTag( tagCase(tag) );
+ 	  	write()->insertTag( QuantaCommon::tagCase(tag) );
   }
   delete( quickDlg);
 }
@@ -492,7 +496,7 @@ void QuantaView::slotTagDate(){
 
 /** for select form */
 void QuantaView::slotTagSelect(){
-  write()->insertTag(tagCase("<select")+ attrCase("name")+tagCase("=\"\"><option>"),tagCase("</select>"));
+  write()->insertTag(QuantaCommon::tagCase("<select")+ QuantaCommon::attrCase("name")+QuantaCommon::tagCase("=\"\"><option>"),QuantaCommon::tagCase("</select>"));
 }
 
 void QuantaView::slotViewInNetscape()
@@ -618,10 +622,10 @@ void QuantaView::slotInsertTagFromTree(QString name)
 	
 	if ( QDir::match( fileMaskImage, name) )
 	{
-		write()->insertTag( tagCase("<img")+attrCase(" src=\"")+shortName+"\">");
+		write()->insertTag( QuantaCommon::tagCase("<img")+QuantaCommon::attrCase(" src=\"")+shortName+"\">");
 	}
 	else {
-	  write()->insertTag( tagCase("<a")+attrCase(" href=\"")+shortName+"\">",tagCase("</a>"));
+	  write()->insertTag( QuantaCommon::tagCase("<a")+QuantaCommon::attrCase(" href=\"")+shortName+"\">",QuantaCommon::tagCase("</a>"));
 	}
 }
 

@@ -102,11 +102,6 @@ public:
   
   QPoint getGlobalCursorPos();
 
-  /** convert tag to upper or lower case */
-  QString tagCase( QString  tag);
-  
-  /** convert attribute of tag to upper or lower case */
-  QString attrCase( QString  attr);
   /** No descriptions */
   void insertFile(QString fileName);
   void insertText(QString, bool=true);

@@ -59,11 +59,10 @@ ProjectNewGeneral::~ProjectNewGeneral(){
 
 void ProjectNewGeneral::slotButtonDir()
 {
-	linePrjDir->setText( KFileDialog::getExistingDirectory(
-		linePrjDir->text(),
-		this,
-		i18n("Select Project Directory")
-	));
+  QString text = KFileDialog::getExistingDirectory(linePrjDir->text(), this,
+                              i18n("Select Project Directory"));
+  if(!text.isEmpty())
+    linePrjDir->setText(text);
 }
 
 void ProjectNewGeneral::slotLinePrjFile( const QString & )
@@ -104,14 +103,18 @@ void ProjectNewGeneral::setMargin(int i)
 
 void ProjectNewGeneral::slotButtonTmpl()
 {
-  linePrjTmpl->setText( KFileDialog::getExistingDirectory(linePrjTmpl->text(), this,
-  i18n("Select Project Template Directory")));
-}
+  QString text = KFileDialog::getExistingDirectory(linePrjTmpl->text(), this,
+                              i18n("Select Project Template Directory"));
+  if(!text.isEmpty())
+    linePrjTmpl->setText(text);
+}                                          
 
 void ProjectNewGeneral::slotButtonToolbar()
 {
-  linePrjToolbar->setText( KFileDialog::getExistingDirectory(linePrjToolbar->text(), this,
-  i18n("Select Project Toolbar & Actions Directory")));
+  QString text = KFileDialog::getExistingDirectory(linePrjToolbar->text(), this,
+                              i18n("Select Project Toolbar & Actions Directory"));
+  if(!text.isEmpty())
+    linePrjToolbar->setText(text);
 }
 
 void ProjectNewGeneral::slotLinePrjToolbar(const QString &Str)

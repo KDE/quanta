@@ -63,7 +63,7 @@
 
 #include "project/project.h"
 
-extern QDict <QStrList> *tagsDict;
+extern QDict<AttributeList> *tagsDict;
 
 QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObject(parent, name)
 {
@@ -512,36 +512,43 @@ void QuantaDoc::slotAttribPopup()
   for (int i=1; i < write()->tagAttrNum; i++ )
       attrList.append( write()->getTagAttr(i) );
 
-  if ( tagsList->find( tag.upper()) != -1 )
+  if ( tagsList->find( tag.upper()) )
   {
     QString caption = QString(i18n("Attributes of <"))+tag+">";
     attribMenu->setTitle( caption );
 
-    QStrList *list = tagsDict->find( tag );
-    char * item = list->first();
+    AttributeList *list = tagsDict->find( tag );
     bool haveAttributes = false; // if popup memu haven't members, dont show it
-    while ( item ) {
-      if ( !((lCore->find(item)!=-1) || (lI18n->find(item)!=-1) || (lScript->find(item)!=-1))) {
-        haveAttributes = true;
-        attribMenu->insertItem( item , list->at() );
-        if ( attrList.find(item) != -1 )
-          attribMenu->setItemEnabled( list->at(), false );
+    bool hasCore = false;
+    bool hasI18n = false;
+    bool hasScript = false;
+    for ( uint i = 0; i < list->count(); i++ )
+    {
+      QString name = list->at(i)->name;
+      //insert the non core/i18n/script attributes
+      if ( !((lCore->find(name)!=-1) || (lI18n->find(name)!=-1) || (lScript->find(name)!=-1)))
+      {
+        attribMenu->insertItem( name , i);//list->findIndex(*item) );
+        attribMenu->setItemEnabled( i , false );
       }
-      item = list->next();
+      if (lCore->find(name) != -1) hasCore = true;
+      if (lScript->find(name) != -1) hasScript = true;
+      if (lI18n->find(name) != -1) hasI18n = true;
+      haveAttributes = true;
     }
 
-    if ( tagsCore->find(tag.upper()) != -1 ) {
-      haveAttributes = true;
+    if ( hasCore)
+    {
       attribMenu->insertItem("Core", attribCoreMenu, -2);
     }
-
-    if ( tagsI18n->find(tag.upper()) != -1 ) {
-      haveAttributes = true;
+    
+    if ( hasI18n )
+    {
       attribMenu->insertItem("I18n", attribI18nMenu, -2);
     }
     
-    if ( tagsScript->find(tag.upper()) != -1 ) {
-      haveAttributes = true;
+    if ( hasScript )
+    {
       attribMenu->insertItem("Script", attribEventsMenu, -2);
     }
 
@@ -565,12 +572,12 @@ void QuantaDoc::slotInsertAttrib( int id )
   write()->currentTag();
   QString tag = write()->getTagAttr(0);
   
-  if ( tagsList->find( tag.upper()) != -1 ) 
+  if ( tagsList->find( tag.upper()) ) 
   {
 
-    QStrList *list = tagsDict->find( tag.data() );
+    AttributeList *list = tagsDict->find( tag.data() );
 
-    write()->insertAttrib( list->at(id) );
+    write()->insertAttrib( list->at(id)->name );
   }
 }
 

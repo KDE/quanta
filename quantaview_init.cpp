@@ -57,8 +57,6 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	
 	initActions();
 	
-	QGridLayout *layout = new QGridLayout( this );
-
   writeTab = new QTabWidget(this);
   writeTab ->setTabPosition( QTabWidget::Bottom );
   connect( writeTab,	SIGNAL(currentChanged(QWidget*)), app, SLOT(slotUpdateStatus(QWidget*)));
@@ -68,14 +66,26 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
   toolbarTab = new QTabWidget(this);
   toolbarTab ->setTabPosition( QTabWidget::Top );
   toolbarTab ->setFocusPolicy( QWidget::NoFocus );
-  toolbarTab->setFixedHeight(60);
-             
+
+  KToolBar *tb = new KToolBar(toolbarTab);
+  tb->insertButton("aaa",1);
+  toolbarTab->addTab(tb, "xxx");
+//Find with this trick the correct needed size for the toolbar holding QTabWidget
+  toolbarTab->setMinimumHeight(tb->minimumSizeHint().height()+toolbarTab->height());
+  toolbarTab->removePage(tb);
+  delete tb;
+  
+	QGridLayout *layout = new QGridLayout( this );
+  layout->setRowStretch(0,0);
+  layout->setRowStretch(1,1);
   layout->addWidget( toolbarTab     ,0,0);
   layout->addWidget( writeTab     ,1,0);
 
 
   writeTab->show();
   toolbarTab->show();
+
+
   oldWrite = 0L;
 
   connect(this, SIGNAL(dragInsert(QDropEvent *)), getApp()->tTab, SLOT(slotDragInsert(QDropEvent *)));

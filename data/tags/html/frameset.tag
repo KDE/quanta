@@ -1,44 +1,36 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="frameset">
+<tag name="frameset" hasCore="1">
 
-    <label>
+   <attr name="rows" type="input">
         <text>Rows</text>
-        <location col="0" row="0" />
-    </label>
-
-    <label>
-        <text>Cols</text>
-        <location col="0" row="1" />
-    </label>
-
-    <label>
-        <text>On load</text>
-        <location col="0" row="3" />
-    </label>
-
-    <label>
-        <text>On unload</text>
-        <location col="0" row="4" />
-    </label>
-
-
-
-    <attr name="rows" type="input">
+        <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2"/>
     </attr>
 
     <attr name="cols" type="input">
+        <text>Cols</text>
+        <textlocation col="0" row="1" />
         <location col="1" row="1"  colspan="2"/>
     </attr>
 
     <attr name="onload" type="input">
+        <text>On load</text>
+        <textlocation col="0" row="3" />
         <location col="1" row="3"  colspan="2"/>
     </attr>
 
     <attr name="onunload" type="input">
+        <text>On unload</text>
+        <textlocation col="0" row="4" />
         <location col="1" row="4"  colspan="2"/>
     </attr>
+    
+    <attr name="border"> </attr>
+    <attr name="frameborder"> </attr>
+    <attr name="marginwidth"> </attr>
+    <attr name="marginheight"> </attr>
+    <attr name="framespacing"> </attr>
 
     <spacer orientation="h">
         <location col="0" row="8" />

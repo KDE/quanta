@@ -1,13 +1,10 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="li">
-
-    <label>
-        <text>Type</text>
-        <location col="0" row="0" />
-    </label>
+<tag name="li" hasCore="1" hasI18n="1" hasScript="1" optional="1">
 
     <attr name="type" type="list">
+        <text>Type</text>
+        <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
         <items>
             <item>disk</item>
@@ -21,17 +18,11 @@
         </items>
     </attr>
 
-
-    <label>
-        <text>Value</text>
-        <location col="0" row="1" />
-    </label>
-
-
     <attr name="value" type="input">
+        <text>Value</text>
+        <textlocation col="0" row="1" />
         <location col="1" row="1" colspan="2" />
     </attr>
-
 
     <attr name="compact" type="check">
         <text>compact</text>
@@ -53,7 +44,6 @@
     <spacer orientation="v">
         <location col="0" row="9" colspan="3" />
     </spacer>
-
 
 </tag>
 </TAGS>

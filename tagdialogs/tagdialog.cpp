@@ -36,12 +36,10 @@
 
 #include "../document.h"
 #include "../qextfileinfo.h"
+#include "../quantacommon.h"
 
 
-extern QStrList *tagsList; // list of known tags
-extern QStrList *tagsCore; // list of tags, allowed core attributes ( id, class, id, title )
-extern QStrList *tagsI18n; // list of tags, allowed i18 attribs.
-extern QStrList *tagsScript; // list of tags, allowed script attribs ( onClicl, omMouseOver... )
+extern QDict<QString> *tagsList; // list of known tags
 extern QStrList *quotedAttribs; // list of attribs, that have quoted values ( alt, src ... )
 extern QStrList *lCore;          // list of core attributes ( id, class, style ... )
 extern QStrList *lI18n;
@@ -49,8 +47,8 @@ extern QStrList *lScript;
 extern QStrList *singleTags; // tags without end  part </ >
 extern QStrList *optionalTags; // tags with optional end part
 
-extern bool tagsCapital; // use capital for tags
-extern bool attrCapital; // use capital letters for attributes of tag
+extern uint tagsCase; // use capital for tags
+extern uint attrsCase; // use capital letters for attributes of tag
 extern bool useCloseTag; // use close tag if optional
 
 
@@ -99,6 +97,7 @@ void TagDialog::parseTag()
   bool findXMLConfig = false;
 
   QStringList tagsDirs = KGlobal::instance()->dirs()->findDirs("appdata", "tags");
+  QDomDocument doc;
 
   for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
   {
@@ -113,16 +112,15 @@ void TagDialog::parseTag()
   	
   		 QString fname = tagDir + *it_f ;
   		 QFile f( fname );
-
 			 f.open( IO_ReadOnly );
-
-		   QDomDocument doc;
-		   if ( !doc.setContent( &f ) )
-		   	 continue;
-
-  		 mainDlg = new Tagxml( doc, this );
-  		 findXMLConfig = true;
-  		 break;
+		   if ( doc.setContent( &f ) )
+       {
+         mainDlg = new Tagxml( doc, this );
+  		   findXMLConfig = true;
+         f.close();
+  		   break;
+       }
+       f.close();
   	}
   	
   	if ( findXMLConfig )
@@ -139,17 +137,22 @@ void TagDialog::parseTag()
   coreDlg   = 0L;
   eventsDlg = 0L;
 
-  if ( tagsCore->find(t)!=-1  || tagsI18n->find(t)!=-1 )
+  QDomElement el = doc.firstChild().firstChild().toElement();
+  bool hasCore = (el.attribute("hasCore") == "1");
+  bool hasI18n = (el.attribute("hasI18n") == "1");
+  bool hasScript = (el.attribute("hasScript") == "1");
+
+  if ( hasCore  || hasI18n )
   {
     coreDlg   = new CoreWidgetDlg( this);
 
-    if ( tagsCore->find(t) == -1 )
+    if ( !hasCore )
       coreDlg->disableCoreAttribs();
-    if ( tagsI18n->find(t) == -1 )
+    if ( !hasI18n )
       coreDlg->disableI18nAttribs();
   }
 
-  if ( tagsScript->find(t) != -1 )
+  if ( hasScript )
     eventsDlg = new EventsWidgetDlg( this);
 
   if ( !findXMLConfig ) {
@@ -189,11 +192,11 @@ QString TagDialog::getAttributeString()
 
     if ( !val.isEmpty() ) {
       if ( trans )
-        attrval += attrCase(attr)+"="+val;
+        attrval += QuantaCommon::attrCase(attr)+"="+val;
       else
-        attrval += attrCase(attr)+"=\""+val+"\"";
+        attrval += QuantaCommon::attrCase(attr)+"=\""+val+"\"";
     } else
-      attrval += attrCase(attr); // for checkboxes dont print =""
+      attrval += QuantaCommon::attrCase(attr); // for checkboxes dont print =""
 
     attrStr = attrval+attrStr;
 
@@ -228,32 +231,6 @@ void TagDialog::slotAccept()
   if ( eventsDlg ) eventsDlg->readAttributes( dict );
 
   accept();
-}
-
-/** convert tag to upper or lower case */
-QString TagDialog::tagCase( QString  tag)
-{
-  QString sTag = tag;
-
-  if ( tagsCapital )
-    sTag = sTag.upper();
-  else
-    sTag = sTag.lower();
-
-  return sTag;
-}
-
-/** convert attr of tag to upper or lower case */
-QString TagDialog::attrCase( QString  attr)
-{
-  QString sAttr = attr;
-
-  if ( attrCapital )
-    sAttr = sAttr.upper();
-  else
-    sAttr = sAttr.lower();
-
-  return sAttr;
 }
 
 /** return document path */
@@ -342,9 +319,9 @@ void TagDialog::parseAttributes( QString attrs )
 void TagDialog::insertTag(Document *w, bool insertInLine)
 {
    QString newTag = getAttributeString();
-   newTag = QString("<")+tagCase(tag)+newTag+">";
+   newTag = QString("<")+QuantaCommon::tagCase(tag)+newTag+">";
 
-   QString secondPartOfTag = QString("</")+tagCase(tag)+">";
+   QString secondPartOfTag = QString("</")+QuantaCommon::tagCase(tag)+">";
 
    if ( !insertInLine )
    {

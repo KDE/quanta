@@ -2,28 +2,9 @@
 <TAGS>
 <tag name="script">
 
-    <label>
-        <text>Type</text>
-        <location col="0" row="0" />
-    </label>
-
-    <label>
-        <text>Language</text>
-        <location col="0" row="1" />
-    </label>
-
-    <label>
-        <text>Source</text>
-        <location col="0" row="2" />
-    </label>
-
-    <label>
-        <text>Charset</text>
-        <location col="0" row="3" />
-    </label>
-
-
     <attr name="type" type="list">
+        <text>Type</text>
+        <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
         <items>
                 <item>text/html</item>
@@ -34,6 +15,8 @@
     </attr>
 
     <attr name="language" type="list">
+        <text>Language</text>
+        <textlocation col="0" row="1" />
         <location col="1" row="1" colspan="2" />
         <items>
                 <item>JavaScript</item>
@@ -44,10 +27,14 @@
     </attr>
 
     <attr name="src" type="url">
+        <text>Source</text>
+        <textlocation col="0" row="2" />
         <location col="1" row="2" colspan="2" />
     </attr>
 
     <attr name="charset" type="input">
+        <text>Charset</text>
+        <textlocation col="0" row="3" />
         <location col="1" row="3" colspan="2" />
     </attr>
 
