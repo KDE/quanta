@@ -208,7 +208,7 @@ void QuantaView::initActions()
         while ( !t.eof() ) {           // until end of file...
             char_list << t.readLine(); // line excluding '\n'
         }
-        f.close();
+        file.close();
     }
     char_action->setItems(char_list);
     char_action->setComboWidth(150);
