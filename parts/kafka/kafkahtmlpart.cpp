@@ -1,7 +1,7 @@
 /***************************************************************************
                               kafkahtmlpart.cpp
                              -------------------
-
+ 
     copyright            : (C) 2001 - The Kafka Team
                            (C) 2003, 2004 - Nicolas Deschildre
     email                : kde-kafka@master.kde.org && ndeschildre@kdewebdev.org
@@ -402,34 +402,34 @@ void KafkaWidget::keyReturn(bool specialPressed)
             m_currentNode = text2;
         else
         {
-          if(!brDomNode.nextSibling().isNull())
-            m_currentNode = brDomNode.nextSibling();
-          if(!brDomNode.nextSibling().isNull() && brDomNode.nextSibling().nextSibling().isNull())
-          {
-            //TEMP before the webcore caret.
-            brDomNode2 = kafkaCommon::createDomNode("br", w->getCurrentDoc()->defaultDTD(),
-              document());
             if(!brDomNode.nextSibling().isNull())
-              w->insertDomNode(brDomNode2, m_currentNode.parentNode(),
-                DOM::Node());
+                m_currentNode = brDomNode.nextSibling();
+            if(!brDomNode.nextSibling().isNull() && brDomNode.nextSibling().nextSibling().isNull())
+            {
+                //TEMP before the webcore caret.
+                brDomNode2 = kafkaCommon::createDomNode("br", w->getCurrentDoc()->defaultDTD(),
+                                                        document());
+                if(!brDomNode.nextSibling().isNull())
+                    w->insertDomNode(brDomNode2, m_currentNode.parentNode(),
+                                     DOM::Node());
 
-            emit domNodeInserted(brDomNode2, false, m_modifs);
-            m_currentNode = brDomNode;
-          }
+                emit domNodeInserted(brDomNode2, false, m_modifs);
+                m_currentNode = brDomNode;
+            }
 
-         }
+        }
         d->m_cursorOffset = 0;
 
     }
     else if( m_currentNode.nodeName().string().lower() == "br")
     {
-      brDomNode = kafkaCommon::createDomNode("br", w->getCurrentDoc()->defaultDTD(),
-        document());
-      w->insertDomNode(brDomNode, m_currentNode.parentNode(),
-        brDomNode.nextSibling());
-      emit domNodeInserted(brDomNode, false, m_modifs);
-      m_currentNode = brDomNode;
-      d->m_cursorOffset = 0;
+        brDomNode = kafkaCommon::createDomNode("br", w->getCurrentDoc()->defaultDTD(),
+                                               document());
+        w->insertDomNode(brDomNode, m_currentNode.parentNode(),
+                         brDomNode.nextSibling());
+        emit domNodeInserted(brDomNode, false, m_modifs);
+        m_currentNode = brDomNode;
+        d->m_cursorOffset = 0;
     }
 
 #ifdef HEAVY_DEBUG
@@ -948,7 +948,7 @@ void KafkaWidget::keyDelete()
             while(!temp.isNull() && !temp.previousSibling().isNull() &&
                     ((kafkaCommon::isInline(temp) && (temp.previousSibling().isNull() ||
                                                       kafkaCommon::isInline(temp.previousSibling()))) /**||
-                                          				(!isInline(temp) && temp.previousSibling().isNull())*/))
+                                                               				(!isInline(temp) && temp.previousSibling().isNull())*/))
                 temp = temp.previousSibling();
             startNode = temp;
 
@@ -965,7 +965,7 @@ void KafkaWidget::keyDelete()
             while(!temp.isNull() && !temp.nextSibling().isNull() &&
                     ((kafkaCommon::isInline(temp) && (temp.nextSibling().isNull() ||
                                                       kafkaCommon::isInline(temp.nextSibling())))/** ||
-                                          				(!isInline(temp) && temp.nextSibling().isNull())*/))
+                                                               				(!isInline(temp) && temp.nextSibling().isNull())*/))
                 temp = temp.nextSibling();
             endNode2 = temp;
 
@@ -1156,7 +1156,7 @@ void KafkaWidget::keyBackspace()
 
     attrs = w->getAttrs(m_currentNode);
     if(!attrs)
-      return;
+        return;
     m_currentNodeType = m_currentNode.nodeType();
 
 #ifdef HEAVY_DEBUG
@@ -1510,13 +1510,13 @@ void KafkaWidget::keyBackspace()
                 //=> It seems it was removed from it.
                 _nodePrev = _node.previousSibling();
                 if(!_nodePrev.isNull() && _nodePrev.nodeType() == DOM::Node::TEXT_NODE &&
-                  m_currentNodeType == DOM::Node::TEXT_NODE)
+                        m_currentNodeType == DOM::Node::TEXT_NODE)
                 {
                     if(_node == m_currentNode)
                     {
-                      m_currentNode = _nodePrev;
-                      d->m_cursorOffset += (static_cast<DOM::CharacterData>(_nodePrev)).length();
-                      QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
+                        m_currentNode = _nodePrev;
+                        d->m_cursorOffset += (static_cast<DOM::CharacterData>(_nodePrev)).length();
+                        QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
                     }
                     _nodePrev.setNodeValue(_nodePrev.nodeValue() + _node.nodeValue());
                     emit domNodeModified(_nodePrev, m_modifs);
@@ -1527,21 +1527,21 @@ void KafkaWidget::keyBackspace()
                 //dirty workaround when after having deleted a br, there is only one br left
                 //Anyway webcore will override this
                 if(m_currentNode.nodeName().string().lower() == "br" &&
-                  (m_currentNode.previousSibling().isNull() || (m_currentNode.previousSibling().nodeType() ==
-                  DOM::Node::TEXT_NODE && m_currentNode.previousSibling().previousSibling().isNull())) &&
-                  (m_currentNode.nextSibling().isNull() || (m_currentNode.nextSibling().nodeType() ==
-                  DOM::Node::TEXT_NODE && m_currentNode.nextSibling().nextSibling().isNull())))
+                        (m_currentNode.previousSibling().isNull() || (m_currentNode.previousSibling().nodeType() ==
+                                DOM::Node::TEXT_NODE && m_currentNode.previousSibling().previousSibling().isNull())) &&
+                        (m_currentNode.nextSibling().isNull() || (m_currentNode.nextSibling().nodeType() ==
+                                DOM::Node::TEXT_NODE && m_currentNode.nextSibling().nextSibling().isNull())))
                 {
-                  if(!m_currentNode.previousSibling().isNull())
-                  {
-                    m_currentNode = m_currentNode.previousSibling();
-                    d->m_cursorOffset = 0;
-                  }
-                  else if(!m_currentNode.nextSibling().isNull())
-                  {
-                    m_currentNode = m_currentNode.nextSibling();
-                    d->m_cursorOffset = 0;
-                  }
+                    if(!m_currentNode.previousSibling().isNull())
+                    {
+                        m_currentNode = m_currentNode.previousSibling();
+                        d->m_cursorOffset = 0;
+                    }
+                    else if(!m_currentNode.nextSibling().isNull())
+                    {
+                        m_currentNode = m_currentNode.nextSibling();
+                        d->m_cursorOffset = 0;
+                    }
                 }
                 break;
             }
@@ -1772,48 +1772,48 @@ void KafkaWidget::postprocessCursorPosition()
     if(attrs->chCurFoc() == kNodeAttrs::textNode &&
             d->m_cursorOffset == 0)
     {
-       /** while(1)
-        {
-            _prevNextNode = _nextNode;
-            _nextNode = kafkaCommon::getPrevDomNode(_nextNode);
-            if(_nextNode.isNull())
-                break;
-            attrs2 = w->getAttrs(_nextNode);
-            if(attrs2->chCurFoc() == kNodeAttrs::textNode &&
-                    (static_cast<DOM::CharacterData>(_nextNode)).length() != 0)
-            {
-                m_currentNode = _nextNode;
-                d->m_cursorOffset = (static_cast<DOM::CharacterData>(_nextNode)).length();
-                setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
-                emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
-#ifdef LIGHT_DEBUG
+        /** while(1)
+         {
+             _prevNextNode = _nextNode;
+             _nextNode = kafkaCommon::getPrevDomNode(_nextNode);
+             if(_nextNode.isNull())
+                 break;
+             attrs2 = w->getAttrs(_nextNode);
+             if(attrs2->chCurFoc() == kNodeAttrs::textNode &&
+                     (static_cast<DOM::CharacterData>(_nextNode)).length() != 0)
+             {
+                 m_currentNode = _nextNode;
+                 d->m_cursorOffset = (static_cast<DOM::CharacterData>(_nextNode)).length();
+                 setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
+                 emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
+        #ifdef LIGHT_DEBUG
 
-                kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition()" <<
-                " - new currentNode :" <<
-                m_currentNode.nodeName().string() << endl;
-#endif
+                 kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition()" <<
+                 " - new currentNode :" <<
+                 m_currentNode.nodeName().string() << endl;
+        #endif
 
-                break;
-            }
-            else if(attrs2->chCurFoc() == kNodeAttrs::singleNodeAndItself ||
-                    attrs2->chCurFoc() == kNodeAttrs::inlineNode ||
-                    attrs2->chCurFoc() == kNodeAttrs::blockNode)
-                break;
-            else
-                continue;
-        }*/
+                 break;
+             }
+             else if(attrs2->chCurFoc() == kNodeAttrs::singleNodeAndItself ||
+                     attrs2->chCurFoc() == kNodeAttrs::inlineNode ||
+                     attrs2->chCurFoc() == kNodeAttrs::blockNode)
+                 break;
+             else
+                 continue;
+         }*/
     }
     else if(attrs->chCurFoc() == kNodeAttrs::singleNodeAndItself)
     {
         if(d->m_cursorOffset == 0  && !m_currentNode.isNull() &&
-         (m_currentNode.nodeName().string().lower() != "br" ||
-          (m_currentNode.nodeName().string().lower() == "br" && /**!m_currentNode.nextSibling().isNull() &&
-          m_currentNode.nextSibling().nodeType() == DOM::Node::TEXT_NODE &&
-          m_currentNode.nextSibling().nodeValue().string().isEmpty() &&
-          m_currentNode.nextSibling().nextSibling().isNull() &&*/
-          !m_currentNode.previousSibling().isNull() &&
-          m_currentNode.previousSibling().nodeType() == DOM::Node::TEXT_NODE &&
-          !m_currentNode.previousSibling().nodeValue().string().isEmpty())))
+                (m_currentNode.nodeName().string().lower() != "br" ||
+                 (m_currentNode.nodeName().string().lower() == "br" && /**!m_currentNode.nextSibling().isNull() &&
+                            m_currentNode.nextSibling().nodeType() == DOM::Node::TEXT_NODE &&
+                            m_currentNode.nextSibling().nodeValue().string() == "" &&
+                            m_currentNode.nextSibling().nextSibling().isNull() &&*/
+                  !m_currentNode.previousSibling().isNull() &&
+                  m_currentNode.previousSibling().nodeType() == DOM::Node::TEXT_NODE &&
+                  m_currentNode.previousSibling().nodeValue().string() != "")))
         {
             while(1)
             {
