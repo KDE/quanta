@@ -46,8 +46,10 @@ void ServerTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
                                    int column, int width, int align)
 {
   QColorGroup _cg( cg );
-  KURL relURL = QExtFileInfo::toRelative(url(), branch()->url());
-  KURL url = QExtFileInfo::toAbsolute(relURL, Project::ref()->projectBaseURL());
+  KURL baseURL = Project::ref()->projectBaseURL();
+  KURL relURL = baseURL;
+  relURL.setPath(QExtFileInfo::toRelative(url(), branch()->url()).path());
+  KURL url = QExtFileInfo::toAbsolute(relURL, baseURL);
   if ( !Project::ref()->contains(url) )
   {
     QFont f = p->font();

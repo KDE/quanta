@@ -1478,8 +1478,6 @@ Project::Project(KMainWindow *parent)
 
 Project::~Project()
 {
-  if (hasProject() && d->uploadProjectFile())
-    d->removeFromConfig( d->projectURL.url() );    // remove the project from the list of open projects
   delete d;
   d = 0;
 }
@@ -1581,7 +1579,7 @@ void Project::loadLastProject(bool reload)
     {
       KURL tempURL = KURL().fromPathOrURL(tempPath);
       if (KIO::NetAccess::exists(tempURL, false, d->m_parent) &&
-          KMessageBox::questionYesNo(d->m_parent, i18n("<qt>Found a backup for project <b>%1</b>.<br> Do you want to open it?</qt>").arg(url.prettyURL()), i18n("Open Backup Project") )
+          KMessageBox::questionYesNo(d->m_parent, i18n("<qt>Found a backup for project <b>%1</b>.<br> Do you want to open it?</qt>").arg(url.prettyURL()), i18n("Open Project Backup") )
           == KMessageBox::Yes)
       {
         d->m_tmpProjectFile = tempPath;
@@ -2527,10 +2525,7 @@ bool Project::queryClose()
   {
     d->config->writePathEntry("Last Project", d->projectURL.url());
     canExit = d->uploadProjectFile();
-    if (canExit)
-    {
-      d->removeFromConfig( d->projectURL.url() );    // remove the project from the list of open projects
-    } else
+    if (! canExit)
     {
       if (KMessageBox::warningYesNo(d->m_parent, i18n("Saving of project failed. Do you want to continue with exit (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::Yes)
           canExit = true;
