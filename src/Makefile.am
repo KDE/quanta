@@ -67,8 +67,7 @@ quanta_METASOURCES = AUTO
 quanta_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 # this is where the kdelnk file will go
-kdelnkdir = $(kde_appsdir)/Development
-kdelnk_DATA = quanta.desktop
+xdg_apps_DATA = quanta.desktop
 
 kdemimedir = $(kde_mimedir)/application
 kdemime_DATA = x-webprj.desktop
