@@ -97,7 +97,7 @@ void  ProjectUpload::initProjectInfo()
   baseUrl = new KURL();
 
 //  list->setMultiSelection(true);
-  QDomDocument *dom = m_project->dom();
+  QDomDocument *dom = m_project->sessionDom();
   m_profilesNode = dom->firstChild().firstChild().namedItem("uploadprofiles");
   if (m_profilesNode.isNull()) //compat code, remove when upgrade from 3.2 is not supported
   {

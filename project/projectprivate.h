@@ -97,6 +97,7 @@ upload.*/
   KURL templateURL;
   QString email;
   QDomDocument dom;
+  QDomDocument m_sessionDom;
   QString debuggerClient;
   TeamMember m_teamLeader;
   QMap<QString, TeamMember> m_subprojectLeaders;
@@ -117,8 +118,10 @@ upload.*/
    KSelectAction *openPrjViewAction, *deletePrjViewAction;
   /** the filename of the local webprj file after download */
   QString m_tmpProjectFile;
+  QString m_tmpSessionFile;
   /** used for creating a new project */
   KTempFile *tempFile;
+  KTempFile *sessionTempFile;
   EventActions *m_events;
 
   /** setup of the actions */
@@ -153,8 +156,9 @@ upload.*/
   /** load project from temp file
       @param url the url of the project file
       @param tempFile the path of the already downloaded temp file
+      @param sessionTempFile the path of the downloaded project session file. Empty if no such file was downloaded
    */
-  void loadProjectFromTemp(const KURL &url, const QString &tempFile);
+  void loadProjectFromTemp(const KURL &url, const QString &tempFile, const QString &sessionTempFile);
 
   void slotDeleteCopytoDlg(CopyTo *dlg);
 
@@ -233,6 +237,7 @@ signals:
 private:
   QStringList treeStatusFromXML();
   QString m_wizTitle ;
+  bool m_createSessionDom;
 };
 
 

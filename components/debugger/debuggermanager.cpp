@@ -104,14 +104,15 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
   }
 
   // Tell client to load its settings
-  if(m_client)
+  if (m_client)
   {
     QDomNode nodeThisDbg;
-    QDomNode projectNode = Project::ref()->dom()->firstChild().firstChild();
+    QDomDocument *dom = Project::ref()->sessionDom();
+    QDomNode projectNode = dom->firstChild().firstChild();
     QDomNode nodeDbg  = projectNode.namedItem("debuggers");
     if(nodeDbg.isNull())
     {
-      nodeDbg = Project::ref()->dom()->createElement("debuggers");
+      nodeDbg = dom->createElement("debuggers");
       projectNode.appendChild(nodeDbg);
     }
 
@@ -122,7 +123,7 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
     nodeThisDbg = nodeDbg.namedItem(m_client->getName());
     if(nodeThisDbg.isNull())
     {
-      nodeThisDbg = Project::ref()->dom()->createElement(m_client->getName());
+      nodeThisDbg = dom->createElement(m_client->getName());
       nodeDbg.appendChild(nodeThisDbg);
     }
 

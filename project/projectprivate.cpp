@@ -63,7 +63,7 @@
 #include "viewmanager.h"
 
 ProjectPrivate::ProjectPrivate(Project *p)
-          : QObject(), config(0L), m_dirWatch(0L), tempFile(0L)
+          : QObject(), config(0L), m_dirWatch(0L), tempFile(0L), sessionTempFile(0L)
 {
   parent = p;
   m_projectFiles.setAutoDelete(true);
@@ -386,13 +386,34 @@ void ProjectPrivate::loadProjectXML()
   }
 
   m_modified = false;
-  QString tmpString = projectNode.toElement().attribute("previewPrefix");
-  if ( !tmpString.isEmpty())
+  QString tmpString;
+  QDomNode sessionNode;
+
+  if (!m_createSessionDom)
   {
-    previewPrefix = KURL::fromPathOrURL( tmpString );
+    sessionNode = m_sessionDom.firstChild().firstChild();
+    tmpString = sessionNode.toElement().attribute("previewPrefix");
+    if ( !tmpString.isEmpty())
+    {
+      previewPrefix = KURL::fromPathOrURL(tmpString);
+    }
+    usePreviewPrefix = ( sessionNode.toElement().attribute("usePreviewPrefix") == "1");
+    m_persistentBookmarks = (sessionNode.toElement().attribute("usePersistentBookmarks") == "1");
+  } else //TODO: Remove when upgrade from 3.4 is not supported
+  {
+    tmpString = projectNode.toElement().attribute("previewPrefix");
+    if ( !tmpString.isEmpty())
+    {
+      previewPrefix = KURL::fromPathOrURL(tmpString);
+    }
+    usePreviewPrefix = ( projectNode.toElement().attribute("usePreviewPrefix") == "1");
+    m_persistentBookmarks = (projectNode.toElement().attribute("usePersistentBookmarks") == "1");
+
+    sessionNode = m_sessionDom.firstChild().firstChild();
+    sessionNode.toElement().setAttribute("usePreviewPrefix", usePreviewPrefix ? "1" : "0");
+    sessionNode.toElement().setAttribute("previewPrefix", previewPrefix.url());
+    sessionNode.toElement().setAttribute("usePersistentBookmarks", m_persistentBookmarks ? "1" : "0");
   }
-  usePreviewPrefix = ( projectNode.toElement().attribute("usePreviewPrefix") == "1");
-  m_persistentBookmarks = (projectNode.toElement().attribute("usePersistentBookmarks") == "1");
   m_eventsEnabled = projectNode.toElement().attribute("enableEvents", "true") == "true";
   m_defaultEncoding = projectNode.toElement().attribute("encoding");
   if (m_defaultEncoding.isEmpty())
@@ -624,14 +645,35 @@ void ProjectPrivate::loadProjectXML()
 
   if (m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx))
    m_modified = true;
-  QDomElement uploadEl = projectNode.namedItem("uploadprofiles").toElement();
+  QDomNode uploadNode;
+  if (!m_createSessionDom)
+  {
+    uploadNode = sessionNode.namedItem("uploadprofiles");
+  } else
+  {
+    uploadNode = projectNode.namedItem("uploadprofiles").cloneNode(true);
+    sessionNode.appendChild(uploadNode);
+  }
+  
+  QDomElement uploadEl = uploadNode.toElement();
   m_showUploadTreeviews = uploadEl.attribute("showtreeviews", "true") == "true";
   if (m_showUploadTreeviews)
   {
     // read the profiles and create treeviews for them
-    UploadProfiles::ref()->readFromXML(dom);
+    UploadProfiles::ref()->readFromXML(m_sessionDom);
   } else
     UploadProfiles::ref()->clear();
+
+  if (!m_createSessionDom)
+  {
+    QDomNode node;
+    node = projectNode.namedItem("treestatus").cloneNode(true);
+    sessionNode.appendChild(node);
+    node = projectNode.namedItem("debuggers").cloneNode(true);
+    sessionNode.appendChild(node);
+  }
+ 
+  
   parent->statusMsg(QString::null);
   parent->newProjectLoaded(projectName, baseURL, templateURL);
   parent->reloadTree(&(m_projectFiles), true, treeStatusFromXML());
@@ -693,9 +735,11 @@ void ProjectPrivate::slotAcceptCreateProject()
       el = dom.firstChild().firstChild().toElement();
       el.setAttribute("type", png->type());
       el.setAttribute("name", projectName );
+      el.setAttribute("encoding", m_defaultEncoding);
+
+      el = m_sessionDom.firstChild().firstChild().toElement();
       el.setAttribute("previewPrefix", previewPrefix.url() );
       el.setAttribute("usePreviewPrefix",usePreviewPrefix);
-      el.setAttribute("encoding", m_defaultEncoding);
 
       el = dom.createElement("author");
       dom.firstChild().firstChild().appendChild( el );
@@ -894,7 +938,7 @@ void ProjectPrivate::slotSelectProjectType(const QString &title)
 bool ProjectPrivate::createEmptyDom()
 {
   QString str;
-  QTextStream stream( &str, IO_WriteOnly );
+  QTextStream stream(&str, IO_WriteOnly);
   stream.setEncoding(QTextStream::UnicodeUTF8);
 
   stream << "<!DOCTYPE webproject ><webproject>" << endl;
@@ -903,9 +947,26 @@ bool ProjectPrivate::createEmptyDom()
   stream << "\t</project>" << endl;
   stream << "</webproject>" << endl;
 
+  QString sessionStr;
+  QTextStream sessionStream(&sessionStr, IO_WriteOnly);
+  sessionStream.setEncoding(QTextStream::UnicodeUTF8);
+
+  sessionStream << "<!DOCTYPE webprojectsession ><webprojectsession>" << endl;
+  sessionStream << "\t<session>" << endl;
+  sessionStream << "\t</session>" << endl;
+  sessionStream << "</webprojectsession>" << endl;
+
+  KURL sessionURL = projectURL;
+  QString fileName = projectURL.fileName();
+  if (fileName.endsWith(".webprj"))
+    fileName.replace(".webprj", ".session");
+  else
+    fileName += ".session";
+  sessionURL.setFileName(fileName);
+
   bool result = true;
 
-  if (! projectURL.isLocalFile())
+  if (!projectURL.isLocalFile())
   {
     tempFile = new KTempFile(tmpDir); // tempFile will get deleted in slotProjectClose()
     tempFile->setAutoDelete(true);
@@ -917,6 +978,15 @@ bool ProjectPrivate::createEmptyDom()
       result = KIO::NetAccess::upload(tempFile->name(), projectURL, m_mainWindow);
     if (result)
       m_tmpProjectFile = tempFile->name();
+
+    sessionTempFile = new KTempFile(tmpDir); // sessionTempFile will get deleted in slotProjectClose()
+    sessionTempFile->setAutoDelete(true);
+    sessionTempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
+    *(sessionTempFile->textStream()) << sessionStr;
+    sessionTempFile->close();
+    result = KIO::NetAccess::upload(sessionTempFile->name(), sessionURL, m_mainWindow);
+    if (result)
+      m_tmpSessionFile= sessionTempFile->name();
   } else
   {
     QFile f(projectURL.path());
@@ -931,6 +1001,21 @@ bool ProjectPrivate::createEmptyDom()
       result = false;
     }
     f.close();
+    if (result)
+    {
+      f.setName(sessionURL.path());
+      if (f.open(IO_WriteOnly))
+      {
+        QTextStream fstream(&f);
+        fstream.setEncoding(QTextStream::UnicodeUTF8);
+        fstream << sessionStr;
+        m_tmpSessionFile = sessionURL.path();  // we are local: the temp file and the projectURL are the same
+      } else
+      {
+        result = false;
+      }
+      f.close();
+    }
   }
 
   if (!result)
@@ -939,10 +1024,13 @@ bool ProjectPrivate::createEmptyDom()
     KMessageBox::sorry(m_mainWindow, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
     delete tempFile;
     tempFile = 0L;
+    delete sessionTempFile;
+    sessionTempFile = 0L;
     return false;
   }
 
-  dom.setContent( str);
+  dom.setContent(str);
+  m_sessionDom.setContent(sessionStr);
   m_projectFiles.clear();
   return true;
 }
@@ -951,7 +1039,7 @@ bool ProjectPrivate::createEmptyDom()
 QStringList ProjectPrivate::treeStatusFromXML()
 {
   QStringList folderList;
-  QDomNodeList nl = dom.elementsByTagName("treestatus");
+  QDomNodeList nl = m_sessionDom.elementsByTagName("treestatus");
   if (nl.count() > 0) {
     nl = nl.item(0).childNodes();
     for ( unsigned int i = 0; i < nl.count(); i++ )
@@ -967,7 +1055,7 @@ QStringList ProjectPrivate::treeStatusFromXML()
 void ProjectPrivate::getStatusFromTree()
 {
   // remove old status
-  QDomNodeList nl = dom.elementsByTagName("treestatus");
+  QDomNodeList nl = m_sessionDom.elementsByTagName("treestatus");
   QDomElement  el;
   for ( unsigned int i = 0; i < nl.count(); i++ )
   {
@@ -983,10 +1071,10 @@ void ProjectPrivate::getStatusFromTree()
      folderList.remove(folderList.begin());
   if (folderList.count() > 0) {
     // create the root element
-    QDomElement root = dom.createElement("treestatus");
-    dom.firstChild().firstChild().appendChild( root );
+    QDomElement root = m_sessionDom.createElement("treestatus");
+    m_sessionDom.firstChild().firstChild().appendChild(root);
     for (QStringList::Iterator it = folderList.begin(); it != folderList.end(); ++it) {
-      el = dom.createElement("openfolder");
+      el = m_sessionDom.createElement("openfolder");
       el.setAttribute("url", QuantaCommon::qUrl( QExtFileInfo::toRelative(KURL(*it), baseURL) ) );
       root.appendChild( el );
     }
@@ -1097,6 +1185,7 @@ void ProjectPrivate::slotProceedWithCloseProject(bool success)
   emit eventHappened("after_project_close", baseURL.url(), QString::null);
   // empty dom tree
   dom.clear();
+  m_sessionDom.clear();
   m_events->clear();
   config->setGroup("Projects");
   config->writePathEntry("Last Project", QString::null);
@@ -1150,6 +1239,14 @@ bool ProjectPrivate::saveProject()
     stream.setEncoding(QTextStream::UnicodeUTF8);
     dom.save(stream, 2);
     f.close();
+    f.setName(m_tmpSessionFile);
+    if (f.open(IO_WriteOnly))
+    {
+      QTextStream stream(&f);
+      stream.setEncoding(QTextStream::UnicodeUTF8);
+      m_sessionDom.save(stream, 2);
+      f.close();
+    }
     m_modified = false;
     parent->statusMsg(i18n( "Wrote project file %1" ).arg(m_tmpProjectFile));
   } else
@@ -1162,9 +1259,12 @@ bool ProjectPrivate::saveProject()
 }
 
 
-void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFile)
+void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFile, const QString &sessionTempFile)
 {
+  m_createSessionDom = true;
   m_tmpProjectFile = tempFile;
+  if (!sessionTempFile.isEmpty())
+    m_tmpSessionFile = sessionTempFile;
   projectURL = url;
   QFile f(tempFile);
   if (f.open(IO_ReadOnly))
@@ -1177,8 +1277,18 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
       baseURL.setPath(dir.canonicalPath());
       baseURL.adjustPath(-1);
     }
-    dom.setContent( &f );
+    dom.setContent(&f);
     f.close();
+    if (!sessionTempFile.isEmpty())
+    {
+      f.setName(sessionTempFile);
+      if (f.open(IO_ReadOnly))
+      {
+        m_sessionDom.setContent(&f);
+        m_createSessionDom = false;
+        f.close();
+      }
+    }
     loadProjectXML();
     openCurrentView();
     m_projectRecent->addURL(url);
@@ -1209,16 +1319,59 @@ void ProjectPrivate::loadProject(const KURL &url)
     if (KMessageBox::warningYesNo(m_mainWindow, i18n("<qt>The project<br><b>%1</b><br> seems to be used by another Quanta instance.<br>You may end up with data loss if you open the same project in two instances, modify and save them in both.<br><br>Do you want to proceed with open?</qt>").arg(url.prettyURL())) == KMessageBox::No)
       return;
   }
-  QString tmpFile = QString::null;
+  QString projectTmpFile;
+  QString sessionTmpFile;  
+
   // test if url is writeable and download to local file
   if (KIO::NetAccess::exists(url, false, m_mainWindow) &&
-      KIO::NetAccess::download(url, tmpFile, m_mainWindow))
+      KIO::NetAccess::download(url, projectTmpFile, m_mainWindow))
   {
     if (parent->hasProject())
     {
       slotCloseProject();
     }
-    loadProjectFromTemp(url, tmpFile);
+    KURL sessionURL = url;
+    QString fileName = url.fileName();
+    if (fileName.endsWith(".webprj"))
+      fileName.replace(".webprj", ".session");
+    else
+      fileName += ".session";
+    sessionURL.setFileName(fileName);
+    if (KIO::NetAccess::exists(sessionURL, false, m_mainWindow))
+     KIO::NetAccess::download(sessionURL, sessionTmpFile, m_mainWindow);
+    else
+    {
+      QString sessionStr;
+      QTextStream sessionStream(&sessionStr, IO_WriteOnly);
+      sessionStream.setEncoding(QTextStream::UnicodeUTF8);
+    
+      sessionStream << "<!DOCTYPE webprojectsession ><webprojectsession>" << endl;
+      sessionStream << "\t<session>" << endl;
+      sessionStream << "\t</session>" << endl;
+      sessionStream << "</webprojectsession>" << endl;
+      if (!sessionURL.isLocalFile())
+      {
+        sessionTempFile = new KTempFile(tmpDir); // sessionTempFile will get deleted in slotProjectClose()
+        sessionTempFile->setAutoDelete(true);
+        sessionTempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
+        *(sessionTempFile->textStream()) << sessionStr;
+        sessionTempFile->close();
+        m_tmpSessionFile = sessionTempFile->name();
+      } else
+      {
+        QFile f(sessionURL.path());
+        if (f.open(IO_WriteOnly))
+        {
+          QTextStream fstream(&f);
+          fstream.setEncoding(QTextStream::UnicodeUTF8);
+          fstream << sessionStr;
+          m_tmpSessionFile = sessionURL.path();  // we are local: the temp file and the projectURL are the same
+        } 
+        f.close();
+      }
+      m_sessionDom.setContent(sessionStr);
+    }
+    loadProjectFromTemp(url, projectTmpFile, sessionTmpFile);
   } else
   {
     parent->hideSplash();
@@ -1307,21 +1460,21 @@ void ProjectPrivate::slotDebuggerOptions()
     {
       int errCode = 0;
       DebuggerClient::DebuggerClient* dbg = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode);
-      if(dbg)
+      if (dbg)
       {
-        QDomNode projectNode = dom.firstChild().firstChild();
+        QDomNode projectNode = m_sessionDom.firstChild().firstChild();
         QDomNode nodeThisDbg;
         QDomNode nodeDbg  = projectNode.namedItem("debuggers");
         if(nodeDbg.isNull())
         {
-          nodeDbg = dom.createElement("debuggers");
+          nodeDbg = m_sessionDom.createElement("debuggers");
           projectNode.appendChild(nodeDbg);
         }
 
         nodeThisDbg = nodeDbg.namedItem(service->name());
         if(nodeThisDbg.isNull())
         {
-          nodeThisDbg = dom.createElement(service->name());
+          nodeThisDbg = m_sessionDom.createElement(service->name());
           nodeDbg.appendChild(nodeThisDbg);
         }
         dbg->showConfig(nodeThisDbg);
@@ -1360,6 +1513,9 @@ void ProjectPrivate::writeConfig()
       projectList = config->readPathListEntry("ProjectTempFiles");
       projectList.append(KURL::fromPathOrURL(m_tmpProjectFile).url());
       config->writePathEntry("ProjectTempFiles", projectList);
+      projectList = config->readPathListEntry("ProjectSessionTempFiles");
+      projectList.append(KURL::fromPathOrURL(m_tmpSessionFile).url());
+      config->writePathEntry("ProjectSessionTempFiles", projectList);
     }
   }
   // save recent projects
@@ -1377,12 +1533,18 @@ void ProjectPrivate::removeFromConfig(const QString & urlStr)
   int i = projectList.findIndex( urlStr );
   if ( i > -1)
   {
-    projectList.remove( projectList.at(i) );
+    projectList.remove(projectList.at(i));
     config->writePathEntry("OpenProjects", projectList);
     // remove the temp file from list
     projectList = config->readPathListEntry("ProjectTempFiles");
-    projectList.remove( projectList.at(i) );
+    projectList.remove(projectList.at(i));
     config->writePathEntry("ProjectTempFiles", projectList);
+    projectList = config->readPathListEntry("ProjectSessionTempFiles");
+    if (projectList.count() > i)
+    {
+      projectList.remove(projectList.at(i));
+      config->writePathEntry("ProjectSessionTempFiles", projectList);
+    }
   }
   config->sync();
 }
@@ -1402,6 +1564,14 @@ bool ProjectPrivate::uploadProjectFile()
 {
   if (m_tmpProjectFile.isNull() || !saveProject())
     return false;
+  KURL sessionURL = projectURL;
+  QString fileName = projectURL.fileName();
+  if (fileName.endsWith(".webprj"))
+    fileName.replace(".webprj", ".session");
+  else
+    fileName += ".session";
+  sessionURL.setFileName(fileName);
+
   // no need to upload a local file because it is the same as the tempFile
   if (projectURL.isLocalFile())
   {
@@ -1409,23 +1579,30 @@ bool ProjectPrivate::uploadProjectFile()
     // delete all temp files we used
     delete tempFile;
     tempFile = 0L;
+    delete sessionTempFile;
+    sessionTempFile = 0L;
     m_tmpProjectFile = QString::null;
     return true;
   }
-  if (KIO::NetAccess::upload(m_tmpProjectFile, projectURL, m_mainWindow))
+  if (KIO::NetAccess::upload(m_tmpProjectFile, projectURL, m_mainWindow) && KIO::NetAccess::upload(m_tmpSessionFile, sessionURL, m_mainWindow))
   {
-    removeFromConfig( projectURL.url() );    // remove the project from the list of open projects
+    removeFromConfig(projectURL.url());    // remove the project from the list of open projects
     if (quantaApp)
       parent->statusMsg(i18n( "Uploaded project file %1" ).arg( projectURL.prettyURL()));
     // delete all temp files we used
     // first the one from creating a new project
     delete tempFile;
     tempFile = 0L;
+    delete sessionTempFile;
+    sessionTempFile = 0L;
     // second the one from downloading a project
     KIO::NetAccess::removeTempFile(m_tmpProjectFile);
+    KIO::NetAccess::removeTempFile(m_tmpSessionFile);
     // third if we recovered after crash
     KIO::NetAccess::del(KURL().fromPathOrURL(m_tmpProjectFile), m_mainWindow);
-    m_tmpProjectFile = QString::null;
+    KIO::NetAccess::del(KURL().fromPathOrURL(m_tmpSessionFile), m_mainWindow);
+    m_tmpProjectFile = "";
+    m_tmpSessionFile = "";
   }
   else
   {

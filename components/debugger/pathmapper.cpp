@@ -146,11 +146,12 @@ void PathMapper::setServerBasedir(const QString &serverpath)
 QDomNode PathMapper::pathMapperNode()
 {
   QDomNode nodeThisDbg;
-  QDomNode projectNode = Project::ref()->dom()->firstChild().firstChild();
+  QDomDocument *dom = Project::ref()->sessionDom();
+  QDomNode projectNode = dom->firstChild().firstChild();
   QDomNode nodeDbg  = projectNode.namedItem("debuggers");
   if(nodeDbg.isNull())
   {
-    nodeDbg = Project::ref()->dom()->createElement("debuggers");
+    nodeDbg = dom->createElement("debuggers");
     projectNode.appendChild(nodeDbg);
   }
 
@@ -158,7 +159,7 @@ QDomNode PathMapper::pathMapperNode()
   nodeThisDbg = nodeDbg.namedItem("pathmapper");
   if(nodeThisDbg.isNull())
   {
-    nodeThisDbg = Project::ref()->dom()->createElement("pathmapper");
+    nodeThisDbg = dom->createElement("pathmapper");
     nodeDbg.appendChild(nodeThisDbg);
   }
   

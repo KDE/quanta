@@ -160,6 +160,7 @@ void Project::loadLastProject(bool reload)
   d->config->setGroup("Projects");
   QStringList projectList = d->config->readPathListEntry("OpenProjects");
   QStringList tempList = d->config->readPathListEntry("ProjectTempFiles");
+  QStringList sessionTempList = d->config->readPathListEntry("ProjectSessionTempFiles");
   // remove all local open projects because project and temp file are the same
   for (uint i = 0; i < projectList.count(); ++i)
   {
@@ -169,6 +170,9 @@ void Project::loadLastProject(bool reload)
       QStringList::Iterator it = tempList.at(i);
       if (it != tempList.end())
         tempList.remove(it);
+      QStringList::Iterator it2 = sessionTempList.at(i);
+      if (it2 != sessionTempList.end())
+        sessionTempList.remove(it);
       --i;
     }
   }
@@ -180,6 +184,7 @@ void Project::loadLastProject(bool reload)
     urlPath = projectList[0];
     QuantaCommon::setUrl(url, urlPath);
     QString tempPath = tempList[0];
+    QString sessionTempPath = sessionTempList[0];
     // test if the remote project is available
     if ( KIO::NetAccess::exists(url, false, d->m_mainWindow) )
     {
@@ -189,16 +194,19 @@ void Project::loadLastProject(bool reload)
           == KMessageBox::Yes)
       {
         d->m_tmpProjectFile = tempPath;
-        d->loadProjectFromTemp(url, d->m_tmpProjectFile);
+        d->m_tmpSessionFile = sessionTempPath;
+        d->loadProjectFromTemp(url, d->m_tmpProjectFile, d->m_tmpSessionFile);
         // the lists might have changed
         d->config->writePathEntry("OpenProjects", projectList);
         d->config->writePathEntry("ProjectTempFiles", tempList);
+        d->config->writePathEntry("ProjectSessionTempFiles", sessionTempList);
         d->config->sync();
         return;
       }
     }
-    projectList.remove( projectList.at(0) );
-    tempList.remove( tempList.at(0) );
+    projectList.remove(projectList.at(0));
+    tempList.remove(tempList.at(0));
+    sessionTempList.remove(sessionTempList.at(0));
   }
   // the lists might have changed
   d->config->writePathEntry("OpenProjects", projectList);
@@ -395,7 +403,7 @@ void Project::slotRemove(const KURL& urlToRemove)
   nice = KStringHandler::lsqueeze(nice, 60);
   if (KMessageBox::warningYesNo(d->m_mainWindow, i18n("<qt>Do you want to remove <br><b>%1</b><br> from the server(s) as well?</qt>").arg(nice), i18n("Remove From Server"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromServer") == KMessageBox::Yes )
   {
-    QDomNode profilesNode = d->dom.firstChild().firstChild().namedItem("uploadprofiles");
+    QDomNode profilesNode = d->m_sessionDom.firstChild().firstChild().namedItem("uploadprofiles");  
     QDomNodeList profileList = profilesNode.toElement().elementsByTagName("profile");
     QDomElement e;
     QString s;
@@ -532,7 +540,7 @@ void Project::slotOptions()
   UploadProfilesPage uploadProfilesPage(page);
   topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
   topLayout->addWidget(&uploadProfilesPage);
-  QDomElement uploadEl = d->dom.firstChild().firstChild().namedItem("uploadprofiles").toElement();
+  QDomElement uploadEl = d->m_sessionDom.firstChild().firstChild().namedItem("uploadprofiles").toElement();
   uploadProfilesPage.profileLabel->setText(uploadEl.attribute("defaultProfile"));
   uploadProfilesPage.checkShowUploadTreeviews->setChecked(d->m_showUploadTreeviews);
 
@@ -611,12 +619,13 @@ void Project::slotOptions()
 
     el = projectNode.toElement();
     el.setAttribute("name",d->projectName);
+    el.setAttribute("encoding", d->m_defaultEncoding);
+    el = d->m_sessionDom.firstChild().firstChild().toElement();
     el.setAttribute("previewPrefix", d->previewPrefix.url() );
     el.setAttribute("usePreviewPrefix", d->usePreviewPrefix );
     el.setAttribute("usePersistentBookmarks", d->m_persistentBookmarks);
-    el.setAttribute("encoding", d->m_defaultEncoding);
 
-    el =projectNode.namedItem("author").toElement();
+    el = projectNode.namedItem("author").toElement();
     if (!el.isNull())
        el.parentNode().removeChild(el);
     el =d->dom.createElement("author");
@@ -1046,6 +1055,11 @@ QString Project::email()
 QDomDocument* Project::dom()
 {
   return &d->dom;
+}
+
+QDomDocument* Project::sessionDom()
+{
+  return &d->m_sessionDom;
 }
 
 QString Project::debuggerClient()

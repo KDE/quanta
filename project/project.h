@@ -99,6 +99,7 @@ public:
   QString password(const QString &entry);
   bool passwordSaved(const QString &entry);
   QDomDocument *dom();
+  QDomDocument *sessionDom();
   QString debuggerClient();
   bool keepPasswd;
   QString email();
