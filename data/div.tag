@@ -9,6 +9,7 @@
 
 
     <attr name="align" type="list">
+        <tooltip>Depricated in HTML 4.0</tooltip>
         <location col="1" row="0" />
         <items>
                 <item>left</item>

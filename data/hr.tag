@@ -18,6 +18,7 @@
     </label>
 
     <attr name="align" type="list">
+        <tooltip>Depricated in HTML 4.0 </tooltip>
         <location col="1" row="0" colspan="2" />
         <items>
                 <item>left</item>

@@ -19,6 +19,7 @@
 
     <attr name="compact" type="check">
         <text>compact</text>
+        <tooltip>Depricated in HTML 4.0</tooltip>
         <location col="0" row="2" colspan="2" />
     </attr>
 

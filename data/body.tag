@@ -37,22 +37,27 @@
     </attr>
 
     <attr name="bgcolor" type="color">
+        <tooltip>Depricated in HTML 4.0 </tooltip>
         <location col="2" row="1"  />
     </attr>
 
     <attr name="text" type="color">
+        <tooltip>Depricated in HTML 4.0 </tooltip>
         <location col="2" row="2"  />
     </attr>
 
     <attr name="link" type="color">
+        <tooltip>Depricated in HTML 4.0 </tooltip>
         <location col="2" row="3"  />
     </attr>
 
     <attr name="alink" type="color">
+        <tooltip>Depricated in HTML 4.0 </tooltip>
         <location col="2" row="4"  />
     </attr>
 
     <attr name="vlink" type="color">
+        <tooltip>Depricated in HTML 4.0 </tooltip>
         <location col="2" row="5"  />
     </attr>
 
