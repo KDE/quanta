@@ -1,0 +1,197 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>dwt</class>
+<comment>Kommander dialog for the dwt script.</comment>
+<author>Benjamin Stocker</author>
+<widget class="Dialog">
+    <property name="name">
+        <cstring>dwt</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>408</width>
+            <height>336</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>dwt - Apply Dreamweaver Template</string>
+    </property>
+    <widget class="CloseButton">
+        <property name="name">
+            <cstring>cmdClose</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>320</x>
+                <y>300</y>
+                <width>78</width>
+                <height>30</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Close</string>
+        </property>
+    </widget>
+    <widget class="TabWidget">
+        <property name="name">
+            <cstring>tabMain</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>390</width>
+                <height>281</height>
+            </rect>
+        </property>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tab</cstring>
+            </property>
+            <attribute name="title">
+                <string>Script</string>
+            </attribute>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>lblScript</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>80</y>
+                        <width>370</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Script Location</string>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>txtProjectPath</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>40</y>
+                        <width>350</width>
+                        <height>22</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText</string>
+                    </stringlist>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>txtScript</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>100</y>
+                        <width>350</width>
+                        <height>22</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>dwt.pl</string>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText</string>
+                    </stringlist>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>lblProject</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>20</y>
+                        <width>370</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Full Project Path</string>
+                </property>
+            </widget>
+            <widget class="CheckBox">
+                <property name="name">
+                    <cstring>chkDebug</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>9</x>
+                        <y>141</y>
+                        <width>360</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Show Debug Messages</string>
+                </property>
+            </widget>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tab</cstring>
+            </property>
+            <attribute name="title">
+                <string>Help</string>
+            </attribute>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>txtHelp</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>9</x>
+                        <y>22</y>
+                        <width>371</width>
+                        <height>220</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>The dwt Script will apply actual Dreamweaver templates to all your project files. Just enter the FULL project path and specify where the script dwt.pl can be found.</string>
+                </property>
+                <property name="textFormat">
+                    <enum>AutoText</enum>
+                </property>
+                <property name="alignment">
+                    <set>WordBreak|AlignTop|AlignLeft</set>
+                </property>
+            </widget>
+        </widget>
+    </widget>
+    <widget class="ExecButton">
+        <property name="name">
+            <cstring>cmdOK</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>250</x>
+                <y>300</y>
+                <width>61</width>
+                <height>30</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>OK</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>xclock sdsdsdsdsd  </string>
+            </stringlist>
+        </property>
+    </widget>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
