@@ -720,8 +720,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
                  break;
   }
   QString textLine = editIf->textLine(line).left(col);
-  QString word = findWordRev(textLine).upper();
-  completion.userdata = word;
+  QString word = findWordRev(textLine, completionDTD).upper();
+  completion.userdata = word +"|";
   QStringList tagNameList;
   QDictIterator<QTag> it(*(completionDTD->tagsList));
   for( ; it.current(); ++it )
@@ -1232,6 +1232,8 @@ void Document::codeCompletionHintRequested()
 QString Document::findWordRev(const QString& textToSearch, DTDStruct *dtd)
 {
   QString t = textToSearch;
+  while (t.endsWith(" "))
+    t = t.left(t.length()-1);
   int startPos = -1;
   int pos;
   bool end = false;
