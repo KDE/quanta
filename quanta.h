@@ -56,7 +56,6 @@ class ProjectTreeView;
 class Project;
 class ToolBars;
 class GrepDialog;
-class FtpClient;
 
 /**
   * The base class for Quanta application windows. It sets up the main
@@ -400,8 +399,6 @@ class QuantaApp : public KTMainWindow
 
     ToolBars *toolbars;
 
-    FtpClient *ftpClient;
-    
     int phpDebugPort;
 };
  

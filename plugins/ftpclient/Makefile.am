@@ -3,27 +3,19 @@
 #### WARNING! All changes made in this part will be lost! ####
 ##############################################################
 
-noinst_LIBRARIES = libwidgets.a
+lib_LTLIBRARIES =libftpclient.la
 
 
+libftpclient_la_LDFLAGS = -module 
 
 INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
-libwidgets_a_METASOURCES = AUTO
-libwidgets_a_SOURCES = \
-		messageoutput.cpp\
-		whtmlpart.cpp\
-		wsplitter.cpp\
-		wtoolbar.cpp
+libftpclient_la_METASOURCES = AUTO
+libftpclient_la_SOURCES = \
+		ftpclients.cpp
 EXTRA_DIST = \
-		messageoutput.cpp\
-		messageoutput.h\
-		whtmlpart.cpp\
-		whtmlpart.h\
-		wsplitter.cpp\
-		wsplitter.h\
-		wtoolbar.cpp\
-		wtoolbar.h
+		ftpclients.cpp\
+		ftpclients.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

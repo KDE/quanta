@@ -52,7 +52,6 @@
 
 #include "widgets/whtmlpart.h"
 #include "widgets/wsplitter.h"
-#include "widgets/ftpclient.h"
 
 #include "dialogs/filemasks.h"
 #include "dialogs/styleoptionss.h"
@@ -1434,55 +1433,12 @@ void QuantaApp::slotSetHl( int _hl )
 void QuantaApp::slotFtpClient()
 {
 	bool stat = toolMenu -> isItemChecked( ID_VIEW_FTP );
-	static int oldW = rightWidgetStack->id( rightWidgetStack->visibleWidget() );
-	
-	if ( !stat )
-	{
-		if ( !ftpClient ) {
-			ftpClient = new FtpClient( rightWidgetStack );
-			rightWidgetStack->addWidget  ( ftpClient, 3 );
-			
-			connect( ftpClient->buttonF10,	SIGNAL(clicked()),
-  				 			this,									SLOT(slotFtpClientClose()));
-		}
-		
-  	rightWidgetStack->raiseWidget( 3 );
-  	
-    fileMenu		->setEnabled(false);
-		editMenu		->setEnabled(false);
-		viewMenu		->setEnabled(false);
-    insertMenu	->setEnabled(false);
-    projectMenu	->setEnabled(false);
-		optionsMenu	->setEnabled(false);
-		
-		toolBar()		->setEnabled(false);
-	}
-	else
-	{
-		rightWidgetStack->raiseWidget ( oldW );
-		
-		fileMenu		->setEnabled(true);
-		editMenu		->setEnabled(true);
-		viewMenu		->setEnabled(true);
-		insertMenu	->setEnabled(true);
-		projectMenu	->setEnabled(true);
-		optionsMenu	->setEnabled(true);
-		
-		toolBar()   ->setEnabled(true);
-	}
 	toolMenu->setItemChecked(ID_VIEW_FTP, !stat);
 }
 
 void QuantaApp::slotFtpClientClose()
 {
 	bool stat = toolMenu -> isItemChecked( ID_VIEW_FTP );
-	
-	if ( !stat ) return;
-		
-	slotFtpClient();
-	rightWidgetStack->removeWidget ( ftpClient );
-	delete ftpClient;
-	ftpClient = 0L;
 }
 
 void QuantaApp::slotViewMessages()

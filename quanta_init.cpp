@@ -90,7 +90,6 @@ QDict <QStrList> *tagsDict;
 
 QuantaApp::QuantaApp()
 {
-  ftpClient	  = 0;
   grepDialog	= 0;
 
   config=kapp->config();

@@ -2,28 +2,8 @@
 ####   Makefile.am generated automatically by KDEStudio   ####
 #### WARNING! All changes made in this part will be lost! ####
 ##############################################################
-
-noinst_LIBRARIES = libwidgets.a
-
-
-
-INCLUDES = $(all_includes)
-DEFS = -I. -I$(srcdir) -I$(top_srcdir)
-libwidgets_a_METASOURCES = AUTO
-libwidgets_a_SOURCES = \
-		messageoutput.cpp\
-		whtmlpart.cpp\
-		wsplitter.cpp\
-		wtoolbar.cpp
-EXTRA_DIST = \
-		messageoutput.cpp\
-		messageoutput.h\
-		whtmlpart.cpp\
-		whtmlpart.h\
-		wsplitter.cpp\
-		wsplitter.h\
-		wtoolbar.cpp\
-		wtoolbar.h
+SUBDIRS = ftpclient 
+EXTRA_DIST = 
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$
