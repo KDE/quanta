@@ -1455,6 +1455,9 @@ QString Document::text(int bLine, int bCol, int eLine, int eCol) const
    int tmp = bLine;
    bLine = eLine;
    eLine = tmp;
+   tmp = bCol;
+   bCol = eCol;
+   eCol = tmp;
  }
  QString t = editIf->textLine(bLine);
  if (bLine == eLine)
