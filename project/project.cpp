@@ -498,6 +498,9 @@ void Project::loadProjectXML()
   author = no.firstChild().nodeValue();
   no = projectNode.namedItem("email");
   email = no.firstChild().nodeValue();
+  no = projectNode.namedItem("defaultDTD");
+  m_defaultDTD = no.firstChild().nodeValue();
+  if (m_defaultDTD.isEmpty()) m_defaultDTD = qConfig.defaultDocType;
 
   no = projectNode.namedItem("autoload");
   currentProjectView = no.toElement().attribute("projectview");
