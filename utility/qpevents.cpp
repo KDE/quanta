@@ -24,7 +24,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kprocess.h>
 
 //app includes
 #include "qpevents.h"
