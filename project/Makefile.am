@@ -16,5 +16,3 @@ INCLUDES = -I$(top_srcdir)/quanta/dialogs $(all_includes) -I$(top_builddir)/quan
 AM_CFLAGS = 
 AM_CXXFLAGS = 
 AM_FFLAGS = 
-SUBDIRS = 
-libproject_a_LIBADD = 
