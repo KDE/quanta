@@ -25,6 +25,7 @@
 #include "quantadebuggerinterface.h"
 #include "debuggermanager.h"
 #include "debuggerui.h"
+#include "pathmapper.h"
 #include "project.h"
 #include "viewmanager.h"
 #include "document.h"
@@ -140,5 +141,11 @@ void QuantaDebuggerInterface::postWatchUpdate()
 {
   m_manager->UI()->postWatchUpdate();
 }*/
+
+// Path mapping
+PathMapper* QuantaDebuggerInterface::Mapper()
+{
+  return m_manager->Mapper();
+}
 
 #include "quantadebuggerinterface.moc"

@@ -333,6 +333,23 @@
                             <property name="name">
                                 <cstring>lineStartSession</cstring>
                             </property>
+                            <property name="toolTip" stdset="0">
+                                <string>See 'Whats this" for available variables</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>%afn - Filename of the current script
+%afd - Absolute directory of the current script
+%afp - Absolute path (directory + filename) of the current script
+
+%rfpd - Directory of the current script relative to project root
+%rfpp - Path of the current script relative to project root
+
+%rfdd - Directory of the current script relative to document root
+%rfdp - Path of the current script relative to document root
+
+%apd - Project root
+%add - Document root of current script</string>
+                            </property>
                         </widget>
                         <widget class="QRadioButton" row="1" column="0">
                             <property name="name">

@@ -27,6 +27,7 @@ class DebuggerBreakpointList;
 class DebuggerUI;
 class DebuggerVariable;
 class DebuggerBreakpoint;
+class PathMapper;
 
 class DebuggerManager : public QObject
 {
@@ -38,6 +39,7 @@ class DebuggerManager : public QObject
     QuantaDebuggerInterface * m_interface;
     DebuggerBreakpointList *m_breakpointList;
     DebuggerUI * m_debuggerui;
+    PathMapper * m_pathmapper;
 
     // Internal help functions
     void initActions();
@@ -52,6 +54,7 @@ class DebuggerManager : public QObject
     // Access to memebers
     DebuggerUI * UI() { return m_debuggerui; };
     DebuggerClient * client() { return m_client; };
+    PathMapper * Mapper() { return m_pathmapper; };
 
     // Breakpoints
     void haveBreakpoint (QString file, int line);

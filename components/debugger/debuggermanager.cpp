@@ -40,6 +40,7 @@
 #include "viewmanager.h"
 #include "quantaview.h"
 #include "debuggerui.h"
+#include "pathmapper.h"
 
 // dialogs
 #include "debuggervariablesets.h"
@@ -51,6 +52,7 @@ DebuggerManager::DebuggerManager(QObject *myparent)
 
   // Create objects
   m_breakpointList = new DebuggerBreakpointList();
+  m_pathmapper = new PathMapper(this, "pathmapper");
   m_debuggerui = NULL;
   m_interface = new QuantaDebuggerInterface(this, "interface");
   m_client = NULL;
@@ -207,6 +209,8 @@ DebuggerManager::~DebuggerManager()
   m_debuggerui = 0L;
   delete m_interface;
   m_interface = 0L;
+  delete m_pathmapper;
+  m_pathmapper = 0L;
 }
 
 void DebuggerManager::enableAction(QString action, bool enable)
@@ -464,7 +468,7 @@ bool DebuggerManager::setActiveLine (QString file, int line )
     quantaApp->gotoFileAndLine(filename, line, 0);
   else
   {
-    kdDebug(24000) << k_lineinfo << "File does not exist: " << filename << endl;
+    showStatus(i18n("Unable to open file %1, check your basedirs and mappings!").arg(filename), true);
   }
 
   // Add new active line mark

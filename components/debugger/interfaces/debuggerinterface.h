@@ -25,6 +25,7 @@
 #include "debuggervariable.h"
 #include "debuggerbreakpoint.h"
 
+class PathMapper;
 
 class DebuggerInterface : public QObject
 {
@@ -60,6 +61,9 @@ class DebuggerInterface : public QObject
     virtual void showBreakpoint(const DebuggerBreakpoint &bp) = 0;
     virtual void refreshBreakpoints() = 0;
     virtual DebuggerBreakpoint * newDebuggerBreakpoint() = 0;
+
+    // Path mapping
+    virtual PathMapper* Mapper() = 0;
 };
 
 #endif

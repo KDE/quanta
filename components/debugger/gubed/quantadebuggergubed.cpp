@@ -32,6 +32,7 @@
 #include "gubedsettings.h"
 #include "debuggervariable.h"
 #include "variableslistview.h"
+#include "pathmapper.h"
 
 
 
@@ -416,13 +417,19 @@ void QuantaDebuggerGubed::processCommand(QString data)
   // Debugger tells its about to parse a file
   else if(m_command == "unparsed")
   {
-    debuggerInterface()->showStatus(i18n("About to parse %1").arg(data), true);
+    debuggerInterface()->showStatus(i18n("About to parse %1").arg(data), false);
     return;
   }
   // Parsing ok
   else if(m_command == "parseok")
   {
-    debuggerInterface()->showStatus(i18n("%1 parsed ok").arg(data), true);
+    debuggerInterface()->showStatus(i18n("%1 parsed ok").arg(data), false);
+    return;
+  }
+  // Parsing failed
+  else if(m_command == "parsefailed")
+  {
+    debuggerInterface()->showStatus(i18n("Syntax or parse error in %1)").arg(data), true);
     return;
   }
   // A debugging session is running
@@ -732,9 +739,13 @@ void QuantaDebuggerGubed::readConfig(QDomNode node)
 
   valuenode = node.namedItem("localbasedir");
   m_localBasedir = valuenode.firstChild().nodeValue();
+  if(debuggerInterface())
+    debuggerInterface()->Mapper()->setLocalBasedir(m_localBasedir);
 
   valuenode = node.namedItem("serverbasedir");
   m_serverBasedir = valuenode.firstChild().nodeValue();
+  if(debuggerInterface())
+    debuggerInterface()->Mapper()->setServerBasedir(m_serverBasedir);
 
   valuenode = node.namedItem("listenport");
   m_listenPort = valuenode.firstChild().nodeValue();
@@ -744,7 +755,7 @@ void QuantaDebuggerGubed::readConfig(QDomNode node)
   valuenode = node.namedItem("startsession");
   m_startsession = valuenode.firstChild().nodeValue();
   if(m_startsession.isEmpty())
-    m_startsession = "http://localhost/Gubed/StartSession.php?gbdScript=/";
+    m_startsession = "http://localhost/Gubed/StartSession.php?gbdScript=/%rfpp";
 
   valuenode = node.namedItem("defaultexecutionstate");
   if(valuenode.firstChild().nodeValue().isEmpty())
@@ -813,6 +824,8 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
     el = node.ownerDocument().createElement("localbasedir");
     node.appendChild( el );
     m_localBasedir = set.lineLocalBasedir->text();
+    if(debuggerInterface())
+      debuggerInterface()->Mapper()->setLocalBasedir(m_localBasedir);
     el.appendChild( node.ownerDocument().createTextNode(m_localBasedir) );
 
     el = node.namedItem("serverbasedir").toElement();
@@ -821,6 +834,8 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
     el = node.ownerDocument().createElement("serverbasedir");
     node.appendChild( el );
     m_serverBasedir = set.lineServerBasedir->text();
+    if(debuggerInterface())
+      debuggerInterface()->Mapper()->setServerBasedir(m_serverBasedir);
     el.appendChild( node.ownerDocument().createTextNode(m_serverBasedir) );
 
     el = node.namedItem("useproxy").toElement();
@@ -883,23 +898,15 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 // Map a server filepath to a local one using project settings
 QString QuantaDebuggerGubed::mapServerPathToLocal(QString serverpath)
 {
-
   // Translate filename from server to local
-  if(!serverpath.startsWith(m_serverBasedir, false))
-  return serverpath;
-
-  serverpath.remove(0, m_serverBasedir.length());
-  return m_localBasedir + serverpath;
+  return debuggerInterface()->Mapper()->mapServerPathToLocal(serverpath);
 }
 
 // Map a local filepath to a server one using project settings
 QString QuantaDebuggerGubed::mapLocalPathToServer(QString localpath)
 {
-  if(!localpath.startsWith(m_localBasedir, false))
-    return localpath;
-
-  localpath.remove(0, m_localBasedir.length());
-  return m_serverBasedir + localpath;
+  // Translate filename from local to server
+  return debuggerInterface()->Mapper()->mapLocalPathToServer(localpath);
 }
 
 void QuantaDebuggerGubed::variableSetValue(const DebuggerVariable &variable)
