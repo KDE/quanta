@@ -328,7 +328,7 @@ void QuantaApp::initView()
   dtabdock = createDockWidget("Docs", BarIcon ("contents2"),    0L,"" /*i18n("Docs")*/);
   dtabdock->setToolTipString(i18n("Documentation"));
   m_oldTreeViewWidget = ptabdock;
-  
+
   QStringList topStrList;
   config->setGroup("General Options");
   topStrList = config->readListEntry("Top folders");
@@ -539,7 +539,7 @@ void QuantaApp::saveOptions()
     config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(config);
     //doc    ->writeConfig(config); // kwrites
-    project->writeConfig(config); // project    
+    project->writeConfig(config); // project
     writeDockConfig(config);
     saveMainWindowSettings(config);
     spellChecker->writeConfig(config);
@@ -875,7 +875,13 @@ uint QuantaApp::readTagFile(QString fileName, DTDStruct* parentDTD, QTagList *ta
  QFile f( fileName );
  f.open( IO_ReadOnly );
  QDomDocument *doc = new QDomDocument();
- doc->setContent( &f );
+ QString errorMsg;
+ int errorLine, errorCol;
+ if (!doc->setContent( &f, &errorMsg, &errorLine, &errorCol ))
+ {
+   kdWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol << endl;
+ }
+
  f.close();
 
  for ( QDomNode n = doc->firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
@@ -1229,7 +1235,7 @@ void QuantaApp::initActions()
   {
     viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F12, view,
                               SLOT(toggleDynamicWordWrap()), actionCollection(), "view_dynamic_word_wrap");
-  }                                                         
+  }
 
   (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0,
                       view, SLOT( slotEditorOptions() ), actionCollection(), "editor_options" );
@@ -1254,7 +1260,7 @@ void QuantaApp::initActions()
 
     fileRecent =  KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
                                          actionCollection(), "file_open_recent");
-    fileRecent->setMaxItems(32);                                         
+    fileRecent->setMaxItems(32);
 
     (void) new KAction( i18n( "Close All" ), 0, this,
                         SLOT( slotFileCloseAll() ),
@@ -1406,7 +1412,7 @@ void QuantaApp::initActions()
                              actionCollection(), "project_open_recent");
     project->projectRecent->setText(i18n("Open Recent Project..."));
     project->projectRecent->setMaxItems(32);
-    
+
     saveprjAction =  new KAction( i18n( "&Save Project" ), SmallIcon("save"), 0,
                          project, SLOT( slotSaveProject() ),
                          actionCollection(), "project_save" );
@@ -1571,7 +1577,7 @@ void QuantaApp::slotPluginsEdit()
   QuantaPluginEditor *editor = new QuantaPluginEditor(getView(), "plugin_editor");
   editor->setSearchPaths(m_pluginInterface->searchPaths());
   editor->setPlugins(m_pluginInterface->plugins());
-  editor->exec();    
+  editor->exec();
   m_pluginInterface->setSearchPaths(editor->searchPathList());
   m_pluginInterface->setPlugins(editor->plugins());
   m_pluginInterface->writeConfig();
