@@ -17,14 +17,22 @@
 
 #include "whtmlpart.h"
 #include <kconfig.h>
+#include <khtml_settings.h>
 
 WHTMLPart::WHTMLPart(QWidget *parent, const char *name )
 	: KHTMLPart(parent,name)
 {
    hpos = 0;
    // get settings from konq.
-   //KConfig konqConfig("konquerorrc",false,true);
-   //konqConfig.setGroup("HTML Settings");
+   KConfig konqConfig("konquerorrc");
+   
+   konqConfig.setGroup("HTML Settings");
+   
+   setCharset( konqConfig.readEntry("DefaultEncoding") );
+   setEncoding( konqConfig.readEntry("DefaultEncoding") );
+   setStandardFont( konqConfig.readEntry("StandardFont") );
+   setFixedFont( konqConfig.readEntry("FixedFont") );
+   updateFontSize( konqConfig.readNumEntry("FontSize"));
 }
 
 WHTMLPart::~WHTMLPart()
