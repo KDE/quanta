@@ -765,7 +765,8 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       handled = true;
     } else
     if (string == ">" && !tagName.isEmpty() && tagName[0] != '!' &&
-        tagName[0] != '/' && qConfig.closeTags &&
+        tagName[0] != '/' && !tagName.endsWith("/") &&
+        qConfig.closeTags &&
         currentDTD(true)->family == Xml) //close unknown tags
     {
       //add closing tag if wanted
@@ -783,7 +784,9 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       if (node && node->parent)
       {
         node = node->parent;
-        editIf->insertText(line, column + 1, node->tag->name + ">");
+        QString name = node->tag->name;
+        name = name.left(name.find(" | "));
+        editIf->insertText(line, column + 1, name + ">");
 #ifdef BUILD_KAFKAPART
         docUndoRedo->dontAddModifsSet(2);
 #endif
@@ -794,7 +797,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   }
   else  // we are inside of a tag
   {
-    if ( string == ">" && tagName[0] != '/' && tag)
+    if ( string == ">" && tagName[0] != '/' && !tagName.endsWith("/") && tag)
     {
       if ( tag->parentDTD->singleTagStyle == "xml" &&
            (tag->isSingle() || (!qConfig.closeOptionalTags && tag->isOptional()))
