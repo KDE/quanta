@@ -9,6 +9,7 @@
 **********************************************************************/
 #include <kapp.h>
 #include <klocale.h>
+#include <knumvalidator.h>
 #include <qspinbox.h>
 #include "pictureview.h"
 #include "tagimgdlg.h"
@@ -38,6 +39,7 @@ void  TagImgDlg::initDialog(){
   lineWidth= new KLineEdit(this,"NoName");
   lineWidth->setGeometry(130,40,60,25);
   lineWidth->setMinimumSize(0,0);
+  lineWidth->setValidator( new KFloatValidator( lineWidth ) );
 
   QLabel_5= new QLabel(this,"NoName");
   QLabel_5->setGeometry(200,40,90,30);
@@ -47,6 +49,7 @@ void  TagImgDlg::initDialog(){
   lineHeight= new KLineEdit(this,"NoName");
   lineHeight->setGeometry(290,40,60,25);
   lineHeight->setMinimumSize(0,0);
+  lineHeight->setValidator( new KFloatValidator( lineHeight ) );
   
   buttonRecalcImgSize= new QPushButton(this,"NoName");
   buttonRecalcImgSize->setGeometry(355,40,35,25);
