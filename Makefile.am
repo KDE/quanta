@@ -73,7 +73,9 @@ EXTRA_DIST = \
 #2########################################################!@#$
 
 messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/quanta.pot
+	$(EXTRACTRC) `find . -name "*.ui"` >> rc.cpp
+	$(EXTRACTRC) `find . -name "*.rc"` >> rc.cpp
+	$(XGETTEXT) `find . -name "*.cpp"` -o $(podir)/quanta.pot
  
 KDE_ICON = quanta
  
