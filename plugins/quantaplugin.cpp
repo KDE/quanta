@@ -124,6 +124,7 @@ bool QuantaPlugin::load()
   }
   m_part->setName(m_name);  // for better debug output
   m_part->widget()->setName(m_name); //needed to be able to dock the same plugin twice in separate toolviews
+  m_part->widget()->setFocusPolicy(QWidget::ClickFocus);
   quantaApp->slotNewPart(m_part, false);  // register the part in the partmanager
   return true;
 }
