@@ -50,7 +50,7 @@ class QuantaDebuggerGubed : public DebuggerClient
       Notice = 8,
       User_Error = 256,
       User_Warning = 512,
-      User_Notice = 1024,
+      User_Notice = 1024
     };
 
     // Protocol version
