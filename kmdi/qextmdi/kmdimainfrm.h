@@ -264,9 +264,7 @@ protected:
 
 private:
    KMdiMainFrmPrivate*     d;
-#if 0   
-   KMDIPrivate::KMDIGUIClient*	   m_mdiGUIClient;
-#endif   
+   KMDIPrivate::KMDIGUIClient*     m_mdiGUIClient;
    bool m_managedDockPositionMode;
 
 // methods
@@ -467,6 +465,8 @@ public slots:
    * as toplevel and stay-on-top on the application's main widget.
    */
    virtual KMdiToolViewAccessor *addToolWindow( QWidget* pWnd, KMdiDockWidget::DockPosition pos = KMdiDockWidget::DockNone, QWidget* pTargetWnd = 0L, int percent = 50, const QString& tabToolTip = 0, const QString& tabCaption = 0);
+   virtual void deleteToolWindow( QWidget* pWnd);
+   virtual void deleteToolWindow( KMdiToolViewAccessor *accessor);
    /**
     * Using this method you have to use the setWidget method of the access object, and it is very recommendet, that you use
     * the widgetContainer() method for the parent of your newly created widget
@@ -701,6 +701,9 @@ signals:
    void collapseOverlapContainers();
 
    void mdiModeHasBeenChangedTo(KMdi::MdiMode);
+
+   void viewActivated(KMdiChildView*);
+   void viewDeactivated(KMdiChildView*);
 
 public slots:
    void prevToolViewInDock();

@@ -29,10 +29,10 @@
 #include <qstring.h>
 #include <assert.h>
 #include <kdebug.h>
-#include <kdockwidget.h>
+#include <kmdidockwidget.h>
 #include "kmdimainfrm.h"
 #include "kmditoolviewaccessor.h"
-
+#include "kmditoolviewaccessor_p.h"
 namespace
 {
     const char *actionListName = "show_kmdi_document_tool_view_actions";
@@ -47,31 +47,33 @@ namespace
         "</kpartgui>";
 
     const char *resourceFileName = "kmdiviewactions.rc";
- 
+
 }
 
 
 using namespace KMDIPrivate;
 
-ToggleToolViewAction::ToggleToolViewAction( const QString& text, const KShortcut& cut,KDockWidget *dw, KMdiMainFrm *mdiMainFrm,
+ToggleToolViewAction::ToggleToolViewAction( const QString& text, const KShortcut& cut,KMdiDockWidget *dw, KMdiMainFrm *mdiMainFrm,
 	QObject* parent, const char* name )
         :KToggleAction(text,cut,parent,name),m_dw(dw),m_mdiMainFrm(mdiMainFrm)
 {
-        connect(this,SIGNAL(toggled(bool)),this,SLOT(slotToggled(bool)));
-        connect(m_dw->dockManager(),SIGNAL(change()),this,SLOT(anDWChanged()));
-        connect(m_dw,SIGNAL(destroyed()),this,SLOT(slotWidgetDestroyed()));
-        setChecked(m_dw->mayBeHide());
+	if (m_dw) {
+		connect(this,SIGNAL(toggled(bool)),this,SLOT(slotToggled(bool)));
+		connect(m_dw->dockManager(),SIGNAL(change()),this,SLOT(anDWChanged()));
+//		connect(m_dw,SIGNAL(destroyed()),this,SLOT(slotWidgetDestroyed()));
+		setChecked(m_dw->mayBeHide());
+	}
 }
 
 
-ToggleToolViewAction::~ToggleToolViewAction(){;}
+ToggleToolViewAction::~ToggleToolViewAction(){unplugAll();}
 
 void ToggleToolViewAction::anDWChanged()
 {
         if (isChecked() && m_dw->mayBeShow()) setChecked(false);
         else if ((!isChecked()) && m_dw->mayBeHide()) setChecked(true);
         else if (isChecked() && (m_dw->parentDockTabGroup() &&
-            ((static_cast<KDockWidget*>(m_dw->parentDockTabGroup()->
+            ((static_cast<KMdiDockWidget*>(m_dw->parentDockTabGroup()->
                         parent()->qt_cast("KDockWidget_Compat::KDockWidget")))->mayBeShow()))) setChecked(false);
 }
 
@@ -88,11 +90,13 @@ void ToggleToolViewAction::slotToggled(bool t)
 }
 
 void ToggleToolViewAction::slotWidgetDestroyed()
-
 {
+        disconnect(m_dw->dockManager(),SIGNAL(change()),this,SLOT(anDWChanged()));
+	disconnect(this,SIGNAL(toggled(bool)),0,0);
         unplugAll();
         deleteLater();
 }
+
 
 KMDIGUIClient::KMDIGUIClient(KMdiMainFrm* mdiMainFrm,const char* name): QObject( mdiMainFrm,name ), KXMLGUIClient( mdiMainFrm )
 {
@@ -135,28 +139,21 @@ KMDIGUIClient::KMDIGUIClient(KMdiMainFrm* mdiMainFrm,const char* name): QObject(
 		actionCollection(),"kmdi_activate_bottom"));
     m_gotoToolDockMenu->insert(new KActionSeparator(actionCollection(),"kmdi_goto_menu_separator"));
     m_gotoToolDockMenu->insert(new KAction(i18n("Previous Tool View"),ALT+CTRL+Key_Left,m_mdiMainFrm,SLOT(prevToolViewInDock()),
-		actionCollection(),"kmdi_next_toolview"));
+		actionCollection(),"kmdi_prev_toolview"));
     m_gotoToolDockMenu->insert(new KAction(i18n("Next Tool View"),ALT+CTRL+Key_Right,m_mdiMainFrm,SLOT(nextToolViewInDock()),
 		actionCollection(),"kmdi_next_toolview"));
     
-
-
-#if 0
-   m_pWindowMenu->insertSeparator();
-   m_pWindowMenu->insertItem(tr("&MDI Mode..."), m_pMdiModeMenu);
-   m_pMdiModeMenu->clear();
-   m_pMdiModeMenu->insertItem(tr("&Toplevel Mode"), this, SLOT(switchToToplevelMode()));
-   m_pMdiModeMenu->insertItem(tr("C&hildframe Mode"), this, SLOT(switchToChildframeMode()));
-   m_pMdiModeMenu->insertItem(tr("Ta&b Page Mode"), this, SLOT(switchToTabPageMode()));
-   m_pMdiModeMenu->insertItem(tr("I&DEAl Mode"), this, SLOT(switchToIDEAlMode()));
-#endif
 }
 
 KMDIGUIClient::~KMDIGUIClient()
 {
-    m_toolViewActions.setAutoDelete( true );
+
+    for (int i=0;i<m_toolViewActions.count();i++)
+	    disconnect(m_toolViewActions.at(i),0,this,0);
+
+    m_toolViewActions.setAutoDelete( false );
     m_toolViewActions.clear();
-    m_documentViewActions.setAutoDelete( true );
+    m_documentViewActions.setAutoDelete( false );
     m_documentViewActions.clear();
 }
 
@@ -216,13 +213,20 @@ void KMDIGUIClient::setupActions()
 
 void KMDIGUIClient::addToolView(KMdiToolViewAccessor* mtva) {
 	KAction *a=new ToggleToolViewAction(i18n("Show %1").arg(mtva->wrappedWidget()->caption()),
-		QString::null,dynamic_cast<KDockWidget*>(mtva->wrapperWidget()),m_mdiMainFrm,actionCollection(),"nothing");
+		QString::null,dynamic_cast<KMdiDockWidget*>(mtva->wrapperWidget()),m_mdiMainFrm,actionCollection(),"nothing");
+	connect(a,SIGNAL(destroyed(QObject*)),this,SLOT(actionDeleted(QObject*)));
 	m_toolViewActions.append(a);
 	m_toolMenu->insert(a);
-	
+
+	mtva->d->action=a;
 	setupActions();
 }
 
+void KMDIGUIClient::actionDeleted(QObject* a) {
+	m_toolViewActions.remove(static_cast<KAction*>(a));
+/*	if (!m_toolMenu.isNull()) m_toolMenu->remove(static_cast<KAction*>(a));*/
+	setupActions();
+}
 
 void KMDIGUIClient::clientAdded( KXMLGUIClient *client )
 {
@@ -252,4 +256,5 @@ void KMDIGUIClient::mdiModeHasBeenChangedTo(KMdi::MdiMode mode) {
 	setupActions();
 
 }
+
 

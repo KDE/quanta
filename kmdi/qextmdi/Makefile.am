@@ -10,6 +10,7 @@ libquantaqextmdi_la_SOURCES = kmdichildarea.cpp kmdichildfrm.cpp kmdichildfrmcap
 				kmdichildview.cpp kmdimainfrm.cpp kmditaskbar.cpp kmdidockcontainer.cpp \
 				kdockwidget_compat.cpp dockmainwindow_compat.cpp kmultitabbar.cpp \
 				kmditoolviewaccessor.cpp kmdidocumentviewtabwidget.cpp kmdifocuslist.cpp \
+				kmdiguiclient.cpp \
 				ktabwidget.cpp ktabbar.cpp
 
 KDE_OPTIONS = nofinal

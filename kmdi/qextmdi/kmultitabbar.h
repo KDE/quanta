@@ -77,7 +77,7 @@ public:
 	 * @param not_used_yet will be used for a popup text in the future
 	 */
  	int appendButton(const QPixmap &pic,int id=-1,QPopupMenu* popup=0,const QString& not_used_yet=QString::null);
-	/** 
+	/**
          * remove a button with the given ID
 	 */
 	void removeButton(int id);
@@ -137,7 +137,7 @@ public:
 private:
 	class KMultiTabBarInternal *m_internal;
 	QBoxLayout *m_l;
-	QFrame *m_btnTabSep;	
+	QFrame *m_btnTabSep;
 	QPtrList<KMultiTabBarButton> m_buttons;
 	KMultiTabBarPosition m_position;
 	KMultiTabBarPrivate *d;
@@ -151,6 +151,8 @@ class KMultiTabBarButton: public QPushButton
 	Q_OBJECT
 public:
 	KMultiTabBarButton(const QPixmap& pic,const QString&, QPopupMenu *popup,
+		int id,QWidget *parent, KMultiTabBar::KMultiTabBarPosition pos, KMultiTabBar::KMultiTabBarStyle style);
+	KMultiTabBarButton(const QString&, QPopupMenu *popup,
 		int id,QWidget *parent, KMultiTabBar::KMultiTabBarPosition pos, KMultiTabBar::KMultiTabBarStyle style);
 	virtual  ~KMultiTabBarButton();
 	int id() const;
@@ -171,7 +173,9 @@ public slots:
 	 * modify the text of the button
          */
 	void setText(const QString &);
-	
+
+	QSize sizeHint() const;
+
 protected:
 	KMultiTabBar::KMultiTabBarPosition m_position;
 	KMultiTabBar::KMultiTabBarStyle m_style;
@@ -225,6 +229,8 @@ protected:
 	void drawButtonClassic(QPainter *);
 protected slots:
 	virtual void slotClicked();
+	void setTabsPosition(KMultiTabBar::KMultiTabBarPosition);
+
 public slots:
 	virtual void setIcon(const QString&);
 	virtual void setIcon(const QPixmap&);

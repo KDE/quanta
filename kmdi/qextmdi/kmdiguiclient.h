@@ -29,7 +29,7 @@ class KMainWindow;
 class KToolBar;
 class KMdiToolViewAccessor;
 class KMdiMainFrm;
-class KDockWidget;
+class KMdiDockWidget;
 
 namespace KMDIPrivate {
 
@@ -46,6 +46,7 @@ private slots:
     void clientAdded( KXMLGUIClient *client );
     void setupActions();
     void changeViewMode(int id);
+    void actionDeleted(QObject*);
     void mdiModeHasBeenChangedTo(KMdi::MdiMode);
 signals:
     void toggleTop();
@@ -74,13 +75,13 @@ class ToggleToolViewAction:public KToggleAction
 {
 Q_OBJECT
 public:
-        ToggleToolViewAction( const QString& text, const KShortcut& cut = KShortcut(),KDockWidget *dw=0,KMdiMainFrm *mdiMainFrm=0,
+        ToggleToolViewAction( const QString& text, const KShortcut& cut = KShortcut(),KMdiDockWidget *dw=0,KMdiMainFrm *mdiMainFrm=0,
 		QObject* parent = 0, const char* name = 0 );
 
         virtual ~ToggleToolViewAction();
 
 private:
-        KDockWidget *m_dw;
+        KMdiDockWidget *m_dw;
         KMdiMainFrm *m_mdiMainFrm;
 protected slots:
         void slotToggled(bool);
