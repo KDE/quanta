@@ -1,0 +1,18 @@
+<!DOCTYPE QuantaScriptInfo>
+<INFO>
+<name>dwt</name>
+<author>Benjamin Stocker</author>
+<email>bstocker@4s-hosting.ch</email>
+<license>GPL</license>
+<about>DreamWeaver Template functionality.
+This is a perl script to apply a modified Dreamweaver (DW)
+template to a file using this template. Macromedia
+Dreamweaver manages this automatically whenever you
+change a tepmplate. See DW Documentation for more infos.
+When you have a DW-Project with templates but no DW, you
+can change templates, but this changes will not be added
+to files using the template.
+This script can solve this problem. It takes the name of a
+file as argument, scans this file for a template and adds
+all template changes to the file.</about>
+</INFO>

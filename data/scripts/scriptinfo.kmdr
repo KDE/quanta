@@ -1,0 +1,286 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>Form1</class>
+<widget class="Dialog">
+    <property name="name">
+        <cstring>Form1</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>484</width>
+            <height>411</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Quanta Script Info Editor</string>
+    </property>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel4</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>110</y>
+                <width>90</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Script License:</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel5</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>140</y>
+                <width>90</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>About Script:</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>21</x>
+                <y>80</y>
+                <width>90</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Author Email</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>50</y>
+                <width>90</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Script Author:</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>20</y>
+                <width>90</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Script Name:</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel6</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>330</y>
+                <width>91</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Script Location:</string>
+        </property>
+    </widget>
+    <widget class="LineEdit">
+        <property name="name">
+            <cstring>Author</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>110</x>
+                <y>50</y>
+                <width>250</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>&lt;author&gt;@widgetText&lt;/author&gt;\n</string>
+            </stringlist>
+        </property>
+    </widget>
+    <widget class="LineEdit">
+        <property name="name">
+            <cstring>email</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>110</x>
+                <y>80</y>
+                <width>251</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>&lt;email&gt;@widgetText&lt;/email&gt;\n</string>
+            </stringlist>
+        </property>
+    </widget>
+    <widget class="ComboBox">
+        <item>
+            <property name="text">
+                <string>GPL</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>LGPL</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>BSD</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Public Domain</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>Other</string>
+            </property>
+        </item>
+        <property name="name">
+            <cstring>ComboBox1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>110</x>
+                <y>110</y>
+                <width>251</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>&lt;license&gt;@widgetText&lt;/license&gt;\n</string>
+            </stringlist>
+        </property>
+        <property name="toolTip" stdset="0">
+            <string>If other include in about</string>
+        </property>
+    </widget>
+    <widget class="TextEdit">
+        <property name="name">
+            <cstring>about</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>110</x>
+                <y>140</y>
+                <width>351</width>
+                <height>181</height>
+            </rect>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>&lt;about&gt;@widgetText&lt;/about&gt;\n</string>
+            </stringlist>
+        </property>
+    </widget>
+    <widget class="FileSelector">
+        <property name="name">
+            <cstring>FileSelector1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>110</x>
+                <y>330</y>
+                <width>350</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>@widgetText</string>
+            </stringlist>
+        </property>
+        <property name="selectionType">
+            <enum>Directory</enum>
+        </property>
+    </widget>
+    <widget class="CloseButton">
+        <property name="name">
+            <cstring>CloseButton1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>190</x>
+                <y>370</y>
+                <width>110</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Write File</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>echo "&lt;!DOCTYPE QuantaScriptInfo&gt;
+&lt;INFO&gt;
+@Name
+@Author
+@email
+@ComboBox1
+@about
+&lt;/INFO&gt;" &gt; "@FileSelector1/@Name.info"</string>
+            </stringlist>
+        </property>
+    </widget>
+    <widget class="LineEdit">
+        <property name="name">
+            <cstring>Name</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>110</x>
+                <y>20</y>
+                <width>171</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>&lt;name&gt;@widgetText&lt;/name&gt;\n</string>
+            </stringlist>
+        </property>
+        <property name="toolTip" stdset="0">
+            <string>Do not include extention</string>
+        </property>
+    </widget>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

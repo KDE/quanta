@@ -1,6 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = doc tags icons templates toolbars 
+SUBDIRS = doc tags icons templates toolbars scripts
 
 EXTRA_DIST = actions.rc plugins.rc 
 
