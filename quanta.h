@@ -34,7 +34,7 @@
 #include <qstrlist.h>
 #include <qptrlist.h>
 
-// include files for KDE 
+// include files for KDE
 #include <kapplication.h>
 #include <kdockwidget.h>
 #include "kqapp.h"
@@ -155,8 +155,6 @@ public:
 
   /** reparse current document and initialize node. */
   void reparse(bool force);
-  /** Configure toolbars, show defaultToolbar by default */
-  void configureToolbars(const QString& defaultToolbar = QString::null);
 
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */
@@ -244,6 +242,8 @@ public slots:
   void slotOptionsConfigureKeys();
   void slotOptionsConfigureToolbars();
   void slotNewToolbarConfig();
+  /** Configure toolbars, show defaultToolbar by default */
+  void slotConfigureToolbars(const QString& defaultToolbar = QString::null);
   void slotOptionsConfigureActions();
 
   void enablePhp3Debug(bool);
@@ -284,6 +284,13 @@ public slots:
   void slotRenameToolbar(const QString& name);
   /** Rename the toolbar. */
   void slotRenameToolbar();
+  /** Delete an action */
+  void slotDeleteAction(KAction *action);
+  /** Remove the action from toolbar*/
+  void slotRemoveAction(const QString&, const QString& actionName);
+  /** Edit the action */
+  void slotEditAction(const QString&);
+
   /** No descriptions */
   void slotToolsChangeDTD();
   /** No descriptions */

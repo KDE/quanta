@@ -715,7 +715,7 @@ void QuantaApp::slotOptionsConfigureKeys()
   KKeyDialog::configureKeys( actionCollection(), xmlFile(), true, this );
 }
 
-void QuantaApp::configureToolbars(const QString& defaultToolbar)
+void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
 {
  currentPageIndex = m_view->toolbarTab()->currentPageIndex();
 
@@ -787,7 +787,7 @@ void QuantaApp::configureToolbars(const QString& defaultToolbar)
 
 void QuantaApp::slotOptionsConfigureToolbars()
 {
-  configureToolbars();
+  slotConfigureToolbars();
 }
 
 void QuantaApp::slotNewToolbarConfig()
@@ -1378,6 +1378,11 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
     m_view->toolbarTab()->insertTab(tb, i18n(tabname));
     m_view->toolbarTab()->setFixedHeight(tb->minimumSizeHint().height()+m_view->toolbarTab()->tabHeight());
     qInstallMsgHandler( oldHandler );
+
+    connect(tb, SIGNAL(removeAction(const QString&, const QString&)),
+                SLOT(slotRemoveAction(const QString&, const QString&)));
+    connect(tb, SIGNAL(editAction(const QString&)),
+                SLOT(slotEditAction(const QString&)));
     return tb;
   }
 
@@ -1593,7 +1598,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    QPtrList<KXMLGUIClient> xml_clients = guiFactory()->clients();
    QString newName = name;
    QString origName = name;
-   bool found;
+   bool found = false;
    int count = 2;
    do
    {
@@ -2135,6 +2140,76 @@ void QuantaApp::removeToolbars()
 
 }
 
+void QuantaApp::slotDeleteAction(KAction *action)
+{
+//remove all references to this action
+  QDomElement el = static_cast<TagAction*>(action)->data();
+  QString text = el.attribute("text");
+  QString actionName = action->name();
+
+  QPtrList<KXMLGUIClient> guiClients = factory()->clients();
+  KXMLGUIClient *guiClient = 0;
+  QDomNodeList nodeList;
+  for (uint i = 0; i < guiClients.count(); i++)
+  {
+    guiClient = guiClients.at(i);
+    guiClient->domDocument().setContent(KXMLGUIFactory::readConfigFile( guiClient->xmlFile(), guiClient->instance() ));
+    nodeList = guiClient->domDocument().elementsByTagName("Action");
+    for (uint j = 0; j < nodeList.count(); j++)
+    {
+      //we found a toolbar that contains the action
+      if (nodeList.item(j).toElement().attribute("name") == actionName)
+      {
+        nodeList.item(j).parentNode().removeChild(nodeList.item(j));
+        KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->xmlFile());
+        break;
+      }
+    }
+  }
+  action->unplugAll();
+  delete action;
+  action = 0L;
+}
+
+void QuantaApp::slotRemoveAction(const QString& toolbarName, const QString& actionName)
+{
+  KAction *action = 0L;
+  for (uint i = 0; i < actionCollection()->count(); i++)
+  {
+    if (actionCollection()->action(i)->text() == actionName)
+    {
+      action = actionCollection()->action(i);
+    }
+  }
+
+  if (action)
+  {
+    ToolbarEntry *p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+    if (p_toolbar)
+    {
+      QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
+      while (!node.isNull())
+      {
+        if (node.nodeName() == "Action" &&
+            node.toElement().attribute("name") == action->name())
+        {
+          action->unplug(m_view->toolbarTab()->page(toolbarName));
+          action->unplug(p_toolbar->menu);
+          node.parentNode().removeChild(node);
+        }
+        node = node.nextSibling();
+      }
+      KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
+        p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
+    }
+  }
+}
+
+void QuantaApp::slotEditAction(const QString& actionName)
+{
+  ActionConfigDialog dlg(this, "actions_config_dlg", true, 0, actionName);
+  dlg.exec();
+}
 
 /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
 void QuantaApp::processDTD(const QString& documentType)

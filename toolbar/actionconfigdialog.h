@@ -26,7 +26,7 @@ class ActionConfigDialog: public ActionConfigDialogS
 
 public:
 
-  ActionConfigDialog( QWidget* parent = 0, const char* name = 0, bool modal = true, WFlags fl = 0 );
+  ActionConfigDialog( QWidget* parent = 0, const char* name = 0, bool modal = true, WFlags fl = 0 , const QString& defaultAction = QString::null);
   ~ActionConfigDialog();
 
 public slots:

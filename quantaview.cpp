@@ -68,6 +68,8 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
           quantaApp, SLOT(slotRemoveToolbar(const QString&)));
   connect(m_toolbarTab, SIGNAL(renameToolbar(const QString&)),
           quantaApp, SLOT(slotRenameToolbar(const QString&)));
+  connect(m_toolbarTab, SIGNAL(editToolbar(const QString&)),
+          quantaApp, SLOT(slotConfigureToolbars(const QString&)));
 
   QGridLayout *layout2 = new QGridLayout(this, 1, 2);
   layout2->setRowStretch(0,0);

@@ -40,6 +40,8 @@ public:
   virtual ~ToolbarTabWidget(){};
 
   virtual void insertTab(QWidget * child, const QString & label);
+  virtual QWidget* page(int index) ;
+  virtual QWidget* page(const QString& label);
   int tabHeight() const;
 
 public slots:
@@ -49,10 +51,15 @@ public slots:
 private slots:
   void slotRemoveToolbar();
   void slotRenameToolbar();
+  void slotEditToolbar();
 
 signals:
   void removeToolbar(const QString&);
   void renameToolbar(const QString&);
+  void editToolbar(const QString&);
+
+public:
+  QString tabUnderMouse;
 
 protected:
   virtual void mousePressEvent ( QMouseEvent * e );
@@ -60,7 +67,6 @@ protected:
   KPopupMenu *m_popupMenu;
   QTabBar *m_tabBar;
   QPtrList<QWidget> toolbarList;
-  QString tabUnderMouse;
 };
 
 class QuantaToolBar: public KToolBar
@@ -71,11 +77,20 @@ public:
   QuantaToolBar (QWidget *parent, const char *name=0, bool honor_style=FALSE, bool readConfig=TRUE);
   virtual ~QuantaToolBar() {};
 
+private slots:
+  void slotEditAction();
+  void slotRemoveAction();
+
+signals:
+  void removeAction(const QString&, const QString&);
+  void editAction(const QString&);
+
 protected:
   virtual void mousePressEvent ( QMouseEvent * e );
 
   KPopupMenu *m_popupMenu;
   ToolbarTabWidget *m_toolbarTab;
+  QString currentActionName;
 };
 
 #endif

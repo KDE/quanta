@@ -22,21 +22,21 @@
 //kde includes
 #include <kaction.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <ktoolbarbutton.h>
 
 //app includes
 #include "toolbartabwidget.h"
-#include "../resource.h"
-#include "../quanta.h"
 
 ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, WFlags f)
 :QTabWidget(parent, name, f)
 {
   m_popupMenu = new KPopupMenu(this);
   m_popupMenu->insertTitle(i18n("Toolbar Menu"), 1);
-  m_popupMenu->insertItem(i18n("Remove"), this, SLOT(slotRemoveToolbar()));
-  m_popupMenu->insertItem(i18n("Rename"), this, SLOT(slotRenameToolbar()));
+  m_popupMenu->insertItem(i18n("Remove Toolbar"), this, SLOT(slotRemoveToolbar()));
+  m_popupMenu->insertItem(i18n("Rename Toolbar"), this, SLOT(slotRenameToolbar()));
+  m_popupMenu->insertItem(i18n("Edit Toolbar"), this, SLOT(slotEditToolbar()));
 }
 
 void ToolbarTabWidget::insertTab(QWidget * child, const QString & label )
@@ -46,6 +46,35 @@ void ToolbarTabWidget::insertTab(QWidget * child, const QString & label )
     QTabWidget::insertTab(child->parentWidget(), label);
     toolbarList.append(child);
   }
+}
+
+QWidget* ToolbarTabWidget::page(int index)
+{
+  QWidget *w = QTabWidget::page(index);
+
+  for (QWidget *tb = toolbarList.first(); tb; tb = toolbarList.next())
+  {
+    if (tb->parentWidget() == w)
+    {
+      w = tb;
+      break;
+    }
+  }
+  return w;
+}
+
+QWidget* ToolbarTabWidget::page(const QString& label)
+{
+  QWidget *w = 0L;
+  for (int i = 0; i < count(); i++)
+  {
+    if (this->label(i) == label)
+    {
+      w = page(i);
+      break;
+    }
+  }
+  return w;
 }
 
 void ToolbarTabWidget::removePage(QWidget * w )
@@ -69,12 +98,17 @@ void ToolbarTabWidget::slotRenameToolbar()
   emit renameToolbar(tabUnderMouse.lower());
 }
 
+void ToolbarTabWidget::slotEditToolbar()
+{
+  emit editToolbar(tabUnderMouse + " <quanta>");
+}
+
 void ToolbarTabWidget::mousePressEvent ( QMouseEvent * e )
 {
   if (e->button() == Qt::RightButton)
   {
     QPoint p = e->globalPos();
-    QTab *tab;
+    QTab *tab = 0L;
     for (int i =0; i < tabBar()->count(); i++)
     {
       tab = tabBar()->tabAt(i);
@@ -124,43 +158,54 @@ QuantaToolBar::QuantaToolBar(QWidget *parent, const char *name, bool honor_style
 :KToolBar (parent, name=0, honor_style, readConfig)
 {
   m_popupMenu = new KPopupMenu(this);
-  m_popupMenu->insertTitle(i18n("Toolbar Menu"), 1);
   m_toolbarTab = dynamic_cast<ToolbarTabWidget*>(parent->parentWidget());
-  if (m_toolbarTab)
-  {
-    m_popupMenu->insertItem(i18n("Remove"), parent, SLOT(slotRemoveToolbar()));
-    m_popupMenu->insertItem(i18n("Rename"), parent, SLOT(slotRenameToolbar()));
-  }
+  currentActionName = "";
 }
 
 void QuantaToolBar::mousePressEvent(QMouseEvent *e)
 {
   if (e->button() == Qt::RightButton)
   {
+    m_popupMenu->clear();
+    QPoint p = e->globalPos();
     if (m_toolbarTab)
     {
-      m_popupMenu->changeTitle(1, i18n("Toolbar Menu") + " - "
-                                  + i18n(m_toolbarTab->label(m_toolbarTab->currentPageIndex())));
-/*
-      QPtrList<KAction> actionList;
-      for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
-      {
-        KAction *action = quantaApp->actionCollection()->action(i);
-        if (action->isPlugged(this))
-            actionList.append(action);
-      }
+      m_toolbarTab->tabUnderMouse = m_toolbarTab->label(m_toolbarTab->currentPageIndex());
+      m_popupMenu->insertTitle(i18n("Toolbar Menu") + " - "
+                               + i18n(m_toolbarTab->tabUnderMouse));
       Id2WidgetMap::Iterator it = id2widget.begin();
       while (it != id2widget.end())
       {
-        if (dynamic_cast<KToolBarButton *>(*it))
+        QPoint p1 = (*it)->parentWidget()->mapToGlobal((*it)->pos());
+        QPoint p2 = QPoint(p1.x() + (*it)->width(), p1.y()+(*it)->height());
+        if (dynamic_cast<KToolBarButton *>(*it) && QRect(p1, p2).contains(p))
         {
-          m_popupMenu->insertItem(dynamic_cast<KToolBarButton *>(*it)->text());
+          currentActionName = dynamic_cast<KToolBarButton *>(*it)->textLabel();
+          m_popupMenu->insertItem(i18n("Remove Action - %1").arg(currentActionName), this, SLOT(slotRemoveAction()));
+          m_popupMenu->insertItem(i18n("Edit Action - %1").arg(currentActionName), this, SLOT(slotEditAction()));
+          m_popupMenu->insertSeparator();
+          break;
         }
         ++it;
-      } */
+      }
+      m_popupMenu->insertItem(i18n("Remove Toolbar"), m_toolbarTab, SLOT(slotRemoveToolbar()));
+      m_popupMenu->insertItem(i18n("Rename Toolbar"), m_toolbarTab, SLOT(slotRenameToolbar()));
+      m_popupMenu->insertItem(i18n("Edit Toolbar"), m_toolbarTab, SLOT(slotEditToolbar()));
     }
-    QPoint p = e->globalPos();
     m_popupMenu->popup(p);
+  }
+}
+
+void QuantaToolBar::slotEditAction()
+{
+  emit editAction(currentActionName);
+}
+
+void QuantaToolBar::slotRemoveAction()
+{
+  if ( KMessageBox::questionYesNo(this, i18n("<qt>Are you sure you want to remove the <b>%1</b> action?</qt>").arg(currentActionName)) == KMessageBox::Yes )
+  {
+    emit removeAction(m_toolbarTab->tabUnderMouse, currentActionName);
   }
 }
 

@@ -45,7 +45,7 @@
 #include "tagaction.h"
 #include "toolbartabwidget.h"
 
-ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool modal, WFlags fl )
+ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool modal, WFlags fl, const QString& defaultAction )
     :ActionConfigDialogS( parent, name, modal, fl )
 {
   currentAction = 0L;
@@ -95,7 +95,22 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
          item->setOpen(true);
          if (item->firstChild())
          {
-           actionTreeView->setCurrentItem(item->firstChild());
+           if (defaultAction.isEmpty())
+           {
+             actionTreeView->setCurrentItem(item->firstChild());
+           } else
+           {
+             QListViewItem *actionItem = item->firstChild();
+             while (actionItem && actionItem->depth() > 0)
+             {
+                if (actionItem->text(0) == defaultAction)
+                {
+                  actionTreeView->setCurrentItem(actionItem);
+                  break;
+                }
+                actionItem = actionItem->nextSibling();
+             }
+           }
          }
       }
     }
@@ -171,7 +186,7 @@ void ActionConfigDialog::slotEditToolbar()
   toolbarName = item->text(0);
   if ( toolbarName != i18n("All"))
   {
-    quantaApp->configureToolbars(toolbarName +" <quanta>");
+    quantaApp->slotConfigureToolbars(toolbarName +" <quanta>");
 
     //update the tree view
     KAction *action;
@@ -607,19 +622,6 @@ void ActionConfigDialog::saveCurrentAction()
     KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
         p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
   }
-  int currentPage = quantaApp->view()->toolbarTab()->currentPageIndex();
-//reload the GUI clients
-  QPtrList<KXMLGUIClient> guiClients = quantaApp->factory()->clients();
-  KXMLGUIClient *guiClient = 0;
-  for (uint i = 1; i < guiClients.count(); i++)
-  {
-      guiClient = guiClients.at(i);
-      quantaApp->factory()->removeClient(guiClient);
-      guiClient ->setXMLGUIBuildDocument( QDomDocument() );
-      guiClient->reloadXML();
-      quantaApp->guiFactory()->addClient(guiClient);
-  }
-  quantaApp->view()->toolbarTab()->setCurrentPage(currentPage);
 }
 
 void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
@@ -729,40 +731,11 @@ void ActionConfigDialog::slotNewAction()
 
 void ActionConfigDialog::slotDeleteAction()
 {
-  if ( KMessageBox::questionYesNo(this, i18n("Removing the action removes all the references to it.\nAre you sure you want to remove the current action ?")) == KMessageBox::Yes )
+  if ( KMessageBox::questionYesNo(this, i18n("<qt>Removing the action removes all the references to it.\nAre you sure you want to remove the <b>%1</b> action?</qt>").arg(currentAction->text())) == KMessageBox::Yes )
   {
-//remove all references to this action
-    QDomElement el = static_cast<TagAction*>(currentAction)->data();
-    QString text = el.attribute("text");
     QString actionName = currentAction->name();
-
-    QPtrList<KXMLGUIClient> guiClients = quantaApp->factory()->clients();
-    KXMLGUIClient *guiClient = 0;
-    QDomNodeList nodeList;
-    for (uint i = 0; i < guiClients.count(); i++)
-    {
-      guiClient = guiClients.at(i);
-      guiClient->domDocument().setContent(KXMLGUIFactory::readConfigFile( guiClient->xmlFile(), guiClient->instance() ));
-      nodeList = guiClient->domDocument().elementsByTagName("Action");
-      for (uint j = 0; j < nodeList.count(); j++)
-      {
-        //we found a toolbar that contains the action
-        if (nodeList.item(j).toElement().attribute("name") == actionName)
-        {
-          nodeList.item(j).parentNode().removeChild(nodeList.item(j));
-          if (i == 0)
-          {
-
-          }
-          KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->xmlFile());
-          break;
-        }
-      }
-    }
-    currentAction->unplugAll();
-    delete currentAction;
+    quantaApp->slotDeleteAction(currentAction);
     currentAction = 0L;
-
     //update the tree view
     QListViewItem *listItem;
     QListViewItemIterator it(actionTreeView);
