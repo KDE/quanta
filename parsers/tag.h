@@ -37,11 +37,11 @@ class Document;
 
 struct TagAttr {
   TagAttr() {nameLine = nameCol = valueLine = valueCol = 0; quoted = true; special = false;}
-  
+
   /** For Kafka copy/paste */
   void save(QDomElement& element) const;
   bool load(QDomElement const& element);
-  
+
   QString name;           //attr name
   QString value;          //attr value
   int nameLine, nameCol;  //where the attr name begins
@@ -75,7 +75,7 @@ public:
   /** For Kafka copy/paste */
   void save(QDomElement& element) const;
   bool load(QDomElement const& element);
-  
+
   /** Parse the p_tagStr in p_write and build up the tag's attributes and values */
   void parse (const QString &p_tagStr, Document *p_write);
   /** Return the attribute at index*/
@@ -83,7 +83,7 @@ public:
   /** Return the attribute value at index*/
   QString attributeValue(int index);
   /** Return the value of attr*/
-  QString attributeValue(QString attr);
+  QString attributeValue(const QString &attr, bool ignoreCase = false);
   /** Add an attribute */
   void addAttribute(TagAttr attr) {attrs.append(attr);}
   /** Get the attribute number index */
@@ -98,7 +98,7 @@ public:
   /** Returns the quotation status of the attribute */
   bool isQuotedAttribute(int index) const {return attrs[index].quoted;}
   /** Check if this tag has the attr attribute defined */
-  bool hasAttribute( const QString &attr );
+  bool hasAttribute(const QString &attr, bool ignoreCase = false);
   /** set the coordinates of a tag attribute */
   void setAttributePosition(int index, int bLineName, int bColName, int bLineValue, int bColValue);
   /** Set the coordinates of tag inside the document */
@@ -178,18 +178,18 @@ public:
   void setIndentationDone(bool indentationDone) {m_indentationDone = indentationDone;}
   bool notInTree() {return m_notInTree;}
   void setNotInTree(bool notInTree) {m_notInTree = notInTree;}
-  
+
 private:
   //specifies if we need to build the clean tag string from the attrs
   // or the text without entities. This "clean" string will be inserted in the source view.
   // if true, the markup is already generated.
   // if false, it is not, we need to generate it.
   bool m_cleanStrBuilt;
-  
+
   //Specify if the indentation has been applied to this Node : added spaces to text and empty Nodes,
   // added empty Node around for other Node.
   bool m_indentationDone;
-  
+
   // specifies if this tag is just conencted to a DOM::Node but isn't part of the Node tree.
   bool m_notInTree;
 

@@ -28,6 +28,8 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
           table editor
         - show the right index of the main cell in case of merged rows in a table
         - don't crash on column removal form a table
+        - read the tables correctly also if the doctype definition is wrong
+          (for example HTML tables inside XHTML)
 
   - behavioral/user interface changes:
         - Toolbars->Add User Toolbar renamed to New User Toolbar

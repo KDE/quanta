@@ -19,7 +19,7 @@
 #include <qdict.h>
 #include <qstring.h>
 #include <qcstring.h>
-#include <qdom.h> 
+#include <qdom.h>
 
 #include <kdebug.h>
 
@@ -143,14 +143,14 @@ void Tag::save(QDomElement& element) const
     element.setAttribute("nameCol", m_nameCol);                 // int
 
     QValueList<TagAttr>::const_iterator it;
-    for (it = attrs.begin(); it != attrs.end(); ++it) 
+    for (it = attrs.begin(); it != attrs.end(); ++it)
     {
         QDomElement child_element = element.ownerDocument().createElement("tagAttr");
         element.appendChild(child_element);
         (*it).save(child_element);
     }
 
-    element.setAttribute("tagStr", m_tagStr);                   // QString    
+    element.setAttribute("tagStr", m_tagStr);                   // QString
 }
 
 bool Tag::load(QDomElement const& element)
@@ -170,12 +170,12 @@ bool Tag::load(QDomElement const& element)
     m_nameCol = QString(element.attribute("nameCol")).toInt();                 // int
 
     QDomNodeList list = element.childNodes();
-    for (unsigned int i = 0; i != list.count(); ++i) 
+    for (unsigned int i = 0; i != list.count(); ++i)
     {
-        if (list.item(i).isElement()) 
+        if (list.item(i).isElement())
         {
             QDomElement e = list.item(i).toElement();
-            if (e.tagName() == "tagAttr") 
+            if (e.tagName() == "tagAttr")
             {
                 TagAttr tag_attr;
                 tag_attr.load(e);
@@ -183,8 +183,8 @@ bool Tag::load(QDomElement const& element)
             }
         }
     }
-    
-    m_tagStr = element.attribute("tagStr");                   // QString    
+
+    m_tagStr = element.attribute("tagStr");                   // QString
 
     return true;
 }
@@ -368,14 +368,14 @@ QString Tag::attributeValue(int index)
   return val;
 }
 
-QString Tag::attributeValue(QString attr)
+QString Tag::attributeValue(const QString &attr, bool ignoreCase)
 {
  QString val = "";
  for (uint i = 0 ; i < attrs.count(); i++)
  {
 
   if ( attr == attrs[i].name ||
-      (!m_dtd->caseSensitive && attrs[i].name == attr.lower()))
+       ((!m_dtd->caseSensitive || ignoreCase) && attrs[i].name == attr.lower()))
   {
     val = attrs[i].value;
     break;
@@ -385,12 +385,12 @@ QString Tag::attributeValue(QString attr)
 }
 
 /** Check if this tag has the attr attribute defined */
-bool Tag::hasAttribute( const QString &attr )
+bool Tag::hasAttribute(const QString &attr, bool ignoreCase)
 {
   for (uint i = 0; i < attrs.count(); i++)
   {
     if ( attrs[i].name ==  attr ||
-         (!m_dtd->caseSensitive && attrs[i].name == attr.lower()))
+         ((!m_dtd->caseSensitive || ignoreCase) && attrs[i].name == attr.lower()))
       return true;
   }
   return false;
@@ -532,7 +532,7 @@ bool Tag::editAttribute(const QString& attrName, const QString& attrValue)
     {
       if(attr.value == attrValue)
         return false;
-        
+
       attr = attrs[i];
       attr.value = attrValue;
       attrs.remove(attrs.at(i));
@@ -549,7 +549,7 @@ bool Tag::editAttribute(const QString& attrName, const QString& attrValue)
     attrs.append(attr);
     return true;
   }
-  
+
   return false;
 }
 

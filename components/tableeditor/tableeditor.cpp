@@ -460,7 +460,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           tableNode.merged = false;
           tableRowTags.append(tableNode);
         }
-        QString colspanValue = n->tag->attributeValue("colspan");
+        QString colspanValue = n->tag->attributeValue("colspan", true);
         int colValue = 1;
         int lastCol = nCol;
         if (!colspanValue.isEmpty())
@@ -488,7 +488,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           } else
             colValue = 1;
         }
-        QString rowspanValue = n->tag->attributeValue("rowspan");
+        QString rowspanValue = n->tag->attributeValue("rowspan", true);
         if (!rowspanValue.isEmpty())
         {
           bool ok;
@@ -1199,7 +1199,7 @@ void TableEditor::configureCell(int row, int col, Node * node)
    item->setHeader(node->tag->name.lower() == "th");
    // Horizontal alignment
    Qt::AlignmentFlags flags;
-   QString align = node->tag->attributeValue("align");
+   QString align = node->tag->attributeValue("align", true);
    if (align == "right")
      flags = Qt::AlignRight;
    else if (align == "center")
@@ -1212,7 +1212,7 @@ void TableEditor::configureCell(int row, int col, Node * node)
      flags = Qt::AlignLeft;
    item->setAlignment(flags);
    // Vertical alignment
-   QString valign = node->tag->attributeValue("valign");
+   QString valign = node->tag->attributeValue("valign", true);
    if (valign == "top")
      flags = Qt::AlignTop;
    else if (valign == "bottom")
