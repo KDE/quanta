@@ -78,7 +78,7 @@ bool QuantaCmdPlugin::load()
   m_process->setUseShell(true);
 
   QString args = arguments();
-  
+
   if (!args.isEmpty())
   {
     //FIXME: This will not work if the arguments contain spaces, but will
@@ -90,7 +90,7 @@ bool QuantaCmdPlugin::load()
       args += KProcess::quote(argsList[i])+" ";
     }
   }
-  
+
   /* TODO
   QString text = quantaApp->doc()->write()->editIf->text();
   args.replace(QRegExp("document"), text);
@@ -163,7 +163,7 @@ void QuantaCmdPlugin::writeStdout(KProcess *, char *a_buffer, int a_len)
   {
     if(quantaApp)
     {
-      quantaApp->getMessages()->showMessage(text);
+      quantaApp->getMessageOutput()->showMessage(text);
     }
   }
   else if(ow == i18n("Konsole"))
@@ -190,7 +190,7 @@ void QuantaCmdPlugin::writeStderr(KProcess *, char *a_buffer, int a_len)
   {
     if(quantaApp)
     {
-      quantaApp->getMessages()->showMessage(text);
+      quantaApp->getMessageOutput()->showMessage(text);
     }
   }
   else if(ow == i18n("Konsole"))

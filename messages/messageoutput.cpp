@@ -69,14 +69,15 @@ void MessageOutput::showMessage( QString message )
   int endPos;
   if ( !count() )
     insertItem("");
-
+  if (!message.endsWith("\n"))
+      message += "\n";
   while ( ( endPos = message.find('\n') ) != -1 ) {
     addToLastItem( message.left(endPos) );
     insertItem("");
     message.remove(0,endPos+1);
   }
 
-  addToLastItem( message );
+  addToLastItem( message);
   setBottomItem(count()>0?count()-1:0);
 }
 

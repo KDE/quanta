@@ -2220,68 +2220,73 @@ void QuantaApp::processDTD(const QString& documentType)
    bool found = false;
    if (!foundName.isEmpty())   //!DOCTYPE found in file
    {
-     DTDSelectDialog *dlg = new DTDSelectDialog(this);
-     QStringList lst;
-     QDictIterator<DTDStruct> it(*dtds);
-     for( ; it.current(); ++it )
-     {
-       if (it.current()->family == Xml)
-       {
-         lst << it.current()->nickName;
-       }
-     }
-     lst.sort();
-     QString foundNickName = QuantaCommon::getDTDNickNameFromName(foundName);
-     for (uint i = 0; i < lst.count(); i++)
-     {
-       dlg->dtdCombo->insertItem(lst[i]);
-       if (lst[i] == foundNickName)
-       {
-         w->setDTDIdentifier(foundName);
-         found =true;
-       }
-    }
+      DTDSelectDialog *dlg = new DTDSelectDialog(this);
+      QStringList lst;
+      QDictIterator<DTDStruct> it(*dtds);
+      for( ; it.current(); ++it )
+      {
+        if (it.current()->family == Xml)
+        {
+          lst << it.current()->nickName;
+        }
+      }
+      lst.sort();
+      QString foundNickName = QuantaCommon::getDTDNickNameFromName(foundName);
+      for (uint i = 0; i < lst.count(); i++)
+      {
+        dlg->dtdCombo->insertItem(lst[i]);
+        if (lst[i] == foundNickName)
+        {
+          w->setDTDIdentifier(foundName);
+          found =true;
+        }
+      }
 
 //    dlg->dtdCombo->insertItem(i18n("Create new DTD info."));
-    dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
-    dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(foundName));
-    QString projectDTDNickName = QuantaCommon::getDTDNickNameFromName(projectDTD);
-    for (int i = 0; i < dlg->dtdCombo->count(); i++)
-    {
-      if (dlg->dtdCombo->text(i) == projectDTDNickName)
+      dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
+      dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(foundName));
+      QString projectDTDNickName = QuantaCommon::getDTDNickNameFromName(projectDTD);
+      for (int i = 0; i < dlg->dtdCombo->count(); i++)
       {
-        dlg->dtdCombo->setCurrentItem(i);
-        break;
+        if (dlg->dtdCombo->text(i) == projectDTDNickName)
+        {
+          dlg->dtdCombo->setCurrentItem(i);
+          break;
+        }
       }
-    }
-    if (!found && dlg->exec())
-    {
-      w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
-      if (dlg->convertDTD->isChecked())
+      if (!found && dlg->exec())
       {
-        QDict<QString> attrDict;
-        uint tagCase = qConfig.tagCase;
-        qConfig.tagCase = 2; //upper case
-        w->changeTag(tag, &attrDict);
-        qConfig.tagCase = tagCase;
-        uint line, col;
-        w->viewCursorIf->cursorPositionReal(&line, &col);
-        if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
-        DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
-        w->insertText(dtd->doctypeStr);
-        delete tag;
+        w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
+        if (dlg->convertDTD->isChecked())
+        {
+          QDict<QString> attrDict;
+          uint tagCase = qConfig.tagCase;
+          qConfig.tagCase = 2; //upper case
+          w->changeTag(tag, &attrDict);
+          qConfig.tagCase = tagCase;
+          uint line, col;
+          w->viewCursorIf->cursorPositionReal(&line, &col);
+          if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
+          DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+          w->insertText(dtd->doctypeStr);
+          delete tag;
+        }
       }
-    }
-    delete dlg;
-  } else //DOCTYPE not found in file
-  {
-    w->setDTDIdentifier(projectDTD);
-  }
+      delete dlg;
+   } else //DOCTYPE not found in file
+   {
+     w->setDTDIdentifier(projectDTD);
+   }
  } else //dtdName is read from the method's parameter
  {
    w->setDTDIdentifier(documentType);
  }
 
+  if (!w->isUntitled())
+  {
+    messageOutput->showMessage("\n");
+    messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".").arg(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL()));
+  }
   loadToolbarForDTD(w->getDTDIdentifier());
   sTab->useOpenLevelSetting = true;
 }

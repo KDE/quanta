@@ -330,6 +330,7 @@ void QuantaApp::initView()
   dtabdock = createDockWidget("Docs", BarIcon ("contents2"), 0L,"");
   dtabdock->setToolTipString(i18n("Documentation"));
 
+  m_oldTreeViewWidget = ptabdock;
   QStringList topStrList;
   m_config->setGroup("General Options");
   topStrList = m_config->readListEntry("Top folders");

@@ -202,7 +202,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 #if (KDE_VERSION >= 309)
        int line = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndLine();
        int col = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndCol();
-       w->viewCursorIf->setCursorPositionReal(line, col);     
+       w->viewCursorIf->setCursorPositionReal(line, col);
 #endif
        w->selectionIf->removeSelectedText();
      }
@@ -229,7 +229,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
 
   if ( scriptOutputDest == "message" )
   {
-    MessageOutput *appMessages = quantaApp->getMessages();
+    MessageOutput *appMessages = quantaApp->getMessageOutput();
     if ( firstOutput )
     {
       appMessages->clear();
@@ -276,7 +276,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
 
   if ( scriptErrorDest == "message" )
   {
-    MessageOutput *appMessages = quantaApp->getMessages();
+    MessageOutput *appMessages = quantaApp->getMessageOutput();
     if ( firstError )
     {
       appMessages->clear();

@@ -127,7 +127,6 @@ public:
   QPopupMenu *toolbarMenu(const QString& name);
   ToolbarEntry *toolbarByURL(const KURL& url);
 
-  MessageOutput *getMessages() { return messageOutput; }
   QWidgetStack *widgetStackOfHtmlPart();
 
   /** Returns the output dock widget */

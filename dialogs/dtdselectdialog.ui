@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>445</width>
-            <height>190</height>
+            <height>244</height>
         </rect>
     </property>
     <property name="caption">
@@ -32,14 +32,6 @@ Dialog message2:</string>
             </property>
             <property name="alignment">
                 <set>WordBreak|AlignVCenter</set>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>convertDTD</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Convert the document to the selected DTD</string>
             </property>
         </widget>
         <widget class="QComboBox" row="1" column="1">
@@ -71,9 +63,9 @@ Dialog message2:</string>
                 <bool>true</bool>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="4" column="0" rowspan="1" colspan="2">
+        <widget class="QLayoutWidget" row="6" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>layout3</cstring>
+                <cstring>layout4</cstring>
             </property>
             <hbox>
                 <property name="name">
@@ -91,7 +83,7 @@ Dialog message2:</string>
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>40</width>
+                            <width>160</width>
                             <height>20</height>
                         </size>
                     </property>
@@ -103,10 +95,16 @@ Dialog message2:</string>
                     <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>1</hsizetype>
-                            <vsizetype>1</vsizetype>
+                            <vsizetype>0</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>90</width>
+                            <height>0</height>
+                        </size>
                     </property>
                     <property name="text">
                         <string>&amp;OK</string>
@@ -124,19 +122,53 @@ Dialog message2:</string>
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>40</width>
+                            <width>150</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
             </hbox>
         </widget>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>convertDTD</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Convert the document to the selected DTD</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>useClosestMtaching</cstring>
+            </property>
+            <property name="text">
+                <string>Don't show this dialog, use the closes matching DTD</string>
+            </property>
+        </widget>
+        <spacer row="5" column="1">
+            <property name="name">
+                <cstring>spacer3_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
 <tabstops>
     <tabstop>dtdCombo</tabstop>
     <tabstop>currentDTD</tabstop>
     <tabstop>convertDTD</tabstop>
+    <tabstop>useClosestMtaching</tabstop>
     <tabstop>okButton</tabstop>
 </tabstops>
 <slots>
