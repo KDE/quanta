@@ -32,19 +32,19 @@ class DocFolder;
 
 class DocTreeView : public KListView  {
    Q_OBJECT
-public: 
+public:
   DocTreeView(QWidget *parent=0, const char *name=0);
   ~DocTreeView();
-  
+
   QString *contextHelp( QString keyword );
-  
+
 signals:
   void openURL( QString );
-  
+
 private slots:
   void clickItem( QListViewItem *);
-  void slotDoubleClicked(QListViewItem *, const QPoint &, int );
-  
+  void slotDoubleClicked(QListViewItem *);
+
 private:
 
   QDict <QString> *contextHelpDict;

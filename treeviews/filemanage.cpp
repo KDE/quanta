@@ -87,7 +87,7 @@ FileManage::FileManage( QWidget *parent, const char *name)
   connect(dirLister, SIGNAL(refreshItems( const KFileItemList&)),SLOT(slotDirListRefreshItesm(const KFileItemList&)));
   connect(dirLister, SIGNAL(clear(const KURL&)),SLOT(slotDirListClearURL(const KURL&)));
 
-  connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int )), SLOT(slotDoubleClicked(QListViewItem *, const QPoint &, int )));
+  connect(this, SIGNAL(doubleClicked(QListViewItem *)), SLOT(slotDoubleClicked(QListViewItem *)));
 
   excludeFilterRx.setWildcard(true);
 }
@@ -251,7 +251,7 @@ void FileManage::slotDirListRefreshItesm(const KFileItemList& ){
 void FileManage::slotDirListClearURL(const KURL& ){
 }
 
-void FileManage::slotDoubleClicked(QListViewItem *item, const QPoint &, int )
+void FileManage::slotDoubleClicked(QListViewItem *item )
 {
   item->setOpen(!item->isOpen());
 }

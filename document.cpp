@@ -219,6 +219,10 @@ void Document::changeTagAttribute(Tag *tag, const QString& attrName, const QStri
        endCol++;
     }
     reparseEnabled = false;
+    QString textLine = editIf->textLine(line);
+    while (col > 1 && textLine[col-1].isSpace())
+      col--;
+
     editIf->removeText(line, col, line, endCol);
     reparseEnabled = true;
     value = attrValue;
@@ -1187,7 +1191,7 @@ bool Document::scriptAutoCompletion(int line, int column)
  {
    showCodeCompletions(getTagCompletions(line, column + 1));
    handled = true;
- } else
+ }
 
  return handled;
 }

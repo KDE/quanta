@@ -37,9 +37,9 @@ TagAttributeTree::TagAttributeTree(QWidget *parent, const char *name)
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
   setFocusPolicy(QWidget::ClickFocus);
-
   addColumn(i18n("Attribute name"));
   addColumn(i18n("Value"));
+  setResizeMode(QListView::LastColumn);
   m_node = 0L;
   rebuildEnabled = true;
 }
@@ -71,6 +71,10 @@ void TagAttributeTree::newCursorPosition(Node *node)
       {
         item = new AttributeUrlItem(this, group, attr->name, node->tag->attributeValue(attr->name));
       } else
+      if (attr->type == "list")
+      {
+        item = new AttributeListItem(this, group, attr->name, node->tag->attributeValue(attr->name));
+      } else
       {
         item = new AttributeItem(this, group, attr->name, node->tag->attributeValue(attr->name));
       }
@@ -93,6 +97,10 @@ void TagAttributeTree::newCursorPosition(Node *node)
         {
           item = new AttributeUrlItem(this, group, attr->name, node->tag->attributeValue(attr->name));
         } else
+        if (attr->type == "list")
+        {
+          item = new AttributeListItem(this, group, attr->name, node->tag->attributeValue(attr->name));
+        } else
         {
           item = new AttributeItem(this, group, attrName, node->tag->attributeValue(attrName));
         }
@@ -107,9 +115,7 @@ void TagAttributeTree::newCursorPosition(Node *node)
 void TagAttributeTree::editorContentChanged()
 {
   AttributeItem *item = dynamic_cast<AttributeItem*>(currentItem());
-  if (m_node && item &&
-      item->text(1) != item->editorText() &&
-      !item->editorText().isEmpty())
+  if (m_node && item )
   {
     rebuildEnabled = false;
     m_node->tag->write()->changeTagAttribute(m_node->tag, item->text(0), item->editorText());

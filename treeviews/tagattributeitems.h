@@ -88,5 +88,19 @@ private:
     KURLRequester* urlRequester;
 };
 
+class AttributeListItem : public AttributeItem
+{
+public:
+    AttributeListItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
+
+    virtual ~AttributeListItem();
+    virtual void showEditor();
+    virtual void hideEditor();
+    virtual QString editorText();
+
+private:
+    QComboBox* combo;
+};
+
 
 #endif

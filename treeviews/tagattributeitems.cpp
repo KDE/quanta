@@ -29,6 +29,7 @@
 #include "tagattributetree.h"
 #include "../parser/node.h"
 #include "../parser/tag.h"
+#include "../parser/qtag.h"
 #include "../document.h"
 #include "../quantacommon.h"
 #include "../qextfileinfo.h"
@@ -223,4 +224,68 @@ void AttributeUrlItem::hideEditor()
   m_listView->editorContentChanged();
   setText(1, editorText());
   urlRequester->hide();
+}
+
+
+//editable listbox
+//Boolean attribute item
+AttributeListItem::AttributeListItem(TagAttributeTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
+: AttributeItem(parent, title, title2)
+{
+  m_listView = listView;
+  combo = new QComboBox( m_listView->viewport() );
+  Node *node = m_listView->node();
+  QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
+  if (qTag)
+  {
+    Attribute *attr = qTag->attribute(title);
+    if (attr)
+        combo->insertStringList(attr->values);
+    combo->insertItem("", 0);
+    combo->setEditable(true);
+  }
+  combo->hide();
+  QObject::connect( combo, SIGNAL( activated(int) ), m_listView, SLOT( editorContentChanged() ) );
+ }
+
+AttributeListItem::~AttributeListItem()
+{
+  delete combo;
+}
+
+QString AttributeListItem::editorText()
+{
+  return combo->currentText();
+}
+
+void AttributeListItem::showEditor()
+{
+  placeEditor(combo);
+  combo->show();
+  int index = -1;
+  Node *node = m_listView->node();
+  QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
+  if (qTag)
+  {
+    Attribute *attr = qTag->attribute(text(0));
+    if (attr)
+    {
+      index = attr->values.findIndex(text(1));
+    }
+  }
+  if (index != -1)
+      combo->setCurrentItem(index + 1);
+  else
+  {
+    combo->changeItem(text(1), 0);
+    combo->setCurrentItem(0);
+  }
+  combo->setFocus();
+}
+
+void AttributeListItem::hideEditor()
+{
+  m_listView->editorContentChanged();
+  setText(1, combo->currentText());
+  combo->hide();
 }

@@ -86,17 +86,6 @@ QString QuantaCommon::attrCase( const QString& attr)
 /** Set's up the url correctly from urlString. */
 void QuantaCommon::setUrl(KURL &url, const QString& urlString)
 {
-/*
- if (urlString.find(":") == -1)
- {
-   url.setPath(urlString);
-   if (url.protocol().isEmpty())
-       url.setProtocol("file");
- }
- else
- {
-   url = urlString;
- }*/
   KURL oldUrl = url;
   url = urlString;
   if (!KProtocolInfo::isKnownProtocol(url))
