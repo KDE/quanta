@@ -23,11 +23,9 @@
 #include "cursors.h"
  
  
- NodeSelectionInd::NodeSelectionInd()
+NodeSelectionInd::NodeSelectionInd()
+    : m_cursorOffset(-1), m_cursorOffsetEndSel(-1), m_cursorAtSelectionStart(true)
 {
-  m_cursorOffset = -1;
-  m_cursorOffsetEndSel = -1;
-  m_cursorAtSelectionStart = true;
 }
   
 NodeSelectionInd::~NodeSelectionInd()
