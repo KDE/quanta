@@ -40,7 +40,11 @@
 #include "qmyhighlighter.h"
 #include "csseditor_globals.h" 
 #include "../../resource.h"
+#include "cssshpropertyparser.h"
+   
 
+
+QStringList HTMLColorList(QStringList::split(",",HTMLColors));
 
 
 myCheckListItem::myCheckListItem(QListView * parent, const QString & text):QCheckListItem(parent, text, QCheckListItem::CheckBox),checkedChildren(0){
@@ -149,8 +153,71 @@ void CSSEditor::activatePreview() {
 previewer->openURL(testFile->name()); 
 }
 
+void CSSEditor::initShortHandForm(){
+
+  QString configFile = locate("appdata", "csseditor/shorthandprops.xml");    
+  
+  QFile file( configFile );
+  if ( !file.open( IO_ReadOnly ) ) {
+    return;
+  }
+  if ( !shortHandDefDoc.setContent( &file ) ) { 
+    file.close();
+    return;
+  }
+  file.close();   
+
+  QDomElement docElem = shortHandDefDoc.documentElement();
+
+  QDomNode n = docElem.firstChild();
+  while( !n.isNull() ) {
+    QDomElement e = n.toElement(); 
+    if( !e.isNull() ) {
+     SHFormList.append(e.tagName());
+     }
+    n = n.nextSibling();
+  } // end while  
+}
+
+
+void CSSEditor::setCurrentPropOn(const QString& s){
+
+if( (currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( s,0 )) )) 
+        currentProp->setOn(true);
+      else  
+      if( (currentProp = static_cast<myCheckListItem*>(lvAll->findItem( s,0 )) )) 
+        currentProp->setOn(true); 
+      else  
+      if( (currentProp = static_cast<myCheckListItem*>(lvAural->findItem( s,0 )) )) 
+        currentProp->setOn(true);   
+      else  
+      if( (currentProp = static_cast<myCheckListItem*>(lvInteractive->findItem( s,0 )) )) 
+        currentProp->setOn(true); 
+      else  
+      if( (currentProp = static_cast<myCheckListItem*>(lvPaged->findItem( s,0 )) )) 
+        currentProp->setOn(true); 
+        
+      if( currentProp->depth() ) {
+          myCheckListItem *p = static_cast<myCheckListItem*>(currentProp->parent());
+          while(p) {
+            p->setOn(true);
+            p=static_cast<myCheckListItem*>(p->parent());
+          }
+        }  
+
+}
+
+ void CSSEditor::addAndSetPropertyOn(const QString& property, const QString& value){
+   addProperty(property,value);
+   setCurrentPropOn(property);
+ }
+
+
 void CSSEditor::initialize()
-{    
+{   
+
+  initShortHandForm();
+ 
   QString configFile = locate("appdata", "csseditor/config.xml");    
 
   myhi = new QMyHighlighter(display);
@@ -219,58 +286,433 @@ void CSSEditor::initialize()
   
   
   if( !selectorName.isEmpty() ){ //the cssselector has been called
+     initialProperties = initialProperties.stripWhiteSpace();
      props=QStringList::split(";",initialProperties);
-     temp=(selectorName + " {\n\t ");
+     temp=(selectorName + " {\n\t");
      *(testFile->textStream()) << ( Header + selectorName + " { " + initialProperties + " } "+ Selectors + Footer);
   }  
   
   else {
+    InlineStyleContent = InlineStyleContent.stripWhiteSpace();
     props=QStringList::split(";",InlineStyleContent);
-    temp=" {\n\t ";
+    temp="\n\t";
     *(testFile->textStream()) << initialPreviewText;
   }
-  
-  
-  
-  for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
-       temp+=((*it).section(":",0,0).stripWhiteSpace() + " : " + (*it).section(":",1,1)+";\n\t");
-     }
-  temp.truncate(temp.length()-1);
-  temp+="}";
-  display->setText(temp);
-    
     
   for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
-      const QString propertyName((*it).section(":",0,0).stripWhiteSpace());
-      const QString propertyValue((*it).section(":",1,1));
-      addProperty(propertyName,propertyValue);
+       const QString propertyName((*it).section(":",0,0).stripWhiteSpace());
+       const QString propertyValue((*it).section(":",1,1));
       
-      if( (currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( propertyName,0 )) )) 
-        currentProp->setOn(true);
-      else  
-      if( (currentProp = static_cast<myCheckListItem*>(lvAll->findItem( propertyName,0 )) )) 
-        currentProp->setOn(true); 
-      else  
-      if( (currentProp = static_cast<myCheckListItem*>(lvAural->findItem( propertyName,0 )) )) 
-        currentProp->setOn(true);   
-      else  
-      if( (currentProp = static_cast<myCheckListItem*>(lvInteractive->findItem( propertyName,0 )) )) 
-        currentProp->setOn(true); 
-      else  
-      if( (currentProp = static_cast<myCheckListItem*>(lvPaged->findItem( propertyName,0 )) )) 
-        currentProp->setOn(true); 
+      if(SHFormList.contains(propertyName)==0) {
+         temp+=( propertyName + " : " + propertyValue +";\n\t");
+         addAndSetPropertyOn(propertyName,propertyValue);
+      }	   
+      
+    else{
+      const QString mode(shortHandDefDoc.documentElement().namedItem(propertyName).toElement().attribute("mode"));
+            
+      //QString dummyPropertyValue(propertyValue);
+      
+      QStringList tempList;// same as the temp QString but used in this case to treat things as background-attachment that can hold more than one value
+      QStringList multipleOccurrenceList;//at moment used only in mode 3 to tray multiple occurrence of background-position property
+          
+      CSSSHPropertyParser parser(propertyValue);
+      QStringList foundValues = parser.parse();
+
+      if( mode =="1"){  
+      QDomNodeList expandRules = shortHandDefDoc.documentElement().namedItem(propertyName).lastChild().childNodes();
+       if(foundValues.count()==1){
+         for(unsigned int i=0;i<expandRules.count();i++){
+	   addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,foundValues[0]);
+	   tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + foundValues[0]);
+	 } 
+       }
+       else
+       if(foundValues.count() !=0 && foundValues.count()>1){
+         for(unsigned int i=0;i<expandRules.count();i++){
+	    addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,foundValues[i]);
+	    tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + foundValues[i] );
+	 } 
+       }
+      }
+
+      
+      else
+      if( mode =="2"){
+       QDomNodeList expandRules = shortHandDefDoc.documentElement().namedItem(propertyName).lastChild().childNodes();
+       if(foundValues.count()==1){ // it works also as protection against wrong single value inserted
+         for(unsigned int i=0;i<expandRules.count();i++){
+	   addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,"inherit");
+	   tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + "inherit");
+	 } 
+       }
+       else	{ 
+       
+         QDomNodeList searchForRules = shortHandDefDoc.documentElement().namedItem(propertyName).firstChild().childNodes();
+         for(unsigned int i=0;i<searchForRules.count();i++){
+	     
+	    QDomNodeList searchValues = searchForRules.item(i).childNodes();
+	    for(unsigned int k=0;k<searchValues.count();k++){
+	    
+	      QString searchValueName(searchValues.item(k).toElement().attribute("name"));
+	      
+	      if(searchValueName == "list"){
+	        QString s(QString::null);
+	        QStringList listValues = QStringList::split(",",searchValues.item(k).toElement().attribute("listValues"));
+                for ( QStringList::Iterator it = listValues.begin(); it != listValues.end(); ++it ) {
+                  if(foundValues.contains((*it))!=0){
+                   if(expandRules.item(i).toElement().attribute("name") == "background-position")
+                     multipleOccurrenceList.append((*it));
+                   else{  
+		   addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+		   tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+                   }
+		  }
+                } 
+	      }
+	      else
+	      if(searchValueName =="uri"){
+	        for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+                  if((*it).contains("url(")!=0){
+		   addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+		   tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+		    break;
+		  }
+                }       
+	      }	      
+	      else
+	      if(searchValueName =="color"){
+	        for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+		  QRegExp colorPattern("#[\\w\\d]{6}");
+                  if((*it).contains("rgb(")!=0 || (*it).contains(colorPattern)!=0 || HTMLColorList.contains((*it))!=0){
+		    addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+		    tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+		    break;
+		  }
+                } 	      
+	      }
+	      else
+	      if(searchValueName =="length"){
+	        for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+		  QRegExp lengthPattern("\\d*ex|em|px");
+                  if((*it).contains(lengthPattern)!=0){
+                     if(expandRules.item(i).toElement().attribute("name") == "background-position")
+                     multipleOccurrenceList.append((*it));
+                   else{  
+		   addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+		   tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+                   }
+		  }
+                } 	      
+	      }
+	      if(searchValueName =="percentage"){
+	        for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+		  QRegExp percentagePattern("\\d*%");
+                  if((*it).contains(percentagePattern)!=0){
+                     if(expandRules.item(i).toElement().attribute("name") == "background-position")
+                     multipleOccurrenceList.append((*it));
+                   else{  
+		   addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+		   tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+                   }
+		  }
+                } 	      
+	      }
+	   
+	   } 
+	  } 
         
-      if( currentProp->depth() ) {
-          myCheckListItem *p = static_cast<myCheckListItem*>(currentProp->parent());
-          while(p) {
-            p->setOn(true);
-            p=static_cast<myCheckListItem*>(p->parent());
-          }
-        }    
+       }
+      }
+      else
+      if( mode =="3"){
+
+       QDomNodeList expandRules = shortHandDefDoc.documentElement().namedItem(propertyName).lastChild().childNodes();
+      
+       QDomNodeList searchForRules = shortHandDefDoc.documentElement().namedItem(propertyName).firstChild().childNodes();
+       for(unsigned int i=0;i<searchForRules.count();i++){
+	     
+	 QDomNodeList searchValues = searchForRules.item(i).childNodes();
+	 for(unsigned int k=0;k<searchValues.count();k++){
+	    
+	   QString searchValueName(searchValues.item(k).toElement().attribute("name"));
+	      
+	    if(searchValueName == "list"){
+
+	      QStringList listValues = QStringList::split(",",searchValues.item(k).toElement().attribute("listValues"));
+              for ( QStringList::Iterator it = listValues.begin(); it != listValues.end(); ++it ) {
+                if(foundValues.contains((*it))!=0){
+		  QStringList l(QStringList::split(",",expandRules.item(i).toElement().attribute("name")));
+		  for ( QStringList::Iterator it2 = l.begin(); it2 != l.end(); ++it2 ) {
+		    addAndSetPropertyOn((*it2) ,(*it));
+                    tempList.append((*it2) + " : " + (*it));
+		  }  
+		  break;
+		  }
+                } 
+
+	      }
+     
+	      else
+	      if(searchValueName =="color"){
+	        for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+		  QRegExp colorPattern("#[\\w\\d]{6}");
+                  if((*it).contains("rgb(")!=0 || (*it).contains(colorPattern)!=0 || HTMLColorList.contains((*it))!=0){
+		    QStringList l(QStringList::split(",",expandRules.item(i).toElement().attribute("name")));
+		    for ( QStringList::Iterator it2 = l.begin(); it2 != l.end(); ++it2 ) {
+		       addAndSetPropertyOn((*it2) ,(*it));
+                      tempList.append((*it2) + " : " + (*it));
+		    }  
+		    break;
+		  }
+                } 	      
+	      }
+	      else
+	      if(searchValueName =="length"){
+	        for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+		  QRegExp lengthPattern("\\d*ex|em|px");
+                  if((*it).contains(lengthPattern)!=0){
+		    QStringList l(QStringList::split(",",expandRules.item(i).toElement().attribute("name")));
+		    for ( QStringList::Iterator it2 = l.begin(); it2 != l.end(); ++it2 ) {
+		      addAndSetPropertyOn((*it2) ,(*it));
+                      tempList.append((*it2) + " : " + (*it));
+		    }  
+		    break;
+		  }
+                } 	      
+	      }
+
+	   
+	   } 
+	  } 	
+      }
+      else
+      if( mode =="4"){//mode 4 is the font shorthand form interpreter
+        QDomNodeList expandRules = shortHandDefDoc.documentElement().namedItem(propertyName).lastChild().childNodes();
+        QDomNodeList searchForRules = shortHandDefDoc.documentElement().namedItem(propertyName).firstChild().childNodes();
+        for(unsigned int i=0;i<searchForRules.count();i++){
+           if(searchForRules.item(i).toElement().attribute("erase")!="yes"){
+             QDomNodeList searchValues = searchForRules.item(i).childNodes();   
+             if(searchForRules.item(i).toElement().attribute("findSpecial")=="/"){
+               for(unsigned int k=0;k<searchValues.count();k++){
+                  QString searchValueName(searchValues.item(k).toElement().attribute("name")); 
+                  if(searchValueName == "list"){
+                    QStringList listValues = QStringList::split(",",searchValues.item(k).toElement().attribute("listValues"));
+                    for ( QStringList::Iterator it = listValues.begin(); it != listValues.end(); ++it ) {
+                      if(foundValues.contains("/"+(*it))!=0){
+                        addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it).remove("/"));
+                        tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it).remove("/"));
+                        foundValues.remove((*it));
+                        break;
+                      }
+                    } 
+                  }
+                  else 
+                  if(searchValueName =="number"){
+                    for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+                       QRegExp numberPattern("/\\d*");
+                       if((*it).contains(numberPattern)!=0){
+                         addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it).remove("/"));
+                         tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it).remove("/"));
+                         foundValues.remove(it);
+                         break;
+                       }
+                    }       
+                  }
+                  else
+                  if(searchValueName =="length"){
+                    for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+                       QRegExp lengthPattern("/\\d*ex|em|px");
+                       if((*it).contains(lengthPattern)!=0){
+                          addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it).remove("/"));
+                          tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it).remove("/"));
+                          foundValues.remove(it);
+                          break;
+                       }
+                    }      
+                  }
+                  else
+                  if(searchValueName =="percentage"){
+                    for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+                       QRegExp percentagePattern("/\\d*%");
+                       if((*it).contains(percentagePattern)!=0){     
+                         addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it).remove("/"));
+                         tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it).remove("/"));
+                         foundValues.remove(it);
+                         break;
+                       }
+                    }      
+                  }
+               }
+             }   
+             else {
+               for(unsigned int k=0;k<searchValues.count();k++){
+                  QString searchValueName(searchValues.item(k).toElement().attribute("name"));
+                  if(searchValueName == "list"){
+                    QStringList listValues = QStringList::split(",",searchValues.item(k).toElement().attribute("listValues"));
+                    for ( QStringList::Iterator it = listValues.begin(); it != listValues.end(); ++it ) {
+                       if(foundValues.contains((*it))!=0){                         
+                         addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+                         tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+                         foundValues.remove((*it));
+                         break;
+                       }
+                    } 
+                  }
+                  else
+                  if(searchValueName =="number"){
+                    for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+                       QRegExp numberPattern("\\d*");
+                       if((*it).contains(numberPattern)!=0){
+                         addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+                         tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+                         foundValues.remove(it);
+                         break;
+                       }
+                    }       
+                  }      
+                  else
+                  if(searchValueName =="color"){
+                    for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+                       QRegExp colorPattern("#[\\w\\d]{6}");
+                       if((*it).contains("rgb(")!=0 || (*it).contains(colorPattern)!=0 || HTMLColorList.contains((*it))!=0){
+                         addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+                         tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+                         foundValues.remove(it);
+                         break;
+                       }
+                    }       
+                  }
+                  else
+                  if(searchValueName =="length"){
+                    for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+                       QRegExp lengthPattern("\\d*ex|em|px");
+                       if((*it).contains(lengthPattern)!=0){
+                         addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+                         tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+                         foundValues.remove(it);
+                         break;
+                       }
+                    }       
+                  }
+                  else
+                  if(searchValueName =="percentage"){
+                    for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+                       QRegExp percentagePattern("\\d*%");
+                       if((*it).contains(percentagePattern)!=0){
+                         addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+                         tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+                         foundValues.remove(it);
+                         break;
+                       }
+                    }      
+                  }
+                  else
+                  if(searchValueName =="genericWithQuotes"){
+                    for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+                       QRegExp quotesPattern("\"|'");
+                       if((*it).contains(quotesPattern)!=0){
+                         addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+                         tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+                         foundValues.remove(it);
+                         break;
+                       }
+                    }      
+                  }  
+                  else{     
+                    if(searchValueName =="genericString"){
+                      //this else treats unquoted single font name
+                     //if the program reaches this else then in foundValues there's only one element
+   
+                    for ( QStringList::Iterator it = foundValues.begin(); it != foundValues.end(); ++it ) {
+                       QRegExp genericUnquotedStringPattern("[\\w\\W]*");
+                       if((*it).contains(genericUnquotedStringPattern)!=0){
+                         addAndSetPropertyOn(expandRules.item(i).toElement().attribute("name") ,(*it));
+                         tempList.append(expandRules.item(i).toElement().attribute("name") + " : " + (*it));
+                         foundValues.remove(it);
+                         break;
+                       }
+                    }
+                  }
+               } 
+              }   
+             }   
+           } 
+        }
+      }
+      else
+      if( mode =="5") { //mode 5 is the box model expanding mode
+        QDomNodeList expandRules = shortHandDefDoc.documentElement().namedItem(propertyName).lastChild().childNodes();
+        QString top(expandRules.item(0).toElement().attribute("name")),
+                    bottom(expandRules.item(1).toElement().attribute("name")),
+                    left(expandRules.item(2).toElement().attribute("name")),
+                    right(expandRules.item(3).toElement().attribute("name"));//sides of the box
+       tempList.append(top+ " : " + foundValues[0]); 
+       addAndSetPropertyOn(top,foundValues[0]); 
+       switch(foundValues.count()) {
+       case 1: {
+                     tempList.append(bottom+ " : " + foundValues[0]); 
+                     tempList.append(left+ " : " + foundValues[0]); 
+                     tempList.append(right+ " : " + foundValues[0] ); 
+                     addAndSetPropertyOn(bottom,foundValues[0]);
+                     addAndSetPropertyOn(left,foundValues[0]);
+                     addAndSetPropertyOn(right,foundValues[0]);
+                   };break;
+
+       case 2: {
+                     tempList.append(bottom+ " : " + foundValues[0]); 
+                     tempList.append(left+ " : " + foundValues[1]); 
+                     tempList.append(right+ " : " + foundValues[1]);
+                     addAndSetPropertyOn(bottom,foundValues[0]);
+                     addAndSetPropertyOn(left,foundValues[1]);
+                     addAndSetPropertyOn(right,foundValues[1]);
+                    };break;
+
+       case 3: {
+                     tempList.append(bottom+ " : " + foundValues[2]); 
+                     tempList.append(left+ " : " + foundValues[1]); 
+                     tempList.append(right+ " : " + foundValues[1]);
+                     addAndSetPropertyOn(bottom,foundValues[2]);
+                     addAndSetPropertyOn(left,foundValues[1]);
+                     addAndSetPropertyOn( right,foundValues[1]);
+                     };break;
+
+       case 4: {
+                     tempList.append(bottom+ " : " + foundValues[2]); 
+                     tempList.append(left+ " : " + foundValues[3]); 
+                     tempList.append(right+ " : " + foundValues[1]);
+                     addAndSetPropertyOn(bottom,foundValues[2]);
+                     addAndSetPropertyOn(left,foundValues[3]);
+                     addAndSetPropertyOn(right,foundValues[1]);
+                    };break;
+       default:break;    
+       } 
+      }
+      
+      if(multipleOccurrenceList.count()!=0){
+      
+        QString tmp=multipleOccurrenceList.join(" ");
+        tempList.append("background-position : "+tmp);
+        tempList.sort();
+      }
+      
+
+      temp+=(tempList.join(";\n\t") + ";\n\t");
+    } 
+        
     }
+   
+    temp.truncate(temp.length()-1);
+    if(!temp.startsWith("\n\t"))//normal mode editing
+      temp+="}";
+    display->setText(temp);
 
    // *(testFile->textStream()) << initialPreviewText;
     testFile->close();
+    
+    
+    
+    
 }
 
 CSSEditor::CSSEditor(QWidget *parent, const char *name) : CSSEditorS(parent, name){

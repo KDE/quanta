@@ -39,6 +39,8 @@ class QVariant;
 class QMyHighlighter;
 class KTempFile;
 
+
+
 class myCheckListItem : public QCheckListItem
 {
   private:
@@ -59,7 +61,6 @@ class myCheckListItem : public QCheckListItem
 
 };
 
-
 /** CSSEditor is the base class of the project */
 class CSSEditor : public CSSEditorS
 {
@@ -70,22 +71,21 @@ class CSSEditor : public CSSEditorS
     propertySetter *ps;
     myCheckListItem *currentProp;
     KHTMLPart *previewer;
-    QDomDocument doc;
+    QDomDocument doc,
+                            shortHandDefDoc ;
     QMap<QString,QString> properties;
     QString selectorName,
-            initialProperties,
-	      Selectors,
-	      Header,
-	      Footer,
-            InlineStyleContent;
+                initialProperties,
+	        Selectors,
+	        Header,
+	        Footer,
+                InlineStyleContent;
     
     QString initialPreviewText;            
             //sourceFileName;
-    //QStringList displayedSelectors;
-    //QString newClass,
-        //    newId,
-         //   newTag,
-         //   newPseudoClass;
+    QStringList SHFormList;    
+	    
+
 
     void Connect();
     void appendSub(QDomNodeList, myCheckListItem *);
@@ -97,15 +97,16 @@ class CSSEditor : public CSSEditorS
     CSSEditor( QString s, QWidget* parent=0, const char *name=0);
     ~CSSEditor();
     void addProperty(const QString& property, const QString& value) { properties[property] = value; }
+    void addAndSetPropertyOn(const QString& property, const QString& value);
     void setForInitialPreview(const QString& s) { initialPreviewText = s; }
+    
+    void initShortHandForm();
+    //QString fromShortHandForm(QString,QString){}
+    //QString toShortHandForm(QString s){}
+    
+    void setCurrentPropOn(const QString& s);
 
   public slots:
-    //void setNewClass(const QString& s){ newClass = s;}
-    //void setNewId(const QString& s){ newId= s;}
-    //void setNewTag(const QString& s){ newTag = s;}
-   // void setNewPseudoClass(const QString& s){ newPseudoClass = s;}
-    //void addSelectors();
-    //void refreshDisplay(QWidget*);
     void removeProperty(const QVariant&);
     void setMiniEditors(QListViewItem*);
     void checkProperty(const QString&);
