@@ -56,9 +56,9 @@ public:
 
   ~TemplatesTreeView();
   /** Writes a .dirinfo file from the selected item's path */
-  void writeDirInfo(const QString& dirInfoFile = QString::null);
+  bool writeDirInfo(const QString& dirInfoFile = QString::null);
   /** Reads a .dirinfo file from the selected item's path */
-  void readDirInfo(const QString& dir = QString::null);
+  DirInfo readDirInfo(const QString& dir = QString::null);
 
 
 public slots:
@@ -121,6 +121,7 @@ private:
   template file */
   KURL filterTemplate();
   void writeTemplateInfo();
+  void updateTypeDescription(KFileTreeViewItem *item, const QString &typeString);
 
   BaseTreeBranch *m_projectDir;
   int m_deleteMenuId;
@@ -134,6 +135,7 @@ private:
   KPopupMenu *m_fileMenu;
   KPopupMenu *m_folderMenu;
   DirInfo m_dirInfo;
+  DirInfo m_parentDirInfo;
   int m_insertFileInProject;
   int m_insertFolderInProject;
   int m_menuClose;                ///< remembers the menu entry

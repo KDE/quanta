@@ -13,6 +13,11 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <unistd.h>
+#include <grp.h>
+#include <pwd.h>
+#include <sys/types.h>
+
 // QT includes
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
@@ -25,6 +30,8 @@
 #include <qtextedit.h>
 #include <qregexp.h>
 #include <qlabel.h>
+#include <qmap.h>
+#include <qwidgetstack.h>
 
 // KDE includes
 #include <kapplication.h>
@@ -67,10 +74,8 @@ const QString textMenu = I18N_NOOP("Insert as &Text");
 const QString binaryMenu = I18N_NOOP("Insert &Link to File");
 const QString docMenu = I18N_NOOP("&New Document Based on This");
 const QString siteMenu = I18N_NOOP("&Extract Site Template To...");
-const QString textType = I18N_NOOP("Text Snippet");
-const QString binaryType = I18N_NOOP("Binary File");
-const QString documentType = I18N_NOOP("Document Template");
-const QString siteType = I18N_NOOP("Site Template");
+QMap<QString, QString> typeToi18n;
+QMap<QString, QString> i18nToType;
 
 
 //TemplatesTreeBranch implementation
@@ -88,10 +93,10 @@ KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *pa
   BaseTreeViewItem  *tvi = 0;
   if( parent && fileItem )
   {
+    KURL url = fileItem->url();
     tvi = new BaseTreeViewItem( parent, fileItem, this );
     if (tvi && fileItem->isDir())
     {
-      KURL url = fileItem->url();
       if (url.isLocalFile())
       {
         QDir dir (url.path(), "", QDir::All & !QDir::Hidden);
@@ -99,23 +104,23 @@ KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *pa
       } else {
         tvi->setExpandable(true);     //   we assume there is something
       }
-      QFileInfo dotFileInfo(fileItem->url().path() + "/.dirinfo");
-      if (dotFileInfo.exists())
-      {
-        KConfig *config = new KConfig(dotFileInfo.filePath());
-        QString s = config->readEntry("Type");
-        if (s == "text/all")
-            s = i18n(textType.utf8());
-        else if (s == "file/all")
-            s = i18n(binaryType.utf8());
-        if (s == "template/all")
-            s = i18n(documentType.utf8());
-        if (s == "site/all")
-            s = i18n(siteType.utf8());
-        tvi->setText(1, s);
-        delete config;
-      }
+    } else
+    {
+      url = static_cast<BaseTreeViewItem*>(parent)->url();
     }
+    QFileInfo dotFileInfo(url.path() + "/.dirinfo");
+    while ((!dotFileInfo.exists()) && (dotFileInfo.dirPath() != "/"))
+    {
+    dotFileInfo.setFile(QFileInfo(dotFileInfo.dirPath()).dirPath()+"/.dirinfo");
+    }
+    if (dotFileInfo.exists())
+    {
+      KConfig *config = new KConfig(dotFileInfo.filePath());
+      QString s = config->readEntry("Type");
+      tvi->setText(1, typeToi18n[s]);
+      delete config;
+    }
+
   }
   else
     kdDebug(24000) << "TemplatesTreeBranch::createTreeViewItem: Have no parent" << endl;
@@ -127,6 +132,15 @@ KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *pa
 TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   : BaseTreeView(parent,name), m_projectDir(0)
 {
+  typeToi18n["text/all"] = i18n("Text Snippet");
+  typeToi18n["file/all"] = i18n("Binary File");
+  typeToi18n["template/all"] = i18n("Document Template");
+  typeToi18n["site/all"] = i18n("Site Template");
+  i18nToType[i18n("Text Snippet")] = "text/all";
+  i18nToType[i18n("Binary File")] = "file/all";
+  i18nToType[i18n("Document Template")] = "template/all";
+  i18nToType[i18n("Site Template")] = "site/all";
+
   m_fileMenu = new KPopupMenu();
 
   m_openId = m_fileMenu->insertItem(i18n("Open"), this ,SLOT(slotInsert()));
@@ -258,7 +272,7 @@ void TemplatesTreeView::slotMenu(KListView*, QListViewItem *item, const QPoint &
     m_folderMenu ->popup(point);
   } else
   {
-   readDirInfo();
+   m_dirInfo = readDirInfo();
 
    QString menuText = "";
 
@@ -326,7 +340,7 @@ void TemplatesTreeView::slotSelectFile(QListViewItem *item)
 
   if ( !kftvItem->isDir() )
   {
-    readDirInfo();
+    m_dirInfo = readDirInfo();
 /*    if (m_dirInfo.mimeType.upper().contains("SITE"))
     {
       slotExtractSiteTemplate();
@@ -351,19 +365,19 @@ void TemplatesTreeView::slotOpen()
 void TemplatesTreeView::slotNewDir()
 {
   NewTemplateDirDlg *createDirDlg = new NewTemplateDirDlg(this,i18n("Create New Template Folder"));
-  createDirDlg->typesCombo->insertItem(i18n(textType.utf8()));
-  createDirDlg->typesCombo->insertItem(i18n(binaryType.utf8()));
-  createDirDlg->typesCombo->insertItem(i18n(documentType.utf8()));
-  createDirDlg->typesCombo->insertItem(i18n(siteType.utf8()));
+  createDirDlg->typesCombo->insertItem(typeToi18n["text/all"]);
+  createDirDlg->typesCombo->insertItem(typeToi18n["file/all"]);
+  createDirDlg->typesCombo->insertItem(typeToi18n["template/all"]);
+  createDirDlg->typesCombo->insertItem(typeToi18n["site/all"]);
 
-  readDirInfo();
+  m_dirInfo = readDirInfo();
 
    if (m_dirInfo.mimeType.isEmpty())
    {
     createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (nothing)"));
    } else
    {
-     createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(m_dirInfo.mimeType));
+     createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(typeToi18n[m_dirInfo.mimeType]));
    }
    if (createDirDlg->exec())
    {
@@ -386,7 +400,7 @@ void TemplatesTreeView::slotNewDir()
    }
    if (! createDirDlg->parentAttr->isChecked())
    {
-      m_dirInfo.mimeType = createDirDlg->typesCombo->currentText();
+      m_dirInfo.mimeType = i18nToType[createDirDlg->typesCombo->currentText()];
       m_dirInfo.preText = "";
       m_dirInfo.postText = "";
       writeDirInfo(startDir+"/"+createDirDlg->dirName->text()+"/.dirinfo");
@@ -400,7 +414,7 @@ QDragObject * TemplatesTreeView::dragObject ()
   // don't drag folders
   if ( ! currentKFileTreeViewItem() ||  currentKFileTreeViewItem()->isDir() ) return 0;
 
-  readDirInfo();
+  m_dirInfo = readDirInfo();
   if(!m_dirInfo.mimeType.isEmpty()) // only drag when the template type is specified
   {
     KURLDrag *drag = new KURLDrag(KURL::List(currentURL()), this);
@@ -462,13 +476,14 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
 }
 
 /** Reads a .dirinfo file from the selected item's path */
-void TemplatesTreeView::readDirInfo(const QString& dir)
+DirInfo TemplatesTreeView::readDirInfo(const QString& dir)
 {
+  DirInfo dirInfo;
   QString startDir = dir;
 
   if (startDir.isEmpty())
   {
-    if ( !currentKFileTreeViewItem()->isDir() )
+    if (!currentKFileTreeViewItem()->isDir())
     {
       startDir = currentURL().path();
     } else
@@ -485,16 +500,17 @@ void TemplatesTreeView::readDirInfo(const QString& dir)
   }
 
   KConfig *config = new KConfig(dotFileInfo.filePath());
-  m_dirInfo.mimeType = config->readEntry("Type");
-  m_dirInfo.preText = config->readEntry("PreText");
-  m_dirInfo.postText = config->readEntry("PostText");
-  m_dirInfo.usePrePostText = config->readBoolEntry("UsePrePostText", false);
+  dirInfo.mimeType = config->readEntry("Type");
+  dirInfo.preText = config->readEntry("PreText");
+  dirInfo.postText = config->readEntry("PostText");
+  dirInfo.usePrePostText = config->readBoolEntry("UsePrePostText", false);
 
   delete config;
+  return dirInfo;
 }
 
 /** Writes a .dirinfo file from the selected item's path */
-void TemplatesTreeView::writeDirInfo(const QString& m_dirInfoFile)
+bool TemplatesTreeView::writeDirInfo(const QString& m_dirInfoFile)
 {
   QString startDir = "";
 
@@ -514,14 +530,19 @@ void TemplatesTreeView::writeDirInfo(const QString& m_dirInfoFile)
 
   QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
 
+  bool success = false;
   KConfig *config = new KConfig(dotFileInfo.filePath());
-  config->writeEntry("Type", m_dirInfo.mimeType);
-  config->writeEntry("PreText", m_dirInfo.preText);
-  config->writeEntry("PostText", m_dirInfo.postText);
-  config->writeEntry("UsePrePostText", m_dirInfo.usePrePostText);
-  config->sync();
-
+  if (!config->isReadOnly())
+  {
+    config->writeEntry("Type", m_dirInfo.mimeType);
+    config->writeEntry("PreText", m_dirInfo.preText);
+    config->writeEntry("PostText", m_dirInfo.postText);
+    config->writeEntry("UsePrePostText", m_dirInfo.usePrePostText);
+    config->sync();
+    success = true;
+  }
   delete config;
+  return success;
 }
 
 void TemplatesTreeView::slotProperties()
@@ -536,44 +557,60 @@ void TemplatesTreeView::slotProperties()
   QVBoxLayout *topLayout = new QVBoxLayout( quantaDirPage);
   m_quantaProperties = new QuantaPropertiesPage( quantaDirPage, i18n("Quanta") );
 
-  m_quantaProperties->typesCombo->insertItem(i18n(textType.utf8()));
-  m_quantaProperties->typesCombo->insertItem(i18n(binaryType.utf8()));
-  m_quantaProperties->typesCombo->insertItem(i18n(documentType.utf8()));
-  m_quantaProperties->typesCombo->insertItem(i18n(siteType.utf8()));
+  m_quantaProperties->typesCombo->insertItem(typeToi18n["text/all"]);
+  m_quantaProperties->typesCombo->insertItem(typeToi18n["file/all"]);
+  m_quantaProperties->typesCombo->insertItem(typeToi18n["template/all"]);
+  m_quantaProperties->typesCombo->insertItem(typeToi18n["site/all"]);
 
-  readDirInfo();
+  m_dirInfo = readDirInfo();
 
-  QString s;
-  if (m_dirInfo.mimeType == "text/all")
-      s = i18n(textType.utf8());
-  else if (m_dirInfo.mimeType == "file/all")
-      s = i18n(binaryType.utf8());
-  if (m_dirInfo.mimeType == "template/all")
-      s = i18n(documentType.utf8());
-  if (m_dirInfo.mimeType == "site/all")
-      s = i18n(siteType.utf8());
+  m_quantaProperties->typesCombo->setCurrentItem(typeToi18n[m_dirInfo.mimeType]);
 
-  m_quantaProperties->typesCombo->setCurrentItem(s);
+  KIO::UDSEntry entry;
+  KIO::NetAccess::stat(url, entry, this);
+  KFileItem fItem(entry, url);
+  QString permissions = fItem.permissionsString();
+  QString userName;
+  struct passwd *user = getpwuid(getuid());
+  if (user)
+    userName = QString::fromLocal8Bit(user->pw_name);
+  QString groupName;
+  gid_t gid = getgid();
+  struct group *ge = getgrgid(gid);
+  if (ge)
+  {
+    groupName = QString::fromLocal8Bit(ge->gr_name);
+    if (groupName.isEmpty())
+        groupName.sprintf("%d", ge->gr_gid);
+  } else
+    groupName.sprintf("%d", gid);
+  bool writable = false;
+  if (permissions[8] == 'w' || (permissions[2] == 'w' && userName == fItem.user()) || (permissions[5] == 'w' && groupName == fItem.group()))
+    writable = true;
 
   QString startDir = "";
-  if (  !currentKFileTreeViewItem()->isDir() )
+  if (!currentKFileTreeViewItem()->isDir())
   {
     startDir = url.path();
-    m_quantaProperties->prePostGroup->hide();
+    m_quantaProperties->typeStack->raiseWidget(1);
   } else
   {
     startDir = url.path() + "/dummy_file";
-    m_quantaProperties->filteringLabel->hide();
-    m_quantaProperties->actionCombo->hide();
+    m_quantaProperties->typeStack->raiseWidget(0);
   }
+  m_quantaProperties->setEnabled(writable);
   QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
-  if (!dotFileInfo.exists()) m_quantaProperties->parentAttr->setChecked(true);
-  if (m_dirInfo.mimeType.isEmpty())
+  m_parentDirInfo = readDirInfo(dotFileInfo.dirPath());
+  if (!dotFileInfo.exists() || m_dirInfo.mimeType == m_parentDirInfo.mimeType)
+  {
+     m_quantaProperties->parentAttr->setChecked(true);
+  }
+  if (m_parentDirInfo.mimeType.isEmpty())
    {
     m_quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (nothing)"));
    } else
    {
-    m_quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(s));
+    m_quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(typeToi18n[m_parentDirInfo.mimeType]));
    }
    m_quantaProperties->preTextEdit->setText(m_dirInfo.preText);
    m_quantaProperties->postTextEdit->setText(m_dirInfo.postText);
@@ -632,23 +669,19 @@ void TemplatesTreeView::slotProperties()
 void TemplatesTreeView::slotPropertiesApplied()
 {
   DirInfo m_localDirInfo;
+  QString typeString = "";
 
   if (!m_quantaProperties->parentAttr->isChecked())
   {
     m_localDirInfo.mimeType = m_quantaProperties->typesCombo->currentText();
-  //IMPORTANT: if you change the i18n strings here, be sure to change also in slotProperties!
-    if (m_localDirInfo.mimeType == i18n(textType.utf8()))
-      m_localDirInfo.mimeType = "text/all";
-    else if (m_localDirInfo.mimeType == i18n(binaryType.utf8()))
-      m_localDirInfo.mimeType = "file/all";
-    if (m_localDirInfo.mimeType == i18n(documentType.utf8()))
-      m_localDirInfo.mimeType = "template/all";
-    if (m_localDirInfo.mimeType == i18n(siteType.utf8()))
-      m_localDirInfo.mimeType = "site/all";
+    typeString = m_localDirInfo.mimeType;
+    m_localDirInfo.mimeType = i18nToType[m_localDirInfo.mimeType];
 
   } else
   {
-    m_localDirInfo.mimeType = m_dirInfo.mimeType;
+    if (m_dirInfo.mimeType != m_parentDirInfo.mimeType)
+      typeString = typeToi18n[m_parentDirInfo.mimeType];
+    m_localDirInfo.mimeType = m_parentDirInfo.mimeType;
   }
 
   m_localDirInfo.usePrePostText = m_quantaProperties->usePrePostText->isChecked();
@@ -663,14 +696,39 @@ void TemplatesTreeView::slotPropertiesApplied()
     m_dirInfo.preText = m_localDirInfo.preText;
     m_dirInfo.postText = m_localDirInfo.postText;
     m_dirInfo.usePrePostText = m_localDirInfo.usePrePostText;
-    writeDirInfo();
-    if (currentItem())
+    bool result = writeDirInfo();
+    KFileTreeViewItem *item = currentKFileTreeViewItem();
+    if (item && !item->isDir())
+      item = static_cast<KFileTreeViewItem *>(item->parent());
+    if (result && item && !typeString.isEmpty())
     {
-      currentItem()->setText(1, m_dirInfo.mimeType);
+      if (item->parent() && item->isDir())
+          item->setText(1, typeString);
+      updateTypeDescription(item, typeString);
     }
   }
 
   writeTemplateInfo();
+}
+
+void TemplatesTreeView::updateTypeDescription(KFileTreeViewItem *item, const QString &typeString)
+{
+  if (item->parent() && item->isDir())
+      item->setText(1, typeString);
+  KFileTreeViewItem *curItem = static_cast<KFileTreeViewItem *>(item->firstChild());
+  while (curItem && curItem != static_cast<KFileTreeViewItem *>(item->nextSibling()))
+  {
+    if (!curItem->isDir())
+    {
+      curItem->setText(1, typeString);
+    } else
+    {
+       QFileInfo dotFileInfo(curItem->url().path() + "/.dirinfo");
+       if (!dotFileInfo.exists())
+        updateTypeDescription(curItem, typeString);
+    }
+    curItem = static_cast<KFileTreeViewItem *>(curItem->nextSibling());
+  }
 }
 
 /** No descriptions */
@@ -678,7 +736,7 @@ void TemplatesTreeView::slotInsertTag()
 {
  if (currentItem())
  {
-  readDirInfo();
+  m_dirInfo = readDirInfo();
   KURL url = currentURL();
   emit insertTag( url, m_dirInfo);
  }
@@ -702,7 +760,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 
    QString localFileName = url.path();
 
-   readDirInfo(localFileName);
+   m_dirInfo = readDirInfo(localFileName);
    QString mimeType = KMimeType::findByPath(localFileName)->name();
 
    /* First, see if the type of the file is specified in the .dirinfo file */
