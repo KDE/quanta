@@ -269,8 +269,7 @@ void QuantaView::slotInsertCSS()
       //parentNode->tag->changeTagAttribute("style", tempStyleContent);
     }
     delete dlg;
-   } else
-   KMessageBox::sorry(this, i18n("The CSS Editor cannot be invoked at this place!"));
+   }
 }
 
 /** for <a href=mailto> tag  */
