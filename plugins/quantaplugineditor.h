@@ -44,6 +44,10 @@ public:
 	QuantaPluginEditor(QWidget *, const char *);
 	~QuantaPluginEditor();
   QDict<QuantaPlugin> plugins();
+  /** No descriptions */
+  QStringList searchPathList();
+  /** No descriptions */
+  void setSearchPaths(const QStringList& paths);
 signals:
   void pluginsChanged();
 public slots:

@@ -18,6 +18,7 @@
 /* KDE INCLUDES */
 #include <kfiledialog.h>
 #include <kmessagebox.h>
+#include <klocale.h>
 
 /* QT INCLUDES */
 #include <qpushbutton.h>
@@ -60,7 +61,7 @@ void QuantaPluginConfig::accept()
 
       if(!isValid)
       {
-        int answer = KMessageBox::questionYesNo(this, QString("The plugin information you entered appears to be invalid. Are you sure you want to apply these settings?"), QString("Invalid Plugin"));
+        int answer = KMessageBox::questionYesNo(this, i18n("The plugin information you entered appears to be invalid. Are you sure you want to apply these settings?"), i18n("Invalid Plugin"));
 
         if(answer == KMessageBox::No)
           return;
@@ -72,7 +73,7 @@ void QuantaPluginConfig::accept()
 /** Gets the plugin location */
 void QuantaPluginConfig::selectLocation()
 {
-  QString pluginLocation = KFileDialog::getExistingDirectory(QString::null, this, "Select Plugin Directory...");
+  QString pluginLocation = KFileDialog::getExistingDirectory(QString::null, this, i18n("Select Plugin Directory"));
   if(pluginLocation != QString::null)
   {
     location->setText(pluginLocation);

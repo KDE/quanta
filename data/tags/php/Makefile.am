@@ -1,3 +1,7 @@
+####### kdevelop will overwrite this part!!! (begin)##########
+
+
+####### kdevelop will overwrite this part!!! (end)############
 # generated
 data_DATA = description.rc \
 apache.tag \

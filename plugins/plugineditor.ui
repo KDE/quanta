@@ -137,7 +137,7 @@
                             </property>
                         </widget>
                         <spacer>
-                            <property name="name">
+                            <property name="name" stdset="0">
                                 <cstring>Spacer2</cstring>
                             </property>
                             <property name="orientation">
@@ -148,8 +148,8 @@
                             </property>
                             <property name="sizeHint">
                                 <size>
-                                    <width>0</width>
-                                    <height>100</height>
+                                    <width>20</width>
+                                    <height>20</height>
                                 </size>
                             </property>
                         </spacer>
@@ -164,6 +164,83 @@
                     </vbox>
                 </widget>
                 <widget class="QListView">
+                    <column>
+                        <property name="text">
+                            <string>Name</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizeable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Type</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizeable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Valid</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizeable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Location</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizeable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>File Name</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizeable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Arguments</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizeable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <column>
+                        <property name="text">
+                            <string>Output Window</string>
+                        </property>
+                        <property name="clickable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="resizeable">
+                            <bool>true</bool>
+                        </property>
+                    </column>
                     <property name="name">
                         <cstring>pluginList</cstring>
                     </property>
@@ -203,7 +280,7 @@
             </hbox>
         </widget>
         <spacer row="2" column="0">
-            <property name="name">
+            <property name="name" stdset="0">
                 <cstring>Spacer7</cstring>
             </property>
             <property name="orientation">
@@ -214,8 +291,8 @@
             </property>
             <property name="sizeHint">
                 <size>
-                    <width>30</width>
-                    <height>0</height>
+                    <width>20</width>
+                    <height>20</height>
                 </size>
             </property>
         </spacer>

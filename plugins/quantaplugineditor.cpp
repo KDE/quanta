@@ -19,6 +19,7 @@
 #include <kfiledialog.h>
 #include <kiconloader.h>
 #include <kglobal.h>
+#include <klocale.h>
 
 /* QT INCLUDES */
 #include <qwidget.h>
@@ -45,13 +46,13 @@ QuantaPluginEditor::QuantaPluginEditor(QWidget *a_parent, const char *a_name)
 {
  // m_plugins.setAutoDelete(TRUE);
 
-  pluginList->addColumn("Name");
+ /* pluginList->addColumn("Name");
   pluginList->addColumn("Type");
   pluginList->addColumn("Valid");
   pluginList->addColumn("Location");
   pluginList->addColumn("File Name");
   pluginList->addColumn("Arguments");
-  pluginList->addColumn("Output Window");
+  pluginList->addColumn("Output Window");*/
   pluginList->setSelectionMode(QListView::Single);
   pluginList->setAllColumnsShowFocus(TRUE);
   pluginList->setColumnAlignment(2, Qt::AlignHCenter);  
@@ -116,10 +117,10 @@ void QuantaPluginEditor::addPlugin()
 void QuantaPluginEditor::addSearchPath()
 {
   // Get a dir and append it to the line edit
-  QString appendDir = KFileDialog::getExistingDirectory(QString::null, 0, "Select Directory..");
+  QString appendDir = KFileDialog::getExistingDirectory(QString::null, 0, i18n("Select Directory"));
   if(appendDir != QString::null)
   {
-   searchPaths->setText(searchPaths->text()+appendDir); 
+   searchPaths->setText(searchPaths->text()+appendDir+";"); 
   }
 }
 
@@ -231,4 +232,23 @@ void PluginEditorItem::paintCell(QPainter *a_painter, const QColorGroup &a_cg, i
   FIXME : Why won't QT let us align cell contents?
 */
   QListViewItem::paintCell(a_painter, a_cg, a_column, a_width, a_align);
+}
+
+/** No descriptions */
+void QuantaPluginEditor::setSearchPaths(const QStringList& paths)
+{
+  QString str;
+  for (uint i =0; i < paths.count(); i++)
+  {
+    str += paths[i] +";";
+  }
+  searchPaths->setText(str);
+}
+/** No descriptions */
+QStringList QuantaPluginEditor::searchPathList()
+{
+  QString str = searchPaths->text();
+  QStringList paths = QStringList::split(";",str);
+  
+  return paths;
 }
