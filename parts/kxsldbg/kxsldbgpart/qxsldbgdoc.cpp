@@ -67,33 +67,50 @@ QXsldbgDoc::~QXsldbgDoc()
 }
 
 
+void QXsldbgDoc::slotDataArrived( KIO::Job * job, const QByteArray& data)
+{
+    Q_UNUSED(job);
+    if (!data.isEmpty())
+	fileContents.append(data);
+}
+
+
+void QXsldbgDoc::slotResult( KIO::Job *job )
+{
+    if ( job->error() != 0 ){
+	this->fileName = "";
+    }else{
+	QStringList lines = QStringList::split('\n', fileContents, TRUE);
+	QXsldbgTextLine *item;
+
+	textLines.clear();
+	for (QStringList::ConstIterator it = lines.begin(); it != lines.end(); it++){
+	    item = new QXsldbgTextLine(*it);
+	    if (item == 0L)
+		break;
+	    else
+		textLines.append(item);
+	}
+    }
+    fileContents = ""; 
+    disconnect( job, SIGNAL( data( KIO::Job *, const QByteArray& )),
+	    this,  SLOT( slotDataArrived( KIO::Job *, const QByteArray& )));
+    disconnect( job, SIGNAL( result( KIO::Job * )), 
+	    this, SLOT( slotResult( KIO::Job * )));
+    emit docChanged();
+}
+
+
 bool QXsldbgDoc::load(QString fileName)
 {
-  bool result = false;
-  QString text;
-  QFile file( fileName );
-
-  if (file.open( IO_ReadOnly ) ) {
-    QTextStream ts( &file );
-    QXsldbgTextLine *item;
-
-    text = ts.readLine();	    
-    textLines.clear();
-    while (text != 0L){
-      item = new QXsldbgTextLine(text);
-      if (item == 0L)
-	break;
-      else
-	textLines.append(item);
-      text = ts.readLine();
-      if (ts.atEnd())
-	break;
-    }
+    KIO::TransferJob *job = KIO::get( fileName );
     this->fileName = fileName;
-  } else {
-    qDebug( "Unable to open file %s", (char *) fileName.latin1() );
-  }
-  return result;
+    connect( job, SIGNAL( data( KIO::Job *, const QByteArray& )),
+	    this, SLOT( slotDataArrived( KIO::Job *, const QByteArray& )));
+    connect( job, SIGNAL( result( KIO::Job * )), 
+	    this, SLOT( slotResult( KIO::Job * )));
+
+  return true;
 }
 
 

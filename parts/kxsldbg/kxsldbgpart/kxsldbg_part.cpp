@@ -614,6 +614,8 @@ KXsldbgPart::lineNoChanged(QString fileName, int lineNumber, bool breakpoint)
     if (docPtr == 0L){
       docPtr = new QXsldbgDoc();
       if (docPtr != 0L){
+	connect( docPtr, SIGNAL(docChanged()),
+		m_editWidget, SLOT(docChanged()));
 	docPtr->load(fileName);
       docDictionary.insert(fileName, docPtr);
       m_editWidget->setDocument(docPtr);
@@ -731,6 +733,8 @@ void  KXsldbgPart::breakpointItem(QString fileName, int lineNumber ,
     if (docPtr == 0L){
       docPtr = new QXsldbgDoc();
       if (docPtr != 0L){
+	connect( docPtr, SIGNAL(docChanged()),
+	        m_editWidget, SLOT(docChanged()));
 	docPtr->load(fileName);
 	docDictionary.insert(fileName, docPtr);
       }

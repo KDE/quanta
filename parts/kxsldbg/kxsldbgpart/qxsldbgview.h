@@ -34,6 +34,8 @@ Q_OBJECT
 
 public slots:
  void show();
+ void docChanged(); 
+ void resizeView();
  
  protected:
   void drawContents(QPainter* p, int clipx, int clipy, int clipw, int cliph);
@@ -42,7 +44,7 @@ public slots:
   void keyPressEvent( QKeyEvent *e );  
   void focusInEvent ( QFocusEvent *e);
   void focusOutEvent ( QFocusEvent *e );
-
+ 
  signals:
   void cursorPositionChanged(int para, int pos);
   void openFile(QString fileName, int lineNumber, int columnNumber);

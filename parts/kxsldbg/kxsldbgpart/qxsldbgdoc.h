@@ -9,6 +9,7 @@
 #ifndef QXSLDBGDOC_H
 #define QXSLDBGDOC_H
 
+#include <kio/job.h>
 #include <qptrlist.h>
 #include <qstring.h>
 
@@ -44,7 +45,10 @@ class QXsldbgTextLine {
 };
 
 
-class QXsldbgDoc {
+class QXsldbgDoc : public QObject {
+
+Q_OBJECT
+
  public:
   QXsldbgDoc();
   ~QXsldbgDoc();
@@ -69,8 +73,15 @@ class QXsldbgDoc {
    */
   QString getFileName();
 
+signals:
+    void docChanged();
+
+private slots:
+    void slotDataArrived( KIO::Job *job, const QByteArray& data);
+    void slotResult( KIO::Job *job );
+
  private:
-  QString fileName;
+  QString fileName, fileContents;
   QPtrList<QXsldbgTextLine> textLines;
 };
 

@@ -16,6 +16,7 @@
  ************************************************************************************/
 
 #include <klocale.h>
+#include <kfiledialog.h>
 
 #include <qdialog.h>
 #include <qlineedit.h>
@@ -364,23 +365,35 @@ void XsldbgConfigImpl::slotOutputFile(QString outputFile)
 
 }
 
+static QString fixLocalPaths(KURL & url)
+{
+    QString result;
+    if (url.isLocalFile()){
+	// libxml2 does not like file:/<localfilepath>
+	result = "file://" + url.encodedPathAndQuery();
+    }else{
+	result = url.url();
+    }
+    return result;
+}
 
 void XsldbgConfigImpl::slotChooseSourceFile()
 {
-	  QString fileName;
-		fileName = QFileDialog::getOpenFileName(QString::null, "*.xsl; *.XSL; *.Xsl \n *.*", 0L,
-										i18n("Choose XSL Source to Debug"));
+	KURL url = KFileDialog::getOpenURL(QString::null, "*.xsl; *.XSL; *.Xsl \n *.*", this,
+		i18n("Choose XSL Source to Debug"));
+	QString fileName = fixLocalPaths(url);
 
-	if ((fileName != QString::null) && (fileName.length() > 0))
-		xslSourceEdit->setText(fileName);
+	if ((fileName != QString::null) && (fileName.length() > 0)){
+	    xslSourceEdit->setText(fileName);
+	}
 }
 
 
 void XsldbgConfigImpl::slotChooseDataFile()
 {
-	QString fileName;
-	fileName = QFileDialog::getOpenFileName(QString::null, "*.xml; *.XML; *.Xml \n*.docbook \n *.html;*.HTML; *.htm ; *HTM \n *.*", 0L,
+	KURL url = KFileDialog::getOpenURL(QString::null, "*.xml; *.XML; *.Xml \n*.docbook \n *.html;*.HTML; *.htm ; *HTM \n *.*", this,
 									i18n("Choose XML Data to Debug"));
+	QString fileName = fixLocalPaths(url);
 	if ((fileName != QString::null) && (fileName.length() > 0))
 		xmlDataEdit->setText(fileName);
 }
@@ -388,11 +401,14 @@ void XsldbgConfigImpl::slotChooseDataFile()
 
 void XsldbgConfigImpl::slotChooseOutputFile()
 {
-	QString fileName;
-	fileName = QFileDialog::getSaveFileName(QString::null, "*.xml; *.XML; *.Xml \n*.docbook \n *.txt; *.TXT \n *.htm;*.HTM;*.htm;*.HTML \n*.*", 0L,
+	KURL url = KFileDialog::getSaveURL(QString::null, "*.xml; *.XML; *.Xml \n*.docbook \n *.txt; *.TXT \n *.htm;*.HTM;*.htm;*.HTML \n*.*", this,
 									i18n("Choose Output File for XSL Transformation"));
-	if ((fileName != QString::null) && (fileName.length() > 0))
+	QString fileName;
+	if (url.isLocalFile()){
+	    fileName = fixLocalPaths(url);
+	    if ((fileName != QString::null) && (fileName.length() > 0))
 		outputFileEdit->setText(fileName);
+	}
 }
 
 

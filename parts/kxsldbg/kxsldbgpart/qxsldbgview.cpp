@@ -16,7 +16,7 @@
 
 
 QXsldbgView::QXsldbgView(QWidget *parent)
- :  QScrollView(parent, "QXsldbg"), markPixMap(0), hashPixMap(0)
+ :  QScrollView(parent, "QXsldbgView"), markPixMap(0), hashPixMap(0)
 {
   setVScrollBarMode(QScrollView::Auto);
   setHScrollBarMode(QScrollView::Auto);
@@ -28,11 +28,8 @@ QXsldbgView::QXsldbgView(QWidget *parent)
   /* Set the size of our cursor area (not mouse cursor)*/
   cursorHeight = fontMetrics().ascent();
   cursorWidth = 15; // fontMetrics().maxWidth();
-  hideCursor = TRUE;
-
   setCursorPosition(0, 0);
-  /* Flash a cursor every 1/2 of a second */
-  startTimer(500);
+  Q_UNUSED(hideCursor);
 
   KStandardDirs kdeDirs;
   markPixMap = new QPixmap(kdeDirs.findResource("icon", "mark.png"));
@@ -52,7 +49,6 @@ QXsldbgView::QXsldbgView(QWidget *parent)
 
   /* make sure we can get keyboard focus */
   setFocusPolicy(QWidget::StrongFocus);
-  //  viewport()->setFocus(); // needed for QT2
   viewport()->setBackgroundMode(PaletteBrightText);
 }
 
@@ -70,10 +66,14 @@ void QXsldbgView::show()
     emit cursorPositionChanged(getLineNo(), getRowNo());
 }
 
-
-void QXsldbgView::setDocument(QXsldbgDoc *doc)
+void QXsldbgView::docChanged()
 {
-  this->doc = doc;
+    resizeView();
+}
+
+
+void QXsldbgView::resizeView()
+{
   if (doc != 0L){
     QFontMetrics fm = fontMetrics();
     QXsldbgTextLine *item;
@@ -88,11 +88,16 @@ void QXsldbgView::setDocument(QXsldbgDoc *doc)
     }
     resizeContents(fm.maxWidth() * lineWidth, doc->lineCount() * textHeight);
   }
-#if QT_VERSION >=300
+
   repaintContents();
-#else
-  repaintContents(0, 0, contentsWidth(), contentsHeight(), TRUE);
-#endif
+}
+
+
+void QXsldbgView::setDocument(QXsldbgDoc *doc)
+{
+  if (doc && (doc != this->doc))
+      this->doc = doc;
+  resizeView();
 }
 
 
@@ -116,8 +121,6 @@ void QXsldbgView::setCursorPosition(int line, int row)
     //  bool repositionContents = line != getLineNo();
 
     if (doc != 0L){
-	int saveHideCursor = hideCursor;
-	hideCursor = TRUE;
 	/* compute the area that needs to be repainted */
 	item = doc->getText(line);
 
@@ -134,7 +137,6 @@ void QXsldbgView::setCursorPosition(int line, int row)
 	    _cursorRect.setBottom(_cursorRect.top() + cursorHeight);
 	    mergedRect = mergedRect.unite(_cursorRect);
 
-
 	    if ((contentsY() + visibleHeight() < getLineNo() * textHeight) ||
 		    getLineNo() * textHeight < contentsY()){
 		if (getLineNo() > 11)
@@ -145,7 +147,6 @@ void QXsldbgView::setCursorPosition(int line, int row)
 	    }
 	    repaintContents(mergedRect.x(), mergedRect.y(),
 		    mergedRect.width(), mergedRect.height(), TRUE);
-	    hideCursor = saveHideCursor;
 
 	    emit cursorPositionChanged(getLineNo(), getRowNo());
 	}
@@ -178,7 +179,6 @@ void  QXsldbgView::repaintAll()
 void QXsldbgView::drawContents(QPainter* p, int /*clipx*/, int clipy,
 			       int /*clipw*/, int cliph)
 {
-
   if (doc == 0L || ( p == 0L)){
     return;
   }
@@ -233,7 +233,7 @@ void QXsldbgView::drawContents(QPainter* p, int /*clipx*/, int clipy,
   }
 
   /* Flash the cursor */
-  if ((hideCursor == FALSE) && (cursorVisible == TRUE)){
+  if (cursorVisible){
     p->fillRect(cursorRect().x(), cursorRect().y(),
 	      cursorRect().width(), cursorRect().height(),
 			black);
@@ -371,13 +371,18 @@ void QXsldbgView::keyPressEvent( QKeyEvent *e )
 void QXsldbgView::focusInEvent ( QFocusEvent *e )
 {
   QScrollView::focusInEvent(e);
-  hideCursor = FALSE;
+  setCursorPosition(getLineNo(), getRowNo());
+  cursorVisible = TRUE;
+  startTimer(500);
+  repaintContents();
 }
 
 void QXsldbgView::focusOutEvent ( QFocusEvent *e)
 {
   QScrollView::focusOutEvent(e);
-  hideCursor = TRUE;
+  cursorVisible = FALSE;
+  killTimers();
+  repaintContents();
 }
 
 #include "qxsldbgview.moc"
