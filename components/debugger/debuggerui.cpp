@@ -31,7 +31,7 @@
 #include <kmditoolviewaccessor.h>
 
 DebuggerUI::DebuggerUI(QObject *parent, const char *name)
- : QObject(parent, name), m_variablesListView(0)
+    : QObject(parent, name), m_variablesListView(0)
 {
   m_variablesListView = new VariablesListView(quantaApp->getMainDockWidget(), "debuggerVariables");
   m_variablesListView->setIcon(SmallIcon("math_brace"));
@@ -50,7 +50,7 @@ DebuggerUI::~DebuggerUI()
   quantaApp->slotRemoveToolbar("debug");
   quantaApp->deleteToolWindow(m_variableListViewTVA);
   m_variableListViewTVA = 0L;
- // delete m_variablesListView;
+  // delete m_variablesListView;
 }
 
 void DebuggerUI::showMenu()

@@ -32,14 +32,13 @@
 #include "debuggerui.h"
 
 QuantaDebuggerInterface::QuantaDebuggerInterface (QObject *myparent, const char* name)
- : DebuggerInterface(myparent, name)
+    : DebuggerInterface(myparent, name)
 {
   m_manager = static_cast<DebuggerManager*>(parent());
 }
 
 QuantaDebuggerInterface::~QuantaDebuggerInterface ()
-{
-}
+{}
 
 void QuantaDebuggerInterface::haveBreakpoint (QString file, int line)
 {

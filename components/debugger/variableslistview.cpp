@@ -45,7 +45,7 @@ namespace VariablesListViewColumns
 }
 
 VariablesListView::VariablesListView(QWidget *parent, const char *name)
- : KListView(parent, name)
+    : KListView(parent, name)
 {
   // If you change here, change the VariablesListViewColumns enums above
   addColumn(i18n("Name"));
@@ -65,8 +65,7 @@ VariablesListView::VariablesListView(QWidget *parent, const char *name)
 
 
 VariablesListView::~VariablesListView()
-{
-}
+{}
 
 DebuggerVariable* VariablesListView::selected()
 {
@@ -206,7 +205,8 @@ void VariablesListView::parsePHPVariables(const QString &varstring)
     addVariable(var);
 
 }
-DebuggerVariable* VariablesListView::parsePHPVariables(QString &str) {
+DebuggerVariable* VariablesListView::parsePHPVariables(QString &str)
+{
 
   QString key, data;
   QString tempstring;

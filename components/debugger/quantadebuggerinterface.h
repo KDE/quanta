@@ -25,11 +25,12 @@
 
 class DebuggerManager;
 
-class QuantaDebuggerInterface : public DebuggerInterface {
-  Q_OBJECT
+class QuantaDebuggerInterface : public DebuggerInterface
+{
+    Q_OBJECT
 
- private:
-  DebuggerManager *m_manager;
+  private:
+    DebuggerManager *m_manager;
 
   public:
     QuantaDebuggerInterface(QObject *myparent, const char* name);

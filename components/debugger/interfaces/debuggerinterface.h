@@ -24,10 +24,11 @@
 
 #include "debuggervariable.h"
 
-class DebuggerInterface : public QObject {
-  Q_OBJECT
+class DebuggerInterface : public QObject
+{
+    Q_OBJECT
 
- private:
+  private:
 
 
   public:

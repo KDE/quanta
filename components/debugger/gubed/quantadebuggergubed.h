@@ -28,8 +28,9 @@
 
 typedef QValueList<QString> WatchList;
 
-class QuantaDebuggerGubed : public DebuggerClient {
-  Q_OBJECT
+class QuantaDebuggerGubed : public DebuggerClient
+{
+    Q_OBJECT
 
   public:
     QuantaDebuggerGubed(QObject *parent, const char* name, const QStringList&);

@@ -11,7 +11,7 @@
  *   This program is free software; you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
  *   the Free Software Foundation; either version 2 of the License, or      *
- *   (at your option) any later version.                                    *                     
+ *   (at your option) any later version.                                    *
  *                                                                          *
  ***************************************************************************/
 
@@ -27,23 +27,23 @@ class DebuggerInterface;
 class DebuggerBreakpoint;
 class DebuggerVariable;
 
-namespace DebuggerClientCapabilities 
+namespace DebuggerClientCapabilities
 {
-  enum Capabilities 
+  enum Capabilities
   {
     // Session related
     StartSession = 1000,
     EndSession,
-    
+
     // Breakpoint related
     LineBreakpoints = 2000,
     ConditionalBreakpoints,
     ClearAllBreakpoints,
-    
+
     // Variable related
     Watches = 4000,
     VariableSetValue,
-    
+
     // Execution related
     Run = 5000,
     RunDisplay,
@@ -63,13 +63,13 @@ class DebuggerClient : public QObject
     DebuggerClient(QObject *parent, const char* name);
 
     bool m_active;
-    
-  public:     
+
+  public:
     virtual const uint supports(DebuggerClientCapabilities::Capabilities) = 0;
     virtual void startSession() = 0;
     virtual void endSession() = 0;
     virtual QString getName() = 0;
-    
+
     // Execution control
     virtual void run();
     virtual void leap();
@@ -83,7 +83,7 @@ class DebuggerClient : public QObject
     // Settings
     virtual void readConfig(QDomNode node);
     virtual void showConfig(QDomNode node);
-    
+
     // Misc
     virtual void fileOpened(QString file);
     virtual void addBreakpoint(DebuggerBreakpoint* breakpoint);
@@ -91,8 +91,8 @@ class DebuggerClient : public QObject
     virtual void addWatch(const QString &);
     virtual void removeWatch(DebuggerVariable*);
     virtual void variableSetValue(DebuggerVariable *variable);
-    
-    bool isActive();    
+
+    bool isActive();
     DebuggerInterface *debuggerInterface();
 
 

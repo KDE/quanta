@@ -41,7 +41,7 @@
 
 
 DebuggerManager::DebuggerManager(QObject *myparent)
- : QObject(myparent)
+    : QObject(myparent)
 {
   initActions();
 
@@ -133,30 +133,30 @@ void DebuggerManager::initActions()
 
   //Debugger, breakpoint
   new KAction(i18n("Toggle &Breakpoint"), SmallIcon("debug_breakpoint"), Qt::CTRL+Qt::SHIFT+Qt::Key_B,
-        this, SLOT(toggleBreakpoint()), ac, "debug_breakpoints_toggle");
+              this, SLOT(toggleBreakpoint()), ac, "debug_breakpoints_toggle");
   new KAction(i18n("&Clear Breakpoints"), 0,
-        this, SLOT(clearBreakpoints()), ac, "debug_breakpoints_clear");
+              this, SLOT(clearBreakpoints()), ac, "debug_breakpoints_clear");
 
   new KAction(i18n("&Run"), SmallIcon("debug_run"), 0,
-        this, SLOT(slotDebugRun()), ac, "debug_run");
+              this, SLOT(slotDebugRun()), ac, "debug_run");
   new KAction(i18n("&Leap"), SmallIcon("debug_leap"), 0,
-        this, SLOT(slotDebugLeap()), ac, "debug_leap");
+              this, SLOT(slotDebugLeap()), ac, "debug_leap");
   new KAction(i18n("&Step"), SmallIcon("debug_stepover"), 0,
-        this, SLOT(slotDebugStepOver()), ac, "debug_stepover");
+              this, SLOT(slotDebugStepOver()), ac, "debug_stepover");
   new KAction(i18n("Step &into"), SmallIcon("debug_stepinto"), 0,
-        this, SLOT(slotDebugStepInto()), ac, "debug_stepinto");
+              this, SLOT(slotDebugStepInto()), ac, "debug_stepinto");
   new KAction(i18n("S&kip"), SmallIcon("debug_skip"), 0,
-        this, SLOT(slotDebugSkip()), ac, "debug_skip");
+              this, SLOT(slotDebugSkip()), ac, "debug_skip");
   new KAction(i18n("Step &Out"), SmallIcon("debug_stepout"), 0,
-        this, SLOT(slotDebugStepOut()), ac, "debug_stepout");
+              this, SLOT(slotDebugStepOut()), ac, "debug_stepout");
   new KAction(i18n("&Pause"), SmallIcon("debug_pause"), 0,
-        this, SLOT(slotDebugPause()), ac, "debug_pause");
+              this, SLOT(slotDebugPause()), ac, "debug_pause");
   new KAction(i18n("Kill"), SmallIcon("debug_kill"), 0,
-        this, SLOT(slotDebugKill()), ac, "debug_kill");
+              this, SLOT(slotDebugKill()), ac, "debug_kill");
   new KAction(i18n("Start Session"), SmallIcon("debug_connect"), 0,
-        this, SLOT(slotDebugStartSession()), ac, "debug_connect");
+              this, SLOT(slotDebugStartSession()), ac, "debug_connect");
   new KAction(i18n("End Session"), SmallIcon("debug_disconnect"), 0,
-        this, SLOT(slotDebugEndSession()), ac, "debug_disconnect");
+              this, SLOT(slotDebugEndSession()), ac, "debug_disconnect");
 
   connect(quantaApp, SIGNAL(debuggerAddWatch(const QString&)), this, SLOT(slotAddWatch(const QString&)));
 
@@ -381,39 +381,39 @@ bool DebuggerManager::setActiveLine (QString file, int line )
 // Set/clear a mark in a document
 void DebuggerManager::setMark(QString filename, long line, bool set, int mark)
 {
-   if((!filename.isEmpty()) && ViewManager::ref()->isOpened(filename))
-   {
-      ::Document* qdoc = ViewManager::ref()->isOpened(filename)->document();
-      if(qdoc)
+  if((!filename.isEmpty()) && ViewManager::ref()->isOpened(filename))
+  {
+    ::Document* qdoc = ViewManager::ref()->isOpened(filename)->document();
+    if(qdoc)
+    {
+      KTextEditor::Document* doc = qdoc->doc();
+      if(doc)
       {
-         KTextEditor::Document* doc = qdoc->doc();
-         if(doc)
-         {
-            KTextEditor::MarkInterface *markIf = dynamic_cast<KTextEditor::MarkInterface*>(doc);
-            if(markIf)
-            {
-               if(set)
-                  markIf->addMark(line, mark);
-               else
-                  markIf->removeMark(line, mark);
-            }
-         }
+        KTextEditor::MarkInterface *markIf = dynamic_cast<KTextEditor::MarkInterface*>(doc);
+        if(markIf)
+        {
+          if(set)
+            markIf->addMark(line, mark);
+          else
+            markIf->removeMark(line, mark);
+        }
       }
-   }
+    }
+  }
 }
 
 // Show a status message and optionally put it on the log
 bool DebuggerManager::showStatus(QString message, bool log)
 {
-   quantaApp->slotStatusMsg(m_client->getName() + ": " + message);
+  quantaApp->slotStatusMsg(m_client->getName() + ": " + message);
 
-   if(log)
-   {
-     if(!message.endsWith("\n"))
-       message.append("\n");
-     quantaApp->messageOutput()->showMessage(m_client->getName() + ": " + message);
-   }
-   return true;
+  if(log)
+  {
+    if(!message.endsWith("\n"))
+      message.append("\n");
+    quantaApp->messageOutput()->showMessage(m_client->getName() + ": " + message);
+  }
+  return true;
 }
 
 

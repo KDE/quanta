@@ -3,7 +3,7 @@
                           ----------------------
     begin                : 2004-04-04
     copyright            : (C) 2004 Thiago Silva
-    
+
  ***************************************************************************/
 
 /****************************************************************************
@@ -11,21 +11,20 @@
  *   This program is free software; you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
  *   the Free Software Foundation; either version 2 of the License, or      *
- *   (at your option) any later version.                                    *                     
+ *   (at your option) any later version.                                    *
  *                                                                          *
  ***************************************************************************/
 
 #include "debuggerbreakpoint.h"
 #include <kdebug.h>
-  
+
 DebuggerBreakpoint::DebuggerBreakpoint()
-  : m_line(1), m_state(0), m_isTemp(false), m_hitCount(0), m_skipHits(0)
-{
-}
+    : m_line(1), m_state(0), m_isTemp(false), m_hitCount(0), m_skipHits(0)
+{}
 
 DebuggerBreakpoint::DebuggerBreakpoint(const QString& filePath
-                                     , int line, const QString& conditionExpr
-                                     , int state, bool isTemp, int hitCount, int skipHits)
+                                       , int line, const QString& conditionExpr
+                                       , int state, bool isTemp, int hitCount, int skipHits)
 {
   m_filePath      = filePath;
   m_line          = line;
@@ -37,9 +36,8 @@ DebuggerBreakpoint::DebuggerBreakpoint(const QString& filePath
 }
 
 DebuggerBreakpoint::~DebuggerBreakpoint()
-{
-}
-    
+{}
+
 void DebuggerBreakpoint::setFilePath(const QString& filePath)
 {
   m_filePath = filePath;
@@ -74,7 +72,7 @@ void DebuggerBreakpoint::setSkipHits(int skipHits)
 {
   m_skipHits = skipHits;
 }
-    
+
 const QString& DebuggerBreakpoint::filePath()
 {
   return m_filePath;

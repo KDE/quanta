@@ -27,8 +27,9 @@ class DebuggerBreakpointList;
 class DebuggerUI;
 class DebuggerVariable;
 
-class DebuggerManager : public QObject {
-  Q_OBJECT
+class DebuggerManager : public QObject
+{
+    Q_OBJECT
 
   private:
     // client

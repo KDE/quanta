@@ -29,7 +29,7 @@ class DebuggerVariable;
 
 class DebuggerUI : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
   public:
     DebuggerUI(QObject *parent = 0, const char *name = 0);
@@ -45,8 +45,6 @@ class DebuggerUI : public QObject
 
     void showMenu();
     void hideMenu();
-
-
 
   private:
     VariablesListView* m_variablesListView;

@@ -19,7 +19,7 @@
 #include "gubedsettings.h"
 
 GubedSettings::GubedSettings(QWidget* parent, const char* name, bool modal, WFlags fl)
-		: GubedSettingsS(parent,name, modal,fl)
+    : GubedSettingsS(parent,name, modal,fl)
 {}
 
 GubedSettings::~GubedSettings()
@@ -27,9 +27,9 @@ GubedSettings::~GubedSettings()
 
 void GubedSettings::slotUseProxyToggle( bool useproxy)
 {
-    lineServerHost->setEnabled(useproxy);
-    lineServerPort->setEnabled(useproxy);
-    lineServerListenPort->setEnabled(!useproxy);
+  lineServerHost->setEnabled(useproxy);
+  lineServerPort->setEnabled(useproxy);
+  lineServerListenPort->setEnabled(!useproxy);
 }
 
 

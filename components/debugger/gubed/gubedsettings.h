@@ -21,7 +21,7 @@
 
 class GubedSettings : public GubedSettingsS
 {
-  Q_OBJECT
+    Q_OBJECT
 
   public slots:
     virtual void slotUseProxyToggle( bool useproxy);

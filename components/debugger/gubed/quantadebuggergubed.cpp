@@ -40,7 +40,7 @@ K_EXPORT_COMPONENT_FACTORY( quantadebuggergubed,
 const char QuantaDebuggerGubed::protocolversion[] = "0.0.9";
 
 QuantaDebuggerGubed::QuantaDebuggerGubed (QObject *parent, const char* name, const QStringList&)
-   : DebuggerClient (parent, name)
+    : DebuggerClient (parent, name)
 {
   // Create a socket object and set up its signals
   m_socket = NULL;
@@ -247,7 +247,7 @@ void QuantaDebuggerGubed::slotReadyAccept()
     }
     else
     {
-       kdDebug(24000) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_server->systemError()) << endl;
+      kdDebug(24000) << k_funcinfo << ", " << KExtendedSocket::strError(error, m_server->systemError()) << endl;
       delete m_socket;
       m_socket = NULL;
     }
@@ -270,7 +270,7 @@ void QuantaDebuggerGubed::slotConnected()
 // Connectio closed
 void QuantaDebuggerGubed::slotConnectionClosed(int state)
 {
-   kdDebug(24000) << k_funcinfo << ", state: " << state << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
+  kdDebug(24000) << k_funcinfo << ", state: " << state << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
 
   if(m_socket)
   {
@@ -485,10 +485,9 @@ void QuantaDebuggerGubed::processCommand(QString data)
   }
   // Instructions we currently ignore
   else if(m_command == "sourcesent"
-       || m_command == "addsourceline"
-       )
-  {
-  }
+          || m_command == "addsourceline"
+         )
+  {}
   else
     // Unimplemented command - log to debug output
     kdDebug(24000) << "QuantaDebuggerGubed::slotReadyRead Unknown: " << m_command << ":" << data << endl;
@@ -532,8 +531,9 @@ bool QuantaDebuggerGubed::sendCommand(QString command, QString data)
 }
 
 // Return name of debugger
-QString QuantaDebuggerGubed::getName() {
-   return "Gubed";      // no i18n on the name
+QString QuantaDebuggerGubed::getName()
+{
+  return "Gubed";      // no i18n on the name
 }
 
 void QuantaDebuggerGubed::showWatch(QString data)
@@ -563,13 +563,13 @@ void QuantaDebuggerGubed::stepInto()
 // Skip next function
 void QuantaDebuggerGubed::skip()
 {
-   sendCommand("skip", "");
+  sendCommand("skip", "");
 }
 
 // Kill the running script
 void QuantaDebuggerGubed::kill()
 {
-   sendCommand("die", "");
+  sendCommand("die", "");
 }
 
 // Pause execution
@@ -677,7 +677,7 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 
     el = node.namedItem("serverhost").toElement();
     if (!el.isNull())
-       el.parentNode().removeChild(el);
+      el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("serverhost");
     node.appendChild( el );
     m_serverHost = set.lineServerHost->text();
@@ -685,7 +685,7 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 
     el = node.namedItem("serverport").toElement();
     if (!el.isNull())
-       el.parentNode().removeChild(el);
+      el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("serverport");
     node.appendChild( el );
     m_serverPort = set.lineServerPort->text();
@@ -693,7 +693,7 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 
     el = node.namedItem("localbasedir").toElement();
     if (!el.isNull())
-       el.parentNode().removeChild(el);
+      el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("localbasedir");
     node.appendChild( el );
     m_localBasedir = set.lineLocalBasedir->text();
@@ -701,7 +701,7 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 
     el = node.namedItem("serverbasedir").toElement();
     if (!el.isNull())
-       el.parentNode().removeChild(el);
+      el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("serverbasedir");
     node.appendChild( el );
     m_serverBasedir = set.lineServerBasedir->text();
@@ -709,7 +709,7 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 
     el = node.namedItem("useproxy").toElement();
     if (!el.isNull())
-       el.parentNode().removeChild(el);
+      el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("useproxy");
     node.appendChild( el );
     m_useproxy = set.checkUseProxy->isChecked();
@@ -717,7 +717,7 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 
     el = node.namedItem("listenport").toElement();
     if (!el.isNull())
-       el.parentNode().removeChild(el);
+      el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("listenport");
     node.appendChild( el );
     m_listenPort = set.lineServerListenPort->text();
@@ -725,7 +725,7 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 
     el = node.namedItem("displaydelay").toElement();
     if (!el.isNull())
-       el.parentNode().removeChild(el);
+      el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("displaydelay");
     node.appendChild( el );
     m_displaydelay = set.sliderDisplayDelay->value();
@@ -733,14 +733,14 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 
     el = node.namedItem("errormask").toElement();
     if (!el.isNull())
-       el.parentNode().removeChild(el);
+      el.parentNode().removeChild(el);
     el = node.ownerDocument().createElement("errormask");
     node.appendChild( el );
     m_errormask = (set.checkBreakOnNotice->isChecked() ? QuantaDebuggerGubed::Notice : 0)
-                + (set.checkBreakOnWarning->isChecked() ? QuantaDebuggerGubed::Warning : 0)
-                + (set.checkBreakOnUserNotice->isChecked() ? QuantaDebuggerGubed::User_Notice : 0)
-                + (set.checkBreakOnUserWarning->isChecked() ? QuantaDebuggerGubed::User_Warning : 0)
-                + (set.checkBreakOnUserError->isChecked() ? QuantaDebuggerGubed::User_Error : 0);
+                  + (set.checkBreakOnWarning->isChecked() ? QuantaDebuggerGubed::Warning : 0)
+                  + (set.checkBreakOnUserNotice->isChecked() ? QuantaDebuggerGubed::User_Notice : 0)
+                  + (set.checkBreakOnUserWarning->isChecked() ? QuantaDebuggerGubed::User_Warning : 0)
+                  + (set.checkBreakOnUserError->isChecked() ? QuantaDebuggerGubed::User_Error : 0);
     kdDebug(24000) << k_funcinfo << ", m_errormask = " << m_errormask << endl;
     el.appendChild( node.ownerDocument().createTextNode(QString::number(m_errormask)));
 
@@ -751,19 +751,19 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
 QString QuantaDebuggerGubed::mapServerPathToLocal(QString serverpath)
 {
 
-   // Translate filename from server to local
-   if(serverpath.startsWith(m_serverBasedir, false))
-      serverpath.remove(0, m_serverBasedir.length());
+  // Translate filename from server to local
+  if(serverpath.startsWith(m_serverBasedir, false))
+    serverpath.remove(0, m_serverBasedir.length());
 
-   return m_localBasedir + serverpath;
+  return m_localBasedir + serverpath;
 }
 
 // Map a local filepath to a server one using project settings
 QString QuantaDebuggerGubed::mapLocalPathToServer(QString localpath)
 {
-    if(localpath.startsWith(m_localBasedir, false))
-       localpath.remove(0, m_localBasedir.length());
-    return m_serverBasedir + localpath;
+  if(localpath.startsWith(m_localBasedir, false))
+    localpath.remove(0, m_localBasedir.length());
+  return m_serverBasedir + localpath;
 }
 
 void QuantaDebuggerGubed::variableSetValue(DebuggerVariable *variable)
