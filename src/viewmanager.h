@@ -55,7 +55,7 @@ public:
   /** Returns the view holding the document loaded from url. */
   QuantaView *isOpened(const KURL &url);
 
-  bool saveAll(bool dont_ask=true);
+  bool saveAll();
 
   /** Returns true if at least one view has the modified flag set. */
   bool isOneModified();
@@ -79,8 +79,8 @@ public slots:
   bool removeActiveView()  { return removeView(activeView()); }
   /** closes all the other but active tabs */
   void slotCloseOtherTabs();
-  /** closes all views. If createNew is true, it creates a new view after closing the others. */
-  void closeAll(bool createNew = true);
+  /** closes all views. If createNew is true, it creates a new view after closing the others. Return true if all documents were closed.*/
+  bool closeAll(bool createNew = true);
   /** called when the last view is closed */
   void slotLastViewClosed();
 

@@ -846,7 +846,7 @@ void QuantaView::deactivated()
   m_VPLUpdateTimer.stop();
 }
 
-bool QuantaView::saveModified()
+bool QuantaView::saveModified(bool ask)
 {
   if (!m_document)
     return true;
@@ -856,17 +856,20 @@ bool QuantaView::saveModified()
 
   if (m_document->isModified() )
   {
-    int want_save
-      = KMessageBox::warningYesNoCancel(this,
+    int want_save;
+    if (ask)
+      want_save = KMessageBox::warningYesNoCancel(this,
           i18n("The file \"%1\" has been modified.\nDo you want to save it?").arg(fileName),
           i18n("Warning"), KStdGuiItem::save(), KStdGuiItem::discard());
+    else
+      want_save = KMessageBox::Yes;
 
     switch (want_save)
     {
       case KMessageBox::Yes :
            if (m_document->isUntitled())
            {
-             completed = quantaApp->slotFileSaveAs();
+             completed = quantaApp->slotFileSaveAs(this);
            }
            else
            {

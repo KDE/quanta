@@ -402,10 +402,12 @@ void QuantaApp::slotFileSave()
   }
 }
 
-bool QuantaApp::slotFileSaveAs()
+bool QuantaApp::slotFileSaveAs(QuantaView *viewToSave)
 {
   bool result = false;
-  QuantaView* view=ViewManager::ref()->activeView();
+  QuantaView* view = viewToSave;
+  if (!view)
+    view = ViewManager::ref()->activeView();
   Document *w = view->document();
   if (w)
   {
@@ -449,7 +451,12 @@ bool QuantaApp::slotFileSaveAs()
         saveAsUrl.setFileName(oldURL.fileName());
       } else
         saveAsUrl = oldURL;
-    }
+    } else
+      if (w->isUntitled() && !saveAsUrl.path().endsWith("/"))
+      {
+        saveAsUrl.setPath(saveAsUrl.directory(false, false) + oldURL.fileName());
+      }
+        
 
     KEncodingFileDialog::Result data;
     data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsUrl.url(),
@@ -3812,11 +3819,11 @@ bool QuantaApp::queryClose()
   bool canExit = true;
   if (quantaStarted)
   {
+    saveOptions();
     exitingFlag = true;
-    canExit = ViewManager::ref()->saveAll(false);
+    canExit = ViewManager::ref()->closeAll(false);
     if (canExit)
        canExit = Project::ref()->queryClose();
-    saveOptions();
     if (canExit)
         canExit = removeToolbars();
   }

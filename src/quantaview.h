@@ -88,9 +88,9 @@ public:
   QWidget* documentArea() {return m_documentArea;}
 
    bool saveDocument(const KURL&);
-   // "save modified" - asks the user
-  // for saving if the document is modified
-  bool saveModified();
+  /** Saves the document if it's modified. Ask the user if their
+   @param ask is true. */ 
+  bool saveModified(bool ask = true);
   /** Returns the baseURL of the document. */
   KURL baseURL();
 

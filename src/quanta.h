@@ -222,7 +222,7 @@ public slots:
   void slotFileOpen( const KURL &, const QString& );
   void slotFileOpen( const KURL::List &urls, const QString& encoding );
   void slotFileSave();
-  bool slotFileSaveAs();
+  bool slotFileSaveAs(QuantaView *viewToSave = 0L);
   void slotFileSaveAsLocalTemplate();
   void slotFileSaveAsProjectTemplate();
   void slotFileSaveSelectionAsLocalTemplate();

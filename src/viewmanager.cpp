@@ -47,6 +47,7 @@
 #include "parser.h"
 #include "qextfileinfo.h"
 #include "qpevents.h"
+#include "ksavealldialog.h"
 
 #ifdef ENABLE_CVSSERVICE
 #include "cvsservice.h"
@@ -217,7 +218,9 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
 void ViewManager::slotCloseOtherTabs()
 {
   KMdiChildView *currentView;
-   if (m_contextView)
+  KMdiChildView *view;
+  QuantaView *qView;
+  if (m_contextView)
      currentView = m_contextView;
    else
      currentView = quantaApp->activeWindow();
@@ -229,8 +232,53 @@ void ViewManager::slotCloseOtherTabs()
       children.append(it->currentItem());
   }
   delete it;
-  KMdiChildView *view;
+  KURL::List modifiedList;
   QValueListIterator<KMdiChildView *> childIt;
+  for (childIt = children.begin(); childIt != children.end(); ++childIt)
+  {
+    view = *childIt;
+    qView = dynamic_cast<QuantaView*>(view);
+    if (qView && view != currentView)
+    {
+      Document *w = qView->document();
+      if (w && w->isModified())
+      {
+        modifiedList += w->url();
+      }
+    }
+  }
+  if (!modifiedList.isEmpty())
+  {
+    KURL::List filesToSave;
+    KSaveSelectDialog dlg(modifiedList, filesToSave /*empty ignore list */, quantaApp);
+    if (dlg.exec() == QDialog::Accepted)
+    {
+      filesToSave = dlg.filesToSave();
+      for (childIt = children.begin(); childIt != children.end(); ++childIt)
+      {
+        view = *childIt;
+        qView = dynamic_cast<QuantaView*>(view);
+        if (view && view != currentView)
+        {
+          Document *w = qView->document();
+          if (w)
+          {
+            if (filesToSave.contains(w->url()))
+              if (!qView->saveModified(false))
+            {
+              return;  //save aborted
+            }
+            w->setModified(false);
+            qView->updateTab();
+          }
+        }
+      }
+    } else
+    {
+      return;  //save aborted
+    }
+  }
+  
   for (childIt = children.begin(); childIt != children.end(); ++childIt)
   {
       view = *childIt;
@@ -286,7 +334,7 @@ KURL::List ViewManager::openedFiles(bool noUntitled)
   return list;
 }
 
-bool ViewManager::saveAll(bool dont_ask)
+bool ViewManager::saveAll()
 {
   bool flagsave = true;
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
@@ -299,7 +347,7 @@ bool ViewManager::saveAll(bool dont_ask)
           Document *w = view->document();
           if ( w && w->isModified())
           {
-              if (dont_ask && !w->isUntitled())
+              if (!w->isUntitled())
               {
                   emit eventHappened("before_save", w->url().url(), QString::null);
                   w->docUndoRedo->fileSaved();
@@ -322,15 +370,12 @@ bool ViewManager::saveAll(bool dont_ask)
   return flagsave;
 }
 
-void ViewManager::closeAll(bool createNew)
+bool ViewManager::closeAll(bool createNew)
 {
   quantaApp->slotShowPreviewWidget(false);
-  disconnect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
-  disconnect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
 
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   QuantaView *view;
-  ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
   //save the children first to a list, as removing invalidates our iterator
   QValueList<KMdiChildView *> children;
   for (it->first(); !it->isDone(); it->next())
@@ -338,7 +383,54 @@ void ViewManager::closeAll(bool createNew)
       children.append(it->currentItem());
   }
   delete it;
+  KURL::List modifiedList;
   QValueListIterator<KMdiChildView *> childIt;
+  for (childIt = children.begin(); childIt != children.end(); ++childIt)
+  {
+    view = dynamic_cast<QuantaView*>(*childIt);
+    if (view)
+    {
+      Document *w = view->document();
+      if (w && w->isModified())
+      {
+        modifiedList += w->url();
+      }
+    }
+  }
+  if (!modifiedList.isEmpty())
+  {
+    KURL::List filesToSave;
+    KSaveSelectDialog dlg(modifiedList, filesToSave /*empty ignore list */, quantaApp);
+    if (dlg.exec() == QDialog::Accepted)
+    {
+      filesToSave = dlg.filesToSave();
+      for (childIt = children.begin(); childIt != children.end(); ++childIt)
+      {
+        view = dynamic_cast<QuantaView*>(*childIt);
+        if (view)
+        {
+          Document *w = view->document();
+          if (w)
+          {
+            if (filesToSave.contains(w->url()))
+              if (!view->saveModified(false))
+              {
+                return false;  //save aborted
+              }
+            w->setModified(false);
+            view->updateTab();
+          }
+        }
+      }
+    } else
+    {
+      return false;  //save aborted
+    }
+  }
+  disconnect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
+  disconnect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
+  ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
+  
   for (childIt = children.begin(); childIt != children.end(); ++childIt)
   {
       view = dynamic_cast<QuantaView*>(*childIt);
@@ -349,7 +441,6 @@ void ViewManager::closeAll(bool createNew)
           {
               if (view->mayRemove())
               {
-//                 w->closeTempFile();
                  if (!w->isUntitled() && w->url().isLocalFile())
                  {
                    fileWatcher->removeFile(w->url().path());
@@ -363,11 +454,12 @@ void ViewManager::closeAll(bool createNew)
                  quantaApp->closeWindow(view);
               } else
               {
+                //actually this code should be never executed
                connect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
                connect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
                view->activated();
-                return;
-               }
+                return false;
+              }
           } else
           {
               if (view == m_documentationView)
@@ -383,7 +475,8 @@ void ViewManager::closeAll(bool createNew)
   {
       createNewDocument();
       quantaApp->slotNewStatus();
-   }
+  }
+  return true; 
 }
 
 bool ViewManager::isOneModified()
