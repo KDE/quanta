@@ -38,6 +38,7 @@
 #include "kqapp.h"
 #include <kparts/browserextension.h>
 #include <kate/document.h>
+#include <kparts/dockmainwindow.h>
 
 //app includes
 #include "dcopwindowmanagerif.h"
@@ -84,6 +85,8 @@ class PHPDebuggerInterface;
 class QuantaInit;
 class KToolBarPopupAction;
 class KTempFile;
+class KParts::Part;
+class KParts::PartManager;
 
 class SpellChecker;
 struct DirInfo;
@@ -101,7 +104,7 @@ typedef struct ToolbarEntry{
 /**
   * The base class for Quanta application windows.
   */
-class QuantaApp : public KDockMainWindow, public DCOPWindowManagerIf
+class QuantaApp : public KParts::DockMainWindow, public DCOPWindowManagerIf
 {
   Q_OBJECT
 
@@ -121,9 +124,9 @@ public:
 //TODO: check if we really need these "get" methods (and get rid o get)
   MessageOutput *messageOutput() const {return m_messageOutput;}
   MessageOutput *problemOutput() const {return m_problemOutput;}
-  
+
   PHPDebuggerInterface *debugger() const {return m_debugger;}
-  
+
 /*  QPopupMenu *toolbarMenu(const QString& name);*/
 
   /** Returns the output dock widget */
@@ -163,10 +166,11 @@ public:
 
   //return the old Cursor position
   void oldCursorPos(uint &line, uint &col) {line = oldCursorLine; col = oldCursorCol;}
+  /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
   void loadToolbarForDTD(const QString& dtdName);
-  
+
   QStringList selectors(const QString& tag);
-  
+
     /** tabs for left panel */
   DocTreeView *dTab;
   EnhancedTagAttributeTree *aTab;
@@ -193,7 +197,6 @@ public slots:
   /** Close the document specified in the parameter if it's opened */
   void slotFileClose(const KURL &url);
   void slotFileCloseAll();
-  void slotFilePrint();
   void slotFileNext();
   void slotFilePrev();
   void slotFileQuit();
@@ -243,10 +246,7 @@ public slots:
 
   void viewMenuAboutToShow();
   void settingsMenuAboutToShow();
-  void setEOLMenuAboutToShow();
   void slotContextMenuAboutToShow();
-  void bookmarkMenuAboutToShow();
-  void gotoBookmark(int n);
 
   void slotEnableMessageWidget(bool enable);
 
@@ -317,12 +317,6 @@ public slots:
 
   void slotExpandAbbreviation();
 
-  void slotFind();
-  void slotFindAgain();
-  void slotFindAgainB();
-  void slotReplace();
-  void slotSelectAll();
-
   /** Show the Document Properties Dialog */
   void slotDocumentProperties();
   /** No descriptions */
@@ -334,8 +328,10 @@ public slots:
 
   /** Reload the tree of the StructTreeView */
   void slotReloadStructTreeView();
-  
+
   void slotReportBug();
+  /** registers a new part in the partmanager */
+  void slotNewPart(KParts::Part *newPart, bool setActiv);
 
 protected slots:
   /** No descriptions */
@@ -366,6 +362,8 @@ protected slots:
   /** External app execution timeout handling */
   void slotProcessTimeout();
 
+  /** connected to the part manager, activates a new part */
+  void slotActivePartChanged(KParts::Part * );
 protected:
   /** Ask for save all the modified user toolbars. */
   bool removeToolbars();
@@ -400,7 +398,7 @@ private:
 
   // Debugger
   PHPDebuggerInterface *m_debugger;
-  
+
   QuantaPluginInterface *m_pluginInterface;
 
   QPopupMenu *m_tagsMenu;
@@ -448,19 +446,13 @@ private:
     *showSTabAction, *showATabAction, *showDTabAction,
     *showStatusbarAction,
     *showKafkaAction, *showDTDToolbar;
-  KSelectAction *setEndOfLine;
   KToolBarPopupAction *showPreviewAction;
 
   KAction *saveAction, *saveAllAction;
 
-  KAction *bookmarkToggle, *bookmarkClear, *bookmarkPrev, *bookmarkNext;
   KAction *editTagAction, *selectTagAreaAction;
 
-  //KToggleAction *viewFoldingMarkers;
-  Kate::ActionMenu *setHighlight;
-
   QPopupMenu* pm_set;
-  QPopupMenu* pm_bookmark;
 
   QDomDocument* m_actions;
 
@@ -480,6 +472,8 @@ private:
 
   KProcess* m_execCommandPS;
   QString m_scriptOutput;
+  // remember the old actions for the context menu
+  KAction *m_oldContextCut, *m_oldContextCopy, *m_oldContextPaste;
 
 protected: // Protected attributes
   /** Timer to refresh the structure tree. */
@@ -497,8 +491,10 @@ protected: // Protected attributes
   QMap<QString, QString> oldShortcuts;
   KURL urlUnderCursor;
   QTimer *autosaveTimer;
-  DCOPSettings *dcopSettings; 
-  DCOPQuanta *dcopQuanta; 
+  DCOPSettings *dcopSettings;
+  DCOPQuanta *dcopQuanta;
+  KParts::PartManager *m_partManager;  ///< the pointer to the part manager
+  QGuardedPtr<KTextEditor::View> m_oldKTextEditor;  ///< remembers the last activated GUI
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;

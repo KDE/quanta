@@ -87,6 +87,16 @@ Document::Document(KTextEditor::Document *doc,
   m_view = 0L; //needed, because createView() calls processEvents() and the "this" may be deleted before m_view gets a value => crash on delete m_view;
   m_view = m_doc->createView(this, 0L);
   completionInProgress = false;
+  // remove the unwanted actions
+  m_view->actionCollection()->take(m_view->actionCollection()->action( "file_export" ));
+  m_view->actionCollection()->take(m_view->actionCollection()->action( "file_save" ));
+  m_view->actionCollection()->take(m_view->actionCollection()->action( "file_save_as" ));
+  m_view->actionCollection()->take(m_view->actionCollection()->action( "file_reload" ));
+  m_view->actionCollection()->take(m_view->actionCollection()->action( "edit_undo" ));
+  m_view->actionCollection()->take(m_view->actionCollection()->action( "edit_redo" ));
+  KAction *viewborderAction = m_view->actionCollection()->action( "view_border" );
+  if (viewborderAction)
+    viewborderAction->setShortcut(Qt::SHIFT + Qt::Key_F9);
 
   kate_doc = dynamic_cast<Kate::Document*>(m_doc);
   kate_view = dynamic_cast<Kate::View*>(m_view);
@@ -106,11 +116,11 @@ Document::Document(KTextEditor::Document *doc,
   iface->setPixmap(KTextEditor::MarkInterface::markType02, SmallIcon("debug_breakpoint"));
   iface->setDescription(KTextEditor::MarkInterface::markType02, i18n("Breakpoint"));
   iface->setPixmap(KTextEditor::MarkInterface::markType05, SmallIcon("debug_currentline"));
-  
-  // FIXME: This is allows user to set breakpoints and bookmarks by clicking or rightclicking on the icon border. However, it needs some additional code to 
-  // work for breakpoints and has been disabled to prevent confusion. 
+
+  // FIXME: This is allows user to set breakpoints and bookmarks by clicking or rightclicking on the icon border. However, it needs some additional code to
+  // work for breakpoints and has been disabled to prevent confusion.
   //iface->setMarksUserChangable(KTextEditor::MarkInterface::markType01 + KTextEditor::MarkInterface::markType02);
-  
+
   tempFile = 0;
   dtdName = Project::ref()->defaultDTD();
   m_parsingDTD = dtdName;
@@ -138,7 +148,7 @@ Document::Document(KTextEditor::Document *doc,
   connect( m_view, SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString *)),
            this,  SLOT(  slotFilterCompletion(KTextEditor::CompletionEntry*,QString *)) );
   connect( m_doc, SIGNAL(textChanged()), SLOT(slotTextChanged()));
-  
+
  // installEventFilter(this);
 
 //  setFocusProxy(m_view);
@@ -148,9 +158,9 @@ Document::~Document()
 {
 #if KDE_VERSION < KDE_MAKE_VERSION(3, 1, 90)
  m_doc->closeURL(); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
-#else 
+#else
  m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
-#endif 
+#endif
  delete m_view;
  delete m_doc;
 }
@@ -176,7 +186,7 @@ bool Document::eventFilter ( QObject * watched, QEvent * e )
     kdDebug(24000) << "eventFilter : AccelOverride : " << ke->key() << endl;
 //    kdDebug(24000) << "              type          : " << ke->type() << endl;
 //    kdDebug(24000) << "              state         : " << ke->state() << endl;
-    typingInProgress = true;    
+    typingInProgress = true;
   }
   return false;
 }
@@ -624,7 +634,7 @@ QString Document::getTagNameAt(int line, int col )
       pos = 0;
       while (pos < (int)textLine.length() &&
             !textLine[pos].isSpace() &&
-            textLine[pos] != '>') 
+            textLine[pos] != '>')
             pos++;
       name = textLine.left(pos).stripWhiteSpace();
       pos = name.find(":");
@@ -645,7 +655,7 @@ QString Document::getTagNameAt(int line, int col )
       }
     }
  }
- 
+
  return name;
 }
 
@@ -763,7 +773,7 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
- if ( (string == ">") || 
+ if ( (string == ">") ||
       (string == "<") )
  {
    slotDelayedTextChanged(true);
@@ -827,11 +837,11 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   while (i > 0 && s[i].isSpace())
     i--;
   s = s.left(i + 1);
-  
+
   if ( !tag || tagName.isEmpty() || namespacecompletion)  //we are outside of any tag
   {
 
-    if (s.endsWith(completionDTD->tagAutoCompleteAfter) || 
+    if (s.endsWith(completionDTD->tagAutoCompleteAfter) ||
         namespacecompletion)  // a tag is started, either with < or <namespace:
     {
       //we need to complete a tag name
@@ -1362,7 +1372,7 @@ bool Document::scriptAutoCompletion(int line, int column)
  Node *node = parser->nodeAt(line, column);
  if (node->parent)
    node = node->parent;
- else if (node->prev)  
+ else if (node->prev)
    node = node->prev;
  int bl, bc;
  node->tag->beginPos(bl, bc);
@@ -1397,7 +1407,7 @@ bool Document::scriptAutoCompletion(int line, int column)
    QTag *tag = 0L;
    if (!word.isEmpty())
     tag = completionDTD->tagsList->find(word);
-   if (!tag) 
+   if (!tag)
      tag = userTagList.find(word.lower());
    if (tag)
    {
@@ -1771,7 +1781,7 @@ void Document::checkDirtyStatus()
       QFile tmpFile(m_tempFileName);
       if (f.open(IO_ReadOnly) && tmpFile.open(IO_ReadOnly))
       {
-        QString encoding = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding();  
+        QString encoding = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding();
         QString content;
         QTextStream stream(&f);
 //        stream.setEncoding(QTextStream::UnicodeUTF8);
@@ -1874,7 +1884,7 @@ void Document::slotDelayedTextChanged(bool forced)
      reparseEnabled = false;
      return;
    }
-   
+
     uint line, column;
     QString oldNodeName = "";
     Node *node;
@@ -1908,7 +1918,7 @@ void Document::slotDelayedTextChanged(bool forced)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
       node = parser->nodeAt(line, column, false);
-      if (node && 
+      if (node &&
           node->tag->nameSpace + node->tag->name != currentNode->tag->nameSpace + currentNode->tag->name &&
           (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) && node->tag->validXMLTag)
       {
@@ -2213,7 +2223,7 @@ void Document::removeBackup(KConfig *config)
   QStringList backedupFilesEntryList = config->readListEntry("List of backedup files");
   QStringList autosavedFilesEntryList = config->readListEntry("List of autosaved files");
 #endif
-  
+
   autosavedFilesEntryList.remove(m_backupPathValue);
   config->writeEntry("List of autosaved files",autosavedFilesEntryList);
   backedupFilesEntryList.remove(url().path() + "." + qConfig.quantaPID);

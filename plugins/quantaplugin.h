@@ -55,7 +55,6 @@ public:
 
   virtual void addWidget();
   virtual void removeWidget();
-  void showGui(bool show);
   QWidget *widget();
   KToggleAction *m_action;
 public slots:
@@ -110,7 +109,6 @@ protected:
   bool m_standard;
   bool m_isRunning;
   KParts::ReadOnlyPart *m_part;
-  bool guiVisible;
   bool m_readOnlyPart;
 private: // Private attributes
   /**  */

@@ -49,7 +49,6 @@
 #include <kstatusbar.h>
 #include <kaction.h>
 #include <kstdaction.h>
-#include <kparts/componentfactory.h>
 #include <kpopupmenu.h>
 #include <kprocess.h>
 #include <kprogress.h>
@@ -132,9 +131,9 @@ void QuantaInit::initQuanta()
   scriptBeginRx.setPattern("(<script)");
   scriptEndRx.setCaseSensitive(false);
   scriptEndRx.setPattern("(/script>)");
-  
+
   initStatusBar();
-  
+
   //defaultDocType must be read before the Project object is created!!
   m_config->setGroup("General Options");
   qConfig.defaultDocType = m_config->readEntry("Default DTD",DEFAULT_DTD);
@@ -145,16 +144,16 @@ void QuantaInit::initQuanta()
   initDocument();  // after initView because of init of treeViews
   initProject();
   initActions();
-  
+
   // Initialize debugger
   m_quanta->m_debugger = new PHPDebuggerInterface();
-   
+
   DTDs::ref();  // create the class, must be before readOptions() !
   readOptions();
-  initPlugins(); // needs to be before createGUI because some actions are created inside
+  initPlugins();  // needs to be before createGUI because some actions are created inside
 
-  m_quanta->createGUI( QString::null, false /* conserveMemory */ );
-   
+  m_quanta->KDockMainWindow::createGUI( QString::null, false /* conserveMemory */ );
+
   m_quanta->menuBar()->insertItem(i18n("Plu&gins"), m_quanta->m_pluginInterface->pluginMenu(),
                                   -1, PLUGINS_MENU_PLACE);
 
@@ -189,17 +188,15 @@ void QuantaInit::initQuanta()
   m_quanta->pm_set  = (QPopupMenu*)(m_quanta->guiFactory())->container("settings", m_quanta);
   connect(m_quanta->pm_set, SIGNAL(aboutToShow()), m_quanta, SLOT(settingsMenuAboutToShow()));
 
-  m_quanta->pm_bookmark  = (QPopupMenu*)(m_quanta->guiFactory())->container("bookmarks", m_quanta);
-  connect(m_quanta->pm_bookmark, SIGNAL(aboutToShow()),
-          m_quanta, SLOT(bookmarkMenuAboutToShow()));
-
   QPopupMenu* pm_view = (QPopupMenu*)(m_quanta->guiFactory())->container("view", m_quanta);
   connect(pm_view,SIGNAL(aboutToShow()), m_quanta, SLOT(viewMenuAboutToShow()));
 
   QPopupMenu *toolbarsMenu  = (QPopupMenu*)(m_quanta->guiFactory())->container("toolbars_load", m_quanta);
   connect(toolbarsMenu, SIGNAL(aboutToShow()), m_quanta, SLOT(slotBuildPrjToolbarsMenu()));
 
-  connect(m_quanta->guiFactory()->container("popup_editor", m_quanta), SIGNAL(aboutToShow()), m_quanta, SLOT(slotContextMenuAboutToShow()));
+  QPopupMenu *contextMenu = (QPopupMenu*)(m_quanta->guiFactory())->container("popup_editor", m_quanta);
+  connect(contextMenu, SIGNAL(aboutToShow()), m_quanta, SLOT(slotContextMenuAboutToShow()));
+  contextMenu->insertSeparator(0);  // XML gui does not support a separator at the beginning
 
   connect(m_quanta->m_messageOutput, SIGNAL(clicked(const QString&, int, int)),
           m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
@@ -397,7 +394,9 @@ void QuantaInit::initView()
   m_quanta->rightWidgetStack->setMinimumHeight(1);
 
   m_quanta->m_htmlPart = new WHTMLPart(m_quanta->rightWidgetStack,"rightHTML");
+  m_quanta->slotNewPart(m_quanta->m_htmlPart, false);
   m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta->rightWidgetStack, "docHTML");
+  m_quanta->slotNewPart(m_quanta->m_htmlPartDoc, false);
 
   m_quanta->rightWidgetStack->addWidget(m_quanta->m_view, 0);
   m_quanta->rightWidgetStack->addWidget(m_quanta->m_htmlPart->view(), 1);
@@ -606,12 +605,6 @@ void QuantaInit::readOptions()
   qConfig.showDTDSelectDialog = m_config->readBoolEntry("Show DTD Select Dialog", true);
 
   m_config->setGroup("Quanta View");
-  qConfig.lineNumbers = m_config->readBoolEntry("LineNumbers", false);
-  qConfig.iconBar = m_config->readBoolEntry("Iconbar", false);
-  qConfig.dynamicWordWrap = m_config->readBoolEntry("DynamicWordWrap",false);
-  m_quanta->viewBorder->setChecked(qConfig.iconBar);
-  m_quanta->viewLineNumbers->setChecked(qConfig.lineNumbers);
-  m_quanta->viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
   m_quanta->manager()->readConfig(m_config);
 
 #ifdef BUILD_KAFKAPART
@@ -718,7 +711,7 @@ void QuantaInit::initActions()
 {
     KActionCollection *ac = m_quanta->actionCollection();
     m_quanta->editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
-                        m_quanta->m_view, SLOT( slotEditCurrentTag() ),          
+                        m_quanta->m_view, SLOT( slotEditCurrentTag() ),
                         ac, "edit_current_tag" );
     m_quanta->selectTagAreaAction = new KAction( i18n( "&Select Current Tag Area" ), 0,
                         m_quanta->m_view, SLOT( slotSelectTagArea() ),
@@ -734,92 +727,18 @@ void QuantaInit::initActions()
     KStdAction::undo(m_quanta->m_view, SLOT(slotUndo()), ac);
     KStdAction::redo(m_quanta->m_view, SLOT(slotRedo()), ac);
 
-    KStdAction::cut(m_quanta->m_view, SLOT(slotCut()), ac);
-    KStdAction::copy(m_quanta->m_view, SLOT(slotCopy()), ac) ;
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-    (void) new KQPasteAction(i18n("Paste"), "editpaste", KStdAccel::shortcut(KStdAccel::Paste), m_quanta->m_view, SLOT(slotPaste()), ac, "edit_paste");
-#else
-    KStdAction::pasteText(m_quanta->m_view, SLOT(slotPaste()), ac);
-#endif
-
-    KStdAction::selectAll(m_quanta, SLOT(slotSelectAll()), ac);
-    KStdAction::deselect(m_quanta->m_view, SLOT(slotDeselectAll()), ac);
-    (void) new KAction( i18n( "Toggle &Block Selection" ), Key_F4, m_quanta->m_view,
-                        SLOT( toggleVertical() ), ac, "set_verticalSelect" );
-    new KToggleAction(i18n("Overwrite Mode"), Key_Insert, m_quanta->m_view, SLOT(toggleInsert()), ac, "set_insert" );
-
-
-    KStdAction::find(m_quanta, SLOT(slotFind()), ac);
-    new KAction(i18n("Find &Next"), "findnext", KStdAccel::shortcut(KStdAccel::FindNext), m_quanta, 
-                 SLOT(slotFindAgain()), ac, "edit_find_next");
-    KStdAction::findPrev(m_quanta, SLOT(slotFindAgainB()), ac, "edit_find_prev");
-    KStdAction::replace(m_quanta, SLOT(slotReplace()), ac);
-
-    new KAction(i18n("&Indent"), "indent", CTRL+Key_I, m_quanta->m_view,
-                SLOT(slotIndent()), ac, "edit_indent");
-    new KAction(i18n("Unindent"), "unindent", CTRL+SHIFT+Key_I, m_quanta->m_view,
-                SLOT(slotUnIndent()), ac, "edit_unindent");
-    new KAction(i18n("Cl&ean Indentation"), "cleanindent", 0, m_quanta->m_view,
-                SLOT(slotCleanIndent()), ac, "edit_cleanindent");
-
-    new KAction(i18n("Co&mment"),  CTRL+Qt::Key_NumberSign,
-                m_quanta->m_view, SLOT(slotComment()), ac, "edit_comment");
-    new KAction(i18n("Unc&omment"),
-                CTRL+SHIFT+Qt::Key_NumberSign, m_quanta->m_view, SLOT(slotUnComment()),
-                ac, "edit_uncomment");
-    new KAction(i18n("Apply &Word Wrap"), "", 0, m_quanta->m_view, SLOT(slotApplyWordWrap()),
-                ac, "edit_apply_wordwrap");
-
-
-//Debugger, breakpoints
+//Debugger, breakpoint
     new KAction(i18n("Toggle &Breakpoint"), SmallIcon("debug_breakpoint"), Qt::CTRL+Qt::SHIFT+Qt::Key_B,
           m_quanta->m_view, SLOT(debugToggleBreakpoint()), ac, "debug_breakpoints_toggle");
     new KAction(i18n("&Clear Breakpoints"), 0, m_quanta->m_view,
           SLOT(debugClearBreakpoints()), ac, "debug_breakpoints_clear");
 
 //Tools menu
-    KStdAction::gotoLine(m_quanta->m_view, SLOT(slotGotoLine()), ac, "edit_goto_line");
     KStdAction::spelling(m_quanta->m_view, SLOT(slotSpellcheck()), ac);
-
-//Bookmarks
-    m_quanta->bookmarkToggle = new KAction(i18n("Toggle &Bookmark"), Qt::CTRL+Qt::Key_B,
-          m_quanta->m_view, SLOT(toggleBookmark()), ac, "bookmarks_toggle");
-    m_quanta->bookmarkClear = new KAction(i18n("&Clear Bookmarks"), 0, m_quanta->m_view,
-          SLOT(clearBookmarks()), ac, "bookmarks_clear");
-    m_quanta->bookmarkPrev = new KAction(i18n("&Previous Bookmark"), Qt::ALT+Qt::Key_PageDown, m_quanta->m_view,
-          SLOT(slotPreviousBookmark()), ac, "bookmarks_previous");
-    m_quanta->bookmarkNext = new KAction(i18n("&Next Bookmark"), Qt::ALT+Qt::Key_PageUp, m_quanta->m_view,
-          SLOT(slotNextBookmark()), ac, "bookmarks_next");
-
-//Settings
-  m_quanta->viewBorder =  new KToggleAction(i18n("Show &Icon Border"), Qt::SHIFT+Qt::Key_F9, m_quanta->m_view,
-                    SLOT(toggleIconBorder()), ac, "view_border");
-  m_quanta->viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F11, m_quanta->m_view,
-                        SLOT(toggleLineNumbers()), ac, "view_line_numbers");
 
 //help
    (void) new KAction(i18n("Ti&p of the Day"), "idea", "", m_quanta,
       SLOT(slotHelpTip()), ac, "help_tip");
-
-//    viewFoldingMarkes =  new KToggleAction(i18n("Show Folding &Markers"), Key_F9, m_view,
-//                              SLOT(toggleFoldingMarkers()), ac, "view_folding_markers");
-  m_quanta->viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F10, m_quanta->m_view,
-                              SLOT(toggleDynamicWordWrap()), ac, "view_dynamic_word_wrap");
-
-  (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0,
-                      m_quanta->m_view, SLOT( slotEditorOptions() ), ac, "editor_options" );
-
-
-    m_quanta->setEndOfLine = new KSelectAction(i18n("End of &Line"), 0, ac,"set_eol");
-    connect(m_quanta->setEndOfLine, SIGNAL(activated(int)), m_quanta->m_view, SLOT(setEol(int)));
-    connect(m_quanta->setEndOfLine->popupMenu(), SIGNAL(aboutToShow()), m_quanta, SLOT(setEOLMenuAboutToShow()));
-
-    QStringList list;
-    list.append(i18n("&Unix"));
-    list.append(i18n("&Windows/DOS"));
-    list.append(i18n("&Macintosh"));
-    m_quanta->setEndOfLine->setItems(list);
-
 
     // File actions
     //
@@ -863,8 +782,6 @@ void QuantaInit::initActions()
     (void) new KAction( i18n( "Save Selection to Local Template File..." ), 0,
                         m_quanta, SLOT( slotFileSaveSelectionAsLocalTemplate() ),
                         ac, "save_selection_local_template" );
-    
-    KStdAction::print( m_quanta, SLOT( slotFilePrint() ), ac );
 
     KStdAction::quit( m_quanta, SLOT( slotFileQuit() ), ac );
 
@@ -872,13 +789,6 @@ void QuantaInit::initActions()
                        SLOT( slotShowOpenFileList() ), ac, "file_list" );
 
     // Edit actions
- /*
-    KAction *undoRedo
-      = new KAction( i18n( "Undo/Redo &History..."), 0,
-                     doc, SLOT( undoHistory()),
-                     ac, "undo_history" );
-
-    undoRedo->setGroup( "edit_undo_merge" ); */
 
     (void) new KAction( i18n( "Find in Files..." ),
                         UserIcon("find"), CTRL+ALT+Key_F,

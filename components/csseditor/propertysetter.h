@@ -47,7 +47,7 @@ class TLPEditor : public QHBox { //editor with a line text and a button calling 
     QLineEdit *m_le;
     QLabel *m_label;
     KPushButton *m_pb;
-     
+
   public:
     TLPEditor(QWidget *parent, const char* name=0);
     virtual ~TLPEditor();
@@ -55,42 +55,42 @@ class TLPEditor : public QHBox { //editor with a line text and a button calling 
     void setButtonIcon(QString);
     void setToolTip(QString);
     void setLabelText(QString);
-     
+
   signals:
-    void valueChanged(const QString&);  
-}; 
-    
+    void valueChanged(const QString&);
+};
+
 class fontEditor : public TLPEditor{
   Q_OBJECT
-     
+
   public:
     fontEditor(QWidget *parent, const char* name=0);
-     
+
   public slots:
     void openFontChooser();
 };
-  
+
 class URIEditor : public TLPEditor {
   Q_OBJECT
   public:
     enum mode{ multi, single };
     enum URIResourceType{ audio, image, mousePointer };
-      
+
   private:
     QStringList m_sFiles;
     mode m_Mode;
     URIResourceType m_resourceType;
-     
+
   public:
     URIEditor(QWidget *parent, const char* name=0);
     void setMode(const mode& m) { m_Mode = m ; }
     void setResourceType(const  URIResourceType& r) { m_resourceType = r ; }
-     
+
   public slots:
     void URI(const QString&);
     void openFileDialog();
 };
-   
+
 class percentageEditor : public QHBox  {
      Q_OBJECT
    private:
@@ -99,12 +99,12 @@ class percentageEditor : public QHBox  {
            percentageEditor(const QString& initialValue="0",QWidget *parent=0, const char *name=0);
            ~percentageEditor();
    signals:
-     void valueChanged(const QString&);  
+     void valueChanged(const QString&);
 };
 
 class propertySetter : public QHBox  {
   Q_OBJECT
-      
+
   private:
     unsigned int m_ind;
     QPtrList<QWidget> m_list;
@@ -122,9 +122,9 @@ class propertySetter : public QHBox  {
     angleEditor *m_ae;
     colorRequester *m_cr;
     QComboBox *m_pcb;
-    KPushButton *m_pb;  
+    KPushButton *m_pb;
     fontEditor *m_ftE;
-        
+
   public:
     propertySetter(QWidget *parent=0, const char *name=0);
     ~propertySetter();
@@ -148,10 +148,10 @@ class propertySetter : public QHBox  {
     QComboBox* ComboBox() const { return m_cb; }
     doubleComboBoxEditor* DoubleComboBoxEditor() const { return m_dcbe; }
     URIEditor* UriEditor() const { return m_ue; }
-     
+
   public slots:
-    void Show();  
-    
+    void Show();
+
   signals:
     void valueChanged(const QString&);
 };

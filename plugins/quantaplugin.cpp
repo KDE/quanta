@@ -51,7 +51,6 @@
 QuantaPlugin::QuantaPlugin()
  : m_isRunning(false)
 {
- guiVisible = false;
  m_readOnlyPart = true;
  m_action = 0L;
  m_icon = "";
@@ -134,6 +133,8 @@ bool QuantaPlugin::load()
     KMessageBox::error(quantaApp, i18n("<qt>The <b>%1</b> plugin could not be loaded.<br>Possible reasons are:<br>    - <b>%2</b> is not installed;<br>    - the file <i>%3</i> is not installed or it is not reachable.").arg(m_name).arg(m_name).arg(m_fileName));
     return false;
   }
+  m_part->setName(m_name);  // for better debug output
+  quantaApp->slotNewPart(m_part, false);  // register the part in the partmanager
   return true;
 }
 
@@ -187,7 +188,6 @@ bool QuantaPlugin::run()
       unload();
       return false;
     }
-    showGui(true);
     addWidget();
     setRunning(true);
     connect( m_part, SIGNAL(setStatusBarText(const QString &)),
@@ -296,7 +296,6 @@ bool QuantaPlugin::unload()
   disconnect( m_part, SIGNAL(setStatusBarText(const QString &)),
            quantaApp, SLOT(slotStatusMsg( const QString & )));
 
-  showGui(false);
   removeWidget();
   delete m_part;
   m_part = 0;
@@ -399,19 +398,6 @@ void QuantaPlugin::removeWidget()
   {
     quantaApp->view()->writeTab()->removePage(m_part->widget());
   }
-}
-
-void QuantaPlugin::showGui(bool show)
-{
-  if (show)
-  {
-    if (!guiVisible)
-       quantaApp->guiFactory()->addClient(m_part);
-  } else
-  {
-    quantaApp->guiFactory()->removeClient(m_part);
-  }
-  guiVisible = show;
 }
 
 QWidget *QuantaPlugin::widget()

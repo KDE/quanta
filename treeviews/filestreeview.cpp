@@ -82,6 +82,7 @@ int FilesTreeViewItem::compare( QListViewItem *i, int col,
   return key( col, ascending ).compare( i->key( col, ascending) );
 }
 
+
 void FilesTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
                                   int column, int width, int align)
 {

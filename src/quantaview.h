@@ -189,43 +189,13 @@ public slots:
   void slotUndo ();
   void slotRedo ();
 
-  void slotCut ();
-  void slotCopy ();
-  void slotPaste ();
-
-  void slotDeselectAll ();
-  void toggleVertical ();
-  void toggleInsert();
-
-  void slotIndent();
-  void slotUnIndent();
-  void slotCleanIndent();
-  void slotComment ();
-  void slotUnComment ();
-  void slotApplyWordWrap ();
-
 //Tools
-  void slotGotoLine ();
   void slotSpellcheck ();
 
-//Bookmarks
-  void toggleBookmark();
-  void clearBookmarks();
-  void gotoMark (KTextEditor::Mark *mark);
-  void slotPreviousBookmark();
-  void slotNextBookmark();
-
-  //Breakpoints
+  //Breakpoint
   void debugToggleBreakpoint();
   void debugClearBreakpoints();
   void debugGotoBreakpoint (KTextEditor::Mark *mark);
-
-//Settings
-  void toggleDynamicWordWrap();
-  void toggleIconBorder();
-  void toggleLineNumbers();
-  void slotEditorOptions();
-  void setEol(int);
 
   //views
   void slotShowQuantaEditor();

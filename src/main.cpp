@@ -35,7 +35,6 @@
 // app includes
 #include "quanta.h"
 
-
 static const char *description =
   I18N_NOOP("Quanta Plus Web Development Environment");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE

@@ -69,7 +69,7 @@
 #include "phpdebuggerinterface.h"
 
 #include "project.h"
-#include "dtds.h"
+//#include "dtds.h"
 
 #ifdef BUILD_KAFKAPART
 #include "undoredo.h"
@@ -127,27 +127,6 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
     quantaApp->view()->addWrite( w, w->url().url() );
 
     quantaApp->processDTD(Project::ref()->defaultDTD());
-
-    /*KToggleAction *a;
-    a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("view_border"));
-    if (a)
-    {
-      a->setChecked(qConfig.iconBar);
-      a->activate();
-    }
-    a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("view_line_numbers"));
-    if (a)
-    {
-      a->setChecked(qConfig.lineNumbers);
-      a->activate();
-    }*/
-    w->kate_view->setIconBorder(qConfig.iconBar);
-    w->kate_view->setLineNumbersOn(qConfig.lineNumbers);
-    quantaApp->viewBorder->setChecked(qConfig.iconBar);
-    quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
-
-    dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
-    quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
   }
   else // select opened
   if (switchToExisting)
@@ -225,8 +204,6 @@ void QuantaDoc::slotOpeningCompleted()
   quantaApp->fileRecent->addURL( w->url() );
 
   quantaApp->slotRepaintPreview();
-  dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
-  quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
 
   w->createTempFile();
   w->view()->setFocus();
@@ -533,9 +510,9 @@ Document* QuantaDoc::write() const
 
 Document* QuantaDoc::newWrite()
 {
-  const DTDStruct *dtd = DTDs::ref()->find(Project::ref()->defaultDTD());
-  if (!dtd)
-      dtd = DTDs::ref()->find(qConfig.defaultDocType);   //fallback, but not really needed
+//  const DTDStruct *dtd = DTDs::ref()->find(Project::ref()->defaultDTD());
+//  if (!dtd)
+//      dtd = DTDs::ref()->find(qConfig.defaultDocType);   //fallback, but not really needed
   int i = 1;
   //while ( isOpened("file:/"+i18n("Untitled%1.").arg(i)+dtd->defaultExtension)) i++;
   while ( isOpened(KURL("file:/"+i18n("Untitled%1").arg(i)))) i++;
@@ -565,6 +542,8 @@ Document* QuantaDoc::newWrite()
   quantaApp->setFocusProxy(w->view());
   w->view()->setFocusPolicy(QWidget::WheelFocus);
   connect( v, SIGNAL(newStatus()),quantaApp, SLOT(slotNewStatus()));
+
+  quantaApp->slotNewPart(doc, true);  // register new part in partmanager and make active
 
   return w;
 }

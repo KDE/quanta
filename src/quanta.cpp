@@ -74,7 +74,8 @@
 #include <kdeversion.h>
 #include <ktip.h>
 #include <kmimetype.h>
-#include <kparts/componentfactory.h>
+#include <kparts/partmanager.h>
+#include <kparts/part.h>
 #include <kstringhandler.h>
 
 #include <ktexteditor/editinterface.h>
@@ -165,7 +166,7 @@ static void silenceQToolBar(QtMsgType, const char *){}
 
 
 
-QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KDockMainWindow(0L,"Quanta")
+QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KParts::DockMainWindow(0L,"Quanta")
 {
   m_quantaInit = new QuantaInit(this);
   dcopSettings = new DCOPSettings;
@@ -191,7 +192,6 @@ QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KDockMainWindow(0L,"Quan
   }
   qConfig.enableDTDToolbar = true;
 
-  setHighlight = 0;
   grepDialog  = 0L;
   exitingFlag = false;
   qConfig.spellConfig = new KSpellConfig();
@@ -204,6 +204,12 @@ QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KDockMainWindow(0L,"Quan
   connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false);
 
   m_execCommandPS = 0L;
+
+  m_partManager = new KParts::PartManager(this);
+  // When the manager says the active part changes,
+  // the builder updates (recreates) the GUI
+  connect(m_partManager, SIGNAL(activePartChanged(KParts::Part * )),
+          this, SLOT(slotActivePartChanged(KParts::Part * )));
 }
 
 QuantaApp::~QuantaApp()
@@ -235,6 +241,7 @@ QuantaApp::~QuantaApp()
  m_execCommandPS = 0L;
  delete dcopSettings;
  delete dcopQuanta;
+ delete m_partManager;
  quantaApp = 0L;
 }
 
@@ -251,8 +258,6 @@ void QuantaApp::setTitle(const QString& title)
 void QuantaApp::slotFileNew()
 {
   m_doc->openDocument( KURL() );
-  if (!setHighlight)
-     setHighlight = m_view->write()->kate_doc->hlActionMenu (i18n("Highlight &Mode"), actionCollection(), "set_highlight");
 }
 
 void QuantaApp::slotFileOpen()
@@ -559,36 +564,7 @@ void QuantaApp::slotFileReloadAll()
 
 void QuantaApp::slotFileClose()
 {
-  if (m_view->writeExists())
-  {
-  //[MB]  QWidget *activeWidget = rightWidgetStack->visibleWidget();
-#ifdef BUILD_KAFKAPART
-    //kafkaPart->unloadDocument();
-#endif
-    m_doc->closeDocument();
-    WHTMLPart *part = m_htmlPart;
-    part->closeURL();
-    part->begin(Project::ref()->projectBaseURL());
-    part->write(" ");
-    part->end();
-
-    slotUpdateStatus(m_view->writeTab()->currentPage());
-  } else {
-    QWidget *kietWidget;
-    kietWidget = m_view->writeTab()->currentPage();
-
-    QDict<QuantaPlugin> plugins = m_pluginInterface->plugins();
-    QDictIterator<QuantaPlugin> it(plugins);
-
-    for(;it.current() != 0;++it) {
-      QuantaPlugin *curPlugin = it.current();
-      QWidget *pluginWidget = curPlugin->widget();
-      if (pluginWidget && pluginWidget == kietWidget) {
-        curPlugin->unload();
-      }
-   }
- }
-
+   slotClosePage(m_view->writeTab()->currentPage());
 }
 
 void QuantaApp::slotFileClose(const KURL &url)
@@ -625,11 +601,6 @@ void QuantaApp::slotFilePrev()
    m_doc->prevDocument();
 }
 
-void QuantaApp::slotFilePrint()
-{
- if (m_view->writeExists())
-     dynamic_cast<KTextEditor::PrintInterface*>(m_view->write()->doc())->printDialog();
-}
 
 void QuantaApp::slotFileQuit()
 {
@@ -912,22 +883,6 @@ void QuantaApp::slotNewStatus()
     actionCollection()->action("toolbars_load_project")->setEnabled(projectExists);
     actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
 
-    KToggleAction *a;
-    a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("view_border"));
-    if (a)
-    {
-      viewBorder->setChecked(a->isChecked());
-    }
-    a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("view_line_numbers"));
-    if (a)
-    {
-      viewLineNumbers->setChecked(a->isChecked());
-    }
-
-     //viewFoldingMarkers->setChecked(w->kate_view->lineNumbersOn());
-    viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
-    if (setHighlight) setHighlight->updateMenu (w->kate_doc);
-
     QTabWidget *wTab = m_view->writeTab();
     w = static_cast<Document*>(wTab->currentPage());
     // try to set the icon from mimetype
@@ -1019,7 +974,6 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   QuantaPlugin *plugin = m_pluginInterface->plugin(tabTitle);
   if (plugin)
   {
-    plugin->showGui(false);
     if (showStatusbarAction->isChecked())
     {
       showStatusbarAction->setChecked(true);
@@ -1033,18 +987,15 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   Document *newWrite = dynamic_cast<Document *>(w);
   if (!newWrite)
   {
-//add the GUI for the currently visible plugin
-    tabTitle = wTab->tabLabel(w);
-    plugin = m_pluginInterface->plugin(tabTitle);
-    if (plugin)
-       plugin->showGui(true);
     m_view->oldTab = w;
     m_view->toolbarTab()->hide();
     parser->setSAParserEnabled(false);
     slotReloadStructTreeView();
     return;
   }
-  dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
+  KTextEditor::View * oldView = newWrite->view();
+  m_partManager->setActivePart(newWrite->doc(), oldView);
+
   newWrite->checkDirtyStatus();
   if (newWrite != m_view->oldWrite)
     StructTreeView::ref()->useOpenLevelSetting = true;
@@ -1066,13 +1017,6 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 #endif
 
   m_view->oldWrite = currentWrite;
-  currentWrite->kate_view->setIconBorder(qConfig.iconBar);
-  currentWrite->kate_view->setLineNumbersOn(qConfig.lineNumbers);
-  viewBorder->setChecked(qConfig.iconBar);
-  viewLineNumbers->setChecked(qConfig.lineNumbers);
-
-  dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->setDynWordWrap(qConfig.dynamicWordWrap);
-  viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->dynWordWrap());
 
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (s->id(s->visibleWidget()) == 1)
@@ -1748,6 +1692,8 @@ void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
 
 void QuantaApp::openDoc(const QString& url)
 {
+  m_htmlPartDoc->view()->setFocus();  // activates the part
+
   QString urlStr = url;
   if (urlStr.startsWith("/"))
     urlStr.prepend("file:");
@@ -1794,7 +1740,6 @@ void QuantaApp::slotContextHelp()
       if (dtabdock->isVisible()) m_oldTreeViewWidget = dtabdock;
       if (!dtabdock->isVisible()) dtabdock->changeHideShowState();
       s->raiseWidget(2);
-      m_htmlPartDoc->view()->setFocus();
 
       openDoc(*url);
     }
@@ -1868,12 +1813,6 @@ void QuantaApp::slotShowBottDock(bool force)
 void QuantaApp::settingsMenuAboutToShow()
 {
   showMessagesAction->setChecked( bottdock->isVisible() );
-//Plug the Highlight menu
-  setHighlight->unplug(pm_set);
-  setHighlight->plug(pm_set);
-//Plug the End of line menu
-  setEndOfLine->unplug(pm_set);
-  setEndOfLine->plug(pm_set);
 }
 
 void QuantaApp::viewMenuAboutToShow()
@@ -2030,21 +1969,34 @@ void QuantaApp::slotInsertFile(const KURL& url)
 }
 
 
-//Kate related
-void QuantaApp::setEOLMenuAboutToShow()
-{
-  if (m_view->writeExists())
-  {
-    int eol = m_view->write()->kate_view->getEol();
-    eol = eol>=0? eol: 0;
-    setEndOfLine->setCurrentItem( eol );
-  }
-}
-
 void QuantaApp::slotContextMenuAboutToShow()
 {
   if (m_view->writeExists())
   {
+    QPopupMenu *popup = static_cast<QPopupMenu*>(factory()->container("popup_editor",this));
+    if (popup) {
+      if (m_oldContextCut) {
+        m_oldContextCut->unplug(popup);
+      }
+      KTextEditor::View* view = m_view->write()->view();
+      m_oldContextCut = view->actionCollection()->action("edit_cut");
+      if (m_oldContextCut)
+        m_oldContextCut->plug(popup, 0);
+
+      if (m_oldContextCopy) {
+        m_oldContextCopy->unplug(popup);
+      }
+      m_oldContextCopy = view->actionCollection()->action("edit_copy");
+      if (m_oldContextCopy)
+        m_oldContextCopy->plug(popup, 1);
+
+      if (m_oldContextPaste) {
+        m_oldContextPaste->unplug(popup);
+      }
+      m_oldContextPaste = view->actionCollection()->action("edit_paste");
+      if (m_oldContextPaste)
+        m_oldContextPaste->plug(popup, 2);
+    }
     QString name;
     uint line, col;
     int bl, bc, el, ec;
@@ -2056,7 +2008,8 @@ void QuantaApp::slotContextMenuAboutToShow()
       if (node->tag->dtd->family == Script)
       {
         StructTreeGroup group;
-        for (uint i = 0; i < node->tag->dtd->structTreeGroups.count(); i++)
+        uint count = node->tag->dtd->structTreeGroups.count();
+        for (uint i = 0; i < count; i++)
         {
           group = node->tag->dtd->structTreeGroups[i];
           if (group.hasFileName)
@@ -2101,10 +2054,11 @@ void QuantaApp::slotContextMenuAboutToShow()
       {
         QMap<QString, XMLStructGroup>::ConstIterator it = node->tag->dtd->xmlStructTreeGroups.find(node->tag->name.lower());
 
-        if (it != node->tag->dtd->xmlStructTreeGroups.end())
+        if (it != node->tag->dtd->xmlStructTreeGroups.constEnd())
         {
           XMLStructGroup group = it.data();
-          for (uint j = 0; j <group.attributes.count(); j++ )
+          uint count = group.attributes.count();
+          for (uint j = 0; j < count; j++ )
             if (node->tag->hasAttribute(group.attributes[j]))
             {
               name.append(node->tag->attributeValue(group.attributes[j]));
@@ -2152,48 +2106,6 @@ void QuantaApp::slotOpenFileUnderCursor()
     slotImageOpen( urlUnderCursor );
   }
 
-}
-
-void QuantaApp::bookmarkMenuAboutToShow()
-{
-  if (m_view->writeExists())
-  {
-    pm_bookmark->clear ();
-    bookmarkToggle->plug (pm_bookmark);
-    bookmarkClear->plug (pm_bookmark);
-    pm_bookmark->insertSeparator ();
-    bookmarkPrev->plug (pm_bookmark);
-    bookmarkNext->plug (pm_bookmark);
-
-    Document *w = m_view->write();
-    markList = dynamic_cast<KTextEditor::MarkInterface*>(w->doc())->marks();
-  //Based on Kate code
-    bool hassep = false;
-    for (int i=0; (uint) i < markList.count(); i++)
-    {
-      if (markList.at(i)->type & Kate::Document::markType01)
-      {
-        if (!hassep) {
-          pm_bookmark->insertSeparator ();
-          hassep = true;
-        }
-        QString bText = w->editIf->textLine(markList.at(i)->line);
-        bText = bText.stripWhiteSpace();
-        if (bText.length() > 35)
-        {
-          bText.truncate(32);
-          bText.append ("...");
-        }
-        pm_bookmark->insertItem ( QString("%1 - \"%2\"").arg(markList.at(i)->line+1).arg(bText),
-                                  this, SLOT (gotoBookmark(int)), 0, i );
-      }
-    }
-  }
-}
-
-void QuantaApp::gotoBookmark (int n)
-{
-  m_view->gotoMark(markList.at(n));
 }
 
 /** No descriptions */
@@ -3793,122 +3705,6 @@ void QuantaApp::slotDeleteFile()
   }
 }
 
-//FIXME: Do it right and add the GUI and shortcuts of the current part (editor, html, plugin)
-//so we don't have to catch ourselves the different actions. Would reduce the code. The
-//reason behind the current implementation is that I like to have a control about
-//disabled/enabled actions, like the save, copy, etc. And idea would be to get the actions
-//each time in slotNewStatus() from the part's actionCollection, but I don't know what would
-//be the performance impact. This is a must to do in 3.3!!
-void QuantaApp::slotFind()
-{
-  KAction *a = 0L;
-  int id = 0;
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (s)
-    id = s->id(s->visibleWidget());
-  if (id == 0 && m_view->writeExists())
-  {
-    a = m_view->write()->view()->actionCollection()->action("edit_find");
-  } else
-  if (id == 1)
-  {
-    a = m_htmlPart->actionCollection()->action("find");
-  } else
-  if (id == 2)
-  {
-    a = m_htmlPartDoc->actionCollection()->action("find");
-  }
-  if (a)
-    a->activate();
-}
-
-void QuantaApp::slotFindAgain ()
-{
-  KAction *a = 0L;
-  int id = 0;
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (s)
-    id = s->id(s->visibleWidget());
-  if (id == 0 && m_view->writeExists())
-  {
-    a = m_view->write()->view()->actionCollection()->action("edit_find_next");
-  } else
-  if (id == 1)
-  {
-    a = m_htmlPartDoc->actionCollection()->action("findNext");
-  } else
-  if (id == 2)
-  {
-    a = m_htmlPartDoc->actionCollection()->action("findNext");
-  }
-  if (a)
-    a->activate();
-}
-
-void QuantaApp::slotFindAgainB ()
-{
-  KAction *a = 0L;
-  int id = 0;
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (s)
-    id = s->id(s->visibleWidget());
-  if (id == 0 && m_view->writeExists())
-  {
-    a = m_view->write()->view()->actionCollection()->action("edit_find_prev");
-  } else
-  if (id == 1)
-  {
-  } else
-  if (id == 2)
-  {
-  }
-  if (a)
-    a->activate();
-}
-
-void QuantaApp::slotReplace ()
-{
-  KAction *a = 0L;
-  int id = 0;
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (s)
-    id = s->id(s->visibleWidget());
-  if (id == 0 && m_view->writeExists())
-  {
-    a = m_view->write()->view()->actionCollection()->action("edit_replace");
-  }
-  if (a)
-    a->activate();
-}
-
-void QuantaApp::slotSelectAll ()
-{
-  int id = 0;
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (s)
-    id = s->id(s->visibleWidget());
-  if (id == 0 && m_view->writeExists())
-  {
-    Document *w = m_view->write();
-    w->selectionIf->selectAll();
-    QString selection = w->selectionIf->selection();
-    QClipboard *cb = QApplication::clipboard();
-    cb->setText(selection, QClipboard::Selection);
-  } else
-  if (id == 1)
-  {
-    KAction *a = m_htmlPartDoc->actionCollection()->action("selectAll");
-    if (a)
-      a->activate();
-  } else
-  if (id == 2)
-  {
-    KAction *a = m_htmlPartDoc->actionCollection()->action("selectAll");
-    if (a)
-      a->activate();
-  }
-}
-
 
 bool QuantaApp::structTreeVisible() const
 {
@@ -3969,6 +3765,25 @@ void QuantaApp::slotProcessTimeout()
     m_loopStarted = false;
   }
 }
+
+
+void QuantaApp::slotActivePartChanged(KParts::Part * part)
+{
+  if (m_oldKTextEditor && part) // if part == 0L the pointer m_oldKTextEditor is not useable
+  {
+    guiFactory()->removeClient(m_oldKTextEditor);
+    m_oldKTextEditor = 0L;
+  }
+  createGUI(part);
+  QWidget * activeWid = m_partManager->activeWidget();
+  if ( activeWid && activeWid->inherits("KTextEditor::View"))
+  {
+    m_oldKTextEditor = dynamic_cast<KTextEditor::View *>(activeWid);
+    if (m_oldKTextEditor)
+      guiFactory()->addClient(m_oldKTextEditor);
+  }
+}
+
 
 void QuantaApp::layoutDockWidgets(const QString& layout)
 {
@@ -4061,6 +3876,11 @@ void QuantaApp::slotReportBug()
   bugReportDlg.exec();
 }
 
+void QuantaApp::slotNewPart(KParts::Part *newPart, bool setActiv)
+{
+  m_partManager->addPart(newPart, setActiv);
+};
+
 
 bool QuantaApp::queryClose()
 {
@@ -4129,8 +3949,6 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Auto completion", qConfig.useAutoCompletion);
     m_config->writeEntry("Update Closing Tags", qConfig.updateClosingTags);
 
-//    m_config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
-
     m_config->writeEntry("Default encoding", qConfig.defaultEncoding);
     m_config->writeEntry("Default DTD", qConfig.defaultDocType);
 
@@ -4164,9 +3982,6 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Show DTD Select Dialog", qConfig.showDTDSelectDialog);
 
     m_config->setGroup("Quanta View");
-    m_config->writeEntry("LineNumbers", qConfig.lineNumbers);
-    m_config->writeEntry("Iconbar", qConfig.iconBar);
-    m_config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
    // m_doc->writeConfig(m_config); // kwrites
     Project::ref()->writeConfig(m_config); // project
     manager()->writeConfig(m_config);

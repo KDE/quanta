@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32036">
+<kpartgui name="quanta" version="32037">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -20,7 +20,7 @@
       <Action name="file_reload" />
       <Action name="file_reload_all" />
       <Separator />
-      <Action name="file_print" />
+      <DefineGroup name="print_merge" />
       <Separator />
       <Action name="file_close" />
       <Action name="file_close_all" append="close_merge"/>
@@ -31,38 +31,18 @@
    <Menu name="edit" noMerge="1"><text>&amp;Edit</text>
     <Action name="edit_undo" />
     <Action name="edit_redo" />
-    <Action name="undo_history" append="edit_undo_merge"/>
-    <Separator />
-    <Action name="edit_cut" />
-    <Action name="edit_copy" />
-    <Action name="edit_paste" />
-    <Menu name="paste_special" append="edit_paste_merge"><text>Paste Special</text>
+    <DefineGroup name="edit_undo_merge" />
+    <DefineGroup name="edit_paste_merge" />
+    <Menu name="paste_special"><text>Paste Special</text>
          <Action name="edit_paste_html_quoted"/>
          <Action name="edit_paste_url_encoded"/>
       </Menu>
-    <Action name="edit_select_all" />
-    <Action name="edit_deselect"/>
-    <Action name="set_verticalSelect"/>
-    <Action name="set_insert"/>
     <Separator />
-    <Action name="edit_find" />
-    <Action name="edit_find_next" />
-    <Action name="edit_find_prev" />
-    <Action name="edit_replace" />
+    <DefineGroup name="edit_select_merge" />
+    <DefineGroup name="edit_find_merge" />
     <Action name="find_in_files"/>
     <Separator />
-    <Action name="edit_indent" />
-    <Action name="edit_unindent" />
-    <Action name="edit_cleanindent" />
-    <Separator />
-    <Action name="edit_comment" />
-    <Action name="edit_uncomment" />
-    <Separator />
     <Action name="expand_abbreviation"/>
-    <Action name="edit_apply_wordwrap"/>
-    <Action name="edit_goto_line"/>
-    <Action name="tools_spelling" />
-    <Separator/>
   </Menu>
 
     <Menu name="view"><text>&amp;View</text>
@@ -81,10 +61,7 @@
       <Action name="view_statusbar"/>
       <Action name="show_messages"/>
       <Action name="show_problems"/>
-      <Separator />
-      <Action name="view_border"/>
-      <Action name="view_line_numbers"/>
-      <Action name="view_dynamic_word_wrap"/>
+      <Merge />
       <Separator/>
       <Action name="show_quanta_editor"/>
       <Action name="show_kafka_view"/>
@@ -102,14 +79,6 @@
       <Action name="view_with_lynx"/>
     </Menu>
 
-  <Menu name="bookmarks" noMerge="1"><text>&amp;Bookmarks</text>
-    <Action name="bookmarks_toggle" />
-    <Action name="bookmarks_clear" />
-    <Separator/>
-    <Action name="bookmarks_previous" />
-    <Action name="bookmarks_next" />
-    <Separator />
-  </Menu>
    <Menu name="debug" noMerge="1"><text>&amp;Debug</text>
      <Menu name="debug_execution"><text>&amp;Execution</text>
        <Action name="debug_run" />
@@ -184,12 +153,10 @@
     <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
       <Action name="general_options"/>
       <Action name="editor_options"/>
+      <Merge/>
       <Action name="conf_actions"/>
       <Action name="conf_toolbars"/>
       <Action name="keys_bind"/>
-      <Separator/>
-      <Action name="set_eol"/>
-      <Action name="set_highlight"/>
     </Menu>
 
     <Menu name="help" noMerge="1"><text>&amp;Help</text>
@@ -219,22 +186,12 @@
     <Separator/>
     <Action name="file_save"    />
     <Action name="save_all"     />
-    <Separator/>
-    <Action name="file_print"   />
-    <Separator/>
   </ToolBar>
 
   <ToolBar name="mainEditToolBar" noMerge="1">
   <text>Editor Toolbar</text>
-    <Action name="edit_cut"  />
-    <Action name="edit_copy" />
-    <Action name="edit_paste"/>
-    <Separator/>
     <Action name="edit_undo" />
     <Action name="edit_redo" />
-    <Separator/>
-    <Action name="edit_find" />
-    <Action name="edit_find_next"/>
     <Separator/>
     <Action name="tools_spelling"/>
   </ToolBar>
@@ -262,10 +219,6 @@
   </ToolBar>
 
   <Menu name="popup_editor">
-    <Action name="edit_copy" />
-    <Action name="edit_cut" />
-    <Action name="edit_paste" />
-    <Separator />
     <Action name="edit_current_tag"/>
     <Action name="select_tag_area"/>
     <Action name="context_help"/>

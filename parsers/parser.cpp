@@ -459,7 +459,6 @@ Node *Parser::parse(Document *w, bool force)
 {
   QTime t;
   t.start();
-
 #ifdef BUILD_KAFKAPART
   //If VPL is loaded, there shouldn't be any rebuild
   if(quantaApp->view()->hadLastFocus() == QuantaView::kafkaFocus && !force)

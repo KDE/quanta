@@ -60,9 +60,6 @@ typedef struct QConfig{
           bool useAutoCompletion;
           bool enableDTDToolbar;
           QString defaultEncoding;
-          bool lineNumbers;
-          bool iconBar;
-          bool dynamicWordWrap;
 
           //parser options
           bool instantUpdate;

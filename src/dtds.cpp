@@ -53,6 +53,7 @@ const QString m_rcFilename("description.rc");
 */
 DTDs::DTDs()
 {
+  connect(this, SIGNAL(hideSplash()), quantaApp, SLOT(slotHideSplash()));
 //  kdDebug(24000) << "dtds::dtds" << endl;
   m_dict = new QDict<DTDStruct>(119, false); //optimized for max 119 DTD. This should be enough.
   m_dict->setAutoDelete(true);
@@ -918,7 +919,6 @@ void DTDs::slotLoadDTEP()
     }
   }
 }
-
 
 
 /** Returns the DTD name (identifier) corresponding to the DTD's nickname */

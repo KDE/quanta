@@ -230,7 +230,15 @@ void ProjectTreeView::slotNewProjectLoaded(const QString &name, const KURL &base
   m_projectName = name;
   if (!m_projectName.isNull())
   {
-    m_projectDir->root()->setText(0, m_projectName);
+    QString projectNameStr = m_projectName+" ";
+    if (m_baseURL.protocol() == "file")
+    {
+      projectNameStr += i18n("[local disk]");
+    } else
+    {
+      projectNameStr += "["+m_baseURL.protocol()+"://"+m_baseURL.user()+"@"+m_baseURL.host()+"]";
+    }
+    m_projectDir->root()->setText(0, projectNameStr);
     m_projectDir->root()->setText(1, m_baseURL.prettyURL());
     setDragEnabled(true);
   }
