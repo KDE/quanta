@@ -160,18 +160,33 @@ public:
   bool closingMissing; //closing tag is optional and missing
   QString structBeginStr; //if it's a special block, contains the block beginning definition string (like <? or <style language="foo">)
   bool validXMLTag; //false if the closing ">" was not found
+
+#ifdef BUILD_KAFKAPART
+  bool cleanStrBuilt() {return m_cleanStrBuilt;}
+  void setCleanStrBuilt(bool cleanStrBuilt) {m_cleanStrBuilt = cleanStrBuilt;}
+  bool indentationDone() {return m_indentationDone;}
+  void setIndentationDone(bool indentationDone) {m_indentationDone = indentationDone;}
+  bool notInTree() {return m_notInTree;}
+  void setNotInTree(bool notInTree) {m_notInTree = notInTree;}
+#endif
+  
+private:
 #ifdef BUILD_KAFKAPART
   //specifies if we need to build the clean tag string from the attrs
-  // or the text without entities. This is the most important bool of kafka!
+  // or the text without entities. This "clean" string will be inserted in the source view.
   // if true, the markup is already generated.
   // if false, it is not, we need to generate it.
-  bool cleanStrBuilt;
-  //specifies if this tag are just here to provide a DOM::Node <-> Node correspondance
-  // but are not in the Node Tree.
-  bool notInTree;
+  bool m_cleanStrBuilt;
+  
+  //Specify if the indentation has been applied to this Node : added spaces to text and empty Nodes,
+  // added empty Node around for other Node.
+  bool m_indentationDone;
+  
+  // specifies if this tag is just conencted to a DOM::Node but isn't part of the Node tree.
+  bool m_notInTree;
 #endif
 
-private:
+
   void init();
   /** Verifies if the last char from @param str is inside a script area or not */
   bool isInsideScript(const QString& str);

@@ -168,11 +168,37 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
         QValueList<NodeModif>::iterator it2;
         NodeModifsSet *NMSet;
         QValueList<int> loc;
-        int curFocus;
+        int curFocus, foo, foo2;
         NodeSelectionInd *nodeSelection;
+        Node *node;
+        bool goUp;
 
+        //Once the changes have been made, we will generate the "clean" string for Text Nodes only, and
+        //we will add the empty indentation Nodes.
+        node = baseNode;
+        while(node)
+        {
+          if(!node->tag->cleanStrBuilt() && node->tag->type == Tag::Text)
+          {
+            if(!node->insideSpecial)
+            {
+              node->tag->setStr(KafkaDocument::ref()->generateCodeFromNode(node, 0, 0, foo, foo2, true));
+              node->tag->setCleanStrBuilt(true);
+            }
+          }
+          if(!node->tag->indentationDone() && !node->insideSpecial)
+          {
+              kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node, modifs);
+              goUp = false;
+              kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp), modifs);
+              kafkaCommon::applyIndentation(node, 2, 0, modifs);
+          }
+          node = node->nextSibling();
+        }
+        
+        //Set the modification flag
         if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
-        m_doc->setModified(true);
+          m_doc->setModified(true);
 
         //Store the cursor position after the changes.
         nodeSelection = modifs->selectionAfter();
@@ -839,30 +865,17 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor, bool encode
         //empty Nodes for the indentation.
         while(node)
         {
-                if(!node->tag->cleanStrBuilt)
+                if(!node->tag->cleanStrBuilt())
                 {
-                        if(node->tag->type != Tag::ScriptTag && !node->insideSpecial)
+                        if(!node->insideSpecial)
                         {
-                          //Xml formatting
-                          //FIXME FIXME FIXME KafkaDocument::translateKafkaIntoNodeCursorPosition() set the
-                          //clean string but does not touch the position!!! FIXME FIXME FIXME
-                          node->tag->setStr(kafkaInterface->generateCodeFromNode(node, 0, 0, eLine, eCol, encodeText));
-                          //node->tag->setTagPosition(bLine, bCol, eLine, eCol);
-                          kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node, 0L);
-                          goUp = false;
-                          kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp), 0L);
-                          kafkaCommon::applyIndentation(node, 2, 0);
-                        }
-                        else if(node->tag->type == Tag::ScriptTag)
-                        {
-                          //Script formatting
                           node->tag->setStr(kafkaInterface->generateCodeFromNode(node, 0, 0, eLine, eCol, encodeText));
                         }
                         else
                         {
                           //Script formatting
                         }
-                        node->tag->cleanStrBuilt = true;
+                        node->tag->setCleanStrBuilt(true);
                 }
                 //_node->tag->beginPos(bLine, bCol);
                 //i can't stop redraw events of Kate!
@@ -961,7 +974,8 @@ void undoRedo::codeFormatting()
   
   while(node)
   {
-    node->tag->cleanStrBuilt = false;
+    node->tag->setCleanStrBuilt(false);
+    node->tag->setIndentationDone(false);
     node = node->nextSibling();
   }
   reloadQuantaEditor(true, false, false);

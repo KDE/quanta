@@ -160,27 +160,27 @@ void KafkaDocument::loadDocument(Document *doc)
 	node = new Node(0L);
 	tag = new Tag();
 	tag->name = "#document";
-	tag->notInTree = true;
+	tag->setNotInTree(true);
 	node->tag = tag;
 	connectDomNodeToQuantaNode(m_kafkaPart->document(), node);
 	node = new Node(0L);
 	tag = new Tag();
 	tag->name = "HTML";
-	tag->notInTree = true;
+	tag->setNotInTree(true);
 	node->tag = tag;
 	connectDomNodeToQuantaNode(m_kafkaPart->document().firstChild(), node);
 	html = m_kafkaPart->document().firstChild();
 	node = new Node(0L);
 	tag = new Tag();
 	tag->name = "HEAD";
-	tag->notInTree = true;
+	tag->setNotInTree(true);
 	node->tag = tag;
 	connectDomNodeToQuantaNode(m_kafkaPart->document().firstChild().firstChild(), node);
 	head = m_kafkaPart->document().firstChild().firstChild();
 	node = new Node(0L);
 	tag = new Tag();
 	tag->name = "BODY";
-	tag->notInTree = true;
+	tag->setNotInTree(true);
 	node->tag = tag;
 	connectDomNodeToQuantaNode(m_kafkaPart->document().firstChild().lastChild(), node);
 	body = m_kafkaPart->document().firstChild().lastChild();
@@ -754,7 +754,8 @@ void KafkaDocument::buildNodeFromKafkaNode(Node *node, DOM::Node domNode)
 
 	if(!node) return;
 
-	node->tag->cleanStrBuilt = false;
+	node->tag->setCleanStrBuilt(false);
+        node->tag->setIndentationDone(false);
 	if(domNode.nodeType() == DOM::Node::TEXT_NODE)
 	{
 		node->tag->setStr(domNode.nodeValue().string());
@@ -794,7 +795,7 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node domNode, Node *nodeParent
 	}
 
 	//nodeParent can be the false body node which is not in the tree.
-	if(nodeParent->tag->notInTree)
+	if(nodeParent->tag->notInTree())
 		nodeParent = 0L;
 
 	/**_node = new Node(_nodeParent);*/
@@ -1194,7 +1195,7 @@ void KafkaDocument::translateQuantaIntoNodeCursorPosition(uint line, uint col, N
   if(!*node)
    return;
   
-  if((*node)->tag->cleanStrBuilt)
+  if((*node)->tag->cleanStrBuilt() && (*node)->tag->indentationDone())
   {
     (*node)->tag->beginPos(beginLine, beginCol);
     curLine = beginLine;
@@ -1261,12 +1262,12 @@ void KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long
 		return ;
 	}
 
-	if(!(*node)->tag->cleanStrBuilt)
+	if(!(*node)->tag->cleanStrBuilt())
 	{
 		//We NEED to have the up-to-date string in node.
 		(*node)->tag->setStr(generateCodeFromNode((*node), bLine, bCol, eLine, eCol));
 		//FIXME we shouldn't set it but if we don't the text will be re-encoded!
-		(*node)->tag->cleanStrBuilt = true;
+		(*node)->tag->setCleanStrBuilt(true);
 	}
 
 	decodedText = domNode.nodeValue().string();
@@ -1563,7 +1564,7 @@ void KafkaDocument::translateNodeIntoKafkaCursorPosition(Node *node, int offset,
 	int col;
 	bool lookForEntity, lookForSpaces, found;
 
-	if(node->rootNode() && node->rootNode()->nodeType() == DOM::Node::TEXT_NODE)
+	if(node && node->rootNode() && node->rootNode()->nodeType() == DOM::Node::TEXT_NODE)
 	{
 		domNodeOffset = 0;
 		domNode = *node->rootNode();
@@ -1595,7 +1596,7 @@ void KafkaDocument::translateNodeIntoKafkaCursorPosition(Node *node, int offset,
 			domNodeOffset++;
 		}
 	}
-	else if(node->rootNode())
+	else if(node && node->rootNode())
 	{
 		domNode = *node->rootNode();
 		domNodeOffset = 0;//shoud we select?
@@ -2014,7 +2015,7 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		_node->parent->tag->endPos(eLine, eCol);
 		_node->tag->beginPos(bLine2, bCol2);
 		if(QuantaCommon::isBetween(bLine2, bCol2, bLine, bCol, eLine,eCol) == 0)
-			_node->parent->tag->cleanStrBuilt = false;
+			_node->parent->tag->setCleanStrBuilt(false);
 	}
 
 	if(_node->prev)

@@ -4551,9 +4551,9 @@ void QuantaApp::slotUndo ()
 #ifdef BUILD_KAFKAPART
   if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus && w)
   {
-    KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
-      QString::null, "show undo unavailable");
-    //w->docUndoRedo->undo();
+    /**MessageBox::information(this, i18n("VPL does not support this functionality yet."),
+      QString::null, "show undo unavailable");*/
+    w->docUndoRedo->undo();
     return;
   }
 #endif
@@ -4578,9 +4578,9 @@ void QuantaApp::slotRedo ()
 #ifdef BUILD_KAFKAPART
   if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
   {
-    KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
-      QString::null, "show redo unavailable");
-    //w->docUndoRedo->redo();
+    /**KMessageBox::information(this, i18n("VPL does not support this functionality yet."),
+      QString::null, "show redo unavailable");*/
+    w->docUndoRedo->redo();
     return;
   }
 #endif

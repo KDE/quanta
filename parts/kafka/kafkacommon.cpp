@@ -199,7 +199,7 @@ DOM::Node kafkaCommon::getPrevDomNode(DOM::Node node, DOM::Node endNode)
     return n;
 }
 
-void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
+void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, NodeModifsSet* modifs)
 {
 #ifdef LIGHT_DEBUG
     kdDebug(25001)<< "kafkaCommon::applyIndentation()" << endl;
@@ -224,7 +224,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
 
     //First remove all the indentation
     if(node->tag->type == Tag::Text)
-        node->tag->setStr(removeUnnecessaryWhitespaces(node->tag->tagStr()));
+        setTagString(node, removeUnnecessaryWhitespaces(node->tag->tagStr()), modifs);
     //Remove all indentation at the end of the prev and at the beginning of the next
     //TODO: UNNECESSARY?
     /**if(prev)
@@ -312,15 +312,15 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
         {
             if(node->tag->type == Tag::Text && !hasParent(node, "pre"))
             {
-                setTagStringAndFitsNodes(node, indentation1 + node->tag->tagStr());
+                setTagStringAndFitsNodes(node, indentation1 + node->tag->tagStr(), modifs);
             }
             else if(prev && prev->tag->type == Tag::Empty)
             {
-                setTagStringAndFitsNodes(prev, indentation1);
+                setTagStringAndFitsNodes(prev, indentation1, modifs);
             }
             else if(prev && prev->tag->type == Tag::Text)
             {
-                setTagStringAndFitsNodes(prev, prev->tag->tagStr() + indentation1);
+                setTagStringAndFitsNodes(prev, prev->tag->tagStr() + indentation1, modifs);
             }
         }
 
@@ -331,17 +331,17 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
         {
             if(node->tag->type == Tag::Text && !hasParent(node, "pre"))
             {
-                setTagStringAndFitsNodes(node, node->tag->tagStr() + indentation2);
+                setTagStringAndFitsNodes(node, node->tag->tagStr() + indentation2, modifs);
             }
             else if(next && next->tag->type == Tag::Empty)
             {
-                setTagStringAndFitsNodes(next, indentation2);
+                setTagStringAndFitsNodes(next, indentation2, modifs);
             }
             //If next's cleanStrBuilt is not true, the next node to be processed will be this
             //one and the indentation spaces will be handled as real spaces.
-            else if(next && next->tag->type == Tag::Text && next->tag->cleanStrBuilt)
+            else if(next && next->tag->type == Tag::Text && next->tag->indentationDone())
             {
-                setTagStringAndFitsNodes(next, indentation2 + next->tag->tagStr());
+                setTagStringAndFitsNodes(next, indentation2 + next->tag->tagStr(), modifs);
             }
         }
     }
@@ -350,6 +350,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
         //The parent is inline, so no indentation.
         //Nothing to do.
     }
+    node->tag->setIndentationDone(true);
 }
 
 void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2, NodeModifsSet *modifs)
@@ -724,7 +725,8 @@ Node* kafkaCommon::createNode(const QString &nodeName, const QString &tagString,
     else
         node->tag->single = false;
     node->tag->setStr(tagString);
-    node->tag->cleanStrBuilt = false;
+    node->tag->setCleanStrBuilt(false);
+    node->tag->setIndentationDone(false);
     return node;
 }
 
@@ -743,7 +745,7 @@ Node *kafkaCommon::createDoctypeNode(Document *doc)
 
     //Then build the Script tag which will be child of the above node.
     child = kafkaCommon::createNode("#text", "DOCTYPE" + doc->defaultDTD()->doctypeStr, Tag::Text, doc);
-    child->tag->cleanStrBuilt = true;
+    child->tag->setCleanStrBuilt(true);
     child->insideSpecial = true;
     insertNode(child, node, 0L, 0L, false);
 
@@ -767,7 +769,7 @@ Node *kafkaCommon::createXmlDeclarationNode(Document *doc, const QString &encodi
     //Then build the Text tag which will be child of the above node.
     text = " encoding=\"" + encoding + "\" version=\"1.0\"";
     child = kafkaCommon::createNode("#text", text, Tag::Text, doc);
-    child->tag->cleanStrBuilt = true;
+    child->tag->setCleanStrBuilt(true);
     child->insideSpecial = true;
     insertNode(child, node, 0L, 0L, false);
 
@@ -877,7 +879,10 @@ Node* kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling,
     if(modifs)
     {
         modif = new NodeModif();
-        modif->setType(NodeModif::NodeAdded);
+        if(node->child)
+          modif->setType(NodeModif::NodeAndChildsAdded);
+        else
+          modif->setType(NodeModif::NodeAdded);
         modif->setLocation(getLocation(node));
         modifs->addNodeModif(modif);
     }
@@ -988,18 +993,9 @@ Node* kafkaCommon::insertNodeSubtree(Node *node, Node* parentNode, Node* nextSib
     {
         nextNode = currentNode->next;
         if(currentNode == node)
-            node = insertNode(currentNode, parentNode, nextSibling, nextSibling, 0L, merge);
+            node = insertNode(currentNode, parentNode, nextSibling, nextSibling, modifs, merge);
         else
-            insertNode(currentNode, parentNode, nextSibling, nextSibling, 0L, merge);
-
-        //log this.
-        if(modifs)
-        {
-            modif = new NodeModif();
-            modif->setType(NodeModif::NodeAndChildsAdded);
-            modif->setLocation(getLocation(currentNode));
-            modifs->addNodeModif(modif);
-        }
+            insertNode(currentNode, parentNode, nextSibling, nextSibling, modifs, merge);
 
         currentNode = nextNode;
     }
@@ -1053,7 +1049,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 
     QValueList<int> startNodeLocation, endNodeLocation;
     QValueList<int>::iterator itStart, itEnd;
-    Node *commonParent, *commonParentStartChild, *commonParentEndChild, *parentNode, *node;
+    Node *commonParent = 0L, *commonParentStartChild, *commonParentEndChild, *parentNode, *node;
     Node *lastValidStartParent = 0L, *lastValidEndParent = 0L, *newParentNode, *child, *next;
     Node *oldCommonParent, *lastNewNode, *oldParentNode;
     QTag *parentNodeQTag, *newNodeQTag, *lastNewNodeQTag;
@@ -1661,7 +1657,8 @@ Node *kafkaCommon::duplicateNode(Node *node)
 
     newNode = new Node(0L);
     (*newNode) = node;
-    newNode->tag->cleanStrBuilt = false;
+    newNode->tag->setCleanStrBuilt(false);
+    newNode->tag->setIndentationDone(false);
 
     return newNode;
 }
@@ -2150,19 +2147,19 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet *modifs)
       (signed)n->tag->tagStr().length())
         return false;
 
-    tag = new Tag(*(n->tag));
-    tagStr = n->tag->tagStr();
-    n->tag->setStr(tagStr.left(offset));
-
     //logging
     if(modifs)
     {
+        tag = new Tag(*(n->tag));
         modif = new NodeModif();
         modif->setType(NodeModif::NodeModified);
         modif->setTag(tag);
         modif->setLocation(getLocation(n));
         modifs->addNodeModif(modif);
     }
+    
+    tagStr = n->tag->tagStr();
+    n->tag->setStr(tagStr.left(offset));
 
     if(n->tag->type == Tag::Text)
       node = createAndInsertNode("#text", tagStr.right(tagStr.length() - offset), Tag::Text, n->tag->write(),
@@ -2172,7 +2169,8 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet *modifs)
         n->parent, n->next, modifs, false);
 
     //Node's string is a part of n's clean string
-    node->tag->cleanStrBuilt = true;
+    node->tag->setCleanStrBuilt(true);
+    node->tag->setIndentationDone(true);
     return true;
 }
 
@@ -2207,8 +2205,10 @@ bool kafkaCommon::mergeNodes(Node *n, Node *n2, NodeModifsSet *modifs, bool merg
 
         if(n->tag->type == Tag::Text || n2->tag->type == Tag::Text)
             n->tag->type = Tag::Text;
-        if(!n->tag->cleanStrBuilt || !n2->tag->cleanStrBuilt)
-            n->tag->cleanStrBuilt = false;
+        if(!n->tag->cleanStrBuilt() || !n2->tag->cleanStrBuilt())
+            n->tag->setCleanStrBuilt(false);
+        if(!n->tag->indentationDone() || !n2->tag->indentationDone())
+            n->tag->setIndentationDone(false);
         kafkaCommon::extractAndDeleteNode(n2, modifs, false, false, false);
 
         return true;
@@ -2353,12 +2353,25 @@ void kafkaCommon::getEndPosition(Node *node, int bLine, int bCol, int &eLine, in
     getEndPosition(node->tag->tagStr(), bLine, bCol, eLine, eCol);
 }
 
-void kafkaCommon::setTagString(Node *node, const QString &newTagString)
+void kafkaCommon::setTagString(Node *node, const QString &newTagString, NodeModifsSet* modifs)
 {
     int eLine, eCol, bLine, bCol;
+    Tag *tag;
+    NodeModif* modif;
 
     if(!node)
         return;
+        
+    //logging
+    if(modifs)
+    {
+      tag = new Tag(*(node->tag));
+      modif = new NodeModif();
+      modif->setType(NodeModif::NodeModified);
+      modif->setTag(tag);
+      modif->setLocation(getLocation(node));
+      modifs->addNodeModif(modif);
+    }
 
     node->tag->beginPos(bLine, bCol);
     node->tag->setStr(newTagString);
@@ -2366,7 +2379,7 @@ void kafkaCommon::setTagString(Node *node, const QString &newTagString)
     node->tag->setTagPosition(bLine, bCol, eLine, eCol);
 }
 
-void kafkaCommon::setTagStringAndFitsNodes(Node *node, const QString &newTagString)
+void kafkaCommon::setTagStringAndFitsNodes(Node *node, const QString &newTagString, NodeModifsSet* modifs)
 {
     int eLine, eCol, oldELine, oldECol;
     bool b = false;
@@ -2375,7 +2388,7 @@ void kafkaCommon::setTagStringAndFitsNodes(Node *node, const QString &newTagStri
         return;
 
     node->tag->endPos(oldELine, oldECol);
-    setTagString(node, newTagString);
+    setTagString(node, newTagString, modifs);
     node->tag->endPos(eLine, eCol);
 
     fitsNodesPosition(getNextNode(node, b), eCol - oldECol, eLine - oldELine);
@@ -2932,8 +2945,8 @@ void kafkaCommon::coutTree(Node *node, int indent)
             output+= node->tag->tagStr().replace('\n',"<return>");
             output += "\"";
         }
-        kdDebug(25001) << output <<" (" << node->tag->type << ", " << node->tag->cleanStrBuilt
-        << ") "<< node << " at pos " << bLine << ":" << bCol << " - " <<
+        kdDebug(25001) << output <<" (" << node->tag->type << ", " << node->tag->cleanStrBuilt() << ", " <<
+        node->tag->indentationDone() << ") "<< node << " at pos " << bLine << ":" << bCol << " - " <<
         eLine << ":" << eCol << endl;
         kdDebug(25001)<< dots << "  +++ prev " << node->prev << " next " << node->next << " parent " <<
         node->parent << " child " << node->child << endl;

@@ -428,7 +428,7 @@ void TagAttributeTree::editorContentChanged()
             attr = m_node->tag->getAttribute((unsigned)i);
             m_node->tag->deleteAttribute((unsigned)i);
 
-            m_node->tag->cleanStrBuilt = false;
+            m_node->tag->setCleanStrBuilt(false);
             nodeModified = true;
           }
           break;
@@ -446,7 +446,7 @@ void TagAttributeTree::editorContentChanged()
          attr.quoted = true;
          m_node->tag->addAttribute(attr);
 
-         m_node->tag->cleanStrBuilt = false;
+         m_node->tag->setCleanStrBuilt(false);
          nodeModified = true;
       }
       QuantaView *view = ViewManager::ref()->activeView();

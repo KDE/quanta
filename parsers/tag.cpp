@@ -72,8 +72,9 @@ Tag::Tag( const Tag &t)
   attrs = t.attrs;
   validXMLTag = t.validXMLTag;
 #ifdef BUILD_KAFKAPART
-  cleanStrBuilt = t.cleanStrBuilt;
-  notInTree = t.notInTree;
+  m_cleanStrBuilt = t.m_cleanStrBuilt;
+  m_indentationDone = t.m_indentationDone;
+  m_notInTree = t.m_notInTree;
 #endif
 }
 
@@ -95,8 +96,9 @@ void Tag::init()
   m_nameCol = -1;
   validXMLTag = true;
 #ifdef BUILD_KAFKAPART
-  cleanStrBuilt = true;
-  notInTree = false;
+  m_cleanStrBuilt = true;
+  m_indentationDone = true;
+  m_notInTree = false;
 #endif
 }
 

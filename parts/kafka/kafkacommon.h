@@ -116,8 +116,9 @@ public:
 	 * @param node Apply nice indentation to this Node.
 	 * @param nbOfSpaces Specifies the number of spaces the minimal indentation must be.
 	 * @param nbOfTabs Specifies the number of tabs the minimal indentation must be.
+         * @param modifs The changes made are logged into modifs.
 	 */
-	static void applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs);
+	static void applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, NodeModifsSet *modifs);
 
 	/**
 	 * Create/Delete the necessary Empty Nodes between n1 and n2 so that a nice indentation can be
@@ -413,7 +414,7 @@ public:
 
 	/**
 	 * Create a copy of Node. It use the Node copy operator and add some kafka-specific flags :
-	 * It set the cleanStrBuilt to false;
+	 * It set the node->tag->cleanStrBuilt and node->tag->indentationDone to false;
 	 * @param node The node to duplicate.
 	 * @return Returns the duplicated Node. I wonder if i should always write so obvious things ;-)
 	 */
@@ -513,7 +514,7 @@ public:
 	/**
 	 * If n and n2 are both Text or Empty Nodes, merge them into one.
 	 * WARNING if merging occurs, n2 is deleted.
-	 * @param modifs The changes made are logged into modifs
+	 * @param modifs The changes made are logged into modifs.
 	 * @param mergeTextOnly Specify if we should only merge text Nodes, not empty ones.
 	 * @return Returns true if the Nodes were merged, else false.
 	 */
@@ -556,14 +557,15 @@ public:
 	 * Set the tag string of node, and update the start/end position of the Node.
 	 * @param node The node which get the new tag string.
 	 * @param newTagString The new tag String :-)
+         * @param modifs The changes made are logged into modifs.
 	 */
-	static void setTagString(Node *node, const QString &newTagString);
+	static void setTagString(Node *node, const QString &newTagString, NodeModifsSet* modifs);
 
 	/**
 	 * This function behaves essentially like the above function except that all the others Nodes' position
 	 * are updated too.
 	 */
-	static void setTagStringAndFitsNodes(Node *node, const QString &newTagString);
+	static void setTagStringAndFitsNodes(Node *node, const QString &newTagString, NodeModifsSet* modifs);
 
 	/**
 	 * Gets the location of a Node in a pointer-independant suit of ints e.g. 1,3,5 means

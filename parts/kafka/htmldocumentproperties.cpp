@@ -456,7 +456,7 @@ void htmlDocumentProperties::aboutToClose()
 					else
 						node->tag->editAttribute("http-equiv", (static_cast<AttributeItem *>(item))->editorText(0));
 					node->tag->editAttribute("content", (static_cast<AttributeItem *>(item))->editorText(1));
-					node->tag->cleanStrBuilt = false;
+					node->tag->setCleanStrBuilt(false);
 				}
 			}
 		}
@@ -539,7 +539,7 @@ void htmlDocumentProperties::aboutToClose()
 		if(linkNode->tag->attributeValue("rel").lower() != "stylesheet");
 			linkNode->tag->editAttribute("rel", "stylesheet");
 		linkNode->tag->editAttribute("href", finalURL);
-		linkNode->tag->cleanStrBuilt = false;
+		linkNode->tag->setCleanStrBuilt(false);
 	}
 
 	view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
