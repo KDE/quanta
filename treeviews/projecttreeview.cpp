@@ -195,10 +195,8 @@ void ProjectTreeView::slotReload()
       m_projectNameStr += "["+m_baseURL.protocol()+"://"+m_baseURL.user()+"@"+m_baseURL.host()+"]";
     }
     m_projectDir =  new ProjectTreeBranch( this, m_baseURL, m_projectNameStr, UserIcon("ptab"));
-    setDragEnabled(true);
   } else {
     m_projectDir =  new ProjectTreeBranch( this, m_baseURL, i18n("No Project"), UserIcon("ptab"));
-    setDragEnabled(false);
   }
 
   connect(m_projectDir, SIGNAL(populateFinished(KFileTreeViewItem*)),
