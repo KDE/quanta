@@ -1769,6 +1769,7 @@ void Parser::clearGroups()
     list = & it.data();
     for (uint i = 0; i < list->count(); i++)
     {
+      (*list)[i].node->groupElementLists.clear();
       delete (*list)[i].tag;
     }
   }
