@@ -15,7 +15,12 @@
 #include <kiconloader.h>
 #include <qmessagebox.h>
 #include <klocale.h>
+#include <kdeversion.h>
+#if KDE_IS_VERSION(3,1,90)
 #include <kinputdialog.h>
+#else
+#include <klineeditdlg.h>
+#endif
 
 // Qxsldbg specific includes
 #include <qvariant.h>
@@ -532,7 +537,11 @@ void KXsldbgPart::breakCmd_activated()
 
 void KXsldbgPart::evaluateCmd_activated()
 {
+#if KDE_IS_VERSION(3,1,90)
   QString expression = KInputDialog::getText("Evalute expression", "XPath:");
+#else
+  QString expression = KLineEditDlg::getText("Evalute expression", "XPath:");
+#endif  
   if (checkDebugger()  && (expression.length() > 0)){
     debugger->slotCatCmd( expression);
   }
@@ -540,7 +549,11 @@ void KXsldbgPart::evaluateCmd_activated()
 
 void KXsldbgPart::gotoXPathCmd_activated()
 {
+#if KDE_IS_VERSION(3,1,90)
   QString xpath = KInputDialog::getText("Goto XPath", "XPath:");
+#else
+  QString xpath = KLineEditDlg::getText("Goto XPath", "XPath:");
+#endif  
   if (checkDebugger() && xpath.length() > 0){
     debugger->slotCdCmd( xpath );
   }
