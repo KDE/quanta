@@ -1705,6 +1705,7 @@ void QuantaApp::initActions()
                                          ac, "file_open_recent");
 #endif
     fileRecent->setMaxItems(32);
+    fileRecent->setWhatsThis(i18n("Open File"));
     connect(fileRecent, SIGNAL(activated()), this, SLOT(slotFileOpen()));
 
     (void) new KAction( i18n( "Close All" ), 0, this,
@@ -1915,6 +1916,7 @@ void QuantaApp::initActions()
     m_project->projectRecent->setIcon("folder_new");
 #endif
     m_project->projectRecent->setMaxItems(32);
+    m_project->projectRecent->setWhatsThis(1i8n("Open Project"));
     connect(m_project->projectRecent, SIGNAL(activated()), m_project, SLOT(slotOpenProject()));
 
 
