@@ -1286,6 +1286,7 @@ Node *Parser::rebuild(Document *w)
  w->viewCursorIf->cursorPositionReal(&line, &col);
  modifs.cursorX2 = col;
  modifs.cursorY2 = line;
+ modifs.isModified = w->isModified();
  /**kdDebug(24000)<< "************* Begin User Modification *****************" << endl;
   //debug!
   coutTree(m_node, 2);*/

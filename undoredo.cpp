@@ -15,12 +15,17 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <kdebug.h>
-
 //debug only
 #include <qdatetime.h>
+//end debug only
+#include <qtabwidget.h>
+
+#include <kdebug.h>
+#include <kiconloader.h>
 
 #include "document.h"
+#include "quanta.h"
+#include "quantaview.h"
 #include "parser/node.h"
 #include "parser/tag.h"
 #include "resource.h"
@@ -38,7 +43,9 @@ undoRedo::undoRedo(Document *doc)
 	NodeModifsSet modifs;
 	modifs.cursorX = 0;
 	modifs.cursorY = 0;
+	modifs.isModified = false;
 	addNewModifsSet(modifs);
+	editorIterator = begin();
 }
 
 undoRedo::~undoRedo()
@@ -57,7 +64,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 	bool noMerge = false;
 	bool textTyped;
 
-/*#ifdef RELEASE**/
+/**#ifdef RELEASE*/
 	//for the release
 	for(it2 = modifs.NodeModifList.begin(); it2 != modifs.NodeModifList.end(); it2++)
 	{
@@ -69,7 +76,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 			delete (*it2).tag;
 	}
 	return;
-/*#endif**/
+/**#endif*/
 
 	if(_mergeNext)
 	{
@@ -347,6 +354,24 @@ bool undoRedo::undo(bool kafkaUndo)
 	}
 	_doc->viewCursorIf->setCursorPositionReal((*editorIterator).cursorY, (*editorIterator).cursorX);
 	editorIterator--;
+	if(quantaApp->view()->writeExists())
+	{
+		Document* w;
+		w = quantaApp->view()->write();
+		w->setModified((*editorIterator).isModified);
+		if(!(*editorIterator).isModified)
+		{
+			QIconSet  emptyIcon( UserIcon("empty16x16" ));
+			QTabWidget *wTab = quantaApp->view()->writeTab();
+			wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
+		}
+		else
+		{
+			QIconSet floppyIcon( UserIcon("save_small"));
+			QTabWidget *wTab = quantaApp->view()->writeTab();
+			wTab->changeTab( w,  floppyIcon,  wTab->tabLabel(w));
+		}
+	}
 	//We need to update the internal pointer of baseNode in the parser.
 	parser->setM_node(baseNode);
 	_doc->activateRepaintView(true);
@@ -403,6 +428,24 @@ bool undoRedo::redo(bool kafkaUndo)
 			(*it).type = undoRedo::NodeTreeRemoved;
 	}
 	_doc->viewCursorIf->setCursorPositionReal((*editorIterator).cursorY2, (*editorIterator).cursorX2);
+	if(quantaApp->view()->writeExists())
+	{
+		Document* w;
+		w = quantaApp->view()->write();
+		w->setModified((*editorIterator).isModified);
+		if(!(*editorIterator).isModified)
+		{
+			QIconSet  emptyIcon( UserIcon("empty16x16" ));
+			QTabWidget *wTab = quantaApp->view()->writeTab();
+			wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
+		}
+		else
+		{
+			QIconSet floppyIcon( UserIcon("save_small"));
+			QTabWidget *wTab = quantaApp->view()->writeTab();
+			wTab->changeTab( w,  floppyIcon,  wTab->tabLabel(w));
+		}
+	}
 	//We need to update the internal pointer of baseNode in the parser.
 	parser->setM_node(baseNode);
 	_doc->activateRepaintView(true);
@@ -1014,6 +1057,25 @@ Node * undoRedo::getNodeFromLocation(QValueList<int> loc)
 		_node = _node->child;
 	}
 	return m;
+}
+
+void undoRedo::fileSaved()
+{
+	QValueList<NodeModifsSet>::iterator it = editorIterator;
+	(*editorIterator).isModified = false;
+	//seting isModified = true to all others
+	while(it != begin())
+	{
+		it--;
+		(*it).isModified = true;
+	}
+	it = editorIterator;
+	it++;
+	while(it != end())
+	{
+		(*it).isModified = true;
+		it++;
+	}
 }
 
 void undoRedo::fitsNodesPosition(Node* _startNode, int colMovement, int lineMovement, int colEnd, int lineEnd)

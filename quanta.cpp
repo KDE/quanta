@@ -211,7 +211,11 @@ void QuantaApp::slotFileSave()
     if ( w->isUntitled() )
       slotFileSaveAs();
     else
+    {
       m_doc->saveDocument( w->url() );
+      view()->write()->docUndoRedo.fileSaved();
+    }
+
 
     slotUpdateStatus(w);
   }
@@ -239,6 +243,7 @@ bool QuantaApp::slotFileSaveAs()
         m_project->insertFile(data.url, true);
       }
 
+      view()->write()->docUndoRedo.fileSaved();
       slotUpdateStatus(w);
       result = true;
     }
@@ -309,6 +314,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
   if (projectTemplate) m_project->insertFile(fileName, true);
 
+  view()->write()->docUndoRedo.fileSaved();
   slotUpdateStatus(w);
 }
 

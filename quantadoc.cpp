@@ -249,13 +249,17 @@ bool QuantaDoc::saveAll(bool dont_ask)
       docTab->showPage(w);
       if ( dont_ask && !w->isUntitled())
       {
+        w->docUndoRedo.fileSaved();
         w->save();
         w->closeTempFile();
         w->createTempFile();
         if ( w->isModified() ) flagsave = false;
       }
       else
+      {
         if ( !saveModified() ) flagsave = false;
+        else w->docUndoRedo.fileSaved();
+      }
 
       if (w->url().isLocalFile()) fileWatcher->addFile(w->url().path());
     }

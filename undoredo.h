@@ -58,6 +58,10 @@ typedef struct NodeModifsSet
 	/** The position of the cursor after the user input */
 	uint cursorX2;
 	uint cursorY2;
+	/** The state of the document after the user input */
+	bool isModified;
+	/** The description of the user input. For a future Undo history */
+	QString description;
 };
 
 /**
@@ -151,6 +155,12 @@ public:
 		//WARNING : NodeAndChildsMoved not implemented for the same reason.
 		NodeAndChildsMoved
 	};
+
+	/**
+	 * Called by quantaApp whenever the current file is saved. The isModified
+	 * flag of each NodeModisSet is updated.
+	 */
+	void fileSaved();
 
 private:
 

@@ -70,7 +70,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
   kate_doc = dynamic_cast<Kate::Document*>(m_doc);
   kate_view = dynamic_cast<Kate::View*>(m_view);
-  m_view->installEventFilter(this);
+  kate_view->installEventFilter(this);
 
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
