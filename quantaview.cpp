@@ -66,7 +66,7 @@
 #include "toolbar/tagaction.h"
 #include "toolbar/toolbartabwidget.h"
 
-QuantaView::QuantaView(QWidget *parent, const char *name )
+    QuantaView::QuantaView(QWidget *parent, const char *name )
   : QWidget( parent, name)
 {
   doc = quantaApp->doc();

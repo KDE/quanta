@@ -66,6 +66,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   busy    = false;
   changed = false;
   m_doc = doc;
+  m_view = 0L; //needed, because createView() calls processEvents() and the "this" may be deleted before m_view gets a value => crash on delete m_view;
   m_view = m_doc->createView(this, 0L);
   completionInProgress = false;
 

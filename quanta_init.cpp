@@ -840,8 +840,11 @@ void QuantaApp::openLastFiles()
   m_doc->blockSignals(false);
   m_view->writeTab()->blockSignals(false);
   Document *w = m_view->write();
-  setCaption(w->url().prettyURL() );
-  slotUpdateStatus(w);
+  if (w) //w==0 might happen on quick close on startup
+  {
+    setCaption(w->url().prettyURL() );
+    slotUpdateStatus(w);
+  }
 }
 
 /** Loads the initial project */
