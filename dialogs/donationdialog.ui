@@ -1,0 +1,66 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>DonationDialog</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>DonationDialog</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>459</width>
+            <height>254</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Make a donation</string>
+    </property>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>closeButton</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>360</x>
+                <y>225</y>
+                <width>80</width>
+                <height>22</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Close</string>
+        </property>
+    </widget>
+    <widget class="KTextBrowser">
+        <property name="name">
+            <cstring>KTextBrowser5</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>5</x>
+                <y>5</y>
+                <width>450</width>
+                <height>215</height>
+            </rect>
+        </property>
+        <property name="frameShadow">
+            <enum>Raised</enum>
+        </property>
+        <property name="textFormat">
+            <enum>RichText</enum>
+        </property>
+        <property name="text">
+            <string>&amp;nbsp;&amp;nbsp;&amp;nbsp;Your contribution can make a difference. As of September 4th the &lt;a href="http://kittyhooch.com" target="_blank"&gt;Kitty Hooch&lt;/a&gt; company, which sponsors Quanta development was notified that it is in violation of zoning ordinances which may force a relocation of the greenhouse. That issue alone not only takes Eric's time as Quanta's project manager but has the potential to adversely affect our ability to increase or sustain full time developers.&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;This does not need to be an issue because we estimate that even a small fraction of our users making a contribution would finance several full time developers for even greater results. Remember, we're not asking you to buy us a beer to say thanks. We're asking you to help us keep developer activity at a high Level and continue to fufill all your requests.&lt;br&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; If you wish to donate through PayPal (online money transfer or credit card), visit our &lt;a href="http://quanta.sourceforge.net/main1.php?actfile=donate"&gt;donation page&lt;/a&gt;. &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;For other types of donations contact the project manager:&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; Eric Laffoon, &lt;a href="Eric Laffoon &lt;sequitur@easystreet.com&gt;"&gt;sequitur@easystreet.com&lt;/a&gt;</string>
+        </property>
+    </widget>
+</widget>
+<connections>
+</connections>
+<includes>
+    <include location="local" impldecl="in implementation">donationdialog.ui.h</include>
+</includes>
+<slots>
+    <slot>init()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
