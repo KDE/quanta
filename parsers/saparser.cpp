@@ -721,8 +721,11 @@ Node *SAParser::parsingDone()
   if (!s_currentNode)
   {
     s_currentNode = ParserCommon::createTextNode(m_write, s_parentNode, s_endLine, s_endCol, s_parentNode);
-    s_currentNode->insideSpecial = true;
-    s_currentNode->specialInsideXml = m_specialInsideXml;
+    if (s_currentNode)
+    {
+      s_currentNode->insideSpecial = true;
+      s_currentNode->specialInsideXml = m_specialInsideXml;
+    }
   }
   else if (s_parentNode && !s_parentNode->next)
   {

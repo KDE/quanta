@@ -15,25 +15,31 @@
 #ifndef ABBREVIATION_H
 #define ABBREVIATION_H
 
-#include <qwidget.h>
+#include <qmap.h>
+#include <qstringlist.h>
+
 #include <abbreviations.h>
 
 class QListViewItem;
+class Abbreviation;
 struct DTDStruct;
 
-class Abbreviation : public Abbreviations
+class AbbreviationDlg : public AbbreviationDlgS
 {
   Q_OBJECT
 public:
-  Abbreviation(QWidget *parent, const char *name = 0);
-  ~Abbreviation();
+  AbbreviationDlg(QWidget *parent, const char *name = 0);
+  ~AbbreviationDlg();
 
   void saveTemplates();
 
 public slots:
-  void slotDTDChanged(const QString& newDTDName);
+  void slotGroupChanged(const QString& newGroupName);
 
 private slots:
+  void slotNewGroup();
+  void slotAddDTEP();
+  void slotRemoveDTEP();
   void slotTemplateSelectionChanged(QListViewItem*);
   void slotAddTemplate();
   void slotRemoveTemplate();
@@ -42,6 +48,7 @@ private slots:
 private:
   const DTDStruct *m_dtd;
   QListViewItem *oldItem;
+  Abbreviation *currentAbbrev;
 };
 
 #endif

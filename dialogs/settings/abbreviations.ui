@@ -1,5 +1,5 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>Abbreviations</class>
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>AbbreviationDlgS</class>
 <comment>/***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -11,7 +11,7 @@
 <author>(C) 2003 Andras Mantia &lt;amantia@kde.org&gt;</author>
 <widget class="QWidget">
     <property name="name">
-        <cstring>Abbreviations</cstring>
+        <cstring>AbbreviationDlgS</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -22,59 +22,80 @@
         </rect>
     </property>
     <property name="caption">
-        <string></string>
+        <string>Abbreviations</string>
     </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
+        <widget class="KPushButton" row="1" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>addDTEPButton</cstring>
+            </property>
+            <property name="text">
+                <string>Add...</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="2" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>removeDTEPButton</cstring>
+            </property>
+            <property name="text">
+                <string>Remove</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="0" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>newGroupButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;New...</string>
+            </property>
+            <property name="accel">
+                <string>Alt+N</string>
+            </property>
+        </widget>
         <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel1_2</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>&amp;Group:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>groupCombo</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
             <property name="name">
                 <cstring>textLabel1</cstring>
             </property>
             <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
-                    <vsizetype>5</vsizetype>
+                    <vsizetype>1</vsizetype>
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>Valid for &amp;DTD:</string>
+                <string>&amp;Valid for:</string>
             </property>
             <property name="buddy" stdset="0">
-                <cstring>dtdCombo</cstring>
-            </property>
-        </widget>
-        <widget class="QTextEdit" row="7" column="0" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>codeEdit</cstring>
-            </property>
-            <property name="textFormat">
-                <enum>PlainText</enum>
-            </property>
-        </widget>
-        <widget class="QLabel" row="6" column="0">
-            <property name="name">
-                <cstring>textLabel2</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Plain</enum>
-            </property>
-            <property name="text">
-                <string>Code:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>codeEdit</cstring>
+                <cstring>dtepList</cstring>
             </property>
         </widget>
         <widget class="KComboBox" row="0" column="1">
             <property name="name">
-                <cstring>dtdCombo</cstring>
+                <cstring>groupCombo</cstring>
             </property>
             <property name="sizePolicy">
                 <sizepolicy>
@@ -85,7 +106,15 @@
                 </sizepolicy>
             </property>
         </widget>
-        <widget class="KListView" row="2" column="0" rowspan="4" colspan="2">
+        <widget class="QTextEdit" row="10" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>codeEdit</cstring>
+            </property>
+            <property name="textFormat">
+                <enum>PlainText</enum>
+            </property>
+        </widget>
+        <widget class="KListView" row="5" column="0" rowspan="4" colspan="2">
             <column>
                 <property name="text">
                     <string>Template</string>
@@ -118,26 +147,18 @@
                 <bool>true</bool>
             </property>
         </widget>
-        <widget class="QPushButton" row="2" column="2">
+        <widget class="QPushButton" row="5" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>addButton</cstring>
             </property>
             <property name="text">
                 <string>&amp;Add...</string>
             </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>textLabel3</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Templates:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>templatesList</cstring>
+            <property name="accel">
+                <string>Alt+A</string>
             </property>
         </widget>
-        <spacer row="5" column="2">
+        <spacer row="8" column="3">
             <property name="name">
                 <cstring>spacer4</cstring>
             </property>
@@ -150,62 +171,158 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>115</height>
+                    <height>30</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QPushButton" row="3" column="2">
+        <widget class="QPushButton" row="6" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>removeButton</cstring>
             </property>
             <property name="text">
                 <string>&amp;Remove</string>
             </property>
+            <property name="accel">
+                <string>Alt+R</string>
+            </property>
         </widget>
-        <widget class="QPushButton" row="4" column="2">
+        <widget class="QPushButton" row="7" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>editButton</cstring>
             </property>
             <property name="text">
                 <string>&amp;Edit</string>
             </property>
+            <property name="accel">
+                <string>Alt+E</string>
+            </property>
         </widget>
+        <widget class="QLabel" row="9" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
+            </property>
+            <property name="text">
+                <string>Expands to:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>codeEdit</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="4" column="0">
+            <property name="name">
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>&amp;Templates:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>templatesList</cstring>
+            </property>
+        </widget>
+        <widget class="KListBox" row="1" column="1" rowspan="3" colspan="1">
+            <property name="name">
+                <cstring>dtepList</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <spacer row="3" column="3" rowspan="2" colspan="1">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>40</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>templatesList</sender>
         <signal>selectionChanged(QListViewItem*)</signal>
-        <receiver>Abbreviations</receiver>
+        <receiver>AbbreviationDlgS</receiver>
         <slot>slotTemplateSelectionChanged(QListViewItem*)</slot>
-    </connection>
-    <connection>
-        <sender>dtdCombo</sender>
-        <signal>activated(const QString&amp;)</signal>
-        <receiver>Abbreviations</receiver>
-        <slot>slotDTDChanged(const QString&amp;)</slot>
     </connection>
     <connection>
         <sender>addButton</sender>
         <signal>clicked()</signal>
-        <receiver>Abbreviations</receiver>
+        <receiver>AbbreviationDlgS</receiver>
         <slot>slotAddTemplate()</slot>
     </connection>
     <connection>
         <sender>removeButton</sender>
         <signal>clicked()</signal>
-        <receiver>Abbreviations</receiver>
+        <receiver>AbbreviationDlgS</receiver>
         <slot>slotRemoveTemplate()</slot>
     </connection>
     <connection>
         <sender>editButton</sender>
         <signal>clicked()</signal>
-        <receiver>Abbreviations</receiver>
+        <receiver>AbbreviationDlgS</receiver>
         <slot>slotEditTemplate()</slot>
+    </connection>
+    <connection>
+        <sender>groupCombo</sender>
+        <signal>activated(const QString&amp;)</signal>
+        <receiver>AbbreviationDlgS</receiver>
+        <slot>slotGroupChanged(const QString&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>newGroupButton</sender>
+        <signal>clicked()</signal>
+        <receiver>AbbreviationDlgS</receiver>
+        <slot>slotNewGroup()</slot>
+    </connection>
+    <connection>
+        <sender>addDTEPButton</sender>
+        <signal>clicked()</signal>
+        <receiver>AbbreviationDlgS</receiver>
+        <slot>slotAddDTEP()</slot>
+    </connection>
+    <connection>
+        <sender>removeDTEPButton</sender>
+        <signal>clicked()</signal>
+        <receiver>AbbreviationDlgS</receiver>
+        <slot>slotRemoveDTEP()</slot>
     </connection>
 </connections>
 <tabstops>
-    <tabstop>dtdCombo</tabstop>
+    <tabstop>groupCombo</tabstop>
+    <tabstop>newGroupButton</tabstop>
+    <tabstop>dtepList</tabstop>
+    <tabstop>addDTEPButton</tabstop>
+    <tabstop>removeDTEPButton</tabstop>
     <tabstop>templatesList</tabstop>
     <tabstop>addButton</tabstop>
     <tabstop>removeButton</tabstop>
@@ -215,15 +332,18 @@
 <slots>
     <slot>slotTemplateSelectionChanged(QListViewItem*)</slot>
     <slot>dtdCombo_activated(const QString&amp;)</slot>
-    <slot>slotDTDChanged(const QString&amp;)</slot>
+    <slot>slotGroupChanged(const QString&amp;)</slot>
     <slot>slotAddTemplate()</slot>
     <slot>slotRemoveTemplate()</slot>
     <slot>templatesList_currentChanged(QListViewItem*)</slot>
     <slot>slotEditTemplate()</slot>
+    <slot>slotAddDTEP()</slot>
+    <slot>slotRemoveDTEP()</slot>
+    <slot>slotNewGroup()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kcombobox.h</includehint>
     <includehint>klistview.h</includehint>
+    <includehint>klistbox.h</includehint>
 </includehints>
 </UI>

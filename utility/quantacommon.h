@@ -38,8 +38,18 @@ class Tag;
 
 class KPopupMenu;
 
+/** Describes one abbreviation group */
+class Abbreviation{
+public:
+/*A list with abbreviations in the for of: <template templatename, code> */
+  QMap<QString, QString> abbreviations;
+  QStringList dteps;
+};
+
+
 //Quanta main configuration structure
-typedef struct QConfig{
+class QConfig{
+public:
           //Tag style options
           uint tagCase;
           uint attrCase;
@@ -86,6 +96,7 @@ typedef struct QConfig{
           QString backupDirPath;
           QString quantaPID;
           bool showHiddenFiles;  ///< show hidden files in files treeview?
+          QMap<QString, Abbreviation> abbreviations; ///< the abbreviation groups
 
           //spelling options
           KSpellConfig *spellConfig;

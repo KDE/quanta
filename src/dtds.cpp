@@ -545,42 +545,6 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         }
       }
     }
-  //read the abbreviations files
-    QString abbrevFile = dirName;
-    tmpStr = dirName;
-    QStringList resourceDirs = KGlobal::dirs()->resourceDirs("data");
-    bool dirFound = false;
-    for (uint i = 0; i < resourceDirs.count(); i++)
-    {
-      if (tmpStr.startsWith(resourceDirs[i]))
-      {
-        dirFound = true;
-        tmpStr = tmpStr.right(tmpStr.length() - resourceDirs[i].length());
-        break;
-      }
-    }
-    if (dirFound)
-    {
-      abbrevFile = KGlobal::dirs()->saveLocation("data", tmpStr) +"/";
-    }
-    abbrevFile.append("abbreviations");
-    if (!QFile::exists(abbrevFile))
-        abbrevFile = dirName + "abbreviations";
-
-  QFile f(abbrevFile);
-  if (f.open(IO_ReadOnly))
-  {
-    if (m_doc->setContent(&f))
-    {
-      QDomNodeList nodeList = m_doc->elementsByTagName("Template");
-      for (uint i = 0; i < nodeList.count(); i++)
-      {
-        QDomElement e = nodeList.item(i).toElement();
-        dtd->abbreviations.insert(e.attribute("name")+" "+e.attribute("description"), e.attribute("code"));
-      }
-    }
-    f.close();
-  }
   delete dtdConfig;
   dtd->loaded = true;
   resolveInherited(dtd);
@@ -605,11 +569,6 @@ void DTDs::resolveInherited (DTDStruct *dtd)
         QTag *newTag = new QTag(*tag);
         dtd->tagsList->insert(searchForTag, newTag);
       }
-    }
-    QMap<QString, QString>::Iterator abbrevIt;
-    for (abbrevIt = parent->abbreviations.begin(); abbrevIt != parent->abbreviations.end(); ++abbrevIt)
-    {
-      dtd->abbreviations.insert(abbrevIt.key(), abbrevIt.data());
     }
   }
 
@@ -969,6 +928,20 @@ QStringList DTDs::nameList(bool topLevelOnly)
     }
   }
   nameList.sort();
+  return nameList;
+}
+
+QStringList DTDs::fileNameList(bool topLevelOnly)
+{
+  QStringList nameList;
+  QDictIterator<DTDStruct> it(*m_dict);
+  for( ; it.current(); ++it )
+  {
+    if (!topLevelOnly || it.current()->toplevel)
+    {
+      nameList << (it.current()->name + "|" + it.current()->fileName);
+    }
+  }
   return nameList;
 }
 

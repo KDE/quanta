@@ -1164,23 +1164,7 @@ void QuantaApp::slotOptions()
   parserOptions->spinExpand->setValue(qConfig.expandLevel);
 
   page = kd->addVBoxPage(i18n("Abbreviations"), QString::null, BarIcon("source", KIcon::SizeMedium));
-  Abbreviation *abbreviationOptions = new Abbreviation((QWidget*)(page));
-  lst = DTDs::ref()->nickNameList();
-  uint abbrevDTDPos = 0;
-  QString defaultDTDNickName;
-  Document *w  = ViewManager::ref()->activeDocument();
-  if (w)
-      defaultDTDNickName = w->defaultDTD()->nickName;
-  for (uint i = 0; i < lst.count(); i++)
-  {
-    if (lst[i] == defaultDTDNickName)
-       abbrevDTDPos = i;
-  }
-  abbreviationOptions->dtdCombo->insertStringList(lst);
-  abbreviationOptions->dtdCombo->setCurrentItem(abbrevDTDPos);
-  if (!defaultDTDNickName.isEmpty())
-    abbreviationOptions->slotDTDChanged(defaultDTDNickName);
-
+  AbbreviationDlg *abbreviationOptions = new AbbreviationDlg((QWidget*)(page));
 //Spelling options
   page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
   KSpellConfig *spellOptions = new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
@@ -3582,14 +3566,26 @@ void QuantaApp::slotExpandAbbreviation()
     QString text = w->text(line, 0, line, col - 1);
     text = w->findWordRev(text) + " ";
     QString textToInsert;
-    QMap<QString, QString>::ConstIterator it;
-    for (it = dtd->abbreviations.begin(); it != dtd->abbreviations.end(); ++it)
+    QMap<QString, Abbreviation>::ConstIterator it;
+    for (it = qConfig.abbreviations.constBegin(); it != qConfig.abbreviations.constEnd(); ++it)
     {
-      if (it.key().startsWith(text))
-      {
-        textToInsert = it.data();
-        break;
-      }
+        bool found = false;
+        Abbreviation abbrev = it.data();
+        if (abbrev.dteps.contains(dtd->name))
+        {
+            QMap<QString, QString>::ConstIterator it2;
+            for (it2 = abbrev.abbreviations.constBegin(); it2 != abbrev.abbreviations.constEnd(); ++it2)
+            {
+               if (it2.key().startsWith(text))
+               {
+                   textToInsert = it2.data();
+                   found = true;
+                   break;
+               }
+            }
+        }
+        if (found)
+          break;
     }
     if (!textToInsert.isEmpty())
     {

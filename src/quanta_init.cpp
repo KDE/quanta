@@ -162,6 +162,7 @@ void QuantaInit::initQuanta()
   DTDs::ref();  // create the class, must be before readOptions() !
   readOptions();
   initPlugins();  // needs to be before createGUI because some actions are created inside
+  readAbbreviations();
 
   // Initialize debugger
   m_quanta->m_debugger = new DebuggerManager(m_quanta);
@@ -1299,6 +1300,100 @@ void QuantaInit::checkRuntimeDependencies()
       errorStr[errorStr.length() - 1] = '.';
       KMessageBox::information(m_quanta, "<qt>" + i18n("Some applications required for full functionality are missing:<br>") + errorStr + "<br><br>You may download the applications from the specified locations.</qt>", i18n("Missing applications"), "RuntimeDependencyCheck");
   }
+}
+
+void QuantaInit::readAbbreviations()
+{
+  QDomDocument doc;
+  QString groupName;
+  bool mainAbbrevFileFound = false;
+  QStringList mainFileList;
+  mainFileList << qConfig.globalDataDir + resourceDir + "abbreviations.xml";
+  mainFileList << KGlobal::dirs()->saveLocation("data") + resourceDir + "abbreviations.xml";
+  for (uint i = 0; i < mainFileList.count(); i++)
+  {
+     if (!QFile::exists(mainFileList[i]))
+       continue;
+     QFile file(mainFileList[i]);
+     if (file.open(IO_ReadOnly))
+     {
+        if (doc.setContent(&file))
+        {
+          QDomNodeList groupList = doc.elementsByTagName("Group");
+          for (uint groupIdx = 0; groupIdx < groupList.count(); groupIdx++)
+          {
+             Abbreviation abbrev;
+             QDomElement el = groupList.item(groupIdx).toElement();
+             groupName = el.attribute("name");
+             QDomNodeList dtepList = el.elementsByTagName("DTEP");
+             for (uint dtepListIdx = 0; dtepListIdx < dtepList.count(); dtepListIdx++)
+             {
+               abbrev.dteps.append(dtepList.item(dtepListIdx).toElement().attribute("name"));
+             }
+             QDomNodeList nodeList = el.elementsByTagName("Template");
+             for (uint nodeIdx = 0; nodeIdx < nodeList.count(); nodeIdx++)
+             {
+               QDomElement e = nodeList.item(nodeIdx).toElement();
+               abbrev.abbreviations.insert(e.attribute("name")+" "+e.attribute("description"), e.attribute("code"));
+             }
+             qConfig.abbreviations.insert(groupName, abbrev);
+          }
+        }
+        mainAbbrevFileFound = true;
+        file.close();
+     }
+  }
+  if (mainAbbrevFileFound) return;
+//Compatibility code: read the abbreviations files from the DTEP directories
+//TODO: Remove when upgrade from 3.2 is not supported.
+ QStringList filenameList = DTDs::ref()->fileNameList(false);
+ QStringList::Iterator it;
+ for (it = filenameList.begin(); it != filenameList.end(); ++it)
+ {
+    int pos =(*it).find('|');
+    QString dirName = (*it).mid(pos + 1);
+    QString dtepName = (*it).left(pos);
+    KURL dirURL(dirName);
+    dirURL.setFileName("");
+    dirName = dirURL.path(1);
+    QString abbrevFile = dirName;
+    QString tmpStr = dirName;
+    QStringList resourceDirs = KGlobal::dirs()->resourceDirs("data");
+    bool dirFound = false;
+    for (uint i = 0; i < resourceDirs.count(); i++)
+    {
+      if (tmpStr.startsWith(resourceDirs[i]))
+      {
+        dirFound = true;
+        tmpStr = tmpStr.right(tmpStr.length() - resourceDirs[i].length());
+        break;
+      }
+    }
+    if (dirFound)
+    {
+      abbrevFile = KGlobal::dirs()->saveLocation("data", tmpStr) +"/";
+    }
+    abbrevFile.append("abbreviations");
+    if (!QFile::exists(abbrevFile))
+        abbrevFile = dirName + "abbreviations";
+    QFile f(abbrevFile);
+    if (f.open(IO_ReadOnly))
+    {
+      if (doc.setContent(&f))
+      {
+        Abbreviation abbrev;
+        QDomNodeList nodeList = doc.elementsByTagName("Template");
+        for (uint i = 0; i < nodeList.count(); i++)
+        {
+          QDomElement e = nodeList.item(i).toElement();
+          abbrev.abbreviations.insert(e.attribute("name")+" "+e.attribute("description"), e.attribute("code"));
+        }
+        abbrev.dteps.append(dtepName);
+        qConfig.abbreviations.insert(DTDs::ref()->getDTDNickNameFromName(dtepName), abbrev);
+      }
+      f.close();
+    }
+ }
 }
 
 #include "quanta_init.moc"
