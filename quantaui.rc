@@ -81,6 +81,42 @@
         <Action name="tag_h4"/>
         <Action name="tag_h5"/>
       </Menu>
+      <Menu name="table_tags"><text>Table</text>
+        <Action name="tag_table"/>
+        <Action name="tag_table_row"/>
+        <Action name="tag_table_head"/>
+    	<Action name="tag_table_data"/>
+    	<Separator/>
+    	<Action name="tag_th"/>
+    	<Action name="tag_tr"/>
+    	<Action name="tag_td"/>
+    	<Action name="tag_caption"/>
+      </Menu>
+      <Menu name="form_tags"><text>Forms</text>
+        <Action name="tag_form"/>
+    	<Separator/>
+        <Action name="tag_form_radio"/>
+        <Action name="tag_form_check"/>
+    	<Action name="tag_form_select"/>
+    	<Separator/>
+    	<Action name="tag_form_lineedit"/>
+    	<Action name="tag_form_passedit"/>
+    	<Action name="tag_form_textarea"/>
+    	<Separator/>
+    	<Action name="tag_form_submit"/>
+    	<Action name="tag_form_reset"/>
+      </Menu>
+      <Menu name="list_tags"><text>Lists</text>
+        <Action name="tag_ul"/>
+        <Action name="tag_ol"/>
+        <Action name="tag_li"/>
+    	<Separator/>
+        <Action name="tag_dl"/>
+        <Action name="tag_dt"/>
+        <Action name="tag_dd"/>
+    	<Separator/>
+        <Action name="tag_menu"/>
+      </Menu>
     </Menu>
     <Menu name="tools"><text>&amp;Tools</text>
       <Action name="tag_attributes"/>
@@ -139,6 +175,42 @@
     <Action name="tag_div_center"/>
     <Action name="tag_div_right"/>
     <Action name="tag_div_justify"/>
+  </ToolBar>
+  <ToolBar name="TablesToolbar"><text>Tables Toolbar</text>
+    <Action name="tag_table"/>
+    <Action name="tag_table_row"/>
+    <Action name="tag_table_head"/>
+    <Action name="tag_table_data"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_th"/>
+    <Action name="tag_tr"/>
+    <Action name="tag_td"/>
+    <Action name="tag_caption"/>
+  </ToolBar>
+  <ToolBar name="FormsToolbar"><text>Forms Toolbar</text>
+    <Action name="tag_form"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_form_radio"/>
+    <Action name="tag_form_check"/>
+    <Action name="tag_form_select"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_form_lineedit"/>
+    <Action name="tag_form_passedit"/>
+    <Action name="tag_form_textarea"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_form_submit"/>
+    <Action name="tag_form_reset"/>
+  </ToolBar>
+  <ToolBar name="ListsToolbar"><text>Lists Toolbar</text>
+    <Action name="tag_ul"/>
+    <Action name="tag_ol"/>
+    <Action name="tag_li"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_dl"/>
+    <Action name="tag_dt"/>
+    <Action name="tag_dd"/>
+    <Separator lineSeparator="true"/>
+    <Action name="tag_menu"/>
   </ToolBar>
   <Menu name="documentContextPopup"><text>Document Context Popup</text>
      <Action name="edit_undo"/>

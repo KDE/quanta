@@ -631,7 +631,7 @@ void QuantaView::initActions()
     // Fonts
     //
     (void) new KAction( i18n( "Base Font" ), "tag_font_base", 0,
-                        this, SLOT( slotTagFontBase() ),
+                        this, SLOT( slotTagBaseFont() ),
                         actionCollection, "tag_font_base" );
 
     QuantaTagAction *tagFontInc = new QuantaTagAction( i18n( "Font Size +1" ), "font_inc", 0,
@@ -690,6 +690,116 @@ void QuantaView::initActions()
                                                    this, SLOT( slotTag() ),
                                                    actionCollection, "tag_h5" );
     tagH5->setTag( I18N_NOOP( "h5" ) );
+
+    //
+    // Tables
+    //
+    (void) new KAction( i18n( "Table..." ), "tag_table", 0,
+                        this, SLOT( slotTagTable() ),
+                        actionCollection, "tag_table" );
+    (void) new KAction( i18n( "Table Row" ), "tag_table_row", 0,
+                        this, SLOT( slotTagTableRow() ),
+                        actionCollection, "tag_table_row" );
+    (void) new KAction( i18n( "Table Head" ), "table_head", 0,
+                        this, SLOT( slotTagTableHead() ),
+                        actionCollection, "tag_table_head" );
+    (void) new KAction( i18n( "Table Data" ), "table_data", 0,
+                        this, SLOT( slotTagTableData() ),
+                        actionCollection, "tag_table_data" );
+
+    QuantaTagAction *tagTh = new QuantaTagAction( i18n( "Table Head" ), "tag_th", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_th" );
+    tagTh->setTag( I18N_NOOP( "th" ) );
+
+    QuantaTagAction *tagTr = new QuantaTagAction( i18n( "Table Row" ), "tag_tr", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_tr" );
+    tagTr->setTag( I18N_NOOP( "tr" ) );
+
+    QuantaTagAction *tagTd = new QuantaTagAction( i18n( "Table Data" ), "tag_td", 0,
+                                                   this, SLOT( slotTag() ),
+                                                   actionCollection, "tag_td" );
+    tagTd->setTag( I18N_NOOP( "td" ) );
+
+    QuantaTagAction *tagCaption = new QuantaTagAction( i18n( "Caption" ), "tag_caption", 0,
+                                                       this, SLOT( slotTag() ),
+                                                       actionCollection, "tag_caption" );
+    tagCaption->setTag( I18N_NOOP( "caption" ) );
+
+    //
+    // Forms
+    //
+    (void) new KAction( i18n( "Form..." ), "form", 0,
+                        this, SLOT( slotTagForm() ),
+                        actionCollection, "tag_form" );
+
+    (void) new KAction( i18n( "Radio Button" ), "radio", 0,
+                        this, SLOT( slotTagFormRadio() ),
+                        actionCollection, "tag_form_radio" );
+    (void) new KAction( i18n( "Check Box" ), "check", 0,
+                        this, SLOT( slotTagFormCheck() ),
+                        actionCollection, "tag_form_check" );
+
+    (void) new KAction( i18n( "Selection List" ), "select", 0,
+                        this, SLOT( slotTagSelect() ),
+                        actionCollection, "tag_form_select" );
+
+    (void) new KAction( i18n( "Line Edit" ), "lineedit", 0,
+                        this, SLOT( slotTagFormLineEdit() ),
+                        actionCollection, "tag_form_lineedit" );
+    (void) new KAction( i18n( "Password Edit" ), "linepas", 0,
+                        this, SLOT( slotTagFormPas() ),
+                        actionCollection, "tag_form_passedit" );
+
+    (void) new KAction( i18n( "Text Area" ), "textarea", 0,
+                        this, SLOT( slotTagFormTextArea() ),
+                        actionCollection, "tag_form_textarea" );
+
+    (void) new KAction( i18n( "Submit Button" ), "submit", 0,
+                        this, SLOT( slotTagFormSubmit() ),
+                        actionCollection, "tag_form_submit" );
+    (void) new KAction( i18n( "Reset Button" ), "reset", 0,
+                        this, SLOT( slotTagFormReset() ),
+                        actionCollection, "tag_form_reset" );
+
+    //
+    // Lists
+    //
+    QuantaTagAction *tagUl = new QuantaTagAction( i18n( "Unordered List" ), "tag_ul", 0,
+                        this, SLOT( slotTag() ),
+                        actionCollection, "tag_ul" );
+    tagUl->setTag( I18N_NOOP( "ul" ) );
+
+    QuantaTagAction *tagOl = new QuantaTagAction( i18n( "Ordered List" ), "tag_ol", 0,
+                        this, SLOT( slotTag() ),
+                        actionCollection, "tag_ol" );
+    tagOl->setTag( I18N_NOOP( "ol" ) );
+
+    QuantaTagAction *tagLi = new QuantaTagAction( i18n( "List Item" ), "tag_li", 0,
+                        this, SLOT( slotTag() ),
+                        actionCollection, "tag_li" );
+    tagLi->setTag( I18N_NOOP( "li" ) );
+
+    QuantaTagAction *tagDl = new QuantaTagAction( i18n( "Definition List" ), "tag_dl", 0,
+                        this, SLOT( slotTag() ),
+                        actionCollection, "tag_dl" );
+    tagDl->setTag( I18N_NOOP( "dl" ) );
+
+    QuantaTagAction *tagDt = new QuantaTagAction( i18n( "Definition Term" ), "tag_dt", 0,
+                        this, SLOT( slotTag() ),
+                        actionCollection, "tag_dt" );
+    tagDt->setTag( I18N_NOOP( "dt" ) );
+
+    QuantaTagAction *tagDd = new QuantaTagAction( i18n( "Definition" ), "tag_dd", 0,
+                        this, SLOT( slotTag() ),
+                        actionCollection, "tag_dd" );
+    tagDd->setTag( I18N_NOOP( "dd" ) );
+
+    QuantaTagAction *tagMenu = new QuantaTagAction( i18n( "Menu" ), "tag_menu", 0,
+                        this, SLOT( slotTag() ),
+                        actionCollection, "tag_menu" );
+    tagMenu->setTag( I18N_NOOP( "menu" ) );
 }
 
 void QuantaView::slotTag()
