@@ -1,6 +1,7 @@
 [General]
 Name = XSLT
 NickName = XSLT 1.0
+DefaultExtension = xslt
 NumOfPages = 0
 CaseSensitive = true
 

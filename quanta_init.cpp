@@ -192,8 +192,8 @@ void QuantaApp::initQuanta()
   refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
 
 //Delay the calls as they contain dialog popups. That may crash Quanta!
-  QTimer::singleShot(10,this,SLOT(slotFileNew()));;
-  QTimer::singleShot(15,this,SLOT(initToolBars()));
+  slotFileNew();
+  initToolBars();
 
 }
 
@@ -500,6 +500,7 @@ void QuantaApp::saveOptions()
 
     config->writeEntry("Default encoding", qConfig.defaultEncoding);
     config->writeEntry("Default DTD", qConfig.defaultDocType);
+    config->writeEntry("New File Type", qConfig.newFileType);
     config->writeEntry("Use MimeTypes", qConfig.useMimeTypes);
 
     config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
@@ -519,7 +520,7 @@ void QuantaApp::saveOptions()
     config->writeEntry ("PHP Debugger style", debuggerStyle);
     writeDockConfig();
     saveMainWindowSettings(config);
-    config->sync();
+    config->sync(); 
   }
 }
 
@@ -543,6 +544,7 @@ void QuantaApp::readOptions()
   qConfig.closeTags = config->readBoolEntry("Close tags", true);
   qConfig.useAutoCompletion = config->readBoolEntry("Auto completion",true);
   qConfig.defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
+  qConfig.newFileType = config->readEntry("New File Type", qConfig.defaultDocType);
   qConfig.defaultEncoding = config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
   previewPosition   = config->readEntry("Preview position","Right");
   qConfig.useMimeTypes = config->readBoolEntry("Use MimeTypes", false);
@@ -693,6 +695,7 @@ bool QuantaApp::queryExit()
     canExit = doc->saveAll(false);
     if (canExit)
     {
+      project->slotCloseProject();
       Document *w;
       do
       {
@@ -858,6 +861,7 @@ void QuantaApp::readTagDir(QString &dirName)
  bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
  dtd->name = dtdName.lower();
  dtd->nickName = dtdConfig->readEntry("NickName", dtdName);
+ dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");
  dtd->caseSensitive = caseSensitive;
  dtd->family = dtdConfig->readNumEntry("Family", Xml);
  int numOfTags = 0;

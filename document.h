@@ -54,7 +54,8 @@ class Document : public QWidget{
 
 public: 
 	Document(const KURL& p_baseURL, KTextEditor::Document *doc, Project *project,
-           QWidget *parent = 0, const char *name = 0, WFlags f=0, QuantaPluginInterface * =0);
+           QuantaPluginInterface * =0,
+           QWidget *parent = 0, const char *name = 0, WFlags f=0);
 	~Document();
 
   void resizeEvent(QResizeEvent* e);

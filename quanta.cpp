@@ -592,7 +592,7 @@ void QuantaApp::slotNewStatus()
 //it will reset itself and you will see the first tabs, even if the actual page is on
 //a tab eg. at the end, and it won't be visible now. This is really confusing.
 //I thought it is fixed in QT 3.x, but it is not. :-(
-        int pageId = wTab->currentPageIndex();
+    int pageId = wTab->currentPageIndex();
     bool block=wTab->signalsBlocked();
     wTab->blockSignals(true);
     wTab->setCurrentPage(pageId-1);
@@ -787,15 +787,21 @@ void QuantaApp::slotOptions()
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
+  QString name;
+  int index;
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
+    index = -1;
+    name = it.current()->name;
     if (it.current()->family == Xml)
     {
-      int index = -1;
-      if (it.current()->name == qConfig.defaultDocType) index = 0;
-      parserOptions->dtdName->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
+      if (name.lower() == qConfig.defaultDocType) index = 0;
+      parserOptions->dtdName->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
+      index = -1;
     }
+    if (name.lower() == qConfig.newFileType) index = 0;
+    fileMasks->newfileCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
   }
 
   parserOptions->refreshFrequency->setValue(qConfig.refreshFrequency);
@@ -805,7 +811,7 @@ void QuantaApp::slotOptions()
 
   if (debuggerStyle=="PHP3") debuggerOptions->radioPhp3->setChecked(true);
   if (debuggerStyle=="None") debuggerOptions->checkDebugger->setChecked(false);
-
+     
   if ( kd->exec() )
   {
     qConfig.tagCase = styleOptionsS->tagCase->currentItem();
@@ -825,11 +831,18 @@ void QuantaApp::slotOptions()
     slotToggleDTDToolbar(showDTDToolbar->isChecked());
 
     qConfig.refreshFrequency = parserOptions->refreshFrequency->value();
-    refreshTimer->changeInterval(qConfig.refreshFrequency*1000);
+    if (qConfig.refreshFrequency > 0)
+    {
+      refreshTimer->changeInterval(qConfig.refreshFrequency*1000);
+    } else
+    {
+      refreshTimer->stop();
+    }
     qConfig.useMimeTypes = parserOptions->useMimeTypes->isChecked();
 
     parserOptions->updateConfig();
     qConfig.defaultDocType = QuantaCommon::getDTDNameFromNickName(parserOptions->dtdName->currentText());
+    qConfig.newFileType = QuantaCommon::getDTDNameFromNickName(fileMasks->newfileCombo->currentText());
 
     if (!debuggerOptions->checkDebugger->isChecked()) {
       if (debuggerStyle=="PHP3") enablePhp3Debug(false);
@@ -860,14 +873,15 @@ void QuantaApp::slotOptions()
   	htmlpart->write( "" );
   	htmlpart->end();
 
-  	repaintPreview(true);
+  	repaintPreview(true);     
   }
 
-  config->sync();
+//  config->sync();
 
   saveOptions();
 
   delete kd;
+//  view->write()->view()->setFocus();
 }
 
 
@@ -2225,5 +2239,17 @@ QString QuantaApp::defaultEncoding()
   } 
   return encoding;
 }
+
+/** Returns the project (if there is one loaded) or global new file type. */
+QString QuantaApp::newFileType()
+{
+  QString type = qConfig.newFileType;
+  if (project && project->hasProject())
+  {
+    type = project->newFileType();
+  }
+  return type;
+}
+
 
 #include "quanta.moc"

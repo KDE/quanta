@@ -1,6 +1,7 @@
 [General]
 Name = -//W3C//DTD HTML 4.01 Transitional//EN
 NickName = HTML 4.01 Transitional
+DefaultExtension = html
 Groups = Core, I18n, Script
 NumOfPages = 2
 QuotedAttributes=src,href,color,bgcolor,background,text,link,vlink,alink,rows,cols,name,type,title,face

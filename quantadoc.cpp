@@ -111,7 +111,7 @@ bool QuantaDoc::newDocument( const KURL& url )
     }
 
     // now we can create new kwrite
-    w = newWrite( quantaApp->view->writeTab);
+    w = newWrite( );
     w->readConfig(quantaApp->config);
 
     if ( newfile ) furl = w->url().url();
@@ -400,20 +400,20 @@ Document* QuantaDoc::write()
 }
 
 
-Document* QuantaDoc::newWrite(QWidget *_parent)
+Document* QuantaDoc::newWrite()
 {
+  DTDStruct *dtd = dtds->find(quantaApp->newFileType());
   int i = 1;
   QString fname;
-  while ( m_docList->find( fname.sprintf("Untitled%i.html",i) ) ) i++;
-
-//  KTextEditor::Document *doc = KTextEditor::createDocument("katepart");
-
+  while ( m_docList->find( fname.sprintf("Untitled%i."+dtd->defaultExtension,i) ) ) i++;
+  
   KTextEditor::Document *doc = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
-													      QString::null,
-													      _parent, 0,
-													      this, 0 );
+													     QString::null,
+													     quantaApp->view->writeTab, 0,
+													     quantaApp->view->writeTab, 0 );
 
-  Document  *w    = new Document (quantaApp->projectBaseURL(), doc, quantaApp->getProject(), _parent, 0, 0, quantaApp->m_pluginInterface);
+  Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->getProject(),
+                             quantaApp->m_pluginInterface, quantaApp->view->writeTab);
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
@@ -428,19 +428,16 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 
   for (unsigned int i=0; i< w->kate_doc->hlModeCount(); i++)
   {
-    if (w->kate_doc->hlModeName(i).contains("HTML"))
+    if (quantaApp->newFileType().contains(w->kate_doc->hlModeName(i).lower()))
     {
       w->kate_doc->setHlMode(i);
+      break;
     }
   }
 
-//FIXME:set to HTML
-//  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
-//  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)quantaApp->factory()->container("rb_popup", quantaApp));
-
-/* 	quantaApp->setFocusProxy(w);
-  w->setFocusPolicy(QWidget::StrongFocus);
-  quantaApp->setFocusPolicy(QWidget::StrongFocus);
+ 	quantaApp->setFocusProxy(w->view());
+  w->view()->setFocusPolicy(QWidget::WheelFocus);
+/*  quantaApp->setFocusPolicy(QWidget::StrongFocus);
   */
  	connect( v, SIGNAL(newStatus()),quantaApp, SLOT(slotNewStatus()));
 
@@ -450,8 +447,6 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 */
 
 // 	connect( w, SIGNAL(statusMsg(const QString &)),quantaApp, SLOT(slotStatusMsg(const QString &)));
-
-  //w->g
 
  	return w;
 }

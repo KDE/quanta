@@ -296,7 +296,7 @@ void Project::writeConfig(KConfig *config)
   config->deleteGroup("RecentProjects");
   projectRecent->saveEntries(config, "RecentProjects");
   
-  slotSaveProject();
+//  slotSaveProject();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -385,6 +385,7 @@ bool Project::slotSaveProject()
   {
     result = false;
   }
+ if (result) projectRecent->addURL( projectURL );
  return result;
 }
 
@@ -485,6 +486,12 @@ void Project::loadProjectXML()
   if (m_defaultEncoding.isEmpty())
   {
     m_defaultEncoding = qConfig.defaultEncoding;
+  }
+
+  m_newFileType = projectNode.toElement().attribute("newfiles");
+  if (m_newFileType.isEmpty())
+  {
+    m_newFileType = qConfig.newFileType;
   }
 
   no = projectNode.namedItem("author");
@@ -839,9 +846,9 @@ void Project::slotNewProject()
 	stack->addWidget( pnl, 0);
 	stack->addWidget( pnw, 1 );
 
-	wiz->addPage( png,   i18n("<b>General setting of project</b>"));
+	wiz->addPage( png,   i18n("<b>General project settings</b>"));
 	wiz->addPage( stack, i18n("<b>Insert files in project</b>"));
-	wiz->addPage( pnf,   i18n("<b>Some settings of project</b>"));
+	wiz->addPage( pnf,   i18n("<b>More project settings</b>"));
 
 	wiz->setNextEnabled  ( png,   false );
 	wiz->setBackEnabled  ( stack, true  );
@@ -872,20 +879,25 @@ void Project::slotNewProject()
 	connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
 					 wiz, SLOT(setBackEnabled(QWidget*,bool)));
 
-
+  QString name;
+  int index;
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
+    index = -1;
+    name = it.current()->name;
     if (it.current()->family == Xml)
     {
-      int index = -1;
-      if (it.current()->name.lower() == qConfig.defaultDocType) index = 0;
-      png->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
+      if (name.lower() == qConfig.defaultDocType) index = 0;
+      pnf->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
+      index = -1;
     }
+    if (name.lower() == qConfig.newFileType) index = 0;
+    pnf->newfileCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
   }
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
-  png->encodingCombo->insertStringList( availableEncodingNames );
+  pnf->encodingCombo->insertStringList( availableEncodingNames );
   QStringList::ConstIterator iter;
   int iIndex = -1;
   for (iter = availableEncodingNames.begin(); iter != availableEncodingNames.end(); ++iter)
@@ -893,7 +905,7 @@ void Project::slotNewProject()
      ++iIndex;
      if ((*iter).lower() == qConfig.defaultEncoding.lower())
      {
-       png->encodingCombo->setCurrentItem(iIndex);
+       pnf->encodingCombo->setCurrentItem(iIndex);
        break;
      }
   }
@@ -945,8 +957,8 @@ void Project::slotAcceptCreateProject()
     errorOccured = !createEmptyDom();
     if (!errorOccured)
     {
-      email = png->lineEmail  ->text();
-      author = png->lineAuthor ->text();
+      email = pnf->lineEmail  ->text();
+      author = pnf->lineAuthor ->text();
 
       QuantaCommon::setUrl(previewPrefix, pnf->linePrefix->text());
       previewPrefix.adjustPath(1);
@@ -1054,18 +1066,12 @@ void Project::slotAcceptCreateProject()
 
 void Project::slotOptions()
 {
-	QTabDialog *dlg = new QTabDialog(0L, i18n("Project Options"), true);
+	QTabDialog *dlg = new QTabDialog(quantaApp, i18n("Project Options"), true);
   KURL url;
 
-	ProjectOptions* optionsPage = new ProjectOptions( dlg );
-
-  pnf = new ProjectNewFinal( dlg );
-//	pnf ->setMargin(10);
-	pnf ->imagelabel->hide();
-
+	ProjectOptions* optionsPage = new ProjectOptions(dlg );
 
 	dlg->addTab( optionsPage, i18n("General") );
-	dlg->addTab( pnf, i18n("Network") );
 
 	dlg->setOkButton();
 	dlg->setCancelButton();
@@ -1079,16 +1085,22 @@ void Project::slotOptions()
   optionsPage->lineAuthor->setText( author );
 	optionsPage->lineEmail->setText( email );
 	
-	pnf->linePrefix->setText(previewPrefix.url());
+	optionsPage->linePrefix->setText(previewPrefix.url());
+  QString name;
+  int index;
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
+    index = -1;
+    name = it.current()->name;
     if (it.current()->family == Xml)
     {
-      int index = -1;
-      if (it.current()->name.lower() == m_defaultDTD) index = 0;
-      optionsPage->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
+      if (name.lower() == m_defaultDTD) index = 0;
+      optionsPage->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
+      index = -1;
     }
+    if (name.lower() == m_newFileType) index = 0;
+    optionsPage->newfileCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
   }
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
@@ -1134,8 +1146,7 @@ void Project::slotOptions()
     optionsPage->viewCombo->setEnabled(false);
   }
 
-	pnf->checkPrefix->setChecked(usePreviewPrefix);
-
+	optionsPage->checkPrefix->setChecked(usePreviewPrefix);
 	if ( dlg->exec() )
 	{
 		projectName = optionsPage->linePrjName->text();
@@ -1143,6 +1154,7 @@ void Project::slotOptions()
 		email			= optionsPage->lineEmail	->text();
     m_defaultDTD = QuantaCommon::getDTDNameFromNickName(optionsPage->dtdCombo->currentText()).lower();
     m_defaultEncoding  = optionsPage->encodingCombo->currentText();
+    m_newFileType  = QuantaCommon::getDTDNameFromNickName(optionsPage->newfileCombo->currentText());
 
     QuantaCommon::setUrl(templateURL, optionsPage->linePrjTmpl->text());
     templateURL.adjustPath(1);
@@ -1160,9 +1172,9 @@ void Project::slotOptions()
       QuantaCommon::dirCreationError(this, toolbarURL);
     }
 		
-		QuantaCommon::setUrl(previewPrefix,pnf->linePrefix->text()+"/");
+		QuantaCommon::setUrl(previewPrefix,optionsPage->linePrefix->text()+"/");
     previewPrefix.adjustPath(1);
-		usePreviewPrefix = pnf->checkPrefix->isChecked();
+		usePreviewPrefix = optionsPage->checkPrefix->isChecked();
 
 		QDomElement el;
 
@@ -1171,6 +1183,7 @@ void Project::slotOptions()
  		el.setAttribute("previewPrefix", previewPrefix.url() );
  		el.setAttribute("usePreviewPrefix", usePreviewPrefix );
     el.setAttribute("encoding", m_defaultEncoding);
+    el.setAttribute("newfiles", m_newFileType);
 
  		el = dom.firstChild().firstChild().namedItem("author").toElement();
  		if (el.isNull())

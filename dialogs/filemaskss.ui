@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>455</width>
-            <height>290</height>
+            <height>366</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -31,14 +31,14 @@
     </property>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout42</cstring>
+            <cstring>Layout78</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>6</x>
-                <y>4</y>
-                <width>394</width>
-                <height>268</height>
+                <y>6</y>
+                <width>405</width>
+                <height>304</height>
             </rect>
         </property>
         <grid>
@@ -53,7 +53,7 @@
             </property>
             <widget class="QLayoutWidget" row="2" column="0">
                 <property name="name">
-                    <cstring>Layout8</cstring>
+                    <cstring>Layout77</cstring>
                 </property>
                 <grid>
                     <property name="name">
@@ -65,29 +65,28 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QComboBox" row="1" column="2">
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>TextLabel1_2_3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Create new files as:</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="1" column="1">
+                        <property name="name">
+                            <cstring>newfileCombo</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>New files will have the extension and highlighting according to this setting</string>
+                        </property>
+                    </widget>
+                    <widget class="QComboBox" row="0" column="1">
                         <property name="name">
                             <cstring>encodingCombo</cstring>
                         </property>
                     </widget>
-                    <spacer row="1" column="1">
-                        <property name="name" stdset="0">
-                            <cstring>Spacer5</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QLabel" row="1" column="0">
+                    <widget class="QLabel" row="0" column="0">
                         <property name="name">
                             <cstring>TextLabel1_2</cstring>
                         </property>
@@ -99,14 +98,6 @@
                         </property>
                     </widget>
                 </grid>
-            </widget>
-            <widget class="QCheckBox" row="3" column="0">
-                <property name="name">
-                    <cstring>hideDTDToolbar</cstring>
-                </property>
-                <property name="text">
-                    <string>&amp;Always hide the DTD toolbar</string>
-                </property>
             </widget>
             <spacer row="1" column="0">
                 <property name="name" stdset="0">
@@ -125,6 +116,14 @@
                     </size>
                 </property>
             </spacer>
+            <widget class="QCheckBox" row="3" column="0">
+                <property name="name">
+                    <cstring>hideDTDToolbar</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;Always hide the DTD toolbar</string>
+                </property>
+            </widget>
             <widget class="QGroupBox" row="0" column="0">
                 <property name="name">
                     <cstring>GroupBox1</cstring>
@@ -140,8 +139,8 @@
                         <rect>
                             <x>9</x>
                             <y>20</y>
-                            <width>374</width>
-                            <height>155</height>
+                            <width>384</width>
+                            <height>160</height>
                         </rect>
                     </property>
                     <grid>
@@ -273,6 +272,7 @@
     <tabstop>lineText</tabstop>
     <tabstop>buttonDefault</tabstop>
     <tabstop>encodingCombo</tabstop>
+    <tabstop>newfileCombo</tabstop>
     <tabstop>hideDTDToolbar</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>

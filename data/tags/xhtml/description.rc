@@ -1,6 +1,7 @@
 [General]
 Name = -//W3C//DTD XHTML 1.0 Transitional//EN
 NickName = XHTML 1.0 Transitional
+DefaultExtension = xhtml
 Groups = Core, I18n, Script, Focus
 NumOfPages = 3
 QuotedAttributes=src,href,color,bgcolor,background,text,link,vlink,alink,rows,cols,name,type,title,face

@@ -24,6 +24,7 @@
 #include <kiconloader.h>
 #include <kstandarddirs.h>
 
+#include "project/project.h"
 #include "quanta.h"
 #include "kqapp.h"
 
@@ -136,11 +137,13 @@ void KQApplicationPrivate::init()
     }
 
     quantaApp->loadInitialProject(initialProject);
+    if (!quantaApp->getProject()->hasProject())
+    {
+      for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
+        quantaApp->slotFileOpen(KURL(*it), quantaApp->defaultEncoding());  // load initial files
 
-    for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-      quantaApp->slotFileOpen(KURL(*it), quantaApp->defaultEncoding());  // load initial files
-
-    quantaApp->openLastFiles();
+      quantaApp->openLastFiles();
+    }
   }
   args->clear();
   if (splash) delete splash;

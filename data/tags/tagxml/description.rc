@@ -1,5 +1,6 @@
 [General]
 Name = XML
+DefaultExtension = xml
 NickName = XML 1.0
 NumOfPages = 0
 CaseSensitive = true

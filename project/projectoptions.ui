@@ -8,23 +8,37 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>615</width>
+            <width>623</width>
             <height>455</height>
         </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>3</hsizetype>
+            <vsizetype>3</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>615</width>
+            <height>420</height>
+        </size>
     </property>
     <property name="caption">
         <string>Form2</string>
     </property>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout26</cstring>
+            <cstring>Layout79</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>5</x>
-                <y>5</y>
-                <width>601</width>
-                <height>253</height>
+                <x>4</x>
+                <y>3</y>
+                <width>610</width>
+                <height>409</height>
             </rect>
         </property>
         <grid>
@@ -37,206 +51,330 @@
             <property name="spacing">
                 <number>6</number>
             </property>
-            <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="2">
+            <widget class="QLayoutWidget" row="0" column="0">
                 <property name="name">
-                    <cstring>linePrjTmpl</cstring>
+                    <cstring>Layout63</cstring>
                 </property>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>0</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>TextLabel5</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>7</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Email:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>linePrjName</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>3</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                            <size>
+                                <width>300</width>
+                                <height>0</height>
+                            </size>
+                        </property>
+                        <property name="text">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>TextLabel1</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Project name:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>TextLabel1_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Templates directory:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>TextLabel1_2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Toolbars directory:</string>
+                        </property>
+                    </widget>
+                    <widget class="QPushButton" row="2" column="3">
+                        <property name="name">
+                            <cstring>buttonToolbar</cstring>
+                        </property>
+                        <property name="minimumSize">
+                            <size>
+                                <width>0</width>
+                                <height>0</height>
+                            </size>
+                        </property>
+                        <property name="maximumSize">
+                            <size>
+                                <width>32</width>
+                                <height>32767</height>
+                            </size>
+                        </property>
+                        <property name="text">
+                            <string>...</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>linePrjTmpl</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>lineAuthor</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>lineEmail</cstring>
+                        </property>
+                        <property name="text">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>linePrjToolbar</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>TextLabel4</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Author:</string>
+                        </property>
+                    </widget>
+                    <widget class="QPushButton" row="1" column="3">
+                        <property name="name">
+                            <cstring>buttonTmpl</cstring>
+                        </property>
+                        <property name="minimumSize">
+                            <size>
+                                <width>0</width>
+                                <height>0</height>
+                            </size>
+                        </property>
+                        <property name="maximumSize">
+                            <size>
+                                <width>32</width>
+                                <height>32767</height>
+                            </size>
+                        </property>
+                        <property name="text">
+                            <string>...</string>
+                        </property>
+                    </widget>
+                </grid>
             </widget>
-            <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
+            <widget class="QGroupBox" row="1" column="0">
                 <property name="name">
-                    <cstring>linePrjToolbar</cstring>
+                    <cstring>GroupBox5</cstring>
                 </property>
+                <property name="title">
+                    <string>Project defaults</string>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout64</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>5</x>
+                            <y>27</y>
+                            <width>592</width>
+                            <height>124</height>
+                        </rect>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLabel" row="1" column="0">
+                            <property name="name">
+                                <cstring>TextLabel3_2_2_2</cstring>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string>Default encoding:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="2" column="0">
+                            <property name="name">
+                                <cstring>TextLabel1_3_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Default view:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>TextLabel3_2_3</cstring>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>32767</width>
+                                    <height>32767</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string>Default DTD:</string>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox" row="1" column="1">
+                            <property name="name">
+                                <cstring>encodingCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox" row="0" column="1">
+                            <property name="name">
+                                <cstring>dtdCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="3" column="0">
+                            <property name="name">
+                                <cstring>TextLabel1_2_3</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Create new files as:</string>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox" row="2" column="1">
+                            <property name="name">
+                                <cstring>viewCombo</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QComboBox" row="3" column="1">
+                            <property name="name">
+                                <cstring>newfileCombo</cstring>
+                            </property>
+                            <property name="toolTip" stdset="0">
+                                <string>New files will have the extension and highlighting according to this setting</string>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
             </widget>
-            <widget class="QLabel" row="7" column="0" rowspan="1" colspan="2">
+            <widget class="QLayoutWidget" row="2" column="0">
                 <property name="name">
-                    <cstring>TextLabel1_3</cstring>
+                    <cstring>Layout12_2</cstring>
                 </property>
-                <property name="text">
-                    <string>Default view:</string>
-                </property>
-            </widget>
-            <widget class="QPushButton" row="2" column="3">
-                <property name="name">
-                    <cstring>buttonToolbar</cstring>
-                </property>
-                <property name="minimumSize">
-                    <size>
-                        <width>0</width>
-                        <height>0</height>
-                    </size>
-                </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>32</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="text">
-                    <string>...</string>
-                </property>
-            </widget>
-            <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>lineAuthor</cstring>
-                </property>
-            </widget>
-            <widget class="QLabel" row="6" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>TextLabel3_2_2</cstring>
-                </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>32767</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="text">
-                    <string>Project default encoding:</string>
-                </property>
-            </widget>
-            <widget class="QLabel" row="1" column="0">
-                <property name="name">
-                    <cstring>TextLabel1_2</cstring>
-                </property>
-                <property name="text">
-                    <string>Project templates:</string>
-                </property>
-            </widget>
-            <widget class="QComboBox" row="5" column="2" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>dtdCombo</cstring>
-                </property>
-            </widget>
-            <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>TextLabel5</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>5</hsizetype>
-                        <vsizetype>7</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-                <property name="text">
-                    <string>Email:</string>
-                </property>
-            </widget>
-            <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="3">
-                <property name="name">
-                    <cstring>linePrjName</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>3</hsizetype>
-                        <vsizetype>0</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                    <size>
-                        <width>300</width>
-                        <height>0</height>
-                    </size>
-                </property>
-            </widget>
-            <widget class="QComboBox" row="7" column="2" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>viewCombo</cstring>
-                </property>
-            </widget>
-            <widget class="QLabel" row="2" column="0">
-                <property name="name">
-                    <cstring>TextLabel1_2_2</cstring>
-                </property>
-                <property name="text">
-                    <string>Project toolbars:</string>
-                </property>
-            </widget>
-            <widget class="QComboBox" row="6" column="2" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>encodingCombo</cstring>
-                </property>
-            </widget>
-            <widget class="QPushButton" row="1" column="3">
-                <property name="name">
-                    <cstring>buttonTmpl</cstring>
-                </property>
-                <property name="minimumSize">
-                    <size>
-                        <width>0</width>
-                        <height>0</height>
-                    </size>
-                </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>32</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="text">
-                    <string>...</string>
-                </property>
-            </widget>
-            <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>TextLabel4</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>7</hsizetype>
-                        <vsizetype>5</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-                <property name="text">
-                    <string>Author:</string>
-                </property>
-            </widget>
-            <widget class="QLabel" row="0" column="0">
-                <property name="name">
-                    <cstring>TextLabel1</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>7</hsizetype>
-                        <vsizetype>5</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-                <property name="text">
-                    <string>Project name:</string>
-                </property>
-            </widget>
-            <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>lineEmail</cstring>
-                </property>
-                <property name="text">
-                    <string></string>
-                </property>
-            </widget>
-            <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>TextLabel3_2</cstring>
-                </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>32767</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="text">
-                    <string>Project default DTD:</string>
-                </property>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>0</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>checkPrefix</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Use preview &amp;prefix</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>TextLabel1_4</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Prefix:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="1" column="1">
+                        <property name="name">
+                            <cstring>linePrefix</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                    </widget>
+                </grid>
             </widget>
         </grid>
     </widget>
 </widget>
+<connections>
+    <connection>
+        <sender>checkPrefix</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>linePrefix</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>checkPrefix</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>TextLabel1_4</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 <tabstops>
     <tabstop>linePrjName</tabstop>
     <tabstop>linePrjTmpl</tabstop>
@@ -248,6 +386,9 @@
     <tabstop>dtdCombo</tabstop>
     <tabstop>encodingCombo</tabstop>
     <tabstop>viewCombo</tabstop>
+    <tabstop>newfileCombo</tabstop>
+    <tabstop>checkPrefix</tabstop>
+    <tabstop>linePrefix</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

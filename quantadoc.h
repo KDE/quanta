@@ -67,7 +67,7 @@ public:
   bool saveAll(bool dont_ask=true);
 
   Document *write();
-  Document *newWrite(QWidget *parent);
+  Document *newWrite();
 		
 	// for kwrites
 	void  readConfig( KConfig * );

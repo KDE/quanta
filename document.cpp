@@ -51,8 +51,8 @@
 
 #define STEP 1
 Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
-                   Project *project, QWidget *parent,
-                   const char *name, WFlags f, QuantaPluginInterface *a_pIf )
+                   Project *project, QuantaPluginInterface *a_pIf,
+                   QWidget *parent, const char *name, WFlags f )
   : QWidget(parent, name, f)
 {
   m_dirty   = false;

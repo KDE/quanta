@@ -46,6 +46,7 @@ typedef struct QConfig{
           bool useMimeTypes;
           uint refreshFrequency;
           QString defaultDocType;
+          QString newFileType;
 
           //environment options
           QString globalDataDir;         //not stored, initialized on app startup

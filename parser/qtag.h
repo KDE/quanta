@@ -55,6 +55,7 @@ typedef struct DTDStruct
     {
      QString name;                    //DTD name
      QString nickName;                //DTD nickname
+     QString defaultExtension;        //default extension when creating new files
      bool caseSensitive;              //the tags&attributes in DTD are case sensitive or not
      int family;                      //xml, script type
      QTagList* tagsList;              //the list of all tags in the DTD
