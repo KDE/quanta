@@ -44,6 +44,8 @@
 #include <kdirwatch.h>
 #include <klocale.h>
 
+static const QChar space(' ');
+
 Parser::Parser()
 {
   m_node = 0L;
@@ -686,10 +688,7 @@ Node* Parser::specialAreaParser(Node *startNode)
       {
         specialEndStr = dtd->specialAreas[dtd->specialAreaStartRx.cap()];
         l = str.find(specialEndStr, pos);
-        for (int j = pos; j < (int)(l + specialEndStr.length()) ; j++)
-        {
-          str[j] = ' ';
-        }
+        str.replace(pos, l + specialEndStr.length() - pos, &space, l + specialEndStr.length() - pos);
         col = l;
       }
     }
@@ -1736,10 +1735,7 @@ void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
               }
               if (pos == -1)
                   pos = foundStr.length();
-              for (int j = structPos; j < pos + 1; j++)
-              {
-                foundStr[j] = ' ';
-              }
+              foundStr.replace(structPos, pos - structPos + 1, &space, pos - structPos + 1);
               int openBracketPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
               openBracketPos = foundStr.find('(', openBracketPos);
               openNum = 1;
@@ -1754,10 +1750,7 @@ void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
                       openNum--;
                   closeBracketPos++;
                 }
-                for (int j = openBracketPos; j < closeBracketPos; j++)
-                {
-                  foundStr[j] = ' ';
-                }
+                foundStr.replace(openBracketPos, closeBracketPos - openBracketPos, &space, closeBracketPos - openBracketPos);
               }
 
               structPos =  pos + 1;
