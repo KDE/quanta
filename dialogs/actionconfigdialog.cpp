@@ -76,6 +76,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   KAction *action;
   QString toolbarName;
   ToolbarTabWidget *tb = ToolbarTabWidget::ref();
+  QRegExp r("\\&(?!\\&)");
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->label(i);
@@ -94,7 +95,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
           action = quantaApp->actionCollection()->action(node.toElement().attribute("name"));
           if (action)
           {
-            oldActionItem = new KListViewItem(item, oldActionItem, action->text().replace(QRegExp("\\&(?!\\&)"),""), action->shortcut().toString(), action->name());
+            oldActionItem = new KListViewItem(item, oldActionItem, action->text().replace(r,""), action->shortcut().toString(), action->name());
             oldActionItem->setPixmap(0, BarIcon(action->icon()) );
           }
         }
@@ -129,7 +130,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
   {
     action = quantaApp->actionCollection()->action(i);
-    item = new KListViewItem(allActionsItem, action->text().replace(QRegExp("\\&(?!\\&)"),""), action->shortcut().toString(), action->name());
+    item = new KListViewItem(allActionsItem, action->text().replace(r, ""),  action->shortcut().toString(), action->name());
     item->setPixmap(0, BarIcon(action->icon()) );
   }
   allActionsItem->sortChildItems(0, true);
