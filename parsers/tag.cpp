@@ -541,7 +541,7 @@ bool Tag::editAttribute(const QString& attrName, const QString& attrValue)
     }
   }
   //attrName not found, creating the attr, if attrValue not empty
-  if(attrValue != "")
+  if(!attrValue.isEmpty())
   {
     attr.name = attrName;
     attr.value = attrValue;

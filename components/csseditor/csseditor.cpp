@@ -2,7 +2,7 @@
                           csseditor.cpp  -  description
                              -------------------
     begin                : mer lug 23 11:20:17 CEST 2003
-    copyright            : (C) 2003 by gulmini luciano   
+    copyright            : (C) 2003 by gulmini luciano
     email                : gulmini.luciano@student.unife.it
  ***************************************************************************/
 
@@ -80,7 +80,7 @@ void myCheckListItem::stateChange (bool b){
        while( child ) {
          m_sig->setValue(QVariant(child->text(0)));
          m_sig->activate();
-         static_cast<myCheckListItem*>(child)->setOn(false);    
+         static_cast<myCheckListItem*>(child)->setOn(false);
          child = child->nextSibling();
        }
        m_checkedChildren = 0;
@@ -137,65 +137,65 @@ void CSSEditor::buildListView(QDomNodeList l, QListView *lv){
 }
 
 void CSSEditor::setCurrentPropOn(const QString& s){
- if( (m_currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( s,0 )) )) 
+ if( (m_currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( s,0 )) ))
     m_currentProp->setOn(true);
-  else  
-  if( (m_currentProp = static_cast<myCheckListItem*>(lvAll->findItem( s,0 )) )) 
-    m_currentProp->setOn(true); 
-  else  
-  if( (m_currentProp = static_cast<myCheckListItem*>(lvAural->findItem( s,0 )) )) 
-    m_currentProp->setOn(true);   
-  else  
-  if( (m_currentProp = static_cast<myCheckListItem*>(lvInteractive->findItem( s,0 )) )) 
-    m_currentProp->setOn(true); 
-  else  
-  if( (m_currentProp = static_cast<myCheckListItem*>(lvPaged->findItem( s,0 )) )) 
-    m_currentProp->setOn(true); 
-            
+  else
+  if( (m_currentProp = static_cast<myCheckListItem*>(lvAll->findItem( s,0 )) ))
+    m_currentProp->setOn(true);
+  else
+  if( (m_currentProp = static_cast<myCheckListItem*>(lvAural->findItem( s,0 )) ))
+    m_currentProp->setOn(true);
+  else
+  if( (m_currentProp = static_cast<myCheckListItem*>(lvInteractive->findItem( s,0 )) ))
+    m_currentProp->setOn(true);
+  else
+  if( (m_currentProp = static_cast<myCheckListItem*>(lvPaged->findItem( s,0 )) ))
+    m_currentProp->setOn(true);
+
   if( m_currentProp && m_currentProp->depth() ) {
     myCheckListItem *p = static_cast<myCheckListItem*>(m_currentProp->parent());
     while(p) {
       p->setOn(true);
       p=static_cast<myCheckListItem*>(p->parent());
     }
-  }  
-}  
-  
+  }
+}
+
 
  void CSSEditor::addAndSetPropertyOn(const QString& property, const QString& value){
    addProperty(property,value);
-   setCurrentPropOn(property);   
+   setCurrentPropOn(property);
  }
 
  void CSSEditor::setSidesOfPropertyBorderOn(const QString& s){
    static_cast<myCheckListItem*>(lvVisual->findItem( "border-top",0 ))->setOn(true);
    static_cast<myCheckListItem*>(lvVisual->findItem( "border-right",0 ))->setOn(true);
    static_cast<myCheckListItem*>(lvVisual->findItem( "border-bottom",0 ))->setOn(true);
-   static_cast<myCheckListItem*>(lvVisual->findItem( "border-left",0 ))->setOn(true); 
+   static_cast<myCheckListItem*>(lvVisual->findItem( "border-left",0 ))->setOn(true);
    static_cast<myCheckListItem*>(lvVisual->findItem( "border-top-"+s,0 ))->setOn(true);
    static_cast<myCheckListItem*>(lvVisual->findItem( "border-right-"+s,0 ))->setOn(true);
    static_cast<myCheckListItem*>(lvVisual->findItem( "border-bottom-"+s,0 ))->setOn(true);
-   static_cast<myCheckListItem*>(lvVisual->findItem( "border-left-"+s,0 ))->setOn(true);  
+   static_cast<myCheckListItem*>(lvVisual->findItem( "border-left-"+s,0 ))->setOn(true);
  }
- 
-void CSSEditor::hidePreviewer(){ 
+
+void CSSEditor::hidePreviewer(){
   fPreview->hide();
  }
- 
+
 void CSSEditor::initialize(){
 
-   
+
   connect(pbOk, SIGNAL(clicked()), this, SLOT(toggleShortendForm()));
   quantaApp->config()->setGroup("CSSEditor Options");
   SHckb->setChecked(quantaApp->config()->readBoolEntry("Shorthand form enabled",false));
-  
+
   QString configFile = locate("appdata", "csseditor/config.xml");
 
   m_myhi = new QMyHighlighter(display);
 
   QBoxLayout *fPreviewLayout = new QBoxLayout(fPreview,QBoxLayout::LeftToRight);
   m_previewer=new KHTMLPart(fPreview);
-  
+
   fPreviewLayout->addWidget(m_previewer->view());
 
   QFile file( configFile );
@@ -239,7 +239,7 @@ void CSSEditor::initialize(){
   } // end while
 
   Connect();
-  
+
   QBoxLayout *fEditingLayout = new QBoxLayout(fEditing,QBoxLayout::LeftToRight);
 
   m_ps = new propertySetter(fEditing);
@@ -309,61 +309,61 @@ CSSEditor::~CSSEditor() {
 }
 
 void CSSEditor::setMiniEditors(QListViewItem* i){
-  
+
   m_ps->reset();
-  
-  if(i->childCount()==0) { 
+
+  if(i->childCount()==0) {
     m_currentProp = static_cast<myCheckListItem*>(i);
     QDomNodeList valueTypes = m_doc.elementsByTagName(i->text(0)).item(0).childNodes();
     unsigned int i;
     for(i=0; i<valueTypes.length(); i++) {
       QDomElement curr =valueTypes.item(i).toElement();
       QString valueTypeName(curr.tagName());
-      
+
       if(valueTypeName =="list") {
         m_ps->setComboBox();
         QStringList values = QStringList::split(",",curr.attribute("value"));
         m_ps->ComboBox()->insertStringList(values);
         if(m_properties.contains(m_currentProp->text(0)) !=0 )
           if( values.contains(m_currentProp->text(0)))
-            m_ps->ComboBox()->setCurrentText(m_properties[m_currentProp->text(0)]); 
+            m_ps->ComboBox()->setCurrentText(m_properties[m_currentProp->text(0)]);
         if(curr.attribute("editable") == "yes"){
           m_ps->ComboBox()->setEditable(true);
           /*if(m_properties.contains(m_currentProp->text(0)) !=0 )
-            m_ps->ComboBox()->setEditText(m_properties[m_currentProp->text(0)]); */ 
-        } 
+            m_ps->ComboBox()->setEditText(m_properties[m_currentProp->text(0)]); */
+        }
       }
-      else  
-  
+      else
+
       /*if( typeName == "spinbox") {
             m_ps->setSpinBox("0", values.item(k).toElement().attribute("minValue"),
             values.item(k).toElement().attribute("maxValue"),
             values.item(k).toElement().attribute("suffix"));
           }
-         
+
       else*/
       if( valueTypeName == "number") m_ps->setLineEdit();
       else
       if( valueTypeName == "integer") {
         if(m_properties.contains(m_currentProp->text(0)) !=0 ) {
-          if(curr.attribute("minValue") != QString::null )
-            m_ps->setSpinBox(m_properties[m_currentProp->text(0)],curr.attribute("minValue"));  
-          else 
-            m_ps->setSpinBox(m_properties[m_currentProp->text(0)]);              
+          if(!curr.attribute("minValue").isNull())
+            m_ps->setSpinBox(m_properties[m_currentProp->text(0)],curr.attribute("minValue"));
+          else
+            m_ps->setSpinBox(m_properties[m_currentProp->text(0)]);
         }
-        else 
-          if(curr.attribute("minValue") != QString::null )
-            m_ps->setSpinBox("0",curr.attribute("minValue"));  
-          else 
-            m_ps->setSpinBox();         
+        else
+          if(!curr.attribute("minValue").isNull())
+            m_ps->setSpinBox("0",curr.attribute("minValue"));
+          else
+            m_ps->setSpinBox();
       }
-      else           
+      else
       if( valueTypeName == "length") {
         lengthEditor *editor = new lengthEditor(m_ps);
         if(m_properties.contains(m_currentProp->text(0)) !=0 )
-          editor->setInitialValue(m_properties[m_currentProp->text(0)]);   
-        else 
-          editor->setInitialValue(QString::null); 
+          editor->setInitialValue(m_properties[m_currentProp->text(0)]);
+        else
+          editor->setInitialValue(QString::null);
         m_ps->installMiniEditor(editor);
       }
       else
@@ -375,12 +375,12 @@ void CSSEditor::setMiniEditors(QListViewItem* i){
         else {
           percentageEditor *editor = new percentageEditor("0",m_ps);
           m_ps->installMiniEditor(editor);
-        } 
+        }
       }
       else
       if( valueTypeName == "doubleLength") {
         doubleLengthEditor *editor = new doubleLengthEditor(m_ps);
-        
+
         if(m_properties.contains(m_currentProp->text(0)) !=0 ){
           QString temp(m_properties[m_currentProp->text(0)].simplifyWhiteSpace()),
                        sx(temp.section(" ",0,0)),
@@ -388,13 +388,13 @@ void CSSEditor::setMiniEditors(QListViewItem* i){
 
           editor->setInitialValue(sx,dx);
         }
-        else editor->setInitialValue(QString::null,QString::null); 
+        else editor->setInitialValue(QString::null,QString::null);
         m_ps->installMiniEditor(editor);
       }
       else
       if( valueTypeName == "doublePercentage") {
         doublePercentageEditor *editor = new doublePercentageEditor(m_ps);
-        
+
         if(m_properties.contains(m_currentProp->text(0)) !=0 ){
           QString temp(m_properties[m_currentProp->text(0)].simplifyWhiteSpace()),
                        sx(temp.section(" ",0,0)),
@@ -410,8 +410,8 @@ void CSSEditor::setMiniEditors(QListViewItem* i){
         frequencyEditor *editor = new frequencyEditor(m_ps);
         if(m_properties.contains(m_currentProp->text(0)) !=0 )
           editor->setInitialValue(m_properties[m_currentProp->text(0)]);
-        else 
-          editor->setInitialValue(QString::null); 
+        else
+          editor->setInitialValue(QString::null);
         m_ps->installMiniEditor(editor);
       }
       else
@@ -419,38 +419,38 @@ void CSSEditor::setMiniEditors(QListViewItem* i){
         timeEditor *editor = new timeEditor(m_ps);
         if(m_properties.contains(m_currentProp->text(0)) !=0 )
           editor->setInitialValue(m_properties[m_currentProp->text(0)]);
-        else 
-          editor->setInitialValue(QString::null); 
+        else
+          editor->setInitialValue(QString::null);
         m_ps->installMiniEditor(editor);
-      }     
+      }
       else
       if( valueTypeName == "angle") {
         angleEditor *editor = new angleEditor(m_ps);
-        if(m_properties.contains(m_currentProp->text(0)) !=0 )       
+        if(m_properties.contains(m_currentProp->text(0)) !=0 )
          editor->setInitialValue(m_properties[m_currentProp->text(0)]);
-        else 
-          editor->setInitialValue(QString::null); 
+        else
+          editor->setInitialValue(QString::null);
         m_ps->installMiniEditor(editor);
-      }    
+      }
       else
       if( valueTypeName == "freeedit") {
         m_ps->setLineEdit();
       }
       else
-      if( valueTypeName == "uri") {  
-        URIEditor *editor = new URIEditor(m_ps);      
+      if( valueTypeName == "uri") {
+        URIEditor *editor = new URIEditor(m_ps);
 
         if(curr.attribute("mode") == "multi") editor->setMode(URIEditor::Multi);
-        else editor->setMode(URIEditor::Single); 
-            
+        else editor->setMode(URIEditor::Single);
+
         if( curr.attribute("resourceType") == "audio") editor->setResourceType(URIEditor::audio);
         else
-          if( curr.attribute("resourceType") == "image") editor->setResourceType(URIEditor::image);  
+          if( curr.attribute("resourceType") == "image") editor->setResourceType(URIEditor::image);
           else
-            if( curr.attribute("resourceType") == "mousePointer") editor->setResourceType(URIEditor::mousePointer);  
-      
-        m_ps->installMiniEditor(editor);             
-      }      
+            if( curr.attribute("resourceType") == "mousePointer") editor->setResourceType(URIEditor::mousePointer);
+
+        m_ps->installMiniEditor(editor);
+      }
       else
       if( valueTypeName == "colors") {
         RGBcolorSlider *RGBeditor = new RGBcolorSlider(m_ps);
@@ -458,20 +458,20 @@ void CSSEditor::setMiniEditors(QListViewItem* i){
         if(m_properties.contains(m_currentProp->text(0)) !=0 ){
           CReditor->lineEdit()->setText(m_properties[m_currentProp->text(0)]);
           CReditor->setInitialValue();
-          
+
         }
-        
+
         m_ps->installMiniEditor(CReditor);
         m_ps->setPredefinedColorListEditor();
-        m_ps->installMiniEditor(RGBeditor);        
-      }         
+        m_ps->installMiniEditor(RGBeditor);
+      }
       else
       if( valueTypeName =="doubleList") {
         doubleComboBoxEditor *editor = new doubleComboBoxEditor(m_ps);
         editor->cbSx()->insertStringList(QStringList::split(",",curr.firstChild().toElement().attribute("value")));
         editor->cbDx()->insertStringList(QStringList::split(",",curr.lastChild().toElement().attribute("value")));
-        m_ps->installMiniEditor(editor);          
-      } 
+        m_ps->installMiniEditor(editor);
+      }
       else
         if( valueTypeName == "fontDialog" ){
           fontEditor *editor = new fontEditor(m_ps);
@@ -480,7 +480,7 @@ void CSSEditor::setMiniEditors(QListViewItem* i){
           }
           else editor->setInitialValue(QString::null);
           m_ps->installMiniEditor(editor);
-        } 
+        }
     }
     m_ps->addButton();
     m_ps->Show();
@@ -488,9 +488,9 @@ void CSSEditor::setMiniEditors(QListViewItem* i){
 }
 
 void CSSEditor::checkProperty(const QString& v){
-  if(!m_currentProp->isOn()) 
+  if(!m_currentProp->isOn())
     m_currentProp->setOn(true);
-  
+
   if( m_currentProp->depth() ){
     myCheckListItem *p = static_cast<myCheckListItem*>(m_currentProp->parent());
     while(p){
@@ -498,31 +498,31 @@ void CSSEditor::checkProperty(const QString& v){
       p=static_cast<myCheckListItem*>(p->parent());
     }
   }
-  
+
   if(m_currentProp->text(0) =="border-style" ){
     setSidesOfPropertyBorderOn("style");
     QStringList values = QStringList::split(" ",v.stripWhiteSpace());
     addProperty("border-top-style",values[0]);
     switch(values.count()) {
-      case 1: 
+      case 1:
                    addProperty("border-right-style",values[0]);
                    addProperty("border-bottom-style",values[0]);
                    addProperty("border-left-style",values[0]);
                    break;
-                   
-      case 2: 
+
+      case 2:
                    addProperty("border-right-style",values[1]);
                    addProperty("border-bottom-style",values[0]);
                    addProperty("border-left-style",values[1]);
                    break;
-                   
-      case 3: 
+
+      case 3:
                    addProperty("border-right-style",values[1]);
                    addProperty("border-bottom-style",values[2]);
                    addProperty("border-left-style",values[1]);
                    break;
-                   
-      case 4: 
+
+      case 4:
                    addProperty("border-right-style",values[1]);
                    addProperty("border-bottom-style",values[2]);
                    addProperty("border-left-style",values[3]);break;
@@ -534,25 +534,25 @@ void CSSEditor::checkProperty(const QString& v){
     QStringList values = QStringList::split(" ",v.stripWhiteSpace());
     addProperty("border-top-width",values[0]);
     switch(values.count()) {
-      case 1: 
+      case 1:
                    addProperty("border-right-width",values[0]);
                    addProperty("border-bottom-width",values[0]);
                    addProperty("border-left-width",values[0]);
                    break;
-                   
-      case 2: 
+
+      case 2:
                    addProperty("border-right-width",values[1]);
                    addProperty("border-bottom-width",values[0]);
                    addProperty("border-left-width",values[1]);
                    break;
-                   
-      case 3: 
+
+      case 3:
                    addProperty("border-right-width",values[1]);
                    addProperty("border-bottom-width",values[2]);
                    addProperty("border-left-width",values[1]);
                    break;
-                   
-      case 4: 
+
+      case 4:
                    addProperty("border-right-width",values[1]);
                    addProperty("border-bottom-width",values[2]);
                    addProperty("border-left-width",values[3]);break;
@@ -564,25 +564,25 @@ void CSSEditor::checkProperty(const QString& v){
     QStringList values = QStringList::split(" ",v.stripWhiteSpace());
     addProperty("border-top-color",values[0]);
     switch(values.count()) {
-      case 1: 
+      case 1:
                    addProperty("border-right-color",values[0]);
                    addProperty("border-bottom-color",values[0]);
                    addProperty("border-left-color",values[0]);
                    break;
-                   
-      case 2: 
+
+      case 2:
                    addProperty("border-right-color",values[1]);
                    addProperty("border-bottom-color",values[0]);
                    addProperty("border-left-color",values[1]);
                    break;
-                   
-      case 3: 
+
+      case 3:
                    addProperty("border-right-color",values[1]);
                    addProperty("border-bottom-color",values[2]);
                    addProperty("border-left-color",values[1]);
                    break;
-                   
-      case 4: 
+
+      case 4:
                    addProperty("border-right-style",values[1]);
                    addProperty("border-bottom-style",values[2]);
                    addProperty("border-left-style",values[3]);break;
@@ -610,13 +610,13 @@ QString CSSEditor::generateProperties(){
   QString props;
   QMap<QString,QString>::Iterator it;
   if(!SHckb->isChecked()) {
-    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) 
+    for ( it = m_properties.begin(); it != m_properties.end(); ++it )
       props+= it.key() + " : " + it.data().stripWhiteSpace() + "; " ;
     props.truncate(props.length()-1);//the last white space creates some problems: better remove it
     //props.chop(1);
     return props;
   }
-  else {    
+  else {
     ShorthandFormer sf(m_properties);
     return sf.compress();
   }
@@ -632,7 +632,7 @@ void CSSEditor::activatePreview() {
    QString testHeader,
                  testFooter,
                  testBody;
-        
+
     if(!m_selectorName.isEmpty()) {
       testHeader +=  m_selectorName + " { \n ";
       testFooter =  "\n}"  + m_Selectors;
@@ -641,57 +641,57 @@ void CSSEditor::activatePreview() {
       testHeader += " style=\"" ;
       testFooter = "\"" ;
     }
-  
+
     QMap<QString,QString>::Iterator it;
-    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) 
+    for ( it = m_properties.begin(); it != m_properties.end(); ++it )
       testBody+= it.key() + " : " + it.data() + ";";
 
     m_previewer->begin( KURL(m_fileToPreview) );
     m_previewer->write( m_Header +  testHeader + testBody+ testFooter+ m_Footer);
-    m_previewer->end(); 
+    m_previewer->end();
 
-    
-  }   
+
+  }
   else {
-    QString tmp("{"); 
-    QFile file(m_fileToPreview);      
-    if ( file.open( IO_ReadOnly ) ) {                    
-        QMap<QString,QString>::Iterator it;        
-        for ( it = m_properties.begin(); it != m_properties.end(); ++it ) 
+    QString tmp("{");
+    QFile file(m_fileToPreview);
+    if ( file.open( IO_ReadOnly ) ) {
+        QMap<QString,QString>::Iterator it;
+        for ( it = m_properties.begin(); it != m_properties.end(); ++it )
           tmp+= it.key() + " : " + it.data() + ";";
-         
-        
+
+
         QFileInfo fi(m_fileToPreview);
         KParts::URLArgs a;
         if(fi.extension().lower() == "xml" or fi.extension().lower() == "xhtml")
           a.serviceType="text/xml";
         if(fi.extension().lower() == "html" or fi.extension().lower() == "html")
-          a.serviceType="text/xml";   
+          a.serviceType="text/xml";
         m_previewer->browserExtension()->setURLArgs(a);
-        QTextStream stream( &file ); 
-        
-        m_previewer->begin(KURL(m_fileToPreview));       
+        QTextStream stream( &file );
+
+        m_previewer->begin(KURL(m_fileToPreview));
         m_previewer->write(stream.read());
-        m_previewer->end(); 
-        m_previewer->setUserStyleSheet(m_externalStyleSheetDefinition + " " + m_selectorName+" "+ tmp +"}");         
+        m_previewer->end();
+        m_previewer->setUserStyleSheet(m_externalStyleSheetDefinition + " " + m_selectorName+" "+ tmp +"}");
         file.close();
     }
-   //else KMessageBox::sorry(this,i18n("The css file you want to edit can't be opened"));  
-  }  
+   //else KMessageBox::sorry(this,i18n("The css file you want to edit can't be opened"));
+  }
 }
 
-void CSSEditor::updateDisplay(){  
+void CSSEditor::updateDisplay(){
   QString toDisplay;
   QMap<QString,QString>::Iterator it;
-  for ( it = m_properties.begin(); it != m_properties.end(); ++it ) 
+  for ( it = m_properties.begin(); it != m_properties.end(); ++it )
     toDisplay += it.key() + " : " + it.data() + ";\n\t";
-  
+
   if(!m_selectorName.isEmpty()){// we're working on <style></style> block
     toDisplay.prepend(m_selectorName +" {\n\t");
     toDisplay+="}";
-  }    
+  }
   else  toDisplay.prepend("\n\t");
-       
+
   display->setText(toDisplay);
 }
 

@@ -54,7 +54,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, bool forceInser
 	bool b;
 	int index;
 	KURL url, baseURL;
-        
+
         m_forceInsertionOfBasicNodes = forceInsertionOfBasicNodes;
 
 	//set the "autodefault" property
@@ -438,8 +438,8 @@ void htmlDocumentProperties::accept()
 			{
 				if(!(static_cast<NodeLinkedViewItem *>(item))->node)
 				{
-					if((static_cast<AttributeItem *>(item))->editorText(0) != "" ||
-						(static_cast<AttributeItem *>(item))->editorText(1) != "")
+					if(!(static_cast<AttributeItem *>(item))->editorText(0).isEmpty() ||
+						!(static_cast<AttributeItem *>(item))->editorText(1).isEmpty())
 					{
 						addBasicNodes(modifs);
 						//create the meta!!
@@ -488,8 +488,8 @@ void htmlDocumentProperties::accept()
 			{
 				if(!(static_cast<NodeLinkedViewItem *>(item))->node)
 				{
-					if((static_cast<AttributeItem *>(item))->editorText(0) != "" ||
-						(static_cast<AttributeItem *>(item))->editorText(1) != "")
+					if(!(static_cast<AttributeItem *>(item))->editorText(0).isEmpty() ||
+						!(static_cast<AttributeItem *>(item))->editorText(1).isEmpty())
 					{
 						addBasicNodes(modifs);
 						addBasicCssNodes(modifs);
@@ -546,7 +546,7 @@ void htmlDocumentProperties::accept()
 
         if(m_forceInsertionOfBasicNodes)
           addBasicNodes(modifs);
-        
+
 	view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
 	view->reloadBothViews();
@@ -557,12 +557,12 @@ void htmlDocumentProperties::accept()
 void htmlDocumentProperties::reject()
 {
   NodeModifsSet *modifs = new NodeModifsSet();
-  
+
   if(m_forceInsertionOfBasicNodes)
     addBasicNodes(modifs);
-    
+
   ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
-    
+
   done(0);
 }
 

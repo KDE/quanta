@@ -642,15 +642,15 @@ void ProjectPrivate::slotAcceptCreateProject()
     not recognize it as parent url because:
                 QString::Null != ""
   */
-  if (png->lineHost->text() != "")
+  if (!png->lineHost->text().isEmpty())
     baseURL.setHost(png->lineHost->text());
-  if (png->lineUser->text() != "")
+  if (!png->lineUser->text().isEmpty())
     baseURL.setUser(png->lineUser->text());
-  if (png->linePasswd->text() != "")
+  if (!png->linePasswd->text().isEmpty())
     baseURL.setPass(png->linePasswd->text());
-  if (png->linePort->text() != "")
+  if (!png->linePort->text().isEmpty())
     baseURL.setPort(png->linePort->text().toInt());
-  if (png->comboProtocol->currentText() != "")
+  if (!png->comboProtocol->currentText().isEmpty())
     baseURL.setProtocol(png->comboProtocol->currentText());
   if (baseURL.protocol() == i18n("Local")) baseURL.setProtocol("file");
   baseURL.adjustPath(1);
@@ -1376,7 +1376,7 @@ bool ProjectPrivate::projectAlreadyOpen(const QString & urlStr)
 /* uploads project file */
 bool ProjectPrivate::uploadProjectFile()
 {
-  if (m_tmpProjectFile == QString::null || !saveProject())
+  if (m_tmpProjectFile.isNull() || !saveProject())
     return false;
   // no need to upload a local file because it is the same as the tempFile
   if (projectURL.isLocalFile())

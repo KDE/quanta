@@ -949,7 +949,7 @@ void TemplatesTreeView::slotSendInMail()
 
     for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
     {
-      if ( (*it_f).fileName(false) != "" ) {
+      if (!(*it_f).fileName(false).isEmpty()) {
         url = QExtFileInfo::toRelative( (*it_f), dirURL) ;
 
         QFile file((*it_f).path());

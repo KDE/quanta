@@ -577,7 +577,7 @@ void TagAction::insertOutputInTheNodeTree(const QString &str1, const QString &st
         if(view->hadLastFocus() == QuantaView::VPLFocus || smartTagInsertion)
 	{
 		modifs = new NodeModifsSet();
-		if(!node && str1 != "")
+		if(!node && !str1.isEmpty())
 		{
 			//We build the node from the str1
 			node = kafkaCommon::createNode("", "", Tag::XmlTag, view->document());

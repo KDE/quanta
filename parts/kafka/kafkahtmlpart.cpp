@@ -1,7 +1,7 @@
 /***************************************************************************
                               kafkahtmlpart.cpp
                              -------------------
- 
+
     copyright            : (C) 2001 - The Kafka Team
                            (C) 2003, 2004 - Nicolas Deschildre
     email                : kde-kafka@master.kde.org && ndeschildre@kdewebdev.org
@@ -80,12 +80,12 @@ KafkaWidget::KafkaWidget(QWidget *parent, QWidget *widgetParent, KafkaDocument *
         w(part)
 {
     d = new KafkaWidgetPrivate();
- 
+
     d->m_cursorOffset = 0;
     d->m_pressOffset = 0;
     d->m_releaseOffset = 0;
     d->stuckCursorHorizontalPos = false;
-    
+
     m_modifs = 0L;
 
     // With the mix of Leo Savernik's caret Mode and the current editing
@@ -412,11 +412,11 @@ void KafkaWidget::keyReturn(bool specialPressed)
             if(!brDomNode.nextSibling().isNull())
               w->insertDomNode(brDomNode2, m_currentNode.parentNode(),
                 DOM::Node());
-    
+
             emit domNodeInserted(brDomNode2, false, m_modifs);
             m_currentNode = brDomNode;
           }
-          
+
          }
         d->m_cursorOffset = 0;
 
@@ -477,7 +477,7 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
     if(event->type() == QEvent::KeyPress)
     {
         QKeyEvent *keyevent = static_cast<QKeyEvent *>(event);
-        
+
         //Create a new NodeModifsSet where the changes will be logged.
         m_modifs = new NodeModifsSet();
 
@@ -638,7 +638,7 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
             d->stuckCursorHorizontalPos = false;
             break;
         }
-        
+
         //Submit the modifs to the undoRedo system.
         ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(m_modifs, undoRedo::KafkaModif);
         m_modifs = 0L;
@@ -1526,7 +1526,7 @@ void KafkaWidget::keyBackspace()
                 }
                 //dirty workaround when after having deleted a br, there is only one br left
                 //Anyway webcore will override this
-                if(m_currentNode.nodeName().string().lower() == "br" && 
+                if(m_currentNode.nodeName().string().lower() == "br" &&
                   (m_currentNode.previousSibling().isNull() || (m_currentNode.previousSibling().nodeType() ==
                   DOM::Node::TEXT_NODE && m_currentNode.previousSibling().previousSibling().isNull())) &&
                   (m_currentNode.nextSibling().isNull() || (m_currentNode.nextSibling().nodeType() ==
@@ -1809,11 +1809,11 @@ void KafkaWidget::postprocessCursorPosition()
          (m_currentNode.nodeName().string().lower() != "br" ||
           (m_currentNode.nodeName().string().lower() == "br" && /**!m_currentNode.nextSibling().isNull() &&
           m_currentNode.nextSibling().nodeType() == DOM::Node::TEXT_NODE &&
-          m_currentNode.nextSibling().nodeValue().string() == "" &&
+          m_currentNode.nextSibling().nodeValue().string().isEmpty() &&
           m_currentNode.nextSibling().nextSibling().isNull() &&*/
-          !m_currentNode.previousSibling().isNull() && 
+          !m_currentNode.previousSibling().isNull() &&
           m_currentNode.previousSibling().nodeType() == DOM::Node::TEXT_NODE &&
-          m_currentNode.previousSibling().nodeValue().string() != "")))
+          !m_currentNode.previousSibling().nodeValue().string().isEmpty())))
         {
             while(1)
             {
@@ -1893,14 +1893,14 @@ void KafkaWidget::postprocessCursorPosition()
 void KafkaWidget::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
 {
     DOM::Node mouseNode = event->innerNode();
-    
+
     if(mouseNode == 0)
         return;
     if(mouseNode.nodeType() == DOM::Node::TEXT_NODE)
         KApplication::setOverrideCursor(Qt::ibeamCursor);
     else
         KApplication::setOverrideCursor(Qt::arrowCursor);
-    
+
     KHTMLPart::khtmlMouseMoveEvent(event);
 }
 

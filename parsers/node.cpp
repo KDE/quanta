@@ -436,7 +436,7 @@ Node *Node::getClosingNode()
     {
         while (n && n->tag->type == Tag::Empty)
             n = n->next;
-        if (n && n->tag->type == Tag::XmlTagEnd && ((tag->type == Tag::XmlTag && QuantaCommon::closesTag(tag, n->tag)) || (tag->type == Tag::ScriptTag && n->tag->name == "")))
+        if (n && n->tag->type == Tag::XmlTagEnd && ((tag->type == Tag::XmlTag && QuantaCommon::closesTag(tag, n->tag)) || (tag->type == Tag::ScriptTag && n->tag->name.isEmpty())))
             return n;
     }
     return 0L;
@@ -450,7 +450,7 @@ Node *Node::getOpeningNode()
         while(n && n->tag->type == Tag::Empty)
             n = n->prev;
         if(n && ((n->tag->type == Tag::XmlTag && QuantaCommon::closesTag(n->tag, tag))
-                 || (n->tag->type == Tag::ScriptTag && tag->name == "")))
+                 || (n->tag->type == Tag::ScriptTag && tag->name.isEmpty())))
             return n;
     }
     return 0L;
