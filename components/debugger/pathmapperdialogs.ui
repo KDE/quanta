@@ -273,10 +273,10 @@ The quanta will know that files starting with "/home/user/project/" on the local
                         <enum>Raised</enum>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Indicates wether the translated path exists on disk or not</string>
+                        <string>Indicates whether the translated path exists on disk or not</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>This indicator tells you wether the translated path exists on local disk or not.</string>
+                        <string>This indicator tells you whether the translated path exists on local disk or not.</string>
                     </property>
                 </widget>
                 <widget class="QLineEdit" row="1" column="1">
@@ -312,7 +312,7 @@ The quanta will know that files starting with "/home/user/project/" on the local
                         </color>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>This filed shows the path currently needed to be translated.</string>
+                        <string>This field shows the path currently needing to be translated.</string>
                     </property>
                 </widget>
             </grid>

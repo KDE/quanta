@@ -160,25 +160,25 @@ void DebuggerManager::initActions()
   newaction->setToolTip(i18n("Initiate HTTP Request to the server with debugging activated"));
   
   newaction = new KAction(i18n("&Run"), SmallIcon("debug_run"), 0, this, SLOT(slotDebugRun()), ac, "debug_run");
-  newaction->setToolTip(i18n("Executes the script showing every line of execution to the user (slow). If a script is currenlty not being debugged, the next script started will start in run mode"));
+  newaction->setToolTip(i18n("Executes the script showing every line of execution to the user (slow). If a script is currently not being debugged, the next script started will start in run mode"));
   
   newaction = new KAction(i18n("&Leap"), SmallIcon("debug_leap"), 0, this, SLOT(slotDebugLeap()), ac, "debug_leap");
-  newaction->setToolTip(i18n("Executes the script without showing every line of execution to the user (fast). If a script is currenlty not being debugged, the next script started will start in leap mode"));
+  newaction->setToolTip(i18n("Executes the script without showing every line of execution to the user (fast). If a script is currently not being debugged, the next script started will start in leap mode"));
   
   newaction = new KAction(i18n("&Step"), SmallIcon("debug_stepover"), 0, this, SLOT(slotDebugStepOver()), ac, "debug_stepover");
   newaction->setToolTip(i18n("Executes the next line of execution, but does not step into functions or includes"));
   
   newaction = new KAction(i18n("Step &Into"), SmallIcon("debug_stepinto"), 0, this, SLOT(slotDebugStepInto()), ac, "debug_stepinto");
-  newaction->setToolTip(i18n("Executes the next line of execution and steps into it if it's a function call or inclusion of a file"));
+  newaction->setToolTip(i18n("Executes the next line of execution and steps into it if it is a function call or inclusion of a file"));
   
   newaction = new KAction(i18n("S&kip"), SmallIcon("debug_skip"), 0, this, SLOT(slotDebugSkip()), ac, "debug_skip");
   newaction->setToolTip(i18n("Skips the next command of execution and makes the next command the current one"));
   
   newaction = new KAction(i18n("Step &Out"), SmallIcon("debug_stepout"), 0, this, SLOT(slotDebugStepOut()), ac, "debug_stepout");
-  newaction->setToolTip(i18n("Executes the rest of the commands in the current function/file and pauses when it's done (when it reaches a higher level in the backtrace)"));
+  newaction->setToolTip(i18n("Executes the rest of the commands in the current function/file and pauses when it is done (when it reaches a higher level in the backtrace)"));
   
   newaction = new KAction(i18n("&Pause"), SmallIcon("debug_pause"), 0, this, SLOT(slotDebugPause()), ac, "debug_pause");
-  newaction->setToolTip(i18n("Pauses the scripts if it's running or leaping. If a script is currently not being debugged, it will start in paused mode when started"));
+  newaction->setToolTip(i18n("Pauses the scripts if it is running or leaping. If a script is currently not being debugged, it will start in paused mode when started"));
   newaction = new KAction(i18n("Kill"), SmallIcon("debug_kill"), 0, this, SLOT(slotDebugKill()), ac, "debug_kill");
   newaction->setToolTip(i18n("Kills the currently running script"));
   
@@ -193,7 +193,7 @@ void DebuggerManager::initActions()
   newaction->setToolTip(i18n("Adds a variable to the watch list"));
   
   newaction = new KAction(i18n("Watch Variable"), SmallIcon("math_brace"), 0, this, SLOT(slotAddWatch()), ac, "debug_addwatchdialog");
-  newaction->setToolTip(i18n("Adds a varibale to the watch list"));
+  newaction->setToolTip(i18n("Adds a variable to the watch list"));
   
   newaction = new KAction(i18n("Set Value of Variable"), SmallIcon("edit"), 0, this, SLOT(slotVariableSet()), ac, "debug_variable_set");
   newaction->setToolTip(i18n("Changes the value of a variable"));

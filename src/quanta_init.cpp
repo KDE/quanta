@@ -1189,7 +1189,7 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
 
   if (!execCommand->start(KProcess::NotifyOnExit,KProcess::All))
   {
-    KMessageBox::error(m_quanta, i18n("Failed to query for running Quanta instances!"));
+    KMessageBox::error(m_quanta, i18n("Failed to query for running Quanta instances."));
   }
   else
   {
