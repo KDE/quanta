@@ -564,7 +564,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   Tag *textTag = 0L;
   Node *node = 0L;
   int el = 0;
-  int ec = 0;
+  int ec = -1;
   if (currentNode)
   {
     currentNode->tag->endPos(el, ec);
@@ -635,6 +635,10 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       currentNode = node;
       if (!rootNode)
           rootNode = node;
+      if (m_dtd->family == Script)
+      {
+        specialAreaParser(node);
+      }
     }
   }
 
@@ -2000,7 +2004,7 @@ void Parser::parseForScriptGroup(Node *node)
   for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
   {
     group = dtd->structTreeGroups[i];
-    if (!group.hasSearchRx)
+    if (!group.hasSearchRx || group.tagType != node->tag->type)
       continue;
     pos = 0;
     while (pos != -1)
