@@ -132,8 +132,6 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
            messageOutput, SLOT(endPhpConnect()) );
   connect( debugger,      SIGNAL(data(QString)),
            messageOutput, SLOT(phpDebug(QString)) );
-  connect( messageOutput, SIGNAL(clicked(const QString&,int)),
-           this,          SLOT(gotoFileAndLine(const QString&,int)));
            
   if ( !debugger->ok() ) {
     QString s;
@@ -146,6 +144,10 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
       s.sprintf("%i",phpDebugPort)+"" );
   }
 */  
+
+  connect( messageOutput, SIGNAL(clicked(const QString&,int)),
+           this,          SLOT(gotoFileAndLine(const QString&,int)));
+
   QTimer *t = new QTimer( this );
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );
   t->start( 2000, false );
