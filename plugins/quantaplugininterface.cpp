@@ -1,5 +1,5 @@
 /***************************************************************************
-    quantaplugininterface.cpp  - General interface to the plugin system 
+    quantaplugininterface.cpp  - General interface to the plugin system
                              -------------------
     begin                : Mon Sep 16 2002
     copyright            : (C) 2002 by Marc Britton
@@ -19,6 +19,7 @@
 #include <kconfig.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
+#include <kdebug.h>
 
 /* QT INCLUDES */
 #include <qdict.h>
@@ -38,7 +39,7 @@
 QuantaPluginInterface::QuantaPluginInterface()
 {
  // m_plugins.setAutoDelete(TRUE);
-  
+
   readConfig();
 }
 
@@ -56,7 +57,7 @@ void QuantaPluginInterface::readConfig()
   // read the plugins.rc
   QString configFile = locateLocal("appdata", "plugins.rc");
   if (!QFileInfo(configFile).exists()) configFile = qConfig.globalDataDir +"quanta/plugins.rc";
-  
+
   KConfig *config = new KConfig(configFile);
   config->setGroup("General");
   QStringList pList = config->readListEntry("Plugins");
@@ -66,9 +67,9 @@ void QuantaPluginInterface::readConfig()
 
   QStringList paths = config->readListEntry("SearchPaths");
   for(QStringList::Iterator it = paths.begin();it != paths.end(); ++it)
-    (*it) = (*it).stripWhiteSpace();  
+    (*it) = (*it).stripWhiteSpace();
   setSearchPaths(paths);
-         
+
   // now that we have a list of the plugins, go through and get the details of them
   for(QStringList::Iterator it = pList.begin();it != pList.end();++it)
   {
@@ -160,7 +161,18 @@ void QuantaPluginInterface::writeConfig()
       if (curPlugin->isStandard()) config->writeEntry("Standard Name", curPlugin->standardName());
     }
   }
+  if (config->isReadOnly())
+  {
+    kdWarning() << "Plugin config file " << locateLocal("appdata", "plugins.rc") << " is read only! Plugin settings were not saved!" << endl;
+  }
   config->sync();
+  if (config->isReadOnly())
+  {
+    kdWarning() << "Plugin config file " << locateLocal("appdata", "plugins.rc") << " is read only! Plugin settings were not saved!" << endl;
+  } else
+  {
+    kdDebug(24000) << "Plugin settings saved to: " << locateLocal("appdata", "plugins.rc") << endl;
+  }
   delete config;
 }
 
