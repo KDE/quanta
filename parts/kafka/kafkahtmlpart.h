@@ -1,7 +1,7 @@
 /***************************************************************************
                                kafkahtmlpart.h
                              -------------------
- 
+
     copyright            : (C) 2001 - The Kafka Team
                            (C) 2003, 2004 - Nicolas Deschildre
     email                : kde-kafka@master.kde.org && ndeschildre@kdewebdev.org
@@ -40,6 +40,7 @@ class DOMString;
 class KafkaWidgetPrivate;
 class KafkaDocument;
 class NodeModifsSet;
+class QPopupMenu;
 
 /*
  * It is the main central widget which get the cursor focus and takes care of "simple" edition
@@ -288,7 +289,7 @@ private:
     KafkaWidgetPrivate *d;
     KafkaDocument *w;
     friend class KafkaWidgetPrivate;
-    
+
     QPopupMenu* m_contextPopupMenu;
 };
 
