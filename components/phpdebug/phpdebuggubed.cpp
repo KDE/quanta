@@ -145,7 +145,7 @@ void PHPDebugGubed::slotReadyRead()
 
     // New current line
     else if(m_command == "setactiveline")
-      m_interface->setActiveLine(data.left(data.find(':')), data.mid(data.find(':') + 1).toLong());
+      m_interface->setActiveLine(KURL(data.left(data.find(':'))), data.mid(data.find(':') + 1).toLong());
 
     // A debugging session is running 
     else if(m_command == "debuggingon")
@@ -182,7 +182,7 @@ void PHPDebugGubed::slotReadyRead()
     // We're about to debug a file..
     else if(m_command == "initialize")
     {
-      m_interface->setActiveLine(data.left(data.find(':')), 0);
+      m_interface->setActiveLine(KURL(data.left(data.find(':'))), 0);
       sendCommand("havesource", "");
       debuggingState(true);
     }

@@ -85,7 +85,7 @@ PHPDebuggerInterface::PHPDebuggerInterface ()
   enableAction("*", false);
 }
 
-void PHPDebuggerInterface::enableAction(QString action, bool enable)
+void PHPDebuggerInterface::enableAction(const QString& action, bool enable)
 {
 
   if(action == "*")
@@ -184,13 +184,13 @@ void PHPDebuggerInterface::slotDebugStepOut()
 }
 
 // The debug server told us we have a breakpoint, mark it in the file
-void PHPDebuggerInterface::haveBreakpoint (QString file, int line)
+void PHPDebuggerInterface::haveBreakpoint (const QString& file, int line)
 {
   setMark(mapServerPathToLocal(file), line, true, KTextEditor::MarkInterface::markType02);
 }
 
 // Users added a breakpoint
-bool PHPDebuggerInterface::setBreakpoint ( KURL file, int line)
+bool PHPDebuggerInterface::setBreakpoint ( const KURL& file, int line)
 {
    if(!m_debugsocket->setBreakpoint(mapLocalPathToServer(file.prettyURL(0, KURL::StripFileProtocol)), line))
    {
@@ -201,7 +201,7 @@ bool PHPDebuggerInterface::setBreakpoint ( KURL file, int line)
 }
 
 // User removed a breakpoint
-bool PHPDebuggerInterface::removeBreakpoint ( KURL file, int line )
+bool PHPDebuggerInterface::removeBreakpoint ( const KURL& file, int line )
 {
    if(!m_debugsocket->removeBreakpoint(mapLocalPathToServer(file.prettyURL(0, KURL::StripFileProtocol)), line))
    {
@@ -245,7 +245,7 @@ QString PHPDebuggerInterface::mapLocalPathToServer(QString localpath)
 }
 
 // New current line
-bool PHPDebuggerInterface::setActiveLine ( KURL file, int line )
+bool PHPDebuggerInterface::setActiveLine ( const KURL& file, int line )
 {
   //Get local filename
   QString filename = mapServerPathToLocal(file.prettyURL(0, KURL::StripFileProtocol));
@@ -266,12 +266,12 @@ bool PHPDebuggerInterface::setActiveLine ( KURL file, int line )
 }
 
 // Set a mark in a document
-void PHPDebuggerInterface::setMark(QString filename, long line, bool set, int mark)
+void PHPDebuggerInterface::setMark(const QString& filename, long line, bool set, int mark)
 {
    if(!filename.isEmpty())
    {
       ::Document* qdoc = 0L;
-      QuantaView *view = ViewManager::ref()->isOpened(filename);
+      QuantaView *view = ViewManager::ref()->isOpened(KURL(filename));
       if (view)
         qdoc = view->document();
       if(qdoc)
@@ -307,9 +307,9 @@ bool PHPDebuggerInterface::showStatus(QString message, bool log)
 }
 
 // A new file was opened, tell the debugger so it can tell us about breakpoints etc
-void PHPDebuggerInterface::fileOpened(KURL file)
+void PHPDebuggerInterface::fileOpened(const KURL& file)
 {
-  m_debugsocket->fileOpened(mapLocalPathToServer(file.prettyURL(0, KURL::StripFileProtocol)));
+  m_debugsocket->fileOpened(KURL(mapLocalPathToServer(file.prettyURL(0, KURL::StripFileProtocol))));
 }
 
 #include "phpdebuggerinterface.moc"

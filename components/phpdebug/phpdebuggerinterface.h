@@ -34,7 +34,7 @@ class PHPDebuggerInterface : public QObject {
     long m_currentLine;
 
     // Internal help functions
-    void setMark(QString, long, bool, int);
+    void setMark(const QString&, long, bool, int);
     QString mapServerPathToLocal(QString serverpath);
     QString mapLocalPathToServer(QString localpath);
     
@@ -42,16 +42,16 @@ class PHPDebuggerInterface : public QObject {
     PHPDebuggerInterface();
 
     // Breakpoints
-    bool setBreakpoint ( KURL file, int line);
-    void haveBreakpoint (QString file, int line);
-    bool removeBreakpoint ( KURL file, int line );
+    bool setBreakpoint (const KURL& file, int line);
+    void haveBreakpoint (const QString& file, int line);
+    bool removeBreakpoint ( const KURL& file, int line );
     
     // Public help functions
     bool showStatus(QString message, bool log);
-    bool setActiveLine (KURL file, int line);
-    void fileOpened(KURL file);
+    bool setActiveLine (const KURL& file, int line);
+    void fileOpened(const KURL& file);
   
-    void enableAction(QString action, bool enable);
+    void enableAction(const QString& action, bool enable);
   
   public slots:
     /** Execution control slots **/
