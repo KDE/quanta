@@ -92,9 +92,13 @@ void BaseTreeViewToolTip::maybeTip( const QPoint &pos )
       QString desc = kftvi->text(1);
       text = kftvi->fileItem()->getToolTipText();
       if ( !desc.isEmpty() )
-        text.prepend("&nbsp;<b>" + desc + "</b><br>");
-    } else {
-      text = item->text(1);  // show something for the branchroot
+        text.prepend("&nbsp;<i>" + desc + "</i><br>");
+      text.prepend("&nbsp;<b>" + kftvi->url().filename() + "</b><br>");  //  add the filename on top
+    } else 
+    {  // show something for the branchroot
+      text = item->text(0);
+      if ( ! item->text(1).isEmpty() )
+        text.append( "<br>" + item->text(1));
     }
     if ( !text.isEmpty() )
       tip(m_view->itemRect(item), text);
