@@ -1,6 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = dbgbase
+SUBDIRS = dbgbase 
 
 EXTRA_DIST = idesite.cpp debugger.cpp listener.h listener.cpp thread.h idesite.h thread.cpp debugger.h 
 

@@ -97,8 +97,6 @@
 #include "dialogs/previewfontoptions.h"
 #include "dialogs/parseroptions.h"
 #include "dialogs/debuggeroptionss.h"
-#include "dialogs/grepdialog.h"
-#include "dialogs/katefiledialog.h"
 #include "dialogs/dtdselectdialog.h"
 #include "dialogs/donationdialog.h"
 
@@ -121,6 +119,9 @@
 #include "toolbar/actioneditdlg.h"
 #include "toolbar/toolbarxmlgui.h"
 #include "toolbar/tagaction.h"
+
+#include "dialogs/kategrepdialog.h"
+#include "dialogs/katefiledialog.h"
 
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}

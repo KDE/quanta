@@ -73,6 +73,12 @@ typedef struct DTDStruct
      QString singleTagStyle;          //"xml" or "html" (<tag/> or <tag>)
      QString defaultAttrType;         //"input", "string" or whatever
      
+     
+     QString structKeywordsRx;        //regular expression to match the keywords that can appear before a structrue
+     QString structRx;
+     QString structBeginStr;
+     QString structEndStr;
+     
      QStringList structGroups;        //group names to appear at the top of the Structure Tree
      QStringList groupsRxs;           //the regexp which helps us to find the groups; valid only for script DTDs
      QStringList groupsClearRxs;      //regexp to clear from the found group regex; valid only for script DTDs

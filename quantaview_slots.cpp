@@ -151,7 +151,7 @@ void QuantaView::slotInsertCSS()
 
   bool insertNew = true;
   QRegExp rx("\\b[a-zA-z_]+\\b");
-  Tag *tag = w->findScriptText(line, col, rx);
+  Tag *tag = w->findScriptText(w->currentDTD(true), line, col, rx);
   if (tag)
   {
     int bLine, bCol, eLine, eCol;

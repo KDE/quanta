@@ -146,8 +146,8 @@ work correctly. */
   /** No descriptions */
   void parseVariables();
 
-  Tag *findScriptText(int line, int col, const QRegExp& keywordRx);
-  Tag *findStruct(int line, int col, const QRegExp& keywordRx);
+  Tag *findScriptText(DTDStruct *dtd, int line, int col, const QRegExp& keywordRx);
+  Tag *findStruct(DTDStruct *dtd, int line, int col, const QRegExp& keywordRx);
 
   Tag *findXMLTag(int line, int col, bool forwardOnly = false, bool useSimpleRx = false);
   Tag *findScriptTag(int line, int col, QRegExp tagRx);

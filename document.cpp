@@ -167,15 +167,14 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
   }
   if (dtd->family == Script)
   {
-    //TODO: The keyword shouldn't be hardcoded but read from description.rc
-    QRegExp keywordRx("\\b(for|foreach|if|else|elseif|while|do|switch|declare|function|class)\\b");
-
-    if (!tag) tag = findScriptText(line, col, keywordRx);
-    if (!tag) tag = findStruct(line, col, keywordRx);
+    QRegExp keywordRx(dtd->structKeywordsRx);
+    
+    if (!tag) tag = findScriptText(dtd, line, col, keywordRx);
+    if (!tag) tag = findStruct(dtd, line, col, keywordRx);
     if (!tag)
     {
-      QString textLine = editIf->textLine(line);
-      if (textLine[col] == '}')
+      QString textLine = text(line, col, line+1, 0);
+      if (textLine.startsWith(dtd->structEndStr))
       {
         tag = new Tag();
         tag->setTagPosition(line, col, line, col);
@@ -190,7 +189,7 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
   return tag;
 }
 
-Tag *Document::findScriptText(int line, int col, const QRegExp& keywordRx)
+Tag *Document::findScriptText(DTDStruct *dtd, int line, int col, const QRegExp& keywordRx)
 {
   int bl, bc, el, ec;
   int bLine = line;
@@ -199,9 +198,9 @@ Tag *Document::findScriptText(int line, int col, const QRegExp& keywordRx)
   int eCol = col;
   Tag *tag = 0L;
   QString textLine;
-  QRegExp rx("\\{|\\}");
+  QRegExp rx(dtd->structRx);
 
-  //find the first { or } backward
+  //find the structure begin or end string backward
   QString s = findRev(rx, line, col, bl, bc, el, ec);
   if (!s.isEmpty())
   {
@@ -209,14 +208,14 @@ Tag *Document::findScriptText(int line, int col, const QRegExp& keywordRx)
     bLine = bl;
   }
 
-  //find the first { or } forward
+  //find the first structure begin or end string forward
   s = find(rx, line, col, bl, bc, el, ec);
   if (s.isEmpty())
   {
     eLine = editIf->numLines()-1;
     eCol = editIf->lineLength(eLine);
   }
-  if ( s == "{")
+  if (s == dtd->structBeginStr)
   {
 
     eLine = el;
@@ -229,7 +228,7 @@ Tag *Document::findScriptText(int line, int col, const QRegExp& keywordRx)
     }
 
   } else
-    if (s == "}")
+    if (s == dtd->structEndStr)
     {
       eLine = el;
       eCol = ec - 1;
@@ -247,47 +246,6 @@ Tag *Document::findScriptText(int line, int col, const QRegExp& keywordRx)
     s = tagStr.stripWhiteSpace();
     if (!s.isEmpty() && s != " ")
     {
-/*    
-      s = find(QRegExp("(include|require)[\\s]+[^;]*(;|\\?>)"),bLine, bCol, bl, bc, el, ec);   
-      if (!s.isEmpty() && QuantaCommon::isBetween(bl, bc, bLine, bCol, eLine, eCol) == 0)
-      {
-        if (bLine == bl && bCol == bc)
-        {
-          eLine = el;
-          eCol = ec;
-        } else
-        {
-          eLine = bl;
-          eCol = bc-1;
-        }
-        if (s.endsWith("?>"))
-        {
-          eCol = eCol - 2;
-        }
-        if (eCol < 0)
-        {
-          eLine = (eLine >0)?eLine-1:0;
-          eCol = editIf->lineLength(eLine);
-        }        
-        tagStr = text(bLine, bCol, eLine, eCol);
-      }
-      s = tagStr.stripWhiteSpace();
-      if (!s.isEmpty() && s != " ")
-      {
-        tag = new Tag();
-        tag->setTagPosition(bLine, bCol, eLine, eCol);
-        tag->type = Tag::Text;
-        tag->name = "Text";
-        tag->single = true;
-        tag->setWrite(this);
-        tag->setStr(tagStr);
-      } else
-      {
-        tag = new Tag();
-        tag->setTagPosition(bLine, bCol, eLine, eCol);
-        tag->type = Tag::Skip;
-      }
-    */
       tag = new Tag();
       tag->setTagPosition(bLine, bCol, eLine, eCol);
       tag->type = Tag::Text;
@@ -305,7 +263,7 @@ Tag *Document::findScriptText(int line, int col, const QRegExp& keywordRx)
   return tag;
 }
 
-Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
+Tag *Document::findStruct(DTDStruct *dtd,int line, int col, const QRegExp& keywordRx)
 {
   Tag *tag = 0L;
   int bLine = 0;
@@ -314,22 +272,17 @@ Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
   int eCol = 0;
   int bl, bc, el, ec;
 
-  QRegExp rx("\\{|\\}");
+  QRegExp rx(dtd->structRx);
 
   QString s = find(rx, line, col, bLine, bCol, eLine, eCol);
 
-  if (s != "}" && !s.isEmpty())
+  if (s != dtd->structEndStr && !s.isEmpty())
   {
     s = findRev(keywordRx, bLine, bCol, bl, bc, el, ec);
     if (!s.isEmpty())
     {
       bLine = bl;
       bCol = bc;
-    }
-    
-    if (s == "include" || s == "require")
-    {      
-      s = find(QRegExp(";"), bLine, bCol, bl, bc, eLine, eCol);
     }
 
     if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
@@ -342,7 +295,7 @@ Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
       tag->setWrite(this);
       tag->setStr(tagStr);
       tag->name = tagStr.left(tagStr.find("{")).simplifyWhiteSpace();
-      QRegExp fnRx = QRegExp("function[\\s]*",false);
+  /*    QRegExp fnRx = QRegExp("function[\\s]*",false);
       if (tag->name.contains(fnRx)) //it is a function
       {
         QString name = tag->name;
@@ -366,7 +319,7 @@ Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
           }
           userTagList.insert(name, newTag);
         }
-      }
+      } */
     }
   }
 

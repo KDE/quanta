@@ -31,6 +31,10 @@ ControlStructures = while, if, elseif, for, foreach, switch, declare
 Expr = (%text%)
 Statement = %text%;
 
+StructKeywords = for;foreach;if;else;elseif;while;do;switch;declare;function;class
+StructBeginStr = {
+StructEndStr = }
+StructRx = \\{|\\}
 StructGroups = Inclusions/No Inclusions//; Variables/No Variables/abs/; Functions/No Functions/mini-modules/; Classes/No Classes//
 RegExp0 = (?:include|require|include_once|require_once)[\\s]+(?:(?:(?:\(|\"|\')+[^\)]*(?:\)|\"|\')+)|(?:\$.*))
 RegExp0_clear = \n
