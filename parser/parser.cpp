@@ -172,14 +172,19 @@ Node *Parser::newParse(Document *w)
         tag->type = Tag::XmlTagEnd;
         tag->single = true;
       }
-      if (tagStr.right(2) == "/>") tag->single = true;
+      if (tagStr.right(2) == "/>") 
+      {
+        tag->single = true;
+        if (tag->name.endsWith("/"))
+            tag->name.truncate(tag->name.length() - 1);
+      }
       
       int tagPos = m_dtd->specialTags.findIndex(tag->name.lower());
       if (tagPos != -1)
       {
         QRegExp endRx;
-        endRx.setPattern("/"+tag->name.lower()+"\\s*>");
-        endRx.setCaseSensitive(false);
+        endRx.setPattern("/"+tag->name+"\\s*>");
+        endRx.setCaseSensitive(m_dtd->caseSensitive);
         int bl, bc, el, ec;
         if (! w->find(endRx, line, tagEndCol, bl, bc, el, ec).isEmpty())
         {
@@ -238,7 +243,8 @@ Node *Parser::newParse(Document *w)
         currentNode->tag->endPos(el, ec);
       }
       QString s = w->text(el, ec + 1, tagStartLine, tagStartPos -1);
-      if (!s.simplifyWhiteSpace().isEmpty())
+      if (!s.simplifyWhiteSpace().isEmpty() &&
+          (el !=0 || ec !=0) )
       {
         textTag = new Tag();
         textTag->setStr(s);
@@ -267,7 +273,7 @@ Node *Parser::newParse(Document *w)
                 parentNode->child = node;
             node->prev = 0;
           }
-          if (!tag->single)
+          if (!textTag->single)
               parentNode = node;
         }
         

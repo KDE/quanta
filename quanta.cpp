@@ -654,6 +654,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   viewLineNumbers->setChecked(qConfig.lineNumbers);
   
 #if (KDE_VERSION > 308)
+  dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->setDynWordWrap(qConfig.dynamicWordWrap);
   viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->dynWordWrap());
 #endif
 
@@ -1065,8 +1066,8 @@ void QuantaApp::reparse()
       }
       if (dtds->find(w->getDTDIdentifier()))
       {
-       // baseNode = parser->parse(w);
-        baseNode = parser->newParse(w);
+        baseNode = parser->parse(w);
+        //baseNode = parser->newParse(w);
         sTab->setParsingDTD(w->parsingDTD());
       }
     
