@@ -543,7 +543,7 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
   }
   tagStr = "<"+QuantaCommon::tagCase(tag->name)+tagStr;
 
-  if ( qTag && qTag->parentDTD->singleTagStyle == "xml" &&
+  if ( dict && !dict->isEmpty() && qTag && qTag->parentDTD->singleTagStyle == "xml" &&
        (qTag->isSingle() || (!qConfig.closeOptionalTags && qTag->isOptional()))
      )
   {

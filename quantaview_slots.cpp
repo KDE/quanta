@@ -250,11 +250,11 @@ void QuantaView::slotTagQuickStart(){
   if ( quickDlg->exec() )
    {
     const QString chset = QTextCodec::codecForLocale()->mimeName();
-    QString s = dtds->find(DEFAULT_DTD)->url;
-    if (!s.isEmpty()) s = "\n\t\t\"" + s + "\"";
-  	QString tag = QString("<!DOCTYPE HTML PUBLIC \""+DEFAULT_DTD+s+"\">\n")+QuantaCommon::tagCase("<html>\n")
-  	                  +space+QuantaCommon::tagCase("<head>\n")+space+QuantaCommon::tagCase("  <title>");
-  	if ( !QString(quickDlg->lineTitle->text()).isEmpty())
+
+    DTDStruct *dtd = write()->defaultDTD();
+    QString tag = QString("<!DOCTYPE" + dtd->doctypeStr +">\n")+QuantaCommon::tagCase("<html>\n")
+	                  + space + QuantaCommon::tagCase("<head>\n")+ space + QuantaCommon::tagCase("  <title>");
+    if ( !QString(quickDlg->lineTitle->text()).isEmpty())
 	   		tag += quickDlg->lineTitle->text();
     tag += QuantaCommon::tagCase("</title>\n")+space+
            "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + chset + "\">\n"+
