@@ -982,7 +982,6 @@ Node* kafkaCommon::insertNodeSubtree(Node *node, Node* parentNode, Node* nextSib
                                      NodeModifsSet *modifs, bool merge)
 {
     Node *nextNode, *currentNode;
-    NodeModif *modif;
 
     if(!node || (node && node->prev))
         return 0L;
@@ -2392,6 +2391,29 @@ void kafkaCommon::setTagStringAndFitsNodes(Node *node, const QString &newTagStri
     node->tag->endPos(eLine, eCol);
 
     fitsNodesPosition(getNextNode(node, b), eCol - oldECol, eLine - oldELine);
+}
+
+void kafkaCommon::editNodeAttribute(Node* node, const QString& name, const QString& value, NodeModifsSet* modifs)
+{
+  NodeModif *modif;
+  
+  if(!node)
+    return;
+
+  if(modifs)
+  {
+    modif = new NodeModif();
+    modif->setType(NodeModif::NodeModified);
+    modif->setTag(new Tag(*(node->tag)));
+    modif->setLocation(kafkaCommon::getLocation(node));
+  } 
+  
+  if(node->tag->editAttribute(name, value))
+  {
+    node->tag->setCleanStrBuilt(false);
+    if(modifs)
+    modifs->addNodeModif(modif);
+  }
 }
 
 QValueList<int> kafkaCommon::getLocation(Node * node)

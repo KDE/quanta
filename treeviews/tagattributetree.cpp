@@ -393,88 +393,11 @@ void TagAttributeTree::editorContentChanged()
     }
     else
     {
-      //edit only the tag and its corresponding DOM::Node
-      int i;
-      TagAttr attr;
-      DOM::Node domNode;
-      bool foundAttr = false, nodeModified= false;
+      //edit the attribute
       NodeModifsSet *modifs = new NodeModifsSet();
-      NodeModif *modif = new NodeModif();
-      modif->setType(NodeModif::NodeModified);
-      modif->setTag(new Tag(*(m_node->tag)));
-      modif->setLocation(kafkaCommon::getLocation(m_node));
+      kafkaCommon::editNodeAttribute(m_node, item->text(0), item->editorText(), modifs);
+      ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-      for(i = 0; i < m_node->tag->attrCount(); i++)
-      {
-        if(m_node->tag->attribute(i) == item->text(0))
-        {
-          foundAttr = true;
-#ifdef HEAVY_DEBUG
-          kdDebug(25001)<< "Attribute " << item->text(0) << " found!" << endl;
-#endif
-          if(m_node->tag->attributeValue(i) != item->editorText())
-          {
-#ifdef HEAVY_DEBUG
-          kdDebug(25001)<< "Different attribute value " << item->editorText() << ", deleting the attr." << endl;
-#endif
-            //delete the attribute in the Node
-            attr = m_node->tag->getAttribute((unsigned)i);
-            m_node->tag->deleteAttribute((unsigned)i);
-
-            m_node->tag->setCleanStrBuilt(false);
-            nodeModified = true;
-          }
-          break;
-        }
-      }
-      if((!foundAttr && item->editorText() != "") ||
-        (foundAttr && item->editorText() != m_node->tag->attributeValue(i) && item->editorText() != ""))
-      {
-#ifdef HEAVY_DEBUG
-         kdDebug(25001)<< "(re)creating the attr." << endl;
-#endif
-         //(re)create the attr.
-         attr.name = item->text(0);
-         attr.value = item->editorText();
-         attr.quoted = true;
-         m_node->tag->addAttribute(attr);
-
-         m_node->tag->setCleanStrBuilt(false);
-         nodeModified = true;
-      }
-      QuantaView *view = ViewManager::ref()->activeView();
-      if(nodeModified)
-      {
-        //delete the corresponding DOM::Node.
-        if(m_node->rootNode())
-        {
-          domNode = *m_node->rootNode();
-          KafkaDocument::ref()->disconnectDomNodeFromQuantaNode(domNode);
-          domNode.parentNode().removeChild(domNode);
-        }
-        if(m_node->leafNode() && m_node->rootNode() && *m_node->rootNode() != *m_node->leafNode())
-        {
-          domNode = *m_node->leafNode();
-          KafkaDocument::ref()->disconnectDomNodeFromQuantaNode(domNode);
-          domNode.parentNode().removeChild(domNode);
-        }
-        if(m_node->rootNode())
-          delete m_node->rootNode();
-        m_node->setRootNode(0L);
-        if(m_node->leafNode())
-          delete m_node->leafNode();
-        m_node->setLeafNode(0L);
-
-        KafkaDocument::ref()->buildKafkaNodeFromNode(m_node);
-        if(!domNode.isNull() && m_node->leafNode())
-        {
-           while(!domNode.firstChild().isNull())
-             m_node->leafNode()->appendChild(domNode.firstChild());
-        }
-
-        modifs->addNodeModif(modif);
-        view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
-      }
 #ifdef HEAVY_DEBUG
         kafkaCommon::coutTree(baseNode, 2);
 #endif
@@ -524,7 +447,12 @@ void TagAttributeTree::slotDelayedSetCurrentNode()
 {
   setCurrentNode(m_newNode);
   if (ViewManager::ref()->activeDocument())
-    ViewManager::ref()->activeDocument()->view()->setFocus();
+  {
+    if (ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::SourceFocus)
+      ViewManager::ref()->activeDocument()->view()->setFocus();
+    else
+      KafkaDocument::ref()->getKafkaWidget()->view()->setFocus();
+  }
 }
 
 EnhancedTagAttributeTree::EnhancedTagAttributeTree(QWidget *parent, const char *name)

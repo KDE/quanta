@@ -172,15 +172,25 @@ public:
 	QPtrList<NodeModif> & nodeModifList() {return m_nodeModifList;}
         
 	/**
-	 * Set the Modified flag AFTER the user input.
+	 * Set the Modified flag BEFORE the user input.
 	 */
-	void setIsModified(bool isModified) {m_isModified = isModified;}
+	void setIsModifiedBefore(bool isModifiedBefore) {m_isModifiedBefore = isModifiedBefore;}
 
 	/**
-	 * @return Returns the Modified flag.
+	 * @return Returns the Modified flag BEFORE the user input.
 	 */
-	bool isModified(){return m_isModified;}
+	bool isModifiedBefore(){return m_isModifiedBefore;}
 
+	/**
+	 * Set the Modified flag AFTER the user input.
+	 */
+	void setIsModifiedAfter(bool isModifiedAfter) {m_isModifiedAfter = isModifiedAfter;}
+
+	/**
+	 * @return Returns the Modified flag AFTER the user input.
+	 */
+	bool isModifiedAfter(){return m_isModifiedAfter;}
+        
 	/**
 	 * Set a description to the user input.
 	 */
@@ -203,7 +213,7 @@ public:
          
 private:
 	QPtrList<NodeModif> m_nodeModifList;
-	bool m_isModified;
+	bool m_isModifiedBefore, m_isModifiedAfter;
 	QString m_description;
         NodeSelectionInd *m_selectionBefore, *m_selectionAfter;
 

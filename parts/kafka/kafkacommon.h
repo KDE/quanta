@@ -566,6 +566,11 @@ public:
 	 * are updated too.
 	 */
 	static void setTagStringAndFitsNodes(Node *node, const QString &newTagString, NodeModifsSet* modifs);
+        
+        /**
+         * This function behaves exactly like Node::editAttribute except that the change is logged inside a NodeModifsSet.
+         */
+        static void editNodeAttribute(Node* node, const QString& name, const QString& value, NodeModifsSet* modifs);
 
 	/**
 	 * Gets the location of a Node in a pointer-independant suit of ints e.g. 1,3,5 means

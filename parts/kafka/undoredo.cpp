@@ -116,6 +116,12 @@ NodeModifsSet::NodeModifsSet()
   m_selectionBefore = new NodeSelectionInd();
   m_selectionAfter = new NodeSelectionInd();
   
+  if(ViewManager::ref()->activeDocument())
+    m_isModifiedBefore = ViewManager::ref()->activeDocument()->isModified();
+  else
+    m_isModifiedBefore = true;
+  m_isModifiedAfter = true;
+  
   //A NodeModifsSet instance is created before the changes are made =>
   //Recording the cursor position
   if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
@@ -172,6 +178,13 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
         NodeSelectionInd *nodeSelection;
         Node *node;
         bool goUp;
+        
+        //If modifs is empty, stop here
+        if(!modifs || modifs->nodeModifList().isEmpty())
+        {
+          delete modifs;
+          return;
+        }
 
         //Once the changes have been made, we will generate the "clean" string for Text Nodes only, and
         //we will add the empty indentation Nodes.
@@ -322,6 +335,9 @@ bool undoRedo::undo()
         //We need to update the internal pointer of baseNode in the parser. FIXME:why?
         parser->setRootNode(baseNode);
         
+        //Update the modified flag
+        m_doc->setModified((*documentIterator)->isModifiedBefore());
+        
         QPtrListIterator<NodeModifsSet> currentIt(documentIterator);
         --documentIterator;
 
@@ -390,6 +406,9 @@ bool undoRedo::redo()
         }
         //We need to update the internal pointer of baseNode in the parser. FIXME: why?
         parser->setRootNode(baseNode);
+        
+        //Update the modified flag
+        m_doc->setModified((*documentIterator)->isModifiedAfter());
 
         //TEMP: Reload the kafka editor TODO: update only the modified Nodes
         if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
@@ -839,7 +858,7 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor, bool encode
         Node *node = baseNode, *child;
         int bCol, bLine, eCol, eLine, bCol2, bLine2, bCol3, bLine3, eCol3, eLine3, i;
         KafkaDocument *kafkaInterface = KafkaDocument::ref();
-        bool updateClosing, goUp;
+        bool updateClosing, goUp, isModified;
 
 #ifdef LIGHT_DEBUG
         kdDebug(25001)<< "undoRedo::reloadQuantaEditor()" << endl;
@@ -856,6 +875,8 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor, bool encode
                 m_doc->editIfExt->editBegin();
         sourceIterator = documentIterator;
 
+        //save some values which must not be affected by / affect the reload
+        isModified = m_doc->isModified();
         updateClosing = qConfig.updateClosingTags;
         m_doc->activateParser(false);
         m_doc->activateRepaintView(false);
@@ -963,9 +984,11 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor, bool encode
         if(syncQuantaCursor)
                 syncQuantaCursorAndSelection();
 
+        m_doc->setModified(isModified);
         qConfig.updateClosingTags = updateClosing;
         m_doc->activateRepaintView(true);
         m_doc->activateParser(true);
+        
 }
 
 void undoRedo::codeFormatting()
@@ -1349,7 +1372,8 @@ void undoRedo::debugOutput()
         QPtrListIterator<NodeModifsSet> it(m_undoList);
         for(it.toFirst(); it ; ++it )
         {
-                kdDebug(24000)<< "== Node Modifications set #" << i << endl;
+                kdDebug(24000)<< "== Node Modifications set #" << i << "(" << (*it)->isModifiedBefore() << "," <<
+                  (*it)->isModifiedAfter() << ")" << endl;
                 if((*it)->nodeModifList().isEmpty())
                 {
                         kdDebug(24000)<< "== Empty!" << endl;
@@ -1405,7 +1429,30 @@ void undoRedo::debugOutput()
 }
 
 void undoRedo::fileSaved()
-{/**
+{
+  QPtrListIterator<NodeModifsSet> it(m_undoList);
+  bool previousWasDocIt = false;
+  for(it.toFirst(); it ; ++it )
+  {
+    if(previousWasDocIt)
+    {
+      (*it)->setIsModifiedBefore(false);
+      (*it)->setIsModifiedAfter(true);
+      previousWasDocIt = false;
+    }
+    else if(it == documentIterator)
+    {
+      (*it)->setIsModifiedBefore(true);
+      (*it)->setIsModifiedAfter(false);
+      previousWasDocIt = true;
+    }
+    else
+    {
+      (*it)->setIsModifiedBefore(true);
+      (*it)->setIsModifiedAfter(true);
+    }
+  }
+/**
         QValueList<NodeModifsSet>::iterator it = sourceIterator;
         (*sourceIterator).isModified = false;
         //seting isModified = true to all others

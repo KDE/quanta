@@ -973,7 +973,7 @@ Node *Parser::rebuild(Document *w)
 
 
 // kdDebug(24000)<< "Node *Parser::rebuild()" << endl;
- modifs->setIsModified(w->isModified());
+ modifs->setIsModifiedAfter(w->isModified());
 
  //**kdDebug(24000)<< "************* Begin User Modification *****************" << endl;
   //debug!

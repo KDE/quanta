@@ -430,7 +430,7 @@ void Tag::attributeValuePos(int index, int &line, int &col)
  }
 }
 
-void Tag::editAttribute(const QString& attrName, const QString& attrValue)
+bool Tag::editAttribute(const QString& attrName, const QString& attrValue)
 {
   TagAttr attr;
 
@@ -439,18 +439,27 @@ void Tag::editAttribute(const QString& attrName, const QString& attrValue)
     if ( attrName == attrs[i].name ||
       (!m_dtd->caseSensitive && attrs[i].name.lower() == attrName.lower()))
     {
+      if(attr.value == attrValue)
+        return false;
+        
       attr = attrs[i];
       attr.value = attrValue;
       attrs.remove(attrs.at(i));
       attrs.append(attr);
-      return;
+      return true;
     }
   }
-  //attrName not found, creating the attr.
-  attr.name = attrName;
-  attr.value = attrValue;
-  attr.quoted = true;
-  attrs.append(attr);
+  //attrName not found, creating the attr, if attrValue not empty
+  if(attrValue != "")
+  {
+    attr.name = attrName;
+    attr.value = attrValue;
+    attr.quoted = true;
+    attrs.append(attr);
+    return true;
+  }
+  
+  return false;
 }
 
 void Tag::deleteAttribute(const QString& attrName)

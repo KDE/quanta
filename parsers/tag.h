@@ -80,8 +80,9 @@ public:
   TagAttr getAttribute(uint index) const {return attrs[index];}
   /** Remove the attribute number index */
   void deleteAttribute(uint index) {attrs.remove(attrs.at(index));}
-  /** Insert a new Attribute, even if it already exists. Prefer using editAttribute */
-  void editAttribute(const QString& attrName, const QString& attrValue);
+  /** Insert a new Attribute, even if it already exists. Prefer using editAttribute.
+    Return true if something was mdofied. */
+  bool editAttribute(const QString& attrName, const QString& attrValue);
   /** Delete the attribute attrName */
   void deleteAttribute(const QString& attrName);
   /** Returns the quotation status of the attribute */
