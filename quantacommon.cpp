@@ -226,46 +226,6 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
  return xmlStr;
 }
 
-/** Returns list of values for attribute */
-QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, 
-QString attribute){
-  QStringList *values = 0L;
-  
-  DTDStruct* dtd = dtds->find(dtdName.lower());
-  if (dtd)
-  {
-    QString searchForAttr = (dtd->caseSensitive) ? attribute : 
-attribute.upper();    AttributeList* attrs = tagAttributes(dtdName, tag);
-    Attribute *attr;
-    if (attrs)
-    {
-      for ( attr = attrs->first(); attr; attr = attrs->next() )
-      {
-        QString attrName = (dtd->caseSensitive) ? attr->name : 
-attr->name.upper();        if (attrName == searchForAttr)
-        {
-          if (attr->type == "url") {
-            Project *project = quantaApp->getProject();
-            if (project->hasProject()) {
-              values = new 
-QStringList(project->fileNameList(true).toStringList());              
-values->append("mailto:" + project->email);            } else {
-              QDir dir = QDir(quantaApp->getDoc()->write()->url().directory());
-              values = new QStringList(dir.entryList());
-            }
-            break;
-          } else {
-            values = &attr->values;
-            break;
-          }
-        }
-      }
-    }
-  }   
-  return values;
-}
-
-
 /** Returns the DTD name (identifier) corresponding to the DTD's nickname */
 QString QuantaCommon::getDTDNameFromNickName(QString nickName)
 {

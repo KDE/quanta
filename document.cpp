@@ -17,6 +17,7 @@
 #include <list>
 
 //QT includes
+#include <qdir.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qtextstream.h>
@@ -49,6 +50,8 @@
 #include "dialogs/dirtydlg.h"
 #include "project/project.h"
 #include "plugins/quantaplugininterface.h"
+#include "qextfileinfo.h"
+#include "quanta.h"
 
 #include <cctype>
 
@@ -1133,7 +1136,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
   completion.type = "attributeValue";
   completion.userdata = startsWith+"|"+tagName + "," + attribute;
 
-  QStringList *values = QuantaCommon::tagAttributeValues(dtd->name,tagName,attribute);
+  QStringList *values = tagAttributeValues(dtd->name,tagName,attribute);
   if (values)
   {
     for ( QStringList::Iterator it = values->begin(); it != values->end(); ++it )
@@ -1751,6 +1754,57 @@ void Document::slotTextChanged()
  }
 
  parser->parseForDTD(this, force);
+}
+
+/** Returns list of values for attribute */
+QStringList* Document::tagAttributeValues(const QString& dtdName, const QString& tag, const QString &attribute)
+{
+  QStringList *values = 0L;
+
+  DTDStruct* dtd = dtds->find(dtdName.lower());
+  if (dtd)
+  {
+    QString searchForAttr = (dtd->caseSensitive) ? attribute : attribute.upper();
+    AttributeList* attrs = QuantaCommon::tagAttributes(dtdName, tag);
+    Attribute *attr;
+    KURL u;
+    KURL base = QExtFileInfo::toRelative(url(), baseURL);
+    base.setPath("/"+base.directory(false, false));
+    QString s;
+    if (attrs)
+    {
+      for ( attr = attrs->first(); attr; attr = attrs->next() )
+      {
+        QString attrName = (dtd->caseSensitive) ? attr->name : attr->name.upper();        if (attrName == searchForAttr)
+        {
+          if (attr->type == "url") {
+            Project *project = quantaApp->getProject();
+            if (project->hasProject())
+            {
+              values = new QStringList(project->fileNameList(true).toStringList());
+              for (uint i = 0; i < values->count(); i++)
+              {
+                u = (*values)[i];
+                u.setPath("/"+u.path());
+                u = QExtFileInfo::toRelative(u, base);
+                (*values)[i] = u.path();
+              }
+              values->append("mailto:" + project->email);
+            } else
+            {
+              QDir dir = QDir(url().directory());
+              values = new QStringList(dir.entryList());
+            }
+            break;
+          } else {
+            values = &attr->values;
+            break;
+          }
+        }
+      }
+    }
+  }
+  return values;
 }
 
 #include "document.moc"

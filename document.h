@@ -219,6 +219,9 @@ private:
   bool xmlCodeCompletion(DTDStruct *dtd, int line, int col);
   /** Code completion is manually invoked for script type languages. */
   bool scriptCodeCompletion(DTDStruct *dtd, int line, int col);
+  /** Returns list of values for attribute */
+  QStringList* tagAttributeValues(const QString& dtdName, const QString& tag, const QString& attribute);
+
 protected: // Protected attributes
   /**  */
   bool completionInProgress;
