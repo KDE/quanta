@@ -30,31 +30,20 @@
 #include "document.h"
 #include "project/project.h"
 
-uint tagsCase;
-uint attrsCase;
-QString attrsQuotation;
-bool closeOptionalTags;
-bool closeTags;
-bool useAutoCompletion;
-bool useMimeTypes;
-uint refreshFrequency;
-QString globalDataDir;
-QString defaultDocType;
+
+QConfig qConfig; //holds the main configuration settings
+
 QuantaApp *QuantaCommon::quantaApp;
-QString defaultEncoding;
 
-QDict<AttributeList> *tagsDict;
 QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
-QValueList<QString> pluginsList; //holds the names of available plugins
-
-Node *baseNode;
-Parser *parser;
-KDirWatch *fileWatcher;
-
-
 QRegExp scriptBeginRx;
 QRegExp scriptEndRx;
 
+Node *baseNode;
+Parser *parser;
+
+QValueList<QString> pluginsList; //holds the names of available plugins
+KDirWatch *fileWatcher;
 
 QuantaCommon::QuantaCommon(){
 }
@@ -67,7 +56,7 @@ QString QuantaCommon::tagCase( const QString tag)
 {
   QString sTag = tag;
 
-  switch (tagsCase)
+  switch (qConfig.tagCase)
   {
     case 1: sTag = tag.lower();
             break;
@@ -81,7 +70,7 @@ QString QuantaCommon::attrCase( const QString attr)
 {
   QString sAttr = attr;
 
-  switch (attrsCase)
+  switch (qConfig.attrCase)
   {
     case 1: sAttr = attr.lower();
             break;

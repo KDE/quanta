@@ -354,9 +354,9 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
     secondPartOfTag = "\n" + space + secondPartOfTag;
    }
 
-   if ( (!closeTags && !dtdTag->isSingle()) ||
+   if ( (!qConfig.closeTags && !dtdTag->isSingle()) ||
         (dtdTag->isSingle()) ||
-        (!closeOptionalTags && dtdTag->isOptional()) )
+        (!qConfig.closeOptionalTags && dtdTag->isOptional()) )
    {
     secondPartOfTag = "";
    }

@@ -171,7 +171,7 @@ void ProjectNewLocal::slotAddFolder()
 
     if ( sdir.left(2) == ".." )
    {
-  	  CopyTo *dlg = new CopyTo( dir, this, dirName+i18n(": copy to project...") );
+  	  CopyTo *dlg = new CopyTo( dir, this, i18n("%1: copy to project...").arg(dirName) );
 
       if ( dlg->exec() )
       {

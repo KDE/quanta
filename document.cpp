@@ -884,7 +884,7 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
- if (useAutoCompletion)
+ if (qConfig.useAutoCompletion)
  {
   if (completionInProgress)
   {
@@ -940,8 +940,8 @@ void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
   {
     if ( string == ">" && tagName[0] != '/' &&
          tag &&
-         ( ( !tag->isSingle() && !tag->isOptional() && closeTags) ||
-           ( tag->isOptional() && closeOptionalTags )) )
+         ( ( !tag->isSingle() && !tag->isOptional() && qConfig.closeTags) ||
+           ( tag->isOptional() && qConfig.closeOptionalTags )) )
     {
       //add closing tag if wanted
       column++;
@@ -1119,7 +1119,7 @@ DTDStruct* Document::currentDTD(bool fallback)
   if (fallback)
   {
     if (!dtd) dtd = dtds->find(dtdName);
-    if (!dtd) dtd = dtds->find(defaultDocType); //this will always exists
+    if (!dtd) dtd = dtds->find(qConfig.defaultDocType); //this will always exists
   }
 
   return dtd;
@@ -1129,7 +1129,7 @@ DTDStruct* Document::currentDTD(bool fallback)
 DTDStruct* Document::defaultDTD()
 {
   DTDStruct* dtd =  dtds->find(dtdName);
-  if (!dtd) dtd = dtds->find(defaultDocType); //this will always exists
+  if (!dtd) dtd = dtds->find(qConfig.defaultDocType); //this will always exists
 
   return dtd;
 }

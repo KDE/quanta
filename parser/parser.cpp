@@ -51,7 +51,7 @@ Node *Parser::parse(Document *w)
   write = w;
   m_dtdName = w->getDTDIdentifier();
   m_dtd = dtds->find(m_dtdName);
-  if (!m_dtd) m_dtd = dtds->find(defaultDocType);
+  if (!m_dtd) m_dtd = dtds->find(qConfig.defaultDocType);
   m_text = w->editIf->text();
 //  if (m_node) delete m_node;
   int line = 0;

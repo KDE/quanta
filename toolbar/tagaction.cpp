@@ -98,7 +98,7 @@ void TagAction::insertTag()
        if (otag.text().right(1) == ">") s1 += ">";
 
        QString s2;
-       if (closeTags)
+       if (qConfig.closeTags)
           s2 = QuantaCommon::tagCase(xtag.text());
        if ( xtag.attribute("use","false") == "true" )
        {

@@ -119,7 +119,7 @@ void Project::insertFile( QString rname, bool repaint )
 
   if ( fname.left(2) == ".." )
   {
-    CopyTo *dlg = new CopyTo( basePath, this, rname+": copy to project..." );
+    CopyTo *dlg = new CopyTo( basePath, this, i18n("%1: copy to project...").arg(rname) );
 
     if ( dlg->exec() )
     {
@@ -494,7 +494,7 @@ void Project::slotProjectReadFinish(KIO::Job *job)
     KURL fu(urls.current());
 
     if ( !fu.isLocalFile() )
-      emit openFile( fu, defaultEncoding );
+      emit openFile( fu, qConfig.defaultEncoding );
   }
   olfwprj=true;
 }
@@ -544,7 +544,7 @@ void Project::loadProjectXML()
   	if ( el.nodeName() == "openfile" )
   	{
   		KURL u(el.attribute("url"));
-  		emit openFile( u, defaultEncoding );
+  		emit openFile( u, qConfig.defaultEncoding );
   	}
 
   	if ( el.nodeName() == "item" )
@@ -635,7 +635,7 @@ void Project::addDirectory(QString rdir, bool showDlg)
 
   if ( sdir.left(2) == ".." )
   {
-  	CopyTo *dlg = new CopyTo( basePath, this, rdir+i18n(": copy to project...") );
+  	CopyTo *dlg = new CopyTo( basePath, this, i18n("%1: copy to project...").arg(rdir) );
 
     if ( (showDlg == false) ||
           (dlg->exec() ) )
@@ -945,7 +945,7 @@ void Project::slotAcceptCreateProject()
  bool  createTemplateDir = true;
  if (pnf->insertGlobalTemplates->isChecked())
  {
-   addDirectory(globalDataDir+"quanta/templates/", false);
+   addDirectory(qConfig.globalDataDir+"quanta/templates/", false);
    createTemplateDir = false;
  }
  if (pnf->insertLocalTemplates->isChecked())

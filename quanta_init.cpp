@@ -93,10 +93,11 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   toolbarDomList.setAutoDelete(true);
   toolbarMenuList.setAutoDelete(true);
   toolbarNames.setAutoDelete(true);
+  toolbarURLs.setAutoDelete(true);
   userToolbarsCount = 0;
   baseNode = 0L;
 
-  globalDataDir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png");
+  qConfig.globalDataDir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png");
 
   setHighlight = 0;
   grepDialog  = 0L;
@@ -115,6 +116,7 @@ QuantaApp::~QuantaApp()
  toolbarDomList.clear();
  toolbarMenuList.clear();
  toolbarNames.clear();
+ toolbarURLs.clear();
 }
 
 
@@ -176,7 +178,7 @@ void QuantaApp::initQuanta()
 
   refreshTimer = new QTimer( this );
   connect( refreshTimer, SIGNAL(timeout()), SLOT(reparse()) );
-  refreshTimer->start( refreshFrequency*1000, false ); //update the structure tree every 5 seconds
+  refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
 
 //Delay the calls as they contain dialog popups. That may crash Quanta!
   QTimer::singleShot(10,this,SLOT(slotFileNew()));;
@@ -191,7 +193,7 @@ void QuantaApp::initQuanta()
 void QuantaApp::initToolBars()
 {
   if (toolbarNames.count() == 0)
-     loadToolbarForDTD(defaultDocType);
+     loadToolbarForDTD(qConfig.defaultDocType);
 }
 
 void QuantaApp::initStatusBar()
@@ -462,7 +464,7 @@ void QuantaApp::saveOptions()
 
   config->writeEntry("Geometry", size());
 
-  config->writeEntry("Show Toolbar",   toolBar("mainToolBar")->isVisible());
+  config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
   config->writeEntry("Show Statusbar", statusBar()->isVisible());
 
   config->writeEntry("Html mask",   fileMaskHtml  );
@@ -471,18 +473,18 @@ void QuantaApp::saveOptions()
   config->writeEntry("Java mask",   fileMaskJava  );
   config->writeEntry("Text mask",   fileMaskText  );
 
-  config->writeEntry("Capitals for tags",     tagsCase);
-  config->writeEntry("Capitals for attr",     attrsCase);
-  config->writeEntry("Attribute quotation",     attrsQuotation);
-  config->writeEntry("Close tag if optional", closeOptionalTags);
-  config->writeEntry("Close tags", closeTags);
-  config->writeEntry("Auto completion",useAutoCompletion);
+  config->writeEntry("Capitals for tags", qConfig.tagCase);
+  config->writeEntry("Capitals for attr", qConfig.attrCase);
+  config->writeEntry("Attribute quotation", qConfig.attrValueQuotation);
+  config->writeEntry("Close tag if optional", qConfig.closeOptionalTags);
+  config->writeEntry("Close tags", qConfig.closeTags);
+  config->writeEntry("Auto completion", qConfig.useAutoCompletion);
 
-  config->writeEntry("Default encoding",defaultEncoding);
-  config->writeEntry("Default DTD",defaultDocType);
-  config->writeEntry("Use MimeTypes",useMimeTypes);
+  config->writeEntry("Default encoding", qConfig.defaultEncoding);
+  config->writeEntry("Default DTD", qConfig.defaultDocType);
+  config->writeEntry("Use MimeTypes", qConfig.useMimeTypes);
 
-  config->writeEntry("Refresh frequency",refreshFrequency);
+  config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
 
   config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
 
@@ -490,7 +492,7 @@ void QuantaApp::saveOptions()
 
   config->writeEntry("PHP Debugger Port", phpDebugPort );
 
-  config->writeEntry("Top folders",          fTTab->dirList);
+  config->writeEntry("Top folders", fTTab->dirList);
   config->writeEntry("List of opened files", doc->openedFiles());
 
   config->writeEntry ("Version", VERSION); // version
@@ -515,24 +517,24 @@ void QuantaApp::readOptions()
   config->setGroup("General Options");
   //if (2>config->readNumEntry("Version",0)) config = new KConfig();
 
-  fileMaskHtml  = config->readEntry("Html mask",   fileMaskHtml)  +" ";
-  fileMaskImage = config->readEntry("Images mask",fileMaskImage)+" ";
-  fileMaskPhp   = config->readEntry("Php mask",   fileMaskPhp)  +" ";
-  fileMaskJava  = config->readEntry("Java mask",   fileMaskJava)  +" ";
-  fileMaskText  = config->readEntry("Text mask",   fileMaskText)  +" ";
+  fileMaskHtml  = config->readEntry("Html mask", fileMaskHtml)  +" ";
+  fileMaskImage = config->readEntry("Images mask", fileMaskImage)+" ";
+  fileMaskPhp   = config->readEntry("Php mask", fileMaskPhp)  +" ";
+  fileMaskJava  = config->readEntry("Java mask", fileMaskJava)  +" ";
+  fileMaskText  = config->readEntry("Text mask", fileMaskText)  +" ";
 
-  tagsCase = config->readNumEntry("Capitals for tags",     0);
-  attrsCase = config->readNumEntry("Capitals for attr",     0);
-  attrsQuotation = config->readEntry("Attribute quotation", "double");
-  closeOptionalTags = config->readBoolEntry("Close tag if optional", true);
-  closeTags = config->readBoolEntry("Close tags", true);
-  useAutoCompletion = config->readBoolEntry("Auto completion",true);
-  defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
-  defaultEncoding = config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
+  qConfig.tagCase = config->readNumEntry("Capitals for tags", 0);
+  qConfig.attrCase = config->readNumEntry("Capitals for attr", 0);
+  qConfig.attrValueQuotation = config->readEntry("Attribute quotation", "double");
+  qConfig.closeOptionalTags = config->readBoolEntry("Close tag if optional", true);
+  qConfig.closeTags = config->readBoolEntry("Close tags", true);
+  qConfig.useAutoCompletion = config->readBoolEntry("Auto completion",true);
+  qConfig.defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
+  qConfig.defaultEncoding = config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
   previewPosition   = config->readEntry("Preview position","Right");
-  useMimeTypes = config->readBoolEntry("Use MimeTypes", false);
+  qConfig.useMimeTypes = config->readBoolEntry("Use MimeTypes", false);
 
-  refreshFrequency = config->readNumEntry("Refresh frequency",5);
+  qConfig.refreshFrequency = config->readNumEntry("Refresh frequency",5);
 
   phpDebugPort = config->readNumEntry("PHP Debugger Port", 7869);
 
@@ -547,17 +549,18 @@ void QuantaApp::readOptions()
   config->setGroup("General Options");
   resize( config->readSizeEntry("Geometry", &s));
 
-  if (!config->readBoolEntry("Show Toolbar",   true)) {
-    toolBar("mainToolBar")    ->hide();
-    toolBar("mainEditToolBar")    ->hide();
+  if (!config->readBoolEntry("Show Toolbar",true))
+  {
+    toolBar("mainToolBar")->hide();
+    toolBar("mainEditToolBar")->hide();
     toolBar("mainNaviToolBar")->hide();
-   showToolbarAction  ->setChecked(false);
- } else
- {
-    toolBar("mainToolBar")    ->show();
-    toolBar("mainEditToolBar")    ->show();
+    showToolbarAction->setChecked(false);
+  } else
+  {
+    toolBar("mainToolBar")->show();
+    toolBar("mainEditToolBar")->show();
     toolBar("mainNaviToolBar")->show();
- }
+  }
   if (!config->readBoolEntry("Show Statusbar", true))
   {
      statusBar()->hide();
@@ -1034,7 +1037,7 @@ void QuantaApp::initTagDict()
   scriptBeginRx.setPattern(scriptBeginRxStr);
   scriptEndRx.setCaseSensitive(false);
   scriptEndRx.setPattern(scriptEndRxStr);
-  if (!dtds->find(defaultDocType)) defaultDocType = DEFAULT_DTD;
+  if (!dtds->find(qConfig.defaultDocType)) qConfig.defaultDocType = DEFAULT_DTD;
 }
 
 void QuantaApp::initActions()

@@ -43,7 +43,6 @@
 #include "quantapropertiespagedlg.h"
 #include "../resource.h"
 
-extern QString globalDataDir;
 const QString textMenu = I18N_NOOP("Insert as Text");
 const QString binaryMenu = I18N_NOOP("Insert Link to File");
 const QString docMenu = I18N_NOOP("New Document Based on This");
@@ -84,7 +83,7 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 
-	QString dir = globalDataDir +"quanta/templates/";
+	QString dir = qConfig.globalDataDir +"quanta/templates/";
  	globalDir = new FilesTreeFolder( this , i18n("Global Templates"), dir);
 	globalDir->setPixmap( 0, SmallIcon("folder"));
 	globalDir->setOpen( true );
@@ -218,7 +217,7 @@ void TemplatesTreeView::slotNewDocument()
 	  if ( !parent ) return;
 	  if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
     QString fileName = currentFileName(); // store, because openFile changes current item
-    emit openFile(KURL(), defaultEncoding);
+    emit openFile(KURL(), qConfig.defaultEncoding);
 	  emit insertFile(fileName);
 	}
 }
@@ -563,7 +562,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
         denyBinaryInsert();
         return;
       }
-      emit openFile(KURL(), defaultEncoding);
+      emit openFile(KURL(), qConfig.defaultEncoding);
       emit insertFile(localFileName);
     }
   }

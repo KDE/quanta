@@ -145,7 +145,7 @@ bool QuantaDoc::newDocument( const KURL& url )
 
   	app ->view->addWrite( w, w->url().url() );
 
-    app->processDTD(defaultDocType);
+    app->processDTD(qConfig.defaultDocType);
 
   	m_docList->insert( w->url().url(), w );
   }
@@ -176,7 +176,7 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
     }
 
     Document *w = write();
-    if (encoding.isEmpty()) encoding = defaultEncoding;
+    if (encoding.isEmpty()) encoding = qConfig.defaultEncoding;
     w->kate_doc->setEncoding(encoding);
     w->readConfig(app->config);
     if (w->doc()->openURL( url ))

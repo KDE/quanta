@@ -399,6 +399,7 @@ private:
   QDict<QDomDocument> toolbarDomList;
   QDict<QPopupMenu> toolbarMenuList;
   QDict<QString> toolbarNames; //list of toolbar names according to their filename
+  QDict<KURL> toolbarURLs; //list of toolbar filenames according to their name
 
   uint userToolbarsCount;
   /**  */

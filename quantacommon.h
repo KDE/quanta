@@ -22,14 +22,38 @@
 #include "parser/node.h"
 #include "parser/parser.h"
 
+/**Some common, mostly static functions.
+  *@author Andras Mantia
+  */
+
 #define DEFAULT_DTD QString("-//W3C//DTD HTML 4.01 Transitional//EN")
+
+//Quanta main configuration structure
+typedef struct QConfig{
+          //Tag style options
+          uint tagCase;
+          uint attrCase;
+          QString attrValueQuotation;
+          bool closeOptionalTags;
+          bool closeTags;
+
+          //editor settings
+          bool useAutoCompletion;
+          QString defaultEncoding;
+
+          //parser options
+          bool useMimeTypes;
+          uint refreshFrequency;
+          QString defaultDocType;
+
+          //environment options
+          QString globalDataDir;
+
+        }; 
 
 class QuantaApp;
 class QString;
 class KURL;
-/**Some common, mostly static functions.
-  *@author Andras Mantia
-  */
 
 class QuantaCommon {
 public: 

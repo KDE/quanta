@@ -233,6 +233,8 @@ void ActionEditDlg::loadAction( TagAction *a )
     if ( type == "text" )
       actionTab->setCurrentPage(2);
 
+    placeOnToolbar->setChecked(false);
+
 }
 
 

@@ -41,8 +41,8 @@ void QuantaView::insertTag( const char *tag)
   bool single = QuantaCommon::isSingleTag(w->getDTDIdentifier(), startTag);
   bool optional = QuantaCommon::isOptionalTag(w->getDTDIdentifier(), startTag);
 
-  if ( (closeTags && !single && !optional) ||
-       (closeOptionalTags && optional) )
+  if ( (qConfig.closeTags && !single && !optional) ||
+       (qConfig.closeOptionalTags && optional) )
   {
     w->insertTag( QString("<")+QuantaCommon::tagCase(startTag)+">", QString("</")+QuantaCommon::tagCase(startTag)+">");
   }

@@ -22,36 +22,26 @@
 #include <config.h>
 #endif
 
-#include "parser/qtag.h"
-#include "parser/node.h"
-#include "parser/parser.h"
+#include "quantacommon.h"
 
 class KDirWatch;
 
-extern QDict<DTDStruct> *dtds;
+extern QConfig qConfig;
 
-extern uint tagsCase; // use capital for tags
-extern uint attrsCase; // use capital letters for attributes of tag
-extern QString attrsQuotation;
-extern bool useAutoCompletion; //enable auto completion of tags
-extern bool closeOptionalTags;
-extern bool closeTags;
-extern bool useMimeTypes;
-extern uint refreshFrequency;
-extern QString defaultDocType;
+extern QDict<DTDStruct> *dtds;
+extern QRegExp scriptBeginRx;
+extern QRegExp scriptEndRx;
+
+extern Node *baseNode;
+extern Parser *parser;
+
+extern QValueList<QString> pluginsList; //holds the names of available plugins
+extern KDirWatch *fileWatcher;
 
 extern QString fileMaskHtml;
 extern QString fileMaskPhp;
 extern QString fileMaskJava;
 extern QString fileMaskText;
 extern QString fileMaskImage;
-extern Node *baseNode;
-extern Parser *parser;
-extern QString defaultEncoding;
-extern QValueList<QString> pluginsList; //holds the names of available plugins
-extern KDirWatch *fileWatcher;
-
-extern QRegExp scriptBeginRx;
-extern QRegExp scriptEndRx;
 
 #endif // RESOURCE_H

@@ -112,9 +112,6 @@
 #include "toolbar/toolbarxmlgui.h"
 #include "toolbar/tagaction.h"
 
-
-
-extern QString globalDataDir;
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}
 
@@ -140,7 +137,7 @@ void QuantaApp::slotFileNew()
 void QuantaApp::slotFileOpen()
 {
 //  KURL url = KFileDialog::getOpenURL( QString::null, QString::null, this);
- QString myEncoding = QString::fromLatin1(QTextCodec::codecForName(defaultEncoding.latin1())->name());
+ QString myEncoding = QString::fromLatin1(QTextCodec::codecForName(qConfig.defaultEncoding.latin1())->name());
 
  KateFileDialog *dialog = new KateFileDialog (QString::null,myEncoding, this, i18n ("Open File"));
  KateFileDialogData data = dialog->exec();
@@ -530,75 +527,78 @@ void QuantaApp::slotInsertTag(QString url, DirInfo dirInfo)
 /** slot for new modify flag */
 void QuantaApp::slotNewStatus()
 {
-  Document *w = view->write();
-  setTitle( doc->url().prettyURL() );
-
-/*  int  config   = w->config();
-  bool readOnly = w->isReadOnly();
-
-  if (readOnly) statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
-  else          statusBar()->changeItem(config & KWriteView::cfOvr ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
-               */
-  statusBar()->changeItem(w->isModified() ? " * " : "",IDS_MODIFIED);
-
-  saveAction   ->setEnabled(doc->isModified());
-  saveAllAction->setEnabled(doc->isModifiedAll());
-  saveprjAction     ->setEnabled(project->isModified());
-
-  bool projectExists = project->hasProject();
-  closeprjAction     ->setEnabled(projectExists);
-  insertFileAction   ->setEnabled(projectExists);
-  insertDirAction    ->setEnabled(projectExists);
-  rescanPrjDirAction ->setEnabled(projectExists);
-  uploadProjectAction->setEnabled(projectExists);
-  projectOptionAction->setEnabled(projectExists);
-  saveAsProjectTemplateAction->setEnabled(projectExists);
-  saveSelectionAsProjectTemplateAction->setEnabled(projectExists);
-
-  if (projectExists)
+  if (view->writeExists())
   {
-    QStringList toolbarList = QExtFileInfo::allFiles(project->toolbarDir+"/", "*.toolbar.tgz");
-    projectToolbarFiles->setMaxItems(toolbarList.count());
-    for (uint i = 0; i < toolbarList.count(); i++)
+    Document *w = view->write();
+    setTitle( doc->url().prettyURL() );
+
+  /*  int  config   = w->config();
+    bool readOnly = w->isReadOnly();
+
+    if (readOnly) statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
+    else          statusBar()->changeItem(config & KWriteView::cfOvr ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
+                 */
+    statusBar()->changeItem(w->isModified() ? " * " : "",IDS_MODIFIED);
+
+    saveAction   ->setEnabled(doc->isModified());
+    saveAllAction->setEnabled(doc->isModifiedAll());
+    saveprjAction     ->setEnabled(project->isModified());
+
+    bool projectExists = project->hasProject();
+    closeprjAction     ->setEnabled(projectExists);
+    insertFileAction   ->setEnabled(projectExists);
+    insertDirAction    ->setEnabled(projectExists);
+    rescanPrjDirAction ->setEnabled(projectExists);
+    uploadProjectAction->setEnabled(projectExists);
+    projectOptionAction->setEnabled(projectExists);
+    saveAsProjectTemplateAction->setEnabled(projectExists);
+    saveSelectionAsProjectTemplateAction->setEnabled(projectExists);
+
+    if (projectExists)
     {
-      if (QFileInfo(toolbarList[i]).isFile())
-        projectToolbarFiles->addURL(KURL(toolbarList[i]));
+      QStringList toolbarList = QExtFileInfo::allFiles(project->toolbarDir+"/", "*.toolbar.tgz");
+      projectToolbarFiles->setMaxItems(toolbarList.count());
+      for (uint i = 0; i < toolbarList.count(); i++)
+      {
+        if (QFileInfo(toolbarList[i]).isFile())
+          projectToolbarFiles->addURL(KURL(toolbarList[i]));
+      }
+    } else
+    {
+      projectToolbarFiles->clearURLList();
     }
-  } else
-  {
-    projectToolbarFiles->clearURLList();
-  }
-  actionCollection()->action("toolbars_load_project")->setEnabled(projectExists);
-  actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
+    actionCollection()->action("toolbars_load_project")->setEnabled(projectExists);
+    actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
 
-  viewBorder->setChecked(w->kate_view->iconBorder());
-  viewLineNumbers->setChecked(w->kate_view->lineNumbersOn());
+    viewBorder->setChecked(w->kate_view->iconBorder());
+    viewLineNumbers->setChecked(w->kate_view->lineNumbersOn());
 
-  if (setHighlight) setHighlight->updateMenu (w->kate_doc);
+    if (setHighlight) setHighlight->updateMenu (w->kate_doc);
 
-  QIconSet floppyIcon( UserIcon("save_small"));
-  QIconSet  emptyIcon( UserIcon("empty1x16" ));
+    QIconSet floppyIcon( UserIcon("save_small"));
+    QIconSet  emptyIcon( UserIcon("empty1x16" ));
 
-  QTabWidget *wTab = view->writeTab;
-  w = static_cast<Document*>(wTab->currentPage());
+    QTabWidget *wTab = view->writeTab;
+    w = static_cast<Document*>(wTab->currentPage());
 
- if ( w->isModified() )
-	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
- else
-	wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
+   if ( w->isModified() )
+  	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
+   else
+  	wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
 
-//This is a really dirty fix for the QTabWidget problem. After the changeTab call,
-//it will reset itself and you will see the first tabs, even if the actual page is on
-//a tab eg. at the end, and it won't be visible now. This is really confusing.
-//I thought it is fixed in QT 3.x, but it is not. :-(
-        int pageId = wTab->currentPageIndex();
-    bool block=wTab->signalsBlocked();
-    wTab->blockSignals(true);
-    wTab->setCurrentPage(pageId-1);
-    wTab->setCurrentPage(pageId);
-    wTab->blockSignals(block);
+  //This is a really dirty fix for the QTabWidget problem. After the changeTab call,
+  //it will reset itself and you will see the first tabs, even if the actual page is on
+  //a tab eg. at the end, and it won't be visible now. This is really confusing.
+  //I thought it is fixed in QT 3.x, but it is not. :-(
+          int pageId = wTab->currentPageIndex();
+      bool block=wTab->signalsBlocked();
+      wTab->blockSignals(true);
+      wTab->setCurrentPage(pageId-1);
+      wTab->setCurrentPage(pageId);
+      wTab->blockSignals(block);
 
-  w->oldstat = w->isModified();
+    w->oldstat = w->isModified();
+ }
 }
 
 /** slot for new undo flag */
@@ -757,11 +757,11 @@ void QuantaApp::slotOptions()
   QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, BarIcon("kwrite", KIcon::SizeMedium ) );
   StyleOptionsS *styleOptionsS = new StyleOptionsS( (QWidget *)page );
 
-  styleOptionsS->tagCase->setCurrentItem( tagsCase);
-  styleOptionsS->attributeCase->setCurrentItem( attrsCase);
-  styleOptionsS->tagAutoClose->setChecked( closeTags );
-  styleOptionsS->optionalTagAutoClose->setChecked( closeOptionalTags );
-  styleOptionsS->useAutoCompletion->setChecked( useAutoCompletion );
+  styleOptionsS->tagCase->setCurrentItem( qConfig.tagCase);
+  styleOptionsS->attributeCase->setCurrentItem( qConfig.attrCase);
+  styleOptionsS->tagAutoClose->setChecked( qConfig.closeTags );
+  styleOptionsS->optionalTagAutoClose->setChecked( qConfig.closeOptionalTags );
+  styleOptionsS->useAutoCompletion->setChecked( qConfig.useAutoCompletion );
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
   styleOptionsS->encodingCombo->insertStringList( availableEncodingNames );
@@ -770,7 +770,7 @@ void QuantaApp::slotOptions()
   for (iter = availableEncodingNames.begin(); iter != availableEncodingNames.end(); ++iter)
   {
      ++iIndex;
-     if ((*iter).lower() == defaultEncoding.lower())
+     if ((*iter).lower() == qConfig.defaultEncoding.lower())
      {
        styleOptionsS->encodingCombo->setCurrentItem(iIndex);
        break;
@@ -800,13 +800,13 @@ void QuantaApp::slotOptions()
     if (it.current()->family == Xml)
     {
       int index = -1;
-      if (it.current()->name == defaultDocType) index = 0;
+      if (it.current()->name == qConfig.defaultDocType) index = 0;
       parserOptions->dtdName->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
     }
   }
 
-  parserOptions->refreshFrequency->setValue(refreshFrequency);
-  parserOptions->useMimeTypes->setChecked(useMimeTypes);
+  parserOptions->refreshFrequency->setValue(qConfig.refreshFrequency);
+  parserOptions->useMimeTypes->setChecked(qConfig.useMimeTypes);
   page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
   DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)page );
 
@@ -815,24 +815,24 @@ void QuantaApp::slotOptions()
 
   if ( kd->exec() )
   {
-    tagsCase = styleOptionsS->tagCase->currentItem();
-    attrsCase = styleOptionsS->attributeCase->currentItem();
-    closeTags = styleOptionsS->tagAutoClose->isChecked();
-    closeOptionalTags = styleOptionsS->optionalTagAutoClose->isChecked();
-    useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
-    defaultEncoding = styleOptionsS->encodingCombo->currentText();
+    qConfig.tagCase = styleOptionsS->tagCase->currentItem();
+    qConfig.attrCase = styleOptionsS->attributeCase->currentItem();
+    qConfig.closeTags = styleOptionsS->tagAutoClose->isChecked();
+    qConfig.closeOptionalTags = styleOptionsS->optionalTagAutoClose->isChecked();
+    qConfig.useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
+    qConfig.defaultEncoding = styleOptionsS->encodingCombo->currentText();
 
     fileMaskHtml = fileMasks->lineHTML->text()+" ";
   	fileMaskPhp  = fileMasks->linePHP->text()+" ";
 	  fileMaskImage= fileMasks->lineImages->text()+" ";
   	fileMaskText = fileMasks->lineText->text()+" ";
 
-    refreshFrequency = parserOptions->refreshFrequency->value();
-    refreshTimer->changeInterval(refreshFrequency*1000);
-    useMimeTypes = parserOptions->useMimeTypes->isChecked();
+    qConfig.refreshFrequency = parserOptions->refreshFrequency->value();
+    refreshTimer->changeInterval(qConfig.refreshFrequency*1000);
+    qConfig.useMimeTypes = parserOptions->useMimeTypes->isChecked();
 
     parserOptions->updateConfig();
-    defaultDocType = QuantaCommon::getDTDNameFromNickName(parserOptions->dtdName->currentText());
+    qConfig.defaultDocType = QuantaCommon::getDTDNameFromNickName(parserOptions->dtdName->currentText());
 
     if (!debuggerOptions->checkDebugger->isChecked()) {
       if (debuggerStyle=="PHP3") enablePhp3Debug(false);
@@ -1578,6 +1578,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
  tempFileList.append(tempFile);
  toolbarGUIClientList.insert(name.lower(),toolbarGUI);
  toolbarNames.insert(url.prettyURL(),new QString(name.lower()));
+ toolbarURLs.insert(name.lower(), new KURL(url));
 }
 
 /** Load an user toolbar from the disk. */
@@ -1598,7 +1599,7 @@ void QuantaApp::slotLoadGlobalToolbar()
 {
  KURL url;
 
- url = KFileDialog::getOpenURL(globalDataDir +"quanta/toolbars/", "*.toolbar.tgz\n*", this);
+ url = KFileDialog::getOpenURL(qConfig.globalDataDir +"quanta/toolbars/", "*.toolbar.tgz\n*", this);
  if (! url.isEmpty())
  {
    slotLoadToolbarFile(url.path());
@@ -1931,7 +1932,7 @@ void QuantaApp::processDTD(QString documentType)
 {
  Document *w = view->write();
  QString foundName;
- w->setDTDIdentifier(defaultDocType);
+ w->setDTDIdentifier(qConfig.defaultDocType);
 
  if (documentType.isEmpty())
  {
@@ -1967,7 +1968,7 @@ void QuantaApp::processDTD(QString documentType)
 
     for (int i = 0; i < dlg->dtdCombo->count(); i++)
     {
-      if (dlg->dtdCombo->text(i) == QuantaCommon::getDTDNickNameFromName(defaultDocType))
+      if (dlg->dtdCombo->text(i) == QuantaCommon::getDTDNickNameFromName(qConfig.defaultDocType))
       {
         dlg->dtdCombo->setCurrentItem(i);
         break;
@@ -1980,7 +1981,7 @@ void QuantaApp::processDTD(QString documentType)
     delete dlg;
   } else //DOCTYPE not found in file
   {
-    w->setDTDIdentifier(defaultDocType);
+    w->setDTDIdentifier(qConfig.defaultDocType);
   }
  } else //dtdName is read from the method's parameter
  {
@@ -2008,7 +2009,7 @@ void QuantaApp::slotToolsChangeDTD()
     {
       dlg->dtdCombo->insertItem(it.current()->nickName);
       if (it.current()->name == oldDtdName) pos = i;
-      if (it.current()->name == defaultDocType) defaultIndex = i;
+      if (it.current()->name == qConfig.defaultDocType) defaultIndex = i;
       i++;
     }
   }
@@ -2066,10 +2067,10 @@ void QuantaApp::slotHelpHomepage()
 void QuantaApp::loadToolbarForDTD(const QString& dtdName, QString oldDtdName)
 {
  DTDStruct *oldDtd = dtds->find(oldDtdName);
- if (!oldDtd && !oldDtdName.isEmpty()) oldDtd = dtds->find(defaultDocType);
+ if (!oldDtd && !oldDtdName.isEmpty()) oldDtd = dtds->find(qConfig.defaultDocType);
 
  DTDStruct *newDtd = dtds->find(dtdName);
- if (!newDtd) newDtd = dtds->find(defaultDocType);
+ if (!newDtd) newDtd = dtds->find(qConfig.defaultDocType);
 
  if (newDtd != oldDtd)
  {
@@ -2079,7 +2080,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName, QString oldDtdName)
      for (uint i = 0; i < oldDtd->toolbars.count(); i++)
      {
        KURL url;
-       QString fileName = globalDataDir + "quanta/toolbars/"+oldDtd->toolbars[i];
+       QString fileName = qConfig.globalDataDir + "quanta/toolbars/"+oldDtd->toolbars[i];
        QuantaCommon::setUrl(url, fileName);
        QString *toolbarName = toolbarNames[url.prettyURL()];
        if (toolbarName) removeToolbar(*toolbarName);
@@ -2093,7 +2094,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName, QString oldDtdName)
    //Load the toolbars for dtdName
    for (uint i = 0; i < newDtd->toolbars.count(); i++)
    {
-      QString fileName = globalDataDir + "quanta/toolbars/"+newDtd->toolbars[i];
+      QString fileName = qConfig.globalDataDir + "quanta/toolbars/"+newDtd->toolbars[i];
       if (QFileInfo(fileName).exists())
       {
         KURL url;
@@ -2140,15 +2141,9 @@ void QuantaApp::removeToolbar(const QString& name)
      toolbarGUIClientList.remove(name);
      toolbarDomList.remove(name);
      toolbarMenuList.remove(name);
-     QDictIterator<QString> it(toolbarNames);
-     for( ; it.current(); ++it )
-     {
-       if (*(it.current()) == name )
-       {
-         toolbarNames.remove(it.currentKey());
-         break;
-       }
-     }
+     KURL *url = toolbarURLs[name];
+     toolbarNames.remove(url->prettyURL());
+     toolbarURLs.remove(name);
     }
   }
 }
