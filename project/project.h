@@ -135,6 +135,7 @@ public slots:
   /** Deletes a project view */
   void slotDeleteProjectView();
   void slotFileDescChanged(const KURL& url, const QString& desc);
+  void slotUploadStatusChanged(const KURL& url, int status);
 
   /** Debugger options */
   void slotDebuggerOptions();

@@ -103,7 +103,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_projectDir->root()->setEnabled(false);
 
   m_uploadStatusMenu = new KPopupMenu(this);
-  m_alwaysUploadId = m_uploadStatusMenu->insertItem(i18n("&Always"), this, SLOT(slotAlwaysUpload()));
+  m_alwaysUploadId = m_uploadStatusMenu->insertItem(i18n("&When Modified"), this, SLOT(slotAlwaysUpload()));
   m_neverUploadId = m_uploadStatusMenu->insertItem(i18n("&Never"), this, SLOT(slotNeverUpload()));
   m_confirmUploadId = m_uploadStatusMenu->insertItem(i18n("&Confirm"), this, SLOT(slotConfirmUpload()));
   connect(m_uploadStatusMenu, SIGNAL(aboutToShow()), this, SLOT(slotUploadMenuAboutToShow()));
@@ -284,7 +284,7 @@ void ProjectTreeView::slotReloadTree( const ProjectUrlList &fileList, bool build
   {
     url = QExtFileInfo::toAbsolute(*it, m_baseURL);
     url.adjustPath(-1);
-    m_projectFiles.append(ProjectURL(url, (*it).fileDesc));
+    m_projectFiles.append(ProjectURL(url, (*it).fileDesc, (*it).uploadStatus));
   }
 
   if (buildNewTree)
@@ -480,19 +480,76 @@ void ProjectTreeView::itemDescChanged(KFileTreeViewItem* item, const QString& ne
 
 void ProjectTreeView::slotAlwaysUpload()
 {
+    KURL url = currentURL();
+    int idx = m_projectFiles.findIndex(url);
+    if (idx != -1)
+    {
+       setUploadStatus(url, ProjectURL::AlwaysUpload);
+    }
 }
 
 void ProjectTreeView::slotNeverUpload()
 {
+    KURL url = currentURL();
+    int idx = m_projectFiles.findIndex(url);
+    if (idx != -1)
+    {
+       setUploadStatus(url, ProjectURL::NeverUpload);
+    }
 }
 
 void ProjectTreeView::slotConfirmUpload()
 {
+    KURL url = currentURL();
+    int idx = m_projectFiles.findIndex(url);
+    if (idx != -1)
+    {
+       setUploadStatus(url, ProjectURL::ConfirmUpload);
+    }
+}
+
+void ProjectTreeView::setUploadStatus(const KURL& url, int status)
+{
+   QString urlStr = url.url();
+   ProjectUrlList::Iterator it;
+   for (it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
+   {
+       if ((*it).url().startsWith(urlStr))
+         (*it).uploadStatus = status;
+   }
+   emit changeUploadStatus(url, status);
 }
 
 void ProjectTreeView::slotUploadMenuAboutToShow()
 {
-
+    m_uploadStatusMenu->setItemChecked(m_alwaysUploadId, false);
+    m_uploadStatusMenu->setItemChecked(m_neverUploadId, false);
+    m_uploadStatusMenu->setItemChecked(m_confirmUploadId, false);
+    KURL url = currentURL();
+    int idx = m_projectFiles.findIndex(url);
+    if (idx != -1)
+    {
+       ProjectURL pUrl = m_projectFiles[idx];
+        switch (pUrl.uploadStatus)
+        {
+            case ProjectURL::NeverUpload:
+               {
+                 m_uploadStatusMenu->setItemChecked(m_neverUploadId, true);
+                 break;
+               }
+            case ProjectURL::ConfirmUpload:
+               {
+                 m_uploadStatusMenu->setItemChecked(m_confirmUploadId, true);
+                 break;
+               }
+            case ProjectURL::AlwaysUpload:
+            default:
+               {
+                 m_uploadStatusMenu->setItemChecked(m_alwaysUploadId, true);
+                 break;
+               }
+        }
+    }
 }
 
 

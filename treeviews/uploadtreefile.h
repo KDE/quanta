@@ -39,11 +39,14 @@ public:
   virtual QString key ( int column, bool ascending ) const;
   /** No descriptions */
   KURL url();
+  void setConfirmUpload(bool confirm) {m_confirm = confirm;}
+  bool confirmUpload() {return m_confirm;}
 
 public:
   UploadTreeFolder * parentFolder;
   KURL m_url;
   bool isDir;
+  bool m_confirm;
   KFileItem *m_fileItem;
 };
 

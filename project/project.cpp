@@ -837,7 +837,7 @@ void Project::loadProjectXML()
       //remove non-existent local files
       if (!excludeRx.exactMatch(path))
       {
-        ProjectURL file(url, el.attribute("desc"));
+        ProjectURL file(url, el.attribute("desc"), el.attribute("uploadstatus", "1").toInt());
         if ( url.isLocalFile() )
         {
           QFileInfo fi( baseURL.path(1)+path);
@@ -1975,7 +1975,8 @@ void Project::slotFileDescChanged(const KURL& url, const QString& desc)
     QDomNodeList nl = dom.elementsByTagName("item");
     QString qurl = QuantaCommon::qUrl(*it);
     const uint nlCount = nl.count();
-    for (uint i = 0; i < nlCount; ++i) {
+    for (uint i = 0; i < nlCount; ++i)
+    {
       QDomElement el = nl.item(i).toElement();
       if (el.attribute("url") == qurl) {
         el.setAttribute("desc", desc);
@@ -1984,6 +1985,33 @@ void Project::slotFileDescChanged(const KURL& url, const QString& desc)
       }
     }
   }
+}
+
+void Project::slotUploadStatusChanged(const KURL& url, int status)
+{
+   QString urlStr = QExtFileInfo::toRelative(url, baseURL).url();
+   QString statusStr = QString("%1").arg(status);
+   ProjectUrlList::Iterator it;
+   for (it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
+   {
+       if ((*it).url().startsWith(urlStr))
+       {
+         (*it).uploadStatus = status;
+          QDomNodeList nl = dom.elementsByTagName("item");
+          QString qurl = QuantaCommon::qUrl(*it);
+          const uint nlCount = nl.count();
+          for (uint i = 0; i < nlCount; ++i)
+          {
+            QDomElement el = nl.item(i).toElement();
+            if (el.attribute("url") == qurl)
+            {
+              el.setAttribute("uploadstatus", statusStr);
+              setModified(true);
+              break;
+            }
+          }
+       }
+   }
 }
 
 /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */

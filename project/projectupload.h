@@ -3,7 +3,7 @@
                              -------------------
     begin                : Wed Nov 15 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
-                           (C) 2002 Andras Mantia <amantia@kde.org>
+                           (C) 2002, 2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -62,6 +62,7 @@ protected slots:
 private:
   void buildSelectedItemList();
   KURL::List modified; // modified files
+  QValueList<QListViewItem*> needsConfirmation;
   QPtrList<QListViewItem> toUpload; // list of files , still didn't uploaded
   QListViewItem *currentItem;
   KURL currentURL;

@@ -84,6 +84,7 @@ signals: // Signals
   void loadToolbarFile( const KURL& );
   void uploadProject();
   void changeFileDescription(const KURL& url, const QString& desc);
+  void changeUploadStatus(const KURL& url, int status);
   void reloadProject();
 
 private:
@@ -93,6 +94,7 @@ private:
    */
   ProjectTreeView(QWidget *parent, const char *name);\
   void reload();
+  void setUploadStatus(const KURL &url, int status);
 
   ProjectTreeBranch *m_projectDir;
   KURL m_oldURL;

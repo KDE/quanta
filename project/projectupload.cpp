@@ -38,6 +38,7 @@
 #include <kmessagebox.h>
 #include <kprotocolinfo.h>
 #include <kdebug.h>
+#include <kinputdialog.h>
 #include <kio/netaccess.h>
 #include <klocale.h>
 #include <klineedit.h>
@@ -163,12 +164,14 @@ void ProjectUpload::slotBuildTree()
        el.setAttribute("modified_time", modifiedTime);
        //kdDebug(24000) << "Last upload at: " << uploadTime << endl;
        //kdDebug(24000) << "Last modified at: " << modifiedTime << endl;
-
-       if ( uploadTime < modifiedTime)
+       int uploadStatus = el.attribute("uploadstatus").toInt();
+       if ( uploadTime < modifiedTime && uploadStatus != 0)
        {
          modified.append( u );
          it->setSelected(true);
        }
+       if (uploadStatus == 2)
+         it->setConfirmUpload(true);
        totalProgress->setValue(i);
      }
    }
@@ -193,6 +196,7 @@ void ProjectUpload::buildSelectedItemList()
   QListViewItem *item;
   QListViewItemIterator it(list);
   toUpload.clear();
+  needsConfirmation.clear();
   for ( ; it.current(); ++it )
   {
    item = it.current();
@@ -204,7 +208,10 @@ void ProjectUpload::buildSelectedItemList()
       u = dynamic_cast<UploadTreeFolder*>(item)->url();
      } else
      {
-      u = dynamic_cast<UploadTreeFile*>(item)->url();
+       UploadTreeFile* fileItem = dynamic_cast<UploadTreeFile*>(item);
+       u = fileItem->url();
+       if (fileItem->confirmUpload() && !u.isEmpty())
+         needsConfirmation.append(item);
      }
 
      if (!u.isEmpty())
@@ -281,6 +288,25 @@ void ProjectUpload::startUpload()
   } else
   {
     buildSelectedItemList();
+    int confirmCount = needsConfirmation.count();
+    if (confirmCount > 0)
+    {
+        QValueList<QListViewItem*>::Iterator it;
+        QStringList confirmList;
+        for (it = needsConfirmation.begin(); it != needsConfirmation.end(); ++it)
+        {
+            confirmList.append(((UploadTreeFile*)(*it))->url().prettyURL(0, KURL::StripFileProtocol));
+        }
+        bool ok;
+        QStringList confirmedList = KInputDialog::getItemList(i18n("Confirm Upload"), i18n("Confirm that you want to upload the following files (unselect the files you do not want to upload):"), confirmList, confirmList, true, &ok, this);
+        if (!ok)  return;
+        for (it = needsConfirmation.begin(); it != needsConfirmation.end(); ++it)
+        {
+            if (!confirmedList.contains(((UploadTreeFile*)(*it))->url().prettyURL(0, KURL::StripFileProtocol)))
+              toUpload.remove(*it);
+        }
+
+    }
     int selectedNum = toUpload.count();
     totalProgress->setProgress(0);
     totalProgress->setTotalSteps(selectedNum);

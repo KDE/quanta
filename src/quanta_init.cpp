@@ -412,6 +412,8 @@ void QuantaInit::initProject()
           m_quanta->fTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
   connect(pTab, SIGNAL(changeFileDescription(const KURL&, const QString&)),
           m_project, SLOT(slotFileDescChanged(const KURL&, const QString&)));
+  connect(pTab, SIGNAL(changeUploadStatus(const KURL&, int)),
+          m_project, SLOT(slotUploadStatusChanged(const KURL&, int)));
 
   connect(m_project, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
 

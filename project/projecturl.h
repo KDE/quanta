@@ -31,14 +31,23 @@ class ProjectURL : public KURL
 {
 public:
   QString fileDesc;
-  
+  int uploadStatus; ///< The upload state, see UploadStatus
+
   ProjectURL()
-    : KURL() {}
+    : KURL(), uploadStatus(1) {}
   ProjectURL(const KURL& url)
-    : KURL(url) {}
-  ProjectURL(const KURL& url, const QString& desc)
-    : KURL(url), fileDesc(desc) {}
+    : KURL(url), uploadStatus(1) {}
+  ProjectURL(const KURL& url, const QString& desc, int status)
+    : KURL(url), fileDesc(desc), uploadStatus(status) {}
   virtual ~ProjectURL() {}
+
+  /** The default state for a file when uploading */
+  enum UploadStatus
+  {
+     NeverUpload = 0, ///< the files is not selected for upload, even if it was modified
+     AlwaysUpload, ///< the file is automatically selected for upload if it was modified
+     ConfirmUpload ///<the file is selected for upload, but the user must confirm the upload
+  };
 };
 
 typedef QValueList<ProjectURL> ProjectUrlList;

@@ -37,6 +37,12 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - enable tab reordering with middle mouse button [#80026]
         - added possibility of ignoring the files listed in .cvsignore [#78183]
         - faster parsing and tree building
+        - per file and per directory upload status (can be changed from the project treeview
+           context menu):
+             - When Modified: the item selected for upload if it was modified
+             - Never: the item is never selected for upload
+             - Confirm: the item is selected for upload if it was modified, but a second confirmation
+                             is needed by the user.
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:
