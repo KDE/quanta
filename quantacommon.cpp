@@ -462,3 +462,19 @@ QString QuantaCommon::obscure( const QString &str )
   return result;
 }
 #endif
+
+void QuantaCommon::normalizeStructure(QString f,QStringList& l)
+{
+ f.remove("\t");
+ f.remove("\n");
+ f.remove("\r");
+
+ while(f.contains("<"))
+  {
+     QString z(f);
+     z.truncate(z.find(">")+1);
+     z.remove(0,z.find("<"));
+     f.remove(0,f.find(">")+1);
+     l.append(z);
+  }
+}

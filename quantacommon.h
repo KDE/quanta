@@ -156,6 +156,8 @@ pointer must be deleted by the caller!! */
   static Format findFormatByFileContent( const QString& fileName );
   static QString obscure( const QString &str );
 #endif
+/** No descriptions */
+  static void normalizeStructure(QString f,QStringList& l);
 };
 
 #endif

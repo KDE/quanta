@@ -119,6 +119,8 @@ void QuantaView::slotFrameWizard()
   bool framesetExists = !list.isEmpty();
   int bl, bc, el, ec;
   QStringList l;
+  QStringList l2;
+  QuantaCommon::normalizeStructure(list[0],l2);
   if (framesetExists)
   {
     l = QStringList::split('\n',list[0],true);
@@ -137,7 +139,7 @@ void QuantaView::slotFrameWizard()
        dlg->setSaved(true);
       }
   dlg->setFramesetFileCurrentPath(quantaApp->projectBaseURL().path());
-  dlg->loadExistingFramesetStructure(l);
+  dlg->loadExistingFramesetStructure(l2);
 
   if ( dlg->exec() )
   {
