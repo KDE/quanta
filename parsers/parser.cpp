@@ -140,6 +140,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         if (!rootNode)
             rootNode = currentNode;
         QString foundText = m_dtd->specialAreaStartRx.cap();
+        if (parentNode && parentNode == currentNode) //some strange cases, but it's possible, eg.: <a href="<? foo ?>""></a><input size="<? foo ?>" >
+           parentNode = parentNode->parent;
         //create a toplevel node for the special area
         AreaStruct area(line, specialStartPos, line, specialStartPos + foundText.length() - 1);
         Node *node = ParserCommon::createScriptTagNode(write, area, foundText, m_dtd, parentNode, currentNode);
