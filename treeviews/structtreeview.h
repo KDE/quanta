@@ -99,6 +99,7 @@ public slots: // Public slots
 
 signals:
   void newCursorPosition( int col, int row );
+  void selectTagArea(Node* node);
   void selectArea(int col1, int row1, int col2, int row2 );
   void needReparse();
   void onTag( const QString &tag );
