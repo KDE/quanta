@@ -1118,7 +1118,7 @@ void ProjectPrivate::slotCloseProject()
   // empty dom tree
   dom.clear();
   m_events->clear();
-  config->writePathEntry("Last Project", QString());
+  config->writePathEntry("Last Project", QString::null);
   init();
   parent->closeFiles();
   parent->newProjectLoaded(projectName, baseURL, templateURL);
@@ -1372,11 +1372,11 @@ void ProjectPrivate::writeConfig()
     if (projectList.contains( projectURL.url() ) == 0)
     {
       projectList.append( projectURL.url() );
-      config->writeEntry("OpenProjects", projectList);
+      config->writePathEntry("OpenProjects", projectList);
       // add the temp file to list
       projectList = config->readPathListEntry("ProjectTempFiles");
       projectList.append(m_tmpProjectFile);
-      config->writeEntry("ProjectTempFiles", projectList);
+      config->writePathEntry("ProjectTempFiles", projectList);
     }
   }
   // save recent projects
@@ -1395,11 +1395,11 @@ void ProjectPrivate::removeFromConfig(const QString & urlStr)
   if ( i > -1)
   {
     projectList.remove( projectList.at(i) );
-    config->writeEntry("OpenProjects", projectList);
+    config->writePathEntry("OpenProjects", projectList);
     // remove the temp file from list
     projectList = config->readPathListEntry("ProjectTempFiles");
     projectList.remove( projectList.at(i) );
-    config->writeEntry("ProjectTempFiles", projectList);
+    config->writePathEntry("ProjectTempFiles", projectList);
   }
   config->sync();
 }
@@ -1583,8 +1583,8 @@ void Project::loadLastProject(bool reload)
         d->m_tmpProjectFile = tempPath;
         d->loadProjectFromTemp(url, d->m_tmpProjectFile);
         // the lists might have changed
-        d->config->writeEntry("OpenProjects", projectList);
-        d->config->writeEntry("ProjectTempFiles", tempList);
+        d->config->writePathEntry("OpenProjects", projectList);
+        d->config->writePathEntry("ProjectTempFiles", tempList);
         d->config->sync();
         return;
       }
@@ -1593,8 +1593,8 @@ void Project::loadLastProject(bool reload)
     tempList.remove( tempList.at(0) );
   }
   // the lists might have changed
-  d->config->writeEntry("OpenProjects", projectList);
-  d->config->writeEntry("ProjectTempFiles", tempList);
+  d->config->writePathEntry("OpenProjects", projectList);
+  d->config->writePathEntry("ProjectTempFiles", tempList);
   // now we look for the last project
   urlPath = d->config->readPathEntry("Last Project");
   QuantaCommon::setUrl(url, urlPath);

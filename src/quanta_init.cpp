@@ -1151,7 +1151,7 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
           entryIt = autosavedFilesEntryList.remove(entryIt);
         }
       }
-      m_config->writeEntry("List of autosaved files", autosavedFilesEntryList);
+      m_config->writePathEntry("List of autosaved files", autosavedFilesEntryList);
 
       autosavedUrlsList = autosavedFilesEntryList;
 
@@ -1161,7 +1161,7 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
         if ((*entryIt) == (*backedUpUrlsIt))
           entryIt = backedupFilesEntryList.remove(entryIt);
       }
-      m_config->writeEntry("List of backedup files", backedupFilesEntryList);
+      m_config->writePathEntry("List of backedup files", backedupFilesEntryList);
      }
     }
   }

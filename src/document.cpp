@@ -2313,9 +2313,9 @@ void Document::createBackup(KConfig* config)
     if(!autosavedFilesEntryList.contains(m_backupPathValue))
      {
        autosavedFilesEntryList.append(m_backupPathValue);
-       config->writeEntry("List of autosaved files", autosavedFilesEntryList);
+       config->writePathEntry("List of autosaved files", autosavedFilesEntryList);
        backedupFilesEntryList.append(url().path() + "." + qConfig.quantaPID);
-       config->writeEntry("List of backedup files", backedupFilesEntryList);
+       config->writePathEntry("List of backedup files", backedupFilesEntryList);
        config->sync();
        setBackupEntry(true);
      }
@@ -2341,9 +2341,9 @@ void Document::removeBackup(KConfig *config)
   QStringList autosavedFilesEntryList = config->readPathListEntry("List of autosaved files");
 
   autosavedFilesEntryList.remove(m_backupPathValue);
-  config->writeEntry("List of autosaved files",autosavedFilesEntryList);
+  config->writePathEntry("List of autosaved files",autosavedFilesEntryList);
   backedupFilesEntryList.remove(url().path() + "." + qConfig.quantaPID);
-  config->writeEntry("List of backedup files", backedupFilesEntryList);
+  config->writePathEntry("List of backedup files", backedupFilesEntryList);
   config->sync();
 
   setBackupEntry(false);
