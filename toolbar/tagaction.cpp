@@ -22,6 +22,7 @@
 
 
 //qt includes
+#include <qdir.h>
 #include <qdom.h>
 #include <qfile.h>
 #include <qtimer.h>
@@ -187,7 +188,11 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
       args = command.mid(pos+1);
       command = command.left(pos);
     }
-
+    if (command.startsWith("~"))
+    {
+      command = command.mid(1);
+      command.prepend(QDir::homeDirPath());
+    }
     *proc << command.stripWhiteSpace();
     args = args.stripWhiteSpace();
     if (!args.isEmpty())
