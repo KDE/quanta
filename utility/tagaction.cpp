@@ -84,6 +84,7 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
     s = QFileInfo(s).fileName();
   }
   setIcon( s );
+  m_file = 0L;
   loopStarted = false;
   m_appMessages = quantaApp->messageOutput();
   connect( this, SIGNAL(activated()), SLOT(insertTag()) );
@@ -91,6 +92,11 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
 
 TagAction::~TagAction()
 {
+}
+
+QString TagAction::type()
+{
+   return tag.attribute("type","");
 }
 
 bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
@@ -390,7 +396,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
     }
     m_appMessages->showMessage( text, true );
   } else
-  if ( scriptOutputDest == "file" )
+  if ( scriptOutputDest == "file" && m_file)
   {
     if (!m_file->isOpen())
        m_file->open(IO_ReadWrite);
@@ -492,7 +498,7 @@ void TagAction::slotProcessExited(KProcess *)
 
 void TagAction::execute()
 {
-  if (insertTag(true, true))
+  if (insertTag(!m_inputFileName.isEmpty(), m_file))
   {
     //To avoid lock-ups, start a timer.
       timer = new QTimer(this);
