@@ -272,7 +272,8 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
         args.replace(begin, end - begin, scriptname);
 //        kdDebug(24000) << "Modified argument list: " << args << endl;
       }
-      *proc << args;
+      QStringList argsList = QStringList::split(' ', args);
+      *proc << argsList;
     }
     firstOutput = true;
     firstError  = true;
