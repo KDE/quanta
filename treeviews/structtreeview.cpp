@@ -605,7 +605,7 @@ void StructTreeView::showTagAtPos(Node *node)
 {
   if (followCursorFlag)
   {
-    if (node->mainListItem)
+    if (node && node->mainListItem)
     {
       ensureItemVisible(node->mainListItem);
       setSelected(node->mainListItem, true);
