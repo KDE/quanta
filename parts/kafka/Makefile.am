@@ -1,6 +1,6 @@
   SUBDIRS = . pics
 
-  INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/quanta/parts/kafka  $(all_includes)
+  INCLUDES = -I$(top_builddir) -I$(top_builddir)/quanta/parts/kafka  $(all_includes)
   KDE_CXXFLAGS = $(USE_EXCEPTIONS)
   lib_LTLIBRARIES = libkafkalibrary.la
 
