@@ -18,7 +18,16 @@ quanta_LDADD = \
 		$(top_srcdir)/quanta/widgets/libwidgets.a\
 		$(top_srcdir)/quanta/toolbar/libtoolbar.a\
 		$(top_srcdir)/quanta/phpdebug/libphpdebug.a\
-		$(top_srcdir)/quanta/plugins/ftpclient/libftpclient.la
+		$(top_srcdir)/quanta/plugins/ftpclient/libftpclient.la\
+		-lSM -lICE\
+		-lX11 $\
+		-lpng -lz -lm\
+		-ljpeg\
+		-lqt $ $ -lXext $ $\
+		-lkdeui\
+		-lkfile\
+		-lkhtml\
+		-lkspell
 LDFLAGS =  -s -lktexteditor
 INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
