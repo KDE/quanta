@@ -2763,6 +2763,11 @@ void KWrite::searchAgain(SConfig &s) {
 
   QString searchFor = searchForList.first();
 
+  if( searchFor.isEmpty() ) {
+    find();
+    return;			   
+  }
+
   do {
     query = KMessageBox::Cancel;
     if (kWriteDoc->doSearch(s,searchFor)) {
@@ -2791,7 +2796,7 @@ void KWrite::searchAgain(SConfig &s) {
       } else {
         // wrapped
         KMessageBox::sorry(this,
-          i18n("Search string not found!"),
+          i18n("Search string '%1' not found!").arg(searchFor),
           i18n("Find"));
       }
     }
