@@ -202,11 +202,11 @@ void ProjectUpload::startUpload()
 	baseUrl->setPort( port->text().toInt() );
 	baseUrl->setHost( lineHost->text() );
 	baseUrl->setPath( linePath->text() );
+  baseUrl->setPass( linePasswd->text() );
 	if (keepPasswd->isChecked())
 	{
 	   p->keepPasswd = true;
 	   p->passwd = linePasswd->text();
-     baseUrl->setPass( linePasswd->text() );
 	} else
 	{
 	   p->keepPasswd = false;
@@ -221,7 +221,7 @@ void ProjectUpload::startUpload()
 	uploadInProgress = true;
 	suspendUpload = false;
   KURL u = *baseUrl;
-  u.setPath("/");
+  u.setPath("");
   u.setUser(lineUser->text());
   if (QExtFileInfo::exists(u))
   {
@@ -269,7 +269,11 @@ void ProjectUpload::upload()
 			if ( !madeDirs.contains(dir) )
 			{
 				madeDirs.append( dir );
-        QExtFileInfo::createDir(dir);
+        if (!QExtFileInfo::createDir(dir))
+        {
+          QuantaCommon::dirCreationError(this, dir.prettyURL());
+          return;
+        }
 			}
 
 			//qDebug("%s -> %s", from.url().data(), to.url().data() );

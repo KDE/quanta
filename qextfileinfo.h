@@ -51,6 +51,7 @@ private:
   KIO::UDSEntry m_entry;
   KURL::List dirListItems;
   QPtrList<QRegExp> lstFilters;
+  QTimer *timer;
 
   void enter_loop();
   /** No descriptions */
@@ -61,6 +62,9 @@ private:
 private slots:
    void slotResult( KIO::Job * job );
    void slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsList);
+public slots: // Public slots
+  /** Timeout occured while waiting for some network function to return. */
+  void slotTimeout();
 };
 
 

@@ -17,6 +17,7 @@
 #include <qptrlist.h>
 #include <qstringlist.h>
 #include <qregexp.h>
+#include <qtimer.h>
 
 //kde includes
 #include <kurl.h>
@@ -127,8 +128,8 @@ bool QExtFileInfo::createDir( const KURL& path )
 {
 	int i=0;
   bool result;
-  KURL dir1, dir2;
-	while ( !exists(path) && i < 2 )
+  KURL dir1, dir2 = KURL();
+	while ( !exists(path) && dir2.path() != path.path() )
 	{
     dir1 = path;
     dir2 = path;
@@ -186,7 +187,8 @@ bool QExtFileInfo::exists(const KURL& a_url)
  } else
  {
   KURL url = a_url;
-  if (a_url.path().endsWith("/")) url.setPath(a_url.path()+"dummy_file");
+  //TODO: THIS IS A HACK!!!! WE SHOULD FIX THE PROBLEM INSTEAD!
+   if (a_url.path().endsWith("/") && a_url.protocol() != "fish" ) url.setPath(a_url.path()+"dummy_file");
   QExtFileInfo internalFileInfo;
   return internalFileInfo.internalExists(url);
  }
@@ -196,9 +198,9 @@ bool QExtFileInfo::exists(const KURL& a_url)
 KURL::List QExtFileInfo::allFilesInternal(const KURL& startURL, const QString& mask)
 {
   dirListItems.clear();
-
   if (internalExists(startURL))
   {
+    timer = new QTimer(this);
     lstFilters.setAutoDelete(true);
     lstFilters.clear();
     // Split on white space
@@ -235,6 +237,9 @@ bool QExtFileInfo::internalExists(const KURL& url)
   KIO::Job * job = KIO::stat( url, false);
   connect( job, SIGNAL( result (KIO::Job *) ),
            this, SLOT( slotResult (KIO::Job *) ) );
+  timer = new QTimer(this);
+  connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
+  timer->start(10*1000, true);         
 //  kdDebug(24000)<<"QExtFileInfo::internalExists:before enter_loop"<<endl;
   enter_loop();
 //  kdDebug(24000)<<"QExtFileInfo::internalExists:after enter_loop"<<endl;
@@ -257,6 +262,7 @@ void QExtFileInfo::enter_loop()
 
 void QExtFileInfo::slotResult( KIO::Job * job )
 {
+  if (timer) delete timer;
   bJobOK = !job->error();
   if ( !bJobOK )
   {
@@ -303,4 +309,11 @@ void QExtFileInfo::slotNewEntries(KIO::Job *job, const KIO::UDSEntryList& udsLis
       delete item;
     }
   }
+}
+
+/** Timeout occured while waiting for some network function to return. */
+void QExtFileInfo::slotTimeout()
+{
+  bJobOK = false;
+  qApp->exit_loop();
 }

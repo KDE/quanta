@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>ProjectUploadS</class>
 <widget class="QDialog">
     <property name="name">
@@ -38,6 +38,22 @@
     <property name="sizeGripEnabled">
         <bool>false</bool>
     </property>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>treeText</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>187</x>
+                <y>228</y>
+                <width>154</width>
+                <height>32</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Building the tree...</string>
+        </property>
+    </widget>
     <widget class="QLayoutWidget">
         <property name="name">
             <cstring>Layout17</cstring>
@@ -129,7 +145,7 @@
                 </grid>
             </widget>
             <spacer row="3" column="1">
-                <property name="name" stdset="0">
+                <property name="name">
                     <cstring>Spacer1</cstring>
                 </property>
                 <property name="orientation">
@@ -291,10 +307,10 @@
                     </property>
                     <property name="geometry">
                         <rect>
-                            <x>6</x>
-                            <y>27</y>
-                            <width>90</width>
-                            <height>128</height>
+                            <x>10</x>
+                            <y>30</y>
+                            <width>101</width>
+                            <height>140</height>
                         </rect>
                     </property>
                     <grid>
@@ -348,7 +364,7 @@
                 </property>
             </widget>
             <spacer row="1" column="1">
-                <property name="name" stdset="0">
+                <property name="name">
                     <cstring>Spacer2</cstring>
                 </property>
                 <property name="orientation">
@@ -427,22 +443,6 @@
                 </property>
             </widget>
         </grid>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>treeText</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>187</x>
-                <y>228</y>
-                <width>154</width>
-                <height>32</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Building the tree...</string>
-        </property>
     </widget>
 </widget>
 <customwidgets>
@@ -556,4 +556,9 @@
     <slot>clearProjectModified()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kprogress.h</includehint>
+    <includehint>kprogress.h</includehint>
+    <includehint>uploadtreeview.h</includehint>
+</includehints>
 </UI>
