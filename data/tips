@@ -136,3 +136,10 @@ server name in form of <i>ftp://user@server</i> and select the remote folder.
 </p>
 </html>
 </tip>
+
+<tip category="Project">
+<html>
+<p>...that you can save <b>file descriptions</b> that appear in the project tree? Right click on a project file, select <i>Properties</i> and go to the <i>Quanta File Info</i> tab.
+</p>
+</html>
+</tip>
