@@ -135,7 +135,7 @@ public:
   void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
 
   /** Get list of possibile tag name completions */
-  QValueList<KTextEditor::CompletionEntry>* getTagCompletions();
+  QValueList<KTextEditor::CompletionEntry>* getTagCompletions(int line, int col);
   
   /** Get list of possibile tag attribute completions */
   QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions( QString tag );

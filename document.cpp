@@ -64,6 +64,8 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget 
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(_view);
   this->basePath = basePath;
   tempFile = 0;
+  dtdName = "";
+
 
   connect( _doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
            this,  SLOT(slotCharactersInserted(int ,int ,const QString&)) );
@@ -742,19 +744,17 @@ void Document::showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *co
 */
 void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
 {
+  unsigned int row,col;
+  viewCursorIf->cursorPositionReal(&row,&col);
   if (completion.type == "attribute")
   {
-    unsigned int row,col;
-    viewCursorIf->cursorPositionReal(&row,&col);
     viewCursorIf->setCursorPositionReal(row,col-1);
     showCodeCompletions( getAttributeValueCompletions(completion.userdata, completion.text) );
   }
-  else if (completion.type == "attributeValue")
-       {
-         unsigned int row,col;
-         viewCursorIf->cursorPositionReal(&row,&col);
-         viewCursorIf->setCursorPositionReal(row,col+1);
-       }
+  if (completion.type == "attributeValue")
+  {
+    viewCursorIf->setCursorPositionReal(row,col+1);
+  }
 }
 
 /** This is called when the user selects a completion. We
@@ -766,6 +766,12 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
   if ( completion->type == "attribute" )
   {
     string->append("=\"\"");
+  }
+  if (completion->type == "doctypeList")
+  {
+    QString s = *string;
+    string->remove(0, string->length());
+    string->append(QuantaCommon::attrCase("public")+" \""+QuantaCommon::getDTDNameFromNickName(s)+"\"");
   }
 }
 
@@ -785,7 +791,7 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
   if ( tag == "" ) {
     if ( string == "<" ) {
       //we need to complete a tag name
-      showCodeCompletions( getTagCompletions() );
+      showCodeCompletions( getTagCompletions(line, column) );
     } else if ( string == "&") {
       //complete character codes
       //showCodeCompletions( getCharacterCompletions() );
@@ -814,13 +820,13 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
 }
 
 /** Return a list of possible tag name completions */
-QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions()
+QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, int col)
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
   KTextEditor::CompletionEntry completion;
   completion.type = "tag";
 
-  DTDStruct* dtd = dtds->find(dtdName);
+  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
 
   if (dtd) {
     QDictIterator<QTag> it(* dtd->tagsList);
@@ -850,6 +856,17 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( QSt
       QString item = list->at(i)->name;
       completion.text = item;
       completions->append( completion );
+    }
+  }
+
+  if (tag.contains("!doctype",false)) //special case, list all the known document types
+  {
+    QDictIterator<DTDStruct> it(*dtds);
+    for( ; it.current(); ++it )
+    {
+     completion.type = "doctypeList";
+     completion.text = it.current()->nickName;
+     completions->append(completion);
     }
   }
 
@@ -910,6 +927,7 @@ QString Document::findDTDName(int startLine, int endLine)
  int dir = (startLine > endLine)?-1:1;
  int pos = 0;
  QString foundName = "";
+ bool endReached;
  do
  {
     QString s = editIf->textLine(i);
@@ -932,7 +950,9 @@ QString Document::findDTDName(int startLine, int endLine)
          }
       }
    i += dir;
- } while ((foundName.isEmpty()) && (i + dir != endLine));
+   endReached = (dir < 0)?(i < endLine):(i > endLine);
+ } while ((foundName.isEmpty()) && (!endReached));
 
+ if (foundName.isEmpty()) foundName = dtdName;
  return foundName;
 }
