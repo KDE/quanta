@@ -24,9 +24,11 @@
 
 // app includes
 #include "structtreetag.h"
+#include "../messages/messageoutput.h"
 #include "../parser/tag.h"
 #include "../parser/node.h"
 #include "../resource.h"
+#include "../quanta.h"
 #include "../quantacommon.h"
 #include "../document.h"
 
@@ -48,7 +50,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
   static const QString space = " ";
   static const QRegExp nbspRx("&nbsp;|\\n");
   node = a_node;
-
+  MessageOutput *appMessages = quantaApp->getMessageOutput();
   if (node)
   {
     Tag *tag = node->tag;
@@ -103,16 +105,36 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
               }
 
               QTag *parentQTag = 0L;
-             if (node->parent)
-               parentQTag = QuantaCommon::tagFromDTD(node->parent->tag->dtd, node->parent->tag->name);
+              if (node->parent)
+                parentQTag = QuantaCommon::tagFromDTD(node->parent->tag->dtd, node->parent->tag->name);
               QString qTagName = node->tag->dtd->caseSensitive ? node->tag->name : node->tag->name.upper();
-             if (parentQTag && !parentQTag->childTags.contains(qTagName) &&
-             !parentQTag->childTags.isEmpty())
-             {
-               int line, col;
-               node->tag->beginPos(line, col);
-               node->tag->write()->setErrorMark(line);
-             }
+              int line, col;
+              node->tag->beginPos(line, col);
+              if (parentQTag && !parentQTag->childTags.contains(qTagName) &&
+              !parentQTag->childTags.isEmpty())
+              {
+                node->tag->write()->setErrorMark(line);
+                QString parentTagName = node->tag->dtd->caseSensitive ? node->parent->tag->name : node->parent->tag->name.upper();
+                appMessages->showMessage(i18n("Error in line %1: %2 isn't a possible child of %3.\n").arg(line + 1).arg(qTagName).arg(parentTagName));
+              }
+              QString nextTagName;
+              if (node->next)
+              {
+                nextTagName = node->tag->dtd->caseSensitive ? node->next->tag->name : node->next->tag->name.upper();
+              }
+              parentQTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
+              if (parentQTag && !parentQTag->isSingle() &&
+                  !parentQTag->isOptional() &&
+                  "/" + qTagName != nextTagName)
+              {
+                node->tag->write()->setErrorMark(line);
+                appMessages->showMessage(i18n("Error in line %1: Closing tag for %2 is missing.\n").arg(line + 1).arg(qTagName));
+              } else
+              if (!parentQTag)
+              {
+                node->tag->write()->setErrorMark(line);
+                appMessages->showMessage(i18n("Error in line %1: %2 is not part of %3.\n").arg(line + 1).arg(qTagName).arg(node->tag->dtd->nickName));
+              }
 
               break;
             }

@@ -31,6 +31,7 @@
 #include <kdebug.h>
 
 // app includes
+#include "../messages/messageoutput.h"
 #include "../parser/node.h"
 #include "../parser/qtag.h"
 #include "../document.h"
@@ -118,6 +119,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
 {
 //  if (baseNode)
   {
+    quantaApp->getMessageOutput()->showMessage(i18n("\n"));
     top = new StructTreeTag( this, i18n("Document Structure") );
     top->setOpen(topOpened);
 
