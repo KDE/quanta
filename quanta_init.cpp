@@ -3,6 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    								  (C) 2001 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -26,6 +27,7 @@
 #include <qtimer.h>
 
 // include files for KDE
+#include <kaccel.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
@@ -33,18 +35,19 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <khtmlview.h>
-#include <kstandarddirs.h>
+#include <kstddirs.h>
 #include <kstatusbar.h>
-#include <kstdaccel.h>
 
 // application specific includes
-#include "document.h"
+#include "kwrite/kwdoc.h"
+#include "kwrite/kwview.h"
+
 #include "quanta.h"
 #include "quantaview.h"
 #include "quantadoc.h"
 #include "resource.h"
+#include "document.h"
 
-#include "kwrite/kwdoc.h"
 
 #include "project/project.h"
 
@@ -57,6 +60,7 @@
 #include "treeviews/projecttreeview.h"
 #include "treeviews/doctreeview.h"
 #include "treeviews/structtreeview.h"
+#include "treeviews/templatestreeview.h"
 
 #include "plugins/php3dbg/debugger.h"
 #include "plugins/php4dbg/debugger.h"
@@ -112,10 +116,10 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow())); 
   
   QPopupMenu* pm_view = (QPopupMenu*)guiFactory()->container("qview", this);
-  connect(pm_view,SIGNAL(aboutToShow()), this, SLOT(viewMenuAboutToShow())); 
-  
+  connect(pm_view,SIGNAL(aboutToShow()), this, SLOT(viewMenuAboutToShow()));
+
   doc->newDocument( KURL() );
-  
+
   readOptions();
 
   connect( messageOutput, SIGNAL(clicked(const QString&,int)),
@@ -129,20 +133,6 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 
 QuantaApp::~QuantaApp()
 {
-  delete parser;
-
-  delete tagsList;
-  delete tagsCore;
-  delete tagsI18n;
-  delete tagsScript;
-  delete quotedAttribs;
-  delete lCore;
-  delete lI18n;
-  delete lScript;
-  delete singleTags;
-  delete optionalTags;
- 
-  delete tagsDict;
 }
 
 void QuantaApp::initStatusBar()
@@ -188,7 +178,9 @@ void QuantaApp::initProject()
           doc,      SLOT  (closeAll()));
   connect(project,  SIGNAL(showTree()),
           this,     SLOT  (slotShowProjectTree()));
-          
+  connect(project,  SIGNAL(removeFromProject(int)),
+          pTab,     SLOT  (slotRemoveFromProject(int)));
+
   connect(fLTab,    SIGNAL(insertDirInProject(QString)),
           project,  SLOT  (addDirectory(QString)));
   connect(fTTab,    SIGNAL(insertDirInProject(QString)),
@@ -199,6 +191,10 @@ void QuantaApp::initProject()
   connect(fTTab,    SIGNAL(insertFileInProject(QString)),
           project,  SLOT  (insertFile(QString)));
           
+  connect(pTab,     SIGNAL(renameFileInProject(QString)),
+          project,  SLOT  (slotRenameFile(QString)));
+  connect(pTab,     SIGNAL(renameFolderInProject(QString)),
+          project,  SLOT  (slotRenameFolder(QString)));
   connect(pTab,     SIGNAL(removeFileFromProject(QString)),
           project,  SLOT  (slotRemoveFile(QString)));
   connect(pTab,     SIGNAL(removeFolderFromProject(QString)),
@@ -220,6 +216,10 @@ void QuantaApp::initProject()
           this, SLOT(slotFileSaveAll()));
   connect(project,  SIGNAL(newStatus()),
           this, SLOT(slotNewStatus()));
+
+  connect(project,  SIGNAL(newProjectLoaded()),
+          this,     SLOT  (slotNewProjectLoaded()));
+
 }
 
 void QuantaApp::initView()
@@ -232,9 +232,15 @@ void QuantaApp::initView()
   bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Output"));
   
   ftabdock = createDockWidget( "Files",  UserIcon("ftab"),     0L, "");
+  ftabdock->setToolTipString(i18n("Files tree view"));
   ptabdock = createDockWidget( "Project",UserIcon("ptab"),     0L, "");
+  ptabdock->setToolTipString(i18n("Project tree view"));
+  ttabdock = createDockWidget( "Templates",UserIcon("ttab"),     0L, "");
+  ttabdock->setToolTipString(i18n("Templates tree view"));
   stabdock = createDockWidget( "Struct", BarIcon ("view_sidetree"),0L, "");
+  stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
   dtabdock = createDockWidget( "Docs",   BarIcon ("contents2"),    0L, "");
+  dtabdock->setToolTipString(i18n("Documentation"));
 
   QStrList topList;
   config->setGroup("General Options");
@@ -250,6 +256,10 @@ void QuantaApp::initView()
   fTab -> raiseWidget( 0 );
 
   pTab  = new ProjectTreeView( ptabdock );
+
+  tTab = new TemplatesTreeView( "" , ttabdock );
+
+
   dTab  = new DocTreeView    ( dtabdock );
 
   sTab = new StructTreeView( parser, config, stabdock ,"struct");
@@ -266,6 +276,7 @@ void QuantaApp::initView()
   bottdock ->setWidget( messageOutput );
   ftabdock ->setWidget( fTab );
   ptabdock ->setWidget( pTab );
+  ttabdock ->setWidget( tTab );
   stabdock ->setWidget( sTab );
   dtabdock ->setWidget( dTab );
   
@@ -273,6 +284,7 @@ void QuantaApp::initView()
   fTTab ->setFocusPolicy(QWidget::ClickFocus);
   fLTab ->setFocusPolicy(QWidget::ClickFocus);
   pTab  ->setFocusPolicy(QWidget::NoFocus);
+  tTab  ->setFocusPolicy(QWidget::NoFocus);
   sTab  ->setFocusPolicy(QWidget::NoFocus);
   dTab  ->setFocusPolicy(QWidget::NoFocus);
   
@@ -308,7 +320,14 @@ void QuantaApp::initView()
             this, SLOT(slotFileOpen(const KURL &)));
   connect(   pTab, SIGNAL(openImage  (QString)),
             this, SLOT(slotImageOpen(QString)));
-            
+
+  connect(   tTab, SIGNAL(openFile  (const KURL &)),
+            this, SLOT(slotFileOpen(const KURL &)));
+  connect(   tTab, SIGNAL(insertFile  (QString)),
+            this, SLOT(slotInsertFile(QString)));
+  connect(   tTab,SIGNAL(insertTag(QString)),
+            this, SLOT(slotInsertTag(QString)));
+
   connect(   fTTab,SIGNAL(insertTag(QString)),
             this, SLOT(slotInsertTag(QString)));
   connect(   fLTab,SIGNAL(insertTag(QString)),
@@ -343,6 +362,7 @@ void QuantaApp::initView()
   bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
   
   ptabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
+  ttabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
   stabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
   dtabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
   
@@ -428,31 +448,48 @@ void QuantaApp::readOptions()
   
   int mode = config->readNumEntry("Left panel mode", 0);
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
-  
+
   fileRecent ->loadEntries(config);
 
   QSize s(800,580);
   config->setGroup("General Options");
   resize( config->readSizeEntry("Geometry", &s));
-  
+
   if (!config->readBoolEntry("Show Toolbar",   true)) {
     toolBar("mainToolBar")    ->hide();
     toolBar("mainEditToolBar")->hide();
     toolBar("mainNaviToolBar")->hide();
-  }
-  if (!config->readBoolEntry("Show Statusbar", true)) statusBar()->hide();
-  
+   showToolbarAction  ->setChecked(false);
+ } else
+ {
+    toolBar("mainToolBar")    ->show();
+    toolBar("mainEditToolBar")->show();
+    toolBar("mainNaviToolBar")->show();
+ }
+  if (!config->readBoolEntry("Show Statusbar", true))
+  {
+     statusBar()->hide();
+  } else
+  {
+      statusBar()->show();
+     showStatusbarAction->setChecked(true);
+ }
+ showToolbarAction  ->setChecked(config->readBoolEntry("Show Toolbar",   true));
+ showStatusbarAction->setChecked(config->readBoolEntry("Show Statusbar", true));
+
   readDockConfig();
-  
-  showToolbarAction  ->setChecked(config->readBoolEntry("Show Toolbar",   true));
-  showStatusbarAction->setChecked(config->readBoolEntry("Show Statusbar", true));
-  
+
   showPreviewAction  ->setChecked( false );
-  showMessagesAction ->setChecked( bottdock->isVisible() );
-  
+  showMessagesAction ->setChecked( bottdock->parent() != 0L );
+
   doc    ->readConfig(config); // kwrites
   project->readConfig(config); // project
-  
+  if (doc->write()->isUntitled())
+  {
+     doc->closeDocument();
+     doc->newDocument(KURL());
+  }
+
   debuggerStyle = "None";
   config->setGroup  ("General Options");
   if (config->readBoolEntry("Enable Debugger", true))
@@ -484,11 +521,7 @@ void QuantaApp::enablePhp3Debug(bool enable)
         s.sprintf("%i",phpDebugPort)+"" );
     }
     debuggerStyle = "PHP3";
-  } 
-  else {
-    delete dbg3;
-    dbg3 = 0L;
-  }
+  } else delete dbg3;
 }
 
 void QuantaApp::enablePhp4Debug(bool enable)
@@ -499,17 +532,13 @@ void QuantaApp::enablePhp4Debug(bool enable)
              messageOutput, SLOT(php4Debug(QString)) );
     dbg4->init();
     debuggerStyle = "PHP4";
-  } 
-  else {
-    delete dbg4;
-    dbg4 = 0L;
-  }
+  } else delete dbg4;
 }
 
 void QuantaApp::openLastFiles()
 {
   // we need to check config
-  // because project now can be 
+  // because project now can be
   // in load stage ( remote prj )
   config->setGroup  ("Projects");
   QString pu = config->readEntry("Last Project");
@@ -558,7 +587,6 @@ void QuantaApp::initTagDict()
   optionalTags  = new QStrList();
 
   tagsDict = new QDict <QStrList>(233,false);
-  tagsDict->setAutoDelete( true );
 
   KConfig *config = new KConfig( locate("appdata","tagdata.rc") );
 
@@ -598,8 +626,6 @@ void QuantaApp::initTagDict()
 
     tagsDict->insert(tag, attrList);
   }
-
-  delete config;
 }
 
 void QuantaApp::initActions()
@@ -612,7 +638,7 @@ void QuantaApp::initActions()
     fileRecent =
       KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
                              actionCollection(), "file_open_recent");
-                        
+
     KStdAction::close  ( this, SLOT( slotFileClose()), actionCollection() );
 
     (void) new KAction( i18n( "Close All" ), 0, this, 
@@ -629,7 +655,17 @@ void QuantaApp::initActions()
                         this, SLOT( slotFileSaveAll() ),
                         actionCollection(), "save_all" );
 
+    saveAsLocalTemplateAction = new KAction( i18n( "Save As Local Template" ), 0,
+                        this, SLOT( slotFileSaveAsLocalTemplate() ),
+                        actionCollection(), "save_local_template" );
+    saveAsProjectTemplateAction = new KAction( i18n( "Save As Project Template..." ), 0,
+                        this, SLOT( slotFileSaveAsProjectTemplate() ),
+                        actionCollection(), "save_project_template" );
+
     KStdAction::quit( this, SLOT( slotFileQuit() ), actionCollection() );
+
+   (void) new KAction( i18n( "&File list" ), 0,this, SLOT( slotShowOpenFileList() ),
+                        actionCollection(), "file_list" );
 
     // Edit actions
     //
@@ -690,11 +726,11 @@ void QuantaApp::initActions()
     (void) new KAction( i18n( "Context &Help..." ), CTRL+Key_H, 
                         this, SLOT( contextHelp() ),
                         actionCollection(), "context_help" );
-                        
+  /*
     (void) new KAction( i18n( "Tag &Attributes" ), ALT+Key_Down,
                         doc, SLOT( slotAttribPopup() ),
                         actionCollection(), "tag_attributes" );
-
+     */
     (void) new KAction( i18n( "&Edit Current Tag..." ), Key_F4, 
                         view, SLOT( slotEditCurrentTag() ),
                         actionCollection(), "edit_current_tag" );
@@ -712,11 +748,15 @@ void QuantaApp::initActions()
       new KToggleAction( i18n( "Show Files Tree" ), 0,
                          this, SLOT( slotShowFTabDock() ),
                          actionCollection(), "show_ftab_tree" );
-    showPTabAction = 
+    showPTabAction =
       new KToggleAction( i18n( "Show Project Tree" ), 0,
                          this, SLOT( slotShowPTabDock() ),
                          actionCollection(), "show_ptab_tree" );
-    showSTabAction = 
+    showTTabAction =
+      new KToggleAction( i18n( "Show Templates Tree" ), 0,
+                         this, SLOT( slotShowTTabDock() ),
+                         actionCollection(), "show_ttab_tree" );
+    showSTabAction =
       new KToggleAction( i18n( "Show Structure Tree" ), 0,
                          this, SLOT( slotShowSTabDock() ),
                          actionCollection(), "show_stab_tree" );
@@ -792,7 +832,11 @@ void QuantaApp::initActions()
     connect(project,                SIGNAL(checkOpenAction(bool)),
             project->projectRecent, SLOT(setEnabled(bool)));
     
-    closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0, 
+    saveprjAction =  new KAction( i18n( "&Save Project" ), SmallIcon("save"), 0,
+                         project, SLOT( saveProject() ),
+                         actionCollection(), "save_project" );
+
+    closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0,
                          project, SLOT( closeProject() ),
                          actionCollection(), "close_project" );
 

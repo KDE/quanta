@@ -36,6 +36,7 @@ class WToolBar;
 class Document;
 class QTabWidget;
 class KProcess;
+class KDockTabGroup;
 class ToolBars;
 class QTabBar;
 class QWidgetStack;
@@ -79,7 +80,7 @@ class QuantaView : public QWidget
 	  /** initialise tags menu */
 	  void initMenu();
 
-    void initActions();
+      void initActions();
 
 	  void insertTag( const char *tag);
 	
@@ -148,6 +149,9 @@ class QuantaView : public QWidget
   
     void slotPasteHTMLQuoted();
     void slotPasteURLEncoded();
+  /** Add the starting and closing text for a 
+user specified tag. */
+  void slotTagMisc();
 
 
   signals:
@@ -163,9 +167,12 @@ class QuantaView : public QWidget
   	
   	QTabBar      *tabBar;
   	QWidgetStack *toolbarStack;
-  	
+
+#ifdef USE_KDOCKTABGROUP
+	KDockTabGroup *writeTab;
+#else 	  	
   	QTabWidget   *writeTab;
-    
+#endif
     /** collum of cursor position */
     int column;
     QString space;

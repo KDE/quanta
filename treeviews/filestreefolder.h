@@ -28,6 +28,7 @@ class FilesTreeFolder: public QListViewItem
 public:
     FilesTreeFolder( QListView * parent, const char * name, const char *_dir);
     FilesTreeFolder( FilesTreeFolder * parent, const char * name );
+    virtual ~FilesTreeFolder();
 
     QString text( int column ) const;
 

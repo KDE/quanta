@@ -30,7 +30,8 @@ class QPopupMenu;
 
 class FileManage : public QListView {
 Q_OBJECT
-public: 
+public:
+    FileManage();
 	FileManage( QWidget *parent, const char *name );
 	~FileManage();
 

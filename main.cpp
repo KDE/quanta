@@ -36,12 +36,16 @@
 static const char *description =
 	I18N_NOOP("Quanta Plus Web Development Environment");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
+
+static const char *othertext =
+	I18N_NOOP("We hope you enjoy Quanta Plus.\n\nQuanta Plus is not in any way affiliated with \nany commercial versions of Quanta. The \nprimary coders from the original team \nleft the GPL'd version to produce a \ncommercial product.");
 	
 
 static KCmdLineOptions options[] =
 {
   { "+[File]", I18N_NOOP("file to open"), 0 },
   { "unique", I18N_NOOP("Whether we start as a one-instance application."), 0 },
+  { "nologo", I18N_NOOP("Do not show the nice logo during startup."), 0 },
   { 0, 0, 0 }
   // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
@@ -52,20 +56,23 @@ int main(int argc, char *argv[])
 		aboutData( "quanta", I18N_NOOP("Quanta"),
 		VERSION, description, KAboutData::License_GPL_V2,
 		"(c) 2000, 2001",
-		"We hope you enjoy our program.",
+		othertext,
 		"http://quanta.sourceforge.net"
 		);
 
- 	aboutData.addAuthor("Dmitry Poplavsky",0, "dima@kde.org");
- 	aboutData.addAuthor("Alexander Yakovlev",0, "yshurik@kde.org");
- 	aboutData.addAuthor("Eric Laffoon",0, "sequitur@kde.org");
+	//aboutData.otherText(&othertext);
+
+ 	aboutData.addAuthor("Dmitry Poplavsky","Inactive - left for commerical version", "dima@kde.org");
+ 	aboutData.addAuthor("Alexander Yakovlev","Inactive - left for commerical version", "yshurik@kde.org");
+ 	aboutData.addAuthor("Eric Laffoon","Project Lead - public liason", "sequitur@kde.org");
+ 	aboutData.addAuthor("Andras Mantia","Program Lead - bug squisher", "amantia@freemail.hu");
 
  	aboutData.addCredit("Richard Moore",
-    "Coding and tag dialog definition documentation",
+    "Coding and tag dialog definition documentation and more",
     "rich@kde.org");
 
   aboutData.addCredit("Matthew Colton",
-    "Cool splash screen for quanta",
+    "Cool splash screen for many version releases of Quanta",
     "mat.colton@web-xs.de");
 
   aboutData.addCredit("Claus Hindsgaul",

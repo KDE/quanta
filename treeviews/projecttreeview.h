@@ -37,7 +37,7 @@ class ProjectTreeView : public QListView  {
 
 public: 
 	ProjectTreeView(QWidget *parent=0, const char *name=0);
-	~ProjectTreeView();
+	virtual ~ProjectTreeView();
 	
 	QString currentFileName();
 	
@@ -46,9 +46,11 @@ public slots: // Public slots
 	void slotOpenWith();
 	void slotOpenInQuanta();
 	void slotRemove();
-	void slotRemoveFromProject();
+	void slotRemoveFromProject(int askForRemove=1);
 	void slotUploadSingleFile();
 	void slotUploadSingleFolder();
+	void slotRenameFile();
+	void slotRenameFolder();
 	
   void slotMenu(QListViewItem*, const QPoint&, int);
   void slotFileTag();
@@ -65,6 +67,8 @@ signals: // Signals
   void openFile ( const KURL& );
   void openImage( QString );
   void insertTag( QString );
+  void renameFileInProject( QString );
+  void renameFolderInProject( QString );
   void removeFileFromProject( QString );
   void removeFolderFromProject( QString );
   void uploadSingleFile( QString );

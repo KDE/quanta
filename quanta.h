@@ -3,6 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    								  (C) 2001 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -17,10 +18,6 @@
 
 #ifndef QUANTA_H
 #define QUANTA_H
- 
-#ifndef VERSION
-  #define VERSION "2"
-#endif
 
 #define IDS_STATUS      1
 #define IDS_INS_OVR     2
@@ -65,6 +62,7 @@ class FilesListView;
 class FilesTreeView;
 class StructTreeView;
 class ProjectTreeView;
+class TemplatesTreeView;
 class Project;
 class ToolBars;
 class GrepDialog;
@@ -116,7 +114,8 @@ class QuantaApp : public KDockMainWindow
     void initTagDict();
     
     virtual bool queryExit();
-    
+    void saveAsTemplate (bool projectTemplate);
+
   public slots:
     
     void slotFileNew ();
@@ -124,6 +123,8 @@ class QuantaApp : public KDockMainWindow
     void slotFileOpen( const KURL & );
     void slotFileSave    ();
     void slotFileSaveAs  ();
+    void slotFileSaveAsLocalTemplate ();
+    void slotFileSaveAsProjectTemplate ();
     void slotFileSaveAll ();
     void slotFileClose   ();
     void slotFileCloseAll();
@@ -173,6 +174,7 @@ class QuantaApp : public KDockMainWindow
     void slotShowPreview();
     
     void slotShowProjectTree();
+    void slotShowTemplatesTree();
 
     void slotFtpClient();
 
@@ -183,6 +185,7 @@ class QuantaApp : public KDockMainWindow
     void slotShowBottDock();
     void slotShowFTabDock();
     void slotShowPTabDock();
+    void slotShowTTabDock();
     void slotShowSTabDock();
     void slotShowDTabDock();
     
@@ -215,6 +218,12 @@ class QuantaApp : public KDockMainWindow
 	  void setTitle(QString);
 	  
 	  void autoComplete();
+	
+	  void slotShowOpenFileList();
+  /** No descriptions */
+  void slotNewProjectLoaded();
+  /** No descriptions */
+  void slotInsertFile(QString);
 	  
   public:
 
@@ -240,11 +249,12 @@ class QuantaApp : public KDockMainWindow
     QWidgetStack *fTab;
     
     /** tabs for left panel */
-    ProjectTreeView  *pTab;
-    DocTreeView 		 *dTab;
-    FilesTreeView		*fTTab;
+    ProjectTreeView  	*pTab;
+    DocTreeView 	*dTab;
+    FilesTreeView	*fTTab;
     FilesListView		*fLTab;
-    StructTreeView   *sTab;
+    StructTreeView *sTab;
+    TemplatesTreeView	 *tTab;
 
     QString previewPosition;
 
@@ -254,6 +264,7 @@ class QuantaApp : public KDockMainWindow
     KDockWidget *maindock;
     KDockWidget *bottdock;
     KDockWidget *ptabdock;
+    KDockWidget *ttabdock;
     KDockWidget *dtabdock;
     KDockWidget *ftabdock;
     KDockWidget *stabdock;
@@ -292,16 +303,16 @@ class QuantaApp : public KDockMainWindow
     KRecentFilesAction *fileRecent;
     
     KToggleAction *verticalSelectAction, *showMessagesAction, *showTreeAction,
-      *showFTabAction,*showPTabAction,*showSTabAction,*showDTabAction,
+      *showFTabAction,*showPTabAction,*showTTabAction,*showSTabAction,*showDTabAction,
       *showToolbarAction,*showStatusbarAction,*showPreviewAction;
     
     KSelectAction *eolSelectAction, *hlSelectAction;
     
     KAction *saveAction, *saveAllAction, *undoAction, *redoAction,
       *cutAction, *copyAction, *findNextAction, *backAction, *forwardAction,
-      *closeprjAction, *insertFileAction, *insertDirAction, 
+      *saveprjAction, *closeprjAction, *insertFileAction, *insertDirAction,
       *newPrjAction, *openPrjAction, *rescanPrjDirAction, *uploadProjectAction,
-      *projectOptionAction;
+      *projectOptionAction, *saveAsLocalTemplateAction, *saveAsProjectTemplateAction;
       
       
     QDomDocument *m_actions;

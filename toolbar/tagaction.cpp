@@ -1,6 +1,5 @@
 
 #include "tagaction.h"
-#include "tagaction.moc"
 #include "../document.h"
 #include "../quantaview.h"
 #include "../quanta.h"

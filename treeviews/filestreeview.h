@@ -32,6 +32,7 @@ class FilesTreeFolder;
 class FilesTreeView : public FileManage  {
    Q_OBJECT
 public:
+    FilesTreeView();
 	FilesTreeView( QString dir, QStrList topList, QWidget *parent=0L, const char *name=0L);
 	~FilesTreeView();
 	

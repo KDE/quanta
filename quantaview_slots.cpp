@@ -24,6 +24,7 @@
 #include <qcstring.h>
 #include <qlineedit.h>
 #include <qclipboard.h>
+#include <qcheckbox.h>
 
 // include files for KDE
 #include <kapp.h>
@@ -48,6 +49,8 @@
 #include "tagdialogs/tagquicklistdlg.h"
 #include "tagdialogs/tagquicktable.h"
 #include "tagdialogs/cssdialogi.h"
+#include "tagdialogs/tagmaildlg.h"
+#include "tagdialogs/tagmiscdlg.h"
 
 #include "qdom.h"
 
@@ -204,7 +207,56 @@ void QuantaView::slotTagFormReset()
 /** for <a href=mailto> tag  */
 void QuantaView::slotTagMail()
 {
+	TagMailDlg *mailDlg = new TagMailDlg( this, i18n("E-mail link (mailto)..."));
+
+  if ( mailDlg->exec() ) {
+  	QString tag = QString(tagCase("<a"));
+  	
+  	if ( !QString(mailDlg->lineEmail->text()).isEmpty())
+  	{
+  		tag += attrCase(" href=\"")+"mailto:"+mailDlg->lineEmail->text();
+  	  	if ( !QString(mailDlg->lineSubject->text()).isEmpty())
+	   		tag += "?subject="+mailDlg->lineSubject->text();
+  	   	tag += "\"";
+  	}
+  	
+  	if ( !QString(mailDlg->lineTitle->text()).isEmpty())
+	   		tag += attrCase(" title=\"")+mailDlg->lineTitle->text()+"\"";
+    tag += QString(">");
+    write()->insertTag(tag,tagCase("</a>"));
+  }
+  delete mailDlg;
 }
+
+/** Add the starting and closing text for a
+user specified tag. */
+//FIXME: In the future, the user should freely specify his tags in external files, and Quanta
+// will automatically use them
+void QuantaView::slotTagMisc()
+{
+ static QString element = "";
+ static bool addClosingTag = true;
+
+ TagMiscDlg *miscDlg = new TagMiscDlg(element, addClosingTag, this, i18n("Misc. tag..."));
+
+  if ( miscDlg->exec() ) {
+  	QString tag;
+  	element = miscDlg->elementName->text();
+  	if ( !element.isEmpty())
+  	{
+  		tag += "<" + attrCase(element)+">";
+  	  	if ( (addClosingTag = miscDlg->addClosingTag->isChecked()) == true)
+        {
+           	write()->insertTag(tag,tagCase( "</"+attrCase(element)+">"));
+         } else
+         {
+		    write()->insertTag(tag,tagCase(""));
+         }
+  	}  	
+  }
+  delete miscDlg;
+}
+
 
 /** quick html text generate */
 void QuantaView::slotTagQuickStart(){
@@ -231,7 +283,7 @@ void QuantaView::slotTagQuickStart(){
     tag += QString(">\n")+space+QString("  ");
     write()->insertTag(tag,QString("\n")+space+tagCase("</body>\n")+space+tagCase("</html>"));
   }
-  delete(quickDlg);
+  delete quickDlg;
 }
 
 /** do quick list */
@@ -268,21 +320,41 @@ void QuantaView::slotTagQuickTable()
 
 	TagQuickTable *quickDlg = new TagQuickTable(this,i18n("Generate table..."));
 	
-  if ( quickDlg->exec() ) {
-  	y = quickDlg->spinBoxRows->value();
-  	x = quickDlg->spinBoxCollums->value();
+  if ( quickDlg->exec() )
+  {
+  		y = quickDlg->SpinBoxRow->value();
+  		x = quickDlg->SpinBoxCol->value();
   	
-  	QString tag = QString("<table>\n")+space;
+  		QString tag = QString("<table>\n")+space;
   	
- 	  for ( int i=0;i<y;i++) {
- 		  tag += QString("  <tr>\n")+space;
- 		  for ( int j=0;j<x;j++)
- 			  tag += QString("    <td>  </td>\n")+space;
- 		  tag += QString("  </tr>\n")+space;
- 	  }
- 	  tag += QString("</table>");
+  		if (quickDlg->useTHead->isChecked())
+  		{
+  			tag += "  <thead>\n";
+  			tag += "    <tr>\n";
+ 		  	for ( int j=0;j<x;j++)
+ 			  tag += QString("      <th scope=col>  </th>\n")+space;
+  			tag += "    </tr>\n";
+  			tag += "  </thead>\n";
+  		}
+  		if (quickDlg->useTFoot->isChecked())
+  		{
+  			tag += "  <tfoot>\n";
+  			tag += "    <tr>\n";
+  			tag += "    </tr>\n";
+  			tag += "  </tfoot>\n";
+  		}
+  	 	tag+="  <tbody>\n";
+     	for ( int i=0;i<y;i++)
+     	{ 	
+ 		  	tag += QString("    <tr>\n")+space;
+ 		  	for ( int j=0;j<x;j++)
+ 			  tag += QString("      <td>  </td>\n")+space;
+ 		  	tag += QString("    </tr>\n")+space;
+ 	 	}
+ 	 	tag += "  </tbody>\n";
+ 	 	tag += QString("</table>");
   	
- 	  write()->insertTag( tagCase(tag) );
+ 	  	write()->insertTag( tagCase(tag) );
   }
   delete( quickDlg);
 }
@@ -382,7 +454,9 @@ void QuantaView::slotViewInNetscape()
   if ( !write()->isUntitled() ) 
   {
     KProcess *show = new KProcess();
-    *show << "netscape" << "-remote" << QString(QString("openURL(")+write()->url().url()+")").data();
+    QString url = app->project->urlWithPrefix(write()->url());
+
+    *show << "netscape" << "-remote" << QString(QString("openURL(")+url+")").data();
     connect( show, SIGNAL(processExited(KProcess *)), this, SLOT(slotNetscapeStatus(KProcess *)));
     show->start( KProcess::NotifyOnExit );
   }
@@ -394,7 +468,8 @@ void QuantaView::slotViewInKFM()
   if ( !write()->isUntitled() ) 
   {
     KProcess *show = new KProcess();
-    *show << "kfmclient" << "exec" << write()->url().url();
+    QString url = app->project->urlWithPrefix(write()->url());
+    *show << "kfmclient" << "exec" << url;
     show->start( KProcess::DontCare );
   }
 }
@@ -405,14 +480,15 @@ void QuantaView::slotViewInLynx()
   if ( !write()->isUntitled() ) 
   {
     KProcess *show = new KProcess();
-    *show << "konsole" 
+    QString url = app->project->urlWithPrefix(write()->url());
+    *show << "konsole"
           << "--nohist" 
           << "--notoolbar"
           << "--caption"
           << "Lynx Preview - Quanta"
           << "-e"
           << "lynx"
-          << write()->url().url();
+          << url;
     show->start( KProcess::DontCare );
   }
 }
@@ -423,7 +499,8 @@ void QuantaView::slotNetscapeStatus(KProcess *proc)
   if ( proc->exitStatus() ) 
   {
     KProcess *show = new KProcess();
-    *show << "netscape" << write()->url().url();
+    QString url = app->project->urlWithPrefix(write()->url());
+    *show << "netscape" << url;
     show->start( KProcess::DontCare );
   }
 }

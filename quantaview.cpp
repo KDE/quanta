@@ -22,10 +22,10 @@
 // application specific includes
 #include "document.h"
 #include "quantaview.h"
-#include "quantaview.moc"
 #include "quantadoc.h"
 #include "quanta.h"
 #include "resource.h"
+
 
 /////////////////////////////////////////////////////////////////////
 // SLOT CALLBACK IMPLEMENTATION
@@ -69,4 +69,3 @@ void QuantaView::insertTag( const char *tag)
   else
       write()->insertTag( QString("<")+startTag+">", QString("</")+startTag+">");
 }
-

@@ -177,3 +177,7 @@ QString FilesTreeFolder::key ( int, bool ) const
 
   return key;
 }
+
+FilesTreeFolder::~FilesTreeFolder()
+{
+}

@@ -48,7 +48,7 @@ class Document : public KWrite  {
    friend class KWriteView;
    
 public: 
-	Document( KWriteDoc *doc, QWidget *parent=0, const char *name=0);
+	Document( KWriteDoc *doc, const QString& basePath, QWidget *parent=0, const char *name=0);
 	~Document();
 
 public:
@@ -116,6 +116,8 @@ public:
   
   /** convert attribute of tag to upper or lower case */
   QString attrCase( QString  attr);
+  /** No descriptions */
+  void insertFile(QString fileName);
 
   TagAttr tagAttr[50];
   int tagAttrNum;
@@ -123,10 +125,12 @@ public:
 
   bool oldstat;
   bool busy;
-  
+  QString basePath;
+
 private:
 
   QString untitledUrl;
+
 
   KSpell          *spell;
   QString         spellText;

@@ -20,6 +20,8 @@ QExtFileInfo::QExtFileInfo(const char *file):QFileInfo(file)
 		//Otherwise, directories ended with "/" will have no filename
 		if (temp.right(1)=="/" && temp.length()>1)
 				setFile(temp.left(temp.length()-1));
+		
+							
 }
 
 bool QExtFileInfo::convertToRelative(const char *baseDir)
@@ -27,8 +29,10 @@ bool QExtFileInfo::convertToRelative(const char *baseDir)
  QString path=dirPath(TRUE);
  QString basePath=baseDir;
 
+ path = QDir::cleanDirPath(path);
  path.remove(0, 1);
  path.append("/");
+ basePath = QDir::cleanDirPath(basePath);
  basePath.remove(0, 1);
  basePath.append("/");
  int pos=0;
@@ -63,11 +67,11 @@ bool QExtFileInfo::convertToRelative(const char *baseDir)
 /** create to ralative short name */
 QString QExtFileInfo::toRelative(QString fname,QString dir)
 {
-  if ( dir.left(5) == "file:" ) dir.remove(0,5);
-  if ( fname.left(5) == "file:" ) fname.remove(0,5);
-
   QString path = fname;
   QString basePath = dir;
+
+  if ( basePath.left(5) == "file:" ) basePath.remove(0,5);
+  if ( path.left(5) == "file:" ) path.remove(0,5);
 
   path.remove(0, 1);
   basePath.remove(0, 1);
@@ -113,38 +117,41 @@ QString QExtFileInfo::toAbsolute( QString  fname, QString dir)
 
   return cutdir+cutname;
 }
-/** all files in dir ( added yshurik, quanta team ) */
+/** all files in dir ( added yshurik, quanta team ).
+	The return will also contain the name of the subdirectories.
+	This is needed for empty directory adding/handling. (Andras)*/
 QStringList QExtFileInfo::allFiles( QString path, QString mask, int level )
 {
 	QStringList r;
-	
+		
 	QDir dir( path );
 	
 	if ( level > 10        ) return r;
 	if ( !dir.isReadable() ) return r;
-  if ( !dir.exists()     ) return r;
+    if ( !dir.exists()     ) return r;
 	
 	QStringList  dirList;
 	QStringList  fileList;
-  QStringList::Iterator it;
-	
+    QStringList::Iterator it;
+		
 	dir.setFilter ( QDir::Dirs);
 	dirList = dir.entryList();
 		
 	dirList.remove(".");
 	dirList.remove("..");
 		
-	dir.setFilter( QDir::Files);
+	dir.setFilter( QDir::Files | QDir::Hidden | QDir::System);
 	fileList = dir.entryList();
 	
 	for ( it = dirList.begin(); it != dirList.end(); ++it )
 	{
 		QString name = *it;
 	  if ( QFileInfo( dir, *it ).isSymLink() ) continue;
+	    r += path+name+"/";
 		r += allFiles( path+name+"/", mask, level+1 );
-  }
+    }
 
-  for ( it = fileList.begin(); it != fileList.end(); ++it )
+    for ( it = fileList.begin(); it != fileList.end(); ++it )
 	{
 	  QString name = *it;
 	

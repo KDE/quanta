@@ -46,7 +46,12 @@ KSplash::~KSplash()
 KQApplication::KQApplication()
  : KApplication()
 {
-	KSplash *splash = new KSplash();
+   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+   KSplash *splash ;
+
+   bool showSplash = args->isSet("logo");
+
+   if (showSplash) splash = new KSplash();
 
    if (isRestored())
    {
@@ -61,15 +66,13 @@ KQApplication::KQApplication()
 
      quanta ->openLastFiles();
 
-     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-
      for (int i = 0; i < args->count(); i++ )
      {
        quanta->slotFileOpen( args->url(i) );
      }
-     args->clear();
    }
-   delete splash;
+   args->clear();
+   if (showSplash) delete splash;
 }
 
 
