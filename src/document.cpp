@@ -1579,10 +1579,12 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& inserte
  if (node->tag->type == Tag::Comment)
    return true; //nothing to do
  const DTDStruct *dtd = node->tag->dtd();
+ if (node->prev)
+   node = node->prev;
+ else
  if (node->parent)
    node = node->parent;
- else if (node->prev)
-   node = node->prev;
+
  int bl, bc;
  node->tag->beginPos(bl, bc);
  QString s = text(bl, bc, line, column);
