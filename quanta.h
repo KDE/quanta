@@ -159,6 +159,8 @@ public:
   void removeToolbar(const QString& name);
   /** Configure toolbars, show defaultToolbar by default */
   void configureToolbars(const QString& defaultToolbar = QString::null);
+  /** Rename the toolbar named "name". */
+  void renameToolbar(const QString& name);
 
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */
@@ -280,6 +282,8 @@ public slots:
   void slotLoadToolbar();
   /** Load a global toolbar from the disk. */
   void slotLoadGlobalToolbar();
+  /** Rename the toolbar. */
+  void slotRenameToolbar();
   /** No descriptions */
   void slotToolsChangeDTD();
   /** No descriptions */

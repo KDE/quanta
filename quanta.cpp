@@ -755,7 +755,7 @@ KEditToolbar *dlg;
 
  QPopupMenu *menu = 0L;
  QString toolbarName;
- QTabWidget *tb = m_view->m_toolbarTab;
+ QTabWidget *tb = m_view->toolbarTab();
  for (int i = 0; i < tb->count(); i++)
  {
    toolbarName = tb->label(i);
@@ -780,7 +780,7 @@ KEditToolbar *dlg;
  //add the menus
  menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);
- m_view->m_toolbarTab->setCurrentPage(currentPageIndex);
+ tb->setCurrentPage(currentPageIndex);
 }
 
 void QuantaApp::slotOptionsConfigureToolbars()
@@ -791,7 +791,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
 void QuantaApp::slotNewToolbarConfig()
 {
  applyMainWindowSettings(KGlobal::config(), autoSaveGroup());
- m_view->m_toolbarTab->setCurrentPage(m_view->m_toolbarTab->currentPageIndex());
+ m_view->toolbarTab()->setCurrentPage(m_view->m_toolbarTab->currentPageIndex());
 }
 
 void QuantaApp::slotOptionsConfigureActions()
@@ -1346,7 +1346,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
   {
 //avoid QToolBar warning in the log
     QtMsgHandler oldHandler = qInstallMsgHandler( silenceQToolBar );
-    KToolBar *tb = new KToolBar(m_view->m_toolbarTab, 0, true, true);
+    KToolBar *tb = new KToolBar(m_view->toolbarTab(), 0, true, true);
     tb->loadState(element);
     tb->enableMoving(false);
     tb->setEnableContextMenu(true);
@@ -1372,7 +1372,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
         tb->insertLineSeparator();
       node = node.nextSibling();
     }
-    m_view->m_toolbarTab->addTab(tb, i18n(tabname));
+    m_view->toolbarTab()->addTab(tb, i18n(tabname));
     qInstallMsgHandler( oldHandler );
     return tb;
   }
@@ -1678,7 +1678,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    }
 
    guiFactory()->addClient(toolbarGUI);
-   m_view->m_toolbarTab->setCurrentPage(m_view->m_toolbarTab->count()-1);
+   m_view->toolbarTab()->setCurrentPage(m_view->m_toolbarTab->count()-1);
 
    m_tagsMenu->insertItem(name,menu);
    p_toolbar->menu = menu;
@@ -1843,7 +1843,7 @@ void QuantaApp::saveToolbar(bool localToolbar,const QString& toolbarToSave)
 
   if (toolbarToSave.isEmpty())
   {
-    QTabWidget *tb = m_view->m_toolbarTab;
+    QTabWidget *tb = m_view->toolbarTab();
 
     QStringList lst;
     int current=0;
@@ -1931,7 +1931,7 @@ void QuantaApp::slotAddToolbar()
 
   ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
   factory()->addClient(toolbarGUI);
-  m_view->m_toolbarTab->setCurrentPage(m_view->m_toolbarTab->count()-1);
+  m_view->toolbarTab()->setCurrentPage(m_view->m_toolbarTab->count()-1);
   tempFileList.append(tempFile);
   ToolbarEntry *p_toolbar = new ToolbarEntry;
   p_toolbar->guiClient = toolbarGUI;
@@ -1953,7 +1953,7 @@ void QuantaApp::slotAddToolbar()
 /** Removes a user toolbar from the toolbars. */
 void QuantaApp::slotRemoveToolbar()
 {
- QTabWidget *tb = m_view->m_toolbarTab;
+ QTabWidget *tb = m_view->toolbarTab();
  int i;
 
  QStringList lst;
@@ -1981,7 +1981,7 @@ void QuantaApp::slotRemoveToolbar()
 /** Sends a toolbar in mail. */
 void QuantaApp::slotSendToolbar()
 {
-  QTabWidget *tb = m_view->m_toolbarTab;
+  QTabWidget *tb = m_view->toolbarTab();
 
   QStringList lst;
   int current = 0;
@@ -2043,6 +2043,59 @@ void QuantaApp::slotSendToolbar()
 
   }
   delete mailDlg;
+}
+
+void QuantaApp::slotRenameToolbar()
+{
+  QTabWidget *tb = m_view->toolbarTab();
+
+  QStringList lst;
+  int current = 0;
+  for (int i = 0; i < tb->count(); i++)
+  {
+    lst << tb->label(i);
+    if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) current=i;
+  }
+
+  bool ok = FALSE;
+  QString res = QInputDialog::getItem(
+                  i18n( "Rename Toolbar" ),
+                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
+
+  if (ok)
+  {
+    renameToolbar(res.lower());
+  }
+}
+
+void QuantaApp::renameToolbar(const QString& name)
+{
+  ToolbarEntry *p_toolbar = quantaApp->toolbarList[name.lower()];;
+  if (p_toolbar)
+  {
+    KLineEditDlg dlg(i18n("Enter the new name:"), p_toolbar->name, this);
+    dlg.setCaption(i18n("Rename toolbar"));
+    if (dlg.exec() && dlg.text() != p_toolbar->name)
+    {
+      toolbarList.take(name.lower());
+      p_toolbar->name = dlg.text();
+      QDomElement el = p_toolbar->guiClient->domDocument().firstChild().firstChild().toElement();
+      el.setAttribute("tabname", p_toolbar->name);
+      el.setAttribute("name", p_toolbar->name.lower());
+      KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
+          p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
+      QTabWidget *tb = m_view->toolbarTab();
+      for (int i = 0; i < tb->count(); i++)
+      {
+        if (tb->label(i).lower() == name)
+        {
+          tb->setTabLabel(tb->page(i), p_toolbar->name);
+          break;
+        }
+      }
+      toolbarList.insert(p_toolbar->name.lower(), p_toolbar);
+    }
+  }
 }
 
 /** Ask for save all the modified user toolbars. */
@@ -2335,7 +2388,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
       }
    }
 
-   m_view->m_toolbarTab->setCurrentPage(0);
+   m_view->toolbarTab()->setCurrentPage(0);
  }
 
  currentToolbarDTD = newDtd->name;
@@ -2401,10 +2454,10 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
 {
   if (show)
   {
-    m_view->m_toolbarTab->show();
+    m_view->toolbarTab()->show();
   } else
   {
-    m_view->m_toolbarTab->hide();
+    m_view->toolbarTab()->hide();
   }
   qConfig.enableDTDToolbar = show;
 }

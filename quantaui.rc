@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32003">
+<kpartgui name="quanta" version="32004">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -128,6 +128,7 @@
     <Separator/>
     <Action name="toolbars_add"/>
     <Action name="toolbars_remove"/>
+    <Action name="toolbars_rename"/>
     <Separator/>
     <Action name="toolbars_send"/>
   </Menu>

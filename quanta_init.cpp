@@ -1595,7 +1595,7 @@ void QuantaApp::initActions()
                         m_project, SLOT( slotOpenProjectView() ),
                         actionCollection(), "project_view_open" );
 
-    savePrjViewAction = new KAction( i18n( "Save Project View..." ), 0,
+    savePrjViewAction = new KAction( i18n( "Save Project View" ), 0,
                         m_project, SLOT( slotSaveProjectView() ),
                         actionCollection(), "project_view_save" );
     saveAsPrjViewAction = new KAction( i18n( "Save Project View As..." ), 0,
@@ -1616,11 +1616,11 @@ void QuantaApp::initActions()
                         m_project, SLOT( slotRescanPrjDir() ),
                         actionCollection(), "project_rescan" );
 
-    uploadProjectAction = new KAction( i18n( "&Upload Project..." ), Key_F8,
+    uploadProjectAction = new KAction( i18n( "&Upload Project" ), Key_F8,
                         m_project, SLOT( slotUpload() ),
                         actionCollection(), "project_upload" );
 
-    projectOptionAction = new KAction( i18n( "&Project Options..." ), Key_F7,
+    projectOptionAction = new KAction( i18n( "&Project Options" ), Key_F7,
                         m_project, SLOT( slotOptions() ),
                         actionCollection(), "project_options" );
 
@@ -1646,9 +1646,10 @@ void QuantaApp::initActions()
     new KAction(i18n("Load &Local Toolbar..."), 0, this, SLOT(slotLoadToolbar()), actionCollection(), "toolbars_load_user");
     new KAction(i18n("Save as &Local Toolbar..."),  0, this, SLOT(slotSaveLocalToolbar()), actionCollection(), "toolbars_save_local");
     new KAction(i18n("Save as &Project Toolbar..."),  0, this, SLOT(slotSaveProjectToolbar()), actionCollection(), "toolbars_save_project");
-    new KAction(i18n("&Add User Toolbar..."),  0, this, SLOT(slotAddToolbar()), actionCollection(), "toolbars_add");
-    new KAction(i18n("&Remove User Toolbar..."),  0, this, SLOT(slotRemoveToolbar()), actionCollection(), "toolbars_remove");
-    new KAction(i18n("Send Toolbar in E-&Mail..."),  0, this, SLOT(slotSendToolbar()), actionCollection(), "toolbars_send");
+    new KAction(i18n("&Add User Toolbar"),  0, this, SLOT(slotAddToolbar()), actionCollection(), "toolbars_add");
+    new KAction(i18n("&Remove User Toolbar"),  0, this, SLOT(slotRemoveToolbar()), actionCollection(), "toolbars_remove");
+    new KAction(i18n("Re&name User Toolbar"),  0, this, SLOT(slotRenameToolbar()), actionCollection(), "toolbars_rename");
+    new KAction(i18n("Send Toolbar in E-&Mail"),  0, this, SLOT(slotSendToolbar()), actionCollection(), "toolbars_send");
 
     showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"),0, actionCollection(), "view_dtd_toolbar");//,view,SLOT(slotHideToolbar()),actionCollection(),"view_dtd_toolbar");
     connect(showDTDToolbar, SIGNAL(toggled(bool)), this, SLOT(slotToggleDTDToolbar(bool)));
