@@ -215,6 +215,7 @@ void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
 {
    if (widget)
    {
+      m_customWidget = widget;
       m_splitter->hide();
       widget->reparent(m_documentArea, 0, QPoint(), true);
       widget->resize(m_documentArea->size());
@@ -244,7 +245,6 @@ void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
                 break;
       }
    }
-   m_customWidget = widget;
 }
 
 
