@@ -94,6 +94,8 @@
 #include "widgets/whtmlpart.h"
 #ifdef BUILD_KAFKAPART
 #include "parts/kafka/kafkahtmlpart.h"
+#include <dom/dom_node.h>
+#include <dom/dom_string.h>
 #endif
 
 #include "dialogs/abbreviation.h"
@@ -1098,13 +1100,142 @@ void QuantaApp::slotShowKafkaPart()
   }
   else
   {
-    //TEMPORARY kafkaPart loading
+    /**TEMPORARY kafkaPart loading
     kafkaPart->openDocument(m_view->write()->url());
     previousWidgetList.push_back(s->id(s->visibleWidget()));
-    s->raiseWidget(3);
+    s->raiseWidget(4);*/
+    
+    kafkaPart->showDomTree();
+    Document *w = m_view->write();
+    w->parseVariables();
+    baseNode = parser->parse(w);
+    //clean the kafkapart
+    while(kafkaPart->document().hasChildNodes())
+      kafkaPart->document().removeChild(kafkaPart->document().firstChild());
+    //load the nodes
+    bool goingUp = false;
+    Node* _node = baseNode;
+    DOM::Node _DOMnode = static_cast<DOM::Node>(kafkaPart->htmlDocument());
+    DOM::Node newNode;
+    while(_node)
+    {
+      kdDebug(25001) << "nodes name :" << _node->tag->name.upper() << "; type : "
+        <<_node->tag->type << "; tagstr : " << _node->tag->tagStr() <<  endl;
+      //_DOMnode.appendChild(newNode);
+      if(!goingUp)
+      {
+        switch(_node->tag->type)
+        {
+          case Tag::Unknown:
+          break;
+          
+          case Tag::XmlTag:
+            if(!_node->tag->single && !_node->next->closesPrevious)
+            {
+              //TODO: ERROR missing closing tags, set the kafka behavior according to this
+            }
+            newNode = kafkaPart->createNode(_node->tag->name);
+            if (newNode.isNull())
+              break;
+            if(_node->parent && _node->parent->kafkaNode)
+              _node->parent->kafkaNode = &newNode;//METTRE DEBUGS ICI
+            else//we suppose it is on the top of the tree
+              kafkaPart->htmlDocument().appendChild(newNode);
+            _node->kafkaNode = &newNode;
+            kdDebug(25001)<< "node added : " << newNode.nodeName().string() << endl;
+            break;
+          
+          case Tag::XmlTagEnd:
+          break;  
+          
+          case Tag::Text:
+            newNode = kafkaPart->createNode("TEXT");
+            if (newNode.isNull())
+              break;
+            if(_node->parent && _node->parent->kafkaNode)
+              _node->parent->kafkaNode = &newNode;
+            else//we suppose it is on the top of the tree
+              kafkaPart->htmlDocument().appendChild(newNode);
+            _node->kafkaNode = &newNode;
+            kdDebug(25001)<< "node added : " << newNode.nodeName().string() << endl;
+            break;
+          
+          case Tag::Comment:
+          //TODO:Create little icons for Comments
+          break;
+          
+          case Tag::CSS:
+          //TODO:create little icons for CSS?
+          break;
+          
+          case Tag::ScriptTag:
+          //TODO:create little icons
+          break;
+          
+          case Tag::ScriptStructureBegin:
+          //TODO:create little icons
+          break;
+          
+          case Tag::ScriptStructureEnd:
+          break;
+          
+          case Tag::NeedsParsing:
+          break;
+          
+          case Tag::Empty:
+          break;
+          
+          case Tag::Skip:
+          break;
+        }
+
+      }
+      
+      //goto next node
+      if(goingUp)
+      {
+        if(_node->next)
+        {
+          _node = _node->next;
+          goingUp = false;
+        }
+        else
+          _node = _node->parent;
+      }
+      else
+      {
+        if(_node->child)
+          _node = _node->child;
+        else if(_node->next)
+          _node = _node->next;
+        else
+        {
+          _node = _node->parent;
+          goingUp = true; 
+        }
+      } 
+    }
+    kafkaPart->finishedLoading();
+    s->raiseWidget(4);
   }
   #endif
 }
+
+#ifdef BUILD_KAFKAPART
+/**void QuantaApp::slotKafkaNodeCreated(DOM::Node _node)
+{
+
+}
+*/
+/**void QuantaApp::slotKafkaNodeModified(DOM::Node _node)
+{
+
+}*/
+/**void QuantaApp::slotKafkaNodeAboutToBeDeleted(DOM::Node _node)
+{
+
+}*/
+#endif  
 
 void QuantaApp::slotShowProjectTree()
 {

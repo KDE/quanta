@@ -16,6 +16,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <dom/dom_node.h>
 #include "node.h"
 
 Node::Node( Node *parent )
@@ -28,6 +29,7 @@ Node::Node( Node *parent )
   removeAll = true;
   closesPrevious = false;
   insideSpecial = false;
+  kafkaNode = 0L;
 }
 
 

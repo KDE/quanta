@@ -27,6 +27,11 @@
 #include "tag.h"
 #include "qlistview.h"
 
+namespace DOM
+{
+  class Node;
+}
+
 class Node {
 
 public:
@@ -41,6 +46,7 @@ public:
  Node *nextSibling();
  Node *previousSibling();
 
+ DOM::Node *kafkaNode;
  QListViewItem *listItem;
  Tag *tag;
  bool closesPrevious; //this node "closes" the tag from previous node

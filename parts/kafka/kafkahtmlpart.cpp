@@ -3,7 +3,8 @@
                              -------------------
 
     copyright            : (C) 2001 - The Kafka Team
-    email                : kde-kafka@master.kde.org
+                           (C) 2003 - Nicolas Deschildre
+    email                : kde-kafka@master.kde.org && nicolasdchd@ifrance.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,12 +28,16 @@
 
 #include <dom/dom_text.h>
 #include <dom/dom_exception.h>
+#include <dom/dom_string.h>
 #include <khtml_events.h>
 
 #include <qfile.h>
 #include <qpainter.h>
 #include <qtextstream.h>
 #include <qstringlist.h> 
+#ifdef KAFKA_DEBUG_UTILITIES
+#include <qdialog.h> 
+#endif
 
 #include "domtreeview.h"
 #include "kafkahtmlview.h"
@@ -116,15 +121,9 @@ KafkaHTMLPart::KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, const char 
 	connect(this, SIGNAL(nodeActivated(const DOM::Node &)), this, SLOT(setNode(const DOM::Node &)));
 
 //for debug purposes, we add a DOM tree view
-#ifdef DEBUG_UTILITIES
-	DOMTreeParent = new QDockWindow(QDockWindow::InDock, widgetParent->topLevelWidget());
-	DOMTreeParent->setResizeEnabled(true);
-	DOMTreeParent->setHorizontallyStretchable(false);
-	DOMTreeParent->setVerticallyStretchable(true);
-	DOMTreeWidget = new DOMTreeView(DOMTreeParent, this);
-	DOMTreeWidget->setTitle("KafkaHTMLPart DOM Tree ");
-	connect(this, SIGNAL(domChanged()), DOMTreeWidget, SLOT(showTree(const DOM::Node &pNode)));
-	DOMTreeParent->setWidget(DOMTreeWidget);
+#ifdef KAFKA_DEBUG_UTILITIES
+	domdialog = new KafkaDOMTreeDialog(view(), this);
+	//connect(this, SIGNAL(domChanged()), DOMTreeWidget, SLOT(showTree(const DOM::Node &pNode)));
 #endif
 //end
 
@@ -133,11 +132,6 @@ KafkaHTMLPart::KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, const char 
 
 KafkaHTMLPart::~KafkaHTMLPart()
 {
-//for debugging purpose
-#ifdef DEBUG_UTILITIES
-	delete DOMTreeWidget;
-#endif
-//end
 }
 
 void KafkaHTMLPart::newDocument()
@@ -154,8 +148,6 @@ void KafkaHTMLPart::newDocument()
 	begin();
 	write(newPageHTMLCode);
 	end();
-	//xcuse me, i've no choice for the moment :(
-	//openDocument("/home/guest/Documents/HTMLType/test-me/HTMLtype.html");
 	setCurrentNode(static_cast<DOM::Node>(htmlDocument()));
 
 }
@@ -596,6 +588,10 @@ void KafkaHTMLPart::keyDown()
 bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 {
 	bool forgetEvent = false;
+        //tmp
+        DOM::Text textNode;
+        DOM::Node * node;
+        
 	if(event->type() == QEvent::FocusIn)
 	{
 		kdDebug(25001) << "KafkaHTMLPart::eventFilter() FocusIn" << endl;
@@ -673,6 +669,9 @@ bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 				d->stuckCursorHorizontalPos = false;
 				break;
 			case Key_Enter:
+                                textNode = htmlDocument().createTextNode("TESTTTT");
+                                node = &textNode;
+                                m_currentNode.parentNode().appendChild(*node);
 				d->stuckCursorHorizontalPos = false;
 				break;
 			case Key_Insert:
@@ -1217,6 +1216,8 @@ void KafkaHTMLPart::postprocessCursorPosition()
 void KafkaHTMLPart::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
 {
 	DOM::Node mouseNode = event->innerNode();
+	if(mouseNode == 0)
+		return;
 	if(mouseNode.nodeType() == DOM::Node::TEXT_NODE)
 		KApplication::setOverrideCursor(Qt::ibeamCursor);
 	else
@@ -1374,6 +1375,7 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 	{//TODO:allow the resizing of theses nodes
 		kdDebug(25001)<< "KafkaHTMLPart::khtmlMousePressEvent() - upcoming selection"
 			<< endl;
+		d->m_cursorOffset = -1;
 	}
 	//if our node is a text, find out which offset is the better one
 	if(m_currentNode.nodeType() == DOM::Node::TEXT_NODE)
@@ -1508,6 +1510,41 @@ void KafkaHTMLPart::setCurrentNode(DOM::Node pNode)
     m_currentNode = pNode;
     m_currentNode.parentNode().applyChanges();
     kdDebug(25001)<<"KafkaHTMLPart::setCurrentNode() finished"<<endl;
+}
+
+DOM::Node KafkaHTMLPart::createNode(QString NodeName)
+{
+	//this will change with the futur DTDs support
+        DOM::DOMString _nodename(NodeName);
+	if(NodeName == "TEXT")
+		return htmlDocument().createTextNode("");
+	return htmlDocument().createElement(_nodename);
+}
+
+void KafkaHTMLPart::showDomTree()
+{
+		domdialog->show();
+}
+
+void KafkaHTMLPart::finishedLoading()
+{
+	DOM::Node _node = htmlDocument();
+        bool b = false;
+	if(_node == 0)
+		kdDebug(25001)<< "KafkaHTMLPart::finishedLoading() ERROR : no htmlDocument()!" << endl;        
+	while(_node != 0)
+	{
+		_node = getNextNode(_node, b);
+		if(_node == 0)
+		{
+			_node = htmlDocument();
+			break;
+		}
+		if(_node.nodeType() == DOM::Node::TEXT_NODE || d->TagsDeletable.contains(_node.nodeName().string()))
+			break;
+	}
+	m_currentNode = _node;
+        d->m_cursorOffset = 0;
 }
 
 void KafkaHTMLPart::loadPlugins()

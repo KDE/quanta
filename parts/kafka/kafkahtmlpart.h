@@ -3,7 +3,8 @@
                              -------------------
 
     copyright            : (C) 2001 - The Kafka Team
-    email                : kde-kafka@master.kde.org
+                           (C) 2003 - Nicolas Deschildre
+    email                : kde-kafka@master.kde.org && nicolasdchd@ifrance.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -37,9 +38,13 @@
 
 
 //*** if you want a very useful DOMTreeView attached to the kafkahtmlPart ***//
-#define DEBUG_UTILITIES
+#define KAFKA_DEBUG_UTILITIES
 
-class DOMTreeView;
+#ifdef KAFKA_DEBUG_UTILITIES
+class KafkaDOMTreeDialog;
+#endif
+
+class DOMString;
 class KafkaHTMLPartPrivate;
 
 class PluginEntry: public QObject
@@ -87,7 +92,7 @@ public:
 	bool saveDocument(const KURL &url);
 	
 	/**
-	 * Category: Standard Function
+	 * Category: Standard Functions
 	 * Called by KafkaPart to set the readonly variable
 	 * @param value Specifies wheter we accept keyboard input or not
 	 */
@@ -99,6 +104,21 @@ public:
 	 * @return Return wheter the part is writeable or not
 	 */
 	bool readOnly();
+	
+	/**
+	 * Category: Standart Function
+	 * Called to create new DOM::Nodes
+	 * @param the name of the DOM::Node to be created
+	 * @return Return the DOM::Node created
+	 */
+	 DOM::Node createNode(QString NodeName);
+	
+	/**
+	 * Category: Temporary function
+	 * For debugging purposes only
+	 * @return Return the view widget
+	 */
+	 void showDomTree();
 	
 public slots:
 	/**
@@ -172,13 +192,39 @@ public slots:
 	* Activate changed node properties
 	*/
 	void setCurrentNode(DOM::Node);
-
+	
+	/**
+	 * Set the cursor after having loaded the DOM tree from scratch
+	 */
+	void finishedLoading();
+	
 signals:
 	/**
 	 * Category: HTML Editing Signal
 	 * Is emitted whenever the DOM tree has changed
 	 */
 	void domChanged();
+
+	/**
+	 * Category: HTML Editing Signal
+	 * Is emitted whenever a dom Node is created
+	 * @param _node is the node created
+	 */
+	void domNodeCreated(DOM::Node _node);
+	        
+	/**
+	 * Category: HTML Editing Signal
+	 * Is emitted whenever a DOM node has its properties changed
+	 * @param _node is the node modified
+	 */
+	void domNodeChanged(DOM::Node _node);
+        
+	/**
+	 * Category: HTML Editing Signal
+	 * Is emitted whenever a DOM node is about to be deleted
+	 * @param _node is the node to be deleted
+	 */        
+	void domNodeIsAboutToBeDeleted(DOM::Node _node);
 	
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
@@ -198,9 +244,8 @@ protected:
 
 private:
 //for debugging purposes
-#ifdef DEBUG_UTILITIES
-	QDockWindow *DOMTreeParent;
-	DOMTreeView *DOMTreeWidget;
+#ifdef KAFKA_DEBUG_UTILITIES
+	KafkaDOMTreeDialog *domdialog;
 #endif
 //end
 

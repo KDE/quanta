@@ -313,6 +313,11 @@ public slots:
   void slotForceReparse();
 
   void slotExpandAbbreviation();
+  #ifdef BUILD_KAFKAPART
+  //void slotKafkaNodeCreated(DOM::Node _node);
+  //void slotKafkaNodeModified(DOM::Node _node);
+  //void slotKafkaNodeAboutToBeDeleted(DOM::Node _node);
+  #endif
 
 protected slots:
   /** No descriptions */

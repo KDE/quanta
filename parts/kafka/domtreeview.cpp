@@ -18,6 +18,7 @@
 #include <kdebug.h>
 #include <khtml_part.h>
 #include <qstring.h>
+#include <qlayout.h>
 #include <dom/dom_text.h>
 #include "domtreeview.moc"
 //#include "xml/dom_nodeimpl.h"
@@ -61,6 +62,8 @@ void DOMTreeView::showTree(const DOM::Node &pNode)
 	m_nodedict.clear();
 	if(pNode.isNull())
 	    return;
+	if(pNode.firstChild() == 0)
+		return;
 	else if(pNode.ownerDocument().isNull())
 	{
 	    document = pNode.ownerDocument();
@@ -122,3 +125,20 @@ void DOMTreeView::slotItemClicked(QListViewItem *cur_item)
         //kdDebug() << handle->toHTML() << endl;
     }
 }
+
+KafkaDOMTreeDialog::KafkaDOMTreeDialog(QWidget *parent, KHTMLPart *part, const char* name, bool modal, WFlags fl )
+	: QDialog(parent, name, modal, fl)
+{
+	setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)1, 0, 0, sizePolicy().hasHeightForWidth() ) );
+	DialogLayout = new QGridLayout( this, 1, 1, 11, 6, "DialogLayout"); 
+	domview = new DOMTreeView(this, part, name);
+	domview->setTitle("Debugging KafkaHTMLPart DOM Tree ");
+        DialogLayout->addWidget(domview, 1,1);
+
+}
+
+KafkaDOMTreeDialog::~KafkaDOMTreeDialog()
+{
+
+}
+

@@ -23,8 +23,10 @@
 #include <qlistview.h>
 #include <qptrdict.h>
 #include <dom/dom_core.h>
+#include <qdialog.h>
 
 class QString;
+class QGridLayout;
 
 /**
  * This class is very useful to see the DOM tree in a KListView
@@ -56,6 +58,16 @@ class DOMTreeView : public KListView
 	DOM::Node document;
 	KHTMLPart *part;
 
+};
+
+class KafkaDOMTreeDialog : public QDialog
+{
+	Q_OBJECT
+public:
+	KafkaDOMTreeDialog(QWidget *parent = 0, KHTMLPart *part = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+	~KafkaDOMTreeDialog();
+	DOMTreeView *domview;
+	QGridLayout *DialogLayout;
 };
 
 #endif
