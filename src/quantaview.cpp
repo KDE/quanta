@@ -910,6 +910,7 @@ bool QuantaView::saveDocument(const KURL& url)
       m_document->closeTempFile();
       m_document->createTempFile();
       m_document->setDirtyStatus(false);
+      m_document->removeBackup(quantaApp->config());
       fileWatcher->addFile(m_document->url().path());
     }
   } else //saving to a remote file
@@ -957,6 +958,7 @@ void QuantaView::slotSavingCompleted()
   m_document->closeTempFile();
   m_document->createTempFile();
   m_document->setDirtyStatus(false);
+  m_document->removeBackup(quantaApp->config());
   if (m_eventLoopStarted)
     qApp->exit_loop();
 }

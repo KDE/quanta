@@ -391,7 +391,6 @@ void QuantaApp::slotFileSave()
       w->docUndoRedo->fileSaved();
 #endif
     }
-    w->removeBackup(m_config);
     //slotUpdateStatus(w); //FIXME:
   }
 }
@@ -479,7 +478,6 @@ bool QuantaApp::slotFileSaveAs()
     }
     if (oldURL.isLocalFile())
         fileWatcher->addFile(oldURL.path());
-    w->removeBackup(m_config);
   }
   return result;
 }
