@@ -42,17 +42,21 @@ public:
   static KURL path(const KURL &);
   static KURL home();
   static bool exists(const KURL& url);
+  static bool copy( const KURL& src, const KURL& dest, int permissions=-1,
+                    bool overwrite=false, bool resume=false, QWidget* window = 0L );
+
   void enter_loop();
 
 private:
   bool internalExists(const KURL& url);
+  bool internalCopy(const KURL& src, const KURL& target, int permissions,
+                    bool overwrite, bool resume, QWidget* window);
 
   bool bJobOK;
   static QString lastErrorMsg;
   KIO::UDSEntry m_entry;
   KURL::List dirListItems;
   QPtrList<QRegExp> lstFilters;
-  QTimer *timer;
 
   /** No descriptions */
   KURL::List allFilesInternal(const KURL& startURL, const QString& mask);

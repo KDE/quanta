@@ -23,6 +23,7 @@
 #include <kurl.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
+#include <kio/scheduler.h>
 #include <kdirlister.h>
 #include <kfileitem.h>
 #include <kglobal.h>
@@ -196,13 +197,20 @@ bool QExtFileInfo::exists(const KURL& a_url)
  }
 }
 
+/* Synchronouse copy, like NetAccess::file_copy in KDE 3.2 */
+bool QExtFileInfo::copy( const KURL& src, const KURL& target, int permissions,
+ bool overwrite, bool resume, QWidget* window )
+{
+  QExtFileInfo internalFileInfo;
+  return internalFileInfo.internalCopy( src, target, permissions, overwrite, resume, window );
+}
+
 /** No descriptions */
 KURL::List QExtFileInfo::allFilesInternal(const KURL& startURL, const QString& mask)
 {
   dirListItems.clear();
   if (internalExists(startURL))
   {
-    timer = new QTimer(this);
     lstFilters.setAutoDelete(true);
     lstFilters.clear();
     // Split on white space
@@ -243,15 +251,28 @@ bool QExtFileInfo::internalExists(const KURL& url)
            this, SLOT( slotResult (KIO::Job *) ) );
 
   //To avoid lock-ups, start a timer.
-  timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
-  timer->start(10*1000, true);
+  QTimer::singleShot(10*1000, this,SLOT(slotTimeout()));
 //  kdDebug(24000)<<"QExtFileInfo::internalExists:before enter_loop"<<endl;
   enter_loop();
 //  kdDebug(24000)<<"QExtFileInfo::internalExists:after enter_loop"<<endl;
-
   return bJobOK;
 }
+
+bool QExtFileInfo::internalCopy(const KURL& src, const KURL& target, int permissions,
+                                bool overwrite, bool resume, QWidget* window)
+{
+  bJobOK = true; // success unless further error occurs
+
+  KIO::Scheduler::checkSlaveOnHold(true);
+  KIO::Job * job = KIO::file_copy( src, target, permissions, overwrite, resume );
+  job->setWindow (window);
+  connect( job, SIGNAL( result (KIO::Job *) ),
+           this, SLOT( slotResult (KIO::Job *) ) );
+
+  enter_loop();
+  return bJobOK;
+}
+
 
 void qt_enter_modal( QWidget *widget );
 void qt_leave_modal( QWidget *widget );
@@ -259,6 +280,7 @@ void qt_leave_modal( QWidget *widget );
 void QExtFileInfo::enter_loop()
 {
   QWidget dummy(0,0,WType_Dialog | WShowModal);
+  dummy.setFocusPolicy( QWidget::NoFocus );
   qt_enter_modal(&dummy);
 //  kdDebug(24000)<<"QExtFileInfo::enter_loop:before qApp->enter_loop()"<<endl;
   qApp->enter_loop();
@@ -268,7 +290,6 @@ void QExtFileInfo::enter_loop()
 
 void QExtFileInfo::slotResult( KIO::Job * job )
 {
-  delete timer;
   bJobOK = !job->error();
   if ( !bJobOK )
   {

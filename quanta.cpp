@@ -68,7 +68,6 @@
 #include <kdeversion.h>
 #include <ktip.h>
 #include <kparts/componentfactory.h>
-#include <kio/netaccess.h>
 
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
@@ -1074,7 +1073,9 @@ void QuantaApp::slotShowPreview()
       KURL origUrl = w->url();
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());
-      KIO::NetAccess::file_copy(tempUrl, origUrl, -1, true, false, this);
+//TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
+//is dropped
+      QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
     }
     fileWatcher->startScan();
   }
@@ -1636,7 +1637,9 @@ void QuantaApp::slotSyntaxCheckDone()
       KURL origUrl = w->url();
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());
-      KIO::NetAccess::file_copy(tempUrl, origUrl, -1, true, false, this);
+//TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
+//is dropped
+      QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
     }
     fileWatcher->startScan();
   }
