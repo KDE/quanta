@@ -7,7 +7,7 @@
         <location col="0" row="0" />
     </label>
 
-    <attr name="tag" type="input">
+    <attr name="name" type="input">
         <tooltip>tag name </tooltip>
         <location col="1" row="0" />
     </attr>

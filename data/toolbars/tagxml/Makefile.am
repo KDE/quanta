@@ -1,3 +1,6 @@
+####### kdevelop will overwrite this part!!! (begin)##########
+
+
 EXTRA_DIST = tagxml.toolbar.tgz 
 
 install-data-local:
@@ -6,3 +9,5 @@ install-data-local:
 
 uninstall-local:
 	-rm -f ${kde_datadir}/quanta/toolbars/tagxml/tagxml.toolbar.tgz
+
+####### kdevelop will overwrite this part!!! (end)############
