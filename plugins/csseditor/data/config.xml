@@ -2,7 +2,7 @@
 <css version="2.1">
 <mediagroup type="aural">
 
- <azimuth initial="center" applies="all" hasSub="no">
+ <azimuth applies="all" hasSub="no">
   <mixed>
    <selectable> 
     <value name="leftwards"/>  
@@ -217,7 +217,16 @@
   </mixed>
  </stress>
    
- <voice-family hasSub="no"/>
+ <voice-family hasSub="no">
+  <mixed>
+   <selectable>
+    <value name="inherit"/>   
+   </selectable>
+   <string>
+    <value type="edit"/>
+   </string>
+  </mixed>
+ </voice-family>
    
  <volume hasSub="no">
   <mixed>
@@ -1134,19 +1143,8 @@
       </numeric>
      </mixed>
     </z-index>
-    
-    
-   
-  
-   
-   
-   
-   
-   
-   
-   
-   
-   <list-style hasSub="yes">
+      
+ <list-style hasSub="yes">
    
      <list-style-image hasSub="no">
       <mixed>
@@ -1307,8 +1305,7 @@
 </mediagroup>
 
 <mediagroup type="paged">
-   
-   
+       
     <page hasSub="no"> 
       <mixed>
         <selectable>
@@ -1350,10 +1347,6 @@
        </selectable>
      </page-break-inside> 
       
-
-   
- 
-
 </mediagroup>
 
 <mediagroup type="interactive">
@@ -1437,7 +1430,7 @@
 
 <mediagroup type="all">
 
-  <content hasSub="no" appliesToSpecificSelector=":before,:after">
+  <content hasSub="no">
    <mixed>
     <selectable>  
      <value name="inherit"/>  
@@ -1452,9 +1445,29 @@
    </mixed>
   </content>
     
-  <counter-increment hasSub="no"/>
+  <counter-increment hasSub="no">
+   <mixed>
+   <selectable>
+    <value name="inherit"/>  
+    <value name="none"/>  
+   </selectable>
+   <string>
+    <value type="edit"/>
+   </string>
+  </mixed>
+  </counter-increment>
   
-  <counter-reset hasSub="no"/>
+  <counter-reset hasSub="no">
+   <mixed>
+   <selectable>
+    <value name="inherit"/> 
+    <value name="none"/>  
+   </selectable>
+   <string>
+    <value type="edit"/>
+   </string>
+  </mixed>
+  </counter-reset>
     
   <display hasSub="no">
    <selectable>

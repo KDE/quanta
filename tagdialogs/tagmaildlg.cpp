@@ -38,7 +38,7 @@ TagMailDlg::TagMailDlg(QWidget *parent, const char *name)
   :TagMail(parent, name)
 {
   setCaption(name);
-  setModal(true);
+  QDialog::setModal(true);
 
   connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
   connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
