@@ -131,6 +131,7 @@ Name = Links
 No_Name = No Links
 Icon = www
 Tag = a(name,href)
+Tag = link(href)
 HasFileName = true
 FileNameRx = .*\||#.*
 
