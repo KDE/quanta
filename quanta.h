@@ -113,6 +113,7 @@ friend class ActionEditDlg;
 
 public:
   StructTreeView *sTab;
+  QWidgetStack *rightWidgetStack;
 
   QuantaApp();
   ~QuantaApp();
@@ -250,6 +251,7 @@ public slots:
   void slotOptions();
   void slotOptionsConfigureKeys();
   void slotOptionsConfigureToolbars();
+  void slotNewToolbarConfig();
   void slotOptionsConfigureActions();
 
   void enablePhp3Debug(bool);
@@ -394,7 +396,6 @@ private:
   FilesListView    *fLTab;
   TemplatesTreeView   *tTab;
 
-  QWidgetStack *rightWidgetStack;
   QWidgetStack *bottomWidgetStack;
 
   KDockWidget *leftdock;

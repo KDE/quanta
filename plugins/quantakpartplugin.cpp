@@ -95,7 +95,7 @@ bool QuantaKPartPlugin::load()
   }
   if(ow == i18n("Editor Frame"))
   {
-    QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
+    QWidgetStack *stack = quantaApp->rightWidgetStack;
 
     m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), stack, 0, stack, 0, QStringList(arguments()));
     if(!m_part)
@@ -103,7 +103,7 @@ bool QuantaKPartPlugin::load()
       qWarning("Failed to create KPart");
       return FALSE;
     }
-    stack->addWidget(m_part->widget());
+    stack->addWidget(m_part->widget(), 3);
   }
   else if(ow == i18n("Message Frame"))
   {

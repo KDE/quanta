@@ -20,6 +20,7 @@
 #define TAGACTION_H
 
 #include <kaction.h>
+#include <kactioncollection.h>
 #include <qstring.h>
 #include <qdom.h>
 
@@ -42,8 +43,8 @@ public:
     /**
      * Create an insert from dom element.
      */
-    TagAction( QDomElement *element);
-    TagAction( QDomElement *element, QuantaView *a_view);
+    TagAction( QDomElement *element, KActionCollection *parent);
+    TagAction( QDomElement *element, QuantaView *a_view, KActionCollection *parent);
 
     virtual ~TagAction();
     
