@@ -151,8 +151,8 @@ class QuantaView : public QWidget
     void slotPasteURLEncoded();
   /** Add the starting and closing text for a 
 user specified tag. */
-  void slotTagMisc();
-
+    void slotTagMisc();
+    void slotInsertChar(const QString &selected);
 
   signals:
     void newCurPos();

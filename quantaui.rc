@@ -308,6 +308,8 @@
     <Action name="tag_misc"/>
     <Separator lineSeparator="true"/>
     <Action name="insert_css"/>
+    <Separator lineSeparator="true"/>
+    <Action name="insert_char"/>
   </ToolBar>
   
   <Menu name="popup_editor">
