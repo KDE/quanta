@@ -55,6 +55,7 @@ public:
  bool opened;
  bool removeAll; //set to false if you don't want to remove the "next" and "child" when deleting the node.
  bool insideSpecial; //true if the node is part of a special area
+ QString fileName; //the node is in this file. If empty, it's in the current document
 };
 
 #endif

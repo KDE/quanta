@@ -719,7 +719,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
 }
 
 /** Return a list of possible variable name completions */
-QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(const StructTreeGroup& group, int line, int col)
+QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *node, const StructTreeGroup& group, int line, int col)
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
   KTextEditor::CompletionEntry completion;
@@ -735,17 +735,39 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(const St
   GroupElementMapList::Iterator it;
   for ( it = map.begin(); it != map.end(); ++it )
   {
-    if (it.key().startsWith(word) && it.key() != word)
+    if (it.key().startsWith(word) && it.key() != word )
     {
-      completion.text = it.key();
-      completions->append( completion );
+      GroupElementList elementList = it.data();
+      for (uint i = 0; i < elementList.count(); i++)
+      {
+        if (elementList[i].parentNode == 0L || elementList[i].global)
+        {
+          completion.text = it.key();
+          completions->append( completion );
+          break;
+        } else
+        {
+          Node *n = node;
+          while (n && n != elementList[i].parentNode)
+          {
+            n = n->parent;
+          }
+          if (n == elementList[i].parentNode)
+          {
+            completion.text = it.key();
+            completions->append( completion );
+            break;
+          }
+        }
+      }
     }
   }
   IncludedGroupElementsMap elements = parser->includedMap;
   IncludedGroupElementsMap::Iterator it2;
   for ( it2 = elements.begin(); it2 != elements.end(); ++it2 )
   {
-    QStringList list = it2.data()[group.name];
+    QStringList list = it2.data()[group.name].keys();
+    list.sort();
     for (uint i = 0; i < list.count(); i++)
     {
       if (list[i].startsWith(word) && list[i] != word)
@@ -1119,7 +1141,8 @@ bool Document::scriptAutoCompletion(int line, int column)
          ( group.autoCompleteAfterRx.search(s2) != -1||
            group.autoCompleteAfterRx.search(s) != -1) )
      {
-       showCodeCompletions(getGroupCompletions(group, line, column + 1));
+       Node *node = parser->nodeAt(line, column, false);
+       showCodeCompletions(getGroupCompletions(node, group, line, column + 1));
        handled = true;
        break;
      }

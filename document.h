@@ -195,7 +195,7 @@ private:
   DTDStruct *completionDTD;
 
   /** Get list of possibile variable name completions */
-  QValueList<KTextEditor::CompletionEntry>* getGroupCompletions(const StructTreeGroup& groupName, int line, int col);
+  QValueList<KTextEditor::CompletionEntry>* getGroupCompletions(Node *node, const StructTreeGroup& groupName, int line, int col);
   /** Get list of possibile tag name completions */
   QValueList<KTextEditor::CompletionEntry>* getTagCompletions(int line, int col);
   /** Get list of possibile tag attribute completions */

@@ -47,12 +47,15 @@ struct GroupElement{
     /* The node which point to the exact place inside the parentNode */
     Node *node;
     /*The node which contains the element */
+    Node *originalNode;
+    /*The parent node indicating the beginning of a structure */
     Node *parentNode;
+    bool global;
   };
 
 typedef QValueList<GroupElement> GroupElementList;
 typedef QMap<QString, GroupElementList> GroupElementMapList;
-typedef QMap<QString, QStringList> IncludedGroupElements;
+typedef QMap<QString, GroupElementMapList> IncludedGroupElements;
 typedef QMap<QString, IncludedGroupElements> IncludedGroupElementsMap;
 
 class Parser: public QObject {

@@ -1615,7 +1615,20 @@ void Parser::parseForGroups()
             node = new Node(0L);
             node->tag = newTag;
             groupElement.node = node;
-            groupElement.parentNode = currentNode;
+            groupElement.originalNode = currentNode;
+            node = groupElement.originalNode;
+            while (node && node->tag->dtd == dtd && node->tag->type != Tag::ScriptStructureBegin)
+            {
+              node = node->parent;
+            }
+            if (node && node->tag->type == Tag::ScriptStructureBegin)
+            {
+              groupElement.parentNode = node;
+            } else
+            {
+              groupElement.parentNode = 0L;
+            }
+            groupElement.global = false;
             groupElementList = & (*groupElementMapList)[title];
             groupElementList->append(groupElement);
             if (group.hasFileName && group.parseFile)
@@ -1652,7 +1665,8 @@ void Parser::parseForGroups()
 
           node->tag = newTag;
           groupElement.node = node;
-          groupElement.parentNode = currentNode;
+          groupElement.originalNode = currentNode;
+          groupElement.parentNode = 0L; //doesn\t matter
           groupElementList = & (*groupElementMapList)[title];
           groupElementList->append(groupElement);
         }
@@ -1666,6 +1680,22 @@ void Parser::parseForGroups()
 
 void Parser::parseIncludedFiles()
 {
+  IncludedGroupElementsMap::Iterator includedMapIt;
+  for (includedMapIt = includedMap.begin(); includedMapIt != includedMap.end(); ++includedMapIt)
+  {
+    IncludedGroupElements::Iterator elementsIt;
+    for (elementsIt = includedMapIt.data().begin(); elementsIt != includedMapIt.data().end(); ++elementsIt)
+    {
+      GroupElementMapList::Iterator it;
+      for (it = elementsIt.data().begin(); it != elementsIt.data().end(); ++it)
+      {
+        for (uint i = 0 ; i < it.data().count(); i++)
+        {
+          delete it.data()[i].node;
+        }
+      }
+    }
+  }
   includedMap.clear();
   if (write->url().isLocalFile())
   {
@@ -1766,11 +1796,25 @@ void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
               pos = group.searchRx.search(foundStr, pos);
               if (pos != -1)
               {
-                QString s = foundStr.mid(pos, group.searchRx.matchedLength());
+                QString s = content.mid(areaPos + pos, group.searchRx.matchedLength());
                 pos += s.length();
                 s.remove(group.clearRx);
                 if (!(*elements)[group.name].contains(s))
-                    (*elements)[group.name] += s;
+                {
+                  Tag *tag = new Tag();
+                  tag->name = s;
+                  QString s2 = content.left(areaPos + pos);
+                  tag->setTagPosition(s2.contains('\n'), s2.length() - s2.findRev('\n') - s.length() - 1, s2.contains('\n'), s2.length() - s2.findRev('\n') - 1);
+                  Node *node = new Node(0L);
+                  node->tag = tag;
+                  node->fileName = fileName;
+                  GroupElement groupElement;
+                  groupElement.node = node;
+                  groupElement.parentNode = 0L;
+                  groupElement.originalNode = 0L;
+                  GroupElementList *groupElementList = &(*elements)[group.name][s];
+                  groupElementList->append(groupElement);
+                }
               }
             }
           } //for

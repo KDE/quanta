@@ -242,9 +242,10 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       insertUnder = new StructTreeTag(static_cast<StructTreeTag*>(groups[i]), 0L, externalIt.key(), groups[i]);
       insertAfter = insertUnder;
       IncludedGroupElements elements = externalIt.data();
-      for (uint j = 0; j < elements[group.name].count(); j++)
+      GroupElementMapList::Iterator elIt;
+      for (elIt = elements[group.name].begin(); elIt != elements[group.name].end(); ++elIt)
       {
-        item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), 0L, elements[group.name][j], insertAfter);
+        item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), elIt.data()[0].node, elIt.key(), insertAfter);
         static_cast<StructTreeTag*>(item)->hasOpenFileMenu = group.hasFileName;
         static_cast<StructTreeTag*>(item)->fileNameRx = group.fileNameRx;
         insertAfter = item;
@@ -344,6 +345,12 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
   {
     int line, col;
     it->node->tag->beginPos(line, col);
+    if (!it->node->fileName.isEmpty())
+    {
+      KURL url;
+      QuantaCommon::setUrl(url, it->node->fileName);
+      emit openFile(url, quantaApp->defaultEncoding());
+    }
     emit newCursorPosition( line, col);
   }
 }
@@ -459,32 +466,44 @@ void StructTreeView::slotSelectTag()
   if (it && it->node)
   {
     int bLine, bCol, eLine, eCol;
-    Tag *tag = it->node->tag;
-    if (tag->single || !it->node->next)
+    if (it->node->fileName.isEmpty())
     {
-      tag->endPos(eLine, eCol);
-    } else
-    {
-      if (tag->closingMissing && it->node->child)
+      Tag *tag = it->node->tag;
+      if (tag->single || !it->node->next)
       {
-        Node *node = it->node->child;
-        while (node->child || node->next)
-        {
-          if (node->next)
-          {
-            node = node->next;
-          } else
-          {
-            node = node->child;
-          }
-        }
-        node->tag->endPos(eLine, eCol);
+        tag->endPos(eLine, eCol);
       } else
       {
-          it->node->next->tag->endPos(eLine, eCol);
+        if (tag->closingMissing && it->node->child)
+        {
+          Node *node = it->node->child;
+          while (node->child || node->next)
+          {
+            if (node->next)
+            {
+              node = node->next;
+            } else
+            {
+              node = node->child;
+            }
+          }
+          node->tag->endPos(eLine, eCol);
+        } else
+        {
+            it->node->next->tag->endPos(eLine, eCol);
+        }
       }
+      it->node->tag->beginPos(bLine, bCol);
+    } else
+    {
+      KURL url;
+      QuantaCommon::setUrl(url, it->node->fileName);
+      it->node->tag->beginPos(bLine, bCol);
+      it->node->tag->endPos(eLine, eCol);
+      eCol--;
+      emit openFile(url, quantaApp->defaultEncoding());
+
     }
-    it->node->tag->beginPos(bLine, bCol);
     emit selectArea( bLine, bCol, eLine, eCol+1);
 
     setSelected(item, true);
