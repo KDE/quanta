@@ -117,44 +117,76 @@
    <standard>Quick start</standard>
    <tag useDialog="false" >&lt;font size=&quot;+1&quot;></tag>
    <xtag use="true" >&lt;/font></xtag>
+   <tooltip>This &lt;b>SIZE=+1&lt;/b> element allows to &lt;i>increase&lt;/i> font.
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="font_dec" type="tag" id="2003" name="Font size-1" >
    <tag useDialog="false" >&lt;font size=&quot;-1&quot;></tag>
    <xtag use="true" >&lt;/font></xtag>
+   <tooltip>This &lt;b>SIZE=-1&lt;/b> element allows to &lt;i>decrease&lt;/i> font.
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="" type="separator" id="2004" name="" />
   <action useTextButton="0" textButton="" icon="tag_pre" type="tag" id="2005" name="Pre" >
    <tag useDialog="false" >&lt;pre></tag>
    <xtag use="true" inLine="false" >&lt;/pre></xtag>
+   <tooltip>The &lt;b>PRE&lt;/b> element allows to view &lt;i>preformatted&lt;/i> text.
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="tag_sub" type="tag" id="2006" name="Subscript" >
    <tag useDialog="false" >&lt;sub></tag>
    <xtag use="true" >&lt;/sub></xtag>
+   <tooltip>The &lt;b>SUB&lt;/b> element is used for &lt;i>subscripts&lt;/i>.
+     &lt;br>- common attributes
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="tag_sup" type="tag" id="2007" name="Superscropt" >
    <tag useDialog="false" >&lt;sup></tag>
    <xtag use="true" >&lt;/sup></xtag>
+   <tooltip>The &lt;b>SUP&lt;/b> element is used for &lt;i>superscripts&lt;/i>.
+     &lt;br>- common attributes
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="" type="separator" id="2008" name="" />
   <action useTextButton="0" textButton="" icon="tag_h1" type="tag" id="2009" name="Head  1 level" >
    <tag useDialog="false" >&lt;h1></tag>
    <xtag use="true" >&lt;/h1></xtag>
+   <tooltip>The &lt;b>H1&lt;/b> element defines a &lt;i>level-one heading&lt;/i>.
+     &lt;br>- ALIGN=[ left | center | right | justify ] (horizontal alignment)
+     &lt;br>- common attributes
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="tag_h2" type="tag" id="2010" name="Head  2 level" >
    <tag useDialog="false" >&lt;h2></tag>
    <xtag use="true" >&lt;/h2></xtag>
+   <tooltip>The &lt;b>H2&lt;/b> element defines a &lt;i>level-two heading&lt;/i>.
+     &lt;br>- ALIGN=[ left | center | right | justify ] (horizontal alignment)
+     &lt;br>- common attributes
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="tag_h3" type="tag" id="2011" name="Head  3 level" >
    <tag useDialog="false" >&lt;h3></tag>
    <xtag use="true" >&lt;/h3></xtag>
+   <tooltip>The &lt;b>H3&lt;/b> element defines a &lt;i>level-three heading&lt;/i>.
+     &lt;br>- ALIGN=[ left | center | right | justify ] (horizontal alignment)
+     &lt;br>- common attributes
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="tag_h4" type="tag" id="2012" name="Head  4 level" >
    <tag useDialog="false" >&lt;h4></tag>
    <xtag use="true" >&lt;/h4></xtag>
+   <tooltip>The &lt;b>H4&lt;/b> element defines a &lt;i>level-four heading&lt;/i>.
+     &lt;br>- ALIGN=[ left | center | right | justify ] (horizontal alignment)
+     &lt;br>- common attributes
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="tag_h5" type="tag" id="2013" name="Head  5 level" >
    <tag useDialog="false" >&lt;h5></tag>
    <xtag use="true" >&lt;/h5></xtag>
+   <tooltip>The &lt;b>H5&lt;/b> element defines a &lt;i>level-five heading&lt;/i>.
+     &lt;br>- ALIGN=[ left | center | right | justify ] (horizontal alignment)
+     &lt;br>- common attributes
+   </tooltip>
   </action>
  </tabbar>
  <tabbar name="Tables" >
@@ -186,6 +218,10 @@
   <action useTextButton="0" textButton="" icon="tag_th" type="tag" id="3009" name="Table head" >
    <tag useDialog="false" >&lt;th></tag>
    <xtag use="true" inLine="true" >&lt;/th></xtag>
+  </action>
+  <action useTextButton="0" textButton="" icon="tag_tbody" type="tag" id="3014" name="Table body" >
+   <tag useDialog="false" >&lt;tbody></tag>
+   <xtag use="true" inLine="true" >&lt;/tbody></xtag>
   </action>
   <action useTextButton="0" textButton="" icon="tag_tr" type="tag" id="3010" name="Table row" >
    <tag useDialog="false" >&lt;tr></tag>
