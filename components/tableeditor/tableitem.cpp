@@ -49,8 +49,8 @@ QWidget* TableItem::createEditor() const
   Editor->setHScrollBarMode(QScrollView::AlwaysOff);
   Editor->setVScrollBarMode(QScrollView::AlwaysOff);
   Editor->setBold(m_header);
-  //  QObject::connect( cb, SIGNAL( activated( int ) ), table(), SLOT( doValueChanged() ) );
   Editor->setText(text());
+  QObject::connect(Editor, SIGNAL(textChanged()), table(), SLOT(doValueChanged()));
   return Editor;
 }
 
@@ -69,9 +69,7 @@ void TableItem::paint(QPainter* p, const QColorGroup& cg, const QRect& cr, bool 
      editFont.setBold(true);
      p->setFont(editFont);
    }
-   QRect cr0 = cr;
-   cr0.setTop(0);
-   cr0.setLeft(0);
+   QRect cr0(0, 0, cr.width(), cr.height());
    if (selected) {
      p->fillRect(cr0, cg.brush(QColorGroup::Highlight));
      p->setPen(cg.highlightedText());
@@ -82,10 +80,10 @@ void TableItem::paint(QPainter* p, const QColorGroup& cg, const QRect& cr, bool 
    }
    if (!pixmap().isNull()) {
      p->drawPixmap(4, 4, pixmap());
-     p->drawText(6 + pixmap().width(), 4, cr.width()-8, cr.height()-8, m_halign | m_valign | WordBreak, text());
+     p->drawText(6 + pixmap().width(), 4, cr0.width()-8, cr0.height()-8, m_halign | m_valign | WordBreak, text());
    }
    else
-     p->drawText(4, 4, cr.width()-8, cr.height()-8, m_halign | m_valign | WordBreak, text());
+     p->drawText(4, 4, cr0.width()-8, cr0.height()-8, m_halign | m_valign | WordBreak, text());
 }
 
 QSize TableItem::sizeHint() const
