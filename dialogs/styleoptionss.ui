@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>321</width>
+            <width>325</width>
             <height>231</height>
         </rect>
     </property>
@@ -36,7 +36,7 @@
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>Use capital symbols for tags</string>
+                <string>Use upper case characters for tags</string>
             </property>
         </widget>
         <widget row="1"  column="0" >
@@ -47,7 +47,7 @@
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>Use capital symbols for attributes of tags</string>
+                <string>Use upper case characters for tag attributes</string>
             </property>
         </widget>
         <widget row="2"  column="0" >
@@ -58,21 +58,13 @@
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>Insert end of tag if optional</string>
+                <string>Insert end of tag if applicable</string>
             </property>
         </widget>
         <spacer row="3"  column="0" >
             <property>
                 <name>name</name>
                 <cstring>Spacer2</cstring>
-            </property>
-            <property stdset="1">
-                <name>enabled</name>
-                <bool>true</bool>
-            </property>
-            <property stdset="1">
-                <name>caption</name>
-                <string></string>
             </property>
             <property stdset="1">
                 <name>orientation</name>
