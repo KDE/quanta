@@ -9,7 +9,7 @@
  ***************************************************************************/
 </comment>
 <author>(C) 2003 by Andras Mantia &lt;amantia@kde.org&gt;</author>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>CodeTemplateDlgS</cstring>
     </property>
@@ -17,9 +17,15 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>398</width>
-            <height>166</height>
+            <width>400</width>
+            <height>72</height>
         </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>400</width>
+            <height>70</height>
+        </size>
     </property>
     <property name="caption">
         <string>Add Code Template</string>
@@ -60,61 +66,12 @@
                 <cstring>descriptionEdit</cstring>
             </property>
         </widget>
-        <spacer row="2" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>spacer2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>180</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QPushButton" row="2" column="2">
-            <property name="name">
-                <cstring>pushButton4</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;OK</string>
-            </property>
-            <property name="default">
-                <bool>true</bool>
-            </property>
-        </widget>
-        <widget class="QPushButton" row="2" column="3">
-            <property name="name">
-                <cstring>pushButton5</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Cancel</string>
-            </property>
-        </widget>
     </grid>
 </widget>
-<connections>
-    <connection>
-        <sender>pushButton5</sender>
-        <signal>clicked()</signal>
-        <receiver>CodeTemplateDlgS</receiver>
-        <slot>reject()</slot>
-    </connection>
-    <connection>
-        <sender>pushButton4</sender>
-        <signal>clicked()</signal>
-        <receiver>CodeTemplateDlgS</receiver>
-        <slot>accept()</slot>
-    </connection>
-</connections>
-<includes>
-    <include location="local" impldecl="in implementation">codetemplatedlgs.ui.h</include>
-</includes>
+<tabstops>
+    <tabstop>templateEdit</tabstop>
+    <tabstop>descriptionEdit</tabstop>
+</tabstops>
 <slots>
     <slot>accept()</slot>
     <slot>reject()</slot>

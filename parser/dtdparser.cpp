@@ -25,6 +25,7 @@
 //kde includes
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kdialogbase.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kurl.h>
@@ -77,26 +78,28 @@ bool DTDParser::parse()
      return false;
 //          xmlGenericError(xmlGenericErrorContext,                          "Could not parse %s\n", argv[1]);
   }
-  DTEPCreationDlg dlg;
+  KDialogBase dlg(0L, 0L, true, i18n("DTD - > DTEP Conversion"), KDialogBase::Ok | KDialogBase::Cancel);
+  DTEPCreationDlg w(&dlg);
+  dlg.setMainWidget(&w);
   QString name = QString((const char*)DTD::dtd_ptr->name);
   if (name == "none")
     name = QFileInfo(m_dtdURL.fileName()).baseName();
-  dlg.dtdName->setText(name);
-  dlg.nickName->setText(name);
-  dlg.directory->setText(QFileInfo(m_dtdURL.fileName()).baseName());
-  dlg.doctype->setText(QString((const char*)DTD::dtd_ptr->ExternalID));
-  dlg.dtdURL->setText(QString((const char*)DTD::dtd_ptr->SystemID));
+  w.dtdName->setText(name);
+  w.nickName->setText(name);
+  w.directory->setText(QFileInfo(m_dtdURL.fileName()).baseName());
+  w.doctype->setText(QString((const char*)DTD::dtd_ptr->ExternalID));
+  w.dtdURL->setText(QString((const char*)DTD::dtd_ptr->SystemID));
   if (!dlg.exec())
       return false;
-  m_name = dlg.dtdName->text();
-  m_nickName = dlg.nickName->text();
-  m_doctype = dlg.doctype->text();
+  m_name = w.dtdName->text();
+  m_nickName = w.nickName->text();
+  m_doctype = w.doctype->text();
   m_doctype.replace(QRegExp("<!doctype", false), "");
   m_doctype = m_doctype.left(m_doctype.findRev(">") - 1);
-  m_dtdURLLine = dlg.dtdURL->text();
-  m_defaultExtension = dlg.defaultExtension->text();
-  m_caseSensitive = dlg.caseSensitive->isChecked();
-  DTD::dirName = m_dtepDir + "/" + dlg.directory->text();
+  m_dtdURLLine = w.dtdURL->text();
+  m_defaultExtension = w.defaultExtension->text();
+  m_caseSensitive = w.caseSensitive->isChecked();
+  DTD::dirName = m_dtepDir + "/" + w.directory->text();
   KURL u;
   u.setPath(DTD::dirName);
   if (!QExtFileInfo::createDir(DTD::dirName)) {

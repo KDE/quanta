@@ -9,7 +9,7 @@
  ***************************************************************************/
 </comment>
 <author>(C) 2003 Andras Mantia &lt;amantia@kde.org&gt;</author>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>DTEPCreationDlg</cstring>
     </property>
@@ -17,14 +17,20 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>559</width>
-            <height>243</height>
+            <width>500</width>
+            <height>201</height>
         </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>500</width>
+            <height>200</height>
+        </size>
     </property>
     <property name="caption">
         <string>DTD - &gt; DTEP Conversion</string>
     </property>
-    <property name="sizeGripEnabled">
+    <property name="sizeGripEnabled" stdset="0">
         <bool>true</bool>
     </property>
     <grid>
@@ -104,101 +110,6 @@
                 <string>Default extension:</string>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="8" column="0" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>Layout1</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>buttonHelp</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Help</string>
-                    </property>
-                    <property name="accel">
-                        <string>F1</string>
-                    </property>
-                    <property name="autoDefault">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>Horizontal Spacing2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>buttonOk</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;OK</string>
-                    </property>
-                    <property name="accel">
-                        <string></string>
-                    </property>
-                    <property name="autoDefault">
-                        <bool>true</bool>
-                    </property>
-                    <property name="default">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>buttonCancel</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Cancel</string>
-                    </property>
-                    <property name="accel">
-                        <string></string>
-                    </property>
-                    <property name="autoDefault">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <spacer row="7" column="2">
-            <property name="name">
-                <cstring>spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>16</height>
-                </size>
-            </property>
-        </spacer>
         <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>caseSensitive</cstring>
@@ -217,19 +128,14 @@
         </widget>
     </grid>
 </widget>
-<connections>
-    <connection>
-        <sender>buttonOk</sender>
-        <signal>clicked()</signal>
-        <receiver>DTEPCreationDlg</receiver>
-        <slot>accept()</slot>
-    </connection>
-    <connection>
-        <sender>buttonCancel</sender>
-        <signal>clicked()</signal>
-        <receiver>DTEPCreationDlg</receiver>
-        <slot>reject()</slot>
-    </connection>
-</connections>
+<tabstops>
+    <tabstop>directory</tabstop>
+    <tabstop>dtdName</tabstop>
+    <tabstop>nickName</tabstop>
+    <tabstop>doctype</tabstop>
+    <tabstop>dtdURL</tabstop>
+    <tabstop>defaultExtension</tabstop>
+    <tabstop>caseSensitive</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

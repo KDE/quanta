@@ -23,6 +23,7 @@
 //kde includes
 #include <kcombobox.h>
 #include <kdebug.h>
+#include <kdialogbase.h>
 #include <kglobal.h>
 #include <klistview.h>
 #include <klocale.h>
@@ -88,12 +89,13 @@ void Abbreviation::slotTemplateSelectionChanged(QListViewItem* item)
 
 void Abbreviation::slotAddTemplate()
 {
-  CodeTemplateDlgS dlg(this);
-  dlg.exec();
-  if (dlg.result() == QDialog::Accepted)
+  KDialogBase dlg(this, 0, true, i18n("Add Code Template"), KDialogBase::Ok | KDialogBase::Cancel);
+  CodeTemplateDlgS w(&dlg);
+  dlg.setMainWidget(&w);
+  if (dlg.exec())
   {
-    QString templateName = dlg.templateEdit->text();
-    QString description = dlg.descriptionEdit->text();
+    QString templateName = w.templateEdit->text();
+    QString description = w.descriptionEdit->text();
     if (!templateName.isEmpty())
     {
       QListViewItem *item = new KListViewItem(templatesList, templateName, description);
@@ -123,16 +125,16 @@ void Abbreviation::slotEditTemplate()
   QListViewItem *item = templatesList->currentItem();
   if (!item)
       return;
-  CodeTemplateDlgS dlg(this);
-  dlg.setCaption(i18n("Edit Code Template"));
-  dlg.templateEdit->setText(item->text(0));
-  dlg.descriptionEdit->setText(item->text(1));
-  dlg.exec();
-  if (dlg.result() == QDialog::Accepted)
+  KDialogBase dlg(this, 0, true, i18n("Edit Code Template"), KDialogBase::Ok | KDialogBase::Cancel);
+  CodeTemplateDlgS w(&dlg);
+  dlg.setMainWidget(&w);
+  w.templateEdit->setText(item->text(0));
+  w.descriptionEdit->setText(item->text(1));
+  if (dlg.exec())
   {
     m_dtd->abbreviations.remove(item->text(0)+" "+item->text(1));
-    item->setText(0, dlg.templateEdit->text());
-    item->setText(1, dlg.descriptionEdit->text());
+    item->setText(0, w.templateEdit->text());
+    item->setText(1, w.descriptionEdit->text());
     m_dtd->abbreviations.insert(item->text(0) + " " + item->text(1), codeEdit->text());
   }
 }

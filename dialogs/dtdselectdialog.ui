@@ -8,8 +8,8 @@
  *                                                                         *
  ***************************************************************************/
 </comment>
-<author>(C) 2002 Andras Mantia &lt;amantia@kde.org&gt;</author>
-<widget class="QDialog">
+<author>(C) 2002, 2003 Andras Mantia &lt;amantia@kde.org&gt;</author>
+<widget class="QWidget">
     <property name="name">
         <cstring>DTDSelectDialog</cstring>
     </property>
@@ -17,9 +17,15 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>445</width>
-            <height>244</height>
+            <width>440</width>
+            <height>161</height>
         </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>440</width>
+            <height>160</height>
+        </size>
     </property>
     <property name="caption">
         <string>DTD Selector</string>
@@ -72,72 +78,6 @@ Dialog message2:</string>
                 <bool>true</bool>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="6" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>layout4</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer3</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>160</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>okButton</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>90</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                    <property name="text">
-                        <string>&amp;OK</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer4</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>150</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </hbox>
-        </widget>
         <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>convertDTD</cstring>
@@ -154,23 +94,6 @@ Dialog message2:</string>
                 <string>Don't show this dialog, use the closest matching DTD</string>
             </property>
         </widget>
-        <spacer row="5" column="1">
-            <property name="name">
-                <cstring>spacer3_2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
     </grid>
 </widget>
 <tabstops>
@@ -178,8 +101,10 @@ Dialog message2:</string>
     <tabstop>currentDTD</tabstop>
     <tabstop>convertDTD</tabstop>
     <tabstop>useClosestMatching</tabstop>
-    <tabstop>okButton</tabstop>
 </tabstops>
+<includes>
+    <include location="local" impldecl="in implementation">dtdselectdialog.ui.h</include>
+</includes>
 <slots>
     <slot>init()</slot>
 </slots>

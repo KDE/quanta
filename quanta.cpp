@@ -786,7 +786,7 @@ void QuantaApp::slotNewStatus()
     {
       if (w->isModified())
       {
-        wTab->changeTab( w, SmallIcon("fileclose"), QExtFileInfo::shortName(w->url().path()) + i18n("[modified]"));
+        wTab->changeTab( w, SmallIcon("fileclose"), QExtFileInfo::shortName(w->url().path()) + " " + i18n("[modified]"));
       } else
       {
         wTab->changeTab( w, SmallIcon("fileclose"), QExtFileInfo::shortName(w->url().path()));
@@ -2742,7 +2742,9 @@ void QuantaApp::processDTD(const QString& documentType)
    bool found = false;
    if (!foundName.isEmpty())   //!DOCTYPE found in file
    {
-      DTDSelectDialog *dlg = new DTDSelectDialog(this);
+      KDialogBase dlg(this, 0L, true, i18n("DTD Selector"), KDialogBase::Ok | KDialogBase::Cancel);
+      DTDSelectDialog *dtdWidget = new DTDSelectDialog(&dlg);
+      dlg.setMainWidget(dtdWidget);
       QStringList lst;
       QDictIterator<DTDStruct> it(*dtds);
       for( ; it.current(); ++it )
@@ -2756,7 +2758,7 @@ void QuantaApp::processDTD(const QString& documentType)
       QString foundNickName = QuantaCommon::getDTDNickNameFromName(foundName);
       for (uint i = 0; i < lst.count(); i++)
       {
-        dlg->dtdCombo->insertItem(lst[i]);
+        dtdWidget->dtdCombo->insertItem(lst[i]);
         if (lst[i] == foundNickName)
         {
           w->setDTDIdentifier(foundName);
@@ -2814,23 +2816,23 @@ void QuantaApp::processDTD(const QString& documentType)
       }
 
 //    dlg->dtdCombo->insertItem(i18n("Create New DTD Info"));
-      dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
-      dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(foundName));
+      dtdWidget->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
+      dtdWidget->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(foundName));
       QString projectDTDNickName = QuantaCommon::getDTDNickNameFromName(projectDTD);
-      for (int i = 0; i < dlg->dtdCombo->count(); i++)
+      for (int i = 0; i < dtdWidget->dtdCombo->count(); i++)
       {
-        if (dlg->dtdCombo->text(i) == projectDTDNickName)
+        if (dtdWidget->dtdCombo->text(i) == projectDTDNickName)
         {
-          dlg->dtdCombo->setCurrentItem(i);
+          dtdWidget->dtdCombo->setCurrentItem(i);
           break;
         }
       }
-      if (!found && qConfig.showDTDSelectDialog && dlg->exec())
+      if (!found && qConfig.showDTDSelectDialog && dlg.exec())
       {
-        qConfig.showDTDSelectDialog = !dlg->useClosestMatching->isChecked();
-        w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
+        qConfig.showDTDSelectDialog = !dtdWidget->useClosestMatching->isChecked();
+        w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
         DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
-        if (dlg->convertDTD->isChecked() && dtd->family == Xml)
+        if (dtdWidget->convertDTD->isChecked() && dtd->family == Xml)
         {
           int bLine, bCol, eLine, eCol;
           tag->beginPos(bLine,bCol);
@@ -2841,7 +2843,6 @@ void QuantaApp::processDTD(const QString& documentType)
           delete tag;
         }
       }
-      delete dlg;
    } else //DOCTYPE not found in file
    {
      QString mimetype = KMimeType::findByURL(w->url())->name();
@@ -2879,7 +2880,10 @@ void QuantaApp::slotChangeDTD()
 {
   if (m_view->writeExists())
   {
-    DTDSelectDialog *dlg = new DTDSelectDialog(this);
+    KDialogBase dlg(this, 0L, true, i18n("DTD Selector"), KDialogBase::Ok | KDialogBase::Cancel);
+    DTDSelectDialog *dtdWidget = new DTDSelectDialog(&dlg);
+    dtdWidget->setMinimumHeight(130);
+    dlg.setMainWidget(dtdWidget);
     Document *w = m_view->write();
     int pos = -1;
     int defaultIndex = 0;
@@ -2903,24 +2907,25 @@ void QuantaApp::slotChangeDTD()
     QString defaultDtdNickName = QuantaCommon::getDTDNickNameFromName(defaultDocType);
     for(uint i = 0; i < lst.count(); i++)
     {
-      dlg->dtdCombo->insertItem(lst[i]);
+      dtdWidget->dtdCombo->insertItem(lst[i]);
       if (lst[i] == oldDtdNickName) pos = i;
       if (lst[i] == defaultDtdNickName) defaultIndex = i;
     }
 
-    if (pos == -1) pos = defaultIndex;
-    dlg->dtdCombo->setCurrentItem(pos);
-    dlg->messageLabel->setText(i18n("Change the current DTD."));
-    dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier()));
+    if (pos == -1)
+      pos = defaultIndex;
+    dtdWidget->dtdCombo->setCurrentItem(pos);
+    dtdWidget->messageLabel->setText(i18n("Change the current DTD."));
+    dtdWidget->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier()));
     //dlg->useClosestMatching->setShown(false);
-    delete dlg->useClosestMatching;
-    dlg->useClosestMatching = 0L;
-    dlg->adjustSize();
-    if (dlg->exec())
+    delete dtdWidget->useClosestMatching;
+    dtdWidget->useClosestMatching = 0L;
+    dtdWidget->adjustSize();
+    if (dlg.exec())
     {
-      w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
+      w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dtdWidget->dtdCombo->currentText()));
       DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
-      if (dlg->convertDTD->isChecked() && dtd->family == Xml)
+      if (dtdWidget->convertDTD->isChecked() && dtd->family == Xml)
       {
         if (tag)
         {
@@ -2941,8 +2946,6 @@ void QuantaApp::slotChangeDTD()
 
     loadToolbarForDTD(w->getDTDIdentifier());
     reparse(true);
-
-    delete dlg;
   }
 }
 
