@@ -213,7 +213,7 @@ QString QuantaCmdPlugin::makeQString(const char *a_buffer, int a_len)
     buffer[i] = a_buffer[i];
   buffer[a_len] = 0;
   QString text(buffer);
-  delete buffer;
+  delete[] buffer;
   return text;
 }
 

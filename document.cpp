@@ -58,7 +58,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   busy    = false;
   oldstat = false;
   m_doc = doc;
-  m_view = (KTextEditor::View *)m_doc->createView(this, 0L);
+  m_view = m_doc->createView(this, 0L);
   int w = parent->width() -5 ;
   int h = parent->height() - 35;
   m_view->resize(w,h);

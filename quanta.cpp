@@ -638,9 +638,9 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   if (newWrite != view->oldWrite)
     sTab->useOpenLevelSetting = true;
   reparse();
-	slotNewUndo();
-	slotNewStatus();
-	slotNewLineColumn();
+  slotNewUndo();
+  slotNewStatus();
+  slotNewLineColumn();
 
   loadToolbarForDTD(newWrite->getDTDIdentifier());
 

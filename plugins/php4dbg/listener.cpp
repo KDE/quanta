@@ -59,5 +59,5 @@ void Listener::log(ListenerLogKind kind, char *message,...)
 
   _dbg->viewMessage(mes);
 
-  delete buf;
+  delete[] buf;
 }

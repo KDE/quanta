@@ -26,8 +26,8 @@
 MessageOutput::MessageOutput(QWidget *parent, const char *name )
   : QListBox(parent,name)
 {
-  insertItem( i18n("Message window...") );
   max_items = 200;
+  insertItem( i18n("Message window...") );
 
   QPalette pal = palette();
   pal.setColor(QColorGroup::HighlightedText, pal.color(QPalette::Normal, QColorGroup::Text));

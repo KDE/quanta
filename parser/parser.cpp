@@ -942,7 +942,8 @@ void Parser::parseForDTD(Document *w, bool force)
                  {
                    for (int i = dtdList.count(); i >=0; i--)
                    {
-                     if (dtdList[i].dtd == dtd && dtdList[i].eLine == -1)
+                     //FIXME: Valgrind says there is an uninitalized variable used here
+                     if (dtdList[i].dtd == dtd && dtdList[i].eLine == -1) 
                      {
                        dtdList[i].eLine = line;
                        dtdList[i].eCol = col;
