@@ -173,9 +173,7 @@ QString Node::nodeValue()
 void Node::setNodeValue(QString value)
 {
   if(!tag)
-  {
     tag = new Tag();
-  }
   tag->setStr(value);
 }
 
