@@ -198,7 +198,7 @@ void QuantaApp::slotFileSave()
   slotUpdateStatus(w);
 }
 
-void QuantaApp::slotFileSaveAs()
+bool QuantaApp::slotFileSaveAs()
 {
   bool result = false;
   Document *w = view->write();
