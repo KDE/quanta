@@ -44,6 +44,7 @@ void WToolBar::fixingSize()
 
 void WToolBar::insertSeparator()
 {
+#ifdef OLD_SEPARATORS
 	QFrame *f  = new QFrame (this);
 	QWidget *w1= new QWidget(this);
 	QWidget *w2= new QWidget(this);
@@ -55,10 +56,14 @@ void WToolBar::insertSeparator()
   insertWidget( 7,0,  w1);
   insertWidget( 0,16, f );
   insertWidget( 7,0,  w2);
+#else
+  insertLineSeparator();
+#endif
 }
 
 void WToolBar::insertSeparator( KToolBar *t )
 {
+#ifdef OLD_SEPARATORS
 	QFrame *f  = new QFrame ( t );
 	QWidget *w1= new QWidget( t );
 	QWidget *w2= new QWidget( t );
@@ -70,4 +75,7 @@ void WToolBar::insertSeparator( KToolBar *t )
   t -> insertWidget( 7,0,  w1);
   t -> insertWidget( 0,16, f );
   t -> insertWidget( 7,0,  w2);
+#else
+  t->insertLineSeparator();
+#endif
 }
