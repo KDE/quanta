@@ -264,6 +264,18 @@ bool Tag::hasAttribute( const QString &attr )
   return false;
 }
 
+void Tag::setAttributePosition(int index, int bLineName, int bColName, int bLineValue, int bColValue)
+{
+  TagAttr attr;
+  attr = attrs[index];
+  attr.nameLine = bLineName;
+  attr.nameCol = bColName;
+  attr.valueLine = bLineValue;
+  attr.valueCol = bColValue;
+  attrs.remove(attrs.at(index));
+  attrs.append(attr);
+}
+
 /** Set the coordinates of tag inside the document */
 void Tag::setTagPosition(int bLine, int bCol, int eLine, int eCol)
 {

@@ -1260,7 +1260,7 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 {
 	QString text, allText;
 	Node *node = baseNode;
-	int bCol, bLine, eCol, eLine, bCol2, bLine2;
+	int bCol, bLine, eCol, eLine, bCol2, bLine2, bCol3, bLine3, eCol3, eLine3, i;
 	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
 	bool updateClosing, goUp;
 
@@ -1284,16 +1284,16 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 	m_doc->activateRepaintView(false);
 	qConfig.updateClosingTags = false;
 
-	bLine = 0;
-	bCol = 0;
+	//First build the tag string which needs to be updated, and add the necessary
+	//empty Nodes for the indentation.
 	while(node)
 	{
 		if(!node->tag->cleanStrBuilt)
 		{
 			//FIXME FIXME FIXME KafkaDocument::translateKafkaIntoNodeCursorPosition() set the
 			//clean string but does not touch the position!!! FIXME FIXME FIXME
-			node->tag->setStr(kafkaInterface->generateCodeFromNode(node, bLine, bCol, eLine, eCol));
-			node->tag->setTagPosition(bLine, bCol, eLine, eCol);
+			node->tag->setStr(kafkaInterface->generateCodeFromNode(node, 0, 0, eLine, eCol));
+			//node->tag->setTagPosition(bLine, bCol, eLine, eCol);
 			//kdDebug(25001)<< "POS1 " << bLine <<  " " <<  bCol << " " << eLine << " " << eCol << endl;
 			goUp = false;
 			kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp));
@@ -1313,21 +1313,24 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 		node = node->nextSibling();
 	}
 
+	//Then, we gather all the tag string and put it into kate, and we set the tag positions.
 	node = baseNode;
 	goUp = false;
+	bCol = 0;
+	bLine = 0;
 	while(node)
 	{
 		//kdDebug(25001)<< "CurNode : " << _node->tag->name << " - " << _node->tag->tagStr() << endl;
 		if(node->parent)
 		{
-			node->parent->tag->beginPos(bLine, bCol);
-			node->parent->tag->endPos(eLine, eCol);
+			node->parent->tag->beginPos(bLine3, bCol3);
+			node->parent->tag->endPos(eLine3, eCol3);
 		}
 		node->tag->beginPos(bLine2, bCol2);
 
 		//if we are in a Script inside a tag e.g. <a href="<? PHP stuff here ?>">, skip it
 		if(node->tag->type == Tag::ScriptTag && node->parent &&
-			QuantaCommon::isBetween(bLine2, bCol2, bLine, bCol, eLine,eCol) == 0)
+			QuantaCommon::isBetween(bLine2, bCol2, bLine3, bCol3, eLine3,eCol3) == 0)
 		{
 			goUp = true;
 
@@ -1336,7 +1339,25 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 				node = node->next;
 		}
 		else
+		{
 			allText += node->tag->tagStr();
+			node->tag->beginPos(bLine, bCol);
+			for(i = 0; i < node->tag->attrCount(); i++)
+			{
+				bCol3 = node->tag->getAttribute(i).nameLine;
+				bLine3 = node->tag->getAttribute(i).nameCol;
+				eCol3 = node->tag->getAttribute(i).valueLine;
+				eLine3 = node->tag->getAttribute(i).valueCol;
+
+				//FIXME: This is OK only when it has just been rebuild.
+				node->tag->setAttributePosition(i, bLine3 + bLine, bCol3 + bCol, eLine3 + bLine,
+					eCol3 + bCol);
+			}
+			kafkaCommon::getEndPosition(node->tag->tagStr(), bLine, bCol, eLine, eCol);
+			node->tag->setTagPosition(bLine, bCol, eLine, eCol);
+			bCol = eCol + 1;
+			bLine = eLine;
+		}
 		node = kafkaCommon::getNextNode(node, goUp);
 	}
 

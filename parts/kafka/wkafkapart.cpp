@@ -943,52 +943,61 @@ QString KafkaDocument::getEncodedText(const QString& decodedText)
 	return getEncodedText(decodedText, a, b, c, d);
 }
 
-QString KafkaDocument::generateCodeFromNode(Node *_node, int bLine, int bCol, int &eLine, int &eCol)
+QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int &eLine, int &eCol)
 {
 	QString text, _char;
+	int bLineAttr, bColAttr;
 	int j = 0;
 
-	if(!_node) return "";
+	if(!node) return "";
 
-	if(_node->tag->type == Tag::XmlTag)
+	if(node->tag->type == Tag::XmlTag)
 	{
-		text = "<" + QuantaCommon::tagCase(_node->tag->name);
-		bCol += _node->tag->name.length() + 1;
-		for(j = 0; j < _node->tag->attrCount(); j++)
+		text = "<" + QuantaCommon::tagCase(node->tag->name);
+		bCol += node->tag->name.length() + 1;
+		for(j = 0; j < node->tag->attrCount(); j++)
 		{
 			text += " ";
-			text += _node->tag->attribute(j);
+			bCol++;
+			bLineAttr = bLine;
+			bColAttr = bCol;
+			text += node->tag->attribute(j);
+			bCol += node->tag->attribute(j).length();
 
 			//doctype have only attrNames.
-			if(_node->tag->name.lower() != "!doctype")
+			if(node->tag->name.lower() != "!doctype")
 			{
 				text += "=";
-				if(_node->tag->isQuotedAttribute(j))
+				bCol++;
+				if(node->tag->isQuotedAttribute(j))
 				{
 					text += qConfig.attrValueQuotation;
 					bCol++;
 				}
-				text += _node->tag->attributeValue(j);
-				if(_node->tag->isQuotedAttribute(j))
+				node->tag->setAttributePosition(j, bLineAttr, bColAttr, bLine, bCol);
+				text += node->tag->attributeValue(j);
+				bCol += node->tag->attributeValue(j).length();
+				if(node->tag->isQuotedAttribute(j))
 				{
 					text += qConfig.attrValueQuotation;
 					bCol++;
 				}
 			}
-			bCol += _node->tag->attribute(j).length() + _node->tag->attributeValue(j).length() + 2;
+			else
+				node->tag->setAttributePosition(j, bLineAttr, bColAttr, -2, -2);
 		}
 
 		//only single Nodes except !doctype and ?xml nodes in XML tag style get the "/"
-		if ( _node->tag->dtd->singleTagStyle == "xml" &&
-			(_node->tag->single || (!qConfig.closeOptionalTags &&
-			QuantaCommon::isOptionalTag(_node->tag->dtd->name, _node->tag->name)))
-			 && _node->tag->name.lower() != "?xml" && _node->tag->name.lower() != "!doctype")
+		if ( node->tag->dtd->singleTagStyle == "xml" &&
+			(node->tag->single || (!qConfig.closeOptionalTags &&
+			QuantaCommon::isOptionalTag(node->tag->dtd->name, node->tag->name)))
+			 && node->tag->name.lower() != "?xml" && node->tag->name.lower() != "!doctype")
 		{
 			text += "/";
 			bCol++;
 		}
 		//?xml nodes get a "?"
-		if(_node->tag->name.lower() == "?xml")
+		if(node->tag->name.lower() == "?xml")
 		{
 			text += "?";
 			bCol++;
@@ -998,23 +1007,23 @@ QString KafkaDocument::generateCodeFromNode(Node *_node, int bLine, int bCol, in
 		eCol = bCol;
 		eLine = bLine;
 	}
-	else if(_node->tag->type == Tag::XmlTagEnd)
+	else if(node->tag->type == Tag::XmlTagEnd)
 	{
-		text = "<" + QuantaCommon::tagCase(_node->tag->name) + ">";
+		text = "<" + QuantaCommon::tagCase(node->tag->name) + ">";
 		bCol += text.length();
 		eCol = bCol - 1;
 		eLine = bLine;
 	}
-	else if(_node->tag->type == Tag::Text)
+	else if(node->tag->type == Tag::Text)
 	{
-		text = getEncodedText(_node->tag->tagStr(), bLine, bCol, eLine, eCol);
+		text = getEncodedText(node->tag->tagStr(), bLine, bCol, eLine, eCol);
 		/** Can't use KGlobal::charsets()->toEntity() :
 		 * It translate all chars into entities! */
 	}
-	else if(_node->tag->type == Tag::ScriptTag)
+	else if(node->tag->type == Tag::ScriptTag)
 	{
 		//WARNING : HTML SPECIFIC
-		if(_node->tag->name.contains("style"));
+		if(node->tag->name.contains("style"));
 		{
 			text = "<" + QuantaCommon::tagCase("style") + ">";
 			bCol += text.length();
@@ -1022,7 +1031,7 @@ QString KafkaDocument::generateCodeFromNode(Node *_node, int bLine, int bCol, in
 			eLine = bLine;
 		}
 	}
-	/**else if(_node->tag->type == Tag::Empty)
+	/**else if(node->tag->type == Tag::Empty)
 	{
 		text = " ";
 		eCol = bCol;
@@ -1031,7 +1040,7 @@ QString KafkaDocument::generateCodeFromNode(Node *_node, int bLine, int bCol, in
 	else
 	{
 		//default behavior : return node->tag->tagStr()
-		text = _node->tag->tagStr();
+		text = node->tag->tagStr();
 		kafkaCommon::getEndPosition(text, bLine, bCol, eLine, eCol);
 	}
 	return text;

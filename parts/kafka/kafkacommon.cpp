@@ -1589,7 +1589,7 @@ bool kafkaCommon::isInline(const QString &nodeNam)
 
 void kafkaCommon::getEndPosition(const QString &tagString, int bLine, int bCol, int &eLine, int &eCol)
 {
-	int result, oldResult;
+	/**int result, oldResult;
 
 	result = tagString.find("\n", 0);
 	if(result == -1)
@@ -1607,6 +1607,20 @@ void kafkaCommon::getEndPosition(const QString &tagString, int bLine, int bCol, 
 			result = tagString.find("\n", result + 1);
 		}
 		eCol = tagString.length() - oldResult - 2;
+	}*/
+	int i;
+
+	eLine = bLine;
+	eCol = bCol - 1;
+	for(i = 0; i < (signed)tagString.length(); i++)
+	{
+		if(tagString[i] == "\n")
+		{
+			eLine++;
+			eCol = -1;
+		}
+		else
+			eCol++;
 	}
 }
 

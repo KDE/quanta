@@ -211,7 +211,7 @@ public:
 	 * @param eCol Returns the end col of the return generated code.
 	 * @return Returns the code.
 	 */
-	QString generateCodeFromNode(Node *_node, int bLine, int bCol, int &eLine, int &eCol);
+	QString generateCodeFromNode(Node *node, int bLine, int bCol, int &eLine, int &eCol);
 
 
 	/* ----------------------------------- KAFKA<->QUANTA POSITION TRANSLATION -------------------------------*/

@@ -35,7 +35,7 @@
 #include "tagdialog.h"
 #include "../parser/parser.h"
 #include "../parser/node.h"
-#include "../parser/node.h"
+#include "../parser/tag.h"
 
 #include "../quantacommon.h"
 #include "../quanta.h"

@@ -91,6 +91,8 @@ public:
   bool isQuotedAttribute(int index) const {return attrs[index].quoted;}
   /** Check if this tag has the attr attribute defined */
   bool hasAttribute( const QString &attr );
+  /** set the coordinates of a tag attribute */
+  void setAttributePosition(int index, int bLineName, int bColName, int bLineValue, int bColValue);
   /** Set the coordinates of tag inside the document */
   void setTagPosition(int bLine, int bCol, int eLine, int eCol);
   /** Set the coordinates of tag inside the document, but using an AreaStruct as argument */
