@@ -147,6 +147,7 @@ void UploadTreeView::slotSelectFile( )
   checkboxTree( );
 }
 
+//TODO: This should search based on url's rather than on text(0)
 UploadTreeFolder* UploadTreeView::findFolder( UploadTreeFolder *it, const QString& folderName )
 {
 	QListViewItem *itIter = 0;
@@ -212,15 +213,16 @@ UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString
   QString item = a_url.path(); //TODO: do with real KURL's
 	QString fname = item;
 	int i;
+  int col = 0;
 	UploadTreeFolder *it = 0;
   KURL u;
-	while ( ( i = item.find('/') ) >= 0 )
+	while ( ( i = item.find('/', col) ) >= 0 )
 	{
-		UploadTreeFolder *itTemp = findFolder(it, item.left(i));
+		UploadTreeFolder *itTemp = findFolder(it, item.mid(col, i - col));
 		if ( itTemp == 0 )
 		{
       u = a_url;
-      QuantaCommon::setUrl(u,item.left(i));
+      QuantaCommon::setUrl(u,item.left(i)+"/");
 			if ( it == 0 )
 			{
 				it = new UploadTreeFolder(u, this, "");
@@ -233,10 +235,12 @@ UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString
 		{
 			it = itTemp;
 		}
-		item.remove(0,i+1);
+		//item.remove(0,i+1);
+    col = i + 1;
 	}
   UploadTreeFile *file = 0;
-  if ( !item.isEmpty() ) {
+  if ( col < item.length() )
+  {
     if (it == 0)
     {
     file = new UploadTreeFile(this, a_url, date, size);

@@ -283,6 +283,8 @@ void QuantaApp::initProject()
           project,  SLOT  (slotRescanPrjDir()));
   connect(pTab,     SIGNAL(showProjectOptions()),
           project,  SLOT  (slotOptions()));
+  connect(pTab,     SIGNAL(uploadProject()),
+          project,  SLOT  (slotUpload()));
 
   connect(project,  SIGNAL(selectMessageWidget()),
           this,     SLOT  (slotMessageWidgetEnable()));

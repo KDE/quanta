@@ -96,6 +96,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   projectMenu = new QPopupMenu(this);
 	projectMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
 	projectMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
+	projectMenu -> insertItem( i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
   
 
 
@@ -250,6 +251,7 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
 
     if ( col < path.length())
     {
+      path = url.fileName();
       QListViewItem *item = folder->firstChild();
       bool neednew = true;
       while( item && neednew)
@@ -422,6 +424,12 @@ void ProjectTreeView::slotRescan()
 void ProjectTreeView::slotOptions()
 {
   emit showProjectOptions();
+}
+
+/** No descriptions */
+void ProjectTreeView::slotUploadProject()
+{
+  emit uploadProject();
 }
 
 #include "projecttreeview.moc"

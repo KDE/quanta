@@ -283,7 +283,6 @@ bool QuantaDoc::saveAll(bool dont_ask)
 {
   bool flagsave = true;
 
-//FIXME: I don't like the switching through the pages... We must optimize this. (Andras)
   Document *currentDoc = static_cast<Document*>(quantaApp ->view->writeTab->currentPage());
 
   QDictIterator<Document> it( *m_docList );
@@ -292,12 +291,11 @@ bool QuantaDoc::saveAll(bool dont_ask)
   Document *w;
   for (int i = docTab->count() -1; i >=0; i--) 
   {
-    docTab->setCurrentPage(i);
-    w = dynamic_cast<Document*>(docTab->currentPage());
+    w = dynamic_cast<Document*>(docTab->page(i));
     if ( w->isModified() )
     {
       if (!w->url().path().isEmpty()) fileWatcher->removeFile(w->url().path());
-      quantaApp->view->writeTab->showPage( w );
+      docTab->showPage(w);
       if ( dont_ask && !w->isUntitled())
       {
       	w->save();

@@ -102,7 +102,7 @@ KURL::List Project::fileNameList(bool check)
 {
 	KURL::List list;
 
-  cout << dom.toString() << "\n";  
+  //cout << dom.toString() << "\n";  
 	QDomNodeList nl = dom.elementsByTagName("item");
 	
 	for ( unsigned int i=0; i < nl.count(); i++ )
@@ -729,7 +729,7 @@ void Project::slotRenameFinished( KIO::Job * job)
     {
       el = nl.item(i).toElement();
       tmpString = el.attribute("url");    
-      tmpString.replace(QRegExp(oldURL.url()),newURL.url());
+      tmpString = tmpString.replace(QRegExp(oldURL.path()),newURL.path());
       el.setAttribute("url",tmpString);
     }
     oldURL = KURL();
@@ -749,7 +749,7 @@ void Project::slotRename(const KURL& url)
   QString caption;
   if (folderRename)
   {
-    oldName = QFileInfo(url.path(-1)).fileName();
+    oldName = url.fileName(true);
     caption = i18n("Rename Directory");
   } else
   {

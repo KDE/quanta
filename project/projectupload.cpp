@@ -162,9 +162,9 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 	      	date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
 	      	date.replace( QRegExp(" "), "0" );
 
-              KURL u = p->baseURL;
-              QuantaCommon::setUrl(u, url);                //TODO
-				QListViewItem *it = list->addItem( url, size, date );
+        KURL u = p->baseURL;
+        QuantaCommon::setUrl(u, url);                //TODO
+				QListViewItem *it = list->addItem( u, size, date );
         if ( it != 0 )
         {
   				int uploadTime = el.attribute("upload_time","1").toInt();

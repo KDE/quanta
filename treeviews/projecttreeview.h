@@ -71,6 +71,7 @@ signals: // Signals
   void showProjectOptions();
   void uploadSingleURL( const KURL& );
   void loadToolbarFile( const KURL& );
+  void uploadProject();
 
 public:
   ProjectTreeFolder *projectDir;
@@ -86,6 +87,9 @@ protected:
   virtual void itemRenamed(const KURL& , const KURL& ) {};
 	virtual KURL currentURL();
 
+private slots: // Private slots
+  /** No descriptions */
+  void slotUploadProject();
 };
 
 #endif
