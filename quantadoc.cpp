@@ -465,7 +465,6 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
   connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)app->tTab, SLOT(slotDragInsert(QDropEvent *)));
   // TODO : find out what's wrong with this connect
 
- 	app-> config->setGroup("General Options");
   w->readConfig( app->config );
  	w->setUntitledUrl( fname );
   w->kate_view->installPopup((QPopupMenu *)app->factory()->container("popup_editor", app));
