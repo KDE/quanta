@@ -41,11 +41,12 @@ protected slots:
 	void uploadProgress ( KIO::Job *job, unsigned long percent );
 	void uploadMessage ( KIO::Job *, const QString & msg );
 		
-  void clearSelection();
-  void selectAll();
-  void selectModified();
+  	void clearSelection();
+  	void selectAll();
+  	void selectModified();
 	
 	virtual void resizeEvent( QResizeEvent * );
+	virtual void reject();
   	
 private:	
   QStringList files;    // list of all files
@@ -56,8 +57,18 @@ private:
   Project *p;
   KURL *baseUrl;
   bool stopUpload;
+  /**  */
+  bool uploadInProgress;
+  /**  */
+  bool suspendUpload;
 
   void initProjectInfo(Project *p);
+private slots: // Private slots
+  /** No descriptions */
+  void slotUploadNext();
+signals: // Signals
+  /** No descriptions */
+  void uploadNext();
 };
 
 #endif

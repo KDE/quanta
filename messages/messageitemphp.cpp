@@ -101,7 +101,7 @@ void MessageItemPHP::parseData(QString text)
 QString MessageItemPHP::getLine( QString &s) 
 {
   
-  uint pos = s.find("\n");
+  int pos = s.find("\n");
   QString res;
   if ( pos == -1 ) {
     res = s;
@@ -112,7 +112,7 @@ QString MessageItemPHP::getLine( QString &s)
     s.remove(0,pos+1);
   }
   
-  uint pos2 = res.find( ")" );
+  int pos2 = res.find( ")" );
   if ( pos2 != -1 )
     res.remove(0, pos2+2 );
   

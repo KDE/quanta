@@ -186,7 +186,7 @@ typedef struct tag_dbg_source_body {			/*FRAME_SOURCE*/
 
 typedef struct tag_dbg_src_tree_body {			/* FRAME_SRC_TREE */
 	dbgint parent_mod_no;
-//	dbgint parent_line_no;
+/*	dbgint parent_line_no;*/
 	dbgint mod_no;
 	dbgint imod_name;
 } dbg_src_tree_body;

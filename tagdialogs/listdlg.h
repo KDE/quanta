@@ -1,9 +1,9 @@
 /***************************************************************************
-                          tagquicktable.h  -  description
+                          listdlg.h  -  description
                              -------------------
-    begin                : Sun Nov 28 1999
-    copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+    begin                : Mon Nov 26 2001
+    copyright            : (C) 2001 by Andras Mantia
+    email                : amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,30 +15,33 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef TAGQUICKTABLE_H
-#define TAGQUICKTABLE_H
+#ifndef LISTDLG_H
+#define LISTDLG_H
 
-#include <qwidget.h>
-#include <qspinbox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qdialog.h>
+#include <kdialogbase.h>
 
-#include "quicktable.h"
+class QPushButton;
+class QString;
+class QStringList;
+class KListBox;
 
-/**
-  *@author Dmitry Poplavsky & Yacovlev Alexander
+/**Select an item from a list. The list is given in
+the constructor as a parameter. After calling
+the exec() method, you can check the
+selected item with the getEntry() method.
+  *@author Andras Mantia
   */
 
-class TagQuickTable : public Quick_Table{
-   Q_OBJECT
-public: 
-	TagQuickTable(QWidget *parent=0, const char *name=0);
-	~TagQuickTable();
-
+class ListDlg : public KDialogBase  {
+Q_OBJECT
 public:
-
-private: 
+	ListDlg(QStringList &entryList,QWidget* parent=0, const char *name =0);
+	~ListDlg();
+	QString getEntry();
+	int getEntryNum();
+private: // Private attributes
+  /**  */
+  KListBox * listbox;
 };
 
 #endif

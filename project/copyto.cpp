@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "copyto.h"
-#include "copyto.moc"
+
 // qt includes
 #include <qdir.h>
 #include <qlineedit.h>
@@ -31,10 +31,11 @@ CopyTo::CopyTo(QString dir, QWidget *parent, const char *name)
     : CopyToS(parent,name,true)
 {
 	setCaption(name);
-
+	
 	lineDir->setText( dir.data() );
+	lineDir->setFocus();
 	buttonDir->setPixmap( UserIcon("open") );
-
+	
 	connect( buttonOk,    SIGNAL(clicked()), SLOT(accept()) );
 	connect( buttonCancel,SIGNAL(clicked()), SLOT(reject()) );
 	connect( buttonDir,   SIGNAL(clicked()), SLOT(slotDirChange()));
@@ -66,11 +67,13 @@ QString CopyTo::copy( QString rname )
   while ( ( i=sname.find('/')) >= 0 ) sname.remove(0,i+1);
 
   fname = path + sname;
-  if ( rname != fname )
+  if ( rname != fname ) 
   {
     KIO::CopyJob *job = KIO::copy( KURL( rname ), KURL( fname ), true );
-    connect( job, SIGNAL(copyingDone( KIO::Job *,const KURL&,const KURL&,bool,bool)),
-                  SLOT  (endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool)));
+//    connect( job, SIGNAL(copyingDone( KIO::Job *,const KURL&,const KURL&,bool,bool)),
+//                  SLOT  (endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool)));
+    connect( job, SIGNAL(result( KIO::Job *)),
+                 SLOT  (slotResult( KIO::Job *)));
   }
 
   return fname;
@@ -78,7 +81,12 @@ QString CopyTo::copy( QString rname )
 
 void CopyTo::endCopy( KIO::Job *,const KURL&,const KURL&, bool, bool)
 {
-  emit addFilesToProject(fname);
+  emit addFilesToProject(fname,this);
+}
+
+void CopyTo::slotResult( KIO::Job *)
+{
+  emit addFilesToProject(fname,this);
 }
 
 QStringList CopyTo::copy( QStringList rfiles )
@@ -100,7 +108,7 @@ QStringList CopyTo::copy( QStringList rfiles )
 		(*it) = path + (*it);
 	}
 
-  if ( rfiles != sfiles )
+  if ( rfiles != sfiles ) 
   {
     KIO::copy( KURL::List( rfiles ), KURL( path ), true );
   }

@@ -1,9 +1,9 @@
 /***************************************************************************
-                          tagquicktable.h  -  description
+                          tagmiscdlg.h  -  description
                              -------------------
-    begin                : Sun Nov 28 1999
-    copyright            : (C) 1999 by Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+    begin                : Thu Dec 13 2001
+    copyright            : (C) 2001 by Andras Mantia
+    email                : amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,30 +15,23 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef TAGQUICKTABLE_H
-#define TAGQUICKTABLE_H
+#ifndef TAGMISCDLG_H
+#define TAGMISCDLG_H
 
-#include <qwidget.h>
-#include <qspinbox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qdialog.h>
-
-#include "quicktable.h"
+#include "tagmisc.h"
 
 /**
-  *@author Dmitry Poplavsky & Yacovlev Alexander
+  *@author Andras Mantia
   */
 
-class TagQuickTable : public Quick_Table{
-   Q_OBJECT
-public: 
-	TagQuickTable(QWidget *parent=0, const char *name=0);
-	~TagQuickTable();
-
+class TagMiscDlg : public TagMisc  {
+Q_OBJECT
 public:
-
-private: 
+	TagMiscDlg(QString element, bool closeTag, QWidget *parent=0, const char *name=0);
+	~TagMiscDlg();
+private slots: // Private slots
+   /** No descriptions */
+  void slotShowHelp();
 };
 
 #endif

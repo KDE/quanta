@@ -11,9 +11,30 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>418</width>
-            <height>370</height>
+            <width>500</width>
+            <height>410</height>
         </rect>
+    </property>
+    <property stdset="1">
+        <name>sizePolicy</name>
+        <sizepolicy>
+            <hsizetype>0</hsizetype>
+            <vsizetype>0</vsizetype>
+        </sizepolicy>
+    </property>
+    <property stdset="1">
+        <name>minimumSize</name>
+        <size>
+            <width>500</width>
+            <height>410</height>
+        </size>
+    </property>
+    <property stdset="1">
+        <name>maximumSize</name>
+        <size>
+            <width>500</width>
+            <height>410</height>
+        </size>
     </property>
     <property stdset="1">
         <name>caption</name>
@@ -25,211 +46,249 @@
     <property>
         <name>layoutSpacing</name>
     </property>
-    <grid>
+    <widget>
+        <class>QLabel</class>
         <property stdset="1">
-            <name>margin</name>
-            <number>0</number>
+            <name>name</name>
+            <cstring>imagelabel</cstring>
         </property>
         <property stdset="1">
-            <name>spacing</name>
-            <number>0</number>
+            <name>geometry</name>
+            <rect>
+                <x>5</x>
+                <y>5</y>
+                <width>120</width>
+                <height>400</height>
+            </rect>
         </property>
-        <widget row="0"  column="0" >
-            <class>QLayoutWidget</class>
+        <property stdset="1">
+            <name>sizePolicy</name>
+            <sizepolicy>
+                <hsizetype>0</hsizetype>
+                <vsizetype>7</vsizetype>
+            </sizepolicy>
+        </property>
+        <property stdset="1">
+            <name>minimumSize</name>
+            <size>
+                <width>120</width>
+                <height>0</height>
+            </size>
+        </property>
+        <property stdset="1">
+            <name>maximumSize</name>
+            <size>
+                <width>120</width>
+                <height>32767</height>
+            </size>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string></string>
+        </property>
+        <property stdset="1">
+            <name>scaledContents</name>
+            <bool>true</bool>
+        </property>
+        <property stdset="1">
+            <name>alignment</name>
+            <set>AlignTop|AlignLeft</set>
+        </property>
+        <property>
+            <name>vAlign</name>
+        </property>
+    </widget>
+    <widget>
+        <class>QLayoutWidget</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>Layout17</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>130</x>
+                <y>5</y>
+                <width>365</width>
+                <height>148</height>
+            </rect>
+        </property>
+        <grid>
             <property stdset="1">
-                <name>name</name>
-                <cstring>Layout8</cstring>
+                <name>margin</name>
+                <number>0</number>
             </property>
-            <hbox>
+            <property stdset="1">
+                <name>spacing</name>
+                <number>6</number>
+            </property>
+            <widget row="0"  column="0" >
+                <class>QCheckBox</class>
                 <property stdset="1">
-                    <name>margin</name>
-                    <number>0</number>
+                    <name>name</name>
+                    <cstring>checkInsert</cstring>
                 </property>
                 <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
+                    <name>text</name>
+                    <string>Insert files from</string>
                 </property>
-                <widget>
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>imagelabel</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string></string>
-                    </property>
-                    <property stdset="1">
-                        <name>alignment</name>
-                        <set>AlignTop|AlignLeft</set>
-                    </property>
-                    <property stdset="1">
-                        <name>minimumSize</name>
-                        <size>
-                            <width>120</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                    <property stdset="1">
-                        <name>maximumSize</name>
-                        <size>
-                            <width>120</width>
-                            <height>32767</height>
-                        </size>
-                    </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
-                        <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>7</vsizetype>
-                        </sizepolicy>
-                    </property>
-                    <property>
-                        <name>vAlign</name>
-                    </property>
-                </widget>
-                <widget>
-                    <class>QLayoutWidget</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Layout7</cstring>
-                    </property>
-                    <vbox>
-                        <property stdset="1">
-                            <name>margin</name>
-                            <number>0</number>
-                        </property>
-                        <property stdset="1">
-                            <name>spacing</name>
-                            <number>6</number>
-                        </property>
-                        <widget>
-                            <class>QCheckBox</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>checkInsert</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Insert files from</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QCheckBox</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>checkInsertWeb</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Insert only web files and images</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLineEdit</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>webmask</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>false</bool>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QCheckBox</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>checkInsertWithMask</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Insert files with the specific file mask</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QLineEdit</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>mask</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>enabled</name>
-                                <bool>false</bool>
-                            </property>
-                        </widget>
-                        <spacer>
-                            <property>
-                                <name>name</name>
-                                <cstring>Spacer2</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>orientation</name>
-                                <enum>Vertical</enum>
-                            </property>
-                            <property stdset="1">
-                                <name>sizeType</name>
-                                <enum>Fixed</enum>
-                            </property>
-                            <property>
-                                <name>sizeHint</name>
-                                <size>
-                                    <width>20</width>
-                                    <height>30</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget>
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel8</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Included files:</string>
-                            </property>
-                        </widget>
-                        <widget>
-                            <class>QListView</class>
-                            <column>
-                                <property>
-                                    <name>text</name>
-                                    <string>File name</string>
-                                </property>
-                                <property>
-                                    <name>clickable</name>
-                                    <bool>true</bool>
-                                </property>
-                                <property>
-                                    <name>resizeable</name>
-                                    <bool>true</bool>
-                                </property>
-                            </column>
-                            <column>
-                                <property>
-                                    <name>text</name>
-                                    <string>Size</string>
-                                </property>
-                                <property>
-                                    <name>clickable</name>
-                                    <bool>true</bool>
-                                </property>
-                                <property>
-                                    <name>resizeable</name>
-                                    <bool>true</bool>
-                                </property>
-                            </column>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>listFiles</cstring>
-                            </property>
-                        </widget>
-                    </vbox>
-                </widget>
-            </hbox>
-        </widget>
-    </grid>
+            </widget>
+            <widget row="4"  column="0" >
+                <class>QLineEdit</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>mask</cstring>
+                </property>
+                <property stdset="1">
+                    <name>enabled</name>
+                    <bool>false</bool>
+                </property>
+            </widget>
+            <widget row="3"  column="0" >
+                <class>QCheckBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>checkInsertWithMask</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Insert files with the specific file mask</string>
+                </property>
+            </widget>
+            <widget row="1"  column="0" >
+                <class>QCheckBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>checkInsertWeb</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Insert only web files and images</string>
+                </property>
+            </widget>
+            <widget row="2"  column="0" >
+                <class>QLineEdit</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>webmask</cstring>
+                </property>
+                <property stdset="1">
+                    <name>enabled</name>
+                    <bool>false</bool>
+                </property>
+            </widget>
+        </grid>
+    </widget>
+    <widget>
+        <class>QLabel</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>TextLabel8</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>135</x>
+                <y>160</y>
+                <width>282</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>Included files:</string>
+        </property>
+    </widget>
+    <widget>
+        <class>QPushButton</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>addFolder</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>270</x>
+                <y>380</y>
+                <width>95</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>A&amp;dd folder</string>
+        </property>
+    </widget>
+    <widget>
+        <class>QPushButton</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>addFiles</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>150</x>
+                <y>380</y>
+                <width>95</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>&amp;Add files</string>
+        </property>
+    </widget>
+    <widget>
+        <class>QPushButton</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>clearList</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>390</x>
+                <y>380</y>
+                <width>95</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>&amp;Clear list</string>
+        </property>
+    </widget>
+    <widget>
+        <class>QListView</class>
+        <column>
+            <property>
+                <name>text</name>
+                <string>Name</string>
+            </property>
+            <property>
+                <name>clickable</name>
+                <bool>true</bool>
+            </property>
+            <property>
+                <name>resizeable</name>
+                <bool>true</bool>
+            </property>
+        </column>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>listFiles</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>130</x>
+                <y>180</y>
+                <width>365</width>
+                <height>195</height>
+            </rect>
+        </property>
+    </widget>
 </widget>
 <connections>
     <connection>

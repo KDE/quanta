@@ -1,77 +1,13 @@
-#1########################################################!@#$
-####   Makefile.am generated automatically by KDEStudio   ####
-#### WARNING! All changes made in this part will be lost! ####
-##############################################################
-
+####### kdevelop will overwrite this part!!! (begin)##########
 noinst_LIBRARIES = libtagdialogs.a
 
-
-
 INCLUDES = $(all_includes)
-CXXFLAGS = -Wall 
-DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+
 libtagdialogs_a_METASOURCES = AUTO
-libtagdialogs_a_SOURCES = \
-		colorcombo.cpp\
-		corewidgetdlg.cpp\
-		corewidgetdlgs.cpp\
-		cssdialog.cpp\
-		cssdialogi.cpp\
-		eventswidgetdlg.cpp\
-		eventswidgetdlgs.cpp\
-		filecombo.cpp\
-		pictureview.cpp\
-		tagattr.cpp\
-		tagdialog.cpp\
-		tagimgdlg.cpp\
-		tagimgdlgdata.cpp\
-		tagquicklistdlg.cpp\
-		tagquicklistdlgdata.cpp\
-		tagquickstart.cpp\
-		tagquicktable.cpp\
-		tagquicktabledata.cpp\
-		tagwidget.cpp\
-		tagxml.cpp\
-		tagquickstarts.ui
-EXTRA_DIST = \
-		colorcombo.cpp\
-		colorcombo.h\
-		corewidgetdlg.cpp\
-		corewidgetdlg.h\
-		corewidgetdlgs.cpp\
-		corewidgetdlgs.h\
-		cssdialog.cpp\
-		cssdialog.h\
-		cssdialogi.cpp\
-		cssdialogi.h\
-		eventswidgetdlg.cpp\
-		eventswidgetdlg.h\
-		eventswidgetdlgs.cpp\
-		eventswidgetdlgs.h\
-		filecombo.cpp\
-		filecombo.h\
-		pictureview.cpp\
-		pictureview.h\
-		tagattr.cpp\
-		tagattr.h\
-		tagdialog.cpp\
-		tagdialog.h\
-		tagimgdlg.cpp\
-		tagimgdlg.h\
-		tagimgdlgdata.cpp\
-		tagquicklistdlg.cpp\
-		tagquicklistdlg.h\
-		tagquicklistdlgdata.cpp\
-		tagquickstart.cpp\
-		tagquickstart.h\
-		tagquicktable.cpp\
-		tagquicktable.h\
-		tagquicktabledata.cpp\
-		tagwidget.cpp\
-		tagwidget.h\
-		tagxml.cpp\
-		tagxml.h\
-		tagquickstarts.ui
-##############################################################
-####                  END KDEStudio part                  ####
-#2########################################################!@#$
+
+libtagdialogs_a_SOURCES = quicktable.ui tagmiscdlg.cpp tagmisc.ui listdlg.cpp tagmail.ui tagmaildlg.cpp eventswidgetdlg.cpp filecombo.cpp tagquicklistdlg.cpp eventswidgetdlgs.cpp tagquicktable.cpp tagquickstarts.ui tagquickstart.cpp cssdialog.cpp tagquicklistdlgdata.cpp tagdialog.cpp tagattr.cpp tagquickstarts.cpp pictureview.cpp tagimgdlg.cpp tagxml.cpp cssdialogi.cpp corewidgetdlg.cpp tagwidget.cpp colorcombo.cpp tagquicktabledata.cpp tagimgdlgdata.cpp corewidgetdlgs.cpp 
+
+
+EXTRA_DIST = corewidgetdlgs.cpp tagimgdlgdata.cpp tagquicktable.h tagquicktabledata.cpp colorcombo.cpp tagwidget.cpp tagquickstart.h corewidgetdlg.cpp cssdialogi.cpp tagxml.cpp tagimgdlg.cpp pictureview.cpp tagquickstarts.cpp eventswidgetdlg.h cssdialogi.h tagdialog.h tagquicklistdlg.h tagattr.cpp cssdialog.h tagdialog.cpp eventswidgetdlgs.h tagquicklistdlgdata.cpp cssdialog.cpp tagquickstart.cpp tagquickstarts.ui corewidgetdlg.h tagattr.h tagxml.h tagquicktable.cpp eventswidgetdlgs.cpp pictureview.h tagquicklistdlg.cpp colorcombo.h tagwidget.h filecombo.cpp corewidgetdlgs.h filecombo.h tagimgdlg.h tagquickstarts.h eventswidgetdlg.cpp tagmaildlg.cpp tagmaildlg.h tagmail.ui listdlg.cpp listdlg.h tagmisc.ui tagmiscdlg.cpp tagmiscdlg.h quicktable.ui 
+
+####### kdevelop will overwrite this part!!! (end)############

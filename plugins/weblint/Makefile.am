@@ -1,13 +1,10 @@
-#1########################################################!@#$
-####   Makefile.am generated automatically by KDEStudio   ####
-#### WARNING! All changes made in this part will be lost! ####
-##############################################################
+####### kdevelop will overwrite this part!!! (begin)##########
+
+
+EXTRA_DIST = weblint 
+
+####### kdevelop will overwrite this part!!! (end)############
 
 datadir = ${kde_libraries}/quanta/plugins
 
 data_DATA = weblint 
-EXTRA_DIST = \
-		weblint
-##############################################################
-####                  END KDEStudio part                  ####
-#2########################################################!@#$

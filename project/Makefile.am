@@ -1,56 +1,13 @@
-#1########################################################!@#$
-####   Makefile.am generated automatically by KDEStudio   ####
-#### WARNING! All changes made in this part will be lost! ####
-##############################################################
-
+####### kdevelop will overwrite this part!!! (begin)##########
 noinst_LIBRARIES = libproject.a
 
-
-
 INCLUDES = $(all_includes)
-CXXFLAGS = -Wall 
-DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+
 libproject_a_METASOURCES = AUTO
-libproject_a_SOURCES = \
-		copyto.cpp\
-		project.cpp\
-		projectnewgeneral.cpp\
-		projectnewlocal.cpp\
-		projectupload.cpp\
-		projectnewweb.cpp\
-		projectnewwebs.ui\
-		copytos.ui\
-		projectnewgenerals.ui\
-		projectnewlocals.ui\
-		projectnewfinals.ui\
-		rescanprjdir.ui\
-		rescanprj.cpp\
-		projectuploads.ui\
-		projectnewfinal.cpp
-EXTRA_DIST = \
-		copyto.cpp\
-		copyto.h\
-		project.cpp\
-		project.h\
-		projectnewgeneral.cpp\
-		projectnewgeneral.h\
-		projectnewlocal.cpp\
-		projectnewlocal.h\
-		projectupload.cpp\
-		projectupload.h\
-		projectnewweb.cpp\
-		projectnewweb.h\
-		projectnewwebs.ui\
-		copytos.ui\
-		projectnewgenerals.ui\
-		projectnewlocals.ui\
-		projectnewfinals.ui\
-		rescanprjdir.ui\
-		rescanprj.cpp\
-		rescanprj.h\
-		projectuploads.ui\
-		projectnewfinal.cpp\
-		projectnewfinal.h
-##############################################################
-####                  END KDEStudio part                  ####
-#2########################################################!@#$
+
+libproject_a_SOURCES = renamedialog.ui renameitem.cpp projectnewgenerals.ui projectnewgeneral.cpp projectnewfinals.cpp projectuploads.cpp projectnewlocals.ui projectnewwebs.cpp projectnewlocal.cpp rescanprj.cpp copytos.ui copyto.cpp rescanprjdir.ui projectnewfinals.ui projectuploads.ui projectnewfinal.cpp projectupload.cpp project.cpp projectnewlocals.cpp projectnewgenerals.cpp projectnewwebs.ui projectnewweb.cpp rescanprjdir.cpp copytos.cpp 
+
+
+EXTRA_DIST = copytos.cpp rescanprjdir.cpp projectnewweb.cpp projectnewwebs.ui projectnewweb.h projectnewgenerals.cpp projectnewlocals.cpp rescanprj.h projectnewfinals.h project.cpp projectnewwebs.h projectuploads.h projectupload.cpp projectnewfinal.cpp projectuploads.ui projectnewfinals.ui rescanprjdir.h projectnewgenerals.h projectnewlocals.h copyto.h rescanprjdir.ui projectnewgeneral.h projectnewlocal.h copyto.cpp copytos.ui projectnewfinal.h rescanprj.cpp projectnewlocal.cpp projectnewwebs.cpp projectnewlocals.ui copytos.h project.h projectuploads.cpp projectnewfinals.cpp projectnewgeneral.cpp projectnewgenerals.ui projectupload.h renameitem.cpp renameitem.h renamedialog.ui 
+
+####### kdevelop will overwrite this part!!! (end)############

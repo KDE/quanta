@@ -3,6 +3,7 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    								  (C) 2001 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -26,22 +27,33 @@
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
 
+class ProjectTreeFolder;
+class CopyTo;
+
 class ProjectNewLocal : public ProjectNewLocalS  {
    Q_OBJECT
 public: 
 	ProjectNewLocal(QWidget *parent=0, const char *name=0);
 	~ProjectNewLocal();
 	
-	QStringList files(bool relative=false);
+	QStringList files();
+	QStringList projectFiles(bool relative=false);
 	
 public slots:
-	void setFiles(bool);
+  void setFiles(bool);
   void setDestDir(QWidget*,bool);
-  
+  void slotReloadTree( QStringList, bool newtree);
+  void slotAddFolder();
+  void slotAddFiles();
+  void slotClearList();
+  void insertFilesAfterCopying(QString,CopyTo*);
+
   virtual void resizeEvent( QResizeEvent * );
 
 private:
 	QString dir;
+	QStringList fileList;
+    ProjectTreeFolder *projectDirTree;
 };
 
 #endif

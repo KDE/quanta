@@ -10,30 +10,31 @@
 #include <kapp.h>
 #include <klocale.h>
 #include "tagquicktable.h"
+/*
 
 void  TagQuickTable::initDialog()
 {
 	this->resize(230,120);
   this->setMinimumSize(0,0);
   spinBoxRows= new QSpinBox(this,"NoName");
-  spinBoxRows->setGeometry(120,10,100,25);
+  spinBoxRows->setGeometry(160,10,60,25);
   spinBoxRows->setMinimumSize(0,0);
   spinBoxRows->setRange(1,99);
 
   spinBoxCollums= new QSpinBox(this,"NoName");
-  spinBoxCollums->setGeometry(120,40,100,25);
+  spinBoxCollums->setGeometry(160,40,60,25);
   spinBoxCollums->setMinimumSize(0,0);
   spinBoxCollums->setRange(0,99);
 
   QLabel_1= new QLabel(this,"NoName");
-  QLabel_1->setGeometry(10,10,100,30);
+  QLabel_1->setGeometry(10,10,140,30);
   QLabel_1->setMinimumSize(0,0);
-  QLabel_1->setText(i18n("Num of Rows"));
+  QLabel_1->setText(i18n("Number of rows"));
 
   QLabel_2= new QLabel(this,"NoName");
-  QLabel_2->setGeometry(10,40,100,30);
+  QLabel_2->setGeometry(10,40,140,30);
   QLabel_2->setMinimumSize(0,0);
-  QLabel_2->setText(i18n("Num of Columns"));
+  QLabel_2->setText(i18n("Number of columns"));
 
   buttonOk= new QPushButton(this,"NoName");
   buttonOk->setGeometry(10,80,100,30);
@@ -47,3 +48,4 @@ void  TagQuickTable::initDialog()
   buttonCancel->setText(i18n("Cancel"));
 
 }
+    */

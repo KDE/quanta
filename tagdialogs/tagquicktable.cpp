@@ -15,15 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 #include "tagquicktable.h"
-#include "tagquicktable.moc"
+
 TagQuickTable::TagQuickTable(QWidget *parent, const char *name)
-    : QDialog(parent,name,true)
+    : Quick_Table(parent,name,true)
 {
 	setCaption(name);
-
-	initDialog();
-
-	connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
+    connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
 	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
 }
 

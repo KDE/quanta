@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 #include "cssdialogi.h"
-#include "cssdialogi.moc"
 #include <klineedit.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
@@ -25,9 +24,9 @@
 #include "colorcombo.h"
 
 
-/*
- *  Constructs a CSSDialogI which is a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'
+/* 
+ *  Constructs a CSSDialogI which is a child of 'parent', with the 
+ *  name 'name' and widget flags set to 'f' 
  *
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  TRUE to construct a modal dialog.
@@ -37,7 +36,7 @@ CSSDialogI::CSSDialogI( QString basePath, QWidget* parent,  const char* name, bo
 {
 }
 
-/*
+/*  
  *  Destroys the object and frees any allocated resources
  */
 CSSDialogI::~CSSDialogI()
@@ -64,7 +63,7 @@ QString CSSDialogI::data()
   	ADD_CSS_VAR( f_style )
   	ADD_CSS_VAR( f_variant )
   	ADD_CSS_VAR( f_weight )
-
+  		
   	text += QString(" ") + f_size + " " + f_family+";\n";
   }
   else {
@@ -217,8 +216,8 @@ QString CSSDialogI::data()
   	text += ";\n";
   }
 
-	return ( selector->text() + "\n{\n" + text + "}\n"  );
-
+	return ( selector->text() + " {\n" + text + "}\n"  );
+	
 }
 
 #undef ADD_CSS_STR

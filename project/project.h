@@ -3,6 +3,7 @@
                              -------------------
     begin                : Thu Mar 16 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
+    								  (C) 2001 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -41,6 +42,9 @@ class ProjectNewLocal;
 class ProjectNewFinal;
 class ProjectNewGeneral;
 
+class CopyTo;
+class RenameItem;
+
 class Project : public QWidget  {
    Q_OBJECT
 public: 
@@ -59,6 +63,10 @@ public:
 
   void  readConfig(KConfig *);
   void writeConfig(KConfig *);
+  /** No descriptions */
+  bool isModified() {return modified;}
+  /** Returns the relative url with the prefix inserted. */
+  QString urlWithPrefix(const KURL& url);
   
 public slots:
 
@@ -75,9 +83,13 @@ public slots:
   void addFiles();
   void addDirectory();
   void addDirectory(QString rdir);
+  void addDirectory(QString rdir, bool showDlg);
   void insertFile(QString name);
-  void insertFilesAfterCopying(QString);
+  void insertFilesAfterCopying(QString,CopyTo*);
+  void renameFinished(RenameItem*);
 
+	void slotRenameFile(QString);
+	void slotRenameFolder(QString);
 	void slotRemoveFile(QString);
 	void slotRemoveFolder(QString);
 
@@ -116,6 +128,10 @@ signals:
   void newStatus();
   void statusMsg(QString);
   void checkOpenAction(bool);
+  /** No descriptions */
+  void removeFromProject(int);
+  /** No descriptions */
+  void newProjectLoaded();
 
 public:
   QDomDocument dom;
@@ -127,11 +143,17 @@ public:
   QString remoteDir;
 
   QString previewPrefix;
+  bool usePreviewPrefix;
 
   QString email;
   QString author;
   
   KRecentFilesAction *projectRecent;
+
+    /** Holds the upload password. It is not saved, and it is lost after the project is closed. */
+  QString passwd;
+  /**  */
+  bool keepPasswd;
 
 private:
 	QWizard *wiz;

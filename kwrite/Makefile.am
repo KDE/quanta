@@ -1,15 +1,16 @@
-#1########################################################!@#$
-####   Makefile.am generated automatically by KDEStudio   ####
-#### WARNING! All changes made in this part will be lost! ####
-##############################################################
+####### kdevelop will overwrite this part!!! (begin)##########
+
 SUBDIRS = highlight 
+
+EXTRA_DIST = kwbuffer.h kwdialog.cpp kwrite_factory.h undohistory.cpp kwdoc.cpp kwdoc.h kwview.cpp ktextprint.cpp kwriteIface_skel.cpp kwdialog.h kwbuffer.cpp kwview.h kvmallocator.h ktextprint.h kwtextline.h kwattribute.cpp kwattribute.h kwrite_factory.cpp kwriteIface.h kwtextline.cpp undohistory.h kvmallocator.cpp 
+
+####### kdevelop will overwrite this part!!! (end)############
 noinst_LIBRARIES = libkwrite.a
 
 
 
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/kwrite/highlight
-CXXFLAGS = -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libkwrite_a_METASOURCES = AUTO
 libkwrite_a_SOURCES = \
@@ -24,30 +25,3 @@ libkwrite_a_SOURCES = \
 		kwtextline.cpp\
 		kwview.cpp\
 		undohistory.cpp
-EXTRA_DIST = \
-		kwriteIface.h\
-		kwriteIface.kidl\
-		kwriteIface_skel.cpp\
-		ktextprint.cpp\
-		ktextprint.h\
-		kvmallocator.cpp\
-		kvmallocator.h\
-		kwattribute.cpp\
-		kwattribute.h\
-		kwbuffer.cpp\
-		kwbuffer.h\
-		kwdialog.cpp\
-		kwdialog.h\
-		kwdoc.cpp\
-		kwdoc.h\
-		kwrite_factory.cpp\
-		kwrite_factory.h\
-		kwtextline.cpp\
-		kwtextline.h\
-		kwview.cpp\
-		kwview.h\
-		undohistory.cpp\
-		undohistory.h
-##############################################################
-####                  END KDEStudio part                  ####
-#2########################################################!@#$

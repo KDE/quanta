@@ -34,6 +34,8 @@
 
 #include <kvmallocator.h>
 
+#include <kdebug.h>
+
 #include <assert.h>
 
 #define LOADED_BLOCKS_MAX	10
@@ -483,8 +485,9 @@ KWBufBlock::blockFill(int dataStart, QByteArray data1, QByteArray data2, bool la
 
    m_rawData2End = l - m_rawData2.data();
    m_endState.lineNr = lineNr;
-qWarning("blockFill(%x) beginState = %d endState = %d", this, 
-   m_beginState.lineNr, m_endState.lineNr);
+//qWarning("blockFill(%x) beginState = %d endState = %d", this,   m_beginState.lineNr, m_endState.lineNr);
+   kdWarning() << "blockFill (" << this << ") beginState = "<< m_beginState.lineNr << " endState = " <<  m_endState.lineNr <<"\n";
+
    m_rawSize = m_rawData1.count() - m_rawData1Start + m_rawData2End;
    b_rawDataValid = true;
    return m_rawData2End;
@@ -684,7 +687,9 @@ qWarning("KWBufBlock: buildStringListFast this = %p", this);
       buf += sizeof(QChar)*l;
       m_stringList.append(textLine);
    }
-qWarning("stringList.count = %d should be %d", m_stringList.count(), m_endState.lineNr - m_beginState.lineNr);
+//qWarning("stringList.count = %d should be %d", m_stringList.count(), m_endState.lineNr - m_beginState.lineNr);
+	kdWarning() << "stringList.count = " <<  m_stringList.count() <<" should be " << m_endState.lineNr - m_beginState.lineNr << "\n";
+	
    assert((int) m_stringList.count() == (m_endState.lineNr - m_beginState.lineNr));
    m_stringListIt = m_stringList.begin();
    m_stringListCurrent = 0;

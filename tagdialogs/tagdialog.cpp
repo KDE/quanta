@@ -22,12 +22,12 @@
 // include kde headers
 #include <kapp.h>
 #include <klocale.h>
-#include <kstandarddirs.h>
+#include <kstddirs.h>
 
 #include "../document.h"
 
 #include "tagdialog.h"
-#include "tagdialog.moc"
+
 #include "corewidgetdlg.h"
 #include "eventswidgetdlg.h"
 
@@ -111,12 +111,12 @@ void TagDialog::parseTag()
   	QString tagDir = *it;
   	QDir dir(tagDir, "*.tag");
   	QStringList files = dir.entryList();
-
+  	
   	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f ) {
-
+  	
   	   if ( *it_f != t+".tag" )
   	   	 continue;
-
+  	
   		 QString fname = tagDir + *it_f ;
   		 QFile f( fname );
 
@@ -130,7 +130,7 @@ void TagDialog::parseTag()
   		 findXMLConfig = true;
   		 break;
   	}
-
+  	
   	if ( findXMLConfig )
   		break;
   }
@@ -265,13 +265,16 @@ QString TagDialog::basePath()
 {
 	if ( !write->isUntitled() )
 	{
-		QString name = write->url().url();
+		QString name = write->url().prettyURL();
 		if ( name.left(5) == "file:" ) name.remove(0,5);
 		QFileInfo fileInfo( name );
 		return fileInfo.dirPath()+"/";
+	} else
+	{
+    	return  write->basePath;
 	}
-
-	return QDir::currentDirPath()+"/";
+		
+	//return QDir::currentDirPath()+"/";
 }
 
 void TagDialog::parseAttributes( QString attrs )
@@ -281,18 +284,18 @@ void TagDialog::parseAttributes( QString attrs )
   t = t.stripWhiteSpace();
 
   while ( !t.isEmpty() ) {
-
+  	
   	int i = 0;
   	while ( !t[i].isSpace() && !t[i].isNull() && t[i] != '=' )	i++;
-
+  	
   	QString attr = t.left(i);
   	QString *value = new QString();
-
+  	
   	t = t.remove(0,i).stripWhiteSpace();
-
+  	
   	if ( t[0] == '=' ) {
   		t = t.remove(0,1).stripWhiteSpace();
-
+  		
   		if ( t[0] == '"' ) {
   			i = 1;
   			while ( t[i] != '"' && !t[i].isNull() ) i++;
@@ -313,23 +316,23 @@ void TagDialog::parseAttributes( QString attrs )
   			t = t.remove(0,i+1).stripWhiteSpace();
   		}
   		else {
-
+  		
     		i=0;
   	  	while ( !t[i].isSpace() && !t[i].isNull() )	i++;
-
+    	
     		*value = t.left(i);
     		t = t.remove(0,i).stripWhiteSpace();
   		}
-
+  		
   		// debug ( name+" , "+attr[attrcount]+"="+value[attrcount]+";" );
-
-
-
-
+  		
+  		
+  		
+  	
    }
    qDebug("attr :%s; value :%s;",attr.data(),value->data() );
    dict->insert( attr , value );
  }
-
+  	
 }
 

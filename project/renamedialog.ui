@@ -1,17 +1,17 @@
 <!DOCTYPE UI><UI>
-<class>CopyToS</class>
+<class>RenameDialog</class>
 <widget>
     <class>QDialog</class>
     <property stdset="1">
         <name>name</name>
-        <cstring>CopyToS</cstring>
+        <cstring>RenameDialog</cstring>
     </property>
     <property stdset="1">
         <name>geometry</name>
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>376</width>
+            <width>368</width>
             <height>81</height>
         </rect>
     </property>
@@ -75,43 +75,17 @@
                 </size>
             </property>
         </spacer>
-        <widget row="0"  column="3" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>buttonDir</cstring>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                </sizepolicy>
-            </property>
-            <property stdset="1">
-                <name>maximumSize</name>
-                <size>
-                    <width>27</width>
-                    <height>27</height>
-                </size>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>...</string>
-            </property>
-        </widget>
         <widget row="0"  column="0"  rowspan="1"  colspan="3" >
             <class>QLineEdit</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>lineDir</cstring>
+                <cstring>NewNameEdit</cstring>
             </property>
         </widget>
     </grid>
 </widget>
 <tabstops>
-    <tabstop>lineDir</tabstop>
-    <tabstop>buttonDir</tabstop>
+    <tabstop>NewNameEdit</tabstop>
     <tabstop>buttonOk</tabstop>
     <tabstop>buttonCancel</tabstop>
 </tabstops>

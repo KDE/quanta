@@ -16,11 +16,10 @@
  ***************************************************************************/
 
 #include <stdio.h>
-
+ 
 // quanta app
 #include "colorcombo.h"
 #include "tagquickstart.h"
-#include "tagquickstart.moc"
 #include "../qextfileinfo.h"
 
 // qt includes
@@ -31,33 +30,33 @@
 // kde includes
 #include <kfiledialog.h>
 
-
 TagQuickStart::TagQuickStart(QString basePath, QWidget *parent, const char *name)
     : TagQuickStartS(parent,name,true)
 {
 	this->basePath = basePath;
 	setCaption(name);
-
+	
 	colorBG   ->setColor("#ffffff");
 	colorText ->setColor("#000000");
 	colorLink ->setColor("#0000a0");
 	colorALink->setColor("#008080");
 	colorVLink->setColor("#c06060");
-
-	connect( buttonFileSelect, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
-
+	
+//FIXME: reenable the connect lines
+	connect( buttonFileSelect, SIGNAL(clicked()),SLOT(slotFileSelect()) );
+	
 	connect( colorBG,    SIGNAL(activated(const QColor &)), this, SLOT(slotBGColor   (const QColor &)) );
 	connect( colorText,  SIGNAL(activated(const QColor &)), this, SLOT(slotTextColor (const QColor &)) );
 	connect( colorLink,  SIGNAL(activated(const QColor &)), this, SLOT(slotLinkColor (const QColor &)) );
 	connect( colorALink, SIGNAL(activated(const QColor &)), this, SLOT(slotALinkColor(const QColor &)) );
 	connect( colorVLink, SIGNAL(activated(const QColor &)), this, SLOT(slotVLinkColor(const QColor &)) );
-
+	
 	connect( comboBGColor,    SIGNAL(activated(const QString &)), this, SLOT(slotColorBG   (const QString &)) );
 	connect( comboTextColor,  SIGNAL(activated(const QString &)), this, SLOT(slotColorText (const QString &)) );
 	connect( comboLinkColor,  SIGNAL(activated(const QString &)), this, SLOT(slotColorLink (const QString &)) );
 	connect( comboALinkColor, SIGNAL(activated(const QString &)), this, SLOT(slotColorALink(const QString &)) );
 	connect( comboVLinkColor, SIGNAL(activated(const QString &)), this, SLOT(slotColorVLink(const QString &)) );
-
+	
 	connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
 	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
 }
@@ -69,13 +68,13 @@ TagQuickStart::~TagQuickStart(){
 void TagQuickStart::slotFileSelect()
 {
 	QString fileName = KFileDialog::getOpenFileName( basePath, "*.gif *.png *.jpg| Image files\n*|All files");
-
+	
 	if (fileName.isEmpty()) return;
-
+		
 	QExtFileInfo file(fileName);
 	file.convertToRelative( basePath );
 	QString shortName = file.filePath();
-
+	
 	lineBGImage->setText(shortName);
 }
 

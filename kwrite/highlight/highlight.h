@@ -26,7 +26,7 @@
 #include <qlist.h>
 #include <qdialog.h>
 
-#include <kcolorbutton.h>
+#include <kcolorbtn.h>
 #include <qstrvec.h>
 #include <qdict.h>
 
@@ -838,8 +838,40 @@ class SqlHighlight : public GenHighlight {
     virtual void setKeywords(HlKeyword *keyword, HlKeyword *dataType);
 };
 
+class CSSHighlight : public GenHighlight  {
+public:
+	CSSHighlight(const char *name);
+	virtual ~CSSHighlight();
+    virtual QString getCommentStart() { return QString("/*"); };
+    virtual QString getCommentEnd() { return QString("*/"); };
+  protected:
+    virtual void createItemData(ItemDataList &);
+    virtual void makeContextList();
+//    virtual void setKeywords(HlKeyword *keyword, HlKeyword *dataType);
+};
+
+class HlCSSClass : public HlItem {
+  public:
+    HlCSSClass(int attribute, int context);
+    virtual bool startEnable(QChar c) {return (c == '.'); }
+    virtual const QChar *checkHgl(const QChar *);
+};
+
+class HlCSSValue : public HlItem {
+  public:
+    HlCSSValue(int attribute, int context);
+    virtual const QChar *checkHgl(const QChar *);
+};
+
+class HlCSSSelector : public HlItem {
+  public:
+    HlCSSSelector(int attribute, int context);
+    virtual const QChar *checkHgl(const QChar *);
+};
+
+
 // *******************************************************************
 // end of a quanta highlightings section
-// *******************************************************************8
+// *******************************************************************
 
 #endif //_HIGHLIGHT_H_

@@ -54,6 +54,8 @@ signals:
   void disableMessages();
   
   void messages( QString );
+  /** No descriptions */
+  void enableNextButton(QWidget *,bool);
 
 private:
   QString basePath;

@@ -41,6 +41,7 @@ extern QStrList *quotedAttribs; // list of attribs, that have quoted values ( al
 
 class TagDialog : public QTabDialog  {
    Q_OBJECT
+
 public:
   /**
     constructor: edit tag if "tag" == 0L or insert new tag if tag != 0L

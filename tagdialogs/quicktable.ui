@@ -1,0 +1,475 @@
+<!DOCTYPE UI><UI>
+<class>Quick_Table</class>
+<widget>
+    <class>QDialog</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>Quick_Table</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>440</width>
+            <height>320</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Quick Table</string>
+    </property>
+    <property stdset="1">
+        <name>sizeGripEnabled</name>
+        <bool>true</bool>
+    </property>
+    <property>
+        <name>name></name>
+        <cstring>Quick_Table</cstring>
+    </property>
+    <widget>
+        <class>QLayoutWidget</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>Layout10</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>5</x>
+                <y>5</y>
+                <width>107</width>
+                <height>265</height>
+            </rect>
+        </property>
+        <vbox>
+            <property stdset="1">
+                <name>margin</name>
+                <number>0</number>
+            </property>
+            <property stdset="1">
+                <name>spacing</name>
+                <number>6</number>
+            </property>
+            <widget>
+                <class>QLayoutWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>Layout6</cstring>
+                </property>
+                <grid>
+                    <property stdset="1">
+                        <name>margin</name>
+                        <number>0</number>
+                    </property>
+                    <property stdset="1">
+                        <name>spacing</name>
+                        <number>6</number>
+                    </property>
+                    <widget row="0"  column="1" >
+                        <class>QSpinBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>SpinBoxCol</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>minValue</name>
+                            <number>1</number>
+                        </property>
+                        <property>
+                            <name>toolTip</name>
+                            <string>Number of columns</string>
+                        </property>
+                    </widget>
+                    <widget row="0"  column="0" >
+                        <class>QLabel</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>TextLabel3</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>Cols</string>
+                        </property>
+                    </widget>
+                    <widget row="1"  column="0" >
+                        <class>QLabel</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>TextLabel3_2</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>Rows</string>
+                        </property>
+                    </widget>
+                    <widget row="1"  column="1" >
+                        <class>QSpinBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>SpinBoxRow</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>minValue</name>
+                            <number>1</number>
+                        </property>
+                        <property>
+                            <name>toolTip</name>
+                            <string>Number of columns</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget>
+                <class>QCheckBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>CheckBox4</cstring>
+                </property>
+                <property stdset="1">
+                    <name>enabled</name>
+                    <bool>false</bool>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Use COLS</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QCheckBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>useTHead</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Insert &amp;header</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QCheckBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>useTFoot</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Insert &amp;footer</string>
+                </property>
+            </widget>
+            <spacer>
+                <property>
+                    <name>name</name>
+                    <cstring>Spacer2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>orientation</name>
+                    <enum>Vertical</enum>
+                </property>
+                <property stdset="1">
+                    <name>sizeType</name>
+                    <enum>Expanding</enum>
+                </property>
+                <property>
+                    <name>sizeHint</name>
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+        </vbox>
+    </widget>
+    <widget>
+        <class>QLayoutWidget</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>Layout1</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>5</x>
+                <y>285</y>
+                <width>428</width>
+                <height>28</height>
+            </rect>
+        </property>
+        <hbox>
+            <property stdset="1">
+                <name>margin</name>
+                <number>0</number>
+            </property>
+            <property stdset="1">
+                <name>spacing</name>
+                <number>6</number>
+            </property>
+            <widget>
+                <class>QPushButton</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>buttonHelp</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>&amp;Help</string>
+                </property>
+                <property stdset="1">
+                    <name>autoDefault</name>
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <spacer>
+                <property>
+                    <name>name</name>
+                    <cstring>Horizontal Spacing2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>orientation</name>
+                    <enum>Horizontal</enum>
+                </property>
+                <property stdset="1">
+                    <name>sizeType</name>
+                    <enum>Expanding</enum>
+                </property>
+                <property>
+                    <name>sizeHint</name>
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget>
+                <class>QPushButton</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>buttonApply</cstring>
+                </property>
+                <property stdset="1">
+                    <name>enabled</name>
+                    <bool>false</bool>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>&amp;Apply</string>
+                </property>
+                <property stdset="1">
+                    <name>autoDefault</name>
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <widget>
+                <class>QPushButton</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>buttonOk</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>&amp;OK</string>
+                </property>
+                <property stdset="1">
+                    <name>autoDefault</name>
+                    <bool>true</bool>
+                </property>
+                <property stdset="1">
+                    <name>default</name>
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <widget>
+                <class>QPushButton</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>buttonCancel</cstring>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>&amp;Cancel</string>
+                </property>
+                <property stdset="1">
+                    <name>autoDefault</name>
+                    <bool>true</bool>
+                </property>
+            </widget>
+        </hbox>
+    </widget>
+    <widget>
+        <class>Line</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>Line1</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>5</x>
+                <y>270</y>
+                <width>425</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>orientation</name>
+            <enum>Horizontal</enum>
+        </property>
+    </widget>
+    <widget>
+        <class>QListView</class>
+        <column>
+            <property>
+                <name>text</name>
+                <string>Columns</string>
+            </property>
+            <property>
+                <name>clickable</name>
+                <bool>true</bool>
+            </property>
+            <property>
+                <name>resizeable</name>
+                <bool>true</bool>
+            </property>
+        </column>
+        <column>
+            <property>
+                <name>text</name>
+                <string>Width</string>
+            </property>
+            <property>
+                <name>clickable</name>
+                <bool>true</bool>
+            </property>
+            <property>
+                <name>resizeable</name>
+                <bool>true</bool>
+            </property>
+        </column>
+        <column>
+            <property>
+                <name>text</name>
+                <string>Align</string>
+            </property>
+            <property>
+                <name>clickable</name>
+                <bool>true</bool>
+            </property>
+            <property>
+                <name>resizeable</name>
+                <bool>true</bool>
+            </property>
+        </column>
+        <column>
+            <property>
+                <name>text</name>
+                <string>VAlign</string>
+            </property>
+            <property>
+                <name>clickable</name>
+                <bool>true</bool>
+            </property>
+            <property>
+                <name>resizeable</name>
+                <bool>true</bool>
+            </property>
+        </column>
+        <column>
+            <property>
+                <name>text</name>
+                <string>CSS class</string>
+            </property>
+            <property>
+                <name>clickable</name>
+                <bool>true</bool>
+            </property>
+            <property>
+                <name>resizeable</name>
+                <bool>true</bool>
+            </property>
+        </column>
+    <item>
+        <property>
+            <name>text</name>
+            <string>Column 1</string>
+        </property>
+        <property>
+            <name>text</name>
+            <string></string>
+        </property>
+        <property>
+            <name>text</name>
+            <string></string>
+        </property>
+        <property>
+            <name>text</name>
+            <string></string>
+        </property>
+        <property>
+            <name>text</name>
+            <string></string>
+        </property>
+        <property>
+            <name>pixmap</name>
+            <pixmap></pixmap>
+        </property>
+        <property>
+            <name>pixmap</name>
+            <pixmap></pixmap>
+        </property>
+        <property>
+            <name>pixmap</name>
+            <pixmap></pixmap>
+        </property>
+        <property>
+            <name>pixmap</name>
+            <pixmap></pixmap>
+        </property>
+        <property>
+            <name>pixmap</name>
+            <pixmap></pixmap>
+        </property>
+    </item>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>ListView1</cstring>
+        </property>
+        <property stdset="1">
+            <name>enabled</name>
+            <bool>false</bool>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>120</x>
+                <y>5</y>
+                <width>313</width>
+                <height>240</height>
+            </rect>
+        </property>
+    </widget>
+    <widget>
+        <class>QPushButton</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>newColumn</cstring>
+        </property>
+        <property stdset="1">
+            <name>enabled</name>
+            <bool>false</bool>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>205</x>
+                <y>250</y>
+                <width>114</width>
+                <height>26</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>&amp;New item</string>
+        </property>
+    </widget>
+</widget>
+</UI>
