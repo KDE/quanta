@@ -94,7 +94,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
   connect(this, SIGNAL(doubleClicked(QListViewItem *)), SLOT(slotDoubleClicked(QListViewItem *)));
 
   m_contextMenu  = new KPopupMenu(this);
-  m_contextMenu->insertItem(i18n("&Reload"), this, SLOT(slotReload()));
+  m_contextMenu->insertItem(i18n("&Reload"), this, SLOT(slotReloadProjectDocs()));
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
 }
@@ -156,10 +156,10 @@ void DocTreeView::slotMenu(KListView *, QListViewItem *item, const QPoint &point
 
 void DocTreeView::slotNewProjectLoaded(const QString &, const KURL &, const KURL &)
 {
-  slotReload();
+  slotReloadProjectDocs();
 }
 
-void DocTreeView::slotReload()
+void DocTreeView::slotReloadProjectDocs()
 {
   QListViewItem *child = projectDocFolder->firstChild();
   while (child) {

@@ -42,6 +42,7 @@
 
 // include files for KDE
 #include <kdebug.h>
+#include <kdirwatch.h>
 #include <kurl.h>
 #include <kfile.h>
 #include <kcharsets.h>
@@ -99,6 +100,7 @@ Project::Project(KMainWindow *parent)
   m_parent = parent;
   config = 0L;
   keepPasswd = true;
+  m_dirWatch = 0L;
   init();
   initActions(parent->actionCollection());
 }
@@ -2076,17 +2078,26 @@ KURL Project::documentFolderForURL(const KURL& url)
 
 void Project::slotReloadProjectDocs()
 {
+   delete m_dirWatch;
+   m_dirWatch = new KDirWatch(this);
+   connect(m_dirWatch, SIGNAL(dirty(const QString &)), SIGNAL(reloadProjectDocs()));
+   connect(m_dirWatch, SIGNAL(deleted(const QString &)), SIGNAL(reloadProjectDocs()));
+   if (baseURL.isLocalFile())
+     m_dirWatch->addDir(baseURL.path() + "/doc");
    KURL url;
+   KURL absURL;
    QString path;
    for (ProjectUrlList::ConstIterator it = m_projectFiles.begin(); it != m_projectFiles.end(); ++it)
    {
       url = *it;
       path = url.path();
+      absURL = QExtFileInfo::toAbsolute(url, baseURL);
       if (path.startsWith("doc/") && path.endsWith("/index.html"))
       {
-          quantaApp->dTab->addProjectDoc(
-          QExtFileInfo::toAbsolute(url, baseURL));
-        }
+          quantaApp->dTab->addProjectDoc(absURL);
+          if (absURL.isLocalFile())
+            m_dirWatch->addFile(absURL.path());
+      }
   }
 }
 

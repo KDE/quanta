@@ -43,6 +43,7 @@ class KRecentFilesAction;
 class KActionCollection;
 class KAction;
 class KMainWindow;
+class KDirWatch;
 
 class ProjectNewWeb;
 class ProjectNewLocal;
@@ -171,6 +172,7 @@ signals:
   void statusMsg(const QString &);
   /** No descriptions */
   void newProjectLoaded(const QString &, const KURL &, const KURL &);
+  void reloadProjectDocs();
   void hideSplash();
 
 public:
@@ -249,6 +251,7 @@ protected: // Protected attributes
   QString m_defaultDTD;
   QString m_defaultEncoding;
   ProjectUrlList m_projectFiles; //stores the last result of fileNameList call
+  KDirWatch *m_dirWatch; ///watches some project directories for modification
 
   void openCurrentView();
   /** pre-sets some variables */

@@ -41,7 +41,7 @@ public:
 
 public slots:
   void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
-
+  void slotReloadProjectDocs();
 
 signals:
   void openURL(const QString& );
@@ -50,7 +50,6 @@ signals:
 private slots:
   void clickItem( QListViewItem *);
   void slotDoubleClicked(QListViewItem *);
-  void slotReload();
   void slotMenu(KListView *, QListViewItem *item, const QPoint &point);
 
 
