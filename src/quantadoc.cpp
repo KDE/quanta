@@ -225,6 +225,9 @@ void QuantaDoc::slotOpeningFailed(const KURL &url)
 
 void QuantaDoc::slotOpeningCompleted(const KURL &url)
 {
+  Document *w = ViewManager::ref()->activeDocument();
+  Project::ref()->loadBookmarks(w->url(), dynamic_cast<KTextEditor::MarkInterface*>(w->doc()));
+    
   quantaApp->fileRecent->addURL(url);
   quantaApp->slotRepaintPreview();
   quantaApp->reparse(true);
@@ -232,7 +235,7 @@ void QuantaDoc::slotOpeningCompleted(const KURL &url)
   quantaApp->slotNewStatus();
   emit eventHappened("after_open", url.url(), QString::null);
   
-  bool flag = TagActionManager::canIndentDTD(ViewManager::ref()->activeDocument()->defaultDTD()->name);
+  bool flag = TagActionManager::canIndentDTD(w->defaultDTD()->name);
   quantaApp->actionCollection()->action("apply_source_indentation")->setEnabled(flag);
 }
 

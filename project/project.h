@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Mar 16 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2001-2004 by Andras Mantia <amantia@kde.org>
+                           (C) 2001-2005 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -19,6 +19,7 @@
 #define PROJECT_H
 
 #include <qobject.h>
+#include <ktexteditor/markinterface.h>
 
 #include "projecturl.h"
 
@@ -123,6 +124,11 @@ public:
        @return true if close is possible
   */
   bool queryClose();
+  
+  /** Saves the bookmarks for the url into the project file */
+  void saveBookmarks(const KURL &url, KTextEditor::MarkInterface *markIf);
+  /** Loads the bookmarks for the url from the project file and sets them in the view*/
+  void loadBookmarks(const KURL &url, KTextEditor::MarkInterface *markIf);
 
 public slots:
 

@@ -74,10 +74,10 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - Warning Messages can be configured on the User Interface page
 
   - enhancements/new features:
-	- VPL:
-		- Undo/Redo.
-		- Copy/Cut/Paste supported in VPL.
-		- Context menu for table actions.
+        - VPL:
+          - Undo/Redo.
+          - Copy/Cut/Paste supported in VPL.
+          - Context menu for table actions.
         - smart tag insertion support in text editing mode as well
         - New Toolbar menu entry added to the toolbar context menu [#80647]
         - New Action menu entry added to the toolbar context menu
@@ -87,7 +87,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - any action can be assigned to an event, not just the user defined
           script actions
         - more than one action can be assigned to events
-	- possibility to disable the event actions added (without the need to
+      	- possibility to disable the event actions added (without the need to
           remove them one by one)
         - support loading of more than one toolbar at a time
         - don't ask for toolbar saving if the toolbar names was modified by
@@ -125,6 +125,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - view the rendered document source
         - ask for deleting the file from the servers when it's removed
           from the project [#60877]
+        - persistent bookmarks support in a project [#65296]
       
 
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):

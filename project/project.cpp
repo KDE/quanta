@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Mar 16 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2001-2003 by Andras Mantia <amantia@kde.org>
+                           (C) 2001-2005 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -522,6 +522,7 @@ void Project::slotOptions()
   }
 
   optionsPage.checkPrefix->setChecked(d->usePreviewPrefix);
+  optionsPage.checkPersistentBookmarks->setChecked(d->m_persistentBookmarks);
 
 //add upload profiles page
   page = optionsDlg.addPage(i18n("Up&load Profiles"));
@@ -600,6 +601,7 @@ void Project::slotOptions()
 
     d->previewPrefix = KURL::fromPathOrURL( optionsPage.linePrefix->text() );
     d->usePreviewPrefix = optionsPage.checkPrefix->isChecked();
+    d->m_persistentBookmarks = optionsPage.checkPersistentBookmarks->isChecked();
 
     QDomNode projectNode = d->dom.firstChild().firstChild();
     QDomElement el;
@@ -608,6 +610,7 @@ void Project::slotOptions()
     el.setAttribute("name",d->projectName);
     el.setAttribute("previewPrefix", d->previewPrefix.url() );
     el.setAttribute("usePreviewPrefix", d->usePreviewPrefix );
+    el.setAttribute("usePersistentBookmarks", d->m_persistentBookmarks);
     el.setAttribute("encoding", d->m_defaultEncoding);
 
     el =projectNode.namedItem("author").toElement();
@@ -1175,6 +1178,56 @@ void Project::slotShowProjectToolbar(bool show)
         m_projectToolbarVisible = w->isShown();
         w->setShown(false);
       }
+    }
+  }
+}
+
+void Project::loadBookmarks(const KURL &url, KTextEditor::MarkInterface *markIf)
+{
+  if (!markIf || !hasProject() || !contains(url) || !d->m_persistentBookmarks)
+    return;
+  QDomNodeList nl = d->dom.elementsByTagName("item");
+  QDomElement el;
+  KURL u = QExtFileInfo::toRelative(url, d->baseURL);
+  for ( uint i = 0; i < nl.count(); i++ )
+  {
+    el = nl.item(i).toElement();
+    if ( el.attribute("url") == QuantaCommon::qUrl(u) )
+    {
+      QString markListStr = el.attribute("bookmarks");
+      QStringList markList = QStringList::split(",", markListStr);
+      for (uint j = 0; j < markList.count(); j++)
+      {
+        int line = markList[j].toInt();
+        markIf->setMark(line, KTextEditor::MarkInterface::Bookmark);
+      }
+      break;
+    }
+  }
+}
+
+void Project::saveBookmarks(const KURL &url, KTextEditor::MarkInterface *markIf)
+{
+  if (!markIf || !hasProject() || !contains(url) || !d->m_persistentBookmarks)
+    return;
+  QStringList markList;
+  QPtrList<KTextEditor::Mark> marks = markIf->marks();
+  for (uint i = 0; i < marks.count(); i++)
+  {
+    KTextEditor::Mark *mark = marks.at(i);
+    if (mark->type == KTextEditor::MarkInterface::Bookmark)
+          markList << QString("%1").arg(mark->line);
+  }
+  QDomNodeList nl = d->dom.elementsByTagName("item");
+  QDomElement el;
+  KURL u = QExtFileInfo::toRelative(url, d->baseURL);
+  for ( uint i = 0; i < nl.count(); i++ )
+  {
+    el = nl.item(i).toElement();
+    if ( el.attribute("url") == QuantaCommon::qUrl(u) )
+    {
+      el.setAttribute("bookmarks", markList.join(","));
+      break;
     }
   }
 }

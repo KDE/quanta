@@ -68,6 +68,7 @@ upload.*/
 
   KURL previewPrefix;
   bool usePreviewPrefix;
+  bool m_persistentBookmarks;
   QString author;
   KRecentFilesAction *m_projectRecent;
 

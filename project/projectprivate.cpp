@@ -218,8 +218,9 @@ void ProjectPrivate::init()
   excludeRx.setPattern(".*~$");
   excludeList.clear();
   excludeList.append("*~");
-  usePreviewPrefix = false;
+  usePreviewPrefix = false;  
   previewPrefix = KURL();
+  m_persistentBookmarks = false;
   m_excludeCvsignore = false;
   currentProjectView = QString::null;
   m_projectFiles.clear();
@@ -391,6 +392,7 @@ void ProjectPrivate::loadProjectXML()
     previewPrefix = KURL::fromPathOrURL( tmpString );
   }
   usePreviewPrefix = ( projectNode.toElement().attribute("usePreviewPrefix") == "1");
+  m_persistentBookmarks = (projectNode.toElement().attribute("usePersistentBookmarks") == "1");
   m_eventsEnabled = projectNode.toElement().attribute("enableEvents", "true") == "true";
   m_defaultEncoding = projectNode.toElement().attribute("encoding");
   if (m_defaultEncoding.isEmpty())

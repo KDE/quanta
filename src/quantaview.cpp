@@ -147,6 +147,7 @@ bool QuantaView::mayRemove()
     if (m_document)
     {
       KURL url = m_document->url();
+      Project::ref()->saveBookmarks(url, dynamic_cast<KTextEditor::MarkInterface*>(m_document->doc()));
       emit eventHappened("before_close", url.url(), QString::null);
       m_currentViewsLayout = -1;
       //slotSetSourceLayout(); //set the layout to source only, otherwise it crashes...
