@@ -682,7 +682,7 @@ void TableEditor::slotAddRemoveCol( int num )
     }
   }
   //TODO: change the main tag's colspan if necessary}
-
+}
 
 void TableEditor::slotRemoveRow()
 {
