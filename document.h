@@ -167,6 +167,7 @@ work correctly. */
   Kate::Document *kate_doc;
   /** Hold the list of variables that are in the document (e.g $variable for PHP variables) */
   QStringList variableList;
+  QStringList includeList;
   /** Hold the list of user tags (real or not, like functions) that are in the document*/
   QTagList userTagList;
   Kate::View *kate_view;

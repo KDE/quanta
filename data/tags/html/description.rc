@@ -114,3 +114,4 @@ location_options = single
 [Extra rules]
 BooleanAttributes = simple
 Single Tag Style = html
+StructGroups =  Images/No Images/image/(img,src); Links/No Links/www/(a,name,href)

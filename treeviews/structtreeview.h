@@ -51,14 +51,15 @@ public:
   void setParsingDTD(const QString dtdName);
 
 	StructTreeTag *top;
-	StructTreeTag *images;
-	StructTreeTag *links;
+	StructTreeTag *groups[5];
+  uint groupsCount;
 	
 	Parser *parser;
 
 	bool topOpened;
-	bool imagesOpened;
-	bool linksOpened;
+  bool groupOpened[5];
+//	bool imagesOpened;
+//	bool linksOpened;
   bool useOpenLevelSetting;
 
 
@@ -97,8 +98,8 @@ private:
   /** Do the recursive opening or closing of the trees */
   void setOpenSubTree( QListViewItem *it, bool open);
 
-  int imagesCount; // to check if there are images
-  int linksCount;	
+  //int imagesCount; // to check if there are images
+  //int linksCount;	
   int followCursorId;
   bool followCursorFlag;
 

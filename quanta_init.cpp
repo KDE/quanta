@@ -1106,7 +1106,12 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
  dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
  dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
-
+ dtd->structGroups = dtdConfig->readListEntry("StructGroups",';');
+ for (uint i = 0; i < dtd->structGroups.count(); i++)
+ {
+  dtd->groupsRxs.append(dtdConfig->readEntry(QString("RegExp%1").arg(i)).stripWhiteSpace());
+  dtd->groupsClearRxs.append(dtdConfig->readEntry(QString("RegExp%1_clear").arg(i)).stripWhiteSpace());
+ }
  dtds->insert(dtdName.lower(), dtd);//insert the taglist into the full list
 
  delete dtdConfig;
