@@ -14,4 +14,5 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \
 	-I$(top_srcdir)/lib/newstuff \
 	$(KMDI_INCLUDES) $(KNEWSTUFF_INCLUDES) $(all_includes)
 
+libutility_la_LDFLAGS = $(all_libraries)
 libutility_la_LIBADD = $(top_builddir)/lib/newstuff/libqnewstuff.la
