@@ -50,76 +50,6 @@
                     <string>Version Number:</string>
                 </property>
             </widget>
-            <widget class="LineEdit">
-                <property name="name">
-                    <cstring>website</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>120</x>
-                        <y>130</y>
-                        <width>351</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>http://</string>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>&lt;website&gt;@widgetText&lt;/website&gt;</string>
-                    </stringlist>
-                </property>
-                <property name="toolTip" stdset="0">
-                    <string>The location of your up to date file on the web</string>
-                </property>
-            </widget>
-            <widget class="ComboBox">
-                <item>
-                    <property name="text">
-                        <string>GPL</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>LGPL</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>BSD</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Public Domain</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Other</string>
-                    </property>
-                </item>
-                <property name="name">
-                    <cstring>license</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>120</x>
-                        <y>190</y>
-                        <width>251</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>&lt;license&gt;@widgetText&lt;/license&gt;</string>
-                    </stringlist>
-                </property>
-                <property name="toolTip" stdset="0">
-                    <string>If other include in about</string>
-                </property>
-            </widget>
             <widget class="QLabel">
                 <property name="name">
                     <cstring>TextLabel1_2</cstring>
@@ -134,48 +64,6 @@
                 </property>
                 <property name="text">
                     <string>Web Address:</string>
-                </property>
-            </widget>
-            <widget class="LineEdit">
-                <property name="name">
-                    <cstring>version</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>120</x>
-                        <y>160</y>
-                        <width>141</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>&lt;version&gt;@widgetText&lt;/version&gt;</string>
-                    </stringlist>
-                </property>
-            </widget>
-            <widget class="FileSelector">
-                <property name="name">
-                    <cstring>FileSelector1</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>120</x>
-                        <y>410</y>
-                        <width>350</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>@widgetText@Name.info</string>
-                    </stringlist>
-                </property>
-                <property name="selectionType">
-                    <enum>Directory</enum>
-                </property>
-                <property name="toolTip" stdset="0">
-                    <string>Select the directory to write the .info file to</string>
                 </property>
             </widget>
             <widget class="QLabel">
@@ -218,45 +106,6 @@
                     <string>About Script:</string>
                 </property>
             </widget>
-            <widget class="LineEdit">
-                <property name="name">
-                    <cstring>Name</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>120</x>
-                        <y>40</y>
-                        <width>171</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>@widgetText</string>
-                    </stringlist>
-                </property>
-                <property name="toolTip" stdset="0">
-                    <string>Enter the script name without the extention</string>
-                </property>
-            </widget>
-            <widget class="LineEdit">
-                <property name="name">
-                    <cstring>Author</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>120</x>
-                        <y>70</y>
-                        <width>250</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>&lt;author&gt;@widgetText&lt;/author&gt;</string>
-                    </stringlist>
-                </property>
-            </widget>
             <widget class="QLabel">
                 <property name="name">
                     <cstring>TextLabel3</cstring>
@@ -271,58 +120,6 @@
                 </property>
                 <property name="text">
                     <string>Author Email:</string>
-                </property>
-            </widget>
-            <widget class="CloseButton">
-                <property name="name">
-                    <cstring>CloseButton1</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>200</x>
-                        <y>433</y>
-                        <width>110</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Write File</string>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
-&lt;!DOCTYPE QuantaScriptInfo&gt;
-&lt;INFO&gt;
-&lt;name&gt;@Name&lt;/name&gt;
-@Author
-@email
-@website
-@version
-@license
-@about
-&lt;/INFO&gt;" &gt; @FileSelector1</string>
-                    </stringlist>
-                </property>
-                <property name="writeStdout">
-                    <bool>true</bool>
-                </property>
-            </widget>
-            <widget class="LineEdit">
-                <property name="name">
-                    <cstring>email</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>120</x>
-                        <y>100</y>
-                        <width>251</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>&lt;email&gt;@widgetText&lt;/email&gt;</string>
-                    </stringlist>
                 </property>
             </widget>
             <widget class="QLabel">
@@ -373,24 +170,6 @@
                     <string>Script Name:</string>
                 </property>
             </widget>
-            <widget class="TextEdit">
-                <property name="name">
-                    <cstring>about</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>120</x>
-                        <y>220</y>
-                        <width>351</width>
-                        <height>181</height>
-                    </rect>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>&lt;about&gt;@widgetText&lt;/about&gt;</string>
-                    </stringlist>
-                </property>
-            </widget>
             <widget class="QLabel">
                 <property name="name">
                     <cstring>TextLabel6</cstring>
@@ -405,6 +184,256 @@
                 </property>
                 <property name="text">
                     <string>Script Location:</string>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>Name</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>40</y>
+                        <width>171</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText</string>
+                    </stringlist>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Enter the script name without the extention</string>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>website</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>130</y>
+                        <width>351</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>http://</string>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>&lt;a href="@widgetText"&gt;@widgetText&lt;/a&gt;</string>
+                    </stringlist>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>The location of your up to date file on the web</string>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>version</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>160</y>
+                        <width>141</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText</string>
+                    </stringlist>
+                </property>
+            </widget>
+            <widget class="ComboBox">
+                <item>
+                    <property name="text">
+                        <string>GPL</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>LGPL</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>BSD</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Public Domain</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Other</string>
+                    </property>
+                </item>
+                <property name="name">
+                    <cstring>license</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>190</y>
+                        <width>251</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText</string>
+                    </stringlist>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>If other include in about</string>
+                </property>
+            </widget>
+            <widget class="TextEdit">
+                <property name="name">
+                    <cstring>about</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>220</y>
+                        <width>351</width>
+                        <height>181</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText</string>
+                    </stringlist>
+                </property>
+            </widget>
+            <widget class="FileSelector">
+                <property name="name">
+                    <cstring>FileSelector1</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>410</y>
+                        <width>350</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText.@Name.html</string>
+                    </stringlist>
+                </property>
+                <property name="selectionType">
+                    <enum>Directory</enum>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Select the directory to write the .info file to</string>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>Author</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>70</y>
+                        <width>250</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText</string>
+                    </stringlist>
+                </property>
+            </widget>
+            <widget class="CloseButton">
+                <property name="name">
+                    <cstring>CloseButton1</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>200</x>
+                        <y>433</y>
+                        <width>110</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Write File</string>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>echo "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;
+&lt;!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"&gt;
+&lt;html  xmlns=\"http://www.w3.org/1999/xhtml\"&gt;
+&lt;head&gt;
+  &lt;link rel=\"stylesheet\" type=\"text/css\" href=\".info.css\" /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;!-- name --&gt;
+&lt;h1&gt;@Name&lt;/h1&gt;
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Author&lt;/th&gt;
+      &lt;td&gt;@email&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Web Site&lt;/th&gt;
+      &lt;td&gt;@website&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Version&lt;/th&gt;
+      &lt;td&gt;@version&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;License&lt;/th&gt;
+      &lt;td&gt;@license&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;About&lt;/th&gt;
+      &lt;td&gt;@about&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;div align=\"center\"&gt;&lt;hr width="50%" /&gt;
+Quanta Information File&lt;br&gt;
+&lt;em&gt;The Quanta Team&lt;/em&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;" &gt; @FileSelector1</string>
+                    </stringlist>
+                </property>
+                <property name="writeStdout">
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <widget class="LineEdit">
+                <property name="name">
+                    <cstring>email</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>120</x>
+                        <y>100</y>
+                        <width>251</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>&lt;a href="mailto:@widgetText?subject=Quanta%20script%20-%20@Name"&gt;@Author&lt;/a&gt;</string>
+                    </stringlist>
                 </property>
             </widget>
         </widget>
@@ -443,5 +472,17 @@
         </widget>
     </widget>
 </widget>
+<tabstops>
+    <tabstop>TabWidget1</tabstop>
+    <tabstop>Name</tabstop>
+    <tabstop>Author</tabstop>
+    <tabstop>email</tabstop>
+    <tabstop>website</tabstop>
+    <tabstop>version</tabstop>
+    <tabstop>license</tabstop>
+    <tabstop>about</tabstop>
+    <tabstop>CloseButton1</tabstop>
+    <tabstop>TextEdit3</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
