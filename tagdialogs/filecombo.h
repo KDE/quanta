@@ -38,6 +38,8 @@ public:
 	void setText( QString );
   /** No descriptions */
   void setBasePath(const QString& p_basePath);
+  /** No descriptions */
+  void setReturnAbsolutePath(bool absolutPath);
 
 public slots:
   void slotFileSelect();
@@ -45,6 +47,9 @@ public slots:
 protected:
   QString     basePath;
   QComboBox   *combo;
+private: // Private attributes
+  /**  */
+  bool m_absolutePath;
   QPushButton *button;
 
 };

@@ -161,7 +161,7 @@ void QuantaView::initActions()
 
     QDomNode n = docElem.firstChild();
     while( !n.isNull() ) {
-       QDomElement e = n.cloneNode().toElement(); // try to convert the node to an element.
+       QDomElement e = n.toElement(); // try to convert the node to an element.
        if( !e.isNull() ) { // the node was really an element.
            new TagAction( &e, this, actionCollection); 
        }

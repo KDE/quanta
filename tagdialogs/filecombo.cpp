@@ -32,6 +32,7 @@ FileCombo::FileCombo(QString basePath, QWidget *parent, const char *name )
   :QWidget(parent,name)
 {
   this->basePath = basePath;
+  m_absolutePath = false;
 
   QHBoxLayout *layout = new QHBoxLayout(this);
 
@@ -87,7 +88,7 @@ void FileCombo::slotFileSelect()
 		if ( fileName.isEmpty() ) return;
 
 		QExtFileInfo file(fileName);
-		file.convertToRelative( basePath );
+		if (!m_absolutePath) file.convertToRelative( basePath );
 
 		QString text = file.filePath();
 		combo  ->setEditText( text );
@@ -97,6 +98,12 @@ void FileCombo::slotFileSelect()
 void FileCombo::setBasePath(const QString& p_basePath)
 {
  basePath = p_basePath;
+}
+
+/** No descriptions */
+void FileCombo::setReturnAbsolutePath(bool absolutePath)
+{
+ m_absolutePath = true;
 }
 
 #include "filecombo.moc"

@@ -73,6 +73,7 @@ ActionEditDlg::ActionEditDlg( QuantaApp *a, QWidget* parent, const char* name, b
      app(a)
 {
    scriptPath->setBasePath(app->getDoc()->basePath());
+   scriptPath->setReturnAbsolutePath(true);
    actionIcon->setIconType(KIcon::User,KIcon::Any,true);
 
    QValueList<KAction*> actions = app->actionCollection()->actions();
@@ -118,7 +119,7 @@ void ActionEditDlg::deleteAction()
       for (uint j = 0; j < nodeList.count(); j++)
       {
         //we found a toolbar that contains the action
-        if (nodeList.item(j).cloneNode().toElement().attribute("name") == actionText)
+        if (nodeList.item(j).toElement().attribute("name") == actionText)
         {
           nodeList.item(j).parentNode().removeChild(nodeList.item(j));
           guiClient->actionCollection()->remove(action);
@@ -192,6 +193,8 @@ void ActionEditDlg::loadAction( TagAction *a )
         actionIcon->setIcon( el.attribute("icon") );
 
     lineText->setText( el.attribute("text") );
+    lineToolTip->setText( el.attribute("tooltip") );
+    lineStatusText->setText( el.attribute("statustext") );
 
     QDomElement elxtag = el.namedItem("xtag").toElement();
     QDomElement eltag = el.namedItem("tag").toElement();
@@ -247,6 +250,8 @@ void ActionEditDlg::saveAction( TagAction *a )
     QDomElement el = a->data();
     el.setAttribute("icon", actionIcon->icon() );
     el.setAttribute("text", lineText->text() );
+    el.setAttribute("tooltip", lineToolTip->text() );
+    el.setAttribute("statustext", lineStatusText->text() );
     QString stab = actionTab->tabLabel( actionTab->currentPage() );
 
     a->setText( lineText->text() );
@@ -255,42 +260,44 @@ void ActionEditDlg::saveAction( TagAction *a )
     QDomDocument document = el.ownerDocument();
 
 
-    if ( stab == i18n("Tag") ) {
+    if ( stab == i18n("Tag") )
+    {
       el.setAttribute("type","tag");
-      replaceDomItem(el,"tag",tag->text() );
-      replaceDomItem(el,"xtag",tagClose->text() );
-      el.namedItem("xtag").toElement().setAttribute("use", useTagClose->isChecked() ? "true" : "false" );
-      //el.namedItem("xtag").toElement().setAttribute("inLine", insertInLine->isChecked() ? "true" : "false" );
-      el.namedItem("tag").toElement().setAttribute("useDialog", useActionDialog->isChecked() ? "true" : "false" );
     }
+    replaceDomItem(el,"tag",tag->text() );
+    replaceDomItem(el,"xtag",tagClose->text() );
+    el.namedItem("xtag").toElement().setAttribute("use", useTagClose->isChecked() ? "true" : "false" );
+    //el.namedItem("xtag").toElement().setAttribute("inLine", insertInLine->isChecked() ? "true" : "false" );
+    el.namedItem("tag").toElement().setAttribute("useDialog", useActionDialog->isChecked() ? "true" : "false" );
 
-    if ( stab == i18n("Text") ) {
+    if ( stab == i18n("Text") )
+    {
       el.setAttribute("type","text");
-      replaceDomItem(el,"text",text->text() );
     }
+    replaceDomItem(el,"text",text->text() );
 
-    if ( stab == i18n("Script") ) {
+    if ( stab == i18n("Script") )
+    {
       el.setAttribute("type","script");
-      replaceDomItem(el,"script", scriptPath->text() );
-
-      QDomElement script = el.namedItem("script").toElement();
-
-      if ( inputNone       ->isChecked() ) script.setAttribute("input","none");
-      if ( inputCurrent    ->isChecked() ) script.setAttribute("input","current");
-      if ( inputSelected   ->isChecked() ) script.setAttribute("input","selected");
-
-      if ( outputNone      ->isChecked() ) script.setAttribute("output","none");
-      if ( outputCursor_2  ->isChecked() ) script.setAttribute("output","cursor");
-      if ( outputMessage   ->isChecked() ) script.setAttribute("output","message");
-      if ( outputNew       ->isChecked() ) script.setAttribute("output","new");
-      if ( outputReplace   ->isChecked() ) script.setAttribute("output","replace");
-
-      if ( errorNone      ->isChecked() ) script.setAttribute("error","none");
-      if ( errorCursor    ->isChecked() ) script.setAttribute("error","cursor");
-      if ( errorMessage   ->isChecked() ) script.setAttribute("error","message");
-      if ( errorNew       ->isChecked() ) script.setAttribute("error","new");
-      if ( errorReplace   ->isChecked() ) script.setAttribute("error","replace");
     }
+    replaceDomItem(el,"script", scriptPath->text() );
+    QDomElement script = el.namedItem("script").toElement();
+
+    if ( inputNone       ->isChecked() ) script.setAttribute("input","none");
+    if ( inputCurrent    ->isChecked() ) script.setAttribute("input","current");
+    if ( inputSelected   ->isChecked() ) script.setAttribute("input","selected");
+
+    if ( outputNone      ->isChecked() ) script.setAttribute("output","none");
+    if ( outputCursor_2  ->isChecked() ) script.setAttribute("output","cursor");
+    if ( outputMessage   ->isChecked() ) script.setAttribute("output","message");
+    if ( outputNew       ->isChecked() ) script.setAttribute("output","new");
+    if ( outputReplace   ->isChecked() ) script.setAttribute("output","replace");
+
+    if ( errorNone      ->isChecked() ) script.setAttribute("error","none");
+    if ( errorCursor    ->isChecked() ) script.setAttribute("error","cursor");
+    if ( errorMessage   ->isChecked() ) script.setAttribute("error","message");
+    if ( errorNew       ->isChecked() ) script.setAttribute("error","new");
+    if ( errorReplace   ->isChecked() ) script.setAttribute("error","replace");
 
   if (placeOnToolbar->isChecked())
   {
@@ -308,7 +315,7 @@ void ActionEditDlg::saveAction( TagAction *a )
       for (uint j = 0; j < nodeList.count(); j++)
       {
         //we found the right toolbar
-        if (nodeList.item(j).cloneNode().toElement().attribute("name") == tabName)
+        if (nodeList.item(j).toElement().attribute("name") == tabName)
         {
           guiClient = guiClients.at(i);
           foundNode = nodeList.item(j);
