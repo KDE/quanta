@@ -1344,7 +1344,7 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     {
       if (!m_previewToolView)
       {
-        m_previewToolView= addToolWindow(m_htmlPart->view(), KDockWidget::DockBottom, getMainDockWidget());
+        m_previewToolView= addToolWindow(m_htmlPart->view(), prevDockPosition(m_htmlPart->view(), KDockWidget::DockBottom), getMainDockWidget());
         connect(m_previewToolView->wrapperWidget(), SIGNAL(iMBeingClosed
 ()), this, SLOT(slotPreviewBeingClosed()));
       }
@@ -1653,7 +1653,7 @@ void QuantaApp::openDoc(const QString& url)
       if (docView)
           ViewManager::ref()->removeView(docView);
       if (!m_documentationToolView)
-        m_documentationToolView= addToolWindow(m_htmlPartDoc->view(), KDockWidget::DockBottom, getMainDockWidget());
+        m_documentationToolView= addToolWindow(m_htmlPartDoc->view(), prevDockPosition(m_htmlPartDoc->view(), KDockWidget::DockBottom), getMainDockWidget());
       m_htmlPartDoc->view()->show();
       m_documentationToolView->show();
   }
@@ -4883,6 +4883,33 @@ void QuantaApp::resetDockLayout()
         if (dynamic_cast<DebuggerBreakpointView*>(widget))
           addToolWindow(widget, KDockWidget::DockBottom, mainDockWidget);
     }
+}
+
+KDockWidget::DockPosition QuantaApp::prevDockPosition(QWidget* widget, KDockWidget::DockPosition def)
+{
+  QMap<KDockWidget::DockPosition,QString> maps;
+  QMap<QString,QString> map;
+  QString dock = widget->name();
+  
+  // Which groups to search through
+  maps[KDockWidget::DockTop] = "dock_setting_default::KMdiDock::topDock";
+  maps[KDockWidget::DockLeft] = "dock_setting_default::KMdiDock::leftDock";
+  maps[KDockWidget::DockBottom] = "dock_setting_default::KMdiDock::bottomDock";
+  maps[KDockWidget::DockRight] = "dock_setting_default::KMdiDock::rightDock";
+
+  // Loop the groups
+  for(QMap<KDockWidget::DockPosition,QString>::Iterator itmaps = maps.begin(); itmaps != maps.end(); ++itmaps ) 
+  {
+    // Loop the items in the  group    
+    map = quantaApp->config()->entryMap(itmaps.data());
+    for(QMap<QString,QString>::Iterator it = map.begin(); it != map.end(); ++it ) 
+    {
+      // If we found it, return the key of the group
+      if(it.data() == dock)
+        return itmaps.key();
+    }
+  }
+  return def;
 }
 
 void QuantaApp::switchToToplevelMode()

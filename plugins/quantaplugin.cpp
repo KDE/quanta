@@ -355,7 +355,7 @@ void QuantaPlugin::addWidget()
   {
     m_part->widget()->setCaption(m_name);
     m_part->widget()->setIcon(SmallIcon(m_icon));
-    m_pluginToolView = quantaApp->addToolWindow(m_part->widget(), KDockWidget::DockBottom, quantaApp->getMainDockWidget());
+    m_pluginToolView = quantaApp->addToolWindow(m_part->widget(), quantaApp->prevDockPosition(m_part->widget(), KDockWidget::DockBottom), quantaApp->getMainDockWidget());
     m_pluginToolView->show();
   } else
   {

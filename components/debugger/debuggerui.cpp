@@ -29,6 +29,7 @@
 #include <kiconloader.h>
 #include <kdockwidget.h>
 #include <klocale.h>
+#include <kdebug.h>
 #include <qstring.h>
 #include <khtmlview.h>
 #include <kmditoolviewaccessor.h>
@@ -36,17 +37,18 @@
 DebuggerUI::DebuggerUI(QObject *parent, const char *name)
     : QObject(parent, name), m_variablesListView(0)
 {
+
   // Variable watch tree
   m_variablesListView = new VariablesListView(quantaApp->getMainDockWidget(), "debuggerVariables");
   m_variablesListView->setIcon(SmallIcon("math_brace"));
   m_variablesListView->setCaption(i18n("Variables"));
-  m_variableListViewTVA = quantaApp->addToolWindow(m_variablesListView,  KDockWidget::DockLeft, quantaApp->getMainDockWidget());
+  m_variableListViewTVA = quantaApp->addToolWindow(m_variablesListView,  quantaApp->prevDockPosition(m_variablesListView, KDockWidget::DockLeft), quantaApp->getMainDockWidget());
 
   // Breakpointlist
   m_debuggerBreakpointView = new DebuggerBreakpointView(quantaApp->getMainDockWidget(), "debuggerBreakpoints");
   m_debuggerBreakpointView->setIcon(SmallIcon("debug_breakpoint"));
   m_debuggerBreakpointView->setCaption(i18n("Breakpoints"));
-  m_debuggerBreakpointViewTVA = quantaApp->addToolWindow(m_debuggerBreakpointView, KDockWidget::DockBottom, quantaApp->getMainDockWidget());
+  m_debuggerBreakpointViewTVA = quantaApp->addToolWindow(m_debuggerBreakpointView, quantaApp->prevDockPosition(m_debuggerBreakpointView, KDockWidget::DockBottom), quantaApp->getMainDockWidget());
   showMenu();
 
   // Debug HTML preview
@@ -54,7 +56,7 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
   //m_preview->view()->resize(0, 0);
   m_preview->view()->setIcon(UserIcon("debug_run"));
   m_preview->view()->setCaption(i18n("Debug Output"));
-  m_previewTVA = quantaApp->addToolWindow(m_preview->view(), KDockWidget::DockBottom, quantaApp->getMainDockWidget());
+  m_previewTVA = quantaApp->addToolWindow(m_preview->view(), quantaApp->prevDockPosition(m_preview->view(), KDockWidget::DockBottom), quantaApp->getMainDockWidget());
 
   // Show debugger toolbar
   quantaApp->toolBar("debugger_toolbar")->show();

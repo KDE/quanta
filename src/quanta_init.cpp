@@ -187,6 +187,7 @@ void QuantaInit::initQuanta()
   m_quanta->m_messageOutputView = addToolTreeView(m_quanta->m_messageOutput, i18n("Messages"), SmallIcon("openterm"), KDockWidget::DockBottom);
   m_quanta->m_problemsOutputView = addToolTreeView(m_quanta->m_problemOutput, i18n("Problems"), SmallIcon("info"), KDockWidget::DockBottom);
 
+  // Restore the dock layout
   m_config->setGroup  ("General Options");
   QString layout = m_config->readEntry("Window layout", "Default");
   int mdiMode = m_config->readNumEntry("MDI mode", -1);
@@ -196,6 +197,7 @@ void QuantaInit::initQuanta()
       if (mdiMode != KMdi::IDEAlMode)
         m_quanta->setToolviewStyle(qConfig.toolviewTabs);
   }
+  
   m_quanta->initTabWidget(true);
   qConfig.windowLayout = "Custom";
   //FIXME: This is a hack to workaround the starting problem when we are in Toplevel mode.
@@ -525,7 +527,7 @@ KMdiToolViewAccessor* QuantaInit::addToolTreeView(QWidget *widget, const QString
 {
   widget->setIcon(icon);
   widget->setCaption(name);
-  return m_quanta->addToolWindow(widget, position, m_quanta->getMainDockWidget());
+  return m_quanta->addToolWindow(widget, m_quanta->prevDockPosition(widget, position), m_quanta->getMainDockWidget());
 }
 
 void QuantaInit::readOptions()

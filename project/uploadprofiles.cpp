@@ -88,7 +88,7 @@ QWidget * UploadProfiles::createTreeview(const UploadProfile &profile)
     widget = new ServerTreeView(quantaApp->config(), quantaApp, kurl, "ServerTreeView" + profile.name);
     widget->setIcon(SmallIcon("up"));
     widget->setCaption( i18n("Upload Profile") + ": " + profile.name );
-    quantaApp->addToolWindow(widget, KDockWidget::DockRight, quantaApp->getMainDockWidget());
+    quantaApp->addToolWindow(widget, quantaApp->prevDockPosition(widget, KDockWidget::DockRight), quantaApp->getMainDockWidget());
   }
   return widget;
 }

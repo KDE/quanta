@@ -390,6 +390,9 @@ public slots:
   /** appends all visible user toolbar urls to the list */
   void slotGetUserToolbarFiles(KURL::List *list);
 
+  // Get saved position of dock
+  KDockWidget::DockPosition prevDockPosition(QWidget* dock, KDockWidget::DockPosition def);
+  
 protected slots:
   void slotDockWidgetHasUndocked(KDockWidget *widget);
   void slotPreviewBeingClosed();
