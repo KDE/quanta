@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="ol" hasScript="1" hasCore="1" hasI18n="1">
+<tag name="ul" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="type" type="list">
         <text>Type</text>

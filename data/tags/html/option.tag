@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="div" hasScript="1" hasCore="1" hasI18n="1" optional="1">
+<tag name="option" hasScript="1" hasCore="1" hasI18n="1" optional="1">
 
     <attr name="value" type="input">
         <text>Value</text>

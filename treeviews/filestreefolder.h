@@ -41,6 +41,8 @@ public:
     void setup();
   /** No descriptions */
   virtual bool acceptDrop(const QMimeSource *mime) const;
+  /** No descriptions */
+  virtual void sortChildItems(int column, bool ascending);
 
 public:
     QFile file;

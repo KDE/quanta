@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="base" hasCore="1" hasI18n="1" single="1">
+<tag name="isindex" hasCore="1" hasI18n="1" single="1">
 
     <attr name="prompt" type="input">
         <text>Prompt</text>

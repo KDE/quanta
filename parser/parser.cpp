@@ -84,10 +84,11 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
   Node * node = 0L;
   Node * prevNode = 0L;
   Node * firstNode = 0L;
-
-  while (line < (int)write->editIf->numLines())
+  int maxLines = write->editIf->numLines();
+  DTDStruct *dtd = write->currentDTD();
+  while (line < maxLines)
   {
-    Tag *tag = write->tagAt(line, col);
+    Tag *tag = write->tagAt(dtd, line, col,true);
     if (tag)
     {
       switch ( tag->type )
@@ -235,33 +236,5 @@ void Parser::nextPos(int &line, int &col)
   {
       col = 0;
       line++;
-  }
-}
-/** Update the internal node tree starting from the specified node. */
-void Parser::update(Node *fromNode)
-{
-  if (fromNode)
-  {
-    int bLine, bCol, eLine, eCol;
-    bLine = bCol = 0;
-    if (fromNode->prev)
-    {
-      Node *node = fromNode->prev;
-      while (node->child) node = node->child;
-      node->tag->endPos(bLine, bCol);
-      nextPos(bLine, bCol);
-    }
-    Tag *oldTag = fromNode->tag;
-    oldTag->endPos(eLine, eCol);
-    Tag *newTag = write->tagAt(bLine, bCol);
-    int nLine, nCol; //the new ending position of the tag
-    newTag->endPos(nLine, nCol);
-    if (nLine != eLine || nCol != eCol) //the end of tag has moved, so move the following also
-    {
-      fromNode->tag = newTag;
-      delete oldTag;
-      if (fromNode->child) update(fromNode->child);
-      else if (fromNode->next) update(fromNode->next);
-    }
   }
 }

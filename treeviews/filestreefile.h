@@ -36,9 +36,11 @@ public:
 	/** set icon for the item */
 	void setDirIcon();
   void setIcon(QString name);
+  /** No descriptions */
+  virtual void sortChildItems(int column, bool ascending);
 
   /** used for sorting */
-  virtual QString key ( int column, bool ascending ) const;
+//  virtual QString key ( int column, bool ascending ) const;
 
 public:
 	QString fname;

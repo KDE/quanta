@@ -71,7 +71,8 @@ FileManage::FileManage( QWidget *parent, const char *name)
 	folderMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
-	
+
+	//setShowSortIndicator(true);
 }
 
 FileManage::~FileManage()

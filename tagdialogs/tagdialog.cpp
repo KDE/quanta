@@ -118,8 +118,15 @@ void TagDialog::parseTag()
 		 f.open( IO_ReadOnly );
 	   if ( doc.setContent( &f ) )
      {
-       mainDlg = new Tagxml( doc, dtdTag->parentDTD, this );
-       ((Tagxml    *)mainDlg)->writeAttributes( dict );
+       for ( QDomNode n = doc.firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
+       {
+          if (n.nodeName() == "tag" && n.toElement().attribute("name") == dtdTag->name()) //read a tag
+          {
+             mainDlg = new Tagxml( doc, dtdTag->parentDTD, this );
+             ((Tagxml    *)mainDlg)->writeAttributes( dict );
+             break;
+          }
+       }
      }
      f.close();
     }

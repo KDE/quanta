@@ -67,7 +67,6 @@ KQApplication::KQApplication()
      QuantaApp *quanta;
 
      quanta = new QuantaApp();
-     quanta->initQuanta();
      quanta ->show();
 
      QString initialProject;
@@ -122,7 +121,6 @@ int KQUniqueApplication::newInstance()
 
     quanta = new QuantaApp;
     setMainWidget(quanta);
-    quanta->initQuanta();
     quanta->show();
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();

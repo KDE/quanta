@@ -169,9 +169,9 @@ Node *Document::nodeAt(int p_line, int p_col)
   return foundNode;
 }
 
-/** Return a node Tag accroding to line,col (or current cursor pos if line==col==-1).
-    If p_dtdName is specified, find tag according to this dtd. */
-Tag *Document::tagAt(int p_line, int p_col, QString p_dtdName)
+/** Return a node Tag according to line,col (or current cursor pos if p_line==p_col==-1), and
+    according to dtd. If forwardOnly is true, the text is parsed from (p_line,p_col) forward.*/
+Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly)
 {
   uint line;
   uint col;
@@ -179,37 +179,24 @@ Tag *Document::tagAt(int p_line, int p_col, QString p_dtdName)
   if ( (p_line < 0) && (p_col < 0))
   {
     viewCursorIf->cursorPositionReal(&line, &col);
-//    col++;
   } else
   {
     line = p_line;
     col = p_col;
   }
-  DTDStruct* dtd;
-  if (p_dtdName.isEmpty())
-  {
-    dtd = dtds->find(dtdName);
-  } else
-  {
-    dtd = dtds->find(p_dtdName);
-  }
-//  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
-  if (!dtd) dtd = dtds->find(defaultDocType);
-
-  QString textLine = editIf->textLine(line);
 
   Tag *tag = 0L;
-//  if (!tag) tag = findComment(line, col2);
   if (dtd->family == Xml)
   {
-    if (!tag) tag = findXMLTag(line, col);
-    if (!tag) tag = findText(line, col);
+    if (!tag) tag = findXMLTag(line, col, forwardOnly);
+    if (!tag) tag = findText(line, col, forwardOnly);
   }
   if (dtd->family == Script)
   {
     if (!tag) tag = findScriptStruct(line, col);
     if (!tag)
     {
+      QString textLine = editIf->textLine(line);
       if (textLine[col] == '}')
       {
         tag = new Tag();
@@ -237,7 +224,7 @@ Tag *Document::findScriptText(int line, int col)
   int pos = -1;
   QString textLine;
 
-  while (line >=0 && pos == -1)
+  while (line >= 0 && pos == -1)
   {
     textLine = editIf->textLine(line);
     if (line == origLine) textLine = textLine.left(col);
@@ -363,7 +350,7 @@ Tag *Document::findScriptStruct(int line, int col)
   return tag;
 }
 
-Tag *Document::findXMLTag(int line, int col)
+Tag *Document::findXMLTag(int line, int col, bool forwardOnly)
 {
   Tag *tag = 0L;
 //  QRegExp quotedTextRx("(((\\(?=[\"]))\")*[^\"]*)*");
@@ -373,22 +360,26 @@ Tag *Document::findXMLTag(int line, int col)
   int sLine = line;
   int sCol = col;
   bool tagFound = false;
-  //search backwards
-  QString foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
-  if (!foundText.isEmpty())
+  QString foundText;
+  if (!forwardOnly)
   {
-    if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
+    //search backwards
+    foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
+    if (!foundText.isEmpty())
     {
-      tagFound = true;
+      if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
+      {
+        tagFound = true;
+      } else
+      {
+        sLine = eLine;
+        sCol = eCol+1;
+      }
     } else
     {
-      sLine = eLine;
-      sCol = eCol+1;
+      sLine = sCol = 0;
     }
-  } else
-  {
-    sLine = sCol = 0;
-  }
+  } //if (!forwardonly)
   //if not found, search forward
   if (!tagFound)
   {
@@ -415,7 +406,7 @@ Tag *Document::findXMLTag(int line, int col)
 }
 
 //findXMLTag must be called before
-Tag *Document::findText(int line, int col)
+Tag *Document::findText(int line, int col, bool forwardOnly)
 {
   int bLine = 0;
   int bCol = 0;
@@ -424,23 +415,31 @@ Tag *Document::findText(int line, int col)
   Tag *tag = 0L;
   int t_bLine, t_bCol, t_eLine, t_eCol;
   t_bLine = t_bCol = t_eLine = t_eCol = -1;
-
+  QString foundText;
   QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>","i");
 
-  //search backwards
-  QString foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
-  if (!foundText.isEmpty())
+  if (!forwardOnly)
   {
-    t_bCol = eCol+1;
-    t_bLine = eLine;
-    if (t_bCol > editIf->lineLength(eLine))
+    //search backwards
+    foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
+    if (!foundText.isEmpty())
     {
-      t_bCol = 0;
-      t_bLine++;
+      t_bCol = eCol+1;
+      t_bLine = eLine;
+      if (t_bCol > editIf->lineLength(eLine))
+      {
+        t_bCol = 0;
+        t_bLine++;
+      }
+    } else
+    {
+      t_bCol = t_bLine = 0;
     }
-  } else
+  } //if (!forwardOnly)
+  else
   {
-    t_bCol = t_bLine = 0;
+    t_bLine = line;
+    t_bCol = col;
   }
   foundText = find(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
   if (!foundText.isEmpty())
@@ -481,7 +480,8 @@ void Document::changeCurrentTag( QDict<QString> *dict )
 {
   QDictIterator<QString> it( *dict ); // iterator for dict
   QDict<QString> oldAttr(1,false);
-  Tag *tag = tagAt();
+  DTDStruct *dtd = currentDTD();
+  Tag *tag = tagAt(dtd);
   if (tag)
   {
     QString tagStr = "";
@@ -518,7 +518,8 @@ QPoint Document::getGlobalCursorPos()
 void Document::insertAttrib(QString attr)
 {
   int line, col;
-  Tag *tag = tagAt();
+  DTDStruct *dtd = currentDTD();
+  Tag *tag = tagAt(dtd);
   if (tag)
   {
     tag->endPos(line, col);
@@ -750,7 +751,8 @@ bool Document::saveIt()
 QString Document::getTagNameAt( int line, int col )
 {
  QString name = "";
- Tag * tag = tagAt(line, col);
+ DTDStruct *dtd = currentDTD();
+ Tag *tag = tagAt(dtd, line, col);
  if (tag)
  {
    name = tag->name;
@@ -772,9 +774,7 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
   unsigned int line,col;
   completionInProgress = false;
   viewCursorIf->cursorPositionReal(&line,&col);
-  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
-  if (!dtd) dtd = dtds->find(dtdName);
-  if (!dtd) dtd = dtds->find(defaultDocType);
+  DTDStruct* dtd = currentDTD();
   if (completion.type == "attribute")
   {
     viewCursorIf->setCursorPositionReal(line,col-1);
@@ -837,20 +837,15 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
     codeCompletionRequested();
   } else
   {
-    DTDStruct* dtd = dtds->find(findDTDName(line, 0));
-    if (!dtd) dtd = dtds->find(dtdName);
-    if (!dtd) dtd = dtds->find(defaultDocType);
-    if (dtd)
+    DTDStruct* dtd = currentDTD();
+    if (dtd->family == Xml)
     {
-      if (dtd->family == Xml)
-      {
-        xmlAutoCompletion(dtd, line, column, string);
-      }
-      if (dtd->family == Script)
-      {
-        scriptAutoCompletion(dtd, line, column, string);
-      }
-    } //if (dtd)
+      xmlAutoCompletion(dtd, line, column, string);
+    }
+    if (dtd->family == Script)
+    {
+      scriptAutoCompletion(dtd, line, column, string);
+    }
   }
  }
 }
@@ -1040,6 +1035,22 @@ void Document::setDTDIdentifier(QString id)
   dtdName = id;
 }
 
+/** Get a pointer to the current active DTD. If fallback is true, this always gives back a valid and known DTD pointer: the active, the document specified and in last case the application default document type. */
+DTDStruct* Document::currentDTD(bool fallback)
+{
+  uint line, col;
+  viewCursorIf->cursorPositionReal(&line, &col);
+
+  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
+  if (fallback)
+  {
+    if (!dtd) dtd = dtds->find(dtdName);
+    if (!dtd) dtd = dtds->find(defaultDocType); //this will always exists
+  }
+
+  return dtd;
+}
+
 /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1. */
 QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
 {
@@ -1063,7 +1074,7 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
     pos = s.find("!doctype",0,false);
     if (pos != -1) //parse the found !DOCTYPE tag
       {
-        Tag *tag = findXMLTag(i, pos);
+        Tag *tag = findXMLTag(i, pos-1, true);
         if (!tag) return foundName;
         s = tag->tagStr();
         pos = s.find("public",0,false);
@@ -1092,7 +1103,7 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
         pos = s.find("<script",false);
         if ( (pos != -1) && ( ((int)line != i) || (pos < (int) col) )) //script tag found
         {
-          Tag *tag2 = findXMLTag(i, pos+2);
+          Tag *tag2 = findXMLTag(i, pos-1, true);
           QString s2 = tag2->attributeValue("language");
           if (s2.lower() == dtd->scriptName)
           {
@@ -1110,7 +1121,11 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
               }
               j -= dir;
             }
-            if (!afterClosingTag) foundName = dtd->name;
+            if (!afterClosingTag)
+            {
+              foundName = dtd->name;
+              break;
+            }
           } //if this script was found
         } //if script tag was found
       } //if it has a scriptName
@@ -1134,9 +1149,14 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
            }
            j -= dir;
          }
-         if (!afterClosingTag) foundName = dtd->name;
+         if (!afterClosingTag)
+         {
+            foundName = dtd->name;
+            break;
+         }
         } //if start tag was found
      }
+     if (!foundName.isEmpty()) break;
     } //dtd->startTags interation (for cycle)
 
    i += dir;
@@ -1297,22 +1317,17 @@ void Document::codeCompletionRequested()
 {
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
-  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
-  if (!dtd) dtd = dtds->find(dtdName);
-  if (!dtd) dtd = dtds->find(defaultDocType);
-  if (dtd)
+  DTDStruct* dtd = currentDTD();
+  if (dtd->family == Xml)
   {
-    if (dtd->family == Xml)
-    {
-      xmlCodeCompletion(dtd, line, col);
+    xmlCodeCompletion(dtd, line, col);
 
-    }
-    if (dtd->family == Script)
-    {
-      scriptCodeCompletion(dtd, line, col);
-    }
-    completionInProgress = true;
-  } //if (dtd)
+  }
+  if (dtd->family == Script)
+  {
+    scriptCodeCompletion(dtd, line, col);
+  }
+  completionInProgress = true;
 }
 
 /** Bring up the code completion tooltip. */
@@ -1320,20 +1335,15 @@ void Document::codeCompletionHintRequested()
 {
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
-  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
-  if (!dtd) dtd = dtds->find(dtdName);
-  if (!dtd) dtd = dtds->find(defaultDocType);
-  if (dtd)
+  DTDStruct* dtd = currentDTD();
+  if (dtd->family == Script)
   {
-    if (dtd->family == Script)
-    {
-      QString textLine = editIf->textLine(line).left(col);
-      int pos = textLine.findRev("(");
-      int pos2 = textLine.findRev(")");
-      if (pos > pos2 )
-         scriptCodeCompletion(dtd, line, pos);
-    }
-  } //if (dtd)
+    QString textLine = editIf->textLine(line).left(col);
+    int pos = textLine.findRev("(");
+    int pos2 = textLine.findRev(")");
+    if (pos > pos2 )
+       scriptCodeCompletion(dtd, line, pos);
+  }
 }
 
 /** Find the word until the first word boundary backwards */
@@ -1361,7 +1371,7 @@ QString Document::findWordRev(const QString& textToSearch)
 /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
 void Document::xmlCodeCompletion(DTDStruct *dtd, int line, int col)
 {
-  Tag * tag = tagAt(line,col,dtd->name);
+  Tag * tag = tagAt(dtd,line,col);
   if (tag)
   {
     int bLine, bCol;

@@ -101,6 +101,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   exitingFlag = false;
 
   config=kapp->config();
+  initQuanta();
 
 //  QTimer::singleShot(10,this, SLOT(initQuanta()));
 }
@@ -151,7 +152,6 @@ void QuantaApp::initQuanta()
 
 
   createGUI( QString::null, false );
-
 
   pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
@@ -808,6 +808,7 @@ uint QuantaApp::readTagFile(QString fileName, DTDStruct* parentDTD, QTagList *ta
    }
  }
 
+ delete doc;
  return numOfTags;
 }
 

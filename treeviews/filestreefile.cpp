@@ -69,23 +69,30 @@ void FilesTreeFile::setDirIcon()
 
 
 /** used for sorting */
+/*
 QString FilesTreeFile::key ( int, bool ) const
 {
   static QString key;
 
-  key  = QString( text(0) );
+//  key  = "2"+QFileInfo(text(0)).extension();
 
-/*  QString prefix = "5";
+//  QString prefix = "5";
 
 //FIXME: VERY slow on KDE/QT 3.0
-  if ( QDir::match( fileMaskHtml,  key) ) prefix = "2";
-  if ( QDir::match( fileMaskText,  key) ) prefix = "3";
-  if ( QDir::match( fileMaskImage, key) ) prefix = "4";
-  if ( isDir ) prefix = "1";
+//  if ( QDir::match( fileMaskHtml,  key) ) prefix = "2";
+//  if ( QDir::match( fileMaskText,  key) ) prefix = "3";
+//  if ( QDir::match( fileMaskImage, key) ) prefix = "4";
+//  if ( isDir ) prefix = "1";
 
-  key = prefix + key;
+//  key = prefix + key;
 
-  return key;                                           */
-  return QFileInfo(key).extension()+key;
+//  return key;
+//  if ( isDir ) key.prepend("0");
+  return text(0);//key;
 
+}                                                         */
+/** No descriptions */
+void FilesTreeFile::sortChildItems(int column, bool ascending)
+{
+  QListViewItem::sortChildItems(column, ascending);
 }

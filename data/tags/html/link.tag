@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="base" hasScript="1" hasCore="1" hasI18n="1" single="1">
+<tag name="link" hasScript="1" hasCore="1" hasI18n="1" single="1">
     <attr name="rel" type="list">
         <text>Rel</text>
         <textlocation col="0" row="0" />

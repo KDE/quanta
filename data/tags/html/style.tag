@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="script" hasI18n="1">
+<tag name="style" hasI18n="1">
 
     <attr name="type" type="list">
         <text>Type</text>

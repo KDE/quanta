@@ -478,7 +478,8 @@ void QuantaDoc::slotAttribPopup()
   Document *w = write();
 
   attribMenu->clear();
-  Tag *tag = w->tagAt();
+  DTDStruct *dtd = w->currentDTD();
+  Tag *tag = w->tagAt(dtd);
   if (tag)
   {
     QString tagName = tag->name;
@@ -544,7 +545,8 @@ void QuantaDoc::slotAttribPopup()
 void QuantaDoc::slotInsertAttrib( int id )
 {
   Document *w = write();
-  Tag *tag = w->tagAt();
+  DTDStruct *dtd = w->currentDTD();
+  Tag *tag = w->tagAt(dtd);
   if (tag)
   {
     QString tagName = tag->name;

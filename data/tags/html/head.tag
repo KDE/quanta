@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="html" hasI18n="1">
+<tag name="head" hasI18n="1">
     
     <attr name="profile" type="url">
         <text>Profile</text>

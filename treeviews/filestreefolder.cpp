@@ -180,11 +180,7 @@ void FilesTreeFolder::reloadList()
 /** need for sorting */
 QString FilesTreeFolder::key ( int, bool ) const
 {
-  static QString key;
-
-  key = QString("1") + text(0);
-
-  return key;
+  return " 0"+text(0);
 }
 
 FilesTreeFolder::~FilesTreeFolder()
@@ -248,4 +244,9 @@ void FilesTreeFolder::dropped(QDropEvent *e)
 bool FilesTreeFolder::acceptDrop(const QMimeSource *mime) const
 {
   return true;
+}
+/** No descriptions */
+void FilesTreeFolder::sortChildItems(int column, bool ascending)
+{
+  QListViewItem::sortChildItems(column, ascending);
 }

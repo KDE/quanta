@@ -37,6 +37,8 @@ class KQApplication : public KApplication
   public:
     KQApplication();
     ~KQApplication();
+  /** No descriptions */
+  void init();
 
 };
 

@@ -70,12 +70,9 @@ void QuantaView::slotEditCurrentTag()
   Document *w = write();
   uint line,col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
-  QString dtdName = w->findDTDName(line, 0);
-  DTDStruct *dtd = dtds->find(dtdName);
-  if (!dtd) dtd = dtds->find(w->getDTDIdentifier());
-  if (!dtd) dtd = dtds->find(defaultDocType);
-  dtdName = dtd->name;
-  Tag *tag = w->tagAt(-1,-1,dtdName);
+  DTDStruct *dtd = w->currentDTD();
+  QString dtdName = dtd->name;
+  Tag *tag = w->tagAt(dtd, line, col);
   if (tag)
   {
     QString tagName = tag->name;
@@ -116,7 +113,14 @@ void QuantaView::slotInsertCSS()
  }
 
   delete dlg;*/
-	CSSSelectorEditor* dlg = new CSSSelectorEditor ("", false, this,
+  QString code="";        /*
+  Tag *tag = w->tagAt();
+  if (tag)
+  {
+    if (tag->name ==
+  }                    */
+
+	CSSSelectorEditor* dlg = new CSSSelectorEditor (code, false, this,
 		i18n ("Insert a new selector"));
 	if (dlg->exec()) {
 		 w->insertTag( dlg->code() );

@@ -59,9 +59,9 @@ public:
 
   bool isUntitled();
   void setUntitledUrl(QString);
-  /** Return a node Tag accroding to line,col (or current cursor pos if line==col==-1).
-      If p_dtdName is specified, find tag according to this dtd. */
-  Tag *tagAt(int p_line = -1, int p_col = -1, QString p_dtdName=QString::null);
+  /** Return a node Tag according to line,col (or current cursor pos if p_line==p_col==-1), and
+      according to dtd. If forwardOnly is true, the text is parsed from (p_line,p_col) forward.*/
+  Tag *tagAt( DTDStruct *dtd, int p_line = -1, int p_col = -1, bool forwardOnly=false);
   /** return a pointet to the Node according to p_line, p_col (or current cursor pos, if both are -1)  */
   Node *nodeAt(int p_line = -1, int p_col = -1);
   /** Returns tag name at specified position */
@@ -114,6 +114,8 @@ public:
   QString getDTDIdentifier();
   /** Sets the DTD identifier */
   void setDTDIdentifier(QString id);
+  /** Get a pointer to the current active DTD. If fallback is true, this always gives back a valid and known DTD pointer: the active, the document specified and in last case the application default document type. */
+  DTDStruct* currentDTD(bool fallback = true);
   /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1.*/
   QString findDTDName(int startLine, int endLine, bool checkCursorPos = true);
   /** Retriwes the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
@@ -168,8 +170,8 @@ private:
   Tag *findScriptText(int line, int col);
   Tag *findScriptStruct(int line, int col);
 
-  Tag *findXMLTag(int line, int col);
-  Tag *findText(int line, int col);
+  Tag *findXMLTag(int line, int col, bool forwardOnly = false);
+  Tag *findText(int line, int col, bool forwardOnly = false);
 
   /** Brings up list of code completions */
   void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
