@@ -116,14 +116,6 @@
                 <string>&amp;Add</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="4" column="2">
-            <property name="name">
-                <cstring>editButton</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Edit</string>
-            </property>
-        </widget>
         <spacer row="5" column="2">
             <property name="name">
                 <cstring>spacer4</cstring>
@@ -167,19 +159,33 @@
         <receiver>Abbreviations</receiver>
         <slot>slotDTDChanged(const QString&amp;)</slot>
     </connection>
+    <connection>
+        <sender>addButton</sender>
+        <signal>clicked()</signal>
+        <receiver>Abbreviations</receiver>
+        <slot>slotAddTemplate()</slot>
+    </connection>
+    <connection>
+        <sender>removeButton</sender>
+        <signal>clicked()</signal>
+        <receiver>Abbreviations</receiver>
+        <slot>slotRemoveTemplate()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>dtdCombo</tabstop>
     <tabstop>templatesList</tabstop>
     <tabstop>addButton</tabstop>
     <tabstop>removeButton</tabstop>
-    <tabstop>editButton</tabstop>
     <tabstop>codeEdit</tabstop>
 </tabstops>
 <slots>
     <slot>slotTemplateSelectionChanged(QListViewItem*)</slot>
     <slot>dtdCombo_activated(const QString&amp;)</slot>
     <slot>slotDTDChanged(const QString&amp;)</slot>
+    <slot>slotAddTemplate()</slot>
+    <slot>slotRemoveTemplate()</slot>
+    <slot>slotEditTemplate()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

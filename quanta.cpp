@@ -826,7 +826,7 @@ void QuantaApp::slotOptions()
   // Environment options
   //TODO FileMasks name is not good anymore
   page=kd->addVBoxPage(i18n("Environment"), QString::null, BarIcon("files", KIcon::SizeMedium ) );
-  FileMasks *fileMasks = new FileMasks( );
+  FileMasks *fileMasks = new FileMasks((QWidget *)page);
 
   fileMasks->lineMarkup->setText( qConfig.markupMimeTypes );
   fileMasks->lineScript->setText( qConfig.scriptMimeTypes );
@@ -866,11 +866,15 @@ void QuantaApp::slotOptions()
   }
   lst.sort();
   uint pos = 0;
+  uint abbrevDTDPos = 0;
   for (uint i = 0; i < lst.count(); i++)
   {
     fileMasks->defaultDTDCombo->insertItem(lst[i]);
     if (lst[i] == QuantaCommon::getDTDNickNameFromName(qConfig.defaultDocType.lower()))
        pos = i;
+    if (lst[i] == m_view->write()->defaultDTD()->nickName)
+       abbrevDTDPos = i;
+
   }
   fileMasks->defaultDTDCombo->setCurrentItem(pos);
 
@@ -883,6 +887,8 @@ void QuantaApp::slotOptions()
   page = kd->addVBoxPage(i18n("Abbreviations"), QString::null, BarIcon("source", KIcon::SizeMedium));
   Abbreviation *abbreviationOptions = new Abbreviation((QWidget*)(page));
   abbreviationOptions->dtdCombo->insertStringList(lst);
+  abbreviationOptions->dtdCombo->setCurrentItem(abbrevDTDPos);
+  abbreviationOptions->slotDTDChanged(m_view->write()->defaultDTD()->nickName);
 
   page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
   DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)(page) );
@@ -959,6 +965,8 @@ void QuantaApp::slotOptions()
 
     repaintPreview(true);
     reparse(true);
+
+    abbreviationOptions->saveTemplates();
   }
 
   m_config->sync();

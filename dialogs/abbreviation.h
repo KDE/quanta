@@ -17,12 +17,17 @@ class Abbreviation : public Abbreviations
   Q_OBJECT
 public:
   Abbreviation(QWidget *parent, const char *name = 0);
-
   ~Abbreviation();
 
-private slots:
+  void saveTemplates();
+
+public slots:
   void slotDTDChanged(const QString& newDTDName);
+
+private slots:
   void slotTemplateSelectionChanged(QListViewItem*);
+  void slotAddTemplate();
+  void slotRemoveTemplate();
 
 private:
   DTDStruct *m_dtd;

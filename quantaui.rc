@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32004">
+<kpartgui name="quanta" version="32005">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -55,6 +55,7 @@
     <Action name="edit_comment" />
     <Action name="edit_uncomment" />
     <Separator />
+    <Action name="expand_abbreviation"/>
     <Action name="edit_apply_wordwrap"/>
     <Action name="edit_goto_line"/>
     <Action name="tools_spelling" />

@@ -928,6 +928,8 @@ uint QuantaApp::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagL
     build up the internal DTD and tag structures. */
 void QuantaApp::readTagDir(QString &dirName)
 {
+ if (!QFile::exists(dirName + "description.rc"))
+     return;
  QString tmpStr;
  QStringList tmpStrList;
 
@@ -1254,7 +1256,17 @@ void QuantaApp::readTagDir(QString &dirName)
  }
 
  //read the abbreviations files
- QFile f(dirName+"abbreviations");
+  QString abbrevFile = dirName;
+  if (dirName.startsWith(qConfig.globalDataDir))
+  {
+    abbrevFile = dirName.right(dirName.length() - qConfig.globalDataDir.length());
+    abbrevFile = KGlobal::dirs()->saveLocation("data", abbrevFile) +"/";
+  }
+  abbrevFile.append("abbreviations");
+  if (!QFile::exists(abbrevFile))
+      abbrevFile = dirName + "abbreviations";
+
+ QFile f(abbrevFile);
  if (f.open(IO_ReadOnly))
  {
    QDomDocument abbrevDom;
@@ -1325,6 +1337,11 @@ void QuantaApp::initTagDict()
           dtd->tagsList->insert(searchForTag, newTag);
         }
       }
+      QMap<QString, QString>::Iterator abbrevIt;
+      for (abbrevIt = parent->abbreviations.begin(); abbrevIt != parent->abbreviations.end(); ++abbrevIt)
+      {
+        dtd->abbreviations.insert(abbrevIt.key(), abbrevIt.data());
+      }
     }
   }
 
@@ -1372,7 +1389,7 @@ void QuantaApp::initActions()
     editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         m_view, SLOT( slotEditCurrentTag() ),
                         actionCollection(), "edit_current_tag" );
-    new KAction( i18n( "E&xpand abbreviation" ), CTRL+Key_J,
+    new KAction( i18n( "E&xpand Abbreviation" ), CTRL+Key_J,
                         this, SLOT( slotExpandAbbreviation() ),
                         actionCollection(), "expand_abbreviation" );
 
