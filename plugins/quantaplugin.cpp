@@ -301,7 +301,6 @@ bool QuantaPlugin::unload()
   disconnect( m_part, SIGNAL(setStatusBarText(const QString &)),
            quantaApp, SLOT(slotStatusMsg( const QString & )));
 
-  removeWidget();
   delete m_part;
   m_part = 0;
   setRunning(false);
@@ -309,6 +308,7 @@ bool QuantaPlugin::unload()
   emit pluginStopped();
 
   m_action->setChecked(false);
+  removeWidget();
   return true;
 }
 
@@ -398,7 +398,7 @@ void QuantaPlugin::removeWidget()
   }
   else if(ow == i18n("Editor Tab")) */
   {
-    ViewManager::ref()->removeView(m_view);
+    ViewManager::ref()->removeView(m_view, true);
   }
 }
 

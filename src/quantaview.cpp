@@ -159,8 +159,8 @@ void QuantaView::addDocument(Document *document)
                   this, SLOT(slotSourceGetFocus(Kate::View *)));
     connect(m_document->view(), SIGNAL(cursorPositionChanged()), this, SIGNAL(cursorPositionChanged()));
 
+    setMDICaption(m_document->url().fileName());
     setCaption(m_document->url().prettyURL());
-    setTabCaption(m_document->url().url());
 
 #ifdef BUILD_KAFKAPART
    m_kafkaDocument =KafkaDocument::ref();
@@ -229,6 +229,8 @@ void QuantaView::addDocument(Document *document)
 
 void QuantaView::addPlugin(QuantaPlugin *plugin)
 {
+   ToolbarTabWidget *m_toolbarTab = ToolbarTabWidget::ref(this);
+   m_toolbarTab->reparent(0, 0, QPoint(), false);
    m_plugin = plugin;
    setMDICaption(m_plugin->name());
    m_splitter->hide();
