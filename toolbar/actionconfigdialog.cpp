@@ -619,9 +619,9 @@ void ActionConfigDialog::saveCurrentAction()
           listItem->setPixmap(0, BarIcon(actionIcon->icon()));
         }
       }
-    }
-    KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
+      KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
         p_toolbar->guiClient->xmlFile(), p_toolbar->guiClient->instance());
+    }
     QWidget *toolBar = tb->page(i);
     if (toolBar->minimumSizeHint().height() > 20)
     {
