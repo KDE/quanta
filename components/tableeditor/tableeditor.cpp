@@ -1086,7 +1086,7 @@ void TableEditor::slotEditChildTable()
       QString cellData = m_dataTable->text(table.row, table.col);
       int pos = cellData.find(table.nestedData);
       if (pos == -1) {
-        KMessageBox::error(this, i18n("Cannot edit the child table. Most probably you modified the cell containing the table manually."), i18n("Cannot Read Table"));
+        KMessageBox::error(this, i18n("Cannot edit the child table; you probably modified the cell containing the table manually."), i18n("Cannot Read Table"));
         error = true;
         errorIt = it;
         break;
@@ -1107,7 +1107,7 @@ void TableEditor::slotEditChildTable()
       if (pos2 != -1)
         pos2 = tableData.find(table.nestedData, pos2);
       else {
-        KMessageBox::error(this, i18n("Cannot edit the child table. Most probably you modified the cell containing the table manually."), i18n("Cannot Read Table"));
+        KMessageBox::error(this, i18n("Cannot edit the child table; you probably modified the cell containing the table manually."), i18n("Cannot Read Table"));
         error = true;
         errorIt = it;
         break;

@@ -66,7 +66,7 @@ QString p = i18n("Inheritance");QString q = i18n("Inherited");QString r = "";
 QString s = i18n("Name");QString tt = i18n("Undo");QString u = i18n("Redo");
 QString v = i18n("Undo/Redo history");QString w = i18n("CSS styles");
 
-QString x = i18n("Sorry, VPL does not support this functionality yet!");
+QString x = i18n("Sorry, VPL does not support this functionality yet.");
 QString y = i18n("Merge cells");
 QString z = i18n("Split cells");
 QString aa = i18n("Edit CSS style of this Tag");
