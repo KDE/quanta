@@ -24,7 +24,9 @@
 #include <kdeversion.h>
 
 #include <ktexteditor/editinterface.h>
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
 #include <ktexteditor/editinterfaceext.h>
+#endif
 #include <ktexteditor/selectioninterface.h>
 
 //app includes
@@ -151,7 +153,9 @@ void SpellChecker::misspelling( const QString& origword, const QStringList&, uin
 void SpellChecker::corrected( const QString& originalword, const QString& newword, uint pos )
 {
         KTextEditor::EditInterface* editIf = dynamic_cast<KTextEditor::EditInterface*>(m_currentDoc);
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
         KTextEditor::EditInterfaceExt* editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt*>(m_currentDoc);
+#endif
         m_replaceCount++;
 
         uint line, col;
@@ -161,14 +165,18 @@ void SpellChecker::corrected( const QString& originalword, const QString& newwor
         lineText.remove(col,originalword.length());
         lineText.insert(col, newword);
 #ifdef BUILD_KAFKAPART
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
         if (editIfExt)
           editIfExt->editBegin();
+#endif
 #endif
         editIf->removeLine(line);
         editIf->insertLine(line, lineText);
 #ifdef BUILD_KAFKAPART
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
         if (editIfExt)
           editIfExt->editEnd();
+#endif
 #endif
 //        m_currentDoc->removeText( line, col, line, col + originalword.length() );
 //        m_currentDoc->insertText( line, col, newword );

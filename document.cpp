@@ -1874,8 +1874,10 @@ void Document::slotDelayedTextChanged()
               reparseEnabled = false;
               node->tag->namePos(bl, bc);
 #ifdef BUILD_KAFKAPART
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
               if(editIfExt)
                 editIfExt->editBegin();
+#endif
 #endif
               editIf->removeText(bl, bc, bl, bc + node->tag->name.length());
               if (updateClosing)
@@ -1890,8 +1892,10 @@ void Document::slotDelayedTextChanged()
                 }
               }
 #ifdef BUILD_KAFKAPART
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
               if(editIfExt)
                 editIfExt->editEnd();
+#endif
 #endif
               viewCursorIf->setCursorPositionReal(bl, bc);
 #ifdef BUILD_KAFKAPART
@@ -2227,8 +2231,10 @@ void Document::convertCase()
         if (tagCase !=0)
         {
 #ifdef BUILD_KAFKAPART
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
           if(editIfExt)
             editIfExt->editBegin();
+#endif
 #endif
           node->tag->namePos(bl, bc);
           ec = bc + node->tag->name.length();
@@ -2241,8 +2247,10 @@ void Document::convertCase()
             newName = newName.upper();
           editIf->insertText(bl, bc, newName);
 #ifdef BUILD_KAFKAPART
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
           if(editIfExt)
             editIfExt->editEnd();
+#endif
 #endif
         }
         if (attrCase != 0)
@@ -2251,8 +2259,10 @@ void Document::convertCase()
           for (int i = 0; i < node->tag->attrCount(); i++)
           {
 #ifdef BUILD_KAFKAPART
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
           if(editIfExt)
             editIfExt->editBegin();
+#endif
 #endif
             node->tag->attributeNamePos(i, bl, bc);
             newName = node->tag->attribute(i);
@@ -2264,8 +2274,10 @@ void Document::convertCase()
               newName = newName.upper();
             editIf->insertText(bl, bc, newName);
 #ifdef BUILD_KAFKAPART
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
           if(editIfExt)
             editIfExt->editEnd();
+#endif
 #endif
           }
         }

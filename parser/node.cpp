@@ -46,10 +46,12 @@ Node::Node( Node *parent )
 
 Node::~Node()
 {
+#ifdef BUILD_KAFKAPART
   //It has no use, except to know when it crash why it has crashed.
   //If it has crashed here, the Node doesn't exist anymore.
   // If it has crashed the next line, it is a GroupElements bug.
   tag->cleanStrBuilt = false;
+#endif
   //Remove the references to this node from the list of group elements.
   //They are actually stored in Parser::m_groups.
   QPtrListIterator<GroupElementList> iter(groupElementLists);

@@ -30,7 +30,11 @@
 #include <ktexteditor/view.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/editinterface.h>
+
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
 #include <ktexteditor/editinterfaceext.h>
+#endif
+
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/codecompletioninterface.h>
@@ -179,7 +183,9 @@ work correctly. */
   KTextEditor::ViewCursorInterface *viewCursorIf;
   KTextEditor::SelectionInterface *selectionIf;
   KTextEditor::EditInterface *editIf;
+#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
   KTextEditor::EditInterfaceExt *editIfExt;
+#endif
   KTextEditor::CursorInterface *cursorIf;
   KTextEditor::CodeCompletionInterface *codeCompletionIf;
   KTextEditor::ConfigInterface* configIf;
