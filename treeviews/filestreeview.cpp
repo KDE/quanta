@@ -118,6 +118,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
   setLineWidth( 2 );
   setFocusPolicy(QWidget::ClickFocus);
   setAcceptDrops(true);
+  setShowSortIndicator(true);
   connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
           this, SLOT(slotDropped(KURL::List&, KURL&)));
 

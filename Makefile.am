@@ -40,10 +40,11 @@ messages: rc.cpp
 	find $$dirs -maxdepth 1 -name "*.cpp" -print > files ;\
 	find $$dirs -maxdepth 1 -name "*.cc" -print >> files ;\
 	find $$dirs -maxdepth 1 -name "*.h" -print >> files ;\
-	toolbars=`find -name "*.toolbar.tgz"`;\
+	toolbars=`find . -name "*.toolbar.tgz"`;\
 	for toolbar in $$toolbars; do \
 	 tar Oxfz $$toolbar  >> extrafiles; \
 	done ;\
+	cat data/actions.rc >> extrafiles; \
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.ui"` >> rc.cpp ;\
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.rc"` >> rc.cpp ;\
 	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.kmdr"` >> rc.cpp ;\

@@ -12,5 +12,3 @@ Names = fonts
 [Extra rules]
 
 [Parsing rules]
-SpecialAreas = <!-- -->, <?xml ?>
-SpecialAreaNames = comment, XML PI

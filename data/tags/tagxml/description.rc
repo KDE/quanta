@@ -11,8 +11,6 @@ Location = tagxml
 Names = tagxml
 
 [Parsing rules]
-SpecialAreas = <!-- -->, <?xml ?>, <!DOCTYPE >
-SpecialAreaNames = comment, XML PI, DTD
 
 [Extra rules]
 Single Tag Style = XML

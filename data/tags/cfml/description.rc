@@ -15,5 +15,6 @@ BooleanAttributes = simple
 Single Tag Style = html
 
 [Parsing rules]
+AppendCommonRules = false
 Comments = <!--- --->
 MayContain = css, cffunct

@@ -545,6 +545,7 @@ void QuantaApp::initView()
           this, SLOT(slotImageOpen(const KURL&)));
   connect(sTab, SIGNAL(showPreviewWidget(bool)),
           this, SLOT(slotShowPreviewWidget(bool)));
+  connect(parser, SIGNAL(nodeTreeChanged()), sTab, SLOT(slotNodeTreeChanged()));        
 
   connect(dTab, SIGNAL(openURL(const QString&)), SLOT(openDoc(const QString&)));
 
@@ -1280,10 +1281,22 @@ bool QuantaApp::readTagDir(QString &dirName)
  {
    dtd->insideDTDs[i] = dtd->insideDTDs[i].stripWhiteSpace().lower();
  }
+ bool appendCommonRules = dtdConfig->readBoolEntry("AppendCommonSpecialAreas", true);
 //Read the special areas and area names
+ QString rxStr = "";
+ if (dtd->family == Xml && appendCommonRules)
+ {
+    dtd->specialAreas["<?xml"] = "?>";
+    dtd->specialAreaNames["<?xml"] = "XML PI";
+    dtd->specialAreas["<!--"] = "-->";
+    dtd->specialAreaNames["<!--"] = "comment";
+    dtd->specialAreas["<!"] = ">";
+    dtd->specialAreaNames["<!"] = "DTD";
+    tmpStr = "(<?xml)|(<!--)|(<!)|";
+    rxStr = QuantaCommon::makeRxCompatible(tmpStr);
+ }
  QStringList specialAreasList = dtdConfig->readListEntry("SpecialAreas");
  QStringList specialAreaNameList = dtdConfig->readListEntry("SpecialAreaNames");
- QString rxStr = "";
  for (uint i = 0; i < specialAreasList.count(); i++)
  {
    if (!specialAreasList[i].stripWhiteSpace().isEmpty())
@@ -1314,6 +1327,8 @@ bool QuantaApp::readTagDir(QString &dirName)
  //static const QString quotationStr = "\\\\\"|\\\\'";
  rxStr = "\\\\\"|\\\\'|";
  QStringList commentsList = dtdConfig->readListEntry("Comments");
+ if (dtd->family == Xml && appendCommonRules)
+   commentsList.append("<!-- -->");
  QString tmpStr2;
  for (uint i = 0; i < commentsList.count(); i++)
  {
@@ -1626,7 +1641,7 @@ void QuantaApp::initTagDict()
           tmpStr = mapIt.key();
           dtd->specialAreas[tmpStr] = mapIt.data();
           dtd->specialAreaNames[tmpStr] = dtd->insideDTDs[i];
-          specialAreaStartRxStr.append("(?:"+ QuantaCommon::makeRxCompatible(tmpStr)+")|");
+          specialAreaStartRxStr.append("(?:" +  QuantaCommon::makeRxCompatible(tmpStr) + ")|");
         }
 
         for (mapIt = insideDTD->definitionTags.begin(); mapIt != insideDTD->definitionTags.end(); ++mapIt)
@@ -1939,16 +1954,6 @@ void QuantaApp::initActions()
                         this, SLOT(slotRepaintPreview()),
                         ac, "reload" );
 
-    (void) new KAction( i18n( "View with &Netscape" ), "netscape", CTRL+ALT+Key_F6,
-                        m_view, SLOT( slotViewInNetscape() ),
-                        ac, "view_with_netscape" );
-    (void) new KAction( i18n( "View with Mo&zilla" ), "mozilla", ALT+Key_F6,
-                        m_view, SLOT( slotViewInMozilla() ),
-                        ac, "view_with_mozilla" );
-    (void) new KAction( i18n( "View with &Opera" ), "opera", CTRL+SHIFT+Key_F6,
-                        m_view, SLOT( slotViewInOpera() ),
-                        ac, "view_with_opera" );
-
     (void) new KAction( i18n( "View with &Konqueror" ), "konqueror", CTRL+Key_F6,
                         m_view, SLOT( slotViewInKFM() ),
                         ac, "view_with_konqueror" );
@@ -2078,12 +2083,14 @@ void QuantaApp::initActions()
     QString ss = i18n("Upload Opened Project Files...");
 /*    new KAction(i18n("Upload Opened Project Files"), 0, this, SLOT(slotUploadOpenedFiles()), ac, "upload_opened_files"); */
 
+    QString error;
+    int el, ec;
     m_actions = new QDomDocument();
 //load the global actions
     QFile f(qConfig.globalDataDir + "quanta/actions.rc");
     if ( f.open( IO_ReadOnly ))
     {
-      if (m_actions->setContent(&f))
+      if (m_actions->setContent(&f, &error, &el, &ec))
       {
         QDomElement docElem = m_actions->documentElement();
 
@@ -2095,7 +2102,8 @@ void QuantaApp::initActions()
           }
           n = n.nextSibling();
         }
-      }
+      } else
+        kdError(24000) << QString("Error %1 at (%2, %3) in %4").arg(error).arg(el).arg(ec).arg(f.name()) << endl;
       f.close();
     }
     m_actions->clear();
@@ -2106,7 +2114,7 @@ void QuantaApp::initActions()
       f.setName(s);
       if ( f.open( IO_ReadOnly ))
       {
-        if (m_actions->setContent(&f))
+        if (m_actions->setContent(&f, &error, &el, &ec))
         {
           QDomElement docElem = m_actions->documentElement();
 
@@ -2120,7 +2128,8 @@ void QuantaApp::initActions()
             }
             n = n.nextSibling();
           }
-        }
+        } else
+        kdError(24000) << QString("Error %1 at (%2, %3) in %4").arg(error).arg(el).arg(ec).arg(f.name()) << endl;
         f.close();
       }
     } else

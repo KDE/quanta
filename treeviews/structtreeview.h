@@ -82,6 +82,7 @@ public slots: // Public slots
   /** No descriptions */
   void slotExpanded(QListViewItem *);
   void slotOpenFile();
+  void slotNodeTreeChanged();
 
 signals:
   void newCursorPosition( int col, int row );
@@ -110,6 +111,7 @@ private:
   QStringList dtdList;
   int openFileMenuId;
   QMap<QString, uint> groupIds;
+  bool m_dirty;
 
 protected: // Protected methods
   /** Do a reparse before showing. */

@@ -847,8 +847,18 @@ void QuantaApp::slotNewStatus()
     int pageId = wTab->currentPageIndex();
     bool block=wTab->signalsBlocked();
     wTab->blockSignals(true);
+    //If we don't disable the parser, it wil parse page 0 and then reload kafka
+    //even if the signals are supposed to be blocked ;(
+    parser->setParsingEnabled(false);
+#ifdef BUILD_KAFKAPART
+    view()->setKafkaReloadingEnabled(false);
+#endif
     wTab->setCurrentPage(0);
     wTab->setCurrentPage(pageId);
+#ifdef BUILD_KAFKAPART
+    view()->setKafkaReloadingEnabled(true);
+#endif    
+    parser->setParsingEnabled(true);
     wTab->blockSignals(block);
  }
 }
@@ -1672,9 +1682,15 @@ void QuantaApp::slotShowScriptTabDock() { scripttabdock->changeHideShowState(); 
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
 void QuantaApp::slotShowATabDock() { atabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
-void QuantaApp::slotShowProblemsDock()
+void QuantaApp::slotShowProblemsDock(bool force)
 {
-  problemsdock->changeHideShowState();
+  if(!force)
+    problemsdock->changeHideShowState();
+  else
+  {
+    if(!problemsdock->isVisible())
+      problemsdock->changeHideShowState();
+  }
   if (!stabdock->isVisible()) {
     m_problemOutput->clear();
     m_problemOutput->showMessage(i18n("Switch to the Structure Tree in order to turn on the error recognition.\n"));
@@ -2365,7 +2381,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   QString error;
   int el, ec;
   if (!dom->setContent(s, &error, &el, &ec))
-      kdDebug(24000) << QString("Error %1 at (%2, %3)").arg(error).arg(el).arg(ec)<<endl;
+      kdError(24000) << QString("Error %1 at (%2, %3)").arg(error).arg(el).arg(ec)<<endl;
   p_toolbar->dom = dom;
 
   QTextStream bufferStr(&buffer);
@@ -4006,6 +4022,37 @@ void QuantaApp::slotReloadStructTreeView()
         expandLevel = 40;
     sTab->slotReparse(w, baseNode , expandLevel );
   }
+}
+
+QString QuantaApp::saveCurrentFile()
+{
+  if (!view()->writeExists()) 
+    return QString::null;
+  Document *w = view()->write();
+  if (w->isModified())
+  {
+    if ( KMessageBox::questionYesNo(this,
+                                    i18n("The file must be saved before external preview.\n"
+                                         "Do you want to save and preview?"),
+                                    i18n("Save Before Preview"),
+                                    i18n("&Yes"),i18n("&No"), "AskForSaveBeforePreview")
+         == KMessageBox::Yes)
+    {
+      if (w->isUntitled())
+      {
+       quantaApp->slotFileSaveAs();
+      }
+      else
+      {
+       w->save();
+      }
+    } else
+    {
+      return QString::null;
+    }
+  }
+  KURL url = project()->urlWithPrefix(w->url());
+  return url.url();
 }
 
 #include "quanta.moc"

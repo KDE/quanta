@@ -36,8 +36,6 @@ Single Tag Style = html
 StructGroupsCount = 3
 
 [Parsing rules]
-SpecialAreas = <!-- -->
-SpecialAreaNames = comment
 SpecialTags = script(language)
 MayContain = php, css
 

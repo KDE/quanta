@@ -105,7 +105,8 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   addColumn(i18n("Templates"), -1);
   addColumn("");
   setFullWidth(true);
-
+  setShowSortIndicator(true);
+  
   KURL url;
   url.setPath(qConfig.globalDataDir + "quanta/templates/");
   m_globalDir = new FilesTreeBranch(this, url, i18n("Global Templates"), SmallIcon("ttab"));

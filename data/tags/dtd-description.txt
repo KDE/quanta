@@ -95,6 +95,13 @@ SpecialAreas = the beginning and ending string of special areas, separatted by a
     Special areas are not parsed according to this DTD's rules, but as their own rules.
     A special area can be a pseudo DTD,a comment or something like that. Eg. <!-- -->
 SpecialAreaNames = comma separated list of the above special area names. Eg. comment
+Comments = comma separated list of area borders for comments. EOL means end-of-line.
+    Eg: // EOL, /* */
+AppendCommonRules = true or false. If true, the following rules are automatically appended:
+      SpecialAreas = <?xml ?>, <!-- -->, <! >
+      SpecialAreaNames = XML PI, comment, DTD
+      Comments = <!-- -->  
+      Default is "true", so append the rules.
 SpecialTags = tagname(attributename) - specifies a tag which defines the start of
     a special area
 MayContain = comma separated list of pseudo-DTDs that can be present in the document.

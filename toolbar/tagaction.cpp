@@ -27,6 +27,7 @@
 #include <qtimer.h>
 
 //kde includes
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kprocess.h>
 #include <klocale.h>
@@ -70,7 +71,7 @@ int MyProcess::commSetupDoneC()
 }
 
 TagAction::TagAction( QDomElement *element, KActionCollection *parent)
-  : KAction( element->attribute("text"), KShortcut(element->attribute("shortcut")), 0, 0, parent, element->attribute("name") )
+  : KAction( i18n(element->attribute("text").utf8()), KShortcut(element->attribute("shortcut")), 0, 0, parent, element->attribute("name") )
 {
   m_modified = false;
   tag = element->cloneNode().toElement();
@@ -211,7 +212,13 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     }
 
     pid_t pid = ::getpid();
-    command.replace("%pid", QString("%1").arg(pid));
+    if (kapp->inherits("KUniqueApplication"))
+    {
+      command.replace("%pid", QString("unique %1").arg(pid));
+    } else
+    {
+      command.replace("%pid", QString("%1").arg(pid));
+    }
     QString buffer;
     QString inputType = script.attribute("input","none");
 
@@ -587,8 +594,8 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 			//Nothing is selected, simply inserting the Node if it is not an inline.
 			if(!kafkaCommon::isInline(node->tag->name) || nodeQTag->isSingle())
 			{
-				kafkaCommon::DTDinsertNode(node, nodeParent, kafkaNode,
-					kafkaNode, offset, offset, modifs);
+				kafkaCommon::DTDinsertNode(node, nodeParent, 0L,
+					0L, offset, offset, modifs);
 			}
 		}
 

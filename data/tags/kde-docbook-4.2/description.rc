@@ -24,5 +24,3 @@ Groups = Core
 Single Tag Style = XML
 
 [Parsing rules]
-SpecialAreas = <!-- -->, <?xml ?>, <!DOCTYPE >
-SpecialAreaNames = comment, XML PI, DTD

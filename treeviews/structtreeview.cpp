@@ -110,6 +110,7 @@ StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *nam
 
   write = 0L;
   timer.start();
+  m_dirty = true;
 }
 
 
@@ -413,12 +414,13 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
     groupsCount = i;
   }
   useOpenLevelSetting = false;
+  m_dirty = false;
 }
 
 void StructTreeView::slotGotoTag( QListViewItem *item )
 {
   StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
-  if (it && it->node && it->node->tag)
+  if (!m_dirty && it && it->node && it->node->tag)
   {
     int line, col;
     it->node->tag->beginPos(line, col);
@@ -433,6 +435,7 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
     kdDebug(24000) << "Node area: " << line << ", " << col << ", " << el << ", " << ec << endl;
     kdDebug(24000) << "Node type: " << it->node->tag->type << endl;
     kdDebug(24000) << "Node str: " << it->node->tag->tagStr() << endl;
+    kdDebug(24000) << "Node cleanstr: " << it->node->tag->cleanStr << endl;
     emit newCursorPosition( line, col);
     it->node->tag->write()->view()->setFocus();
   }
@@ -518,7 +521,7 @@ void StructTreeView::slotGotoClosingTag()
 {
   QListViewItem *item = currentItem();
   StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
-  if (it && it->node)
+  if (!m_dirty && it && it->node)
   {
     int newLine, newCol;
     Tag *tag = it->node->tag;
@@ -546,7 +549,7 @@ void StructTreeView::slotSelectTag()
 {
   QListViewItem *item = currentItem();
   StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
-  if (it && it->node)
+  if (!m_dirty && it && it->node)
   {
     int bLine, bCol, eLine, eCol;
     if (it->node->fileName.isEmpty())
@@ -661,7 +664,7 @@ void StructTreeView::setFollowCursor(bool follow)
 void StructTreeView::slotExpanded(QListViewItem *item)
 {
  StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
- if (it && it->node)
+ if (!m_dirty && it && it->node)
      it->node->opened = true;
 }
 
@@ -669,7 +672,7 @@ void StructTreeView::slotExpanded(QListViewItem *item)
 void StructTreeView::slotCollapsed(QListViewItem *item)
 {
  StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
- if (it && it->node)
+ if (!m_dirty && it && it->node)
      it->node->opened = false;
 }
 /** Do a reparse before showing. */
@@ -707,7 +710,7 @@ void StructTreeView::setParsingDTD(const QString dtdName)
 void StructTreeView::slotOpenFile()
 {
   StructTreeTag *item = dynamic_cast<StructTreeTag*>(currentItem());
-  if (item->node)
+  if (!m_dirty && item->node)
   {
     QString text = item->groupTag->name;
     text.remove(item->fileNameRx);
@@ -724,4 +727,9 @@ void StructTreeView::slotOpenFile()
       emit openImage( url );
     }
   }
+}
+
+void StructTreeView::slotNodeTreeChanged()
+{
+  m_dirty = true;
 }

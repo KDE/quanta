@@ -33,14 +33,8 @@
 
 class Document;
 class KDirWatch;
-
-struct DTDListNode {
-    DTDStruct *dtd;
-    QString startText;
-    QString endText;
-    int bLine, bCol;
-    int eLine, eCol;
-  };
+class QRegExp;
+class NodeModifsSet;
 
 typedef QMap<QString, GroupElementMapList> IncludedGroupElements;
 typedef QMap<QString, IncludedGroupElements> IncludedGroupElementsMap;
@@ -53,23 +47,12 @@ public:
   Parser();
   ~Parser();
 
-  /** Searches for scripts inside the text from startNode. It looks only for the
-  script begin/and delimiters, and not for the <script> or other special tags.
-  Useful when parsing for script inside scripts, or inside the quoted attribute
-  values of the xml tags.
-  Returns: true if a script area is found, false if the parsed text does not
-  contain any scripts. */
-  bool scriptParser(Node *startNode);
-
   /** Parse a string, using as start position sLine, sCol. */
   Node *parseArea(int startLine, int startCol, int endLine, int endCol, Node **lastNode, Node *a_node = 0L);
 
   /** Parse the whole text from Document w and build the internal structure tree
   from Nodes */
   Node *parse(Document *w);
-
-  /** Parses the found special (like script, css and such) areas.*/
-  Node* specialAreaParser(Node *startNode);
 
   /** Returns the node for position (line, column). As more than one node can
   contain the same area, it return the "deepest" node. */
@@ -83,8 +66,10 @@ public:
   void clearGroups();
   void parseIncludedFiles();
   void removeCommentsAndQuotes(QString& str, DTDStruct* dtd);
-  void parseForXMLGroup(Node *node);
-  void parseForScriptGroup(Node *node);
+
+  /** Enable/Disable parsing. */
+  void setParsingEnabled(bool enabled) {m_parsingEnabled = enabled;}
+  bool IsparsingEnabled() {return m_parsingEnabled;}
   /**
    * This function is ESSENTIAL : when one modify baseNode, one MUST use
    * this function to set the internal parser RootNode pointer to the same Node as
@@ -106,6 +91,9 @@ public:
 
 private slots:
   void slotIncludedFileChanged(const QString& fileName);
+  
+signals:
+  void nodeTreeChanged();  
 
 private:
   Node* m_node;       //the internal Node pointer
@@ -117,8 +105,86 @@ private:
   int treeSize;
   KDirWatch *includeWatch;
   QMap<QString, XMLStructGroup>::ConstIterator xmlGroupIt;
+  QRegExp m_quotesRx;
+  bool m_parsingEnabled;
 
-  void parseIncludedFile(const QString& fileName, DTDStruct *dtd);
+  void parseIncludedFile(const QString &fileName, DTDStruct *dtd);
+  /** Searches for scripts inside the text from startNode. It looks only for the
+  script begin/and delimiters, and not for the <script> or other special tags.
+  Useful when parsing for script inside the xml tags.
+  Returns: true if a script area is found, false if the parsed text does not
+  contain any scripts. */
+  bool parseScriptInsideTag(Node *startNode);
+
+/*
+  Parses the document for special areas (eg. scripts).
+  specialArea: the area (start/end position) in the document that may contain the special
+               area. It may end before the end position.
+  areaStartString: the special area starting string
+  forcedAreaEndString: force this as the special area ending string.
+  parentNode: the Node under where the special area goes
+  lastLine: will contain the line where the special area ends
+  lastCol: will contain the column where the special area ends
+*/
+  Node* parseSpecialArea(const AreaStruct &specialArea,
+                         const QString &areaStartString,
+                         const QString &forcedAreaEndString,
+                         Node *parentNode,
+                         int& lastLine, int& lastCol);
+  QString getLine(int line, int endLine, int endCol);
+  /** Appends a text area to a text node. */
+  void appendAreaToTextNode(const AreaStruct &area, Node *node);
+  /** Creates a text/empty node between node and the provided position */
+  Node* createTextNode(Node *node, int eLine, int eCol, Node *parentNode);
+  /** Creates a head node for special areas.
+      area: the area belonging to this node
+      areaName: the special area name (type)
+      dtd: the parent DTD
+      parentNode: the parent of the node
+      currentNode: the last child of the parent, if it exists
+  */
+  Node* createScriptTagNode(const AreaStruct &area, const QString &areaName, DTDStruct *dtd, Node *parentNode, Node *currentNode);
+  /** Parses the node for XML groups (specific tags)*/
+  void parseForXMLGroup(Node *node);
+  /** Parses the node for Script groups (functions, variables, selectors, etc.) */
+  void parseForScriptGroup(Node *node);
+  /** Determines the area that should be reparsed.
+      w: the document we are working on
+      area: the invalid areas
+      firstNode: the first unchanged node before the current position
+      lastNode: the first unchanged node after the current position
+      Returns: true if an area was found, false otherwise => require full parsing
+   */
+  bool invalidArea(Document *w, AreaStruct &area, Node **firstNode, Node **lastNode);
+
+  /** Deletes all the nodes between the firstNode and lastNode and keeps the tree's consistency.
+      modifs is the class recording these changes for the undo/redo system, cf undoredo.h */
+  void deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs);
+
+  /**
+   * This function must be called before reparsing : it log in the undo/redo system
+   * that the whole Node tree is reloaded.
+   * @param modifs This class record all the changes made.
+   * @param w modifs will be inserted in w's undoredo list.
+   */
+  void logReparse(NodeModifsSet *modifs, Document *w);
+
+  struct ContextStruct{
+    int type;
+    AreaStruct area;
+    QString startString;
+    Node *parentNode;
+    Node *lastNode;
+  };
+
+  enum ContextType {
+    Unknown = 0,
+    Text,
+    Comment,
+    QuotedString,
+    Group
+  };
+
 
 };
 

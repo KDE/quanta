@@ -49,8 +49,6 @@ Single Tag Style = XML
 StructGroupsCount = 2
 
 [Parsing rules]
-SpecialAreas = <!-- -->, <?xml ?>, <!DOCTYPE >
-SpecialAreaNames = comment, XML PI, DTD
 SpecialTags = script(language)
 MayContain = php, css
 

@@ -70,7 +70,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
  // header()->hide();
   setSorting( 0 );
   m_urlList.clear();
-
+  setShowSortIndicator(true);
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
   addColumn(i18n("Project Files"), -1);

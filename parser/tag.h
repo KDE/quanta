@@ -122,7 +122,7 @@ public:
 
   void namePos(int &line, int &col);
   int attrCount() const {return attrs.count();}
-  /** modify the attributes of tag accoording to the attrDict*/
+  /** modify the attributes of tag according to the attrDict*/
   void modifyAttributes(QDict<QString> *attrDict);
   /** returns the tag as a string */
   QString toString();

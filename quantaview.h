@@ -116,6 +116,14 @@ public:
   void reloadKafkaView(bool force = false);
   /** reload the Quanta view from the Node Tree. Set force to true if you want to reload even if not necessary. */
   void reloadQuantaView(bool force = false);
+
+  /** Enable/Disable kafka Reloading. */
+  void setKafkaReloadingEnabled(bool enabled) {m_kafkaReloadingEnabled = enabled;}
+  bool IsKafkaReloadingEnabled() {return m_kafkaReloadingEnabled;}
+
+  /** Enable/Disable quanta Reloading. */
+  void setQuantaReloadingEnabled(bool enabled) {m_quantaReloadingEnabled = enabled;}
+  bool IsQuantaReloadingEnabled() {return m_quantaReloadingEnabled;}
 #endif
 
   /** Resize the current view */
@@ -163,11 +171,6 @@ public slots:
   void slotNewCurPos();
 
   void slotViewInKFM();
-  void slotViewInNetscape();
-  void slotViewInMozilla();
-  void slotViewInOpera();
-  void slotViewInNetscapeOrMozilla();
-  void slotNetscapeStatus(KProcess *proc);
   void slotViewInLynx();
 
   void slotGetScriptOutput(KProcess *proc, char *buffer, int buflen);
@@ -243,6 +246,12 @@ public slots:
    */
   void slotSetKafkaCursorPosition(DOM::Node node, int offset);
 
+  /**
+   * Called when an error occured when loading kafka.
+   * Pop up the Error reporter dialog.
+   */
+  void slotKafkaLoadingError(Node *node);
+
   /** closes all the other but active tabs */
   void slotCloseOtherTabs();
 
@@ -275,6 +284,7 @@ private:
   int curCol, curLine, curOffset;
   DOM::Node curNode;
   bool m_needKafkaReload;
+  bool m_kafkaReloadingEnabled, m_quantaReloadingEnabled;
 #endif
   int currentViewsLayout;
 
@@ -284,7 +294,6 @@ private:
   QString scriptErrorDest;
   ToolbarTabWidget *m_toolbarTab;
   QTabWidget *m_writeTab;
-  QString m_netscape;
 
 protected:
   virtual void dropEvent(QDropEvent *e);

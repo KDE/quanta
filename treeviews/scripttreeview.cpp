@@ -49,13 +49,13 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   setRootIsDecorated( true );
   //header()->hide();
   setSorting( 0 );
-
+  setShowSortIndicator(true);
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
   addColumn(i18n("Scripts"), -1);
   addColumn("");
   setFullWidth(true);
-
+  
   KURL url;
   url.setPath(qConfig.globalDataDir + "quanta/scripts/");
 

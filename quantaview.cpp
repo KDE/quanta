@@ -114,11 +114,17 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   kafkaInterface->getKafkaWidget()->view()->setMinimumHeight(50);
   splitter = new QSplitter(Qt::Vertical, 0);
 
-  connect(kafkaInterface->getKafkaWidget(), SIGNAL(hasFocus(bool)),
-    this, SLOT(slotKafkaGetFocus(bool)));
-  connect(kafkaInterface, SIGNAL(newCursorPosition(int,int)), this, SLOT(slotSetQuantaCursorPosition(int, int)));
+  m_kafkaReloadingEnabled = true;
+  m_quantaReloadingEnabled = true;
   curCol = curLine = curOffset = 0;
   m_needKafkaReload = true;
+
+  connect(kafkaInterface->getKafkaWidget(), SIGNAL(hasFocus(bool)),
+    this, SLOT(slotKafkaGetFocus(bool)));
+  connect(kafkaInterface, SIGNAL(newCursorPosition(int,int)),
+    this, SLOT(slotSetQuantaCursorPosition(int, int)));
+  connect(kafkaInterface, SIGNAL(loadingError(Node *)),
+    this, SLOT(slotKafkaLoadingError(Node *)));
 #endif
 
   setAcceptDrops(TRUE); // [MB02] Accept drops on the view
@@ -467,7 +473,7 @@ void QuantaView::reloadBothViews(bool force)
 void QuantaView::reloadKafkaView(bool force)
 {
 	if(!(qConfig.kafkaRefreshOnFocus && hadLastFocus() != QuantaView::kafkaFocus) &&
-		getViewsLayout() != QuantaView::QuantaViewOnly)
+		getViewsLayout() != QuantaView::QuantaViewOnly && m_kafkaReloadingEnabled)
 		write()->docUndoRedo->reloadKafkaEditor(force);
 }
 
@@ -475,7 +481,7 @@ void QuantaView::reloadKafkaView(bool force)
 void QuantaView::reloadQuantaView(bool force)
 {
 	if(!(qConfig.quantaRefreshOnFocus && hadLastFocus() != QuantaView::quantaFocus) &&
-		getViewsLayout() != QuantaView::KafkaViewOnly)
+		getViewsLayout() != QuantaView::KafkaViewOnly && m_quantaReloadingEnabled)
 		write()->docUndoRedo->reloadQuantaEditor(force);
 }
 
@@ -503,7 +509,7 @@ void QuantaView::slotShowQuantaEditor()
   {
     kafkaInterface->getKafkaWidget()->view()->hide();
     kafkaInterface->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
-    write()->docUndoRedo->reloadQuantaEditor();
+    reloadQuantaView();
     /**kafkaInterface->getQuantaCursorPosition(curLine, curCol);
     write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);*/
     if(kafkaInterface->isLoaded())
@@ -521,7 +527,7 @@ void QuantaView::slotShowQuantaEditor()
     kafkaInterface->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
     if(kafkaInterface->getKafkaWidget()->view()->hasFocus())
     {
-    	write()->docUndoRedo->reloadQuantaEditor();
+    	reloadQuantaView();
 	/**kafkaInterface->getQuantaCursorPosition(curLine, curCol);
 	write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);*/
     }
@@ -640,7 +646,7 @@ void QuantaView::slotShowKafkaAndQuanta()
       kafkaInterface->loadDocument(write());
     if(currentViewsLayout == QuantaView::KafkaViewOnly)
     {
-      write()->docUndoRedo->reloadQuantaEditor();
+      reloadQuantaView();
     }
     kafkaInterface->getKafkaWidget()->view()->reparent(splitter, 0, QPoint(), true);
     splitter->moveToFirst(kafkaInterface->getKafkaWidget()->view());
@@ -730,7 +736,7 @@ void QuantaView::slotKafkaGetFocus(bool focus)
 
       //Reload the kafka Editor only if Quanta was modified or if something has happened (e.g. a reparse)
       //and NEED a kafka reload.
-      write()->docUndoRedo->reloadKafkaEditor();
+      reloadKafkaView();
       //doesn't work!
       kafkaInterface->getKafkaWidget()->view()->setContentsPos(contentsX, contentsY);
     }
@@ -810,7 +816,7 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
     if (kafkaUpdateTimer != -1) killTimer(kafkaUpdateTimer);
     if(!qConfig.kafkaRefreshOnFocus)
       kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
-    write()->docUndoRedo->reloadQuantaEditor();
+    reloadQuantaView();
 
     //FIXME: the tree (and the output)is right, the pos aren't.
     //This will reparse the whole Node tree and reload kafka.
@@ -892,7 +898,7 @@ void QuantaView::timerEvent( QTimerEvent *e )
     {
       //Update kafka view
       //write()->docUndoRedo->syncKafkaView();
-      write()->docUndoRedo->reloadKafkaEditor();
+      reloadKafkaView();
       /**kafkaInterface->getKafkaCursorPosition(node, offset);
       kafkaInterface->getKafkaWidget()->setCurrentNode(node, offset);*/
     }
@@ -901,7 +907,7 @@ void QuantaView::timerEvent( QTimerEvent *e )
     {
       //Update quanta view
       //write()->docUndoRedo->syncQuantaView();
-      write()->docUndoRedo->reloadQuantaEditor();
+      reloadQuantaView();
       /**kafkaInterface->getQuantaCursorPosition(curLine, curCol);
       write()->viewCursorIf->cursorPositionReal(&oldCurLine, &oldCurCol);
       if(oldCurCol != (uint)curCol || oldCurLine != (uint)curLine)
@@ -929,6 +935,13 @@ void QuantaView::slotSetKafkaCursorPosition(DOM::Node node, int offset)
   curOffset = offset;
   if(currentViewsLayout == QuantaView::QuantaAndKafkaViews || currentViewsLayout == QuantaView::KafkaViewOnly)
   {}
+#endif
+}
+
+void QuantaView::slotKafkaLoadingError(Node *)
+{
+#ifdef BUILD_KAFKAPART
+  quantaApp->slotShowProblemsDock(true);
 #endif
 }
 

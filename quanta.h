@@ -160,6 +160,7 @@ public:
   QString projectURL() const;
   /** Return the list of opened URLs and their editor interface numbers*/
   QStringList openedURLs() const;
+  QString saveCurrentFile();
   QStringList tagAreas(const QString& name, bool includeCoordinates, bool skipFoundContent) const;
   /** Capture DCOP signals from KXsldbgPart or similar plugin */
   void newCursorPosition(QString file, int lineNumber, int columnNumber);
@@ -261,7 +262,7 @@ public slots:
   void slotShowProjectTree();
 
   void slotShowBottDock(bool force = false);
-  void slotShowProblemsDock();
+  void slotShowProblemsDock(bool force = false);
   void slotShowFTabDock();
   void slotShowPTabDock();
   void slotShowTTabDock();

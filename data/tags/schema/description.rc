@@ -14,5 +14,3 @@ Names = main,complex,simple,attributes,facets,documentation,misc
 Single Tag Style = XML
 
 [Parsing rules]
-SpecialAreas = <!-- -->
-SpecialAreaNames = comment

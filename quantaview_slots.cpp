@@ -68,15 +68,8 @@
 #include "tagdialogs/tagmisc.h"
 #include "tagdialogs/tableeditor.h"
 
-#define NEW_CSS_EDITOR
-
-#ifdef NEW_CSS_EDITOR
 #include "plugins/csseditor/csseditor.h"
 #include "plugins/csseditor/cssselector.h"
-#else
-#include "tagdialogs/csseditor.h"
-#include "tagdialogs/cssselectoreditor.h"
-#endif
 
 #include "plugins/spellchecker.h"
 #include "plugins/framewizard/framewizard.h"
@@ -167,7 +160,6 @@ QString("\n")+dlg->generateFramesetStructure()+QString("\n");
 
 
 /** edit/insert CSS */
-#ifdef NEW_CSS_EDITOR
 void QuantaView::slotInsertCSS()
 {
   if (!writeExists()) return;
@@ -177,23 +169,38 @@ void QuantaView::slotInsertCSS()
   int bLine, bCol, eLine, eCol;
   bLine = bCol = eLine = eCol = 0;
   w->viewCursorIf->cursorPositionReal(&line, &col);
-  Node *node = parser->nodeAt(line, col);
+  if (line == 0 && col == 0)
+    col++;
+  Node *node = parser->nodeAt(line, col, false);
   unsigned int lastLine = w->editIf->numLines() - 1;
   unsigned int lastCol = w->editIf->lineLength(lastLine);
+  Node *styleNode = node;
+  if (styleNode->tag->type == Tag::XmlTagEnd && styleNode->prev)
+    styleNode = styleNode->prev;
+  while (styleNode && styleNode->parent && styleNode->tag->dtd->name == "text/css")
+    styleNode = styleNode->parent;
+  Node *parentNode = node;
+  if (parentNode->tag->type == Tag::XmlTagEnd && parentNode->prev)
+    parentNode = parentNode->prev;
+  else
+    while (parentNode && parentNode->parent && 
+           parentNode->tag->type != Tag::XmlTag)  
+      parentNode = parentNode->parent;
+  QString fullDocument = w->editIf->text().stripWhiteSpace();          
  
-  if(node && node->tag->name.contains("style")) 
-  {  
-    node->tag->endPos(bLine,bCol);
-    const QString header(w->text(0, 0,bLine, bCol));// beginning part of the file
-    node->next->tag->endPos(eLine,eCol);
-    const QString footer("</style>"+w->text(eLine, eCol+1,lastLine, lastCol)); // ending part of the file
+  if (styleNode && styleNode->tag->name.lower() == "style")  //inside <style> invoke the selector editor
+  {      
+    styleNode->tag->endPos(bLine, bCol);
+    QString header(w->text(0, 0, bLine, bCol));// beginning part of the file
+    styleNode->next->tag->endPos(eLine, eCol);
+    QString footer("</style>" + w->text(eLine, eCol+1, lastLine, lastCol)); // ending part of the file
     
-    node->next->tag->beginPos(eLine,eCol);
+    styleNode->next->tag->beginPos(eLine, eCol);
     QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1).remove("<!--").remove("-->"));// <style></style> block content
 
     CSSSelector *dlg = new CSSSelector;
 
-    dlg->setForInitialPreview(w->editIf->text());
+    dlg->setForInitialPreview(fullDocument);
     //dlg->setSourceFileName(w->url().path());
 
     dlg->setHeader(header);
@@ -202,7 +209,7 @@ void QuantaView::slotInsertCSS()
     dlg->loadExistingStyleSection(styleTagContent);
     if( dlg->exec() ){
       w->activateParser(false);
-      node->next->tag->beginPos(eLine,eCol);
+      styleNode->next->tag->beginPos(eLine, eCol);
       w->editIf->removeText(bLine, bCol+1, eLine, eCol);
       w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol+1);
       w->activateParser(true);
@@ -210,32 +217,43 @@ void QuantaView::slotInsertCSS()
     }
     delete dlg;
 
-  }
-  else {
-    CSSEditor *dlg = new CSSEditor(this);
-    dlg->setForInitialPreview(w->editIf->text());
-
-    if (node)
+  } else
+  if (!node || fullDocument.isEmpty() ||
+      w->currentDTD(true)->name == "text/css") //empty document or pure CSS file, invoke the selector editor
+  {
+    CSSSelector *dlg = new CSSSelector;
+    dlg->setForInitialPreview(QString::null);
+    if (!fullDocument.isEmpty())
+      dlg->loadExistingStyleSection(fullDocument);
+    if (dlg->exec()) 
     {
-      node->tag->beginPos(bLine, bCol);
-      node->tag->endPos(eLine, eCol);
+      w->activateParser(false);
+      w->editIf->clear();
+      w->activateParser(true);
+      w->insertTag(dlg->generateStyleSection());
     }
+    delete dlg;
+  } else 
+  if (parentNode && parentNode->tag->type == Tag::XmlTag)
+  {
+    CSSEditor *dlg = new CSSEditor(this);
+    dlg->setForInitialPreview(fullDocument);
+
+    parentNode->tag->beginPos(bLine, bCol);
+    parentNode->tag->endPos(eLine, eCol);
     dlg->setFooter(">" + w->text(eLine, eCol + 1, lastLine, lastCol));
 
     QString temp(QString::null);
     QString tempStyleContent(QString::null);
-    if(node && node->tag->hasAttribute("style")) 
+    if (parentNode->tag->hasAttribute("style")) 
     {
-      dlg->setInlineStyleContent(node->tag->attributeValue("style"));
-      tempStyleContent = node->tag->attributeValue("style");
-      node->tag->deleteAttribute("style");
-      temp=node->tag->toString();
+      tempStyleContent = parentNode->tag->attributeValue("style");
+      dlg->setInlineStyleContent(tempStyleContent);
+      //parentNode->tag->deleteAttribute("style");
+      temp = parentNode->tag->toString();
     } else {
       dlg->setInlineStyleContent(QString::null);
-      if (node)
-        temp = node->tag->toString();
-      else
-        temp = "";
+      temp = parentNode->tag->toString();
     }
     //using QString::mid sometimes generates strange results; maybe this is due to a (random) blank in temp
     temp = temp.left(temp.length()-1);//remove >
@@ -245,68 +263,13 @@ void QuantaView::slotInsertCSS()
     dlg->initialize();
     if( dlg->exec() )
     {
-
-      QDict<QString> attr;
-      attr.setAutoDelete(true);
-      attr.insert("style",new QString(dlg->generateProperties()));
-      if (node)
-        w->changeTag(node->tag, &attr);
+      w->changeTagAttribute(parentNode->tag, "style", dlg->generateProperties());
     } else {
-      if (node)
-       node->tag->editAttribute("style", tempStyleContent);
+      //parentNode->tag->changeTagAttribute("style", tempStyleContent);
     }
     delete dlg;
    }
 }
-#else
-void QuantaView::slotInsertCSS()
-{
-  if (!writeExists()) return;
-
-  Document *w = write();
-  QString code="";
-
-  uint line, col;
-  w->viewCursorIf->cursorPositionReal(&line, &col);
-
-//TODO: Edit only real CSS selectors, not any text between { }
-  bool insertNew = true;
-  Node * node = parser->nodeAt(line, col);
-  if (node)
-  {
-    Tag *tag = node->tag;
-    int bLine, bCol, eLine, eCol;
-    tag->beginPos(bLine,bCol);
-    tag->endPos(eLine,eCol);
-    if (w->text(bLine, bCol-1,bLine, bCol-1) == "{" &&
-        w->text(eLine, eCol+1,eLine, eCol+1) == "}")
-    {
-      code = tag->tagStr();
-      CSSSelectorEditor* dlg = new CSSSelectorEditor (code, false, this,
-        i18n ("Edit selector"));
-      if (dlg->exec())
-      {
-        w->editIf->removeText(bLine, bCol-1, eLine, eCol+2);
-        w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol-1);
-        w->insertText(dlg->code());
-      }
-
-      delete dlg;
-      insertNew = false;
-    }
-  }
-  if (insertNew)
-  {
-    CSSSelectorEditor* dlg = new CSSSelectorEditor (code, true, this,
-      i18n ("Insert a new selector"));
-    if (dlg->exec()) {
-       w->insertTag( dlg->code() );
-    }
-    delete dlg;
-  }
-
-}
-#endif
 
 /** for <a href=mailto> tag  */
 void QuantaView::slotTagMail()
@@ -506,63 +469,6 @@ void QuantaView::slotTagSelect()
   write()->insertTag(QuantaCommon::tagCase("<select")+ QuantaCommon::attrCase("name")+QuantaCommon::tagCase("=\"\"><option>"),QuantaCommon::tagCase("</select>"));
 }
 
-void QuantaView::slotViewInNetscape()
-{
-  m_netscape = "netscape";
-  slotViewInNetscapeOrMozilla();
-}
-
-void QuantaView::slotViewInMozilla()
-{
-  m_netscape = "mozilla";
-  slotViewInNetscapeOrMozilla();
-}
-
-void QuantaView::slotViewInOpera()
-{
-  m_netscape = "opera";
-  slotViewInNetscapeOrMozilla();
-}
-
-/** Open the document in Netscape, Mozilla or Opera, depending on m_netscape */
-void QuantaView::slotViewInNetscapeOrMozilla()
-{
-  if (!writeExists()) return;
-  Document *w = write();
-  if (w->isModified())
-  {
-    if ( KMessageBox::questionYesNo(this,
-                                    i18n("The file must be saved before external preview.\n"
-                                         "Do you want to save and preview?"),
-                                    i18n("Save Before Preview"),
-                                    i18n("&Yes"),i18n("&No"), "AskForSaveBeforePreview")
-         == KMessageBox::Yes)
-    {
-      if (w->isUntitled())
-      {
-       quantaApp->slotFileSaveAs();
-      }
-      else
-      {
-       w->save();
-      }
-    } else
-    {
-      return;
-    }
-  }
-  if ( !w->isUntitled() )
-  {
-    KProcess *show = new KProcess();
-    KURL url = quantaApp->project()->urlWithPrefix(w->url());
-
-
-    *show << m_netscape << "-remote" << QString("openURL(")+url.url()+")";
-    connect( show, SIGNAL(processExited(KProcess *)), this, SLOT(slotNetscapeStatus(KProcess *)));
-    show->start( KProcess::NotifyOnExit );
-  }
-}
-
 void QuantaView::slotViewInKFM()
 {
   if (!writeExists()) return;
@@ -635,18 +541,6 @@ void QuantaView::slotViewInLynx()
           << "-e"
           << "lynx"
           << url.url();
-    show->start( KProcess::DontCare );
-  }
-}
-
-/** check netscape status */
-void QuantaView::slotNetscapeStatus(KProcess *proc)
-{
-  if ( proc->exitStatus() )
-  {
-    KProcess *show = new KProcess();
-    KURL url = quantaApp->project()->urlWithPrefix(write()->url());
-    *show << m_netscape << url.url();
     show->start( KProcess::DontCare );
   }
 }
