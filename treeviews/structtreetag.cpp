@@ -44,12 +44,12 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag *tag, QString name )
 			setText(0, space + tag->attr[0] + "=" + tag->value[0]);
 		else
 			setText(0,"");
-	}
+	} else
 	
 	if ( sname.left(3) == "img" ) {
 		setPixmap( 0, SmallIcon("image") );
 		setText(0, space + tag->attrValue("src") );
-	}
+	} else
 		
 	if ( sname == "a" ) {
 		setPixmap( 0, SmallIcon("www") );
@@ -57,7 +57,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag *tag, QString name )
 			setText(0,space + "href "+ tag->attrValue("href"));
 		if ( tag->haveAttrib("name") )
 			setText(0,space + "name "+ tag->attrValue("name"));	
-	}
+	} else
 		
 	/*
 	if ( sname == "p") {
@@ -68,16 +68,28 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag *tag, QString name )
 	if ( sname == "br") {
 		setPixmap( 0, UserIcon("tag_br_small") );
 		setText(0,"");
-	}
+	} else
 	
 	if ( sname == "hr") {
 		setPixmap( 0, UserIcon("tag_hr_small") );
 		setText(0,"");
-	}
+	} else
 	
 	if ( sname == "li") {
 		setPixmap( 0, UserIcon("ball") );
+		setText(0,"");
+	} else
+	
+	if ( sname == "php" ) {
+		setText(0,"< php >");
+	} else
+	
+  if ( sname == "comment" ) {
+	  setPixmap( 0, UserIcon("tag_comm") );
+		setText(0,"");
 	}
+
+	
 }
 
 StructTreeTag::StructTreeTag(StructTreeTag *parent, QString name )

@@ -188,6 +188,27 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 			createList( tnode->child, item ,openLevel-1);
 			item->setOpen( openLevel > 0 );
 		}
+		else 
+		  if ( tnode->type == Node::tComment ) {
+		    item = new StructTreeTag( parent, 0, "comment" );
+  			  item->pos1 = tnode->start-1;
+			  item->pos2 = tnode->end;
+			  
+			  QString text = parser->s.mid( tnode->startContext , tnode->endContext - tnode->startContext + 1);
+		    text = text.left(70);
+		    text = text.replace( QRegExp("&nbsp;")," ");
+		    int endlPos;
+		    if ( ( endlPos = text.find('\n') ) != -1 )
+		      text = text.left( endlPos );
+		    item->setText(0,text);
+		  }
+		else 
+		  if ( tnode->type == Node::tPHP ) {
+		    item = new StructTreeTag( parent, 0, "php" );
+  			  item->pos1 = tnode->start-1;
+			  item->pos2 = tnode->end;
+		  }
+
 		
 		tnode = tnode->prev;
 	}
@@ -245,8 +266,8 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
 
   config->setGroup("Parser options");
 		
-  QString handleMBM = config->readEntry("MBM","Find tag");
-	QString handleLBM = config->readEntry("LBM","Find tag and open tree");
+  QString handleMBM = config->readEntry("MBM","Select tag area");
+	QString handleLBM = config->readEntry("LBM","Find tag");
 	QString handleDoubleClick = config->readEntry("Double click","Select tag area");
 
 	setSelected(item, true);
