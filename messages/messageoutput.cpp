@@ -29,6 +29,7 @@ MessageOutput::MessageOutput(QWidget *parent, const char *name )
 {
   max_items = 200;
   insertItem( i18n("Message Window...") );
+  insertItem("");
 
   QPalette pal = palette();
   pal.setColor(QColorGroup::HighlightedText, pal.color(QPalette::Normal, QColorGroup::Text));
@@ -43,14 +44,14 @@ MessageOutput::~MessageOutput()
 {
 }
 
-void MessageOutput::insertItem(QString s)
+void MessageOutput::insertItem(const QString& s)
 {
   checkMaxItems();
-  new MessageItem(this,s);
+  new MessageItem(this, s);
   setBottomItem(count()>0?count()-1:0);
 }
 
-void MessageOutput::addToLastItem(QString s)
+void MessageOutput::addToLastItem(const QString& s)
 {
   int ind = count()-1;
   if ( ind != -1 ) {
@@ -58,25 +59,24 @@ void MessageOutput::addToLastItem(QString s)
     if ( it )
       it->addText( s );
     else
-      changeItem( text( ind )+s, ind );
+      changeItem( text( ind )+ s, ind );
   }
 }
 
 
-void MessageOutput::showMessage( QString message )
+void MessageOutput::showMessage(const QString& s)
 {
+  QString message = s;
   int endPos;
   if ( !count() )
     insertItem("");
-  if (!message.endsWith("\n"))
-      message += "\n";
   while ( ( endPos = message.find('\n') ) != -1 ) {
     addToLastItem( message.left(endPos) );
     insertItem("");
     message.remove(0,endPos+1);
   }
-
-  addToLastItem( message);
+  if (!message.isEmpty())
+      addToLastItem( message);
   setBottomItem(count()>0?count()-1:0);
 }
 
@@ -96,7 +96,7 @@ void MessageOutput::clickItem( QListBoxItem * l_item )
    }
 }
 
-void MessageOutput::phpDebug( QString s)
+void MessageOutput::phpDebug(const QString& s)
 {
    static QString data = "";
    data += s;
@@ -114,7 +114,7 @@ void MessageOutput::phpDebug( QString s)
 
 }
 
-void MessageOutput::php4Debug( QString s)
+void MessageOutput::php4Debug(const QString& s)
 {
   new MessageItemPHP4( this, s );
   setBottomItem(count()-1);

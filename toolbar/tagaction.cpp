@@ -70,6 +70,7 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   m_view = quantaApp->view();
   setIcon( tag.attribute("icon","") );
   loopStarted = false;
+  m_appMessages = quantaApp->getMessageOutput();
   if ( m_view )
       connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }
@@ -227,6 +228,8 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
+      m_appMessages->clear();
+      m_appMessages->showMessage( i18n("\"%1\" script started.\n").arg(tag.attribute("text")) );
       if (!inputFromFile)
       {
         if ( inputType == "current" || inputType == "selected" )
@@ -239,7 +242,6 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     {
       KMessageBox::error(quantaApp, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible!</qt>").arg(command + " " + args).arg(command), i18n("Script not found"));
     }
-    kdDebug(24000) << "Script started.\n";
   }
 
 }
@@ -288,13 +290,11 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   } else
   if ( scriptOutputDest == "message" )
   {
-    MessageOutput *appMessages = quantaApp->getMessageOutput();
     if ( firstOutput )
     {
-      appMessages->clear();
-      appMessages->insertItem( i18n( "Script output:\n" ) );
+      m_appMessages->showMessage( i18n( "\"%1\" script output:\n" ).arg(tag.attribute("text")) );
     }
-    appMessages->showMessage( text );
+    m_appMessages->showMessage( text );
   } else
   if ( scriptOutputDest == "file" )
   {
@@ -333,13 +333,13 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   } else
   if ( scriptErrorDest == "replace" )
   {
-    if ( firstOutput )
+    if ( firstError )
        w->editIf->clear();
     w->insertTag( text );
   } else
   if ( scriptErrorDest == "new" )
   {
-    if ( firstOutput )
+    if ( firstError )
     {
         quantaApp->doc()->openDocument( KURL() );
         m_view = quantaApp->view();
@@ -349,13 +349,11 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   } else
   if ( scriptErrorDest == "message" )
   {
-    MessageOutput *appMessages = quantaApp->getMessageOutput();
     if ( firstError )
     {
-      appMessages->clear();
-      appMessages->insertItem( i18n( "Script output:\n" ) );
+      m_appMessages->showMessage( i18n( "\"%1\" script output:\n" ).arg(tag.attribute("text")) );
     }
-    appMessages->showMessage( text );
+    m_appMessages->showMessage( text );
   }
 
   firstError = false;
@@ -384,6 +382,7 @@ void TagAction::slotProcessExited(KProcess *)
     qApp->exit_loop();
     loopStarted = false;
   }
+  m_appMessages->showMessage( i18n("The \"%1\" script has exited.\n").arg(tag.attribute("text")) );
 }
 
 void TagAction::execute()

@@ -36,6 +36,7 @@ class KProcess;
 class QDomElement;
 class QFile;
 class QTimer;
+class MessageOutput;
 
 /**
  * An action for inserting an XML tag.
@@ -86,6 +87,7 @@ private:
     QuantaView *m_view;
     QFile* m_file;
     QString m_inputFileName;
+    MessageOutput *m_appMessages;
 };
 
 

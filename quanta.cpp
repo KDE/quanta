@@ -2691,7 +2691,7 @@ void QuantaApp::processDTD(const QString& documentType)
 
   if (!w->isUntitled())
   {
-    messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".").arg(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL()));
+    messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL()));
   }
   loadToolbarForDTD(w->getDTDIdentifier());
   sTab->useOpenLevelSetting = true;

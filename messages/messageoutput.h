@@ -36,18 +36,18 @@ public:
 
 public slots:
   /**  */
-  void insertItem( QString s );
+  void insertItem(const QString& s );
   /** insert message for each line of s */
-  void showMessage( QString s );
-  void addToLastItem( QString s );
+  void showMessage(const QString& s );
+  void addToLastItem(const QString& s );
 
   /** php3 debugger stuff */
-  void phpDebug(QString s);
+  void phpDebug(const QString& s);
   void newPhpConnect();
   void endPhpConnect();
 
   /** php4 debugger stuff */
-  void php4Debug(QString s);
+  void php4Debug(const QString& s);
 
 
   /** weblint stuff */

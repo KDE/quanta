@@ -1739,10 +1739,10 @@ void QuantaApp::initActions()
                         this, SLOT( slotEmailDTD() ),
                         ac, "tools_send_dtd" );
 
-    (void) new KAction( i18n( "Weblint &Syntax Check" ), 0,
+ /*   (void) new KAction( i18n( "Weblint &Syntax Check" ), 0,
                         this, SLOT( slotToolSyntaxCheck() ),
                         ac, "syntax_check" );
-
+*/
     // View actions
 
     showFTabAction =
