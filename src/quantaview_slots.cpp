@@ -272,7 +272,7 @@ void QuantaView::slotInsertCSS()
     }
     delete dlg;
    } else
-   KMessageBox::sorry(this, i18n("The CSS Editor cannot be invoked at this place."));
+   KMessageBox::sorry(this, i18n("The CSS Editor cannot be invoked here."));
 }
 
 /** for <a href=mailto> tag  */

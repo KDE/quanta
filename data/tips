@@ -78,7 +78,7 @@ in the structure tree with <b>RMB Show Groups For &gt; PHP</b>?
 
 <tip category="Application">
 <html>
-<p>...that you can cause Quanta open files from Konqueror into the
+<p>...that you can cause Quanta to open files from Konqueror into the
 currently open window by adding a <b>--unique</b> switch to your .desktop
 file or menu entry? It would look like this: '[path/]quanta --unique'.
 </p>
