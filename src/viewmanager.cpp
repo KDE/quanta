@@ -246,7 +246,7 @@ void ViewManager::slotCloseOtherTabs()
 QuantaView* ViewManager::isOpened(const KURL& url)
 {
   KURL url2 = url;
-  if (url2.isLocalFile())
+  if (url2.isLocalFile() && !url.path().startsWith(i18n("Untitled")))
   {
       QDir dir(url2.path());
       url2.setPath(dir.canonicalPath());
