@@ -7,7 +7,8 @@ noinst_LIBRARIES = libphpdebug.a
 
 
 
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes)\
+		-I$(top_srcdir)/po
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libphpdebug_a_METASOURCES = AUTO
 libphpdebug_a_SOURCES = \

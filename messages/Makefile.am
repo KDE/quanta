@@ -7,7 +7,8 @@ noinst_LIBRARIES = libmessages.a
 
 
 
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes)\
+		-I$(top_srcdir)/po
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libmessages_a_METASOURCES = AUTO
 libmessages_a_SOURCES = \

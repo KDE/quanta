@@ -8,6 +8,7 @@ noinst_LIBRARIES = libparser.a
 
 
 INCLUDES = $(all_includes)\
+		-I$(top_srcdir)/po\
 		-I$(top_srcdir)/quanta/kwrite
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libparser_a_METASOURCES = AUTO

@@ -7,7 +7,8 @@ noinst_LIBRARIES = libtreeviews.a
 
 
 
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes)\
+		-I$(top_srcdir)/po
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libtreeviews_a_METASOURCES = AUTO
 libtreeviews_a_SOURCES = \
