@@ -1,7 +1,7 @@
 /***************************************************************************
                           quanta.cpp  -  description
                              -------------------
-    begin                : Ÿ?? ???  9 13:29:57 EEST 2000
+    begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
@@ -964,9 +964,6 @@ void QuantaApp::slotShowLeftPanel()
 
   KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_tree" );
 	bool stat = !ta->isChecked();
-
-	bool stat = viewMenu -> isItemChecked( ID_VIEW_TREE );
-#endif
 
 	if ( stat )
 	{
