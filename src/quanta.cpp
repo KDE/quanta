@@ -364,14 +364,10 @@ void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
 
 void QuantaApp::slotFileOpenRecent(const KURL &url)
 {
-  QString fn = url.prettyURL();
-  if (fn.left(5) == "file:")
-    fn.remove(0,5);
-
   if ((url.isLocalFile()) && (!QFileInfo(fn).exists()))
   {
     if (KMessageBox::questionYesNo( this,
-        i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(fn) )
+        i18n("The file %1 does not exist.\n Do you want to remove it from the list?").arg(url.prettyURL(0, KURL::StripFileProtocol)) )
         == KMessageBox::Yes)
     {
       fileRecent->removeURL(url);

@@ -194,8 +194,8 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
     if ( !w->isUntitled() ) {
       QString fname = w->url().url();
-      if ( fname.left(5) == "file:")
-        fname.remove(0,5);
+      if ( w->url().protocol() == "file")
+        fname = w->url().path();
       command.replace("%f", fname );
     }
 
