@@ -207,8 +207,8 @@ void KQApplicationPrivate::init()
     quantaApp->m_quantaInit->openLastFiles();
   }
   args->clear();
- // delete splash;
-//  splash = 0L;
+  delete splash;
+  splash = 0L;
   delete sp;
   sp = 0L;
   kdDebug(24000) << "Delete splash" << endl;

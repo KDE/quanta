@@ -22,6 +22,7 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - don't show a debug toolbar without actions on it
         - really reload the project XML from disc when Reload is selected in the project treeview
            context menu
+        - unconditionally hide the splash screen after 10 seconds [#80086, #82013]
 
   - behavioral/user interface changes:
         - enable the configure toolbars item in the toolbar context menu [#80643]
