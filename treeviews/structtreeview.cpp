@@ -32,6 +32,7 @@
 #include "../parser/node.h"
 #include "../parser/parser.h"
 #include "../document.h"
+#include "../quantacommon.h"
 
 #include "structtreetag.h"
 #include "structtreeview.h"
@@ -162,7 +163,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
       {
         QString text = currentNode->tag->tagStr();
         text = text.left(70);
-        text = text.replace( QRegExp("&nbsp;")," ");
+        text = text.replace( QRegExp("&nbsp;|\\n")," ");
         item = new StructTreeTag(parent,currentNode,text);
       }
       if ( currentNode->tag->type == Tag::Comment )
@@ -353,7 +354,7 @@ void StructTreeView::slotSelectTag()
       node->tag->endPos(eLine, eCol);
     } else
     {
-      it->node->next->tag->endPos(eLine, eCol);
+        it->node->next->tag->endPos(eLine, eCol);
     }
   }
   it->node->tag->beginPos(bLine, bCol);
@@ -410,10 +411,7 @@ void StructTreeView::showTagAtPos(int x, int y)
         int bLine, bCol, eLine, eCol;
         tag->beginPos(bLine,bCol);
         tag->endPos(eLine, eCol);
-        if ( ( x > bLine && x < eLine ) ||
-             ( x == bLine && x < eLine && y >= bCol) ||
-             ( x > bLine && x == eLine && y <= eCol) ||
-             ( x == bLine && x == eLine && y >=bCol && y <=eCol) )
+        if (QuantaCommon::isBetween(x,y,bLine,bCol,eLine,eCol))
         {
          curTag = item;
         }

@@ -103,5 +103,11 @@
     <attr name="charoff"> </attr>
     <attr name="background"> </attr>
 
+    <stoppingtags>
+        <stoppingtag>td</stoppingtag>
+        <stoppingtag>tr</stoppingtag>
+        <stoppingtag>th</stoppingtag>
+    </stoppingtags>
+
 </tag>
 </TAGS>

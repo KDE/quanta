@@ -15,6 +15,8 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+//qt include
+#include <qregexp.h>
 
 // KDE includes
 #include <kiconloader.h>
@@ -39,7 +41,8 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *p_node, QString name )
 	
   if (!node) return;
   Tag *tag = node->tag;
-	QString sname(name);
+	QString sname = name;
+  sname.replace(QRegExp("\\n")," ");
 	QString space = " ";
 	
 	if ( sname.left(4) == "font" ) {

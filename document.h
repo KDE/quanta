@@ -31,6 +31,7 @@
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/codecompletioninterface.h>
+//#include <ktexteditor/searchinterface.h>
 
 
 /**
@@ -83,7 +84,7 @@ public:
 
 
   QPoint getGlobalCursorPos();
-
+  QString find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
   /** Get the view of the document */
   KTextEditor::View* view();
   /** Get the KTextEditor::Document of the document */
@@ -136,6 +137,7 @@ work correctly. */
   KTextEditor::SelectionInterface *selectionIf;
   KTextEditor::EditInterface *editIf;
   KTextEditor::CodeCompletionInterface *codeCompletionIf;
+//  KTextEditor::SearchInterface *searchIf;
 
   Kate::Document *kate_doc;
   Kate::View *kate_view;

@@ -31,6 +31,7 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <ktempfile.h>
+#include <kregexp.h>
 
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
@@ -63,6 +64,7 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget 
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(_view);
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(_view);
+//  searchIf = dynamic_cast<KTextEditor::SearchInterface *>(_view);
   this->basePath = basePath;
   tempFile = 0;
   dtdName = "";
@@ -312,63 +314,52 @@ Tag *Document::findScriptStruct(int line, int col)
   return tag;
 }
 
+#include <iostream.h>
 Tag *Document::findXMLTag(int line, int col)
 {
-  int bLine = 0;
-  int bCol = 0;
-  int eLine = 0;
-  int eCol = 0;
   Tag *tag = 0L;
-  int origLine = line;
-  int pos = -1;
-  QString textLine;
-
-  while (line >=0 && pos == -1)
+//  QRegExp quotedTextRx("(((\\(?=[\"]))\")*[^\"]*)*");
+  int bLine, bCol, eLine, eCol;
+  bLine = bCol = eLine = eCol = 0;
+  QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>","i");
+  QString foundText = find(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
+  if (!foundText.isEmpty())
   {
-    textLine = editIf->textLine(line);
-    if (line == origLine) textLine = textLine.left(col+1);
-    pos = textLine.findRev(QRegExp("\\<|\\>"));
-    if (line == origLine && pos == col && textLine[pos]=='>') pos = -1;
-    if (pos == -1) line--;
-  }
-  if ( (pos == -1) || (pos != -1 && textLine[pos] == '>' ) )
-  {
-    return 0L; // > or no < is found
-  }
-  bLine = line;
-  bCol = pos;
-  line = origLine;
-  pos = -1;
-  int startCol;
-  while (line < (int) editIf->numLines() && pos == -1)
-  {
-    startCol = 0;
-    textLine = editIf->textLine(line);
-    if (line == origLine)
+    if (line == bLine && col == bCol) //we found a tag
     {
-      startCol = col;
-      if (textLine[col] == '<') startCol++;
+      tag = new Tag();
+      tag->setTagPosition(bLine, bCol,eLine, eCol);
+      tag->parse(foundText, this);
+      tag->type = Tag::XmlTag;
+      if (tag->name[0] == '/') tag->type =  Tag::XmlTagEnd;
+      if (tag->name == "!--") tag->type = Tag::Comment;
+      if (foundText.right(2) == "/>") tag->single = true;
+    } else  //the tag is ahead us, use a Text until that
+    {
+      tag = new Tag();
+      bCol--;
+      if (bCol < 0)
+      {
+        bLine = (bLine > 0)?bLine-1:0;
+        bCol = editIf->lineLength(bLine);
+      }
+      tag->setTagPosition(line, col, bLine, bCol);
+      QString s = text(line, col, bLine, bCol);
+      s.replace(QRegExp("\\n"),"");
+      s = s.stripWhiteSpace();
+      if (s.isEmpty() || s == " ")  //whitespaces are not text
+      {
+        tag->type = 100;
+      } else
+      {
+        tag->type = Tag::Text;
+        tag->setStr(s);
+        tag->setWrite(this);
+        tag->name = "Text";
+      }
+
     }
-    pos = textLine.find(QRegExp("(\\<|\\>)"), startCol);
-    if (pos == -1) line++;
   }
-  if ( (pos == -1) || (pos != -1 && textLine[pos] == '<') )
-  {
-    return 0L;
-  }
-  eLine = line;
-  eCol = pos;
-
-  tag = new Tag();
-  tag->setTagPosition(bLine, bCol, eLine, eCol);
-  QString tagStr = text(bLine, bCol, eLine, eCol);
-  tag->parse(tagStr, this);
-  tag->type = Tag::XmlTag;
-  if (tag->name[0] == '/') tag->type =  Tag::XmlTagEnd;
-  if (tag->name == "!--") tag->type = Tag::Comment;
-  tag->single = false;
-  if (tagStr.right(2) == "/>") tag->single = true;
-
   return tag;
 }
 
@@ -502,50 +493,6 @@ void Document::replaceSelected(QString s)
  editIf->insertText(line, col, s);
 
 }
-
-
-/**  */   /*
-int Document::pos2y( int pos )
-{
-	QString s = editIf->text();
-	int endLineCount = 0;
-	if ( pos<0 ) pos = 0;
-	
-	for (int i=0; i<=pos && !s[i].isNull(); i++)
-		if (s[i]=='\n')
-			endLineCount++;
-	return endLineCount;
-}
-
-int Document::pos2x( int pos )
-{
-  QString s = editIf->text();
-	int i;
-	if ( pos<0 ) pos = 0;
-	for (i=pos; s[i]!='\n' && i; i--);
-	return pos-i;
-}
-
-int Document::xy2pos( int x, int y )
-{
-  QString s = editIf->text();
-  int pos = 0;
-  QStringList slist = QStringList::split('\n',s,true);
-
-  if ( y > (int) slist.count() )
-  	y = slist.count();
-
-  for ( int i=0; i<y; i++ )
-  	 pos += slist[i].length()+1;
-
-  int len = slist[y].length();
-  if ( len>x )
-  	pos+=x;
-  else
-  	pos+=len;
-
-	return (pos);
-}           */
 
 void Document::readConfig(KConfig *config)
 {
@@ -1090,7 +1037,7 @@ QString Document::text(int bLine, int bCol, int eLine, int eCol)
    bLine = eLine;
    eLine = tmp;
  }
- QString t = editIf->textLine(bLine);
+ QString t = editIf->textLine(bLine)+"\n";
  if (bLine == eLine)
  {
    return t.mid(bCol, eCol-bCol +1);
@@ -1098,8 +1045,48 @@ QString Document::text(int bLine, int bCol, int eLine, int eCol)
  t.remove(0, bCol);
  for (int i = bLine+1; i < eLine ; i++)
  {
-   t = t+editIf->textLine(i);
+   t = t+editIf->textLine(i)+"\n";
  }
  t = t+editIf->textLine(eLine).left(eCol+1);
  return t;
+}
+
+QString Document::find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
+{
+ int maxLine = editIf->numLines();
+ int lastLineLength = editIf->lineLength(maxLine);
+ QString textToSearch = text(sLine, sCol, maxLine, lastLineLength);
+ int pos = rx.search(textToSearch,0);
+ QString foundText = "";
+ if (pos != -1)
+ {
+   foundText = rx.cap();
+   QString s = textToSearch.left(pos);
+   int linesUntilFound = s.contains("\n");
+   s = s.remove(0,s.findRev("\n")+1);
+   fbCol = s.length();
+   int linesInFound = foundText.contains("\n");
+   s = foundText;
+   s = s.remove(0,s.findRev("\n")+1);
+   feCol = s.length()-1;
+   fbLine = sLine + linesUntilFound;
+   feLine = fbLine + linesInFound;
+   if (linesUntilFound == 0)
+   {
+    fbCol = fbCol + sCol;
+   }
+   if (linesInFound == 0)
+   {
+       feCol = feCol + fbCol;
+   }
+   if (fbCol < 0) fbCol = 0;
+   if (feCol < 0) feCol = 0;
+   s = text(fbLine, fbCol, feLine, feCol);
+   if (s != foundText) //debug, error
+   {
+     KMessageBox::error(this,"Found: "+foundText+"\nRead: "+s);
+   }
+ }
+
+ return foundText;
 }

@@ -280,3 +280,16 @@ QString QuantaCommon::getDTDNickNameFromName(QString name)
   return nickName;
 }
 
+/** Returns true if the (line,col) is inside the area specified by the other arguments. */
+bool QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol)
+{
+  bool between = false;
+  if ( ( line > bLine && line < eLine ) ||
+       ( line == bLine && line < eLine && col >= bCol) ||
+       ( line > bLine && line == eLine && col <= eCol) ||
+        ( line == bLine && line == eLine && col >=bCol && col <=eCol) )
+ {
+   between = true;
+ }
+ return between;
+}

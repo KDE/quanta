@@ -48,6 +48,9 @@
         <location col="0" row="9" colspan="2" />
     </spacer>
 
+    <stoppingtags>
+        <stoppingtag>select</stoppingtag>
+    </stoppingtags>
 
 
 </tag>

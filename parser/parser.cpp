@@ -56,7 +56,7 @@ Node *Parser::parse(Document *w)
   int col = 0;
   m_node = subParse(0L, line, col);
 
-//  coutTree(m_node,0); //debug printout
+  coutTree(m_node,0); //debug printout
 
   return m_node;
 }
@@ -93,6 +93,10 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
       {
         case Tag::XmlTag :
              {
+               if (prevNode && !prevNode->tag->name.startsWith("/"))
+               {
+                 prevNode->tag->closingMissing = true; //prevNode is single...
+               }
                if ( parent )   // check if this tag stop area of previous
                {
                  QTag *qTag = QuantaCommon::tagFromDTD(m_dtdName, parent->tag->name);
@@ -101,7 +105,8 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
                    QString searchFor = (qTag->parentDTD->caseSensitive)?tag->name:tag->name.upper();
                    if ( qTag->stoppingTags.contains( searchFor ) )
                    {
-                    parent->tag->closingMissing = true; //parent is single...
+                     parent->tag->closingMissing = true; //parent is single...
+                     col--;
                      return firstNode;
                    }
                  }
@@ -189,6 +194,12 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
              node->prev = parent;
              tag->endPos(line, col);
              return firstNode;
+             break;
+           }
+      case 100:
+           {
+             tag->endPos(line, col);
+             delete tag;
              break;
            }
 

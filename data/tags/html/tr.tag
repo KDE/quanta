@@ -45,5 +45,9 @@
     <attr name="char"> </attr>
     <attr name="charoff"> </attr>
 
+    <stoppingtags>
+        <stoppingtag>tr</stoppingtag>
+        <stoppingtag>tfoot</stoppingtag>
+    </stoppingtags>
 </tag>
 </TAGS>

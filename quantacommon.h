@@ -57,6 +57,8 @@ public:
   static QString getDTDNameFromNickName(QString nickName);
   /** Returns the DTD iddentifier from the given nickname */
   static QString getDTDNickNameFromName(QString name);
+  /** Returns true if the (line,col) is inside the area specified by the other arguments. */
+  static bool isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol);
 public: // Public attributes
   /**  */
   static QuantaApp *quantaApp;

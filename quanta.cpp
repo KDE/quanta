@@ -934,7 +934,7 @@ void QuantaApp::reparse()
     {
       baseNode = parser->parse(w);
     }
-    if (!baseNode) sTab->deleteList();
+    sTab->deleteList();
 	  if ( stabdock->isVisible() && baseNode)
 	  {
       config->setGroup("Parser options");

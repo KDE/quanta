@@ -45,5 +45,8 @@
         <location col="0" row="9" colspan="3" />
     </spacer>
 
+    <stoppingtags>
+        <stoppingtag>li</stoppingtag>
+    </stoppingtags>
 </tag>
 </TAGS>
