@@ -28,7 +28,7 @@
 #include <kio/job.h>
 #include <kurl.h>
 
-#include "project_url.h"
+#include "projecturl.h"
 
 /**project
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
