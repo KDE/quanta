@@ -1870,7 +1870,7 @@ void KafkaWidget::postprocessCursorPosition()
                             m_currentNode.nextSibling().nextSibling().isNull() &&*/
                   !m_currentNode.previousSibling().isNull() &&
                   m_currentNode.previousSibling().nodeType() == DOM::Node::TEXT_NODE &&
-                  m_currentNode.previousSibling().nodeValue().string() != "")))
+                  !m_currentNode.previousSibling().nodeValue().string().isEmpty())))
         {
             while(1)
             {
