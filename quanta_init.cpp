@@ -17,8 +17,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <stdlib.h>
-
 // include files for QT
 #include <qdir.h>
 #include <qprinter.h>
@@ -110,9 +108,10 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   if (qConfig.globalDataDir.isEmpty())
   {
     quantaStarted = false;
-    fprintf(stderr,"***************************************************************************\n");
-    fprintf(stderr, "%s", static_cast<const char *> (i18n("\tQuanta data files were not found.\nYou may forgot to run \"make install\",\nor your KDEDIR, KDEDIRS or PATH is not set correctly.!\n").local8Bit()) );
-    fprintf(stderr,"***************************************************************************\n");
+    kdWarning() << "***************************************************************************" << endl
+                << i18n("Quanta data files were not found.\nYou may forgot to run \"make install\","
+                        "or your KDEDIR, KDEDIRS or PATH is not set correctly.!") << endl
+                << "***************************************************************************" << endl;
     QTimer::singleShot(20, kapp, SLOT(quit()));
     return;
   }
