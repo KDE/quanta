@@ -21,12 +21,12 @@
 #include <qwidget.h>
 
 #include "projecturl.h"
-#include "qpevents.h"
 
 class QDom;
 class ProjectPrivate;
 class ProjectList;
-
+struct EventAction;
+typedef  QMap<QString, EventAction> EventActions;
 
 /**project
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia & Jens Herden
@@ -34,8 +34,6 @@ class ProjectList;
 
 class KConfig;
 class KMainWindow;
-
-
 
 struct TeamMember {
   QString name;
@@ -180,8 +178,6 @@ private:
   Project(KMainWindow *parent);
 
   ProjectPrivate *d;
-
-  EventActions m_events;
 };
 
 #endif

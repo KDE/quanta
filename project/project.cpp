@@ -94,6 +94,7 @@
 #include "projectlist.h"
 #include "projectprivate.h"
 #include "teammembersdlg.h"
+#include "qpevents.h"
 
 extern QString simpleMemberStr;
 extern QString taskLeaderStr;
@@ -105,9 +106,14 @@ ProjectPrivate::ProjectPrivate(Project *p)
 {
   parent = p;
   m_projectFiles.setAutoDelete(true);
+  m_events = new EventActions();
   init();
 }
 
+ProjectPrivate::~ProjectPrivate()
+{
+  delete m_events;
+}
 
 /** setup of the actions */
 void ProjectPrivate::initActions(KActionCollection *ac)
@@ -575,8 +581,7 @@ void ProjectPrivate::loadProjectXML()
   }
   excludeRx.setPattern(regExpStr);
 
-  EventActions *events = parent->events();
-  events->clear();
+  m_events->clear();
   nl = projectNode.toElement().elementsByTagName("event");
   uint nlCount = nl.count();
   for ( uint i = 0; i < nlCount; i++ )
@@ -591,7 +596,7 @@ void ProjectPrivate::loadProjectXML()
     QDomNodeList nl2 = el.elementsByTagName("argument");
     for (uint j = 0; j < nl2.count(); j++)
       ev.arguments << nl2.item(j).toElement().text();
-    events->insert(el.attribute("name"), ev);
+    m_events->insert(el.attribute("name"), ev);
   }
 
   QDomNode teamNode = projectNode.namedItem("teamdata");
@@ -1105,7 +1110,7 @@ void ProjectPrivate::slotCloseProject()
   config->sync();
   // empty dom tree
   dom.clear();
-  parent->events()->clear();
+  m_events->clear();
   init();
   parent->closeFiles();
   parent->newProjectLoaded(projectName, baseURL, templateURL);
@@ -2337,7 +2342,7 @@ bool Project::uploadProjectFile()
 EventActions* Project::events()
 {
   if (hasProject())
-    return &m_events;
+    return d->m_events;
   else
     return 0L;
 }

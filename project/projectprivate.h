@@ -19,6 +19,8 @@
 #define PROJECTPRIVATE_H
 
 class ProjectList;
+struct EventAction;
+typedef  QMap<QString, EventAction> EventActions;
 
 class ProjectPrivate
             : public QObject
@@ -27,7 +29,7 @@ class ProjectPrivate
 public:
   ProjectPrivate(Project *p);
 
-  ~ProjectPrivate() {}
+  ~ProjectPrivate();
 
   Project *parent;
   /** Point to the .webprj file */
@@ -89,8 +91,9 @@ upload.*/
    KSelectAction *openPrjViewAction, *deletePrjViewAction;
   /** the filename of the local webprj file after download */
   QString m_tmpProjectFile;
-  /** used for creating a new project */  
+  /** used for creating a new project */
   KTempFile *tempFile;
+  EventActions *m_events;
 
   /** setup of the actions */
   void initActions(KActionCollection *ac);
@@ -122,17 +125,17 @@ upload.*/
       @param url the url of the project file
    */
   void loadProject(const KURL &url);
-  
+
   /** load project from temp file
       @param url the url of the project file
       @param tempFile the path of the already downloaded temp file
    */
   void loadProjectFromTemp(const KURL &url, const QString &tempFile);
-  
+
   void slotDeleteCopytoDlg(CopyTo *dlg);
 
   void getStatusFromTree();
-  
+
   /** save project file to local file @ref tmpFileName
       @return false if there was nothing to save or an error occured during save
   */
@@ -174,6 +177,7 @@ signals:
 
 private:
   QStringList treeStatusFromXML();
+
 };
 
 
