@@ -219,8 +219,18 @@ public slots:
 	 */
 	void finishedLoading();
 
-
+	/**
+	 * Reload the TagAttributesTree if necessary;
+	 * @param domNode The current DOM::Node.
+	 * @param offset The current cursor offset.
+	 */
 	void slotNewCursorPos(const DOM::Node &domNode, long offset);
+
+	/**
+	 * Called to set the cursor Position with a QTimer::singleShot() after calling
+	 *  document->updateRendering()
+	 */
+	void slotDelaledSetCaretPosition();
 
 signals:
 	/**

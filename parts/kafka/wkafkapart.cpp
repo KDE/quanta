@@ -872,7 +872,6 @@ Node * WKafkaPart::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
 	_node = new Node(_nodeParent);
 	connectDomNodeToQuantaNode(_domNode, _node);
 	_node->_rootNode = _domNode;
-	//TODO:handle the special case of TABLE which need absolutely TBODY
 	_node->_leafNode = _domNode;
 
 	//split _beginNode

@@ -22,6 +22,7 @@
 #include <qstringlist.h>
 #include <qlayout.h>
 #include <qmainwindow.h>
+#include <qtimer.h>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -230,14 +231,10 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 	{
 		try
 		{
-			kdDebug(25001)<< "TEMP nodeValue: " << node.nodeValue() << endl;
-			kdDebug(25001)<< "TEMP offset :" << d->m_cursorOffset << endl;
 			DOM::DOMString textNode = node.nodeValue();
 			DOM::DOMString textSplitted = textNode.split(position);
 			node.setNodeValue(textNode + text + textSplitted);
 			d->m_cursorOffset += text.length();
-			kdDebug(25001)<< "TEMP nodeValue apres: " << node.nodeValue() << endl;
-			kdDebug(25001)<< "TEMP offset apres:" << d->m_cursorOffset << endl;
 			emit domNodeModified(node);
 			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text" << endl;
 		} catch(DOM::DOMException e)
@@ -316,8 +313,13 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 				"ERROR - code : " << e.code << endl;
 		}
 	}
-	document().updateRendering();
-	view()->updateContents();
+			document().updateRendering();
+	QTimer::singleShot(0, this, SLOT(slotDelaledSetCaretPosition()));
+	//setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
+}
+
+void KafkaHTMLPart::slotDelaledSetCaretPosition()
+{
 	setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 	emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 }
