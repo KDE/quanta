@@ -50,7 +50,7 @@ ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
     if ( KProtocolInfo::supportsWriting(p) &&
          KProtocolInfo::supportsMakeDir(p) &&
          KProtocolInfo::supportsDeleting(p) &&
-         p != "file" )
+         (p != "file" && p != "fonts" && p != "floppy" && p != "newcd" ))
     {
       comboProtocol->insertItem(p);
     }
