@@ -1781,7 +1781,7 @@ void Document::paste()
 }
 
 /** returns all the areas that are between tag and it's closing pair */
-QStringList Document::tagAreas(const QString& tag, bool skipFoundContent)
+QStringList Document::tagAreas(const QString& tag, bool includeCoordinates, bool skipFoundContent)
 {
   Node *node = baseNode;
   int bl, bc, el, ec;
@@ -1802,7 +1802,12 @@ QStringList Document::tagAreas(const QString& tag, bool skipFoundContent)
           el = editIf->numLines()-1;
           ec = editIf->lineLength(el);
         }
-        result += text(bl, bc, el, ec);
+        QString s = text(bl, bc, el, ec);
+        if (includeCoordinates)
+        {
+          s.prepend(QString("%1,%2,%3,%4\n").arg(bl).arg(bc).arg(el).arg(ec));
+        }
+        result += s;
         if (skipFoundContent)
             node = node->next;
         else

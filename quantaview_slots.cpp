@@ -115,13 +115,20 @@ void QuantaView::slotFrameWizard()
   if (!writeExists())
       return;
   Document *w = write();
-  QStringList list = w->tagAreas("frameset", true);
-
-  QStringList l = QStringList::split('\n',list.first(),true);
-  /*for ( QStringList::Iterator it = l.begin(); it != l.end(); ++it ) {
-        qWarning("line %s",(*it).latin1());
-    }
-  qWarning("%d",list.count()); */
+  QStringList list = w->tagAreas("frameset", true, true);
+  bool framesetExists = !list.isEmpty();
+  int bl, bc, el, ec;
+  QStringList l;
+  if (framesetExists)
+  {
+    l = QStringList::split('\n',list[0],true);
+    QStringList coordList = QStringList::split(',', l[0], true);
+    bl = coordList[0].toInt();
+    bc = coordList[1].toInt();
+    el = coordList[2].toInt();
+    ec = coordList[3].toInt();
+    l.remove(l.begin());
+  }
 
   FrameWizard *dlg = new FrameWizard();
 
@@ -133,8 +140,14 @@ void QuantaView::slotFrameWizard()
   dlg->loadExistingFramesetStructure(l);
 
   if ( dlg->exec() )
-   {
-
+  {
+    if (framesetExists)
+    {
+      w->activateParser(false);
+      w->editIf->removeText(bl, bc, el, ec);
+      w->viewCursorIf->setCursorPositionReal((uint)bl, (uint)bc);
+      w->activateParser(true);
+    }
     QString tag =
 QString("\n")+dlg->generateFramesetStructure()+QString("\n");
     write()->insertTag(tag);

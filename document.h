@@ -155,7 +155,7 @@ work correctly. */
   bool parserActivated() {return reparseEnabled;}
 
   /** returns all the areas that are between tag and it's closing pair */
-  QStringList tagAreas(const QString &tag, bool skipFoundContent);
+  QStringList tagAreas(const QString &tag, bool includeCoordinates, bool skipFoundContent);
 
   bool busy;
   KURL baseURL;
