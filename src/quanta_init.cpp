@@ -1278,6 +1278,8 @@ void QuantaInit::checkRuntimeDependencies()
     errorStr += QString(stdErrorMsg).arg(i18n("Kommander")).arg("http://kommander.kdewebdev.org").arg(i18n("various script based dialogs including the Quick Start dialog"));
   if (KStandardDirs::findExe("tidy").isNull())
     errorStr += QString(stdErrorMsg).arg("Tidy").arg("http://tidy.sourceforge.net").arg(i18n("HTML syntax checking"));
+  if (KStandardDirs::findExe("kompare").isNull())
+    errorStr += QString(stdErrorMsg).arg("Kompare").arg("http://bruggie.dnsalias.org/kompare").arg(i18n("comparing of files by content"));
   if (KStandardDirs::findExe("kcmshell").isNull())
     errorStr += QString(stdErrorMsg).arg("KControl (kdebase)").arg("http://www.kde.org").arg(i18n("preview browser configuration"));
   if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("KFileReplace")))

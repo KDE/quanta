@@ -9,7 +9,7 @@ messages: rc.cpp
 	find ../lib -name "*.cpp" -print >> files ;\
 	toolbars=`find . -name "*.toolbar.tgz"`;\
 	for toolbar in $$toolbars; do \
-	    tar Oxfz $$toolbar  >> extrafiles; \
+	    tar Oxfz $$toolbar >> extrafiles ; \
 	done ;\
 	cat data/config/actions.rc >> extrafiles; \
 	$(EXTRACTRC) `find . -name "*.ui"` >> rc.cpp ;\
@@ -19,5 +19,5 @@ messages: rc.cpp
 	$(EXTRACTRC) extrafiles >> rc.cpp ;\
 	cat extrafiles | perl -e 'while(<STDIN>) { if (/\<action .* text="(.*)"/) { print "i18n(\"$$1\");\n"; }}' >> rc.cpp
 	(cd data && $(PREPARETIPS) >> ../tips.cpp)
-	$(XGETTEXT) rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
+	$(XGETTEXT) --from-code=UTF-8 rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
 	rm -f extrafiles tips.cpp files dirs
