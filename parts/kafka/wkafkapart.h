@@ -29,7 +29,7 @@ class Parser;
 
 #include <qmap.h>
 #include <qobject.h>
-//#include <qptrdict.h>
+#include <qptrdict.h>
 
 #include "kafkahtmlpart.h"
 
@@ -108,7 +108,7 @@ public slots:
 	/**
 	 * Called whenever a DOM::Node get the focus
 	 */
-	void slotDomNodeGetFocus(DOM::Node _domNode);
+	void slotdomNodeNewCursorPos(DOM::Node _domNode, int offset);
 
 signals:
 	/**
@@ -139,7 +139,7 @@ private:
 	 * from its encoded form (e.g. &nbsp;)
 	 * @return Returns the special character.
 	 */
-	QString getSpecialChar(QString encodedChar);
+	QString getDecodedChar(QString encodedChar);
 
 	/**
 	 * This function returns the text decoded from its XML-encoded form.
@@ -162,17 +162,20 @@ private:
 	 * @param _nodeParent The parent Node of the Node returned.
 	 * @param _nodePrev The Node the Node returned will be placed after. If null, it will
 	 * be placed as the first child of _nodeParent.
+	 * @param appendChild Specifies if a Node without previous Node should be placed as the last
+	 * child of _nodeParent in case we don't know the previous Node.
 	 * @return Returns a new Node* created from the DOM::Node.
 	*/
-	Node * buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent, Node *_nodePrev = 0L);
+	Node * buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent, Node *_nodePrev = 0L, bool appendChild = false);
 
 	/**
 	 * This function returns the XML-encoded character (e.g. &nbsp;)
 	 * from the XML special character (e.g. space, �...)
-	 * @param encodeWhiteSpaces Specifies if it should encode the whitespaces
+	 * @param decodedChar The character to encode.
+	 * @param previousDecodedchar The previous decoded character.
 	 * @return Returns the XML-encoded character.
 	 */
-	QString getEncodedChar(QString specialChar, bool encodeWhiteSpaces = true);
+	QString getEncodedChar(QString decodedChar, QString previousDecodedChar);
 
 	/**
 	 * This function returns the text with all the special XML characters encoded.
@@ -236,9 +239,9 @@ private:
 	/** For debugging purpose. It prints the quanta internal tree to stdout */
 	void coutTree(Node *node, int indent);
 
-	QMap<QString, QString> specialChars;
+	QMap<QString, QString> decodedChars;
 	QMap<QString, QString> encodedChars;
-	//QPtrDict<Node> domNodeToNode;
+	QPtrDict<Node> domNodeToNode;
 	KafkaHTMLPart *_kafkaPart;
 	Document *_currentDoc;
 	Node *_rootNode;

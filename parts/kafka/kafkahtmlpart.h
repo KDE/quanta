@@ -112,6 +112,24 @@ public:
 	 void getCurrentNode(DOM::Node &_currentNode, int &offset);
 
 	/**
+	 * Category : Standart Function
+	 * Get the next DOM::Node after _node.
+	 * @param _node The DOM::Node the search starts from.
+	 * @param goingTowardsRootNode A needed boolean for several consecutive call to
+	 * this function.
+	 * @param skipParentNodes Specifies if we should skip the parent Node when going up :
+	 * this implies that some Nodes will not be returned two times.
+	 * @param dontBlock Specifies if the search should or not be blocked by BlockingTags.
+	 * @return Returns the next Node :)
+	 */
+	DOM::Node getNextNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes = false, bool dontBlock = false);
+
+	/**
+	 * The same that above, but this function search the previous DOM::Node.
+	 */
+	DOM::Node getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes = false, bool dontBlock = false);
+
+	/**
 	 * Category: Temporary function
 	 * For debugging purposes only, shows the kafka DOM tree
 	 * @return Return the view widget
@@ -229,10 +247,11 @@ signals:
 
 	/**
 	 * Category: HTML Editing Signal
-	 * Is emitted whenever a new DOM::Node get the focus
-	 * @param _domNode The DOM::Node which has got the focus.
+	 * Is emitted whenever the cursor position change in one DOM::Node.
+	 * @param _domNode The DOM::Node which contains the cursor.
+	 * @param _offset The new cursorOffset.
 	 */
-	void domNodeGetFocus(DOM::Node _domNode);
+	void domNodeNewCursorPos(DOM::Node _domNode, int offset);
 
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
@@ -261,9 +280,6 @@ private:
 	void keyDelete();
 	//temporary universam method to get cursor coordinates
 	bool getCursor(DOM::Node _node, int offset, int &_x, int &_y, int &height);
-	//get the next node when possible (e.g. stops on Blockings tags)
-	DOM::Node getNextNode(DOM::Node _node, bool &goingTowardsRootNode);
-	DOM::Node getPrevNode(DOM::Node _node, bool &goingTowardsRootNode);
 	void postprocessCursorPosition();
 	void makeCursorVisible(int xMargin = 50, int yMargin = 50);
 	DOM::Node m_currentNode;
