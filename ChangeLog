@@ -43,6 +43,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
         - delayed parsing: reparse only if there was no keypress for some time [#63000 and its duplicates]
         - background parsing: allow user input while parsing [#63000 and its duplicates]
         - load DTEPs only on demand: improves startup performance, uses less memory
+        - use the correct quotation and case when inserting a link to a file from the treeviews [#76663]
     - behavioral changes:
     - new features:
       - Next / Previous Bookmark actions

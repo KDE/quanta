@@ -100,6 +100,14 @@ QString QuantaCommon::attrCase( const QString& attr)
   return sAttr;
 }
 
+/** returns the attribute value in quoted form, by taking care of the
+quotation setting*/
+QString QuantaCommon::quoteAttributeValue(const QString& value)
+{
+  QString quote = qConfig.attrValueQuotation;
+  return quote + value + quote;
+}
+
 /** Set's up the url correctly from urlString. */
 void QuantaCommon::setUrl(KURL &url, const QString& urlString)
 {

@@ -126,6 +126,9 @@ public:
   static QString tagCase( const QString& tag);
   /** convert tag to upper or lower case */
   static QString attrCase( const QString& attr);
+/** returns the attribute value in quoted form, by taking care of the
+quotation setting*/
+  static QString quoteAttributeValue(const QString& value);
   /** Set's up the url correctly from urlString. */
   static void setUrl(KURL &url, const QString& urlString);
   /** No descriptions */

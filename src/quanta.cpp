@@ -761,15 +761,29 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
         if ( !img.isNull() )
         {
           QString width,height;
-          width.setNum( img.width () );
-          height.setNum( img.height() );
-          w->insertTag("<img src=\""+urlStr+"\" width=\""+width+"\" height=\""+height+"\" border=\"0\">");
+          width.setNum(img.width());
+          height.setNum(img.height());
+          QString imgTag = QuantaCommon::tagCase("<img ");        
+          imgTag += QuantaCommon::attrCase("src=");
+          imgTag += QuantaCommon::quoteAttributeValue(urlStr);
+          imgTag += QuantaCommon::attrCase(" width=");
+          imgTag += QuantaCommon::quoteAttributeValue(width);
+          imgTag += QuantaCommon::attrCase(" height=");
+          imgTag += QuantaCommon::quoteAttributeValue(height);
+          imgTag += QuantaCommon::attrCase(" border=");
+          imgTag += QuantaCommon::quoteAttributeValue(QString("%1").arg(0));
+          imgTag += ">";
+          w->insertTag(imgTag);
           isImage = true;
         }
       }
       if (!isImage)
       {
-        w->insertTag( "<a href=\""+urlStr+"\">","</a>");
+        QString tag = QuantaCommon::tagCase("<a ");
+        tag += QuantaCommon::attrCase("href=");
+        tag += QuantaCommon::quoteAttributeValue(urlStr);
+        tag += ">";
+        w->insertTag(tag, QuantaCommon::tagCase("</a>"));
       }
     }
     w->view()->setFocus();
