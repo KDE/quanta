@@ -243,28 +243,65 @@ void ProjectUpload::startUpload()
      m_project->passwd = "";
   }
 
-  buildSelectedItemList();
-  int selectedNum = toUpload.count();
-
-  totalProgress->setProgress(0);
-  totalProgress->setTotalSteps(selectedNum);
-  uploadInProgress = true;
-  suspendUpload = false;
-  user = lineUser->text();
-  KURL u = *baseUrl;
-  u.setPath("");
-  u.setUser(user);
-  if (QExtFileInfo::exists(u))
+  if (markAsUploaded->isChecked())
   {
-    upload();
-    return;
+      QStringList selectedList;
+      QListViewItem *item;
+      QListViewItemIterator it(list);
+      for ( ; it.current(); ++it )
+      {
+          item = it.current();
+          if ( list->isSelected( item ))
+          {
+            KURL u;
+            if (dynamic_cast<UploadTreeFolder*>(item))
+            {
+              u = dynamic_cast<UploadTreeFolder*>(item)->url();
+            } else
+            {
+              u = dynamic_cast<UploadTreeFile*>(item)->url();
+            }
+
+            if (!u.isEmpty())
+                selectedList.append(QuantaCommon::qUrl(u));
+          }
+     }
+    //update upload time
+    QDomNodeList nl = m_project->dom.elementsByTagName("item");
+    QDomElement el;
+    for ( uint i = 0; i < nl.count(); i++ )
+    {
+      el = nl.item(i).toElement();
+      if ( selectedList.contains(el.attribute("url")))
+      {
+        el.setAttribute( "upload_time", el.attribute("modified_time") );
+      }
+    }
+    accept();
   } else
   {
-    if (KMessageBox::warningYesNo(this, i18n("<qt><b>%1</b> seems to be unaccessible.<br>Do you want to proceed with upload?</qt>")
-                                         .arg(u.prettyURL(0, KURL::StripFileProtocol))) == KMessageBox::Yes)
+    buildSelectedItemList();
+    int selectedNum = toUpload.count();
+    totalProgress->setProgress(0);
+    totalProgress->setTotalSteps(selectedNum);
+    uploadInProgress = true;
+    suspendUpload = false;
+    user = lineUser->text();
+    KURL u = *baseUrl;
+    u.setPath("");
+    u.setUser(user);
+    if (QExtFileInfo::exists(u))
     {
       upload();
       return;
+    } else
+    {
+      if (KMessageBox::warningYesNo(this, i18n("<qt><b>%1</b> seems to be unaccessible.<br>Do you want to proceed with upload?</qt>")
+                                          .arg(u.prettyURL(0, KURL::StripFileProtocol))) == KMessageBox::Yes)
+      {
+        upload();
+        return;
+      }
     }
   }
   uploadInProgress = false;
