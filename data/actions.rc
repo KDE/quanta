@@ -2,16 +2,16 @@
 <actions>
 
   <action icon="tag_bold" type="tag" name="tag_b" text="Bold" >
-   <tag useDialog="false" >&lt;b></tag>
-   <xtag use="true" inLine="true" >&lt;/b></xtag>
+   <tag useDialog="false" >&lt;strong></tag>
+   <xtag use="true" inLine="true" >&lt;/strong></xtag>
    <tooltip>The &lt;b>B&lt;/b> element suggests that text be rendered as &lt;i>bold text&lt;/i>.
      &lt;br>- common attributes
    </tooltip>
   </action>
 
   <action icon="tag_i" type="tag" name="tag_i" text="Italic" >
-   <tag useDialog="false" >&lt;i></tag>
-   <xtag use="true" inLine="true" >&lt;/i></xtag>
+   <tag useDialog="false" >&lt;em></tag>
+   <xtag use="true" inLine="true" >&lt;/em></xtag>
    <tooltip>The &lt;b>I&lt;/b> element suggests that text be rendered as &lt;i>italic text&lt;/i>.
      &lt;br>- common attributes
    </tooltip>
