@@ -1,0 +1,16 @@
+# Process user input to configure
+build_wysiwyg="no"
+AC_ARG_WITH(kafkapart,
+[  --with-kafkapart        build kafka WYSIWYG editor (experimental) (default=no)],
+[case "${enableval}" in
+       yes) build_wysiwyg="yes" ;;
+       no)  build_wysiwyg="no" ;;
+       *)   build_wysiwyg="yes" ;;
+     esac])
+
+if test "$build_wysiwyg" = "yes"; then
+  CPPFLAGS="$CPPFLAGS -DBUILD_KAFKAPART"
+fi
+
+  AM_CONDITIONAL(BUILD_WYSIWYG, test "$build_wysiwyg" = "yes")
+  
