@@ -102,6 +102,7 @@ class QuantaApp : public KDockMainWindow
     
     QuantaDoc  *getDoc()   { return doc; };
     QuantaView *getView()  { return view;};
+    Project *getProject()  { return project; };
 
     MessageOutput *getMessages() { return messageOutput; }
 
@@ -291,7 +292,7 @@ class QuantaApp : public KDockMainWindow
   void readTagDir(QString &dirName);
   /** No descriptions */
   virtual void focusInEvent(QFocusEvent*);
-	
+  
   private:
     /** project class */
     Project *project;

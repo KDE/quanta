@@ -188,7 +188,7 @@ void QuantaView::slotTagQuickStart(){
 	TagQuickStart *quickDlg = new TagQuickStart( doc->basePath(), this, i18n("Generate HTML Text"));
 
   if ( quickDlg->exec() ) {
-  	QString tag = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n")+QuantaCommon::tagCase("<html>\n")
+  	QString tag = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\">\n")+QuantaCommon::tagCase("<html>\n")
   	                  +space+QuantaCommon::tagCase("<head>\n")+space+QuantaCommon::tagCase("  <title>");
   	if ( !QString(quickDlg->lineTitle->text()).isEmpty())
 	   		tag += quickDlg->lineTitle->text();

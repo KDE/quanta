@@ -83,6 +83,8 @@ QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
+  QuantaCommon::quantaApp = this;
+
   tempFileList.setAutoDelete(true);
   toolbarGUIClientList.setAutoDelete(true);
   toolbarDomList.setAutoDelete(true);
@@ -700,6 +702,22 @@ void QuantaApp::setAttributes(QDomDocument *dom, QTag* tag)
        attr->values.append("true");
        attr->values.append("false");
      } else if ( attr->type == "color" ) {
+       attr->values.append("Black");
+       attr->values.append("Silver");
+       attr->values.append("Gray");
+       attr->values.append("White");
+       attr->values.append("Maroon");
+       attr->values.append("Red");
+       attr->values.append("Purple");
+       attr->values.append("Fuchsia");
+       attr->values.append("Green");
+       attr->values.append("Lime");
+       attr->values.append("Olive");
+       attr->values.append("Yellow");
+       attr->values.append("Navy");
+       attr->values.append("Blue");
+       attr->values.append("Teal");
+       attr->values.append("Aqua");
      } else if ( attr->type == "url" ) {
      } else if ( attr->type == "input" ) {
      } else {

@@ -17,11 +17,16 @@
 //qt includes
 #include <qstring.h>
 #include <qdict.h>
+#include <qdir.h>
 
 //kde includes
 #include <kurl.h>
 
 #include "quantacommon.h"
+#include "quanta.h"
+#include "quantadoc.h"
+#include "document.h"
+#include "project/project.h"
 #include "resource.h"
 
 
@@ -32,6 +37,7 @@ bool useCloseTag;
 bool useAutoCompletion;
 QString globalDataDir;
 QString defaultDocType;
+QuantaApp *QuantaCommon::quantaApp;
 
 QDict<AttributeList> *tagsDict;
 
@@ -206,6 +212,8 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
 /** Returns list of values for attribute */
 QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, QString attribute)
 {
+  QStringList *values = 0L;
+  
   AttributeList* attrs = tagAttributes(dtdName, tag); 
   Attribute *attr;
   if (attrs)
@@ -214,11 +222,25 @@ QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, QStr
     {
       if (attr->name == attribute)
       {
-        return &attr->values;
+        if (attr->type == "url") {
+          Project *project = quantaApp->getProject();
+          if (project->hasProject()) {
+            values = new QStringList(project->fileNameList(true));
+            values->append("mailto:" + project->email);
+          } else {
+            QDir dir = QDir(quantaApp->getDoc()->write()->url().directory());
+            values = new QStringList(dir.entryList());            
+          }
+          break;
+        } else {
+          values = &attr->values;
+          break;
+        }
       }
     }
   }
-  return 0L;
+  
+  return values;
 }
 
 
@@ -245,7 +267,7 @@ QString QuantaCommon::getDTDNickNameFromName(QString name)
   QString nickName = name;
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
- {
+  {
     if (it.current()->name == name)
     {
       nickName = it.current()->nickName;

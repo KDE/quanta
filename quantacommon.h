@@ -20,6 +20,7 @@
 
 #include "parser/qtag.h"
 
+class QuantaApp;
 class QString;
 class KURL;
 /**Some common, mostly static functions.
@@ -55,7 +56,9 @@ public:
   static QString getDTDNameFromNickName(QString nickName);
   /** Returns the DTD iddentifier from the given nickname */
   static QString getDTDNickNameFromName(QString name);
-
+public: // Public attributes
+  /**  */
+  static QuantaApp *quantaApp;
 };
 
 #endif
