@@ -1,3 +1,18 @@
+/***************************************************************************
+                          colorrequester.cpp  -  description
+                             -------------------
+    copyright            : (C) 2004 by gulmini luciano
+    email                : gulmini.luciano@student.unife.it
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
 
 #include "colorrequester.h"
 #include <klineedit.h>
@@ -55,7 +70,7 @@ void colorRequester::init()
      d->connectSignals( this );
      connect( myButton, SIGNAL( clicked() ), this, SLOT( openColorDialog() ));
      connect( d->edit, SIGNAL( textChanged ( const QString & ) ), this, SLOT( setInitialValue(/*const QString&*/ ) ));
- 
+
      KAccel *accel = new KAccel( this );
      accel->insert( KStdAccel::Open, this, SLOT( openColorDialog() ));
      accel->readSettings();
@@ -70,7 +85,7 @@ void colorRequester::openColorDialog(){
    emit textChanged(myColor.name());
  }
 }
- 
+
 KLineEdit * colorRequester::lineEdit() const{
   return d->edit;
 }
@@ -78,7 +93,7 @@ KLineEdit * colorRequester::lineEdit() const{
 void colorRequester::setInitialValue(/*const QString& s*/){
   QString temp = d->edit->text();
   temp.remove(" ");
- if( temp.contains("#") != 0){  
+ if( temp.contains("#") != 0){
    temp.remove("#");
    if(temp.length() == 3) {
      QString temp2;
@@ -97,7 +112,7 @@ void colorRequester::setInitialValue(/*const QString& s*/){
    m_initialValue.setRgb(r,g,b);
  }
  else
- 
+
    if( temp.contains("rgb(") != 0){
      temp.remove("rgb(").remove(")");
      QStringList rgbValues = QStringList::split(",",temp);
@@ -108,7 +123,7 @@ void colorRequester::setInitialValue(/*const QString& s*/){
      m_initialValue.setRgb(r,g,b);
    }
    else
-      m_initialValue.setNamedColor(d->edit->text());   
+      m_initialValue.setNamedColor(d->edit->text());
 }
 
 #include "colorrequester.moc"
