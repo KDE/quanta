@@ -1483,7 +1483,7 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 				}
 				else if((curCol + encodedChar.length()) >= currentLine.length())
 				{
-					curLine++;
+					++curLine;
 					curCol = 0;
 					currentLine = m_currentDoc->editIf->textLine(curLine);
 					if(curLine < endLine)
@@ -1495,7 +1495,7 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 				}
 			}
 			oldChar = curChar;
-			currentOffset--;
+			--currentOffset;
 		}
 	}
 	else if(_currentNode->tag->type == Tag::XmlTag)
@@ -1512,12 +1512,12 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 					closingNode->tag->endPos(curLine, curCol);
 				else
 					_currentNode->tag->endPos(curLine, curCol);
-				curCol++;
+				++curCol;
 			}
 			else
 			{
 				_currentNode->tag->endPos(curLine, curCol);
-				curCol++;
+				++curCol;
 			}
 		}
 		else
@@ -1543,7 +1543,7 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 				while(i < offset && node && node->SNext())
 				{
 					node = node->SNext();
-					i++;
+					++i;
 				}
 				if(!node)
 					node = _currentNode;
@@ -1556,7 +1556,7 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 						closingNode->tag->endPos(curLine, curCol);
 					else
 						node->tag->endPos(curLine, curCol);
-					curCol++;
+					++curCol;
 				}
 			}
 		}
