@@ -2327,7 +2327,7 @@ void QuantaApp::removeToolbar(const QString& name)
      QString s2 = toolbarGUI->domDocument().toString();
      if ( s1 != s2 )
      {
-      if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(name),
+      if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(p_toolbar->name),
               i18n("Save Toolbar")) == KMessageBox::Yes)
       {
         bool local = true;

@@ -41,7 +41,7 @@
 TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   : KAction( element->attribute("text"), element->attribute("shortcut"), 0, 0, parent, element->attribute("name") )
 {
-  tag = *element;
+  tag = element->cloneNode().toElement();
   m_view = quantaApp->view();
   setIcon( tag.attribute("icon","") );
 
