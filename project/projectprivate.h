@@ -118,8 +118,6 @@ upload.*/
 
   void slotAcceptCreateProject();
 
-  void slotSelectProjectType(const QString &title);
-
   bool createEmptyDom();
 
   /** load project file
@@ -197,13 +195,16 @@ public slots:
   /** Opens a project view (toolbars & files). */
   void slotOpenProjectView(const QString &view);
 
+  /** for the new project wizard */
+  void slotSelectProjectType(const QString &title);
+
 signals:
   void setLocalFiles( bool );
   void eventHappened(const QString&, const QString&, const QString& );
 
 private:
   QStringList treeStatusFromXML();
-
+  QString m_wizTitle ;
 };
 
 
