@@ -23,10 +23,7 @@ QTag::QTag()
  attrs.setAutoDelete(true);
  single = false;
  optional = false;
- tagName = "";
- m_fileName = "";
  type = "xmltag";
- returnType = "";
  parentDTD = 0L;
 }
 
@@ -39,6 +36,7 @@ QTag::QTag( QTag &t)
   parentDTD = t.parentDTD;
   type = t.type;
   returnType = t.returnType;
+  comment = t.comment;
   commonGroups = t.commonGroups;
   stoppingTags = t.stoppingTags;
   childTags = t.childTags;
@@ -60,7 +58,7 @@ void QTag::addAttribute(Attribute* attr)
  {
   Attribute* a = attribute(attr->name);
   bool createNew = !a;
-  if (createNew) 
+  if (createNew)
     a = new Attribute;
   a->name = attr->name;
   a->type = attr->type;
@@ -74,7 +72,7 @@ void QTag::addAttribute(Attribute* attr)
   a->method = attr->method;
   a->interface = attr->interface;
   a->arguments = attr->arguments;
-  if (createNew) 
+  if (createNew)
     attrs.append(a);
  }
 }
@@ -172,6 +170,7 @@ QTag QTag::operator = (QTag &t)
   parentDTD = t.parentDTD;
   type = t.type;
   returnType = t.returnType;
+  comment = t.comment;
   commonGroups = t.commonGroups;
   stoppingTags = t.stoppingTags;
 

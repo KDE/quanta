@@ -241,9 +241,10 @@ public:
   /** The tag has the attributes of the above common groups */
   QStringList commonGroups;
   QStringList stoppingTags;
-  QMap<QString, bool> childTags; //list of the possible child tags. If the value is true, the child is mandatory
-  QString type; //function, class, xmltag, etc.
-  QString returnType;  //useful is type="function"; may be int, string or whatever
+  QMap<QString, bool> childTags; ///<list of the possible child tags. If the value is true, the child is mandatory
+  QString type; ///<function, class, xmltag, etc.
+  QString returnType;  ///<useful is type="function"; may be int, string or whatever
+  QString comment; ///< comment associated to the tag. Will appear as a tooltip in the autocompletion box. Useful for specifying version information (eg. since PHP5)
 
 protected: // Protected attributes
   /** List of the possible attributes */

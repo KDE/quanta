@@ -705,6 +705,7 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
 
     tag->type = el.attribute("type","xmltag");
     tag->returnType = el.attribute("returnType","");
+    tag->comment = el.attribute("langVersion", "");
  } else
  {
    common = true;

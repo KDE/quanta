@@ -1117,6 +1117,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   QString word = findWordRev(textLine, completionDTD).upper();
   completion.userdata = word +"|";
   QStringList tagNameList;
+  QMap<QString, QString> comments;
   QString tagName;
   QDictIterator<QTag> it(*(completionDTD->tagsList));
   for( ; it.current(); ++it )
@@ -1125,7 +1126,11 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
     if (tagName.upper().startsWith(word))
     {
       if (!parentQTag || (parentQTag && parentQTag->isChild(tagName)))
-          tagNameList += it.current()->name();
+      {
+        tagName = it.current()->name();
+        tagNameList += tagName;
+        comments.insert(tagName, it.current()->comment);
+      }
     }
   }
 
@@ -1134,14 +1139,17 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   {
     if (it2.current()->name().upper().startsWith(word))
     {
-      tagNameList += it2.current()->name();
+      tagName = it2.current()->name();
+      tagNameList += tagName;
+      comments.insert(tagName, it2.current()->comment);
     }
   }
 
   tagNameList.sort();
   for (uint i = 0; i < tagNameList.count(); i++)
   {
-   completion.text = QuantaCommon::tagCase( tagNameList[i]);
+   completion.text = QuantaCommon::tagCase(tagNameList[i]);
+   completion.comment = comments[tagNameList[i]];
    completions->append( completion );
   }
 
