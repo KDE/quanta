@@ -19,7 +19,7 @@
 #include <qradiobutton.h>
 
 #include <klocale.h>
-#include <kcolorbtn.h>
+#include <kcolorbutton.h>
 #include <knuminput.h>
 
 #include "kwdoc.h"
