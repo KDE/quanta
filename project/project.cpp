@@ -429,6 +429,8 @@ void Project::slotCloseProject()
   projectURL  = KURL();
   m_modified = false;
   passwd = "";
+  usePreviewPrefix = false;
+  previewPrefix = KURL();
 
   emit newStatus();
 }
