@@ -19,12 +19,15 @@
 #include "tagattr.h"
 #include <klineedit.h>
 #include <kdebug.h>
+#include <klocale.h>
 
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
+
+#include "styleeditor.h"
 
 Tagxml::Tagxml( QDomNode &d, QTag *dtdTag, QWidget *parent, const char *name)
   :QWidget(parent,name), TagWidget(parent,name), doc(d)
@@ -188,6 +191,26 @@ Tagxml::Tagxml( QDomNode &d, QTag *dtdTag, QWidget *parent, const char *name)
            if (!m_firstItem)
               m_firstItem = w;
         }
+        
+        else
+        if ( type == "css-style" )
+        {
+           StyleEditor *w = new StyleEditor(this);
+           grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
+
+           if ( !tip.isNull() )
+               QToolTip::add( w, tip );
+           if ( !whatsThis.isNull() )
+               QWhatsThis::add( w, whatsThis );
+
+           Attr_line *attr = new Attr_line(&el, w->lineEdit(), m_dtdTag);
+           attributes.append(attr);
+           
+           if (!m_firstItem)
+              m_firstItem = w;
+           
+        }
+        
      }
 
      if ( n.nodeName() == "spacer")

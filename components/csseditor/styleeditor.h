@@ -16,31 +16,24 @@
 #define STYLEEDITOR_H
 
 //qt includes
-#include <qhbox.h>
-
+#include "tlpeditors.h"
 //kde includes
 
 //app includes
 
 //forward declarations
-class QLineEdit;
-class KPushButton;
 
-class StyleEditor : public QHBox{
+class StyleEditor : public TLPEditor{
   Q_OBJECT
-
+  private:
+    int m_iconWidth,
+        m_iconHeight;
 public:
     StyleEditor(QWidget *parent=0, const char* name=0);
-    ~StyleEditor();
-    QLineEdit* lineEdit() const { return m_le; }
-    KPushButton* button() const { return m_pb; }
+    virtual void setButtonIcon(int width, int height);
 
 public slots:
     void openCSSEditor();
-
-private:
-    QLineEdit *m_le;
-    KPushButton *m_pb;
 };
 
 

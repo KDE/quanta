@@ -16,6 +16,7 @@
 #include <qlineedit.h>
 #include <qtooltip.h>
 #include <qiconset.h>
+#include <qlabel.h>
 
 //kde includes
 #include <kdialog.h>
@@ -36,21 +37,20 @@
 #include "viewmanager.h"
 #include "csseditor.h"
 
-StyleEditor::StyleEditor(QWidget *parent, const char* name) : QHBox(parent,name){
-  m_le = new QLineEdit(this);
-  m_pb = new KPushButton(this);
-  QIconSet iconSet = SmallIconSet(QString::fromLatin1("stylesheet"));
-  QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
-  m_pb->setIconSet( iconSet );
-  m_pb->setFixedSize( pixMap.width()+4, pixMap.height()+0 );
-  QToolTip::add(m_pb, i18n("Open css dialog"));
-  setSpacing( KDialog::spacingHint() );
+StyleEditor::StyleEditor(QWidget *parent, const char* name) : TLPEditor(parent,name){
   connect(m_pb, SIGNAL(clicked()), this, SLOT(openCSSEditor()));
+  setToolTip(i18n("Open css dialog"));
+  QIconSet iconSet =  SmallIconSet(QString::fromLatin1("stylesheet"));
+  QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
+  m_pb->setIconSet(iconSet);
+  m_iconWidth = pixMap.width();
+  m_iconHeight = pixMap.height(); 
+  m_pb->setFixedSize( m_iconWidth+8, m_iconHeight+8 );
+  m_label->hide();
 }
 
-StyleEditor::~StyleEditor(){
-  delete m_le;
-  delete m_pb;
+void StyleEditor::setButtonIcon(int width, int height){
+  m_pb->setFixedSize( m_iconWidth+width, m_iconHeight+height );
 }
 
 void StyleEditor::openCSSEditor(){

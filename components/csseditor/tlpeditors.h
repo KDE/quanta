@@ -38,10 +38,11 @@ class TLPEditor : public QHBox { //editor with a line text and a button calling 
   public:
     TLPEditor(QWidget *parent, const char* name=0);
     virtual ~TLPEditor();
-    KPushButton *button() const { return m_pb;}
-    void setButtonIcon(QString);
+    virtual void setButtonIcon(QString);
     void setToolTip(QString);
     void setLabelText(QString);
+    QLineEdit* lineEdit() const { return m_le; }
+    KPushButton* button() const { return m_pb; }
 
   signals:
     void valueChanged(const QString&);

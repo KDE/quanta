@@ -570,7 +570,7 @@ void QuantaInit::readOptions()
   m_quanta->slotViewStatusBar();
   qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
   m_quanta->showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
-  qConfig.showCloseButtons = m_config->readEntry("Close Buttons", "ShowAlways");
+  qConfig.showCloseButtons = m_config->readEntry("Close Buttons", "ShowDelayed");
   m_quanta->initTabWidget(true);
   m_quanta->fileRecent ->loadEntries(m_config);
 

@@ -30,6 +30,7 @@
 #include <kiconloader.h>
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
+#include <ktexteditor/view.h>
 
 //app includes
 #include "tagattributetree.h"
@@ -529,6 +530,8 @@ void TagAttributeTree::slotExpanded(QListViewItem *item)
 void TagAttributeTree::slotDelayedSetCurrentNode()
 {
   setCurrentNode(m_newNode);
+  if (ViewManager::ref()->activeDocument())
+    ViewManager::ref()->activeDocument()->view()->setFocus();
 }
 
 EnhancedTagAttributeTree::EnhancedTagAttributeTree(QWidget *parent, const char *name)

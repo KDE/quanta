@@ -504,6 +504,7 @@ AttributeStyleItem::AttributeStyleItem(EditableTree* listView, QListViewItem* pa
 {
   m_listView = listView;
   m_se = new StyleEditor( m_listView->viewport() );
+  m_se->setButtonIcon(4,0);
   //combo->setEditable(true);
   m_se->hide();
 

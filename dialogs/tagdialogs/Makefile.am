@@ -5,6 +5,7 @@ libtagdialogs_la_SOURCES = tagmisc.ui listdlg.cpp tagmail.ui tagmaildlg.cpp tagq
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/quanta/parsers \
 	-I$(top_srcdir)/quanta/dialogs \
+	-I$(top_srcdir)/quanta/components/csseditor \
 	-I$(top_srcdir)/quanta/src \
 	-I$(top_srcdir)/quanta/parts/kafka \
 	-I$(top_srcdir)/lib \
