@@ -158,6 +158,17 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
     pid_t pid = getpid();
     command.replace("%pid", QString("%1").arg(pid));
+    QString buffer;
+    QString inputType = script.attribute("input","none");
+
+    if ( inputType == "current" ) {
+      buffer = w->editIf->text();
+    } else
+    if ( inputType == "selected" ) {
+      buffer = w->selectionIf->selection();
+    }
+    command.replace("%input", buffer);
+
     int pos = command.find(' ');
     QString args;
     if (pos != -1)
@@ -165,6 +176,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
       args = command.mid(pos+1);
       command = command.left(pos);
     }
+
     *proc << command.stripWhiteSpace();
     args = args.stripWhiteSpace();
     if (!args.isEmpty())
@@ -201,15 +213,8 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     {
       if (!inputFromFile)
       {
-        QString buffer;
-        QString inputType = script.attribute("input","none");
-
-        if ( inputType == "current" ) {
-          buffer = w->editIf->text();
-          proc->writeStdin( buffer.local8Bit(), buffer.length() );
-        } else
-        if ( inputType == "selected" ) {
-          buffer = w->selectionIf->selection();
+        if ( inputType == "current" || inputType == "selected" )
+        {
           proc->writeStdin( buffer.local8Bit(), buffer.length() );
         }
       }
@@ -218,7 +223,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     {
       KMessageBox::error(quantaApp, i18n("There was an error running \"%1\".\nCheck that you have the executable installed and in the PATH!").arg(command + " " + args), i18n("Script not found"));
     }
-    kdDebug(24000) << "Script started\n";
+    kdDebug(24000) << "Script started.\n";
   }
 
 }
@@ -228,8 +233,12 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   QCString tmp( buffer, buflen + 1 );
   QString text( QString::fromLocal8Bit(tmp) );
   Document *w = m_view->write();
-  kdDebug(24000) << "Script output" << endl;
+  kdDebug(24000) << "Script output received." << endl;
   if ( scriptOutputDest == "cursor" )
+  {
+     w->insertTag( text );
+  } else
+  if ( scriptOutputDest == "selection" )
   {
      if ( firstOutput )
      {
@@ -285,17 +294,26 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
     scriptErrorDest = scriptOutputDest;
     firstError = firstOutput;
   }
-
   if ( scriptErrorDest == "cursor" )
      w->insertTag( text );
-
+  else
+  if ( scriptErrorDest == "selection" )
+  {
+     if ( firstError )
+     {
+       int line = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndLine();
+       int col = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndCol();
+       w->viewCursorIf->setCursorPositionReal(line, col);
+       w->selectionIf->removeSelectedText();
+     }
+     w->insertTag( text );
+  } else
   if ( scriptErrorDest == "replace" )
   {
     if ( firstOutput )
        w->editIf->clear();
     w->insertTag( text );
-  }
-
+  } else
   if ( scriptErrorDest == "new" )
   {
     if ( firstOutput )
@@ -305,8 +323,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
         w = m_view->write();
     }
     w->insertTag( text );
-  }
-
+  } else
   if ( scriptErrorDest == "message" )
   {
     MessageOutput *appMessages = quantaApp->getMessageOutput();
