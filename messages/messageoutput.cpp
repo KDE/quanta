@@ -18,6 +18,7 @@
 #include <klocale.h>
 
 #include "messageoutput.h"
+#include "messageoutput.moc"
 #include "messageitem.h"
 #include "messageitemphp.h"
 #include "messageitemphp4.h"
@@ -28,15 +29,15 @@ MessageOutput::MessageOutput(QWidget *parent, const char *name )
 {
   insertItem( "Message window..." );
   max_items = 200;
-  
+
   QPalette pal = palette();
   pal.setColor(QColorGroup::HighlightedText, pal.color(QPalette::Normal, QColorGroup::Text));
   pal.setColor(QColorGroup::Highlight,       pal.color(QPalette::Normal, QColorGroup::Mid));
   setPalette(pal);
   setFocusPolicy( NoFocus );
-  
+
   connect( this, SIGNAL(pressed(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
-  
+
 }
 
 MessageOutput::~MessageOutput()
@@ -63,7 +64,7 @@ void MessageOutput::addToLastItem(QString s)
 }
 
 
-void MessageOutput::showMessage( QString message ) 
+void MessageOutput::showMessage( QString message )
 {
   int endPos;
   if ( !count() )
@@ -74,24 +75,24 @@ void MessageOutput::showMessage( QString message )
     insertItem("");
     message.remove(0,endPos+1);
   }
-  
+
   addToLastItem( message );
   setBottomItem(count()-1);
 }
 
 
-void MessageOutput::checkMaxItems() 
+void MessageOutput::checkMaxItems()
 {
   if ( count() >= max_items )
     removeItem( index(firstItem()) );
 }
 
-void MessageOutput::clickItem( QListBoxItem * l_item ) 
+void MessageOutput::clickItem( QListBoxItem * l_item )
 {
    MessageItem *item = dynamic_cast<MessageItem*>(l_item);
    if ( item )  {
      if ( item->line() != -1  )
-       emit clicked( item->fileName(), item->line()-1 );  
+       emit clicked( item->fileName(), item->line()-1 );
    }
 }
 
@@ -101,7 +102,7 @@ void MessageOutput::phpDebug( QString s)
    data += s;
    int pos1;
    QString res;
-   
+
    if ( (pos1=data.find(") end: ")) != -1 )  {
      res = data.left(pos1+7);
      data.remove(0, pos1+7);
@@ -110,7 +111,7 @@ void MessageOutput::phpDebug( QString s)
      new MessageItemPHP( this, res );
      setBottomItem(count()-1);
    }
-   
+
 }
 
 void MessageOutput::php4Debug( QString s)
@@ -133,19 +134,19 @@ void MessageOutput::endPhpConnect()
 void MessageOutput::processWebLint( KProcess *p, char *buffer, int len )
 {
   static QString s = "";
-  
+
   if ( p ) {
     QString text(buffer);
     text.truncate(len);
     s += text;
-  } 
+  }
   else {
     int endPos;
-    if ( s.right(1) == "\n" ) 
+    if ( s.right(1) == "\n" )
       s.remove( s.length()-1,1 );
-    if ( s.left(1) == "\n" ) 
+    if ( s.left(1) == "\n" )
       s.remove( 0,1 );
-    
+
     while ( ( endPos = s.find('\n') ) != -1 ) {
       new MessageItemWebLint( this, s.left(endPos) );
       s.remove(0,endPos+1);
@@ -154,13 +155,13 @@ void MessageOutput::processWebLint( KProcess *p, char *buffer, int len )
       new MessageItemWebLint( this, s );
     }
    // setBottomItem(count()-1);
-    s = ""; 
+    s = "";
   }
   setBottomItem(count()-1);
-       
+
 }
 
-void MessageOutput::weblintFinished() 
+void MessageOutput::weblintFinished()
 {
    clear();
    processWebLint(0,0,0); // show output
