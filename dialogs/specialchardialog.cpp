@@ -25,13 +25,12 @@
 #include <klistbox.h>
 #include <klineedit.h>
 
-
 #include "specialchardialog.h"
+#include "resource.h"
 
 SpecialCharDialog::SpecialCharDialog( QWidget* parent, const char* name, bool modal, WFlags fl)
     :SpecialCharDialogS( parent, name, modal, fl )
 {
-  readChars();  
   connect ( FilterLineEdit, SIGNAL(textChanged(const QString&)), 
       SLOT(filterChars(const QString&)) );
   connect ( CharsListBox, SIGNAL(doubleClicked(QListBoxItem*)), 
@@ -46,31 +45,15 @@ SpecialCharDialog::~SpecialCharDialog()
 {
 }
 
-void SpecialCharDialog::readChars()
-{
-   if (m_charList.count()) 
-     return;
-   QFile file( locate("appdata","chars") );
-   if ( file.open(IO_ReadOnly) ) {    // file opened successfully
-     QTextStream t( &file );        // use a text stream
-     t.setEncoding(QTextStream::UnicodeUTF8);
-     QString s;
-     while ( !t.eof() ) {           // until end of file...
-       m_charList << i18n(t.readLine().utf8()); // line excluding '\n'
-     }
-     file.close();
-   }
-}
-
 void SpecialCharDialog::filterChars(const QString& filter)
 {
   CharsListBox->clear();
   if (filter.isEmpty())
-    CharsListBox->insertStringList(m_charList);
+    CharsListBox->insertStringList(charList);
   else {
     QRegExp p_reg( QString("\\b%1\\b").arg(filter) );
     QString p_begin = QString("%1 ").arg(filter);
-    for (QStringList::ConstIterator it = m_charList.begin(); it != m_charList.end(); ++it)
+    for (QStringList::ConstIterator it = charList.begin(); it != charList.end(); ++it)
       if ( (*it).contains(p_reg) || (*it).startsWith(p_begin) )
         CharsListBox->insertItem(*it);
   }

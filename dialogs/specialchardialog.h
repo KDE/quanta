@@ -40,9 +40,7 @@ public slots:
 private slots:
   
 private:
-  void readChars();
   QString m_selection;
-  QStringList m_charList;
 };
 
 #endif
