@@ -79,6 +79,7 @@ signals:
 private:
  /** Private constructor for the singleton object. */
   ViewManager(QObject * parent = 0, const char * name = 0);
+  QuantaView *m_lastActiveView;
 
 };
 

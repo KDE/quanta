@@ -161,6 +161,7 @@ void QuantaInit::initQuanta()
   initPlugins();  // needs to be before createGUI because some actions are created inside
 
   //m_quanta->KDockMainWindow::createGUI( QString::null, false /* conserveMemory */ );
+  kdDebug(24000) << "Calling createGUI" << endl;
   m_quanta->createShellGUI(true);
   m_quanta->menuBar()->insertItem(i18n("Plu&gins"), m_quanta->m_pluginInterface->pluginMenu(),
                                   -1, PLUGINS_MENU_PLACE);
@@ -350,7 +351,6 @@ void QuantaInit::initView()
   ViewManager *m_viewManager = ViewManager::ref(m_quanta);
   connect(m_quanta, SIGNAL(viewActivated (KMdiChildView *)), m_viewManager, SLOT(slotViewActivated(KMdiChildView*)));
    connect(m_quanta, SIGNAL(viewDeactivated(KMdiChildView *)), m_viewManager, SLOT(slotViewDeactivated(KMdiChildView*)));
-
 #if KDE_IS_VERSION(3,2,90)
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3ICON);
   m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );

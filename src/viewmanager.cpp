@@ -40,7 +40,7 @@ ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, na
    KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
    m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
 
-
+    m_lastActiveView = 0L;
 }
 
 QuantaView* ViewManager::createView()
@@ -118,13 +118,16 @@ QuantaView* ViewManager::activeView()
 
 void ViewManager::slotViewDeactivated(KMdiChildView *view)
 {
+/*
    QuantaView *qView = dynamic_cast<QuantaView*>(view);
    if (qView)
-     qView->deactivated();
+     qView->deactivated(); */
 }
 
 void ViewManager::slotViewActivated(KMdiChildView *view)
 {
+   if (m_lastActiveView)
+     m_lastActiveView->deactivated();
    QuantaView *qView = dynamic_cast<QuantaView*>(view);
    if (qView)
      qView->activated();
@@ -136,6 +139,7 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
   quantaApp->slotNewStatus();
   quantaApp->slotNewLineColumn();
   typingInProgress = false; //need to reset, as it's set to true in the above slots
+  m_lastActiveView = dynamic_cast<QuantaView *>(view);
 }
 
 
@@ -228,7 +232,7 @@ bool ViewManager::saveAll(bool dont_ask)
               if (!view->saveModified())
                   flagsave = false;
           }
-          if (w->url().isLocalFile())
+          if (w && w->url().isLocalFile())
               fileWatcher->addFile(w->url().path());
       }
   }

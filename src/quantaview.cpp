@@ -243,6 +243,7 @@ void QuantaView::addPlugin(QuantaPlugin *plugin)
    m_documentArea->reparent(this, 0, QPoint(), true);
    m_viewLayout->addWidget(m_documentArea, 1, 0);
    m_documentArea->show();
+   activated();
 }
 
 void QuantaView::slotSetSourceLayout()
