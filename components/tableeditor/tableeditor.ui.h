@@ -451,7 +451,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
     }
     n = n->nextSibling();
   }
-  if (missingBody) {
+  if (0 && missingBody) {
       rowSpinBox->setValue(nRow);
       colSpinBox->setValue(maxCol);
   }

@@ -234,6 +234,7 @@ QuantaApp::~QuantaApp()
  m_execCommandPS = 0L;
  delete dcopSettings;
  delete dcopQuanta;
+ quantaApp = 0L;
 }
 
 

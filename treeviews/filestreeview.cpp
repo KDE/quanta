@@ -89,7 +89,8 @@ void FilesTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
   if (column == 0)
   {
     QFont f = p->font();
-    f.setBold(quantaApp->doc()->isOpened(url()));
+    if (quantaApp)
+      f.setBold(quantaApp->doc()->isOpened(url()));
     p->setFont(f);
   } else
   {
