@@ -1,6 +1,6 @@
 # KDE Config File  
 [KDE Desktop Entry]
-Type=Application
+Type=Office
 Exec=quanta -caption "%c" %i %m  
 Icon=quanta.xpm
 MiniIcon=quanta.png
