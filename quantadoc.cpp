@@ -210,15 +210,26 @@ bool QuantaDoc::saveDocument(const KURL& url)
   if ( !url.isEmpty())
   {
     fileWatcher->removeFile(oldURL.path());
-    if (!w->doc()->saveAs( url ))
+    KTextEditor::Document *wdoc = w->doc();
+    if (!wdoc->saveAs( url ))
     {
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
       KMessageBox::error(quantaApp, i18n("Saving of the document\n%1\nfailed.\nMaybe you should try to save in another directory.").arg(url.prettyURL()));
+#endif
       result = false;
+    } else
+    {
+      w->closeTempFile();
+      if (dynamic_cast<KTextEditor::HighlightingInterface*>(wdoc)->hlMode()==0)
+       {
+         uint line,col;
+         w->viewCursorIf->cursorPositionReal(&line, &col);
+        wdoc->openURL(url);
+         w->viewCursorIf->setCursorPosition(line, col);
+     }
+      w->createTempFile();
+      w->setDirtyStatus(false);
     }
-    w->closeTempFile();
-    w->doc()->openURL(url);
-    w->createTempFile();
-    w->setDirtyStatus(false);
     if (w->url().isLocalFile())
     {
       fileWatcher->addFile(w->url().path());
