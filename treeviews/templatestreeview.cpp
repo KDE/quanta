@@ -142,6 +142,9 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
           this, SLOT(slotDropped(KURL::List&, KURL&)));
 
   setAcceptDrops(true);
+  connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
+          this, SLOT(slotDropped(KURL::List&, KURL&)));
+
   setSelectionMode(QListView::Single);
   setDropHighlighter(true);
   setDragEnabled(true);
@@ -310,7 +313,7 @@ void TemplatesTreeView::slotNewDir()
 QDragObject * TemplatesTreeView::dragObject ()
 {
   // don't drag folders
-  if ( ! currentKFileTreeViewItem() || ! currentKFileTreeViewItem()->isDir() ) return 0;
+  if ( ! currentKFileTreeViewItem() ||  currentKFileTreeViewItem()->isDir() ) return 0;
 
   readDirInfo();
   if(!m_dirInfo.mimeType.isEmpty()) // only drag when the template type is specified
