@@ -1,5 +1,4 @@
 quantadir = ${quanta_datadir}/toolbar
-
 quanta_DATA = ball.png \
 check_clear.png \
 check_grey.png \

@@ -2,7 +2,7 @@ noinst_LTLIBRARIES = libplugins.la
 
 METASOURCES = AUTO
 
-libplugins_la_SOURCES = spellchecker.cpp quantaplugininterface.cpp quantaplugineditor.cpp quantapluginconfig.cpp quantaplugin.cpp plugineditor.ui pluginconfig.ui
+libplugins_la_SOURCES = quantaplugininterface.cpp quantaplugineditor.cpp quantapluginconfig.cpp quantaplugin.cpp plugineditor.ui pluginconfig.ui
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/quanta/parsers \

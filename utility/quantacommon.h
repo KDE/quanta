@@ -33,7 +33,6 @@ class DCOPReply;
 class KURL;
 class KStandardDirs;
 class QWidget;
-class KSpellConfig;
 class Tag;
 
 class KPopupMenu;
@@ -101,9 +100,6 @@ public:
           QMap<QString, Abbreviation> abbreviations; ///< the abbreviation groups
           bool replaceAccented; ///< replace or not the accented characters
           bool smartTagInsertion; //enable/disable smartTagInsertion
-
-          //spelling options
-          KSpellConfig *spellConfig;
         };
 
 typedef struct DirInfo{

@@ -53,7 +53,6 @@
 #include <kpopupmenu.h>
 #include <kprocess.h>
 #include <kprogress.h>
-#include <kspell.h>
 #include <ktip.h>
 #include <kio/netaccess.h>
 #include <ktabwidget.h>
@@ -106,7 +105,6 @@
 #include "dirtydialog.h"
 
 #include "dtds.h"
-#include "spellchecker.h"
 #include "qpevents.h"
 #include "quantabookmarks.h"
 
@@ -589,7 +587,6 @@ void QuantaInit::readOptions()
 
 
   Project::ref()->readConfig(m_config); // project
-  SpellChecker::ref()->readConfig(m_config);
 }
 
 void QuantaInit::openLastFiles()
@@ -680,9 +677,6 @@ void QuantaInit::initActions()
     KStdAction::copy(m_quanta, SLOT(slotCopy()), ac) ;
     KStdAction::pasteText(m_quanta, SLOT(slotPaste()), ac);
     
-//Tools menu
-    KStdAction::spelling(m_quanta, SLOT(slotSpellcheck()), ac);
-
 //help
    (void) new KAction(i18n("Ti&p of the Day"), "idea", "", m_quanta,
       SLOT(slotHelpTip()), ac, "help_tip");

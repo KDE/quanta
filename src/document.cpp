@@ -131,9 +131,6 @@ Document::Document(KTextEditor::Document *doc,
   a = m_view->actionCollection()->action( "edit_redo" );
   if (a)
     m_view->actionCollection()->take(a);
-  a = m_view->actionCollection()->action( "tools_spelling" );
-  if (a)
-    m_view->actionCollection()->take(a);
   //because they are not implemented in VPL
 
   a = m_view->actionCollection()->action( "edit_copy" );

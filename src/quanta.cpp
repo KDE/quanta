@@ -80,7 +80,6 @@
 #include <kaction.h>
 #include <kcharsets.h>
 #include <kdirwatch.h>
-#include <kspell.h>
 #include <kstandarddirs.h>
 #include <ktabwidget.h>
 #include <ktip.h>
@@ -100,6 +99,7 @@
 #include <ktexteditor/dynwordwrapinterface.h>
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/undointerface.h>
+#include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 #include <ktexteditor/clipboardinterface.h>
 
@@ -159,7 +159,6 @@
 #include "csseditor.h"
 #include "cssselector.h"
 
-#include "spellchecker.h"
 #include "framewizard.h"
 
 #include "debuggermanager.h"
@@ -181,7 +180,6 @@
 #include "quantaplugin.h"
 #include "dtds.h"
 #include "dcopsettings.h"
-#include "spellchecker.h"
 #include "quanta_init.h"
 #include "viewmanager.h"
 #include "debuggerui.h"
@@ -227,7 +225,6 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   qConfig.enableDTDToolbar = true;
 
   exitingFlag = false;
-  qConfig.spellConfig = new KSpellConfig();
 
   // connect up signals from KXXsldbgPart
   connectDCOPSignal(0, 0, "debuggerPositionChangedQString,int)", "newDebuggerPosition(QString,int)", false );
@@ -1204,9 +1201,6 @@ void QuantaApp::slotOptions()
 
   page = kd->addVBoxPage(i18n("Abbreviations"), QString::null, BarIcon("source", KIcon::SizeMedium));
   AbbreviationDlg *abbreviationOptions = new AbbreviationDlg((QWidget*)(page));
-//Spelling options
-  page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
-  KSpellConfig *spellOptions = new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
 
   bool reloadTrees = false;
   kd->adjustSize();
@@ -1291,15 +1285,6 @@ void QuantaApp::slotOptions()
     qConfig.defaultDocType = DTDs::ref()->getDTDNameFromNickName(fileMasks->defaultDTDCombo->currentText());
 
     abbreviationOptions->saveTemplates();
-
-    qConfig.spellConfig->setDictionary(spellOptions->dictionary());
-    qConfig.spellConfig->setNoRootAffix(spellOptions->noRootAffix());
-    qConfig.spellConfig->setRunTogether(spellOptions->runTogether());
-    qConfig.spellConfig->setDictFromList(spellOptions->dictFromList());
-    qConfig.spellConfig->setEncoding(spellOptions->encoding());
-    qConfig.spellConfig->setIgnoreList(spellOptions->ignoreList());
-    qConfig.spellConfig->setReplaceAllList(spellOptions->replaceAllList());
-    qConfig.spellConfig->setClient(spellOptions->client());
 
     tmpStr = uiOptions->position();
     if (tmpStr != qConfig.previewPosition)
@@ -3911,7 +3896,6 @@ void QuantaApp::saveOptions()
 
     manager()->writeConfig(m_config);
     saveMainWindowSettings(m_config);
-    SpellChecker::ref()->writeConfig(m_config);
     writeDockConfig(m_config);
     // save settings of treeviews
     fTab->saveLayout( m_config, fTab->className() );
@@ -4578,15 +4562,6 @@ void QuantaApp::slotRedo ()
       undoIf->redo();
 //#endif
     qConfig.updateClosingTags = updateClosing;
-  }
-}
-
-void QuantaApp::slotSpellcheck ()
-{
-  Document *w = ViewManager::ref()->activeDocument();
-  if (w)
-  {
-    SpellChecker::ref(this)->spellCheck(w->doc());
   }
 }
 

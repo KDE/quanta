@@ -97,7 +97,6 @@ namespace KTextEditor
   class View;
 }
 
-class SpellChecker;
 struct DirInfo;
 struct EventAction;
 
@@ -469,9 +468,6 @@ protected slots:
   void slotCut();
   void slotCopy();
   void slotPaste();
-
-//Tools
-  void slotSpellcheck ();
 
   void slotShowSourceEditor();
   void slotShowVPLAndSourceEditor();

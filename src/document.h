@@ -252,8 +252,6 @@ private:
   int m_replaceCol;
   QString m_replaceStr;
 
-  QString         spellText;
-  QValueList<int> *spellPos;
   KTextEditor::Document *m_doc;
   KTextEditor::View *m_view;
 
@@ -263,7 +261,6 @@ private:
   bool m_backupEntry;
   /* path of the backup copy file of the document */
   QString m_backupPathValue;
-  int spellMoved;
   QString dtdName;
 /*The DTD valid in the place where the completion was invoked.*/
   const DTDStruct *completionDTD;
