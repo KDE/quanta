@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>GubedSettingsS</class>
 <widget class="QDialog">
     <property name="name">
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>432</width>
-            <height>197</height>
+            <width>594</width>
+            <height>558</height>
         </rect>
     </property>
     <property name="caption">
@@ -22,7 +22,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="2">
+        <widget class="QLayoutWidget" row="1" column="0">
             <property name="name">
                 <cstring>Layout1</cstring>
             </property>
@@ -86,117 +86,450 @@
                 </widget>
             </hbox>
         </widget>
-        <widget class="QLabel" row="2" column="0">
+        <widget class="QTabWidget" row="0" column="0">
             <property name="name">
-                <cstring>lblDebuggerServerHost</cstring>
+                <cstring>tabWidget2</cstring>
             </property>
             <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>5</hsizetype>
                     <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
+                    <horstretch>1</horstretch>
+                    <verstretch>1</verstretch>
                 </sizepolicy>
             </property>
-            <property name="text">
-                <string>Server Host:</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>lblDebuggerServerBasedir</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>Server Basedir:</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>lblDebuggerLocalBasedir</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>Local Basedir:</string>
-            </property>
-        </widget>
-        <spacer row="4" column="1">
-            <property name="name">
-                <cstring>spacer4</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>21</width>
-                    <height>60</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QLabel" row="3" column="0">
-            <property name="name">
-                <cstring>lblDebuggerServerPort</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string>Server Port:</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="2" column="1">
-            <property name="name">
-                <cstring>lineServerHost</cstring>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="3" column="1">
-            <property name="name">
-                <cstring>lineServerPort</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="1" column="1">
-            <property name="name">
-                <cstring>lineServerBasedir</cstring>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="0" column="1">
-            <property name="name">
-                <cstring>lineLocalBasedir</cstring>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>General</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <spacer row="7" column="2">
+                        <property name="name">
+                            <cstring>spacer4</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>21</width>
+                                <height>30</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="2" column="1">
+                        <property name="name">
+                            <cstring>spacer4_2_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Fixed</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>21</width>
+                                <height>30</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="2" column="3">
+                        <property name="name">
+                            <cstring>spacer4_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Fixed</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>21</width>
+                                <height>30</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLineEdit" row="6" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>lineServerListenPort</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="5" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>lineServerPort</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="4" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>lineServerHost</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="3" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>checkUseProxy</cstring>
+                        </property>
+                        <property name="text">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>lineServerBasedir</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>lineLocalBasedir</cstring>
+                        </property>
+                        <property name="text">
+                            <string></string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>lblDebuggerLocalBasedir</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Local Basedir:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>lblDebuggerServerBasedir</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Server Basedir:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>lblDebuggerUseProxe</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Use Proxy:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="0">
+                        <property name="name">
+                            <cstring>lblDebuggerServerHost</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Proxy Host:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="5" column="0">
+                        <property name="name">
+                            <cstring>lblDebuggerServerPort</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Proxy Port:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="6" column="0">
+                        <property name="name">
+                            <cstring>lblDebuggerServerListenPort</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Listen Port:</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Debug behaviour</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QCheckBox" row="4" column="1" rowspan="1" colspan="4">
+                        <property name="name">
+                            <cstring>checkBreakOnUserError</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>User Errors</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="3" column="1" rowspan="1" colspan="4">
+                        <property name="name">
+                            <cstring>checkBreakOnUserWarning</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>User Warnings</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="2" column="1" rowspan="1" colspan="4">
+                        <property name="name">
+                            <cstring>checkBreakOnUserNotice</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>User notices</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="1" column="1" rowspan="1" colspan="4">
+                        <property name="name">
+                            <cstring>checkBreakOnWarning</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Warnings</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="0" column="1" rowspan="1" colspan="4">
+                        <property name="name">
+                            <cstring>checkBreakOnNotice</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Notices</string>
+                        </property>
+                    </widget>
+                    <spacer row="5" column="2">
+                        <property name="name">
+                            <cstring>spacer4_2_2_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Fixed</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>21</width>
+                                <height>30</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLabel" row="0" column="0" rowspan="5" colspan="1">
+                        <property name="name">
+                            <cstring>lblBreakOn</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Break on:</string>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignTop</set>
+                        </property>
+                    </widget>
+                    <spacer row="7" column="3">
+                        <property name="name">
+                            <cstring>spacer4_3</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>21</width>
+                                <height>90</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QLabel" row="6" column="0">
+                        <property name="name">
+                            <cstring>lblDisplayDelay</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Run delay:</string>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignTop</set>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="6" column="1">
+                        <property name="name">
+                            <cstring>lblDelayFast</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>4</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <pointsize>9</pointsize>
+                            </font>
+                        </property>
+                        <property name="text">
+                            <string>Fast</string>
+                        </property>
+                    </widget>
+                    <widget class="QSlider" row="6" column="2" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>sliderDisplayDelay</cstring>
+                        </property>
+                        <property name="minimumSize">
+                            <size>
+                                <width>0</width>
+                                <height>27</height>
+                            </size>
+                        </property>
+                        <property name="maxValue">
+                            <number>200</number>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="tickmarks">
+                            <enum>Below</enum>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="6" column="4">
+                        <property name="name">
+                            <cstring>lblDelaySlow</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>4</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="font">
+                            <font>
+                                <pointsize>9</pointsize>
+                            </font>
+                        </property>
+                        <property name="text">
+                            <string>Slow</string>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignVCenter|AlignRight</set>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
         </widget>
     </grid>
 </widget>
@@ -213,14 +546,22 @@
         <receiver>GubedSettingsS</receiver>
         <slot>reject()</slot>
     </connection>
+    <connection>
+        <sender>checkUseProxy</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>GubedSettingsS</receiver>
+        <slot>checkUseProxy_toggled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
-    <tabstop>lineLocalBasedir</tabstop>
-    <tabstop>lineServerBasedir</tabstop>
-    <tabstop>lineServerHost</tabstop>
-    <tabstop>lineServerPort</tabstop>
     <tabstop>buttonOk</tabstop>
     <tabstop>buttonCancel</tabstop>
 </tabstops>
+<includes>
+    <include location="local" impldecl="in implementation">gubedsettingss.ui.h</include>
+</includes>
+<slots>
+    <slot>checkUseProxy_toggled( bool useproxy )</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -3,7 +3,7 @@
                              ------------------
     begin                : 2004-03-12
     copyright            : (C) 2004 Linus McCabe <linus@mccabe.nu>
-    
+
  ***************************************************************************/
 
 /****************************************************************************
@@ -11,7 +11,7 @@
  *   This program is free software; you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
  *   the Free Software Foundation; either version 2 of the License, or      *
- *   (at your option) any later version.                                    *                     
+ *   (at your option) any later version.                                    *
  *                                                                          *
  ***************************************************************************/
 
@@ -31,27 +31,27 @@
 #include "debuggermanager.h"
 #include "debuggerui.h"
 
-QuantaDebuggerInterface::QuantaDebuggerInterface (QObject *myparent, const char* name) 
+QuantaDebuggerInterface::QuantaDebuggerInterface (QObject *myparent, const char* name)
  : DebuggerInterface(myparent, name)
 {
   m_manager = static_cast<DebuggerManager*>(parent());
-} 
+}
 
-QuantaDebuggerInterface::~QuantaDebuggerInterface () 
+QuantaDebuggerInterface::~QuantaDebuggerInterface ()
 {
 }
 
-void QuantaDebuggerInterface::haveBreakpoint (QString file, int line) 
+void QuantaDebuggerInterface::haveBreakpoint (QString file, int line)
 {
   return m_manager->haveBreakpoint(file, line);
 }
-    
+
 // Public help functions
 bool QuantaDebuggerInterface::showStatus(QString message, bool log)
 {
   return m_manager->showStatus(message, log);
 }
- 
+
 bool QuantaDebuggerInterface::setActiveLine(QString file, int line)
 {
   return m_manager->setActiveLine(file, line);
@@ -82,8 +82,12 @@ void QuantaDebuggerInterface::parsePHPVariables(const QString &varstring)
   m_manager->UI()->parsePHPVariables(varstring);
 }
 
+void QuantaDebuggerInterface::refreshBreakpoints()
+{
+  m_manager->refreshBreakpoints();
+}
 /*
-void QuantaDebuggerInterface::preWatchUpdate() 
+void QuantaDebuggerInterface::preWatchUpdate()
 {
   m_manager->UI()->preWatchUpdate();
 }

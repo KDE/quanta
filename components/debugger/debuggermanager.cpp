@@ -316,10 +316,37 @@ void DebuggerManager::slotDebugStepOut()
 // A new file was opened, tell the debugger so it can tell us about breakpoints etc
 void DebuggerManager::fileOpened(QString file)
 {
-  if(!m_client)
-    return;
 
-  m_client->fileOpened(file);
+  // Set breakpoint markers if we have a bp in the file
+  m_breakpointList->rewind();
+  DebuggerBreakpoint* bp;
+  while((bp = m_breakpointList->next()))
+  {
+    if(bp->filePath() == file)
+    {
+      setMark(bp->filePath(), bp->line(), true, KTextEditor::MarkInterface::markType02);
+    }
+  }
+
+  // Also, if we have a debug-session, let the debugger know...
+  if(m_client)
+    m_client->fileOpened(file);
+}
+
+// Check with editors if breakpoints changed and send all breakpoint (again) to client
+void DebuggerManager::refreshBreakpoints()
+{
+  // Update bp-list from editors
+  // ...TODO
+
+  // Resend bps
+  m_breakpointList->rewind();
+  DebuggerBreakpoint* bp;
+  while((bp = m_breakpointList->next()))
+  {
+    m_client->addBreakpoint(bp);
+  }
+
 }
 
 

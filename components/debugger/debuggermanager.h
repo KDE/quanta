@@ -54,6 +54,7 @@ class DebuggerManager : public QObject {
 
     // Breakpoints
     void haveBreakpoint (QString file, int line);
+    void refreshBreakpoints();
 
     // Public help functions
     bool showStatus(QString message, bool log);
