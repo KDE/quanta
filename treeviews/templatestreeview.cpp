@@ -567,6 +567,7 @@ void TemplatesTreeView::slotProperties()
   uint pos = 0;
   uint j = 1;
   m_quantaProperties->actionCombo->insertItem(i18n(NONE));
+  QString tmpStr;
   KActionCollection *ac = quantaApp->actionCollection();
   for (uint i = 0; i < ac->count(); i++)
   {
@@ -577,8 +578,9 @@ void TemplatesTreeView::slotProperties()
       QString type = el.attribute("type", "tag");
       if (type == "script")
       {
-        m_quantaProperties->actionCombo->insertItem(action->text());
-        if (action->text() == name)
+        tmpStr = action->text().replace(QRegExp("\\&(?!\\&)"),"");
+        m_quantaProperties->actionCombo->insertItem(tmpStr);
+        if (tmpStr == name)
             pos = j;
         j++;
       }
@@ -794,6 +796,7 @@ KURL TemplatesTreeView::filterTemplate()
  name = config.readEntry("Action", NONE);
  TagAction *filterAction = 0L;
  KActionCollection *ac = quantaApp->actionCollection();
+ QString tmpStr;
  for (uint i = 0; i < ac->count(); i++)
  {
    TagAction *action = dynamic_cast<TagAction*>(ac->action(i));
@@ -801,7 +804,9 @@ KURL TemplatesTreeView::filterTemplate()
    {
      QDomElement el = action->data();
      QString type = el.attribute("type", "tag");
-     if (type == "script" && action->text() == name)
+     tmpStr = action->text();
+     tmpStr.replace(QRegExp("\\&(?!\\&)"),"");
+     if (type == "script" && tmpStr == name)
      {
        filterAction = action;
      }

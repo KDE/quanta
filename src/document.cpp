@@ -928,7 +928,6 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
     }
     else if ( string == " " )
          {
-           kdDebug(24000) << "TagName: " << tagName << endl;
            QString textLine = editIf->textLine(line);
            if (!QuantaCommon::insideCommentsOrQuotes(column, textLine, completionDTD))
            {
