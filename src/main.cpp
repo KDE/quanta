@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
     "nicolasdchd@ifrance.com");
 
   aboutData.addCredit("Paulo Moura Guedes",
-    I18N_NOOP("Visual Page Layout part"),
+    I18N_NOOP("VPL View"),
     "moura@caixamagica.pt");
   
   aboutData.addCredit("Luciano Gulmini",
