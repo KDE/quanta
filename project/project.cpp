@@ -172,7 +172,7 @@ void Project::loadLastProject(bool reload)
         tempList.remove(it);
       QStringList::Iterator it2 = sessionTempList.at(i);
       if (it2 != sessionTempList.end())
-        sessionTempList.remove(it);
+        sessionTempList.remove(it2);
       --i;
     }
   }
