@@ -185,6 +185,8 @@ void QuantaApp::initQuanta()
 
   createGUI( QString::null, false /* conserveMemory */ );
 
+  applyMainWindowSettings(config);
+
   initPlugins  ();
 
   m_tagsMenu = new QPopupMenu(this);
@@ -683,7 +685,6 @@ void QuantaApp::readOptions()
          enablePhp4Debug(true);
     else enablePhp3Debug(true);
 
-  applyMainWindowSettings(config);
 
   spellChecker->readConfig(config);
 }
