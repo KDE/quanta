@@ -72,7 +72,7 @@
 #include "tagdialogs/tagmiscdlg.h"
 
 #include "plugins/spellchecker.h"
-#include "plugins/framewizard/framewizard.h"
+//#include "plugins/framewizard/framewizard.h"
 
 #include "qdom.h"
 
