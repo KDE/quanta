@@ -294,11 +294,11 @@ void EventEditorDlg::slotActionChanged(const QString &name)
        argument2Combo->insertItem(i18n("Full"), 0);
        argument2Combo->insertItem(i18n("Minimal"), 1);
        argument3Label->setEnabled(true);
-       argument3Label->setText(i18n("Behaviour:"));
+       argument3Label->setText(i18n("Behavior:"));
        argument3Combo->setEnabled(true);
        argument3Combo->setEditable(false);
-       argument3Combo->insertItem(i18n("Create new log"), 0);
-       argument3Combo->insertItem(i18n("Append to existing log"), 1);
+       argument3Combo->insertItem(i18n("Create New Log"), 0);
+       argument3Combo->insertItem(i18n("Append to Existing Log"), 1);
    } else
    if (name == QPEvents::ref()->fullActionName("script"))
    {
