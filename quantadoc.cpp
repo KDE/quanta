@@ -332,8 +332,6 @@ bool QuantaDoc::saveAll(bool dont_ask)
     w = dynamic_cast<Document*>(docTab->page(i));
     if ( w && w->isModified() )
     {
-      if (!w->isUntitled())
-          fileWatcher->removeFile(w->url().path());
       docTab->showPage(w);
       if ( dont_ask && !w->isUntitled())
       {
@@ -352,8 +350,6 @@ bool QuantaDoc::saveAll(bool dont_ask)
         else w->docUndoRedo->fileSaved();
 #endif
       }
-
-      if (w->url().isLocalFile()) fileWatcher->addFile(w->url().path());
     }
   }
 
