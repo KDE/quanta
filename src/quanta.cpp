@@ -199,15 +199,18 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_newDTEPStuff = 0L;
   currentToolbarDTD = QString::null;
   m_config=kapp->config();
+  idleTimer = new QTimer(this);
+  connect(idleTimer, SIGNAL(timeout()), SLOT(slotIdleTimerExpired()));
+  m_idleTimerEnabled = true;
 
   qConfig.globalDataDir = KGlobal::dirs()->findResourceDir("data",resourceDir + "toolbar/quantalogo.png");
   if (qConfig.globalDataDir.isEmpty())
   {
     quantaStarted = false;
-    kdWarning() <<  "***************************************************************************" << endl
-                << i18n("Quanta data files were not found.\nYou may have forgotten to run \"make install\","
-                        "or your KDEDIR, KDEDIRS or PATH are not set correctly.") << endl
-                << "***************************************************************************" << endl;
+    kdWarning() <<  "***************************************************************************" << endl;
+    kdWarning() << i18n("Quanta data files were not found.") << endl;
+    kdWarning() << i18n("You may have forgotten to run \"make install\", or your KDEDIR, KDEDIRS or PATH are not set correctly.") << endl;
+    kdWarning() << "***************************************************************************" << endl;
     QTimer::singleShot(20, kapp, SLOT(quit()));
     return;
   }
@@ -215,9 +218,6 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
 
   exitingFlag = false;
   qConfig.spellConfig = new KSpellConfig();
-  idleTimer = new QTimer(this);
-  connect(idleTimer, SIGNAL(timeout()), SLOT(slotIdleTimerExpired()));
-  m_idleTimerEnabled = true;
 
   // connect up signals from KXXsldbgPart
   connectDCOPSignal(0, 0, "debuggerPositionChangedQString,int)", "newDebuggerPosition(QString,int)", false );
