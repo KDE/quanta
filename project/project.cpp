@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #include "project.h"
-
+#include "project.moc"
 // unix includes
 #include <time.h>
 #include <unistd.h>
@@ -86,9 +86,9 @@ bool Project::hasProject(){
 QStringList Project::fileNameList(bool check)
 {
 	QStringList list;
-		
+
 	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-	
+
 	for ( unsigned int i=0; i<nl.count(); i++ )
   {
 		QDomElement el = nl.item(i).toElement();
@@ -97,7 +97,7 @@ QStringList Project::fileNameList(bool check)
 		    list.append( el.attribute("url") );
 		  else {
 		    QFileInfo fi( basePath + el.attribute("url") );
-		    if ( fi.exists() || !url.isLocalFile() ) 
+		    if ( fi.exists() || !url.isLocalFile() )
 		      list.append( el.attribute("url") );
 		  }
 		}
@@ -115,7 +115,7 @@ void Project::insertFile( QString rname, bool repaint )
   {
     CopyTo *dlg = new CopyTo( basePath, this, rname+": copy to project..." );
 
-    if ( dlg->exec() ) 
+    if ( dlg->exec() )
     {
       fname = dlg->copy( rname );
       fname = QExtFileInfo::toRelative( fname, basePath);
@@ -129,7 +129,7 @@ void Project::insertFile( QString rname, bool repaint )
 
 	QDomElement  el;
 	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-	
+
 	for ( unsigned int i=0; i<nl.count(); i++ )
   {
 		el = nl.item(i).toElement();
@@ -166,7 +166,7 @@ void Project::insertFiles( QStringList files )
 
   QDomElement  el;
 	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-	
+
 	for ( unsigned int i=0; i<nl.count(); i++ )
   {
 		el = nl.item(i).toElement();
@@ -174,7 +174,7 @@ void Project::insertFiles( QStringList files )
 			if ( files.contains( el.attribute("url")))
 				files.remove( el.attribute("url"));
   }
-	
+
 	for ( it = files.begin(); it != files.end(); ++it )
 	{
   	el = dom.createElement("item");
@@ -190,7 +190,7 @@ void Project::createEmptyDom()
 {
   QString sf = url.url();
   if (sf.left(5) == "file:" ) sf.remove(0,5);
-  
+
   QFile f(sf);
   if ( !f.open( IO_WriteOnly ) )
   {
@@ -207,22 +207,22 @@ void Project::createEmptyDom()
   qts << "</webproject>" << endl;
 
   f.close();
-  
+
   loadProject( url );
 }
 
 void Project::readConfig (KConfig *config)
 {
   this->config = config;
-  
+
   config->setGroup  ("Projects");
   QString url = config->readEntry("Last Project");
   projectRecent->loadEntries(config, "RecentProjects");
-  
+
   KURL u(url);
   if ( url.isEmpty())   return;
   if ( u.isMalformed()) return;
-  
+
   closeProject();
   loadProject ( url );
 }
@@ -231,9 +231,9 @@ void Project::writeConfig(KConfig *config)
 {
   config->setGroup  ("Projects");
   config->writeEntry("Last Project", url.url());
-  
+
   projectRecent->saveEntries(config, "RecentProjects");
-  
+
   saveProject();
 }
 
@@ -252,17 +252,17 @@ void Project::openProject()
   {
     closeProject();
     loadProject ( url );
-    
+
     projectRecent->addURL( url );
   }
-  
+
   emit newStatus();
 }
 
 void Project::openProject(const KURL &url)
 {
   if ( url.url().isEmpty() ) return;
-  
+
   closeProject();
   loadProject ( url );
 }
@@ -275,7 +275,7 @@ bool Project::saveProject()
   // remove old opened files
   QDomElement  el;
 	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-	
+
 	for ( unsigned int i=0; i<nl.count(); i++ )
   {
 		el = nl.item(i).toElement();
@@ -285,10 +285,10 @@ bool Project::saveProject()
 			i--;
 		}
 	}
-  
+
 	QString fn;
 	KTempFile *tmp;
-	
+
   if ( !url.isLocalFile() )
   {
     tmp = new KTempFile;
@@ -299,7 +299,7 @@ bool Project::saveProject()
     fn = url.url();
     if ( fn.left(5) == "file:" ) fn.remove(0,5);
   }
-  
+
   QFile f( fn );
   if ( !f.open( IO_ReadWrite | IO_Truncate ) )
   {
@@ -308,7 +308,7 @@ bool Project::saveProject()
   QTextStream qts( &f );
   dom.save( qts, 0);
   f.close();
-  
+
   if ( !url.isLocalFile() )
   {
     if ( KIO::NetAccess::upload( tmp->name(), url ) )
@@ -323,9 +323,9 @@ bool Project::saveProject()
 
     delete tmp;
   }
-  
+
   emit newStatus();
-  
+
   return true;
 }
 
@@ -346,7 +346,7 @@ void Project::closeProject()
   url  = KURL();
   name = QString::null;
   modified = false;
-  
+
   emit newStatus();
 }
 
@@ -357,13 +357,13 @@ void Project::loadProject(const KURL &url)
 
   this->url =KURL();
   this->name=QString::null;
-  
-  if (u.isMalformed()) 
+
+  if (u.isMalformed())
   {
       QString s = i18n("Malformed URL\n%1").arg(u.prettyURL());
       KMessageBox::sorry(this, s);
       return;
-  }  
+  }
 
   if ( !u.isLocalFile() )
   {
@@ -372,37 +372,37 @@ void Project::loadProject(const KURL &url)
     // clear
     QByteArray b;
     buff.setBuffer(b);
-    
+
     KIO::Job *job = KIO::get( u );
 
     connect( job, SIGNAL( result( KIO::Job * ) ), this, SLOT( slotProjectReadFinish(KIO::Job *)));
     connect( job, SIGNAL( data(KIO::Job *,const QByteArray &)), this, SLOT( slotProjectReadData(KIO::Job *,const QByteArray &)));
-  
+
     this->url = u;
-    
+
     QString s = u.url();
     s.remove(s.findRev('/')+1,s.length());
-    
+
     basePath = s;
   }
-  else 
+  else
   {
     QString fn = u.url();
-    
+
     if ( fn.left(5) == "file:" ) fn.remove(0,5);
-    
+
     QFile       f( fn );
     QFileInfo   fi( fn );
-    
+
     basePath = fi.dirPath();
     if ( basePath.right(1) != "/" )	basePath += "/";
-    
+
     if ( !f.exists() )          { KMessageBox::sorry( this, i18n("File %1 does not exist").arg(fn) );return;}
     if ( !f.open(IO_ReadOnly))  { KMessageBox::sorry( this, i18n("Can't open %1 for IO_ReadOnly").arg(fn) );return;}
     if ( !dom.setContent( &f )) { KMessageBox::sorry( this, i18n("Not found XML info in file %1").arg(fn) );return;}
-  
+
     this->url = u;
-    
+
     loadProjectXML();
   }
 }
@@ -411,13 +411,13 @@ void Project::slotProjectReadFinish(KIO::Job *job)
 {
   emit checkOpenAction(true);
   if ( job->error() ) job->showErrorDialog();
-  
+
   QString s(buff.buffer());
-  
+
   if ( !dom.setContent( s )) { KMessageBox::sorry( this, i18n("Not found XML info in file") );return;}
-  
+
   loadProjectXML();
-  
+
   // we finish load project
   // and now very cool if we load
   // remote "last opened" files
@@ -431,8 +431,8 @@ void Project::slotProjectReadFinish(KIO::Job *job)
   for ( urls.last();urls.current();urls.prev() )
   {
     KURL fu(urls.current());
-    
-    if ( !fu.isLocalFile() ) 
+
+    if ( !fu.isLocalFile() )
       emit openFile( fu );
   }
   olfwprj=true;
@@ -449,32 +449,32 @@ void Project::loadProjectXML()
 {
   QDomNode    no;
   QDomElement el;
-	
+
   if ((no=dom.firstChild().firstChild()).isNull())      { KMessageBox::sorry( this, i18n("Wrong project's file") );return;}
   if ((name=no.toElement().attribute("name")).isNull()) { KMessageBox::sorry( this, i18n("Wrong project's file") );return;}
-	
+
   QString s = no.toElement().attribute("preview");
   if ( s.right(1) != "/" && !s.isEmpty() ) s+="/";
   previewPrefix = s;
-		
+
   QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-	
+
   for ( unsigned int i=0; i<nl.count(); i++ )
   {
     el = nl.item(i).toElement();
-		
-  	if ( el.nodeName() == "openfile" ) 
+
+  	if ( el.nodeName() == "openfile" )
   	{
   		KURL u(el.attribute("url"));
   		emit openFile( u );
   	}
-  		
+
   	if ( el.nodeName() == "item" )
   	{
      	if ( url.isLocalFile() )
     	{
     	  QFileInfo fi( basePath+el.attribute("url") );
-    	  if ( !fi.exists() ) 
+    	  if ( !fi.exists() )
     	  {
     		  el.parentNode().removeChild( el );
     		  i--;
@@ -486,10 +486,10 @@ void Project::loadProjectXML()
   emit setBasePath		( basePath );
   emit setProjectName	( name );
   emit reloadTree 		( fileNameList(true), true, false );
-  
+
   emit showTree();
   emit newStatus();
-  
+
   modified = false;
 }
 
@@ -504,15 +504,15 @@ void Project::addFiles()
 {
 	KURL::List list = KFileDialog::getOpenURLs(
 		basePath,	i18n("*"), this, i18n("Insert files in project..."));
-		
+
 	QStringList files = list.toStringList();
-	
+
 	if ( files.isEmpty() ) return;
-	
+
 	QString t = files.first();
 	if ( t.left(5)=="file:" ) t.remove(0,5);
 	t = QExtFileInfo::toRelative( t, basePath );
-	
+
 	if ( t.left(2)=="..")
 	{
 		CopyTo *dlg = new CopyTo( basePath, this, i18n("Files: copy to project...") );
@@ -524,9 +524,9 @@ void Project::addFiles()
     }
     delete dlg;
 	}
-	
+
 	insertFiles( files );
-	
+
 	emit reloadTree 		( fileNameList(), true, false );
 }
 
@@ -534,7 +534,7 @@ void Project::addDirectory()
 {
 	QString dir = KFileDialog::getExistingDirectory(
 		basePath, this, i18n("Insert directory in project..."));
-	
+
 	addDirectory(dir);
 }
 
@@ -542,19 +542,19 @@ void Project::addDirectory(QString rdir)
 {
 	if ( !hasProject() ) return;
 	if ( rdir.isEmpty() ) return;
-	
+
 	if ( rdir.left(5) == "file:" ) rdir.remove(0,5);
 	if ( rdir.right(1) != "/" ) rdir += "/";
-	
+
 	QString sdir = rdir;
   sdir = QExtFileInfo::toRelative( sdir, basePath);
-	
+
   if ( sdir.left(2) == ".." )
   {
   	CopyTo *dlg = new CopyTo( basePath, this, rdir+i18n(": copy to project...") );
 
     if ( dlg->exec() )
-    { 
+    {
       if ( rdir.right(1) == "/" ) rdir.remove( rdir.length()-1,1);
       rdir = dlg->copy( rdir );
       connect(dlg, SIGNAL(addFilesToProject(QString)),
@@ -567,7 +567,7 @@ void Project::addDirectory(QString rdir)
     }
     delete dlg;
   }
-  
+
   if ( rdir.right(1) != "/" ) rdir += "/";
 
   insertFiles( rdir, "*" );
@@ -582,10 +582,10 @@ void Project::insertFilesAfterCopying(QString rdir)
 void Project::slotRemoveFile(QString fname)
 {
 	QDomElement el;
-	
+
   	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-   	
-  	for ( unsigned int i=0; i<nl.count(); i++ ) 
+
+  	for ( unsigned int i=0; i<nl.count(); i++ )
   	{
   		el = nl.item(i).toElement();
   		if ( el.nodeName() == "item" )
@@ -602,8 +602,8 @@ void Project::slotRemoveFolder(QString fname)
 {
 	QDomElement  el;
 	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-	
-	
+
+
 	for ( unsigned int i=0; i<nl.count(); i++ )
   {
 		el = nl.item(i).toElement();
@@ -622,28 +622,28 @@ void Project::newProject()
 {
 	wiz = new QWizard( 0, "new", true);
 	wiz ->resize(500,400);
-	
+
 	png = new ProjectNewGeneral( wiz );
-	
+
 	stack = new QWidgetStack( wiz );
-	
+
 	pnl = new ProjectNewLocal( stack );
 	pnw = new ProjectNewWeb  ( stack );
 	pnf = new ProjectNewFinal( wiz );
-	
+
 	stack->addWidget( pnl, 0);
 	stack->addWidget( pnw, 1 );
-	
+
 	wiz->addPage( png,   i18n("<b>General setting of project...</b>"));
 	wiz->addPage( stack, i18n("<b>Insert files in project...</b>"));
 	wiz->addPage( pnf,   i18n("<b>Some settings of project...</b>"));
-	
+
 	wiz->setNextEnabled  ( png,   false );
 	wiz->setBackEnabled  ( stack, true  );
 	wiz->setNextEnabled  ( stack, true  );
 	wiz->setNextEnabled  ( pnf, 	false );
 	wiz->setFinishEnabled( pnf, 	true  );
-	
+
 	connect( png, SIGNAL(enableNextButton(QWidget *,bool)),
 					 wiz, SLOT(setNextEnabled(QWidget*,bool)));
 	connect( png, SIGNAL(enableNextButton(QWidget *,bool)),
@@ -651,11 +651,11 @@ void Project::newProject()
 	connect( png, SIGNAL(setBasePath(QString)),
 					 pnw, SLOT(  setBasePath(QString)));
 	connect( this,SIGNAL(setLocalFiles(bool)),
-					 pnl, SLOT(setFiles(bool)));	
-	
+					 pnl, SLOT(setFiles(bool)));
+
 	connect( wiz, SIGNAL(selected(const QString &)),
 					this, SLOT  (slotSelectProjectType(const QString &)));
-					
+
 	connect( pnw, SIGNAL(enableMessages()),
 					this, SLOT  (slotEnableMessages()));
   connect( pnw, SIGNAL(disableMessages()),
@@ -664,9 +664,9 @@ void Project::newProject()
 					this, SLOT  (slotGetMessages(QString)));
 
 	if ( wiz->exec() ) slotAcceptCreateProject();
-	
+
 	delete wiz;
-	
+
 	emit newStatus();
 }
 
@@ -681,26 +681,26 @@ void Project::slotSelectProjectType(const QString &title)
 void Project::slotAcceptCreateProject()
 {
   closeProject();
-  
+
   name     = png->linePrjName->text();
   basePath = png->linePrjDir ->text();
-	
+
   if ( basePath.right(1) != "/" )	basePath += "/";
-  
+
 	url  = KURL( basePath+png->linePrjFile->text());
 
 	QExtFileInfo::createDir( basePath );
-	
+
   createEmptyDom();
-  
+
   name     = png->linePrjName->text();
   basePath = png->linePrjDir ->text();
   email    = png->lineEmail  ->text();
 	author   = png->lineAuthor ->text();
   if ( basePath.right(1) != "/" )	basePath += "/";
-  
+
   url  = KURL( basePath+png->linePrjFile->text());
-	
+
 	if ( pnf->checkPrefix->isChecked() )
 	{
 		previewPrefix = pnf->linePrefix->text();
@@ -708,7 +708,7 @@ void Project::slotAcceptCreateProject()
 	}
 	else
 		previewPrefix = QString::null;
-	
+
   QDomElement el;
 
   el = dom.firstChild().firstChild().toElement();
@@ -731,20 +731,20 @@ void Project::slotAcceptCreateProject()
   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
 	{
 		QString fname = QExtFileInfo::toRelative( *it, basePath );
-		
+
 		el = dom.createElement("item");
 	  el.setAttribute("url", fname );
   	dom.firstChild().firstChild().appendChild( el );
 	}
-	
+
 	emit closeFiles();
 	emit setBasePath( basePath );
 	emit setProjectName( name );
 	emit reloadTree( fileNameList(), true, false );
 	emit   showTree();
-	
+
 	modified = true;
-	
+
 	saveProject();
 }
 
@@ -754,40 +754,40 @@ void Project::options()
 
 	png = new ProjectNewGeneral( dlg );
 	pnf = new ProjectNewFinal  ( dlg );
-	
+
 	png ->setMargin(10);
 	pnf ->setMargin(10);
-	
+
 	png ->imagelabel->hide();
 	pnf ->imagelabel->hide();
-	
+
 	png ->bGroupSources->hide();
-		
+
 	dlg->addTab( png, i18n("General") );
 	dlg->addTab( pnf, i18n("Network") );
-	
+
 	dlg->setOkButton();
 	dlg->setCancelButton();
-	
+
 	png->linePrjDir ->setEnabled( false );
 	png->linePrjFile->setEnabled( false );
 	png->buttonDir  ->setEnabled( false );
-	
+
 	png->linePrjDir ->setText( basePath );
 	png->linePrjName->setText( name );
 	png->linePrjFile->setText( url.url() );
 	png->lineAuthor ->setText( author );
 	png->lineEmail  ->setText( email );
-	
+
 	pnf->linePrefix ->setText( previewPrefix );
 	if ( !previewPrefix.isEmpty() ) pnf->checkPrefix->setChecked(true);
-	
+
 	if ( dlg->exec() )
 	{
 		name        	= png->linePrjName->text();
 		author				= png->lineAuthor ->text();
 		email					= png->lineEmail	->text();
-		
+
 		if ( pnf->checkPrefix->isChecked() && !pnf->linePrefix ->text().isEmpty() )
 		{
 			previewPrefix = pnf->linePrefix ->text();
@@ -795,23 +795,23 @@ void Project::options()
 		}
 		else
 			previewPrefix = QString::null;
-		
+
 		QDomElement el;
 
   	el = dom.firstChild().firstChild().toElement();
   	el.setAttribute("name",    name );
   	el.setAttribute("preview", previewPrefix );
-		
+
 		emit setProjectName( name );
 	}
-	
+
 	delete dlg;
 }
 
 void Project::upload()
 {
 	emit saveAllFiles();
-	
+
 	ProjectUpload *dlg = new ProjectUpload(this, 0,i18n("Upload project's files..."), true);
 	dlg->exec();
 	delete dlg;
@@ -821,7 +821,7 @@ void Project::uploadFile(QString file)
 {
 	emit saveAllFiles();
 	QString fname = QExtFileInfo::toRelative( file, basePath);
-	
+
 	ProjectUpload *dlg = new ProjectUpload(fname, this, 0, i18n("Upload project's files..."));
 	dlg->exec();
 	delete dlg;

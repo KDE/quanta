@@ -27,12 +27,13 @@
 #include <kfiledialog.h>
 
 #include "projectnewgeneral.h"
+#include "projectnewgeneral.moc"
 
 ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
 	: ProjectNewGeneralS(parent,name)
 {
 	imagelabel->setPixmap( UserIcon("wiznewprjglb") );
-	
+
 	connect( linePrjFile, SIGNAL(textChanged(const QString &)),
 					 this,				SLOT(slotLinePrjFile(const QString &)));
 	connect( linePrjName, SIGNAL(textChanged(const QString &)),
@@ -71,10 +72,10 @@ void ProjectNewGeneral::slotChangeNames( const QString &text )
 	int i;
 	QString fname = text.lower();
 	while( (i=fname.find(" ")) >=0 ) fname.remove(i,1);
-	
+
 	linePrjFile->setText( fname+".webprj" );
 	linePrjDir ->setText( QDir::homeDirPath()+"/"+fname );
-	
+
 	emit setBasePath(linePrjDir->text());
 }
 

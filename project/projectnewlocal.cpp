@@ -27,6 +27,7 @@
 #include <kiconloader.h>
 
 #include "projectnewlocal.h"
+#include "projectnewlocal.moc"
 #include "projectnewgeneral.h"
 #include "../qextfileinfo.h"
 
@@ -39,17 +40,17 @@ ProjectNewLocal::ProjectNewLocal(QWidget *parent, const char *name )
 	: ProjectNewLocalS(parent,name)
 {
 	imagelabel->setPixmap( UserIcon("wiznewprjloc") );
-	
+
 	listFiles->setColumnAlignment(1,Qt::AlignRight);
-	
+
 	mask->setText("*");
 	webmask->setText( fileMaskPhp+
 										fileMaskHtml+
 										fileMaskJava+
 										fileMaskImage);
-									
+
 	checkInsertWeb->setChecked( true );
-										
+
 	connect( checkInsert, SIGNAL(toggled(bool)),
 					 this, 				SLOT(setFiles(bool)));
 	connect( checkInsertWeb, SIGNAL(toggled(bool)),
@@ -64,43 +65,43 @@ ProjectNewLocal::~ProjectNewLocal(){
 void ProjectNewLocal::setDestDir(QWidget *w,bool)
 {
 	ProjectNewGeneral *png = (ProjectNewGeneral *)w;
-	
+
 	dir = png->linePrjDir->text();
 	if ( dir.right(1) != "/" ) dir+="/";
-	
+
 	checkInsert->setText(i18n("Insert files from ")+dir);
 }
 
 QStringList ProjectNewLocal::files(bool relative)
 {
 	QStringList list;
-	
+
 	QFileInfo fi( dir );
 	if ( !fi.exists() || !fi.isDir() || !checkInsert->isChecked() ) return list;
-	
+
 	QString fmask = "*";
 	if ( checkInsertWeb->isChecked() ) fmask = webmask->text();
 	if ( checkInsertWithMask->isChecked() ) fmask = mask->text();
-	
+
 	if (relative) list = QExtFileInfo::allFilesRelative( dir, fmask);
 	else          list = QExtFileInfo::allFiles( dir, fmask);
-	
+
 	return list;
 }
 
 void ProjectNewLocal::setFiles(bool)
 {
 	listFiles->clear();
-	
+
 	if ( !checkInsert->isChecked() ) return;
-	
+
 	QStringList list = files(true);
 	for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
 	{
 		QFileInfo fi( dir+*it );
     QString size;
     size.sprintf( "%i", fi.size() );
-		
+
 		listFiles->insertItem( new QListViewItem( listFiles, *it, size ) );
 		listFiles->setColumnWidth(0,listFiles->width()-listFiles->columnWidth(1)-20);
   }

@@ -24,6 +24,7 @@
 
 // app includes
 #include "projectnewfinal.h"
+#include "projectnewfinal.moc"
 
 ProjectNewFinal::ProjectNewFinal(QWidget *parent, const char *name )
 	: ProjectNewFinalS(parent,name)
