@@ -127,6 +127,11 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
               title = i18n("Empty tag");
               break;
             }
+         case Tag::ScriptStructureBegin:
+             {
+              title = tag->cleanStr.stripWhiteSpace();
+              break;
+            }
          default:
             {
               title = tag->tagStr().left(70).stripWhiteSpace();

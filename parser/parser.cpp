@@ -906,15 +906,15 @@ Node* Parser::specialAreaParser(Node *startNode)
 
         tag = new Tag();
         //s = tagStr.mid(startPos, lastPos2 - startPos);
-        s = str.mid(startPos, lastPos - startPos - 1);
+        s = str.mid(startPos, lastPos - startPos - 1 + dtd->structBeginStr.length());
         eLine = bLine + s.contains('\n');
         n = s.findRev('\n');
         if (n == -1)
         {
-          eCol = lastPos - startPos + bCol - 2 + dtd->structBeginStr.length();
+          eCol = lastPos - startPos + bCol - 2;
         } else
         {
-          eCol = lastPos - n - 2 - startPos + dtd->structBeginStr.length();
+          eCol = lastPos - n - 2 - startPos;
         }
         tag->name = name.stripWhiteSpace();
         //tag->setStr(name);
@@ -986,7 +986,7 @@ Node* Parser::specialAreaParser(Node *startNode)
 
       }
 
-      bCol += name.length() + 1;
+      bCol += name.section('\n', -1).length() + 1;
     } else    //create a text node from the last structure until the end of special area
     {
       startNode->tag->endPos(eLine, eCol);
