@@ -563,17 +563,29 @@ void QuantaApp::saveOptions()
     config->writeEntry("Top folders", fTTab->topURLList.toStringList());
     config->writeEntry("List of opened files", doc->openedFiles().toStringList());
     config->writeEntry("Version", VERSION); // version
-    doc    ->writeConfig(config); // kwrites
-    project->writeConfig(config); // project
-    config->setGroup  ("General Options");
-    config->deleteGroup("RecentFiles");
-    fileRecent->saveEntries(config);
     config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     config->writeEntry ("PHP Debugger style", debuggerStyle);
+    config->deleteGroup("RecentFiles");
+    fileRecent->saveEntries(config);
+    doc    ->writeConfig(config); // kwrites
+    project->writeConfig(config); // project    
     writeDockConfig(config);
     saveMainWindowSettings(config);
     spellChecker->writeConfig(config);
+
+    config->setGroup("Kate View");
+    config->writeEntry("LineNumbers", qConfig.lineNumbers);
+    config->writeEntry("Iconbar", qConfig.iconBar);
+    config->writeEntry("DynamicWordWrap",qConfig.dynamicWordWrap);
     config->sync();
+
+    view->write()->kate_view->setIconBorder(qConfig.iconBar);
+    view->write()->kate_view->setLineNumbersOn(qConfig.lineNumbers);
+
+#if (KDE_VERSION > 308)
+    dynamic_cast<KTextEditor::DynWordWrapInterface *>(view->write()->view())->setDynWordWrap(qConfig.dynamicWordWrap);
+#endif
+
   }
 }
 
