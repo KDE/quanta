@@ -30,6 +30,7 @@
 #endif
 
 // include files for Qt
+#include <qvaluelist.h>
 #include <qstrlist.h>
 #include <qptrlist.h>
 
@@ -456,8 +457,8 @@ protected: // Protected attributes
   QString currentToolbarDTD;
   SpellChecker *m_spellChecker;
   KDockWidget *m_oldTreeViewWidget;
-  /** The id of the widget visible before doing the preview */
-  int previousWidgetId;
+  /** The ids of the widgets visible before doing the preview/documentation browsing */
+  QValueList<int> previousWidgetList;
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;
