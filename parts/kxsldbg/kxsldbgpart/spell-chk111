@@ -294,7 +294,7 @@ void KXsldbgPart::lookupPublicID(QString publicID)
 
    if (publicID.isEmpty()){
      publicID = QInputDialog::getText(
-			      tr( "Lookup PulicID" ),
+			      tr( "Lookup PublicID" ),
 			      tr( "Please enter PublicID to find" ),
 			      QLineEdit::Normal, QString::null, &ok, m_editWidget );
    }else{

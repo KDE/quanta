@@ -344,12 +344,12 @@ void KXsldbgPart::lookupPublicID(QString publicID)
    if (publicID.isEmpty()){
 #if KDE_IS_VERSION(3, 1, 90)
      publicID = KInputDialog::getText(
-			      i18n( "Lookup PulicID" ),
+			      i18n( "Lookup PublicID" ),
 			      i18n( "Please enter PublicID to find:" ),
 			      QString::null, &ok, m_editWidget );
 #else
      publicID = QInputDialog::getText(
-			      i18n( "Lookup PulicID" ),
+			      i18n( "Lookup PublicID" ),
 			      i18n( "Please enter PublicID to find:" ),
 			      QLineEdit::Normal, QString::null, &ok, m_editWidget );
 #endif
