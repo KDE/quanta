@@ -192,8 +192,8 @@ ProjectTreeView::~ProjectTreeView(){
 void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const QPoint& point)
 {
   Q_UNUSED(listView);
-#ifdef ENABLE_CVSSERVICE
   KURL url = currentURL();
+#ifdef ENABLE_CVSSERVICE
   CVSService::ref()->setRepository(m_baseURL.path());
   if (url.isLocalFile())
   {
