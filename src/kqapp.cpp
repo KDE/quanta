@@ -28,6 +28,7 @@
 #include <kglobalsettings.h>
 #include <ksplashscreen.h>
 #include <dcopclient.h>
+#include <kdeversion.h>
 
 #include "config.h"
 #include "quantacommon.h"
@@ -37,12 +38,13 @@
 #include "kqapp.h"
 
 QuantaApp *quantaApp = 0L; //global pointer to the main application object
+#define SPLASH_PICTURE "quantalogo_be"
 
 KSplash::KSplash()
  : QFrame( 0L, QString("Quanta")+QUANTA_VERSION,
    QWidget::WStyle_NoBorder | QWidget::WStyle_Customize | WX11BypassWM)
 {
-   QPixmap pm( UserIcon("quantalogo_be") );
+   QPixmap pm( UserIcon(SPLASH_PICTURE) );
 
    setBackgroundPixmap(pm);
   QRect desk = KGlobalSettings::splashScreenDesktopGeometry();
@@ -85,11 +87,15 @@ KQApplication::KQApplication()
      config->setGroup("General Options");
     if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
      {
-       splash = new KSplash();
-//      sp = new KSplashScreen(UserIcon("quantalogo_be"));
-//      sp->show();
-       connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
-       QTimer::singleShot(10*1000, this, SLOT(slotSplashTimeout()));
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,3)
+      splash = new KSplash();
+      connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
+#else
+      sp = new KSplashScreen(UserIcon(SPLASH_PICTURE));
+      sp->show();
+      connect(quantaApp, SIGNAL(showSplash(bool)), sp, SLOT(setShown(bool)));
+#endif
+      QTimer::singleShot(10*1000, this, SLOT(slotSplashTimeout()));
      }
      setMainWidget(quantaApp);
      slotInit();
@@ -150,8 +156,14 @@ int KQUniqueApplication::newInstance()
     config->setGroup("General Options");
     if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
     {
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,3)
       splash = new KSplash();
       connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
+#else
+      sp = new KSplashScreen(UserIcon(SPLASH_PICTURE));
+      sp->show();
+      connect(quantaApp, SIGNAL(showSplash(bool)), sp, SLOT(setShown(bool)));
+#endif
       QTimer::singleShot(10*1000, this, SLOT(slotSplashTimeout()));
     }
     setMainWidget(quantaApp);
@@ -211,7 +223,6 @@ void KQApplicationPrivate::init()
   splash = 0L;
   delete sp;
   sp = 0L;
-  kdDebug(24000) << "Delete splash" << endl;
   delete quantaApp->m_quantaInit;
   quantaApp->m_quantaInit = 0L;
   quantaApp->enableIdleTimer(true);
