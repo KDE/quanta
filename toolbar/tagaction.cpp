@@ -22,6 +22,7 @@
 #include <qtimer.h>
 
 //kde includes
+#include <kdebug.h>
 #include <kprocess.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -210,6 +211,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     {
       KMessageBox::error(quantaApp, i18n("There was an error running \"%1\".\nCheck that you have the executable installed and in the PATH!").arg(command + " " + args), i18n("Script not found"));
     }
+    kdDebug(24000) << "Script started\n";
   }
 
 }
@@ -219,7 +221,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   QCString tmp( buffer, buflen + 1 );
   QString text( QString::fromLocal8Bit(tmp) );
   Document *w = m_view->write();
-
+  kdDebug(24000) << "Script output" << endl;
   if ( scriptOutputDest == "cursor" )
   {
      if ( firstOutput )
