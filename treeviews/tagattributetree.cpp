@@ -346,7 +346,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
         } else
         if (attr->type == "list")
         {
-          item = new AttributeListItem(this, group, attr->name, node->tag->attributeValue(attr->name));
+          item = new AttributeListItem(this, group, attr->name, node->tag->attributeValue(attr->name), attr);
         } else
         if (attr->type == "color")
         {

@@ -25,6 +25,7 @@ class QListViewItem;
 class QLineEdit;
 class QComboBox;
 
+class Attribute;
 class EditableTree;
 class TagAttributeTree;
 class Node;
@@ -90,7 +91,6 @@ protected:
                     int column, int width, int align );
 
     EditableTree *m_listView;
-
 };
 
 class AttributeNameSpaceItem:public AttributeItem
@@ -133,7 +133,7 @@ private:
 class AttributeListItem : public AttributeItem
 {
 public:
-    AttributeListItem(EditableTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
+    AttributeListItem(EditableTree *listView, QListViewItem* parent, const QString& title, const QString& title2, Attribute *attr = 0L);
 
     virtual ~AttributeListItem();
     virtual void showEditor(int column = 1);

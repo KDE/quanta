@@ -21,6 +21,7 @@
 #include <qstyle.h>
 
 //kde includes
+#include <dcopref.h>
 #include <kapplication.h>
 #include <kcolorcombo.h>
 #include <klistview.h>
@@ -375,7 +376,7 @@ void AttributeUrlItem::hideEditor(int)
 
 //editable listbox
 //Boolean attribute item
-AttributeListItem::AttributeListItem(EditableTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
+AttributeListItem::AttributeListItem(EditableTree* listView, QListViewItem* parent, const QString &title, const QString& title2, Attribute *attr)
 : AttributeItem(parent, title, title2)
 {
   m_listView = listView;
@@ -384,9 +385,27 @@ AttributeListItem::AttributeListItem(EditableTree* listView, QListViewItem* pare
   QTag *qTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
   if (qTag)
   {
-    Attribute *attr = qTag->attribute(title);
+    if (!attr)
+        attr = qTag->attribute(title);
     if (attr)
-        combo->insertStringList(attr->values);
+    {
+      combo->insertStringList(attr->values);
+      if (attr->source == "dcop") //fill the list with a result of a DCOP call
+      {
+        QString interface = "QuantaIf";
+        if (!attr->interface.isEmpty())
+          interface = attr->interface;
+        QString arguments = attr->arguments;
+        arguments.replace("%tagname%", node->tag->name);
+        DCOPReply reply = QuantaCommon::callDCOPMethod(interface, attr->method, arguments);
+        if (reply.isValid())
+        {
+            QStringList list = reply;
+            combo->insertStringList(list);
+        }
+      }
+      
+    }
     combo->insertItem("", 0);
     combo->setEditable(true);
   }

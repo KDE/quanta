@@ -35,6 +35,7 @@
 #define PLUGINS_MENU_PLACE 7
 
 class QString;
+class DCOPReply;
 class KURL;
 class KStandardDirs;
 class QWidget;
@@ -188,6 +189,13 @@ pointer must be deleted by the caller!! */
   static int denyBinaryInsert();
   static void removeCommentsAndQuotes(QString& str, const DTDStruct* dtd);
   static bool insideCommentsOrQuotes(int position, const QString &string, const DTDStruct *dtd);
+  /** Calls a Quanta DCOP method.
+  * @param interface the DCOP interface the method belongs to
+  * @param method the DCOP method name (with the argument types)
+  * @param arguments comma separated list of argument
+  * @return the return value of the DCOP caller
+  */
+  static DCOPReply callDCOPMethod(const QString& interface, const QString& method, const QString& arguments);
 };
 
 

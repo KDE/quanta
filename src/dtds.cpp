@@ -781,14 +781,19 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
    } else
    if (tmpStr == "attr") //an attribute
    {
+     QDomElement el = n.toElement();
      attr = new Attribute;
-     attr->name = n.toElement().attribute("name");
-     attr->type = n.toElement().attribute("type",tag->parentDTD->defaultAttrType);
-     attr->defaultValue = n.toElement().attribute("defaultValue");
-     attr->status = n.toElement().attribute("status");
+     attr->name = el.attribute("name");
+     attr->source = el.attribute("source");
+     attr->interface = el.attribute("interface");
+     attr->method = el.attribute("method");
+     attr->arguments = el.attribute("arguments");
+          
+     attr->type = el.attribute("type",tag->parentDTD->defaultAttrType);
+     attr->defaultValue = el.attribute("defaultValue");
+     attr->status = el.attribute("status");
 
      if ( attr->type == "list" ) {
-       QDomElement el = n.toElement();
        for ( QDomElement attrEl = el.firstChild().toElement(); !attrEl.isNull(); attrEl = attrEl.nextSibling().toElement() ) {
          if ( attrEl.tagName() == "items" ) {
            QDomElement item = attrEl.firstChild().toElement();

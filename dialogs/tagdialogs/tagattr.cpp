@@ -26,15 +26,12 @@
 #include <qdom.h>
 #include <qtextstream.h>
 
-//system includes
-#include <sys/types.h> 
-#include <unistd.h> 
-
 //app includes
 #include "tagattr.h"
 #include "node.h"
 #include "colorcombo.h"
 #include "qtag.h"
+#include "quantacommon.h"
 
 QString Attr::attrName() const
 {
@@ -53,43 +50,8 @@ Attr_list::Attr_list( QDomElement *el, QWidget *w, QTag *dtdTag )
      QString method = el->attribute("method");
      QString interface = el->attribute("interface", "QuantaIf");
      QString arguments = el->attribute("arguments");
-     QStringList argumentList = QStringList::split(",", arguments, true);
-     for ( QStringList::Iterator it = argumentList.begin(); it != argumentList.end(); ++it ) 
-     {
-        (*it).replace("%tagname%", m_dtdTag->name());
-     }
-     QString app = "quanta";
-     if (!kapp->inherits("KUniqueApplication"))
-     {
-       pid_t pid = ::getpid();
-       app += QString("-%1").arg(pid);
-     }
-     DCOPRef quantaRef(app.utf8(), interface.utf8());
-     DCOPReply reply;
-     int argumentCount = argumentList.count();
-     if (argumentCount == 0)
-     {
-       reply = quantaRef.call(method.utf8());
-     }
-     else if (argumentCount == 1)
-     {
-       reply = quantaRef.call(method.utf8(), argumentList[0]);
-     }
-     else if (argumentCount == 2)
-       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1]);
-     else if (argumentCount == 3)
-       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2]);
-     else if (argumentCount == 4)
-       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3]);
-     else if (argumentCount == 5)
-       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4]);
-     else if (argumentCount == 6)
-       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5]);
-     else if (argumentCount == 7)
-       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5], argumentList[6]);
-     else if (argumentCount == 8)
-       reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5], argumentList[6], argumentList[7]);
-      
+     arguments.replace("%tagname%", m_dtdTag->name());
+     DCOPReply reply = QuantaCommon::callDCOPMethod(interface, method, arguments);
      if (reply.isValid())
      {
         QStringList list = reply;

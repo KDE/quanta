@@ -19,6 +19,8 @@
 #include <qwidget.h>
 
 //kde includes
+#include <kapplication.h>
+#include <dcopref.h>
 #include <kurl.h>
 #include <kdirwatch.h>
 #include <kmimetype.h>
@@ -31,12 +33,10 @@
 
 //remove the below ones when KQPasteAction is removed
 #include <dcopclient.h>
-#include <dcopref.h>
 #include <kdebug.h>
 #include <kpopupmenu.h>
 #include <ktoolbar.h>
 #include <ktoolbarbutton.h>
-#include <kapplication.h>
 #include <kstringhandler.h>
 #include <qwhatsthis.h>
 #include <qtimer.h>
@@ -554,6 +554,44 @@ bool QuantaCommon::insideCommentsOrQuotes(int position, const QString &string, c
  }
 
   return false;
+}
+
+DCOPReply QuantaCommon::callDCOPMethod(const QString& interface, const QString& method, const QString& arguments)
+{
+  QStringList argumentList = QStringList::split(",", arguments, true);
+  QString app = "quanta";
+  if (!kapp->inherits("KUniqueApplication"))
+  {
+    pid_t pid = ::getpid();
+    app += QString("-%1").arg(pid);
+  }
+  DCOPRef quantaRef(app.utf8(), interface.utf8());
+  DCOPReply reply;
+  int argumentCount = argumentList.count();
+  if (argumentCount == 0)
+  {
+    reply = quantaRef.call(method.utf8());
+  }
+  else if (argumentCount == 1)
+  {
+    reply = quantaRef.call(method.utf8(), argumentList[0]);
+  }
+  else if (argumentCount == 2)
+    reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1]);
+  else if (argumentCount == 3)
+    reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2]);
+  else if (argumentCount == 4)
+    reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3]);
+  else if (argumentCount == 5)
+    reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4]);
+  else if (argumentCount == 6)
+    reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5]);
+  else if (argumentCount == 7)
+    reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5], argumentList[6]);
+  else if (argumentCount == 8)
+    reply = quantaRef.call(method.utf8(), argumentList[0], argumentList[1], argumentList[2], argumentList[3], argumentList[4], argumentList[5], argumentList[6], argumentList[7]);
+  
+  return reply;
 }
 
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
