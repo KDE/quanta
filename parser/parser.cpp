@@ -182,7 +182,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   int tagEndLine, tagEndCol;
   int tagStartPos, specialStartPos;
   int lastLineLength;
-  if (endCol == 0)
+ // if (endCol == 0)
+  if (endLine > maxLines)
   {
     if (endLine > 0)
         endLine--;
@@ -206,7 +207,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     if (line == endLine)
     {
       if (endCol > 0)
-        textLine.truncate(endCol);
+        textLine.truncate(endCol + 1);
       else
         textLine = "";
     }
@@ -260,7 +261,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           if (line == endLine)
           {
             if (endCol >0)
-              textLine.truncate(endCol);
+              textLine.truncate(endCol + 1);
             else
               textLine = "";
           }
@@ -311,7 +312,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         if (line == endLine)
         {
           if (endCol > 0)
-            textLine.truncate(endCol);
+            textLine.truncate(endCol + 1);
           else
             textLine = "";
         }
@@ -384,7 +385,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       if (tagStr.right(2) == "/>")
       {
         tag->single = true;
-        if (tag->name.endsWith("/"))
+        if (tag->name.length() > 1 && tag->name.endsWith("/"))
             tag->name.truncate(tag->name.length() - 1);
       }
       //the tag we found indicates the beginning of a special area, like <script type=... >

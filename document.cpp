@@ -80,10 +80,10 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   kate_view = dynamic_cast<Kate::View*>(m_view);
 
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
-  #ifdef BUILD_KAFKAPART
+#ifdef BUILD_KAFKAPART
   editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
   cursorIf = dynamic_cast<KTextEditor::CursorInterface *>(m_doc);
-  #endif
+#endif
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
   configIf = dynamic_cast<KTextEditor::ConfigInterface*>(m_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(m_view);
@@ -923,7 +923,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
   QString word = findWordRev(textLine);
   if (!group.removeFromAutoCompleteWordRx.pattern().isEmpty())
       word.remove(group.removeFromAutoCompleteWordRx);
-  completion.userdata = word;
+  completion.userdata = word + "|";
   GroupElementMapList map = parser->m_groups;
   GroupElementMapList::Iterator it;
   QString str = group.name;
@@ -1858,49 +1858,51 @@ void Document::slotDelayedTextChanged()
             node = node->previousSibling();
           while (node)
           {
-            if (node->tag->name == currentNode->tag->name)
+            if (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd)
             {
-              num++;
-            }
-            if ( (updateClosing && QuantaCommon::closesTag(currentNode->tag, node->tag) ) ||
-                 (!updateClosing && QuantaCommon::closesTag(node->tag, currentNode->tag) ) )
-            {
-              num--;
-            }
-            if (num == 0)
-            {
-              reparseEnabled = false;
-              node->tag->namePos(bl, bc);
-#ifdef BUILD_KAFKAPART
-              if(editIfExt)
-                editIfExt->editBegin();
-#endif
-              editIf->removeText(bl, bc, bl, bc + node->tag->name.length());
-              if (updateClosing)
+              if (node->tag->name == currentNode->tag->name )
               {
-                editIf->insertText(bl, bc, "/"+newName);
-              } else
-              {
-                editIf->insertText(bl, bc, newName.mid(1));
-                if (bl == (int)line)
-                {
-                  column += (newName.length() - currentNode->tag->name.length());
-                }
+                num++;
               }
+              if ( updateClosing && QuantaCommon::closesTag(currentNode->tag, node->tag) ||
+                  !updateClosing && QuantaCommon::closesTag(node->tag, currentNode->tag) )
+              {
+                num--;
+              }
+              if (num == 0)
+              {
+                reparseEnabled = false;
+                node->tag->namePos(bl, bc);
 #ifdef BUILD_KAFKAPART
-              if(editIfExt)
-                editIfExt->editEnd();
+                if(editIfExt)
+                  editIfExt->editBegin();
 #endif
-              viewCursorIf->setCursorPositionReal(bl, bc);
+                editIf->removeText(bl, bc, bl, bc + node->tag->name.length());
+                if (updateClosing)
+                {
+                  editIf->insertText(bl, bc, "/"+newName);
+                } else
+                {
+                  editIf->insertText(bl, bc, newName.mid(1));
+                  if (bl == (int)line)
+                  {
+                    column += (newName.length() - currentNode->tag->name.length());
+                  }
+                }
 #ifdef BUILD_KAFKAPART
-              docUndoRedo->mergeNextModifsSet();
+                if(editIfExt)
+                  editIfExt->editEnd();
 #endif
-              baseNode = parser->rebuild(this);
-              viewCursorIf->setCursorPositionReal(line, column);
-              reparseEnabled = true;
-              break;
+                viewCursorIf->setCursorPositionReal(bl, bc);
+#ifdef BUILD_KAFKAPART
+                docUndoRedo->mergeNextModifsSet();
+#endif
+                baseNode = parser->rebuild(this);
+                viewCursorIf->setCursorPositionReal(line, column);
+                reparseEnabled = true;
+                break;
+              }
             }
-
             if (updateClosing)
               node = node->nextSibling();
             else
