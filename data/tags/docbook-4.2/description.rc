@@ -1,6 +1,6 @@
 [General]
 Name = -//OASIS//DTD DocBook XML V4.2//EN
-NickName = Docbook 4.2
+NickName = Docbook XML 4.2
 URL = http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd
 DoctypeString = book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
 DefaultExtension = docbook
@@ -18,6 +18,3 @@ Attributes=arch,condition,conformance,id,lang,os,remap,role,revision,revisionfla
 [Page1]
 Title = Core
 Groups = Core
-
-[Extra tags]
-List = !DOCTYPE
