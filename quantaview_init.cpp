@@ -45,7 +45,7 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	this->app = app;
 	this->doc = app->doc;
 	
-	QBoxLayout *layout = new QVBoxLayout( this);
+	QBoxLayout *layout = new QVBoxLayout( this );
 	
   QTabBar *tabBar = new QTabBar( this);
 
@@ -166,6 +166,7 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
   connect( tabBar,		SIGNAL(selected(int)), toolbarStack, SLOT(raiseWidget(int)));
 
   initMenu();
+  writeTab->show();
 }
 
 QuantaView::~QuantaView()
@@ -228,34 +229,34 @@ void QuantaView::slotToolbarCallback( int id ){
          slotViewInKFM();
          break;
     case ID_TAG_BOLD:
-    		 write()->insertTag("b");
+    		 insertTag("b");
     	 	 break;
     case ID_TAG_H1:
-    		 write()->insertTag("h1");
+    		 insertTag("h1");
     	 	 break;
     case ID_TAG_H2:
-    		 write()->insertTag("h2");
+    		 insertTag("h2");
     	 	 break;
     case ID_TAG_H3:
-    		 write()->insertTag("h3");
+    		 insertTag("h3");
     	 	 break;
     case ID_TAG_H4:
-    		 write()->insertTag("h4");
+    		 insertTag("h4");
     	 	 break;
     case ID_TAG_H5:
-    		 write()->insertTag("h5");
+    		 insertTag("h5");
     	 	 break;
     case ID_TAG_I:
-    		 write()->insertTag("i");
+    		 insertTag("i");
     	 	 break;
     case ID_TAG_U:
-    		 write()->insertTag("u");
+    		 insertTag("u");
     	 	 break;
     case ID_TAG_BR:
-    		 write()->insertTag("br");
+    		 insertTag("br");
     	 	 break;
     case ID_TAG_P:
-    		 write()->insertTag("p");
+    		 insertTag("p");
     	 	 break;
     case ID_TAG_NBSP:
          slotTagNbsp();
@@ -279,52 +280,52 @@ void QuantaView::slotToolbarCallback( int id ){
     		 write()->insertTag( tagCase("<font ")+attrCase("size")+"=\"-1\">",tagCase("</font>"));
     	 	 break;
     case ID_TAG_TH:
-    		 write()->insertTag("th");
+    		 insertTag("th");
     	 	 break;
     case ID_TAG_TR:
-    		 write()->insertTag("tr");
+    		 insertTag("tr");
     	 	 break;
     case ID_TAG_TD:
-    		 write()->insertTag("td");
+    		 insertTag("td");
     	 	 break;
     case ID_TAG_CAPTION:
-    		 write()->insertTag("caption");
+    		 insertTag("caption");
     	 	 break;
     case ID_TAG_COMM:
     		 write()->insertTag("<!-- "," -->");
     	 	 break;
     case ID_TAG_PRE:
-    		 write()->insertTag("pre");
+    		 insertTag("pre");
     	 	 break;
     case ID_TAG_SUB:
-    		 write()->insertTag("sub");
+    		 insertTag("sub");
     	 	 break;
     case ID_TAG_SUP:
-    		 write()->insertTag("sup");
+    		 insertTag("sup");
     	 	 break;
     case ID_TAG_UL:
-    		 write()->insertTag("ul");
+    		 insertTag("ul");
     	 	 break;
     case ID_TAG_OL:
-    		 write()->insertTag("ol");
+    		 insertTag("ol");
     	 	 break;
     case ID_TAG_LI:
-    		 write()->insertTag("li");
+    		 insertTag("li");
     	 	 break;
     case ID_TAG_DL:
-    		 write()->insertTag("dl");
+    		 insertTag("dl");
     	 	 break;
     case ID_TAG_DT:
-    		 write()->insertTag("dt");
+    		 insertTag("dt");
     	 	 break;
     case ID_TAG_DD:
-    		 write()->insertTag("dd");
+    		 insertTag("dd");
     	 	 break;
     case ID_TAG_MENU:
-    		 write()->insertTag("menu");
+    		 insertTag("menu");
     	 	 break;
     case ID_TAG_HR:
-    		 write()->insertTag("hr");
+    		 insertTag("hr");
     	 	 break;
     case ID_TAG_SUBMIT:
          slotTagFormSubmit();

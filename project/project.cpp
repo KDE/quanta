@@ -531,7 +531,11 @@ void Project::insertFile( QString name )
   file->URL = baseURL + fname;
   file->fname = fname;
 
+  debug( fname );
+
   insertFile( file );
+
+  emit reloadTree( fileNameList(), false, true );
 }
 
 /**  */

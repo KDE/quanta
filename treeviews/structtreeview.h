@@ -29,9 +29,11 @@ class Node;
 class StructTreeTag;
 class Parser;
 class QPopupMenu;
+class QuantaApp;
 
 class StructTreeView : public QListView  {
    Q_OBJECT
+friend class QuantaApp;
 public: 
 	StructTreeView(Parser *parser, QWidget *parent=0, const char *name=0);
 	~StructTreeView();

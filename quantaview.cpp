@@ -57,7 +57,7 @@ QString QuantaView::attrCase( const char*  attr)
 }
 
 /**  */
-void QuantaView::insertTag( char *tag)
+void QuantaView::insertTag( const char *tag)
 {
 
   QString startTag = tagCase(tag);

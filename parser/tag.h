@@ -31,24 +31,20 @@ public:
 	Tag( const Tag&);
 	~Tag();
 	
-	void parseStr ( const char *tag );
+	void parseStr ( const QString tag );
 	
 	Tag operator = ( const Tag& );
-  /**  */
-  QString attrValue( const char *attr);
-  /**  */
-  bool haveAttrib( const char *attr );
+
+  QString attrValue( const QString attr);
+
+  bool haveAttrib( const QString attr );
 	
 	QString name;
 	
-	char* attr[20];  //atributes
-	char* value[20]; // values of attributes.
+	QString attr[20];  //atributes
+	QString value[20]; // values of attributes.
 	int attrcount;
 
-//	QDict<char> attr;
-
-private:	
-	const char *passSpaces( const char * );
 };
 
 #endif

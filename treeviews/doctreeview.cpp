@@ -66,7 +66,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
   		DocFolder *folder = new DocFolder(this, config.readEntry("Top Element"), &config , docDir+relDocDir+"/");
   		folder->setPixmap( 0, QPixmap((const char**)folder_open_xpm) );
 		  folder->topLevel = true;
-		  folder->setOpen( false );
+		  folder->setOpen( true );
 		
 		  config.setGroup("Context");
 		  QStrList list;

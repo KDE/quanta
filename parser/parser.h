@@ -18,7 +18,6 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <qstring.h>
 #include <qdict.h>
 #include <qstrlist.h>
 
@@ -35,7 +34,7 @@ public:
 	Parser();
 	~Parser();
 	
-	Node *parse( const char *text);
+	Node *parse( QString text);
 	int xy2pos( int x, int y );
 	int pos2y(int pos);
 	int pos2x(int pos);
@@ -43,13 +42,13 @@ public:
 	QString tagsListForPoint(int pos);
 	
 	bool textChanged;
-	char *s;
+	QString s;
 
 
 private:
 
 
-  Node * subParse( Node* parent , const char * tag = 0);
+  Node * subParse( Node* parent , QString tag = QString::null );
   QString subList( Node* node, int pos);
 
   enum { EndText = 0, Text,  TagStart, TagEnd, Comment, PHP }; // types of token

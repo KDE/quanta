@@ -22,6 +22,7 @@
 #include <qstring.h>
 #include <qregexp.h>
 #include <qcstring.h>
+#include <qstringlist.h>
 
 #include <stdio.h>
 #include <ctype.h>
@@ -32,7 +33,7 @@ extern QStrList *optionalTags;
 
 Parser::Parser()
 {
-  s = 0;
+  s = QString::null;
   pos = 0;
   node = 0L;
 
@@ -80,53 +81,27 @@ Parser::Parser()
 
 Parser::~Parser()
 {
-	if (s) delete [] s;
 }
 
 
-Node *Parser::parse( const char *text)
+Node *Parser::parse( QString text)
 {
 	if ( s )
-		if ( !strcmp(s,text) ) {
+		if ( s == text ) {
 			textChanged = false;
 			return node;
 		}
 	textChanged = true;
-		
-	if (s) delete [] s;
+	
+	
+	s = text;	
+	
 	if (node) delete node;
-	s = new char[ strlen(text)+1 ];
-	strcpy(s,text);
   pos = 0;
-
   node = subParse(0L);
   return node;
 }
 
-int Parser::xy2pos( int x, int y )
-{
-  int pos;
-	const char *stmp = this->s;
-	
-	for ( int i=0; i<y && stmp; i++ ){
-		stmp = strstr( stmp, "\n");
-		if (stmp)
-			stmp++;
-  }
-
-	if ( stmp )	{
-		const char *nextline = strstr(stmp,"\n");
-	  if ( nextline && nextline-stmp >= x )
-			pos = stmp-s+x-1;
-		else
-			pos = nextline-s;
-	}
-	else
-		pos = x;
-//	printf("x: %d \t y: %d \t pos: %d\n",x,y,pos);	
-//	fflush(stdout);
-	return (pos);
-}
 
 QString Parser::tagsListForPoint(int pos)
 {
@@ -153,7 +128,7 @@ QString Parser::subList( Node* node, int pos)
 }
 
 
-Node * Parser::subParse( Node * parent, const char *tag )
+Node * Parser::subParse( Node * parent, QString tag )
 {
   Node * node = 0L;
   Node * prevNode = 0L;
@@ -173,12 +148,11 @@ Node * Parser::subParse( Node * parent, const char *tag )
         int oldpos = pos;
         Tag tagData = parseTag();
 
-        if ( tag ) {  // check if this tag stop area of previous
+        if ( !tag.isEmpty() ) {  // check if this tag stop area of previous
           QStrList *list = tagsStop[tag];
           if ( list )
-            if ( list->find( tagData.name ) != -1 ) {
+            if ( list->find( tagData.name.lower() ) != -1 ) {
               pos = oldpos;  // return to pos before tag
-              //delete tagData;
               return firstNode;
             }
         }
@@ -187,7 +161,7 @@ Node * Parser::subParse( Node * parent, const char *tag )
         if ( !firstNode )
            firstNode = tnode;
 
-        tnode->tag = tagData; // !!!
+        tnode->tag = tagData;
 
         tnode->start = oldpos;
         tnode->startContext = pos;
@@ -205,7 +179,7 @@ Node * Parser::subParse( Node * parent, const char *tag )
         	if ( tokenType() == TagEnd ) {
           	int oldpos = pos;
           	QString tagend = parseTagEnd();
-          	if ( tagend != tnode->tag.name ) {
+          	if ( tagend.lower() != tnode->tag.name.lower() ) {
            	 pos = oldpos;
            	 //delete tagData;
            	 return firstNode;
@@ -275,19 +249,19 @@ int Parser::tokenType()
 {
   pos = skipSpaces();
 
-  if ( s[pos] == 0 )
+  if ( pos >= (int) s.length() )
     return EndText;
 
   if ( s[pos] != '<')
     return Text;
 
-  if ( strncmp( s+pos, "</", 2 ) == 0 )
+  if ( s.mid(pos,2) == "</" )
     return TagEnd;
 
-  if ( strncmp( s+pos, "<!--", 4 ) == 0 )
+  if ( s.mid(pos,4) ==  "<!--" )
     return Comment;
 
-  if ( strncmp( s+pos, "<?", 2 ) == 0 )
+  if ( s.mid(pos,2) == "<?" )
     return PHP;
 
   return TagStart;
@@ -296,7 +270,7 @@ int Parser::tokenType()
 int Parser::skipSpaces()
 {
   int tpos = pos;
-  while ( isspace(s[tpos]) && s[tpos] ) tpos++;
+  while ( s[tpos].isSpace() ) tpos++;
   return tpos;
 }
 
@@ -304,12 +278,12 @@ Tag Parser::parseTag()
 {
   Tag tag;// = new Tag();
   int tpos = pos+1;
-  while ( s[tpos]!='>' && s[tpos] ) tpos++;
+  while ( s[tpos] != '>' && !s[tpos].isNull() ) tpos++;
 
-  tag.parseStr( QCString( s+pos+1, tpos-pos ).data() );
+  tag.parseStr( s.mid( pos+1, tpos-pos-1 ) );
 
   pos = tpos;
-  if ( s[pos] ) pos++;
+  if ( !s[pos].isNull() ) pos++;
 
   return tag;
 }
@@ -318,32 +292,32 @@ QString Parser::parseTagEnd()
 {
   int tpos = pos+2;
   int start = tpos;
-  while ( s[tpos]!='>' && s[tpos] ) tpos++;
+  while ( s[tpos] !='>' && !s[tpos].isNull() ) tpos++;
   pos = tpos;
-  if ( s[pos])  pos++;
-
   int len = pos-start;
 
-  return QCString( s+start, len ).lower();
+  if ( !s[pos].isNull() )  pos++;
+
+  return s.mid( start, len ).lower();
 }
 
 void Parser::parseText()
 {
-  while ( s[pos]!='<' && s[pos] ) pos++;
+  while ( s[pos]!='<' && !s[pos].isNull() ) pos++;
 }
 
 
 void Parser::parseComment()
 {
-  while ( strncmp( s+pos, "-->", 3) && s[pos] ) pos++;
-  if ( s[pos] )
+  while ( s.mid(pos,3) != "-->" && !s[pos].isNull() ) pos++;
+  if ( !s[pos].isNull() )
     pos+=3;
 }
 
 void Parser::parsePHP()
 {
-  while ( strncmp( s+pos, "?>", 2) && s[pos] ) pos++;
-  if ( s[pos] )
+  while ( s.mid(pos,2) != "?>" && !s[pos].isNull() ) pos++;
+  if ( !s[pos].isNull() )
     pos+=2;
 }
 
@@ -351,7 +325,9 @@ void Parser::parsePHP()
 int Parser::pos2y( int pos )
 {
 	int endLineCount = 0;
-	for (int i=0; i<=pos && s[i]; i++)
+	if ( pos<0 ) pos = 0;
+	
+	for (int i=0; i<=pos && !s[i].isNull(); i++)
 		if (s[i]=='\n')
 			endLineCount++;
 	return endLineCount;
@@ -360,6 +336,30 @@ int Parser::pos2y( int pos )
 int Parser::pos2x( int pos )
 {
 	int i;
+	if ( pos<0 ) pos = 0;
 	for (i=pos; s[i]!='\n' && i; i--);
 	return pos-i;
+}
+
+int Parser::xy2pos( int x, int y )
+{
+  int pos = 0;
+  QStringList slist = QStringList::split('\n',s,true);
+
+  if ( y > (int) slist.count() )
+  	y = slist.count();
+
+  for ( int i=0; i<y; i++ )
+  	 pos += slist[i].length()+1;
+
+  int len = slist[y].length();
+  if ( len>x )
+  	pos+=x;
+  else
+  	pos+=len;
+  	
+	//printf("x: %d \t y: %d \t pos: %d\n",x,y,pos);	
+	//fflush(stdout);
+	
+	return (pos);
 }

@@ -926,15 +926,15 @@ void QuantaApp::slotOptions()
 ////////////////////////
 // editor commands
 ///////////////////////
-void QuantaApp::doCursorCommand(int cmdNum) {
+void QuantaApp::doCursorCommand(int /*cmdNum*/) {
   //view->write()->doCursorCommand(cmdNum);
 }
 
-void QuantaApp::doEditCommand(int cmdNum) {
+void QuantaApp::doEditCommand(int /*cmdNum*/) {
   //view->write()->doEditCommand(cmdNum);
 }
 
-void QuantaApp::doStateCommand(int cmdNum) {
+void QuantaApp::doStateCommand(int /*cmdNum*/) {
   //view->write()->doStateCommand(cmdNum);
 }
 
@@ -1107,11 +1107,16 @@ void QuantaApp::updateNavButtons( bool back, bool forward )
 
 void QuantaApp::contextHelp()
 {
-   QString curWord = view->write()->currentWord();
-   QString * url = dTab->contextHelp( curWord );
+   if ( leftPanel->currentPage() == dTab ) {
+   	 leftPanel->showPage(fTab);
+   }
+   else {
+     QString curWord = view->write()->currentWord();
+     QString * url = dTab->contextHelp( curWord );
 
-   if ( url ) {
-      leftPanel->showPage(dTab);
-   		openDoc(*url);
+     if ( url ) {
+        leftPanel->showPage(dTab);
+     		openDoc(*url);
+     }
    }
 }

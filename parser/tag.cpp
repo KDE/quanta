@@ -27,7 +27,7 @@ Tag::Tag()
 //  attr.setAutoDelete(true);
   attrcount = 0;
   for (int i=0; i<20;i++)
-  	attr[i] = value[i] = 0L;
+  	attr[i] = value[i] = "";
 }
 
 Tag::Tag( const Tag &t)
@@ -35,18 +35,8 @@ Tag::Tag( const Tag &t)
 	name = t.name;
 	
 	for (int i=0; i<20; i++) {
-  		
-  	if ( t.attr[i] ) {
-  		attr[i] = new char[ strlen(t.attr[i])+1 ];
-  		strcpy( attr[i], t.attr[i] );
-  	}
-  	else	attr[i] = 0L;
-  			
-  	if ( t.value[i] ) {
-  		value[i] = new char[ strlen(t.value[i])+1 ];
-  		strcpy( value[i], t.value[i] );
-  	}
-  	else	value[i] = 0L;
+	  attr[i] = t.attr[i];
+	  value[i] = t.value[i];
   }
 
   attrcount = t.attrcount;
@@ -54,128 +44,101 @@ Tag::Tag( const Tag &t)
 
 Tag::~Tag()
 {
+}
 
-  for (int i=0; i<20; i++) {
-  	if (attr[i])
-  		delete [] (char*)attr[i];
-  	if (value[i])
-  		delete [] (char*)value[i];
+void Tag::parseStr ( const QString tag )
+{
+  QString t = tag;
+
+  attrcount = 0;
+
+  int i = 0;
+
+  t = t.stripWhiteSpace();
+
+  while ( !t[i].isSpace() && !t[i].isNull() )	i++;
+
+  name = t.left(i);
+
+  t = t.remove(0,i).stripWhiteSpace();
+
+  while ( !t.isEmpty() ) {
+  	attrcount++;
+  	i=0;
+  	while ( !t[i].isSpace() && !t[i].isNull() && t[i] != '=' )	i++;
+  	
+  	attr[attrcount] = t.left(i);
+  	t = t.remove(0,i).stripWhiteSpace();
+  	
+  	if ( t[0] == '=' ) {
+  		t = t.remove(0,1).stripWhiteSpace();
+  		
+  		if ( t[0] == '"' ) {
+  			i = 1;
+  			while ( t[i] != '"' && !t[i].isNull() ) i++;
+  			if ( t[i] == '"' )
+  				value[attrcount] = t.mid(1,i-1);
+  			else
+  			  value[attrcount] = t.mid(1,i);
+  			t = t.remove(0,i).stripWhiteSpace();
+  		}
+  		else
+  		if ( t[0] == '\'' ) {
+  			i = 1;
+  			while ( t[i] != '\'' && !t[i].isNull() ) i++;
+  			if ( t[i] == '\'' )
+  				value[attrcount] = t.mid(1,i-1);
+  			else
+  			  value[attrcount] = t.mid(1,i);
+  			t = t.remove(0,i).stripWhiteSpace();
+  		}
+  		else {
+  		
+    		i=0;
+  	  	while ( !t[i].isSpace() && !t[i].isNull() )	i++;
+    	
+    		value[attrcount] = t.left(i);
+    		t = t.remove(0,i).stripWhiteSpace();
+  		}
+  		
+  		// debug ( name+" , "+attr[attrcount]+"="+value[attrcount]+";" );
+  	
+  	}
+  	else {
+  	  value[attrcount]="";
+  	}
+  	
   }
 
 }
 
-void Tag::parseStr ( const char *tag )
-{
-  const char *t = tag; //tag.data();
-
-
-  const char *tagname;
-  const char *attrname;
-  const char *attrvalue;
-
-  QString attrName;
-  QString attrVal;
-
-  int len = 0;
-
-  t = passSpaces( t );
-
-  if ( *t ) tagname = t; else return;
-  // find end of tag name
-  while ( !isspace(*t) && *t ) { t++;len++;}
-
-  name = QCString( tagname, len+1 ).lower();
-
-  while ( *t )
-  {
-    t = passSpaces( t );
-
-    len = 0;
-    if ( *t ) attrname = t; else return;
-    while ( !isspace(*t) && *t!='=' && *t ) { t++;len++;}
-
-    attrName = QCString( attrname, len+1).lower();
-    //attr[attrcount] = QString( attrname, len+1).lower();
-
-    attr[attrcount] = new char[len+2];
-    qstrcpy( attr[attrcount], attrName.data() );
-    attrcount++;
-
-    t = passSpaces( t );
-    if ( !*t || *t!='=' ) continue;else t++;
-    t = passSpaces( t );
-
-    len = 0;
-    if ( *t ) attrvalue = t; else return;
-    if ( *t=='"' && *(t+1)) {
-    	t++;
-      attrvalue = t;
-      while ( *t!='"' && *t ) { t++;len++;}
-    }
-    else
-      while ( !isspace(*t) && *t!='=' && *t ) { t++;len++;}
-
-    if ( *t=='"' ) t++;
-
-    attrVal = QCString( attrvalue, len+1);
-
-    value[attrcount-1] = new char[len+2];
-    qstrcpy( value[attrcount-1], attrVal.data() );
-
-    if ( attrcount == 20)
-    	return;
-
-//    attr.insert( attrName, attrValue );
-  }
-
-}
-
-const char * Tag::passSpaces( const char *t )
-{
-  while ( isspace(*t) ) t++;
-  return t;
-}
 
 Tag Tag::operator = (const Tag &t)
 {
 	name = t.name;
 	
 	for (int i=0; i<20; i++) {
-  	if ( attr[i] )
-  		delete [] (char*)attr[i];
-  	attr[i] = 0L;
-  		
-  	if ( t.attr[i] ) {
-  		attr[i] = new char[ strlen(t.attr[i])+1 ];
-  		strcpy( attr[i], t.attr[i] );
-  	}
-  			
-  	if (value[i])
-  		delete [] (char*)value[i];
-  	value[i] = 0L;
-  		
-  	if ( t.value[i] ) {
-  		value[i] = new char[ strlen(t.value[i])+1 ];
-  		strcpy( value[i], t.value[i] );
-  	}
-  }
+	  attr[i]  = t.attr[i];
+	  value[i] = t.value[i];
+ 	}
 
   attrcount = t.attrcount;
   return *this;
 	
-}/**  */
-bool Tag::haveAttrib( const char *attr )
+}
+
+bool Tag::haveAttrib( const QString attr )
 {
 	for (int i=0; i<attrcount;i++)
-		if ( !strcasecmp(attr, this->attr[i]) )
+		if ( attr.lower() ==  this->attr[i].lower()  )
 			return true;
 	return false;
 }
 /**  */
-QString Tag::attrValue( const char *attr)
+QString Tag::attrValue( const QString attr)
 {
 	for (int i=0; i<attrcount;i++)
-		if ( !strcasecmp(attr, this->attr[i]) )
-			return QString( value[i] );
+		if ( attr.lower() ==  this->attr[i].lower() )
+			return value[i];
 	return QString();
 }

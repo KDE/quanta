@@ -165,7 +165,7 @@ void QuantaApp::initKeyAccel()
   keyAccel->insertItem("Edit current tag",Key_F4);
   keyAccel->connectItem("Edit current tag",view,SLOT(slotEditCurrentTag()));
 
-  keyAccel->insertItem("Context help",Key_F1);
+  keyAccel->insertItem("Context help",Key_H+CTRL);
   keyAccel->connectItem("Context help",this,SLOT( contextHelp() ) );
 
   keyAccel->insertItem("Indent",ALT+SHIFT+Key_Right);
@@ -179,6 +179,9 @@ void QuantaApp::initKeyAccel()
 
   keyAccel->insertItem("Preview",Key_F6);
   keyAccel->connectItem("Preview",this,SLOT(slotShowPreview()));
+
+  keyAccel->insertItem("Reparse",Key_X+CTRL);
+  keyAccel->connectItem("Reparse",this,SLOT(reparse()));
 
   keyAccel->insertItem("<br>",Key_Return+CTRL);
   keyAccel->connectItem("<br>",view,SLOT(slotTagBr()));
@@ -279,6 +282,8 @@ void QuantaApp::initKeyAccel()
   keyAccel->changeMenuAccel(toolMenu, ID_EDIT_INDENT,      "Indent");
   keyAccel->changeMenuAccel(toolMenu, ID_EDIT_UNINDENT,    "Unindent");
   keyAccel->changeMenuAccel(toolMenu, ID_EDIT_GOTO_LINE,   "goto line");
+
+  // keyAccel->changeMenuAccel(sTab->popupMenu, ID_REPARSE,   "Reparse");
 }
 
 void QuantaApp::initMenuBar()

@@ -291,7 +291,7 @@ void QuantaView::slotTagColor(){
 
 /** insert <br> tag */
 void QuantaView::slotTagBr(){
-  write()->insertTag("br");
+  insertTag("br");
 }
 
 /** insert  &nbsp; */

@@ -78,7 +78,7 @@ class QuantaView : public QWidget
 	  /** initialise tags menu */
 	  void initMenu();
 	  /**  */
-	  void insertTag( char *tag);
+	  void insertTag( const char *tag);
 	
 	  /** convert tag to upper or lower case */
 	  QString tagCase( const char*  tag);

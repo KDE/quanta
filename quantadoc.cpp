@@ -383,6 +383,7 @@ bool QuantaDoc::saveDocument(const QString &filename, const char *)
 
   QString oldName = write()->fileName();
   write()->writeURL( filename );
+  write()->doc()->setURL( filename, false );
   changeFileName( oldName );
 
   setModified( false );
