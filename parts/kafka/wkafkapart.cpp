@@ -392,12 +392,16 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 		if(!node->tag->single && node->next && node->next->tag->type != Tag::XmlTagEnd)
 		{
 			//TODO: ERROR missing closing tags, set the kafka behavior according to this
-#ifdef LIGHT_DEBUG
+#ifdef HEAVY_DEBUG
 			kdDebug(25001)<< "KafkaDocument::buildKafkaNodeFromNode() - Node missing closing Tag" <<
 				endl;
 #endif
 		}
 		str = node->tag->name.lower();
+
+		//The basics DOM::Nodes HTML, HEAD and BODY are loaded anyway, but we must now
+		// link the real  HTML,... to their Nodes.
+		//A basic Common tree is !doctype<-html<-(head, body)
 		if(!node->parent)
 		{//FIXME:html, head and body are HTML-specific tag, for others DTDs it might result to some pbs.
 			if(str == "html")
@@ -433,14 +437,23 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 				}
 			}
 		}
-		else if(str == "body" && node->parent && !node->parent->parent)
+		else if(str == "html" && (!node->parent || (node->parent && !node->parent->parent)))
+		{
+			if(!html.isNull())//delete the empty Node
+				disconnectDomNodeFromQuantaNode(html);
+			newNode = html;
+			insertNode = false;
+			}
+		else if(str == "body" && ((node->parent && !node->parent->parent) || (node->parent &&
+			 node->parent->parent && !node->parent->parent->parent)))
 		{
 			if(!body.isNull())
 				disconnectDomNodeFromQuantaNode(body);
 			newNode = body;
 			insertNode = false;
 		}
-		else if(str == "head" && node->parent && !node->parent->parent)
+		else if(str == "head" && ((node->parent && !node->parent->parent) || (node->parent &&
+			 node->parent->parent && !node->parent->parent->parent)))
 		{
 			if(!head.isNull())
 				disconnectDomNodeFromQuantaNode(head);
@@ -1691,12 +1704,12 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 			_node->prev->next = _node->next;
 		if(_node->next)
 			_node->next->prev = _node->prev;
+		modif->setLocation(kafkaCommon::getLocation(_node));
 		_node->parent = 0L;
 		_node->prev = 0L;
 		_node->next = 0L;
 		_node->child = 0L;
 		modif->setNode(_node);
-		modif->setLocation(kafkaCommon::getLocation(_node));
 		modifs->addNodeModif(modif);
 	}
 	m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);

@@ -102,6 +102,7 @@ KafkaWidget::KafkaWidget(QWidget *parent, QWidget *widgetParent, KafkaDocument *
 //for debug purposes, we add a DOM tree view
 #ifdef HEAVY_DEBUG
 	//d->domdialog = new KafkaDOMTreeDialog(view(), this);
+	//d->domdialog->show();
 #endif
 	//IMPORTANT:without him, no document() is created in khtmlPart
 	begin();
@@ -1140,18 +1141,14 @@ void KafkaWidget::khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event)
 void KafkaWidget::khtmlMousePressEvent(khtml::MousePressEvent *event)
 {
 	KHTMLPart::khtmlMousePressEvent(event);
+#ifdef HEAVY_DEBUG
+	//d->domdialog->domview->showTree(document());
+#endif
 }
 
 void KafkaWidget::khtmlDrawContentsEvent(khtml::DrawContentsEvent *event)
 {
 	KHTMLPart::khtmlDrawContentsEvent(event);
-}
-
-void KafkaWidget::showDomTree()
-{
-#ifdef HEAVY_DEBUG
-	//d->domdialog->show();
-#endif
 }
 
 void KafkaWidget::getCurrentNode(DOM::Node &_currentNode, int &offset)

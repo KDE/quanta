@@ -117,6 +117,10 @@ bool QuantaCommon::isSingleTag(const QString& dtdName, const QString& tag)
 {
   bool single = false;
 
+  //!doctype is a common tag to all DTDs not listed in the tagsList
+  if(tag.lower() == "!doctype")
+    return true;
+
   DTDStruct* dtd = dtds->find(dtdName.lower());
   if (dtd)
   {

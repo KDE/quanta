@@ -160,9 +160,21 @@ public:
 
 	/**
 	 * Create a simple Node, without taking care of building the closing Node.
+	 * @param nodeName The name of the Node.
+	 * @param tagString The String of the tag as it will appears in the editor.
+	 * @param nodeType The node type, cf Tag::TokenType
+	 * @param doc The document the Node will belong to.
+	 * @return Returns the newly created node.
 	 */
 	static Node* createNode(const QString &nodeName, const QString &tagString, int nodeType,
 		Document *doc);
+
+	/**
+	 * Create a !doctype Node with all the necessary attributes.
+	 * @param doc It needs the document where the !doctype node will be inserted in order to
+	 * build the right attributes.
+	 */
+	static Node *createDoctypeNode(Document *doc);
 
 	/**
 	 * Insert node in the tree. WARNING This function will log that node was added.

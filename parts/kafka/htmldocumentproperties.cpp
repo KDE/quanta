@@ -22,6 +22,8 @@
 #include <kpushbutton.h>
 #include <kurlrequester.h>
 #include <kurl.h>
+#include <kmessagebox.h>
+#include <klocale.h>
 #include <kdebug.h>
 
 #include "../../parser/node.h"
@@ -104,6 +106,29 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 			if(nodeName.contains("style"))
 				loadCSS(node);
 			node = node->next;
+		}
+		if(doctypeNode)
+		{
+			node = doctypeNode->child;
+			while(node)
+			{
+				nodeName = node->tag->name.lower();
+				if(nodeName == "html")
+					htmlNode = node;
+				if(nodeName == "head")
+					headNode = node;
+				if(nodeName == "body")
+					bodyNode = node;
+				if(nodeName == "title")
+					titleNode = node;
+				if(nodeName == "link")
+					linkNode = node;
+				if(nodeName == "meta")
+					loadMetaNode(node);
+				if(nodeName.contains("style"))
+					loadCSS(node);
+				node = node->next;
+			}
 		}
 		if(htmlNode)
 		{
@@ -285,6 +310,7 @@ void htmlDocumentProperties::newCSSRule()
 void htmlDocumentProperties::editCSSRule()
 {
 //Make this using the big CSS dialog, need parsing!!
+	KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"));
 }
 
 void htmlDocumentProperties::deleteCurrentCSSRule()
@@ -508,7 +534,7 @@ void htmlDocumentProperties::addBasicCssNodes(NodeModifsSet *modifs)
 
 void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
 {
-	Node *allTheNodes, /***htmlEnd, *headEnd, *bodyEnd,*/ *lastHeadChild, *lastBodyChild, *lastHtmlChild;
+	Node *allTheNodes, *lastHeadChild, *lastBodyChild, *lastHtmlChild;
 	Node *n;
 	bool htmlNodeCreated = false, bodyNodeCreated = false;
 	QTag *qHead, *qBody;
@@ -517,17 +543,32 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
 	if(headNode)
 		return;
 
+	if(!doctypeNode)
+	{
+		//if the !doctype node is not present, create it
+		allTheNodes = baseNode;
+		baseNode = 0L;
+		doctypeNode = kafkaCommon::createDoctypeNode(quantaApp->view()->write());
+		kafkaCommon::insertNode(doctypeNode, 0L, 0L, modifs);
+		doctypeNode->child = allTheNodes;
+		while(allTheNodes)
+		{
+			allTheNodes->parent = doctypeNode;
+			allTheNodes = allTheNodes->next;
+		}
+	}
+
 	if(!htmlNode && !headNode)
 	{
 		//if the HTML node is not present, create it
-		allTheNodes = baseNode;
-		baseNode = 0L;
-		htmlNode = kafkaCommon::createAndInsertNode("html", "", Tag::XmlTag, quantaApp->view()->write(),
-			0L, 0L, 0L, modifs);
+		allTheNodes = doctypeNode->firstChild();
+		doctypeNode->child = 0L;
+		htmlNode = kafkaCommon::createAndInsertNode("html", "", Tag::XmlTag,
+			quantaApp->view()->write(), doctypeNode, 0L, 0L, modifs);
 		htmlNode->child = allTheNodes;
 		while(allTheNodes)
 		{
-			allTheNodes->parent = baseNode;
+			allTheNodes->parent = htmlNode;
 			allTheNodes = allTheNodes->next;
 		}
 		htmlNodeCreated = true;

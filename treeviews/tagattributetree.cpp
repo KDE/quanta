@@ -257,6 +257,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
   if (group)
      group->setOpen(true);
 //  if (!node->tag->nameSpace.isEmpty())
+  if(node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd)
   {
     group = new TopLevelItem(this, group, i18n("Namespace"));
     item = new AttributeNameSpaceItem(this, group, i18n("name"), node->tag->nameSpace);
@@ -633,7 +634,7 @@ void EnhancedTagAttributeTree::deleteSubTree()
     oldNode->tag->endPos(eLine, eCol);
 
   quantaApp->view()->write()->editIf->removeText(bLine, bCol, eLine, eCol+1);
-  #endif
+#endif
 }
 
 void EnhancedTagAttributeTree::deleteNode()
@@ -711,7 +712,7 @@ void EnhancedTagAttributeTree::deleteNode()
     quantaApp->view()->getKafkaInterface()->getKafkaWidget()->setCurrentNode(domNode, offset);
   }
 
-  #else
+#else
   //Quick code for 3.1.x users
   //Without kafka, all is more text-based, so we can avoid removing Nodes with wrong DTD relationship.
 
@@ -735,7 +736,7 @@ void EnhancedTagAttributeTree::deleteNode()
   oldNode->tag->endPos(eLine, eCol);
   quantaApp->view()->write()->editIf->removeText(bLine, bCol, eLine, eCol+1);
 
-  #endif
+#endif
 }
 
 #include "tagattributetree.moc"

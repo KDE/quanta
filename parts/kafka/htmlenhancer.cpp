@@ -22,6 +22,10 @@
 #include <kstandarddirs.h>
 #include <kconfig.h>
 
+#include "../../resource.h"
+#include "../../quanta.h"
+#include "../../quantaview.h"
+#include "../../document.h"
 #include "../../parser/tag.h"
 #include "../../parser/node.h"
 #include "wkafkapart.h"
@@ -48,25 +52,38 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 	bool tbody, goUp;
 	Node *n;
 	QString script, filename, text;
+	KURL url, baseURL;
 
 	//FIRST update the src attr with the baseURL
 	domNode = node->_rootNode.attributes().getNamedItem("src");
 	if(!domNode.isNull())
 	{
-		domNode.setNodeValue(DOM::DOMString(m_baseURL.url()) + domNode.nodeValue());
+		baseURL.setPath(quantaApp->view()->write()->url().directory());
+		QuantaCommon::setUrl(url, domNode.nodeValue().string());
+		url = QExtFileInfo::toAbsolute(url, baseURL);
+		domNode.setNodeValue(url.url());
+#ifdef HEAVY_DEBUG
+		kdDebug(25001)<< "HTMLTranslator::translateNode() - new src : " << url.url() << endl;
+#endif
 	}
 
 	//THEN if it is the style element, add a DOM::Node::TEXT_NODE child gathering all the CSS
 	//by default, the parser parse it as a script, which can't be translated in DOM::Nodes.
-	if(node->tag->type == Tag::ScriptTag && node->tag->name.lower().contains("style"))
+	if((node->tag->type == Tag::ScriptTag && node->tag->name.lower().contains("style")) ||
+		(node->tag->type == Tag::XmlTag && node->tag->name.lower() == "style"))
 	{
-		domNode = kafkaCommon::createDomNode("style", m_wkafkapart->defaultDTD(),
-			m_wkafkapart->getKafkaWidget()->document());
-		if(!kafkaCommon::insertDomNode(domNode, parentDNode))
-			return false;
-		node->_rootNode = domNode;
-		node->_leafNode = domNode;
-		m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
+		if(node->tag->type == Tag::ScriptTag && node->tag->name.lower().contains("style"))
+		{
+			domNode = kafkaCommon::createDomNode("style", m_wkafkapart->defaultDTD(),
+				m_wkafkapart->getKafkaWidget()->document());
+			if(!kafkaCommon::insertDomNode(domNode, parentDNode))
+				return false;
+			node->_rootNode = domNode;
+			node->_leafNode = domNode;
+			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
+		}
+		else
+			domNode = node->_rootNode;
 		n = node->child;
 		text = "";
 		goUp = false;

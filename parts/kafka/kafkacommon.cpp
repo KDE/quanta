@@ -606,6 +606,25 @@ Node* kafkaCommon::createNode(const QString &nodeName, const QString &tagString,
 	return node;
 }
 
+Node *kafkaCommon::createDoctypeNode(Document *doc)
+{
+	Node *node;
+	QString tagStr;
+
+	if(!doc)
+		return 0L;
+
+	//create the Node
+	tagStr = "<!DOCTYPE" + doc->defaultDTD()->doctypeStr + ">";
+
+	//As the Tag class was not made to handle value-less attrs, we won't load them.
+	//We'll simply set the Tag string.
+	node = createNode("!DOCTYPE", tagStr, Tag::XmlTag, doc);
+	node->tag->cleanStrBuilt = true;
+
+	return node;
+}
+
 Node* kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling,
 	NodeModifsSet *modifs, bool merge)
 {
@@ -1921,9 +1940,11 @@ void kafkaCommon::coutTree(Node *, int)
 		{
 			kdDebug(25001)<< dots << " *** attr" << j << " " <<
 				node->tag->getAttribute(j).nameLine << ":" <<
-				node->tag->getAttribute(j).nameCol << " - " <<
+				node->tag->getAttribute(j).nameCol << ":" <<
+				node->tag->getAttribute(j).name <<  " - " <<
 				node->tag->getAttribute(j).valueLine << ":" <<
-				node->tag->getAttribute(j).valueCol << endl;
+				node->tag->getAttribute(j).valueCol << ":" <<
+				node->tag->getAttribute(j).value << endl;
 		}
 
 		if (node->child)
