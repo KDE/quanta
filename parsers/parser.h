@@ -116,6 +116,8 @@ private:
   bool m_parsingEnabled;
   bool m_parsingNeeded;
 
+  /** Clears the group elements found in the included files */
+  void clearIncludedGroupElements();
   void parseIncludedFile(const QString &fileName, const DTDStruct *dtd);
   /** Searches for scripts inside the text from startNode. It looks only for the
   script begin/and delimiters, and not for the <script> or other special tags.
