@@ -13,6 +13,7 @@
 #ifndef TAGATTRIBUTEITEM_H
 #define TAGATTRIBUTEITEM_H
 
+class KColorCombo;
 class KURLRequester;
 class KListView;
 class KListViewItem;
@@ -100,6 +101,20 @@ public:
 
 private:
     QComboBox* combo;
+};
+
+class AttributeColorItem : public AttributeItem
+{
+public:
+    AttributeColorItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
+
+    virtual ~AttributeColorItem();
+    virtual void showEditor();
+    virtual void hideEditor();
+    virtual QString editorText();
+
+private:
+    KColorCombo* combo;
 };
 
 

@@ -75,6 +75,10 @@ void TagAttributeTree::newCursorPosition(Node *node)
       {
         item = new AttributeListItem(this, group, attr->name, node->tag->attributeValue(attr->name));
       } else
+      if (attr->type == "color")
+      {
+        item = new AttributeColorItem(this, group, attr->name, node->tag->attributeValue(attr->name));
+      } else
       {
         item = new AttributeItem(this, group, attr->name, node->tag->attributeValue(attr->name));
       }
@@ -100,6 +104,10 @@ void TagAttributeTree::newCursorPosition(Node *node)
         if (attr->type == "list")
         {
           item = new AttributeListItem(this, group, attr->name, node->tag->attributeValue(attr->name));
+        } else
+        if (attr->type == "color")
+        {
+          item = new AttributeColorItem(this, group, attr->name, node->tag->attributeValue(attr->name));
         } else
         {
           item = new AttributeItem(this, group, attrName, node->tag->attributeValue(attrName));

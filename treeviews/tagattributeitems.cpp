@@ -20,6 +20,7 @@
 
 //kde includes
 #include <kapplication.h>
+#include <kcolorcombo.h>
 #include <klistview.h>
 #include <klocale.h>
 #include <kurlrequester.h>
@@ -287,5 +288,49 @@ void AttributeListItem::hideEditor()
 {
   m_listView->editorContentChanged();
   setText(1, combo->currentText());
+  combo->hide();
+}
+
+//editable color combobox
+AttributeColorItem::AttributeColorItem(TagAttributeTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
+: AttributeItem(parent, title, title2)
+{
+  m_listView = listView;
+  combo = new KColorCombo( m_listView->viewport() );
+  combo->setEditable(true);
+  combo->hide();
+  QObject::connect( combo, SIGNAL( activated(int) ), m_listView, SLOT( editorContentChanged() ) );
+ }
+
+AttributeColorItem::~AttributeColorItem()
+{
+  delete combo;
+}
+
+QString AttributeColorItem::editorText()
+{
+  QString name =  combo->color().name();
+  if (name == "#000000")
+      name = "";
+  combo->setCurrentText(name);
+  return name;
+}
+
+void AttributeColorItem::showEditor()
+{
+  placeEditor(combo);
+  combo->show();
+  combo->setColor(text(1));
+  combo->setCurrentText(text(1));
+  combo->setFocus();
+}
+
+void AttributeColorItem::hideEditor()
+{
+  m_listView->editorContentChanged();
+  QString name =  combo->color().name();
+  if (name == "#000000")
+      name = "";
+  setText(1, name);
   combo->hide();
 }

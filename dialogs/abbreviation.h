@@ -31,6 +31,7 @@ private slots:
 
 private:
   DTDStruct *m_dtd;
+  QListViewItem *oldItem;
 };
 
 #endif

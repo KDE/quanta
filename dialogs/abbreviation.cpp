@@ -48,6 +48,7 @@ void Abbreviation::slotDTDChanged(const QString& newDTDName)
 {
   saveTemplates();
   templatesList->clear();
+  oldItem = 0L;
   QString dtdName = QuantaCommon::getDTDNameFromNickName(newDTDName);
   m_dtd = dtds->find(dtdName.lower());
   QString templateStr;
@@ -67,7 +68,7 @@ void Abbreviation::slotDTDChanged(const QString& newDTDName)
 
 void Abbreviation::slotTemplateSelectionChanged(QListViewItem* item)
 {
-  QListViewItem *oldItem = templatesList->currentItem();
+  //QListViewItem *oldItem = templatesList->currentItem();
   if (oldItem)
   {
     QString key = oldItem->text(0)+" " +oldItem->text(1);
@@ -76,6 +77,7 @@ void Abbreviation::slotTemplateSelectionChanged(QListViewItem* item)
 
   QString code = m_dtd->abbreviations[item->text(0)+" " +item->text(1)];
   codeEdit->setText(code);
+  oldItem = item;
 }
 
 void Abbreviation::slotAddTemplate()

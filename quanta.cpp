@@ -922,15 +922,11 @@ void QuantaApp::slotOptions()
   }
   lst.sort();
   uint pos = 0;
-  uint abbrevDTDPos = 0;
   for (uint i = 0; i < lst.count(); i++)
   {
     fileMasks->defaultDTDCombo->insertItem(lst[i]);
     if (lst[i] == QuantaCommon::getDTDNickNameFromName(qConfig.defaultDocType.lower()))
        pos = i;
-    if (lst[i] == m_view->write()->defaultDTD()->nickName)
-       abbrevDTDPos = i;
-
   }
   fileMasks->defaultDTDCombo->setCurrentItem(pos);
 
@@ -942,6 +938,19 @@ void QuantaApp::slotOptions()
 
   page = kd->addVBoxPage(i18n("Abbreviations"), QString::null, BarIcon("source", KIcon::SizeMedium));
   Abbreviation *abbreviationOptions = new Abbreviation((QWidget*)(page));
+  lst.clear();
+  it.toFirst();
+  for( ; it.current(); ++it )
+  {
+      lst << it.current()->nickName;
+  }
+  lst.sort();
+  uint abbrevDTDPos = 0;
+  for (uint i = 0; i < lst.count(); i++)
+  {
+    if (lst[i] == m_view->write()->defaultDTD()->nickName)
+       abbrevDTDPos = i;
+  }
   abbreviationOptions->dtdCombo->insertStringList(lst);
   abbreviationOptions->dtdCombo->setCurrentItem(abbrevDTDPos);
   abbreviationOptions->slotDTDChanged(m_view->write()->defaultDTD()->nickName);
@@ -1007,15 +1016,17 @@ void QuantaApp::slotOptions()
       debuggerStyle="PHP4";
     }
 
+    abbreviationOptions->saveTemplates();
+
 #if KDE_VERSION > 308
-  qConfig.spellConfig->setDictionary(spellOptions->dictionary());
-  qConfig.spellConfig->setNoRootAffix(spellOptions->noRootAffix());
-  qConfig.spellConfig->setRunTogether(spellOptions->runTogether());
-  qConfig.spellConfig->setDictFromList(spellOptions->dictFromList());
-  qConfig.spellConfig->setEncoding(spellOptions->encoding());
-  qConfig.spellConfig->setIgnoreList(spellOptions->ignoreList());
-  qConfig.spellConfig->setReplaceAllList(spellOptions->replaceAllList());
-  qConfig.spellConfig->setClient(spellOptions->client());
+    qConfig.spellConfig->setDictionary(spellOptions->dictionary());
+    qConfig.spellConfig->setNoRootAffix(spellOptions->noRootAffix());
+    qConfig.spellConfig->setRunTogether(spellOptions->runTogether());
+    qConfig.spellConfig->setDictFromList(spellOptions->dictFromList());
+    qConfig.spellConfig->setEncoding(spellOptions->encoding());
+    qConfig.spellConfig->setIgnoreList(spellOptions->ignoreList());
+    qConfig.spellConfig->setReplaceAllList(spellOptions->replaceAllList());
+    qConfig.spellConfig->setClient(spellOptions->client());
 #endif
 
     QWidgetStack *s;
@@ -1061,7 +1072,6 @@ void QuantaApp::slotOptions()
     repaintPreview(true);
     reparse(true);
 
-    abbreviationOptions->saveTemplates();
   }
 
   m_config->sync();
