@@ -517,9 +517,11 @@ void QuantaView::slotViewInMozilla()
 
 void QuantaView::slotViewInOpera()
 {
-//TODO: Implement
+  m_netscape = "opera";
+  slotViewInNetscapeOrMozilla();
 }
 
+/** Open the document in Netscape, Mozilla or Opera, depending on m_netscape */
 void QuantaView::slotViewInNetscapeOrMozilla()
 {
   if (!writeExists()) return;

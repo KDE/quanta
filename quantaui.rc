@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32031">
+<kpartgui name="quanta" version="32032">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -98,6 +98,7 @@
       <Action name="view_with_konqueror"/>
       <Action name="view_with_mozilla"/>
       <Action name="view_with_netscape"/>
+      <Action name="view_with_opera"/>
       <Action name="view_with_lynx"/>
     </Menu>
 
