@@ -65,7 +65,7 @@
    </tooltip>
   </action>
 
-  <action icon="tag_hr" type="tag" name="tag_hr" text="Horisontal rule" >
+  <action icon="tag_hr" type="tag" name="tag_hr" text="Horizontal rule" >
    <tag>&lt;hr></tag>
    <tooltip>The &lt;b>HR&lt;/b> element defines a &lt;i>horizontal rule&lt;/i> for visual browsers.
      While this element is inherently presentational, it can be used structurally as a section divider.
