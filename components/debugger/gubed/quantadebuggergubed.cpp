@@ -289,6 +289,8 @@ void QuantaDebuggerGubed::slotConnectionClosed(int state)
   debuggerInterface()->enableAction("debug_run", true);
   debuggerInterface()->enableAction("debug_leap", true);
   debuggerInterface()->enableAction("debug_pause", true);
+  debuggerInterface()->enableAction("debug_breakpoints_toggle", true);
+  debuggerInterface()->enableAction("debug_breakpoints_clear", true);
 
   m_active = false;
 }

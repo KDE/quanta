@@ -182,15 +182,16 @@ void DebuggerManager::initActions()
 
 void DebuggerManager::initClientActions()
 {
+  enableAction("*", false);
+
   if(m_client)
   {
     // Get actioncollection and add appropriate actions depending on capabilities of the debugger
-    if(!m_client->supports(DebuggerClientCapabilities::LineBreakpoints))
-      enableAction("debug_breakpoints_toggle", false);
-    if(!m_client->supports(DebuggerClientCapabilities::ClearAllBreakpoints))
-      enableAction("debug_breakpoints_clear", false);
+    if(m_client->supports(DebuggerClientCapabilities::LineBreakpoints))
+      enableAction("debug_breakpoints_toggle", true);
+    if(m_client->supports(DebuggerClientCapabilities::ClearAllBreakpoints))
+      enableAction("debug_breakpoints_clear", true);
 
-    enableAction("*", false);
   }
 }
 
@@ -222,6 +223,10 @@ void DebuggerManager::enableAction(QString action, bool enable)
 
     enableAction("debug_connect", enable);
     enableAction("debug_disconnect", enable);
+
+    enableAction("debug_breakpoints_toggle", enable);
+    enableAction("debug_breakpoints_clear", enable);
+
   }
   else
   {
