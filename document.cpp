@@ -1739,5 +1739,12 @@ bool Document::hasChanged()
   return b;
 }
 
+void Document::paste()
+{
+  reparseEnabled = false;
+  dynamic_cast<KTextEditor::ClipboardInterface*>(view())->paste();
+  reparseEnabled = true;
+  baseNode = parser->rebuild(this);
+}
 
 #include "document.moc"

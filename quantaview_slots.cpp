@@ -705,7 +705,7 @@ void QuantaView::slotPaste ()
 {
   if (writeExists())
   {
-    dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->paste();
+    write()->paste();
   }
 }
 

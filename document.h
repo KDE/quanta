@@ -143,6 +143,8 @@ work correctly. */
   QString findWordRev(const QString& textToSearch, DTDStruct *dtd = 0L);
   /** Returns the changed status since the last query. Resets changed.*/
   bool hasChanged();
+  /** Paste the contents of clipboard into the document */
+  void paste();
 
   bool busy;
   KURL baseURL;
