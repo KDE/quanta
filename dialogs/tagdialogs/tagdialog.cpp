@@ -138,7 +138,7 @@ void TagDialog::parseTag()
           QString nodeTagName = n.toElement().attribute("name");
           if (!dtdTag->parentDTD->caseSensitive)
               nodeTagName = nodeTagName.upper();
-          if (nodeTagName == tagName) //read a tag
+          if (nodeTagName == tagName && n.toElement().elementsByTagName("attr").count() > 0) //read a tag
           {
             mainDlg = new Tagxml( n, dtdTag, this );
             ((Tagxml    *)mainDlg)->writeAttributes( dict );
@@ -195,7 +195,7 @@ void TagDialog::parseTag()
       }
     }
     docString += QuantaCommon::xmlFromAttributes(attrs); */
-    
+
     QDomDocument commonDoc;
     QString commonFileName = QFileInfo(dtdTag->fileName()).dirPath() + "/common.tag";
     if (QFile(commonFileName).exists())
@@ -209,7 +209,7 @@ void TagDialog::parseTag()
         for ( uint j = 0; j < nodeList.count(); j++)
         {
           QDomNode node = nodeList.item(j);
-          QString nodeTagName = node.toElement().attribute("name");         
+          QString nodeTagName = node.toElement().attribute("name");
           if (groupList.contains(nodeTagName)) //add the attributes of this common tag to a new tab
           {
             QString s;
@@ -220,7 +220,7 @@ void TagDialog::parseTag()
             {
               if (n.nodeName() == "attr")
               {
-                QDomElement el = n.toElement();               
+                QDomElement el = n.toElement();
                 str.reset();
                 str << "<attr name=\"" << el.attribute("name") << "\" type=\"" << el.attribute("type", "input");
                 str << "\" source=\"" << el.attribute("source");
@@ -237,11 +237,11 @@ void TagDialog::parseTag()
                   QDomNode childNode = childNodes.item(j);
                   childNode.save(str2, 2);
                   str << s2;
-                }  
+                }
                 str << "</attr>" << endl;
                 row++;
               }
-              
+
             }
             docString += s;
           }
@@ -250,7 +250,7 @@ void TagDialog::parseTag()
         commonFile.close();
       }
     }
-    
+
     docString += "</tag>\n</TAGS>\n";
     if (addPage)
     {
