@@ -23,13 +23,13 @@ messages: rc.cpp
 	$(EXTRACTRC) `find . -name "*.rc"` >> rc.cpp
 	$(EXTRACTRC) $(top_srcdir)/quanta/data/chars >> rc.cpp
 	$(XGETTEXT) `find . -name "*.cpp"` -o $(podir)/quanta.pot
- 
+
 KDE_ICON = quanta
- 
+
 # this is where the kdelnk file will go
 kdelnkdir = $(kde_appsdir)/Development
 kdelnk_DATA = quanta.desktop
- 
+
 # this is where the XML-GUI resource file goes
 rcdir = $(kde_datadir)/quanta
 rc_DATA = quantaui.rc
@@ -37,6 +37,6 @@ rc_DATA = quantaui.rc
 
 INCLUDES = -I$(top_srcdir)/quanta/dialogs -I$(top_srcdir)/quanta/plugins -I$(top_srcdir)/quanta/tagdialogs -I$(top_srcdir)/quanta/toolbar -I$(top_builddir)/quanta/toolbar -I$(top_builddir)/quanta/tagdialogs -I$(top_builddir)/quanta/plugins -I$(top_builddir)/quanta/dialogs $(all_includes)
 
-AM_CFLAGS = 
-AM_CXXFLAGS = 
-AM_FFLAGS = 
+AM_CFLAGS =
+AM_CXXFLAGS =
+AM_FFLAGS =

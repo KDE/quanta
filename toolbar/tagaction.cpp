@@ -261,7 +261,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   } else
   if ( scriptOutputDest == "file" )
   {
-    m_file->writeBlock(buffer, buflen + 1);
+    m_file->writeBlock(buffer, buflen);
   }
 
   firstOutput = false;

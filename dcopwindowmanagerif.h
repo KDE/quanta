@@ -27,7 +27,8 @@ class DCOPWindowManagerIf : virtual public DCOPObject
   k_dcop:
 
   virtual int currentEditorIfNum() const = 0;
-  virtual QString currentURL() const =0;
+  virtual QString currentURL() const = 0;
+  virtual QString projectURL() const = 0;
 };
 
 #endif

@@ -143,8 +143,8 @@ public:
   void removeContainer(QWidget *container, QWidget *parent, QDomElement &element, int id );
   /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
   void processDTD(const QString& documentType = QString::null);
-  /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
-  KURL projectBaseURL();
+/** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
+  KURL projectBaseURL() const;
 
   KURL::List userToolbarFiles();
   /** Returns the project (if there is one loaded) or global default encoding. */
@@ -153,6 +153,8 @@ public:
   int currentEditorIfNum() const;
   /** Return the URL of the currently active document */
   QString currentURL() const;
+  /** Return the URL of the currently project */
+  QString projectURL() const;
 
   /** reparse current document and initialize node. */
   void reparse(bool force);

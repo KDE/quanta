@@ -76,6 +76,9 @@ private:
   int openId;
   FilesTreeFolder *projectDir;
   QuantaPropertiesPageDlg *quantaProperties;
+  /** Filters the template through and action, and returns the modified/filtered
+  template file */
+  KURL filterTemplate();
 
 signals: // Signals
   /** No descriptions */

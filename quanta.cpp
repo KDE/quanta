@@ -2756,7 +2756,7 @@ void QuantaApp::slotParsingDTDChanged(const QString& newDTDName)
 }
 
 /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
-KURL QuantaApp::projectBaseURL()
+KURL QuantaApp::projectBaseURL() const
 {
   KURL result;
   if  ( m_project->hasProject())
@@ -2984,6 +2984,11 @@ QString QuantaApp::currentURL() const
   {
     return m_view->oldWrite->url().url();
   }
+}
+
+QString QuantaApp::projectURL() const
+{
+  return projectBaseURL().url();
 }
 
 void QuantaApp::slotExpandAbbreviation()
