@@ -33,6 +33,7 @@
 
 //remove the below ones when KPasteAction is removed
 #include <dcopclient.h>
+#include <dcopref.h>
 #include <kdebug.h>
 #include <kpopupmenu.h>
 #include <ktoolbar.h>
@@ -565,16 +566,15 @@ void KPasteAction::menuAboutToShow()
     m_popup->clear();
     QStringList list;
     DCOPClient *client = kapp->dcopClient();
-    if (client->isAttached()){
-        if (client->isApplicationRegistered("klipper")) {
-          QByteArray data;
-          QCString replyType;
-          QByteArray replyData;
-          if (client->call("klipper", "klipper", "getClipboardHistoryMenu()", data, replyType, replyData, false)) {
-            QDataStream replyStream(replyData, IO_ReadOnly);
-            replyStream >> list;
-          }
-        }
+    if (client->isAttached() &&
+        client->isApplicationRegistered("klipper"))
+    {
+      DCOPRef klipper("klipper","klipper");
+      DCOPReply reply = klipper.call("getClipboardHistoryMenu");
+      if (reply.isValid())
+      {
+        list = reply;
+      }
     }
     QString clipboardText = qApp->clipboard()->text(QClipboard::Clipboard);
     if (list.isEmpty())
@@ -594,18 +594,12 @@ void KPasteAction::menuAboutToShow()
 void KPasteAction::menuItemActivated( int id)
 {
     DCOPClient *client = kapp->dcopClient();
-    if (client->isAttached()){
-         if (client->isApplicationRegistered("klipper")) {
-           QByteArray data;
-           QDataStream arg(data, IO_WriteOnly);
-           arg << m_popup->text(id);
-           QCString replyType;
-           QByteArray replyData;
-           if (client->send("klipper", "klipper", "setClipboardContents(QString)", data)) {
-             kdDebug(24000) << "Clipboard: " << qApp->clipboard()->text(QClipboard::Clipboard) << endl;
-           }
-         }
-      }
+    if (client->isAttached() && client->isApplicationRegistered("klipper"))
+    {
+      DCOPRef klipper("klipper","klipper");
+      if (klipper.send("setClipboardContents", m_popup->text(id)))
+        kdDebug(24000) << "Clipboard: " << qApp->clipboard()->text(QClipboard::Clipboard) << endl;
+    }
     QTimer::singleShot(20, this, SLOT(slotActivated()));
 }
 
