@@ -1,7 +1,7 @@
 <tip category="IO">
 <html>
 <p>...that you can use ftp for file operations by using
-<b>ftp://user:pwd@domain/path</b> in the file dialog?
+<b>ftp://user@domain/path</b> in the file dialog? It will prompt you for your password.
 </p>
 </html>
 </tip>
@@ -9,7 +9,7 @@
 <tip category="IO">
 <html>
 <p>...that you can use SSH/SCP for file operations by using
-<b>fish://user@domain/path</b> in the file dialog?
+<b>fish://user@domain/path</b> in the file dialog? It will prompt you for your password.
 </p>
 </html>
 </tip>
@@ -25,7 +25,7 @@ by default from <b>Settings &gt; Configure Editor::Defaults</b>?
 <tip category="Application">
 <html>
 <p>...that you can create actions that will run scripts from
-<b>Settings &gt; Configure Actions</b> and place them on the toolbar?
+<b>Settings &gt; Configure Actions</b> and place them on the toolbar? You can even assign hot keys to them.
 </p>
 </html>
 </tip>
@@ -33,7 +33,7 @@ by default from <b>Settings &gt; Configure Editor::Defaults</b>?
 <tip category="Application">
 <html>
 <p>...that you can create custom toolbars and even make them project
-specific?
+specific? You can customize any of Quanta's toolbars too.
 </p>
 </html>
 </tip>
@@ -41,7 +41,7 @@ specific?
 <tip category="Project">
 <html>
 <p>...that you can create remote projects and manage them with the
-<b>kio slave of your choice</b>?
+<b>kio slave of your choice</b>? Look in the project settings dialog.
 </p>
 </html>
 </tip>
@@ -95,9 +95,7 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 
 <tip category="Application">
 <html>
-<p>...that you can add new local and remote top level folders to the Files Tree?
-Use <b>RMB New Top Folder...</b> and select a local folder or enter the remote
-server name in form of <i>ftp://user@server</i> and select the remote folder.
+<p>...that you can add new local and remote top level folders to the Files Tree? Use <b>RMB New Top Folder...</b> and select a local folder or enter the remote server name in form of <i>ftp://user@server</i> and select the remote folder.
 </p>
 </html>
 </tip>
@@ -111,28 +109,42 @@ server name in form of <i>ftp://user@server</i> and select the remote folder.
 
 <tip category="Information">
 <html>
-<p>...that we have a mailing list for users at <b>http://mail.kde.org/mailman/listinfo/quanta</b>?
+<p>...that we have a mailing list for users at <b><a href="http://mail.kde.org/mailman/listinfo/quanta">http://mail.kde.org/mailman/listinfo/quanta</a></b>?
+</p>
+</html>
+</tip>
+
+<tip category="Information">
+<html>
+<p>...that we have additional mailing lists to support our users? <b><a href="http://mail.kdewebdev.org/mailman/listinfo">Click here to see</a></b>.
+</p>
+</html>
+</tip>
+
+<tip category="Information">
+<html>
+<p>...that you can help to financially support our program of sponsoring developers? <b><a href="http://quanta.sourceforge.net/main1.php?actfile=donate">Click here to help</a></b>.
 </p>
 </html>
 </tip>
 
 <tip category="Application">
 <html>
-<p>...that you can use quanta to enable new DTDs using our <b>tagxml DTD</b>?
+<p>...that you can use quanta to enable new DTDs using our <b>tagxml DTD</b>? Quanta can even import a DTD for you.
 </p>
 </html>
 </tip>
 
 <tip category="Application">
 <html>
-<p>...that you can use <b>Kommander</b> to create custom dialogs for Quanta?
+<p>...that you can use <b>Kommander</b> to create custom dialogs for Quanta? Open the editor with <i>kmdr-editor</i> or run a dialog with <i>kmdr-executor mydialog.kmdr</i>.
 </p>
 </html>
 </tip>
 
 <tip category="Application">
 <html>
-<p>...that Quanta has a visual <b>problem reporter</b>? Switch to the <b>Structure Tree</b> and make the problem description widget visible with <b>View &gt; Show Problem Reporter</b>.
+<p>...that Quanta has a visual <b>problem reporter</b> for your current DTD? Switch to the <b>Structure Tree</b> and make the problem description widget visible with <b>View &gt; Show Problem Reporter</b>.
 </p>
 </html>
 </tip>
@@ -143,3 +155,67 @@ server name in form of <i>ftp://user@server</i> and select the remote folder.
 </p>
 </html>
 </tip>
+
+<tip category="Application">
+<html>
+<p>...that you can set the file tabs to one of three modes for close buttons? You can set them to never, always or delay/hover in <b>Settings &gt; Configure Quanta::User Interface</b>.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that the file tabs now have popup menus? <b>RMB on a file tab</b> and you can even select which open file to view from a menu list.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that Quanta comes with a number of applications that run a plug ins? Quanta can also load other programs if they are installed including HTML Tidy, Cervisia and Kompare. Make sure you have HTML Tidy and the kdesdk module installed to use them all.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can use Cervisia to manage CVS from inside Quanta? <b>Click on the Cervisia icon</b> and and it will load up the current project directory (if it is CVS). If you've never used CVS Cervisia has great help files and setting up a local repository is easy.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can use KFileReplace to find and replace across your entire project? <b>Click on the KFileReplace button</b> and you can set extensive configurations, use multi line values and wild cards and even go to the files found in Quanta.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can create image maps easily with Quanta? <b>Select KImageMapEditor from the Plugins menu</b> and you have estensive options at your fingertips.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can debug XSL from within Quanta? <b>Click on the XSL icon for KXSL Dbg</b> and Quanta will load an interactive XSL debugger.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that Quanta has XML tools for things like XSL Transforms? <b>Select the scripts tree on the left</b> and you will find several Kommander dialogs that use your installed libxml libraries.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that Quanta has a local script library for useful scripts? <b>Select the scripts tree on the left</b> and you will find scripts and Kommander dialogs for doc generation, Quick Start, XSL Transforms and more.
+</p>
+</html>
+</tip>
+
