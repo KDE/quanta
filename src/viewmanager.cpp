@@ -131,7 +131,7 @@ void ViewManager::createNewDocument()
   m_lastActiveEditorView = view;
 }
 
-bool ViewManager::removeView(QuantaView *view, bool force)
+bool ViewManager::removeView(QuantaView *view, bool force, bool unlinkOnly)
 {
     if (view)
     {
@@ -143,8 +143,10 @@ bool ViewManager::removeView(QuantaView *view, bool force)
             m_lastActiveView = 0L;
         if (view == m_lastActiveEditorView)
             m_lastActiveEditorView = 0L;
-        ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
-        quantaApp->closeWindow(view);
+        if (view == activeView())
+            ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
+        if (!unlinkOnly)
+            quantaApp->closeWindow(view);
         if (allEditorsClosed())
         {
             createNewDocument();
@@ -491,9 +493,9 @@ void ViewManager::slotCloseView()
 void ViewManager::slotCloseRequest(QWidget *widget)
 {
   kdDebug(24000) << widget << endl;
-   QuantaView *view = static_cast<QuantaView *>(widget);
+   QuantaView *view = dynamic_cast<QuantaView *>(widget);
    if (view)
-      removeView(view);
+      removeView(view, false, true);
 }
 
 #include "viewmanager.moc"

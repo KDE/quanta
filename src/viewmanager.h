@@ -42,8 +42,11 @@ public:
   /** Creates a QuantaView object */
   QuantaView *createView();
   /** Removes a QuantaView object. Returns false on failure (eg. the view was not saved and it refused
-  the delete itself.) If force is true, the view is removed without asking for save.*/
-  bool removeView(QuantaView *view, bool force = false);
+  the delete itself.) If force is true, the view is removed without asking for save.
+  If unlinkOnly is true, the actual removal is not done. Important to avoid double deletions
+  in certain cases.
+  */
+  bool removeView(QuantaView *view, bool force = false, bool unlinkOnly = false);
   /** Returns the active view */
   QuantaView *activeView();
   /** Returns the active document or 0L */
