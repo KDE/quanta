@@ -34,14 +34,19 @@ public:
 	/**
 	 * This function returns the next Node after _node.
 	 * @param _node It is the Node from which we want the next Node.
-	 * @param goingTowardsRootNode This boolean specifies if we should go up or down in the tree.
+	 * @param goUp This boolean specifies if we should go up or down in the tree.
 	 * For a normal use, It must be set to false at the
 	 * beginning and then the same boolean must be used when using
 	 * several times this function.
 	 * @param endNode Specifies at which Node the search should end.
 	 * @return Returns the next Node.
 	 */
-	Node *getNextNode(Node *_node, bool &goingTowardsRootNode, Node *endNode = 0L);
+	Node *getNextNode(Node *_node, bool &goUp, Node *endNode = 0L);
+
+	/**
+	 * Prints in stdout the current Node tree.
+	 */
+	void coutTree(Node *node, int indent);
 
 	 /**
 	 *@return Returns true if the kafkaPart is loaded. It does not imply that

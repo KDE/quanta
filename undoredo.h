@@ -200,6 +200,9 @@ private:
 
 private:
 	int _listLimit;
+	bool _merging;
+	bool addingText;
+	QValueList<int> _currentLoc;
 	QValueList<NodeModifsSet>::iterator editorIterator;
 	QValueList<NodeModifsSet>::iterator kafkaIterator;
 	Document *_doc;

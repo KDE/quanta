@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "kafkahtmlview.moc"
+#include "kafkahtmlpart.h"
 
 KafkaHTMLView::KafkaHTMLView(KafkaHTMLPart *part, QWidget *parent, const char *name)
 	: KHTMLView(part, parent, name)

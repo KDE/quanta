@@ -32,6 +32,7 @@ undoRedo::undoRedo(Document *doc)
 {
 	//TODO:add it to the config
 	_listLimit = 50;
+	_merging = false;
 	_mergeNext = false;
 	//add a first empty NodeModifs struct
 	NodeModifsSet modifs;
@@ -48,10 +49,17 @@ undoRedo::~undoRedo()
 void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 {
 	QValueList<NodeModifsSet>::iterator it;
-	QValueList<NodeModif>::iterator it2;
+	QValueList<NodeModif>::iterator it2, it3, it4;
 	NodeModifsSet modifications;
+	Node *n;
+	QValueList<int> loc;
+	bool beginToMerge = false;
+	bool noMerge = false;
+	bool textTyped;
+
 	if(_mergeNext)
 	{
+		//we merge modifs with the previous NodeModifsSet
 		for(it2 = modifs.NodeModifList.begin(); it2 != modifs.NodeModifList.end(); it2++)
 		{
 			(*fromLast()).NodeModifList.append(*it2);
@@ -66,28 +74,174 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 		_dontAddModifSet--;
 	if(_dontAddModifSet == 0)
 	{
+		//we don't add the modifsset
 		_dontAddModifSet = -1;
 		//debugOutput();
 		return;
 	}
 
-	if(!empty())
+	//we remove the unnecessary Node Modifs
+	//WARNING : this is based on the parser::rebuild() behavior
+	//any changes to it might compromise this!
+	//A NodeModifSet is supposed to be : X*NodeRemoved, X*NodeAdded, [NodeRemoved, NodeModified]
+	while(!modifs.NodeModifList.empty())
 	{
-		/** A new UndoRedo struct : if we are in the middle of the stack, we delete the end of the stack*/
-		if(fromLast() != end() && editorIterator != fromLast())
+		it3 = modifs.NodeModifList.fromLast();
+		if((*it3).type == undoRedo::NodeModified)
 		{
-			it = editorIterator;
-			it++;
-			while(it != end())
+			//A text node is merging, we don't wan't to touch this
+			it3--;
+			if(it3 == modifs.NodeModifList.begin())
+				break;
+			it3--;
+			if(it3 == modifs.NodeModifList.begin() || (*it3).type != undoRedo::NodeAdded)
+				break;
+		}
+		it2 = modifs.NodeModifList.begin();
+		if((*it2).type != undoRedo::NodeRemoved)
+			break;
+		while(it2 != modifs.NodeModifList.end() && (*it2).type == undoRedo::NodeRemoved)
+		{
+			it4 = it2;
+			it2++;
+		}
+		it2 = it4;
+		//comparing it3, last NodeAdded, and it2, last NodeRemoved
+		n = getNodeFromLocation((*it3).location);
+		if(!n)
+		{
+			kdDebug(24000)<< "undoRedo::addNewModifsSet - ERROR1 - merging failed" << endl;
+			break;
+		}
+		//kdDebug(24000)<< n->tag->tagStr() << " - " << (*it2).node->tag->tagStr() << endl;
+		if(n->tag->tagStr() == (*it2).node->tag->tagStr())
+		{
+			//One node is removed, and the same one is replaced. Delete this two NodeModifs.
+			modifs.NodeModifList.remove(it2);
+			modifs.NodeModifList.remove(it3);
+		}
+		else
+			break;
+	}
+
+	//Now merging, if possible, this NodeModifsSet. != of the first merging.
+	//adding a text => 1*undoRedo::NodeAdded, modifying a text => 1*undoRedo::NodeRemoved + 1*undoRedo::NodeAdded
+	//removing a text => 1*undoRedo::NodeRemoved.
+	//adding a tag: [1*undoRedo::NodeRemoved + 1*undoRedo::NodeAdded] + 1*undoRedo::NodeAdded
+	//modifying a tag : 1*undoRedo::NodeRemoved + 1*undoRedo::NodeAdded
+	//removing a tag => 1*undoRedo::NodeRemoved + 2*undoRedo::NodeAdded [+ 1*undoRedo::NodeAdded]
+	if(_merging && editorIterator != fromLast())
+	{
+		//we can't merge if we are in the middle of the undo stack
+		_merging = false;
+	}
+	else if(modifs.NodeModifList.count() == 1 && modifs.NodeModifList.first().type == undoRedo::NodeAdded)
+	{
+		//the beginning of a text or a tag
+		_merging = true;
+		beginToMerge = true;
+		_currentLoc = modifs.NodeModifList.last().location;
+		addingText = true;
+	}
+	else if(modifs.NodeModifList.count() == 1 && modifs.NodeModifList.first().type == undoRedo::NodeRemoved)
+	{
+		//removing the last char of a text or tag
+		if(_merging == true)
+		{
+			(*editorIterator).NodeModifList.remove((*editorIterator).NodeModifList.fromLast());
+			(*editorIterator).NodeModifList.append(modifs.NodeModifList.last());
+			(*editorIterator).cursorX2 = modifs.cursorX2;
+			(*editorIterator).cursorY2 = modifs.cursorY2;
+			_merging = false;
+			noMerge = true;
+		}
+		//else _merging == false, simply append modifs
+	}
+	else if(modifs.NodeModifList.count() == 2 && modifs.NodeModifList[0].type == undoRedo::NodeRemoved &&
+		modifs.NodeModifList[1].type == undoRedo::NodeAdded && modifs.NodeModifList[0].location ==
+		modifs.NodeModifList[1].location)
+	{
+		n = getNodeFromLocation(modifs.NodeModifList[1].location);
+		textTyped = (n->tag->tagStr().length() >= modifs.NodeModifList[0].node->tag->tagStr().length());
+		if(_merging == false || (addingText != textTyped && modifs.NodeModifList[0].node->tag->type == Tag::Text))
+		{
+			//we are editing a [new] text or tag
+			beginToMerge = true;
+			_merging = true;
+			_currentLoc = modifs.NodeModifList.last().location;
+		}
+		else if(modifs.NodeModifList[0].location == _currentLoc && modifs.NodeModifList[1].location == _currentLoc)
+		{
+			//we are editing a text or tag, and a merge was already started
+			(*editorIterator).NodeModifList.remove((*editorIterator).NodeModifList.fromLast());
+			(*editorIterator).NodeModifList.append(modifs.NodeModifList.last());
+			(*editorIterator).cursorX2 = modifs.cursorX2;
+			(*editorIterator).cursorY2 = modifs.cursorY2;
+		}
+		else
+			_merging = false;
+		addingText = textTyped;
+	}
+	else if((modifs.NodeModifList.count() == 3 || modifs.NodeModifList.count() == 4) &&
+		modifs.NodeModifList[0].type == undoRedo::NodeRemoved &&
+		modifs.NodeModifList[1].type == undoRedo::NodeAdded && modifs.NodeModifList[0].location ==
+		modifs.NodeModifList[1].location && modifs.NodeModifList.last().type == undoRedo::NodeAdded)
+	{
+		n = getNodeFromLocation(modifs.NodeModifList[2].location);
+		loc = _currentLoc;
+		loc.last()++;
+		if(!n)
+		{
+			kdDebug(24000)<< "undoRedo::addNewModifsSet - ERROR2 - merging failed" << endl;
+			return;
+		}
+		if(_merging == false || (_merging == true && modifs.NodeModifList.count() == 3 && n->tag->tagStr().left(1) == "<"))
+		{
+			//Beginning a Tag or (||) starting a tag in a currently edited text.
+			_merging = true;
+			beginToMerge = true;
+			_currentLoc = modifs.NodeModifList.last().location;
+		}
+		else if(modifs.NodeModifList[0].location == _currentLoc && modifs.NodeModifList[1].location == _currentLoc &&
+		modifs.NodeModifList[2].location == loc)
+		{
+			//Adding the final ">" in the tag.
+			(*editorIterator).NodeModifList.remove((*editorIterator).NodeModifList.fromLast());
+			(*editorIterator).NodeModifList.append(modifs.NodeModifList[1]);
+			(*editorIterator).NodeModifList.append(modifs.NodeModifList[2]);
+			if(modifs.NodeModifList.count() == 4)
+				(*editorIterator).NodeModifList.append(modifs.NodeModifList[3]);
+			(*editorIterator).cursorX2 = modifs.cursorX2;
+			(*editorIterator).cursorY2 = modifs.cursorY2;
+		}
+		else
+			_merging = false;
+	}
+	else
+		_merging = false;
+
+	if((!_merging || beginToMerge) && !noMerge)
+	{
+		//inserting the NodeModifsSet
+		if(!empty())
+		{
+			// if we are in the middle of the stack, we delete the end of the stack
+			if(fromLast() != end() && editorIterator != fromLast())
 			{
-				it = erase(it);
+				it = editorIterator;
+				it++;
+				while(it != end())
+				{
+					it = erase(it);
+				}
 			}
 		}
+		append(modifs);
+		while(count() > (unsigned)_listLimit)
+			remove(begin());
+		editorIterator = fromLast();
 	}
-	append(modifs);
-	while(count() > (unsigned)_listLimit)
-		remove(begin());
-	editorIterator = fromLast();
+
 	/** A lot more to do:
 	 * -NodeModifs fusionning in case of typing text multiple times, and also for some similar
 	 * actions like NodeCreated and then just after NodeModified.
@@ -114,7 +268,7 @@ bool undoRedo::undo(bool kafkaUndo)
 		if(!UndoNodeModif(*it, kafkaUndo))
 			return false;
 		kdDebug(24000) << "NodeModif type :" << (*it).type <<" undoed!" << endl;
-		coutTree(baseNode, 2);
+		//coutTree(baseNode, 2);
 		if(it == (*editorIterator).NodeModifList.begin())
 			break;
 		it--;

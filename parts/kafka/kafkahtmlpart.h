@@ -33,6 +33,8 @@
 #include <dom/dom2_range.h>
 #include <dom/dom_element.h>
 
+#include "kafkahtmlview.h"
+
 
 //*** if you want a very useful DOMTreeView attached to the kafkahtmlPart ***//
 #define KAFKA_DEBUG_UTILITIES

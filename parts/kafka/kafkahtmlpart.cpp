@@ -42,7 +42,6 @@
 #include "domtreeview.h"
 #include "wkafkapart.h"
 #include "nodeproperties.h"
-#include "kafkahtmlview.h"
 #include "kafkahtmlpart.moc"
 
 class KafkaHTMLPartPrivate

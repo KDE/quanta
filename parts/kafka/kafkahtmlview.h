@@ -20,13 +20,12 @@
 
 #include <khtmlview.h>
 
-#include "kafkahtmlpart.h"
-
+class KafkaHTMLPart;
 
 class KafkaHTMLView : public KHTMLView
 {
 Q_OBJECT
-public: 
+public:
 	KafkaHTMLView(KafkaHTMLPart *part, QWidget *parent, const char *name);
 	~KafkaHTMLView();
 
