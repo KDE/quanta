@@ -23,6 +23,14 @@
     <property name="caption">
         <string>Quick Start</string>
     </property>
+    <property name="populationText">
+        <string></string>
+    </property>
+    <property name="associations" stdset="0">
+        <stringlist>
+            <string></string>
+        </stringlist>
+    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -91,6 +99,9 @@
             </property>
             <property name="flat">
                 <bool>false</bool>
+            </property>
+            <property name="populationText">
+                <string></string>
             </property>
             <property name="associations" stdset="0">
                 <stringlist>
@@ -388,6 +399,32 @@ echo '&lt;/head&gt;'</string>
                     </property>
                     <property name="title">
                         <string></string>
+                    </property>
+                    <property name="populationText">
+                        <string>@execBegin
+quanta=`dcop quanta-@parentPid`
+if [ -z "$quanta" ]; then
+    quanta=`dcop quanta`
+    if [ ! -z "$quanta" ]; then
+       quantadcop=quanta
+    fi
+else
+    quantadcop=quanta-@parentPid
+fi
+
+if [ ! -z "$quantadcop" ]; then
+   encoding=`dcop $quantadcop SettingsIf encoding`
+   dcop @dcopid KommanderIf setCurrentListItem ComboMetachar $encoding
+   dcop @dcopid KommanderIf setChecked CBMetaChar true
+   dtep=`dcop $quantadcop SettingsIf dtep`
+   dcop @dcopid KommanderIf setCurrentListItem DTEPselect "$dtep"
+fi
+@execEnd</string>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string></string>
+                        </stringlist>
                     </property>
                     <grid>
                         <property name="name">
@@ -812,6 +849,12 @@ echo "$PADDING&lt;/script&gt;"</string>
         <signal>toggled(bool)</signal>
         <receiver>phpFooterFile</receiver>
         <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>quickStartForm</sender>
+        <signal>widgetOpened()</signal>
+        <receiver>GroupBox2</receiver>
+        <slot>populate()</slot>
     </connection>
 </connections>
 <tabstops>
