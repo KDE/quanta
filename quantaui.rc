@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32010">
+<kpartgui name="quanta" version="32011">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -142,6 +142,9 @@
     <Action name="tools_send_dtd"/>
     <Separator/>
     <Action name="syntax_check"/>
+    <Action name="tidy_check" />
+    <Separator/>
+    <Action name="file_list"/>
   </Menu>
 
 
@@ -178,7 +181,7 @@
   <ToolBar name="mainToolBar" noMerge="1" fullWidth="false">
   <text>Main Toolbar</text>
     <Action name="file_new"     />
-    <Action name="qfile_open"    />
+    <Action name="file_open"    />
     <Action name="project_open" />
     <Separator/>
     <Action name="file_save"    />
@@ -219,28 +222,16 @@
   </ToolBar>
 
   <Menu name="popup_editor">
-    <Action name="file_open"/>
-    <Action name="file_save"/>
-    <Action name="file_close"/>
-    <Action name="file_list"/>
+    <Action name="edit_current_tag"/>
+    <Action name="context_help"/>
     <Action name="open_file_under_cursor"/>
     <Separator/>
-    <Action name="edit_undo" />
-    <Action name="edit_redo" />
+    <Action name="file_save"/>
+    <Action name="file_close"/>
+    <Action name="upload_file"/>
+    <Action name="upload_opened_files"/>
     <Separator/>
-    <Action name="edit_cut"  />
-    <Action name="edit_copy" />
-    <Action name="edit_paste"/>
-    <Separator/>
-    <Action name="edit_current_tag"/>
-    <Separator/>
-    <Action name="tools_spelling"/>
-    <Action name="syntax_check"/>
-    <Action name="tidy_check"/>
-    <Action name="context_help"/>
-    <Separator/>
-    <Action name="set_eol"/>
-    <Action name="set_highlight"/>
+    <Action name="file_list"/>
   </Menu>
 
   <ActionProperties>

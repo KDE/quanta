@@ -44,6 +44,7 @@
 #include <qeventloop.h>
 
 // include files for KDE
+#include <kdebug.h>
 #include <kurl.h>
 #include <kfile.h>
 #include <kcharsets.h>
@@ -131,6 +132,7 @@ KURL::List Project::fileNameList(bool check)
       }
     }
   }
+  m_projectFiles = list;
   return list;
 }
 
@@ -276,6 +278,7 @@ bool Project::createEmptyDom()
 
   //slotLoadProject( projectURL );
   dom.setContent( str);
+  m_projectFiles.clear();
   return true;
 }
 
@@ -1596,6 +1599,14 @@ void Project::setModified(bool modified)
 {
   m_modified = modified;
   emit newStatus();
+}
+
+/*Returns true if url is already in the project.*/
+bool Project::contains(const KURL& url)
+{
+  if (m_projectFiles.isEmpty())
+     fileNameList(false);
+  return (m_projectFiles.contains(QExtFileInfo::toRelative(url, baseURL)) > 0);
 }
 
 #include "project.moc"

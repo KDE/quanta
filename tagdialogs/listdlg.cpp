@@ -19,6 +19,7 @@
 
 //kde include
 #include <klistbox.h>
+#include <klocale.h>
 
 //qt includes
 #include <qpushbutton.h>
@@ -32,6 +33,7 @@ ListDlg::ListDlg(QStringList &entryList,QWidget* parent, const char *name )
    setMainWidget(listbox);
    showButtonApply(false);
    enableButtonSeparator(true);
+   setCaption(i18n("Opened files"));
 
    listbox->clear();
    listbox->insertStringList(entryList);

@@ -335,6 +335,8 @@ protected slots:
   /** Show the user mailing list sign up */
   void slotHelpUserList();
   void slotOpenFileUnderCursor();
+  void slotUploadFile();
+  void slotUploadOpenedFiles();
 
 protected:
   WHTMLPart *htmlPart();

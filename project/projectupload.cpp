@@ -125,6 +125,7 @@ void ProjectUpload::slotBuildTree()
 {
  KIO::UDSEntry entry;
  QString strUrl = QuantaCommon::qUrl(startUrl);
+ bool isDirectory = strUrl.endsWith("/");
  QString s;
  QDomElement el;
  QDomNodeList nl = p->dom.elementsByTagName("item");
@@ -138,7 +139,7 @@ void ProjectUpload::slotBuildTree()
  {
    el = nl.item(i).toElement();
    s = el.attribute("url");
-   if (startUrl.isEmpty() || s.startsWith(strUrl))
+   if (startUrl.isEmpty() || (s.startsWith(strUrl) && isDirectory) || s == strUrl)
    {
      QuantaCommon::setUrl(u, s);
      absUrl.setPath(p->baseURL.path(1)+u.path());
@@ -166,6 +167,8 @@ void ProjectUpload::slotBuildTree()
  totalText->setText(i18n("Building the tree..."));
  kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
  list->checkboxTree();
+ if (!startUrl.isEmpty())
+      expandAll();
  list->show();
  totalText->setText(i18n("Total:"));
  totalProgress->setValue(0);

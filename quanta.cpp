@@ -1546,18 +1546,22 @@ void QuantaApp::slotShowOpenFileList()
   KURL baseURL = projectBaseURL();
   fileList = m_doc->openedFiles(false);
 
-//A little trick. I fill in the list in reversed order.
-  for (int i = fileList.count()-1;  i >=0 ; i--)
+  for (uint i = 0; i < fileList.count(); i++)
   {
-    url = QExtFileInfo::toRelative(fileList[i], baseURL);
-    openList.append(url.url());
+    url = fileList[i];
+    if (m_project->hasProject())
+    {
+      url = QExtFileInfo::toRelative(url, baseURL);
+      if (url.protocol() == baseURL.protocol())
+         url.setProtocol("");
+    }
+    openList.append(url.prettyURL());
   }
 
   ListDlg listDlg(openList);
   if (listDlg.exec())
   {
-  //This "complex" read-out is due to the reversed list.
-    KURL docURL= fileList[openList.count() - listDlg.getEntryNum() - 1];
+    KURL docURL= fileList[listDlg.getEntryNum()];
     m_view->writeTab()->showPage(m_doc->isOpened(docURL));
   }
 }
@@ -1660,23 +1664,27 @@ void QuantaApp::slotContextMenuAboutToShow()
         }
       }
     }
-    QPopupMenu *menu = dynamic_cast<QPopupMenu*>(factory()->container("popup_editor", quantaApp));
     KAction *action = actionCollection()->action("open_file_under_cursor");
-    if (menu && !name.isEmpty())
-    {
-      QuantaCommon::setUrl(urlUnderCursor, name.stripWhiteSpace());
-      KURL baseUrl = QExtFileInfo::path(m_view->write()->url());
-      urlUnderCursor = QExtFileInfo::toAbsolute(urlUnderCursor, baseUrl);
-      if (action)
-      {
-        action->setText(i18n("Open File: %1").arg(urlUnderCursor.prettyURL()));
-        action->setEnabled(true);
-      }
-    } else
     if (action)
     {
-      action->setText(i18n("Open File: none"));
-      action->setEnabled(false);
+      if (!name.isEmpty())
+      {
+        urlUnderCursor = KURL();
+        QuantaCommon::setUrl(urlUnderCursor, name.stripWhiteSpace());
+        KURL baseUrl = QExtFileInfo::path(m_view->write()->url());
+        urlUnderCursor = QExtFileInfo::toAbsolute(urlUnderCursor, baseUrl);
+        action->setText(i18n("Open File: %1").arg(urlUnderCursor.prettyURL()));
+        action->setEnabled(true);
+      } else
+      {
+        action->setText(i18n("Open File: none"));
+        action->setEnabled(false);
+      }
+    }
+    action = actionCollection()->action("upload_file");
+    if (action)
+    {
+      action->setEnabled(m_project->contains(m_view->write()->url()));
     }
   }
 }
@@ -3144,7 +3152,16 @@ void QuantaApp::slotExpandAbbreviation()
 
 
   }
+}
 
+void QuantaApp::slotUploadFile()
+{
+  m_project->slotUploadURL(m_view->write()->url());
+}
+
+
+void QuantaApp::slotUploadOpenedFiles()
+{
 }
 
 #include "quanta.moc"

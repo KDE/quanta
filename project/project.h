@@ -70,6 +70,7 @@ public:
   void setModified(bool modified);
   /** Returns the relative url with the prefix inserted. */
   KURL urlWithPrefix(const KURL& url);
+  bool contains(const KURL &url);
   /** Write property of QString defaultDTD. */
   virtual void setDefaultDTD( const QString& p_defaultDTD);
   /** Read property of QString defaultDTD. */
@@ -192,6 +193,7 @@ protected: // Protected attributes
   KURL oldURL;
   /** The new name of the url (used when renaming an url). */
   KURL newURL;
+  KURL::List m_projectFiles; //stores the last result of fileNameList call
 
   void openCurrentView();
 };

@@ -31,16 +31,11 @@
 
 #include "quantacommon.h"
 
-#include "quanta.h"
-#include "quantadoc.h"
-#include "document.h"
-#include "project/project.h"
+#include "resource.h"
 
 
 QConfig qConfig; //holds the main configuration settings
 QString tmpDir;
-
-extern QuantaApp *quantaApp;
 
 QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
 QRegExp scriptBeginRx;

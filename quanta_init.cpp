@@ -1563,7 +1563,7 @@ void QuantaApp::initActions()
 
     KStdAction::quit( this, SLOT( slotFileQuit() ), ac );
 
-   (void) new KAction( i18n( "&File List" ), ALT+Key_0, this,
+   (void) new KAction( i18n( "&List Opened Files..." ), ALT+Key_0, this,
                        SLOT( slotShowOpenFileList() ), ac, "file_list" );
 
     // Edit actions
@@ -1610,7 +1610,7 @@ void QuantaApp::initActions()
                         this, SLOT( slotEmailDTD() ),
                         ac, "tools_send_dtd" );
 
-    (void) new KAction( i18n( "&Syntax Check" ), 0,
+    (void) new KAction( i18n( "Weblint &Syntax Check" ), 0,
                         this, SLOT( slotToolSyntaxCheck() ),
                         ac, "syntax_check" );
 
@@ -1781,6 +1781,8 @@ void QuantaApp::initActions()
     KStdAction::forward(this, SLOT( slotForward() ), ac, "w_forward");
 
     new KAction(i18n("Open File: none"), 0, this, SLOT(slotOpenFileUnderCursor()), ac, "open_file_under_cursor");
+    new KAction(i18n("Upload..."), 0, this, SLOT(slotUploadFile()), ac, "upload_file");
+/*    new KAction(i18n("Upload Opened Project Files"), 0, this, SLOT(slotUploadOpenedFiles()), ac, "upload_opened_files"); */
 
     m_actions = new QDomDocument();
 //load the global actions
