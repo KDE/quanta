@@ -38,6 +38,7 @@ public:
   Node *node() const {return m_node;}
 
 public slots:
+  void slotDelayedSetCurrentNode();
   void slotParentSelected(int index);
   void editorContentChanged();
 
@@ -50,6 +51,7 @@ signals:
 
 private:
   Node *m_node;
+  Node *m_newNode;
   bool rebuildEnabled;
   ParentItem *m_parentItem;
 };

@@ -42,6 +42,7 @@ TagAttributeTree::TagAttributeTree(QWidget *parent, const char *name)
   addColumn(i18n("Value"));
   setResizeMode(QListView::LastColumn);
   m_node = 0L;
+  m_newNode = 0L;
   m_parentItem = 0L;
   rebuildEnabled = true;
 }
@@ -71,7 +72,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
     {
       if (!m_parentItem)
       {
-        group = new TopLevelItem(this, i18n("Parent tags"));
+        group = new TopLevelItem(this, 0L, i18n("Parent tags"));
         m_parentItem = new ParentItem(this, group);
       }
       m_parentItem->addNode(n);
@@ -79,7 +80,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
     n = n->parent;
   }
   if (m_parentItem)
-	    m_parentItem->showCombo(true);
+      m_parentItem->showList(true);
   if (group)
      group->setOpen(true);
 //  if (!node->tag->nameSpace.isEmpty())
@@ -188,20 +189,27 @@ void TagAttributeTree::setCurrentItem( QListViewItem *item )
 void TagAttributeTree::slotParentSelected(int index)
 {
   if (m_parentItem)
-      setCurrentNode(m_parentItem->node(index));
+  {
+    m_newNode = m_parentItem->node(index);
+    QTimer::singleShot(0, this, SLOT(slotDelayedSetCurrentNode()));
+  }
 }
 
 void TagAttributeTree::slotCollapsed(QListViewItem *item)
 {
   if (m_parentItem && item == m_parentItem->parent())
-      m_parentItem->showCombo(false);
+      m_parentItem->showList(false);
 }
 
 void TagAttributeTree::slotExpanded(QListViewItem *item)
 {
   if (m_parentItem && item == m_parentItem->parent())
-      m_parentItem->showCombo(true);
+      m_parentItem->showList(true);
 }
 
+void TagAttributeTree::slotDelayedSetCurrentNode()
+{
+  setCurrentNode(m_newNode);
+}
 
 #include "tagattributetree.moc"

@@ -15,6 +15,7 @@
 #include <qcombobox.h>
 #include <qheader.h>
 #include <qlineedit.h>
+#include <qlistbox.h>
 #include <qpainter.h>
 #include <qstyle.h>
 
@@ -24,6 +25,7 @@
 #include <klistview.h>
 #include <klocale.h>
 #include <kurlrequester.h>
+#include <kdebug.h>
 
 //app includes
 #include "tagattributeitems.h"
@@ -75,7 +77,7 @@ ParentItem::ParentItem(TagAttributeTree *listView, QListViewItem* parent)
 : KListViewItem(parent)
 {
   m_listView = listView;
-  combo = new QComboBox(false, m_listView->viewport() );
+  comboBox = new QComboBox(false, m_listView->viewport() );
   QRect r = m_listView->itemRect( this );
   if ( !r.size().isValid() )
   {
@@ -85,13 +87,15 @@ ParentItem::ParentItem(TagAttributeTree *listView, QListViewItem* parent)
   r.setX( m_listView->header()->sectionPos( 0 ) + 20);
   r.setWidth( m_listView->header()->sectionSize( 0 ) - 20);
   r = QRect( m_listView->viewportToContents( r.topLeft() ), r.size() );
-  combo->resize( r.size() );
-  m_listView->moveChild( combo, r.x(), r.y() );
+  comboBox->resize( r.size() );
+  m_listView->moveChild( comboBox, r.x(), r.y() );
 }
 
 ParentItem::~ParentItem()
 {
-  delete combo;
+  kdDebug(24000) << "ParentItem deleted" << endl;
+  showList(false);
+  delete comboBox;
 }
 
 
@@ -114,7 +118,7 @@ void ParentItem::addNode(Node *node)
   if (node)
   {
     m_nodeList.append(node);
-    combo->insertItem(node->tag->name);
+    comboBox->insertItem(node->tag->name);
   }
 }
 
@@ -123,18 +127,18 @@ Node* ParentItem::node(int index)
   return m_nodeList.at(index);
 }
 
-void ParentItem::showCombo(bool show)
+void ParentItem::showList(bool show)
 {
   if (show)
-	{
-      combo->show();
-      QObject::connect(combo, SIGNAL(activated(int)), m_listView, SLOT(slotParentSelected(int)));
-	}
+  {
+      comboBox->show();
+      QObject::connect(comboBox, SIGNAL(activated(int)), m_listView, SLOT(slotParentSelected(int)));
+  }
   else
-	{
-      combo->hide();
-      QObject::disconnect(combo, SIGNAL(activated(int)), m_listView, SLOT(slotParentSelected(int)));
-	}
+  {
+      comboBox->hide();
+      QObject::disconnect(comboBox, SIGNAL(activated(int)), m_listView, SLOT(slotParentSelected(int)));
+  }
 }
 
 //Generic attribute item

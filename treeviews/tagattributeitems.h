@@ -50,7 +50,7 @@ public:
     virtual ~ParentItem();
     Node *node(int index);
     void addNode(Node *node);
-    void showCombo(bool show);
+    void showList(bool show);
 
 protected:
 
@@ -59,7 +59,7 @@ protected:
 
 private:
     QPtrList<Node> m_nodeList;
-    QComboBox *combo;
+    QComboBox *comboBox;
     TagAttributeTree *m_listView;
 };
 
@@ -91,6 +91,7 @@ class AttributeNameSpaceItem:public AttributeItem
 public:
     AttributeNameSpaceItem(QListViewItem* parent, const QString& title, const QString& title2): AttributeItem(parent, title, title2){};
     AttributeNameSpaceItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2):AttributeItem(listView, parent, title, title2){};
+    virtual ~AttributeNameSpaceItem(){};
 
 };
 
