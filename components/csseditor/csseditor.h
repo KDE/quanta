@@ -94,7 +94,7 @@ class CSSEditor : public CSSEditorS
     
   public:
     
-    CSSEditor(QWidget* parent=0, const char *name=0){};
+    CSSEditor(QWidget* parent=0, const char *name=0): CSSEditorS(parent, name){}
     CSSEditor( QListViewItem * i, QWidget* parent=0, const char *name=0);
     ~CSSEditor(); 
     void initialize();

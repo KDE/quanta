@@ -81,7 +81,7 @@ class URIEditor : public TLPEditor {
     URIEditor(QWidget *parent, const char* name=0);
     void setMode(const mode& m);
     void setResourceType(const  URIResourceType& r) { m_resourceType = r ; }
-    virtual void setInitialValue(const QString& s){}
+    virtual void setInitialValue(const QString& /*s*/){}
     virtual void connectToPropertySetter(propertySetter* p);
 
   public slots:

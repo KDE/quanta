@@ -33,7 +33,7 @@ class doubleEditorBase : public miniEditor {
     doubleEditorBase(QWidget *parent=0, const char *name=0);
     virtual ~doubleEditorBase(){}
     virtual void setInitialValue(){}
-    virtual void connectToPropertySetter(propertySetter* p){};
+    virtual void connectToPropertySetter(propertySetter* /*p*/){}
 
    public slots:
      void sxValueSlot(const QString&);

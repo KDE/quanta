@@ -34,8 +34,8 @@ public:
 
 public slots:
     void openCSSEditor();
-    virtual void connectToPropertySetter(propertySetter* p){}
-    virtual void setInitialValue(const QString& s){}
+    virtual void connectToPropertySetter(propertySetter* /*p*/){}
+    virtual void setInitialValue(const QString& /*s*/){}
 };
 
 
