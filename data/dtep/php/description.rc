@@ -1,16 +1,13 @@
 [General]
 Name = PHP
 DefaultExtension = php
-Groups =
 NumOfPages = 0
 CaseSensitive = true
 Family = 2
 
 [Extra tags]
-
 List = apache_lookup_uri
 DefaultAttrType = string
-
 apache_lookup_uri = filename
 
 [Extra rules]

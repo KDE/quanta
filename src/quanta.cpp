@@ -261,7 +261,7 @@ QuantaApp::~QuantaApp()
  // disconnect(m_htmlPart, SIGNAL(destroyed(QObject *)));
  // disconnect(m_htmlPartDoc, SIGNAL(destroyed(QObject *)));
   disconnect(this, SIGNAL(lastChildViewClosed()), ViewManager::ref(), SLOT(slotLastViewClosed()));
-  kdDebug(24000) << "QuantaApp::~QuantaApp" << endl;
+  //kdDebug(24000) << "QuantaApp::~QuantaApp" << endl;
 #ifdef ENABLE_CVSSERVICE
  delete CVSService::ref();
 #endif
@@ -3906,7 +3906,7 @@ bool QuantaApp::queryClose()
   }
   if (canExit)
   {
-    kdDebug(24000) << "Quanta will exit" << endl;
+   // kdDebug(24000) << "Quanta will exit" << endl;
     emit eventHappened("quanta_exit", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
   }
   return canExit;

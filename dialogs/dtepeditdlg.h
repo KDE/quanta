@@ -77,6 +77,7 @@ class DTEPEditDlg : public DTEPEditDlgS
     void writePages(KConfig *config);
     void writeParserRules(KConfig *config);
     void writeStructures(KConfig *config);
+    void writeEntry(KConfig *config, const QString &key, const QString &value);
     
   QString m_descriptionFile;
   KConfig *m_config;

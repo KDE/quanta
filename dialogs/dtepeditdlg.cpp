@@ -225,19 +225,21 @@ void DTEPEditDlg::saveResult()
 void DTEPEditDlg::writeGeneral(KConfig *config)
 {  
   config->setGroup("General");
-  config->writeEntry("Name", nameEdit->text());
-  config->writeEntry("NickName", nickNameEdit->text());
+  writeEntry(config, "Name", nameEdit->text());
+  writeEntry(config, "NickName", nickNameEdit->text());
   config->writeEntry("Family", typeCombo->currentItem() + 1);
   config->writeEntry("CaseSensitive", caseSensitive->isChecked());
-  config->writeEntry("Inherits", inheritsCombo->currentText());
-  config->writeEntry("URL", urlEdit->text());
-  config->writeEntry("DoctypeString", doctypeEdit->text());
+  writeEntry(config, "Inherits", inheritsCombo->currentText());
+  writeEntry(config, "URL", urlEdit->text());
+  writeEntry(config, "DoctypeString", doctypeEdit->text());
+  writeEntry(config, "DefaultExtension", extensionEdit->text());
+  writeEntry(config, "MimeTypes", extensionEdit->text());
   if (m_family == 1)
     config->writeEntry("TopLevel", topLevel->isChecked());
   
   config->setGroup("Toolbars");
-  config->writeEntry("Location", toolbarFolderEdit->text());
-  config->writeEntry("Names", toolbarsEdit->text());
+  writeEntry(config, "Location", toolbarFolderEdit->text());
+  writeEntry(config, "Names", toolbarsEdit->text());
 }
 
 void DTEPEditDlg::writePages(KConfig *config)
@@ -250,36 +252,36 @@ void DTEPEditDlg::writePages(KConfig *config)
     {
       num++;
       config->setGroup(QString("Page%1").arg(num));
-      config->writeEntry("Title", pageTitleEdit1->text());
-      config->writeEntry("Group", groupsEdit1->text());
+      writeEntry(config, "Title", pageTitleEdit1->text());
+      writeEntry(config, "Group", groupsEdit1->text());
     }
     if (enablePage2->isChecked())
     {
       num++;
       config->setGroup(QString("Page%1").arg(num));
-      config->writeEntry("Title", pageTitleEdit2->text());
-      config->writeEntry("Group", groupsEdit2->text());
+      writeEntry(config, "Title", pageTitleEdit2->text());
+      writeEntry(config, "Group", groupsEdit2->text());
     }
     if (enablePage3->isChecked())
     {
       num++;
       config->setGroup(QString("Page%1").arg(num));
-      config->writeEntry("Title", pageTitleEdit3->text());
-      config->writeEntry("Group", groupsEdit3->text());
+      writeEntry(config, "Title", pageTitleEdit3->text());
+      writeEntry(config, "Group", groupsEdit3->text());
     }
     if (enablePage4->isChecked())
     {
       num++;
       config->setGroup(QString("Page%1").arg(num));
-      config->writeEntry("Title", pageTitleEdit4->text());
-      config->writeEntry("Group", groupsEdit4->text());
+      writeEntry(config, "Title", pageTitleEdit4->text());
+      writeEntry(config, "Group", groupsEdit4->text());
     }
     if (enablePage5->isChecked())
     {
       num++;
       config->setGroup(QString("Page%1").arg(num));
-      config->writeEntry("Title", pageTitleEdit5->text());
-      config->writeEntry("Group", groupsEdit5->text());
+      writeEntry(config, "Title", pageTitleEdit5->text());
+      writeEntry(config, "Group", groupsEdit5->text());
     }
     config->setGroup("General");
     config->writeEntry("NumOfPages", num);
@@ -290,41 +292,41 @@ void DTEPEditDlg::writeParserRules(KConfig *config)
 {
   config->setGroup("Extra rules");
   config->writeEntry("MinusAllowedInWord", enableMinusInWords->isChecked());
-  config->writeEntry("AttributeSeparator", attributeSeparatorEdit->text());
-  config->writeEntry("TagSeparator", tagSeparatorEdit->text());
-  config->writeEntry("TagAutoCompleteAfter", tagAfterEdit->text());
+  writeEntry(config, "AttributeSeparator", attributeSeparatorEdit->text());
+  writeEntry(config, "TagSeparator", tagSeparatorEdit->text());
+  writeEntry(config, "TagAutoCompleteAfter", tagAfterEdit->text());
   
   if (m_family == 0)
   {
-    config->writeEntry("BooleanAttributes", extendedBooleans->isChecked() ? "extended" : "simple");
-    config->writeEntry("BooleanTrue", trueEdit->text());
-    config->writeEntry("BooleanFalse", falseEdit->text());
-    config->writeEntry("Single Tag Style", xmlStyleTags->isChecked() ? "xml" : "html");
+    writeEntry(config, "BooleanAttributes", extendedBooleans->isChecked() ? "extended" : "simple");
+    writeEntry(config, "BooleanTrue", trueEdit->text());
+    writeEntry(config, "BooleanFalse", falseEdit->text());
+    writeEntry(config, "Single Tag Style", xmlStyleTags->isChecked() ? "xml" : "html");
   } else
   {
-    config->writeEntry("AttributeAutoCompletionAfter", attributesAfterEdit->text());
-    config->writeEntry("MemberAutoCompleteAfter", membersAfterEdit->text());
+    writeEntry(config, "AttributeAutoCompletionAfter", attributesAfterEdit->text());
+    writeEntry(config, "MemberAutoCompleteAfter", membersAfterEdit->text());
   }
   
   config->setGroup("Parsing rules");
-  config->writeEntry("Comments", commentsEdit->text());
-  config->writeEntry("MayContain", mayContainEdit->text());
+  writeEntry(config, "Comments", commentsEdit->text());
+  writeEntry(config, "MayContain", mayContainEdit->text());
   
   if (m_family == 0)
   {
-    config->writeEntry("SpecialAreas", specialAreasEdit->text());
-    config->writeEntry("SpecialAreaNames", specialAreaNamesEdit->text());
-    config->writeEntry("SpecialTags", specialTagsEdit->text());
+    writeEntry(config, "SpecialAreas", specialAreasEdit->text());
+    writeEntry(config, "SpecialAreaNames", specialAreaNamesEdit->text());
+    writeEntry(config, "SpecialTags", specialTagsEdit->text());
     config->writeEntry("AppendCommonSpecialAreas", useCommonRules->isChecked());  
   } else
   {
-    config->writeEntry("AreaBorders", areaBordersEdit->text());
-    config->writeEntry("Tags", definitionTagsEdit->text());
-    config->writeEntry("StructKeywords", structKeywordsEdit->text());
-    config->writeEntry("LocalScopeKeywords", localStructKeywordsEdit->text());
-    config->writeEntry("StructBeginStr", structBeginEdit->text());
-    config->writeEntry("StructEndStr", structEndEdit->text());
-    config->writeEntry("StructRx", structRxEdit->text());
+    writeEntry(config, "AreaBorders", areaBordersEdit->text());
+    writeEntry(config, "Tags", definitionTagsEdit->text());
+    writeEntry(config, "StructKeywords", structKeywordsEdit->text());
+    writeEntry(config, "LocalScopeKeywords", localStructKeywordsEdit->text());
+    writeEntry(config, "StructBeginStr", structBeginEdit->text());
+    writeEntry(config, "StructEndStr", structEndEdit->text());
+    writeEntry(config, "StructRx", structRxEdit->text());
   }
 }
 
@@ -382,24 +384,24 @@ void DTEPEditDlg::writeStructures(KConfig *config)
   {
     StructGroup group = *it;
     config->setGroup(QString("StructGroup_%1").arg(i));
-    config->writeEntry("Name", group.name);
-    config->writeEntry("No_Name", group.noName);
-    config->writeEntry("Icon", group.icon);
-    config->writeEntry("Tag", group.tag);
+    writeEntry(config, "Name", group.name);
+    writeEntry(config, "No_Name", group.noName);
+    writeEntry(config, "Icon", group.icon);
+    writeEntry(config, "Tag", group.tag);
     config->writeEntry("HasFileName", group.hasFileName);
-    config->writeEntry("FileNameRx", group.fileNameRx);
+    writeEntry(config, "FileNameRx", group.fileNameRx);
     config->writeEntry("AppendToTags", group.appendToTags);
     if (m_family == 1)
     {
-      config->writeEntry("ParentGroup", group.parentGroup);
-      config->writeEntry("DefinitionRx", group.definitionRx);
+      writeEntry(config, "ParentGroup", group.parentGroup);
+      writeEntry(config, "DefinitionRx", group.definitionRx);
       config->writeEntry("DefinitionRx_Minimal", group.definitionRxMinimal);
-      config->writeEntry("UsageRx", group.usageRx);
-      config->writeEntry("TypeRx", group.typeRx);
-      config->writeEntry("TagType", group.tagType);
+      writeEntry(config, "UsageRx", group.usageRx);
+      writeEntry(config, "TypeRx", group.typeRx);
+      writeEntry(config, "TagType", group.tagType);
       config->writeEntry("ParseFile", group.parseFile);
-      config->writeEntry("AutoCompleteAfter", group.completeAfterRx);
-      config->writeEntry("RemoveFromAutoCompleteWord", group.removeRx);
+      writeEntry(config, "AutoCompleteAfter", group.completeAfterRx);
+      writeEntry(config, "RemoveFromAutoCompleteWord", group.removeRx);
       if (group.variableGroup)
       {
         config->setGroup("Extra rules");
@@ -536,6 +538,14 @@ void DTEPEditDlg::slotDeleteStructGroup()
       structuresList->removeItem(currentItem);
     }
   }  
+}
+
+void DTEPEditDlg::writeEntry(KConfig *config, const QString &key, const QString &value)
+{
+  if (value.isEmpty())
+    config->deleteEntry(key);
+  else
+    config->writeEntry(key, value);
 }
 
 

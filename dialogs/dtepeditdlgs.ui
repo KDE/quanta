@@ -93,44 +93,7 @@
                             <string>The user visible, beautified name. If not defined, the real name is used.</string>
                         </property>
                     </widget>
-                    <widget class="QLabel" row="2" column="0">
-                        <property name="name">
-                            <cstring>textLabel8</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Inherits:</string>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>The DTEP name from where this DTEP inherits the tags.</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The real name of the DTEP (like -&lt;i&gt;//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN&lt;/i&gt;) from where the current DTEP inherits the tags.</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="3" column="0">
-                        <property name="name">
-                            <cstring>textLabel7</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>1</hsizetype>
-                                <vsizetype>5</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="text">
-                            <string>Type:</string>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>The family to where this DTEP belongs.</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The family to where this DTEP belong. There are two families:&lt;br&gt;&lt;p&gt;&lt;b&gt;XML style&lt;/b&gt;:DTEP describing an XML like language&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Pseudo type&lt;/b&gt;:DTEP describing some other language, where the notion of a tag is not the same as in XML. Examples are &lt;i&gt;PHP, JavaScript, CSS&lt;/i&gt;.&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <spacer row="3" column="3">
+                    <spacer row="3" column="3" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>spacer2</cstring>
                         </property>
@@ -147,69 +110,7 @@
                             </size>
                         </property>
                     </spacer>
-                    <spacer row="8" column="2">
-                        <property name="name">
-                            <cstring>spacer3</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>50</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <widget class="QLabel" row="6" column="0">
-                        <property name="name">
-                            <cstring>textLabel9</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Toolbar folder:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>toolbarFolderEdit</cstring>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>The name of the folder where the toolbars are stored</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The name of the folder where the toolbars are stored. This is a relative name to &lt;br&gt;&lt;i&gt;$KDEDIR(&amp;nbsp;or&amp;nbsp;$KDEHOME)/share/apps/quanta/toolbars&lt;/i&gt; .</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="7" column="0">
-                        <property name="name">
-                            <cstring>textLabel10</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Autoloaded toolbars:</string>
-                        </property>
-                        <property name="buddy" stdset="0">
-                            <cstring>toolbarsEdit</cstring>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Comma separated list of toolbars</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>Comma separated list of toolbars from the toolbar folder that will be loaded when a document with this DTEP is loaded.</string>
-                        </property>
-                    </widget>
-                    <widget class="KLineEdit" row="7" column="1" rowspan="1" colspan="3">
-                        <property name="name">
-                            <cstring>toolbarsEdit</cstring>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Comma separated list of toolbars</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>Comma separated list of toolbars from the toolbar folder that will be loaded when a document with this DTEP is loaded.</string>
-                        </property>
-                    </widget>
-                    <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="3">
+                    <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="5">
                         <property name="name">
                             <cstring>nameEdit</cstring>
                         </property>
@@ -228,7 +129,7 @@
                             <string>The real name of the DTEP. In case of XML DTEPs this should be the DTD definition string, like -&lt;i&gt;//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN&lt;/i&gt;.</string>
                         </property>
                     </widget>
-                    <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="3">
+                    <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="5">
                         <property name="name">
                             <cstring>nickNameEdit</cstring>
                         </property>
@@ -247,84 +148,24 @@
                             <string>The user visible, beautified name. If not defined, the real name is used.</string>
                         </property>
                     </widget>
-                    <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+                    <spacer row="9" column="2">
                         <property name="name">
-                            <cstring>caseSensitive</cstring>
+                            <cstring>spacer3</cstring>
                         </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
+                        <property name="orientation">
+                            <enum>Vertical</enum>
                         </property>
-                        <property name="text">
-                            <string>Case sensitive</string>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
                         </property>
-                        <property name="checked">
-                            <bool>true</bool>
+                        <property name="sizeHint">
+                            <size>
+                                <width>20</width>
+                                <height>50</height>
+                            </size>
                         </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Check if the DTEP has case sensitive tags</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>Indicates whether the DTEP has case sensitive tags. In case of XML this should be checked, but for example HTML variants are not case sensitive.</string>
-                        </property>
-                    </widget>
-                    <widget class="KComboBox" row="3" column="1" rowspan="1" colspan="2">
-                        <item>
-                            <property name="text">
-                                <string>XML style</string>
-                            </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>Pseudo type</string>
-                            </property>
-                        </item>
-                        <property name="name">
-                            <cstring>typeCombo</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>5</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>The family to where this DTEP belongs.</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The family to where this DTEP belong. There are two families:&lt;br&gt;&lt;p&gt;&lt;b&gt;XML style&lt;/b&gt;:DTEP describing an XML like language&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Pseudo type&lt;/b&gt;:DTEP describing some other language, where the notion of a tag is not the same as in XML. Examples are &lt;i&gt;PHP, JavaScript, CSS&lt;/i&gt;.&lt;/p&gt;</string>
-                        </property>
-                    </widget>
-                    <widget class="KComboBox" row="2" column="1" rowspan="1" colspan="3">
-                        <property name="name">
-                            <cstring>inheritsCombo</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>7</hsizetype>
-                                <vsizetype>0</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="editable">
-                            <bool>true</bool>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>The DTEP name from where this DTEP inherits the tags.</string>
-                        </property>
-                        <property name="whatsThis" stdset="0">
-                            <string>The real name of the DTEP (like -&lt;i&gt;//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN&lt;/i&gt;) from where the current DTEP inherits the tags.</string>
-                        </property>
-                    </widget>
-                    <widget class="QGroupBox" row="5" column="0" rowspan="1" colspan="4">
+                    </spacer>
+                    <widget class="QGroupBox" row="8" column="0" rowspan="1" colspan="6">
                         <property name="name">
                             <cstring>groupBox1</cstring>
                         </property>
@@ -372,7 +213,7 @@
                                                 <cstring>textLabel4</cstring>
                                             </property>
                                             <property name="text">
-                                                <string>DOCTYPE string:</string>
+                                                <string>DOCT&amp;YPE string:</string>
                                             </property>
                                             <property name="buddy" stdset="0">
                                                 <cstring>doctypeEdit</cstring>
@@ -443,7 +284,24 @@
                             </widget>
                         </grid>
                     </widget>
-                    <widget class="KLineEdit" row="6" column="1" rowspan="1" colspan="3">
+                    <widget class="QLabel" row="5" column="0">
+                        <property name="name">
+                            <cstring>textLabel9</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Toolbar folder:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>toolbarFolderEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The name of the folder where the toolbars are stored</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The name of the folder where the toolbars are stored. This is a relative name to &lt;br&gt;&lt;i&gt;$KDEDIR(&amp;nbsp;or&amp;nbsp;$KDEHOME)/share/apps/quanta/toolbars&lt;/i&gt; .</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="5" column="1" rowspan="1" colspan="5">
                         <property name="name">
                             <cstring>toolbarFolderEdit</cstring>
                         </property>
@@ -454,6 +312,206 @@
                             <string>The name of the folder where the toolbars are stored. This is a relative name to &lt;br&gt;&lt;i&gt;$KDEDIR(&amp;nbsp;or&amp;nbsp;$KDEHOME)/share/apps/quanta/toolbars&lt;/i&gt; .</string>
                         </property>
                     </widget>
+                    <widget class="QLabel" row="6" column="0">
+                        <property name="name">
+                            <cstring>textLabel10</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Autoloaded toolbars:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>toolbarsEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of toolbars</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of toolbars from the toolbar folder that will be loaded when a document with this DTEP is loaded.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="6" column="1" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>toolbarsEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of toolbars</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of toolbars from the toolbar folder that will be loaded when a document with this DTEP is loaded.</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>caseSensitive</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Case sensitive</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Check if the DTEP has case sensitive tags</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Indicates whether the DTEP has case sensitive tags. In case of XML this should be checked, but for example HTML variants are not case sensitive.</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>textLabel7</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>1</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>Type:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The family to where this DTEP belongs.</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The family to where this DTEP belong. There are two families:&lt;br&gt;&lt;p&gt;&lt;b&gt;XML style&lt;/b&gt;:DTEP describing an XML like language&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Pseudo type&lt;/b&gt;:DTEP describing some other language, where the notion of a tag is not the same as in XML. Examples are &lt;i&gt;PHP, JavaScript, CSS&lt;/i&gt;.&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel8</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Inherits:</string>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The DTEP name from where this DTEP inherits the tags.</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The real name of the DTEP (like -&lt;i&gt;//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN&lt;/i&gt;) from where the current DTEP inherits the tags.</string>
+                        </property>
+                    </widget>
+                    <widget class="KComboBox" row="3" column="1" rowspan="1" colspan="2">
+                        <item>
+                            <property name="text">
+                                <string>XML style</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>Pseudo type</string>
+                            </property>
+                        </item>
+                        <property name="name">
+                            <cstring>typeCombo</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The family to where this DTEP belongs.</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The family to where this DTEP belong. There are two families:&lt;br&gt;&lt;p&gt;&lt;b&gt;XML style&lt;/b&gt;:DTEP describing an XML like language&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Pseudo type&lt;/b&gt;:DTEP describing some other language, where the notion of a tag is not the same as in XML. Examples are &lt;i&gt;PHP, JavaScript, CSS&lt;/i&gt;.&lt;/p&gt;</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="0">
+                        <property name="name">
+                            <cstring>textLabel1_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Mimet&amp;ypes:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>mimeTypeEdit</cstring>
+                        </property>
+                    </widget>
+                    <widget class="KComboBox" row="2" column="1" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>inheritsCombo</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="editable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The DTEP name from where this DTEP inherits the tags.</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The real name of the DTEP (like -&lt;i&gt;//W3C//DTD&amp;nbsp;HTML&amp;nbsp;4.01&amp;nbsp;Transitional//EN&lt;/i&gt;) from where the current DTEP inherits the tags.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="4" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>mimeTypeEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of mimetypes</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of mimetypes. Files of these types are treated as belonging to this DTEP, unless the !DOCTYPE entry says something else.</string>
+                        </property>
+                    </widget>
+                    <widget class="KLineEdit" row="4" column="5">
+                        <property name="name">
+                            <cstring>extensionEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The default extension of files belonging to this DTEP</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="4">
+                        <property name="name">
+                            <cstring>textLabel2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>E&amp;xtension:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>extensionEdit</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="4" column="3">
+                        <property name="name">
+                            <cstring>spacer6</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>40</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
                 </grid>
             </widget>
             <widget class="QWidget">
@@ -1852,10 +1910,12 @@ Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
     <tabstop>nickNameEdit</tabstop>
     <tabstop>inheritsCombo</tabstop>
     <tabstop>typeCombo</tabstop>
-    <tabstop>caseSensitive</tabstop>
-    <tabstop>topLevel</tabstop>
+    <tabstop>mimeTypeEdit</tabstop>
+    <tabstop>extensionEdit</tabstop>
     <tabstop>toolbarFolderEdit</tabstop>
     <tabstop>toolbarsEdit</tabstop>
+    <tabstop>caseSensitive</tabstop>
+    <tabstop>topLevel</tabstop>
     <tabstop>urlEdit</tabstop>
     <tabstop>doctypeEdit</tabstop>
     <tabstop>enablePage1</tabstop>
