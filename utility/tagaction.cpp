@@ -588,7 +588,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 	long startOffset, endOffset, longDomNodeOffset;
 	QValueList<int> loc;
         uint line, col;
-        bool smartTagInsertion, hasSelection;
+        bool smartTagInsertion, hasSelection, nodeTreeModified;
 
 	if(!node && str1 == "" || node && str1 != "")
 		return;
@@ -694,6 +694,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
                    }*/
                 }
 
+                nodeTreeModified = false;
 		if(specialTagInsertion)
 		{
 			//let's try to insert this node in the closest parent accepting it.
@@ -708,6 +709,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 						view->document());
 					nodeOffset = 0;
 					kafkaCommon::insertNodeSubtree(node, nodeParent, 0L, 0L, modifs);
+                                        nodeTreeModified = true;
 					break;
 				}
 				nodeParent = nodeParent->parent;
@@ -718,7 +720,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 			//If some text is selected in kafka, surround the selection with the new Node.
 			if(!startContainer || !endContainer)
 				return;
-			kafkaCommon::DTDinsertRemoveNode(node, startContainer, (int)startOffset,
+			nodeTreeModified = kafkaCommon::DTDinsertRemoveNode(node, startContainer, (int)startOffset,
 				endContainer, (int)endOffset, view->document(), &nodeCursor,
 					nodeOffset, modifs);
 		}
@@ -727,7 +729,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 			//Nothing is selected, simply inserting the Node if it is not an inline.
 			if(!kafkaCommon::isInline(node->tag->name) || nodeQTag->isSingle())
 			{
-				kafkaCommon::DTDinsertRemoveNode(node, nodeCursor, (int)nodeOffset, nodeCursor,
+				nodeTreeModified = kafkaCommon::DTDinsertRemoveNode(node, nodeCursor, (int)nodeOffset, nodeCursor,
 					(int)nodeOffset, view->document(), &nodeCursor, nodeOffset, modifs);
 			}
 		}
@@ -753,6 +755,8 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
                   wkafka->translateNodeIntoQuantaCursorPosition(nodeCursor, nodeOffset, line, col);
                   view->document()->viewCursorIf->setCursorPositionReal(line, col);
                 }
+                if(!nodeTreeModified)
+                  quantaApp->slotStatusMsg(i18n("Can't insert the tag : Invalid location."));
 
         }
         else

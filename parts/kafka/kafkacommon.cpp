@@ -1292,6 +1292,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
         //Else we apply the recursive function to add the new Node when necessary/possible.
         bool addingStarted = false;
         bool examinationStarted = false;
+        bool nodeInserted = false;
         int level = 0;
         addNodeRecursively(newNode, lastNewNode,
                            (compareNodePosition(lastValidStartParent, commonParentStartChild) ==
@@ -1299,31 +1300,33 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
                            (compareNodePosition(lastValidEndParent, commonParentEndChild) ==
                             kafkaCommon::isAfter)?lastValidEndParent:commonParentEndChild,
                            startNode, endNode, commonParentStartChild, examinationStarted,
-                           addingStarted, level, modifs);
+                           addingStarted, nodeInserted, level, modifs);
 
         //And we merge if necessary some identical inline Nodes.
         mergeInlineNode(startNode, endNode, cursorNode, cursorOffset, modifs);
-        return true;
+        return nodeInserted;
     }
 }
 
-void kafkaCommon::DTDinsertRemoveNode(Node *newNode, Node *startNode, int startOffset,
+bool kafkaCommon::DTDinsertRemoveNode(Node *newNode, Node *startNode, int startOffset,
                                       Node *endNode, int endOffset, Document *doc, Node **cursorNode, int &cursorOffset,
                                       NodeModifsSet *modifs)
 {
     int result;
 
     if(!newNode || !startNode || !endNode || !doc)
-        return;
+        return false;
 
     //First try to remove the Nodes. If unsuccessfull, try to insert it.
     result = DTDExtractNode(newNode->tag->name, doc, startNode, startOffset, endNode, endOffset,
                             cursorNode, cursorOffset, modifs);
     if(result == kafkaCommon::nothingExtracted || result == kafkaCommon::extractionBadParameters)
     {
-        DTDinsertNode(newNode, startNode, startOffset, endNode, endOffset, doc, cursorNode,
+        return DTDinsertNode(newNode, startNode, startOffset, endNode, endOffset, doc, cursorNode,
                       cursorOffset, modifs);
     }
+    else
+      return true;
     //else if result == kafkaCommon::extractionStoppedDueToBadNodes,
     //what should we do?
 }
@@ -1418,7 +1421,7 @@ bool kafkaCommon::DTDcreateAndInsertNode(const QString &nodeName, const QString 
 
 bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
                                      Node *startExaminationNode, Node *endExaminationNode, Node* startNode, Node *endNode,
-                                     Node* currentNode, bool &examinationStarted, bool &addingStarted, int level,
+                                     Node* currentNode, bool &examinationStarted, bool &addingStarted, bool &nodeInserted, int level,
                                      NodeModifsSet *modifs)
 {
 
@@ -1520,6 +1523,7 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
                     copyNewNode = duplicateNodeSubtree(newNode);
                     insertNodeSubtree(copyNewNode, startSelection->parentNode(), startSelection,
                                       endSelection->next, modifs);
+                    nodeInserted = true;
                 }
             }
             
@@ -1539,7 +1543,7 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
             {
                 addNodeRecursively(newNode, leafNode, startExaminationNode,
                                    endExaminationNode, startNode, endNode, currentNode->child,
-                                   examinationStarted, addingStarted, level + 1, modifs);
+                                   examinationStarted, addingStarted, nodeInserted, level + 1, modifs);
             }
         }
         //If the currentNode is XmlTagEnd, Empty or whatever but not XmlTag and Text,
@@ -1597,6 +1601,7 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
                 copyNewNode = duplicateNodeSubtree(newNode);
                 insertNodeSubtree(copyNewNode, startSelection->parentNode(), startSelection,
                                   endSelection->next, modifs);
+                nodeInserted = true;
             }
         }
 
@@ -1625,6 +1630,7 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
             copyNewNode = duplicateNodeSubtree(newNode);
             insertNodeSubtree(copyNewNode, startSelection->parentNode(), startSelection,
                               endSelection->next, modifs);
+            nodeInserted = true;
         }
     }
 
