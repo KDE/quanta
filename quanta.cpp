@@ -63,7 +63,6 @@
 #include <kdirwatch.h>
 #include <kspell.h>
 #include <kdeversion.h>
-#include <kio/netaccess.h>
 
 #include <kparts/componentfactory.h>
 
@@ -964,7 +963,7 @@ void QuantaApp::slotShowPreview()
       KURL origUrl = w->url();
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());
-      KIO::NetAccess::file_copy(tempUrl, origUrl, -1, true, false, this);  
+      QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
     }
     fileWatcher->startScan();
 //	  w->view()->setFocus();
@@ -1474,7 +1473,7 @@ void QuantaApp::slotSyntaxCheckDone()
     KURL origUrl = w->url();
     KURL tempUrl;
     tempUrl.setPath(w->tempFileName());
-    KIO::NetAccess::file_copy(tempUrl, origUrl, -1, true, false, this);  
+    QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
   }
   fileWatcher->startScan();
 }

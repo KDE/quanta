@@ -3,12 +3,12 @@
     Copyright (C) 1998, 1999 Alexei Dets <dets@services.ru>
 
     Rewritten for Quanta Plus: (C) 2002 Andras Mantia <amantia@freemail.hu>
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-*/    
+*/
 
 
 //qt includes
@@ -23,6 +23,7 @@
 #include <kurl.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
+#include <kio/scheduler.h>
 #include <kdirlister.h>
 #include <kfileitem.h>
 #include <kglobal.h>
@@ -114,13 +115,13 @@ KURL::List QExtFileInfo::allFilesRelative( const KURL& path, const QString& mask
 {
   QExtFileInfo internalFileInfo;
 	KURL::List r = internalFileInfo.allFilesInternal( path, mask);
-	
+
 	KURL::List::Iterator it;
 	for ( it = r.begin(); it != r.end(); ++it )
 	{
 		*it = QExtFileInfo::toRelative( *it, path );
 	}
-	
+
 	return r;
 }
 
@@ -146,7 +147,7 @@ bool QExtFileInfo::createDir( const KURL& path )
 		i++;
 	}
  result = exists(path);
- return result; 
+ return result;
 }
 
 KURL QExtFileInfo::cdUp(const KURL &url)
@@ -196,27 +197,35 @@ bool QExtFileInfo::exists(const KURL& a_url)
  }
 }
 
+/* Synchronouse copy, like NetAccess::file_copy in KDE 3.2 */
+bool QExtFileInfo::copy( const KURL& src, const KURL& target, int permissions,
+ bool overwrite, bool resume, QWidget* window )
+{
+  QExtFileInfo internalFileInfo;
+  return internalFileInfo.internalCopy( src, target, permissions, overwrite, resume, window );
+}
+
+
 /** No descriptions */
 KURL::List QExtFileInfo::allFilesInternal(const KURL& startURL, const QString& mask)
 {
   dirListItems.clear();
   if (internalExists(startURL))
   {
-    timer = new QTimer(this);
     lstFilters.setAutoDelete(true);
     lstFilters.clear();
     // Split on white space
     QStringList list = QStringList::split( ' ', mask );
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
        lstFilters.append( new QRegExp(*it, false, true ) );
-    
+
     bJobOK = true;
     KIO::ListJob *job = KIO::listRecursive(startURL, false, true);
     connect(job, SIGNAL(entries(KIO::Job *, const KIO::UDSEntryList&)),
             this, SLOT(slotNewEntries(KIO::Job *, const KIO::UDSEntryList&)));
     connect( job, SIGNAL( result (KIO::Job *) ),
              this, SLOT( slotResult (KIO::Job *) ) );
-            
+
  //   kdDebug(24000) << "Now listing: " << startURL.url() << endl;
     enter_loop();
     lstFilters.clear();
@@ -242,16 +251,30 @@ bool QExtFileInfo::internalExists(const KURL& url)
   connect( job, SIGNAL( result (KIO::Job *) ),
            this, SLOT( slotResult (KIO::Job *) ) );
 
-  //To avoid lock-ups, start a timer.         
-  timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
-  timer->start(10*1000, true);         
+  //To avoid lock-ups, start a timer.
+  QTimer::singleShot(10*1000, this,SLOT(slotTimeout()));
 //  kdDebug(24000)<<"QExtFileInfo::internalExists:before enter_loop"<<endl;
   enter_loop();
 //  kdDebug(24000)<<"QExtFileInfo::internalExists:after enter_loop"<<endl;
 
-  return bJobOK; 
+  return bJobOK;
 }
+
+bool QExtFileInfo::internalCopy(const KURL& src, const KURL& target, int permissions,
+                                bool overwrite, bool resume, QWidget* window)
+{
+  bJobOK = true; // success unless further error occurs
+
+  KIO::Scheduler::checkSlaveOnHold(true);
+  KIO::Job * job = KIO::file_copy( src, target, permissions, overwrite, resume );
+  job->setWindow (window);
+  connect( job, SIGNAL( result (KIO::Job *) ),
+           this, SLOT( slotResult (KIO::Job *) ) );
+
+  enter_loop();
+  return bJobOK;
+}
+
 
 void qt_enter_modal( QWidget *widget );
 void qt_leave_modal( QWidget *widget );
@@ -268,7 +291,6 @@ void QExtFileInfo::enter_loop()
 
 void QExtFileInfo::slotResult( KIO::Job * job )
 {
-  if (timer) delete timer;
   bJobOK = !job->error();
   if ( !bJobOK )
   {
