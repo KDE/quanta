@@ -8,13 +8,146 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>454</width>
+            <width>459</width>
             <height>279</height>
         </rect>
     </property>
     <property name="caption">
         <string>File changed</string>
     </property>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>Layout10</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>5</y>
+                <width>437</width>
+                <height>215</height>
+            </rect>
+        </property>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property name="text">
+                    <string>The file was changed outside of the Quanta editor.</string>
+                </property>
+            </widget>
+            <widget class="QButtonGroup" row="2" column="0">
+                <property name="name">
+                    <cstring>ButtonGroup2</cstring>
+                </property>
+                <property name="title">
+                    <string> How do you want to proceed?</string>
+                </property>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>11</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QLayoutWidget" row="3" column="0">
+                        <property name="name">
+                            <cstring>Layout6</cstring>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>0</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QLabel" row="0" column="1">
+                                <property name="name">
+                                    <cstring>TextLabel2</cstring>
+                                </property>
+                                <property name="sizePolicy">
+                                    <sizepolicy>
+                                        <hsizetype>3</hsizetype>
+                                        <vsizetype>5</vsizetype>
+                                        <horstretch>0</horstretch>
+                                        <verstretch>0</verstretch>
+                                    </sizepolicy>
+                                </property>
+                                <property name="text">
+                                    <string>(If you save later the document, you will lose what was on the disk.)</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>WordBreak|AlignVCenter</set>
+                                </property>
+                            </widget>
+                            <spacer row="0" column="0">
+                                <property name="name" stdset="0">
+                                    <cstring>Spacer2</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Fixed</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </grid>
+                    </widget>
+                    <widget class="QRadioButton" row="2" column="0">
+                        <property name="name">
+                            <cstring>buttonIgnore</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Do not load the modified version from disk.</string>
+                        </property>
+                    </widget>
+                    <widget class="QRadioButton" row="1" column="0">
+                        <property name="name">
+                            <cstring>buttonLoad</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Use the version from disk (will lose the current content)</string>
+                        </property>
+                    </widget>
+                    <widget class="QRadioButton" row="0" column="0">
+                        <property name="name">
+                            <cstring>buttonCompare</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Compare the two versions and load the result</string>
+                        </property>
+                        <property name="checked">
+                            <bool>true</bool>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Use Kompare if available. Otherwise this checkbox is disabled.</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+        </grid>
+    </widget>
     <widget class="QLayoutWidget">
         <property name="name">
             <cstring>Layout2</cstring>
@@ -72,152 +205,13 @@
             </widget>
         </grid>
     </widget>
-    <widget class="QLayoutWidget">
-        <property name="name">
-            <cstring>Layout14</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>6</x>
-                <y>6</y>
-                <width>439</width>
-                <height>220</height>
-            </rect>
-        </property>
-        <grid>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>0</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="QLabel" row="0" column="0">
-                <property name="name">
-                    <cstring>TextLabel1</cstring>
-                </property>
-                <property name="text">
-                    <string>The file was changed outside of the Quanta editor.</string>
-                </property>
-            </widget>
-            <widget class="QButtonGroup" row="1" column="0">
-                <property name="name">
-                    <cstring>ButtonGroup2</cstring>
-                </property>
-                <property name="title">
-                    <string> How do you want to proceed?</string>
-                </property>
-                <widget class="QLayoutWidget">
-                    <property name="name">
-                        <cstring>Layout11</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>6</x>
-                            <y>21</y>
-                            <width>425</width>
-                            <height>135</height>
-                        </rect>
-                    </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <spacer row="1" column="0">
-                            <property name="name" stdset="0">
-                                <cstring>Spacer2</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QLabel" row="1" column="1">
-                            <property name="name">
-                                <cstring>TextLabel2</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>(If you save later the document, you will lose what was on the disk.)</string>
-                            </property>
-                            <property name="alignment">
-                                <set>WordBreak|AlignVCenter</set>
-                            </property>
-                        </widget>
-                        <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="2">
-                            <property name="name">
-                                <cstring>Layout3</cstring>
-                            </property>
-                            <grid>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <property name="margin">
-                                    <number>0</number>
-                                </property>
-                                <property name="spacing">
-                                    <number>6</number>
-                                </property>
-                                <widget class="QRadioButton" row="2" column="0">
-                                    <property name="name">
-                                        <cstring>buttonIgnore</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>&amp;Do not load the modified version from disk.</string>
-                                    </property>
-                                </widget>
-                                <widget class="QRadioButton" row="1" column="0">
-                                    <property name="name">
-                                        <cstring>buttonLoad</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>&amp;Use the version from disk (will lose the current content)</string>
-                                    </property>
-                                </widget>
-                                <widget class="QRadioButton" row="0" column="0">
-                                    <property name="name">
-                                        <cstring>buttonCompare</cstring>
-                                    </property>
-                                    <property name="text">
-                                        <string>&amp;Compare the two versions and load the result</string>
-                                    </property>
-                                    <property name="checked">
-                                        <bool>true</bool>
-                                    </property>
-                                    <property name="toolTip" stdset="0">
-                                        <string>Use Kompare if available. Otherwise this checkbox is disabled.</string>
-                                    </property>
-                                </widget>
-                            </grid>
-                        </widget>
-                    </grid>
-                </widget>
-            </widget>
-        </grid>
-    </widget>
 </widget>
+<tabstops>
+    <tabstop>buttonCompare</tabstop>
+    <tabstop>buttonLoad</tabstop>
+    <tabstop>buttonIgnore</tabstop>
+    <tabstop>okButton</tabstop>
+    <tabstop>cancelButton</tabstop>
+</tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
