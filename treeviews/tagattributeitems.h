@@ -50,6 +50,7 @@ public:
     virtual ~ParentItem();
     Node *node(int index);
     void addNode(Node *node);
+    void showCombo(bool show);
 
 protected:
 

@@ -125,6 +125,14 @@ Node* ParentItem::node(int index)
   return m_nodeList.at(index);
 }
 
+void ParentItem::showCombo(bool show)
+{
+  if (show)
+      combo->show();
+  else
+      combo->hide();
+}
+
 //Generic attribute item
 AttributeItem::AttributeItem(QListViewItem* parent, const QString &title, const QString& title2)
 : KListViewItem(parent, title, title2)

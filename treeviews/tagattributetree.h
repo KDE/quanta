@@ -41,6 +41,10 @@ public slots:
   void slotParentSelected(int index);
   void editorContentChanged();
 
+private slots:
+  void slotCollapsed(QListViewItem *item);
+  void slotExpanded(QListViewItem *item);
+
 signals:
   void newNodeSelected(Node *node);
 
