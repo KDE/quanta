@@ -42,7 +42,7 @@ bool NodeSelectionInd::operator==(const NodeSelectionInd & nodeSelection)
     m_cursorAtSelectionStart == nodeSelection.m_cursorAtSelectionStart);
 }
 
-bool NodeSelectionInd::operator=(const NodeSelectionInd & nodeSelection)
+void NodeSelectionInd::operator=(const NodeSelectionInd & nodeSelection)
 {
   m_cursorNode = nodeSelection.m_cursorNode;
   m_cursorNodeEndSel = nodeSelection.m_cursorNodeEndSel;

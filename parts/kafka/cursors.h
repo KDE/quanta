@@ -36,7 +36,7 @@ public:
    */
   bool operator==(const NodeSelectionInd & nodeSelection);
   
-  bool operator=(const NodeSelectionInd & nodeSelection);
+  void operator=(const NodeSelectionInd & nodeSelection);
   
   /**
    * Take the current VPL cursor selection coordinates, if not speficied otherwise, translate
