@@ -4408,7 +4408,11 @@ void QuantaApp::slotViewInKFM()
   {
     KProcess *show = new KProcess();
     KURL url = Project::ref()->urlWithPrefix(w->url());
+#if KDE_IS_VERSION(3,2,90)
+    *show << "kfmclient" << "newTab" << url.url();
+#else
     *show << "kfmclient" << "openURL" << url.url();
+#endif
     show->start( KProcess::DontCare );
   }
 }

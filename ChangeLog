@@ -105,6 +105,7 @@ Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
       - added descriptions for all scripts
       - added installation script for Gubed PHP debugger
       - choose the default highlighting of new documents based on the default DTD [#68942]
+      - open documents in Konqueror as new tab. Requires KDE 3.3. [#80659]
 
 Version 3.2.2 (Release data: xx-xx-2004; Started 01-03-2004):
     - bugfixes:
