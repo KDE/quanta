@@ -31,6 +31,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_srcdir)/quanta/plugins \
 	-I$(top_srcdir)/quanta/components/framewizard \
 	-I$(top_srcdir)/quanta/components/csseditor \
+	-I$(top_srcdir)/quanta/components/debugger \
+	-I$(top_srcdir)/quanta/components/tableeditor \
 	-I$(top_srcdir)/quanta/dialogs/tagdialogs \
 	-I$(top_srcdir)/quanta/dialogs/settings \
 	-I$(top_srcdir)/quanta/utility \
@@ -46,7 +48,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_builddir)/quanta/dialogs \
 	-I$(top_builddir)/quanta/dialogs/tagdialogs \
 	-I$(top_builddir)/quanta/dialogs/settings \
-	-I$(top_srcdir)/quanta/components/debugger \
 	-I$(top_builddir)/quanta/components/csseditor \
 	-I$(top_builddir)/quanta/components/framewizard \
 	-I$(top_builddir)/quanta/components/tableeditor \

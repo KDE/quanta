@@ -3149,6 +3149,7 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
      ToolbarTabWidget::ref()->hide();
   }
   qConfig.enableDTDToolbar = show;
+//  ViewManager::ref()->activeView()->activated();
 }
 
 

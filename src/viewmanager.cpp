@@ -135,9 +135,11 @@ void ViewManager::createNewDocument()
 
 bool ViewManager::removeView(QuantaView *view, bool force)
 {
-    if (view)
+    if (!view) return false;
+    bool mayRemove = view->mayRemove();
+    if (mayRemove)
     {
-       if (force || view->mayRemove())
+      if (force || mayRemove)
       {
         if (view == m_documentationView)
             m_documentationView = 0L;
