@@ -40,20 +40,20 @@
 #include "structtreeview.moc"
 
 StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent, const char *name )
-		: KListView(parent,name)
+: KListView(parent,name)
 {
-	top = 0L;
-	lastTag = 0L;
+  top = 0L;
+  lastTag = 0L;
   groupsCount = 0;
-	followCursorFlag = true;
-	this->config = config;
+  followCursorFlag = true;
+  this->config = config;
 
-	this->parser = parser;
+  this->parser = parser;
 
-	topOpened = true;
+  topOpened = true;
   useOpenLevelSetting = true;
 
-	setRootIsDecorated( true );
+  setRootIsDecorated( true );
   header()->hide();
   setSorting(-1,false);
 
@@ -61,33 +61,37 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
   setLineWidth( 2 );
   addColumn( i18n("Name"), 600 );
 
-	setFocusPolicy(QWidget::ClickFocus);
+  setFocusPolicy(QWidget::ClickFocus);
 
   dtdMenu = new QPopupMenu(this);
   
   QDictIterator<DTDStruct> it(*dtds);
-  int id = 0;
   for( ; it.current(); ++it )
   {
-    dtdMenu->insertItem(it.current()->nickName,id,-1);
-    id++;
+    dtdList << it.current()->nickName;
+  }
+  dtdList.sort();
+  
+  for(uint i = 0; i < dtdList.count(); i++ )
+  {
+    dtdMenu->insertItem(dtdList[i],i,-1);
   }
   connect(dtdMenu, SIGNAL(activated(int)), this, SLOT(slotDTDChanged(int)));
 
- 	popupMenu = new QPopupMenu();
+  popupMenu = new QPopupMenu();
 
   popupMenu -> insertItem( i18n("Parse As..."), dtdMenu);
-	popupMenu -> insertSeparator();
-	popupMenu -> insertItem( i18n("Select Tag Area"), this ,SLOT(slotSelectTag()));
-	popupMenu -> insertItem( i18n("Go To End Of Tag"), this ,SLOT(slotGotoClosingTag()));
-	popupMenu -> insertSeparator();
-	popupMenu -> insertItem( i18n("Open Subtrees"), this ,SLOT(slotOpenSubTree()));
-	popupMenu -> insertItem( i18n("Close Subtrees"),this ,SLOT(slotCloseSubTree()));
-	popupMenu -> insertSeparator();
-	popupMenu -> insertItem( UserIcon("repaint"),  i18n("&Reparse"), 		this ,SLOT(slotReparse()));
-	followCursorId = popupMenu -> insertItem( i18n("Follow Cursor"), this ,SLOT(changeFollowCursor()));
+  popupMenu -> insertSeparator();
+  popupMenu -> insertItem( i18n("Select Tag Area"), this ,SLOT(slotSelectTag()));
+  popupMenu -> insertItem( i18n("Go To End Of Tag"), this ,SLOT(slotGotoClosingTag()));
+  popupMenu -> insertSeparator();
+  popupMenu -> insertItem( i18n("Open Subtrees"), this ,SLOT(slotOpenSubTree()));
+  popupMenu -> insertItem( i18n("Close Subtrees"),this ,SLOT(slotCloseSubTree()));
+  popupMenu -> insertSeparator();
+  popupMenu -> insertItem( UserIcon("repaint"),  i18n("&Reparse"), 		this ,SLOT(slotReparse()));
+  followCursorId = popupMenu -> insertItem( i18n("Follow Cursor"), this ,SLOT(changeFollowCursor()));
 
-	popupMenu -> setItemChecked ( followCursorId, followCursor() );
+  popupMenu -> setItemChecked ( followCursorId, followCursor() );
 
 
   connect( this, SIGNAL(mouseButtonClicked(int, QListViewItem*, const QPoint&, int)),
@@ -391,27 +395,27 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 /** Delete the items */
 void StructTreeView::deleteList()
 {
-	if ( top ) {
-		topOpened = top->isOpen();
-		delete top;
-		top = 0L;
-	}
-  for (uint i = 0; i < groupsCount; i++)
-  {
-    groupOpened[i] = groups[i]->isOpen();
-    delete groups[i];
-    groups[i] = 0L;
-  }
-  groupsCount = 0;
-
+ if ( top ) 
+ {
+  topOpened = top->isOpen();
+  delete top;
+  top = 0L;
+ }
+ for (uint i = 0; i < groupsCount; i++)
+ {
+   groupOpened[i] = groups[i]->isOpen();
+   delete groups[i];
+   groups[i] = 0L;
+ }
+ groupsCount = 0;
 }
 
 /** repaint document structure */
 void StructTreeView::slotReparse(Node* node, int openLevel)
 {
   deleteList();
-  write = node->tag->write();
-	createList(node,0L,openLevel);
+  write = node->tag->write(); 
+  createList(node,0L,openLevel);
   for (uint i = 0; i < groupsCount; i++)
   {
     if (groups[i]->childCount() == 0)  
@@ -426,69 +430,73 @@ void StructTreeView::slotReparse(Node* node, int openLevel)
 void StructTreeView::slotGotoTag( QListViewItem *item )
 {
   StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
-  if (!it || !it->node) return;
-
-  int line, col;
-  it->node->tag->beginPos(line, col);
-  emit newCursorPosition( line, col);
+  if (it && it->node)
+  {
+    int line, col;
+    it->node->tag->beginPos(line, col);
+    emit newCursorPosition( line, col);
+  }
 }
 
 
 void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPoint& point, int)
 {
-  if ( !item ) return;
+  if (item)
+  {
+    config->setGroup("Parser options");
 
-  config->setGroup("Parser options");
+    QString handleMBM = config->readEntry("MBM", i18n("Select tag area"));
+    QString handleLBM = config->readEntry("LBM", i18n("Find tag"));
+    QString handleDoubleClick = config->readEntry("Double click", i18n("Select tag area"));
 
-  QString handleMBM = config->readEntry("MBM", i18n("Select tag area"));
-  QString handleLBM = config->readEntry("LBM", i18n("Find tag"));
-  QString handleDoubleClick = config->readEntry("Double click", i18n("Select tag area"));
+    setSelected(item, true);
 
-  setSelected(item, true);
-
-  if ( button == Qt::RightButton ) {
+    if ( button == Qt::RightButton ) 
+    {
       popupMenu->popup( point);
       return;
-  }
+    }
 
-  if ( button == Qt::LeftButton ) {
-
+    if ( button == Qt::LeftButton ) 
+    {
       if ( handleLBM == i18n("Find Tag && Open Tree"))
-          setOpen( item, ! isOpen(item) );
+           setOpen( item, ! isOpen(item) );
       setSelected(item, true);
       slotGotoTag(item);
-  }
+    }
 
-  if ( button == Qt::MidButton ) {
-
+    if ( button == Qt::MidButton ) 
+    {
       if ( handleMBM == i18n("nothing"))
-          return;
+           return;
 
-      if ( handleMBM == i18n("Find Tag && Open Tree")) {
-          setOpen( item, ! isOpen(item) );
-          setSelected(item, true);
-          slotGotoTag(item);
+      if ( handleMBM == i18n("Find Tag && Open Tree")) 
+      {
+        setOpen( item, ! isOpen(item) );
+        setSelected(item, true);
+        slotGotoTag(item);
       }
 
       if ( handleMBM == i18n("Select Tag Area"))
-          slotSelectTag();
+           slotSelectTag();
 
       if ( handleMBM == i18n("Go to End of Tag"))
           slotGotoClosingTag();
 
       setSelected(item, true);
+    }
   }
 }
 
 
 void StructTreeView::slotDoubleClicked( QListViewItem *)
 {
-    config->setGroup("Parser options");
+  config->setGroup("Parser options");
 
-    if ( config->readEntry("Double click") == i18n("nothing") )
-        return;
-
+  if ( config->readEntry("Double click") != i18n("nothing") )
+  {
     slotSelectTag();
+  }
 }
 
 
@@ -502,89 +510,94 @@ void StructTreeView::slotReparse()
 void StructTreeView::slotGotoClosingTag()
 {
   QListViewItem *item = currentItem();
-	StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
-	if (!it || !it->node)
-		return;
-
-  int newLine, newCol;
-  Tag *tag = it->node->tag;
-  if (tag->single || !it->node->next)
+  StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
+  if (it && it->node)
   {
-    tag->endPos(newLine, newCol);
-  } else
-  {
-    if (tag->closingMissing)
+    int newLine, newCol;
+    Tag *tag = it->node->tag;
+    if (tag->single || !it->node->next)
     {
-      Node *node = it->node;
-      while (node->child) node = node->child;
-      node->tag->endPos(newLine, newCol);
+      tag->endPos(newLine, newCol);
     } else
     {
-      it->node->next->tag->endPos(newLine, newCol);
+      if (tag->closingMissing)
+      {
+        Node *node = it->node;
+        while (node->child) node = node->child;
+        node->tag->endPos(newLine, newCol);
+      } else
+      {
+        it->node->next->tag->endPos(newLine, newCol);
+      }
     }
+    
+    emit newCursorPosition( newLine, newCol + 1 );
   }
-
-	emit newCursorPosition( newLine, newCol + 1 );
-
 }
 
 void StructTreeView::slotSelectTag()
 {
   QListViewItem *item = currentItem();
-	StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
-	if (!it || !it->node) return;
-  int bLine, bCol, eLine, eCol;
-  Tag *tag = it->node->tag;
-  if (tag->single || !it->node->next)
+  StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
+  if (it && it->node)
   {
-    tag->endPos(eLine, eCol);
-  } else
-  {
-    if (tag->closingMissing)
+    int bLine, bCol, eLine, eCol;
+    Tag *tag = it->node->tag;
+    if (tag->single || !it->node->next)
     {
-      Node *node = it->node;
-      while (node->child) node = node->child;
-      node->tag->endPos(eLine, eCol);
+      tag->endPos(eLine, eCol);
     } else
     {
-        it->node->next->tag->endPos(eLine, eCol);
+      if (tag->closingMissing)
+      {
+        Node *node = it->node;
+        while (node->child) node = node->child;
+        node->tag->endPos(eLine, eCol);
+      } else
+      {
+          it->node->next->tag->endPos(eLine, eCol);
+      }
     }
-  }
-  it->node->tag->beginPos(bLine, bCol);
-	emit selectArea( bLine, bCol, eLine, eCol+1);
+    it->node->tag->beginPos(bLine, bCol);
+    emit selectArea( bLine, bCol, eLine, eCol+1);
 
-  setSelected(item, true);
+    setSelected(item, true);
+  }
 }
 
 
 /** Do the recursive opening or closing of the trees */
 void StructTreeView::setOpenSubTree( QListViewItem *it, bool open)
 {
-   if ( !it ) return;
-
-   it->setOpen(open);
-   setOpenSubTree( it->nextSibling(), open );
-   setOpenSubTree( it->firstChild(), open );
+  if (it)
+  {
+    it->setOpen(open);
+    setOpenSubTree( it->nextSibling(), open );
+    setOpenSubTree( it->firstChild(), open );
+  }
 }
 
 /** Recursively open the tree and all its subtrees */
 void StructTreeView::slotOpenSubTree()
 {
-	QListViewItem *item = currentItem();
-	if ( !item ) return;
-	item->setOpen( true );
-  setOpenSubTree( item->firstChild(), true );
+  QListViewItem *item = currentItem();
+  if (item)
+  {
+    item->setOpen( true );
+    setOpenSubTree( item->firstChild(), true );
+  }
 }
 
 
 /** Recursively close the tree and all its subtrees */
 void StructTreeView::slotCloseSubTree()
 {
-
-	QListViewItem *item = currentItem();
-	if ( !item ) return;
-	item->setOpen( false );
-  setOpenSubTree( item->firstChild(), false );
+  QListViewItem *item = currentItem();
+  if (item)
+  {
+    item->setOpen( false );
+    setOpenSubTree( item->firstChild(), false );
+  }
 }
 
 /** Show the element in tree according to cursor position (x,y) */
@@ -628,19 +641,17 @@ void StructTreeView::setFollowCursor(bool follow)
 /** No descriptions */
 void StructTreeView::slotExpanded(QListViewItem *item)
 {
-	StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
-	if (!it || !it->node)
-		return;
-  it->node->opened = true;
+ StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
+ if (it && it->node)
+     it->node->opened = true;
 }
 
 /** No descriptions */
 void StructTreeView::slotCollapsed(QListViewItem *item)
 {
-	StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
-	if (!it || !it->node)
-		return;
-  it->node->opened = false;
+ StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
+ if (it && it->node)
+     it->node->opened = false;
 }
 /** Do a reparse before showing. */
 void StructTreeView::showEvent(QShowEvent* /*ev*/)
@@ -666,14 +677,10 @@ void StructTreeView::slotDTDChanged(int id)
 /** Set the Parse As... menu to dtdName. */
 void StructTreeView::setParsingDTD(const QString dtdName)
 {
-  QDictIterator<DTDStruct> it(*dtds);
-  int index = 0;
-  for( ; it.current(); ++it )
+  QString dtdNickName = QuantaCommon::getDTDNickNameFromName(dtdName);
+  for (uint i = 0; i < dtdList.count(); i++)
   {
-    dtdMenu->setItemChecked(index, it.current()->name == dtdName); 
-    index++;
+    dtdMenu->setItemChecked(i, dtdList[i] == dtdNickName);
   }
   m_parsingDTD = dtds->find(dtdName); //this should always exist
 }
-
-
