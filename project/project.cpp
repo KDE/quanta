@@ -229,7 +229,7 @@ KURL::List Project::fileNameList(bool check)
   uint nlCount = nl.count();
   for ( uint i=0; i < nlCount; i++ )
   {
-    QDomElement el = nl.item(i).cloneNode().toElement();
+    QDomElement el = nl.item(i).toElement();
     ProjectURL url = baseURL;
     QuantaCommon::setUrl(url, el.attribute("url"));
     if (!excludeRx.exactMatch(url.path()))
@@ -1907,6 +1907,32 @@ bool Project::contains(const KURL& url)
   if (m_projectFiles.isEmpty())
      fileNameList(false);
   return (m_projectFiles.contains(QExtFileInfo::toRelative(url, baseURL)) > 0);
+}
+
+void Project::updateTimeStamp(const KURL& url, int modifiedTime)
+{
+  ProjectUrlList::Iterator it = m_projectFiles.find(QExtFileInfo::toRelative(url, baseURL));
+  if (it != m_projectFiles.end())
+  {
+    QDomNodeList nl = dom.elementsByTagName("item");
+    QString qurl = QuantaCommon::qUrl(*it);
+    const uint nlCount = nl.count();
+    for (uint i = 0; i < nlCount; ++i)
+    {
+      QDomElement el = nl.item(i).toElement();
+      if (el.attribute("url") == qurl) {
+        int uploadTime = el.attribute("upload_time","1").toInt();
+        int origModifTime = el.attribute("modified_time","1").toInt();
+        if (uploadTime == origModifTime)
+        {
+          el.setAttribute("modified_time", modifiedTime);
+          el.setAttribute("upload_time", modifiedTime);
+          setModified(true);
+        }
+        break;
+      }
+    }
+  }
 }
 
 void Project::slotFileDescChanged(const KURL& url, const QString& desc)

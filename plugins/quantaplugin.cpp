@@ -176,7 +176,7 @@ bool QuantaPlugin::run()
     }
     if (!result)
     {
-      unload();
+      unload(false);
       return false;
     }
     addWidget();

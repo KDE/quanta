@@ -185,7 +185,8 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
    if (m_lastActiveView)
    {
      m_lastActiveView->deactivated();
-     quantaApp->restoreFromTempfile(static_cast<QuantaView*>(m_lastActiveView)->document());
+     Document *w = static_cast<QuantaView*>(m_lastActiveView)->document();
+      quantaApp->restoreFromTempfile(w);
    }
    QuantaView *qView = static_cast<QuantaView*>(view);
    qView->activated();
@@ -296,8 +297,6 @@ bool ViewManager::saveAll(bool dont_ask)
           Document *w = view->document();
           if ( w && w->isModified())
           {
-              if (!w->isUntitled() && w->url().isLocalFile())
-                fileWatcher->removeFile(w->url().path());
               if (dont_ask && !w->isUntitled())
               {
 #ifdef BUILD_KAFKAPART
@@ -315,8 +314,6 @@ bool ViewManager::saveAll(bool dont_ask)
                     flagsave = false;
               }
           }
-          if (w && w->url().isLocalFile())
-              fileWatcher->addFile(w->url().path());
       }
   }
   delete it;
@@ -353,7 +350,10 @@ void ViewManager::closeAll(bool createNew)
               {
                  w->closeTempFile();
                  if (!w->isUntitled() && w->url().isLocalFile())
+                 {
                    fileWatcher->removeFile(w->url().path());
+//                   kdDebug(24000) << "removeFile: " << w->url().path() << endl;
+                 }
                  quantaApp->guiFactory()->removeClient(w->view());
                  if (view == m_lastActiveEditorView)
                    m_lastActiveEditorView = 0L;

@@ -147,7 +147,10 @@ bool QuantaView::mayRemove()
 #endif
           m_document->closeTempFile();
           if (!m_document->isUntitled() && m_document->url().isLocalFile())
+          {
             fileWatcher->removeFile(m_document->url().path());
+//            kdDebug(24000) << "removeFile: " << m_document->url().path() << endl;
+          }
           quantaApp->guiFactory()->removeClient(m_document->view());
       }
 /*      kdDebug(24000) << "Calling reparse from close " << endl;
@@ -905,13 +908,16 @@ bool QuantaView::saveDocument(const KURL& url)
   m_saveResult = true;
   KURL oldURL = m_document->url();
   if (oldURL.isLocalFile())
+  {
     fileWatcher->removeFile(oldURL.path());
-
+//    kdDebug(24000) << "removeFile: " << oldURL.path() << endl;
+  }
   if (url.isLocalFile())
   {
     if (!m_document->doc()->saveAs(url))
     {
       fileWatcher->addFile(oldURL.path());
+//      kdDebug(24000) << "addFile: " << oldURL.path() << endl;
       return false; //saving to a local file failed
     } else //successful saving to a local file
     {
@@ -920,6 +926,7 @@ bool QuantaView::saveDocument(const KURL& url)
       m_document->setDirtyStatus(false);
       m_document->removeBackup(quantaApp->config());
       fileWatcher->addFile(m_document->url().path());
+//      kdDebug(24000) << "addFile: " << m_document->url().path() << endl;
     }
   } else //saving to a remote file
   {

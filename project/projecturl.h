@@ -17,6 +17,7 @@
 #ifndef PROJECT_URL_H
 #define PROJECT_URL_H
 
+#include <qdom.h>
 #include <qvaluelist.h>
 #include <qstring.h>
 

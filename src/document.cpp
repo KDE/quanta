@@ -1882,9 +1882,11 @@ void Document::save()
     QString fileName;
     fileName = url().path();
     fileWatcher->removeFile(fileName);
+//    kdDebug(24000) << "removeFile: " << fileName << endl;
     m_doc->save();
     m_dirty = false;
     fileWatcher->addFile(fileName);
+//    kdDebug(24000) << "addFile: " << fileName << endl;
   } else
   {
     m_doc->save();

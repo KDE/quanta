@@ -397,7 +397,10 @@ bool QuantaApp::slotFileSaveAs()
     KURL oldURL = w->url();
     w->checkDirtyStatus();
     if (oldURL.isLocalFile())
+    {
         fileWatcher->removeFile(oldURL.path());
+//        kdDebug(24000) << "removeFile: " << oldURL.path() << endl;
+    }
     QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
 
     QString saveAsPath;
@@ -463,7 +466,10 @@ bool QuantaApp::slotFileSaveAs()
       result = true;
     }
     if (oldURL.isLocalFile())
+    {
         fileWatcher->addFile(oldURL.path());
+//        kdDebug(24000) << "addFile: " << oldURL.path() << endl;
+    }
   }
   return result;
 }
@@ -1334,7 +1340,10 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     m_previewVisible = false;
     Document *w = view->document();
     if (w)
+    {
+        restoreFromTempfile(w);
         w->setFocus();
+    }
   }
 
 #ifdef BUILD_KAFKAPART
@@ -1421,13 +1430,26 @@ void QuantaApp::restoreFromTempfile(Document *w)
 
   KURL origUrl = w->url();
   if (origUrl.isLocalFile())
+  {
       fileWatcher->removeFile(origUrl.path());
+//      kdDebug(24000) << "removeFile: " << origUrl.path() << endl;
+  }
   KURL tempUrl;
   tempUrl.setPath(w->tempFileName());
 //  kdDebug(24000) << "Restoring tempfile " << w->tempFileName() << " for " << w->url() << endl;
   QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
+  KIO::UDSEntry entry;
+  if (KIO::NetAccess::stat(origUrl, entry, this))
+  {
+    KFileItem item(entry, origUrl, true);
+    int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
+    Project::ref()->updateTimeStamp(origUrl, modifiedTime);
+  }
   if (origUrl.isLocalFile())
+  {
+//      kdDebug(24000) << "addFile: " << origUrl.path() << endl;
       fileWatcher->addFile(origUrl.path());
+  }
 }
 
 void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
