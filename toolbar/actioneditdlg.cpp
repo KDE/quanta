@@ -250,3 +250,4 @@ void ActionEditDlg::saveAction( TagAction *a )
 }
 
 
+#include "actioneditdlg.moc"

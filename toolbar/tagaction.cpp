@@ -212,3 +212,4 @@ void TagAction::scriptDone()
 
 
 
+#include "tagaction.moc"
