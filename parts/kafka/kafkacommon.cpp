@@ -343,11 +343,6 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, Nod
                        kafkaCommon::blockDisplay) ||
                 (prevNE && getNodeDisplay(node, true) == kafkaCommon::inlineDisplay &&
                  getNodeDisplay(prevNE, true) == kafkaCommon::blockDisplay))
-            /**
-             * <body>_text_</body> or (node = text)
-             * <body>text<_li_>...</li></body> or (prevNE = text and node = li)
-             * <body>text<_i_>text</body> or
-             */
         {
             if(node->tag->type == Tag::Text && !hasParent(node, "pre"))
             {

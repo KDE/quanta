@@ -200,10 +200,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSel
   node = baseNode;
   while(node)
   {
-    if(!node->tag->cleanStrBuilt() && 
-        (node->tag->type == Tag::Text || 
-        node->tag->name.contains("XML PI", false) ||
-        node->tag->name.contains("DTD", false)))
+    if(!node->tag->cleanStrBuilt() && node->tag->type == Tag::Text)
     {
       if(!node->insideSpecial)
       {

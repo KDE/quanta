@@ -1026,10 +1026,10 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 		openingNode = node->getOpeningNode();
 		if(openingNode && openingNode->tag->type == Tag::ScriptTag)
 		{
-                  if(openingNode->tag->name.contains("XML PI") || 
-                    openingNode->tag->name.contains("PHP"))
+                  if(openingNode->tag->name.contains("XML PI", false) || 
+                    openingNode->tag->name.contains("PHP", false))
                     text = "?>";
-                  else if(openingNode->tag->name.contains("DTD"))
+                  else if(openingNode->tag->name.contains("DTD", false))
                     text = ">";
                   else
                     text = ">";
@@ -1056,7 +1056,7 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 	else if(node->tag->type == Tag::ScriptTag)
 	{
 		//WARNING : HTML SPECIFIC
-		if(node->tag->name.contains("style"))
+        if(node->tag->name.contains("style", false))
 		{
 			text = "<" + QuantaCommon::tagCase("style") + ">";
 		}
@@ -1068,7 +1068,7 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 		{
 			text = "<?xml";
 		}
-        else if(node->tag->name.contains("PHP"))
+        else if(node->tag->name.contains("PHP", false))
         {
             text = "<?php";
         }
