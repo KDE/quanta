@@ -26,7 +26,7 @@
 #include <qlist.h>
 #include <qdialog.h>
 
-#include <kcolorbtn.h>
+#include <kcolorbutton.h>
 #include <qstrvec.h>
 #include <qdict.h>
 
