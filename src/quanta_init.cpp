@@ -304,7 +304,7 @@ void QuantaInit::initQuanta()
   QString infoCss = tmpDir;
   infoCss.replace(QRegExp("/quanta$"),"");
   infoCss += "/info.css";
-  KIO::NetAccess::copy(KURL().fromPathOrURL(qConfig.globalDataDir + resourceDir + "scripts/info.css"), KURL().fromPathOrURL(infoCss));
+  QExtFileInfo::copy(KURL().fromPathOrURL(qConfig.globalDataDir + resourceDir + "scripts/info.css"), KURL().fromPathOrURL(infoCss));
 
   checkRuntimeDependencies();
 }
@@ -1112,11 +1112,7 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
           {
             KURL backupURL = originalVersion;
             backupURL.setPath(backupURL.path()+"."+QString::number(getpid(),10)+".backup");
-            //TODO: Replace with KIO::NetAccess::file_move, when KDE 3.1 support
-            //is dropped
             QExtFileInfo::copy(originalVersion, backupURL, -1, true, false, m_quanta);
-            //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
-            //is dropped
             QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, m_quanta);
             //we save a list of autosaved file names so "KQApplicationPrivate::init()"
             //can open them. If autosavedVersion.path().right(1) == "U" then we are recovering

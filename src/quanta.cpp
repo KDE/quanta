@@ -1409,8 +1409,6 @@ void QuantaApp::slotShowPreview()
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());
       kdDebug(24000) << "Restoring tempfile " << w->tempFileName() << " for " << w->url() << endl;
-//TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
-//is dropped
       QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
       if (origUrl.isLocalFile())
           fileWatcher->addFile(origUrl.path());
@@ -1991,9 +1989,7 @@ void QuantaApp::slotSyntaxCheckDone()
           fileWatcher->removeFile(origUrl.path());
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());
-//TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
-//is dropped
-      QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
+     QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
       if (origUrl.isLocalFile())
           fileWatcher->addFile(origUrl.path());
     }

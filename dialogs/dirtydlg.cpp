@@ -76,8 +76,6 @@ void DirtyDlg::slotCompareDone(KProcess* proc)
  {
    KURL backupURL = m_src;
    backupURL.setPath(backupURL.path()+".backup");
-   //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
-   //is dropped
    QExtFileInfo::copy(m_src, backupURL, -1, true, false, this);
  }
 
