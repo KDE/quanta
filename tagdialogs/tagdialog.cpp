@@ -119,24 +119,23 @@ void TagDialog::parseTag()
     //read the tag file it is available
     else if (QFileInfo(dtdTag->fileName()).exists())
     {
-      QFile f( dtdTag->fileName() );
+       QFile f( dtdTag->fileName() );
        f.open( IO_ReadOnly );
        if ( doc.setContent( &f ) )
        {
        QString tagName = dtdTag->name();
-       for ( QDomNode n = doc.firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
+       QDomNodeList nodeList = doc.elementsByTagName("tag");
+       for ( uint i = 0; i < nodeList.count(); i++)
        {
-          if (n.nodeName() == "tag")
+           QDomNode n = nodeList.item(i);
+          QString nodeTagName = n.toElement().attribute("name");
+          if (!dtdTag->parentDTD->caseSensitive)
+              nodeTagName = nodeTagName.upper();
+          if (nodeTagName == tagName) //read a tag
           {
-            QString nodeTagName = n.toElement().attribute("name");
-            if (!dtdTag->parentDTD->caseSensitive)
-                nodeTagName = nodeTagName.upper();
-            if (nodeTagName == tagName) //read a tag
-            {
-              mainDlg = new Tagxml( n, dtdTag->parentDTD, this );
-              ((Tagxml    *)mainDlg)->writeAttributes( dict );
-              break;
-            }
+            mainDlg = new Tagxml( n, dtdTag->parentDTD, this );
+            ((Tagxml    *)mainDlg)->writeAttributes( dict );
+            break;
           }
        }
        }
