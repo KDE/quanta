@@ -2052,7 +2052,7 @@ void QuantaApp::slotOpenFileUnderCursor()
     }
   } else
   {
-    KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exists or it is not reachable.</qt>").arg(urlUnderCursor.prettyURL(0, KURL::StripFileProtocol)));
+    KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exist or is not a recognized mime type.</qt>").arg(urlUnderCursor.prettyURL(0, KURL::StripFileProtocol)));
 
   }
 }
