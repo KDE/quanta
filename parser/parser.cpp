@@ -391,7 +391,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         if ( qTag )
         {
           QString searchFor = (m_dtd->caseSensitive)?tag->name:tag->name.upper();
-	  searchFor.remove('/');
+          searchFor.remove('/');
           if ( qTag->stoppingTags.contains( searchFor ) )
           {
             parentNode->tag->closingMissing = true; //parent is single...
@@ -1478,6 +1478,7 @@ Node *Parser::rebuild(Document *w)
         if ( qTag )
         {
           QString searchFor = (m_dtd->caseSensitive)?lastNode->tag->name:lastNode->tag->name.upper();
+          searchFor.remove('/');
           if ( qTag->stoppingTags.contains( searchFor ) )
           {
             node->parent->tag->closingMissing = true; //parent is single...
