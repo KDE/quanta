@@ -69,7 +69,7 @@ signals: // Signals
   void removeFolderFromProject( QString );
   void uploadSingleFile( QString );
   void uploadSingleFolder( QString );
-  void loadToolbarFile( QString );
+  void loadToolbarFile( const KURL& );
 
 public:
   ProjectTreeFolder *projectDir;

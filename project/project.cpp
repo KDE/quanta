@@ -150,7 +150,11 @@ void Project::insertFile( QString rname, bool repaint )
   dom.firstChild().firstChild().appendChild( el );
   modified = true;
 
-  if ( repaint ) emit reloadTree( fileNameList(), false, false );
+  if ( repaint )
+  {
+    emit reloadTree( fileNameList(), false, false );
+    emit newStatus();
+  }
 }
 
 

@@ -331,8 +331,8 @@ void QuantaApp::initView()
             this, SLOT(slotFileOpen(const KURL &)));
   connect(   pTab, SIGNAL(openImage  (QString)),
             this, SLOT(slotImageOpen(QString)));
-  connect(   pTab, SIGNAL(loadToolbarFile  (QString)),
-            this, SLOT(slotLoadToolbarFile(QString)));
+  connect(   pTab, SIGNAL(loadToolbarFile  (const KURL&)),
+            this, SLOT(slotLoadToolbarFile(const KURL&)));
 
   connect(   tTab, SIGNAL(openImage  (QString)),
             this, SLOT(slotImageOpen(QString)));
@@ -950,7 +950,10 @@ void QuantaApp::initActions()
     KStdAction::preferences      ( this, SLOT( slotOptions() ),                  actionCollection(), "general_options" );
 
     // Toolbars actions
-    new KAction(i18n("&Load User Toolbar"), 0, this, SLOT(slotLoadToolbar()), actionCollection(), "toolbars_load");
+    new KAction(i18n("&Load User Toolbar"), 0, this, SLOT(slotLoadToolbar()), actionCollection(), "toolbars_load_user");
+    projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"),0,this, SLOT(slotLoadToolbarFile(const KURL&)),
+                           actionCollection(), "toolbars_load_project");
+
     new KAction(i18n("Save As &Local Toolbar"),  0, this, SLOT(slotSaveLocalToolbar()), actionCollection(), "toolbars_save_local");
     new KAction(i18n("Save As &Project Toolbar"),  0, this, SLOT(slotSaveProjectToolbar()), actionCollection(), "toolbars_save_project");
     new KAction(i18n("&Add User Toolbar"),  0, this, SLOT(slotAddToolbar()), actionCollection(), "toolbars_add");

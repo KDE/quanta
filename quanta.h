@@ -250,7 +250,7 @@ class QuantaApp : public KDockMainWindow
   /** Saves a toolbar as project specific. */
   void slotSaveProjectToolbar();
   /** Load an user toolbar from the disk. */
-  void slotLoadToolbarFile(QString fileName);
+  void slotLoadToolbarFile(const KURL& url);
   /** Load an user toolbar from the disk. */
   void slotLoadToolbar();
 
@@ -330,6 +330,7 @@ class QuantaApp : public KDockMainWindow
     
     // ACTIONS
     KRecentFilesAction *fileRecent;
+    KRecentFilesAction *projectToolbarFiles;
     
     KToggleAction *showMessagesAction, *showTreeAction,
       *showFTabAction,*showPTabAction,*showTTabAction,*showSTabAction,*showDTabAction,

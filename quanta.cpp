@@ -51,6 +51,7 @@
 #include <kprocess.h>
 #include <ktempfile.h>
 #include <kdebug.h>
+#include <ktar.h>
 
 #include <kparts/componentfactory.h>
 
@@ -226,10 +227,12 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
   if( query == KMessageBox::Cancel ) return;
 
+  QString fileName;
   if (selectionOnly)
   {
     QString selection = doc->write()->selectionIf->selection();
-    QFile templateFile(url.directory(false)+url.fileName());
+    fileName = url.directory(false)+url.fileName();
+    QFile templateFile(fileName);
 
     templateFile.open(IO_WriteOnly);
     QTextStream stream(&templateFile);
@@ -240,7 +243,10 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
   } else
   {
     doc->saveDocument( url );
+    fileName = url.path();
   }
+  if (projectTemplate) project->insertFile(fileName, true);
+
   slotUpdateStatus(view->write());
 }
 
@@ -251,7 +257,7 @@ void QuantaApp::slotFileSaveAsLocalTemplate()
 
 void QuantaApp::slotFileSaveAsProjectTemplate()
 {
-	saveAsTemplate(true);
+  saveAsTemplate(true);
 }
 
 
@@ -506,14 +512,32 @@ void QuantaApp::slotNewStatus()
 
   saveAction   ->setEnabled(doc->isModified());
   saveAllAction->setEnabled(doc->isModifiedAll());
-
   saveprjAction     ->setEnabled(project->isModified());
-  closeprjAction     ->setEnabled(project->hasProject());
-  insertFileAction   ->setEnabled(project->hasProject());
-  insertDirAction    ->setEnabled(project->hasProject());
-  rescanPrjDirAction ->setEnabled(project->hasProject());
-  uploadProjectAction->setEnabled(project->hasProject());
-  projectOptionAction->setEnabled(project->hasProject());
+
+  bool projectExists = project->hasProject();
+  closeprjAction     ->setEnabled(projectExists);
+  insertFileAction   ->setEnabled(projectExists);
+  insertDirAction    ->setEnabled(projectExists);
+  rescanPrjDirAction ->setEnabled(projectExists);
+  uploadProjectAction->setEnabled(projectExists);
+  projectOptionAction->setEnabled(projectExists);
+  saveAsProjectTemplateAction->setEnabled(projectExists);
+  saveSelectionAsProjectTemplateAction->setEnabled(projectExists);
+  actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
+  if (projectExists)
+  {
+    QStringList toolbarList = QExtFileInfo::allFiles(project->toolbarDir+"/", "*.toolbar.tgz");
+    projectToolbarFiles->setMaxItems(toolbarList.count());
+    for (uint i = 0; i < toolbarList.count(); i++)
+    {
+      if (QFileInfo(toolbarList[i]).isFile())
+        projectToolbarFiles->addURL(KURL(toolbarList[i]));
+    }
+  } else
+  {
+    projectToolbarFiles->clearURLList();
+  }
+  actionCollection()->action("toolbars_load_project")->setEnabled(projectExists);
 
   viewBorder->setChecked(view->write()->kate_view->iconBorder());
   viewLineNumbers->setChecked(view->write()->kate_view->lineNumbersOn());
@@ -1291,10 +1315,80 @@ void QuantaApp::slotSyntaxCheckDone()
 }
 
 /** Load an user toolbar file from the disk. */
-void QuantaApp::slotLoadToolbarFile(QString fileName)
+void QuantaApp::slotLoadToolbarFile(const KURL& url)
 {
- ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(fileName);
- QDomNodeList nodeList = toolbarGUI->domDocument().elementsByTagName("ToolBar");
+ QString toolbarContent;
+ QString actionContent;
+ QTextStream str;
+ QString fileName = url.path();
+
+ if ( (fileName.find(".toolbar.tgz") != -1) )
+ {
+  QBuffer* buffer;
+
+//extract the files from the archives
+  KTar tar(fileName);
+  tar.open(IO_ReadOnly);
+
+//FIXME: This is weird. The first time it read uncorrectly the data:
+//  <DOCTYPE ... instead of <!DOCTYPE ...
+// What to do? Re-read again... ;-)
+  KArchiveFile* file = (KArchiveFile *) tar.directory()->entry(QFileInfo(fileName).baseName()+".actions");
+  buffer = (QBuffer*) file->device();
+  str.setDevice(buffer);
+  actionContent = str.read();
+  buffer->close();
+
+//read the toolbar file
+  file = (KArchiveFile *) tar.directory()->entry(QFileInfo(fileName).baseName()+".toolbar");
+  buffer = (QBuffer*) file->device();
+  str.setDevice(buffer);
+  toolbarContent = str.read();
+  buffer->close();
+  delete buffer;
+
+//read the action file
+  file = (KArchiveFile *) tar.directory()->entry(QFileInfo(fileName).baseName()+".actions");
+  buffer = (QBuffer*) file->device();
+  str.setDevice(buffer);
+  actionContent = str.read();
+  buffer->close();
+  delete buffer;
+
+  tar.close();
+
+ } else //to support loading of separate .toolbar, .action files
+ {
+   //Load the actions from the associated .action file
+   QString actionFile;
+   if (QFileInfo(fileName).extension(false) != "toolbar")
+   {
+     actionFile = fileName + ".actions";
+   }else
+   {
+     actionFile = QFileInfo(fileName).dirPath() + "/"+QFileInfo(fileName).baseName()+".actions";
+   }
+   QFile f(fileName);
+   if ( f.open( IO_ReadOnly ) )
+   {
+    str.setDevice(&f);
+    toolbarContent = str.read();
+   }
+   f.close();
+
+   f.setName(actionFile);
+   if ( f.open( IO_ReadOnly ) )
+   {
+    str.setDevice(&f);
+    actionContent = str.read();
+   }
+   f.close();
+ }
+
+
+ QDomDocument toolbarDom;
+ toolbarDom.setContent(toolbarContent);
+ QDomNodeList nodeList = toolbarDom.elementsByTagName("ToolBar");
  QString name = nodeList.item(0).toElement().attribute("tabname");
 
 //search for another toolbar with the same name
@@ -1319,7 +1413,6 @@ void QuantaApp::slotLoadToolbarFile(QString fileName)
         } else
         {
           KMessageBox::information(this,i18n("The rename was canceled.\n The toolbar won't be loaded."),i18n("Name conflict"));
-          delete toolbarGUI;
           delete dlg;
           return;
         }
@@ -1333,23 +1426,9 @@ void QuantaApp::slotLoadToolbarFile(QString fileName)
   if (found) break;
  }
 
-//Load the actions from the associated .action file
- QString actionFile;
- if (QFileInfo(fileName).extension(false) != "toolbar")
- {
-   actionFile = fileName + ".actions";
- }else
- {
-   actionFile = QFileInfo(fileName).dirPath() + "/"+QFileInfo(fileName).baseName()+".actions";
- }
-
+//setup the actions
  QDomDocument actionDom;
- QFile f(actionFile);
- if ( f.open( IO_ReadOnly ) )
- {
-  actionDom.setContent( &f );
- }
- f.close();
+ actionDom.setContent(actionContent);
  nodeList = actionDom.elementsByTagName("action");
  for (uint i = 0; i < nodeList.count(); i++)
  {
@@ -1370,17 +1449,17 @@ void QuantaApp::slotLoadToolbarFile(QString fileName)
  KTempFile* tempFile = new KTempFile();
  tempFile->setAutoDelete(true);
 
- nodeList = toolbarGUI->domDocument().elementsByTagName("ToolBar");
+ nodeList = toolbarDom.elementsByTagName("ToolBar");
  nodeList.item(0).toElement().setAttribute("name",name.lower());
  nodeList.item(0).toElement().setAttribute("tabname",name);
- nodeList = toolbarGUI->domDocument().elementsByTagName("text");
+ nodeList = toolbarDom.elementsByTagName("text");
  nodeList.item(0).toElement().firstChild().setNodeValue(name);
 
- * (tempFile->textStream()) << toolbarGUI->domDocument().toString();
+ * (tempFile->textStream()) << toolbarDom.toString();
  tempFile->close();
- delete toolbarGUI;
+
 //create the new toolbar GUI from the temp file
- toolbarGUI = new ToolbarXMLGUI(tempFile->name());
+ ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
 
 //Plug in the actions
  KAction *action;
@@ -1410,7 +1489,7 @@ void QuantaApp::slotLoadToolbar()
 {
  KURL url;
 
- url = KFileDialog::getOpenURL(doc->basePath(), "*.toolbar\n*", this);
+ url = KFileDialog::getOpenURL(doc->basePath(), "*.toolbar.tgz\n*", this);
  if (! url.isEmpty())
  {
    slotLoadToolbarFile(url.path());
@@ -1421,37 +1500,33 @@ void QuantaApp::slotLoadToolbar()
 QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
 {
 
-  QString toolbarFile = destFile;
-  QString actionFile;
+  QString tarFile = destFile;
 
-  if (QFileInfo(toolbarFile).extension(false) != "toolbar")
+  if (QFileInfo(destFile).extension() != "toolbar.tgz")
   {
-   toolbarFile = destFile + ".toolbar";
-   actionFile = destFile + ".actions";
-  } else
-  {
-    actionFile = QFileInfo(toolbarFile).dirPath();
-    actionFile += "/"+QFileInfo(toolbarFile).baseName()+".actions";
+   tarFile = destFile + ".toolbar.tgz";
   }
 
+  QBuffer buffer;
+  buffer.open(IO_WriteOnly);
+  QTextStream toolStr(&buffer);
 
-  QFile toolFile(toolbarFile);
-  QFile actFile(actionFile);
+  QBuffer buffer2;
+  buffer2.open(IO_WriteOnly);
+  QTextStream actStr(&buffer2);
+
   QDomNodeList nodeList, nodeList2;
   QStringList actionNameList;
 
   QString s = actions()->toString();
 
-  if ( (toolFile.open(IO_ReadWrite | IO_Truncate)) && (actFile.open(IO_ReadWrite | IO_Truncate)) )
-  {
-    QTextStream toolStr(&toolFile);
-    QTextStream actStr(&actFile);
-    toolStr << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n");
-    actStr << QString("<!DOCTYPE actionsconfig>\n<actions>\n");
+  toolStr << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n");
+  actStr << QString("<!DOCTYPE actionsconfig>\n<actions>\n");
+
 //look up the clients
-    QPtrList<KXMLGUIClient> xml_clients = factory()->clients();
-    for (uint index = 0; index < xml_clients.count(); index++)
-    {
+  QPtrList<KXMLGUIClient> xml_clients = factory()->clients();
+  for (uint index = 0; index < xml_clients.count(); index++)
+  {
       nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
       for (uint i = 0; i < nodeList.count(); i++)
       {
@@ -1481,19 +1556,19 @@ QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
           }       
        }
       }
-    }
-    toolStr << QString("\n</kpartgui>");
-    actStr << QString("\n</actions>");
-
-    toolFile.close();
-    actFile.close();
-
-    return actionFile;
   }
-  else
-  {
-    return QString::null;
-  }
+  toolStr << QString("\n</kpartgui>");
+  actStr << QString("\n</actions>");
+  buffer.close();
+  buffer2.close();
+
+  KTar tar(tarFile, "application/x-gzip");
+  tar.open(IO_WriteOnly);
+  tar.writeFile(QFileInfo(tarFile).baseName()+".toolbar", "user", "group", buffer.buffer().size(), buffer.buffer().data());
+  tar.writeFile(QFileInfo(tarFile).baseName()+".actions", "user", "group", buffer2.buffer().size(), buffer2.buffer().data());
+  tar.close();
+
+  return tarFile;
 }
 
 /** Saves a toolbar as local or project specific. */
@@ -1528,10 +1603,10 @@ void QuantaApp::slotSaveToolbar(bool localToolbar)
 
     if (localToolbar)
     {
-  	  url = KFileDialog::getSaveURL(locateLocal("data","quanta/toolbars/"), "*.toolbar\n*", this);
+  	  url = KFileDialog::getSaveURL(locateLocal("data","quanta/toolbars/"), "*.toolbar.tgz\n*", this);
   	} else
   	{
-  	  url = KFileDialog::getSaveURL(project->toolbarDir, "*.toolbar\n*", this);
+  	  url = KFileDialog::getSaveURL(project->toolbarDir, "*.toolbar.tgz\n*", this);
   	}
 
     if (url.isEmpty()) return;
@@ -1551,7 +1626,8 @@ void QuantaApp::slotSaveToolbar(bool localToolbar)
 
   if( query == KMessageBox::Cancel ) return;
 
-  saveToolBar(toolbarName, url.path());
+  QString tarName = saveToolBar(toolbarName, url.path());
+  if (!localToolbar) project->insertFile(tarName, true);
 }
 
 /** Saves a toolbar as localspecific. */
@@ -1562,7 +1638,7 @@ void QuantaApp::slotSaveLocalToolbar()
 /** Saves a toolbar as project specific. */
 void QuantaApp::slotSaveProjectToolbar()
 {
-  slotSaveToolbar(false);
+ slotSaveToolbar(false);
 }
 
 /** Adds a new, empty toolbar. */
@@ -1657,7 +1733,7 @@ void QuantaApp::slotSendToolbar()
   QString extension=".toolbar";
   KTempFile* tempFile = new KTempFile(locateLocal("tmp", prefix), extension);;
   tempFile->setAutoDelete(true);
-  toolbarFile += saveToolBar(toolbarName, tempFile->name());
+  saveToolBar(toolbarName, tempFile->name());
   tempFile->close();
   tempFileList.append(tempFile);
 

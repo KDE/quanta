@@ -130,7 +130,7 @@ void ProjectTreeView::slotMenu(QListViewItem *item, const QPoint& point, int)
 	ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( item);
 	if ( f )
   {
-    if (QFileInfo(currentFileName()).extension() == "toolbar")
+    if (QFileInfo(currentFileName()).extension() == "toolbar.tgz")
     {
      fileMenu->changeItem(openInQuantaId, i18n("Load toolbar file"));
     }
@@ -289,9 +289,9 @@ void ProjectTreeView::slotOpenInQuanta()
 	
  KURL url(currentFileName());
 
- if (QFileInfo(currentFileName()).extension() == "toolbar")
+ if (QFileInfo(currentFileName()).extension() == "toolbar.tgz")
  {
-  emit loadToolbarFile(currentFileName());
+  emit loadToolbarFile(KURL(currentFileName()));
   return;
  }
 
