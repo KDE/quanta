@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>374</width>
-            <height>559</height>
+            <width>344</width>
+            <height>523</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -559,12 +559,12 @@ echo "$PADDING&lt;/style&gt;"</string>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>utf8</string>
+                                    <string>UTF-8</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>utf16</string>
+                                    <string>UTF-16</string>
                                 </property>
                             </item>
                             <property name="name">
@@ -742,25 +742,6 @@ echo "$PADDING&lt;/script&gt;"</string>
                 <bool>true</bool>
             </property>
         </widget>
-        <widget class="ExecButton" row="2" column="2">
-            <property name="name">
-                <cstring>ExecButton1</cstring>
-            </property>
-            <property name="text">
-                <string>Apply</string>
-            </property>
-            <property name="on">
-                <bool>false</bool>
-            </property>
-            <property name="associations" stdset="0">
-                <stringlist>
-                    <string>@dialogScript</string>
-                </stringlist>
-            </property>
-            <property name="writeStdout">
-                <bool>true</bool>
-            </property>
-        </widget>
         <widget class="CloseButton" row="2" column="1">
             <property name="name">
                 <cstring>CloseButton1</cstring>
@@ -858,7 +839,6 @@ echo "$PADDING&lt;/script&gt;"</string>
     <tabstop>phpFooterFile</tabstop>
     <tabstop>CloseButton1</tabstop>
     <tabstop>CloseButton1_2</tabstop>
-    <tabstop>ExecButton1</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
