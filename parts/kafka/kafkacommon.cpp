@@ -1130,6 +1130,12 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
         }
     }
     
+    if(isInline(newNode->tag->name) ||
+       newNode->tag->type == Tag::Text || newNode->tag->type == Tag::Empty)
+    {
+        return insertNode(newNode, newNode->parent, endNode, modifs);
+    }
+    
     //Then we "split" the lastValidStartParent - startNode subtree into two : the first part is untouched
     // and the second will be surrounded by the new Node. Same thing for endNode.
     Node* node = startNode;
@@ -1215,11 +1221,10 @@ Node* kafkaCommon::DTDInsertNodeSubtree(Node *newNode, NodeSelectionInd& selecti
     if(cursorOffset == 0)
         nextSibling = nextSibling->SNext();
     */  
-    insertNodeSubtree(newNode, commonParent, nextSibling/*, nextSibling*/, modifs);
+    return insertNodeSubtree(newNode, commonParent, nextSibling/*, nextSibling*/, modifs);
     
     //mergeInlineNode(commonParent, commonParent->next, cursorNode, cursorOffset, modifs);
-    
-    return newNode;
+    //return newNode;
 }
 
 bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
@@ -2307,33 +2312,28 @@ Node* kafkaCommon::getNodeSubtree(Node *startNode, int startOffset, Node *endNod
     //OK now, we are sure the node can be inserted. Start the work by splitting
     //startNode and endNode if necessary
     Node* new_start_node = duplicateNode(startNode);
-    new_start_node->parent = startNode->parent; // for the split
     if(startNode->tag->type == Tag::Text || startNode->tag->type == Tag::Empty)
     {
+        new_start_node->parent = startNode->parent; // for the split
         if(splitNode(new_start_node, startOffset, 0))
         {
-            //</TEMPORARY>
             /*
+            //</TEMPORARY>
             if(startNode == commonParentStartChild)
                 commonParentStartChild = commonParentStartChild->nextSibling();
-            */
-            /*
             if(startNode == endNode)
             {
                 endNode = endNode->nextSibling();
                 endOffset -= startOffset;
-                
-                Node* node_to_get = new_start_node->next;
-                splitNode(node_to_get, endOffset - startOffset, 0);
-                delete extractNode(node_to_get->next, 0);
-                return extractNode(node_to_get, 0);
             }
             */
             new_start_node = extractNode(startNode->parent->SLastChild(), 0);
             if(startNode == endNode)
             {
+                new_start_node->parent = new_start_node;
                 splitNode(new_start_node, endOffset - startOffset, 0);
-                return new_start_node;
+                delete new_start_node->child;
+                return extractNode(new_start_node, 0);
             }
         }
         else if(startOffset == (signed)startNode->tag->tagStr().length())
