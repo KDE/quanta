@@ -86,8 +86,6 @@ void MessageOutput::phpDebug( QString s)
    int pos1;
    QString res;
    
-   debug(s);
-   
    if ( (pos1=data.find(") end: ")) != -1 )  {
      res = data.left(pos1+7);
      data.remove(0, pos1+7);
@@ -97,6 +95,16 @@ void MessageOutput::phpDebug( QString s)
      setBottomItem(count()-1);
    }
    
+}
+
+void MessageOutput::newPhpConnect()
+{
+   insertItem(" PHP debugger started :");
+}
+
+void MessageOutput::endPhpConnect()
+{
+   insertItem("");
 }
 
 

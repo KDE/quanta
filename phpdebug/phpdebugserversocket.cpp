@@ -14,7 +14,7 @@ PhpDebugServerSocket::PhpDebugServerSocket( int port, QObject *parent, const cha
 
 void PhpDebugServerSocket::newConnection( int socket )
 {
-  debug("\nConnect...\n\n");
+  debug("PHP debugger connected...");
   
   QSocket* s = new QSocket(this);
 	connect(s,SIGNAL(readyRead()),           this,SLOT(readClient()));
@@ -30,7 +30,6 @@ void PhpDebugServerSocket::readClient()
 	{
 	  QString s = socket->readLine();
 	  emit data( s );
-	  //debug(s);
 	}
 }
 

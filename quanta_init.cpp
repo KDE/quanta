@@ -112,6 +112,10 @@ QuantaApp::QuantaApp()
   PhpDebugServerSocket *debugger = 
     new PhpDebugServerSocket( phpDebugPort,0,0);
     
+  connect( debugger,      SIGNAL(newConnect()),
+           messageOutput, SLOT(newPhpConnect()) );
+  connect( debugger,      SIGNAL(endConnect()),
+           messageOutput, SLOT(endPhpConnect()) );
   connect( debugger,      SIGNAL(data(QString)),
            messageOutput, SLOT(phpDebug(QString)) );
   connect( messageOutput, SIGNAL(clicked(QString,int)),
