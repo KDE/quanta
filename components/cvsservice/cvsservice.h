@@ -79,6 +79,8 @@ public slots:
   void slotRemove();
   void slotRemove(const QStringList &files);
   void slotBrowseLog();
+  void slotAddToCVSIgnore();
+  void slotRemoveFromCVSIgnore();
 
   virtual void slotJobExited(bool normalExit, int exitStatus);
   virtual void slotReceivedStdout(QString output);

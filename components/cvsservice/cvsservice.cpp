@@ -14,8 +14,11 @@
  ***************************************************************************/
 
 //qt include
+#include <qfile.h>
+#include <qfileinfo.h>
 #include <qradiobutton.h>
 #include <qtextedit.h>
+#include <qtextstream.h>
 
 //kde includes
 #include <kaction.h>
@@ -82,6 +85,11 @@ CVSService::CVSService(KActionCollection *ac)
   action = new KAction(i18n("&Remove from Repository..."), "vcs_remove", 0, this, SLOT(slotRemove()), ac);
 #endif
   action->plug(m_menu);
+  action = new KAction(i18n("Add to .cvs&ignore"), 0, this, SLOT(slotAddToCVSIgnore()), ac);
+  action->plug(m_menu);
+  action = new KAction(i18n("Re&move from .cvsignore"), 0, this, SLOT(slotRemoveFromCVSIgnore()), ac);
+  action->plug(m_menu);
+  
   m_menu->insertSeparator();
   action = new KAction(i18n("Show &Log Messages"), 0, this, SLOT(slotBrowseLog()), ac);
   action->plug(m_menu);
@@ -383,7 +391,6 @@ void CVSService::slotRemove(const QStringList &files)
   }
 }
 
-
 void CVSService::slotBrowseLog()
 {
   if (!m_defaultFile.isEmpty())
@@ -405,6 +412,93 @@ void CVSService::slotBrowseLog()
         connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
         m_cvsJob->execute();
       }
+    } else
+    {
+      notInRepository();
+    }
+  }
+}
+
+void CVSService::slotAddToCVSIgnore()
+{
+  if (!m_defaultFile.isEmpty())
+  {
+    if (m_defaultFile.startsWith(m_repositoryPath))
+    {
+      emit clearMessages();
+      QFileInfo fInfo(m_defaultFile);
+      QFile f(fInfo.dirPath()+ "/.cvsignore");
+      if (f.open(IO_ReadWrite))
+      {
+        bool found = false;
+        QTextStream str(&f);
+        str.setEncoding(QTextStream::UnicodeUTF8);
+        QString line;
+        while (!str.atEnd())
+        {
+          line = str.readLine().stripWhiteSpace();
+          if (line == fInfo.fileName())
+          {
+            emit showMessage(i18n("\"%1\" is already in the CVS ignore list.").arg(fInfo.fileName()), false);
+            found = true;
+            break;
+          }
+        }       
+        if (!found)
+        {
+          str << fInfo.fileName() << endl;
+          emit showMessage(i18n("\"%1\" added to the CVS ignore list.").arg(fInfo.fileName()), false);
+        }
+        f.close();
+      }
+      
+    } else
+    {
+      notInRepository();
+    }
+  }
+}
+
+void CVSService::slotRemoveFromCVSIgnore()
+{
+  if (!m_defaultFile.isEmpty())
+  {
+    if (m_defaultFile.startsWith(m_repositoryPath))
+    {
+      emit clearMessages();
+      QString content;
+      QFileInfo fInfo(m_defaultFile);
+      QFile f(fInfo.dirPath()+ "/.cvsignore");
+      bool found = false;
+      if (f.open(IO_ReadWrite))
+      {
+        QTextStream str(&f);
+        str.setEncoding(QTextStream::UnicodeUTF8);
+        QString line;
+        while (!str.atEnd())
+        {
+          line = str.readLine().stripWhiteSpace();
+          if (line != fInfo.fileName())
+          {
+            content += line + "\n";
+          } else
+            found = true;
+        }       
+        if (!found)
+        {
+          emit showMessage(i18n("\"%1\" is not in the CVS ignore list.").arg(fInfo.fileName()), false);
+        }
+        f.close();
+      }
+      if (found && f.open(IO_WriteOnly))
+      {
+        QTextStream str(&f);
+        str.setEncoding(QTextStream::UnicodeUTF8);
+        str << content;
+        emit showMessage(i18n("\"%1\" removed from the CVS ignore list.").arg(fInfo.fileName()), false);
+        f.close();
+      }
+      
     } else
     {
       notInRepository();
