@@ -33,6 +33,7 @@
 #include <qradiobutton.h>
 #include <qwidgetstack.h>
 #include <qbuttongroup.h>
+#include <qurloperator.h>
 
 // include files for KDE
 #include <kurl.h>
@@ -50,7 +51,7 @@
 #include "projectnewlocal.h"
 #include "projectnewwebs.h"
 #include "projectnewfinals.h"
-#include "projectuploads.h"
+#include "projectupload.h"
 
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
@@ -175,6 +176,7 @@ void Project::createEmptyDom()
 
   qts << "<!DOCTYPE webproject ><webproject>" << endl;
   qts << "\t<project name=\"" << projectName << "\">" << endl;
+  qts << "\t\t<upload />" << endl;
   qts << "\t</project>" << endl;
   qts << "</webproject>" << endl;
 
@@ -589,9 +591,9 @@ void Project::upload()
 {
 	if ( !hasProject() ) return;
 	
-	ProjectUploadS *dlg = new ProjectUploadS(0,i18n("Upload project's files..."), true);
+	ProjectUpload *dlg = new ProjectUpload(this, 0,i18n("Upload project's files..."), true);
 	
-	QStringList::Iterator it;
+/*	QStringList::Iterator it;
 	QStringList files = fileNameList();
 	
 	dlg->list->setMultiSelection(true);
@@ -600,13 +602,10 @@ void Project::upload()
 	{
 		new QListViewItem( dlg->list, *it );
 	}
-	
-	dlg->lineUrl->setText("ftp://ftp.someserver.net/incoming");
-	dlg->lineUser->setText("anonymous");
-	
+	*/
 	if (dlg->exec())
 	{
-		QStringList uploadList;
+		/*QStringList uploadList;
 		QListViewItemIterator it( dlg->list );
 		
     for ( ; it.current(); ++it )
@@ -621,9 +620,14 @@ void Project::upload()
 		url.setProtocol( "ftp" );
 		url.setPort(21);
 		
-		KURL::List list( uploadList );
-		KIO ::Job *job = KIO::copy( list, KURL( url ) );
-  	connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotUploadFinished( KIO::Job *) ) );
+		static QUrlOperator op;
+		
+		op.copy( uploadList, url.toString() );
+		
+		//KURL::List list( uploadList );
+		//KIO ::Job *job = KIO::copy( list, KURL( url ) );
+  	//connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotUploadFinished( KIO::Job *) ) );
+*/  	
 	}
 	
 	delete dlg;

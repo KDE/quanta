@@ -98,6 +98,8 @@ signals:
   void selectMessageWidget	();
   void disableMessageWidget	();
 
+  void saveAllFiles();
+
 public:
   QDomDocument dom;
 

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'project-upload.ui'
 **
-** Created: Mon Nov 6 03:51:34 2000
+** Created: Fri Dec 1 13:10:54 2000
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -18,7 +18,9 @@ class QLabel;
 class QLineEdit;
 class QListView;
 class QListViewItem;
+class QProgressBar;
 class QPushButton;
+class QSpinBox;
 
 class ProjectUploadS : public QDialog
 { 
@@ -28,22 +30,32 @@ public:
     ProjectUploadS( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~ProjectUploadS();
 
-    QPushButton* buttonOk;
-    QPushButton* buttonCancel;
-    QPushButton* buttonHelp;
-    QLabel* TextLabel4;
-    QLabel* TextLabel2;
-    QLabel* TextLabel3;
-    QListView* list;
-    QLineEdit* linePasswd;
-    QLineEdit* lineUser;
-    QLineEdit* lineUrl;
     QPushButton* buttonAll;
     QPushButton* buttonModified;
     QPushButton* buttonClear;
+    QListView* list;
+    QPushButton* buttonCancel;
+    QPushButton* buttonUpload;
+    QProgressBar* ProgressBar1;
+    QLabel* TextLabel2_2;
+    QLabel* TextLabel4;
+    QLabel* TextLabel2;
+    QLabel* labelCurFile;
+    QLineEdit* lineUser;
+    QLabel* TextLabel3;
+    QLineEdit* linePasswd;
+    QLineEdit* linePath;
+    QSpinBox* spinPort;
+    QLabel* TextLabel1_2;
+    QLineEdit* lineHost;
+
+public slots:
+    virtual void clearSelection();
+    virtual void startUpload();
+    virtual void selectAll();
+    virtual void selectModified();
 
 protected:
-    QVBoxLayout* vbox;
     QGridLayout* grid;
 };
 
