@@ -1433,8 +1433,18 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
               pos = group.definitionRx.search(foundStr, pos);
               if (pos != -1)
               {
-                QString s = group.definitionRx.cap(1);
-                pos += s.length();
+                int l;
+                if (group.definitionRx.pos(1) > pos)
+                {
+                  pos = group.definitionRx.pos(1);
+                  l = group.definitionRx.cap(1).length();
+                }
+                else
+                {
+                  l = group.definitionRx.cap().length();
+                }
+                QString s = content.mid(areaPos + pos, l);
+                pos += l;
                 if (!(*elements)[group.name].contains(s))
                 {
                   Tag *tag = new Tag();
