@@ -65,36 +65,6 @@ quanta_METASOURCES = AUTO
 # the library search path.
 quanta_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
-# some parts got own messages targets. No need to duplicate their messages
-messages: rc.cpp
-	find . -type d | grep -v CVS | sed -e 's,$$,/,' > dirs
-	mfs=`find . -name Makefile.am | xargs egrep -l '^messages:'` ;\
-	for dir in $$mfs; do \
-	    if test ! "$$dir" = "./Makefile.am"; then \
-		dir=`dirname $$dir` ;\
-	    egrep -v "^$$dir" dirs > dirs.new && mv dirs.new dirs ;\
-	    fi ;\
-	done
-	egrep -v "/tests" dirs > dirs.new && mv dirs.new dirs ;\
-	dirs=`cat dirs` ;\
-	find $$dirs -maxdepth 1 -name "*.cpp" -print > files ;\
-	find $$dirs -maxdepth 1 -name "*.cc" -print >> files ;\
-	find $$dirs -maxdepth 1 -name "*.h" -print >> files ;\
-	toolbars=`find . -name "*.toolbar.tgz"`;\
-	for toolbar in $$toolbars; do \
-	    tar Oxfz $$toolbar  >> extrafiles; \
-	done ;\
-	cat ../data/config/actions.rc >> extrafiles; \
-	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.ui"` >> rc.cpp ;\
-	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.rc"` >> rc.cpp ;\
-	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.kmdr"` >> rc.cpp ;\
-	cat ../data/chars | perl -e 'while(<STDIN>) { chomp ; s/\"/\\\"/ ; print "i18n(\"$$_\");\n"; }' >> rc.cpp ;\
-	$(EXTRACTRC) extrafiles >> rc.cpp ;\
-	cat extrafiles | perl -e 'while(<STDIN>) { if (/\<action .* text="(.*)"/) { print "i18n(\"$$1\");\n"; }}' >> rc.cpp
-	(cd ../data && $(PREPARETIPS) >> ../src/tips.cpp)
-	$(XGETTEXT) rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
-	rm -f extrafiles tips.cpp files dirs
-
 # this is where the kdelnk file will go
 kdelnkdir = $(kde_appsdir)/Development
 kdelnk_DATA = quanta.desktop
