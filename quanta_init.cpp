@@ -584,7 +584,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Follow Cursor", sTab->followCursor() );
     m_config->writeEntry("PHP Debugger Port", phpDebugPort );
     m_config->writeEntry("Top folders", fTab->topURLList.toStringList());
-#if KDE_IS_VERSION(3,1,90)
+#if KDE_IS_VERSION(3,1,3)
     m_config->writePathEntry("List of opened files", m_doc->openedFiles().toStringList());
 #else
     m_config->writeEntry("List of opened files", m_doc->openedFiles().toStringList());
@@ -798,7 +798,7 @@ void QuantaApp::openLastFiles()
 
   m_config->setGroup("General Options");
 
-#if KDE_IS_VERSION(3,1,90)
+#if KDE_IS_VERSION(3,1,3)
   QStringList urls = m_config->readPathListEntry("List of opened files");
 #else
   QStringList urls = m_config->readListEntry("List of opened files");
