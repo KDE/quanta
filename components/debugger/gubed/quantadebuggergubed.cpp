@@ -585,12 +585,12 @@ void QuantaDebuggerGubed::showWatch(QString data)
 void QuantaDebuggerGubed::request()
 {
   QString request;
-  request = debuggerInterface()->activeFile();
+  request = debuggerInterface()->activeFileParts(m_startsession);
 
-  if(request.startsWith(m_localBasedir, false))
-    request.remove(0, m_localBasedir.length());
+  //if(request.startsWith(m_localBasedir, false))
+  //  request.remove(0, m_localBasedir.length());
 
-  request = m_startsession + request;
+  //request = m_startsession + request;
   kdDebug(24000) << k_funcinfo << ", request: " << request << endl;
   debuggerInterface()->sendRequest(request);
 }

@@ -71,11 +71,33 @@ void QuantaDebuggerInterface::sendRequest(const KURL &url)
   m_manager->UI()->sendRequest(url);
 }
 
-const QString QuantaDebuggerInterface::activeFile()
+const QString QuantaDebuggerInterface::activeFileParts(const QString & str)
 {
-  //kdDebug(24000) << k_funcinfo << ", BaseURL " << Project::ref()->projectBaseURL().path() << ", active doc : " << ViewManager::ref()->activeDocument()->url().path() << endl;
+  QString newstr = str;
 
-  return ViewManager::ref()->activeDocument()->url().path();
+  // a/r = absolute/relative
+  // f/p/d = file/project/docroot
+  // n/d/p = name/dir/path
+
+  // Filename, filedir and filepath
+  newstr.replace("%afn", ViewManager::ref()->activeDocument()->url().fileName());
+  newstr.replace("%afd", ViewManager::ref()->activeDocument()->url().directory());
+  newstr.replace("%afp", ViewManager::ref()->activeDocument()->url().path());
+
+  // filedir and filepath relative to project root
+  newstr.replace("%rfpp", KURL::relativePath(Project::ref()->projectBaseURL().path(), ViewManager::ref()->activeDocument()->url().path()));
+  newstr.replace("%rfpd", KURL::relativePath(Project::ref()->projectBaseURL().path(), ViewManager::ref()->activeDocument()->url().directory()));
+
+  // filedir and filepath relative to document root
+  newstr.replace("%rfdp", KURL::relativePath(Project::ref()->documentFolderForURL(ViewManager::ref()->activeDocument()->url()).directory(), ViewManager::ref()->activeDocument()->url().path()));
+  newstr.replace("%rfdd", KURL::relativePath(Project::ref()->documentFolderForURL(ViewManager::ref()->activeDocument()->url()).directory(), ViewManager::ref()->activeDocument()->url().directory()));
+
+  newstr.replace("%apd", Project::ref()->projectBaseURL().path());
+  newstr.replace("%add", Project::ref()->documentFolderForURL(ViewManager::ref()->activeDocument()->url()).directory());
+
+  kdDebug(24000) << k_funcinfo << ", BaseURL " << Project::ref()->projectBaseURL().path() << ", active doc : " << ViewManager::ref()->activeDocument()->url().path() << ", documentFolderForURL" << Project::ref()->documentFolderForURL(ViewManager::ref()->activeDocument()->url()) << ", newstr" << newstr << endl;
+
+  return newstr;
 }
 
 /*DebuggerVariable* QuantaDebuggerInterface::newDebuggerVariable(const QString& name, const QString& value, int type)

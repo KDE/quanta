@@ -47,7 +47,7 @@ class QuantaDebuggerInterface : public DebuggerInterface
     void enableAction(QString action, bool enable);
     void fileOpened(QString file) ;
     void sendRequest(const KURL &url);
-    virtual const QString activeFile();
+    virtual const QString activeFileParts(const QString & str);
 
     // Watches handling
     //void preWatchUpdate();
