@@ -812,6 +812,18 @@
         <receiver>ActionEditDlgS</receiver>
         <slot>actionSelected()</slot>
     </connection>
+    <connection>
+        <sender>buttonNew</sender>
+        <signal>clicked()</signal>
+        <receiver>ActionEditDlgS</receiver>
+        <slot>newAction()</slot>
+    </connection>
+    <connection>
+        <sender>buttonDelete</sender>
+        <signal>clicked()</signal>
+        <receiver>ActionEditDlgS</receiver>
+        <slot>deleteAction()</slot>
+    </connection>
     <slot access="public">deleteAction()</slot>
     <slot access="public">newAction()</slot>
     <slot access="public">actionSelected()</slot>

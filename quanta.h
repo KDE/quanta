@@ -69,6 +69,7 @@ class ToolBars;
 class GrepDialog;
 class MessageOutput;
 class QDomDocument;
+class ActionEditDlg;
 
 /**
   * The base class for Quanta application windows. 
@@ -79,6 +80,7 @@ class QuantaApp : public KDockMainWindow
 
   friend class QuantaDoc;
   friend class QuantaView;
+  friend class ActionEditDlg;
 
   public:
     QuantaApp();
@@ -274,7 +276,7 @@ class QuantaApp : public KDockMainWindow
       *cutAction, *copyAction, *findNextAction, *backAction, *forwardAction,
       *closeprjAction, *insertFileAction, *insertDirAction, 
       *rescanPrjDirAction, *uploadProjectAction, *projectOptionAction;
-      
+
     QDomDocument *actions;
 };
  

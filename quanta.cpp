@@ -460,9 +460,16 @@ void QuantaApp::slotOptionsConfigureToolbars()
 
 void QuantaApp::slotOptionsConfigureActions()
 {
-    ActionEditDlg dlg( actionCollection(), this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
+    ActionEditDlg dlg( this, this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
     
-    dlg.exec();
+    if ( dlg.exec() ) {
+    QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
+    f.open( IO_ReadWrite | IO_Truncate );
+    QTextStream qts(&f);
+    actions->save(qts,0);
+    f.close();
+
+    }
 }
 
 

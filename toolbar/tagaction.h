@@ -27,7 +27,7 @@ public:
 
     virtual ~TagAction();
     
-    QDomElement *data();
+    QDomElement data() { return tag; }
 
 
 protected slots:
