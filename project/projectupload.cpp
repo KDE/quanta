@@ -209,7 +209,6 @@ void ProjectUpload::slotBuildTree()
  totalText->setText(i18n("Total:"));
  totalProgress->setTotalSteps(1);
  totalProgress->setValue(0);
- kdDebug(24000) << "Build time: " << t.elapsed() << endl;
 }
 
 

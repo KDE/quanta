@@ -260,7 +260,7 @@ QuantaApp::~QuantaApp()
  tempFileList.clear();
  for (uint i = 0; i < tempDirList.count(); i++)
  {
-    KIO::NetAccess::del(KURL().fromPathOrURL(tempDirList.at(i)->name()), 0);
+    KIO::NetAccess::del(KURL().fromPathOrURL(tempDirList.at(i)->name()), this);
  }
  tempDirList.clear();
  QDictIterator<ToolbarEntry> iter(toolbarList);
@@ -3356,10 +3356,15 @@ KURL QuantaApp::projectBaseURL() const
 /** No descriptions */
 void QuantaApp::slotBuildPrjToolbarsMenu()
 {
+  static bool buildInProgress = false;
+  if (buildInProgress)
+    return;
   KURL::List toolbarList;
   if (Project::ref()->hasProject())
   {
+    buildInProgress = true;
     toolbarList = QExtFileInfo::allFiles(Project::ref()->toolbarURL, "*"+toolbarExtension);
+    buildInProgress = false;
     projectToolbarFiles->setMaxItems(toolbarList.count());
     for (uint i = 0; i < toolbarList.count(); i++)
     {

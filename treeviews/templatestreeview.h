@@ -84,6 +84,8 @@ public slots:
   void slotNewDocument();
   /** Insert the template as text, image, new document. */
   void slotInsert();
+  /** Extracts the site template to an user specified directory */
+  void slotExtractSiteTemplate();
   /** No descriptions */
   void slotNewDir();
  /** Handles dropping on the document from the template tree */
@@ -115,21 +117,22 @@ private:
    *  construction and reference
    */
   TemplatesTreeView(QWidget *parent, const char *name = 0L);
+  /** Filters the template through and action, and returns the modified/filtered
+  template file */
+  KURL filterTemplate();
+  void writeTemplateInfo();
+
   BaseTreeBranch *m_projectDir;
   int m_deleteMenuId;
   int m_openId;
   int m_reloadMenuId;
   QuantaPropertiesPage *m_quantaProperties;
-  /** Filters the template through and action, and returns the modified/filtered
-  template file */
-  KURL filterTemplate();
   QString m_projectName;
   KURL localURL;
   KURL globalURL;
   KPopupMenu *m_fileMenu;
   KPopupMenu *m_folderMenu;
   DirInfo m_dirInfo;
-  void writeTemplateInfo();
   int m_insertFileInProject;
   int m_insertFolderInProject;
   int m_menuClose;                ///< remembers the menu entry

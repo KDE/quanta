@@ -58,7 +58,7 @@ KURL CopyTo::copy(const KURL& urlToCopy, const KURL& destination)
     KIO::NetAccess::stat(urlToCopy, entry, 0);
     KFileItem item(entry, urlToCopy, false, true);
     destURL = targetDirURL;
-    destURL.setPath(destURL.path(1) + urlToCopy.fileName());
+    destURL.setPath(destURL.path(1) + urlToCopy.fileName(false));
     if (item.isDir())
         destURL.adjustPath(1);
 

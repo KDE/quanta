@@ -113,7 +113,8 @@ Project::~Project()
 
 void Project::init()
 {
-  projectURL  = KURL();
+  baseURL = KURL();
+  projectURL = KURL();
   templateURL = KURL();
   projectName = QString::null;
   m_modified=false;
