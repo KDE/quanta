@@ -26,6 +26,7 @@
 #include <kiconloader.h>
 #include <kstandarddirs.h>
 #include <kglobalsettings.h>
+#include <ksplashscreen.h>
 #include <dcopclient.h>
 
 #include "config.h"
@@ -55,6 +56,7 @@ KSplash::~KSplash()
 {
 }
 
+
 KQApplication::KQApplication()
  : KApplication()
 {
@@ -81,10 +83,13 @@ KQApplication::KQApplication()
          mdiMode = KMdi::IDEAlMode;
      quantaApp = new QuantaApp(mdiMode);
      config->setGroup("General Options");
-     if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
+    if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
      {
        splash = new KSplash();
+//      sp = new KSplashScreen(UserIcon("quantalogo_be"));
+//      sp->show();
        connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
+       QTimer::singleShot(10*1000, this, SLOT(slotSplashTimeout()));
      }
      setMainWidget(quantaApp);
      slotInit();
@@ -100,6 +105,13 @@ KQApplication::~KQApplication()
 {
 }
 
+void KQApplication::slotSplashTimeout()
+{
+  delete splash;
+  delete sp;
+  splash = 0L;
+  sp = 0L;
+}
 
 KQUniqueApplication::KQUniqueApplication()
  : KUniqueApplication()
@@ -140,6 +152,7 @@ int KQUniqueApplication::newInstance()
     {
       splash = new KSplash();
       connect(quantaApp, SIGNAL(showSplash(bool)), splash, SLOT(setShown(bool)));
+      QTimer::singleShot(10*1000, this, SLOT(slotSplashTimeout()));
     }
     setMainWidget(quantaApp);
     slotInit();
@@ -152,6 +165,15 @@ void KQUniqueApplication::slotInit()
 {
   KQApplicationPrivate::init();
 }
+
+void KQUniqueApplication::slotSplashTimeout()
+{
+  delete splash;
+  delete sp;
+  splash = 0L;
+  sp = 0L;
+}
+
 
 void KQApplicationPrivate::init()
 {
@@ -185,7 +207,11 @@ void KQApplicationPrivate::init()
     quantaApp->m_quantaInit->openLastFiles();
   }
   args->clear();
-  delete splash;
+ // delete splash;
+//  splash = 0L;
+  delete sp;
+  sp = 0L;
+  kdDebug(24000) << "Delete splash" << endl;
   delete quantaApp->m_quantaInit;
   quantaApp->m_quantaInit = 0L;
   quantaApp->enableIdleTimer(true);

@@ -187,7 +187,6 @@ int main(int argc, char *argv[])
   KApplication *app;
   KApplication::disableAutoDcopRegistration();
 
-
   if (isUnique) {
       KUniqueApplication::dcopClient()->registerAs("quanta-foo");
       if (KUniqueApplication::dcopClient()->isApplicationRegistered("quanta"))
@@ -209,6 +208,5 @@ int main(int argc, char *argv[])
   }
   qInitNetworkProtocols();
 
-//  kdDebug(24000)<<"Calling app->exec()"<<endl;
   return app->exec();
 }

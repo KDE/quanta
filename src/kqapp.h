@@ -23,6 +23,7 @@
 #include <kuniqueapplication.h>
 
 class KCmdLineArgs;
+class KSplashScreen;
 
 class KSplash : public QFrame
 {
@@ -36,7 +37,7 @@ class KSplash : public QFrame
 class KQApplicationPrivate
 {
   public:
-    KQApplicationPrivate() {};
+    KQApplicationPrivate():splash(0L), sp(0L) {};
     ~KQApplicationPrivate() {};
 
   protected:
@@ -44,6 +45,7 @@ class KQApplicationPrivate
 
     KSplash *splash;
     KCmdLineArgs *args;
+    KSplashScreen *sp;
 };
 
 class KQApplication : public KApplication, KQApplicationPrivate
@@ -56,6 +58,7 @@ class KQApplication : public KApplication, KQApplicationPrivate
   public slots:
     /** No descriptions */
     void slotInit();
+    void slotSplashTimeout();
 };
 
 class KQUniqueApplication : public KUniqueApplication, KQApplicationPrivate
@@ -72,6 +75,7 @@ class KQUniqueApplication : public KUniqueApplication, KQApplicationPrivate
   public slots:
     /** No descriptions */
     void slotInit();
+    void slotSplashTimeout();
 };
 
 #endif
