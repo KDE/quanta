@@ -2677,7 +2677,8 @@ void kafkaCommon::moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibli
 
     //insert the new Node.
     insertNode(newNode, newParent, newNextSibling, 0L, merge);
-    modif->setFinalLocation(getLocation(newNode));
+    if(modifs)
+      modif->setFinalLocation(getLocation(newNode));
     
     if(moveClosingNode && closingNode)
         moveNode(closingNode, newParent, newNextSibling,
