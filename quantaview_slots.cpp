@@ -249,7 +249,6 @@ void QuantaView::slotTagQuickStart(){
 
   if ( quickDlg->exec() )
    {
-    const QString chset = QTextCodec::codecForLocale()->mimeName();
 
     DTDStruct *dtd = write()->defaultDTD();
     QString tag = QString("<!DOCTYPE" + dtd->doctypeStr +">\n")+QuantaCommon::tagCase("<html>\n")
@@ -257,8 +256,7 @@ void QuantaView::slotTagQuickStart(){
     if ( !QString(quickDlg->lineTitle->text()).isEmpty())
 	   		tag += quickDlg->lineTitle->text();
     tag += QuantaCommon::tagCase("</title>\n")+space+
-           "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + chset + "\">\n"+
-           space+"  <meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"+space+
+           "  <meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"+space+
            QuantaCommon::tagCase("</head>\n")+space+QuantaCommon::tagCase("<body");
     if ( !QString(quickDlg->lineBGImage->text()).isEmpty())
 	   		tag += QuantaCommon::attrCase(" background=\"")+quickDlg->lineBGImage->text()+"\"";
