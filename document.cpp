@@ -81,7 +81,9 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
   #ifdef BUILD_KAFKAPART
+  #if 0 //TODO: reenable if editinterfaceext is available
   editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
+  #endif
   cursorIf = dynamic_cast<KTextEditor::CursorInterface *>(m_doc);
   #endif
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
