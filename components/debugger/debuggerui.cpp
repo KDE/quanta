@@ -55,7 +55,7 @@ void DebuggerUI::showMenu()
 {
   QPopupMenu* debuggerMenu = (QPopupMenu*)(quantaApp->guiFactory())->container("debugger_menu", quantaApp);
   if(debuggerMenu)
-    m_debuggerMenuID = quantaApp->menuBar()->insertItem(i18n("Deb&ug"), debuggerMenu, -1, 4);
+    m_debuggerMenuID = quantaApp->menuBar()->insertItem(i18n("Deb&ug"), debuggerMenu, -1, 5);
   else
     m_debuggerMenuID  = 0;
 }
