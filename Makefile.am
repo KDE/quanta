@@ -21,6 +21,7 @@ quanta_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 messages: rc.cpp
 	$(EXTRACTRC) `find . -name "*.ui"` >> rc.cpp
 	$(EXTRACTRC) `find . -name "*.rc"` >> rc.cpp
+	$(EXTRACTRC) $(top_srcdir)/quanta/data/chars >> rc.cpp
 	$(XGETTEXT) `find . -name "*.cpp"` -o $(podir)/quanta.pot
  
 KDE_ICON = quanta

@@ -1,101 +1,129 @@
-"   (&quot;)
-&   (&amp;)
-<   (&lt;)
->   (&gt;)
-    (&nbsp;)
-¡   (&iexcl;)
-¤   (&euro;)
-¢   (&cent;)
-£   (&pound;)
-?   (&curren;)
-¥   (&yen;)
-?   (&brvbar;)
-§   (&sect;)
-?   (&uml;)
-©   (&copy;)
-ª   (&ordf;)
-«   (&laquo;)
-¬   (&not;)
-­   (&shy;)
-®   (&reg;)
-¯   (&macr;)
-°   (&deg;)
-±   (&plusmn;)
-²   (&sup2;)
-³   (&sup3;)
-?   (&acute;)
-µ   (&micro;)
-¶   (&para;)
-*   (&middot;)
-?   (&cedil;)
-¹   (&sup1;)
-º   (&ordm;)
-»   (&raquo;)
-?   (&frac14;)
-?   (&frac12;)
-?   (&frac34;)
-¿   (&iquest;)
-À   (&Agrave;)
-Á   (&Aacute;)
-Â   (&Acirc;)
-Ã   (&Atilde;)
-Ä   (&Auml;)
-Å   (&Aring;)
-Æ   (&AElig;)
-Ç   (&Ccedil;)
-È   (&Egrave;)
-É   (&Eacute;)
-Ê   (&Ecirc;)
-Ë   (&Euml;)
-Ì   (&Igrave;)
-Í   (&Iacute;)
-Î   (&Icirc;)
-Ï   (&Iuml;)
-Ð   (&ETH;)
-Ñ   (&Ntilde;)
-Ò   (&Ograve;)
-Ó   (&Oacute;)
-Ô   (&Ocirc;)
-Õ   (&Otilde;)
-Ö   (&Ouml;)
-×   (&times;)
-Ø   (&Oslash;)
-Ù   (&Ugrave;)
-Ú   (&Uacute;)
-Û   (&Ucirc;)
-Ü   (&Uuml;)
-Ý   (&Yacute;)
-Þ   (&THORN;)
-ß   (&szlig;)
-à   (&agrave;)
-á   (&aacute;)
-â   (&acirc;)
-ã   (&atilde;)
-ä   (&auml;)
-å   (&aring;)
-æ   (&aelig;)
-c   (&ccedil;)
-è   (&egrave;)
-é   (&eacute;)
-ê   (&ecirc;)
-ë   (&euml;)
-ì   (&igrave;)
-í   (&iacute;)
-î   (&icirc;)
-ï   (&iuml;)
-ð   (&eth;)
-ñ   (&ntilde;)
-ò   (&ograve;)
-ó   (&oacute;)
-ô   (&ocirc;)
-õ   (&otilde;)
-ö   (&ouml;)
-÷   (&divide;)
-ø   (&oslash;)
-ù   (&ugrave;)
-ú   (&uacute;)
-û   (&ucirc;)
-ü   (&uuml;)
-ý   (&yacute;)
-þ   (&thorn;)
-ÿ   (&yuml;)
+" (&quot;) Quotation mark
+# (&#035;) Hash mark
+$ (&#036;) Dollar sign
+% (&#037;) Percent sign
+  (&amp;) Ampersand
+' (&#039;) Apostrophe
+( (&#040;) Left parenthesis
+) (&#041;) Right parenthesis
+* (&#042;) Asterisk
++ (&#043;) Plus sign
+, (&#044;) Comma
+- (&#045;) Hyphen
+. (&#046;) Period
+/ (&#047;) Slash
+: (&#058;) Colon
+; (&#059;) Semicolon
+< (&lt;) Less than
+= (&#061;) Equals sign
+> (&gt;) Greater than
+? (&#063;) Question mark
+@ (&#064;) Commercial at sign
+[ (&#091;) Left square bracket
+\ (&#092;) Backslash
+] (&#093;) Right square bracket
+^ (&#094;) Caret
+_ (&#095;) Underscore
+` (&#096;) Grave accent
+{ (&#123;) Left curly brace
+| (&#124;) Vertical bar
+} (&#125;) Right curly brace
+~ (&#126;) Tilde
+x (&times;) Multiplication
+  (&divide;) Division
+  (&nbsp;) Nonbreaking space
+  (&iexcl;) Inverted exclamation point
+  (&euro;) Euro currency sign
+  (&cent;) Cent sign
+  (&pound;) Pound sign
+  (&curren;) General currency sign
+  (&yen;) Yen sign
+  (&brvbar;) Broken vertical bar
+  (&sect;) Section sign
+  (&uml;) Umlaut
+  (&copy;) Copyright
+  (&ordf;) Feminine ordinal
+  (&laquo;) Left angle quote
+  (&not;) Not sign
+  (&shy;) Soft hyphen
+  (&reg;) Registered trademark
+  (&macr;) Macron accent
+  (&deg;) Degree sign
+  (&plusmn;) Plus or minus
+  (&sup2;) Superscript 2
+  (&sup3;) Superscript 3
+  (&acute;) Acute sign
+  (&micro;) Micro sign (Greek mu)
+  (&para;) Paragraph sign
+  (&middot;) Middle dot
+  (&cedil;) Cedilla
+  (&sup1;) Superscript 1
+  (&ordm;) Masculine ordinal
+  (&raquo;) Right angle quote
+  (&frac14;) Fraction one-fourth
+  (&frac12;) Fraction one-half
+  (&frac34;) Fraction three-fourths
+  (&iquest;) Inverted question mark
+--ISO 8859-1 Character Entities--
+  (&Agrave;) Capital A, grave accent
+  (&Aacute;) Capital A, acute accent
+  (&Acirc;) Capital A, circumflex accent
+  (&Atilde;) Capital A, tilde
+  (&Auml;) Capital A, umlaut
+  (&Aring;) Capital A, ring
+  (&AElig;) Capital AE ligature
+  (&Ccedil;) Capital C, cedilla
+  (&Egrave;) Capital E, grave accent
+  (&Eacute;) Capital E, acute accent
+  (&Ecirc;) Capital E, circumflex accent
+  (&Euml;) Capital E, umlaut
+  (&Igrave;) Capital I, grave accent
+  (&Iacute;) Capital I, acute accent
+  (&Icirc;) Capital I, circumflex accent
+  (&Iuml;) Capital I, umlaut
+  (&ETH;) Capital eth, Icelandic
+  (&Ntilde;) Capital N, tilde
+  (&Ograve;) Capital O, grave accent
+  (&Oacute;) Capital O, acute accent
+  (&Ocirc;) Capital O, circumflex accent
+  (&Otilde;) Capital O, tilde
+  (&Ouml;) Capital O, umlaut
+  (&Oslash;) Capital O, slash
+  (&Ugrave;) Capital U, grave accent
+  (&Uacute;) Capital U, acute accent
+  (&Ucirc;) Capital U, circumflex accent
+  (&Uuml;) Capital U, umlaut
+  (&Yacute;) Capital Y, acute accent
+  (&THORN;) Capital thorn, Icelandic
+  (&szlig;) Small sz ligature, German
+  (&agrave;) Small a, grave accent
+  (&aacute;) Small a, acute accent
+  (&acirc;) Small a, circumflex accent
+  (&atilde;) Small a, tilde
+  (&auml;) Small a, umlaut
+  (&aring;) Small a, ring
+  (&aelig;) Small ae ligature
+  (&ccedil;) Small c, cedilla
+  (&egrave;) Small e, grave accent
+  (&eacute;) Small e, acute accent
+  (&ecirc;) Small e, circumflex accent
+  (&euml;) Small e, umlaut
+  (&igrave;) Small i, grave accent
+  (&iacute;) Small i, acute accent
+  (&icirc;) Small i, circumflex accent
+  (&iuml;) Small i, umlaut
+  (&eth;) Small eth, Icelandic
+  (&ntilde;) Small n, tilde
+  (&ograve;) Small o, grave accent
+  (&oacute;) Small o, acute accent
+  (&ocirc;) Small o, circumflex accent
+  (&otilde;) Small o, tilde
+  (&ouml;) Small o, umlaut
+  (&oslash;) Small o, slash
+  (&ugrave;) Small u, grave accent
+  (&uacute;) Small u, acute accent
+  (&ucirc;) Small u, acute accent
+  (&uuml;) Small u, umlaut
+  (&yacute;) Small y, acute accent
+  (&thorn;) Small thorn, Icelandic
+  (&yuml;) Small y, umlaut

@@ -8,4 +8,3 @@ EXTRA_DIST = actions.rc plugins.rc
 datadir = ${kde_datadir}/quanta
 
 data_DATA = plugins.rc actions.rc chars tips
-

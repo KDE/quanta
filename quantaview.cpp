@@ -184,12 +184,11 @@ void QuantaView::initActions()
         QTextStream t( &file );        // use a text stream
         QString s;
         while ( !t.eof() ) {           // until end of file...
-            char_list << t.readLine(); // line excluding '\n'
+            char_list << i18n(t.readLine()); // line excluding '\n'
         }
         file.close();
     }
     char_action->setItems(char_list);
-    char_action->setComboWidth(150);
 }
 
 /** No descriptions /
