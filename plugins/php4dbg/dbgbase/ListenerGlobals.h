@@ -17,7 +17,7 @@
 #include "phpdbg_idl.h"
 #include "dbg_core.h"
 
-#if PHP_WIN32
+#ifdef PHP_WIN32
 # include <winsock.h>
 #else
 # include <sys/socket.h>
@@ -48,7 +48,7 @@
   #endif
 #endif
 
-#if PHP_WIN32
+#ifdef PHP_WIN32
   #define	snprintf _snprintf
   #define	vsnprintf _vsnprintf
 #else

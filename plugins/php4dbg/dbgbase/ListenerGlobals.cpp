@@ -47,7 +47,7 @@ void __dbgtrace(const char *str,...) {
 #endif
 
 int oserrno(int isnetwork) {
-#if PHP_WIN32
+#ifdef PHP_WIN32
 	if (isnetwork)
 		return WSAGetLastError();
 	else
@@ -65,7 +65,7 @@ void oserrnostr(char *buf, int bufsize, int err) {
 		if (!err) err = oserrno(1);
 	}
 	if (!err) return;
-#if PHP_WIN32
+#ifdef PHP_WIN32
 	{
 		int i;
 		FormatMessage(
@@ -83,9 +83,9 @@ void oserrnostr(char *buf, int bufsize, int err) {
 	}
 #else
 	{
-#if defined(__NetBSD__)
+#if defined(__NetBSD__) || defined(USE_SOLARIS)
    strncpy (buf, strerror (err), bufsize);
-#else
+#else   
    strerror_r(err, buf, bufsize);
 #endif
 	}

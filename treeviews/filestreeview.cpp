@@ -61,7 +61,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
 	
 	setRootIsDecorated( true );
   header()->hide();
-  setSorting( 0 );
+  setSorting(0);
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
@@ -69,8 +69,10 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
 
 	setFocusPolicy(QWidget::ClickFocus);
 
+/*  
 	fileMenu -> insertItem( i18n("List Mode"), this ,SLOT(slotNewMode()));
 	folderMenu -> insertItem( i18n("List Mode"), this ,SLOT(slotNewMode()));
+*/  
 	folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
 	
 	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
@@ -272,7 +274,7 @@ void FilesTreeView::slotSelectImage(QListViewItem *item)
 /** Add or remove folders to/from the top list */
 void FilesTreeView::slotAddToTop()
 {
-    FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( currentItem() );
+  FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( currentItem() );
 	if ( d )
 	{
     KURL url = currentURL();
@@ -419,7 +421,7 @@ void FilesTreeView::slotDirListNewItems(const KFileItemList& items)
 {
   KFileItem * firstItem = const_cast<KFileItemList&>(items).first();
   KURL parentUrl = firstItem->url();
-  QString parentKey = firstItem->url().path();
+  QString parentKey = parentUrl.path();
   parentKey = parentKey.left(parentKey.findRev("/"))+"/";
   parentUrl.setPath(parentKey);
   QPtrList<QListViewItem> parents = getItems(parentUrl);
@@ -515,13 +517,13 @@ QPtrList<QListViewItem> FilesTreeView::getItems(const KURL& p_url)
     fileItem = dynamic_cast<FilesTreeFile*>(it);
     if (fileItem)
     {
-      if (fileItem->url == p_url) items.append(it);
+      if (fileItem->url.url() == p_url.url()) items.append(it);
     } else
     {
       folderItem = dynamic_cast<FilesTreeFolder*>(it);
       if (folderItem)
       {
-        if (folderItem->url == p_url) items.append(it);
+        if (folderItem->url.url() == p_url.url()) items.append(it);
       }
     }
   }

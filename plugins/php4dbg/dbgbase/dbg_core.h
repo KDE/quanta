@@ -54,7 +54,7 @@
 #endif
 
 
-#if PHP_WIN32
+#ifdef PHP_WIN32
   #ifdef DBG_EXPORTS
     #define DBGAPI __declspec(dllexport)
   #else
@@ -64,7 +64,7 @@
   #endif
 #endif
 
-#if PHP_WIN32
+#ifdef PHP_WIN32
   #include <windows.h>
   #include <windef.h>
   #include <winsock.h>
@@ -86,7 +86,7 @@
 #endif
 
 
-#if PHP_WIN32
+#ifdef PHP_WIN32
   #define SCLOSE(a) closesocket(a)
 #else
   #define SCLOSE(a) close(a)

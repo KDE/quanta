@@ -970,7 +970,10 @@ void Project::slotAcceptCreateProject()
     {
       email = pnf->lineEmail  ->text();
       author = pnf->lineAuthor ->text();
-
+      m_defaultDTD = QuantaCommon::getDTDNameFromNickName(pnf->dtdCombo->currentText());
+      m_defaultEncoding  = pnf->encodingCombo->currentText();
+      m_newFileType  = QuantaCommon::getDTDNameFromNickName(pnf->newfileCombo->currentText());
+      
       QuantaCommon::setUrl(previewPrefix, pnf->linePrefix->text());
       previewPrefix.adjustPath(1);
 
@@ -984,6 +987,8 @@ void Project::slotAcceptCreateProject()
       el.setAttribute("name", projectName );
       el.setAttribute("previewPrefix", previewPrefix.url() );
       el.setAttribute("usePreviewPrefix",usePreviewPrefix);
+      el.setAttribute("encoding", m_defaultEncoding);
+      el.setAttribute("newfiles", m_newFileType);
 
       el = dom.createElement("author");
       dom.firstChild().firstChild().appendChild( el );
@@ -992,6 +997,10 @@ void Project::slotAcceptCreateProject()
       el = dom.createElement("email");
       dom.firstChild().firstChild().appendChild( el );
       el.appendChild( dom.createTextNode( email ) );
+
+      el = dom.createElement("defaultDTD");
+      dom.firstChild().firstChild().appendChild(el);
+      el.appendChild(dom.createTextNode(m_defaultDTD));
 
       KURL::List list;
       if ( png->type() == "Local" ) list = pnl->files();

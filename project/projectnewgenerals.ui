@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>ProjectNewGeneralS</class>
 <widget class="QWidget">
     <property name="name">
@@ -348,7 +348,7 @@
                                     <x>9</x>
                                     <y>22</y>
                                     <width>465</width>
-                                    <height>95</height>
+                                    <height>104</height>
                                 </rect>
                             </property>
                             <grid>

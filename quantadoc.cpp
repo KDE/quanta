@@ -405,6 +405,7 @@ Document* QuantaDoc::write()
 Document* QuantaDoc::newWrite()
 {
   DTDStruct *dtd = dtds->find(quantaApp->newFileType());
+//  if (!dtd) dtd = dtds->find(qConfig.newFileType);   //fallback, but not really needed
   int i = 1;
   QString fname;
   while ( isOpened(fname.sprintf("Untitled%i."+dtd->defaultExtension,i))) i++;

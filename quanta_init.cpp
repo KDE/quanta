@@ -343,10 +343,10 @@ void QuantaApp::initView()
   }
   url = KURL();
   url.setPath("/");
-  topList.append(url);
+  if (!topList.contains(url)) topList.append(url);
   url = KURL();
   url.setPath(QDir::homeDirPath()+"/");
-  topList.append(url);
+  if (!topList.contains(url)) topList.append(url);
 
   fTab = new QWidgetStack( ftabdock );
   fTTab = new FilesTreeView(topList, fTab );
@@ -522,9 +522,9 @@ void QuantaApp::saveOptions()
     config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
     config->writeEntry("Follow Cursor", sTab->followCursor() );
     config->writeEntry("PHP Debugger Port", phpDebugPort );
-//    config->writeEntry("Top folders", fTTab->dirList);
+    config->writeEntry("Top folders", fTTab->topURLList.toStringList());
     config->writeEntry("List of opened files", doc->openedFiles().toStringList());
-    config->writeEntry ("Version", VERSION); // version
+    config->writeEntry("Version", VERSION); // version
     doc    ->writeConfig(config); // kwrites
     project->writeConfig(config); // project
     config->setGroup  ("General Options");
@@ -571,7 +571,10 @@ void QuantaApp::readOptions()
   sTab->setFollowCursor( config->readBoolEntry("Follow Cursor", true));
 
   int mode = config->readNumEntry("Left panel mode", 0);
+/* List Mode disabled!!
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
+*/
+  fTab->raiseWidget(0);  
 
   fileRecent ->loadEntries(config);
 

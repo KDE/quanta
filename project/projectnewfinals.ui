@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>ProjectNewFinalS</class>
 <widget class="QWidget">
     <property name="name">
@@ -91,7 +91,7 @@
                                     <x>8</x>
                                     <y>25</y>
                                     <width>459</width>
-                                    <height>92</height>
+                                    <height>105</height>
                                 </rect>
                             </property>
                             <grid>
@@ -205,7 +205,7 @@
                         <property name="name">
                             <cstring>Line4</cstring>
                         </property>
-                        <property name="frameShape" stdset="0">
+                        <property name="frameShape">
                             <enum>HLine</enum>
                         </property>
                         <property name="frameShadow">
@@ -248,7 +248,7 @@
                         </grid>
                     </widget>
                     <spacer row="2" column="0">
-                        <property name="name" stdset="0">
+                        <property name="name">
                             <cstring>Spacer9</cstring>
                         </property>
                         <property name="orientation">
@@ -265,7 +265,7 @@
                         </property>
                     </spacer>
                     <spacer row="6" column="0">
-                        <property name="name" stdset="0">
+                        <property name="name">
                             <cstring>Spacer6</cstring>
                         </property>
                         <property name="orientation">
@@ -325,7 +325,7 @@
                                 </property>
                             </widget>
                             <spacer row="0" column="2">
-                                <property name="name" stdset="0">
+                                <property name="name">
                                     <cstring>Spacer2</cstring>
                                 </property>
                                 <property name="orientation">
