@@ -4127,6 +4127,36 @@ void QuantaApp::slotEditCurrentTag()
 
       delete dlg;
     }
+  } 
+  if (isUnknown)
+  {
+    const DTDStruct *dtd = w->defaultDTD();
+    if (dtd->family == Xml)
+    {
+      QString currentLine = w->editIf->textLine(line);
+      int sPos = currentLine.findRev('<', col);
+      if (sPos != -1)
+      {
+        int ePos = currentLine.find('>', col);
+        if (ePos != -1)
+        {
+          AreaStruct area(line, sPos, line, ePos);          
+          Tag *tag = new Tag(area, w, dtd, true);  
+          if ( QuantaCommon::isKnownTag(dtd->name, tag->name) )
+          {
+            isUnknown = false;
+            QString selection(w->selectionIf->selection());
+            TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtd, tag->name), tag, selection, ViewManager::ref()->activeView()->baseURL() );
+            if (dlg->exec())
+            {
+              w->changeTag(tag, dlg->getAttributes() );
+            }
+            delete dlg;
+          }
+          delete tag;
+        }
+      }
+    }
   }
   typingInProgress = false;
   slotEnableIdleTimer(true);
