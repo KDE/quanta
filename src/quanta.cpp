@@ -329,7 +329,7 @@ void QuantaApp::slotFileOpen()
 
  KEncodingFileDialog::Result data;
  data = KEncodingFileDialog::getOpenURLsAndEncoding(myEncoding, startDir,
-        "all/allfiles text/plain", this, i18n("Open File"));
+     "all/allfiles text/html text/xml application/x-php text/plain", this, i18n("Open File"));
  slotFileOpen(data.URLs, data.encoding);
 }
 
@@ -452,7 +452,7 @@ bool QuantaApp::slotFileSaveAs()
 
     KEncodingFileDialog::Result data;
     data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsUrl.url(),
-             "all/allfiles text/plain", this, i18n("Save File"));
+        "all/allfiles text/html text/xml application/x-php text/plain", this, i18n("Save File"));
     KURL saveUrl = data.URLs[0];
     QString encoding = data.encoding;
     KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
