@@ -94,6 +94,7 @@ public:
   /** Parse for groups (variables, inclusions) in the node. */
   void parseForGroups();
   void parseIncludedFiles();
+  void removeCommentsAndQuotes(QString& str, DTDStruct* dtd);
 
   QMap<QString, GroupElementMapList> m_groups; //a list of groups (variables, inclusions)
   QStringList includedFiles;

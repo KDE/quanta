@@ -239,16 +239,18 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     }
     for (externalIt = parser->includedMap.begin(); externalIt != parser->includedMap.end(); ++externalIt)
     {
-      insertUnder = groups[i];
+      insertUnder = new StructTreeTag(static_cast<StructTreeTag*>(groups[i]), 0L, externalIt.key(), groups[i]);
       insertAfter = insertUnder;
       IncludedGroupElements elements = externalIt.data();
       for (uint j = 0; j < elements[group.name].count(); j++)
       {
-        item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), 0L, elements[group.name][j] + " ["+externalIt.key()+"]", insertAfter);
+        item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), 0L, elements[group.name][j], insertAfter);
         static_cast<StructTreeTag*>(item)->hasOpenFileMenu = group.hasFileName;
         static_cast<StructTreeTag*>(item)->fileNameRx = group.fileNameRx;
         insertAfter = item;
       }
+      if (!insertUnder->firstChild())
+          delete insertUnder;
     }
     groups[i]->sortChildItems(0, true);
   }

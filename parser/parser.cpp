@@ -695,50 +695,7 @@ Node* Parser::specialAreaParser(Node *startNode)
     }
   }
 
- //Replace all the commented strings and the escaped quotation marks (\", \')
- // with spaces so they will not mess up our parsing
- pos = 0;
- while (pos != -1)
- {
-   pos = dtd->commentsStartRx.search(str, pos);
-   if (pos != -1)
-   {
-     s = dtd->commentsStartRx.cap();
-     if (s == "\\\"" || s == "\\'")
-     {
-       str[pos] = ' ';
-       str[pos+1] = ' ';
-       pos += 2;
-     } else
-     {
-       s = dtd->comments[s];
-       l = str.find(s, pos);
-       l = (l == -1) ? str.length() : l;
-       for (int i = pos; i < l ; i++)
-       {
-         str[i] = ' ';
-       }
-       pos = l + s.length();
-     }
-   }
- }
-
- //Now replace the quoted strings with spaces
- const QRegExp strRx("(\"[^\"]*\"|'[^']*')");
- pos = 0;
- while (pos != -1)
- {
-   pos = strRx.search(str, pos);
-   if (pos != -1)
-   {
-    l = strRx.matchedLength();
-    for (int i = pos; i < pos + l ; i++)
-    {
-      str[i] = ' ';
-    }
-    pos += l;
-   }
- }
+  removeCommentsAndQuotes(str, dtd);
 
   pos = 0;
   int lastPos = startNode->tag->structBeginStr.length();
@@ -1025,6 +982,7 @@ Node* Parser::specialAreaParser(Node *startNode)
   s = write->text(bl, bc, bLine, bCol - 1);
   startNode->tag->setTagPosition(bl, bc, bLine, bCol - 1);
   startNode->tag->setStr(s);
+  removeCommentsAndQuotes(startNode->tag->cleanStr, startNode->tag->dtd);
 
   eLine = eCol = -1;
   //create a node with the end of special area
@@ -1079,6 +1037,7 @@ Node* Parser::specialAreaParser(Node *startNode)
     Tag *tag = new Tag();
     s = write->text(eLine, eCol+1, el, ec);
     tag->setStr(s);
+    removeCommentsAndQuotes(tag->cleanStr, dtd);
     tag->setTagPosition(eLine, eCol+1, el, ec);
     tag->type = Tag::XmlTagEnd;
     tag->single = true;
@@ -1102,6 +1061,7 @@ Node* Parser::specialAreaParser(Node *startNode)
     tag = new Tag(*startNode->tag);
     s = write->text(bLine, bCol, eLine, eCol);
     tag->setStr(s);
+    removeCommentsAndQuotes(tag->cleanStr, dtd);
     tag->setTagPosition(bLine, bCol, eLine, eCol);
     tag->type = Tag::Text;
     tag->single = true;
@@ -1122,6 +1082,7 @@ Node* Parser::specialAreaParser(Node *startNode)
       currentNode->tag->type = Tag::Text;
     }
     currentNode->tag->setStr(s);
+    removeCommentsAndQuotes(currentNode->tag->cleanStr, currentNode->tag->dtd);
     currentNode->tag->setTagPosition(bLine, bCol, eLine, eCol);
   }
 
@@ -1759,6 +1720,57 @@ void Parser::slotIncludedFileChanged(const QString& fileName)
       parseIncludedFile(fileName, dtd);
     }
   }
+}
+
+void Parser::removeCommentsAndQuotes(QString &str, DTDStruct *dtd)
+{
+ //Replace all the commented strings and the escaped quotation marks (\", \')
+ // with spaces so they will not mess up our parsing
+ int pos = 0;
+ int l;
+ QString s;
+ while (pos != -1)
+ {
+   pos = dtd->commentsStartRx.search(str, pos);
+   if (pos != -1)
+   {
+     s = dtd->commentsStartRx.cap();
+     if (s == "\\\"" || s == "\\'")
+     {
+       str[pos] = ' ';
+       str[pos+1] = ' ';
+       pos += 2;
+     } else
+     {
+       s = dtd->comments[s];
+       l = str.find(s, pos);
+       l = (l == -1) ? str.length() : l;
+       for (int i = pos; i < l ; i++)
+       {
+         str[i] = ' ';
+       }
+       pos = l + s.length();
+     }
+   }
+ }
+
+ //Now replace the quoted strings with spaces
+ const QRegExp strRx("(\"[^\"]*\"|'[^']*')");
+ pos = 0;
+ while (pos != -1)
+ {
+   pos = strRx.search(str, pos);
+   if (pos != -1)
+   {
+    l = strRx.matchedLength();
+    for (int i = pos; i < pos + l ; i++)
+    {
+      str[i] = ' ';
+    }
+    pos += l;
+   }
+ }
+
 }
 
 #include "parser.moc"

@@ -78,8 +78,6 @@ void QuantaPluginInterface::readConfig()
     QString pluginType = config->readEntry("Type", "Command Line");
     if (pluginType == "KPart") pluginType = i18n("KPart");
     if (pluginType == "Command Line") pluginType = i18n("Command Line");
-    kdDebug(24000) << "Plugin type: " << pluginType << endl;
-    kdDebug(24000) << "Command Line: " << i18n("Command Line") << endl;
     bool isStandard = config->readBoolEntry("Standard",false);
 /*    if (isStandard)
     {
@@ -168,9 +166,6 @@ void QuantaPluginInterface::writeConfig()
   if (config->isReadOnly())
   {
     kdWarning() << "Plugin config file " << locateLocal("appdata", "plugins.rc") << " is read only! Plugin settings were not saved!" << endl;
-  } else
-  {
-    kdDebug(24000) << "Plugin settings saved to: " << locateLocal("appdata", "plugins.rc") << endl;
   }
   delete config;
 }
