@@ -13,6 +13,7 @@
  ***************************************************************************/
 
 //qt includes
+#include <qdir.h>
 
 //kde includes
 #include <kdirwatch.h>
@@ -224,12 +225,18 @@ void ViewManager::slotCloseOtherTabs()
 
 QuantaView* ViewManager::isOpened(const KURL& url)
 {
+  KURL url2 = url;
+  if (url2.isLocalFile())
+  {
+      QDir dir(url2.path());
+      url2.setPath(dir.canonicalPath());
+ }
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   QuantaView *view;
   for (it->first(); !it->isDone(); it->next())
   {
       view = dynamic_cast<QuantaView*>(it->currentItem());
-      if (view && view->document() && view->document()->url() == url)
+      if (view && view->document() && view->document()->url() == url2)
       {
           delete it;
           return view;
