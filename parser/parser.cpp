@@ -659,6 +659,7 @@ Node *Parser::parse(Document *w)
   m_dtd = w->defaultDTD();
   maxLines = w->editIf->numLines() - 1;
   clearGroups();
+  parsingEnabled = true;
   if (maxLines >= 0)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
@@ -1210,6 +1211,7 @@ Node *Parser::rebuild(Document *w)
    return parse(w);
  } else
  {
+   parsingEnabled = true;
    oldMaxLines = maxLines;
    maxLines = w->editIf->numLines() - 1;
    int lineDiff = maxLines - oldMaxLines;
@@ -1267,7 +1269,7 @@ Node *Parser::rebuild(Document *w)
      {
         text = w->text(bl + lineDiff, bc, el + lineDiff, ec);
         tagStr = node->tag->tagStr();
-        if (tagStr == text && node->tag->type != Tag::Empty && !node->insideSpecial && !node->tag->validXMLTag)
+        if (tagStr == text && node->tag->type != Tag::Empty && !node->insideSpecial && node->tag->validXMLTag)
         {
           if (!lastNode)
               lastNode = node;

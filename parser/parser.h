@@ -107,6 +107,7 @@ public:
   QStringList includedFiles;
   QPtrList<DTDStruct> includedFilesDTD;
   IncludedGroupElementsMap includedMap;
+  bool parsingEnabled;
 
 private slots:
   void slotIncludedFileChanged(const QString& fileName);
