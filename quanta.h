@@ -102,7 +102,6 @@ class QuantaApp : public KDockMainWindow
     void saveOptions();
     void readOptions();
     
-    void initContextMenu();
     void initActions();
     void initStatusBar();
     void initDocument();
@@ -154,16 +153,13 @@ class QuantaApp : public KDockMainWindow
     void slotNewLineColumn();
     void slotUpdateStatus (const QString &);
 
+    void slotDockChanged();
     void slotSwapLeftPanelMode();
-
-    void slotLeftTabChanged(QWidget *);
-
+    
     void slotActivatePreview();
     
     /** show preview ( F6 )*/
     void slotShowPreview();
-    
-    
     
     void slotShowProjectTree();
 
@@ -211,7 +207,6 @@ class QuantaApp : public KDockMainWindow
     /** project class */
     Project *project;
 
-    /** return htmlPart or 0L if use previewPosition=="Disabled" */
     WHTMLPart    *htmlPart();
     QWidgetStack *widgetStackOfHtmlPart();
     

@@ -522,26 +522,24 @@ void QuantaApp::slotOptions()
   delete kd;
 }
 
+
 void QuantaApp::slotSwapLeftPanelMode()
 {
-	if 	( fTab->id( fTab->visibleWidget() ) == 0 )
+	if ( fTab->id( fTab->visibleWidget() ) == 0 )
 	{
-		FilesTreeView *fT = dynamic_cast<FilesTreeView *>( fTab->visibleWidget() );
-		FilesListView *fL = dynamic_cast<FilesListView *>( fTab->visibleWidget() );
-		if (!fT) return;
-		if (!fL) return;
-		FilesTreeFolder *p = dynamic_cast<FilesTreeFolder *>(fT->currentItem()->parent());
+		FilesTreeFolder *p = dynamic_cast<FilesTreeFolder *>(fTTab->currentItem()->parent());
 		if (!p) return;
 		
 		QString dir = p->fullName();
 		
-		fL->dir = dir;
-		fL->slotReload();
+		fLTab->dir = dir;
+		fLTab->slotReload();
 		
 		fTab->raiseWidget(1);
 	}
 	else if ( fTab->id( fTab->visibleWidget() ) == 1 ) fTab->raiseWidget(0);
 }
+
 
 void QuantaApp::slotActivatePreview()
 {
@@ -594,8 +592,7 @@ void QuantaApp::slotShowPreview()
 
 void QuantaApp::slotShowProjectTree()
 {
-#warning view project tree
-//  leftPanel->showPage((QWidget *)pTab);
+  if ( !ptabdock->isVisible() ) ptabdock->changeHideShowState();
 }
 
 void QuantaApp::slotNewLineColumn()
@@ -614,8 +611,7 @@ void QuantaApp::slotNewLineColumn()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse()
 {
-#warning fixme
-//	if ( QString(leftPanel->currentPage()->name()) == "struct" )
+	if ( stabdock->isVisible() )
 	{
 		Node *node = parser->parse( view->write()->text() );
 		//sTab->s = parser->s;
@@ -650,18 +646,15 @@ void QuantaApp::gotoFileAndLine( const QString &filename, int line )
 }
 
 
-void QuantaApp::slotLeftTabChanged(QWidget *)
+//void QuantaApp::slotLeftTabChanged(QWidget *)
+void QuantaApp::slotDockChanged()
 {
-#warning fixme
-/*
   static bool docTabOpened = false;
-
-  StructTreeView *sView = dynamic_cast<StructTreeView *>( leftPanel->currentPage());
-  if ( sView )
-  	reparse();
-  DocTreeView *dView = dynamic_cast<DocTreeView *>( leftPanel->currentPage());
-
-  if ( dView ) {
+  
+  if ( stabdock->isVisible() ) reparse();
+  
+  if ( dtabdock->isVisible() ) 
+  {
     static bool first = true;
   	rightWidgetStack -> raiseWidget(2);
   	if ( first )
@@ -679,7 +672,6 @@ void QuantaApp::slotLeftTabChanged(QWidget *)
     }
   	docTabOpened = false;
   }
-*/
 }
 
 void QuantaApp::selectArea(int col1, int row1, int col2, int row2)
@@ -719,20 +711,27 @@ void QuantaApp::updateNavButtons( bool back, bool forward )
 
 void QuantaApp::contextHelp()
 {
-#warning fixme
-//   if ( leftPanel->currentPage() == dTab ) 
-//   {
-//   	 leftPanel->showPage(fTab);
-//   }
-//   else {
-     QString curWord = view->write()->currentWord();
-     QString * url = dTab->contextHelp( curWord );
-
-     if ( url ) {
-//        leftPanel->showPage(dTab);
-   		  openDoc(*url);
-     }
-//   }
+  int id_w = rightWidgetStack->id( rightWidgetStack->visibleWidget());
+  
+  if (  id_w == 1 || id_w == 2 )
+  {
+    rightWidgetStack->raiseWidget(0);
+    doc ->write()->setFocus();
+  }
+  else 
+  {
+    QString *url = dTab->contextHelp( view->write()->currentWord());
+  
+    if ( url ) 
+    {
+      if ( !dtabdock->isVisible() ) dtabdock->changeHideShowState();
+      
+      rightWidgetStack->raiseWidget(2);
+      htmlPartDoc->view()->setFocus();
+      
+  		openDoc(*url);
+    }
+  }
 }
 
 void QuantaApp::slotFtpClient()
@@ -771,7 +770,7 @@ void QuantaApp::slotFtpClient()
 */	
 }
 
-void QuantaApp::slotShowLeftDock() { ftabdock->changeHideShowState();}
+void QuantaApp::slotShowLeftDock() {  }
 void QuantaApp::slotShowFTabDock() { ftabdock->changeHideShowState();}
 void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}

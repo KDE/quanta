@@ -106,8 +106,6 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   initActions();
   createGUI( QString::null, false );
   
-  initContextMenu();
-  
   QPopupMenu* pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow())); 
   
@@ -176,12 +174,6 @@ void QuantaApp::statusBarTimeout()
   statusBar()->changeItem("", IDS_STATUS);
 }
 
-void QuantaApp::initContextMenu()
-{
-//  kwritePopupMenu = (QPopupMenu *)factory()->container("documentContextPopup", this);
-//  doc->setRBMenu(kwritePopupMenu);
-}
-
 void QuantaApp::initDocument()
 {
   doc = new QuantaDoc(this,this);
@@ -243,10 +235,10 @@ void QuantaApp::initView()
   maindock = createDockWidget( "Editor", UserIcon("textarea"  ), 0L, i18n("Editor"));
   bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Output"));
   
-  ftabdock = createDockWidget( "Files",  UserIcon("ftab"),     0L, " ");
-  ptabdock = createDockWidget( "Project",UserIcon("ptab"),     0L, " ");
-  stabdock = createDockWidget( "Struct", BarIcon ("view_sidetree"),0L, " ");
-  dtabdock = createDockWidget( "Docs",   BarIcon ("contents2"),    0L, " ");
+  ftabdock = createDockWidget( "Files",  UserIcon("ftab"),     0L, ".");
+  ptabdock = createDockWidget( "Project",UserIcon("ptab"),     0L, ".");
+  stabdock = createDockWidget( "Struct", BarIcon ("view_sidetree"),0L, ".");
+  dtabdock = createDockWidget( "Docs",   BarIcon ("contents2"),    0L, ".");
 
   QStrList topList;
   config->setGroup("General Options");
@@ -356,6 +348,9 @@ void QuantaApp::initView()
   ptabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
   stabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
   dtabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
+  
+  KDockManager *mng = stabdock->dockManager();
+  connect(mng, SIGNAL(change()),this,SLOT(slotDockChanged()));
 }
 
 
@@ -440,16 +435,11 @@ void QuantaApp::readOptions()
   doc    ->readConfig(config); // kwrites
   project->readConfig(config); // project
 
+  QSize s(800,580);
   config->setGroup("General Options");
-  resize( config->readSizeEntry("Geometry", &QSize(800,580)));
+  resize( config->readSizeEntry("Geometry", &s));
   
   readDockConfig();
-  
-//  if ( !bottdock->isVisible() ) { 
-//    bottdock ->manualDock(maindock, KDockWidget::DockBottom);
-//    bottdock ->changeHideShowState();
-//  }
-//  if ( !ftabdock->isVisible() ) ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
 }
 
 void QuantaApp::openLastFiles()

@@ -162,8 +162,8 @@
       <Separator/>
       <Action name="editor_options"/>
       <Action name="general_options"/>
-      <Action name="conf_toolbars"/>
       <Action name="conf_actions"/>
+      <Action name="conf_toolbars"/>
       <Action name="keys_bind"/>
       <Separator/>
       <Action name="set_eol"/>
