@@ -216,7 +216,7 @@ void ProjectUpload::slotBuildTree()
  //hack to force repainting of the treeview
  resize(width() + 1, height());
  resize(width() - 1, height());
- if (m_quickUpload)
+ if (m_quickUpload && (isDirectory || KMessageBox::questionYesNo(this, i18n("Do you want to review the upload?"), i18n("Enable Quick Upload"), i18n("Review"), KStdGuiItem::no(), "DisableQuickUpload") == KMessageBox::No))
    startUpload();
 }
 

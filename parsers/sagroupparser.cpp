@@ -205,11 +205,11 @@ void SAGroupParser::parseForScriptGroup(Node *node)
           qTag->className = "";
           if (groupElement->parentNode)
           {
-            for (QValueList<GroupElement *>::ConstIterator it = groupElement->parentNode->m_groupElements.constBegin(); it != groupElement->parentNode->m_groupElements.constEnd(); ++it)
+            for (GroupElementList::ConstIterator it2 = groupElement->parentNode->m_groupElements.constBegin(); it2 != groupElement->parentNode->m_groupElements.constEnd(); ++it2)
             {
-              if ((*it)->group->name == group.parentGroup)
+              if ((*it2)->group->name == group.parentGroup)
               {
-                qTag->className = (*it)->tag->name;
+                qTag->className = (*it2)->tag->name;
                 break;
               }
             }

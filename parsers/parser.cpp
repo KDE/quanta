@@ -1258,7 +1258,7 @@ void Parser::clearGroups()
     }
   }
 #ifdef DEBUG_PARSER
-      kdDebug(24000) << count << "GroupElement deleted." << endl;
+      kdDebug(24000) << count << " GroupElement deleted." << endl;
 #endif
   globalGroupMap.clear();
   ParserCommon::includedFiles.clear();

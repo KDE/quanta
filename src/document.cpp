@@ -788,7 +788,6 @@ void Document::slotCharactersInserted(int line, int column, const QString& strin
    slotDelayedTextChanged(true);
  }
  bool handled = false;
- kdDebug(24000) << completionInProgress << endl;
  if (qConfig.useAutoCompletion)
  {
   if (completionInProgress)
@@ -1114,8 +1113,9 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
             //at this position.
             SAGroupParser *gParser = new SAGroupParser(0L, this, n, n->nextSibling(), true, false, false);
             gParser->slotParseForScriptGroup();
-            for (QValueList<GroupElement *>::Iterator it = n->m_groupElements.begin(); it != n->m_groupElements.end(); ++it)
+            for (GroupElementList::Iterator it = n->m_groupElements.begin(); it != n->m_groupElements.end(); ++it)
             {
+              GroupElement *e = *it;
               if (parentGroupStr.isEmpty() && (*it)->group->appendToTags)
               {
                 parentGroupStr = (*it)->group->parentGroup;
@@ -1562,7 +1562,6 @@ bool Document::scriptAutoCompletion(int line, int column)
      QTag *tag = *it;
      if (!tag)
        continue;
-     kdDebug(24000) << tag->name() << endl;
      QString arguments;
      if (tag->type != "property")
      {

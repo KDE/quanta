@@ -487,6 +487,7 @@ void Node::detachNode()
     GroupElement *groupElement = (*it);
     groupElement->node = 0L;
     groupElement->deleted = true;
+    groupElement->group = 0L;
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "GroupElement scheduled for deletion: " << groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
 #endif
