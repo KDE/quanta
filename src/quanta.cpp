@@ -735,10 +735,11 @@ void QuantaApp::slotRepaintPreview()
       m_htmlPart->end();
     } else
     {
+      m_previewedDocument = w;
       url = Project::ref()->urlWithPrefix(w->url());
       m_htmlPart->setPreviewedURL(url, text);
-      KURL previewURL = url;
-      previewURL.setPath(url.path() + ".preview");
+      KURL previewURL = w->url();
+      previewURL.setFileName("preview-" + previewURL.fileName());
       //save the content to disk, so preview with prefix works
       KTempFile *tmpFile = new KTempFile(tmpDir);
       QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
@@ -1353,8 +1354,8 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     Document *w = view->document();
     if (w)
     {
-      KURL url = Project::ref()->urlWithPrefix(w->url());
-      url.setPath(url.path() + ".preview");
+      KURL url = w->url();
+      url.setFileName("preview-" + url.fileName());
       KIO::NetAccess::del(url, this);
       w->view()->setFocus();
     }
@@ -1387,8 +1388,13 @@ void QuantaApp::slotChangePreviewStatus()
       //hiding the preview when it's in a toolview means that the current tab has changed,
       //so we just repaint the content and restore the document on the disc.
         m_previewVisible = true;
+        if (m_previewedDocument)
+        {
+          KURL url = m_previewedDocument->url();
+          url.setFileName("preview-" + url.fileName());
+          KIO::NetAccess::del(url, this);
+        }
         slotRepaintPreview();
-//        restoreFromTempfile(m_previewedDocument);
         m_previewedDocument = 0L;
         Document *w = ViewManager::ref()->activeDocument();
         if (w)
@@ -1404,8 +1410,13 @@ void QuantaApp::slotPreviewHasFocus(bool focus)
         slotRepaintPreview();
       else
       {
-//          restoreFromTempfile(m_previewedDocument);
-          m_previewedDocument = 0L;
+        if (m_previewedDocument)
+        {
+          KURL url = m_previewedDocument->url();
+          url.setFileName("preview-" + url.fileName());
+          KIO::NetAccess::del(url, this);
+        }
+        m_previewedDocument = 0L;
       }
    }
 }

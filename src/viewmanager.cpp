@@ -184,10 +184,6 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
    if (m_lastActiveView)
    {
      m_lastActiveView->deactivated();
-     Document *w = static_cast<QuantaView*>(m_lastActiveView)->document();
-     KURL url = Project::ref()->urlWithPrefix(w->url());
-     url.setPath(url.path() + ".preview");
-     KIO::NetAccess::del(url, quantaApp);
    }
    QuantaView *qView = static_cast<QuantaView*>(view);
    qView->activated();

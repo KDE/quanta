@@ -59,7 +59,7 @@ bool WHTMLPart::openURL(const KURL& url)
   if (url == m_previewedURL)
   {
     KURL previewURL = url;
-    previewURL.setPath(url.path()  + ".preview");
+    previewURL.setFileName("preview-" + url.fileName());
     return KHTMLPart::openURL(previewURL);
   } else
     return KHTMLPart::openURL(url);
