@@ -283,45 +283,6 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, Nod
     //First remove all the indentation
     if(node->tag->type == Tag::Text)
         setTagString(node, removeUnnecessaryWhitespaces(node->tag->tagStr()), modifs);
-    //Remove all indentation at the end of the prev and at the beginning of the next
-    //TODO: UNNECESSARY?
-    /**if(prev)
-    {
-        if(prev->tag->type == Tag::Empty)
-            prev->tag->setStr("");
-        else if(prev->tag->type == Tag::Text && prev->tag->cleanStrBuilt)
-        {
-            text = prev->tag->tagStr();
-            for(i = 0; (unsigned)i < text.length(); i++)
-            {
-                if(!text[i].isSpace())
-                    break;
-            }
-            if(i == 0)
-                prev->tag->setStr(removeUnnecessaryWhitespaces(text));
-            else
-                prev->tag->setStr(text.mid(0, i) + removeUnnecessaryWhitespaces(text, true));
-        }
-    }
-    if(next)
-    {
-        if(next->tag->type == Tag::Empty)
-            next->tag->setStr("");
-        else if(next->tag->type == Tag::Text && next->tag->cleanStrBuilt)
-        {
-            text = next->tag->tagStr();
-            for(i = text.length() - 1; i <= 0; i--)
-            {
-                if(!text[i].isSpace())
-                    break;
-            }
-            if((unsigned)i == text.length() - 1)
-                next->tag->setStr(removeUnnecessaryWhitespaces(text));
-            else
-                next->tag->setStr(removeUnnecessaryWhitespaces(text, false, true) +
-                                  text.mid(i + 1));
-        }
-    }*/
 
     //compute the "non-inline depth" of the Node and of the next NE (not Empty) Node
     // i.e. we count how many non-inline parent they have.
@@ -376,8 +337,20 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, Nod
             {
                 setTagStringAndFitsNodes(prev, indentation1, modifs);
             }
-            else if(prev && prev->tag->type == Tag::Text)
+            //The indentation is always done at the left because we apply this function "from left to right"
+            else if(prev && prev->tag->type == Tag::Text /** && prev->tag->indentationDone() */)
             {
+                //Remove the indentation at the right of the text Node
+                text = prev->tag->tagStr();
+                for(i = 0; (unsigned)i < text.length(); i++)
+                {
+                    if(!text[i].isSpace())
+                        break;
+                }
+                if(i == 0)
+                    prev->tag->setStr(removeUnnecessaryWhitespaces(text));
+                else
+                    prev->tag->setStr(text.mid(0, i) + removeUnnecessaryWhitespaces(text, true));
                 setTagStringAndFitsNodes(prev, prev->tag->tagStr() + indentation1, modifs);
             }
         }
@@ -399,6 +372,18 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, Nod
             //one and the indentation spaces will be handled as real spaces.
             else if(next && next->tag->type == Tag::Text && next->tag->indentationDone())
             {
+                //Remove the indentation at the left of the text Node
+                text = next->tag->tagStr();
+                for(i = text.length() - 1; i <= 0; i--)
+                {
+                    if(!text[i].isSpace())
+                        break;
+                }
+                if((unsigned)i == text.length() - 1)
+                    next->tag->setStr(removeUnnecessaryWhitespaces(text));
+                else
+                    next->tag->setStr(removeUnnecessaryWhitespaces(text, false, true) +
+                                      text.mid(i + 1));
                 setTagStringAndFitsNodes(next, indentation2 + next->tag->tagStr(), modifs);
             }
         }
