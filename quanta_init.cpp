@@ -66,7 +66,7 @@ QString fileMaskHtml 	= "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML 
 QString fileMaskPhp 	= "*.*PHP* *.*php* ";
 QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";
 QString fileMaskText  = "*.txt *.TXT ";
-QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP ";
+QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.xpm *.GIF *.JPG *.PNG *.JPEG *.BMP ";
 
 QStrList *tagsList; // list of known tags
 QStrList *tagsCore; // list of tags, allowed core attributes ( id, class, id, title )
@@ -442,7 +442,7 @@ void QuantaApp::initMenuBar()
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry helpMenu
-  helpMenu_ = helpMenu(	"Quanta 1.7 Web Development Enviroment\n\n"\
+  helpMenu_ = helpMenu(	"Quanta+ Web Development Enviroment\n\n"\
   											"(c) 2000 by\n"\
   											"Dmitry Poplavsky,\n"\
   											"Alexander Yakovlev,\n"\
