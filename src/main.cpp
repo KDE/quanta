@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     QUANTA_VERSION, description, KAboutData::License_GPL_V2,
     I18N_NOOP("(C) 2000-2004 - The Quanta+ developers"),
     othertext,
-    "http://quanta.sourceforge.net"
+    "http://kdewebdev.org"
     );
 
   //aboutData.otherText(&othertext);

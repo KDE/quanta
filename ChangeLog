@@ -1,6 +1,6 @@
-This files contains the changes since Quanta 2.0 until the current 3.3.x series.
+This files contains the changes since Quanta 2.0 until the current 3.4.x series.
 
-Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
+Version 3.4 (Release date: xx-03-2005; Started 20-08-2004):
   - bugfixes:
       - VPL:
           - enable VPL on KDE 3.3.x

@@ -135,6 +135,8 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
   dtd->name      = dtdName;
   dtd->nickName  = dtdConfig->readEntry("NickName", dtdName);
   dtd->mimeTypes = dtdConfig->readListEntry("MimeTypes");
+  for (uint i = 0; i < dtd->mimeTypes.count(); i++)
+    dtd->mimeTypes[i] = dtd->mimeTypes[i].stripWhiteSpace();
   dtd->family    = dtdConfig->readNumEntry("Family", Xml);
   if (dtd->family != Xml)
       dtd->toplevel = dtdConfig->readBoolEntry("TopLevel", false);
