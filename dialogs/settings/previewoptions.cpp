@@ -106,3 +106,13 @@ uint PreviewOptions::toolviewTabs()
     KMessageBox::information(this, i18n("Changes made to the toolview tab style take effect only on the next startup."), i18n("Warning"), "TabStyleChangeWarning");
   return state;
 }
+
+void PreviewOptions::setHiddenFiles(bool show)
+{
+  showHidden->setChecked(show);
+}
+
+bool PreviewOptions::hiddenFiles()
+{
+  return showHidden->isChecked();
+}

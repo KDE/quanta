@@ -91,6 +91,7 @@ typedef struct QConfig{
           uint autosaveInterval;
           QString backupDirPath;
           QString quantaPID;
+          bool showHiddenFiles;  ///< show hidden files in files treeview?
 
           //spelling options
           KSpellConfig *spellConfig;

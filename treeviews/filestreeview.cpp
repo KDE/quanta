@@ -167,6 +167,8 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
 
   m_config = config;
   m_config->setGroup("General Options");
+  // I must read this here because quanta_init has not done it yet
+  qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
   QStringList topStrList;
 #if KDE_IS_VERSION(3,1,3)
   topStrList = m_config->readPathListEntry("Top folders");
@@ -272,6 +274,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
       newBrnch = new FilesTreeBranch(this, url, s, SmallIcon(fileItem.iconName()), true);
     }
   }
+  newBrnch->setShowingDotFiles(qConfig.showHiddenFiles);
   addBranch(newBrnch);
   return newBrnch;
 }

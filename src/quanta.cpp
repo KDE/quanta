@@ -1167,6 +1167,7 @@ void QuantaApp::slotOptions()
   uiOptions->setWindowLayout(qConfig.windowLayout);
   uiOptions->setCloseButtons(qConfig.showCloseButtons);
   uiOptions->setToolviewTabs(qConfig.toolviewTabs);
+  uiOptions->setHiddenFiles(qConfig.showHiddenFiles);
 
 #ifdef BUILD_KAFKAPART
   //kafka options
@@ -1243,6 +1244,7 @@ void QuantaApp::slotOptions()
     qConfig.showCloseButtons = uiOptions->closeButtons();
     qConfig.toolviewTabs = uiOptions->toolviewTabs();
     initTabWidget(true);
+    qConfig.showHiddenFiles = uiOptions->hiddenFiles();
 
     qConfig.showEmptyNodes = parserOptions->showEmptyNodes->isChecked();
     qConfig.showClosingTags = parserOptions->showClosingTags->isChecked();
@@ -3885,6 +3887,7 @@ void QuantaApp::saveOptions()
 
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);
+    m_config->writeEntry("Show Hidden Files", qConfig.showHiddenFiles);
 
     m_config->setGroup("Parser options");
     m_config->writeEntry("Instant Update", qConfig.instantUpdate);

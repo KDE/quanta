@@ -584,6 +584,7 @@ void QuantaInit::readOptions()
   qConfig.showCloseButtons = m_config->readEntry("Close Buttons", "ShowDelayed");
   m_quanta->initTabWidget(true);
   m_quanta->fileRecent ->loadEntries(m_config);
+  qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
 
   m_config->setGroup("Parser options");
   qConfig.showEmptyNodes = m_config->readBoolEntry("Show Empty Nodes", false);
