@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>317</width>
-            <height>413</height>
+            <width>345</width>
+            <height>454</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -39,22 +39,6 @@
             </property>
             <property name="text">
                 <string>&amp;Inherit type from parent (nothing)</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>usePrePostText</cstring>
-            </property>
-            <property name="text">
-                <string>Use &amp;pre/post text</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="3" column="0" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>TextLabel1_2</cstring>
-            </property>
-            <property name="text">
-                <string>Pre-text:</string>
             </property>
         </widget>
         <widget class="QLabel" row="0" column="0">
@@ -102,31 +86,12 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QTextEdit" row="4" column="0" rowspan="1" colspan="4">
+        <widget class="KComboBox" row="0" column="2">
             <property name="name">
-                <cstring>preTextEdit</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
+                <cstring>typesCombo</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="5" column="0" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>TextLabel2</cstring>
-            </property>
-            <property name="text">
-                <string>Post-text:</string>
-            </property>
-        </widget>
-        <widget class="QTextEdit" row="6" column="0" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>postTextEdit</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-        </widget>
-        <widget class="QLabel" row="7" column="0" rowspan="1" colspan="2">
+        <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>textLabel1</cstring>
             </property>
@@ -137,12 +102,60 @@
                 <cstring>actionCombo</cstring>
             </property>
         </widget>
-        <widget class="KComboBox" row="0" column="2">
+        <widget class="QButtonGroup" row="2" column="0" rowspan="1" colspan="4">
             <property name="name">
-                <cstring>typesCombo</cstring>
+                <cstring>prePostGroup</cstring>
             </property>
+            <property name="title">
+                <string></string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox" row="0" column="0">
+                    <property name="name">
+                        <cstring>usePrePostText</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Use &amp;pre/post text</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Pre-text:</string>
+                    </property>
+                </widget>
+                <widget class="QTextEdit" row="2" column="0">
+                    <property name="name">
+                        <cstring>preTextEdit</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Post-text:</string>
+                    </property>
+                </widget>
+                <widget class="QTextEdit" row="4" column="0">
+                    <property name="name">
+                        <cstring>postTextEdit</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <widget class="KComboBox" row="7" column="2" rowspan="1" colspan="2">
+        <widget class="KComboBox" row="3" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>actionCombo</cstring>
             </property>
@@ -156,25 +169,10 @@
         <receiver>typesCombo</receiver>
         <slot>setDisabled(bool)</slot>
     </connection>
-    <connection>
-        <sender>usePrePostText</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>postTextEdit</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>usePrePostText</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>preTextEdit</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
 </connections>
 <tabstops>
     <tabstop>typesCombo</tabstop>
     <tabstop>parentAttr</tabstop>
-    <tabstop>usePrePostText</tabstop>
-    <tabstop>preTextEdit</tabstop>
-    <tabstop>postTextEdit</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

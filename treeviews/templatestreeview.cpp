@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 // QT includes
+#include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qclipboard.h>
 #include <qdir.h>
@@ -437,7 +438,7 @@ void TemplatesTreeView::slotProperties()
   KPropertiesDialog *propDlg = new KPropertiesDialog( currentURL(), this, 0L, false, false);
 
 //Always add the Quanta directory page
-  QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta Directory"));
+  QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta Template"));
   QVBoxLayout *topLayout = new QVBoxLayout( quantaDirPage);
   quantaProperties = new QuantaPropertiesPageDlg( quantaDirPage, i18n("Quanta") );
 
@@ -455,6 +456,7 @@ void TemplatesTreeView::slotProperties()
   if ( f )
   {
    startDir = currentURL().path();
+   quantaProperties->prePostGroup->setEnabled(false);
   } else
   {
    startDir = currentURL().path() + "/dummy_file";
@@ -655,7 +657,8 @@ void TemplatesTreeView::slotPaste()
     {
       url = list[i];
       url.setFileName(url.fileName()+".tmpl");
-      list += url;
+      if (QFileInfo(url.path()).exists())
+          list += url;
     }
     url = currentURL();
     KIO::Job *job = KIO::copy( list, url);
@@ -674,7 +677,7 @@ void TemplatesTreeView::slotDelete()
       connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
       url.setFileName(url.fileName()+".tmpl");
       KIO::Job *job2 = KIO::del(url);
-      connect( job,2 SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+      connect( job2, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
     }
   }
 }
