@@ -132,9 +132,9 @@ public:
   DTDStruct* defaultDTD();
   /** Find the DTD name for a part of the document. */
   QString findDTDName(Tag **tag);
-  /** Retriwes the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
+  /** Retrives the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
 work correctly. */
-  QString text(int bLine, int bCol, int eLine, int eCol);
+  QString text(int bLine, int bCol, int eLine, int eCol) const;
   /** Code completion was requested by the user. */
   void codeCompletionRequested();
   /** Bring up the code completion tooltip. */
@@ -200,8 +200,6 @@ work correctly. */
   bool isBackedUp();
   /** Creates an automatic backup copy for the crash recovering mechanism */
   void createBackup(KConfig* config);
-  /** checks the existance of an entry in quantarc */
-  bool existsBackupEntry(const QString& autosavedFilesEntryList);
   /** No descriptions */
   void setBackupEntry(bool b);
   /** No descriptions */

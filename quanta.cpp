@@ -1395,7 +1395,7 @@ void QuantaApp::slotShowProjectTree()
 }
 
 void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
-{      
+{
   idleTimer->start(250, true);
   QString linenumber;
   linenumber = i18n("Line: %1 Col: %2").arg(lineNumber).arg(columnNumber);
@@ -3725,7 +3725,7 @@ void QuantaApp::slotAutosaveTimer()
   for (int i = docTab->count() -1; i >= 0; i--)
   {
     w = dynamic_cast<Document*>(docTab->page(i));
-    if (w) 
+    if (w)
       w->createBackup(m_config);
   }
 }
@@ -3748,26 +3748,38 @@ void QuantaApp::slotGetScriptError(KProcess* ,char* buf,int buflen)
 /** Notify when process exits*/
 void QuantaApp::slotProcessExited(KProcess* )
 {
+  slotProcessTimeout();
 }
+
+/** Timeout occurred while waiting for some network function to return. */
+void QuantaApp::slotProcessTimeout()
+{
+  if (m_loopStarted)
+  {
+    qApp->exit_loop();
+    m_loopStarted = false;
+  }
+}
+
 
 QString QuantaApp::searchPathListEntry(const QString& backedUpUrl,const QString& autosavedUrls)
 {
   KURL k(backedUpUrl);
   QStringList autosavedUrlsList = QStringList::split(",", autosavedUrls);
   QStringList::Iterator autosavedUrlsIt;
-  for ( autosavedUrlsIt = autosavedUrlsList.begin(); 
-        autosavedUrlsIt != autosavedUrlsList.end(); 
+  for ( autosavedUrlsIt = autosavedUrlsList.begin();
+        autosavedUrlsIt != autosavedUrlsList.end();
 	++autosavedUrlsIt )
   {
    QString quPID = retrievePID((*autosavedUrlsIt));
- 
+
    QStringList PIDlist = QStringList::split("\n", m_scriptOutput);
-   
+
    QStringList::Iterator PIDIt;
    bool isOrphan = true;
    for ( PIDIt = PIDlist.begin(); PIDIt != PIDlist.end(); ++PIDIt )
-   { 
-    if((*PIDIt) == quPID && qConfig.quantaPID != quPID) 
+   {
+    if((*PIDIt) == quPID && qConfig.quantaPID != quPID)
     {
      isOrphan = false;
      break;
@@ -3775,11 +3787,11 @@ QString QuantaApp::searchPathListEntry(const QString& backedUpUrl,const QString&
    }
    if(isOrphan)
    {
-    if(retrieveHashedPath(Document::hashedFilePath(k.path())) == retrieveHashedPath((*autosavedUrlsIt))) 
-      return (*autosavedUrlsIt); 
+    if(retrieveHashedPath(Document::hashedFilePath(k.path())) == retrieveHashedPath((*autosavedUrlsIt)))
+      return (*autosavedUrlsIt);
    }
   }
-  return QString::null; 
+  return QString::null;
 }
 
 /** Retrieves PID from the name of a backup file */
@@ -3787,10 +3799,10 @@ QString QuantaApp::retrievePID(const QString& filename)
 {
  QString strPID = QString::null;
  strPID = filename.right(filename.length() - filename.findRev("P") - 1);
- 
- if (strPID.isEmpty()) 
+
+ if (strPID.isEmpty())
    strPID = filename.right(filename.length() - filename.findRev("N") - 1);
- 
+
  return strPID;
 }
 /** Retrieves hashed path from the name of a backup file */

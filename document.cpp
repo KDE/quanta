@@ -1401,9 +1401,9 @@ bool Document::scriptAutoCompletion(int line, int column)
  return handled;
 }
 
-/** Retriwes the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
+/** Retrives the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
 work correctly. */
-QString Document::text(int bLine, int bCol, int eLine, int eCol)
+QString Document::text(int bLine, int bCol, int eLine, int eCol) const
 {
  if (bLine > eLine)
  {
@@ -2052,15 +2052,6 @@ void Document::clearErrorMarks()
   }
 }
 
-/** if exists an entry for this document then return true */
-bool Document::existsBackupEntry(const QString& autosavedFilesEntryList)
-{
- QStringList entryList = QStringList::split(",", autosavedFilesEntryList);
- if(entryList.contains(m_backupPathValue))
-    return true;
- else
-    return false;
-}
 /** obvious */
 void Document::setBackupEntry(bool b)
 {
@@ -2075,19 +2066,19 @@ void Document::createBackup(KConfig* config)
     {
      m_backupPathValue = qConfig.backupDirPath + url().fileName() + "." + hashedFilePath(url().path());
      //creates an entry string in quantarc if it does not exist yet
-     QString autosavedFilesEntryList = config->readEntry("List of autosaved files");
-     QString backedupFilesEntryList = config->readEntry("List of backedup files");
-     if(!existsBackupEntry(autosavedFilesEntryList))
+     config->setGroup("General Options");
+#if KDE_IS_VERSION(3,1,3)
+     QStringList backedupFilesEntryList = config->readPathListEntry("List of backedup files");
+     QStringList autosavedFilesEntryList = config->readPathListEntry("List of autosaved files");
+#else
+     QStringList backedupFilesEntryList = config->readListEntry("List of backedup files");
+     QStringList autosavedFilesEntryList = config->readListEntry("List of autosaved files");
+#endif
+     if(!autosavedFilesEntryList.contains(m_backupPathValue))
      {
-       config->setGroup("General Options");
-       QStringList entryList = QStringList::split(",", autosavedFilesEntryList);
-       entryList.append(m_backupPathValue);
-       autosavedFilesEntryList = entryList.join(", ");
+       autosavedFilesEntryList.append(m_backupPathValue);
        config->writeEntry("List of autosaved files", autosavedFilesEntryList);
-       backedupFilesEntryList = config->readEntry("List of backedup files");
-       QStringList bkEntryList = QStringList::split(",", backedupFilesEntryList);
-       bkEntryList.append(url().path() + "." + qConfig.quantaPID);
-       backedupFilesEntryList = bkEntryList.join(", ");
+       backedupFilesEntryList.append(url().path() + "." + qConfig.quantaPID);
        config->writeEntry("List of backedup files", backedupFilesEntryList);
        config->sync();
        setBackupEntry(true);
@@ -2118,19 +2109,19 @@ void Document::removeBackup(KConfig *config)
 {
   config->reparseConfiguration();
   config->setGroup("General Options");
- 
-  QString autosavedFilesEntryList = config->readEntry("List of autosaved files");
-  QString backedupFilesEntryList = config->readEntry("List of backedup files");
-  QStringList entryList = QStringList::split(",",autosavedFilesEntryList);
-  entryList.remove(m_backupPathValue);
-  autosavedFilesEntryList = entryList.join(",");
-  config->writeEntry("List of autosaved files",autosavedFilesEntryList);
 
-  backedupFilesEntryList = config->readEntry("List of backedup files");
-  QStringList bkEntryList = QStringList::split(",",backedupFilesEntryList);
-  bkEntryList.remove(url().path()+"."+qConfig.quantaPID);
-  backedupFilesEntryList = bkEntryList.join(",");
-  config->writeEntry("List of backedup files",backedupFilesEntryList);
+#if KDE_IS_VERSION(3,1,3)
+  QStringList backedupFilesEntryList = config->readPathListEntry("List of backedup files");
+  QStringList autosavedFilesEntryList = config->readPathListEntry("List of autosaved files");
+#else
+  QStringList backedupFilesEntryList = config->readListEntry("List of backedup files");
+  QStringList autosavedFilesEntryList = config->readListEntry("List of autosaved files");
+#endif
+
+  autosavedFilesEntryList.remove(m_backupPathValue);
+  config->writeEntry("List of autosaved files",autosavedFilesEntryList);
+  backedupFilesEntryList.remove(url().path() + "." + qConfig.quantaPID);
+  config->writeEntry("List of backedup files", backedupFilesEntryList);
   config->sync();
 
   setBackupEntry(false);
@@ -2154,17 +2145,16 @@ QString Document::hashedFilePath(const QString& p)
           }
 
   default:{
-           uint i;
            int sign = 1,
 	       sum = 0;
-           for (i = 0; i < (p.length() - 1); i++)
+           for (int i = 0; i < (p.length() - 1); i++)
            {
             sum += int(p[i]) + int(p[i + 1]) * sign;
             sign *= -1;
            }
-           if( sum >= 0 ) 
+           if( sum >= 0 )
 	     return QString::number(sum, 10) + "P" + qConfig.quantaPID;
-           else 
+           else
 	     return QString::number(sum*(-1), 10) + "N" + qConfig.quantaPID;
           }
  }

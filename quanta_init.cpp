@@ -2243,8 +2243,17 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
     kdError() << "Failed to query for running Quanta instances!" << endl;
     //TODO: Replace the above error with a real messagebox after the message freeze is over
   else
-    m_execCommandPS->wait();
-
+  {
+    //To avoid lock-ups, start a timer.
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), SLOT(slotProcessTimeout()));
+    timer->start(180*1000, true);
+    QExtFileInfo internalFileInfo;
+    m_loopStarted = true;
+    internalFileInfo.enter_loop();
+    delete timer;
+    //m_execCommandPS->wait();
+  }
   for ( QStringList::Iterator backedUpUrlsIt = backedUpUrlsList.begin();
         backedUpUrlsIt != backedUpUrlsList.end();
 	++backedUpUrlsIt )
@@ -2296,7 +2305,7 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
           w->warningLabel = 0L;
           w->setMinimumHeight(320);
           dlg->adjustSize();
-          if (!KStandardDirs::findExe("kompare").isEmpty())
+          if (KStandardDirs::findExe("kompare").isEmpty())
           {
             w->buttonCompare->setEnabled(false);
             w->buttonLoad->setChecked(true);
@@ -2324,33 +2333,32 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
      if(QFile::exists(autosavedVersion.path()))
      {
       QFile::remove(autosavedVersion.path());
-      QString autosavedFilesEntryList = QString::null,
-              backedupFilesEntryList = QString::null;
       m_config->setGroup("General Options");
 
-      autosavedFilesEntryList = m_config->readEntry("List of autosaved files");
-
-      QStringList entryList = QStringList::split(",",autosavedFilesEntryList);
+#if KDE_IS_VERSION(3,1,3)
+     QStringList backedupFilesEntryList = m_config->readPathListEntry("List of backedup files");
+     QStringList autosavedFilesEntryList = m_config->readPathListEntry("List of autosaved files");
+#else
+     QStringList backedupFilesEntryList = m_config->readListEntry("List of backedup files");
+     QStringList autosavedFilesEntryList = m_config->readListEntry("List of autosaved files");
+#endif
       QStringList::Iterator entryIt;
 
-      for ( entryIt = entryList.begin(); entryIt != entryList.end(); ++entryIt )
-       if ((*entryIt) == autosavedVersion.path())
-         entryIt = entryList.remove(entryIt);
+      for ( entryIt = autosavedFilesEntryList.begin();
+            entryIt != autosavedFilesEntryList.end(); ++entryIt )
+      {
+        if ((*entryIt) == autosavedVersion.path())
+          entryIt = autosavedFilesEntryList.remove(entryIt);
+      }
+      m_config->writeEntry("List of autosaved files", autosavedFilesEntryList);
 
-      autosavedFilesEntryList = entryList.join(",");
-
-      m_config->writeEntry("List of autosaved files",autosavedFilesEntryList);
-
-      backedupFilesEntryList = m_config->readEntry("List of backedup files");
-
-      entryList = QStringList::split(",",backedupFilesEntryList);
-
-      for ( entryIt = entryList.begin(); entryIt != entryList.end(); ++entryIt )
-       if ((*entryIt) == (*backedUpUrlsIt)) entryIt = entryList.remove(entryIt);
-
-      backedupFilesEntryList = entryList.join(",");
-
-      m_config->writeEntry("List of backedup files",backedupFilesEntryList);
+      for ( entryIt = backedupFilesEntryList.begin();
+            entryIt != backedupFilesEntryList.end(); ++entryIt )
+      {
+        if ((*entryIt) == (*backedUpUrlsIt))
+          entryIt = backedupFilesEntryList.remove(entryIt);
+      }
+      m_config->writeEntry("List of backedup files", backedupFilesEntryList);
      }
     }
   }

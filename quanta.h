@@ -365,12 +365,6 @@ public slots:
   void slotDocumentProperties();
   /** No descriptions */
   void slotAutosaveTimer();
-  /** Get script output */
-  void slotGetScriptOutput(KProcess*, char*, int);
-  /** Get script error */
-  void slotGetScriptError(KProcess*, char*, int);
-  /** Notify when process exits */
-  void slotProcessExited(KProcess*);
   /** Load a DTD and convert to a DTEP */
   void slotLoadDTD();
 
@@ -403,6 +397,14 @@ protected slots:
   /** Called after there was no user activity - cursor movement - for xx ms*/
   void slotIdleTimerExpired();
   void slotShowNoFramesPreview();
+  /** Get script output */
+  void slotGetScriptOutput(KProcess*, char*, int);
+  /** Get script error */
+  void slotGetScriptError(KProcess*, char*, int);
+  /** Notify when process exits */
+  void slotProcessExited(KProcess*);
+  /** External app execution timeout handling */
+  void slotProcessTimeout();
 
 protected:
   KParts::BrowserExtension *browserExtension()
@@ -586,6 +588,7 @@ public: //TODO: check if it's worth to make a read method for them
   QuantaPluginInterface *m_pluginInterface;
   /** True when the whole quanta is initialized. */
   bool quantaStarted;
+  bool m_loopStarted; //true if an internal event loop has been started
 };
 
 #endif // QUANTA_H
