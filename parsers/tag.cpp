@@ -375,7 +375,7 @@ QString Tag::attributeValue(const QString &attr, bool ignoreCase)
  {
 
   if ( attr == attrs[i].name ||
-       ((!m_dtd->caseSensitive || ignoreCase) && attrs[i].name == attr.lower()))
+       ((!m_dtd->caseSensitive || ignoreCase) && attrs[i].name.lower() == attr.lower()))
   {
     val = attrs[i].value;
     break;
@@ -390,7 +390,7 @@ bool Tag::hasAttribute(const QString &attr, bool ignoreCase)
   for (uint i = 0; i < attrs.count(); i++)
   {
     if ( attrs[i].name ==  attr ||
-         ((!m_dtd->caseSensitive || ignoreCase) && attrs[i].name == attr.lower()))
+         ((!m_dtd->caseSensitive || ignoreCase) && attrs[i].name.lower() == attr.lower()))
       return true;
   }
   return false;
