@@ -95,6 +95,10 @@ int main(int argc, char *argv[])
     I18N_NOOP("Tree based upload dialog"),
     "gav@creolmail.org");
 
+  aboutData.addCredit("Ted Pibil",
+    I18N_NOOP("Addition and maintainence of DTDs"),
+    "ted@pibil.org");
+
   aboutData.addCredit("Matthew Colton",
     I18N_NOOP("Cool splash screen for many version releases of Quanta"),
     "mat.colton@web-xs.de");
