@@ -432,13 +432,7 @@ void ProjectPrivate::loadProjectXML()
   QString tmpString = projectNode.toElement().attribute("previewPrefix");
   if ( !tmpString.isEmpty())
   {
-    QuantaCommon::setUrl(previewPrefix, tmpString);
-    previewPrefix.adjustPath(-1);
-    if (tmpString != previewPrefix.url()) //compatibility
-    {
-      projectNode.toElement().setAttribute("previewPrefix",previewPrefix.url());
-      m_modified = true;
-    }
+    previewPrefix = KURL::fromPathOrURL( tmpString );
   }
 
   usePreviewPrefix = ( projectNode.toElement().attribute("usePreviewPrefix") == "1");
@@ -724,9 +718,7 @@ void ProjectPrivate::slotAcceptCreateProject()
       m_defaultDTD = DTDs::ref()->getDTDNameFromNickName(pnf->dtdCombo->currentText());
       m_defaultEncoding  = pnf->encodingCombo->currentText();
 
-      QuantaCommon::setUrl(previewPrefix, pnf->linePrefix->text());
-      previewPrefix.adjustPath(-1);
-
+      previewPrefix = KURL::fromPathOrURL( pnf->linePrefix->text() );
       usePreviewPrefix = pnf->checkPrefix->isChecked();
 
       QDomElement el;
@@ -1246,6 +1238,7 @@ void ProjectPrivate::loadProject(const KURL &url)
       slotCloseProject();
     }
     loadProjectFromTemp(url, tmpFile);
+    projectRecent->addURL(url);
   } else
   {
     parent->hideSplash();
@@ -1429,7 +1422,6 @@ bool ProjectPrivate::uploadProjectFile()
 {
   if (m_tmpProjectFile == QString::null || !saveProject())
     return false;
-  projectRecent->addURL(projectURL);
   // no need to upload a local file because it is the same as the tempFile
   if (projectURL.isLocalFile())
   {
@@ -1854,7 +1846,7 @@ void Project::slotOptions()
   optionsPage.lineExclude->setText(excludeStr);
   optionsPage.checkCvsignore->setChecked(d->m_excludeCvsignore);
 
-  optionsPage.linePrefix->setText(d->previewPrefix.url());
+  optionsPage.linePrefix->setText(d->previewPrefix.prettyURL());
   QStringList lst = DTDs::ref()->nickNameList(true);
   uint pos = 0;
   for (uint i = 0; i < lst.count(); i++)
@@ -1967,8 +1959,7 @@ void Project::slotOptions()
       QuantaCommon::dirCreationError(d->m_parent, d->toolbarURL);
     }
 
-    QuantaCommon::setUrl(d->previewPrefix, optionsPage.linePrefix->text()+"/");
-    d->previewPrefix.adjustPath(-1);
+    d->previewPrefix = KURL::fromPathOrURL( optionsPage.linePrefix->text() );
     d->usePreviewPrefix = optionsPage.checkPrefix->isChecked();
 
     QDomNode projectNode = d->dom.firstChild().firstChild();
@@ -2155,7 +2146,7 @@ void Project::slotOptions()
 
     eventsPage.saveEvents(d->dom);
 
-    d->m_modified = true;
+    setModified();
     d->loadProjectXML();
   }
 }

@@ -207,22 +207,25 @@ bool QuantaNetAccess::checkProjectRemove(const KURL& src, QWidget* window, bool 
 
 bool QuantaNetAccess::checkProjectDel(const KURL& src, QWidget* window, bool confirm)
 {
-  if ( !Project::ref()->hasProject() ) return true;
   KURL url = adjustURL(src);
-  if ( Project::ref()->projectBaseURL().isParentOf(url) && Project::ref()->contains(url) )
+  if ( Project::ref()->hasProject() )
   {
-    if ( !confirm ||
-          KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b><br> and remove it from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Delete & Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteAndRemoveFromProject") )
+    if ( Project::ref()->projectBaseURL().isParentOf(url) && Project::ref()->contains(url) )
     {
-      Project::ref()->slotRemove(url);
-    } else
-    {
-      return false;
+      if ( !confirm ||
+            KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b><br> and remove it from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Delete & Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteAndRemoveFromProject") )
+      {
+        Project::ref()->slotRemove(url);
+        return true;
+      } else
+      {
+        return false;
+      }
     }
-  } else {
-    if (confirm) {
-      return (KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b>?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Delete File or Folder"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteFileOrFolder") );
-    }
+  }
+  // confirm normal delete if wanted
+  if (confirm) {
+    return (KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b>?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Delete File or Folder"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteFileOrFolder") );
   }
   return true;
 }
