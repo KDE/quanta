@@ -26,7 +26,7 @@ class ProjectPrivate
    Q_OBJECT
 public:
   ProjectPrivate(Project *p);
-            
+
   ~ProjectPrivate() {}
 
   Project *parent;
@@ -45,12 +45,12 @@ upload.*/
   bool usePreviewPrefix;
   QString author;
   KRecentFilesAction *projectRecent;
- 
+
   ProjectNewGeneral    *png;
   ProjectNewLocal      *pnl;
   ProjectNewWeb       *pnw;
   ProjectNewFinal     *pnf;
-  
+
   QWidgetStack *stack;
   QString currentProjectView;
 
@@ -65,13 +65,16 @@ upload.*/
   KMainWindow *m_parent;
   QString m_debuggerClientEdit;
   QMap<QString, QString> m_passwdList;
-  ProjectList m_projectFiles; ///< the list with the _absolute_ URL's of the project  
+  ProjectList m_projectFiles; ///< the list with the _absolute_ URL's of the project
   KDirWatch *m_dirWatch; ///< watches some project directories for modification
   KURL toolbarURL;
   KURL templateURL;
   QString email;
   QDomDocument dom;
   QString debuggerClient;
+  TeamMember m_teamLeader;
+  QMap<QString, TeamMember> m_subprojectLeaders;
+  QMap<QString, TeamMember> m_taskLeaders;
 
   KAction
     *closeprjAction, *insertFileAction, *insertDirAction,
@@ -84,39 +87,39 @@ upload.*/
 
   /** setup of the actions */
   void initActions(KActionCollection *ac);
-  
+
   void adjustActions();
-  
+
   void adjustViewActions();
-  
+
   QStringList projectViewList();
 
   void init();
-  
+
   void openCurrentView();
  /** insert files */
   void insertFiles( KURL::List files );
 
   /** insert files from dir recursive */
   void insertFiles(const KURL& pathURL, const QString& mask );
-  
+
   void loadProjectXML();
 
   void slotAcceptCreateProject();
-  
+
   void slotSelectProjectType(const QString &title);
 
   bool createEmptyDom();
 
   /** load project from file: name */
   void slotLoadProject(const KURL &a_url);
-  
+
   void slotDeleteCopytoDlg(CopyTo *dlg);
 
   void getStatusFromTree();
 
 public slots:
-  
+
   void slotDebuggerOptions();
 
   void slotDebuggerChanged(const QString &debugger);
@@ -136,17 +139,17 @@ public slots:
 
   /** Deletes a project view */
   void slotDeleteProjectView(const QString &view);
-  
+
   /** Saves a project view (group of files & toolbars) asking for a name. */
   void slotSaveAsProjectView(bool askForName = true);
-  
+
   /** Saves a project view (group of files & toolbars) without asking for a name. */
   void slotSaveProjectView();
 
   /** Opens a project view (toolbars & files). */
   void slotOpenProjectView(const QString &view);
- 
-signals:  
+
+signals:
   void setLocalFiles( bool );
 
 private:

@@ -96,6 +96,7 @@ namespace KTextEditor
 
 class SpellChecker;
 struct DirInfo;
+struct EventAction;
 
 typedef struct ToolbarEntry{
   KXMLGUIClient *guiClient;
@@ -468,6 +469,14 @@ protected:
   /** Makes the tabwidget look and behave like we want. If closeButtonsOnly is true,
   only the close button behavior is changed. */
   void initTabWidget(bool closeButtonsOnly = false);
+
+  /** Calls the action associated with an event. Returns true if the call succeeded, false
+  otherwise. The call might fail if:
+    - the action type is unknown
+    - the script cannot be found
+    - the user canceled the execution
+ */
+  bool handleEvent(const EventAction& ev);
 
   ScriptTreeView *scriptTab;
 

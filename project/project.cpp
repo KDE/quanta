@@ -383,6 +383,8 @@ void ProjectPrivate::insertFiles(const KURL& pathURL, const QString& mask )
 
 void ProjectPrivate::loadProjectXML()
 {
+//TODO: Optimize reading. For example iterate through all the nodes and handle them
+//according to the found node type
   parent->statusMsg( i18n("Reading the project file...") );
   QDomNode    no;
   QDomElement el;
@@ -556,6 +558,56 @@ void ProjectPrivate::loadProjectXML()
     }
   }
   excludeRx.setPattern(regExpStr);
+
+  EventActions *events = parent->events();
+  events->clear();
+  nl = projectNode.toElement().elementsByTagName("event");
+  uint nlCount = nl.count();
+  for ( uint i = 0; i < nlCount; i++ )
+  {
+    el = nl.item(i).toElement();
+    EventAction ev;
+    if (el.attribute("type", "internal") == "internal")
+      ev.type = EventAction::Internal;
+    else
+      ev.type = EventAction::External;
+    ev.action = el.attribute("action");
+    QDomNodeList nl2 = el.elementsByTagName("argument");
+    for (uint j = 0; j < nl2.count(); j++)
+      ev.arguments << nl2.item(j).toElement().text();
+    events->insert(el.attribute("name"), ev);
+  }
+
+  QDomNode teamNode = projectNode.namedItem("teamdata");
+  no = teamNode.namedItem("leader");
+  if (!no.isNull())
+  {
+     m_teamLeader.name = no.namedItem("name").toElement().text();
+     m_teamLeader.email = no.namedItem("email").toElement().text();
+  }
+  no = teamNode.namedItem("subprojectleaders");
+  nl = no.toElement().elementsByTagName("subproject");
+  for (uint i = 0; i < nl.count(); i++)
+  {
+     el = nl.item(i).toElement();
+     QDomElement el2 = el.namedItem("subprojectleader").toElement();
+     TeamMember member;
+     member.name = el2.attribute("name");
+     member.email = el2.attribute("email");
+     m_subprojectLeaders[el.attribute("name")] = member;
+  }
+
+  no = teamNode.namedItem("taskleaders");
+  nl = no.toElement().elementsByTagName("projecttask");
+  for (uint i = 0; i < nl.count(); i++)
+  {
+     el = nl.item(i).toElement();
+     TeamMember member;
+     member.name = el.attribute("tasklead");
+     member.email = el.attribute("email");
+     m_taskLeaders[el.attribute("task")] = member;
+  }
+
   if (m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx))
    m_modified = true;
   parent->statusMsg(QString::null);
@@ -1005,7 +1057,7 @@ void ProjectPrivate::slotCloseProject()
       parent->slotSaveProject();
 
   dom.clear();
-
+  parent->events()->clear();
   init();
   parent->closeFiles();
 
@@ -2071,6 +2123,29 @@ void Project::setModified(bool b)
   d->m_modified = b;
   if (b)
     slotSaveProject();
+}
+
+EventActions* Project::events()
+{
+  if (hasProject())
+    return &m_events;
+  else
+    return 0L;
+}
+
+TeamMember Project::teamLeader()
+{
+  return d->m_teamLeader;
+}
+
+TeamMember Project::subprojectLeader(const QString &name)
+{
+  return d->m_subprojectLeaders[name];
+}
+
+TeamMember Project::taskLeader(const QString &name)
+{
+  return d->m_taskLeaders[name];
 }
 
 #include "project.moc"

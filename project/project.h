@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Mar 16 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2001-2003 by Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -34,10 +34,43 @@ class ProjectList;
 class KConfig;
 class KMainWindow;
 
+/** Describes an event action. */
+struct EventAction {
+ /** Possible event types */
+  enum Types {
+     Internal = 0,
+     External = 1
+  };
+  /** The type of the event. See @ref Types */
+  uint type;
+  /** the name of the action to be executed. In case of external events
+     this is the name of the script, in case of internal events it can be one of the
+     following: "email"
+  */
+  QString action;
+  /** The arguments for the event action. It is different for each action.
+  */
+  QStringList arguments;
+};
+
+/** The configured events. The key is the event name, the data is the event description.
+For example: events["before_save"] points to the event data that needs to be used
+before a file is saved. Possible key names are: before_save, after_save, after_open,
+after_project_open, after_project_save, before_upload, after_upload, after_project_add,
+after_project_remove, after_commit
+*/
+typedef  QMap<QString, EventAction> EventActions;
+
+
+struct TeamMember {
+  QString name;
+  QString email;
+};
+
 class Project : public QObject  {
    Q_OBJECT
    friend class ProjectPrivate;  // need this because I use the signals
-   
+
 public:
 
   /**
@@ -90,6 +123,10 @@ public:
   QString email();
   KURL templateURL();
   KURL toolbarURL();
+  EventActions* events();
+  TeamMember teamLeader();
+  TeamMember subprojectLeader(const QString &name);
+  TeamMember taskLeader(const QString &name);
 
   /** save project file */
   bool slotSaveProject();
@@ -144,16 +181,17 @@ signals:
   void loadToolbarFile(const KURL &);
   /** ask for the tree status for saving in project */
   void getTreeStatus(QStringList *);
-    
+
 private:
   /** The constructor is privat because we use singleton patter.
    *  If you need the class use Project::ref() for
    *  construction and reference
    */
   Project(KMainWindow *parent);
-    
+
   ProjectPrivate *d;
 
+  EventActions m_events;
 };
 
 #endif
