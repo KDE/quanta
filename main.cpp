@@ -107,7 +107,8 @@ int main(int argc, char *argv[])
 		
 		if (args->count())
 		{
-      quanta->slotFileOpen( KURL(args->arg(0)) );
+		  KURL url(args->arg(0));
+      quanta->slotFileOpen( url );
 		}
 		args->clear();
   }

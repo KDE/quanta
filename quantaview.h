@@ -26,6 +26,8 @@
 #include <qwidget.h>
 #include <qlist.h>
 
+#include "quanta.h"
+
 class QuantaApp;
 class QuantaDoc;
 

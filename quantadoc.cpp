@@ -40,10 +40,7 @@
 #include "kwrite/kwdoc.h"
 #include "kwrite/highlight/highlight.h"
 
-QList<QuantaView> *QuantaDoc::pViewList = 0L;
-
 extern QDict <QStrList> *tagsDict;
-
 
 QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObject(parent, name)
 {

@@ -119,11 +119,6 @@ class QuantaDoc : public QObject
     bool newDocument (const KURL&);
 	
   public slots:
-    /** calls repaint() on all views connected to the document object
-     * and is called by the view by which the document has been
-     * changed.  As this view normally repaints itself, it is excluded
-     * from the paintEvent.  */
-    void slotUpdateAllViews(QuantaView *sender);
     /** close documents. */
     void closeAll();
     /** for exchange signals */
