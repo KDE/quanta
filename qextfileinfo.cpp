@@ -213,12 +213,12 @@ KURL::List QExtFileInfo::allFilesInternal(const KURL& startURL, const QString& m
     connect( job, SIGNAL( result (KIO::Job *) ),
              this, SLOT( slotResult (KIO::Job *) ) );
             
-    kdDebug(24000) << "Now listing: " << startURL.url() << endl;
+ //   kdDebug(24000) << "Now listing: " << startURL.url() << endl;
     enter_loop();
     lstFilters.clear();
     if (!bJobOK)
     {
-      kdDebug(24000) << "Error while listing "<< startURL.url() << endl;
+ //     kdDebug(24000) << "Error while listing "<< startURL.url() << endl;
       dirListItems.clear();
     }
   }
@@ -231,13 +231,13 @@ KURL::List QExtFileInfo::allFilesInternal(const KURL& startURL, const QString& m
 bool QExtFileInfo::internalExists(const KURL& url)
 {
   bJobOK = true;
-  kdDebug(24000)<<"QExtFileInfo::internalExists"<<endl;
+ // kdDebug(24000)<<"QExtFileInfo::internalExists"<<endl;
   KIO::Job * job = KIO::stat( url, false);
   connect( job, SIGNAL( result (KIO::Job *) ),
            this, SLOT( slotResult (KIO::Job *) ) );
-  kdDebug(24000)<<"QExtFileInfo::internalExists:before enter_loop"<<endl;
+//  kdDebug(24000)<<"QExtFileInfo::internalExists:before enter_loop"<<endl;
   enter_loop();
-  kdDebug(24000)<<"QExtFileInfo::internalExists:after enter_loop"<<endl;
+//  kdDebug(24000)<<"QExtFileInfo::internalExists:after enter_loop"<<endl;
 
   return bJobOK; 
 }
@@ -249,9 +249,9 @@ void QExtFileInfo::enter_loop()
 {
   QWidget dummy(0,0,WType_Dialog | WShowModal);
   qt_enter_modal(&dummy);
-  kdDebug(24000)<<"QExtFileInfo::enter_loop:before qApp->enter_loop()"<<endl;
+//  kdDebug(24000)<<"QExtFileInfo::enter_loop:before qApp->enter_loop()"<<endl;
   qApp->enter_loop();
-  kdDebug(24000)<<"QExtFileInfo::enter_loop:after qApp->enter_loop()"<<endl;
+//  kdDebug(24000)<<"QExtFileInfo::enter_loop:after qApp->enter_loop()"<<endl;
   qt_leave_modal(&dummy);
 }
 

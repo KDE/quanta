@@ -40,7 +40,7 @@ public slots:
   virtual bool load();
   virtual bool run();
   virtual bool unload();
-  virtual bool isLoaded() const;
+  virtual bool isLoaded();
 protected:
   KParts::ReadOnlyPart *m_part;
 };

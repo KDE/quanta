@@ -43,6 +43,7 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
 #include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/encodinginterface.h>
 
 #include <kparts/componentfactory.h>
 
@@ -121,6 +122,11 @@ bool QuantaDoc::newDocument( const KURL& url )
     quantaApp->processDTD(quantaApp->getProject()->defaultDTD());
 
   	m_docList->insert( w->url().url(), w );
+
+    w->kate_view->setIconBorder(qConfig.iconBar);
+    w->kate_view->setLineNumbersOn(qConfig.lineNumbers);
+    quantaApp->viewBorder->setChecked(qConfig.iconBar);
+    quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
   }
   else // select opened
   {
@@ -151,7 +157,7 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
 
     Document *w = write();
     if (encoding.isEmpty()) encoding = quantaApp->defaultEncoding();
-    w->kate_doc->setEncoding(encoding);
+    dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
     w->readConfig(quantaApp->config);
     if (w->doc()->openURL( url ))
     {
@@ -176,6 +182,12 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
       quantaApp->reparse();
 
       loaded = true;
+
+      write()->kate_view->setIconBorder(qConfig.iconBar);
+      write()->kate_view->setLineNumbersOn(qConfig.lineNumbers);
+      quantaApp->viewBorder->setChecked(qConfig.iconBar);
+      quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
+
       write()->createTempFile();
       emit title( write()->url().prettyURL() );
     } 
@@ -425,15 +437,15 @@ Document* QuantaDoc::newWrite()
   w->readConfig( quantaApp->config );
  	w->setUntitledUrl( fname );
 
-  for (unsigned int i=0; i< w->kate_doc->hlModeCount(); i++)
+  for (unsigned int i=0; i< dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->hlModeCount(); i++)
   {
-    if (quantaApp->newFileType().contains(w->kate_doc->hlModeName(i).lower()))
+    if (quantaApp->newFileType().contains(dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->hlModeName(i).lower()))
     {
-      w->kate_doc->setHlMode(i);
+      dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->setHlMode(i);
       break;
     }
   }
-  w->kate_view->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
+  dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view())->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
 
  	quantaApp->setFocusProxy(w->view());
   w->view()->setFocusPolicy(QWidget::WheelFocus);

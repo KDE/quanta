@@ -570,11 +570,19 @@ void Document::readConfig(KConfig *config)
   bool m = m_doc->isModified();
   dynamic_cast<KTextEditor::ConfigInterface*>(m_doc)->readConfig( config );
   m_doc->setModified(m);
+  //read the line number & icon border setting from the General section
+//  config->setGroup("General Options");
+//  qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);
+//  qConfig.iconBar = config->readBoolEntry("Iconbar", false);
 }
 
 void Document::writeConfig(KConfig *config)
 {
   dynamic_cast<KTextEditor::ConfigInterface*>(m_doc)->writeConfig( config );
+  //store the line number & icon border setting also in the General section
+  config->setGroup("General Options");
+  config->writeEntry("LineNumbers", qConfig.lineNumbers);
+  config->writeEntry("Iconbar", qConfig.iconBar);
 }
 
 /** No descriptions */

@@ -36,6 +36,7 @@
 #include <kxmlguiclient.h>
 #include <kmenubar.h>
 #include <kurl.h>
+#include <ktexteditor/popupmenuinterface.h>
 
 //app includes
 #include "actioneditdlg.h"
@@ -353,7 +354,7 @@ void ActionEditDlg::saveAction( TagAction *a )
 
     quantaApp->menuBar()->insertItem(i18n("Plu&gins"), quantaApp->pluginMenu(), -1, PLUGINS_MENU_PLACE);
     quantaApp->menuBar()->insertItem(i18n("&Tags"),quantaApp->tagsMenu(),-1,TAGS_MENU_PLACE);
-    quantaApp->getView()->write()->kate_view->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
+    dynamic_cast<KTextEditor::PopupMenuInterface*>(quantaApp->getView()->write()->view())->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
   }
 
 }

@@ -47,7 +47,7 @@ QuantaKPartPlugin::~QuantaKPartPlugin()
 {
 }
 
-bool QuantaKPartPlugin::isLoaded() const
+bool QuantaKPartPlugin::isLoaded() 
 {
   return m_part != 0;
 }

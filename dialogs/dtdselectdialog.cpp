@@ -2,11 +2,12 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Sat Oct 12 20:37:34 2002
+** Created: Tue Oct 15 11:09:50 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
+
 #include "dtdselectdialog.h"
 
 #include <qvariant.h>
@@ -18,34 +19,30 @@
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
-#include "dtdselectdialog.ui.h"
+#include "./dtdselectdialog.ui.h"
 
 /* 
- *  Constructs a DTDSelectDialog which is a child of 'parent', with the 
+ *  Constructs a DTDSelectDialog as a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f'.
  *
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  TRUE to construct a modal dialog.
  */
-DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal, WFlags fl )
+DTDSelectDialog::DTDSelectDialog( QWidget* parent, const char* name, bool modal, WFlags fl )
     : QDialog( parent, name, modal, fl )
+
 {
     if ( !name )
 	setName( "DTDSelectDialog" );
-    resize( 445, 190 ); 
-    setCaption( tr2i18n( "DTD Selector" ) );
 
     okButton = new QPushButton( this, "okButton" );
-    okButton->setGeometry( QRect( 190, 160, 80, 22 ) ); 
-    okButton->setText( tr2i18n( "&OK" ) );
+    okButton->setGeometry( QRect( 190, 160, 80, 22 ) );
 
     QWidget* privateLayoutWidget = new QWidget( this, "Layout2" );
-    privateLayoutWidget->setGeometry( QRect( 9, 10, 430, 137 ) ); 
+    privateLayoutWidget->setGeometry( QRect( 9, 10, 430, 137 ) );
     Layout2 = new QGridLayout( privateLayoutWidget, 1, 1, 0, 6, "Layout2"); 
 
     messageLabel = new QLabel( privateLayoutWidget, "messageLabel" );
-    messageLabel->setText( tr2i18n( "Dialog message:\n"
-"Dialog message2:" ) );
     messageLabel->setScaledContents( TRUE );
     messageLabel->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter ) );
 
@@ -58,12 +55,10 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
     Layout1->addWidget( dtdCombo, 0, 1 );
 
     textLabel = new QLabel( privateLayoutWidget, "textLabel" );
-    textLabel->setText( tr2i18n( "Current DTD:" ) );
 
     Layout1->addWidget( textLabel, 1, 0 );
 
     comboLabel = new QLabel( privateLayoutWidget, "comboLabel" );
-    comboLabel->setText( tr2i18n( "Select DTD:" ) );
 
     Layout1->addWidget( comboLabel, 0, 0 );
 
@@ -75,9 +70,10 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
     Layout2->addLayout( Layout1, 1, 0 );
 
     convertDTD = new QCheckBox( privateLayoutWidget, "convertDTD" );
-    convertDTD->setText( tr2i18n( "&Convert the document to the selected DTD" ) );
 
     Layout2->addWidget( convertDTD, 2, 0 );
+    languageChange();
+    resize( QSize(445, 190).expandedTo(minimumSizeHint()) );
 
     // signals and slots connections
 
@@ -88,12 +84,27 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
     init();
 }
 
-/*  
+/*
  *  Destroys the object and frees any allocated resources
  */
 DTDSelectDialog::~DTDSelectDialog()
 {
     // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void DTDSelectDialog::languageChange()
+{
+    setCaption( tr2i18n( "DTD Selector" ) );
+    okButton->setText( tr2i18n( "&OK" ) );
+    messageLabel->setText( tr2i18n( "Dialog message:\n"
+"Dialog message2:" ) );
+    textLabel->setText( tr2i18n( "Current DTD:" ) );
+    comboLabel->setText( tr2i18n( "Select DTD:" ) );
+    convertDTD->setText( tr2i18n( "&Convert the document to the selected DTD" ) );
 }
 
 #include "dtdselectdialog.moc"

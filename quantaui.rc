@@ -50,6 +50,8 @@
     <Separator />
     <Action name="edit_indent" />
     <Action name="edit_unindent" />
+    <Action name="edit_cleanindent" />
+    <Separator />
     <Action name="edit_comment" />
     <Action name="edit_uncomment" />
     <Separator />

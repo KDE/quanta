@@ -584,13 +584,20 @@ void QuantaApp::readOptions()
   {
       statusBar()->show();
      showStatusbarAction->setChecked(true);
- }
- showToolbarAction  ->setChecked(config->readBoolEntry("Show Toolbar",   true));
- showStatusbarAction->setChecked(config->readBoolEntry("Show Statusbar", true));
- qConfig.enableDTDToolbar = config->readBoolEntry("Show DTD Toolbar",true);
+  }
+  showToolbarAction  ->setChecked(config->readBoolEntry("Show Toolbar",   true));
+  showStatusbarAction->setChecked(config->readBoolEntry("Show Statusbar", true));
+  qConfig.enableDTDToolbar = config->readBoolEntry("Show DTD Toolbar",true);
 
- slotToggleDTDToolbar(qConfig.enableDTDToolbar);
- showDTDToolbar->setEnabled(qConfig.enableDTDToolbar);
+  slotToggleDTDToolbar(qConfig.enableDTDToolbar);
+  showDTDToolbar->setEnabled(qConfig.enableDTDToolbar);
+
+  qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);
+  qConfig.iconBar = config->readBoolEntry("Iconbar", false);
+  viewBorder->setChecked(qConfig.iconBar);
+  viewLineNumbers->setChecked(qConfig.lineNumbers);
+  viewBorder->setChecked(qConfig.iconBar);
+  viewLineNumbers->setChecked(qConfig.lineNumbers);
 
   readDockConfig();
 
@@ -1100,6 +1107,8 @@ void QuantaApp::initActions()
                 SLOT(slotIndent()), actionCollection(), "edit_indent");
     new KAction(i18n("&Unindent"), "unindent", CTRL+SHIFT+Key_I, view,
                 SLOT(slotUnIndent()), actionCollection(), "edit_unindent");
+    new KAction(i18n("&Clean Indentation"), "cleanindent", 0, view,
+                SLOT(slotCleanIndent()), actionCollection(), "edit_cleanindent");
 
     new KAction(i18n("Co&mment"),  CTRL+Qt::Key_NumberSign,
                 view, SLOT(slotComment()), actionCollection(), "edit_comment");

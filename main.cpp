@@ -137,6 +137,6 @@ int main(int argc, char *argv[])
 
   qInitNetworkProtocols();
 
-  kdDebug(24000)<<"Calling app->exec()"<<endl;
+//  kdDebug(24000)<<"Calling app->exec()"<<endl;
   return app->exec();
 }

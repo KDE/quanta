@@ -39,6 +39,8 @@
 #include <kmessagebox.h>
 
 #include <ktexteditor/configinterface.h>
+#include <ktexteditor/clipboardinterface.h>
+#include <ktexteditor/selectioninterface.h>
 
 
 // application specific includes
@@ -653,42 +655,42 @@ void QuantaView::slotPasteURLEncoded()
 
 void QuantaView::slotUndo ()
 {
-  write()->kate_doc->undo();
+  dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->undo();
 }
 
 void QuantaView::slotRedo ()
 {
-  write()->kate_doc->redo();
+  dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->redo();
 }
 
 void QuantaView::slotCut ()
 {
-  write()->kate_view->cut();
+  dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->cut();
 }
 
 void QuantaView::slotCopy ()
 {
-  write()->kate_view->copy();
+  dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->copy();
 }
 
 void QuantaView::slotPaste ()
 {
-  write()->kate_view->paste();
+  dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->paste();
 }
 
 void QuantaView::slotSelectAll ()
 {
-  write()->kate_doc->selectAll();
+  dynamic_cast<KTextEditor::SelectionInterface*>(write()->doc())->selectAll();
 }
 
 void QuantaView::slotDeselectAll ()
 {
-  write()->kate_doc->clearSelection ();
+  dynamic_cast<KTextEditor::SelectionInterface*>(write()->doc())->clearSelection ();
 }
 
 void QuantaView::toggleVertical()
 {
-  write()->kate_doc->toggleBlockSelectionMode();
+  dynamic_cast<KTextEditor::BlockSelectionInterface*>(write()->doc())->toggleBlockSelectionMode();
 }
 
 
@@ -722,6 +724,11 @@ void QuantaView::slotIndent()
 void QuantaView::slotUnIndent()
 {
    write()->kate_view->unIndent();
+}
+
+void QuantaView::slotCleanIndent()
+{
+   write()->kate_view->cleanIndent();
 }
 
 void QuantaView::slotComment ()
@@ -768,11 +775,13 @@ void QuantaView::gotoMark (KTextEditor::Mark *mark)
 void QuantaView::toggleIconBorder ()
 {
   write()->kate_view->toggleIconBorder ();
+  qConfig.iconBar = quantaApp->viewBorder->isChecked();
 }
 
 void QuantaView::toggleLineNumbers()
 {
   write()->kate_view->toggleLineNumbersOn();
+  qConfig.lineNumbers = quantaApp->viewLineNumbers->isChecked();
 }
 
 void QuantaView::slotEditorOptions()

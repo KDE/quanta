@@ -136,6 +136,7 @@ class QuantaView : public QWidget
 
     void slotIndent();
     void slotUnIndent();
+    void slotCleanIndent();
     void slotComment ();
     void slotUnComment ();
     void slotApplyWordWrap ();

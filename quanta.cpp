@@ -67,6 +67,8 @@
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/viewcursorinterface.h>
+#include <ktexteditor/printinterface.h>
+#include <ktexteditor/popupmenuinterface.h>
 
 #include <kate/view.h>
 
@@ -341,7 +343,7 @@ void QuantaApp::slotFilePrev()
 
 void QuantaApp::slotFilePrint()
 {
- view->write()->kate_doc->printDialog();
+ dynamic_cast<KTextEditor::PrintInterface*>(view->write()->doc())->printDialog();
 }
 
 void QuantaApp::slotFileQuit()
@@ -613,8 +615,8 @@ void QuantaApp::slotNewUndo()
 
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
-  view->write()->kate_view->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
   Document *newWrite = dynamic_cast<Document *>(w);
+  dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
   newWrite->checkDirtyStatus();
   if (newWrite != view->oldWrite)
     sTab->useOpenLevelSetting = true;
@@ -626,10 +628,13 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   loadToolbarForDTD(newWrite->getDTDIdentifier());
 
   newWrite->readConfig(config);
-
   Document *currentWrite = view->write();
   currentWrite->view()->resize(view->writeTab->size().width()-5, view->writeTab->size().height()-35);
   view->oldWrite = currentWrite;
+  currentWrite->kate_view->setIconBorder(qConfig.iconBar);
+  currentWrite->kate_view->setLineNumbersOn(qConfig.lineNumbers);
+  viewBorder->setChecked(qConfig.iconBar);
+  viewLineNumbers->setChecked(qConfig.lineNumbers);
 
   emit reloadTreeviews();
 }
@@ -720,7 +725,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
  //add the menus
  menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);
- view->write()->kate_view->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
+ dynamic_cast<KTextEditor::PopupMenuInterface*>(view->write()->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
  view->toolbarTab->setCurrentPage(currentPageIndex);
  view->toolbarTab->setUpdatesEnabled(true);
  view->toolbarTab->blockSignals(block);
@@ -1364,7 +1369,7 @@ void QuantaApp::bookmarkMenuAboutToShow()
   bookmarkClear->plug (pm_bookmark);
 
   Document *w = view->write();
-  markList = w->kate_doc->marks();
+  markList = dynamic_cast<KTextEditor::MarkInterface*>(w->doc())->marks();
 //Based on Kate code
   bool hassep = false;
   for (int i=0; (uint) i < markList.count(); i++)
@@ -1375,10 +1380,10 @@ void QuantaApp::bookmarkMenuAboutToShow()
         pm_bookmark->insertSeparator ();
         hassep = true;
       }
-      QString bText = w->kate_doc->textLine(markList.at(i)->line);
+      QString bText = w->editIf->textLine(markList.at(i)->line);
       bText.truncate(32);
       bText.append ("...");
-      pm_bookmark->insertItem ( QString("%1 - \"%2\"").arg(markList.at(i)->line).arg(bText),
+      pm_bookmark->insertItem ( QString("%1 - \"%2\"").arg(markList.at(i)->line+1).arg(bText),
                                  this, SLOT (gotoBookmark(int)), 0, i );
     }
   }

@@ -33,6 +33,7 @@
 
 CervisiaPlugin::CervisiaPlugin():QuantaKPartPlugin()
 {
+  m_part = 0;
 }
 
 CervisiaPlugin::~CervisiaPlugin()
@@ -47,7 +48,7 @@ bool CervisiaPlugin::run()
   if(isLoaded())
   {
     m_part->openURL(quantaApp->projectBaseURL());
-    quantaApp->guiFactory()->addClient(m_part);
+    quantaApp->factory()->addClient(m_part);
     QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
     stack->raiseWidget(m_part->widget());
     m_part->widget()->show();
@@ -62,9 +63,9 @@ bool CervisiaPlugin::unload()
   if(!isLoaded())
     return FALSE;
 
-  quantaApp->guiFactory()->removeClient(m_part);
   QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
   stack->removeWidget(m_part->widget());
+  quantaApp->guiFactory()->removeClient(m_part);
   delete m_part;
   m_part = 0;
 
