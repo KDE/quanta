@@ -35,7 +35,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
 	- fix creation of remote projects [#73172]
 	- fix opening of documentation pages with references [#70345]
         - fix creation of project when the main directory starts with a protocol name
-        - make removal of top folders added with "New Top Folder" possible [#76498]
+        - make removal of top folders added with "New Top Folder" possible [#76498, #76573]
         - don't change the tab name if saving under a new name failed (needs KDE 3.2.2 or later)
         - various parsing fixes        
         - report bugs for "quanta" module, not for "quanta_be"        
