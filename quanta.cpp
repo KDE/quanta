@@ -39,6 +39,7 @@
 #include <qspinbox.h>
 #include <qeventloop.h>
 #include <qfontmetrics.h>
+#include <qclipboard.h>
 
 // include files for KDE
 #include <kcombobox.h>
@@ -1563,14 +1564,17 @@ void QuantaApp::slotDockChanged()
   if ( dtabdock->isVisible() )
   {
     static bool first = true;
-    previousWidgetList.push_back(s->id(s->visibleWidget()));
-    s->raiseWidget(2);
-    if ( first )
+    if (s->id(s->visibleWidget()) != 2)
     {
-      openDoc( locate("appdata","doc/intro.html") );
-      first = false;
+      previousWidgetList.push_back(s->id(s->visibleWidget()));
+      s->raiseWidget(2);
+      if ( first )
+      {
+        openDoc( locate("appdata","doc/intro.html") );
+        first = false;
+      }
+      docTabOpened = true;
     }
-    docTabOpened = true;
   }
   else {
     if ( docTabOpened )
@@ -1666,7 +1670,6 @@ void QuantaApp::slotContextHelp()
       if (stabdock->isVisible()) m_oldTreeViewWidget = stabdock;
       if (dtabdock->isVisible()) m_oldTreeViewWidget = dtabdock;
       if (!dtabdock->isVisible()) dtabdock->changeHideShowState();
-
       s->raiseWidget(2);
       m_htmlPartDoc->view()->setFocus();
 
@@ -3695,7 +3698,13 @@ void QuantaApp::slotDeleteFile()
   }
 }
 
-void QuantaApp::slotFind ()
+//FIXME: Do it right and add the GUI and shortcuts of the current part (editor, html, plugin)
+//so we don't have to catch ourselves the different actions. Would reduce the code. The 
+//reason behind the current implementation is that I like to have a control about 
+//disabled/enabled actions, like the save, copy, etc. And idea would be to get the actions
+//each time in slotNewStatus() from the part's actionCollection, but I don't know what would
+//be the performance impact. This is a must to do in 3.3!!
+void QuantaApp::slotFind()
 {
   int id = 0;
   QWidgetStack *s = widgetStackOfHtmlPart();
@@ -3707,11 +3716,15 @@ void QuantaApp::slotFind ()
   } else
   if (id == 1)
   {
-    m_htmlPart->findTextBegin();
+    KAction *a = m_htmlPart->actionCollection()->action("find");
+    if (a)
+      a->activate();
   } else
   if (id == 2)
   {
-    m_htmlPartDoc->findTextBegin();
+    KAction *a = m_htmlPartDoc->actionCollection()->action("find");
+    if (a)
+      a->activate();
   }
 }
 
@@ -3727,11 +3740,15 @@ void QuantaApp::slotFindAgain ()
   } else
   if (id == 1)
   {
-    m_htmlPart->findTextNext("", true, true, false);
+    KAction *a = m_htmlPartDoc->actionCollection()->action("findNext");
+    if (a)
+      a->activate();
   } else
   if (id == 2)
   {
-    m_htmlPartDoc->findTextNext("", true, true, false);
+    KAction *a = m_htmlPartDoc->actionCollection()->action("findNext");
+    if (a)
+      a->activate();
   }
 }
 
@@ -3747,11 +3764,9 @@ void QuantaApp::slotFindAgainB ()
   } else
   if (id == 1)
   {
-    m_htmlPart->findTextNext("", false, true, false);
   } else
   if (id == 2)
   {
-    m_htmlPartDoc->findTextNext("", false, true, false);
   }
 }
 
@@ -3766,6 +3781,35 @@ void QuantaApp::slotReplace ()
     m_view->write()->kate_view->replace();
   }
 }
+
+void QuantaApp::slotSelectAll ()
+{
+  int id = 0;
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if (s)
+    id = s->id(s->visibleWidget());
+  if (id == 0 && m_view->writeExists())
+  {
+    Document *w = m_view->write();
+    w->selectionIf->selectAll();
+    QString selection = w->selectionIf->selection();
+    QClipboard *cb = QApplication::clipboard();
+    cb->setText(selection, QClipboard::Selection);
+  } else
+  if (id == 1)
+  {
+    KAction *a = m_htmlPartDoc->actionCollection()->action("selectAll");
+    if (a)
+      a->activate();
+  } else
+  if (id == 2)
+  {
+    KAction *a = m_htmlPartDoc->actionCollection()->action("selectAll");
+    if (a)
+      a->activate();
+  }
+}
+
 
 bool QuantaApp::structTreeVisible() const
 {

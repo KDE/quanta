@@ -744,18 +744,6 @@ void QuantaView::slotPaste ()
   }
 }
 
-void QuantaView::slotSelectAll ()
-{
-  if (writeExists())
-  {
-    Document *w = write();
-    w->selectionIf->selectAll();
-    QString selection = w->selectionIf->selection();
-    QClipboard *cb = QApplication::clipboard();
-    cb->setText(selection, QClipboard::Selection);
-  }
-}
-
 void QuantaView::slotDeselectAll ()
 {
   if (writeExists())

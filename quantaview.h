@@ -189,7 +189,6 @@ public slots:
   void slotCopy ();
   void slotPaste ();
 
-  void slotSelectAll ();
   void slotDeselectAll ();
   void toggleVertical ();
   void toggleInsert();

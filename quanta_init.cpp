@@ -163,11 +163,8 @@ QuantaApp::~QuantaApp()
  QDir dir;
  dir.rmdir(tmpDir + "quanta");
 
- if(m_execCommandPS)
- {
-  delete m_execCommandPS;
-  m_execCommandPS = 0L;
- }
+ delete m_execCommandPS;
+ m_execCommandPS = 0L;
 }
 
 
@@ -899,6 +896,11 @@ bool QuantaApp::queryClose()
   bool canExit = true;
   if (quantaStarted)
   {
+    if (dtabdock->isVisible())
+    {
+      QWidgetStack *s = widgetStackOfHtmlPart();
+      s->raiseWidget(0);
+    }
     saveOptions();
     exitingFlag = true;
     canExit = m_doc->saveAll(false);
@@ -927,6 +929,7 @@ bool QuantaApp::queryClose()
       }while (m_view->removeWrite());
     }
   }
+
   return canExit;
 }
 
@@ -1685,7 +1688,7 @@ void QuantaApp::initActions()
     KStdAction::pasteText(m_view, SLOT(slotPaste()), ac);
 #endif
 
-    KStdAction::selectAll(m_view, SLOT(slotSelectAll()), ac);
+    KStdAction::selectAll(this, SLOT(slotSelectAll()), ac);
     KStdAction::deselect(m_view, SLOT(slotDeselectAll()), ac);
     (void) new KAction( i18n( "Toggle &Block Selection" ), Key_F4, m_view,
                         SLOT( toggleVertical() ), ac, "set_verticalSelect" );

@@ -363,6 +363,7 @@ public slots:
   void slotFindAgain();
   void slotFindAgainB();
   void slotReplace();
+  void slotSelectAll();
 
   /** Show the Document Properties Dialog */
   void slotDocumentProperties();
