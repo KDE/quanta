@@ -1,12 +1,12 @@
 # Process user input to configure
 build_wysiwyg="yes"
-AC_ARG_WITH(kafkapart,
-[  --without-kafkapart     don't build the WYSIWYG editor mode (requires KDE 3.2)],
-[case "${enableval}" in
-       no) build_wysiwyg="yes" ;;
-       yes)  build_wysiwyg="no" ;;
-       *)   build_wysiwyg="no" ;;
-     esac])
+#AC_ARG_WITH(kafkapart,
+#[  --without-kafkapart     don't build the WYSIWYG editor mode (requires KDE 3.2)],
+#[case "${enableval}" in
+#       no) build_wysiwyg="yes" ;;
+#       yes)  build_wysiwyg="no" ;;
+#       *)   build_wysiwyg="no" ;;
+#     esac])
 
 KDE_VERSION=""
 AC_MSG_CHECKING(for KDE version)
