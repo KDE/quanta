@@ -25,6 +25,8 @@
 #include <qdom.h>
 #include <qfile.h>
 #include <qevent.h>
+#include <qdragobject.h>
+#include <qwidget.h>
 
 // include files for KDE
 #include <klocale.h>
@@ -40,7 +42,7 @@
 #include "quantaview.h"
 #include "quantadoc.h"
 #include "quanta.h"
-
+#include "treeviews/templatestreeview.h"
 
 #include "widgets/wtoolbar.h"
 
@@ -76,6 +78,9 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 
   writeTab->show();
   oldWrite = 0L;
+
+  connect(this, SIGNAL(dragInsert(QDropEvent *)), getApp()->tTab, SLOT(slotDragInsert(QDropEvent *)));
+  setAcceptDrops(TRUE); // [MB02] Accept drops on the view
 }
 
 QuantaView::~QuantaView()
@@ -205,4 +210,14 @@ void QuantaView::resizeEvent (QResizeEvent *)
 {
  if (write() !=0)
    write()->view()->resize(writeTab->size().width()-5, writeTab->size().height()-35);
+}
+
+void QuantaView::dragEnterEvent(QDragEnterEvent *e)
+{
+  e->accept(QUriDrag::canDecode(e));
+}
+
+void QuantaView::dropEvent(QDropEvent *e)
+{
+  emit dragInsert(e);
 }

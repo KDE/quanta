@@ -18,7 +18,7 @@
 #ifndef PROJECTTREEFILE_H
 #define PROJECTTREEFILE_H
 
-#include <qlistview.h>
+#include "filestreefile.h"
 
 class ProjectTreeFolder;
 
@@ -26,7 +26,7 @@ class ProjectTreeFolder;
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
-class ProjectTreeFile : public QListViewItem  {
+class ProjectTreeFile : public FilesTreeFile  {
 friend class Project;
 public: 
 	ProjectTreeFile( ProjectTreeFolder *parent, const char *name, const char *filename = 0L);

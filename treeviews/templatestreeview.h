@@ -34,6 +34,10 @@ class TemplatesTreeView : public FilesTreeView  {
 public: 
 	TemplatesTreeView(const QString& projectBasePath,QWidget *parent=0, const char *name=0);
 	~TemplatesTreeView();
+  /** Writes a .dirinfo file from the selected item's path */
+  void writeDirInfo(QString dirInfoFile="");
+  /** Reads a .dirinfo file from the selected item's path */
+  void readDirInfo(QString startDir = "");
 
 public slots:
   /** No descriptions */
@@ -46,6 +50,14 @@ public slots:
   /** No descriptions */
   void slotNewDir();
   virtual void slotReload();
+  /** Properties dialog for template view */
+  virtual void slotProperties();
+  /** Property application for template view */
+  virtual void slotPropertiesApplied();
+  /** Handles dropping on the document from the template tree */
+  void slotDragInsert(QDropEvent *);
+
+  virtual void slotInsertTag();
   /** No descriptions */
   void contentsDragEnterEvent(QDragEnterEvent *event);
 
@@ -58,15 +70,18 @@ private:
   int deleteMenuId;
   int openId;
   FilesTreeFolder *projectDir;
+  QuantaPropertiesPageDlg *quantaProperties;
 	
 signals: // Signals
   /** No descriptions */
   void insertFile(QString);
 protected: // Protected methods
   /** No descriptions */
-  virtual QDragObject * dragObject ();
+//  virtual QDragObject * dragObject ();
+  virtual void startDrag();
   /** No descriptions */
   void contentsDropEvent(QDropEvent *);
+  int confirmInsert();
 };
 
 #endif

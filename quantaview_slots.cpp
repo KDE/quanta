@@ -461,7 +461,14 @@ void QuantaView::slotViewInNetscape()
          Do you want to save and preview?"),i18n("Save before preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
-      write()->doc()->save();
+      if (write()->isUntitled())
+      {
+       getApp()->slotFileSaveAs();
+      }
+      else
+      {
+       write()->doc()->save();
+      }
     } else
     {
       return;
@@ -487,7 +494,14 @@ void QuantaView::slotViewInKFM()
          Do you want to save and preview?"),i18n("Save before preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
-      write()->doc()->save();
+      if (write()->isUntitled())
+      {
+       getApp()->slotFileSaveAs();
+      }
+      else
+      {
+       write()->doc()->save();
+      }
     } else
     {
       return;
@@ -511,7 +525,14 @@ void QuantaView::slotViewInLynx()
          Do you want to save and preview?"),i18n("Save before preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
          == KMessageBox::Yes)
     {
-      write()->doc()->save();
+      if (write()->isUntitled())
+      {
+       getApp()->slotFileSaveAs();
+      }
+      else
+      {
+       write()->doc()->save();
+      }
     } else
     {
       return;

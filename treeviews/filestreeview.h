@@ -22,6 +22,7 @@
 #include <qstrlist.h>
 
 #include <kconfig.h>
+#include <kpropertiesdialog.h>
 
 #include "filemanage.h"
 
@@ -39,10 +40,7 @@ public:
     FilesTreeView();
 	FilesTreeView( QString dir, QStrList topList, QWidget *parent=0L, const char *name=0L);
 	~FilesTreeView();
-  /** No descriptions */
-  void writeDirInfo(QString dirInfoFile="");
-  /** No descriptions */
-  void readDirInfo();
+  void addFileInfoPage(KPropertiesDialog *propDlg);
 	
 public slots:
 	void slotMenu(QListViewItem *, const QPoint &, int);
@@ -57,7 +55,6 @@ public slots:
   virtual void slotInsertTag();
 	virtual void slotReload();
   virtual void slotProperties();
-  virtual void slotPropertiesApplied();
 	
 signals:
 	void activatePreview();
@@ -71,7 +68,6 @@ public:
 	FilesTreeFolder *homeDir;
   FilesTreeFolder *rootDir;
 
-  QuantaPropertiesPageDlg *quantaProperties;
   QStrList dirList;
   /**  */
   DirInfo dirInfo;

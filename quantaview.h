@@ -40,6 +40,7 @@ class KDockTabGroup;
 class ToolBars;
 class QTabBar;
 class QWidgetStack;
+class QDropEvent;
 
 /** The QuantaView class provides the view widget for the QuantaApp
  * instance.  The View instance inherits QWidget as a base class and
@@ -202,6 +203,8 @@ class QuantaView : public QWidget
     
     /** emit when select document from tabbar */
     void writeSelected(int);
+    /** emitted when a file from the template view is dropped on the view */
+    void dragInsert(QDropEvent *);
 	
   private:
   	/** Quanta classes */
@@ -226,6 +229,9 @@ public: // Public attributes
   Document *oldWrite;
   /**  */
   QString dontShowSavePreview;
+protected:
+  virtual void dropEvent(QDropEvent *e);
+  virtual void dragEnterEvent(QDragEnterEvent *e);
 };
 
 #endif // QUANTAVIEW_H

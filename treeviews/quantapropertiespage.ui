@@ -8,105 +8,83 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>305</width>
-            <height>218</height>
+            <width>314</width>
+            <height>634</height>
         </rect>
     </property>
     <property name="caption">
         <string>Quanta properties</string>
     </property>
-    <widget class="QLabel">
+    <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>TextLabel1</cstring>
+            <cstring>Layout1</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>15</x>
-                <y>20</y>
-                <width>45</width>
-                <height>16</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Type:</string>
-        </property>
-    </widget>
-    <widget class="KComboBox">
-        <property name="name">
-            <cstring>typesCombo</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>100</x>
+                <x>10</x>
                 <y>15</y>
-                <width>160</width>
-                <height>30</height>
+                <width>285</width>
+                <height>26</height>
             </rect>
         </property>
-    </widget>
-    <widget class="QCheckBox">
-        <property name="name">
-            <cstring>usePostText</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>150</y>
-                <width>212</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Use pos&amp;t-text</string>
-        </property>
-    </widget>
-    <widget class="QLineEdit">
-        <property name="name">
-            <cstring>postTextEdit</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>25</x>
-                <y>180</y>
-                <width>270</width>
-                <height>23</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QLineEdit">
-        <property name="name">
-            <cstring>preTextEdit</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>25</x>
-                <y>115</y>
-                <width>270</width>
-                <height>23</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QCheckBox">
-        <property name="name">
-            <cstring>usePreText</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>90</y>
-                <width>212</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Use &amp;pre-text</string>
-        </property>
+        <hbox>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property name="text">
+                    <string>Type:</string>
+                </property>
+            </widget>
+            <spacer>
+                <property name="name" stdset="0">
+                    <cstring>Spacer1</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="KComboBox">
+                <property name="name">
+                    <cstring>typesCombo</cstring>
+                </property>
+            </widget>
+            <spacer>
+                <property name="name" stdset="0">
+                    <cstring>Spacer2</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+        </hbox>
     </widget>
     <widget class="QCheckBox">
         <property name="name">
@@ -115,7 +93,7 @@
         <property name="geometry">
             <rect>
                 <x>10</x>
-                <y>60</y>
+                <y>55</y>
                 <width>285</width>
                 <height>21</height>
             </rect>
@@ -123,6 +101,121 @@
         <property name="text">
             <string>&amp;Inherit type from parent (nothing)</string>
         </property>
+    </widget>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>Layout2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>85</y>
+                <width>285</width>
+                <height>335</height>
+            </rect>
+        </property>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <spacer row="1" column="1">
+                <property name="name" stdset="0">
+                    <cstring>Spacer6</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>usePrePostText</cstring>
+                </property>
+                <property name="text">
+                    <string>Use &amp;pre/post text</string>
+                </property>
+            </widget>
+            <widget class="QTextEdit" row="2" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>preTextEdit</cstring>
+                </property>
+                <property name="enabled">
+                    <bool>false</bool>
+                </property>
+            </widget>
+            <widget class="QTextEdit" row="4" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>postTextEdit</cstring>
+                </property>
+                <property name="enabled">
+                    <bool>false</bool>
+                </property>
+            </widget>
+            <spacer row="3" column="1">
+                <property name="name" stdset="0">
+                    <cstring>Spacer5</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="QLabel" row="3" column="0">
+                <property name="name">
+                    <cstring>TextLabel2</cstring>
+                </property>
+                <property name="text">
+                    <string>Post-text</string>
+                </property>
+            </widget>
+            <spacer row="5" column="1">
+                <property name="name" stdset="0">
+                    <cstring>Spacer3</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="QLabel" row="1" column="0">
+                <property name="name">
+                    <cstring>TextLabel1_2</cstring>
+                </property>
+                <property name="text">
+                    <string>Pre-text</string>
+                </property>
+            </widget>
+        </grid>
     </widget>
 </widget>
 <connections>
@@ -133,15 +226,15 @@
         <slot>setDisabled(bool)</slot>
     </connection>
     <connection>
-        <sender>usePreText</sender>
+        <sender>usePrePostText</sender>
         <signal>toggled(bool)</signal>
-        <receiver>preTextEdit</receiver>
+        <receiver>postTextEdit</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>usePostText</sender>
+        <sender>usePrePostText</sender>
         <signal>toggled(bool)</signal>
-        <receiver>postTextEdit</receiver>
+        <receiver>preTextEdit</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>

@@ -33,7 +33,7 @@ extern QString fileMaskImage;
 
 
 ProjectTreeFile::ProjectTreeFile( ProjectTreeFolder *parent, const char *name, const char *filename)
-    : QListViewItem( parent, name )
+    : FilesTreeFile( parent, name, filename )
 {
   fname = filename;
   setIcon( filename );

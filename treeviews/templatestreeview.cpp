@@ -21,6 +21,8 @@
 #include <qheader.h>
 #include <qdragobject.h>
 #include <qpoint.h>
+#include <qlayout.h>
+#include <qtextedit.h>
 
 // KDE includes
 #include <krun.h>
@@ -31,15 +33,17 @@
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kcombobox.h>
+#include <kpropertiesdialog.h>
 
 #include "templatestreeview.h"
 #include "templatestreeview.moc"
 #include "filestreefolder.h"
 #include "filestreefile.h"
 #include "newtemplatedirdlg.h"
+#include "quantapropertiespagedlg.h"
 
 const QString textMenu = i18n("Insert as text");
-const QString binaryMenu = i18n("Insert binary (as link)");
+const QString binaryMenu = i18n("Insert link to file");
 const QString docMenu = i18n("New document based on this");
 
 TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *parent, const char *name )
@@ -126,6 +130,7 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 						this,	SLOT(slotSelectFile(QListViewItem *)));
 						
   setAcceptDrops(true);
+  setSelectionMode(QListView::Single);
   viewport()->setAcceptDrops(true);
 }
 
@@ -139,8 +144,7 @@ void TemplatesTreeView::slotInsertInDocument()
 
  if (! mimetype.contains("text"))
  {
-   if (KMessageBox::questionYesNo(this,i18n("This file may be a binary file, thus cannot be \
-inserted correctly.\n Do you still want to insert it?"),i18n("Wrong type")) != KMessageBox::Yes)
+   if (confirmInsert() != KMessageBox::Yes)
   {
     return;
   }
@@ -153,12 +157,24 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 {
 	if ( !item ) return;
 	setSelected(item, true);
-  readDirInfo();
+	
+	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
+	if ( d )
+	{
+	  if ( d->text(0) == i18n("Global templates") || d->text(0) == i18n("Local templates" )
+	       || d->text(0) == i18n("Project templates") )
+	        folderMenu ->setItemEnabled( deleteMenuId, false);
+	  else  folderMenu ->setItemEnabled( deleteMenuId, true );
+	
+	  folderMenu ->popup     ( point);
+	} else
+  {
+   readDirInfo();
 	
    QString menuText = "";
 
    if (dirInfo.mimeType.upper().contains("TEXT")) menuText = textMenu;
-   if (dirInfo.mimeType.upper().contains("BINARY")) menuText = binaryMenu;
+   if (dirInfo.mimeType.upper().contains("FILE")) menuText = binaryMenu;
    if (dirInfo.mimeType.upper().contains("TEMPLATE")) menuText = docMenu;
 
    if (menuText.isEmpty())
@@ -171,18 +187,7 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
    }
 
    fileMenu->popup( point);
-
-	
-	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
-	if ( d )
-	{
-	  if ( d->text(0) == i18n("Global templates") || d->text(0) == i18n("Local templates" )
-	       || d->text(0) == i18n("Project templates") )
-	        folderMenu ->setItemEnabled( deleteMenuId, false);
-	  else  folderMenu ->setItemEnabled( deleteMenuId, true );
-	
-	  folderMenu ->popup     ( point);
-	}
+  }
 }
 /** No descriptions */
 void TemplatesTreeView::slotNewDocument()
@@ -191,8 +196,7 @@ void TemplatesTreeView::slotNewDocument()
 
  if (! mimetype.contains("text"))
  {
-   if (KMessageBox::questionYesNo(this,i18n("This file may be a binary file, thus cannot be \
-used as a base file correctly.\n Do you still want to continue?"),i18n("Wrong type")) != KMessageBox::Yes)
+   if (confirmInsert() != KMessageBox::Yes)
   {
     return;
   }
@@ -232,7 +236,7 @@ void TemplatesTreeView::slotNewDir()
 {
   NewTemplateDirDlg *createDirDlg = new NewTemplateDirDlg(this,i18n("Create new template directory"));
   createDirDlg->typesCombo->insertItem("text/all");
-  createDirDlg->typesCombo->insertItem("binary/all");
+  createDirDlg->typesCombo->insertItem("file/all");
   createDirDlg->typesCombo->insertItem("template/all");
 
   readDirInfo();
@@ -276,38 +280,279 @@ void TemplatesTreeView::slotNewDir()
   }
 }
 /** No descriptions */
+/*
 QDragObject * TemplatesTreeView::dragObject ()
 {
   QDragObject *drag = new QTextDrag(currentFileName(), this);
   return drag;
-}
+} */
+void TemplatesTreeView::startDrag()
+{
+  QUriDrag *drag = new QUriDrag(this, 0);
+  QStringList uriList(currentFileName());
+  drag->setFileNames(uriList);
+  drag->drag();
+ }
+
+
 /** No descriptions */
 void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
 {
  QString source;
  QString dest = "";
- QTextDrag::decode(e,source);
+// QTextDrag::decode(e,source);
+ QStringList fileList;
 
-  QListViewItem *item = itemAt( contentsToViewport(e->pos()));
+ QUriDrag::decodeLocalFiles(e, fileList);
+ if(fileList.empty()) return;
 
-	FilesTreeFolder *parent = dynamic_cast<FilesTreeFolder *> (item->parent());
+ source = fileList.front();
+
+ QListViewItem *item = itemAt(contentsToViewport(e->pos()));
+
+ if (item)
+ {
+  FilesTreeFolder *parent = dynamic_cast<FilesTreeFolder *> (item->parent());
 	
 	if ( !parent ) // top level element
   {
 		dest = ((FilesTreeFolder *)item)->fullName();
-	} else
+	}
+  else
   {
    	dest = parent->fullName()+item->text(0);
     KIO::Job *job = KIO::copy(source,dest);
     connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
-  }	
+  }
+ }
 
 }
 /** No descriptions */
 void TemplatesTreeView::contentsDragEnterEvent(QDragEnterEvent *event)
 {
- if (QTextDrag::canDecode(event))
+ if (QUriDrag::canDecode(event))
  {
     event->accept();
  }
+}
+
+/** Reads a .dirinfo file from the selected item's path */
+void TemplatesTreeView::readDirInfo(QString startDir)
+{
+  QListViewItem *item = currentItem();
+
+  if (startDir.isEmpty())
+  {
+    FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+  	if ( f )
+    {
+      startDir = currentFileName();
+    } else
+    {
+     startDir = currentFileName() + "/dummy_file";
+    }
+  }
+
+  QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
+
+  while ((!dotFileInfo.exists()) && (dotFileInfo.dirPath() != "/"))
+  {
+   dotFileInfo.setFile(QFileInfo(dotFileInfo.dirPath()).dirPath()+"/.dirinfo");
+  }
+
+  KConfig *config = new KConfig(dotFileInfo.filePath());
+  dirInfo.mimeType = config->readEntry("Type");
+  dirInfo.preText = config->readEntry("PreText");
+  dirInfo.postText = config->readEntry("PostText");
+  dirInfo.usePrePostText = config->readBoolEntry("UsePrePostText", false);
+
+  delete config;
+}
+
+/** Writes a .dirinfo file from the selected item's path */
+void TemplatesTreeView::writeDirInfo(QString dirInfoFile)
+{
+  QListViewItem *item = currentItem();
+  QString startDir = "";
+
+  if (dirInfoFile.isEmpty())
+  {
+	  FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+	  if ( f )
+    {
+      startDir = currentFileName();
+    } else
+    {
+      startDir = currentFileName() + "/dummy_file";
+    }
+  } else
+  {
+    startDir = dirInfoFile;
+  }
+
+  QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
+
+  KConfig *config = new KConfig(dotFileInfo.filePath());
+  config->writeEntry("Type", dirInfo.mimeType);
+  config->writeEntry("PreText", dirInfo.preText);
+  config->writeEntry("PostText", dirInfo.postText);
+  config->writeEntry("UsePrePostText", dirInfo.usePrePostText);
+  config->sync();
+
+  delete config;
+}
+
+void TemplatesTreeView::slotProperties()
+{
+  if ( !currentItem() ) return;
+
+  KPropertiesDialog *propDlg = new KPropertiesDialog( KURL( currentFileName() ), this, 0L, false, false);
+
+//Always add the Quanta directory page
+  QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta directory"));
+  QVBoxLayout *topLayout = new QVBoxLayout( quantaDirPage);
+  quantaProperties = new QuantaPropertiesPageDlg( quantaDirPage, i18n("Quanta") );
+
+  quantaProperties->typesCombo->insertItem("text/all");
+  quantaProperties->typesCombo->insertItem("file/all");
+  quantaProperties->typesCombo->insertItem("template/all");
+
+  readDirInfo();
+
+  quantaProperties->typesCombo->setCurrentItem(dirInfo.mimeType);
+
+  QListViewItem *item = currentItem();
+  QString startDir = "";
+	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+	if ( f )
+  {
+   startDir = currentFileName();
+  } else
+  {
+   startDir = currentFileName() + "/dummy_file";
+  }
+  QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
+  if (!dotFileInfo.exists()) quantaProperties->parentAttr->setChecked(true);
+  if (dirInfo.mimeType.isEmpty())
+   {
+    quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (nothing)"));
+   } else
+   {
+    quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(dirInfo.mimeType));
+   }
+   quantaProperties->preTextEdit->setText(dirInfo.preText);
+   quantaProperties->postTextEdit->setText(dirInfo.postText);
+   if (dirInfo.usePrePostText)
+   {
+    quantaProperties->usePrePostText->setChecked(true);
+   }
+
+   topLayout->addWidget( quantaProperties );
+//   connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied) );
+
+
+//If the item is a file, add the Quanta file info page
+  addFileInfoPage(propDlg);
+  if (propDlg->exec() == QDialog::Accepted)
+   {
+    slotPropertiesApplied();
+    slotReload();
+   }
+
+  delete propDlg;
+}
+
+
+/** No descriptions */
+void TemplatesTreeView::slotPropertiesApplied()
+{
+  DirInfo localDirInfo;
+
+  if (!quantaProperties->parentAttr->isChecked())
+  {
+    localDirInfo.mimeType = quantaProperties->typesCombo->currentText();
+  } else
+  {
+    localDirInfo.mimeType = dirInfo.mimeType;
+  }
+
+  localDirInfo.usePrePostText = quantaProperties->usePrePostText->isChecked();
+  localDirInfo.preText = quantaProperties->preTextEdit->text();
+  localDirInfo.postText = quantaProperties->postTextEdit->text();
+
+  if ( (dirInfo.mimeType != localDirInfo.mimeType) ||
+       (dirInfo.preText != localDirInfo.preText) ||
+       (dirInfo.postText != localDirInfo.postText))
+  {
+    dirInfo.mimeType = localDirInfo.mimeType;
+    dirInfo.preText = localDirInfo.preText;
+    dirInfo.postText = localDirInfo.postText;
+    dirInfo.usePrePostText = localDirInfo.usePrePostText;
+    writeDirInfo();
+  }
+
+
+}
+
+/** No descriptions */
+void TemplatesTreeView::slotInsertTag()
+{
+ if (!currentItem()) return;
+
+ readDirInfo();
+ emit insertTag( currentFileName(), dirInfo);
+}
+
+void TemplatesTreeView::slotDragInsert(QDropEvent *e)
+{
+  QStringList fileList;
+  QUriDrag::decodeLocalFiles(e, fileList);
+
+  if(fileList.empty())
+   return;
+
+  bool set = false;
+
+  QString localFileName = fileList.front();
+
+  readDirInfo(localFileName);
+  QString mimeType = KMimeType::findByPath(localFileName)->name();
+
+  /* First, see if the type of the file is specified in the .dirinfo file */
+  if(!dirInfo.mimeType.isEmpty())
+  {
+    if(dirInfo.mimeType == "file/all")
+    {
+      // whatever this is, insert it with a tag (image or link or prefix/postfix)
+      emit insertTag(localFileName, dirInfo);
+      set = true;
+    }
+    else if(dirInfo.mimeType == "template/all")
+    {
+      if(!mimeType.contains("text", false))
+        if(confirmInsert() != KMessageBox::Yes)
+          return;
+      emit openFile(KURL());
+      emit insertFile(localFileName);
+      set = true;
+    }
+  }
+  if(dirInfo.mimeType.isEmpty() || !set) // default to inserting in document
+  {
+    if(!mimeType.contains("text", false))
+    {
+       if(confirmInsert() != KMessageBox::Yes)
+         return;
+    }
+    emit insertFile(localFileName);
+  }
+}
+
+
+
+
+int TemplatesTreeView::confirmInsert()
+{
+  return KMessageBox::questionYesNo(this,i18n("This file may be a binary file, thus cannot be \
+used as a base file correctly.\n Do you still want to continue?"),i18n("Wrong type")) ;
 }

@@ -1169,6 +1169,8 @@ void QuantaApp::slotNewProjectLoaded()
   connect(fTTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
   connect(tTab, SIGNAL(reloadTreeviews()), fTTab, SLOT (slotReload()));
   connect(tTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
+
+  connect(getView(), SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *))); // [MB02]
 }
 
 /** No descriptions */

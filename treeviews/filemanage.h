@@ -28,10 +28,13 @@ class QPopupMenu;
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
 
+/*This will remain here, as we need the inserTag(QString, DirInfo) signal.
+  DirInfo used here to specify the pre/post text for the tag. */
 typedef struct DirInfo{
       QString mimeType;
       QString preText;
       QString postText;
+      bool    usePrePostText;
     };
 
 class FileManage : public QListView {

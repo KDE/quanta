@@ -149,9 +149,9 @@ void FileManage::slotProperties()
 {
   if ( !currentItem() ) return;
 
-  KPropertiesDialog *propDlg = new KPropertiesDialog( KURL( currentFileName() ));
+  KPropertiesDialog *propDlg = new KPropertiesDialog( KURL(currentFileName()), this, 0L, true  );
 
-  connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied) );
+  connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied()) );
 }
 
 

@@ -22,6 +22,9 @@
 #include <qtabwidget.h>
 #include <qtabbar.h>
 #include <qlayout.h>
+#include <qdragobject.h>
+#include <qobject.h>
+
 
 // include files for KDE
 #include <klocale.h>
@@ -450,6 +453,10 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 
   Document  *w    = new Document (basePath(), doc, _parent);
   KTextEditor::View * v = w->view();
+
+  //[MB02] connect all kate views for drag and drop
+  connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)app->tTab, SLOT(slotDragInsert(QDropEvent *)));
+  // TODO : find out what's wrong with this connect
 
  	app-> config->setGroup("General Options");
   w->readConfig( app->config );
