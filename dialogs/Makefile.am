@@ -7,8 +7,7 @@ noinst_LIBRARIES = libdialogs.a
 
 
 
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/po
+INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libdialogs_a_METASOURCES = AUTO
 libdialogs_a_SOURCES = \

@@ -8,7 +8,6 @@ noinst_LIBRARIES = libtoolbar.a
 
 
 INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/po\
 		-I$(top_srcdir)/quanta/tagdialogs
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libtoolbar_a_METASOURCES = AUTO

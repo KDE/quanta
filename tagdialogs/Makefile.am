@@ -7,8 +7,7 @@ noinst_LIBRARIES = libtagdialogs.a
 
 
 
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/po
+INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libtagdialogs_a_METASOURCES = AUTO
 libtagdialogs_a_SOURCES = \

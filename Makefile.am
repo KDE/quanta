@@ -30,7 +30,6 @@ quanta_LDADD = \
 		-lkspell
 LDFLAGS =  -s -lktexteditor
 INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/po\
 		-I$(top_srcdir)/quanta/kwrite\
 		-I$(top_srcdir)/quanta/kwrite/highlight
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
@@ -67,12 +66,15 @@ EXTRA_DIST = \
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$
 
-install-data-local:
-	$(mkinstalldirs) $(kde_appsdir)/Development/
-	$(INSTALL_DATA) $(srcdir)/quanta.desktop $(kde_appsdir)/Development/quanta.desktop
-	$(mkinstalldirs) $(kde_datadir)/quanta/
-	$(INSTALL_DATA) $(srcdir)/quantaui.rc $(kde_datadir)/quanta/quantaui.rc
-
-uninstall-local:
-	-rm -f $(kde_appsdir)/Development/quanta.desktop
-	-rm -f $(kde_datadir)/quanta/quantaui.rc
+messages: rc.cpp
+	$(XGETTEXT) *.cpp -o $(podir)/quanta.pot
+ 
+KDE_ICON = quanta
+ 
+# this is where the kdelnk file will go
+kdelnkdir   = $(kde_appsdir)/Development
+kdelnk_DATA = quanta.desktop
+ 
+# this is where the XML-GUI resource file goes
+rcdir = $(kde_datadir)/quanta
+rc_DATA = quantaui.rc
