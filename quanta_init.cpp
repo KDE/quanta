@@ -1836,6 +1836,10 @@ void QuantaApp::initActions()
                         ac, "tools_document_properties" );
 #endif
 
+    (void) new KAction( i18n( "Convert Tag And Attribute Case..."), 0,
+                        this, SLOT(slotConvertCase()),
+                        ac, "tools_change_case");
+
     // View actions
 
     showFTabAction =

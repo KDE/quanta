@@ -20,6 +20,7 @@
 
 //QT includes
 #include <qdir.h>
+#include <qeventloop.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qtextstream.h>
@@ -27,6 +28,7 @@
 #include <qradiobutton.h>
 
 // KDE includes
+#include <kapplication.h>
 #include <kwin.h>
 #include <klocale.h>
 #include <kaction.h>
@@ -36,6 +38,7 @@
 #include <ktempfile.h>
 #include <kdirwatch.h>
 #include <kdebug.h>
+#include <kprogress.h>
 
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
@@ -49,6 +52,7 @@
 #include "resource.h"
 #include "dialogs/dirtydlg.h"
 #include "dialogs/dirtydialog.h"
+#include "dialogs/casewidget.h"
 #include "project/project.h"
 #include "plugins/quantaplugininterface.h"
 
@@ -2113,6 +2117,96 @@ QString Document::hashedFilePath(const QString& p)
           }
  }
 
+}
+
+void Document::convertCase()
+{
+  int tagCase = 0;
+  int attrCase = 0;
+  KDialogBase dlg(this, 0L, false, i18n("Change tag and attribute case"), KDialogBase::Ok | KDialogBase::Cancel);
+  CaseWidget w(&dlg);
+  dlg.setMainWidget(&w);
+  DTDStruct *dtd = defaultDTD();
+  switch (qConfig.attrCase)
+  {
+    case 1: {w.lowerAttr->setChecked(true); break;}
+    case 2: {w.upperAttr->setChecked(true); break;}
+    default:{w.unchangedAttr->setChecked(true); break;}
+  }
+  switch (qConfig.tagCase)
+  {
+    case 1: {w.lowerTag->setChecked(true); break;}
+    case 2: {w.upperTag->setChecked(true); break;}
+    default:{w.unchangedTag->setChecked(true); break;}
+  }
+
+  if (dlg.exec())
+  {
+    KProgressDialog progressDlg(this, 0, i18n("Working..."));
+    progressDlg.setLabel(i18n("Changing tag and attribute case. This may take some time, depending on the document complexity."));
+    progressDlg.setAllowCancel(false);
+    progressDlg.show();
+    kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
+    KProgress *pBar = progressDlg.progressBar();
+    pBar->setValue(0);
+    pBar->setTotalSteps(parser->nodeNum);
+    pBar->setTextEnabled(true);
+    if (w.lowerTag->isChecked())
+        tagCase = 1;
+    if (w.upperTag->isChecked())
+        tagCase = 2;
+    if (w.lowerAttr->isChecked())
+        attrCase = 1;
+    if (w.upperAttr->isChecked())
+        attrCase = 2;
+    if (tagCase == 0 && attrCase == 0)
+        return;
+    reparseEnabled = false;
+    int bl, bc, ec;
+    uint line, col;
+    viewCursorIf->cursorPositionReal(&line, &col);
+    Node *node = baseNode;
+    while (node)
+    {
+      pBar->advance(1);
+      if (node->tag->dtd == dtd)
+      {
+        if (tagCase !=0)
+        {
+          node->tag->namePos(bl, bc);
+          ec = bc + node->tag->name.length();
+          editIf->removeText(bl, bc, bl, ec);
+          viewCursorIf->setCursorPositionReal(bl, bc);
+          QString newName = node->tag->name;
+          if (tagCase == 1)
+            newName = newName.lower();
+          else if (tagCase == 2)
+            newName = newName.upper();
+          editIf->insertText(bl, bc, newName);
+        }
+        if (attrCase != 0)
+        {
+          QString newName;
+          for (int i = 0; i < node->tag->attrCount(); i++)
+          {
+            node->tag->attributeNamePos(i, bl, bc);
+            newName = node->tag->attribute(i);
+            ec = bc + newName.length();
+            editIf->removeText(bl, bc, bl, ec);
+            if (attrCase == 1)
+              newName = newName.lower();
+            else if (attrCase == 2)
+              newName = newName.upper();
+            editIf->insertText(bl, bc, newName);
+          }
+        }
+      }
+      node = node->nextSibling();
+    }
+    reparseEnabled = true;
+    viewCursorIf->setCursorPositionReal(line, col);
+    quantaApp->reparse(true);
+  }
 }
 
 #include "document.moc"

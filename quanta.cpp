@@ -3777,4 +3777,12 @@ void QuantaApp::removeDTD(DTDStruct *dtd)
   }
 }
 
+void QuantaApp::slotConvertCase()
+{
+  if (m_view->writeExists())
+  {
+    m_view->write()->convertCase();
+  }
+}
+
 #include "quanta.moc"

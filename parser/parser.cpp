@@ -146,6 +146,7 @@ bool Parser::scriptParser(Node *startNode)
           tag->name = i18n("%1 block").arg(dtd->specialAreaNames[foundText].upper());
           tag->structBeginStr = foundText;
           Node *node = new Node(startNode);
+          nodeNum++;
           node->tag = tag;
           node->tag->type = Tag::NeedsParsing;
           node->insideSpecial = true;
@@ -482,6 +483,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         if (parentNode && parentNode->tag->single)
         {
           node = new Node(parentNode->parent);
+          nodeNum++;
           node->prev = parentNode;
           parentNode->next = node;
           parentNode = parentNode->parent;
@@ -508,6 +510,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           } else
           {
             node = new Node(parentNode);
+            nodeNum++;
             if (currentNode && currentNode != parentNode)
             {
               currentNode->next = node;
@@ -544,6 +547,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       if (goUp)
       {
         node = new Node(parentNode->parent);
+        nodeNum++;
         node->prev = parentNode;
         parentNode->next = node;
         parentNode = parentNode->parent;
@@ -551,6 +555,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       } else
       {
         node = new Node(parentNode);
+        nodeNum++;
         if (currentNode && currentNode != parentNode)
         {
           currentNode->next = node;
@@ -628,6 +633,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     if (parentNode && parentNode->tag->single)
     {
       node = new Node(parentNode->parent);
+      nodeNum++;
       node->prev = parentNode;
       parentNode->next = node;
       parentNode = parentNode->parent;
@@ -655,6 +661,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       } else
       {
         node = new Node(parentNode);
+        nodeNum++;
         if (currentNode && currentNode != parentNode)
         {
           currentNode->next = node;
@@ -716,6 +723,7 @@ Node *Parser::parse(Document *w)
   maxLines = w->editIf->numLines() - 1;
   clearGroups();
   parsingEnabled = true;
+  nodeNum = 0;
   if (maxLines >= 0)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "Parsing time ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
@@ -857,6 +865,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         goUp = true;
       }
       node = new Node(rootNode);
+      nodeNum++;
       if (!rootNode->child)
       {
         rootNode->child = node;
@@ -940,6 +949,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         }
 
         node = new Node(rootNode);
+        nodeNum++;
         if (!rootNode->child)
         {
           rootNode->child = node;
@@ -976,6 +986,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         tag->single = true;
 
         nextToRoot = new Node(rootNode);
+        nodeNum++;
         nextToRoot->prev = node;
         node->next = nextToRoot;
         nextToRoot->tag = tag;
@@ -1019,6 +1030,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         goUp = true;
       }
       node = new Node(rootNode);
+      nodeNum++;
       if (!rootNode->child)
       {
         rootNode->child = node;
@@ -1122,6 +1134,7 @@ Node* Parser::specialAreaParser(Node *startNode)
     tag->setWrite(write);
 
     node = new Node(startNode->parent);
+    nodeNum++;
     node->tag = tag;
     node->insideSpecial = true;
     node->closesPrevious = true;
@@ -1141,6 +1154,7 @@ Node* Parser::specialAreaParser(Node *startNode)
     tag->dtd = dtd;
     tag->setWrite(write);
     node = new Node(startNode->parent);
+    nodeNum++;
     node->tag = tag;
     node->insideSpecial = true;
     node->closesPrevious = true;
@@ -1163,6 +1177,7 @@ Node* Parser::specialAreaParser(Node *startNode)
     tag->type = Tag::Text;
     tag->single = true;
     node = new Node(startNode);
+    nodeNum++;
     startNode->child = node;
     node->tag = tag;
     node->insideSpecial = true;
@@ -1509,6 +1524,7 @@ Node *Parser::rebuild(Document *w)
       modif.node = node;
 #else
      delete node;
+     nodeNum--;
 #endif
      node = 0L;
      i = 0;
@@ -1653,6 +1669,7 @@ Node *Parser::rebuild(Document *w)
             lastNode->parent->child = 0L;
       }
      delete lastNode;
+     nodeNum--;
      lastNode = 0L;
    //going to return
 #ifdef BUILD_KAFKAPART
@@ -1720,6 +1737,7 @@ Node *Parser::rebuild(Document *w)
 #else
 	lastInserted->removeAll = false;
         delete lastInserted;
+        nodeNum--;
 #endif
         lastInserted = lastNode;
         lastNode = lastNode->nextNotChild();

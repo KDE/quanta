@@ -362,6 +362,8 @@ public slots:
 
   void slotHideSplash() {emit showSplash(false);}
 
+  void slotConvertCase();
+
 protected slots:
   /** No descriptions */
   void slotMakeDonation();

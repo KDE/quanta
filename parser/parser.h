@@ -102,6 +102,7 @@ public:
   QPtrList<DTDStruct> includedFilesDTD;
   IncludedGroupElementsMap includedMap;
   bool parsingEnabled;
+  int nodeNum;
 
 private slots:
   void slotIncludedFileChanged(const QString& fileName);

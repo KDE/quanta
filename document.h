@@ -162,12 +162,13 @@ work correctly. */
   /** returns all the areas that are between tag and it's closing pair */
   QStringList tagAreas(const QString &tag, bool includeCoordinates, bool skipFoundContent);
 
-   /** disable/enable the repaint of the Kate view */
-   void activateRepaintView(bool activation) {repaintEnabled = activation;}
-   bool RepaintViewActivated() {return repaintEnabled;}
+  /** disable/enable the repaint of the Kate view */
+  void activateRepaintView(bool activation) {repaintEnabled = activation;}
+  bool RepaintViewActivated() {return repaintEnabled;}
 
-   void setErrorMark(int line);
+  void setErrorMark(int line);
   void clearErrorMarks();
+  void convertCase();
 
   bool busy;
   KURL baseURL;
