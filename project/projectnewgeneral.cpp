@@ -182,12 +182,18 @@ void ProjectNewGeneral::slotButtonToolbar()
 
 void ProjectNewGeneral::slotLinePrjToolbar(const QString &Str)
 {
-  linePrjToolbar->setText(Str + "/toolbars");
+  QString str = Str;
+  if (!str.endsWith("/"))
+      str.append("/");
+  linePrjToolbar->setText(str + "toolbars");
 }
 
 void ProjectNewGeneral::slotLinePrjTmpl(const QString &Str)
 {
-  linePrjTmpl->setText(Str + "/templates");
+  QString str = Str;
+  if (!str.endsWith("/"))
+      str.append("/");
+  linePrjTmpl->setText(str + "templates");
 }
 
 /** No descriptions */
