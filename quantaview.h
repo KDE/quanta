@@ -33,6 +33,7 @@ class Document;
 class QTabWidget;
 class KProcess;
 class KDockTabGroup;
+class KConfig;
 class QTabBar;
 class QWidgetStack;
 class QDropEvent;
@@ -66,6 +67,9 @@ public:
 
   QuantaView(QWidget *parent = 0, const char *name=0);
   ~QuantaView();
+
+  //for dual-views mode sync and VPL config
+  void readConfig(KConfig *m_config);
 
   ToolbarTabWidget *toolbarTab() const {return m_toolbarTab;}
   QTabWidget *writeTab() const {return m_writeTab;}
@@ -237,7 +241,8 @@ private:
 	  quantaFocus = 0,
 	  kafkaFocus
   };
-  int viewUpdateTimer;
+  int quantaUpdateTimer;
+  int kafkaUpdateTimer;
   int curCol, curLine, curOffset;
   DOM::Node curNode;
 #endif

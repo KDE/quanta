@@ -42,6 +42,7 @@
 #include <kurldrag.h>
 #include <kdeversion.h>
 #ifdef BUILD_KAFKAPART
+#include <kconfig.h>
 #include "parts/kafka/wkafkapart.h"
 #include <dom/dom_node.h>
 #include <dom/dom_string.h>
@@ -446,7 +447,7 @@ void QuantaView::slotShowQuantaEditor()
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
   if(ta)
     ta->setChecked(true);
-  killTimer(viewUpdateTimer);
+  /**killTimer(quantaUpdateTimer);*/
   if(!writeExists())
   {
     currentViewsLayout = QuantaView::QuantaViewOnly;
@@ -504,7 +505,7 @@ void QuantaView::slotShowKafkaPart()
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_view" );
   KToggleAction *ta2 = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
 
-  killTimer(viewUpdateTimer);
+  /**killTimer(quantaUpdateTimer);*/
   if(!writeExists())
   {
     currentViewsLayout = QuantaView::KafkaViewOnly;
@@ -616,7 +617,13 @@ void QuantaView::slotShowKafkaAndQuanta()
     splitter->setCollapsible(kafkaInterface->getKafkaPart()->view(), false);
 #endif
     splitter->show();
-    viewUpdateTimer = startTimer(4000);
+    /**quantaUpdateTimer = startTimer(4000);*/
+    killTimer(quantaUpdateTimer);
+    killTimer(kafkaUpdateTimer);
+    if(currentFocus == QuantaView::quantaFocus && !qConfig.kafkaRefreshOnFocus)
+      kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
+    else if(currentFocus == QuantaView::kafkaFocus && !qConfig.quantaRefreshOnFocus)
+      quantaUpdateTimer = startTimer(qConfig.quantaRefreshDelay);
   }
   else
   {
@@ -660,9 +667,12 @@ void QuantaView::slotKafkaGetFocus(bool focus)
   {
     if(currentViewsLayout == QuantaView::QuantaAndKafkaViews && currentFocus == QuantaView::quantaFocus)
     {
+      killTimer(kafkaUpdateTimer);
+      killTimer(quantaUpdateTimer);
+      if(!qConfig.quantaRefreshOnFocus)
+        quantaUpdateTimer = startTimer(qConfig.quantaRefreshDelay);
       contentsX = kafkaInterface->getKafkaPart()->view()->contentsX();
       contentsY = kafkaInterface->getKafkaPart()->view()->contentsY();
-      kdDebug(25001)<< "contents pos " << contentsX << ":" << contentsY << endl;
       write()->docUndoRedo->reloadKafkaEditor();
       //doesn't work!
       kafkaInterface->getKafkaPart()->view()->setContentsPos(contentsX, contentsY);
@@ -677,7 +687,13 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
 #ifdef BUILD_KAFKAPART
   kdDebug(25001)<< "QuantaView::slotQuantaGetFocus(true)" << endl;
   if(currentViewsLayout == QuantaView::QuantaAndKafkaViews && currentFocus == QuantaView::kafkaFocus)
+  {
+    killTimer(quantaUpdateTimer);
+    killTimer(kafkaUpdateTimer);
+    if(!qConfig.kafkaRefreshOnFocus)
+      kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
     write()->docUndoRedo->reloadQuantaEditor();
+  }
   currentFocus = QuantaView::quantaFocus;
 #endif
 }
@@ -685,15 +701,16 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
 #ifdef BUILD_KAFKAPART
 void QuantaView::timerEvent( QTimerEvent *e )
 {
-  if (e->timerId() == viewUpdateTimer && kafkaInterface->isLoaded() &&
-     currentViewsLayout == QuantaView::QuantaAndKafkaViews && writeExists())
+  kdDebug(25001)<< "QuantaView::timerEvent" << endl;
+  if (kafkaInterface->isLoaded() && currentViewsLayout == QuantaView::QuantaAndKafkaViews && writeExists())
   {
-    if(write()->view()->hasFocus())
+    if(e->timerId() == kafkaUpdateTimer && write()->view()->hasFocus())
     {
       //Update kafka view
       //write()->docUndoRedo->syncKafkaView();
+      write()->docUndoRedo->reloadKafkaEditor();
     }
-    else if(kafkaInterface->getKafkaPart()->view()->hasFocus())
+    else if(e->timerId() == quantaUpdateTimer && kafkaInterface->getKafkaPart()->view()->hasFocus())
     {
       //Update quanta view
       //write()->docUndoRedo->syncQuantaView();
@@ -708,10 +725,10 @@ void QuantaView::timerEvent( QTimerEvent *e )
 void QuantaView::slotSetQuantaCursorPosition(int col, int line)
 {
 #ifdef BUILD_KAFKAPART
-	curCol = col;
-	curLine = line;
-	if(currentViewsLayout == QuantaView::QuantaAndKafkaViews || currentViewsLayout == QuantaView::QuantaViewOnly)
-		write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+  curCol = col;
+  curLine = line;
+  if(currentViewsLayout == QuantaView::QuantaAndKafkaViews || currentViewsLayout == QuantaView::QuantaViewOnly)
+    write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
 #endif
 }
 
@@ -719,10 +736,35 @@ void QuantaView::slotSetQuantaCursorPosition(int col, int line)
 void QuantaView::slotSetKafkaCursorPosition(DOM::Node node, int offset)
 {
 #ifdef BUILD_KAFKAPART
-	curNode = node;
-	curOffset = offset;
-        if(currentViewsLayout == QuantaView::QuantaAndKafkaViews || currentViewsLayout == QuantaView::KafkaViewOnly)
-	{}
+  curNode = node;
+  curOffset = offset;
+  if(currentViewsLayout == QuantaView::QuantaAndKafkaViews || currentViewsLayout == QuantaView::KafkaViewOnly)
+  {}
+#endif
+}
+
+void QuantaView::readConfig(KConfig *m_config)
+{
+#ifdef BUILD_KAFKAPART
+  kdDebug(24000)<< "QuantaView::readConfig()" << endl;
+  m_config->setGroup("Kafka Synchronization options");
+  qConfig.quantaRefreshOnFocus = (m_config->readEntry("Source refresh", "delay") == "focus");
+  qConfig.quantaRefreshDelay = m_config->readNumEntry("Source refresh delay", 4000);
+  qConfig.kafkaRefreshOnFocus = (m_config->readEntry("Kafka refresh", "focus") == "focus");
+  qConfig.kafkaRefreshDelay = m_config->readNumEntry("Kafka refresh delay", 4000);
+  /**reloadUpdateTimers();*/
+
+  //reload the Timers.
+  killTimer(quantaUpdateTimer);
+  killTimer(kafkaUpdateTimer);
+  if(kafkaInterface->isLoaded() && currentViewsLayout == QuantaView::QuantaAndKafkaViews)
+  {
+    if(currentFocus == QuantaView::quantaFocus && !qConfig.kafkaRefreshOnFocus)
+      kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
+    else if(currentFocus == QuantaView::kafkaFocus && !qConfig.quantaRefreshOnFocus)
+      quantaUpdateTimer = startTimer(qConfig.quantaRefreshDelay);
+  }
+  kafkaInterface->readConfig(m_config);
 #endif
 }
 

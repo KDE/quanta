@@ -69,6 +69,14 @@ typedef struct QConfig{
           uint expandLevel;
           bool showDTDSelectDialog;
 
+#ifdef BUILD_KAFKAPART
+         //kafka sync options
+        bool quantaRefreshOnFocus;
+        int quantaRefreshDelay;
+        bool kafkaRefreshOnFocus;
+        int kafkaRefreshDelay;
+#endif
+
           //environment options
           QString globalDataDir;         //not stored, initialized on app startup
           QStringList pluginSearchPaths; //global but read from plugins.rc

@@ -1,5 +1,5 @@
 /***************************************************************************
-                               nodetranslator.h
+                             nodeenhancer.h
                              -------------------
 
     copyright            : (C) 2003 - Nicolas Deschildre
@@ -15,9 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef NODETRANSLATOR_H
-#define NODETRANSLATOR_H
+#ifndef NODEENHANCER_H
+#define NODEENHANCER_H
 
+class KConfig;
 class Node;
 namespace DOM
 {
@@ -25,29 +26,35 @@ namespace DOM
 }
 
 /**
- * Base class which define an interface to "translate" DOM::Nodes
+ * Base class which define an interface to enhance DOM::Nodes
  * i.e. to modify the corresponding DOM::Node of a Node.
  * The aim is to modify the kafka view to provide visual aids
  * like a error system which highlight syntax error, and so on...
- * Defining this in XML files could be a nice idea once kafka 
+ * Defining this in XML files could be a nice idea once kafka
  * support all the DTDs.
  */
 
-class NodeTranslator
+class NodeEnhancer
 {
 public:
-	NodeTranslator(){}
-	virtual ~NodeTranslator(){}
+	NodeEnhancer(){}
+	virtual ~NodeEnhancer(){}
 
 	/**
 	 * This function modify the DOM::Node of the node.
 	 * The DOM::Node must be built before calling this
 	 * function.
-	 * @param node The Node we want to "translate".
+	 * @param node The Node we want to enhance.
 	 * @param parentDNode the parent DOM::Node of the root DOM::Node of node.
 	 * @param nextDNode the DOM::Node next to the root DOM::Node of node.
 	 */
-	virtual bool translateNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode) = 0;
+	virtual bool enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode) = 0;
+
+	/**
+	* Read the config.
+	* @m_config The config to read.
+	*/
+	virtual void readConfig(KConfig *m_config) = 0;
 
 	/**
 	 * This need to be strongly extended.

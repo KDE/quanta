@@ -1,5 +1,5 @@
 /***************************************************************************
-                               htmltranslator.h
+                            htmlenhancer.h
                              -------------------
 
     copyright            : (C) 2003 - Nicolas Deschildre
@@ -15,13 +15,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef HTMLTRANSLATOR_H
-#define HTMLTRANSLATOR_H
+#ifndef HTMLENHANCER_H
+#define HTMLENHANCER_H
 
 #include <kurl.h>
 
-#include "nodetranslator.h"
+#include "nodeenhancer.h"
 
+class KConfig;
 class Node;
 class WKafkaPart;
 class KStandardDirs;
@@ -31,23 +32,30 @@ class KStandardDirs;
  * - Add a TBODY DOM::Node to TABLE DOM::Node if necessary.
  * - Update the src attr of the DOM::Node.
  * - Display an little icon for scripts.
+ * - Load the CSS informations into the DOM tree.
  */
 
-class HTMLTranslator : public NodeTranslator
+class HTMLEnhancer : public NodeEnhancer
 {
 public:
-	HTMLTranslator(WKafkaPart *_wkafkapart);
-	virtual ~HTMLTranslator();
+	HTMLEnhancer(WKafkaPart *_wkafkapart);
+	virtual ~HTMLEnhancer();
 
 	/**
 	 * This function modify the DOM::Node of the node.
 	 * The DOM::Node must be built before calling this
 	 * function.
-	 * @param node The Node we want to "translate".
+	 * @param node The Node we want to enhance.
 	 * @param parentDNode the parent DOM::Node of the root DOM::Node of node.
 	 * @param nextDNode the DOM::Node next to the root DOM::Node of node.
 	 */
-	virtual bool translateNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode);
+	virtual bool enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode);
+
+	/**
+	* Read the config.
+	* @m_config The config to read.
+	*/
+	void readConfig(KConfig *m_config);
 
 	/**
 	 * Set the base URL of the current document to update src attrs.

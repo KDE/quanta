@@ -67,9 +67,6 @@
 
 #include "widgets/whtmlpart.h"
 #include "messages/messageoutput.h"
-#ifdef BUILD_KAFKAPART
-#include "parts/kafka/nodeproperties.h"
-#endif
 
 #include "toolbar/tagaction.h"
 
@@ -692,6 +689,18 @@ void QuantaApp::readOptions()
   viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
   manager()->readConfig(m_config);
 
+#ifdef BUILD_KAFKAPART
+  quantaApp->view()->readConfig(m_config);
+  /**m_config->setGroup("Kafka Synchronization options");
+  qConfig.quantaRefreshOnFocus = (m_config->readEntry("Source refresh", "delay") == "focus");
+  qConfig.quantaRefreshDelay = m_config->readNumEntry("Source refresh delay", 4000);
+  qConfig.kafkaRefreshOnFocus = (m_config->readEntry("Kafka refresh", "focus") == "focus");
+  qConfig.kafkaRefreshDelay = m_config->readNumEntry("Kafka refresh delay", 4000);
+  view()->reloadUpdateTimers();*/
+  /**(static_cast<HTMLEnhancer *>(quantaApp->view()->getKafkaInterface()->mainEnhancer))->
+    showIconsForScripts(m_config->readBoolEntry("Show Scripts Icons", true));*/
+#endif
+
   showPreviewAction  ->setChecked( false );
   #ifdef BUILD_KAFKAPART
   showKafkaAction    ->setChecked( false );
@@ -978,36 +987,6 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
 
      delete attr;
    }
-#ifdef BUILD_KAFKAPART
-   else
-   if ( n.nodeName() == "kafkainfos" )
-   {
-     QDomElement child = n.toElement().firstChild().toElement();
-     if(child.tagName() == "rootnode")
-     {
-       tag->setCanBeDeleted((child.attribute("canbedeleted", "false") == "false")?false:true);
-       tag->setCanBeModified((child.attribute("canbemodified", "false") ==
-           "false")?false:true);
-       tag->setCursorCanEnter((child.attribute("cursorcanenter", "false") ==
-           "false")?false:true);
-       QString result = child.attribute("canhavecursorfocus", "no");
-       {
-         if(result == "no")
-           tag->setCanHaveCursorFocus(kNodeAttrs::no);
-         else if(result == "left")
-           tag->setCanHaveCursorFocus(kNodeAttrs::left);
-         else if(result == "right")
-           tag->setCanHaveCursorFocus(kNodeAttrs::right);
-         else if(result == "leftandright")
-           tag->setCanHaveCursorFocus(kNodeAttrs::leftAndRight);
-         else if(result == "singlenode")
-           tag->setCanHaveCursorFocus(kNodeAttrs::singleNode);
-         else if(result == "singlenodeanditself")
-           tag->setCanHaveCursorFocus(kNodeAttrs::singleNodeAndItself);
-       }
-     }
-   }
-#endif
  }
 
 // return attrs;

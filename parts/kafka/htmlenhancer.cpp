@@ -20,28 +20,29 @@
 #include <dom/dom_exception.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
+#include <kconfig.h>
 
 #include "../../parser/tag.h"
 #include "../../parser/node.h"
 #include "wkafkapart.h"
 #include "kafkacommon.h"
 
-#include "htmltranslator.h"
+#include "htmlenhancer.h"
 
-HTMLTranslator::HTMLTranslator(WKafkaPart *_wkafkapart)
-	: NodeTranslator()
+HTMLEnhancer::HTMLEnhancer(WKafkaPart *_wkafkapart)
+	: NodeEnhancer()
 {
 	m_showIconForScripts = true;
 	m_wkafkapart = _wkafkapart;
 	m_stddirs = new KStandardDirs();
 }
 
-HTMLTranslator::~HTMLTranslator()
+HTMLEnhancer::~HTMLEnhancer()
 {
 	delete m_stddirs;
 }
 
-bool HTMLTranslator::translateNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode)
+bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode)
 {
 	DOM::Node domNode, domNode2, attr;
 	bool tbody, goUp;
@@ -82,7 +83,7 @@ bool HTMLTranslator::translateNode(Node *node, DOM::Node parentDNode, DOM::Node 
 	}
 
 	//THEN replace, if asked, scripts by a little icon.
-	if(node->tag->type == Tag::ScriptTag)
+	if(node->tag->type == Tag::ScriptTag && m_showIconForScripts)
 	{
 		script = node->tag->name.left(node->tag->name.find("block", 0, false) - 1).lower();
 #ifdef LIGHT_DEBUG
@@ -152,4 +153,10 @@ bool HTMLTranslator::translateNode(Node *node, DOM::Node parentDNode, DOM::Node 
 		}
 	}
 	return true;
+}
+
+void HTMLEnhancer::readConfig(KConfig *m_config)
+{
+	m_config->setGroup("HTML Enhancer");
+	m_showIconForScripts = m_config->readBoolEntry("Show Scripts Icons", true);
 }

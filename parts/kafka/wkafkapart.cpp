@@ -39,7 +39,7 @@
 #include "../../parser/parser.h"
 #include "../../parser/tag.h"
 #include "nodeproperties.h"
-#include "htmltranslator.h"
+#include "htmlenhancer.h"
 #include "kafkacommon.h"
 
 #include "wkafkapart.moc"
@@ -56,6 +56,7 @@ WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 	_kafkaPart->showDomTree();
 	_docLoaded = false;
 	_currentDoc = 0L;
+	mainEnhancer =  new HTMLEnhancer(this);
 	domNodeProps.setAutoDelete(false);
 
 	QFile file( locate("appdata","chars") );
@@ -111,8 +112,7 @@ void WKafkaPart::loadDocument(Document *doc)
 #endif
 	_currentDoc = doc;
 
-	mainTranslator = new HTMLTranslator(this);
-	(static_cast<HTMLTranslator *>(mainTranslator))->setBaseURL(quantaApp->view()->baseURL());
+	(static_cast<HTMLEnhancer *>(mainEnhancer))->setBaseURL(quantaApp->view()->baseURL());
 
 	//create a empty document with a basic tree : HTML, HEAD, BODY
 	_kafkaPart->newDocument();
@@ -171,7 +171,6 @@ void WKafkaPart::unloadDocument()
 #endif
 	Node *node;
 
-	delete mainTranslator;
 	domNodeProps.clear();
 	//clean the kafkapart
 	while(_kafkaPart->document().hasChildNodes())
@@ -186,6 +185,41 @@ void WKafkaPart::unloadDocument()
 		node = node->nextSibling();
 	}
 	emit unloaded();
+}
+
+void WKafkaPart::reloadDocument()
+{
+#ifdef LIGHT_DEBUG
+	kdDebug(25001)<< "WKafkaPart::reloadDocument()" << endl;
+#endif
+	Node *node;
+
+	if(!_docLoaded)
+		return;
+
+	domNodeProps.clear();
+	while(_kafkaPart->document().hasChildNodes())
+		_kafkaPart->document().removeChild(_kafkaPart->document().firstChild());
+	node = baseNode;
+	while(node)
+	{
+		node->_rootNode = 0L;
+		node->_leafNode = 0L;
+		node = node->nextSibling();
+	}
+	loadDocument(_currentDoc);
+}
+
+void WKafkaPart::readConfig(KConfig *m_config)
+{
+#ifdef LIGHT_DEBUG
+	kdDebug(25001)<< "WKafkaPart::readConfig()" << endl;
+#endif
+	//for each nodeEnhancer
+	if(mainEnhancer)
+		mainEnhancer->readConfig(m_config);
+	//reload the document
+	reloadDocument();
 }
 
 void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode, bool insertChilds)
@@ -754,7 +788,7 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 				}
 			}
 			_node->_leafNode = newNode;
-			mainTranslator->translateNode(_node, parentNode, nextNode);
+			mainEnhancer->enhanceNode(_node, parentNode, nextNode);
 		}
 		else
 		{
@@ -778,7 +812,7 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 				break;
 			}
 		}
-		mainTranslator->translateNode(_node, parentNode, nextNode);
+		mainEnhancer->enhanceNode(_node, parentNode, nextNode);
 	}
 	return true;
 }

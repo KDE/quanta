@@ -980,11 +980,6 @@ void QuantaApp::slotOptions()
      }
   }
 
-#ifdef BUILD_KAFKAPART
-  //kafka options
-  page = kd->addVBoxPage(i18n("VPL view"), QString::null, BarIcon("files", KIcon::SizeMedium));
-  /**KafkaSyncOptions *kafkaOptions = */new KafkaSyncOptions( m_config, (QWidget *)page );
-#endif
 
   // Preview options
   page=kd->addVBoxPage(i18n("Layout"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
@@ -992,6 +987,12 @@ void QuantaApp::slotOptions()
 
   previewOptions->setPosition(qConfig.previewPosition);
   previewOptions->setWindowLayout(qConfig.windowLayout);
+
+#ifdef BUILD_KAFKAPART
+  //kafka options
+  page = kd->addVBoxPage(i18n("VPL view"), QString::null, BarIcon("files", KIcon::SizeMedium));
+  KafkaSyncOptions *kafkaOptions = new KafkaSyncOptions( m_config, (QWidget *)page );
+#endif
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( m_config, (QWidget *)page );
@@ -1083,6 +1084,18 @@ void QuantaApp::slotOptions()
     }
     qConfig.expandLevel = parserOptions->spinExpand->value();
     parserOptions->updateConfig();
+#ifdef BUILD_KAFKAPART
+    kafkaOptions->updateConfig();
+    quantaApp->view()->readConfig(m_config);
+    /**qConfig.quantaRefreshOnFocus = kafkaOptions->sourceFocusRefresh->isChecked();
+    qConfig.quantaRefreshDelay = kafkaOptions->sourceDelay->value();
+    qConfig.kafkaRefreshOnFocus = kafkaOptions->kafkaFocusRefresh->isChecked();
+    qConfig.kafkaRefreshDelay = kafkaOptions->kafkaDelay->value();
+    view()->reloadUpdateTimers();*/
+    /**(static_cast<HTMLEnhancer *>(quantaApp->view()->getKafkaInterface()->mainEnhancer))->
+      showIconsForScripts(kafkaOptions->showScriptsIcon->isChecked());*/
+
+#endif
     qConfig.defaultDocType = QuantaCommon::getDTDNameFromNickName(fileMasks->defaultDTDCombo->currentText());
 
     if (!debuggerOptions->checkDebugger->isChecked()) {

@@ -15,25 +15,29 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "kafkasyncoptions.h"
-#include "kafkasyncoptions.moc"
 #include <qradiobutton.h>
 #include <qcheckbox.h>
 #include <qspinbox.h>
 
 #include <kconfig.h>
+#include <kdebug.h>
+
+#include "kafkasyncoptions.h"
+#include "kafkasyncoptions.moc"
 
 KafkaSyncOptions::KafkaSyncOptions( KConfig *config, QWidget* parent,  const char* name )
     : KafkaSyncOptionsUI( parent, name )
 {
 	this->config = config;
-	config->setGroup("Kafka Synchronization options");
 
+	config->setGroup("HTML Enhancer");
 	bool showIcons  = config->readBoolEntry("Show Scripts Icons", true);
+
+	config->setGroup("Kafka Synchronization options");
 	QString sourceRefresh = config->readEntry("Source refresh", "delay");
-	uint sourceRefreshDelay = config->readNumEntry("Source refresh delay", 4000);
+	int sourceRefreshDelay = config->readNumEntry("Source refresh delay", 4000);
 	QString kafkaRefresh = config->readEntry("Kafka refresh", "focus");
-	uint kafkaRefreshDelay = config->readNumEntry("Kafka refresh delay", 4000);
+	int kafkaRefreshDelay = config->readNumEntry("Kafka refresh delay", 4000);
 
 	if ( !name )
 		setName( "kafkaSyncOptions" );
@@ -61,10 +65,10 @@ KafkaSyncOptions::~KafkaSyncOptions()
 
 void KafkaSyncOptions::updateConfig()
 {
-	config->setGroup("Kafka Synchronization options");
-
+	config->setGroup("HTML Enhancer");
 	config->writeEntry("Show Scripts Icons", showScriptsIcon->isChecked());
 
+	config->setGroup("Kafka Synchronization options");
 	if(sourceFocusRefresh->isChecked())
 		config->writeEntry("Source refresh", "focus");
 	else if(sourceDelayRefresh->isChecked())

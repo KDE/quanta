@@ -18,6 +18,7 @@
 #ifndef WKAFKAPART_H
 #define WKAFKAPART_H
 
+class KConfig;
 namespace DOM
 {
 	class Node;
@@ -31,7 +32,7 @@ class Node;
 class Parser;
 class kNodeAttrs;
 class NodeModifsSet;
-class NodeTranslator;
+class NodeEnhancer;
 
 #include <qmap.h>
 #include <qobject.h>
@@ -63,10 +64,21 @@ public:
 	void unloadDocument();
 
 	/**
+	 * Reloads the Document.
+	 */
+	void reloadDocument();
+
+	/**
 	 * Called to get WKafkaPart's state.
 	 * @return Returns true if WKafkaPart is loaded.
 	 */
 	bool isLoaded() {return _docLoaded;}
+
+	/**
+	 * Read the config.
+	 * @param m_config The config to read.
+	 */
+	 void readConfig(KConfig *m_config);
 
 	/**
 	 * @return Returns the current KafkaHTMLPart.
@@ -261,15 +273,16 @@ public slots:
 	 */
 	void slotdomNodeNewCursorPos(DOM::Node _domNode, int offset);
 
+public:
+	//use a QPtrList aferwards
+	NodeEnhancer *mainEnhancer;
+
 private:
 	QMap<QString, QString> decodedChars;
 	QMap<QString, QString> encodedChars;
 	QPtrDict<kNodeAttrs> domNodeProps;
 	KafkaHTMLPart *_kafkaPart;
 	Document *_currentDoc;
-	//use a QPtrList aferwards
-	NodeTranslator *mainTranslator;
-
 	bool _docLoaded;
 
 };
