@@ -349,7 +349,7 @@ void QuantaInit::initView()
    loadVPLConfig();
    (void) ToolbarTabWidget::ref(quantaApp);
 
-#if KDE_IS_VERSION(3,2,2) //|| defined(COMPAT_KMDI)
+#if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3ICON);
   if (m_quanta->tabWidget())
       m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
