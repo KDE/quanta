@@ -382,7 +382,7 @@ QuantaView* ViewManager::documentationView(bool create)
     if (!m_documentationView && create)
     {
         m_documentationView = createView();
-        m_documentationView->addCustomWidget(quantaApp->documentationPart()->view(), i18n("Documentation"));
+        m_documentationView->addCustomWidget((QWidget*)quantaApp->documentationPart()->view(), i18n("Documentation"));
     }
     return m_documentationView;
 }
