@@ -3663,6 +3663,7 @@ void QuantaApp::slotDeleteFile(QuantaView *view)
     view = ViewManager::ref()->activeView();
   Document *w = view->document();
   KURL url = w->url();
+  bool modified = w->isModified();
   w->setModified(false); //don't ask for save
   if (QuantaNetAccess::del(url, this, true))
   {
