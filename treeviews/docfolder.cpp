@@ -28,7 +28,7 @@
 #include "docfolder.h"
 #include "docitem.h"
 
-DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath)
+DocFolder::DocFolder(QListViewItem *parent, const QString &_name, KConfig *config, const QString &basePath)
   : KListViewItem(parent)
 {
   name = _name;
@@ -62,7 +62,7 @@ DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QStr
   }
 }
 
-DocFolder::DocFolder(QListView *parent, QString _name, KConfig *config, QString basePath)
+DocFolder::DocFolder(QListView *parent, const QString &_name, KConfig *config, const QString &basePath)
   : KListViewItem(parent)
 {
   name = _name;

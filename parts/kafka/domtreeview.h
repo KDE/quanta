@@ -38,15 +38,15 @@ class QGridLayout;
 class DOMTreeView : public KListView
 {
     Q_OBJECT
-    public: 
+    public:
 	DOMTreeView(QWidget *parent, KHTMLPart *part, const char * name = 0);
 	~DOMTreeView();
-	void setTitle(QString str);
+        void setTitle(const QString &str);
 	void recursive(const DOM::Node &pNode, const DOM::Node &node);
 
     signals:
 	void sigNodeClicked(const DOM::Node &);
-	
+
     public slots:
 	void showTree(const DOM::Node &pNode);
 

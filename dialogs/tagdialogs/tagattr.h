@@ -37,19 +37,19 @@ class QWidget;
 class QTag;
 
 
-QDomNode findChild( QDomNode &parent, QString name );
+QDomNode findChild( QDomNode &parent, const QString &name );
 
 
 class Attr
 {
   public:
-    Attr( QDomElement const& el, QWidget *, QTag *dtdTag ) 
+    Attr( QDomElement const& el, QWidget *, QTag *dtdTag )
     : domEl(el), name(domEl.attribute("name","")), m_dtdTag(dtdTag) {}
     //{ domEl = el; name = domEl->attribute("name",""); m_dtdTag = dtdTag;}
     virtual ~Attr(){}
 
     virtual QString value()=0;
-    virtual void setValue( QString )=0;
+    virtual void setValue(const QString &value)=0;
 
     QString attrName() const;
     QDomElement const& domElement() const { return domEl; }
@@ -72,7 +72,7 @@ class Attr_line : public Attr
     virtual ~Attr_line(){};
 
     virtual QString value() { return line->text(); }
-    virtual void setValue( QString s ) { line->setText(s); }
+    virtual void setValue(const QString &value) { line->setText(value); }
 };
 
 
@@ -87,7 +87,7 @@ class Attr_color : public Attr
     virtual ~Attr_color(){};
 
     virtual QString value() {  return color->colorName(); }
-    virtual void setValue( QString s ) { color->setColorName(s); }
+    virtual void setValue(const QString &value) { color->setColorName(value); }
 };
 
 class Attr_file : public Attr
@@ -101,7 +101,7 @@ class Attr_file : public Attr
     virtual ~Attr_file(){};
 
     virtual QString value() {  return file->text(); }
-    virtual void setValue( QString s ) { file->setText(s); }
+    virtual void setValue(const QString &value) { file->setText(value); }
 };
 
 class Attr_list : public Attr
@@ -114,7 +114,7 @@ class Attr_list : public Attr
     virtual ~Attr_list(){};
 
     virtual QString value() { return combo->currentText(); }
-    virtual void setValue( QString s );
+    virtual void setValue(const QString &value);
 };
 
 
@@ -129,7 +129,7 @@ class Attr_check : public Attr
     virtual ~Attr_check(){};
 
     virtual QString value() { return check->isChecked() ? "checked" : "unchecked" ; }
-    virtual void setValue( QString s ) { check->setChecked( !s.isEmpty() ); }
+    virtual void setValue(const QString &value) { check->setChecked( !value.isEmpty() ); }
 };
 
 

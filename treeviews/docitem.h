@@ -31,8 +31,8 @@ class KConfig;
 class DocItem : public KListViewItem  {
 
 public:
-  DocItem(QListViewItem *parent, QString _name, QString _url);
-  DocItem(QListView *parent, QString _name, QString _url);
+  DocItem(QListViewItem *parent, const QString &_name, const QString &_url);
+  DocItem(QListView *parent, const QString &_name, const QString &_url);
   ~DocItem();
   QString text( int column ) const;
 

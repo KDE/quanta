@@ -212,10 +212,11 @@ void DTD::parseDTDEntity(QString line) {
   //kdDebug() << "Entity --- Name: " << name << " --- Value: " << *value << endl;
 }
 
-void DTD::parseDTDElement(QString line) {
+void DTD::parseDTDElement(const QString &l) {
   QString name;
   QString *value;
 
+  QString line = l;
   line.replace("\\end", " ");
   name = line.mid(10);
   int firstSpace = name.find(' ');
@@ -248,10 +249,11 @@ void DTD::parseDTDElement(QString line) {
   }
 }
 
-void DTD::parseDTDAttlist(QString line) {
+void DTD::parseDTDAttlist(const QString &l) {
   QString name;
   QString *value;
 
+  QString line = l;
   line.replace("\\end", " ");
   name = line.mid(10);
   int firstSpace = name.find(' ');
@@ -285,7 +287,7 @@ void DTD::parseDTDAttlist(QString line) {
 
 }
 
-void DTD::parseTagAttributeValues(QString name, QString *value) {
+void DTD::parseTagAttributeValues(const QString &name, QString *value) {
   AttributeList *attributes = new AttributeList();
 
   QStringList attrLines = QStringList::split("\\end",*value);

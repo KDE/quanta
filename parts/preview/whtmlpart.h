@@ -41,7 +41,7 @@ public slots:
   void forward();
   void back();
 
-  void addToHistory( QString url );
+  void addToHistory(const QString &url);
   virtual bool eventFilter(QObject *watched, QEvent *e);
 
 signals:

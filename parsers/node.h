@@ -90,7 +90,7 @@ public:
 /** DOM like functions cf dom/dom_node.h */
  QString nodeName();
  QString nodeValue();
- void setNodeValue(QString value);
+ void setNodeValue(const QString &value);
  Node* parentNode() {return parent;}
  Node* firstChild() {return child;}
  Node* lastChild();

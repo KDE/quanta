@@ -25,8 +25,8 @@
 /**
   *@author gulmini luciano
   */
-     
-  
+
+
 class VisualFrameEditor : public QHBox  {
    Q_OBJECT
    private:
@@ -35,12 +35,12 @@ class VisualFrameEditor : public QHBox  {
       SelectableArea* m_firstInsertedSA;
       QStringList m_existingStructure;
       MarkupLanguage m_markupLanguage;
-      
-      void buildInternalTree(QString);
-      void setGeometries(QString);
+
+      void buildInternalTree(const QString &parent);
+      void setGeometries(const QString &l);
       void drawGUI(treeNode *n, QWidget* parent);
-      QStringList convertAsterisks(QString,int);
-      
+      QStringList convertAsterisks(const QString &s, int d);
+
       QString createFrameTag(areaAttribute *a);
       QString formatStructure();
       QString RCvalue(treeNode *n);
@@ -50,17 +50,17 @@ class VisualFrameEditor : public QHBox  {
       VisualFrameEditor( QWidget * parent = 0, const char * name = 0);
       ~VisualFrameEditor();
       void draw() { repaint(); }
-      void loadExistingStructure(QStringList);
-      QString framesetStructure(); 
-      void removeNode(QString l);
-      void split(QString,int,SplitType);
+      void loadExistingStructure(const QStringList &list);
+      QString framesetStructure();
+      void removeNode(const QString &l);
+      void split(const QString &l, int n, SplitType type);
       void setMarkupLanguage(const QString& s);
       tree* internalTree() { return m_internalTree;}
 
    protected:
       virtual void paintEvent ( QPaintEvent * );
    signals:
-      void areaSelected(QString);
+     void areaSelected(const QString &);
 };
 
 #endif

@@ -19,7 +19,7 @@
 
 static const int SIZE = 101;
 
-treeNode::treeNode(QString l,QString pl) : m_label(l), m_parentLabel(pl), m_splitType(NONE){
+treeNode::treeNode(const QString &l, const QString &pl) : m_label(l), m_parentLabel(pl), m_splitType(NONE){
   m_childrenList.setAutoDelete(true);
   m_atts = new areaAttribute;
 }
@@ -28,16 +28,16 @@ treeNode::~treeNode(){
   delete m_atts;
 }
 
-void treeNode::addChildNode(QString l) {
+void treeNode::addChildNode(const QString &l) {
   m_childrenList.append( new treeNode(l,m_label) );
 }
 
-void treeNode::removeChildNode(QString l,bool autoDelete) {
+void treeNode::removeChildNode(const QString &l,bool autoDelete) {
   m_childrenList.setAutoDelete(autoDelete);
   m_childrenList.remove(findChild(l));
- }
+}
 
-treeNode* treeNode::findChild(QString l){
+treeNode* treeNode::findChild(const QString &l){
   QPtrListIterator<treeNode> it( m_childrenList );
   treeNode *node;
   while ( (node = it.current()) != 0 ) {
@@ -60,14 +60,14 @@ tree::~tree(){
 
 void tree::refreshGeometries(treeNode *n){
   int dim = -6;// so we won't add exceeding pixels
-  
+
   if(n->hasChildren()){
     n->firstChild();
     while(n->currentChild()){
       refreshGeometries(n->currentChild());
       n->nextChild();
     }
-      
+
     QPtrList<treeNode> list = n->childrenList();
     QPtrListIterator<treeNode> it( list );
     treeNode *node= it.current();
@@ -91,17 +91,17 @@ void tree::refreshGeometries(treeNode *n){
       }
       newGeometry.setHeight(dim);
     }
-    
+
     n->atts()->setGeometry( newGeometry );
   }
 }
 
-treeNode* tree::findNode(QString l){
+treeNode* tree::findNode(const QString &l){
   if(l==m_root->label()) return m_root;
   return m_nodeList.find(l);
 }
 
-QString tree::addChildNode(QString l){
+QString tree::addChildNode(const QString &l){
   treeNode *node;
   if( (node = findNode(l)) != 0) {
     ++nodeId;
@@ -113,12 +113,12 @@ QString tree::addChildNode(QString l){
   return QString::number(nodeId,10);
 }
 
-bool tree::insertChildNode(QString l){
+bool tree::insertChildNode(const QString &l){
   QString parent = findNode(l)->parentLabel();
   int pos=findNode( parent )->childPosition( findNode(l) );
   ++nodeId;
   treeNode *newNode = new treeNode(QString::number(nodeId,10),parent);
-  newNode->atts()->setAttribute( "src",findNode(l)->atts()->src() ); 
+  newNode->atts()->setAttribute( "src",findNode(l)->atts()->src() );
   m_nodeList.insert(QString::number(nodeId,10),newNode);
   return findNode( parent )->insertChild(pos,newNode);
 }
@@ -130,6 +130,6 @@ void tree::reset(){
   m_nodeList.clear();
 }
 
-void tree::removeChildNode(QString pl,QString l,bool autoDelete){
+void tree::removeChildNode(const QString &pl,const QString &l,bool autoDelete){
   findNode(pl)->removeChildNode(l,autoDelete);
 }

@@ -128,7 +128,7 @@ public:
   /** Returns the index of attributevalue at (line,col). */
   int valueIndexAtPos(int line, int col);
   /** Return the index of attr. */
-  int attributeIndex(QString attr);
+  int attributeIndex(const QString &attr);
 
   void namePos(int &line, int &col);
   int attrCount() const {return attrs.count();}

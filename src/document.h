@@ -66,7 +66,7 @@ public:
   KURL url();
 
   bool isUntitled();
-  void setUntitledUrl(QString);
+  void setUntitledUrl(const QString &url);
   /** Returns tag name at specified position */
   QString getTagNameAt(int line, int col );
 
@@ -74,7 +74,7 @@ public:
   void replaceSelected(const QString &s);
 
   /** insert tag in document  */
-  void insertTag( QString s1,QString s2 = "" );
+  void insertTag(const QString &s1, const QString &s2 = QString::null);
   /** Change the current tag's attributes with those from dict */
   void changeTag(Tag *tag, QDict<QString> *dict );
   /**Change the attr value of the called attrName to attrValue*/

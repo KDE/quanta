@@ -34,7 +34,7 @@ class SelectableArea : public KHTMLPart  {
      SelectableArea(QWidget *parent=0, const char *name=0);
      ~SelectableArea();
      QString idLabel() const { return m_idLabel; }
-     void setIdLabel(QString i) { m_idLabel = i; }
+     void setIdLabel(const QString &i) { m_idLabel = i; }
      void setSource(const QString& s) { if(!s.isEmpty()) openURL( KURL(s) ); }
 
    protected :
@@ -44,8 +44,8 @@ class SelectableArea : public KHTMLPart  {
       QString m_idLabel;
 
     signals :
-     void selected(QString);
-     void Resized(QRect);
+      void selected(const QString &);
+      void Resized(QRect);
 };
 
 

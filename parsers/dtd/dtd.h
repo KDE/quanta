@@ -44,10 +44,10 @@ public:
 
 private:
   bool parseDTD(const KURL& url);
-  void parseDTDEntity(QString line);
-  void parseDTDElement(QString line);
-  void parseDTDAttlist(QString line);
-  void parseTagAttributeValues(QString name, QString *value);
+  void parseDTDEntity(const QString &line);
+  void parseDTDElement(const QString &line);
+  void parseDTDAttlist(const QString &line);
+  void parseTagAttributeValues(const QString &name, QString *value);
   void parseDTDReplace(QString *value);
   void stripSpaces(QString *value);
   void removeComments(QString &value);

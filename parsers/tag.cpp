@@ -425,7 +425,7 @@ void Tag::setTagPosition(const AreaStruct &area)
 }
 
 /** Return the index of attr. */
-int Tag::attributeIndex(QString attr)
+int Tag::attributeIndex(const QString &attr)
 {
   int index = -1;
   uint i = 0;

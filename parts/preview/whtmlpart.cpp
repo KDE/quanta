@@ -80,7 +80,7 @@ void WHTMLPart::back()
 }
 
 
-void WHTMLPart::addToHistory( QString url )
+void WHTMLPart::addToHistory(const QString &url)
 {
 
    if ( history.count() > 0 )

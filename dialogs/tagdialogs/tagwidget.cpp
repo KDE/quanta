@@ -38,67 +38,73 @@ TagWidget::TagWidget(QObject *parent, const char *)
 TagWidget::~TagWidget(){
 }
 
-void TagWidget::updateDict( QString attr, QComboBox *combo )
+void TagWidget::updateDict(const QString &attr, QComboBox *combo )
 {
   QString *s = new QString(combo->currentText());
-  if ( s->isEmpty() ) dict->remove(attr);
-  else dict->replace(attr, s );
+  if (s->isEmpty())
+    dict->remove(attr);
+  else
+    dict->replace(attr, s);
 }
 
-void TagWidget::setValue( QString val, QComboBox *combo)
+void TagWidget::setValue(const QString &val, QComboBox *combo)
 {
   bool found = false;
-  QString value = val;
   int num = combo->count();
 
-  for ( int i=0;i<num;i++) {
-    if ( value == combo->text( i) ) {
-      combo->setCurrentItem( i);
-        found = true;
+  for ( int i = 0; i < num; i++)
+  {
+    if (val == combo->text(i))
+    {
+      combo->setCurrentItem(i);
+      found = true;
     }
   }
 
-  if ( !found ) combo->setEditText( val);
+  if (!found)
+    combo->setEditText(val);
 }
 
-void TagWidget::setValue( QString val, QLineEdit *line)
+void TagWidget::setValue(const QString &val, QLineEdit *line)
 {
-  line->setText( val);
+  line->setText(val);
 }
 
-void TagWidget::setValue( QString val, QSpinBox *spin)
+void TagWidget::setValue(const QString &val, QSpinBox *spin)
 {
-  QString value = val;
-  int valint = value.toInt();
-
-  spin->setValue( valint);
+  spin->setValue(val.toInt());
 }
 
-void TagWidget::setValue( QString val, KColorButton *button)
+void TagWidget::setValue(const QString &val, KColorButton *button)
 {
-  button->setColor( val );
+  button->setColor(val);
 }
 
-void TagWidget::updateDict( QString attr, QLineEdit *line )
+void TagWidget::updateDict(const QString &attr, QLineEdit *line )
 {
   QString *s = new QString(line->text());
-  if ( s->isEmpty() ) dict->remove(attr);
-  else dict->replace(attr, s );
+  if (s->isEmpty())
+    dict->remove(attr);
+  else
+    dict->replace(attr, s);
 }
 
-void TagWidget::updateDict( QString attr, QSpinBox *spin )
+void TagWidget::updateDict(const QString &attr, QSpinBox *spin )
 {
   QString *s = new QString(spin->text());
-  if ( s->isEmpty() ) dict->remove(attr);
-  else dict->replace(attr, s );
+  if (s->isEmpty())
+    dict->remove(attr);
+  else
+    dict->replace(attr, s);
 }
 
-void TagWidget::updateDict( QString attr, QCheckBox *check )
+void TagWidget::updateDict(const QString &attr, QCheckBox *check )
 {
-  if ( !check->isChecked() )
-    dict->remove( attr );
-  else {
-    if ( !dict->find(attr) )
-      dict->insert(attr, new QString("") );
+  if (!check->isChecked())
+    dict->remove(attr);
+  else
+  {
+    if (!dict->find(attr))
+      dict->insert(attr, new QString(""));
   }
 }

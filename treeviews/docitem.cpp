@@ -21,14 +21,14 @@
 
 #include "docitem.h"
 
-DocItem::DocItem(QListViewItem *parent, QString _name, QString _url)
+DocItem::DocItem(QListViewItem *parent, const QString &_name, const QString &_url)
   : KListViewItem(parent)
 {
   url = _url;
   name = _name;
 }
 
-DocItem::DocItem(QListView *parent, QString _name, QString _url)
+DocItem::DocItem(QListView *parent, const QString &_name, const QString &_url)
   : KListViewItem(parent)
 {
   url = _url;

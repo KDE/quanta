@@ -33,8 +33,8 @@ class KConfig;
 
 class DocFolder : public KListViewItem  {
 public:
-  DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath);
-  DocFolder(QListView *parent, QString _name, KConfig *config, QString basePath);
+  DocFolder(QListViewItem *parent, const QString &_name, KConfig *config, const QString &basePath);
+  DocFolder(QListView *parent, const QString &_name, KConfig *config, const QString &basePath);
   ~DocFolder();
   QString text( int column ) const;
   void setup();

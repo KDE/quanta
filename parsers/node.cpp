@@ -260,7 +260,7 @@ QString Node::nodeValue()
     return QString::null;
 }
 
-void Node::setNodeValue(QString value)
+void Node::setNodeValue(const QString &value)
 {
     if(!tag)
         tag = new Tag();

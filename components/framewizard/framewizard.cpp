@@ -34,8 +34,8 @@ m_hasSelected(false),m_saved(false)
   m_hasSelected = false;
   m_currSA=vfe->internalTree()->root()->label();
   connect(this, SIGNAL(launchDraw()), this, SLOT(draw()));
-  connect(vfe, SIGNAL(areaSelected(QString)), this, SLOT(catchSelectedArea(QString)));
-  
+  connect(vfe, SIGNAL(areaSelected(const QString &)), this, SLOT(catchSelectedArea(const QString &)));
+
   connect(pbHorizontal, SIGNAL(clicked()), this, SLOT(split()));
   connect(pbVertical, SIGNAL(clicked()), this, SLOT(split()));
   connect(pbEditFrame, SIGNAL(clicked()), this, SLOT(showFrameEditorDlg()));
@@ -48,7 +48,7 @@ FrameWizard::~FrameWizard(){
 Q_CHECK_PTR( vfe );
 }
 
-void FrameWizard::catchSelectedArea( QString id ){
+void FrameWizard::catchSelectedArea(const QString &id ){
   m_currSA = id; //is the current SelectableArea selected
   m_hasSelected = true;// a SelectableArea has been selected
 }
@@ -62,7 +62,7 @@ void FrameWizard::split(){
       split = showRCeditorDlg(i18n("Enter the desired number of rows"));
       if(split>=2) vfe->split(currNodeLabel,split,HORIZONTAL);
     }
-    else 
+    else
     if(senderName=="pbVertical"){
       split = showRCeditorDlg(i18n("Enter the desired number of columns"));
       if(split>=2) vfe->split(currNodeLabel,split,VERTICAL);
@@ -77,7 +77,7 @@ void FrameWizard::draw(){
   vfe->draw();
 }
 
-int FrameWizard::showRCeditorDlg( QString s){
+int FrameWizard::showRCeditorDlg(const QString &s){
   int res = 0;
   fmRCeditor *dlg = new fmRCeditor;
   dlg->setLabelText(s);
@@ -90,7 +90,7 @@ void FrameWizard::showFrameEditorDlg(){
   if(m_saved){
     if(m_hasSelected) {
       fmFPeditor *dlg = new fmFPeditor();
-      dlg->setup(vfe->internalTree()->findAreaAttribute(m_currSA)->attributeMap());   
+      dlg->setup(vfe->internalTree()->findAreaAttribute(m_currSA)->attributeMap());
       if(dlg->exec()) {
         vfe->internalTree()->findAreaAttribute(m_currSA)->setAllAttributes(dlg->attributeMap());
         vfe->draw();

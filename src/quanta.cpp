@@ -1464,7 +1464,7 @@ void QuantaApp::restoreFromTempfile(Document *w)
   }
 }
 
-void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
+void QuantaApp::newCursorPosition(const QString &file, int lineNumber, int columnNumber)
 {
   Q_UNUSED(file);
   typingInProgress = true;
@@ -1477,12 +1477,12 @@ void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber
   statusBar()->changeItem("",IDS_MODIFIED);
 }
 
-void QuantaApp::newDebuggerPosition(QString file, int lineNumber)
+void QuantaApp::newDebuggerPosition(const QString &file, int lineNumber)
 {
     newCursorPosition(file, lineNumber, 0);
 }
 
-void QuantaApp::openFile(QString file, int lineNumber, int columnNumber)
+void QuantaApp::openFile(const QString &file, int lineNumber, int columnNumber)
 {
   gotoFileAndLine(file, lineNumber, columnNumber);
   slotNewStatus();
@@ -3700,13 +3700,13 @@ QStringList QuantaApp::tagAreas(const QString &tag, bool includeCoordinates, boo
     return QStringList();
 }
 
-QString QuantaApp::documentFolderForURL(QString url)
+QString QuantaApp::documentFolderForURL(const QString &url)
 {
   KURL u = KURL::fromPathOrURL(url);
   return Project::ref()->documentFolderForURL(u).url();
 }
 
-QString QuantaApp::urlWithPreviewPrefix(QString url)
+QString QuantaApp::urlWithPreviewPrefix(const QString &url)
 {
   KURL u = KURL::fromPathOrURL(url);
   return Project::ref()->urlWithPrefix(u).url();
@@ -4132,11 +4132,11 @@ void QuantaApp::slotInsertCSS()
     QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1).remove("<!--").remove("-->"));// <style></style> block content
         kdDebug(24000) << "Style tag contains: " << endl << styleTagContent << endl;
     CSSSelector *dlg = new CSSSelector;
-    
+
     dlg->setCallingFrom("XHTML");
     QFileInfo fi(quantaApp->currentURL());
     dlg->setFileToPreview(quantaApp->projectBaseURL().path() +  fi.baseName());
-   
+
 
     dlg->setHeader(header);
     dlg->setFooter(footer);
@@ -4159,12 +4159,12 @@ void QuantaApp::slotInsertCSS()
         kdDebug(24000) << "[CSS editor] This is a pure CSS document";
 
     CSSSelector *dlg = new CSSSelector;
-    
+
     dlg->setCallingFrom("CSS");
-    
+
     if (!fullDocument.isEmpty())
       dlg->loadCSSContent(fullDocument);
-    dlg->enableApplyToFile();  
+    dlg->enableApplyToFile();
     if(!dlg->errorOnProcessingStylesheet())
       if (dlg->exec())
       {

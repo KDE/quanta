@@ -38,7 +38,7 @@ int MessageItem::line()
     int pos2 = pos;
     while ( s[pos2].isDigit() ) pos2++;
 
-    QString snum = s.mid( pos, pos2-pos );
+    QString snum = s.mid(pos, pos2-pos);
     return snum.toInt();
 
   }
@@ -48,18 +48,18 @@ int MessageItem::column()
 {
   QString s = text();
   QRegExp exp("(?:\\D|^)(\\d{1,4})(?:\\D|$)");
-  
+
   int pos = exp.search(s);
   if ( pos == -1 )
     return 0;
-  pos = exp.search(s, pos + exp.cap(1).length());  
+  pos = exp.search(s, pos + exp.cap(1).length());
   if ( pos == -1 )
     return 0;
   s = exp.cap(1);
   return s.toInt();
 }
 
-void MessageItem::addText( QString t )
+void MessageItem::addText(const QString &t)
 {
    setText( text() + t );
 }

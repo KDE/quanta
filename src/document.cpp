@@ -204,7 +204,7 @@ Document::~Document()
  delete m_view;
 }
 
-void Document::setUntitledUrl(QString url)
+void Document::setUntitledUrl(const QString &url)
 {
   untitledUrl = url;
   m_doc->openURL(KURL());
@@ -222,18 +222,18 @@ KURL Document::url()
 
 // kwrite addons
 
-void Document::insertTag(QString s1,QString s2)
+void Document::insertTag(const QString &s1, const QString &s2)
 {
-  QString selection = "";
+  QString selection;
 
-  if ( selectionIf->hasSelection() )
+  if (selectionIf->hasSelection())
   {
     reparseEnabled = false;
     selection = selectionIf->selection();
     selectionIf->removeSelectedText();
     reparseEnabled = true;
   }
-  insertText(s1+selection);
+  insertText(s1 + selection);
   insertText(s2, FALSE); // don't adjust cursor, thereby leaving it in the middle of tag
 }
 

@@ -539,7 +539,7 @@ void TagAction::slotTimeout()
   timer->start(180*1000, true);
 }
 
-void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node)
+void TagAction::insertOutputInTheNodeTree(const QString &str1, const QString &str2, Node *node)
 {
         QuantaView *view = ViewManager::ref()->activeView();
 #ifdef LIGHT_DEBUG

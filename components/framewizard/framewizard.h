@@ -37,24 +37,24 @@ class FrameWizard : public FrameWizardS
   public:
     FrameWizard( QWidget* parent=0, const char *name=0);
     ~FrameWizard();
-    
-  private slots:  
-    void showFrameEditorDlg(); 
+
+  private slots:
+    void showFrameEditorDlg();
     void reset();
     void remove();
-    void catchSelectedArea( QString id );
+    void catchSelectedArea(const QString &id );
     void split();
     void draw();
-    int showRCeditorDlg( QString );
-    
-  public :   
-    void loadExistingFramesetStructure(QStringList list){ vfe->loadExistingStructure(list);}
+    int showRCeditorDlg(const QString &s);
+
+  public :
+    void loadExistingFramesetStructure(const QStringList &list){ vfe->loadExistingStructure(list);}
     QString generateFramesetStructure(){ return vfe->framesetStructure(); }
     void setSaved( bool b){ m_saved=b; }
     void setMarkupLanguage(const QString& s){ vfe->setMarkupLanguage(s);}
-    
+
   signals:
-    void launchDraw();  
+    void launchDraw();
 
 };
 

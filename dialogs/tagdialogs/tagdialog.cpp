@@ -362,7 +362,7 @@ KURL TagDialog::baseURL()
 }
 
 
-void TagDialog::parseAttributes( QString attrs )
+void TagDialog::parseAttributes(const QString &attrs)
 {
   QString t = attrs;
 

@@ -96,7 +96,7 @@ private:
   QPtrList<Tagxml> *extraPageList;
 
   void init(QTag* dtdTag, KURL a_baseURL);
-  void parseAttributes( QString attrs );
+  void parseAttributes(const QString &attrs);
 };
 
 #endif

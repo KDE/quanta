@@ -154,12 +154,12 @@ public:
   QStringList openedURLs() const;
   QString saveCurrentFile();
   QStringList tagAreas(const QString& name, bool includeCoordinates, bool skipFoundContent) const;
-  QString documentFolderForURL(QString url);
-  QString urlWithPreviewPrefix(QString url);
+  QString documentFolderForURL(const QString &url);
+  QString urlWithPreviewPrefix(const QString &url);
   /** Capture DCOP signals from KXsldbgPart or similar plugin */
-  void newCursorPosition(QString file, int lineNumber, int columnNumber);
-  void newDebuggerPosition(QString file, int lineNumber);
-  void openFile(QString file, int lineNumber, int columnNumber);
+  void newCursorPosition(const QString &file, int lineNumber, int columnNumber);
+  void newDebuggerPosition(const QString &file, int lineNumber);
+  void openFile(const QString &file, int lineNumber, int columnNumber);
 
   /** reparse current document and initialize node. */
   void reparse(bool force);

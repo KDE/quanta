@@ -18,7 +18,7 @@
 
 //kde includes
 #include <dcopref.h>
-#include <kapplication.h> 
+#include <kapplication.h>
 #include <kdebug.h>
 #include <klineedit.h>
 
@@ -43,7 +43,7 @@ Attr_list::Attr_list( QDomElement const& el, QWidget *w, QTag *dtdTag )
   : Attr(el, w, dtdTag)
 {
    combo = (QComboBox *)w;
-   
+
    QString source = el.attribute("source");
    if (source == "dcop") //fill the list with a result of a DCOP call
    {
@@ -58,7 +58,7 @@ Attr_list::Attr_list( QDomElement const& el, QWidget *w, QTag *dtdTag )
         combo->insertStringList(list);
      }
    }
-      
+
    for ( QDomElement n = el.firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
       if ( n.tagName() == "items" ) {
          QDomElement item = n.firstChild().toElement();
@@ -66,28 +66,28 @@ Attr_list::Attr_list( QDomElement const& el, QWidget *w, QTag *dtdTag )
              combo->insertItem( item.text() );
              item = item.nextSibling().toElement();
          }
-      } 
+      }
    }
 
    setValue("");
 }
 
-void Attr_list::setValue( QString s )
+void Attr_list::setValue(const QString &value)
 {
 
   for ( int i=0; i<combo->count(); i++ )
-    if ( s == combo->text(i) ) {
+    if ( value == combo->text(i) ) {
       combo->setCurrentItem(i);
       return;
     }
 
-  combo->insertItem(s);
+  combo->insertItem(value);
   combo->setCurrentItem( combo->count() - 1 );
 
 }
 
 
-QDomNode findChild( QDomNode &parent, QString name )
+QDomNode findChild( QDomNode &parent, const QString &name )
 {
   for ( QDomNode n = parent.firstChild(); !n.isNull(); n = n.nextSibling() )
     if ( n.nodeName() == name )

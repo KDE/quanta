@@ -35,17 +35,17 @@ class treeNode {
       SplitType m_splitType;
       QPtrList<treeNode> m_childrenList;
       areaAttribute *m_atts;
-     
+
    public:
-     treeNode(QString l=QString::null,QString pl=QString::null);
-     ~treeNode();
-      void addChildNode(QString);
+     treeNode(const QString &l=QString::null, const QString &pl=QString::null);
+      ~treeNode();
+      void addChildNode(const QString &L);
       void addChildNode(treeNode *n){ m_childrenList.append(n); }
-      void removeChildNode(QString l, bool autoDelete);
+      void removeChildNode(const QString &l, bool autoDelete);
       void setSplitType(SplitType s) { m_splitType = s; }
-      void setLabel(QString l) { m_label = l; }
+      void setLabel(const QString &l) { m_label = l; }
       void removeChildren() { m_childrenList.clear(); }
-      void setParentLabel(QString s){ m_parentLabel = s;}
+      void setParentLabel(const QString &s){ m_parentLabel = s;}
       int  childPosition(treeNode* n){ return m_childrenList.find(n); }
       bool insertChild(unsigned int pos, treeNode* n) { return m_childrenList.insert( pos, n); }
       QString label() const { return m_label; }
@@ -57,10 +57,10 @@ class treeNode {
       treeNode* nextChild() { return m_childrenList.next(); }
       treeNode* lastChild() { return m_childrenList.last(); }
       treeNode* currentChild()  { return m_childrenList.current(); }
-      treeNode* findChild(QString);
+      treeNode* findChild(const QString &L);
 
       areaAttribute* atts() { return m_atts; }
-        
+
       int countChildren() const { return m_childrenList.count(); }
       bool hasChildren() const { return !m_childrenList.isEmpty(); }
 };
@@ -75,11 +75,11 @@ class tree{
       tree();
       ~tree();
       treeNode* root() const { return m_root; }
-      QString addChildNode(QString l);
-      bool insertChildNode(QString);
-      void removeChildNode(QString pl,QString l,bool autoDelete);//parent node,child node
-      treeNode* findNode(QString);
-      areaAttribute* findAreaAttribute(QString l){ return findNode(l)->atts(); };
+      QString addChildNode(const QString &l);
+      bool insertChildNode(const QString &L);
+      void removeChildNode(const QString &pl,const QString &l,bool autoDelete);//parent node,child node
+      treeNode* findNode(const QString &L);
+      areaAttribute* findAreaAttribute(const QString &l){ return findNode(l)->atts(); };
       void reset();
       void refreshGeometries(treeNode*);
 };

@@ -50,10 +50,10 @@ DOMTreeView::~DOMTreeView()
     disconnect(part);
 }
 
-void DOMTreeView::setTitle(QString str)
+void DOMTreeView::setTitle(const QString &str)
 {
-	title = str;
-	titleItem->setText(1, title);
+  title = str;
+  titleItem->setText(1, title);
 }
 
 void DOMTreeView::showTree(const DOM::Node &pNode)
