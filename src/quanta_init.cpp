@@ -355,6 +355,7 @@ void QuantaInit::initView()
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3ICON);
   if (m_quanta->tabWidget())
       m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
+  m_quanta->setTabWidgetVisibility(KMdi::AlwaysShowTabs);
 #else
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3);
 #endif
