@@ -43,13 +43,33 @@ void QPEvents::slotEventHappened(const QString& name)
   EventActions *events = Project::ref()->events();
   if (events && events->contains(name))
   {
+    EventAction ev = (*events)[name];
+    if (ev.type == EventAction::Internal)
+    {
+       if (KMessageBox::warningYesNo(0L, i18n("<qt>An  internal action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), i18n("&Allow"), KStdGuiItem::no(), "warn_about_internal_actions") == KMessageBox::No)
+         return;
+    } else
+    {
+       if (KMessageBox::warningYesNo(0L, i18n("<qt>An  external action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), i18n("&Allow"), KStdGuiItem::no(), "warn_about_external_actions") == KMessageBox::No)
+         return;
+    }
     if (name == "after_save")
     {
         Document *w = ViewManager::ref()->activeDocument();
         if (w && Project::ref()->contains(w->url()))
         {
-          EventAction ev = (*events)[name];
-          ev.arguments << i18n("The file %1 was saved").arg(QExtFileInfo::toRelative(w->url(), Project::ref()->projectBaseURL()).path());
+          ev.arguments << i18n("Document saved");
+          ev.arguments << QExtFileInfo::toRelative(w->url(), Project::ref()->projectBaseURL()).path();
+          handleEvent(ev);
+        }
+     } else
+     if (name == "before_save")
+     {
+        Document *w = ViewManager::ref()->activeDocument();
+        if (w && Project::ref()->contains(w->url()))
+        {
+          ev.arguments << i18n("About to save");
+          ev.arguments << QExtFileInfo::toRelative(w->url(), Project::ref()->projectBaseURL()).path();
           handleEvent(ev);
         }
      }
@@ -58,7 +78,6 @@ void QPEvents::slotEventHappened(const QString& name)
 
 bool QPEvents::handleEvent(const EventAction& ev)
 {
-  return true;
   if (ev.type == EventAction::Internal)
   {
     if (ev.action == "email")
@@ -72,7 +91,11 @@ bool QPEvents::handleEvent(const EventAction& ev)
        else if (receiver.startsWith("taskleader-"))
          member = Project::ref()->taskLeader(receiver.remove("taskleader-"));
 
-       kapp->invokeMailer(member.name + "<" + member.email + ">", ev.arguments[1], "");
+       QString body;
+       for (uint i = 2; i < ev.arguments.count(); i++)
+          body += ev.arguments[i] + "\n";
+       kapp->invokeMailer(member.name + "<" + member.email + ">", "", "", ev.arguments[1], body, "", QStringList(), "");
+
        return true;
     } else
       KMessageBox::sorry(0L, i18n("Unsupported internal event."));
