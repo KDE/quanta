@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>620</width>
-            <height>569</height>
+            <width>615</width>
+            <height>446</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -187,36 +187,6 @@
                 <cstring>lineAuthor</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="9" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>linePrefix</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-        </widget>
-        <widget class="QLabel" row="9" column="0">
-            <property name="name">
-                <cstring>TextLabel1_4</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Prefix:</string>
-            </property>
-        </widget>
-        <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>checkPrefix</cstring>
-            </property>
-            <property name="text">
-                <string>Use preview &amp;prefix</string>
-            </property>
-            <property name="accel">
-                <string>Alt+P</string>
-            </property>
-        </widget>
         <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>lineEmail</cstring>
@@ -232,102 +202,59 @@
             <property name="title">
                 <string>Project Defaults</string>
             </property>
-            <widget class="QComboBox">
+            <grid>
                 <property name="name">
-                    <cstring>encodingCombo</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>302</x>
-                        <y>23</y>
-                        <width>285</width>
-                        <height>32</height>
-                    </rect>
-                </property>
-            </widget>
-            <widget class="QComboBox">
-                <property name="name">
-                    <cstring>dtdCombo</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>302</x>
-                        <y>99</y>
-                        <width>285</width>
-                        <height>32</height>
-                    </rect>
-                </property>
-                <property name="toolTip" stdset="0">
-                    <string>New files will have the extension and highlighting according to this setting</string>
-                </property>
-            </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>TextLabel1_3_2</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>61</y>
-                        <width>285</width>
-                        <height>32</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Default view:</string>
-                </property>
-            </widget>
-            <widget class="QComboBox">
-                <property name="name">
-                    <cstring>viewCombo</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>302</x>
-                        <y>61</y>
-                        <width>285</width>
-                        <height>32</height>
-                    </rect>
-                </property>
-            </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>TextLabel3_2_2_2</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>23</y>
-                        <width>285</width>
-                        <height>32</height>
-                    </rect>
-                </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>32767</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="text">
-                    <string>Default encoding:</string>
-                </property>
-            </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>TextLabel1_2_3</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>11</x>
-                        <y>99</y>
-                        <width>285</width>
-                        <height>32</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Default DTD:</string>
-                </property>
-            </widget>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1_2_3</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Default DTD:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1_3_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Default view:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel3_2_2_2</cstring>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>32767</width>
+                            <height>32767</height>
+                        </size>
+                    </property>
+                    <property name="text">
+                        <string>Default encoding:</string>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="0" column="1">
+                    <property name="name">
+                        <cstring>encodingCombo</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="1" column="1">
+                    <property name="name">
+                        <cstring>viewCombo</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="2" column="1">
+                    <property name="name">
+                        <cstring>dtdCombo</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>New files will have the extension and highlighting according to this setting</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
         <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="4">
             <property name="name">
@@ -428,6 +355,36 @@ is obscured, saving the password in any file is a security risk. Use this option
                 </widget>
             </grid>
         </widget>
+        <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>checkPrefix</cstring>
+            </property>
+            <property name="text">
+                <string>Use preview &amp;prefix</string>
+            </property>
+            <property name="accel">
+                <string>Alt+P</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="9" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>linePrefix</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="QLabel" row="9" column="0">
+            <property name="name">
+                <cstring>TextLabel1_4</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Prefix:</string>
+            </property>
+        </widget>
     </grid>
 </widget>
 <connections>
@@ -494,6 +451,6 @@ is obscured, saving the password in any file is a security risk. Use this option
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kpasswordedit.h</includehint>
+    <includehint>kpassdlg.h</includehint>
 </includehints>
 </UI>
