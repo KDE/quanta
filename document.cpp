@@ -1624,21 +1624,42 @@ void Document::checkDirtyStatus()
   fileWatcher->stopScan();
   if (m_dirty)
   {
-    createTempFile();
-    DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, this);
-    if (!m_pluginInterface || !(m_pluginInterface->pluginAvailable("kompare")))
+    if (url().isLocalFile())
     {
-       dlg->buttonCompare->setEnabled(false);
-       dlg->buttonLoad->setChecked(true);
+      //check if the file is changed, also by file content. Might help to reduce
+      //unwanted warning on NFS
+      QFile f(url().path());
+      if (f.open(IO_ReadOnly))
+      {
+        QString content;
+        QTextStream stream(&f);
+        content = stream.read();
+        if (content == editIf->text())
+        {
+          m_dirty = false;
+        }
+        f.close();
+      }
+      
     }
-    if (dlg->exec())
+    if (m_dirty)
     {
-        m_doc->setModified(false);
-        m_doc->openURL(url());
-        createTempFile();
+     createTempFile();
+     DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, this);
+     if (!m_pluginInterface || !(m_pluginInterface->pluginAvailable("kompare")))
+     {
+        dlg->buttonCompare->setEnabled(false);
+        dlg->buttonLoad->setChecked(true);
+     }
+     if (dlg->exec())
+     {
+         m_doc->setModified(false);
+         m_doc->openURL(url());
+         createTempFile();
+     }
+     delete dlg;
     }
     m_dirty = false;
-    delete dlg;
   }
   fileWatcher->startScan();
 }
