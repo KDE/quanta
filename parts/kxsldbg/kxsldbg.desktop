@@ -3,6 +3,7 @@ Encoding=UTF-8
 Name=KXsldbg
 Name[sv]=Kxsldbg
 Name[xx]=xxKXsldbgxx
+GenericName=XSLT Debugger
 Exec=kxsldbg %i %m -caption "%c"
 Icon=kxsldbg
 Type=Application
