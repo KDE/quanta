@@ -139,7 +139,6 @@ void QuantaApp::slotFileSaveAs()
                             
   doc->saveDocument( url );
     
-  bool addToProject = false;
   if ( project->hasProject() ) 
     if ( KMessageBox::Yes == KMessageBox::questionYesNo(0,"Add file\n " +url.url()+"\n to project ? "))
       project->insertFile(url.url(),true);
@@ -662,6 +661,12 @@ void QuantaApp::reparse()
 		  	expandLevel = 40;
 		  	
 		  sTab->slotReparse( node , expandLevel );
+		  
+	    int y = view->write()->currentLine();
+      int x = view->write()->currentColumn();
+
+      sTab->showTagAtPos(x,y);
+
 		}
 		// delete node;
 	}
@@ -931,4 +936,10 @@ void QuantaApp::slotMessageWidgetDisable()
 {
   if ( bottdock->isVisible() )
     bottdock->changeHideShowState();
+}
+
+void QuantaApp::autoComplete()
+{
+   
+
 }

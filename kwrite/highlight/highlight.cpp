@@ -83,7 +83,7 @@ const char *phpKeywords[] = {
 
 const char *phpTypes[] = {
   "printf","list","each","sprintf","echo","print", "apache_lookup_uri"  ,
-/*  "apache_note", "getallheaders", "virtual", "aspell_new", "aspell_check",
+  "apache_note", "getallheaders", "virtual", "aspell_new", "aspell_check",
   "aspell_check-raw", "aspell_suggest", "bcadd", "bccomp", "bcdiv", "bcmod",
   "bcmul", "bcpow", "bcscale", "bcsqrt", "bcsub", "JDToGregorian",
   "GregorianToJD", "JDToJulian", "JulianToJD", "JDToJewish", "JewishToJD",
@@ -279,7 +279,7 @@ const char *phpTypes[] = {
   "session_destroy", "session_name", "session_module_name",
   "session_save_path", "session_id", "session_register",
   "session_unregister", "session_is_registered", "session_decode",
-  "session_encode", "array_merge", "key",*/ 0L};
+  "session_encode", "array_merge", "key", 0L};
 
 const char *jsKeywords[] = {
   "break", "case", "endfor", "default", "exit", "else", "array",

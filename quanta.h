@@ -204,6 +204,10 @@ class QuantaApp : public KDockMainWindow
 	  void selectArea(int col1, int row1, int col2, int row2);
 	
 	  void setTitle(QString);
+	  
+	  void autoComplete();
+	  
+  public:
 
 	  	
 	  	QDomDocument *actions() { return m_actions; }

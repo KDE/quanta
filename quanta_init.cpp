@@ -23,6 +23,7 @@
 #include <qwidgetstack.h>
 #include <qlayout.h>
 #include <qtoolbutton.h>
+#include <qtimer.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -136,6 +137,11 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
     messageOutput->insertItem("PHP3 Debugger listens port "+
       s.sprintf("%i",phpDebugPort)+"" );
   }
+  
+  QTimer *t = new QTimer( this );
+  connect( t, SIGNAL(timeout()), SLOT(reparse()) );
+  t->start( 2000, false );
+
 }
 
 QuantaApp::~QuantaApp()
