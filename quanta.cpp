@@ -452,22 +452,29 @@ void QuantaApp::slotImageOpen(QString url)
 
 
 /** insert <img> tag for images or <a> for other */
-void QuantaApp::slotInsertTag(QString url)
+void QuantaApp::slotInsertTag(QString url, DirInfo dirInfo)
 {
  	QImage img(url);
   
   QString furl = QExtFileInfo::toRelative( url, doc->basePath() );
-  
+
+  if (!(dirInfo.preText.isEmpty()) || !(dirInfo.postText.isEmpty()))
+  {
+	   doc->write()->insertTag(dirInfo.preText+furl+dirInfo.postText);
+  } else
+  {
+
    if ( !img.isNull() )
    { 
      QString w,h;
      w.setNum( img.width () );
 	   h.setNum( img.height() );
 
-	   doc->write()->insertTag("<img src=\""+furl+"\" width=\""+w+"\" height=\""+h+"\" border=\"0\">");
+ 	   doc->write()->insertTag("<img src=\""+furl+"\" width=\""+w+"\" height=\""+h+"\" border=\"0\">");
    }
    else
      doc->write()->insertTag( "<a href=\""+furl+"\">","</a>");
+  }
 
   doc->write()->view()->setFocus();
 }
@@ -1184,8 +1191,8 @@ void QuantaApp::slotNewProjectLoaded()
             this, SLOT(slotFileOpen(const KURL &)));
   connect(   tTab, SIGNAL(insertFile  (QString)),
             this, SLOT(slotInsertFile(QString)));
-  connect(   tTab,SIGNAL(insertTag(QString)),
-            this, SLOT(slotInsertTag(QString)));
+  connect(   tTab,SIGNAL(insertTag(QString, DirInfo)),
+            this, SLOT(slotInsertTag(QString, DirInfo)));
   connect(this, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
   connect(fTTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
   connect(tTab, SIGNAL(reloadTreeviews()), fTTab, SLOT (slotReload()));

@@ -26,6 +26,8 @@
 #include <qlayout.h>
 #include <qfileinfo.h>
 #include <qtextedit.h>
+#include <qlabel.h>
+#include <qimage.h>
 
 // KDE includes
 #include <krun.h>
@@ -44,6 +46,7 @@
 #include "filestreefolder.h"
 #include "filestreeview.h"
 #include "quantapropertiespagedlg.h"
+#include "fileinfodlg.h"
 
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
@@ -280,15 +283,16 @@ void FilesTreeView::slotProperties()
 
   KPropertiesDialog *propDlg = new KPropertiesDialog( KURL( currentFileName() ), this, 0L, false, false);
 
-  QFrame *quantaPage = propDlg->dialog()->addPage(i18n("Quanta directory"));
-  QVBoxLayout *topLayout = new QVBoxLayout( quantaPage);
-  quantaProperties = new QuantaPropertiesPageDlg( quantaPage, i18n("Quanta") );
+//Always add the Quanta directory page
+  QFrame *quantaDirPage = propDlg->dialog()->addPage(i18n("Quanta directory"));
+  QVBoxLayout *topLayout = new QVBoxLayout( quantaDirPage);
+  quantaProperties = new QuantaPropertiesPageDlg( quantaDirPage, i18n("Quanta") );
 
   quantaProperties->typesCombo->insertItem("text/all");
   quantaProperties->typesCombo->insertItem("binary/all");
   quantaProperties->typesCombo->insertItem("template/all");
 
-  readDirinfo();
+  readDirInfo();
 
   quantaProperties->typesCombo->setCurrentItem(dirInfo.mimeType);
 
@@ -324,6 +328,83 @@ void FilesTreeView::slotProperties()
 
    topLayout->addWidget( quantaProperties );
 //   connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied) );
+
+
+//If the item is a file, add the Quanta file info page
+  if (f)
+  {
+    QFrame *quantaFilePage = propDlg->dialog()->addPage(i18n("Quanta file info"));
+    QVBoxLayout *topLayout = new QVBoxLayout( quantaFilePage);
+    FileInfoDlg *quantaFileProperties = new FileInfoDlg( quantaFilePage, i18n("Quanta") );
+
+    int fsize,fimgsize=0;
+    int ct=0,imgct=0,position=0;
+    QString nameForInfo = currentFileName();
+    KURL u(nameForInfo);
+    QString path =u.directory(0,0);       //extract path for images
+    QString sourcename=u.fileName(0);
+
+    QFile qfile(nameForInfo);
+    fsize=qfile.size();                              //html file size
+
+    QString mimetype = KMimeType::findByFileContent(nameForInfo)->name();
+    if (mimetype.contains("text"))
+    {
+     qfile.open(IO_ReadOnly);
+     QString imgname,imgpath;
+     while (qfile.readLine(imgname,200)!=-1)     //open & parse file
+     {
+       ct++;
+       position=imgname.find("<img",0,FALSE);              //check for images
+       if (position!=-1)
+       {
+         imgname.remove(0,position+4);
+         position=imgname.find("src=",0,FALSE);              //extract images names
+         imgname.remove(0,position+4);
+         if (imgname.startsWith("\"")) imgname.remove(0,1);
+         if (imgname.startsWith("'")) imgname.remove(0,1);
+         position=imgname.find(" ",0,FALSE);
+         if (position!=-1) imgname=imgname.left(position);
+         position=imgname.find(">",0,FALSE);
+         if (position!=-1) imgname=imgname.left(position);
+         position=imgname.find("\"",0,FALSE);
+         if (position!=-1) imgname=imgname.left(position);
+         position=imgname.find("'",0,FALSE);
+         if (position!=-1) imgname=imgname.left(position);
+         if (!quantaFileProperties->imageList->findItem(imgname,Qt::ExactMatch))     //check if image was already counted
+         {
+           KURL v(path,imgname);
+           imgpath=v.path();
+           QFile qimage(imgpath);
+           if (qimage.exists() && v.isLocalFile())
+           {
+            fimgsize+=qimage.size();
+            quantaFileProperties->imageList->insertItem(imgname);
+            imgct++;
+           }
+          }
+        }
+      }
+      qfile.close();
+
+      quantaFileProperties->lineNum->setText(i18n("Number of lines: %1").arg(ct));
+      quantaFileProperties->imageNum->setText(i18n("Number of images included: %1").arg(imgct));
+      quantaFileProperties->imageSize->setText(i18n("Size of the included images: %1 bytes").arg(fimgsize));
+      quantaFileProperties->totalSize->setText(i18n("Total size with images: %1 bytes").arg(fsize+fimgsize));
+     }
+     else
+     if (mimetype.contains("image"))
+     {              // assume it's an image file
+       QImage imagefile=QImage(nameForInfo);
+       quantaFileProperties->lineNum->setText(i18n("Image size: %1 x %2").arg(imagefile.width()).arg(imagefile.height()));
+       quantaFileProperties->imageNum->hide();
+       quantaFileProperties->imageSize->hide();
+       quantaFileProperties->totalSize->hide();
+       quantaFileProperties->includedLabel->hide();
+       quantaFileProperties->imageList->hide();
+     }
+    topLayout->addWidget(quantaFileProperties);
+  }
 
    if (propDlg->exec())
    {
@@ -378,7 +459,7 @@ void FilesTreeView::slotPropertiesApplied()
 }
 
 /** No descriptions */
-void FilesTreeView::readDirinfo()
+void FilesTreeView::readDirInfo()
 {
   QListViewItem *item = currentItem();
   QString startDir = "";
@@ -440,3 +521,11 @@ void FilesTreeView::writeDirInfo(QString dirInfoFile)
 }
 
 #include "filestreeview.moc"
+/** No descriptions */
+void FilesTreeView::slotInsertTag()
+{
+ if (!currentItem()) return;
+
+ readDirInfo();
+ emit insertTag( currentFileName(), dirInfo);
+}

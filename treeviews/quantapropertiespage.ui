@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>312</width>
-            <height>334</height>
+            <width>305</width>
+            <height>218</height>
         </rect>
     </property>
     <property name="caption">
@@ -51,7 +51,7 @@
         <property name="geometry">
             <rect>
                 <x>10</x>
-                <y>210</y>
+                <y>150</y>
                 <width>212</width>
                 <height>21</height>
             </rect>
@@ -60,20 +60,36 @@
             <string>Use pos&amp;t-text</string>
         </property>
     </widget>
-    <widget class="QCheckBox">
+    <widget class="QLineEdit">
         <property name="name">
-            <cstring>parentAttr</cstring>
+            <cstring>postTextEdit</cstring>
+        </property>
+        <property name="enabled">
+            <bool>false</bool>
         </property>
         <property name="geometry">
             <rect>
-                <x>10</x>
-                <y>60</y>
-                <width>285</width>
-                <height>21</height>
+                <x>25</x>
+                <y>180</y>
+                <width>270</width>
+                <height>23</height>
             </rect>
         </property>
-        <property name="text">
-            <string>&amp;Inherit ype from parent (nothing)</string>
+    </widget>
+    <widget class="QLineEdit">
+        <property name="name">
+            <cstring>preTextEdit</cstring>
+        </property>
+        <property name="enabled">
+            <bool>false</bool>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>25</x>
+                <y>115</y>
+                <width>270</width>
+                <height>23</height>
+            </rect>
         </property>
     </widget>
     <widget class="QCheckBox">
@@ -92,36 +108,20 @@
             <string>Use &amp;pre-text</string>
         </property>
     </widget>
-    <widget class="QTextEdit">
+    <widget class="QCheckBox">
         <property name="name">
-            <cstring>preTextEdit</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
+            <cstring>parentAttr</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>10</x>
-                <y>115</y>
+                <y>60</y>
                 <width>285</width>
-                <height>85</height>
+                <height>21</height>
             </rect>
         </property>
-    </widget>
-    <widget class="QTextEdit">
-        <property name="name">
-            <cstring>postTextEdit</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>235</y>
-                <width>285</width>
-                <height>85</height>
-            </rect>
+        <property name="text">
+            <string>&amp;Inherit type from parent (nothing)</string>
         </property>
     </widget>
 </widget>

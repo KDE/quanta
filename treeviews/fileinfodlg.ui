@@ -1,0 +1,116 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>FileInfoDlg</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>FileInfoDlg</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>349</width>
+            <height>266</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>includedLabel</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>130</y>
+                <width>103</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Included images:</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>lineNum</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>15</y>
+                <width>300</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Number of lines:</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>imageNum</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>45</y>
+                <width>300</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Number of images included:</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>imageSize</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>75</y>
+                <width>300</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Size of the included images:</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>totalSize</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>105</y>
+                <width>300</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Total file size:</string>
+        </property>
+    </widget>
+    <widget class="QListBox">
+        <property name="name">
+            <cstring>imageList</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>45</x>
+                <y>155</y>
+                <width>265</width>
+                <height>100</height>
+            </rect>
+        </property>
+        <property name="selectionMode">
+            <enum>NoSelection</enum>
+        </property>
+    </widget>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

@@ -176,7 +176,12 @@ void FileManage::slotInsertDirInProject()
 void FileManage::slotInsertTag() 
 {
   if ( !currentItem() ) return;
-  emit insertTag( currentFileName() );
+  DirInfo dirInfo;
+
+  dirInfo.mimeType = "";
+  dirInfo.preText = "";
+  dirInfo.postText = "";
+  emit insertTag( currentFileName(), dirInfo );
 }
 
 /** No descriptions */

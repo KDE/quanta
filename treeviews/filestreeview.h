@@ -32,11 +32,6 @@ class QuantaPropertiesPageDlg;
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
 
-typedef struct DirInfo{
-      QString mimeType;
-      QString preText;
-      QString postText;
-    };
 
 class FilesTreeView : public FileManage  {
    Q_OBJECT
@@ -44,6 +39,10 @@ public:
     FilesTreeView();
 	FilesTreeView( QString dir, QStrList topList, QWidget *parent=0L, const char *name=0L);
 	~FilesTreeView();
+  /** No descriptions */
+  void writeDirInfo(QString dirInfoFile="");
+  /** No descriptions */
+  void readDirInfo();
 	
 public slots:
 	void slotMenu(QListViewItem *, const QPoint &, int);
@@ -54,11 +53,9 @@ public slots:
 	void slotAddToTop     ();
 	
 	void slotNewMode();
+  /** No descriptions */
+  virtual void slotInsertTag();
 	virtual void slotReload();
-  /** No descriptions */
-  void writeDirInfo(QString dirInfoFile="");
-  /** No descriptions */
-  void readDirinfo();
   virtual void slotProperties();
   virtual void slotPropertiesApplied();
 	

@@ -153,27 +153,13 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 {
 	if ( !item ) return;
 	setSelected(item, true);
+  readDirInfo();
 	
-	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-	if ( f )
-  {
-   QFileInfo fileInfo(currentFileName());
-   QFileInfo dotFileInfo(fileInfo.dirPath()+"/.dirinfo");
-
-   while ((!dotFileInfo.exists()) && (dotFileInfo.dirPath() != "/"))
-   {
-    dotFileInfo.setFile(QFileInfo(dotFileInfo.dirPath()).dirPath()+"/.dirinfo");
-   }
-   QFile dotFile(dotFileInfo.filePath());
-   dotFile.open(IO_ReadOnly);
-
-   QString s;
    QString menuText = "";
 
-   dotFile.readLine(s,100);
-   if (s.upper().contains("TEXT")) menuText = textMenu;
-   if (s.upper().contains("BINARY")) menuText = binaryMenu;
-   if (s.upper().contains("TEMPLATE")) menuText = docMenu;
+   if (dirInfo.mimeType.upper().contains("TEXT")) menuText = textMenu;
+   if (dirInfo.mimeType.upper().contains("BINARY")) menuText = binaryMenu;
+   if (dirInfo.mimeType.upper().contains("TEMPLATE")) menuText = docMenu;
 
    if (menuText.isEmpty())
    {
@@ -185,7 +171,7 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
    }
 
    fileMenu->popup( point);
-  }
+
 	
 	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
 	if ( d )
@@ -249,7 +235,7 @@ void TemplatesTreeView::slotNewDir()
   createDirDlg->typesCombo->insertItem("binary/all");
   createDirDlg->typesCombo->insertItem("template/all");
 
-  readDirinfo();
+  readDirInfo();
 
    if (dirInfo.mimeType.isEmpty())
    {

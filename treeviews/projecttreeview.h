@@ -24,14 +24,16 @@
 
 #include <kurl.h>
 
+#include "filestreeview.h"
+
+
 class QPopupMenu;
 class ProjectTreeFolder;
-
 /**
   *@author Yacovlev Alexander & Dmitry Poplavsky
   */
 
-class ProjectTreeView : public QListView  {
+class ProjectTreeView : public FilesTreeView  {
 	friend class Project;
 	Q_OBJECT
 
@@ -66,7 +68,7 @@ signals: // Signals
 	void open( QListViewItem *name );
   void openFile ( const KURL& );
   void openImage( QString );
-  void insertTag( QString );
+ // void insertTag( QString );
   void renameFileInProject( QString );
   void renameFolderInProject( QString );
   void removeFileFromProject( QString );

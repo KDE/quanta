@@ -36,6 +36,7 @@
 #include "projecttreefile.h"
 #include "projecttreefolder.h"
 #include "projecttreeview.h"
+#include "filestreeview.h"
 
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
@@ -43,7 +44,7 @@ extern QString fileMaskText;
 extern QString fileMaskImage;
 
 ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
-  : QListView(parent,name)
+  //: QListView(parent,name)
 {
   setRootIsDecorated( true );
   header()->hide();
@@ -70,6 +71,8 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	fileMenu -> insertItem( i18n("Rename"),   this ,SLOT(slotRenameFile()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem(i18n("Upload file..."),this,SLOT(slotUploadSingleFile()));
+	fileMenu -> insertSeparator();
+	fileMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
 
 	folderMenu = new QPopupMenu();
 	
@@ -80,6 +83,8 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
  	folderMenu -> insertItem( i18n("Rename"),   this ,SLOT(slotRenameFolder()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem(i18n("Upload folder..."),this,SLOT(slotUploadSingleFolder()));
+	folderMenu -> insertSeparator();
+	folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
 
 
 	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
@@ -137,7 +142,7 @@ void ProjectTreeView::slotFileTag()
 	
 	QString name = d->path + f->text(0);
 
-  emit insertTag( name );
+  emit insertTag( name, dirInfo );
 }
 
 /** open file */

@@ -41,6 +41,9 @@
 #include <kate/document.h>
 #include <ktempfile.h>
 
+//app includes
+#include "treeviews/filestreeview.h"
+
 // forward declaration
 class QuantaDoc;
 class QuantaView;
@@ -74,6 +77,7 @@ class ActionEditDlg;
 
 class PHP3Debugger;
 class PHP4Debugger;
+
 
 /**
   * The base class for Quanta application windows. 
@@ -139,7 +143,7 @@ class QuantaApp : public KDockMainWindow
     
     void slotImageOpen        (QString);
     void slotFileOpenRecent   (const KURL&);
-    void slotInsertTag        (QString);
+    void slotInsertTag        (QString, DirInfo);
 
     void slotEditFindInFiles   ();
     

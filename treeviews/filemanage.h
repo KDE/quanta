@@ -28,6 +28,12 @@ class QPopupMenu;
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
 
+typedef struct DirInfo{
+      QString mimeType;
+      QString preText;
+      QString postText;
+    };
+
 class FileManage : public QListView {
 Q_OBJECT
 public:
@@ -47,7 +53,7 @@ public slots:
 	void slotInsertInProject();
 	void slotInsertDirInProject();
 	
-	void slotInsertTag();
+	virtual void slotInsertTag();
 	
 	virtual void slotReload();
 	void slotJobFinished( KIO::Job *);
@@ -61,7 +67,7 @@ signals:
 	void insertDirInProject( QString );
 	void insertFileInProject( QString );
 	
-	void insertTag(QString);
+	void insertTag(QString, DirInfo);
 	
 	void jobFinished();
 	void changeMode();
