@@ -67,6 +67,7 @@ void DTEPEditDlg::init()
     readPages();
   else
     tabWidget->removePage(m_pagesWidget);
+  readParserRules();
 }
 
 void DTEPEditDlg::readGeneral()
@@ -140,6 +141,49 @@ void DTEPEditDlg::readPages()
   }
 }
 
+void DTEPEditDlg::readParserRules()
+{
+  m_config->setGroup("Extra rules");
+  enableMinusInWords->setChecked(m_config->readBoolEntry("MinusAllowedInWord", false));
+  attributeSeparatorEdit->setText(m_config->readEntry("AttributeSeparator"));
+  tagSeparatorEdit->setText(m_config->readEntry("TagSeparator"));
+  tagAfterEdit->setText(m_config->readEntry("TagAutoCompleteAfter"));
+  
+  if (m_family == 0)
+  {
+    extendedBooleans->setChecked(m_config->readEntry("BooleanAttributes", "extended") == "extended");
+    trueEdit->setText(m_config->readEntry("BooleanTrue","true"));
+    falseEdit->setText(m_config->readEntry("BooleanFalse","false"));
+    xmlStyleTags->setChecked(m_config->readEntry("Single Tag Style", "xml").lower() == "xml");
+  } else
+  {
+    attributesAfterEdit->setText(m_config->readEntry("AttributeAutoCompletionAfter"));
+    membersAfterEdit->setText(m_config->readEntry("MemberAutoCompleteAfter"));
+  }
+  
+  m_config->setGroup("Parsing rules");
+  commentsEdit->setText(m_config->readEntry("Comments"));
+  mayContainEdit->setText(m_config->readEntry("MayContain"));
+  
+  if (m_family == 0)
+  {
+    specialAreasEdit->setText(m_config->readEntry("SpecialAreas"));
+    specialAreaNamesEdit->setText(m_config->readEntry("SpecialAreaNames"));
+    specialTagsEdit->setText(m_config->readEntry("SpecialTags"));
+    useCommonRules->setChecked(m_config->readBoolEntry("AppendCommonSpecialAreas", true));  
+  } else
+  {
+    areaBordersEdit->setText(m_config->readEntry("AreaBorders"));
+    definitionTagsEdit->setText(m_config->readEntry("Tags"));
+    structKeywordsEdit->setText(m_config->readEntry("StructKeywords"));
+    localStructKeywordsEdit->setText(m_config->readEntry("LocalScopeKeywords"));
+    structBeginEdit->setText(m_config->readEntry("StructBeginStr"));
+    structEndEdit->setText(m_config->readEntry("StructEndStr"));
+    structRxEdit->setText(m_config->readEntry("StructRx"));
+  }
+  
+}
+
 void DTEPEditDlg::saveResult()
 {
   QString targetFile = m_descriptionFile;
@@ -164,6 +208,7 @@ void DTEPEditDlg::saveResult()
     newConfig->sync();
     writeGeneral(newConfig);
     writePages(newConfig);
+    writeParserRules(newConfig);
     newConfig->sync();
     delete newConfig;        
   }
@@ -189,9 +234,8 @@ void DTEPEditDlg::writeGeneral(KConfig *config)
 
 void DTEPEditDlg::writePages(KConfig *config)
 {
-  if (m_family == 1)
-    config->deleteGroup("Pages");
-  else
+  config->deleteGroup("Pages");
+  if (m_family == 0)
   {
     int num = 0;
     if (enablePage1->isChecked())
@@ -232,6 +276,49 @@ void DTEPEditDlg::writePages(KConfig *config)
     config->setGroup("General");
     config->writeEntry("NumOfPages", num);
   }
+}
+
+void DTEPEditDlg::writeParserRules(KConfig *config)
+{
+  config->setGroup("Extra rules");
+  config->writeEntry("MinusAllowedInWord", enableMinusInWords->isChecked());
+  config->writeEntry("AttributeSeparator", attributeSeparatorEdit->text());
+  config->writeEntry("TagSeparator", tagSeparatorEdit->text());
+  config->writeEntry("TagAutoCompleteAfter", tagAfterEdit->text());
+  
+  if (m_family == 0)
+  {
+    config->writeEntry("BooleanAttributes", extendedBooleans->isChecked() ? "extended" : "simple");
+    config->writeEntry("BooleanTrue", trueEdit->text());
+    config->writeEntry("BooleanFalse", falseEdit->text());
+    config->writeEntry("Single Tag Style", xmlStyleTags->isChecked() ? "xml" : "html");
+  } else
+  {
+    config->writeEntry("AttributeAutoCompletionAfter", attributesAfterEdit->text());
+    config->writeEntry("MemberAutoCompleteAfter", membersAfterEdit->text());
+  }
+  
+  config->setGroup("Parsing rules");
+  config->writeEntry("Comments", commentsEdit->text());
+  config->writeEntry("MayContain", mayContainEdit->text());
+  
+  if (m_family == 0)
+  {
+    config->writeEntry("SpecialAreas", specialAreasEdit->text());
+    config->writeEntry("SpecialAreaNames", specialAreaNamesEdit->text());
+    config->writeEntry("SpecialTags", specialTagsEdit->text());
+    config->writeEntry("AppendCommonSpecialAreas", useCommonRules->isChecked());  
+  } else
+  {
+    config->writeEntry("AreaBorders", areaBordersEdit->text());
+    config->writeEntry("Tags", definitionTagsEdit->text());
+    config->writeEntry("StructKeywords", structKeywordsEdit->text());
+    config->writeEntry("LocalScopeKeywords", localStructKeywordsEdit->text());
+    config->writeEntry("StructBeginStr", structBeginEdit->text());
+    config->writeEntry("StructEndStr", structEndEdit->text());
+    config->writeEntry("StructRx", structRxEdit->text());
+  }
+
 }
 
 #include "dtepeditdlg.moc"

@@ -33,8 +33,11 @@ class DTEPEditDlg : public DTEPEditDlgS
     void init();
     void readGeneral();
     void readPages();
+    void readParserRules();
+    
     void writeGeneral(KConfig *config);
     void writePages(KConfig *config);
+    void writeParserRules(KConfig *config);
     
   QString m_descriptionFile;
   KConfig *m_config;

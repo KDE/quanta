@@ -883,7 +883,7 @@
                                         <property name="name">
                                             <cstring>unnamed</cstring>
                                         </property>
-                                        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                                        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="7">
                                             <property name="name">
                                                 <cstring>xmlStyleTags</cstring>
                                             </property>
@@ -894,7 +894,7 @@
                                                 <bool>true</bool>
                                             </property>
                                         </widget>
-                                        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+                                        <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="7">
                                             <property name="name">
                                                 <cstring>useCommonRules</cstring>
                                             </property>
@@ -905,20 +905,94 @@
                                                 <bool>true</bool>
                                             </property>
                                         </widget>
-                                        <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+                                        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
                                             <property name="name">
-                                                <cstring>simpleBooleans</cstring>
+                                                <cstring>extendedBooleans</cstring>
                                             </property>
                                             <property name="text">
-                                                <string>Simple booleans</string>
-                                            </property>
-                                            <property name="checked">
-                                                <bool>true</bool>
+                                                <string>Extended booleans</string>
                                             </property>
                                         </widget>
-                                        <widget class="KLineEdit" row="1" column="1">
+                                        <widget class="KLineEdit" row="3" column="6">
                                             <property name="name">
-                                                <cstring>specialAreaNamesEdit</cstring>
+                                                <cstring>falseEdit</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="sizePolicy">
+                                                <sizepolicy>
+                                                    <hsizetype>2</hsizetype>
+                                                    <vsizetype>0</vsizetype>
+                                                    <horstretch>0</horstretch>
+                                                    <verstretch>0</verstretch>
+                                                </sizepolicy>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="3" column="4">
+                                            <property name="name">
+                                                <cstring>trueEdit</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="sizePolicy">
+                                                <sizepolicy>
+                                                    <hsizetype>2</hsizetype>
+                                                    <vsizetype>0</vsizetype>
+                                                    <horstretch>0</horstretch>
+                                                    <verstretch>0</verstretch>
+                                                </sizepolicy>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="3" column="5">
+                                            <property name="name">
+                                                <cstring>textLabel39</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>False:</string>
+                                            </property>
+                                            <property name="alignment">
+                                                <set>AlignVCenter|AlignRight</set>
+                                            </property>
+                                        </widget>
+                                        <widget class="QLabel" row="3" column="3">
+                                            <property name="name">
+                                                <cstring>textLabel38</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>True:</string>
+                                            </property>
+                                            <property name="alignment">
+                                                <set>AlignVCenter|AlignRight</set>
+                                            </property>
+                                        </widget>
+                                        <spacer row="3" column="2">
+                                            <property name="name">
+                                                <cstring>spacer12</cstring>
+                                            </property>
+                                            <property name="orientation">
+                                                <enum>Horizontal</enum>
+                                            </property>
+                                            <property name="sizeType">
+                                                <enum>Expanding</enum>
+                                            </property>
+                                            <property name="sizeHint">
+                                                <size>
+                                                    <width>40</width>
+                                                    <height>20</height>
+                                                </size>
+                                            </property>
+                                        </spacer>
+                                        <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="6">
+                                            <property name="name">
+                                                <cstring>specialAreasEdit</cstring>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="0" column="0">
@@ -932,6 +1006,11 @@
                                                 <cstring>kLineEdit11</cstring>
                                             </property>
                                         </widget>
+                                        <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="6">
+                                            <property name="name">
+                                                <cstring>specialAreaNamesEdit</cstring>
+                                            </property>
+                                        </widget>
                                         <widget class="QLabel" row="1" column="0">
                                             <property name="name">
                                                 <cstring>textLabel28</cstring>
@@ -943,9 +1022,17 @@
                                                 <cstring>kLineEdit12</cstring>
                                             </property>
                                         </widget>
-                                        <widget class="KLineEdit" row="0" column="1">
+                                        <widget class="QLabel" row="2" column="0">
                                             <property name="name">
-                                                <cstring>specialAreasEdit</cstring>
+                                                <cstring>textLabel40</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>Special tags:</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="6">
+                                            <property name="name">
+                                                <cstring>specialTagsEdit</cstring>
                                             </property>
                                         </widget>
                                     </grid>
@@ -1468,6 +1555,30 @@
         <receiver>DTEPEditDlgS</receiver>
         <slot>slotFamilyChanged(int)</slot>
     </connection>
+    <connection>
+        <sender>extendedBooleans</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel38</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>extendedBooleans</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>trueEdit</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>extendedBooleans</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>textLabel39</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>extendedBooleans</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>falseEdit</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>tabWidget</tabstop>
@@ -1476,11 +1587,11 @@
     <tabstop>inheritsCombo</tabstop>
     <tabstop>typeCombo</tabstop>
     <tabstop>caseSensitive</tabstop>
-    <tabstop>urlEdit</tabstop>
-    <tabstop>doctypeEdit</tabstop>
+    <tabstop>topLevel</tabstop>
     <tabstop>toolbarFolderEdit</tabstop>
     <tabstop>toolbarsEdit</tabstop>
-    <tabstop>topLevel</tabstop>
+    <tabstop>urlEdit</tabstop>
+    <tabstop>doctypeEdit</tabstop>
     <tabstop>enablePage1</tabstop>
     <tabstop>pageTitleEdit1</tabstop>
     <tabstop>groupsEdit1</tabstop>
@@ -1507,7 +1618,10 @@
     <tabstop>membersAfterEdit</tabstop>
     <tabstop>specialAreasEdit</tabstop>
     <tabstop>specialAreaNamesEdit</tabstop>
-    <tabstop>simpleBooleans</tabstop>
+    <tabstop>specialTagsEdit</tabstop>
+    <tabstop>extendedBooleans</tabstop>
+    <tabstop>trueEdit</tabstop>
+    <tabstop>falseEdit</tabstop>
     <tabstop>xmlStyleTags</tabstop>
     <tabstop>useCommonRules</tabstop>
     <tabstop>enableMinusInWords</tabstop>
