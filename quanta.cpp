@@ -656,7 +656,10 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 {
   Document *newWrite = dynamic_cast<Document *>(w);
 
-  if (!newWrite) return;
+  if (!newWrite)
+  {
+    return;
+  }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
   newWrite->checkDirtyStatus();
   if (newWrite != view->oldWrite)
@@ -2584,7 +2587,7 @@ int QuantaApp::currentEditorIfNum() const
     return view->write()->editIf->editInterfaceNumber();
   } else
   {
-    return -1;
+    return view->oldWrite->editIf->editInterfaceNumber();
   }
 }
 
@@ -2596,7 +2599,7 @@ QString QuantaApp::currentURL() const
     return view->write()->url().url();
   } else
   {
-    return "";
+    return view->oldWrite->url().url();
   }
 }
 
