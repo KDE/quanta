@@ -36,6 +36,7 @@
 #include "../document.h"
 
 //kde includes
+#include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
 
@@ -66,7 +67,6 @@ bool Parser::scriptParser(Node *startNode, DTDStruct *dtd)
   
   int pos = 0;
   int pos2;
-  int parsingDTDIndex = 0;
   int col = startNode->tag->structBeginStr.length();
   int bl, bc, el, ec;
   int node_bl, node_bc, node_el, node_ec;
@@ -94,15 +94,7 @@ bool Parser::scriptParser(Node *startNode, DTDStruct *dtd)
         bc = node_bc + pos;
       }
       //What is the closing string?
-      for (uint i = 0; i < dtd->specialAreaBegin.count(); i++)
-      {
-        if (dtd->specialAreaBegin[i] == foundText)
-        {
-          specialEndStr = dtd->specialAreaEnd[i];
-          parsingDTDIndex = i;
-          break;
-        }
-      }
+      specialEndStr = dtd->specialAreas[foundText];
       pos2 = text.find(specialEndStr, pos);
       if (pos2 != -1) 
       {          
@@ -124,7 +116,7 @@ bool Parser::scriptParser(Node *startNode, DTDStruct *dtd)
         tag->setStr(s);
         tag->setTagPosition(bl, bc, el, ec);
         tag->single = true;
-        tag->parsingDTDName = dtd->specialAreaNames[parsingDTDIndex];
+        tag->parsingDTDName = dtd->specialAreaNames[foundText];
         tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
         tag->structBeginStr = foundText;
         Node *node = new Node(startNode);
@@ -159,7 +151,7 @@ Node *Parser::newParse(Document *w)
   t.start();
 
   write = w;
-  m_dtd = dtds->find(w->parsingDTD()); 
+  m_dtd = w->defaultDTD(); 
   //first parse as an XML document
   QString textLine;
   int line, col;
@@ -168,7 +160,6 @@ Node *Parser::newParse(Document *w)
   int tagStartPos, specialStartPos;
   int maxLine = w->editIf->numLines() - 1;
   int lastLineLength = w->editIf->lineLength(maxLine);
-  int parsingDTDIndex = -1; //the index inside specialAreaNames or specialTagNames
   bool nodeFound = false;
   bool goUp;
   Node *rootNode = 0L;
@@ -187,17 +178,7 @@ Node *Parser::newParse(Document *w)
     {
       tagStartLine = line;
       QString foundText = m_dtd->specialAreaStartRx.cap();
-      QString specialEndStr;
-      for (uint i = 0; i < m_dtd->specialAreaBegin.count(); i++)
-      {
-        if (m_dtd->specialAreaBegin[i] == foundText)
-        {
-          specialEndStr = m_dtd->specialAreaEnd[i];
-          parsingDTDIndex = i;
-          break;
-        }
-      }
-      
+      QString specialEndStr = m_dtd->specialAreas[foundText];
       int pos = specialStartPos + foundText.length();
       tagEndCol = lastLineLength;
       while (line < maxLine)
@@ -227,7 +208,7 @@ Node *Parser::newParse(Document *w)
       tag->type = Tag::NeedsParsing;
       tag->setWrite(w);
       tag->single = true;
-      tag->parsingDTDName = m_dtd->specialAreaNames[parsingDTDIndex];
+      tag->parsingDTDName = m_dtd->specialAreaNames[foundText];
       tag->name = i18n("%1 block").arg(tag->parsingDTDName.upper());
       tag->structBeginStr = foundText;
       
@@ -282,8 +263,7 @@ Node *Parser::newParse(Document *w)
             tag->name.truncate(tag->name.length() - 1);
       }
       
-      int tagPos = m_dtd->specialTags.findIndex(tag->name.lower());
-      if (tagPos != -1)
+      if (m_dtd->specialTags.contains(tag->name.lower()))
       {
         QRegExp endRx;
         endRx.setPattern("/"+tag->name+"\\s*>");
@@ -294,9 +274,7 @@ Node *Parser::newParse(Document *w)
           QString structBeginStr = tagStr;
           tagEndLine = el;
           tagEndCol = ec;
-          QString s = tag->attributeValue(m_dtd->specialTagNames[tagPos]);
-          if (s.isEmpty())
-              s = i18n("unknown");
+          QString s = tag->attributeValue(m_dtd->specialTags[tag->name.lower()]);
           delete tag;
           tag = new Tag();
           tag->setTagPosition(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
@@ -448,20 +426,9 @@ Node *Parser::newParse(Document *w)
 
 void Parser::parseInside(Node *startNode)
 {
-
- const QString quotationStr = "\\\\\"|\\\\'";
-  
- QRegExp commentsRx;
  DTDStruct *dtd = dtds->find(startNode->tag->parsingDTDName);
  if (!dtd) 
     dtd = m_dtd;  //fallback
- if (dtd->commentsRxStr.isEmpty())
- {
-   commentsRx.setPattern("("+quotationStr+")");
- } else
- {
-   commentsRx.setPattern("("+dtd->commentsRxStr+"|"+quotationStr+")");
- }
  
  QString str = startNode->tag->tagStr();
  QString tagStr = str;
@@ -477,37 +444,29 @@ void Parser::parseInside(Node *startNode)
  {
     int col = 0;
     QString specialEndStr;
-      while (pos != -1)
+    while (pos != -1)
+    {
+      pos = str.find(dtd->specialAreaStartRx, col); 
+      if (pos != -1)
       {
-        pos = str.find(m_dtd->specialAreaStartRx, col); //FIXME: m_dtd nem jo...
-        if (pos != -1)
+        specialEndStr = dtd->specialAreas[dtd->specialAreaStartRx.cap()];
+        l = str.find(specialEndStr, pos);
+        for (int j = pos; j < (int)(l + specialEndStr.length()) ; j++)
         {
-          QString foundText = m_dtd->specialAreaStartRx.cap();
-          for (uint i = 0; i < m_dtd->specialAreaBegin.count(); i++)
-          {
-            if (m_dtd->specialAreaBegin[i] == foundText)
-            {
-              specialEndStr = m_dtd->specialAreaEnd[i];
-              break;
-            }
-          }
-          l = str.find(specialEndStr, pos);
-          for (int j = pos; j < l ; j++)
-          {
-            str[j] = ' ';
-          }
-          col = l;
+          str[j] = ' ';
         }
+        col = l;
       }
+    }
   }
      
  pos = 0; 
  while (pos != -1)
  {
-   pos = commentsRx.search(str, pos);
+   pos = dtd->commentsRx.search(str, pos);
    if (pos != -1)
    {
-    l = commentsRx.matchedLength();
+    l = dtd->commentsRx.matchedLength();
     for (int i = pos; i < pos + l ; i++)
     {
       str[i] = ' ';
@@ -533,8 +492,6 @@ void Parser::parseInside(Node *startNode)
  
  //kdDebug(24000) << "str: " << str << "\n";
  
-  QRegExp keywordRx(dtd->structKeywordsRx);
-  QRegExp startEndRx(dtd->structRx);
   QString s, name;
   pos = 0;
   int lastPos = startNode->tag->structBeginStr.length();
@@ -567,13 +524,13 @@ void Parser::parseInside(Node *startNode)
   }
   while (pos != -1)
   {
-    pos  = startEndRx.search(str, lastPos);
+    pos  = dtd->structRx.search(str, lastPos);
     rootNode->tag->endPos(el, ec);
     if (pos != -1)
     {
-      if (startEndRx.cap() == dtd->structBeginStr)
+      if (dtd->structRx.cap() == dtd->structBeginStr)
       {   
-        startPos = keywordRx.searchRev(str, pos);
+        startPos = dtd->structKeywordsRx.searchRev(str, pos);
         findStruct = true;
       } else 
       {
@@ -596,7 +553,7 @@ void Parser::parseInside(Node *startNode)
       if (!s.simplifyWhiteSpace().isEmpty())
       {
         tag = new Tag();
-        tag->setStr(s.replace(commentsRx,"").stripWhiteSpace());
+        tag->setStr(s.replace(dtd->commentsRx,"").stripWhiteSpace());
         tag->setWrite(write);
         tag->setTagPosition(bLine, bCol, eLine, eCol);
         tag->type = Tag::Text;
@@ -620,9 +577,6 @@ void Parser::parseInside(Node *startNode)
           currentNode->next = node;
         }
         node->tag = tag;
-        
-        //scriptParser(node);
-        
         currentNode = node;
       } 
       lastPos = pos + 1;
@@ -638,10 +592,10 @@ void Parser::parseInside(Node *startNode)
         pos = 0;
         while (matchNum != 0 && pos != -1)
         {
-          pos = startEndRx.search(str, lastPos2);
+          pos = dtd->structRx.search(str, lastPos2);
           if (pos != -1)
           {
-            s = startEndRx.cap();       
+            s = dtd->structRx.cap();       
             if (s == dtd->structBeginStr) 
             {
               matchNum++;

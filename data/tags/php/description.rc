@@ -19,16 +19,17 @@ ScriptTagBorders = <? ?>, <* *>
 
 ScriptRegExp = (<\?.+\?>) | (<\*.+\*>)
 
+StructGroupsCount = 4
+
+[Parsing rules]
+AreaBorders = <? ?>, <* *>
+Tags = script(language)
+CommentsRx = //[^\n]*|/\*.*\*/
 StructKeywords = for;foreach;if;else;elseif;while;do;switch;declare;function;class
 StructBeginStr = {
 StructEndStr = }
 StructRx = \\{|\\}
-StructGroupsCount = 4
-
-CommentsRx = //[^\n]*|/\*.*\*/
-
-[Parsing rules]
-May_Contain = php
+MayContain = php
 
 
 [StructGroup_1]

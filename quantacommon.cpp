@@ -52,6 +52,7 @@ KDirWatch *fileWatcher;
 KProgress *progressBar;
 
 const QString toolbarExtension = ".toolbar.tgz";
+const QRegExp newLineRx("\n");
 
 QuantaCommon::QuantaCommon(){
 }

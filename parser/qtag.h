@@ -28,11 +28,14 @@
   */
 //qt includes
 #include <qdict.h>
+#include <qmap.h>
 #include <qptrlist.h>
 #include <qstringlist.h>
 #include <qregexp.h>
 
 //app includes
+
+class QTag;
 
 //an attribute of a tag looks like:
 typedef struct Attribute{
@@ -42,11 +45,21 @@ typedef struct Attribute{
         QString defaultValue; //the default value
         QString status;       // "optional", "required","implied"
       };
+      
+//the groups in structure tree are defined with the help of:      
+typedef struct StructTreeGroup{
+        QString name;        //the name of the group
+        QString noName;      //the text when there are no elements in the group
+        QString icon;        //the icon of the group
+        QRegExp searchRx;    //regular experssion to help us find the group - for pseudo DTDs     
+        QRegExp clearRx;     //clear the text matched from the result of the searchRx search - for pseudo DTDs
+        QString tag;         //tags belonging to this group - for real DTDs
+        QStringList attributes; //the attributes of the above tag to be displayed - for real DTDs
+      };
 
 typedef QPtrList<Attribute> AttributeList;
 typedef QDict<AttributeList> AttributeListDict;
 
-class QTag;
 typedef QDict<QTag> QTagList;
 
 enum DTDFamily{Unknown = 0, Xml, Script};
@@ -66,10 +79,14 @@ typedef struct DTDStruct
      QTagList* tagsList;              //the list of all defined tags in the DTD
      QString fileName;                //the DTD decription.rc with path
      AttributeListDict* commonAttrs;  //the attributes of the common groups
+     
+//TODO: These are obsolete. Remove them!!     
      QString scriptName;              //the name that can be the value of <script language=""> attribute
      QString scriptRegExpStr;
      QStringList scriptTagStart;
      QStringList scriptTagEnd;
+//End of TODO     
+     
      QString booleanAttributes;       //simple or extended <tag booleanAttr> or <tag booleanAttr="1">
      QString booleanTrue;             //"true" or "1" or whatever
      QString booleanFalse;            //"false" or "0" or whatever
@@ -77,25 +94,73 @@ typedef struct DTDStruct
      QString defaultAttrType;         //"input", "string" or whatever
      
 /****************** FOR THE NEW PARSER **********************/     
-     //special, not to be parsed areas. It is the area of the nested DTD's (script, css) and
-     //special area like comments
-     QStringList specialAreaBegin;    
-     QStringList specialAreaEnd;
+
+/* Special, not to be parsed areas. It is the area of the nested DTD's 
+ (script, css) and special areas like comments. Special areas can be in form:
+  <begin_str end_str> or they can be inside special tags, like 
+  <special_tag> </special_tag>.  
+*/ 
+
+/* The starting and closing strings of a special area. For PHP the special areas 
+   are <? ?> and <* *>, so the entries are (<?,?>),(<*,*>).
+*/
+     QMap<QString, QString> specialAreas;    
+    
+/* To which DTD this special area belongs. It may be a non-dtd name, like
+   "comment", which is treated as a special case. 
+   Entries are in for of (<?,php) or (<!--,comment).
+*/
+     QMap<QString, QString> specialAreaNames;
+    
+/* A regular expression which matches the starting strings of all the 
+   possible special areas.
+*/
      QRegExp     specialAreaStartRx;
-     QStringList specialAreaNames;
-     
-     QStringList specialTags;
-     QStringList specialTagNames;
-     
+
+/* For each special tag name, holds an attribute name. This attribute is used to
+   figure out the DTD which is valid in the special tag area. 
+   E.g for the <script language="php">, the entry is "script"->"language".  
+   Special tags are skipped during parsing and parsed later according to
+   their DTD definition.
+*/
+     QMap<QString, QString> specialTags;  
+
+/* A list of DTDs that can be present inside the DTD. 
+   For each DTD specified here the definitionAreaBegin/definitionAreaEnd is 
+   copied to specialAreaBegin/specialAreaEnd (and the specialAreaStartRx is
+   updated) and the definitionTags are added to the specialTags.
+   Basicly this means that we use the DTD definitions when building
+   the special area and tag definitions.
+*/
      QStringList insideDTDs;
      
-     QString     commentsRxStr;
+/* The definition tags for this DTD in the same for as the above. */     
+     QMap<QString, QString> definitionTags;
+
+/* The beginning and end string of the definition areas for this DTD. 
+   It is stored in (area_begin_str,area_end_str) pairs. E.g (<?,?>)
+*/
+     QMap<QString, QString> definitionAreas;
+     
+/* Regular experssion to match the possible comment types */     
+     QRegExp commentsRx;
+          
+/* How does a structure starts in this DTD. Eg. "{" or "begin".*/     
+     QString structBeginStr;   
+/* How does a structure ends in this DTD. Eg. "}" or "end".*/     
+     QString structEndStr;
+/* A regular experssion to match the structe begin or end. */
+     QRegExp structRx;
+/* Regular experssion to match the possible keywords that can appear before
+   a structure, like "function", "for", etc. */
+     QRegExp structKeywordsRx;  
+     
+/* A list of structure tree groups definition */     
+     QValueList<StructTreeGroup> structTreeGroups;     
 /****************** END FOR THE NEW PARSER **********************/
      
-     QString structKeywordsRx;        //regular expression to match the keywords that can appear before a structrue
-     QString structRx;
-     QString structBeginStr;
-     QString structEndStr;
+     QString structKeywordsRxStr;        //regular expression to match the keywords that can appear before a structrue
+     QString structRxStr;
      
      QStringList structGroups;        //group names to appear at the top of the Structure Tree in form of "Name;No Name"
      QStringList groupIcons;

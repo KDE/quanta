@@ -41,6 +41,8 @@ extern Parser *parser;
 extern KDirWatch *fileWatcher;
 
 extern const QString toolbarExtension;
+extern const QRegExp newLineRx;
+
 
 extern KProgress *progressBar;
 extern QuantaApp *quantaApp;

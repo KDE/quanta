@@ -72,7 +72,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *p_node, QString name, 
 		setText(0,"");
 	}*/
 	
-	if ( sname == "br") {
+	if ( sname.lower() == "br") {
 		setPixmap( 0, UserIcon("tag_br_small") );
 		setText(0,"");
 	} else

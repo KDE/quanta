@@ -167,7 +167,7 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
   }
   if (dtd->family == Script)
   {
-    QRegExp keywordRx(dtd->structKeywordsRx);
+    QRegExp keywordRx(dtd->structKeywordsRxStr);
     
     if (!tag) tag = findScriptText(dtd, line, col, keywordRx);
     if (!tag) tag = findStruct(dtd, line, col, keywordRx);
@@ -198,7 +198,7 @@ Tag *Document::findScriptText(DTDStruct *dtd, int line, int col, const QRegExp& 
   int eCol = col;
   Tag *tag = 0L;
   QString textLine;
-  QRegExp rx(dtd->structRx);
+  QRegExp rx(dtd->structRxStr);
 
   //find the structure begin or end string backward
   QString s = findRev(rx, line, col, bl, bc, el, ec);
@@ -272,7 +272,7 @@ Tag *Document::findStruct(DTDStruct *dtd,int line, int col, const QRegExp& keywo
   int eCol = 0;
   int bl, bc, el, ec;
 
-  QRegExp rx(dtd->structRx);
+  QRegExp rx(dtd->structRxStr);
 
   QString s = find(rx, line, col, bLine, bCol, eLine, eCol);
 

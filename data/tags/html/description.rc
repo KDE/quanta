@@ -117,10 +117,10 @@ Single Tag Style = html
 StructGroupsCount = 2
 
 [Parsing rules]
-May_Contain = php
 SpecialAreas = <!-- -->
 SpecialAreaNames = comment
 SpecialTags = script(language), style(type)
+MayContain = php
 
 [StructGroup_1]
 Name = Images

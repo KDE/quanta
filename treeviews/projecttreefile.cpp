@@ -36,10 +36,3 @@ ProjectTreeFile::ProjectTreeFile( ProjectTreeFolder *parent, QString name, const
 
 ProjectTreeFile::~ProjectTreeFile(){
 }
-
-void ProjectTreeFile::paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int alignment)
-{
-  QColorGroup mycg(cg);
-  QListViewItem::paintCell(p,mycg,column,width,alignment);
-}
-
