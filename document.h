@@ -91,8 +91,8 @@ public:
 
 
   QPoint getGlobalCursorPos();
-  QString find(const QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
-  QString findRev(const QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
+  QString find(const QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol, bool incremental = true);
+  QString findRev(const QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol, bool incremental = true);
   /** Get the view of the document */
   KTextEditor::View* view();
   /** Get the KTextEditor::Document of the document */
@@ -151,7 +151,7 @@ work correctly. */
 
   Tag *findXMLTag(int line, int col, bool forwardOnly = false, bool useSimpleRx = false);
   Tag *findScriptTag(int line, int col, QRegExp tagRx);
-  Tag *findText(int line, int col, bool forwardOnly = false);
+  Tag *findText(int line, int col, bool forwardOnly = false, bool useSimpleRx = false);
   /** Find the word until the first word boundary backwards */
   QString findWordRev(const QString& textToSearch);
 
@@ -167,9 +167,6 @@ work correctly. */
   Kate::Document *kate_doc;
   /** Hold the list of variables that are in the document (e.g $variable for PHP variables) */
   QStringList variableList;
-  QStringList includeList;
-  /** Hold the list of user tags (real or not, like functions) that are in the document*/
-  QTagList userTagList;
   Kate::View *kate_view;
 
 public slots:

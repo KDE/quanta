@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 #include <list>
-#include <cctype>
 
 //QT includes
 #include <qfile.h>
@@ -23,6 +22,7 @@
 #include <qtextstream.h>
 #include <qregexp.h>
 #include <qradiobutton.h>
+#include <qdatetime.h>
 
 // KDE includes
 #include <kapp.h>
@@ -40,6 +40,8 @@
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/wordwrapinterface.h>
 
+#include <kdebug.h>
+
 #include "parser/tag.h"
 #include "quantacommon.h"
 #include "document.h"
@@ -47,6 +49,8 @@
 #include "dialogs/dirtydlg.h"
 #include "project/project.h"
 #include "plugins/quantaplugininterface.h"
+
+#include <cctype>
 
 #define STEP 1
 Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
@@ -147,6 +151,11 @@ void Document::insertTag(QString s1,QString s2)
     according to dtd. If forwardOnly is true, the text is parsed from (p_line,p_col) forward.*/
 Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bool useSimpleRx )
 {
+/*
+  QTime t;
+  t.start();
+*/
+
   uint line;
   uint col;
 
@@ -163,7 +172,7 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
   if (dtd->family == Xml)
   {
     if (!tag) tag = findXMLTag(line, col, forwardOnly, useSimpleRx);
-    if (!tag) tag = findText(line, col, forwardOnly);
+    if (!tag) tag = findText(line, col, forwardOnly, useSimpleRx);
   }
   if (dtd->family == Script)
   {
@@ -187,6 +196,15 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
       }
     }
   }
+
+/*  
+  if (t.elapsed() > 10)
+  {
+    kdDebug(24000) << "DTD: " << dtd->nickName << " line: " << line << " col: " << col << " simple: "<< useSimpleRx << "\n";
+    kdDebug(24000) << "time: " << t.elapsed() <<"ms \n";
+  }
+*/
+  
   return tag;
 }
 
@@ -247,47 +265,6 @@ Tag *Document::findScriptText(int line, int col, const QRegExp& keywordRx)
     s = tagStr.stripWhiteSpace();
     if (!s.isEmpty() && s != " ")
     {
-/*    
-      s = find(QRegExp("(include|require)[\\s]+[^;]*(;|\\?>)"),bLine, bCol, bl, bc, el, ec);   
-      if (!s.isEmpty() && QuantaCommon::isBetween(bl, bc, bLine, bCol, eLine, eCol) == 0)
-      {
-        if (bLine == bl && bCol == bc)
-        {
-          eLine = el;
-          eCol = ec;
-        } else
-        {
-          eLine = bl;
-          eCol = bc-1;
-        }
-        if (s.endsWith("?>"))
-        {
-          eCol = eCol - 2;
-        }
-        if (eCol < 0)
-        {
-          eLine = (eLine >0)?eLine-1:0;
-          eCol = editIf->lineLength(eLine);
-        }        
-        tagStr = text(bLine, bCol, eLine, eCol);
-      }
-      s = tagStr.stripWhiteSpace();
-      if (!s.isEmpty() && s != " ")
-      {
-        tag = new Tag();
-        tag->setTagPosition(bLine, bCol, eLine, eCol);
-        tag->type = Tag::Text;
-        tag->name = "Text";
-        tag->single = true;
-        tag->setWrite(this);
-        tag->setStr(tagStr);
-      } else
-      {
-        tag = new Tag();
-        tag->setTagPosition(bLine, bCol, eLine, eCol);
-        tag->type = Tag::Skip;
-      }
-    */
       tag = new Tag();
       tag->setTagPosition(bLine, bCol, eLine, eCol);
       tag->type = Tag::Text;
@@ -326,11 +303,6 @@ Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
       bLine = bl;
       bCol = bc;
     }
-    
-    if (s == "include" || s == "require")
-    {      
-      s = find(QRegExp(";"), bLine, bCol, bl, bc, eLine, eCol);
-    }
 
     if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
     {
@@ -342,31 +314,6 @@ Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
       tag->setWrite(this);
       tag->setStr(tagStr);
       tag->name = tagStr.left(tagStr.find("{")).simplifyWhiteSpace();
-      QRegExp fnRx = QRegExp("function[\\s]*",false);
-      if (tag->name.contains(fnRx)) //it is a function
-      {
-        QString name = tag->name;
-        name.replace(fnRx,"");
-        QString paramStr = name.mid(name.find('(')+1);
-        paramStr = paramStr.left(paramStr.find(')',-1));
-        name = name.left(name.find('(')).stripWhiteSpace();
-        if (!userTagList.find(name))
-        {
-          QTag *newTag = new QTag();
-          newTag->setName(name);
-          newTag->type = "function";
-          newTag->parentDTD = dtds->find(m_parsingDTD);
-          QStringList params = QStringList::split(",",paramStr);
-          for (uint i = 0; i < params.count(); i++)
-          {
-            Attribute *attr = new Attribute;
-            attr->name = params[i].stripWhiteSpace();
-            newTag->addAttribute(attr);           
-            delete attr;
-          }
-          userTagList.insert(name, newTag);
-        }
-      }
     }
   }
 
@@ -375,6 +322,8 @@ Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
 
 Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
 {
+//  kdDebug(24000) << "Document::findXMLTag entered \n";
+
   Tag *tag = 0L;
 //  QRegExp quotedTextRx("(((\\(?=[\"]))\")*[^\"]*)*");
   int bLine, bCol, eLine, eCol;
@@ -388,7 +337,7 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
   if (!forwardOnly)
   {
     //search backwards
-    foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
+    foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol, !useSimpleRx);
     if (!foundText.isEmpty())
     {
       if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
@@ -407,7 +356,7 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
   //if not found, search forward
   if (!tagFound)
   {
-   foundText = find(xmlTagRx, sLine, sCol, bLine, bCol, eLine, eCol);
+   foundText = find(xmlTagRx, sLine, sCol, bLine, bCol, eLine, eCol, !useSimpleRx);
    if (!foundText.isEmpty() &&
        QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
    {
@@ -425,31 +374,9 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
       if (tag->name == "!--") tag->type = Tag::Comment;
       if (scriptBeginRx.search(tag->name) == 0) tag->type = Tag::ScriptTag;
       if (foundText.right(2) == "/>") tag->single = true;
-
-      if (tag->type == Tag::XmlTag &&
-          !QuantaCommon::isKnownTag(m_parsingDTD, tag->name) )
-      {
-        QTag *newTag = userTagList.find(tag->name);
-        bool insertNew = !newTag;     
-        if (insertNew)
-        {
-          newTag = new QTag();
-          newTag->setName(tag->name);
-          newTag->parentDTD = dtds->find(m_parsingDTD);
-        }
-        for (int i = 0; i < tag->attrCount; i++)
-        {
-           Attribute *attr = new Attribute;
-           attr->name = tag->attribute(i);
-           attr->values.append(tag->attributeValue(i));
-           newTag->addAttribute(attr);
-           delete attr;
-        }
-        if (insertNew)
-            userTagList.insert(tag->name, newTag);
-      }
   }
 
+ // kdDebug(24000) << "Document::findXMLTag exited \n";
   return tag;
 }
 
@@ -502,8 +429,11 @@ Tag *Document::findScriptTag(int line, int col,  QRegExp tagRx)
 }
 
 //findXMLTag must be called before
-Tag *Document::findText(int line, int col, bool forwardOnly)
+Tag *Document::findText(int line, int col, bool forwardOnly, bool useSimpleRx)
 {
+
+ // kdDebug(24000) << "Document::findText entered \n";
+
   int bLine = 0;
   int bCol = 0;
   int eLine = 0;
@@ -513,11 +443,12 @@ Tag *Document::findText(int line, int col, bool forwardOnly)
   t_bLine = t_bCol = t_eLine = t_eCol = -1;
   QString foundText;
   QRegExp xmlTagRx("<(?:[^>]*(?:\"(?:[^\"]*(?:<[^\"]*>)+[^\"<]*)*\")*(?:'(?:[^']*(?:<[^']*>)+[^'<]*)*')*[^>]*)*>",false);
+  if (useSimpleRx) xmlTagRx.setPattern("<[^<>]+>");
 
   if (!forwardOnly)
   {
     //search backwards
-    foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
+    foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol, !useSimpleRx);
     if (!foundText.isEmpty())
     {
       t_bCol = eCol+1;
@@ -537,7 +468,7 @@ Tag *Document::findText(int line, int col, bool forwardOnly)
     t_bLine = line;
     t_bCol = col;
   }
-  foundText = find(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
+  foundText = find(xmlTagRx, line, col, bLine, bCol, eLine, eCol, !useSimpleRx);
   if (!foundText.isEmpty())
   {
     t_eCol = bCol-1;
@@ -568,6 +499,8 @@ Tag *Document::findText(int line, int col, bool forwardOnly)
     tag->setWrite(this);
     tag->name = "Text";
   }
+
+ //kdDebug(24000) << "Document::findText exited \n";
  return tag;
 }
 
@@ -993,16 +926,16 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
       handled = scriptAutoCompletion(dtd, line, column, string);
     }
 
-    if (!handled)
+    DTDStruct *default_dtd = defaultDTD();
+    if (!handled && dtd != default_dtd)
     {
-      dtd = defaultDTD();
-      if (dtd->family == Xml)
+      if (default_dtd->family == Xml)
       {
-        xmlAutoCompletion(dtd, line, column, string);
+        xmlAutoCompletion(default_dtd, line, column, string);
       }
-      if (dtd->family == Script)
+      if (default_dtd->family == Script)
       {
-        scriptAutoCompletion(dtd, line, column, string);
+        scriptAutoCompletion(default_dtd, line, column, string);
       }
     }
   }
@@ -1020,8 +953,7 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
   tagName = getTagNameAt(dtd, line, column);
 
   tag = QuantaCommon::tagFromDTD(dtd, tagName);
-  if (!tag) tag = userTagList.find(tagName);
-  
+
   if ( !tag || tagName.isEmpty() )  //we are outside of any tag
   {
     if ( string == "<" )  // a tag is started
@@ -1127,15 +1059,6 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(DTDStruct 
     }
   }
 
-  QDictIterator<QTag> it2(userTagList);
-  for( ; it2.current(); ++it2 )
-  {
-    if (it2.current()->name().upper().startsWith(word))
-    {
-      tagNameList += it2.current()->name();
-    }
-  }
-  
   tagNameList.sort();
   for (uint i = 0; i < tagNameList.count(); i++)
   {
@@ -1153,17 +1076,12 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
   KTextEditor::CompletionEntry completion;
   QTag *tag = QuantaCommon::tagFromDTD(dtd, tagName);
-  if (!tag)
-  {
-    QString searchForTag = (dtd->caseSensitive) ? tagName : tagName.upper();
-    tag = userTagList.find(searchForTag);
-  }
   startsWith = startsWith.upper();
   if (tag)
   {
     switch (dtd->family)
     {
-       case Xml:
+      case Xml:
             {
               completion.type = "attribute";
               completion.userdata = startsWith+"|"+tag->name();
@@ -1193,7 +1111,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
               }
               break;
             }
-       case Script:
+      case Script:
             {
               completion.userdata = startsWith+"|"+tag->name();
               completion.type = "script";
@@ -1343,7 +1261,6 @@ bool Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const 
    QString textLine = editIf->textLine(line).left(column);
    QString word = findWordRev(textLine);
    QTag *tag = dtd->tagsList->find(word);
-   if (!tag) tag = userTagList.find(word);
    if (tag)
    {
      QStringList argList;
@@ -1401,32 +1318,40 @@ QString Document::text(int bLine, int bCol, int eLine, int eCol)
  return t;
 }
 
-QString Document::find(const QRegExp& regExp, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
+QString Document::find(const QRegExp& regExp, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol, bool incremental)
 {
 
  QRegExp rx = regExp;
  QString foundText = "";
  int maxLine = editIf->numLines();
- QString textToSearch = text(sLine, sCol, sLine, editIf->lineLength(sLine));
  int pos;
- int line = sLine;  
- do
+ QString textToSearch;
+
+ if (incremental)
  {
-   pos = rx.search(textToSearch);
-   if (pos == -1)
+   int line = sLine;
+   textToSearch = text(sLine, sCol, sLine, editIf->lineLength(sLine));
+   do
    {
-/*     if (line + STEP < maxLine)
+     pos = rx.search(textToSearch);
+     if (pos == -1)
      {
-       line += STEP;
-       textToSearch.append("\n"+text(line - STEP + 1, 0, line, editIf->lineLength(line)));
-     } else*/
-     {
-      line ++;
-      if (line < maxLine) textToSearch.append("\n"+editIf->textLine(line));
+  //     if (line + STEP < maxLine)
+  //     {
+  //       line += STEP;
+  //       textToSearch.append("\n"+text(line - STEP + 1, 0, line, editIf->lineLength(line)));
+  //     } else
+       {
+        line ++;
+        if (line < maxLine) textToSearch.append("\n"+editIf->textLine(line));
+       }
      }
-   }
- } while (line < maxLine && pos == -1);
-// pos = rx.search(text(sLine, sCol, maxLine -1, 100));
+   } while (line < maxLine && pos == -1);    
+ } else
+ {
+   textToSearch = text(sLine, sCol, maxLine -1, editIf->lineLength(maxLine-1));
+ }
+ pos = rx.search(textToSearch);
  if (pos != -1)
  {
    foundText = rx.cap();
@@ -1447,47 +1372,67 @@ QString Document::find(const QRegExp& regExp, int sLine, int sCol, int& fbLine, 
    }
    if (fbCol < 0) fbCol = 0;
    if (feCol < 0) feCol = 0;
-/*
+
    s = text(fbLine, fbCol, feLine, feCol);
    if (s != foundText) //debug, error
    {
      KMessageBox::error(this,"Found: "+foundText+"\nRead: "+s);
    }
-*/
+
  }
 
  return foundText;
 }
 
-QString Document::findRev(const QRegExp& regExp, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
+QString Document::findRev(const QRegExp& regExp, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol, bool incremental)
 {
  QRegExp rx = regExp;
  QString foundText = "";
  int pos = -1;
  int line = sLine;
- QString textToSearch = text(sLine, 0, sLine, sCol);
- do
+ QString textToSearch;
+
+ if (incremental)
  {
-   pos = rx.searchRev(textToSearch);
-   if (pos == -1)
+   textToSearch = text(sLine, 0, sLine, sCol);
+   do
    {
-/*     if (line - STEP >= 0)
+     pos = rx.searchRev(textToSearch);
+     if (pos == -1)
      {
-         textToSearch.prepend(text(line - STEP, 0, line - 1, editIf->lineLength(line-1)) + "\n");
-         line -= STEP;
-     } else */
-     {
-       line--;
-       if (line >=0) textToSearch.prepend(editIf->textLine(line) + "\n");
+  //     if (line - STEP >= 0)
+  //     {
+  //         textToSearch.prepend(text(line - STEP, 0, line - 1, editIf->lineLength(line-1)) + "\n");
+  //         line -= STEP;
+  //     } else
+       {
+         line--;
+         if (line >=0) textToSearch.prepend(editIf->textLine(line) + "\n");
+       }
      }
-   }
- } while (line >=0 && pos == -1);
+   } while (line >=0 && pos == -1);
+ } else
+ {
+   textToSearch = text(0, 0, sLine, sCol);
+ }
+ pos = rx.searchRev(textToSearch);
  if (pos != -1)
  {
    foundText = rx.cap();
+
+   int linesInFound = foundText.contains("\n");
+
+   if (incremental)
+   {
    fbLine = line;
    fbCol = pos;
-   int linesInFound = foundText.contains("\n");
+   } else
+   {
+    QString leftStr = textToSearch.left(pos);
+    fbLine = leftStr.contains('\n');
+    fbCol = pos - leftStr.findRev('\n') - 1;
+   }
+   
    feCol = foundText.length()-foundText.findRev("\n")-2;
    feLine = fbLine + linesInFound;
    if (linesInFound == 0)
@@ -1496,8 +1441,8 @@ QString Document::findRev(const QRegExp& regExp, int sLine, int sCol, int& fbLin
    }
    if (fbCol < 0) fbCol = 0;
    if (feCol < 0) feCol = 0;
-/*
-   QString s = text(fbLine, fbCol, feLine, feCol);
+
+/*   QString s = text(fbLine, fbCol, feLine, feCol);
    if (s != foundText) //debug, error
    {
      KMessageBox::error(this,"FindRev\nFound: "+foundText+"\nRead: "+s);
@@ -1741,31 +1686,23 @@ void Document::parseVariables()
  QString text = editIf->text();
 //TODO: Make general for all script languages
  int pos = 0;
- int pos2 = 0;
 
- QRegExp varRx("\\$+[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*",false);
- QRegExp inclRx("((?:include|require|include_once|require_once)[\\s]+[^;]*)(;|\\?>|\\n)");
+ QRegExp rx("\\$+[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*",false);
  QString variable;
 
  while (pos != -1)
  {
-   pos = varRx.search(text,pos);
+   pos = rx.search(text,pos);
    if (pos != -1)
    {
-     variable = varRx.cap();
+     variable = rx.cap();
      pos += variable.length();
      variable.replace(QRegExp("\\$"),"");
      if (!variableList.contains(variable))
      {
        variableList.append(variable);
      }
-   }
-   pos2 = inclRx.search(text, pos2);
-   if (pos2 != -1)
-   {
-    variable = inclRx.cap(1);
-    pos2 += inclRx.cap().length();
-    includeList.append(variable);
+
    }
  }
 
