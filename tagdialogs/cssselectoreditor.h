@@ -15,6 +15,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#ifndef CSSSELECTOREDITOR_H
+#define CSSSELECTOREDITOR_H
+
 #include "selectoreditors.h"
 
 /** @author Andrea Bergia */
@@ -39,3 +42,5 @@ protected:
 private:
 	bool code_inline;
 };
+
+#endif
