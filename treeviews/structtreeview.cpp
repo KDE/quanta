@@ -31,6 +31,7 @@
 // app includes
 #include "../parser/node.h"
 #include "../parser/parser.h"
+#include "../parser/qtag.h"
 #include "../document.h"
 #include "../resource.h"
 
@@ -110,7 +111,8 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 
   connect(this, SIGNAL(expanded(QListViewItem *)), SLOT(slotExpanded(QListViewItem *)));
   connect(this, SIGNAL(collapsed(QListViewItem *)), SLOT(slotCollapsed(QListViewItem *)));
-
+  
+  write = 0L;
 }
 
 
@@ -124,15 +126,25 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 
 	if ( !parent ) {
 		top = new StructTreeTag( this, i18n("Document Structure") );
-		images = new StructTreeTag( this, i18n("Images") );
-		images->setPixmap( 0, SmallIcon("image") );
-		links = new StructTreeTag( this, i18n("Links") );
-		links->setPixmap( 0, SmallIcon("www") );
+    if (m_parsingDTD->nickName.find("html", 0, false) != -1)
+    {
+  		images = new StructTreeTag( this, i18n("Images") );
+  		images->setPixmap( 0, SmallIcon("image") );
+  		links = new StructTreeTag( this, i18n("Links") );
+  		links->setPixmap( 0, SmallIcon("www") );
+    }
+    if (m_parsingDTD->family == Script)
+    {
+  		images = new StructTreeTag( this, i18n("Variables") );
+  		images->setPixmap( 0, SmallIcon("abs") );
+  		links = new StructTreeTag( this, i18n("Functions") );
+  		links->setPixmap( 0, UserIcon("mini-modules") );
+    }
 
 		createList(node, top, openLevel-1 );
 		top->setOpen( topOpened );
-		images->setOpen( imagesOpened );
-		links->setOpen( linksOpened );
+		if (images) images->setOpen( imagesOpened );
+		if (links) links->setOpen( linksOpened );
 		return;
 	}
   Node *currentNode = node;
@@ -146,11 +158,10 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
   {
    StructTreeTag *item = 0L;
    {
-     Document *w = currentNode->tag->write();
      if (currentNode->tag->type == Tag::XmlTag)// || currentNode->tag->type == "xmltagend")
      {
       //HTML specific tags
-      if (w->getDTDIdentifier().find("html", 0, false) != -1)
+      if (m_parsingDTD->nickName.find("html", 0, false) != -1)
       {
         if ( currentNode->tag->name.lower() == "img")
         {
@@ -179,6 +190,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
         text = text.left(70);
         text = text.replace( QRegExp("&nbsp;|\\n")," ");
         item = new StructTreeTag(parent,currentNode,text);
+
       }
       if ( currentNode->tag->type == Tag::Comment )
       {
@@ -194,6 +206,14 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
       }
       if ( currentNode->tag->type == Tag::ScriptStructureBegin )
       {
+        QString text = currentNode->tag->name;
+        QRegExp fnRx = QRegExp("function[\\s]*",false);
+        if (text.contains(fnRx))
+        {
+          text.replace(fnRx,"");
+          item = new StructTreeTag( links, currentNode, text);
+          linksCount++;
+        }
         item = new StructTreeTag(parent,currentNode,currentNode->tag->name);
       }
    }
@@ -228,6 +248,7 @@ void StructTreeView::deleteList()
 		delete links;
 		links = 0L;
 	}
+
 }
 
 /** repaint document structure */
@@ -235,11 +256,31 @@ void StructTreeView::slotReparse(Node* node, int openLevel)
 {
   deleteList();
 	imagesCount = linksCount = 0;
+  write = node->tag->write();
 	createList(node,0L,openLevel);
-	if ( !imagesCount )
-	  images->setText(0, i18n("No Images"));
-	if ( !linksCount )
-	  links->setText(0, i18n("No Links"));
+  if (m_parsingDTD->nickName.find("html", 0, false) != -1)
+  {
+  	if ( !imagesCount )
+  	  images->setText(0, i18n("No Images"));
+  	if ( !linksCount )
+  	  links->setText(0, i18n("No Links"));
+  } else
+    if (m_parsingDTD->family == Script)
+    {
+    	if ( !linksCount )
+    	  links->setText(0, i18n("No Functions"));
+
+     if ( write->variableList.count() )
+     {
+       for (int i = write->variableList.count()-1; i >=0; i--)
+       {
+         new StructTreeTag( images, write->variableList[i] );
+       }
+     } else
+     {
+       images->setText(0, i18n("No Variables"));
+     }
+    }  
   useOpenLevelSetting = false;
 }
 
@@ -424,7 +465,7 @@ void StructTreeView::showTagAtPos(int x, int y)
         int bLine, bCol, eLine, eCol;
         tag->beginPos(bLine,bCol);
         tag->endPos(eLine, eCol);
-        if (QuantaCommon::isBetween(x,y,bLine,bCol,eLine,eCol) == 0)
+        if (QuantaCommon::isBetween(x,y,bLine,bCol+1,eLine,eCol) == 0)
         {
          curTag = item;
         }
@@ -493,4 +534,7 @@ void StructTreeView::setParsingDTD(const QString dtdName)
     dtdMenu->setItemChecked(index, it.current()->name == dtdName); 
     index++;
   }
+  m_parsingDTD = dtds->find(dtdName); //this should always exist
 }
+
+

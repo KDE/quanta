@@ -143,6 +143,8 @@ work correctly. */
   QString parsingDTD();
   /** No descriptions */
   void setParsingDTD(const QString& dtdName);
+  /** No descriptions */
+  void parseVariables();
 
   bool oldstat;
   bool busy;
@@ -154,6 +156,8 @@ work correctly. */
   KTextEditor::CodeCompletionInterface *codeCompletionIf;
 
   Kate::Document *kate_doc;
+  /** Hold the list of variables that are in the document (e.g $variable for PHP variables) */
+  QStringList variableList;
   Kate::View *kate_view;
 
 public slots:
@@ -193,6 +197,8 @@ private:
   QString findWordRev(const QString& textToSearch);
   /** Brings up list of code completions */
   void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
+  /** Get list of possibile variable name completions */
+  QValueList<KTextEditor::CompletionEntry>* getVariableCompletions(DTDStruct *dtd, int line, int col);
   /** Get list of possibile tag name completions */
   QValueList<KTextEditor::CompletionEntry>* getTagCompletions(DTDStruct *dtd, int line, int col);
   /** Get list of possibile tag attribute completions */
@@ -217,6 +223,9 @@ protected: // Protected attributes
   Project *m_project;
   /** Parse the document according to this DTD. */
   QString m_parsingDTD;
+protected: // Protected methods
+  /** Returns true if the number of " (excluding \") inside text is even. */
+  bool evenQuotes(const QString &text);
 };
 
 #endif

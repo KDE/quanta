@@ -60,7 +60,8 @@ public:
 	bool imagesOpened;
 	bool linksOpened;
   bool useOpenLevelSetting;
-	
+
+
 public slots: // Public slots
   /** repaint document structure */
   void slotReparse(Node* node, int openLevel = 3 );
@@ -111,6 +112,10 @@ protected: // Protected methods
 protected slots: // Protected slots
   /** The treeview DTD  has changed to id. */
   void slotDTDChanged(int id);
+protected: // Protected attributes
+  /**  */
+  DTDStruct* m_parsingDTD;
+  Document *write;
 };
 
 #endif

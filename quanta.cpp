@@ -994,6 +994,8 @@ void QuantaApp::slotNewLineColumn()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse()
 {
+//TODO: This function is very ugly...
+  if (view->writeExists())view->write()->parseVariables();
   if (view->writeExists() && stabdock->isVisible())
   {
     Document *w = view->write();

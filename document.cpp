@@ -212,6 +212,7 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
   }
   if (dtd->family == Script)
   {
+    if (!tag) tag = findScriptText(line, col);
     if (!tag) tag = findScriptStruct(line, col);
     if (!tag)
     {
@@ -227,92 +228,82 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
         tag->setWrite(this);
       }
     }
-    if (!tag) tag = findScriptText(line, col);
   }
   return tag;
 }
 
 Tag *Document::findScriptText(int line, int col)
 {
-  int bLine = 0;
-  int bCol = 0;
-  int eLine = 0;
-  int eCol = 0;
+  int bl, bc, el, ec;
+  int bLine = line;
+  int bCol = col;
+  int eLine = line;
+  int eCol = col;
   Tag *tag = 0L;
-  int origLine = line;
-  int pos = -1;
   QString textLine;
+  QRegExp rx("\\{|\\}");
 
-  while (line >= 0 && pos == -1)
+  //find the first { or } backward
+  QString s = findRev(rx, line, col, bl, bc, el, ec);
+  if (!s.isEmpty())
   {
-    textLine = editIf->textLine(line);
-    if (line == origLine) textLine = textLine.left(col);
-    pos = textLine.findRev(QRegExp("\\{|\\}"));
-    if (pos == -1) line--;
+    bCol = bc +1;
+    bLine = bl;
   }
-  if (pos != -1)
+
+  //find the first { or } forward
+  s = find(rx, line, col, bl, bc, el, ec);
+  if (s.isEmpty())
   {
-    bLine = line;
-    bCol = pos + 1;
+    eLine = editIf->numLines()-1;
+    eCol = editIf->lineLength(eLine);
   }
-  line = origLine;
-  pos = -1;
-  int startCol = col;
-//search for the first { or }
-  while (line < (int) editIf->numLines() && pos == -1)
-  {
-    textLine = editIf->textLine(line);
-    pos = textLine.find(QRegExp("(\\{|\\})"), startCol);
-    startCol = 0;
-    if (pos == -1) line++;
-  }
-  if (pos != -1 && textLine[pos] == '{')  //search back for the first keyword
+  if ( s == "{")
   {
     //TODO: The keyword shouldn't be hardcoded but read from description.rc
-    QRegExp rx("\\b(for|foreach|if|else|elseif|while|do|switch|declare|function)\\b");
-    origLine = line;
-    int origPos = pos;
-    pos = -1;
-    while (line > 0 && pos == -1)
+    QRegExp keywordRx("\\b(for|foreach|if|else|elseif|while|do|switch|declare|function)\\b");
+
+    eLine = el;
+    eCol = ec - 1;
+    s = findRev(keywordRx, bl, bc, bl, bc, el, ec);
+    if (!s.isEmpty())
     {
-      textLine = editIf->textLine(line);
-      if (line == origLine) textLine = textLine.left(origPos);
-      pos = rx.searchRev(textLine);
-      if (pos == -1) line --;
+      eLine = bl;
+      eCol = bc - 1;
     }
-    if (line < bLine || (line == bLine && pos < bCol))
-    {
-      line = origLine;
-      pos = origPos;
-    }
-  }
-  eLine = line;
-  if (pos == -1)
-  {
-   eCol = textLine.length();
-   eLine = (line > 0)?line - 1 : 0;
+
   } else
+    if (s == "}")
+    {
+      eLine = el;
+      eCol = ec - 1;
+    }
+  
+  if (eCol < 0)
   {
-   eCol = pos-1;
-   if (eCol < col) eCol = col;
-   if (eCol < 0)
-   {
     eLine = (eLine >0)?eLine-1:0;
     eCol = editIf->lineLength(eLine);
-   }
   }
 
-  QString tagStr = text(bLine, bCol, eLine, eCol);
-  QString s = tagStr.stripWhiteSpace();
-  if (!s.isEmpty() && s != " ")
+  if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
   {
-    tag = new Tag();
-    tag->setTagPosition(bLine, bCol, eLine, eCol);
-    tag->type = Tag::Text;
-    tag->name = "Text";
-    tag->single = false;
-    tag->setWrite(this);
-    tag->setStr(tagStr);
+    QString tagStr = text(bLine, bCol, eLine, eCol);
+    s = tagStr.stripWhiteSpace();
+    if (!s.isEmpty() && s != " ")
+    {
+      tag = new Tag();
+      tag->setTagPosition(bLine, bCol, eLine, eCol);
+      tag->type = Tag::Text;
+      tag->name = "Text";
+      tag->single = true;
+      tag->setWrite(this);
+      tag->setStr(tagStr);
+    } else
+    {
+      tag = new Tag();
+      tag->setTagPosition(bLine, bCol, eLine, eCol);
+      tag->type = 100;
+    }
   }
   return tag;
 }
@@ -324,48 +315,37 @@ Tag *Document::findScriptStruct(int line, int col)
   int bCol = 0;
   int eLine = 0;
   int eCol = 0;
-  QString textLine;
-  int origLine = line;
-  int pos = -1;
-  int maxLine = editIf->numLines();
-  int startCol = col;
-  while (line < maxLine && pos == -1)
+  int bl, bc, el, ec;
+
+  QRegExp rx("\\{|\\}");
+
+  QString s = find(rx, line, col, bLine, bCol, eLine, eCol);
+
+  if (s != "}" && !s.isEmpty())
   {
-    textLine = editIf->textLine(line);
-    pos = textLine.find(QRegExp("\\{|\\}"), startCol);
-    if (pos == -1) line++;
-    startCol = 0;
+    //TODO: The keyword shouldn't be hardcoded but read from description.rc
+    QRegExp keywordRx("\\b(for|foreach|if|else|elseif|while|do|switch|declare|function)\\b");
+
+    s = findRev(keywordRx, bLine, bCol, bl, bc, el, ec);
+    if (!s.isEmpty())
+    {
+      bLine = bl;
+      bCol = bc;
+    }
+
+    if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
+    {
+      QString tagStr = text(bLine, bCol, eLine, eCol);
+      tag = new Tag();
+      tag->setTagPosition(bLine, bCol, eLine, eCol);
+      tag->type = Tag::ScriptStructureBegin;
+      tag->single = false;
+      tag->setWrite(this);
+      tag->setStr(tagStr);
+      tag->name = tagStr.left(tagStr.find("{")).simplifyWhiteSpace();
+    }
   }
-  if (pos == -1 || textLine[pos] == '}') return 0L;
-  eLine = line;
-  eCol = pos;
-//now search back for a keyword
-//TODO: The keyword shouldn't be hardcoded but read from description.rc
-  QRegExp rx("\\b(for|foreach|if|else|elseif|while|do|switch|declare|function)\\b");
-  int savedLine = line;
-  pos = -1;
-  while (line >=0 && pos == -1)
-  {
-    textLine = editIf->textLine(line);
-    if (line == savedLine) textLine = textLine.left(eCol);
-    pos = rx.searchRev(textLine);
-    if (pos == -1) line--;
-  }
-  if (pos == -1) return 0L;
-  if (line > origLine || (line == origLine && pos > col))
-  {
-    return 0L; // the keyword starts AFTER the cursor position
-  }
-  bLine = line;
-  bCol = pos;
-  QString tagStr = text(bLine, bCol, eLine, eCol);
-  tag = new Tag();
-  tag->setTagPosition(bLine, bCol, eLine, eCol);
-  tag->type = Tag::ScriptStructureBegin;
-  tag->single = false;
-  tag->setWrite(this);
-  tag->setStr(tagStr);
-  tag->name = tagStr.left(tagStr.find("{")).simplifyWhiteSpace();
+
   return tag;
 }
 
@@ -600,7 +580,7 @@ void Document::insertAttrib(QString attr)
 /**  */
 void Document::selectText(int x1, int y1, int x2, int y2 )
 {
-   selectionIf->setSelection(x1, y1, x2, y2);
+  selectionIf->setSelection(x1, y1, x2, y2);
 }
 
 
@@ -987,6 +967,31 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
  return handled;
 }
 
+/** Return a list of possible variable name completions */
+QValueList<KTextEditor::CompletionEntry>* Document::getVariableCompletions(DTDStruct */*dtd*/,int line, int col)
+{
+  QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
+  KTextEditor::CompletionEntry completion;
+
+  completion.type = "variable";
+
+  QString textLine = editIf->textLine(line).left(col);
+  QString word = findWordRev(textLine);
+  completion.userdata = word;
+
+  for (uint i = 0; i < variableList.count(); i++)
+  {
+
+   if (variableList[i].startsWith(word))
+   {
+     completion.text = variableList[i];
+     completions->append( completion );
+   }
+  }
+
+//  completionInProgress = true;
+  return completions;
+}
 
 /** Return a list of possible tag name completions */
 QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(DTDStruct *dtd,int line, int col)
@@ -1131,7 +1136,10 @@ QString Document::getDTDIdentifier()
 void Document::setDTDIdentifier(QString id)
 {
   dtdName = id;
-  m_parsingDTD = dtdName;
+  if (dtds->find(dtdName))
+  {
+    m_parsingDTD = dtdName;
+  }
 }
 
 /** Get a pointer to the current active DTD. If fallback is true, this always gives back a valid and known DTD pointer: the active, the document specified and in last case the application default document type. */
@@ -1284,6 +1292,13 @@ bool Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const 
      handled = true;
    }
  }
+ //TODO: this is PHP specific. Make it generic
+ if (string == "$")
+ {
+   showCodeCompletions( getVariableCompletions(dtd, line, column) );
+   handled = true; 
+ }
+ 
  return handled;
 }
 
@@ -1545,23 +1560,40 @@ bool Document::scriptCodeCompletion(DTDStruct *dtd, int line, int col)
    handled = true;
  } else
  {
-   bool goAhead = true;
+   bool goAhead = true; //go ahead and bring up completion box for XML tags
    int pos;
    s = editIf->textLine(line);
-   pos = s.findRev("<",col);
+   pos = s.findRev("$",col);
    if (pos != -1)
    {
      s = text(line, pos+1,line,col);
      QRegExp rx("[A-Za-z0-9_]*",false);
      if (rx.exactMatch(s))
      {
+       scriptAutoCompletion(dtd, line, col, "$");
        goAhead = false;
-     }
+       handled = true;
+     }  
    }
+
    if (goAhead)
    {
-     showCodeCompletions(getTagCompletions(dtd, line, col));
-     handled = true;
+     s = editIf->textLine(line);
+     pos = s.findRev("<",col);
+     if (pos != -1)
+     {
+       s = text(line, pos+1,line,col);
+       QRegExp rx("[A-Za-z0-9_]*",false);
+       if (rx.exactMatch(s))
+       {
+         goAhead = false;
+       }
+     }
+     if (goAhead)
+     {
+       showCodeCompletions(getTagCompletions(dtd, line, col));
+       handled = true;
+     }
    }
  }
  return handled;
@@ -1616,6 +1648,44 @@ void Document::setParsingDTD(const QString& dtdName)
 QString Document::parsingDTD()
 {
  return m_parsingDTD;
+}
+
+/** Returns true if the number of " (excluding \") inside text is even. */
+bool Document::evenQuotes(const QString &text)
+{
+ int num = text.contains(QRegExp("[^\\\\]\""));
+
+ return (num /2 *2 == num);
+}
+
+/** No descriptions */
+void Document::parseVariables()
+{
+ variableList.clear();
+ QString text = editIf->text();
+//TODO: Make general for all script languages
+ int pos = 0;
+
+ QRegExp rx("\\$+[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*",false);
+ QString variable;
+
+ while (pos != -1)
+ {
+   pos = rx.search(text,pos);
+   if (pos != -1)
+   {
+     variable = rx.cap();
+     pos += variable.length();
+     variable.replace(QRegExp("\\$"),"");
+     if (!variableList.contains(variable))
+     {
+       variableList.append(variable);
+     }
+
+   }
+ }
+
+ variableList.sort();
 }
 
 #include "document.moc"
