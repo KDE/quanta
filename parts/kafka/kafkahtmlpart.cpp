@@ -428,6 +428,7 @@ void KafkaHTMLPart::keyLeft()
 
 void KafkaHTMLPart::normalize(DOM::Node _node)
 {
+	kdDebug(25001)<< "KafkaHTMLPart::normalize()" << endl;
 	DOM::Node childNode = _node.firstChild();
 	while(childNode != 0 && childNode.nodeType() == DOM::Node::TEXT_NODE)
 	{

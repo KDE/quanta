@@ -33,7 +33,7 @@
 #include <dom/dom2_range.h>
 #include <dom/dom_element.h>
 
-#include "kafkahtmlpartplugin.h"
+//#include "kafkahtmlpartplugin.h"
 
 
 
