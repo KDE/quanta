@@ -44,13 +44,15 @@ WHTMLPart::~WHTMLPart()
 {
 }
 
-void WHTMLPart::urlSelected( const QString &url, int, int, const QString & )
+void  WHTMLPart::urlSelected ( const QString &url, int button, int state, const QString &_target, KParts::URLArgs args)
 {
+  KHTMLPart::urlSelected (url, button, state,_target, args);
   KURL cURL = completeURL( url );
+//  alternative not tested but used in kdevelop !
+//  KURL cURL=KURL(baseURL(),url);
   openURL( cURL ) ;
   addToHistory( cURL.url() );
 }
-
 
 void WHTMLPart::forward()
 {

@@ -47,7 +47,7 @@ signals:
 	void updateStatus( bool back, bool forward );
 
 protected:	
-	virtual void urlSelected( const QString &url, int button = 0, int state = 0, const QString &_target = QString::null );
+	virtual void urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs args = KParts::URLArgs());
 	
 private:
 	QStrList history;	
