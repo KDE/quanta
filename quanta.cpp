@@ -92,6 +92,7 @@
 #include "project/project.h"
 
 #include "widgets/whtmlpart.h"
+#include "parts/kafka/kafkahtmlpart.h"
 
 #include "dialogs/abbreviation.h"
 #include "dialogs/filemasks.h"
@@ -765,7 +766,8 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
   dlg = new KEditToolbar(factory(), this);
 #else
-  dlg = new KEditToolbar(defaultToolbar, factory(), this);
+  dlg = new KEditToolbar(defaultToolbar, factory());
+  //dlg = new KEditToolbar(factory(), this, defaultToolbar);
 #endif
 #else
   dlg = new KEditToolbar(factory(), this);
@@ -1065,6 +1067,35 @@ void QuantaApp::slotShowPreview()
     s->raiseWidget(1);
     repaintPreview(false);
   }
+}
+
+void QuantaApp::slotShowKafkaPart()
+{
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if(!kafkaPart) return;
+  if(!s) return;
+
+  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_kafka_view" );
+  bool stat = !ta->isChecked();
+
+  if ( stat )
+  {
+    int id = 0;
+    if (!previousWidgetList.empty())
+    {
+      id = previousWidgetList.last();
+      previousWidgetList.pop_back();
+    }
+    s->raiseWidget(id);
+  }
+  else
+  {
+    //TEMPORARY kafkaPart loading
+    kafkaPart->openDocument(m_view->write()->url());
+    previousWidgetList.push_back(s->id(s->visibleWidget()));
+    s->raiseWidget(3);
+  }
+
 }
 
 void QuantaApp::slotShowProjectTree()

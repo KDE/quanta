@@ -80,6 +80,7 @@
       <Action name="view_line_numbers"/>
       <Action name="view_dynamic_word_wrap"/>
       <Separator/>
+      <Action name="show_kafka_view"/>
       <Action name="show_preview"/>
       <Separator/>
       <Action name="w_back"/>
@@ -206,6 +207,7 @@
   <text>Navigation Toolbar</text>
     <Action name="show_messages"/>
     <Action name="show_preview"/>
+    <Action name="show_kafka_view"/>
     <Action name="reload"/>
     <Separator/>
     <Action name="w_back"/>

@@ -67,6 +67,8 @@ class QPopupMenu;
 class WHTMLPart;
 class KHTMLView;
 
+class KafkaHTMLPart;
+
 class KAction;
 class KToggleAction;
 class KSelectAction;
@@ -213,6 +215,8 @@ public slots:
   void slotActivatePreview();
   /** show preview ( F6 )*/
   void slotShowPreview();
+  /** slot WYSIWYG */
+  void slotShowKafkaPart();
   void slotShowProjectTree();
   void slotShowTemplatesTree();
   /** Repaint preview ( slot ) */
@@ -404,6 +408,9 @@ private:
   WHTMLPart *htmlpart;
   WHTMLPart *htmlPartDoc;
 
+  /** KafkaHTMLPart widget */
+  KafkaHTMLPart *kafkaPart;
+
   /** Grep window */
   GrepDialog *grepDialog;
 
@@ -427,7 +434,7 @@ private:
 
   KToggleAction *showMessagesAction, *showTreeAction,
     *showFTabAction,*showPTabAction,*showTTabAction,*showSTabAction,*showDTabAction,
-    *showToolbarAction,*showStatusbarAction,*showPreviewAction;
+    *showToolbarAction,*showStatusbarAction,*showPreviewAction,*showKafkaAction;
   KToggleAction *showDTDToolbar;
 
   KSelectAction *setEndOfLine;

@@ -26,7 +26,7 @@
 #include <qtabwidget.h>
 #include <qwidgetstack.h>
 #include <qlayout.h>
-#include <qtoolbutton.h>
+// #include <qtoolbutton.h>
 #include <qtimer.h>
 #include <qdom.h>
 #include <qfile.h>
@@ -69,6 +69,7 @@
 
 #include "widgets/whtmlpart.h"
 #include "messages/messageoutput.h"
+#include "parts/kafka/kafkahtmlpart.h"
 
 #include "toolbar/tagaction.h"
 
@@ -399,9 +400,12 @@ void QuantaApp::initView()
   htmlpart = new WHTMLPart(rightWidgetStack,"rightHTML");
   htmlPartDoc = new WHTMLPart(rightWidgetStack, "docHTML");
 
+  kafkaPart = new KafkaHTMLPart(rightWidgetStack,rightWidgetStack, "KafkaHTMLPart");
+
   rightWidgetStack->addWidget(m_view, 0);
   rightWidgetStack->addWidget(htmlpart->view(), 1);
   rightWidgetStack->addWidget(htmlPartDoc->view(), 2);
+  rightWidgetStack->addWidget(kafkaPart->view(), 3);
   rightWidgetStack->raiseWidget(0);
 
   messageOutput = new MessageOutput(bottomWidgetStack);
@@ -497,6 +501,7 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
   {
     s->addWidget( htmlpart->view(), 1 );
     s->addWidget( htmlPartDoc->view(), 2 );
+    s->addWidget( kafkaPart->view(), 3);
   }
 
   return s;
@@ -645,6 +650,7 @@ void QuantaApp::readOptions()
   readDockConfig(m_config);
 
   showPreviewAction  ->setChecked( false );
+  showKafkaAction    ->setChecked( false );
   showMessagesAction ->setChecked( bottdock->parent() != 0L );
 
   m_doc    ->readConfig(m_config); // kwrites
@@ -1603,6 +1609,11 @@ void QuantaApp::initActions()
       new KToggleAction( i18n( "Pr&eview" ), "preview", Key_F6,
                          this, SLOT( slotShowPreview() ),
                          actionCollection(), "show_preview" );
+
+    showKafkaAction =
+      new KToggleAction( i18n( "&Visual editor (experimental)"), "kafka_view", Key_F12,
+                         this, SLOT( slotShowKafkaPart() ),
+                         actionCollection(), "show_kafka_view");
 
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),
