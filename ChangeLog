@@ -5,20 +5,25 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
 	- VPL:
 	    - enable VPL on KDE 3.3.x
         - show (again) the full filename in a tooltip
-        - don't crash if the preview widget is closed with a JavaScript command from the
-          code itself [#87533]
+        - don't crash if the preview widget is closed with a JavaScript command
+          from the code itself [#87533]
         - possible crash on startup fixed
         - don't try to autofill a closing tag for non-xml tags [#89212]
         - when opening a Quanta 3.2 project set the upload status of the files to
           "When Modified" not to "Never" [#88232]
-        - when adding files to a project, use the upload status of the parent directory
-           for the newly added file
-        - fix the Save As.. behavior (it defaulted to some strange directories, depending
-          on the active treeview, selected directory, etc.)
+        - when adding files to a project, use the upload status of the parent
+          directory for the newly added file
+        - fix the Save As.. behavior (it defaulted to some strange directories,
+          depending on the active treeview, selected directory, etc.)
         - update the modified status text/icon when using Save All  [#87196]
         - better, more stable switching between the different MDI modes [#89295]
-        - always find the right action to edit, even if there are more actions with the same
-           user visible name
+        - always find the right action to edit, even if there are more actions
+          with the same
+        - don't change the template description if writing to the .dirinfo file
+          fails (normally for global templates).
+        - fix creation of new template directories (template type was stored
+          incorrectly).
+        - always display the user-readable template type user visible name
 
   - behavioral/user interface changes:
         - Toolbars->Add User Toolbar renamed to New User Toolbar
@@ -30,12 +35,19 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - add command line switch (--resetlayout) to reset the UI to the default mode
         - new events:
             - Before project closed
-        - any action can be assigned to an event, not just the user defined script actions
-	- possibility to disable the event actions added (without the need to remove them
-	  one by one)
+        - any action can be assigned to an event, not just the user defined
+          script actions
+	- possibility to disable the event actions added (without the need to
+          remove them one by one)
         - support loading of more than one toolbar at a time
         - don't ask for toolbar saving if the toolbar names was modified by
           Quanta to add (1), (2), etc. at the end
+        - disable the Quanta Template page in properties if you don't have
+          writing rights to the directory
+        - show the user-readable template description for every template file,
+          not just the directories.
+        - don't allow to change the template type in the properties of a file as
+          it's valid per-directory.
 
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and
