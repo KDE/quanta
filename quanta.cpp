@@ -924,11 +924,11 @@ void QuantaApp::slotNewLineColumn()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse()
 {
-  if (view->writeExists())
+  if (view->writeExists() && stabdock->isVisible())
   {
     Document *w = view->write();
     QString s = w->editIf->text();
-    if (s != parser->m_text)
+    if (s != parser->m_text)  //rebuild the node tree only if the text has changed
     {
       if (baseNode)
       {
@@ -941,7 +941,7 @@ void QuantaApp::reparse()
       }
     }
     sTab->deleteList();
-	  if ( stabdock->isVisible() && baseNode)
+	  if (baseNode)
 	  {
       config->setGroup("Parser options");
       int expandLevel = config->readNumEntry("Expand level",8);
@@ -990,7 +990,7 @@ void QuantaApp::slotDockChanged()
 {
   static bool docTabOpened = false;
   
-  if ( stabdock->isVisible() && baseNode) reparse();
+//  if ( stabdock->isVisible() && baseNode) reparse();
   
   if ( dtabdock->isVisible() ) 
   {

@@ -449,3 +449,8 @@ void StructTreeView::slotCollapsed(QListViewItem *item)
 		return;
   it->node->opened = false;
 }
+/** Do a reparse before showing. */
+void StructTreeView::showEvent(QShowEvent* ev)
+{
+ slotReparse();
+}

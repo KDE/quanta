@@ -70,7 +70,6 @@ void QuantaView::slotEditCurrentTag()
   uint line,col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
   QString dtdName = w->findDTDName(line, 0); //call currentTag, so should be before
-
   Tag *tag = w->tagAt(-1,-1,dtdName);
   if (tag)
   {

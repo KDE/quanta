@@ -478,9 +478,6 @@ void QuantaDoc::slotAttribPopup()
   Document *w = write();
 
   attribMenu->clear();
-//  Node *node = w->nodeAt(); //get node at current position
-//  if (!node || !node->tag) return;
-//  Tag *tag = node->tag;
   Tag *tag = w->tagAt();
   if (tag)
   {
@@ -547,9 +544,6 @@ void QuantaDoc::slotAttribPopup()
 void QuantaDoc::slotInsertAttrib( int id )
 {
   Document *w = write();
-//  Node *node = w->nodeAt(); //get node at current position
-//  if (!node || !node->tag) return;
-//  Tag *tag = node->tag;
   Tag *tag = w->tagAt();
   if (tag)
   {

@@ -125,6 +125,7 @@ work correctly. */
   void scriptCodeCompletion(DTDStruct *dtd, int line, int col);
   /** Bring up the code completion tooltip. */
   void codeCompletionHintRequested();
+  /** Splits the document content in a QStringList (m_text). Must be called before find/findRev function is used in order to have an updated content. */
 
   bool oldstat;
   bool busy;

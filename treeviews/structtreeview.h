@@ -100,6 +100,9 @@ private:
   QPopupMenu *popupMenu;
   StructTreeTag *lastTag;
   KConfig *config;
+protected: // Protected methods
+  /** Do a reparse before showing. */
+  virtual void showEvent(QShowEvent*);
 };
 
 #endif

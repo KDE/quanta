@@ -127,7 +127,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 
   QTimer *t = new QTimer( this );
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );
-  t->start( 2000, false );
+  t->start( 5000, false ); //update the structure tree every 5 seconds
   QTimer::singleShot(10,this, SLOT(slotFileNew()) );
 
 //  KParts::ReadOnlyPart *m_cervisia =  KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>( "libcervisia.so",this);

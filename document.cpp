@@ -1177,15 +1177,17 @@ QString Document::text(int bLine, int bCol, int eLine, int eCol)
    bLine = eLine;
    eLine = tmp;
  }
- QString t = editIf->textLine(bLine)+"\n";
+ QString t = editIf->textLine(bLine);
  if (bLine == eLine)
  {
    return t.mid(bCol, eCol-bCol +1);
  }
  t.remove(0, bCol);
+ t.append("\n");
+//TODO: This is slow if the area is big. We need to speed it up!!
  for (int i = bLine+1; i < eLine ; i++)
  {
-   t = t+editIf->textLine(i)+"\n";
+   t.append(editIf->textLine(i)+"\n");
  }
  t = t+editIf->textLine(eLine).left(eCol+1);
  return t;
@@ -1193,23 +1195,29 @@ QString Document::text(int bLine, int bCol, int eLine, int eCol)
 
 QString Document::find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
 {
- int maxLine = editIf->numLines();
- int lastLineLength = editIf->lineLength(maxLine);
- QString textToSearch = text(sLine, sCol, maxLine, lastLineLength);
- int pos = rx.search(textToSearch,0);
  QString foundText = "";
+ int maxLine = editIf->numLines();
+ QString textToSearch = text(sLine, sCol, sLine, editIf->lineLength(sLine));
+ int pos;
+ int line = sLine;
+ do
+ {
+   pos = rx.search(textToSearch);
+   if (pos == -1)
+   {
+     line++;
+     if (line < maxLine) textToSearch.append("\n"+editIf->textLine(line));
+   }
+ } while (line <maxLine && pos == -1);
  if (pos != -1)
  {
    foundText = rx.cap();
    QString s = textToSearch.left(pos);
    int linesUntilFound = s.contains("\n");
-   s = s.remove(0,s.findRev("\n")+1);
-   fbCol = s.length();
-   int linesInFound = foundText.contains("\n");
-   s = foundText;
-   s = s.remove(0,s.findRev("\n")+1);
-   feCol = s.length()-1;
    fbLine = sLine + linesUntilFound;
+   fbCol = s.length()-s.findRev("\n")-1;
+   int linesInFound = foundText.contains("\n");
+   feCol = foundText.length()-foundText.findRev("\n")-2;
    feLine = fbLine + linesInFound;
    if (linesUntilFound == 0)
    {
@@ -1221,11 +1229,13 @@ QString Document::find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol,
    }
    if (fbCol < 0) fbCol = 0;
    if (feCol < 0) feCol = 0;
+/*
    s = text(fbLine, fbCol, feLine, feCol);
    if (s != foundText) //debug, error
    {
      KMessageBox::error(this,"Found: "+foundText+"\nRead: "+s);
    }
+*/
  }
 
  return foundText;
@@ -1233,21 +1243,26 @@ QString Document::find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol,
 
 QString Document::findRev(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
 {
- QString textToSearch = text(0,0, sLine, sCol);
- int pos = rx.searchRev(textToSearch);
  QString foundText = "";
+ int pos = -1;
+ int line = sLine;
+ QString textToSearch = text(sLine,0, sLine, sCol);
+ do
+ {
+   pos = rx.searchRev(textToSearch);
+   if (pos == -1)
+   {
+     line--;
+     if (line >=0) textToSearch.prepend(editIf->textLine(line) + "\n");
+   }
+ } while (line >=0 && pos == -1);
  if (pos != -1)
  {
    foundText = rx.cap();
-   QString s = textToSearch.left(pos);
-   int linesUntilFound = s.contains("\n");
-   fbLine = linesUntilFound;
-   s = s.remove(0,s.findRev("\n")+1);
-   fbCol = s.length();
+   fbLine = line;
+   fbCol = pos;
    int linesInFound = foundText.contains("\n");
-   s = foundText;
-   s = s.remove(0,s.findRev("\n")+1);
-   feCol = s.length()-1;
+   feCol = foundText.length()-foundText.findRev("\n")-2;
    feLine = fbLine + linesInFound;
    if (linesInFound == 0)
    {
@@ -1255,11 +1270,13 @@ QString Document::findRev(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbC
    }
    if (fbCol < 0) fbCol = 0;
    if (feCol < 0) feCol = 0;
-   s = text(fbLine, fbCol, feLine, feCol);
+/*
+   QString s = text(fbLine, fbCol, feLine, feCol);
    if (s != foundText) //debug, error
    {
      KMessageBox::error(this,"FindRev\nFound: "+foundText+"\nRead: "+s);
    }
+*/
  }
 
  return foundText;
@@ -1380,4 +1397,3 @@ void Document::scriptCodeCompletion(DTDStruct *dtd, int line, int col)
    showCodeCompletions(getTagCompletions(dtd, line, col));
  }
 }
-
