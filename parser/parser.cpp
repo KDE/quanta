@@ -220,31 +220,46 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       QString foundText = m_dtd->specialAreaStartRx.cap();
       QString specialEndStr = m_dtd->specialAreas[foundText];
       int pos = specialStartPos + foundText.length();
+      int pos2;
       tagEndCol = lastLineLength;
       tagEndLine = endLine;
       bool endFound = false;
+      int openNum = 1; //count how many special area beginning strings were found
       //go through the document and find the matchin special area end definition
       //string
       while (line <= endLine)
       {
-        textLine = write->editIf->textLine(line);
-        if (line == endLine)
-        {
-          if (endCol >0)
-            textLine.truncate(endCol);
-          else
-            textLine = "";
-        }
+        pos2 = textLine.find(foundText, pos);
         pos = textLine.find(specialEndStr, pos);
         if (pos != -1)
         {
-          tagEndLine = line;
-          tagEndCol = pos + specialEndStr.length() - 1;
-          endFound = true;
-          break;
+          if (pos2 > pos || pos2 == -1) //good, the next special area of this type starts after the end of this area
+          {
+            tagEndLine = line;
+            pos += specialEndStr.length();
+            tagEndCol = pos - 1;
+            openNum--;
+            if (openNum == 0)
+            {
+              endFound = true;
+              break;
+            }
+          } else  //there is a special area start string between the start/end string
+          {
+            openNum++;
+            pos = pos2 + foundText.length();
+          }
         } else
         {
           line++;
+          textLine = write->editIf->textLine(line);
+          if (line == endLine)
+          {
+            if (endCol >0)
+              textLine.truncate(endCol);
+            else
+              textLine = "";
+          }
           pos = 0;
         }
       }
@@ -691,7 +706,7 @@ Node *Parser::parse(Document *w)
   clearGroups();
   parsingEnabled = true;
   if (maxLines >= 0)
-      m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines) - 1, &lastNode);
+      m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
 //  t.restart();
 //  parseForGroups();
