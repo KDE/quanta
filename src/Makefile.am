@@ -92,3 +92,7 @@ messages: rc.cpp
 # this is where the kdelnk file will go
 kdelnkdir = $(kde_appsdir)/Development
 kdelnk_DATA = quanta_be.desktop
+
+kdemimedir = $(kde_mimedir)/application
+kdemime_DATA = x-webprj.desktop
+

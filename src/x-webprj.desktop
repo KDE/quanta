@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Comment=Quanta Project
+Comment[xx]=xxQuanta Projectxx
+Icon=quanta
+Type=MimeType
+MimeType=application/x-webprj
+Patterns=*.webprj
+
+[Property::X-KDE-text]
+Type=bool
+Value=true
