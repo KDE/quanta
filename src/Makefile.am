@@ -3,9 +3,6 @@ LIB_KAFKA = $(top_builddir)/quanta/parts/kafka/libkafkalibrary.la
 KAFKAINCLUDE = -I$(top_srcdir)/quanta/parts/kafka -I$(top_builddir)/quanta/parts/kafka
 endif
 
-# Make merging simple
-LIB_KMDI = -lkmdi
-
 bin_PROGRAMS = quanta_be
 
 quanta_be_SOURCES = quanta_init.cpp quantaview.cpp quantadoc.cpp main.cpp document.cpp kqapp.cpp quanta.cpp dcopwindowmanagerif.skel dcopsettingsif.skel dcopquantaif.skel dcopsettings.cpp dtds.cpp dcopquanta.cpp viewmanager.cpp

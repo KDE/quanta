@@ -113,7 +113,7 @@ bool QuantaPlugin::load()
   QWidget *targetWidget;
   if(ow == i18n("Editor Tab"))
   {
-     targetWidget = quantaApp; //FIXME:
+     targetWidget = quantaApp;
   } else
   if(ow == i18n("Editor Frame"))
   {
