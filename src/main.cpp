@@ -154,6 +154,7 @@ int main(int argc, char *argv[])
   }
 
   KApplication *app;
+  KApplication::disableAutoDcopRegistration();
 
   if (isUnique) {
 //  if (!KQUniqueApplication::start())

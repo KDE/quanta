@@ -97,8 +97,11 @@
 #include "dirtydlg.h"
 #include "dirtydialog.h"
 
+#include "dcopsettings.h"
+
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManagerIf")
 {
+  dcopSettings = new DCOPSettings;
   quantaStarted = true;
   tempFileList.setAutoDelete(true);
   toolbarList.setAutoDelete(true);

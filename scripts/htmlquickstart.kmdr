@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>344</width>
-            <height>523</height>
+            <width>473</width>
+            <height>535</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -479,82 +479,82 @@ echo "$PADDING&lt;/style&gt;"</string>
                         <widget class="ComboBox" row="3" column="1">
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-1</string>
+                                    <string>iso 8859-1</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-2</string>
+                                    <string>iso 8859-2</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-3</string>
+                                    <string>iso 8859-3</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-4</string>
+                                    <string>iso 8859-4</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-5</string>
+                                    <string>iso 8859-5</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-6</string>
+                                    <string>iso 8859-6</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-7</string>
+                                    <string>iso 8859-7</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-8</string>
+                                    <string>iso 8859-8</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-8i</string>
+                                    <string>iso 8859-8i</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-9</string>
+                                    <string>iso 8859-9</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-10</string>
+                                    <string>iso 8859-10</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-11</string>
+                                    <string>iso 8859-11</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-12</string>
+                                    <string>iso 8859-12</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-13</string>
+                                    <string>iso 8859-13</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-14</string>
+                                    <string>iso 8859-14</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>iso-8859-15</string>
+                                    <string>iso 8859-15</string>
                                 </property>
                             </item>
                             <item>

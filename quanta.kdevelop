@@ -69,57 +69,57 @@
         <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cxxflags>
         <f77flags></f77flags>
-        <topsourcedir></topsourcedir>
+        <topsourcedir>/home/andris/development/sources/kde-head/kdewebdev</topsourcedir>
         <cppflags></cppflags>
         <ldflags></ldflags>
       </default>
       <withkommander>
         <configargs>--enable-debug=full --prefix=/opt/kde3</configargs>
         <builddir>/home/andris/development/build/kde-head/kdewebdev</builddir>
-        <topsourcedir></topsourcedir>
+        <topsourcedir/>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary></ccompilerbinary>
-        <cxxcompilerbinary></cxxcompilerbinary>
-        <f77compilerbinary></f77compilerbinary>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
         <cflags>-DKDE_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT</cxxflags>
-        <f77flags></f77flags>
-        <cppflags></cppflags>
-        <ldflags></ldflags>
+        <f77flags/>
+        <cppflags/>
+        <ldflags/>
       </withkommander>
       <all>
         <configargs>--enable-debug=full --with-kafkapart --prefix=/opt/kde3</configargs>
         <builddir>/home/andris/development/build/kde-head/kdewebdev</builddir>
-        <topsourcedir></topsourcedir>
+        <topsourcedir/>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary></ccompilerbinary>
-        <cxxcompilerbinary></cxxcompilerbinary>
-        <f77compilerbinary></f77compilerbinary>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
         <cflags>-DKDE_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT</cxxflags>
-        <f77flags></f77flags>
-        <cppflags></cppflags>
-        <ldflags></ldflags>
+        <f77flags/>
+        <cppflags/>
+        <ldflags/>
       </all>
       <withoutkafka>
         <configargs>--enable-debug=full --without-kommander --without-kafkapart --prefix=/opt/kde3</configargs>
         <builddir>/home/andris/development/build/kde-head/kdewebdev-simple</builddir>
-        <topsourcedir></topsourcedir>
-        <cppflags></cppflags>
-        <ldflags></ldflags>
+        <topsourcedir/>
+        <cppflags/>
+        <ldflags/>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary></ccompilerbinary>
-        <cxxcompilerbinary></cxxcompilerbinary>
-        <f77compilerbinary></f77compilerbinary>
-        <cflags></cflags>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
+        <cflags/>
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cxxflags>
-        <f77flags></f77flags>
+        <f77flags/>
       </withoutkafka>
     </configurations>
     <makeenvvars>
@@ -216,7 +216,14 @@
     <revertoptions>-C -d -P</revertoptions>
   </kdevcvs>
   <kdevfilecreate>
-    <filetypes/>
+    <filetypes>
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
+        <descr>A new empty C++ file.</descr>
+      </type>
+      <type icon="source_h" ext="h" create="template" name="C/C++ header" >
+        <descr>A new empty header file for C or C++.</descr>
+      </type>
+    </filetypes>
     <useglobaltypes/>
   </kdevfilecreate>
   <kdevcppsupport>

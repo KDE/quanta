@@ -45,6 +45,8 @@
 #include "dcopwindowmanagerif.h"
 
 // forward declaration
+class DCOPSettings;
+
 class QuantaPluginInterface;
 
 class QuantaDoc;
@@ -100,7 +102,7 @@ typedef struct ToolbarEntry{
 /**
   * The base class for Quanta application windows.
   */
-class QuantaApp : public KDockMainWindow, virtual public DCOPWindowManagerIf
+class QuantaApp : public KDockMainWindow, public DCOPWindowManagerIf
 {
   Q_OBJECT
 
@@ -179,7 +181,7 @@ public:
   QString retrieveBaseFileName(const QString& filename);
   /**Executes *nix ps command */
   void execCommandPS(const QString& cmd);
-
+  
     /** tabs for left panel */
   ProjectTreeView *pTab;
   DocTreeView *dTab;
@@ -566,6 +568,7 @@ protected: // Protected attributes
   QMap<QString, QString> oldShortcuts;
   KURL urlUnderCursor;
   QTimer *autosaveTimer;
+  DCOPSettings *dcopSettings; 
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;

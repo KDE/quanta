@@ -247,37 +247,41 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     args = args.stripWhiteSpace();
     if (!args.isEmpty())
     {
-      pos = args.find("%scriptdir");
-      QString scriptname;
-      if (pos != -1)
+      pos = 0;
+      while (pos != -1 )
       {
-        int begin = args.findRev('"', pos);
-        int end = -1;
-        if (begin == -1)
+        pos = args.find("%scriptdir");
+        QString scriptname;
+        if (pos != -1)
         {
-          begin = args.findRev('\'', pos);
-          if (begin != -1)
-              end = args.find('\'', pos);
-        }  else
-        {
-          end = args.find('"', pos);
-        }
-        if (begin == -1 || end != -1)
-        {
-          begin = args.findRev(' ', pos);
+          int begin = args.findRev('"', pos);
+          int end = -1;
           if (begin == -1)
-              begin = 0;
-          end = args.find(' ', pos);
-          if (end == -1)
-              end = args.length();
+          {
+            begin = args.findRev('\'', pos);
+            if (begin != -1)
+                end = args.find('\'', pos);
+          }  else
+          {
+            end = args.find('"', pos);
+          }
+          if (begin == -1 || end != -1)
+          {
+            begin = args.findRev(' ', pos);
+            if (begin == -1)
+                begin = 0;
+            end = args.find(' ', pos);
+            if (end == -1)
+                end = args.length();
+          }
+          scriptname = args.mid(begin, end - begin).stripWhiteSpace();
+          scriptname.replace("%scriptdir","scripts");
+   //       kdDebug(24000) << "Script name is: |" << scriptname << "|" << endl;
+          scriptname = " " + locate("appdata", scriptname);
+   //       kdDebug(24000) << "Script found at: " << scriptname << endl;
+          args.replace(begin, end - begin, scriptname);
+   //       kdDebug(24000) << "Modified argument list: " << args << endl;
         }
-        scriptname = args.mid(begin, end - begin);
-        scriptname.replace("%scriptdir","scripts");
-//        kdDebug(24000) << "Script name is: " << scriptname << endl;
-        scriptname = locate("appdata", scriptname);
-//        kdDebug(24000) << "Script found at: " << scriptname << endl;
-        args.replace(begin, end - begin, scriptname);
-//        kdDebug(24000) << "Modified argument list: " << args << endl;
       }
       QStringList argsList = QStringList::split(' ', args);
       *proc << argsList;

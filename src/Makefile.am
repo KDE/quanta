@@ -8,8 +8,7 @@ LIB_KMDI =
 
 bin_PROGRAMS = quanta_be
 
-quanta_be_SOURCES = quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp main.cpp document.cpp \
-	kqapp.cpp quanta.cpp dcopwindowmanagerif.skel
+quanta_be_SOURCES = quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp main.cpp document.cpp kqapp.cpp quanta.cpp dcopwindowmanagerif.skel dcopsettingsif.skel dcopsettings.cpp
 
 
 quanta_be_LDADD = $(top_builddir)/quanta/project/libproject.la \
@@ -97,3 +96,4 @@ kdelnk_DATA = quanta_be.desktop
 
 
 
+noinst_HEADERS =  dcopsettingsif.h dcopsettings.h
