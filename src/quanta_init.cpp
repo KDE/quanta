@@ -163,7 +163,6 @@ void QuantaInit::initQuanta()
   initPlugins();  // needs to be before createGUI because some actions are created inside
 
   //m_quanta->KDockMainWindow::createGUI( QString::null, false /* conserveMemory */ );
-  kdDebug(24000) << "Calling createGUI" << endl;
   m_quanta->createShellGUI(true);
 
   addToolTreeView(m_quanta->fTab, i18n("Files"), UserIcon("ftab"), KDockWidget::DockLeft);
@@ -369,16 +368,7 @@ void QuantaInit::initView()
    m_config->setGroup  ("General Options");
    qConfig.toolviewTabs = m_config->readNumEntry("MDI style", 3);
    m_quanta->setIDEAlModeStyle(qConfig.toolviewTabs);
-
-#if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
-  if (m_quanta->tabWidget())
-  {
-      m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
-      connect( m_quanta->tabWidget(), SIGNAL( contextMenu( QWidget *, const QPoint & ) ), m_viewManager,
-           SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
-  }
-  m_quanta->setTabWidgetVisibility(KMdi::AlwaysShowTabs);
-#endif
+   m_quanta->initTabWidget();
 
   m_quanta->setStandardMDIMenuEnabled(false);
   m_quanta->setManagedDockPositionModeEnabled(true);
@@ -551,26 +541,7 @@ void QuantaInit::readOptions()
   qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
   m_quanta->showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
   qConfig.showCloseButtons = m_config->readEntry("Close Buttons", "ShowAlways");
-#if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
-  KTabWidget *tabWidget = m_quanta->tabWidget();
-  if (tabWidget)
-  {
-      if (qConfig.showCloseButtons == "ShowAlways")
-      {
-        tabWidget->setHoverCloseButton(true);
-        tabWidget->setHoverCloseButtonDelayed(false);
-      } else
-      if (qConfig.showCloseButtons == "ShowDelayed")
-      {
-        tabWidget->setHoverCloseButton(true);
-        tabWidget->setHoverCloseButtonDelayed(true);
-      } else
-      {
-         tabWidget->setHoverCloseButton(false);
-      }
-  }
-#endif
-
+  m_quanta->initTabWidget(true);
   m_quanta->fileRecent ->loadEntries(m_config);
 
   m_config->setGroup("Parser options");

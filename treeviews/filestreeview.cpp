@@ -51,7 +51,6 @@
 #include "resource.h"
 #include "quanta.h"
 #include "quantacommon.h"
-#include "quantadoc.h"
 #include "qextfileinfo.h"
 #include "viewmanager.h"
 

@@ -58,7 +58,6 @@
 #include "document.h"
 #include "resource.h"
 #include "quantaview.h"
-#include "quantadoc.h"
 #include "quanta.h"
 #include "quantacommon.h"
 #include "qextfileinfo.h"

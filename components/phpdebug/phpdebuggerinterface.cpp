@@ -25,7 +25,6 @@
 
 #include "quanta.h"
 #include "quantaview.h"
-#include "quantadoc.h"
 #include "document.h"
 #include "resource.h"
 #include "project.h"
@@ -216,7 +215,7 @@ bool PHPDebuggerInterface::removeBreakpoint ( KURL file, int line )
 QString PHPDebuggerInterface::mapServerPathToLocal(QString serverpath)
 {
    // Translate filename from server to local
-#if KDE_IS_VERSION(3,2,0)   
+#if KDE_IS_VERSION(3,2,0)
    if(serverpath.startsWith(Project::ref()->debugServerBasedir, false))
       serverpath.remove(0, Project::ref()->debugServerBasedir.length());
 #else
@@ -224,7 +223,7 @@ QString PHPDebuggerInterface::mapServerPathToLocal(QString serverpath)
    QString lBaseDir = Project::ref()->debugServerBasedir.lower();
    if(lServerPath.startsWith(lBaseDir))
       serverpath.remove(0, Project::ref()->debugServerBasedir.length());
-#endif      
+#endif
 
    return Project::ref()->debugLocalBasedir + serverpath;
 }
@@ -233,7 +232,7 @@ QString PHPDebuggerInterface::mapServerPathToLocal(QString serverpath)
 QString PHPDebuggerInterface::mapLocalPathToServer(QString localpath)
 {
    // Translate filename from local to server
-#if KDE_IS_VERSION(3,2,0)   
+#if KDE_IS_VERSION(3,2,0)
    if(localpath.startsWith(Project::ref()->debugLocalBasedir, false))
       localpath.remove(0, Project::ref()->debugLocalBasedir.length());
 #else

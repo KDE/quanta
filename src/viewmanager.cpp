@@ -133,7 +133,7 @@ void ViewManager::createNewDocument()
   m_lastActiveEditorView = view;
 }
 
-bool ViewManager::removeView(QuantaView *view, bool force, bool unlinkOnly)
+bool ViewManager::removeView(QuantaView *view, bool force)
 {
     if (view)
     {
@@ -147,8 +147,7 @@ bool ViewManager::removeView(QuantaView *view, bool force, bool unlinkOnly)
             m_lastActiveEditorView = 0L;
         if (view == activeView())
             ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
-        if (!unlinkOnly)
-            quantaApp->closeWindow(view);
+        quantaApp->closeWindow(view);
         if (allEditorsClosed())
         {
             createNewDocument();

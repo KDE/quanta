@@ -335,6 +335,9 @@ public slots:
 //Overridden KMdiMainFrm slots
   virtual void closeAllViews();
   virtual void closeActiveView();
+  virtual void switchToIDEAlMode();
+  virtual void switchToTabPageMode();
+
 
 protected slots:
   /** No descriptions */
@@ -425,6 +428,9 @@ protected:
   void setTitle(const QString&);
   /** Updates the structure and attribute treeview. */
   void updateTreeViews();
+  /** Makes the tabwidget look and behave like we want. If closeButtonsOnly is true,
+  only the close button behavior is changed. */
+  void initTabWidget(bool closeButtonsOnly = false);
 
   ScriptTreeView *scriptTab;
 

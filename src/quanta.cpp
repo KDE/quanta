@@ -1190,25 +1190,7 @@ void QuantaApp::slotOptions()
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
     qConfig.showCloseButtons = uiOptions->closeButtons();
     qConfig.toolviewTabs = uiOptions->toolviewTabs();
-#if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
-    KTabWidget *tab = tabWidget();
-    if (tab)
-    {
-        if (qConfig.showCloseButtons == "ShowAlways")
-        {
-          tab->setHoverCloseButton(true);
-          tab->setHoverCloseButtonDelayed(false);
-        } else
-        if (qConfig.showCloseButtons == "ShowDelayed")
-        {
-          tab->setHoverCloseButton(true);
-          tab->setHoverCloseButtonDelayed(true);
-        } else
-        {
-          tab->setHoverCloseButton(false);
-        }
-    }
-#endif
+    initTabWidget(true);
 
     qConfig.showEmptyNodes = parserOptions->showEmptyNodes->isChecked();
     qConfig.showClosingTags = parserOptions->showClosingTags->isChecked();
@@ -4478,6 +4460,35 @@ void QuantaApp::slotShowVPLOnly()
    ViewManager::ref()->activeView()->slotSetVPLOnlyLayout();
 }
 
+void QuantaApp::initTabWidget(bool closeButtonsOnly)
+{
+#if KDE_IS_VERSION(3,2,2) || defined(COMPAT_KMDI)
+    KTabWidget *tab = tabWidget();
+    if (tab)
+    {
+        if (!closeButtonsOnly)
+        {
+            tab->setTabPosition(QTabWidget::Bottom);
+            connect(tab, SIGNAL( contextMenu( QWidget *, const QPoint & ) ), ViewManager::ref(), SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
+            setTabWidgetVisibility(KMdi::AlwaysShowTabs);
+        }
+        if (qConfig.showCloseButtons == "ShowAlways")
+        {
+            tab->setHoverCloseButton(true);
+            tab->setHoverCloseButtonDelayed(false);
+        } else
+        if (qConfig.showCloseButtons == "ShowDelayed")
+        {
+            tab->setHoverCloseButton(true);
+            tab->setHoverCloseButtonDelayed(true);
+        } else
+        {
+            tab->setHoverCloseButton(false);
+        }
+    }
+#endif
+}
+
 //overridden KMdiMainFrm slots
 void QuantaApp::closeActiveView()
 {
@@ -4487,6 +4498,18 @@ void QuantaApp::closeActiveView()
 void QuantaApp::closeAllViews()
 {
    ViewManager::ref()->closeAll();
+}
+
+void QuantaApp::switchToIDEAlMode()
+{
+    KMdiMainFrm::switchToIDEAlMode();
+    initTabWidget();
+}
+
+void QuantaApp::switchToTabPageMode()
+{
+    KMdiMainFrm::switchToTabPageMode();
+    initTabWidget();
 }
 
 #include "quanta.moc"
