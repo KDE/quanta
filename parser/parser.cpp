@@ -67,7 +67,7 @@ Parser::Parser()
   m_parsingNeeded = true;
   m_parseIncludedFiles = true;
   m_saParser = new SAParser();
-  connect(m_saParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
+  connect(m_saParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
   connect(m_saParser, SIGNAL(cleanGroups()), SLOT(cleanGroups()));
   ParserCommon::includeWatch = new KDirWatch();
   connect(ParserCommon::includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
@@ -1099,7 +1099,7 @@ Node *Parser::rebuild(Document *w)
 #ifdef BUILD_KAFKAPART
         //here, lastNode is at the pos of lastInserted.
         modif = new NodeModif();
-	modif->setType(NodeModif::NodeRemoved);
+        modif->setType(NodeModif::NodeRemoved);
         modif->setLocation(kafkaCommon::getLocation(lastNode));
         if(lastInserted->prev)
           lastInserted->prev->next = 0L;
@@ -1332,7 +1332,7 @@ void Parser::parseIncludedFiles()
       parseIncludedFile(ParserCommon::includedFiles[i], ParserCommon::includedFilesDTD.at(i));
     }
   }
-  emit rebuildStructureTree();
+  emit rebuildStructureTree(true);
 }
 
 void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)

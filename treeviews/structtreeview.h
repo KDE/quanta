@@ -61,7 +61,7 @@ public:
   /** Show the element in tree according to cursor position (x,y) */
   void showTagAtPos(Node *node);
   /** Delete the items */
-  void deleteList();
+  void deleteList(bool groupOnly);
   /** Set the View as... menu to dtdName. */
   void setParsingDTD(const QString dtdName);
 
@@ -76,7 +76,7 @@ public:
 
 public slots: // Public slots
   /** repaint document structure */
-  void slotReparse(Document *w, Node* node, int openLevel = 3 );
+  void slotReparse(Document *w, Node* node, int openLevel = 3,bool groupOnly=false);
   void slotMouseClicked(int button, QListViewItem*, const QPoint&, int);
   void slotDoubleClicked( QListViewItem * );
 
@@ -116,7 +116,7 @@ private:
    */
   StructTreeView(QWidget *parent=0, const char *name=0);
   /** builds the structure tree */
-  void buildTree(Node *baseNode, int openLevel);
+  void buildTree(Node *baseNode, int openLevel, bool groupOnly);
   /** Do the recursive opening or closing of the trees */
   void setOpenSubTree( QListViewItem *it, bool open);
 
@@ -135,9 +135,11 @@ private:
 protected: // Protected methods
   /** Do a reparse before showing. */
   virtual void showEvent(QShowEvent*);
+
 protected slots: // Protected slots
   /** The treeview DTD  has changed to id. */
   void slotDTDChanged(int id);
+
 protected: // Protected attributes
   /**  */
   const DTDStruct* m_parsingDTD;

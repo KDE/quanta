@@ -374,7 +374,7 @@ public slots:
   void slotConvertCase();
 
   /** Reload the tree of the StructTreeView */
-  void slotReloadStructTreeView();
+  void slotReloadStructTreeView(bool groupOnly = false);
 
 protected slots:
   /** No descriptions */

@@ -84,7 +84,7 @@ private slots:
   void slotParseNodeInDetail();
 
 signals:
-  void rebuildStructureTree();
+  void rebuildStructureTree(bool);
   void cleanGroups();
 
 private:
@@ -165,7 +165,7 @@ class SAGroupParser: public QObject {
   void slotParseForScriptGroup();
 
  signals:
-  void rebuildStructureTree();
+  void rebuildStructureTree(bool);
   void cleanGroups();
   void parsingDone(SAGroupParser*);
 

@@ -302,7 +302,7 @@ void QuantaApp::initQuanta()
 
   connect(m_doc, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
 
-  connect(parser, SIGNAL(rebuildStructureTree()), this, SLOT(slotReloadStructTreeView()));
+  connect(parser, SIGNAL(rebuildStructureTree(bool)), this, SLOT(slotReloadStructTreeView(bool)));
 }
 
 

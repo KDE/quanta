@@ -371,11 +371,14 @@ bool SAParser::slotParseOneLine()
             kdDebug(24001) << "Calling slotParseForScriptGroup from slotParseOneLine." << endl;
 #endif
 //            slotParseForScriptGroup();
+if (!m_synchronous)
+{
             SAGroupParser *groupParser = new SAGroupParser(this, g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
-            connect(groupParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
+            connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
             connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
             connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
             groupParser->slotParseForScriptGroup();
+}
           }
 
           m_lastParsedNode = node;
@@ -710,7 +713,7 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER
           kdDebug(24001) << "Emitting rebuildStructureTree from parsingDone (use return values). Enable parsing." << endl;
 #endif
-          emit rebuildStructureTree();
+          emit rebuildStructureTree(false);
           emit cleanGroups();
         }
     }
@@ -720,8 +723,11 @@ Node *SAParser::parsingDone()
   if (!s_currentNode)
   {
     s_currentNode = ParserCommon::createTextNode(m_write, s_parentNode, s_endLine, s_endCol, s_parentNode);
-    s_currentNode->insideSpecial = true;
-    s_currentNode->specialInsideXml = m_specialInsideXml;
+    if (s_currentNode)
+    {
+      s_currentNode->insideSpecial = true;
+      s_currentNode->specialInsideXml = m_specialInsideXml;
+    }
   }
   else if (s_parentNode && !s_parentNode->next)
   {
@@ -747,12 +753,15 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "Calling slotParseForScriptGroup from parsingDone. Synch:" << m_synchronous << endl;
 #endif
-//    slotParseForScriptGroup();
+    //parse for groups only when doing aynchronous detailed parsing
+    if (!m_synchronous)
+    {
             SAGroupParser *groupParser = new SAGroupParser(this, g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
-            connect(groupParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
+            connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
             connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
             connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
             groupParser->slotParseForScriptGroup();
+     }
   }
 
   m_lastParsedLine = s_endLine;
@@ -774,7 +783,7 @@ Node *SAParser::parsingDone()
         kdDebug(24001) << "Calling slotParseNodeInDetail from parsingDone." << endl;
 #endif
         QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
-        emit rebuildStructureTree();
+        emit rebuildStructureTree(false);
       }
       else
       {
@@ -782,7 +791,7 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER
         kdDebug(24001) << "Emitting detailedParsingDone from parsingDone. Enable parsing." << endl;
 #endif
-        emit rebuildStructureTree();
+        emit rebuildStructureTree(false);
       }
   }
   m_currentNode = 0L;
@@ -871,7 +880,34 @@ void SAParser::slotParseNodeInDetail()
         parseArea(area, m_currentNode->tag->tagStr(), "", m_currentNode, true, m_synchronous);
     } else
     {
+      Node *node = m_currentNode;
       m_currentNode = m_currentNode->nextSibling();
+      if (node->tag->type == Tag::Comment)
+      {
+         Node *commentNode = new Node(node);
+         int line, col;
+         AreaStruct area;
+         node->tag->endPos(line, col);
+         area.bLine = line;
+         area.bCol = col + 1;
+         if (m_currentNode)
+           m_currentNode->tag->beginPos(line, col);
+        else
+         {
+            line = m_write->editIf->numLines() - 1;
+            col = m_write->editIf->lineLength(area.eLine);
+         }
+         area.eLine = line;
+         area.eCol = col - 1;
+         if (area.eCol < 0)
+         {
+             area.eLine--;
+             area.eCol = m_write->editIf->lineLength(area.eLine);
+         }
+         Tag *tag = new Tag(area, m_write, node->tag->dtd(), false);
+         commentNode->tag = tag;
+         node->child = commentNode;
+      }
       if (m_currentNode)
       {
 #ifdef DEBUG_PARSER
@@ -883,7 +919,7 @@ void SAParser::slotParseNodeInDetail()
 #ifdef DEBUG_PARSER
         kdDebug(24001) << "Emitting rebuildStructureTree from slotParseNodeInDetail." << endl;
 #endif
-        emit rebuildStructureTree();
+        emit rebuildStructureTree(false);
       }
     }
   }
@@ -940,15 +976,15 @@ void SAGroupParser::slotParseForScriptGroup()
 #endif
     if (m_lastGroupParsed && m_parsingLastNode && !m_synchronous)
     {
-#ifdef DEBUG_PARSER
-      kdDebug(24001) << "Emitting rebuildStructureTree from slotParseForScriptGroup." << endl;
-#endif
-      emit rebuildStructureTree();
       if (m_lastGroupParsed)
       {
         emit cleanGroups();
         m_lastGroupParsed = false;
       }
+#ifdef DEBUG_PARSER
+      kdDebug(24001) << "Emitting rebuildStructureTree from slotParseForScriptGroup." << endl;
+#endif
+      emit rebuildStructureTree(true);
     }
   }
 }
