@@ -55,6 +55,7 @@
 #include "quantaview.h"
 #include "tagattributetree.h"
 #include "tagactionmanager.h"
+#include "cursors.h"
 
 #include "viewmanager.h"
 
@@ -556,6 +557,8 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
                     w->getAttrs(m_currentNode)->chCurFoc() != kNodeAttrs::no)
             {
                 // @todo check tab settings in Quanta
+                if(hasSelection())
+                    removeSelection();
                 insertText("    ", -1);
                 makeCursorVisible();
             }
@@ -569,7 +572,8 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 
             kdDebug(25001)<< "KafkaWidget::eventFilter() Return" << endl;
 #endif
-
+            if(hasSelection())
+                removeSelection();
             keyReturn(keyevent->state() & ControlButton);
             d->stuckCursorHorizontalPos = false;
             break;
@@ -637,7 +641,12 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
                           !( keyevent->state() & MetaButton ) ||
                           ( ( (keyevent->state()&ControlButton) | AltButton ) == (ControlButton|AltButton) ) ) &&
                         ( !keyevent->ascii() || keyevent->ascii() >= 32 || keyevent->text() == "\t" ) )
+                {
+                    if(hasSelection())
+                        removeSelection();
+
                     insertText(keyevent->text(), -1);
+                }
                 makeCursorVisible();
 #ifdef HEAVY_DEBUG
                 //w->coutLinkTree(baseNode, 2);
@@ -771,6 +780,12 @@ void KafkaWidget::keyDelete()
     DOM::Node childOfCommonParent, childOfCommonParent2, commonParent;
     bool _goingTowardsRootNode, isParent, singleNodeDeleted, nextIsBlock, startNode2IsNotInline;
 
+    if(hasSelection())
+    {
+        removeSelection();
+        return;
+    }
+    
     if(m_currentNode.isNull())
         return;
     attrs = w->getAttrs(m_currentNode);
@@ -1170,6 +1185,12 @@ void KafkaWidget::keyBackspace()
     bool _goingTowardsRootNode, singleNodeDeleted, isParent, prevIsBlock, endNodeIsNotInline, boolTmp;
     QString text;
 
+    if(hasSelection())
+    {
+        removeSelection();
+        return;
+    }
+    
     if(m_currentNode.isNull())
         return;
 
@@ -2098,6 +2119,30 @@ void KafkaWidget::moveDomNodes(DOM::Node newParent, DOM::Node startNode, DOM::No
             domNode = domNodeNext;
         }
     }
+}
+
+void KafkaWidget::removeSelection()
+{
+    Q_ASSERT(hasSelection());
+    
+    NodeSelectionInd selection;
+    selection.fillWithVPLCursorSelection();
+    Node* cursorNode = kafkaCommon::getNodeFromLocation(selection.cursorNode());
+    int cursorOffset = 0;
+    long domNodeCursorOffset = 0;
+        
+    kafkaCommon::DTDRemoveSelection(selection, &cursorNode, cursorOffset, m_modifs);
+    
+    KafkaDocument::ref()->translateNodeIntoKafkaCursorPosition(cursorNode, cursorOffset, m_currentNode, domNodeCursorOffset);
+    d->m_cursorOffset = domNodeCursorOffset;
+    
+    setCurrentNode(m_currentNode, domNodeCursorOffset);
+    
+    QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
+    
+    ViewManager::ref()->activeDocument()->docUndoRedo->addNewModifsSet(m_modifs, undoRedo::NodeTreeModif);
+
+    makeCursorVisible();
 }
 
 #include "kafkahtmlpart.moc"

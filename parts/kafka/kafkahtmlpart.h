@@ -277,6 +277,11 @@ private:
      * and the edge of the widget.
      */
     void makeCursorVisible(int xMargin = 50, int yMargin = 50);
+    
+    /**
+     * Removes the selection and places the cursor in the right place.
+     */
+    void removeSelection();
 
     /**
      * When some changes are made, store the changes made in m_modifs.

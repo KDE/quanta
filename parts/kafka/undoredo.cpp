@@ -1362,7 +1362,7 @@ void undoRedo::syncKafkaCursorAndSelection(NodeSelection *selection)
     curCol, node, offset);
     kafkaPart->setCurrentNode(node, offset);
   }
-        
+  
   //Translate and set the selection.
   //quantaApp->view()->write()->selectionIf()
 }
