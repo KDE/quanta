@@ -584,7 +584,11 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Follow Cursor", sTab->followCursor() );
     m_config->writeEntry("PHP Debugger Port", phpDebugPort );
     m_config->writeEntry("Top folders", fTab->topURLList.toStringList());
+#if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)
     m_config->writePathEntry("List of opened files", m_doc->openedFiles().toStringList());
+#else
+    m_config->writeEntry("List of opened files", m_doc->openedFiles().toStringList());
+#endif
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     m_config->writeEntry ("PHP Debugger style", debuggerStyle);
@@ -794,8 +798,11 @@ void QuantaApp::openLastFiles()
 
   m_config->setGroup("General Options");
 
+#if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)
   QStringList urls = m_config->readPathListEntry("List of opened files");
-
+#else
+  QStringList urls = m_config->readListEntry("List of opened files");
+#endif
   m_doc->blockSignals(true);
   m_view->writeTab()->blockSignals(true);
   for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
