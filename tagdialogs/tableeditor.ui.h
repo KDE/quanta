@@ -652,7 +652,6 @@ QString TableEditor::tagContent(Node *node)
   if (node->next)
   {
     node->next->tag->beginPos(el, ec);
-    ec--;
   }
   else
   {
@@ -777,6 +776,8 @@ void TableEditor::slotAddRemoveCol( int num )
 
 void TableEditor::slotRemoveRow()
 {
+  if (m_row == -1)
+    m_row = m_dataTable->numRows() - 1;
   QValueList<TableNode>::Iterator it = m_tableRows->at(m_row);
   delete (*it).node;
   newNum--;
@@ -806,6 +807,8 @@ void TableEditor::slotRemoveCol()
       }
       i++;
   }
+  if (m_col == -1)
+    m_col = m_dataTable->numCols() - 1;
   for (QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
     QValueList<TableNode>::Iterator it2 = (*it).at(m_col);
     delete (*it2).node;

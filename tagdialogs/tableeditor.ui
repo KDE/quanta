@@ -775,6 +775,8 @@
     <variable>int m_bLine, m_bCol, m_eLine, m_eCol;</variable>
     <variable>QValueList&lt;NestedTable&gt; m_nestedTables;</variable>
     <variable>int m_editChildId;</variable>
+    <variable>QSpinBox *m_rowSpin;</variable>
+    <variable>QSpinBox *m_colSpin;</variable>
 </variables>
 <slots>
     <slot>slotContextMenuRequested( int row, int col, const QPoint &amp; pos )</slot>
