@@ -84,7 +84,7 @@ void oserrnostr(char *buf, int bufsize, int err) {
 	}
 #else
 	{
-#if defined(__NetBSD__) || defined(USE_SOLARIS)
+#if defined(__NetBSD__) || defined(USE_SOLARIS) || defined(__APPLE__)
    strncpy (buf, strerror (err), bufsize);
 #else   
    strerror_r(err, buf, bufsize);

@@ -11,6 +11,7 @@
                            the world-wide-web at http://dd.cron.ru/license
  ***************************************************************************/
 
+#include <sys/types.h>
 #include "dbg_core.h"
 #include <string.h>
 #include <stdlib.h>
