@@ -4,7 +4,7 @@ bin_PROGRAMS = kxsldbg xsldbg
 ## INCLUDES were found outside kdevelop specific part
 
 kxsldbg_SOURCES = kxsldbg.cpp main.cpp
-kxsldbg_LDADD   = ./kxsldbgpart/libqtnotfier/libqtnotfier.la ./kxsldbgpart/libkxsldbgpart.la ./kxsldbgpart/libxsldbg/libxsldbg.la  $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBXSLT_LIBS) $(LIBXML_LIBS) $(LIBSOCKET)
+kxsldbg_LDADD   = ./kxsldbgpart/libqtnotfier/libqtnotfier.la ./kxsldbgpart/libkxsldbgpart.la ./kxsldbgpart/libxsldbg/libxsldbg.la  $(LIB_KDEUI) $(LIBXSLT_LIBS) $(LIBXML_LIBS) 
 
 SUBDIRS = kxsldbgpart
 
@@ -50,33 +50,16 @@ xsldbg_LDFLAGS = $(all_libraries)
 # kde_designerdir     Where Qt Designer plugins should go to (new in KDE 3).
 
 # set the include path for X, qt and KDE
-INCLUDES= $(all_includes)
+INCLUDES= $(LIBXML_CFLAGS)  $(LIBXSLT_CFLAGS) $(all_includes)
 
 METASOURCES = AUTO
 
 # the application source, library search path, and link libraries
 kxsldbg_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 
-# this is where the desktop file will go
-shelldesktopdir   = $(kde_appsdir)/Development
-shelldesktop_DATA = kxsldbg.desktop
-
 # this is where the shell's XML-GUI resource file goes
 shellrcdir   = $(kde_datadir)/kxsldbg
 shellrc_DATA = kxsldbg_shell.rc
-
-# Uncomment the following two lines if you add a ui.rc file for your application to make use of
-# KDE´s XML GUI builing
-#rcdir = $(kde_datadir)/kxsldbg
-#rc_DATA = kxsldbgui.rc
-
-#WARNING: if you use a ui.rc file above, use:
-
-# messages: rc.cpp
-
-# instead of
-
-# messages:
 
 messages:
 	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \
