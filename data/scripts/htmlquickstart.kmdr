@@ -121,7 +121,7 @@ fi
 
 @CBDTD
 echo $HTML
-ehco '@CBCVS'
+echo '@CBCVS'
 @CBHead
 
 echo '&lt;body&gt;'
@@ -313,13 +313,13 @@ xhtml1frameset='&lt;?xml version="1.0" encoding="@ComboMetachar"?&gt;
 # Set the DTD based on user selection
 
 case "@widgetText" in 
-"HTML 4.0.1 Transitional" ) 
+"HTML 4.01 Transitional" ) 
 	DTD="$htmltrans"
 ;; 
-"HTML 4.0.1 Strict" ) 
+"HTML 4.01 Strict" ) 
 	DTD="$strict"
 ;; 
-"HTML 4.0.1 Frameset" ) 
+"HTML 4.01 Frameset" ) 
 	DTD="$frameset"
 ;; 
 "XHTML 1.0 Transitional" ) 

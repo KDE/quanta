@@ -962,7 +962,7 @@ accessibility-check		Integer   	0, 1, 2, ...
 [ 0 -lt @ParseAccess ] &amp;&amp; tidyargs="$tidyargs -access @ParseAccess"
 
 if [ @GUseDCOP -eq 1 ]; then
-	dcopid=`dcop quanta*`
+	dcopid=`dcop |grep quanta`
 	ifstr="EditInterface#"`dcop $dcopid WindowManagerIf currentEditorIfNum`
 	dcop $dcopid $ifstr text | $tidyargs
 else
