@@ -156,15 +156,19 @@ public:
         /**
 	 * Reload kafka from the current document.
 	 * @param force If set to true, it will reload kafka even if it is already up to date.
+	 * @param syncKafkaCursor If set to true, it will try to sync the kafka cursor from the
+	 * quanta one.
 	 */
-	 void reloadKafkaEditor(bool force = false);
+	 void reloadKafkaEditor(bool force = false, bool syncKafkaCursor = true);
 
 	/**
 	 * Reload the quanta editor from kafka.
 	 * @param force If set to true, it will reload quanta even if it is already up to date.
+	 * @param syncQuantaCursor If set to true, it will try to sync the quanta cursor from
+	 * the kafka one.
 	 */
-	void reloadQuantaEditor(bool force = false);
-	 
+	void reloadQuantaEditor(bool force = false, bool syncQuantaCursor = true);
+
 	/** All the possible Node modifications */
 	enum NodeModification {
 		//A complete Node Tree is added. Implemented.

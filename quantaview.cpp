@@ -450,22 +450,25 @@ void QuantaView::insertTag( const char *tag)
 
 #ifdef BUILD_KAFKAPART
 /** Reloads both views ONLY when changes have been made to the Node tree ONLY. */
-void QuantaView::reloadBothViews()
+void QuantaView::reloadBothViews(bool force)
 {
-	  write()->docUndoRedo->reloadQuantaEditor();
-	  write()->docUndoRedo->reloadKafkaEditor();
+	reloadQuantaView(force);
+	reloadKafkaView(force);
 }
 /** reload the Kafka view from the Node Tree. Set force to true if you want to reload even if not necessary. */
 void QuantaView::reloadKafkaView(bool force)
 {
-	write()->docUndoRedo->reloadKafkaEditor(force);
+	if(getViewsLayout() != QuantaView::QuantaViewOnly)
+		write()->docUndoRedo->reloadKafkaEditor(force);
 }
 
 /** reload the Quanta view from the Node Tree. Set force to true if you want to reload even if not necessary. */
 void QuantaView::reloadQuantaView(bool force)
 {
-	write()->docUndoRedo->reloadQuantaEditor(force);
+	if(getViewsLayout() != QuantaView::KafkaViewOnly)
+		write()->docUndoRedo->reloadQuantaEditor(force);
 }
+
 #endif
 
 void QuantaView::slotShowQuantaEditor()
@@ -717,7 +720,7 @@ void QuantaView::slotKafkaGetFocus(bool focus)
 
       //Reload the kafka Editor only if Quanta was modified or if something has happened (e.g. a reparse)
       //and NEED a kafka reload.
-      write()->docUndoRedo->reloadKafkaEditor(needKafkaReload());
+      write()->docUndoRedo->reloadKafkaEditor();
       //doesn't work!
       kafkaInterface->getKafkaWidget()->view()->setContentsPos(contentsX, contentsY);
     }
@@ -798,14 +801,14 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
     if(!qConfig.kafkaRefreshOnFocus)
       kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
     write()->docUndoRedo->reloadQuantaEditor();
+
+    //FIXME: the tree (and the output)is right, the pos aren't.
+    //This will reparse the whole Node tree and reload kafka.
+    if(writeExists())
+      baseNode = parser->parse(write());
   }
 
   currentFocus = QuantaView::quantaFocus;
-
-  //FIXME: the tree (and the output)is right, the pos aren't.
-  //quantaApp->slotForceReparse();
-  if(writeExists())
-    baseNode = parser->parse(write());
 
     //We enable some actions which doesn't work on kafka for the moment
     action = quantaApp->actionCollection()->action("tag_edit_table");

@@ -109,19 +109,13 @@ public:
   };
 
 #ifdef BUILD_KAFKAPART
-  /** Reloads both views ONLY when changes have been made to the Node tree ONLY. */
-  void reloadBothViews();
+  /** Reloads both views ONLY when changes have been made to the Node tree ONLY.
+    * Set force to true if you want to reload even if not necessary.*/
+  void reloadBothViews(bool force = false);
   /** reload the Kafka view from the Node Tree. Set force to true if you want to reload even if not necessary. */
   void reloadKafkaView(bool force = false);
   /** reload the Quanta view from the Node Tree. Set force to true if you want to reload even if not necessary. */
   void reloadQuantaView(bool force = false);
-
-  /**
-   * Specifies if a kafka reload is mandatory. It is mandatory e.g. when a reparse have been made, otherwise
-   * the DOM::Node->Node link will be wrong.
-   */
-  bool needKafkaReload() {return m_needKafkaReload;}
-  void setNeedKafkaReload(bool kafkaReload) {m_needKafkaReload = kafkaReload;}
 #endif
 
   /** Resize the current view */

@@ -738,9 +738,13 @@ Node *Parser::parse(Document *w)
  kdDebug(24000) << "Size of tree: " << treeSize << endl;
  */
 
+//FIXME: What is the use of two pointer to the same Node???
+baseNode = m_node;
+
 #ifdef BUILD_KAFKAPART
  //We need to reload Kafka to refresh the DOM::Node->Node links.
- quantaApp->view()->setNeedKafkaReload(true);
+ //FIXME: make a function which only update the DOM::Node->Node links.
+ quantaApp->view()->reloadKafkaView(true);
  #endif
 
  return m_node;

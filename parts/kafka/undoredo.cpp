@@ -1174,13 +1174,14 @@ bool undoRedo::UndoNodeModifInKafka(NodeModif &_nodeModif)
 	return true;
 }
 
-void undoRedo::reloadKafkaEditor(bool force)
+void undoRedo::reloadKafkaEditor(bool force, bool syncKafkaCursor)
 {
 	kdDebug(25001)<< "undoRedo::reloadKafkaEditor()" << endl;
 
 	if(kafkaIterator == documentIterator && !force)
 	{
-		syncKafkaCursorAndSelection();
+		if(syncKafkaCursor)
+			syncKafkaCursorAndSelection();
 		return;
 	}
 
@@ -1191,10 +1192,11 @@ void undoRedo::reloadKafkaEditor(bool force)
 	kafkaInterface->unloadDocument();
 	kafkaInterface->loadDocument(m_doc);
 
-	syncKafkaCursorAndSelection();
+	if(syncKafkaCursor)
+		syncKafkaCursorAndSelection();
 }
 
-void undoRedo::reloadQuantaEditor(bool force)
+void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 {
 	QString text, allText;
 	Node *node = baseNode;
@@ -1206,7 +1208,8 @@ void undoRedo::reloadQuantaEditor(bool force)
 
 	if(documentIterator == sourceIterator && !force)
 	{
-		syncQuantaCursorAndSelection();
+		if(syncQuantaCursor)
+			syncQuantaCursorAndSelection();
 		return;
 	}
 
@@ -1265,7 +1268,8 @@ void undoRedo::reloadQuantaEditor(bool force)
 	if(m_doc->editIfExt)
 		m_doc->editIfExt->editEnd();
 #endif
-	syncQuantaCursorAndSelection();
+	if(syncQuantaCursor)
+		syncQuantaCursorAndSelection();
 
 	qConfig.updateClosingTags = updateClosing;
 	m_doc->activateRepaintView(true);
