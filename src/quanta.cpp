@@ -4467,7 +4467,9 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
         {
             tab->setTabPosition(QTabWidget::Bottom);
             connect(tab, SIGNAL( contextMenu( QWidget *, const QPoint & ) ), ViewManager::ref(), SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
+#ifdef COMPAT_KMDI
             setTabWidgetVisibility(KMdi::AlwaysShowTabs);
+#endif
         }
         if (qConfig.showCloseButtons == "ShowAlways")
         {
