@@ -6,7 +6,7 @@
  </attr>
  <attr name="class" type="list" source="dcop" interface="QuantaIf" method="selectors(QString)" arguments="%tagname%" >
  </attr>
- <attr name="style" type="input">
+ <attr name="style" type="css-style">
  </attr>
  <attr name="title" type="input">
  </attr>

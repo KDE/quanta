@@ -139,7 +139,7 @@ bool DualEditableTree::eventFilter(QObject *object, QEvent *event)
       {
         it->hideEditor(1);
         it->showEditor(0);
-	it->lin2->setFocus();
+        it->lin2->setFocus();
         curCol = 0;
       }
       break;
@@ -149,7 +149,7 @@ bool DualEditableTree::eventFilter(QObject *object, QEvent *event)
       {
         it->hideEditor(0);
         it->showEditor(1);
-	it->lin->setFocus();
+        it->lin->setFocus();
         curCol = 1;
       }
       break;
@@ -278,11 +278,13 @@ void TagAttributeTree::setCurrentNode(Node *node)
     }
     n = n->parent;
   }
+
   if (m_parentItem)
       m_parentItem->showList(true);
   if (group)
      group->setOpen(true);
 //  if (!node->tag->nameSpace.isEmpty())
+
   if(node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd)
   {
     QString nameSpace = node->tag->nameSpace;
@@ -292,7 +294,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
     item = new AttributeNameSpaceItem(this, group, i18n("prefix"), nameSpace);
     group->setOpen(true);
   }
-  if (qTag)
+   if (qTag)
   {
     group = new TopLevelItem(this, group, i18n("Attributes"));
     QStringList list;
@@ -355,6 +357,10 @@ void TagAttributeTree::setCurrentNode(Node *node)
         if (attr->type == "color")
         {
           item = new AttributeColorItem(this, group, attr->name, node->tag->attributeValue(attr->name));
+        } else
+        if (attr->type == "css-style")
+        {
+          item = new AttributeStyleItem(this, group, attr->name, node->tag->attributeValue(attr->name));
         } else
         {
           item = new AttributeItem(this, group, attrName, node->tag->attributeValue(attrName));

@@ -29,6 +29,7 @@ class Attribute;
 class EditableTree;
 class TagAttributeTree;
 class Node;
+class StyleEditor;
 
 class TopLevelItem : public KListViewItem
 {
@@ -156,6 +157,21 @@ public:
 
 private:
     KColorCombo* combo;
+};
+
+class AttributeStyleItem : public AttributeItem
+{
+public:
+    AttributeStyleItem(EditableTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
+
+    virtual ~AttributeStyleItem();
+    virtual void showEditor(int column = 1);
+    virtual void hideEditor(int column = 1);
+    virtual QString editorText(int column = 1);
+
+private:
+
+    StyleEditor *m_se;
 };
 
 

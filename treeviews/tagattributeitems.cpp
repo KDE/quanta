@@ -38,6 +38,7 @@
 #include "document.h"
 #include "quantacommon.h"
 #include "qextfileinfo.h"
+#include "styleeditor.h"
 
 TopLevelItem::TopLevelItem(KListView* parent, const QString &title)
 : KListViewItem(parent, title)
@@ -402,7 +403,7 @@ AttributeListItem::AttributeListItem(EditableTree* listView, QListViewItem* pare
             combo->insertStringList(list);
         }
       }
-      
+
     }
     combo->insertItem("", 0);
     combo->setEditable(true);
@@ -496,3 +497,41 @@ void AttributeColorItem::hideEditor(int)
   setText(1, name);
   combo->hide();
 }
+
+//editable style combobox
+AttributeStyleItem::AttributeStyleItem(EditableTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
+: AttributeItem(parent, title, title2)
+{
+  m_listView = listView;
+  m_se = new StyleEditor( m_listView->viewport() );
+  //combo->setEditable(true);
+  m_se->hide();
+
+  QObject::connect( m_se->button(), SIGNAL( clicked() ), m_listView, SLOT( editorContentChanged() ) );
+ }
+
+AttributeStyleItem::~AttributeStyleItem()
+{
+  delete m_se;
+}
+
+QString AttributeStyleItem::editorText(int)
+{
+   return m_se->lineEdit()->text();
+}
+
+void AttributeStyleItem::showEditor(int)
+{
+  placeEditor(m_se);
+  m_se->show();
+  m_se->lineEdit()->setText(text(1));
+  m_se->setFocus();
+}
+
+void AttributeStyleItem::hideEditor(int)
+{
+  m_listView->editorContentChanged();
+  setText(1, m_se->lineEdit()->text());
+  m_se->hide();
+}
+

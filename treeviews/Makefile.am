@@ -12,6 +12,8 @@ INCLUDES = -I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/quanta/dialogs \
 	-I$(top_srcdir)/quanta/messages \
 	-I$(top_srcdir)/quanta/parts/kafka \
+	-I$(top_srcdir)/quanta/components/csseditor \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/quanta/dialogs/tagdialogs \
+	-I$(top_builddir)/quanta/components/csseditor \
 	$(KMDI_INCLUDES) $(all_includes)
