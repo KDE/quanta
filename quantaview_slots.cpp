@@ -505,16 +505,32 @@ void QuantaView::slotTagSelect()
 
 void QuantaView::slotViewInNetscape()
 {
+  m_netscape = "netscape";
+  slotViewInNetscapeOrMozilla();
+}
+
+void QuantaView::slotViewInMozilla()
+{
+  m_netscape = "mozilla";
+  slotViewInNetscapeOrMozilla();
+}
+
+void QuantaView::slotViewInOpera()
+{
+//TODO: Implement
+}
+
+void QuantaView::slotViewInNetscapeOrMozilla()
+{
   if (!writeExists()) return;
   Document *w = write();
   if (w->isModified())
   {
-    dontShowSavePreview = "AskForSaveBeforePreview";
     if ( KMessageBox::questionYesNo(this,
                                     i18n("The file must be saved before external preview.\n"
                                          "Do you want to save and preview?"),
                                     i18n("Save Before Preview"),
-                                    i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+                                    i18n("&Yes"),i18n("&No"), "AskForSaveBeforePreview")
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
@@ -535,7 +551,8 @@ void QuantaView::slotViewInNetscape()
     KProcess *show = new KProcess();
     KURL url = quantaApp->project()->urlWithPrefix(w->url());
 
-    *show << "netscape" << "-remote" << QString("openURL(")+url.url()+")";
+
+    *show << m_netscape << "-remote" << QString("openURL(")+url.url()+")";
     connect( show, SIGNAL(processExited(KProcess *)), this, SLOT(slotNetscapeStatus(KProcess *)));
     show->start( KProcess::NotifyOnExit );
   }
@@ -547,12 +564,11 @@ void QuantaView::slotViewInKFM()
   Document *w = write();
   if (w->isModified())
   {
-    dontShowSavePreview = "AskForSaveBeforePreview";
     if ( KMessageBox::questionYesNo(this,
                                     i18n("The file must be saved before external preview.\n"
                                          "Do you want to save and preview?"),
                                     i18n("Save Before Preview"),
-                                    i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+                                    i18n("&Yes"),i18n("&No"), "AskForSaveBeforePreview")
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
@@ -583,11 +599,10 @@ void QuantaView::slotViewInLynx()
   Document *w = write();
   if (w->isModified())
   {
-    dontShowSavePreview = "AskForSaveBeforePreview";
     if ( KMessageBox::questionYesNo(this,
                                     i18n("The file must be saved before external preview.\n"
                                          "Do you want to save and preview?"),
-                                    i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"),dontShowSavePreview)
+                                    i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"), "AskForSaveBeforePreview")
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
@@ -626,7 +641,7 @@ void QuantaView::slotNetscapeStatus(KProcess *proc)
   {
     KProcess *show = new KProcess();
     KURL url = quantaApp->project()->urlWithPrefix(write()->url());
-    *show << "netscape" << url.url();
+    *show << m_netscape << url.url();
     show->start( KProcess::DontCare );
   }
 }

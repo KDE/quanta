@@ -1928,9 +1928,15 @@ void QuantaApp::initActions()
                         this, SLOT( slotViewRepaint() ),
                         ac, "reload" );
 
-    (void) new KAction( i18n( "View with Net&scape" ), "netscape", ALT+Key_F6,
+    (void) new KAction( i18n( "View with Net&scape" ), "netscape", CTRL+ALT+Key_F6,
                         m_view, SLOT( slotViewInNetscape() ),
                         ac, "view_with_netscape" );
+    (void) new KAction( i18n( "View with &Mozilla" ), "mozilla", ALT+Key_F6,
+                        m_view, SLOT( slotViewInMozilla() ),
+                        ac, "view_with_mozilla" );
+    (void) new KAction( i18n( "View with &Opera" ), "opera", CTRL+SHIFT+Key_F6,
+                        m_view, SLOT( slotViewInOpera() ),
+                        ac, "view_with_opera" );
 
     (void) new KAction( i18n( "View with &Konqueror" ), "konqueror", CTRL+Key_F6,
                         m_view, SLOT( slotViewInKFM() ),

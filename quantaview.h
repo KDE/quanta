@@ -158,6 +158,9 @@ public slots:
 
   void slotViewInKFM();
   void slotViewInNetscape();
+  void slotViewInMozilla();
+  void slotViewInOpera();
+  void slotViewInNetscapeOrMozilla();
   void slotNetscapeStatus(KProcess *proc);
   void slotViewInLynx();
 
@@ -274,7 +277,7 @@ private:
   QString scriptErrorDest;
   ToolbarTabWidget *m_toolbarTab;
   QTabWidget *m_writeTab;
-  QString dontShowSavePreview;
+  QString m_netscape;
 
 protected:
   virtual void dropEvent(QDropEvent *e);
