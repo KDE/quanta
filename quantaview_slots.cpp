@@ -404,7 +404,6 @@ void QuantaView::slotTagEditTable()
     ec = coordList[3].toInt();
     if (QuantaCommon::isBetween(line, col, bl, bc, el, ec) == 0)
     {
-      kdDebug(24000) << "coordList = " << coordList << endl;
       tableExists = true;
       break;
     }
