@@ -3,6 +3,7 @@
 #### WARNING! All changes made in this part will be lost! ####
 ##############################################################
 
+libdir = ${kde_libraries}/quanta/plugins
 lib_LTLIBRARIES =libftpclient.la
 
 
@@ -12,10 +13,13 @@ INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libftpclient_la_METASOURCES = AUTO
 libftpclient_la_SOURCES = \
-		ftpclients.cpp
+		ftpclients.cpp\
+		ftpclient.cpp
 EXTRA_DIST = \
 		ftpclients.cpp\
-		ftpclients.h
+		ftpclients.h\
+		ftpclient.cpp\
+		ftpclient.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

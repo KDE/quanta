@@ -1432,8 +1432,25 @@ void QuantaApp::slotSetHl( int _hl )
 
 void QuantaApp::slotFtpClient()
 {
-	bool stat = toolMenu -> isItemChecked( ID_VIEW_FTP );
+/*	bool stat = toolMenu -> isItemChecked( ID_VIEW_FTP );
 	toolMenu->setItemChecked(ID_VIEW_FTP, !stat);
+	
+	// get the library loader instance
+  KLibLoader *loader = KLibLoader::self();
+  
+  KLibrary *lib = loader->library(QFile::encodeName("libftpclient"));
+  
+  if (lib)
+	{
+	  // get the init_ function
+	  QString init_func = QString("create_ftpclient");
+	  void *init = lib->symbol(init_func.utf8());
+	  if (init)
+	  {
+	    void (*func)() = (void(*)())init;
+      func();
+	  }
+	}*/
 }
 
 void QuantaApp::slotFtpClientClose()
