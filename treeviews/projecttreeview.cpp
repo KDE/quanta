@@ -31,6 +31,8 @@
 #include <kmessagebox.h>
 #include <kdebug.h>
 #include <kpropsdlg.h>
+#include <kprogress.h>
+#include <kstatusbar.h>
 
 // app includes
 #include "projecttreefile.h"
@@ -40,6 +42,7 @@
 #include "../quantacommon.h"
 #include "../qextfileinfo.h"
 #include "../resource.h"
+#include "../quanta.h"
 
 ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   //: QListView(parent,name)
@@ -178,8 +181,13 @@ void ProjectTreeView::slotSetProjectName( QString name )
 
 void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNewTree)
 {
+  quantaApp->statusBar()->changeItem( i18n("Building the project tree...") , IDS_STATUS);
+  progressBar->setTotalSteps(a_urlList.count()*2-2);
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(true);
   if (buildNewTree)
   {
+    progressBar->setTotalSteps(a_urlList.count()-1);
     if (projectDir) delete projectDir;
     QString projectNameStr = projectName+" ";
     if (projectName != i18n("No Project"))
@@ -217,7 +225,7 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
       QString dir = path.left(pos);
       newFolder = 0L;
       QListViewItem *item = folder->firstChild();
-      while( item )
+      while( item && !newFolder)
       {
         if ( dir == item->text(0) ) //get the correct dir to insert into
         {
@@ -239,7 +247,7 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
     {
       QListViewItem *item = folder->firstChild();
       bool neednew = true;
-      while( item )
+      while( item && neednew)
       {
         if ( path == item->text(0) ) neednew = false; //it is already present
         item = item->nextSibling();
@@ -253,37 +261,44 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
         item->setIcon(QExtFileInfo::toAbsolute(url, baseURL));
       }
     }
+    progressBar->advance(1);
   }
     
 //now remove all the invalid items for the treeview
-
- ProjectTreeFolder *folderItem;
- ProjectTreeFile *fileItem;
- QListViewItem *item;
- 
- QListViewItemIterator iter(this);
- for ( ; iter.current(); ++iter )
+ if (!buildNewTree)
  {
-   item = iter.current();
-   folderItem = dynamic_cast<ProjectTreeFolder *> (item);
-   if ( folderItem )
-   {
-     url = folderItem->url;
-   } else
-   {
-     fileItem = dynamic_cast<ProjectTreeFile *> (item);
-     if ( fileItem )
-     {
-       url = fileItem->url;
-     }
-   }
-   if (!urlList.contains(url) && item != projectDir)
-   {
-     delete item;
-   }
- }
+  ProjectTreeFolder *folderItem;
+  ProjectTreeFile *fileItem;
+  QListViewItem *item;
 
- projectDir->sortChildItems(0,true);
+  QListViewItemIterator iter(this);
+  for ( ; iter.current(); ++iter )
+  {
+    item = iter.current();
+    folderItem = dynamic_cast<ProjectTreeFolder *> (item);
+    if ( folderItem )
+    {
+      url = folderItem->url;
+    } else
+    {
+      fileItem = dynamic_cast<ProjectTreeFile *> (item);
+      if ( fileItem )
+      {
+        url = fileItem->url;
+      }
+    }
+    if (!urlList.contains(url) && item != projectDir)
+    {
+      delete item;
+    }
+    progressBar->advance(1);
+  }
+ }
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(false);
+
+  projectDir->sortChildItems(0,true);
+  quantaApp->slotStatusMsg( i18n("Ready."));
 }
 
 void ProjectTreeView::slotOpen()

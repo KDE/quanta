@@ -30,6 +30,17 @@
   *@author Andras Mantia
   */
 
+
+struct DTDNode {
+    DTDNode *next;
+    DTDNode *prev;
+    DTDNode *parent;
+    DTDNode *child;
+    QString name;
+    int bLine, bCol;
+    int eLine, eCol;
+  };
+
 class Document;
 
 class Parser {
@@ -46,10 +57,12 @@ public:
   void deleteNode();
   /** Clear the parser internal text, thus forcing the reparsing. */
   void clear();
+  /** Builds an internal tree to reflect the areas where each real & pseudo dtd is active. */
+  void parseForDTD(Document *w);
 
 	QString m_text;  //FIXME: having an internal copy of text is absolutely useless
 private:
-
+  DTDNode *m_dtdNode;
   Node* m_node;       //the internal Node pointer
   QString m_dtdName;  //the DTD name of write
   DTDStruct *m_dtd; //the dtd used for main parsing
@@ -61,6 +74,7 @@ private:
   void parse2();
   /** Go to the next column, or to the next line if we are at the end of line */
   void nextPos(int &line, int &col);
+  DTDNode *subParseForDTD(DTDNode *parent, int& line, int& col);
 };
 
 #endif

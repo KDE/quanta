@@ -104,7 +104,7 @@ bool QuantaCommon::isSingleTag(QString dtdName, QString tag)
 {
   bool single = false;
 
-  DTDStruct* dtd = dtds->find(dtdName);
+  DTDStruct* dtd = dtds->find(dtdName.lower());
   if (dtd)
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
@@ -121,7 +121,7 @@ bool QuantaCommon::isOptionalTag(QString dtdName, QString tag)
 {
   bool optional = false;
 
-  DTDStruct* dtd = dtds->find(dtdName);
+  DTDStruct* dtd = dtds->find(dtdName.lower());
   if (dtd)
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
@@ -137,7 +137,7 @@ bool QuantaCommon::isKnownTag(QString dtdName, QString tag)
 {
   bool known = false;
 
-  DTDStruct* dtd = dtds->find(dtdName);
+  DTDStruct* dtd = dtds->find(dtdName.lower());
   if (dtd)
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
@@ -152,7 +152,7 @@ AttributeList*  QuantaCommon::tagAttributes(QString dtdName, QString tag)
 {
   AttributeList* attrs = 0L;
 
-  DTDStruct* dtd = dtds->find(dtdName);
+  DTDStruct* dtd = dtds->find(dtdName.lower());
   if (dtd)
   {
     QString searchForTag = (dtd->caseSensitive) ? tag : tag.upper();
@@ -166,7 +166,7 @@ AttributeList*  QuantaCommon::tagAttributes(QString dtdName, QString tag)
 /** Returns the QTag object for the tag "tag" from the DTD named "dtdname". */
 QTag* QuantaCommon::tagFromDTD(QString dtdName, QString tag)
 {
-  DTDStruct* dtd = dtds->find(dtdName);
+  DTDStruct* dtd = dtds->find(dtdName.lower());
   return tagFromDTD(dtd, tag);
 }
 /** Returns the QTag object for the tag "tag" from the DTD. */
@@ -232,7 +232,7 @@ QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, QStr
 {
   QStringList *values = 0L;
   
-  DTDStruct* dtd = dtds->find(dtdName);
+  DTDStruct* dtd = dtds->find(dtdName.lower());
   if (dtd)
   {
     QString searchForAttr = (dtd->caseSensitive) ? attribute : attribute.upper();
@@ -274,7 +274,7 @@ QString QuantaCommon::getDTDNameFromNickName(QString nickName)
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
-    if (it.current()->nickName == nickName)
+    if (it.current()->nickName.lower() == nickName.lower())
     {
      name = it.current()->name;
      break;
@@ -291,7 +291,7 @@ QString QuantaCommon::getDTDNickNameFromName(QString name)
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
-    if (it.current()->name == name)
+    if (it.current()->name.lower() == name.lower())
     {
       nickName = it.current()->nickName;
       break;

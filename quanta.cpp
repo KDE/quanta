@@ -1359,7 +1359,7 @@ void QuantaApp::slotShowOpenFileList()
 /** No descriptions */
 void QuantaApp::slotNewProjectLoaded()
 {
-  delete tTab;
+/*  delete tTab;
   tTab = new TemplatesTreeView( project->baseURL, ttabdock );
   ttabdock->setWidget( tTab );
   tTab->setFocusPolicy(QWidget::NoFocus);
@@ -1373,7 +1373,7 @@ void QuantaApp::slotNewProjectLoaded()
   connect( getView(), SIGNAL(dragInsert(QDropEvent *)),
            tTab, SLOT(slotDragInsert(QDropEvent *))); // [MB02]
   connect( project, SIGNAL(templateURLChanged(const KURL &)),
-           tTab, SLOT(slotSetTemplateURL(const KURL &)));
+           tTab, SLOT(slotSetTemplateURL(const KURL &)));*/
   tTab->slotSetTemplateURL(project->templateURL);
 }
 

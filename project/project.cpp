@@ -559,6 +559,7 @@ void Project::loadProjectXML()
 
   KURL::List fileList;
   QDomNodeList nl = dom.firstChild().firstChild().childNodes();
+  quantaApp->slotStatusMsg( i18n("Reading the project file...") );
   progressBar->setTotalSteps(nl.count()-1);
   progressBar->setValue(0);
   progressBar->setTextEnabled(true);
@@ -605,6 +606,7 @@ void Project::loadProjectXML()
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 
+  quantaApp->slotStatusMsg( i18n("Done."));
 
   emit setBaseURL(baseURL);
   emit setProjectName( projectName );
@@ -1046,7 +1048,7 @@ void Project::slotOptions()
     if (it.current()->family == Xml)
     {
       int index = -1;
-      if (it.current()->name == m_defaultDTD) index = 0;
+      if (it.current()->name.lower() == m_defaultDTD) index = 0;
       optionsPage->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
     }
   }
@@ -1080,7 +1082,7 @@ void Project::slotOptions()
 		projectName = optionsPage->linePrjName->text();
 		author		= optionsPage->lineAuthor ->text();
 		email			= optionsPage->lineEmail	->text();
-    m_defaultDTD = QuantaCommon::getDTDNameFromNickName(optionsPage->dtdCombo->currentText());
+    m_defaultDTD = QuantaCommon::getDTDNameFromNickName(optionsPage->dtdCombo->currentText()).lower();
 
     QuantaCommon::setUrl(templateURL, optionsPage->linePrjTmpl->text());
     templateURL.adjustPath(1);
@@ -1277,7 +1279,7 @@ void Project::openCurrentView()
       {
         quantaApp->slotFileCloseAll(); //TODO: make a signal for closeAll
         QDomNodeList itemNodes = el.childNodes();
-        for (uint j = 0; j < itemNodes.count(); j++)
+        for (int j = itemNodes.count()-1; j >= 0 ; j--)
         {
           QDomElement el2 = itemNodes.item(j).cloneNode().toElement();
           KURL url = baseURL;

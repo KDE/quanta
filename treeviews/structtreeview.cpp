@@ -529,7 +529,7 @@ void StructTreeView::slotDTDChanged(int id)
     if (it.current()->nickName == text)
     {
       QString dtdName = QuantaCommon::getDTDNameFromNickName(text);
-      emit parsingDTDChanged(dtdName);
+      emit parsingDTDChanged(dtdName.lower());
       break;
     }
   }

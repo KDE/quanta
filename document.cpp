@@ -1180,7 +1180,7 @@ QString Document::getDTDIdentifier()
 /** Sets the DTD identifier */
 void Document::setDTDIdentifier(QString id)
 {
-  dtdName = id;
+  dtdName = id.lower();
   if (dtds->find(dtdName))
   {
     m_parsingDTD = dtdName;
@@ -1196,7 +1196,7 @@ DTDStruct* Document::currentDTD(bool fallback)
   DTDStruct* dtd = dtds->find(findDTDName(line, 0));
   if (fallback)
   {
-    if (!dtd) dtd = dtds->find(dtdName);
+    if (!dtd) dtd = dtds->find(dtdName.lower());
     if (!dtd) dtd = dtds->find(m_project->defaultDTD());
     if (!dtd) dtd = dtds->find(qConfig.defaultDocType); //this will always exists
   }
@@ -1244,7 +1244,18 @@ QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
      pos = scriptBeginRx.searchRev(text);
      if (pos != -1)
      {
-         foundText = scriptBeginRx.cap(0).lower();
+       foundText = scriptBeginRx.cap(0).lower();
+       if (foundText.startsWith("<script"))
+       {
+         tag = findXMLTag(i, pos, true);
+         if (tag)
+         {
+           foundText = tag->attributeValue("language");
+           delete tag;
+         }
+         searchPseudoDTD = false;
+       } else
+       {
          QDictIterator<DTDStruct> it(*dtds);
          for( ; it.current(); ++it )
          {
@@ -1254,28 +1265,14 @@ QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
              int index = dtd->scriptTagStart.findIndex(foundText);
              if (index !=-1)
              {
-               QString t = this->text(i, pos, line, col);
-               if (t.find(dtd->scriptTagEnd[index],0,false) == -1)
-               {
-                 if (text.mid(pos,7).lower() == "<script")
-                 {
-                   tag = findXMLTag(i, pos, true);
-                   if (tag)
-                   {
-                     foundText = tag->attributeValue("language");
-                     delete tag;
-                   }
-                 } else
-                 {
-                   foundText = dtd->name;
-                 }
-                 searchPseudoDTD = false;
-                 break; //exit the for
-               }
+               foundText = dtd->name;
              }
+             searchPseudoDTD = false;
+             break; //exit the for
            }
-         } //FOR
-         if (!searchPseudoDTD) break;
+         }
+       }
+       if (!searchPseudoDTD) break;
      }
    }
    //search for !DOCTYPE tags
@@ -1307,7 +1304,7 @@ QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
    endReached = (direction < 0)?(i < endLine):(i > endLine);
  } while (!endReached);
 
- return foundText;
+ return foundText.lower();
 }
 
 /** Called whenever a user inputs text in a script type document. */
