@@ -1,0 +1,296 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>xslt_processor</class>
+<comment>Kommander front-end to xsltproc for Quanta Plus.</comment>
+<author>Chris Hornbaker</author>
+<widget class="Dialog">
+    <property name="name">
+        <cstring>Form1</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>461</width>
+            <height>250</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Quanta+: xsltproc</string>
+    </property>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>Layout5</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>200</y>
+                <width>439</width>
+                <height>38</height>
+            </rect>
+        </property>
+        <hbox>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <spacer>
+                <property name="name">
+                    <cstring>Spacer4</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>30</width>
+                        <height>0</height>
+                    </size>
+                </property>
+            </spacer>
+            <widget class="ExecButton">
+                <property name="name">
+                    <cstring>ExecButton1</cstring>
+                </property>
+                <property name="text">
+                    <string>Translate</string>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string># Set up the CMDLINE var and run xsltproc
+@GroupBox1
+xsltproc $CMDLINE</string>
+                    </stringlist>
+                </property>
+            </widget>
+            <widget class="CloseButton">
+                <property name="name">
+                    <cstring>CloseButton1</cstring>
+                </property>
+                <property name="text">
+                    <string>Close</string>
+                </property>
+            </widget>
+        </hbox>
+    </widget>
+    <widget class="GroupBox">
+        <property name="name">
+            <cstring>GroupBox1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>439</width>
+                <height>180</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string></string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string># get file to be tested location
+@CheckBox1
+if [ !$CUR ]
+ then
+  TMP0=`dcop | grep quanta`
+  TMP1=`dcop $TMP0 WindowManagerIf currentURL`
+  FILE=`echo $TMP1 | cut -b6-`
+ else
+  FILE=`echo '@FileSelector1'`
+fi
+
+STYLESHEET=`echo '@FileSelector2'`
+
+OPFILE=`echo '@LineEdit1'`
+
+# Put it all together
+CMDLINE="-o $HOME/$OPFILE $STYLESHEET $FILE"</string>
+            </stringlist>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout17</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>10</y>
+                    <width>420</width>
+                    <height>156</height>
+                </rect>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="CheckBox">
+                    <property name="name">
+                        <cstring>CheckBox1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Current File</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string></string>
+                            <string></string>
+                            <string># Check if we're using the current file and make note of it
+if [ !@FileSelector1 ]
+ then
+  CUR=1
+ else
+  CUR=''
+fi</string>
+                        </stringlist>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout15</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>TextLabel1</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>File Location:</string>
+                            </property>
+                        </widget>
+                        <widget class="FileSelector">
+                            <property name="name">
+                                <cstring>FileSelector1</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout14</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>TextLabel2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Stylesheet Location:</string>
+                            </property>
+                        </widget>
+                        <widget class="FileSelector">
+                            <property name="name">
+                                <cstring>FileSelector2</cstring>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout13</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>TextLabel1_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Output File Name:</string>
+                            </property>
+                        </widget>
+                        <widget class="LineEdit">
+                            <property name="name">
+                                <cstring>LineEdit1</cstring>
+                            </property>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+            </vbox>
+        </widget>
+    </widget>
+</widget>
+<connections>
+    <connection>
+        <sender>CheckBox1</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>FileSelector1</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>CheckBox1</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>TextLabel1</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+</connections>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

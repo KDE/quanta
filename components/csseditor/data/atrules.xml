@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<rules version="2.1">
+  <rule name="charset"/> 
+  <rule name="import"/> 
+  <rule name="media"/> 
+  <rule name="page"/> 
+</rules>

@@ -1,0 +1,16 @@
+[General]
+Name = CFFUNCT
+DefaultExtension = cfm
+Groups =
+NumOfPages = 0
+CaseSensitive = true
+Family = 2
+
+[Extra rules]
+TagAutoCompleteAfter = none
+
+[Parsing rules]
+AreaBorders = # #,<cfscript> </cfscript>
+Tags = script(language)
+Comments = // EOL
+maycontain = cffunct

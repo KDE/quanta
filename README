@@ -1,0 +1,224 @@
+ Quanta Plus - a WEB Development tool for the K Desktop Environment.
+ Version: 3.2 line
+
+NOTE: This is a "Bleeding Edge" edition. It contains the latest features and 
+bugfixes, but due to its bleeding edge nature, it is less tested and
+might contain unknown bugs or not fully implemented features.
+
+Table of contents
+-----------------
+
+    1. Introduction
+    2. Requirements
+    3. Release notes
+    4. Getting Quanta Plus
+    5. Installation
+       5.1 Common installation and compilation problems
+    6. Common runtime problems
+    7. Reporting bugs
+    8. Developer info
+    9. Contactins us, mailing lists
+
+
+1. Introduction:
+----------------
+ It is more than a HTML editor, altough currently the majority of the users
+are using Quanta+ to create web pages (HTML and PHP). Quanta+ supports a
+lot of markup and script languages, and the number of supported languages
+can be easily extended, even by the user.
+
+ Our objective is to product a complete web development environment!
+We are well on our way to those objectives, supporting basic HTML that now
+assists you to write compliant mark up, as well as XML support. Our newest
+features allow for the DTD to be read in on the fly and for visual page layout.
+
+ Look for active development with a focus on supporting professional level
+development. This means full HTML/XML support including cascading style
+sheets and lots of time saving features.
+ Also improved support is planned for Perl, Javascript and PHP.
+
+2. Requirements
+---------------
+ Quanta Plus 3.2 was developed for KDE 3.2. We do our best to support running
+it on KDE 3.1.x, but you should understand that as it will be part
+of KDE 3.2, it's best working under this version. Under
+KDE 3.1.x some of the new features are not available or they may not work
+as expected.
+ Check out the KDE webpage (http://www.kde.org) for the requirements
+running and compiling KDE 3.1 software. Generally for KDE 3.1.x you will
+need at least QT 3.1.0 or above.
+ Don't forget that for compilation you need an environment set up for
+developing. This means that aside from the compiler (usually GCC) and the
+make tools (autoconf, automake, gmake/make and so) you need some additional
+libraries and the _header_ files for those libraries. The headers are
+usually located in the so called "-devel" or "-dev" packages in RPM based
+distros, but this depends on the distribution you use.
+ For some more information about what do you need and how to compile KDE
+(and KDE applications) read the documents from the following site:
+ http://developer.kde.org/build/index.html
+
+3. Release notes
+----------------
+  This release (3.2 pre-1) is an unstable development release, a so called
+preview to show you some of the upcoming features and behavior of Quanta+ 3.2.
+Unstable means that it's software under development and some features might
+be broken, altough in case of Quanta+ even the CVS HEAD version is quite stable.
+As mentioned some features require the KDE CVS HEAD version to work correctly,
+but beware that some things may be broken in KDE CVS, so upgrade only if you
+know what you're doing. For example since some time Quanta+ crashes with KDE
+CVS HEAD, but this is not Quanta's fault, but possibly a bug in a recent
+commit to the Kate part, the editor we are using.
+  For a complete list of changes, including the notes which feature is available
+under KDE 3.1.x and which requires KDE CVS HEAD consult the ChangeLog file.
+  This preview release is available only in English. Translated version will be
+available as soon as KDE 3.2 is released.
+
+4. Getting Quanta Plus
+----------------------
+ Starting from version 3.1, you can download Quanta Plus from the same
+place as the rest of KDE. Start to browse at http://www.kde.org.
+ The homepage of Quanta Plus is located at http://quanta.sourceforge.net,
+and here you can find the latest news regarding the development,
+announcements, merchandise and you can make some donation to support
+Quanta. The homepage contains links to download it for KDE 3.1.x.
+ An alternative way to use the latest and greatest version is to get it
+from CVS. More info about getting the sources from KDE CVS can be found
+at: http://developer.kde.org/source/. The module name for Quanta is "quanta".
+
+5. Installation
+---------------
+ In order to install Quanta Plus on your computer do the following:
+
+./configure
+make
+make install (as root)
+
+Should you have trouble during ./configure or the make process, try the
+following:
+ - export KDEDIRS=<path to kde installation>:$KDEDIRS
+ - export QTDIR=<path to qt3>
+ - run  "make -f Makefile.cvs"
+ - run "./configure"
+
+ The recommended place where to install Quanta is your $KDEDIR. To find out, use
+"kde-config --prefix" or simply configure Quanta with:
+
+./configure --prefix `kde-config --prefix`
+
+ If you use Quanta+ from CVS, or your ./configure script is missing, run
+"make -f Makefile.cvs" and you will get it.
+
+ For more information regarding the configuration and make process read the
+instructions from the INSTALL file, and run the ./configure --help command.
+
+5.1. Common installation and compilation problems
+-------------------------------------------------
+Possible problem sources can be:
+  - old autoconf was used (2.52 or newer is required). Check with
+    "autoconf --version".
+  - old automake was used (1.5 or newer is required). Check with
+    "automake --version".
+  - wrong --prefix given to ./configure
+  - "make install" process was forgotten or failed
+  - you have an old quantarc file in $KDEHOME/share/config
+  - you have old files in $KDEHOME/share/apps/quanta
+
+In the latter two cases backup the old files, then remove them and try
+to start Quanta again.
+
+ For those having compilation errors like:
+
+copytos.cpp:47: invalid use of undefined type `class KURLRequester'
+copytos.h:17: forward declaration of `class KURLRequester'
+
+(or the same error in other files for other K... classes), try the following:
+  - check if there is a kdewidgets.so (and kdewidgets.la) in your
+    $KDEDIR/lib/kde3/plugins/designer. If there isn't, you have a broken
+    KDE (kdelibs) install.
+  - check your $HOME/.qt/qtrc file. Add the above path as the first entry to
+    the libraryPath (like:
+    libraryPath=/opt/kde-cvs/lib/kde3/plugins/:/home/user/cvs/head/qt-copy/plugins).
+    You can use the qtconfig tool to do this.
+  - recompile the QT tools (uic, designer) if you have upgraded kdelibs
+    (or QT).
+  - check that your $KDEDIR and $QTDIR path is set correctly.
+  - do an
+       export kde_widgetdir="$KDEDIR/lib/kde3/plugins/designer"
+    (or whatever command your shell uses for environment variable setting)
+    before running make.
+In most cases one of the above is the problem (and the solution).
+
+6. Common runtime problems
+--------------------------
+
+  a) In case Quanta refuses to open a source file from it's treeviews, saying
+that the file is a binary one, check in Control Center->File Associations that
+the mimetype corresponding to this file extension is under the text node. There
+were reports that Mandrake 9.0 puts the mimetype for php under the application
+node, so users could not open PHP files from Quanta... This shouldn't be a problem
+with Quanta 3.2 on KDE 3.1.1 or newer.
+  b) If Quanta crashes on startup then rename your local quantarc file
+(in $KDEHOME/share/config) and send this file to me, so I can find out why does
+it crash. in case of any  crash, please send me a backtrace.
+  c) If you see the same DTD more than once in the DTD selection lists, it means
+that you have more than one Quanta installed, one in your KDE directories and
+the other in some other place.
+     If you start the second one, it will pick up also the DTD's from the KDE
+directories. The rule is: install Quanta in the KDE dir, or if you wish to have
+more than one Quanta version, install both of them in another dir than the KDE
+one! In this case you should remove the $KDEDIR/share/apps/quanta directory.
+  d) If you removed the editor/treeviews from the main window and you cannot dock
+them back anymore, locate your local quantarc file, and remove the whole
+[dock_setting_default] group.
+
+7. Reporting bugs
+-----------------
+ Good reports make my work easier. I usually cannot locate the problem and fix
+it, if the report is bad or incomplete. Some rules:
+
+    a) Report ALL your bugs and wishes on http://bugs.kde.org (or use
+    Help->Report Bug). If it is not possible, than report in E-Mail to the
+    amantia@kde.org address. As this is my private address, please use the
+    KDE bug reporting system if you can.
+    b) Specify the Quanta version in your report. "quanta --version" will tell
+    it to you, or you can find it from Help->About Quanta. In case of
+    compilation errors, look at the quanta.lsm file.
+    c) Specify the KDE and QT version. "quanta --version" is your friend here.
+    d) Specify the used package (if it is a pre-built binary package).
+    e) Tell me the compiler version. (g++ --version)
+    f) Tell me how the bug can be reproduced. This is essentially.
+    g) In case of crashes re-configure Quanta with the --enable-debug switch and
+    generate a backtrace. You must have gdb installed to do so. Send me the
+    backtrace.
+    h) Send me the document which caused the problem, or the quantarc file if
+    it's a startup crash. (See 5/c.)
+
+I'm waiting your bugs and wishes.
+
+8. Developer info
+-----------------
+  If you are a C++ developer, first of all read the HACKING file about coding rules.
+  If you would like to review the structure of Quanta you can use Umbrello from
+kdesdk CVS to load the quanta_uml.xmi file. The file will not load in pre-CVS
+versions like Umbrello 1.1.1.
+  If you are interested in getting involved with the development of Quanta
+contact Eric Laffoon at sequitur@kde.org. You can contribute in more ways than
+just C++ including templates, XML files to adapt new languages and more.
+  If you would like to make a contribution to the project to help defer our
+very real development expenses you may use PayPal and send to Eric Laffoon
+sequitur@easystreet.com.
+
+9. Contacting us, mailing lists
+-------------------------------
+  We have two mailing lists. For the general users there is the Quanta user
+mailing lists at http://mail.kde.org/mailman/listinfo/quanta .
+  If you would like to become a Quanta developer, you may want to subscribe to
+the Quanta developer list at http://mail.kde.org/mailman/listinfo/quanta-devel
+Subscription to this list is moderated.
+  In case of urgent issues, and if the above isn't good for you, contact the
+current maintainers using their addresses found at Help->About Quanta->Authors.
+
+
+Enjoy Quanta+!
+
+The Quanta team

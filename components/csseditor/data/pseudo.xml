@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<pseudo>
+  <element name="after"/>
+  <element name="before"/>
+  <element name="first-child"/>
+  <element name="first-letter"/>
+  <element name="first-line" appliesTo="p"/>
+  <class name="active"/>
+  <class name="focus"/>
+  <class name="hover"/>
+  <class name="lang"/>
+  <class name="link"/>
+  <class name="visited"/>
+</pseudo>

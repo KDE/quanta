@@ -1,0 +1,33 @@
+[General]
+Name = text/css
+NickName = CSS
+DefaultExtension = css
+MimeTypes = text/css
+Groups =
+NumOfPages = 0
+CaseSensitive = true
+Family = 2
+TopLevel = true
+
+[Extra rules]
+StructGroupsCount = 1
+MinusAllowedInWord = true
+TagAutoCompleteAfter = {
+AttributeAutoCompleteAfter = :
+AttributeSeparator = ,
+TagSeparator = ;
+
+[Parsing rules]
+Tags = style(type)
+Comments = /* */
+StructKeywords =
+StructBeginStr = {
+StructEndStr = }
+StructRx = \\{|\\}
+
+
+[StructGroup_1]
+Name = Selectors
+No_Name = No Selectors Found
+SearchRx = \s[\d\S\w]+\b
+TagType = ScriptStructureBegin

@@ -1,0 +1,156 @@
+DTD definitions for Quanta+ are made up from two parts:
+a) the description.rc
+b) the tag files
+
+The content of them depends also on the type of the DTD (real or pseudo
+DTD).
+
+A. The description.rc
+---------------------
+Contains some information and rules about the DTD itself.
+
+A1. description.rc for real DTDs
+--------------------------------
+
+[General] - generic information
+Name = DTD definition string (like -//W3C//DTD HTML 4.01 Transitional//EN)
+NickName = the beautified name of the DTD (like HTML 4.01 Transitional). If not
+    defined, the Name is used as NickName.
+URL = url pointing to the DTD definition (http://www.w3.org/TR/html4/loose.dtd)
+DoctypeString = the string that should appear in the !DOCTYPE tag
+      (HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd")
+Inherits = the name of the DTD from where this DTD inherits the tags (-//W3C//DTD HTML 4.01//EN)
+DefaultExtension = new files are created with this extension (html)
+Groups = the list of common attribute groups, which may be present in more than
+      one tag (Core, I18n, Script). See below (Group1, Group2...)
+NumOfPages = how many pages does a tag dialog have (aside of the page containing
+      the attributes defined in the tag file). See below (Page1,...)
+CaseSensitive = case-sensitiveness of the DTD
+QuotedAttributes = OBSOLETE, not used
+Family = 1 (it's a real DTD)
+
+
+[Toolbars] - information about DTD toolbars
+Location = the directory inside the $KDEDIR($KDEHOME)/share/apps/quanta/toolbars
+    where the toolbars for this DTD are
+Names = the list of toolbar file names (without the .toolbar.tgz extension) that
+    are loaded for this DTD from the above directory
+
+
+[Group1] - replace with one of the Groups listed below
+Attributes = the list of attributes for this group. Currently all of the listed
+    attributes are treated as strings.
+Example:
+[Core]
+Attributes = id, class, style, title
+
+
+[Page1] - description of a tag editor page
+Title = the title of this page in the tag editing dialog
+Groups = list of groups appearing on this page (like Core, I18n)
+
+
+[Extra tags] -  OBSOLETE! Please define the tags in external files!
+List = list of tags not defined in external tag files.
+tag_name = attribute1, attribute2  - attribute names of tag called tag_name
+tag_name_options = options of tag called tag_name
+
+
+[Extra rules] - some rules not fitted in other places
+BooleanAttributes = simple or complex.
+    Example for simple: <tag booleanAttr>.
+    Example for complex: <tag booleanAttr="1"> or <tag booleanAttr="true">
+Single Tag Style = html or XML.
+    Example for html: <single_tag>
+    Example for XML:  <single_tag />
+StructGroupsCount = the number of structure groups. See below.
+MinusAllowedInWords = if true "this-is-a-word" is treated like a word. Otherwise
+    it's treated like 4 words.
+TagAutoCompleteAfter = CHAR. The autocompletion box is brought up automatically
+    once this CHAR is entered or SPACE is pressed after this CHAR. For real
+    DTDs it's usually "<", but for CSS pseudo DTD it's "{". The text "none"
+    instead of a CHAR specifies that the tag completion box should not be brought
+    up automatically, only if the user requests it.
+AttributeSeparator = CHAR. This CHAR means that the attribute name has ended.
+    It's " for XML DTDs and , for pseudo DTDs.
+TagSeparator = CHAR. Similar to the above.
+
+
+[StructGroup_1] - definition of structure group 1
+Name = the text that appears if there are tags matching this group settings
+       (like Links)
+No_Name = the text that appears if there are NO tags matching this group settings
+       (like No Links)
+Icon = the name of the icon appearing before the above texts (like www)
+Tag = tagname(attribute1, attribute2, ...). Tags with name tagname will appear
+    under this group. The item text will be "attribute1_value | attribute2_value | ..."
+    Currently only one tag may be listed here.
+HasFileName = true if the item text (one of the above attribute values) contains a file name
+FileNameRx = regular expression used to remove the unnecessary chars from the item
+    text.
+
+
+[Parsing rules] - rules used when parsing the document
+SpecialAreas = the beginning and ending string of special areas, separatted by a comma.
+    Special areas are not parsed according to this DTD's rules, but as their own rules.
+    A special area can be a pseudo DTD,a comment or something like that. Eg. <!-- -->
+SpecialAreaNames = comma separated list of the above special area names. Eg. comment
+Comments = comma separated list of area borders for comments. EOL means end-of-line.
+    Eg: // EOL, /* */
+AppendCommonRules = true or false. If true, the following rules are automatically appended:
+      SpecialAreas = <?xml ?>, <!-- -->, <! >
+      SpecialAreaNames = XML PI, comment, DTD
+      Comments = <!-- -->  
+      Default is "true", so append the rules.
+SpecialTags = tagname(attributename) - specifies a tag which defines the start of
+    a special area
+MayContain = comma separated list of pseudo-DTDs that can be present in the document.
+    E.g. php, css
+
+
+A2. description.rc for pseudo DTDs
+----------------------------------
+
+Only the differences, special notices are listed here.
+[General]
+Groups = (There are no common groups)
+NumOfPages = 0 . There is no tag editing dialog for pseudo DTDs.
+Family = 2 (it's a pseudo DTD)
+
+
+[Extra rules]
+ScriptName = OBSOLETE, don't use.
+ScriptTagBorders = OBSOLETE, don't use.
+ScriptRegExp = OBSOLETE, don't use.
+AttributeAutoCompletionAfter = CHAR. Similar to the TagAutoCompletionAfter, but
+    for tag attributes. It's "(" by default and ":" for CSS. Not used for real
+    DTDs.
+
+
+[StructGroup_1]
+SearchRx = regular expression used to find text areas in the pseudo DTD, which
+    will belong to this group
+ClearRx = regular experssion used to clear unwanted text/chars from the above
+    search result. The cleaned string will appear in the structure tree.
+
+
+[Parsing rules]
+AreaBorders = comma separated list of the area borders encapsulating this pseudo
+    DTD. In case of PHP it is: <? ?>, <* *>, <% %>
+Tags = tagname(attribute). If the parent(real) DTD has a tag with tagname and
+    the attribute value of this tag is equal with the DTD name, the tag area
+    is parsed according to the rules of this DTD.
+Comments = comma separated list of area borders for comments. EOL means end-of-line.
+    Eg: // EOL, /* */
+StructKeywords = ";" separated list of structure keywords. Structures are treated
+    as new nodes in the structure tree.
+StructBeginStr = a string specifying the beginning of a structure (like {)
+StructEndStr = a string specifying the beginning of a structure (like })
+StructRx = regular experssion containing the beginning or the end of the structure
+    area. Eg. \\{ | \\} (structure area border can be { or })
+MayContain = pseudo DTDs can contain other pseudo DTDs
+
+
+B. Tag file structure
+---------------------
+Tag files are described in the Quanta doc tab under Quanta Tag Dialog Definition XML.

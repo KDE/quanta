@@ -1,0 +1,68 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>TagMisc</class>
+<comment>/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *   (at your option) any later version.                                   *
+ ***************************************************************************/
+</comment>
+<author>(C) 2001, 2003 Andras Mantia &lt;amantia@kde.org&gt;</author>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>TagMisc</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>350</width>
+            <height>61</height>
+        </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>350</width>
+            <height>60</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>Misc. Tag</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLineEdit" row="0" column="1">
+            <property name="name">
+                <cstring>elementName</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Element name:</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>addClosingTag</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Add closing tag</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>elementName</tabstop>
+    <tabstop>addClosingTag</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

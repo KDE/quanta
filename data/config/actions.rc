@@ -1,0 +1,21 @@
+<!DOCTYPE actionsconfig>
+<actions>
+<action shortcut="Alt+Ctrl+T" icon="check.png" type="script" tooltip="Syntax checking with HTML Tidy" name="tidy_check" text="&amp;HTML Tidy Syntax Checking" >
+<script output="message" error="message" input="current" >tidy -qe</script>
+</action>
+<action shortcut="" icon="quick_start.png" type="script" tooltip="Kommander Quick Start Dialog" name="tag_quick_start" text="Quick Start Dialog" >
+<script output="new" error="message" input="none" >kmdr-executor %scriptdir/htmlquickstart.kmdr</script>
+</action>
+<action shortcut="" icon="kompare" type="script" tooltip="" name="kompare_script" text="&amp;Kompare" >
+<script output="message" error="message" input="none" >kompare</script>
+</action>
+<action shortcut="CTRL+SHIFT+F6" icon="opera" type="script" tooltip="" name="view_with_opera" text="View with &amp;Opera">
+<script output="message" error="message" input="none" >sh %scriptdir/externalpreview.sh %pid opera new-page</script>
+</action>
+<action shortcut="ALT+F6" icon="mozilla" type="script" tooltip="" name="view_with_mozilla" text="View with Mo&amp;zilla">
+<script output="message" error="message" input="none" >sh %scriptdir/externalpreview.sh %pid mozilla new-tab</script>
+</action>
+<action shortcut="CTRL+ALT+F6" icon="netscape" type="script" tooltip="" name="view_with_netscape" text="View with &amp;Netscape">
+<script output="message" error="message" input="none" >sh %scriptdir/externalpreview.sh %pid netscape new-tab</script>
+</action>
+</actions>

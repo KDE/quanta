@@ -1,0 +1,9 @@
+<!DOCTYPE QuantaScriptInfo>
+<INFO>
+<options editor="kmdr-editor" interpreter="kmdr-executor" />
+<name>tidy</name>
+<author>Robert Nickel</author>
+<email>robert@artnickel.com</email>
+<license>GPL</license>
+<about>An advanced Kommander dialog for HTML Tidy that also demonstrates some advanced Kommander features.</about>
+</INFO>

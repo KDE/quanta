@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE QuantaScriptInfo>
+<INFO>
+<options editor="kmdr-editor" interpreter="kmdr-executor" />
+<name>htmlquickstart</name>
+<author>Eric Laffoon / Frederik Nosi</author>
+<email>sequitur@kde.org</email>
+<website>http://quanta.sf.net/</website>
+<version>1.1</version>
+<license>GPL</license>
+<about>This replaces the old HTML 3.2 oriented quick start hard coded into Quanta. This dialog allows for various HTML dialects and additional structural setup.
+
+Enjoy!</about>
+</INFO>

@@ -1,0 +1,244 @@
+<!DOCTYPE kdevelop>
+<kdevelop>
+  <general>
+    <author>Andras Mantia</author>
+    <email>amantia@kde.org</email>
+    <projectmanagement>KDevKDEAutoProject</projectmanagement>
+    <primarylanguage>C++</primarylanguage>
+    <keywords>
+      <keyword>KDE</keyword>
+      <keyword>Qt</keyword>
+    </keywords>
+    <version>3.2-CVS-1</version>
+    <description>Quanta Plus Web Development Environment</description>
+    <ignoreparts>
+      <part>KDevBookmarks</part>
+      <part>KDevClearCase</part>
+      <part>KDevDoxygen</part>
+      <part>KDevdistpart</part>
+      <part>KDevPerforce</part>
+      <part>KDevVisualBoyAdvance</part>
+    </ignoreparts>
+    <projectdirectory>.</projectdirectory>
+    <absoluteprojectpath>false</absoluteprojectpath>
+    <secondaryLanguages/>
+  </general>
+  <kdevautoproject>
+    <general>
+      <mainprogram>quanta</mainprogram>
+      <useconfiguration>default</useconfiguration>
+      <activetarget>quanta/treeviews/libtreeviews.la</activetarget>
+    </general>
+    <configure>
+      <configargs>--prefix=/opt/kde3 --enable-debug\s</configargs>
+    </configure>
+    <make>
+      <abortonerror>true</abortonerror>
+      <numberofjobs>1</numberofjobs>
+      <dontact>false</dontact>
+      <makebin/>
+      <envvars>
+        <envvar value="1" name="WANT_AUTOCONF_2_5" />
+        <envvar value="1" name="WANT_AUTOMAKE_1_6" />
+      </envvars>
+    </make>
+    <compiler>
+      <cflags/>
+      <cxxflags>\s-O0 -g3 -Wall</cxxflags>
+    </compiler>
+    <run>
+      <mainprogram>quanta/quanta_be</mainprogram>
+      <programargs/>
+      <terminal>false</terminal>
+      <envvars/>
+      <directoryradio>build</directoryradio>
+      <customdirectory>/</customdirectory>
+      <autocompile>true</autocompile>
+    </run>
+    <envvars/>
+    <configurations>
+      <default>
+        <configargs>--enable-debug=full --without-kommander --prefix=/opt/kde3</configargs>
+        <builddir>/home/andris/development/build/kde-head/quanta</builddir>
+        <ccompiler>GccOptions</ccompiler>
+        <cxxcompiler>GppOptions</cxxcompiler>
+        <f77compiler>G77Options</f77compiler>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
+        <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
+        <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cxxflags>
+        <f77flags/>
+        <topsourcedir/>
+        <cppflags/>
+        <ldflags/>
+      </default>
+      <withkommander>
+        <configargs>--enable-debug=full --prefix=/opt/kde3</configargs>
+        <builddir>/home/andris/development/build/kde-head/quanta</builddir>
+        <topsourcedir/>
+        <ccompiler>GccOptions</ccompiler>
+        <cxxcompiler>GppOptions</cxxcompiler>
+        <f77compiler>G77Options</f77compiler>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
+        <cflags>-DKDE_NO_COMPAT</cflags>
+        <cxxflags>-DKDE_NO_COMPAT</cxxflags>
+        <f77flags/>
+        <cppflags/>
+        <ldflags/>
+      </withkommander>
+      <all>
+        <configargs>--enable-debug=full --with-kafkapart --prefix=/opt/kde3</configargs>
+        <builddir>/home/andris/build/kde-head/quanta</builddir>
+        <topsourcedir/>
+        <ccompiler>kdevgccoptions</ccompiler>
+        <cxxcompiler>kdevgppoptions</cxxcompiler>
+        <f77compiler>kdevpgf77options</f77compiler>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
+        <cflags>-DKDE_NO_COMPAT</cflags>
+        <cxxflags>-DKDE_NO_COMPAT</cxxflags>
+        <f77flags/>
+        <cppflags/>
+        <ldflags/>
+      </all>
+      <withoutkafka>
+        <configargs>--enable-debug=full --without-kommander --without-kafkapart --prefix=/opt/kde3</configargs>
+        <builddir>/home/andris/development/build/kde-head/quanta-simple</builddir>
+        <topsourcedir/>
+        <cppflags/>
+        <ldflags/>
+        <ccompiler>kdevgccoptions</ccompiler>
+        <cxxcompiler>kdevgppoptions</cxxcompiler>
+        <f77compiler>kdevpgf77options</f77compiler>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
+        <cflags/>
+        <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cxxflags>
+        <f77flags/>
+      </withoutkafka>
+    </configurations>
+    <makeenvvars>
+      <envvar value="1" name="WANT_AUTOCONF_2_5" />
+      <envvar value="1" name="WANT_AUTOMAKE_1_6" />
+    </makeenvvars>
+  </kdevautoproject>
+  <kdevfileview>
+    <groups>
+      <group pattern="description.rc" name="Tag descriptions" />
+      <group pattern=".h;.hxx;.hpp;.H" name="Headers" />
+      <group pattern=".cpp;.c;.cc;.C;.cxx;.ec;.ecpp;.lxx;.l++;.ll;.l" name="Sources" />
+      <group pattern=".ui;.rc;" name="User Interface" />
+      <group pattern="AUTHORS;COPYING;ChangeLog;INSTALL;README;TODO;NEWS" name="GNU" />
+      <group pattern=".ts;.po" name="Translations" />
+      <group pattern=".png;.jpg;.gif;.tiff;.tif;.jpg;.xpm" name="Images" />
+      <group pattern=".desktop" name="Desktop" />
+      <group pattern=".tag" name="Tags" />
+      <group pattern="*" name="Others" />
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+    </groups>
+    <tree>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+      <hidepatterns></hidepatterns>
+      <showvcsfields>true</showvcsfields>
+    </tree>
+  </kdevfileview>
+  <kdevdoctreeview>
+    <ignoretocs>
+      <toc>gtk</toc>
+      <toc>gnustep</toc>
+      <toc>python</toc>
+      <toc>php</toc>
+      <toc>perl</toc>
+    </ignoretocs>
+    <projectdoc>
+      <userdocDir/>
+      <apidocDir/>
+    </projectdoc>
+    <ignoreqt_xml/>
+    <ignoredoxygen/>
+    <ignorekdocs/>
+    <ignoredevhelp/>
+  </kdevdoctreeview>
+  <kdevdebugger>
+    <general>
+      <dbgshell/>
+      <programargs/>
+      <gdbpath>/usr/bin/</gdbpath>
+      <breakonloadinglibs>true</breakonloadinglibs>
+      <separatetty>false</separatetty>
+      <floatingtoolbar>false</floatingtoolbar>
+      <runappinappdirectory>true</runappinappdirectory>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
+    </general>
+    <display>
+      <staticmembers>false</staticmembers>
+      <demanglenames>true</demanglenames>
+    </display>
+  </kdevdebugger>
+  <cppsupportpart>
+    <codecompletion>
+      <codehinting outputview="1" enablech="1" selectview="0" />
+    </codecompletion>
+    <classstore>
+      <enablepcs>false</enablepcs>
+      <enablepp>false</enablepp>
+      <preparsing/>
+    </classstore>
+    <filetemplates>
+      <choosefiles>false</choosefiles>
+      <interfaceURL/>
+      <implementationURL/>
+      <interfacesuffix>.h</interfacesuffix>
+      <implementationsuffix>.cpp</implementationsuffix>
+      <lowercasefilenames>true</lowercasefilenames>
+    </filetemplates>
+  </cppsupportpart>
+  <kdevclassview>
+    <folderhierarchy>true</folderhierarchy>
+    <depthoffolders>2</depthoffolders>
+  </kdevclassview>
+  <kdevcvs>
+    <cvsoptions>-f</cvsoptions>
+    <commitoptions/>
+    <updateoptions>-dP</updateoptions>
+    <addoptions/>
+    <removeoptions>-f</removeoptions>
+    <diffoptions>-u3 -p</diffoptions>
+    <logoptions/>
+    <rshoptions/>
+    <revertoptions>-C -d -P</revertoptions>
+  </kdevcvs>
+  <kdevfilecreate>
+    <filetypes/>
+    <useglobaltypes/>
+  </kdevfilecreate>
+  <kdevcppsupport>
+    <codecompletion>
+      <includeGlobalFunctions>true</includeGlobalFunctions>
+      <includeTypes>true</includeTypes>
+      <includeEnums>true</includeEnums>
+      <includeTypedefs>false</includeTypedefs>
+      <automaticCodeCompletion>true</automaticCodeCompletion>
+      <automaticArgumentsHint>true</automaticArgumentsHint>
+      <codeCompletionDelay>250</codeCompletionDelay>
+      <argumentsHintDelay>400</argumentsHintDelay>
+      <automaticHeaderCompletion>true</automaticHeaderCompletion>
+      <headerCompletionDelay>250</headerCompletionDelay>
+    </codecompletion>
+    <references/>
+  </kdevcppsupport>
+  <kdevcvsservice>
+    <recursivewhenupdate>true</recursivewhenupdate>
+    <prunedirswhenupdate>true</prunedirswhenupdate>
+    <createdirswhenupdate>true</createdirswhenupdate>
+    <recursivewhencommitremove>true</recursivewhencommitremove>
+    <revertoptions>-C</revertoptions>
+  </kdevcvsservice>
+</kdevelop>

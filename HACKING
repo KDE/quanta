@@ -1,0 +1,31 @@
+ Quanta's coding style is a real mess as it was written by many persons, and
+some had changed their style on-the-fly. ;-) From now on, if you add new code
+to Quanta please try to follow the below rules:
+
+1. Use spaces instead of tabs.
+2. Indent with 2 spaces.
+3. Do not put spaces around parentheses, except in one case (grouping multiple
+   expressions): if ( (A || B) && (C || D) )
+4. Do not put spaces around "->", use: object->methodname().
+5. No extra spaces between parameters/arguments, just after commas: method(arg1, arg2, ...)
+6. Put spaces around =, >, <, !=, +, -, /, *: a = b * c / d
+7. Name the member variables as m_variablename if they are not public. See #8.
+8. Try to avoid public member variables. Write instead set/get methods. See #9.
+9. Don't put the "get" prefix ahead of the get method. Example:
+   Variable: m_foo
+   Get method: foo()
+   Set method: setFoo()
+10. Mention the argument names also in header files. Signals may be an exception.
+11. Use 0L when setting a pointer to NULL.
+12. I prefer to put the opening { in a new line, but I'm not strongly against putting
+    it in the same line as the expression, like: if (a) {
+13. Avoid inclusions in header files. Use forward declarations instead, like:
+   Header file:
+     class Foo;
+     class Foo2{
+       Foo* m_foo;
+     }
+   Implementation file:
+     #include "foo.h"
+14. Use .h and .cpp for file extension.
+

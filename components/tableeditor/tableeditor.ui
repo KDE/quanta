@@ -1,0 +1,827 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>TableEditor</class>
+<comment>/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; version 2 of the License.               *
+ *                                                                         *
+ ***************************************************************************/
+
+/* Copyright: (C) 2003 Andras Mantia &lt;amantia@kde.org&gt; */
+</comment>
+<author>Andras Mantia &lt;amantia@kde.org&gt;</author>
+<widget class="KDialog">
+    <property name="name">
+        <cstring>TableEditor</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>695</width>
+            <height>759</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Table Editor</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLayoutWidget" row="1" column="0">
+            <property name="name">
+                <cstring>Layout1</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>buttonHelp</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Help</string>
+                    </property>
+                    <property name="accel">
+                        <string>F1</string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Horizontal Spacing2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>buttonOk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>buttonCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                    <property name="accel">
+                        <string></string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QTabWidget" row="0" column="0">
+            <property name="name">
+                <cstring>tabWidget</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Main</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel" row="3" column="0" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>textLabel5</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Table &amp;data:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>tableData</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QTable" row="4" column="0" rowspan="1" colspan="5">
+                        <property name="name">
+                            <cstring>tableData</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>7</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="resizePolicy">
+                            <enum>Default</enum>
+                        </property>
+                        <property name="numRows">
+                            <number>0</number>
+                        </property>
+                        <property name="numCols">
+                            <number>0</number>
+                        </property>
+                        <property name="selectionMode">
+                            <enum>Single</enum>
+                        </property>
+                    </widget>
+                    <spacer row="0" column="2">
+                        <property name="name">
+                            <cstring>spacer1</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>276</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <spacer row="1" column="2">
+                        <property name="name">
+                            <cstring>spacer1_2_2</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>276</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="QSpinBox" row="0" column="1">
+                        <property name="name">
+                            <cstring>rowSpinBox</cstring>
+                        </property>
+                        <property name="value">
+                            <number>0</number>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>textLabel2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Co&amp;lumns:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>colSpinBox</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>captionText</cstring>
+                        </property>
+                    </widget>
+                    <widget class="KPushButton" row="1" column="3">
+                        <property name="name">
+                            <cstring>pushButton7_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Body Properties</string>
+                        </property>
+                    </widget>
+                    <widget class="KPushButton" row="0" column="3">
+                        <property name="name">
+                            <cstring>pushButton7</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Table Properties</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>textLabel3</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>5</hsizetype>
+                                <vsizetype>1</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="text">
+                            <string>C&amp;aption:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>captionText</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>textLabel1</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Rows:</string>
+                        </property>
+                        <property name="buddy" stdset="0">
+                            <cstring>rowSpinBox</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QSpinBox" row="1" column="1">
+                        <property name="name">
+                            <cstring>colSpinBox</cstring>
+                        </property>
+                        <property name="value">
+                            <number>0</number>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Header</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QFrame" row="1" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>frame3</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="frameShape">
+                            <enum>StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                            <enum>Raised</enum>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QTable" row="3" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>headerTableData</cstring>
+                                </property>
+                                <property name="resizePolicy">
+                                    <enum>AutoOneFit</enum>
+                                </property>
+                                <property name="numRows">
+                                    <number>0</number>
+                                </property>
+                                <property name="numCols">
+                                    <number>0</number>
+                                </property>
+                                <property name="selectionMode">
+                                    <enum>Single</enum>
+                                </property>
+                            </widget>
+                            <spacer row="0" column="2">
+                                <property name="name">
+                                    <cstring>spacer2</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>340</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget class="QSpinBox" row="0" column="1">
+                                <property name="name">
+                                    <cstring>headerRowSpinBox</cstring>
+                                </property>
+                                <property name="minValue">
+                                    <number>0</number>
+                                </property>
+                                <property name="value">
+                                    <number>0</number>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>textLabel4_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Header &amp;rows:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>headerRowSpinBox</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QSpinBox" row="1" column="1">
+                                <property name="name">
+                                    <cstring>headerColSpinBox</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>textLabel4</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Header co&amp;lumns:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>headerColSpinBox</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="2" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>textLabel6</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Header &amp;data:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>headerTableData</cstring>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QCheckBox" row="0" column="0">
+                        <property name="name">
+                            <cstring>headerCheckBox</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Insert table header</string>
+                        </property>
+                    </widget>
+                    <spacer row="0" column="1">
+                        <property name="name">
+                            <cstring>spacer6</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>40</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="KPushButton" row="0" column="2">
+                        <property name="name">
+                            <cstring>pushButton7_3</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Header Properties</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Footer</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QFrame" row="1" column="0" rowspan="1" colspan="3">
+                        <property name="name">
+                            <cstring>frame3_2</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="frameShape">
+                            <enum>StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                            <enum>Raised</enum>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <widget class="QTable" row="3" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>footerTableData</cstring>
+                                </property>
+                                <property name="resizePolicy">
+                                    <enum>AutoOneFit</enum>
+                                </property>
+                                <property name="numRows">
+                                    <number>0</number>
+                                </property>
+                                <property name="numCols">
+                                    <number>0</number>
+                                </property>
+                                <property name="selectionMode">
+                                    <enum>Single</enum>
+                                </property>
+                            </widget>
+                            <widget class="QSpinBox" row="0" column="1">
+                                <property name="name">
+                                    <cstring>footerRowSpinBox</cstring>
+                                </property>
+                                <property name="minValue">
+                                    <number>0</number>
+                                </property>
+                                <property name="value">
+                                    <number>0</number>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>textLabel4_2_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Footer &amp;rows:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>footerRowSpinBox</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QSpinBox" row="1" column="1">
+                                <property name="name">
+                                    <cstring>footerColSpinBox</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="1" column="0">
+                                <property name="name">
+                                    <cstring>textLabel4_3</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Footer co&amp;lumns:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>footerColSpinBox</cstring>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="2" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>textLabel6_2</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Footer &amp;data:</string>
+                                </property>
+                                <property name="buddy" stdset="0">
+                                    <cstring>footerTableData</cstring>
+                                </property>
+                            </widget>
+                            <spacer row="0" column="2">
+                                <property name="name">
+                                    <cstring>spacer2_2</cstring>
+                                </property>
+                                <property name="orientation">
+                                    <enum>Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property name="sizeHint">
+                                    <size>
+                                        <width>340</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                        </grid>
+                    </widget>
+                    <widget class="QCheckBox" row="0" column="0">
+                        <property name="name">
+                            <cstring>footerCheckBox</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Insert table footer</string>
+                        </property>
+                    </widget>
+                    <spacer row="0" column="1">
+                        <property name="name">
+                            <cstring>spacer7</cstring>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                            <enum>Expanding</enum>
+                        </property>
+                        <property name="sizeHint">
+                            <size>
+                                <width>40</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                    <widget class="KPushButton" row="0" column="2">
+                        <property name="name">
+                            <cstring>pushButton7_4</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>&amp;Footer Properties</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>headerCheckBox</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>frame3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>headerColSpinBox</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveCol(int)</slot>
+    </connection>
+    <connection>
+        <sender>headerRowSpinBox</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveRow(int)</slot>
+    </connection>
+    <connection>
+        <sender>rowSpinBox</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveRow(int)</slot>
+    </connection>
+    <connection>
+        <sender>colSpinBox</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveCol(int)</slot>
+    </connection>
+    <connection>
+        <sender>footerCheckBox</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>frame3_2</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>footerRowSpinBox</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveRow(int)</slot>
+    </connection>
+    <connection>
+        <sender>footerColSpinBox</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveCol(int)</slot>
+    </connection>
+    <connection>
+        <sender>tableData</sender>
+        <signal>contextMenuRequested(int,int,const QPoint&amp;)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotContextMenuRequested(int,int,const QPoint&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>buttonOk</sender>
+        <signal>clicked()</signal>
+        <receiver>TableEditor</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>buttonCancel</sender>
+        <signal>clicked()</signal>
+        <receiver>TableEditor</receiver>
+        <slot>reject()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton7</sender>
+        <signal>clicked()</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotEditTable()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton7_2</sender>
+        <signal>clicked()</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotEditTableBody()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton7_3</sender>
+        <signal>clicked()</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotEditTableHeader()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton7_4</sender>
+        <signal>clicked()</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotEditTableFooter()</slot>
+    </connection>
+    <connection>
+        <sender>headerCheckBox</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>pushButton7_3</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>footerCheckBox</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>pushButton7_4</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>headerTableData</sender>
+        <signal>contextMenuRequested(int,int,const QPoint&amp;)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotContextMenuRequested(int,int,const QPoint&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>footerTableData</sender>
+        <signal>contextMenuRequested(int,int,const QPoint&amp;)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotContextMenuRequested(int,int,const QPoint&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>tabWidget</sender>
+        <signal>currentChanged(QWidget*)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotTabChanged(QWidget*)</slot>
+    </connection>
+    <connection>
+        <sender>buttonHelp</sender>
+        <signal>clicked()</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotHelpInvoked()</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>rowSpinBox</tabstop>
+    <tabstop>colSpinBox</tabstop>
+    <tabstop>pushButton7</tabstop>
+    <tabstop>pushButton7_2</tabstop>
+    <tabstop>captionText</tabstop>
+    <tabstop>tableData</tabstop>
+    <tabstop>buttonHelp</tabstop>
+    <tabstop>buttonOk</tabstop>
+    <tabstop>buttonCancel</tabstop>
+    <tabstop>headerCheckBox</tabstop>
+    <tabstop>pushButton7_3</tabstop>
+    <tabstop>headerRowSpinBox</tabstop>
+    <tabstop>headerColSpinBox</tabstop>
+    <tabstop>headerTableData</tabstop>
+    <tabstop>footerCheckBox</tabstop>
+    <tabstop>pushButton7_4</tabstop>
+    <tabstop>footerRowSpinBox</tabstop>
+    <tabstop>footerColSpinBox</tabstop>
+    <tabstop>footerTableData</tabstop>
+    <tabstop>tabWidget</tabstop>
+</tabstops>
+<includes>
+    <include location="local" impldecl="in declaration">kurl.h</include>
+    <include location="local" impldecl="in declaration">qvaluelist.h</include>
+    <include location="local" impldecl="in declaration">../document.h</include>
+    <include location="local" impldecl="in implementation">tableeditor.ui.h</include>
+</includes>
+<forwards>
+    <forward>class KPopupMenu</forward>
+    <forward>class Tag</forward>
+    <forward>struct DTDStruct</forward>
+    <forward>class Node</forward>
+    <forward>typedef struct TableNode {   Node *node; bool merged; int mergedRow; int mergedCol; }  </forward>
+    <forward>typedef struct NestedTable{ Node *node; int row; int col; int bLine; int bCol; int eLine; int eCol; QString nestedData;}</forward>
+    <forward>class Parser</forward>
+</forwards>
+<variables>
+    <variable>QValueList&lt;Tag*&gt; m_colTags;</variable>
+    <variable>int m_unmergeCellsId;</variable>
+    <variable>int m_mergeSeparatorId;</variable>
+    <variable>int m_mergeCellsId;</variable>
+    <variable>bool m_createNodes;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableFooterTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableHeaderTags;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableFooterRows;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableHeaderRows;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableRows;</variable>
+    <variable>Document* m_write;</variable>
+    <variable>Tag *m_table;</variable>
+    <variable>Tag *m_tfoot;</variable>
+    <variable>Tag *m_thead;</variable>
+    <variable>int newVariable;</variable>
+    <variable>Tag *m_tbody;</variable>
+    <variable>int m_colEditId;</variable>
+    <variable>int m_rowEditId;</variable>
+    <variable>int m_cellEditId;</variable>
+    <variable>int m_col;</variable>
+    <variable>int m_row;</variable>
+    <variable>KPopupMenu *m_popup;</variable>
+    <variable>KURL m_baseURL;</variable>
+    <variable>DTDStruct *m_dtd;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableDataTags;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableDataRows;</variable>
+    <variable>QTable *m_dataTable;</variable>
+    <variable>int m_bLine, m_bCol, m_eLine, m_eCol;</variable>
+    <variable>QValueList&lt;NestedTable&gt; m_nestedTables;</variable>
+    <variable>int m_editChildId;</variable>
+    <variable>QSpinBox *m_rowSpin;</variable>
+    <variable>QSpinBox *m_colSpin;</variable>
+</variables>
+<slots>
+    <slot>slotContextMenuRequested( int row, int col, const QPoint &amp; pos )</slot>
+    <slot>slotEditCell()</slot>
+    <slot>slotEditRow()</slot>
+    <slot>slotEditCol()</slot>
+    <slot>slotEditTable()</slot>
+    <slot>slotEditTableBody()</slot>
+    <slot>slotEditTableHeader()</slot>
+    <slot>slotEditTableFooter()</slot>
+    <slot>slotTabChanged( QWidget * w )</slot>
+    <slot>slotInsertRow()</slot>
+    <slot>slotInsertCol()</slot>
+    <slot>slotAddRemoveRow( int num )</slot>
+    <slot>slotAddRemoveCol( int num )</slot>
+    <slot>slotRemoveRow()</slot>
+    <slot>slotRemoveCol()</slot>
+    <slot>slotMergeCells()</slot>
+    <slot>slotUnmergeCells()</slot>
+    <slot>slotEditChildTable()</slot>
+    <slot access="protected">slotHelpInvoked()</slot>
+</slots>
+<functions>
+    <function>init()</function>
+    <function>destroy()</function>
+    <function returnType="bool">setTableArea( int bLine, int bCol, int eLine, int eCol, Parser * docParser )</function>
+    <function>setBaseURL( const KURL &amp; url )</function>
+    <function returnType="QString">readModifiedTable()</function>
+    <function access="protected" returnType="QString">indent( int n )</function>
+    <function access="protected" returnType="QString">cellValue( int row, int col )</function>
+    <function access="protected" returnType="QString">tableToString()</function>
+    <function access="protected" returnType="QString">tagContent( Node * node )</function>
+    <function>createNewTable( Document * write, DTDStruct * dtd )</function>
+    <function access="protected">deleteList( QValueList&lt;TableNode&gt; * table )</function>
+    <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt; &gt; * matrix )</function>
+</functions>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kdialog.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
+</UI>

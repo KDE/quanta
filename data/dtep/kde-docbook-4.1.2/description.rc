@@ -1,0 +1,25 @@
+[General]
+Name = -//KDE//DTD DocBook XML V4.1.2-Based Variant V1.0//EN
+NickName = KDE Docbook XML 4.1.2
+URL = dtd/kdex.dtd
+DoctypeString = book PUBLIC "-//KDE//DTD DocBook XML V4.1.2-Based Variant V1.0//EN" "dtd/kdex.dtd"
+DefaultExtension = docbook
+Groups = Core
+NumOfPages = 1
+CaseSensitive = true
+
+[Toolbars]
+Location = kde-docbook
+Names = kdexmltools
+
+[Core]
+Attributes=arch,condition,conformance,id,lang,os,remap,role,revision,revisionflag,security,userlevel,vendor,xreflabel
+
+[Page1]
+Title = Core
+Groups = Core
+
+[Extra rules]
+Single Tag Style = XML
+
+[Parsing rules]

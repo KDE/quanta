@@ -1,0 +1,68 @@
+[General]
+Name = -//W3C//DTD XHTML 1.1//EN
+NickName = XHTML 1.1
+URL = http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd
+DoctypeString = HTML PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
+DefaultExtension = html
+Groups = Core, I18n, Script,Focus
+NumOfPages = 3
+CaseSensitive = true
+
+[Toolbars]
+Location = html
+Names = standard, tables, lists, forms, other
+
+[Core]
+Attributes = id, class, style, title
+
+[I18n]
+Attributes = xml:lang, dir
+
+[Script]
+Attributes = onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,onmouseout,onkeypress,onkeydown,onkeyup
+
+[Focus]
+Attributes = accesskey,tabindex,onfocus,onblur
+
+[Page1]
+Title = Core and i18n
+Groups = Core, I18n
+
+[Page2]
+Title = Events
+Groups = Script
+
+[Page3]
+Title = Focus
+Groups = Focus
+
+[Extra rules]
+BooleanAttributes = simple
+Single Tag Style = XML
+StructGroupsCount = 3
+
+[Parsing rules]
+SpecialTags = script(language)
+MayContain = php, css
+
+[StructGroup_1]
+Name = Images (anchor)
+No_Name = No Images (anchor)
+Icon = image
+Tag = img(src)
+HasFileName = true
+
+[StructGroup_2]
+Name = Links
+No_Name = No Links
+Icon = www
+Tag = a(name,href)
+HasFileName = true
+FileNameRx = .*\||#.*
+
+[StructGroup_3]
+Name = Resources (link)
+No_Name = No Links (link)
+Icon = www
+Tag = link(href)
+HasFileName = true

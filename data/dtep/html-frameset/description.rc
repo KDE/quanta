@@ -1,0 +1,66 @@
+[General]
+Name = -//W3C//DTD HTML 4.01 Frameset//EN
+NickName = HTML 4.01 Frameset
+URL = http://www.w3.org/TR/html4/frameset.dtd
+DoctypeString = HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"
+Inherits = -//W3C//DTD HTML 4.01//EN
+DefaultExtension = html
+Groups = Core, I18n, Script
+NumOfPages = 2
+CaseSensitive = false
+
+[Toolbars]
+Location = html
+Names = standard, fonts, tables, lists, forms, other
+
+[Core]
+Attributes = id, class, style, title
+
+[I18n]
+Attributes = lang, dir
+
+[Script]
+Attributes = onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,onmouseout,onkeypress,onkeydown,onkeyup
+
+[Page1]
+Title = Core && i18n
+Groups = Core, I18n
+
+[Page2]
+Title = Events
+Groups = Script
+
+[Extra rules]
+BooleanAttributes = simple
+Single Tag Style = html
+StructGroupsCount = 3
+
+[Parsing rules]
+SpecialTags = script(language)
+MayContain = php, css
+
+
+[StructGroup_1]
+Name = Images
+No_Name = No Images
+Icon = image
+Tag = img(src)
+HasFileName = true
+
+[StructGroup_2]
+Name = Links (anchor)
+No_Name = No Links (anchor)
+Icon = www
+Tag = a(name,href)
+HasFileName = true
+FileNameRx = .*\||#.*
+
+[StructGroup_3]
+Name = Resources (link)
+No_Name = No Links (link)
+Icon = www
+Tag = link(href)
+HasFileName = true
+
+
+
