@@ -20,7 +20,7 @@ Attributes = id, class, style, title
 Attributes = lang, dir
 
 [Script]
-Attributes = onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,onmouseout,onkeypress,onkeydown,onkeyup
+Attributes = onchange,onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,onmouseout,onkeypress,onkeydown,onkeyup
 
 [Page1]
 Title = Core && i18n
