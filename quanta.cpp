@@ -22,6 +22,8 @@
 #include <qwidgetstack.h>
 #include <qtabwidget.h>
 #include <qfile.h>
+#include <qlineedit.h>
+#include <qcheckbox.h>
 #include <qtextstream.h>
 
 // include files for KDE
@@ -50,8 +52,8 @@
 #include "widgets/whtmlpart.h"
 #include "widgets/wsplitter.h"
 
-#include "dialogs/filesmask.h"
-#include "dialogs/styleoptions.h"
+#include "dialogs/filemasks.h"
+#include "dialogs/styleoptionss.h"
 #include "dialogs/previewoptions.h"
 #include "dialogs/parseroptions.h"
 #include "dialogs/grepdialog.h"
@@ -960,21 +962,21 @@ void QuantaApp::slotOptions()
 				
 	// Tag Style options
   QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, BarIcon("kwrite", KIcon::SizeMedium ) );
-  StyleOptions *styleOptions = new StyleOptions( (QWidget *)page );
+  StyleOptionsS *styleOptionsS = new StyleOptionsS( (QWidget *)page );
 
-  styleOptions->checkTagsCapital->setChecked( tagsCapital);
-  styleOptions->checkAttrCapital->setChecked( attrCapital);
-  styleOptions->checkEndTag->setChecked( useCloseTag );
+  styleOptionsS->checkTagsCapital->setChecked( tagsCapital);
+  styleOptionsS->checkAttrCapital->setChecked( attrCapital);
+  styleOptionsS->checkEndTag->setChecked( useCloseTag );
 
 
   // Files Masks options
   page=kd->addVBoxPage(i18n("Files Masks"), QString::null, BarIcon("files", KIcon::SizeMedium ) );
-  FilesMask *filesMask = new FilesMask( (QWidget *)page );
+  FileMasks *fileMasks = new FileMasks( (QWidget *)page );
 
-  filesMask->lineHTML->setText( fileMaskHtml );
-  filesMask->linePHP->setText( fileMaskPhp );
-  filesMask->lineImages->setText( fileMaskImage );
-  filesMask->lineText->setText( fileMaskText );
+  fileMasks->lineHTML->setText( fileMaskHtml );
+  fileMasks->linePHP->setText( fileMaskPhp );
+  fileMasks->lineImages->setText( fileMaskImage );
+  fileMasks->lineText->setText( fileMaskText );
 
   // Preview options
   page=kd->addVBoxPage(i18n("Preview"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
@@ -985,27 +987,22 @@ void QuantaApp::slotOptions()
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
 
-//  KGuiCmdConfigTab *keys = new KGuiCmdConfigTab((QWidget *)page, KGuiCmdManager::self());
-
-  //IndentConfigTab *indentConfig = new IndentConfigTab(page, kWrite);
-
   if ( kd->exec() )
   {
-    tagsCapital = styleOptions->checkTagsCapital->isChecked();
-    attrCapital = styleOptions->checkAttrCapital->isChecked();
-    useCloseTag = styleOptions->checkEndTag->isChecked();
+    tagsCapital = styleOptionsS->checkTagsCapital->isChecked();
+    attrCapital = styleOptionsS->checkAttrCapital->isChecked();
+    useCloseTag = styleOptionsS->checkEndTag->isChecked();
 
-    fileMaskHtml = filesMask->lineHTML->text();
-  	fileMaskPhp  = filesMask->linePHP->text();
-	  fileMaskImage= filesMask->lineImages->text();
-  	fileMaskText = filesMask->lineText->text();
-
-
+    fileMaskHtml = fileMasks->lineHTML->text();
+  	fileMaskPhp  = fileMasks->linePHP->text();
+	  fileMaskImage= fileMasks->lineImages->text();
+  	fileMaskText = fileMasks->lineText->text();
 
     parserOptions->updateConfig();
 
     QWidgetStack *s;
-    if ( htmlPart() ) {
+    if ( htmlPart() )
+    {
     	s = (QWidgetStack *)htmlPart()->parent();
 	    s -> raiseWidget( 0 );
 	 	}

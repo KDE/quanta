@@ -6,9 +6,9 @@ libdialogs_a_METASOURCES = AUTO
 
 noinst_LIBRARIES = libdialogs.a
 
-libdialogs_a_SOURCES = parseroptions.cpp previewoptionsdata.cpp previewoptions.cpp styleoptionsdata.cpp styleoptions.cpp filesmaskdata.cpp filesmask.cpp grepdialog.cpp
+libdialogs_a_SOURCES = parseroptions.cpp previewoptions.cpp previewoptionss.cpp styleoptionss.cpp filemasks.cpp filemaskss.cpp grepdialog.cpp
 
 
-EXTRA_DIST = filesmask.cpp filesmask.h filesmaskdata.cpp styleoptions.cpp styleoptions.h styleoptionsdata.cpp preview.kdevdlg previewoptions.h previewoptions.cpp previewoptionsdata.cpp parseroptions.cpp parseroptions.h grepdialog.h
+EXTRA_DIST = filemasks.cpp filemasks.h filemaskss.cpp filemaskss.h styleoptionss.cpp styleoptionss.h previewoptions.h previewoptions.cpp previewoptionss.h previewoptionss.cpp parseroptions.cpp parseroptions.h grepdialog.h
 
 ####### kdevelop will overwrite this part!!! (end)############

@@ -1,7 +1,7 @@
 /***************************************************************************
-                          styleoptions.cpp  -  description
+                          filesmask.cpp  -  description
                              -------------------
-    begin                : Fri Apr 7 2000
+    begin                : Fri May 19 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
@@ -14,11 +14,25 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include "styleoptions.h"
+#include "filemasks.h"
 
-StyleOptions::StyleOptions(QWidget *parent, const char *name) : QWidget(parent,name){
-	initDialog();
+// qt includes
+#include <qlineedit.h>
+#include <qpushbutton.h>
+
+FileMasks::FileMasks(QWidget *parent, const char *name)
+	:FileMasksS(parent,name)
+{
+	connect(buttonDefault, SIGNAL(clicked()), this, SLOT(setToDefault()));
 }
 
-StyleOptions::~StyleOptions(){
+FileMasks::~FileMasks(){
+}
+/** set masks to default */
+void FileMasks::setToDefault()
+{
+   lineHTML->setText("*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* ");
+   linePHP->setText( "*.php* *.PHP*" );
+   lineImages->setText("*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP ");
+   lineText->setText( "*.txt *.TXT " );
 }
