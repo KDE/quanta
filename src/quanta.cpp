@@ -1355,7 +1355,7 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     if (w)
     {
         restoreFromTempfile(w);
-        w->setFocus();
+        w->view()->setFocus();
     }
   }
 
@@ -1396,7 +1396,7 @@ void QuantaApp::slotChangePreviewStatus()
         m_previewedDocument = 0L;
         Document *w = ViewManager::ref()->activeDocument();
         if (w)
-          w->setFocus();
+          w->view()->setFocus();
     }
 }
 
