@@ -1800,14 +1800,15 @@ Node *Parser::rebuild(Document *w)
 void Parser::clearGroups()
 {
   GroupElementMapList::Iterator it;
+  GroupElementList::Iterator elementIt;
   GroupElementList *list;
   for (it = m_groups.begin(); it != m_groups.end(); ++it)
   {
     list = & it.data();
-    for (uint i = 0; i < list->count(); i++)
+    for (elementIt = list->begin(); elementIt != list->end(); ++elementIt)
     {
-      (*list)[i].node->groupElementLists.clear();
-      delete (*list)[i].tag;
+      (*elementIt).node->groupElementLists.clear();
+      delete (*elementIt).tag;
     }
   }
   m_groups.clear();
@@ -1915,6 +1916,7 @@ void Parser::parseForGroups()
 void Parser::parseIncludedFiles()
 {
   IncludedGroupElementsMap::Iterator includedMapIt;
+  uint listCount;
   for (includedMapIt = includedMap.begin(); includedMapIt != includedMap.end(); ++includedMapIt)
   {
     IncludedGroupElements::Iterator elementsIt;
@@ -1923,7 +1925,8 @@ void Parser::parseIncludedFiles()
       GroupElementMapList::Iterator it;
       for (it = elementsIt.data().begin(); it != elementsIt.data().end(); ++it)
       {
-        for (uint i = 0 ; i < it.data().count(); i++)
+        listCount = it.data().count();
+        for (uint i = 0 ; i < listCount; i++)
         {
           delete it.data()[i].node;
         }
@@ -1933,7 +1936,8 @@ void Parser::parseIncludedFiles()
   includedMap.clear();
   if (write->url().isLocalFile())
   {
-    for (uint i = 0; i < includedFiles.count(); i++)
+    listCount = includedFiles.count();
+    for (uint i = 0; i < listCount; i++)
     {
       parseIncludedFile(includedFiles[i], includedFilesDTD.at(i));
     }
@@ -2020,10 +2024,10 @@ void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
               structPos =  pos + 1;
             }
           }
-
-          for (uint j = 0; j < dtd->structTreeGroups.count(); j++)
+          QValueList<StructTreeGroup>::Iterator it;
+          for (it = dtd->structTreeGroups.begin(); it != dtd->structTreeGroups.end(); ++it)
           {
-            group = dtd->structTreeGroups[j];
+            group = *it;
             int pos = 0;
             while (pos != -1)
             {
@@ -2130,11 +2134,12 @@ void Parser::parseForXMLGroup(Node *node)
     XMLStructGroup group = xmlGroupIt.data();
     Tag *newTag = new Tag(*node->tag);
     QString title = "";
-    for (uint j = 0; j < group.attributes.count(); j++)
+    QStringList::Iterator it;
+    for (it = group.attributes.begin(); it != group.attributes.end(); ++it)
     {
-      if (newTag->hasAttribute(group.attributes[j]))
+      if (newTag->hasAttribute(*it))
       {
-          title.append(newTag->attributeValue(group.attributes[j]).left(100));
+          title.append(newTag->attributeValue(*it).left(100));
           title.append(" | ");
       }
     }
@@ -2160,9 +2165,10 @@ void Parser::parseForScriptGroup(Node *node)
   QString tagStr = node->tag->tagStr();
   DTDStruct* dtd = node->tag->dtd;
   node->tag->beginPos(bl, bc);
-  for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
+  QValueList<StructTreeGroup>::Iterator it;
+  for (it = dtd->structTreeGroups.begin(); it != dtd->structTreeGroups.end(); ++it)
   {
-    group = dtd->structTreeGroups[i];
+    group = *it;
     if (!group.hasSearchRx ||
         node->tag->type == Tag::XmlTag ||
         node->tag->type == Tag::XmlTagEnd ||
