@@ -37,6 +37,9 @@ struct TagAttr {
   bool quotes;
 };
 
+class KSpell;
+class QStringList;
+
 class Document : public KWrite  {
    Q_OBJECT
    friend KWrite;
@@ -69,6 +72,26 @@ public:
   /** add attrib to end of current tag */
   void insertAttrib(QString attr);
 
+	int xy2pos( int x, int y );
+	int pos2y(int pos);
+	int pos2x(int pos);
+
+
+
+
+public slots:
+
+  // Spell checked related slots
+
+  void slotSpellCheck();
+  void slotSpellGo(KSpell *);
+  void slotSpellResult(bool);
+  void slotSpellCorrect( QString originalword, QString newword, unsigned pos);
+  void slotSpellMis( QString originalword, QStringList *suggestions, unsigned pos);
+  void slotSpellDone();
+  void createSpellList();
+
+public:
 
   //bool hasFileName() { return (fileName() != 0 ); };
 
@@ -93,6 +116,14 @@ public:
   int tagBeginX, tagBeginY, tagEndX, tagEndY;
 
   QString filename;
+
+  KSpell *spell;
+ 	/** spell lists */
+	QValueList<int> *spellPos;
+//	QValueList<int> *spellLen;
+//	QStringList     *spellList;
+	QString  spellText;
+	int spellMoved;
 
 };
 

@@ -178,6 +178,10 @@ void QuantaApp::commandCallback(int id_)
     case ID_EDIT_CURRENT_TAG:
          view->slotEditCurrentTag();
          break;
+
+    case ID_EDIT_SPELL:
+    		 view->write()->slotSpellCheck();
+    		 break;
   
     case ID_VIEW_TOOLBAR:
          slotViewToolBar();
@@ -1041,7 +1045,7 @@ void QuantaApp::reparse()
 		//sTab->s = parser->s;
 		if ( parser->textChanged ) {
 		  config->setGroup("Parser options");
-		  int expandLevel = config->readNumEntry("Expand level",0);
+		  int expandLevel = config->readNumEntry("Expand level",4);
 		  if ( expandLevel == 0 )
 		  	expandLevel = 100000000;
 		  	

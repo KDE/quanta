@@ -24,6 +24,7 @@
 #include <klocale.h>
 #include <kdialogbase.h>
 #include <kiconloader.h>
+#include <kspell.h>
 
 #include "document.h"
 
@@ -499,8 +500,189 @@ void Document::editorOptions()
     editConfig->getData(this);
     // spell checker
     ksc->writeGlobalSettings();
+
     this->setKSConfig(*ksc);
   }
 
   delete kd;
 }
+
+
+/** spell checker */
+void Document::slotSpellCheck()
+{
+	spell = new KSpell( this, "Spell checker...", this, SLOT(slotSpellGo(KSpell *)), ksConfig()  );
+}
+
+/** spell check go */
+void Document::slotSpellGo(KSpell *)
+{
+	if ( spell->status() == KSpell::Running )
+	{
+		
+		spellMoved = 0;
+		createSpellList();
+		
+		connect( spell, SIGNAL(misspelling(QString, QStringList *, unsigned)), this, SLOT(slotSpellMis(QString, QStringList *, unsigned)));
+	  connect( spell, SIGNAL(corrected(QString, QString, unsigned)), this, SLOT(slotSpellCorrect(QString, QString, unsigned)));
+	  connect( spell, SIGNAL(done(bool)), this, SLOT(slotSpellResult(bool)));
+	  		
+		spell->check( spellText );
+		
+	}
+	else {
+    warning(i18n("Error starting KSpell. Please make sure you have ISpell properly configured."));
+  }
+}
+
+/** create lists from html text */
+void Document::createSpellList()
+{
+	unsigned int pos = 0;
+	int wordBeg, wordEnd;
+	
+	spellPos = new QValueList<int>();
+	//spellLen = new QValueList<int>();
+	//spellList = new QStringList();
+	
+	spellText = "";
+	
+	QString s = text();
+	
+	while ( pos < s.length() )
+	{
+	  if ( s.mid(pos,7).lower() == "<script" )
+	  {
+	  	while ( s.mid(pos,9).lower() != "</script>" ) pos++;
+	  	pos += 9;
+	  }
+	
+	  if ( s.mid(pos,2).lower() == "<?" )
+	  {
+	  	while ( s.mid(pos,2).lower() != "?>" ) pos++;
+	  	pos += 2;
+	  }
+	
+	  if ( s[pos] == '<') while ( s[pos] != '>') pos++;
+	
+		if ( s[pos].isLetter() )
+		{
+			wordBeg = pos;
+			while ( s[pos].isLetter() ) pos++;
+			wordEnd = pos;
+			
+		  //qDebug( "%s %d %d ",s.mid( wordBeg, wordEnd-wordBeg ).data(), wordBeg, wordEnd );
+			
+			//spellList -> append( s.mid( wordBeg, wordEnd-wordBeg ) );
+			spellText += s.mid( wordBeg, wordEnd-wordBeg ) + "\n";
+			spellPos  -> append( wordBeg );
+			//spellLen  -> append( wordEnd-wordBeg );
+		}
+		else pos++;
+	}
+}
+
+
+void Document::slotSpellMis(QString originalword, QStringList *, unsigned pos)
+{
+
+  //int posText = (*spellPos)[pos-1];
+
+  int posTab = 0;
+
+  for ( unsigned i=0; i < pos+1; i++ )
+  	if ( spellText[i] == '\n' ) {
+  	   posTab++;
+  	}
+  	
+  int posText = (*spellPos)[ posTab ] + spellMoved;
+
+  int x = pos2x(posText);
+  int y = pos2y(posText);
+
+  setCursorPosition(y,x-1);
+  selectText(x-1, y, x-1+originalword.length(), y);
+
+  kWriteDoc->updateViews();
+
+  // qDebug( "pos : %d; posText : %d; x : %d; y : %d; word : %s ", pos, posText, x,y,originalword.data() );
+
+}
+
+void Document::slotSpellCorrect( QString originalword, QString newword, unsigned pos)
+{
+	if ( originalword == newword )
+		return;
+
+	replaceSelected( newword );
+	
+	spellMoved += newword.length() - originalword.length();
+	
+//	for (unsigned int i=pos+1; i< spellPos->count(); i++)
+//		(*spellPos)[i] += newword.length() - originalword.length();
+		
+}
+
+/** spell check result */
+void Document::slotSpellResult(bool)
+{
+  spell->hide();
+	view()->repaint();
+	spell->cleanUp();
+	
+	slotSpellDone();
+}
+
+/** spell check done */
+void Document::slotSpellDone()
+{
+	//delete spell;
+	delete spellPos;
+	//delete spellLen;
+	//delete spellList;
+}
+
+
+/**  */
+int Document::pos2y( int pos )
+{
+	QString s = text();
+	int endLineCount = 0;
+	if ( pos<0 ) pos = 0;
+	
+	for (int i=0; i<=pos && !s[i].isNull(); i++)
+		if (s[i]=='\n')
+			endLineCount++;
+	return endLineCount;
+}
+
+int Document::pos2x( int pos )
+{
+  QString s = text();
+	int i;
+	if ( pos<0 ) pos = 0;
+	for (i=pos; s[i]!='\n' && i; i--);
+	return pos-i;
+}
+
+int Document::xy2pos( int x, int y )
+{
+  QString s = text();
+  int pos = 0;
+  QStringList slist = QStringList::split('\n',s,true);
+
+  if ( y > (int) slist.count() )
+  	y = slist.count();
+
+  for ( int i=0; i<y; i++ )
+  	 pos += slist[i].length()+1;
+
+  int len = slist[y].length();
+  if ( len>x )
+  	pos+=x;
+  else
+  	pos+=len;
+  	
+	return (pos);
+}
+
