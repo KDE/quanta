@@ -1,4 +1,3 @@
-####### kdevelop will overwrite this part!!! (begin)##########
 
 EXTRA_DIST = quanta.png
 
@@ -9,4 +8,3 @@ install-data-local:
 uninstall-local:
 	-rm -f $(kde_icondir)/hicolor/32x32/apps/quanta.png
 
-####### kdevelop will overwrite this part!!! (end)############
