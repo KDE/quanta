@@ -149,6 +149,7 @@ void  ProjectUpload::initProjectInfo()
 /** No descriptions */
 void ProjectUpload::slotBuildTree()
 {
+ emit eventHappened("upload_requested", m_project->projectBaseURL().url(), "");
  loadRemoteUploadInfo();
  KIO::UDSEntry entry;
  QString strUrl = QuantaCommon::qUrl(startUrl);

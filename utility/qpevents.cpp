@@ -47,8 +47,9 @@ QPEvents::QPEvents(QObject *parent, const char *name)
    m_eventNames["after_project_open"] = i18n("After Project Open");
    m_eventNames["before_project_close"] = i18n("Before Project Close");
    m_eventNames["after_project_close"] = i18n("After Project Close");
-   m_eventNames["before_upload"] = i18n("Before Upload");
-   m_eventNames["after_upload"] = i18n("After Upload");
+   m_eventNames["upload_requested"] = i18n("Upload Requested");
+   m_eventNames["before_upload"] = i18n("Before Document Upload");
+   m_eventNames["after_upload"] = i18n("After Document Upload");
    m_eventNames["after_project_add"] = i18n("After Addition to Project");
    m_eventNames["after_project_remove"] = i18n("After Removal From Project");
    m_eventNames["after_commit"] = i18n("After Commit to CVS");
@@ -96,6 +97,15 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
       if (url.isValid())
       {
         bool inProject = Project::ref()->contains(url);
+        if (inProject)
+        {
+          if (name == "upload_requested")
+            {
+              ev.arguments << i18n("An upload was initiated");
+              ev.arguments << url.path();
+              handleEvent(ev);
+            } 
+        }
         if (inProject && url2.isValid())
         {
             if (name == "before_upload")
@@ -316,8 +326,14 @@ bool QPEvents::handleEvent(const EventAction& ev)
           TagAction *tagAction = dynamic_cast<TagAction*>(action);
           if (tagAction)
           {
-            tagAction->addArguments(ev.arguments);
-            tagAction->insertTag();
+            bool blocking = (ev.arguments[1] == "yes");
+            EventAction event = ev;
+            event.arguments.remove(event.arguments.at(1));
+            tagAction->addArguments(event.arguments);
+            if (blocking)
+              tagAction->execute();
+            else
+              tagAction->insertTag();
           }
           else
           if (action)

@@ -141,6 +141,14 @@ QString EventEditorDlg::argument2()
             return "full";
        else
             return "minimal";
+     } else
+     if (actionType == QPEvents::ref()->fullActionName("script"))
+     {
+        int id = argument2Combo->currentItem();
+        if (id == 0)
+            return "yes";
+       else
+            return "no";
      }
      return argument2Combo->currentText();
    } else
@@ -231,6 +239,12 @@ void EventEditorDlg::setArguments(const QStringList& arguments)
          argument1Combo->insertItem(s, 0);
          argument1Combo->setCurrentItem(0);
       }
+      s = arguments[1];
+      if (s == "yes")
+        argument2Combo->setCurrentItem(0);
+      else if (s == "no")
+        argument2Combo->setCurrentItem(1);
+      return; //setup for script arguments completed
    } else
    if (actionType == QPEvents::ref()->fullActionName("action"))
    {
@@ -357,6 +371,12 @@ void EventEditorDlg::slotActionChanged(const QString &name)
        items.sort();
        argument1Combo->insertStringList(items);
        argument1Combo->setEnabled(true);
+       argument2Label->setEnabled(true);
+       argument2Label->setText(i18n("Blocking:"));
+       argument2Combo->setEnabled(true);
+       argument2Combo->setEditable(false);
+       argument2Combo->insertItem(i18n("Yes"), 0);
+       argument2Combo->insertItem(i18n("No"), 1);
    } else
    if (name == QPEvents::ref()->fullActionName("action"))
    {
