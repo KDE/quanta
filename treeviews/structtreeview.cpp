@@ -110,9 +110,9 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 	if ( !parent ) {
 		top = new StructTreeTag( this, "Document structure" );
 		images = new StructTreeTag( this, "Images" );
-		images->setPixmap( 0, UserIcon("image") );
+		images->setPixmap( 0, SmallIcon("image") );
 		links = new StructTreeTag( this, "Links" );
-		links->setPixmap( 0, UserIcon("html") );
+		links->setPixmap( 0, SmallIcon("www") );
 		
 		createList(node, top, openLevel-1 );
 		top->setOpen( topOpened );

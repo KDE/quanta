@@ -29,6 +29,10 @@
 #include "quanta.h"
 #include "kwrite/kwview.h"
 
+#ifndef VERSION
+  #define VERSION "2.0"
+#endif
+
 static const char *description =
 	I18N_NOOP("Quanta Plus Web Development Environment");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
@@ -45,13 +49,20 @@ int main(int argc, char *argv[])
 {
 	KAboutData
 		aboutData( "quanta", I18N_NOOP("Quanta"),
-		VERSION, description, KAboutData::License_GPL,
-		"(c) 2000, 2001\nQuanta Plus is an HTML editor for the K Desktop Environment.");
+		VERSION, description, KAboutData::License_GPL_V2,
+		"(c) 2000, 2001",
+		"We hope you enjoy our program.",
+		"http://quanta.sourceforge.net"
+		);
 		
  	aboutData.addAuthor("Dmitry Poplavsky",0, "dima@kde.org");
  	aboutData.addAuthor("Alexander Yakovlev",0, "yshurik@kde.org");
  	aboutData.addAuthor("Eric Laffoon",0, "sequitur@kde.org");
-
+ 	
+ 	aboutData.addCredit("Richard Moore",
+    "Tag dialog definition documentation",
+    "rich@kde.org");
+    
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	

@@ -2,6 +2,8 @@
  <tabbar name="Standard" >
   <action icon="quick_start" type="standard" id="1000" name="Quick start" >
    <standard>Quick start</standard>
+   <tooltip>&lt;b>Quick start&lt;/b> takes a number of attributes for specifying the &lt;i>background&lt;/i> and &lt;i>colors&lt;/i> of the document.
+   </tooltip>
   </action>
   <action type="separator" id="0" />
   <action useTextButton="0" textButton="" icon="tag_bold" type="tag" id="1001" name="Bold" >
@@ -43,6 +45,9 @@
   </action>
   <action icon="tag_nbsp" type="text" id="1006" name="Non breaking space" >
    <text>&amp;nbsp;</text>
+   <tooltip>Inserting &lt;b>nbsp&lt;/b>.
+     Non breaking &lt;i>space&lt;/i>.
+   </tooltip>
   </action>
   <action type="separator" id="0" />
   <action icon="tag_a" type="tag" id="1007" name="Anchor" >
@@ -75,28 +80,28 @@
    <tag>&lt;div align=&quot;left&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>left&lt;/i>
-     suggests the horizontal alignment for the content of the division to &lt;i>left&lt;/i.
+     suggests the horizontal alignment for the content of the division to &lt;i>left&lt;/i>.
    </tooltip>
   </action>
   <action icon="div_center" type="tag" id="1012" name="Align center" >
    <tag>&lt;div align=&quot;center&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>center&lt;/i> or &lt;b>CENTER&lt;/b>
-     suggests the horizontal alignment for the content of the division to &lt;i>center&lt;/i.
+     suggests the horizontal alignment for the content of the division to &lt;i>center&lt;/i>.
    </tooltip>
   </action>
   <action icon="div_right" type="tag" id="1013" name="Align right" >
    <tag>&lt;div align=&quot;right&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>right&lt;/i>
-     suggests the horizontal alignment for the content of the division to &lt;i>right&lt;/i.
+     suggests the horizontal alignment for the content of the division to &lt;i>right&lt;/i>.
    </tooltip>
   </action>
   <action icon="div_justify" type="tag" id="1014" name="Align justify" >
    <tag>&lt;div align=&quot;justify&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>justify&lt;/i>
-     suggests the horizontal alignment for the content of the division to &lt;i>justify&lt;/i.
+     suggests the horizontal alignment for the content of the division to &lt;i>justify&lt;/i>.
    </tooltip>
   </action>
  </tabbar>
@@ -104,6 +109,8 @@
   <action useTextButton="0" textButton="" icon="tag_font" type="tag" id="2000" name="Font" >
    <tag useDialog="true" >&lt;font></tag>
    <xtag use="true" >&lt;/font></xtag>
+   <tooltip>The &lt;b>FONT&lt;/b> element allows authors to suggest rudimentary &lt;i>font changes&lt;/i>.
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="" type="separator" id="2001" />
   <action useTextButton="0" textButton="" icon="font_inc" type="tag" id="2002" name="Font size+1" >
@@ -162,6 +169,10 @@
   <action useTextButton="0" textButton="" icon="table_head" type="tag" id="3005" name="Table head ( with dialog )" >
    <tag useDialog="true" >&lt;th></tag>
    <xtag use="true" inLine="true" >&lt;/th></xtag>
+  </action>
+  <action useTextButton="0" textButton="" icon="tag_table_body" type="tag" id="3013" name="Table body ( with dialog )" >
+   <tag useDialog="true" >&lt;tbody></tag>
+   <xtag use="true" inLine="true" >&lt;/tbody></xtag>
   </action>
   <action useTextButton="0" textButton="" icon="tag_table_row" type="tag" id="3006" name="Table row ( with dialog )" >
    <tag useDialog="true" >&lt;tr></tag>

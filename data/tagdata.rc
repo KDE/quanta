@@ -113,3 +113,5 @@ TT=
 U=
 FRAME=name,src,longdesc,frameborder,marginwidth,marginheight,noresize,scrolling,
 NOFRAMES=
+!DOCTYPE=html,public,
+

@@ -10,7 +10,6 @@ noinst_LIBRARIES = libtagdialogs.a
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta\
 		-I$(top_srcdir)/quanta/kwrite
-CXXFLAGS = -g -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libtagdialogs_a_METASOURCES = AUTO
 libtagdialogs_a_SOURCES = \

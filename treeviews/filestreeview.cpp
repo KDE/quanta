@@ -93,7 +93,7 @@ FilesTreeView::FilesTreeView( QString dir, QStrList topList, QWidget *parent, co
     while ( ( i = f.find('/')) >= 0 ) f.remove(0,i+1);
 	
 	  FilesTreeFolder *dir = new FilesTreeFolder( this , " "+f, fname+"/");
-	  dir->setPixmap( 0, QPixmap((const char**)folder_top_xpm) );
+	  dir->setPixmap( 0, SmallIcon("kdisknav") );
 	  dir->setOpen( false);
 	}
 }
@@ -216,7 +216,7 @@ void FilesTreeView::slotAddToTop()
       if ( dirList.find( fname ) != -1) return;
 
 	    FilesTreeFolder *dir = new FilesTreeFolder( this , " "+f, fname+"/");
-  	  dir->setPixmap( 0, QPixmap((const char**)folder_top_xpm) );
+  	    dir->setPixmap( 0, SmallIcon("kdisknav") );
 	    dir->setOpen( false);
 	    dirList.append( fname );
 	  }

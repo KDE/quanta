@@ -10,7 +10,6 @@ noinst_LIBRARIES = libparser.a
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta\
 		-I$(top_srcdir)/quanta/kwrite
-CXXFLAGS = -g -O2 -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libparser_a_METASOURCES = AUTO
 libparser_a_SOURCES = \

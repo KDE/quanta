@@ -453,7 +453,7 @@ void QuantaApp::initMenuBar()
   menuBar()->insertItem(i18n(" &Tool "), toolMenu);
   menuBar()->insertItem(i18n(" &View "), viewMenu);
   menuBar()->insertItem(i18n(" &Project "), projectMenu);
-  #warning NEED_BOOKMARS_VERY_NEED_!!!
+  #warning NEED_BOOKMARS!!!
   //menuBar()->insertItem(i18n(" &Bookmarks "), bookmarksMenu);
   menuBar()->insertItem(i18n(" &Options "), optionsMenu);
 
@@ -514,10 +514,10 @@ void QuantaApp::initToolBar()
   toolbar1 = new KToolBar(this);
   toolbar1->setFullSize(false);
   
-  toolbar1->insertButton(UserIcon("new"),     ID_FILE_NEW,      true, i18n("New File"));
-  toolbar1->insertButton(UserIcon("open"),    ID_FILE_OPEN,     true, i18n("Open File"));
-  toolbar1->insertButton(UserIcon("openprj"), ID_PROJECT_OPEN,  true, i18n("Open Project"));
-
+  toolbar1->insertButton(UserIcon("new"),     ID_FILE_NEW,      true, i18n("<b>New</b> File<br>Create new <i>empty</i> document"));
+  toolbar1->insertButton(UserIcon("open"),    ID_FILE_OPEN,     true, i18n("<b>Open</b> existing <i>File</i> from disk"));
+  toolbar1->insertButton(UserIcon("openprj"), ID_PROJECT_OPEN,  true, i18n("<b>Open</b> existing <i>Web-Workspace</i> from disk"));
+  
   toolbar1->insertSeparator();
 
   toolbar1->insertButton(UserIcon("save"),    ID_FILE_SAVE,     true, i18n("Save File"));

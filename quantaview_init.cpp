@@ -108,6 +108,7 @@ void QuantaView::updateToolBars( ToolBars *t)
        		if ( el.nodeName() == "tooltip" )	tooltip = el.text();
         }
         tooltip.replace( QRegExp("&lt;"), "<" );
+        tooltip.replace( QRegExp("&gt;"), ">" );
         
         tb->insertButton( t->actionIcon(id),  el.attribute("id","-1").toInt(), true, i18n( tooltip ));
       }

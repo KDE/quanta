@@ -12,7 +12,6 @@ INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/tagdialogs\
 		-I$(top_srcdir)/quanta/project\
 		-I$(top_srcdir)/quanta/dialogs
-CXXFLAGS = -g -Wall 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libwidgets_a_METASOURCES = AUTO
 libwidgets_a_SOURCES = \

@@ -23,6 +23,7 @@
 #include <kapp.h>
 #include <kconfig.h>
 #include <kstddirs.h>
+#include <kiconloader.h>
 
 // app includes
 #include "docfolder.h"
@@ -30,10 +31,6 @@
 
 #include "pix/mini-book1.xpm"
 #include "pix/mini-book2.xpm"
-// #include "pix/greenbook.xpm"
-#include "pix/mini-doc.xpm"
-#include "pix/folder.xpm"
-#include "pix/folder_open.xpm"
 
 DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath)
   : QListViewItem(parent)
@@ -51,7 +48,7 @@ DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QStr
     if ( item[0] != '#' ) {
       QString url = config->readEntry( item );
       DocItem *el = new DocItem( this, QString(item), basePath+url);
-      el->setPixmap( 0, QPixmap((const char**)mini_doc_xpm) );
+      el->setPixmap( 0, SmallIcon("info") );
     }
   }
 
@@ -80,7 +77,7 @@ DocFolder::DocFolder(QListView *parent, QString _name, KConfig *config, QString 
     if ( item[0] != '#' ) {
       QString url = config->readEntry( item );
       DocItem *el = new DocItem( this, QString(item), basePath+url);
-      el->setPixmap( 0, QPixmap((const char**)mini_doc_xpm) );
+      el->setPixmap( 0, SmallIcon("info") );
     }
   }
 
@@ -121,8 +118,8 @@ void DocFolder::setOpen( bool o)
   		  setPixmap( 0, QPixmap((const char**)mini_book1_xpm) );
   } else {
       if (o)
-    		setPixmap( 0, QPixmap((const char**)folder_open_xpm) );
+    		setPixmap( 0, SmallIcon("folder_open") );
       else
-  		  setPixmap( 0, QPixmap((const char**)folder_xpm) );
+  		  setPixmap( 0, SmallIcon("folder") );
   }
 }
