@@ -202,6 +202,9 @@
                         <property name="numCols">
                             <number>0</number>
                         </property>
+                        <property name="selectionMode">
+                            <enum>Single</enum>
+                        </property>
                     </widget>
                     <spacer row="0" column="2">
                         <property name="name">
@@ -295,6 +298,9 @@
                                 </property>
                                 <property name="numCols">
                                     <number>0</number>
+                                </property>
+                                <property name="selectionMode">
+                                    <enum>Single</enum>
                                 </property>
                             </widget>
                             <spacer row="0" column="2">
@@ -443,6 +449,9 @@
                                 </property>
                                 <property name="numCols">
                                     <number>0</number>
+                                </property>
+                                <property name="selectionMode">
+                                    <enum>Single</enum>
                                 </property>
                             </widget>
                             <widget class="QSpinBox" row="0" column="1">
@@ -690,30 +699,33 @@
     <forward>typedef struct TableNode {   Node *node;   bool isFromDocument;  bool merged; int mergedRow; int mergedCol; }  </forward>
 </forwards>
 <variables>
-    <variable>QTable *m_dataTable;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableDataRows;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableDataTags;</variable>
-    <variable>DTDStruct *m_dtd;</variable>
-    <variable>KURL m_baseURL;</variable>
-    <variable>KPopupMenu *m_popup;</variable>
-    <variable>int m_row;</variable>
-    <variable>int m_col;</variable>
-    <variable>int m_cellEditId;</variable>
-    <variable>int m_rowEditId;</variable>
-    <variable>int m_colEditId;</variable>
-    <variable>Tag *m_tbody;</variable>
-    <variable>int newVariable;</variable>
-    <variable>Tag *m_thead;</variable>
-    <variable>Tag *m_tfoot;</variable>
-    <variable>Tag *m_table;</variable>
-    <variable>Document* m_write;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableRows;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableHeaderRows;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableFooterRows;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableHeaderTags;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableFooterTags;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableTags;</variable>
+    <variable>int m_unmergeCellsId;</variable>
+    <variable>int m_mergeSeparatorId;</variable>
+    <variable>int m_mergeCellsId;</variable>
     <variable>bool m_createNodes;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableFooterTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableHeaderTags;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableFooterRows;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableHeaderRows;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableRows;</variable>
+    <variable>Document* m_write;</variable>
+    <variable>Tag *m_table;</variable>
+    <variable>Tag *m_tfoot;</variable>
+    <variable>Tag *m_thead;</variable>
+    <variable>int newVariable;</variable>
+    <variable>Tag *m_tbody;</variable>
+    <variable>int m_colEditId;</variable>
+    <variable>int m_rowEditId;</variable>
+    <variable>int m_cellEditId;</variable>
+    <variable>int m_col;</variable>
+    <variable>int m_row;</variable>
+    <variable>KPopupMenu *m_popup;</variable>
+    <variable>KURL m_baseURL;</variable>
+    <variable>DTDStruct *m_dtd;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableDataTags;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableDataRows;</variable>
+    <variable>QTable *m_dataTable;</variable>
 </variables>
 <slots>
     <slot>slotContextMenuRequested( int row, int col, const QPoint &amp; pos )</slot>
@@ -732,6 +744,8 @@
     <slot>slotRemoveRow()</slot>
     <slot>slotRemoveCol()</slot>
     <slot>createNewTable( Document * write, DTDStruct * dtd )</slot>
+    <slot>slotMergeCells()</slot>
+    <slot>slotUnmergeCells()</slot>
 </slots>
 <functions>
     <function>init()</function>

@@ -38,8 +38,11 @@ void TableEditor::init()
 {
   m_popup = new KPopupMenu();
   m_cellEditId = m_popup->insertItem(i18n("&Edit Cell Properties"), this ,SLOT(slotEditCell()));
-  m_rowEditId = m_popup->insertItem(i18n("Edit &Row Properties"), this ,SLOT(slotEditRow()));
-//  m_colEditId = m_popup->insertItem(i18n("Edit &Column Properties"), this ,SLOT(slotEditCol()));
+  m_rowEditId = m_popup->insertItem(i18n("Edit &Row Properties"), this ,SLOT(slotEditRow()));//  m_colEditId = m_popup->insertItem(i18n("Edit &Column Properties"), this ,SLOT(slotEditCol()));
+  m_mergeSeparatorId = m_popup->insertSeparator();
+  m_mergeCellsId = m_popup->insertItem(i18n("Merge Cells"), this, SLOT(slotMergeCells()));
+  m_unmergeCellsId = m_popup->insertItem(i18n("Unmerge Cells"), this, SLOT(slotUnmergeCells()));
+
   m_popup->insertSeparator();
   m_popup->insertItem(i18n("&Insert Row"), this, SLOT(slotInsertRow()));
   m_popup->insertItem(i18n("Insert Co&lumn"), this, SLOT(slotInsertCol()));
@@ -87,6 +90,18 @@ void TableEditor::slotContextMenuRequested( int row, int col, const QPoint & pos
   m_popup->setItemEnabled(m_cellEditId, (row >=0 && col >=0));
   m_popup->setItemEnabled(m_rowEditId, (row >=0));
   m_popup->setItemEnabled(m_colEditId, (col >=0));
+  m_popup->setItemVisible(m_mergeSeparatorId, false);
+  m_popup->setItemVisible(m_mergeCellsId, false);
+  m_popup->setItemVisible(m_unmergeCellsId, false);
+  if  (row >=0 && col >=0) {
+    TableNode tableNode = (*m_tableTags)[m_row][m_col];
+    m_popup->setItemVisible(m_mergeSeparatorId, false);
+    m_popup->setItemVisible(m_mergeCellsId, false);
+    if (tableNode.merged) {
+      m_popup->setItemVisible(m_unmergeCellsId, true);
+      m_popup->setItemVisible(m_mergeSeparatorId, true);
+    }
+  }
   m_popup->popup(pos);
 }
 
@@ -573,7 +588,11 @@ void TableEditor::slotInsertRow()
       tableNode.node = new Node(0L);
       tableNode.node->tag = new Tag();
       tableNode.node->tag->dtd = m_dtd;
-      tableNode.node->tag->parse("<td>", m_write);
+      if (m_tableTags == m_tableHeaderTags) {
+        tableNode.node->tag->parse("<th>", m_write);
+      } else {
+        tableNode.node->tag->parse("<td>", m_write);
+      }
       tableRowTags.append(tableNode);
     }
     QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->at(num);
@@ -600,7 +619,11 @@ void TableEditor::slotInsertCol()
       tableNode.node = new Node(0L);
       tableNode.node->tag = new Tag();
       tableNode.node->tag->dtd = m_dtd;
-      tableNode.node->tag->parse("<td>", m_write);
+      if (m_tableTags == m_tableHeaderTags) {
+        tableNode.node->tag->parse("<th>", m_write);
+      } else {
+        tableNode.node->tag->parse("<td>", m_write);
+      }
       (*it).append(tableNode);
     }
   }
@@ -648,6 +671,12 @@ void TableEditor::slotRemoveRow()
   if (!(*it).isFromDocument)
      delete (*it).node;
   m_tableRows->erase(it);
+  QValueList<QValueList<TableNode> >::Iterator it2 = m_tableTags->at(m_row);
+  for (QValueList<TableNode>::Iterator it3 = (*it2).begin(); it3 != (*it2).end(); ++it3) {
+    if (!(*it3).isFromDocument)
+      delete (*it3).node;
+  }
+  m_tableTags->erase(it2);
   m_dataTable->removeRow(m_row);
 }
 
@@ -716,4 +745,50 @@ void TableEditor::deleteMatrix( QValueList<QValueList<TableNode> > *matrix )
   }
   delete matrix;
 
+}
+
+
+void TableEditor::slotMergeCells()
+{
+
+}
+
+
+void TableEditor::slotUnmergeCells()
+{
+  TableNode tableNode = (*m_tableTags)[m_row][m_col];
+  TableNode newTableNode;
+  int i = 0;
+  QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->at(m_row);
+  QValueList<TableNode>::Iterator it2 = (*it).at(m_col);
+  while (it2 != (*it).end()) {
+    if ((*it2).merged &&
+        tableNode.mergedRow == (*it2).mergedRow &&
+        tableNode.mergedCol == (*it2).mergedCol) {
+        if (!(*it2).isFromDocument)
+          delete (*it2).node;
+        it2 = (*it).erase(it2);
+        newTableNode.isFromDocument = false;
+        newTableNode.merged = false;
+        newTableNode.node = new Node(0L);
+        newTableNode.node->tag = new Tag();
+        newTableNode.node->tag->dtd = m_dtd;
+        if (m_tableTags == m_tableHeaderTags) {
+          newTableNode.node->tag->parse("<th>", m_write);
+        } else {
+          newTableNode.node->tag->parse("<td>", m_write);
+        }
+        (*it).insert(it2, newTableNode);
+        m_dataTable->setText(m_row, m_col + i, tagContent(newTableNode.node));
+        m_dataTable->item(m_row, m_col + i)->setEnabled(true);
+    } else {
+      ++it2;
+    }
+    i++;
+  }
+  newTableNode = (*m_tableTags)[tableNode.mergedRow][tableNode.mergedCol];
+  if (m_col - tableNode.mergedCol == 1)
+    newTableNode.node->tag->deleteAttribute("colspan");
+  else
+    newTableNode.node->tag->editAttribute("colspan",  QString("%1").arg(m_col - tableNode.mergedCol));
 }
