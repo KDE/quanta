@@ -1350,10 +1350,7 @@ void Project::slotAcceptCreateProject()
      fileNameList();
      emit reloadTree( m_projectFiles, true );
      emit showTree();
-
-     m_modified = true;
-
-     slotSaveProject();
+     setModified(true);
    }
  }
  if (errorOccured)
@@ -1887,7 +1884,7 @@ void Project::slotDeleteProjectView()
 void Project::setModified(bool modified)
 {
   m_modified = modified;
-  emit newStatus();
+  slotSaveProject();
 }
 
 /*Returns true if url is already in the project.*/

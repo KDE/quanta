@@ -2,7 +2,11 @@ SUBDIRS = data
 
 noinst_LTLIBRARIES = libcsseditor.la
 
-libcsseditor_la_SOURCES = fontfamilychoosers.ui cssselectors.ui csseditors.ui fontfamilychooser.cpp cssselector.cpp csseditor.cpp specialsb.cpp doubleeditors.cpp qmyhighlighter.cpp colorrequester.cpp propertysetter.cpp shorthandformer.cpp cssshpropertyparser.cpp csseditor_globals.cpp tlpeditors.cpp styleeditor.cpp
+libcsseditor_la_SOURCES = fontfamilychoosers.ui cssselectors.ui csseditors.ui \
+	fontfamilychooser.cpp cssselector.cpp csseditor.cpp specialsb.cpp doubleeditors.cpp \
+	qmyhighlighter.cpp colorrequester.cpp propertysetter.cpp shorthandformer.cpp \
+	csseditor_globals.cpp tlpeditors.cpp styleeditor.cpp cssshpropertyparser.cpp 
+
 libcsseditor_la_METASOURCES = AUTO
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \

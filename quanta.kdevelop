@@ -15,7 +15,6 @@
       <part>KDevBookmarks</part>
       <part>KDevClearCase</part>
       <part>KDevCTags</part>
-      <part>KDevDoxygen</part>
       <part>KDevdistpart</part>
       <part>KDevPerforce</part>
     </ignoreparts>
@@ -27,7 +26,7 @@
     <general>
       <mainprogram>quanta</mainprogram>
       <useconfiguration>default</useconfiguration>
-      <activetarget>src/quanta_be</activetarget>
+      <activetarget>components/csseditor/libcsseditor.la</activetarget>
     </general>
     <configure>
       <configargs>--prefix=/opt/kde3 --enable-debug\s</configargs>
@@ -238,10 +237,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="" ext="h" create="template" name="C++ header" >
+      <type icon="" ext="h" name="C++ header" create="template" >
         <descr>Quanta speicfic header</descr>
       </type>
-      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
+      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
         <descr>A new empty C++ file.</descr>
       </type>
     </filetypes>
