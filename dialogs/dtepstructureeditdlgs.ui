@@ -119,9 +119,6 @@
             <property name="text">
                 <string>Contains a &amp;filename</string>
             </property>
-            <property name="accel">
-                <string>Alt+F</string>
-            </property>
             <property name="toolTip" stdset="0">
                 <string>True if the element's text contains a filename</string>
             </property>
@@ -235,7 +232,7 @@
                 <cstring>pseudoGroupBox</cstring>
             </property>
             <property name="title">
-                <string>&amp;Pseudo DTEP specific settings</string>
+                <string>&amp;Pseudo DTEP Specific Settings</string>
             </property>
             <grid>
                 <property name="name">
@@ -555,7 +552,7 @@ Example:&lt;b&gt;\bnew[\\s]+$&lt;/b&gt; tells that after typing &lt;b&gt;new&amp
                                 <cstring>classGroup</cstring>
                             </property>
                             <property name="text">
-                                <string>Class Group</string>
+                                <string>Class group</string>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>The group's elements are classes</string>
@@ -567,9 +564,6 @@ Example:&lt;b&gt;\bnew[\\s]+$&lt;/b&gt; tells that after typing &lt;b&gt;new&amp
                             </property>
                             <property name="text">
                                 <string>Ob&amp;ject group</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+J</string>
                             </property>
                             <property name="toolTip" stdset="0">
                                 <string>The group's elements are objects</string>

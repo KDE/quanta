@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Add a conditional breakpoint</string>
+        <string>Add Conditional Breakpoint</string>
     </property>
     <property name="sizeGripEnabled">
         <bool>true</bool>
@@ -107,7 +107,7 @@
                 <cstring>buttonGroup1</cstring>
             </property>
             <property name="title">
-                <string>Break when</string>
+                <string>Break When</string>
             </property>
             <grid>
                 <property name="name">
@@ -194,7 +194,7 @@
                 <cstring>groupBox10</cstring>
             </property>
             <property name="title">
-                <string>Only break in</string>
+                <string>Only Break In</string>
             </property>
             <grid>
                 <property name="name">
