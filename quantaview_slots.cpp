@@ -68,7 +68,7 @@ void QuantaView::slotEditCurrentTag()
 
   Document *w = write();
   uint line,col;
-  w->viewCursorIf->cursorPosition(&line, &col);
+  w->viewCursorIf->cursorPositionReal(&line, &col);
   QString dtdName = w->findDTDName(line, 0); //call currentTag, so should be before
 
   Tag *tag = w->currentTag();
@@ -83,7 +83,7 @@ void QuantaView::slotEditCurrentTag()
      w->changeCurrentTag( dlg->getAttributes() );
      int eLine, eCol;
      tag->endPos(eLine, eCol);
-     w->viewCursorIf->setCursorPosition(eLine, eCol);
+     w->viewCursorIf->setCursorPositionReal(eLine, eCol);
     }
 
     delete dlg;
@@ -573,7 +573,7 @@ void QuantaView::slotPasteHTMLQuoted()
     text.replace( QRegExp( I18N_NOOP( "<" ) ), I18N_NOOP( "&lt;" ) );
     text.replace( QRegExp( I18N_NOOP( "\"" ) ), I18N_NOOP( "&quot;" ) );
     unsigned int line, col;
-    w->viewCursorIf->cursorPosition(&line, &col);
+    w->viewCursorIf->cursorPositionReal(&line, &col);
     w->editIf->insertText(line, col, text );
   }
 }
@@ -589,7 +589,7 @@ void QuantaView::slotPasteURLEncoded()
   {
     text = KURL::encode_string( text );
     unsigned int line, col;
-    w->viewCursorIf->cursorPosition(&line, &col);
+    w->viewCursorIf->cursorPositionReal(&line, &col);
     w->editIf->insertText(line, col, text );
   }
 }

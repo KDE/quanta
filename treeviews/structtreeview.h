@@ -3,7 +3,8 @@
                              -------------------
     begin                : Sat Apr 29 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+                           (C) 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,7 +23,7 @@
 #include <qlistview.h>
 
 /**view class of document structure
-  *@author Yacovlev Alexander & Dmitry Poplavsky
+  *@author Andras Mantia & Yacovlev Alexander & Dmitry Poplavsky
   */
 
 class Node;
@@ -39,29 +40,29 @@ public:
 	StructTreeView(Parser *parser, KConfig *config, QWidget *parent=0, const char *name=0);
 	~StructTreeView();
 	
-  /** create items in the level */
-  void createList(Node *node, StructTreeTag *parent = 0L, int openLevel = 3);	
 
   void setFollowCursor(bool);
   bool followCursor() { return followCursorFlag; }
+  /** Show the element in tree according to cursor position (x,y) */
+  void showTagAtPos(int x, int y);
 
 	
 public slots: // Public slots
   /** repaint document structure */
   void slotReparse(Node* node, int openLevel = 3 );
-  void slotFollowTag( QListViewItem *item );
   void slotMouseClicked(int button, QListViewItem*, const QPoint&, int);
   void slotDoubleClicked( QListViewItem * );
-  void slotOnTag( QListViewItem *);
 
   // slots for RBM menu
   void slotReparse();
   void slotSelectTag();
-  void slotGotoEndOfTag();
+  void slotGotoTag( QListViewItem *item );
+  void slotGotoClosingTag();
+  /** Recursively open the tree and all its subtrees */
   void slotOpenSubTree();
+  /** Recursively close the tree and all its subtrees */
   void slotCloseSubTree();
-  void showTagAtPos(int x, int y);
-  void changeFollowCursor() { setFollowCursor( !followCursor() ); }
+  void changeFollowCursor() { setFollowCursor(!followCursorFlag); }
   /** No descriptions */
   void slotCollapsed(QListViewItem *item);
   /** No descriptions */
@@ -83,6 +84,7 @@ public:
 	bool topOpened;
 	bool imagesOpened;
 	bool linksOpened;
+  bool useOpenLevelSetting;
 private:
   int imagesCount; // to check if there are images
   int linksCount;	
@@ -93,6 +95,9 @@ private:
 
   StructTreeTag *lastTag;
 
+  /** create items in the level */
+  void createList(Node *node, StructTreeTag *parent = 0L, int openLevel = 3);	
+  /** Do the recursive opening or closing of the trees */
   void setOpenSubTree( QListViewItem *it, bool open);
 
   KConfig *config;

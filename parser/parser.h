@@ -41,10 +41,6 @@ public:
   /** Print the doc structure tree to the standard output.
       Only for debugging purposes. */
   void coutTree(Node *node, int indent);
-/*	int xy2pos( int x, int y );
-	int pos2y(int pos);
-	int pos2x(int pos);*/
-	
   /** Delete the internal m_node */
   void deleteNode();
 

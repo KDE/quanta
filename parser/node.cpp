@@ -21,7 +21,6 @@ Node::Node( Node *parent )
 {
   this->parent = parent;
   next = child = 0L;
-//  type = tDefault;
   tag = 0L;
   opened = false;
 }

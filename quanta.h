@@ -241,7 +241,7 @@ class QuantaApp : public KDockMainWindow
 	  void setCursorPosition( int row, int col );
     void gotoFileAndLine  ( QString filename, int line );
 
-	  void selectArea(int col1, int row1, int col2, int row2);
+	  void selectArea(int line1, int col1, int line2, int col2);
 	
 	  void setTitle(QString);
 	  

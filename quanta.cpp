@@ -608,9 +608,11 @@ void QuantaApp::slotNewUndo()
 
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
+  reparse();
 	slotNewUndo();
 	slotNewStatus();
 	slotNewLineColumn();
+
 
 //Add the Kate menus
 /*
@@ -907,15 +909,12 @@ void QuantaApp::slotShowTemplatesTree()
 void QuantaApp::slotNewLineColumn()
 {
   QString linenumber;
-  unsigned int x;
-  unsigned int y;
+  unsigned int line;
+  unsigned int col;
 
-  view->write()->viewCursorIf->cursorPosition(&y, &x);
-  x++; y++ ;
-
-  sTab->showTagAtPos(x-1,y-1);
-
-  linenumber.sprintf(i18n("Line: %d Col: %d"),y,x);
+  view->write()->viewCursorIf->cursorPositionReal(&line, &col);
+  sTab->showTagAtPos(line,col);
+  linenumber.sprintf(i18n("Line: %d Col: %d"),line+1,col+1);
 
   statusBar()->changeItem(linenumber.data(), IDS_STATUS_CLM);
 }
@@ -926,6 +925,15 @@ void QuantaApp::reparse()
   if (view->writeExists())
   {
     Document *w = view->write();
+    if (baseNode)
+    {
+      delete baseNode;
+      baseNode = 0L;
+    }
+    if (dtds->find(w->getDTDIdentifier()))
+    {
+      baseNode = parser->parse(w);
+    }
 	  if ( stabdock->isVisible() && baseNode)
 	  {
       config->setGroup("Parser options");
@@ -933,10 +941,10 @@ void QuantaApp::reparse()
       if ( expandLevel == 0 ) expandLevel = 40;
       sTab->slotReparse(baseNode , expandLevel );
 		  
-      uint x;
-      uint y;
-      w->viewCursorIf->cursorPosition(&y, &x);
-      sTab->showTagAtPos(x,y);
+      uint line;
+      uint col;
+      w->viewCursorIf->cursorPositionReal(&line, &col);
+      sTab->showTagAtPos(line,col);
 	  } // if (stabdock->isVisible())
   } // if (view->writeExists())
 }
@@ -948,9 +956,9 @@ void QuantaApp::setCursorPosition( int row, int col )
   int numLines = w->editIf->numLines();
   
   if ( row < numLines )
-    w->viewCursorIf->setCursorPosition(row, col);
+    w->viewCursorIf->setCursorPositionReal(row, col);
   else
-    w->viewCursorIf->setCursorPosition(numLines - 1, col);
+    w->viewCursorIf->setCursorPositionReal(numLines - 1, col);
 
   w->view()->setFocus();
 }
@@ -963,7 +971,7 @@ void QuantaApp::gotoFileAndLine(QString filename, int line )
   int numLines = w->editIf->numLines();
   if ( numLines > line && line >= 0 )
   {
-    w->viewCursorIf->setCursorPosition(line, 0);
+    w->viewCursorIf->setCursorPositionReal(line, 0);
   }
   
   w->view()->setFocus();
@@ -975,7 +983,7 @@ void QuantaApp::slotDockChanged()
 {
   static bool docTabOpened = false;
   
-  if ( stabdock->isVisible() ) reparse();
+  if ( stabdock->isVisible() && baseNode) reparse();
   
   if ( dtabdock->isVisible() ) 
   {
@@ -1001,19 +1009,19 @@ void QuantaApp::slotDockChanged()
   }
 }
 
-void QuantaApp::selectArea(int col1, int row1, int col2, int row2)
+void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
 {
   Document *w = view->write();
   int numLines = w->editIf->numLines();
 
-  if ( row1 > numLines-1 )
-    row1 = numLines-1;
+  if ( line1 > numLines-1 )
+    line1 = numLines-1;
     
-  if ( row2 > numLines-1 )
-    row2 = numLines-1;
+  if ( line2 > numLines-1 )
+    line2 = numLines-1;
     
-  w->viewCursorIf->setCursorPosition(row2, col2);
-  w->selectionIf->setSelection(row1, col1, row2, col2);
+  w->viewCursorIf->setCursorPositionReal(line2, col2);
+  w->selectionIf->setSelection(line1, col1, line2, col2);
 }
 
 void QuantaApp::openDoc( QString url )
@@ -1911,12 +1919,7 @@ void QuantaApp::processDTD(QString documentType)
  {
    w->setDTDIdentifier(documentType);w->setDTDIdentifier(documentType);
  }
-
-  if (baseNode) delete baseNode;
-  if (dtds->find(w->getDTDIdentifier()))
-  {
-    baseNode = parser->parse(w);
-  }
+  sTab->useOpenLevelSetting = true;
 }
 
 /** No descriptions */
@@ -1941,6 +1944,8 @@ void QuantaApp::slotToolsChangeDTD()
   {
     w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
   }
+
+  reparse();
 
   delete dlg;
 }

@@ -164,14 +164,11 @@ private:
 	int spellMoved;
   QString dtdName;
 
-  QString findBeginOfTag( QString tag, int line, int col, int &beginLine, int &beginCol, QString beginStr = "<",QString endStr=">");
-  QString findEndOfTag  ( QString tag, int line, int col, int &endLine, int &endCol, QString beginStr = "<",QString endStr=">");
   Tag *findScriptText(int line, int col);
-  Tag *findScriptStructBegin(int line, int col);
+  Tag *findScriptStruct(int line, int col);
 
   Tag *findXMLTag(int line, int col);
   Tag *findText(int line, int col);
-  Tag *findComment(int line, int col);
   /** Called whenever a user inputs text in an XML type document. */
   void xmlAutoCompletion(int , int , const QString & );
   /** Called whenever a user inputs text in a script type document. */

@@ -33,6 +33,8 @@
 
 class Document;
 
+#define MAX_ATTR_NUM 100
+
 struct TagAttr {
   QString name;           //attr name
   QString value;          //attr value
@@ -81,13 +83,14 @@ public:
 	QString name;
   int type;   //one of the TokenType
 	bool single; // tags like <tag />
+  bool closingMissing; //closing tag is optional and missing
   int attrCount;
 private:
   int beginLine; //where the tag begins in the doc
   int beginCol;
   int endLine;   //where the tag ends in the doc
   int endCol;
-  TagAttr attrs[50];  //max 50 attributes in a tag
+  TagAttr attrs[MAX_ATTR_NUM];  //attributes in a tag
   QString m_tagStr;   //the tag in string format (as it is in the document)
   Document *m_write;  //the document
 

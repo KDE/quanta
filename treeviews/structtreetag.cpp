@@ -3,7 +3,8 @@
                              -------------------
     begin                : Sat Apr 29 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+                           (C) 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -92,7 +93,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *p_node, QString name )
 		setText(0,"");
 	}
 
-  setText(0, text(0)+" ["+tag->tagStr()+"]"); //debug
+//  setText(0, text(0)+QString(" ["+tag->tagStr()+" ; %1]").arg(tag->type)); //debug
 }
 
 StructTreeTag::StructTreeTag(StructTreeTag *parent, QString name )

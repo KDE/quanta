@@ -1,9 +1,9 @@
 /***************************************************************************
                           tag.cpp  -  description
                              -------------------
-    begin                : Sun Apr 16 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+    begin                : Sun Sep 1 2002
+    copyright            : (C) 2002 by Andras Mantia
+    email                : amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,6 +28,7 @@ Tag::Tag()
   name = "";
   type = Unknown;
   single = false;
+  closingMissing = false;
   attrCount = 0;
 }
 
@@ -68,7 +69,7 @@ void Tag::parseAttr( QString text, int &line, int &col)
   int begin = col;
 
   //go through the string
-  while (col < (int) text.length() && text[col] != '>')
+  while (col < (int) text.length() && text[col] != '>' && currentAttrNum < MAX_ATTR_NUM)
   {
    //find where the attr name begins
    while ( text[col].isSpace() && !text[col].isNull()) col++;

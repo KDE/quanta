@@ -31,18 +31,10 @@ public:
 	Node( Node *parent );
 	~Node();
 	
-	//enum { tDefault = 0 , tText = 1 , tTag = 2, tComment, tPHP };
-	
 	Node *next;
 	Node *prev;
 	Node *parent;
 	Node *child;
-	
-	//int type;  // Tag, Text, ...
-	//int start; //  pos in string
-	//int end;
-	//int startContext;
-	//int endContext;
 	
 	Tag *tag;
   bool opened;

@@ -56,7 +56,7 @@ Node *Parser::parse(Document *w)
   int col = 0;
   m_node = subParse(0L, line, col);
 
-  coutTree(m_node,0); //debug printout
+//  coutTree(m_node,0); //debug printout
 
   return m_node;
 }
@@ -101,7 +101,8 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
                    QString searchFor = (qTag->parentDTD->caseSensitive)?tag->name:tag->name.upper();
                    if ( qTag->stoppingTags.contains( searchFor ) )
                    {
-                     return firstNode; //parent will have 0 as child
+                    parent->tag->closingMissing = true; //parent is single...
+                     return firstNode;
                    }
                  }
                } //if (parent)
@@ -158,6 +159,7 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
                  prevNode->next = node;
              node->tag = tag;
              node->prev = prevNode;
+             node->next = 0L;
              prevNode = node;
              tag->endPos(line, col);
              break;
@@ -171,6 +173,7 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
                  prevNode->next = node;
              node->tag = tag;
              node->prev = prevNode;
+             node->next = 0L;
              prevNode = node;
              tag->endPos(line, col);
              nextPos(line, col);
@@ -197,49 +200,6 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
   return firstNode;
 }
 
-/*
-int Parser::pos2y( int pos )
-{
-	int endLineCount = 0;
-	if ( pos<0 ) pos = 0;
-	
-	for (int i=0; i<=pos && !m_text[i].isNull(); i++)
-		if (m_text[i]=='\n')
-			endLineCount++;
-	return endLineCount;
-}
-
-int Parser::pos2x( int pos )
-{
-	int i;
-	if ( pos<0 ) pos = 0;
-	for (i=pos; m_text[i]!='\n' && i; i--);
-	return pos-i;
-}
-
-int Parser::xy2pos( int x, int y )
-{
-  int pos = 0;
-  QStringList slist = QStringList::split('\n',m_text,true);
-
-  if ( y > (int) slist.count() )
-  	y = slist.count();
-
-  for ( int i=0; i<y; i++ )
-  	 pos += slist[i].length()+1;
-
-  int len = slist[y].length();
-  if ( len>x )
-  	pos+=x;
-  else
-  	pos+=len;
-  	
-	//printf("x: %d \t y: %d \t pos: %d\n",x,y,pos);	
-	//fflush(stdout);
-	
-	return (pos);
-}
-              */
 /** Delete the internal m_node */
 void Parser::deleteNode()
 {

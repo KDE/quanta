@@ -125,9 +125,9 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   connect( messageOutput, SIGNAL(clicked(QString,int)),
            this,          SLOT(gotoFileAndLine(QString,int)));
 
-  QTimer *t = new QTimer( this );
+  /*QTimer *t = new QTimer( this );
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );
-  t->start( 2000, false );
+  t->start( 2000, false );*/
   QTimer::singleShot(10,this, SLOT(slotFileNew()) );
 
 //  KParts::ReadOnlyPart *m_cervisia =  KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>( "libcervisia.so",this);
