@@ -24,13 +24,15 @@
   *@author Dmitry Poplavsky
   */
 
+#include <qptrlist.h>
+#include <qvaluelist.h>
+
 class Tag;
 class QListViewItem;
 struct XMLStructGroup;
 
 #ifdef BUILD_KAFKAPART
 #include <dom/dom_node.h>
-#include <qlist.h>
 
 typedef struct domNodeStruct
    {
@@ -40,6 +42,21 @@ typedef struct domNodeStruct
     int endOffset;
    };
 #endif
+
+class Node;
+
+struct GroupElement{
+    /*The node which contains the element */
+    Node *node;
+    /* The tag which point to the actual place in the node */
+    Tag *tag;
+    /*The parent node indicating the beginning of a structure */
+    Node *parentNode;
+    bool global;
+  };
+
+typedef QValueList<GroupElement> GroupElementList;
+typedef QMap<QString, GroupElementList> GroupElementMapList;
 
 class Node {
 
@@ -72,6 +89,8 @@ public:
  bool insideSpecial; //true if the node is part of a special area
  QString fileName; //the node is in this file. If empty, it's in the current document
  XMLStructGroup *group;
+ QPtrList<GroupElementList> groupElementLists;
+ GroupElementList::Iterator groupElementIt;
 };
 
 #endif

@@ -43,16 +43,6 @@ struct DTDListNode {
     int eLine, eCol;
   };
 
-struct GroupElement{
-    /*The node which contains the element */
-    Node *node;
-    /*The parent node indicating the beginning of a structure */
-    Node *parentNode;
-    bool global;
-  };
-
-typedef QValueList<GroupElement> GroupElementList;
-typedef QMap<QString, GroupElementList> GroupElementMapList;
 typedef QMap<QString, GroupElementMapList> IncludedGroupElements;
 typedef QMap<QString, IncludedGroupElements> IncludedGroupElementsMap;
 

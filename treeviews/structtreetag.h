@@ -39,7 +39,7 @@ public:
 
   Node *node;
   bool hasOpenFileMenu;
-  bool groupItem;
+  Tag* groupTag;
   QRegExp fileNameRx;
 };
 

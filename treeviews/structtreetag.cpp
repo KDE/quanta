@@ -34,7 +34,7 @@ StructTreeTag::StructTreeTag(QListView *parent, QString a_title)
 {
   node = 0L;
   hasOpenFileMenu = false;
-  groupItem = false;
+  groupTag = 0L;
 }
 
 StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString a_title,
@@ -42,7 +42,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
 : KListViewItem(parent, after, a_title)
 {
   hasOpenFileMenu = false;
-  groupItem = false;
+  groupTag = 0L;
   static const QString space = " ";
   static const QRegExp nbspRx("&nbsp;|\\n");
   node = a_node;
@@ -149,7 +149,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, QString a_title )
 {
   node = 0L;
   hasOpenFileMenu = false;
-  groupItem = false;
+  groupTag = 0L;
 }
 
 

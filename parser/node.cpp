@@ -42,6 +42,19 @@ Node::Node( Node *parent )
 
 Node::~Node()
 {
+  for (uint i = 0; i < groupElementLists.count(); i++)
+  {
+    GroupElementList *groupElementList = groupElementLists.at(i);
+    GroupElementList::Iterator it = groupElementList->begin();
+    while (it != groupElementList->end())
+    {
+      if ((*it).node == this)
+      {
+        it = groupElementList->erase(it);
+      } else
+        ++it;
+    }
+  }
   if (prev)
       prev->next = 0L;
   if (parent && parent->child == this)

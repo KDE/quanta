@@ -1566,6 +1566,16 @@ Node *Parser::rebuild(Document *w)
 
 void Parser::clearGroups()
 {
+  GroupElementMapList::Iterator it;
+  GroupElementList *list;
+  for (it = m_groups.begin(); it != m_groups.end(); ++it)
+  {
+    list = & it.data();
+    for (uint i = 0; i < list->count(); i++)
+    {
+      delete (*list)[i].tag;
+    }
+  }
   m_groups.clear();
   includedFiles.clear();
   includedFilesDTD.clear();
@@ -1944,7 +1954,7 @@ void Parser::parseForScriptGroup(Node *node)
         pos += l;
         title.remove(group.clearRx);
         newTag->name = title;
-        node->groupTag = newTag;
+        groupElement.tag = newTag;
         groupElement.node = node;
         Node *tmpNode = node;
         while (tmpNode && tmpNode->tag->dtd == dtd && tmpNode->tag->type != Tag::ScriptStructureBegin)
@@ -1960,6 +1970,7 @@ void Parser::parseForScriptGroup(Node *node)
         }
         groupElement.global = false;
         groupElementList = & (m_groups[group.name+"|"+title]);
+        node->groupElementLists.append(groupElementList);
         groupElementList->append(groupElement);
         if (group.hasFileName && group.parseFile)
         {

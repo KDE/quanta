@@ -190,7 +190,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
             insertAfter = lastItemInGroup[group->name];
 
         StructTreeTag *item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), currentNode, currentNode->groupTag->name, insertAfter);
-        item->groupItem = true;
+        item->groupTag = currentNode->groupTag;
         if (insertUnder == groupItem)
         {
           groupItems[currentNode->groupTag->name] = item;
@@ -276,10 +276,11 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         {
           groupElementList = & (it.data());
           QString title = it.key().section('|', -1);
-          for (uint j = 0; j < groupElementList->count(); j++)
+          GroupElementList::Iterator groupElementIt;
+          for (groupElementIt = groupElementList->begin(); groupElementIt != groupElementList->end(); ++groupElementIt)
           {
-            item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, title, insertAfter);
-            static_cast<StructTreeTag*>(item)->groupItem = true;
+            item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), (*groupElementIt).node, title, insertAfter);
+            static_cast<StructTreeTag*>(item)->groupTag = (*groupElementIt).tag;
             static_cast<StructTreeTag*>(item)->hasOpenFileMenu = group.hasFileName;
             static_cast<StructTreeTag*>(item)->fileNameRx = group.fileNameRx;
             if (first)
@@ -539,9 +540,9 @@ void StructTreeView::slotSelectTag()
     int bLine, bCol, eLine, eCol;
     if (it->node->fileName.isEmpty())
     {
-      if (it->groupItem && it->node->groupTag)
+      if (it->groupTag)
       {
-        Tag *tag = it->node->groupTag;
+        Tag *tag = it->groupTag;
         tag->beginPos(bLine, bCol);
         tag->endPos(eLine, eCol);
       } else
