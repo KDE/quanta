@@ -1291,6 +1291,7 @@ void QuantaInit::checkRuntimeDependencies()
 
   if (!errorStr.isEmpty())
   {
+      m_quanta->slotHideSplash();
       errorStr[errorStr.length() - 1] = '.';
       KMessageBox::information(m_quanta, "<qt>" + i18n("Some applications required for full functionality are missing:<br>") + errorStr + "<br><br>You may download the applications from the specified locations.</qt>", i18n("Missing applications"), "RuntimeDependencyCheck");
   }
