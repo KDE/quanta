@@ -39,10 +39,12 @@ void TableEditor::init()
   m_popup = new KPopupMenu();
   m_cellEditId = m_popup->insertItem(i18n("&Edit Cell Properties"), this ,SLOT(slotEditCell()));
   m_rowEditId = m_popup->insertItem(i18n("Edit &Row Properties"), this ,SLOT(slotEditRow()));
-  m_colEditId = m_popup->insertItem(i18n("Edit &Column Properties"), this ,SLOT(slotEditCol()));
+//  m_colEditId = m_popup->insertItem(i18n("Edit &Column Properties"), this ,SLOT(slotEditCol()));
   m_popup->insertSeparator();
   m_popup->insertItem(i18n("&Insert Row"), this, SLOT(slotInsertRow()));
   m_popup->insertItem(i18n("Insert Co&lumn"), this, SLOT(slotInsertCol()));
+  m_popup->insertItem(i18n("Remove Row"), this, SLOT(slotRemoveRow()));
+  m_popup->insertItem(i18n("Remove Column"), this, SLOT(slotRemoveCol()));
   m_popup->insertSeparator();
   m_popup->insertItem(i18n("Edit &Table Properties"), this, SLOT(slotEditTable()));
   m_row = m_col = -1;
@@ -408,7 +410,7 @@ QString TableEditor::readModifiedTable()
   tableString += "<" + QuantaCommon::tagCase("caption") + ">";
   tableString += captionText->text();
   tableString += "</" + QuantaCommon::tagCase("caption") + ">";
-  if (headerCheckBox->isChecked()) {
+  if (headerCheckBox->isChecked() && headerTableData->numRows() > 0) {
     //insert the <thead> tag
     tableString += indent(2);
     tableString += m_thead->toString();
@@ -421,7 +423,7 @@ QString TableEditor::readModifiedTable()
     tableString += indent(2);
     tableString += "</" + QuantaCommon::tagCase(m_thead->name) +">";
   }
-  if (footerCheckBox->isChecked()) {
+  if (footerCheckBox->isChecked() && footerTableData->numRows() > 0) {
     //insert the <tfoot> tag
     tableString += indent(2);
     tableString += m_tfoot->toString();
@@ -625,13 +627,23 @@ void TableEditor::slotAddRemoveCol( int num )
 
 void TableEditor::slotRemoveRow()
 {
-
+  QValueList<TableNode>::Iterator it = m_tableRows->at(m_row);
+  if (!(*it).isFromDocument)
+     delete (*it).node;
+  m_tableRows->erase(it);
+  m_dataTable->removeRow(m_row);
 }
 
 
 void TableEditor::slotRemoveCol()
 {
-
+  for (QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
+    QValueList<TableNode>::Iterator it2 = (*it).at(m_col);
+     if (!(*it2).isFromDocument)
+       delete (*it2).node;
+     (*it).erase(it2);
+  }
+ m_dataTable->removeColumn(m_col);
 }
 
 
