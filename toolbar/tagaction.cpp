@@ -16,6 +16,11 @@
  *                                                                         *
  ***************************************************************************/
 
+//other includes
+#include <sys/types.h>
+#include <unistd.h>
+
+
 //qt includes
 #include <qdom.h>
 #include <qfile.h>
@@ -151,6 +156,8 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
       command.replace( QRegExp("%f"), fname );
     }
 
+    pid_t pid = getpid();
+    command.replace("%pid", QString("%1").arg(pid));
     int pos = command.find(' ');
     QString args;
     if (pos != -1)
