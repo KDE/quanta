@@ -35,8 +35,16 @@ public slots:
   void slotEditScript();
   void slotEditInQuanta();
   void slotEditDescription();
+  void slotRun();
+  void slotSendScriptInMail();
+
+signals:
+  void openFileInPreview(const KURL&);
+  void hidePreview();
 
 private:
+  KURL infoFile(const KURL& a_url);
+
   KURL m_baseURL;
   FilesTreeFolder *m_globalDir;
   FilesTreeFolder *m_localDir;

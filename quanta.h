@@ -202,6 +202,7 @@ public slots:
   void slotFilePrev();
   void slotFileQuit();
 
+  void slotOpenFileInPreview(const KURL&);
   void slotImageOpen(const KURL&);
   void slotFileOpenRecent(const KURL&);
   void slotInsertTag(const KURL&, DirInfo);
@@ -234,6 +235,7 @@ public slots:
   /** repaint preview */
   void repaintPreview( bool clear = false);
   void slotActivatePreview();
+  void slotHidePreview();
   /** show preview ( F6 )*/
   void slotShowPreview();
   void slotShowProjectTree();

@@ -593,6 +593,28 @@ void QuantaApp::repaintPreview( bool clear )
  part->show();
 }
 
+void QuantaApp::slotHidePreview()
+{
+  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
+  if (ta->isChecked())
+      ta->setChecked(false);
+}
+
+void QuantaApp::slotOpenFileInPreview(const KURL& a_url)
+{
+  if ( qConfig.previewPosition == "Disabled" )
+     return;
+  WHTMLPart *part = htmlPart();
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if ( !s || !part  )
+     return;
+  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
+  if (!ta->isChecked())
+      ta->setChecked(true);
+  part->openURL(a_url);
+  part->show();
+}
+
 /** view image in preview */
 void QuantaApp::slotImageOpen(const KURL& url)
 {
@@ -3269,21 +3291,21 @@ void QuantaApp::slotEmailDTD()
     mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
     if ( mailDlg->exec() )
     {
-    if ( !mailDlg->lineEmail->text().isEmpty())
-    {
-      toStr = +mailDlg->lineEmail->text();
-      subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus DTD"):mailDlg->lineSubject->text();
-      if ( !mailDlg->titleEdit->text().isEmpty())
-          message = mailDlg->titleEdit->text();
-    } else
-    {
-      KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error Sending Email"));
-      delete mailDlg;
-      return;
-    }
+      if ( !mailDlg->lineEmail->text().isEmpty())
+      {
+        toStr = +mailDlg->lineEmail->text();
+        subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus DTD"):mailDlg->lineSubject->text();
+        if ( !mailDlg->titleEdit->text().isEmpty())
+            message = mailDlg->titleEdit->text();
+      } else
+      {
+        KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error Sending Email"));
+        delete mailDlg;
+        return;
+      }
 
-    QString nullString="";
-    kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, dtdFile);
+      QString nullString="";
+      kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, dtdFile);
     }
     delete mailDlg;
   }

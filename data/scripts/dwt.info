@@ -1,5 +1,6 @@
 <!DOCTYPE QuantaScriptInfo>
 <INFO>
+<options editor="kmdr-editor" interpreter="kmdr-executor" />
 <name>dwt</name>
 <author>Benjamin Stocker</author>
 <email>bstocker@4s-hosting.ch</email>

@@ -450,8 +450,10 @@ void QuantaApp::initView()
 
   connect(scriptTab, SIGNAL(openFile(const KURL &, const QString&)),
           this, SLOT(slotFileOpen(const KURL &, const QString&)));
-  connect(scriptTab, SIGNAL(activatePreview()),
-          this, SLOT(slotActivatePreview()));
+  connect(scriptTab, SIGNAL(openFileInPreview(const KURL &)),
+          this, SLOT(slotOpenFileInPreview(const KURL &)));
+  connect(scriptTab, SIGNAL(hidePreview()),
+          this, SLOT(slotHidePreview()));
 
   connect(fTab, SIGNAL(insertTag(const KURL &, DirInfo)),
           this, SLOT(slotInsertTag(const KURL &, DirInfo)));
