@@ -4,19 +4,13 @@ NickName = XHTML Basic 1.0
 URL = http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd
 DoctypeString = html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"
 DefaultExtension = html
-Groups = Core, I18n, Script, Focus
+Groups = Core, I18n
 NumOfPages = 1
 CaseSensitive = true
 
 [Toolbars]
 Location = html
 Names = standard, tables, lists, forms, other
-
-[Core]
-Attributes = id, class, title
-
-[I18n]
-Attributes = xml:lang
 
 [Page1]
 Title = Core and i18n

@@ -203,40 +203,14 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");
   dtd->caseSensitive = caseSensitive;
   int numOfTags = 0;
-  
-  //read the attributes for each common group
-  QStrList * groupList = new QStrList();
-  dtdConfig->readListEntry("Groups", *groupList); //read the common groups
-  for (uint i = 0; i < groupList->count(); i++)
-  {
-    AttributeList *commonAttrList = new AttributeList;      //no need to delete it
-    commonAttrList->setAutoDelete(true);
-    QString groupName = QString(groupList->at(i)).stripWhiteSpace();
-  
-    dtdConfig->setGroup(groupName);
-    QStrList *attrList = new QStrList();
-    dtdConfig->readListEntry("Attributes", * attrList);
-    for (uint j = 0; j < attrList->count(); j++)
-    {
-      Attribute *attr = new Attribute;                                  //no need to delete it
-      attr->name = QString(attrList->at(j)).stripWhiteSpace();
-      attr->type = "input";
-      attr->defaultValue = "";
-      attr->status = "optional";
-      commonAttrList->append(attr);
-    }
-    delete attrList;
-  
-    dtd->commonAttrs->insert(groupName, commonAttrList);
-  }
-  delete groupList;
-  
   QTagList *tagList = new QTagList(119, false); //max 119 tag in a DTD
   tagList->setAutoDelete(true);
   //read all the tag files
   KURL dirURL(dtd->fileName);
   dirURL.setFileName("");
   QString dirName = dirURL.path(1);
+  if (QFile::exists(dirName + "common.tag"))
+    readTagFile(dirName + "common.tag", dtd, 0L);
   KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*.tag");
   QString tmpStr;
   for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
@@ -245,7 +219,8 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     if (!tmpStr.isEmpty())
     {
       tmpStr.prepend(dirName);
-      numOfTags += readTagFile(tmpStr, dtd, tagList);
+      if (!tmpStr.endsWith("/common.tag"))
+        numOfTags += readTagFile(tmpStr, dtd, tagList);
     }
   }
   
@@ -699,13 +674,27 @@ uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *
     tag->setName(n.toElement().attribute("name"));
     tag->setFileName(fileName);
     tag->parentDTD = parentDTD;
-    setAttributes(&n, tag);
-    if (parentDTD->caseSensitive)
+    bool common = false;
+    setAttributes(&n, tag, common);
+    if (common)
     {
-      tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
+      QString groupName = n.toElement().attribute("name");
+      AttributeList *attrs = tag->attributes();
+      attrs->setAutoDelete(false);
+      AttributeList *commonAttrList = new AttributeList;      //no need to delete it
+      commonAttrList->setAutoDelete(true);
+      *commonAttrList = *attrs;
+      //delete tag;
+      parentDTD->commonAttrs->insert(groupName, commonAttrList);
     } else
     {
-      tagList->insert(tag->name().upper(),tag);
+      if (parentDTD->caseSensitive)
+      {
+        tagList->insert(tag->name(), tag);  //append the tag to the list for this DTD
+      } else
+      {
+        tagList->insert(tag->name().upper(), tag);
+      }
     }
  }
  return numOfTags;
@@ -715,48 +704,56 @@ uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *
 /**
  Parse the dom document and retrieve the tag attributes
 */
-void DTDs::setAttributes(QDomNode *dom, QTag* tag)
+void DTDs::setAttributes(QDomNode *dom, QTag* tag, bool &common)
 {
+ common = false;
  Attribute *attr;
 
  QDomElement el = dom->toElement();
  QString tmpStr;
-
- QDictIterator<AttributeList> it(*(tag->parentDTD->commonAttrs));
- for( ; it.current(); ++it )
+ 
+ tmpStr = el.attribute("common");
+ if ((tmpStr != "1" && tmpStr != "yes")) //in case of common tags, we are not interested in these options
  {
-   QString lookForAttr = "has" + QString(it.currentKey()).stripWhiteSpace();
-   tmpStr = el.attribute(lookForAttr);
-   if (tmpStr == "1" || tmpStr == "yes")
-   {
-    tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
-   }
- }
-
- tmpStr = el.attribute("single");
- if (tmpStr == "1" || tmpStr == "yes")
+    QDictIterator<AttributeList> it(*(tag->parentDTD->commonAttrs));
+    for( ; it.current(); ++it )
+    {
+      QString lookForAttr = "has" + QString(it.currentKey()).stripWhiteSpace();
+      tmpStr = el.attribute(lookForAttr);
+      if (tmpStr == "1" || tmpStr == "yes")
+      {
+        tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
+      }
+    }
+    
+    tmpStr = el.attribute("single");
+    if (tmpStr == "1" || tmpStr == "yes")
+    {
+      tag->setSingle(true);
+    }
+    
+    tmpStr = el.attribute("optional");
+    if (tmpStr == "1" || tmpStr == "yes")
+    {
+      tag->setOptional(true);
+    }
+    
+    tag->type = el.attribute("type","xmltag");
+    tag->returnType = el.attribute("returnType","");
+ } else
  {
-  tag->setSingle(true);
+   common = true;
  }
-
- tmpStr = el.attribute("optional");
- if (tmpStr == "1" || tmpStr == "yes")
- {
-  tag->setOptional(true);
- }
-
- tag->type = el.attribute("type","xmltag");
- tag->returnType = el.attribute("returnType","");
-
  for ( QDomNode n = dom->firstChild(); !n.isNull(); n = n.nextSibling() )
  {
-    if (n.nodeName() == "children")
+   tmpStr = n.nodeName();
+   if (tmpStr == "children")
    {
      QDomElement el = n.toElement();
      QDomElement item = el.firstChild().toElement();
      while ( !item.isNull() )
      {
-       if (item.tagName() == "child")
+       if (tmpStr == "child")
        {
           QString childTag = item.attribute("name");
           if (!tag->parentDTD->caseSensitive)
@@ -765,8 +762,8 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag)
        }
        item = item.nextSibling().toElement();
      }
-   }
-   if (n.nodeName() == "stoppingtags") //read what tag can act as closing tag
+   } else
+   if (tmpStr == "stoppingtags") //read what tag can act as closing tag
    {
      QDomElement el = n.toElement();
      QDomElement item = el.firstChild().toElement();
@@ -782,7 +779,7 @@ void DTDs::setAttributes(QDomNode *dom, QTag* tag)
        item = item.nextSibling().toElement();
      }
    } else
-   if ( n.nodeName() == "attr" ) //an attribute
+   if (tmpStr == "attr") //an attribute
    {
      attr = new Attribute;
      attr->name = n.toElement().attribute("name");

@@ -1,7 +1,6 @@
 [General]
 Name = CFFUNCT
 DefaultExtension = cfm
-Groups =
 NumOfPages = 0
 CaseSensitive = true
 Family = 2

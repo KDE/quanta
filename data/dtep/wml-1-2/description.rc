@@ -10,9 +10,6 @@ CaseSensitive = true
 Location = wml-1-2
 Names = deck, forms, table, tasks, text, misc
 
-[Core]
-Attributes = id, class
-
 [Page1]
 Title = Core Attributes
 Groups = Core

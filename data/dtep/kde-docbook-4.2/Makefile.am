@@ -1,4 +1,4 @@
-quanta_DATA = description.rc
+quanta_DATA = common.tag description.rc
 
 quantadir = ${quanta_datadir}/dtep/kde-docbook-4.2
 

@@ -13,15 +13,6 @@ CaseSensitive = false
 Location = html
 Names = standard, fonts, tables, lists, forms, other
 
-[Core]
-Attributes = id, class, style, title
-
-[I18n]
-Attributes = lang, dir
-
-[Script]
-Attributes = onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,onmouseout,onkeypress,onkeydown,onkeyup
-
 [Page1]
 Title = Core && i18n
 Groups = Core, I18n

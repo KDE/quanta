@@ -182,10 +182,13 @@ private:
    */
   uint readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList);
 
-  /**
-  Parse the dom document and retrieve the tag attributes
+  /** Parses the dom document and retrieve the tag attributes
+  *
+  * @param dom the DOM node containing the tag definition
+  * @param tag the QTag object that will be initialized by using the information in dom
+  * @param common will be true, if the tag is a just a list of common group attributes
   */
-  void setAttributes(QDomNode *dom, QTag* tag);
+  void setAttributes(QDomNode *dom, QTag* tag, bool &common);
   /** removes dtd from dictonary and deletes all components 
    * 
    * @param dtd the dtd to delete

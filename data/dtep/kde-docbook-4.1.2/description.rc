@@ -12,9 +12,6 @@ CaseSensitive = true
 Location = kde-docbook
 Names = kdexmltools
 
-[Core]
-Attributes=arch,condition,conformance,id,lang,os,remap,role,revision,revisionflag,security,userlevel,vendor,xreflabel
-
 [Page1]
 Title = Core
 Groups = Core

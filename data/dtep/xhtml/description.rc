@@ -12,15 +12,6 @@ CaseSensitive = true
 Location = html
 Names = standard, fonts, tables, lists, forms, other
 
-[Core]
-Attributes = id, class, style, title
-
-[I18n]
-Attributes = lang, xml:lang, dir
-
-[Script]
-Attributes = onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,onmouseout,onkeypress,onkeydown,onkeyup
-
 [Focus]
 Attributes = accesskey, tabindex, onfocus, onblur
 
