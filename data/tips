@@ -14,6 +14,14 @@
 </html>
 </tip>
 
+<tip category="IO">
+<html>
+<p>...that you can view and manage the content of any  
+<b>project upload profile</b> in the in a tree in the right side dock? Dragging files from the upload profile to the project tree in the left dock will also prompt asking if you want to add them to the project if they are new.
+</p>
+</html>
+</tip>
+
 <tip category="Editor">
 <html>
 <p>...that you can turn on line numbering and the icon border
@@ -49,7 +57,14 @@ specific? You can customize any of Quanta's toolbars too.
 <tip category="Project">
 <html>
 <p>...that you can open and close groups of files in projects with
-<b>Project Views</b>? You can even include project toolbars in the views.
+<b>Project Views</b>? You can even include project toolbars in the views. The new project toolbar makes it easy.
+</p>
+</html>
+</tip>
+
+<tip category="Project">
+<html>
+<p>...that you can you can have as many <b>upload profiles</b> as you want for a project? This means you can have a separate test server and production server and Quanta will keep track of what is uploaded where.
 </p>
 </html>
 </tip>
@@ -64,7 +79,7 @@ in the structure tree with <b>RMB Show Groups For &gt; PHP</b>?
 
 <tip category="Application">
 <html>
-<p>...that you can use PHP to auto-complete functions with <b>Ctrl+Space</b>?
+<p>...that you can use auto-complete with PHP's built in functions by using <b>Ctrl+Space</b>?
 </p>
 </html>
 </tip>
@@ -109,14 +124,21 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 
 <tip category="Information">
 <html>
-<p>...that we have a mailing list for users at <b><a href="http://mail.kde.org/mailman/listinfo/quanta">http://mail.kde.org/mailman/listinfo/quanta</a></b>?
+<p>...that we have a mailing list for  Quanta users at <b><a href="http://mail.kde.org/mailman/listinfo/quanta">http://mail.kde.org/mailman/listinfo/quanta</a></b>? This is a great place to go for help and information. Please join before posting, even if you read from a newsreader. You can set it not to send you mail and this is how we prevent spam.
 </p>
 </html>
 </tip>
 
 <tip category="Information">
 <html>
-<p>...that we have additional mailing lists to support our users? <b><a href="http://mail.kdewebdev.org/mailman/listinfo">Click here to see</a></b>.
+<p>...that you can search the Quanta mailing list using <b><a href="http://www.google.com/custom?hl=en&lr=&ie=ISO-8859-1&safe=off&cof=&sitesearch=http%3A%2F%2Fmail.kde.org&q=&btnG=Google+Search">Google</a></b>? 
+</p>
+</html>
+</tip>
+
+<tip category="Information">
+<html>
+<p>...that we have additional mailing lists to support our users? Lists include Kommander and web development help.<b><a href="http://mail.kdewebdev.org/mailman/listinfo">Click here to see</a></b>.
 </p>
 </html>
 </tip>
@@ -165,6 +187,13 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 
 <tip category="Application">
 <html>
+<p>...that you can move the file tabs now? <b>Hold the middle mouse button on a tab and drag it where you want it.</b>.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
 <p>...that the file tabs now have popup menus? <b>RMB on a file tab</b> and you can even select which open file to view from a menu list.
 </p>
 </html>
@@ -207,6 +236,13 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 
 <tip category="Application">
 <html>
+<p>...that you can visually check the status of your links from within Quanta? <b>Select KLinkStatus from the Plugins menu</b> and Quanta will load a visual link checker.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
 <p>...that Quanta has XML tools for things like XSL Transforms? <b>Select the scripts tree on the left</b> and you will find several Kommander dialogs that use your installed libxml libraries.
 </p>
 </html>
@@ -215,6 +251,27 @@ Just go to <b>Settings > Configure Shortcuts</b>.
 <tip category="Application">
 <html>
 <p>...that Quanta has a local script library for useful scripts? <b>Select the scripts tree on the left</b> and you will find scripts and Kommander dialogs for doc generation, Quick Start, XSL Transforms and more.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can create the XML files used to display information about scripts in the Script tree? <b>Select the scripts tree on the left</b> and you will find scriptinfo.kmdr. Right click and select <i>Run Script</i> and fill in the dialog.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can create text templates using <b>Drag and Drop </b>? Have your template tree open, select some text, drag it to the tree and drop it on a folder. Quanta will prompt you for a file name.
+</p>
+</html>
+</tip>
+
+<tip category="Application">
+<html>
+<p>...that you can create <b>filter actions for templates</b>? Right click on a template in the tree and select properties, Quanta Templates and a filtering action, which is a script from the scripts tree. This can take the template and filter it.
 </p>
 </html>
 </tip>
