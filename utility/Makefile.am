@@ -3,7 +3,7 @@ noinst_LTLIBRARIES = libutility.la
 METASOURCES = AUTO
 
 libutility_la_SOURCES = quantacommon.cpp tagaction.cpp toolbartabwidget.cpp \
-	toolbarxmlgui.cpp qnewdtepstuff.cpp
+		toolbarxmlgui.cpp qnewdtepstuff.cpp security.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \
 	-I$(top_srcdir)/quanta/parsers \
@@ -12,5 +12,5 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \
 	-I$(top_srcdir)/quanta/parts/kafka \
 	-I$(top_srcdir)/lib \
 	$(KMDI_INCLUDES) $(KNEWSTUFF_INCLUDES) $(all_includes)
-noinst_HEADERS = qnewdtepstuff.h
+noinst_HEADERS = qnewdtepstuff.h security.h
 libutility_la_LIBADD = $(LIB_KNEWSTUFF)

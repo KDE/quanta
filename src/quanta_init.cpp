@@ -1322,6 +1322,8 @@ void QuantaInit::checkRuntimeDependencies()
     errorStr += QString(stdErrorMsg).arg("Kompare").arg("http://bruggie.dnsalias.org/kompare").arg(i18n("comparing of files by content"));
   if (KStandardDirs::findExe("kcmshell").isNull())
     errorStr += QString(stdErrorMsg).arg("KControl (kdebase)").arg("http://www.kde.org").arg(i18n("preview browser configuration"));
+  if (KStandardDirs::findExe("gpg").isNull())
+    errorStr += QString(stdErrorMsg).arg("GPG (OpenPGP)").arg("http://www.gnupg.de").arg(i18n("resource signing and validating"));
   if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("KFileReplace")))
     errorStr += QString(stdErrorMsg).arg("KFileReplace").arg("http://kfilereplace.kdewebdev.org").arg(i18n("search and replace in files"));
   if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("CVS Management (Cervisia)")))

@@ -17,17 +17,21 @@
 #define QNEWDTEPSTUFF_H
 
 //qt includes
+#include <qobject.h>
 
 //kde includes
 #include <knewstuff/knewstuff.h>
 
+class KTempDir;
 /**
 Makes possible downloading and installing new DTEP packages
 
 @author Andras Mantia
 */
-class QNewDTEPStuff : public KNewStuff
+class QNewDTEPStuff : public  QObject, public KNewStuff
 {
+  Q_OBJECT
+
 public:
     QNewDTEPStuff(const QString &type,  QWidget *parentWidget=0);
     ~QNewDTEPStuff();
@@ -36,6 +40,14 @@ public:
     bool install( const QString &fileName );
     /** Creates a DTEP tarball to be uploaded */
     bool createUploadFile( const QString &fileName );
+
+private slots:
+    /** Checks the validity of the downloaded tarball and installs it*/
+    void slotValidated(int result);
+
+private:
+    KTempDir *m_tempDir;
+    QString m_tarName;
 };
 
 #endif
