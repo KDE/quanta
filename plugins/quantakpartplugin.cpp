@@ -160,7 +160,10 @@ bool QuantaKPartPlugin::run()
     showGui(true);
     addWidget();
     setRunning(true);
+    connect( m_part, SIGNAL(setStatusBarText(const QString &)), 
+           quantaApp, SLOT(slotStatusMsg( const QString & ))); 
 
+    
     emit pluginStarted();
 
     return true;
@@ -172,6 +175,9 @@ bool QuantaKPartPlugin::unload()
 {
   if(!isLoaded())
     return FALSE;
+
+  disconnect( m_part, SIGNAL(setStatusBarText(const QString &)), 
+           quantaApp, SLOT(slotStatusMsg( const QString & ))); 
 
   showGui(false);
   removeWidget();
