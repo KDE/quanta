@@ -41,7 +41,9 @@ struct DTDStruct;
 //#define LIGHT_DEBUG
 
 
-/** This class gathers all the basic functions needed by kafka. */
+/** This class gathers all the basic functions needed by kafka. 
+ * It's very useful for manipulating nodes.
+ */
 
 class kafkaCommon
 {
@@ -145,7 +147,7 @@ public:
 		int colEnd = -2, int lineEnd = -2);
 
 	/**
-	 * Get the display type of a Node. NOT a official list, more a little hack to
+	 * Get the display type of a Node. NOT an official list, more a little hack to
 	 * handle the indentation. Text are inline. The rest return an error.
 	 * @param closingNodeToo Specifies if we consider that closing Node have the same type as
 	 * their opening tag.
@@ -219,7 +221,7 @@ public:
 	 * It will also try to merge text/Empty Nodes.
 	 * @param node The node to insert.
 	 * @param parentNode This Node will be the parent of node.
-	 * @param nextSibling This Node will be the next Sibling of Node. If null, node will be appened at
+	 * @param nextSibling This Node will be the next Sibling of Node. If null, node will be appended at
 	 * the child list of parentNode.
 	 * TODO: @param rootNode The rootNode of the tree we want to insert the Node (usually &baseNode).
 	 * @param modifs The changes made are logged into modifs. Put 0L if you don't want to log
@@ -298,7 +300,7 @@ public:
 	 * It will also try to merge text/Empty Nodes.
 	 * @param node The root node of the Node subtree to insert.
 	 * @param parentNode This Node will be the parent of node.
-	 * @param nextSibling This Node will be the next Sibling of Node. If null, node will be appened at
+	 * @param nextSibling This Node will be the next Sibling of Node. If null, node will be appended at
 	 * the child list of parentNode.
 	 * @param modifs The changes made are logged into modifs. Put 0L if you don't want to log
 	 * and if you know what you're doing!
@@ -784,6 +786,14 @@ public:
 	 */
 	static bool parentSupports(DOM::Node parent, DOM::Node startNode, DOM::Node endNode,
 		const DTDStruct* dtd);
+    
+    /**
+     * Sets the title attribute of node to name. This is useful to add tooltips to the nodes.
+     * @param node The Node to set the title attribute.
+     * @param name The value of title atribute (that will be displayed in the tooltip text)
+     * @return If the new Node replaces an existing node with the same name the previously existing Node is returned, otherwise null is returned.
+     */
+    static DOM::Node setTitleAttribute(DOM::Node& node, DOM::Document doc, QString const& name);
 
 	/** ----------------------- MISCELLANEOUS -------------------------------------*/
 
