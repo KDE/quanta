@@ -74,7 +74,7 @@ int MyProcess::commSetupDoneC()
 }
 
 TagAction::TagAction( QDomElement *element, KActionCollection *parent)
-  : KAction( element->attribute("text").isEmpty() ? "" : i18n(element->attribute("text").utf8()), KShortcut(element->attribute("shortcut")), 0, 0, parent, element->attribute("name") )
+  : KAction( element->attribute("text").isEmpty() ? QString("") : i18n(element->attribute("text").utf8()), KShortcut(element->attribute("shortcut")), 0, 0, parent, element->attribute("name") )
 {
   m_modified = false;
   tag = element->cloneNode().toElement();

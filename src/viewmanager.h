@@ -18,6 +18,7 @@
 //forward declarations
 class QuantaView;
 class KafkaDocument;
+class KPopupMenu;
 
 class KMdiChildView;
 
@@ -43,10 +44,6 @@ public:
   /** Removes a QuantaView object. Returns false on failure (eg. the view was not saved and it refused
   the delete itself.) If force is true, the view is removed without asking for save.*/
   bool removeView(QuantaView *view, bool force = false);
-  /** Removes the active view Returns false on failure (eg. the view was not saved and it refused the delete itself.) */
-  bool removeActiveView()  {
-      return removeView(activeView());
-   };
   /** Returns the active view */
   QuantaView *activeView();
   /** Returns the active document or 0L */
@@ -71,8 +68,11 @@ public:
   QuantaView *lastActiveEditorView() {return m_lastActiveEditorView;}
 
 public slots:
+  /**called when a new view was activated */
   void slotViewActivated(KMdiChildView *view);
 
+  /** Removes the active view Returns false on failure (eg. the view was not saved and it refused the delete itself.) */
+  bool removeActiveView()  { return removeView(activeView()); }
   /** closes all the other but active tabs */
   void slotCloseOtherTabs();
   /** closes all views. If createNew is true, it creates a new view after closing the others. */
@@ -86,6 +86,18 @@ signals:
   /** emitted when a file from the template view is dropped on a view */
   void dragInsert(QDropEvent *);
 
+private slots:
+ /** called before the file list menu shows up, so it can be updated */
+  void slotFileListPopupAboutToShow();
+  /** called when an item is selected in the file list menu */
+  void slotFileListPopupItemActivated(int id);
+
+  /** Handle tab context menus for editor views */
+  void slotReloadFile();
+  void slotUploadFile();
+  void slotDeleteFile();
+  void slotCloseView();
+
 private:
   /** Private constructor for the singleton object. */
   ViewManager(QObject * parent = 0, const char * name = 0);
@@ -95,6 +107,10 @@ private:
   QuantaView *m_lastActiveView; ///< Holds the last active view. Used to deactivate it when a new view is selected
   QuantaView *m_lastActiveEditorView; ///< Contains the last active view which has an editor inside
   QuantaView *m_documentationView; ///< Contains the view which holds the documentation browser
+  KPopupMenu *m_tabPopup; ///< the menu which pops up when the user clicks on a view tab
+  KPopupMenu *m_fileListPopup; ///< a menu containing the opened views as menu items
+  QuantaView *m_contextView; ///<the tab where the context menu was requested
+  bool m_separatorVisible;
 };
 
 #endif

@@ -562,9 +562,10 @@ void QuantaApp::slotFileSaveAll()
     slotUpdateStatus(m_view->write()); */
 }
 
-void QuantaApp::slotFileReload()
+void QuantaApp::slotFileReload(QuantaView *view)
 {
-  QuantaView *view = ViewManager::ref()->activeView();
+  if (!view)
+     view = ViewManager::ref()->activeView();
   Document *w = view->document();
   if (!w || !view->saveModified())
       return;
@@ -1801,7 +1802,11 @@ void QuantaApp::slotContextMenuAboutToShow()
       {
         QMap<QString, XMLStructGroup>::ConstIterator it = node->tag->dtd->xmlStructTreeGroups.find(node->tag->name.lower());
 
+#if KDE_IS_VERSION(3, 2, 0)
         if (it != node->tag->dtd->xmlStructTreeGroups.constEnd())
+#else
+        if (it != node->tag->dtd->xmlStructTreeGroups.end())
+#endif
         {
           XMLStructGroup group = it.data();
           uint count = group.attributes.count();
@@ -3436,9 +3441,11 @@ void QuantaApp::slotExpandAbbreviation()
   }
 }
 
-void QuantaApp::slotUploadFile()
+void QuantaApp::slotUploadFile(QuantaView *view)
 {
-  Project::ref()->slotUploadURL(ViewManager::ref()->activeDocument()->url());
+  if (!view)
+    view = ViewManager::ref()->activeView();
+  Project::ref()->slotUploadURL(view->document()->url());
 }
 
 
@@ -3446,9 +3453,11 @@ void QuantaApp::slotUploadOpenedFiles()
 {
 }
 
-void QuantaApp::slotDeleteFile()
+void QuantaApp::slotDeleteFile(QuantaView *view)
 {
-  Document *w = ViewManager::ref()->activeDocument();
+  if (!view)
+    view = ViewManager::ref()->activeView();
+  Document *w = view->document();
   KURL url = w->url();
   if (KMessageBox::questionYesNo(this,
                    i18n("<qt>Do you really want to delete the file <b>%1</b> ?</qt>")

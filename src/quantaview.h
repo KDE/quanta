@@ -122,6 +122,9 @@ public:
  /** Updates the icon at the name on the view tab */
   void updateTab();
 
+  /** Returns the tab name associated with this view */
+  QString tabName();
+
   void insertTag( const char *tag);
 
   /** Insert a new tag by bringing up the TagDialog. */

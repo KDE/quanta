@@ -203,7 +203,7 @@ public slots:
   void slotFileSaveSelectionAsLocalTemplate();
   void slotFileSaveSelectionAsProjectTemplate();
   void slotFileSaveAll();
-  void slotFileReload();
+  void slotFileReload(QuantaView *view = 0L);
   void slotFileReloadAll();
   void slotFileClose();
   /** Close the document specified in the parameter if it's opened */
@@ -330,6 +330,9 @@ public slots:
   /** registers a new part in the partmanager */
   void slotNewPart(KParts::Part *newPart, bool setActiv);
 
+  void slotUploadFile(QuantaView *view=0L);
+  void slotDeleteFile(QuantaView *view=0L);
+
 //Overridden KMdiMainFrm slots
   virtual void closeAllViews();
   virtual void closeActiveView();
@@ -348,9 +351,7 @@ protected slots:
   /** Show the user mailing list sign up */
   void slotHelpUserList();
   void slotOpenFileUnderCursor();
-  void slotUploadFile();
   void slotUploadOpenedFiles();
-  void slotDeleteFile();
   /** Called after there was no user activity - cursor movement - for xx ms*/
   void slotIdleTimerExpired();
   void slotShowNoFramesPreview();

@@ -275,6 +275,23 @@ void QuantaView::updateTab()
     }
 }
 
+QString QuantaView::tabName()
+{
+   if (m_document)
+   {
+       return m_document->url().fileName();
+   } else
+   if (m_plugin)
+   {
+       return m_plugin->name();
+   } else
+   if (m_customWidget)
+   {
+       return m_customWidget->caption();
+   } else
+   return "";
+}
+
 void QuantaView::slotSetSourceLayout()
 {
    emit hidePreview();

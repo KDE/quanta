@@ -13,13 +13,13 @@
  ***************************************************************************/
 
 //qt includes
-#include <qpopupmenu.h>
 
 //kde includes
 #include <kdirwatch.h>
 #include <klocale.h>
 #include <kmdimainfrm.h>
 #include <kurl.h>
+#include <kpopupmenu.h>
 #include <ktexteditor/view.h>
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/popupmenuinterface.h>
@@ -44,11 +44,30 @@
 #include "toolbartabwidget.h"
 #include "parser.h"
 
+#define SEPARATOR_INDEX 3
+#define RELOAD_ID 11
+#define UPLOAD_ID 12
+#define DELETE_ID 13
+
 ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, name)
 {
     m_lastActiveView = 0L;
     m_lastActiveEditorView = 0L;
     m_documentationView = 0L;
+    m_tabPopup = new KPopupMenu(quantaApp);
+    m_tabPopup->insertItem(i18n("&Close"), this, SLOT(slotCloseView()));
+    m_tabPopup->insertItem(i18n("Close &Other Tabs"), this, SLOT(slotCloseOtherTabs()));
+    m_tabPopup->insertItem(i18n("Close &All"), this, SLOT(closeAll()));
+    m_tabPopup->insertItem(i18n("&Reload"), this, SLOT(slotReloadFile()), 0, RELOAD_ID);
+    m_tabPopup->insertItem(i18n("&Upload File"), this, SLOT(slotUploadFile()), 0, UPLOAD_ID);
+    m_tabPopup->insertItem(i18n("&Delete File"), this, SLOT(slotDeleteFile()), 0, DELETE_ID);
+    m_tabPopup->insertSeparator();
+    m_fileListPopup = new KPopupMenu(quantaApp);
+    connect(m_fileListPopup, SIGNAL(aboutToShow()), this, SLOT(slotFileListPopupAboutToShow()));
+    connect(m_fileListPopup, SIGNAL(activated(int)), this, SLOT(slotFileListPopupItemActivated(int)));
+    m_tabPopup->insertItem(i18n("&Switch To"), m_fileListPopup);
+    m_contextView = 0L;
+    m_separatorVisible = false;
 }
 
 QuantaView* ViewManager::createView()
@@ -174,7 +193,11 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
 
 void ViewManager::slotCloseOtherTabs()
 {
-  KMdiChildView *currentView = quantaApp->activeWindow();
+  KMdiChildView *currentView;
+   if (m_contextView)
+     currentView = m_contextView;
+   else
+     currentView = quantaApp->activeWindow();
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   //save the children first to a list, as removing invalidates our iterator
   QValueList<KMdiChildView *> children;
@@ -390,7 +413,82 @@ bool ViewManager::allEditorsClosed()
 
 void ViewManager::slotTabContextMenu(QWidget *widget, const QPoint& point)
 {
-  //quantaApp->taskBarPopup(activeView(), true)->exec(point);
+   if (m_separatorVisible)
+       m_tabPopup->removeItemAt(SEPARATOR_INDEX);
+   m_contextView = dynamic_cast<QuantaView*>(widget);
+   if (m_contextView && m_contextView->document())
+   {
+       m_tabPopup->insertSeparator(SEPARATOR_INDEX);
+       m_tabPopup->setItemVisible(RELOAD_ID, true);
+       m_tabPopup->setItemVisible(UPLOAD_ID, true);
+       m_tabPopup->setItemVisible(DELETE_ID, true);
+       m_separatorVisible = true;
+   } else
+   {
+       m_tabPopup->setItemVisible(RELOAD_ID, false);
+       m_tabPopup->setItemVisible(UPLOAD_ID, false);
+       m_tabPopup->setItemVisible(DELETE_ID, false);
+       m_separatorVisible = false;
+   }
+   m_tabPopup->exec(point);
+}
+
+void ViewManager::slotFileListPopupAboutToShow()
+{
+   m_fileListPopup->clear();
+   QStringList viewList;
+   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
+   QuantaView *view;
+   int id = 0;
+   for (it->first(); !it->isDone(); it->next())
+   {
+      view = dynamic_cast<QuantaView*>(it->currentItem());
+      if (view)
+      {
+          m_fileListPopup->insertItem(view->tabName(), id);
+          id++;
+      }
+  }
+  delete it;
+}
+
+void ViewManager::slotFileListPopupItemActivated(int id)
+{
+   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
+   QuantaView *view;
+   int id2 = 0;
+   for (it->first(); !it->isDone(); it->next())
+   {
+      view = dynamic_cast<QuantaView*>(it->currentItem());
+      if (view && id == id2)
+      {
+          view->activate();
+          view->activated();
+          break;
+      }
+      id2++;
+  }
+  delete it;
+}
+
+void ViewManager::slotReloadFile()
+{
+    quantaApp->slotFileReload(m_contextView);
+}
+
+void ViewManager::slotUploadFile()
+{
+    quantaApp->slotUploadFile(m_contextView);
+}
+
+void ViewManager::slotDeleteFile()
+{
+    quantaApp->slotDeleteFile(m_contextView);
+}
+
+void ViewManager::slotCloseView()
+{
+   removeView(m_contextView);
 }
 
 #include "viewmanager.moc"

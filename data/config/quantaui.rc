@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32041">
+<kpartgui name="quanta" version="32042">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -211,15 +211,6 @@
     <Action name="select_tag_area"/>
     <Action name="context_help"/>
     <Action name="open_file_under_cursor"/>
-    <Separator/>
-    <Action name="file_close"/>
-    <Action name="close_other_tabs" />
-    <Action name="file_reload" />
-    <Action name="upload_file"/>
-    <Action name="upload_opened_files"/>
-    <Action name="delete_file" />
-    <Separator/>
-    <Action name="file_list"/>
   </Menu>
 
   <ActionProperties>
