@@ -1401,6 +1401,8 @@ bool Document::scriptAutoCompletion(int line, int column)
 {
  bool handled = false;
  Node *node = parser->nodeAt(line, column);
+ if (!node) //happens in some cases in CSS
+   return false;
  if (node->parent)
    node = node->parent;
  else if (node->prev)
