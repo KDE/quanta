@@ -787,14 +787,20 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
                 showAttributes = false;
            }
           //suggest attribute completions
-          if (showAttributes)
+          if (node && showAttributes)
           {
-            QString s =  node->tag->tagStr().section(' ', -1);
-            if (s.endsWith(">"))
-                s = s.left(s.length() - 1);
-            s = s.stripWhiteSpace();
-            if (s.contains("="))
-                s = "";
+            QString s;
+            if (node->tag->attrCount() > 0)
+            {
+              s =  node->tag->tagStr().section(' ', -1);
+              if (s.endsWith(">"))
+                  s = s.left(s.length() - 1);
+              if (s.startsWith("<"))
+                  s = s.mid(1);
+              s = s.stripWhiteSpace();
+              if (s.contains("="))
+                  s = "";
+            }
             showCodeCompletions( getAttributeCompletions(tagName, s) );
           }
          }
@@ -1792,10 +1798,10 @@ void Document::paste()
 
 bool Document::eventFilter(QObject *object, QEvent *event)
 {
-	if(event->type() == QEvent::Paint && !repaintEnabled)
-		return true;
-	else
-		return false;
+        if(event->type() == QEvent::Paint && !repaintEnabled)
+                return true;
+        else
+                return false;
 }
 
 /** returns all the areas that are between tag and it's closing pair */
