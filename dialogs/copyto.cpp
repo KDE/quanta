@@ -22,7 +22,7 @@
 
 //app includes
 #include "copyto.h"
-#include "../qextfileinfo.h"
+#include "qextfileinfo.h"
 
 CopyTo::CopyTo(const KURL& dirURL)
 {

@@ -51,9 +51,9 @@
 //own includes
 #include "projectupload.h"
 #include "project.h"
-#include "../quantacommon.h"
-#include "../qextfileinfo.h"
-#include "../resource.h"
+#include "quantacommon.h"
+#include "qextfileinfo.h"
+#include "resource.h"
 
 ProjectUpload::ProjectUpload(const KURL& url, const char* name)
   :ProjectUploadS( 0L, name, true, Qt::WDestructiveClose)

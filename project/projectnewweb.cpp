@@ -34,9 +34,9 @@
 
 // app includes
 #include "projectnewweb.h"
-#include "../qextfileinfo.h"
-#include "../quantacommon.h"
-#include "../treeviews/uploadtreeview.h"
+#include "qextfileinfo.h"
+#include "quantacommon.h"
+#include "uploadtreeview.h"
 
 ProjectNewWeb::ProjectNewWeb(QWidget *parent, const char *name )
   : ProjectNewWebS(parent,name)

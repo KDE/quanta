@@ -25,7 +25,7 @@
 // app includes
 #include "uploadtreefolder.h"
 #include "uploadtreefile.h"
-#include "../resource.h"
+#include "resource.h"
 
 UploadTreeFolder::UploadTreeFolder(const KURL &a_url, UploadTreeFolder * parent, const char * name )
     : KListViewItem( parent, name, "", "", "" )

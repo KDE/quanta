@@ -40,7 +40,7 @@
 
 #include "propertysetter.h"
 #include "qmyhighlighter.h"
-#include "../../resource.h"
+#include "resource.h"
 #include "cssshpropertyparser.h"
 #include "shorthandformer.h"
    

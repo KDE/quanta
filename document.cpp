@@ -49,20 +49,26 @@
 #include <ktexteditor/wordwrapinterface.h>
 #include <ktexteditor/markinterfaceextension.h>
 
-#include "parser/tag.h"
+#include "tag.h"
 #include "quantacommon.h"
 #include "document.h"
 #include "resource.h"
-#include "dialogs/dirtydlg.h"
-#include "dialogs/dirtydialog.h"
-#include "dialogs/casewidget.h"
-#include "project/project.h"
-#include "plugins/quantaplugininterface.h"
+#include "dirtydlg.h"
+#include "dirtydialog.h"
+#include "casewidget.h"
+#include "project.h"
+#include "quantaplugininterface.h"
 
-#include "dtds.h"
 #include "quanta.h"
 #include "quantaview.h"
-#include "treeviews/structtreeview.h"
+#include "structtreeview.h"
+#include "qextfileinfo.h"
+
+#ifdef BUILD_KAFKAPART
+#include "undoredo.h"
+#endif
+
+#include "dtds.h"
 
 #define STEP 1
 

@@ -36,19 +36,17 @@
 #include <kapplication.h>
 #include <kdockwidget.h>
 #include "kqapp.h"
-#include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
 #include <kate/document.h>
 #include <ktempfile.h>
 
 //app includes
-#include "parser/qtag.h"
-#include "quantacommon.h"
-#include "qextfileinfo.h"
-#include "resource.h"
+#include "qtag.h"
 #include "dcopwindowmanagerif.h"
 
 // forward declaration
+class DCOPSettings;
+
 class QuantaPluginInterface;
 
 class QuantaDoc;

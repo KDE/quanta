@@ -57,23 +57,23 @@
 #include "resource.h"
 #include "qextfileinfo.h"
 
-#include "parser/tag.h"
-#include "project/project.h"
-#include "messages/messageoutput.h"
+#include "tag.h"
+#include "project.h"
+#include "messageoutput.h"
 
 // dialogs headers
-#include "tagdialogs/tagdialog.h"
+#include "tagdialog.h"
 
-#include "tagdialogs/tagquicklistdlg.h"
-#include "tagdialogs/tagmaildlg.h"
-#include "tagdialogs/tagmisc.h"
-#include "tagdialogs/tableeditor.h"
+#include "tagquicklistdlg.h"
+#include "tagmaildlg.h"
+#include "tagmisc.h"
+#include "tableeditor.h"
 
-#include "plugins/csseditor/csseditor.h"
-#include "plugins/csseditor/cssselector.h"
+#include "csseditor.h"
+#include "cssselector.h"
 
-#include "plugins/spellchecker.h"
-#include "plugins/framewizard/framewizard.h"
+#include "spellchecker.h"
+#include "framewizard.h"
 
 #include "qdom.h"
 

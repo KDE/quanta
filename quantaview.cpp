@@ -40,11 +40,13 @@
 #include <kmessagebox.h>
 #include <kurldrag.h>
 #include <kdeversion.h>
+
+#include <dom/dom_node.h>
 #ifdef BUILD_KAFKAPART
 #include <kconfig.h>
-#include "parts/kafka/wkafkapart.h"
-#include "parts/kafka/kafkacommon.h"
-#include <dom/dom_node.h>
+#include "wkafkapart.h"
+#include "kafkacommon.h"
+#include "undoredo.h"
 #include <dom/dom_string.h>
 #include <kate/view.h>
 #endif
@@ -62,11 +64,12 @@
 #include "quantaview.h"
 #include "quantadoc.h"
 #include "quanta.h"
+#include "quantacommon.h"
 
-#include "toolbar/tagaction.h"
-#include "toolbar/toolbartabwidget.h"
-#include "plugins/quantaplugin.h"
-#include "plugins/quantaplugininterface.h"
+#include "tagaction.h"
+#include "toolbartabwidget.h"
+#include "quantaplugin.h"
+#include "quantaplugininterface.h"
 
 QuantaView::QuantaView(QWidget *parent, const char *name )
   : QWidget( parent, name)

@@ -4,4 +4,4 @@ libdialogs_la_SOURCES = copyto.cpp dirtydialog.ui dirtydlg.cpp donationdialog.ui
 
 METASOURCES = AUTO
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/quanta/tagdialogs $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/quanta -I$(top_srcdir)/quanta/parser -I$(top_srcdir)/quanta/tagdialogs $(all_includes)

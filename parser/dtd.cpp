@@ -30,8 +30,8 @@
 #include <ktempfile.h>
 
 #include "dtd.h"
-#include "../quantacommon.h"
-#include "../qextfileinfo.h"
+#include "quantacommon.h"
+#include "qextfileinfo.h"
 
 
 DTD::DTD(const KURL &dtdURL, const QString &dtepDir)

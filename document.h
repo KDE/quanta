@@ -39,9 +39,8 @@
 
 #ifdef BUILD_KAFKAPART
 #include <ktexteditor/editinterfaceext.h>
-#include "parts/kafka/undoredo.h"
 #endif
-#include "parser/qtag.h"
+#include "qtag.h"
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
@@ -54,6 +53,7 @@ class Tag;
 class Node;
 class Project;
 class QuantaPluginInterface;
+class undoRedo;
 struct AreaStruct;
 struct DTDStruct;
 

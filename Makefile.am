@@ -75,7 +75,26 @@ if BUILD_WYSIWYG
 KAFKAINCLUDE = -I$(top_builddir)/quanta/parts/kafka
 endif
 
-INCLUDES = -I$(top_srcdir)/quanta/dialogs -I$(top_srcdir)/quanta/plugins -I$(top_srcdir)/quanta/plugins/framewizard -I$(top_builddir)/quanta/plugins/csseditor -I$(top_srcdir)/quanta/tagdialogs -I$(top_srcdir)/quanta/toolbar -I$(top_builddir)/quanta/toolbar -I$(top_builddir)/quanta/tagdialogs -I$(top_builddir)/quanta/plugins -I$(top_builddir)/quanta/dialogs -I$(top_builddir)/quanta/plugins/framewizard $(KAFKAINCLUDE) $(KMDI_INCLUDES) $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
+        -I$(top_srcdir)/quanta/plugins \
+        -I$(top_srcdir)/quanta/plugins/framewizard \
+        -I$(top_srcdir)/quanta/plugins/csseditor \
+        -I$(top_srcdir)/quanta/tagdialogs \
+        -I$(top_srcdir)/quanta/toolbar \
+        -I$(top_srcdir)/quanta/utility \
+        -I$(top_srcdir)/quanta/treeviews \
+        -I$(top_srcdir)/quanta/project \
+        -I$(top_srcdir)/quanta/parser \
+        -I$(top_srcdir)/quanta/widgets \
+	-I$(top_srcdir)/quanta/messages \
+	-I$(top_srcdir)/quanta/parts/kafka \
+        -I$(top_builddir)/quanta/toolbar \
+        -I$(top_builddir)/quanta/tagdialogs \
+        -I$(top_builddir)/quanta/dialogs \
+        -I$(top_builddir)/quanta/plugins/framewizard \
+        -I$(top_builddir)/quanta/plugins/csseditor \
+        -I$(top_builddir)/quanta/plugins \
+        $(KAFKAINCLUDE) $(KMDI_INCLUDES) $(all_includes)
 
 
 

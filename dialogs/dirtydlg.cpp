@@ -30,8 +30,8 @@
 //app includes
 #include "dirtydialog.h"
 #include "dirtydlg.h"
-#include "../resource.h"
-#include "../qextfileinfo.h"
+#include "resource.h"
+#include "qextfileinfo.h"
 
 DirtyDlg::DirtyDlg(const QString& srcName, const QString& destName, bool createBackup, QWidget *parent, const char *name ) : KDialogBase(parent, name, true, i18n("File Changed"), KDialogBase::Ok | KDialogBase::Cancel)
 {

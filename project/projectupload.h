@@ -25,7 +25,7 @@
 #include <qstringlist.h>
 
 #include <kio/job.h>
-#include "../treeviews/uploadtreeview.h"
+#include "uploadtreeview.h"
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev

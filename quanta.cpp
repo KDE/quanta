@@ -100,54 +100,57 @@
 #include "quantadoc.h"
 #include "qextfileinfo.h"
 #include "resource.h"
-#include "dtds.h"
 
-#include "project/project.h"
+#include "project.h"
 
-#include "widgets/whtmlpart.h"
+#include "whtmlpart.h"
 
-#include "dialogs/abbreviation.h"
-#include "dialogs/filemasks.h"
-#include "dialogs/styleoptionss.h"
-#include "dialogs/previewoptions.h"
-#include "dialogs/parseroptions.h"
-#include "dialogs/debuggeroptionss.h"
-#include "dialogs/dtdselectdialog.h"
-#include "dialogs/donationdialog.h"
-#include "dialogs/fourbuttonmessagebox.h"
+#include "abbreviation.h"
+#include "filemasks.h"
+#include "debuggeroptionss.h"
+#include "styleoptionss.h"
+#include "previewoptions.h"
+#include "parseroptions.h"
+#include "dtdselectdialog.h"
+#include "donationdialog.h"
+#include "fourbuttonmessagebox.h"
 #ifdef BUILD_KAFKAPART
-#include "parts/kafka/kafkasyncoptions.h"
-#include "parts/kafka/htmldocumentproperties.h"
+#include "kafkasyncoptions.h"
+#include "htmldocumentproperties.h"
+#include "undoredo.h"
 #endif
 
-#include "treeviews/structtreeview.h"
-#include "treeviews/doctreeview.h"
-#include "treeviews/templatestreeview.h"
-#include "treeviews/tagattributetree.h"
-#include "treeviews/projecttreeview.h"
+#include "structtreeview.h"
+#include "doctreeview.h"
+#include "templatestreeview.h"
+#include "tagattributetree.h"
+#include "projecttreeview.h"
 
-#include "tagdialogs/listdlg.h"
-#include "tagdialogs/tagmaildlg.h"
+#include "listdlg.h"
+#include "tagmaildlg.h"
 
-#include "parser/parser.h"
-#include "parser/dtdparser.h"
+#include "parser.h"
+#include "dtdparser.h"
 
-#include "messages/messageoutput.h"
+#include "messageoutput.h"
 
-#include "toolbar/actionconfigdialog.h"
-#include "toolbar/toolbarxmlgui.h"
-#include "toolbar/tagaction.h"
-#include "toolbar/toolbartabwidget.h"
+#include "actionconfigdialog.h"
+#include "toolbarxmlgui.h"
+#include "tagaction.h"
+#include "toolbartabwidget.h"
 
-#include "dialogs/kategrepdialog.h"
+#include "kategrepdialog.h"
 
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-#include "dialogs/katefiledialog.h"
+#include "katefiledialog.h"
 #else
 #include <kencodingfiledialog.h>
 #endif
 
-#include "plugins/quantaplugininterface.h"
+#include "quantaplugininterface.h"
+#include "dtds.h"
+
+const QString resourceDir = QString(PACKAGE) + "/";
 
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}

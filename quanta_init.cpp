@@ -62,43 +62,45 @@
 
 // application specific includes
 
+#include "plugins/php3dbg/debugger.h"
+#include "plugins/php4dbg/debugger.h"
+
 #include "quanta.h"
 #include "quantaview.h"
 #include "quantadoc.h"
 #include "resource.h"
 #include "document.h"
 #include "qextfileinfo.h"
-#include "dtds.h"
 #include <kapplication.h>
 #include <dcopclient.h>
 
-#include "project/project.h"
+#include "project.h"
 
-#include "widgets/whtmlpart.h"
-#include "messages/messageoutput.h"
+#include "whtmlpart.h"
+#include "messageoutput.h"
 
-#include "toolbar/tagaction.h"
+#include "tagaction.h"
 
-#include "treeviews/filestreeview.h"
-#include "treeviews/projecttreeview.h"
-#include "treeviews/doctreeview.h"
-#include "treeviews/structtreeview.h"
-#include "treeviews/templatestreeview.h"
-#include "treeviews/tagattributetree.h"
-#include "treeviews/scripttreeview.h"
+#include "filestreeview.h"
+#include "projecttreeview.h"
+#include "doctreeview.h"
+#include "structtreeview.h"
+#include "templatestreeview.h"
+#include "tagattributetree.h"
+#include "scripttreeview.h"
 
-#include "plugins/quantaplugininterface.h"
-#include "plugins/quantaplugin.h"
-#include "plugins/quantaplugineditor.h"
+#include "quantaplugininterface.h"
+#include "quantaplugin.h"
+#include "quantaplugineditor.h"
 
-#include "plugins/php3dbg/debugger.h"
-#include "plugins/php4dbg/debugger.h"
-#include "plugins/spellchecker.h"
+#include "spellchecker.h"
 
-#include "parser/parser.h"
-#include "dialogs/filemasks.h"
-#include "dialogs/dirtydlg.h"
-#include "dialogs/dirtydialog.h"
+#include "parser.h"
+#include "filemasks.h"
+#include "dirtydlg.h"
+#include "dirtydialog.h"
+
+#include "dtds.h"
 
 QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KDockMainWindow(0L,"Quanta")
 {

@@ -21,7 +21,7 @@
 #define DTDS_H
 
 // application specific includes
-#include "parser/qtag.h"
+#include "qtag.h"
 #include "qobject.h"
 #include "qfile.h"
 

@@ -25,7 +25,7 @@ class EditableTree;
 
 #include <qptrlist.h>
 
-#include "../../treeviews/tagattributeitems.h"
+#include "tagattributeitems.h"
 #include "htmldocumentpropertiesui.h"
 
 class NodeLinkedViewItem : public AttributeItem

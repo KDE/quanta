@@ -4,6 +4,7 @@ libtagdialogs_la_SOURCES = tagmisc.ui listdlg.cpp tagmail.ui tagmaildlg.cpp file
 
 libtagdialogs_la_LDFLAGS = -no-undefined
 
-INCLUDES = $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/quanta -I$(top_srcdir)/quanta/parser -I$(top_srcdir)/quanta/parts/kafka $(all_includes)
+
 METASOURCES = AUTO
 

@@ -32,9 +32,9 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include "csseditor_globals.h"
-#include "../framewizard/fwglobal.h"
-#include "../../resource.h"
-#include "../../quanta.h"
+#include "fwglobal.h"
+#include "resource.h"
+#include "quanta.h"
 
 CSSSelector::CSSSelector(QString dtd, QWidget *parent, const char* name) : CSSSelectorS (parent,name), currentDocumentDTD(dtd) {
   

@@ -26,7 +26,7 @@
 
 #include "tagattr.h"
 #include "tagwidget.h"
-#include "../parser/qtag.h"
+#include "qtag.h"
 
 class Tagxml : public QWidget, TagWidget {
   Q_OBJECT

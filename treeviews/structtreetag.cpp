@@ -23,13 +23,13 @@
 
 // app includes
 #include "structtreetag.h"
-#include "../messages/messageoutput.h"
-#include "../parser/tag.h"
-#include "../parser/node.h"
-#include "../resource.h"
-#include "../quanta.h"
-#include "../quantacommon.h"
-#include "../document.h"
+#include "messageoutput.h"
+#include "tag.h"
+#include "node.h"
+#include "resource.h"
+#include "quanta.h"
+#include "quantacommon.h"
+#include "document.h"
 
 
 StructTreeTag::StructTreeTag(QListView *parent, QString a_title)

@@ -48,10 +48,11 @@
 
 #include "filestreeview.h"
 #include "fileinfodlg.h"
-#include "../project/project.h"
-#include "../resource.h"
-#include "../quanta.h"
-#include "../quantadoc.h"
+#include "project.h"
+#include "resource.h"
+#include "quanta.h"
+#include "quantadoc.h"
+#include "quantacommon.h"
 
 //FilesTreeViewItem implementation
 FilesTreeViewItem::FilesTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )

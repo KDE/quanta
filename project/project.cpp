@@ -72,9 +72,9 @@
 #endif
 
 // application headers
-#include "../dialogs/copyto.h"
-#include "../dialogs/dtdselectdialog.h"
-#include "../qextfileinfo.h"
+#include "copyto.h"
+#include "dtdselectdialog.h"
+#include "qextfileinfo.h"
 #include "projectnewgeneral.h"
 #include "projectnewlocal.h"
 #include "projectnewweb.h"
@@ -82,13 +82,14 @@
 #include "projectupload.h"
 #include "projectoptions.h"
 #include "rescanprj.h"
-#include "../resource.h"
-#include "../document.h"
-#include "../quanta.h"
-#include "../quantadoc.h"
-#include "../quantaview.h"
-#include "../treeviews/doctreeview.h"
-#include "../dtds.h"
+#include "resource.h"
+#include "document.h"
+#include "quanta.h"
+#include "quantacommon.h"
+#include "quantadoc.h"
+#include "quantaview.h"
+#include "doctreeview.h"
+#include "dtds.h"
 
 Project::Project()
         : QObject()

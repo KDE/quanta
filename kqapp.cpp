@@ -18,6 +18,7 @@
 
 #include <qtimer.h>
 
+#include <kconfig.h>
 #include <kdebug.h>
 #include <kwin.h>
 #include <kcmdlineargs.h>
@@ -28,13 +29,12 @@
 #include <dcopclient.h>
 
 #include "quantacommon.h"
-#include "project/project.h"
+#include "project.h"
 #include "quanta.h"
 #include "kqapp.h"
 
  
 QuantaApp *quantaApp = 0L; //global pointer to the main application object
-const QString resourceDir = QString(PACKAGE) + "/";
 
 KSplash::KSplash()
  : QFrame( 0L, QString("Quanta")+VERSION,

@@ -21,7 +21,7 @@
 #include <kfileitem.h>
 
 #include "uploadtreeview.h"
-#include "../quantacommon.h"
+#include "quantacommon.h"
 
 UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
   KListView(parent, name)

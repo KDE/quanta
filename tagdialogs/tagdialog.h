@@ -23,7 +23,7 @@
 #include <qdict.h>
 #include <qstrlist.h>
 
-#include "../resource.h"
+#include "resource.h"
 
 /**class for insert/edit tags
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia

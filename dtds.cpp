@@ -37,7 +37,7 @@
 // application specific includes
 #include "quantacommon.h"
 #include "resource.h"
-#include "parser/dtdparser.h"
+#include "dtdparser.h"
 #include "document.h"
 #include "quanta.h"
 #include "quantaview.h"

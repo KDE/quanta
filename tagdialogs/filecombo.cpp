@@ -27,7 +27,7 @@
 
 // app include
 #include "filecombo.h"
-#include "../qextfileinfo.h"
+#include "qextfileinfo.h"
 
 FileCombo::FileCombo(const KURL& a_baseURL, QWidget *parent, const char *name )
   :QWidget(parent,name)

@@ -34,7 +34,7 @@
 
 //app includes
 #include "projectnewgeneral.h"
-#include "../quantacommon.h"
+#include "quantacommon.h"
 
 ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
   : ProjectNewGeneralS(parent,name)

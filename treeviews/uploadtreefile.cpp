@@ -25,7 +25,7 @@
 
 // app includes
 #include "uploadtreefile.h"
-#include "../resource.h"
+#include "resource.h"
 
 UploadTreeFile::UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, const KFileItem &a_fileItem)
     : KListViewItem( parent, a_url.fileName(), "", QString("%1").arg( (long int)a_fileItem.size() ), a_fileItem.timeString())

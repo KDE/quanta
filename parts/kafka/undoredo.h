@@ -21,7 +21,7 @@
 #include <qvaluelist.h>
 #include <qptrlist.h>
 #include <qobject.h>
-#include "../../parser/node.h"
+#include "node.h"
 
 class Document;
 

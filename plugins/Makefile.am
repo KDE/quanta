@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libplugins.la
 
-INCLUDES = $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/quanta -I$(top_srcdir)/quanta/parser -I$(top_srcdir)/quanta/messages -I$(top_srcdir)/quanta/project $(all_includes)
 
 METASOURCES = AUTO
 

@@ -33,13 +33,13 @@
 
 //own includes
 #include "tagdialog.h"
-#include "../parser/parser.h"
-#include "../parser/node.h"
-#include "../parser/tag.h"
+#include "parser.h"
+#include "node.h"
+#include "tag.h"
 
-#include "../quantacommon.h"
-#include "../quanta.h"
-#include "../resource.h"
+#include "quantacommon.h"
+#include "quanta.h"
+#include "resource.h"
 
 int newNum;
 

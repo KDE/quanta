@@ -31,12 +31,12 @@
 //app includes
 #include "tagattributeitems.h"
 #include "tagattributetree.h"
-#include "../parser/node.h"
-#include "../parser/tag.h"
-#include "../parser/qtag.h"
-#include "../document.h"
-#include "../quantacommon.h"
-#include "../qextfileinfo.h"
+#include "node.h"
+#include "tag.h"
+#include "qtag.h"
+#include "document.h"
+#include "quantacommon.h"
+#include "qextfileinfo.h"
 
 TopLevelItem::TopLevelItem(KListView* parent, const QString &title)
 : KListViewItem(parent, title)

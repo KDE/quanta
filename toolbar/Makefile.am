@@ -4,4 +4,4 @@ libtoolbar_la_SOURCES = toolbarxmlgui.cpp tagaction.cpp actionconfigdialog.cpp a
 
 METASOURCES = AUTO
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/quanta/tagdialogs $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/quanta -I$(top_srcdir)/quanta/messages -I$(top_srcdir)/quanta/parts/kafka -I$(top_srcdir)/quanta/parser -I$(top_srcdir)/quanta/tagdialogs $(all_includes)

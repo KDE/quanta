@@ -38,14 +38,14 @@
 
 /* OTHER INCLUDES */
 #include "quantaplugin.h"
-#include "../resource.h"
-#include "../quanta.h"
-#include "../quantaview.h"
-#include "../document.h"
-#include "../quantacommon.h"
-#include "../resource.h"
-#include "../messages/messageoutput.h"
-#include "../project/project.h"
+#include "resource.h"
+#include "quanta.h"
+#include "quantaview.h"
+#include "document.h"
+#include "quantacommon.h"
+#include "resource.h"
+#include "messageoutput.h"
+#include "project.h"
 
 
 QuantaPlugin::QuantaPlugin()
