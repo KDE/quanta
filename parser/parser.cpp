@@ -1309,6 +1309,8 @@ Node *Parser::rebuild(Document *w)
      {
        nextNode->prev = prev;
      }
+     if (next)
+      next->prev = prev;
      if (prev && prev->next == node)
      {
         prev->next = next;
@@ -1402,19 +1404,19 @@ Node *Parser::rebuild(Document *w)
    Node *lastInserted = 0L;
    node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
 
+   if (lastNode)
+   {
+     if (lastNode->prev)
+        lastNode->prev->next = 0L;
+     if (lastNode->parent && lastNode->parent->child == lastNode)
+         lastNode->parent->child = 0L;
+   }
    //another stange case: the parsed area contains a special area without end
    if (!node)
    {
-      if (lastNode)
-      {
-        if (lastNode->prev)
-          lastNode->prev->next = 0L;
-        if (lastNode->parent && lastNode->parent->child == lastNode)
-            lastNode->parent->child = 0L;
-        delete lastNode;
-        lastNode = 0L;
-      }
-      return parse(w);
+     delete lastNode;
+     lastNode = 0L;
+     return parse(w);
    }
 
    bool goUp;

@@ -47,6 +47,7 @@ public:
  bool opened;
  bool removeAll; //set to false if you don't want to remove the "next" and "child" when deleting the node.
  bool insideSpecial; //true if the node is part of a special area
+ bool marked; //true when the node must be changed. It is marked.
 };
 
 #endif

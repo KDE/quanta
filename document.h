@@ -141,8 +141,6 @@ work correctly. */
   void setParsingDTD(const QString& dtdName);
   /** No descriptions */
   void parseVariables();
-
-  Tag *findXMLTag(int line, int col, bool forwardOnly = false, bool useSimpleRx = false);
   /** Find the word until the first word boundary backwards */
   QString findWordRev(const QString& textToSearch);
 

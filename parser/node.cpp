@@ -28,6 +28,7 @@ Node::Node( Node *parent )
   removeAll = true;
   closesPrevious = false;
   insideSpecial = false;
+  marked = false;
 }
 
 

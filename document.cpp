@@ -143,70 +143,15 @@ void Document::insertTag(QString s1,QString s2)
 
   if ( selectionIf->hasSelection() )
   {
+    reparseEnabled = false;
     selection = selectionIf->selection();
     selectionIf->removeSelectedText();
+    reparseEnabled = true;
   }
-
   insertText(s1+selection);
   insertText(s2, FALSE); // don't adjust cursor, thereby leaving it in the middle of tag
 }
 
-Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
-{
-  Tag *tag = 0L;
-//  QRegExp quotedTextRx("(((\\(?=[\"]))\")*[^\"]*)*");
-  int bLine, bCol, eLine, eCol;
-  bLine = bCol = eLine = eCol = 0;
-  QRegExp xmlTagRx("<(?:[^>]*(?:\"(?:[^\"]*(?:<[^\"]*>)+[^\"<]*)*\")*(?:'(?:[^']*(?:<[^']*>)+[^'<]*)*')*[^>]*)*>",false);
-  if (useSimpleRx) xmlTagRx.setPattern("<[^<>]+>");
-  int sLine = line;
-  int sCol = col;
-  bool tagFound = false;
-  QString foundText;
-  if (!forwardOnly)
-  {
-    //search backwards
-    foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
-    if (!foundText.isEmpty())
-    {
-      if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
-      {
-        tagFound = true;
-      } else
-      {
-        sLine = eLine;
-        sCol = eCol+1;
-      }
-    } else
-    {
-      sLine = sCol = 0;
-    }
-  } //if (!forwardonly)
-  //if not found, search forward
-  if (!tagFound)
-  {
-   foundText = find(xmlTagRx, sLine, sCol, bLine, bCol, eLine, eCol);
-   if (!foundText.isEmpty() &&
-       QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
-   {
-      tagFound = true;
-   }
-  }
-
-  if (tagFound) //build the Tag object
-  {
-      tag = new Tag();
-      tag->setTagPosition(bLine, bCol,eLine, eCol);
-      tag->parse(foundText, this);
-      tag->type = Tag::XmlTag;
-      if (tag->name[0] == '/') tag->type =  Tag::XmlTagEnd;
-      if (tag->name == "!--") tag->type = Tag::Comment;
-      if (scriptBeginRx.search(tag->name) == 0) tag->type = Tag::ScriptTag;
-      if (foundText.right(2) == "/>") tag->single = true;
-  }
-
-  return tag;
-}
 
 /** Change the current tag's attributes with those from dict */
 void Document::changeTag(Tag *tag, QDict<QString> *dict )
@@ -270,7 +215,9 @@ void Document::replaceSelected(QString s)
  unsigned int line, col;
 
  viewCursorIf->cursorPositionReal(&line, &col);
+ reparseEnabled = false;
  selectionIf->removeSelectedText();
+ reparseEnabled = true;
  editIf->insertText(line, col, s);
 
 }
@@ -309,6 +256,7 @@ void Document::insertText(QString text, bool adjustCursor)
   if(text.isEmpty())
     return;
 
+  reparseEnabled = false;
   unsigned int line, col;
 
   viewCursorIf->cursorPositionReal(&line, &col);
@@ -352,7 +300,7 @@ void Document::insertText(QString text, bool adjustCursor)
         }
         if(wordLength == -1)
           wordLength = (textLength)-i;
-          
+
         if((wordLength+col) > wordWrapAt)
         {
           if(col && !lineLock) // wraps onto new line unless locked by kate
@@ -379,6 +327,11 @@ void Document::insertText(QString text, bool adjustCursor)
     }
     viewCursorIf->setCursorPositionReal(line, col);
   }
+
+  reparseEnabled = true;
+  baseNode = parser->rebuild(this);
+  if (qConfig.instantUpdate)
+        quantaApp->sTab->slotReparse(this, baseNode , qConfig.expandLevel);
 }
 
 /** Get the view of the document */
@@ -1444,33 +1397,44 @@ void Document::slotTextChanged()
   {
     uint line, column;
     QString oldNodeName = "";
-    bool updateClosing = false;
+    bool updateClosing = true;
     Node *node;
     if (qConfig.updateClosingTags)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
-      node = parser->nodeAt(line, column);
+      node = parser->nodeAt(line, column, false);
       if (node)
       {
         if (node->tag->type != Tag::XmlTag && node->tag->type != Tag::XmlTagEnd)
-          node = node->previousSibling();
+          //node = node->previousSibling();
+          node = 0L;
         if (node && !node->tag->single && !node->tag->closingMissing
             && node->tag->type == Tag::XmlTag)
         {
           oldNodeName = "/"+node->tag->name;
+          if (node->next && node->next->tag->name.lower() == "/"+node->tag->name.lower())
+              node->next->marked = true;
+          else
+              node = 0L;
           updateClosing = true;
         }
         if (node && node->tag->type == Tag::XmlTagEnd)
         {
           oldNodeName = node->tag->name.mid(1);
+          if (node->prev && node->tag->name.lower() == "/"+node->prev->tag->name.lower())
+              node->prev->marked = true;
+          else
+              node = 0L;
           updateClosing = false;
         }
       }
+        if (node && node->next && node->next)
+           node->next->marked = true;
     }
     baseNode = parser->rebuild(this);
     if (qConfig.updateClosingTags && node)
     {
-      node = parser->nodeAt(line, column);
+      node = parser->nodeAt(line, column, false);
       if (node)
       {
         QString newNodeName = node->tag->name;
@@ -1484,23 +1448,25 @@ void Document::slotTextChanged()
             node = node->previousSibling();
           while (node)
           {
-            if (node->tag->name == oldNodeName)
+//            if (node->tag->name == oldNodeName)
+            if (node->marked)
             {
               reparseEnabled = false;
               int bl, bc;
               node->tag->namePos(bl, bc);
               editIf->removeText(bl, bc, bl, bc + node->tag->name.length());
-              viewCursorIf->setCursorPositionReal(bl, bc);
               if (updateClosing)
               {
-                insertText("/"+newNodeName, false);
+                editIf->insertText(bl, bc, "/"+newNodeName);
               }
               else
               {
-                insertText(newNodeName.mid(1), false);
+                editIf->insertText(bl, bc, newNodeName.mid(1));
                 if (bl == (int) line)
                     column += (newNodeName.length() - oldNodeName.length() - 1);
               }
+              node->marked = false;
+              viewCursorIf->setCursorPositionReal(bl, bc);
               baseNode = parser->rebuild(this);
               viewCursorIf->setCursorPositionReal(line, column);
               reparseEnabled = true;
@@ -1516,7 +1482,7 @@ void Document::slotTextChanged()
     }
 
     if (qConfig.instantUpdate)
-        quantaApp->sTab->slotReparse(this, baseNode , 2);
+        quantaApp->sTab->slotReparse(this, baseNode , qConfig.expandLevel);
   }
 }
 
