@@ -178,11 +178,11 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       {
         AreaStruct area2(currentNode->next->tag->area());
         area.eLine = area2.eLine;
-        area.eCol = area2.eCol;
+        area.eCol = area2.eCol + 1;
+        next = currentNode->next->next;
         if (currentNode->next->closesPrevious)
         {
           currentNode->next->removeAll = false;
-          next = currentNode->next->next;
           delete currentNode->next;
         }
       } else
