@@ -37,7 +37,7 @@ class Document;
 
 class KConfig;
 class KDirWatch;
-
+             
 class QuantaDoc : public QObject
 {
   Q_OBJECT
@@ -74,12 +74,12 @@ public:
 	void writeConfig( KConfig * );
 		
 	KURL::List openedFiles(bool noUntitled=true);
-  /** No descriptions */
-  QDict<Document> *docList() {return m_docList;}
-  void changeFileTabName(const KURL& oldURL, KURL newURL = KURL() );
+  void changeFileTabName(KURL newURL = KURL() );
 		
 private:
   bool newDocument (const KURL&);
+  /** Check if url is opened or not. */
+  Document* isOpened(const KURL& url);
 	
 public slots:
   /** close documents. */
@@ -98,11 +98,7 @@ signals:
   void title(QString);
 
 private:
-    /** list with documents( kwrites ) */
-    QDict<Document> *m_docList;
-
     KPopupMenu *attribMenu;
-
 };
 
 #endif // QUANTADOC_H

@@ -155,6 +155,7 @@ void QuantaApp::slotFileOpen()
 void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
 {
   doc->openDocument( url, encoding );
+  view->write()->view()->setFocus();
 }
 
 void QuantaApp::slotFileOpenRecent(const KURL &url )
@@ -174,6 +175,7 @@ void QuantaApp::slotFileOpenRecent(const KURL &url )
   {
   	doc->openDocument( url );
   }
+  view->write()->view()->setFocus();
 }
 
 void QuantaApp::slotFileSave()
@@ -209,9 +211,7 @@ void QuantaApp::slotFileSaveAs()
 
     if ( oldURL != url )
     {
-      doc->changeFileTabName( oldURL );
-      doc->docList()->remove(oldURL.url());
-      doc->docList()->insert(url.url(), w);
+      doc->changeFileTabName();
     }
     slotUpdateStatus(w);
   }
@@ -1337,7 +1337,7 @@ void QuantaApp::slotShowOpenFileList()
   QStringList openList;
   KURL url;
   KURL baseURL = projectBaseURL();
-  fileList = view->doc->openedFiles(false);
+  fileList = doc->openedFiles(false);
 
 //A little trick. I fill in the list in reversed order.
   for (int i = fileList.count()-1;  i >=0 ; i--)
@@ -1350,9 +1350,8 @@ void QuantaApp::slotShowOpenFileList()
   if (listDlg.exec())
   {
   //This "complex" read-out is due to the reversed list.
-    QString docName= fileList[openList.count() - listDlg.getEntryNum() - 1].url();
-
-    view->writeTab->showPage(doc->docList()->find(docName));
+    KURL docURL= fileList[openList.count() - listDlg.getEntryNum() - 1];
+    view->writeTab->showPage(doc->isOpened(docURL));
   }
 }
 

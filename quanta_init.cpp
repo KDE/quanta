@@ -78,7 +78,7 @@
 #include "plugins/quantaplugineditor.h"
 
 #include "plugins/php3dbg/debugger.h"
-#include "plugins/php4dbg/debugger.h"
+#include "plugins/php4dbg/debugger.h"        
 #include "plugins/spellchecker.h"
 
 #include "parser/parser.h"
@@ -725,7 +725,6 @@ bool QuantaApp::queryExit()
       {
         w = view->write();
         w->closeTempFile();
-    	  doc->docList()->remove(w->url().url() );
   	  }while (view->removeWrite());
     }
   }

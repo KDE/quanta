@@ -29,6 +29,7 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qfileinfo.h>
+#include <qinputdialog.h>
 #include <qtabdialog.h>
 #include <qfiledialog.h>
 #include <qtextstream.h>
@@ -73,12 +74,13 @@
 #include "../document.h"
 #include "../quanta.h"
 #include "../quantadoc.h"
+#include "../quantaview.h"
 
 Project::Project( QWidget *, const char *name )
         : QWidget(0L,name)
 {
   projectName = QString::null;
-  config = 0L;
+  config = 0L;     
   modified=false;
   olfwprj=false;
   usePreviewPrefix=false;
@@ -1388,13 +1390,6 @@ void Project::openCurrentView()
 /** Opens a project view (toolbars & files). */
 void Project::slotOpenProjectView()
 {
-  DTDSelectDialog dlg(this);
-  dlg.setCaption(i18n("Open project view"));
-  dlg.messageLabel->setText(i18n("Select a project view to open."));
-  dlg.comboLabel->setText(i18n("Available views"));
-  dlg.textLabel->hide();
-  dlg.currentDTD->hide();
-  dlg.convertDTD->hide();
   QStringList list;
   QDomNodeList nl = dom.elementsByTagName("projectview");
   QDomElement el;
@@ -1404,11 +1399,15 @@ void Project::slotOpenProjectView()
     list += el.attribute("name");
   }
   list.sort();
-  dlg.dtdCombo->insertStringList(list);
-  
-  if ( dlg.exec() )
+
+  bool ok = FALSE;
+  QString res = QInputDialog::getItem(
+                  i18n("Open project view"),
+                  i18n("Select a project view to open."), list, 0, FALSE, &ok, this );
+
+  if ( ok)
   {
-    currentProjectView = dlg.dtdCombo->currentText();
+    currentProjectView = res;
     openCurrentView();
   }
 }
@@ -1422,6 +1421,11 @@ void Project::slotSaveAsProjectView(bool askForName)
   if ( !askForName || dlg.exec() )
   {
     if (askForName) currentProjectView = dlg.text().lower();
+    else
+    {
+      if (KMessageBox::questionYesNo(this, i18n("Do you want to overwrite the project view named \"%1\" ?").arg(currentProjectView))
+          == KMessageBox::No) return;
+    }
     QDomNodeList nl = dom.elementsByTagName("projectview");
     for (uint i =0 ;i < nl.count(); i++)
     {
@@ -1444,10 +1448,11 @@ void Project::slotSaveAsProjectView(bool askForName)
     KURL::List fileList = fileNameList();
     QDomElement el = dom.createElement("projectview");
     el.setAttribute("name", currentProjectView);
-    QDictIterator<Document> it( * quantaApp->getDoc()->docList());
     QDomElement item;
-    while ( Document *w = it.current() )
+    QTabWidget *tab = quantaApp->getView()->writeTab;
+    for (int i = 0; i < tab->count(); i++)
     {
+      Document *w = dynamic_cast<Document *>(tab->page(i));
       KURL url = w->url();
       url = QExtFileInfo::toRelative(url, baseURL);
       if (!w->isUntitled() && fileList.contains(url))
@@ -1456,7 +1461,6 @@ void Project::slotSaveAsProjectView(bool askForName)
        item.setAttribute("url", QuantaCommon::qUrl(url) );
        el.appendChild(item);
       }
-      ++it;
     }
 
     KURL::List toolbarList = quantaApp->userToolbarFiles();

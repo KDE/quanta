@@ -83,7 +83,9 @@ class QuantaView : public QWidget
   /** True if a Document object exists, false otherwise. */
   bool writeExists();
 
-	public slots:
+  QTabWidget *writeTab;
+
+  public slots:
 
     void slotTagMail();
     void slotTagQuickStart();
@@ -167,7 +169,6 @@ class QuantaView : public QWidget
     QuantaDoc *doc;
 
     QTabWidget *toolbarTab;
-  	QTabWidget *writeTab;
 
     /** collum of cursor position */
     int column;
