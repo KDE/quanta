@@ -885,6 +885,7 @@ Node *SAParser::parsingDone()
 void SAParser::parseInDetail(bool synchronous)
 {
   //synchronous = true; //for testing. Uncomment to test the parser in synchronous mode
+  //return; //for testing. Uncomment to disable the detailed parser
 #ifdef DEBUG_PARSER  
   kdDebug(24000) << "parseInDetail. Enabled: " << m_parsingEnabled << endl; 
 #endif  

@@ -96,14 +96,14 @@
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary></ccompilerbinary>
-        <cxxcompilerbinary></cxxcompilerbinary>
-        <f77compilerbinary></f77compilerbinary>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
         <cflags>-DKDE_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT -DDEBUG_PARSER</cxxflags>
-        <f77flags></f77flags>
-        <cppflags></cppflags>
-        <ldflags></ldflags>
+        <f77flags/>
+        <cppflags/>
+        <ldflags/>
       </all>
       <withoutkafka>
         <configargs>--enable-debug=full --without-kommander --without-kafkapart --prefix=/opt/kde3</configargs>
@@ -182,16 +182,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell></dbgshell>
-      <programargs></programargs>
+      <dbgshell/>
+      <programargs/>
       <gdbpath>/usr/bin/</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
     </general>
     <display>
       <staticmembers>false</staticmembers>
@@ -234,10 +234,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
         <descr>A new empty C++ file.</descr>
       </type>
-      <type icon="source_h" ext="h" name="C/C++ header" create="template" >
+      <type icon="source_h" ext="h" create="template" name="C/C++ header" >
         <descr>A new empty header file for C or C++.</descr>
       </type>
     </filetypes>

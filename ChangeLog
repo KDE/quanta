@@ -23,6 +23,8 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
     - new features:
       - Next / Previous Bookmark actions
       - add a toolbar for CSS
+      - list the opened files as bold in the treeviews
+      - add description field for project files
 
 Version 3.2-CVS-1 (Release Date: xx-xx-200x; Started: 25-11-2002)
 NOTE: Minimum KDE 3.1 is required.

@@ -111,264 +111,267 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     else
       textLine = "";
   }
-  while (line <= endLine)
+  if (m_dtd->family == Xml)
   {
-    nodeFound = false;
-    goUp = false;
-    //find the first "<" and the first special area start definition in this line
-    tagStartPos = textLine.find('<', col);
-    specialStartPos = specialAreaCount ? textLine.find(m_dtd->specialAreaStartRx, col): -1;
-    //if the special area start definition is before the first "<" it means
-    //that we have found a special area
-    if ( specialStartPos != -1 &&
-         (specialStartPos <= tagStartPos || tagStartPos == -1) )
+    while (line <= endLine)
     {
-      currentNode = ParserCommon::createTextNode(write, currentNode, line, specialStartPos, parentNode);
-      if (!rootNode)
-          rootNode = currentNode;
-      QString foundText = m_dtd->specialAreaStartRx.cap();
-      //create a toplevel node for the special area
-      AreaStruct area(line, specialStartPos, line, specialStartPos + foundText.length() - 1);
-      Node *node = ParserCommon::createScriptTagNode(write, area, foundText, m_dtd, parentNode, currentNode);
-      if (node->tag->name.lower().startsWith("comment"))
-        node->tag->type = Tag::Comment;
-
-      if (!rootNode)
-        rootNode = node;
-
-      area.eLine = endLine;
-      area.eCol = endCol;
-      currentNode = m_saParser->parseArea(area, foundText, "", node, false, true);
-      line = m_saParser->lastParsedLine();
-      textLine = ParserCommon::getLine(write, line, endLine, endCol);
-      col = m_saParser->lastParsedColumn();
-      continue;
-    } else
-    //if we have found an XML tag start ("<")
-    if ( tagStartPos != -1 /*&&
-         (tagStartPos < specialStartPos || specialStartPos == -1) */)
-    {
-      int openNum = 1;
-      tagStartLine = line;
-      tagEndLine = endLine;
-      tagEndCol = lastLineLength;
-      int sCol = tagStartPos + 1;
-      int firstStartCol = lastLineLength + 1;
-      int firstStartLine = endLine;
-      bool firstOpenFound = false;
-      bool insideSingleQuotes = false;
-      bool insideDoubleQuotes = false;
-      //fint he matching ">" in the document
-      while (line <= endLine && openNum > 0)
+      nodeFound = false;
+      goUp = false;
+      //find the first "<" and the first special area start definition in this line
+      tagStartPos = textLine.find('<', col);
+      specialStartPos = specialAreaCount ? textLine.find(m_dtd->specialAreaStartRx, col): -1;
+      //if the special area start definition is before the first "<" it means
+      //that we have found a special area
+      if ( specialStartPos != -1 &&
+          (specialStartPos <= tagStartPos || tagStartPos == -1) )
       {
-        textLine = ParserCommon::getLine(write, line, endLine, endCol);
-        for (uint i = sCol; i < textLine.length(); i++)
-        {
-           if (i == 0 || (i > 0 && textLine[i-1] != '\\'))
-           {
-             if (textLine[i] == '\'' && !insideDoubleQuotes)
-               insideSingleQuotes = !insideSingleQuotes;
-             if (textLine[i] == '"' && !insideSingleQuotes)
-               insideDoubleQuotes = !insideDoubleQuotes;
-           }
-           if (!insideSingleQuotes && !insideDoubleQuotes)
-           {
-              if (textLine[i] == '<')
-              {
-                openNum++;
-                if (!firstOpenFound)
-                {
-                  firstStartCol = i;
-                  firstStartLine = line;
-                  firstOpenFound = true;
-                }
-              } else
-              if (textLine[i] == '>') openNum--;
-           }
-           if (openNum == 0)
-           {
-             tagEndCol = i;
-             tagEndLine = line;
-             break;
-           }
-        }
-        sCol = 0;
-        if (openNum != 0)
-            line++;
-      }
-      //the matching closing tag was not found
-      if (openNum != 0)
-      {
-        tagEndLine = firstStartLine;
-        tagEndCol = firstStartCol - 1;
-        if (tagEndCol < 0)
-        {
-          tagEndLine--;
-          if (tagEndLine < 0)
-              tagEndLine = 0;
-          tagEndCol = write->editIf->lineLength(tagEndLine);
-        }
-        line = tagEndLine;
-        textLine = ParserCommon::getLine(write, line, endLine, endCol);
-      }
-      col = tagEndCol;
-      nodeFound = true;
-      //build an xml tag node here
-      AreaStruct area(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
-      tag = new Tag(area, write, m_dtd, true);
-      QString tagStr = tag->tagStr();
-      tag->type = Tag::XmlTag;
-      tag->validXMLTag = (openNum == 0);
-      tag->single = QuantaCommon::isSingleTag(m_dtd->name, tag->name);
-      if (tag->isClosingTag())
-      {
-        tag->type = Tag::XmlTagEnd;
-        tag->single = true;
-      }
-      if (tagStr.right(2) == "/>")
-      {
-        tag->single = true;
-        if (tag->name.length() > 1 && tag->name.endsWith("/"))
-            tag->name.truncate(tag->name.length() - 1);
-      }
-      //the tag we found indicates the beginning of a special area, like <script type=... >
-      if (m_dtd->specialTags.contains(tag->name.lower()))
-      {
-       //TODO: handle goUp here
-        Node *node = new Node(parentNode);
-        nodeNum++;
-        node->tag = tag;
-        node->insideSpecial = true;
-        if (currentNode && currentNode != parentNode)
-        {
-          currentNode->next = node;
-          node->prev = currentNode;
-        } else
-        {
-          if (parentNode)
-              parentNode->child = node;
-        }
+        currentNode = ParserCommon::createTextNode(write, currentNode, line, specialStartPos, parentNode);
         if (!rootNode)
-            rootNode = node;
-        //find the DTD that needs to be used for the special area
-        QString s = tag->attributeValue(m_dtd->specialTags[tag->name.lower()]);
-        const DTDStruct *dtd = DTDs::ref()->find(s);
-        if (!dtd)
-            dtd = m_dtd;
-        //a trick here: replace the node's DTD with this one
-        const DTDStruct *savedDTD = node->tag->dtd;
-        node->tag->dtd = dtd;
-        node->tag->type = Tag::ScriptTag;
-        //now parse the special area
-        area.bLine = area.eLine;
-        area.bCol = area.eCol + 1;
+            rootNode = currentNode;
+        QString foundText = m_dtd->specialAreaStartRx.cap();
+        //create a toplevel node for the special area
+        AreaStruct area(line, specialStartPos, line, specialStartPos + foundText.length() - 1);
+        Node *node = ParserCommon::createScriptTagNode(write, area, foundText, m_dtd, parentNode, currentNode);
+        if (node->tag->name.lower().startsWith("comment"))
+          node->tag->type = Tag::Comment;
+  
+        if (!rootNode)
+          rootNode = node;
+  
         area.eLine = endLine;
         area.eCol = endCol;
-        currentNode = m_saParser->parseArea(area, "", "</"+tag->name+"\\s*>", node, false, true);
-        //restore & set the new variables
-       // node->tag->dtd = savedDTD;
+        currentNode = m_saParser->parseArea(area, foundText, "", node, false, true);
         line = m_saParser->lastParsedLine();
         textLine = ParserCommon::getLine(write, line, endLine, endCol);
         col = m_saParser->lastParsedColumn();
         continue;
-      }
-
-      goUp = ( parentNode &&
-               ( (tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(parentNode->tag, tag)
-                ) ||
-                  parentNode->tag->single )
-             );
-      if (parentNode && !goUp)
-      {
-        QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, parentNode->tag->name);
-        if ( qTag )
-        {
-          QString searchFor = (m_dtd->caseSensitive)?tag->name:tag->name.upper();
-          searchFor.remove('/');
-          if ( qTag->stoppingTags.contains( searchFor ) )
-          {
-            parentNode->tag->closingMissing = true; //parent is single...
-            goUp = true;
-          }
-        }
-      }
-    }
-
-    col++;
-    if (nodeFound)
-    {
-      //first create a text/empty node between the current position and the last node
-      Node *savedParentNode = parentNode;
-      currentNode = ParserCommon::createTextNode(write, currentNode, tagStartLine, tagStartPos, parentNode);
-      if (savedParentNode != parentNode)
-          goUp = false;
-      if (!rootNode)
-          rootNode = currentNode;
-
-      Node *node = 0L;
-      if (goUp)
-      {
-        //handle cases like <ul><li></ul>
-        if (tag->type == Tag::XmlTagEnd && !QuantaCommon::closesTag(parentNode->tag, tag))
-        {
-          while ( parentNode->parent &&
-                  QuantaCommon::closesTag(parentNode->parent->tag, tag)
-                )
-          {
-            parentNode = parentNode->parent;
-          }
-        }
-        node = new Node(parentNode->parent);
-        nodeNum++;
-        node->prev = parentNode;
-        parentNode->next = node;
-        parentNode = parentNode->parent;
-        node->closesPrevious = true;
       } else
+      //if we have found an XML tag start ("<")
+      if ( tagStartPos != -1 /*&&
+          (tagStartPos < specialStartPos || specialStartPos == -1) */)
       {
-        node = new Node(parentNode);
-        nodeNum++;
-        if (currentNode && currentNode != parentNode)
+        int openNum = 1;
+        tagStartLine = line;
+        tagEndLine = endLine;
+        tagEndCol = lastLineLength;
+        int sCol = tagStartPos + 1;
+        int firstStartCol = lastLineLength + 1;
+        int firstStartLine = endLine;
+        bool firstOpenFound = false;
+        bool insideSingleQuotes = false;
+        bool insideDoubleQuotes = false;
+        //fint he matching ">" in the document
+        while (line <= endLine && openNum > 0)
         {
-          currentNode->next = node;
-          node->prev = currentNode;
+          textLine = ParserCommon::getLine(write, line, endLine, endCol);
+          for (uint i = sCol; i < textLine.length(); i++)
+          {
+            if (i == 0 || (i > 0 && textLine[i-1] != '\\'))
+            {
+              if (textLine[i] == '\'' && !insideDoubleQuotes)
+                insideSingleQuotes = !insideSingleQuotes;
+              if (textLine[i] == '"' && !insideSingleQuotes)
+                insideDoubleQuotes = !insideDoubleQuotes;
+            }
+            if (!insideSingleQuotes && !insideDoubleQuotes)
+            {
+                if (textLine[i] == '<')
+                {
+                  openNum++;
+                  if (!firstOpenFound)
+                  {
+                    firstStartCol = i;
+                    firstStartLine = line;
+                    firstOpenFound = true;
+                  }
+                } else
+                if (textLine[i] == '>') openNum--;
+            }
+            if (openNum == 0)
+            {
+              tagEndCol = i;
+              tagEndLine = line;
+              break;
+            }
+          }
+          sCol = 0;
+          if (openNum != 0)
+              line++;
+        }
+        //the matching closing tag was not found
+        if (openNum != 0)
+        {
+          tagEndLine = firstStartLine;
+          tagEndCol = firstStartCol - 1;
+          if (tagEndCol < 0)
+          {
+            tagEndLine--;
+            if (tagEndLine < 0)
+                tagEndLine = 0;
+            tagEndCol = write->editIf->lineLength(tagEndLine);
+          }
+          line = tagEndLine;
+          textLine = ParserCommon::getLine(write, line, endLine, endCol);
+        }
+        col = tagEndCol;
+        nodeFound = true;
+        //build an xml tag node here
+        AreaStruct area(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
+        tag = new Tag(area, write, m_dtd, true);
+        QString tagStr = tag->tagStr();
+        tag->type = Tag::XmlTag;
+        tag->validXMLTag = (openNum == 0);
+        tag->single = QuantaCommon::isSingleTag(m_dtd->name, tag->name);
+        if (tag->isClosingTag())
+        {
+          tag->type = Tag::XmlTagEnd;
+          tag->single = true;
+        }
+        if (tagStr.right(2) == "/>")
+        {
+          tag->single = true;
+          if (tag->name.length() > 1 && tag->name.endsWith("/"))
+              tag->name.truncate(tag->name.length() - 1);
+        }
+        //the tag we found indicates the beginning of a special area, like <script type=... >
+        if (m_dtd->specialTags.contains(tag->name.lower()))
+        {
+        //TODO: handle goUp here
+          Node *node = new Node(parentNode);
+          nodeNum++;
+          node->tag = tag;
+          node->insideSpecial = true;
+          if (currentNode && currentNode != parentNode)
+          {
+            currentNode->next = node;
+            node->prev = currentNode;
+          } else
+          {
+            if (parentNode)
+                parentNode->child = node;
+          }
+          if (!rootNode)
+              rootNode = node;
+          //find the DTD that needs to be used for the special area
+          QString s = tag->attributeValue(m_dtd->specialTags[tag->name.lower()]);
+          const DTDStruct *dtd = DTDs::ref()->find(s);
+          if (!dtd)
+              dtd = m_dtd;
+          //a trick here: replace the node's DTD with this one
+          const DTDStruct *savedDTD = node->tag->dtd;
+          node->tag->dtd = dtd;
+          node->tag->type = Tag::ScriptTag;
+          //now parse the special area
+          area.bLine = area.eLine;
+          area.bCol = area.eCol + 1;
+          area.eLine = endLine;
+          area.eCol = endCol;
+          currentNode = m_saParser->parseArea(area, "", "</"+tag->name+"\\s*>", node, false, true);
+          //restore & set the new variables
+        // node->tag->dtd = savedDTD;
+          line = m_saParser->lastParsedLine();
+          textLine = ParserCommon::getLine(write, line, endLine, endCol);
+          col = m_saParser->lastParsedColumn();
+          continue;
+        }
+  
+        goUp = ( parentNode &&
+                ( (tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(parentNode->tag, tag)
+                  ) ||
+                    parentNode->tag->single )
+              );
+        if (parentNode && !goUp)
+        {
+          QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, parentNode->tag->name);
+          if ( qTag )
+          {
+            QString searchFor = (m_dtd->caseSensitive)?tag->name:tag->name.upper();
+            searchFor.remove('/');
+            if ( qTag->stoppingTags.contains( searchFor ) )
+            {
+              parentNode->tag->closingMissing = true; //parent is single...
+              goUp = true;
+            }
+          }
+        }
+      }
+  
+      col++;
+      if (nodeFound)
+      {
+        //first create a text/empty node between the current position and the last node
+        Node *savedParentNode = parentNode;
+        currentNode = ParserCommon::createTextNode(write, currentNode, tagStartLine, tagStartPos, parentNode);
+        if (savedParentNode != parentNode)
+            goUp = false;
+        if (!rootNode)
+            rootNode = currentNode;
+  
+        Node *node = 0L;
+        if (goUp)
+        {
+          //handle cases like <ul><li></ul>
+          if (tag->type == Tag::XmlTagEnd && !QuantaCommon::closesTag(parentNode->tag, tag))
+          {
+            while ( parentNode->parent &&
+                    QuantaCommon::closesTag(parentNode->parent->tag, tag)
+                  )
+            {
+              parentNode = parentNode->parent;
+            }
+          }
+          node = new Node(parentNode->parent);
+          nodeNum++;
+          node->prev = parentNode;
+          parentNode->next = node;
+          parentNode = parentNode->parent;
+          node->closesPrevious = true;
         } else
         {
-          if (parentNode)
-              parentNode->child = node;
+          node = new Node(parentNode);
+          nodeNum++;
+          if (currentNode && currentNode != parentNode)
+          {
+            currentNode->next = node;
+            node->prev = currentNode;
+          } else
+          {
+            if (parentNode)
+                parentNode->child = node;
+          }
         }
-      }
-      if (!tag->single)
-          parentNode = node;
-
-      node->tag = tag;
-      if (tag->type == Tag::NeedsParsing)
-      {
-        if (tag->name.lower().startsWith("comment"))
+        if (!tag->single)
+            parentNode = node;
+  
+        node->tag = tag;
+        if (tag->type == Tag::NeedsParsing)
         {
+          if (tag->name.lower().startsWith("comment"))
+          {
 #ifdef DEBUG_PARSER
-          kdDebug(24000) << "COMMENT!" << endl;
+            kdDebug(24000) << "COMMENT!" << endl;
 #endif          
-          node->tag->type = Tag::Comment;
+            node->tag->type = Tag::Comment;
+          }
         }
+        else if (tag->type == Tag::XmlTag)
+            {
+              parseForXMLGroup(node);
+              //search for scripts inside the XML tag
+              parseScriptInsideTag(node);
+            }
+  
+        currentNode = node;
+        if (!rootNode)
+            rootNode = node;
+      } else
+      {
+        line++;
+        col = 0;
+        textLine = ParserCommon::getLine(write, line, endLine, endCol);
       }
-      else if (tag->type == Tag::XmlTag)
-           {
-             parseForXMLGroup(node);
-             //search for scripts inside the XML tag
-             parseScriptInsideTag(node);
-           }
-
-      currentNode = node;
-      if (!rootNode)
-          rootNode = node;
-    } else
-    {
-      line++;
-      col = 0;
-      textLine = ParserCommon::getLine(write, line, endLine, endCol);
+  
     }
-
   }
 
   int el = 0;
