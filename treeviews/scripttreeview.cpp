@@ -47,7 +47,7 @@
 ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name)
 {
-  excludeFilterRx.setPattern("*.info");
+  excludeFilterRx.setPattern(".*\\.info$|.*\\.css$");
 
   KURL url;
   url.setPath(qConfig.globalDataDir +"quanta/scripts/");
@@ -267,7 +267,7 @@ KURL ScriptTreeView::infoFile(const KURL& a_url)
 {
   KURL url = a_url;
   QString fileName = url.fileName();
-  fileName.truncate(fileName.length() - QFileInfo(fileName).extension().length() - 1);
+  //fileName.truncate(fileName.length() - QFileInfo(fileName).extension().length() - 1);
   fileName.append(".info");
   url.setFileName(fileName);
   return url;

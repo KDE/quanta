@@ -124,7 +124,7 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   setAcceptDrops(true);
   setSelectionMode(QListView::Single);
   viewport()->setAcceptDrops(true);
-  excludeFilterRx.setPattern("*.tmpl");
+  excludeFilterRx.setPattern(".*\\.tmpl$");
 }
 
 TemplatesTreeView::~TemplatesTreeView()

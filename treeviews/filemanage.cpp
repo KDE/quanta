@@ -44,7 +44,7 @@
 
 FileManage::FileManage()
 {
-  excludeFilterRx.setWildcard(true);
+//  excludeFilterRx.setWildcard(true);
 }
 
 FileManage::FileManage( QWidget *parent, const char *name)
@@ -90,7 +90,7 @@ FileManage::FileManage( QWidget *parent, const char *name)
 
   connect(this, SIGNAL(doubleClicked(QListViewItem *)), SLOT(slotDoubleClicked(QListViewItem *)));
 
-  excludeFilterRx.setWildcard(true);
+//  excludeFilterRx.setWildcard(true);
 }
 
 FileManage::~FileManage()
