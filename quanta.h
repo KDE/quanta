@@ -129,6 +129,9 @@ public:
   /** True when the whole quanta is initalized. */
   bool quantaStarted;
 
+  QWidgetStack *rightWidgetStack;
+  QWidgetStack *bottomWidgetStack;
+
   MessageOutput *getMessages() { return messageOutput; }
   QWidgetStack *widgetStackOfHtmlPart();
 
@@ -389,9 +392,6 @@ private:
   StructTreeView *sTab;
   TemplatesTreeView	 *tTab;
 
-  QWidgetStack *rightWidgetStack;
-  QWidgetStack *bottomWidgetStack;
-
   KDockWidget *leftdock;
   KDockWidget *maindock;
   KDockWidget *bottdock;
@@ -478,6 +478,9 @@ protected: // Protected attributes
   SpellChecker *spellChecker;
 
   KDockWidget *m_oldTreeViewWidget;
+
+  /** The id of the widget visible before doing the preview */
+  int previousWidgetId;  
 };
  
 #endif // QUANTA_H

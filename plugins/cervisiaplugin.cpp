@@ -20,6 +20,7 @@
 #include <kparts/componentfactory.h>
 #include <kparts/part.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
 
 /* QT INCLUDES */
 #include <qwidget.h>
@@ -49,13 +50,22 @@ bool CervisiaPlugin::run()
   {
     m_part->openURL(quantaApp->projectBaseURL());
     quantaApp->guiFactory()->addClient(m_part);
-    QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
-    stack->raiseWidget(m_part->widget());
+    QString ow = outputWindow();
+    if(ow == i18n("Output Dock"))
+    {
+      QWidgetStack *stack = quantaApp->bottomWidgetStack;
+      stack->raiseWidget(m_part->widget());
+    }
+    else if (i18n("Editor View"))
+    {
+      QWidgetStack *stack = quantaApp->rightWidgetStack;
+      stack->raiseWidget(m_part->widget());
+    }
     m_part->widget()->show();
 
     setRunning(TRUE);
 
-	emit pluginStarted();
+    emit pluginStarted();
 
     return TRUE;
   }
@@ -67,13 +77,22 @@ bool CervisiaPlugin::unload()
   if(!isLoaded())
     return FALSE;
 
-  QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
-  stack->removeWidget(m_part->widget());
+  QString ow = outputWindow();
+  if(ow == i18n("Output Dock"))
+  {
+    QWidgetStack *stack = quantaApp->bottomWidgetStack;
+  	stack->removeWidget(m_part->widget());
+    stack->raiseWidget(0);
+  }
+  else if(ow == i18n("Editor View"))
+  {
+    QWidgetStack *stack = quantaApp->rightWidgetStack;
+  	stack->removeWidget(m_part->widget());
+    stack->raiseWidget(0);
+  }
   quantaApp->guiFactory()->removeClient(m_part);
   delete m_part;
   m_part = 0;
-
-  stack->raiseWidget(0);
 
   setRunning(FALSE);
 

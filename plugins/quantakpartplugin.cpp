@@ -78,35 +78,27 @@ bool QuantaKPartPlugin::load()
     return FALSE;
   }
 
+  QFileInfo partInfo(loc);
   QString ow = outputWindow();
+  QWidgetStack *stack;
   if(ow == i18n("Editor View"))
   {
-    QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
-
-    QFileInfo partInfo(loc);
-    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), stack, 0, stack, 0, QStringList(arguments()));
-    if(!m_part)
-    {
-      qWarning("Failed to create KPart");
-      return FALSE;
-    }
-
-    stack->addWidget(m_part->widget());
+    stack = quantaApp->rightWidgetStack;
   }
   else if(ow == i18n("Output Dock"))
   {
-    QFileInfo partInfo(loc);
-	KDockWidget *outDock = quantaApp->outputDockWidget();
-    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), outDock, 0, outDock, 0, QStringList(arguments()));
-    if(!m_part)
-    {
-      qWarning("Failed to create KPart");
-      return FALSE;
-    }
+    stack = quantaApp->bottomWidgetStack;
   }
   else
   {
     qWarning("QuantaKPartPlugin::load - Unknown output window %s", ow.latin1());
+    return FALSE;
+  }
+  m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), stack, 0, stack, 0, QStringList(arguments()));
+  stack->addWidget(m_part->widget(), 3);
+  if(!m_part)
+  {
+    qWarning("Failed to create KPart");
     return FALSE;
   }
   return TRUE;
@@ -121,23 +113,23 @@ bool QuantaKPartPlugin::run()
   {
     quantaApp->guiFactory()->addClient(m_part);
 
-	QString ow = outputWindow();
-	if(ow == i18n("Output Dock"))
-	{
-		quantaApp->outputDockWidget()->setWidget(m_part->widget());
-	}
-	else if (i18n("Editor View"))
-	{
-    	QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
-    	stack->raiseWidget(m_part->widget());
-	}
-
+    QString ow = outputWindow();
+    if(ow == i18n("Output Dock"))
+    {
+      QWidgetStack *stack = quantaApp->bottomWidgetStack;
+      stack->raiseWidget(m_part->widget());
+    }
+    else if (i18n("Editor View"))
+    {
+      QWidgetStack *stack = quantaApp->rightWidgetStack;
+      stack->raiseWidget(m_part->widget());
+    }
     m_part->widget()->show();
 
     setRunning(TRUE);
 
-	emit pluginStarted();
-	
+    emit pluginStarted();
+
     return TRUE;
   }
   return FALSE;
@@ -153,11 +145,13 @@ bool QuantaKPartPlugin::unload()
   QString ow = outputWindow();
   if(ow == i18n("Output Dock"))
   {
-    quantaApp->outputDockWidget()->setWidget(quantaApp->getMessages());
+    QWidgetStack *stack = quantaApp->bottomWidgetStack;
+  	stack->removeWidget(m_part->widget());
+    stack->raiseWidget(0);
   }
   else if(ow == i18n("Editor View"))
   {
-	QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
+    QWidgetStack *stack = quantaApp->rightWidgetStack;
   	stack->removeWidget(m_part->widget());
     stack->raiseWidget(0);
   }
