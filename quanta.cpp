@@ -417,7 +417,7 @@ void QuantaApp::slotViewStatusBar()
 
 void QuantaApp::slotHelpTip()
 {
-   KTipDialog::showTip(this, 0, true);
+   KTipDialog::showTip(this, QString::null, true);
 }
 
 void QuantaApp::slotStatusMsg(const QString &msg)

@@ -118,7 +118,6 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   exitingFlag = false;
   qConfig.spellConfig = new KSpellConfig();
   spellChecker = new SpellChecker();
-  //KTipDialog::showTip(this); //Shows too early
 }
 
 QuantaApp::~QuantaApp()
@@ -1412,7 +1411,7 @@ void QuantaApp::initActions()
                         SLOT(toggleLineNumbers()), actionCollection(), "view_line_numbers");
 
 //help
-   KAction* actionHelpTip = new KAction(i18n("&Tip of the day"), "idea", "", this,
+   KAction* actionHelpTip = new KAction(i18n("Ti&p of the day"), "idea", "", this,
       SLOT(slotHelpTip()), actionCollection(), "help_tip");
 
   #if (KDE_VERSION > 308)
