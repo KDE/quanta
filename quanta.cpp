@@ -1546,26 +1546,6 @@ void QuantaApp::slotShowBottDock(bool force)
   }
 }
 
-void QuantaApp::slotOpenRecentMenuAboutToShow()
-{
- KToolBarPopupAction *fileOpenRecent = (KToolBarPopupAction *) actionCollection()->action("file_open_recent_2");
- if (fileOpenRecent)
- {
-   KPopupMenu *popupMenu = fileOpenRecent->popupMenu();
-   popupMenu->clear();
-   QStringList list = fileRecent->items();
-   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
-        popupMenu->insertItem(*it);
-    }
- }
-}
-
-void QuantaApp::slotOpenRecentMenuItemActivated(int id)
-{
-  QStringList list = fileRecent->items();
-  slotFileOpenRecent(KURL(list[fileOpenRecent->popupMenu()->indexOf(id)]));
-}
-
 void QuantaApp::settingsMenuAboutToShow()
 {
   showMessagesAction->setChecked( bottdock->isVisible() );

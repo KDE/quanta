@@ -31,7 +31,7 @@
 #include <kprogress.h>
 #include <ktempfile.h>
 
-//remove the below ones when KPasteAction is removed
+//remove the below ones when KQPasteAction is removed
 #include <dcopclient.h>
 #include <dcopref.h>
 #include <kdebug.h>
@@ -43,7 +43,6 @@
 #include <qtimer.h>
 #include <qclipboard.h>
 #include <qdatastream.h>
-#include <kaction.h>
 #include "quantacommon.h"
 
 //#include "resource.h"
@@ -504,8 +503,7 @@ void QuantaCommon::normalizeStructure(QString f,QStringList& l)
   }
 }
 
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-KPasteAction::KPasteAction( const QString& text,
+KQPasteAction::KQPasteAction( const QString& text,
                             const QString& icon,
                             const KShortcut& cut,
                             const QObject* receiver,
@@ -519,12 +517,12 @@ KPasteAction::KPasteAction( const QString& text,
   m_popup->setCheckable(true);
 }
 
-KPasteAction::~KPasteAction()
+KQPasteAction::~KQPasteAction()
 {
   delete m_popup;
 }
 
-int KPasteAction::plug( QWidget *widget, int index )
+int KQPasteAction::plug( QWidget *widget, int index )
 {
   if (kapp && !kapp->authorizeKAction(name()))
     return -1;
@@ -561,7 +559,7 @@ int KPasteAction::plug( QWidget *widget, int index )
   return KAction::plug( widget, index );
 }
 
-void KPasteAction::menuAboutToShow()
+void KQPasteAction::menuAboutToShow()
 {
     m_popup->clear();
     QStringList list;
@@ -591,18 +589,254 @@ void KPasteAction::menuAboutToShow()
     }
 }
 
-void KPasteAction::menuItemActivated( int id)
+void KQPasteAction::menuItemActivated( int id)
 {
     DCOPClient *client = kapp->dcopClient();
     if (client->isAttached() && client->isApplicationRegistered("klipper"))
     {
       DCOPRef klipper("klipper","klipper");
-      if (klipper.send("setClipboardContents", m_popup->text(id)))
+      DCOPReply reply = klipper.call("setClipboardContents", m_popup->text(id));
+      if (reply.isValid())
         kdDebug(24000) << "Clipboard: " << qApp->clipboard()->text(QClipboard::Clipboard) << endl;
     }
     QTimer::singleShot(20, this, SLOT(slotActivated()));
 }
 
-#endif
+class KQRecentFilesAction::KQRecentFilesActionPrivate
+{
+public:
+  KQRecentFilesActionPrivate()
+  {
+    m_maxItems = 0;
+    m_popup = 0;
+  }
+  uint m_maxItems;
+  KPopupMenu *m_popup;
+};
+
+KQRecentFilesAction::KQRecentFilesAction( const QString& text,
+                                        const QString& pix,
+                                        const KShortcut& cut,
+                                        const QObject* receiver,
+                                        const char* slot,
+                                        QObject* parent, const char* name,
+                                        uint maxItems )
+  : KListAction( text, pix, cut, parent, name)
+{
+  d = new KQRecentFilesActionPrivate;
+  d->m_maxItems = maxItems;
+
+  init();
+
+  if ( receiver )
+    connect( this,     SIGNAL(urlSelected(const KURL&)),
+             receiver, slot );
+}
+
+void KQRecentFilesAction::init()
+{
+  connect( this, SIGNAL( activated( const QString& ) ),
+           this, SLOT( itemSelected( const QString& ) ) );
+
+  setMenuAccelsEnabled( false );
+}
+
+KQRecentFilesAction::~KQRecentFilesAction()
+{
+  delete d->m_popup;
+  delete d; d = 0;
+}
+
+KPopupMenu *KQRecentFilesAction::popupMenu() const
+{
+  if ( !d->m_popup ) {
+    KQRecentFilesAction *that = const_cast<KQRecentFilesAction*>(this);
+    that->d->m_popup = new KPopupMenu;
+    connect(d->m_popup, SIGNAL(aboutToShow()), this, SLOT(menuAboutToShow()));
+    connect(d->m_popup, SIGNAL(activated(int)), this, SLOT(menuItemActivated(int)));
+  }
+  return d->m_popup;
+}
+
+uint KQRecentFilesAction::maxItems() const
+{
+    return d->m_maxItems;
+}
+
+void KQRecentFilesAction::setMaxItems( uint maxItems )
+{
+    QStringList lst = items();
+    uint oldCount   = lst.count();
+
+    // set new maxItems
+    d->m_maxItems = maxItems;
+
+    // remove all items that are too much
+    while( lst.count() > maxItems )
+    {
+        // remove last item
+        lst.remove( lst.last() );
+    }
+
+    // set new list if changed
+    if( lst.count() != oldCount )
+        setItems( lst );
+}
+
+void KQRecentFilesAction::addURL( const KURL& url )
+{
+    QString     file = url.prettyURL();
+    if ( url.isLocalFile() && !KGlobal::dirs()->relativeLocation("tmp", url.path()).startsWith("/"))
+       return;
+    QStringList lst = items();
+
+    // remove file if already in list
+    lst.remove( file );
+
+    // remove las item if already maxitems in list
+    if( lst.count() == d->m_maxItems )
+    {
+        // remove last item
+        lst.remove( lst.last() );
+    }
+
+    // add file to list
+    lst.prepend( file );
+    setItems( lst );
+}
+
+void KQRecentFilesAction::removeURL( const KURL& url )
+{
+    QStringList lst = items();
+    QString     file = url.prettyURL();
+
+    // remove url
+    if( lst.count() > 0 )
+    {
+        lst.remove( file );
+        setItems( lst );
+    }
+}
+
+void KQRecentFilesAction::clearURLList()
+{
+    clear();
+}
+
+void KQRecentFilesAction::loadEntries( KConfig* config, QString groupname)
+{
+    QString     key;
+    QString     value;
+    QString     oldGroup;
+    QStringList lst;
+
+    oldGroup = config->group();
+
+    if (groupname.isEmpty())
+      groupname = "RecentFiles";
+    config->setGroup( groupname );
+
+    // read file list
+    for( unsigned int i = 1 ; i <= d->m_maxItems ; i++ )
+    {
+        key = QString( "File%1" ).arg( i );
+        value = config->readPathEntry( key );
+
+        if (!value.isNull())
+            lst.append( value );
+    }
+
+    // set file
+    setItems( lst );
+
+    config->setGroup( oldGroup );
+}
+
+void KQRecentFilesAction::saveEntries( KConfig* config, QString groupname )
+{
+    QString     key;
+    QString     value;
+    QString     oldGroup;
+    QStringList lst = items();
+
+    oldGroup = config->group();
+
+    if (groupname.isEmpty())
+      groupname = "RecentFiles";
+    config->deleteGroup( groupname, true );
+    config->setGroup( groupname );
+
+    // write file list
+    for( unsigned int i = 1 ; i <= lst.count() ; i++ )
+    {
+        key = QString( "File%1" ).arg( i );
+        value = lst[ i - 1 ];
+        config->writePathEntry( key, value );
+    }
+
+    config->setGroup( oldGroup );
+}
+
+void KQRecentFilesAction::itemSelected( const QString& text )
+{
+    emit urlSelected( KURL( text ) );
+}
+
+void KQRecentFilesAction::menuItemActivated( int id )
+{
+    emit urlSelected( KURL(popupMenu()->text(id)) );
+}
+
+void KQRecentFilesAction::menuAboutToShow()
+{
+    KPopupMenu *menu = popupMenu();
+    menu->clear();
+    QStringList list = items();
+    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+        menu->insertItem(*it);
+}
+
+int KQRecentFilesAction::plug( QWidget *widget, int index )
+{
+  if (kapp && !kapp->authorizeKAction(name()))
+    return -1;
+  // This is very related to KActionMenu::plug.
+  // In fact this class could be an interesting base class for KActionMenu
+  if ( widget->inherits( "KToolBar" ) )
+  {
+    KToolBar *bar = (KToolBar *)widget;
+
+    int id_ = KAction::getToolButtonID();
+
+    KInstance * instance;
+    if ( m_parentCollection )
+        instance = m_parentCollection->instance();
+    else
+        instance = KGlobal::instance();
+
+    bar->insertButton( icon(), id_, SIGNAL( clicked() ), this,
+                       SLOT( slotClicked() ), isEnabled(), plainText(),
+                       index, instance );
+
+    addContainer( bar, id_ );
+
+    connect( bar, SIGNAL( destroyed() ), this, SLOT( slotDestroyed() ) );
+
+    bar->setDelayedPopup( id_, popupMenu(), true);
+
+    if ( !whatsThis().isEmpty() )
+        QWhatsThis::add( bar->getButton( id_ ), whatsThisWithIcon() );
+
+    return containerCount() - 1;
+  }
+
+  return KListAction::plug( widget, index );
+}
+
+void KQRecentFilesAction::slotClicked()
+{
+  KAction::slotActivated();
+}
+
 
 #include "quantacommon.moc"

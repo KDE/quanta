@@ -42,10 +42,9 @@ class KStandardDirs;
 class QWidget;
 class KSpellConfig;
 
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+//TODO: remove once KDE 3.1.x is not supported
 #include <kaction.h>
 class KPopupMenu;
-#endif
 
 //Quanta main configuration structure
 typedef struct QConfig{
@@ -174,18 +173,18 @@ pointer must be deleted by the caller!! */
 };
 
 
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+//TODO: remove once KDE 3.1.x is not supported
 //backported classes from CVS HEAD. I just don't want to create new files for
 //this temporary present classes.
-class KPasteAction: public KAction
+class KQPasteAction: public KAction
 {
     Q_OBJECT
 public:
-    KPasteAction( const QString& text, const QString& icon, const KShortcut& cut,
+    KQPasteAction( const QString& text, const QString& icon, const KShortcut& cut,
                   const QObject* receiver, const char* slot,
                   QObject* parent = 0, const char* name = 0 );
 
-    virtual ~KPasteAction();
+    virtual ~KQPasteAction();
     virtual int plug( QWidget *widget, int index = -1 );
 
 protected slots:
@@ -195,6 +194,124 @@ protected slots:
 private:
     KPopupMenu *m_popup;
 };
-#endif
+
+/**
+ *  This class is an action to handle a recent files submenu.
+ *  The best way to create the action is to use KStdAction::openRecent.
+ *  Then you simply need to call loadEntries on startup, saveEntries
+ *  on shutdown, addURL when your application loads/saves a file.
+ *
+ *  @author Michael Koch
+ *  @short Recent files action
+ */
+class KQRecentFilesAction : public KListAction  // TODO public KSelectAction
+{
+  Q_OBJECT
+  Q_PROPERTY( uint maxItems READ maxItems WRITE setMaxItems )
+public:
+  /**
+   *  @param text The text that will be displayed.
+   *  @param pix The dynamically loaded icon that goes with this action.
+   *  @param cut The corresponding keyboard accelerator (shortcut).
+   *  @param receiver The SLOT's parent.
+   *  @param slot The SLOT to invoke when a URL is selected.
+   *  Its signature is of the form slotURLSelected( const KURL & ).
+   *  @param parent This action's parent.
+   *  @param name An internal name for this action.
+   *  @param maxItems The maximum number of files to display
+   */
+  KQRecentFilesAction( const QString& text, const QString& pix, const KShortcut& cut,
+                      const QObject* receiver, const char* slot,
+                      QObject* parent, const char* name = 0,
+                      uint maxItems = 10 );
+
+  /**
+   *  Destructor.
+   */
+  virtual ~KQRecentFilesAction();
+
+  virtual int plug( QWidget *widget, int index = -1 );
+
+  /**
+   *  Returns the maximum of items in the recent files list.
+   */
+  uint maxItems() const;
+
+public slots:
+  /**
+   *  Sets the maximum of items in the recent files list.
+   *  The default for this value is 10 set in the constructor.
+   *
+   *  If this value is lesser than the number of items currently
+   *  in the recent files list the last items are deleted until
+   *  the number of items are equal to the new maximum.
+   */
+  void setMaxItems( uint maxItems );
+
+  /**
+   *  Loads the recent files entries from a given KConfig object.
+   *  You can provide the name of the group used to load the entries.
+   *  If the groupname is empty, entries are load from a group called 'RecentFiles'
+   *
+   *  This method does not effect the active group of KConfig.
+   */
+  void loadEntries( KConfig* config, QString groupname=QString::null );
+
+  /**
+   *  Saves the current recent files entries to a given KConfig object.
+   *  You can provide the name of the group used to load the entries.
+   *  If the groupname is empty, entries are saved to a group called 'RecentFiles'
+   *
+   *  This method does not effect the active group of KConfig.
+   */
+  void saveEntries( KConfig* config, QString groupname=QString::null );
+
+  /**
+   *  Add URL to recent files list.
+   *
+   *  @param url The URL of the file
+   */
+  void addURL( const KURL& url );
+
+  /**
+   *  Remove an URL from the recent files list.
+   *
+   *  @param url The URL of the file
+   */
+  void removeURL( const KURL& url );
+
+  /**
+   *  Removes all entries from the recent files list.
+   */
+  void clearURLList();
+
+signals:
+
+  /**
+   *  This signal gets emited when the user selects an URL.
+   *
+   *  @param url The URL thats the user selected.
+   */
+  void urlSelected( const KURL& url );
+
+protected slots:
+  void itemSelected( const QString& string );
+  void menuAboutToShow();
+  void menuItemActivated( int id );
+  void slotClicked();
+
+private:
+  void init();
+
+  /**
+    * The popup menu that is shown when clicking (some time) on the toolbar
+    * button. You may want to plug items into it on creation, or connect to
+    * aboutToShow for a more dynamic menu.
+    */
+  KPopupMenu *popupMenu() const;
+
+  class KQRecentFilesActionPrivate;
+  KQRecentFilesActionPrivate *d;
+};
 
 #endif

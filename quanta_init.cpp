@@ -1621,10 +1621,10 @@ void QuantaApp::initActions()
 
     KStdAction::cut(m_view, SLOT(slotCut()), ac);
     KStdAction::copy(m_view, SLOT(slotCopy()), ac) ;
-#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
-    (void) new KPasteAction(i18n("Paste"), "editpaste", KStdAccel::shortcut(KStdAccel::Paste), m_view, SLOT(slotPaste()), ac, "edit_paste");
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,94)
+    (void) new KQPasteAction(i18n("Paste"), "editpaste", KStdAccel::shortcut(KStdAccel::Paste), m_view, SLOT(slotPaste()), ac, "edit_paste");
 #else
-    KStdAction::paste(m_view, SLOT(slotPaste()), ac);
+    KStdAction::pasteText(m_view, SLOT(slotPaste()), ac);
 #endif
 
     KStdAction::selectAll(m_view, SLOT(slotSelectAll()), ac);
@@ -1702,25 +1702,16 @@ void QuantaApp::initActions()
     KStdAction::open   ( this, SLOT( slotFileOpen() ), ac, "file_open");
     KStdAction::close  ( this, SLOT( slotFileClose()), ac);
 
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+    fileRecent =  new KQRecentFilesAction(i18n("Open &Recent"), "fileopen", 0,
+                      this, SLOT(slotFileOpenRecent(const KURL&)), ac,
+                      "file_open_recent");
+#else
     fileRecent =  KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
                                          ac, "file_open_recent");
+#endif
     fileRecent->setMaxItems(32);
-    fileRecent->setIcon("fileopen");
     connect(fileRecent, SIGNAL(activated()), this, SLOT(slotFileOpen()));
-
-    fileOpenRecent = new KToolBarPopupAction(i18n("Open"),
-       "fileopen", KStdAccel::shortcut(KStdAccel::Open), this,
-       SLOT(slotFileOpen()), ac, "file_open_recent_2");
-    connect( fileOpenRecent->popupMenu(),
-             SIGNAL(aboutToShow()),
-             this,
-             SLOT(slotOpenRecentMenuAboutToShow()) );
-
-    connect( fileOpenRecent->popupMenu(),
-              SIGNAL(activated(int)),
-              this,
-              SLOT(slotOpenRecentMenuItemActivated(int)) );
-
 
     (void) new KAction( i18n( "Close All" ), 0, this,
                         SLOT( slotFileCloseAll() ),
@@ -1911,12 +1902,20 @@ void QuantaApp::initActions()
     (void) new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
                         m_project, SLOT( slotOpenProject() ),
                         ac, "project_open" );
-
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+    m_project -> projectRecent = new KQRecentFilesAction(i18n("Open Recent Project"),
+                                 "folder_new", 0,
+                                  m_project, SLOT(slotOpenProject(const KURL&)),
+                                  ac, "project_open_recent");
+#else
     m_project -> projectRecent =
       KStdAction::openRecent(m_project, SLOT(slotOpenProject(const KURL&)),
                              ac, "project_open_recent");
     m_project->projectRecent->setText(i18n("Open Recent Project"));
+    m_project->projectRecent->setIcon("folder_new");
+#endif
     m_project->projectRecent->setMaxItems(32);
+    connect(m_project->projectRecent, SIGNAL(activated()), m_project, SLOT(slotOpenProject()));
 
 
     closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0,

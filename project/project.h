@@ -25,6 +25,7 @@
 #include <qstringlist.h>
 #include <qregexp.h>
 
+#include <kdeversion.h>
 #include <kio/job.h>
 #include <kurl.h>
 
@@ -37,7 +38,11 @@ class QWidgetStack;
 
 class KConfig;
 class KTempFile;
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+class KQRecentFilesAction;
+#else
 class KRecentFilesAction;
+#endif
 
 class ProjectNewWeb;
 class ProjectNewLocal;
@@ -161,7 +166,11 @@ public:
   QString email;
   QString author;
 
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+  KQRecentFilesAction *projectRecent;
+#else
   KRecentFilesAction *projectRecent;
+#endif
 
     /** Holds the upload password. It is not saved, and it is lost after the project is closed. */
   QString passwd;

@@ -70,6 +70,9 @@ class KHTMLView;
 class KAction;
 class KToggleAction;
 class KSelectAction;
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+class KQRecentFilesAction;
+#endif
 class KRecentFilesAction;
 class KToolBarPoupAction;
 
@@ -251,8 +254,6 @@ public slots:
   void slotShowATabDock();
   void slotShowDTabDock();
 
-  void slotOpenRecentMenuAboutToShow();
-  void slotOpenRecentMenuItemActivated(int id);
 
   void viewMenuAboutToShow();
   void settingsMenuAboutToShow();
@@ -466,7 +467,6 @@ private:
     *showSTabAction, *showATabAction, *showDTabAction,
     *showStatusbarAction, *showPreviewAction,
     *showKafkaAction, *showDTDToolbar;
-  KToolBarPopupAction *fileOpenRecent;
   KSelectAction *setEndOfLine;
 
   KAction *saveAction, *saveAllAction,
@@ -522,7 +522,11 @@ public: //TODO: check if it's worth to make a read method for them
   KToggleAction *viewBorder;
   KToggleAction *viewLineNumbers;
   KToggleAction *viewDynamicWordWrap;
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+  KQRecentFilesAction *fileRecent;
+#else
   KRecentFilesAction *fileRecent;
+#endif
   /** plugin classes */
   QuantaPluginInterface *m_pluginInterface;
   /** True when the whole quanta is initialized. */
