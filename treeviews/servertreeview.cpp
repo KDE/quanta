@@ -99,7 +99,7 @@ ServerTreeView::ServerTreeView(KConfig *config, QWidget *parent, const KURL &url
   m_config->setGroup("General Options");
   // I must read this here because quanta_init has not done it yet
   qConfig.showHiddenFiles = m_config->readBoolEntry("Show Hidden Files", true);
-  
+
   m_fileMenu = new KPopupMenu();
 
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
@@ -148,9 +148,7 @@ KFileTreeBranch* ServerTreeView::newBranch(const KURL& url)
   KURL branchURL = url;
   branchURL.adjustPath(+1);
   BaseTreeBranch* newBrnch = 0;
-  KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, branchURL);
-  QString s = branchURL.prettyURL();
-  newBrnch = new ServerTreeBranch(this, branchURL, s, SmallIcon("up"), true);
+  newBrnch = new ServerTreeBranch(this, branchURL, branchURL.prettyURL(), SmallIcon("up"), true);
   newBrnch->setShowingDotFiles(qConfig.showHiddenFiles);
   addBranch(newBrnch);
   return newBrnch;
@@ -177,7 +175,7 @@ void ServerTreeView::slotMenu(KListView* listView, QListViewItem *item, const QP
       m_folderMenu->setItemVisible(m_renameId, ! root);
       m_folderMenu->popup(point);
    }
- } 
+ }
 }
 
 

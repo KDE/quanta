@@ -26,6 +26,7 @@
 #include "uploadprofiles.h"
 #include "quanta.h"
 #include "resource.h"
+#include "project.h"
 
 
 UploadProfiles::UploadProfiles() : UploadProfileMap()
@@ -39,7 +40,7 @@ void UploadProfiles::readFromXML(const QDomDocument &dom)
   m_profilesNode = dom.firstChild().firstChild().namedItem("uploadprofiles");
   if (m_profilesNode.isNull())
     return;
-    
+
   QDomNodeList profileList = m_profilesNode.toElement().elementsByTagName("profile");
   UploadProfile newProfile;
   for (uint i = 0; i < profileList.count(); i++)
@@ -82,7 +83,7 @@ QWidget * UploadProfiles::createTreeview(const UploadProfile &profile)
 {
   QWidget *widget = 0L;
   KURL kurl = url(profile.domElement);
-  if (kurl.isValid() && ! kurl.isEmpty()) 
+  if (kurl.isValid() && ! kurl.isEmpty())
   {
     widget = new ServerTreeView(quantaApp->config(), quantaApp, kurl, "ServerTreeView" + profile.name);
     widget->setIcon(SmallIcon("up"));
@@ -91,20 +92,29 @@ QWidget * UploadProfiles::createTreeview(const UploadProfile &profile)
   }
   return widget;
 }
-    
-    
+
+
 KURL UploadProfiles::url(const QDomElement &e)
 {
-  QString s = e.attribute("remote_protocol","ftp") + "://";
-  QString tmp = e.attribute("user","");
-  if (! tmp.isEmpty()) {
-    s += tmp + "@";
+  QString protocol = e.attribute("remote_protocol","ftp") + "://";
+  QString s = protocol;
+  QString user = e.attribute("user","");
+  if (! user.isEmpty()) {
+    s += user + "@";
   }
-  s += e.attribute("remote_host","");
-  tmp = e.attribute("remote_port","");
-  if (! tmp.isEmpty()) {
-    s += ":" + tmp;
+  QString host = e.attribute("remote_host","");
+  s += host;
+  QString port = e.attribute("remote_port","");
+  if (! port.isEmpty()) {
+    s += ":" + port;
   }
   s += e.attribute("remote_path","");
-  return KURL::fromPathOrURL(s);
+  KURL url = KURL::fromPathOrURL(s);
+  // check if we know the password
+  if ( !user.isEmpty() && Project::ref()->keepPasswd )
+  {
+    QString password = Project::ref()->password(protocol + user + "@" + host);
+    url.setPass(password);
+  }
+  return url;
 }
