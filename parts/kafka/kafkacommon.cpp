@@ -311,18 +311,28 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, Nod
     if(!parent || getNodeDisplay(parent, true) == kafkaCommon::blockDisplay)
     {
         //prepare the indentation
-        indentation1 = "\n";
-        for(i = 1; i <= nbOfSpaces * nonInlineDepth; ++i)
-            indentation1 += " ";
-        for(i = 1; i <= nbOfTabs * nonInlineDepth; ++i)
-            indentation1 += "\t";
-
+        indentation1 = "\n";        
+        QString separator;
+        int count = 0;
+        if(nbOfSpaces == 0) // tabs are used
+        {
+            separator = "\t";
+            count = nbOfTabs * nonInlineDepth;
+        }
+        else // spaces are used
+        {
+            separator = " ";
+            count = nbOfSpaces * nonInlineDepth;
+        }
+        
+        for(i = 0; i != count; ++i)
+            indentation1 += separator;
+            
         indentation2 = "\n";
-        for(i = 1; i <= nbOfSpaces * nonInlineDepth2; ++i)
-            indentation2 += " ";
-        for(i = 1; i <= nbOfTabs * nonInlineDepth2; ++i)
-            indentation2 += "\t";
-
+        count = count / nonInlineDepth * nonInlineDepth2;
+        for(i = 0; i != count; ++i)
+            indentation2 += separator;        
+        
         //test and add indentations if necessary
         if(!prevNE || (prevNE && getNodeDisplay(node, true) ==
                        kafkaCommon::blockDisplay) ||
