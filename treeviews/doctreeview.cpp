@@ -84,7 +84,8 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
   setFocusPolicy(QWidget::ClickFocus);
 
-  connect( this, SIGNAL(executed(QListViewItem *)), SLOT(clickItem(QListViewItem *)) );
+  connect(this, SIGNAL(executed(QListViewItem *)), SLOT(clickItem(QListViewItem *)) );
+  connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int )), SLOT(slotDoubleClicked(QListViewItem *, const QPoint &, int )));
 }
 
 
@@ -113,6 +114,11 @@ void DocTreeView::clickItem( QListViewItem *)
 QString * DocTreeView::contextHelp( QString keyword )
 {
   return contextHelpDict->find( keyword );
+}
+
+void DocTreeView::slotDoubleClicked(QListViewItem *item, const QPoint &, int )
+{
+  item->setOpen(!item->isOpen());
 }
 
 #include "doctreeview.moc"

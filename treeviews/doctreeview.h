@@ -43,7 +43,8 @@ signals:
   
 private slots:
   void clickItem( QListViewItem *);
-
+  void slotDoubleClicked(QListViewItem *, const QPoint &, int );
+  
 private:
 
   QDict <QString> *contextHelpDict;

@@ -450,13 +450,16 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
 }
 
 
-void StructTreeView::slotDoubleClicked( QListViewItem *)
+void StructTreeView::slotDoubleClicked( QListViewItem *item)
 {
   config->setGroup("Parser options");
 
   if ( config->readEntry("Double click") != i18n("nothing") )
   {
     slotSelectTag();
+  } else
+  {
+    item->setOpen(!item->isOpen());
   }
 }
 

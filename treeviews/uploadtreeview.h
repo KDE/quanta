@@ -51,6 +51,9 @@ public slots:
   void slotSelectFile( );
   void selectAllUnderNode( QListViewItem *it, bool select );
 
+private slots:
+  void slotDoubleClicked(QListViewItem *, const QPoint &, int );  
+
 private:
   UploadTreeFolder* findFolder( UploadTreeFolder *, const QString&);
   UploadTreeFolder* printTree( UploadTreeFolder *, QString);

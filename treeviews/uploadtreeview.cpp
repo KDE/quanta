@@ -40,9 +40,10 @@ UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
   setFocusPolicy(QWidget::ClickFocus);
 
   connect( this, SIGNAL(selectionChanged()), SLOT(slotSelectFile()));
-  connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
-            this, SLOT(slotSelectFile(QListViewItem *))); 
+  connect( this, SIGNAL(selectionChanged(QListViewItem *)),
+           this, SLOT(slotSelectFile(QListViewItem *)));
 
+  connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int )), SLOT(slotDoubleClicked(QListViewItem *, const QPoint &, int )));
 }
 
 UploadTreeView::~UploadTreeView()
@@ -415,6 +416,11 @@ QListViewItem* UploadTreeView::itemByUrl(const KURL& a_url)
   }
 
   return 0L;
+}
+
+void UploadTreeView::slotDoubleClicked(QListViewItem *item, const QPoint &, int )
+{
+  item->setOpen(!item->isOpen());
 }
 
 #include "uploadtreeview.moc"

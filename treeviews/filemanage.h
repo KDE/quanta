@@ -84,6 +84,7 @@ protected slots: // Private slots
   virtual void slotDirListCompleted(const KURL& _url);
   /** No descriptions */
   virtual void slotDirListClearURL(const KURL& _url);
+  virtual void slotDoubleClicked(QListViewItem *, const QPoint &, int );
 
 protected:
   virtual KURL currentURL();
