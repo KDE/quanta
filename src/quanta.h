@@ -75,6 +75,7 @@ class KSelectAction;
 class KRecentFilesAction;
 class KToolBarPoupAction;
 
+class TagAction;
 class Node;
 class Parser;
 class DocTreeView;
@@ -191,6 +192,19 @@ public:
 
   void createPreviewPart();
   void createDocPart();
+
+  /**
+   * This is a pool for actions waiting for being applied (VPL only yet).
+   * For example, whee a user presses the bold action, it isn't immediately applied on the document.
+   * If the user presses a key right away the character is inserted inside the tags for the queued actions.
+   * If the user changes the place of the cursor, the actions waiting for being inserted are removed.
+   */
+  QStringList const& tagActionPool() const {return m_tagActionPool;}
+  void insertTagActionPoolItem(QString const& action_item);
+  void removeTagActionPoolItem(QString const& action_item);
+  void removeAllTagActionPoolItems() {m_tagActionPool.clear();}
+  
+  QPtrList<TagAction> const& tagActions() const {return m_tagActions;}
 
   /** Clicked word or selected text for context sensitive menu in editor */
   QString popupWord;
@@ -582,6 +596,9 @@ private:
   bool m_noFramesPreview;
 
   QString m_scriptOutput;
+
+  QStringList m_tagActionPool;
+  QPtrList<TagAction> m_tagActions;
 
 protected: // Protected attributes
   /** Timer to refresh the structure tree. */

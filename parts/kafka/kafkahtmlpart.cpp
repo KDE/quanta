@@ -49,6 +49,7 @@
 #include "wkafkapart.h"
 #include "undoredo.h"
 #include "nodeproperties.h"
+#include "tagaction.h"
 #include "tagactionset.h"
 #include "document.h"
 #include "resource.h"
@@ -578,6 +579,9 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 #endif
             if(hasSelection())
                 removeSelection();
+                
+            applyQueuedToggableTagActions();                
+            
             keyReturn(keyevent->state() & ControlButton);
             d->stuckCursorHorizontalPos = false;
             break;
@@ -646,6 +650,8 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
                 {
                     if(hasSelection())
                         removeSelection();
+                
+                    applyQueuedToggableTagActions();                
 
                     insertText(keyevent->text(), -1);
                 }
@@ -1787,6 +1793,51 @@ DOM::Node KafkaWidget::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, 
     return 0;
 }
 
+void KafkaWidget::updateToggableTagActions(/*const DOM::Node &domNode, long offset*/) const
+{
+    quantaApp->removeAllTagActionPoolItems();
+    
+    NodeSelectionInd selection;
+    selection.fillWithVPLCursorSelection();
+    
+    Node* start_node = 0, *end_node = 0;
+//     int start_offset = 0, end_offset = 0;
+        
+    start_node = kafkaCommon::getNodeFromLocation(selection.cursorNode());
+//     start_offset = selection.cursorOffset();
+    
+    if(!start_node)
+        return;
+    
+    if(selection.hasSelection())
+    {
+        end_node = kafkaCommon::getNodeFromLocation(selection.cursorNodeEndSel());
+//         end_offset = selection.cursorOffsetEndSel();
+    }
+    else
+    {
+        end_node = start_node;
+//         end_offset = start_offset;
+    }
+    
+    // Iterate all toggable toolbar actions and toggle them on or off
+    // Look if there is a selection
+    TagAction* tag_action = 0;    
+    QPtrList<TagAction> tag_actions = quantaApp->tagActions();        
+    for (tag_action = tag_actions.first(); tag_action; tag_action = tag_actions.next())
+    {
+        if(tag_action->toggable())
+        {
+            QString tag_name = tag_action->XMLTagName();
+            if(tag_name.isEmpty())
+                break;
+            
+            int inside_tag = kafkaCommon::isInsideTag(start_node, end_node, tag_name);
+            tag_action->setChecked(inside_tag == 1);
+        }
+    }
+}
+
 void KafkaWidget::makeCursorVisible(int , int )
 {
     /**DOM::Range range;
@@ -2016,6 +2067,18 @@ void KafkaWidget::setCurrentNode(DOM::Node node, int offset)
     //setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 }
 
+void KafkaWidget::setCurrentNode(Node* cursorNode, int cursorOffset)
+{
+    DOM::Node domNode;
+    long longDomNodeOffset;
+    KafkaDocument::ref()->translateNodeIntoKafkaCursorPosition(cursorNode, cursorOffset, domNode, longDomNodeOffset);
+    if (!domNode.isNull() && domNode.nodeType() != DOM::Node::TEXT_NODE &&
+         !domNode.firstChild().isNull() && domNode.firstChild().nodeType() == DOM::Node::TEXT_NODE)
+        domNode = domNode.firstChild();
+    if (!domNode.isNull())
+        setCurrentNode(domNode, (int)longDomNodeOffset);       
+}
+
 void KafkaWidget::putCursorAtFirstAvailableLocation()
 {
     kNodeAttrs *attrs = 0L;
@@ -2076,6 +2139,8 @@ void KafkaWidget::slotNewCursorPos(const DOM::Node &domNode, long offset)
 
     if(quantaApp->aTab && ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
         quantaApp->aTab->setCurrentNode(w->getNode(domNode));
+
+    updateToggableTagActions(/*domNode, offset*/);            
 }
 
 void KafkaWidget::moveDomNodes(DOM::Node newParent, DOM::Node startNode, DOM::Node endNode,
@@ -2158,6 +2223,25 @@ void KafkaWidget::removeSelection()
     delete cursorPos;
 
     makeCursorVisible();
+}
+
+void KafkaWidget::applyQueuedToggableTagActions()
+{
+    QStringList queued_actions = quantaApp->tagActionPool();
+    QPtrList<TagAction> action_list = quantaApp->tagActions();
+    for(QStringList::Iterator it = queued_actions.begin(); it != queued_actions.end(); ++it) 
+    {
+        TagAction* tag_action = 0;    
+        for (tag_action = action_list.first(); tag_action; tag_action = action_list.next())
+        {
+            if(tag_action->name() == *it)
+            {
+                tag_action->slotActionActivated(KAction::EmulatedActivation, Qt::NoButton);
+                break;
+            }
+        }
+    }
+    quantaApp->removeAllTagActionPoolItems();
 }
 
 #include "kafkahtmlpart.moc"

@@ -35,6 +35,7 @@
 #include <qtextstream.h>
 #include <qdatetime.h>
 #include <qclipboard.h> 
+#include <qptrvector.h> 
 
 #include "document.h"
 #include "viewmanager.h"
@@ -513,7 +514,7 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
         
         Node* parent_node = node->parent;
         QTag* parent_node_description_tag = QuantaCommon::tagFromDTD(parent_node);
-        if(parent_node_description_tag && !parent_node_description_tag->isChild(node, true, true))
+        if(parent_node_description_tag && !parent_node_description_tag->isChild(node, false, true))
             canInsertEmptyNode = false;
     }
     
@@ -2275,6 +2276,9 @@ void KafkaDocument::slotCut(Node* startNode, int startOffset, Node* endNode, int
     
     m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
     
+    //Now update the VPL cursor position
+    kafkaWidget->setCurrentNode(startNode, startOffset);
+    
     if(subtree_root)
     {        
         KafkaDragObject* node_drag = new KafkaDragObject(subtree_root);
@@ -2355,5 +2359,8 @@ void KafkaDocument::slotPaste()
         kafkaCommon::DTDInsertNodeSubtree(node, selection_ind, &cursorNode, cursorOffset, modifs);
         
         m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif, 0, false);
+        
+        //Now update the VPL cursor position
+        kafkaWidget->setCurrentNode(cursorNode, cursorOffset);
     }
 }

@@ -72,6 +72,13 @@ public:
     void setCurrentNode(DOM::Node node, int offset);
 
     /**
+     * Convenience function to set the current node. 
+     * @param node The Quanta node which will get the focus.
+     * @param offset The offset of the cursor if node tag is of type Tag::Text.
+     */
+    void setCurrentNode(Node* cursorNode, int cursorOffset);
+    
+    /**
     * Get the next DOM::Node after _node.
     * @param _node The DOM::Node the search starts from.
     * @param goUp A needed boolean for several consecutive call to
@@ -92,6 +99,14 @@ public:
      */
     DOM::Node getPrevNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false,
                           bool dontBlock = false, DOM::Node _endNode = DOM::Node());
+
+    /**
+     * Set the TagActions checked/unchecked in context.
+     * This is called when the cursor position changes.
+     * @param domNode 
+     * @param offset 
+     */
+    void updateToggableTagActions(/*const DOM::Node &domNode, long offset*/) const;
 
 
     /** --------------- DOM::Node modifications -------------------------- */
@@ -279,6 +294,9 @@ private:
      */
     void removeSelection();
 
+    void applyQueuedToggableTagActions();
+
+private:
     /**
      * When some changes are made, store the changes made in m_modifs.
      * It will be created when a key is pressed, and will be submitted to

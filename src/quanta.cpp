@@ -2196,7 +2196,9 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
     //if there is no such action yet, add to the available actions
     if (!actionCollection()->action(actionName))
     {
-      TagAction *tagAction = new TagAction(&el, this);
+        bool toggable = (el.attribute("toggable", "") == "true");
+        TagAction *tagAction = new TagAction(&el, this, toggable);
+        m_tagActions.append(tagAction);
 
 #if KDE_IS_VERSION(3,2,90)
      //add the actions to every toolbar xmlguiclient
@@ -5124,6 +5126,27 @@ void QuantaApp::createDocPart()
   m_htmlPartDoc->view()->setCaption(i18n("Documentation"));
   slotNewPart(m_htmlPartDoc, false);
   connect(m_htmlPartDoc, SIGNAL(destroyed(QObject *)), this, SLOT(slotHTMLPartDeleted(QObject *)));
+}
+
+void QuantaApp::insertTagActionPoolItem(QString const& action_item)
+{
+    for(QStringList::Iterator it = m_tagActionPool.begin(); it != m_tagActionPool.end(); ++it) 
+        if(action_item == *it)
+            return;
+
+    m_tagActionPool += action_item;
+}
+
+void QuantaApp::removeTagActionPoolItem(QString const& action_item)
+{
+    for(QStringList::Iterator it = m_tagActionPool.begin(); it != m_tagActionPool.end(); ++it) 
+    {
+        if(action_item == *it)
+        {
+            m_tagActionPool.remove(it);
+            return;
+        }
+    }
 }
 
 void QuantaApp::slotHTMLPartDeleted(QObject *object)

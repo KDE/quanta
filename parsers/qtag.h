@@ -231,6 +231,16 @@ public:
   bool isSingle();
   /** No descriptions */
   bool isOptional();
+  
+  /**
+   * This property is used to determine the scope of a tag action.
+   * For example, if the user is in the midle of a word and press the bold button,
+   * the scope is a "word", i.e., the whole word will be affected by the action. 
+   * Instead, if center is pressed, all surrounding inline nodes will be affected by the new tag.
+   */
+  QString const& scope() const {return m_scope;}
+  void setScope(QString const& scope) {m_scope = scope;}
+  
   /** Returns true if tag is a possible child of this tag, or if
   there are no children defined and if trueIfNoChildsDefined is set to true. */
   bool isChild(const QString& tag, bool trueIfNoChildsDefined = true);
@@ -263,6 +273,7 @@ protected: // Protected attributes
   bool single;
   bool optional;
   QString tagName;
+  QString m_scope;
   /** The path to the tag file. Null if there is no tag file for the tag. */
   QString m_fileName;
 };

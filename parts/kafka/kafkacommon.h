@@ -27,6 +27,7 @@ namespace DOM
 }
 class Node;
 class NodeModifsSet;
+class NodeSelection;
 class NodeSelectionInd;
 class Document;
 struct DTDStruct;
@@ -299,8 +300,11 @@ public:
 	 * @return Returns a pointer to the node inserted.
 	 */
 	static Node* insertNode(Node *node, Node* parentNode, Node* nextSibling,
-		NodeModifsSet *modifs/**, Node **rootNode*/, bool merge = true);
+                            NodeModifsSet *modifs/**, Node **rootNode*/, bool merge = true);
 
+    static Node* insertNode(Node *node, Node* parentNode, Node* nextSibling, NodeSelection& selection, 
+                            NodeModifsSet *modifs, bool merge = true);
+ 
 	/**
 	 * It behaves essentially like the above function except that it can "surround" a set of Nodes with the
 	 * new Node. Thus, the closing Node is created if necessary.
@@ -622,6 +626,9 @@ public:
 	static void moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibling,
                          NodeModifsSet *modifs, bool merge = true, bool moveClosingNode = false);
 
+    static void moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibling, NodeSelection& cursorHolder,
+                         NodeModifsSet *modifs, bool merge = true, bool moveClosingNode = false);
+
 	/**
 	 * Split a Text Node at offset offset. If offset or n is invalid, nothing is done.
 	 * @param n The Node to split.
@@ -689,7 +696,7 @@ public:
     static void splitStartAndEndNodeSubtree(Node*& startNode, int startOffset, Node*& endNode, int endOffset, Node*& commonParent, 
                                             QValueList<int>& commonParentStartChildLocation, 
                                             QValueList<int>& commonParentEndChildLocation, 
-                                            Node*& cursorNode, int& cursorOffset, 
+                                            NodeSelection& cursorHolder, 
                                             Node* subTree, NodeModifsSet* modifs);
 
 	/**
@@ -700,6 +707,8 @@ public:
 	 * @return Returns true if the Nodes were merged, else false.
 	 */
 	static bool mergeNodes(Node *n, Node *n2, NodeModifsSet *modifs, bool mergeTextOnly = false);
+
+    static bool mergeNodes(Node *n, Node *n2, NodeSelection& cursorHolder, NodeModifsSet *modifs, bool mergeTextOnly = false);
 
 	/**
 	 * This function will navigate through the Nodes from startNode to endNode and
@@ -1033,7 +1042,22 @@ public:
      * @param offset The position in text we want to see if it's between words.
      * @return true if is a space between words or if it's in the limit of a word.
      */
-    static bool isbetweenWords(Node* node, int offset);
+    static bool isBetweenWords(Node* node, int offset);
+
+    /**
+     * Set node and offset to the beggining of the word
+     * @pre node is a text node.
+     * @pre isBetweenWords
+     * @param node The text node, which will be changed (or not) to the start of the word.
+     * @param offset The current offset of the text node which will be changed (or not) to the start of the word.
+     * @return the offset of the beggining of the word
+     */
+    static void getStartOfWord(Node*& node, int& offset);
+
+    /**
+     * Same as above, but will get the end of the word
+     */
+    static void getEndOfWord(Node*& node, int& offset);
     
 private:
     /**
