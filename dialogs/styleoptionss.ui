@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>350</width>
-            <height>220</height>
+            <height>242</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -38,7 +38,7 @@
                 <x>5</x>
                 <y>5</y>
                 <width>340</width>
-                <height>165</height>
+                <height>170</height>
             </rect>
         </property>
         <grid>
@@ -162,8 +162,8 @@
         </property>
         <property name="geometry">
             <rect>
-                <x>235</x>
-                <y>170</y>
+                <x>230</x>
+                <y>180</y>
                 <width>110</width>
                 <height>20</height>
             </rect>
@@ -175,8 +175,8 @@
         </property>
         <property name="geometry">
             <rect>
-                <x>5</x>
-                <y>170</y>
+                <x>10</x>
+                <y>180</y>
                 <width>210</width>
                 <height>16</height>
             </rect>
@@ -185,23 +185,6 @@
             <string>Default character encoding:</string>
         </property>
     </widget>
-    <spacer>
-        <property name="name" stdset="0">
-            <cstring>Spacer1</cstring>
-        </property>
-        <property name="orientation">
-            <enum>Horizontal</enum>
-        </property>
-        <property name="sizeType">
-            <enum>Expanding</enum>
-        </property>
-        <property name="sizeHint">
-            <size>
-                <width>20</width>
-                <height>20</height>
-            </size>
-        </property>
-    </spacer>
 </widget>
 <tabstops>
     <tabstop>tagCase</tabstop>
