@@ -581,7 +581,11 @@ void QuantaApp::readOptions()
   qConfig.closeOptionalTags = config->readBoolEntry("Close tag if optional", true);
   qConfig.closeTags = config->readBoolEntry("Close tags", true);
   qConfig.useAutoCompletion = config->readBoolEntry("Auto completion",true);
+
   qConfig.defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
+  if (! dtds->find(qConfig.defaultDocType))
+    qConfig.defaultDocType = DEFAULT_DTD;
+
   qConfig.newFileType = config->readEntry("New File Type", qConfig.defaultDocType);
   qConfig.defaultEncoding = config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
   qConfig.useMimeTypes = config->readBoolEntry("Use MimeTypes", false);
