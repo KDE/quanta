@@ -404,10 +404,19 @@ void StructTreeView::slotSelectTag()
     tag->endPos(eLine, eCol);
   } else
   {
-    if (tag->closingMissing)
+    if (tag->closingMissing && it->node->child)
     {
-      Node *node = it->node;
-      while (node->child) node = node->child;
+      Node *node = it->node->child;
+      while (node->child || node->next)
+      {
+        if (node->next)
+        {
+          node = node->next;
+        } else
+        {
+          node = node->child;
+        }
+      }
       node->tag->endPos(eLine, eCol);
     } else
     {
