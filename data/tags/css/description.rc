@@ -1,0 +1,26 @@
+[General]
+Name = text/css
+NickName = CSS
+DefaultExtension = css
+Groups =
+NumOfPages = 0
+CaseSensitive = true
+Family = 2
+
+[Extra rules]
+StructGroupsCount = 1
+
+[Parsing rules]
+Tags = style(type)
+Comments = /* */
+StructKeywords = 
+StructBeginStr = {
+StructEndStr = }
+StructRx = \\{|\\}
+
+
+[StructGroup_1]
+Name = Selectors
+No_Name = No Selectors Found
+SearchRx = \s[\d\S\w]+\b
+TagType = ScriptStructureBegin
