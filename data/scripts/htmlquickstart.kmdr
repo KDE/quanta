@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>374</width>
-            <height>555</height>
+            <height>557</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -23,123 +23,78 @@
     <property name="caption">
         <string>Quick Start</string>
     </property>
-    <widget class="CloseButton">
+    <grid>
         <property name="name">
-            <cstring>CloseButton1_2</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>260</x>
-                <y>510</y>
-                <width>80</width>
-                <height>28</height>
-            </rect>
+        <property name="margin">
+            <number>11</number>
         </property>
-        <property name="text">
-            <string>Cancel</string>
+        <property name="spacing">
+            <number>6</number>
         </property>
-        <property name="flat">
-            <bool>false</bool>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Helvetica</family>
+                    <pointsize>14</pointsize>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Quanta Plus Kommander Quick Start</string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <spacer row="2" column="0">
+            <property name="name">
+                <cstring>Spacer6_2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>33</width>
+                    <height>0</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="GroupBox" row="1" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>dialogScript</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>0</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <property name="title">
                 <string></string>
-            </stringlist>
-        </property>
-        <property name="writeStdout">
-            <bool>true</bool>
-        </property>
-    </widget>
-    <widget class="ExecButton">
-        <property name="name">
-            <cstring>ExecButton1</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>160</x>
-                <y>580</y>
-                <width>57</width>
-                <height>28</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>test</string>
-        </property>
-        <property name="on">
-            <bool>false</bool>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>@dialogScript</string>
-            </stringlist>
-        </property>
-        <property name="writeStdout">
-            <bool>true</bool>
-        </property>
-    </widget>
-    <widget class="CloseButton">
-        <property name="name">
-            <cstring>CloseButton1</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>40</x>
-                <y>510</y>
-                <width>80</width>
-                <height>28</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Ok</string>
-        </property>
-        <property name="flat">
-            <bool>false</bool>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>@dialogScript
-</string>
-            </stringlist>
-        </property>
-        <property name="writeStdout">
-            <bool>true</bool>
-        </property>
-    </widget>
-    <widget class="GroupBox">
-        <property name="name">
-            <cstring>dialogScript</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>40</y>
-                <width>353</width>
-                <height>455</height>
-            </rect>
-        </property>
-        <property name="sizePolicy">
-            <sizepolicy>
-                <hsizetype>5</hsizetype>
-                <vsizetype>5</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-            </sizepolicy>
-        </property>
-        <property name="minimumSize">
-            <size>
-                <width>0</width>
-                <height>0</height>
-            </size>
-        </property>
-        <property name="title">
-            <string></string>
-        </property>
-        <property name="flat">
-            <bool>false</bool>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string>#############################
+            </property>
+            <property name="flat">
+                <bool>false</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string>#############################
 # Globals
 
 # The indentation level. We have only
@@ -175,186 +130,165 @@ echo '@CBPHPFooter'
 echo '&lt;/body&gt;'
 echo '&lt;/html&gt;'
 </string>
-            </stringlist>
-        </property>
-        <grid>
-            <property name="name">
-                <cstring>unnamed</cstring>
+                </stringlist>
             </property>
-            <property name="margin">
-                <number>11</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="QLabel" row="0" column="0">
+            <grid>
                 <property name="name">
-                    <cstring>TextLabel1_2</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <property name="text">
-                    <string>DTD / Schema</string>
+                <property name="margin">
+                    <number>11</number>
                 </property>
-            </widget>
-            <widget class="GroupBox" row="4" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>GroupBox3</cstring>
+                <property name="spacing">
+                    <number>6</number>
                 </property>
-                <property name="title">
-                    <string>Body Area</string>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>&lt;body&gt;
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>DTD / Schema</string>
+                    </property>
+                </widget>
+                <widget class="GroupBox" row="4" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>GroupBox3</cstring>
+                    </property>
+                    <property name="title">
+                        <string>Body Area</string>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>&lt;body&gt;
 @CBPHPHeader
 @CBPHPFooter
 &lt;/body&gt;</string>
-                    </stringlist>
-                </property>
-                <widget class="LineEdit">
-                    <property name="name">
-                        <cstring>phpHeaderFile</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>150</x>
-                            <y>20</y>
-                            <width>170</width>
-                            <height>22</height>
-                        </rect>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>@widgetText</string>
                         </stringlist>
                     </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>11</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="LineEdit" row="0" column="1">
+                            <property name="name">
+                                <cstring>phpHeaderFile</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="LineEdit" row="1" column="1">
+                            <property name="name">
+                                <cstring>phpFooterFile</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="CheckBox" row="1" column="0">
+                            <property name="name">
+                                <cstring>CBPHPFooter</cstring>
+                            </property>
+                            <property name="text">
+                                <string>PHP Footer Include</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                    <string></string>
+                                    <string>&lt;? include_once("@phpFooterFile") ?&gt;</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="CheckBox" row="0" column="0">
+                            <property name="name">
+                                <cstring>CBPHPHeader</cstring>
+                            </property>
+                            <property name="text">
+                                <string>PHP Header Include</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                    <string></string>
+                                    <string>&lt;? include_once("@phpHeaderFile") ?&gt;</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                    </grid>
                 </widget>
-                <widget class="LineEdit">
+                <widget class="CheckBox" row="1" column="0">
                     <property name="name">
-                        <cstring>phpFooterFile</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>149</x>
-                            <y>55</y>
-                            <width>170</width>
-                            <height>22</height>
-                        </rect>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>@widgetText</string>
-                        </stringlist>
-                    </property>
-                </widget>
-                <widget class="CheckBox">
-                    <property name="name">
-                        <cstring>CBPHPFooter</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>11</x>
-                            <y>59</y>
-                            <width>138</width>
-                            <height>20</height>
-                        </rect>
+                        <cstring>CBDTD</cstring>
                     </property>
                     <property name="text">
-                        <string>PHP Footer Include</string>
+                        <string>Show DTD</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
                             <string></string>
-                            <string></string>
-                            <string>&lt;? include_once("@phpFooterFile") ?&gt;</string>
-                        </stringlist>
-                    </property>
-                </widget>
-                <widget class="CheckBox">
-                    <property name="name">
-                        <cstring>CBPHPHeader</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>11</x>
-                            <y>25</y>
-                            <width>138</width>
-                            <height>20</height>
-                        </rect>
-                    </property>
-                    <property name="text">
-                        <string>PHP Header Include</string>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string></string>
-                            <string></string>
-                            <string>&lt;? include_once("@phpHeaderFile") ?&gt;</string>
-                        </stringlist>
-                    </property>
-                </widget>
-            </widget>
-            <widget class="CheckBox" row="1" column="0">
-                <property name="name">
-                    <cstring>CBDTD</cstring>
-                </property>
-                <property name="text">
-                    <string>Show DTD</string>
-                </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string></string>
-                        <string>@DTEPselect
+                            <string>@DTEPselect
 echo "$DTD"</string>
-                        <string>echo "$DTD"</string>
-                    </stringlist>
-                </property>
-            </widget>
-            <widget class="ComboBox" row="0" column="1">
-                <item>
-                    <property name="text">
-                        <string>HTML 4.0.1 Transitional</string>
+                            <string>echo "$DTD"</string>
+                        </stringlist>
                     </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>HTML 4.0.1 Strict</string>
+                </widget>
+                <widget class="ComboBox" row="0" column="1">
+                    <item>
+                        <property name="text">
+                            <string>HTML 4.0.1 Transitional</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>HTML 4.0.1 Strict</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>HTML 4.0.1 Frameset</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>XHTML 1.0 Transitional</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>XHTML 1.0 Strict</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property name="text">
+                            <string>XHTML 1.0 Frameset</string>
+                        </property>
+                    </item>
+                    <property name="name">
+                        <cstring>DTEPselect</cstring>
                     </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>HTML 4.0.1 Frameset</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>XHTML 1.0 Transitional</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>XHTML 1.0 Strict</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>XHTML 1.0 Frameset</string>
-                    </property>
-                </item>
-                <property name="name">
-                    <cstring>DTEPselect</cstring>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string>################################
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>################################
 # This script sets the DTD var
 
 
@@ -402,24 +336,24 @@ case "@widgetText" in
 ;; 
 esac
 </string>
-                    </stringlist>
-                </property>
-            </widget>
-            <widget class="CheckBox" row="2" column="0">
-                <property name="name">
-                    <cstring>CBHead</cstring>
-                </property>
-                <property name="text">
-                    <string>Head Area</string>
-                </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string></string>
-                        <string></string>
-                        <string>echo '&lt;head&gt;'
+                        </stringlist>
+                    </property>
+                </widget>
+                <widget class="CheckBox" row="2" column="0">
+                    <property name="name">
+                        <cstring>CBHead</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Head Area</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string></string>
+                            <string></string>
+                            <string>echo '&lt;head&gt;'
 @LETitle
 @CBBasedir
 @CBMetaQuanta
@@ -430,346 +364,346 @@ esac
 @CBStyleArea
 @CBJavascript
 echo '&lt;/head&gt;'</string>
-                    </stringlist>
-                </property>
-            </widget>
-            <widget class="CheckBox" row="1" column="1">
-                <property name="name">
-                    <cstring>CBCVS</cstring>
-                </property>
-                <property name="text">
-                    <string>CVS Tag in Comment</string>
-                </property>
-                <property name="associations" stdset="0">
-                    <stringlist>
-                        <string></string>
-                        <string></string>
-                        <string>&lt;!-- $Id$ --&gt;</string>
-                    </stringlist>
-                </property>
-            </widget>
-            <widget class="GroupBox" row="3" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>GroupBox2</cstring>
-                </property>
-                <property name="title">
-                    <string></string>
-                </property>
-                <grid>
+                        </stringlist>
+                    </property>
+                </widget>
+                <widget class="CheckBox" row="1" column="1">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>CBCVS</cstring>
                     </property>
-                    <property name="margin">
-                        <number>11</number>
+                    <property name="text">
+                        <string>CVS Tag in Comment</string>
                     </property>
-                    <property name="spacing">
-                        <number>6</number>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string></string>
+                            <string></string>
+                            <string>&lt;!-- $Id$ --&gt;</string>
+                        </stringlist>
                     </property>
-                    <widget class="CheckBox" row="2" column="0">
+                </widget>
+                <widget class="GroupBox" row="3" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>GroupBox2</cstring>
+                    </property>
+                    <property name="title">
+                        <string></string>
+                    </property>
+                    <grid>
                         <property name="name">
-                            <cstring>CBMetaAuthor</cstring>
+                            <cstring>unnamed</cstring>
                         </property>
-                        <property name="text">
-                            <string>Meta Author</string>
+                        <property name="margin">
+                            <number>11</number>
                         </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string></string>
-                                <string></string>
-                                <string>echo "$PADDING&lt;meta name=\"AUTHOR\" content=\"@LEMetaAuthor\"$TAGEND"</string>
-                            </stringlist>
+                        <property name="spacing">
+                            <number>6</number>
                         </property>
-                    </widget>
-                    <widget class="CheckBox" row="3" column="0">
-                        <property name="name">
-                            <cstring>CBMetaChar</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Meta Character Set</string>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string></string>
-                                <string></string>
-                                <string>echo "$PADDING&lt;meta http-equiv=\"Content-Type\" content=\"text/html; charset=@ComboMetachar\"$TAGEND"</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="CheckBox" row="7" column="0">
-                        <property name="name">
-                            <cstring>CBStyleArea</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Style Area</string>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string></string>
-                                <string></string>
-                                <string>echo "$PADDING&lt;style type=\"text/css\"&gt;"
+                        <widget class="CheckBox" row="2" column="0">
+                            <property name="name">
+                                <cstring>CBMetaAuthor</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Meta Author</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                    <string></string>
+                                    <string>echo "$PADDING&lt;meta name=\"AUTHOR\" content=\"@LEMetaAuthor\"$TAGEND"</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="CheckBox" row="3" column="0">
+                            <property name="name">
+                                <cstring>CBMetaChar</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Meta Character Set</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                    <string></string>
+                                    <string>echo "$PADDING&lt;meta http-equiv=\"Content-Type\" content=\"text/html; charset=@ComboMetachar\"$TAGEND"</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="CheckBox" row="7" column="0">
+                            <property name="name">
+                                <cstring>CBStyleArea</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Style Area</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                    <string></string>
+                                    <string>echo "$PADDING&lt;style type=\"text/css\"&gt;"
 if [ $XHTML = true ]; then
 	echo "$PADDING/* &lt;![CDATA[ */"
 	echo "$PADDING"
 	echo "$PADDING/* ]]&gt; */"
 fi
 echo "$PADDING&lt;/style&gt;"</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="LineEdit" row="1" column="1">
-                        <property name="name">
-                            <cstring>LEBasedir</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string>@widgetText</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="LineEdit" row="2" column="1">
-                        <property name="name">
-                            <cstring>LEMetaAuthor</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string>@widgetText</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="ComboBox" row="3" column="1">
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-1</string>
+                                </stringlist>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-2</string>
+                        </widget>
+                        <widget class="LineEdit" row="1" column="1">
+                            <property name="name">
+                                <cstring>LEBasedir</cstring>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-3</string>
+                            <property name="enabled">
+                                <bool>false</bool>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-4</string>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-5</string>
+                        </widget>
+                        <widget class="LineEdit" row="2" column="1">
+                            <property name="name">
+                                <cstring>LEMetaAuthor</cstring>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-6</string>
+                            <property name="enabled">
+                                <bool>false</bool>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-7</string>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-8</string>
+                        </widget>
+                        <widget class="ComboBox" row="3" column="1">
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-1</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-2</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-3</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-4</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-5</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-6</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-7</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-8</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-8i</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-9</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-10</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-11</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-12</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-13</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-14</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>iso-8859-15</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>utf8</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>utf16</string>
+                                </property>
+                            </item>
+                            <property name="name">
+                                <cstring>ComboMetachar</cstring>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-8i</string>
+                            <property name="enabled">
+                                <bool>false</bool>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-9</string>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-10</string>
+                        </widget>
+                        <widget class="LineEdit" row="4" column="1">
+                            <property name="name">
+                                <cstring>LEMetaKeywords</cstring>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-11</string>
+                            <property name="enabled">
+                                <bool>false</bool>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-12</string>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-13</string>
+                            <property name="toolTip" stdset="0">
+                                <string>limit to 8, seperate with commas</string>
                             </property>
-                        </item>
-                        <item>
-                            <property name="text">
-                                <string>iso-8859-14</string>
+                        </widget>
+                        <widget class="CheckBox" row="1" column="0">
+                            <property name="name">
+                                <cstring>CBBasedir</cstring>
                             </property>
-                        </item>
-                        <item>
                             <property name="text">
-                                <string>iso-8859-15</string>
+                                <string>Base Directory</string>
                             </property>
-                        </item>
-                        <item>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                    <string></string>
+                                    <string>echo "$PADDING&lt;base href=\"@LEBasedir\"$TAGEND"</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="CheckBox" row="6" column="0">
+                            <property name="name">
+                                <cstring>CBMetaQuanta</cstring>
+                            </property>
                             <property name="text">
-                                <string>utf8</string>
+                                <string>Meta Quanta</string>
                             </property>
-                        </item>
-                        <item>
+                            <property name="checked">
+                                <bool>true</bool>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                    <string></string>
+                                    <string>echo "$PADDING&lt;meta name=\"GENERATOR\" content=\"Quanta Plus\"$TAGEND"</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="CheckBox" row="4" column="0">
+                            <property name="name">
+                                <cstring>CBMetaKeywords</cstring>
+                            </property>
                             <property name="text">
-                                <string>utf16</string>
+                                <string>Meta Keywords</string>
                             </property>
-                        </item>
-                        <property name="name">
-                            <cstring>ComboMetachar</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string>@widgetText</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="LineEdit" row="4" column="1">
-                        <property name="name">
-                            <cstring>LEMetaKeywords</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string>@widgetText</string>
-                            </stringlist>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>limit to 8, seperate with commas</string>
-                        </property>
-                    </widget>
-                    <widget class="CheckBox" row="1" column="0">
-                        <property name="name">
-                            <cstring>CBBasedir</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Base Directory</string>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                    <string></string>
+                                    <string>echo"$PADDING&lt;meta name=\"KEYWORDS\" content=\"@LEMetaKeywords\"$TAGEND"</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="CheckBox" row="5" column="0">
+                            <property name="name">
+                                <cstring>CBStyle</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Linked Style Sheet</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                    <string></string>
+                                    <string>echo "$PADDING&lt;link rel=\"stylesheet\" type=\"text/css\" href=\"@cssFile\"$TAGEND"</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="LineEdit" row="5" column="1">
+                            <property name="name">
+                                <cstring>cssFile</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="LineEdit" row="0" column="1">
+                            <property name="name">
+                                <cstring>LETitle</cstring>
+                            </property>
+                            <property name="text">
                                 <string></string>
-                                <string></string>
-                                <string>echo "$PADDING&lt;base href=\"@LEBasedir\"$TAGEND"</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="CheckBox" row="6" column="0">
-                        <property name="name">
-                            <cstring>CBMetaQuanta</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Meta Quanta</string>
-                        </property>
-                        <property name="checked">
-                            <bool>true</bool>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string></string>
-                                <string></string>
-                                <string>echo "$PADDING&lt;meta name=\"GENERATOR\" content=\"Quanta Plus\"$TAGEND"</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="CheckBox" row="4" column="0">
-                        <property name="name">
-                            <cstring>CBMetaKeywords</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Meta Keywords</string>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string></string>
-                                <string></string>
-                                <string>echo"$PADDING&lt;meta name=\"KEYWORDS\" content=\"@LEMetaKeywords\"$TAGEND"</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="CheckBox" row="5" column="0">
-                        <property name="name">
-                            <cstring>CBStyle</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Linked Style Sheet</string>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string></string>
-                                <string></string>
-                                <string>echo "$PADDING&lt;link rel=\"stylesheet\" type=\"text/css\" href=\"@cssFile\"$TAGEND"</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="LineEdit" row="5" column="1">
-                        <property name="name">
-                            <cstring>cssFile</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string>@widgetText</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="LineEdit" row="0" column="1">
-                        <property name="name">
-                            <cstring>LETitle</cstring>
-                        </property>
-                        <property name="text">
-                            <string></string>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string>echo "$PADDING&lt;title&gt;@widgetText&lt;/title&gt;"</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="0" column="0">
-                        <property name="name">
-                            <cstring>TextLabel2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Title</string>
-                        </property>
-                    </widget>
-                    <widget class="CheckBox" row="7" column="1">
-                        <property name="name">
-                            <cstring>CBJavascript</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Javascript Area</string>
-                        </property>
-                        <property name="associations" stdset="0">
-                            <stringlist>
-                                <string></string>
-                                <string></string>
-                                <string>echo "$PADDING&lt;script language=\"javascript\" type=\"text/javascript\"&gt;"
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>echo "$PADDING&lt;title&gt;@widgetText&lt;/title&gt;"</string>
+                                </stringlist>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>TextLabel2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Title</string>
+                            </property>
+                        </widget>
+                        <widget class="CheckBox" row="7" column="1">
+                            <property name="name">
+                                <cstring>CBJavascript</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Javascript Area</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string></string>
+                                    <string></string>
+                                    <string>echo "$PADDING&lt;script language=\"javascript\" type=\"text/javascript\"&gt;"
 
 if [ $XHTML = true ]; then
 	echo "$PADDING/* &lt;![CDATA[ */"
@@ -782,39 +716,72 @@ else
 fi
 
 echo "$PADDING&lt;/script&gt;"</string>
-                            </stringlist>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
-        </grid>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel1</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>350</width>
-                <height>22</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Helvetica</family>
-                <pointsize>14</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="text">
-            <string>Quanta Plus Kommander Quick Start</string>
-        </property>
-        <property name="alignment">
-            <set>AlignCenter</set>
-        </property>
-    </widget>
+                                </stringlist>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="CloseButton" row="2" column="3">
+            <property name="name">
+                <cstring>CloseButton1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Cancel</string>
+            </property>
+            <property name="flat">
+                <bool>false</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                </stringlist>
+            </property>
+            <property name="writeStdout">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="ExecButton" row="2" column="2">
+            <property name="name">
+                <cstring>ExecButton1</cstring>
+            </property>
+            <property name="text">
+                <string>Apply</string>
+            </property>
+            <property name="on">
+                <bool>false</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string>@dialogScript</string>
+                </stringlist>
+            </property>
+            <property name="writeStdout">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="CloseButton" row="2" column="1">
+            <property name="name">
+                <cstring>CloseButton1</cstring>
+            </property>
+            <property name="text">
+                <string>Ok</string>
+            </property>
+            <property name="flat">
+                <bool>false</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string>@dialogScript
+</string>
+                </stringlist>
+            </property>
+            <property name="writeStdout">
+                <bool>true</bool>
+            </property>
+        </widget>
+    </grid>
 </widget>
 <connections>
     <connection>
