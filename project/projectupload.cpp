@@ -72,7 +72,7 @@ ProjectUpload::ProjectUpload(const KURL& url, bool showOnlyProfiles, const char*
       uploadFrame->hide();
       buttonCancel->hide();
       adjustSize();
-      buttonUpload->setText(i18n("&OK"));
+      buttonUpload->setText(i18n("&Close"));
       setCaption(i18n("Upload Profiles"));
     } else
     {
@@ -557,7 +557,8 @@ void ProjectUpload::slotNewProfile()
      m_profilesNode.appendChild(m_currentProfileElement);
      m_project->setModified(true);
      comboProfile->insertItem(m_currentProfileElement.attribute("name"), 0);
-  }
+  } else
+    m_currentProfileElement = el;
   delete profileDlg;
 }
 
@@ -578,17 +579,29 @@ void ProjectUpload::slotRemoveProfile()
 {
    if (comboProfile->count() == 1)
    {
-       KMessageBox::error(this, i18n("Profile Removal Error"), i18n("You cannot remove the last profile"));
+       KMessageBox::error(this, i18n("You cannot remove the last profile."), i18n("Profile Removal Error") );
    } else
    {
-       m_profilesNode.removeChild(m_currentProfileElement);
-       int idx = comboProfile->currentItem();
-       int newIdx = idx + 1;
-       if (newIdx >= comboProfile->count())
-         newIdx = idx - 1;
-       comboProfile->setCurrentItem(newIdx);
-       slotNewProfileSelected(comboProfile->currentText());
-       comboProfile->removeItem(idx);
+      QString profileName = comboProfile->currentText();
+      if (KMessageBox::questionYesNo(this, i18n("<qt>Do you really want to remove the <b>%1</b> upload profile?</qt>").arg(profileName),
+                                   i18n("Profile Removal")) == KMessageBox::Yes)
+       {
+          m_profilesNode.removeChild(m_currentProfileElement);
+          int idx = comboProfile->currentItem();
+          int newIdx = idx + 1;
+          if (newIdx >= comboProfile->count())
+            newIdx = idx - 1;
+          comboProfile->setCurrentItem(newIdx);
+          QString currentProfile = comboProfile->currentText();
+          slotNewProfileSelected(currentProfile);
+          if (profileName == defaultProfile())
+          {
+              KMessageBox::information(this, i18n("<qt>You have removed your default profile.<br>The new default profile will be <b>%1</b>.</qt>").arg(currentProfile), i18n("Profile Removal"));
+              m_profilesNode.toElement().setAttribute("defaultProfile", currentProfile);
+          }
+          comboProfile->removeItem(idx);
+          m_project->setModified(true);
+       }
    }
 }
 
