@@ -253,9 +253,26 @@ void ProjectTreeView::slotOpen()
 		return;
 	}
 
- QString mimetype = KMimeType::findByFileContent(nameToOpen)->name();
+//The file type is unknown, so do some Mimetype magic
 
- if (mimetype.contains("text"))
+ QString mimetype = KMimeType::findByFileContent(nameToOpen)->name();
+ bool isText = false;
+
+ KMimeType::List list = KMimeType::allMimeTypes();
+ KMimeType::List::iterator it;
+
+ mimetype = mimetype.section('/',-1);
+ for ( it = list.begin(); it != list.end(); ++it )
+ {
+    if ( ((*it)->name().contains("text")) && ((*it)->name().find(mimetype) != -1) )
+    {
+      isText = true;
+      break;
+    }
+ }
+ //QString mimetype = KMimeType::findByFileContent(nameToOpen)->name();
+
+ if (isText)
  {
 		KURL url(nameToOpen);
 		emit openFile( url );

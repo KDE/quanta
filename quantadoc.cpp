@@ -257,7 +257,10 @@ void QuantaDoc::saveDocument(const KURL& url)
 
   if ( !url.url().isEmpty())
   {
-    write()->doc()->saveAs( url );
+    if (!write()->doc()->saveAs( url ))
+    {
+      KMessageBox::error(app, i18n("Saving of the document failed.\nMaybe you should try to save in another directory."));
+    }
     write()->closeTempFile();
     write()->createTempFile();
 //    write()->setURL( url, false );
