@@ -17,6 +17,7 @@
 
 /* KDE INCLUDES */
 #include <kstandarddirs.h>
+#include <klocale.h>
 
 /* QT INCLUDES */
 #include <qstring.h>
@@ -157,9 +158,9 @@ bool QuantaPlugin::validatePluginInfo(const QString &a_name, const QString &a_ty
   {
     // lookup
     QString lookupType;
-    if(a_type == "KPart")
+    if(a_type == i18n("KPart"))
       lookupType = "lib";
-    else if(a_type == "Command Line")
+    else if(a_type == i18n("Command Line"))
       lookupType = "exe";
     else
     {

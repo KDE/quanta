@@ -135,6 +135,8 @@ public:
   KURL projectBaseURL();
 
   KURL::List userToolbarFiles() {return m_userToolbarFileList;}
+  /** Returns the project (if there is one loaded) or global default encoding. */
+  QString defaultEncoding();
 
 public slots:
 

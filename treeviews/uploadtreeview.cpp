@@ -205,7 +205,7 @@ QListViewItem* UploadTreeView::findItem(const QString& path )
 }
 
 UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString size )
-{
+{ 
   QString item = a_url.path(); //TODO: do with real KURL's
 	QString fname = item;
 	int i;
@@ -245,7 +245,7 @@ UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString
       file = new UploadTreeFile(it, a_url, date, size);
     }
   }
-	return file;
+	return file; 
 }
 
 void UploadTreeView::expandAll( QListViewItem *it )
@@ -312,5 +312,31 @@ void UploadTreeView::selectAll( bool select )
   }
 }
 
+
+/** No descriptions */
+QListViewItem* UploadTreeView::itemByUrl(const KURL& a_url)
+{
+  QListViewItemIterator it(this);
+  UploadTreeFile *fileItem;
+  UploadTreeFolder *folderItem;
+  KURL url;
+  for ( ; it.current(); ++it )
+  {
+    if ( (fileItem = dynamic_cast<UploadTreeFile *>(it.current()) ) !=0)
+    {
+      url = fileItem->m_url;
+    } else
+    {
+      folderItem = dynamic_cast<UploadTreeFolder*>(it.current());
+      url = folderItem->m_url;
+    }
+    if (url == a_url)
+    {
+      return it.current();
+    }
+  }
+
+  return 0L;
+}
 
 #include "uploadtreeview.moc"

@@ -66,17 +66,6 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 
 	setFocusPolicy(QWidget::ClickFocus);
 
-
-
-/*
-	RBMenuFile = new KPopupMenu("Project's file");
-
-	RBMenuFile -> insertItem( UserIcon("open"),  i18n("&Open"),       this, SLOT(slotFileOpen()), 0, ID_PROJECT_FILE_OPEN);
-	RBMenuFile -> insertItem( i18n("&Insert Tag"), this, SLOT(slotFileTag()), 0, ID_PROJECT_FILE_TAG);
-	RBMenuFile -> insertSeparator();
-	RBMenuFile -> insertItem( i18n("Remove File From Project"), this, SLOT(slotRemoveFromProject()), 0, ID_PROJECT_REMOVE_FROM_PROJECT);
-*/
-
   dtdMenu = new QPopupMenu(this);
   
   QDictIterator<DTDStruct> it(*dtds);

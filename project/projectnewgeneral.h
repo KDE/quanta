@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    								       (C) 2001, 2002 by Andras Mantia
+    								       (C) 2001, 2002 by Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 

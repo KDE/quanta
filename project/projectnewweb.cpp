@@ -119,7 +119,7 @@ void ProjectNewWeb::slotStart()
       	emit enableNextButton((QWidget *)this->parent(),false);
       } else
       {
-        KMessageBox::sorry(this,i18n("This feature is available, only if the project lies on a local disk!"));
+        KMessageBox::sorry(this,i18n("This feature is available only if the project lies on a local disk!"));
         start = false;
         button->setText( i18n("Start") );
         emit enableNextButton((QWidget *)this->parent(),true);

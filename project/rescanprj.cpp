@@ -4,18 +4,22 @@
 #include <qlistview.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
+#include <qregexp.h>
+#include <qlabel.h>
 
 // kde includes
 #include <kurl.h>
 #include <klocale.h>
 #include <kfileitem.h>
 #include <kglobal.h>
+#include <kprogress.h>
 
 // app includes
 #include "rescanprj.h"
 #include "../qextfileinfo.h"
 #include "../quantacommon.h"
 #include "../treeviews/uploadtreefolder.h"
+#include "../resource.h"
 
 RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent, const char *name, bool modal )
 	: RescanPrjDir(parent,name,modal)
@@ -28,10 +32,13 @@ RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *p
 
   prjFileList = p_prjFileList;
 
+  progressText->setText(i18n("Reading directory:"));
   KIO::ListJob *job = KIO::listRecursive( baseURL, false );
 
   connect( job, SIGNAL(entries(KIO::Job *,const KIO::UDSEntryList &)),
            this,SLOT  (addEntries(KIO::Job *,const KIO::UDSEntryList &)));
+  connect( job, SIGNAL(result(KIO::Job *)),
+           this,SLOT  (slotListDone(KIO::Job *)));
 
 
 	connect( buttonSelect,   SIGNAL(clicked()),
@@ -60,35 +67,27 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
   KIO::UDSEntryListConstIterator it  = list.begin();
   KIO::UDSEntryListConstIterator end = list.end();
   KURL itemURL;
+  URLListEntry urlEntry;
+  QString name;
   for ( ; it != end; ++it )
-   {
-     QString name;
-
-     // find out about the name
-     KIO::UDSEntry::ConstIterator entit = (*it).begin();
-     for( ; entit != (*it).end(); ++entit )
-       if ( (*entit).m_uds == KIO::UDS_NAME )
-       {
-         name = (*entit).m_str;
-         break;
-       }
-     if ( ! name.isEmpty() && name != dot && name != dotdot) 
-     {
-       KFileItem* item = new KFileItem( *it, url, false, true );
-       itemURL = item->url();
-       if (item->isDir()) itemURL.adjustPath(1);
-       itemURL = QExtFileInfo::toRelative(itemURL, baseURL);
-       if (prjFileList.findIndex(itemURL) == -1 )
-       {
-         QString s = QString("%1").arg( (long int)item->size() );
-         this->list.append(itemURL);
-         listView->addItem(itemURL, s, item->timeString());
-       }
-       delete item;
-     }
-   }
-   
-  slotSelect();
+  {
+    KFileItem item( *it, url, false, true );
+    name = item.name();
+    if ( ! name.isEmpty() && name != dot && name != dotdot)
+    {
+      itemURL = item.url();
+      if (item.isDir()) itemURL.adjustPath(1);
+//    itemURL = QExtFileInfo::toRelative(itemURL, baseURL);
+      itemURL.setPath(itemURL.path().replace(QRegExp(baseURL.path()),""));
+      if (prjFileList.findIndex(itemURL) == -1 )
+      {
+        urlEntry.url = itemURL;
+        urlEntry.date = item.timeString();
+        urlEntry.size = QString("%1").arg( (long int)item.size() );
+        urlList.append(urlEntry);
+      }
+    }
+  }
 }
 
 void RescanPrj::resizeEvent ( QResizeEvent *t )
@@ -137,9 +136,7 @@ KURL::List RescanPrj::files()
    item = it.current();
    if ( listView->isSelected( item ))
    {
-      KURL u;
- //    KURL u = baseURL;
-//     u.setPath(baseURL.path(1)+item->text(0));
+     KURL u;
      if (dynamic_cast<UploadTreeFolder*>(item))
      {
       u = dynamic_cast<UploadTreeFolder*>(item)->url();
@@ -152,4 +149,24 @@ KURL::List RescanPrj::files()
    }
   }
   return r;
+}
+/** No descriptions */
+void RescanPrj::slotListDone(KIO::Job *)
+{
+  progressText->setText(i18n("Building tree:"));
+  progressText->repaint();
+  progress->setTotalSteps(urlList.count());
+  progress->setValue(0);
+  URLListEntry urlEntry;
+  for (uint i = 0; i < urlList.count(); i++)
+  {
+    urlEntry = urlList[i];
+    listView->addItem(urlEntry.url, urlEntry.size, urlEntry.date);
+    progress->advance(1);
+  }
+  
+  progress->setValue(0);
+  progress->setTextEnabled(false);
+  slotSelect();
+  progressText->setText(i18n("Progress:"));
 }

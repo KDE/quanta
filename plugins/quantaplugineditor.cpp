@@ -47,13 +47,6 @@ QuantaPluginEditor::QuantaPluginEditor(QWidget *a_parent, const char *a_name)
 {
  // m_plugins.setAutoDelete(TRUE);
 
- /* pluginList->addColumn("Name");
-  pluginList->addColumn("Type");
-  pluginList->addColumn("Valid");
-  pluginList->addColumn("Location");
-  pluginList->addColumn("File Name");
-  pluginList->addColumn("Arguments");
-  pluginList->addColumn("Output Window");*/
   pluginList->setSelectionMode(QListView::Single);
   pluginList->setAllColumnsShowFocus(TRUE);
   pluginList->setColumnAlignment(2, Qt::AlignHCenter);  
@@ -91,9 +84,9 @@ void QuantaPluginEditor::addPlugin()
     // plugin accepted, create the proper type
     QuantaPlugin *newPlugin = 0;
     QString pluginType = configDlg->pluginType->currentText();
-    if(pluginType == "KPart")
+    if(pluginType == i18n("KPart"))
       newPlugin = new QuantaKPartPlugin();
-    else if(pluginType == "Command Line")
+    else if(pluginType == i18n("Command Line"))
       newPlugin = new QuantaCmdPlugin();
     else
     {

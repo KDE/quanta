@@ -121,7 +121,7 @@ void MessageOutput::php4Debug( QString s)
 
 void MessageOutput::newPhpConnect()
 {
-   insertItem("PHP debugger started");
+   insertItem(i18n("PHP debugger started"));
 }
 
 void MessageOutput::endPhpConnect()

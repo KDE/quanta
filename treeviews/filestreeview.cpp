@@ -52,6 +52,7 @@
 #include "fileinfodlg.h"
 #include "../resource.h"
 #include "../quantacommon.h"
+#include "../quanta.h"
 
 FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *name)
 	: FileManage(parent,name)
@@ -208,7 +209,7 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
       {
       	if ( QuantaCommon::checkMimeGroup(urlToOpen,"text") )
       	{
-    		  emit openFile( urlToOpen, qConfig.defaultEncoding );
+    		  emit openFile( urlToOpen, quantaApp->defaultEncoding() );
       	}
       	else if ( QuantaCommon::checkMimeGroup(urlToOpen, "image") ) //it may be an image
     	       {
@@ -216,8 +217,8 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
             		emit openImage( urlToOpen );
              } else //it is an unknown type, maybe binary
              {
-               if (KMessageBox::questionYesNo(this,"This file cannot be opened in Quanta. \n \
-                   Do you want to open with an external program or run it?","Unknown type") == KMessageBox::Yes)
+               if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
+                   Do you want to open with an external program or run it?"),i18n("Unknown type")) == KMessageBox::Yes)
                {
                  KFileOpenWithHandler fowh;
                  new KRun(urlToOpen, 0, true );
@@ -241,7 +242,7 @@ void FilesTreeView::slotSelectAnyFile(QListViewItem *item)
        {
          if (QuantaCommon::checkMimeGroup(urlToOpen, "text"))
          {
-           emit openFile( urlToOpen, qConfig.defaultEncoding );
+           emit openFile( urlToOpen, quantaApp->defaultEncoding() );
          } else     //Don't allow to open binary files
          {
            denyBinaryInsert();

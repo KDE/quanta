@@ -3,7 +3,7 @@
                              -------------------
     begin                : Wed Nov 15 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                              (C) 2001 by Andras Mantia
+                           (C) 2001, 2002 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -54,6 +54,7 @@
 ProjectUpload::ProjectUpload(Project* prg, const KURL& url, QWidget *parent, const char* name, bool modal, WFlags fl)
   :ProjectUploadS( parent, name, modal, fl)
 {
+    list->hide();
     initProjectInfo(prg);
     startUrl = url;
     QTimer::singleShot(10, this, SLOT(slotBuildTree())); 
@@ -135,7 +136,6 @@ void ProjectUpload::slotBuildTree()
    if (startUrl.isEmpty() || s.startsWith(strUrl))
    {
      QuantaCommon::setUrl(u, s);
-//      list->addItem(u, "", "");
      absUrl.setPath(p->baseURL.path(1)+u.path());
      KIO::NetAccess::stat(absUrl, entry);
      KFileItem item(entry, absUrl, false, true);
@@ -155,8 +155,9 @@ void ProjectUpload::slotBuildTree()
      }
    }
  }
-
  list->slotSelectFile();
+ treeText->hide();
+ list->show();
  totalText->setText(i18n("Total:"));
  totalProgress->setValue(0);
 }
@@ -227,7 +228,11 @@ void ProjectUpload::startUpload()
   	upload();
   } else
   {
-    KMessageBox::error(this, i18n("The upload was aborted because %1 is unaccesible.").arg(u.prettyURL()));  
+    if (KMessageBox::warningYesNo(this, i18n("%1 seems to be unaccesible.\nDo you want to proceed with upload?")
+                                         .arg(u.prettyURL())) == KMessageBox::Yes)
+    {
+      upload();
+    }                                   
   }
 }
 

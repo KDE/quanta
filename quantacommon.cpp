@@ -308,13 +308,7 @@ int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, i
   int pos = 0;
   if (line < bLine || (line == bLine && (col < bCol) )) pos = -1; //it is before
   if (line > eLine || (line == eLine && (col > eCol) )) pos = 1;  //it is after
-/*  if ( ( line > bLine && line < eLine ) ||
-       ( line == bLine && line < eLine && col >= bCol) ||
-       ( line > bLine && line == eLine && col <= eCol) ||
-        ( line == bLine && line == eLine && col >=bCol && col <=eCol) )
- {
-   result = 0;  //between
- }*/
+
  return pos;
 }
 
@@ -336,32 +330,15 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
  KMimeType::List list = KMimeType::allMimeTypes();
  KMimeType::List::iterator it;
  bool status = false;
- QString mimetype;
-          /*
- if (url.isLocalFile())
+ QString mimetype = KMimeType::findByURL(url)->name();
+ mimetype = mimetype.section('/',-1);
+ for ( it = list.begin(); it != list.end(); ++it )
  {
-   mimetype = KMimeType::findByFileContent(url.path())->name();
-   mimetype = mimetype.section('/',-1);
-   for ( it = list.begin(); it != list.end(); ++it )
-   {
-      if ( ((*it)->name().contains(group)) && ((*it)->name().find(mimetype) != -1) )
-      {
-        status = true;
-        break;
-      }
-   }
- } else     */
- {
-   mimetype = KMimeType::findByURL(url)->name();
-   mimetype = mimetype.section('/',-1);
-   for ( it = list.begin(); it != list.end(); ++it )
-   {
-      if ( ((*it)->name().contains(group)) && ((*it)->name().find(mimetype) != -1) )
-      {
-        status = true;
-        break;
-      }
-   }
+    if ( ((*it)->name().contains(group)) && ((*it)->name().find(mimetype) != -1) )
+    {
+      status = true;
+      break;
+    }
  }
 
  return status;
@@ -371,19 +348,9 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
 bool QuantaCommon::checkMimeType(const KURL& url, const QString& type)
 {
  bool status = false;
- QString mimetype;
-                 /*
- if (url.isLocalFile())
- {
-   mimetype = KMimeType::findByFileContent(url.path())->name();
-   mimetype = mimetype.section('/',-1);
-   if (mimetype == type) status = true;
- } else        */
- {
-   mimetype = KMimeType::findByURL(url)->name();
-   mimetype = mimetype.section('/',-1);
-   if (mimetype == type) status = true;
- }
+ QString mimetype = KMimeType::findByURL(url)->name();
+ mimetype = mimetype.section('/',-1);
+ if (mimetype == type) status = true;
 
  return status;
 }
@@ -392,20 +359,12 @@ bool QuantaCommon::checkMimeType(const KURL& url, const QString& type)
 bool QuantaCommon::checkExactMimeType(const KURL& url, const QString& type)
 {
  bool status = false;
- QString mimetype;
-                   /*
- if (url.isLocalFile())
- {
-   mimetype = KMimeType::findByFileContent(url.path())->name();
-   if (mimetype == type) status = true;
- } else              */
- {
-   mimetype = KMimeType::findByURL(url)->name();
-   if (mimetype == type) status = true;
- }
+ QString mimetype = KMimeType::findByURL(url)->name();
+ if (mimetype == type) status = true;
 
  return status;
 }
+
 /** Returns the url without the filename. */
 KURL QuantaCommon::convertToPath(const KURL& url)
 {

@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    								  (C) 2001 by Andras Mantia
+                           (C) 2001, 2002 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -132,24 +132,19 @@ void QuantaApp::slotFileNew()
     doc->openDocument( KURL() );
   if (!setHighlight)
      setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
-
-//  slotUpdateStatus(view->write());
 }
 
 void QuantaApp::slotFileOpen()
 {
-//  KURL url = KFileDialog::getOpenURL( QString::null, QString::null, this);
- QString myEncoding = QString::fromLatin1(QTextCodec::codecForName(qConfig.defaultEncoding.latin1())->name());
+ QString myEncoding = QString::fromLatin1(QTextCodec::codecForName(defaultEncoding().latin1())->name());
 
  KateFileDialog *dialog = new KateFileDialog (QString::null,myEncoding, this, i18n ("Open File"));
  KateFileDialogData data = dialog->exec();
  delete dialog;
 
-//  if ( !url.url().isEmpty() ) slotFileOpen( url );
  for (KURL::List::Iterator i=data.urls.begin(); i != data.urls.end(); ++i)
  {
     slotFileOpen( *i , data.encoding);
-//    view->write()->doc()->setEncoding(data.encoding);
  }
 
   slotUpdateStatus(view->write());
@@ -204,7 +199,8 @@ void QuantaApp::slotFileSaveAs()
     KURL url = w->doc()->url();
 
     if ( ( project->hasProject() ) &&
-         ( KMessageBox::Yes == KMessageBox::questionYesNo(0,"Add file\n " +url.url()+"\n to project ? ")) )
+         ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project ?").arg(url.url())) )
+       )  
     {
       project->insertFile(url,true);
     }
@@ -408,6 +404,7 @@ void QuantaApp::slotStatusMsg(const QString &msg)
 {
   statusbarTimer->stop();
   statusBar()   ->changeItem(" " + msg, IDS_STATUS);
+  statusBar()->repaint();
   statusbarTimer->start(10000, true);
 }
 
@@ -762,10 +759,10 @@ void QuantaApp::slotOptions()
   page=kd->addVBoxPage(i18n("Environment"), QString::null, BarIcon("files", KIcon::SizeMedium ) );
   FileMasks *fileMasks = new FileMasks( (QWidget *)page );
 
-  fileMasks->lineHTML->setText( fileMaskHtml );
-  fileMasks->linePHP->setText( fileMaskPhp );
-  fileMasks->lineImages->setText( fileMaskImage );
-  fileMasks->lineText->setText( fileMaskText );
+  fileMasks->lineMarkup->setText( qConfig.markupMimeTypes );
+  fileMasks->lineScript->setText( qConfig.scriptMimeTypes );
+  fileMasks->lineImage->setText( qConfig.imageMimeTypes );
+  fileMasks->lineText->setText( qConfig.textMimeTypes );
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
   fileMasks->encodingCombo->insertStringList( availableEncodingNames );
@@ -817,10 +814,11 @@ void QuantaApp::slotOptions()
     qConfig.closeOptionalTags = styleOptionsS->optionalTagAutoClose->isChecked();
     qConfig.useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
 
-    fileMaskHtml = fileMasks->lineHTML->text()+" ";
-  	fileMaskPhp  = fileMasks->linePHP->text()+" ";
-	  fileMaskImage= fileMasks->lineImages->text()+" ";
-  	fileMaskText = fileMasks->lineText->text()+" ";
+    qConfig.markupMimeTypes = fileMasks->lineMarkup->text();
+  	qConfig.scriptMimeTypes  = fileMasks->lineScript->text();
+	  qConfig.imageMimeTypes= fileMasks->lineImage->text();
+  	qConfig.textMimeTypes = fileMasks->lineText->text();
+   
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
     qConfig.enableDTDToolbar = !fileMasks->hideDTDToolbar->isChecked();
     showDTDToolbar->setEnabled(qConfig.enableDTDToolbar);
@@ -1306,18 +1304,6 @@ void QuantaApp::slotShowOpenFileList()
 //A little trick. I fill in the list in reversed order.
   for (int i = fileList.count()-1;  i >=0 ; i--)
   {
-/*     tmpString = KURL(fileList[i]).prettyURL();
-     if (tmpString.left(5) == "file:") tmpString.remove(0,5);
-     if (tmpString.left(1) == "/")
-    {
-       	tmpString = QExtFileInfo::toRelative(tmpString,projectBaseURL());
-       	if (tmpString.contains("../"))
-       	{
-        	tmpString.replace(QRegExp("\\.\\./"),"");
-        	tmpString = ".../"+tmpString;
-       	}
-     }
-  	openList.append(tmpString);*/
     url = QExtFileInfo::toRelative(fileList[i], baseURL);
     openList.append(url.url());
   }
@@ -2227,6 +2213,17 @@ void QuantaApp::slotBuildPrjToolbarsMenu()
     {
       projectToolbarFiles->clearURLList();
     }
+}
+
+/** Returns the project (if there is one loaded) or global default encoding. */
+QString QuantaApp::defaultEncoding()
+{
+  QString encoding = qConfig.defaultEncoding;
+  if (project && project->hasProject())
+  {
+    encoding = project->defaultEncoding();
+  } 
+  return encoding;
 }
 
 #include "quanta.moc"

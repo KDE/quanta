@@ -2,8 +2,9 @@
                           projecttreeview.h  -  description
                              -------------------
     begin                : Tue Mar 14 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
+                           (C) 2001, 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************

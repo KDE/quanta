@@ -84,7 +84,6 @@ protected: // Protected methods
 //  virtual void startDrag();
   /** No descriptions */
   void contentsDropEvent(QDropEvent *);
-  int confirmInsert();
 };
 
 #endif

@@ -50,6 +50,10 @@ typedef struct QConfig{
           //environment options
           QString globalDataDir;         //not stored, initialized on app startup
           QStringList pluginSearchPaths; //global but read from plugins.rc
+          QString markupMimeTypes;
+          QString scriptMimeTypes;
+          QString imageMimeTypes;
+          QString textMimeTypes;
 
         }; 
 

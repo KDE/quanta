@@ -19,6 +19,7 @@
 /* KDE INCLUDES */
 #include <kparts/componentfactory.h>
 #include <kparts/part.h>
+#include <klocale.h>
 #include <kstandarddirs.h>
 
 /* QT INCLUDES */
@@ -70,7 +71,7 @@ bool QuantaKPartPlugin::load()
   }
 
   QString ow = outputWindow();
-  if(ow == "Editor View")
+  if(ow == i18n("Editor View"))
   {
     QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
 

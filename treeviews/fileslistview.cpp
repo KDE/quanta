@@ -189,7 +189,7 @@ void FilesListView::slotSelectFile(QListViewItem *item)
   KURL url;
   QuantaCommon::setUrl(url,nameToOpen);
 
-	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
+/*	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
 		emit openFile( url, qConfig.defaultEncoding );
 		return;
@@ -199,7 +199,7 @@ void FilesListView::slotSelectFile(QListViewItem *item)
 		emit activatePreview();
 		emit openImage( url );
 		return;
-	}
+	} */
 	new KRun( url, 0, true );
 }
 
@@ -226,7 +226,7 @@ void FilesListView::slotSelectImage(QListViewItem *item)
 	QString nameToOpen = currentFileName();
   KURL url;
   QuantaCommon::setUrl(url, nameToOpen);
-	if ( QDir::match( fileMaskImage, nameToOpen) )
+//	if ( QDir::match( fileMaskImage, nameToOpen) )
 	{
 		emit openImage( url );
 	}

@@ -45,6 +45,7 @@
 // include files for KDE
 #include <kurl.h>
 #include <kfile.h>
+#include <kcharsets.h>
 #include <kwizard.h>
 #include <klocale.h>
 #include <kaction.h>
@@ -264,16 +265,6 @@ void Project::readConfig (KConfig *config)
 
   config->setGroup  ("Projects");
   projectRecent->loadEntries(config, "RecentProjects");
-
-  /*
-  QString url = config->readEntry("Last Project")
-  KURL u(url);
-  if ( url.isEmpty())   return;
-  if ( u.isMalformed()) return;
-
-  closeProject();
-  loadProject ( url );
-  */
 }
 
 void Project::readLastConfig(KConfig *c)
@@ -316,7 +307,7 @@ void Project::writeConfig(KConfig *config)
 void Project::slotOpenProject()
 {
   KURL url = KFileDialog::getOpenURL( QString::null,
-                       i18n("*.wpj *.webprj|Project files\n*|All files"), this);
+                       "*.wpj *.webprj"+i18n("|Project files\n*|All files"), this);
 
   if( !url.isEmpty() )
   {
@@ -489,6 +480,11 @@ void Project::loadProjectXML()
   }
 
   usePreviewPrefix = ( projectNode.toElement().attribute("usePreviewPrefix") == "1");
+  m_defaultEncoding = projectNode.toElement().attribute("encoding");
+  if (m_defaultEncoding.isEmpty())
+  {
+    m_defaultEncoding = qConfig.defaultEncoding;
+  }
 
   no = projectNode.namedItem("author");
   author = no.firstChild().nodeValue();
@@ -863,6 +859,33 @@ void Project::slotNewProject()
 	connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
 					 wiz, SLOT(setBackEnabled(QWidget*,bool)));
 
+
+  QDictIterator<DTDStruct> it(*dtds);
+  for( ; it.current(); ++it )
+  {
+    if (it.current()->family == Xml)
+    {
+      int index = -1;
+      if (it.current()->name.lower() == qConfig.defaultDocType) index = 0;
+      png->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
+    }
+  }
+
+  QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
+  png->encodingCombo->insertStringList( availableEncodingNames );
+  QStringList::ConstIterator iter;
+  int iIndex = -1;
+  for (iter = availableEncodingNames.begin(); iter != availableEncodingNames.end(); ++iter)
+  {
+     ++iIndex;
+     if ((*iter).lower() == qConfig.defaultEncoding.lower())
+     {
+       png->encodingCombo->setCurrentItem(iIndex);
+       break;
+     }
+  }
+  
+           
 	if ( wiz->exec() ) slotAcceptCreateProject();
 
 	delete wiz;
@@ -1047,6 +1070,21 @@ void Project::slotOptions()
     }
   }
 
+  QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
+  optionsPage->encodingCombo->insertStringList( availableEncodingNames );
+  QStringList::ConstIterator iter;
+  int iIndex = -1;
+  for (iter = availableEncodingNames.begin(); iter != availableEncodingNames.end(); ++iter)
+  {
+     ++iIndex;
+     if ((*iter).lower() == m_defaultEncoding.lower())
+     {
+       optionsPage->encodingCombo->setCurrentItem(iIndex);
+       break;
+     }
+  }
+  
+
   QStringList list;
   QDomNodeList nl = dom.elementsByTagName("projectview");
   QDomElement el;
@@ -1058,16 +1096,22 @@ void Project::slotOptions()
   list.sort();
 
   QString defaultView = dom.firstChild().firstChild().namedItem("autoload").toElement().attribute("projectview");
-  optionsPage->viewCombo->insertStringList(list);
-  for (uint i = 0; i < list.count(); i++)
+  if (list.count() > 0)
   {
-    if (list[i] == defaultView)
+    optionsPage->viewCombo->insertStringList(list);
+    for (uint i = 0; i < list.count(); i++)
     {
-      optionsPage->viewCombo->setCurrentItem(i);
-      break;
+      if (list[i] == defaultView)
+      {
+        optionsPage->viewCombo->setCurrentItem(i);
+        break;
+      }
     }
+  } else
+  {
+    optionsPage->viewCombo->insertItem(i18n("No view was saved yet."));
+    optionsPage->viewCombo->setEnabled(false);
   }
-  
 
 	pnf->checkPrefix->setChecked(usePreviewPrefix);
 
@@ -1077,6 +1121,7 @@ void Project::slotOptions()
 		author		= optionsPage->lineAuthor ->text();
 		email			= optionsPage->lineEmail	->text();
     m_defaultDTD = QuantaCommon::getDTDNameFromNickName(optionsPage->dtdCombo->currentText()).lower();
+    m_defaultEncoding  = optionsPage->encodingCombo->currentText();
 
     QuantaCommon::setUrl(templateURL, optionsPage->linePrjTmpl->text());
     templateURL.adjustPath(1);
@@ -1104,6 +1149,7 @@ void Project::slotOptions()
  		el.setAttribute("name",projectName);
  		el.setAttribute("previewPrefix", previewPrefix.url() );
  		el.setAttribute("usePreviewPrefix", usePreviewPrefix );
+    el.setAttribute("encoding", m_defaultEncoding);
 
  		el = dom.firstChild().firstChild().namedItem("author").toElement();
  		if (el.isNull())
@@ -1165,18 +1211,20 @@ void Project::slotOptions()
       el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
     }
 
-    defaultView = optionsPage->viewCombo->currentText();
- 		el = dom.firstChild().firstChild().namedItem("autoload").toElement();
- 		if (el.isNull())
- 		{
- 		  el = dom.createElement("autoload");
-      el.setAttribute("projectview", defaultView);
-		  dom.firstChild().firstChild().appendChild( el );
- 		} else
- 		{
-      el.setAttribute("projectview", defaultView);
- 		}
-
+    if (optionsPage->viewCombo->isEnabled())
+    {
+      defaultView = optionsPage->viewCombo->currentText();
+   		el = dom.firstChild().firstChild().namedItem("autoload").toElement();
+   		if (el.isNull())
+   		{
+   		  el = dom.createElement("autoload");
+        el.setAttribute("projectview", defaultView);
+  		  dom.firstChild().firstChild().appendChild( el );
+   		} else
+   		{
+        el.setAttribute("projectview", defaultView);
+   		}
+    }
     modified = true;
 		
 		emit setProjectName( projectName );
@@ -1279,11 +1327,11 @@ void Project::openCurrentView()
           KURL url = baseURL;
           QuantaCommon::setUrl(url,el2.attribute("url"));
           url = QExtFileInfo::toAbsolute(url, baseURL);
-          if (el2.nodeName() == "item")
+          if (el2.nodeName() == "viewitem")
           {
-            emit openFile(url, qConfig.defaultEncoding);
+            emit openFile(url, m_defaultEncoding);
           }
-          if (el2.nodeName() == "toolbar")
+          if (el2.nodeName() == "viewtoolbar")
           {
             quantaApp->slotLoadToolbarFile(url);
           }
@@ -1361,7 +1409,7 @@ void Project::slotSaveAsProjectView(bool askForName)
       url = QExtFileInfo::toRelative(url, baseURL);
       if (!w->isUntitled() && fileList.contains(url))
       {
-       item = dom.createElement("item");
+       item = dom.createElement("viewitem");
        item.setAttribute("url", QuantaCommon::qUrl(url) );
        el.appendChild(item);
       }
@@ -1371,7 +1419,7 @@ void Project::slotSaveAsProjectView(bool askForName)
     KURL::List toolbarList = quantaApp->userToolbarFiles();
     for (uint i =0 ; i < toolbarList.count(); i++)
     {
-      item = dom.createElement("toolbar");
+      item = dom.createElement("viewtoolbar");
       item.setAttribute("url", QuantaCommon::qUrl(toolbarList[i]) );
       el.appendChild(item);
     }

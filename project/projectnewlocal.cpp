@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    								 (C) 2001 Andras Mantia
+                           (C) 2001, 2002 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -28,7 +28,7 @@
 // kde includes
 #include <klocale.h>
 #include <kiconloader.h>
-#include	 <kfiledialog.h>
+#include <kfiledialog.h>
 
 #include "projectnewlocal.h"
 #include "projectnewgeneral.h"
@@ -47,10 +47,6 @@ ProjectNewLocal::ProjectNewLocal(QWidget *parent, const char *name )
 
 	listFiles->setColumnAlignment(1,Qt::AlignRight);
 
-    QString tmpString;
-    tmpString = fileMaskPhp + fileMaskHtml + fileMaskJava + fileMaskImage;
-	webmask->setText(tmpString.simplifyWhiteSpace());
-	webmask->setCursorPosition(0);
 	mask->setText("*");
 
 	projectDirTree = 0L;
@@ -94,7 +90,7 @@ KURL::List ProjectNewLocal::projectFiles(bool relative)
 	if ( !fi.exists() || !fi.isDir() || !checkInsert->isChecked() ) return list;
 
 	QString fmask = "*";
-	if ( checkInsertWeb->isChecked() ) fmask = webmask->text();
+//	if ( checkInsertWeb->isChecked() ) fmask = webmask->text();
 	if ( checkInsertWithMask->isChecked() ) fmask = mask->text();
 
     if (relative) list = QExtFileInfo::allFilesRelative( dir, fmask);

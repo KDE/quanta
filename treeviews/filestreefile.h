@@ -39,9 +39,6 @@ public:
   /** No descriptions */
   virtual void sortChildItems(int column, bool ascending);
 
-  /** used for sorting */
-//  virtual QString key ( int column, bool ascending ) const;
-
 public:
 	KURL url;
 	bool isDir;

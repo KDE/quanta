@@ -11,6 +11,12 @@
 #include "../treeviews/uploadtreeview.h"
 
 
+struct URLListEntry{
+   KURL url;
+   QString date;
+   QString size;
+ };
+
 class RescanPrj : public RescanPrjDir  {
    Q_OBJECT
 public: 
@@ -32,8 +38,11 @@ public slots:
   
 private:
   KURL baseURL;
-  KURL::List list;
   KURL::List prjFileList;
+  QValueList<URLListEntry> urlList;
+protected slots: // Protected slots
+  /** No descriptions */
+  void slotListDone(KIO::Job *);
 };
 
 #endif

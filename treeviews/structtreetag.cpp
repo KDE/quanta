@@ -113,7 +113,3 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, QString name )
 
 StructTreeTag::~StructTreeTag(){
 }
-
-/** set pixmap of tag */
-//void StructTreeTag::setPixmap(QString name){
-//}

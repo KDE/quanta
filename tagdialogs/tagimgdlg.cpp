@@ -92,7 +92,7 @@ void TagImgDlg::slotRecalcImgSize()
 void TagImgDlg::slotFileSelect()
 {
 //TODO: Implemented only for local files, but maybe it is enough
- KURL url = KFileDialog::getOpenURL( baseURL.url(), i18n("*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP|Image files\n*|All files"));
+ KURL url = KFileDialog::getOpenURL( baseURL.url(), "*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP"+i18n("|Image files\n*|All files"));
  if ( !url.isEmpty() )
   {
     url = QExtFileInfo::toRelative(url, baseURL);

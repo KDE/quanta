@@ -49,6 +49,7 @@
 #include "../resource.h"
 #include "../quantacommon.h"
 #include "../qextfileinfo.h"
+#include "../quanta.h"
 
 const QString textMenu = I18N_NOOP("Insert as Text");
 const QString binaryMenu = I18N_NOOP("Insert Link to File");
@@ -63,9 +64,6 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
 	
 	openId = fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotInsert()));
   fileMenu -> insertItem(i18n("Open for Editing"), 	this ,SLOT(slotOpen()));
-//	fileMenu -> insertItem(i18n("Insert Tag"), 	this ,SLOT(slotInsertTag()));
-//	fileMenu -> insertItem(i18n("Insert as Text in Document"), 	this ,SLOT(slotInsertInDocument()));
-//	fileMenu -> insertItem(i18n("New Document Based on This"), 	this ,SLOT(slotNewDocument()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( i18n("&New Directory..."), 		this ,SLOT(slotNewDir()));
 	fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
@@ -78,8 +76,6 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
 
 	folderMenu = new QPopupMenu();
 
-//	folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
-//	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( i18n("&New Directory..."), 		this ,SLOT(slotNewDir()));
 	folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
 	folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
@@ -99,27 +95,13 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
 	localDir->setPixmap( 0, SmallIcon("folder"));
 	localDir->setOpen( true );
 
-/*
-	if (! basePath.isEmpty())
-	{
- 		projectDir = new FilesTreeFolder( this , i18n("Project Templates"), basePath+"templates/");
-		projectDir->setPixmap( 0, SmallIcon("folder"));
-		projectDir->setOpen( true );
-	} else
-	{
-		projectDir = 0L;
-	}
-*/
-	
-//	topURLList = 0L;	
-	
 	setRootIsDecorated( true );
   header()->hide();
   setSorting( 0 );
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( "Name" );
+  addColumn( i18n("Name") );
 
 	setFocusPolicy(QWidget::ClickFocus);
 
@@ -209,7 +191,7 @@ void TemplatesTreeView::slotNewDocument()
     	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
  	    if ( parent && !dynamic_cast<FilesTreeFolder *>(item) )
       {
-       emit openFile(KURL(), qConfig.defaultEncoding);
+       emit openFile(KURL(), quantaApp->defaultEncoding());
  	     emit insertFile(url);
       }
  	 }
@@ -589,12 +571,10 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
      {
        if(!mimeType.contains("text", false))
        {
- /*        if(confirmInsert() != KMessageBox::Yes)
-           return;*/
          denyBinaryInsert();
          return;
        }
-       emit openFile(KURL(), qConfig.defaultEncoding);
+       emit openFile(KURL(), quantaApp->defaultEncoding());
        emit insertFile(localFileName);
      }
    }
@@ -607,11 +587,6 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
    }
 }
 
-int TemplatesTreeView::confirmInsert()
-{
-  return KMessageBox::questionYesNo(this,i18n("This file may be a binary file, thus cannot be \
-used as a base file correctly.\n Do you still want to continue?"),i18n("Wrong type")) ;
-}
 /** Sets the project template directory */
 void TemplatesTreeView::slotSetTemplateURL(const KURL& newTemplateURL)
 {

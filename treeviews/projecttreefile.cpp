@@ -3,7 +3,7 @@
                              -------------------
     begin                : Wed Mar 15 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-                          (C) 2001, 2002 Andras Mantia
+                           (C) 2001, 2002 Andras Mantia
     email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
@@ -37,27 +37,6 @@ ProjectTreeFile::ProjectTreeFile( ProjectTreeFolder *parent, QString name, const
 
 ProjectTreeFile::~ProjectTreeFile(){
 }
-
-/** used for sorting */
-/*
-QString ProjectTreeFile::key ( int, bool ) const
-{
-  static QString key;
-  key  = QString( text(0) );
-
-  QString prefix = "5";
-
-//FIXME: VERY slow on KDE/QT 3.0
-//  if ( QDir::match( fileMaskHtml,  key) ) prefix = "2";
-//  if ( QDir::match( fileMaskText,  key) ) prefix = "3";
-//  if ( QDir::match( fileMaskImage, key) ) prefix = "4";
-
-
-  key = prefix + key;
-  return key;
-
-  return QFileInfo(key).extension()+key;
-}            */
 
 void ProjectTreeFile::paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int alignment)
 {

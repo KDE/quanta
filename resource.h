@@ -39,12 +39,6 @@ extern Parser *parser;
 
 extern KDirWatch *fileWatcher;
 
-extern QString fileMaskHtml;
-extern QString fileMaskPhp;
-extern QString fileMaskJava;
-extern QString fileMaskText;
-extern QString fileMaskImage;
-
 extern const QString toolbarExtension;
 
 extern KProgress *progressBar;

@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>530</width>
+            <width>620</width>
             <height>410</height>
         </rect>
     </property>
@@ -22,13 +22,13 @@
     </property>
     <property name="minimumSize">
         <size>
-            <width>530</width>
+            <width>620</width>
             <height>410</height>
         </size>
     </property>
     <property name="maximumSize">
         <size>
-            <width>530</width>
+            <width>620</width>
             <height>410</height>
         </size>
     </property>
@@ -41,13 +41,13 @@
     </property>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout39</cstring>
+            <cstring>Layout38</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>5</x>
-                <y>5</y>
-                <width>520</width>
+                <x>6</x>
+                <y>6</y>
+                <width>608</width>
                 <height>400</height>
             </rect>
         </property>
@@ -59,47 +59,11 @@
                 <number>0</number>
             </property>
             <property name="spacing">
-                <number>5</number>
+                <number>6</number>
             </property>
-            <widget class="QLabel" row="0" column="0">
-                <property name="name">
-                    <cstring>imagelabel</cstring>
-                </property>
-                <property name="sizePolicy">
-                    <sizepolicy>
-                        <hsizetype>0</hsizetype>
-                        <vsizetype>7</vsizetype>
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                    </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                    <size>
-                        <width>120</width>
-                        <height>0</height>
-                    </size>
-                </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>120</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="text">
-                    <string></string>
-                </property>
-                <property name="scaledContents">
-                    <bool>true</bool>
-                </property>
-                <property name="alignment">
-                    <set>AlignTop|AlignLeft</set>
-                </property>
-                <property name="vAlign" stdset="0">
-                </property>
-            </widget>
             <widget class="QLayoutWidget" row="0" column="1">
                 <property name="name">
-                    <cstring>Layout35</cstring>
+                    <cstring>Layout37</cstring>
                 </property>
                 <grid>
                     <property name="name">
@@ -111,42 +75,9 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>checkPublishing</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="text">
-                            <string>Project publishing (not implemented)</string>
-                        </property>
-                    </widget>
                     <widget class="Line" row="6" column="0" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>Line1_2</cstring>
-                        </property>
-                        <property name="frameShape" stdset="0">
-                            <enum>HLine</enum>
-                        </property>
-                        <property name="frameShadow">
-                            <enum>Sunken</enum>
-                        </property>
-                        <property name="orientation">
-                            <enum>Horizontal</enum>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="1" column="1">
-                        <property name="name">
-                            <cstring>lineUrl</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                    </widget>
-                    <widget class="Line" row="4" column="0" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>Line1</cstring>
                         </property>
                         <property name="frameShape" stdset="0">
                             <enum>HLine</enum>
@@ -187,25 +118,6 @@
                         </property>
                         <property name="orientation">
                             <enum>Horizontal</enum>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="3" column="0">
-                        <property name="name">
-                            <cstring>TextLabel5</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                        <property name="text">
-                            <string>Password:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="3" column="1">
-                        <property name="name">
-                            <cstring>linePasswd</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
                         </property>
                     </widget>
                     <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="2">
@@ -251,6 +163,33 @@
                             </widget>
                         </grid>
                     </widget>
+                    <widget class="QLineEdit" row="3" column="1">
+                        <property name="name">
+                            <cstring>linePasswd</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="1" column="1">
+                        <property name="name">
+                            <cstring>lineUrl</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>TextLabel3</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Server URL:</string>
+                        </property>
+                    </widget>
                     <widget class="QLabel" row="2" column="0">
                         <property name="name">
                             <cstring>TextLabel4</cstring>
@@ -260,6 +199,14 @@
                         </property>
                         <property name="text">
                             <string>User name:</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="2" column="1">
+                        <property name="name">
+                            <cstring>lineUser</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
                         </property>
                     </widget>
                     <widget class="QLayoutWidget" row="7" column="0" rowspan="1" colspan="2">
@@ -294,26 +241,79 @@
                             </widget>
                         </grid>
                     </widget>
-                    <widget class="QLineEdit" row="2" column="1">
+                    <widget class="QLabel" row="3" column="0">
                         <property name="name">
-                            <cstring>lineUser</cstring>
-                        </property>
-                        <property name="enabled">
-                            <bool>false</bool>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>TextLabel3</cstring>
+                            <cstring>TextLabel5</cstring>
                         </property>
                         <property name="enabled">
                             <bool>false</bool>
                         </property>
                         <property name="text">
-                            <string>Server URL:</string>
+                            <string>Password:</string>
+                        </property>
+                    </widget>
+                    <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>checkPublishing</cstring>
+                        </property>
+                        <property name="enabled">
+                            <bool>false</bool>
+                        </property>
+                        <property name="text">
+                            <string>Project publishing (not implemented)</string>
+                        </property>
+                    </widget>
+                    <widget class="Line" row="4" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>Line1</cstring>
+                        </property>
+                        <property name="frameShape" stdset="0">
+                            <enum>HLine</enum>
+                        </property>
+                        <property name="frameShadow">
+                            <enum>Sunken</enum>
+                        </property>
+                        <property name="orientation">
+                            <enum>Horizontal</enum>
                         </property>
                     </widget>
                 </grid>
+            </widget>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>imagelabel</cstring>
+                </property>
+                <property name="sizePolicy">
+                    <sizepolicy>
+                        <hsizetype>0</hsizetype>
+                        <vsizetype>7</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                    </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                    <size>
+                        <width>120</width>
+                        <height>0</height>
+                    </size>
+                </property>
+                <property name="maximumSize">
+                    <size>
+                        <width>120</width>
+                        <height>32767</height>
+                    </size>
+                </property>
+                <property name="text">
+                    <string></string>
+                </property>
+                <property name="scaledContents">
+                    <bool>true</bool>
+                </property>
+                <property name="alignment">
+                    <set>AlignTop|AlignLeft</set>
+                </property>
+                <property name="vAlign" stdset="0">
+                </property>
             </widget>
         </grid>
     </widget>

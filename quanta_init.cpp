@@ -81,16 +81,7 @@
 #include "plugins/php4dbg/debugger.h"
 
 #include "parser/parser.h"
-
-
-extern QString globalDataDir;
-
-QString fileMaskHtml   = "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* *.xml *.XML";
-QString fileMaskPhp   = "*.*PHP* *.*php* ";
-QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";
-QString fileMaskText  = "*.txt; *.TXT";
-QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.xpm *.GIF *.JPG *.PNG *.JPEG *.BMP ";
-
+#include "dialogs/filemasks.h"
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
@@ -184,7 +175,8 @@ void QuantaApp::initQuanta()
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
 
   pm_bookmark  = (QPopupMenu*)guiFactory()->container("bookmarks", this);
-  connect(pm_bookmark, SIGNAL(aboutToShow()), this, SLOT(bookmarkMenuAboutToShow()));
+  connect(pm_bookmark, SIGNAL(
+  aboutToShow()), this, SLOT(bookmarkMenuAboutToShow()));
 
   QPopupMenu* pm_view = (QPopupMenu*)guiFactory()->container("view", this);
   connect(pm_view,SIGNAL(aboutToShow()), this, SLOT(viewMenuAboutToShow()));
@@ -202,9 +194,6 @@ void QuantaApp::initQuanta()
 //Delay the calls as they contain dialog popups. That may crash Quanta!
   QTimer::singleShot(10,this,SLOT(slotFileNew()));;
   QTimer::singleShot(15,this,SLOT(initToolBars()));
-
-
-//  KParts::ReadOnlyPart *m_cervisia =  KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>( "libcervisia.so",this);
 
 }
 
@@ -441,7 +430,6 @@ void QuantaApp::initView()
             this, SLOT(slotActivatePreview()));
   connect(   pTab, SIGNAL(activatePreview()),
             this, SLOT(slotActivatePreview()));
-//  connect(this, SIGNAL(reloadTreeviews()), pTab, SLOT (slotReload()));
 
   connect(  htmlpart,       SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
   connect(  htmlPartDoc,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
@@ -498,11 +486,10 @@ void QuantaApp::saveOptions()
     config->writeEntry("Show DTD Toolbar", qConfig.enableDTDToolbar);
     config->writeEntry("Show Statusbar", statusBar()->isVisible());
 
-    config->writeEntry("Html mask",   fileMaskHtml  );
-    config->writeEntry("Images mask", fileMaskImage );
-    config->writeEntry("Php mask",    fileMaskPhp   );
-    config->writeEntry("Java mask",   fileMaskJava  );
-    config->writeEntry("Text mask",   fileMaskText  );
+    config->writeEntry("Markup mimetypes", qConfig.markupMimeTypes  );
+    config->writeEntry("Script mimetypes", qConfig.scriptMimeTypes   );
+    config->writeEntry("Image mimetypes", qConfig.imageMimeTypes );
+    config->writeEntry("Text mimetypes", qConfig.textMimeTypes  );
 
     config->writeEntry("Capitals for tags", qConfig.tagCase);
     config->writeEntry("Capitals for attr", qConfig.attrCase);
@@ -542,11 +529,12 @@ void QuantaApp::readOptions()
   config->setGroup("General Options");
   //if (2>config->readNumEntry("Version",0)) config = new KConfig();
 
-  fileMaskHtml  = config->readEntry("Html mask", fileMaskHtml)  +" ";
-  fileMaskImage = config->readEntry("Images mask", fileMaskImage)+" ";
-  fileMaskPhp   = config->readEntry("Php mask", fileMaskPhp)  +" ";
-  fileMaskJava  = config->readEntry("Java mask", fileMaskJava)  +" ";
-  fileMaskText  = config->readEntry("Text mask", fileMaskText)  +" ";
+  FileMasks dlg(this);
+  dlg.setToDefault();
+  qConfig.markupMimeTypes = config->readEntry("Markup mimetypes", qConfig.markupMimeTypes);
+  qConfig.scriptMimeTypes = config->readEntry("Script mimetypes", qConfig.scriptMimeTypes);
+  qConfig.imageMimeTypes = config->readEntry("Image mimetypes", qConfig.imageMimeTypes);
+  qConfig.textMimeTypes = config->readEntry("Text mimetypes", qConfig.textMimeTypes);
 
   qConfig.tagCase = config->readNumEntry("Capitals for tags", 0);
   qConfig.attrCase = config->readNumEntry("Capitals for attr", 0);
@@ -1444,7 +1432,7 @@ void QuantaApp::slotPluginRun(int a_id)
     QuantaPlugin *plugin = m_pluginInterface->plugin(pluginName);
     if(plugin)
     {
-      if(plugin->type() == "KPart") // special case
+      if(plugin->type() == i18n("KPart")) // special case
       {
         /*
          Currently there's no easy way to determine when a KPart has been closed
@@ -1494,7 +1482,7 @@ void QuantaApp::slotPluginsValidate()
   {
     if(!QuantaPlugin::validatePlugin(it.current()))
     {
-      int answer = KMessageBox::warningYesNo(getView(), "You have plugins installed that aren't currently valid. Do you want to edit the plugins?", "Invalid Plugins");
+      int answer = KMessageBox::warningYesNo(getView(), i18n("You have plugins installed that aren't currently valid. Do you want to edit the plugins?"), i18n("Invalid Plugins"));
       if(answer == KMessageBox::Yes)
       {
         slotPluginsEdit();
@@ -1502,7 +1490,7 @@ void QuantaApp::slotPluginsValidate()
       return;      
     }
   }
-  statusBar()->message("All plugins validated successfully.");
+  statusBar()->message(i18n("All plugins validated successfully."));
 }
 
 

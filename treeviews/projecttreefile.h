@@ -33,8 +33,6 @@ public:
 	ProjectTreeFile( ProjectTreeFolder *parent,  QString name, const KURL& p_url);
 	~ProjectTreeFile();
 
-  /** used for sorting */
-//  virtual QString key ( int column, bool ascending ) const;
   virtual void paintCell( QPainter *, const QColorGroup &, int, int, int);
   
 public:

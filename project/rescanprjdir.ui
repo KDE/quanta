@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>553</width>
-            <height>450</height>
+            <width>620</width>
+            <height>540</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -22,8 +22,8 @@
     </property>
     <property name="minimumSize">
         <size>
-            <width>550</width>
-            <height>450</height>
+            <width>620</width>
+            <height>540</height>
         </size>
     </property>
     <property name="caption">
@@ -34,14 +34,14 @@
     </property>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>MainLayout</cstring>
+            <cstring>Layout8</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>5</x>
-                <y>5</y>
-                <width>540</width>
-                <height>435</height>
+                <y>4</y>
+                <width>606</width>
+                <height>527</height>
             </rect>
         </property>
         <grid>
@@ -49,7 +49,7 @@
                 <cstring>unnamed</cstring>
             </property>
             <property name="margin">
-                <number>1</number>
+                <number>0</number>
             </property>
             <property name="spacing">
                 <number>6</number>
@@ -162,6 +162,19 @@
                         </property>
                     </widget>
                 </grid>
+            </widget>
+            <widget class="KProgress" row="4" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>progress</cstring>
+                </property>
+            </widget>
+            <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>progressText</cstring>
+                </property>
+                <property name="text">
+                    <string>Progress:</string>
+                </property>
             </widget>
             <widget class="UploadTreeView" row="2" column="0">
                 <property name="name">

@@ -85,9 +85,9 @@ void QuantaPluginConfig::nameChanged(const QString &a_text)
   QString type = pluginType->currentText();
 
   QString text = a_text;
-  if(type == "KPart")
+  if(type == i18n("KPart"))
     text = QString("lib") + text + ".so";
-  else if(type == "Command Line")
+  else if(type == i18n("Command Line"))
     ;
     
   else

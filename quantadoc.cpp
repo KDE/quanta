@@ -150,7 +150,7 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
     }
 
     Document *w = write();
-    if (encoding.isEmpty()) encoding = qConfig.defaultEncoding;
+    if (encoding.isEmpty()) encoding = quantaApp->defaultEncoding();
     w->kate_doc->setEncoding(encoding);
     w->readConfig(quantaApp->config);
     if (w->doc()->openURL( url ))
@@ -636,60 +636,6 @@ void QuantaDoc::changeFileTabName(const KURL& oldURL, KURL newURL)
     m_docList->remove( oldURL.url() );
     m_docList->insert( newURL.url(), w );
   }
-
-
-  //TODO Why is this useful??
-/*
-  QDictIterator<Document> it1(*m_docList);
-// QDictIterator<Document> it2(*m_docList);
-
-// 	int i,len;
- 	while ( it1.current() )
- 	{
- 		QString name1 = it1.currentKey();
- 		len = 0;
- 		i = name1.findRev( '/' );
-
- 		if ( i!=-1 ) len = name1.length()-i-1;
- 		else		 		 len = name1.length();
-
- 		it2.toFirst();
-
- 		while ( it2.current() && i != -1 && it1.current() != it2.current() )
- 		{
- 			QString name2 = it2.currentKey();
-
- 			if ( name1 != name2 )
- 			{
- 				while ( name1.right( len ) == name2.right( len ) && i != -1 && len>=0 )
- 				{
- 					i = name1.findRev( '/', i-1 );
- 					len = name1.length()-i-1;
- 				}
- 			}
- 			++it2;
- 		}
- 		QString shortUrl = name1.right( len );
-  	 QString shortUrl = KURL(name1).prettyURL();
-  	 if (shortUrl.left(5) == "file:") shortUrl.remove(0,5);
-     if (shortUrl.left(1) == "/")
-    {
-       	shortUrl = QExtFileInfo::toRelative(shortUrl,baseURL());
-        if (shortUrl.contains("../"))
-        {
-          shortUrl.replace(QRegExp("\\.\\./"),"");
-          shortUrl = ".../" + shortUrl;
-        }
-    }
-
-		if ( quantaApp->view->writeTab->tabToolTip(it1.current()) != shortUrl)
-    {
- 		  quantaApp->view->writeTab->changeTab( it1.current() , shortUrl.section("/",-1) );
- 		  quantaApp->view->writeTab->setTabToolTip( it1.current() , shortUrl );
-    }                                       
- 		++it1;
- 	}
-  */
 }
 
 /// SLOTS

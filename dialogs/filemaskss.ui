@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>410</width>
-            <height>250</height>
+            <width>455</width>
+            <height>290</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -31,14 +31,14 @@
     </property>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout9</cstring>
+            <cstring>Layout42</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>5</x>
-                <y>5</y>
-                <width>400</width>
-                <height>235</height>
+                <x>6</x>
+                <y>4</y>
+                <width>394</width>
+                <height>268</height>
             </rect>
         </property>
         <grid>
@@ -51,9 +51,9 @@
             <property name="spacing">
                 <number>6</number>
             </property>
-            <widget class="QLayoutWidget" row="0" column="0">
+            <widget class="QLayoutWidget" row="2" column="0">
                 <property name="name">
-                    <cstring>Layout4</cstring>
+                    <cstring>Layout8</cstring>
                 </property>
                 <grid>
                     <property name="name">
@@ -65,81 +65,14 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
+                    <widget class="QComboBox" row="1" column="2">
                         <property name="name">
-                            <cstring>lineHTML</cstring>
+                            <cstring>encodingCombo</cstring>
                         </property>
                     </widget>
-                    <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>lineImages</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton" row="4" column="2">
-                        <property name="name">
-                            <cstring>buttonDefault</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Default</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="3" column="0">
-                        <property name="name">
-                            <cstring>TextLabel4</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Text files:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="0" column="0">
-                        <property name="name">
-                            <cstring>TextLabel1</cstring>
-                        </property>
-                        <property name="text">
-                            <string>HTML files:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="2" column="0">
-                        <property name="name">
-                            <cstring>TextLabel3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Images:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="2">
-                        <property name="name">
-                            <cstring>lineText</cstring>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>TextLabel2</cstring>
-                        </property>
-                        <property name="sizePolicy">
-                            <sizepolicy>
-                                <hsizetype>1</hsizetype>
-                                <vsizetype>1</vsizetype>
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="minimumSize">
-                            <size>
-                                <width>0</width>
-                                <height>0</height>
-                            </size>
-                        </property>
-                        <property name="text">
-                            <string>PHP files:</string>
-                        </property>
-                        <property name="scaledContents">
-                            <bool>false</bool>
-                        </property>
-                    </widget>
-                    <spacer row="4" column="1">
+                    <spacer row="1" column="1">
                         <property name="name" stdset="0">
-                            <cstring>Spacer2</cstring>
+                            <cstring>Spacer5</cstring>
                         </property>
                         <property name="orientation">
                             <enum>Horizontal</enum>
@@ -154,12 +87,26 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="2">
+                    <widget class="QLabel" row="1" column="0">
                         <property name="name">
-                            <cstring>linePHP</cstring>
+                            <cstring>TextLabel1_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Default character encoding:</string>
+                        </property>
+                        <property name="alignment">
+                            <set>AlignVCenter|AlignLeft</set>
                         </property>
                     </widget>
                 </grid>
+            </widget>
+            <widget class="QCheckBox" row="3" column="0">
+                <property name="name">
+                    <cstring>hideDTDToolbar</cstring>
+                </property>
+                <property name="text">
+                    <string>&amp;Always hide the DTD toolbar</string>
+                </property>
             </widget>
             <spacer row="1" column="0">
                 <property name="name" stdset="0">
@@ -178,88 +125,148 @@
                     </size>
                 </property>
             </spacer>
-            <widget class="QLayoutWidget" row="2" column="0">
+            <widget class="QGroupBox" row="0" column="0">
                 <property name="name">
-                    <cstring>Layout7</cstring>
+                    <cstring>GroupBox1</cstring>
                 </property>
-                <grid>
+                <property name="title">
+                    <string>Mimetypes</string>
+                </property>
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>Layout4</cstring>
                     </property>
-                    <property name="margin">
-                        <number>0</number>
+                    <property name="geometry">
+                        <rect>
+                            <x>9</x>
+                            <y>20</y>
+                            <width>374</width>
+                            <height>155</height>
+                        </rect>
                     </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QLayoutWidget" row="0" column="0">
+                    <grid>
                         <property name="name">
-                            <cstring>Layout8</cstring>
+                            <cstring>unnamed</cstring>
                         </property>
-                        <grid>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
                             <property name="name">
-                                <cstring>unnamed</cstring>
+                                <cstring>lineMarkup</cstring>
                             </property>
-                            <property name="margin">
-                                <number>0</number>
+                            <property name="alignment">
+                                <set>AlignLeft</set>
                             </property>
-                            <property name="spacing">
-                                <number>6</number>
+                        </widget>
+                        <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>lineImage</cstring>
                             </property>
-                            <widget class="QComboBox" row="1" column="2">
-                                <property name="name">
-                                    <cstring>encodingCombo</cstring>
-                                </property>
-                            </widget>
-                            <spacer row="1" column="1">
-                                <property name="name" stdset="0">
-                                    <cstring>Spacer5</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QLabel" row="1" column="0">
-                                <property name="name">
-                                    <cstring>TextLabel1_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Default character encoding:</string>
-                                </property>
-                                <property name="alignment">
-                                    <set>AlignVCenter|AlignLeft</set>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
-                    <widget class="QCheckBox" row="1" column="0">
-                        <property name="name">
-                            <cstring>hideDTDToolbar</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Always hide the DTD toolbar</string>
-                        </property>
-                    </widget>
-                </grid>
+                            <property name="alignment">
+                                <set>AlignLeft</set>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton" row="4" column="2">
+                            <property name="name">
+                                <cstring>buttonDefault</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Reset To &amp;Default</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="3" column="0">
+                            <property name="name">
+                                <cstring>TextLabel4_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Texts:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>TextLabel1_3</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Markups:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="2" column="0">
+                            <property name="name">
+                                <cstring>TextLabel3_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Images:</string>
+                            </property>
+                        </widget>
+                        <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>lineText</cstring>
+                            </property>
+                            <property name="alignment">
+                                <set>AlignLeft</set>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0">
+                            <property name="name">
+                                <cstring>TextLabel2_2</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>1</hsizetype>
+                                    <vsizetype>1</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>0</width>
+                                    <height>0</height>
+                                </size>
+                            </property>
+                            <property name="text">
+                                <string>Scripts:</string>
+                            </property>
+                            <property name="scaledContents">
+                                <bool>false</bool>
+                            </property>
+                        </widget>
+                        <spacer row="4" column="1">
+                            <property name="name" stdset="0">
+                                <cstring>Spacer2_2</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Expanding</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>lineScript</cstring>
+                            </property>
+                            <property name="alignment">
+                                <set>AlignLeft</set>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
             </widget>
         </grid>
     </widget>
 </widget>
 <tabstops>
-    <tabstop>lineHTML</tabstop>
-    <tabstop>linePHP</tabstop>
-    <tabstop>lineImages</tabstop>
-    <tabstop>lineText</tabstop>
-    <tabstop>buttonDefault</tabstop>
     <tabstop>encodingCombo</tabstop>
     <tabstop>hideDTDToolbar</tabstop>
 </tabstops>

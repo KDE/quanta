@@ -20,6 +20,7 @@
 /* KDE INCLUDES */
 #include <kprocess.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
 
 /* QT INCLUDES */
 #include <qwidget.h>
@@ -95,13 +96,13 @@ bool QuantaCmdPlugin::load()
   }
 
   QString ow = outputWindow();
-  if(ow == "Konsole")
+  if(ow == i18n("Konsole"))
   {
     QString kon = locate("exe", "konsole");
     *m_process << kon << "-e" << loc;
     *m_process << args; // FIXME : Do we need to tokenize arguments here?
   }
-  else if(ow == "Message Window")
+  else if(ow == i18n("Message Window"))
   {
     *m_process << loc << args;
   }
@@ -144,14 +145,14 @@ void QuantaCmdPlugin::writeOutput(KProcess *, char *a_buffer, int a_len)
   QString text(buffer);
 
   QString ow = outputWindow();
-  if(ow == "Message Window")
+  if(ow == i18n("Message Window"))
   {
     if(quantaApp)
     {
       quantaApp->getMessages()->showMessage(text);
     }
   }
-  else if(ow == "Konsole")
+  else if(ow == i18n("Konsole"))
   {
     fprintf(stdin, text.latin1());
   }

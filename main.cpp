@@ -125,7 +125,6 @@ int main(int argc, char *argv[])
   }
 
   KApplication *app;
-//  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
   if (isUnique) {
 	if (!KQUniqueApplication::start())

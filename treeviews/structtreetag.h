@@ -37,10 +37,6 @@ public:
 	~StructTreeTag();
 	
 	Node *node;
-	
-private: // Private methods
-  /** set pixmap of tag */
-//  void setPixmap(QString name);
 };
 
 #endif

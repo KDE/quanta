@@ -43,6 +43,8 @@ public:
   void collapseAll( QListViewItem * = 0 );
   void invertAll( QListViewItem * = 0 );
   virtual void selectAll( bool select);
+  /** No descriptions */
+  QListViewItem* itemByUrl(const KURL& a_url);;
 
 public slots:
   void slotSelectFile( QListViewItem * );

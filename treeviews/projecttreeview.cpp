@@ -2,8 +2,9 @@
                           projecttreeview.cpp  -  description
                              -------------------
     begin                : Tue Mar 14 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
-    email                : pdima@mail.univ.kiev.ua
+    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
+                           (C) 2001, 2002 Andras Mantia
+    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -54,7 +55,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( "Name" );
+  addColumn( i18n("Name") );
 
 	setFocusPolicy(QWidget::ClickFocus);
 	
@@ -201,41 +202,6 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
   projectDir->setOpen( false );
   urlList = a_urlList;
 
-//first add all the new files to the treeview
-/*
-//now remove all the invalid items for the treeview
- if (!buildNewTree)
- {
-  ProjectTreeFolder *folderItem;
-  ProjectTreeFile *fileItem;
-  QListViewItem *item;
-
-  QListViewItemIterator iter(this);
-  for ( ; iter.current(); ++iter )
-  {
-    item = iter.current();
-    folderItem = dynamic_cast<ProjectTreeFolder *> (item);
-    if ( folderItem )
-    {
-      url = folderItem->url;
-    } else
-    {
-      fileItem = dynamic_cast<ProjectTreeFile *> (item);
-      if ( fileItem )
-      {
-        url = fileItem->url;
-      }
-    }
-    if (!urlList.contains(url) && item != projectDir)
-    {
-      delete item;
-    }
-    progressBar->advance(1);
-  }
- }
-  progressBar->setValue(0);
-  progressBar->setTextEnabled(false);*/
-
   if (!buildNewTree) slotRemoveDeleted();
 
   projectDir->setOpen(true);
@@ -255,7 +221,7 @@ void ProjectTreeView::slotOpen()
 
    	if ( QuantaCommon::checkMimeGroup(urlToOpen,"text" ) )
    	{
-   		emit openFile( urlToOpen, qConfig.defaultEncoding );
+   		emit openFile( urlToOpen, quantaApp->defaultEncoding() );
    	}
    	else if ( QuantaCommon::checkMimeGroup(urlToOpen,"image" ) )
    	{
@@ -297,7 +263,7 @@ void ProjectTreeView::slotOpenInQuanta()
 
    if (QuantaCommon::checkMimeGroup(urlToOpen,"text"))
    {
-     emit openFile( urlToOpen, qConfig.defaultEncoding );
+     emit openFile( urlToOpen, quantaApp->defaultEncoding() );
    } else
    {
      denyBinaryInsert();

@@ -138,7 +138,7 @@ void KQApplicationPrivate::init()
     quantaApp->loadInitialProject(initialProject);
 
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-      quantaApp->slotFileOpen(KURL(*it), qConfig.defaultEncoding);  // load initial files
+      quantaApp->slotFileOpen(KURL(*it), quantaApp->defaultEncoding());  // load initial files
 
     quantaApp->openLastFiles();
   }

@@ -18,6 +18,7 @@
 /* KDE INCLUDES */
 #include <kconfig.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
 
 /* QT INCLUDES */
 #include <qdict.h>
@@ -75,6 +76,8 @@ void QuantaPluginInterface::readConfig()
 
     QuantaPlugin *newPlugin = 0;
     QString pluginType = config->readEntry("Type", "Command Line");
+    if (pluginType == "KPart") pluginType = i18n("KPart");
+    if (pluginType == "Command Line") pluginType = i18n("Command Line");
     bool isStandard = config->readBoolEntry("Standard",false);
     if (isStandard)
     {
@@ -89,7 +92,7 @@ void QuantaPluginInterface::readConfig()
       }
     } else
     {
-      if(pluginType == "KPart")
+      if(pluginType == i18n("KPart"))
         newPlugin = new QuantaKPartPlugin();
       else if(pluginType == "Command Line")
         newPlugin = new QuantaCmdPlugin();
@@ -105,7 +108,11 @@ void QuantaPluginInterface::readConfig()
     newPlugin->setLocation(config->readEntry("Location"));
     newPlugin->setType(pluginType);
     newPlugin->setArguments(config->readEntry("Arguments"));
-    newPlugin->setOutputWindow(config->readEntry("OutputWindow"));
+    QString type = config->readEntry("OutputWindow");
+    if (type == "Editor View") type = i18n("Editor View");
+    if (type == "Message Window") type = i18n("Message Window");
+    if (type == "Konsole") type = i18n("Konsole");
+    newPlugin->setOutputWindow(type);
 
     m_plugins.insert(newPlugin->pluginName(), newPlugin);
   }
@@ -132,10 +139,17 @@ void QuantaPluginInterface::writeConfig()
     if(curPlugin)
     {
       config->writeEntry("FileName", curPlugin->fileName());
-      config->writeEntry("Type", curPlugin->type());
+      QString type =  curPlugin->type();
+      if (type == i18n("KPart")) type = "KPart";
+      if (type == i18n("Command Line")) type = "Command Line";
+      config->writeEntry("Type", type);
       config->writeEntry("Location", curPlugin->location());
       config->writeEntry("Arguments", curPlugin->arguments());
-      config->writeEntry("OutputWindow", curPlugin->outputWindow());
+      type = curPlugin->outputWindow();
+      if (type == i18n("Editor View")) type = "Editor View";
+      if (type == i18n("Message Window")) type = "Message Window";
+      if (type == i18n("Konsole")) type = "Konsole";
+      config->writeEntry("OutputWindow", type);
       config->writeEntry("Standard", curPlugin->isStandard());
       if (curPlugin->isStandard()) config->writeEntry("Standard Name", curPlugin->standardName());
     }
@@ -201,8 +215,8 @@ QStringList QuantaPluginInterface::searchPaths()
 QStringList QuantaPluginInterface::pluginTypes()
 {
   QStringList types;
-  types << "KPart";
-  types << "Command Line";
+  types << i18n("KPart");
+  types << i18n("Command Line");
 
   return types;
 }
@@ -211,13 +225,13 @@ QStringList QuantaPluginInterface::outputWindows(const QString &a_type)
 {
   QStringList windows;
 
-  if(a_type == "KPart")
+  if(a_type == i18n("KPart"))
   {
-    windows << "Editor View"; // TODO
+    windows << i18n("Editor View"); // TODO
   }
-  else if(a_type == "Command Line")
+  else if(a_type == i18n("Command Line"))
   {
-    windows << "Message Window" << "Konsole";
+    windows << i18n("Message Window") << i18n("Konsole");
   }
   else
     qWarning("QuantaPluginInterface::outputWindows - Unknown type %s", a_type.latin1());

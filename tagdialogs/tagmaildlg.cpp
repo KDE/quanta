@@ -96,7 +96,7 @@ void TagMailDlg::slotSelectAddress()
  {
 //Actually this may mean also other erros, but the result is the same for us: cannot get the
 //e-mail address
-   KMessageBox::error(this,i18n("No addresses found!"),i18n("Error"));
+   KMessageBox::error(this,i18n("No addresses found!"));
   }
 }
 
