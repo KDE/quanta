@@ -183,6 +183,8 @@ void QuantaApp::initQuanta()
   m_pluginInterface = new QuantaPluginInterface();
 
   createGUI( QString::null, false /* conserveMemory */ );
+  
+  applyMainWindowSettings(config);
 
   initPlugins  ();
 
@@ -678,8 +680,6 @@ void QuantaApp::readOptions()
     if (config->readEntry("PHP Debugger style","PHP4") == "PHP4")
          enablePhp4Debug(true);
     else enablePhp3Debug(true);
-
-  applyMainWindowSettings(config);
 
   spellChecker->readConfig(config);
 }
