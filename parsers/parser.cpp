@@ -329,6 +329,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           } else
           if (qTag && tag->type != Tag::XmlTagEnd)
           {
+            //handle the case when a tag is a stopping tag for parent, and grandparent and so on.
             Node *n = parentNode;
             QString searchFor = (m_dtd->caseSensitive)?tag->name:tag->name.upper();
             while (qTag && n)
@@ -1109,15 +1110,17 @@ Node *Parser::rebuild(Document *w)
 
     node = lastInserted;
 
+    QTag *qTag = 0L;  
     while (node && lastNode)
     {
+      qTag = 0L;
       goUp = ( node->parent &&
                ( (lastNode->tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(node->parent->tag, lastNode->tag) ) ||
                   node->parent->tag->single )
              );
       if (node->parent && !goUp)
       {
-        QTag *qTag = QuantaCommon::tagFromDTD(m_dtd, node->parent->tag->name);
+        qTag = QuantaCommon::tagFromDTD(m_dtd, node->parent->tag->name);
         if ( qTag )
         {
           QString searchFor = (m_dtd->caseSensitive)?lastNode->tag->name:lastNode->tag->name.upper();
@@ -1145,6 +1148,29 @@ Node *Parser::rebuild(Document *w)
                 )
           {
             node = node->parent;
+          }
+        } else
+        if (qTag && lastNode->tag->type != Tag::XmlTagEnd)
+        {
+          //handle the case when a tag is a stopping tag for parent, and grandparent and so on. I'm not sure it's needed here, but anyway...
+          Node *n = node->parent;
+          QString searchFor = (m_dtd->caseSensitive) ? lastNode->tag->name : lastNode->tag->name.upper();
+          while (qTag && n)
+          {
+            qTag = QuantaCommon::tagFromDTD(m_dtd, n->tag->name);
+            if ( qTag )
+            {
+              if ( qTag->stoppingTags.contains(searchFor) )
+              {
+                n->tag->closingMissing = true; //parent is single...
+                if (n->parent)
+                  node = n;
+                n = n->parent;
+              } else
+              {
+                break;
+              }
+            }
           }
         }
       if (lastNode->prev && lastNode->prev->next == lastNode)
