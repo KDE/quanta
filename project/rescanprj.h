@@ -26,6 +26,7 @@
 
 
 #include "rescanprjdir.h"
+#include "projecturl.h"
 
 class KFileItem;
 
@@ -37,7 +38,7 @@ struct URLListEntry{
 class RescanPrj : public RescanPrjDir  {
    Q_OBJECT
 public:
-  RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QRegExp &p_excludeRx, QWidget *parent=0, const char *name=0, bool modal = true);
+  RescanPrj(ProjectUrlList p_prjFileList, const KURL& p_baseURL, QRegExp &p_excludeRx, QWidget *parent=0, const char *name=0, bool modal = true);
   ~RescanPrj();
 
 public slots:
@@ -55,7 +56,7 @@ public slots:
 
 private:
   KURL baseURL;
-  KURL::List prjFileList;
+  ProjectUrlList prjFileList;
   QRegExp excludeRx;
   QValueList<URLListEntry> urlList;
 protected slots: // Protected slots

@@ -59,7 +59,8 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   KURL url;
   url.setPath(qConfig.globalDataDir + resourceDir + "scripts/");
 
-  m_globalDir = new FilesTreeBranch(this, url, i18n("Global scripts"), SmallIcon("run"));
+  FilesTreeBranch *m_globalDir;
+  m_globalDir = new FilesTreeBranch(this, url, i18n("Global scripts"), SmallIcon("run"), true);
   addBranch(m_globalDir);
 
   QDir dir(url.path(), "", QDir::All & !QDir::Hidden);
@@ -68,7 +69,9 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
     m_globalDir->setOpen( true );
   }
   url.setPath(locateLocal("data", resourceDir + "scripts/"));
-  m_localDir = new FilesTreeBranch(this, url, i18n("Local scripts"), SmallIcon("run"));
+
+  FilesTreeBranch *m_localDir;
+  m_localDir = new FilesTreeBranch(this, url, i18n("Local scripts"), SmallIcon("run"), true);
   addBranch(m_localDir);
 
   dir.setPath(url.path());
@@ -76,6 +79,8 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
     m_localDir->root()->setExpandable(true);     //   . and .. are always there
     m_localDir->setOpen( true );
   }
+
+  // here you define which files should not be visible for the users
   const QString excludeString = ".*\\.info$|.*\\.css$";
   m_globalDir->excludeFilterRx.setPattern(excludeString);
   m_localDir->excludeFilterRx.setPattern(excludeString);

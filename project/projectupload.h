@@ -38,7 +38,7 @@ class ProjectUpload : public ProjectUploadS
 {
   Q_OBJECT
 public:
-  ProjectUpload(Project* p,const KURL& url, QWidget *parent = 0, const char * name = 0, bool modal = FALSE, WFlags fl = 0 );
+  ProjectUpload(const KURL& url, const char * name = 0);
   ~ProjectUpload();
 
 protected slots:
@@ -66,7 +66,6 @@ private:
   QListViewItem *currentItem;
   KURL currentURL;
   KURL::List madeDirs;
-  Project *p;
   KURL *baseUrl;
   KURL startUrl;
   bool stopUpload;

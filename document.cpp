@@ -59,14 +59,17 @@
 #include "project/project.h"
 #include "plugins/quantaplugininterface.h"
 
+#include "dtds.h"
 #include "quanta.h"
 #include "quantaview.h"
 #include "treeviews/structtreeview.h"
 
 #define STEP 1
 
-Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
-                   Project *project, QuantaPluginInterface *a_pIf,
+extern GroupElementMapList globalGroupMap;
+
+Document::Document(KTextEditor::Document *doc,
+                   QuantaPluginInterface *a_pIf,
                    QWidget *parent, const char *name, WFlags f )
   : QWidget(parent, name, f)
 {
@@ -93,10 +96,8 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   markIf = dynamic_cast<KTextEditor::MarkInterface *>(m_doc);
   KTextEditor::MarkInterfaceExtension* iface = dynamic_cast<KTextEditor::MarkInterfaceExtension*>( m_doc );
   iface->setPixmap(KTextEditor::MarkInterface::markType10, SmallIcon("stop"));
-  baseURL = p_baseURL;
-  m_project = project;
   tempFile = 0;
-  dtdName = project->defaultDTD();
+  dtdName = Project::ref()->defaultDTD();
   m_parsingDTD = dtdName;
   reparseEnabled = true;
   repaintEnabled = true;
@@ -124,12 +125,15 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   connect( m_view, SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString *)),
            this,  SLOT(  slotFilterCompletion(KTextEditor::CompletionEntry*,QString *)) );
   connect( m_doc, SIGNAL(textChanged()), SLOT(slotTextChanged()));
+  
+ // installEventFilter(this);
 
 //  setFocusProxy(m_view);
 }
 
 Document::~Document()
 {
+ m_doc->closeURL(false); //TODO: Workaround for a Kate bug. Remove when KDE < 3.2.0 support is dropped.
  delete m_view;
  delete m_doc;
 }
@@ -145,6 +149,21 @@ void Document::resizeEvent(QResizeEvent *e)
     quantaApp->view()->resize(w,h);
   }
 }
+
+bool Document::eventFilter ( QObject * watched, QEvent * e )
+{
+  Q_UNUSED(watched)
+  if ( e->type() == QEvent::AccelOverride)
+  {
+    QKeyEvent *ke = (QKeyEvent*) e;
+    kdDebug(24000) << "eventFilter : AccelOverride : " << ke->key() << endl;
+//    kdDebug(24000) << "              type          : " << ke->type() << endl;
+//    kdDebug(24000) << "              state         : " << ke->state() << endl;
+    typingInProgress = true;    
+  }
+  return false;
+}
+
 
 void Document::setUntitledUrl(QString url)
 {
@@ -431,7 +450,7 @@ void Document::insertText(const QString &text, bool adjustCursor, bool reparse)
     if (qConfig.instantUpdate && quantaApp->structTreeVisible())
     {
       typingInProgress = false;
-      quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+      StructTreeView::ref()->slotReparse(this, baseNode , qConfig.expandLevel);
     }
   }
 }
@@ -574,43 +593,41 @@ bool Document::saveIt()
 QString Document::getTagNameAt(int line, int col )
 {
  QString name = "";
- Node *node = parser->nodeAt(line, col, false);
-
- if (node && node->tag)
+ QString textLine = editIf->textLine(line);
+ textLine = textLine.left(col);
+ while (line >= 0)
  {
-   Tag *tag = new Tag();
-   int bl, bc;
-   uint el, ec;
-   node->tag->beginPos(bl, bc);
-   int el2, ec2;
-   node->tag->endPos(el2, ec2);
-   if (el2 == line && ec2 + 1 == col && node->tag->tagStr().endsWith(">"))
-     return name;
-   viewCursorIf->cursorPositionReal(&el, &ec);
-   ec--;
-   tag->setTagPosition(bl, bc, el, ec);
-   tag->parse(text(bl,bc,el,ec), this);
-
-   name = (tag->nameSpace.isEmpty()) ? tag->name : tag->nameSpace + ":" + tag->name;
-   if (name.isEmpty())
-   {
-     QString s = tag->tagStr();
-     int pos = s.find("<");
-     if (pos !=-1)
-     {
-       s.remove(0,pos);
-       pos = 0;
-       while (pos < (int)s.length() &&
-              !s[pos].isSpace() &&
-              s[pos] != '>') pos++;
-       name = s.mid(1, pos -1).stripWhiteSpace();
-     } else
-     {
-       name = "";
-     }
-   }
-   delete tag;
+    QuantaCommon::removeCommentsAndQuotes(textLine, completionDTD);
+    int pos = textLine.findRev("<");
+    int pos2 = textLine.findRev(">");
+    if (pos != -1 && pos2 < pos)
+    {
+      textLine.remove(0, pos + 1);
+      pos = 0;
+      while (pos < (int)textLine.length() &&
+            !textLine[pos].isSpace() &&
+            textLine[pos] != '>') 
+            pos++;
+      name = textLine.left(pos).stripWhiteSpace();
+      pos = name.find(":");
+      if (pos != -1)
+        name = name.mid(pos + 1);
+      break;
+    } else
+    {
+      if (pos2 == -1)
+      {
+        line--;
+        if (line >= 0)
+          textLine = editIf->textLine(line);
+      } else
+      {
+        name = "";
+        break;
+      }
+    }
  }
+ 
  return name;
 }
 
@@ -627,7 +644,7 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
   unsigned int line,col;
   completionInProgress = false;
   viewCursorIf->cursorPositionReal(&line,&col);
-  DTDStruct* dtd = currentDTD();
+  const DTDStruct* dtd = currentDTD();
 /*  if (completion.type == "charCompletion")
   {
     m_lastCompletionList = getCharacterCompletions(completion.userdata);
@@ -709,8 +726,8 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
   {
     s = *string;
     string->remove(0, string->length());
-    QString s2 = QString("public \""+QuantaCommon::getDTDNameFromNickName(s)+"\"");
-    DTDStruct *dtd = dtds->find(QuantaCommon::getDTDNameFromNickName(s));
+    QString s2 = QString("public \""+DTDs::ref()->getDTDNameFromNickName(s)+"\"");
+    const DTDStruct *dtd = DTDs::ref()->find(DTDs::ref()->getDTDNameFromNickName(s));
     if (dtd && !dtd->url.isEmpty())
     {
       s2 += " \""+dtd->url+"\"";
@@ -728,6 +745,12 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
+ const DTDStruct *dtd = currentDTD();
+ if ( (string == ">") || 
+      (string == "<") )
+ {
+   slotDelayedTextChanged(true);
+ }
  bool handled = false;
  if (qConfig.useAutoCompletion)
  {
@@ -749,7 +772,7 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
 
     if (!handled)
     {
-      DTDStruct *lastDTD = completionDTD;
+      const DTDStruct *lastDTD = completionDTD;
       completionDTD = defaultDTD();
       if (lastDTD != completionDTD && completionDTD->family == Xml)
       {
@@ -776,7 +799,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   bool handled = false;
   tagName = getTagNameAt(line, column);
   tag = QuantaCommon::tagFromDTD(completionDTD, tagName);
-  if (!tag)
+  if (!tag && !tagName.isEmpty())
      tag = userTagList.find(tagName.lower());
 
   QString s = editIf->textLine(line).left(column + 1);
@@ -808,7 +831,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       viewCursorIf->setCursorPositionReal( line, column );
       handled = true;
     } else
-    if (string == "/" && tagName == "/")
+    if (string == "/" && s.endsWith("</") && tagName.isEmpty())
     {
       Node *node = parser->nodeAt(line, column, false);
       if (node && node->parent)
@@ -816,11 +839,13 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
         node = node->parent;
         QString name = node->tag->name;
         name = name.left(name.find(" | "));
+        if (!node->tag->nameSpace.isEmpty())
+          name.prepend(node->tag->nameSpace + ":");
         editIf->insertText(line, column + 1, name + ">");
 #ifdef BUILD_KAFKAPART
         docUndoRedo->dontAddModifsSet(2);
 #endif
-        viewCursorIf->setCursorPositionReal( line, column + node->tag->name.length() + 2);
+        viewCursorIf->setCursorPositionReal( line, column + name.length() + 2);
         handled = true;
       }
     }
@@ -863,50 +888,18 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
         if (qConfig.instantUpdate && quantaApp->structTreeVisible())
         {
           typingInProgress = false;
-          quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+          StructTreeView::ref()->slotReparse(this, baseNode , qConfig.expandLevel);
         }
       }
     }
     else if ( string == " " )
          {
            kdDebug(24000) << "TagName: " << tagName << endl;
-           bool showAttributes = true;
-           Node *node = parser->nodeAt(line, column);
-           if (node)
+           QString textLine = editIf->textLine(line);
+           if (!QuantaCommon::insideCommentsOrQuotes(column, textLine, completionDTD))
            {
-             int index = node->tag->valueIndexAtPos(line, column);
-             if (index != -1)
-                showAttributes = false;
+             showCodeCompletions(getAttributeCompletions(tagName, ""));
            }
-          //suggest attribute completions
-          if (node && showAttributes)
-          {
-            int bl, bc;
-            node->tag->beginPos(bl, bc);
-            if (node->tag->attrCount() > 0)
-            {
-              s = editIf->text(bl, bc, line, column);
-              if (s.contains(' ') != 0)
-                s = s.section(' ', -1);
-              else
-                s = "";
-              if (s.contains("="))
-                  s = "";
-            }
-            kdDebug(24000) << "s: " << s << endl;
-/*            if (node->tag->attrCount() > 0)
-            {
-              s =  node->tag->tagStr().section(' ', -1);
-              if (s.endsWith(">"))
-                  s = s.left(s.length() - 1);
-              if (s.startsWith("<"))
-                  s = s.mid(1);
-              s = s.stripWhiteSpace();
-              if (s.contains("="))
-                  s = "";
-            } */
-            showCodeCompletions( getAttributeCompletions(tagName, s) );
-          }
          }
     else if ( string[0] == qConfig.attrValueQuotation )
           {
@@ -945,12 +938,11 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
   if (!group.removeFromAutoCompleteWordRx.pattern().isEmpty())
       word.remove(group.removeFromAutoCompleteWordRx);
   completion.userdata = word + "|";
-  GroupElementMapList map = parser->m_groups;
   GroupElementMapList::Iterator it;
   QString str = group.name;
   str.append("|");
   str.append(word);
-  for ( it = map.begin(); it != map.end(); ++it )
+  for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
   {
     if (it.key().startsWith(str) && it.key() != str )
     {
@@ -1110,13 +1102,13 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions(cons
 
               if (tag->name().contains("!doctype",false)) //special case, list all the known document types
               {
-                QDictIterator<DTDStruct> it(*dtds);
-                for( ; it.current(); ++it )
+                QStringList nickNames = DTDs::ref()->nickNameList(true);
+                for ( QStringList::Iterator it = nickNames.begin(); it != nickNames.end(); ++it )
                 {
-                 completion.type = "doctypeList";
-                 completion.text = it.current()->nickName;
-                 tempCompletions.append(completion);
-                 nameList.append(completion.text);
+                  completion.type = "doctypeList";
+                  completion.text = *it;
+                  tempCompletions.append(completion);
+                  nameList.append(completion.text);
                 }
               }
               //below isn't fast, but enough here. May be better with QMap<QString, KTextEditor::CompletionEntry>
@@ -1171,18 +1163,24 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
     {
       values = new QStringList();
       deleteValues = true;
-      for ( QStringList::Iterator it = parser->selectors.begin(); it != parser->selectors.end(); ++it )
+      GroupElementMapList::Iterator it;
+      for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
       {
-        int index = (*it).find('.');
-        if (index != -1)
+        QString key = it.key();
+        if (key.startsWith("Selectors|"))
         {
-          QString tmpStr = (*it).left(index);
-          if (tmpStr.isEmpty() || tagName.lower() == tmpStr || tmpStr == "*")
+          QString selectorName = key.mid(10);
+          int index = selectorName.find('.');
+          if (index != -1)
           {
-            values->append((*it).mid(index + 1).replace('.',' '));
+            QString tmpStr = selectorName.left(index);
+            if (tmpStr.isEmpty() || tagName.lower() == tmpStr || tmpStr == "*")
+            {
+              values->append(selectorName.mid(index + 1).replace('.',' '));
+            }
           }
-        }
-      }
+         }
+       }
     }
   }
   if (values)
@@ -1246,35 +1244,31 @@ QString Document::getDTDIdentifier()
 void Document::setDTDIdentifier(QString id)
 {
   dtdName = id.lower();
-  if (dtds->find(dtdName))
+  if (DTDs::ref()->find(dtdName))
   {
     m_parsingDTD = dtdName;
   }
 }
 
 /** Get a pointer to the current active DTD. If fallback is true, this always gives back a valid and known DTD pointer: the active, the document specified and in last case the application default document type. */
-DTDStruct* Document::currentDTD(bool fallback)
+const DTDStruct* Document::currentDTD(bool fallback)
 {
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
 
-  DTDStruct *dtd = parser->currentDTD(line, col);
-  if (fallback)
-  {
-    if (!dtd) dtd = dtds->find(dtdName.lower());
-    if (!dtd) dtd = dtds->find(m_project->defaultDTD());
-    if (!dtd) dtd = dtds->find(qConfig.defaultDocType); //this will always exists
-  }
+  const DTDStruct *dtd = parser->currentDTD(line, col);
+
+  if (fallback && !dtd) return defaultDTD();
 
   return dtd;
 }
 
 /** Get a pointer to the default DTD (document, or app). */
-DTDStruct* Document::defaultDTD()
+const DTDStruct* Document::defaultDTD()
 {
-  DTDStruct* dtd =  dtds->find(dtdName);
-  if (!dtd) dtd = dtds->find(m_project->defaultDTD());
-  if (!dtd) dtd = dtds->find(qConfig.defaultDocType); //this will always exists
+  const DTDStruct* dtd = DTDs::ref()->find(dtdName);
+  if (!dtd) dtd = DTDs::ref()->find(Project::ref()->defaultDTD());
+  if (!dtd) dtd = DTDs::ref()->find(qConfig.defaultDocType); //this will always exists
 
   return dtd;
 }
@@ -1386,7 +1380,9 @@ bool Document::scriptAutoCompletion(int line, int column)
  {
    QString textLine = s.left(i);
    QString word = findWordRev(textLine, completionDTD);
-   QTag *tag = completionDTD->tagsList->find(word);
+   QTag *tag = 0L;
+   if (!word.isEmpty())
+    tag = completionDTD->tagsList->find(word);
    if (!tag) 
      tag = userTagList.find(word.lower());
    if (tag)
@@ -1588,6 +1584,7 @@ QString Document::findRev(const QRegExp& regExp, int sLine, int sCol, int& fbLin
 /** Code completion was requested by the user. */
 void Document::codeCompletionRequested()
 {
+  slotDelayedTextChanged(true);
   bool handled = false;
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
@@ -1595,7 +1592,6 @@ void Document::codeCompletionRequested()
   if (completionDTD->family == Xml)
   {
     handled = xmlCodeCompletion(line, col);
-
   }
   if (completionDTD->family == Script)
   {
@@ -1632,6 +1628,7 @@ void Document::codeCompletionRequested()
 /** Bring up the code completion tooltip. */
 void Document::codeCompletionHintRequested()
 {
+  slotDelayedTextChanged(true);
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
   completionDTD = currentDTD();
@@ -1646,7 +1643,7 @@ void Document::codeCompletionHintRequested()
 }
 
 /** Find the word until the first word boundary backwards */
-QString Document::findWordRev(const QString& textToSearch, DTDStruct *dtd)
+QString Document::findWordRev(const QString& textToSearch, const DTDStruct *dtd)
 {
   QString t = textToSearch;
   while (t.endsWith(" "))
@@ -1843,9 +1840,9 @@ void Document::slotTextChanged()
   }
 }
 
-void Document::slotDelayedTextChanged()
+void Document::slotDelayedTextChanged(bool forced)
 {
-/*   if (typingInProgress)
+   if (!forced && typingInProgress)
    {
     // kdDebug(24000) << "Reparsing delayed!" << endl;
      parser->setParsingNeeded(true);
@@ -1853,7 +1850,7 @@ void Document::slotDelayedTextChanged()
      reparseEnabled = false;
      return;
    }
-*/
+   
     uint line, column;
     QString oldNodeName = "";
     Node *node;
@@ -1976,7 +1973,7 @@ void Document::slotDelayedTextChanged()
     if (qConfig.instantUpdate && quantaApp->structTreeVisible())
     {
       typingInProgress = false;
-      quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
+      StructTreeView::ref()->slotReparse(this, baseNode , qConfig.expandLevel);
     }
     reparseEnabled = true;
 }
@@ -1986,14 +1983,14 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
 {
   QStringList *values = 0L;
   deleteResult = true;
-  DTDStruct* dtd = dtds->find(dtdName.lower());
+  const DTDStruct* dtd = DTDs::ref()->find(dtdName);
   if (dtd)
   {
     QString searchForAttr = (dtd->caseSensitive) ? attribute : attribute.upper();
     AttributeList* attrs = QuantaCommon::tagAttributes(dtdName, tag);
     Attribute *attr;
     KURL u;
-    KURL base = QExtFileInfo::toRelative(url(), baseURL);
+    KURL base = QExtFileInfo::toRelative(url(), Project::ref()->projectBaseURL());
     base.setPath("/"+base.directory(false, false));
     QString s;
     if (attrs)
@@ -2004,7 +2001,7 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
         if (attrName == searchForAttr)
         {
           if (attr->type == "url") {
-            Project *project = quantaApp->project();
+            Project *project = Project::ref();
             if (project->hasProject())
             {
               values = new QStringList(project->fileNameList(true).toStringList());
@@ -2235,7 +2232,7 @@ void Document::convertCase()
   KDialogBase dlg(this, 0L, false, i18n("Change Tag & Attribute Case"), KDialogBase::Ok | KDialogBase::Cancel);
   CaseWidget w(&dlg);
   dlg.setMainWidget(&w);
-  DTDStruct *dtd = defaultDTD();
+  const DTDStruct *dtd = defaultDTD();
   switch (qConfig.attrCase)
   {
     case 1: {w.lowerAttr->setChecked(true); break;}
@@ -2258,7 +2255,7 @@ void Document::convertCase()
     kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
     KProgress *pBar = progressDlg.progressBar();
     pBar->setValue(0);
-    pBar->setTotalSteps(parser->nodeNum);
+    pBar->setTotalSteps(nodeNum);
     pBar->setTextEnabled(true);
     if (w.lowerTag->isChecked())
         tagCase = 1;

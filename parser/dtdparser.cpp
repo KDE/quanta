@@ -105,7 +105,7 @@ bool DTDParser::parse()
   DTD::dirName = m_dtepDir + "/" + w.directory->text();
   KURL u;
   u.setPath(DTD::dirName);
-  if (!QExtFileInfo::createDir(DTD::dirName)) {
+  if (!QExtFileInfo::createDir(u)) {
     QuantaCommon::dirCreationError(0, u);
     return false;
   }

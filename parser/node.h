@@ -45,6 +45,7 @@ struct GroupElement{
     /*The parent node indicating the beginning of a structure */
     Node *parentNode;
     bool global;
+    bool deleted;
   };
 
 typedef QValueList<GroupElement> GroupElementList;
@@ -140,7 +141,7 @@ public:
  void setLeafNode(DOM::Node *leafNode) {m_leafNode = leafNode;}
  Node* _closingNode;
 #endif
- QListViewItem *listItem; //points to the listview item which represents this node in the structure tree
+ QListViewItem *listItem; ///<points to the listview item which represents this node in the structure tree
  Tag *tag;
  bool closesPrevious; //this node "closes" the tag from previous node
  bool opened;
@@ -157,7 +158,7 @@ public:
 //"function | foo" and "variable | $i" group. In this case the list has two pointers.
 //if "$i" appeared more than once in the node, the second pointer points to a list
 //with more than one elements. The original group element lists are in
-// Parser::m_groups
+// globalGroupMap
  QPtrList<GroupElementList> groupElementLists;
 
  #ifdef BUILD_KAFKAPART

@@ -32,7 +32,7 @@
 #include "quanta.h"
 #include "kqapp.h"
 
-
+ 
 QuantaApp *quantaApp = 0L; //global pointer to the main application object
 const QString resourceDir = QString(PACKAGE) + "/";
 

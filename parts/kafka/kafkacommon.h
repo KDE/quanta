@@ -681,7 +681,7 @@ public:
 	 * @param rootNode The rootNode is needed in order to create a new DOM::Node.
 	 * @return Returns the DOM::Node created or a null DOM::Node if nodeName is invalid.
 	 */
-	static DOM::Node createDomNode(const QString &nodeName, DTDStruct* dtd, DOM::Document rootNode);
+	static DOM::Node createDomNode(const QString &nodeName, const DTDStruct* dtd, DOM::Document rootNode);
 
 	/**
 	 * It behaves essentially like the above function.
@@ -706,7 +706,7 @@ public:
 	 * @param rootNode The rootNode is needed in order to create a new Attribute.
 	 * @return Returns the new Attribute or a null DOM::Node if attrName is invalid.
 	 */
-	static DOM::Node createDomNodeAttribute(const QString &nodeName, DTDStruct* dtd,
+	static DOM::Node createDomNodeAttribute(const QString &nodeName, const DTDStruct* dtd,
 		const QString &attrName, const QString &attrValue, DOM::Document rootNode);
 
 	/**
@@ -741,7 +741,7 @@ public:
 	 * @param rootNode The rootNode is needed in order to create a new Attribute.
 	 * @return Returns if the operation was successfull.
 	 */
-	static bool editDomNodeAttribute(DOM::Node node, const QString &nodeName, DTDStruct* dtd,
+	static bool editDomNodeAttribute(DOM::Node node, const QString &nodeName, const DTDStruct* dtd,
 		const QString &attrName, const QString &attrValue, DOM::Document rootNode);
 
 	/**

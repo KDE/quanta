@@ -20,10 +20,13 @@
 #include "node.h"
 #include "tag.h"
 #include "qtag.h"
-#include "../quantacommon.h"
+#include "quantacommon.h"
+#include "structtreetag.h"
 #ifdef BUILD_KAFKAPART
-#include "../parts/kafka/kafkacommon.h"
+#include "kafkacommon.h"
 #endif
+
+GroupElementMapList globalGroupMap;
 
 Node::Node( Node *parent )
 {
@@ -55,7 +58,7 @@ Node::~Node()
   tag->cleanStrBuilt = false;
 #endif
   //Remove the references to this node from the list of group elements.
-  //They are actually stored in Parser::m_groups.
+  //They are actually stored in globalGroupMap.
   QPtrListIterator<GroupElementList> iter(groupElementLists);
   GroupElementList *groupElementList;
   while ((groupElementList = iter.current()) != 0)
@@ -66,11 +69,21 @@ Node::~Node()
     {
       if ((*it).node == this)
       {
-        it = groupElementList->erase(it);
+       // it = groupElementList->erase(it);
+        (*it).node = 0L;
+        (*it).tag = 0L;
+        (*it).deleted = true;        
       } else
         ++it;
     }
   }
+  if (listItem)
+  {
+    static_cast<StructTreeTag*>(listItem)->node = 0L;
+    static_cast<StructTreeTag*>(listItem)->groupTag = 0L;
+  }
+  
+  groupElementLists.clear();
   if (prev && prev->next == this)
       prev->next = 0L;
   if (parent && parent->child == this)
@@ -88,9 +101,11 @@ Node::~Node()
       next = 0L;
     }
   }
-  if ( tag ) { delete tag; tag = 0L;}
-  if ( groupTag ) { delete groupTag; groupTag = 0L;}
-
+  
+  delete tag; 
+  tag = 0L;
+  delete groupTag; 
+  groupTag = 0L;
 #ifdef BUILD_KAFKAPART
   if(m_rootNode)
     delete m_rootNode;

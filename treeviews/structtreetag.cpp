@@ -103,7 +103,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                 title = "";
               }
 
-              if (!typingInProgress)  
+              if (!typingInProgress)
               {
                 QTag *parentQTag = 0L;
                 if (node->parent)

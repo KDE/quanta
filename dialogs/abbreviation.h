@@ -40,7 +40,7 @@ private slots:
   void slotEditTemplate();
 
 private:
-  DTDStruct *m_dtd;
+  const DTDStruct *m_dtd;
   QListViewItem *oldItem;
 };
 

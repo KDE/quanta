@@ -59,6 +59,7 @@ struct TagAttr {
 struct AreaStruct{
    AreaStruct() {bLine = bCol = eLine = eCol = -1;}
    AreaStruct(int bl, int bc, int el, int ec) {bLine = bl; bCol = bc; eLine = el; eCol = ec;}
+   AreaStruct(const AreaStruct& area) {bLine = area.bLine; bCol = area.bCol; eLine = area.eLine; eCol = area.eCol;}
    int bLine;
    int bCol;
    int eLine;
@@ -70,7 +71,7 @@ class Tag {
 public:
   Tag();
   Tag(const Tag&);
-  Tag(const AreaStruct &area, Document *write, DTDStruct *dtd = 0L, bool doParse = false);
+  Tag(const AreaStruct &area, Document *write, const DTDStruct *dtd = 0L, bool doParse = false);
   ~Tag();
   Tag operator = ( const Tag& );
 
@@ -164,7 +165,7 @@ public:
   int type;   //one of the TokenType
   bool single; // tags like <tag />
   bool closingMissing; //closing tag is optional and missing
-  DTDStruct* dtd; //the tag belongs to this DTD
+  const DTDStruct* dtd; //the tag belongs to this DTD
   QString structBeginStr; //if it's a special block, contains the block beginning definition string (like <? or <style language="foo">)
   bool validXMLTag; //false if the closing ">" was not found
 #ifdef BUILD_KAFKAPART

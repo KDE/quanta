@@ -313,7 +313,7 @@ public:
 	/**
 	 * Returns the default DTD of the current Document.
 	 */
-	DTDStruct* defaultDTD();
+	const DTDStruct* defaultDTD();
 
 	/**
 	 * @return Returns the current KafkaWidget.

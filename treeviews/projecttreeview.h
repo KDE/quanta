@@ -20,6 +20,9 @@
 
 //own includes
 #include "filestreeview.h"
+#include "../project/projecturl.h"
+
+class KIO::Job;
 
 class ProjectTreeBranch : public FilesTreeBranch {
 
@@ -28,45 +31,51 @@ public:
                     const QString& name, const QPixmap& pix,
                     bool showHidden = false, KFileTreeViewItem *branchRoot = 0L);
 
-  /** check for CVS */
+  /** check for CVS and visible*/
   virtual KFileTreeViewItem* createTreeViewItem(KFileTreeViewItem *parent,
                                                 KFileItem *fileItem );
+
+  /** only files in list will be shown */
+  ProjectUrlList urlList;
 };
 
 
 
 class ProjectTreeView : public FilesTreeView  {
-  friend class Project;
   Q_OBJECT
 
 public:
-  ProjectTreeView(QWidget *parent = 0L, const char *name = 0L);
-  virtual ~ProjectTreeView();
+  /**
+   *  since this class is a singleton you must use this function to access it
+   *
+   *  the parameters are only used at the first call to create the class
+   *
+   */
+  static ProjectTreeView* const ref(QWidget *parent = 0L, const char *name = 0L)
+  {
+    static ProjectTreeView *m_ref;
+    if (!m_ref) m_ref = new ProjectTreeView (parent, name);
+    return m_ref;
+  }
 
-  /** adds the baseURL of project */
-  KURL addBaseURL(const KURL& );
+  virtual ~ProjectTreeView();
 
 public slots: // Public slots
   void slotOpen();
   void slotOpenInQuanta();
   void slotRemove();
-  void slotRemoveFromProject(int askForRemove = 1);
-  void slotUploadSingleURL();
-  void slotRename();
 
   void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
-  void slotReloadTree(const KURL::List &a_urlList, bool buildNewtree);
-  void slotSetBaseURL(const KURL& url);
-  void slotSetProjectName(const QString& name);
-  /** No descriptions */
-  void slotRescan();
-  /** Bring up the project options dialog */
-  void slotOptions();
-  /** Remove all the deleted - from the project - url's from the treeview. */
-  void slotRemoveDeleted();
+  void slotReloadTree(const ProjectUrlList &a_fileList, bool buildNewtree);
+  /** Sets new project informations */
+  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
+  /** triggers repaint of treeview */
+  void slotDocumentClosed();
+  /** reloads the tree again with current settings */
+  void slotReload();
+  virtual void slotPopulateFinished(KFileTreeViewItem* );
 
 signals: // Signals
-  void renameInProject( const KURL& );
   void removeFromProject( const KURL& );
   /** No descriptions */
   void rescanProjectDir();
@@ -75,22 +84,40 @@ signals: // Signals
   void uploadSingleURL( const KURL& );
   void loadToolbarFile( const KURL& );
   void uploadProject();
+  void changeFileDescription(const KURL& url, const QString& desc);
 
 private:
-  FilesTreeBranch *m_projectDir;
+  /** The constructor is privat because we use singleton patter.
+   *  If you need the class use ProjectTreeView::ref() for
+   *  construction and reference
+   */
+  ProjectTreeView(QWidget *parent = 0L, const char *name = 0L);
+
+  ProjectTreeBranch *m_projectDir;
+  KURL m_oldURL;
+  KURL m_newURL;
   KURL m_baseURL;
-  KURL::List m_urlList;
   QPopupMenu *m_projectMenu;
   QString m_projectName;
+  ProjectUrlList m_projectFiles;
 
-  int m_openInQuantaId;
+  int m_openInQuantaId;  ///< remembers the menu entry
 
 protected:
+  virtual bool isProjectView() const { return true; }
   virtual void itemRenamed(const KURL& , const KURL& );
 
 private slots: // Private slots
   /** No descriptions */
   void slotUploadProject();
+  /** Bring up the project options dialog */
+  void slotOptions();
+  /** No descriptions */
+  void slotRescan();
+  void slotRemoveFromProject(int askForRemove = 1);
+  void slotRename();
+  void slotUploadSingleURL();
+  void slotRenameFinished(KIO::Job *job);
 };
 
 #endif

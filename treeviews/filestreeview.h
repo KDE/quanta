@@ -44,13 +44,18 @@ class FilesTreeViewItem : public KFileTreeViewItem {
 
 public:
   FilesTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
-    /* sorts dirs seperat from files */
+  /** sorts dirs seperat from files */
   QString key (int column, bool ascending) const;
+  /** makes compare independent from locale */
   int compare( QListViewItem *i, int col, bool ascending ) const;
+  /** makes open files bold and 2. column gray */
+  void paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int align);
+
 };
 
 /** class for branch with special items */
 class FilesTreeBranch : public KFileTreeBranch {
+   Q_OBJECT
 
 public:
   FilesTreeBranch(KFileTreeView *parent, const KURL& url,
@@ -63,8 +68,6 @@ public:
   bool matchesFilter(const KFileItem *item) const;
 
 public:
-  /** only files in list will be shown */
-  KURL::List urlList;
   /** files matching to this will not be shown */
   QRegExp excludeFilterRx;
 };
@@ -90,6 +93,7 @@ public slots:
   virtual void slotProperties();
 
   virtual void slotOpen();
+
   void slotOpenWith();
   void slotOpenInQuanta();
   void slotCopy();
@@ -102,12 +106,14 @@ public slots:
   virtual void slotInsertInProject();
   virtual void slotInsertDirInProject();
   void slotReturnPressed(QListViewItem *item);
+  /** Sets new project informations */
+  void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
 
 protected slots:
   void slotDropped (KURL::List&, KURL&);
 
 protected:
-  KFileTreeBranch* newBranch(const KURL& url);
+  virtual KFileTreeBranch* newBranch(const KURL& url);
   virtual void itemRenamed(const KURL& , const KURL& );
   void addFileInfoPage(KPropertiesDialog *propDlg);
   /** expands an archiv, if possible */
@@ -122,6 +128,8 @@ protected:
   int m_insertFolderInProject;
   // config
   KConfig *m_config;
+  /** this is mainly for project and template tree to reduce includes there */
+  bool isFileOpen(const KURL &url);
 
 signals:
   void showPreviewWidget(bool);
@@ -133,10 +141,16 @@ signals:
   void insertFileInProject(const KURL&);
 
   void insertTag(const KURL &, DirInfo);
+  /** file or folder has been renamed */
+  void renamed(const KURL &, const KURL &);
+  /** close the file in Quanta */
+  void closeFile( const KURL& );
 
 private:
   int m_menuTop;
   int m_menuDel;
+  QString m_projectName;
+  KURL m_projectBaseURL;
 };
 
 #endif

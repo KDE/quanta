@@ -36,7 +36,7 @@
 #include "../treeviews/uploadtreeview.h"
 #include "../resource.h"
 
-RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QRegExp &p_excludeRx, QWidget *parent, const char *name, bool modal )
+RescanPrj::RescanPrj(ProjectUrlList p_prjFileList, const KURL& p_baseURL, QRegExp &p_excludeRx, QWidget *parent, const char *name, bool modal )
   : RescanPrjDir(parent,name,modal)
 {
   setCaption(name);

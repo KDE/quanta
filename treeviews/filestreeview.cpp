@@ -25,6 +25,9 @@
 #include <qclipboard.h>
 #include <qpoint.h>
 #include <qregexp.h>
+#include <qlineedit.h>
+#include <qfont.h>
+#include <qpainter.h>
 
 
 // KDE includes
@@ -48,6 +51,7 @@
 #include "../project/project.h"
 #include "../resource.h"
 #include "../quanta.h"
+#include "../quantadoc.h"
 
 //FilesTreeViewItem implementation
 FilesTreeViewItem::FilesTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
@@ -74,6 +78,31 @@ int FilesTreeViewItem::compare( QListViewItem *i, int col,
 {
   return key( col, ascending ).compare( i->key( col, ascending) );
 }
+
+void FilesTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
+                                  int column, int width, int align)
+{
+  QColorGroup _cg( cg );
+  QColor c = _cg.text();
+  if (column == 0)
+  {
+    QFont f = p->font();
+    f.setBold(quantaApp->doc()->isOpened(url()));
+    p->setFont(f);
+  } else
+  {
+    int h, s, v;
+#if KDE_IS_VERSION(3,1,90)    
+    p->pen().color().getHsv(&h, &s, &v);
+#else
+    p->pen().color().getHsv(h, s, v);
+#endif    
+    v = (v < 155 ? v + 100 : 255);
+    _cg.setColor(QColorGroup::Text, QColor(h, s, v, QColor::Hsv));
+  };
+  KFileTreeViewItem::paintCell( p, _cg, column, width, align );
+  _cg.setColor( QColorGroup::Text, c );
+}
     
     
 //FilesTreeBranch implementation
@@ -89,9 +118,6 @@ FilesTreeBranch::FilesTreeBranch(KFileTreeView *parent, const KURL& url,
 
 bool FilesTreeBranch::matchesFilter( const KFileItem *item ) const
 {
-  if (!urlList.isEmpty())
-    return urlList.contains(item->url());
-
   if (!excludeFilterRx.isEmpty())
     if (excludeFilterRx.exactMatch(item->url().path()))
       return false;
@@ -108,7 +134,9 @@ KFileTreeViewItem* FilesTreeBranch::createTreeViewItem( KFileTreeViewItem *paren
     tvi = new FilesTreeViewItem( parent, fileItem, this );
     // we assume there are childs
     if (tvi)
+    {
       tvi->setExpandable(tvi->isDir());
+    }
   }
   else
     kdDebug(24000) << "createTreeViewItem: Have no parent" << endl;
@@ -204,12 +232,12 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
   FilesTreeBranch* newBrnch = 0;
   if (url.isLocalFile() && url.path() == "/")
   {
-    newBrnch = new FilesTreeBranch(this, url, i18n("Root Folder"), SmallIcon("folder_red"));
+    newBrnch = new FilesTreeBranch(this, url, i18n("Root Folder"), SmallIcon("folder_red"), true);
   } else
   {
     if (url.isLocalFile() && url.equals(KURL(QDir::homeDirPath()), true))
     {
-      newBrnch = new FilesTreeBranch(this, url, i18n("Home Folder"), SmallIcon("home_blue"));
+      newBrnch = new FilesTreeBranch(this, url, i18n("Home Folder"), SmallIcon("home_blue"), true);
     } else
     {
       QString s = url.fileName();
@@ -217,20 +245,30 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
         s = "/";
       s += " ["+url.prettyURL()+"]";
       KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
-      newBrnch = new FilesTreeBranch(this, url, s, SmallIcon(fileItem.iconName()));
+      newBrnch = new FilesTreeBranch(this, url, s, SmallIcon(fileItem.iconName()), true);
     }
   }
   addBranch(newBrnch);
   return newBrnch;
 }
 
-void FilesTreeView::itemRenamed(const KURL& , const KURL& newURL )
+void FilesTreeView::itemRenamed(const KURL& oldURL, const KURL& newURL )
 {
   KFileTreeViewItem *curItem = currentKFileTreeViewItem();
-  if ( ! curItem) return;
-  KFileItem *fItem = curItem->fileItem();
-  fItem->setURL(newURL);
-  curItem->setText( 0, fItem->text());
+  if (! curItem) return;
+
+  if (curItem->isDir())
+  {
+    KURL n = newURL;
+    n.adjustPath(1);
+    KURL o = oldURL;
+    o.adjustPath(1);
+    emit renamed(o, n);
+  }
+  else
+  {
+    emit renamed(oldURL, newURL);
+  }
 }
 
 /** RMB pressed, bring up the menu */
@@ -239,26 +277,27 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
   Q_UNUSED(listView);
   if (item)
   {
-    m_folderMenu->setItemEnabled(m_insertFolderInProject, quantaApp->project()->hasProject());
-    m_fileMenu->setItemEnabled(m_insertFileInProject, quantaApp->project()->hasProject());
+    bool hasProject = !m_projectName.isNull();
+    m_folderMenu->setItemVisible(m_insertFolderInProject, hasProject);
+    m_fileMenu->setItemVisible(m_insertFileInProject, hasProject);
     setSelected(item, true);
     KFileTreeViewItem *curItem = currentKFileTreeViewItem();
     if ( !curItem->isDir() )
     {
       m_fileMenu->popup( point);
     } else {
-      m_folderMenu ->setItemEnabled( m_menuDel, true );
-      m_folderMenu ->setItemEnabled( m_menuTop, true );
+      m_folderMenu ->setItemVisible( m_menuDel, true );
+      m_folderMenu ->setItemVisible( m_menuTop, true );
       if ( curItem == curItem->branch()->root() )
       {
-        m_folderMenu ->setItemEnabled( m_menuDel, false);
+        m_folderMenu ->setItemVisible( m_menuDel, false);
         m_folderMenu ->changeItem( m_menuTop, i18n("Remove From Top"));
 
         m_config->setGroup("General Options");
         QString text = curItem->url().path();
         if ((text == "/" || text == QDir::homeDirPath()+"/") &&
             m_config->readBoolEntry("Home-Root Folder On", true) )
-          m_folderMenu ->setItemEnabled(m_menuTop, false);
+          m_folderMenu ->setItemVisible(m_menuTop, false);
       }
       else
       {
@@ -307,6 +346,7 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
 /** expands an archiv, if possible */
 bool FilesTreeView::expandArchiv (KFileTreeViewItem *item)
 {
+  if (!item) return false;
   KURL urlToOpen = item->url();
 
   if ( ! urlToOpen.isLocalFile()) return false;
@@ -329,7 +369,7 @@ bool FilesTreeView::expandArchiv (KFileTreeViewItem *item)
     return true;
   };
 
-  KFileTreeBranch *kftb = new FilesTreeBranch(this, urlToOpen, item->text(0), *(item->pixmap(0)), false, item);
+  KFileTreeBranch *kftb = new FilesTreeBranch(this, urlToOpen, item->text(0), *(item->pixmap(0)), true, item);
   addBranch(kftb);  // connecting some signals
   kftb->populate(urlToOpen, item);
   item->setExpandable(true);
@@ -421,7 +461,7 @@ void FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
             if (position!=-1) imgname=imgname.left(position);
             if (!quantaFileProperties->imageList->findItem(imgname,Qt::ExactMatch))     //check if image was already counted
             {
-              KURL v(path,imgname);
+              KURL v(KURL::fromPathOrURL( path ),imgname);
               imgpath=v.path();
               QFile qimage(imgpath);
               if (qimage.exists() && v.isLocalFile())
@@ -440,8 +480,7 @@ void FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
          quantaFileProperties->imageSize->setText(i18n("Size of the included images: %1 bytes").arg(fimgsize));
          quantaFileProperties->totalSize->setText(i18n("Total size with images: %1 bytes").arg(fsize+fimgsize));
         }
-        else
-        if (mimetype.contains("image"))
+        else if (mimetype.contains("image"))
         {              // assume it's an image file
           QImage imagefile=QImage(nameForInfo);
           quantaFileProperties->lineNum->setText(i18n("Image size: %1 x %2").arg(imagefile.width()).arg(imagefile.height()));
@@ -553,6 +592,7 @@ void FilesTreeView::slotOpenInQuanta()
     emit openInQuanta(item);
   }
 }
+
 void FilesTreeView::slotPopulateFinished(KFileTreeViewItem *item)
 {
   progressBar->setTotalSteps(1);
@@ -615,15 +655,12 @@ void FilesTreeView::slotProperties()
 
 void FilesTreeView::slotReload()
 {
-    QListViewItemIterator it(this);
-    KFileTreeViewItem *kftvi;
-    for ( ; it.current(); ++it )
-    {
-      kftvi = dynamic_cast<KFileTreeViewItem*> (it.current());
-      if ( kftvi && kftvi->isDir() && kftvi->isOpen()) {
-        kftvi->branch()->updateDirectory(kftvi->url());
-      }
-    }
+  KFileTreeViewItem *curItem = currentKFileTreeViewItem();
+  if (!curItem) return;
+
+  KURL url = curItem->branch()->rootUrl();
+  removeBranch(curItem->branch());
+  newBranch(url);
 }
 
 
@@ -633,9 +670,6 @@ void FilesTreeView::slotJobFinished(KIO::Job *job)
       job->showErrorDialog(this);
 
   progressBar->reset();
-
-  slotReload();
-//  emit reloadTreeviews();
 }
 
 
@@ -672,6 +706,18 @@ void FilesTreeView::findDrop(const QPoint &pos, QListViewItem *&parent, QListVie
     after = atpos;
     parent = atpos;
   }
+}
+
+
+void FilesTreeView::slotNewProjectLoaded(const QString &name, const KURL &baseURL, const KURL &)
+{
+  m_projectName = name;
+  m_projectBaseURL = baseURL;
+}
+
+bool FilesTreeView::isFileOpen(const KURL &url)
+{
+  return quantaApp->doc()->isOpened(url);
 }
 
 #include "filestreeview.moc"

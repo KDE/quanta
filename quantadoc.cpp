@@ -63,9 +63,11 @@
 
 #include "qextfileinfo.h"
 #include "resource.h"
+#include "dtds.h"
 
 #include "project/project.h"
 #include "plugins/quantaplugininterface.h"
+#include "treeviews/templatestreeview.h"
 
 QuantaDoc::QuantaDoc(QWidget *parent, const char *name) : QObject(parent, name)
 {
@@ -101,11 +103,10 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
 {
   quantaApp->slotShowMainDock(true);
   bool newfile = false;
-  QString furl = url.url();
-  if ( furl.isEmpty() ) newfile = true;
+  if ( url.url().isEmpty() ) newfile = true;
   Document *w;
 
-  if (!isOpened(furl) || newfile)
+  if (!isOpened(url) || newfile)
   {
     // no modi and new -> we can remove                           !!!!
     if (quantaApp->view()->writeExists())
@@ -119,7 +120,7 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
     w = newWrite( );
     quantaApp->view()->addWrite( w, w->url().url() );
 
-    quantaApp->processDTD(quantaApp->project()->defaultDTD());
+    quantaApp->processDTD(Project::ref()->defaultDTD());
 
     /*KToggleAction *a;
     a = dynamic_cast<KToggleAction*>(w->view()->actionCollection()->action("view_border"));
@@ -145,7 +146,7 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
   else // select opened
   if (switchToExisting)
   {
-    w = isOpened(furl);
+    w = isOpened(url);
     w->checkDirtyStatus();
     quantaApp->view()->writeTab()->showPage( w );
     return false; // don't need loadURL
@@ -181,47 +182,17 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
 
     dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
 
+#if KDE_IS_VERSION(3,1,90)
+    connect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));  
+#endif    
     if (w->doc()->openURL( url ))
     {
-      w->setDirtyStatus(false);
-
-      changeFileTabName();
-      quantaApp->fileRecent->addURL( w->url() );
-
-      quantaApp->slotRepaintPreview();
-
- /*     w->kate_view->setIconBorder(qConfig.iconBar);
-      w->kate_view->setLineNumbersOn(qConfig.lineNumbers);
-      quantaApp->viewBorder->setChecked(qConfig.iconBar);
-      quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
-*/
-      dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
-      quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
-
-      w->createTempFile();
-      w->view()->setFocus();
-
-      quantaApp->processDTD();
-      quantaApp->reparse(true);
-
-      emit title( w->url().prettyURL() );
-      emit newStatus();
       loaded = true;
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
+      slotOpeningCompleted();
+#endif
     }
-  } else
-  { /*
-    Project *project = quantaApp->project();
-    KTextEditor::HighlightingInterface *highlightinginterface = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
-    for (unsigned int i=0; i< highlightinginterface->hlModeCount(); i++)
-    {
-      kdDebug(24000) << QString("HL mode #%1 : %2").arg(i).arg(highlightinginterface->hlModeName(i)) << endl;
-      if (project->defaultDTD().contains(highlightinginterface->hlModeName(i), false))
-      {
-        highlightinginterface->setHlMode(i);
-        break;
-      }
-    } */
-  }
+  } 
   if (!loaded && !url.isEmpty()) //the open of the document has failed*/
   {
     bool signalStatus = signalsBlocked();
@@ -231,6 +202,29 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
     closeDocument();
     blockSignals(signalStatus);
   }
+}
+
+void QuantaDoc::slotOpeningCompleted()
+{
+  Document *w = write();
+  w->setDirtyStatus(false);
+  //  kdDebug(24000) << "Text: " << w->editIf->text() << endl;
+
+  changeFileTabName();
+  quantaApp->fileRecent->addURL( w->url() );
+
+  quantaApp->slotRepaintPreview();
+  dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
+  quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
+
+  w->createTempFile();
+  w->view()->setFocus();
+
+  quantaApp->processDTD();
+  quantaApp->reparse(true);
+
+  emit title( w->url().prettyURL() );
+  emit newStatus();
 }
 
 bool QuantaDoc::saveDocument(const KURL& url)
@@ -345,6 +339,7 @@ void QuantaDoc::closeDocument()
       openDocument( KURL() );
     }
   }
+  emit documentClosed();
 }
 
 void QuantaDoc::closeAll()
@@ -373,6 +368,7 @@ void QuantaDoc::closeAll()
 
   //all documents were removed, so open an empty one
   openDocument( KURL() );
+  emit documentClosed();
 }
 
 void QuantaDoc::readConfig( KConfig *config )
@@ -486,12 +482,12 @@ Document* QuantaDoc::write() const
 
 Document* QuantaDoc::newWrite()
 {
-  DTDStruct *dtd = dtds->find(quantaApp->project()->defaultDTD());
+  const DTDStruct *dtd = DTDs::ref()->find(Project::ref()->defaultDTD());
   if (!dtd)
-      dtd = dtds->find(qConfig.defaultDocType);   //fallback, but not really needed
+      dtd = DTDs::ref()->find(qConfig.defaultDocType);   //fallback, but not really needed
   int i = 1;
   //while ( isOpened("file:/"+i18n("Untitled%1.").arg(i)+dtd->defaultExtension)) i++;
-  while ( isOpened("file:/"+i18n("Untitled%1").arg(i))) i++;
+  while ( isOpened(KURL("file:/"+i18n("Untitled%1").arg(i)))) i++;
 
 //  QString fname = i18n("Untitled%1.").arg(i)+dtd->defaultExtension;
   QString fname = i18n("Untitled%1").arg(i);
@@ -502,8 +498,7 @@ Document* QuantaDoc::newWrite()
                                 quantaApp->view->writeTab(),
                                 "KTextEditor::Document"
                                 );*/
-  Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->project(),
-                             quantaApp->m_pluginInterface, quantaApp->view()->writeTab());
+  Document *w = new Document(doc, quantaApp->m_pluginInterface, quantaApp->view()->writeTab());
   w->readConfig(quantaApp->config());
   QString encoding = quantaApp->defaultEncoding();
   dynamic_cast<KTextEditor::EncodingInterface*>(doc)->setEncoding(encoding);
@@ -511,7 +506,7 @@ Document* QuantaDoc::newWrite()
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
-  connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)quantaApp->gettTab(), SLOT(slotDragInsert(QDropEvent *)));
+  connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *) TemplatesTreeView::ref(), SLOT(slotDragInsert(QDropEvent *)));
 
   w->setUntitledUrl( fname );
   dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view())->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));

@@ -1498,7 +1498,7 @@ void KafkaDocument::readConfig(KConfig *m_config)
 	reloadDocument();
 }
 
-DTDStruct* KafkaDocument::defaultDTD()
+const DTDStruct* KafkaDocument::defaultDTD()
 {
 	return m_currentDoc->defaultDTD();
 }

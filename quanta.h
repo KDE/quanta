@@ -24,9 +24,7 @@
 #define IDS_STATUS_CLM  4
 #define IDS_DEFAULT     "Ready."
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 // include files for Qt
 #include <qmap.h>
@@ -93,6 +91,7 @@ class Document;
 class PHP3Debugger;
 class PHP4Debugger;
 class SpellChecker;
+struct DirInfo;
 
 typedef struct ToolbarEntry{
   KXMLGUIClient *guiClient;
@@ -107,7 +106,7 @@ typedef struct ToolbarEntry{
 /**
   * The base class for Quanta application windows.
   */
-class QuantaApp : public KDockMainWindow, virtual public DCOPWindowManagerIf
+class QuantaApp : public KDockMainWindow, public DCOPWindowManagerIf
 {
   Q_OBJECT
 
@@ -117,7 +116,6 @@ public:
 
   QuantaDoc  *doc() const {return m_doc; }
   QuantaView *view() const {return m_view;}
-  Project *project() const {return m_project; }
   QPopupMenu *tagsMenu() const {return m_tagsMenu;}
   QPopupMenu *pluginMenu() const {return m_pluginMenu;}
   KConfig *config() const {return m_config;}
@@ -125,9 +123,6 @@ public:
   QWidgetStack *bottomWidget() const {return bottomWidgetStack;}
 
 //TODO: check if we really need these "get" methods (and get rid o get)
-  SpellChecker *spellChecker() const {return m_spellChecker;}
-  TemplatesTreeView *gettTab() const {return tTab;}
-  StructTreeView *getsTab() const {return sTab;}
   MessageOutput *messageOutput() const {return m_messageOutput;}
   MessageOutput *problemOutput() const {return m_problemOutput;}
 
@@ -146,7 +141,9 @@ public:
   void removeContainer(QWidget *container, QWidget *parent, QDomElement &element, int id );
   /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
   void processDTD(const QString& documentType = QString::null);
-/** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
+/** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere.
+
+  maps to the same function in Project*/
   KURL projectBaseURL() const;
 
   KURL::List userToolbarFiles();
@@ -186,13 +183,14 @@ public:
   QString retrieveBaseFileName(const QString& filename);
   /**Executes *nix ps command */
   void execCommandPS(const QString& cmd);
-
+  /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
+  void loadToolbarForDTD(const QString& dtdName);
+  
     /** tabs for left panel */
   ProjectTreeView *pTab;
   DocTreeView *dTab;
   FilesTreeView *fTab;
   TemplatesTreeView *tTab;
-  StructTreeView *sTab;
   EnhancedTagAttributeTree *aTab;
   ScriptTreeView *scriptTab;
 
@@ -303,8 +301,6 @@ public slots:
 
   void slotShowOpenFileList();
   /** No descriptions */
-  void slotNewProjectLoaded();
-  /** No descriptions */
   void slotInsertFile(const KURL&);
   /** No descriptions */
   void slotSyntaxCheckDone();
@@ -372,8 +368,6 @@ public slots:
   void slotDocumentProperties();
   /** No descriptions */
   void slotAutosaveTimer();
-  /** Load a DTD and convert to a DTEP */
-  void slotLoadDTD();
 
   void slotHideSplash() {emit showSplash(false);}
 
@@ -391,8 +385,6 @@ protected slots:
   void slotToggleDTDToolbar(bool show);
   /** No descriptions */
   void slotEmailDTEP();
-  /** Load a DTEP*/
-  void slotLoadDTEP();
   /** Shows tip of the day */
   void slotHelpTip();
   /** Show the user mailing list sign up */
@@ -423,8 +415,6 @@ protected:
   bool removeToolbars();
   /** Returns true if all toolbars are hidden, false otherwise. */
   bool allToolbarsHidden() const;
-  /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. Returns true on success, false on error.*/
-  bool readTagDir(QString &dirName);
   /** No descriptions */
   virtual void focusInEvent(QFocusEvent*);
   void saveOptions();
@@ -435,12 +425,7 @@ protected:
   void initDocument();
   void initView();
   void initProject();
-  void initTagDict();
 
-  /** Reads the tags for the tag files. Returns the number of read tags. */
-  uint readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList);
-  /** Parse the dom document and retrieve the tag attributes */
-  void setAttributes(QDomNode *dom, QTag *tag);
   virtual bool queryClose();
   void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
   /** Saves a toolbar as local or project specific. */
@@ -452,13 +437,9 @@ protected:
   void showToolbarFile(const KURL &url);
   /** Initialize the plugin architecture. */
   void initPlugins();
-  /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
-  void loadToolbarForDTD(const QString& dtdName);
   void setTitle(const QString&);
   void connectDockSignals(QObject *obj);
   void layoutDockWidgets(const QString &layout);
-  /** Removes the dtd from the memory */
-  void removeDTD(DTDStruct *dtd);
   /** Updates the structure and attribute treeview. */
   void updateTreeViews();
 
@@ -471,8 +452,6 @@ private:
   QPopupMenu *m_pluginMenu;
   QPopupMenu *m_tagsMenu;
 
-  /** project class */
-  Project *m_project;
   // config
   KConfig *m_config;
 
@@ -535,7 +514,7 @@ private:
     *openPrjViewAction, *savePrjViewAction, *saveAsPrjViewAction,
     *deletePrjViewAction;
 
-  KAction *bookmarkToggle, *bookmarkClear;
+  KAction *bookmarkToggle, *bookmarkClear, *bookmarkPrev, *bookmarkNext;
   KAction *editTagAction;
 
   //KToggleAction *viewFoldingMarkers;
@@ -569,11 +548,8 @@ protected: // Protected attributes
   /** Timer to detect idle periods. Every time the cursor moves the timer is
   restarted.*/
   QTimer *idleTimer;
-  QString scriptBeginRxStr;
-  QString scriptEndRxStr;
   /** The toolbars for this DTD are currently shown to the user. */
   QString currentToolbarDTD;
-  SpellChecker *m_spellChecker;
   KDockWidget *m_oldTreeViewWidget;
   /** The ids of the widgets visible before doing the preview/documentation browsing */
   QValueList<int> previousWidgetList;

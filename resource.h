@@ -18,8 +18,6 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
-//qt includes
-#include <qdict.h>
 
 class KDirWatch;
 class KProgress;
@@ -36,7 +34,6 @@ struct DTDStruct;
 extern QConfig qConfig;
 extern QString tmpDir;
 
-extern QDict<DTDStruct> *dtds;
 extern QRegExp scriptBeginRx;
 extern QRegExp scriptEndRx;
 
@@ -54,5 +51,7 @@ extern KProgress *progressBar;
 extern QuantaApp *quantaApp;
 extern const QString resourceDir;
 extern bool typingInProgress;
+
+extern int nodeNum;
 
 #endif // RESOURCE_H

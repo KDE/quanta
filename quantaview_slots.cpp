@@ -79,7 +79,7 @@
 
 void QuantaView::slotEditCurrentTag()
 {
-  if (!writeExists()) 
+  if (!writeExists())
     return;
   Document *w = write();
   if (parser->parsingNeeded())
@@ -136,19 +136,19 @@ void QuantaView::slotFrameWizard()
     l.remove(l.begin());
   }
 
-  FrameWizard *dlg = new FrameWizard(this);
+  FrameWizard dlg(this);
 
   if (!w->isUntitled())
       {
-       dlg->setSaved(true);
+       dlg.setSaved(true);
       }
-  dlg->setFramesetFileCurrentPath(quantaApp->projectBaseURL().path());
-  dlg->loadExistingFramesetStructure(l2);
+  dlg.setFramesetFileCurrentPath(Project::ref()->projectBaseURL().path());
+  dlg.loadExistingFramesetStructure(l2);
 
-  if ( dlg->exec() )
+  if ( dlg.exec() )
   {
     QString tag =
-QString("\n")+dlg->generateFramesetStructure()+QString("\n");
+QString("\n")+dlg.generateFramesetStructure()+QString("\n");
     if (framesetExists)
     {
       w->activateParser(false);
@@ -158,7 +158,6 @@ QString("\n")+dlg->generateFramesetStructure()+QString("\n");
     }
     w->insertTag(tag);
   }
-  delete dlg;
 }
 
 
@@ -167,7 +166,7 @@ void QuantaView::slotInsertCSS()
 {
   if (!writeExists()) return;
   Document *w = write();
-  
+
   uint line, col;
   int bLine, bCol, eLine, eCol;
   bLine = bCol = eLine = eCol = 0;
@@ -186,18 +185,18 @@ void QuantaView::slotInsertCSS()
   if (parentNode->tag->type == Tag::XmlTagEnd && parentNode->prev)
     parentNode = parentNode->prev;
   else
-    while (parentNode && parentNode->parent && 
-           parentNode->tag->type != Tag::XmlTag)  
+    while (parentNode && parentNode->parent &&
+           parentNode->tag->type != Tag::XmlTag)
       parentNode = parentNode->parent;
-  QString fullDocument = w->editIf->text().stripWhiteSpace();          
- 
+  QString fullDocument = w->editIf->text().stripWhiteSpace();
+
   if (styleNode && styleNode->tag->name.lower() == "style")  //inside <style> invoke the selector editor
-  {      
+  {
     styleNode->tag->endPos(bLine, bCol);
     QString header(w->text(0, 0, bLine, bCol));// beginning part of the file
     styleNode->next->tag->endPos(eLine, eCol);
     QString footer("</style>" + w->text(eLine, eCol+1, lastLine, lastCol)); // ending part of the file
-    
+
     styleNode->next->tag->beginPos(eLine, eCol);
     QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1).remove("<!--").remove("-->"));// <style></style> block content
 
@@ -228,7 +227,7 @@ void QuantaView::slotInsertCSS()
     dlg->setForInitialPreview(QString::null);
     if (!fullDocument.isEmpty())
       dlg->loadExistingStyleSection(fullDocument);
-    if (dlg->exec()) 
+    if (dlg->exec())
     {
       w->activateParser(false);
       w->editIf->clear();
@@ -236,7 +235,7 @@ void QuantaView::slotInsertCSS()
       w->insertTag(dlg->generateStyleSection());
     }
     delete dlg;
-  } else 
+  } else
   if (parentNode && parentNode->tag->type == Tag::XmlTag)
   {
     CSSEditor *dlg = new CSSEditor(this);
@@ -248,7 +247,7 @@ void QuantaView::slotInsertCSS()
 
     QString temp(QString::null);
     QString tempStyleContent(QString::null);
-    if (parentNode->tag->hasAttribute("style")) 
+    if (parentNode->tag->hasAttribute("style"))
     {
       tempStyleContent = parentNode->tag->attributeValue("style");
       dlg->setInlineStyleContent(tempStyleContent);
@@ -367,6 +366,7 @@ void QuantaView::slotTagEditTable()
 {
   if (!writeExists()) return;
   Document *w = write();
+  baseNode = parser->rebuild(w);
   QStringList list = w->tagAreas("table", true, false);
   bool tableExists = false;
   uint line, col;
@@ -409,7 +409,7 @@ void QuantaView::slotTagEditTable()
   } else
   {
     Node *node = parser->nodeAt(line, col);
-    DTDStruct *dtd = w->defaultDTD();
+    const DTDStruct *dtd = w->defaultDTD();
     if (node)
       dtd = node->tag->dtd;
     bLine = line;
@@ -501,7 +501,7 @@ void QuantaView::slotViewInKFM()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    KURL url = quantaApp->project()->urlWithPrefix(w->url());
+    KURL url = Project::ref()->urlWithPrefix(w->url());
     *show << "kfmclient" << "openURL" << url.url();
     show->start( KProcess::DontCare );
   }
@@ -535,7 +535,7 @@ void QuantaView::slotViewInLynx()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    KURL url = quantaApp->project()->urlWithPrefix(w->url());
+    KURL url = Project::ref()->urlWithPrefix(w->url());
     *show << "konsole"
           << "--nohist"
           << "--notoolbar"
@@ -891,7 +891,7 @@ void QuantaView::slotSpellcheck ()
 {
   if (writeExists())
   {
-    quantaApp->spellChecker()->spellCheck(write()->doc());
+    SpellChecker::ref(this)->spellCheck(write()->doc());
   }
 }
 
@@ -919,7 +919,7 @@ void QuantaView::clearBookmarks ()
   {
     KTextEditor::Mark* mark;
     KTextEditor::MarkInterface *markinterface = dynamic_cast<KTextEditor::MarkInterface*>(write()->doc());
-    QPtrList<KTextEditor::Mark> marks= dynamic_cast<KTextEditor::MarkInterface*>(write()->doc())->marks();
+    QPtrList<KTextEditor::Mark> marks= markinterface->marks();
     for ( mark = marks.first(); mark; mark = marks.next() )
     {
       markinterface->removeMark(mark->line,  KTextEditor::MarkInterface::markType01);
@@ -1076,7 +1076,7 @@ KURL QuantaView::baseURL()
     base = QuantaCommon::convertToPath(w->url());
   } else
   {
-    base = w->baseURL;
+    base = Project::ref()->projectBaseURL();
   }
 
   return base;

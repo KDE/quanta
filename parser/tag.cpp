@@ -20,16 +20,16 @@
 #include <qcstring.h>
 
 #include "tag.h"
-#include "../document.h"
-#include "../quantacommon.h"
-#include "../resource.h"
+#include "document.h"
+#include "quantacommon.h"
+#include "resource.h"
 
 Tag::Tag()
 {
   init();
 }
 
-Tag::Tag(const AreaStruct &area, Document *write, DTDStruct *dtd, bool doParse)
+Tag::Tag(const AreaStruct &area, Document *write, const DTDStruct *dtd, bool doParse)
 {
   init();
   QString s = write->text(area);
@@ -496,7 +496,7 @@ QString Tag::toString()
   {
     attr = *it;
     attrString = " ";
-    if (attr.value.isEmpty())
+    if (attr.value.isEmpty() || attr.name == "/")
     {
       attrString.append(attr.name);
     } else

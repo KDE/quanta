@@ -383,7 +383,7 @@ void QuantaView::initActions()
                         this, SLOT( slotPasteURLEncoded() ),
                         actionCollection, "edit_paste_url_encoded" );
 
-    (void) new KAction( i18n( "Insert CSS..." ),"mini-modules", 0,
+    (void) new KAction( i18n( "Insert CSS..." ),"css", 0,
                         this, SLOT( slotInsertCSS() ),
                         actionCollection, "insert_css" );
 
@@ -437,7 +437,7 @@ void QuantaView::insertTag( const char *tag)
 
   Document *w = write();
   QString tagStr = QuantaCommon::tagCase(tag);
-  DTDStruct *dtd = w->currentDTD(true);
+  const DTDStruct *dtd = w->currentDTD(true);
   bool single = QuantaCommon::isSingleTag(dtd->name, tagStr);
   bool optional = QuantaCommon::isOptionalTag(dtd->name, tagStr);
 

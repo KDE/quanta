@@ -67,6 +67,8 @@
 #include "quantadoc.h"
 #include "resource.h"
 #include "document.h"
+#include "qextfileinfo.h"
+#include "dtds.h"
 #include <kapplication.h>
 #include <dcopclient.h>
 
@@ -98,7 +100,7 @@
 #include "dialogs/dirtydlg.h"
 #include "dialogs/dirtydialog.h"
 
-QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManagerIf")
+QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KDockMainWindow(0L,"Quanta")
 {
   quantaStarted = true;
   tempFileList.setAutoDelete(true);
@@ -125,7 +127,6 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   grepDialog  = 0L;
   exitingFlag = false;
   qConfig.spellConfig = new KSpellConfig();
-  m_spellChecker = new SpellChecker();
   idleTimer = new QTimer(this);
   connect(idleTimer, SIGNAL(timeout()), SLOT(slotIdleTimerExpired()));
 
@@ -152,7 +153,6 @@ QuantaApp::~QuantaApp()
  }
 
  toolbarList.clear();
- delete m_spellChecker;
  QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
  tmpDir = tmpDirs[0];
  for (uint i = 0; i < tmpDirs.count(); i++)
@@ -184,13 +184,25 @@ void QuantaApp::initQuanta()
   dir.mkdir(tmpDir + "quanta");
   tmpDir += "quanta/quanta";
 
-  initTagDict  ();
+  scriptBeginRx.setCaseSensitive(false);
+  scriptBeginRx.setPattern("(<script)");
+  scriptEndRx.setCaseSensitive(false);
+  scriptEndRx.setPattern("(/script>)");
+  
   initStatusBar();
+  
+  //defaultDocType must be read before the Project object is created!!
+  m_config->setGroup("General Options");
+  qConfig.defaultDocType = m_config->readEntry("Default DTD",DEFAULT_DTD);
+  if (! DTDs::ref()->find(qConfig.defaultDocType))
+     qConfig.defaultDocType = DEFAULT_DTD;
+
   initDocument ();
   initView     ();
   initProject  ();
   initActions();
-
+  
+  DTDs::ref();  // create the class, must be before readOptions() !
   readOptions();
 
   m_pluginInterface = new QuantaPluginInterface();
@@ -268,14 +280,15 @@ void QuantaApp::initQuanta()
   autosaveTimer->start(qConfig.autosaveInterval * 60000, false);
 
   connect(m_doc, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
-  connect(m_project, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
+  
+  connect(parser, SIGNAL(rebuildStructureTree()), this, SLOT(slotReloadStructTreeView()));
 }
 
 
 void QuantaApp::initToolBars()
 {
  if (toolbarList.count() == 0)
-     loadToolbarForDTD(m_project->defaultDTD());
+     loadToolbarForDTD(Project::ref()->defaultDTD());
 }
 
 void QuantaApp::initStatusBar()
@@ -306,30 +319,23 @@ void QuantaApp::initDocument()
 {
   m_doc = new QuantaDoc(this);
   connect(m_doc, SIGNAL(newStatus()),    this, SLOT(slotNewStatus()));
+  connect(m_doc, SIGNAL(documentClosed()), ProjectTreeView::ref(), SLOT(slotDocumentClosed()));
 }
 
 void QuantaApp::initProject()
 {
-  m_project = new Project(this);
+  Project *m_project = Project::ref();
 
   connect(m_project,  SIGNAL(openFile    (const KURL &, const QString&)),
           this,     SLOT  (slotFileOpen(const KURL &, const QString&)));
   connect(m_project,  SIGNAL(closeFile   (const KURL &)),
           this,     SLOT  (slotFileClose(const KURL &)));
-  connect(m_project,  SIGNAL(reloadTree(const KURL::List & ,bool)),
-          pTab,     SLOT  (slotReloadTree(const KURL::List &,bool)));
-  connect(m_project,  SIGNAL(setBaseURL(const KURL&)),
-          pTab,     SLOT  (slotSetBaseURL(const KURL&)));
-  connect(m_project,  SIGNAL(setProjectName(const QString&)),
-          pTab,     SLOT  (slotSetProjectName(const QString&)));
+  connect(m_project,  SIGNAL(reloadTree(const ProjectUrlList & ,bool)),
+          pTab,     SLOT  (slotReloadTree(const ProjectUrlList &,bool)));
   connect(m_project,  SIGNAL(closeFiles()),
           m_doc,      SLOT  (closeAll()));
   connect(m_project,  SIGNAL(showTree()),
           this,     SLOT  (slotShowProjectTree()));
-  connect(m_project,  SIGNAL(removeFromProject(int)),
-          pTab,     SLOT  (slotRemoveFromProject(int)));
-  connect(m_project,  SIGNAL(templateURLChanged(const KURL &)),
-          tTab,     SLOT  (slotSetTemplateURL(const KURL &)));
 
   connect(fTab,    SIGNAL(insertDirInProject(const KURL&)),
           m_project,  SLOT  (slotAddDirectory(const KURL&)));
@@ -337,14 +343,20 @@ void QuantaApp::initProject()
   connect(fTab,    SIGNAL(insertFileInProject(const KURL&)),
           m_project,  SLOT  (slotInsertFile(const KURL&)));
 
-  connect(tTab,    SIGNAL(insertDirInProject(const KURL&)),
+  connect(TemplatesTreeView::ref(),    SIGNAL(insertDirInProject(const KURL&)),
           m_project,  SLOT  (slotAddDirectory(const KURL&)));
 
-  connect(tTab,    SIGNAL(insertFileInProject(const KURL&)),
+  connect(TemplatesTreeView::ref(),    SIGNAL(insertFileInProject(const KURL&)),
           m_project,  SLOT  (slotInsertFile(const KURL&)));
 
-  connect(pTab,     SIGNAL(renameInProject(const KURL&)),
-          m_project,  SLOT  (slotRename(const KURL&)));
+  // inform project if something was renamed
+  connect(pTab,     SIGNAL(renamed(const KURL&, const KURL&)),
+          m_project,  SLOT  (slotRenamed(const KURL&, const KURL&)));
+  connect(fTab,     SIGNAL(renamed(const KURL&, const KURL&)),
+          m_project,  SLOT  (slotRenamed(const KURL&, const KURL&)));
+  connect(tTab,     SIGNAL(renamed(const KURL&, const KURL&)),
+          m_project,  SLOT  (slotRenamed(const KURL&, const KURL&)));
+
   connect(pTab,     SIGNAL(removeFromProject(const KURL&)),
           m_project,  SLOT  (slotRemove(const KURL&)));
   connect(pTab,     SIGNAL(uploadSingleURL(const KURL&)),
@@ -367,8 +379,16 @@ void QuantaApp::initProject()
   connect(m_project,  SIGNAL(newStatus()),
           this, SLOT(slotNewStatus()));
 
-  connect(m_project,  SIGNAL(newProjectLoaded()),
-          this,     SLOT  (slotNewProjectLoaded()));
+  connect(m_project,  SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
+          TemplatesTreeView::ref(), SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+  connect(m_project,  SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
+          pTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+  connect(m_project,  SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
+          fTab, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
+  connect(pTab,    SIGNAL(changeFileDescription(const KURL&, const QString&)),
+          m_project, SLOT(slotFileDescChanged(const KURL&, const QString&)));
+
+  connect(m_project, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
 
 }
 
@@ -430,10 +450,10 @@ void QuantaApp::initView()
   }
   fTab = new FilesTreeView(topList, ftabdock);
   aTab = new EnhancedTagAttributeTree(atabdock);
-  pTab = new ProjectTreeView(ptabdock );
-  tTab = new TemplatesTreeView("" , ttabdock);
+  pTab = ProjectTreeView::ref(ptabdock );
+  tTab = TemplatesTreeView::ref(ttabdock);  // creates the treeview
   dTab = new DocTreeView(dtabdock);
-  sTab = new StructTreeView(m_config, stabdock ,"struct");
+  StructTreeView *sTab = StructTreeView::ref(stabdock ,"struct");
   scriptTab = new ScriptTreeView(scripttabdock);
 
   rightWidgetStack = new QWidgetStack(maindock);
@@ -488,6 +508,13 @@ void QuantaApp::initView()
   connect(pTab, SIGNAL(loadToolbarFile  (const KURL&)),
           this, SLOT(slotLoadToolbarFile(const KURL&)));
 
+  connect(fTab, SIGNAL(closeFile   (const KURL &)),
+          this, SLOT  (slotFileClose(const KURL &)));
+  connect(pTab, SIGNAL(closeFile   (const KURL &)),
+          this, SLOT  (slotFileClose(const KURL &)));
+  connect(tTab, SIGNAL(closeFile   (const KURL &)),
+          this, SLOT  (slotFileClose(const KURL &)));
+
   connect(tTab, SIGNAL(openImage  (const KURL&)),
           this, SLOT(slotImageOpen(const KURL&)));
   connect(tTab, SIGNAL(openFile  (const KURL &, const QString&)),
@@ -534,7 +561,7 @@ void QuantaApp::initView()
           this, SLOT(slotImageOpen(const KURL&)));
   connect(sTab, SIGNAL(showPreviewWidget(bool)),
           this, SLOT(slotShowPreviewWidget(bool)));
-  connect(parser, SIGNAL(nodeTreeChanged()), sTab, SLOT(slotNodeTreeChanged()));        
+  connect(parser, SIGNAL(nodeTreeChanged()), sTab, SLOT(slotNodeTreeChanged()));
 
   connect(dTab, SIGNAL(openURL(const QString&)), SLOT(openDoc(const QString&)));
 
@@ -623,7 +650,7 @@ void QuantaApp::saveOptions()
 
     m_config->writeEntry("Preview position", qConfig.previewPosition);
     m_config->writeEntry("Window layout", qConfig.windowLayout);
-    m_config->writeEntry("Follow Cursor", sTab->followCursor() );
+    m_config->writeEntry("Follow Cursor", StructTreeView::ref()->followCursor() );
     m_config->writeEntry("PHP Debugger Port", phpDebugPort );
     //If user choose the timer interval, it needs to restart the timer too
     m_config->writeEntry("Autosave interval", qConfig.autosaveInterval);
@@ -658,11 +685,11 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Iconbar", qConfig.iconBar);
     m_config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
    // m_doc->writeConfig(m_config); // kwrites
-    m_project->writeConfig(m_config); // project
+    Project::ref()->writeConfig(m_config); // project
     manager()->writeConfig(m_config);
     //saveMainWindowSettings(m_config);
     writeDockConfig(m_config);
-    m_spellChecker->writeConfig(m_config);
+    SpellChecker::ref()->writeConfig(m_config);
     m_config->sync();
   }
 }
@@ -686,15 +713,11 @@ void QuantaApp::readOptions()
   qConfig.useAutoCompletion = m_config->readBoolEntry("Auto completion",true);
   qConfig.updateClosingTags = m_config->readBoolEntry("Update Closing Tags", true);
 
-  qConfig.defaultDocType = m_config->readEntry("Default DTD",DEFAULT_DTD);
-  if (! dtds->find(qConfig.defaultDocType))
-     qConfig.defaultDocType = DEFAULT_DTD;
-
   qConfig.defaultEncoding = m_config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
 
   phpDebugPort = m_config->readNumEntry("PHP Debugger Port", 7869);
 
-  sTab->setFollowCursor( m_config->readBoolEntry("Follow Cursor", true));
+  StructTreeView::ref()->setFollowCursor( m_config->readBoolEntry("Follow Cursor", true));
 
   qConfig.previewPosition   = m_config->readEntry("Preview position","Right");
 
@@ -771,8 +794,8 @@ void QuantaApp::readOptions()
 #endif
   showMessagesAction->setChecked( bottdock->parent() != 0L );
 
-  m_doc    ->readConfig(m_config); // kwrites
-  m_project->readConfig(m_config); // project
+  m_doc->readConfig(m_config); // kwrites
+  Project::ref()->readConfig(m_config); // project
 
   if (m_view->writeExists() && m_view->write()->isUntitled())
   {
@@ -787,7 +810,7 @@ void QuantaApp::readOptions()
          enablePhp4Debug(true);
     else enablePhp3Debug(true);
 
-  m_spellChecker->readConfig(m_config);
+  SpellChecker::ref()->readConfig(m_config);
   readDockConfig(m_config);
 
   m_config->setGroup  ("General Options");
@@ -867,7 +890,7 @@ void QuantaApp::openLastFiles()
  //   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
   }
   m_config->sync();
-  m_doc->blockSignals(false);  
+  m_doc->blockSignals(false);
   m_view->writeTab()->blockSignals(false);
   Document *w = m_view->write();
   if (w) //w==0 might happen on quick close on startup
@@ -887,10 +910,10 @@ void QuantaApp::loadInitialProject(const QString& url)
     config->setGroup("General Options");
 
     // Reload last project if setting is enabled
-    m_project->readLastConfig();
+    Project::ref()->readLastConfig();
   }
   else
-    m_project->slotOpenProject(url);
+    Project::ref()->slotOpenProject(KURL( url ));
 }
 
 
@@ -921,7 +944,7 @@ bool QuantaApp::queryClose()
         if (w)
            w->setModified(false);
       }
-      m_project->slotCloseProject();
+      Project::ref()->slotCloseProject();
       do
       {
         if (m_view->writeExists())
@@ -936,739 +959,11 @@ bool QuantaApp::queryClose()
   return canExit;
 }
 
-/**
- Parse the dom document and retrieve the tag attributes
-*/
-void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
-{
- Attribute *attr;
 
- QDomElement el = dom->toElement();
-
- QDictIterator<AttributeList> it(*(tag->parentDTD->commonAttrs));
- for( ; it.current(); ++it )
- {
-   QString lookForAttr = "has"+QString(it.currentKey()).stripWhiteSpace();
-   if (el.attribute(lookForAttr) == "1")
-   {
-    tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
-   }
- }
-
- if (el.attribute("single") == "1")
- {
-  tag->setSingle(true);
- }
-
- if (el.attribute("optional") == "1")
- {
-  tag->setOptional(true);
- }
-
- tag->type = el.attribute("type","xmltag");
- tag->returnType = el.attribute("returnType","");
-
- for ( QDomNode n = dom->firstChild(); !n.isNull(); n = n.nextSibling() )
- {
-    if (n.nodeName() == "children")
-   {
-     QDomElement el = n.toElement();
-     QDomElement item = el.firstChild().toElement();
-     while ( !item.isNull() )
-     {
-       if (item.tagName() == "child")
-       {
-          QString childTag = item.attribute("name");
-          if (!tag->parentDTD->caseSensitive)
-              childTag = childTag.upper();
-          tag->childTags.insert(childTag, item.attribute("usage") == "required");
-       }
-       item = item.nextSibling().toElement();
-     }
-   }
-   if (n.nodeName() == "stoppingtags") //read what tag can act as closing tag
-   {
-     QDomElement el = n.toElement();
-     QDomElement item = el.firstChild().toElement();
-     while ( !item.isNull() )
-     {
-       if (item.tagName() == "stoppingtag")
-       {
-         QString stopTag = item.attribute("name");
-         if (!tag->parentDTD->caseSensitive)
-            stopTag = stopTag.upper();
-         tag->stoppingTags.append(stopTag);
-       }
-       item = item.nextSibling().toElement();
-     }
-   } else
-   if ( n.nodeName() == "attr" ) //an attribute
-   {
-     attr = new Attribute;
-     attr->name = n.toElement().attribute("name");
-     attr->type = n.toElement().attribute("type",tag->parentDTD->defaultAttrType);
-     attr->defaultValue = n.toElement().attribute("defaultValue");
-     attr->status = n.toElement().attribute("status");
-
-     if ( attr->type == "list" ) {
-       QDomElement el = n.toElement();
-       for ( QDomElement attrEl = el.firstChild().toElement(); !attrEl.isNull(); attrEl = attrEl.nextSibling().toElement() ) {
-         if ( attrEl.tagName() == "items" ) {
-           QDomElement item = attrEl.firstChild().toElement();
-           while ( !item.isNull() ) {
-             attr->values.append( item.text() );
-             item = item.nextSibling().toElement();
-           }
-         }
-       }
-     } else if ( attr->type == "check" ) {
-       attr->values.append("true");
-       attr->values.append("false");
-     } else if ( attr->type == "color" ) {
-       attr->values.append("Black");
-       attr->values.append("Silver");
-       attr->values.append("Gray");
-       attr->values.append("White");
-       attr->values.append("Maroon");
-       attr->values.append("Red");
-       attr->values.append("Purple");
-       attr->values.append("Fuchsia");
-       attr->values.append("Green");
-       attr->values.append("Lime");
-       attr->values.append("Olive");
-       attr->values.append("Yellow");
-       attr->values.append("Navy");
-       attr->values.append("Blue");
-       attr->values.append("Teal");
-       attr->values.append("Aqua");
-     } else if ( attr->type == "url" ) {
-     } else if ( attr->type == "input" ) {
-     } else {
-     }
-
-     if (!attr->name.isEmpty())
-     {
-       tag->addAttribute(attr);
-     }
-
-     delete attr;
-   }
- }
-
-// return attrs;
-}
-
-/** Reads the tags for the tag files. Returns the number of read tags. */
-uint QuantaApp::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList)
-{
-
- QFile f( fileName );
- f.open( IO_ReadOnly );
- QDomDocument *m_doc = new QDomDocument();
- QString errorMsg;
- int errorLine, errorCol;
- if (!m_doc->setContent( &f, &errorMsg, &errorLine, &errorCol ))
- {
-   emit showSplash(false);
-   KMessageBox::error(this, i18n("<qt>The DTD tag file %1 is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>").arg(fileName).arg(errorMsg).arg(errorLine).arg(errorCol),
-   i18n("Invalid Tag File"));
-   kdWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol << endl;
- }
-
- f.close();
- QDomNodeList nodeList = m_doc->elementsByTagName("tag");
- uint numOfTags = nodeList.count();
- for (uint i = 0; i < numOfTags; i++)
- {
-    QDomNode n = nodeList.item(i);
-    QTag *tag = new QTag();
-    tag->setName(n.toElement().attribute("name"));
-    tag->setFileName(fileName);
-    tag->parentDTD = parentDTD;
-    setAttributes(&n, tag);
-    if (parentDTD->caseSensitive)
-    {
-      tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
-    } else
-    {
-      tagList->insert(tag->name().upper(),tag);
-    }
- }
-
- delete m_doc;
- return numOfTags;
-}
-
-/** Reads the tag files and the description.rc from tagDir in order to
-    build up the internal DTD and tag structures. */
-bool QuantaApp::readTagDir(QString &dirName)
-{
- if (!QFile::exists(dirName + "description.rc"))
-     return false;
- QString tmpStr = dirName + "description.rc";
- QStringList tmpStrList;
- KConfig *dtdConfig = new KConfig(tmpStr);
- dtdConfig->setGroup("General");
- QString dtdName = dtdConfig->readEntry("Name", "Unknown");
- if (dtds->find(dtdName.lower()))
- {
-   delete dtdConfig;
-   return false;
- }
-
- //read the general DTD info
- DTDStruct *dtd = new DTDStruct;
- dtd->fileName = tmpStr;
- dtd->commonAttrs = new AttributeListDict();
- dtd->commonAttrs->setAutoDelete(true);
-
- bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
- dtd->name = dtdName.lower();
- dtd->nickName = dtdConfig->readEntry("NickName", dtdName);
- dtd->url = dtdConfig->readEntry("URL");
- dtd->doctypeStr = dtdConfig->readEntry("DoctypeString");
- if (dtd->doctypeStr.isEmpty())
- {
-   dtd->doctypeStr = "PUBLIC \"" + dtdName + "\"";
-   if (!dtd->url.isEmpty())
-      dtd->doctypeStr += " \"" + dtd->url + "\"";
- }
- dtd->doctypeStr.prepend(' ');
- dtd->inheritsTagsFrom = dtdConfig->readEntry("Inherits");
-
- dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");
- dtd->mimeTypes = dtdConfig->readListEntry("MimeTypes");
- dtd->caseSensitive = caseSensitive;
- dtd->family = dtdConfig->readNumEntry("Family", Xml);
- if (dtd->family != Xml)
-     dtd->toplevel = dtdConfig->readBoolEntry("TopLevel", false);
- else
-     dtd->toplevel = true;
- int numOfTags = 0;
-
- //read the attributes for each common group
- QStrList * groupList = new QStrList();
- dtdConfig->readListEntry("Groups", *groupList); //read the common groups
- for (uint i = 0; i < groupList->count(); i++)
- {
-   AttributeList *commonAttrList = new AttributeList;      //no need to delete it
-   commonAttrList->setAutoDelete(true);
-   QString groupName = QString(groupList->at(i)).stripWhiteSpace();
-
-   dtdConfig->setGroup(groupName);
-   QStrList *attrList = new QStrList();
-   dtdConfig->readListEntry("Attributes", * attrList);
-   for (uint j = 0; j < attrList->count(); j++)
-   {
-     Attribute *attr = new Attribute;                                  //no need to delete it
-     attr->name = QString(attrList->at(j)).stripWhiteSpace();
-     attr->type = "input";
-     attr->defaultValue = "";
-     attr->status = "optional";
-     commonAttrList->append(attr);
-   }
-   delete attrList;
-
-   dtd->commonAttrs->insert(groupName, commonAttrList);
- }
- delete groupList;
-
- QTagList *tagList = new QTagList(119, false); //max 119 tag in a DTD
- tagList->setAutoDelete(true);
- //read all the tag files
- KURL dirURL;
- QuantaCommon::setUrl(dirURL, dirName);
- dirURL.adjustPath(1);
- KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*.tag");
- for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
- {
-   tmpStr = (*it_f).fileName();
-   if (!tmpStr.isEmpty())
-   {
-     tmpStr.prepend(dirName);
-     numOfTags += readTagFile(tmpStr,dtd, tagList);
-   }
- }
-
- //read the toolbars
- dtdConfig->setGroup("Toolbars");
- tmpStr = dtdConfig->readPathEntry("Location"); //holds the location of the toolbars
- if (!tmpStr.endsWith("/") && !tmpStr.isEmpty())
- {
-   tmpStr.append("/");
- }
- dtd->toolbars = dtdConfig->readListEntry("Names");
- for (uint i = 0; i < dtd->toolbars.count(); i++)
- {
-   dtd->toolbars[i] = tmpStr + dtd->toolbars[i].stripWhiteSpace() + toolbarExtension;
- }
-
- //read the extra tags and their attributes
- dtdConfig->setGroup("Extra tags");
- dtd->defaultAttrType = dtdConfig->readEntry("DefaultAttrType","input");
- QStrList extraTagsList;
- dtdConfig->readListEntry("List",extraTagsList);
- QString option;
- QStrList optionsList;
- QStrList attrList;
- for (uint i = 0 ; i < extraTagsList.count(); i++)
- {
-   QTag *tag = new QTag();
-   tag->setName(QString(extraTagsList.at(i)).stripWhiteSpace());
-
-   tmpStr = (dtd->caseSensitive) ? tag->name() : tag->name().upper();
-   if (tagList->find(tmpStr)) //the tag is already defined in a .tag file
-   {
-     delete tag;
-     continue; //skip this tag
-   }
-   tag->parentDTD = dtd;
-   //read the possible stopping tags
-   QStrList stoppingTags;
-   dtdConfig->readListEntry(tag->name() + "_stoppingtags",stoppingTags);
-   for (uint j = 0; j < stoppingTags.count(); j++)
-   {
-     QString stopTag = QString(stoppingTags.at(j)).stripWhiteSpace();
-     if (!dtd->caseSensitive) stopTag = stopTag.upper();
-     tag->stoppingTags.append(stopTag);
-   }
-   //read the possible tag options
-   optionsList.clear();
-   dtdConfig->readListEntry(tag->name() + "_options",optionsList);
-   for (uint j = 0; j < optionsList.count(); j++)
-   {
-     option = QString(optionsList.at(j)).stripWhiteSpace();
-     QDictIterator<AttributeList> it(*(dtd->commonAttrs));
-     for( ; it.current(); ++it )
-     {
-       tmpStr = "has" + QString(it.currentKey()).stripWhiteSpace();
-       if (option == tmpStr)
-       {
-         tag->commonGroups += QString(it.currentKey()).stripWhiteSpace();
-       }
-     }
-     if (option == "single")
-     {
-       tag->setSingle(true);
-     }
-     if (option == "optional")
-     {
-       tag->setOptional(true);
-     }
-   }
-   attrList.clear();
-   dtdConfig->readListEntry(tag->name(), attrList);
-   for (uint j = 0; j < attrList.count(); j++)
-   {
-     Attribute* attr = new Attribute;
-     attr->name = QString(attrList.at(j)).stripWhiteSpace();
-     attr->type = dtd->defaultAttrType;
-     tag->addAttribute(attr);
-     delete attr;
-   }
-   if (caseSensitive)
-   {
-     tagList->insert(tag->name(),tag);  //append the tag to the list for this DTD
-   } else
-   {
-     tagList->insert(tag->name().upper(),tag);
-   }
- }
- dtd->tagsList = tagList;
- dtd->tagsList->setAutoDelete(true);
-
-
-/**** Code for the new parser *****/
-
- dtdConfig->setGroup("Parsing rules");
-//Which DTD can be present in this one?
- dtd->insideDTDs = dtdConfig->readListEntry("MayContain");
- for (uint i = 0; i < dtd->insideDTDs.count(); i++)
- {
-   dtd->insideDTDs[i] = dtd->insideDTDs[i].stripWhiteSpace().lower();
- }
- bool appendCommonRules = dtdConfig->readBoolEntry("AppendCommonSpecialAreas", true);
-//Read the special areas and area names
- QString rxStr = "";
- if (dtd->family == Xml && appendCommonRules)
- {
-    dtd->specialAreas["<?xml"] = "?>";
-    dtd->specialAreaNames["<?xml"] = "XML PI";
-    dtd->specialAreas["<!--"] = "-->";
-    dtd->specialAreaNames["<!--"] = "comment";
-    dtd->specialAreas["<!"] = ">";
-    dtd->specialAreaNames["<!"] = "DTD";
-    tmpStr = "(<?xml)|(<!--)|(<!)|";
-    rxStr = QuantaCommon::makeRxCompatible(tmpStr);
- }
- QStringList specialAreasList = dtdConfig->readListEntry("SpecialAreas");
- QStringList specialAreaNameList = dtdConfig->readListEntry("SpecialAreaNames");
- for (uint i = 0; i < specialAreasList.count(); i++)
- {
-   if (!specialAreasList[i].stripWhiteSpace().isEmpty())
-   {
-     tmpStrList = QStringList::split(" ",specialAreasList[i].stripWhiteSpace());
-     tmpStr = tmpStrList[0].stripWhiteSpace();
-     rxStr.append(QuantaCommon::makeRxCompatible(tmpStr)+"|");
-     dtd->specialAreas[tmpStr] = tmpStrList[1].stripWhiteSpace();
-     dtd->specialAreaNames[tmpStr] = specialAreaNameList[i];
-   }
- }
- if (rxStr.isEmpty())
- {
-   dtd->specialAreaStartRx.setPattern("");
- } else
- {
-  dtd->specialAreaStartRx.setPattern(rxStr.left(rxStr.length() - 1));
- }
- //Read the special tags
- tmpStrList = dtdConfig->readListEntry("SpecialTags");
- for (uint i = 0; i < tmpStrList.count(); i++)
- {
-   tmpStr = tmpStrList[i].stripWhiteSpace();
-   int pos = tmpStr.find('(');
-   dtd->specialTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
- }
-
- //static const QString quotationStr = "\\\\\"|\\\\'";
- rxStr = "\\\\\"|\\\\'|";
- QStringList commentsList = dtdConfig->readListEntry("Comments");
- if (dtd->family == Xml && appendCommonRules)
-   commentsList.append("<!-- -->");
- QString tmpStr2;
- for (uint i = 0; i < commentsList.count(); i++)
- {
-   tmpStrList = QStringList::split(" ",commentsList[i].stripWhiteSpace());
-   tmpStr = tmpStrList[0].stripWhiteSpace();
-   rxStr += QuantaCommon::makeRxCompatible(tmpStr);
-   rxStr += "|";
-   tmpStr2 = tmpStrList[1].stripWhiteSpace();
-   if (tmpStr2 == "EOL")
-       tmpStr2 = '\n';
-   dtd->comments[tmpStr] = tmpStr2;
- }
- dtd->commentsStartRx.setPattern(rxStr.left(rxStr.length()-1));
-
- //Read the tags that define this DTD
- tmpStrList = dtdConfig->readListEntry("Tags");
- for (uint i = 0; i < tmpStrList.count(); i++)
- {
-   tmpStr = tmpStrList[i].stripWhiteSpace();
-   int pos = tmpStr.find('(');
-   dtd->definitionTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
- }
-
- //Read the areas that define the areas
- QStringList definitionAreaBorders = dtdConfig->readListEntry("AreaBorders");
- for (uint i = 0; i < definitionAreaBorders.count(); i++)
- {
-   tmpStrList = QStringList::split(" ", definitionAreaBorders[i].stripWhiteSpace());
-   dtd->definitionAreas[tmpStrList[0].stripWhiteSpace()] = tmpStrList[1].stripWhiteSpace();
- }
-
-/**** End of code for the new parser *****/
-
-//read the definition of a structure, and the structure keywords
- QStringList structKeywords = dtdConfig->readListEntry("StructKeywords",';');
- if (structKeywords.count() !=0 )
- {
-    tmpStr = "\\b(";
-    for (uint i = 0; i < structKeywords.count(); i++)
-    {
-      tmpStr += structKeywords[i].stripWhiteSpace()+"|";
-    }
-    tmpStr.truncate(tmpStr.length()-1);
-    tmpStr += ")\\b";
- } else
- {
-   tmpStr = "\\b[\\d\\S\\w]+\\b";
- }
- dtd->structKeywordsRx.setPattern(tmpStr);
-
- structKeywords = dtdConfig->readListEntry("LocalScopeKeywords",';');
- if (structKeywords.count() !=0 )
- {
-    tmpStr = "\\b(";
-    for (uint i = 0; i < structKeywords.count(); i++)
-    {
-      tmpStr += structKeywords[i].stripWhiteSpace()+"|";
-    }
-    tmpStr.truncate(tmpStr.length()-1);
-    tmpStr += ")\\b";
- } else
- {
-   tmpStr = "\\b[\\d\\S\\w]+\\b";
- }
- dtd->localScopeKeywordsRx.setPattern(tmpStr);
-
- dtd->structRx.setPattern(dtdConfig->readEntry("StructRx","\\{|\\}").stripWhiteSpace());
- dtd->structBeginStr = dtdConfig->readEntry("StructBeginStr","{").stripWhiteSpace();
- dtd->structEndStr = dtdConfig->readEntry("StructEndStr","}").stripWhiteSpace();
-
-
- dtdConfig->setGroup("Extra rules");
- dtd->minusAllowedInWord = dtdConfig->readBoolEntry("MinusAllowedInWord", false);
- tmpStr = dtdConfig->readEntry("TagAutoCompleteAfter", "<").stripWhiteSpace();
- if (tmpStr.upper() == "NONE")
-    dtd->tagAutoCompleteAfter = '\0';
- else
- if (tmpStr.upper() == "ALWAYS")
-    dtd->tagAutoCompleteAfter = '\1';
- else
-    dtd->tagAutoCompleteAfter = tmpStr.at(0);
- dtd->attrAutoCompleteAfter = dtdConfig->readEntry("AttributeAutoCompleteAfter","(").stripWhiteSpace().at(0);
- dtd->attributeSeparator = dtdConfig->readEntry("AttributeSeparator").stripWhiteSpace().at(0);
- if (dtd->attributeSeparator.isNull())
- {
-   dtd->attributeSeparator = (dtd->family == Xml) ? '\"' : ',';
- }
- dtd->tagSeparator = dtdConfig->readEntry("TagSeparator").stripWhiteSpace().at(0);
- if (dtd->tagSeparator.isNull())
-     dtd->tagSeparator = dtd->attributeSeparator;
-
- dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
- dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
- dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
- dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
-
-//read the definition of different structure groups, like links, images, functions
-//classes, etc.
- uint structGroupsCount = dtdConfig->readNumEntry("StructGroupsCount", 0);
- if (structGroupsCount > MAX_STRUCTGROUPSCOUNT)
-     structGroupsCount = MAX_STRUCTGROUPSCOUNT; //max. 10 groups
-
- if (dtd->family == Script)
- {
-    StructTreeGroup group;
-    QRegExp attrRx("\\([^\\)]*\\)");
-    QString tagStr;
-    for (uint index = 1; index <= structGroupsCount; index++)
-    {
-      dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
-      //new code
-      group.name = dtdConfig->readEntry("Name").stripWhiteSpace();
-      group.noName = dtdConfig->readEntry("No_Name").stripWhiteSpace();
-      group.icon = dtdConfig->readEntry("Icon").stripWhiteSpace();
-      tmpStr = dtdConfig->readEntry("SearchRx").stripWhiteSpace();
-      group.searchRx.setPattern(tmpStr);
-      group.hasSearchRx = !group.searchRx.pattern().isEmpty();
-      group.isMinimalSearchRx = dtdConfig->readBoolEntry("SearchRx_Minimal", false);
-      group.clearRx = dtdConfig->readEntry("ClearRx").stripWhiteSpace();
-      tagStr = dtdConfig->readEntry("Tag").stripWhiteSpace();
-      group.tag = "";
-      if (!tagStr.isEmpty())
-      {
-        attrRx.search(tagStr);
-        tmpStr = attrRx.cap();
-        tmpStrList = QStringList::split(',', tmpStr.mid(1, tmpStr.length()-2));
-        group.tag = tagStr.left(tagStr.find('(')).lower();
-        group.attributes.clear();
-        for (uint i = 0; i < tmpStrList.count(); i++)
-          group.attributes += tmpStrList[i].stripWhiteSpace();
-      }
-      tagStr = dtdConfig->readEntry("TagType", "Text").stripWhiteSpace();
-      if (tagStr == "XmlTag")
-          group.tagType = Tag::XmlTag;
-      else if (tagStr == "XmlTagEnd")
-          group.tagType = Tag::XmlTagEnd;
-      else if (tagStr == "Text")
-          group.tagType = Tag::Text;
-      else if (tagStr == "Comment")
-          group.tagType = Tag::Comment;
-      else if (tagStr == "CSS")
-          group.tagType = Tag::CSS;
-      else if (tagStr == "ScriptTag")
-          group.tagType = Tag::ScriptTag;
-      else if (tagStr == "ScriptStructureBegin")
-          group.tagType = Tag::ScriptStructureBegin;
-      else if (tagStr == "ScriptStructureEnd")
-          group.tagType = Tag::ScriptStructureEnd;
-      else group.tagType = -1;
-      tmpStr = dtdConfig->readEntry("AutoCompleteAfter").stripWhiteSpace();
-      group.autoCompleteAfterRx.setPattern(tmpStr);
-      tmpStr = dtdConfig->readEntry("RemoveFromAutoCompleteWord").stripWhiteSpace();
-      group.removeFromAutoCompleteWordRx.setPattern(tmpStr);
-      group.hasFileName = dtdConfig->readBoolEntry("HasFileName", false);
-      group.parseFile = dtdConfig->readBoolEntry("ParseFile", false);
-      tmpStr = dtdConfig->readEntry("FileNameRx").stripWhiteSpace();
-      group.fileNameRx.setPattern(tmpStr);
-      dtd->structTreeGroups.append(group);
-    }
-  } else
-  {
-    XMLStructGroup group;
-    QRegExp attrRx("\\([^\\)]*\\)");
-    QString tagName;
-    for (uint index = 1; index <= structGroupsCount; index++)
-    {
-      dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
-      group.name = dtdConfig->readEntry("Name").stripWhiteSpace();
-      group.noName = dtdConfig->readEntry("No_Name").stripWhiteSpace();
-      group.icon = dtdConfig->readEntry("Icon").stripWhiteSpace();
-      QString tagStr = dtdConfig->readEntry("Tag").stripWhiteSpace();
-      if (!tagStr.isEmpty())
-      {
-        attrRx.search(tagStr);
-        tmpStr = attrRx.cap();
-        tmpStrList = QStringList::split(',', tmpStr.mid(1, tmpStr.length()-2));
-        tagName = tagStr.left(tagStr.find('(')).lower();
-        group.attributes.clear();
-        for (uint i = 0; i < tmpStrList.count(); i++)
-          group.attributes += tmpStrList[i].stripWhiteSpace();
-        group.hasFileName = dtdConfig->readBoolEntry("HasFileName", false);
-        tmpStr = dtdConfig->readEntry("FileNameRx").stripWhiteSpace();
-        group.fileNameRx.setPattern(tmpStr);
-        dtd->xmlStructTreeGroups.insert(tagName, group);
-      }
-    }
-  }
- //read the abbreviations files
-  QString abbrevFile = dirName;
-  tmpStr = dirName;
-  QStringList resourceDirs = KGlobal::dirs()->resourceDirs("data");
-  bool dirFound = false;
-  for (uint i = 0; i < resourceDirs.count(); i++)
-  {
-    if (tmpStr.startsWith(resourceDirs[i]))
-    {
-      dirFound = true;
-      tmpStr = tmpStr.right(tmpStr.length() - resourceDirs[i].length());
-      break;
-    }
-  }
-  if (dirFound)
-  {
-    abbrevFile = KGlobal::dirs()->saveLocation("data", tmpStr) +"/";
-  }
-  abbrevFile.append("abbreviations");
-  if (!QFile::exists(abbrevFile))
-      abbrevFile = dirName + "abbreviations";
-
- QFile f(abbrevFile);
- if (f.open(IO_ReadOnly))
- {
-   QDomDocument abbrevDom;
-   if (abbrevDom.setContent(&f))
-   {
-     QDomNodeList nodeList = abbrevDom.elementsByTagName("Template");
-     for (uint i = 0; i < nodeList.count(); i++)
-     {
-       QDomElement e = nodeList.item(i).toElement();
-       dtd->abbreviations.insert(e.attribute("name")+" "+e.attribute("description"), e.attribute("code"));
-     }
-   }
-   f.close();
- }
-
- dtds->insert(dtdName.lower(), dtd);//insert the taglist into the full list
-
- delete dtdConfig;
- return true;
-}
-
-
-/**
-  read dictionary of known tags and attributes from tags.rc file.
-*/
-
-void QuantaApp::initTagDict()
-{
-  dtds = new QDict<DTDStruct>(119, false); //optimized for max 119 DTD. This should be enough.
-  dtds->setAutoDelete(true);
-
-  QStringList tagsResourceDirs = KGlobal::instance()->dirs()->findDirs("appdata", "dtep");
-  QStringList tagsDirs;
-  for ( QStringList::Iterator it = tagsResourceDirs.begin(); it != tagsResourceDirs.end(); ++it )
-  {
-    QDir dir(*it);
-    dir.setFilter(QDir::Dirs);
-    QStringList subDirs = dir.entryList();
-    for ( QStringList::Iterator subit = subDirs.begin(); subit != subDirs.end(); ++subit )
-    {
-      if ((*subit != ".") && (*subit != ".."))
-         tagsDirs += *it + *subit+"/";
-    }
-  }
-  scriptBeginRxStr = "(<script)";
-  scriptEndRxStr = "(/script>)";
-  for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
-  {
-    readTagDir(*it);
-  }
-
-  DTDStruct *dtd;
-//Resolve the inheritence
-  QDictIterator<DTDStruct> it(*dtds);
-  for( ; it.current(); ++it )
-  {
-    dtd = it.current();
-    if (!dtd->inheritsTagsFrom.isEmpty())
-    {
-      DTDStruct *parent = dtds->find(dtd->inheritsTagsFrom);
-      QDictIterator<QTag> tag_it(*(parent->tagsList));
-      for ( ; tag_it.current(); ++tag_it)
-      {
-        QTag *tag = tag_it.current();
-        QString searchForTag = (dtd->caseSensitive) ? tag->name() : tag->name().upper();
-        if (!dtd->tagsList->find(searchForTag))
-        {
-          QTag *newTag = new QTag(*tag);
-          dtd->tagsList->insert(searchForTag, newTag);
-        }
-      }
-      QMap<QString, QString>::Iterator abbrevIt;
-      for (abbrevIt = parent->abbreviations.begin(); abbrevIt != parent->abbreviations.end(); ++abbrevIt)
-      {
-        dtd->abbreviations.insert(abbrevIt.key(), abbrevIt.data());
-      }
-    }
-  }
-
-//Read the pseudo DTD area definition strings (special area/tag string)
-//from the DTD's which may be present in an other DTD (May_Contain setting)
-  it.toFirst();
-  QMap<QString, QString>::Iterator mapIt;
-  QString tmpStr;
-  for( ; it.current(); ++it)
-  {
-    dtd = it.current();
-    QString specialAreaStartRxStr = dtd->specialAreaStartRx.pattern();
-    if (!specialAreaStartRxStr.isEmpty())
-        specialAreaStartRxStr += "|";
-    for (uint i = 0; i < dtd->insideDTDs.count(); i++)
-    {
-      DTDStruct *insideDTD = dtds->find(dtd->insideDTDs[i]);
-      if (!insideDTD)
-          insideDTD = dtds->find(QuantaCommon::getDTDNameFromNickName(dtd->insideDTDs[i]));
-      if (insideDTD)
-      {
-        for (mapIt = insideDTD->definitionAreas.begin(); mapIt != insideDTD->definitionAreas.end(); ++mapIt)
-        {
-          tmpStr = mapIt.key();
-          dtd->specialAreas[tmpStr] = mapIt.data();
-          dtd->specialAreaNames[tmpStr] = dtd->insideDTDs[i];
-          specialAreaStartRxStr.append("(?:" +  QuantaCommon::makeRxCompatible(tmpStr) + ")|");
-        }
-
-        for (mapIt = insideDTD->definitionTags.begin(); mapIt != insideDTD->definitionTags.end(); ++mapIt)
-        {
-          dtd->specialTags[mapIt.key()] = mapIt.data();
-        }
-      }
-    }
-    dtd->specialAreaStartRx.setPattern(specialAreaStartRxStr.left(specialAreaStartRxStr.length() - 1));
-  }
-
-  scriptBeginRx.setCaseSensitive(false);
-  scriptBeginRx.setPattern(scriptBeginRxStr);
-  scriptEndRx.setCaseSensitive(false);
-  scriptEndRx.setPattern(scriptEndRxStr);
-  if (!dtds->find(qConfig.defaultDocType)) qConfig.defaultDocType = DEFAULT_DTD;
-}
 
 void QuantaApp::initActions()
 {
-  KActionCollection *ac = actionCollection();
+    KActionCollection *ac = actionCollection();
 
     editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         m_view, SLOT( slotEditCurrentTag() ),
@@ -1858,11 +1153,11 @@ void QuantaApp::initActions()
                         ac, "change_dtd" );
 
     (void) new KAction( i18n( "&Load && Convert DTD..." ), 0,
-                        this, SLOT( slotLoadDTD() ),
+                        DTDs::ref(), SLOT( slotLoadDTD() ),
                         ac, "load_dtd" );
 
     (void) new KAction( i18n( "Load DTD &Package (DTEP)..." ), 0,
-                        this, SLOT( slotLoadDTEP() ),
+                        DTDs::ref(), SLOT( slotLoadDTEP() ),
                         ac, "load_dtep" );
 
     (void) new KAction( i18n( "Send DTD Package (DTEP) in E-&Mail" ), 0,
@@ -1922,7 +1217,7 @@ void QuantaApp::initActions()
 #ifdef BUILD_KAFKAPART
     KToggleAction *ta;
       ta =
-      new KToggleAction( i18n( "&Source Editor") , UserIcon("view_text"), ALT+Key_F9,
+      new KToggleAction( i18n( "&Source Editor"), UserIcon ("view_text"), ALT+Key_F9,
                          m_view, SLOT( slotShowQuantaEditor()),
                          ac, "show_quanta_editor");
       ta->setExclusiveGroup("view");
@@ -1934,7 +1229,7 @@ void QuantaApp::initActions()
      showKafkaAction->setExclusiveGroup("view");
 
      ta =
-      new KToggleAction( i18n("VPL && So&urce Editors"), UserIcon("vpl_text"), Key_F9,
+      new KToggleAction( i18n("VPL && So&urce Editors"), UserIcon ("vpl_text"), Key_F9,
                          m_view, SLOT( slotShowKafkaAndQuanta() ),
                           ac, "show_kafka_and_quanta");
      ta->setExclusiveGroup("view");
@@ -1979,6 +1274,7 @@ void QuantaApp::initActions()
 
     // Project actions
     //
+    Project *m_project = Project::ref();
     (void) new KAction( i18n( "&New Project..." ), 0,
                         m_project, SLOT( slotNewProject() ),
                         ac, "project_new" );
@@ -2360,7 +1656,7 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
      }
     }
   }
-  
+
   m_view->writeTab()->blockSignals(false);
  }
  void QuantaApp::execCommandPS(const QString& cmd)

@@ -246,10 +246,11 @@ void TagAttributeTree::setCurrentNode(Node *node)
       return;
   clear();
   m_parentItem = 0L;
+  //We don't want to be able to edit the text node but it's parent.
+  if (node && node->tag->type == Tag::Text)
+    m_node = node = node->parent;
   if (!node)
       return;
-  if (node && node->tag->type == Tag::Text)  
-    return;  
 #ifdef BUILD_KAFKAPART
 #ifdef HEAVY_DEBUG
   kafkaCommon::coutTree(baseNode, 2);
@@ -453,7 +454,7 @@ void TagAttributeTree::editorContentChanged()
           delete m_node->leafNode();
         m_node->setLeafNode(0L);
 
-        quantaApp->view()->getKafkaInterface()->buildKafkaNodeFromNode(m_node, true);
+        quantaApp->view()->getKafkaInterface()->buildKafkaNodeFromNode(m_node);
         if(!domNode.isNull() && m_node->leafNode())
         {
            while(!domNode.firstChild().isNull())
@@ -564,6 +565,9 @@ void EnhancedTagAttributeTree::setCurrentNode(Node *node)
 void EnhancedTagAttributeTree::NodeSelected(Node *node)
 {
   curNode = node;
+  //We don't want to be able to edit the text node but it's parent.
+  if (node && node->tag->type == Tag::Text)
+    curNode = node = node->parent;
   showCaption();
   emit newNodeSelected(node);
 }

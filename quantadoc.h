@@ -18,9 +18,7 @@
 #ifndef QUANTADOC_H
 #define QUANTADOC_H
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 // include files for QT
 #include <qptrlist.h>
@@ -84,11 +82,13 @@ public slots:
   void invertSelect();
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
+  void slotOpeningCompleted();  
 
 signals:
   void newStatus();
   void title(QString);
   void hideSplash();
+  void documentClosed();
 
 private:
   KPopupMenu *attribMenu;
