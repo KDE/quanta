@@ -159,9 +159,13 @@ bool QuantaPlugin::run()
                   break;
                 }
         case 3: { KURL url;
-                  if (quantaApp->project()->hasProject() &&
-                      quantaApp->project()->contains(quantaApp->view()->write()->url()))
-                      url = quantaApp->projectBaseURL();
+                  if ( quantaApp->project()->hasProject() &&
+                       (quantaApp->project()->contains(quantaApp->view()->write()->url()) ||
+                        quantaApp->view()->write()->isUntitled())
+                     )
+                  {
+                    url = quantaApp->projectBaseURL();
+                  }
                   else
                   {
                     url = quantaApp->view()->write()->url();
