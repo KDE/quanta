@@ -79,7 +79,7 @@
 //
 // Enable this define to test the KAction/XMLGUI code (Rich).
 //
-#define NEW_STUFF
+//#define NEW_STUFF
 //
 
 #ifdef NEW_STUFF
