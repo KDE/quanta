@@ -1177,6 +1177,12 @@ void QuantaApp::readTagDir(QString &dirName)
    dtd->definitionAreas[tmpStrList[0].stripWhiteSpace()] = tmpStrList[1].stripWhiteSpace();
  }
 
+ rxStr = dtdConfig->readEntry("VariableDefinitionRx");
+ dtd->variableDefsRx.setPattern(QuantaCommon::makeRxCompatible(rxStr));
+ rxStr = dtdConfig->readEntry("ExcludeFromVariableDefinitonRx");
+ dtd->excludeFromVariableDefsRx.setPattern(QuantaCommon::makeRxCompatible(rxStr));
+
+
 /**** End of code for the new parser *****/
 
 //read the definition of a structure, and the structure keywords

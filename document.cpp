@@ -1076,7 +1076,7 @@ bool Document::scriptAutoCompletion(int line, int column)
  //TODO: this is PHP specific. Make it generic
  if (s[i] == completionDTD->varAutoCompleteAfter)
  {
-   showCodeCompletions( getVariableCompletions(line, column) );
+   showCodeCompletions( getVariableCompletions(line, column + 1) );
    handled = true;
  }
 

@@ -372,7 +372,6 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           if (a_node)
               return 0L;
         }
-
       }
 
       goUp = ( parentNode &&

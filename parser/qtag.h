@@ -162,6 +162,13 @@ typedef struct DTDStruct
 
 /* A list of structure tree groups definition */
      QValueList<StructTreeGroup> structTreeGroups;
+
+/*A regexp to match a variable definition (eg $var_name in PHP) */
+     QRegExp variableDefsRx;
+/*A regexp which tells what should be removed from the string found with
+the above regexp to get the variable name itself. In case of PHP it's simply
+"$" */
+     QRegExp excludeFromVariableDefsRx;
 /****************** END FOR THE NEW PARSER **********************/
 
      QString structKeywordsRxStr;        //regular expression to match the keywords that can appear before a structrue
