@@ -1,28 +1,33 @@
-/***************************************************************************
-                          grepdialog.cpp  -  grep frontend
-                             -------------------
-    copyright            : (C) 1999 by Bernd Gehrmann
-    email                : bernd@physik.hu-berlin.de
- ***************************************************************************/
+/* This file is part of the KDE project
+   Copyright (C) 2001 Christoph Cullmann <cullmann@kde.org>
+   Copyright (C) 2001 Joseph Wenninger <jowenn@kde.org>
+   Copyright (C) 2001 Anders Lund <anders.lund@lund.tdcadsl.dk>
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public
+   License version 2 as published by the Free Software Foundation.
 
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
 
-#include "grepdialog.h"
+   You should have received a copy of the GNU Library General Public License
+   along with this library; see the file COPYING.LIB.  If not, write to
+   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.
+*/
+
+// $Id$
+
+#include "kategrepdialog.h"
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
-#include <qlistview.h>
+#include <qlistbox.h>
 #include <qregexp.h>
 #include <qwhatsthis.h>
 #include <kbuttonbox.h>
@@ -55,7 +60,7 @@ const char *template_str[] = {
 };
 
 
-GrepDialog::GrepDialog(QString /*dirname*/, QWidget *parent, const char *name)
+GrepDialog::GrepDialog(QString dirname, QWidget *parent, const char *name)
     : KDialog(parent, name, false), childproc(0)
 {
     setCaption(i18n("Find in Files"));
@@ -152,6 +157,7 @@ GrepDialog::GrepDialog(QString /*dirname*/, QWidget *parent, const char *name)
     dir_combo = new KURLRequester( new KComboBox(true, this), this, "dir combo" );
     dir_combo->completionObject()->setMode(KURLCompletion::DirCompletion);
     dir_combo->comboBox()->insertStringList(lastSearchPaths);
+    dir_combo->setMode( KFile::Directory|KFile::LocalOnly );
     dir_layout->addWidget(dir_combo);
     dir_label->setBuddy(dir_combo);
 
@@ -173,12 +179,7 @@ GrepDialog::GrepDialog(QString /*dirname*/, QWidget *parent, const char *name)
     actionbox->addStretch();
     actionbox->layout();
 
-    resultbox = new QListView(this);
-    resultbox->setShowSortIndicator(true);
-    resultbox->setAllColumnsShowFocus(true);
-    resultbox->addColumn(i18n("File"));
-    resultbox->addColumn(i18n("Line"));
-    resultbox->addColumn(i18n("Excerpt"));
+    resultbox = new QListBox(this);
     QFontMetrics rb_fm(resultbox->fontMetrics());
     resultbox->setMinimumSize(rb_fm.width("0")*55,
 			      rb_fm.lineSpacing()*15);
@@ -247,8 +248,8 @@ GrepDialog::GrepDialog(QString /*dirname*/, QWidget *parent, const char *name)
 	     SLOT(templateActivated(int)) );
 /*    connect( dir_button, SIGNAL(clicked()),
 	     SLOT(dirButtonClicked()) );*/
-    connect( resultbox, SIGNAL(selectionChanged(QListViewItem*)),
-       SLOT(itemSelected(QListViewItem*)) );
+    connect( resultbox, SIGNAL(selected(const QString&)),
+	     SLOT(itemSelected(const QString&)) );
     connect( search_button, SIGNAL(clicked()),
 	     SLOT(slotSearch()) );
     connect( cancel_button, SIGNAL(clicked()),
@@ -286,37 +287,41 @@ void GrepDialog::templateActivated(int index)
 }
 
 
-void GrepDialog::itemSelected(QListViewItem* item)
+void GrepDialog::itemSelected(const QString& item)
 {
-  emit itemSelected(item->text(0),item->text(1).toInt()-1);
+    int pos;
+    QString filename, linenumber;
+
+    QString str = item;
+    if ( (pos = str.find(':')) != -1)
+    {
+        filename = str.left(pos);
+        str = str.right(str.length()-1-pos);
+        if ( (pos = str.find(':')) != -1)
+        {
+            linenumber = str.left(pos);
+            emit itemSelected(filename,linenumber.toInt()-1);
+            //	kdDebug() << "Selected file " << filename << ", line " << linenumber << endl;
+        }
+    }
 }
 
 
 void GrepDialog::processOutput()
 {
-  int pos,field_pos;
-  QString line,filename,line_number,excerpt;
-  while ( (pos = buf.find('\n')) != -1)
-  {
-    line = buf.left(pos);
-    buf=buf.mid(pos+1);
-    if (line.isEmpty()) continue;
-    field_pos=line.find(':');
-    if (field_pos==-1) continue;
-    filename=line.left(field_pos);
-    line=line.mid(field_pos+1);
+    int pos;
+    while ( (pos = buf.find('\n')) != -1)
+    {
+        QString item = buf.left(pos);
+        if (!item.isEmpty())
+  	        resultbox->insertItem(item);
+        buf = buf.right(buf.length()-pos-1);
+    }
 
-    field_pos=line.find(':');
-    if (field_pos==-1) continue;
-    line_number=line.left(field_pos);
-    excerpt=line.mid(field_pos+1);
-
-    new QListViewItem(resultbox,filename,line_number,excerpt.stripWhiteSpace());
-  }
-  QString str;
-  str.setNum(resultbox->childCount());
-  str += i18n(" matches");
-  matches_label->setText(str);
+    QString str;
+    str.setNum(resultbox->count());
+    str += i18n(" matches");
+    matches_label->setText(str);
 }
 
 
@@ -435,7 +440,7 @@ void GrepDialog::childExited()
 }
 
 
-void GrepDialog::receivedOutput(KProcess* /*proc*/, char *buffer, int buflen)
+void GrepDialog::receivedOutput(KProcess */*proc*/, char *buffer, int buflen)
 {
     buf += QCString(buffer, buflen+1);
     processOutput();
@@ -456,4 +461,4 @@ void  GrepDialog::setDirName(QString dir){
 //    dir_combo->setEditText(dir);
     dir_combo->setURL(dir);
 }
-#include "grepdialog.moc"
+#include "kategrepdialog.moc"
