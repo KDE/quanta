@@ -1253,6 +1253,23 @@ void QuantaApp::readTagDir(QString &dirName)
    dtd->structTreeGroups.append(group);
  }
 
+ //read the abbreviations files
+ QFile f(dirName+"abbreviations");
+ if (f.open(IO_ReadOnly))
+ {
+   QDomDocument abbrevDom;
+   if (abbrevDom.setContent(&f))
+   {
+     QDomNodeList nodeList = abbrevDom.elementsByTagName("Template");
+     for (uint i = 0; i < nodeList.count(); i++)
+     {
+       QDomElement e = nodeList.item(i).toElement();
+       dtd->abbreviations.insert(e.attribute("name")+" "+e.attribute("description"), e.attribute("code"));
+     }
+   }
+   f.close();
+ }
+
  dtds->insert(dtdName.lower(), dtd);//insert the taglist into the full list
 
  delete dtdConfig;
@@ -1355,6 +1372,9 @@ void QuantaApp::initActions()
     editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         m_view, SLOT( slotEditCurrentTag() ),
                         actionCollection(), "edit_current_tag" );
+    new KAction( i18n( "E&xpand abbreviation" ), CTRL+Key_J,
+                        this, SLOT( slotExpandAbbreviation() ),
+                        actionCollection(), "expand_abbreviation" );
 
     //Kate actions
 

@@ -40,6 +40,7 @@
 #include <qspinbox.h>
 
 // include files for KDE
+#include <kcombobox.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
@@ -92,6 +93,7 @@
 
 #include "widgets/whtmlpart.h"
 
+#include "dialogs/abbreviation.h"
 #include "dialogs/filemasks.h"
 #include "dialogs/styleoptionss.h"
 #include "dialogs/previewoptions.h"
@@ -812,7 +814,7 @@ void QuantaApp::slotOptions()
 
   // Tag Style options
   QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, BarIcon("kwrite", KIcon::SizeMedium ) );
-  StyleOptionsS *styleOptionsS = new StyleOptionsS( (QWidget *)page );
+  StyleOptionsS *styleOptionsS = new StyleOptionsS( (QWidget *)page);
 
   styleOptionsS->tagCase->setCurrentItem( qConfig.tagCase);
   styleOptionsS->attributeCase->setCurrentItem( qConfig.attrCase);
@@ -824,7 +826,7 @@ void QuantaApp::slotOptions()
   // Environment options
   //TODO FileMasks name is not good anymore
   page=kd->addVBoxPage(i18n("Environment"), QString::null, BarIcon("files", KIcon::SizeMedium ) );
-  FileMasks *fileMasks = new FileMasks( (QWidget *)page );
+  FileMasks *fileMasks = new FileMasks( );
 
   fileMasks->lineMarkup->setText( qConfig.markupMimeTypes );
   fileMasks->lineScript->setText( qConfig.scriptMimeTypes );
@@ -877,8 +879,13 @@ void QuantaApp::slotOptions()
   parserOptions->showEmptyNodes->setChecked(qConfig.showEmptyNodes);
   parserOptions->showClosingTags->setChecked(qConfig.showClosingTags);
   parserOptions->spinExpand->setValue(qConfig.expandLevel);
+
+  page = kd->addVBoxPage(i18n("Abbreviations"), QString::null, BarIcon("source", KIcon::SizeMedium));
+  Abbreviation *abbreviationOptions = new Abbreviation((QWidget*)(page));
+  abbreviationOptions->dtdCombo->insertStringList(lst);
+
   page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
-  DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)page );
+  DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)(page) );
 
   if (debuggerStyle=="PHP3") debuggerOptions->radioPhp3->setChecked(true);
   if (debuggerStyle=="None") debuggerOptions->checkDebugger->setChecked(false);
@@ -2775,6 +2782,53 @@ QString QuantaApp::currentURL() const
   {
     return m_view->oldWrite->url().url();
   }
+}
+
+void QuantaApp::slotExpandAbbreviation()
+{
+  if (m_view->writeExists())
+  {
+    Document *w = m_view->write();
+    DTDStruct *dtd = w->currentDTD();
+    uint line, col;
+    w->viewCursorIf->cursorPositionReal(&line, &col);
+    QString text = w->text(line, 0, line, col);
+    text = w->findWordRev(text)+" ";
+    QString textToInsert;
+    QMap<QString, QString>::Iterator it;
+    for (it = dtd->abbreviations.begin(); it != dtd->abbreviations.end(); ++it)
+    {
+      if (it.key().startsWith(text))
+      {
+        textToInsert = it.data();
+        break;
+      }
+    }
+    if (!textToInsert.isEmpty())
+    {
+      w->editIf->removeText(line, col - text.length() + 1, line, col);
+      col -= (text.length() - 1);
+      int pos = textToInsert.find('|');
+      if (pos != -1)
+      {
+        text = textToInsert.left(pos);
+        if (text.contains('\n'))
+        {
+          line += text.contains('\n');
+          col = text.length() - text.findRev('\n');
+        } else
+        {
+          col += pos;
+        }
+      }
+      textToInsert.replace('|',"");
+      w->insertText(textToInsert, false);
+      w->viewCursorIf->setCursorPositionReal(line, col);
+    }
+
+
+  }
+
 }
 
 #include "quanta.moc"

@@ -54,8 +54,8 @@ Parser::~Parser()
 
 /** Searches for scripts inside the text from startNode. It looks only for the
 script begin/and delimiters, and not for the <script> or other special tags.
-Useful when parsing for script inside scripts, or inside the quoted attribute 
-values of the xml tags. 
+Useful when parsing for script inside scripts, or inside the quoted attribute
+values of the xml tags.
  Returns: true if a script area is found, false if the parsed text does not
 contain any scripts. */
 bool Parser::scriptParser(Node *startNode)
@@ -161,7 +161,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   textLine.fill(' ', startCol);
   int line = startLine;
   int col = 0;;
-  int tagStartCol, tagStartLine, tagEndLine, tagEndCol;
+  int tagStartCol, tagStartLine = 0;
+  int tagEndLine, tagEndCol;
   int tagStartPos, specialStartPos;
   int lastLineLength = write->editIf->lineLength(endLine);
   int specialAreaCount = m_dtd->specialAreas.count();
@@ -173,13 +174,13 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   if (currentNode && (currentNode->tag->type != Tag::XmlTag ||
       currentNode->tag->single))
       parentNode = currentNode->parent;
-  Tag *tag;
+  Tag *tag = 0L;
   textLine.append(write->text(startLine, startCol, startLine, write->editIf->lineLength(startLine)));
   while (line <= endLine)
   {
     if (line == endLine)
     {
-      if (endCol > 0) 
+      if (endCol > 0)
         textLine.truncate(endCol);
       else
         textLine = "";

@@ -313,6 +313,7 @@ public slots:
   void slotReparse();
   void slotForceReparse();
 
+  void slotExpandAbbreviation();
 
 protected slots:
   /** No descriptions */

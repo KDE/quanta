@@ -45,13 +45,13 @@ typedef struct Attribute{
         QString defaultValue; //the default value
         QString status;       // "optional", "required","implied"
       };
-      
-//the groups in structure tree are defined with the help of:      
+
+//the groups in structure tree are defined with the help of:
 typedef struct StructTreeGroup{
         QString name;        //the name of the group
         QString noName;      //the text when there are no elements in the group
         QString icon;        //the icon of the group
-        QRegExp searchRx;    //regular experssion to help us find the group - for pseudo DTDs     
+        QRegExp searchRx;    //regular experssion to help us find the group - for pseudo DTDs
         QRegExp clearRx;     //clear the text matched from the result of the searchRx search - for pseudo DTDs
         QString tag;         //tags belonging to this group - for real DTDs
         QStringList attributes; //the attributes of the above tag to be displayed - for real DTDs
@@ -80,40 +80,40 @@ typedef struct DTDStruct
      QTagList* tagsList;              //the list of all defined tags in the DTD
      QString fileName;                //the DTD decription.rc with path
      AttributeListDict* commonAttrs;  //the attributes of the common groups
-     
-//TODO: These are obsolete. Remove them!!     
+
+//TODO: These are obsolete. Remove them!!
      QString scriptName;              //the name that can be the value of <script language=""> attribute
      QString scriptRegExpStr;
      QStringList scriptTagStart;
      QStringList scriptTagEnd;
-//End of TODO     
-     
+//End of TODO
+
      QString booleanAttributes;       //simple or extended <tag booleanAttr> or <tag booleanAttr="1">
      QString booleanTrue;             //"true" or "1" or whatever
      QString booleanFalse;            //"false" or "0" or whatever
      QString singleTagStyle;          //"xml" or "html" (<tag/> or <tag>)
      QString defaultAttrType;         //"input", "string" or whatever
 
-/****************** FOR THE NEW PARSER **********************/     
+/****************** FOR THE NEW PARSER **********************/
 
-/* Special, not to be parsed areas. It is the area of the nested DTD's 
+/* Special, not to be parsed areas. It is the area of the nested DTD's
  (script, css) and special areas like comments. Special areas can be in form:
-  <begin_str end_str> or they can be inside special tags, like 
-  <special_tag> </special_tag>.  
-*/ 
+  <begin_str end_str> or they can be inside special tags, like
+  <special_tag> </special_tag>.
+*/
 
-/* The starting and closing strings of a special area. For PHP the special areas 
+/* The starting and closing strings of a special area. For PHP the special areas
    are <? ?> and <* *>, so the entries are (<?,?>),(<*,*>).
 */
-     QMap<QString, QString> specialAreas;    
-    
+     QMap<QString, QString> specialAreas;
+
 /* To which DTD this special area belongs. It may be a non-dtd name, like
-   "comment", which is treated as a special case. 
+   "comment", which is treated as a special case.
    Entries are in for of (<?,php) or (<!--,comment).
 */
      QMap<QString, QString> specialAreaNames;
-    
-/* A regular expression which matches the starting strings of all the 
+
+/* A regular expression which matches the starting strings of all the
    possible special areas.
 */
      QRegExp     specialAreaStartRx;
@@ -134,11 +134,11 @@ typedef struct DTDStruct
    the special area and tag definitions.
 */
      QStringList insideDTDs;
-     
-/* The definition tags for this DTD in the same for as the above. */     
+
+/* The definition tags for this DTD in the same for as the above. */
      QMap<QString, QString> definitionTags;
 
-/* The beginning and end string of the definition areas for this DTD. 
+/* The beginning and end string of the definition areas for this DTD.
    It is stored in (area_begin_str,area_end_str) pairs. E.g (<?,?>)
 */
      QMap<QString, QString> definitionAreas;
@@ -162,20 +162,22 @@ typedef struct DTDStruct
 /* A list of structure tree groups definition */
      QValueList<StructTreeGroup> structTreeGroups;
 /****************** END FOR THE NEW PARSER **********************/
-     
+
      QString structKeywordsRxStr;        //regular expression to match the keywords that can appear before a structrue
      QString structRxStr;
-     
+
      QStringList structGroups;        //group names to appear at the top of the Structure Tree in form of "Name;No Name"
      QStringList groupIcons;
      QStringList groupTags;          //the tag which defines the group in tag(attr1,attr2,...) form
      QStringList groupRxs;           //the regexp which helps us to find the groups; valid only for script DTDs
      QStringList groupClearRxs;      //regexp to clear from the found group regex; valid only for script DTDs
      QStringList toolbars;
+/*A list with abbreviations in the for of: <template templatename, code> */
+     QMap<QString, QString> abbreviations;
     };
 
 class QTag {
-public: 
+public:
   QTag();
   QTag(  QTag&);
   ~QTag();
