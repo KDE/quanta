@@ -324,17 +324,16 @@ void QuantaView::initActions()
                         actionCollection, "insert_char" );
     connect( char_action, SIGNAL(activated(const QString &)),
              this, SLOT(slotInsertChar(const QString &)) );
-    QStringList char_list;
     QFile file( locate("appdata","chars") );
     if ( file.open(IO_ReadOnly) ) {    // file opened successfully
         QTextStream t( &file );        // use a text stream
         QString s;
         while ( !t.eof() ) {           // until end of file...
-            char_list << i18n(t.readLine()); // line excluding '\n'
+            charList << i18n(t.readLine()); // line excluding '\n'
         }
         file.close();
     }
-    char_action->setItems(char_list);
+    char_action->setItems(charList);
 }
 
 /** No descriptions /

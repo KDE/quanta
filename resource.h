@@ -28,6 +28,7 @@
 class KDirWatch;
 class KProgress;
 class QuantaApp;
+class QStringList;
 
 extern QConfig qConfig;
 extern QString tmpDir;
@@ -43,7 +44,7 @@ extern KDirWatch *fileWatcher;
 
 extern const QString toolbarExtension;
 extern const QRegExp newLineRx;
-
+extern QStringList charList; //hold the list of the &char; chars. See the data/chars file.
 
 extern KProgress *progressBar;
 extern QuantaApp *quantaApp;

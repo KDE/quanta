@@ -567,9 +567,13 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
 {
   unsigned int line,col;
   completionInProgress = false;
-  kdDebug(24000) << "slotCompletionDone\n";
   viewCursorIf->cursorPositionReal(&line,&col);
   DTDStruct* dtd = currentDTD();
+/*  if (completion.type == "charCompletion")
+  {
+    m_lastCompletionList = getCharacterCompletions(completion.userdata);
+    QTimer::singleShot(0, this, SLOT(slotDelayedShowCodeCompletion()));
+  } else*/
   if (completion.type == "attribute")
   {
     viewCursorIf->setCursorPositionReal(line,col-1);
@@ -582,15 +586,15 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
         QTimer::singleShot(0, this, SLOT(slotDelayedShowCodeCompletion()));
       }
     }
-  }
+  } else
   if (completion.type == "attributeValue")
   {
     viewCursorIf->setCursorPositionReal(line, col);
-  }
+  } else
   if (completion.type == "doctypeList")
   {
     viewCursorIf->setCursorPositionReal(line,col+1);
-  }
+  } else
   if (completion.type == "script")
   {
     viewCursorIf->setCursorPositionReal(line,col);
@@ -623,7 +627,10 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
   QString s = completion->userdata.left(pos);
   completion->userdata.remove(0,pos+1);
   string->remove(0, s.length());
-
+  if (completion->type == "charCompletion")
+  {
+    *string = completion->userdata;
+  } else
   if ( completion->type == "attributeValue")
   {
     uint line, col;
@@ -634,11 +641,11 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
         tagSeparator = qConfig.attrValueQuotation;
     if (textLine[col] != tagSeparator)
         string->append(tagSeparator);
-  }
+  } else
   if ( completion->type == "attribute" )
   {
     string->append("="+QString(qConfig.attrValueQuotation)+QString(qConfig.attrValueQuotation));
-  }
+  } else
   if (completion->type == "doctypeList")
   {
     s = *string;
@@ -650,7 +657,7 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
       s2 += " \""+dtd->url+"\"";
     }
     string->append(QuantaCommon::attrCase(s2));
-  }
+  } else
   if (completion->type == "script")
   {
     string->append(completionDTD->attrAutoCompleteAfter);
@@ -726,11 +733,6 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       //we need to complete a tag name
       showCodeCompletions( getTagCompletions(line, column) );
       handled = true;
-    } else
-    if ( string == "&")
-    {
-          //complete character codes
-          //showCodeCompletions( getCharacterCompletions() );
     } else
     if (string == ">" && !tagName.isEmpty() &&
         tagName[0] != '/' && qConfig.closeTags &&
@@ -817,7 +819,18 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
           handled = true;
           }
   } // else - we are inside of a tag
-
+  if (!handled)
+  {
+    QString s = editIf->textLine(line).left(column + 1);
+    int pos = s.findRev('&');
+    if (pos != -1)
+    {
+      s = s.mid(pos + 1);
+      //complete character codes
+      showCodeCompletions( getCharacterCompletions(s) );
+      handled = true;
+    }
+  }
  return handled;
 }
 
@@ -1035,18 +1048,41 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
       }
     }
   }
+  int andSignPos = startsWith.find('&');
+  if (andSignPos != -1)
+  {
+    QValueList<KTextEditor::CompletionEntry> *charCompletions = getCharacterCompletions(startsWith.mid(andSignPos + 1));
+    *completions += *charCompletions;
+    delete charCompletions;
+  }
 
 //  completionInProgress = true;
   return completions;
 }
 
 /** Return a list of chatacter completions (like &nbsp; ...) */
-QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions()
+QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(const QString& startsWith)
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
 
-  //need to get this information from something
+  KTextEditor::CompletionEntry completion;
+  completion.type = "charCompletion";
 
+  for ( QStringList::Iterator it = charList.begin(); it != charList.end(); ++it )
+  {
+    completion.text = *it;
+    int begin = completion.text.find("(") + 2;
+    if (begin == 1)
+        continue;
+    int length = completion.text.find(")") - begin;
+    QString s = completion.text.mid(begin, length);
+    completion.text = "&" + s + " : " + completion.text.left(begin -2) + " - " + completion.text.mid(begin + length + 1);
+    if (s.startsWith(startsWith))
+    {
+      completion.userdata = startsWith + "|" + s.mid(startsWith.length());
+      completions->append( completion );
+    }
+  }
   return completions;
 }
 
@@ -1481,7 +1517,7 @@ bool Document::xmlCodeCompletion(int line, int col)
 {
   bool handled = false;
   Node *node = parser->nodeAt(line, col);
-  if (node && node->tag)
+  if (node && node->tag && node->tag->type == Tag::XmlTag )
   {
     Tag *tag = node->tag;
     int bLine, bCol;
@@ -1489,7 +1525,7 @@ bool Document::xmlCodeCompletion(int line, int col)
     QString s;
     int index;
     QString tagName = tag->name.section('|', 0, 0).stripWhiteSpace();
-    if (col <= (int)(bCol + tagName.length()+1)) //we are inside a tag name, so show the possible tags
+    if (col > bCol && col <= (int)(bCol + tagName.length()+1)) //we are inside a tag name, so show the possible tags
     {
      showCodeCompletions( getTagCompletions(line, col) );
      handled = true;
@@ -1521,6 +1557,18 @@ bool Document::xmlCodeCompletion(int line, int col)
           handled = true;
         }
       }
+    }
+  }
+  if (!handled)
+  {
+    QString s = editIf->textLine(line).left(col);
+    int pos = s.findRev('&');
+    if (pos != -1)
+    {
+      s = s.mid(pos + 1);
+      //complete character codes
+      showCodeCompletions( getCharacterCompletions(s) );
+      handled = true;
     }
   }
   return handled;

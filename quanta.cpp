@@ -1468,7 +1468,7 @@ void QuantaApp::slotToolSyntaxCheck()
 
       KProcess *p = new KProcess();
       *p << "perl";
-      *p << locate("lib","quanta/plugins/weblint");
+      *p << locate("appdata","plugins/weblint");
       *p << "-x" << "Netscape";
       *p << fname;
 

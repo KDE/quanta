@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32012">
+<kpartgui name="quanta" version="32013">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -180,7 +180,7 @@
 
   </MenuBar>
 
-  <ToolBar name="mainToolBar" noMerge="1" fullWidth="false">
+  <ToolBar name="mainToolBar" noMerge="1">
   <text>Main Toolbar</text>
     <Action name="file_new"     />
     <Action name="file_open"    />
@@ -195,7 +195,7 @@
     <Separator/>
   </ToolBar>
 
-  <ToolBar name="mainEditToolBar" noMerge="1" fullWidth="false">
+  <ToolBar name="mainEditToolBar" noMerge="1">
   <text>Editor Toolbar</text>
     <Action name="edit_cut"  />
     <Action name="edit_copy" />
@@ -208,8 +208,13 @@
     <Action name="edit_find_next"/>
     <Separator/>
     <Action name="tools_spelling"/>
+  </ToolBar>
+
+  <ToolBar name="mainPluginsToolBar" noMerge="1">
+    <text>Plugins Toolbar</text>
     <Action name="tidy_check" />
     <Action name="KFileReplace" />
+    <Action name="CVS Management (Cervisia)" />
   </ToolBar>
 
   <ToolBar name="mainNaviToolBar" noMerge="1">

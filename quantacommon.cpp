@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 //qt includes
-#include <qstring.h>
+#include <qstringlist.h>
 #include <qdict.h>
 #include <qdir.h>
 #include <qwidget.h>
@@ -48,6 +48,7 @@ KProgress *progressBar;
 
 const QString toolbarExtension = ".toolbar.tgz";
 const QRegExp newLineRx("\\n");
+QStringList charList; //hold the list of the &char; chars. See the data/chars file.
 
 QuantaCommon::QuantaCommon(){
 }

@@ -240,7 +240,7 @@ private:
   /** Get list of possibile tag attribute value completions */
   QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions(const QString& tagName, const QString& attribute, const QString& startsWith=QString::null);
   /** Get list of possibile completions in normal text input (nt creating a tag) */
-  QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
+  QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions(const QString& starstWith=QString::null);
   /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
   bool xmlCodeCompletion(int line, int col);
   /** Returns list of values for attribute */

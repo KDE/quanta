@@ -452,13 +452,20 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         currentNode->tag->endPos(el, ec);
       }
       tagStartPos--;
-      QString s = write->text(el, ec + 1, tagStartLine, tagStartPos);
 
-      if ((el !=0 || ec !=0) && !(el == tagStartLine && ec ==tagStartPos))
+      if ((el !=0 || ec !=0) && !(el == tagStartLine && ec == tagStartPos) )
       {
+        QString s;
         textTag = new Tag();
+        if (!(el == tagStartLine && ec == tagStartPos))
+        {
+          s = write->text(el, ec + 1, tagStartLine, tagStartPos);
+          textTag->setTagPosition(el, ec+1, tagStartLine, tagStartPos);
+        } else
+        {
+          textTag->setTagPosition(el, ec, tagStartLine, tagStartPos);
+        }
         textTag->setStr(s);
-        textTag->setTagPosition(el, ec+1, tagStartLine, tagStartPos);
         textTag->setWrite(write);
         textTag->single = true;
         textTag->dtd = m_dtd;
@@ -1247,8 +1254,8 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
       node->next->tag->beginPos(el, ec);
     } else
     {
-      el = write->editIf->numLines();
-      ec = 0;
+       el = write->editIf->numLines();
+       ec = 0;
     }
     result = QuantaCommon::isBetween(line, col, bl, bc, el, ec);
     if ( result == 0)
@@ -1288,6 +1295,12 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
      {
        node = node->prev;
      }
+  } else
+  if (node && (el < line || (el == line && ec < col)))
+  {
+    Node *n = node->nextSibling();
+    if (n && n->nextSibling()) //don't set it to the last, always empty node
+      node = n;
   }
   return node;
 }

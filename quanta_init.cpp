@@ -706,7 +706,7 @@ void QuantaApp::readOptions()
   debuggerStyle = "None";
   m_config->setGroup  ("General Options");
   if (m_config->readBoolEntry("Enable Debugger", true))
-    if (m_config->readEntry("PHP Debugger style","PHP4") == "PHP4")
+    if (m_config->readEntry("PHP Debugger style","None") == "PHP4")
          enablePhp4Debug(true);
     else enablePhp3Debug(true);
 
