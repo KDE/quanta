@@ -133,6 +133,7 @@ void ViewManager::createNewDocument()
   view->activated(); //the previous activate does not call this, because it detects that the view was not changed (createView() also calls activate())
   m_lastActiveView = view;
   m_lastActiveEditorView = view;
+  quantaApp->newCursorPosition("", 1, 1);
 }
 
 bool ViewManager::removeView(QuantaView *view, bool force)
