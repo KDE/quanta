@@ -693,6 +693,14 @@ void QuantaView::slotPasteURLEncoded()
 
 void QuantaView::slotUndo ()
 {
+#ifdef BUILD_KAFKAPART
+  if(hadLastFocus() == QuantaView::kafkaFocus)
+  {
+    KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"),
+      QString::null, "show undo unavailable");
+    return;
+  }
+#endif
   if (writeExists())
   {
     bool updateClosing = qConfig.updateClosingTags;
@@ -708,6 +716,14 @@ void QuantaView::slotUndo ()
 
 void QuantaView::slotRedo ()
 {
+#ifdef BUILD_KAFKAPART
+  if(hadLastFocus() == QuantaView::kafkaFocus)
+  {
+    KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"),
+      QString::null, "show redo unavailable");
+    return;
+  }
+#endif
   if (writeExists())
   {
     bool updateClosing = qConfig.updateClosingTags;
@@ -723,6 +739,14 @@ void QuantaView::slotRedo ()
 
 void QuantaView::slotCut ()
 {
+#ifdef BUILD_KAFKAPART
+  if(hadLastFocus() == QuantaView::kafkaFocus)
+  {
+    KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"),
+      QString::null, "show cut unavailable");
+    return;
+  }
+#endif
   if (writeExists())
   {
     dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->cut();
@@ -731,6 +755,14 @@ void QuantaView::slotCut ()
 
 void QuantaView::slotCopy ()
 {
+#ifdef BUILD_KAFKAPART
+  if(hadLastFocus() == QuantaView::kafkaFocus)
+  {
+    KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"),
+      QString::null, "show copy unavailable");
+    return;
+  }
+#endif
   if (writeExists())
   {
     dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->copy();
@@ -742,6 +774,14 @@ void QuantaView::slotCopy ()
 
 void QuantaView::slotPaste ()
 {
+#ifdef BUILD_KAFKAPART
+  if(hadLastFocus() == QuantaView::kafkaFocus)
+  {
+    KMessageBox::information(this, i18n("Sorry, VPL doesn't support this functionality yet!"),
+      QString::null, "show paste unavailable");
+    return;
+  }
+#endif
   if (writeExists())
   {
     write()->paste();

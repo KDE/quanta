@@ -44,6 +44,7 @@ namespace Kate {
 class Document;
 
 struct TagAttr {
+  TagAttr() {nameLine = nameCol = valueLine = valueCol = 0; quoted = true; special = false;}
   QString name;           //attr name
   QString value;          //attr value
   int nameLine, nameCol;  //where the attr name begins

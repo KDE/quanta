@@ -740,6 +740,8 @@ void QuantaView::slotKafkaGetFocus(bool focus)
 
       //Reload the kafka Editor only if Quanta was modified or if something has happened (e.g. a reparse)
       //and NEED a kafka reload.
+      if(parser->parsingNeeded() && writeExists())
+        baseNode = parser->rebuild(write());
       reloadKafkaView();
       //doesn't work!
       kafkaInterface->getKafkaWidget()->view()->setContentsPos(contentsX, contentsY);
@@ -778,27 +780,6 @@ void QuantaView::slotKafkaGetFocus(bool focus)
     if(action)
       action->setEnabled(false);
 
-
-    action = 0L;
-    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Undo));
-    if(action)
-      action->setEnabled(false);
-    action = 0L;
-    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Redo));
-    if(action)
-      action->setEnabled(false);
-    action = 0L;
-    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Cut));
-    if(action)
-      action->setEnabled(false);
-    action = 0L;
-    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Copy));
-    if(action)
-      action->setEnabled(false);
-    action = 0L;
-    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Paste));
-    if(action)
-      action->setEnabled(false);
 
     currentFocus = QuantaView::kafkaFocus;
   }
@@ -860,28 +841,6 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
       action->setEnabled(true);
     action = 0L;
     action = quantaApp->actionCollection()->action("insert_char");
-    if(action)
-      action->setEnabled(true);
-
-
-    action = 0L;
-    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Undo));
-    if(action)
-      action->setEnabled(true);
-    action = 0L;
-    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Redo));
-    if(action)
-      action->setEnabled(true);
-    action = 0L;
-    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Cut));
-    if(action)
-      action->setEnabled(true);
-    action = 0L;
-    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Copy));
-    if(action)
-      action->setEnabled(true);
-    action = 0L;
-    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Paste));
     if(action)
       action->setEnabled(true);
 

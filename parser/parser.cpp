@@ -410,6 +410,12 @@ Node *Parser::parse(Document *w)
   QTime t;
   t.start();
 
+#ifdef BUILD_KAFKAPART
+  //If VPL is loaded, there shouldn't be any rebuild
+  if(quantaApp->view()->hadLastFocus() == QuantaView::kafkaFocus)
+    return m_node;
+#endif
+
   if(!m_parsingEnabled)
     return baseNode;
 
@@ -884,7 +890,12 @@ Node *Parser::rebuild(Document *w)
 {
  QTime t;
  t.start();
+
 #ifdef BUILD_KAFKAPART
+  //If VPL is loaded, there shouldn't be any rebuild
+  if(quantaApp->view()->hadLastFocus() == QuantaView::kafkaFocus)
+    return m_node;
+
  NodeModifsSet *modifs = new NodeModifsSet();
  NodeModif *modif;
 #endif
