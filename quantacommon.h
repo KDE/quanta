@@ -47,7 +47,7 @@ typedef struct QConfig{
           //Tag style options
           uint tagCase;
           uint attrCase;
-          QString attrValueQuotation;
+          QChar attrValueQuotation;
           bool closeOptionalTags;
           bool closeTags;
           bool updateClosingTags;

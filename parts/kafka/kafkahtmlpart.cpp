@@ -43,7 +43,6 @@
 #include "kafkahtmlview.h"
 #include "kafkahtmlpart.moc"
 
-
 class KafkaHTMLPartPrivate
 {
 public:
@@ -125,11 +124,12 @@ KafkaHTMLPart::~KafkaHTMLPart()
 
 void KafkaHTMLPart::newDocument()
 {
+ QChar attrValueQuotation = '"'; //FIXME: Somehow we should get it from Quanta settings: qConfig.attrValueQuotation
 	QString newPageHTMLCode = "<html>\n"
 					 "<head>\n"
 					"<title>" + i18n("New Homepage") + "</title>\n"
 					"</head>\n"
-					"<body bgColor=\"#FFFFFF\" text=\"#000000\">\n"
+					"<body bgColor="+attrValueQuotation+"#FFFFFF"+attrValueQuotation+" text="+attrValueQuotation+"#000000"+attrValueQuotation+">\n"
 					"&nbsp;\n"
 					"</body>\n"
 					"</html>\n";

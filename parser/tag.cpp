@@ -94,12 +94,13 @@ void Tag::parseAttr( QString text, int &line, int &col)
      col++;
      while ( text[col].isSpace() )
         col++;
-     if (text[col] == '\"') //the attribute value is quoted
+     if (text[col] == '"' || text[col] == '\'') //the attribute value is quoted
      {
+       QChar quotation = text[col];
        begin = ++col;
-//TODO: recognize the different quoting styles as it is specified in options
-       while (  text[col] != '\"' &&
-                col < (int) text.length())
+       while (  (text[col] != quotation ||
+                (text[col] == quotation && text[col-1] == '\\') )
+              && col < (int) text.length())
        {
          col++;
        }

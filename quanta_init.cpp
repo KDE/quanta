@@ -540,7 +540,7 @@ void QuantaApp::saveOptions()
 
     m_config->writeEntry("Capitals for tags", qConfig.tagCase);
     m_config->writeEntry("Capitals for attr", qConfig.attrCase);
-    m_config->writeEntry("Attribute quotation", qConfig.attrValueQuotation);
+    m_config->writeEntry("Attribute quotation", qConfig.attrValueQuotation=='"' ? "double":"single");
     m_config->writeEntry("Close tag if optional", qConfig.closeOptionalTags);
     m_config->writeEntry("Close tags", qConfig.closeTags);
     m_config->writeEntry("Auto completion", qConfig.useAutoCompletion);
@@ -599,7 +599,7 @@ void QuantaApp::readOptions()
 
   qConfig.tagCase = m_config->readNumEntry("Capitals for tags", 0);
   qConfig.attrCase = m_config->readNumEntry("Capitals for attr", 0);
-  qConfig.attrValueQuotation = m_config->readEntry("Attribute quotation", "double");
+  qConfig.attrValueQuotation = (m_config->readEntry("Attribute quotation", "double") == "double" )? '"':'\'';
   qConfig.closeOptionalTags = m_config->readBoolEntry("Close tag if optional", true);
   qConfig.closeTags = m_config->readBoolEntry("Close tags", true);
   qConfig.useAutoCompletion = m_config->readBoolEntry("Auto completion",true);

@@ -175,9 +175,9 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
     else
     {
       attrval = QString(" ")+attr+"=";
-      if (! val.startsWith("\\\"")) attrval += "\"";
+      if (!val.startsWith("\\\"") && !val.startsWith("\\\'")) attrval += qConfig.attrValueQuotation;
       attrval += val;
-      if (! val.endsWith("\\\"")) attrval += "\"";
+      if (!val.endsWith("\\\"") && !val.endsWith("\\\'")) attrval += qConfig.attrValueQuotation;
     }
     tagStr = attrval + tagStr;
     ++it;
@@ -545,7 +545,7 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
   }
   if ( completion->type == "attribute" )
   {
-    string->append("=\"\"");
+    string->append("="+QString(qConfig.attrValueQuotation)+QString(qConfig.attrValueQuotation));
   }
   if (completion->type == "doctypeList")
   {
@@ -687,7 +687,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
           if (showAttributes)
               showCodeCompletions( getAttributeCompletions(tagName) );
          }
-    else if ( string == "\"" )
+    else if ( string[0] == qConfig.attrValueQuotation )
           {
           //we need to find the attribute name
           QString textLine = editIf->textLine(line).left(column-1);

@@ -170,14 +170,14 @@ void QuantaView::slotTagMail()
 
     if ( !QString(mailDlg->lineEmail->text()).isEmpty())
     {
-      tag += QuantaCommon::attrCase(" href=\"")+"mailto:"+mailDlg->lineEmail->text();
+      tag += QuantaCommon::attrCase(" href=")+qConfig.attrValueQuotation+"mailto:"+mailDlg->lineEmail->text();
         if ( !QString(mailDlg->lineSubject->text()).isEmpty())
          tag += "?subject="+mailDlg->lineSubject->text();
-         tag += "\"";
+         tag += qConfig.attrValueQuotation;
     }
 
     if ( !QString(mailDlg->titleEdit->text()).isEmpty())
-         tag += QuantaCommon::attrCase(" title=\"")+mailDlg->titleEdit->text()+"\"";
+         tag += QuantaCommon::attrCase(" title=")+qConfig.attrValueQuotation+mailDlg->titleEdit->text()+qConfig.attrValueQuotation;
     tag += QString(">");
     write()->insertTag(tag,QuantaCommon::tagCase("</a>"));
   }
@@ -235,17 +235,17 @@ void QuantaView::slotTagQuickStart()
            space+"  <meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"+space+
            QuantaCommon::tagCase("</head>\n")+space+QuantaCommon::tagCase("<body");
     if ( !QString(quickDlg->lineBGImage->text()).isEmpty())
-         tag += QuantaCommon::attrCase(" background=\"")+quickDlg->lineBGImage->text()+"\"";
+         tag += QuantaCommon::attrCase(" background=")+qConfig.attrValueQuotation+quickDlg->lineBGImage->text()+qConfig.attrValueQuotation;
     if ( !QString(quickDlg->comboBGColor->currentText()).isEmpty())
-         tag += QuantaCommon::attrCase(" bgcolor=\"")+quickDlg->comboBGColor->currentText()+"\"";
+         tag += QuantaCommon::attrCase(" bgcolor=")+qConfig.attrValueQuotation+quickDlg->comboBGColor->currentText()+qConfig.attrValueQuotation;
     if ( !QString(quickDlg->comboTextColor->currentText()).isEmpty())
-         tag += QuantaCommon::attrCase(" text=\"")+quickDlg->comboTextColor->currentText()+"\"";
+         tag += QuantaCommon::attrCase(" text=")+qConfig.attrValueQuotation+quickDlg->comboTextColor->currentText()+qConfig.attrValueQuotation;
     if ( !QString(quickDlg->comboLinkColor->currentText()).isEmpty())
-         tag += QuantaCommon::attrCase(" link=\"")+quickDlg->comboLinkColor->currentText()+"\"";
+         tag += QuantaCommon::attrCase(" link=")+qConfig.attrValueQuotation+quickDlg->comboLinkColor->currentText()+qConfig.attrValueQuotation;
     if ( !QString(quickDlg->comboALinkColor->currentText()).isEmpty())
-         tag += QuantaCommon::attrCase(" alink=\"")+quickDlg->comboALinkColor->currentText()+"\"";
+         tag += QuantaCommon::attrCase(" alink=")+qConfig.attrValueQuotation+quickDlg->comboALinkColor->currentText()+qConfig.attrValueQuotation;
     if ( !QString(quickDlg->comboVLinkColor->currentText()).isEmpty())
-         tag += QuantaCommon::attrCase(" vlink=\"")+quickDlg->comboVLinkColor->currentText()+"\"";
+         tag += QuantaCommon::attrCase(" vlink=")+qConfig.attrValueQuotation+quickDlg->comboVLinkColor->currentText()+qConfig.attrValueQuotation;
     tag += QString(">\n")+space+QString("  ");
     write()->insertTag(tag,QString("\n")+space+QuantaCommon::tagCase("</body>\n")+space+QuantaCommon::tagCase("</html>"));
   }

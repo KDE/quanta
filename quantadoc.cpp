@@ -597,7 +597,7 @@ void QuantaDoc::slotInsertAttrib( int id )
       int el, ec;
       tag->endPos(el, ec);
       w->viewCursorIf->setCursorPositionReal( el, ec );
-      w->insertTag( " " + QuantaCommon::attrCase(attrStr) + "=\"", "\"" );
+      w->insertTag( " " + QuantaCommon::attrCase(attrStr) + "="+qConfig.attrValueQuotation, qConfig.attrValueQuotation );
     }
 
     delete attribMenu;

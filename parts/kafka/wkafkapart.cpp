@@ -844,9 +844,9 @@ QString WKafkaPart::generateCodeFromNode(Node *_node)
 			text += " ";
 			text += _node->tag->attribute(j);
 			text += "=";
-			if(_node->tag->isQuotedAttribute(j)) text += "\"";
+			if(_node->tag->isQuotedAttribute(j)) text += qConfig.attrValueQuotation;
 			text += _node->tag->attributeValue(j);
-			if(_node->tag->isQuotedAttribute(j)) text += "\"";
+			if(_node->tag->isQuotedAttribute(j)) text += qConfig.attrValueQuotation;
 		}
 		if ( _node->tag->dtd->singleTagStyle == "xml" &&
 			(_node->tag->single || (!qConfig.closeOptionalTags &&
