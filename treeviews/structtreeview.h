@@ -45,7 +45,19 @@ public:
   bool followCursor() { return followCursorFlag; }
   /** Show the element in tree according to cursor position (x,y) */
   void showTagAtPos(int x, int y);
+  /** Delete the items */
+  void deleteList();
 
+	StructTreeTag *top;
+	StructTreeTag *images;
+	StructTreeTag *links;
+	
+	Parser *parser;
+
+	bool topOpened;
+	bool imagesOpened;
+	bool linksOpened;
+  bool useOpenLevelSetting;
 	
 public slots: // Public slots
   /** repaint document structure */
@@ -74,32 +86,19 @@ signals:
   void needReparse();
   void onTag( const QString &tag );
 
-public:
-	StructTreeTag *top;
-	StructTreeTag *images;
-	StructTreeTag *links;
-	
-	Parser *parser;
-
-	bool topOpened;
-	bool imagesOpened;
-	bool linksOpened;
-  bool useOpenLevelSetting;
 private:
+  /** create items in the level */
+  void createList(Node *node, StructTreeTag *parent = 0L, int openLevel = 3);	
+  /** Do the recursive opening or closing of the trees */
+  void setOpenSubTree( QListViewItem *it, bool open);
+
   int imagesCount; // to check if there are images
   int linksCount;	
   int followCursorId;
   bool followCursorFlag;
 
   QPopupMenu *popupMenu;
-
   StructTreeTag *lastTag;
-
-  /** create items in the level */
-  void createList(Node *node, StructTreeTag *parent = 0L, int openLevel = 3);	
-  /** Do the recursive opening or closing of the trees */
-  void setOpenSubTree( QListViewItem *it, bool open);
-
   KConfig *config;
 };
 

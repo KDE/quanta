@@ -193,8 +193,8 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
   }
 }
 
-/** repaint document structure */
-void StructTreeView::slotReparse(Node* node, int openLevel)
+/** Delete the items */
+void StructTreeView::deleteList()
 {
 	if ( top ) {
 		topOpened = top->isOpen();
@@ -213,17 +213,12 @@ void StructTreeView::slotReparse(Node* node, int openLevel)
 		delete links;
 		links = 0L;
 	}
+}
 
-  if (top)
-  {
-    delete top;
-    top = 0L;
-  }
-	if ( !node ) {
-		top = 0L;
-		return;
-	}
-
+/** repaint document structure */
+void StructTreeView::slotReparse(Node* node, int openLevel)
+{
+  deleteList();
 	imagesCount = linksCount = 0;
 	createList(node,0L,openLevel);
 	if ( !imagesCount )
