@@ -58,6 +58,7 @@ private:
   KAction *currentAction;
   QListViewItem *allActionsItem;
   QMap<QString, QString> globalShortcuts;
+  KShortcut selectedShortcut;
 };
 
 #endif
