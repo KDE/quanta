@@ -35,6 +35,8 @@
 #include "../parser/qtag.h"
 #include "../document.h"
 #include "../resource.h"
+#include "../qextfileinfo.h"
+#include "../quanta.h"
 
 #include "structtreetag.h"
 #include "structtreeview.h"
@@ -62,7 +64,7 @@ StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *nam
 
   setFocusPolicy(QWidget::ClickFocus);
 
-  dtdMenu = new QPopupMenu(this);
+  dtdMenu = new KPopupMenu(this);
 
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
@@ -77,12 +79,13 @@ StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *nam
   }
   connect(dtdMenu, SIGNAL(activated(int)), this, SLOT(slotDTDChanged(int)));
 
-  popupMenu = new QPopupMenu();
+  popupMenu = new KPopupMenu(this);
 
   popupMenu -> insertItem( i18n("Show Groups For"), dtdMenu);
   popupMenu -> insertSeparator();
   popupMenu -> insertItem( i18n("Select Tag Area"), this ,SLOT(slotSelectTag()));
   popupMenu -> insertItem( i18n("Go to End of Tag"), this ,SLOT(slotGotoClosingTag()));
+  openFileMenuId = popupMenu -> insertItem( i18n("Open File"), this ,SLOT(slotOpenFile()));
   popupMenu -> insertSeparator();
   popupMenu -> insertItem( i18n("Open Subtrees"), this ,SLOT(slotOpenSubTree()));
   popupMenu -> insertItem( i18n("Close Subtrees"),this ,SLOT(slotCloseSubTree()));
@@ -220,7 +223,9 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       groupElementList = & (it.data());
       for (uint j = 0; j < groupElementList->count(); j++)
       {
-        item = new StructTreeTag(dynamic_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, (*groupElementList)[j].node->tag->name, insertAfter);
+        item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, (*groupElementList)[j].node->tag->name, insertAfter);
+        static_cast<StructTreeTag*>(item)->hasOpenFileMenu = group.hasFileName;
+        static_cast<StructTreeTag*>(item)->fileNameRx = group.fileNameRx;
         if (first)
         {
           insertUnder = item;
@@ -337,6 +342,10 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
 
     if ( button == Qt::RightButton )
     {
+      if (dynamic_cast<StructTreeTag*>(item))
+      {
+        popupMenu->setItemVisible(openFileMenuId, static_cast<StructTreeTag*>(item)->hasOpenFileMenu);
+      }
       popupMenu->popup( point);
       return;
     }
@@ -561,4 +570,24 @@ void StructTreeView::setParsingDTD(const QString dtdName)
     dtdMenu->setItemChecked(i, dtdList[i] == dtdNickName);
   }
   m_parsingDTD = dtds->find(dtdName); //this should always exist
+}
+
+void StructTreeView::slotOpenFile()
+{
+  StructTreeTag *item = dynamic_cast<StructTreeTag*>(currentItem());
+  QString text = item->node->tag->name;
+  text.remove(item->fileNameRx);
+  KURL url;
+  QuantaCommon::setUrl(url, text.stripWhiteSpace());
+  KURL baseUrl = QExtFileInfo::path(write->url());
+  url = QExtFileInfo::toAbsolute(url, baseUrl);
+  if ( QuantaCommon::checkMimeGroup(url,"text" ) )
+  {
+    emit openFile( url, quantaApp->defaultEncoding() );
+  }
+  else if ( QuantaCommon::checkMimeGroup(url,"image" ) )
+  {
+    emit activatePreview();
+    emit openImage( url );
+  }
 }

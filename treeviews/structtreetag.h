@@ -31,13 +31,15 @@ class Node;
 
 class StructTreeTag : public KListViewItem  {
 
-public: 
+public:
   StructTreeTag(QListView *parent, const QString a_title = QString::null );
   StructTreeTag(StructTreeTag *parent, Node *a_node, const QString a_title = QString::null, QListViewItem *after = 0L);
   StructTreeTag(StructTreeTag *parent, const QString a_title = QString::null );
   ~StructTreeTag();
-  
+
   Node *node;
+  bool hasOpenFileMenu;
+  QRegExp fileNameRx;
 };
 
 #endif

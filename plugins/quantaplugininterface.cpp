@@ -161,10 +161,6 @@ void QuantaPluginInterface::writeConfig()
       if (curPlugin->isStandard()) config->writeEntry("Standard Name", curPlugin->standardName());
     }
   }
-  if (config->isReadOnly())
-  {
-    kdWarning() << "Plugin config file " << locateLocal("appdata", "plugins.rc") << " is read only! Plugin settings were not saved!" << endl;
-  }
   config->sync();
   if (config->isReadOnly())
   {

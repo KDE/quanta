@@ -637,19 +637,6 @@ Node *Parser::parse(Document *w)
     baseNode = 0L;
     m_node = 0L;
   }
-  QMap<QString, GroupElementMapList>::Iterator groupIt;
-  for (groupIt = m_groups.begin(); groupIt != m_groups.end(); ++groupIt)
-  {
-    GroupElementMapList::Iterator it;
-    for (it = groupIt.data().begin(); it != groupIt.data().end(); ++it)
-    {
-      for (uint i = 0 ; i < it.data().count(); i++)
-      {
-        delete it.data()[i].node;
-      }
-    }
-  }
-  m_groups.clear();
 
   Node *lastNode;
   write = w;
@@ -1589,6 +1576,20 @@ Node *Parser::rebuild(Document *w)
 
 void Parser::parseForGroups()
 {
+  QMap<QString, GroupElementMapList>::Iterator groupIt;
+  for (groupIt = m_groups.begin(); groupIt != m_groups.end(); ++groupIt)
+  {
+    GroupElementMapList::Iterator it;
+    for (it = groupIt.data().begin(); it != groupIt.data().end(); ++it)
+    {
+      for (uint i = 0 ; i < it.data().count(); i++)
+      {
+        delete it.data()[i].node;
+      }
+    }
+  }
+  m_groups.clear();
+
   GroupElementList* groupElementList;
   GroupElementMapList* groupElementMapList;
   DTDStruct *dtd;

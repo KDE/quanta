@@ -30,7 +30,7 @@
 class Node;
 class StructTreeTag;
 class Parser;
-class QPopupMenu;
+class KPopupMenu;
 class QuantaApp;
 class KConfig;
 class QTime;
@@ -81,6 +81,7 @@ public slots: // Public slots
   void slotCollapsed(QListViewItem *item);
   /** No descriptions */
   void slotExpanded(QListViewItem *);
+  void slotOpenFile();
 
 signals:
   void newCursorPosition( int col, int row );
@@ -89,6 +90,9 @@ signals:
   void onTag( const QString &tag );
   /** No descriptions */
   void parsingDTDChanged(const QString&);
+  void openFile(const KURL&, const QString& );
+  void openImage(const KURL&);
+  void activatePreview();
 
 private:
   /** builds the structure tree */
@@ -99,11 +103,12 @@ private:
   int followCursorId;
   bool followCursorFlag;
 
-  QPopupMenu *popupMenu;
-  QPopupMenu *dtdMenu;
+  KPopupMenu *popupMenu;
+  KPopupMenu *dtdMenu;
   StructTreeTag *lastTag;
   KConfig *config;
   QStringList dtdList;
+  int openFileMenuId;
 
 protected: // Protected methods
   /** Do a reparse before showing. */

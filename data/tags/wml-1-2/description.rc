@@ -1,6 +1,6 @@
 [General]
 Name = -//WAPFORUM//DTD WML 1.2//EN
-NickName = WML 1.2 
+NickName = WML 1.2
 DefaultExtension = wml
 Groups = Core
 NumOfPages = 1
@@ -50,9 +50,12 @@ Name = Images
 No_Name = No Images
 Icon = image
 Tag = img(src)
+HasFileName = true
 
 [StructGroup_2]
 Name = Links
 No_Name = No Links
 Icon = www
 Tag = a(title,href)
+HasFileName = true
+FileNameRx = .*\||#.*

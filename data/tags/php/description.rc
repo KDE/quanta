@@ -38,6 +38,8 @@ No_Name = No Inclusions
 Icon = attach
 SearchRx = (?:include|require|include_once|require_once)[\\s]+(?:(?:(?:\(|\"|\')+[^\)]*(?:\)|\"|\')+)|(?:\$.*))
 ClearRx = \n
+HasFileName = true
+FileNameRx = (?:include|require|include_once|require_once|\(|\)|\"|\')
 
 [StructGroup_2]
 Name = Variables

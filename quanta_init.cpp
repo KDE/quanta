@@ -469,6 +469,13 @@ void QuantaApp::initView()
   connect(sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
   connect(sTab, SIGNAL(needReparse()), SLOT(slotForceReparse()));
   connect(sTab, SIGNAL(parsingDTDChanged(const QString&)), SLOT(slotParsingDTDChanged(const QString&)));
+  connect(sTab, SIGNAL(openFile    (const KURL &, const QString&)),
+          this, SLOT  (slotFileOpen(const KURL &, const QString&)));
+  connect(sTab, SIGNAL(openImage  (const KURL&)),
+          this, SLOT(slotImageOpen(const KURL&)));
+  connect(sTab, SIGNAL(activatePreview()),
+          this, SLOT(slotActivatePreview()));
+
   connect(dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
 
   connect(m_view, SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
@@ -1302,6 +1309,9 @@ void QuantaApp::readTagDir(QString &dirName)
    group.autoCompleteAfterRx.setPattern(tmpStr);
    tmpStr = dtdConfig->readEntry("RemoveFromAutoCompleteWord").stripWhiteSpace();
    group.removeFromAutoCompleteWordRx.setPattern(tmpStr);
+   group.hasFileName = dtdConfig->readBoolEntry("HasFileName", false);
+   tmpStr = dtdConfig->readEntry("FileNameRx").stripWhiteSpace();
+   group.fileNameRx.setPattern(tmpStr);
    dtd->structTreeGroups.append(group);
  }
 

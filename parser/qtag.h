@@ -59,6 +59,8 @@ typedef struct StructTreeGroup{
         QStringList attributes; //the attributes of the above tag to be displayed - for real DTDs
         QRegExp autoCompleteAfterRx;  //holds the char after the autocompletion box should be shown for this group elements. Null, if autocompletion shouldn't be used
         QRegExp removeFromAutoCompleteWordRx;
+        bool hasFileName;  //the group contains filename(s)
+        QRegExp fileNameRx; //delete the matches of this regexp to obtain a filename (eg. linked, included file name)
       };
 
 typedef QPtrList<Attribute> AttributeList;
