@@ -760,6 +760,8 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
+ if (useAutoCompletion)
+ {
   QString tag;
   if ( string == ">")
     tag = getTagNameAt( line, column-1 );
@@ -789,6 +791,7 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
       //showCodeCompletions( getAttributeValueCompletions(tag, attribute) );
     }
   }
+ }
 }
 
 /** Return a list of possible tag name completions */

@@ -22,6 +22,7 @@
 #include <qtabwidget.h>
 #include <qtextstream.h>
 #include <qfile.h>
+#include <qptrlist.h>
 
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -30,6 +31,7 @@
 #include <kicondialog.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
+#include <kxmlguiclient.h>
 
 #include "actioneditdlg.h"
 #include "tagaction.h"
@@ -95,9 +97,35 @@ ActionEditDlg::~ActionEditDlg()
 void ActionEditDlg::deleteAction()
 {
    if ( !action ) return;
-   if ( KMessageBox::questionYesNo(this,"Are you sure, \nyou want to remove current action ?") == KMessageBox::Yes ) {
-       app->actions()->firstChild().removeChild( action->data() );
-       app->actionCollection()->remove(action);
+   if ( KMessageBox::questionYesNo(this,"Removing the action removes all the references to it.\nAre you sure, you want to remove the current action ?") == KMessageBox::Yes )
+   {
+//remove all references to this action
+     app->actions()->firstChild().removeChild( action->data() );
+     QString actionText = action->name();
+
+     QPtrList<KXMLGUIClient> guiClients = app->factory()->clients();
+     KXMLGUIClient *guiClient = 0;
+     QDomNodeList nodeList;
+     for (uint i = 0; i < guiClients.count(); i++)
+     {
+      guiClient = guiClients.at(i);
+      app->factory()->removeClient(guiClient);
+      nodeList = guiClient->domDocument().elementsByTagName("Action");
+      for (uint j = 0; j < nodeList.count(); j++)
+      {
+        //we found a toolbar that contains the action
+        if (nodeList.item(j).toElement().attribute("name") == actionText)
+        {
+          nodeList.item(j).parentNode().removeChild(nodeList.item(j));
+          guiClient->actionCollection()->remove(action);
+          KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->localXMLFile());
+        }
+      }
+        guiClient ->setXMLGUIBuildDocument( QDomDocument() );
+        guiClient->reloadXML();
+        app->guiFactory()->addClient(guiClient);
+     }
+//       app->actionCollection()->remove(action);
        action = 0;
        actionsList->removeItem( actionsList->currentItem() );
    }

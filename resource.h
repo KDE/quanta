@@ -35,6 +35,7 @@ extern QStrList *optionalTags; // tags with optional end part
 extern uint tagsCase; // use capital for tags
 extern uint attrsCase; // use capital letters for attributes of tag
 extern bool useCloseTag; // use close tag if optional
+extern bool useAutoCompletion; //enable auto completion of tags
 
 extern QString fileMaskHtml;
 extern QString fileMaskPhp;

@@ -440,6 +440,7 @@ void QuantaApp::saveOptions()
   config->writeEntry("Capitals for tags",     tagsCase);
   config->writeEntry("Capitals for attr",     attrsCase);
   config->writeEntry("Close tag if optional", useCloseTag);
+  config->writeEntry("Auto completion",useAutoCompletion);
 
   config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
 
@@ -481,6 +482,7 @@ void QuantaApp::readOptions()
   tagsCase = config->readNumEntry("Capitals for tags",     0);
   attrsCase = config->readNumEntry("Capitals for attr",     0);
   useCloseTag = config->readBoolEntry("Close tag if optional", true);
+  useAutoCompletion = config->readBoolEntry("Auto completion",true);
 
   previewPosition   = config->readEntry("Preview position","Right");
 

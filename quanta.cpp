@@ -684,6 +684,7 @@ void QuantaApp::slotOptions()
   styleOptionsS->tagCase->setCurrentItem( tagsCase);
   styleOptionsS->attributeCase->setCurrentItem( attrsCase);
   styleOptionsS->checkEndTag->setChecked( useCloseTag );
+  styleOptionsS->useAutoCompletion->setChecked( useAutoCompletion );
 
 
   // Files Masks options
@@ -715,6 +716,7 @@ void QuantaApp::slotOptions()
     tagsCase = styleOptionsS->tagCase->currentItem();
     attrsCase = styleOptionsS->attributeCase->currentItem();
     useCloseTag = styleOptionsS->checkEndTag->isChecked();
+    useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
 
     fileMaskHtml = fileMasks->lineHTML->text();
   	fileMaskPhp  = fileMasks->linePHP->text();

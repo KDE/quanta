@@ -17,14 +17,14 @@
     </property>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout1</cstring>
+            <cstring>Layout2</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>10</x>
+                <x>5</x>
                 <y>5</y>
-                <width>305</width>
-                <height>95</height>
+                <width>315</width>
+                <height>105</height>
             </rect>
         </property>
         <grid>
@@ -37,42 +37,6 @@
             <property name="spacing">
                 <number>6</number>
             </property>
-            <widget class="QComboBox" row="1" column="1">
-                <item>
-                    <property name="text">
-                        <string>Default case</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Lower Case</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Upper Case</string>
-                    </property>
-                </item>
-                <property name="name">
-                    <cstring>attributeCase</cstring>
-                </property>
-            </widget>
-            <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>checkEndTag</cstring>
-                </property>
-                <property name="text">
-                    <string>Insert end of tag if applicable</string>
-                </property>
-            </widget>
-            <widget class="QLabel" row="0" column="0">
-                <property name="name">
-                    <cstring>TextLabel1</cstring>
-                </property>
-                <property name="text">
-                    <string>Tag case:</string>
-                </property>
-            </widget>
             <widget class="QLabel" row="1" column="0">
                 <property name="name">
                     <cstring>TextLabel2</cstring>
@@ -101,7 +65,51 @@
                     <cstring>tagCase</cstring>
                 </property>
             </widget>
-            <spacer row="3" column="1">
+            <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>checkEndTag</cstring>
+                </property>
+                <property name="text">
+                    <string>Insert &amp;end of tag if applicable</string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property name="text">
+                    <string>Tag case:</string>
+                </property>
+            </widget>
+            <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                <property name="name">
+                    <cstring>useAutoCompletion</cstring>
+                </property>
+                <property name="text">
+                    <string>Use &amp;auto-completion</string>
+                </property>
+            </widget>
+            <widget class="QComboBox" row="1" column="1">
+                <item>
+                    <property name="text">
+                        <string>Default case</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Lower Case</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Upper Case</string>
+                    </property>
+                </item>
+                <property name="name">
+                    <cstring>attributeCase</cstring>
+                </property>
+            </widget>
+            <spacer row="4" column="1">
                 <property name="name" stdset="0">
                     <cstring>Spacer2</cstring>
                 </property>
@@ -124,11 +132,29 @@
             </spacer>
         </grid>
     </widget>
+    <spacer>
+        <property name="name" stdset="0">
+            <cstring>Spacer2_2</cstring>
+        </property>
+        <property name="orientation">
+            <enum>Horizontal</enum>
+        </property>
+        <property name="sizeType">
+            <enum>Expanding</enum>
+        </property>
+        <property name="sizeHint">
+            <size>
+                <width>20</width>
+                <height>20</height>
+            </size>
+        </property>
+    </spacer>
 </widget>
 <tabstops>
     <tabstop>tagCase</tabstop>
     <tabstop>attributeCase</tabstop>
     <tabstop>checkEndTag</tabstop>
+    <tabstop>useAutoCompletion</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
