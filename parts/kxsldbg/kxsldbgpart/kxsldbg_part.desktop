@@ -1,21 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KXsldbgPart
-Name[af]=kxsldbgdeel
-Name[de]=kxsldbg-Objekt
-Name[eo]=kxsldbg-Parto
-Name[es]=Parte
-Name[et]=kxsldbg komponent
-Name[id]=kxsldbgbagian
-Name[ko]=kxsldbg 부분
-Name[lt]=kxsldbgDalis
-Name[nb]=kxsldbg
-Name[ro]=Componenta kxsldbg
-Name[sv]=kxsldbg-del
-Name[ven]=Tshipida
-Name[xh]=kxsldbgIqela
-Name[xx]=xx
-Name[zu]=kxsldbgIngxenye
+Name[et]=KXsldbg komponent
+Name[sv]=Kxsldbg-del
+Name[xx]=xxKXsldbgPartxx
 MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
 ServiceTypes=KParts/ReadOnlyPart
 X-KDE-Library=libkxsldbgpart
