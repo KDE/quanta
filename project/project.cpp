@@ -187,13 +187,13 @@ void Project::insertFiles( QStringList files )
 
 void Project::createEmptyDom()
 {
-  QString s(url.url());
-  if (s.left(5) == "file:" ) s.remove(0,5);
+  QString sf = url.url();
+  if (sf.left(5) == "file:" ) sf.remove(0,5);
   
-  QFile f(s);
+  QFile f(sf);
   if ( !f.open( IO_WriteOnly ) )
   {
-    KMessageBox::sorry(this, i18n("Can't open file %s for IO_WriteOnly").arg(url.url()));
+    KMessageBox::sorry(this, i18n("Can't open file %s for IO_WriteOnly").arg(sf));
     return;
   }
 
@@ -359,34 +359,34 @@ void Project::loadProject(const KURL &url)
   
   if (u.isMalformed()) 
   {
-      QString s = i18n("Malformed URL\n%1").arg(url.prettyURL());
+      QString s = i18n("Malformed URL\n%1").arg(u.prettyURL());
       KMessageBox::sorry(this, s);
       return;
   }  
 
-  if ( !url.isLocalFile() )
+  if ( !u.isLocalFile() )
   {
-    emit statusMsg(i18n("Loading project %s").arg(url.url()));
+    emit statusMsg(i18n("Loading project %s").arg(u.url()));
     emit checkOpenAction(false);
     // clear
     QByteArray b;
     buff.setBuffer(b);
     
-    KIO::Job *job = KIO::get( url );
+    KIO::Job *job = KIO::get( u );
 
     connect( job, SIGNAL( result( KIO::Job * ) ), this, SLOT( slotProjectReadFinish(KIO::Job *)));
     connect( job, SIGNAL( data(KIO::Job *,const QByteArray &)), this, SLOT( slotProjectReadData(KIO::Job *,const QByteArray &)));
   
-    this->url = url;
+    this->url = u;
     
-    QString s = url.url();
+    QString s = u.url();
     s.remove(s.findRev('/')+1,s.length());
     
     basePath = s;
   }
   else 
   {
-    QString fn = url.url();
+    QString fn = u.url();
     
     if ( fn.left(5) == "file:" ) fn.remove(0,5);
     
@@ -396,11 +396,11 @@ void Project::loadProject(const KURL &url)
     basePath = fi.dirPath();
     if ( basePath.right(1) != "/" )	basePath += "/";
     
-    if ( !f.exists() )          { KMessageBox::sorry( this, i18n("File don't exists") );return;}
-    if ( !f.open(IO_ReadOnly))  { KMessageBox::sorry( this, i18n("Can't open for IO_ReadOnly") );return;}
-    if ( !dom.setContent( &f )) { KMessageBox::sorry( this, i18n("Not found XML info in file") );return;}
+    if ( !f.exists() )          { KMessageBox::sorry( this, i18n("File %s don't exists").arg(fn) );return;}
+    if ( !f.open(IO_ReadOnly))  { KMessageBox::sorry( this, i18n("Can't open %s for IO_ReadOnly").arg(fn) );return;}
+    if ( !dom.setContent( &f )) { KMessageBox::sorry( this, i18n("Not found XML info in file %s").arg(fn) );return;}
   
-    this->url = url;
+    this->url = u;
     
     loadProjectXML();
   }
@@ -683,18 +683,24 @@ void Project::slotAcceptCreateProject()
   
   name     = png->linePrjName->text();
   basePath = png->linePrjDir ->text();
-  email    = png->lineEmail  ->text();
-	author   = png->lineAuthor ->text();
 	
   if ( basePath.right(1) != "/" )	basePath += "/";
   
 	url  = KURL( basePath+png->linePrjFile->text());
 
-  createEmptyDom();
-
 	QExtFileInfo::createDir( basePath );
 	
-	if ( pnf->checkPrefix->isChecked() ) 
+  createEmptyDom();
+  
+  name     = png->linePrjName->text();
+  basePath = png->linePrjDir ->text();
+  email    = png->lineEmail  ->text();
+	author   = png->lineAuthor ->text();
+  if ( basePath.right(1) != "/" )	basePath += "/";
+  
+  url  = KURL( basePath+png->linePrjFile->text());
+	
+	if ( pnf->checkPrefix->isChecked() )
 	{
 		previewPrefix = pnf->linePrefix->text();
 		if ( previewPrefix.right(1) != "/" ) previewPrefix+="/";
