@@ -1,3 +1,5 @@
+#ifndef _FOLDER_OPEN_XPM_
+#define _FOLDER_OPEN_XPM_ 1
 /* XPM */
 static const char*folder_open_xpm[]={
 "16 16 11 1",
@@ -28,4 +30,4 @@ static const char*folder_open_xpm[]={
 "........#egiibb#",
 "..........#egib#",
 "............#ee#"};
-
+#endif

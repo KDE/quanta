@@ -1,3 +1,5 @@
+#ifndef _FOLDER_XPM_
+#define _FOLDER_XPM_ 1
 /* XPM */
 static const char*folder_xpm[]={
 "16 16 13 1",
@@ -30,3 +32,4 @@ static const char*folder_xpm[]={
 "......e#kjjjjcbe",
 ".........e#kjcce",
 "............e#e."};
+#endif

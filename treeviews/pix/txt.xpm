@@ -1,3 +1,5 @@
+#ifndef _TXT_OPEN_XPM_
+#define _TXT_OPEN_XPM_ 1
 /* XPM */
 static const char*txt_xpm[]={
 "16 16 14 1",
@@ -31,3 +33,4 @@ static const char*txt_xpm[]={
 "....#eiejejklkl#",
 "....#iejejklklk#",
 "....############"};
+#endif

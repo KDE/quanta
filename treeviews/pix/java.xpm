@@ -1,3 +1,5 @@
+#ifndef _JAVA_OPEN_XPM_
+#define _JAVA_OPEN_XPM_ 1
 /* XPM */
 static const char*java_xpm[]={
 "16 15 169 2",
@@ -185,3 +187,4 @@ static const char*java_xpm[]={
 "Qt.eajakalamanaoapaqarasatauQtQt",
 "QtQt.eavawaxayazaAaBaCaDaEQtQtQt",
 "QtQtQtaFaGaHaIaJ#HaKaLaMQtQtQtQt"};
+#endif
