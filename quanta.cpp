@@ -792,13 +792,24 @@ void QuantaApp::repaintPreview( bool clear )
   static QString oldtext = "";
   if ( clear )   oldtext = "";
 
-  QWidgetStack *s = (QWidgetStack *)part-> parent();
+  // check use prefix for preview or not
+  QString fname;
+	bool usePrefix = false;
+	
+	if ( project->hasProject() && !project->previewPrefix.isEmpty() )
+	{
+		fname = doc->write()->fileName();
+		fname = QExtFileInfo::toRelative( fname, project->basePath );
+		if ( fname.left(2) != ".." ) usePrefix = true;
+	}
 
+  QWidgetStack *s = (QWidgetStack *)part-> parent();
   if ( !s->id( s ->visibleWidget()) ) return;
 
   QString text = doc->write()->text();
 
-  if ( !qstrcmp( text, oldtext ) ) return;
+  // check if don't need reload
+  if ( !qstrcmp( text, oldtext ) && !usePrefix ) return;
 
   if ( text.isNull() ) {
       text = i18n( "<i>The current document is empty</i>" );
@@ -810,20 +821,11 @@ void QuantaApp::repaintPreview( bool clear )
 
 	part->closeURL();
 	
-	QString fname;
-	bool usePrefix = false;
-	
-	if ( project->hasProject() && !project->previewPrefix.isEmpty() )
-	{
-		fname = doc->write()->fileName();
-		fname = QExtFileInfo::toRelative( fname, project->basePath );
-		if ( fname.left(2) != ".." ) usePrefix = true;
-	}
-	
 	if ( usePrefix )
 	{
 		part->begin( project->previewPrefix+fname, xOffset, yOffset );
-		part->openURL( KURL( project->previewPrefix+fname ) );
+		if ( clear )	part->openURL( part->url() );
+		else				  part->openURL( KURL( project->previewPrefix+fname ) );
 		part->end();
 	}
 	else {

@@ -552,12 +552,17 @@ void Project::options()
 	png->linePrjDir ->setText( basePath );
 	png->linePrjName->setText( projectName );
 	png->linePrjFile->setText( projectFileName );
+	png->lineAuthor ->setText( author );
+	png->lineEmail  ->setText( email );
 	
 	pnf->linePrefix ->setText( previewPrefix );
+	if ( !previewPrefix.isEmpty() ) pnf->checkPrefix->setChecked(true);
 	
 	if ( dlg->exec() )
 	{
 		projectName 	= png->linePrjName->text();
+		author				= png->lineAuthor ->text();
+		email					= png->lineEmail	->text();
 		
 		if ( pnf->checkPrefix->isChecked() && !pnf->linePrefix ->text().isEmpty() )
 		{
@@ -596,7 +601,7 @@ void Project::upload()
 		new QListViewItem( dlg->list, *it );
 	}
 	
-	dlg->lineUrl->setText("ftp://ftp.somesrver.net/");
+	dlg->lineUrl->setText("ftp://ftp.someserver.net/incoming");
 	dlg->lineUser->setText("anonymous");
 	
 	if (dlg->exec())
