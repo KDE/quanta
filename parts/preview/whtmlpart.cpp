@@ -48,6 +48,28 @@ WHTMLPart::~WHTMLPart()
 {
 }
 
+void WHTMLPart::setPreviewedURL(const KURL &url, const QString& text)
+{
+  m_previewedText = text;
+  m_previewedURL = url;
+}
+
+bool WHTMLPart::openURL(const KURL& url)
+{
+  if (url == m_previewedURL)
+  {
+    KHTMLView *html = view();
+    int xOffset = html->contentsX();
+    int yOffset = html->contentsY();
+    closeURL();
+    begin(url, xOffset, yOffset);
+    write(m_previewedText);
+    end();
+    return true;
+  } else
+    return KHTMLPart::openURL(url);
+}
+
 void  WHTMLPart::urlSelected ( const QString &url, int button, int state, const QString &_target, KParts::URLArgs args)
 {
   KHTMLPart::urlSelected (url, button, state,_target, args);
@@ -71,11 +93,12 @@ void WHTMLPart::forward()
 
 void WHTMLPart::back()
 {
-  if ( backEnable() ) {
+  if (backEnable())
+  {
     hpos--;
-    openURL( KURL( history.at(hpos) ) );
+    openURL(KURL(history.at(hpos)));
 
-    emit updateStatus( backEnable() , forwardEnable() );
+    emit updateStatus(backEnable(), forwardEnable());
   }
 }
 

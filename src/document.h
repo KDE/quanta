@@ -18,9 +18,12 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
+//qt includes
+#include <qdatetime.h>
 #include <qdict.h>
 #include <qwidget.h>
 
+//own includes
 #include "qtag.h"
 
 /**
@@ -82,7 +85,7 @@ public:
   /**Change the namespace in a tag. Add if it's not present, or remove if the
   namespace argument is empty*/
   void changeTagNamespace(Tag *tag, const QString& nameSpace);
-  /** No descriptions */
+  /** Insert the content of the url into the document. */
   void insertFile(const KURL& url);
   /** Inserts text at the current cursor position */
   void insertText(const QString &text, bool adjustCursor = true, bool reparse = true);
@@ -102,19 +105,13 @@ public:
   /** Returns true if the document was modified. */
   bool isModified();
 
-  /** Creates a temporary file where the url is backed up.
-  *  If dump is true the editor content is saved to the temporary file,
-  *  otherwise a copy of the original file is created.
+  /** Creates a temporary file where the editor content is saved.
   */
-  int createTempFile(bool dump = false);
-  /** No descriptions */
-  int closeTempFile();
-  /** No descriptions */
-  void clearTempFile();
-  /** No descriptions */
+  void createTempFile();
+  /** Closes and removes the temporary file. */
+  void closeTempFile();
+  /** Returns the name of the temporary file, QString::null if no temporary file exists. */
   QString tempFileName();
-  /** No descriptions */
-  bool saveIt();
 
   /** Returns the DTD identifier for the document */
   QString getDTDIdentifier();
@@ -135,7 +132,7 @@ work correctly. */
   void codeCompletionRequested();
   /** Bring up the code completion tooltip. */
   void codeCompletionHintRequested();
-  /** No descriptions */
+  /** Returns the dirty status. */
   bool dirty() const {return m_dirty;};
   void setDirtyStatus(bool status) {m_dirty = status;};
   /** Ask for user confirmation if the file was changed outside. */
@@ -218,17 +215,19 @@ work correctly. */
 
 public slots:
 
-  /* Called after a completion is inserted */
+  /** Called after a completion is inserted */
   void slotCompletionDone( KTextEditor::CompletionEntry completion );
-  /* Called when a user selects a completion, we then can modify it */
+  /** Called when a user selects a completion, we then can modify it */
   void slotFilterCompletion(KTextEditor::CompletionEntry*,QString *);
-  /* Called whenever a user inputs text */
+  /** Called whenever a user inputs text */
   void slotCharactersInserted(int ,int ,const QString&);
-  /** No descriptions */
+  /** Called when the code completion is aborted.*/
   void slotCompletionAborted();
-  /** No descriptions */
+  /** Called whenever the text in the document is changed. */
   void slotTextChanged();
-  /** No descriptions */
+  /** Handle the text changed events. Usually called from slotTextChanged,
+  but it's possible to force the handling by calling manually and setting
+  forced to true. */
   void slotDelayedTextChanged(bool forced = false);
   void slotDelayedScriptAutoCompletion();
   void slotDelayedShowCodeCompletion();
@@ -260,6 +259,7 @@ private:
 
   KTempFile *tempFile;
   QString m_tempFileName;
+  QDateTime m_modifTime;
   bool m_backupEntry;
   /* path of the backup copy file of the document */
   QString m_backupPathValue;

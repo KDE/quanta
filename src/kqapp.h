@@ -56,7 +56,6 @@ class KQApplication : public KApplication, KQApplicationPrivate
     KQApplication();
     ~KQApplication();
   public slots:
-    /** No descriptions */
     void slotInit();
     void slotSplashTimeout();
 };
@@ -73,7 +72,6 @@ class KQUniqueApplication : public KUniqueApplication, KQApplicationPrivate
         main window active if Quanta is already running */
     int newInstance();
   public slots:
-    /** No descriptions */
     void slotInit();
     void slotSplashTimeout();
 };

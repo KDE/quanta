@@ -177,8 +177,6 @@ public:
   /** Show the toolbar which is in url. If it was not loaded yet, it loads the
       toolbar from the file */
   void showToolbarFile(const KURL &url);
-  /** Restores the original document from the temporary backup */
-  void restoreFromTempfile(Document *w);
 
     /** tabs for left panel */
   DocTreeView *dTab;
@@ -298,10 +296,8 @@ public slots:
 
   void selectArea(int line1, int col1, int line2, int col2);
 
-  /** No descriptions */
-  void slotInsertFile(const KURL&);
-  /** No descriptions */
-  void slotSyntaxCheckDone();
+  /** Insert the content of the url into the current document. */
+  void slotInsertFile(const KURL& url);
   /** Sends a toolbar in mail. */
   void slotSendToolbar();
   /** Removes a user toolbar from the toolbars. */
@@ -336,17 +332,17 @@ public slots:
   interpreter application */
   void slotAssignActionToScript(const KURL&a_scriptURL, const QString& a_interpreter);
 
-  /** No descriptions */
+  /** Change the DTD/DTEP of the current document. */
   void slotChangeDTD();
-  /** No descriptions */
+  /** Called when the user explicetly requested the completion box.*/
   void slotShowCompletion();
-  /** No descriptions */
+  /** Called when the user explicetly requested the completion hint.*/
   void slotShowCompletionHint();
   /** Show or hide the groups for dtepName in the structure tree.
     The special value of "clear" for dtepName means show groups
     for all DTEPs found in the document.*/
   void slotShowGroupsForDTEP(const QString& dtepName, bool show);
-  /** No descriptions */
+  /** Build the project specific toolbar menu. */
   void slotBuildPrjToolbarsMenu();
 
   void slotReparse();

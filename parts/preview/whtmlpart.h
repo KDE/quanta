@@ -31,8 +31,12 @@ public:
   WHTMLPart(QWidget *parent, const char *name=0);
   ~WHTMLPart();
 
+  /** Specify the URL where the preview was started and the
+  content of this url as well.*/
+  void setPreviewedURL(const KURL &url, const QString &text);
   bool backEnable();
   bool forwardEnable();
+  virtual bool openURL(const KURL &url);
 
 public slots:
 
@@ -56,6 +60,8 @@ protected:
                                             QStringList &serviceTypes, const QStringList &params);
 
 private:
+  KURL m_previewedURL;
+  QString m_previewedText;
   QStrList history;
   unsigned int hpos;
 };

@@ -148,7 +148,7 @@ bool QuantaView::mayRemove()
       m_currentViewsLayout = -1;
       //slotSetSourceLayout(); //set the layout to source only, otherwise it crashes...
      // m_kafkaDocument->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
-      m_document->closeTempFile();
+//      m_document->closeTempFile();
       if (!m_document->isUntitled() && url.isLocalFile())
       {
         fileWatcher->removeFile(url.path());
@@ -914,8 +914,6 @@ bool QuantaView::saveDocument(const KURL& url)
       return false; //saving to a local file failed
     } else //successful saving to a local file
     {
-      m_document->closeTempFile();
-      m_document->createTempFile();
       m_document->setDirtyStatus(false);
       m_document->removeBackup(quantaApp->config());
       fileWatcher->addFile(m_document->url().path());
@@ -974,8 +972,6 @@ void QuantaView::slotSavingFailed(const QString &error)
 void QuantaView::slotSavingCompleted()
 {
   m_saveResult = true;
-  m_document->closeTempFile();
-  m_document->createTempFile();
   m_document->setDirtyStatus(false);
   m_document->removeBackup(quantaApp->config());
   if (m_eventLoopStarted)

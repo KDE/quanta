@@ -183,8 +183,8 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
    if (m_lastActiveView)
    {
      m_lastActiveView->deactivated();
-     Document *w = static_cast<QuantaView*>(m_lastActiveView)->document();
-      quantaApp->restoreFromTempfile(w);
+//     Document *w = static_cast<QuantaView*>(m_lastActiveView)->document();
+//     quantaApp->restoreFromTempfile(w);
    }
    QuantaView *qView = static_cast<QuantaView*>(view);
    qView->activated();
@@ -300,8 +300,6 @@ bool ViewManager::saveAll(bool dont_ask)
                   emit eventHappened("before_save", w->url().url(), QString::null);
                   w->docUndoRedo->fileSaved();
                   w->save();
-                  w->closeTempFile();
-                  w->createTempFile();
                   w->removeBackup(quantaApp->config());
                   if (w->isModified())
                       flagsave = false;
@@ -347,7 +345,7 @@ void ViewManager::closeAll(bool createNew)
           {
               if (view->mayRemove())
               {
-                 w->closeTempFile();
+//                 w->closeTempFile();
                  if (!w->isUntitled() && w->url().isLocalFile())
                  {
                    fileWatcher->removeFile(w->url().path());

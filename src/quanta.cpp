@@ -709,7 +709,11 @@ void QuantaApp::slotRepaintPreview()
       if (w->isUntitled())
         m_htmlPart->begin(Project::ref()->projectBaseURL(), xOffset, yOffset);
       else
-        m_htmlPart->begin(w->url(), xOffset, yOffset);
+      {
+        url = Project::ref()->urlWithPrefix(w->url());
+        m_htmlPart->setPreviewedURL(url, noFramesText);
+        m_htmlPart->begin(url, xOffset, yOffset);
+      }
       m_htmlPart->write(noFramesText);
       m_htmlPart->end();
     }
@@ -717,32 +721,24 @@ void QuantaApp::slotRepaintPreview()
 
   if (!m_noFramesPreview)
   {
-    if (!w->isUntitled())
+    m_htmlPart->closeURL();
+    QString text = w->editIf->text();
+    if (text.isEmpty())
     {
-  //if it's  not untitled, than it was loaded from somewhere. In this case show it from that place
-      url = w->url();
-
-      if (w->isModified())
-      {
-        w->saveIt(); //saves the file so the preview will show the current content
-        m_previewedDocument = w;
-      }
-      url = Project::ref()->urlWithPrefix(url);
-
-      m_htmlPart->openURL(url);
-      m_htmlPart->addToHistory(url.url());
-    } else  //the document is Untitled, preview the text from it
-    {
-      QString text = w->editIf->text();
-      if (text.isEmpty())
-      {
-        text = i18n("<center><h3>The current document is empty...</h3></center>");
-      }
-      m_htmlPart->closeURL();
-      m_htmlPart->begin(Project::ref()->projectBaseURL(), xOffset, yOffset);
-      m_htmlPart->write(text);
-      m_htmlPart->end();
+      text = i18n("<center><h3>The current document is empty...</h3></center>");
     }
+    if (w->isUntitled())
+    {
+      m_htmlPart->begin(Project::ref()->projectBaseURL(), xOffset, yOffset);
+    } else
+    {
+      url = Project::ref()->urlWithPrefix(w->url());
+      m_htmlPart->setPreviewedURL(url, text);
+      m_htmlPart->begin(url, xOffset, yOffset);
+      m_htmlPart->addToHistory(url.url());
+    }
+    m_htmlPart->write(text);
+    m_htmlPart->end();
    }
   m_htmlPart->show();
 }
@@ -1339,7 +1335,7 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     Document *w = view->document();
     if (w)
     {
-        restoreFromTempfile(w);
+//        restoreFromTempfile(w);
         w->view()->setFocus();
     }
   }
@@ -1375,7 +1371,7 @@ void QuantaApp::slotChangePreviewStatus()
       //so we just repaint the content and restore the document on the disc.
         m_previewVisible = true;
         slotRepaintPreview();
-        restoreFromTempfile(m_previewedDocument);
+//        restoreFromTempfile(m_previewedDocument);
         m_previewedDocument = 0L;
         Document *w = ViewManager::ref()->activeDocument();
         if (w)
@@ -1385,14 +1381,13 @@ void QuantaApp::slotChangePreviewStatus()
 
 void QuantaApp::slotPreviewHasFocus(bool focus)
 {
-
    if (m_previewToolView)
    {
       if (focus)
         slotRepaintPreview();
       else
       {
-          restoreFromTempfile(m_previewedDocument);
+//          restoreFromTempfile(m_previewedDocument);
           m_previewedDocument = 0L;
       }
    }
@@ -1418,36 +1413,6 @@ void QuantaApp::slotShowNoFramesPreview()
 {
   m_noFramesPreview = true;
   slotToggleShowPreview();
-}
-
-void QuantaApp::restoreFromTempfile(Document *w)
-{
-  if (!w) return;
-  if (w->tempFileName().isEmpty())
-    return;
-
-  KURL origUrl = w->url();
-  if (!w->isUntitled() && origUrl.isLocalFile())
-  {
-      fileWatcher->removeFile(origUrl.path());
-      kdDebug(24000) << "removeFile[restoreFromTempfile]: " << origUrl.path() << endl;
-  }
-  KURL tempUrl;
-  tempUrl.setPath(w->tempFileName());
-//  kdDebug(24000) << "Restoring tempfile " << w->tempFileName() << " for " << w->url() << endl;
-  QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
-  KIO::UDSEntry entry;
-  if (KIO::NetAccess::stat(origUrl, entry, this))
-  {
-    KFileItem item(entry, origUrl, true);
-    int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
-    Project::ref()->updateTimeStamp(origUrl, modifiedTime, false);
-  }
-  if (origUrl.isLocalFile())
-  {
-      kdDebug(24000) << "addFile[restoreFromTempfile]: " << origUrl.path() << endl;
-      fileWatcher->addFile(origUrl.path());
-  }
 }
 
 void QuantaApp::newCursorPosition(const QString &file, int lineNumber, int columnNumber)
@@ -1798,7 +1763,6 @@ void QuantaApp::slotForward()
    }
 }
 
-/** No descriptions */
 void QuantaApp::slotInsertFile(const KURL& url)
 {
   Document *w = ViewManager::ref()->activeDocument();
@@ -2022,26 +1986,6 @@ void QuantaApp::slotOpenFileUnderCursor()
   {
     KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exist or is not a recognized mime type.</qt>").arg(urlUnderCursor.prettyURL(0, KURL::StripFileProtocol)));
 
-  }
-}
-
-/** No descriptions */
-void QuantaApp::slotSyntaxCheckDone()
-{
-  Document *w = ViewManager::ref()->activeDocument();
-  if (w)
-  {
-    if (w->isModified())
-    {
-      KURL origUrl = w->url();
-      if (!w->isUntitled() && origUrl.isLocalFile())
-          fileWatcher->removeFile(origUrl.path());
-      KURL tempUrl;
-      tempUrl.setPath(w->tempFileName());
-     QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
-      if (origUrl.isLocalFile())
-          fileWatcher->addFile(origUrl.path());
-    }
   }
 }
 
@@ -2847,8 +2791,6 @@ void QuantaApp::slotAssignActionToScript(const KURL& a_scriptURL, const QString&
   dlg.exec();
 }
 
-
-/** No descriptions */
 void QuantaApp::slotChangeDTD()
 {
   Document *w = ViewManager::ref()->activeDocument();
@@ -2916,7 +2858,6 @@ void QuantaApp::slotChangeDTD()
   }
 }
 
-/** No descriptions */
 void QuantaApp::focusInEvent(QFocusEvent* e)
 {
  KDockMainWindow::focusInEvent(e);
@@ -2928,7 +2869,6 @@ void QuantaApp::focusInEvent(QFocusEvent* e)
  }
 }
 
-/** No descriptions */
 void QuantaApp::slotShowCompletion()
 {
   Document *w = ViewManager::ref()->activeDocument();
@@ -2936,7 +2876,6 @@ void QuantaApp::slotShowCompletion()
     w->codeCompletionRequested();
 }
 
-/** No descriptions */
 void QuantaApp::slotShowCompletionHint()
 {
   Document *w = ViewManager::ref()->activeDocument();
@@ -2944,7 +2883,6 @@ void QuantaApp::slotShowCompletionHint()
     w->codeCompletionHintRequested();
 }
 
-/** No descriptions */
 void QuantaApp::slotMakeDonation()
 {
  DonationDialog *dlg = new DonationDialog(this);
@@ -2954,13 +2892,11 @@ void QuantaApp::slotMakeDonation()
  delete dlg;
 }
 
-/** No descriptions */
 void QuantaApp::slotHelpHomepage()
 {
   kapp->invokeBrowser("http://quanta.sourceforge.net");
 }
 
-/** No descriptions */
 void QuantaApp::slotHelpUserList()
 {
   kapp->invokeBrowser("http://mail.kde.org/mailman/listinfo/quanta");
@@ -3226,8 +3162,6 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
     ViewManager::ref()->activeView()->refreshWindow();
 }
 
-
-/** No descriptions */
 void QuantaApp::slotShowGroupsForDTEP(const QString& dtepName, bool show)
 {
   Document *w = ViewManager::ref()->activeDocument();
@@ -3250,7 +3184,6 @@ KURL QuantaApp::projectBaseURL() const
   return Project::ref()->projectBaseURL();
 }
 
-/** No descriptions */
 void QuantaApp::slotBuildPrjToolbarsMenu()
 {
   static bool buildInProgress = false;

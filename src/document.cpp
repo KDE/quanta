@@ -30,8 +30,6 @@
 #include <qregexp.h>
 #include <qradiobutton.h>
 
-#include <qclipboard.h>
-
 // KDE includes
 #include <kapplication.h>
 #include <kwin.h>
@@ -370,7 +368,6 @@ void Document::replaceSelected(const QString &s)
 
 }
 
-/** No descriptions */
 void Document::insertFile(const KURL& url)
 {
   QString fileName;
@@ -551,112 +548,51 @@ bool Document::isModified()
 
   return modified;
 }
-/** Sets the modifiedFlag value. */
+
 void Document::setModified(bool flag)
 {
   if (m_doc)
     m_doc->setModified(flag);
 }
 
-/** Creates a temporary file where the url is backed up. */
-int Document::createTempFile(bool dump)
+void Document::createTempFile()
 {
- closeTempFile();
- tempFile = new KTempFile(tmpDir);
- tempFile->setAutoDelete(true);
- m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
- if (isUntitled() || dump)
- {
-    QString encoding = quantaApp->defaultEncoding();
-    KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
-    if (encodingIf)
-          encoding = encodingIf->encoding();
-    if (encoding.isEmpty())
-        encoding = "utf8";  //final fallback
-    tempFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
-    * (tempFile->textStream()) << editIf->text();
+  closeTempFile();
+  tempFile = new KTempFile(tmpDir);
+  tempFile->setAutoDelete(true);
+  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
+  QString encoding = quantaApp->defaultEncoding();
+  KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
+  if (encodingIf)
+        encoding = encodingIf->encoding();
+  if (encoding.isEmpty())
+      encoding = "utf8";  //final fallback
+  tempFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
+  * (tempFile->textStream()) << editIf->text();
 
-    m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
-    tempFile->close();
- } else
- {
-    tempFile->close();
-    tempFile->unlink();
-    QExtFileInfo::copy(url(), KURL::fromPathOrURL(m_tempFileName));
- }
-  KIO::UDSEntry entry;
-  if (KIO::NetAccess::stat(url(), entry, this))
-  {
-    KFileItem item(entry, url(), true);
-    int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
-    Project::ref()->updateTimeStamp(url(), modifiedTime, true);
-  }
+  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
+  tempFile->close();
 // kdDebug(24000) << "Creating tempfile " << m_tempFileName << " for " << url() << endl;
-return 1;
 }
 
-/** No descriptions */
-int Document::closeTempFile()
+void Document::closeTempFile()
 {
  if (tempFile != 0)
  {
    delete tempFile;
-   tempFile = 0;
+   tempFile = 0L;
  }
  if (QFileInfo(m_tempFileName).exists())
      QFile::remove(m_tempFileName);
 
  m_tempFileName = QString::null;
- return 1; //not used yet
 }
-/** No descriptions */
-void Document::clearTempFile()
-{
-// tempFile->unlink();
- delete tempFile;
- tempFile = new KTempFile(tmpDir);
-}
-/** No descriptions */
+
 QString Document::tempFileName()
 {
  return m_tempFileName;
 }
 
-/** No descriptions */
-bool Document::saveIt()
-{
-  QString fileName;
-  fileName = url().path();
-  if (url().isLocalFile())
-  {
-    fileWatcher->removeFile(fileName);
-    kdDebug(24000) << "removeFile[saveIt]: " <<url().path() << endl;
-    bool modifiedStatus = m_doc->isModified();
-    m_doc->save();
-    m_doc->setModified(modifiedStatus);
-    fileWatcher->addFile(fileName);
-    kdDebug(24000) << "addFile[saveIt]: " << url().path() << endl;
-  } else
-  {
-  //use our own save method for remote files, as otherwise the modified flag of the KTextEditor::Document is reset
-    KTempFile *tmpFile = new KTempFile(tmpDir);
-    QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
-    tmpFile->setAutoDelete(true);
-    QString encoding = quantaApp->defaultEncoding();
-    KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
-    if (encodingIf)
-          encoding = encodingIf->encoding();
-    if (encoding.isEmpty())
-        encoding = "utf8";  //final fallback
-    tmpFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
-    *(tmpFile->textStream()) << editIf->text();
-    tmpFile->close();
-    QExtFileInfo::copy(KURL::fromPathOrURL(tempFileName), url(), -1, true);
-    delete tmpFile;
-  }
-  m_dirty = false;
-  return true;   //not used yet
-}
 
 /** This will return the current tag name at the given position.
     It will work even if the tag has not been completed yet. An
@@ -1213,9 +1149,9 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
       }
     }
   }
-  if ((!objStr.isEmpty() || !completionRequested) && classStr.isEmpty()) //the class cannot be identified for the object.
+  if ((!objStr.isEmpty() || !completionRequested) && classStr.isEmpty()) //the class cannot be identified for the object or there is no object.
     return completions;
-  completion.userdata = word +"|";
+  completion.userdata = word + "|";
   QStringList tagNameList;
   QMap<QString, QString> comments;
   QString tagName;
@@ -1998,7 +1934,6 @@ bool Document::xmlCodeCompletion(int line, int col)
   return handled;
 }
 
-/** No descriptions */
 void Document::slotCompletionAborted()
 {
   completionInProgress = false;
@@ -2013,8 +1948,12 @@ void Document::checkDirtyStatus()
       fileName = url().path();
   if (m_dirty)
   {
-    if (url().isLocalFile())
+    if (!fileName.isEmpty())
     {
+      QDateTime modifTime = QFileInfo(fileName).lastModified();
+      if (modifTime == m_modifTime)
+        m_dirty = false;
+      /*
       //check if the file is changed, also by file content. Might help to reduce
       //unwanted warning on NFS
       QFile f(fileName);
@@ -2041,12 +1980,11 @@ void Document::checkDirtyStatus()
           m_dirty = false;
         }
         f.close();
-      }
-
+    } */
     }
     if (m_dirty)
     {
-      createTempFile(true);
+      createTempFile();
       DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, false, this);
       DirtyDialog *w = static_cast<DirtyDialog*>(dlg->mainWidget());
       QString kompareStr = KStandardDirs::findExe("kompare");
@@ -2059,9 +1997,9 @@ void Document::checkDirtyStatus()
       {
           m_doc->setModified(false);
           m_doc->openURL(url());
-          createTempFile();
-      } else
-        createTempFile();
+      }
+      closeTempFile();
+      m_modifTime = QFileInfo(fileName).lastModified();
       delete dlg;
     }
     m_dirty = false;
@@ -2079,6 +2017,7 @@ void Document::save()
     kdDebug(24000) << "removeFile[save]: " << fileName << endl;
     m_doc->save();
     m_dirty = false;
+    m_modifTime = QFileInfo(fileName).lastModified();
     fileWatcher->addFile(fileName);
     kdDebug(24000) << "addFile[save]: " << fileName << endl;
   } else
@@ -2116,8 +2055,6 @@ bool Document::evenQuotes(const QString &text)
  return (num /2 *2 == num);
 }
 
-
-/** No descriptions */
 void Document::slotTextChanged()
 {
   changed = true;
@@ -2632,16 +2569,19 @@ void Document::slotOpeningCompleted()
 {
   KURL u = url();
   if (!u.isLocalFile())
+  {
+    m_modifTime = QDateTime();
     qApp->exit_loop();
+  }
   else
   {
       fileWatcher->addFile(u.path());
+      m_modifTime = QFileInfo(u.path()).lastModified();
       kdDebug(24000) << "addFile[Document::open]: " << u.path() << endl;
   }
   disconnect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
   disconnect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
   m_dirty = false;
-  createTempFile();
   m_view->setFocus();
   processDTD();
   emit openingCompleted(u);

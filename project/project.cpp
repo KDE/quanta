@@ -827,41 +827,6 @@ bool Project::contains(const KURL& url)
   return (d->m_projectFiles.contains(url) > 0);
 }
 
-void Project::updateTimeStamp(const KURL& url, int modifiedTime, bool modifiedTimeOnly)
-{
-  ProjectURL *proUrl = d->m_projectFiles.find(url);
-  if (! proUrl)
-    return;
-
-  QDomElement itemEl = proUrl->domElement;
-  if (modifiedTimeOnly)
-  {
-    itemEl.setAttribute("modified_time", modifiedTime);
-    return;
-  }
-  int origModifTime = itemEl.attribute("modified_time","1").toInt();
-  QString qurl = QuantaCommon::qUrl(d->m_projectFiles.toRelative(*proUrl));
-
-  QDomNodeList nl = d->dom.elementsByTagName("uploadeditem");
-  uint nlCount = nl.count();
-  for (uint i = 0; i < nlCount; ++i)
-  {
-    QDomElement el = nl.item(i).toElement();
-    if (el.attribute("url") == qurl)
-    {
-      int uploadTime = el.attribute("upload_time","1").toInt();
-      if (uploadTime == origModifTime)
-      {
-        itemEl.setAttribute("modified_time", modifiedTime);
-        el.setAttribute("upload_time", modifiedTime);
-        d->m_modified = true;
-      }
-    }
-  }
-  if (d->m_modified)
-    setModified();
-}
-
 void Project::slotFileDescChanged(const KURL& url, const QString& desc)
 {
   ProjectURL *proUrl = d->m_projectFiles.find(url);
