@@ -341,9 +341,8 @@ void StructTreeView::deleteList(bool groupOnly)
   {
     groupOpened.append(groups[i]->isOpen());
 #ifdef DEBUG_PARSER
-    kdDebug(24001) << "Grouptag deleted: " << i << " " <<
+    kdDebug(24001) << "Grouptag deleted: " << i << " " <<  groups[i]->text(0) << endl;
 #endif
-    groups[i]->text(0) << endl;
     delete groups[i];
   }
   groups.clear();
