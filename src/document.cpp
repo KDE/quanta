@@ -1514,12 +1514,15 @@ QString Document::findDTDName(Tag **tag)
    pos = text.find("!doctype",0,false);
    if (pos != -1) //parse the found !DOCTYPE tag
    {
+     int bl, bc, el, ec;
      line = i;
+     bl = line;
      startPos = text.findRev('<',pos);
      while (startPos == -1 && line >=0)
      {
        text = editIf->textLine(line);
        startPos = text.findRev('<');
+       bl = line;
        line--;
      }
      if (startPos == -1)
@@ -1527,16 +1530,16 @@ QString Document::findDTDName(Tag **tag)
         i++;
         continue;
      }
-     int bl, bc, el, ec;
-     bl = line++;
      bc = startPos;
      line = i;
      text = editIf->textLine(i);
      startPos = text.find('>',pos);
+     el = line;
      while (startPos == -1 && line < endLine)
      {
        text = editIf->textLine(line);
        startPos = text.find('>');
+       el = line;
        line++;
      }
      if (startPos == -1)
@@ -1544,7 +1547,6 @@ QString Document::findDTDName(Tag **tag)
         i++;
         continue;
      }
-     el = line--;
      ec = startPos + 1;
      *tag = new Tag();
      (*tag)->setTagPosition(bl, bc, el, ec);
