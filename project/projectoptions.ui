@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>ProjectOptions</class>
-<widget class="QWidget">
+<widget class="QDialog">
     <property name="name">
         <cstring>ProjectOptions</cstring>
     </property>
@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>615</width>
-            <height>446</height>
+            <width>480</width>
+            <height>491</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -22,7 +22,7 @@
     </property>
     <property name="minimumSize">
         <size>
-            <width>615</width>
+            <width>480</width>
             <height>420</height>
         </size>
     </property>
@@ -33,7 +33,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QPushButton" row="1" column="3">
+        <widget class="QPushButton" row="1" column="5">
             <property name="name">
                 <cstring>buttonTmpl</cstring>
             </property>
@@ -53,7 +53,7 @@
                 <string>...</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="1" column="2">
+        <widget class="QLineEdit" row="1" column="2" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>linePrjTmpl</cstring>
             </property>
@@ -61,6 +61,12 @@
         <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>TextLabel1_2_2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
             </property>
             <property name="text">
                 <string>Toolbars directory:</string>
@@ -90,12 +96,12 @@
                 <string>Exclude from project:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="5" column="2" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="5" column="2" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>lineExclude</cstring>
             </property>
         </widget>
-        <widget class="QPushButton" row="2" column="3">
+        <widget class="QPushButton" row="2" column="5">
             <property name="name">
                 <cstring>buttonToolbar</cstring>
             </property>
@@ -123,12 +129,12 @@
                 <string>Templates directory:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="2" column="2">
+        <widget class="QLineEdit" row="2" column="2" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>linePrjToolbar</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="0" column="2" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="0" column="2" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>linePrjName</cstring>
             </property>
@@ -182,12 +188,12 @@
                 <string>Email:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>lineAuthor</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>lineEmail</cstring>
             </property>
@@ -195,7 +201,7 @@
                 <string></string>
             </property>
         </widget>
-        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="4">
+        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="6">
             <property name="name">
                 <cstring>GroupBox5</cstring>
             </property>
@@ -256,7 +262,7 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="4">
+        <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="6">
             <property name="name">
                 <cstring>GroupBox5_2</cstring>
             </property>
@@ -355,9 +361,17 @@ is obscured, saving the password in any file is a security risk. Use this option
                 </widget>
             </grid>
         </widget>
-        <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="4">
+        <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="6">
             <property name="name">
                 <cstring>checkPrefix</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
             <property name="text">
                 <string>Use preview &amp;prefix</string>
@@ -366,12 +380,20 @@ is obscured, saving the password in any file is a security risk. Use this option
                 <string>Alt+P</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="9" column="1" rowspan="1" colspan="3">
+        <widget class="QLineEdit" row="9" column="1" rowspan="1" colspan="5">
             <property name="name">
                 <cstring>linePrefix</cstring>
             </property>
             <property name="enabled">
                 <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
         </widget>
         <widget class="QLabel" row="9" column="0">
@@ -383,6 +405,47 @@ is obscured, saving the password in any file is a security risk. Use this option
             </property>
             <property name="text">
                 <string>Prefix:</string>
+            </property>
+        </widget>
+        <spacer row="10" column="3">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>40</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QPushButton" row="10" column="1" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>pushButton3</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Ok</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="10" column="4">
+            <property name="name">
+                <cstring>pushButton3_2</cstring>
+            </property>
+            <property name="text">
+                <string>Cancel</string>
             </property>
         </widget>
     </grid>
@@ -417,6 +480,18 @@ is obscured, saving the password in any file is a security risk. Use this option
         <signal>toggled(bool)</signal>
         <receiver>ProjectOptions</receiver>
         <slot>keepPasswdToggled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>pushButton3</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectOptions</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton3_2</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectOptions</receiver>
+        <slot>reject()</slot>
     </connection>
 </connections>
 <tabstops>

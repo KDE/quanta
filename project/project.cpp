@@ -1177,34 +1177,39 @@ void Project::slotAcceptCreateProject()
 
 void Project::slotOptions()
 {
-  QDialog *dlg = new QDialog(quantaApp, "project_options", true);
-  dlg->setCaption(i18n("Project Options"));
   KURL url;
+  ProjectOptions optionsPage(quantaApp, "project_options", true );
 
-  ProjectOptions* optionsPage = new ProjectOptions(dlg );
-
-  optionsPage->linePrjName->setText( projectName );
+  optionsPage.linePrjName->setText( projectName );
   url = QExtFileInfo::toRelative(templateURL, baseURL);
-  optionsPage->linePrjTmpl->setText(QuantaCommon::qUrl(url));
+  optionsPage.linePrjTmpl->setText(QuantaCommon::qUrl(url));
   url = QExtFileInfo::toRelative(toolbarURL, baseURL);
-  optionsPage->linePrjToolbar->setText( QuantaCommon::qUrl(url) );
+  optionsPage.linePrjToolbar->setText( QuantaCommon::qUrl(url) );
 
-  optionsPage->lineAuthor->setText( author );
-  optionsPage->lineEmail->setText( email );
+  optionsPage.lineAuthor->setText( author );
+  optionsPage.lineEmail->setText( email );
 
   QDomElement uploadEl = dom.firstChild().firstChild().namedItem("upload").toElement();
 
-  optionsPage->lineHost->setText(uploadEl.attribute("remote_host",""));
-  optionsPage->lineUser->setText(uploadEl.attribute("user",""));
-  optionsPage->linePath->setText(uploadEl.attribute("remote_path",""));
-  optionsPage->port->setText( uploadEl.attribute("remote_port","") );
-  optionsPage->keepPasswd->setChecked(storePasswdInFile);
+  optionsPage.lineHost->setText(uploadEl.attribute("remote_host",""));
+  optionsPage.lineUser->setText(uploadEl.attribute("user",""));
+  optionsPage.linePath->setText(uploadEl.attribute("remote_path",""));
+  optionsPage.port->setText( uploadEl.attribute("remote_port","") );
+  
+  /*
+   * keepPasswd->setChecked() would popup the confirm dialog before the
+   * project options dialog shows if the user has setted storePasswdInFile
+   * and this is ugly. The hack for solving this is ugly too.
+   */
+  optionsPage.keepPasswd->blockSignals(true);
+  optionsPage.keepPasswd->setChecked(storePasswdInFile);
+  optionsPage.keepPasswd->blockSignals(false);
   if (storePasswdInFile)
   {
-    optionsPage->linePasswd->insert(passwd);
+    optionsPage.linePasswd->insert(passwd);
   } else
   {
-    optionsPage->linePasswd->clear();
+    optionsPage.linePasswd->clear();
   }
 
   QString def_p = uploadEl.attribute("remote_protocol","ftp");
@@ -1217,9 +1222,9 @@ void Project::slotOptions()
          KProtocolInfo::supportsMakeDir(p) &&
          KProtocolInfo::supportsDeleting(p) )
     {
-      optionsPage->comboProtocol->insertItem(p);
+      optionsPage.comboProtocol->insertItem(p);
       if ( p == def_p )
-        optionsPage->comboProtocol->setCurrentItem( optionsPage->comboProtocol->count()-1 );
+        optionsPage.comboProtocol->setCurrentItem( optionsPage.comboProtocol->count()-1 );
     }
   }
 
@@ -1230,9 +1235,9 @@ void Project::slotOptions()
     excludeStr.append(excludeList[i]);
     excludeStr.append(";");
   }
-  optionsPage->lineExclude->setText(excludeStr);
+  optionsPage.lineExclude->setText(excludeStr);
 
-  optionsPage->linePrefix->setText(previewPrefix.url());
+  optionsPage.linePrefix->setText(previewPrefix.url());
   QStringList lst;
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
@@ -1246,15 +1251,15 @@ void Project::slotOptions()
   uint pos = 0;
   for (uint i = 0; i < lst.count(); i++)
   {
-    optionsPage->dtdCombo->insertItem(lst[i]);
+    optionsPage.dtdCombo->insertItem(lst[i]);
     if (lst[i] == QuantaCommon::getDTDNickNameFromName(m_defaultDTD))
        pos = i;
   }
-  optionsPage->dtdCombo->setCurrentItem(pos);
+  optionsPage.dtdCombo->setCurrentItem(pos);
 
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
-  optionsPage->encodingCombo->insertStringList( availableEncodingNames );
+  optionsPage.encodingCombo->insertStringList( availableEncodingNames );
   QStringList::ConstIterator iter;
   int iIndex = -1;
   for (iter = availableEncodingNames.begin(); iter != availableEncodingNames.end(); ++iter)
@@ -1262,7 +1267,7 @@ void Project::slotOptions()
      ++iIndex;
      if ((*iter).lower() == m_defaultEncoding.lower())
      {
-       optionsPage->encodingCombo->setCurrentItem(iIndex);
+       optionsPage.encodingCombo->setCurrentItem(iIndex);
        break;
      }
   }
@@ -1281,31 +1286,31 @@ void Project::slotOptions()
   QString defaultView = dom.firstChild().firstChild().namedItem("autoload").toElement().attribute("projectview");
   if (list.count() > 0)
   {
-    optionsPage->viewCombo->insertStringList(list);
+    optionsPage.viewCombo->insertStringList(list);
     for (uint i = 0; i < list.count(); i++)
     {
       if (list[i] == defaultView)
       {
-        optionsPage->viewCombo->setCurrentItem(i);
+        optionsPage.viewCombo->setCurrentItem(i);
         break;
       }
     }
   } else
   {
-    optionsPage->viewCombo->insertItem(i18n("No view was saved yet."));
-    optionsPage->viewCombo->setEnabled(false);
+    optionsPage.viewCombo->insertItem(i18n("No view was saved yet."));
+    optionsPage.viewCombo->setEnabled(false);
   }
 
-  optionsPage->checkPrefix->setChecked(usePreviewPrefix);
-  if ( dlg->exec() )
+  optionsPage.checkPrefix->setChecked(usePreviewPrefix);
+  if ( optionsPage.exec() )
   {
-    projectName = optionsPage->linePrjName->text();
-    author    = optionsPage->lineAuthor ->text();
-    email      = optionsPage->lineEmail  ->text();
-    m_defaultDTD = QuantaCommon::getDTDNameFromNickName(optionsPage->dtdCombo->currentText()).lower();
-    m_defaultEncoding  = optionsPage->encodingCombo->currentText();
+    projectName = optionsPage.linePrjName->text();
+    author    = optionsPage.lineAuthor ->text();
+    email      = optionsPage.lineEmail  ->text();
+    m_defaultDTD = QuantaCommon::getDTDNameFromNickName(optionsPage.dtdCombo->currentText()).lower();
+    m_defaultEncoding  = optionsPage.encodingCombo->currentText();
 
-    QuantaCommon::setUrl(templateURL, optionsPage->linePrjTmpl->text());
+    QuantaCommon::setUrl(templateURL, optionsPage.linePrjTmpl->text());
     templateURL.adjustPath(1);
     templateURL = QExtFileInfo::toAbsolute(templateURL, baseURL);
     if (!QExtFileInfo::createDir(templateURL))
@@ -1313,7 +1318,7 @@ void Project::slotOptions()
       QuantaCommon::dirCreationError(this, templateURL);
     }
 
-    QuantaCommon::setUrl(toolbarURL, optionsPage->linePrjToolbar->text());
+    QuantaCommon::setUrl(toolbarURL, optionsPage.linePrjToolbar->text());
     toolbarURL.adjustPath(1);
     toolbarURL = QExtFileInfo::toAbsolute(toolbarURL, baseURL);
     if (!QExtFileInfo::createDir(toolbarURL))
@@ -1321,9 +1326,9 @@ void Project::slotOptions()
       QuantaCommon::dirCreationError(this, toolbarURL);
     }
 
-    QuantaCommon::setUrl(previewPrefix,optionsPage->linePrefix->text()+"/");
+    QuantaCommon::setUrl(previewPrefix,optionsPage.linePrefix->text()+"/");
     previewPrefix.adjustPath(1);
-    usePreviewPrefix = optionsPage->checkPrefix->isChecked();
+    usePreviewPrefix = optionsPage.checkPrefix->isChecked();
 
     QDomElement el;
 
@@ -1347,7 +1352,7 @@ void Project::slotOptions()
     dom.firstChild().firstChild().appendChild( el );
     el.appendChild( dom.createTextNode( email ) );
 
-    excludeStr = optionsPage->lineExclude->text();
+    excludeStr = optionsPage.lineExclude->text();
     el = dom.firstChild().firstChild().namedItem("exclude").toElement();
     if (!el.isNull())
        el.parentNode().removeChild(el);
@@ -1412,9 +1417,9 @@ void Project::slotOptions()
       el.firstChild().setNodeValue(QuantaCommon::qUrl(url));
     }
 
-    if (optionsPage->viewCombo->isEnabled())
+    if (optionsPage.viewCombo->isEnabled())
     {
-      defaultView = optionsPage->viewCombo->currentText();
+      defaultView = optionsPage.viewCombo->currentText();
        el = dom.firstChild().firstChild().namedItem("autoload").toElement();
        if (el.isNull())
        {
@@ -1427,22 +1432,22 @@ void Project::slotOptions()
        }
     }
 
-    QString path = optionsPage->linePath->text();
+    QString path = optionsPage.linePath->text();
     if (!path.startsWith("/"))
       path.prepend("/");
-    uploadEl.setAttribute("remote_host", optionsPage->lineHost->text() );
+    uploadEl.setAttribute("remote_host", optionsPage.lineHost->text() );
     uploadEl.setAttribute("remote_path", path);
-    uploadEl.setAttribute("remote_port", optionsPage->port->text() );
-    uploadEl.setAttribute("user", optionsPage->lineUser->text() );
-    uploadEl.setAttribute("remote_protocol", optionsPage->comboProtocol->currentText() );
+    uploadEl.setAttribute("remote_port", optionsPage.port->text() );
+    uploadEl.setAttribute("user", optionsPage.lineUser->text() );
+    uploadEl.setAttribute("remote_protocol", optionsPage.comboProtocol->currentText() );
 
     loadProjectXML();
 
     KConfig *config = quantaApp->config();
     config->setGroup("Projects");
-    if (optionsPage->keepPasswd->isChecked())
+    if (optionsPage.keepPasswd->isChecked())
     {
-      passwd = optionsPage->linePasswd->password();
+      passwd = optionsPage.linePasswd->password();
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
       config->writeEntry(projectName, QuantaCommon::obscure(passwd));
 #else
@@ -1464,8 +1469,6 @@ void Project::slotOptions()
     emit templateURLChanged( templateURL );
     emit newStatus();
   }
-
-  delete dlg;
 }
 
 void Project::slotUpload()
