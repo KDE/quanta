@@ -98,8 +98,8 @@ Tagxml::Tagxml( QDomNode &d, QTag *dtdTag, QWidget *parent, const char *name)
      if ( n.nodeName() == "attr" ) //an attribute
      {
 
-         QDomElement el = n.toElement();
-         QString type = el.attribute("type","input");
+         QDomElement* el = new QDomElement(n.toElement());
+         QString type = el->attribute("type","input");
 
          QDomElement ltext = findChild(n,"text").toElement();
          if ( !ltext.isNull() && (type != "check") ) //if there is a text label for the attribute
@@ -126,7 +126,7 @@ Tagxml::Tagxml( QDomNode &d, QTag *dtdTag, QWidget *parent, const char *name)
            if ( !whatsThis.isNull() )
                QWhatsThis::add( w, whatsThis );
 
-           Attr_line *attr = new Attr_line(&el, w, m_dtdTag);
+           Attr_line *attr = new Attr_line(el, w, m_dtdTag);
            attributes.append(attr);
            if (!m_firstItem)
               m_firstItem = w;
@@ -144,7 +144,7 @@ Tagxml::Tagxml( QDomNode &d, QTag *dtdTag, QWidget *parent, const char *name)
            if ( !whatsThis.isNull() )
                 QWhatsThis::add( w, whatsThis );
 
-           Attr_check *attr = new Attr_check(&el, w, m_dtdTag);
+           Attr_check *attr = new Attr_check(el, w, m_dtdTag);
            attributes.append(attr);
            if (!m_firstItem)
               m_firstItem = w;
@@ -157,7 +157,7 @@ Tagxml::Tagxml( QDomNode &d, QTag *dtdTag, QWidget *parent, const char *name)
                QToolTip::add( w, tip );
            if ( !whatsThis.isNull() )
                QWhatsThis::add( w, whatsThis );
-           Attr_list *attr = new Attr_list(&el, w, dtdTag);
+           Attr_list *attr = new Attr_list(el, w, dtdTag);
            attributes.append(attr);
            if (!m_firstItem)
               m_firstItem = w;
@@ -172,7 +172,7 @@ Tagxml::Tagxml( QDomNode &d, QTag *dtdTag, QWidget *parent, const char *name)
            if ( !whatsThis.isNull() )
                QWhatsThis::add( w, whatsThis );
 
-           Attr_color *attr = new Attr_color(&el, w, m_dtdTag);
+           Attr_color *attr = new Attr_color(el, w, m_dtdTag);
            attributes.append(attr);
            if (!m_firstItem)
               m_firstItem = w;
@@ -186,7 +186,7 @@ Tagxml::Tagxml( QDomNode &d, QTag *dtdTag, QWidget *parent, const char *name)
              QToolTip::add( w, tip );
            if ( !whatsThis.isNull() )
              QWhatsThis::add( w, whatsThis );
-           Attr_file *attr = new Attr_file(&el, w, m_dtdTag);
+           Attr_file *attr = new Attr_file(el, w, m_dtdTag);
            attributes.append(attr);
            if (!m_firstItem)
               m_firstItem = w;
@@ -203,7 +203,7 @@ Tagxml::Tagxml( QDomNode &d, QTag *dtdTag, QWidget *parent, const char *name)
            if ( !whatsThis.isNull() )
                QWhatsThis::add( w, whatsThis );
 
-           Attr_line *attr = new Attr_line(&el, w->lineEdit(), m_dtdTag);
+           Attr_line *attr = new Attr_line(el, w->lineEdit(), m_dtdTag);
            attributes.append(attr);
            
            if (!m_firstItem)

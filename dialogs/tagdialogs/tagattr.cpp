@@ -1,7 +1,7 @@
 /***************************************************************************
                           tagxml.cpp  -  description
                              -------------------
-    begin                : Пнд Сен 25 14:34:07 EEST 2000
+    begin                : О©╫О©╫О©╫О©╫25 14:34:07 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev <pdima@users.sourceforge.net,yshurik@linuxfan.com>
                            (C) 2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
