@@ -2730,7 +2730,9 @@ void kafkaCommon::splitStartNodeSubtree(Node* startNode, Node* commonParent,
         node = parentNode;
         parentNode = parentNode->parent;
     }
-    commonParentStartChildLocation = getLocation(commonParentStartChild);
+    
+    if(commonParentStartChild)
+        commonParentStartChildLocation = getLocation(commonParentStartChild);
 }
 
 void kafkaCommon::splitEndNodeSubtree(Node* endNode, Node* commonParent,
