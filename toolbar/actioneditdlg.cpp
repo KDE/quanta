@@ -23,6 +23,7 @@
 #include <qtextstream.h>
 #include <qfile.h>
 #include <qptrlist.h>
+#include <qpopupmenu.h>
 
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -32,6 +33,7 @@
 #include <kstandarddirs.h>
 #include <kdebug.h>
 #include <kxmlguiclient.h>
+#include <kmenubar.h>
 
 #include "actioneditdlg.h"
 #include "tagaction.h"
@@ -292,6 +294,9 @@ void ActionEditDlg::saveAction( TagAction *a )
     QDomNodeList nodeList;
     QDomNode foundNode;
     QString tabName = toolbarCombo->currentText().lower();
+    QPopupMenu *menu = app->toolbarMenu(tabName);
+    a->plug(menu);
+
     KXMLGUIClient *guiClient = 0;
     uint i =0;
     do {
@@ -329,6 +334,9 @@ void ActionEditDlg::saveAction( TagAction *a )
       }
     }
 
+    app->menuBar()->removeItem(app->tagsMenuId());
+    int id = app->menuBar()->insertItem(i18n("&Tags"),app->tagsMenu(),-1,5);
+    app->setTagsMenuId(id);
   }
   
 }

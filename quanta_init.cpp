@@ -153,8 +153,8 @@ void QuantaApp::initQuanta()
 
 
   createGUI( QString::null, false );
-  tagsMenu = new QPopupMenu(this);
-  menuBar()->insertItem(i18n("&Tags"),tagsMenu,-1,5);
+  m_tagsMenu = new QPopupMenu(this);
+  m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,5);
 
   pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));

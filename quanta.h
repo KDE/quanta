@@ -106,6 +106,10 @@ public:
   QuantaView *getView()  { return view;};
   Project *getProject()  { return project; };
   QDomDocument *actions() { return m_actions; }
+  QPopupMenu *tagsMenu() { return m_tagsMenu;}
+  int tagsMenuId() { return m_tagsMenuId;}
+  void setTagsMenuId(int id) {m_tagsMenuId = id;}
+  QPopupMenu *toolbarMenu(const QString& name) {return toolbarMenuList[name];}
 
   MessageOutput *getMessages() { return messageOutput; }
 
@@ -395,7 +399,8 @@ private:
   /**  */
   KTempFile *previewTmpFile;
   /**  */
-  QPopupMenu * tagsMenu;
+  QPopupMenu * m_tagsMenu;
+  int m_tagsMenuId;
 
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */

@@ -652,6 +652,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
  QDictIterator<KXMLGUIClient> iter(toolbarGUIClientList);
  QDomNodeList nodeList;
  KAction *action;
+ QPopupMenu *menu;
  for( ; iter.current(); ++iter )
  {
    int actionCount = iter.current()->actionCollection()->count();
@@ -665,29 +666,54 @@ void QuantaApp::slotOptionsConfigureToolbars()
  KEditToolbar dlg(factory(), this);
 
  int result = dlg.exec();
-     
- QString actionName;
- QDictIterator<KXMLGUIClient> it(toolbarGUIClientList);
- for( ; it.current(); ++it )
- {
-    //remove all inserted toolbars
-    if (result == QDialog::Accepted) factory()->removeClient(it.current());
 
-    //plug the actions in again
-    nodeList = it.current()->domDocument().elementsByTagName("Action");
-    for (uint i = 0; i < nodeList.count(); i++)
+ menuBar()->removeItem(m_tagsMenuId);
+ QString actionName;
+ QString name;
+// QDictIterator<KXMLGUIClient> it(toolbarGUIClientList);
+ //for( ; it.current(); ++it )
+ KXMLGUIClient *guiClient = 0;
+ QPtrList<KXMLGUIClient> guiClients = factory()->clients();
+ for (uint i = 0; i < guiClients.count(); i++)
+ {
+    guiClient = guiClients.at(i);
+    if (result == QDialog::Accepted)
     {
-      actionName = nodeList.item(i).toElement().attribute("name");
+      nodeList = guiClient->domDocument().elementsByTagName("ToolBar");
+      name = nodeList.item(0).toElement().attribute("tabname");
+      toolbarMenuList.remove(name.lower());
+      menu = new QPopupMenu;
+      //remove all inserted toolbars
+      factory()->removeClient(guiClient);
+    }
+    //plug the actions in again
+    nodeList = guiClient->domDocument().elementsByTagName("Action");
+    for (uint j = 0; j < nodeList.count(); j++)
+    {
+      actionName = nodeList.item(j).toElement().attribute("name");
       action = actionCollection()->action(actionName);
       if (action)
       {
-        it.current()->actionCollection()->insert(action);
+        guiClient->actionCollection()->insert(action);
+        action->plug(menu);
       }
     }
     //and add them again. Is there a better way to do this?
-    if (result == QDialog::Accepted) factory()->addClient(it.current());
+    if (result == QDialog::Accepted)
+    {
+      guiFactory()->addClient(guiClient);
+      if (!name.isEmpty())
+      {
+        m_tagsMenu->insertItem(name,menu);
+        toolbarMenuList.insert(name.lower(),menu);
+      } else
+      {
+        delete menu;
+      }
+    }
  }     
 
+ m_tagsMenuId = menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,5);
  view->toolbarTab->setCurrentPage(currentPageIndex);
 }
 
@@ -1511,7 +1537,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
       action->plug(menu);
     }
  }
- tagsMenu->insertItem(name,menu);
+ m_tagsMenu->insertItem(name,menu);
  toolbarMenuList.insert(name.lower(),menu);
 
  factory()->addClient(toolbarGUI);
