@@ -31,5 +31,8 @@ kdelnk_DATA = quanta.desktop
 rcdir = $(kde_datadir)/quanta
 rc_DATA = quantaui.rc
 
+if BUILD_WYSIWYG
+KAFKAINCLUDE = -I$(top_builddir)/quanta/parts/kafka
+endif
 
-INCLUDES = -I$(top_srcdir)/quanta/dialogs -I$(top_srcdir)/quanta/plugins -I$(top_srcdir)/quanta/plugins/framewizard -I$(top_srcdir)/quanta/tagdialogs -I$(top_srcdir)/quanta/toolbar -I$(top_builddir)/quanta/toolbar -I$(top_builddir)/quanta/tagdialogs -I$(top_builddir)/quanta/plugins -I$(top_builddir)/quanta/dialogs -I$(top_builddir)/quanta/plugins/framewizard $(all_includes)
+INCLUDES = -I$(top_srcdir)/quanta/dialogs -I$(top_srcdir)/quanta/plugins -I$(top_srcdir)/quanta/plugins/framewizard -I$(top_srcdir)/quanta/tagdialogs -I$(top_srcdir)/quanta/toolbar -I$(top_builddir)/quanta/toolbar -I$(top_builddir)/quanta/tagdialogs -I$(top_builddir)/quanta/plugins -I$(top_builddir)/quanta/dialogs -I$(top_builddir)/quanta/plugins/framewizard $(KAFKAINCLUDE) $(all_includes)
