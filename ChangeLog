@@ -45,6 +45,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - don't crash when previewing a page with frames twices in a row or when
           downloading a documentation packages from the Welcome screen [#95465]
         - open the frames in the correct place [#66233]
+        - get the encoding correctly from Quanta in the QuickStart dialog [#96696]
 	- enable full copy/paste from documentation and preview. Until now it worked
 	  only with the mouse through the selection. [#92936]
 	- don't show directories that were removed from the project in the upload

@@ -29,6 +29,8 @@ QString DCOPSettings::encoding()
 {
   QString encoding = quantaApp->defaultEncoding();
   encoding.replace("iso ", "iso-"); //it's said that "iso-8859-x" is the valid format
+  encoding.replace("utf", "utf-"); //it's said that "utf-x" is the valid format
+  encoding.replace("cp ", "windows-");
   return encoding;
 }
 
