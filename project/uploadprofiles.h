@@ -61,7 +61,7 @@ public:
   
       @param the dom document to parse 
   */
-  void UploadProfiles::readFromXML(const QDomDocument &dom);
+  void readFromXML(const QDomDocument &dom);
 
   /**
       removes a profile from the map and the dom tree
