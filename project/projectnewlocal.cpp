@@ -287,3 +287,4 @@ void ProjectNewLocal::slotReloadTree( QStringList fileList, bool newtree)
   projectDirTree->sortChildItems(0,true);
   projectDirTree->setOpen( true );
 }
+#include "projectnewlocal.moc"

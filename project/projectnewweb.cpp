@@ -180,3 +180,4 @@ void ProjectNewWeb::resizeEvent ( QResizeEvent *t )
   ProjectNewWebS::resizeEvent(t);
   listFiles->setColumnWidth(0,listFiles->width()-listFiles->columnWidth(1)-20);
 }
+#include "projectnewweb.moc"

@@ -417,3 +417,4 @@ void ProjectUpload::reject()
 
   QDialog::reject();
 }
+#include "projectupload.moc"

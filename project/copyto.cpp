@@ -115,3 +115,4 @@ QStringList CopyTo::copy( QStringList rfiles )
 
   return sfiles;
 }
+#include "copyto.moc"

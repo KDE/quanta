@@ -93,3 +93,4 @@ void ProjectNewGeneral::setMargin(int i)
   layout()->setMargin(i);
 }
 
+#include "projectnewgeneral.moc"

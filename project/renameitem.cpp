@@ -76,3 +76,4 @@ void RenameItem::slotResult( KIO::Job *)
 RenameItem::~RenameItem()
 {
 }
+#include "renameitem.moc"

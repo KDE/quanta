@@ -1060,3 +1060,4 @@ QString Project::urlWithPrefix(const KURL& url)
 
     return returnUrl;
 }
+#include "project.moc"
