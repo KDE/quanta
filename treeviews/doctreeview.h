@@ -35,7 +35,7 @@ public:
 	DocTreeView(QWidget *parent=0, const char *name=0);
 	~DocTreeView();
 	
-	QString * contextHelp( QString keyword );
+	QString *contextHelp( QString keyword );
 	
 signals:
 	void openURL( QString );
