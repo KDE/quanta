@@ -50,6 +50,7 @@
 #include <kstdaction.h>
 #include <kstddirs.h>
 #include <kfiledialog.h>
+#include <klineeditdlg.h>
 #include <kmessagebox.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
@@ -63,7 +64,6 @@
 #include "projectnewfinal.h"
 #include "projectupload.h"
 #include "rescanprj.h"
-#include "renameitem.h"
 
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
@@ -650,9 +650,8 @@ void Project::insertFilesAfterCopying(QString rdir,CopyTo* dlg)
   emit reloadTree( fileNameList(), true, false );
 }
 
-void Project::renameFinished(RenameItem* dlg)
+void Project::renameFinished()
 {
-  delete dlg;
   emit removeFromProject(0); //remove without confirm
   emit reloadTree( fileNameList(), false, false );
   emit newStatus();
@@ -660,18 +659,24 @@ void Project::renameFinished(RenameItem* dlg)
 
 void Project::slotRenameFile (QString oldName)
 {
-   QString newName;	
-   RenameItem *dlg = new RenameItem(this, QFileInfo(oldName).fileName() );
+   QString newName;
+   KLineEditDlg dlg(i18n("Enter new name:"), QFileInfo(oldName).fileName(), this);
+   dlg.setCaption(i18n("Rename File"));
 
-    if ( dlg->exec() )
+    if ( dlg.exec() )
     {
-      newName = dlg->renameFile( oldName );
-      connect(dlg, SIGNAL(renameFinished(RenameItem*)),
-                   SLOT  (renameFinished(RenameItem*)));
-	
-	  QDomElement el;	
+      newName = dlg.text();
+
+      QString newFullName = QFileInfo(oldName).dirPath() + '/'+newName;
+      if ( oldName != newFullName )
+      {
+         KIO::SimpleJob *job = KIO::rename( KURL( oldName ), KURL(  newFullName ), true );
+         connect( job, SIGNAL( result( KIO::Job *) ), SLOT( renameFinished() ));
+      }
+
+	  QDomElement el;
   	  QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-   	
+
   	  for ( unsigned int i=0; i<nl.count(); i++ )
   	  {
   		el = nl.item(i).toElement();
@@ -688,28 +693,32 @@ void Project::slotRenameFile (QString oldName)
 			break;
       	 }
        }
-    }  else
-    {
-       delete dlg;              	
-     }
+    }
 }
 
 void Project::slotRenameFolder (QString oldName)
 {
-   QString newName;	
+   QString newName;
 
    //do this trick to get the last directory name from oldName
    QString dirName = oldName;
    dirName.truncate(dirName.length()-1);
 
-   RenameItem *dlg = new RenameItem(this,QFileInfo(dirName).fileName());
-   if ( dlg->exec() )
-    {
-      newName = dlg->renameFolder(oldName);
-      connect(dlg, SIGNAL(renameFinished(RenameItem*)),
-                   SLOT  (renameFinished(RenameItem*)));
+   KLineEditDlg dlg(i18n("Enter new name:"), QFileInfo(dirName).fileName(), this);
+   dlg.setCaption(i18n("Rename Directory"));
 
-	  QDomElement el;	
+   if ( dlg.exec() )
+    {
+      QString newName = QFileInfo(dirName).dirPath() + '/'+dlg.text()+'/';
+      dirName += '/';
+
+      if ( dirName != newName )
+      {
+         KIO::SimpleJob *job = KIO::rename( KURL( dirName ), KURL(  newName ), true );
+         connect( job, SIGNAL(result( KIO::Job *)), SLOT( renameFinished() ));
+      }
+
+	  QDomElement el;
   	  QDomNodeList nl = dom.firstChild().firstChild().childNodes();
   	  QString tmpString;
 
@@ -726,19 +735,16 @@ void Project::slotRenameFolder (QString oldName)
   		}
        }
     	modified = true;
-    } else
-    {
-      delete dlg;              	
-     }
+    }
 }
 
 void Project::slotRemoveFile(QString fname)
 {
 	QDomElement el;
-	
+
   	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-   	
-  	for ( unsigned int i=0; i<nl.count(); i++ ) 
+
+  	for ( unsigned int i=0; i<nl.count(); i++ )
   	{
   		el = nl.item(i).toElement();
   		if ( el.nodeName() == "item" )

@@ -43,11 +43,10 @@ class ProjectNewFinal;
 class ProjectNewGeneral;
 
 class CopyTo;
-class RenameItem;
 
 class Project : public QWidget  {
    Q_OBJECT
-public: 
+public:
 	Project( QWidget *parent=0, const char *name=0);
 	~Project();
 	
@@ -86,7 +85,7 @@ public slots:
   void addDirectory(QString rdir, bool showDlg);
   void insertFile(QString name);
   void insertFilesAfterCopying(QString,CopyTo*);
-  void renameFinished(RenameItem*);
+  void renameFinished();
 
 	void slotRenameFile(QString);
 	void slotRenameFolder(QString);
