@@ -40,6 +40,7 @@
 #include "quantacommon.h"
 #include "quanta.h"
 #include "resource.h"
+#include "tableitem.h"
 
 int newNum;
 
@@ -144,11 +145,14 @@ void TableEditor::slotEditCell()
     for (int row = 0; row < m_dataTable->numRows(); row++)
       for (int col = 0; col < m_dataTable->numCols(); col++) {
         many++;
-       if (m_dataTable->isSelected(row, col))
+       if (m_dataTable->isSelected(row, col)) {
          (*m_tableTags)[row][col].node->tag->modifyAttributes(dlg.getAttributes());
+	 configureCell(row, col, (*m_tableTags)[row][col].node);
+	 }
       }
     if (!many) {
       (*m_tableTags)[m_row][m_col].node->tag->modifyAttributes(dlg.getAttributes());
+      configureCell(m_row, m_col, (*m_tableTags)[m_row][m_col].node);
     }
     //TODO: add/remove columns/rows if the colspan/rowspan attribute is changed
   }
@@ -388,10 +392,12 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
               m_colSpin->setValue(col);
           TableNode tableN = mergeMatrix[nRow - 1][col];
           Node *n = tableN.node;
-          m_dataTable->setText(nRow - 1, col, i18n("Merged with (%1, %2).").arg(tableN.mergedRow).arg(tableN.mergedCol));
+          //m_dataTable->setText(nRow - 1, col, i18n("Merged with (%1, %2).").arg(tableN.mergedRow).arg(tableN.mergedCol));
+	  setCellText(m_dataTable, nRow - 1, col, i18n("Merged with (%1, %2).").arg(tableN.mergedRow).arg(tableN.mergedCol));
           m_dataTable->item(nRow-1, col)->setEnabled(false);
           tableNode.node = new Node(0L);
           tableNode.node->tag = new Tag(*(n->tag));
+	  configureCell(nRow-1,  col, tableNode.node);
           newNum++;
           tableNode.merged = true;
           tableNode.mergedRow = tableN.mergedRow;
@@ -406,9 +412,11 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           m_rowSpin->setValue(nRow);
           if (m_colSpin->value() < nCol)
             m_colSpin->setValue(nCol);
-          m_dataTable->setText(nRow - 1, nCol - 1, tagContent(n));
+          //m_dataTable->setText(nRow - 1, nCol - 1, tagContent(n));
+	  setCellText(m_dataTable, nRow - 1, nCol - 1, tagContent(n));
           tableNode.node = new Node(0L);
           tableNode.node->tag = new Tag(*(n->tag));
+	  configureCell(nRow-1,  col, tableNode.node);
           newNum++;
           tableNode.merged = false;
           tableRowTags.append(tableNode);
@@ -427,10 +435,12 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
               m_colSpin->setValue(nCol);
             for (int i = 0; i < colValue - 1; i++)
             {
-              m_dataTable->setText(nRow - 1, lastCol + i, i18n("Merged with (%1, %2).").arg(nRow).arg(lastCol));
+              //m_dataTable->setText(nRow - 1, lastCol + i, i18n("Merged with (%1, %2).").arg(nRow).arg(lastCol));
+	      setCellText(m_dataTable, nRow - 1, lastCol + i, i18n("Merged with (%1, %2).").arg(nRow).arg(lastCol));
               m_dataTable->item(nRow-1, lastCol + i)->setEnabled(false);
               tableNode.node = new Node(0L);
               tableNode.node->tag = new Tag(*(n->tag));
+	      configureCell(nRow-1,  col, tableNode.node);
               newNum++;
               tableNode.merged = true;
               tableNode.mergedRow = nRow - 1;
@@ -834,7 +844,8 @@ void TableEditor::slotRemoveCol()
       for (QValueList<TableNode>::Iterator it2 = (*it).begin(); it2 != (*it).end(); ++it2) {
         if ((*it2).merged && (*it2).mergedCol == m_col) {
           (*it2).merged = false;
-          m_dataTable->setText(i, j, tagContent((*it2).node));
+          //m_dataTable->setText(i, j, tagContent((*it2).node));
+	  setCellText(m_dataTable, i, j, tagContent((*it2).node));
           m_dataTable->item(i, i)->setEnabled(true);
         }
         j++;
@@ -921,7 +932,8 @@ void TableEditor::slotMergeCells()
   for (int i = 0; i < bRow - tRow + 1; i++)
     for (int j = 0; j < rCol - lCol + 1; j++) {
       if (i != 0 || j != 0) {
-        m_dataTable->setText(tRow + i, lCol + j, i18n("Merged with (%1, %2).").arg(tRow).arg(lCol));
+        // m_dataTable->setText(tRow + i, lCol + j, i18n("Merged with (%1, %2).").arg(tRow).arg(lCol));
+	setCellText(m_dataTable, tRow + i, lCol + j, i18n("Merged with (%1, %2).").arg(tRow).arg(lCol));
         m_dataTable->item(tRow + i, lCol + j)->setEnabled(false);
         TableNode *tableNode = &((*m_tableTags)[tRow + i][lCol + j]);
         tableNode->node = new Node(0L);
@@ -981,7 +993,8 @@ void TableEditor::slotUnmergeCells()
                 newTableNode.node->tag->parse("<td>", m_write);
               }
               (*it).insert(it2, newTableNode);
-              m_dataTable->setText(i, j, tagContent(newTableNode.node));
+              //m_dataTable->setText(i, j, tagContent(newTableNode.node));
+	      setCellText(m_dataTable, i, j, tagContent(newTableNode.node));
               m_dataTable->item(i, j)->setEnabled(true);
           } else {
             ++it2;
@@ -1074,7 +1087,8 @@ void TableEditor::slotEditChildTable()
        int length = table.nestedData.length();
        (*it).nestedData =  editor.readModifiedTable();
        cellData.replace(pos, length, (*it).nestedData);
-       m_dataTable->setText(table.row, table.col, cellData);
+       //m_dataTable->setText(table.row, table.col, cellData);
+       setCellText(m_dataTable, table.row, table.col, cellData);
       }
       //cleanup on success
       delete baseNode;
@@ -1121,3 +1135,47 @@ void TableEditor::configureTable( QTable * table )
 }
 
 
+
+
+void TableEditor::setCellText( QTable * table, int row, int col, const QString & text )
+{
+   table->setItem(row, col, new TableItem(table, QTableItem::OnTyping, text));
+}
+
+
+void TableEditor::configureCell(int row, int col, Node * node)
+{
+   TableItem* item = (TableItem*) m_dataTable->item(row, col);
+   if (!item) 
+     return;
+   // Header (TH) or standard cell?
+   item->setHeader(node->tag->name.lower() == "th");
+   // Horizontal alignment
+   Qt::AlignmentFlags flags;
+   QString align = node->tag->attributeValue("align");
+   if (align == "right") 
+     flags = Qt::AlignRight;
+   else if (align == "center") 
+     flags = Qt::AlignHCenter;
+   else if (align == "justify") 
+     flags = Qt::AlignJustify;
+   else if (align.isEmpty() && item->header())
+     flags = Qt::AlignHCenter;   // TH is centered by default
+   else 
+     flags = Qt::AlignLeft;
+   item->setAlignment(flags);
+   // Vertical alignment
+   QString valign = node->tag->attributeValue("valign");
+   if (valign == "top") 
+     flags = Qt::AlignTop;
+   else if (valign == "bottom") 
+     flags = Qt::AlignBottom;
+   else flags = Qt::AlignVCenter;
+   item->setVAlignment(flags);
+}
+
+
+void TableEditor::newFunction()
+{
+
+}

@@ -20,7 +20,7 @@
             <x>0</x>
             <y>0</y>
             <width>695</width>
-            <height>763</height>
+            <height>769</height>
         </rect>
     </property>
     <property name="caption">
@@ -578,6 +578,8 @@
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>headerCheckBox</sender>
@@ -799,6 +801,7 @@
 <slots>
     <slot>slotContextMenuRequested( int row, int col, const QPoint &amp; pos )</slot>
     <slot>slotEditCell()</slot>
+    <slot>slotEditCellText( int r, int )</slot>
     <slot>slotEditRow()</slot>
     <slot>slotEditCol()</slot>
     <slot>slotEditTable()</slot>
@@ -816,7 +819,6 @@
     <slot>slotUnmergeCells()</slot>
     <slot>slotEditChildTable()</slot>
     <slot access="protected">slotHelpInvoked()</slot>
-    <slot>slotEditCellText(int r, int c)</slot>
 </slots>
 <functions>
     <function>init()</function>
@@ -831,7 +833,10 @@
     <function>createNewTable( Document * write, const DTDStruct * dtd )</function>
     <function access="protected">deleteList( QValueList&lt;TableNode&gt; * table )</function>
     <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt; &gt; * matrix )</function>
-    <function>configureTable(QTable*)</function>
+    <function>configureTable( QTable * table )</function>
+    <function>setCellText( QTable * table, int row, int col, const QString &amp; text )</function>
+    <function>configureCell( int row, int col, Node * node )</function>
+    <function>newFunction()</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
