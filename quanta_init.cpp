@@ -1687,10 +1687,10 @@ void QuantaApp::initActions()
     QString s = locateLocal("appdata","actions.rc");
     if (!s.isEmpty())
     {
-      f.setName(s);
-      if ( f.open( IO_ReadOnly ))
+      QFile f2(s);
+      if ( f2.open( IO_ReadOnly ))
       {
-        QByteArray buffer = f.readAll();
+        QByteArray buffer = f2.readAll();
         kdDebug(24000) << "Setting content for m_actions from local actions.rc\n";
         if (m_actions->setContent(buffer))
         {
@@ -1707,7 +1707,7 @@ void QuantaApp::initActions()
             n = n.nextSibling();
           }
         }
-        f.close();
+        f2.close();
       }
     } else
     {

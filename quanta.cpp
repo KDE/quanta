@@ -370,7 +370,6 @@ void QuantaApp::slotFilePrint()
 void QuantaApp::slotFileQuit()
 {
   saveOptions();
-  removeToolbars();
 
   if(memberList)
   {
@@ -380,6 +379,7 @@ void QuantaApp::slotFileQuit()
     }
   }
 
+  removeToolbars();
 }
 
 
