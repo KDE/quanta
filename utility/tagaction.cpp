@@ -374,6 +374,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
     if ( firstOutput )
     {
         quantaApp->doc()->openDocument( KURL() );
+        w = ViewManager::ref()->activeDocument();
     }
     w->insertTag( text );
   } else
