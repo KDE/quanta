@@ -479,8 +479,10 @@ void QuantaView::slotShowKafkaAndQuanta()
     }
     else
       splitter->setSizes(_splittSizes);
+#if QT_VERSION > 0x030103      //shouldn't be a problem in the real release, as KDE 3.2 will require QT 3.2
     splitter->setCollapsible(write()->view(), false);
     splitter->setCollapsible(kafkaInterface->getKafkaPart()->view(), false);
+#endif
     splitter->show();
   }
   else
