@@ -899,7 +899,8 @@ void ProjectPrivate::getStatusFromTree()
   parent->getTreeStatus( &folderList );
   // toplevel folder is always open in a project and QExtFileInfo::toRelative
   // creates strange output -> we remove the toplevel folder
-  folderList.remove(folderList.begin());
+  if (folderList.count() > 0)
+     folderList.remove(folderList.begin());
   if (folderList.count() > 0) {
     // create the root element
     QDomElement root = dom.createElement("treestatus");
