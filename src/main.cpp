@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
     "emi_barbarossa@yahoo.it");
 
   aboutData.addCredit("Jens Herden",
-    I18N_NOOP("Cleanup of the treeview code, code review"),
+    I18N_NOOP("Improvements to the treeview code; code review and cleanup"),
     "jhe@epost.de");
 
   aboutData.addCredit("Andrea Bergia",
