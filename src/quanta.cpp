@@ -169,6 +169,7 @@ QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KDockMainWindow(0L,"Quan
 {
   m_quantaInit = new QuantaInit(this);
   dcopSettings = new DCOPSettings;
+  dcopQuanta = new DCOPQuanta;
   quantaStarted = true;
   tempFileList.setAutoDelete(true);
   toolbarList.setAutoDelete(true);
@@ -849,7 +850,7 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
           QString width,height;
           width.setNum(img.width());
           height.setNum(img.height());
-          QString imgTag = QuantaCommon::tagCase("<img ");        
+          QString imgTag = QuantaCommon::tagCase("<img ");
           imgTag += QuantaCommon::attrCase("src=");
           imgTag += QuantaCommon::quoteAttributeValue(urlStr);
           imgTag += QuantaCommon::attrCase(" width=");
@@ -996,12 +997,12 @@ void QuantaApp::slotClosePage(QWidget *w)
     QWidget *oldPage = writeTab->currentPage();
     if (oldPage != w)
         writeTab->showPage(w);
-    parser->setSAParserEnabled(false);    
+    parser->setSAParserEnabled(false);
     m_doc->closeDocument();
     if (oldPage != w)
         writeTab->showPage(oldPage);
-    kdDebug(24000) << "Calling reparse from close " << endl;    
-    parser->setSAParserEnabled(true);    
+    kdDebug(24000) << "Calling reparse from close " << endl;
+    parser->setSAParserEnabled(true);
     reparse(true);
   }
   if (!writeTab->currentPage())
@@ -1054,7 +1055,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   slotNewStatus();
   slotNewLineColumn();
   typingInProgress = false; //need to reset, as it's set to true in the above slots
-  
+
   loadToolbarForDTD(newWrite->getDTDIdentifier());
 
   Document *currentWrite = m_view->write();
@@ -1798,19 +1799,19 @@ void QuantaApp::slotContextHelp()
   }
 }
 
-void QuantaApp::slotShowSTabDock() 
-{ 
+void QuantaApp::slotShowSTabDock()
+{
   stabdock->changeHideShowState();
   slotReloadStructTreeView();
 }
 
-void QuantaApp::slotShowATabDock() 
-{ 
+void QuantaApp::slotShowATabDock()
+{
   atabdock->changeHideShowState();
 }
 
-void QuantaApp::slotShowDTabDock() 
-{ 
+void QuantaApp::slotShowDTabDock()
+{
   dtabdock->changeHideShowState();
 }
 
