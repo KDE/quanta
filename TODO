@@ -40,5 +40,5 @@ Bugs discovered:
  - attribute tree is updated and redrew on every keypress in case of PHP
 
 DTEP:
- - in feature try to use the WEML for stroing the DTEP tags
+ - in feature try to use the WEML for storing the DTEP tags
  - better document type recognition, namespace recognition (<MyNS:rootElement xmlns:MyNS="http://www.example.com">)

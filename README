@@ -1,9 +1,6 @@
  Quanta Plus - a WEB Development tool for the K Desktop Environment.
  Version: 3.3 line
-
-NOTE: This is a "Bleeding Edge" edition. It contains the latest features and
-bugfixes, but due to its bleeding edge nature, it is less tested and
-might contain unknown bugs or not fully implemented features.
+ Last updated: 2004-08-04
 
 Table of contents
 -----------------
@@ -40,19 +37,12 @@ sheets and lots of time saving features.
 
 2. Requirements
 ---------------
- Quanta Plus 3.3 was developed for the upcoming KDE 3.3. We do our best to support running it on KDE 3.2.x and 3.1.x, but you should understand that as it will be part
-of KDE 3.3, it's best working under this version. Under
-KDE 3.2.x and 3.1.x some of the new features are not available or they may not work
-as expected.
-  NOTE: as KDE 3.3 is still under heavy development the recommended platform for
-this release is KDE 3.2.2 or better, even if some feature won't be available. With KDE
-3.3 (CVS HEAD) the presence and good working of a feature highly depends on the
-day when you updated your KDE libraries from the CVS.
-  This release will be the last that will run on KDE 3.1.x. We expect that users will move
-soon to KDE 3.2.x, as it's released already for 4 months.
+ Quanta Plus 3.3 was developed for KDE 3.3. We do our best to support running it on KDE 3.2.x, but you should understand that as it is part of KDE 3.3, it's best working under this version. Under
+KDE 3.2.x some of the new features are not available or they may not work as expected.
   Check out the KDE webpage (http://www.kde.org) for the requirements
-running and compiling KDE 3.1 software. Generally for KDE 3.1.x you will
-need at least QT 3.1.0 or above.
+running and compiling KDE 3.2 software. Generally for KDE 3.2.x you will
+need at least QT 3.2.0 or above. Quanta also has some other runtime and compile time (optional)
+dependencies as described in the toplevel PACKAGING file.
  Don't forget that for compilation you need an environment set up for
 developing. This means that aside from the compiler (usually GCC) and the
 make tools (autoconf, automake, gmake/make and so) you need some additional
@@ -65,19 +55,7 @@ distros, but this depends on the distribution you use.
 
 3. Release notes
 ----------------
-  This release (3.3 be2) is an unstable development release, a so called
-preview to show you some of the upcoming features and behavior of Quanta+ 3.3.
-Unstable means that it's software under development and some features might
-be broken, altough in case of Quanta+ even the CVS HEAD version is quite stable.
-As mentioned some features require the KDE CVS HEAD version to work correctly,
-but beware that some things may be broken in KDE CVS, so upgrade only if you
-know what you're doing. For example since some time Quanta+ crashes with KDE
-CVS HEAD, but this is not Quanta's fault, but possibly a bug in a recent
-commit to the Kate part, the editor we are using.
-  For a complete list of changes, including the notes which feature is available
-under KDE 3.1.x and which requires KDE CVS HEAD consult the ChangeLog file.
-  This preview release is available only in English. Translated version will be
-available as soon as KDE 3.3 is released.
+  No knows issues at this time.
 
 4. Getting Quanta Plus
 ----------------------
@@ -89,7 +67,8 @@ announcements, merchandise and you can make some donation to support
 Quanta.
  An alternative way to use the latest and greatest version is to get it
 from CVS. More info about getting the sources from KDE CVS can be found
-at: http://developer.kde.org/source/. The module name for Quanta is "quanta".
+at: http://developer.kde.org/source/. The module name for Quanta is 
+"kdewebdev".
 
 5. Installation
 ---------------
@@ -147,11 +126,12 @@ You can put the lines starting with the first "export" into a separate file,
 call it "new-quanta", make it executable, put it in your PATH and when you
 run "new-quanta" the version installed into /opt/new-quanta will be run.
 
-
 NOTE: In case of BE releases, only the Quanta BE executable name is
 different of the stable version, for the other applications when installing into the
 same directory as the old versions are, the old versions will be upgraded. To avoid this,
 use the way descibed above for the whole kdewebdev module.
+NOTE2: There is no newer BE release than 3.3.0. Please don't use BE1 or BE2, they are much
+older than 3.3.0.
 
 
 5.2. Common installation and compilation problems
@@ -202,7 +182,11 @@ node, so users could not open PHP files from Quanta... This shouldn't be a probl
 with Quanta 3.2 on KDE 3.1.1 or newer.
   b) If Quanta crashes on startup then rename your local quantarc file
 (in $KDEHOME/share/config) and send this file to me, so I can find out why does
-it crash. In case of any  crash, please send me a backtrace.
+it crash. In case of any  crash, please send me a backtrace. One known cause of such
+crash is if you use the same $KDEHOME for Quanta 3.2 and Quanta 3.3. Due to some
+incompatible changes in the quantarc file regarding the user interface, Quanta 3.2
+cannot interpret the settings correctly and will crash. See section 5.1 how to deal
+with different $KDEHOME directories.
   c) If you see the same DTD more than once in the DTD selection lists, it means
 that you have more than one Quanta installed, one in your KDE directories and
 the other in some other place.
@@ -234,7 +218,7 @@ it, if the report is bad or incomplete. Some rules:
     generate a backtrace. You must have gdb installed to do so. Send me the
     backtrace.
     h) Send me the document which caused the problem, or the quantarc file if
-    it's a startup crash. (See 5/c.)
+    it's a startup crash. (See 6/c.)
 
 I'm waiting your bugs and wishes.
 
