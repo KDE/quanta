@@ -63,6 +63,8 @@ signals:
 	
 protected:
 	virtual QString currentFileName();
+  /** Return true, if the file is a text file. */
+  bool isText(QString fileName);
 	
 public:
 	FilesTreeFolder *homeDir;

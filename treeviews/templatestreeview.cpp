@@ -594,4 +594,6 @@ int TemplatesTreeView::denyBinaryInsert()
 {
   KMessageBox::sorry(this, "Can't insert binary file as text", "Wrong type",
 FALSE);
+
+ return 1; //not used yet
 }

@@ -190,26 +190,8 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
 		emit openImage( nameToOpen );
 		return;
 	}
-//The file type is unknown, so do some Mimetype magic
 
- QString mimetype = KMimeType::findByFileContent(nameToOpen)->name();
- bool isText = false;
-
- KMimeType::List list = KMimeType::allMimeTypes();
- KMimeType::List::iterator it;
-
- mimetype = mimetype.section('/',-1);
- for ( it = list.begin(); it != list.end(); ++it )
- {
-    if ( ((*it)->name().contains("text")) && ((*it)->name().find(mimetype) != -1) )
-    {
-      isText = true;
-      break;
-    }
- }
- //QString mimetype = KMimeType::findByFileContent(nameToOpen)->name();
-
- if (isText)
+ if (isText(nameToOpen))
  {
 		KURL url(nameToOpen);
 		emit openFile( url );
@@ -397,6 +379,28 @@ void FilesTreeView::slotInsertTag()
 
 // readDirInfo();
  emit insertTag( currentFileName(), dirInfo);
+}
+
+/** Return true, if the file is a text file. */
+bool FilesTreeView::isText(QString fileName)
+{
+ QString mimetype = KMimeType::findByFileContent(fileName)->name();
+ bool status = false;
+
+ KMimeType::List list = KMimeType::allMimeTypes();
+ KMimeType::List::iterator it;
+
+ mimetype = mimetype.section('/',-1);
+ for ( it = list.begin(); it != list.end(); ++it )
+ {
+    if ( ((*it)->name().contains("text")) && ((*it)->name().find(mimetype) != -1) )
+    {
+      status = true;
+      break;
+    }
+ }
+
+ return status;
 }
 
 #include "filestreeview.moc"

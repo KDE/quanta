@@ -15,6 +15,11 @@
  *                                                                         *
  ***************************************************************************/
 
+//KDE includes
+
+#include <kcombobox.h>
+
+//app includes
 #include "quantapropertiespagedlg.h"
 
 QuantaPropertiesPageDlg::QuantaPropertiesPageDlg(QWidget *parent, const char *name ) : QuantaPropertiesPage(parent,name)

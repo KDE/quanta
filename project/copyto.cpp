@@ -14,8 +14,6 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include "copyto.h"
-
 // qt includes
 #include <qdir.h>
 #include <qlineedit.h>
@@ -26,7 +24,10 @@
 #include <kio/jobclasses.h>
 #include <kfiledialog.h>
 #include <kiconloader.h>
-#include "kurlrequester.h"
+#include <kurlrequester.h>
+
+//app includes
+#include "copyto.h"
 
 CopyTo::CopyTo(QString dir, QWidget *parent, const char *name)
     : CopyToS(parent,name,true)
