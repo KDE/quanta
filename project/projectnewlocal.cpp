@@ -75,7 +75,7 @@ void ProjectNewLocal::setBaseURL(const KURL& a_baseURL)
 {
   baseURL = a_baseURL;
   baseURL.adjustPath(1);
-  checkInsert->setText(i18n("<qt>Insert files from <b>%1</b>.</qt>").arg(baseURL.prettyURL(0, KURL::StripFileProtocol)));
+  checkInsert->setText(i18n("Insert files from %1.").arg(baseURL.prettyURL(0, KURL::StripFileProtocol)));
   listView->clear();
   fileList.clear();
   checkInsert->setChecked(false);

@@ -1067,19 +1067,24 @@ void Project::slotNewProject()
   connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
            wiz, SLOT(setBackEnabled(QWidget*,bool)));
 
-  QString name;
-  int index;
+  QStringList lst;
   QDictIterator<DTDStruct> it(*dtds);
   for( ; it.current(); ++it )
   {
-    index = -1;
-    name = it.current()->name;
     if (it.current()->toplevel)
     {
-      if (name.lower() == qConfig.defaultDocType) index = 0;
-      pnf->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(name), index);
+      lst << it.current()->nickName;
     }
   }
+  lst.sort();
+  uint pos = 0;
+  for (uint i = 0; i < lst.count(); i++)
+  {
+    pnf->dtdCombo->insertItem(lst[i]);
+    if (lst[i] == QuantaCommon::getDTDNickNameFromName(qConfig.defaultDocType.lower()))
+       pos = i;
+  }
+  pnf->dtdCombo->setCurrentItem(pos);
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
   pnf->encodingCombo->insertStringList( availableEncodingNames );
@@ -1096,7 +1101,8 @@ void Project::slotNewProject()
   }
 
   png->linePrjName->setFocus();
-  if ( wiz->exec() ) slotAcceptCreateProject();
+  if ( wiz->exec() )
+    slotAcceptCreateProject();
 
   delete wiz;
 
