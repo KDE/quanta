@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>314</width>
-            <height>405</height>
+            <width>317</width>
+            <height>413</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -49,22 +49,6 @@
                 <string>Use &amp;pre/post text</string>
             </property>
         </widget>
-        <widget class="QTextEdit" row="4" column="0" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>preTextEdit</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-        </widget>
-        <widget class="QTextEdit" row="6" column="0" rowspan="1" colspan="4">
-            <property name="name">
-                <cstring>postTextEdit</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-        </widget>
         <widget class="QLabel" row="3" column="0" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>TextLabel1_2</cstring>
@@ -73,20 +57,15 @@
                 <string>Pre-text:</string>
             </property>
         </widget>
-        <widget class="QLabel" row="5" column="0" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>TextLabel2</cstring>
-            </property>
-            <property name="text">
-                <string>Post-text:</string>
-            </property>
-        </widget>
         <widget class="QLabel" row="0" column="0">
             <property name="name">
                 <cstring>TextLabel1</cstring>
             </property>
             <property name="text">
-                <string>Type:</string>
+                <string>&amp;Type:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>typesCombo</cstring>
             </property>
         </widget>
         <spacer row="0" column="1">
@@ -106,11 +85,6 @@
                 </size>
             </property>
         </spacer>
-        <widget class="KComboBox" row="0" column="2">
-            <property name="name">
-                <cstring>typesCombo</cstring>
-            </property>
-        </widget>
         <spacer row="0" column="3">
             <property name="name">
                 <cstring>Spacer2</cstring>
@@ -128,6 +102,51 @@
                 </size>
             </property>
         </spacer>
+        <widget class="QTextEdit" row="4" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>preTextEdit</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="QLabel" row="5" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>TextLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Post-text:</string>
+            </property>
+        </widget>
+        <widget class="QTextEdit" row="6" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>postTextEdit</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="QLabel" row="7" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Filtering &amp;action:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>actionCombo</cstring>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="0" column="2">
+            <property name="name">
+                <cstring>typesCombo</cstring>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="7" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>actionCombo</cstring>
+            </property>
+        </widget>
     </grid>
 </widget>
 <connections>
@@ -159,6 +178,7 @@
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
+    <includehint>kcombobox.h</includehint>
     <includehint>kcombobox.h</includehint>
 </includehints>
 </UI>

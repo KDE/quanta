@@ -22,6 +22,7 @@
 #include <qheader.h>
 #include <qpopupmenu.h>
 #include <qstringlist.h>
+#include <qregexp.h>
 
 // KDE includes
 #include <krun.h>

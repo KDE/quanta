@@ -27,6 +27,7 @@ email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,se
 
 class QPopupMenu;
 class KDirLister;
+class QRegExp;
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
@@ -48,17 +49,13 @@ public:
   FileManage( QWidget *parent, const char *name );
   ~FileManage();
 
-  QPopupMenu *fileMenu;
-  QPopupMenu *folderMenu;
-  KDirLister *dirLister;
-
 public slots:
   void slotOpen();
   void slotOpenWith();
   void slotOpenInQuanta();
   void slotCopy();
-  void slotPaste();
-  void slotDelete();
+  virtual void slotPaste();
+  virtual void slotDelete();
   virtual void slotProperties();
 
   void slotInsertInProject();
@@ -90,6 +87,11 @@ protected:
   virtual KURL currentURL();
   int denyBinaryInsert();
   DirInfo dirInfo;
+
+  QPopupMenu *fileMenu;
+  QPopupMenu *folderMenu;
+  KDirLister *dirLister;
+  QRegExp excludeFilterRx;
 
 signals:
   void open( QListViewItem *name );

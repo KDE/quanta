@@ -24,6 +24,7 @@
 #include <qfileinfo.h>
 #include <qpixmap.h>
 #include <qstringlist.h>
+#include <qregexp.h>
 
 // KDE includes
 #include <kiconloader.h>
@@ -93,7 +94,7 @@ void FilesTreeFolder::setOpen( bool open )
 QString FilesTreeFolder::fullName()
 {
   QString s="";
-  
+
 //  if (!item) item = this;
 
   if ( parentFolder )

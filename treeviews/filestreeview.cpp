@@ -30,6 +30,7 @@
 #include <qlabel.h>
 #include <qimage.h>
 #include <qpopupmenu.h>
+#include <qregexp.h>
 
 
 // KDE includes
@@ -466,6 +467,7 @@ void FilesTreeView::slotDirListNewItems(const KFileItemList& items)
         dirItem->setPixmap( 0, SmallIcon("folder") );
       }
     } else
+    if (!excludeFilterRx.exactMatch(item->name()))
     {
        FilesTreeFile *fileItem;
        if (parents.count() > 0) //add the files under the parents
@@ -534,13 +536,15 @@ QPtrList<QListViewItem> FilesTreeView::getItems(const KURL& p_url)
     fileItem = dynamic_cast<FilesTreeFile*>(it);
     if (fileItem)
     {
-      if (fileItem->url.url() == p_url.url()) items.append(it);
+      if (fileItem->url.url() == p_url.url())
+         items.append(it);
     } else
     {
       folderItem = dynamic_cast<FilesTreeFolder*>(it);
       if (folderItem)
       {
-        if (folderItem->url.url() == p_url.url()) items.append(it);
+        if (folderItem->url.url() == p_url.url())
+           items.append(it);
       }
     }
   }

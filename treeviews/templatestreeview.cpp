@@ -16,6 +16,7 @@
  ***************************************************************************/
 // QT includes
 #include <qcheckbox.h>
+#include <qclipboard.h>
 #include <qdir.h>
 #include <qpixmap.h>
 #include <qheader.h>
@@ -24,6 +25,7 @@
 #include <qlayout.h>
 #include <qtextedit.h>
 #include <qpopupmenu.h>
+#include <qregexp.h>
 
 // KDE includes
 #include <krun.h>
@@ -45,6 +47,7 @@
 #include "filestreefile.h"
 #include "newtemplatedirdlg.h"
 #include "quantapropertiespagedlg.h"
+#include "../toolbar/tagaction.h"
 #include "../dialogs/copyto.h"
 #include "../resource.h"
 #include "../quantacommon.h"
@@ -120,6 +123,7 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   setAcceptDrops(true);
   setSelectionMode(QListView::Single);
   viewport()->setAcceptDrops(true);
+  excludeFilterRx.setPattern("*.tmpl");
 }
 
 TemplatesTreeView::~TemplatesTreeView()
@@ -474,6 +478,31 @@ void TemplatesTreeView::slotProperties()
    topLayout->addWidget( quantaProperties );
 //   connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied) );
 
+  QString name = currentURL().path() + ".tmpl";
+  KConfig config(name);
+  config.setGroup("Filtering");
+  name = config.readEntry("Action", i18n("None"));
+  uint pos = 0;
+  uint j = 1;
+  quantaProperties->actionCombo->insertItem(i18n("None"));
+  KActionCollection *ac = quantaApp->actionCollection();
+  for (uint i = 0; i < ac->count(); i++)
+  {
+    TagAction *action = dynamic_cast<TagAction*>(ac->action(i));
+    if (action)
+    {
+      QDomElement el = action->data();
+      QString type = el.attribute("type", "tag");
+      if (type == "script")
+      {
+        quantaProperties->actionCombo->insertItem(action->text());
+        if (action->text() == name)
+            pos = j;
+        j++;
+      }
+    }
+  }
+  quantaProperties->actionCombo->setCurrentItem(pos);
 
 //If the item is a file, add the Quanta file info page
   addFileInfoPage(propDlg);
@@ -515,7 +544,7 @@ void TemplatesTreeView::slotPropertiesApplied()
     writeDirInfo();
   }
 
-
+  writeTemplateInfo();
 }
 
 /** No descriptions */
@@ -599,3 +628,53 @@ void TemplatesTreeView::slotSetTemplateURL(const KURL& newTemplateURL)
   slotReload();
 }
 
+
+
+/*!
+    \fn TemplatesTreeView::writeTemplateInfo()
+ */
+void TemplatesTreeView::writeTemplateInfo()
+{
+  QString fileName = currentURL().path() + ".tmpl";
+  KConfig config(fileName);
+  config.setGroup("Filtering");
+  config.writeEntry("Action", quantaProperties->actionCombo->currentText());
+  config.sync();
+}
+
+void TemplatesTreeView::slotPaste()
+{
+  if (currentItem())
+  {
+    QClipboard *cb = QApplication::clipboard();
+    KURL::List list( QStringList::split( QChar('\n'), cb->text() ) );
+
+    KURL url;
+    uint j = list.count();
+    for (uint i = 0; i < j; i++)
+    {
+      url = list[i];
+      url.setFileName(url.fileName()+".tmpl");
+      list += url;
+    }
+    url = currentURL();
+    KIO::Job *job = KIO::copy( list, url);
+    connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+  }
+}
+
+void TemplatesTreeView::slotDelete()
+{
+  if (currentItem())
+  {
+    KURL url = currentURL();
+    if ( KMessageBox::warningYesNo(this,i18n("Do you really want to delete file \n%1 ?\n").arg(url.path())) == KMessageBox::Yes )
+    {
+      KIO::Job *job = KIO::del(url);
+      connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+      url.setFileName(url.fileName()+".tmpl");
+      KIO::Job *job2 = KIO::del(url);
+      connect( job,2 SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+    }
+  }
+}

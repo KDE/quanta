@@ -32,14 +32,14 @@ class KURL;
 
 class TemplatesTreeView : public FilesTreeView  {
    Q_OBJECT
-public: 
+public:
   TemplatesTreeView(const KURL& projectBaseURL,QWidget *parent=0, const char *name=0);
   ~TemplatesTreeView();
   /** Writes a .dirinfo file from the selected item's path */
   void writeDirInfo(QString dirInfoFile="");
   /** Reads a .dirinfo file from the selected item's path */
   void readDirInfo(QString startDir = "");
-  
+
 
 public slots:
   /** Sets the project template directory */
@@ -54,6 +54,8 @@ public slots:
   /** No descriptions */
   void slotNewDir();
   virtual void slotReload();
+  virtual void slotPaste();
+  virtual void slotDelete();
   /** Properties dialog for template view */
   virtual void slotProperties();
   /** Property application for template view */
@@ -66,24 +68,26 @@ public slots:
 
 private:
   KURL baseURL;
-  
+
   FilesTreeFolder *globalDir;
-    FilesTreeFolder *localDir;
+  FilesTreeFolder *localDir;
   /**  */
   int deleteMenuId;
   int openId;
   FilesTreeFolder *projectDir;
   QuantaPropertiesPageDlg *quantaProperties;
-  
+
 signals: // Signals
   /** No descriptions */
   void insertFile(const KURL &);
+
 protected: // Protected methods
   /** No descriptions */
   virtual QDragObject * dragObject ();
 //  virtual void startDrag();
   /** No descriptions */
   void contentsDropEvent(QDropEvent *);
+  void writeTemplateInfo();
 };
 
 #endif

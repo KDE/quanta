@@ -22,6 +22,7 @@
 #include <qclipboard.h>
 #include <qfileinfo.h>
 #include <qstringlist.h>
+#include <qregexp.h>
 
 // KDE includes
 #include <klocale.h>
@@ -42,6 +43,7 @@
 
 FileManage::FileManage()
 {
+  excludeFilterRx.setWildcard(true);
 }
 
 FileManage::FileManage( QWidget *parent, const char *name)
@@ -86,6 +88,8 @@ FileManage::FileManage( QWidget *parent, const char *name)
   connect(dirLister, SIGNAL(clear(const KURL&)),SLOT(slotDirListClearURL(const KURL&)));
 
   connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int )), SLOT(slotDoubleClicked(QListViewItem *, const QPoint &, int )));
+
+  excludeFilterRx.setWildcard(true);
 }
 
 FileManage::~FileManage()

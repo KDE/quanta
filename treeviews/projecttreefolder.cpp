@@ -16,6 +16,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <qregexp.h>
+
 // KDE includes
 #include <kiconloader.h>
 
@@ -25,13 +27,13 @@
 #include "projecttreeview.h"
 
 ProjectTreeFolder::ProjectTreeFolder(QListView *parentListView, ProjectTreeFolder *parent, const KURL& p_url)
-  : FilesTreeFolder(parentListView, parent, p_url )     
+  : FilesTreeFolder(parentListView, parent, p_url )
 {
   filesTreeList.setAutoDelete( true );
 
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
   else                    setPixmap( 0, SmallIcon("folder") );
-  
+
   QString fname = name;
   parentView =  dynamic_cast<ProjectTreeView*>(parentListView);
   url = p_url;
@@ -67,13 +69,13 @@ void ProjectTreeFolder::setOpen( bool open )
   {
     parentView->openFolder(this);
   }
-  
+
   QListViewItem::setOpen( open );
   if (open)
     setPixmap( 0, SmallIcon("folder_open") );
   else
     setPixmap( 0, SmallIcon("folder") );
-    
+
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
 }
 
