@@ -45,6 +45,10 @@
 #include "qextfileinfo.h"
 #include "qpevents.h"
 
+#ifdef ENABLE_CVSSERVICE
+#include "cvsservice.h"
+#endif
+
 #define SEPARATOR_INDEX 3
 #define RELOAD_ID 11
 #define UPLOAD_ID 12
@@ -68,6 +72,7 @@ ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, na
     connect(m_fileListPopup, SIGNAL(activated(int)), this, SLOT(slotFileListPopupItemActivated(int)));
     m_tabPopup->insertItem(i18n("&Switch To"), m_fileListPopup);
     m_contextView = 0L;
+    m_cvsMenuId = -1;
     m_separatorVisible = false;
 }
 
@@ -456,6 +461,29 @@ void ViewManager::slotTabContextMenu(QWidget *widget, const QPoint& point)
        m_tabPopup->setItemVisible(DELETE_ID, false);
        m_separatorVisible = false;
    }
+#ifdef ENABLE_CVSSERVICE
+   Document *w = m_contextView->document();
+   if (w && w->url().isLocalFile() && !w->isUntitled() && CVSService::ref()->exists())
+   {
+     if (m_cvsMenuId == -1)
+     {
+       m_tabPopup->insertSeparator();
+       m_cvsMenuId = m_tabPopup->insertItem(SmallIcon("cervisia"), i18n("CVS"), CVSService::ref()->menu());
+     }
+     if (Project::ref()->contains(w->url()))
+       CVSService::ref()->setRepository(Project::ref()->projectBaseURL().path());
+     else
+         CVSService::ref()->setRepository(w->url().directory());
+     CVSService::ref()->setCurrentFile(w->url().path());
+   } else
+   if (m_cvsMenuId != -1)
+   {
+       int idx = m_tabPopup->indexOf(m_cvsMenuId);
+       m_tabPopup->removeItemAt(idx-1);
+       m_tabPopup->removeItem(m_cvsMenuId);
+       m_cvsMenuId = -1;
+   }
+#endif
    m_tabPopup->exec(point);
 }
 

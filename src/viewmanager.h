@@ -125,6 +125,7 @@ private:
   KPopupMenu *m_fileListPopup; ///< a menu containing the opened views as menu items
   QuantaView *m_contextView; ///<the tab where the context menu was requested
   bool m_separatorVisible;
+  int m_cvsMenuId;
 };
 
 #endif

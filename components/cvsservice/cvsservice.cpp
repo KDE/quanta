@@ -39,15 +39,15 @@ CVSService::CVSService(KActionCollection *ac)
   m_menu = new QPopupMenu;
 #if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
   KAction *action = new KAction(i18n("&Commit"), 0, this, SLOT(slotCommit()), ac);
-#else  
+#else
   KAction *action = new KAction(i18n("&Commit"), "vcs_commit", 0, this, SLOT(slotCommit()), ac);
-#endif  
+#endif
   action->plug(m_menu);
 #if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
   action = new KAction(i18n("&Update"), 0, this, SLOT(slotUpdate()), ac);
-#else  
+#else
   action = new KAction(i18n("&Update"), "vcs_update", 0, this, SLOT(slotUpdate()), ac);
-#endif  
+#endif
   action->plug(m_menu);
   m_cvsJob = 0L;
   m_repository = 0L;
@@ -109,6 +109,7 @@ void CVSService::slotUpdate(const QStringList &files)
    if (m_repository && !m_appId.isEmpty())
    {
       emit clearMessages();
+      emit showMessage(i18n("Running CVS update..."), false);
       m_files = files;
       DCOPRef job = m_cvsService->update(files, true, true, true, "");
       m_cvsCommand = "update";
@@ -139,6 +140,7 @@ void CVSService::slotCommit()
 
 void CVSService::slotCommit(const QStringList &files)
 {
+   emit showMessage(i18n("Running CVS commit..."), false);
    m_commitDlg->fileList->clear();
    m_commitDlg->fileList->insertStringList(files);
    m_commitDlg->logEdit->clear();
@@ -173,6 +175,7 @@ void CVSService::slotJobExited(bool normalExit, int exitStatus)
     }
     delete m_cvsJob;
     m_cvsJob = 0L;
+    emit showMessage(i18n("CVS command finished."), false);
 }
 
 void CVSService::slotReceivedStdout(QString output)
