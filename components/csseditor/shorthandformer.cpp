@@ -423,7 +423,7 @@ QString ShorthandFormer::compressImplementation2( QString prop, QString after, Q
   else {
     if(before.isEmpty()) props+=( prop + " : " + defValue + " " + after + "; ");
     else   
-      if(pause_after.isEmpty()) props+=( prop + " : " + before + " " + defValue + "; ");
+      if(after.isEmpty()) props+=( prop + " : " + before + " " + defValue + "; ");
       else props+=( prop + " : " + before + " " + after + "; ");
   }   
   return props;
