@@ -237,7 +237,7 @@ signals:
   void editorGotFocus();
   void openingFailed(const KURL &url);
   void openingCompleted(const KURL &url);
-
+  
 private slots:
   void slotReplaceChar();
   void slotOpeningCompleted();

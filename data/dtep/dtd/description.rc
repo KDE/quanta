@@ -22,3 +22,4 @@ StructRx = \\[|\\]
 Name = Entities
 No_Name = No Entities Found
 DefinitionRx = ENTITY[\\s]+([\\w]+)[\\s]+ 
+AutoCompleteAfter = \&

@@ -54,15 +54,13 @@
 #include <ktexteditor/codecompletioninterface.h>
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/editinterface.h>
+#include <ktexteditor/editinterfaceext.h>
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/selectioninterfaceext.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/wordwrapinterface.h>
 #include <ktexteditor/markinterfaceextension.h>
-
-#include <ktexteditor/editinterfaceext.h>
-
 
 #include <kate/view.h>
 
@@ -1377,30 +1375,17 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
   return completions;
 }
 
-static void ssort( QValueList<KTextEditor::CompletionEntry> &a, int max )
-{
-  KTextEditor::CompletionEntry tmp;
-  uint j, maxpos;
-  for ( uint h = max; h >= 1; h-- )
-  {
-    maxpos = 0;
-    for ( j = 0; j <= h; j++ )
-      maxpos = a[j].text > a[maxpos].text ? j : maxpos;
-    tmp = a[maxpos];
-    a[maxpos] = a[h];
-    a[h] = tmp;
-  }
-}
 /** Return a list of character completions (like &nbsp; ...) */
 QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(const QString& startsWith)
 {
   QValueList<KTextEditor::CompletionEntry> *completions = 0L;
+  QMap<QString, KTextEditor::CompletionEntry> completionMap;
       
   //first search for entities defined in the document
   const DTDStruct *dtdDTD = DTDs::ref()->find("dtd");
   if (dtdDTD)
   {
-    StructTreeGroup group;
+    StructTreeGroup group;    
     for (uint j = 0; j < dtdDTD->structTreeGroups.count(); j++)
     {
       group = dtdDTD->structTreeGroups[j];
@@ -1415,6 +1400,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
         {
           (*completions)[i].type = "charCompletion";
           (*completions)[i].userdata = (*completions)[i].text;
+          completionMap[(*completions)[i].text] = (*completions)[i];
         }
         break;
       }
@@ -1439,13 +1425,20 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
         completion.text = tagName;
         completion.userdata = tagName;
         completions->append( completion );
+        completionMap[tagName] = completion;
       }
     }
   }
-
- // ssort(*completions, completions->count()); //quite slow...
   
-  //now add the character codes
+  QStringList keys = completionMap.keys();
+  keys.sort();
+  QValueList<KTextEditor::CompletionEntry> *completions2 = new QValueList<KTextEditor::CompletionEntry>();
+  for (QStringList::ConstIterator it = keys.constBegin(); it != keys.constEnd(); ++it)
+  {
+    completions2->append(completionMap[*it]);
+  }
+  delete completions;
+  completions = completions2;
 
   for ( QStringList::Iterator it = charList.begin(); it != charList.end(); ++it )
   {
