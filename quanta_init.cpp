@@ -138,8 +138,14 @@ QuantaApp::~QuantaApp()
  toolbarList.clear();
  delete m_spellChecker;
  QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
+ tmpDir = tmpDirs[0];
+ for (uint i = 0; i < tmpDirs.count(); i++)
+ {
+   if (tmpDirs[i].contains("kde-"))
+      tmpDir = tmpDirs[i];
+ }
  QDir dir;
- dir.rmdir(tmpDirs[0] + "quanta");
+ dir.rmdir(tmpDir + "quanta");
 }
 
 
@@ -150,8 +156,14 @@ void QuantaApp::initQuanta()
 
   QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
   QDir dir;
-  dir.mkdir(tmpDirs[0] + "quanta");
-  tmpDir = tmpDirs[0] + "quanta/quanta";
+  tmpDir = tmpDirs[0];
+  for (uint i = 0; i < tmpDirs.count(); i++)
+  {
+    if (tmpDirs[i].contains("kde-"))
+       tmpDir = tmpDirs[i];
+  }
+  dir.mkdir(tmpDir + "quanta");
+  tmpDir += "quanta/quanta";
 
   initTagDict  ();
   initStatusBar();
@@ -197,7 +209,7 @@ void QuantaApp::initQuanta()
   if (qConfig.instantUpdate || qConfig.refreshFrequency == 0)
   {
     refreshTimer->stop();
-  } 
+  }
 
   slotFileNew();
   initToolBars();
@@ -918,7 +930,7 @@ void QuantaApp::readTagDir(QString &dirName)
 {
  QString tmpStr;
  QStringList tmpStrList;
- 
+
  //read the general DTD info
  DTDStruct *dtd = new DTDStruct;
  dtd->fileName = dirName + "description.rc";
@@ -1151,8 +1163,8 @@ void QuantaApp::readTagDir(QString &dirName)
  }
 
 /**** End of code for the new parser *****/
-  
-//read the definition of a structure, and the structure keywords  
+
+//read the definition of a structure, and the structure keywords
  QStringList structKeywords = dtdConfig->readListEntry("StructKeywords",';');
  if (structKeywords.count() !=0 )
  {
@@ -1168,12 +1180,12 @@ void QuantaApp::readTagDir(QString &dirName)
    dtd->structKeywordsRxStr = " ";
  }
  dtd->structKeywordsRx.setPattern(dtd->structKeywordsRxStr);
- 
+
  dtd->structRx.setPattern(dtdConfig->readEntry("StructRx","\\{|\\}").stripWhiteSpace());
  dtd->structBeginStr = dtdConfig->readEntry("StructBeginStr","{").stripWhiteSpace();
  dtd->structEndStr = dtdConfig->readEntry("StructEndStr","}").stripWhiteSpace();
- 
- 
+
+
  dtdConfig->setGroup("Extra rules");
  dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
  if (!dtd->scriptName.isEmpty())
@@ -1201,11 +1213,11 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
 
 //read the definition of different structure groups, like links, images, functions
-//classes, etc. 
+//classes, etc.
  uint structGroupsCount = dtdConfig->readNumEntry("StructGroupsCount", 0);
- if (structGroupsCount > MAX_STRUCTGROUPSCOUNT) 
+ if (structGroupsCount > MAX_STRUCTGROUPSCOUNT)
      structGroupsCount = MAX_STRUCTGROUPSCOUNT; //max. 10 groups
-     
+
  StructTreeGroup group;
  QRegExp attrRx("\\([^\\)]*\\)");
  QString tagStr;
@@ -1219,7 +1231,7 @@ void QuantaApp::readTagDir(QString &dirName)
    dtd->groupClearRxs += dtdConfig->readEntry("ClearRx").stripWhiteSpace();
    dtd->groupTags += dtdConfig->readEntry("Tag").stripWhiteSpace();
    dtd->groupIcons += dtdConfig->readEntry("Icon").stripWhiteSpace();
-   
+
    //new code
    group.name = dtdConfig->readEntry("Name").stripWhiteSpace();
    group.noName = dtdConfig->readEntry("No_Name").stripWhiteSpace();
@@ -1233,14 +1245,14 @@ void QuantaApp::readTagDir(QString &dirName)
      attrRx.search(tagStr);
      tmpStr = attrRx.cap();
      tmpStrList = QStringList::split(',', tmpStr.mid(1, tmpStr.length()-2));
-     group.tag = tagStr.left(tagStr.find('(')).lower();      
+     group.tag = tagStr.left(tagStr.find('(')).lower();
      for (uint i = 0; i < tmpStrList.count(); i++)
        group.attributes += tmpStrList[i].stripWhiteSpace();
    }
-   
+
    dtd->structTreeGroups.append(group);
- }  
- 
+ }
+
  dtds->insert(dtdName.lower(), dtd);//insert the taglist into the full list
 
  delete dtdConfig;
@@ -1313,7 +1325,7 @@ void QuantaApp::initTagDict()
     for (uint i = 0; i < dtd->insideDTDs.count(); i++)
     {
       DTDStruct *insideDTD = dtds->find(dtd->insideDTDs[i]);
-      
+
       for (mapIt = insideDTD->definitionAreas.begin(); mapIt != insideDTD->definitionAreas.end(); ++mapIt)
       {
         tmpStr = mapIt.key();
@@ -1321,15 +1333,15 @@ void QuantaApp::initTagDict()
         dtd->specialAreaNames[tmpStr] = dtd->insideDTDs[i];
         specialAreaStartRxStr.append("(?:"+ QuantaCommon::makeRxCompatible(tmpStr)+")|");
       }
-      
+
       for (mapIt = insideDTD->definitionTags.begin(); mapIt != insideDTD->definitionTags.end(); ++mapIt)
       {
          dtd->specialTags[mapIt.key()] = mapIt.data();
-      }      
+      }
     }
-    dtd->specialAreaStartRx.setPattern(specialAreaStartRxStr.left(specialAreaStartRxStr.length() - 1));    
+    dtd->specialAreaStartRx.setPattern(specialAreaStartRxStr.left(specialAreaStartRxStr.length() - 1));
   }
-  
+
   scriptBeginRx.setCaseSensitive(false);
   scriptBeginRx.setPattern(scriptBeginRxStr);
   scriptEndRx.setCaseSensitive(false);
