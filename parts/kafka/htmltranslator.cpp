@@ -43,16 +43,42 @@ HTMLTranslator::~HTMLTranslator()
 
 bool HTMLTranslator::translateNode(Node *node, DOM::Node parentDNode, DOM::Node nextDNode)
 {
-	DOM::Node domNode, attr;
-	bool tbody;
+	DOM::Node domNode, domNode2, attr;
+	bool tbody, goUp;
 	Node *n;
-	QString script, filename;
+	QString script, filename, text;
 
 	//FIRST update the src attr with the baseURL
 	domNode = node->_rootNode.attributes().getNamedItem("src");
 	if(!domNode.isNull())
 	{
 		domNode.setNodeValue(DOM::DOMString(m_baseURL.url()) + domNode.nodeValue());
+	}
+
+	//THEN if it is the style element, add a DOM::Node::TEXT_NODE child gathering all the CSS
+	//by default, the parser parse it as a script, which can't be translated in DOM::Nodes.
+	if(node->tag->type == Tag::ScriptTag && node->tag->name.lower().contains("style"))
+	{
+		domNode =  m_wkafkapart->getKafkaPart()->createNode("style");
+		parentDNode.appendChild(domNode);
+		node->_rootNode = domNode;
+		node->_leafNode = domNode;
+		m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
+		n = node->child;
+		text = "";
+		goUp = false;
+		while(n)
+		{
+			text += n->tag->tagStr();
+			n = kafkaCommon::getNextNode(n, goUp, node);
+		}
+#ifdef HEAVY_DEBUG
+		kdDebug(25001)<< "HTMLTranslator::translateNode() - CSS code : " << text << endl;
+#endif
+		domNode2 = m_wkafkapart->getKafkaPart()->createNode("TEXT");
+		domNode2.setNodeValue(DOM::DOMString(text));
+		domNode.appendChild(domNode2);
+		m_wkafkapart->connectDomNodeToQuantaNode(domNode2, node);
 	}
 
 	//THEN replace, if asked, scripts by a little icon.

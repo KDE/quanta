@@ -18,6 +18,8 @@
 #ifndef DOMTREEVIEW_H
 #define DOMTREEVIEW_H
 
+#include "kafkacommon.h"
+
 #ifdef HEAVY_DEBUG
 #include <klistview.h>
 #include <kdebug.h>
@@ -25,8 +27,6 @@
 #include <qptrdict.h>
 #include <dom/dom_core.h>
 #include <qdialog.h>
-
-#include "kafkacommon.h"
 
 class QString;
 class QGridLayout;

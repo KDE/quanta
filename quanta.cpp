@@ -101,6 +101,9 @@
 #include "dialogs/dtdselectdialog.h"
 #include "dialogs/donationdialog.h"
 #include "dialogs/fourbuttonmessagebox.h"
+#ifdef BUILD_KAFKAPART
+#include "parts/kafka/kafkasyncoptions.h"
+#endif
 
 #include "treeviews/filestreeview.h"
 #include "treeviews/filestreefolder.h"
@@ -938,6 +941,12 @@ void QuantaApp::slotOptions()
        break;
      }
   }
+
+#ifdef BUILD_KAFKAPART
+  //kafka options
+  page = kd->addVBoxPage(i18n("VPL view"), QString::null, BarIcon("files", KIcon::SizeMedium));
+  /**KafkaSyncOptions *kafkaOptions = */new KafkaSyncOptions( m_config, (QWidget *)page );
+#endif
 
   // Preview options
   page=kd->addVBoxPage(i18n("Layout"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );

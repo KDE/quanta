@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "kafkacommon.h"
 #ifdef HEAVY_DEBUG
 
 #include <kdebug.h>
@@ -22,9 +23,8 @@
 #include <qstring.h>
 #include <qlayout.h>
 #include <dom/dom_text.h>
-#include "domtreeview.moc"
 
-#include "kafkacommon.h"
+#include "domtreeview.moc"
 
 DOMTreeView::DOMTreeView(QWidget *parent, KHTMLPart *currentpart, const char * name) : KListView(parent, name)
 {

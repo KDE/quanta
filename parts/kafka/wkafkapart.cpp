@@ -593,7 +593,7 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 	Node *n;
 	int i;
 
-	if(_node->tag->type == Tag::XmlTag || _node->tag->type == Tag::Text)
+	if(_node->tag->type == Tag::XmlTag || (_node->tag->type == Tag::Text && !_node->insideSpecial))
 	{
 		if(!_node->tag->single && _node->next && _node->next->tag->type != Tag::XmlTagEnd)
 		{
@@ -719,6 +719,7 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 				//the parent tag was invalid and khtml refuse to insert it
 				//so impossible to inser the current node
 				disconnectDomNodeFromQuantaNode(newNode);
+				_node->_rootNode = 0L;
 				return false;
 			}
 			else
@@ -734,6 +735,7 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 					kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode() *ERROR* - code : " <<
 						e.code << endl;
 					disconnectDomNodeFromQuantaNode(newNode);
+					_node->_rootNode = 0L;
 					return false;
 				}
 			}
@@ -747,6 +749,7 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 					kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode() *ERROR4* - code : " <<
 						e.code << endl;
 					disconnectDomNodeFromQuantaNode(newNode);
+					_node->_rootNode = 0L;
 					return false;
 				}
 			}
@@ -759,19 +762,6 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 			_node->_leafNode = newNode;
 		}
 	}
-	/**else if(_node->tag->type == Tag::ScriptTag)
-	{
-		kdDebug(25001)<< "ScriptTag" << endl;
-		newNode =  _kafkaPart->createNode("style");
-		newNode.setNodeValue(DOM::DOMString("body {background-color:blue;}"));
-		_node->parent->_leafNode.appendChild(newNode);
-		_node->_rootNode = newNode;
-		_node->_leafNode = newNode;*/
-		/**newNode = _kafkaPart->createNode("TEXT");
-		newNode.setNodeValue(DOM::DOMString("body {background-color:blue;}"));
-		_node->_leafNode.appendChild(newNode);*/
-
-	/**}*/
 	else
 	{
 		if(_node->parent && !_node->parent->_leafNode.isNull())
@@ -1443,7 +1433,7 @@ void WKafkaPart::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 	QString name;
 	kNodeAttrs *props;
 
-	if(_domNode.isNull() || _node == 0L)
+	if(_domNode.isNull())
 	{
 		kdDebug(25001)<< "WKafkaPart::connectDomNodeToQuantaNode() *ERROR*" << endl;
 				return;

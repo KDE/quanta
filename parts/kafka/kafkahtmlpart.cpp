@@ -16,6 +16,13 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <qfile.h>
+#include <qpainter.h>
+#include <qtextstream.h>
+#include <qstringlist.h>
+#include <qlayout.h>
+#include <qmainwindow.h>
+
 #include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -23,25 +30,16 @@
 #include <ktrader.h>
 #include <klibloader.h>
 #include <kparts/factory.h>
-#include <qlayout.h>
-#include <qmainwindow.h>
-
 #include <dom/dom_text.h>
 #include <dom/dom_exception.h>
 #include <dom/dom_string.h>
 #include <dom/dom2_range.h>
 #include <khtml_events.h>
 
-#include <qfile.h>
-#include <qpainter.h>
-#include <qtextstream.h>
-#include <qstringlist.h>
-#ifdef HEAVY_DEBUG
-#include <qdialog.h>
-#endif
-
+#include "kafkacommon.h"
 #ifdef HEAVY_DEBUG
 #include "domtreeview.h"
+#include <qdialog.h>
 #endif
 #include "wkafkapart.h"
 #include "nodeproperties.h"
