@@ -458,19 +458,8 @@ void QuantaInit::initView()
   m_quanta->m_problemOutput = new MessageOutput(m_quanta, "Problems");
   m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);
 
-  m_quanta->m_htmlPart = new WHTMLPart(m_quanta, "rightHTML");
-  m_quanta->m_htmlPart->view()->resize(0, 0);
-  m_quanta->m_htmlPart->view()->setIcon(UserIcon("preview"));
-  m_quanta->m_htmlPart->view()->setCaption(i18n("Preview"));
-  m_quanta->slotNewPart(m_quanta->m_htmlPart, false);
-  connect(m_quanta->m_htmlPart, SIGNAL(previewHasFocus(bool)), m_quanta, SLOT(slotPreviewHasFocus(bool)));
-
-
-  m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta, "docHTML");
-  m_quanta->m_htmlPartDoc->view()->resize(0, 0);
-  m_quanta->m_htmlPartDoc->view()->setIcon(SmallIcon("contents"));
-  m_quanta->m_htmlPartDoc->view()->setCaption(i18n("Documentation"));
-  m_quanta->slotNewPart(m_quanta->m_htmlPartDoc, false);
+  m_quanta->createPreviewPart();
+  m_quanta->createDocPart();
 
   connect(m_quanta, SIGNAL(reloadAllTrees()),
           m_quanta->fTab, SLOT(slotReloadAllTrees()));

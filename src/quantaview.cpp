@@ -313,6 +313,7 @@ void QuantaView::updateTab()
              setIcon(mimeIcon.pixmap());
           }
           setMDICaption(urlStr);
+          quantaApp->setTabToolTip(this, m_document->url().prettyURL(0, KURL::StripFileProtocol));
         }
     } else
     if (m_plugin)

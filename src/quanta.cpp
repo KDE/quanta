@@ -2937,8 +2937,11 @@ void QuantaApp::focusInEvent(QFocusEvent* e)
 {
  KDockMainWindow::focusInEvent(e);
  Document *w = ViewManager::ref()->activeDocument();
- w->view()->setFocus();
- w->checkDirtyStatus();
+ if (w)
+ {
+   w->view()->setFocus();
+   w->checkDirtyStatus();
+ }
 }
 
 /** No descriptions */
@@ -4757,6 +4760,44 @@ void QuantaApp::slotTabDragged(QWidget *widget)
      QDragObject *d = new QTextDrag( url, this );
      d->dragCopy();
    }
+}
+
+void QuantaApp::setTabToolTip(QWidget *w, const QString &toolTipStr)
+{
+  if (tabWidget())
+    tabWidget()->setTabToolTip(w, toolTipStr);
+}
+
+void QuantaApp::createPreviewPart()
+{
+  m_htmlPart = new WHTMLPart(this, "rightHTML");
+  m_htmlPart->view()->resize(0, 0);
+  m_htmlPart->view()->setIcon(UserIcon("preview"));
+  m_htmlPart->view()->setCaption(i18n("Preview"));
+  slotNewPart(m_htmlPart, false);
+  connect(m_htmlPart, SIGNAL(previewHasFocus(bool)), this, SLOT(slotPreviewHasFocus(bool)));
+  connect(m_htmlPart, SIGNAL(destroyed(QObject *)), this, SLOT(slotHTMLPartDeleted(QObject *)));
+
+}
+
+void QuantaApp::createDocPart()
+{
+  m_htmlPartDoc = new WHTMLPart(this, "docHTML");
+  m_htmlPartDoc->view()->resize(0, 0);
+  m_htmlPartDoc->view()->setIcon(SmallIcon("contents"));
+  m_htmlPartDoc->view()->setCaption(i18n("Documentation"));
+  slotNewPart(m_htmlPartDoc, false);
+  connect(m_htmlPartDoc, SIGNAL(destroyed(QObject *)), this, SLOT(slotHTMLPartDeleted(QObject *)));
+}
+
+void QuantaApp::slotHTMLPartDeleted(QObject *object)
+{
+  if (object == m_htmlPart)
+  {
+     createPreviewPart();
+     slotShowPreviewWidget(false);
+  } else
+     createDocPart();
 }
 
 #include "quanta.moc"
