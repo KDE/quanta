@@ -26,7 +26,6 @@
 
 // app include
 #include "filecombo.h"
-#include "filecombo.moc"
 #include "../qextfileinfo.h"
 
 FileCombo::FileCombo(QString basePath, QWidget *parent, const char *name )
@@ -93,3 +92,11 @@ void FileCombo::slotFileSelect()
 		QString text = file.filePath();
 		combo  ->setEditText( text );
 }
+
+/** No descriptions */
+void FileCombo::setBasePath(const QString& p_basePath)
+{
+ basePath = p_basePath;
+}
+
+#include "filecombo.moc"

@@ -27,6 +27,7 @@
 #include <qdom.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qfileinfo.h>
 #include <qtabdialog.h>
 #include <qfiledialog.h>
@@ -64,7 +65,6 @@
 #include "projectnewfinal.h"
 #include "projectupload.h"
 #include "rescanprj.h"
-#include "../quantacommon.h"
 #include "../resource.h"
 
 
@@ -73,11 +73,12 @@ extern QString globalDataDir;
 Project::Project( QWidget *, const char *name )
         : QWidget(0L,name)
 {
-  this->name=QString::null;
-  this->config = 0L;
-  this->modified=false;
-  this->olfwprj=false;
-  this->usePreviewPrefix=false;
+  name=QString::null;
+  config = 0L;
+  modified=false;
+  olfwprj=false;
+  usePreviewPrefix=false;
+  m_defaultDTD = qConfig.defaultDocType;
 }
 
 Project::~Project()
@@ -393,6 +394,7 @@ void Project::closeProject()
   dom.clear();
 
   name = QString::null;
+  m_defaultDTD = qConfig.defaultDocType;
 
   emit closeFiles();
 
@@ -524,6 +526,12 @@ void Project::loadProjectXML()
   author = no.firstChild().nodeValue();
   no = dom.firstChild().firstChild().namedItem("email");
   email = no.firstChild().nodeValue();
+  no = dom.firstChild().firstChild().namedItem("defaultDTD");
+  if(no.isNull()) // compatability
+    m_defaultDTD = qConfig.defaultDocType;
+  else
+    m_defaultDTD = no.firstChild().nodeValue();
+
   no = dom.firstChild().firstChild().namedItem("templates");
   if(no.isNull()) // compatability
     templateDir = basePath + "templates";
@@ -1011,6 +1019,17 @@ void Project::options()
 	png->lineAuthor ->setText( author );
 	png->lineEmail  ->setText( email );
 
+  QDictIterator<DTDStruct> it(*dtds);
+  for( ; it.current(); ++it )
+  {
+    if (it.current()->family == Xml)
+    {
+      int index = -1;
+      if (it.current()->name == m_defaultDTD) index = 0;
+      png->dtdCombo->insertItem(QuantaCommon::getDTDNickNameFromName(it.current()->name), index);
+    }
+  }
+
 	pnf->linePrefix->setText(previewPrefix);
 	pnf->checkPrefix->setChecked(usePreviewPrefix);
 
@@ -1021,6 +1040,7 @@ void Project::options()
     toolbarDir = png->linePrjToolbar->text();
 		author		= png->lineAuthor ->text();
 		email			= png->lineEmail	->text();
+    m_defaultDTD = QuantaCommon::getDTDNameFromNickName(png->dtdCombo->currentText());
 
     QDir dir;
     dir.mkdir(templateDir,true);
@@ -1061,6 +1081,18 @@ void Project::options()
  		{
  		  el.firstChild().setNodeValue(email);
  		}
+
+    el = dom.firstChild().firstChild().namedItem("defaultDTD").toElement();
+    if(el.isNull())
+    {
+      el = dom.createElement("defaultDTD");
+      dom.firstChild().firstChild().appendChild(el);
+      el.appendChild(dom.createTextNode(m_defaultDTD));
+    }
+    else
+    {
+      el.firstChild().setNodeValue(m_defaultDTD);
+    }
 
     el = dom.firstChild().firstChild().namedItem("templates").toElement();
     if(el.isNull())
@@ -1160,4 +1192,16 @@ QString Project::urlWithPrefix(const KURL& url)
 
     return returnUrl;
 }
+
+/** Read property of QString defaultDTD. */
+const QString& Project::defaultDTD()
+{
+	return m_defaultDTD;
+}
+/** Write property of QString defaultDTD. */
+void Project::setDefaultDTD( const QString& p_defaultDTD)
+{
+	m_defaultDTD = p_defaultDTD;
+}
+
 #include "project.moc"

@@ -301,7 +301,7 @@ protected:
   /** Initialize the plugin architecture. */
   void initPlugins();
   /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
-  void loadToolbarForDTD(const QString& dtdName, QString oldDtdName = QString::null);
+  void loadToolbarForDTD(const QString& dtdName);
   /** Remove the toolbar named "name". */
   void removeToolbar(const QString& name);
 
@@ -420,6 +420,8 @@ protected: // Protected attributes
   QString scriptBeginRxStr;
   /**  */
   QString scriptEndRxStr;
+  /** The toolbars for this DTD are currently shown to the user. */
+  QString currentToolbarDTD;
 };
  
 #endif // QUANTA_H

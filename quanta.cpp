@@ -60,6 +60,7 @@
 #include <kedittoolbar.h>
 #include <kaction.h>
 #include <kcharsets.h>
+#include <kdirwatch.h>
 
 #include <kparts/componentfactory.h>
 
@@ -194,6 +195,7 @@ void QuantaApp::slotFileSaveAs()
   QString oldUrl = doc->url().url();
   Document *w = view->write();
   w->checkDirtyStatus();
+  fileWatcher->stopScan();
   if (w->kate_view->saveAs() == Kate::View::SAVE_OK)
   {
     w->createTempFile();
@@ -210,7 +212,7 @@ void QuantaApp::slotFileSaveAs()
 
     slotUpdateStatus(w);
   }
-
+  fileWatcher->startScan();
 }
 
 void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
@@ -621,11 +623,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 	slotNewStatus();
 	slotNewLineColumn();
 
-  if (view->oldWrite && newWrite)
-  {
-    loadToolbarForDTD(newWrite->getDTDIdentifier(), view->oldWrite->getDTDIdentifier());
-  }
-
+  loadToolbarForDTD(newWrite->getDTDIdentifier());
 
 //Add the Kate menus
 /*
@@ -916,6 +914,7 @@ void QuantaApp::slotShowPreview()
 	if ( !s ) return;
 	if ( !part ) return;
 
+
   KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
 	bool stat = !ta->isChecked();
 
@@ -930,6 +929,7 @@ void QuantaApp::slotShowPreview()
 //Restore the original doc from the temp file.
 //We should find a better synchronous method to copy the temp file to the current one.
 //which works also for non local files
+    fileWatcher->stopScan();
     if (doc->isModified())
     {
       KURL origUrl = w->url();
@@ -944,8 +944,8 @@ void QuantaApp::slotShowPreview()
       doc2->saveAs(origUrl);
       delete doc2;
     }
-	w->view()->setFocus();
-
+    fileWatcher->startScan();
+	  w->view()->setFocus();
 	}
 	else {
 //		enableCommand(ID_VIEW_BACK);
@@ -960,6 +960,7 @@ void QuantaApp::slotShowPreview()
 		repaintPreview(false);
 	}
 //	checkCommand( ID_VIEW_PREVIEW, !stat );
+
 }
 
 void QuantaApp::slotShowProjectTree()
@@ -1403,20 +1404,22 @@ void QuantaApp::slotSyntaxCheckDone()
 //A method for this is also a good idea.
   Document *w = view->write();
 
- if (doc->isModified())
- {
-   KURL origUrl = w->url();
-   KURL tempUrl;
-   tempUrl.setPath(w->tempFileName());
+  fileWatcher->stopScan();
+  if (doc->isModified())
+  {
+    KURL origUrl = w->url();
+    KURL tempUrl;
+    tempUrl.setPath(w->tempFileName());
 
-   KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
-	         								      QString::null,
-	 				    						      this, 0,
-	 						      			      this, 0 );
-   doc2->openURL(tempUrl);
-   doc2->saveAs(origUrl);
-   delete doc2;
- }
+    KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
+ 	         								      QString::null,
+ 	 				    						      this, 0,
+ 	 						      			      this, 0 );
+    doc2->openURL(tempUrl);
+    doc2->saveAs(origUrl);
+    delete doc2;
+  }
+  fileWatcher->startScan();
 }
 
 /** Load an user toolbar file from the disk. */
@@ -1577,7 +1580,9 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
 
  tempFileList.append(tempFile);
  toolbarGUIClientList.insert(name.lower(),toolbarGUI);
- toolbarNames.insert(url.prettyURL(),new QString(name.lower()));
+ QString *pstr = new QString();
+ pstr->append(name.lower());
+ toolbarNames.insert(url.prettyURL(),pstr);
  toolbarURLs.insert(name.lower(), new KURL(url));
 }
 
@@ -1797,6 +1802,10 @@ void QuantaApp::slotAddToolbar()
 
   QDomDocument *dom = new QDomDocument(toolbarGUI->domDocument());
   toolbarDomList.insert(name.lower(), dom);
+  toolbarNames.insert(tempFile->name(),new QString(name.lower()));
+  KURL *url = new KURL();
+  QuantaCommon::setUrl(*url,tempFile->name());
+  toolbarURLs.insert(name.lower(), url);
 
  }
 }
@@ -1932,7 +1941,8 @@ void QuantaApp::processDTD(QString documentType)
 {
  Document *w = view->write();
  QString foundName;
- w->setDTDIdentifier(qConfig.defaultDocType);
+ QString projectDTD = project->defaultDTD();
+ w->setDTDIdentifier(projectDTD);
 
  if (documentType.isEmpty())
  {
@@ -1968,7 +1978,7 @@ void QuantaApp::processDTD(QString documentType)
 
     for (int i = 0; i < dlg->dtdCombo->count(); i++)
     {
-      if (dlg->dtdCombo->text(i) == QuantaCommon::getDTDNickNameFromName(qConfig.defaultDocType))
+      if (dlg->dtdCombo->text(i) == QuantaCommon::getDTDNickNameFromName(projectDTD))
       {
         dlg->dtdCombo->setCurrentItem(i);
         break;
@@ -1981,14 +1991,14 @@ void QuantaApp::processDTD(QString documentType)
     delete dlg;
   } else //DOCTYPE not found in file
   {
-    w->setDTDIdentifier(qConfig.defaultDocType);
+    w->setDTDIdentifier(projectDTD);
   }
  } else //dtdName is read from the method's parameter
  {
    w->setDTDIdentifier(documentType);
  }
 
- // loadToolbarForDTD(w->getDTDIdentifier());
+  loadToolbarForDTD(w->getDTDIdentifier());
   sTab->useOpenLevelSetting = true;
 }
 
@@ -2001,15 +2011,16 @@ void QuantaApp::slotToolsChangeDTD()
   int pos = -1;
   QDictIterator<DTDStruct> it(*dtds);
   int defaultIndex = 0;
-  QString oldDtdName = w->getDTDIdentifier();
 
+  QString oldDtdName = w->getDTDIdentifier();
+  QString defaultDocType = project->defaultDTD();
   for( ; it.current(); ++it )
   {
     if (it.current()->family == Xml)
     {
       dlg->dtdCombo->insertItem(it.current()->nickName);
       if (it.current()->name == oldDtdName) pos = i;
-      if (it.current()->name == qConfig.defaultDocType) defaultIndex = i;
+      if (it.current()->name == defaultDocType) defaultIndex = i;
       i++;
     }
   }
@@ -2022,7 +2033,7 @@ void QuantaApp::slotToolsChangeDTD()
     w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
   }
 
-  loadToolbarForDTD(w->getDTDIdentifier(), oldDtdName);
+  loadToolbarForDTD(w->getDTDIdentifier());
   reparse();
 
   delete dlg;
@@ -2064,18 +2075,19 @@ void QuantaApp::slotHelpHomepage()
 }
 
 /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
-void QuantaApp::loadToolbarForDTD(const QString& dtdName, QString oldDtdName)
+void QuantaApp::loadToolbarForDTD(const QString& dtdName)
 {
- DTDStruct *oldDtd = dtds->find(oldDtdName);
- if (!oldDtd && !oldDtdName.isEmpty()) oldDtd = dtds->find(qConfig.defaultDocType);
+ DTDStruct *oldDtd = dtds->find(currentToolbarDTD);
+ if (!oldDtd && !currentToolbarDTD.isEmpty()) oldDtd = dtds->find(project->defaultDTD());
 
  DTDStruct *newDtd = dtds->find(dtdName);
- if (!newDtd) newDtd = dtds->find(qConfig.defaultDocType);
+ if (!newDtd) newDtd = dtds->find(project->defaultDTD());
+ if (!newDtd) newDtd = dtds->find(qConfig.defaultDocType); //extreme case
 
  if (newDtd != oldDtd)
  {
    //remove the toolbars of the oldDtdName
-   if (!oldDtdName.isEmpty())
+   if (!currentToolbarDTD.isEmpty())
    {
      for (uint i = 0; i < oldDtd->toolbars.count(); i++)
      {
@@ -2114,6 +2126,8 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName, QString oldDtdName)
   
    view->toolbarTab->setCurrentPage(0);
  }
+
+ currentToolbarDTD = newDtd->name;
 }
 
 /** Remove the toolbar named "name". */
@@ -2142,10 +2156,12 @@ void QuantaApp::removeToolbar(const QString& name)
      toolbarDomList.remove(name);
      toolbarMenuList.remove(name);
      KURL *url = toolbarURLs[name];
+     QString s = name;
      toolbarNames.remove(url->prettyURL());
-     toolbarURLs.remove(name);
+     toolbarURLs.remove(s);
     }
   }
 }
+
 
 #include "quanta.moc"

@@ -44,12 +44,14 @@
 #include "document.h"
 #include "resource.h"
 #include "dialogs/dirtydlg.h"
+#include "project/project.h"
 
 #include <cctype>
 
 #define STEP 1
 
-Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget *parent,
+Document::Document(const QString& basePath, KTextEditor::Document *doc,
+                   Project *project, QWidget *parent,
                    const char *name, WFlags f ) : QWidget(parent, name, f)
 {
   m_dirty   = false;
@@ -71,8 +73,9 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget 
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(m_view);
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(m_view);
   this->basePath = basePath;
+  m_project = project;
   tempFile = 0;
-  dtdName = "";
+  dtdName = project->defaultDTD();
 
 
   connect( m_doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
@@ -95,6 +98,7 @@ Document::~Document()
 void Document::setUntitledUrl(QString url)
 {
   untitledUrl = url;
+  m_doc->openURL(KURL());
 }
 
 bool Document::isUntitled()
@@ -793,9 +797,8 @@ QString Document::tempFileName()
 bool Document::saveIt()
 {
  bool modifyStatus = m_doc->isModified();
- m_doc->save();
+ save();
  m_doc->setModified(modifyStatus);
- m_dirty = false;
  return true;   //not used yet
 }
 
@@ -1119,6 +1122,7 @@ DTDStruct* Document::currentDTD(bool fallback)
   if (fallback)
   {
     if (!dtd) dtd = dtds->find(dtdName);
+    if (!dtd) dtd = dtds->find(m_project->defaultDTD());
     if (!dtd) dtd = dtds->find(qConfig.defaultDocType); //this will always exists
   }
 
@@ -1129,6 +1133,7 @@ DTDStruct* Document::currentDTD(bool fallback)
 DTDStruct* Document::defaultDTD()
 {
   DTDStruct* dtd =  dtds->find(dtdName);
+  if (!dtd) dtd = dtds->find(m_project->defaultDTD());
   if (!dtd) dtd = dtds->find(qConfig.defaultDocType); //this will always exists
 
   return dtd;
@@ -1541,8 +1546,10 @@ void Document::checkDirtyStatus()
 /** Save the document and reset the dirty status. */
 void Document::save()
 {
+  fileWatcher->stopScan();
   m_doc->save();
   m_dirty = false;
+  fileWatcher->startScan();
 }
 
 #include "document.moc"

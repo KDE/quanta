@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>415</width>
-            <height>360</height>
+            <height>361</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -171,48 +171,21 @@
             </widget>
         </grid>
     </widget>
-    <widget class="QLayoutWidget">
+    <widget class="QCheckBox">
         <property name="name">
-            <cstring>Layout6</cstring>
+            <cstring>useMimeTypes</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>6</x>
-                <y>175</y>
-                <width>390</width>
-                <height>26</height>
+                <x>5</x>
+                <y>215</y>
+                <width>395</width>
+                <height>25</height>
             </rect>
         </property>
-        <grid>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>0</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="QLabel" row="0" column="0">
-                <property name="name">
-                    <cstring>TextLabel3</cstring>
-                </property>
-                <property name="maximumSize">
-                    <size>
-                        <width>32767</width>
-                        <height>32767</height>
-                    </size>
-                </property>
-                <property name="text">
-                    <string>Default DTD:</string>
-                </property>
-            </widget>
-            <widget class="QComboBox" row="0" column="1">
-                <property name="name">
-                    <cstring>dtdName</cstring>
-                </property>
-            </widget>
-        </grid>
+        <property name="text">
+            <string>Use &amp;mimetype recognition</string>
+        </property>
     </widget>
     <widget class="QGroupBox">
         <property name="name">
@@ -221,9 +194,9 @@
         <property name="geometry">
             <rect>
                 <x>6</x>
-                <y>11</y>
+                <y>4</y>
                 <width>398</width>
-                <height>158</height>
+                <height>165</height>
             </rect>
         </property>
         <property name="title">
@@ -236,9 +209,9 @@
             <property name="geometry">
                 <rect>
                     <x>5</x>
-                    <y>15</y>
+                    <y>25</y>
                     <width>385</width>
-                    <height>128</height>
+                    <height>135</height>
                 </rect>
             </property>
             <grid>
@@ -356,21 +329,48 @@
             </grid>
         </widget>
     </widget>
-    <widget class="QCheckBox">
+    <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>useMimeTypes</cstring>
+            <cstring>Layout6</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>5</x>
-                <y>215</y>
-                <width>395</width>
-                <height>25</height>
+                <x>10</x>
+                <y>175</y>
+                <width>385</width>
+                <height>26</height>
             </rect>
         </property>
-        <property name="text">
-            <string>Use &amp;mimetype recognition</string>
-        </property>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>TextLabel3</cstring>
+                </property>
+                <property name="maximumSize">
+                    <size>
+                        <width>32767</width>
+                        <height>32767</height>
+                    </size>
+                </property>
+                <property name="text">
+                    <string>Default DTD:</string>
+                </property>
+            </widget>
+            <widget class="QComboBox" row="0" column="1">
+                <property name="name">
+                    <cstring>dtdName</cstring>
+                </property>
+            </widget>
+        </grid>
     </widget>
 </widget>
 <tabstops>

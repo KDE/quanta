@@ -39,6 +39,7 @@
 #include "tagaction.h"
 #include "../tagdialogs/filecombo.h"
 #include "../quanta.h"
+#include "../quantadoc.h"
 #include "../quantaview.h"
 
 class ActionListItem : public QListBoxPixmap {
@@ -71,6 +72,7 @@ ActionEditDlg::ActionEditDlg( QuantaApp *a, QWidget* parent, const char* name, b
      action(0),
      app(a)
 {
+   scriptPath->setBasePath(app->getDoc()->basePath());
    actionIcon->setIconType(KIcon::User,KIcon::Any,true);
 
    QValueList<KAction*> actions = app->actionCollection()->actions();
@@ -329,7 +331,7 @@ void ActionEditDlg::saveAction( TagAction *a )
       for (i = 0; i < guiClients.count(); i++)
       {
         guiClient = guiClients.at(i);
-        app->factory()->removeClient(guiClient);
+        app->guiFactory()->removeClient(guiClient);
         guiClient ->setXMLGUIBuildDocument( QDomDocument() );
         guiClient->reloadXML();
         app->guiFactory()->addClient(guiClient);

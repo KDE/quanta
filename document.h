@@ -45,12 +45,14 @@ class QStringList;
 class KTempFile;
 class Tag;
 class Node;
+class Project;
 
 class Document : public QWidget{
    Q_OBJECT
 
 public: 
-	Document(const QString& basePath, KTextEditor::Document *doc, QWidget *parent = 0, const char *name = 0, WFlags f=0);
+	Document(const QString& basePath, KTextEditor::Document *doc, Project *project,
+           QWidget *parent = 0, const char *name = 0, WFlags f=0);
 	~Document();
 
 public:
@@ -205,6 +207,7 @@ protected: // Protected attributes
   bool completionInProgress;
   /** True if the document is dirty (has been modified outside). */
   bool m_dirty;
+  Project *m_project;
 };
 
 #endif

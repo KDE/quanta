@@ -36,6 +36,8 @@ public:
 	
 	QString text();
 	void setText( QString );
+  /** No descriptions */
+  void setBasePath(const QString& p_basePath);
 
 public slots:
   void slotFileSelect();

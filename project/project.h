@@ -67,6 +67,10 @@ public:
   bool isModified() {return modified;}
   /** Returns the relative url with the prefix inserted. */
   QString urlWithPrefix(const KURL& url);
+  /** Write property of QString defaultDTD. */
+  virtual void setDefaultDTD( const QString& p_defaultDTD);
+  /** Read property of QString defaultDTD. */
+  virtual const QString& defaultDTD();
   
 public slots:
 
@@ -174,6 +178,9 @@ private:
 	bool olfwprj; //for internal use
 	
   QBuffer buff;
+protected: // Protected attributes
+  /** Default DTD for this project. */
+  QString m_defaultDTD;
 };
 
 #endif

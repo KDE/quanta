@@ -96,6 +96,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   toolbarURLs.setAutoDelete(true);
   userToolbarsCount = 0;
   baseNode = 0L;
+  currentToolbarDTD = QString::null;
 
   qConfig.globalDataDir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png");
 
@@ -193,7 +194,7 @@ void QuantaApp::initQuanta()
 void QuantaApp::initToolBars()
 {
   if (toolbarNames.count() == 0)
-     loadToolbarForDTD(qConfig.defaultDocType);
+     loadToolbarForDTD(project->defaultDTD());
 }
 
 void QuantaApp::initStatusBar()

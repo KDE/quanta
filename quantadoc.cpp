@@ -145,7 +145,7 @@ bool QuantaDoc::newDocument( const KURL& url )
 
   	app ->view->addWrite( w, w->url().url() );
 
-    app->processDTD(qConfig.defaultDocType);
+    app->processDTD(app->getProject()->defaultDTD());
 
   	m_docList->insert( w->url().url(), w );
   }
@@ -440,7 +440,7 @@ Document* QuantaDoc::newWrite(QWidget *_parent)
 													      _parent, 0,
 													      this, 0 );
 
-  Document  *w    = new Document (basePath(), doc, _parent);
+  Document  *w    = new Document (basePath(), doc, app->getProject(), _parent);
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
