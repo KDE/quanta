@@ -1,0 +1,311 @@
+
+AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h stdlib.h paths.h stdarg.h)
+AC_CHECK_FUNCS(usleep)
+
+dnl
+dnl Math detection
+dnl
+
+AC_CHECK_HEADERS(sys/types.h unistd.h string.h)
+AC_CHECK_HEADERS(ieeefp.h nan.h math.h fp_class.h float.h ansidecl.h)
+AC_CHECK_HEADERS(time.h sys/stat.h stdarg.h)
+AC_CHECK_FUNCS(stat _stat)
+
+AC_CHECK_FUNC(isnan, , AC_CHECK_LIB(m, isnan,
+  [M_LIBS="-lm"; AC_DEFINE(HAVE_ISNAN)]))
+
+AC_CHECK_FUNC(isinf, , AC_CHECK_LIB(m, isinf,
+  [M_LIBS="-lm"; AC_DEFINE(HAVE_ISINF)]))
+
+AC_CHECK_FUNC(pow, , AC_CHECK_LIB(m, pow,
+  [M_LIBS="-lm"; AC_DEFINE(HAVE_POW)]))
+
+AC_CHECK_FUNC(floor, , AC_CHECK_LIB(m, pow,
+  [M_LIBS="-lm"; AC_DEFINE(HAVE_FLOOR)]))
+
+AC_CHECK_FUNC(fabs, , AC_CHECK_LIB(m, pow,
+  [M_LIBS="-lm"; AC_DEFINE(HAVE_FABS)]))
+AC_CHECK_FUNCS(gettimeofday)
+AC_CHECK_FUNCS(mktime localtime asctime)
+
+AH_TEMPLATE(USE_DOCS_MACRO)
+AH_TEMPLATE(TIMESTAMP)
+AH_TEMPLATE(WITH_DEBUG_HELP)
+AH_TEMPLATE(WITH_XSLDBG_DEBUG)
+AH_TEMPLATE(XSLDBG_BIN)
+AH_TEMPLATE(USE_XSLDBG_AS_THREAD)
+AH_TEMPLATE(HAVE_INCLUDE_FIX)
+
+AH_TEMPLATE(_GNU_SOURCE)
+AH_TEMPLATE(HAVE_ISINF)
+AH_TEMPLATE(HAVE_ISNAN)
+AH_TEMPLATE(HAVE_POW)
+AH_TEMPLATE(HAVE_FLOOR)
+AH_TEMPLATE(HAVE_FABS)
+AH_TEMPLATE(HAVE_QT)
+AH_TEMPLATE(HAVE_PTHREAD)
+
+dnl
+dnl how are we to invoke xsldbg, or the other stylesheet processor (xsltproc?)
+dnl
+
+AC_DEFINE(XSLDBG_BIN, "xsldbg")
+
+dnl
+dnl The following new parameters were added to offer
+dnl the ability to specify the location of the libxml
+dnl library during linking and compilation.
+dnl Mathieu Lacage 30/03/2000
+dnl
+LIBXML_PREFIX=""
+AC_ARG_WITH(libxml-prefix,
+        [  --with-libxml-prefix=[PFX]     Specify location of libxml],
+   LIBXML_PREFIX="$withval"
+)
+
+if test "x${LIBXML_PREFIX}" != "x"
+then
+  AC_MSG_RESULT(Using a libxml prefix of ${LIBXML_PREFIX})
+fi
+
+
+AC_SUBST(LIBXML_LIBS)
+
+
+dnl
+dnl find libxml
+dnl
+XML_CONFIG="xml2-config"
+AC_SUBST(LIBXML_REQUIRED_VERSION)
+AC_MSG_CHECKING(for libxml libraries >= $LIBXML_REQUIRED_VERSION)
+XML_WARNING=""
+if test "x$LIBXML_PREFIX" != "x"
+then
+  if ${LIBXML_PREFIX}/bin/xml2-config --libs print > /dev/null 2>&1
+  then
+    XML_CONFIG=${LIBXML_PREFIX}/bin/xml2-config
+  else
+          XML_WARNING="1"
+    XML_CONFIG=xml2-config
+  fi
+fi
+
+AC_DEFUN(VERSION_TO_NUMBER,
+[`$1 | sed -e 's/libxml //' | awk 'BEGIN { FS = "."; } { printf "%d",
+ ([$]1* 1000 + [$]2) * 1000 + [$]3;}'`])
+
+dnl
+dnl test version and init our variables
+dnl
+if test "x$XML_CONFIG" != "x"
+then
+  vers=VERSION_TO_NUMBER($XML_CONFIG --version)
+  if test "$vers" -ge VERSION_TO_NUMBER(echo $LIBXML_REQUIRED_VERSION)
+  then
+    LIBXML_LIBS="`$XML_CONFIG --libs`"
+    LIBXML_CFLAGS="`$XML_CONFIG --cflags`"
+    AC_MSG_RESULT(found)
+          if test "x$LIBXML_PREFIX" != "x"
+     then
+       AC_MSG_RESULT(
+Don't forget to make sure that ${LIBXML_PREFIX}/lib has been added
+  to your LD_LIBRARY_PATH environment variable)
+    else
+      LIBXML_PREFIX="$XML_CONFIG --prefix"
+          fi
+  else
+    AC_MSG_ERROR(You need at least libxml2 $LIBXML_REQUIRED_VERSION for this
+ version of xsldbg)
+  fi
+else
+  AC_MSG_ERROR(Could not find libxml2 anywhere, check ftp://xmlsoft.org/.)
+fi
+
+
+dnl
+dnl Do we have we fix for included xml files
+dnl
+
+AC_CHECK_LIB(xml2, xmlSetEntityReferenceFunc,
+  [AC_DEFINE(HAVE_INCLUDE_FIX)],
+  [AC_MSG_RESULT(
+!!Warning!!  The version of libxml2 installed does not support
+  debugging of files included as entities. Test 10 will be skipped
+  as it will fail.   You will not be able to set breakpoints on external
+        entities. Try upgrading your libxml2.
+  See also --enable-includefix)
+  RUNTEST10="false"
+  ])
+
+AC_ARG_ENABLE(includefix, [  --enable-includefix   Do you want to force the use of include fix (no)],
+  [if test "x${enableval}" = "xyes"
+  then
+      AC_DEFINE(HAVE_INCLUDE_FIX)
+      AC_MSG_RESULT(Forcing the use if include fix)
+  fi])
+
+
+if test "x${XML_WARNING}" != "x"
+then
+   AC_MSG_RESULT(
+!!Warning!! using xml2-config in default path
+)
+fi
+
+LIBXML_PREFIX_DIR="`$XML_CONFIG --prefix`"
+
+AC_SUBST(XML_CONFIG)
+AC_SUBST(LIBXML_PREFIX)
+AC_SUBST(LIBXML_LIBS)
+AC_SUBST(LIBXML_CFLAGS)
+
+LIBXSLT_PREFIX=""
+AC_ARG_WITH(libxslt-prefix,
+        [  --with-libxslt-prefix=[PFX]    Specify location of libxslt],
+   LIBXSLT_PREFIX="$withval"
+)
+
+if test "x${LIBXSLT_PREFIX}" != "x"
+then
+  AC_MSG_RESULT(Using a libxslt prefix of ${LIBXSLT_PREFIX})
+fi
+
+dnl
+dnl find libxslt
+dnl
+XSLT_CONFIG="xslt-config"
+XSLT_WARNING=""
+AC_SUBST(LIBXSLT_REQUIRED_VERSION)
+AC_MSG_CHECKING(for libxslt libraries >= $LIBXSLT_REQUIRED_VERSION)
+if test "x$LIBXSLT_PREFIX" != "x"
+then
+  if ${LIBXSLT_PREFIX}/bin/xslt-config --libs print > /dev/null 2>&1
+  then
+    XSLT_CONFIG=${LIBXSLT_PREFIX}/bin/xslt-config
+  else
+          XSLT_WARNING="1"
+    XSLT_CONFIG=xslt-config
+  fi
+fi
+
+
+AC_DEFUN(VERSION_TO_NUMBER,
+[`$1 | sed -e 's/libxslt //' | awk 'BEGIN { FS = "."; } { printf "%d",
+ ([$]1  * 1000 + [$]2) * 1000 + [$]3;}'`])
+
+dnl
+dnl test version and init our variables
+dnl
+if test "x$XSLT_CONFIG" != "x"
+then
+  vers=VERSION_TO_NUMBER($XSLT_CONFIG --version)
+  if test "$vers" -ge VERSION_TO_NUMBER(echo $LIBXSLT_REQUIRED_VERSION)
+  then
+    LIBXSLT_LIBS="-lexslt `$XSLT_CONFIG --libs`"
+    LIBXSLT_CFLAGS="`$XSLT_CONFIG --cflags`"
+    AC_MSG_RESULT(found)
+          if test "x$LIBXSLT_PREFIX" != "x"
+     then
+       AC_MSG_RESULT(
+Don't forget to make sure that ${LIBXSLT_PREFIX}/lib has been added
+  to your LD_LIBRARY_PATH environment variable)
+    else
+      LIBXSLT_PREFIX="$XSLT_CONFIG --prefix"
+          fi
+  else
+    AC_MSG_ERROR(You need at least libxslt $LIBXSLT_REQUIRED_VERSION for this
+  version of xsldbg)
+  fi
+else
+  AC_MSG_ERROR(Could not find libxslt anywhere, check
+ ftp://xmlsoft.org/XSLT/.)
+fi
+
+if test "x${XSLT_WARNING}" != "x"
+then
+   AC_MSG_RESULT(
+!!Warning!! using xslt-config in default path
+)
+fi
+
+AC_SUBST(XSLT_CONFIG)
+AC_SUBST(LIBXSLT_PREFIX)
+AC_SUBST(LIBXSLT_LIBS)
+AC_SUBST(LIBXSLT_CFLAGS)
+
+XSLDBG_MAJOR_VERSION=3
+XSLDBG_MINOR_VERSION=1
+XSLDBG_MICRO_VERSION=7
+XSLDBG_VERSION=$XSLDBG_MAJOR_VERSION.$XSLDBG_MINOR_VERSION.$XSLDBG_MICRO_VERSION
+XSLDBG_VERSION_INFO=`expr $XSLDBG_MAJOR_VERSION + \
+$XSLDBG_MINOR_VERSION`:$XSLDBG_MICRO_VERSION:$XSLDBG_MINOR_VERSION
+
+XSLDBG_VERSION_NUMBER=`expr $XSLDBG_MAJOR_VERSION \* 10000 + \
+$XSLDBG_MINOR_VERSION \* 100 + $XSLDBG_MICRO_VERSION`
+AC_SUBST(XSLDBG_MAJOR_VERSION)
+AC_SUBST(XSLDBG_MINOR_VERSION)
+AC_SUBST(XSLDBG_MICRO_VERSION)
+AC_SUBST(XSLDBG_VERSION)
+AC_SUBST(XSLDBG_VERSION_INFO)
+AC_SUBST(XSLDBG_VERSION_NUMBER)
+
+
+dnl
+dnl We must run xsldbg as a thread
+dnl
+AC_CHECK_HEADERS(pthread.h,
+    AC_DEFINE(HAVE_PTHREAD)
+    AVE_PTHREAD=1
+    SE_XSLDBG_AS_THREAD=1
+    AC_DEFINE(USE_XSLDBG_AS_THREAD),
+    AC_MSG_ERROR(PThread library not found)
+)
+XSLDBG_INCLUDEDIR="`pwd`/kxsldbg/kxsldbgpart"
+
+dnl Where is the xsldbg documentation stored
+dnl
+docs_macro=true
+AC_ARG_ENABLE(docs_macro,
+[  --enable-docs-macro      Use a compiler macro to specify where documentation is (PREFIX/doc/xsldbg/) ],
+if test "${enableval}" = "no"
+then
+       docs_macro=false
+       AC_MSG_RESULT(Disabling the use of a compiler macro to specify where documention is.)
+fi
+)
+if test "x$docs_macro" = "xtrue"
+then
+       AC_DEFINE(USE_DOCS_MACRO, 1)
+       if test "x$prefix" != "x"
+       then
+       AC_MSG_RESULT(xsldbg will look for installed documentation in ${prefix}/doc/xsldbg)
+       else
+       AC_MSG_RESULT(xsldbg will look for installed documentation in ${ac_default_prefix}doc/xsldbg/)
+       fi
+       DOCS_PATH="${prefix}/doc/xsldbg"
+AC_SUBST(DOCS_PATH)
+
+else
+       AC_MSG_RESULT(
+
+       !!Warning!! Using a environment variable for specifiying location of documentation.
+       On non risc os systems :  XSLDBG_DOCS_DIR
+       On risc os systems : XSLDebugDocs\$Dir
+       See --enable-docs-macro in ./configure
+       )
+fi
+
+
+XSLDBG_LIBS=" -Llibxsldbg/ -lxsldbg ${LIBXSLT_LIBS} -lexslt -Llibqtnotifier/ -lqtnotifier -lpthread"
+AC_MSG_RESULT(Using xsldbg as a part of kxsldbg)
+
+AC_DEFINE_UNQUOTED(TIMESTAMP, "$timestamp")
+AC_SUBST(TIMESTAMP)
+
+AC_SUBST(XSLDBG_LIBDIR)
+AC_SUBST(XSLDBG_INCLUDEDIR)
+AC_SUBST(EXTRA_LIBS)
+AC_SUBST(XSLDBG_LIBS)
+XSLDBG_CFLAGS="-I${XSLDBG_INCLUDEDIR} ${LIBXSLT_CFLAGS} "
+AC_SUBST(XSLDBG_CFLAGS)
+AC_SUBST(XSLDBG_PREFIX)

@@ -3,11 +3,11 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif 
+#endif
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kparts/mainwindow.h>
- 
+
 class KToggleAction;
 
 /**
@@ -54,8 +54,8 @@ private slots:
 
     void applyNewToolbarConfig();
 
-    void newCursorPosition(const QString &file, int lineNumber); 
-    void newDebuggerPosition(const QString &file, int lineNumber); 
+    void newCursorPosition(const QString &file, int lineNumber);
+    void newDebuggerPosition(const QString &file, int lineNumber);
 
 private:
     void setupAccel();

@@ -1,7 +1,4 @@
 if BUILD_WYSIWYG
  KAFKA_SUBDIR=kafka
 endif
-if BUILD_KXSLDBG
- KXSLDBG_SUBDIR=kxsldbg
-endif
-SUBDIRS= kfilereplace $(KAFKA_SUBDIR) $(KXSLDBG_SUBDIR)
+SUBDIRS = kfilereplace $(KAFKA_SUBDIR) kxsldbg
