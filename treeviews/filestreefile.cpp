@@ -18,6 +18,7 @@
 // QT includes
 #include <qdir.h>
 #include <qpixmap.h>
+#include <qfileinfo.h>
 
 // KDE includes
 #include <kiconloader.h>
@@ -73,15 +74,17 @@ QString FilesTreeFile::key ( int, bool ) const
 
   key  = QString( text(0) );
 
-  QString prefix = "5";
+/*  QString prefix = "5";
 
-//FIXME: QDir::match is VERY slow on KDE/QT 3.0
-/*  if ( QDir::match( fileMaskHtml,  key) ) prefix = "2";
+//FIXME: VERY slow on KDE/QT 3.0
+  if ( QDir::match( fileMaskHtml,  key) ) prefix = "2";
   if ( QDir::match( fileMaskText,  key) ) prefix = "3";
-  if ( QDir::match( fileMaskImage, key) ) prefix = "4"; */
+  if ( QDir::match( fileMaskImage, key) ) prefix = "4";
   if ( isDir ) prefix = "1";
 
   key = prefix + key;
 
-  return key;
+  return key;                                           */
+  return QFileInfo(key).extension()+key;
+
 }

@@ -17,6 +17,7 @@
 
 // QT includes
 #include <qdir.h>
+#include <qfileinfo.h>
 
 // KDE includes
 #include <kiconloader.h>
@@ -54,18 +55,22 @@ void ProjectTreeFile::setIcon(QString name)
 QString ProjectTreeFile::key ( int, bool ) const
 {
   static QString key;
-
   key  = QString( text(0) );
+
+/*
 
   QString prefix = "5";
 
-//FIXME: QDir::match is VERY slow on KDE/QT 3.0
-/*  if ( QDir::match( fileMaskHtml,  key) ) prefix = "2";
+//FIXME: VERY slow on KDE/QT 3.0
+  if ( QDir::match( fileMaskHtml,  key) ) prefix = "2";
   if ( QDir::match( fileMaskText,  key) ) prefix = "3";
   if ( QDir::match( fileMaskImage, key) ) prefix = "4";
-  */	
+
+
   key = prefix + key;
-  return key;
+  return key;*/
+
+  return QFileInfo(key).extension()+key;
 }
 
 void ProjectTreeFile::paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int alignment)
@@ -73,3 +78,4 @@ void ProjectTreeFile::paintCell(QPainter *p, const QColorGroup &cg, int column, 
   QColorGroup mycg(cg);
   QListViewItem::paintCell(p,mycg,column,width,alignment);
 }
+
