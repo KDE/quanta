@@ -23,6 +23,7 @@
 #include <krun.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
+#include <ktempdir.h>
 #include <ktempfile.h>
 #include <kurl.h>
 #include <kdebug.h>
@@ -235,17 +236,19 @@ void ScriptTreeView::slotSendScriptInMail()
     KURL url = currentURL();
     KURL infoURL = infoFile(url);
 
-    QString prefix="quanta";
-    KTempFile* tempFile = new KTempFile(tmpDir, ".tgz");
-    tempFile->setAutoDelete(true);
+    KTempDir* tempDir = new KTempDir(tmpDir);
+    tempDir->setAutoDelete(true);
+    tempDirList.append(tempDir);
+    QString tempFileName=tempDir->name() + url.fileName() + ".tgz";
 
   //pack the .tag files and the description.rc into a .tgz file
-    KTar tar(tempFile->name(), "application/x-gzip");
+    KTar tar(tempFileName, "application/x-gzip");
     tar.open(IO_WriteOnly);
 
     KURL::List files;
     files.append(url);
     files.append(infoURL);
+    files.append(KURL().fromPathOrURL(qConfig.globalDataDir + resourceDir + "scripts/info.xsl"));
     for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
     {
       QFile file((*it_f).path());
@@ -256,11 +259,8 @@ void ScriptTreeView::slotSendScriptInMail()
     }
     tar.close();
 
-    tempFile->close();
-    tempFileList.append(tempFile);
-
     QStringList attachmentFile;
-    attachmentFile += tempFile->name();
+    attachmentFile += tempFileName;
 
     TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send script in email"));
     QString toStr;

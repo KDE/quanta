@@ -34,6 +34,7 @@
 #include <klocale.h>
 #include <kprotocolinfo.h>
 #include <kprogress.h>
+#include <ktempdir.h>
 #include <ktempfile.h>
 
 //remove the below ones when KQPasteAction is removed
@@ -69,6 +70,7 @@ QString toolbarExtension = ".toolbar.tgz";
 QRegExp newLineRx("\\n");
 QStringList charList; //hold the list of the &char; chars. See the data/chars file.
 QPtrList<KTempFile> tempFileList;
+QPtrList<KTempDir> tempDirList;
 bool typingInProgress;
 
 QuantaCommon::QuantaCommon(){
@@ -632,30 +634,30 @@ bool QuantaCommon::closesTag(Tag *tag1, Tag *tag2)
 }
 
 bool QuantaCommon::closesTag(QString namespaceName, QString tagName, bool caseSensitive,
-	QString namespaceName2, QString tagName2, bool caseSensitive2)
+        QString namespaceName2, QString tagName2, bool caseSensitive2)
 {
-	QString tag1Name, tag2Name;
-	if(namespaceName.isEmpty())
-	{
-		if(!namespaceName.isEmpty())
-			return false;//namespace missmatch
-		tag1Name = caseSensitive ? tagName : tagName.upper();
-		tag2Name = caseSensitive2 ? tagName2 : tagName2.upper();
-		if("/" + tag1Name != tag2Name)
-			return false;//not the closing tag
-	}
-	else
-	{
-		if(namespaceName2.isEmpty())
-			return false;//namespace missmatch
-		tag1Name = caseSensitive ? (namespaceName + tagName) : (namespaceName.upper() +
-			tagName.upper());
-		tag2Name = caseSensitive2 ? (namespaceName2 + tagName2) : (namespaceName2.upper() +
-			tagName2.upper());
-		if("/" + tag1Name != tag2Name)
-			return false; //namespace missmatch or not the closing tag
-	}
-	return true;
+        QString tag1Name, tag2Name;
+        if(namespaceName.isEmpty())
+        {
+                if(!namespaceName.isEmpty())
+                        return false;//namespace missmatch
+                tag1Name = caseSensitive ? tagName : tagName.upper();
+                tag2Name = caseSensitive2 ? tagName2 : tagName2.upper();
+                if("/" + tag1Name != tag2Name)
+                        return false;//not the closing tag
+        }
+        else
+        {
+                if(namespaceName2.isEmpty())
+                        return false;//namespace missmatch
+                tag1Name = caseSensitive ? (namespaceName + tagName) : (namespaceName.upper() +
+                        tagName.upper());
+                tag2Name = caseSensitive2 ? (namespaceName2 + tagName2) : (namespaceName2.upper() +
+                        tagName2.upper());
+                if("/" + tag1Name != tag2Name)
+                        return false; //namespace missmatch or not the closing tag
+        }
+        return true;
 }
 
 int QuantaCommon::denyBinaryInsert()

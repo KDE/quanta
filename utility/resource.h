@@ -24,6 +24,7 @@ class KProgress;
 class QuantaApp;
 class QStringList;
 class KTempFile;
+class KTempDir;
 
 class Node;
 class Parser;
@@ -46,6 +47,7 @@ extern QString toolbarExtension;
 extern QRegExp newLineRx;
 extern QStringList charList; //hold the list of the &char; chars. See the data/chars file.
 extern QPtrList<KTempFile> tempFileList;
+extern QPtrList<KTempDir> tempDirList;
 
 extern KProgress *progressBar;
 extern QuantaApp *quantaApp;

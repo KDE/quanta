@@ -67,6 +67,7 @@
 #include <kpushbutton.h>
 #include <kprocess.h>
 #include <kprogress.h>
+#include <ktempdir.h>
 #include <ktempfile.h>
 #include <kdebug.h>
 #include <ktar.h>
@@ -251,6 +252,11 @@ QuantaApp::~QuantaApp()
  delete idleTimer;
  idleTimer = 0L;
  tempFileList.clear();
+ for (uint i = 0; i < tempDirList.count(); i++)
+ {
+    KIO::NetAccess::del(KURL().fromPathOrURL(tempDirList.at(i)->name()), 0);
+ }
+ tempDirList.clear();
  QDictIterator<ToolbarEntry> iter(toolbarList);
  ToolbarEntry *p_toolbar;
  for( ; iter.current(); ++iter )
@@ -2549,15 +2555,16 @@ void QuantaApp::slotSendToolbar()
   QStringList toolbarFile;
 
   QString prefix="quanta";
-  KTempFile* tempFile = new KTempFile(tmpDir, toolbarExtension);
-  tempFile->setAutoDelete(true);
-  KURL tempURL;
-  tempURL.setPath(tempFile->name());
-  saveToolbarToFile(toolbarName, tempURL);
-  tempFile->close();
-  tempFileList.append(tempFile);
+  KTempDir* tempDir = new KTempDir(tmpDir);
+  tempDir->setAutoDelete(true);
+  tempDirList.append(tempDir);
+  QString tempFileName=tempDir->name() + toolbarName.replace(QRegExp("\\s|\\."), "_");
 
-  toolbarFile += tempFile->name();
+  KURL tempURL;
+  tempURL.setPath(tempFileName);
+  saveToolbarToFile(toolbarName, tempURL);
+
+  toolbarFile += tempFileName + ".toolbar.tgz";
 
   TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send toolbar in email"));
   QString toStr;
@@ -3413,11 +3420,13 @@ void QuantaApp::slotEmailDTEP()
     QStringList dtdFile;
 
     QString prefix="quanta";
-    KTempFile* tempFile = new KTempFile(tmpDir, ".tgz");
-    tempFile->setAutoDelete(true);
+    KTempDir* tempDir = new KTempDir(tmpDir);
+    tempDir->setAutoDelete(true);
+    tempDirList.append(tempDir);
+    QString tempFileName=tempDir->name() +"/"+ DTDs::ref()->getDTDNickNameFromName(dtdName).replace(QRegExp("\\s|\\."), "_") + ".tgz";
 
   //pack the .tag files and the description.rc into a .tgz file
-    KTar tar(tempFile->name(), "application/x-gzip");
+    KTar tar(tempFileName, "application/x-gzip");
     tar.open(IO_WriteOnly);
 
     KURL dirURL;
@@ -3437,16 +3446,12 @@ void QuantaApp::slotEmailDTEP()
 
     }
     tar.close();
-
-    tempFile->close();
-    tempFileList.append(tempFile);
-
-    dtdFile += tempFile->name();
+    dtdFile += tempFileName;
 
 
-    TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTD in Email"));
+    TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTEP in Email"));
     QString toStr;
-    QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] DTD definition tarball.\n\nHave fun.\n");
+    QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] DTEP definition tarball.\n\nHave fun.\n");
     QString titleStr;
     QString subjectStr;
 

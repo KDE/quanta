@@ -30,6 +30,8 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - faster switching between documents
         - reworked abbreviation support: abbreviation templates are grouped and one groupd can
           be valid for more than one DTEP
+        - added possibility to mark project files as uploaded [#81546]
+        - generate nicer file names when sending some resource in email
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:

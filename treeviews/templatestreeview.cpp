@@ -39,6 +39,7 @@
 #include <kpopupmenu.h>
 #include <kpropertiesdialog.h>
 #include <kurlrequesterdlg.h>
+#include <ktempdir.h>
 #include <ktempfile.h>
 #include <kio/netaccess.h>
 #include <kurldrag.h>
@@ -836,12 +837,12 @@ void TemplatesTreeView::slotSendInMail()
     KURL dirURL (url);
     dirURL.setPath(dirURL.directory(false));
 
-    QString prefix="quanta";
-    KTempFile* tempFile = new KTempFile(tmpDir, ".tgz");
-    tempFile->setAutoDelete(true);
-
+    KTempDir* tempDir = new KTempDir(tmpDir);
+    tempDir->setAutoDelete(true);
+    tempDirList.append(tempDir);
+    QString tempFileName=tempDir->name() + url.fileName() + ".tgz";
   //pack the files into a .tgz file
-    KTar tar(tempFile->name(), "application/x-gzip");
+    KTar tar(tempFileName, "application/x-gzip");
     tar.open(IO_WriteOnly);
 //    tar.setOrigFileName("");
 
@@ -867,11 +868,8 @@ void TemplatesTreeView::slotSendInMail()
     }
     tar.close();
 
-    tempFile->close();
-    tempFileList.append(tempFile);
-
     QStringList attachmentFile;
-    attachmentFile += tempFile->name();
+    attachmentFile += tempFileName;
 
     TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send template in email"));
     QString toStr;
