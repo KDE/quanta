@@ -151,7 +151,7 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
         else
         {
             current_node = kafkaCommon::getNodeFromLocation(selection.cursorNode());
-            assert(current_node);
+            Q_ASSERT(current_node);
             current_offset = selection.cursorOffset();
             
             start_node = end_node = current_node;
@@ -159,7 +159,7 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
             
             QTag* tag_description = QuantaCommon::tagFromDTD(KafkaDocument::ref()->getCurrentDoc()->defaultDTD(), XMLTagName());
             QString scope = tag_description->scope();
-//             assert(!scope.isNull());
+//             Q_ASSERT(!scope.isNull());
             if(scope.isNull())
                 scope = "word"; // FIXME temporary
             
@@ -182,7 +182,7 @@ bool TagAction::slotActionActivated(KAction::ActivationReason reason, Qt::Button
                 }
             }
         }        
-        assert(start_node && end_node);
+        Q_ASSERT(start_node && end_node);
         
 /*        kdDebug(23100) << "start node string: " << start_node->tag->tagStr() << endl;    
         kdDebug(23100) << "start node offset: " << start_offset << endl;    
@@ -983,11 +983,11 @@ void TagAction::applyTagInSelection(Node* start_node, int start_offset, Node* en
     QuantaView *view = ViewManager::ref()->activeView();    
     Document* w = view->document();
         
-    assert(view->hadLastFocus() == QuantaView::VPLFocus);
-    assert(toggable());
+    Q_ASSERT(view->hadLastFocus() == QuantaView::VPLFocus);
+    Q_ASSERT(toggable());
         
     QString tag_name = XMLTagName();
-    assert(kafkaCommon::isInsideTag(start_node, end_node, tag_name) == -1);
+    Q_ASSERT(kafkaCommon::isInsideTag(start_node, end_node, tag_name) == -1);
     
     QString open_tag = openXMLTagString();
     
@@ -1074,13 +1074,13 @@ void TagAction::applyTagInSelection(Node* start_node, int start_offset, Node* en
 void TagAction::applyTagInMixedSelection(Node* start_node, int start_offset, Node* end_node, int end_offset, 
                                          NodeSelection& selection, NodeModifsSet* modifs) const
 {
-    assert(start_node != end_node);
+    Q_ASSERT(start_node != end_node);
 
     QString const tag_name = XMLTagName();
     
     // FIXME o pai pode ser do endNode. nao sei se esta merda eh precisa
 /*    Node* tag_parent = kafkaCommon::hasParent(start_node, tag_name);
-    assert(tag_parent);*/
+    Q_ASSERT(tag_parent);*/
     
     QuantaView *view = ViewManager::ref()->activeView();    
     Document* w = view->document();
@@ -1102,7 +1102,7 @@ void TagAction::applyTagInMixedSelection(Node* start_node, int start_offset, Nod
                                              commonParentStartChildLocation, commonParentEndChildLocation,
                                              selection, false, modifs);
 
-    assert(start_node != end_node);
+    Q_ASSERT(start_node != end_node);
     
 //     kafkaCommon::coutTree(baseNode, 3);
 
@@ -1114,7 +1114,7 @@ void TagAction::applyTagInMixedSelection(Node* start_node, int start_offset, Nod
     new_node->tag->single = QuantaCommon::isSingleTag(w->defaultDTD()->name,
             new_node->tag->name);
     
-    assert(new_node->tag->type == Tag::XmlTag);
+    Q_ASSERT(new_node->tag->type == Tag::XmlTag);
 
     Node* commonParentStartChild = kafkaCommon::getNodeFromLocation(commonParentStartChildLocation, commonParent);
     Node* commonParentEndChild = kafkaCommon::getNodeFromLocation(commonParentEndChildLocation, commonParent);
@@ -1142,7 +1142,7 @@ void TagAction::applyTagInMixedSelection(Node* start_node, int start_offset, Nod
     cursor_node = selection.cursorNode();
     cursor_offset = selection.cursorOffset();
         
-    assert(new_node->getClosingNode());
+    Q_ASSERT(new_node->getClosingNode());
 
     // FIXME remove possible equal tags inside the main surrounding tag    
     kafkaCommon::mergeInlineNode(new_node, new_node->getClosingNode(), &cursor_node, cursor_offset, modifs);
@@ -1181,7 +1181,7 @@ void TagAction::deapplyTagInSelection(Node* start_node, int start_offset, Node* 
 //     kafkaCommon::coutTree(baseNode, 3);
     
     Node* tag_parent = kafkaCommon::hasParent(start_node, end_node, tag_name);
-    assert(tag_parent);
+    Q_ASSERT(tag_parent);
     
     Node* common_parent_start_child = kafkaCommon::getCommonParentChild(start_node, tag_parent);
     Node* common_parent_end_child = kafkaCommon::getCommonParentChild(end_node, tag_parent);
