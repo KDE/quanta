@@ -771,11 +771,11 @@ void QuantaInit::initActions()
                         m_quanta, SLOT( slotLoadDTEP() ),
                         ac, "load_dtep" );
 
-    (void) new KAction( i18n( "Send DTD Package (DTEP) in E&mail..." ), 0,
+    (void) new KAction( i18n( "Send DTD Package (DTEP) in E&mail..." ), "mail_send", 0,
                         m_quanta, SLOT( slotEmailDTEP() ),
                         ac, "send_dtep" );
 
-    (void) new KAction( i18n( "&Download DTD Package (DTEP)..." ), 0,
+    (void) new KAction( i18n( "&Download DTD Package (DTEP)..." ), "network", 0,
                         m_quanta, SLOT( slotDownloadDTEP() ),
                         ac, "download_dtep" );
 /*
@@ -860,8 +860,8 @@ void QuantaInit::initActions()
     new KAction(i18n("&Add User Toolbar..."),  0, m_quanta, SLOT(slotAddToolbar()), ac, "toolbars_add");
     new KAction(i18n("&Remove User Toolbar..."), 0, m_quanta, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
     new KAction(i18n("Re&name User Toolbar..."), 0, m_quanta, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
-    new KAction(i18n("Send Toolbar in E&mail..."), 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");
-    new KAction(i18n("&Download Toolbar..." ), 0, m_quanta, SLOT(slotDownloadToolbar()), ac, "toolbars_download" );
+    new KAction(i18n("Send Toolbar in E&mail..."), "mail_send", 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");
+    new KAction(i18n("&Download Toolbar..." ), "network", 0, m_quanta, SLOT(slotDownloadToolbar()), ac, "toolbars_download" );
 
     m_quanta->showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
 
