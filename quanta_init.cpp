@@ -1665,6 +1665,7 @@ void QuantaApp::initActions()
     QFile f(qConfig.globalDataDir + "quanta/actions.rc");
     if ( f.open( IO_ReadOnly ))
     {
+      kdDebug(24000) << "Setting content for m_actions from global actions.rc\n";
       if (m_actions->setContent(&f))
       {
         QDomElement docElem = m_actions->documentElement();
@@ -1680,6 +1681,7 @@ void QuantaApp::initActions()
       }
       f.close();
     }
+    m_actions->clear();
 //read the user defined actions
     QString s = locateLocal("appdata","actions.rc");
     if (!s.isEmpty())
@@ -1687,6 +1689,7 @@ void QuantaApp::initActions()
       f.setName(s);
       if ( f.open( IO_ReadOnly ))
       {
+        kdDebug(24000) << "Setting content for m_actions from local actions.rc\n";
         if (m_actions->setContent(&f))
         {
           QDomElement docElem = m_actions->documentElement();
@@ -1706,6 +1709,7 @@ void QuantaApp::initActions()
       }
     } else
     {
+      kdDebug(24000) << "Setting content for m_actions from a string\n";
       s = "<!DOCTYPE actionsconfig>\n<actions>\n</actions>\n";
       m_actions->setContent(s);
     }
