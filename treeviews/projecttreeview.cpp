@@ -91,6 +91,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   addColumn(i18n("Description"), -1);
   setFullWidth(true);
   setDragEnabled(false);
+  setShowFolderOpenPixmap(false);
 
   setFocusPolicy(QWidget::ClickFocus);
 
@@ -430,6 +431,5 @@ void ProjectTreeView::itemDescChanged(KFileTreeViewItem* item, const QString& ne
     emit changeFileDescription(item->url(), newDesc);
   }
 }
-
 
 #include "projecttreeview.moc"

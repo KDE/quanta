@@ -55,7 +55,8 @@ public:
   int compare( QListViewItem *i, int col, bool ascending ) const;
   /** makes open files bold and 2. column gray */
   void paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int align);
-
+  /** refresh icon if changed */
+  void refreshIcon();
 };
 
 /** class for branch with special items */

@@ -104,6 +104,10 @@ void FilesTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
   KFileTreeViewItem::paintCell( p, _cg, column, width, align );
 }
 
+void FilesTreeViewItem::refreshIcon()
+{
+  setPixmap(0, fileItem()->pixmap( KIcon::SizeSmall ));
+}
 
 //FilesTreeBranch implementation
 FilesTreeBranch::FilesTreeBranch(KFileTreeView *parent, const KURL& url,
@@ -160,6 +164,7 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   setAcceptDrops(true);
   setShowSortIndicator(true);
   setDragEnabled(true);
+  setShowFolderOpenPixmap(false);
 
   connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
           this, SLOT(slotDropped(KURL::List&, KURL&)));
@@ -706,6 +711,13 @@ void FilesTreeView::slotProperties()
       QString newDesc = fileInfoDlg->fileDesc->text();
       if (currentKFileTreeViewItem()->text(1) != newDesc)
         itemDescChanged(currentKFileTreeViewItem(), newDesc);
+    } else
+    {
+      FilesTreeViewItem * kftvi = dynamic_cast<FilesTreeViewItem *> (currentKFileTreeViewItem());
+      if (kftvi)
+      {
+        kftvi->refreshIcon();
+      }
     }
     if (url != newURL)
     {
