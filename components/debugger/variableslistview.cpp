@@ -283,7 +283,7 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str)
     str.remove(0, length + 3);
     debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::String, length);
   }
-  else if(type == "a" || type == "O")
+  else if(type == "a")
   {
     /* Example:
       s:6:"$array";a:5:{s:11:"Ingredients";a:3:{i:0;s:8:"potatoes";i:1;s:4:"salt";i:2;s:6:"pepper";}s:6:"Guests";a:4:{i:0;s:5:"Fiona";i:1;s:4:"Tori";i:2;s:4:"Neil";i:3;s:4:"Nick";}s:4:"Dogs";a:4:{i:0;s:5:"Kitty";i:1;s:5:"Tessy";i:2;s:5:"Fanny";i:3;s:5:"Cosmo";}s:7:"Numbers";a:6:{i:0;i:1;i:1;i:2;i:2;i:3;i:3;i:9;i:4;i:8;i:5;i:7;}s:6:"Letter";s:1:"L";}
@@ -297,6 +297,8 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str)
     QPtrList<DebuggerVariable> vars ;
     while(length > 0)
     {
+     //kdDebug(24002) << "VariablesListView::parsePHPVariables: length " << length << ", \"" << str << "\"" << endl;
+   
       length --;
       DebuggerVariable* var = parsePHPVariables(str);
       if(var)
@@ -305,6 +307,35 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str)
     }
     str.remove(0, 1);
     debuggervar = new DebuggerVariable(key, vars, DebuggerVariableTypes::Array);
+  }
+  else if(type == "O")
+  {
+    /* Example:
+      
+    */
+
+    // Get length of array
+    tempstring = str.left(str.find(':'));
+    str.remove(0, str.find(':') + 2);
+    tempstring = str.mid(str.find(':') + 1);
+    tempstring = tempstring.left(tempstring.find(':'));
+    length = tempstring.toUInt();
+
+    str.remove(0, str.find('{') + 1);
+    
+    QPtrList<DebuggerVariable> vars ;
+    while(length > 0)
+    {
+     //kdDebug(24002) << "VariablesListView::parsePHPVariables: length " << length << ", \"" << str << "\"" << endl;
+   
+      length --;
+      DebuggerVariable* var = parsePHPVariables(str);
+      if(var)
+        vars.append(var);
+
+    }
+    str.remove(0, 1);
+    debuggervar = new DebuggerVariable(key, vars, DebuggerVariableTypes::Object);
   }
   else if(type == "d")
   {
@@ -326,7 +357,7 @@ DebuggerVariable* VariablesListView::parsePHPVariables(QString &str)
   }
   else
   {
-    kdDebug(24002) << "VariablesListView::parsePHPVariables: Unknown variable type " << type << endl;
+    kdDebug(24002) << "VariablesListView::parsePHPVariables: Unknown variable type " << type << ", " << str << endl;
     debuggervar = new DebuggerVariable(key, i18n("<Unimplemented type>"), DebuggerVariableTypes::Error);
   }
 
