@@ -165,7 +165,7 @@ void QuantaApp::initQuanta()
   }
 
 
-  createGUI();
+  createGUI( QString::null, false /* conserveMemory */ );
 
   initPlugins  ();
   
