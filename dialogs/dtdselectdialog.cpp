@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Tue Aug 27 14:27:05 2002
+** Created: Thu Aug 29 13:55:21 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -31,18 +31,11 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
 {
     if ( !name )
 	setName( "DTDSelectDialog" );
-    resize( 337, 132 ); 
-    setCaption( tr2i18n( "Form1" ) );
-
-    messageLabel = new QLabel( this, "messageLabel" );
-    messageLabel->setGeometry( QRect( 15, 10, 295, 25 ) ); 
-    messageLabel->setText( tr2i18n( "Dialog message:\n"
-"Dialog message2:" ) );
-    messageLabel->setScaledContents( TRUE );
-    messageLabel->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter ) );
+    resize( 337, 145 ); 
+    setCaption( tr2i18n( "DTD Selector" ) );
 
     QWidget* privateLayoutWidget = new QWidget( this, "Layout1" );
-    privateLayoutWidget->setGeometry( QRect( 10, 40, 315, 48 ) ); 
+    privateLayoutWidget->setGeometry( QRect( 10, 40, 315, 60 ) ); 
     Layout1 = new QGridLayout( privateLayoutWidget, 1, 1, 0, 6, "Layout1"); 
 
     dtdCombo = new QComboBox( FALSE, privateLayoutWidget, "dtdCombo" );
@@ -65,8 +58,15 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
     Layout1->addWidget( currentDTD, 1, 1 );
 
     okButton = new QPushButton( this, "okButton" );
-    okButton->setGeometry( QRect( 135, 100, 80, 22 ) ); 
+    okButton->setGeometry( QRect( 130, 110, 80, 22 ) ); 
     okButton->setText( tr2i18n( "&OK" ) );
+
+    messageLabel = new QLabel( this, "messageLabel" );
+    messageLabel->setGeometry( QRect( 15, 10, 295, 25 ) ); 
+    messageLabel->setText( tr2i18n( "Dialog message:\n"
+"Dialog message2:" ) );
+    messageLabel->setScaledContents( TRUE );
+    messageLabel->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter ) );
 
     // signals and slots connections
 

@@ -29,44 +29,6 @@
     <property name="caption">
         <string>Form2</string>
     </property>
-    <spacer>
-        <property name="name" stdset="0">
-            <cstring>Spacer2_2</cstring>
-        </property>
-        <property name="orientation">
-            <enum>Horizontal</enum>
-        </property>
-        <property name="sizeType">
-            <enum>Expanding</enum>
-        </property>
-        <property name="sizeHint">
-            <size>
-                <width>20</width>
-                <height>20</height>
-            </size>
-        </property>
-    </spacer>
-    <spacer>
-        <property name="name" stdset="0">
-            <cstring>Spacer2</cstring>
-        </property>
-        <property name="orientation">
-            <enum>Vertical</enum>
-        </property>
-        <property name="sizeType">
-            <enum>Expanding</enum>
-        </property>
-        <property name="sizeHint">
-            <size>
-                <width>20</width>
-                <height>20</height>
-            </size>
-        </property>
-        <property name="layoutMargin" stdset="0">
-        </property>
-        <property name="layoutSpacing" stdset="0">
-        </property>
-    </spacer>
     <widget class="QLayoutWidget">
         <property name="name">
             <cstring>Layout6</cstring>
@@ -76,7 +38,7 @@
                 <x>5</x>
                 <y>6</y>
                 <width>325</width>
-                <height>130</height>
+                <height>150</height>
             </rect>
         </property>
         <grid>
