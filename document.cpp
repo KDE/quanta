@@ -804,7 +804,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
       {
         if (elementList[i].parentNode == 0L || elementList[i].global)
         {
-          completion.text = it.key();
+          completion.text = it.key().section('|', -1);
           completions->append( completion );
           break;
         } else
@@ -816,7 +816,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
           }
           if (n == elementList[i].parentNode)
           {
-            completion.text = it.key();
+            completion.text = it.key().section('|', -1);
             completions->append( completion );
             break;
           }

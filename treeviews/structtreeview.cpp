@@ -190,6 +190,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
             insertAfter = lastItemInGroup[group->name];
 
         StructTreeTag *item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), currentNode, currentNode->groupTag->name, insertAfter);
+        item->groupItem = true;
         if (insertUnder == groupItem)
         {
           groupItems[currentNode->groupTag->name] = item;
@@ -274,9 +275,11 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         if (it.key().startsWith(name))
         {
           groupElementList = & (it.data());
+          QString title = it.key().section('|', -1);
           for (uint j = 0; j < groupElementList->count(); j++)
           {
-            item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, (*groupElementList)[j].node->tag->name, insertAfter);
+            item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), (*groupElementList)[j].node, title, insertAfter);
+            static_cast<StructTreeTag*>(item)->groupItem = true;
             static_cast<StructTreeTag*>(item)->hasOpenFileMenu = group.hasFileName;
             static_cast<StructTreeTag*>(item)->fileNameRx = group.fileNameRx;
             if (first)
@@ -536,32 +539,40 @@ void StructTreeView::slotSelectTag()
     int bLine, bCol, eLine, eCol;
     if (it->node->fileName.isEmpty())
     {
-      Tag *tag = it->node->tag;
-      if (tag->single || !it->node->next)
+      if (it->groupItem && it->node->groupTag)
       {
+        Tag *tag = it->node->groupTag;
+        tag->beginPos(bLine, bCol);
         tag->endPos(eLine, eCol);
       } else
       {
-        if (tag->closingMissing && it->node->child)
+        Tag *tag = it->node->tag;
+        if (tag->single || !it->node->next)
         {
-          Node *node = it->node->child;
-          while (node->child || node->next)
-          {
-            if (node->next)
-            {
-              node = node->next;
-            } else
-            {
-              node = node->child;
-            }
-          }
-          node->tag->endPos(eLine, eCol);
+          tag->endPos(eLine, eCol);
         } else
         {
-            it->node->next->tag->endPos(eLine, eCol);
+          if (tag->closingMissing && it->node->child)
+          {
+            Node *node = it->node->child;
+            while (node->child || node->next)
+            {
+              if (node->next)
+              {
+                node = node->next;
+              } else
+              {
+                node = node->child;
+              }
+            }
+            node->tag->endPos(eLine, eCol);
+          } else
+          {
+              it->node->next->tag->endPos(eLine, eCol);
+          }
         }
+        tag->beginPos(bLine, bCol);
       }
-      it->node->tag->beginPos(bLine, bCol);
     } else
     {
       KURL url;
