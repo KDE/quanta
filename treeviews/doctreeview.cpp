@@ -124,7 +124,10 @@ QString * DocTreeView::contextHelp( QString keyword )
 
 void DocTreeView::slotDoubleClicked(QListViewItem *item )
 {
-  item->setOpen(!item->isOpen());
+  if (item)
+  {
+    item->setOpen(!item->isOpen());
+  }
 }
 
 void DocTreeView::addProjectDoc(const KURL& url)
