@@ -1234,25 +1234,6 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->tagSeparator = dtdConfig->readEntry("TagSeparator").stripWhiteSpace().at(0);
  if (dtd->tagSeparator.isNull())
      dtd->tagSeparator = dtd->attributeSeparator;
- dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
- if (!dtd->scriptName.isEmpty())
- {
-   dtd->scriptTagStart.append("<script");
-   dtd->scriptTagEnd.append("/script>");
- }
- dtd->scriptRegExpStr = dtdConfig->readEntry("ScriptRegExp");
- QStringList tagBorders = dtdConfig->readListEntry("ScriptTagBorders");
- for (uint i = 0; i < tagBorders.count(); i++)
- {
-   QString s;
-   QStringList slist = QStringList::split(" ",tagBorders[i].stripWhiteSpace());
-   s = slist[0].stripWhiteSpace();
-   dtd->scriptTagStart.append(s);
-   scriptBeginRxStr.append("|(?:"+QuantaCommon::makeRxCompatible(s)+")");
-   s = slist[1].stripWhiteSpace();
-   dtd->scriptTagEnd.append(s);
-   scriptEndRxStr.append("|("+QuantaCommon::makeRxCompatible(s)+")");
- }
 
  dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
