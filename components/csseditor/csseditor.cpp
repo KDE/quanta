@@ -2,7 +2,8 @@
                           csseditor.cpp  -  description
                              -------------------
     begin                : mer lug 23 11:20:17 CEST 2003
-    copyright            : (C) |YEAR| by si2003    email                : gulmini.luciano@student.unife.it
+    copyright            : (C) 2003 by gulmini luciano   
+    email                : gulmini.luciano@student.unife.it
  ***************************************************************************/
 
 /***************************************************************************
@@ -162,6 +163,17 @@ void CSSEditor::setCurrentPropOn(const QString& s){
    setCurrentPropOn(property);   
  }
 
+ void CSSEditor::setSidesOfPropertyBorderOn(const QString& s){
+   static_cast<myCheckListItem*>(lvVisual->findItem( "border-top",0 ))->setOn(true);
+   static_cast<myCheckListItem*>(lvVisual->findItem( "border-right",0 ))->setOn(true);
+   static_cast<myCheckListItem*>(lvVisual->findItem( "border-bottom",0 ))->setOn(true);
+   static_cast<myCheckListItem*>(lvVisual->findItem( "border-left",0 ))->setOn(true); 
+   static_cast<myCheckListItem*>(lvVisual->findItem( "border-top-"+s,0 ))->setOn(true);
+   static_cast<myCheckListItem*>(lvVisual->findItem( "border-right-"+s,0 ))->setOn(true);
+   static_cast<myCheckListItem*>(lvVisual->findItem( "border-bottom-"+s,0 ))->setOn(true);
+   static_cast<myCheckListItem*>(lvVisual->findItem( "border-left-"+s,0 ))->setOn(true);  
+ }
+ 
  void CSSEditor::hidePreviewer(){ 
    m_previewer->view()->hide(); 
    fPreview->setEnabled(false);
@@ -432,6 +444,99 @@ void CSSEditor::checkProperty(const QString& v){
       p=static_cast<myCheckListItem*>(p->parent());
     }
   }
+  
+  if(m_currentProp->text(0) =="border-style" ){
+    setSidesOfPropertyBorderOn("style");
+    QStringList values = QStringList::split(" ",v.stripWhiteSpace());
+    addProperty("border-top-style",values[0]);
+    switch(values.count()) {
+      case 1: 
+                   addProperty("border-right-style",values[0]);
+                   addProperty("border-bottom-style",values[0]);
+                   addProperty("border-left-style",values[0]);
+                   break;
+                   
+      case 2: 
+                   addProperty("border-right-style",values[1]);
+                   addProperty("border-bottom-style",values[0]);
+                   addProperty("border-left-style",values[1]);
+                   break;
+                   
+      case 3: 
+                   addProperty("border-right-style",values[1]);
+                   addProperty("border-bottom-style",values[2]);
+                   addProperty("border-left-style",values[1]);
+                   break;
+                   
+      case 4: 
+                   addProperty("border-right-style",values[1]);
+                   addProperty("border-bottom-style",values[2]);
+                   addProperty("border-left-style",values[3]);break;
+    }
+  }
+  else
+  if(m_currentProp->text(0) =="border-width" ){
+    setSidesOfPropertyBorderOn("width");
+    QStringList values = QStringList::split(" ",v.stripWhiteSpace());
+    addProperty("border-top-width",values[0]);
+    switch(values.count()) {
+      case 1: 
+                   addProperty("border-right-width",values[0]);
+                   addProperty("border-bottom-width",values[0]);
+                   addProperty("border-left-width",values[0]);
+                   break;
+                   
+      case 2: 
+                   addProperty("border-right-width",values[1]);
+                   addProperty("border-bottom-width",values[0]);
+                   addProperty("border-left-width",values[1]);
+                   break;
+                   
+      case 3: 
+                   addProperty("border-right-width",values[1]);
+                   addProperty("border-bottom-width",values[2]);
+                   addProperty("border-left-width",values[1]);
+                   break;
+                   
+      case 4: 
+                   addProperty("border-right-width",values[1]);
+                   addProperty("border-bottom-width",values[2]);
+                   addProperty("border-left-width",values[3]);break;
+    }
+  }
+  else
+  if(m_currentProp->text(0) =="border-color" ){
+    setSidesOfPropertyBorderOn("color");
+    QStringList values = QStringList::split(" ",v.stripWhiteSpace());
+    addProperty("border-top-color",values[0]);
+    switch(values.count()) {
+      case 1: 
+                   addProperty("border-right-color",values[0]);
+                   addProperty("border-bottom-color",values[0]);
+                   addProperty("border-left-color",values[0]);
+                   break;
+                   
+      case 2: 
+                   addProperty("border-right-color",values[1]);
+                   addProperty("border-bottom-color",values[0]);
+                   addProperty("border-left-color",values[1]);
+                   break;
+                   
+      case 3: 
+                   addProperty("border-right-color",values[1]);
+                   addProperty("border-bottom-color",values[2]);
+                   addProperty("border-left-color",values[1]);
+                   break;
+                   
+      case 4: 
+                   addProperty("border-right-style",values[1]);
+                   addProperty("border-bottom-style",values[2]);
+                   addProperty("border-left-style",values[3]);break;
+    }
+  }
+  else
+  
+  
   addProperty(m_currentProp->text(0),v);
   emit signalUpdatePreview();
 }

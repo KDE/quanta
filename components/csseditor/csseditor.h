@@ -2,7 +2,8 @@
                           csseditor.h  -  description
                              -------------------
     begin                : mer lug 23 11:20:17 CEST 2003
-    copyright            : (C) |YEAR| by si2003    email                : simone@localhost
+    copyright            : (C) 2003 by gulmini luciano    
+    email                : gulmini.luciano@student.unife.it
  ***************************************************************************/
 
 /***************************************************************************
@@ -80,6 +81,7 @@ class CSSEditor : public CSSEditorS
     void setCurrentPropOn(const QString& s);
     void addProperty(const QString& property, const QString& value) { m_properties[property] = value; }
     void addAndSetPropertyOn(const QString& property, const QString& value);
+    void setSidesOfPropertyBorderOn(const QString& s);
 
   private slots:
     void checkProperty(const QString&);   
