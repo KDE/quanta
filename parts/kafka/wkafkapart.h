@@ -86,19 +86,30 @@ public slots:
 	void slotUpdateQuantaTree();
 
 	/**
-	 * Called by Kafka whenever a DOM::Node is created.
+	 * Called whenever a DOM::Node is created.
 	 */
-	void slotDomNodeCreated(DOM::Node *_node);
+	void slotDomNodeCreated(DOM::Node _domNode);
 
 	/**
-	 * Called by Kafka whenever a DOM::Node is modified.
+	 * Called whenever DOM::Node's attributes are modified.
 	 */
-	void slotDomNodeModified(DOM::Node *_node);
+	void slotDomNodeModified(DOM::Node _domNode);
 
 	/**
-	 * Called by Kafka whenever a DOM::Node is about to be deleted.
+	 * Called whenever a DOM::Node is about to be deleted.
 	 */
-	void slotDomNodeAboutToBeDeleted(DOM::Node *_node);
+	void slotDomNodeAboutToBeDeleted(DOM::Node _domNode);
+
+	/**
+	 * Called whenever a DOM::Node get the focus
+	 */
+	void slotDomNodeGetFocus(DOM::Node _domNode);
+
+signals:
+	/**
+	 * Called when a DOM::Node get the focus
+	 */
+	void newCursorPosition(int col, int row);
 
 private:
 	QString getSpecialChar(QString encodedChar);
@@ -112,6 +123,8 @@ private:
 	bool _docLoaded;
 	void synchronizeXMLTag(Node* _node);
 	void synchronizeTextTag(Node* _node);
+	Node *getNextNode(Node *_node, bool &goingTowardsRootNode);
+	Node *searchCorrespondingNode(DOM::Node _domNode);
 };
 
 #endif

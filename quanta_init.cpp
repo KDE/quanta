@@ -463,6 +463,9 @@ void QuantaApp::initView()
   connect(m_view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
 
   connect(sTab, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
+  #ifdef BUILD_KAFKAPART
+  connect(kafkaPart, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
+  #endif
   connect(sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
   connect(sTab, SIGNAL(needReparse()), SLOT(slotForceReparse()));
   connect(sTab, SIGNAL(parsingDTDChanged(const QString&)), SLOT(slotParsingDTDChanged(const QString&)));

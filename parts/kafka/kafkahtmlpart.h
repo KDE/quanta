@@ -47,25 +47,15 @@ class KafkaDOMTreeDialog;
 class DOMString;
 class KafkaHTMLPartPrivate;
 
-class PluginEntry: public QObject
-{
-    Q_OBJECT
-public:
-    PluginEntry(QObject *parent):QObject(parent){;}
-    ~PluginEntry(){;}
-    KafkaHTMLPartPlugin *plugin;
-    QStringList tags;                       
-};
-
 /*
  * The main kafka class which handles user input(keyboard, mouse), DOM object
  * editing.
  */
- 
+
 class KafkaHTMLPart : public KHTMLPart
 {
 Q_OBJECT
-public: 
+public:
 	KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, const char *name);
 	~KafkaHTMLPart();
 
@@ -74,7 +64,7 @@ public:
 	 * Called by KafkaPart to create a new document
 	 */
 	void newDocument();
-	
+
 	/**
 	 * Category: Standard Functions
 	 * Called by KafkaPart to open a document
@@ -90,7 +80,7 @@ public:
 	 * @return Returns true if it worked, else false
 	 */
 	bool saveDocument(const KURL &url);
-	
+
 	/**
 	 * Category: Standard Functions
 	 * Called by KafkaPart to set the readonly variable
@@ -104,7 +94,7 @@ public:
 	 * @return Return wheter the part is writeable or not
 	 */
 	bool readOnly();
-	
+
 	/**
 	 * Category: Standart Function
 	 * Called to create new DOM::Nodes
@@ -112,43 +102,46 @@ public:
 	 * @return Return the DOM::Node created
 	 */
 	 DOM::Node createNode(QString NodeName);
-	
+
 	/**
 	 * Category: Temporary function
-	 * For debugging purposes only
+	 * For debugging purposes only, shows the kafka DOM tree
 	 * @return Return the view widget
 	 */
 	 void showDomTree();
-	
+
 public slots:
 	/**
 	 * Category: HTML Editing Functions
-	 * Inserts a DOM::Element into the DOM::Document, after or before the panode
-	 * @param element The element to add into the document
-	 * @param paelement The element before/after element
-	 * @param insertBefore Specifies wheter to add element before panode or after panode
+	 * Inserts a DOM::Node into the DOM::Document, after or before the panode.
+	 * Should be used instead of DOM::Node::appendChild().
+	 * @param node The node to add into the document
+	 * @param panode The node before/after node
+	 * @param insertBefore Specifies wheter to add node before panode or after panode
 	 * @return Returns true if it worked, else false
 	 */
-	bool insertElement(DOM::Element element, DOM::Node panode, bool insertBefore);
-	
-	/**
-	 * Category: HTML Editing Functions
-	 * Inserts a DOM::Element into the DOM::Document, after or before the current DOM::Node
-	 * @param node The element to add into the document
-	 * @param insertBefore Specifies wheter to add element before the current node
-	 * or after the current node
-	 * @return Returns true if it worked, else false
-	 */
-	bool insertElement(DOM::Element node, bool insertBefore);
+	bool insertNode(DOM::Node node, DOM::Node panode, bool insertBefore);
 
 	/**
 	 * Category: HTML Editing Functions
-	 * Removes a DOM::Element from the DOM::Document
-	 * @param element The element to remove from the document
+	 * Inserts a DOM::Node into the DOM::Document, after or before the current DOM::Node.
+	 * Should be used instead of DOM::Node::appendChild().
+	 * @param node The node to add into the document
+	 * @param insertBefore Specifies wheter to add node before the current node
+	 * or after the current node
+	 * @return Returns true if it worked, else false
+	 */
+	bool insertNode(DOM::Node node, bool insertBefore);
+
+	/**
+	 * Category: HTML Editing Functions
+	 * Removes a DOM::Node from the DOM::Document.
+	 * Should be used instead of DOM::Node::removeChild()
+	 * @param node The Node to remove from the document
 	 * @retun Returns true if it worked, else false
 	 */
-	bool removeElement(DOM::Element element);
-	
+	bool removeNode(DOM::Node node);
+
 	/**
 	 * Category: HTML Editing Functions
 	 * Adds text into a DOM::Node of type DOM::Node::TEXT_NODE
@@ -170,7 +163,6 @@ public slots:
 	/**
 	 * Category: HTML Editing Functions
 	 * Moves the cursor x-characters to the left
-	 * FIXME: doesn't work for an value > 1
 	 * @param value Specifies the charachters to move to the left
 	 */
 	void nextOffset(int value);
@@ -178,26 +170,24 @@ public slots:
 	/**
 	 * Category: HTML Editing Functions
 	 * Moves the cursor x-characters to the right
-	 * FIXME: doesn't work for an value > 1
 	 * @param value Specifies the charachters to move to the right
 	 */
 	void previousOffset(int value);
 
 	/**
-	 * Choose the right plugin on node change
-         */
-	void setNode(const DOM::Node &);
-
-	/**
-	* Activate changed node properties
+	 * Puts all the child Text DOM::Node  into a "normal" form where only
+	* structure (e.g., elements, comments, processing instructions, CDATA
+	* sections, and entity references) separates Text nodes, i.e., there are
+	* neither adjacent Text nodes nor empty Text nodes.
+	* @param _node This node is the parent node of the childs normalized
 	*/
-	void setCurrentNode(DOM::Node);
-	
+	void normalize(DOM::Node _node);
+
 	/**
 	 * Set the cursor after having loaded the DOM tree from scratch
 	 */
 	void finishedLoading();
-	
+
 signals:
 	/**
 	 * Category: HTML Editing Signal
@@ -211,21 +201,21 @@ signals:
 	 * @param _node is the node created
 	 */
 	void domNodeCreated(DOM::Node _node);
-	        
+
 	/**
 	 * Category: HTML Editing Signal
-	 * Is emitted whenever a DOM node has its properties changed
+	 * Is emitted whenever a DOM node has its properties modified
 	 * @param _node is the node modified
 	 */
-	void domNodeChanged(DOM::Node _node);
-        
+	void domNodeModified(DOM::Node _node);
+
 	/**
 	 * Category: HTML Editing Signal
 	 * Is emitted whenever a DOM node is about to be deleted
 	 * @param _node is the node to be deleted
-	 */        
+	 */
 	void domNodeIsAboutToBeDeleted(DOM::Node _node);
-	
+
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
 
@@ -235,12 +225,7 @@ protected:
 	virtual void khtmlDrawContentsEvent(khtml::DrawContentsEvent *event);
 
 	virtual void timerEvent(QTimerEvent *e );
-	
-	void loadPlugins();
-	KafkaHTMLPartPlugin *loadPlugin(const QString& name);
-	
-	QPtrList<PluginEntry> plugins;
-	QDockWindow *tagEditorParent;
+
 
 private:
 //for debugging purposes

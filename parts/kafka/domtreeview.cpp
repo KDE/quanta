@@ -30,8 +30,8 @@ DOMTreeView::DOMTreeView(QWidget *parent, KHTMLPart *currentpart, const char * n
     addColumn("Name");
     addColumn("Value (limited to 20 char)");
     addColumn("lenght");
-    addColumn("HTML Tag");
-    addColumn("Renderer");
+    addColumn("ID");
+    addColumn("");
     setSorting(-1);
     part = currentpart;
     connect(part, SIGNAL(nodeActivated(const DOM::Node &)), this, SLOT(showTree(const DOM::Node &)));
@@ -100,7 +100,14 @@ void DOMTreeView::recursive(const DOM::Node &pNode, const DOM::Node &node)
 	    len = (static_cast<DOM::CharacterData>(node)).length();
 	else
 	    len = 0;
-	cur_item = new QListViewItem(m_itemdict[pNode.handle()], node.nodeName().string(), val, QString::number(len) );
+	cur_item = new QListViewItem(m_itemdict[pNode.handle()], node.nodeName().string(), val, QString::number(len), QString::number(node.elementId()) );
+	unsigned long i;
+	QListViewItem *tmp = new QListViewItem(cur_item, "properties");
+	for(i = 0; i < node.attributes().length(); i++)
+	{
+		new QListViewItem(tmp, node.attributes().item(i).nodeName().string(),
+			node.attributes().item(i).nodeValue().string());
+	}
     }
 
     if(node.handle())
@@ -130,7 +137,7 @@ KafkaDOMTreeDialog::KafkaDOMTreeDialog(QWidget *parent, KHTMLPart *part, const c
 	: QDialog(parent, name, modal, fl)
 {
 	setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)1, 0, 0, sizePolicy().hasHeightForWidth() ) );
-	DialogLayout = new QGridLayout( this, 1, 1, 11, 6, "DialogLayout"); 
+	DialogLayout = new QGridLayout( this, 1, 1, 11, 6, "DialogLayout");
 	domview = new DOMTreeView(this, part, name);
 	domview->setTitle("Debugging KafkaHTMLPart DOM Tree ");
         DialogLayout->addWidget(domview, 1,1);

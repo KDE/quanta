@@ -79,14 +79,11 @@ void Tag::parseAttr( QString text, int &line, int &col)
    //find where the attr name begins
    while ( text[col].isSpace() && !text[col].isNull())
          col++;
-   begin = col++;
+   begin = col;
    //go to the first non-space char
    while ( !text[col].isSpace() &&  text[col] != '=' && text[col] != '>'
             && !text[col].isNull())
-   {
-     QString s = text.mid(col,1);
      col++;
-   }
    if (text[col].isNull()) break;
    if (text[col] == '=') //an attribute value comes
    {
@@ -127,6 +124,7 @@ void Tag::parseAttr( QString text, int &line, int &col)
    else           // no attribute value, the next attr comes
    {
      //FIXME: This values are not correct for every DTD
+     if(begin == col) return;//if begin == col, the "attribute" was >
      attr.name = text.mid(begin, col-begin).stripWhiteSpace();
      attr.nameLine = line;
      attr.nameCol = begin;

@@ -32,7 +32,7 @@ Node::Node( Node *parent )
   closesPrevious = false;
   insideSpecial = false;
   #ifdef BUILD_KAFKAPART
-  kafkaNode = 0L;
+  kafkaAddon = 0L;
   #endif
 }
 
@@ -57,6 +57,9 @@ Node::~Node()
     }
   }
   if ( tag ) { delete tag; tag = 0L;}
+  #ifdef BUILD_KAFKAPART
+  if(kafkaAddon) { delete kafkaAddon; kafkaAddon = 0L;}
+  #endif
 }
 
 
@@ -115,7 +118,7 @@ int Node::size()
 {
   int l = tag->size();
 #ifdef BUILD_KAFKAPART
-  l += 4*sizeof(Node*) + sizeof(QListViewItem*) + sizeof(Tag*) + 2*sizeof(DOM::Node);
+  l += 4*sizeof(Node*) + sizeof(QListViewItem*) + sizeof(Tag*) + sizeof(kNodeProperties*);
 #else
   l += 4*sizeof(Node*) + sizeof(QListViewItem*) + sizeof(Tag*);
 #endif
