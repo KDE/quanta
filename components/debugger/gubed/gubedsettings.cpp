@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 
+#include "qlineedit.h"
 #include "gubedsettings.h"
 
 GubedSettings::GubedSettings(QWidget* parent, const char* name, bool modal, WFlags fl)
@@ -24,7 +25,12 @@ GubedSettings::GubedSettings(QWidget* parent, const char* name, bool modal, WFla
 GubedSettings::~GubedSettings()
 {}
 
-/*$SPECIALIZATION$*/
+void GubedSettings::slotUseProxyToggle( bool useproxy)
+{
+    lineServerHost->setEnabled(useproxy);
+    lineServerPort->setEnabled(useproxy);
+    lineServerListenPort->setEnabled(!useproxy);
+}
 
 
 #include "gubedsettings.moc"

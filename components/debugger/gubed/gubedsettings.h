@@ -23,10 +23,13 @@ class GubedSettings : public GubedSettingsS
 {
   Q_OBJECT
 
+  public slots:
+    virtual void slotUseProxyToggle( bool useproxy);
+
   public:
     GubedSettings(QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~GubedSettings();
-    
+
 };
 
 #endif
