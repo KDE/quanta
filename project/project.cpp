@@ -811,6 +811,7 @@ void ProjectPrivate::slotAcceptCreateProject()
     m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx);
     parent->reloadTree( &(m_projectFiles), true, QStringList() );
     saveProject();
+    projectRecent->addURL(projectURL);
     // remember the project in config
     writeConfig();
   }
@@ -1202,6 +1203,7 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
     f.close();
     loadProjectXML();
     openCurrentView();
+    projectRecent->addURL(url);
     // remember the project in config
     writeConfig();
   } else
@@ -1238,7 +1240,6 @@ void ProjectPrivate::loadProject(const KURL &url)
       slotCloseProject();
     }
     loadProjectFromTemp(url, tmpFile);
-    projectRecent->addURL(url);
   } else
   {
     parent->hideSplash();

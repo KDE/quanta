@@ -22,7 +22,9 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kfileitem.h>
+#include <kstringhandler.h>
 
+#include "qextfileinfo.h"
 #include "quantanetaccess.h"
 #include "project.h"
 
@@ -171,17 +173,23 @@ void QuantaNetAccess::checkProjectInsert(const KURL& target, QWidget* window, bo
 {
   if ( !Project::ref()->hasProject()) return;
   KURL saveUrl = adjustURL(target);
-  if ( Project::ref()->projectBaseURL().isParentOf(saveUrl) && !Project::ref()->contains(saveUrl) )
+  KURL baseURL = Project::ref()->projectBaseURL();
+  if ( baseURL.isParentOf(saveUrl) && !Project::ref()->contains(saveUrl) )
   {
-    if ( !confirm ||
-      KMessageBox::Yes == KMessageBox::questionYesNo(window, i18n("<qt>Do you want to add <br><b>%1</b><br> to the project?</qt>").arg(saveUrl.prettyURL(0, KURL::StripFileProtocol)), i18n("Add to Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "AddToProject") )
+    if (confirm)
     {
-      KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, saveUrl);
-      if ( fileItem.isDir() )
-        Project::ref()->slotAddDirectory(saveUrl, false);
-      else
-        Project::ref()->slotInsertFile(saveUrl);
+      QString nice = QExtFileInfo::toRelative(saveUrl, baseURL).path();
+      nice = KStringHandler::lsqueeze(nice, 60);
+      if ( KMessageBox::Yes != KMessageBox::questionYesNo(window, i18n("<qt>Do you want to add <br><b>%1</b><br> to the project?</qt>").arg(nice), i18n("Add to Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "AddToProject") )
+      {
+        return;
+      }
     }
+    KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, saveUrl);
+    if ( fileItem.isDir() )
+      Project::ref()->slotAddDirectory(saveUrl, false);
+    else
+      Project::ref()->slotInsertFile(saveUrl);
   }
 }
 
@@ -190,16 +198,20 @@ bool QuantaNetAccess::checkProjectRemove(const KURL& src, QWidget* window, bool 
 {
   if ( !Project::ref()->hasProject() ) return true;
   KURL url = adjustURL(src);
-  if ( Project::ref()->projectBaseURL().isParentOf(url) && Project::ref()->contains(url) )
+  KURL baseURL = Project::ref()->projectBaseURL();
+  if ( baseURL.isParentOf(url) && Project::ref()->contains(url) )
   {
-    if ( !confirm ||
-          KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") )
+    if (confirm)
     {
-      if (remove)
-        Project::ref()->slotRemove(url);
-    } else {
-      return false;
+       QString nice = QExtFileInfo::toRelative(url, baseURL).path();
+      nice = KStringHandler::lsqueeze(nice, 60);
+      if ( KMessageBox::Yes != KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(nice), i18n("Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") )
+      {
+        return false;
+      }
     }
+    if (remove)
+      Project::ref()->slotRemove(url);
   }
   return true;
 }
@@ -212,20 +224,24 @@ bool QuantaNetAccess::checkProjectDel(const KURL& src, QWidget* window, bool con
   {
     if ( Project::ref()->projectBaseURL().isParentOf(url) && Project::ref()->contains(url) )
     {
-      if ( !confirm ||
-            KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b><br> and remove it from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Delete & Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteAndRemoveFromProject") )
+      if (confirm)
       {
-        Project::ref()->slotRemove(url);
-        return true;
-      } else
-      {
-        return false;
+        QString nice = url.prettyURL(0, KURL::StripFileProtocol);
+        nice = KStringHandler::csqueeze(nice, 60);
+        if ( KMessageBox::Yes != KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b><br> and remove it from the project?</qt>").arg(nice), i18n("Delete & Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteAndRemoveFromProject") )
+        {
+          return false;
+        }
       }
+      Project::ref()->slotRemove(url);
+      return true;
     }
   }
   // confirm normal delete if wanted
   if (confirm) {
-    return (KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b>?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Delete File or Folder"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteFileOrFolder") );
+    QString nice = url.prettyURL(0, KURL::StripFileProtocol);
+    nice = KStringHandler::csqueeze(nice, 60);
+    return (KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b>?</qt>").arg(nice), i18n("Delete File or Folder"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteFileOrFolder") );
   }
   return true;
 }

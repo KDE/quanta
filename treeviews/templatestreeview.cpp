@@ -448,7 +448,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
         }
         if (proceed)
         {
-          if (!QuantaNetAccess::upload(tempFile->name(), url, this, false))
+          if (!QuantaNetAccess::upload(tempFile->name(), url, m_parent, false))
           {
             KMessageBox::error(this,i18n("<qt>Could not write to file <b>%1</b>.<br>Check if you have rights to write there or that your connection is working.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
           }

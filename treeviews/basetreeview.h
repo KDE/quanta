@@ -297,6 +297,10 @@ protected:
   QString m_projectName;
   KURL m_projectBaseURL;
   FileInfoDlg* fileInfoDlg;
+  /** the parent of the treeview 
+      the passwords are cached there 
+    */
+  QWidget * m_parent;
 
   BaseTreeViewToolTip * m_tooltip;
   // some stuff for renaming

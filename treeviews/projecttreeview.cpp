@@ -30,6 +30,7 @@
 #include <kpopupmenu.h>
 #include <kpropertiesdialog.h>
 #include <kapplication.h>
+#include <kstringhandler.h>
 
 // app includes
 #include "projecttreeview.h"
@@ -374,8 +375,10 @@ void ProjectTreeView::slotRemoveFromProject(int askForRemove)
   if (item)
   {
     KURL url = currentURL();
+    QString nice = QExtFileInfo::toRelative(url, m_projectBaseURL).prettyURL(0, KURL::StripFileProtocol);
+    nice = KStringHandler::lsqueeze(nice, 60);
     if ( !askForRemove ||
-         KMessageBox::warningYesNo(this,i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") == KMessageBox::Yes )
+         KMessageBox::warningYesNo(this,i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(nice), i18n("Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") == KMessageBox::Yes )
     {
       if ( currentKFileTreeViewItem()->isDir() ) url.adjustPath(+1);
       emit removeFromProject(url);

@@ -277,6 +277,7 @@ void BaseTreeBranch::reopenFolder()
 BaseTreeView::BaseTreeView(QWidget *parent, const char *name)
 : KFileTreeView(parent, name), fileInfoDlg(0), m_saveOpenFolder(false)
 {
+  m_parent = parent; 
   QToolTip::remove(viewport());  // remove the tooltip from QListView
   m_tooltip = new BaseTreeViewToolTip(viewport(), this);
   setFrameStyle( Panel | Sunken );
@@ -566,7 +567,7 @@ void BaseTreeView::slotPaste()
     KURL url = currentURL();
     if ( ! currentKFileTreeViewItem()->isDir() )
       url.setFileName("");   // don't paste on files but in dirs
-    QuantaNetAccess::dircopy(list, url, this, true);
+    QuantaNetAccess::dircopy(list, url, m_parent, true);
   }
 }
 
@@ -584,7 +585,7 @@ void BaseTreeView::slotDelete()
   KURL url = currentURL();
   if (currentKFileTreeViewItem()->isDir())
     url.adjustPath(+1);
-  QuantaNetAccess::del(url, this, true);
+  QuantaNetAccess::del(url, m_parent, true);
 }
 
 
@@ -799,13 +800,13 @@ void BaseTreeView::slotDropped (QWidget *, QDropEvent * /*e*/, KURL::List& fileL
   switch ( result ) {
     case 1  : setShowToolTips(false);
               setDragEnabled(false);
-              QuantaNetAccess::dircopy(fileList, dest, this, true);
+              QuantaNetAccess::dircopy(fileList, dest, m_parent, true);
               setDragEnabled(true);
               setShowToolTips(tooltip);
               return;
     case 2  : setShowToolTips(false);
               setDragEnabled(false);
-              QuantaNetAccess::move(fileList, dest, this, true);
+              QuantaNetAccess::move(fileList, dest, m_parent, true);
               setDragEnabled(true);
               setShowToolTips(tooltip);
               return;
@@ -946,7 +947,7 @@ void BaseTreeView::doRename(KFileTreeViewItem* kftvi, const QString & newName)
     //start the rename job
       oldURL.adjustPath(-1);
       newURL.adjustPath(-1);
-      if (!QuantaNetAccess::file_move(oldURL, newURL, -1, true, false, this, true))
+      if (!QuantaNetAccess::file_move(oldURL, newURL, -1, true, false, m_parent, true))
       {
         kftvi->setText(0, kftvi->fileItem()->text());  // reset the text
       }
@@ -1079,7 +1080,7 @@ void BaseTreeView::slotCreateSiteTemplate()
       tar.close();
    } else
       error = true;
-   if (!QuantaNetAccess::copy(KURL::fromPathOrURL(tempFile->name()), targetURL, this, false))
+   if (!QuantaNetAccess::copy(KURL::fromPathOrURL(tempFile->name()), targetURL, m_parent, false))
      error = true;
 
    if (error)
