@@ -110,7 +110,11 @@ bool QuantaKPartPlugin::run()
     QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
     stack->raiseWidget(m_part->widget());
     m_part->widget()->show();
+
     setRunning(TRUE);
+
+	emit pluginStarted();
+	
     return TRUE;
   }
   return FALSE;
@@ -130,6 +134,8 @@ bool QuantaKPartPlugin::unload()
   stack->raiseWidget(0);
 
   setRunning(FALSE);
+
+  emit pluginStopped();
   
   return TRUE;
 }

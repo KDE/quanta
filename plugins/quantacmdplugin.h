@@ -42,15 +42,30 @@ protected:
   bool m_firstOutput;
   KProcess *m_process;
 public slots:
+  /** Stops the command process */
   virtual bool unload();
+  /** Loads the plugin */
+  /** Prepares the plugin including locating the program, setting command line arguments and windows for output */
   virtual bool load();
+  /** Runs the command */
   virtual bool run();
+  /** Returns if the plugin should be toggled for actions */
   virtual bool toggle() {return QuantaPlugin::toggle();}
+  /** Returns TRUE if the plugin is currently loaded */
   virtual bool isLoaded();
+signals:
+  void wroteStdout(const QString &);
+  void wroteStderr(const QString &);
+protected:
   /** Does post process cleanup */
   void cleanupProcess(KProcess *);
-  /** Writes (inserts or appends) process' output */
-  void writeOutput(KProcess *, char *, int);
+  /** Writes (inserts or appends) processes stdout */
+  void writeStdout(KProcess *, char *, int);
+  /** Writes (inserts or appends) processes stderr */
+  void writeStderr(KProcess *, char *, int);
+  /** Creates a QString from an array of char */
+  QString makeQString(const char *, int);
+
 };
 
 #endif

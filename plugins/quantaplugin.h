@@ -95,6 +95,9 @@ public slots:
   void setStandardName(const QString& a_stdName);
   /** No descriptions */
   QString standardName();
+signals:
+  void pluginStarted();
+  void pluginStopped();
 protected:
   /** Superficial name of plugin */
   QString m_fileName;

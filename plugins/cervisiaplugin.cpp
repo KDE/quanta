@@ -52,7 +52,11 @@ bool CervisiaPlugin::run()
     QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
     stack->raiseWidget(m_part->widget());
     m_part->widget()->show();
+
     setRunning(TRUE);
+
+	emit pluginStarted();
+
     return TRUE;
   }
   return FALSE;
@@ -72,6 +76,8 @@ bool CervisiaPlugin::unload()
   stack->raiseWidget(0);
 
   setRunning(FALSE);
+
+  emit pluginStopped();
 
   return TRUE;
 }
