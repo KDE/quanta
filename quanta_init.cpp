@@ -36,6 +36,7 @@
 
 // include files for KDE
 #include <kaccel.h>
+#include <kapplication.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>

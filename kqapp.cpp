@@ -65,14 +65,16 @@ KQApplication::KQApplication()
 
    KGlobal::dirs()->addPrefix(PREFIX);
 
-   if (args->isSet("logo")) splash = new KSplash();
-
-   if (isRestored())
+//FIXME: Do not hide the problem, but really fix the session restoration.
+//I have no idea how to do it, but it may be broken because of delayed
+//initialization in QuantaApp
+/*   if (isRestored())
    {
      RESTORE(QuantaApp);
    }
-   else
+   else */
    {
+     if (args->isSet("logo")) splash = new KSplash();
      quantaApp = new QuantaApp();
      setMainWidget(quantaApp);
      QTimer::singleShot(10, this, SLOT( slotInit()));
@@ -107,7 +109,7 @@ int KQUniqueApplication::newInstance()
   {
     KWin::setActiveWindow(mainWidget()->winId());
     quantaApp = static_cast<QuantaApp*>(mainWidget());
-    for (int i = 0; i < args->count(); i++) 
+    for (int i = 0; i < args->count(); i++)
     {
       quantaApp->slotFileOpen(args->url(i), quantaApp->defaultEncoding());  // load initial files
     }

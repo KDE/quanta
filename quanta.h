@@ -117,8 +117,6 @@ public:
   QuantaApp();
   ~QuantaApp();
 
-  /** Delayed initialization. */
-  void initQuanta();
   QuantaDoc  *getDoc()   { return doc; };
   QuantaView *getView()  { return view;};
   Project *getProject()  { return project; };
@@ -163,6 +161,9 @@ public:
   void reparse(bool force);
 
 public slots:
+
+  /** Delayed initialization. */
+  void initQuanta();
 
   void slotFileNew ();
   void slotFileOpen();
