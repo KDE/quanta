@@ -14,6 +14,7 @@ Version 3.3.2 (Release date: xx-10-2004; Started 07-10-2004):
 	  various problems like non-responding Quanta after upload and possibly the
 	  bug described in #88892.
         - don't try to add a newly created action to a non-existent All toolbar.
+	- don't crash on exist if the user removed an action
 
   - improvements:
   	 - recognize one-line PHP comments starting with #

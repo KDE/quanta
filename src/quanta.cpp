@@ -2800,6 +2800,9 @@ void QuantaApp::slotDeleteAction(KAction *action)
         break;
       }
     }
+#if KDE_IS_VERSION(3,2,90)
+    guiClient->actionCollection()->take(action);
+#endif
   }
   action->unplugAll();
   delete action;
