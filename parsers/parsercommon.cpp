@@ -87,7 +87,9 @@ Node* createTextNode(Document *write, Node *node, int eLine, int eCol, Node *par
   if (node)
   {
     node->tag->endPos(bLine, bCol);
-  }
+  } else
+  if (parentNode)
+    parentNode->tag->endPos(bLine, bCol);
   if (parentNode)
     dtd = parentNode->tag->dtd();
   eCol--;
