@@ -31,6 +31,15 @@
   *@author Andras Mantia
   */
 
+/**
+  Declare Kate::Document before ::Document.
+  Otherwise --enable-final could break by #including this file
+  before <kate/document.h>.
+  */
+namespace Kate {
+  class Document;
+}
+
 class Document;
 
 #define MAX_ATTR_NUM 100
