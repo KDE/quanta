@@ -97,6 +97,7 @@
 #include "scripttreeview.h"
 #include "toolbartabwidget.h"
 
+#include "quantaplugin.h"
 #include "quantaplugininterface.h"
 
 
@@ -305,6 +306,7 @@ void QuantaInit::initQuanta()
   infoCss += "/info.css";
   KIO::NetAccess::copy(KURL().fromPathOrURL(qConfig.globalDataDir + resourceDir + "scripts/info.css"), KURL().fromPathOrURL(infoCss));
 
+  checkRuntimeDependencies();
 }
 
 void QuantaInit::initToolBars()
@@ -1269,6 +1271,26 @@ void QuantaInit::loadVPLConfig()
   qConfig.kafkaRefreshDelay = m_config->readNumEntry("Kafka refresh delay", 4000);
   /**reloadUpdateTimers();*/
 #endif
+}
+
+void QuantaInit::checkRuntimeDependencies()
+{
+  QString stdErrorMsg = i18n("<br><b>-    %1</b> [<i>%2</i>] - %3 will not be available;");
+  QString errorStr;
+  if (KStandardDirs::findExe("kmdr-executor").isNull())
+    errorStr += QString(stdErrorMsg).arg(i18n("Kommander")).arg("http://kommander.kdewebdev.org").arg(i18n("various script based dialogs including the Quick Start dialog"));
+  if (KStandardDirs::findExe("tidy").isNull())
+    errorStr += QString(stdErrorMsg).arg("Tidy").arg("http://tidy.sourceforge.net").arg(i18n("HTML syntax checking"));
+  if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("KFileReplace")))
+    errorStr += QString(stdErrorMsg).arg("KFileReplace").arg("http://kfilereplace.kdewebdev.org").arg(i18n("search and replace in files"));
+  if (!QuantaPlugin::validatePlugin(m_quanta->m_pluginInterface->plugin("CVS Management (Cervisia)")))
+    errorStr += QString(stdErrorMsg).arg("Cervisia").arg("http://www.kde.org/apps/cervisia").arg(i18n("CVS management"));
+
+  if (!errorStr.isEmpty())
+  {
+      errorStr[errorStr.length() - 1] = '.';
+      KMessageBox::information(m_quanta, "<qt>" + i18n("Some applications required for full functionality are missing:<br>") + errorStr + "<br><br>You may download the applications from the specified locations.</qt>", i18n("Missing applications"), "RuntimeDependencyCheck");
+  }
 }
 
 #include "quanta_init.moc"

@@ -73,6 +73,7 @@ private:
   void initDocument();
   void initView();
   void initProject();
+  void checkRuntimeDependencies();
 
   KMdiToolViewAccessor* addToolTreeView(QWidget *widget, const QString &name, const QPixmap &icon, KDockWidget::DockPosition position);
 
