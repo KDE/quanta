@@ -64,6 +64,8 @@ TagAttributeTree::~TagAttributeTree()
 
 void TagAttributeTree::setCurrentNode(Node *node)
 {
+  if(m_node == node)
+    return;
   m_node = node;
   emit newNodeSelected(node);
   if (!rebuildEnabled)
