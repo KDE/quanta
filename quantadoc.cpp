@@ -291,6 +291,7 @@ void QuantaDoc::closeDocument()
 
 void QuantaDoc::closeAll()
 {
+  disconnect( quantaApp->view->writeTab, SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
   Document *w;
   do
   {
@@ -304,12 +305,13 @@ void QuantaDoc::closeAll()
             fileWatcher->removeFile(w->url().path());
       } else
       {
+        connect( quantaApp->view->writeTab, SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
         return; //save failed, so don't close anything
       }
     }
 	}
 	while ( quantaApp->view->removeWrite());
-
+  connect( quantaApp->view->writeTab, SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
   //all documents were removed, so open an empty one
 	openDocument( KURL() );
 }

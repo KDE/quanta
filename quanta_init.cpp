@@ -534,9 +534,11 @@ void QuantaApp::saveOptions()
     config->writeEntry("Version", VERSION); // version
     config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     config->writeEntry ("PHP Debugger style", debuggerStyle);
+    view->write()->writeConfig(config);
+
     config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(config);
-    doc    ->writeConfig(config); // kwrites
+    //doc    ->writeConfig(config); // kwrites
     project->writeConfig(config); // project    
     writeDockConfig(config);
     saveMainWindowSettings(config);
@@ -743,7 +745,7 @@ bool QuantaApp::queryClose()
     canExit = doc->saveAll(false);
     if (canExit)
     {
-      //avoid double question about saving files, so set the "modified"
+      disconnect( view->writeTab, SIGNAL(currentChanged(QWidget*)), this, SLOT(slotUpdateStatus(QWidget*)));      //avoid double question about saving files, so set the "modified"
       //flags to "false". This is safe here.
       Document *w;
       for (int i = view->writeTab->count() -1; i >=0; i--)
