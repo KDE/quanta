@@ -1129,9 +1129,17 @@ void QuantaApp::initActions()
 
     // Tool actions
 
-    (void) new KAction( i18n( "Context &Help..." ), CTRL+Key_H, 
+    (void) new KAction( i18n( "&Context Help..." ), CTRL+Key_H,
                         this, SLOT( contextHelp() ),
                         actionCollection(), "context_help" );
+
+    (void) new KAction( i18n( "&Quanta Homepage" ), 0,
+                        this, SLOT( slotHelpHomepage() ),
+                        actionCollection(), "help_homepage" );
+
+    (void) new KAction( i18n( "Make a &Donation" ), 0,
+                        this, SLOT( slotMakeDonation() ),
+                        actionCollection(), "help_donation" );
 
     (void) new KAction( i18n( "Tag &Attributes" ), ALT+Key_Down,
                         doc, SLOT( slotAttribPopup() ),

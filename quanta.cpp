@@ -89,6 +89,7 @@
 #include "dialogs/grepdialog.h"
 #include "dialogs/katefiledialog.h"
 #include "dialogs/dtdselectdialog.h"
+#include "dialogs/donationdialog.h"
 
 #include "treeviews/filestreeview.h"
 #include "treeviews/fileslistview.h"
@@ -1996,6 +1997,20 @@ void QuantaApp::slotShowCompletion()
 void QuantaApp::slotShowCompletionHint()
 {
   view->write()->codeCompletionHintRequested();
+}
+
+/** No descriptions */
+void QuantaApp::slotMakeDonation()
+{
+ DonationDialog *dlg = new DonationDialog(this);
+ dlg->exec();
+ delete dlg;
+}
+
+/** No descriptions */
+void QuantaApp::slotHelpHomepage()
+{
+  kapp->invokeBrowser("http://quanta.sourceforge.net");
 }
 
 #include "quanta.moc"

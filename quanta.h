@@ -260,6 +260,10 @@ public slots:
 
 protected slots:
   void initToolBars();
+  /** No descriptions */
+  void slotMakeDonation();
+  /** No descriptions */
+  void slotHelpHomepage();
 
 protected:
   KParts::BrowserExtension *browserExtension()

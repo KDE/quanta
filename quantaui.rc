@@ -59,6 +59,33 @@
     <Separator/>
   </Menu>
 
+    <Menu name="qview" noMerge="1"><text>&amp;View</text>
+      <Menu name="treeviews"><text>&amp;Tree views</text>
+          <Action name="show_ftab_tree"/>
+	  <Action name="show_ptab_tree"/>
+    	  <Action name="show_ttab_tree"/>
+          <Action name="show_stab_tree"/>
+          <Action name="show_dtab_tree"/>
+      </Menu>
+      <Separator/>
+      <Action name="view_toolbar"/>
+      <Action name="view_statusbar"/>
+      <Action name="show_messages"/>
+      <Separator />
+      <Action name="view_border"/>
+      <Action name="view_line_numbers"/>
+      <Separator/>
+      <Action name="show_preview"/>
+      <Separator/>
+      <Action name="w_back"/>
+      <Action name="w_forward"/>
+      <Action name="reload"/>
+      <Separator/>
+      <Action name="view_with_netscape"/>
+      <Action name="view_with_konqueror"/>
+      <Action name="view_with_lynx"/>
+    </Menu>
+         
   <Menu name="bookmarks" noMerge="1"><text>&amp;Bookmarks</text>
     <Action name="edit_bookmarkToggle" />
     <Action name="edit_bookmarksClear" />
@@ -104,33 +131,6 @@
       <Action name="toolbars_send"/>
     </Menu>
 
-    <Menu name="qview" noMerge="1"><text>&amp;View</text>
-      <Menu name="treeviews"><text>&amp;Tree views</text>
-          <Action name="show_ftab_tree"/>
-	  <Action name="show_ptab_tree"/>
-    	  <Action name="show_ttab_tree"/>
-          <Action name="show_stab_tree"/>
-          <Action name="show_dtab_tree"/>
-      </Menu>
-      <Separator/>
-      <Action name="view_toolbar"/>
-      <Action name="view_statusbar"/>
-      <Action name="show_messages"/>
-      <Separator />
-      <Action name="view_border"/>
-      <Action name="view_line_numbers"/>
-      <Separator/>
-      <Action name="show_preview"/>
-      <Separator/>
-      <Action name="w_back"/>
-      <Action name="w_forward"/>
-      <Action name="reload"/>
-      <Separator/>
-      <Action name="view_with_netscape"/>
-      <Action name="view_with_konqueror"/>
-      <Action name="view_with_lynx"/>
-    </Menu>
-         
     <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
       <Action name="editor_options"/>
       <Action name="general_options"/>
@@ -149,6 +149,8 @@
       <Separator />
       <Action name="context_help"/>
       <Separator />
+      <Action name="help_homepage" />
+      <Action name="help_donation"/>
       <Action name="help_report_bug" />
       <Separator />
       <Action name="help_about_app" />
