@@ -4,8 +4,7 @@
 Doc dir=../doc
 
 #top level elements
-Top Element=Quanta Documentation
+Top Element=Quanta Plus
 
-Quanta Documentation=Welcome,Documentation
+Quanta Plus=Welcome
 Welcome=intro.html
-Documentation=maindoc.html
