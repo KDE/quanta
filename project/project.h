@@ -106,6 +106,7 @@ public slots:
   void slotOptions();
   void slotUpload();
   void slotUploadURL(const KURL &urlToUpload);
+  void slotReloadProject();
 
   void slotAddFiles();
   void slotAddDirectory();
@@ -211,6 +212,7 @@ private:
 
   bool m_modified;
   bool storePasswdInFile;
+  bool m_excludeCvsignore;
   KMainWindow *m_parent;
   QBuffer buff;
   QRegExp excludeRx;

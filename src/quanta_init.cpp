@@ -391,6 +391,7 @@ void QuantaInit::initProject()
   connect(pTab, SIGNAL(rescanProjectDir()), m_project, SLOT(slotRescanPrjDir()));
   connect(pTab, SIGNAL(showProjectOptions()), m_project, SLOT(slotOptions()));
   connect(pTab, SIGNAL(uploadProject()), m_project, SLOT(slotUpload()));
+  connect(pTab, SIGNAL(reloadProject()), m_project, SLOT(slotReloadProject()));
 
   connect(m_project, SIGNAL(enableMessageWidget()),
           m_quanta, SLOT(slotShowMessagesView()));

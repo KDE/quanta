@@ -122,6 +122,7 @@ void Project::init()
   passwd = "";
   usePreviewPrefix=false;
   previewPrefix = KURL();
+  m_excludeCvsignore = false;
 }
 
 
@@ -223,7 +224,6 @@ KURL::List Project::fileNameList(bool check)
 {
   KURL::List result;
   ProjectUrlList list;
-
   //cout << dom.toString() << "\n";
   QDomNodeList nl = dom.elementsByTagName("item");
   uint nlCount = nl.count();
@@ -749,6 +749,7 @@ void Project::loadProjectXML()
   toolbarURL = QExtFileInfo::toAbsolute(toolbarURL, baseURL);
 
   no = projectNode.namedItem("exclude");
+  m_excludeCvsignore = (no.toElement().attribute("cvsignore", "false") == "true");
   QString excludeStr = no.firstChild().nodeValue();
   QString regExpStr = "";
   excludeList = QStringList::split(';', excludeStr);
@@ -766,9 +767,50 @@ void Project::loadProjectXML()
     if (i+1 < excludeList.count())
       regExpStr.append("|");
   }
+  QDomNodeList nl = dom.firstChild().firstChild().childNodes();
+  if (m_excludeCvsignore && projectURL.isLocalFile())
+  {
+    QStringList cvsIgnoreList;
+    uint nlCount = nl.count();
+    for ( uint i = 0; i < nlCount; i++ )
+    {
+      el = nl.item(i).toElement();
+      tmpString = el.attribute("url");
+      if (!tmpString.endsWith("/")) continue;
+      cvsIgnoreList.append(tmpString);
+    }
+    cvsIgnoreList.append("");
+    for (QStringList::ConstIterator it = cvsIgnoreList.constBegin(); it != cvsIgnoreList.constEnd(); ++it)
+    {
+      tmpString = *it;
+      QString rxStr;
+      KURL cvsIgnoreURL;
+      cvsIgnoreURL.setPath(baseURL.path(1) + tmpString + ".cvsignore");
+      QFile f(cvsIgnoreURL.path());
+      if (f.open(IO_ReadOnly))
+      {
+        QTextStream stream(&f);
+        QString line;
+        while (!stream.atEnd())
+        {
+            line = stream.readLine().stripWhiteSpace();
+            line.prepend(tmpString);
+            if (!line.endsWith("*"))
+              line.append("$");
+            if (!line.startsWith("*"))
+              line.prepend("^");
+            line.replace(".","\\.");
+            line.replace("*",".*");
+            line.replace("?",".");
+            rxStr += line + "|";
+        }
+        regExpStr.prepend(rxStr);
+        f.close();
+      }
+    }
+  }
   excludeRx.setPattern(regExpStr);
 
-  QDomNodeList nl = dom.firstChild().firstChild().childNodes();
   emit statusMsg( i18n("Reading the project file...") );
   progressBar->setTotalSteps(nl.count() - 1);
   progressBar->setValue(0);
@@ -1414,6 +1456,7 @@ void Project::slotOptions()
     excludeStr.append(";");
   }
   optionsPage.lineExclude->setText(excludeStr);
+  optionsPage.checkCvsignore->setChecked(m_excludeCvsignore);
 
   optionsPage.linePrefix->setText(previewPrefix.url());
   QStringList lst = DTDs::ref()->nickNameList(true);
@@ -1533,33 +1576,18 @@ void Project::slotOptions()
     dom.firstChild().firstChild().appendChild( el );
     el.appendChild( dom.createTextNode( debuggerClient ) );
 
-
+    m_excludeCvsignore = optionsPage.checkCvsignore->isChecked();
     excludeStr = optionsPage.lineExclude->text();
     el = dom.firstChild().firstChild().namedItem("exclude").toElement();
     if (!el.isNull())
        el.parentNode().removeChild(el);
     el = dom.createElement("exclude");
+    if (m_excludeCvsignore)
+      el.setAttribute("cvsignore", "true");
+    else
+      el.setAttribute("cvsignore", "false");
     dom.firstChild().firstChild().appendChild( el );
     el.appendChild( dom.createTextNode( excludeStr ) );
-
-    QString regExpStr = "";
-    excludeList = QStringList::split(';', excludeStr);
-    for (uint i = 0; i < excludeList.count(); i++)
-    {
-      excludeStr = excludeList[i].stripWhiteSpace();
-      if (!excludeStr.endsWith("*"))
-        excludeStr.append("$");
-      if (!excludeStr.startsWith("*"))
-        excludeStr.prepend("^");
-      excludeStr.replace(".","\\.");
-      excludeStr.replace("*",".*");
-      excludeStr.replace("?",".");
-      regExpStr.append(excludeStr);
-      if (i+1 < excludeList.count())
-        regExpStr.append("|");
-    }
-    excludeRx.setPattern(regExpStr);
-
 
     el = dom.firstChild().firstChild().namedItem("defaultDTD").toElement();
     if(el.isNull())
@@ -1623,8 +1651,6 @@ void Project::slotOptions()
     uploadEl.setAttribute("user", optionsPage.lineUser->text() );
     uploadEl.setAttribute("remote_protocol", optionsPage.comboProtocol->currentText() );
 
-    loadProjectXML();
-
     KConfig *config = kapp->config();
     config->setGroup("Projects");
     if (optionsPage.keepPasswd->isChecked())
@@ -1642,12 +1668,7 @@ void Project::slotOptions()
     storePasswdInFile = keepPasswd;
     config->sync();
     m_modified = true;
-
-    emit newProjectLoaded(projectName, baseURL, templateURL);
-    // exclude filter might have changed
-    fileNameList(false);
-    emit reloadTree( m_projectFiles, false );
-    emit newStatus();
+    slotReloadProject();
   }
 }
 
@@ -1712,6 +1733,16 @@ void Project::slotUploadURL(const KURL& urlToUpload)
 
   ProjectUpload *dlg = new ProjectUpload(url, i18n("Upload project items..."));
   dlg->show();
+}
+
+void Project::slotReloadProject()
+{
+    loadProjectXML();
+    emit newProjectLoaded(projectName, baseURL, templateURL);
+    // exclude filter might have changed
+    fileNameList(false);
+    emit reloadTree( m_projectFiles, false );
+    emit newStatus();
 }
 
 void Project::slotGetMessages(const QString& data)

@@ -84,13 +84,15 @@ signals: // Signals
   void loadToolbarFile( const KURL& );
   void uploadProject();
   void changeFileDescription(const KURL& url, const QString& desc);
+  void reloadProject();
 
 private:
   /** The constructor is privat because we use singleton patter.
    *  If you need the class use ProjectTreeView::ref() for
    *  construction and reference
    */
-  ProjectTreeView(QWidget *parent, const char *name);
+  ProjectTreeView(QWidget *parent, const char *name);\
+  void reload();
 
   ProjectTreeBranch *m_projectDir;
   KURL m_oldURL;

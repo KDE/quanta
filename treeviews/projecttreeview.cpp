@@ -196,6 +196,11 @@ void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const Q
 
 void ProjectTreeView::slotReload()
 {
+  emit reloadProject();
+}
+
+void ProjectTreeView::reload()
+{
   if (m_projectDir)
     removeBranch(m_projectDir);
   QString m_projectNameStr = m_projectName+" ";
@@ -276,7 +281,7 @@ void ProjectTreeView::slotReloadTree( const ProjectUrlList &fileList, bool build
 
   if (buildNewTree)
   {
-    slotReload();
+    reload();
   } else
   {
     if (m_projectDir){
