@@ -2,6 +2,7 @@
 <html>
 <p>...that you can use ftp for file operations by using 
 <b>ftp://user:pwd@domain/path</b> in the file dialog?
+</p>
 </html>
 </tip>
 
@@ -9,6 +10,7 @@
 <html>
 <p>...that you can use SSH/SCP for file operations by using 
 <b>fish://user@domain/path</b> in the file dialog?
+</p>
 </html>
 </tip>
 
@@ -16,13 +18,15 @@
 <html>
 <p>...that you can turn on line numbering and the icon border
 by default from <b>Settings &gt; Configure Editor::Defaults</b>?
+</p>
 </html>
 </tip>
 
 <tip category="Application">
 <html>
 <p>...that you can create actions that will run scripts from
- <b>Settings &gt; Configure Actions</b> and place them on the toolbar?
+<b>Settings &gt; Configure Actions</b> and place them on the toolbar?
+</p>
 </html>
 </tip>
 
@@ -30,20 +34,23 @@ by default from <b>Settings &gt; Configure Editor::Defaults</b>?
 <html>
 <p>...that you can create custom toolbars and even make them project
 specific?
+</p>
 </html>
 </tip>
 
 <tip category="Project">
 <html>
 <p>...that you can create remote projects and manage them with the 
- <b>kio slave of your choice</b>?
+<b>kio slave of your choice</b>?
+</p>
 </html>
 </tip>
 
 <tip category="Project">
 <html>
 <p>...that you can open and close groups of files in projects with 
- <b>Project Views</b>? You can even include project toolbars in the views.
+<b>Project Views</b>? You can even include project toolbars in the views.
+</p>
 </html>
 </tip>
 
@@ -51,12 +58,14 @@ specific?
 <html>
 <p>...that you can view a summary of PHP classes, functions and variables
 in the structure tree with <b>RMB Show Groups For &gt; PHP</b>?
+</p>
 </html>
 </tip>
 
 <tip category="Application">
 <html>
 <p>...that you can use PHP to auto-complete functions with <b>Ctrl+Space</b>?
+</p>
 </html>
 </tip>
 
@@ -70,7 +79,17 @@ in the structure tree with <b>RMB Show Groups For &gt; PHP</b>?
 <tip category="Application">
 <html>
 <p>...that you can cause make Quanta open files from Konqueror into the
-  currently open window by adding a <b>--unique</b> switch to your .desktop
-  file or menu entry? It would look like this: '[path/]quanta --unique'.
+currently open window by adding a <b>--unique</b> switch to your .desktop
+file or menu entry? It would look like this: '[path/]quanta --unique'.
+</p>
 </html>
 </tip>
+
+<tip category="Application">
+<html>
+<p>...that you can add a keyboard shortcut for any action you define? 
+Just go to <b>Settings > Configure Shortcuts</b>.
+</p>
+</html>
+</tip>
+
