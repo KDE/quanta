@@ -35,6 +35,7 @@ class QuantaView;
 class KProcess;
 class QDomElement;
 class QFile;
+class QTimer;
 
 /**
  * An action for inserting an XML tag.
@@ -80,7 +81,7 @@ private:
     bool loopStarted;
     QString scriptOutputDest;
     QString scriptErrorDest;
-
+    QTimer* timer;
     QDomElement tag;
     QuantaView *m_view;
     QFile* m_file;

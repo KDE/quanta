@@ -142,7 +142,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
   if ( type == "script" )
   {
-    KProcess *proc = new KProcess();
+    proc = new KProcess();
     proc->setWorkingDirectory(quantaApp->projectBaseURL().path());
 
     QDomElement script = tag.namedItem("script").toElement();
@@ -374,19 +374,26 @@ void TagAction::execute()
 {
   insertTag(true, true);
  //To avoid lock-ups, start a timer.
-/*  QTimer* timer = new QTimer(this);
+  timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
-  timer->start(10*1000, true);  */
+  timer->start(180*1000, true);
   QExtFileInfo internalFileInfo;
   loopStarted = true;
   internalFileInfo.enter_loop();
-//  delete timer;
+  delete timer;
 }
 
 /** Timeout occured while waiting for some network function to return. */
 void TagAction::slotTimeout()
 {
-  qApp->exit_loop();
+  if (KMessageBox::warningYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(tag.attribute("text")), i18n("Action not responding")) == KMessageBox::Yes)
+  {
+    if (proc->kill(SIGKILL))
+    {
+      return;
+    }
+  }
+  timer->start(180*1000, true);
 }
 
 
