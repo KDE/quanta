@@ -67,26 +67,29 @@ KQApplication::KQApplication()
      QuantaApp *quanta;
 
      quanta = new QuantaApp();
-     quanta ->show();
-
-     QString initialProject;
-     QStringList initialFiles;
-
-     for (int i = 0; i < args->count(); i++ )
+     if (quanta->quantaStarted)
      {
-       QString arg = args->url(i).url();
+       quanta ->show();
 
-       if(arg.findRev(QRegExp(QString(".+\\.webprj"))) != -1)
-         initialProject = arg;
-       else
-         initialFiles += arg;
+       QString initialProject;
+       QStringList initialFiles;
+
+       for (int i = 0; i < args->count(); i++ )
+       {
+         QString arg = args->url(i).url();
+
+         if(arg.findRev(QRegExp(QString(".+\\.webprj"))) != -1)
+           initialProject = arg;
+         else
+           initialFiles += arg;
+       }
+       quanta->loadInitialProject(initialProject); // open initial project
+
+       for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
+         quanta->slotFileOpen(KURL(*it), qConfig.defaultEncoding);  // load initial files
+
+       QTimer::singleShot(10,quanta,SLOT(openLastFiles())); // load files from previous session
      }
-     quanta->loadInitialProject(initialProject); // open initial project
-
-     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-       quanta->slotFileOpen(KURL(*it), qConfig.defaultEncoding);  // load initial files
-
-     QTimer::singleShot(10,quanta,SLOT(openLastFiles())); // load files from previous session
    }
    args->clear();
    if (showSplash) delete splash;
@@ -119,30 +122,34 @@ int KQUniqueApplication::newInstance()
   {
     KSplash *splash = new KSplash();
 
-    quanta = new QuantaApp;
-    setMainWidget(quanta);
-    quanta->show();
+    quanta = new QuantaApp();
 
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-
-    QString initialProject;
-    QStringList initialFiles;
-    for (int i = 0; i < args->count(); i++ )
+    if (quanta->quantaStarted)
     {
-      QString arg = args->url(i).url();
+      setMainWidget(quanta);
+      quanta->show();
 
-      if(arg.findRev(QRegExp(QString(".+\\.webprj"))) != -1)
-        initialProject = arg;
-      else
-        initialFiles += arg;
+      KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+      QString initialProject;
+      QStringList initialFiles;
+      for (int i = 0; i < args->count(); i++ )
+      {
+        QString arg = args->url(i).url();
+
+        if(arg.findRev(QRegExp(QString(".+\\.webprj"))) != -1)
+          initialProject = arg;
+        else
+          initialFiles += arg;
+      }
+
+      quanta->loadInitialProject(initialProject);
+
+      for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
+             QTimer::singleShot(10,quanta,SLOT(openLastFiles()));
+
+      quanta ->openLastFiles();
     }
-
-    quanta->loadInitialProject(initialProject);
-
-    for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-           QTimer::singleShot(10,quanta,SLOT(openLastFiles()));
-
-    quanta ->openLastFiles();
     delete splash;
   }
 

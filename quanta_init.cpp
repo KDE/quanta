@@ -87,6 +87,7 @@ QString fileMaskImage = "*.gif *.jpg *.png *.jpeg *.bmp *.xpm *.GIF *.JPG *.PNG 
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
+  quantaStarted = true;
   QuantaCommon::quantaApp = this;
   tempFileList.setAutoDelete(true);
   toolbarGUIClientList.setAutoDelete(true);
@@ -97,15 +98,24 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   userToolbarsCount = 0;
   baseNode = 0L;
   currentToolbarDTD = QString::null;
+  config=kapp->config();
 
   qConfig.globalDataDir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png");
+  if (qConfig.globalDataDir.isEmpty())
+  {
+    quantaStarted = false;
+    fprintf(stderr,"***************************************************************************\n");
+    fprintf(stderr, i18n("\tQuanta data files were not found.\nYou may forgot to run \"make install\",\nor your KDEDIR, KDEDIRS or PATH is not set correctly.!\n"));
+    fprintf(stderr,"***************************************************************************\n");
+    QTimer::singleShot(20,kapp, SLOT(quit()));
+    return;
+  }
   qConfig.enableDTDToolbar = true;
 
   setHighlight = 0;
   grepDialog  = 0L;
   exitingFlag = false;
 
-  config=kapp->config();
   initQuanta();
 
 //  QTimer::singleShot(10,this, SLOT(initQuanta()));
@@ -463,56 +473,59 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
 
 void QuantaApp::saveOptions()
 {
-  config->setGroup  ("General Options");
+  if (config)
+  {
+    config->setGroup  ("General Options");
 
-  config->writeEntry("Geometry", size());
+    config->writeEntry("Geometry", size());
 
-  config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
-  config->writeEntry("Show DTD Toolbar", qConfig.enableDTDToolbar);
-  config->writeEntry("Show Statusbar", statusBar()->isVisible());
+    config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
+    config->writeEntry("Show DTD Toolbar", qConfig.enableDTDToolbar);
+    config->writeEntry("Show Statusbar", statusBar()->isVisible());
 
-  config->writeEntry("Html mask",   fileMaskHtml  );
-  config->writeEntry("Images mask", fileMaskImage );
-  config->writeEntry("Php mask",    fileMaskPhp   );
-  config->writeEntry("Java mask",   fileMaskJava  );
-  config->writeEntry("Text mask",   fileMaskText  );
+    config->writeEntry("Html mask",   fileMaskHtml  );
+    config->writeEntry("Images mask", fileMaskImage );
+    config->writeEntry("Php mask",    fileMaskPhp   );
+    config->writeEntry("Java mask",   fileMaskJava  );
+    config->writeEntry("Text mask",   fileMaskText  );
 
-  config->writeEntry("Capitals for tags", qConfig.tagCase);
-  config->writeEntry("Capitals for attr", qConfig.attrCase);
-  config->writeEntry("Attribute quotation", qConfig.attrValueQuotation);
-  config->writeEntry("Close tag if optional", qConfig.closeOptionalTags);
-  config->writeEntry("Close tags", qConfig.closeTags);
-  config->writeEntry("Auto completion", qConfig.useAutoCompletion);
+    config->writeEntry("Capitals for tags", qConfig.tagCase);
+    config->writeEntry("Capitals for attr", qConfig.attrCase);
+    config->writeEntry("Attribute quotation", qConfig.attrValueQuotation);
+    config->writeEntry("Close tag if optional", qConfig.closeOptionalTags);
+    config->writeEntry("Close tags", qConfig.closeTags);
+    config->writeEntry("Auto completion", qConfig.useAutoCompletion);
 
-  config->writeEntry("Default encoding", qConfig.defaultEncoding);
-  config->writeEntry("Default DTD", qConfig.defaultDocType);
-  config->writeEntry("Use MimeTypes", qConfig.useMimeTypes);
+    config->writeEntry("Default encoding", qConfig.defaultEncoding);
+    config->writeEntry("Default DTD", qConfig.defaultDocType);
+    config->writeEntry("Use MimeTypes", qConfig.useMimeTypes);
 
-  config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
+    config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
 
-  config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
+    config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
 
-  config->writeEntry("Follow Cursor", sTab->followCursor() );
+    config->writeEntry("Follow Cursor", sTab->followCursor() );
 
-  config->writeEntry("PHP Debugger Port", phpDebugPort );
+    config->writeEntry("PHP Debugger Port", phpDebugPort );
 
-  config->writeEntry("Top folders", fTTab->dirList);
-  config->writeEntry("List of opened files", doc->openedFiles());
+    config->writeEntry("Top folders", fTTab->dirList);
+    config->writeEntry("List of opened files", doc->openedFiles());
 
-  config->writeEntry ("Version", VERSION); // version
+    config->writeEntry ("Version", VERSION); // version
 
-  doc    ->writeConfig(config); // kwrites
-  project->writeConfig(config); // project
+    doc    ->writeConfig(config); // kwrites
+    project->writeConfig(config); // project
 
-  config->setGroup  ("General Options");
+    config->setGroup  ("General Options");
 
-  fileRecent->saveEntries(config);
-  config->writeEntry ("Enable Debugger", debuggerStyle!="None");
-  config->writeEntry ("PHP Debugger style", debuggerStyle);
+    fileRecent->saveEntries(config);
+    config->writeEntry ("Enable Debugger", debuggerStyle!="None");
+    config->writeEntry ("PHP Debugger style", debuggerStyle);
 
-  writeDockConfig();
+    writeDockConfig();
 
-  saveMainWindowSettings(config);
+    saveMainWindowSettings(config);
+  }
 }
 
 
@@ -675,17 +688,21 @@ void QuantaApp::loadInitialProject(QString url)
 
 bool QuantaApp::queryExit()
 {
-  exitingFlag = true;
-  saveOptions();
-  saveModifiedToolbars();
-  bool canExit = doc->saveAll(false);
-  if (canExit)
+  bool canExit = true;
+  if (quantaStarted)
   {
-    do
+    exitingFlag = true;
+    saveOptions();
+    saveModifiedToolbars();
+    canExit = doc->saveAll(false);
+    if (canExit)
     {
-      view->write()->closeTempFile();
-  	  doc->docList()->remove( doc->url().url() );
-	  }while (view->removeWrite());
+      do
+      {
+        view->write()->closeTempFile();
+    	  doc->docList()->remove( doc->url().url() );
+  	  }while (view->removeWrite());
+    }
   }
   return canExit;
 }
@@ -1141,17 +1158,17 @@ void QuantaApp::initActions()
                         this, SLOT( slotFileSaveAll() ),
                         actionCollection(), "save_all" );
 
-    saveAsLocalTemplateAction = new KAction( i18n( "Save as Local Template..." ), 0,
+    saveAsLocalTemplateAction = new KAction( i18n( "Save As Local Template" ), 0,
                         this, SLOT( slotFileSaveAsLocalTemplate() ),
                         actionCollection(), "save_local_template" );
-    saveAsProjectTemplateAction = new KAction( i18n( "Save as Project Template..." ), 0,
+    saveAsProjectTemplateAction = new KAction( i18n( "Save As Project Template" ), 0,
                         this, SLOT( slotFileSaveAsProjectTemplate() ),
                         actionCollection(), "save_project_template" );
 
-    saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection as Local Template..." ), 0,
+    saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection To Local Template File" ), 0,
                         this, SLOT( slotFileSaveSelectionAsLocalTemplate() ),
                         actionCollection(), "save_selection_local_template" );
-    saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection as Project Template..." ), 0,
+    saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection To Project Template File" ), 0,
                         this, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
                         actionCollection(), "save_selection_project_template" );
 

@@ -32,7 +32,7 @@
 
 #include "projectnewlocal.h"
 #include "projectnewgeneral.h"
-#include "copyto.h"
+#include "../dialogs/copyto.h"
 #include "../qextfileinfo.h"
 #include "../treeviews/projecttreefolder.h"
 #include "../treeviews/projecttreefile.h"

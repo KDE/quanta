@@ -252,23 +252,22 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
   if( query == KMessageBox::Cancel ) return;
 
   QString fileName;
-  QString content;
   if (selectionOnly)
   {
+    QString content;
     content = w->selectionIf->selection();
-
+    fileName = url.directory(false)+url.fileName();
+    QFile templateFile(fileName);
+    templateFile.open(IO_WriteOnly);
+    QTextStream stream(&templateFile);
+    stream << content;
+    templateFile.flush();
+    templateFile.close();
   } else
   {
-    content = w->editIf->text();
+    doc->saveDocument( url );
+    fileName = url.path();
   }
-  
-  fileName = url.directory(false)+url.fileName();
-  QFile templateFile(fileName);
-  templateFile.open(IO_WriteOnly);
-  QTextStream stream(&templateFile);
-  stream << content;
-  templateFile.flush();
-  templateFile.close();
 
   if (projectTemplate) project->insertFile(fileName, true);
 

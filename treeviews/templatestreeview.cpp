@@ -44,7 +44,7 @@
 #include "filestreefile.h"
 #include "newtemplatedirdlg.h"
 #include "quantapropertiespagedlg.h"
-#include "../project/copyto.h"
+#include "../dialogs/copyto.h"
 #include "../resource.h"
 
 const QString textMenu = I18N_NOOP("Insert as Text");

@@ -111,6 +111,8 @@ public:
   void setTagsMenuId(int id) {m_tagsMenuId = id;}
   QPopupMenu *toolbarMenu(const QString& name) {return toolbarMenuList[name];}
   KToggleAction *showDTDToolbar;
+  /** True when the whole quanta is initalized. */
+  bool quantaStarted;
 
   MessageOutput *getMessages() { return messageOutput; }
 

@@ -105,6 +105,9 @@ int main(int argc, char *argv[])
     I18N_NOOP("Part of a code for PHP4 Debugger"),
     "dd@cron.ru");
 
+  aboutData.addCredit("Keith Isdale",
+    I18N_NOOP("XSLT tags, XSLT debugger"),
+    "k_isdale@tpg.com.au");
 
   KCmdLineArgs::init( argc, argv, &aboutData );
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.

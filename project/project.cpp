@@ -57,7 +57,7 @@
 #include <kio/netaccess.h>
 
 // application headers
-#include "copyto.h"
+#include "../dialogs/copyto.h"
 #include "../qextfileinfo.h"
 #include "projectnewgeneral.h"
 #include "projectnewlocal.h"
