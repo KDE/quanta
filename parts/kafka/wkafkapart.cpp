@@ -1137,7 +1137,7 @@ Node * WKafkaPart::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
 		_tag->setWrite(_currentDoc);
 		_tag->type = Tag::Text;
 		_tag->single = true;
-		_tag->dtd = _currentDoc->currentDTD();
+		_tag->dtd = _currentDoc->defaultDTD();
 		_tag->setTagPosition(beginLine, beginCol, -1, -1);
 		buildNodeFromKafkaNode(_node, _domNode);
 	}
@@ -1147,9 +1147,9 @@ Node * WKafkaPart::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
 		_tag->setWrite(_currentDoc);
 		_tag->type = Tag::XmlTag;
 		_tag->name = _domNode.nodeName().string();
-		_tag->single = QuantaCommon::isSingleTag(_currentDoc->currentDTD()->name,
+		_tag->single = QuantaCommon::isSingleTag(_currentDoc->defaultDTD()->name,
 			 _tag->name);
-		_tag->dtd = _currentDoc->currentDTD();
+		_tag->dtd = _currentDoc->defaultDTD();
 		_tag->setTagPosition(beginLine, beginCol, -1, -1);
 		buildNodeFromKafkaNode(_node, _domNode);
 		int tmpEndLine, tmpEndCol;
@@ -1174,7 +1174,7 @@ Node * WKafkaPart::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
 			_tagEnd->setWrite(_currentDoc);
 			_tagEnd->type = Tag::XmlTagEnd;
 			_tagEnd->single = true;
-			_tagEnd->dtd = _currentDoc->currentDTD();
+			_tagEnd->dtd = _currentDoc->defaultDTD();
 			_tagEnd->name = _tag->name;
 			//temp adding node code to editor
 			QString text = generateCodeFromNode(_nodeXmlEnd);
@@ -1314,7 +1314,7 @@ void WKafkaPart::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 		kdDebug(25001)<< "WKafkaPart::connectDomNodeToQuantaNode() *ERROR*" << endl;
 				return;
 	}
-	qtag = QuantaCommon::tagFromDTD(_currentDoc->currentDTD(),
+	qtag = QuantaCommon::tagFromDTD(_currentDoc->defaultDTD(),
 		_domNode.nodeName().string());
 	props = new kNodeAttrs();
 	if(qtag)

@@ -68,7 +68,6 @@
 #include "widgets/whtmlpart.h"
 #include "messages/messageoutput.h"
 #ifdef BUILD_KAFKAPART
-#include "parts/kafka/wkafkapart.h"
 #include "parts/kafka/nodeproperties.h"
 #endif
 
@@ -407,16 +406,10 @@ void QuantaApp::initView()
 
   htmlpart = new WHTMLPart(rightWidgetStack,"rightHTML");
   htmlPartDoc = new WHTMLPart(rightWidgetStack, "docHTML");
-  #ifdef BUILD_KAFKAPART
-  kafkaPart = new WKafkaPart(rightWidgetStack,rightWidgetStack, "KafkaHTMLPart");
-  #endif
 
   rightWidgetStack->addWidget(m_view, 0);
   rightWidgetStack->addWidget(htmlpart->view(), 1);
   rightWidgetStack->addWidget(htmlPartDoc->view(), 2);
-  #ifdef BUILD_KAFKAPART
-  rightWidgetStack->addWidget(kafkaPart->getKafkaPart()->view(), 4);
-  #endif
   rightWidgetStack->raiseWidget(0);
 
   messageOutput = new MessageOutput(bottomWidgetStack);
@@ -466,7 +459,7 @@ void QuantaApp::initView()
 
   connect(sTab, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
   #ifdef BUILD_KAFKAPART
-  connect(kafkaPart, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
+  //connect(kafkaPart, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
   #endif
   connect(sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
   connect(sTab, SIGNAL(needReparse()), SLOT(slotForceReparse()));
@@ -541,9 +534,6 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
   {
     s->addWidget( htmlpart->view(), 1 );
     s->addWidget( htmlPartDoc->view(), 2 );
-    #ifdef BUILD_KAFKAPART
-    s->addWidget( kafkaPart->getKafkaPart()->view(), 4);
-    #endif
   }
 
   return s;
@@ -1781,17 +1771,39 @@ void QuantaApp::initActions()
                          this, SLOT( slotShowBottDock() ),
                          ac, "show_messages" );
 
-    showPreviewAction =
+    #ifdef BUILD_KAFKAPART
+    KToggleAction *ta;
+      ta =
+      new KToggleAction( i18n( "&Source editor") , "show_quanta_editor", ALT+Key_F9,
+                         m_view, SLOT( slotShowQuantaEditor()),
+                         ac, "show_quanta_editor");
+      ta->setExclusiveGroup("view");
+
+     showKafkaAction =
+      new KToggleAction( i18n( "&VPL editor (experimental)"), "show_kafka_view", CTRL+SHIFT+Key_F9,
+                         m_view, SLOT( slotShowKafkaPart() ),
+                          ac, "show_kafka_view");
+     showKafkaAction->setExclusiveGroup("view");
+
+     ta =
+      new KToggleAction( i18n("V&PL and source editors"), "show_kafka_and_quanta", Key_F9,
+                         m_view, SLOT( slotShowKafkaAndQuanta() ),
+                          ac, "show_kafka_and_quanta");
+     ta->setExclusiveGroup("view");
+    /**kafkaSelectAction = new KSelectAction(i18n("Main &View"), 0, ac,"show_kafka");
+    QStringList list2;
+    list2.append(i18n("&Source editor"));
+    list2.append(i18n("&VPL editor (experimental)"));
+    list2.append(i18n("&Both editors"));
+    kafkaSelectAction->setItems(list2);
+    connect(kafkaSelectAction, SIGNAL(activated(int)), this, SLOT(slotShowKafkaPartl(int)));*/
+    #endif
+
+     showPreviewAction =
       new KToggleAction( i18n( "Pr&eview" ), "preview", Key_F6,
                          this, SLOT( slotShowPreview() ),
                          ac, "show_preview" );
-
-    #ifdef BUILD_KAFKAPART
-    showKafkaAction =
-      new KToggleAction( i18n( "&Visual Editor (experimental)"), "kafka_view", Key_F12,
-                         this, SLOT( slotShowKafkaPart() ),
-                         ac, "show_kafka_view");
-    #endif
+     showPreviewAction->setExclusiveGroup("view");
 
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),

@@ -1,7 +1,7 @@
 /***************************************************************************
                           quantadoc.cpp  -  description
                              -------------------
-    begin                : Втр Май  9 13:29:57 EEST 2000
+    begin                : О©╫О©╫О©╫О©╫ 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
                            (C) 2001-2003 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
@@ -116,7 +116,6 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
 
     // now we can create new kwrite
     w = newWrite( );
-
     quantaApp->view()->addWrite( w, w->url().url() );
 
     quantaApp->processDTD(quantaApp->project()->defaultDTD());

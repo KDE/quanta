@@ -90,11 +90,6 @@
 #include "project/project.h"
 
 #include "widgets/whtmlpart.h"
-#ifdef BUILD_KAFKAPART
-#include "parts/kafka/wkafkapart.h"
-#include <dom/dom_node.h>
-#include <dom/dom_string.h>
-#endif
 
 #include "dialogs/abbreviation.h"
 #include "dialogs/filemasks.h"
@@ -350,7 +345,7 @@ void QuantaApp::slotFileClose()
   {
   //[MB]  QWidget *activeWidget = rightWidgetStack->visibleWidget();
   #ifdef BUILD_KAFKAPART
-    kafkaPart->unloadDocument();
+    //kafkaPart->unloadDocument();
   #endif
     m_doc->closeDocument();
     WHTMLPart *part = htmlPart();
@@ -366,7 +361,7 @@ void QuantaApp::slotFileClose()
 void QuantaApp::slotFileCloseAll()
 {
 #ifdef BUILD_KAFKAPART
-  kafkaPart->unloadDocument();
+  //kafkaPart->unloadDocument();
 #endif
   m_doc->closeAll();
 
@@ -707,6 +702,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
       statusBar()->show();
     }
   }
+  m_view->updateViews();
   m_view->oldTab = w;
 
   Document *newWrite = dynamic_cast<Document *>(w);
@@ -730,7 +726,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   loadToolbarForDTD(newWrite->getDTDIdentifier());
 
   Document *currentWrite = m_view->write();
-  currentWrite->view()->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
+  //currentWrite->view()->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
+  m_view->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
   m_view->oldWrite = currentWrite;
   currentWrite->kate_view->setIconBorder(qConfig.iconBar);
   currentWrite->kate_view->setLineNumbersOn(qConfig.lineNumbers);
@@ -746,12 +743,12 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
    repaintPreview(true);
   }
   #ifdef BUILD_KAFKAPART
-   if(kafkaPart->getCurrentDoc() &&
+   /**if(kafkaPart->getCurrentDoc() &&
      m_view->write() &&
     kafkaPart->getCurrentDoc()->url() != m_view->write()->url())
    {
      kafkaPart->unloadDocument();
-   }
+   }*/
   #endif
   slotNewLineColumn();
 
@@ -1158,44 +1155,6 @@ void QuantaApp::slotShowPreview()
     s->raiseWidget(1);
     repaintPreview(false);
   }
-}
-
-void QuantaApp::slotShowKafkaPart()
-{
-  #ifdef BUILD_KAFKAPART
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if(!kafkaPart) return;
-  if(!s) return;
-
-  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_kafka_view" );
-  bool stat = !ta->isChecked();
-
-  if ( stat )
-  {
-    int id = 0;
-    if (!previousWidgetList.empty())
-    {
-      id = previousWidgetList.last();
-      previousWidgetList.pop_back();
-    }
-    kafkaPart->slotUpdateQuantaTree();
-    s->raiseWidget(id);
-  }
-  else
-  {
-    if(!kafkaPart->isLoaded())
-    {
-      kafkaPart->unloadDocument();
-      kafkaPart->loadDocument(m_view->write());
-      //TODO: put later a minimum load to make kafka work with a new file
-    }
-    else
-    {
-      kafkaPart->slotUpdateKafkaTree();
-    }
-    s->raiseWidget(4);
-  }
-  #endif
 }
 
 void QuantaApp::slotShowProjectTree()

@@ -1,7 +1,7 @@
 /***************************************************************************
                           quantaview.h  -  description
                              -------------------
-    begin                : Втр Май  9 13:29:57 EEST 2000
+    begin                : О©╫О©╫О©╫О©╫ 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
                            (C) 2001-2002 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
@@ -37,6 +37,8 @@ class QWidgetStack;
 class QDropEvent;
 class QPopupMenu;
 class ToolbarTabWidget;
+class WKafkaPart;
+class QSplitter;
 
 /** The QuantaView class provides the view widget for the QuantaApp
  * instance.  The View instance inherits QWidget as a base class and
@@ -65,6 +67,22 @@ public:
   void addWrite( QWidget* w , QString label );
   /** remove KWrite class from stack, return id of new KWrite */
   QWidget* removeWrite();
+  /** Return the WKafkaPart */
+  WKafkaPart *getkafkaPart() {return kafkaInterface;}
+  /** Return the curren views layout*/
+  int getViewsLayout() {return currentViewsLayout;}
+
+    enum viewsLayout {
+    QuantaViewOnly = 0,
+    QuantaAndKafkaViews,
+    KafkaViewOnly
+  };
+
+  /** Update the views when the current page changed. Called by quantaApp::slotUpdateStatus. */
+  void updateViews();
+
+  /** Resize the current view */
+  void resize(int width, int height);
 
   /** initialise tags menu */
   void initMenu();
@@ -151,6 +169,13 @@ public slots:
   void slotEditorOptions();
   void setEol(int);
 
+   #ifdef BUILD_KAFKAPART
+  //views
+  void slotShowQuantaEditor();
+  void slotShowKafkaPart();
+  void slotShowKafkaAndQuanta();
+  #endif
+
 signals:
   void newCurPos();
   /** emit when select document from tabbar */
@@ -169,6 +194,11 @@ private:
   int column;
   QString space;
 
+  /** Kafka stuff */
+  WKafkaPart *kafkaInterface;
+  QSplitter *splitter;
+
+  int currentViewsLayout;
   bool beginOfScriptOutput;
   bool beginOfScriptError;
   QString scriptOutputDest;

@@ -67,8 +67,6 @@ class QPopupMenu;
 class WHTMLPart;
 class KHTMLView;
 
-class WKafkaPart;
-
 class KAction;
 class KToggleAction;
 class KSelectAction;
@@ -121,7 +119,6 @@ public:
   KConfig *config() const {return m_config;}
   QWidgetStack *rightWidget() const {return rightWidgetStack;}
   QWidgetStack *bottomWidget() const {return bottomWidgetStack;}
-  WKafkaPart *kafka() const {return kafkaPart;}
 
 //TODO: check if we really need these "get" methods (and get rid o get)
   SpellChecker *spellChecker() const {return m_spellChecker;}
@@ -227,8 +224,6 @@ public slots:
   void slotActivatePreview();
   /** show preview ( F6 )*/
   void slotShowPreview();
-  /** slot WYSIWYG */
-  void slotShowKafkaPart();
   void slotShowProjectTree();
   void slotShowTemplatesTree();
   /** Repaint preview ( slot ) */
@@ -428,9 +423,6 @@ private:
    /** HTML class for preview */
   WHTMLPart *htmlpart;
   WHTMLPart *htmlPartDoc;
-
-  /** KafkaHTMLPart widget */
-  WKafkaPart *kafkaPart;
 
   /** Grep window */
   GrepDialog *grepDialog;

@@ -82,7 +82,9 @@
       <Action name="view_line_numbers"/>
       <Action name="view_dynamic_word_wrap"/>
       <Separator/>
+      <Action name="show_quanta_editor"/>
       <Action name="show_kafka_view"/>
+      <Action name="show_kafka_and_quanta"/>
       <Action name="show_preview"/>
       <Separator/>
       <Action name="w_back"/>
@@ -212,8 +214,10 @@
   <ToolBar name="mainNaviToolBar" noMerge="1">
   <text>Navigation Toolbar</text>
     <Action name="show_messages"/>
-    <Action name="show_preview"/>
+    <Action name="show_quanta_editor"/>
     <Action name="show_kafka_view"/>
+    <Action name="show_kafka_and_quanta"/>
+    <Action name="show_preview"/>
     <Action name="reload"/>
     <Separator/>
     <Action name="w_back"/>

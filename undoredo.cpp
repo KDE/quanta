@@ -57,7 +57,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 	bool noMerge = false;
 	bool textTyped;
 
-#ifdef 0
+#ifdef RELEASE
 	//for the release
 	for(it2 = modifs.NodeModifList.begin(); it2 != modifs.NodeModifList.end(); it2++)
 	{
