@@ -66,6 +66,7 @@
   </Menu>
 
     <Menu name="tools" noMerge="1"><text>&amp;Tools</text>
+      <Action name="tools_change_dtd"/>
       <Action name="edit_current_tag"/>
       <Separator/>
       <Action name="syntax_check"/>

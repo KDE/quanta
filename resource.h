@@ -38,8 +38,10 @@ extern QDict<DTDStruct> *dtds;
 
 extern uint tagsCase; // use capital for tags
 extern uint attrsCase; // use capital letters for attributes of tag
+extern QString attrsQuotation;
 extern bool useCloseTag; // use close tag if optional
 extern bool useAutoCompletion; //enable auto completion of tags
+extern QString defaultDocType;
 
 extern QString fileMaskHtml;
 extern QString fileMaskPhp;

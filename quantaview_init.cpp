@@ -96,20 +96,10 @@ QuantaView::~QuantaView()
 {
 }
 
-void QuantaView::print(QPrinter *pPrinter)
-{
-  QPainter printpainter;
-  printpainter.begin(pPrinter);
-	
-  // TODO: add your printing code here
-
-  printpainter.end();
-}
-
 /** return current KWrite class */
 Document* QuantaView::write()
 {
-  return ( Document* )writeTab->currentPage();
+  return dynamic_cast<Document *>(writeTab->currentPage());
 }
 
 /** Add new kwrite class to writeStack and return id in stack */
@@ -118,7 +108,6 @@ void QuantaView::addWrite( Document* w , QString label )
 	QIconSet emptyIcon ( UserIcon("empty1x16"));
 	writeTab->addTab  ( w,  emptyIcon,  label );
 	writeTab->showPage( w );
-	
 	connect( w->view(),
            SIGNAL(cursorPositionChanged()), this, SLOT(slotNewCurPos()));
 }

@@ -29,12 +29,14 @@
   *@author Dmitry Poplavsky
   */
 
+class Document;
+
 class Parser {
 public: 
 	Parser();
 	~Parser();
 	
-	Node *parse( QString text);
+	Node *parse( QString text, QString dtdName = QString::null);
 	int xy2pos( int x, int y );
 	int pos2y(int pos);
 	int pos2x(int pos);
@@ -66,6 +68,7 @@ private:
   int lastpos;
   int lasttype;
   Node* node;
+  QString m_dtdName;
 
   QDict<QStringList> tagsStop; // list of tag, can stop area of curren tag ( <tr> stop <td> )
 

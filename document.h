@@ -67,8 +67,10 @@ public:
   void setUntitledUrl(QString);
   
   /** return qstring with current tag for parse */
-  QString currentTag();
-  
+  QString currentTag(int line=-1, int col=-1);
+  /** return qstring with tag at line,col for parse */
+  QString tagAt(int line, int col) {return currentTag(line,col);}
+
   void selectText(int x1, int y1, int x2, int y2 );
   
   void replaceSelected(QString s);

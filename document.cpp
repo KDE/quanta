@@ -294,14 +294,21 @@ QString Document::getTagAttrValue(int i)
 }
 
 /** return qstring with current tag for parse */
-QString Document::currentTag()
+QString Document::currentTag(int line, int col)
 {
   tagAttrNum = 0;
 
   unsigned int y;// = currentLine();
   unsigned int ox;// = currentColumn(); // need to reorganise ;)
 
-  viewCursorIf->cursorPosition(&y, &ox);
+  if ((line == -1) && (col == -1))
+  {
+    viewCursorIf->cursorPosition(&y, &ox);
+  } else
+  {
+    y = line;
+    ox = col;
+  }
 
 
   QString t = getLine(y);

@@ -136,9 +136,8 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   QTimer *t = new QTimer( this );
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );
   t->start( 2000, false );
-  slotFileNew();
-
-  setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
+  QTimer::singleShot(10,this, SLOT(slotFileNew()) );
+//  setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
 
 //  KParts::ReadOnlyPart *m_cervisia =  KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>( "libcervisia.so",this);
 
@@ -442,8 +441,11 @@ void QuantaApp::saveOptions()
 
   config->writeEntry("Capitals for tags",     tagsCase);
   config->writeEntry("Capitals for attr",     attrsCase);
+  config->writeEntry("Attribute quotation",     attrsQuotation);
   config->writeEntry("Close tag if optional", useCloseTag);
   config->writeEntry("Auto completion",useAutoCompletion);
+
+  config->writeEntry("Default DTD",defaultDocType);
 
   config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
 
@@ -484,8 +486,10 @@ void QuantaApp::readOptions()
 
   tagsCase = config->readNumEntry("Capitals for tags",     0);
   attrsCase = config->readNumEntry("Capitals for attr",     0);
+  attrsQuotation = config->readEntry("Attribute quotation", "double");
   useCloseTag = config->readBoolEntry("Close tag if optional", true);
   useAutoCompletion = config->readBoolEntry("Auto completion",true);
+  defaultDocType = config->readEntry("Default DTD","-//W3C//DTD HTML 4.0//EN");
 
   previewPosition   = config->readEntry("Preview position","Right");
 
@@ -1091,6 +1095,10 @@ void QuantaApp::initActions()
     (void) new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         view, SLOT( slotEditCurrentTag() ),
                         actionCollection(), "edit_current_tag" );
+
+    (void) new KAction( i18n( "&Change DTD Type" ), 0,
+                        this, SLOT( slotToolsChangeDTD() ),
+                        actionCollection(), "tools_change_dtd" );
 
     (void) new KAction( i18n( "&Syntax Check" ), 0, 
                         this, SLOT( slotToolSyntaxCheck() ),

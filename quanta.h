@@ -80,6 +80,7 @@ class GrepDialog;
 class MessageOutput;
 class QDomDocument;
 class ActionEditDlg;
+class Document;
 
 class PHP3Debugger;
 class PHP4Debugger;
@@ -104,7 +105,6 @@ class QuantaApp : public KDockMainWindow
 
     MessageOutput *getMessages() { return messageOutput; }
 
-    void openLastFiles();
     /** Loads the initial project */
     void loadInitialProject(QString url="");
 
@@ -115,7 +115,7 @@ class QuantaApp : public KDockMainWindow
     QWidget* createContainer( QWidget *parent, int index, const QDomElement &element, int &id );  
     void removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id );
     /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
-    void processDTD();
+    void processDTD(QString documentType = QString::null);
 
 
   protected:
@@ -168,6 +168,7 @@ class QuantaApp : public KDockMainWindow
     
     void slotToolSyntaxCheck();
 
+    void openLastFiles();
     /// open url in documentation window
     void openDoc( QString url );
 
@@ -270,6 +271,8 @@ class QuantaApp : public KDockMainWindow
   void slotLoadToolbar();
   /** Load a global toolbar from the disk. */
   void slotLoadGlobalToolbar();
+  /** No descriptions */
+  void slotToolsChangeDTD();
 
  private slots:
 	

@@ -2,7 +2,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file './dtdselectdialog.ui'
 **
-** Created: Sun Aug 18 15:45:57 2002
+** Created: Fri Aug 23 22:11:02 2002
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -33,9 +33,6 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
     resize( 332, 116 ); 
     setCaption( tr2i18n( "Form1" ) );
 
-    ComboBox1 = new QComboBox( FALSE, this, "ComboBox1" );
-    ComboBox1->setGeometry( QRect( 85, 20, 230, 20 ) ); 
-
     TextLabel1 = new QLabel( this, "TextLabel1" );
     TextLabel1->setGeometry( QRect( 20, 25, 59, 12 ) ); 
     TextLabel1->setText( tr2i18n( "Select DTD:" ) );
@@ -47,6 +44,9 @@ DTDSelectDialog::DTDSelectDialog( QWidget* parent,  const char* name, bool modal
     okButton = new QPushButton( this, "okButton" );
     okButton->setGeometry( QRect( 80, 80, 80, 22 ) ); 
     okButton->setText( tr2i18n( "&OK" ) );
+
+    dtdCombo = new QComboBox( FALSE, this, "dtdCombo" );
+    dtdCombo->setGeometry( QRect( 85, 20, 230, 20 ) ); 
 
     // signals and slots connections
     init();

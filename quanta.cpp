@@ -128,6 +128,9 @@ void QuantaApp::setTitle(QString title)
 void QuantaApp::slotFileNew()
 {
   doc->openDocument( KURL() );
+  if (!setHighlight)
+     setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
+
 //  slotUpdateStatus(view->write());
 }
 
@@ -137,7 +140,7 @@ void QuantaApp::slotFileOpen()
  QString myEncoding = QString::fromLatin1(QTextCodec::codecForLocale()->name());
 
  KateFileDialog *dialog = new KateFileDialog (QString::null,myEncoding, this, i18n ("Open File"));
- KateFileDialogData data = dialog->exec ();
+ KateFileDialogData data = dialog->exec();
  delete dialog;
 
 //  if ( !url.url().isEmpty() ) slotFileOpen( url );
@@ -728,7 +731,8 @@ void QuantaApp::slotOptions()
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
-  
+  parserOptions->dtdName->setText(defaultDocType);
+
   page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
   DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)page );
 
@@ -748,6 +752,7 @@ void QuantaApp::slotOptions()
   	fileMaskText = fileMasks->lineText->text()+" ";
 
     parserOptions->updateConfig();
+    defaultDocType = parserOptions->dtdName->text();
 
     if (!debuggerOptions->checkDebugger->isChecked()) {
       if (debuggerStyle=="PHP3") enablePhp3Debug(false);
@@ -904,9 +909,10 @@ void QuantaApp::slotNewLineColumn()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse()
 {
-	if ( ( stabdock->isVisible() ) && (view->write()) )
+  Document *w = view->write();
+	if ( ( stabdock->isVisible() ) && (w) )
 	{
-		Node *node = parser->parse( view->write()->editIf->text() );
+		Node *node = parser->parse( w->editIf->text(), w->dtdName );
 		//sTab->s = parser->s;
 		if ( parser->textChanged ) {
 		  config->setGroup("Parser options");
@@ -1843,22 +1849,97 @@ void QuantaApp::saveModifiedToolbars()
  }
 }
 
-#include <iostream.h>
 /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
-void QuantaApp::processDTD()
-{     /*
- QDomDocument doc;
- doc.setContent(view->write()->editIf->text());
- QDomDocumentType docType = doc.doctype();
- cout << doc.toString() << endl;
- if (docType.name().isEmpty())
+void QuantaApp::processDTD(QString documentType)
+{
+ Document *w = view->write();
+ QString foundName;
+ w->dtdName = defaultDocType;
+
+ if (documentType.isEmpty())
  {
-  // KMessageBox::error(this, i18n("There is no DOCTYPE element in the document."));
-  DTDSelectDialog *dlg = new DTDSelectDialog;
-  dlg->exec();
-  delete dlg;
+   QDomDocument doc;
+   doc.setContent(w->editIf->text());
+   QDomDocumentType docType = doc.doctype();
+   QString type = docType.name() ;
+   //Do some magic to find the document type
+   bool found = false;
+   if (type.isEmpty())
+   {
+     uint i=0;
+     int pos = 0;
+     do {
+      QString s = w->editIf->textLine(i);
+      pos = s.find("doctype",0,false);
+      if (pos != -1)
+      {
+        s = w->tagAt(i,pos);
+        pos = s.find("public",0,false);
+        if (pos == -1)
+        {
+          foundName = w->getTagAttr(1);
+        } else
+        {
+          pos = s.find("\"", pos+1);
+          if (pos !=-1)
+          {
+            int endPos = s.find("\"",pos+1);
+            foundName = s.mid(pos+1, endPos-pos-1);
+          }
+         }
+        found = true;
+      }
+     } while ((!found) && (++i <= w->editIf->numLines()));
+   }
+   if (docType.name().isEmpty() )
+   {
+    DTDSelectDialog *dlg = new DTDSelectDialog(this);
+    QDictIterator<DTDStruct> it(*dtds);
+    found = false;
+    for( ; it.current(); ++it )
+    {
+      dlg->dtdCombo->insertItem(it.current()->name);
+      if (it.current()->name == foundName)
+      {
+       w->dtdName = foundName;
+       found =true;
+      }
+    }
+
+    if (!found && dlg->exec())
+    {
+      w->dtdName = dlg->dtdCombo->currentText();
+    }
+    delete dlg;
+   }
+ } else
+ {
+   w->dtdName = documentType;
  }
-        */
+}
+
+/** No descriptions */
+void QuantaApp::slotToolsChangeDTD()
+{
+  DTDSelectDialog *dlg = new DTDSelectDialog(this);
+  Document *w = view->write();
+  int i=0;
+  int pos =0;
+  QDictIterator<DTDStruct> it(*dtds);
+  for( ; it.current(); ++it )
+  {
+    dlg->dtdCombo->insertItem(it.current()->name);
+    if (it.current()->name == w->dtdName) pos = i;
+    i++;
+  }
+
+  dlg->dtdCombo->setCurrentItem(pos);
+  if (dlg->exec())
+  {
+    w->dtdName = dlg->dtdCombo->currentText();
+  }
+
+  delete dlg;
 }
 
 #include "quanta.moc"

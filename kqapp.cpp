@@ -14,6 +14,8 @@
     Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, US
 */
 
+#include <qtimer.h>
+
 #include <kwin.h>
 #include <kcmdlineargs.h>
 #include <kurl.h>
@@ -84,7 +86,7 @@ KQApplication::KQApplication()
      for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
        quanta->slotFileOpen(KURL(*it));  // load initial files
 
-     quanta ->openLastFiles(); // load files from previous session
+     QTimer::singleShot(10,quanta,SLOT(openLastFiles())); // load files from previous session
    }
    args->clear();
    if (showSplash) delete splash;
@@ -138,7 +140,7 @@ int KQUniqueApplication::newInstance()
     quanta->loadInitialProject(initialProject);
 
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-      quanta->slotFileOpen(KURL(*it));
+           QTimer::singleShot(10,quanta,SLOT(openLastFiles()));
 
     quanta ->openLastFiles();
     delete splash;

@@ -1,9 +1,9 @@
 /***************************************************************************
                           parseroptions.h  -  description
                              -------------------
-    begin                : Wed Sep 20 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+    begin                : Fri Aug 23 2002
+    copyright            : (C) 2002 by Andras Mantia
+    email                : amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,43 +18,21 @@
 #ifndef PARSEROPTIONS_H
 #define PARSEROPTIONS_H
 
-#include <qwidget.h>
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QComboBox;
-class QGroupBox;
-class QLabel;
-class QSpinBox;
+#include "parseroptionsui.h"
 
 class KConfig;
 
-class ParserOptions : public QWidget
+class ParserOptions : public ParserOptionsUI
 { 
     Q_OBJECT
 
 public:
-    ParserOptions( KConfig *config, QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
+    ParserOptions( KConfig *config, QWidget* parent = 0, const char* name = 0);
     ~ParserOptions();
 
     void updateConfig();
 
-    QGroupBox* GroupBox2;
-    QComboBox* comboMBM;
-    QComboBox* comboRBM;
-    QComboBox* comboLBM;
-    QComboBox* comboDoubleClick;
-    QLabel* TextLabel2_2;
-    QLabel* TextLabel3_2;
-    QLabel* TextLabel4_2;
-    QLabel* TextLabel5_2;
-    QLabel* TextLabel7;
-    QSpinBox* spinExpand;
-    QLabel* TextLabel6;
-
 protected:
-    QGridLayout* grid;
-    QGridLayout* grid_2;
     KConfig *config;
 };
 

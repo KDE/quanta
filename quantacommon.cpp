@@ -27,9 +27,11 @@
 
 uint tagsCase;
 uint attrsCase;
+QString attrsQuotation;
 bool useCloseTag;
 bool useAutoCompletion;
 QString globalDataDir;
+QString defaultDocType;
 
 QDict<AttributeList> *tagsDict;
 

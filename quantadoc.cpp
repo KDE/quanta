@@ -154,8 +154,7 @@ bool QuantaDoc::newDocument( const KURL& url )
 
   	app ->view  ->addWrite( w, QExtFileInfo::shortName(w->url().url()) );
 
-    app->processDTD();
-    write()->dtdName = "HTML 4.0"; //FIXME: This is hardcoded for testing...
+    app->processDTD(defaultDocType);
   	
   	docList->insert( w->url().url(), w );
   }
@@ -171,6 +170,7 @@ bool QuantaDoc::newDocument( const KURL& url )
 
 void QuantaDoc::openDocument(const KURL& url)
 {
+  Document *ww = write();
   if ( !newDocument( url )) return;
   if ( !url.url().isEmpty()) {
 //    write()->busy = true;
@@ -201,12 +201,11 @@ void QuantaDoc::openDocument(const KURL& url)
 
      app->processDTD();
 
-     write()->dtdName = "HTML 4.0"; //FIXME: This is hardcoded for testing...
      app->reparse();
     }
 
   }
-
+  ww = write();
   write()->createTempFile();
 
   emit title( url.url() );

@@ -30,6 +30,7 @@
 
 #include "../resource.h"
 #include "../quantacommon.h"
+#include "../document.h"
 
 Parser::Parser()
 {
@@ -82,7 +83,6 @@ Parser::Parser()
   list = new QStringList();
   list->append("option");
   tagsStop.insert("option",list);
-  
 }
 
 Parser::~Parser()
@@ -90,8 +90,10 @@ Parser::~Parser()
 }
 
 
-Node *Parser::parse( QString text)
+Node *Parser::parse( QString text, QString dtdName)
 {
+  m_dtdName = dtdName;
+
 	if ( s )
 		if ( s == text ) {
 			textChanged = false;
@@ -177,8 +179,7 @@ Node * Parser::subParse( Node * parent, QString tag )
           prevNode->next = tnode;
         prevNode = tnode;
 
-//FIXME: Hardcoded DTD
-        if ( !tagData->single && !QuantaCommon::isSingleTag("HTML 4.0", tagData->name) ) { // not single tag
+        if ( !tagData->single && !QuantaCommon::isSingleTag(m_dtdName, tagData->name) ) { // not single tag
           tnode->child = subParse( tnode , tagData->name.lower() );
 
         	tnode->endContext = pos-1;
