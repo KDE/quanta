@@ -285,6 +285,7 @@ void EventEditorDlg::setArguments(const QStringList& arguments)
 
 void EventEditorDlg::resetArgumentWidgets(QLabel *label, KComboBox *combo)
 {
+   label->setText(i18n("Argument:"));
    label->setEnabled(false);
    combo->setEnabled(false);
    combo->setEditable(true);
