@@ -24,6 +24,7 @@
 #include <qtabwidget.h>
 
 //kde includes
+#include <kdebug.h>
 #include <kicondialog.h>
 #include <kiconloader.h>
 #include <kkeybutton.h>
@@ -58,7 +59,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   actionTreeView->setSorting(-1);
   allActionsItem = new KListViewItem(actionTreeView, i18n("All"));
   actionTreeView->insertItem(allActionsItem);
-  QListViewItem *item, *oldItem = 0L;
+  QListViewItem *item, *oldItem = allActionsItem;
   KAction *action;
   QString toolbarName;
   QTabWidget *tb = quantaApp->getView()->toolbarTab;
@@ -118,6 +119,21 @@ ActionConfigDialog::~ActionConfigDialog()
 void ActionConfigDialog::slotAddToolbar()
 {
   quantaApp->slotAddToolbar();
+  QString toolbarName;
+  QListViewItem *item;
+  QTabWidget *tb = quantaApp->getView()->toolbarTab;
+  for (int i = 0; i < tb->count(); i++)
+  {
+    toolbarName = tb->label(i);
+    if (!actionTreeView->findItem(toolbarName, 0))
+    {
+      item = actionTreeView->lastItem();
+      if (item->parent())
+        item = item->parent();
+      new KListViewItem(actionTreeView, item, i18n(toolbarName));
+      break;
+    }
+  }
 }
 
 void ActionConfigDialog::slotRemoveToolbar()
@@ -480,16 +496,84 @@ void ActionConfigDialog::saveCurrentAction()
         break;
       }
   }
+  QTabWidget *tb = quantaApp->getView()->toolbarTab;
+  for (int i = 0; i < tb->count(); i++)
+  {
+    QString toolbarName = tb->label(i);
+    ToolbarEntry *p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+    bool isOnToolbar = false;
+    if (p_toolbar)
+    {
+      QDomNode node = p_toolbar->guiClient->domDocument().firstChild().firstChild().firstChild();
+      bool placeOnToolbar = toolbarListBox->findItem(toolbarName, Qt::ExactMatch);
+      while (!node.isNull())
+      {
+        if (node.nodeName() == "Action" &&
+            node.toElement().attribute("name") == el.attribute("name"))
+        {
+          //if it's present in the toolbar, but not in the container list,
+          //remove it also from the toolbar
+          if (!placeOnToolbar)
+          {
+            currentAction->unplug(tb->page(i));
+            currentAction->unplug(p_toolbar->menu);
+            node.parentNode().removeChild(node);
+            KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(), p_toolbar->guiClient->localXMLFile());
+            QListViewItemIterator iter(actionTreeView);
+            while (iter.current())
+            {
+              listItem = iter.current();
+              if (listItem->depth() > 0 && listItem->parent()->text(0) == toolbarName
+                  && listItem->text(0) == el.attribute("text"))
+              {
+                delete listItem;
+                break;
+              }
+              ++iter;
+            }
+          }
+          isOnToolbar = true;
+          break;
+        }
+        node = node.nextSibling();
+      }
+      //it's not on the toolbar, but it should be
+      if (!isOnToolbar && placeOnToolbar)
+      {
+        currentAction->plug(tb->page(i));
+        currentAction->plug(p_toolbar->menu);
+        item = p_toolbar->guiClient->domDocument().createElement("Action");
+        item.setAttribute("name",el.attribute("name"));
+        p_toolbar->guiClient->domDocument().firstChild().firstChild().appendChild(item);
+        KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(), p_toolbar->guiClient->localXMLFile());
+      //put it also in the treeview
+        listItem = actionTreeView->findItem(toolbarName, 0);
+        if (listItem)
+        {
+          QListViewItem *after = listItem->firstChild();
+          while ( after && after->nextSibling() && after->nextSibling()->depth()!=0 )
+          {
+            after = after->nextSibling();
+          }
+          listItem = new KListViewItem(listItem, after, lineText->text(), currentAction->shortcut().toString());
+          listItem->setPixmap(0, BarIcon(actionIcon->icon()));
+        }
+      }
+    }
+  }
+
 }
 
 void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
 {
   shortcutKeyButton->setText(shortcut.toString());
+  buttonApply->setEnabled(true);
 }
 
 void ActionConfigDialog::accept()
 {
-  saveCurrentAction();
+  if (buttonApply->isEnabled())
+      saveCurrentAction();
   ActionConfigDialogS::accept();
 }
 
@@ -530,13 +614,13 @@ void ActionConfigDialog::slotDeleteAction()
     quantaApp->actions()->firstChild().removeChild( el );
     QString actionName = currentAction->name();
 
-    QPtrList<KXMLGUIClient> guiClients = quantaApp->guiFactory()->clients();
+    QPtrList<KXMLGUIClient> guiClients = quantaApp->factory()->clients();
     KXMLGUIClient *guiClient = 0;
     QDomNodeList nodeList;
-    for (uint i = 1; i < guiClients.count(); i++)
+    for (uint i = 0; i < guiClients.count(); i++)
     {
       guiClient = guiClients.at(i);
-      quantaApp->guiFactory()->removeClient(guiClient);
+      guiClient->domDocument().setContent(KXMLGUIFactory::readConfigFile( guiClient->xmlFile(), guiClient->instance() ));
       nodeList = guiClient->domDocument().elementsByTagName("Action");
       for (uint j = 0; j < nodeList.count(); j++)
       {
@@ -544,30 +628,34 @@ void ActionConfigDialog::slotDeleteAction()
         if (nodeList.item(j).toElement().attribute("name") == actionName)
         {
           nodeList.item(j).parentNode().removeChild(nodeList.item(j));
-          KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->localXMLFile());
+          if (i == 0)
+          {
+
+          }
+          KXMLGUIFactory::saveConfigFile(guiClient->domDocument(), guiClient->xmlFile());
+          break;
         }
       }
-        guiClient ->setXMLGUIBuildDocument( QDomDocument() );
-        guiClient->reloadXML();
-        quantaApp->guiFactory()->addClient(guiClient);
     }
-      delete currentAction;
-      currentAction = 0L;
+    currentAction->unplugAll();
+    delete currentAction;
+    currentAction = 0L;
+
     //update the tree view
-      QListViewItem *listItem;
-      QListViewItemIterator it(actionTreeView);
-      while (it.current())
+    QListViewItem *listItem;
+    QListViewItemIterator it(actionTreeView);
+    while (it.current())
+    {
+      listItem = it.current();
+      if (listItem->depth() > 0 && listItem->text(0) == text)
       {
-        listItem = it.current();
-        if (listItem->depth() > 0 && listItem->text(0) == text)
-        {
-          ++it;
-          delete listItem;
-        } else
-        {
-          ++it;
-        }
+        ++it;
+        delete listItem;
+      } else
+      {
+        ++it;
       }
+    }
   }
 }
 
@@ -631,4 +719,3 @@ void ActionConfigDialog::slotTextChanged(const QString&)
 }
 
 #include "actionconfigdialog.moc"
-

@@ -742,6 +742,30 @@ void QuantaApp::slotOptionsConfigureToolbars()
  connect( &dlg, SIGNAL( newToolbarConfig() ), SLOT( slotNewToolbarConfig() ) );
  dlg.exec();
 
+ QPopupMenu *menu = 0L;
+ QString toolbarName;
+ QTabWidget *tb = view->toolbarTab;
+ for (int i = 0; i < tb->count(); i++)
+ {
+   toolbarName = tb->label(i);
+   p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+   if (p_toolbar)
+   {
+    delete p_toolbar->menu;
+    menu = new QPopupMenu(m_tagsMenu);
+    nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("Action");
+    for (uint i = 0; i < nodeList.count(); i++)
+    {
+      KAction *action = actionCollection()->action(nodeList.item(i).toElement().attribute("name"));
+      if (action)
+          action->plug(menu);
+    }
+
+    m_tagsMenu->insertItem(toolbarName,menu);
+    p_toolbar->menu = menu;
+   }
+ }
+
  //add the menus
  menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);

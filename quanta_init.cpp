@@ -37,6 +37,7 @@
 // include files for KDE
 #include <kaccel.h>
 #include <kapplication.h>
+#include <kdebug.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
@@ -162,9 +163,8 @@ void QuantaApp::initQuanta()
   m_pluginInterface = new QuantaPluginInterface();
 
   createGUI( QString::null, false /* conserveMemory */ );
-  
-  applyMainWindowSettings(config);
 
+  applyMainWindowSettings(config);
   initPlugins  ();
 
   m_tagsMenu = new QPopupMenu(this);

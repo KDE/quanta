@@ -916,6 +916,12 @@
         <receiver>ActionConfigDialogS</receiver>
         <slot>slotTextChanged(const QString&amp;)</slot>
     </connection>
+    <connection>
+        <sender>shortcutKeyButton</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>ActionConfigDialogS</receiver>
+        <slot>slotToggled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>actionTreeView</tabstop>
@@ -954,9 +960,10 @@
     <slot>slotApply()</slot>
     <slot>lineText_selectionChanged()</slot>
     <slot>slotTextChanged()</slot>
-    <slot>slotToggled( bool )</slot>
     <slot>typeCombo_activated(const QString&amp;)</slot>
     <slot>slotTextChanged(const QString&amp;)</slot>
+    <slot>shortcutKeyButton_toggled(bool)</slot>
+    <slot>slotToggled(bool)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
