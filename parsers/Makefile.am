@@ -9,7 +9,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/quanta/parts/kafka \
 	-I$(top_srcdir)/quanta/treeviews \
 	-I$(top_srcdir)/lib \
-	$(all_includes)
+	$(KMDI_INCLUDES) $(all_includes)
 
 
 noinst_HEADERS =  saparser.h parsercommon.h

@@ -179,15 +179,12 @@
 
 const QString resourceDir = QString(PACKAGE) + "/";
 
-
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}
 
-
-
-QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta", KMdi::IDEAlMode )//KParts::DockMainWindow(0L,"Quanta")
+QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta", KMdi::IDEAlMode )
 {
-  //KDockMainWindow::createGUI(0, false);
+  setXMLFile("quanta_beui.rc");
   m_quantaInit = new QuantaInit(this);
   dcopSettings = new DCOPSettings;
   dcopQuanta = new DCOPQuanta;

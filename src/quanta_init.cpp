@@ -82,6 +82,7 @@
 #include "project.h"
 #include "phpdebuggerinterface.h"
 
+#include "wkafkapart.h"
 #include "whtmlpart.h"
 #include "messageoutput.h"
 
@@ -194,6 +195,10 @@ void QuantaInit::initQuanta()
   m_quanta->selectTagAreaAction->plug(m_quanta->m_tagsMenu);
   m_quanta->m_tagsMenu->insertSeparator();
   m_quanta->menuBar()->insertItem(i18n("&Tags"), m_quanta->m_tagsMenu, -1, TAGS_MENU_PLACE);
+  m_quanta->menuBar()->insertItem(i18n("&Window"), m_quanta->windowMenu(), -1, 10);
+  KActionMenu *toolviewMenu = (KActionMenu*)(m_quanta->actionCollection()->action("kmdi_toolview_menu"));
+  if (toolviewMenu)
+  toolviewMenu->plug(m_quanta->windowMenu());
 
   QPopupMenu *toolbarsMenu  = (QPopupMenu*)(m_quanta->guiFactory())->container("toolbars_load", m_quanta);
   connect(toolbarsMenu, SIGNAL(aboutToShow()), m_quanta, SLOT(slotBuildPrjToolbarsMenu()));
@@ -353,7 +358,7 @@ void QuantaInit::initView()
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3);
 #endif
 
-  m_quanta->setStandardMDIMenuEnabled(true);
+  m_quanta->setStandardMDIMenuEnabled(false);
   m_quanta->setManagedDockPositionModeEnabled(true);
 /*  KMdiChildView* pMDICover = new KMdiChildView("MainDock");
   pMDICover->setName("MainDock");

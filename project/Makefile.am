@@ -10,4 +10,4 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/quanta/src \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/quanta/dialogs \
-	$(all_includes)
+	$(KMDI_INCLUDES) $(all_includes)
