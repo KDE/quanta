@@ -155,6 +155,9 @@ void QuantaInit::initQuanta()
 
   m_quanta->createGUI( QString::null, false /* conserveMemory */ );
    
+  m_quanta->menuBar()->insertItem(i18n("Plu&gins"), m_quanta->m_pluginInterface->pluginMenu(),
+                                  -1, PLUGINS_MENU_PLACE);
+
 //Compatility code (read the action shortcuts from quantaui.rc)
 //TODO: Remove after upgrade from 3.1 is not supported
   QDomDocument doc;
@@ -1126,9 +1129,6 @@ void QuantaInit::initPlugins()
   connect(m_quanta->m_pluginInterface, SIGNAL(statusMsg(const QString &)),
           m_quanta, SLOT(slotStatusMsg(const QString & )));
   m_quanta->m_pluginInterface->readConfig();
-
-  m_quanta->menuBar()->insertItem(i18n("Plu&gins"), m_quanta->m_pluginInterface->pluginMenu(),
-                                  -1, PLUGINS_MENU_PLACE);
 }
 
 
