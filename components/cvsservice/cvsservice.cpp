@@ -94,7 +94,7 @@ void CVSService::slotUpdate(const QStringList &files)
    if (m_repository && !m_appId.isEmpty())
    {
       emit clearMessages();
-      DCOPRef job = m_cvsService->log(files[0]);//m_cvsService->update(files, true, true, true, "");
+      DCOPRef job = m_cvsService->update(files, true, true, true, "");
       m_cvsJob = new CvsJob_stub( job.app(), job.obj() );
 
       connectDCOPSignal(job.app(), job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
