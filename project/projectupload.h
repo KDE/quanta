@@ -57,6 +57,7 @@ private:
   KURL *baseUrl;
   bool stopUpload;
 
+  void initProjectInfo(Project *p);
 };
 
 #endif

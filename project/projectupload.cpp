@@ -33,104 +33,88 @@
 #include <kio/job.h>
 #include <kmessagebox.h>
 #include <kprotocolinfo.h>
+#include <kdebug.h>
 
 
 ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const char* name)
   :ProjectUploadS( parent, name, true, 0)
 {
-  p = prg;
+    initProjectInfo(prg);
 	
-  baseUrl = new KURL();
+    QFileInfo fi( p->basePath + file );
+  
+    if (fi.isDir()) {
+	kdDebug() << file << " is a directory" << endl;
+	QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
+
+	QDateTime stime;
+	stime.setTime_t(1);	
+		
+	for ( unsigned int i=0; i<nl.count(); i++ ) {
+		       
+	    QDomElement el = nl.item(i).toElement();
+	    if ( el.nodeName() == "item" )	{
+		QString url = el.attribute("url");
+		if (url.contains(file) > 0) {
+		    files.append( url );
+				
+		    QFileInfo fi( p->basePath + url );
+		    
+		    QString size;
+		    size.sprintf( "%i", fi.size() );
+		    
+		    QDate d = fi.lastModified().date();
+		    QString date;
+		    
+		    date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
+		    date.replace( QRegExp(" "), "0" );
+		    
+		    QListViewItem *it = new QListViewItem( list, url, date, size );
+		    
+		    int uploadTime = el.attribute("upload_time","1").toInt();
+		    int modifiedTime = stime.secsTo( fi.lastModified() );
+		    
+		    if ( uploadTime < modifiedTime ) {
+			modified.append( url );
+			it->setSelected(true);
+		    }
+		}	
+	    }
+	}
+		
+    } else {
+
+	kdDebug() << file << " is a file" << endl;
+
+        files.append( file );
 	
-  list->setMultiSelection(true);
-	
-  list->setColumnAlignment(1,Qt::AlignRight);
-  list->setColumnAlignment(2,Qt::AlignRight);
-  list->setShowSortIndicator (true);
-	
-  QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
-	
-  QDateTime stime;
-  stime.setTime_t(1);
-	
-  QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
-	
-  lineHost -> setText(uploadEl.attribute("remote_host",""));
-  lineUser -> setText(uploadEl.attribute("user",""));
-  linePath -> setText(uploadEl.attribute("remote_path",""));
-  port -> setText( uploadEl.attribute("remote_port","") );
-  QString def_p = uploadEl.attribute("remote_protocol","ftp");
-	
-  QStringList protocols = KProtocolInfo::protocols();
-  for ( uint i=0; i<protocols.count(); i++ ) {
-    QString p = protocols[i];
-    if ( KProtocolInfo::supportsWriting(p) &&
-	 KProtocolInfo::supportsMakeDir(p) &&
-	 KProtocolInfo::supportsDeleting(p) ) {
-      comboProtocol->insertItem(p);
-      if ( p == def_p )
-	comboProtocol->setCurrentItem( comboProtocol->count()-1 );
+	QString size;
+	size.sprintf( "%i", fi.size() );
+  
+	QDate d = fi.lastModified().date();
+	QString date;
+		
+	date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
+	date.replace( QRegExp(" "), "0" );
+		
+	QListViewItem *it = new QListViewItem( list, file, date, size );
+		
+	modified.append( file );
+	it->setSelected(true);
     }
-  }
-	
-  files.append( file );
-  
-  QFileInfo fi( p->basePath + file );
-  
-  QString size;
-  size.sprintf( "%i", fi.size() );
-  
-  QDate d = fi.lastModified().date();
-  QString date;
-  
-  date.sprintf( "%4i.%2i.%2i", d.year(), d.month(), d.day() );
-  date.replace( QRegExp(" "), "0" );
-  
-  QListViewItem *it = new QListViewItem( list, file, date, size );
-  
-  modified.append( file );
-  it->setSelected(true);
-  
 }
 
 
 ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, bool modal, WFlags fl )
   :ProjectUploadS( parent,  name, modal, fl )
 {
-	p = prg;
 	
-	baseUrl = new KURL();
-	
-	list->setMultiSelection(true);
-	
-	list->setColumnAlignment(1,Qt::AlignRight);
-	list->setColumnAlignment(2,Qt::AlignRight);
-	list->setShowSortIndicator (true);
-	
+	initProjectInfo(prg);
+
 	QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
-	
+
 	QDateTime stime;
-	stime.setTime_t(1);
-	
-	QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
-	
-	lineHost -> setText(uploadEl.attribute("remote_host",""));
-	lineUser -> setText(uploadEl.attribute("user",""));
-	linePath -> setText(uploadEl.attribute("remote_path",""));
-	port -> setText( uploadEl.attribute("remote_port","") );
-	QString def_p = uploadEl.attribute("remote_protocol","ftp");
-	
-	QStringList protocols = KProtocolInfo::protocols();
-	for ( uint i=0; i<protocols.count(); i++ ) {
-	  QString p = protocols[i];
-	  if ( KProtocolInfo::supportsWriting(p) &&
-	       KProtocolInfo::supportsMakeDir(p) &&
-	       KProtocolInfo::supportsDeleting(p) ) {
-       comboProtocol->insertItem(p);
-       if ( p == def_p )
-         comboProtocol->setCurrentItem( comboProtocol->count()-1 );
-    }
-	}
+	stime.setTime_t(1);	
 	
 	for ( unsigned int i=0; i<nl.count(); i++ )
 	  {
@@ -163,10 +147,48 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 	    }
 	  }
 }
+
 ProjectUpload::~ProjectUpload()
 {
   delete baseUrl;
 }
+
+void 
+ProjectUpload::initProjectInfo(Project *prg) 
+{
+
+	p = prg;
+	
+	baseUrl = new KURL();
+	
+	list->setMultiSelection(true);
+	
+	list->setColumnAlignment(1,Qt::AlignRight);
+	list->setColumnAlignment(2,Qt::AlignRight);
+	list->setShowSortIndicator (true);
+	
+	QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
+	
+	lineHost -> setText(uploadEl.attribute("remote_host",""));
+	lineUser -> setText(uploadEl.attribute("user",""));
+	linePath -> setText(uploadEl.attribute("remote_path",""));
+	port -> setText( uploadEl.attribute("remote_port","") );
+	QString def_p = uploadEl.attribute("remote_protocol","ftp");
+	
+	QStringList protocols = KProtocolInfo::protocols();
+	for ( uint i=0; i<protocols.count(); i++ ) {
+		QString p = protocols[i];
+		if ( KProtocolInfo::supportsWriting(p) &&
+		     KProtocolInfo::supportsMakeDir(p) &&
+		     KProtocolInfo::supportsDeleting(p) ) {
+			comboProtocol->insertItem(p);
+			if ( p == def_p )
+				comboProtocol->setCurrentItem( comboProtocol->count()-1 );
+		}
+	}
+
+}
+
 
 void ProjectUpload::startUpload()
 {

@@ -48,6 +48,7 @@ public slots: // Public slots
 	void slotRemove();
 	void slotRemoveFromProject();
 	void slotUploadSingleFile();
+	void slotUploadSingleFolder();
 	
   void slotMenu(QListViewItem*, const QPoint&, int);
   void slotFileTag();
@@ -67,6 +68,7 @@ signals: // Signals
   void removeFileFromProject( QString );
   void removeFolderFromProject( QString );
   void uploadSingleFile( QString );
+  void uploadSingleFolder( QString );
 
 public:
   ProjectTreeFolder *projectDir;

@@ -75,6 +75,8 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
  	folderMenu -> insertSeparator();
 	folderMenu -> insertItem(	UserIcon("delete"),i18n("Remove from disc"), 	 this ,SLOT(slotRemove()));
 	folderMenu -> insertItem(					  			   i18n("Remove from project"),this ,SLOT(slotRemoveFromProject()));
+	folderMenu -> insertSeparator();
+	folderMenu -> insertItem(i18n("Upload folder..."),this,SLOT(slotUploadSingleFolder()));
 
 //	folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
 
@@ -351,4 +353,10 @@ void ProjectTreeView::slotUploadSingleFile()
 {
 	if ( !currentItem() ) return;
 	emit uploadSingleFile( currentFileName() );
+}
+
+void ProjectTreeView::slotUploadSingleFolder()
+{
+	if ( !currentItem() ) return;
+	emit uploadSingleFolder( currentFileName() );
 }

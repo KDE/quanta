@@ -213,6 +213,8 @@ void QuantaApp::initProject()
           project,  SLOT  (slotRemoveFolder(QString)));
   connect(pTab,      SIGNAL(uploadSingleFile(QString)),
           project,  SLOT  (uploadFile(QString)));
+  connect(pTab,      SIGNAL(uploadSingleFolder(QString)),
+          project,  SLOT  (uploadFile(QString)));
           
   connect(project,  SIGNAL(selectMessageWidget()),
           this,      SLOT  (slotSelectMessageWidget()));
@@ -237,10 +239,10 @@ void QuantaApp::initView()
   maindock = createDockWidget( "Editor", UserIcon("textarea"  ), 0L, i18n("Editor"));
   bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Output"));
   
-  ftabdock = createDockWidget( "Files",  UserIcon("ftab"),     0L, ".");
-  ptabdock = createDockWidget( "Project",UserIcon("ptab"),     0L, ".");
-  stabdock = createDockWidget( "Struct", BarIcon ("view_sidetree"),0L, ".");
-  dtabdock = createDockWidget( "Docs",   BarIcon ("contents2"),    0L, ".");
+  ftabdock = createDockWidget( "Files",  UserIcon("ftab"),     0L, "");
+  ptabdock = createDockWidget( "Project",UserIcon("ptab"),     0L, "");
+  stabdock = createDockWidget( "Struct", BarIcon ("view_sidetree"),0L, "");
+  dtabdock = createDockWidget( "Docs",   BarIcon ("contents2"),    0L, "");
 
   QStrList topList;
   config->setGroup("General Options");
