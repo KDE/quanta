@@ -1187,8 +1187,8 @@ void ProjectPrivate::loadProject(const KURL &url)
   if ( projectAlreadyOpen(url.url()) )
   {
     parent->hideSplash();
-    KMessageBox::sorry(m_mainWindow, i18n("<qt>Cannot open the file<br><b>%1</b><br>It is used by another Quanta instance.</qt>").arg(url.prettyURL()));
-    return;
+    if (KMessageBox::warningYesNo(m_mainWindow, i18n("<qt>The project<br><b>%1</b><br> seems to be used by another Quanta instance.<br>You may end up with data loss if you open the same project in two instances, modify and save them in both.<br><br>Do you want to proceed with open?</qt>").arg(url.prettyURL())) == KMessageBox::No)
+      return;
   }
   QString tmpFile = QString::null;
   // test if url is writeable and download to local file

@@ -82,6 +82,8 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - autocomplete PHP functions after @
         - Create New Folder/File item added to project and file treeview context
           menu [#93189]
+        - allow opening of the same project in two instances if the user really
+          wants to [#94289]
 
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and
