@@ -677,19 +677,17 @@ void QuantaApp::slotClosePage(QWidget *w)
     plugin->m_action->setChecked(false);
   } else
   {
-    Document *write = dynamic_cast<Document *>(w);
-    if (write)
-    {
-      write->closeTempFile();
-      if (!write->isUntitled())
-        fileWatcher->removeFile(write->url().path());
-      //writeTab->removePage(w);
-      m_view->removeWrite();
-    }
+      QWidget *oldPage = writeTab->currentPage();
+      if (oldPage != w)
+          writeTab->showPage(w);
+      m_doc->closeDocument();
+      if (oldPage != w)
+          writeTab->showPage(oldPage);
   }
   if (!writeTab->currentPage())
   {
     m_doc->openDocument(KURL());
+    reparse(true);
   }
 }
 
