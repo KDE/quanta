@@ -131,6 +131,8 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   connect( m_view, SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString *)),
            this,  SLOT(  slotFilterCompletion(KTextEditor::CompletionEntry*,QString *)) );
   connect( m_doc, SIGNAL(textChanged()), SLOT(slotTextChanged()));
+  
+ // installEventFilter(this);
 
 //  setFocusProxy(m_view);
 }
@@ -153,11 +155,19 @@ void Document::resizeEvent(QResizeEvent *e)
   }
 }
 
-void Document::keyPressEvent(QKeyEvent *e)
+bool Document::eventFilter ( QObject * watched, QEvent * e )
 {
-  kdDebug(24000) << "Key pressed." << endl;
-  e->ignore();
+  if ( e->type() == QEvent::AccelOverride)
+  {
+    QKeyEvent *ke = (QKeyEvent*) e;
+    kdDebug(24000) << "eventFilter : AccelOverride : " << ke->key() << endl;
+//    kdDebug(24000) << "              type          : " << ke->type() << endl;
+//    kdDebug(24000) << "              state         : " << ke->state() << endl;
+    typingInProgress = true;    
+  }
+  return false;
 }
+
 
 void Document::setUntitledUrl(QString url)
 {
@@ -587,43 +597,38 @@ bool Document::saveIt()
 QString Document::getTagNameAt(int line, int col )
 {
  QString name = "";
- Node *node = parser->nodeAt(line, col, false);
-
- if (node && node->tag)
+ QString textLine = editIf->textLine(line);
+ textLine = textLine.left(col);
+ while (line >= 0)
  {
-   Tag *tag = new Tag();
-   int bl, bc;
-   uint el, ec;
-   node->tag->beginPos(bl, bc);
-   int el2, ec2;
-   node->tag->endPos(el2, ec2);
-   if (el2 == line && ec2 + 1 == col && node->tag->tagStr().endsWith(">"))
-     return name;
-   viewCursorIf->cursorPositionReal(&el, &ec);
-   ec--;
-   tag->setTagPosition(bl, bc, el, ec);
-   tag->parse(text(bl,bc,el,ec), this);
-
-   name = (tag->nameSpace.isEmpty()) ? tag->name : tag->nameSpace + ":" + tag->name;
-   if (name.isEmpty())
-   {
-     QString s = tag->tagStr();
-     int pos = s.find("<");
-     if (pos !=-1)
-     {
-       s.remove(0,pos);
-       pos = 0;
-       while (pos < (int)s.length() &&
-              !s[pos].isSpace() &&
-              s[pos] != '>') pos++;
-       name = s.mid(1, pos -1).stripWhiteSpace();
-     } else
-     {
-       name = "";
-     }
-   }
-   delete tag;
+    QuantaCommon::removeCommentsAndQuotes(textLine, completionDTD);
+    int pos = textLine.findRev("<");
+    int pos2 = textLine.findRev(">");
+    if (pos != -1 && pos2 < pos)
+    {
+      textLine.remove(0, pos + 1);
+      pos = 0;
+      while (pos < (int)textLine.length() &&
+            !textLine[pos].isSpace() &&
+            textLine[pos] != '>') 
+            pos++;
+      name = textLine.left(pos).stripWhiteSpace();
+      break;
+    } else
+    {
+      if (pos2 == -1)
+      {
+        line--;
+        if (line >= 0)
+          textLine = editIf->textLine(line);
+      } else
+      {
+        name = "";
+        break;
+      }
+    }
  }
+ 
  return name;
 }
 

@@ -471,6 +471,60 @@ QString QuantaCommon::i18n2normal(const QString& a_str)
   return str;
 }
 
+static const QChar space(' ');
+
+void QuantaCommon::removeCommentsAndQuotes(QString &str, DTDStruct *dtd)
+{
+ //Replace all the commented strings and the escaped quotation marks (\", \')
+ // with spaces so they will not mess up our parsing
+ int pos = 0;
+ int l;
+ QString s;
+ while (pos != -1)
+ {
+   pos = dtd->commentsStartRx.search(str, pos);
+   if (pos != -1)
+   {
+     s = dtd->commentsStartRx.cap();
+     if (s == "\\\"" || s == "\\'")
+     {
+       str[pos] = space;
+       str[pos+1] = space;
+       pos += 2;
+     } else
+     {
+       s = dtd->comments[s];
+       l = str.find(s, pos);
+       l = (l == -1) ? str.length() : l;
+       for (int i = pos; i < l ; i++)
+       {
+         str[i] = space;
+       }
+       pos = l + s.length();
+     }
+   }
+ }
+
+ //Now replace the quoted strings with spaces
+ const QRegExp strRx("(\"[^\"]*\"|'[^']*')");
+ pos = 0;
+ while (pos != -1)
+ {
+   pos = strRx.search(str, pos);
+   if (pos != -1)
+   {
+    l = strRx.matchedLength();
+    for (int i = pos; i < pos + l ; i++)
+    {
+      str[i] = space;
+    }
+    pos += l;
+   }
+ }
+
+}
+
+
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
 
 #define GZIP_MAGIC1     0x1f

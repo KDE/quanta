@@ -896,6 +896,7 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
 
 Node *Parser::rebuild(Document *w)
 {
+ kdDebug(24000) << "Rebuild started. " << endl;
  QTime t;
  t.start();
 
@@ -1220,7 +1221,7 @@ void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
             foundStr = content.mid(areaPos, areaPos2 - areaPos + 1);
             lastAreaPos = areaPos2 + 1;
           }
-          removeCommentsAndQuotes(foundStr, dtd);
+          QuantaCommon::removeCommentsAndQuotes(foundStr, dtd);
           //find the structure blocks and remove the text inside them
           int structPos = 0;
           while (structPos !=-1)
@@ -1318,56 +1319,6 @@ void Parser::slotIncludedFileChanged(const QString& fileName)
   }
 }
 
-void Parser::removeCommentsAndQuotes(QString &str, DTDStruct *dtd)
-{
- //Replace all the commented strings and the escaped quotation marks (\", \')
- // with spaces so they will not mess up our parsing
- int pos = 0;
- int l;
- QString s;
- while (pos != -1)
- {
-   pos = dtd->commentsStartRx.search(str, pos);
-   if (pos != -1)
-   {
-     s = dtd->commentsStartRx.cap();
-     if (s == "\\\"" || s == "\\'")
-     {
-       str[pos] = space;
-       str[pos+1] = space;
-       pos += 2;
-     } else
-     {
-       s = dtd->comments[s];
-       l = str.find(s, pos);
-       l = (l == -1) ? str.length() : l;
-       for (int i = pos; i < l ; i++)
-       {
-         str[i] = space;
-       }
-       pos = l + s.length();
-     }
-   }
- }
-
- //Now replace the quoted strings with spaces
- const QRegExp strRx("(\"[^\"]*\"|'[^']*')");
- pos = 0;
- while (pos != -1)
- {
-   pos = strRx.search(str, pos);
-   if (pos != -1)
-   {
-    l = strRx.matchedLength();
-    for (int i = pos; i < pos + l ; i++)
-    {
-      str[i] = space;
-    }
-    pos += l;
-   }
- }
-
-}
 
 void Parser::parseForXMLGroup(Node *node)
 {
@@ -1587,6 +1538,8 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
   Node *currentNode = parentNode;
   while (line <= endLine)
   {
+    if (typingInProgress)
+      kdDebug(24000) << "Key pressed. " << endl;
     contextFound = false;
     switch (currentContext.type)
     {
@@ -1848,7 +1801,7 @@ Node* Parser::parseSpecialArea(const AreaStruct &specialArea,
             Tag *tag = new Tag(currentContext.area, write, dtd);
             QString tagStr = tag->tagStr();
             tag->cleanStr = tagStr;
-            removeCommentsAndQuotes(tag->cleanStr, dtd);
+            QuantaCommon::removeCommentsAndQuotes(tag->cleanStr, dtd);
             if (tagStr.simplifyWhiteSpace().isEmpty())
             {
               tag->type = Tag::Empty;
@@ -2098,7 +2051,7 @@ void Parser::appendAreaToTextNode(const AreaStruct &area, Node *node)
     }
   }
   QString cleanedTagStr = tagStr;
-  removeCommentsAndQuotes(cleanedTagStr, node->tag->dtd);
+  QuantaCommon::removeCommentsAndQuotes(cleanedTagStr, node->tag->dtd);
   node->tag->cleanStr = cleanStr + cleanedTagStr;
   int bLine, bCol;
   node->tag->beginPos(bLine, bCol);

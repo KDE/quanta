@@ -63,8 +63,7 @@ public:
   DTDStruct * currentDTD(int line, int col);
   /** Remove the found groups from the memeber variables */
   void clearGroups();
-  void parseIncludedFiles();
-  void removeCommentsAndQuotes(QString& str, DTDStruct* dtd);
+  void parseIncludedFiles();  
 
   /** Enable/Disable parsing. */
   void setParsingEnabled(bool enabled) {m_parsingEnabled = enabled;}
