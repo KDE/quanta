@@ -21,6 +21,7 @@
 #include "node.h"
 #include "tag.h"
 #include "qtag.h"
+#include "../quantacommon.h"
 #ifdef BUILD_KAFKAPART
 #include "../parts/kafka/kafkacommon.h"
 #endif
@@ -218,7 +219,7 @@ Node *Node::getClosingNode()
 	{
 		while(n->tag->type == Tag::Empty)
 			n = n->next;
-		if(n->tag->type == Tag::XmlTagEnd && n->tag->name == ("/" + tag->name))
+		if (n->tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(tag, n->tag))
 			return n;
 	}
 	return 0L;

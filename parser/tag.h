@@ -113,6 +113,8 @@ public:
   void modifyAttributes(QDict<QString> *attrDict);
   /** returns the tag as a string */
   QString toString();
+  /** returns true if the tag is a closing tag (name or namespace starts with "/") */
+  bool isClosingTag();
 
   int size();
 

@@ -180,8 +180,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
     return false;
   m_write = node->tag->write();
   m_dtd = node->tag->dtd;
-  if ((m_dtd->caseSensitive && "/" + node->tag->name != lastNode->tag->name) ||
-       (!m_dtd->caseSensitive && "/" + node->tag->name.lower() != lastNode->tag->name.lower()) ) {
+  if ( !QuantaCommon::closesTag(node->tag, lastNode->tag) ) {
     return false;
   }
   int nCol, nRow, maxCol;

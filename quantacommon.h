@@ -41,6 +41,7 @@ class KURL;
 class KStandardDirs;
 class QWidget;
 class KSpellConfig;
+class Tag;
 
 //TODO: remove once KDE 3.1.x is not supported
 #include <kaction.h>
@@ -173,6 +174,8 @@ pointer must be deleted by the caller!! */
 #endif
 /** No descriptions */
   static void normalizeStructure(QString f,QStringList& l);
+  /**Returns true if tag2 is the closing pair of tag1. It's namespace aware.*/
+  static bool closesTag(Tag *tag1, Tag *tag2);
 };
 
 

@@ -28,6 +28,7 @@
 #include "../../document.h"
 #include "../../quanta.h"
 #include "../../quantaview.h"
+#include "../../quantacommon.h"
 #include "../../parser/node.h"
 #include "../../parser/tag.h"
 #include "../../resource.h"
@@ -865,7 +866,7 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool ge
 			}
 			_nodeNext = _node;
 		}
-		if(newNode->next && ("/" + newNode->tag->name.lower() == newNode->next->tag->name.lower()))
+		if(newNode->next && QuantaCommon::closesTag(newNode->tag,  newNode->next->tag))
 			newNode->next->closesPrevious = true;
 		n = newNode;
 		while(n)

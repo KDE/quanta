@@ -43,8 +43,9 @@
 #include <qtimer.h>
 #include <qclipboard.h>
 #include <qdatastream.h>
-#include "quantacommon.h"
 
+#include "quantacommon.h"
+#include "parser/tag.h"
 //#include "resource.h"
 
 
@@ -509,6 +510,28 @@ void QuantaCommon::normalizeStructure(QString f,QStringList& l)
      f.remove(0,f.find(">")+1);
      l.append(z);
   }
+}
+
+bool QuantaCommon::closesTag(Tag *tag1, Tag *tag2)
+{
+  if (tag1->nameSpace.isEmpty())
+  {
+    if (!tag2->nameSpace.isEmpty())
+      return false; //namespace missmatch
+    QString tag1Name = tag1->dtd->caseSensitive ? tag1->name : tag1->name.upper();
+    QString tag2Name = tag2->dtd->caseSensitive ? tag2->name : tag2->name.upper();
+    if ("/" + tag1Name != tag2Name)
+      return false; //not the closing tag
+  } else
+  {
+    if (tag2->nameSpace.isEmpty())
+      return false; //namespace missmatch
+    QString tag1Name = tag1->dtd->caseSensitive ? (tag1->nameSpace + tag1->name) : (tag1->nameSpace.upper() + tag1->name.upper());
+    QString tag2Name = tag2->dtd->caseSensitive ? (tag2->nameSpace + tag2->name) : (tag2->nameSpace.upper() + tag2->name.upper());
+    if ("/" + tag1Name != tag2Name)
+      return false; //namespace missmatch or not the closing tag
+  }
+  return true;
 }
 
 KQPasteAction::KQPasteAction( const QString& text,

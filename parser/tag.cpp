@@ -443,3 +443,8 @@ QString Tag::toString()
 
   return tagString;
 }
+
+bool Tag::isClosingTag()
+{
+  return (name[0] == '/' || nameSpace[0] == '/');
+}

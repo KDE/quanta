@@ -376,7 +376,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       tag->type = Tag::XmlTag;
       tag->validXMLTag = (openNum == 0);
       tag->single = QuantaCommon::isSingleTag(m_dtd->name, tag->name);
-      if (tag->name[0] == '/')
+      if (tag->isClosingTag())
       {
         tag->type = Tag::XmlTagEnd;
         tag->single = true;
@@ -423,8 +423,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       }
 
       goUp = ( parentNode &&
-               ( (tag->type == Tag::XmlTagEnd &&
-                  "/"+parentNode->tag->name.lower() == tag->name.lower() ) ||
+               ( (tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(parentNode->tag, tag)
+                ) ||
                   parentNode->tag->single )
              );
       if (parentNode && !goUp)
@@ -1732,8 +1732,7 @@ Node *Parser::rebuild(Document *w)
     while (node && lastNode)
     {
       goUp = ( node->parent &&
-               ( (lastNode->tag->type == Tag::XmlTagEnd &&
-                  "/"+node->parent->tag->name.lower() == lastNode->tag->name.lower() ) ||
+               ( (lastNode->tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(node->parent->tag, lastNode->tag) ) ||
                   node->parent->tag->single )
              );
       if (node->parent && !goUp)

@@ -125,7 +125,8 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
               parentQTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
               if (parentQTag && !parentQTag->isSingle() &&
                   !parentQTag->isOptional() &&
-                  "/" + qTagName != nextTagName)
+                  (!node->next || (node->next && !QuantaCommon::closesTag(node->tag, node->next->tag)) )
+                 )
               {
                 node->tag->write()->setErrorMark(line);
                 appMessages->showMessage(i18n("Error in line %1: Closing tag for %2 is missing.\n").arg(line + 1).arg(qTagName));

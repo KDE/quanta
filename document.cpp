@@ -1803,8 +1803,8 @@ void Document::slotDelayedTextChanged()
             {
               num++;
             }
-            if ( (updateClosing && node->tag->name == "/"+currentNode->tag->name) ||
-                 (!updateClosing && "/"+node->tag->name == currentNode->tag->name) )
+            if ( (updateClosing && QuantaCommon::closesTag(currentNode->tag, node->tag) ) ||
+                 (!updateClosing && QuantaCommon::closesTag(node->tag, currentNode->tag) ) )
             {
               num--;
             }

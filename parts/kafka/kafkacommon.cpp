@@ -1104,7 +1104,7 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool d
 		curNode = nodeNext;
 		while(curNode && curNode->tag->type == Tag::Empty)
 			curNode = curNode->next;
-		if(curNode && curNode->tag->name == ("/" + nodeName))
+		if(curNode && QuantaCommon::closesTag(node->tag,curNode->tag))
 		{
 			curNode = nodeNext;
 			while(curNode)
