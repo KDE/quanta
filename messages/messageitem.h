@@ -3,7 +3,7 @@
                              -------------------
     begin                : Jan 12 2001
     copyright            : (C) 2001 by Dmitry Poplavsky <dima@kde.org>
-                           (C) 2002 Andras Mantia <amantia@kde.org>
+                           (C) 2002, 2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -36,6 +36,8 @@ class MessageItem : public QListBoxText {
 
     /** return line number for file , associated with this message */
     int line();
+    /** return column number for file , associated with this message */
+    int column();
     /** return name of file , associated with this message */
     QString fileName() { return filename; }
 

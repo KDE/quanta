@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Feb 24 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski <pdima@mail.univ.kiev.ua>
-                           (C) 2002,2003 Andras Mantia <amantia@kde.org>
+                           (C) 2002-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -47,7 +47,7 @@ public:
   void checkMaxItems();
 
 signals:
-  void clicked(const QString& fname, int line );
+  void clicked(const QString& fname, int line, int col);
 
 protected slots:
   void clickItem( QListBoxItem *);

@@ -644,8 +644,8 @@ void QuantaApp::slotEditFindInFiles()
     KURL pBase = Project::ref()->projectBaseURL();
     if (pBase.isLocalFile()) startDir = pBase.path(1);
     grepDialog = new GrepDialog( startDir, this, "grep_dialog" );
-    connect( grepDialog, SIGNAL( itemSelected   (const QString& , int)),
-             this,       SLOT  ( gotoFileAndLine(const QString& , int)));
+    connect( grepDialog, SIGNAL( itemSelected   (const QString& , int, int)),
+             this,       SLOT  ( gotoFileAndLine(const QString& , int, int)));
   }
   grepDialog->show();
   grepDialog->raise();
@@ -1550,8 +1550,7 @@ void QuantaApp::newDebuggerPosition(QString file, int lineNumber)
 
 void QuantaApp::openFile(QString file, int lineNumber, int columnNumber)
 {
-  gotoFileAndLine(file, lineNumber);
-  setCursorPosition(lineNumber, columnNumber);
+  gotoFileAndLine(file, lineNumber, columnNumber);
   slotNewStatus();
 }
 
@@ -1648,7 +1647,7 @@ void QuantaApp::setCursorPosition( int row, int col )
   }
 }
 
-void QuantaApp::gotoFileAndLine(const QString& filename, int line )
+void QuantaApp::gotoFileAndLine(const QString& filename, int line, int column)
 {
   if ( !filename.isEmpty() ) m_doc->openDocument( KURL::fromPathOrURL( filename ) );
 
@@ -1658,7 +1657,7 @@ void QuantaApp::gotoFileAndLine(const QString& filename, int line )
     int numLines = w->editIf->numLines();
     if ( numLines > line && line >= 0 )
     {
-      w->viewCursorIf->setCursorPositionReal(line, 0);
+      w->viewCursorIf->setCursorPositionReal(line, column);
     }
   }
 }

@@ -44,7 +44,7 @@ public:
   void  setDirName(QString);
 
 signals:
-    void itemSelected(const QString& abs_filename, int line);
+    void itemSelected(const QString& abs_filename, int line, int column);
     
 public slots:
 		void slotSearchFor(QString pattern);

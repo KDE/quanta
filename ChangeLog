@@ -35,6 +35,8 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
     
     - enhancements:
       - improve multiline script autocompletion    
+      - warn if there is a closing tag without opening tag in the document
+      - show also the column number in the error reporting dialog
       
 Version 3.2.2 (Release data: xx-xx-2004; Started 01-03-2004):
     - bugfixes:

@@ -300,7 +300,7 @@ void GrepDialog::itemSelected(const QString& item)
         if ( (pos = str.find(':')) != -1)
         {
             linenumber = str.left(pos);
-            emit itemSelected(filename,linenumber.toInt()-1);
+            emit itemSelected(filename, linenumber.toInt()-1, 0);
             //	kdDebug() << "Selected file " << filename << ", line " << linenumber << endl;
         }
     }

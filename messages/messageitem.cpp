@@ -3,7 +3,7 @@
                              -------------------
     begin                : Jan 12 2001
     copyright            : (C) 2001 by Dmitry Poplavsky <dima@kde.org>
-                           (C) 2002, 2003 Andras Mantia <amantia@kde.org>
+                           (C) 2002-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -44,6 +44,20 @@ int MessageItem::line()
   }
 }
 
+int MessageItem::column()
+{
+  QString s = text();
+  QRegExp exp("(?:\\D|^)(\\d{1,4})(?:\\D|$)");
+  
+  int pos = exp.search(s);
+  if ( pos == -1 )
+    return 0;
+  pos = exp.search(s, pos + exp.cap(1).length());  
+  if ( pos == -1 )
+    return 0;
+  s = exp.cap(1);
+  return s.toInt();
+}
 
 void MessageItem::addText( QString t )
 {

@@ -258,7 +258,7 @@ public slots:
   void slotOptionsConfigureActions();
 
   void setCursorPosition(int row, int col );
-  void gotoFileAndLine(const QString& filename, int line );
+  void gotoFileAndLine(const QString& filename, int line, int column);
 
   void selectArea(int line1, int col1, int line2, int col2);
 

@@ -194,10 +194,10 @@ void QuantaInit::initQuanta()
 
   connect(m_quanta->guiFactory()->container("popup_editor", m_quanta), SIGNAL(aboutToShow()), m_quanta, SLOT(slotContextMenuAboutToShow()));
 
-  connect(m_quanta->m_messageOutput, SIGNAL(clicked(const QString&,int)),
-          m_quanta, SLOT(gotoFileAndLine(const QString&,int)));
-  connect(m_quanta->m_problemOutput, SIGNAL(clicked(const QString&,int)),
-          m_quanta, SLOT(gotoFileAndLine(const QString&,int)));
+  connect(m_quanta->m_messageOutput, SIGNAL(clicked(const QString&, int, int)),
+          m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
+  connect(m_quanta->m_problemOutput, SIGNAL(clicked(const QString&, int, int)),
+          m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
 
   m_quanta->refreshTimer = new QTimer(m_quanta);
   connect(m_quanta->refreshTimer, SIGNAL(timeout()), m_quanta, SLOT(slotReparse()));

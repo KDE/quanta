@@ -3,7 +3,7 @@
                              -------------------
     begin                : Thu Feb 24 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavski <pdima@mail.univ.kiev.ua>
-                           (C) 2003 Andras Mantia <amantia@kde.org>
+                           (C) 2003-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include <klocale.h>
+#include <kdebug.h>
 
 #include "messageoutput.h"
 #include "messageitem.h"
@@ -85,8 +86,9 @@ void MessageOutput::clickItem( QListBoxItem * l_item )
 {
    MessageItem *item = dynamic_cast<MessageItem*>(l_item);
    if ( item )  {
+     kdDebug(24000) << "Column: " << item->column() << endl;
      if ( item->line() != -1  )
-       emit clicked( item->fileName(), item->line()-1 );
+       emit clicked( item->fileName(), item->line() - 1, item->column() - 1);
    }
 }
 
