@@ -58,8 +58,9 @@ UploadTreeFile::~UploadTreeFile(){
 QString UploadTreeFile::key ( int, bool ) const
 {
   static QString key;
-  key  = QString( text(0) );
-  return QFileInfo(key).extension()+key;
+  key  = QString( "1" + text(0) );
+  return key;
+//  return QFileInfo(key).extension()+key;
 }
 
 void UploadTreeFile::setWhichPixmap( QString pixmap )

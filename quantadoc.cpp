@@ -186,6 +186,7 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
 
       write()->createTempFile();
       emit title( write()->url().prettyURL() );
+      write()->view()->setFocus();     
     } 
   }
  if (!loaded && !url.isEmpty()) //the open of the document has failed

@@ -104,7 +104,7 @@ QString UploadTreeFolder::key ( int, bool ) const
 {
   static QString key;
 
-  key = QString("1") + text(0);
+  key = QString("0") + text(0);
 
   return key;
 }

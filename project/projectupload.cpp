@@ -43,7 +43,10 @@
 #include <kcompletion.h>
 #include <kprogress.h>
 
- //own includes
+//standard includes
+#include <time.h>
+
+//own includes
 #include "projectupload.h"
 #include "project.h"
 #include "../quantacommon.h"
@@ -390,9 +393,12 @@ void ProjectUpload::slotUploadNext()
   		QDomElement el = nl.item(i).toElement();
   		if ( el.nodeName() == "item"  &&  el.attribute("url") == QuantaCommon::qUrl(currentURL) )
   		{
-  			QDateTime stime;
-  			stime.setTime_t(1);
-  			el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
+  			//QDateTime stime;
+  			//stime.setTime_t(1);
+  			//el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
+        time_t stime;
+        time(&stime);
+  			el.setAttribute( "upload_time", (int)stime);
         break;
   		}
   	}
