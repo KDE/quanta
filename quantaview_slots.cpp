@@ -58,6 +58,7 @@
 #include "tagdialogs/tagquicklistdlg.h"
 #include "tagdialogs/tagquicktable.h"
 #include "tagdialogs/csseditor.h"
+#include "tagdialogs/cssselectoreditor.h"
 #include "tagdialogs/tagmaildlg.h"
 #include "tagdialogs/tagmiscdlg.h"
 
@@ -106,7 +107,7 @@ void QuantaView::slotEditCurrentTag()
 void QuantaView::slotInsertCSS()
 {
  Document *w = write();
-
+/*
  CSSEditor* dlg = new CSSEditor("", 0L, "CSS Editor");
  if (dlg->exec())
  {
@@ -114,7 +115,14 @@ void QuantaView::slotInsertCSS()
   // Todo
  }
 
+  delete dlg;*/
+	CSSSelectorEditor* dlg = new CSSSelectorEditor ("", false, this,
+		i18n ("Insert a new selector"));
+	if (dlg->exec()) {
+		 w->insertTag( dlg->code() );
+	}
   delete dlg;
+
 }
 
 /** for <a href=mailto> tag  */

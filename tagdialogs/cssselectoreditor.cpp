@@ -336,7 +336,7 @@ QString CSSSelectorEditor::code()
 	// Let's create the final CSS code
 	if (properties.size() == 0)
 		return "";
-	QString text;
+	QString text="";
 	if (!code_inline) {
 		bool ind = checkCodeInline->isChecked();
 
@@ -349,7 +349,12 @@ QString CSSSelectorEditor::code()
 				text += "\t";
 			text += *it;
 			if (ind)
+      {
 				text += "\n";
+      } else
+      {
+        text += "; ";
+      }
 		}
 		text += "}";
 		if (ind)
