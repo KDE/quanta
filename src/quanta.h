@@ -344,7 +344,7 @@ public slots:
   void slotConvertCase();
 
   /** Reload the tree of the StructTreeView */
-  void slotReloadStructTreeView();
+  void slotReloadStructTreeView(bool groupOnly = false);
 
   void slotReportBug();
   /** registers a new part in the partmanager */

@@ -117,15 +117,17 @@ StructTreeView::~StructTreeView(){
 }
 
 /** builds the structure tree */
-void StructTreeView::buildTree(Node *baseNode, int openLevel)
+void StructTreeView::buildTree(Node *baseNode, int openLevel, bool groupOnly)
 {
 #ifdef DEBUG_PARSER
   kdDebug(24000) << "Starting to rebuild the structure tree." << endl;
 #endif
   quantaApp->problemOutput()->clear();
-  top = new StructTreeTag( this, i18n("Document Structure") );
-  top->setOpen(topOpened);
-
+  if (!groupOnly)
+  {
+      top = new StructTreeTag( this, i18n("Document Structure") );
+      top->setOpen(topOpened);
+  }
   Node *currentNode = baseNode;
   StructTreeTag *currentItem = top; //after this
   StructTreeTag *item;
@@ -167,6 +169,8 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
   }
   QMap<QString, QListViewItem*> lastItemInGroup;
   QMap<QString, QListViewItem*> groupItems;
+  if (!groupOnly)
+  {
   while (currentNode)
   {
     title = "";
@@ -259,7 +263,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       }
     }
   }
-
+  }
   GroupElementList* groupElementList;
   QListViewItem *insertUnder;
   QListViewItem *insertAfter;
@@ -322,9 +326,9 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
 }
 
 /** Delete the items */
-void StructTreeView::deleteList()
+void StructTreeView::deleteList(bool groupOnly)
 {
-  if ( top )
+  if (!groupOnly && top )
   {
     topOpened = top->isOpen();
     delete top;
@@ -341,18 +345,18 @@ void StructTreeView::deleteList()
 }
 
 /** repaint document structure */
-void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
+void StructTreeView::slotReparse(Document *w, Node* node, int openLevel, bool groupOnly)
 {
   timer.restart();
   if (typingInProgress)
     return;
-  deleteList();
+  deleteList(groupOnly);
   if (!node)
     return;
   groupsCount = m_parsingDTD->structTreeGroups.count();
   write = w;
   write->clearErrorMarks();
-  buildTree(node, openLevel);
+  buildTree(node, openLevel, groupOnly);
 
   kdDebug(24000) << "StructTreeView building: " << timer.elapsed() << " ms\n";
 

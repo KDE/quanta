@@ -3747,7 +3747,7 @@ void QuantaApp::slotConvertCase()
   }
 }
 
-void QuantaApp::slotReloadStructTreeView()
+void QuantaApp::slotReloadStructTreeView(bool groupOnly)
 {
   Document *w = ViewManager::ref()->activeDocument();
    if (StructTreeView::ref()->isVisible() && w)
@@ -3756,7 +3756,7 @@ void QuantaApp::slotReloadStructTreeView()
     int expandLevel = qConfig.expandLevel;
     if (expandLevel == 0)
         expandLevel = 40;
-    StructTreeView::ref()->slotReparse(w, baseNode, expandLevel);
+    StructTreeView::ref()->slotReparse(w, baseNode, expandLevel, groupOnly);
   } else
     StructTreeView::ref()->slotReparse(0L, 0L, 0); //delete the tree
 }

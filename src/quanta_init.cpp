@@ -294,8 +294,8 @@ void QuantaInit::initQuanta()
   m_quanta->autosaveTimer->start(qConfig.autosaveInterval * 60000, false);
 
   connect(m_quanta->m_doc, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
-  connect(parser, SIGNAL(rebuildStructureTree()),
-          m_quanta, SLOT(slotReloadStructTreeView()));
+  connect(parser, SIGNAL(rebuildStructureTree(bool)),
+          m_quanta, SLOT(slotReloadStructTreeView(bool)));
 
   // Read list of characters
   QFile file(locate("appdata","chars"));

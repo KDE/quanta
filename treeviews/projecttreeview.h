@@ -98,11 +98,15 @@ private:
   KURL m_oldURL;
   KURL m_newURL;
   KURL m_baseURL;
-  QPopupMenu *m_projectMenu;
+  KPopupMenu *m_projectMenu;
+  KPopupMenu *m_uploadStatusMenu;
   QString m_projectName;
   ProjectUrlList m_projectFiles;
 
   int m_openInQuantaId;  ///< remembers the menu entry
+  int m_alwaysUploadId;
+  int m_neverUploadId;
+  int m_confirmUploadId;
 
 protected:
   virtual void itemDescChanged(KFileTreeViewItem* item, const QString& newDesc);
@@ -120,6 +124,10 @@ private slots: // Private slots
   void slotRename();
   void slotUploadSingleURL();
   void slotRenameFinished(KIO::Job *job);
+  void slotAlwaysUpload();
+  void slotNeverUpload();
+  void slotConfirmUpload();
+  void slotUploadMenuAboutToShow();
 };
 
 #endif

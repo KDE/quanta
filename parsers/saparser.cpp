@@ -372,11 +372,14 @@ bool SAParser::slotParseOneLine()
             kdDebug(24001) << "Calling slotParseForScriptGroup from slotParseOneLine." << endl;
 #endif
 //            slotParseForScriptGroup();
+if (!m_synchronous)
+{
             SAGroupParser *groupParser = new SAGroupParser(this, g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
-            connect(groupParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
+            connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
             connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
             connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
             groupParser->slotParseForScriptGroup();
+}
           }
 
           m_lastParsedNode = node;
@@ -711,7 +714,7 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER
           kdDebug(24001) << "Emitting rebuildStructureTree from parsingDone (use return values). Enable parsing." << endl;
 #endif
-          emit rebuildStructureTree();
+          emit rebuildStructureTree(false);
           emit cleanGroups();
         }
     }
@@ -751,12 +754,15 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "Calling slotParseForScriptGroup from parsingDone. Synch:" << m_synchronous << endl;
 #endif
-//    slotParseForScriptGroup();
+    //parse for groups only when doing aynchronous detailed parsing
+    if (!m_synchronous)
+    {
             SAGroupParser *groupParser = new SAGroupParser(this, g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
-            connect(groupParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
+            connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
             connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
             connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
             groupParser->slotParseForScriptGroup();
+     }
   }
 
   m_lastParsedLine = s_endLine;
@@ -778,7 +784,7 @@ Node *SAParser::parsingDone()
         kdDebug(24001) << "Calling slotParseNodeInDetail from parsingDone." << endl;
 #endif
         QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
-        emit rebuildStructureTree();
+        emit rebuildStructureTree(false);
       }
       else
       {
@@ -786,7 +792,7 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER
         kdDebug(24001) << "Emitting detailedParsingDone from parsingDone. Enable parsing." << endl;
 #endif
-        emit rebuildStructureTree();
+        emit rebuildStructureTree(false);
       }
   }
   m_currentNode = 0L;
@@ -887,7 +893,7 @@ void SAParser::slotParseNodeInDetail()
 #ifdef DEBUG_PARSER
         kdDebug(24001) << "Emitting rebuildStructureTree from slotParseNodeInDetail." << endl;
 #endif
-        emit rebuildStructureTree();
+        emit rebuildStructureTree(false);
       }
     }
   }
@@ -910,7 +916,7 @@ void SAParser::slotGroupParsingDone(SAGroupParser *groupParser)
 void SAGroupParser::slotParseForScriptGroup()
 {
 #ifdef DEBUG_PARSER
-  kdDebug(24001) << "slotParseForScriptGroup. Synch: " << m_synchronous << endl;
+  //kdDebug(24001) << "slotParseForScriptGroup. Synch: " << m_synchronous << endl;
 #endif
   if (!m_parent->parsingEnabled())
   {
@@ -933,7 +939,7 @@ void SAGroupParser::slotParseForScriptGroup()
     else
     {
 #ifdef DEBUG_PARSER
-        kdDebug(24001) << "Calling slotParseForScriptGroup from slotParseForScriptGroup." << endl;
+      //  kdDebug(24001) << "Calling slotParseForScriptGroup from slotParseForScriptGroup." << endl;
 #endif
       QTimer::singleShot(0, this, SLOT(slotParseForScriptGroup()));
     }
@@ -944,15 +950,15 @@ void SAGroupParser::slotParseForScriptGroup()
 #endif
     if (m_lastGroupParsed && m_parsingLastNode && !m_synchronous)
     {
-#ifdef DEBUG_PARSER
-      kdDebug(24001) << "Emitting rebuildStructureTree from slotParseForScriptGroup." << endl;
-#endif
-      emit rebuildStructureTree();
       if (m_lastGroupParsed)
       {
         emit cleanGroups();
         m_lastGroupParsed = false;
       }
+#ifdef DEBUG_PARSER
+      kdDebug(24001) << "Emitting rebuildStructureTree from slotParseForScriptGroup." << endl;
+#endif
+      emit rebuildStructureTree(true);
     }
   }
 }

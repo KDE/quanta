@@ -102,6 +102,12 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   addBranch(m_projectDir);
   m_projectDir->root()->setEnabled(false);
 
+  m_uploadStatusMenu = new KPopupMenu(this);
+  m_alwaysUploadId = m_uploadStatusMenu->insertItem(i18n("&Always"), this, SLOT(slotAlwaysUpload()));
+  m_neverUploadId = m_uploadStatusMenu->insertItem(i18n("&Never"), this, SLOT(slotNeverUpload()));
+  m_confirmUploadId = m_uploadStatusMenu->insertItem(i18n("&Confirm"), this, SLOT(slotConfirmUpload()));
+  connect(m_uploadStatusMenu, SIGNAL(aboutToShow()), this, SLOT(slotUploadMenuAboutToShow()));
+
   m_fileMenu = new KPopupMenu(this);
 
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this, SLOT(slotOpen()));
@@ -117,6 +123,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
+  m_fileMenu->insertItem(i18n("Upload &status"), m_uploadStatusMenu);
 
   m_folderMenu = new KPopupMenu(this);
 
@@ -126,6 +133,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload Folder..."), this, SLOT(slotUploadSingleURL()));
   m_folderMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
   m_folderMenu->insertSeparator();
+  m_folderMenu->insertItem(i18n("Upload &status"), m_uploadStatusMenu);
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
 
   m_projectMenu = new KPopupMenu(this);
@@ -469,5 +477,23 @@ void ProjectTreeView::itemDescChanged(KFileTreeViewItem* item, const QString& ne
     emit changeFileDescription(item->url(), newDesc);
   }
 }
+
+void ProjectTreeView::slotAlwaysUpload()
+{
+}
+
+void ProjectTreeView::slotNeverUpload()
+{
+}
+
+void ProjectTreeView::slotConfirmUpload()
+{
+}
+
+void ProjectTreeView::slotUploadMenuAboutToShow()
+{
+
+}
+
 
 #include "projecttreeview.moc"

@@ -63,15 +63,15 @@
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
         <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
-        <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cxxflags>
-        <f77flags/>
+        <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT -DDEBUG_PARSER</cxxflags>
+        <f77flags></f77flags>
         <topsourcedir>/home/andris/development/sources/kde-head/kdewebdev</topsourcedir>
-        <cppflags/>
-        <ldflags/>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
         <envvars>
           <envvar value="kommander klinkstatus kfilereplace kxsldbg kimagemapeditor" name="DO_NOT_COMPILE" />
         </envvars>
@@ -186,16 +186,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell/>
-      <programargs/>
+      <dbgshell></dbgshell>
+      <programargs></programargs>
       <gdbpath>/usr/bin/</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
     </general>
     <display>
       <staticmembers>false</staticmembers>
@@ -238,10 +238,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="" ext="h" create="template" name="C++ header" >
+      <type icon="" ext="h" name="C++ header" create="template" >
         <descr>Quanta speicfic header</descr>
       </type>
-      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
+      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
         <descr>A new empty C++ file.</descr>
       </type>
     </filetypes>

@@ -71,7 +71,7 @@ Parser::Parser()
   m_parsingNeeded = true;
   m_parseIncludedFiles = true;
   m_saParser = new SAParser();
-  connect(m_saParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
+  connect(m_saParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
   connect(m_saParser, SIGNAL(cleanGroups()), SLOT(cleanGroups()));
   ParserCommon::includeWatch = new KDirWatch();
   connect(ParserCommon::includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
@@ -1341,7 +1341,7 @@ void Parser::parseIncludedFiles()
       parseIncludedFile(ParserCommon::includedFiles[i], ParserCommon::includedFilesDTD.at(i));
     }
   }
-  emit rebuildStructureTree();
+  emit rebuildStructureTree(true);
 }
 
 void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)

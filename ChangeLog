@@ -36,6 +36,7 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - generate nicer file names when sending some resource in email
         - enable tab reordering with middle mouse button [#80026]
         - added possibility of ignoring the files listed in .cvsignore [#78183]
+        - faster parsing and tree building
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:
