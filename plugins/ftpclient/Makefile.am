@@ -4,15 +4,15 @@
 ##############################################################
 
 libdir = ${kde_libraries}/quanta/plugins
-lib_LTLIBRARIES =libftpclient.la
+lib_LTLIBRARIES =libproject.la
 
 
-libftpclient_la_LDFLAGS = -module 
+libproject_la_LDFLAGS = -module 
 
 INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
-libftpclient_la_METASOURCES = AUTO
-libftpclient_la_SOURCES = \
+libproject_la_METASOURCES = AUTO
+libproject_la_SOURCES = \
 		ftpclients.cpp\
 		ftpclient.cpp
 EXTRA_DIST = \
