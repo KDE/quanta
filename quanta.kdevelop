@@ -27,7 +27,7 @@
     <general>
       <mainprogram>quanta</mainprogram>
       <useconfiguration>all</useconfiguration>
-      <activetarget>quanta/treeviews/libtreeviews.la</activetarget>
+      <activetarget>parsers/libparser.la</activetarget>
     </general>
     <configure>
       <configargs>--prefix=/opt/kde3 --enable-debug\s</configargs>
@@ -233,10 +233,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
         <descr>A new empty C++ file.</descr>
       </type>
-      <type icon="source_h" ext="h" name="C/C++ header" create="template" >
+      <type icon="source_h" ext="h" create="template" name="C/C++ header" >
         <descr>A new empty header file for C or C++.</descr>
       </type>
     </filetypes>

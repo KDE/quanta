@@ -36,6 +36,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 
+#include "qextfileinfo.h"
 #include "resource.h"
 #include "quanta.h"
 #include "fontfamilychooser.h"
@@ -256,7 +257,9 @@ URIEditor::URIEditor(QWidget *parent, const char* name) : TLPEditor(parent,name)
 
 void URIEditor::URI(const QString & s)
  {
-   emit valueChanged("url(\'" + KURL::relativeURL( KURL( quantaApp->projectBaseURL().path() ), KURL(s) ) + "\')");
+   KURL u;
+   u.setPath(s);
+   emit valueChanged("url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
  }
 
 void URIEditor::openFileDialog(){
@@ -283,8 +286,12 @@ void URIEditor::openFileDialog(){
       URI( fd->selectedFile() );
     else {
       QStringList selectedFiles = fd->selectedFiles();
-      for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it ) 
-        m_sFiles.append( "url(\'" + KURL::relativeURL( KURL( quantaApp->projectBaseURL().path() ), KURL( (*it) ) ) + "\')");
+      KURL u;
+      for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it )
+      {      
+        u.setPath(*it);   
+        m_sFiles.append( "url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
+      }
       emit valueChanged(m_sFiles.join(","));
     }
   }
