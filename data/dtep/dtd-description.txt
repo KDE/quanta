@@ -190,7 +190,7 @@ Tags = tagname(attribute[defaultvalue]). If the parent(real) DTD has a tag with 
     treated the same way and the DTD defined by this tag is named "text/css".
 Comments = comma separated list of area borders for comments. EOL means end-of-line.
     Eg: // EOL, /* */
-StructKeywords = ";" separated list of structure keywords. Structures are treated
+StructKeywords = "," separated list of structure keywords. Structures are treated
     as new nodes in the structure tree.
 StructBeginStr = a string specifying the beginning of a structure (like {)
 StructEndStr = a string specifying the beginning of a structure (like })

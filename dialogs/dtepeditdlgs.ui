@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>DTEPEditDlgS</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -846,6 +846,12 @@
                         <property name="text">
                             <string>Enable minus in words</string>
                         </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Treat the minus sign as part of a word</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>If enabled &lt;b&gt;this-is-a-word&lt;/b&gt; is treated like a word. Otherwise it is treated like 4 words.</string>
+                        </property>
                     </widget>
                     <widget class="QLabel" row="2" column="0">
                         <property name="name">
@@ -856,6 +862,13 @@
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>kLineEdit10</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of area borders for comments</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of area borders for comments. &lt;i&gt;EOL&lt;/i&gt; means end of line, used for single line comments.&lt;br&gt;
+Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
                         </property>
                     </widget>
                     <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="5">
@@ -897,10 +910,16 @@
                                                 <cstring>xmlStyleTags</cstring>
                                             </property>
                                             <property name="text">
-                                                <string>XML style tags</string>
+                                                <string>XML style single tags</string>
                                             </property>
                                             <property name="checked">
                                                 <bool>true</bool>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Check to use XML style single tags</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Check to use XML style single tags (&lt;b&gt;&amp;lt;single_tag /&amp;gt;&lt;/b&gt;), otherwise HTML style single tags (&lt;b&gt;&amp;lt;single_tag&amp;gt;&lt;/b&gt;) are used.</string>
                                             </property>
                                         </widget>
                                         <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="7">
@@ -913,6 +932,17 @@
                                             <property name="checked">
                                                 <bool>true</bool>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Append common parsing rules</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Check it to append common parsing rules. These are:
+&lt;p&gt;&lt;b&gt;
+&amp;nbsp;&amp;nbsp;SpecialAreas=&amp;lt;?xml ?&amp;gt;, &amp;lt;!-- --&amp;gt;, &amp;lt;! &amp;gt;
+&amp;nbsp;&amp;nbsp;SpecialAreaNames = XML PI, comment, DTD
+&amp;nbsp;&amp;nbsp;Comments = &amp;lt;!-- --&amp;gt;
+&lt;/b&gt;&lt;/p&gt;</string>
+                                            </property>
                                         </widget>
                                         <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
                                             <property name="name">
@@ -920,6 +950,17 @@
                                             </property>
                                             <property name="text">
                                                 <string>Extended booleans</string>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Check if the booleans are stored in extended form</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Check if you want extended booleans in the language.&lt;br&gt;
+Examples:&lt;br&gt;
+&lt;i&gt;Simple boolean&lt;/i&gt;: &lt;b&gt;&amp;lt;tag&amp;nbsp;booleanAttr&amp;gt;&lt;/b&gt;&lt;br&gt;
+&lt;i&gt;Extended boolean&lt;/i&gt;: &lt;b&gt;&amp;lt;tag&amp;nbsp;booleanAttr="1"&amp;gt;&lt;/b&gt; or &lt;b&gt;&amp;lt;tag&amp;nbsp;booleanAttr="true"&amp;gt;&lt;/b&gt;.
+&lt;br&gt;
+See the &lt;b&gt;True&lt;/b&gt; and &lt;b&gt;False&lt;/b&gt; boxes to define the values for true and false.</string>
                                             </property>
                                         </widget>
                                         <widget class="KLineEdit" row="3" column="6">
@@ -937,6 +978,9 @@
                                                     <verstretch>0</verstretch>
                                                 </sizepolicy>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>The value of "true" in case of extended booleans</string>
+                                            </property>
                                         </widget>
                                         <widget class="KLineEdit" row="3" column="4">
                                             <property name="name">
@@ -952,6 +996,9 @@
                                                     <horstretch>0</horstretch>
                                                     <verstretch>0</verstretch>
                                                 </sizepolicy>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>The value of "true" in case of extended booleans</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="3" column="5">
@@ -1003,6 +1050,14 @@
                                             <property name="name">
                                                 <cstring>specialAreasEdit</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the beginning and closing string for special areas</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>The beginning and closing string of special areas, separated by a comma.&lt;br&gt;
+ Special areas are not parsed according to this DTD's rules, but accroding to their own rules.&lt;br&gt;
+    A special area can be a pseudo DTD, a comment or something like that, for example &lt;i&gt;&amp;lt;!--&amp;nbsp;--&amp;gt;&lt;/i&gt;.</string>
+                                            </property>
                                         </widget>
                                         <widget class="QLabel" row="0" column="0">
                                             <property name="name">
@@ -1014,10 +1069,21 @@
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit11</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the beginning and closing string for special areas</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>The beginning and closing string of special areas, separated by a comma.&lt;br&gt;
+ Special areas are not parsed according to this DTD's rules, but accroding to their own rules.&lt;br&gt;
+    A special area can be a pseudo DTD, a comment or something like that, for example &lt;i&gt;&amp;lt;!--&amp;nbsp;--&amp;gt;&lt;/i&gt;.</string>
+                                            </property>
                                         </widget>
                                         <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="6">
                                             <property name="name">
                                                 <cstring>specialAreaNamesEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the names for the above definied special areas</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="1" column="0">
@@ -1030,6 +1096,9 @@
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit12</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the names for the above definied special areas</string>
+                                            </property>
                                         </widget>
                                         <widget class="QLabel" row="2" column="0">
                                             <property name="name">
@@ -1038,10 +1107,24 @@
                                             <property name="text">
                                                 <string>Special tags:</string>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Specifies a tag that defines the start of a special area</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Specifies a tag which defines the start of a special area in the form of &lt;i&gt;tagname(attributename)&lt;/i&gt;.&lt;br&gt;
+Example:&lt;b&gt;script(language)&lt;/b&gt; means that any &lt;b&gt;&amp;lt;script&amp;gt;&lt;/b&gt; tag having a &lt;b&gt;language&lt;/b&gt; attribute indicates a special area.</string>
+                                            </property>
                                         </widget>
                                         <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="6">
                                             <property name="name">
                                                 <cstring>specialTagsEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Specifies a tag that defines the start of a special area</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Specifies a tag which defines the start of a special area in the form of &lt;i&gt;tagname(attributename)&lt;/i&gt;.&lt;br&gt;
+Example:&lt;b&gt;script(language)&lt;/b&gt; means that any &lt;b&gt;&amp;lt;script&amp;gt;&lt;/b&gt; tag having a &lt;b&gt;language&lt;/b&gt; attribute indicates a special area.</string>
                                             </property>
                                         </widget>
                                     </grid>
@@ -1067,6 +1150,16 @@
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit14</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Tags and attributes defining this DTEP</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of tags that define this DTEP. The format used is &lt;i&gt;tagname(attribute[defaultvalue])&lt;/i&gt;. If the parent (a real) DTEP has a tag with &lt;i&gt;tagname&lt;/i&gt; and
+the &lt;i&gt;attribute value&lt;/i&gt; of this tag is equal with the name of this DTEP, the tag area
+is parsed according to the rules of this DTEP.&lt;br&gt;
+If &lt;i&gt;[defaultvalue]&lt;/i&gt; is present, it means that if the attribute is not present in the tag it is taken as present with &lt;i&gt;value = defaultvalue&lt;/i&gt;.&lt;br&gt;
+Example: &lt;b&gt;Tags=style(type[text/css])&lt;/b&gt; means that both &lt;b&gt;&amp;lt;style&amp;gt;&lt;/b&gt; and &lt;b&gt;&amp;lt;style&amp;nbsp;type="text/css"&amp;gt;&lt;/b&gt; are treated the same way and the DTEP defined by this tag is named &lt;b&gt;text/css&lt;/b&gt;.</string>
+                                            </property>
                                         </widget>
                                         <widget class="QLabel" row="0" column="0">
                                             <property name="name">
@@ -1077,6 +1170,13 @@
                                             </property>
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit13</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the area borders</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of the area borders encapsulating this pseudo DTEP. In the case of PHP it is:&lt;br&gt;
+&lt;b&gt;&amp;lt;?&amp;nbsp;?&amp;gt;,&amp;nbsp;&amp;lt;*&amp;nbsp;*&amp;gt;,&amp;nbsp;&amp;lt;%&amp;nbsp;%&amp;gt;&lt;/b&gt;</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="2" column="0">
@@ -1089,6 +1189,12 @@
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit15</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of structure keywords</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of structure keywords. The keywords used here are used to create new node (nodes for structures) in the structure tree, like for a function, class or if block.</string>
+                                            </property>
                                         </widget>
                                         <widget class="QLabel" row="5" column="0">
                                             <property name="name">
@@ -1099,6 +1205,12 @@
                                             </property>
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit19</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Regular expression that finds the beginning or end of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Regular expression that finds the beginning or end of a structure. This is usually the combination of &lt;b&gt;Structure beginning&lt;/b&gt; and &lt;b&gt;Structure end&lt;/b&gt;, like &lt;b&gt;\\{&amp;nbsp;|&amp;nbsp;\\}&lt;/b&gt;</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="4" column="0">
@@ -1111,6 +1223,12 @@
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit17</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>A string specifying the beginning of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>A string specifying the beginning of a structure, like &lt;b&gt;{&lt;/b&gt; in many cases.</string>
+                                            </property>
                                         </widget>
                                         <widget class="QLabel" row="3" column="0">
                                             <property name="name">
@@ -1122,30 +1240,75 @@
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit16</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the local scope defining keywords</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of the local scope defining keywords.
+Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements.
+For example if this list contains "function", it means that elements, like variables found under a "function" are local, relative to the node that holds the "function".</string>
+                                            </property>
                                         </widget>
                                         <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="3">
                                             <property name="name">
                                                 <cstring>localStructKeywordsEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the local scope defining keywords</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of the local scope defining keywords.
+Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements.
+For example if this list contains "function", it means that elements, like variables found under a "function" are local, relative to the node that holds the "function".</string>
                                             </property>
                                         </widget>
                                         <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="3">
                                             <property name="name">
                                                 <cstring>structKeywordsEdit</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of structure keywords</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of structure keywords. The keywords used here are used to create new node (nodes for structures) in the structure tree, like for a function, class or if block.</string>
+                                            </property>
                                         </widget>
                                         <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="3">
                                             <property name="name">
                                                 <cstring>definitionTagsEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Tags and attributes defining this DTEP</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of tags that define this DTEP. The format used is &lt;i&gt;tagname(attribute[defaultvalue])&lt;/i&gt;. If the parent (a real) DTEP has a tag with &lt;i&gt;tagname&lt;/i&gt; and
+the &lt;i&gt;attribute value&lt;/i&gt; of this tag is equal with the name of this DTEP, the tag area
+is parsed according to the rules of this DTEP.&lt;br&gt;
+If &lt;i&gt;[defaultvalue]&lt;/i&gt; is present, it means that if the attribute is not present in the tag it is taken as present with &lt;i&gt;value = defaultvalue&lt;/i&gt;.&lt;br&gt;
+Example: &lt;b&gt;Tags=style(type[text/css])&lt;/b&gt; means that both &lt;b&gt;&amp;lt;style&amp;gt;&lt;/b&gt; and &lt;b&gt;&amp;lt;style&amp;nbsp;type="text/css"&amp;gt;&lt;/b&gt; are treated the same way and the DTEP defined by this tag is named &lt;b&gt;text/css&lt;/b&gt;.</string>
                                             </property>
                                         </widget>
                                         <widget class="KLineEdit" row="0" column="1" rowspan="1" colspan="3">
                                             <property name="name">
                                                 <cstring>areaBordersEdit</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Comma separated list of the area borders</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Comma separated list of the area borders encapsulating this pseudo DTEP. In the case of PHP it is:&lt;br&gt;
+&lt;b&gt;&amp;lt;?&amp;nbsp;?&amp;gt;,&amp;nbsp;&amp;lt;*&amp;nbsp;*&amp;gt;,&amp;nbsp;&amp;lt;%&amp;nbsp;%&amp;gt;&lt;/b&gt;</string>
+                                            </property>
                                         </widget>
                                         <widget class="KLineEdit" row="4" column="3">
                                             <property name="name">
                                                 <cstring>structEndEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>A string specifying the end of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>A string specifying the end of a structure, like &lt;b&gt;}&lt;/b&gt; in many cases.</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="4" column="2">
@@ -1158,10 +1321,22 @@
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit18</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>A string specifying the end of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>A string specifying the end of a structure, like &lt;b&gt;}&lt;/b&gt; in many cases.</string>
+                                            </property>
                                         </widget>
                                         <widget class="KLineEdit" row="4" column="1">
                                             <property name="name">
                                                 <cstring>structBeginEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>A string specifying the beginning of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>A string specifying the beginning of a structure, like &lt;b&gt;{&lt;/b&gt; in many cases.</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="7" column="0" rowspan="1" colspan="2">
@@ -1182,6 +1357,18 @@
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit21</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Regular expression to find out when to invoke member autocompletion</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Regular expression to find out when to invoke member autocompletion. &lt;br&gt;
+Example:&lt;br&gt;
+- we have a class called &lt;b&gt;foo&lt;/b&gt; with some member variables&lt;br&gt;
+- the object of type &lt;b&gt;foo&lt;/b&gt; is used in the document as $&lt;b&gt;objFoo&lt;/b&gt;&lt;br&gt;
+- the members can appear as &lt;b&gt;$objFoo-&gt;member&lt;/b&gt; or &lt;b&gt;$objFoo.member&lt;/b&gt;
+- in the above case this entry shoul look like &lt;b&gt;(?:-&amp;gt;|\.)$&lt;/b&gt; (autocomplete if the object is followed by &lt;b&gt;-&amp;gt;&lt;/b&gt; or &lt;b&gt;.&lt;/b&gt;)&lt;br&gt;
+    The regular experssion must be terminated with &lt;b&gt;$&lt;/b&gt; (match end of line).</string>
+                                            </property>
                                         </widget>
                                         <widget class="QLabel" row="6" column="0" rowspan="1" colspan="2">
                                             <property name="name">
@@ -1201,20 +1388,44 @@
                                             <property name="buddy" stdset="0">
                                                 <cstring>kLineEdit20</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Autocomplete attributes after this character. See the information for the same entry valid for tags.</string>
+                                            </property>
                                         </widget>
                                         <widget class="KLineEdit" row="6" column="2" rowspan="1" colspan="2">
                                             <property name="name">
                                                 <cstring>attributesAfterEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Autocomplete attributes after this character. See the information for the same entry valid for tags.</string>
                                             </property>
                                         </widget>
                                         <widget class="KLineEdit" row="7" column="2" rowspan="1" colspan="2">
                                             <property name="name">
                                                 <cstring>membersAfterEdit</cstring>
                                             </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Regular expression to find out when to invoke member autocompletion</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Regular expression to find out when to invoke member autocompletion. &lt;br&gt;
+Example:&lt;br&gt;
+- we have a class called &lt;b&gt;foo&lt;/b&gt; with some member variables&lt;br&gt;
+- the object of type &lt;b&gt;foo&lt;/b&gt; is used in the document as $&lt;b&gt;objFoo&lt;/b&gt;&lt;br&gt;
+- the members can appear as &lt;b&gt;$objFoo-&gt;member&lt;/b&gt; or &lt;b&gt;$objFoo.member&lt;/b&gt;
+- in the above case this entry shoul look like &lt;b&gt;(?:-&amp;gt;|\.)$&lt;/b&gt; (autocomplete if the object is followed by &lt;b&gt;-&amp;gt;&lt;/b&gt; or &lt;b&gt;.&lt;/b&gt;)&lt;br&gt;
+    The regular experssion must be terminated with &lt;b&gt;$&lt;/b&gt; (match end of line).</string>
+                                            </property>
                                         </widget>
                                         <widget class="KLineEdit" row="5" column="1" rowspan="1" colspan="3">
                                             <property name="name">
                                                 <cstring>structRxEdit</cstring>
+                                            </property>
+                                            <property name="toolTip" stdset="0">
+                                                <string>Regular expression that finds the beginning or end of a structure</string>
+                                            </property>
+                                            <property name="whatsThis" stdset="0">
+                                                <string>Regular expression that finds the beginning or end of a structure. This is usually the combination of &lt;b&gt;Structure beginning&lt;/b&gt; and &lt;b&gt;Structure end&lt;/b&gt;, like &lt;b&gt;\\{&amp;nbsp;|&amp;nbsp;\\}&lt;/b&gt;</string>
                                             </property>
                                         </widget>
                                     </grid>
@@ -1232,10 +1443,23 @@
                         <property name="buddy" stdset="0">
                             <cstring>kLineEdit22</cstring>
                         </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character specifying the end of an attribute</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The character specifying the end of an attribute. By default it is &lt;b&gt;"&lt;/b&gt; for XML DTEPs and &lt;b&gt;,&lt;/b&gt; for pseudo DTEPs.</string>
+                        </property>
                     </widget>
                     <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>commentsEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separated list of area borders for comments</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separated list of area borders for comments. &lt;i&gt;EOL&lt;/i&gt; means end of line, used for single line comments.&lt;br&gt;
+Example: &lt;b&gt;//&amp;nbsp;EOL,&amp;nbsp;/*&amp;nbsp;*/&lt;/b&gt;</string>
                         </property>
                     </widget>
                     <widget class="QLabel" row="5" column="0">
@@ -1248,6 +1472,12 @@
                         <property name="buddy" stdset="0">
                             <cstring>kLineEdit25</cstring>
                         </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separater list of DTEPs that can be present inside this DTEP</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separater list of DTEPs that can be present inside this DTEP. The list consist usually of pseudo DTEPs.</string>
+                        </property>
                     </widget>
                     <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
                         <property name="name">
@@ -1259,10 +1489,22 @@
                         <property name="buddy" stdset="0">
                             <cstring>kLineEdit24</cstring>
                         </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character after which the list of tags should be shown</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The autocompletion box is brought up automatically once this character is entered or space is pressed after this character&lt;br&gt;. For real DTEPs it's usually &lt;b&gt;&amp;lt;&lt;/b&gt;, but for example for the CSS pseudo DTEP it is &lt;b&gt;{&lt;/b&gt;. The text &lt;b&gt;none&lt;/b&gt; instead of a character specifies that the tag completion box should not be brought up automatically, only if the user requests it.</string>
+                        </property>
                     </widget>
                     <widget class="KLineEdit" row="4" column="2" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>tagAfterEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character after which the list of tags should be shown</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The autocompletion box is brought up automatically once this character is entered or space is pressed after this character&lt;br&gt;. For real DTEPs it's usually &lt;b&gt;&amp;lt;&lt;/b&gt;, but for example for the CSS pseudo DTEP it is &lt;b&gt;{&lt;/b&gt;. The text &lt;b&gt;none&lt;/b&gt; instead of a character specifies that the tag completion box should not be brought up automatically, only if the user requests it.</string>
                         </property>
                     </widget>
                     <widget class="KLineEdit" row="3" column="4">
@@ -1277,6 +1519,9 @@
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character specifying the end of a tag. See the information for the attribute separator for details.</string>
+                        </property>
                     </widget>
                     <widget class="QLabel" row="3" column="3">
                         <property name="name">
@@ -1288,15 +1533,30 @@
                         <property name="buddy" stdset="0">
                             <cstring>kLineEdit23</cstring>
                         </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character specifying the end of a tag. See the information for the attribute separator for details.</string>
+                        </property>
                     </widget>
                     <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="2">
                         <property name="name">
                             <cstring>attributeSeparatorEdit</cstring>
                         </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The character specifying the end of an attribute</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>The character specifying the end of an attribute. By default it is &lt;b&gt;"&lt;/b&gt; for XML DTEPs and &lt;b&gt;,&lt;/b&gt; for pseudo DTEPs.</string>
+                        </property>
                     </widget>
                     <widget class="KLineEdit" row="5" column="2" rowspan="1" colspan="3">
                         <property name="name">
                             <cstring>mayContainEdit</cstring>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Comma separater list of DTEPs that can be present inside this DTEP</string>
+                        </property>
+                        <property name="whatsThis" stdset="0">
+                            <string>Comma separater list of DTEPs that can be present inside this DTEP. The list consist usually of pseudo DTEPs.</string>
                         </property>
                     </widget>
                 </grid>
