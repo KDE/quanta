@@ -91,8 +91,8 @@ public:
 
 
   QPoint getGlobalCursorPos();
-  QString find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
-  QString findRev(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
+  QString find(const QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
+  QString findRev(const QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
   /** Get the view of the document */
   KTextEditor::View* view();
   /** Get the KTextEditor::Document of the document */
@@ -146,6 +146,15 @@ work correctly. */
   /** No descriptions */
   void parseVariables();
 
+  Tag *findScriptText(int line, int col, const QRegExp& keywordRx);
+  Tag *findStruct(int line, int col, const QRegExp& keywordRx);
+
+  Tag *findXMLTag(int line, int col, bool forwardOnly = false, bool useSimpleRx = false);
+  Tag *findScriptTag(int line, int col, QRegExp tagRx);
+  Tag *findText(int line, int col, bool forwardOnly = false);
+  /** Find the word until the first word boundary backwards */
+  QString findWordRev(const QString& textToSearch);
+
   bool oldstat;
   bool busy;
   QString basePath;
@@ -186,15 +195,6 @@ private:
 	int spellMoved;
   QString dtdName;
 
-  Tag *findScriptText(int line, int col);
-  Tag *findScriptStruct(int line, int col);
-
-  Tag *findXMLTag(int line, int col, bool forwardOnly = false, bool useSimpleRx = false);
-  Tag *findScriptTag(int line, int col, QRegExp tagRx);
-  Tag *findText(int line, int col, bool forwardOnly = false);
-
-  /** Find the word until the first word boundary backwards */
-  QString findWordRev(const QString& textToSearch);
   /** Brings up list of code completions */
   void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
   /** Get list of possibile variable name completions */

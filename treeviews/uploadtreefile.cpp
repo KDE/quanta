@@ -78,3 +78,4 @@ void UploadTreeFile::setWhichPixmap( QString pixmap )
 {
   setPixmap( 1, SmallIcon(pixmap) );
 }
+

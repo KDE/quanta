@@ -138,19 +138,46 @@ void QuantaView::slotInsertCSS()
  }
 
   delete dlg;*/
-  QString code="";        /*
-  Tag *tag = w->tagAt();
+  QString code="";
+  
+  uint line, col;
+  w->viewCursorIf->cursorPositionReal(&line, &col);
+
+  bool insertNew = true;
+  QRegExp rx("\\b[a-zA-z_]+\\b");
+  Tag *tag = w->findScriptText(line, col, rx);
   if (tag)
   {
-    if (tag->name ==
-  }                    */
+    int bLine, bCol, eLine, eCol;
+    tag->beginPos(bLine,bCol);
+    tag->endPos(eLine,eCol);
+    if (w->text(bLine, bCol-1,bLine, bCol-1) == "{" &&
+        w->text(eLine, eCol+1,eLine, eCol+1) == "}")
+    {
+      code = tag->tagStr();
+    	CSSSelectorEditor* dlg = new CSSSelectorEditor (code, false, this,
+    		i18n ("Edit selector"));
+    	if (dlg->exec())
+      {
+        w->editIf->removeText(bLine, bCol-1, eLine, eCol+2);
+        w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol-1);
+        w->insertText(dlg->code());
+    	}
 
-	CSSSelectorEditor* dlg = new CSSSelectorEditor (code, false, this,
-		i18n ("Insert a new selector"));
-	if (dlg->exec()) {
-		 w->insertTag( dlg->code() );
-	}
-  delete dlg;
+      delete tag;
+      delete dlg;
+      insertNew = false;
+    }
+  }
+  if (insertNew)
+  {
+  	CSSSelectorEditor* dlg = new CSSSelectorEditor (code, false, this,
+  		i18n ("Insert a new selector"));
+  	if (dlg->exec()) {
+  		 w->insertTag( dlg->code() );
+  	}
+    delete dlg;
+  }
 
 }
 

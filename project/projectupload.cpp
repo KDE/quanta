@@ -303,7 +303,6 @@ void ProjectUpload::startUpload()
 
 void ProjectUpload::upload()
 {
-  cout << "filename: " << *(toUpload.begin()) << endl;
 	if ( stopUpload ) return;
 	QString pass = linePasswd->text();
 	QString user = lineUser->text();
@@ -341,7 +340,6 @@ void ProjectUpload::upload()
 				pos = dirStr.find("/",1);
 				while ( pos != -1)
 				{
-cout << "Trying to make: " << dirStr.left(pos) << endl;
 					KIO::NetAccess::mkdir(dirStr.left(pos));
 					pos = dirStr.find("/",pos+1);
 				}
@@ -466,6 +464,24 @@ void ProjectUpload::slotUploadNext()
   	}
   	upload();
   }
+}
+
+void ProjectUpload::clearProjectModified()
+{
+  QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
+  for ( unsigned int i=0; i<nl.count(); i++ )
+  {
+    QDomElement el = nl.item(i).toElement();
+    //if ( el.nodeName() == "item"  &&  el.attribute("url") == currentFile )
+    //{
+      QDateTime stime;
+      stime.setTime_t(1);
+      el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
+    //}
+  }
+  modified.clear();
+  list->clearSelection();
+  list->slotSelectFile();
 }
 
 void ProjectUpload::reject()

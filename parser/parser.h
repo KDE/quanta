@@ -58,6 +58,7 @@ private:
 
   /** Recursive parsing algorithm. Actually this does the parsing and tree building. */
   Node * subParse( Node* parent , int &line, int &col);
+  void parse2();
   /** Go to the next column, or to the next line if we are at the end of line */
   void nextPos(int &line, int &col);
 };

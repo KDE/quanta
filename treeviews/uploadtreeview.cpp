@@ -58,49 +58,58 @@ int UploadTreeView::checkboxTree( QListViewItem *it = 0 )
   // We don't need some children as a bit flag, because that's implied if the bits are "00".
 
   int bitFlags = 3;
-	for( ; itIter != 0; itIter = itIter->nextSibling() )
-	{
-    if ( dynamic_cast<UploadTreeFolder *>(itIter) )
+
+  if ( itIter != 0 )
+  //if ( 1 == 1 )
+  {
+    for( ; itIter != 0; itIter = itIter->nextSibling() )
     {
-      int hadCheckFlags = checkboxTree( itIter );
-      bitFlags &= hadCheckFlags;
-      UploadTreeFolder *itF = dynamic_cast<UploadTreeFolder *>(itIter);
-
-      if (hadCheckFlags == 2) {
-        // All children exist.
-        itF->setWhichPixmap( "check" );
-        itF->setSelected( true );
-      }
-      else if (hadCheckFlags == 1) {
-        // No children exist.
-        itF->setWhichPixmap( "check_clear" );
-        itF->setSelected( false );
-      }
-      else {
-        // Some children exist.
-        itF->setWhichPixmap( "check_grey" );
-        itF->setSelected( true );
-      }
-
-    }
-    else if ( dynamic_cast<UploadTreeFile *>(itIter) )
-    {
-      UploadTreeFile *itF = dynamic_cast<UploadTreeFile *>(itIter);
-      if ( itF->isSelected() )
+      if ( dynamic_cast<UploadTreeFolder *>(itIter) )
       {
-        itF->setWhichPixmap("check");
-        // Turn off "no children"
-        if ( bitFlags % 2 == 1 ) bitFlags -= 1;
-      }
-      else
-      {
-        itF->setWhichPixmap("check_clear");
-        // Turn off "all children".
-        if (bitFlags >> 1 == 1) bitFlags -= 2;
-      }
+        int hadCheckFlags = checkboxTree( itIter );
+        bitFlags &= hadCheckFlags;
+        UploadTreeFolder *itF = dynamic_cast<UploadTreeFolder *>(itIter);
 
-    }
-	}
+        if (hadCheckFlags == 2) {
+          // All children exist.
+          itF->setWhichPixmap( "check" );
+          itF->setSelected( true );
+        }
+        else if (hadCheckFlags == 1) {
+          // No children exist.
+          itF->setWhichPixmap( "check_clear" );
+          itF->setSelected( false );
+        }
+        else {
+          // Some children exist.
+          itF->setWhichPixmap( "check_grey" );
+          itF->setSelected( true );
+        }
+
+      }
+      else if ( dynamic_cast<UploadTreeFile *>(itIter) )
+      {
+        UploadTreeFile *itF = dynamic_cast<UploadTreeFile *>(itIter);
+        if ( itF->isSelected() )
+        {
+          itF->setWhichPixmap("check");
+          // Turn off "no children"
+          if ( bitFlags % 2 == 1 ) bitFlags -= 1;
+        }
+        else
+        {
+          itF->setWhichPixmap("check_clear");
+          // Turn off "all children".
+          if (bitFlags >> 1 == 1) bitFlags -= 2;
+        }
+
+      }
+	  }
+  }
+  else
+  {
+    return 1;
+  }
 
   return bitFlags;
 }

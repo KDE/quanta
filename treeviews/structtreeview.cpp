@@ -188,7 +188,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
       {
         QString text = currentNode->tag->tagStr();
         text = text.left(70);
-        text = text.replace( QRegExp("&nbsp;|\\n")," ");
+        text.replace( QRegExp("&nbsp;|\\n")," ");
         item = new StructTreeTag(parent,currentNode,text);
 
       }
@@ -196,12 +196,22 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
       {
         item = new StructTreeTag( parent, currentNode, "comment" );
         QString text = currentNode->tag->tagStr();
+        text.replace( QRegExp("&nbsp;|\\n")," ");
         text.replace(QRegExp("<!--"),"");
         text.replace(QRegExp("-->"),"");
         text.replace(QRegExp("/*"),"");
         text.replace(QRegExp("*/"),"");
         text.replace(QRegExp("^//"),"");
         text.replace(QRegExp("^#"),"");
+        item->setText(0, text);
+      }
+      if ( currentNode->tag->type == Tag::CSS )
+      {
+        item = new StructTreeTag( parent, currentNode, "css" );
+        QString text = currentNode->tag->tagStr();
+        text.replace( QRegExp("&nbsp;|\\n")," ");
+        text.replace(QRegExp("<!--"),"");
+        text.replace(QRegExp("-->"),"");
         item->setText(0, text);
       }
       if ( currentNode->tag->type == Tag::ScriptStructureBegin )

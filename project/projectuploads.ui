@@ -99,6 +99,38 @@
                             <string>C&amp;lear</string>
                         </property>
                     </widget>
+                    <widget class="QPushButton">
+                        <property name="name">
+                            <cstring>buttonInvert</cstring>
+                        </property>
+                        <property name="text">
+                            <string>I&amp;nvert</string>
+                        </property>
+                    </widget>
+                    <widget class="QPushButton">
+                        <property name="name">
+                            <cstring>buttonExpand</cstring>
+                        </property>
+                        <property name="text">
+                            <string>E&amp;xpand All</string>
+                        </property>
+                    </widget>
+                    <widget class="QPushButton">
+                        <property name="name">
+                            <cstring>buttonCollapse</cstring>
+                        </property>
+                        <property name="text">
+                            <string>C&amp;ollapse All</string>
+                        </property>
+                    </widget>
+                    <widget class="QPushButton">
+                        <property name="name">
+                            <cstring>buttonUpdate</cstring>
+                        </property>
+                        <property name="text">
+                            <string>U&amp;pdate All</string>
+                        </property>
+                    </widget>
                     <spacer>
                         <property name="name">
                             <cstring>Spacer1</cstring>
@@ -362,10 +394,34 @@
         <slot>clearSelection()</slot>
     </connection>
     <connection>
+        <sender>buttonInvert</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectUploadS</receiver>
+        <slot>invertSelection()</slot>
+    </connection>
+    <connection>
+        <sender>buttonExpand</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectUploadS</receiver>
+        <slot>expandAll()</slot>
+    </connection>
+    <connection>
+        <sender>buttonCollapse</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectUploadS</receiver>
+        <slot>collapseAll()</slot>
+    </connection>
+    <connection>
         <sender>buttonUpload</sender>
         <signal>clicked()</signal>
         <receiver>ProjectUploadS</receiver>
         <slot>startUpload()</slot>
+    </connection>
+    <connection>
+        <sender>buttonUpdate</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectUploadS</receiver>
+        <slot>clearProjectModified()</slot>
     </connection>
 </connections>
 <tabstops>
@@ -379,6 +435,10 @@
     <tabstop>buttonAll</tabstop>
     <tabstop>buttonModified</tabstop>
     <tabstop>buttonClear</tabstop>
+    <tabstop>buttonInvert</tabstop>
+    <tabstop>buttonExpand</tabstop>
+    <tabstop>buttonCollapse</tabstop>
+    <tabstop>buttonUpdate</tabstop>
     <tabstop>buttonUpload</tabstop>
     <tabstop>buttonCancel</tabstop>
 </tabstops>
@@ -387,6 +447,10 @@
     <slot>startUpload()</slot>
     <slot>selectAll()</slot>
     <slot>selectModified()</slot>
+    <slot>invertSelection()</slot>
+    <slot>expandAll()</slot>
+    <slot>collapseAll()</slot>
+    <slot>clearProjectModified()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

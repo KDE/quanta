@@ -94,7 +94,7 @@ public:
   /** Return the index of attr. */
   int attributeIndex(QString attr);
 	
-  enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, ScriptTag, ScriptStructureBegin, ScriptStructureEnd }; // types of token
+  enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, CSS, ScriptTag, ScriptStructureBegin, ScriptStructureEnd, Skip = 100 }; // types of token
 	QString name;
   int type;   //one of the TokenType
 	bool single; // tags like <tag />

@@ -96,6 +96,11 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *p_node, QString name )
 		setText(0,"");
 	}
 
+  if ( sname == "css" ) {
+	  setPixmap( 0, UserIcon("mini-modules") );
+		setText(0,"");
+	}
+
 //  setText(0, text(0)+QString(" ["+tag->tagStr()+" ; %1]").arg(tag->type)); //debug
 }
 

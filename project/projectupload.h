@@ -48,6 +48,7 @@ protected slots:
   void invertSelection();
   void expandAll();
   void collapseAll();
+  void clearProjectModified();
 
   virtual void resizeEvent( QResizeEvent * );
   virtual void reject();

@@ -59,6 +59,8 @@ Node *Parser::parse(Document *w)
   maxLines = write->editIf->numLines();
   m_node = subParse(0L, line, col);
 
+  parse2();
+
 //  coutTree(m_node,0); //debug printout
 
   return m_node;
@@ -78,6 +80,11 @@ void Parser::coutTree(Node *node, int indent)
    if (node->child) coutTree(node->child, indent + 4);
    node = node->next;
  }
+}
+
+void Parser::parse2()
+{
+ Node * node = m_node;
 }
 
 /** Recursive parsing algorithm. Actually this does the parsing and tree building. */
@@ -158,16 +165,34 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
       case Tag::Comment:
       case Tag::Text:
            {
-             node = new Node( parent );
-             if ( !firstNode )
-                 firstNode = node;
-             if ( prevNode )
-                 prevNode->next = node;
-             node->tag = tag;
-             node->prev = prevNode;
-             node->next = 0L;
-             prevNode = node;
-             tag->endPos(line, col);
+             if (parent &&
+                 parent->tag->name.lower() == "style" &&
+                 parent->tag->attributeValue("type").lower() == "text/css")
+             {
+               node = new Node( parent );
+               if ( !firstNode )
+                   firstNode = node;
+               if ( prevNode )
+                   prevNode->next = node;
+               tag->type = Tag::CSS;    
+               node->tag = tag;
+               node->prev = prevNode;
+               node->next = 0L;
+               prevNode = node;
+               tag->endPos(line, col);
+             } else
+             {
+               node = new Node( parent );
+               if ( !firstNode )
+                   firstNode = node;
+               if ( prevNode )
+                   prevNode->next = node;
+               node->tag = tag;
+               node->prev = prevNode;
+               node->next = 0L;
+               prevNode = node;
+               tag->endPos(line, col);
+             }
              break;
            }
       case Tag::ScriptStructureBegin:
@@ -200,7 +225,7 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
              }
              break;
            }
-      case 100:
+      case Tag::Skip:
            {
              tag->endPos(line, col);
              delete tag;

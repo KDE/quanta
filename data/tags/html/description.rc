@@ -8,7 +8,7 @@ CaseSensitive = false
 
 [Toolbars]
 Location = html
-Names = standard, fonts, tables, lists, forms, others
+Names = standard, fonts, tables, lists, forms, other
 
 [Core]
 Attributes = id, class, style, title

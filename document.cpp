@@ -212,8 +212,11 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
   }
   if (dtd->family == Script)
   {
-    if (!tag) tag = findScriptText(line, col);
-    if (!tag) tag = findScriptStruct(line, col);
+    //TODO: The keyword shouldn't be hardcoded but read from description.rc
+    QRegExp keywordRx("\\b(for|foreach|if|else|elseif|while|do|switch|declare|function)\\b");
+
+    if (!tag) tag = findScriptText(line, col, keywordRx);
+    if (!tag) tag = findStruct(line, col, keywordRx);
     if (!tag)
     {
       QString textLine = editIf->textLine(line);
@@ -232,7 +235,7 @@ Tag *Document::tagAt(DTDStruct *dtd, int p_line, int p_col, bool forwardOnly, bo
   return tag;
 }
 
-Tag *Document::findScriptText(int line, int col)
+Tag *Document::findScriptText(int line, int col, const QRegExp& keywordRx)
 {
   int bl, bc, el, ec;
   int bLine = line;
@@ -260,8 +263,6 @@ Tag *Document::findScriptText(int line, int col)
   }
   if ( s == "{")
   {
-    //TODO: The keyword shouldn't be hardcoded but read from description.rc
-    QRegExp keywordRx("\\b(for|foreach|if|else|elseif|while|do|switch|declare|function)\\b");
 
     eLine = el;
     eCol = ec - 1;
@@ -302,13 +303,13 @@ Tag *Document::findScriptText(int line, int col)
     {
       tag = new Tag();
       tag->setTagPosition(bLine, bCol, eLine, eCol);
-      tag->type = 100;
+      tag->type = Tag::Skip;
     }
   }
   return tag;
 }
 
-Tag *Document::findScriptStruct(int line, int col)
+Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
 {
   Tag *tag = 0L;
   int bLine = 0;
@@ -323,9 +324,6 @@ Tag *Document::findScriptStruct(int line, int col)
 
   if (s != "}" && !s.isEmpty())
   {
-    //TODO: The keyword shouldn't be hardcoded but read from description.rc
-    QRegExp keywordRx("\\b(for|foreach|if|else|elseif|while|do|switch|declare|function)\\b");
-
     s = findRev(keywordRx, bLine, bCol, bl, bc, el, ec);
     if (!s.isEmpty())
     {
@@ -513,7 +511,7 @@ Tag *Document::findText(int line, int col, bool forwardOnly)
   s = s.stripWhiteSpace();
   if (s.isEmpty() || s == " ")  //whitespaces are not text
   {
-    tag->type = 100;
+    tag->type = Tag::Skip;
   } else
   {
     tag->type = Tag::Text;
@@ -1328,8 +1326,10 @@ QString Document::text(int bLine, int bCol, int eLine, int eCol)
  return t;
 }
 
-QString Document::find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
+QString Document::find(const QRegExp& regExp, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
 {
+
+ QRegExp rx = regExp;
  QString foundText = "";
  int maxLine = editIf->numLines();
  QString textToSearch = text(sLine, sCol, sLine, editIf->lineLength(sLine));
@@ -1384,8 +1384,9 @@ QString Document::find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol,
  return foundText;
 }
 
-QString Document::findRev(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
+QString Document::findRev(const QRegExp& regExp, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
 {
+ QRegExp rx = regExp;
  QString foundText = "";
  int pos = -1;
  int line = sLine;
