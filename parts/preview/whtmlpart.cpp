@@ -35,7 +35,7 @@
 
 WHTMLPart::WHTMLPart(QWidget *parentWidget, const char *widgetName, bool enableViewSource, 
             QObject *parent, const char *name, GUIProfile prof)
-  : KHTMLPart(parentWidget, widgetName, parent, name, prof)
+  : KHTMLPart(parentWidget, widgetName, parent, name, prof), m_contextMenu(0)
 {
   //kdDebug(24000) << "WHTMLPart: " << parentWidget << " " << widgetName << " " << parent << " " << name << this << endl;
    hpos = 0;
