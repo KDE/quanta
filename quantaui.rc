@@ -132,8 +132,8 @@
     </Menu>
 
     <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
-      <Action name="editor_options"/>
       <Action name="general_options"/>
+      <Action name="editor_options"/>
       <Action name="conf_actions"/>
       <Action name="conf_toolbars"/>
       <Action name="keys_bind"/>

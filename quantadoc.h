@@ -108,7 +108,6 @@ private:
     //KWriteManager *writeManager;
 
     KPopupMenu *attribMenu;
-    KDirWatch *fileWatcher;
 
 };
 

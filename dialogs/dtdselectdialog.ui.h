@@ -10,3 +10,4 @@ void DTDSelectDialog::init()
 {
  connect(okButton,SIGNAL(clicked()),SLOT(accept()));
 }
+

@@ -176,6 +176,7 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
     Document *w = write();
     if (encoding.isEmpty()) encoding = defaultEncoding;
     w->kate_doc->setEncoding(encoding);
+    w->readConfig(app->config);
     if (w->doc()->openURL( url ))
     {
       w->setDirtyStatus(false);
@@ -187,7 +188,6 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
         if ( w == it.current() ) defUrl = it.currentKey();
   	    ++it;
    	  }
-      w->readConfig(app->config);
 
       app ->view->writeTab->showPage( w );
       changeFileTabName(defUrl);
@@ -723,7 +723,14 @@ void QuantaDoc::slotFileDirty(const QString& fileName)
 
   while ( Document *w = it.current() )
   {
-    if ( w->url().path()==fileName ) w->setDirtyStatus(true);
+    if ( w->url().path()==fileName )
+    {
+      w->setDirtyStatus(true);
+      if (w == write())
+      {
+        w->checkDirtyStatus();
+      }
+    }
     ++it;
   }
 

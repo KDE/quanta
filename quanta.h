@@ -156,7 +156,7 @@ public slots:
   /// open url in documentation window
   void openDoc( QString url );
 
-  void updateNavButtons( bool back, bool forward );
+//  void updateNavButtons( bool back, bool forward );
 
   void contextHelp();
 
@@ -298,6 +298,8 @@ protected:
   void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
   /* Saves the toolbar and the actions. Returns the name of the actions file*/
   QString saveToolBar(QString& toolbarName, QString destFile);
+  /** Initialize the plugin architecture. */
+  void initPlugins();
 
 private:
   /** project class */

@@ -70,8 +70,6 @@ QString CopyTo::copy( QString rname )
     QuantaCommon::setUrl(sourceUrl, rname);
     QuantaCommon::setUrl(destUrl, fname);
     KIO::CopyJob *job = KIO::copy( sourceUrl, destUrl, true );
-//    connect( job, SIGNAL(copyingDone( KIO::Job *,const KURL&,const KURL&,bool,bool)),
-//                  SLOT  (endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool)));
     connect( job, SIGNAL(result( KIO::Job *)),
                  SLOT  (slotResult( KIO::Job *)));
   }

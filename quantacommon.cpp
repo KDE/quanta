@@ -21,6 +21,7 @@
 
 //kde includes
 #include <kurl.h>
+#include <kdirwatch.h>
 
 #include "quantacommon.h"
 
@@ -42,9 +43,11 @@ QuantaApp *QuantaCommon::quantaApp;
 
 QDict<AttributeList> *tagsDict;
 QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
+QValueList<QString> pluginsList; //holds the names of available plugins
 
 Node *baseNode;
 Parser *parser;
+KDirWatch *fileWatcher;
 
 QString defaultEncoding;
 
@@ -305,4 +308,17 @@ int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, i
    result = 0;  //between
  }*/
  return pos;
+}
+
+
+/** Read property of QDict<bool> pluginsAvailable. */
+bool QuantaCommon::pluginAvailable(const QString& name)
+{
+	bool result = false;
+  for (uint i=0; i < pluginsList.count(); i++)
+  {
+    if (pluginsList[i] == name) result = true;
+  }
+
+  return result;
 }

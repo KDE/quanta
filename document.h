@@ -106,7 +106,7 @@ public:
   /** No descriptions */
   void clearTempFile();
   /** No descriptions */
-  KURL tempURL();
+  QString tempFileName();
   /** No descriptions */
   bool saveIt();
 
@@ -134,7 +134,6 @@ work correctly. */
   void checkDirtyStatus();
   /** Save the document and reset the dirty status. */
   void save();
-  /** Splits the document content in a QStringList (m_text). Must be called before find/findRev function is used in order to have an updated content. */
 
   bool oldstat;
   bool busy;
@@ -165,11 +164,11 @@ private:
 
   QString         spellText;
 	QValueList<int> *spellPos;
-  KTextEditor::Document *_doc;
-  KTextEditor::View *_view;
+  KTextEditor::Document *m_doc;
+  KTextEditor::View *m_view;
 
 	KTempFile *tempFile;
-  KURL tempUrl;
+  QString m_tempFileName;
 
 	int spellMoved;
   QString dtdName;

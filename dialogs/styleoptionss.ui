@@ -156,6 +156,52 @@
             </widget>
         </grid>
     </widget>
+    <widget class="QComboBox">
+        <property name="name">
+            <cstring>encodingCombo</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>235</x>
+                <y>170</y>
+                <width>110</width>
+                <height>20</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel1_2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>5</x>
+                <y>170</y>
+                <width>210</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Default character encoding:</string>
+        </property>
+    </widget>
+    <spacer>
+        <property name="name" stdset="0">
+            <cstring>Spacer1</cstring>
+        </property>
+        <property name="orientation">
+            <enum>Horizontal</enum>
+        </property>
+        <property name="sizeType">
+            <enum>Expanding</enum>
+        </property>
+        <property name="sizeHint">
+            <size>
+                <width>20</width>
+                <height>20</height>
+            </size>
+        </property>
+    </spacer>
 </widget>
 <tabstops>
     <tabstop>tagCase</tabstop>

@@ -22,10 +22,11 @@
 #include <config.h>
 #endif
 
-#include <qdict.h>
 #include "parser/qtag.h"
 #include "parser/node.h"
 #include "parser/parser.h"
+
+class KDirWatch;
 
 extern QDict<DTDStruct> *dtds;
 
@@ -46,5 +47,8 @@ extern QString fileMaskImage;
 extern Node *baseNode;
 extern Parser *parser;
 extern QString defaultEncoding;
+extern QValueList<QString> pluginsList; //holds the names of available plugins
+extern KDirWatch *fileWatcher;
+
 
 #endif // RESOURCE_H

@@ -21,6 +21,7 @@
 #include <qfileinfo.h>
 #include <qtextstream.h>
 #include <qregexp.h>
+#include <qradiobutton.h>
 
 // KDE includes
 #include <kapp.h>
@@ -31,6 +32,7 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <ktempfile.h>
+#include <kdirwatch.h>
 
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
@@ -41,6 +43,7 @@
 #include "quantacommon.h"
 #include "document.h"
 #include "resource.h"
+#include "dialogs/dirtydlg.h"
 
 #include <cctype>
 
@@ -50,36 +53,36 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget 
   m_dirty   = false;
   busy    = false;
   oldstat = false;
-  _doc = doc;
-  _view = (KTextEditor::View *)_doc->createView(this, 0L);
+  m_doc = doc;
+  m_view = (KTextEditor::View *)m_doc->createView(this, 0L);
   int w = parent->width() -5 ;
   int h = parent->height() - 35;
-   _view->resize(w,h);
-//  _view->setGeometry(parent->geometry());
+   m_view->resize(w,h);
+//  m_view->setGeometry(parent->geometry());
   completionInProgress = false;
 
-  kate_doc = dynamic_cast<Kate::Document*>(_doc);
-  kate_view = dynamic_cast<Kate::View*>(_view);
+  kate_doc = dynamic_cast<Kate::Document*>(m_doc);
+  kate_view = dynamic_cast<Kate::View*>(m_view);
 
-  editIf = dynamic_cast<KTextEditor::EditInterface *>(_doc);
-  selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(_doc);
-  viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(_view);
-  codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(_view);
+  editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
+  selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
+  viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(m_view);
+  codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(m_view);
   this->basePath = basePath;
   tempFile = 0;
   dtdName = "";
 
 
-  connect( _doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
+  connect( m_doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
            this,  SLOT(slotCharactersInserted(int ,int ,const QString&)) );
 
-  connect( _view, SIGNAL(completionAborted()),
+  connect( m_view, SIGNAL(completionAborted()),
            this,  SLOT(  slotCompletionAborted()) );
 
-  connect( _view, SIGNAL(completionDone(KTextEditor::CompletionEntry)),
+  connect( m_view, SIGNAL(completionDone(KTextEditor::CompletionEntry)),
            this,  SLOT(  slotCompletionDone(KTextEditor::CompletionEntry)) );
 
-  connect( _view, SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString *)),
+  connect( m_view, SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString *)),
            this,  SLOT(  slotFilterCompletion(KTextEditor::CompletionEntry*,QString *)) );
 }
 
@@ -94,12 +97,12 @@ void Document::setUntitledUrl(QString url)
 
 bool Document::isUntitled()
 {
-  return (_doc->url().url().isEmpty()) ? true : false;
+  return (m_doc->url().url().isEmpty()) ? true : false;
 }
 
 KURL Document::url()
 {
-  return ( isUntitled() ) ? KURL(untitledUrl) : _doc->url();
+  return ( isUntitled() ) ? KURL(untitledUrl) : m_doc->url();
 }
 
 // kwrite addons
@@ -549,14 +552,14 @@ void Document::replaceSelected(QString s)
 
 void Document::readConfig(KConfig *config)
 {
-  bool m = _doc->isModified();
-  dynamic_cast<KTextEditor::ConfigInterface*>(_doc)->readConfig( config );
-  _doc->setModified(m);
+  bool m = m_doc->isModified();
+  dynamic_cast<KTextEditor::ConfigInterface*>(m_doc)->readConfig( config );
+  m_doc->setModified(m);
 }
 
 void Document::writeConfig(KConfig *config)
 {
-  dynamic_cast<KTextEditor::ConfigInterface*>(_doc)->writeConfig( config );
+  dynamic_cast<KTextEditor::ConfigInterface*>(m_doc)->writeConfig( config );
 }
 
 /** No descriptions */
@@ -655,28 +658,28 @@ void Document::insertText(QString text, bool adjustCursor)
 /** Get the view of the document */
 KTextEditor::View* Document::view()
 {
-  return _view;
+  return m_view;
 }
 
 /** Get the KTextEditor::Document of the document */
 KTextEditor::Document* Document::doc()
 {
-  return _doc;
+  return m_doc;
 }
 
 /** Returns true if the document was modified. */
 bool Document::isModified()
 {
   bool modified = false;
-  if ( _doc )	
-   modified = _doc->isModified();
+  if ( m_doc )	
+   modified = m_doc->isModified();
 
   return modified;	
 }
 /** Sets the modifiedFlag value. */
 void Document::setModified(bool flag)
 {
-  _doc->setModified(flag);
+  m_doc->setModified(flag);
 }
 
 /** No descriptions */
@@ -704,7 +707,7 @@ int Document::createTempFile()
  tempFile->setAutoDelete(true);
  * (tempFile->textStream()) << editIf->text();
 
- tempUrl = KURL(QFileInfo(*(tempFile->file())).filePath());
+ m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
  tempFile->close();
 
  return 1;
@@ -730,17 +733,17 @@ void Document::clearTempFile()
  tempFile = new KTempFile();
 }
 /** No descriptions */
-KURL Document::tempURL()
+QString Document::tempFileName()
 {
- return tempUrl;
+ return m_tempFileName;
 }
 
 /** No descriptions */
 bool Document::saveIt()
 {
- bool modifyStatus = _doc->isModified();
- _doc->save();
- _doc->setModified(modifyStatus);
+ bool modifyStatus = m_doc->isModified();
+ m_doc->save();
+ m_doc->setModified(modifyStatus);
  m_dirty = false;
  return true;   //not used yet
 }
@@ -1438,23 +1441,32 @@ void Document::slotCompletionAborted()
 /** Ask for user confirmation if the file was changed outside. */
 void Document::checkDirtyStatus()
 {
+  fileWatcher->stopScan();
   if (m_dirty)
   {
-    if (KMessageBox::questionYesNo(this,
-        i18n("The file was changed outside of the Quanta editor.\nDo you want to reload the modified file?\n\n\
-If you choose Cancel and subsequently save the file, you will lose those modifications."),
-        i18n("File changed")) == KMessageBox::Yes)
+    createTempFile();
+    DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, this);
+    if (!QuantaCommon::pluginAvailable("kompare"))
     {
-      _doc->openURL(url());
+       dlg->buttonCompare->setEnabled(false);
+       dlg->buttonLoad->setChecked(true);
+    }
+    if (dlg->exec())
+    {
+        m_doc->setModified(false);
+        m_doc->openURL(url());
+        createTempFile();
     }
     m_dirty = false;
+    delete dlg;
   }
+  fileWatcher->startScan();
 }
 
 /** Save the document and reset the dirty status. */
 void Document::save()
 {
-  _doc->save();
+  m_doc->save();
   m_dirty = false;
 }
 

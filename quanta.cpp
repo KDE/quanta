@@ -59,6 +59,7 @@
 #include <ktar.h>
 #include <kedittoolbar.h>
 #include <kaction.h>
+#include <kcharsets.h>
 
 #include <kparts/componentfactory.h>
 
@@ -182,6 +183,7 @@ void QuantaApp::slotFileOpenRecent(const KURL &url )
 void QuantaApp::slotFileSave()
 {
   Document *w = view->write();
+  w->checkDirtyStatus();
   if ( w->isUntitled() )
   	slotFileSaveAs();
   else
@@ -194,10 +196,9 @@ void QuantaApp::slotFileSaveAs()
 {
   QString oldUrl = doc->url().url();
   Document *w = view->write();
-
+  w->checkDirtyStatus();
   if (w->kate_view->saveAs() == Kate::View::SAVE_OK)
   {
-    w->closeTempFile();
     w->createTempFile();
 
     KURL url = w->doc()->url();
@@ -221,6 +222,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
   int query;
   QString projectTemplateDir;
   Document *w = view->write();
+  w->checkDirtyStatus();
 
   do {
     query = KMessageBox::Yes;
@@ -755,6 +757,19 @@ void QuantaApp::slotOptions()
   styleOptionsS->optionalTagAutoClose->setChecked( closeOptionalTags );
   styleOptionsS->useAutoCompletion->setChecked( useAutoCompletion );
 
+  QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
+  styleOptionsS->encodingCombo->insertStringList( availableEncodingNames );
+  QStringList::ConstIterator iter;
+  int iIndex = -1;
+  for (iter = availableEncodingNames.begin(); iter != availableEncodingNames.end(); ++iter)
+  {
+     ++iIndex;
+     if (*iter == defaultEncoding)
+     {
+       styleOptionsS->encodingCombo->setCurrentItem(iIndex);
+       break;
+     }
+  }
 
   // Files Masks options
   page=kd->addVBoxPage(i18n("Files Masks"), QString::null, BarIcon("files", KIcon::SizeMedium ) );
@@ -795,6 +810,7 @@ void QuantaApp::slotOptions()
     closeTags = styleOptionsS->tagAutoClose->isChecked();
     closeOptionalTags = styleOptionsS->optionalTagAutoClose->isChecked();
     useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
+    defaultEncoding = styleOptionsS->encodingCombo->currentText();
 
     fileMaskHtml = fileMasks->lineHTML->text()+" ";
   	fileMaskPhp  = fileMasks->linePHP->text()+" ";
@@ -906,7 +922,8 @@ void QuantaApp::slotShowPreview()
     if (doc->isModified())
     {
       KURL origUrl = w->url();
-      KURL tempUrl = w->tempURL();
+      KURL tempUrl;
+      tempUrl.setPath(w->tempFileName());
 
       KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
 			        								      QString::null,
@@ -1080,10 +1097,10 @@ void QuantaApp::openDoc( QString url )
 	 
 	 oldUrl = url;
 }
-
+/*
 void QuantaApp::updateNavButtons( bool back, bool forward )
 {
-/*   
+
    if ( back )
    	  enableCommand(ID_VIEW_BACK);
    else
@@ -1093,8 +1110,8 @@ void QuantaApp::updateNavButtons( bool back, bool forward )
    	  enableCommand(ID_VIEW_FORWARD);
    else
    		disableCommand(ID_VIEW_FORWARD);
-*/   		
-}
+   		
+} */
 
 void QuantaApp::contextHelp()
 {
@@ -1378,7 +1395,8 @@ void QuantaApp::slotSyntaxCheckDone()
  if (doc->isModified())
  {
    KURL origUrl = w->url();
-   KURL tempUrl = w->tempURL();
+   KURL tempUrl;
+   tempUrl.setPath(w->tempFileName());
 
    KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
 	         								      QString::null,
@@ -2041,6 +2059,5 @@ void QuantaApp::slotHelpHomepage()
 {
   kapp->invokeBrowser("http://quanta.sourceforge.net");
 }
-
 
 #include "quanta.moc"

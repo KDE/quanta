@@ -2,7 +2,7 @@
 
 SUBDIRS = doc tags icons templates toolbars 
 
-EXTRA_DIST = actions.rc php.xml 
+EXTRA_DIST = actions.rc php.xml plugins.rc 
 
 install-data-local:
 	$(mkinstalldirs) $(prefix)/share/apps/kate/syntax/
@@ -14,4 +14,4 @@ uninstall-local:
 ####### kdevelop will overwrite this part!!! (end)############
 datadir = ${kde_datadir}/quanta
 
-data_DATA = actions.rc chars
+data_DATA = plugins.rc actions.rc chars

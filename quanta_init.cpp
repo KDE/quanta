@@ -118,6 +118,7 @@ void QuantaApp::initQuanta()
 {
   parser = new Parser();
 
+  initPlugins  ();
   initTagDict  ();
   initStatusBar();
   initDocument ();
@@ -418,7 +419,7 @@ void QuantaApp::initView()
 
   connect(  htmlpart,       SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
   connect(  htmlPartDoc,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
-  connect(  htmlPartDoc,    SIGNAL(updateStatus(bool, bool)), SLOT(updateNavButtons( bool, bool)));
+//  connect(  htmlPartDoc,    SIGNAL(updateStatus(bool, bool)), SLOT(updateNavButtons( bool, bool)));
 
   connect( view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
 
@@ -1303,4 +1304,20 @@ void QuantaApp::initActions()
 
     new KAction(i18n("Complete Text"),CTRL+Key_Space,this,SLOT(slotShowCompletion()),actionCollection(),"show_completion");
     new KAction(i18n("Completion Hints"),CTRL+SHIFT+Key_Space,this,SLOT(slotShowCompletionHint()),actionCollection(),"show_completion_hint");
+}
+
+/** Initialize the plugin architecture. */
+void QuantaApp::initPlugins()
+{
+ KConfig *config = new KConfig(locate("appdata","plugins.rc"));
+ config->setGroup("General");
+ QStrList pList;
+ config->readListEntry("Plugins",pList);
+ for (uint i = 0; i < pList.count(); i++)
+ {
+   QString name = pList.at(i);
+   if (locate("exe",name) != QString::null)
+      pluginsList.append(name);
+ }
+ delete config;
 }

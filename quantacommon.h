@@ -65,6 +65,9 @@ public:
   /** Returns 0 if the (line,col) is inside the area specified by the other arguments,
       -1 if it is before the area and 1 if it is after. */
   static int isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol);
+  /** Check if plugin is available or not. */
+  static bool pluginAvailable(const QString& name);
+
 public: // Public attributes
   /**  */
   static QuantaApp *quantaApp;
