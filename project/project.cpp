@@ -743,14 +743,20 @@ void Project::slotRenameFinished( KIO::Job * job)
     QDomElement el;
     QDomNodeList nl = dom.elementsByTagName("item");
     QString tmpString;
+    QString oldString;
     QString oldStr = QuantaCommon::qUrl(oldURL);
     QString newStr = QuantaCommon::qUrl(newURL);
     for (uint i = 0; i < nl.count(); i++ )
     {
       el = nl.item(i).toElement();
       tmpString = el.attribute("url");    
+      oldString = tmpString;
       tmpString = tmpString.replace(QRegExp(oldStr),newStr);
-      el.setAttribute("url",tmpString);
+      if (oldString != tmpString )
+      {
+        el.setAttribute("url",tmpString);
+        el.setAttribute("upload_time","");
+      }
     }
     oldURL = KURL();
     newURL = KURL();
