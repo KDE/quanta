@@ -1211,15 +1211,16 @@ void QuantaApp::slotShowTemplatesTree()
 void QuantaApp::slotNewLineColumn()
 {
   QString linenumber;
-  uint line, col;
-  m_view->write()->viewCursorIf->cursorPositionReal(&line, &col);
-  Node *node = parser->nodeAt(line, col);
+  oldCursorLine = cursorLine;
+  oldCursorCol = cursorCol;
+  m_view->write()->viewCursorIf->cursorPositionReal(&cursorLine, &cursorCol);
+  Node *node = parser->nodeAt(cursorLine, cursorCol);
   if (node)
   {
     sTab->showTagAtPos(node);
   }
   aTab->setCurrentNode(node);
-  linenumber.sprintf(i18n("Line: %d Col: %d"),line+1,col+1);
+  linenumber.sprintf(i18n("Line: %d Col: %d"),cursorLine+1,cursorCol+1);
 
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
 }

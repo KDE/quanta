@@ -88,6 +88,8 @@ public:
   void removeCommentsAndQuotes(QString& str, DTDStruct* dtd);
   void parseForXMLGroup(Node *node);
   void parseForScriptGroup(Node *node);
+  /** For the undo/redo system use. */
+  void setM_node(Node* node) {m_node = node;}
 
   GroupElementMapList m_groups; //a list of groups (variables, inclusions)
   QStringList includedFiles;

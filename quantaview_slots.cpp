@@ -716,8 +716,8 @@ void QuantaView::slotUndo ()
   {
     bool updateClosing = qConfig.updateClosingTags;
     qConfig.updateClosingTags = false;
-    dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->undo();
-    //write()->docUndoRedo.undo();
+    //dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->undo();
+    write()->docUndoRedo.undo(false);
     qConfig.updateClosingTags = updateClosing;
   }
 }
@@ -728,7 +728,8 @@ void QuantaView::slotRedo ()
   {
     bool updateClosing = qConfig.updateClosingTags;
     qConfig.updateClosingTags = false;
-    dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->redo();
+    //dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->redo();
+    write()->docUndoRedo.redo(false);
     qConfig.updateClosingTags = updateClosing;
   }
 }

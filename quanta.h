@@ -121,6 +121,7 @@ public:
   KConfig *config() const {return m_config;}
   QWidgetStack *rightWidget() const {return rightWidgetStack;}
   QWidgetStack *bottomWidget() const {return bottomWidgetStack;}
+  WKafkaPart *kafka() const {return kafkaPart;}
 
 //TODO: check if we really need these "get" methods (and get rid o get)
   SpellChecker *spellChecker() const {return m_spellChecker;}
@@ -163,6 +164,9 @@ public:
   void reparse(bool force);
 
   bool structTreeVisible() const;
+
+    //return the old Cursor position
+  void oldCursorPos(uint &line, uint &col) {line = oldCursorLine; col = oldCursorCol;}
 
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */
@@ -387,7 +391,6 @@ protected:
   void loadToolbarForDTD(const QString& dtdName);
   void setTitle(const QString&);
   void connectDockSignals(QObject *obj);
-
 private:
   /** Messaage output window */
   MessageOutput *messageOutput;
@@ -483,6 +486,10 @@ private:
   bool previewCopyMade;
   KTempFile *previewTmpFile;
 
+  uint cursorLine;
+  uint cursorCol;
+  uint oldCursorLine;
+  uint oldCursorCol;
 protected: // Protected attributes
   /** Timer to refresh the structure tree. */
   QTimer *refreshTimer;

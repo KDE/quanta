@@ -23,7 +23,6 @@
 #include "document.h"
 #include "parser/node.h"
 #include "parser/tag.h"
-//debug only
 #include "resource.h"
 
 #include "undoredo.h"
@@ -33,8 +32,11 @@ undoRedo::undoRedo(Document *doc)
 {
 	//TODO:add it to the config
 	_listLimit = 50;
+	_mergeNext = false;
 	//add a first empty NodeModifs struct
 	NodeModifsSet modifs;
+	modifs.cursorX = 0;
+	modifs.cursorY = 0;
 	addNewModifsSet(modifs);
 }
 
@@ -45,12 +47,36 @@ undoRedo::~undoRedo()
 
 void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 {
+	QValueList<NodeModifsSet>::iterator it;
+	QValueList<NodeModif>::iterator it2;
+	NodeModifsSet modifications;
+	if(_mergeNext)
+	{
+		for(it2 = modifs.NodeModifList.begin(); it2 != modifs.NodeModifList.end(); it2++)
+		{
+			(*fromLast()).NodeModifList.append(*it2);
+		}
+		modifs.NodeModifList.clear();
+		_mergeNext = false;
+		//debugOutput();
+		return;
+	}
+
+	if(_dontAddModifSet >= 0)
+		_dontAddModifSet--;
+	if(_dontAddModifSet == 0)
+	{
+		_dontAddModifSet = -1;
+		//debugOutput();
+		return;
+	}
+
 	if(!empty())
 	{
 		/** A new UndoRedo struct : if we are in the middle of the stack, we delete the end of the stack*/
 		if(fromLast() != end() && editorIterator != fromLast())
 		{
-			QValueList<NodeModifsSet>::iterator it = editorIterator;
+			it = editorIterator;
 			it++;
 			while(it != end())
 			{
@@ -71,10 +97,98 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs)
 	 //debugOutput();
 }
 
-bool undoRedo::undo()
+bool undoRedo::undo(bool kafkaUndo)
 {
 	QTime t;
-	NodeModifsSet::iterator it;
+	QValueList<NodeModif>::iterator it;
+
+	t.start();
+	kdDebug(24000)<< "************* Begin Undo *****************" << endl;
+	if(editorIterator == begin())//the first one is empty
+		return false;
+	it = (*editorIterator).NodeModifList.fromLast();
+	_doc->activateParser(false);
+	_doc->activateRepaintView(false);
+	while(1)
+	{
+		if(!UndoNodeModif(*it, kafkaUndo))
+			return false;
+		kdDebug(24000) << "NodeModif type :" << (*it).type <<" undoed!" << endl;
+		coutTree(baseNode, 2);
+		if(it == (*editorIterator).NodeModifList.begin())
+			break;
+		it--;
+	}
+	_doc->viewCursorIf->setCursorPositionReal((*editorIterator).cursorY, (*editorIterator).cursorX);
+	editorIterator--;
+	//We need to update the internal pointer of baseNode in the parser.
+	parser->setM_node(baseNode);
+	_doc->activateRepaintView(true);
+	_doc->activateParser(true);
+	kdDebug(24000)<< "************* End Undo *****************" << endl;
+	kdDebug(24000) << "undoRedo::undo() : " << t.elapsed() << " ms \n";
+	//debugOutput();
+	return !(editorIterator == begin());
+}
+
+bool undoRedo::redo(bool kafkaUndo)
+{
+	QValueList<NodeModif>::iterator it;
+	QTime t;
+	bool success;
+
+	t.start();
+	kdDebug(24000)<< "************* Begin Redo *****************" << endl;
+	if(editorIterator == fromLast())
+		return false;
+	editorIterator++;
+	_doc->activateParser(false);
+	_doc->activateRepaintView(false);
+	for(it = (*editorIterator).NodeModifList.begin(); it != (*editorIterator).NodeModifList.end(); it++)
+	{
+		/** Redoing is the opposite of Undoing ... */
+		if((*it).type == undoRedo::NodeTreeAdded)
+			(*it).type = undoRedo::NodeTreeRemoved;
+		else if((*it).type == undoRedo::NodeAndChildsAdded)
+			(*it).type = undoRedo::NodeAndChildsRemoved;
+		else if((*it).type == undoRedo::NodeAdded)
+			(*it).type = undoRedo::NodeRemoved;
+		else if((*it).type == undoRedo::NodeRemoved)
+			(*it).type = undoRedo::NodeAdded;
+		else if((*it).type == undoRedo::NodeAndChildsRemoved)
+			(*it).type = undoRedo::NodeAndChildsAdded;
+		else if((*it).type == undoRedo::NodeTreeRemoved)
+			(*it).type = undoRedo::NodeTreeAdded;
+
+		success = UndoNodeModif(*it, kafkaUndo);
+		kdDebug(24000) << "NodeModif type :" << (*it).type <<" redoed!" << endl;
+
+		if((*it).type == undoRedo::NodeTreeRemoved)
+			(*it).type = undoRedo::NodeTreeAdded;
+		else if((*it).type == undoRedo::NodeAndChildsRemoved)
+			(*it).type = undoRedo::NodeAndChildsAdded;
+		else if((*it).type == undoRedo::NodeRemoved)
+			(*it).type = undoRedo::NodeAdded;
+		else if((*it).type == undoRedo::NodeAdded)
+			(*it).type = undoRedo::NodeRemoved;
+		else if((*it).type == undoRedo::NodeAndChildsAdded)
+			(*it).type = undoRedo::NodeAndChildsRemoved;
+		else if((*it).type == undoRedo::NodeTreeAdded)
+			(*it).type = undoRedo::NodeTreeRemoved;
+	}
+	_doc->viewCursorIf->setCursorPositionReal((*editorIterator).cursorY2, (*editorIterator).cursorX2);
+	//We need to update the internal pointer of baseNode in the parser.
+	parser->setM_node(baseNode);
+	_doc->activateRepaintView(true);
+	_doc->activateParser(true);
+	kdDebug(24000)<< "************* End Redo *****************" << endl;
+	kdDebug(24000) << "undoRedo::redo() : " << t.elapsed() << " ms \n";
+	//debugOutput();
+	return !(editorIterator == fromLast());
+}
+
+bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool kafkaUndo)
+{
 	Node *_node = 0L, *_nodeNext = 0L, *n = 0L, *m = 0L, *newNode = 0L;
 	int bLine, bCol, eLine, eCol, bLine2, bCol2, eLine2, eCol2, bLine3, bCol3, i;
 	bool b;
@@ -82,111 +196,162 @@ bool undoRedo::undo()
 	Tag *_tag;
 	QString text, totalText;
 
-	t.start();
-	if(editorIterator == begin())//the first one is empty
-		return false;
-	it = (*editorIterator).fromLast();
-	_doc->activateParser(false);
-	while(1)
+	if(_nodeModif.type == undoRedo::NodeTreeAdded)
 	{
-		if((*it).type == undoRedo::NodeTreeAdded)
+		/** Remove all the text and set baseNode to 0L */
+		_doc->editIf->removeText(0, 0, _doc->editIf->numLines() - 1,
+			_doc->editIf->lineLength(_doc->editIf->numLines() - 1));
+		_nodeModif.node = baseNode;
+		baseNode = 0L;
+	}
+	else if(_nodeModif.type == undoRedo::NodeAndChildsAdded ||
+		_nodeModif.type == undoRedo::NodeAdded)
+	{
+		/** Removing the node */
+		_node = getNodeFromLocation(_nodeModif.location);
+		if(!_node)
 		{
-			_doc->editIf->removeText(0, 0, _doc->editIf->numLines() - 1, _doc->editIf->lineLength(_doc->editIf->numLines() - 1));
-			(*it).node = baseNode;
-			baseNode = 0L;
+			kdDebug(24000)<< "undoRedo::UndoNodeModif() - ERROR1" << endl;
+			_doc->activateParser(true);
+			return false;
 		}
-		else if((*it).type == undoRedo::NodeAndChildsAdded ||
-			(*it).type == undoRedo::NodeAdded)
+		_nodeModif.node = _node;
+		_node->tag-> beginPos(bLine, bCol);
+		if(_node->next && _node->next->closesPrevious)
+			_node->next->closesPrevious = false;
+		if(_nodeModif.type == undoRedo::NodeAndChildsAdded ||
+			(_nodeModif.type == undoRedo::NodeAdded && !_node->child))
 		{
-			_node = getNodeFromLocation((*it).location);
-			if(!_node)
+			b = true;
+			_nodeNext = getNextNode(_node, b);
+			if(_node->prev)
+				_node->prev->next = _node->next;
+			if(_node->next)
+				_node->next->prev = _node->prev;
+			if(_node->parent && _node->parent->child == _node)
+				_node->parent->child = _node->next;
+			if(_node->closesPrevious && _node->next)
 			{
-				kdDebug(24000)<< "undoRedo::undo() - ERROR1" << endl;
-				_doc->activateParser(true);
-				return false;
-			}
-			(*it).node = _node;
-			_node->tag-> beginPos(bLine, bCol);
-			if((*it).type == undoRedo::NodeAndChildsAdded ||
-				((*it).type == undoRedo::NodeAdded && !_node->child))
-			{
-				b = true;
-				_nodeNext = getNextNode(_node, b);
-				if(_node->prev)
-					_node->prev->next = _node->next;
-				if(_node->next)
-					_node->next->prev = _node->prev;
-				if(_node->parent && _node->parent->child == _node)
-					_node->parent->child = _node->next;
-				_node->parent = 0L;
-				_node->next = 0L;
-				_node->prev = 0L;
-				n = _node;
+				/** If _node close the previous Node, it means that all the node next to _node
+				  * will be moved next to the last child of _node->prev (need to be updated) */
+				n = _node->prev;
+				if(!n)
+				{
+					kdDebug(24000)<< "undoRedo::UndoNodeModif() - ERROR2" << endl;
+					_doc->activateParser(true);
+					return false;
+				}
 				while(n->child)
 				{
 					n = n->child;
 					while(n->next)
 						n = n->next;
 				}
-				n->tag->endPos(eLine, eCol);
-			}
-			else
-			{
-				b = false;
-				_nodeNext = getNextNode(_node, b);
-				_node->tag->endPos(eLine, eCol);
-				if(_node->parent && _node->parent->child == _node)
-					_node->parent->child = _node->child;
-				n = _node->child;//not null
-				i = 0;
-				while(n)
+				m = _node->next;
+				if(_node->prev->child)
 				{
-					if(i == 0)
+					_node->next->prev = n;
+					n->next = _node->next;
+					while(m)
 					{
-						n->prev = _node->prev;
-						if(_node->prev)
-							_node->prev->next = n;
-					}
-					i++;
-					m = n;
-					n->parent = _node->parent;
-					n = n->next;
-					if(!n)
-					{
-						m->next = _node->next;
-						if(_node->next)
-							_node->next->prev = m;
+						m->parent = n->parent;
+						m = m->next;
 					}
 				}
-				_node->parent = 0L;
-				_node->next = 0L;
-				_node->prev = 0L;
-				(*it).childsNumber = i;
+				else
+				{
+					_node->prev->child = _node->next;
+					_node->next->prev = 0L;
+					while(m)
+					{
+						m->parent = _node->prev;
+						m = m->next;
+					}
+				}
+				_node->prev->next = 0L;
+				i = 0;
+				n = _node->next;
+				while(n)
+				{
+					i++;
+					n = n->next;
+				}
+				_nodeModif.childsNumber2 = i;
 			}
-			fitsNodesPosition(_nodeNext, bCol - eCol, bLine - eLine);
-			_doc->editIf->removeText(bLine, bCol, eLine, eCol + 1);
-		}
-		else if((*it).type == undoRedo::NodeModified)
-		{
-			_node = getNodeFromLocation((*it).location);
-			if(!_node)
+			n = _node;
+			while(n->child)
 			{
-				kdDebug(24000)<< "undoRedo::undo() - ERROR2" << endl;
-				_doc->activateParser(true);
-				return false;
+				n = n->child;
+				while(n->next)
+					n = n->next;
 			}
-			_tag = (*it).tag;
-			(*it).tag = _node->tag;
+			n->tag->endPos(eLine, eCol);
+			_node->parent = 0L;
+			_node->next = 0L;
+			_node->prev = 0L;
+		}
+		else
+		{
 			b = false;
 			_nodeNext = getNextNode(_node, b);
-			_node->tag->beginPos(bLine, bCol);
 			_node->tag->endPos(eLine, eCol);
-			_node->tag = _tag;
+			if(_node->parent && _node->parent->child == _node)
+				_node->parent->child = _node->child;
+			n = _node->child;//not null
+			i = 0;
+			while(n)
+			{
+				/** _node is deleted, all its child go up */
+				if(i == 0)
+				{
+					n->prev = _node->prev;
+					if(_node->prev)
+						_node->prev->next = n;
+				}
+				i++;
+				m = n;
+				n->parent = _node->parent;
+				n = n->next;
+				if(!n)
+				{
+					m->next = _node->next;
+					if(_node->next)
+						_node->next->prev = m;
+				}
+			}
+			_node->parent = 0L;
+			_node->next = 0L;
+			_node->prev = 0L;
+			_node->child = 0L;
+			_nodeModif.childsNumber = i;
+		}
+		fitsNodesPosition(_nodeNext, bCol - eCol - 1, bLine - eLine);
+		_doc->editIf->removeText(bLine, bCol, eLine, eCol + 1);
+	}
+	else if(_nodeModif.type == undoRedo::NodeModified)
+	{
+		/** Simply replacing the tag(node->tag) of the node by the old tag. */
+		_node = getNodeFromLocation(_nodeModif.location);
+		if(!_node)
+		{
+			kdDebug(24000)<< "undoRedo::UndoNodeModif() - ERROR3" << endl;
+			_doc->activateParser(true);
+			return false;
+		}
+		_tag = _nodeModif.tag;
+		_nodeModif.tag = _node->tag;
+		b = false;
+		_nodeNext = getNextNode(_node, b);
+		_node->tag->beginPos(bLine, bCol);
+		_node->tag->endPos(eLine, eCol);
+		_node->tag = _tag;
+		text = _node->tag->tagStr();
+		if(kafkaUndo)
+		{
 			bLine2 = bLine;
 			bCol2 = bCol;
 			eLine2 = bLine2;
 			eCol2 = bCol2;
-			text = _node->tag->tagStr();
 			for(i = 0; (unsigned)i < text.length(); i++)
 			{
 				if(text[i] != QChar(Qt::Key_Return))
@@ -198,277 +363,302 @@ bool undoRedo::undo()
 				}
 			}
 			_node->tag->setTagPosition(bLine2, bCol2, eLine2, eCol2);
-			_doc->editIf->removeText(bLine, bCol, eLine, eCol + 1);
-			_doc->editIf->insertText(bLine2, bCol2, newNode->tag->tagStr());
-			fitsNodesPosition(_nodeNext, (bCol2 - eCol2) - (bCol - eCol),
-				(bLine2 - eLine2) - (bLine - eLine));
 		}
-		else if((*it).type == undoRedo::NodeRemoved ||
-			(*it).type == undoRedo::NodeAndChildsRemoved)
+		else
 		{
-			newNode = (*it).node;
-			_node = getNodeFromLocation((*it).location);
-			if(!_node)
-			{//no node at this location, simply appending newNode here
-				loc = (*it).location;
-				loc.remove(loc.fromLast());
-				if(loc.empty())
+			if(_node->prev)
+			{
+				m = _node->prev;
+				while(m->child)
 				{
-					newNode->parent = 0L;
-					if(baseNode)
-					{
-						_node = baseNode;
-						while(_node->next)
-							_node = _node->next;
-						_node->tag->endPos(bLine, bCol);
-						bCol++;
-						b = true;
-						_nodeNext = 0L;
-						newNode->next = 0L;
-						newNode->prev = _node;
-						_node->next = newNode;
-					}
-					else
-					{
-						baseNode = newNode;
-						bCol = 0;
-						bLine = 0;
-						_nodeNext = 0L;
-						newNode->prev = 0L;
-						newNode->next = 0L;
-					}
+					m = m->child;
+					while(m->next)
+						m = m->next;
+				}
+				m->tag->endPos(bLine3, bCol3);
+			}
+			else if(_node->parent)
+				_node->parent->tag->endPos(bLine3, bCol3);
+			else
+			{
+				bCol3 = -1;
+				bLine3 = 0;
+			}
+			bCol3++;
+			_node->tag->beginPos(bLine2, bCol2);
+			_node->tag->endPos(eLine2, eCol2);
+			if(bCol2 == -1)
+			{
+				bCol3 = -1;
+				bLine3++;
+			}
+			if((eLine2 - bLine2) == 0)
+				_node->tag->setTagPosition(bLine3, bCol3, bLine3, bCol3 + (eCol2 - bCol2));
+			else
+				_node->tag->setTagPosition(bLine3, bCol3, bLine3 + (eLine2 - bLine2), eCol2);
+		}
+		_doc->editIf->removeText(bLine, bCol, eLine, eCol + 1);
+		_doc->editIf->insertText(bLine3, bCol3, _node->tag->tagStr());
+		_node->tag->beginPos(bLine2, bCol2);
+		_node->tag->endPos(eLine2, eCol2);
+		fitsNodesPosition(_nodeNext, (eCol2 - bCol2) - (eCol - bCol),
+			(eLine2 - bLine2) - (eLine - bLine));
+	}
+	else if(_nodeModif.type == undoRedo::NodeRemoved ||
+		_nodeModif.type == undoRedo::NodeAndChildsRemoved)
+	{
+		/** Adding the node */
+		newNode = _nodeModif.node;
+		_node = getNodeFromLocation(_nodeModif.location);
+		if(!_node)
+		{
+			/** No node at this location, getting the parent Node and appending newNode after
+			* the last child of the parent. */
+			loc = _nodeModif.location;
+			loc.remove(loc.fromLast());
+			if(loc.empty())
+			{
+				/** No parent, adding it on top of the tree. */
+				newNode->parent = 0L;
+				if(baseNode)
+				{
+					_node = baseNode;
+					while(_node->next)
+						_node = _node->next;
+					newNode->next = 0L;
+					newNode->prev = _node;
+					_node->next = newNode;
 				}
 				else
 				{
-					_node = getNodeFromLocation(loc);
-					if(!_node)
+					baseNode = newNode;
+					newNode->prev = 0L;
+					newNode->next = 0L;
+				}
+			}
+			else
+			{
+				_node = getNodeFromLocation(loc);
+				if(!_node)
+				{
+					kdDebug(24000)<< "undoRedo::UndoNodeModif() - ERROR4" << endl;
+					_doc->activateParser(true);
+					return false;
+				}
+				newNode->parent = _node;
+				n = _node->child;
+				if(n)
+				{
+					while(n->next)
+						n = n->next;
+					n->next = newNode;
+				}
+				else
+					_node->child = newNode;
+				newNode->prev = n;
+				newNode->next = 0L;
+				//bCol++;
+			}
+			if(_nodeModif.childsNumber2 != 0)
+			{
+				/** Moving nodes from the last child of newNode->prev next to the right of
+				  * newNode. */
+				n = newNode->prev;
+				if(!n)
+				{
+					kdDebug(24000)<< "undoRedo::UndoNodeModif() - ERROR5" << endl;
+					_doc->activateParser(true);
+					return false;
+				}
+				while(n->child)
+				{
+					n = n->child;
+					while(n->next)
+						n = n->next;
+				}
+				for(i = 0; i < _nodeModif.childsNumber2; i++)
+				{
+					if(i == (_nodeModif.childsNumber2 - 1))
 					{
-						kdDebug(24000)<< "undoRedo::undo() - ERROR3" << endl;
+						if(n->prev)
+							n->prev->next = 0L;
+						n->prev = newNode;
+						newNode->next = n;
+						if(n->parent && n->parent->child == n)
+							n->parent->child = 0L;
+					}
+					n->parent = newNode->parent;
+					n = n->prev;
+				}
+			}
+			b = true;
+			_nodeNext = getNextNode(newNode, b);
+		}
+		else
+		{
+			/** A node is already here. Moving it to the right and adding newNode here.*/
+			m = _node;
+			if(_node->parent && _node->parent->child == _node)
+				_node->parent->child = newNode;
+			newNode->parent = _node->parent;
+			if(_node->prev)
+				_node->prev->next = newNode;
+			newNode->prev = _node->prev;
+			if(_nodeModif.type == undoRedo::NodeRemoved && _nodeModif.childsNumber != 0)
+			{
+				/** Some Nodes at the right of newNode will be childs of newNode. */
+				for(i = 0; i < _nodeModif.childsNumber; i++)
+				{
+					if(i == 0)
+					{
+						newNode->child = m;
+						m->prev = 0L;
+					}
+					m->parent = newNode;
+					if(i == (_nodeModif.childsNumber - 1))
+					{
+						if(m->next)
+							m->next->prev = newNode;
+						newNode->next = m->next;
+						m->next = 0L;
+						break;
+					}
+					if(m->next)
+						m = m->next;
+					else//ERROR
+					{
+						kdDebug(24000)<< "undoRedo::UndoNodeModif() - ERROR6" << endl;
 						_doc->activateParser(true);
 						return false;
-					}
-					b = true;
-					_nodeNext = getNextNode(_node, b);
-					newNode->parent = _node;
-					if(!_node->child)
-						_node->child = newNode;
-					_node->tag->endPos(bLine, bCol);
-					_node = _node->child;
-					if(_node)
-					{
-						while(_node->next)
-							_node = _node->next;
-						_node->tag->endPos(bLine, bCol);
-						b = true;
-						_nodeNext = getNextNode(_node, b);
-						_node->next = newNode;
-					}
-					newNode->prev = _node;
-					newNode->next = 0L;
-					bCol++;
-				}
-				eCol = bCol;
-				eLine = bLine;
-				n = newNode;
-				b = false;
-				while(n)
-				{
-					text = n->tag->tagStr();
-					bLine3 = eLine;
-					bCol3 = eCol;
-					for(i = 0; (unsigned)i < text.length(); i++)
-					{
-						if(text[i] != QChar(Qt::Key_Return))
-							eCol++;
-						else
-						{
-							eLine++;
-							eCol = 0;
-						}
-					}
-					n->tag->setTagPosition(bLine3, bCol3, eLine, eCol);
-					totalText += text;
-					if((*it).type == undoRedo::NodeRemoved)
-						break;
-					n = getNextNode(n, b, newNode);
-					if(n)
-					{
-						n->tag->beginPos(bLine2, bCol2);
-						if(bCol2 == 0)
-						{
-							eLine++;
-							eCol = 0;
-						}
-						else
-							eCol++;
 					}
 				}
 			}
 			else
-			{//ouch, a node here. Moving it.
-				m = _node;
-				if(_node->parent && _node->parent->child == _node)
-					_node->parent = newNode;
-				newNode->parent = _node->parent;
-				if(_node->prev)
-					_node->prev->next = newNode;
-				newNode->prev = _node->prev;
-				if((*it).type == undoRedo::NodeRemoved)
+			{
+				newNode->next = _node;
+				_node->prev = newNode;
+			}
+			_nodeNext = _node;
+		}
+		if(newNode->prev)
+		{
+			m = newNode->prev;
+			while(m->child)
+			{
+				m = m->child;
+				while(m->next)
+					m = m->next;
+			}
+			m->tag->endPos(bLine, bCol);
+		}
+		else if(newNode->parent)
+			newNode->parent->tag->endPos(bLine, bCol);
+		else
+		{
+			bCol = -1;
+			bLine = 0;
+		}
+		bCol++;
+
+		_nodeModif.node = 0L;
+		if(newNode->next && ("/" + newNode->tag->name.lower() == newNode->next->tag->name.lower()))
+			newNode->next->closesPrevious = true;
+		eCol = bCol;
+		eLine = bLine;
+		n = newNode;
+		b = false;
+		newNode->tag->beginPos(bLine2, bCol2);
+		if(bCol2 == -1)
+		{
+			bCol = -1;
+			bLine++;
+		}
+		while(n)
+		{
+			text = n->tag->tagStr();
+			//remove any reference to a now deleted QListViewItem
+			n->listItem = 0L;
+			if(kafkaUndo)
+			{
+				bLine2 = eLine;
+				bCol2 = eCol;
+				for(i = 0; (unsigned)i < text.length(); i++)
 				{
-					for(i = 0; (*it).childsNumber < i; i++)
+					if(text[i] != QChar(Qt::Key_Return))
+						eCol++;
+					else
 					{
-						if(i == 0)
-						{
-							newNode->child = m;
-							m->prev = 0L;
-						}
-						m->parent = newNode;
-						if(i == ((*it).childsNumber - 1))
-						{
-							if(m->next)
-								m->next->prev = newNode;
-							newNode->next = m->next;
-							m->next = 0L;
-							break;
-						}
-						if(m->next)
-							m = m->next;
-						else//ERROR
-						{
-							kdDebug(24000)<< "undoRedo::undo() - ERROR4" << endl;
-							_doc->activateParser(true);
-							return false;
-						}
+						eLine++;
+						eCol = 0;
 					}
+				}
+				n->tag->setTagPosition(bLine2, bCol2, eLine, eCol);
+			}
+			else
+			{
+				n->tag->beginPos(bLine2, bCol2);
+				n->tag->endPos(eLine2, eCol2);
+				if((eLine2 - bLine2) == 0)
+				{
+					n->tag->setTagPosition(eLine, eCol, eLine, eCol + (eCol2 - bCol2));
+					eCol += (eCol2 - bCol2);
 				}
 				else
 				{
-					newNode->next = _node;
-					_node->prev = newNode;
+					n->tag->setTagPosition(eLine, eCol, eLine + (eLine2 - bLine2), eCol2);
+					eCol = eCol2;
 				}
-				(*it).node = 0L;
-				_nodeNext = _node;
-				if(newNode->prev)
-					newNode->prev->tag->endPos(bLine, bCol);
-				else if(newNode->parent)
-					newNode->parent->tag->endPos(bLine, bCol);
-				//else ERROR;
-				bCol++;
-				eCol = bCol;
-				eLine = bLine;
-				n = newNode;
-				b = false;
-				while(n)
-				{
-					text = n->tag->tagStr();
-					bLine3 = eLine;
-					bCol3 = eCol;
-					for(i = 0; (unsigned)i < text.length(); i++)
-					{
-						if(text[i] != QChar(Qt::Key_Return))
-							eCol++;
-						else
-						{
-							eLine++;
-							eCol = 0;
-						}
-					}
-					n->tag->setTagPosition(bLine3, bCol3, eLine, eCol);
-					totalText += text;
-					if((*it).type == undoRedo::NodeRemoved)
-						break;
-					n = getNextNode(n, b, newNode);
-					if(n)
-					{
-						n->tag->beginPos(bLine2, bCol2);
-						if(bCol2 == 0)
-						{
-							eLine++;
-							eCol = 0;
-						}
-						else
-							eCol++;
-					}
-				}
+				eLine += (eLine2 - bLine2);
 			}
-			_doc->editIf->insertText(bLine, bCol, totalText);
-			fitsNodesPosition(_nodeNext, bCol - eCol, eLine - bLine);
-		}
-		else if((*it).type == undoRedo::NodeTreeRemoved)
-		{
- 			baseNode = (*it).node;
- 			(*it).node = 0L;
-			n = baseNode;
-			b = false;
-			while(n)
+			totalText += text;
+			if(_nodeModif.type == undoRedo::NodeRemoved)
+				break;
+			n = getNextNode(n, b, newNode);
+			if(n)
 			{
-				totalText += n->tag->tagStr();
-				n = getNextNode(n, b);
+				n->tag->beginPos(bLine3, bCol3);
+				if(bCol3 == -1)
+				{
+					eLine++;
+					eCol = -1;
+				}
+				else
+					eCol++;
 			}
-			_doc->editIf->insertText(0, 0, totalText);
 		}
-		else if((*it).type == undoRedo::NodeMoved ||
-			(*it).type == undoRedo::NodeAndChildsMoved)
-		{
-
-		}
-
-		if(it == (*editorIterator).begin())
-			break;
-		it--;
-		_nodeNext = 0L;
-		_node = 0L;
-		totalText = "";
-		n = 0L;
-		m = 0L;
+		_doc->editIf->insertText(bLine, bCol, totalText);
+		fitsNodesPosition(_nodeNext, eCol - bCol + 1, eLine - bLine);
 	}
-	editorIterator--;
-	kdDebug(24000) << "undoRedo::undo() : " << t.elapsed() << " ms \n";
-	debugOutput();
-	_doc->activateParser(true);
-	return !(editorIterator == begin());
-}
-
-bool undoRedo::redo()
-{
-	NodeModifsSet::iterator it;
-	QTime t;
-
-	t.start();
-	if(editorIterator == fromLast())
-		return false;
-	editorIterator++;
-	_doc->activateParser(false);
-	for(it = (*editorIterator).begin(); it != (*editorIterator).end(); it++)
+	else if(_nodeModif.type == undoRedo::NodeTreeRemoved)
 	{
-		if((*it).type == undoRedo::NodeAndChildsAdded ||
-			(*it).type == undoRedo::NodeAdded)
+		/** Appending the tree in the editor and putting its adress in baseNode. */
+		baseNode = _nodeModif.node;
+		_nodeModif.node = 0L;
+		n = baseNode;
+		b = false;
+		while(n)
 		{
-
+			//remove any reference to a now deleted QListViewItem
+			n->listItem = 0L;
+			totalText += n->tag->tagStr();
+			n = getNextNode(n, b);
 		}
-		else if((*it).type == undoRedo::NodeModified)
-		{
-
-		}
-		else if((*it).type == undoRedo::NodeRemoved ||
-			(*it).type == undoRedo::NodeAndChildsRemoved)
-		{
-
-		}
-		else if((*it).type == undoRedo::NodeMoved ||
-			(*it).type == undoRedo::NodeAndChildsMoved)
-		{
-
-		}
+		_doc->editIf->insertText(0, 0, totalText);
 	}
-	kdDebug(24000) << "undoRedo::redo() : " << t.elapsed() << " ms \n";
-	debugOutput();
-	_doc->activateParser(true);
+	else if(_nodeModif.type == undoRedo::NodeMoved ||
+		_nodeModif.type == undoRedo::NodeAndChildsMoved)
+	{
+		/** NOT IMPLEMENTED and i don't think i will need to. */
+	}
+
+	return true;
 }
 
 void undoRedo::debugOutput()
 {
 	int i = 0;
+	bool afterEditorIt = false;
+
 	kdDebug(24000)<< "Undo/redo stack contents:" << endl;
 	if(empty())
 	{
@@ -479,36 +669,46 @@ void undoRedo::debugOutput()
 	for(it = begin(); it != end(); ++it )
 	{
 		kdDebug(24000)<< "== Node Modifications set #" << i << endl;
-		if((*it).empty())
+		if((*it).NodeModifList.empty())
 		{
 			kdDebug(24000)<< "== Empty!" << endl;
 			kdDebug(24000)<< "== End Node Modifications set #" << i << endl;
 			i++;
 			continue;
 		}
-		NodeModifsSet::iterator it2;
-		for(it2 = (*it).begin(); it2 != (*it).end(); ++it2)
+		kdDebug(24000)<< "== Cursor Pos: " << (*it).cursorY << ":" << (*it).cursorX << endl;
+		kdDebug(24000)<< "== Cursor Pos2:" << (*it).cursorY2 << ":" << (*it).cursorX2 << endl;
+		QValueList<NodeModif>::iterator it2;
+		for(it2 = (*it).NodeModifList.begin(); it2 != (*it).NodeModifList.end(); ++it2)
 		{
-			if((*it2).node)
-				kdDebug(24000)<< "==== NodeModif type:" << (*it2).type << " - node:" <<
-					(*it2).node->tag->name << endl;
-			else
-				kdDebug(24000)<< "==== NodeModif type:" << (*it2).type << endl;
+			kdDebug(24000)<< "==== NodeModif type:" << (*it2).type << endl;
+			kdDebug(24000)<< "==== Location1: " << endl;
+			QValueList<int>::iterator it3;
 			if((*it2).location.empty())
 			{
 				kdDebug(24000)<< "==== Empty location!!" << endl;
-				continue;
 			}
-			QValueList<int>::iterator it3;
-			kdDebug(24000)<< "==== Location: " << endl;
-			for(it3 = (*it2).location.begin(); it3 != (*it2).location.end(); ++it3)
+			else if((*it2).type != undoRedo::NodeTreeAdded && (*it2).type != undoRedo::NodeTreeRemoved)
 			{
-				kdDebug(24000)<< (*it3) << endl;
+				for(it3 = (*it2).location.begin(); it3 != (*it2).location.end(); ++it3)
+					kdDebug(24000)<< (*it3) << endl;
 			}
-			kdDebug(24000)<< endl;
+			if((((*it2).type == undoRedo::NodeRemoved && !afterEditorIt) ||
+				((*it2).type == undoRedo::NodeAdded && afterEditorIt)) && (*it2).node)
+				kdDebug(24000)<< "==== Node: " << (*it2).node->tag->name <<
+					" - contents: " << (*it2).node->tag->tagStr() << endl;
+			if((*it2).type == undoRedo::NodeModified)
+				kdDebug(24000)<< "==== Tag: " << (*it2).tag->name <<
+					" - contents: " << (*it2).tag->tagStr() << endl;
+			if(((*it2).type == undoRedo::NodeRemoved && !afterEditorIt) ||
+				((*it2).type == undoRedo::NodeAdded && afterEditorIt))
+				kdDebug(24000)<< "==== ChildsNumber1 : " << (*it2).childsNumber <<
+					" - ChildsNumber2 : " << (*it2).childsNumber2 << endl;
 		}
 		kdDebug(24000)<< "== End Node Modifications set #" << i << endl;
 		i++;
+		if(it == editorIterator)
+			afterEditorIt = true;
 	}
 	kdDebug(24000)<< "End Undo/redo stack contents" << endl;
 	coutTree(baseNode, 2);

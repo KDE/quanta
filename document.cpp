@@ -69,6 +69,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
   kate_doc = dynamic_cast<Kate::Document*>(m_doc);
   kate_view = dynamic_cast<Kate::View*>(m_view);
+  m_view->installEventFilter(this);
 
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
@@ -81,6 +82,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   dtdName = project->defaultDTD();
   m_parsingDTD = dtdName;
   reparseEnabled = true;
+  repaintEnabled = true;
 
   //need access to plugin interface. and we can't get to app from here ..
   m_pluginInterface = a_pIf;
@@ -733,6 +735,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       //add closing tag if wanted
       column++;
       editIf->insertText(line, column, "</" + tagName + ">");
+      docUndoRedo.dontAddModifsSet(2);
       viewCursorIf->setCursorPositionReal( line, column );
       handled = true;
     } else
@@ -743,6 +746,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       {
         node = node->parent;
         editIf->insertText(line, column + 1, node->tag->name + ">");
+        docUndoRedo.dontAddModifsSet(2);
         viewCursorIf->setCursorPositionReal( line, column + node->tag->name.length() + 2);
         handled = true;
       }
@@ -757,6 +761,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
          )
       {
         editIf->insertText(line, column, " /");
+        docUndoRedo.dontAddModifsSet(2);
         viewCursorIf->setCursorPositionReal( line, column+3 );
         handled = true;
       }
@@ -766,6 +771,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
         //add closing tag if wanted
         column++;
         editIf->insertText(line, column, "</" + tagName + ">");
+        docUndoRedo.dontAddModifsSet(2);
         viewCursorIf->setCursorPositionReal( line, column );
         handled = true;
       }
@@ -1691,6 +1697,7 @@ void Document::slotDelayedTextChanged()
                 }
               }
               viewCursorIf->setCursorPositionReal(bl, bc);
+              docUndoRedo.mergeNextModifsSet();
               baseNode = parser->rebuild(this);
               viewCursorIf->setCursorPositionReal(line, column);
               reparseEnabled = true;
@@ -1783,6 +1790,14 @@ void Document::paste()
   baseNode = parser->rebuild(this);
 }
 
+bool Document::eventFilter(QObject *object, QEvent *event)
+{
+	if(event->type() == QEvent::Paint && !repaintEnabled)
+		return true;
+	else
+		return false;
+}
+
 /** returns all the areas that are between tag and it's closing pair */
 QStringList Document::tagAreas(const QString& tag, bool includeCoordinates, bool skipFoundContent)
 {
@@ -1823,6 +1838,5 @@ QStringList Document::tagAreas(const QString& tag, bool includeCoordinates, bool
 
   return result;
 }
-
 
 #include "document.moc"

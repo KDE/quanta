@@ -35,18 +35,30 @@ typedef struct NodeModif
 	QValueList<int> location;
 	/** For Node move : Initial location of the Node moved */
 	QValueList<int> location2;
-	/** For Node modification : Store the old Node. */
+	/** For Node deletion: Store the deleted Node. */
 	Node *node;
 	/** For Node modification : Store the old tag */
 	Tag *tag;
-	/** For Node removal without its childs : number of childs */
+	/** For non-XmlEnd Node deletion without its childs : number of childs which are moved up*/
 	int childsNumber;
+	/** For XmlEnd Node deletion : number of right neighbours moved down*/
+	int childsNumber2;
 };
 
 /**
  * A NodeModifsSet contains all the Node modifications made by one user input.
  */
-typedef QValueList<NodeModif> NodeModifsSet;
+typedef struct NodeModifsSet
+{
+	/** The list of Node Modification resulting of one user input. */
+	QValueList<NodeModif> NodeModifList;
+	/** The position of the cursor before the user input. */
+	uint cursorX;
+	uint cursorY;
+	/** The position of the cursor after the user input */
+	uint cursorX2;
+	uint cursorY2;
+};
 
 /**
  * A new Node-based undo/redo system.
@@ -70,16 +82,32 @@ public:
 	void addNewModifsSet(NodeModifsSet modifs);
 
 	/**
-	 * Makes the undo operation on the Quanta editor view.
-	 * @return Returns true if a previous undo operation is available.
+	 * Ignores the ModifSet that will come in the number'th position. Useful when
+	 * KTextEditor::EditInterface::insertText() is called before parser::rebuild() and
+	 * thus parser::rebuild will be called two times.
+	 * @param number Specifies the position of the ModifsSet to ignore.
 	 */
-	bool undo();
+	 void dontAddModifsSet(int number) {_dontAddModifSet = number;}
 
 	/**
-	 * Makes the redo operation on the Quanta editor view.
+	 * Merges the next ModifsSet with the previous one. Useful when autocompletion
+	 * makes parser::rebuild() to be called again.
+	 */
+	 void mergeNextModifsSet() {_mergeNext = true;}
+
+	/**
+	 * Makes the undo operation.
+	 * @param kafkaUndo Specifies if the undo operation is done in the kafka view.
+	 * @return Returns true if a previous undo operation is available.
+	 */
+	bool undo(bool kafkaUndo);
+
+	/**
+	 * Makes the redo operation.
+	 * @param kafkaUndo Specifies if the undo operation is done in the kafka view.
 	 * @return Returns true if a next redo operation is available.
 	 */
-	bool redo();
+	bool redo(bool kafkaUndo);
 
 	/**
 	  * Gets the location of a Node in a pointer-independant suit of ints e.g. 1,3,5 means
@@ -99,26 +127,41 @@ public:
 
 	/** All the possible Node modifications */
 	enum NodeModification {
-		//A complete Node Tree is added.
+		//A complete Node Tree is added. Implemented.
 		NodeTreeAdded = 0,
+		//WARNING : not tested yet.
+		//A Node and its childs are added. Implemented.
 		NodeAndChildsAdded,
+		//A Node is added. Implemented.
 		NodeAdded,
+		//WARNING : do not use this if the node type or the node name change.
+		//A Node is modified. Implemented.
 		NodeModified,
+		//a Node is removed. Implemented.
 		NodeRemoved,
+		//WARNING : not tested yet.
+		//A Node and its childs are removed. Implemented.
 		NodeAndChildsRemoved,
-		//The complete Node tree is removed.
+		//The complete Node tree is removed. Implemented.
 		NodeTreeRemoved,
 		/** WARNING : node movement is only node-based, e.g. you can't use it for Drag'n'Drop
 		use NodeRemoved and NodeAdded instead */
 		//WARNING : NodeMoved not implemented, because it has no use for the moment.
 		NodeMoved,
 		//WARNING : NodeAndChildsMoved not implemented for the same reason.
-		NodeAndChildsMoved,
-		//A NodeSubtreeMoved is a move of a subtree composed of one Node and all its childs and all its right neighbours.
-		NodeSubtreeMoved
+		NodeAndChildsMoved
 	};
 
 private:
+
+	/**
+	 * This is the main function which apply the changes needed to undo a nodeModif.
+	 * @param _nodeModif The nodeModif to undo.
+	 * @param Specifies if the undo operation is done in the kafka view. This implies some
+	 * additionnal tasks like tag String generation.
+	 * @return Returns true if the undo has correctly worked.
+	 */
+	bool UndoNodeModif(NodeModif &_nodeModif, bool kafkaUndo);
 
 	/**
 	 * Fits the Nodes position when a change occurs in the kafka tree.
@@ -160,6 +203,8 @@ private:
 	QValueList<NodeModifsSet>::iterator editorIterator;
 	QValueList<NodeModifsSet>::iterator kafkaIterator;
 	Document *_doc;
+	bool _mergeNext;
+	int _dontAddModifSet;
 };
 
 #endif

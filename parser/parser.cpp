@@ -37,6 +37,7 @@
 #include "../resource.h"
 #include "../quantacommon.h"
 #include "../document.h"
+#include "../quanta.h"
 #include "../qextfileinfo.h"
 
 //kde includes
@@ -582,7 +583,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   }
 
   QString s = write->text(el, ec + 1, endLine, endCol);
-  if ( ( el !=0 || ec !=0) )
+  if ( (el !=0 || ec !=0) && !(el == endLine && ec == endCol) )
   {
     textTag = new Tag();
     textTag->setStr(s);
@@ -1164,23 +1165,35 @@ Node* Parser::specialAreaParser(Node *startNode)
 
 void Parser::coutTree(Node *node, int indent)
 {
- QString output;
- while (node)
- {
-   output = "";
-   output.fill('.', indent);
-   if (node->tag->type != Tag::Text)
-       output += node->tag->name.replace('\n'," ");
-   else
-       output+= node->tag->tagStr().replace('\n'," ");
-  // cout << output <<" (" << node->tag->type << ")\n";
-   if (node->child)
-       coutTree(node->child, indent + 4);
-  // treeSize += sizeof(node) + sizeof(node->tag);
-   //treeSize += node->size();
-   //treeSize++;
-   node = node->next;
- }
+ 	QString output;
+	int bLine, bCol, eLine, eCol, j;
+	if(!node)
+		kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
+	while (node)
+	{
+		output = "";
+		output.fill('.', indent);
+		node->tag->beginPos(bLine, bCol);
+		node->tag->endPos(eLine, eCol);
+		if (node->tag->type != Tag::Text)
+			output += node->tag->name.replace('\n'," ");
+		else
+			output+= node->tag->tagStr().replace('\n'," ");
+		kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
+			bLine << ":" << bCol << " - " << eLine << ":" << eCol << endl;
+		for(j = 0; j < node->tag->attrCount(); j++)
+		{
+			kdDebug(24000)<< " attr" << j << " " <<
+				node->tag->getAttribute(j).nameLine << ":" <<
+				node->tag->getAttribute(j).nameCol << " - " <<
+				node->tag->getAttribute(j).valueLine << ":" <<
+				node->tag->getAttribute(j).valueCol << endl;
+		}
+
+		if (node->child)
+			coutTree(node->child, indent + 4);
+		node = node->next;
+	}
 }
 
 
@@ -1262,11 +1275,19 @@ Node *Parser::rebuild(Document *w)
 {
  QTime t;
  t.start();
+ uint line, col;
  NodeModifsSet modifs;
  NodeModif modif;
- Node *returnNode, *nn;
- QValueList<int> loc;
 
+ quantaApp->oldCursorPos(line, col);
+ modifs.cursorX = col;
+ modifs.cursorY = line;
+ w->viewCursorIf->cursorPositionReal(&line, &col);
+ modifs.cursorX2 = col;
+ modifs.cursorY2 = line;
+ /**kdDebug(24000)<< "************* Begin User Modification *****************" << endl;
+  //debug!
+  coutTree(m_node, 2);*/
  if (w != write || !m_node)
  {
    //going to return
@@ -1274,11 +1295,12 @@ Node *Parser::rebuild(Document *w)
    {
      modif.type = undoRedo::NodeTreeRemoved;
      modif.node = baseNode;
-     modifs.append(modif);
+     modifs.NodeModifList.append(modif);
+     baseNode = 0L;
    }
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
-   modifs.append(modif);
+   modifs.NodeModifList.append(modif);
    w->docUndoRedo.addNewModifsSet(modifs);
    return parse(w);
  } else
@@ -1295,7 +1317,9 @@ Node *Parser::rebuild(Document *w)
    QString text;
    QString tagStr;
    bool moveNodes = false;
-   uint line, col;
+   int i, j;
+   QValueList<int> loc;
+
    QStringList textLines = QStringList::split('\n', w->editIf->text(), true);
    w->viewCursorIf->cursorPositionReal(&line, &col);
    Node *node = nodeAt(line, col, false);
@@ -1306,7 +1330,7 @@ Node *Parser::rebuild(Document *w)
      bLine = bl;
      bCol = bc;
    }
-
+;
    Node *firstNode = 0L;
    Node *lastNode = 0L;
 //find the first unchanged (non empty) node and store it as firstNode
@@ -1326,6 +1350,9 @@ Node *Parser::rebuild(Document *w)
      } else
      {
        firstNode = node;
+       //temporary : firstNode might not be the first unchanged node e.g. text nodes
+       while(firstNode->tag->type == Tag::Text)
+         firstNode = firstNode->previousSibling();
        break;
      }
    }
@@ -1373,11 +1400,12 @@ Node *Parser::rebuild(Document *w)
    {
      modif.type = undoRedo::NodeTreeRemoved;
      modif.node = baseNode;
-     modifs.append(modif);
+     modifs.NodeModifList.append(modif);
+     baseNode = 0L;
    }
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
-   modifs.append(modif);
+   modifs.NodeModifList.append(modif);
    w->docUndoRedo.addNewModifsSet(modifs);
    return parse(w);
 
@@ -1416,10 +1444,15 @@ Node *Parser::rebuild(Document *w)
 
       modif.type = undoRedo::NodeRemoved;
       modif.location = w->docUndoRedo.getLocation(node);
+      node->parent = 0L;
+      node->next = 0L;
+      node->prev = 0L;
+      node->child = 0L;
       modif.node = node;
-      modifs.append(modif);
      //delete node;
      node = 0L;
+     i = 0;
+     j = 0;
      if (child)
      {
        Node *n = child;
@@ -1429,6 +1462,7 @@ Node *Parser::rebuild(Document *w)
          m = n;
          n->parent = parent;
          n = n->next;
+         i++;
        }
        if (prev)
        {
@@ -1473,6 +1507,7 @@ Node *Parser::rebuild(Document *w)
          {
            n->parent = prev;
            n = n->next;
+           j++;
          }
        }
      } else
@@ -1491,7 +1526,13 @@ Node *Parser::rebuild(Document *w)
        if (node)
            node->child = next;
      }
+     modif.childsNumber = i;
+     modif.childsNumber2 = j;
+     modifs.NodeModifList.append(modif);
      node = nextNode;
+    /** //debug!
+     kdDebug(24000)<< "Node removed!" << endl;
+     coutTree(m_node, 2);*/
    }
 
    QString invalidStr = QString("Invalid area: %1,%2,%3,%4").arg(bLine).arg(bCol).arg(eLine).arg(eCol);
@@ -1505,11 +1546,12 @@ Node *Parser::rebuild(Document *w)
    {
      modif.type = undoRedo::NodeTreeRemoved;
      modif.node = baseNode;
-     modifs.append(modif);
+     modifs.NodeModifList.append(modif);
+     baseNode = 0L;
    }
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
-   modifs.append(modif);
+   modifs.NodeModifList.append(modif);
    w->docUndoRedo.addNewModifsSet(modifs);
    return parse(w);
 
@@ -1518,17 +1560,18 @@ Node *Parser::rebuild(Document *w)
    Node *lastInserted = 0L;
    node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
 
-   Node *swapNode = firstNode;
-   while(swapNode)
+   Node *swapNode = firstNode->nextSibling();
+   while(swapNode != lastInserted->nextSibling())
    {
-      modif.type = undoRedo::NodeAndChildsAdded;
+      modif.type = undoRedo::NodeAdded;
       modif.location = w->docUndoRedo.getLocation(swapNode);
       modif.node = 0L;
-      modifs.append(modif);
-      //kdDebug(24000)<< "Node created: " << swapNode->tag->name << endl;
-      if(swapNode == lastInserted) break;
-      swapNode = swapNode->next;
+      modif.childsNumber = 0;
+      modif.childsNumber2 = 0;
+      modifs.NodeModifList.append(modif);
+      swapNode = swapNode->nextSibling();
    }
+
 
    //another stange case: the parsed area contains a special area without end
    if (!node)
@@ -1547,11 +1590,12 @@ Node *Parser::rebuild(Document *w)
    {
      modif.type = undoRedo::NodeTreeRemoved;
      modif.node = baseNode;
-     modifs.append(modif);
+     modifs.NodeModifList.append(modif);
+     baseNode = 0L;
    }
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
-   modifs.append(modif);
+   modifs.NodeModifList.append(modif);
    w->docUndoRedo.addNewModifsSet(modifs);
    return parse(w);
    }
@@ -1569,6 +1613,7 @@ Node *Parser::rebuild(Document *w)
         lastNode->parent = lastInserted->parent;
         lastInserted->tag->beginPos(bLine, bCol);
         lastNode->tag->endPos(eLine, eCol);
+        Tag *_tag = new Tag(*(lastNode->tag));
         lastNode->tag->setTagPosition(bLine, bCol, eLine, eCol);
         QString s = write->text(bLine, bCol, eLine, eCol);
         lastNode->tag->setStr(s);
@@ -1580,9 +1625,26 @@ Node *Parser::rebuild(Document *w)
           lastNode->tag->type = Tag::Empty;
         }
         if (lastInserted->parent && lastInserted->parent->child == lastInserted)
-            lastInserted->parent->child = lastInserted->next;
-        lastInserted->removeAll = false;
-        delete lastInserted;
+            //lastInserted->parent->child = lastInserted->next; lastInserted has no next!
+           lastInserted->parent->child = lastNode;
+        //lastInserted->removeAll = false;
+       //here, lastNode is at the pos of lastInserted.
+        modif.location =  w->docUndoRedo.getLocation(lastNode);
+        modif.type = undoRedo::NodeRemoved;
+        lastInserted->prev = 0L;
+        lastInserted->next = 0L;
+        lastInserted->parent = 0L;
+        lastInserted->child = 0L;
+        modif.node = lastInserted;
+        modif.childsNumber = 0;
+        modif.childsNumber2 = 0;
+        modifs.NodeModifList.append(modif);
+        modif.location =  w->docUndoRedo.getLocation(lastNode);
+        modif.type = undoRedo::NodeModified;
+       modif.node = 0L;
+        modif.tag = _tag;
+        modifs.NodeModifList.append(modif);
+        //delete lastInserted;
         lastInserted = lastNode;
         if (lastNode->next)
         {
@@ -1669,6 +1731,9 @@ Node *Parser::rebuild(Document *w)
 
     }
    }
+   /**kdDebug(24000)<< "END"<< endl;
+   coutTree(baseNode,  2);
+   kdDebug(24000)<< "************* End User Modification *****************" << endl;*/
    w->docUndoRedo.addNewModifsSet(modifs);
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";

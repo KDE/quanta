@@ -110,25 +110,26 @@ public:
 	 */
 	 void getCurrentNode(DOM::Node &_currentNode, int &offset);
 
-	/**
+	 /**
 	 * Category : Standart Function
 	 * Get the next DOM::Node after _node.
 	 * @param _node The DOM::Node the search starts from.
-	 * @param goingTowardsRootNode A needed boolean for several consecutive call to
-	 * this function.
+	 * @param goUp A needed boolean for several consecutive call to
+	 * this function. Setting it to false by default, or to true if we don't want to go through
+	 * the childs of _node.
 	 * @param skipParentNodes Specifies if we should skip the parent Node when going up :
-	 * this implies that some Nodes will not be returned two times.
+	 * this implies that Nodes will not be returned two times.
 	 * @param dontBlock Specifies if the search should or not be blocked by BlockingTags.
 	 * @param _endNode Specifies at which DOM::Node the search should end. It is useful
 	 * when setting skipParentNodes to true.
 	 * @return Returns the next Node :)
 	 */
-	DOM::Node getNextNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = 0L);
+	DOM::Node getNextNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = 0L);
 
 	/**
 	 * The same that above, but this function search the previous DOM::Node.
 	 */
-	DOM::Node getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = 0L);
+	DOM::Node getPrevNode(DOM::Node _node, bool &goUp, bool skipParentNodes = false, bool dontBlock = false, DOM::Node _endNode = 0L);
 
 	/**
 	 * Category: Temporary function

@@ -157,6 +157,10 @@ work correctly. */
   /** returns all the areas that are between tag and it's closing pair */
   QStringList tagAreas(const QString &tag, bool includeCoordinates, bool skipFoundContent);
 
+ /** disable/enable the repaint of the Kate view */
+ void activateRepaintView(bool activation) {repaintEnabled = activation;}
+ bool RepaintViewActivated() {return repaintEnabled;}
+
   bool busy;
   KURL baseURL;
 
@@ -172,6 +176,9 @@ work correctly. */
   Kate::View *kate_view;
   /** The undo/redo stack */
   undoRedo docUndoRedo;
+
+protected:
+  bool eventFilter(QObject *object, QEvent *event);
 
 public slots:
 
@@ -212,6 +219,7 @@ private:
   bool changed;
   bool completionInProgress;
   bool reparseEnabled;
+  bool repaintEnabled;
   /** True if the document is dirty (has been modified outside). */
   bool m_dirty;
   Project *m_project;

@@ -70,6 +70,8 @@ public:
  Node *parent;
  Node *child;
 
+ /** Returns the child if available, else the next node, else the next node of the first parent which has one, else 0L.
+       WARNING: it doesn't behave like DOM::Node::nextSibling() which give the next Node, or 0L if there is no next Node */
  Node *nextSibling();
  Node *previousSibling();
  int size();
