@@ -708,11 +708,11 @@ void TagAction::insertOutputInTheNodeTree(const QString &str1, const QString &st
         else
         {
 			//Nothing is selected, simply inserting the Node if it is not an inline.
-            if(!kafkaCommon::isInline(node->tag->name) || nodeQTag->isSingle())
-            {
+/*            if(!kafkaCommon::isInline(node->tag->name) || nodeQTag->isSingle())
+            {*/
                 nodeTreeModified = kafkaCommon::DTDinsertRemoveNode(node, nodeCursor, (int)nodeOffset, nodeCursor,
                         (int)nodeOffset, view->document(), &nodeCursor, nodeOffset, modifs);
-            }
+//             }
         }
 
         view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
