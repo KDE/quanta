@@ -37,7 +37,7 @@ public:
   	virtual QString key ( int column, bool ascending ) const;
     virtual QString fullName();
 
-    void setOpen( bool );
+    virtual void setOpen( bool );
     void setup();
   /** No descriptions */
   virtual bool acceptDrop(const QMimeSource *mime) const;

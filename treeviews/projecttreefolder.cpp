@@ -103,14 +103,6 @@ int ProjectTreeFolder::find(QString name)
   return 0;
 }
 
-/** need for sorting */
-QString ProjectTreeFolder::key ( int, bool ) const
-{
-  static QString k;
-  k = QString("1") + text(0);
-  return k.data();
-}
-
 void ProjectTreeFolder::paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int alignment)
 {
   QColorGroup mycg(cg);

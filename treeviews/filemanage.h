@@ -84,7 +84,7 @@ public:
 
 protected:
 	virtual QString currentFileName();
-	
+  DirInfo dirInfo;
 
 };
 

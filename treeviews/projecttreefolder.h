@@ -35,7 +35,7 @@ public:
 	ProjectTreeFolder( QListView *parent, const char *, const char *);
 	~ProjectTreeFolder();
 	
-  void setOpen( bool );
+  virtual void setOpen( bool );
   void setup();
 	
   /** return fullname of child element item */
@@ -44,8 +44,6 @@ public:
   void insertItem(ProjectTreeFile *item, QString name);
   /**  */
   int find(QString name);
-  /** need for sorting */
-  virtual QString key( int column, bool ascending ) const;
   virtual void paintCell( QPainter *, const QColorGroup &, int, int, int);
   
 public:

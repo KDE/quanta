@@ -60,14 +60,8 @@ public slots: // Public slots
   void slotSetBasePath( QString dir );
   void slotSetProjectName( QString name );
 
-  void slotSelectFile(QListViewItem *);
-  void slotSelectImage(QListViewItem *);
-
 signals: // Signals
-	void activatePreview();
 	void open( QListViewItem *name );
-  void openFile ( const KURL& );
-  void openImage( QString );
  // void insertTag( QString );
   void renameFileInProject( QString );
   void renameFolderInProject( QString );

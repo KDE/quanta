@@ -208,8 +208,9 @@ void TemplatesTreeView::slotNewDocument()
   	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
 	  if ( !parent ) return;
 	  if ( dynamic_cast<FilesTreeFolder *>(item) ) return;
-	  emit openFile( KURL());
-	  emit insertFile(currentFileName());
+	  QString fileName = currentFileName(); // store, because openFile changes current item
+    emit openFile( KURL());
+	  emit insertFile(fileName);
 	}
 }
 

@@ -145,49 +145,6 @@ void ProjectTreeView::slotFileTag()
   emit insertTag( name, dirInfo );
 }
 
-/** open file */
-void ProjectTreeView::slotSelectFile(QListViewItem *item)
-{
-	if ( !item ) return;
-	if ( !currentItem() ) return;
-	ProjectTreeFolder *parent = (ProjectTreeFolder *) item->parent();
-	if ( !parent ) return;
-	if ( dynamic_cast<ProjectTreeFolder *>(item) ) return;
-	
-	QString nameToOpen = currentFileName();
-	
-	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
-	{
-		KURL url(nameToOpen);
-		emit openFile( url );
-		return;
-	}
-	else if ( QDir::match( fileMaskImage, nameToOpen) )
-	{
-		emit activatePreview();
-		emit openImage( nameToOpen );
-		return;
-	}
-	new KRun( KURL(nameToOpen), 0, true );
-}
-
-/** open image in preview */
-void ProjectTreeView::slotSelectImage(QListViewItem *item)
-{
-	if ( !item ) return;
-	if ( !currentItem() ) return;
-	ProjectTreeFolder *parent = (ProjectTreeFolder *) item->parent();
-	if ( !parent ) return;
-	if ( dynamic_cast<ProjectTreeFolder *>(item) ) return;
-	
-	QString nameToOpen = parent->fullName( item )+item->text(0);
-	
-	if ( QDir::match( fileMaskImage, nameToOpen) )
-	{
-		emit openImage( nameToOpen );
-	}
-}
-
 void ProjectTreeView::slotSetBasePath( QString dir )
 {
 	basePath = dir;

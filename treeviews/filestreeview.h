@@ -69,8 +69,6 @@ public:
   FilesTreeFolder *rootDir;
 
   QStrList dirList;
-  /**  */
-  DirInfo dirInfo;
 };
 
 #endif
