@@ -1968,11 +1968,7 @@ void QuantaApp::focusInEvent(QFocusEvent* e)
 /** No descriptions */
 void QuantaApp::slotShowCompletion()
 {
-  uint line, col;
-  Document *w = view->write();
-  w->viewCursorIf->cursorPositionReal(&line,&col);
-  QString s = w->text(line,col,line,col);
-  w->slotCharactersInserted(line, col, s);
+  view->write()->codeCompletionRequested();
 }
 
 #include "quanta.moc"

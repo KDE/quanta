@@ -87,6 +87,12 @@ public:
   Document *write() {return m_write;}
   /** Set the document where the tag lies */
   void setWrite(Document *p_write) {m_write = p_write;}
+  /** Returns the index of attribute at (line,col). */
+  int attributeIndexAtPos(int line, int col);
+  /** Returns the index of attributevalue at (line,col). */
+  int valueIndexAtPos(int line, int col);
+  /** Return the index of attr. */
+  int attributeIndex(QString attr);
 	
   enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, ScriptStructureBegin, ScriptStructureEnd }; // types of token
 	QString name;

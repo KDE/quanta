@@ -901,10 +901,7 @@ void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
 {
   QTag *tag;
   QString tagName;
-  if ( string == ">")
-    tagName = getTagNameAt( line, column-1 );
-  else
-    tagName = getTagNameAt( line, column );
+  tagName = getTagNameAt( line, column );
 
   tag = QuantaCommon::tagFromDTD(dtd, tagName);
 
@@ -936,7 +933,7 @@ void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
     else if ( string == " " )
          {
           //suggest attribute completions
-          showCodeCompletions( getAttributeCompletions(tag) );
+
          }
          else if ( string == "\"" )
               {
@@ -956,18 +953,23 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(DTDStruct 
   KTextEditor::CompletionEntry completion;
   completion.type = "tag";
 
+  QString textLine = editIf->textLine(line).left(col);
+  QString word = findWordRev(textLine);
   QDictIterator<QTag> it(* dtd->tagsList);
   for( ; it.current(); ++it )
   {
+    if (it.current()->name().startsWith(word))
+    {
       completion.text = QuantaCommon::tagCase( it.current()->name() );
       completions->append( completion );
+    }
   }
 
   return completions;
 }
 
 /** Return a list of valid attributes for the given tag */
-QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( QTag* tag )
+QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( QTag* tag, QString startsWith )
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
   KTextEditor::CompletionEntry completion;
@@ -983,9 +985,12 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( QTa
             for (uint i = 0; i < list->count(); i++)
             {
               QString item = list->at(i)->name;
-              completion.text = item;
-              completion.comment = list->at(i)->type;
-              completions->append( completion );
+              if (item.startsWith(startsWith))
+              {
+                completion.text = item;
+                completion.comment = list->at(i)->type;
+                completions->append( completion );
+              }
             }
 
 
@@ -1176,21 +1181,7 @@ void Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const 
   if (string == "(")  //if we need to list the arguments of a function
  {
    QString textLine = editIf->textLine(line).left(column);
-   int startPos = -1;
-   int pos;
-   bool end = false;
-   do{
-     pos = textLine.findRev(QRegExp("\\W"), startPos);
-     if (textLine[pos] == '_')
-     {
-       startPos = pos - textLine.length()-1;
-       end = false;
-     } else
-     {
-       end = true;
-     }
-   } while (!end);
-   QString word = textLine.remove(0,pos+1);
+   QString word = findWordRev(textLine);
    QTag *tag = dtd->tagsList->find(word);
    if (tag)
    {
@@ -1305,3 +1296,80 @@ QString Document::findRev(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbC
 
  return foundText;
 }
+
+/** Code completion was requested by the user. */
+void Document::codeCompletionRequested()
+{
+  uint line, col;
+  viewCursorIf->cursorPositionReal(&line, &col);
+  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
+  if (dtd)
+  {
+    if (dtd->family == Xml)
+    {
+      Tag * tag = tagAt(line,col);
+      if (!tag) return;
+      QTag *qtag = QuantaCommon::tagFromDTD(dtd,tag->name);
+      if (!qtag) return;
+      int bLine, bCol;
+      tag->beginPos(bLine, bCol);
+      QString s;
+      int index;
+      if (col <= bCol+tag->name.length()) //we are inside a tag name, so show the possible tags
+      {
+       showCodeCompletions( getTagCompletions(dtd, line, col) );
+      } else
+      {
+        index = tag->valueIndexAtPos(line,col);
+        if (index != -1)      //inside a value
+        {
+          showCodeCompletions( getAttributeValueCompletions(qtag, tag->attribute(index) ));
+        } else
+        {
+          index = tag->attributeIndexAtPos(line,col);
+          s = text(line,col,line,col);
+          if (index != -1 || s ==" " || s==">" || s == "/") //inside an attribute or between attributes
+          {
+            if (index !=-1)
+            {
+             tag->attributeNamePos(index, bLine, bCol);
+             s = tag->attribute(index).left(col - bCol);
+            } else
+            {
+              s="";
+            }
+            showCodeCompletions( getAttributeCompletions(qtag, s) );
+          }
+        }
+      }
+      delete tag;
+    }
+    if (
+dtd->family == Script)
+    {
+//      scriptAutoCompletion(dtd, line, column, string);
+    }
+  } //if (dtd)
+}
+/** Find the word until the first word boundary backwards */
+QString Document::findWordRev(const QString& textToSearch)
+{
+  QString t = textToSearch;
+  int startPos = -1;
+  int pos;
+  bool end = false;
+  do{
+    pos = t.findRev(QRegExp("\\W"), startPos);
+    if (t[pos] == '_')
+    {
+      startPos = pos - t.length()-1;
+      end = false;
+    } else
+    {
+      end = true;
+    }
+  } while (!end);
+  return t.remove(0,pos+1);
+}
+
+

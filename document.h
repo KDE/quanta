@@ -118,6 +118,8 @@ public:
   /** Retriwes the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
 work correctly. */
   QString text(int bLine, int bCol, int eLine, int eCol);
+  /** Code completion was requested by the user. */
+  void codeCompletionRequested();
 
   bool oldstat;
   bool busy;
@@ -166,7 +168,7 @@ private:
   /** Get list of possibile tag name completions */
   QValueList<KTextEditor::CompletionEntry>* getTagCompletions(DTDStruct *dtd, int line, int col);
   /** Get list of possibile tag attribute completions */
-  QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions( QTag* tag );
+  QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions( QTag* tag, QString startsWith );
   /** Get list of possibile tag attribute value completions */
   QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions( QTag* tag, QString attribute );
   /** Get list of possibile completions in normal text input (nt creating a tag) */
@@ -175,6 +177,8 @@ private:
   void xmlAutoCompletion(DTDStruct*,int , int , const QString & );
   /** Called whenever a user inputs text in a script type document. */
   void scriptAutoCompletion(DTDStruct*,int , int , const QString & );
+  /** Find the word until the first word boundary backwards */
+  QString findWordRev(const QString& textToSearch);
 };
 
 #endif

@@ -314,3 +314,54 @@ void Tag::setTagPosition(int bLine, int bCol, int eLine, int eCol)
   endLine = eLine;
   endCol = eCol;
 }
+
+/** Return the index of attr. */
+int Tag::attributeIndex(QString attr)
+{
+  int index = -1;
+  int i = 0;
+  do{
+    if (attrs[i].name == attr) index = i;
+    i++;
+  } while (index == -1 && i < attrCount);
+  return index;
+}
+/** Returns the index of attribute at (line,col). */
+int Tag::attributeIndexAtPos(int line, int col)
+{
+ int index = -1;
+ int i = 0;
+ do
+ {
+   if (attrs[i].nameLine == line)
+   {
+     if (attrs[i].nameCol <= col &&
+         (int) (attrs[i].nameCol + attrs[i].name.length()) >=col)
+     {
+        index = i;
+     }
+   }
+   i++;
+ } while (i < attrCount && index == -1);
+ return index;
+}
+
+/** Returns the index of attributevalue at (line,col). */
+int Tag::valueIndexAtPos(int line, int col)
+{
+ int index = -1;
+ int i = 0;
+ do
+ {
+   if (attrs[i].valueLine == line)
+   {
+     if (attrs[i].valueCol <= col &&
+         (int) (attrs[i].valueCol + attrs[i].value.length()) >=col)
+     {
+        index = i;
+     }
+   }
+   i++;
+ } while (i < attrCount && index == -1);
+ return index;
+}
