@@ -264,9 +264,17 @@ void TagAttributeTree::setCurrentNode(Node *node)
   if (qTag)
   {
     group = new TopLevelItem(this, group, i18n("Attributes"));
+    QStringList list;
     for (int i = 0; i < qTag->attributeCount(); i++)
     {
-      Attribute *attr = qTag->attributeAt(i);
+      list += qTag->attributeAt(i)->name;
+    }
+    list.sort();
+    QStringList::Iterator it = list.end();
+    --it;
+    while (it != list.end())
+    {
+      Attribute *attr = qTag->attribute(*it);
       if (attr->type == "check")
       {
         item = new AttributeBoolItem(this, group, attr->name, node->tag->attributeValue(attr->name));
@@ -287,6 +295,10 @@ void TagAttributeTree::setCurrentNode(Node *node)
         item = new AttributeItem(this, group, attr->name, node->tag->attributeValue(attr->name));
       }
       item->setRenameEnabled(1, true);
+      if (it != list.begin())
+        --it;
+      else
+        break;
     }
     group->setOpen(true);
     for (uint i = 0; i < qTag->commonGroups.count(); i++)
