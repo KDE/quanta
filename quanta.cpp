@@ -1821,7 +1821,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
   }
 
   QBuffer buffer;
-  buffer.open(IO_WriteOnly);
+  buffer.open(IO_ReadWrite);
   QTextStream toolStr(&buffer);
 
   QBuffer buffer2;
