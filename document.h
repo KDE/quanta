@@ -57,38 +57,33 @@ public:
 
   bool isUntitled();
   void setUntitledUrl(QString);
-  
   /** Return a node Tag accroding to line,col (or current cursor pos if line==col==-1) */
   Tag *currentTag(int p_line=-1, int p_col=-1);
   /** return qstring with tag at line,col for parse */
   Tag *tagAt(int line, int col) {return currentTag(line,col);}
+  /** Returns tag name at specified position */
+  QString getTagNameAt( int line, int col );
 
   void selectText(int x1, int y1, int x2, int y2 );
-  
   void replaceSelected(QString s);
 
   /** insert tag in document  */
   void insertTag( QString s1,QString s2 = "" );
-
+  /** Change the current tag's attributes with those from dict */
+  void changeCurrentTag( QDict<QString> *dict );
   /** add attrib to end of current tag */
   void insertAttrib(QString attr);
-/*
-	int pos2y (int pos);
-	int pos2x (int pos);
-	int xy2pos(int x, int y );
-  */
-public:
+  /** No descriptions */
+  void insertFile(QString fileName);
+  /** Inserts text at the current cursor position */
+  void insertText(QString, bool=true);
 
   void readConfig (KConfig *);
   void writeConfig(KConfig *);
 
-  void changeCurrentTag( QDict<QString> *dict );
-  
+
   QPoint getGlobalCursorPos();
 
-  /** No descriptions */
-  void insertFile(QString fileName);
-  void insertText(QString, bool=true);
   /** Get the view of the document */
   KTextEditor::View* view();
   /** Get the KTextEditor::Document of the document */
@@ -99,6 +94,7 @@ public:
   bool isModified();
   /** No descriptions */
   int checkOverwrite(KURL u);
+
   /** Creates a temporary file where the url is backed up. */
   int createTempFile();
   /** No descriptions */
@@ -110,32 +106,27 @@ public:
   /** No descriptions */
   bool saveIt();
 
-  /** Returns tag name at specified position */
-  QString getTagNameAt( int line, int col );
 
   /** Brings up list of code completions */
   void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
-
   /** Get list of possibile tag name completions */
   QValueList<KTextEditor::CompletionEntry>* getTagCompletions(int line, int col);
-  
   /** Get list of possibile tag attribute completions */
   QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions( QString tag );
-  
   /** Get list of possibile tag attribute value completions */
   QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions( QString tag, QString attribute );
-  
   /** Get list of possibile completions in normal text input (nt creating a tag) */
   QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
+
   /** Returns the DTD identifier for the document */
   QString getDTDIdentifier();
-
   /** Sets the DTD identifier */
   void setDTDIdentifier(QString id);
   /** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1.*/
   QString findDTDName(int startLine, int endLine, bool checkCursorPos = true);
-  /** Builds a tree with Node* elements. This is the internal representation of the document. */
-  void buildDocumentTree();
+  /** Retriwes the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
+work correctly. */
+  QString text(int bLine, int bCol, int eLine, int eCol);
 
   bool oldstat;
   bool busy;
@@ -153,10 +144,8 @@ public slots:
 
   /* Called after a completion is inserted */
   void slotCompletionDone( KTextEditor::CompletionEntry completion );
-  
   /* Called when a user selects a completion, we then can modify it */
   void slotFilterCompletion(KTextEditor::CompletionEntry*,QString *);
-  
   /* Called whenever a user inputs text */
   void slotCharactersInserted(int ,int ,const QString&);
 
@@ -177,6 +166,9 @@ private:
 
   QString findBeginOfTag( QString tag, int line, int col, int &beginLine, int &beginCol, QString beginStr = "<",QString endStr=">");
   QString findEndOfTag  ( QString tag, int line, int col, int &endLine, int &endCol, QString beginStr = "<",QString endStr=">");
+  Tag *findScriptText(int line, int col);
+  Tag *findScriptStructBegin(int line, int col);
+
   Tag *findXMLTag(int line, int col);
   Tag *findText(int line, int col);
   Tag *findComment(int line, int col);

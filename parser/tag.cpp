@@ -26,7 +26,7 @@
 Tag::Tag()
 {
   name = "";
-  type = "unknown";
+  type = Unknown;
   single = false;
   attrCount = 0;
 }
@@ -55,6 +55,7 @@ Tag::~Tag()
 {
 }
 
+/** Parse the attributes in the string and build the attrs vector */
 void Tag::parseAttr( QString text, int &line, int &col)
 {
   QString tagname;
@@ -295,6 +296,7 @@ Tag Tag::operator = (const Tag &t)
 	
 }           */
 
+/** Check if this tag has the attr attribute defined */
 bool Tag::hasAttribute( const QString &attr )
 {
 	for (int i=0; i < attrCount; i++)
@@ -303,7 +305,7 @@ bool Tag::hasAttribute( const QString &attr )
 	return false;
 }
 
-/** No descriptions */
+/** Set the coordinates of tag inside the document */
 void Tag::setTagPosition(int bLine, int bCol, int eLine, int eCol)
 {
   beginLine = bLine;

@@ -20,7 +20,7 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qtextstream.h>
-//#include <qregexp.h>
+#include <qregexp.h>
 
 // KDE includes
 #include <kapp.h>
@@ -115,13 +115,9 @@ void Document::insertTag(QString s1,QString s2)
 
 QString Document::findBeginOfTag(QString t, int line, int col, int &beginLine, int &beginCol, QString beginStr,QString endStr)
 {
-  QString s;
+  if (line < 0 ) return "";
   QString textLine = editIf->textLine(line);
-
-  if ( !textLine.isNull() )
-     s = QString(textLine)+" "+t;
-   else
-     return QString("");
+  QString s = textLine+t;
 
   if ( col ) s = s.left(col);
   if ( col > (int)s.length() )
@@ -130,10 +126,10 @@ QString Document::findBeginOfTag(QString t, int line, int col, int &beginLine, i
   }
   if (col < 0)
   {
-   col = s.length() - t.length() - 2;
+   col = s.length() - t.length() - 1;
   }
 
-  while ( col )
+  while ( col > 0)
   {
     if ( s.mid(col-endStr.length(), endStr.length()) == endStr ) return "";
     if ( s.mid(col-beginStr.length(), beginStr.length()) == beginStr )  // found !!!
@@ -151,20 +147,13 @@ QString Document::findBeginOfTag(QString t, int line, int col, int &beginLine, i
 QString Document::findEndOfTag( QString t, int line, int col, int &endLine, int &endCol, QString beginStr,QString endStr)
 {
   int oldlen = t.length();
-  QString s;
-  QString textLine = editIf->textLine(line);
+  if (line >= (int) editIf->numLines())
+  {
+   return "";
+  }
 
-  if ( !textLine.isNull() )
-  {
-    if ( !t.isEmpty() )
-    	s = t+" "+QString(textLine);
-    else
-      s = QString(textLine);
-  }
-  else
-  {
-    return QString("");
-  }
+  QString textLine = editIf->textLine(line);
+  QString s = t + textLine;
 
   if ( col ) s = s.remove(0,col);
 
@@ -173,7 +162,7 @@ QString Document::findEndOfTag( QString t, int line, int col, int &endLine, int 
   int i=0;
   while ( i < len )
   {
-    if ( s.mid(i-beginStr.length()+1, beginStr.length()) == beginStr ) return QString("");
+    if ( !beginStr.isEmpty() && s.mid(i-beginStr.length()+1, beginStr.length()) == beginStr ) return QString("");
     if ( s.mid(i-endStr.length()+1, endStr.length()) == endStr )  // found !!!
     {
       endCol = col+i-oldlen + 1;
@@ -201,11 +190,13 @@ Tag *Document::currentTag(int p_line, int p_col)
     col = p_col;
   }
 
+  DTDStruct* dtd = dtds->find(findDTDName(line, 0));
+  if (!dtd) dtd = dtds->find(defaultDocType);
   QString textLine = editIf->textLine(line);
   int tabWidth = kate_view->tabWidth();
 
   uint col2=0;
-  int i=0;
+  uint i=0;
   while (i < col)
   {
     if (textLine[col2] == '\t' )
@@ -221,8 +212,124 @@ Tag *Document::currentTag(int p_line, int p_col)
 
   Tag *tag = 0L;
 //  if (!tag) tag = findComment(line, col2);
-  if (!tag) tag = findXMLTag(line, col2);
-  if (!tag) tag = findText(line, col2);
+  if (dtd->family == Xml)
+  {
+    if (!tag) tag = findXMLTag(line, col2);
+    if (!tag) tag = findText(line, col2);
+  }
+  if (dtd->family == Script)
+  {
+    if (!tag) tag = findScriptStructBegin(line, col2);
+    if (!tag)
+    {
+      if (textLine[col2] == '}')
+      {
+        tag = new Tag();
+        tag->setTagPosition(line, col2, line, col2);
+        tag->type = Tag::ScriptStructureEnd;
+        tag->name = "Structure End";
+        tag->setStr("}");
+        tag->single = false;
+        tag->setWrite(this);
+      }
+    }
+    if (!tag) tag = findScriptText(line, col2);
+
+  }
+
+  return tag;
+}
+
+Tag *Document::findScriptText(int line, int col)
+{
+  int bLine = 0;
+  int bCol = 0;
+  int eLine = 0;
+  int eCol = 0;
+  Tag *tag = 0L;
+  int origLine = line;
+  int pos = -1;
+  QString textLine;
+
+  while (line >=0 && pos == -1)
+  {
+    textLine = editIf->textLine(line);
+    if (line == origLine) textLine = textLine.left(col);
+    pos = textLine.find(QRegExp("\\{|\\}"));
+    if (pos == -1) line--;
+  }
+  if (pos != -1)
+  {
+    bLine = line;
+    bCol = pos + 1;
+  }
+  line = origLine;
+  pos = -1;
+  while (line < (int) editIf->numLines() && pos == -1)
+  {
+    textLine = editIf->textLine(line);
+    if (line == origLine) pos = textLine.find(QRegExp("(\\{|\\})"), col);
+    else pos = textLine.find(QRegExp("(\\{|\\})"));
+    if (pos == -1) line++;
+  }
+  eLine = line;
+  if (pos == -1)
+  {
+   eCol = textLine.length();
+  } else
+  {
+   eCol = pos-1;
+   if (eCol < 0)
+   {
+    eLine = (eLine >0)?eLine--:0;
+    eCol = editIf->lineLength(eLine);
+   }
+  }
+
+  tag = new Tag();
+  tag->setTagPosition(bLine, bCol, eLine, eCol);
+  tag->type = Tag::Text;
+  tag->name = "Text";
+  tag->single = false;
+  tag->setWrite(this);
+  tag->setStr(text(bLine, bCol, eLine, eCol));
+  return tag;
+}
+
+Tag *Document::findScriptStructBegin(int line, int col)
+{
+  Tag *tag = 0L;
+  int origLine = line;
+  QString textLine = editIf->textLine(line);
+  if (textLine[col] == '{')
+  {
+    tag = new Tag();
+    tag->setTagPosition(line, col, line, col);
+    tag->type = Tag::ScriptStructureBegin;
+    tag->single = false;
+    tag->setWrite(this);
+    QRegExp rx("\\b(for|foreach|if|else|elseif|while|do|switch|declare)\\b");
+    int pos = -1;
+    while (line >=0 && pos == -1)
+    {
+      textLine = editIf->textLine(line);
+      if (line == origLine) textLine = textLine.left(col);
+      pos = rx.searchRev(textLine);
+      if (pos == -1)
+      {
+        line--;
+      }
+      else
+      {
+        QString s = text(line, pos, origLine, col);
+        tag->setStr(s);
+        if (s.find("}") == -1)
+        {
+          if (rx.search(s) != -1) tag->name = "Structure: "+rx.cap();
+        }
+      }
+    }
+  }
 
   return tag;
 }
@@ -237,14 +344,16 @@ Tag *Document::findXMLTag(int line, int col)
   QString endTag = findEndOfTag(   QString(""), line, col, tagEndLine, tagEndCol); // end
   QString tagStr = "";
   Tag *tag = 0L;
-  if ( ! begTag.isEmpty() && !endTag.isEmpty() )
+  if ( ! begTag.isEmpty() && !endTag.isEmpty()
+       && tagStr.startsWith("<") && tagStr.endsWith(">"))
   {
     tagStr = begTag+endTag;
     tag = new Tag();
     tag->setTagPosition(tagBeginLine, tagBeginCol, tagEndLine, tagEndCol);
     tag->parse(tagStr, this);
-    tag->type = "xmltag";
-    if (tag->name[0] == '/') tag->type = "xmltagend";
+    tag->type = Tag::XmlTag;
+    if (tag->name[0] == '/') tag->type =  Tag::XmlTagEnd;
+    if (tag->name == "!--") tag->type = Tag::Comment;
     tag->single = false;
     if (tagStr.right(2) == "/>") tag->single = true;
   }
@@ -259,7 +368,7 @@ Tag *Document::findText(int line, int col)
   int tagEndCol = 0;
   Tag *tag = 0L;
   QString begTag = findBeginOfTag( QString(""), line, col, tagBeginLine, tagBeginCol, ">","<");
-  QString endTag = findEndOfTag(   QString(""), line, col, tagEndLine, tagEndCol, ">", "<");
+  QString endTag = findEndOfTag(   QString(""), line, col, tagEndLine, tagEndCol, "", "<");
   QString tagStr = begTag.right(begTag.length()-1)+endTag.left(endTag.length()-1);
   tagStr = tagStr.stripWhiteSpace();
   if (!tagStr.isEmpty() && tagStr != " ")
@@ -267,8 +376,9 @@ Tag *Document::findText(int line, int col)
       tag = new Tag();
       tag->setStr(tagStr);
       tag->setTagPosition(tagBeginLine, tagBeginCol+1, tagEndLine, tagEndCol-1);
-      tag->type = "text";
+      tag->type = Tag::Text;
       tag->setWrite(this);
+      tag->name = "Text";
   }
  return tag;
 }
@@ -288,11 +398,12 @@ Tag *Document::findComment(int line, int col)
       tag = new Tag();
       tag->setStr(tagStr);
       tag->setTagPosition(tagBeginLine, tagBeginCol+1, tagEndLine, tagEndCol-1);
-      tag->type = "comment";
+      tag->type = Tag::Comment;
   }
  return tag;
 }
 
+/** Change the current tag's attributes with those from dict */
 void Document::changeCurrentTag( QDict<QString> *dict )
 {
   QDictIterator<QString> it( *dict ); // iterator for dict
@@ -315,8 +426,8 @@ void Document::changeCurrentTag( QDict<QString> *dict )
   }
   tagStr = "<"+QuantaCommon::tagCase(tag->name)+tagStr+">";
   int bLine, bCol, eLine, eCol;
-  tag->getTagBeginPos(bLine,bCol);
-  tag->getTagEndPos(eLine,eCol);
+  tag->beginPos(bLine,bCol);
+  tag->endPos(eLine,eCol);
   editIf->removeText(bLine, bCol, eLine, eCol);
   editIf->insertText(bLine, bCol, tagStr);
   delete tag;
@@ -334,7 +445,7 @@ void Document::insertAttrib(QString attr)
   if (tag)
   {
    int line, col;
-   tag->getTagEndPos(line, col);
+   tag->endPos(line, col);
    viewCursorIf->setCursorPosition( line, col - 1 );
    insertTag( QString(" ") + QuantaCommon::attrCase(attr) + "=\"", QString( "\"" ) );
    delete tag;
@@ -489,7 +600,7 @@ void Document::insertText(QString text, bool adjustCursor)
         }
         col += wordLength;
         i += wordLength;
-        if(wordLength > wordWrapAt)
+        if(wordLength > (int) wordWrapAt)
           lineLock = true; // words > wordWrapAt lock the rest of the line
       }
       else // whitespace
@@ -608,37 +719,11 @@ bool Document::saveIt()
 */
 QString Document::getTagNameAt( int line, int col )
 {
-  if ( line == -1 ) return "";
+ QString name = "";
+ Tag * tag = tagAt(line, col);
+ if (tag) name = tag->name;
 
-  QString text = editIf->textLine( line );
-
-  if ( col == -1 ) col = text.length();
-
-  int tagBegin = text.findRev( '<', col );
-  int previousTagEnd = text.findRev( '>', col);
-
-  if ( tagBegin != -1  && tagBegin > previousTagEnd ) {
-    int tagEnd = text.find( '>', col );
-    int nextTagBegin = text.find( '>', col);
-    int firstSpace = text.find( ' ', tagBegin);
-
-    if ( tagEnd != -1 && ( tagEnd < firstSpace || firstSpace == -1 ) && ( tagEnd < nextTagBegin || nextTagBegin == -1 ) ) {
-      text.remove( tagEnd, text.length() );
-    } else if ( firstSpace != -1 ) {
-      text.remove( firstSpace, text.length() );
-    } else {
-      text.remove( col+1, text.length() );
-    }
-
-    text.remove( 0, tagBegin+1 );
-    return text;
-
-  } else if ( previousTagEnd != -1 ) {
-    return "";
-
-  } else {
-    return getTagNameAt( line-1, -1 );
-  }
+ return name;
 }
 
 /** Show the code completions passed in as an argument */
@@ -690,11 +775,11 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
  if (useAutoCompletion)
  {
   DTDStruct* dtd = dtds->find(findDTDName(line, 0));
-  if (dtd->family == "xml")
+  if (dtd->family == Xml)
   {
     xmlAutoCompletion(line, column, string);
   }
-  if (dtd->family == "script")
+  if (dtd->family == Script)
   {
     scriptAutoCompletion(line, column, string);
   }
@@ -870,7 +955,8 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
     pos = s.find("!doctype",0,false);
     if (pos != -1) //parse the found !DOCTYPE tag
       {
-        Tag *tag = tagAt(i, pos);
+//        Tag *tag = tagAt(i, pos);
+        Tag *tag = findXMLTag(i, pos);
         if (!tag) return foundName;
         s = tag->tagStr();
         pos = s.find("public",0,false);
@@ -897,9 +983,10 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
       if (!dtd->scriptName.isEmpty()) //it may be defined as <script language="name">
       {
         pos = s.find("<script",false);
-        if ( (pos != -1) && ( (line != i) || (pos < col) )) //script tag found
+        if ( (pos != -1) && ( ((int)line != i) || (pos < (int) col) )) //script tag found
         {
-          Tag *tag2 = currentTag(i, pos+2);
+//          Tag *tag2 = tagAt(i, pos+2);
+          Tag *tag2 = findXMLTag(i, pos+2);
           QString s2 = tag2->attributeValue("language");
           if (s2.lower() == dtd->scriptName)
           {
@@ -910,7 +997,7 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
             {
               s2 = editIf->textLine(j);
               pos = s2.find("</script",false);
-              if ( (pos != -1) && ( (line != j) || (pos < col) ) )
+              if ( (pos != -1) && ( ((int)line != j) || (pos < (int)col) ) )
               {
                afterClosingTag = true;
                break;
@@ -925,7 +1012,7 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
      for ( QStringList::Iterator tagIt = dtd->startTags.begin(); tagIt != dtd->startTags.end(); ++tagIt )
      {
        pos = s.find(*tagIt,false);
-       if ( (pos != -1) && ( !checkCursorPos || (line != i) || (pos < col) )) //start tag found
+       if ( (pos != -1) && ( !checkCursorPos || ((int)line != i) || (pos < (int)col) )) //start tag found
        {
          //now check if we are after the closing tag
          bool afterClosingTag = false;
@@ -934,7 +1021,7 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
          {
            QString s2 = editIf->textLine(j);
            pos = s2.find(dtd->endTags[dtd->startTags.findIndex(*tagIt)],false);
-           if ( (pos != -1) && (!checkCursorPos || (line != j) || (pos < col) ) )
+           if ( (pos != -1) && (!checkCursorPos || ((int)line != j) || (pos < (int)col) ) )
            {
              afterClosingTag = true;
              break;
@@ -954,37 +1041,25 @@ QString Document::findDTDName(int startLine, int endLine, bool checkCursorPos)
  return foundName;
 }
 
-/** No descriptions */
-/*
-QString Document::getTagAttrValueByName(QString attr)
-{
- QString val;
- for (int i=0 ; i < tagAttrNum; i++)
- {
-
-  if ( ( attr.upper() == getTagAttr(i).upper()) && tagAttr[i].valuelen )
-  {
-    val = tagAttr[i].value;
-    break;
-  }
- }
- return val;
-} */
-
 /** Called whenever a user inputs text in a script type document. */
 void Document::scriptAutoCompletion(int line, int column, const QString & string)
 {
  //TODO: Implement this.
 }
-
-
-/** Builds a tree with Node* elements. This is the internal representation of the document. */
-void Document::buildDocumentTree()
+/** Retriwes the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
+work correctly. */
+QString Document::text(int bLine, int bCol, int eLine, int eCol)
 {
- int line = 0;
- int col = 0;
- int i = editIf->numLines();
- int j = editIf->lineLength(editIf->numLines()-1);
-// if (baseNode) delete baseNode;
-// baseNode = parser->parse(this);
+ QString t = editIf->textLine(bLine);
+ if (bLine == eLine)
+ {
+   return t.mid(bCol, eCol-bCol);
+ }
+ t.remove(0, bCol);
+ for (int i = bLine+1; i < eLine ; i++)
+ {
+   t = t+editIf->textLine(i);
+ }
+ t = t+editIf->textLine(eLine).left(eCol+1);
+ return t;
 }

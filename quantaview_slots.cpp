@@ -82,7 +82,7 @@ void QuantaView::slotEditCurrentTag()
     {
      w->changeCurrentTag( dlg->getAttributes() );
      int eLine, eCol;
-     tag->getTagEndPos(eLine, eCol);
+     tag->endPos(eLine, eCol);
      w->viewCursorIf->setCursorPosition(eLine, eCol);
     }
 

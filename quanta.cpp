@@ -1913,7 +1913,10 @@ void QuantaApp::processDTD(QString documentType)
  }
 
   if (baseNode) delete baseNode;
-  baseNode = parser->parse(w);
+  if (dtds->find(w->getDTDIdentifier()))
+  {
+    baseNode = parser->parse(w);
+  }
 }
 
 /** No descriptions */

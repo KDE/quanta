@@ -751,7 +751,7 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->name = dtdName;
  dtd->nickName = dtdConfig->readEntry("NickName", dtdName);
  dtd->caseSensitive = caseSensitive;
- dtd->family = (dtdConfig->readEntry("Family", "xml")).lower();
+ dtd->family = dtdConfig->readNumEntry("Family", Xml);
  int numOfTags = 0;
 
  //read the attributes for each common group

@@ -1,10 +1,9 @@
 /***************************************************************************
                           parser.h  -  description
                              -------------------
-    begin                : Sun Apr 16 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky
-                           (C) 2002 by Andras Mantia
-    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
+    begin                : Sun Sep 1 2002
+    copyright            : (C) 2002 by Andras Mantia
+    email                : amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,7 +26,7 @@
 
 
 /**
-  *@author Dmitry Poplavsky, Andras Mantia
+  *@author Andras Mantia
   */
 
 class Document;
@@ -37,26 +36,29 @@ public:
 	Parser();
 	~Parser();
 	
+  /** Parse the whole text from Document w and build the internal structure tree from Nodes */
 	Node *parse( Document *w);
+  /** Print the doc structure tree to the standard output.
+      Only for debugging purposes. */
   void coutTree(Node *node, int indent);
 /*	int xy2pos( int x, int y );
 	int pos2y(int pos);
 	int pos2x(int pos);*/
 	
-  /** No descriptions */
+  /** Delete the internal m_node */
   void deleteNode();
 
 	QString m_text;  //FIXME: having an internal copy of text is absolutely useless
 private:
-  enum { Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, Script }; // types of token
 
-  Node* m_node;
-  QString m_dtdName;
-  Document *write;
+  Node* m_node;       //the internal Node pointer
+  QString m_dtdName;  //the DTD name of write
+  Document *write;    //pointer to the parsed document
 
+  /** Recursive parsing algorithm. Actually this does the parsing and tree building. */
   Node * subParse( Node* parent , int &line, int &col);
+  /** Go to the next column, or to the next line if we are at the end of line */
   void nextPos(int &line, int &col);
-  int tokenType(Tag *tag); // return type of next token
 };
 
 #endif

@@ -136,7 +136,7 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
    StructTreeTag *item = 0L;
    {
      Document *w = currentNode->tag->write();
-     if (currentNode->tag->type == "xmltag")// || currentNode->tag->type == "xmltagend")
+     if (currentNode->tag->type == Tag::XmlTag)// || currentNode->tag->type == "xmltagend")
      {
       //HTML specific tags
       if (w->getDTDIdentifier().find("html", 0, false) != -1)
@@ -162,21 +162,29 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
       item = new StructTreeTag( parent, currentNode, currentNode->tag->name );
      }
 
-      if ( currentNode->tag->type == "text" )
+      if ( currentNode->tag->type == Tag::Text )
       {
-        int bLine, bCol, eLine, eCol;
-        currentNode->tag->getTagBeginPos(bLine, bCol);
-        currentNode->tag->getTagEndPos(eLine, eCol);
         QString text = currentNode->tag->tagStr();
-		    text = text.left(70);
-		    text = text.replace( QRegExp("&nbsp;")," ");
-		    int endlPos;
-		    if ( ( endlPos = text.find('\n') ) != -1 )
-		      text = text.left( endlPos );
-
-		    item = new StructTreeTag(parent,currentNode,text);
-		  }
-
+        text = text.left(70);
+        text = text.replace( QRegExp("&nbsp;")," ");
+        item = new StructTreeTag(parent,currentNode,text);
+      }
+      if ( currentNode->tag->type == Tag::Comment )
+      {
+        item = new StructTreeTag( parent, currentNode, "comment" );
+        QString text = currentNode->tag->tagStr();
+        text.replace(QRegExp("<!--"),"");
+        text.replace(QRegExp("-->"),"");
+        text.replace(QRegExp("/*"),"");
+        text.replace(QRegExp("*/"),"");
+        text.replace(QRegExp("^//"),"");
+        text.replace(QRegExp("^#"),"");
+        item->setText(0, text);
+      }
+      if ( currentNode->tag->type == Tag::ScriptStructureBegin )
+      {
+        item = new StructTreeTag(parent,currentNode,currentNode->tag->name);
+      }
    }
    if (currentNode->child)
    {
@@ -434,8 +442,8 @@ void StructTreeView::slotOnTag( QListViewItem * item)
 		return;
   Tag *tag = it->node->tag;
   int bLine, bCol, eLine, eCol;
-  tag->getTagBeginPos(bLine, bCol);
-  tag->getTagEndPos(eLine, eCol);
+  tag->beginPos(bLine, bCol);
+  tag->endPos(eLine, eCol);
 	QString text = tag->write()->editIf->text(bLine, bCol, eLine, eCol);
 //parser->m_text.mid( it->pos1+1, it->pos2 - it->pos1 );
   text = text.left(70);

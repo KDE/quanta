@@ -19,7 +19,11 @@
 #define QTAG_H
 
 
-/**Quanta style tag (XML tag or code tag)
+/**Quanta style tag (XML tag or code tag), as they are defined in the DTD. Contains
+  all the possible attributes and the possible values for the attributes. Do not
+  confund with the Tag class, which can change as the user types other attributes and
+  changes their values.
+
   *@author Andras Mantia
   */
 //qt includes
@@ -44,13 +48,15 @@ typedef QDict<AttributeList> AttributeListDict;
 class QTag;
 typedef QDict<QTag> QTagList;
 
+enum DTDFamily{Unknown = 0, Xml, Script};
+
 //an internal representation of a DTD
 typedef struct DTDStruct
     {
      QString name;                    //DTD name
      QString nickName;                //DTD nickname
      bool caseSensitive;              //the tags&attributes in DTD are case sensitive or not
-     QString family;                  //xml, script type
+     int family;                      //xml, script type
      QTagList* tagsList;              //the list of all tags in the DTD
      QString fileName;                //the DTD decription.rc with path
      AttributeListDict* commonAttrs;  //the attributes of the common groups

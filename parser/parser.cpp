@@ -1,10 +1,9 @@
 /***************************************************************************
                           parser.cpp  -  description
                              -------------------
-    begin                : Sun Apr 16 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky
-                           (C) 2002 by Andras Mantia
-    email                : pdima@mail.univ.kiev.ua, amantia@freemail.hu
+    begin                : Sun Sep 1 2002
+    copyright            : (C) 2002 by Andras Mantia
+    email                : amantia@freemail.hu
  ***************************************************************************/
 
 /***************************************************************************
@@ -16,16 +15,19 @@
  *                                                                         *
  ***************************************************************************/
 
+//qt includes
 #include <qstring.h>
 #include <qregexp.h>
 #include <qcstring.h>
 #include <qstringlist.h>
 #include <qstrlist.h>
 
+//standard library includes
 #include <stdio.h>
 #include <ctype.h>
 #include <iostream.h>
 
+//app includes
 #include "parser.h"
 #include "node.h"
 #include "tag.h"
@@ -44,6 +46,7 @@ Parser::~Parser()
 {
 }
 
+/** Parse the whole text from Document w and build the internal structure tree from Nodes */
 Node *Parser::parse(Document *w)
 {
   write = w;
@@ -57,13 +60,16 @@ Node *Parser::parse(Document *w)
 
   return m_node;
 }
+
+/** Print the doc structure tree to the standard output.
+    Only for debugging purposes. */
 void Parser::coutTree(Node *node, int indent)
 {
  while (node)
  {
    for (int i =0; i < indent; i++)
     cout << " ";
-   if (node->tag->type != "text") cout << node->tag->name;
+   if (node->tag->type != Tag::Text) cout << node->tag->name;
    else cout << node->tag->tagStr();
    cout << " (" << node->tag->type << ")\n";
    if (node->child) coutTree(node->child, indent + 4);
@@ -71,22 +77,21 @@ void Parser::coutTree(Node *node, int indent)
  }
 }
 
+/** Recursive parsing algorithm. Actually this does the parsing and tree building. */
 Node * Parser::subParse( Node * parent, int &line, int &col )
 {
   Node * node = 0L;
   Node * prevNode = 0L;
   Node * firstNode = 0L;
 
-  while (line < write->editIf->numLines())
+  while (line < (int)write->editIf->numLines())
   {
     Tag *tag = write->tagAt(line, col);
     if (tag)
     {
-      int type = tokenType(tag);
-
-      switch ( type )
+      switch ( tag->type )
       {
-        case XmlTag :
+        case Tag::XmlTag :
              {
                if ( parent )   // check if this tag stop area of previous
                {
@@ -112,34 +117,39 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
 
                if ( !tag->single && !QuantaCommon::isSingleTag(m_dtdName, tag->name) )  // not single tag
                {
-                 tag->getTagEndPos(line, col);
+                 tag->endPos(line, col);
                  nextPos(line, col);
-                 tnode->child = subParse( tnode , line, col );
+                 tnode->child = subParse( tnode , line, col ); //tag can have other elements inside
                } else
                {
-                 tag->getTagEndPos(line, col);
+                 tag->endPos(line, col);
                 }
                if (tnode->next) prevNode = tnode->next;
                break;
              } //case XMLTag
-      case XmlTagEnd:
+      case Tag::XmlTagEnd:
              {
                if (parent)
                {
-                 if ("/"+parent->tag->name == tag->name)
+                 DTDStruct *dtd = dtds->find(m_dtdName);
+                 if (!dtd) dtd = dtds->find(defaultDocType);
+                 QString startName = (dtd->caseSensitive) ? parent->tag->name: parent->tag->name.upper();
+                 QString endName = (dtd->caseSensitive) ? tag->name: tag->name.upper();
+                 if ("/"+startName == endName)
                  {
                    Node *tnode = new Node( parent->parent );
                    tnode->tag = tag;
                    parent->next = tnode;
                    tnode->prev = parent;
-                   tag->getTagEndPos(line, col);
+                   tag->endPos(line, col);
                    return firstNode;
                  }
                }
                break;
              }
 
-      case Text:
+      case Tag::Comment:
+      case Tag::Text:
            {
              node = new Node( parent );
              if ( !firstNode )
@@ -149,7 +159,33 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
              node->tag = tag;
              node->prev = prevNode;
              prevNode = node;
-             tag->getTagEndPos(line, col);
+             tag->endPos(line, col);
+             break;
+           }
+      case Tag::ScriptStructureBegin:
+           {
+             node = new Node(parent);
+             if ( !firstNode )
+                 firstNode = node;
+             if ( prevNode )
+                 prevNode->next = node;
+             node->tag = tag;
+             node->prev = prevNode;
+             prevNode = node;
+             tag->endPos(line, col);
+             nextPos(line, col);
+             node->child = subParse( node , line, col );
+             if (node->next) prevNode = node->next;
+             break;
+           }
+      case Tag::ScriptStructureEnd:
+           {
+             Node *node = new Node( parent->parent );
+             node->tag = tag;
+             parent->next = node;
+             node->prev = parent;
+             tag->endPos(line, col);
+             return firstNode;
              break;
            }
 
@@ -159,22 +195,6 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
     nextPos(line, col);
   } // while
   return firstNode;
-}
-
-int Parser::tokenType(Tag *tag)
-{
-  if (tag->type == "xmltag")
-   return XmlTag;
-  if (tag->type == "xmltagend")
-   return XmlTagEnd;
-  if (tag->type == "text")
-   return Text;
-  if (tag->type == "comment")
-   return Comment;
-  if (tag->type == "script")
-   return Script;
-
-  return Unknown;
 }
 
 /*
@@ -220,7 +240,7 @@ int Parser::xy2pos( int x, int y )
 	return (pos);
 }
               */
-/** No descriptions */
+/** Delete the internal m_node */
 void Parser::deleteNode()
 {
   if (m_node)
@@ -230,6 +250,7 @@ void Parser::deleteNode()
   }
 }
 
+/** Go to the next column, or to the next line if we are at the end of line */
 void Parser::nextPos(int &line, int &col)
 {
   if (col < write->editIf->lineLength(line))

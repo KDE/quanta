@@ -92,7 +92,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *p_node, QString name )
 		setText(0,"");
 	}
 
-	
+  setText(0, text(0)+" ["+tag->tagStr()+"]"); //debug
 }
 
 StructTreeTag::StructTreeTag(StructTreeTag *parent, QString name )
