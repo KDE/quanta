@@ -14,7 +14,7 @@
         </items>
     </attr>
 
-    <attr name="coords" type="text">
+    <attr name="coords" type="input">
         <text>Coords</text>
         <textlocation col="0" row="1" />
         <location col="1" row="1"  colspan="2"/>
