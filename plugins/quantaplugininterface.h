@@ -37,7 +37,7 @@
 class QuantaPluginInterface : public QObject
 {
   Q_OBJECT
-public: 
+public:
   QuantaPluginInterface();
   ~QuantaPluginInterface();
   /** Returns a list of the known types */
@@ -54,10 +54,6 @@ public:
   QDict<QuantaPlugin> plugins();
   /** Sets the plugins */
   void setPlugins(QDict<QuantaPlugin>);
-#if 0
-  /** Sets the plugin names */
-  virtual void setPluginNames(QStringList);
-#endif
   /** Gets the plugin specified by a_name */
   virtual QuantaPlugin *plugin(const QString &);
   /** Gets the plugin names */
@@ -67,8 +63,9 @@ public:
   /** Sets the search paths */
   virtual void setSearchPaths(QStringList);
 protected:
+  void readConfigFile(const QString& configFile);
+
   QDict<QuantaPlugin> m_plugins;
-  QStringList m_pluginNames;
 };
 
 #endif

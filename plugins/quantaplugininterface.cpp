@@ -48,15 +48,8 @@ QuantaPluginInterface::~QuantaPluginInterface()
   // TODO : free plugins
 }
 
-/** Reads the plugin settings from the rc file */
-void QuantaPluginInterface::readConfig()
+void QuantaPluginInterface::readConfigFile(const QString& configFile)
 {
-  m_plugins.clear();
-
-  // read the plugins.rc
-  QString configFile = locateLocal("appdata", "plugins.rc");
-  if (!QFileInfo(configFile).exists()) configFile = qConfig.globalDataDir +"quanta/plugins.rc";
-
   KConfig *config = new KConfig(configFile);
   config->setGroup("General");
   QStringList pList = config->readListEntry("Plugins");
@@ -72,6 +65,8 @@ void QuantaPluginInterface::readConfig()
   // now that we have a list of the plugins, go through and get the details of them
   for(QStringList::Iterator it = pList.begin();it != pList.end();++it)
   {
+    if (m_plugins.find(*it))
+        continue;
     config->setGroup(*it);
 
     QuantaPlugin *newPlugin = 0;
@@ -116,9 +111,23 @@ void QuantaPluginInterface::readConfig()
     if (newPlugin->isA("QuantaKPartPlugin"))
         static_cast<QuantaKPartPlugin*>(newPlugin)->setReadOnlyPart(config->readBoolEntry("ReadOnly", true));
 
-    m_plugins.insert(newPlugin->pluginName(), newPlugin);
+    m_plugins.insert(*it, newPlugin);
   }
   delete config;
+}
+
+/** Reads the plugin settings from the rc file */
+void QuantaPluginInterface::readConfig()
+{
+  m_plugins.clear();
+
+  // read the local plugins.rc
+  QString configFile = locateLocal("appdata", "plugins.rc");
+  if (QFileInfo(configFile).exists())
+      readConfigFile(configFile);
+  // read the global plugins.rc
+  configFile = qConfig.globalDataDir +"quanta/plugins.rc";
+  readConfigFile(configFile);
 }
 
 /** Writes the plugin settings to the rc file */
@@ -191,14 +200,6 @@ bool QuantaPluginInterface::pluginAvailable(const QString &a_name)
 
   return FALSE;
 }
-
-#if 0
-/** Sets the plugin names */
-void QuantaPluginInterface::setPluginNames(QStringList a_pluginNames)
-{
-  m_pluginNames = a_pluginNames;
-}
-#endif
 
 /**  Gets the plugin names */
 QStringList QuantaPluginInterface::pluginNames() const
