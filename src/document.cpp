@@ -1180,8 +1180,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   for( ; it.current(); ++it )
   {
     QTag *tag = it.current();
-    if (tag->className == classStr ||
-        isDerivatedFrom(classStr, tag->className))
+    if ((tag->type != "entity") && (tag->className == classStr ||
+        isDerivatedFrom(classStr, tag->className)))
     {
       tagName = tag->name();
       if (!tagName.isEmpty() && tagName.upper().startsWith(word))
