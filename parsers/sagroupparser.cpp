@@ -88,7 +88,7 @@ void SAGroupParser::slotParseForScriptGroup()
       {
 #ifdef DEBUG_PARSER
         kdDebug(24000) << "Calling cleanGroups from SAGroupParser::slotParseForScriptGroup" << endl;
-        kdDebug(24000) << m_count << " GroupElement created." << endl;
+        kdDebug(24001) << m_count << " GroupElement created." << endl;
 #endif
         emit cleanGroups();
         m_lastGroupParsed = false;
@@ -200,24 +200,21 @@ void SAGroupParser::parseForScriptGroup(Node *node)
 
         if (group.appendToTags)
         {
-          QTag *qTag = m_write->userTagList.find(s.lower());
-          if (!qTag)
+          QTag *qTag = new QTag();
+          qTag->setName(s.left(s.find('(')));
+          qTag->className = "";
+          if (groupElement->parentNode)
           {
-            QTag *qTag = new QTag();
-            qTag->setName(s.left(s.find('(')));
-            if (groupElement->parentNode)
+            for (QValueList<GroupElement *>::ConstIterator it = groupElement->parentNode->m_groupElements.constBegin(); it != groupElement->parentNode->m_groupElements.constEnd(); ++it)
             {
-              for (QValueList<GroupElement *>::ConstIterator it = groupElement->parentNode->m_groupElements.constBegin(); it != groupElement->parentNode->m_groupElements.constEnd(); ++it)
+              if ((*it)->group->name == group.parentGroup)
               {
-                if ((*it)->group->name == group.parentGroup)
-                {
-                  qTag->className = (*it)->tag->name;
-                  break;
-                }
+                qTag->className = (*it)->tag->name;
+                break;
               }
             }
-            m_write->userTagList.insert(s.lower(), qTag);
           }
+          m_write->userTagList.insert(s.lower(), qTag);
         }
 
 

@@ -109,6 +109,7 @@ Document::Document(KTextEditor::Document *doc,
   completionInProgress = false;
   argHintVisible = false;
   completionRequested = false;
+  userTagList.setAutoDelete(true);
 
   // remove the unwanted actions
   KAction *a = m_view->actionCollection()->action( "file_export" );

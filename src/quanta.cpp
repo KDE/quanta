@@ -240,7 +240,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   // the builder updates (recreates) the GUI
   connect(m_partManager, SIGNAL(activePartChanged(KParts::Part * )),
           this, SLOT(slotActivePartChanged(KParts::Part * )));
-   connect(this, SIGNAL(dockWidgetHasUndocked(KDockWidget *)), this, SLOT(slotDockWidgetHasUndocked(KDockWidget *)));
+  connect(this, SIGNAL(dockWidgetHasUndocked(KDockWidget *)), this, SLOT(slotDockWidgetHasUndocked(KDockWidget *)));
   connect(tabWidget(), SIGNAL(initiateDrag(QWidget *)), this, SLOT(slotTabDragged(QWidget*)));
 
   m_oldKTextEditor = 0L;

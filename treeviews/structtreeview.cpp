@@ -157,7 +157,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel, bool groupOnly)
         }
         groupTag->setOpen(groupOpened[groupId]);
 #ifdef DEBUG_PARSER
-        kdDebug(24000) << "Grouptag created: " << groupId << " " << groupTag->text(0) << " "<< groupTag << endl;
+        kdDebug(24001) << "Grouptag created: " << groupId << " " << groupTag->text(0) << " "<< groupTag << endl;
 #endif
         groups.append(groupTag);
         groupIds.insert(group.name + parsingDTD->name, groupId);

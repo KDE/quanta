@@ -1245,15 +1245,16 @@ void Parser::clearGroups()
 #ifdef DEBUG_PARSER
       kdDebug(24001) << "GroupElement deleted: " <<groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
 #endif
+      groupElement->tag->write()->userTagList.remove(groupElement->tag->name.lower());
       if (!groupElement->deleted)
-       {
-         Node *n = groupElement->node;
-         n->m_groupElements.clear();
-         delete groupElement->tag;
-       }
-       delete groupElement;
-       elementIt = list->erase(elementIt);
-       count++;
+      {
+        Node *n = groupElement->node;
+        n->m_groupElements.clear();
+      }
+      delete groupElement->tag;
+      delete groupElement;
+      elementIt = list->erase(elementIt);
+      count++;
     }
   }
 #ifdef DEBUG_PARSER
@@ -1289,6 +1290,7 @@ void Parser::cleanGroups()
 #ifdef DEBUG_PARSER
          kdDebug(24001) << "GroupElement deleted: " <<groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
 #endif
+         groupElement->tag->write()->userTagList.remove(groupElement->tag->name.lower());
          delete groupElement->tag;
          delete groupElement;
          elementIt = list->erase(elementIt);
