@@ -1,0 +1,441 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>DocBook_List</class>
+<comment>This dialog creates a variable, itemized, or ordered  list, or a procedure for DocBook documents.</comment>
+<author>Carlos Leonhard Woelz</author>
+<widget class="Dialog">
+    <property name="name">
+        <cstring>Form1</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>504</width>
+            <height>538</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Docbook List Wizard</string>
+    </property>
+    <property name="associations" stdset="0">
+        <stringlist>
+            <string></string>
+            <string></string>
+            <string></string>
+        </stringlist>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget" row="3" column="0">
+            <property name="name">
+                <cstring>Layout12</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <spacer row="0" column="0">
+                    <property name="name">
+                        <cstring>Spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>296</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="CloseButton" row="0" column="2">
+                    <property name="name">
+                        <cstring>CloseButton1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                    <property name="flat">
+                        <bool>false</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string></string>
+                        </stringlist>
+                    </property>
+                    <property name="writeStdout">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Press this button to cancel the creation of the list or procedure. No action will be performed.</string>
+                    </property>
+                </widget>
+                <widget class="CloseButton" row="0" column="1">
+                    <property name="name">
+                        <cstring>OKButton</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                    <property name="flat">
+                        <bool>false</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@VariableOption
+@ItemizedOption
+@OrderedOption
+@ProcedureOption</string>
+                        </stringlist>
+                    </property>
+                    <property name="writeStdout">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Press this button to create the selected list or procedure.</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="GroupBox" row="2" column="0">
+            <property name="name">
+                <cstring>GroupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>List Options</string>
+            </property>
+            <property name="populationText">
+                <string></string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                </stringlist>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLayoutWidget" row="0" column="0">
+                    <property name="name">
+                        <cstring>Layout7</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="SpinBoxInt" row="0" column="1">
+                            <property name="name">
+                                <cstring>sb_lin</cstring>
+                            </property>
+                            <property name="value">
+                                <number>5</number>
+                            </property>
+                            <property name="populationText">
+                                <string></string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Select or enter in this spin box the number of list entries or steps that should be created by the wizard. After using the wizard, you can add (or remove) more entries or steps manually.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>TextLabel2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Number of list items or steps:</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Select or enter in this spin box the number of list entries or steps that should be created by the wizard. After using the wizard, you can add (or remove) more entries or steps manually.</string>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel1_2_2</cstring>
+            </property>
+            <property name="font">
+                <font>
+                </font>
+            </property>
+            <property name="text">
+                <string>&lt;qt&gt;
+Select the list type:
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;variablelist:&lt;/b&gt; a list with two sections for each item: the term and the definition.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;itemizedlist:&lt;/b&gt; a list  used when the order of the items is not important.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;orderedlist:&lt;/b&gt; a list  used when the order of the items is important (for instance, a list of things in order of preference). Do not use orderedlist to describe the steps required to perform an action.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;procedure:&lt;/b&gt; list of an sequence of ordered steps, describing to the reader how to perform a task. You can add substeps later.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/qt&gt;</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignJustify|AlignTop</set>
+            </property>
+        </widget>
+        <widget class="ButtonGroup" row="1" column="0">
+            <property name="name">
+                <cstring>ButtonGroup1</cstring>
+            </property>
+            <property name="title">
+                <string>List Type</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="RadioButton" row="1" column="1">
+                    <property name="name">
+                        <cstring>ProcedureOption</cstring>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>NoFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string>&amp;procedure</string>
+                    </property>
+                    <property name="checked">
+                        <bool>false</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@null</string>
+                            <string>echo '&lt;procedure&gt;'
+echo ''
+l=1
+while [ $l -le @sb_lin ]; do
+ echo '&lt;step&gt;&lt;para&gt;'
+ echo 'Step '$l'.'
+ echo '&lt;/para&gt;&lt;/step&gt;'
+ echo ''
+ l=$((l+1))
+done
+echo '&lt;/procedure&gt;'</string>
+                        </stringlist>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option to create a procedure. A procedure is a sequence of ordered steps, describing to the reader how to perform a task. You can add nested substeps.
+
+Here is one example of a procedure:
+
+&lt;procedure&gt;
+
+&lt;step&gt;&lt;para&gt;First step.&lt;/para&gt;&lt;/step&gt;
+
+&lt;step&gt;&lt;para&gt;Second step.&lt;/para&gt;
+&lt;substeps&gt;
+&lt;step&gt;&lt;para&gt;First substep of the second step.&lt;/para&gt;&lt;/step&gt;
+&lt;/substeps&gt;
+&lt;/step&gt;
+
+&lt;/procedure&gt;</string>
+                    </property>
+                </widget>
+                <widget class="RadioButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>ItemizedOption</cstring>
+                    </property>
+                    <property name="text">
+                        <string>itemi&amp;zedlist</string>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@null</string>
+                            <string>echo '&lt;itemizedlist&gt;'
+echo ''
+l=1
+while [ $l -le @sb_lin ] ; do
+ echo '&lt;listitem&gt;&lt;para&gt;'
+ echo 'Text entry '$l'.'
+ echo '&lt;/para&gt;&lt;/listitem&gt;'
+ echo ''
+ l=$((l+1))
+done
+echo '&lt;/itemizedlist&gt;'</string>
+                        </stringlist>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option to create a itemizedlist. A itemizedlist is a list used when the order of the items is not important.
+
+Here is one example of a itemizedlist:
+
+&lt;itemizedlist&gt;
+
+&lt;listitem&gt;&lt;para&gt;
+First item.
+&lt;/para&gt;&lt;/listitem&gt;
+
+&lt;listitem&gt;&lt;para&gt;
+Second item.
+&lt;/para&gt;&lt;/listitem&gt;
+
+&lt;/itemizedlist&gt;</string>
+                    </property>
+                </widget>
+                <widget class="RadioButton" row="0" column="1">
+                    <property name="name">
+                        <cstring>OrderedOption</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>NoFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string>or&amp;deredlist</string>
+                    </property>
+                    <property name="checked">
+                        <bool>false</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@null</string>
+                            <string>echo '&lt;orderedlist&gt;'
+echo ''
+l=1
+while [ $l -le @sb_lin ] ; do
+ echo '&lt;listitem&gt;&lt;para&gt;'
+ echo 'Text entry '$l'.'
+ echo '&lt;/para&gt;&lt;/listitem&gt;'
+ echo ''
+ l=$((l+1))
+ done
+echo '&lt;/orderedlist&gt;'</string>
+                        </stringlist>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option to create a orderedlist. A orderedlist is a list  used when the order of the items is important. A number will be associated with each entry, in order, starting from one.
+
+Here is one example of a orderedlist:
+
+&lt;orderedlist&gt;
+
+&lt;listitem&gt;&lt;para&gt;
+First item.
+&lt;/para&gt;&lt;/listitem&gt;
+
+&lt;listitem&gt;&lt;para&gt;
+Second item.
+&lt;/para&gt;&lt;/listitem&gt;
+
+&lt;/orderedlist&gt;</string>
+                    </property>
+                </widget>
+                <widget class="RadioButton" row="0" column="0">
+                    <property name="name">
+                        <cstring>VariableOption</cstring>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>TabFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string>&amp;variablelist</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="populationText">
+                        <string></string>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@null</string>
+                            <string>echo '&lt;variablelist&gt;'
+echo ''
+l=1
+while [ $l -le @sb_lin ]; do
+ echo '&lt;varlistentry&gt;'
+ echo '&lt;term&gt;Term '$l'&lt;/term&gt;'
+ echo '&lt;listitem&gt;&lt;para&gt;'
+ echo 'Definition '$l'.'
+ echo '&lt;/para&gt;&lt;/listitem&gt;'
+ echo '&lt;/varlistentry&gt;'
+ echo ''
+ l=$((l+1))
+done
+echo '&lt;/variablelist&gt;'</string>
+                        </stringlist>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option to create a variablelist. A variablelist is a list with two sections for each item: the term (the tag used is &lt;term&gt;) and the definition (the tag used is &lt;listitem&gt;). To mark each entry of the list, the &lt;varlistentry&gt; tag is used.
+
+Here is one example of a variablelist:
+
+&lt;variablelist&gt;
+
+&lt;varlistentry&gt;
+&lt;term&gt;Term text&lt;/term&gt;
+&lt;listitem&gt;&lt;para&gt;Definition text.&lt;/para&gt;&lt;/listitem&gt;
+&lt;varlistentry&gt;
+
+&lt;/variablelist&gt;</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>VariableOption</tabstop>
+    <tabstop>sb_lin</tabstop>
+    <tabstop>OKButton</tabstop>
+    <tabstop>CloseButton1_2</tabstop>
+    <tabstop>ItemizedOption</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

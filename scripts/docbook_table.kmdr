@@ -1,0 +1,250 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>DocBook_Table</class>
+<comment>Cria uma tabela em um documento docbook</comment>
+<author>Huberto Gastal Mayer</author>
+<widget class="Dialog">
+    <property name="name">
+        <cstring>Form1</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>266</width>
+            <height>401</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Docbook Table</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>15</pointsize>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>DocBook Table</string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="GroupBox" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>GroupBox1</cstring>
+            </property>
+            <property name="title">
+                <string></string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string>echo '&lt;table id="@le_id"&gt;'
+echo '  &lt;title&gt;@te_descr&lt;/title&gt;'
+echo '  &lt;tgroup cols=""&gt;'
+
+@cb_title
+
+echo '    &lt;tbody&gt;'
+@sb_lin
+echo '    &lt;/tbody&gt;'
+
+echo '  &lt;/tgroup&gt;'
+echo '&lt;/table&gt;'
+
+
+</string>
+                </stringlist>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
+                        <cstring>TextLabel4</cstring>
+                    </property>
+                    <property name="text">
+                        <string>id:</string>
+                    </property>
+                </widget>
+                <widget class="LineEdit" row="3" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>le_id</cstring>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@widgetText</string>
+                        </stringlist>
+                    </property>
+                </widget>
+                <widget class="TextEdit" row="5" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>te_descr</cstring>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@widgetText</string>
+                        </stringlist>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>TextLabel5</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Description:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Colums</string>
+                    </property>
+                </widget>
+                <widget class="SpinBoxInt" row="1" column="2">
+                    <property name="name">
+                        <cstring>sb_lin</cstring>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>l=0
+while [ $l -le @widgetText ]
+do
+
+	echo '      &lt;row&gt;';
+
+	@sb_col
+
+	echo '      &lt;/row&gt;';
+
+	l=$((l+1))
+
+done
+</string>
+                        </stringlist>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Lines</string>
+                    </property>
+                </widget>
+                <widget class="SpinBoxInt" row="0" column="2">
+                    <property name="name">
+                        <cstring>sb_col</cstring>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>c=0
+while [ $c -le @widgetText ]
+do
+
+	echo "         &lt;entry&gt;&lt;/entry&gt;"
+
+	c=$((c+1))
+
+done
+</string>
+                        </stringlist>
+                    </property>
+                </widget>
+                <widget class="CheckBox" row="2" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>cb_title</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Include title line</string>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string></string>
+                            <string></string>
+                            <string>echo '   &lt;thead&gt;';
+echo '      &lt;row&gt;';
+
+@sb_col
+
+echo '      &lt;/row&gt;';
+echo '   &lt;/thead&gt;';</string>
+                        </stringlist>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="CloseButton" row="2" column="0">
+            <property name="name">
+                <cstring>CloseButton1</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;OK</string>
+            </property>
+            <property name="flat">
+                <bool>false</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string>@GroupBox1</string>
+                </stringlist>
+            </property>
+            <property name="writeStdout">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="CloseButton" row="2" column="1">
+            <property name="name">
+                <cstring>CloseButton1_2</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Cancel</string>
+            </property>
+            <property name="flat">
+                <bool>false</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                </stringlist>
+            </property>
+            <property name="writeStdout">
+                <bool>true</bool>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>sb_col</tabstop>
+    <tabstop>sb_lin</tabstop>
+    <tabstop>cb_title</tabstop>
+    <tabstop>le_id</tabstop>
+    <tabstop>te_descr</tabstop>
+    <tabstop>CloseButton1</tabstop>
+    <tabstop>CloseButton1_2</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

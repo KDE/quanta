@@ -1,0 +1,587 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>DocBook_Image</class>
+<comment>This dialog creates a screenshot, a mediaobject or an inlinemediaobject for DocBook documents.</comment>
+<author>Carlos Leonhard Woelz</author>
+<widget class="Dialog">
+    <property name="name">
+        <cstring>Form1</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>649</width>
+            <height>529</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Docbook Image Wizard</string>
+    </property>
+    <property name="associations" stdset="0">
+        <stringlist>
+            <string></string>
+            <string></string>
+            <string></string>
+        </stringlist>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget" row="3" column="0">
+            <property name="name">
+                <cstring>Layout12</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <spacer row="0" column="0">
+                    <property name="name">
+                        <cstring>Spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>342</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="CloseButton" row="0" column="2">
+                    <property name="name">
+                        <cstring>CloseButton1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                    <property name="flat">
+                        <bool>false</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string></string>
+                        </stringlist>
+                    </property>
+                    <property name="writeStdout">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Press this button to cancel the creation of the image markup. No action will be performed.</string>
+                    </property>
+                </widget>
+                <widget class="CloseButton" row="0" column="1">
+                    <property name="name">
+                        <cstring>OKButton</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>O&amp;K</string>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                    <property name="flat">
+                        <bool>false</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@ScreenshotOption
+@MediaOption
+@InlineMediaOption
+</string>
+                        </stringlist>
+                    </property>
+                    <property name="writeStdout">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Press this button to create the image markup.</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel1_2_2</cstring>
+            </property>
+            <property name="font">
+                <font>
+                </font>
+            </property>
+            <property name="text">
+                <string>&lt;qt&gt;
+Select the type of markup appropriated to wrap your image:
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;screenshot:&lt;/b&gt; used for screenshot images.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;mediaobject:&lt;/b&gt; used for all kinds of images which are not presented inside the flow of text or table entry.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;inlinemediaobject:&lt;/b&gt; used for images which are presented in the middle of flow of text, or in a table entry. Use mediaobject for all other images.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/qt&gt;</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignJustify|AlignTop</set>
+            </property>
+        </widget>
+        <widget class="ButtonGroup" row="1" column="0">
+            <property name="name">
+                <cstring>ButtonGroup1</cstring>
+            </property>
+            <property name="title">
+                <string>Wrapper Type</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="RadioButton" row="0" column="0">
+                    <property name="name">
+                        <cstring>ScreenshotOption</cstring>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>TabFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string>&amp;screenshot</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="populationText">
+                        <string></string>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@null</string>
+                            <string>echo '&lt;screenshot&gt;'
+echo '&lt;screeninfo&gt;@le_description&lt;/screeninfo&gt;'
+echo '&lt;mediaobject&gt;'
+echo '&lt;imageobject&gt;'
+echo '&lt;imagedata fileref="@le_imagefile" format="@cb_imagetype" /&gt;'
+echo '&lt;/imageobject&gt;'
+echo '&lt;textobject&gt;'
+echo '&lt;phrase&gt;@le_description&lt;/phrase&gt;'
+echo '&lt;/textobject&gt;'
+@cb_caption
+echo '&lt;/mediaobject&gt;'
+echo '&lt;/screenshot&gt;'</string>
+                        </stringlist>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option to create the necessary markup for a screenshot. The screenshot markup contains the mediaoption markup. Use for screenshots only. Other figures and images should use inlinemediaobject if inside text, or mediaobject to separate the image from the text.</string>
+                    </property>
+                </widget>
+                <widget class="RadioButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>MediaOption</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;mediaobject</string>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@null</string>
+                            <string>echo '&lt;mediaobject&gt;'
+echo '&lt;imageobject&gt;'
+echo '&lt;imagedata fileref="@le_imagefile" format="@cb_imagetype" /&gt;'
+echo '&lt;/imageobject&gt;'
+echo '&lt;textobject&gt;'
+echo '&lt;phrase&gt;@le_description&lt;/phrase&gt;'
+echo '&lt;/textobject&gt;'
+@cb_caption
+echo '&lt;/mediaobject&gt;'</string>
+                        </stringlist>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option to create the necessary markup for a image outside the normal flow of text. Check the "Create caption, using the image description text." box, to add text description for the image.</string>
+                    </property>
+                </widget>
+                <widget class="RadioButton" row="2" column="0">
+                    <property name="name">
+                        <cstring>InlineMediaOption</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>true</bool>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>NoFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string>i&amp;nlinemediaobject</string>
+                    </property>
+                    <property name="checked">
+                        <bool>false</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@null</string>
+                            <string>echo '&lt;inlinemediaobject&gt;'
+echo '&lt;imageobject&gt;'
+echo '&lt;imagedata fileref="@le_imagefile" format="@cb_imagetype" /&gt;'
+echo '&lt;/imageobject&gt;'
+echo '&lt;textobject&gt;'
+echo '&lt;phrase&gt;@le_description&lt;/phrase&gt;'
+echo '&lt;/textobject&gt;'
+echo '&lt;/inlinemediaobject&gt;'</string>
+                        </stringlist>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option to create the necessary markup for a image inside the normal flow of text. You should use this option for images inside a table entry (entry tag) or a paragraph (para tag). This option is specially suited for small images, such as icons.</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="GroupBox" row="2" column="0">
+            <property name="name">
+                <cstring>GroupBox1</cstring>
+            </property>
+            <property name="title">
+                <string>Image Options</string>
+            </property>
+            <property name="populationText">
+                <string></string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                </stringlist>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLayoutWidget" row="0" column="0">
+                    <property name="name">
+                        <cstring>Layout5</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="ComboBox" row="2" column="1">
+                            <item>
+                                <property name="text">
+                                    <string>BMP</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>CGM-BINARY</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>CGM-CHAR</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>CGM-CLEAR</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>DITROFF</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>DVI</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>EPS</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>EQN</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>FAX</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>GIF</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>GIF87a</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>GIF89a</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>IGES</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>JPEG</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>JPG</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>linespecific</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>PCX</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>PDF</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>PIC</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>PNG</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>PS</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>SGML</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>SVG</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>SWF</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>TBL</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>TEX</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>TIFF</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>WMF</string>
+                                </property>
+                            </item>
+                            <item>
+                                <property name="text">
+                                    <string>WPG</string>
+                                </property>
+                            </item>
+                            <property name="name">
+                                <cstring>cb_imagetype</cstring>
+                            </property>
+                            <property name="currentItem">
+                                <number>19</number>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Select the image format here.  The image format is usually reflects the file extension of your image file (.png corresponds to PNG in the drop down, .jpg corresponds to JPG, etc.).</string>
+                            </property>
+                        </widget>
+                        <widget class="CheckBox" row="3" column="0" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>cb_caption</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Create caption, &amp;using the image description text.</string>
+                            </property>
+                            <property name="checked">
+                                <bool>true</bool>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@null</string>
+                                    <string>@null</string>
+                                    <string>echo '&lt;caption&gt;@le_description&lt;/caption&gt;'</string>
+                                </stringlist>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Check this box add caption text to the image. The caption text will appear below the image, allowing you to introduce or explain the image.</string>
+                            </property>
+                        </widget>
+                        <widget class="LineEdit" row="0" column="1">
+                            <property name="name">
+                                <cstring>le_description</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Image description.</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Enter the description of the image here. For instance, a screenshot of a configuration dialog should be described as "Configuration dialog.". This text will be used as caption text if the box below is checked.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="2" column="0">
+                            <property name="name">
+                                <cstring>TextLabel2_2_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Image Type:</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Select the image format here.  The image format is usually reflects the file extension of your image file (.png corresponds to PNG in the drop down, .jpg corresponds to JPG, etc.).</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0">
+                            <property name="name">
+                                <cstring>TextLabel2_2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Image file name:</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Enter the file name of the image here, including the extension (.png, .jpg, etc.). Enter only the file name, not the location (path) of the image file. The image files should be located in the same folder as the DocBook sources.</string>
+                            </property>
+                        </widget>
+                        <widget class="LineEdit" row="1" column="1">
+                            <property name="name">
+                                <cstring>le_imagefile</cstring>
+                            </property>
+                            <property name="text">
+                                <string>image.png</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Enter the file name of the image here, including the extension (.png, .jpg, etc.). Enter only the file name, not the location (path) of the image file. The image files should be located in the same folder as the DocBook sources.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="0" column="0">
+                            <property name="name">
+                                <cstring>TextLabel2</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Image Description:</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Enter the description of the image here. For instance, a screenshot of a configuration dialog should be described as "Configuration dialog.". This text will be used as caption text if the box below is checked.</string>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+            </grid>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>InlineMediaOption</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>cb_caption</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>MediaOption</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>cb_caption</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>ScreenshotOption</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>cb_caption</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>ScreenshotOption</tabstop>
+    <tabstop>le_description</tabstop>
+    <tabstop>le_imagefile</tabstop>
+    <tabstop>cb_imagetype</tabstop>
+    <tabstop>cb_caption</tabstop>
+    <tabstop>OKButton</tabstop>
+    <tabstop>CloseButton1_2</tabstop>
+    <tabstop>MediaOption</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

@@ -1,0 +1,449 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>DocBook_Table</class>
+<comment>Create a formal and informal table for DocBook documents.</comment>
+<author>Carlos Leonhard Woelz (based on Huberto Gastal Mayer initial work)</author>
+<widget class="Dialog">
+    <property name="name">
+        <cstring>Form1</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>487</width>
+            <height>531</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Docbook Table Wizard</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLayoutWidget" row="3" column="0">
+            <property name="name">
+                <cstring>Layout10</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="CloseButton" row="0" column="2">
+                    <property name="name">
+                        <cstring>CloseButton1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                    <property name="flat">
+                        <bool>false</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string></string>
+                        </stringlist>
+                    </property>
+                    <property name="writeStdout">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Click here to cancel the creation of the table. No action will be performed.</string>
+                    </property>
+                </widget>
+                <widget class="CloseButton" row="0" column="1">
+                    <property name="name">
+                        <cstring>OKButton</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                    <property name="flat">
+                        <bool>false</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@InformaltableOption
+@TableOption
+</string>
+                        </stringlist>
+                    </property>
+                    <property name="writeStdout">
+                        <bool>true</bool>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Press this button to create the table or informaltable.</string>
+                    </property>
+                </widget>
+                <spacer row="0" column="0">
+                    <property name="name">
+                        <cstring>Spacer3</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>141</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                </spacer>
+            </grid>
+        </widget>
+        <widget class="GroupBox" row="2" column="0">
+            <property name="name">
+                <cstring>TableOptionsGroup</cstring>
+            </property>
+            <property name="title">
+                <string>Table Options</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                </stringlist>
+            </property>
+            <property name="whatsThis" stdset="0">
+                <string>Enter here the id of the table or informaltable. You can use the id to link or reference to the table or informaltable elsewhere in the document.</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QLayoutWidget" row="0" column="0">
+                    <property name="name">
+                        <cstring>Layout12</cstring>
+                    </property>
+                    <grid>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>6</number>
+                        </property>
+                        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>ColumnLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Number of columns:</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Select or enter in this spin box the number of columns that should be created by the wizard.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="2" column="0">
+                            <property name="name">
+                                <cstring>TableIdLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Table id:</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Enter here the id of the table or informaltable. You can use the id to link or reference to the table or informaltable elsewhere in the document.</string>
+                            </property>
+                        </widget>
+                        <widget class="CheckBox" row="4" column="0" rowspan="1" colspan="3">
+                            <property name="name">
+                                <cstring>cb_header</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Add table header</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>echo '';</string>
+                                    <string>echo '';</string>
+                                    <string>echo '&lt;thead&gt;'
+echo '&lt;row&gt;'
+@sb_col
+echo '&lt;/row&gt;'
+echo '&lt;/thead&gt;'</string>
+                                </stringlist>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Check this box to create a table header. The table header is the first row of the table, and has the same number of entries as the other rows.</string>
+                            </property>
+                        </widget>
+                        <widget class="LineEdit" row="2" column="1" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>le_id</cstring>
+                            </property>
+                            <property name="text">
+                                <string>table_id</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>@widgetText</string>
+                                </stringlist>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Enter here the id of the table or informaltable. You can use the id to link or reference to the table or informaltable elsewhere in the document.</string>
+                            </property>
+                        </widget>
+                        <widget class="SpinBoxInt" row="1" column="2">
+                            <property name="name">
+                                <cstring>sb_lin</cstring>
+                            </property>
+                            <property name="value">
+                                <number>5</number>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>l=1
+while [ $l -le @widgetText ]; do
+echo ''
+ echo '&lt;row&gt;'
+ @sb_col
+ echo '&lt;/row&gt;'
+ l=$((l+1))
+done;
+</string>
+                                </stringlist>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Select or enter in this spin box the number of rows that should be created by the wizard. After using the wizard, you can add (or remove) more rows. To add more rows,  add the same number of &lt;entry&gt; tags per &lt;row&gt; tag as in the rest of the table.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>LinesLabel</cstring>
+                            </property>
+                            <property name="text">
+                                <string>Number of rows:</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Select or enter in this spin box the number of rows that should be created by the wizard. After using the wizard, you can add (or remove) more rows. To add more rows,  add the same number of &lt;entry&gt; tags per &lt;row&gt; tag as in the rest of the table.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel" row="3" column="0">
+                            <property name="name">
+                                <cstring>TableTitleLabel5</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>Table title:</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Enter here the title of the table. The title of the table will appear in the table of contents as well, under the "List of Tables", if you are using the KDE DocBook tools.</string>
+                            </property>
+                        </widget>
+                        <widget class="SpinBoxInt" row="0" column="2">
+                            <property name="name">
+                                <cstring>sb_col</cstring>
+                            </property>
+                            <property name="value">
+                                <number>3</number>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>c=1
+while [ $c -le @widgetText ]; do
+ echo "&lt;entry&gt;&lt;/entry&gt;"
+ c=$((c+1))
+done
+</string>
+                                </stringlist>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Select or enter in this spin box the number of columns that should be created by the wizard.</string>
+                            </property>
+                        </widget>
+                        <widget class="LineEdit" row="3" column="1" rowspan="1" colspan="2">
+                            <property name="name">
+                                <cstring>TitleLineBox</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="text">
+                                <string>Table Title</string>
+                            </property>
+                            <property name="associations" stdset="0">
+                                <stringlist>
+                                    <string>echo '&lt;title&gt;@widgetText&lt;/title&gt;'</string>
+                                </stringlist>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Enter here the title of the table. The title of the table will appear in the table of contents as well, under the "List of Tables", if you are using the KDE DocBook tools.</string>
+                            </property>
+                        </widget>
+                    </grid>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="ButtonGroup" row="1" column="0">
+            <property name="name">
+                <cstring>TableTypeGroup</cstring>
+            </property>
+            <property name="title">
+                <string>Table Type</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>11</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="RadioButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>TableOption</cstring>
+                    </property>
+                    <property name="text">
+                        <string>ta&amp;ble</string>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@null</string>
+                            <string>echo '&lt;table id="@le_id"&gt;'
+@TitleLineBox
+echo '&lt;tgroup cols="@sb_col.text"&gt;'
+echo ''
+@cb_header
+echo ''
+echo '&lt;tbody&gt;'
+@sb_lin
+echo '&lt;/tbody&gt;'
+echo ''
+echo '&lt;/tgroup&gt;'
+echo '&lt;/table&gt;'
+</string>
+                        </stringlist>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option to generate a formal table (table).</string>
+                    </property>
+                </widget>
+                <widget class="RadioButton" row="0" column="0">
+                    <property name="name">
+                        <cstring>InformaltableOption</cstring>
+                    </property>
+                    <property name="focusPolicy">
+                        <enum>TabFocus</enum>
+                    </property>
+                    <property name="text">
+                        <string>&amp;informaltable</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="associations" stdset="0">
+                        <stringlist>
+                            <string>@null</string>
+                            <string>echo '&lt;informaltable id="@le_id"&gt;'
+echo '&lt;tgroup cols="@sb_col.text"&gt;'
+echo ''
+echo '&lt;tbody&gt;'
+@sb_lin
+echo '&lt;/tbody&gt;'
+echo ''
+echo '&lt;/tgroup&gt;'
+echo '&lt;/informaltable&gt;'</string>
+                        </stringlist>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Select this option to generate an informal table (informaltable).</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TableTypeLabel</cstring>
+            </property>
+            <property name="font">
+                <font>
+                </font>
+            </property>
+            <property name="text">
+                <string>&lt;qt&gt;
+Select the table type:
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;informaltable:&lt;/b&gt; the most used table type in KDE docs. A informaltable does not contain title, table head or entry in the table of contents.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;table:&lt;/b&gt; a complete and formal table type, including title, table head and entry in the table of contents.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/qt&gt;</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignJustify|AlignTop</set>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>TableOption</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>TableTitleLabel5</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>TableOption</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>TitleLineBox</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>TableOption</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>cb_header</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>InformaltableOption</tabstop>
+    <tabstop>TableOption</tabstop>
+    <tabstop>sb_col</tabstop>
+    <tabstop>sb_lin</tabstop>
+    <tabstop>le_id</tabstop>
+    <tabstop>TitleLineBox</tabstop>
+    <tabstop>cb_header</tabstop>
+    <tabstop>OKButton</tabstop>
+    <tabstop>CloseButton1_2</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
