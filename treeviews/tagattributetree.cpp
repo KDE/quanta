@@ -495,36 +495,32 @@ EnhancedTagAttributeTree::EnhancedTagAttributeTree(QWidget *parent, const char *
 : QWidget(parent, name)
 {
 #ifdef BUILD_KAFKAPART
-  mainLayout = new QVBoxLayout(this, 11, 6, "Main Layout");
-  topLayout = new QHBoxLayout(0, 0, 6, "Top Layout");
+
+  widgetLayout = new QGridLayout( this, 1, 1, 11, 6, "MainLayout");
+
+  attrTree = new TagAttributeTree(this, "TagAttributeTree");
+attrTree->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+  widgetLayout->addMultiCellWidget( attrTree, 1, 1, 0, 3 );
 
   nodeName = new QLabel(this, "Node Name");
-  /**nodeName->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, 0, 0,
-    nodeName->sizePolicy().hasHeightForWidth()));*/
-  topLayout->addWidget(nodeName);
-  /**QSpacerItem *spacer = new QSpacerItem(50, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-  topLayout->addItem(spacer);*/
+  nodeName->setSizePolicy( QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Fixed, 0, 0, nodeName->sizePolicy().hasHeightForWidth() ) );
 
+  widgetLayout->addWidget( nodeName, 0, 0 );
   deleteTag = new KPushButton(this, "Delete Tag");
   deleteTag->setPixmap(SmallIcon("editdelete"));
   deleteTag->setMaximumHeight(32);
   deleteTag->setMaximumWidth(32);
   QToolTip::add(deleteTag, i18n("Delete the current tag only."));
-  topLayout->addWidget(deleteTag);
 
   deleteAll = new KPushButton(this, "Delete All");
   deleteAll->setPixmap(SmallIcon("editdelete"));
   deleteAll->setMaximumHeight(32);
   deleteAll->setMaximumWidth(32);
   QToolTip::add(deleteAll, i18n("Delete the current tag and all its children."));
-  topLayout->addWidget(deleteAll);
 
-  mainLayout->addLayout(topLayout);
-
-  attrTree = new TagAttributeTree(this, "TagAttributeTree");
-  mainLayout->addWidget(attrTree);
-  //resize( QSize(100, 100).expandedTo(minimumSizeHint()) );
-
+  widgetLayout->addWidget( deleteTag, 0, 2 );
+  widgetLayout->addWidget( deleteAll, 0, 3 );
+  clearWState( WState_Polished );
 
   connect(attrTree, SIGNAL(newNodeSelected(Node *)), this, SLOT(NodeSelected(Node *)));
   connect(deleteTag, SIGNAL(clicked()), this, SLOT(deleteNode()));
@@ -562,7 +558,7 @@ void EnhancedTagAttributeTree::showCaption()
   {
     if(curNode->tag->type == Tag::XmlTag || curNode->tag->type == Tag::XmlTagEnd ||
       curNode->tag->type == Tag::ScriptTag)
-      nodeName->setText(QString(i18n("Current Tag : <b>%1</b>")).arg(curNode->tag->name));
+      nodeName->setText(i18n("Current Tag : <b>%1</b>").arg(curNode->tag->name));
     else if(curNode->tag->type == Tag::Text)
       nodeName->setText(i18n("Current Tag : <b>text</b>"));
     else if(curNode->tag->type == Tag::Comment)

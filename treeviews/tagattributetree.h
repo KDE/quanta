@@ -27,8 +27,7 @@ class ParentItem;
 class Node;
 class QLabel;
 class KPushButton;
-class QHBoxLayout;
-class QVBoxLayout;
+class QGridLayout;
 
 class EditableTree : public KListView {
 Q_OBJECT
@@ -133,8 +132,7 @@ private:
   KPushButton* deleteAll;
   KPushButton* deleteTag;
   TagAttributeTree *attrTree;
-  QVBoxLayout *mainLayout;
-  QHBoxLayout *topLayout;
+  QGridLayout *widgetLayout;
   Node *curNode;
 };
 
