@@ -48,7 +48,7 @@ before a file is saved. Possible key names are: before_save, after_save, after_o
 after_project_open, after_project_save, before_upload, after_upload, after_project_add,
 after_project_remove, after_commit
 */
-typedef  QMap<QString, EventAction> EventActions;
+typedef  QMap<QString, QValueList<EventAction> > EventActions;
 
 class QPEvents : public QObject
 {

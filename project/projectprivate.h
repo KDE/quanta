@@ -43,7 +43,7 @@ class ProjectNewWeb;
 class ProjectNewFinal;
 class ProjectList;
 struct EventAction;
-typedef QMap<QString, EventAction> EventActions;
+typedef QMap<QString, QValueList<EventAction> > EventActions;
 
 class ProjectPrivate
             : public QObject

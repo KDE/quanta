@@ -43,17 +43,21 @@ void EventConfigurationDlg::initEvents(EventActions *events)
   QListViewItem *item;
   for (EventActions::ConstIterator it = events->constBegin(); it != events->constEnd(); ++it)
   {
-    EventAction ev = it.data();
-    item = new QListViewItem(eventsListView, QPEvents::ref()->fullEventName(it.key()), QPEvents::ref()->fullActionName(ev.action));
-    int argcount = ev.arguments.count();
-    if (argcount > 0)
-        item->setText(2, ev.arguments[0]);
-    if (argcount > 1)
-        item->setText(3, ev.arguments[1]);
-    if (argcount > 2)
-        item->setText(4, ev.arguments[2]);
-    if (argcount > 3)
-        item->setText(5, ev.arguments[3]);
+    QValueList<EventAction> evList = it.data();
+    for (QValueList<EventAction>::ConstIterator it2 = evList.constBegin(); it2 != evList.constEnd(); ++it2)
+    {
+      EventAction ev = *it2;
+      item = new QListViewItem(eventsListView, QPEvents::ref()->fullEventName(it.key()), QPEvents::ref()->fullActionName(ev.action));
+      int argcount = ev.arguments.count();
+      if (argcount > 0)
+          item->setText(2, ev.arguments[0]);
+      if (argcount > 1)
+          item->setText(3, ev.arguments[1]);
+      if (argcount > 2)
+          item->setText(4, ev.arguments[2]);
+      if (argcount > 3)
+          item->setText(5, ev.arguments[3]);
+    }
   }
 }
 

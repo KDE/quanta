@@ -26,7 +26,7 @@ class QDom;
 class ProjectPrivate;
 class ProjectList;
 struct EventAction;
-typedef  QMap<QString, EventAction> EventActions;
+typedef  QMap<QString, QValueList<EventAction> > EventActions;
 
 /**project
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia & Jens Herden

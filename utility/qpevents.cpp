@@ -78,20 +78,23 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
   if (events->contains(name))
   {
     m_eventName = name;
-    EventAction ev = (*events)[name];
-    if (ev.type == EventAction::Internal)
+    QValueList<EventAction> evList = (*events)[name];
+    for (QValueList<EventAction>::Iterator it = evList.begin(); it != evList.end(); ++it)
     {
-       if (KMessageBox::warningYesNo(0L, i18n("<qt>An internal action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), KStdGuiItem::yes(), KStdGuiItem::no(), "Warn about internal actions") == KMessageBox::No)
-         return;
-    } else
-    {
-       if (KMessageBox::warningYesNo(0L, i18n("<qt>An external action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), KStdGuiItem::yes(), KStdGuiItem::no(), "Warn about external actions") == KMessageBox::No)
-         return;
-    }
-    KURL url = KURL::fromPathOrURL(argument1);
-    KURL url2 = KURL::fromPathOrURL(argument2);
-    if (url.isValid())
-    {
+      EventAction ev = *it;
+      if (ev.type == EventAction::Internal)
+      {
+        if (KMessageBox::warningYesNo(0L, i18n("<qt>An internal action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), KStdGuiItem::yes(), KStdGuiItem::no(), "Warn about internal actions") == KMessageBox::No)
+          return;
+      } else
+      {
+        if (KMessageBox::warningYesNo(0L, i18n("<qt>An external action (<i>%1</i>) associated with an event (<i>%2</i>) will be executed.  Do you want to allow the execution of this action?</qt>").arg(ev.action).arg(name), i18n("Event Triggered"), KStdGuiItem::yes(), KStdGuiItem::no(), "Warn about external actions") == KMessageBox::No)
+          return;
+      }
+      KURL url = KURL::fromPathOrURL(argument1);
+      KURL url2 = KURL::fromPathOrURL(argument2);
+      if (url.isValid())
+      {
         bool inProject = Project::ref()->contains(url);
         if (inProject && url2.isValid())
         {
@@ -180,7 +183,7 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
                 handleEvent(ev);
             }
         }
-     }  else
+      } else
       if (name == "after_commit")
       {
         ev.arguments << i18n("Document committed");
@@ -205,6 +208,7 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
         ev.arguments << argument1;
         handleEvent(ev);
       }
+    }
   }
   if (!m_eventNames.contains(name))
     KMessageBox::sorry(0L, i18n("<qt>Unsupported event <b>%1</b>.</qt>").arg(name), i18n("Event Handling Error"));

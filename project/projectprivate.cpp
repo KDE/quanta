@@ -556,7 +556,15 @@ void ProjectPrivate::loadProjectXML()
       if (s != "--not set--" && !s.isEmpty())
           ev.arguments << s;
     }
-    m_events->insert(el.attribute("name"), ev);
+    if (m_events->contains(el.attribute("name")))
+    {
+      (*m_events)[el.attribute("name")].append(ev);
+    } else
+    {
+      QValueList<EventAction> evList;
+      evList.append(ev);
+      m_events->insert(el.attribute("name"), evList);
+    }
   }
 
   QDomNode teamNode = projectNode.namedItem("teamdata");

@@ -21,7 +21,7 @@
 
 class QDomDocument;
 struct EventAction;
-typedef  QMap<QString, EventAction> EventActions;
+typedef  QMap<QString, QValueList<EventAction> > EventActions;
 
 class EventConfigurationDlg : public EventConfigurationDlgS
 {
