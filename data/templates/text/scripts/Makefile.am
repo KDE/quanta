@@ -1,8 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = jpg png others 
 
-EXTRA_DIST = .dirinfo
+EXTRA_DIST = demo.php 
 
 ####### kdevelop will overwrite this part!!! (end)############
-

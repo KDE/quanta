@@ -1,5 +1,7 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = images pages scripts 
+SUBDIRS = images text documents 
+
+EXTRA_DIST = text 
 
 ####### kdevelop will overwrite this part!!! (end)############

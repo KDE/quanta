@@ -1,8 +1,7 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = jpg png others 
+SUBDIRS = scripts others html 
 
-EXTRA_DIST = .dirinfo
+EXTRA_DIST = .dirinfo 
 
 ####### kdevelop will overwrite this part!!! (end)############
-
