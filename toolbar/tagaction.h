@@ -77,6 +77,7 @@ private:
     bool firstError;
     bool firstOutput;
     bool m_modified;
+    bool loopStarted;
     QString scriptOutputDest;
     QString scriptErrorDest;
 

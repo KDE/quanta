@@ -51,7 +51,7 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   tag = element->cloneNode().toElement();
   m_view = quantaApp->view();
   setIcon( tag.attribute("icon","") );
-
+  loopStarted = false;
   if ( m_view )
       connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }
@@ -332,7 +332,11 @@ void TagAction::setInputFileName(const QString& fileName)
 
 void TagAction::slotProcessExited(KProcess *)
 {
-  qApp->exit_loop();
+  if (loopStarted)
+  {
+    qApp->exit_loop();
+    loopStarted = false;
+  }
 }
 
 void TagAction::execute()
@@ -343,6 +347,7 @@ void TagAction::execute()
   connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
   timer->start(10*1000, true);
   QExtFileInfo internalFileInfo;
+  loopStarted = true;
   internalFileInfo.enter_loop();
   delete timer;
 }
