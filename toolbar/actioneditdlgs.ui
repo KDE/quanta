@@ -703,6 +703,9 @@
     <tabstop>errorMessage</tabstop>
     <tabstop>text</tabstop>
 </tabstops>
+<includes>
+    <include location="global" impldecl="in implementation">kicondialog.h</include>
+</includes>
 <slots>
     <slot>deleteAction()</slot>
     <slot>newAction()</slot>
@@ -711,6 +714,6 @@
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>filecombo.h</includehint>
-    <includehint>kiconbutton.h</includehint>
+    <includehint>kicondialog.h</includehint>
 </includehints>
 </UI>
