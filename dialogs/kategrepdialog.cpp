@@ -344,7 +344,7 @@ void GrepDialog::slotSearch()
         files = " '"+(*it++)+"'" ;
 
     for ( ; it != tokens.end(); it++ )
-        files = files + " -o -name " + "'"+(*it)+ "'";
+        files = files + " -o -name " + "'"+KProcess::quote(*it)+ "'";
 
     status_label->setText(i18n("Searching..."));
 
@@ -354,7 +354,7 @@ void GrepDialog::slotSearch()
 
 
     QString command = "find '";
-    command += dir_combo->url();
+    command += KProcess::quote(dir_combo->url());
     command += "'";
     if (!recursive_box->isChecked())
         command += " -maxdepth 1";
@@ -363,7 +363,7 @@ void GrepDialog::slotSearch()
     command += " \\) -print";
     command += " | xargs ";
     command += "grep -n ";
-    command += "-e '" + pattern + "' ";
+    command += "-e '" + KProcess::quote(pattern) + "' ";
     command += " /dev/null";
     
     childproc = new KProcess();
