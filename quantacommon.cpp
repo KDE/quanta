@@ -27,7 +27,7 @@
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-
+#include <kprotocolinfo.h>
 
 #include "quantacommon.h"
 
@@ -91,14 +91,11 @@ QString QuantaCommon::attrCase( const QString attr)
 /** Set's up the url correctly from urlString. */
 void QuantaCommon::setUrl(KURL &url, QString urlString)
 {
- if (urlString.find(":") == -1)
+ url = urlString;
+ if (!KProtocolInfo::isKnownProtocol(url))
  {
    url.setPath(urlString);
-   if (url.protocol().isEmpty()) url.setProtocol("file");
- }
- else
- {
-   url = urlString;
+   url.setProtocol("file");
  }
 }
 /** No descriptions */
