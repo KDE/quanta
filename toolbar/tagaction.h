@@ -40,7 +40,9 @@ private:
     KProcess *proc;
     bool firstError;
     bool firstOutput;
-
+    QString scriptOutputDest;
+    QString scriptErrorDest;
+  
     QDomElement *tag;
     QuantaView *view_;
 };
