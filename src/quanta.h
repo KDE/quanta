@@ -564,7 +564,6 @@ private:
   bool m_previewVisible;
   bool m_noFramesPreview;
 
-  KProcess* m_execCommandPS;
   QString m_scriptOutput;
 
 protected: // Protected attributes

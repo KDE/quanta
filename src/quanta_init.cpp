@@ -1169,18 +1169,18 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
 
   //We create a KProcess that executes the "ps" *nix command to get the PIDs of the
   //other instances of quanta actually running
-  m_quanta->m_execCommandPS = new KProcess();
-  *(m_quanta->m_execCommandPS) << QStringList::split(" ",cmd);
+  KProcess *execCommandPS = new KProcess();
+  *(execCommandPS) << QStringList::split(" ",cmd);
 
-  connect( m_quanta->m_execCommandPS, SIGNAL(receivedStdout(KProcess*,char*,int)),
-           m_quanta, SLOT(slotGetScriptOutput(KProcess*,char*,int)));
-  connect( m_quanta->m_execCommandPS, SIGNAL(receivedStderr(KProcess*,char*,int)),
-           m_quanta, SLOT(slotGetScriptError(KProcess*,char*,int)));
-  connect( m_quanta->m_execCommandPS, SIGNAL(processExited(KProcess*)),
-           m_quanta, SLOT(slotProcessExited(KProcess*)));
+  connect(execCommandPS, SIGNAL(receivedStdout(KProcess*,char*,int)),
+          m_quanta, SLOT(slotGetScriptOutput(KProcess*,char*,int)));
+  connect(execCommandPS, SIGNAL(receivedStderr(KProcess*,char*,int)),
+          m_quanta, SLOT(slotGetScriptError(KProcess*,char*,int)));
+  connect(execCommandPS, SIGNAL(processExited(KProcess*)),
+          m_quanta, SLOT(slotProcessExited(KProcess*)));
 
   //if KProcess fails I think a message box is needed... I will fix it
-  if (!m_quanta->m_execCommandPS->start(KProcess::NotifyOnExit,KProcess::All))
+  if (!execCommandPS->start(KProcess::NotifyOnExit,KProcess::All))
     kdError() << "Failed to query for running Quanta instances!" << endl;
     //TODO: Replace the above error with a real messagebox after the message freeze is over
   else

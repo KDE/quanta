@@ -234,8 +234,6 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   connectDCOPSignal(0, 0, "editorPositionChanged(QString,int,int)", "newCursorPosition(QString,int,int)", false );
   connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false);
 
-  m_execCommandPS = 0L;
-
   m_partManager = new KParts::PartManager(this);
   // When the manager says the active part changes,
   // the builder updates (recreates) the GUI
@@ -306,8 +304,6 @@ QuantaApp::~QuantaApp()
  QDir dir;
  dir.rmdir(tmpDir + "quanta");
 
- delete m_execCommandPS;
- m_execCommandPS = 0L;
  delete dcopSettings;
  delete dcopQuanta;
 // delete m_partManager;

@@ -14,17 +14,17 @@
  ***************************************************************************/
 
 //qt include
-#include <qpopupmenu.h>
 #include <qtextedit.h>
 
 //kde includes
 #include <dcopref.h>
 #include <kaction.h>
 #include <kcombobox.h>
+#include <kdeversion.h>
 #include <klistbox.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kdeversion.h>
+#include <kpopupmenu.h>
 
 // CvsService
 #include <repository_stub.h>
@@ -36,7 +36,7 @@
 
 CVSService::CVSService(KActionCollection *ac)
 {
-  m_menu = new QPopupMenu;
+  m_menu = new KPopupMenu(this);
 #if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
   KAction *action = new KAction(i18n("&Commit"), 0, this, SLOT(slotCommit()), ac);
 #else
