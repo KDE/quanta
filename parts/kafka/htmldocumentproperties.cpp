@@ -730,3 +730,5 @@ NodeLinkedViewItem::~NodeLinkedViewItem()
 {
 
 }
+
+#include "htmldocumentproperties.moc"

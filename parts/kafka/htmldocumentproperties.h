@@ -44,6 +44,7 @@ public:
  */
 class htmlDocumentProperties : public htmlDocumentPropertiesui
 {
+	Q_OBJECT
 public:
         /**
          * @param forceInsertionOfBasicNodes Force the insertion of the basic Nodes (HTML, BODY, HEAD, ...) if pressing OK
@@ -52,6 +53,9 @@ public:
 	htmlDocumentProperties( QWidget* parent = 0, bool forceInsertionOfBasicNodes = false, 
           const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
 	~htmlDocumentProperties();
+	
+protected slots:	
+	virtual void aboutToClose();
 
 private slots:
 	virtual void accept();
