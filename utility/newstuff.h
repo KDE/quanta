@@ -19,12 +19,8 @@
 //qt includes
 #include <qobject.h>
 
-//app includes
-#ifdef COMPAT_NEWSTUFFSECURE
-#include "qnewstuff.h"
-#else
+//kde includes
 #include <knewstuff/knewstuffsecure.h>
-#endif
 /**
 Makes possible downloading and installing a DTEP resource files from a server.
 
