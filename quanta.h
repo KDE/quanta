@@ -384,6 +384,7 @@ protected slots:
   void slotDeleteFile();
   /** Called after there was no user activity - cursor movement - for xx ms*/
   void slotIdleTimerExpired();
+  void slotShowNoFramesPreview();
 
 protected:
   KParts::BrowserExtension *browserExtension()
@@ -492,9 +493,10 @@ private:
     *showScriptTabAction,
     *showFTabAction, *showPTabAction, *showTTabAction,
     *showSTabAction, *showATabAction, *showDTabAction,
-    *showStatusbarAction, *showPreviewAction,
+    *showStatusbarAction,
     *showKafkaAction, *showDTDToolbar;
   KSelectAction *setEndOfLine;
+  KToolBarPopupAction *showPreviewAction;
 
   KAction *saveAction, *saveAllAction,
     *closeprjAction, *insertFileAction, *insertDirAction,
@@ -526,6 +528,8 @@ private:
   uint cursorCol;
   uint oldCursorLine;
   uint oldCursorCol;
+  bool m_previewVisible;
+  bool m_noFramesPreview;
 protected: // Protected attributes
   /** Timer to refresh the structure tree. */
   QTimer *refreshTimer;

@@ -1,8 +1,5 @@
 LIBXSLT_REQUIRED_VERSION="1.0.18"
 
-AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h stdlib.h paths.h stdarg.h)
-AC_CHECK_FUNCS(usleep)
-
 dnl
 dnl Math detection
 dnl

@@ -473,6 +473,7 @@ void QuantaView::slotShowQuantaEditor()
   if(ta)
     ta->setChecked(true);
   /**killTimer(quantaUpdateTimer);*/
+  quantaApp->slotShowPreviewWidget(false);
   if(!writeExists())
   {
     currentViewsLayout = QuantaView::QuantaViewOnly;

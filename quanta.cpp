@@ -629,30 +629,66 @@ void QuantaApp::repaintPreview( bool clear )
 
   KURL url;
   Document *w = m_view->write();
-  if (!w->isUntitled())
+  QStringList list;
+  if (m_noFramesPreview)
   {
-//if it's  not untitled, than it was loaded from somewhere. In this case show it from that place
-    url = w->url();
-
-    if ( m_doc->isModified() ) //m_doc->saveDocument( m_doc->url() );
-         w->saveIt();
-
-    url = m_project->urlWithPrefix(url);
-
-    part->begin(url, xOffset, yOffset );
-    part->openURL( url );
-  } else  //the document is Untitled, preview the text from it
- {
-    QString text = w->editIf->text();
-    if ( text == oldtext ) return;
-    if ( text.isEmpty() )
+    list = w->tagAreas("frameset", true, true);
+    if (list.isEmpty() || w->editIf->text().isEmpty())
+      m_noFramesPreview = false;
+    else
     {
-      text = i18n( "<center><h3>The current document is empty...</h3></center>" );
+      QStringList noframearea =  w->tagAreas("noframes", false, true);
+      //find the frameset area
+      int bl, bc, el, ec;
+      QStringList l = QStringList::split('\n', list[0], true);
+      QStringList coordList = QStringList::split(',', l[0], true);
+      bl = coordList[0].toInt();
+      bc = coordList[1].toInt();
+      el = coordList[2].toInt();
+      ec = coordList[3].toInt();
+      QString noFramesText = w->text(0,0, bl, bc - 1);
+      noFramesText += noframearea[0];
+      noFramesText += w->text(el, ec + 1, w->editIf->numLines() - 1, w->editIf->lineLength(w->editIf->numLines() - 1));
+      noFramesText.replace(QRegExp("</?noframes[^>]*>", false), "");
+      //kdDebug(24000) << "NOFRAMES: " << noFramesText << endl;
+      if (w->isUntitled())
+        part->begin( projectBaseURL(), xOffset, yOffset );
+      else
+        part->begin( w->url(), xOffset, yOffset );
+      part->write(noFramesText);
     }
-    oldtext = text;
-    part->begin( projectBaseURL(), xOffset, yOffset );
-    part->write( text );
- }
+  }
+
+  if (!m_noFramesPreview)
+  {
+    if (!w->isUntitled())
+    {
+  //if it's  not untitled, than it was loaded from somewhere. In this case show it from that place
+      url = w->url();
+
+      if ( m_doc->isModified() ) //m_doc->saveDocument( m_doc->url() );
+          w->saveIt();
+
+      url = m_project->urlWithPrefix(url);
+
+      part->begin(url, xOffset, yOffset );
+      part->openURL( url );
+    } else  //the document is Untitled, preview the text from it
+    {
+      QString text = w->editIf->text();
+      if ( text == oldtext ) return;
+      if ( text.isEmpty() )
+      {
+        text = i18n( "<center><h3>The current document is empty...</h3></center>" );
+      } else
+      if (m_noFramesPreview)
+      {
+      }
+      oldtext = text;
+      part->begin( projectBaseURL(), xOffset, yOffset );
+      part->write( text );
+    }
+   }
  part->end();
  part->show();
 }
@@ -1290,7 +1326,8 @@ void QuantaApp::slotShowPreviewWidget(bool show)
       previousWidgetList.push_back(id);
       s->raiseWidget(1);
     }
-    showPreviewAction->setChecked(true);
+//    showPreviewAction->setChecked(true);
+    m_previewVisible = true;
   } else
   {
     int id = 0;
@@ -1300,7 +1337,9 @@ void QuantaApp::slotShowPreviewWidget(bool show)
       previousWidgetList.pop_back();
     }
     s->raiseWidget(id);
-    showPreviewAction->setChecked(false);
+//    showPreviewAction->setChecked(false);
+    m_previewVisible = false;
+    m_noFramesPreview = false;
   }
 }
 
@@ -1309,23 +1348,27 @@ void QuantaApp::slotShowPreview()
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (!s)
   {
-    showPreviewAction->setChecked(!showPreviewAction->isChecked());
+   // showPreviewAction->setChecked(!showPreviewAction->isChecked());
+    m_previewVisible = false;
     return;
   }
   int id = s->id(s->visibleWidget());
   if (id == 2)
   {
-    showPreviewAction->setChecked(!showPreviewAction->isChecked());
+    //showPreviewAction->setChecked(!showPreviewAction->isChecked());
+    m_previewVisible = false;
     return;
   }
   if (!m_view->writeExists())
   {
-    showPreviewAction->setChecked(!showPreviewAction->isChecked());
+    //showPreviewAction->setChecked(!showPreviewAction->isChecked());
+    m_previewVisible = false;
     return;
   }
   Document *w = m_view->write();
 
-  if (showPreviewAction->isChecked())
+//  if (showPreviewAction->isChecked())
+  if (!m_previewVisible)
   {
     if ( qConfig.previewPosition == "Bottom" )
     {
@@ -1334,6 +1377,7 @@ void QuantaApp::slotShowPreview()
     }
     slotShowPreviewWidget(true);
     repaintPreview(false);
+    m_previewVisible = true;
   } else
   {
     slotShowPreviewWidget(false);
@@ -1350,8 +1394,22 @@ void QuantaApp::slotShowPreview()
       if (origUrl.isLocalFile())
           fileWatcher->addFile(origUrl.path());
     }
+    m_previewVisible = false;
   }
+  KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
+  if (ta)
+  {
+    ta->setChecked(!m_previewVisible);
+  }
+  m_noFramesPreview = false;
 }
+
+void QuantaApp::slotShowNoFramesPreview()
+{
+  m_noFramesPreview = true;
+  slotShowPreview();
+}
+
 
 void QuantaApp::slotShowProjectTree()
 {
