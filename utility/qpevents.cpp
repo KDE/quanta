@@ -45,6 +45,7 @@ QPEvents::QPEvents(QObject *parent, const char *name)
    m_eventNames["before_close"] = i18n("Before document close");
    m_eventNames["after_close"] = i18n("After document close");
    m_eventNames["after_project_open"] = i18n("After project open");
+   m_eventNames["before_project_close"] = i18n("Before project close");
    m_eventNames["after_project_close"] = i18n("After project close");
    m_eventNames["before_upload"] = i18n("Before upload");
    m_eventNames["after_upload"] = i18n("After upload");
@@ -60,6 +61,7 @@ QPEvents::QPEvents(QObject *parent, const char *name)
    m_actionNames["email"] = i18n("Send email");
    m_actionNames["log"] = i18n("Log event");
    m_actionNames["script"] = i18n("Script action");
+   m_actionNames["action"] = i18n("Non-script action");
 }
 
 
@@ -158,7 +160,13 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
                 ev.arguments << i18n("Project closed");
                 ev.arguments <<  url.path();
                 handleEvent(ev);
-            }
+            } else
+            if (name == "before_project_close")
+            {
+                ev.arguments << i18n("About to close the project");
+                ev.arguments <<  url.path();
+                handleEvent(ev);
+            } else
             if (name == "after_project_add")
             {
                 ev.arguments << i18n("Document added to project");
@@ -297,16 +305,21 @@ bool QPEvents::handleEvent(const EventAction& ev)
   if (ev.type == EventAction::External)
   {
       //KMessageBox::sorry(0L, i18n("External event actions are not yet supported."));
-      if (ev.action == "script")
+      if (ev.action == "script" || ev.action =="action")
       {
           QString name = ev.arguments[0];
-          TagAction *action = dynamic_cast<TagAction*>(quantaApp->actionCollection()->action(name));
-          if (action)
+          KAction *action = quantaApp->actionCollection()->action(name);
+          TagAction *tagAction = dynamic_cast<TagAction*>(action);
+          if (tagAction)
           {
-            action->addArguments(ev.arguments);
-            action->insertTag();
+            tagAction->addArguments(ev.arguments);
+            tagAction->insertTag();
           }
           else
+          if (action)
+          {
+            action->activate();
+          } else
             KMessageBox::sorry(0L, i18n("<qt>The <b>%1</b> script action was not found on your system.</qt>").arg(name), i18n("Action Execution Error"));
       }  else
       KMessageBox::sorry(0L, i18n("Unsupported external event action."));

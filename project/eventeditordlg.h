@@ -45,6 +45,7 @@ protected:
    void resetArgumentWidgets(QLabel *label, KComboBox *combo);
 
    QMap<QString, QString> m_scriptActions;
+   QMap<QString, QString> m_otherActions;
 
 protected slots:
 

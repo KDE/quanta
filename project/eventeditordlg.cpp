@@ -109,7 +109,21 @@ QString EventEditorDlg::argument1()
               }
           }
           return s;
-       }
+       } else
+       if (actionType == QPEvents::ref()->fullActionName("action"))
+       {
+          QString s = argument1Combo->currentText();
+          for (QMap<QString, QString>::ConstIterator it = m_otherActions.constBegin(); it != m_otherActions.constEnd(); ++it)
+          {
+              if (it.data() == s)
+              {
+                  s = it.key();
+                  break;
+              }
+          }
+          return s;
+       } else
+
        return s;
    }
 
@@ -219,6 +233,28 @@ void EventEditorDlg::setArguments(const QStringList& arguments)
          argument1Combo->setCurrentItem(0);
       }
    } else
+   if (actionType == QPEvents::ref()->fullActionName("action"))
+   {
+      QString s = arguments[0];
+      if (m_otherActions.contains(s))
+        s = m_otherActions[s];
+      if (argument1Combo->contains(s))
+      {
+          for (int i = 0; i < argument1Combo->count(); i++)
+          {
+              if (argument1Combo->text(i) == s)
+              {
+                  argument1Combo->setCurrentItem(i);
+                  break;
+              }
+          }
+      }
+      else
+      {
+         argument1Combo->insertItem(s, 0);
+         argument1Combo->setCurrentItem(0);
+      }
+   } else
    if (actionType == QPEvents::ref()->fullActionName("log"))
    {
       argument1Combo->insertItem(arguments[0], 0);
@@ -306,6 +342,7 @@ void EventEditorDlg::slotActionChanged(const QString &name)
        argument1Label->setText(i18n("Action name:"));
        TagAction *action = 0L;
        QString s;
+       QStringList items;
        QRegExp r("\\&(?!\\&)");
        for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
        {
@@ -313,10 +350,35 @@ void EventEditorDlg::slotActionChanged(const QString &name)
           if (action && action->type() == "script")
           {
              s = action->text().replace(r, "");
-             argument1Combo->insertItem(s);
+             items.append(s);
              m_scriptActions[action->name()] = s;
           }
        }
+       items.sort();
+       argument1Combo->insertStringList(items);
+       argument1Combo->setEnabled(true);
+   } else
+   if (name == QPEvents::ref()->fullActionName("action"))
+   {
+       argument1Label->setEnabled(true);
+       argument1Label->setText(i18n("Action name:"));
+       TagAction *action = 0L;
+       QString s;
+       QRegExp r("\\&(?!\\&)");
+       QStringList items;
+       for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
+       {
+          KAction *a = quantaApp->actionCollection()->action(i);
+          action = dynamic_cast<TagAction*>(a);
+          if (!action || action->type() != "script")
+          {
+             s = a->text().replace(r, "");
+             items.append(s);
+             m_otherActions[a->name()] = s;
+          }
+       }
+       items.sort();
+       argument1Combo->insertStringList(items);
        argument1Combo->setEnabled(true);
    }
 }

@@ -1109,6 +1109,7 @@ void ProjectPrivate::slotNewProject()
 void ProjectPrivate::slotCloseProject()
 {
   if (!parent->hasProject()) return;
+  emit eventHappened("before_project_close", baseURL.url(), QString::null);
   if (!uploadProjectFile())
   {
     if (KMessageBox::warningYesNo(m_parent, i18n("Saving of project failed. Do you want to continue with closing (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::No)
@@ -2537,6 +2538,7 @@ bool Project::queryClose()
   bool canExit = true;
   if (hasProject())
   {
+    emit eventHappened("before_project_close", d->baseURL.url(), QString::null);
     d->config->writePathEntry("Last Project", d->projectURL.url());
     canExit = d->uploadProjectFile();
     if (! canExit)

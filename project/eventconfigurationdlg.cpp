@@ -75,7 +75,7 @@ void EventConfigurationDlg::saveEvents(QDomDocument dom)
        QDomElement el = node.toElement();
        el.setAttribute("name", QPEvents::ref()->eventName(item->text(0)));
        el.setAttribute("action", QPEvents::ref()->actionName(item->text(1)));
-       if (el.attribute("action") == "script")
+       if (el.attribute("action") == "script" || el.attribute("action") == "action")
          el.setAttribute("type", "external");
        else
          el.setAttribute("type", "internal");
