@@ -58,9 +58,6 @@
             <property name="text">
                 <string>&amp;Create new subproject</string>
             </property>
-            <property name="accel">
-                <string>Alt+C</string>
-            </property>
         </widget>
     </grid>
 </widget>

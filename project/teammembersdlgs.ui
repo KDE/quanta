@@ -12,9 +12,6 @@
             <height>492</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>TeamMembersDlgS</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -36,9 +33,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Add</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
                     </property>
                 </widget>
                 <spacer row="1" column="3">
@@ -64,9 +58,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Edit</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
                     </property>
                 </widget>
                 <spacer row="1" column="1">
@@ -152,9 +143,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Delete</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+D</string>
                     </property>
                 </widget>
             </grid>
