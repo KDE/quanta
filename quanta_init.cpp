@@ -876,8 +876,8 @@ void QuantaApp::openLastFiles()
            "Backup file size: <b>%4</b><br>"
            "Backup created on: <b>%5</b><br><br>"
            "Do you want to restore it and use the backup copy instead of the original one?</qt>").arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
-           .arg(origSize).arg(origTime)
-           .arg(backupSize).arg(backupTime), i18n("Restore file")) == KMessageBox::Yes)
+           .arg(KIO::convertSize(origSize)).arg(origTime)
+           .arg(KIO::convertSize(backupSize)).arg(backupTime), i18n("Restore file")) == KMessageBox::Yes)
        {
           KURL backupURL = originalVersion;
           backupURL.setPath(backupURL.path()+".backup");
