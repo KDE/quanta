@@ -142,7 +142,7 @@ KafkaDOMTreeDialog::KafkaDOMTreeDialog(QWidget *parent, KHTMLPart *part, const c
 	setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)1, 0, 0, sizePolicy().hasHeightForWidth() ) );
 	DialogLayout = new QGridLayout( this, 1, 1, 11, 6, "DialogLayout");
 	domview = new DOMTreeView(this, part, name);
-	domview->setTitle("Debugging KafkaHTMLPart DOM Tree ");
+	domview->setTitle("Debugging KafkaWidget DOM Tree ");
         DialogLayout->addWidget(domview, 1,1);
 
 }

@@ -49,21 +49,20 @@
 #include "../../treeviews/tagattributetree.h"
 #include "kafkahtmlpart.moc"
 
-class KafkaHTMLPartPrivate
+class KafkaWidgetPrivate
 {
 public:
-	KafkaHTMLPartPrivate()
+	KafkaWidgetPrivate()
 	{
 		cursorTimer = 0;
 		drawCursor = true;
 	}
-	~KafkaHTMLPartPrivate()
+	~KafkaWidgetPrivate()
 	{
 	}
 	int cursorTimer;
 	bool cursorOn;
 	bool drawCursor;
-	bool m_readOnly;
 	int m_cursorOffset;
 	int m_pressOffset;
 	int m_releaseOffset;
@@ -76,17 +75,16 @@ public:
 #endif
 };
 
-KafkaHTMLPart::KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, WKafkaPart *part,
+KafkaWidget::KafkaWidget(QWidget *parent, QWidget *widgetParent, KafkaDocument *part,
 	const char *name)
 	: KHTMLPart(new KafkaHTMLView(this, widgetParent, name), parent, name),
 	w(part)
 {
-	d = new KafkaHTMLPartPrivate();
+	d = new KafkaWidgetPrivate();
 
 	d->m_cursorOffset = 0;
 	d->m_pressOffset = 0;
 	d->m_releaseOffset = 0;
-	d->m_readOnly = false;
 	d->cursorOn = false;
 	d->stuckCursorHorizontalPos = false;
 
@@ -110,11 +108,11 @@ KafkaHTMLPart::KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, WKafkaPart 
 	end();
 }
 
-KafkaHTMLPart::~KafkaHTMLPart()
+KafkaWidget::~KafkaWidget()
 {
 }
 
-void KafkaHTMLPart::newDocument()
+void KafkaWidget::newDocument()
 {
  //FIXME: Somehow we should get it from Quanta settings: qConfig.attrValueQuotation
  //-->No need for that: Quotations aren't stored in the DOM::Nodes
@@ -132,151 +130,84 @@ void KafkaHTMLPart::newDocument()
 
 }
 
-bool KafkaHTMLPart::openDocument(const KURL &url)
+void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
 {
-	return openURL(url);
-}
-
-bool KafkaHTMLPart::readOnly()
-{
-	return d->m_readOnly;
-}
-
-void KafkaHTMLPart::setReadOnly(bool value)
-{
-	d->m_readOnly = value;
-}
-
-void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position)
-{
-	kdDebug(25001)<< "KafkaHTMLPart::insertText text " << text << " pos " << position << endl;
+	kdDebug(25001)<< "KafkaWidget::insertText text " << text << " pos " << position << endl;
 	int focus = w->getAttrs(node)->chCurFoc();
 
 	if(position < 0) return;//nothing to do if something is selected
 	//if(focus == kNodeAttrs::no || !cbModified) return;//can't add text in this Node.
 	if(focus == kNodeAttrs::textNode && node.nodeType() == DOM::Node::TEXT_NODE)
 	{
-		try
-		{
-			DOM::DOMString textNode = node.nodeValue();
-			DOM::DOMString textSplitted = textNode.split(position);
-			node.setNodeValue(textNode + text + textSplitted);
-			d->m_cursorOffset += text.length();
-			emit domNodeModified(node);
-			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text" << endl;
-		} catch(DOM::DOMException e)
-		{
-			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-				"ERROR - code : " << e.code << endl;
-		}
+		DOM::DOMString textNode = node.nodeValue();
+		DOM::DOMString textSplitted = textNode.split(position);
+		node.setNodeValue(textNode + text + textSplitted);
+		d->m_cursorOffset += text.length();
+		emit domNodeModified(node);
+		kdDebug(25001) << "KafkaWidget::insertText() - added text" << endl;
 	}
 	else if(position == 0 && node.nodeName().string().lower() == "body")
 	{
 		//SPECIFIC HTML code!!!
-		try
-		{
-			DOM::Text textNode = document().createTextNode(text);
-			node.appendChild(textNode);
-			m_currentNode = textNode;
-			d->m_cursorOffset = text.length();
-			emit domNodeInserted(textNode, false);
-			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text - 1" << endl;
-		} catch(DOM::DOMException e)
-		{
-			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-				"ERROR - code : " << e.code << endl;
-		}
+		DOM::Text textNode = document().createTextNode(text);
+		node.appendChild(textNode);
+		m_currentNode = textNode;
+		d->m_cursorOffset = text.length();
+		emit domNodeInserted(textNode, false);
+		kdDebug(25001) << "KafkaWidget::insertText() - added text - 1" << endl;
 	}
 	else if(position == 0)
 	{
-		try
-		{
-			DOM::Text textNode = document().createTextNode(text);
-			DOM::Node parent = node.parentNode();
-			parent.insertBefore(textNode, node);
-			m_currentNode = textNode;
-			d->m_cursorOffset = text.length();
-			emit domNodeInserted(textNode, false);
-			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text - 2" << endl;
-		} catch(DOM::DOMException e)
-		{
-			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-				"ERROR - code : " << e.code << endl;
-		}
+		DOM::Text textNode = document().createTextNode(text);
+		DOM::Node parent = node.parentNode();
+		parent.insertBefore(textNode, node);
+		m_currentNode = textNode;
+		d->m_cursorOffset = text.length();
+		emit domNodeInserted(textNode, false);
+		kdDebug(25001) << "KafkaWidget::insertText() - added text - 2" << endl;
 	}
 	else if(position == 3 || (position == 1 && (focus == kNodeAttrs::singleNode ||
 		focus == kNodeAttrs::singleNodeAndItself)))
 	{
-		try
-		{
-			DOM::Text textNode = document().createTextNode(text);
-			DOM::Node parent = node.parentNode();
-			parent.insertBefore(textNode, node.nextSibling());
-			m_currentNode = textNode;
-			d->m_cursorOffset = text.length();
-			emit domNodeInserted(textNode, false);
-			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text - 3" << endl;
-		} catch(DOM::DOMException e)
-		{
-			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-				"ERROR - code : " << e.code << endl;
-		}
+		DOM::Text textNode = document().createTextNode(text);
+		DOM::Node parent = node.parentNode();
+		parent.insertBefore(textNode, node.nextSibling());
+		m_currentNode = textNode;
+		d->m_cursorOffset = text.length();
+		emit domNodeInserted(textNode, false);
+		kdDebug(25001) << "KafkaWidget::insertText() - added text - 3" << endl;
 	}
 	else if(position == 1)
 	{
-		try
-		{
-			DOM::Text textNode = document().createTextNode(text);
-			if(!node.firstChild().isNull())
-				node.insertBefore(textNode, node.firstChild());
-			else
-				node.appendChild(textNode);
-			m_currentNode = textNode;
-			d->m_cursorOffset = text.length();
-			emit domNodeInserted(textNode, false);
-			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text - 4" << endl;
-		} catch(DOM::DOMException e)
-		{
-			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-				"ERROR - code : " << e.code << endl;
-		}
-	}
-	else if(position == 2)
-	{
-		try
-		{
-			DOM::Text textNode = document().createTextNode(text);
+		DOM::Text textNode = document().createTextNode(text);
+		if(!node.firstChild().isNull())
+			node.insertBefore(textNode, node.firstChild());
+		else
 			node.appendChild(textNode);
-			m_currentNode = textNode;
-			d->m_cursorOffset = text.length();
-			emit domNodeInserted(textNode, false);
-			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text - 5" << endl;
-		} catch(DOM::DOMException e)
-		{
-			kdDebug(25001)<< "KafkaHTMLPart::insertText()" <<
-				"ERROR - code : " << e.code << endl;
-		}
+		m_currentNode = textNode;
+		d->m_cursorOffset = text.length();
+		emit domNodeInserted(textNode, false);
+		kdDebug(25001) << "KafkaWidget::insertText() - added text - 4" << endl;
 	}
-			document().updateRendering();
+	//document().updateRendering();
 	QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
-	//setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 }
 
-void KafkaHTMLPart::slotDelayedSetCaretPosition()
+void KafkaWidget::slotDelayedSetCaretPosition()
 {
 	setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 	emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 }
 
-void KafkaHTMLPart::insertText(const QString &text, int position)
+void KafkaWidget::insertText(const QString &text, int position)
 {
 	insertText(m_currentNode, text, (position == -1 ? d->m_cursorOffset : position));
 }
 
 
-void KafkaHTMLPart::normalize(DOM::Node _node)
+void KafkaWidget::normalize(DOM::Node _node)
 {
-	kdDebug(25001)<< "KafkaHTMLPart::normalize()" << endl;
+	kdDebug(25001)<< "KafkaWidget::normalize()" << endl;
 	DOM::Node childNode = _node.firstChild();
 	while(!childNode.isNull() && w->getAttrs(childNode)->chCurFoc() == kNodeAttrs::textNode)
 	{
@@ -297,7 +228,7 @@ void KafkaHTMLPart::normalize(DOM::Node _node)
 	}
 }
 
-void KafkaHTMLPart::keyReturn()
+void KafkaWidget::keyReturn()
 {
 	//Temporary HTML-specific function
 	//TODO:CHANGE AND USE <P> instead of <BR>
@@ -344,7 +275,7 @@ void KafkaHTMLPart::keyReturn()
 	}
 }
 
-bool KafkaHTMLPart::eventFilter(QObject *, QEvent *event)
+bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 {
 	bool forgetEvent = false;
 	//tmp
@@ -353,7 +284,7 @@ bool KafkaHTMLPart::eventFilter(QObject *, QEvent *event)
 
 	if(event->type() == QEvent::FocusIn)
 	{
-		kdDebug(25001) << "KafkaHTMLPart::eventFilter() FocusIn" << endl;
+		kdDebug(25001) << "KafkaWidget::eventFilter() FocusIn" << endl;
 		emit hasFocus(true);
 		if(!d->cursorTimer)
 			{
@@ -365,7 +296,7 @@ bool KafkaHTMLPart::eventFilter(QObject *, QEvent *event)
 
 	if(event->type() == QEvent::FocusOut)
 	{
-		kdDebug(25001) << "KafkaHTMLPart::eventFilter() FocusOut" << endl;
+		kdDebug(25001) << "KafkaWidget::eventFilter() FocusOut" << endl;
 		emit hasFocus(false);
 		if(d->cursorTimer)
 		{
@@ -382,40 +313,38 @@ bool KafkaHTMLPart::eventFilter(QObject *, QEvent *event)
 		switch(keyevent->key())
 		{
 			case Key_Left:
-				kdDebug(25001) << "KafkaHTMLPart::eventFilter() Left" << endl;
+				kdDebug(25001) << "KafkaWidget::eventFilter() Left" << endl;
 				//previousOffset(1);
 				d->stuckCursorHorizontalPos = false;
 				//forgetEvent = true;//to avoid the scrolling of the page
 				break;
 
 			case Key_Right:
-				kdDebug(25001) << "KafkaHTMLPart::eventFilter() Right" << endl;
+				kdDebug(25001) << "KafkaWidget::eventFilter() Right" << endl;
 				//nextOffset(1);
 				d->stuckCursorHorizontalPos = false;
 				//forgetEvent = true;
 				break;
 
 			case Key_Backspace:
-				kdDebug(25001)<< "KafkaHTMLPart::eventFilter() Backspace" << endl;
-				if(!readOnly())
-					keyBackspace();
+				kdDebug(25001)<< "KafkaWidget::eventFilter() Backspace" << endl;
+				keyBackspace();
 				d->stuckCursorHorizontalPos = false;
 				break;
 
 			case Key_Delete:
-				kdDebug(25001)<< "KafkaHTMLPart::eventFilter() Delete" << endl;
-				if(!readOnly())
-					keyDelete();
+				kdDebug(25001)<< "KafkaWidget::eventFilter() Delete" << endl;
+				keyDelete();
 				d->stuckCursorHorizontalPos = false;
 				break;
 
 			case Key_Up:
-				kdDebug(25001)<< "KafkaHTMLPart::eventFilter() Up" << endl;
+				kdDebug(25001)<< "KafkaWidget::eventFilter() Up" << endl;
 				//keyUp();
 				//forgetEvent = true;
 				break;
 			case Key_Down:
-				kdDebug(25001)<< "KafkaHTMLPart::eventFilter() Down" << endl;
+				kdDebug(25001)<< "KafkaWidget::eventFilter() Down" << endl;
 				//keyDown();
 				//forgetEvent = true;
 				break;
@@ -434,7 +363,7 @@ bool KafkaHTMLPart::eventFilter(QObject *, QEvent *event)
 			case Key_BackTab:
 				break;
 			case Key_Return:
-				kdDebug(25001)<< "KafkaHTMLPart::eventFilter() Return" << endl;
+				kdDebug(25001)<< "KafkaWidget::eventFilter() Return" << endl;
 				keyReturn();
 				d->stuckCursorHorizontalPos = false;
 				break;
@@ -479,19 +408,19 @@ bool KafkaHTMLPart::eventFilter(QObject *, QEvent *event)
 				break;
 
 			default:
-				kdDebug(25001) << "KafkaHTMLPart::eventFilter() Text" << endl;
+				kdDebug(25001) << "KafkaWidget::eventFilter() Text" << endl;
 				if(m_currentNode.isNull())
 				{
-					kdDebug(25001)<< "DOM::Node NULLLLLLLLLLLLLLLLLL" << endl;
+					kdDebug(25001)<< "KafkaWidget::eventFilter() - DOM::Node NULL" << endl;
 					break;
 				}
 				else if(w->getAttrs(m_currentNode)->chCurFoc() !=
 					kNodeAttrs::no || m_currentNode.nodeName().string().lower() == "body")
 				{
-					kdDebug(25001) << "KafkaHTMLPart::eventFilter() Text - " <<
+					kdDebug(25001) << "KafkaWidget::eventFilter() Text - " <<
 						keyevent->text() << endl;
 					if(/**keyevent->key() >= Key_Space &&*/ /**keyevent->key() !=
-						Key_unknown && */!readOnly())
+						Key_unknown && */keyevent->state() == Qt::NoButton)
 						insertText(keyevent->text(), -1);
 					makeCursorVisible();
 				}
@@ -516,7 +445,7 @@ bool KafkaHTMLPart::eventFilter(QObject *, QEvent *event)
 		return true;
 }
 
-void KafkaHTMLPart::keyDelete()
+void KafkaWidget::keyDelete()
 {
 	kNodeAttrs *attrs;
 	int focus;
@@ -530,7 +459,7 @@ void KafkaHTMLPart::keyDelete()
 	{//if we are in the middle of some text, we remove one letter
 		if(!attrs->cbMod())
 			return;
-		kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - one letter removed - 1" << endl;
+		kdDebug(25001)<< "KafkaWidget::keyDelete() - one letter removed - 1" << endl;
 		DOM::DOMString nodeText = m_currentNode.nodeValue();
 		DOM::DOMString textSplitted = nodeText.split(d->m_cursorOffset + 1);
 		nodeText.split(d->m_cursorOffset);
@@ -546,7 +475,7 @@ void KafkaHTMLPart::keyDelete()
 	{//if we delete ourselves, which node will be m_currentNode??
 		if(!attrs->cbDel())
 			return;
-		kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting a Node - 2" <<
+		kdDebug(25001)<< "KafkaWidget::keyDelete() - deleting a Node - 2" <<
 			endl;
 		DOM::Node _node = m_currentNode;
 		bool b = false;
@@ -620,7 +549,7 @@ void KafkaHTMLPart::keyDelete()
 		{
 			if((static_cast<DOM::CharacterData>(_nodeNext)).length() != 0)
 			{//if we are in text, remove a letter
-				kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - one letter" <<
+				kdDebug(25001)<< "KafkaWidget::keyDelete() - one letter" <<
 					" removed - 2" << endl;
 				DOM::DOMString nodeText = _nodeNext.nodeValue();
 				DOM::DOMString textSplitted = nodeText.split(1);
@@ -631,7 +560,7 @@ void KafkaHTMLPart::keyDelete()
 			}
 			else
 			{//if we are in an empty text
-				kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting" <<
+				kdDebug(25001)<< "KafkaWidget::keyDelete() - deleting" <<
 					"empty #text" << endl;
 				_nodeParent = _nodeNext.parentNode();
 				emit domNodeIsAboutToBeRemoved(_nodeNext, true);
@@ -647,7 +576,7 @@ void KafkaHTMLPart::keyDelete()
 			kNodeAttrs::no || attrs->chCurFoc() == kNodeAttrs::left) &&
 			!_nodeNext.hasChildNodes()))
 		{
-			kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting" <<
+			kdDebug(25001)<< "KafkaWidget::keyDelete() - deleting" <<
 				" a Node" << endl;
 			_nodeParent = _nodeNext.parentNode();
 			focus = w->getAttrs(_nodeNext)->chCurFoc();
@@ -673,7 +602,7 @@ void KafkaHTMLPart::keyDelete()
 		}
 		/**else if(d->TagsDeletable.contains(_nodeNext.nodeName().string().upper()))
 		{//if it is a deletable tag, remove it
-			kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting a" <<
+			kdDebug(25001)<< "KafkaWidget::keyDelete() - deleting a" <<
 				" TagDeletable" << endl;
 			_nodeParent = _nodeNext.parentNode();
 			emit domNodeIsAboutToBeRemoved(_nodeNext, true);
@@ -687,7 +616,7 @@ void KafkaHTMLPart::keyDelete()
 		{//if it is a Text deletable tag
 			if(!_nodeNext.hasChildNodes())
 			{//if the tagTextDeletable has no childs, delete it
-				kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting" <<
+				kdDebug(25001)<< "KafkaWidget::keyDelete() - deleting" <<
 					" a TagTextDeletable" << endl;
 				emit domNodeIsAboutToBeRemoved(_nodeNext, true);
 				_nodeNext.parentNode().removeChild(_nodeNext);
@@ -702,7 +631,7 @@ void KafkaHTMLPart::keyDelete()
 	}
 }
 
-void KafkaHTMLPart::keyBackspace()
+void KafkaWidget::keyBackspace()
 {
 	kNodeAttrs *attrs;
 	int focus;
@@ -716,7 +645,7 @@ void KafkaHTMLPart::keyBackspace()
 	{//if we are in the middle of some text, we remove one letter
 		if(!attrs->cbMod())
 			return;
-		kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - one letter removed - 1" << endl;
+		kdDebug(25001)<< "KafkaWidget::keyBackspace() - one letter removed - 1" << endl;
 		DOM::DOMString nodeText = m_currentNode.nodeValue();
 		DOM::DOMString textSplitted = nodeText.split(d->m_cursorOffset);
 		nodeText.split(d->m_cursorOffset - 1);
@@ -734,7 +663,7 @@ void KafkaHTMLPart::keyBackspace()
 	{//if we delete ourselves, which node will be m_currentNode??
 		if(!attrs->cbDel())
 			return;
-		kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting a TagDeletable - 2" << endl;
+		kdDebug(25001)<< "KafkaWidget::keyBackspace() - deleting a TagDeletable - 2" << endl;
 		DOM::Node _node = m_currentNode;
 		bool b = false;
 		while(1)
@@ -810,7 +739,7 @@ void KafkaHTMLPart::keyBackspace()
 		{
 			if((static_cast<DOM::CharacterData>(_nodePrev)).length() != 0)
 			{//if we are in text, remove a letter
-				kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - one" <<
+				kdDebug(25001)<< "KafkaWidget::keyBackspace() - one" <<
 					" letter removed - 2" << endl;
 				DOM::DOMString nodeText = _nodePrev.nodeValue();
 				nodeText.split((static_cast<DOM::CharacterData>(_nodePrev)).length() - 1);
@@ -822,7 +751,7 @@ void KafkaHTMLPart::keyBackspace()
 			}
 			else
 			{//if we are in an empty text
-				kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting" <<
+				kdDebug(25001)<< "KafkaWidget::keyBackspace() - deleting" <<
 					" empty #text" << endl;
 				_nodeParent = _nodePrev.parentNode();
 				emit domNodeIsAboutToBeRemoved(_nodePrev, true);
@@ -837,7 +766,7 @@ void KafkaHTMLPart::keyBackspace()
 			kNodeAttrs::no || attrs->chCurFoc() == kNodeAttrs::left) &&
 			!_nodePrev.hasChildNodes()))
 		{
-			kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting" <<
+			kdDebug(25001)<< "KafkaWidget::keyBackspace() - deleting" <<
 				" a Node" << endl;
 			_nodeParent = _nodePrev.parentNode();
 			focus = w->getAttrs(_nodePrev)->chCurFoc();
@@ -863,7 +792,7 @@ void KafkaHTMLPart::keyBackspace()
 		}
 		/**else if(d->TagsDeletable.contains(_nodePrev.nodeName().string().upper()))
 		{//if it is a deletable tag, remove it
-			kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting a TagDeletable"
+			kdDebug(25001)<< "KafkaWidget::keyBackspace() - deleting a TagDeletable"
 				<< endl;
 			if((_nodePrev.previousSibling() != 0) &&
 				_nodePrev.previousSibling().nodeType() == DOM::Node::TEXT_NODE &&
@@ -887,7 +816,7 @@ void KafkaHTMLPart::keyBackspace()
 		{//if it is a Text deletable tag
 			if(!_nodePrev.hasChildNodes())
 			{//if we go up and we can delete the tag, delete it :)
-				kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting" <<
+				kdDebug(25001)<< "KafkaWidget::keyBackspace() - deleting" <<
 					" a TagTextDeletable" << endl;
 				emit domNodeIsAboutToBeRemoved(_nodePrev, true);
 				_nodePrev.parentNode().removeChild(_nodePrev);
@@ -902,7 +831,7 @@ void KafkaHTMLPart::keyBackspace()
 	}
 }
 
-DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes, bool dontBlock, DOM::Node _endNode)
+DOM::Node KafkaWidget::getNextNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes, bool dontBlock, DOM::Node _endNode)
 {
 	kNodeAttrs *attrs = 0L;
 
@@ -911,13 +840,13 @@ DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode
 	attrs = w->getAttrs(_node);
 	if(!attrs)
 	{
-		kdDebug(25001)<< "KafkaHTMLPart::getNextNode() Attrs not found!"<< endl;
+		kdDebug(25001)<< "KafkaWidget::getNextNode() Attrs not found!"<< endl;
 		return 0;
 	}
 	if(_node.hasChildNodes() && goingTowardsRootNode == false &&
 		(attrs->ccanEnter() || dontBlock))
 	{//if we can descend to a child node, we do it
-		kdDebug(25001)<< "KafkaHTMLPart::getNextNode() - descending from node : " <<
+		kdDebug(25001)<< "KafkaWidget::getNextNode() - descending from node : " <<
 			_node.nodeName().string() << " to " <<
 			_node.firstChild().nodeName().string() << endl;
 		if(_endNode == _node.firstChild())
@@ -927,7 +856,7 @@ DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode
 	if(_node.nextSibling() != 0)
 	{//else if there is a sibling, we move to it
 		goingTowardsRootNode = false;
-		kdDebug(25001)<< "KafkaHTMLPart::getNextNode() - going from node : " <<
+		kdDebug(25001)<< "KafkaWidget::getNextNode() - going from node : " <<
 			_node.nodeName().string() <<
 		 	" to " << _node.nextSibling().nodeName().string() << endl;
 		if(_endNode == _node.nextSibling())
@@ -943,11 +872,11 @@ DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode
 			w->getAttrs(_node.parentNode())->ccanEnter() || dontBlock)
 		{
 			if(!_node.parentNode().isNull())
-				kdDebug(25001)<< "KafkaHTMLPart::getNextNode() - going" <<
+				kdDebug(25001)<< "KafkaWidget::getNextNode() - going" <<
 					" up from node : " << _node.nodeName().string() <<
 				 	" to " << _node.parentNode().nodeName().string() << endl;
 			else
-				kdDebug(25001)<< "KafkaHTMLPart::getNextNode() - going" <<
+				kdDebug(25001)<< "KafkaWidget::getNextNode() - going" <<
 					" up from node : " << _node.nodeName().string() <<
 					" to an empty Node" << endl;
 			if(skipParentNodes)
@@ -967,11 +896,11 @@ DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode
 		else
 			return 0;
 	}
-	kdError()<< "KafkaHTMLPart::getNextNode() ERROR" << endl;
+	kdError()<< "KafkaWidget::getNextNode() ERROR" << endl;
 	return 0;
 }
 
-DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes, bool dontBlock, DOM::Node _endNode)
+DOM::Node KafkaWidget::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, bool skipParentNodes, bool dontBlock, DOM::Node _endNode)
 {
 	kNodeAttrs *attrs = 0L;
 
@@ -980,13 +909,13 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 	attrs = w->getAttrs(_node);
 	if(!attrs)
 	{
-		kdDebug(25001)<< "KafkaHTMLPart::getPrevNode() Attrs not found!"<< endl;
+		kdDebug(25001)<< "KafkaWidget::getPrevNode() Attrs not found!"<< endl;
 		return 0;
 	}
 	if(_node.hasChildNodes() && goingTowardsRootNode == false &&
 		(attrs->ccanEnter() || dontBlock))
 	{//if we can descend to a child node, we do it
-		kdDebug(25001)<< "KafkaHTMLPart::getPrevNode() - descending from node : " <<
+		kdDebug(25001)<< "KafkaWidget::getPrevNode() - descending from node : " <<
 			_node.nodeName().string() << " to " <<
 			_node.lastChild().nodeName().string() << endl;
 		if(_endNode == _node.lastChild())
@@ -996,7 +925,7 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 	if(_node.previousSibling() != 0)
 	{//else if there is a sibling, we move to it
 		goingTowardsRootNode = false;
-		kdDebug(25001)<< "KafkaHTMLPart::getPrevNode() - going from node : " <<
+		kdDebug(25001)<< "KafkaWidget::getPrevNode() - going from node : " <<
 			_node.nodeName().string() <<
 		 	" to " << _node.previousSibling().nodeName().string() << endl;
 		if(_endNode == _node.previousSibling())
@@ -1012,11 +941,11 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 			w->getAttrs(_node.parentNode())->ccanEnter() || dontBlock)
 		{
 			if(!_node.parentNode().isNull())
-				kdDebug(25001)<< "KafkaHTMLPart::getPrevNode() - going up from" <<
+				kdDebug(25001)<< "KafkaWidget::getPrevNode() - going up from" <<
 					" node : " << _node.nodeName().string() << " to " <<
 					_node.parentNode().nodeName().string() << endl;
 			else
-				kdDebug(25001)<< "KafkaHTMLPart::getPrevNode() - going up from" <<
+				kdDebug(25001)<< "KafkaWidget::getPrevNode() - going up from" <<
 					" node : " << _node.nodeName().string() << " to an " <<
 					"empty Node" << endl;
 			if (skipParentNodes)
@@ -1036,38 +965,38 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 		else
 			return 0;
 	}
-	kdError()<< "KafkaHTMLPart::getPrevNode() ERROR" << endl;
+	kdError()<< "KafkaWidget::getPrevNode() ERROR" << endl;
 	return 0;
 }
 
-void KafkaHTMLPart::makeCursorVisible(int , int )
+void KafkaWidget::makeCursorVisible(int , int )
 {
 	/**DOM::Range range;
 	if(m_currentNode == 0)
 		return;
-	kdDebug(25001)<< "KafkaHTMLPart::makeCursorVisible()" << endl;
+	kdDebug(25001)<< "KafkaWidget::makeCursorVisible()" << endl;
 	int X, Y, dummy;
 	getCursor(m_currentNode, d->m_cursorOffset, X, Y, dummy);
 	view()->ensureVisible (X, Y, xMargin, yMargin);*/
 	//does not work... ???
 	/**range = selection();
-	try{
+	//try{
 		range.setStart(m_currentNode, d->m_cursorOffset);
 	}
 	catch(DOM::RangeException e)
 	{
 		//ignore
-		kdDebug(25001)<< "KafkaHTMLPart::makeCursorVisible() - ERROR " << e.code << endl;
+		kdDebug(25001)<< "KafkaWidget::makeCursorVisible() - ERROR " << e.code << endl;
 		return;
 	}
 	catch(DOM::DOMException e)
 	{
-		kdDebug(25001)<< "KafkaHTMLPart::makeCursorVisible() - ERROR " << e.code << endl;
+		kdDebug(25001)<< "KafkaWidget::makeCursorVisible() - ERROR " << e.code << endl;
 	}*/
 	//range.setEnd(m_currentNode, d->m_cursorOffset);
 }
 
-void KafkaHTMLPart::postprocessCursorPosition()
+void KafkaWidget::postprocessCursorPosition()
 {
 	kNodeAttrs *attrs, *attrs2;
 	if(m_currentNode == 0)
@@ -1093,7 +1022,7 @@ void KafkaHTMLPart::postprocessCursorPosition()
 				d->m_cursorOffset = (static_cast<DOM::CharacterData>(_nextNode)).length();
 				setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 				emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
-				kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition()" <<
+				kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition()" <<
 					" - new currentNode :" <<
 					m_currentNode.nodeName().string() << endl;
 				break;
@@ -1127,7 +1056,7 @@ void KafkaHTMLPart::postprocessCursorPosition()
 					setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 					emit domNodeNewCursorPos(m_currentNode,
 						d->m_cursorOffset);
-					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition()" <<
+					kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition()" <<
 						" - new currentNode :" << m_currentNode.nodeName().string() << endl;
 					break;
 				}
@@ -1139,7 +1068,7 @@ void KafkaHTMLPart::postprocessCursorPosition()
 					d->m_cursorOffset = 1;
 					setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 					emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
-					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition()" <<
+					kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition()" <<
 						" - new currentNode :" << m_currentNode.nodeName().string() << endl;
 					break;
 				}
@@ -1166,7 +1095,7 @@ void KafkaHTMLPart::postprocessCursorPosition()
 					d->m_cursorOffset = 0;
 					setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 					emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
-					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition() " <<
+					kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition() " <<
 						"- new currentNode :" << m_currentNode.nodeName().string() << endl;
 					break;
 				}
@@ -1178,7 +1107,7 @@ void KafkaHTMLPart::postprocessCursorPosition()
 	makeCursorVisible();
 }
 
-void KafkaHTMLPart::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
+void KafkaWidget::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
 {
 	DOM::Node mouseNode = event->innerNode();
 	if(mouseNode == 0)
@@ -1190,7 +1119,7 @@ void KafkaHTMLPart::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
 	KHTMLPart::khtmlMouseMoveEvent(event);
 }
 
-void KafkaHTMLPart::khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event)
+void KafkaWidget::khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event)
 {
 	KHTMLPart::khtmlMouseReleaseEvent(event);
 	if(m_currentNode.isNull() || m_currentNode.nodeName().string().lower() == "#document")
@@ -1200,33 +1129,33 @@ void KafkaHTMLPart::khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event)
 		setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 	}
 	if(quantaApp->aTab)
-		quantaApp->aTab->setCurrentNode(w->searchCorrespondingNode(event->innerNode()));
+		quantaApp->aTab->setCurrentNode(w->getNode(event->innerNode()));
 }
 
-void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
+void KafkaWidget::khtmlMousePressEvent(khtml::MousePressEvent *event)
 {
 	KHTMLPart::khtmlMousePressEvent(event);
 }
 
-void KafkaHTMLPart::khtmlDrawContentsEvent(khtml::DrawContentsEvent *event)
+void KafkaWidget::khtmlDrawContentsEvent(khtml::DrawContentsEvent *event)
 {
 	KHTMLPart::khtmlDrawContentsEvent(event);
 }
 
-void KafkaHTMLPart::showDomTree()
+void KafkaWidget::showDomTree()
 {
 #ifdef HEAVY_DEBUG
 	//d->domdialog->show();
 #endif
 }
 
-void KafkaHTMLPart::getCurrentNode(DOM::Node &_currentNode, int &offset)
+void KafkaWidget::getCurrentNode(DOM::Node &_currentNode, int &offset)
 {
 	_currentNode = m_currentNode;
 	offset = d->m_cursorOffset;
 }
 
-void KafkaHTMLPart::setCurrentNode(DOM::Node node, int offset)
+void KafkaWidget::setCurrentNode(DOM::Node node, int offset)
 {
 	m_currentNode = node;
 	d->m_cursorOffset = offset;
@@ -1235,14 +1164,14 @@ void KafkaHTMLPart::setCurrentNode(DOM::Node node, int offset)
 		setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 }
 
-void KafkaHTMLPart::finishedLoading()
+void KafkaWidget::finishedLoading()
 {
 	kNodeAttrs *attrs = 0L;
 	DOM::Node _node = document();
         bool b = false;
 
 	if(_node == 0)
-		kdDebug(25001)<< "KafkaHTMLPart::finishedLoading() ERROR : no document()!" << endl;
+		kdDebug(25001)<< "KafkaWidget::finishedLoading() ERROR : no document()!" << endl;
 	while(_node != 0)
 	{
 		_node = getNextNode(_node, b);
@@ -1263,11 +1192,11 @@ void KafkaHTMLPart::finishedLoading()
 	emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 }
 
-void KafkaHTMLPart::slotNewCursorPos(const DOM::Node &domNode, long offset)
+void KafkaWidget::slotNewCursorPos(const DOM::Node &domNode, long offset)
 {
 	m_currentNode = domNode;
 	d->m_cursorOffset = (int)offset;
-	kdDebug(25001)<<"kafkaHTMLPart::slotNewCursorPos() offset : " << d->m_cursorOffset << endl;
+	kdDebug(25001)<<"KafkaWidget::slotNewCursorPos() offset : " << d->m_cursorOffset << endl;
 	if(quantaApp->aTab)
-		quantaApp->aTab->setCurrentNode(w->searchCorrespondingNode(domNode));
+		quantaApp->aTab->setCurrentNode(w->getNode(domNode));
 }

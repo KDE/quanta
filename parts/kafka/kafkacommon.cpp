@@ -28,7 +28,6 @@
 #include "../../document.h"
 #include "../../resource.h"
 #include "../../quantacommon.h"
-#include "undoredo.h"
 
 #include "kafkacommon.h"
 
@@ -1730,96 +1729,100 @@ bool kafkaCommon::removeDomNode(DOM::Node node)
 	if(parent.isNull())
 		return false;
 
-	try
-	{
-		parent.removeChild(node);
-#ifdef HEAVY_DEBUG
-	}catch(DOM::DOMException e)
-	{
-		kdDebug(25001)<< "kafkaCommon::removeDomNode() - ERROR code :" << e.code << endl;
-#else
-	}catch(DOM::DOMException)
-	{
-#endif
-		return false;
-	}
+	parent.removeChild(node);
+
 	return true;
 }
 
-DOM::Node kafkaCommon::createDomNode(const QString &nodeName, DOM::Document rootNode)
+DOM::Node kafkaCommon::createDomNode(const QString &nodeName, DTDStruct* dtd,
+	DOM::Document rootNode)
 {
 	//this will change with the futur multi-DTDs support
+	//It does not use exceptions handling, so everything is checked via the DTEP definitions.
 	DOM::Node dn;
-	try
-	{
+	QTag *qTag = 0L;
+
+	qTag = QuantaCommon::tagFromDTD(dtd, nodeName);
+
+	if(qTag)
 		dn =  rootNode.createElement(nodeName);
 #ifdef HEAVY_DEBUG
-	} catch(DOM::DOMException e)
-	{
-		kdDebug(25001)<< "kafkaCommon::createDomNode() - ERROR code :" << e.code << endl;
-#else
-	} catch(DOM::DOMException)
-	{
+	else
+		kdDebug(25001)<< "kafkaCommon::createDomNode() - ERROR bad nodeName :" <<
+			nodeName << endl;
 #endif
-		return DOM::Node();
-	}
+
 	return dn;
+}
+
+DOM::Node kafkaCommon::createDomNode(Node *node, DOM::Document rootNode)
+{
+	if(!node)
+		return DOM::Node();
+
+	return createDomNode(node->tag->name, node->tag->dtd, rootNode);
 }
 
 DOM::Node kafkaCommon::createTextDomNode(const QString &textString, DOM::Document rootNode)
 {
-	DOM::Node dn;
-	try
-	{
-		dn = rootNode.createTextNode(textString);
-	}catch(DOM::DOMException)
-	{
-		return DOM::Node();
-	}
-	return dn;
+	return rootNode.createTextNode(textString);
 }
 
-DOM::Node kafkaCommon::createDomNodeAttribute(const QString &attrName, DOM::Document rootNode)
+DOM::Node kafkaCommon::createDomNodeAttribute(const QString &nodeName, DTDStruct* dtd,
+	const QString &attrName, const QString &attrValue, DOM::Document rootNode)
 {
 	DOM::Node attr;
-	try
+	QTag *qTag = 0L;
+
+	qTag = QuantaCommon::tagFromDTD(dtd, nodeName);
+	if(!qTag)
+		return DOM::Node();
+
+	if(qTag->isAttribute(attrName))
 	{
 		attr = rootNode.createAttribute(attrName);
-#ifdef HEAVY_DEBUG
-	} catch(DOM::DOMException e)
-	{
-		kdDebug(25001)<< "kafkaCommon::createDomNodeAttribute() - ERROR code :" << e.code << endl;
-#else
-	} catch(DOM::DOMException)
-	{
-#endif
-		return DOM::Node();
+		attr.setNodeValue(attrValue);
 	}
+#ifdef HEAVY_DEBUG
+	else
+		kdDebug(25001)<< "kafkaCommon::createDomNodeAttribute() - ERROR bad attrName " <<
+			attrName << endl;
+#endif
+
 	return attr;
 }
+
+DOM::Node kafkaCommon::createDomNodeAttribute(Node* node, const QString &attrName,
+	DOM::Document rootNode)
+{
+	if(!node)
+		return DOM::Node();
+
+	return createDomNodeAttribute(node->tag->name, node->tag->dtd, attrName, "", rootNode);
+}
+
+//DOM::node kafkaCommon::createDomNodeAttribute(DOM::Node node, const QString &attrName,
+//	DOM::Document rootNode)
+//{
+	/**if(node.isNull())
+		return DOM::node();
+
+	return createDomNodeAttribute()*/
+//}
 
 bool kafkaCommon::insertDomNodeAttribute(DOM::Node node, DOM::Node attr)
 {
 	if(node.isNull())
 		return false;
 
-	try{
-		node.attributes().setNamedItem(attr);
-#ifdef HEAVY_DEBUG
-	}catch(DOM::DOMException e)
-	{
-		kdDebug(25001)<< "kafkaCommon::insertDomNodeAttribute() - ERROR code:" << e.code << endl;
-#else
-	}catch(DOM::DOMException)
-	{
-#endif
-		return false;
-	}
+	//should we check if the attr is valid???
+	node.attributes().setNamedItem(attr);
+
 	return true;
 }
 
-bool kafkaCommon::editDomNodeAttribute(DOM::Node node, const QString &attrName,
-	const QString &attrValue, DOM::Document rootNode)
+bool kafkaCommon::editDomNodeAttribute(DOM::Node node, const QString &nodeName, DTDStruct* dtd,
+	const QString &attrName, const QString &attrValue, DOM::Document rootNode)
 {
 	DOM::Node attr;
 
@@ -1830,16 +1833,22 @@ bool kafkaCommon::editDomNodeAttribute(DOM::Node node, const QString &attrName,
 	if(attr.isNull())
 	{
 		//let's create it
-		attr = createDomNodeAttribute(attrName, rootNode);
+		attr = createDomNodeAttribute(nodeName, dtd, attrName, attrValue, rootNode);
 		if(attr.isNull())
 			return false;
 		insertDomNodeAttribute(node, attr);
 	}
 
-	//set the new value
-	attr.setNodeValue(attrValue);
-
 	return true;
+}
+
+bool kafkaCommon::editDomNodeAttribute(DOM::Node domNode, Node* node,
+	const QString &attrName, const QString &attrValue, DOM::Document rootNode)
+{
+	if(!node)
+		return false;
+
+	return editDomNodeAttribute(domNode, node->tag->name, node->tag->dtd, attrName, attrValue, rootNode);
 }
 
 #ifdef HEAVY_DEBUG

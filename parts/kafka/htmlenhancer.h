@@ -24,7 +24,7 @@
 
 class KConfig;
 class Node;
-class WKafkaPart;
+class KafkaDocument;
 class KStandardDirs;
 
 /**
@@ -33,12 +33,13 @@ class KStandardDirs;
  * - Update the src attr of the DOM::Node.
  * - Display an little icon for scripts.
  * - Load the CSS informations into the DOM tree.
+ * - Add a colourfull border to FORM, OL, DL, UL
  */
 
 class HTMLEnhancer : public NodeEnhancer
 {
 public:
-	HTMLEnhancer(WKafkaPart *_wkafkapart);
+	HTMLEnhancer(KafkaDocument *_wkafkapart);
 	virtual ~HTMLEnhancer();
 
 	/**
@@ -83,7 +84,7 @@ public:
 private:
 	KURL m_baseURL;
 	bool m_showIconForScripts;
-	WKafkaPart *m_wkafkapart;
+	KafkaDocument *m_wkafkapart;
 	KStandardDirs *m_stddirs;
 };
 

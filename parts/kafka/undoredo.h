@@ -66,7 +66,7 @@ typedef struct NodeModifsSet
 };
 
 /**
- * This class, basically a new undo/redo system, also helps WKafkaPart to synchronize the
+ * This class, basically a new undo/redo system, also helps KafkaDocument to synchronize the
  * kafka and quanta view.
  */
 class undoRedo : public QValueList<NodeModifsSet>, public QObject

@@ -29,7 +29,7 @@
 
 #include "htmlenhancer.h"
 
-HTMLEnhancer::HTMLEnhancer(WKafkaPart *_wkafkapart)
+HTMLEnhancer::HTMLEnhancer(KafkaDocument *_wkafkapart)
 	: NodeEnhancer()
 {
 	m_showIconForScripts = true;
@@ -60,7 +60,8 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 	//by default, the parser parse it as a script, which can't be translated in DOM::Nodes.
 	if(node->tag->type == Tag::ScriptTag && node->tag->name.lower().contains("style"))
 	{
-		domNode = kafkaCommon::createDomNode("style", m_wkafkapart->getKafkaPart()->document());
+		domNode = kafkaCommon::createDomNode("style", m_wkafkapart->defaultDTD(),
+			m_wkafkapart->getKafkaWidget()->document());
 		if(!kafkaCommon::insertDomNode(domNode, parentDNode))
 			return false;
 		node->_rootNode = domNode;
@@ -77,7 +78,7 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 #ifdef HEAVY_DEBUG
 		kdDebug(25001)<< "HTMLTranslator::translateNode() - CSS code : " << text << endl;
 #endif
-		domNode2 = kafkaCommon::createTextDomNode(text, m_wkafkapart->getKafkaPart()->document());
+		domNode2 = kafkaCommon::createTextDomNode(text, m_wkafkapart->getKafkaWidget()->document());
 		if(!kafkaCommon::insertDomNode(domNode2, domNode))
 			return false;
 		m_wkafkapart->connectDomNodeToQuantaNode(domNode2, node);
@@ -93,9 +94,11 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 		filename = m_stddirs->findResource("data", "kafkapart/pics/" + script + ".png" );
 		if(!filename.isEmpty())
 		{
-			domNode = kafkaCommon::createDomNode("IMG", m_wkafkapart->getKafkaPart()->document());
-			kafkaCommon::editDomNodeAttribute(domNode, "src", filename,
-				m_wkafkapart->getKafkaPart()->document());
+			//FIXME DTD!
+			domNode = kafkaCommon::createDomNode("IMG", m_wkafkapart->defaultDTD(),
+				m_wkafkapart->getKafkaWidget()->document());
+			kafkaCommon::editDomNodeAttribute(domNode, "IMG", m_wkafkapart->defaultDTD(), "src",
+				filename, m_wkafkapart->getKafkaWidget()->document());
 			if(!kafkaCommon::insertDomNode(domNode, parentDNode, nextDNode))
 				return false;
 			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
@@ -115,7 +118,8 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 		}
 		if(!tbody)
 		{
-			domNode = kafkaCommon::createDomNode("TBODY", m_wkafkapart->getKafkaPart()->htmlDocument());
+			domNode = kafkaCommon::createDomNode("TBODY", m_wkafkapart->defaultDTD(),
+				m_wkafkapart->getKafkaWidget()->htmlDocument());
 			if(!kafkaCommon::insertDomNode(domNode, node->_rootNode))
 				return false;
 			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
@@ -126,8 +130,8 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 	//THEN add a red dotted border to FORM tags.
 	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "form")
 	{
-		kafkaCommon::editDomNodeAttribute(node->_rootNode, "style", "border: 1px dotted red",
-			m_wkafkapart->getKafkaPart()->document());
+		kafkaCommon::editDomNodeAttribute(node->_rootNode, node, "style", "border: 1px dotted red",
+			m_wkafkapart->getKafkaWidget()->document());
 	}
 
 	//THEN add a blue dotted border to DL, OL, UL tags
@@ -136,8 +140,8 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 		text = node->_rootNode.nodeName().string().lower();
 		if(text == "dl" || text == "ol" || text == "ul")
 		{
-			kafkaCommon::editDomNodeAttribute(node->_rootNode, "style", "border: 1px dotted blue",
-				m_wkafkapart->getKafkaPart()->document());
+			kafkaCommon::editDomNodeAttribute(node->_rootNode, node, "style", "border: 1px dotted blue",
+				m_wkafkapart->getKafkaWidget()->document());
 		}
 	}
 
@@ -148,8 +152,8 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 		attr = node->_rootNode.attributes().getNamedItem("border");
 		if(attr.isNull() || (!attr.isNull() && attr.nodeValue().string() == "0"))
 		{
-			kafkaCommon::editDomNodeAttribute(node->_rootNode, "border", "1",
-				m_wkafkapart->getKafkaPart()->document());
+			kafkaCommon::editDomNodeAttribute(node->_rootNode, node, "border", "1",
+				m_wkafkapart->getKafkaWidget()->document());
 		}
 	}
 

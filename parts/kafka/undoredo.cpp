@@ -355,7 +355,7 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool ge
 	QValueList<int> loc;
 	Tag *_tag;
 	QString text, totalText;
-	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
+	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
 
 	if(_nodeModif.type == undoRedo::NodeTreeAdded)
 	{
@@ -926,8 +926,8 @@ bool undoRedo::UndoNodeModifInKafka(NodeModif &_nodeModif)
 	Tag *_tag;
 	DOM::Node domNode, domNode2, dn, dm;
 	bool goUp;
-	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
-	KafkaHTMLPart *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaPart();
+	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
+	KafkaWidget *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaWidget();
 
 	if(_nodeModif.type == undoRedo::NodeTreeAdded)
 	{
@@ -1184,7 +1184,7 @@ void undoRedo::reloadKafkaEditor(bool force)
 	}
 
 	kafkaIterator = documentIterator;
-	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
+	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
 
 	Document *m_doc = kafkaInterface->getCurrentDoc();
 	kafkaInterface->unloadDocument();
@@ -1198,7 +1198,7 @@ void undoRedo::reloadQuantaEditor(bool force)
 	QString text, allText;
 	Node *node = baseNode;
 	int bCol, bLine, eCol, eLine;
-	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
+	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
 	bool updateClosing;
 
 	kdDebug(25001)<< "undoRedo::reloadQuantaEditor()" << endl;
@@ -1561,7 +1561,7 @@ bool undoRedo::syncQuantaView()
 
 void undoRedo::syncKafkaCursorAndSelection()
 {
-	KafkaHTMLPart *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaPart();
+	KafkaWidget *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaWidget();
 	DOM::Node node;
 	int offset;
 	uint curLine, curCol/**, curLine2, curCol2*/;
@@ -1584,7 +1584,7 @@ void undoRedo::syncKafkaCursorAndSelection()
 
 void undoRedo::syncQuantaCursorAndSelection()
 {
-	KafkaHTMLPart *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaPart();
+	KafkaWidget *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaWidget();
 	int curCol, curLine, curCol2, curLine2;
 	uint oldCurCol, oldCurLine;
 	DOM::Node domNode;
@@ -1592,7 +1592,7 @@ void undoRedo::syncQuantaCursorAndSelection()
 	DOM::Range range(kafkaPart);
 
 	//Translate and set the cursor.
-	quantaApp->view()->getKafkaInterface()->getKafkaPart()->getCurrentNode(domNode, offset);
+	quantaApp->view()->getKafkaInterface()->getKafkaWidget()->getCurrentNode(domNode, offset);
  	quantaApp->view()->getKafkaInterface()->translateKafkaIntoQuantaCursorPosition(domNode,
 		offset, curLine, curCol);
 	quantaApp->view()->write()->viewCursorIf->cursorPositionReal(&oldCurLine, &oldCurCol);

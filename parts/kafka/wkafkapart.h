@@ -33,6 +33,7 @@ class Parser;
 class kNodeAttrs;
 class NodeModifsSet;
 class NodeEnhancer;
+class DTDStruct;
 
 #include <qmap.h>
 #include <qobject.h>
@@ -42,14 +43,23 @@ class NodeEnhancer;
 
 /**
  * This class assures the synchronisation of the two trees : the quanta and the
- * kafka tree, with the help of the undo/redo class.
+ * kafka tree.
+ * By Quanta Node, i mean Node (cf quanta/parser/node.h)
+ * By Kafka Node, i mean DOM::Node (cf <dom/dom_node.h>)
  */
-class WKafkaPart : public QObject
+class KafkaDocument : public QObject
 {
 Q_OBJECT
 public:
-	WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name);
-	~WKafkaPart();
+
+	/**
+	 * Create a KafkaWidget.
+	 */
+	KafkaDocument(QWidget *parent, QWidget *widgetParent, const char *name);
+	~KafkaDocument();
+
+
+	/* ----------------------------------- LOADING/UNLOADING -------------------------------------------------*/
 
 	/**
 	 * Builds kafka's own tree from the Quanta tree.
@@ -59,7 +69,7 @@ public:
 	void loadDocument(Document *doc);
 
 	/**
-	 * Unloads kafka tree.
+	 * Unloads the kafka tree.
 	 */
 	void unloadDocument();
 
@@ -69,32 +79,26 @@ public:
 	void reloadDocument();
 
 	/**
-	 * Called to get WKafkaPart's state.
-	 * @return Returns true if WKafkaPart is loaded.
+	 * Called to get KafkaDocument's state.
+	 * @return Returns true if KafkaDocument is loaded.
 	 */
 	bool isLoaded() {return _docLoaded;}
 
-	/**
-	 * Read the config.
-	 * @param m_config The config to read.
-	 */
-	 void readConfig(KConfig *m_config);
 
-	/**
-	 * @return Returns the current KafkaHTMLPart.
-	 */
-	KafkaHTMLPart *getKafkaPart() {return _kafkaPart;}
-
-	/**
-	 * @return Returns the current Document.
-	 */
-	Document *getCurrentDoc() {return _currentDoc;}
+	/* ----------------------------------- KAFKA<->QUANTA NODES LINK ----------------------------------*/
 
 	/**
 	 * @param _node The DOM::Node we want the attributess.
 	 * @return Return the corresponding kNodeAttrs of the DOM::Node.
 	 */
 	kNodeAttrs *getAttrs(DOM::Node _domNode);
+
+	/**
+	 * This function search the corresponding quanta Node to the kafka DOM::Node
+	 * @param _domNode The DOM::Node we seek its corresponding Node.
+	 * @return The Node corresponding to _domNode.
+	 */
+	Node *getNode(DOM::Node _domNode);
 
 	/**
 	 * Connects the domNode to the corresponding Quanta Node.
@@ -114,6 +118,9 @@ public:
 	 */
 	void disconnectAllDomNodes();
 
+
+	/* --------------------------- KAFKA/QUANTA NODES CREATION -----------------------------*/
+
 	/**
 	 * This function build a kafka DOM:::Node from a Quanta Node.
 	 * @param _node The node from which we build the DOM::Node
@@ -121,20 +128,6 @@ public:
 	 * @return Returns if the insertion was successful if asked, else true.
 	 */
 	bool buildKafkaNodeFromNode(Node *_node, bool insertNode = true);
-
-	/**
-	 * This function returns the special XML character (e.g. space, �...)
-	 * from its encoded form (e.g. &nbsp;)
-	 * @return Returns the special character.
-	 */
-	QString getDecodedChar(const QString &encodedChar);
-
-	/**
-	 * This function returns the text decoded from its XML-encoded form.
-	 * @param encodedText The text to decode.
-	 * @return Returns the text decoded.
-	 */
-	QString getDecodedText(const QString &encodedText);
 
 	/**
 	 * This function synchronizes the Node from the DOM::Node. If the Node is a text Node,
@@ -165,6 +158,23 @@ public:
 	Node * buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
 		Node *_beginNode, int beginOffset, Node *_endNode, int endOffset,
 		NodeModifsSet &modifs);
+
+
+	/* ------------------------------- TEXT ENTITIES ENCODING/DECODING ---------------------*/
+
+	/**
+	 * This function returns the special XML character (e.g. space, �...)
+	 * from its encoded form (e.g. &nbsp;)
+	 * @return Returns the special character.
+	 */
+	QString getDecodedChar(const QString &encodedChar);
+
+	/**
+	 * This function returns the text decoded from its XML-encoded form.
+	 * @param encodedText The text to decode.
+	 * @return Returns the text decoded.
+	 */
+	QString getDecodedText(const QString &encodedText);
 
 	/**
 	 * This function returns the XML-encoded character (e.g. &nbsp;)
@@ -203,12 +213,8 @@ public:
 	 */
 	QString generateCodeFromNode(Node *_node, int bLine, int bCol, int &eLine, int &eCol);
 
-	/**
-	 * This function search the corresponding quanta Node to the kafka DOM::Node
-	 * @param _domNode The DOM::Node we seek its corresponding Node.
-	 * @return The Node corresponding to _domNode.
-	 */
-	Node *searchCorrespondingNode(DOM::Node _domNode);
+
+	/* ----------------------------------- KAFKA<->QUANTA POSITION TRANSLATION -------------------------------*/
 
 	/**
 	 * Returns the kafka cursor position corresponding to the quanta cursor position.
@@ -227,6 +233,30 @@ public:
 	 * @param col Returns the col cursor position.
 	 */
 	void translateKafkaIntoQuantaCursorPosition(DOM::Node domNode, int offset, int &line, int &col);
+
+
+	/* --------------------------------- MISCELLANEOUS ------------------------------------------*/
+
+	/**
+	 * Read the config.
+	 * @param m_config The config to read.
+	 */
+	 void readConfig(KConfig *m_config);
+
+	/**
+	 * Returns the default DTD of the current Document.
+	 */
+	DTDStruct* defaultDTD();
+
+	/**
+	 * @return Returns the current KafkaWidget.
+	 */
+	KafkaWidget *getKafkaWidget() {return m_kafkaPart;}
+
+	/**
+	 * @return Returns the current Document.
+	 */
+	Document *getCurrentDoc() {return m_currentDoc;}
 
 	/**
 	 * In order to have khtml works whatever DTD is loaded, they must always exists
@@ -289,8 +319,8 @@ private:
 	QMap<QString, QString> decodedChars;
 	QMap<QString, QString> encodedChars;
 	QPtrDict<kNodeAttrs> domNodeProps;
-	KafkaHTMLPart *_kafkaPart;
-	Document *_currentDoc;
+	KafkaWidget *m_kafkaPart;
+	Document *m_currentDoc;
 	bool _docLoaded;
 
 };

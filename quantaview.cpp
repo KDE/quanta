@@ -104,11 +104,11 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 
   currentViewsLayout = QuantaView::QuantaViewOnly;//TODO: load it from the config
 #ifdef BUILD_KAFKAPART
-  kafkaInterface = new WKafkaPart(0, 0, "KafkaHTMLPart");
-  kafkaInterface->getKafkaPart()->view()->setMinimumHeight(50);
+  kafkaInterface = new KafkaDocument(0, 0, "KafkaPart");
+  kafkaInterface->getKafkaWidget()->view()->setMinimumHeight(50);
   splitter = new QSplitter(Qt::Vertical, 0);
 
-  connect(kafkaInterface->getKafkaPart(), SIGNAL(hasFocus(bool)),
+  connect(kafkaInterface->getKafkaWidget(), SIGNAL(hasFocus(bool)),
     this, SLOT(slotKafkaGetFocus(bool)));
   connect(kafkaInterface, SIGNAL(newCursorPosition(int,int)), this, SLOT(slotSetQuantaCursorPosition(int, int)));
   curCol = curLine = curOffset = 0;
@@ -149,8 +149,8 @@ void QuantaView::addWrite( QWidget* w , QString label )
   {
     disconnect(write()->view(), SIGNAL(gotFocus(Kate::View *)),
       this, SLOT(slotQuantaGetFocus(Kate::View *)));
-    kafkaInterface->getKafkaPart()->view()->hide();
-    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
+    kafkaInterface->getKafkaWidget()->view()->hide();
+    kafkaInterface->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
     write()->view()->reparent(write(), 0, QPoint(), true);
@@ -210,8 +210,8 @@ QWidget* QuantaView::removeWrite()
 #ifdef BUILD_KAFKAPART
     if(oldLayout != QuantaView::QuantaViewOnly)
     {
-      kafkaInterface->getKafkaPart()->view()->hide();
-      kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
+      kafkaInterface->getKafkaWidget()->view()->hide();
+      kafkaInterface->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
       if(kafkaInterface->isLoaded())
         kafkaInterface->unloadDocument();
       write()->view()->reparent(write(), 0, QPoint(), true);
@@ -290,8 +290,8 @@ void QuantaView::updateViews()
     if(_doc)
       disconnect(_doc->view(), SIGNAL(gotFocus(Kate::View *)),
         this, SLOT(slotQuantaGetFocus(Kate::View *)));
-    kafkaInterface->getKafkaPart()->view()->hide();
-    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
+    kafkaInterface->getKafkaWidget()->view()->hide();
+    kafkaInterface->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
     if(_doc)
@@ -486,8 +486,8 @@ void QuantaView::slotShowQuantaEditor()
     return;
   else if(currentViewsLayout == QuantaView::KafkaViewOnly)
   {
-    kafkaInterface->getKafkaPart()->view()->hide();
-    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
+    kafkaInterface->getKafkaWidget()->view()->hide();
+    kafkaInterface->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
     write()->docUndoRedo->reloadQuantaEditor();
     /**kafkaInterface->getQuantaCursorPosition(curLine, curCol);
     write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);*/
@@ -502,9 +502,9 @@ void QuantaView::slotShowQuantaEditor()
   else if(currentViewsLayout == QuantaView::QuantaAndKafkaViews)
   {
     _splittSizes = splitter->sizes();
-    kafkaInterface->getKafkaPart()->view()->hide();
-    kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
-    if(kafkaInterface->getKafkaPart()->view()->hasFocus())
+    kafkaInterface->getKafkaWidget()->view()->hide();
+    kafkaInterface->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
+    if(kafkaInterface->getKafkaWidget()->view()->hasFocus())
     {
     	write()->docUndoRedo->reloadQuantaEditor();
 	/**kafkaInterface->getQuantaCursorPosition(curLine, curCol);
@@ -559,13 +559,13 @@ void QuantaView::slotShowKafkaPart()
       kafkaInterface->loadDocument(write());
     write()->docUndoRedo->syncKafkaCursorAndSelection();
     /**kafkaInterface->getKafkaCursorPosition(node, offset);
-    kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);*/
-    kafkaInterface->getKafkaPart()->view()->reparent(write(), 0, QPoint(), true);
+    kafkaInterface->getKafkaWidget()->setCurrentNode(node, offset);*/
+    kafkaInterface->getKafkaWidget()->view()->reparent(write(), 0, QPoint(), true);
     oldViewsLayout = currentViewsLayout;
     currentViewsLayout = QuantaView::KafkaViewOnly;
     resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
-    kafkaInterface->getKafkaPart()->view()->show();
-    kafkaInterface->getKafkaPart()->view()->setFocus();
+    kafkaInterface->getKafkaWidget()->view()->show();
+    kafkaInterface->getKafkaWidget()->view()->setFocus();
   }
   else if(currentViewsLayout == QuantaView::KafkaViewOnly)
     return;
@@ -576,10 +576,10 @@ void QuantaView::slotShowKafkaPart()
     write()->view()->reparent(0, 0, QPoint(), false);
     if(!kafkaInterface->isLoaded())
       kafkaInterface->loadDocument(write());
-    kafkaInterface->getKafkaPart()->view()->reparent(write(), 0, QPoint(), true);
+    kafkaInterface->getKafkaWidget()->view()->reparent(write(), 0, QPoint(), true);
     currentViewsLayout = QuantaView::KafkaViewOnly;
     resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
-    kafkaInterface->getKafkaPart()->view()->show();
+    kafkaInterface->getKafkaWidget()->view()->show();
     //delete splitter;
     splitter->reparent(0, 0, QPoint(), false);
     splitter->hide();
@@ -627,9 +627,9 @@ void QuantaView::slotShowKafkaAndQuanta()
     {
       write()->docUndoRedo->reloadQuantaEditor();
     }
-    kafkaInterface->getKafkaPart()->view()->reparent(splitter, 0, QPoint(), true);
-    splitter->moveToFirst(kafkaInterface->getKafkaPart()->view());
-    kafkaInterface->getKafkaPart()->view()->show();
+    kafkaInterface->getKafkaWidget()->view()->reparent(splitter, 0, QPoint(), true);
+    splitter->moveToFirst(kafkaInterface->getKafkaWidget()->view());
+    kafkaInterface->getKafkaWidget()->view()->show();
     write()->view()->reparent(splitter, 0, QPoint(), true);
     write()->view()->show();
     oldViewsLayout = currentViewsLayout;
@@ -645,7 +645,7 @@ void QuantaView::slotShowKafkaAndQuanta()
       splitter->setSizes(_splittSizes);
 #if QT_VERSION > 0x030103      //shouldn't be a problem in the real release, as KDE 3.2 will require QT 3.2
     splitter->setCollapsible(write()->view(), false);
-    splitter->setCollapsible(kafkaInterface->getKafkaPart()->view(), false);
+    splitter->setCollapsible(kafkaInterface->getKafkaWidget()->view(), false);
 #endif
     splitter->show();
     /**quantaUpdateTimer = startTimer(4000);*/
@@ -664,10 +664,10 @@ void QuantaView::slotShowKafkaAndQuanta()
     {
       write()->docUndoRedo->syncKafkaCursorAndSelection();
       /**kafkaInterface->getKafkaCursorPosition(node, offset);
-      kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);*/
-      kafkaInterface->getKafkaPart()->view()->setFocus();
+      kafkaInterface->getKafkaWidget()->setCurrentNode(node, offset);*/
+      kafkaInterface->getKafkaWidget()->view()->setFocus();
     }
-    else if(kafkaInterface->getKafkaPart()->view()->hasFocus())
+    else if(kafkaInterface->getKafkaWidget()->view()->hasFocus())
     {
       write()->docUndoRedo->syncQuantaCursorAndSelection();
       /**kafkaInterface->getQuantaCursorPosition(curLine, curCol);
@@ -687,7 +687,7 @@ void QuantaView::resize(int width, int height)
     write()->view()->resize(width,height);
 #ifdef BUILD_KAFKAPART
   else if(currentViewsLayout == QuantaView::KafkaViewOnly)
-    kafkaInterface->getKafkaPart()->view()->resize(width,height);
+    kafkaInterface->getKafkaWidget()->view()->resize(width,height);
   else if(currentViewsLayout == QuantaView::QuantaAndKafkaViews)
     splitter->resize(width,height);
 #endif
@@ -711,11 +711,11 @@ void QuantaView::slotKafkaGetFocus(bool focus)
       killTimer(quantaUpdateTimer);
       if(!qConfig.quantaRefreshOnFocus)
         quantaUpdateTimer = startTimer(qConfig.quantaRefreshDelay);
-      contentsX = kafkaInterface->getKafkaPart()->view()->contentsX();
-      contentsY = kafkaInterface->getKafkaPart()->view()->contentsY();
+      contentsX = kafkaInterface->getKafkaWidget()->view()->contentsX();
+      contentsY = kafkaInterface->getKafkaWidget()->view()->contentsY();
       write()->docUndoRedo->reloadKafkaEditor();
       //doesn't work!
-      kafkaInterface->getKafkaPart()->view()->setContentsPos(contentsX, contentsY);
+      kafkaInterface->getKafkaWidget()->view()->setContentsPos(contentsX, contentsY);
     }
 
     //We disable some actions which doesn't work on kafka for the moment
@@ -750,12 +750,26 @@ void QuantaView::slotKafkaGetFocus(bool focus)
     action = quantaApp->actionCollection()->action("insert_char");
     if(action)
       action->setEnabled(false);
+
+
     action = 0L;
-    action = quantaApp->actionCollection()->action("");
+    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Undo));
     if(action)
       action->setEnabled(false);
     action = 0L;
-    action = quantaApp->actionCollection()->action("");
+    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Redo));
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Cut));
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Copy));
+    if(action)
+      action->setEnabled(false);
+    action = 0L;
+    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Paste));
     if(action)
       action->setEnabled(false);
 
@@ -814,14 +828,29 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
     action = quantaApp->actionCollection()->action("insert_char");
     if(action)
       action->setEnabled(true);
+
+
     action = 0L;
-    action = quantaApp->actionCollection()->action("");
+    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Undo));
     if(action)
       action->setEnabled(true);
     action = 0L;
-    action = quantaApp->actionCollection()->action("");
+    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Redo));
     if(action)
       action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Cut));
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Copy));
+    if(action)
+      action->setEnabled(true);
+    action = 0L;
+    action = quantaApp->actionCollection()->action(KStdAction::stdName(KStdAction::Paste));
+    if(action)
+      action->setEnabled(true);
+
 
   currentFocus = QuantaView::quantaFocus;
 #endif
@@ -841,10 +870,10 @@ void QuantaView::timerEvent( QTimerEvent *e )
       //write()->docUndoRedo->syncKafkaView();
       write()->docUndoRedo->reloadKafkaEditor();
       /**kafkaInterface->getKafkaCursorPosition(node, offset);
-      kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);*/
+      kafkaInterface->getKafkaWidget()->setCurrentNode(node, offset);*/
     }
     else if(e->timerId() == quantaUpdateTimer &&  hadLastFocus() == kafkaFocus
-      /**kafkaInterface->getKafkaPart()->view()->hasFocus()*/)
+      /**kafkaInterface->getKafkaWidget()->view()->hasFocus()*/)
     {
       //Update quanta view
       //write()->docUndoRedo->syncQuantaView();

@@ -583,7 +583,7 @@ void EnhancedTagAttributeTree::deleteSubTree()
     curNode->tag->beginPos(curLine, curCol);
   else
   {
-    quantaApp->view()->getKafkaInterface()->getKafkaPart()->getCurrentNode(domNode, offset);
+    quantaApp->view()->getKafkaInterface()->getKafkaWidget()->getCurrentNode(domNode, offset);
     if(!domNode.previousSibling().isNull())
       domNode = domNode.previousSibling();
     else
@@ -607,8 +607,8 @@ void EnhancedTagAttributeTree::deleteSubTree()
   else
   {
     domNode = kafkaCommon::getNodeFromLocation(loc,
-      quantaApp->view()->getKafkaInterface()->getKafkaPart()->document());
-    quantaApp->view()->getKafkaInterface()->getKafkaPart()->setCurrentNode(domNode, offset);
+      quantaApp->view()->getKafkaInterface()->getKafkaWidget()->document());
+    quantaApp->view()->getKafkaInterface()->getKafkaWidget()->setCurrentNode(domNode, offset);
   }
 
 #else
@@ -663,7 +663,7 @@ void EnhancedTagAttributeTree::deleteNode()
     curNode->tag->beginPos(curLine, curCol);
   else
   {
-    quantaApp->view()->getKafkaInterface()->getKafkaPart()->getCurrentNode(domNode, offset);
+    quantaApp->view()->getKafkaInterface()->getKafkaWidget()->getCurrentNode(domNode, offset);
     if(!domNode.previousSibling().isNull())
       domNode = domNode.previousSibling();
     else
@@ -710,8 +710,8 @@ void EnhancedTagAttributeTree::deleteNode()
   else
   {
     domNode = kafkaCommon::getNodeFromLocation(loc,
-      quantaApp->view()->getKafkaInterface()->getKafkaPart()->document());
-    quantaApp->view()->getKafkaInterface()->getKafkaPart()->setCurrentNode(domNode, offset);
+      quantaApp->view()->getKafkaInterface()->getKafkaWidget()->document());
+    quantaApp->view()->getKafkaInterface()->getKafkaWidget()->setCurrentNode(domNode, offset);
   }
 
   #else

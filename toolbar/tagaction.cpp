@@ -501,8 +501,8 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 		kdDebug(25001)<< "TagAction::insertOutputInTheNodeTree() - str1 : " << str1 <<
 			" - str2 : " << str2 << endl;
 #endif
-	KafkaHTMLPart *kafkaPart = m_view->getKafkaInterface()->getKafkaPart();
-	WKafkaPart *wkafka = m_view->getKafkaInterface();
+	KafkaWidget *kafkaPart = m_view->getKafkaInterface()->getKafkaWidget();
+	KafkaDocument *wkafka = m_view->getKafkaInterface();
 	NodeModifsSet modifs;
 	DOM::Node domNode;
 	DOM::Range range;
@@ -531,7 +531,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 			node->tag->parse(str1, quantaApp->view()->write());
 		}
 		kafkaPart->getCurrentNode(domNode, offset);
-		kafkaNode = wkafka->searchCorrespondingNode(domNode);
+		kafkaNode = wkafka->getNode(domNode);
 		kdDebug(25001)<< "BOO"<< endl;
 
 		if(!kafkaNode)
@@ -583,8 +583,8 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 		{
 			//If some text is selected in kafka, surround the selection with the new Node.
 			kdDebug(25001)<< "BOO3"<< endl;
-			startContainer = wkafka->searchCorrespondingNode(range.startContainer());
-			endContainer = wkafka->searchCorrespondingNode(range.endContainer());
+			startContainer = wkafka->getNode(range.startContainer());
+			endContainer = wkafka->getNode(range.endContainer());
 			if(!startContainer || !endContainer)
 				return;
 			kdDebug(25001)<< "BOO4-2"<< endl;

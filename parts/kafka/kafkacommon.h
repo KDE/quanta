@@ -28,6 +28,7 @@ namespace DOM
 class Node;
 class NodeModifsSet;
 class Document;
+class DTDStruct;
 
 /**
  * For heavy debug including Node Tree in stdout printing, a DOM::Node tree widget.
@@ -95,7 +96,8 @@ public:
 	 * when setting returnParentNode to false.
 	 * @return the next Node.
 	 */
-	static DOM::Node getNextDomNode(DOM::Node node, bool &goUp, bool returnParentNode = false, DOM::Node endNode = DOM::Node());
+	static DOM::Node getNextDomNode(DOM::Node node, bool &goUp, bool returnParentNode = false,
+		DOM::Node endNode = DOM::Node());
 
 
 	/** ----------------------- NODE INDENTATION STUFF -------------------------------------*/
@@ -271,9 +273,9 @@ public:
 	 * @param startOffset The first Node will be splitted at offset startOffset, the right part will be enclosed.
 	 * @param endOffset The last Node will be splitted at offset endOffset, the left part will be enclosed.
 	 */
-	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
-		Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset, int endOffset,
-		NodeModifsSet &modifs);
+	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
+	Document *doc, Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset,
+	int endOffset, NodeModifsSet &modifs);
 
 	/**
 	 * It behaves essentially like the above function except that it will insert the new Node only if the DTD
@@ -283,9 +285,9 @@ public:
 	 * can't be inserted.
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
-	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
-		Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset, int endOffset,
-		NodeModifsSet &modifs, bool generateElements = true);
+	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
+	Document *doc, Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset,
+	int endOffset, NodeModifsSet &modifs, bool generateElements = true);
 
 	/**
 	 * It behaves essentially like the above function except that the new Tag can surround any subtree. If
@@ -298,8 +300,8 @@ public:
 	 * @param endOffset If endNode is a text, specify at which offset the new Node must stop to surround.
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
-	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc,
-		Node *startNode, int startOffset, Node *endNode, int endOffset, NodeModifsSet &modifs);
+	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
+	Document *doc, Node *startNode, int startOffset, Node *endNode, int endOffset, NodeModifsSet &modifs);
 
 	/**
 	 * For internal use. From startNode to endNode, it add where possible/necessary a new Node in order
@@ -456,12 +458,19 @@ public:
 	/** --------------------- DOM::NODE MODIFICATIONS ---------------------- */
 
 	/**
-	 * Create new DOM::Nodes. It takes care of catching exceptions.
-	 * @param nodeName The name of the DOM::Node to be created
+	 * Create a new DOM::Node. It takes care to check if nodeName is valid.
+	 * @param nodeName The DOM::Node's name.
+	 * @param dtd The currently used dtd.
 	 * @param rootNode The rootNode is needed in order to create a new DOM::Node.
 	 * @return Returns the DOM::Node created or a null DOM::Node if nodeName is invalid.
 	 */
-	static DOM::Node createDomNode(const QString &nodeName, DOM::Document rootNode);
+	static DOM::Node createDomNode(const QString &nodeName, DTDStruct* dtd, DOM::Document rootNode);
+
+	/**
+	 * It behaves essentially like the above function.
+	 * @param node The DOM::Node will be created with node's name.
+	 */
+	static DOM::Node createDomNode(Node *node, DOM::Document rootNode);
 
 	/**
 	 * Create a new Text Node.
@@ -472,12 +481,30 @@ public:
 	static DOM::Node createTextDomNode(const QString &textString, DOM::Document rootNode);
 
 	/**
-	 * Create a new attribute. It takes care of catching exceptions.
-	 * @param attrName The name of the new attribute
+	 * Create a new attribute and check if the attrName can have this attribute.
+	 * @param nodeName The node name of the DOM::Node which will get this attribute.
+	 * @param dtd The currently used dtd.
+	 * @param attrName The name of the new attribute.
+	 * @param attrValue The value of the new attribute.
 	 * @param rootNode The rootNode is needed in order to create a new Attribute.
 	 * @return Returns the new Attribute or a null DOM::Node if attrName is invalid.
 	 */
-	static DOM::Node createDomNodeAttribute(const QString &attrName, DOM::Document rootNode);
+	static DOM::Node createDomNodeAttribute(const QString &nodeName, DTDStruct* dtd,
+		const QString &attrName, const QString &attrValue, DOM::Document rootNode);
+
+	/**
+	 * It behaves essentially like the above function.
+	 * @param node The corresponding DOM::Node of node will get the attribute. It don't add the attribute.
+	 */
+	static DOM::Node createDomNodeAttribute(Node* node, const QString &attrName, DOM::Document rootNode);
+
+	/**
+	 * It behaves essentially like the above function except that it use the DOM::Node->Node* link to get the
+	 * corresponding Node. So be sure that the link is set.
+	 * @param node The node which will get the attribute. It don't add the attribute.
+	 */
+	//static DOM::node createDomNodeAttribute(DOM::Node node, const QString &attrName,
+	//	DOM::Document rootNode);
 
 	/**
 	 * Append a new attribute to a DOM::Node.
@@ -490,14 +517,22 @@ public:
 	/**
 	 * It behaves essentially like the above function except that if the attribute doesn't exist, it will create it,
 	 * and then it fills the attribute with attrValue.
+	 * @param nodeName The name of the Node corresponding to node.
+	 * @param dtd The currently used DTD.
 	 * @param attrName The name of the (new) Attribute.
 	 * @param attrValue The value of the new Attribute.
 	 * @param rootNode The rootNode is needed in order to create a new Attribute.
 	 * @return Returns if the operation was successfull.
 	 */
-	static bool editDomNodeAttribute(DOM::Node node, const QString &attrName, const QString &attrValue,
-		DOM::Document rootNode);
+	static bool editDomNodeAttribute(DOM::Node node, const QString &nodeName, DTDStruct* dtd,
+		const QString &attrName, const QString &attrValue, DOM::Document rootNode);
 
+	/**
+	 * It behaves essentially like the above function.
+	 * @param node The DOM::Node comes from this node.
+	 */
+	static bool editDomNodeAttribute(DOM::Node domNode, Node* node,
+		const QString &attrName, const QString &attrValue, DOM::Document rootNode);
 
 	/** ----------------------- MISCELLANEOUS -------------------------------------*/
 

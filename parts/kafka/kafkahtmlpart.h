@@ -37,21 +37,21 @@
 
 
 class DOMString;
-class KafkaHTMLPartPrivate;
-class WKafkaPart;
+class KafkaWidgetPrivate;
+class KafkaDocument;
 
 /*
- * The main kafka class which handles user input(keyboard, mouse), DOM object
- * editing.
+ * It is the main central widget which get the cursor focus and takes care of "simple" edition
+ * such as typing text.
  */
 
-class KafkaHTMLPart : public KHTMLPart
+class KafkaWidget : public KHTMLPart
 {
 Q_OBJECT
 public:
-	KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, WKafkaPart *part,
+	KafkaWidget(QWidget *parent, QWidget *widgetParent, KafkaDocument *part,
 		const char *name = 0);
-	~KafkaHTMLPart();
+	~KafkaWidget();
 
 	/**
 	 * Category: Standard Functions
@@ -60,29 +60,6 @@ public:
 	void newDocument();
 
 	/**
-	 * Category: Standard Functions
-	 * Called by KafkaPart to open a document
-	 * @param url Specifies the URL to open
-	 * @return Returns true if it worked, else false
-	 */
-	bool openDocument(const KURL &url);
-
-	/**
-	 * Category: Standard Functions
-	 * Called by KafkaPart to set the readonly variable
-	 * @param value Specifies wheter we accept keyboard input or not
-	 */
-	void setReadOnly(bool value);
-
-	/**
-	 * Category: Standard Functions
-	 * Is the KafkaHTMLPart ReadOnly?
-	 * @return Return wheter the part is writeable or not
-	 */
-	bool readOnly();
-
-	/**
-	 * Category: Standart Function
 	 * Returns the current Node (which has the focus) and its offset.
 	 * @param currentNode The Node which has the cursor focus.
 	 * @param offset The offset of the cursor in _currentNode.
@@ -97,7 +74,6 @@ public:
 	void setCurrentNode(DOM::Node node, int offset);
 
 	 /**
-	 * Category : Standart Function
 	 * Get the next DOM::Node after _node.
 	 * @param _node The DOM::Node the search starts from.
 	 * @param goUp A needed boolean for several consecutive call to
@@ -213,7 +189,7 @@ signals:
 
 	/**
 	 * Category: Widget Signal
-	 * Is emitted whenever the KafkaHTMLPart widget get or lost the focus
+	 * Is emitted whenever the KafkaWidget widget get or lost the focus
 	 * @param focus True if it has got the focus, false otherwise.
 	 */
 	 void hasFocus(bool focus);
@@ -258,9 +234,9 @@ private:
 	void makeCursorVisible(int xMargin = 50, int yMargin = 50);
 
 	DOM::Node m_currentNode;
-	KafkaHTMLPartPrivate *d;
-	WKafkaPart *w;
-	friend class KafkaHTMLPartPrivate;
+	KafkaWidgetPrivate *d;
+	KafkaDocument *w;
+	friend class KafkaWidgetPrivate;
 };
 
 #endif

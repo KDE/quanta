@@ -204,6 +204,8 @@ public:
   /** Returns the attribute at index. */
   Attribute* attributeAt(int index);
   AttributeList *attributes() { return &attrs;}
+  /** Returns true if the attribute exists */
+  bool isAttribute(const QString &attrName);
   /** No descriptions */
   void setSingle(bool isSingle);
   /** No descriptions */

@@ -38,7 +38,7 @@ class QWidgetStack;
 class QDropEvent;
 class QPopupMenu;
 class ToolbarTabWidget;
-class WKafkaPart;
+class KafkaDocument;
 namespace DOM
 {
   class Node;
@@ -82,8 +82,8 @@ public:
   QWidget* removeWrite();
 #ifdef BUILD_KAFKAPART
 
-  /** Return the WKafkaPart */
-  WKafkaPart *getKafkaInterface() {return kafkaInterface;}
+  /** Return the KafkaDocument */
+  KafkaDocument *getKafkaInterface() {return kafkaInterface;}
 
   /** Tells which widget had the focus the more recently */
   int hadLastFocus() {return currentFocus;}
@@ -214,7 +214,7 @@ public slots:
   void slotShowKafkaAndQuanta();
 
   /**
-   * Called whenever the kafkaHTMLPart widget get/lost the focus.
+   * Called whenever the KafkaWidget widget get/lost the focus.
    */
   void slotKafkaGetFocus(bool focus);
 
@@ -260,7 +260,7 @@ private:
 
 #ifdef BUILD_KAFKAPART
 /** Kafka stuff */
-  WKafkaPart *kafkaInterface;
+  KafkaDocument *kafkaInterface;
   QSplitter *splitter;
   QValueList<int> _splittSizes;
   int currentFocus;

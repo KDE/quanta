@@ -84,6 +84,20 @@ Attribute* QTag::attributeAt(int index)
 {
   return attrs.at(index);
 }
+
+/** Returns true if the attribute exists */
+bool QTag::isAttribute(const QString &attrName)
+{
+  Attribute *a;
+
+  for(a = attrs.first(); a; a = attrs.next())
+  {
+    if(a->name == attrName)
+      return true;
+  }
+  return false;
+}
+
 /** No descriptions */
 void QTag::setSingle(bool isSingle)
 {
