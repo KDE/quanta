@@ -308,12 +308,17 @@ void ProjectTreeView::slotReloadTree( ProjectList *fileList, bool buildNewTree, 
   if (buildNewTree)
   {
     if (m_projectDir)
+    {
+      kdDebug(250) << "removebranch: " << m_projectDir << endl;
       removeBranch(m_projectDir);
+      m_projectDir = 0L;
+    }
     BaseTreeBranch *btb = dynamic_cast<BaseTreeBranch *>(newBranch(m_projectBaseURL));
     if (btb && folderToOpen.count() > 0) {
       btb->folderToOpen = folderToOpen;
       btb->reopenFolder();
     }
+    kdDebug(250) << "m_projectDir: " << m_projectDir << endl;
   } else
   {
     if (m_projectDir){
@@ -327,6 +332,7 @@ void ProjectTreeView::slotReloadTree( ProjectList *fileList, bool buildNewTree, 
         item = dynamic_cast <KFileTreeViewItem*> (iter.current());
         item->setVisible(m_projectFiles->contains(item->url()) || item == rootItem);
       }
+      rootItem->setEnabled(true);
     }
   }
 }

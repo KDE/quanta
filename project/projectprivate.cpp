@@ -24,9 +24,11 @@
 #include <qradiobutton.h>
 #include <qwidgetstack.h>
 #include <qwizard.h>
+#include <qeventloop.h>
 
 //kde includes
 #include <kaction.h>
+#include <kapplication.h>
 #include <kcharsets.h>
 #include <kconfig.h>
 #include <kdirwatch.h>
@@ -143,12 +145,12 @@ void ProjectPrivate::initActions(KActionCollection *ac)
 
   saveAsProjectTemplateAction =
             new KAction( i18n( "Save as Project Template..." ), 0,
-                        m_parent, SLOT( slotFileSaveAsProjectTemplate() ),
+                        m_mainWindow, SLOT( slotFileSaveAsProjectTemplate() ),
                         ac, "save_project_template" );
 
   saveSelectionAsProjectTemplateAction =
                         new KAction( i18n( "Save Selection to Project Template File..." ), 0,
-                                    m_parent, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
+                                    m_mainWindow, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
                                     ac, "save_selection_project_template" );
   adjustActions();
 }
@@ -377,7 +379,7 @@ void ProjectPrivate::loadProjectXML()
   if ( projectNode.isNull() || projectName.isEmpty() )
   {
     parent->hideSplash();
-    KMessageBox::sorry(m_parent, i18n("Invalid project file.") );
+    KMessageBox::sorry(m_mainWindow, i18n("Invalid project file.") );
     adjustActions();
     return;
   }
@@ -657,7 +659,7 @@ void ProjectPrivate::slotAcceptCreateProject()
   if (!baseURL.path().startsWith("/")) baseURL.setPath("/"+ baseURL.path());
   if (!QExtFileInfo::createDir( baseURL ))
   {
-    QuantaCommon::dirCreationError(m_parent, baseURL);
+    QuantaCommon::dirCreationError(m_mainWindow, baseURL);
     baseURL = oldBaseURL;
   } else
   {
@@ -740,7 +742,7 @@ void ProjectPrivate::slotAcceptCreateProject()
       templateURL = QExtFileInfo::toAbsolute(templateURL, baseURL);
       if (!QExtFileInfo::createDir(templateURL))
       {
-        QuantaCommon::dirCreationError(m_parent, templateURL);
+        QuantaCommon::dirCreationError(m_mainWindow, templateURL);
       }
     }
     //the nodes are already created in loadProjectXML() called from createEmptyDom()
@@ -755,7 +757,7 @@ void ProjectPrivate::slotAcceptCreateProject()
     toolbarURL = QExtFileInfo::toAbsolute(toolbarURL, baseURL);
     if (!QExtFileInfo::createDir(toolbarURL))
     {
-      QuantaCommon::dirCreationError(m_parent, toolbarURL);
+      QuantaCommon::dirCreationError(m_mainWindow, toolbarURL);
     }
     el = dom.firstChild().firstChild().namedItem("toolbars").toElement();
     url = QExtFileInfo::toRelative(toolbarURL, baseURL);
@@ -812,7 +814,7 @@ void ProjectPrivate::slotSaveAsProjectView(bool askForName)
   {
     bool ok;
     QString newProjectView = KInputDialog::getText(i18n("Save Project View As"),
-                                                        i18n("Enter the name of the view:"), "", &ok, m_parent).lower();
+                                                        i18n("Enter the name of the view:"), "", &ok, m_mainWindow).lower();
     if (!ok)
       return;
     currentProjectView = newProjectView;
@@ -824,7 +826,7 @@ void ProjectPrivate::slotSaveAsProjectView(bool askForName)
     if (node.toElement().attribute("name") == currentProjectView)
     {
       if (!askForName ||
-          KMessageBox::warningYesNo(m_parent, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
+          KMessageBox::warningYesNo(m_mainWindow, i18n("<qt>A project view named <b>%1</b> already exists.<br>Do you want to overwrite it?</qt>")
                                             .arg(currentProjectView)) == KMessageBox::Yes)
       {
         node.parentNode().removeChild(node);
@@ -901,7 +903,7 @@ bool ProjectPrivate::createEmptyDom()
     tempFile->close();
     result = QExtFileInfo::createDir(baseURL);
     if (result)
-      result = KIO::NetAccess::upload(tempFile->name(), projectURL, m_parent);
+      result = KIO::NetAccess::upload(tempFile->name(), projectURL, m_mainWindow);
     if (result)
       m_tmpProjectFile = tempFile->name();
   } else
@@ -923,7 +925,7 @@ bool ProjectPrivate::createEmptyDom()
   if (!result)
   {
     parent->hideSplash();
-    KMessageBox::sorry(m_parent, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
+    KMessageBox::sorry(m_mainWindow, i18n("<qt>Cannot open file <b>%1</b> for writing.</qt>").arg(projectURL.prettyURL(0, KURL::StripFileProtocol)));
     delete tempFile;
     tempFile = 0L;
     return false;
@@ -984,18 +986,19 @@ void ProjectPrivate::getStatusFromTree()
 /** create new project */
 void ProjectPrivate::slotNewProject()
 {
+  kdDebug(250) << "slotNewProject " << endl;
   slotCloseProject();
-    QWizard *wiz = new QWizard(m_parent, "new", true);
+  QWizard *wiz = new QWizard(m_mainWindow, "new", true);
   wiz->setCaption(i18n("New Project Wizard"));
   wiz->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-  png = new ProjectNewGeneral( wiz );
+  png = new ProjectNewGeneral(0L);
 
-  stack = new QWidgetStack( wiz );
+  stack = new QWidgetStack(0L);
 
-  pnl = new ProjectNewLocal( stack );
-  pnw = new ProjectNewWeb  ( stack );
-  pnf = new ProjectNewFinal( wiz );
+  pnl = new ProjectNewLocal(stack);
+  pnw = new ProjectNewWeb(stack);
+  pnf = new ProjectNewFinal(0L);
 
   stack->addWidget( pnl, 0);
   stack->addWidget( pnw, 1 );
@@ -1011,7 +1014,7 @@ void ProjectPrivate::slotNewProject()
   wiz->setFinishEnabled( pnf,   true  );
 
   connect( png, SIGNAL(enableNextButton(QWidget *,bool)),
-          wiz, SLOT(setNextEnabled(QWidget*,bool)));
+           wiz, SLOT(setNextEnabled(QWidget*,bool)));
   connect( png, SIGNAL(setBaseURL(const KURL&)),
           pnl, SLOT(  setBaseURL(const KURL&)));
   connect( png, SIGNAL(setBaseURL(const KURL&)),
@@ -1019,7 +1022,7 @@ void ProjectPrivate::slotNewProject()
   connect( this,SIGNAL(setLocalFiles(bool)),
           pnl, SLOT(slotSetFiles(bool)));
 
-  connect( wiz, SIGNAL(selected(const QString &)),
+  connect(wiz, SIGNAL(selected(const QString &)),
           this, SLOT  (slotSelectProjectType(const QString &)));
 
   connect( pnw, SIGNAL(enableMessagesWidget()),
@@ -1027,9 +1030,9 @@ void ProjectPrivate::slotNewProject()
   connect( pnw, SIGNAL(messages(const QString&)),
           parent, SLOT  (slotGetMessages(const QString&)));
   connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
-          wiz, SLOT(setNextEnabled(QWidget*,bool)));
+           wiz, SLOT(setNextEnabled(QWidget*,bool)));
   connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
-          wiz, SLOT(setBackEnabled(QWidget*,bool)));
+           wiz, SLOT(setBackEnabled(QWidget*,bool)));
 
   QStringList lst = DTDs::ref()->nickNameList(true);
   pnf->dtdCombo->insertStringList(lst);
@@ -1054,14 +1057,14 @@ void ProjectPrivate::slotNewProject()
 
   png->linePrjName->setFocus();
   if ( wiz->exec() )
+  {
     slotAcceptCreateProject();
-
+  }
   delete wiz;
 
   adjustActions();
-  emit parent->newStatus();
+  parent->newStatus();
 }
-
 
 /** close project and edited files */
 void ProjectPrivate::slotCloseProject()
@@ -1070,7 +1073,7 @@ void ProjectPrivate::slotCloseProject()
   emit eventHappened("before_project_close", baseURL.url(), QString::null);
   if (!uploadProjectFile())
   {
-    if (KMessageBox::warningYesNo(m_parent, i18n("Saving of project failed. Do you want to continue with closing (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::No)
+    if (KMessageBox::warningYesNo(m_mainWindow, i18n("Saving of project failed. Do you want to continue with closing (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::No)
       return;
   }
   emit eventHappened("after_project_close", baseURL.url(), QString::null);
@@ -1085,6 +1088,7 @@ void ProjectPrivate::slotCloseProject()
   parent->reloadTree( &(m_projectFiles), true, QStringList());
   adjustActions();
   parent->newStatus();
+  kapp->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
 }
 
 
@@ -1092,7 +1096,7 @@ void ProjectPrivate::slotCloseProject()
 void ProjectPrivate::slotOpenProject()
 {
   KURL url = KFileDialog::getOpenURL( QString::null,
-                      "*.wpj *.webprj"+i18n("|Project Files\n*|All Files"), m_parent,
+                      "*.wpj *.webprj"+i18n("|Project Files\n*|All Files"), m_mainWindow,
                       i18n("Open Project"));
 
   if( !url.isEmpty() )
@@ -1133,7 +1137,7 @@ bool ProjectPrivate::saveProject()
   } else
   {
     parent->hideSplash();
-    KMessageBox::error(m_parent, i18n("<qt>Cannot open the file <b>%1</b> for writing.</qt>").arg(m_tmpProjectFile));
+    KMessageBox::error(m_mainWindow, i18n("<qt>Cannot open the file <b>%1</b> for writing.</qt>").arg(m_tmpProjectFile));
     result = false;
   }
   return result;
@@ -1165,7 +1169,7 @@ void ProjectPrivate::loadProjectFromTemp(const KURL &url, const QString &tempFil
   } else
   {
     parent->hideSplash();
-    KMessageBox::error(m_parent, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tempFile));
+    KMessageBox::error(m_mainWindow, i18n("<qt>Cannot open the file <b>%1</b> for reading.</qt>").arg(tempFile));
   }
 }
 
@@ -1177,19 +1181,19 @@ void ProjectPrivate::loadProject(const KURL &url)
   if (!url.isValid())
   {
     parent->hideSplash();
-    KMessageBox::sorry(m_parent, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
+    KMessageBox::sorry(m_mainWindow, i18n("<qt>Malformed URL: <b>%1</b></qt>").arg(url.prettyURL()));
     return;
   }
   if ( projectAlreadyOpen(url.url()) )
   {
     parent->hideSplash();
-    KMessageBox::sorry(m_parent, i18n("<qt>Cannot open the file<br><b>%1</b><br>It is used by another Quanta instance.</qt>").arg(url.prettyURL()));
+    KMessageBox::sorry(m_mainWindow, i18n("<qt>Cannot open the file<br><b>%1</b><br>It is used by another Quanta instance.</qt>").arg(url.prettyURL()));
     return;
   }
   QString tmpFile = QString::null;
   // test if url is writeable and download to local file
-  if (KIO::NetAccess::exists(url, false, m_parent) &&
-      KIO::NetAccess::download(url, tmpFile, m_parent))
+  if (KIO::NetAccess::exists(url, false, m_mainWindow) &&
+      KIO::NetAccess::download(url, tmpFile, m_mainWindow))
   {
     if (parent->hasProject())
     {
@@ -1199,7 +1203,7 @@ void ProjectPrivate::loadProject(const KURL &url)
   } else
   {
     parent->hideSplash();
-    KMessageBox::error(m_parent, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+    KMessageBox::error(m_mainWindow, i18n("<qt>Cannot access the project file <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
   }
 }
 
@@ -1208,7 +1212,7 @@ void ProjectPrivate::loadProject(const KURL &url)
 void ProjectPrivate::slotAddFiles()
 {
   KURL::List list = KFileDialog::getOpenURLs(
-    baseURL.url(),  i18n("*"), m_parent, i18n("Insert Files in Project"));
+    baseURL.url(),  i18n("*"), m_mainWindow, i18n("Insert Files in Project"));
 
   if ( !list.isEmpty() )
   {
@@ -1217,7 +1221,7 @@ void ProjectPrivate::slotAddFiles()
 
     if ( firstURL.path().startsWith("/") || firstURL.path().startsWith("."))
     {
-      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), m_parent, "");
+      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), m_mainWindow, "");
       urlRequesterDlg->setCaption(i18n("Files: Copy to Project"));
       urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
       urlRequesterDlg->exec();
@@ -1266,7 +1270,7 @@ void ProjectPrivate::slotDeleteCopytoDlg(CopyTo *dlg)
 void ProjectPrivate::slotAddDirectory()
 {
 KURL url = KURL();
-url = KFileDialog::getExistingURL(baseURL.prettyURL(), m_parent,
+url = KFileDialog::getExistingURL(baseURL.prettyURL(), m_mainWindow,
                 i18n("Insert Folder in Project"));
 parent->slotAddDirectory(url);
 }
@@ -1389,7 +1393,7 @@ bool ProjectPrivate::uploadProjectFile()
     m_tmpProjectFile = QString::null;
     return true;
   }
-  if (KIO::NetAccess::upload(m_tmpProjectFile, projectURL, m_parent))
+  if (KIO::NetAccess::upload(m_tmpProjectFile, projectURL, m_mainWindow))
   {
     removeFromConfig( projectURL.url() );    // remove the project from the list of open projects
     if (quantaApp)
@@ -1401,7 +1405,7 @@ bool ProjectPrivate::uploadProjectFile()
     // second the one from downloading a project
     KIO::NetAccess::removeTempFile(m_tmpProjectFile);
     // third if we recovered after crash
-    KIO::NetAccess::del(KURL().fromPathOrURL(m_tmpProjectFile), m_parent);
+    KIO::NetAccess::del(KURL().fromPathOrURL(m_tmpProjectFile), m_mainWindow);
     m_tmpProjectFile = QString::null;
   }
   else
@@ -1409,7 +1413,7 @@ bool ProjectPrivate::uploadProjectFile()
     if (quantaApp)
     {
       parent->statusMsg(QString::null );
-      KMessageBox::error(m_parent, KIO::NetAccess::lastErrorString());
+      KMessageBox::error(m_mainWindow, KIO::NetAccess::lastErrorString());
     }
     return false;
   }

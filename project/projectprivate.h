@@ -87,7 +87,7 @@ upload.*/
   QString m_defaultEncoding;
   QRegExp excludeRx;
   QStringList excludeList;
-  KMainWindow *m_parent;
+  KMainWindow *m_mainWindow;
   QString m_debuggerClientEdit;
   QMap<QString, QString> m_passwdList;
   ProjectList m_projectFiles; ///< the list with the _absolute_ URL's of the project

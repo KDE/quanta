@@ -66,7 +66,7 @@ Project::Project(KMainWindow *parent)
 {
   d = new ProjectPrivate(this);
   connect(d, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), this, SIGNAL(eventHappened(const QString&, const QString&, const QString& )));
-  d->m_parent = parent;
+  d->m_mainWindow = parent;
   keepPasswd = true;
   d->initActions(parent->actionCollection());
 }
@@ -98,7 +98,7 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
 
   if ( !d->baseURL.isParentOf(url) )
   {
-    KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( d->baseURL.prettyURL(), d->m_parent, "");
+    KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( d->baseURL.prettyURL(), d->m_mainWindow, "");
     urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(nameURL.prettyURL(0, KURL::StripFileProtocol)));
     urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
     urlRequesterDlg->exec();
@@ -176,11 +176,11 @@ void Project::loadLastProject(bool reload)
     QuantaCommon::setUrl(url, urlPath);
     QString tempPath = tempList[0];
     // test if the remote project is available
-    if ( KIO::NetAccess::exists(url, false, d->m_parent) )
+    if ( KIO::NetAccess::exists(url, false, d->m_mainWindow) )
     {
       KURL tempURL = KURL().fromPathOrURL(tempPath);
-      if (KIO::NetAccess::exists(tempURL, false, d->m_parent) &&
-          KMessageBox::questionYesNo(d->m_parent, i18n("<qt>Found a backup for project <b>%1</b>.<br> Do you want to open it?</qt>").arg(url.prettyURL()), i18n("Open Project Backup") )
+      if (KIO::NetAccess::exists(tempURL, false, d->m_mainWindow) &&
+          KMessageBox::questionYesNo(d->m_mainWindow, i18n("<qt>Found a backup for project <b>%1</b>.<br> Do you want to open it?</qt>").arg(url.prettyURL()), i18n("Open Project Backup") )
           == KMessageBox::Yes)
       {
         d->m_tmpProjectFile = tempPath;
@@ -221,7 +221,7 @@ void Project::slotOpenProject(const KURL &url)
     if ( !QExtFileInfo::exists(url) )
     {
       emit hideSplash();
-      if (KMessageBox::questionYesNo(d->m_parent,
+      if (KMessageBox::questionYesNo(d->m_mainWindow,
            i18n("<qt>The file <b>%1</b> does not exist.<br> Do you want to remove it from the list?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)) )
            == KMessageBox::Yes)
       {
@@ -255,7 +255,7 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
       KURL destination = d->baseURL;
       if (showDlg)
       {
-        KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( d->baseURL.prettyURL(), d->m_parent, "");
+        KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( d->baseURL.prettyURL(), d->m_mainWindow, "");
         urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL(0, KURL::StripFileProtocol)));
         urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
         urlRequesterDlg->exec();
@@ -389,7 +389,7 @@ void Project::slotRemove(const KURL& urlToRemove)
 void Project::slotOptions()
 {
   KURL url;
-  KDialogBase optionsDlg(KDialogBase::Tabbed, WStyle_DialogBorder, d->m_parent, "project_options", true, i18n("Project Settings"), KDialogBase::Ok | KDialogBase::Cancel);
+  KDialogBase optionsDlg(KDialogBase::Tabbed, WStyle_DialogBorder, d->m_mainWindow, "project_options", true, i18n("Project Settings"), KDialogBase::Ok | KDialogBase::Cancel);
  // optionsDlg.setMainWidget(&optionsPage);
 
  //add the main options page
@@ -555,7 +555,7 @@ void Project::slotOptions()
     d->templateURL = QExtFileInfo::toAbsolute(d->templateURL, d->baseURL);
     if (!QExtFileInfo::createDir(d->templateURL))
     {
-      QuantaCommon::dirCreationError(d->m_parent, d->templateURL);
+      QuantaCommon::dirCreationError(d->m_mainWindow, d->templateURL);
     }
 
     QuantaCommon::setUrl(d->toolbarURL, optionsPage.linePrjToolbar->text());
@@ -563,7 +563,7 @@ void Project::slotOptions()
     d->toolbarURL = QExtFileInfo::toAbsolute(d->toolbarURL, d->baseURL);
     if (!QExtFileInfo::createDir(d->toolbarURL))
     {
-      QuantaCommon::dirCreationError(d->m_parent, d->toolbarURL);
+      QuantaCommon::dirCreationError(d->m_mainWindow, d->toolbarURL);
     }
 
     d->previewPrefix = KURL::fromPathOrURL( optionsPage.linePrefix->text() );
@@ -791,7 +791,7 @@ void Project::slotGetMessages(const QString& data)
 void Project::slotRescanPrjDir()
 {
   RescanPrj *dlg = new RescanPrj( d->m_projectFiles, d->baseURL, d->excludeRx,
-                                    d->m_parent, i18n("New Files in Project's Folder"));
+                                    d->m_mainWindow, i18n("New Files in Project's Folder"));
   if ( dlg->exec() )
   {
     d->insertFiles(dlg->files());
@@ -1144,7 +1144,7 @@ bool Project::queryClose()
     canExit = d->uploadProjectFile();
     if (! canExit)
     {
-      if (KMessageBox::warningYesNo(d->m_parent, i18n("Saving of project failed. Do you want to continue with exit (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::Yes)
+      if (KMessageBox::warningYesNo(d->m_mainWindow, i18n("Saving of project failed. Do you want to continue with exit (might cause data loss)?"), i18n("Project Saving Error")) == KMessageBox::Yes)
           canExit = true;
     }
     if (canExit)
