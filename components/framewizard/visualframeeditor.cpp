@@ -43,9 +43,9 @@ VisualFrameEditor::VisualFrameEditor(QWidget * parent, const char * name) : QHBo
 }
 
 VisualFrameEditor::~VisualFrameEditor(){
-  delete t;
-  if(firstInsertedSA) delete firstInsertedSA;
-  firstInsertedSA=0L;
+ // delete t;
+//  delete firstInsertedSA;
+ // firstInsertedSA=0L;
 }
 
 void VisualFrameEditor::setGeometries(QString l){
@@ -249,10 +249,8 @@ void VisualFrameEditor::build(QString parent, QString path){
 
 void VisualFrameEditor::paintEvent ( QPaintEvent * ){
   hide();
-  if(firstInsertedSA) {
-    delete firstInsertedSA;
-    firstInsertedSA = 0L;
-  }
+  delete firstInsertedSA;
+  firstInsertedSA = 0L;
   
   QObjectList* splitterList = queryList("QSplitter");
   for (uint i = 0; i < splitterList->count(); i++) {

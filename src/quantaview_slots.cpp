@@ -136,19 +136,19 @@ void QuantaView::slotFrameWizard()
     l.remove(l.begin());
   }
 
-  FrameWizard *dlg = new FrameWizard(this);
+  FrameWizard dlg(this);
 
   if (!w->isUntitled())
       {
-       dlg->setSaved(true);
+       dlg.setSaved(true);
       }
-  dlg->setFramesetFileCurrentPath(quantaApp->projectBaseURL().path());
-  dlg->loadExistingFramesetStructure(l2);
+  dlg.setFramesetFileCurrentPath(quantaApp->projectBaseURL().path());
+  dlg.loadExistingFramesetStructure(l2);
 
-  if ( dlg->exec() )
+  if ( dlg.exec() )
   {
     QString tag =
-QString("\n")+dlg->generateFramesetStructure()+QString("\n");
+QString("\n")+dlg.generateFramesetStructure()+QString("\n");
     if (framesetExists)
     {
       w->activateParser(false);
@@ -158,7 +158,6 @@ QString("\n")+dlg->generateFramesetStructure()+QString("\n");
     }
     w->insertTag(tag);
   }
-  delete dlg;
 }
 
 
