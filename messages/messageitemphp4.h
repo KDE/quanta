@@ -5,7 +5,7 @@
 #include <config.h>
 #endif
 
-#include <messageitem.h>
+#include "messageitem.h"
 #include <qcolor.h>
 
 
