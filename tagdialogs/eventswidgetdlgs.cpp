@@ -7,7 +7,7 @@
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 #include "eventswidgetdlgs.h"
-
+#include "eventswidgetdlgs.moc"
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
@@ -16,18 +16,18 @@
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 
-/* 
- *  Constructs a EventsWidgetDlgS which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
+/*
+ *  Constructs a EventsWidgetDlgS which is a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'
  */
 EventsWidgetDlgS::EventsWidgetDlgS( QWidget* parent,  const char* name, WFlags fl )
     : QWidget( parent, name, fl )
 {
     if ( !name )
 	setName( "EventsWidgetDlgS" );
-    resize( 445, 387 ); 
+    resize( 445, 387 );
     setCaption( tr( "Form1"  ) );
-    grid = new QGridLayout( this ); 
+    grid = new QGridLayout( this );
     grid->setSpacing( 6 );
     grid->setMargin( 11 );
 
@@ -124,7 +124,7 @@ EventsWidgetDlgS::EventsWidgetDlgS( QWidget* parent,  const char* name, WFlags f
     grid->addItem( spacer, 10, 1 );
 }
 
-/*  
+/*
  *  Destroys the object and frees any allocated resources
  */
 EventsWidgetDlgS::~EventsWidgetDlgS()

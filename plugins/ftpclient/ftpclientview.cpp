@@ -9,7 +9,7 @@
 *****************************************************************************/
 
 #include "ftpclientview.h"
-
+#include "ftpclientview.moc"
 #include <qdir.h>
 #include <qpixmap.h>
 #include <qvaluelist.h>
@@ -70,22 +70,22 @@ QString FtpClientViewItem::text( int c ) const
 }
 
 const QPixmap *FtpClientViewItem::pixmap( int c ) const
-{ 
+{
   if ( !folderIcon	 )	folderIcon		= new QPixmap( (const char**)folder_xpm );
   if ( !fileIconTxt  )	fileIconTxt		= new QPixmap( (const char**)txt_xpm   );
   if ( !fileIconHtml )	fileIconHtml	= new QPixmap( (const char**)html_xpm  );
   if ( !fileIconImage)	fileIconImage	= new QPixmap( (const char**)image_xpm );
   if ( !fileIconJava )	fileIconJava	= new QPixmap( (const char**)java_xpm  );
-    
+
   if      ( info.isDir()  && c == 0 )		return folderIcon;
   else if ( info.isFile() && c == 0 )
-  { 
+  {
   	if ( QDir::match( fileMaskHtml,  info.name()) ) return fileIconHtml;
 	  if ( QDir::match( fileMaskImage, info.name()) ) return fileIconImage;
   	if ( QDir::match( fileMaskJava,  info.name()) ) return fileIconJava;
-  	  
+
   	return fileIconTxt;
-  }		
+  }
 
   return 0;
 }
@@ -99,7 +99,7 @@ FtpClientView::FtpClientView( QWidget *parent )
   setShowSortIndicator	 ( true );
   setAllColumnsShowFocus( true );
   setMultiSelection		 ( true );
-  
+
   connect( this, SIGNAL( doubleClicked( QListViewItem * ) ),
      this, SLOT( slotSelected( QListViewItem * ) ) );
   connect( this, SIGNAL( returnPressed( QListViewItem * ) ),
@@ -109,16 +109,16 @@ FtpClientView::FtpClientView( QWidget *parent )
 void FtpClientView::slotInsertEntries( const QValueList<QUrlInfo> &info )
 {
   QValueList<QUrlInfo>::ConstIterator it;
-  
-  for( it = info.begin(); it != info.end(); ++it ) 
+
+  for( it = info.begin(); it != info.end(); ++it )
   {
-		if ( (*it).name() != ".." && 
-		     (*it).name() != "." && 
+		if ( (*it).name() != ".." &&
+		     (*it).name() != "." &&
 		     (*it).name()[ 0 ] == '.' )
      	continue;
-		
+
 		FtpClientViewItem *item = new FtpClientViewItem( this, (*it) );
-		
+
 		if ( (*it).isDir() )
 	  	  item->setSelectable( false );
   }

@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #include "parseroptions.h"
-
+#include "parseroptions.moc"
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
@@ -30,22 +30,22 @@
 #include <klocale.h>
 #include <kconfig.h>
 
-/* 
- *  Constructs a ParserOptions which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
+/*
+ *  Constructs a ParserOptions which is a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'
  */
 ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* name, WFlags fl )
     : QWidget( parent, name, fl )
 {
 		this->config = config;
 		config->setGroup("Parser options");
-		
+
 		QString handleMBM = config->readEntry("MBM", i18n("Find tag"));
 		QString handleLBM = config->readEntry("LBM", i18n("Find tag and open tree"));
 		QString handleRBM = config->readEntry("RBM", i18n("Popup menu"));
 		QString handleDoubleClick = config->readEntry("Double click", i18n("Select tag area"));
-		
-		
+
+
     if ( !name )
 		  setName( "ParserOptions" );
     resize( 400, 330 );
@@ -150,7 +150,7 @@ ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* nam
     grid->addWidget( TextLabel6, 1, 0 );
 }
 
-/*  
+/*
  *  Destroys the object and frees any allocated resources
  */
 ParserOptions::~ParserOptions()
@@ -163,11 +163,11 @@ void ParserOptions::updateConfig()
 {
 
 		config->setGroup("Parser options");
-		
+
 		config->writeEntry("MBM",comboMBM->currentText());
 		config->writeEntry("LBM",comboLBM->currentText());
 		config->writeEntry("RBM",comboRBM->currentText());
 		config->writeEntry("Double click",comboDoubleClick->currentText());
 		config->writeEntry("Expand level", spinExpand->text().toInt() );
-		
+
 }

@@ -6,7 +6,7 @@
 
 // app includes
 #include "debugger.h"
-
+#include "debugger.moc"
 
 PHP3Debugger::PHP3Debugger( int port, QObject *parent, const char *name )
   :QServerSocket( port, 0, parent, name )
@@ -16,7 +16,7 @@ PHP3Debugger::PHP3Debugger( int port, QObject *parent, const char *name )
 void PHP3Debugger::newConnection( int socket )
 {
   debug("PHP debugger connected...");
-  
+
   QSocket* s = new QSocket(this);
 	connect(s,SIGNAL(readyRead()),           this,SLOT(readClient()));
 	connect(s,SIGNAL(delayedCloseFinished()),this,SLOT(discardClient()));
@@ -27,7 +27,7 @@ void PHP3Debugger::newConnection( int socket )
 void PHP3Debugger::readClient()
 {
   QSocket* socket = (QSocket*)sender();
-	while (socket->canReadLine()) 
+	while (socket->canReadLine())
 	{
 	  QString s = socket->readLine();
 	  emit data( s );

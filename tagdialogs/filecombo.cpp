@@ -26,7 +26,7 @@
 
 // app include
 #include "filecombo.h"
-
+#include "filecombo.moc"
 #include "../qextfileinfo.h"
 
 FileCombo::FileCombo(QString basePath, QWidget *parent, const char *name )
@@ -84,12 +84,12 @@ void FileCombo::slotFileSelect()
 {
  		QString fileName = KFileDialog::getOpenFileName(
  		  basePath, "*|All files");
- 		
+
 		if ( fileName.isEmpty() ) return;
-		
+
 		QExtFileInfo file(fileName);
 		file.convertToRelative( basePath );
-		
+
 		QString text = file.filePath();
 		combo  ->setEditText( text );
 }

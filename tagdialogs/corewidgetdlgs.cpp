@@ -7,7 +7,7 @@
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 #include "corewidgetdlgs.h"
-
+#include "corewidgetdlgs.moc"
 #include <qframe.h>
 #include <qlabel.h>
 #include <qlineedit.h>
@@ -17,18 +17,18 @@
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 
-/* 
- *  Constructs a CoreWidgetDlgS which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
+/*
+ *  Constructs a CoreWidgetDlgS which is a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'
  */
 CoreWidgetDlgS::CoreWidgetDlgS( QWidget* parent,  const char* name, WFlags fl )
     : QWidget( parent, name, fl )
 {
     if ( !name )
 	setName( "CoreWidgetDlgS" );
-    resize( 318, 316 ); 
+    resize( 318, 316 );
     setCaption( tr( "Form1"  ) );
-    grid = new QGridLayout( this ); 
+    grid = new QGridLayout( this );
     grid->setSpacing( 6 );
     grid->setMargin( 11 );
 
@@ -94,7 +94,7 @@ CoreWidgetDlgS::CoreWidgetDlgS( QWidget* parent,  const char* name, WFlags fl )
     grid->addWidget( lineDir, 6, 2 );
 }
 
-/*  
+/*
  *  Destroys the object and frees any allocated resources
  */
 CoreWidgetDlgS::~CoreWidgetDlgS()

@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "filemasks.h"
-
+#include "filemasks.moc"
 // qt includes
 #include <qlineedit.h>
 #include <qpushbutton.h>

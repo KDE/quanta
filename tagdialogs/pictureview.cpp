@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "pictureview.h"
+#include "pictureview.moc"
 #include "qpainter.h"
 
 PictureView::PictureView(QWidget *parent, char *file, const char *name ) : QFrame(parent,name)
@@ -34,8 +35,8 @@ PictureView::PictureView(QWidget *parent, char *file, const char *name ) : QFram
 			x_of = 0;
 			y_of = 0;
 		}
-		
-		
+
+
 		setFrameStyle ( Box|Sunken );
 }
 
@@ -64,7 +65,7 @@ void PictureView::slotSetImage( char * file ){
 	pix->load( file );
 	picwidth  = pix->width();
 	picheight = pix->height();
-	
+
 	scale();
 	repaint();
 }
@@ -81,7 +82,7 @@ void PictureView::scale(){
 		else x_of = (size().width()-picwidth)/2;
 	if ( picheight > size().height() ) height_ot = (float)size().height()/(float)picheight;
 		else y_of = (size().height()-picheight)/2;
-		
+
 	if (  width_ot < 1 || height_ot < 1) {
 		if ( width_ot < height_ot) {
 			*pix = pix->smoothScale( (int)(width_ot*picwidth), (int)(width_ot*picheight));
@@ -91,10 +92,10 @@ void PictureView::scale(){
 			*pix = pix->smoothScale( (int)(height_ot*picwidth), (int)(height_ot*picheight));
 			x_of = ( size().width()-(int)(height_ot*picwidth) )/2;
 		}
-			
+
 		picwidth  = size().width();
 		picheight = size().height();
-	}	
-	
-	
+	}
+
+
 }

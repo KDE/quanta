@@ -15,18 +15,19 @@
  *                                                                         *
  ***************************************************************************/
 #include "tagquicklistdlg.h"
+#include "tagquicklistdlg.moc"
 #include <qbuttongroup.h>
 
 TagQuickListDlg::TagQuickListDlg(QWidget *parent, const char *name)
     : QDialog(parent,name,true)
 {
 	setCaption(name);
-	
+
 	initDialog();
-	
+
 	groupBox->insert(radioOrdered);
 	groupBox->insert(radioUnordered);
-	
+
 	connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
 	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
 }

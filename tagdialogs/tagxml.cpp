@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "tagxml.h"
+#include "tagxml.moc"
 #include "tagattr.h"
 #include <klineedit.h>
 #include <qcheckbox.h>
@@ -36,11 +37,11 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
      QDomNode location = findChild(n,"location");
      if ( location.isNull() )
      	 continue;
-     	
+
      //debug( n.nodeName() );
 
      QDomElement el = location.toElement();
-     	
+
      int row = el.attribute("row","0").toInt();
      int col = el.attribute("col","0").toInt();
      int colspan = el.attribute("colspan","1").toInt()-1;
@@ -78,7 +79,7 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
               QToolTip::add( label, tip );
           if ( whatsThis != QString::null )
               QWhatsThis::add( label, whatsThis );
-     	  	
+
      	  grid->addMultiCellWidget( label, row, row+rowspan, col,  col+colspan );
      }
 
@@ -103,11 +104,11 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
         if ( type == "check" ) {
         	 QCheckBox *w = new QCheckBox(this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
-        	
+
         	 QDomElement ltext = findChild(n,"text").toElement();
 		     	 if ( !ltext.isNull() )
     	 	  	 w->setText( ltext.text() );
-        	
+
              if ( tip != QString::null )
                  QToolTip::add( w, tip );
              if ( whatsThis != QString::null )
@@ -120,7 +121,7 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
         if ( type == "list" ) {
         	 QComboBox *w = new QComboBox(true,this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
-        	
+
              if ( tip != QString::null )
                  QToolTip::add( w, tip );
              if ( whatsThis != QString::null )
@@ -133,7 +134,7 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
         if ( type == "color" ) {
         	 ColorCombo *w = new ColorCombo(this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
-        	
+
              if ( tip != QString::null )
                  QToolTip::add( w, tip );
              if ( whatsThis != QString::null )
@@ -146,7 +147,7 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
         if ( type == "url" ) {
         	 FileCombo *w = new FileCombo(basePath, this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
-        	
+
              if ( tip != QString::null )
                  QToolTip::add( w, tip );
              if ( whatsThis != QString::null )
@@ -156,21 +157,21 @@ Tagxml::Tagxml( QDomDocument &d, QWidget *parent, const char *name)
         	 attributes.append(attr);
         }
 
-     	
+
      }
 
      if ( n.nodeName() == "spacer") {
      	 QDomElement el = n.toElement();
-     	
+
      	 QSpacerItem* spacer;
-     	
+
      	 if ( el.attribute("orientation","v") == "v" )
      	   spacer = new QSpacerItem( 5, 10, QSizePolicy::Fixed, QSizePolicy::Expanding );
      	 else
      	 	 spacer = new QSpacerItem( 10, 5, QSizePolicy::Expanding, QSizePolicy::Fixed );
      	 grid->addItem(spacer,row,col);
      }
-     	
+
    }
 
 }
@@ -188,7 +189,7 @@ void Tagxml::readAttributes( QDict<QString> *d )
  	while ( attr ) {
  	  name = attr->attrName();
  	  value = attr->value();
- 	
+
  	  if ( value.isEmpty() ) d->remove(name);
     else {
       if ( dynamic_cast<Attr_check *>(attr) ) // checkbox
@@ -197,7 +198,7 @@ void Tagxml::readAttributes( QDict<QString> *d )
 	      d->replace(name, new QString(value) );
     }
 
- 	   	
+
 	  attr = attributes.next();
   }
 
@@ -209,9 +210,9 @@ void Tagxml::writeAttributes( QDict<QString> *d )
 
   Attr * attr = attributes.first();
  	while ( attr ) {
- 		
+
  	  name = attr->attrName();
- 	
+
  	  QString *v = d->find(name);
  	  if ( v ) {
  	  	if ( dynamic_cast<Attr_check *>(attr) ) // checkbox
@@ -220,10 +221,10 @@ void Tagxml::writeAttributes( QDict<QString> *d )
 		 	  value = *v;
 		}
 		else value = "";
-	 	
- 	
+
+
  	  attr->setValue( value );
- 	   	
+
 	  attr = attributes.next();
   }
 

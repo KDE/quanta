@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "docitem.h"
+#include "docitem.moc"
 #include "kconfig.h"
 #include "qstrlist.h"
 

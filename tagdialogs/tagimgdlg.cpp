@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "tagimgdlg.h"
+#include "tagimgdlg.moc"
 #include <qspinbox.h>
 
 #include <kapp.h>
@@ -34,11 +35,11 @@ TagImgDlg::TagImgDlg(QWidget *parent, const char *name)
 	img = 0L;
 	setCaption(name);
 	initDialog();
-	
+
 	buttonImgSource     ->setPixmap( UserIcon("open") );
 	buttonRecalcImgSize ->setPixmap( UserIcon("repaint") );
 	comboAlign       		->insertStrList(align);
-	
+
 	connect( buttonImgSource, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
 	connect( buttonRecalcImgSize, SIGNAL(clicked()), this, SLOT(slotRecalcImgSize()) );
 	connect( lineImgSource, SIGNAL( returnPressed()), this, SLOT(slotLineFileSelect()) );
@@ -50,19 +51,19 @@ TagImgDlg::~TagImgDlg(){
 /** Choose new image */
 void TagImgDlg::slotImageSet( const char * file){
 	widgetImg->slotSetImage( (char *)file);
-	
+
 	img = new QImage(file);
 	QString filename = file;
 	if ( img->isNull() ) {
 		return;
 	}
-	
+
 	QString s;
 	s.setNum( img->width() );
 	lineWidth->setText( s );
 	s.setNum( img->height() );
 	lineHeight->setText( s );
-	
+
 }
 
 /** recalculate image size */
@@ -82,12 +83,12 @@ void TagImgDlg::slotFileSelect()
 {
 		QString fileName = KFileDialog::getOpenFileName( basePath, "*.gif *.jpg *.png *.jpeg *.bmp *.GIF *.JPG *.PNG *.JPEG *.BMP|Image files\n*|All files");
 		if (fileName.isEmpty()) return;
-		
+
 		QExtFileInfo file(fileName);
 		file.convertToRelative( basePath );
 		QString shortName = file.filePath();
 		lineImgSource->setText(shortName);
-		
+
 		slotImageSet( fileName.data() );
 }
 

@@ -34,7 +34,7 @@
 
 #include <qdrawutil.h>
 #include <qevent.h>
-#include <qfile.h> 
+#include <qfile.h>
 #include <qimage.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -57,9 +57,10 @@
 #include <kimageeffect.h>
 
 #include "colorcombo.h"
+#include "colorcombo.moc"
 
-// This is repeated from the KColorDlg, but I didn't 
-// want to make it public BL. 
+// This is repeated from the KColorDlg, but I didn't
+// want to make it public BL.
 // We define it out when compiling with --enable-final in which case
 // we use the version defined in KColorDlg
 
@@ -70,7 +71,7 @@ ColorCombo::ColorCombo( QWidget *parent, const char *name )
 {
 	customColor.setRgb( 255, 255, 255 );
 	internalcolor.setRgb( 255, 255, 255 );
-	
+
 	hascolor = false;
 
 	createStandardPalette();
@@ -114,9 +115,9 @@ bool ColorCombo::hasColor() {
 
 void ColorCombo::setColorName( QString color )
 {
-	
+
 	QColor c(color);
-	
+
 	if ( c.isValid() && !color.isEmpty() ) {
 		setColor( c );
 	}
@@ -124,20 +125,20 @@ void ColorCombo::setColorName( QString color )
 		hascolor = false;
 		addColors();
 	}
-	
+
 }
 
 QString ColorCombo::colorName()
 {
 	if ( hascolor ) {
 		int i;
-		
+
 		for ( i = 0; i < STANDARD_PAL_SIZE; i++ )
 			if ( standardPalette[i] == internalcolor )
 				  return standardPaletteNames[i];
 
 		return internalcolor.name();
-		
+
 	}
 	else
 		return "";
@@ -154,7 +155,7 @@ void ColorCombo::resizeEvent( QResizeEvent *re )
 void ColorCombo::slotActivated( int index )
 {
 	hascolor = ( index != 0);
-	
+
 	if ( index == 1 )
 	{
 	  if ( KColorDialog::getColor( customColor ) == QDialog::Accepted )
@@ -215,7 +216,7 @@ void ColorCombo::addColors()
 
 	if ( i == STANDARD_PAL_SIZE )
 		customColor = internalcolor;
-	
+
 	insertItem( i18n("None") );
 
 	if ( qGray( customColor.rgb() ) < 128 )
@@ -227,15 +228,15 @@ void ColorCombo::addColors()
 	QBrush brush( customColor );
 	painter.fillRect( rect, brush );
 	painter.setPen( pen );
-	
+
 	painter.drawText( 2, painter.fontMetrics().height(), i18n("Custom...") );
 	painter.end();
 
 	insertItem( pixmap );
 	pixmap.detach();
-	
+
 	bool findColor = false;
-	
+
 	for ( i = 0; i < STANDARD_PAL_SIZE; i++ )
 	{
 		painter.begin( &pixmap );
@@ -251,15 +252,15 @@ void ColorCombo::addColors()
 			findColor = true;
 		}
 	}
-	
+
 	if ( !findColor )
 		setCurrentItem(1);
-	
-	
-	
+
+
+
 	if ( !hascolor )
 		setCurrentItem(0);
-		
+
 }
 
 void ColorCombo::createStandardPalette()

@@ -1,6 +1,7 @@
 
 #include "tagaction.h"
-#include "../quantaview.h"  
+#include "tagaction.moc"
+#include "../quantaview.h"
 #include "../quanta.h"
 #include "../quantadoc.h"
 #include "../document.h"
@@ -17,7 +18,7 @@ TagAction::TagAction( QDomElement *element, QuantaView *view,KActionCollection *
     view_(view)
 {
    setIcon( tag.attribute("icon","") );
-   
+
    if ( view_ )
         connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }
@@ -31,9 +32,9 @@ TagAction::~TagAction()
 
 void TagAction::insertTag()
 {
-  if ( !view_ ) 
+  if ( !view_ )
      return;
-  
+
   QString space="";
 	space.fill( ' ',view_->write()->currentColumn() );
 
@@ -127,7 +128,7 @@ void TagAction::insertTag()
     }
     proc->closeStdin();
   }
-    
+
 }
 
 void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
@@ -135,22 +136,22 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
     QCString tmp( buffer, buflen );
     QString text( tmp );
 
-    
+
     if ( scriptOutputDest == "cursor" )
         view_->write()->insertTag( text );
-    
+
     if ( scriptOutputDest == "replace" ) {
         if ( firstOutput )
             view_->write()->setText("");
         view_->write()->insertTag( text );
     }
-   
+
     if ( scriptOutputDest == "new" ) {
         if ( firstOutput )
             view_->getDoc()->openDocument( KURL() );
         view_->write()->insertTag( text );
     }
-    
+
     if ( scriptOutputDest == "message" ) {
         if ( firstOutput ) {
             view_->getApp()->getMessages()->clear();
@@ -167,27 +168,27 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
 {
     QCString tmp( buffer, buflen );
     QString text( tmp );
-    
+
     if ( scriptErrorDest == "merge" ) {
        	scriptErrorDest = scriptOutputDest;
   	      firstError = firstOutput;
     }
-    
+
     if ( scriptErrorDest == "cursor" )
         view_->write()->insertTag( text );
-    
+
     if ( scriptErrorDest == "replace" ) {
         if ( firstOutput )
             view_->write()->setText("");
         view_->write()->insertTag( text );
     }
-   
+
     if ( scriptErrorDest == "new" ) {
         if ( firstOutput )
             view_->getDoc()->openDocument( KURL() );
         view_->write()->insertTag( text );
     }
-    
+
     if ( scriptErrorDest == "message" ) {
         if ( firstError ) {
             view_->getApp()->getMessages()->clear();

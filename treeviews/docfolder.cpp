@@ -28,7 +28,7 @@
 // app includes
 #include "docfolder.h"
 #include "docitem.h"
-
+#include "docfolder.moc"
 
 DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath)
   : QListViewItem(parent)

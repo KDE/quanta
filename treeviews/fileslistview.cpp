@@ -29,7 +29,7 @@
 #include "filestreefile.h"
 #include "filestreefolder.h"
 #include "fileslistview.h"
-
+#include "fileslistview.moc"
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
 extern QString fileMaskText;
@@ -39,8 +39,8 @@ FilesListView::FilesListView( QString dir, QStringList dirList, QWidget *parent,
 	: FileManage(parent,name)
 {
 	this->dir	= dir;
-	this->dirList = dirList;	
-	
+	this->dirList = dirList;
+
 	setRootIsDecorated( true );
   header()->hide();
   setSorting( 0 );
@@ -52,12 +52,12 @@ FilesListView::FilesListView( QString dir, QStringList dirList, QWidget *parent,
   loadDir( dir );
 
 	setFocusPolicy(QWidget::ClickFocus);
-	
+
 	fileMenu -> insertItem( i18n("Tree mode"), this ,SLOT(slotNewMode()));
-	
+
 	folderMenu -> insertItem( i18n("Tree mode"), this ,SLOT(slotNewMode()));
-	
-	connect(  this, SIGNAL(clicked(QListViewItem *)),	
+
+	connect(  this, SIGNAL(clicked(QListViewItem *)),
 						this, SLOT(slotClicked(QListViewItem *)));
 	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
@@ -67,7 +67,7 @@ FilesListView::FilesListView( QString dir, QStringList dirList, QWidget *parent,
 						this, SLOT(slotSelectFile(QListViewItem *)));
 	connect(  this, SIGNAL(returnPressed(QListViewItem *)),
 						this, SLOT(slotClicked(QListViewItem *)));
-						
+
 	connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
 					 this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
 
@@ -84,37 +84,37 @@ FilesListView::~FilesListView()
 void FilesListView::loadDir( QString path )
 {
 	QDir thisDir( path );
-	
+
 	QStringList dirList;
 	QStringList fileList;
-	
+
 	QStringList::Iterator it;
-	
+
 	if ( !thisDir.exists()) return;
 	if ( !thisDir.isReadable() ) return;
-	
+
 	thisDir.setSorting( QDir::Name);
 	thisDir.setFilter ( QDir::Dirs);
-	
+
 	dirList = thisDir.entryList();
-	
+
 	dirList.first();
 	dirList.remove(".");
-	
+
 	thisDir.setFilter( QDir::Files);
-	
+
 	fileList = thisDir.entryList();
-	
+
 	FilesTreeFile* item;
-	
+
 	for ( it = fileList.begin(); it != fileList.end(); ++it )
 	{
 	  item = new FilesTreeFile( this, *it, dir+(*it) );
 	  item->setIcon( *it );
 	}
-	
+
 	FilesTreeFile *ditem;
-		
+
 	for ( it = dirList.begin(); it != dirList.end(); ++it )
 	{
 	  ditem = new FilesTreeFile( this, *it, dir+(*it) );
@@ -140,10 +140,10 @@ void FilesListView::slotMenu(QListViewItem *item, const QPoint &point, int)
 {
 	if ( !item ) return;
 	setSelected(item, true);
-	
+
 	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
 	if ( !f ) return;
-	
+
 	if ( f->isDir ) folderMenu->popup( point);
 	else							fileMenu->popup( point);
 }
@@ -163,7 +163,7 @@ void FilesListView::slotClicked(QListViewItem *item)
 	if ( !item ) return;
 	FilesTreeFile *file = (FilesTreeFile *)item;
 	if ( !file->isDir ) return;
-	
+
 	if ( file->text(0) == ".." )
 	{
 		QDir thisDir( dir );
@@ -173,7 +173,7 @@ void FilesListView::slotClicked(QListViewItem *item)
 	}
 	else
 		dir = dir + file->text(0)+"/";
-	
+
 	slotReload();
 }
 
@@ -183,9 +183,9 @@ void FilesListView::slotSelectFile(QListViewItem *item)
 	FilesTreeFile *file = (FilesTreeFile *)item;
 	if ( file->isDir ) return;
 	if ( !currentItem() ) return;
-	
+
 	QString nameToOpen = currentFileName();
-	
+
 	if ( QDir::match( fileMaskHtml+fileMaskJava+fileMaskText, nameToOpen) )
 	{
 		KURL url(nameToOpen);
@@ -207,9 +207,9 @@ void FilesListView::slotSelectAnyFile(QListViewItem *item)
 	FilesTreeFile *file = (FilesTreeFile *)item;
 	if ( file->isDir ) return;
 	if ( !currentItem() ) return;
-	
+
 	KURL url(currentFileName());
-	
+
 	emit openFile( url );
 }
 
@@ -220,9 +220,9 @@ void FilesListView::slotSelectImage(QListViewItem *item)
 	FilesTreeFile *file = (FilesTreeFile *)item;
 	if ( file->isDir ) return;
 	if ( !currentItem() ) return;
-	
+
 	QString nameToOpen = currentFileName();
-	
+
 	if ( QDir::match( fileMaskImage, nameToOpen) )
 	{
 		emit openImage( nameToOpen );

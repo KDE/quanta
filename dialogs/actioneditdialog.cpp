@@ -23,7 +23,7 @@
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 #include "actioneditdialog.h"
-
+#include "actioneditdialog.moc"
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
@@ -50,8 +50,8 @@
 const char* standardActionsList[] = {"Quick start","Quick list","Quick table","Insert color","Insert date","CSS",0};
 
 /*
- *  Constructs a ActionEditDialog which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
+ *  Constructs a ActionEditDialog which is a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'
  *
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  TRUE to construct a modal dialog.
@@ -61,10 +61,10 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
 {
     if ( !name )
 	setName( "ActionEditDialog" );
-    resize( 517, 424 ); 
+    resize( 517, 424 );
     setCaption( i18n( "Action"  ) );
     setSizeGripEnabled( TRUE );
-    grid = new QGridLayout( this ); 
+    grid = new QGridLayout( this );
     grid->setSpacing( 6 );
     grid->setMargin( 11 );
 
@@ -107,7 +107,7 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
     actionTab = new QTabWidget( GroupBox7, "actionTab" );
 
     QWidget* widget = new QWidget( actionTab, "widget" );
-    grid_3 = new QGridLayout( widget ); 
+    grid_3 = new QGridLayout( widget );
     grid_3->setSpacing( 6 );
     grid_3->setMargin( 11 );
 
@@ -127,7 +127,7 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
     actionTab->insertTab( widget, i18n( "Standard" ) );
 
     QWidget* widget_2 = new QWidget( actionTab, "widget_2" );
-    grid_4 = new QGridLayout( widget_2 ); 
+    grid_4 = new QGridLayout( widget_2 );
     grid_4->setSpacing( 6 );
     grid_4->setMargin( 11 );
 
@@ -166,14 +166,14 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
     actionTab->insertTab( widget_2, i18n( "Tag" ) );
 
     QWidget* widget_3 = new QWidget( actionTab, "widget_3" );
-    grid_5 = new QGridLayout( widget_3 ); 
+    grid_5 = new QGridLayout( widget_3 );
     grid_5->setSpacing( 6 );
     grid_5->setMargin( 11 );
 
     tabScript = new QTabWidget( widget_3, "tabScript" );
 
     QWidget* widget_4 = new QWidget( tabScript, "widget_4" );
-    grid_6 = new QGridLayout( widget_4 ); 
+    grid_6 = new QGridLayout( widget_4 );
     grid_6->setSpacing( 6 );
     grid_6->setMargin( 11 );
 
@@ -207,7 +207,7 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
     tabScript->insertTab( widget_4, i18n( "Input" ) );
 
     QWidget* widget_5 = new QWidget( tabScript, "widget_5" );
-    grid_8 = new QGridLayout( widget_5 ); 
+    grid_8 = new QGridLayout( widget_5 );
     grid_8->setSpacing( 6 );
     grid_8->setMargin( 11 );
 
@@ -251,7 +251,7 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
     tabScript->insertTab( widget_5, i18n( "Output" ) );
 
     QWidget* widget_6 = new QWidget( tabScript, "widget_6" );
-    grid_10 = new QGridLayout( widget_6 ); 
+    grid_10 = new QGridLayout( widget_6 );
     grid_10->setSpacing( 6 );
     grid_10->setMargin( 11 );
 
@@ -309,7 +309,7 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
     actionTab->insertTab( widget_3, i18n( "Script" ) );
 
     QWidget* widget_7 = new QWidget( actionTab, "widget_7" );
-    grid_12 = new QGridLayout( widget_7 ); 
+    grid_12 = new QGridLayout( widget_7 );
     grid_12->setSpacing( 6 );
     grid_12->setMargin( 11 );
 
@@ -326,7 +326,7 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
 
     grid->addWidget( GroupBox7, 0, 0 );
 
-    hbox = new QHBoxLayout; 
+    hbox = new QHBoxLayout;
     hbox->setSpacing( 6 );
     hbox->setMargin( 0 );
 
@@ -363,7 +363,7 @@ ActionEditDialog::ActionEditDialog( QWidget* parent,  const char* name, bool mod
     standardActions->insertStrList(standardActionsList);
 }
 
-/*  
+/*
  *  Destroys the object and frees any allocated resources
  */
 ActionEditDialog::~ActionEditDialog()

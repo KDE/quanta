@@ -23,7 +23,7 @@
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 #include "cssdialog.h"
-
+#include "cssdialog.moc"
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qframe.h>
@@ -43,9 +43,9 @@
 
 #include <klocale.h>
 
-/* 
- *  Constructs a CSSDialog which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
+/*
+ *  Constructs a CSSDialog which is a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'
  *
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  TRUE to construct a modal dialog.
@@ -1034,10 +1034,10 @@ CSSDialog::CSSDialog( QString basePath, QWidget* parent,  const char* name, bool
     // signals and slots connections
     connect( buttonOk, SIGNAL( clicked() ), this, SLOT( accept() ) );
     connect( buttonCancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
-  	
+
 }
 
-/*  
+/*
  *  Destroys the object and frees any allocated resources
  */
 CSSDialog::~CSSDialog()

@@ -30,6 +30,7 @@
 
 // application clases
 #include "doctreeview.h"
+#include "doctreeview.moc"
 #include "docfolder.h"
 #include "docitem.h"
 
@@ -50,29 +51,29 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
   QStringList docDirs = KGlobal::instance()->dirs()->findDirs("appdata", "doc");
 
 
-  for ( QStringList::Iterator it = docDirs.begin(); it != docDirs.end(); ++it ) 
+  for ( QStringList::Iterator it = docDirs.begin(); it != docDirs.end(); ++it )
   {
    	QString docDir = *it;
    	QDir dir(docDir, "*.docrc");
    	QStringList files = dir.entryList();
-   	
-   	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f ) 
+
+   	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
    	{
    		KConfig config( docDir + *it_f );
    		config.setGroup("Tree");
-   		
+
    		QString relDocDir = config.readEntry("Doc dir");
-   		
+
    		DocFolder *folder = new DocFolder(this, config.readEntry("Top Element"), &config , docDir+relDocDir+"/");
    		folder->setPixmap( 0, SmallIcon("folder_open") );
    	  folder->topLevel = true;
    	  folder->setOpen( true );
-  		
+
    	  config.setGroup("Context");
    	  QStrList list;
    	  config.readListEntry("ContextList", list );
-  		
-   	  for ( unsigned int i=0; i<list.count(); i++ ) 
+
+   	  for ( unsigned int i=0; i<list.count(); i++ )
    	  {
         QString keyword = list.at(i);
         QString *url = new QString( docDir + relDocDir + "/" + config.readEntry( list.at(i) ) );
@@ -99,7 +100,7 @@ void DocTreeView::clickItem( QListViewItem *)
 	if ( dit )
 	  if ( ! dit->url.isEmpty() )
     		emit openURL( dit->url );
-		
+
 	DocFolder *dfol = dynamic_cast< DocFolder *>(it);
 	if ( dfol )
 	  if ( ! dfol->url.isEmpty() )

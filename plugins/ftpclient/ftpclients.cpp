@@ -7,6 +7,7 @@
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 #include "ftpclients.h"
+#include "ftpclients.moc"
 #include "ftpclientview.h"
 
 #include <ktoolbar.h>
@@ -25,26 +26,26 @@
 // kde includes
 #include <klocale.h>
 
-/* 
- *  Constructs a FtpClientS which is a child of 'parent', with the 
- *  name 'name' and widget flags set to 'f' 
+/*
+ *  Constructs a FtpClientS which is a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'
  */
 FtpClientS::FtpClientS( QWidget* parent,  const char* name, WFlags fl )
     : QWidget( parent, name, fl )
 {
     if ( !name )
 	setName( "FtpClientS" );
-    resize( 578, 480 ); 
+    resize( 578, 480 );
     setCaption( i18n( "Form2"  ) );
-    FtpClientSLayout = new QGridLayout( this ); 
+    FtpClientSLayout = new QGridLayout( this );
     FtpClientSLayout->setSpacing( 6 );
     FtpClientSLayout->setMargin( 2 );
 
-    Layout22 = new QGridLayout; 
+    Layout22 = new QGridLayout;
     Layout22->setSpacing( 6 );
     Layout22->setMargin( 0 );
 
-    Layout21 = new QVBoxLayout; 
+    Layout21 = new QVBoxLayout;
     Layout21->setSpacing( 6 );
     Layout21->setMargin( 0 );
 
@@ -64,7 +65,7 @@ FtpClientS::FtpClientS( QWidget* parent,  const char* name, WFlags fl )
     GroupBox1_2Layout->addWidget( TextLabel3_2, 0, 0 );
     Layout21->addWidget( GroupBox1_2 );
 
-    Layout10_2 = new QHBoxLayout; 
+    Layout10_2 = new QHBoxLayout;
     Layout10_2->setSpacing( 6 );
     Layout10_2->setMargin( 0 );
 
@@ -114,7 +115,7 @@ FtpClientS::FtpClientS( QWidget* parent,  const char* name, WFlags fl )
 
     Layout22->addMultiCellWidget( GroupBox3, 3, 3, 0, 1 );
 
-    Layout20 = new QVBoxLayout; 
+    Layout20 = new QVBoxLayout;
     Layout20->setSpacing( 6 );
     Layout20->setMargin( 0 );
 
@@ -134,7 +135,7 @@ FtpClientS::FtpClientS( QWidget* parent,  const char* name, WFlags fl )
     GroupBox1Layout->addWidget( TextLabel3, 0, 0 );
     Layout20->addWidget( GroupBox1 );
 
-    Layout10 = new QHBoxLayout; 
+    Layout10 = new QHBoxLayout;
     Layout10->setSpacing( 6 );
     Layout10->setMargin( 0 );
 
@@ -165,7 +166,7 @@ FtpClientS::FtpClientS( QWidget* parent,  const char* name, WFlags fl )
     FtpClientSLayout->addLayout( Layout22, 0, 0 );
 }
 
-/*  
+/*
  *  Destroys the object and frees any allocated resources
  */
 FtpClientS::~FtpClientS()

@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "previewoptions.h"
-
+#include "previewoptions.moc"
 // qt includes
 #include <qlabel.h>
 #include <qradiobutton.h>
@@ -42,7 +42,7 @@ PreviewOptions::~PreviewOptions(){
 void PreviewOptions::setPosition( QString position )
 {
 	radioBottom->setChecked(true);
-	
+
 	if ( position == "Disabled") radioDisabled->setChecked(true);
 	if ( position == "Bottom"  ) radioBottom->setChecked(true);
 	if ( position == "Right"   ) radioRight->setChecked(true);
@@ -52,12 +52,12 @@ void PreviewOptions::setPosition( QString position )
 QString PreviewOptions::position()
 {
 	QString position = "Bottom";
-	
+
 	if ( radioBottom->isChecked() 				) position = "Bottom";
 	if ( radioRight->isChecked()					) position = "Right";
 	if ( radioFullworkspace->isChecked() 	) position = "FWSpace";
 	if ( radioDisabled->isChecked()				) position = "Disabled";
-	
+
 	return position;
 }
 

@@ -35,12 +35,13 @@
 
 // Application includes
 #include "filemanage.h"
+#include "filemanage.moc"
 
 FileManage::FileManage( QWidget *parent, const char *name)
 	: QListView( parent, name )
 {
 	fileMenu = new QPopupMenu();
-	
+
 	fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
 	fileMenu -> insertItem(					  			   i18n("Open with..."), 		this ,SLOT(slotOpenWith()));
 	fileMenu -> insertItem(					  			   i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
@@ -54,10 +55,10 @@ FileManage::FileManage( QWidget *parent, const char *name)
 	fileMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
-	
-	
+
+
 	folderMenu = new QPopupMenu();
-	
+
 	folderMenu -> insertItem(					  			   i18n("Insert in project"),this ,SLOT(slotInsertDirInProject()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
@@ -66,7 +67,7 @@ FileManage::FileManage( QWidget *parent, const char *name)
 	folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
-	
+
 }
 
 FileManage::~FileManage()
@@ -99,13 +100,13 @@ void FileManage::slotOpenInQuanta()
 void FileManage::slotOpenWith()
 {
 	if ( !currentItem() ) return;
-	
+
 	QStringList list;
 	QString fileToOpen = currentFileName();
 	list.append( fileToOpen );
-	
+
 	KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
-	
+
 	kfowh -> displayOpenWithDialog( KURL::List( list ) );
 }
 
@@ -133,9 +134,9 @@ void FileManage::slotPaste()
 void FileManage::slotDelete()
 {
   if ( !currentItem() ) return;
-  
+
   if ( KMessageBox::warningYesNo(this,"Do you really want to delete file \n"+currentFileName()+" ?\n") == KMessageBox::Yes ) {
-  
+
     KIO::Job *job = KIO::del( KURL( currentFileName() ) );
     connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
   }
@@ -168,7 +169,7 @@ void FileManage::slotInsertDirInProject()
 	emit insertDirInProject( currentFileName() );
 }
 
-void FileManage::slotInsertTag() 
+void FileManage::slotInsertTag()
 {
   if ( !currentItem() ) return;
   emit insertTag( currentFileName() );

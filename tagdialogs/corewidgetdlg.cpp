@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "corewidgetdlg.h"
+#include "corewidgetdlg.moc"
 #include "tagwidget.h"
 
 #include <qdict.h>

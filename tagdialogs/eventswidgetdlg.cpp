@@ -17,7 +17,7 @@
 
 #include "tagwidget.h"
 #include "eventswidgetdlg.h"
-
+#include "eventswidgetdlg.moc"
 // qt includes
 #include <qdict.h>
 #include <qlineedit.h>
