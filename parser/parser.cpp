@@ -781,7 +781,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         eCol = startPos - n - 2 - lastPos;
       }
       tag = new Tag();
-      tag->setStr(s);//s.replace(dtd->commentsRx,"").stripWhiteSpace());
+      tag->setStr(s);
       tag->cleanStr = str.mid(lastPos, startPos - lastPos);
       tag->setWrite(write);
       tag->setTagPosition(bLine, bCol, eLine, eCol);
@@ -941,7 +941,7 @@ Node* Parser::specialAreaParser(Node *startNode)
       startNode->tag->endPos(eLine, eCol);
       tag = new Tag();
       s = tagStr.mid(lastPos);
-      tag->setStr(s);//s.replace(dtd->commentsRx,"").stripWhiteSpace());
+      tag->setStr(s);
       tag->cleanStr = str.mid(lastPos);
       tag->setWrite(write);
       tag->setTagPosition(bLine, bCol, eLine, eCol);
@@ -1109,9 +1109,9 @@ void Parser::coutTree(Node *node, int indent)
    output = "";
    output.fill('.', indent);
    if (node->tag->type != Tag::Text)
-       output += node->tag->name.replace(QRegExp("\n")," ");
+       output += node->tag->name.replace('\n'," ");
    else
-       output+= node->tag->tagStr().replace(QRegExp("\n")," ");
+       output+= node->tag->tagStr().replace('\n'," ");
    cout << output <<" (" << node->tag->type << ")\n";
    if (node->child)
        coutTree(node->child, indent + 4);

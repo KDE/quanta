@@ -97,7 +97,7 @@ void RescanPrj::addEntries(KIO::Job *job,const KIO::UDSEntryList &list)
       itemURL = item.url();
       if (item.isDir()) itemURL.adjustPath(1);
 //    itemURL = QExtFileInfo::toRelative(itemURL, baseURL);
-      itemURL.setPath(itemURL.path().replace(QRegExp(baseURL.path()),""));
+      itemURL.setPath(itemURL.path().replace(baseURL.path(),""));
       if (prjFileList.findIndex(itemURL) == -1 )
       {
         urlEntry.url = itemURL;

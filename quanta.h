@@ -154,8 +154,10 @@ public:
   KURL::List userToolbarFiles();
   /** Returns the project (if there is one loaded) or global default encoding. */
   QString defaultEncoding();
-  /** Returns the project (if there is one loaded) or global new file type. */
+  /** Returns the interface number for the currently active editor. */
   int currentEditorIfNum() const;
+  /** Return the URL of the currently active document */
+  QString currentURL() const;
 
   /** reparse current document and initialize node. */
   void reparse(bool force);

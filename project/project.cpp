@@ -755,7 +755,7 @@ void Project::slotRenameFinished( KIO::Job * job)
       el = nl.item(i).toElement();
       tmpString = el.attribute("url");    
       oldString = tmpString;
-      tmpString = tmpString.replace(QRegExp(oldStr),newStr);
+      tmpString = tmpString.replace(oldStr,newStr);
       if (oldString != tmpString )
       {
         el.setAttribute("url",tmpString);

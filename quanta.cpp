@@ -2536,6 +2536,11 @@ int QuantaApp::currentEditorIfNum() const
   return view->write()->editIf->editInterfaceNumber();
 }
 
+QString QuantaApp::currentURL() const
+{
+  return view->write()->url().url();
+}
+
 
 #include "quanta.moc"
 
