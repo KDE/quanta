@@ -333,19 +333,19 @@ void QuantaApp::slotFileOpen()
   slotFileOpen(data.URLs, data.encoding);
 }
 
-void QuantaApp::slotFileOpen( const KURL::List &urls, const QString& encoding )
+void QuantaApp::slotFileOpen(const KURL::List &urls, const QString& encoding)
 {
-  m_doc->blocksignals(true);
-  for (kurl::list::constiterator i = urls.begin(); i != urls.end(); ++i)
+  m_doc->blockSignals(true);
+  for (KURL::List::ConstIterator i = urls.begin(); i != urls.end(); ++i)
   {
-    if (quantacommon::checkmimegroup(*i, "text") ||
-        quantacommon::denybinaryinsert() == kmessagebox::yes)
-      slotfileopen(*i , encoding);
+    if (QuantaCommon::checkMimeGroup(*i, "text") ||
+        QuantaCommon::denyBinaryInsert() == KMessageBox::Yes)
+      slotFileOpen(*i, encoding);
   }
-  m_doc->blocksignals(false);
-  document *w = viewmanager::ref()->activedocument();
+  m_doc->blockSignals(false);
+  Document *w = ViewManager::ref()->activeDocument();
   if (w)
-    setcaption(w->url().prettyurl() );
+    setCaption(w->url().prettyURL());
 }
 
 void QuantaApp::slotFileOpen(const KURL &url)
