@@ -3453,6 +3453,24 @@ void QuantaApp::slotDownloadToolbar()
     m_newToolbarStuff->download();
 }
 
+void QuantaApp::slotSmartTagInsertion()        
+{
+#ifdef BUILD_KAFKAPART
+  KAction *action = actionCollection()->action("smart_tag_insertion");
+  if(!action)  
+    return;
+  if(!ViewManager::ref()->activeDocument() || !ViewManager::ref()->activeView()
+    ||ViewManager::ref()->activeDocument()->defaultDTD()->name.contains("HTML", false) == 0)        
+  {
+    KMessageBox::error(this, "Smart Tag Insertion is available only for (X)HTML for the moment.");
+    qConfig.smartTagInsertion = false;
+    (static_cast<KToggleAction* >(action))->setChecked(false);
+    return;
+  }
+  qConfig.smartTagInsertion = (static_cast<KToggleAction* >(action))->isChecked();   
+#endif        
+}
+
 void QuantaApp::slotDownloadTemplate()
 {
     if (!m_newTemplateStuff)
@@ -3852,6 +3870,7 @@ void QuantaApp::saveOptions()
 
     m_config->writeEntry("Preview area", qConfig.previewPosition);
     m_config->writeEntry("Documentation area", qConfig.docPosition);
+    m_config->writeEntry("Smart Tag Insertion", qConfig.smartTagInsertion);
     m_config->writeEntry("Window layout", qConfig.windowLayout);
     m_config->writeEntry("Follow Cursor", StructTreeView::ref()->followCursor() );
     //If user choose the timer interval, it needs to restart the timer too

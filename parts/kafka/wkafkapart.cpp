@@ -34,6 +34,7 @@
 #include <qdatetime.h>
 
 #include "document.h"
+#include "viewmanager.h"
 #include "quanta.h"
 #include "quantacommon.h"
 #include "resource.h"
@@ -913,12 +914,13 @@ QString KafkaDocument::getEncodedText(const QString& decodedText)
 	return getEncodedText(decodedText, a, b, c, d);
 }
 
-QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int &eLine, int &eCol)
+QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int &eLine, int &eCol, bool encodeText)
 {
 	QString text, _char;
 	Node *openingNode;
 	int bLineAttr, bColAttr;
 	int j = 0;
+        bool hasPreParent;
 
 	if(!node) return "";
 
@@ -981,14 +983,15 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 	else if(node->tag->type == Tag::XmlTagEnd)
 	{
 		openingNode = node->getOpeningNode();
-		if(openingNode && openingNode->tag->type == Tag::ScriptTag &&
-			(openingNode->tag->name.contains("XML PI block") ||
-			openingNode->tag->name.contains("DTD block")))
+		if(openingNode && openingNode->tag->type == Tag::ScriptTag)
 		{
-			if(openingNode->tag->name.contains("XML PI block"))
-				text = "?>";
-			else if(openingNode->tag->name.contains("DTD block"))
-				text = ">";
+                  if(openingNode->tag->name.contains("XML PI") || 
+                    openingNode->tag->name.contains("PHP"))
+                    text = "?>";
+                  else if(openingNode->tag->name.contains("DTD"))
+                    text = ">";
+                  else
+                    text = ">";
 		}
 		else
 			text = "<" + QuantaCommon::tagCase(node->tag->name) + ">";
@@ -998,10 +1001,16 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 	}
 	else if(node->tag->type == Tag::Text)
 	{
-		text = getEncodedText(node->tag->tagStr(), bLine, bCol, eLine, eCol,
-			!kafkaCommon::hasParent(node, "pre"));
-		/** Can't use KGlobal::charsets()->toEntity() :
-		 * It translate all chars into entities! */
+          hasPreParent = kafkaCommon::hasParent(node, "pre");
+          if(encodeText)
+            text = getEncodedText(node->tag->tagStr(), bLine, bCol, eLine, eCol,
+              !hasPreParent);
+            /** Can't use KGlobal::charsets()->toEntity() :
+             * It translate all chars into entities! */
+          else if(!hasPreParent)
+            text = node->tag->tagStr().replace(QRegExp("\\s+"), " ");
+          else
+            text = node->tag->tagStr();
 	}
 	else if(node->tag->type == Tag::ScriptTag)
 	{
@@ -1010,14 +1019,18 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 		{
 			text = "<" + QuantaCommon::tagCase("style") + ">";
 		}
-		else if(node->tag->name.contains("DTD block"))
+		else if(node->tag->name.contains("DTD"))
 		{
-			text = "<!DOCTYPE";
+			text = "<!";
 		}
-		else if(node->tag->name.contains("XML PI block"))
+		else if(node->tag->name.contains("XML PI"))
 		{
 			text = "<?xml";
 		}
+                else if(node->tag->name.contains("PHP"))
+                {
+                  text = "<?php";
+                }
 		bCol += text.length();
 		eCol = bCol - 1;
 		eLine = bLine;
@@ -1135,6 +1148,47 @@ void KafkaDocument::translateQuantaIntoKafkaCursorPosition(uint curLine, uint cu
 			":" << offset << endl;
 	else
 		kdDebug(25001)<< "KafkaDocument::getKafkaCursorPosition() - NULL domNode" << endl;
+#endif
+}
+
+void KafkaDocument::translateQuantaIntoNodeCursorPosition(uint line, uint col, Node **node, int &offset)
+{
+  int curCol, curLine, beginCol, beginLine;
+  QString currentLine;
+  
+  *node = parser->nodeAt(line, col, false);
+  
+  offset = 0;
+  if(!*node)
+   return;
+  
+  if((*node)->tag->cleanStrBuilt)
+  {
+    (*node)->tag->beginPos(beginLine, beginCol);
+    curLine = beginLine;
+    curCol = beginCol;
+    while(curLine < (signed)line)
+    {
+      currentLine = ViewManager::ref()->activeDocument()->editIf->textLine(curLine);
+      if(curLine == beginLine)
+        offset += (signed)currentLine.length() - beginCol;
+      else
+        offset += (signed)currentLine.length();
+      offset++;
+      curLine++;
+    }
+    if(beginLine != (signed)line)
+      offset += col;
+    else
+      offset += col - beginCol;
+  }
+  else
+  {
+    //TODO
+  }
+#ifdef LIGHT_DEBUG
+  kdDebug(25001)<< "KafkaDocument::translateQuantaIntoNodeCursorPosition() - " << *node <<
+    ":" << offset << endl;
 #endif
 }
 
@@ -1517,6 +1571,24 @@ void KafkaDocument::translateNodeIntoKafkaCursorPosition(Node *node, int offset,
 		domNode = DOM::Node();
 		domNodeOffset = 0;
 	}
+}
+
+void KafkaDocument::translateNodeIntoQuantaCursorPosition(Node *node, int offset, uint &line, uint &col)
+{
+  int curCol, curLine, curOffset;
+  
+  node->tag->beginPos(curLine, curCol);
+  line = curLine;
+  col = curCol;
+  curOffset = offset;
+  while(curOffset > 0)
+  {
+    if(node->tag->tagStr()[offset - curOffset] == '\n')
+      line++;
+    else
+      col++;
+    curOffset--;
+  }
 }
 
 bool KafkaDocument::insertDomNode(DOM::Node node, DOM::Node parent,

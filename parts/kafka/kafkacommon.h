@@ -290,8 +290,9 @@ public:
 	 * from the area, by calling DTDExtractNode. If newNode wasn't present, it will then insert it by
 	 * calling DTDinsertNode.
 	 * This is the key function making the toolbars working.
+         * @return Returns true if a modification was done (Node inserted/removed)
 	 */
-	static void DTDinsertRemoveNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
+	static bool DTDinsertRemoveNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
 		int endOffset, Document *doc, Node **cursorNode, int &cursorOffset, NodeModifsSet *modifs);
 
 	/**
@@ -401,12 +402,13 @@ public:
 	 * @param currentNode This node is currently examined.
 	 * @param examinationStarted Specifies if we have begun to examine the Nodes.
 	 * @param addingStarted Specifies if we have begun to add the new Node.
+         * @param nodeInserted Returns true if newNode was inserted at least once. Set to false before calling the function.
 	 * @level The relative level of the current Node Sibling (level 0 : root Node, level 1 : childs, and so on...)
 	 * MUST BE set to 0.
 	 */
 	static bool addNodeRecursively(Node *newNode, Node *leafNode, Node *startExaminationNode,
 		Node *endExaminationNode, Node* startNode, Node *endNode, Node* currentNode,
-		bool &examinationStarted, bool &addingStarted, int level, NodeModifsSet *modifs);
+		bool &examinationStarted, bool &addingStarted, bool &nodeInserted, int level, NodeModifsSet *modifs);
 
 	/**
 	 * Create a copy of Node. It use the Node copy operator and add some kafka-specific flags :

@@ -56,6 +56,7 @@
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/selectioninterfaceext.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/wordwrapinterface.h>
 #include <ktexteditor/markinterfaceextension.h>
@@ -153,6 +154,7 @@ Document::Document(KTextEditor::Document *doc,
   editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
 #endif
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
+  selectionIfExt = dynamic_cast<KTextEditor::SelectionInterfaceExt *>(m_doc);
   configIf = dynamic_cast<KTextEditor::ConfigInterface*>(m_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(m_view);
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(m_view);

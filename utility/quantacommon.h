@@ -99,6 +99,7 @@ public:
           bool saveTrees;         ///< save tree status for local trees?
           QMap<QString, Abbreviation> abbreviations; ///< the abbreviation groups
           bool replaceAccented; ///< replace or not the accented characters
+          bool smartTagInsertion; //enable/disable smartTagInsertion
 
           //spelling options
           KSpellConfig *spellConfig;

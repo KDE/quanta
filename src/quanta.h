@@ -403,6 +403,8 @@ protected slots:
   void slotUploadDTEP();
   /** Downloads a toolbar from the main server */
   void slotDownloadToolbar();
+  /** Enable/Disable Smart Tag Insertion */
+  void slotSmartTagInsertion();
   /** Downloads a template from the main server */
   void slotDownloadTemplate();
   /** Downloads a script from the main server */
