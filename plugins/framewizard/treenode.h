@@ -68,6 +68,7 @@ class treeNode {
 
 class tree{
    private:
+      QString reldPath;// Percorso da "relativizzare"
       treeNode *root;
       QDict<treeNode> nodeList;
       void createStructure(treeNode*);
@@ -88,7 +89,8 @@ class tree{
       treeNode* findNode(QString);
       areaAttribute* findAreaAttribute(QString l){ return findNode(l)->getAtts(); };
       void reinitialize();
-      QString framesetStructure();
+      QString framesetStructure(QString path) { reldPath=path; return formatStructure(); }
+
 };
 
 

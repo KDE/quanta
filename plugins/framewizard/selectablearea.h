@@ -34,19 +34,19 @@ class SelectableArea : public KHTMLPart  {
 	   SelectableArea(QWidget *parent=0, const char *name=0);
 	   ~SelectableArea();
 	   QString getIdLabel() const { return idLabel; }
-      void setIdLabel(QString i) { idLabel = i; }
-	   void setSource(const QString&);
+           void setIdLabel(QString i) { idLabel = i; }
+	   void setSource(const QString& s) { if(!s.isEmpty()) openURL( KURL(s) ); }
 
    protected :
             virtual bool eventFilter(QObject*, QEvent*);
+	    virtual void khtmlMousePressEvent(khtml::MousePressEvent *event);
 
    private :
       QString idLabel;
 
     signals :
 	   void selected(QString);
-      void Resized(QRect,QString);
-      void Resized();
+           void Resized(QRect,QString);
 };
 
 

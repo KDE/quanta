@@ -159,8 +159,15 @@ QString tree::RCvalue(treeNode *n)
    return s+=(QString::number(remainingPercentage,10)+"%");
 }
 
-QString tree::createFrameTag(areaAttribute *a){
+/*
+dummySrc is the src value obtained from the frame editor dialog and has absolute path 
+including the name of the file used as src.
+path is the the absolute path of the file containing the frameset structure
+*/
 
+
+
+QString tree::createFrameTag(areaAttribute *a){
   QString Src =          a->getAttributeValue("src"),
           Longdesc =     a->getAttributeValue("longdesc"),
           Name =         a->getAttributeValue("name"),
@@ -178,19 +185,23 @@ QString tree::createFrameTag(areaAttribute *a){
           tagEnd=">\n",
           tagMiddle="";
 
-  if( !Src.isEmpty() )       tagMiddle+=(" src=\""+a->getAttributeValue("src")+"\"");
-  if( !Longdesc.isEmpty() )  tagMiddle+=(" longdesc=\""+a->getAttributeValue("longdesc")+"\"");
+ 
+
+if( !Src.isEmpty() )       {qWarning("%s",Src.latin1());tagMiddle+=(" src=\""+relativize(Src,reldPath)+"\"");}
+  
+  if( !Longdesc.isEmpty() )  tagMiddle+=(" longdesc=\""+Longdesc+"\"");
   //if( !Name.isEmpty() )
-  tagMiddle+=(" name=\""+a->getAttributeValue("name")+"\"");
-  if( Scrolling!="auto" && !Scrolling.isEmpty() )    tagMiddle+=(" scrolling=\""+a->getAttributeValue("scrolling")+"\"");
-  if( !Id.isEmpty() )        tagMiddle+=(" id=\""+a->getAttributeValue("id")+"\"");
-  if( !Style.isEmpty() )     tagMiddle+=(" style=\""+a->getAttributeValue("style")+"\"");
-  if( !Title.isEmpty() )     tagMiddle+=(" title=\""+a->getAttributeValue("title")+"\"");
-  if( !Class.isEmpty() )     tagMiddle+=(" class=\""+a->getAttributeValue("class")+"\"");
-  if( Noresize=="noresize" ) tagMiddle+=(" "+a->getAttributeValue("noresize"));
-  if( Frameborder=="0" )     tagMiddle+=(" frameborder=\""+a->getAttributeValue("frameborder")+"\"");
-  if( Marginwidth!="0" && !Marginwidth.isEmpty() )     tagMiddle+=(" marginwidth=\""+a->getAttributeValue("marginwidth")+"\"");
-  if( Marginheight!="0" && !Marginheight.isEmpty())    tagMiddle+=(" marginheight=\""+a->getAttributeValue("marginheight")+"\"");
+  tagMiddle+=(" name=\""+Name+"\"");
+  if( Scrolling!="auto" && !Scrolling.isEmpty() )    tagMiddle+=(" scrolling=\""+Scrolling+"\"");
+  if( !Id.isEmpty() )        tagMiddle+=(" id=\""+Id+"\"");
+  if( !Style.isEmpty() )     tagMiddle+=(" style=\""+Style+"\"");
+  if( !Title.isEmpty() )     tagMiddle+=(" title=\""+Title+"\"");
+  if( !Class.isEmpty() )     tagMiddle+=(" class=\""+Class+"\"");
+  if( Noresize=="noresize" ) tagMiddle+=(" "+Noresize);
+  if( Frameborder=="0" )     tagMiddle+=(" frameborder=\""+Frameborder+"\"");
+  if( Marginwidth!="0" && !Marginwidth.isEmpty() )     tagMiddle+=(" marginwidth=\""+Marginwidth+"\"");
+  if( Marginheight!="0" && !Marginheight.isEmpty())    tagMiddle+=(" marginheight=\""+Marginheight+"\"");
+
 
  return tagBegin+tagMiddle+tagEnd;
 }
@@ -202,7 +213,7 @@ int tree::tabNum = 0; // number of tabulation character used to indent the frame
 
 
 void tree::createStructure(treeNode* n){
-
+if(n==root && !n->hasChildren()) return;
 if(n->hasChildren()) {
 
         if(n->getSplit()=="v")
@@ -222,7 +233,7 @@ if(n->hasChildren()) {
 }
 
 QString tree::formatStructure(){
-  QString s="";
+  QString s(QString::null);
   refreshGeometries(root);
   createStructure(root);
   for ( QStringList::Iterator it = nonFormattedStructure.begin(); it != nonFormattedStructure.end(); ++it ) {
@@ -235,21 +246,6 @@ QString tree::formatStructure(){
   return s;
 }
 
-QString tree::framesetStructure() {
-
-  //the code between comments it's only for demonstration purpose ******************************
-  QString header="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Frameset//EN\" \"http://www.w3.org/TR/html4/frameset.dtd\"><html><title>Test page</title><head></head>\n",
-          footer="</html>";
-  QFile file( "./testpage.html" );
-    if ( file.open( IO_WriteOnly ) ) {
-        QTextStream stream( &file );
-
-            stream << (header+formatStructure()+footer);
-        file.close();
-    }
-  //********************************************************************************************
-  return formatStructure();
-}
 
 treeNode* tree::findNode(QString l){
   if(l==root->getLabel()) return root;

@@ -30,13 +30,17 @@ QMap<QString, QValueList< int > > SIZES;
 static QString lastModified;
 static int splitterIdNumber = 0;
 
-VisualFrameEditor::VisualFrameEditor(QWidget * parent, const char * name) : QHBox(parent,name){
+
+
+VisualFrameEditor::VisualFrameEditor(QWidget * parent, const char * name) : QHBox(parent,name)
+{
   t = new tree;
   splitterList.setAutoDelete(true);
   SAList.setAutoDelete(true);
   lastModified=t->getRoot()->getLabel();
   t->getRoot()->getAtts()->setGeometry(QRect(0,0,510,422));
-  //t->getRoot()->getAtts()->setGeometry(geometry());
+
+
 }
 
 VisualFrameEditor::~VisualFrameEditor(){
@@ -44,9 +48,6 @@ VisualFrameEditor::~VisualFrameEditor(){
   t = 0;
 }
 
-void VisualFrameEditor::setNodeSplitMode(QString node,QString mode){
-  t->findNode(node)->setSplit(mode);
-}
 
 
 void VisualFrameEditor::setGeometries(QString l){
@@ -104,16 +105,16 @@ void VisualFrameEditor::split(QString l, int n, QString type) {
 }
 
 
-void VisualFrameEditor::loadExistingStructure(const QStringList& list){
+void VisualFrameEditor::loadExistingStructure(QStringList list,QString path){
   if(!list.isEmpty())
    {
     existingStructure = list;
     existingStructure.remove("</frameset>");//closure tag not needed
-    build(t->getRoot()->getLabel());
+    build(t->getRoot()->getLabel(),path);
  }
 }
 
-QStringList VisualFrameEditor::convertAsterisks(QString s){
+QStringList VisualFrameEditor::convertAsterisks(QString s,int d){
    QStringList list=QStringList::split(",",s);
    int leftPercentage = 100;
    int leftPercentageDistributedAmongAsterisks=0;
@@ -123,50 +124,69 @@ QStringList VisualFrameEditor::convertAsterisks(QString s){
    // then every asterisk must be assigned a percentage of 10% so the real percentage
    // notation is cols="40%,50%,10%"
    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
+   
+        if(!(*it).contains("%") && !(*it).contains("*")){
+            leftPercentage -= ( (*it).toInt()*100 )/d;
+	    //qWarning("%s",(*it).latin1());
+        }
+	 
         if((*it).contains("%")){
             leftPercentage -= (*it).section("%",0,0).toInt();
+	    //qWarning("%s",(*it).latin1());
         }
 
         if((*it).contains("*")){
              int weight= (*it).section("*",0,0).toInt();
              if(weight==0) weight=1;
              weightAsteriskCounter += weight;
+	     //qWarning("%s %d",(*it).latin1(),weightAsteriskCounter);
         }
     }
    if(weightAsteriskCounter!=0)
-   leftPercentageDistributedAmongAsterisks= proxInt(double(leftPercentage)/double(weightAsteriskCounter));
-
+     leftPercentageDistributedAmongAsterisks= proxInt(double(leftPercentage)/double(weightAsteriskCounter));
+  // qWarning("%d",leftPercentageDistributedAmongAsterisks);
    // this for changes asterisk notation in percentage notation
    // This part of the comment is for me:
    // NB: I valori delle percentuali generati da if .. else possono non corrispondere
    // a quelli effettivamente generati dal metodo build che opera un'altra normalizzazione.
-   // In genere la differenza è dell' 1%
+   // In genere la differenza ï¿½dell' 1%
    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
         if((*it).contains("*")){
              int weight= (*it).section("*",0,0).toInt();
              if(weight==0) weight=1;
              int newPercentage = weight*leftPercentageDistributedAmongAsterisks;
-             if((*it)!=list.last()){
-               (*it)=(QString::number(newPercentage,10)+"%");
-               leftPercentage-=newPercentage;
+             (*it)=(QString::number(newPercentage,10)+"%");
+	       //qWarning("%s",(*it).latin1());
+             leftPercentage-=newPercentage;
                }
-             else (*it)=(QString::number(leftPercentage,10)+"%");
         }
-    }
+
     return list;
 }
-void VisualFrameEditor::build(QString parent){
+
+void VisualFrameEditor::build(QString parent, QString path){
+
    QString line = existingStructure.first();
    if(line.contains("<frameset")){
+   
+      //QRect dummy=t->findNode(parent)->getAtts()->getGeometry();
+      //QPtrList<treeNode> list=t->findNode(parent)->getChildrenList();
+      //QPtrListIterator<treeNode> it( list );
+      //treeNode *node;
+      
       if(line.contains("rows")){
          split(parent,(line.contains(",")+1),"h");
 
-         QRegExp pattern("rows\\s*=\"([\\d%,\\*]*)\"");
+         QRegExp pattern("rows\\s*=\"([\\s\\d%,\\*]*)\"");
          pattern.search(line);
-
-         QStringList percentages = convertAsterisks(pattern.cap(1));
-
+	 
+	 //qWarning("%s",pattern.cap(1).latin1());
          QRect dummy=t->findNode(parent)->getAtts()->getGeometry();
+         QStringList percentages = convertAsterisks(pattern.cap(1),dummy.height());
+	 //for ( QStringList::Iterator it = percentages.begin(); it != percentages.end(); ++it )
+	   //qWarning("%s",(*it).latin1());
+
+         
 
          int dummyDimension=dummy.height()-cancelledPixels(line.contains(",")+1);
 
@@ -176,7 +196,10 @@ void VisualFrameEditor::build(QString parent){
          while ( (node = it.current()) != 0 ) {
             ++it;
             QRect newGeometry(dummy);
-            double newDimension=(dummyDimension*(percentages.first().remove("%").toInt()))/100.0;
+	    double   newDimension;
+	    if(percentages.first().contains("%"))
+              newDimension=(dummyDimension*(percentages.first().remove("%").toInt()))/100.0;
+	    else newDimension=(double)percentages.first().toInt();  
             newGeometry.setHeight( proxInt(newDimension) );
             node->getAtts()->setGeometry(newGeometry);
             percentages.pop_front();
@@ -185,12 +208,13 @@ void VisualFrameEditor::build(QString parent){
       else
       if(line.contains("cols")){
          split(parent,(line.contains(",")+1),"v");
-         QRegExp pattern("cols\\s*=\"([\\d%,]*)\"");
+         QRegExp pattern("cols\\s*=\"([\\s\\d%,\\*]*)\"");
          pattern.search(line);
+	 
+	 QRect dummy=t->findNode(parent)->getAtts()->getGeometry();
+         QStringList percentages = convertAsterisks(pattern.cap(1),dummy.width());
 
-         QStringList percentages = convertAsterisks(pattern.cap(1));
-
-         QRect dummy=t->findNode(parent)->getAtts()->getGeometry();
+         
 
          int dummyDimension=dummy.width()-cancelledPixels(line.contains(",")+1);
 
@@ -200,32 +224,45 @@ void VisualFrameEditor::build(QString parent){
          while ( (node = it.current()) != 0 ) {
             ++it;
             QRect newGeometry(dummy);
-            double newDimension=(dummyDimension*(percentages.first().remove("%").toInt()))/100.0;
+	    double   newDimension;
+	    if(percentages.first().contains("%"))
+              newDimension=(dummyDimension*(percentages.first().remove("%").toInt()))/100.0;
+	    else newDimension=(double)percentages.first().toInt();  
             newGeometry.setWidth( proxInt(newDimension) );
             node->getAtts()->setGeometry(newGeometry);
             percentages.pop_front();
           }
        }
-
+       
       existingStructure.pop_front();
+      
       t->findNode(parent)->firstChild();
       while(t->findNode(parent)->getCurrentChild()){
-	      build(t->findNode(parent)->getCurrentChild()->getLabel());
+	      build(t->findNode(parent)->getCurrentChild()->getLabel(),path);
 	      t->findNode(parent)->nextChild();
 	   }
    }
    else
       {
       QMap<QString,QString> attributeMap;
-      if( line.contains( QRegExp("\\s+noresize\\s+") ) )
-         attributeMap["noresize"] = "noresize";
-      else
-         attributeMap["noresize"] = "";
-
+      if( line.contains( QRegExp("\\s+noresize\\s+") ) )  
+         attributeMap["noresize"] = "noresize";           
+      else                                                 
+         attributeMap["noresize"] = QString::null;
+	 
+      QRegExp srcPattern("\\s+src\\s*=\\s*\"([\\w\\s\\./_\\+\\d]*)\"");	//search for files
+      if(srcPattern.search(line) !=-1 ){
+         attributeMap["src"] = absolutize(srcPattern.cap(1),path);
+         line.remove(srcPattern);//we don't need to operate on this anymore
+      }
+      
+     
+      
       QRegExp pattern("\\s+(\\w+\\s*=\\s*\"[\\w\\s\\./_\\+\\d]*\")");
 
       int pos = 0;
 
+      
       while ( pos >= 0 ) {
          pos = pattern.search( line, pos );
          attributeMap[ pattern.cap(1).section( QRegExp("=\\s*\"") ,0,0) ] = pattern.cap(1).section(QRegExp("=\\s*\""),1,1).remove("\"");
@@ -253,25 +290,27 @@ void VisualFrameEditor::paintEvent ( QPaintEvent * ){
 */
   //Delete the Selectable areas and the splitters
   QObjectList* ch = queryList("SelectableArea");
-  kdDebug(24000) << "Area num: " << ch->count() << endl;
   for (uint i = 0; i < ch->count(); i++)
   {
     QObject* o = ch->at(i);
     removeChild(o); //this will delete all childr of "o"
+    SAList.remove(static_cast<SelectableArea*>(o));
   }
   SAList.clear();
 
   ch = queryList("QSplitter");
-  kdDebug(24000) << "QSplitter num: " << ch->count() << endl;
   for (uint i = 0; i < ch->count(); i++)
   {
     QObject* o = ch->at(i);
     removeChild(o); //this will delete all children of "o"
+    splitterList.remove(static_cast<QSplitter*>(o));
   }
+  splitterList.clear();
 
   splitterIdNumber=0;
   draw2(t->getRoot(),this);
   show();
+  
 }
 
 void VisualFrameEditor::removeNode(QString l){
@@ -294,12 +333,15 @@ void VisualFrameEditor::removeNode(QString l){
          }
       else{
          t->findNode(parentLabel)->setSplit( t->findNode(parentLabel)->firstChild()->getSplit() );
-
+         //qWarning("%s",t->findNode(parentLabel)->firstChild()->getSplit().latin1());
          QPtrList<treeNode> list = t->findNode(parentLabel)->firstChild()->getChildrenList();
+	 //qWarning("number of children of the first child %d",list.count());
          treeNode *node;
-         for ( node = t->findNode(parentLabel)->firstChild()->getChildrenList().first(); node; node = t->findNode(parentLabel)->firstChild()->getChildrenList().next() ){
-            QString newNodeLabel = t->addChildNode(parentLabel);
+         for ( node = list.first(); node; node = list.next() ){
+              
+	    QString newNodeLabel = t->addChildNode(parentLabel);
             t->findNode(newNodeLabel)->setAtts( node->getAttributeMap() );
+	    //qWarning("node added");
          }
          t->removeChildNode( parentLabel,t->findNode(parentLabel)->firstChild()->getLabel() );
       }
@@ -327,13 +369,13 @@ void VisualFrameEditor::draw2(treeNode *n, QWidget* parent){
       SelectableArea *sa=new SelectableArea(parent,n->getLabel());
       sa->view()->setGeometry(n->getAtts()->getGeometry());
       if(parent->isA("QSplitter"))
-         ((QSplitter *)parent)->setResizeMode(sa->view(),QSplitter::KeepSize );
+         //((QSplitter *)parent)->setResizeMode(sa->view(),QSplitter::KeepSize );
+	 dynamic_cast<QSplitter *>(parent)->setResizeMode(sa->view(),QSplitter::KeepSize );
       SAList.append(sa);
       sa->setIdLabel( n->getLabel() );
       sa->setSource(n->getAtts()->getSrc());
       QObject::connect(sa, SIGNAL(Resized(QRect,QString)), t->findNode(sa->getIdLabel())->getAtts(), SLOT(setGeometry(QRect,QString)));
-	   QObject::connect(sa, SIGNAL(selected(QString)),form, SLOT(catchSelectedArea(QString)));
-      QObject::connect(sa, SIGNAL(Resized()),form, SLOT(SAResized()));
-
+      QObject::connect(sa, SIGNAL(selected(QString)),this, SIGNAL(areaSelected(QString)));
+      
       }
 }

@@ -30,26 +30,25 @@
   */
 
 class VisualFrameEditor : public QHBox  {
+   Q_OBJECT
    private:
       tree *t;
-      QWidget *form;
-  
       QPtrList<QSplitter> splitterList;
       QPtrList<SelectableArea> SAList;
       QStringList existingStructure;
-      void build(QString);
+    
+      void build(QString,QString);
       void setGeometries(QString);
       void draw2(treeNode *n, QWidget* parent);
-      QStringList convertAsterisks(QString);
+      QStringList convertAsterisks(QString,int);
 
    public:
-	   VisualFrameEditor( QWidget * parent = 0, const char * name = 0);
-	   ~VisualFrameEditor();
-      void setupForm(QWidget *f){ form = f; }
+      VisualFrameEditor( QWidget * parent = 0, const char * name = 0);
+      ~VisualFrameEditor();
       void draw() { repaint(); }
-	   void loadExistingStructure(const QStringList&);
-      QString framesetStructure(){ return t->framesetStructure(); }
-      void setNodeSplitMode(QString,QString);//node,mode
+      void loadExistingStructure(QStringList,QString);
+      QString framesetStructure(QString path){ return (t->framesetStructure(path)); }
+      void setNodeSplitMode(QString node,QString mode){ t->findNode(node)->setSplit(mode); }
       void reset(){ t->reinitialize(); }
       void removeNode(QString l);
       void split(QString,int,QString);
@@ -59,6 +58,9 @@ class VisualFrameEditor : public QHBox  {
 
    protected:
       virtual void paintEvent ( QPaintEvent * );
+   signals:
+      void areaSelected(QString);
+      void SAResized();
 };
 
 #endif

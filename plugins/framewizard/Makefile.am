@@ -1,9 +1,16 @@
-bin_PROGRAMS = framewizard
-framewizard_METASOURCES = AUTO
+####### kdevelop will overwrite this part!!! (begin)##########
+noinst_LIBRARIES = libframewizard.a
 
-framewizard_SOURCES = areaattributedb.cpp areaattributedb.h fmfpeditor.ui fmrceditor.ui framewizard.ui selectablearea.cpp selectablearea.h treenode.cpp treenode.h visualframeeditor.cpp visualframeeditor.h fwglobal.h fwglobal.cpp main.cpp
+## INCLUDES were found outside kdevelop specific part
 
-INCLUDES = -I$(top_srcdir)/quanta/plugins/framewizard -I$(top_builddir)/quanta/plugins/framewizard $(all_includes)
+INCLUDES = $(all_includes)
+libframewizard_a_METASOURCES = AUTO
 
-framewizard_LDADD = $(LIB_KDECORE) $(LIB_KDEUI)  $(LIB_KFILE) $(LIB_KHTML) 
-framewizard_LDFLAGS = $(all_libraries)
+libframewizard_a_SOURCES =  fmfpeditors.ui fmfpeditor.cpp fmrceditors.ui fmrceditor.cpp framewizards.ui framewizard.cpp  fwglobal.cpp areaattributedb.cpp selectablearea.cpp treenode.cpp visualframeeditor.cpp   
+   
+
+#EXTRA_DIST =  
+
+####### kdevelop will overwrite this part!!! (end)############
+
+
