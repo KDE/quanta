@@ -235,6 +235,9 @@ void QuantaDoc::slotOpeningCompleted()
 
   emit title( w->url().prettyURL() );
   emit newStatus();
+#if KDE_IS_VERSION(3,1,90)
+   disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));  
+#endif    
 }
 
 bool QuantaDoc::saveDocument(const KURL& url)

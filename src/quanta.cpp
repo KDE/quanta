@@ -713,12 +713,13 @@ void QuantaApp::slotRepaintPreview()
   int xOffset = html->contentsX(), yOffset = html->contentsY();
 
   part->closeURL();
-
-  KParts::URLArgs  args(true, browserExtension()->xOffset(), browserExtension()->yOffset());
-  browserExtension()->setURLArgs( args );
+  KParts::BrowserExtension *browserExtension = KParts::BrowserExtension::childObject(part);
+  KParts::URLArgs  args(true, browserExtension->xOffset(), browserExtension->yOffset());
+  browserExtension->setURLArgs( args );
 
   KURL url;
   Document *w = m_view->write();
+  part->setEncoding(dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding(), true);
   QStringList list;
   if (m_noFramesPreview)
   {
@@ -746,6 +747,7 @@ void QuantaApp::slotRepaintPreview()
       else
         part->begin( w->url(), xOffset, yOffset );
       part->write(noFramesText);
+      part->end();
     }
   }
 
@@ -761,7 +763,6 @@ void QuantaApp::slotRepaintPreview()
 
       url = Project::ref()->urlWithPrefix(url);
 
-      part->begin(url, xOffset, yOffset);
       part->openURL(url);
     } else  //the document is Untitled, preview the text from it
     {
@@ -775,10 +776,10 @@ void QuantaApp::slotRepaintPreview()
       }
       part->begin( Project::ref()->projectBaseURL(), xOffset, yOffset );
       part->write( text );
+      part->end();
     }
    }
- part->end();
- part->setEncoding(dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding(), true);
+// part->end();
  part->show();
 }
 

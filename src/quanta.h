@@ -365,10 +365,6 @@ protected slots:
   void slotProcessTimeout();
 
 protected:
-  KParts::BrowserExtension *browserExtension()
-  {
-      return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)m_htmlPart)->child( 0L, "KParts::BrowserExtension" ));
-  }
   /** Ask for save all the modified user toolbars. */
   bool removeToolbars();
   /** Returns true if all toolbars are hidden, false otherwise. */
