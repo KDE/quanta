@@ -125,21 +125,27 @@ KURL::List QExtFileInfo::allFilesRelative( const KURL& path, const QString& mask
   return r;
 }
 
-bool QExtFileInfo::createDir( const KURL& path )
+bool QExtFileInfo::createDir(const KURL& path)
 {
-  int i=0;
+  int i = 0;
   bool result;
-  KURL dir1, dir2 = KURL();
-  while ( !exists(path) && dir2.path() != path.path() && i < 2)
+  KURL dir2;
+  KURL dir1 = path;
+  dir1.setPath("/");
+  if (!exists(dir1))
+  {
+    return false; //the root is not accessible, possible wrong username/password supplied
+  }
+  while (!exists(path) && dir2.path() != path.path() && i < 1)
   {
     dir1 = path;
     dir2 = path;
 
     dir1=cdUp(dir1);
-    while ( !exists(dir1) && dir1.path() != "/" )
+    while (!exists(dir1) && dir1.path() != "/")
     {
-      dir1=cdUp(dir1);
-      dir2=cdUp(dir2);
+      dir1 = cdUp(dir1);
+      dir2 = cdUp(dir2);
     //  debug(d1);
     }
   //  dir2.setPath(dir2.path(-1));
