@@ -1736,7 +1736,7 @@ void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
               }
               if (pos == -1)
                   pos = foundStr.length();
-              structPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
+            //  structPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
               for (int j = structPos; j < pos + 1; j++)
               {
                 foundStr[j] = ' ';
