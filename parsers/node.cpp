@@ -69,10 +69,10 @@ Node::~Node()
     delete next;
     next = 0L;
   }
-  
-  delete tag; 
+
+  delete tag;
   tag = 0L;
-  delete groupTag; 
+  delete groupTag;
   groupTag = 0L;
 #ifdef BUILD_KAFKAPART
   delete m_rootNode;
@@ -411,16 +411,18 @@ void Node::detachNode()
        // it = groupElementList->erase(it);
         (*it).node = 0L;
         (*it).tag = 0L;
-        (*it).deleted = true;        
+        (*it).deleted = true;
       } else
         ++it;
     }
   }
+  //FIXME:
+
   if (listItem)
   {
     static_cast<StructTreeTag*>(listItem)->node = 0L;
     static_cast<StructTreeTag*>(listItem)->groupTag = 0L;
   }
-  
+
   groupElementLists.clear();
 }

@@ -118,11 +118,6 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 
 QuantaView::~QuantaView()
 {
-    kdDebug(24000) << "QuantaView DTOR" << endl;
-    if (m_plugin)
-    {
-      m_plugin->unload();
-    }
     delete m_document;
 }
 
@@ -730,7 +725,7 @@ void QuantaView::deactivated()
   {
     kdDebug(24000) << "Gui removed for " << m_document->view() << endl;
 //FIXME: Why does this crash???
-    quantaApp->guiFactory()->removeClient(m_document->doc());
+    quantaApp->guiFactory()->removeClient(m_document->view());
     m_guiAdded = false;
   }
 
