@@ -527,6 +527,10 @@ void QuantaDoc::slotAttribPopup()
         attribMenu->setActiveItem( 0);
 
         QPoint globalPos = w->getGlobalCursorPos();
+        quantaApp->config->setGroup("Kate Document");
+        QFont font;
+        font.fromString(quantaApp->config->readEntry("Font"));
+        globalPos.setY(globalPos.y() + QFontMetrics(font).height());
         attribMenu->exec( globalPos );
       }
     }
