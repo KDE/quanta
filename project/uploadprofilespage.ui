@@ -84,9 +84,6 @@
                     <property name="text">
                         <string>Show a &amp;treeview for each profile</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+T</string>
-                    </property>
                 </widget>
             </grid>
         </widget>
