@@ -291,7 +291,7 @@ void Tagxml::writeAttributes( QDict<QString> *d )
          value = "checked";
        else
        if ( dynamic_cast<Attr_file *>(attr))
-         value = KURL::decode_string(value);
+         value = KURL::decode_string(*v);
        else
          value = *v;
     }
