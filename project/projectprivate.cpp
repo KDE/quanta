@@ -505,14 +505,20 @@ void ProjectPrivate::loadProjectXML()
   for (uint i = 0; i < excludeList.count(); i++)
   {
     excludeStr = excludeList[i].stripWhiteSpace();
-    if (!excludeStr.endsWith("*"))
-      excludeStr = excludeStr + "/*|"+ excludeStr + "$";
+    QString str = excludeStr;
     if (!excludeStr.startsWith("*"))
-      excludeStr.prepend("^");
-    excludeStr.replace(".","\\.");
-    excludeStr.replace("*",".*");
-    excludeStr.replace("?",".");
-    regExpStr.append(excludeStr);
+    {
+      if (!excludeStr.endsWith("*"))
+        str += "|^" + excludeStr + "/*|*/" + excludeStr + "/*|*/" + excludeStr + "$";
+      else
+        str += "|^" + excludeStr + "|*/" + excludeStr + "$";
+    } else
+    if (!excludeStr.endsWith("*"))
+      str = excludeStr + "/*|"+ excludeStr + "$";
+    str.replace(".","\\.");
+    str.replace("*",".*");
+    str.replace("?",".");
+    regExpStr.append(str);
     if (i+1 < excludeList.count())
       regExpStr.append("|");
   }
