@@ -1061,8 +1061,8 @@ void QuantaView::slotInsertChar(const QString &selected)
 {
   if (writeExists())
   {
-    int begin = selected.find("(")+1;
-    int length = selected.find(")") - begin;
+    int begin = selected.find("(&")+1;
+    int length = selected.find(";)") - begin + 1;
     QString part = selected.mid(begin, length);
     write()->insertTag(part);
   }

@@ -1178,10 +1178,10 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
   for ( QStringList::Iterator it = charList.begin(); it != charList.end(); ++it )
   {
     completion.text = *it;
-    int begin = completion.text.find("(") + 2;
+    int begin = completion.text.find("(&") + 2;
     if (begin == 1)
         continue;
-    int length = completion.text.find(")") - begin;
+    int length = completion.text.find(";)") - begin + 1;
     QString s = completion.text.mid(begin, length);
     completion.text = "&" + s + " : " + completion.text.left(begin -2) + " - " + completion.text.mid(begin + length + 1);
     if (s.startsWith(startsWith))
