@@ -361,12 +361,18 @@ void FilesTreeView::addFileInfoPage(KPropertiesDialog* propDlg)
 void FilesTreeView::slotProperties()
 {
   if ( !currentItem() ) return;
-
-  KPropertiesDialog *propDlg = new KPropertiesDialog( KURL( currentFileName() ), this, 0L, false, false);
-  addFileInfoPage(propDlg);
-
-  propDlg->exec();
-  delete propDlg;
+  QListViewItem *item = currentItem();
+	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+  if (f)
+  {
+    KPropertiesDialog *propDlg = new KPropertiesDialog( KURL( currentFileName() ), this, 0L, false, false);
+    addFileInfoPage(propDlg);
+    propDlg->exec();
+    delete propDlg;
+  } else
+  {
+    FileManage::slotProperties();
+  }
 }
 
 /** No descriptions */

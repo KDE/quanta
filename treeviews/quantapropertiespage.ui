@@ -9,21 +9,51 @@
             <x>0</x>
             <y>0</y>
             <width>314</width>
-            <height>634</height>
+            <height>405</height>
         </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>300</width>
+            <height>400</height>
+        </size>
     </property>
     <property name="caption">
         <string>Quanta properties</string>
     </property>
+    <widget class="QCheckBox">
+        <property name="name">
+            <cstring>parentAttr</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>48</y>
+                <width>288</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Inherit type from parent (nothing)</string>
+        </property>
+    </widget>
     <widget class="QLayoutWidget">
         <property name="name">
             <cstring>Layout1</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>10</x>
-                <y>15</y>
-                <width>285</width>
+                <x>11</x>
+                <y>16</y>
+                <width>288</width>
                 <height>26</height>
             </rect>
         </property>
@@ -86,136 +116,119 @@
             </spacer>
         </hbox>
     </widget>
+    <spacer>
+        <property name="name" stdset="0">
+            <cstring>Spacer6</cstring>
+        </property>
+        <property name="orientation">
+            <enum>Vertical</enum>
+        </property>
+        <property name="sizeType">
+            <enum>Expanding</enum>
+        </property>
+        <property name="sizeHint">
+            <size>
+                <width>20</width>
+                <height>20</height>
+            </size>
+        </property>
+    </spacer>
     <widget class="QCheckBox">
         <property name="name">
-            <cstring>parentAttr</cstring>
+            <cstring>usePrePostText</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>10</x>
-                <y>55</y>
-                <width>285</width>
+                <x>12</x>
+                <y>76</y>
+                <width>286</width>
                 <height>21</height>
             </rect>
         </property>
         <property name="text">
-            <string>&amp;Inherit type from parent (nothing)</string>
+            <string>Use &amp;pre/post text</string>
         </property>
     </widget>
-    <widget class="QLayoutWidget">
+    <widget class="QTextEdit">
         <property name="name">
-            <cstring>Layout2</cstring>
+            <cstring>preTextEdit</cstring>
+        </property>
+        <property name="enabled">
+            <bool>false</bool>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>12</x>
+                <y>144</y>
+                <width>286</width>
+                <height>100</height>
+            </rect>
+        </property>
+    </widget>
+    <spacer>
+        <property name="name" stdset="0">
+            <cstring>Spacer5</cstring>
+        </property>
+        <property name="orientation">
+            <enum>Vertical</enum>
+        </property>
+        <property name="sizeType">
+            <enum>Expanding</enum>
+        </property>
+        <property name="sizeHint">
+            <size>
+                <width>20</width>
+                <height>20</height>
+            </size>
+        </property>
+    </spacer>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>12</x>
+                <y>250</y>
+                <width>140</width>
+                <height>36</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Post-text</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel1_2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>12</x>
+                <y>103</y>
+                <width>140</width>
+                <height>35</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Pre-text</string>
+        </property>
+    </widget>
+    <widget class="QTextEdit">
+        <property name="name">
+            <cstring>postTextEdit</cstring>
+        </property>
+        <property name="enabled">
+            <bool>false</bool>
         </property>
         <property name="geometry">
             <rect>
                 <x>10</x>
-                <y>85</y>
-                <width>285</width>
-                <height>335</height>
+                <y>290</y>
+                <width>286</width>
+                <height>100</height>
             </rect>
         </property>
-        <grid>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>0</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <spacer row="1" column="1">
-                <property name="name" stdset="0">
-                    <cstring>Spacer6</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>20</height>
-                    </size>
-                </property>
-            </spacer>
-            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>usePrePostText</cstring>
-                </property>
-                <property name="text">
-                    <string>Use &amp;pre/post text</string>
-                </property>
-            </widget>
-            <widget class="QTextEdit" row="2" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>preTextEdit</cstring>
-                </property>
-                <property name="enabled">
-                    <bool>false</bool>
-                </property>
-            </widget>
-            <widget class="QTextEdit" row="4" column="0" rowspan="1" colspan="2">
-                <property name="name">
-                    <cstring>postTextEdit</cstring>
-                </property>
-                <property name="enabled">
-                    <bool>false</bool>
-                </property>
-            </widget>
-            <spacer row="3" column="1">
-                <property name="name" stdset="0">
-                    <cstring>Spacer5</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>20</height>
-                    </size>
-                </property>
-            </spacer>
-            <widget class="QLabel" row="3" column="0">
-                <property name="name">
-                    <cstring>TextLabel2</cstring>
-                </property>
-                <property name="text">
-                    <string>Post-text</string>
-                </property>
-            </widget>
-            <spacer row="5" column="1">
-                <property name="name" stdset="0">
-                    <cstring>Spacer3</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>20</height>
-                    </size>
-                </property>
-            </spacer>
-            <widget class="QLabel" row="1" column="0">
-                <property name="name">
-                    <cstring>TextLabel1_2</cstring>
-                </property>
-                <property name="text">
-                    <string>Pre-text</string>
-                </property>
-            </widget>
-        </grid>
     </widget>
 </widget>
 <connections>
