@@ -1372,3 +1372,5 @@ QString QuantaInit::retrieveBaseFileName(const QString& filename)
 {
  return filename.left(filename.findRev("."));
 }
+
+#include "quanta_init.moc"
