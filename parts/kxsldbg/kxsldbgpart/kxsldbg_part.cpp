@@ -228,8 +228,11 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char * /*widgetName*/,
              this, SLOT( slotGotoXPath() ) );
     connect( evaluateBtn, SIGNAL( clicked() ),
              this, SLOT( slotEvaluate() ) );
+/*
+
     connect( searchBtn, SIGNAL( clicked() ),
              this, SLOT( slotSearch() ) );
+*/
 
 }
 
