@@ -1,4 +1,4 @@
-#SUBDIRS = dtd
+SUBDIRS = dtd
 METASOURCES = AUTO
 
 noinst_LTLIBRARIES = libparser.la

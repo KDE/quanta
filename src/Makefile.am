@@ -11,13 +11,11 @@ bin_PROGRAMS = quanta_be
 quanta_be_SOURCES = quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp main.cpp document.cpp \
 	kqapp.cpp quanta.cpp dcopwindowmanagerif.skel
 
-#add back after parsers/dtd is created
-#	$(top_builddir)/quanta/parsers/dtd/libdtdparser.la \
-#
 
 quanta_be_LDADD = $(top_builddir)/quanta/project/libproject.la \
 	$(top_builddir)/quanta/plugins/libplugins.la \
 	$(top_builddir)/quanta/parsers/libparser.la \
+	$(top_builddir)/quanta/parsers/dtd/libdtdparser.la \
 	$(top_builddir)/quanta/treeviews/libtreeviews.la \
 	$(top_builddir)/quanta/dialogs/libdialogs.la \
 	$(top_builddir)/quanta/dialogs/tagdialogs/libtagdialogs.la \
@@ -32,10 +30,6 @@ quanta_be_LDADD = $(top_builddir)/quanta/project/libproject.la \
 	$(top_builddir)/lib/compatibility/libcompat.la \
 	-lkatepartinterfaces $(LIB_KAFKA) $(LIB_KMDI) $(LIBXML_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
 
-#add back after parsers/dtd is created
-#	-I$(top_srcdir)/quanta/parsers/dtd \
-#
-
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_srcdir)/quanta/plugins \
 	-I$(top_srcdir)/quanta/components/framewizard \
@@ -46,6 +40,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_srcdir)/quanta/treeviews \
 	-I$(top_srcdir)/quanta/project \
 	-I$(top_srcdir)/quanta/parsers \
+	-I$(top_srcdir)/quanta/parsers/dtd \
 	-I$(top_srcdir)/quanta/parts/preview \
 	-I$(top_srcdir)/quanta/messages \
 	-I$(top_srcdir)/lib \
