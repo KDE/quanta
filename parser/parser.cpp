@@ -901,8 +901,8 @@ Node* Parser::specialAreaParser(Node *startNode)
         tag->dtd = dtd;
 
         bLine += name.contains("\n");
-        if ( bLine > el ||                //the beginning of the tag is after the end of the
-            (bLine == el && bCol > ec) )  //root, so go up one level
+        if ( rootNode->parent && (bLine > el ||                //the beginning of the tag is after the end of the
+            (bLine == el && bCol > ec) ) )  //root, so go up one level
         {
           currentNode = nextToRoot;
           rootNode = rootNode->parent;
