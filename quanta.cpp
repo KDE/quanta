@@ -1682,7 +1682,7 @@ KURL QuantaApp::saveToolBar(const QString& toolbarName, const KURL& destFile)
   }
 
   QBuffer buffer;
-  buffer.open(IO_WriteOnly);
+  buffer.open(IO_ReadWrite);
   QTextStream toolStr(&buffer);
 
   QBuffer buffer2;
@@ -1732,6 +1732,7 @@ KURL QuantaApp::saveToolBar(const QString& toolbarName, const KURL& destFile)
   }
   toolStr << QString("\n</kpartgui>");
   actStr << QString("\n</actions>");
+  buffer.flush();
 
   ToolbarEntry *p_toolbar = toolbarList[toolbarName.lower()];
   if (p_toolbar->dom) delete p_toolbar->dom;
