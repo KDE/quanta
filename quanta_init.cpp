@@ -158,29 +158,6 @@ void QuantaApp::initQuanta()
 
   readOptions();
 
-//Check for an existing quanatui.rc
-  QString uiFileName = locateLocal("appdata","quantaui.rc");
-  if (QFileInfo(uiFileName).exists())
-  {
-    QDomDocument doc;
-     QFile f( uiFileName );
-		 f.open( IO_ReadOnly );
-	   if ( doc.setContent( &f ) )
-     {
-       f.close();
-       QDomElement el = doc.firstChild().toElement();
-       if (el.attribute("version","old") != QString(VERSION))
-       {
-         QString command = "mv "+uiFileName+" "+uiFileName+".old";
-         system(QFile::encodeName(command));
-       }
-     } else
-     {
-       f.close();
-     }
-  }
-
-
   m_pluginInterface = new QuantaPluginInterface();
 
   createGUI( QString::null, false /* conserveMemory */ );
