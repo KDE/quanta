@@ -56,9 +56,9 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
           For old projects, the document root is the same as project root. The document root can be
           changed from the project treeview context menu.
           Implements wish #64742 (in somewhat different way, but the result is the same).
-
         - dragging a tab holding a document puts the document URL in the drag object [#80649]
         - possibility of as-you-type replacing of accented chars [#23164]
+        - add support for upload profiles [#54366]
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:

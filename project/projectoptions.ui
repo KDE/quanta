@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>640</width>
-            <height>643</height>
+            <width>641</width>
+            <height>554</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -118,145 +118,48 @@
             <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
-                    <vsizetype>5</vsizetype>
+                    <vsizetype>1</vsizetype>
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
             <property name="title">
-                <string>Project Up&amp;load</string>
+                <string>Up&amp;load Profiles</string>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="2" column="0">
+                <widget class="KPushButton" row="0" column="2">
                     <property name="name">
-                        <cstring>TextLabel2_2</cstring>
+                        <cstring>buttonEditProfiles</cstring>
                     </property>
                     <property name="text">
-                        <string>Path:</string>
+                        <string>Edit profiles</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="5">
+                <widget class="QLabel" row="0" column="1">
                     <property name="name">
-                        <cstring>linePath</cstring>
+                        <cstring>profileLabel</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>5</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>TextLabel2</cstring>
-                    </property>
                     <property name="text">
-                        <string>User:</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="1" column="1">
-                    <property name="name">
-                        <cstring>lineUser</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                        <string>x</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>TextLabel4_2</cstring>
+                        <cstring>pLabel</cstring>
                     </property>
                     <property name="text">
-                        <string>Host:</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="0" column="5">
-                    <property name="name">
-                        <cstring>port</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>lineHost</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="0" column="2" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>comboProtocol</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="4">
-                    <property name="name">
-                        <cstring>textLabel1_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Port:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="2">
-                    <property name="name">
-                        <cstring>textLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Password:</string>
-                    </property>
-                </widget>
-                <widget class="KPasswordEdit" row="1" column="3">
-                    <property name="name">
-                        <cstring>linePasswd</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="4" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>keepPasswd</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Store p&amp;assword on disc</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Keep the password in a file. DANGEROUS!</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>&lt;qt&gt;If you check this box, the password will be saved in the local Quanta configuration file, so every time you start Quanta and load this project, the password will be loaded and you don't have to enter it. Altough the local configuration file is readable only by you and the password
-is obscured, saving the password in any file is a security risk. Use this option at your own risk.&lt;br&gt;
-&lt;i&gt;Note:&lt;/i&gt; due to the security concerns, the password is not present in the project file, and moving the project files to another computer or uploading the project to a server will not move/upload the password to the new place.&lt;/qt&gt;</string>
+                        <string>Default profile:</string>
                     </property>
                 </widget>
             </grid>
@@ -610,7 +513,7 @@ is obscured, saving the password in any file is a security risk. Use this option
         <sender>buttonTmpl</sender>
         <signal>clicked()</signal>
         <receiver>ProjectOptions</receiver>
-        <slot>buttonTmpl_clicked()</slot>
+        <slot>buttonTemplate_clicked()</slot>
     </connection>
     <connection>
         <sender>buttonToolbar</sender>
@@ -631,16 +534,16 @@ is obscured, saving the password in any file is a security risk. Use this option
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>keepPasswd</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>ProjectOptions</receiver>
-        <slot>keepPasswdToggled(bool)</slot>
-    </connection>
-    <connection>
         <sender>comboDebuggerClient</sender>
         <signal>activated(int)</signal>
         <receiver>ProjectOptions</receiver>
         <slot>comboDebuggerClient_activated(int)</slot>
+    </connection>
+    <connection>
+        <sender>buttonEditProfiles</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectOptions</receiver>
+        <slot>buttonEditProfiles_clicked()</slot>
     </connection>
 </connections>
 <tabstops>
@@ -656,13 +559,6 @@ is obscured, saving the password in any file is a security risk. Use this option
     <tabstop>encodingCombo</tabstop>
     <tabstop>viewCombo</tabstop>
     <tabstop>dtdCombo</tabstop>
-    <tabstop>lineHost</tabstop>
-    <tabstop>comboProtocol</tabstop>
-    <tabstop>port</tabstop>
-    <tabstop>lineUser</tabstop>
-    <tabstop>linePasswd</tabstop>
-    <tabstop>keepPasswd</tabstop>
-    <tabstop>linePath</tabstop>
     <tabstop>comboDebuggerClient</tabstop>
     <tabstop>buttonDebuggerOptions</tabstop>
     <tabstop>checkPrefix</tabstop>
@@ -672,10 +568,10 @@ is obscured, saving the password in any file is a security risk. Use this option
     <include location="local" impldecl="in implementation">projectoptions.ui.h</include>
 </includes>
 <slots>
-    <slot>buttonTmpl_clicked()</slot>
+    <slot>buttonTemplate_clicked()</slot>
     <slot>buttonToolbar_clicked()</slot>
-    <slot>keepPasswdToggled( bool )</slot>
     <slot>comboDebuggerClient_activated( int idx )</slot>
+    <slot>buttonEditProfiles_clicked()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

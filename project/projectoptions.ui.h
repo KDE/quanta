@@ -15,12 +15,15 @@
  *                                                                         *
  ***************************************************************************/
 
+ #include <kcombobox.h>
 #include <kfiledialog.h>
 #include <kdeversion.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 
-void ProjectOptions::buttonTmpl_clicked()
+#include "projectupload.h"
+
+void ProjectOptions::buttonTemplate_clicked()
 {
    KURL url = KFileDialog::getExistingURL(linePrjTmpl->text(), this,
                               i18n("Select Project Template Folder"));
@@ -42,17 +45,16 @@ void ProjectOptions::buttonToolbar_clicked()
    }
 }
 
-
-void ProjectOptions::keepPasswdToggled( bool )
-{
-  if (keepPasswd->isChecked())
-  {
-      KMessageBox::information(this, i18n("<qt>Saving the password is not recommended. Please read the <b>What's This</b> information for this checkbox.</qt>"), i18n("Security Warning"), "SavePasswordWarning");
-  }
-}
-
-
 void ProjectOptions::comboDebuggerClient_activated( int idx)
 {
     buttonDebuggerOptions->setEnabled(idx > 0);
+}
+
+
+void ProjectOptions::buttonEditProfiles_clicked()
+{
+   ProjectUpload* dlg = new ProjectUpload(KURL(), true);
+   dlg->exec();
+   profileLabel->setText(dlg->comboProfile->currentText());
+   delete dlg;
 }

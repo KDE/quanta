@@ -21,6 +21,7 @@
 #include "projectuploads.h"
 #include "project.h"
 
+#include <qdom.h>
 #include <qptrlist.h>
 #include <qstringlist.h>
 
@@ -28,17 +29,18 @@
 #include "uploadtreeview.h"
 
 /**
-  *@author Dmitry Poplavsky & Alexander Yakovlev
+  *@author Dmitry Poplavsky & Alexander Yakovlev & Andras Mantia
   */
 
 class KURL;
 class Project;
+class UploadProfileDlgS;
 
 class ProjectUpload : public ProjectUploadS
 {
   Q_OBJECT
 public:
-  ProjectUpload(const KURL& url, const char * name = 0);
+  ProjectUpload(const KURL& url, bool showOnlyProfiles = false, const char * name = 0);
   ~ProjectUpload();
 
 protected slots:
@@ -56,11 +58,19 @@ protected slots:
   void collapseAll();
   void clearProjectModified();
 
+  void slotNewProfile();
+  void slotEditProfile();
+  void slotRemoveProfile();
+  void slotNewProfileSelected(const QString &profileName);
+
   virtual void resizeEvent( QResizeEvent * );
   virtual void reject();
 
 private:
   void buildSelectedItemList();
+  void fillProfileDlg(UploadProfileDlgS *profileDlg);
+  void readProfileDlg(UploadProfileDlgS *profileDlg);
+
   KURL::List modified; // modified files
   QValueList<QListViewItem*> needsConfirmation;
   QPtrList<QListViewItem> toUpload; // list of files , still didn't uploaded
@@ -72,9 +82,15 @@ private:
   bool stopUpload;
   bool uploadInProgress;
   bool suspendUpload;
+  QString m_lastPassword;
   QString password;
   QString user;
   Project *m_project;
+  QString m_defaultProfile;
+  QDomElement m_currentProfileElement;
+  QDomElement m_lastEditedProfileElement;
+  QDomNode m_profilesNode;
+  bool m_profilesOnly;
 
   void initProjectInfo();
 

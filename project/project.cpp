@@ -99,6 +99,7 @@ Project::Project(KMainWindow *parent)
 {
   m_parent = parent;
   config = 0L;
+  keepPasswd = true;
   init();
   initActions(parent->actionCollection());
 }
@@ -119,7 +120,6 @@ void Project::init()
   excludeRx.setPattern(".*~$");
   excludeList.clear();
   excludeList.append("*~");
-  passwd = "";
   usePreviewPrefix=false;
   previewPrefix = KURL();
   m_excludeCvsignore = false;
@@ -540,7 +540,7 @@ bool Project::slotSaveProject()
     KTempFile *tmpFile = new KTempFile(tmpDir);
     tmpFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
     tmpFile->setAutoDelete(true);
-    dom.save(*(tmpFile->textStream()), 0);
+    dom.save(*(tmpFile->textStream()), 2);
     tmpFile->close();
     if (KIO::NetAccess::upload( tmpFile->name(), projectURL, m_parent))
     {
@@ -619,12 +619,6 @@ void Project::slotLoadProject(const KURL &a_url)
         dom.setContent( &f );
         f.close();
         loadProjectXML();
-        //load the password for this project
-        KConfig *config = kapp->config();
-        config->setGroup("Projects");
-        passwd = KStringHandler::obscure(config->readEntry(projectName, ""));
-        keepPasswd = !passwd.isEmpty();
-        storePasswdInFile = keepPasswd;
         openCurrentView();
         adjustActions();
       } else
@@ -894,8 +888,6 @@ void Project::loadProjectXML()
 
   emit showTree();
   emit newStatus();
-
-  passwd = "";
 }
 
 // slot for insert file
@@ -1420,48 +1412,8 @@ void Project::slotOptions()
       optionsPage.buttonDebuggerOptions->setEnabled(true);
     }
   }
-
-  QDomElement uploadEl = dom.firstChild().firstChild().namedItem("upload").toElement();
-
-  optionsPage.lineHost->setText(uploadEl.attribute("remote_host",""));
-  optionsPage.lineUser->setText(uploadEl.attribute("user",""));
-  optionsPage.linePath->setText(uploadEl.attribute("remote_path",""));
-  optionsPage.port->setText( uploadEl.attribute("remote_port","") );
-
-  /*
-   * keepPasswd->setChecked() would popup the confirm dialog before the
-   * project options dialog shows if the user has setted storePasswdInFile
-   * and this is ugly. The hack for solving this is ugly too.
-   */
-  optionsPage.keepPasswd->blockSignals(true);
-  optionsPage.keepPasswd->setChecked(storePasswdInFile);
-  optionsPage.keepPasswd->blockSignals(false);
-  if (storePasswdInFile)
-  {
-    optionsPage.linePasswd->insert(passwd);
-  } else
-  {
-    optionsPage.linePasswd->clear();
-  }
-
-  QString def_p = uploadEl.attribute("remote_protocol","ftp");
-  QStringList protocols = KProtocolInfo::protocols();
-  protocols.sort();
-  for ( uint i = 0; i < protocols.count(); i++ )
-  {
-    QString protocol = protocols[i];
-    KURL p;
-    p.setProtocol(protocol);
-    if ( KProtocolInfo::supportsWriting(p) &&
-         KProtocolInfo::supportsMakeDir(p) &&
-         KProtocolInfo::supportsDeleting(p) )
-    {
-      optionsPage.comboProtocol->insertItem(protocol);
-      if ( protocol == def_p )
-        optionsPage.comboProtocol->setCurrentItem( optionsPage.comboProtocol->count()-1 );
-    }
-  }
-
+  QDomElement uploadEl = dom.firstChild().firstChild().namedItem("uploadprofiles").toElement();
+  optionsPage.profileLabel->setText(uploadEl.attribute("defaultProfile"));
 
   QString excludeStr;
   for (uint i = 0; i < excludeList.count(); i++)
@@ -1656,31 +1608,6 @@ void Project::slotOptions()
        }
     }
 
-    QString path = optionsPage.linePath->text();
-    if (!path.startsWith("/"))
-      path.prepend("/");
-    uploadEl.setAttribute("remote_host", optionsPage.lineHost->text() );
-    uploadEl.setAttribute("remote_path", path);
-    uploadEl.setAttribute("remote_port", optionsPage.port->text() );
-    uploadEl.setAttribute("user", optionsPage.lineUser->text() );
-    uploadEl.setAttribute("remote_protocol", optionsPage.comboProtocol->currentText() );
-
-    KConfig *config = kapp->config();
-    config->setGroup("Projects");
-    if (optionsPage.keepPasswd->isChecked())
-    {
-      passwd = optionsPage.linePasswd->password();
-      config->writeEntry(projectName, KStringHandler::obscure(passwd));
-      keepPasswd = true;
-    }
-    else
-    {
-      config->deleteEntry(projectName);
-      keepPasswd = false;
-      passwd = "";
-    }
-    storePasswdInFile = keepPasswd;
-    config->sync();
     m_modified = true;
     slotReloadProject();
   }
@@ -1736,7 +1663,7 @@ void Project::slotUpload()
 {
   emit saveAllFiles();
 
-  ProjectUpload *dlg = new ProjectUpload(KURL(), i18n("Upload project items..."));
+  ProjectUpload *dlg = new ProjectUpload(KURL(), false, i18n("Upload project items..."));
   dlg->show();
 }
 
@@ -1745,7 +1672,7 @@ void Project::slotUploadURL(const KURL& urlToUpload)
   emit saveAllFiles();
   KURL url = QExtFileInfo::toRelative( urlToUpload, baseURL);
 
-  ProjectUpload *dlg = new ProjectUpload(url, i18n("Upload project items..."));
+  ProjectUpload *dlg = new ProjectUpload(url, false, i18n("Upload project items..."));
   dlg->show();
 }
 
@@ -2058,6 +1985,46 @@ KURL Project::projectBaseURL()
     }
   }
   return result;
+}
+
+void Project::savePassword(const QString &entry, const QString &passwd, bool store)
+{
+  m_passwdList[entry] = passwd;
+  KConfig *config = kapp->config();
+  config->setGroup("Projects");
+  if (store)
+  {
+    //config->writeEntry(projectName + " | " + entry, KStringHandler::obscure(passwd));
+    config->writeEntry(projectName + " | " + entry, passwd);
+  }
+  else
+  {
+    config->deleteEntry(projectName + " | " + entry);
+  }
+  config->sync();
+}
+
+QString Project::password(const QString &entry)
+{
+   if (m_passwdList.contains(entry))
+     return m_passwdList[entry];
+   else
+   {
+      KConfig *config = kapp->config();
+      config->setGroup("Projects");
+      QString passwd =  KStringHandler::obscure(config->readEntry(projectName + " | " + entry,""));
+//      QString passwd =  config->readEntry(projectName + " | " + entry,"");
+      return passwd;
+   }
+}
+
+bool Project::passwordSaved(const QString &entry)
+{
+      KConfig *config = kapp->config();
+      config->setGroup("Projects");
+      QString passwd =  KStringHandler::obscure(config->readEntry(projectName + " | " + entry,""));
+//      QString passwd =  config->readEntry(projectName + " | " + entry,"");
+      return !passwd.isEmpty();
 }
 
 #include "project.moc"

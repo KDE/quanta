@@ -30,6 +30,7 @@
 #include <qurl.h>
 #include <qcheckbox.h>
 #include <qtimer.h>
+#include <qframe.h>
 
 //kde includes
 #include <kapplication.h>
@@ -42,7 +43,7 @@
 #include <kio/netaccess.h>
 #include <klocale.h>
 #include <klineedit.h>
-#include <kcompletion.h>
+#include <kcombobox.h>
 #include <kprogress.h>
 #include <kpassdlg.h>
 
@@ -50,21 +51,34 @@
 #include <time.h>
 
 //own includes
+#include "uploadprofiledlgs.h"
 #include "projectupload.h"
 #include "project.h"
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "resource.h"
 
-ProjectUpload::ProjectUpload(const KURL& url, const char* name)
+ProjectUpload::ProjectUpload(const KURL& url, bool showOnlyProfiles, const char* name)
   :ProjectUploadS( 0L, name, true, Qt::WDestructiveClose)
 {
+    m_profilesOnly = showOnlyProfiles;
     list->hide();
     m_project = Project::ref();
     initProjectInfo();
     startUrl = url;
-    QTimer::singleShot(10, this, SLOT(slotBuildTree()));
-    currentItem = 0L;
+    if (m_profilesOnly)
+    {
+      clearWFlags(Qt::WDestructiveClose);
+      uploadFrame->hide();
+      buttonCancel->hide();
+      adjustSize();
+      buttonUpload->setText(i18n("&OK"));
+      setCaption(i18n("Upload Profiles"));
+    } else
+    {
+      QTimer::singleShot(10, this, SLOT(slotBuildTree()));
+      currentItem = 0L;
+    }
 }
 
 
@@ -80,47 +94,50 @@ void  ProjectUpload::initProjectInfo()
 
 //  list->setMultiSelection(true);
 
-  QDomElement uploadEl = m_project->dom.firstChild().firstChild().namedItem("upload").toElement();
-
-  lineHost -> setText(uploadEl.attribute("remote_host",""));
-  lineUser -> setText(uploadEl.attribute("user",""));
-  linePath -> setText(uploadEl.attribute("remote_path",""));
-  port -> setText( uploadEl.attribute("remote_port","") );
-  QString def_p = uploadEl.attribute("remote_protocol","ftp");
-  keepPasswd->setChecked(m_project->keepPasswd);
-  if (m_project->keepPasswd)
+  m_profilesNode = m_project->dom.firstChild().firstChild().namedItem("uploadprofiles");
+  if (m_profilesNode.isNull()) //compat code, remove when upgrade from 3.2 is not supported
   {
-    linePasswd->insert(m_project->passwd);
+     m_currentProfileElement = m_project->dom.firstChild().firstChild().namedItem("upload").toElement();
+     m_defaultProfile = m_currentProfileElement.attribute("user","") + "@" + m_currentProfileElement.attribute("remote_host","");
+     QDomElement e = m_project->dom.createElement("uploadprofiles");
+     e.setAttribute("defaultProfile", m_defaultProfile);
+     QDomElement el = m_project->dom.createElement("profile");
+     el.setAttribute("remote_host", m_currentProfileElement.attribute("remote_host",""));
+     el.setAttribute("user", m_currentProfileElement.attribute("user",""));
+     el.setAttribute("remote_path", m_currentProfileElement.attribute("remote_path",""));
+     el.setAttribute("remote_port", m_currentProfileElement.attribute("remote_port",""));
+     el.setAttribute("remote_protocol", m_currentProfileElement.attribute("remote_protocol","ftp"));
+     el.setAttribute("name", m_defaultProfile);
+     e.appendChild(el);
+//     m_project->dom.firstChild().firstChild().removeChild(m_currentProfileElement);
+     m_currentProfileElement = el;
+     m_project->dom.firstChild().firstChild().appendChild(e);
+     m_profilesNode = e;
+     comboProfile->insertItem(m_defaultProfile);
+     m_project->setModified(true);
   } else
   {
-    linePasswd->clear();
+      m_defaultProfile = m_profilesNode.toElement().attribute("defaultProfile");
+      QDomNodeList profileList = m_profilesNode.toElement().elementsByTagName("profile");
+      QDomElement e;
+      QString s;
+      int defaultIdx = 0;
+      for (uint i = 0; i < profileList.count(); i++)
+      {
+          e = profileList.item(i).toElement();
+          s = e.attribute("name");
+          comboProfile->insertItem(s);
+          if (s == m_defaultProfile)
+          {
+            defaultIdx = i;
+            m_currentProfileElement = e;
+          }
+      }
+      comboProfile->setCurrentItem(defaultIdx);
   }
-
-  QStringList protocols = KProtocolInfo::protocols();
-  protocols.sort();
-  for ( uint i=0; i<protocols.count(); i++ )
-  {
-    QString protocol = protocols[i];
-    KURL p;
-    p.setProtocol(protocol);
-    if ( KProtocolInfo::supportsWriting(p) &&
-         KProtocolInfo::supportsMakeDir(p) &&
-         KProtocolInfo::supportsDeleting(p) )
-    {
-      comboProtocol->insertItem(protocol);
-      if ( protocol == def_p )
-        comboProtocol->setCurrentItem( comboProtocol->count()-1 );
-    }
-  }
-
-//  KCompletion *comp = linePath->completionObject();
-//  connect(linePath,SIGNAL(returnPressed(const QString&)),
-//                  comp,SLOT(addItem(const QString&)));
-
+  keepPasswords->setChecked(m_project->keepPasswd);
   uploadInProgress = false;
   connect( this, SIGNAL( uploadNext() ), SLOT( slotUploadNext() ) );
-
-  lineHost->setFocus();
 }
 
 /** No descriptions */
@@ -222,33 +239,35 @@ void ProjectUpload::buildSelectedItemList()
 
 void ProjectUpload::startUpload()
 {
+  if (m_profilesOnly)
+  {
+    QDialog::accept();
+    return;
+   }
   stopUpload = false;
   QDomElement uploadEl = m_project->dom.firstChild().firstChild().namedItem("upload").toElement();
-  QString path = linePath->text();
+  QString path = m_currentProfileElement.attribute("remote_path","");
   if (!path.startsWith("/"))
     path.prepend("/");
-  uploadEl.setAttribute("remote_host", lineHost->text() );
-  uploadEl.setAttribute("remote_path", path);
-  uploadEl.setAttribute("remote_port", port->text() );
-  uploadEl.setAttribute("user", lineUser->text() );
-  uploadEl.setAttribute("remote_protocol", comboProtocol->currentText() );
-  m_project->setModified(true);
 
-  baseUrl->setProtocol(comboProtocol->currentText());
-  baseUrl->setPort(port->text().toInt());
-  baseUrl->setHost(lineHost->text());
+  baseUrl->setProtocol(m_currentProfileElement.attribute("remote_protocol","ftp"));
+  baseUrl->setPort(m_currentProfileElement.attribute("remote_port","").toInt());
+  baseUrl->setHost(m_currentProfileElement.attribute("remote_host",""));
   baseUrl->setPath(path);
-  password = linePasswd->password();
-  baseUrl->setPass(password);
-  if (keepPasswd->isChecked())
+  if (keepPasswords->isChecked())
   {
      m_project->keepPasswd = true;
-     m_project->passwd = password;
+     password = m_project->password(m_currentProfileElement.attribute("remote_protocol") + "://" + m_currentProfileElement.attribute("user") + "@" + m_currentProfileElement.attribute("remote_host"));
   } else
   {
      m_project->keepPasswd = false;
-     m_project->passwd = "";
+     if (m_currentProfileElement != m_lastEditedProfileElement)
+     {
+         m_lastPassword = "";
+     }
+     password = m_lastPassword;
   }
+  baseUrl->setPass(password);
 
   if (markAsUploaded->isChecked())
   {
@@ -312,7 +331,7 @@ void ProjectUpload::startUpload()
     totalProgress->setTotalSteps(selectedNum);
     uploadInProgress = true;
     suspendUpload = false;
-    user = lineUser->text();
+    user = m_currentProfileElement.attribute("user","");
     KURL u = *baseUrl;
     u.setPath("");
     u.setUser(user);
@@ -526,10 +545,127 @@ void ProjectUpload::clearProjectModified()
   list->checkboxTree();
 }
 
+void ProjectUpload::slotNewProfile()
+{
+  UploadProfileDlgS *profileDlg = new UploadProfileDlgS(this);
+  QDomElement el = m_currentProfileElement;
+  m_currentProfileElement = m_project->dom.createElement("profile");
+  fillProfileDlg(profileDlg);
+  if (profileDlg->exec())
+  {
+     readProfileDlg(profileDlg);
+     m_profilesNode.appendChild(m_currentProfileElement);
+     m_project->setModified(true);
+     comboProfile->insertItem(m_currentProfileElement.attribute("name"), 0);
+  }
+  delete profileDlg;
+}
+
+void ProjectUpload::slotEditProfile()
+{
+  UploadProfileDlgS *profileDlg = new UploadProfileDlgS(this);
+  fillProfileDlg(profileDlg);
+  if (profileDlg->exec())
+  {
+    readProfileDlg(profileDlg);
+    m_project->setModified(true);
+    comboProfile->changeItem(profileDlg->lineProfileName->text(), comboProfile->currentItem());
+  }
+  delete profileDlg;
+}
+
+void ProjectUpload::slotRemoveProfile()
+{
+   if (comboProfile->count() == 1)
+   {
+       KMessageBox::error(this, i18n("Profile Removal Error"), i18n("You cannot remove the last profile"));
+   } else
+   {
+       m_profilesNode.removeChild(m_currentProfileElement);
+       int idx = comboProfile->currentItem();
+       int newIdx = idx + 1;
+       if (newIdx >= comboProfile->count())
+         newIdx = idx - 1;
+       comboProfile->setCurrentItem(newIdx);
+       slotNewProfileSelected(comboProfile->currentText());
+       comboProfile->removeItem(idx);
+   }
+}
+
+void ProjectUpload::fillProfileDlg(UploadProfileDlgS *profileDlg)
+{
+  profileDlg->lineProfileName->setText(m_currentProfileElement.attribute("name",""));
+  profileDlg->lineHost->setText(m_currentProfileElement.attribute("remote_host",""));
+  profileDlg->lineUser->setText(m_currentProfileElement.attribute("user",""));
+  profileDlg->linePath->setText(m_currentProfileElement.attribute("remote_path",""));
+  profileDlg->port->setText( m_currentProfileElement.attribute("remote_port","") );
+  QString def_p = m_currentProfileElement.attribute("remote_protocol","ftp");
+
+  QStringList protocols = KProtocolInfo::protocols();
+  protocols.sort();
+  for ( uint i=0; i<protocols.count(); i++ )
+  {
+    QString protocol = protocols[i];
+    KURL p;
+    p.setProtocol(protocol);
+    if ( KProtocolInfo::supportsWriting(p) &&
+         KProtocolInfo::supportsMakeDir(p) &&
+         KProtocolInfo::supportsDeleting(p) )
+    {
+      profileDlg->comboProtocol->insertItem(protocol);
+      if ( protocol == def_p )
+        profileDlg->comboProtocol->setCurrentItem(profileDlg->comboProtocol->count()-1 );
+    }
+  }
+  QString entry = profileDlg->comboProtocol->currentText() + "://" + profileDlg->lineUser->text() + "@" + profileDlg->lineHost->text();
+  if (m_project->keepPasswd || m_project->passwordSaved(entry))
+  {
+    profileDlg->linePasswd->insert(m_project->password(entry));
+    profileDlg->keepPasswd->setChecked(m_project->passwordSaved(entry));
+ } else
+  {
+    profileDlg->linePasswd->clear();
+    profileDlg->keepPasswd->setChecked(false);
+  }
+}
+
+void ProjectUpload::readProfileDlg(UploadProfileDlgS *profileDlg)
+{
+  m_currentProfileElement.setAttribute("name", profileDlg->lineProfileName->text());
+  m_currentProfileElement.setAttribute("remote_host", profileDlg->lineHost->text());
+  m_currentProfileElement.setAttribute("user", profileDlg->lineUser->text());
+  m_currentProfileElement.setAttribute("remote_path", profileDlg->linePath->text());
+  m_currentProfileElement.setAttribute("remote_port", profileDlg->port->text());
+  m_currentProfileElement.setAttribute("remote_protocol", profileDlg->comboProtocol->currentText());
+  QString passwd = QString(profileDlg->linePasswd->password());
+  m_project->savePassword(profileDlg->comboProtocol->currentText() + "://" + profileDlg->lineUser->text() + "@" + profileDlg->lineHost->text(), passwd,  profileDlg->keepPasswd->isChecked());
+  m_lastEditedProfileElement = m_currentProfileElement;
+  m_lastPassword = passwd;
+  m_profilesNode.toElement().setAttribute("defaultProfile", profileDlg->lineProfileName->text());
+}
+
+void ProjectUpload::slotNewProfileSelected(const QString& profileName)
+{
+  QDomNodeList profileList = m_profilesNode.toElement().elementsByTagName("profile");
+  QDomElement e;
+  QString s;
+  for (uint i = 0; i < profileList.count(); i++)
+  {
+      e = profileList.item(i).toElement();
+      s = e.attribute("name");
+      if (s == profileName)
+      {
+        m_currentProfileElement = e;
+        break;
+      }
+  }
+  m_profilesNode.toElement().setAttribute("defaultProfile", profileName);
+  m_project->setModified(true);
+}
+
 void ProjectUpload::reject()
 {
-
-  if (uploadInProgress)
+  if (uploadInProgress && !m_profilesOnly)
   {
     suspendUpload = true;
     if (KMessageBox::questionYesNo(this,i18n("Do you really want to cancel the upload?"),

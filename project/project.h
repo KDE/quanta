@@ -94,8 +94,13 @@ public:
    * and the base URL of the opened document, if it is saved somewhere.
    */
   KURL projectBaseURL();
-
   KURL documentRootURL() {return m_documentRootURL;}
+
+  /** Saves the password for entry into a list. Stores on disc if store == true */
+  void savePassword(const QString& entry, const QString& passwd, bool store);
+  /** Returns the saved password for entry */
+  QString password(const QString &entry);
+  bool passwordSaved(const QString &entry);
 
 public slots:
 
@@ -168,8 +173,6 @@ signals:
 public:
   QDomDocument dom;
   QString debuggerClient;
-    /** Holds the upload password. It is not saved, and it is lost after the project is closed. */
-  QString passwd;
   bool keepPasswd;
   QString email;
   KURL templateURL;
@@ -221,7 +224,6 @@ upload.*/
   KConfig *config;
 
   bool m_modified;
-  bool storePasswdInFile;
   bool m_excludeCvsignore;
   KMainWindow *m_parent;
   QBuffer buff;
@@ -237,6 +239,8 @@ upload.*/
     *saveSelectionAsProjectTemplateAction,
     *openPrjViewAction, *savePrjViewAction, *saveAsPrjViewAction,
     *deletePrjViewAction;
+
+   QMap<QString, QString> m_passwdList;
 
 protected: // Protected attributes
   /** Default DTD for this project. */
