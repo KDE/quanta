@@ -77,7 +77,6 @@ class FilesTreeView;
 class ScriptTreeView;
 class EnhancedTagAttributeTree;
 class Project;
-class GrepDialog;
 class MessageOutput;
 class QDomDocument;
 class Document;
@@ -470,9 +469,6 @@ private:
    /** HTML class for preview */
   WHTMLPart *m_htmlPart;
   WHTMLPart *m_htmlPartDoc;
-
-  /** Grep window */
-  GrepDialog *grepDialog;
 
   // DOC & VIEW
   QuantaDoc  *m_doc;

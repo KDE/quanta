@@ -166,8 +166,6 @@
 #include "toolbartabwidget.h"
 #include "dcopquanta.h"
 
-#include "kategrepdialog.h"
-
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
 #include "katefiledialog.h"
 #else
@@ -216,7 +214,6 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   }
   qConfig.enableDTDToolbar = true;
 
-  grepDialog  = 0L;
   exitingFlag = false;
   qConfig.spellConfig = new KSpellConfig();
   idleTimer = new QTimer(this);
@@ -637,17 +634,9 @@ void QuantaApp::slotFileQuit()
 
 void QuantaApp::slotEditFindInFiles()
 {
-  if (!grepDialog)
-  {
-    QString startDir = QDir::homeDirPath();
-    KURL pBase = Project::ref()->projectBaseURL();
-    if (pBase.isLocalFile()) startDir = pBase.path(1);
-    grepDialog = new GrepDialog( startDir, this, "grep_dialog" );
-    connect( grepDialog, SIGNAL( itemSelected   (const QString& , int, int)),
-             this,       SLOT  ( gotoFileAndLine(const QString& , int, int)));
-  }
-  grepDialog->show();
-  grepDialog->raise();
+  QuantaPlugin *fileReplacePlugin = m_pluginInterface->plugin("KFileReplace");
+  if (fileReplacePlugin)
+    fileReplacePlugin->run();
 }
 
 

@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libdialogs.la
 
-libdialogs_la_SOURCES = copyto.cpp dirtydialog.ui dirtydlg.cpp donationdialog.ui dtdselectdialog.ui kategrepdialog.cpp fourbuttonmessagebox.ui casewidget.ui actionconfigdialogs.ui actionconfigdialog.cpp filecombo.cpp specialchardialogs.ui specialchardialog.cpp
+libdialogs_la_SOURCES = copyto.cpp dirtydialog.ui dirtydlg.cpp donationdialog.ui dtdselectdialog.ui fourbuttonmessagebox.ui casewidget.ui actionconfigdialogs.ui actionconfigdialog.cpp filecombo.cpp specialchardialogs.ui specialchardialog.cpp
 
 METASOURCES = AUTO
 
