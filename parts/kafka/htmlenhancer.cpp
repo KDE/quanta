@@ -60,16 +60,9 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 	//by default, the parser parse it as a script, which can't be translated in DOM::Nodes.
 	if(node->tag->type == Tag::ScriptTag && node->tag->name.lower().contains("style"))
 	{
-		domNode =  m_wkafkapart->getKafkaPart()->createNode("style");
-		try
-		{
-			parentDNode.appendChild(domNode);
-		}
-		catch(DOM::DOMException e)
-		{
-			kdDebug(25001)<< "HTMLEnhancer::enhanceNode() ERROR 1" << endl;
+		domNode = kafkaCommon::createDomNode("style", m_wkafkapart->getKafkaPart()->document());
+		if(!kafkaCommon::insertDomNode(domNode, parentDNode))
 			return false;
-		}
 		node->_rootNode = domNode;
 		node->_leafNode = domNode;
 		m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
@@ -84,17 +77,9 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 #ifdef HEAVY_DEBUG
 		kdDebug(25001)<< "HTMLTranslator::translateNode() - CSS code : " << text << endl;
 #endif
-		domNode2 = m_wkafkapart->getKafkaPart()->createNode("TEXT");
-		domNode2.setNodeValue(DOM::DOMString(text));
-		try
-		{
-			domNode.appendChild(domNode2);
-		}
-		catch(DOM::DOMException e)
-		{
-			kdDebug(25001)<< "HTMLEnhancer::enhanceNode() ERROR 2" << endl;
+		domNode2 = kafkaCommon::createTextDomNode(text, m_wkafkapart->getKafkaPart()->document());
+		if(!kafkaCommon::insertDomNode(domNode2, domNode))
 			return false;
-		}
 		m_wkafkapart->connectDomNodeToQuantaNode(domNode2, node);
 	}
 
@@ -108,34 +93,11 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 		filename = m_stddirs->findResource("data", "kafkapart/pics/" + script + ".png" );
 		if(!filename.isEmpty())
 		{
-			domNode = m_wkafkapart->getKafkaPart()->createNode("IMG");
-			attr = m_wkafkapart->getKafkaPart()->htmlDocument().createAttribute("src");
-			attr.setNodeValue(filename);
-			domNode.attributes().setNamedItem(attr);
-			if(!nextDNode.isNull())
-			{
-				try
-				{
-					parentDNode.insertBefore(domNode, nextDNode);
-				} catch(DOM::DOMException e)
-				{
-					kdDebug(25001)<< "HTMLTranslator::translateNode - ERROR2 code : " <<
-						e.code << endl;
-					return false;
-				}
-			}
-			else
-			{
-				try
-				{
-					parentDNode.appendChild(domNode);
-				} catch(DOM::DOMException e)
-				{
-					kdDebug(25001)<< "HTMLTranslator::translateNode - ERROR3 code : " <<
-						e.code << endl;
-					return false;
-				}
-			}
+			domNode = kafkaCommon::createDomNode("IMG", m_wkafkapart->getKafkaPart()->document());
+			kafkaCommon::editDomNodeAttribute(domNode, "src", filename,
+				m_wkafkapart->getKafkaPart()->document());
+			if(!kafkaCommon::insertDomNode(domNode, parentDNode, nextDNode))
+				return false;
 			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
 		}
 	}
@@ -153,18 +115,10 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 		}
 		if(!tbody)
 		{
-			domNode = m_wkafkapart->getKafkaPart()->createNode("TBODY");
-			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
-			try
-			{
-				domNode = node->_rootNode.appendChild(domNode);
-			} catch(DOM::DOMException e)
-			{
-				kdDebug(25001)<< "HTMLTranslator::translateNode - ERROR code : " <<
-					e.code << endl;
-				m_wkafkapart->disconnectDomNodeFromQuantaNode(domNode);
+			domNode = kafkaCommon::createDomNode("TBODY", m_wkafkapart->getKafkaPart()->htmlDocument());
+			if(!kafkaCommon::insertDomNode(domNode, node->_rootNode))
 				return false;
-			}
+			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
 			node->_leafNode = domNode;
 		}
 	}
@@ -172,32 +126,31 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 	//THEN add a red dotted border to FORM tags.
 	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "form")
 	{
-		attr = m_wkafkapart->getKafkaPart()->htmlDocument().createAttribute("style");
-		attr.setNodeValue("border: 1px dotted red");
-		node->_rootNode.attributes().setNamedItem(attr);
+		kafkaCommon::editDomNodeAttribute(node->_rootNode, "style", "border: 1px dotted red",
+			m_wkafkapart->getKafkaPart()->document());
 	}
 
-	//THEN add a blue dotted border to DL tags
-	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "dl")
+	//THEN add a blue dotted border to DL, OL, UL tags
+	if(!node->_rootNode.isNull())
 	{
-		attr = m_wkafkapart->getKafkaPart()->htmlDocument().createAttribute("style");
-		attr.setNodeValue("border: 1px dotted blue");
-		node->_rootNode.attributes().setNamedItem(attr);
+		text = node->_rootNode.nodeName().string().lower();
+		if(text == "dl" || text == "ol" || text == "ul")
+		{
+			kafkaCommon::editDomNodeAttribute(node->_rootNode, "style", "border: 1px dotted blue",
+				m_wkafkapart->getKafkaPart()->document());
+		}
 	}
 
 	//THEN add a minimal border for borderless tables
 	//TODO: make it configurable, and look if CSS hasn't defined a border first
-	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "table" )
+	if(!node->_rootNode.isNull() && node->_rootNode.nodeName().string().lower() == "table")
 	{
-		domNode = node->_rootNode.attributes().getNamedItem("border");
-		if(domNode.isNull())
+		attr = node->_rootNode.attributes().getNamedItem("border");
+		if(attr.isNull() || (!attr.isNull() && attr.nodeValue().string() == "0"))
 		{
-			attr = m_wkafkapart->getKafkaPart()->htmlDocument().createAttribute("border");
-			attr.setNodeValue("1");
-			node->_rootNode.attributes().setNamedItem(attr);
+			kafkaCommon::editDomNodeAttribute(node->_rootNode, "border", "1",
+				m_wkafkapart->getKafkaPart()->document());
 		}
-		else if(!domNode.isNull() && domNode.nodeValue().string() == "0")
-			domNode.setNodeValue("1");
 	}
 
 	return true;

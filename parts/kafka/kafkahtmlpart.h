@@ -69,14 +69,6 @@ public:
 
 	/**
 	 * Category: Standard Functions
-	 * Called by KafkaPart to save the current document
-	 * @param url Specifies the URL to save to
-	 * @return Returns true if it worked, else false
-	 */
-	bool saveDocument(const KURL &url);
-
-	/**
-	 * Category: Standard Functions
 	 * Called by KafkaPart to set the readonly variable
 	 * @param value Specifies wheter we accept keyboard input or not
 	 */
@@ -91,19 +83,11 @@ public:
 
 	/**
 	 * Category: Standart Function
-	 * Called to create new DOM::Nodes
-	 * @param The name of the DOM::Node to be created
-	 * @return Return the DOM::Node created
-	 */
-	DOM::Node createNode(const QString &NodeName);
-
-	/**
-	 * Category: Standart Function
 	 * Returns the current Node (which has the focus) and its offset.
-	 * @param _currentNode The Node which has the cursor focus.
+	 * @param currentNode The Node which has the cursor focus.
 	 * @param offset The offset of the cursor in _currentNode.
 	 */
-	void getCurrentNode(DOM::Node &_currentNode, int &offset);
+	void getCurrentNode(DOM::Node &currentNode, int &offset);
 
 	/**
 	 * Set the focus.
@@ -141,36 +125,6 @@ public:
 	void showDomTree();
 
 public slots:
-	/**
-	 * Category: HTML Editing Functions
-	 * Inserts a DOM::Node into the DOM::Document, after or before the panode.
-	 * Should be used instead of DOM::Node::appendChild().
-	 * @param node The node to add into the document
-	 * @param panode The node before/after node
-	 * @param insertBefore Specifies wheter to add node before panode or after panode
-	 * @return Returns true if it worked, else false
-	 */
-	bool insertNode(DOM::Node node, DOM::Node panode, bool insertBefore);
-
-	/**
-	 * Category: HTML Editing Functions
-	 * Inserts a DOM::Node into the DOM::Document, after or before the current DOM::Node.
-	 * Should be used instead of DOM::Node::appendChild().
-	 * @param node The node to add into the document
-	 * @param insertBefore Specifies wheter to add node before the current node
-	 * or after the current node
-	 * @return Returns true if it worked, else false
-	 */
-	bool insertNode(DOM::Node node, bool insertBefore);
-
-	/**
-	 * Category: HTML Editing Functions
-	 * Removes a DOM::Node from the DOM::Document.
-	 * Should be used instead of DOM::Node::removeChild()
-	 * @param node The Node to remove from the document
-	 * @retun Returns true if it worked, else false
-	 */
-	bool removeNode(DOM::Node node);
 
 	/**
 	 * Category: HTML Editing Functions

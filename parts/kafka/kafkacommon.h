@@ -21,11 +21,11 @@
 #include <qvaluelist.h>
 #include <dom/dom_node.h>
 
-class Node;
 namespace DOM
 {
-	class Node;
+	class Document;
 }
+class Node;
 class NodeModifsSet;
 class Document;
 
@@ -429,6 +429,74 @@ public:
 	 * @return Returns a parent of the node pointed by loc.
 	 */
 	static Node* getNodeFromSubLocation(QValueList<int> loc, int locOffset);
+
+
+	/** ----------------- DOM::NODE TREE MODIFICATIONS --------------------*/
+
+	/**
+	 * Insert a DOM::Node in the DOM::Node tree. It takes care to handle the exceptions.
+	 * @param node The node to insert.
+	 * @param parent The new parent of node. If null, insert node at the top level.
+	 * @param nextSibling The new next sibling of node. If null, append node at the end of the child list.
+	 * @param rootNode The root DOM::Node of the DOM::Node tree. Usefull when no parent is provided.
+	 * @return Returns true if the operation was successfull.
+	 */
+	static bool insertDomNode(DOM::Node node, DOM::Node parent = DOM::Node(),
+		DOM::Node nextSibling = DOM::Node(), DOM::Node rootNode = DOM::Node());
+
+
+	/**
+	 * Removes a DOM::Node from the DOM::Node Tree. It takes care to handle the exceptions.
+	 * @param node The Node to remove from the tree.
+	 * @retun Returns true if the operation was successfull..
+	 */
+	static bool removeDomNode(DOM::Node node);
+
+
+	/** --------------------- DOM::NODE MODIFICATIONS ---------------------- */
+
+	/**
+	 * Create new DOM::Nodes. It takes care of catching exceptions.
+	 * @param nodeName The name of the DOM::Node to be created
+	 * @param rootNode The rootNode is needed in order to create a new DOM::Node.
+	 * @return Returns the DOM::Node created or a null DOM::Node if nodeName is invalid.
+	 */
+	static DOM::Node createDomNode(const QString &nodeName, DOM::Document rootNode);
+
+	/**
+	 * Create a new Text Node.
+	 * @param textString The text inside the new text DOM::Node.
+	 * @param rootNode The rootNode is needed in order to create a new Text DOM::Node.
+	 * @return a new text DOM::Node.
+	 */
+	static DOM::Node createTextDomNode(const QString &textString, DOM::Document rootNode);
+
+	/**
+	 * Create a new attribute. It takes care of catching exceptions.
+	 * @param attrName The name of the new attribute
+	 * @param rootNode The rootNode is needed in order to create a new Attribute.
+	 * @return Returns the new Attribute or a null DOM::Node if attrName is invalid.
+	 */
+	static DOM::Node createDomNodeAttribute(const QString &attrName, DOM::Document rootNode);
+
+	/**
+	 * Append a new attribute to a DOM::Node.
+	 * @param node The node which will get the new attribute.
+	 * @param attr The new attribute to add.
+	 * @return Returns if the operation was successfull.
+	 */
+	static bool insertDomNodeAttribute(DOM::Node node, DOM::Node attr);
+
+	/**
+	 * It behaves essentially like the above function except that if the attribute doesn't exist, it will create it,
+	 * and then it fills the attribute with attrValue.
+	 * @param attrName The name of the (new) Attribute.
+	 * @param attrValue The value of the new Attribute.
+	 * @param rootNode The rootNode is needed in order to create a new Attribute.
+	 * @return Returns if the operation was successfull.
+	 */
+	static bool editDomNodeAttribute(DOM::Node node, const QString &attrName, const QString &attrValue,
+		DOM::Document rootNode);
 
 
 	/** ----------------------- MISCELLANEOUS -------------------------------------*/

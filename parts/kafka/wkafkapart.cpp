@@ -606,10 +606,10 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChil
 
 }
 
-bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
+bool WKafkaPart::buildKafkaNodeFromNode(Node *node, bool insertNode)
 {
 #ifdef LIGHT_DEBUG
-	if(_node)
+	if(node)
 		kdDebug(25001)<< "WKafkaPart::buildKafkaNodeFromNode() " << endl;
 #endif
 	DOM::Node newNode, newNode2, attr, nextNode, parentNode;
@@ -617,9 +617,9 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 	Node *n;
 	int i;
 
-	if(_node->tag->type == Tag::XmlTag || (_node->tag->type == Tag::Text && !_node->insideSpecial))
+	if(node->tag->type == Tag::XmlTag || (node->tag->type == Tag::Text && !node->insideSpecial))
 	{
-		if(!_node->tag->single && _node->next && _node->next->tag->type != Tag::XmlTagEnd)
+		if(!node->tag->single && node->next && node->next->tag->type != Tag::XmlTagEnd)
 		{
 			//TODO: ERROR missing closing tags, set the kafka behavior according to this
 #ifdef LIGHT_DEBUG
@@ -627,8 +627,8 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 				endl;
 #endif
 		}
-		str = _node->tag->name.lower();
-		if(!_node->parent)
+		str = node->tag->name.lower();
+		if(!node->parent)
 		{//FIXME:html, head and body are HTML-specific tag, for others DTDs it might result to some pbs.
 			if(str == "html")
 			{
@@ -653,26 +653,24 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 			}
 			else
 			{
-				if(_node->tag->type == Tag::Text)
+				if(node->tag->type == Tag::Text)
 				{
-					newNode = _kafkaPart->createNode("TEXT");
+					newNode = kafkaCommon::createTextDomNode("", _kafkaPart->document());
 				}
 				else
 				{
-					newNode = _kafkaPart->createNode(_node->tag->name);
-					if (newNode.nodeName().string().upper() != _node->tag->name.upper())
-						return false;
+					newNode = kafkaCommon::createDomNode(node->tag->name, _kafkaPart->document());
 				}
 			}
 		}
-		else if(str == "body" && _node->parent && !_node->parent->parent)
+		else if(str == "body" && node->parent && !node->parent->parent)
 		{
 			if(!body.isNull())
 				disconnectDomNodeFromQuantaNode(body);
 			newNode = body;
 			insertNode = false;
 		}
-		else if(str == "head" && _node->parent && !_node->parent->parent)
+		else if(str == "head" && node->parent && !node->parent->parent)
 		{
 			if(!head.isNull())
 				disconnectDomNodeFromQuantaNode(head);
@@ -682,56 +680,48 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 	/**	else if(node->parent->tag->str == "html")*/
 		else
 		{
-			if(_node->tag->type == Tag::Text)
+			if(node->tag->type == Tag::Text)
 			{
-				newNode = _kafkaPart->createNode("TEXT");
+				newNode = kafkaCommon::createTextDomNode("", _kafkaPart->document());
 			}
 			else
 			{
-				newNode = _kafkaPart->createNode(_node->tag->name);
-				if (newNode.nodeName().string().upper() != _node->tag->name.upper())
-					return false;
+				newNode = kafkaCommon::createDomNode(node->tag->name, _kafkaPart->document());
 			}
 		}
 
-		connectDomNodeToQuantaNode(newNode, _node);
-		if(_node->tag->type == Tag::Text)
+		if(newNode.isNull())
+			return true;
+
+		connectDomNodeToQuantaNode(newNode, node);
+		if(node->tag->type == Tag::Text)
 		{
-			nodeValue = _node->tag->tagStr();
+			nodeValue = node->tag->tagStr();
 			nodeValue = getDecodedText(nodeValue);
 			newNode.setNodeValue(nodeValue);
 		}
 
-		for(i = 0; i < _node->tag->attrCount(); i++)
+		for(i = 0; i < node->tag->attrCount(); i++)
 		{
-			try{
-			attr = _kafkaPart->htmlDocument().createAttribute(_node->tag->attribute(i));
-			}catch(DOM::DOMException e){}
-
+			attr = kafkaCommon::createDomNodeAttribute(node->tag->attribute(i), _kafkaPart->document());
 			if(!attr.isNull())
 			{
-				attr.setNodeValue(_node->tag->attributeValue(i));
-				try{
-					newNode.attributes().setNamedItem(attr);
-				}catch(DOM::DOMException e){}
-				/**kdDebug(25001)<< "WKafkaPart::buildKafkaNodeFromNode() -  Attr added : " <<
-					_node->tag->attribute(i) <<
-					" value : " << _node->tag->attributeValue(i) << endl;*/
+				attr.setNodeValue(node->tag->attributeValue(i));
+				kafkaCommon::insertDomNodeAttribute(newNode, attr);
 			}
 		}
 
-		if(_node->next && _node->next->tag && _node->next->tag->name ==
-			("/" + _node->tag->name))
+		if(node->next && node->next->tag && node->next->tag->name ==
+			("/" + node->tag->name))
 		{
-			/**kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode()" <<
-				"_node->_closingNode set." << endl;*/
-			_node->_closingNode = _node->next;
+			//DEPRECATED, NO USE TO CHANGE THE above check
+			node->_closingNode = node->next;
 		}
 
 		if(insertNode)
 		{
-			_node->_rootNode = newNode;
-			n = _node;
+			node->_rootNode = newNode;
+			n = node;
 			while(n->next)
 			{
 				n = n->next;
@@ -741,14 +731,14 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 						break;
 				}
 			}
-			if(_node->parent && !_node->parent->_leafNode.isNull())
-				parentNode = _node->parent->_leafNode;
-			else if(_node->parent && _node->parent->_leafNode.isNull())
+			if(node->parent && !node->parent->_leafNode.isNull())
+				parentNode = node->parent->_leafNode;
+			else if(node->parent && node->parent->_leafNode.isNull())
 			{
 				//the parent tag was invalid and khtml refuse to insert it
 				//so impossible to inser the current node
 				disconnectDomNodeFromQuantaNode(newNode);
-				_node->_rootNode = DOM::Node();
+				node->_rootNode = DOM::Node();
 				return false;
 			}
 			else
@@ -756,48 +746,38 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 
 			if(nextNode.isNull())
 			{
-				try
+				if(!kafkaCommon::insertDomNode(newNode, parentNode))
 				{
-					newNode = parentNode.appendChild(newNode);
-				} catch(DOM::DOMException e)
-				{
-					kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode() *ERROR* - code : " <<
-						e.code << endl;
 					disconnectDomNodeFromQuantaNode(newNode);
-					_node->_rootNode = DOM::Node();
+					node->_rootNode = DOM::Node();
 					return false;
 				}
 			}
 			else
 			{
-				try
+				if(!kafkaCommon::insertDomNode(newNode, parentNode, nextNode))
 				{
-					newNode = parentNode.insertBefore(newNode, nextNode);
-				} catch(DOM::DOMException e)
-				{
-					kdDebug(25001)<< "WKafkart::buildKafkaNodeFromNode() *ERROR4* - code : " <<
-						e.code << endl;
 					disconnectDomNodeFromQuantaNode(newNode);
-					_node->_rootNode = DOM::Node();
+					node->_rootNode = DOM::Node();
 					return false;
 				}
 			}
-			_node->_leafNode = newNode;
-			mainEnhancer->enhanceNode(_node, parentNode, nextNode);
+			node->_leafNode = newNode;
+			mainEnhancer->enhanceNode(node, parentNode, nextNode);
 		}
 		else
 		{
-			_node->_rootNode = newNode;
-			_node->_leafNode = newNode;
+			node->_rootNode = newNode;
+			node->_leafNode = newNode;
 		}
 	}
 	else
 	{
-		if(_node->parent && !_node->parent->_leafNode.isNull())
-			parentNode = _node->parent->_leafNode;
+		if(node->parent && !node->parent->_leafNode.isNull())
+			parentNode = node->parent->_leafNode;
 		else
 			parentNode = body;
-		n = _node;
+		n = node;
 		while(n->next)
 		{
 			n = n->next;
@@ -807,7 +787,7 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 				break;
 			}
 		}
-		mainEnhancer->enhanceNode(_node, parentNode, nextNode);
+		mainEnhancer->enhanceNode(node, parentNode, nextNode);
 	}
 	return true;
 }

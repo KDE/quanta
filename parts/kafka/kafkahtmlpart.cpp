@@ -137,35 +137,6 @@ bool KafkaHTMLPart::openDocument(const KURL &url)
 	return openURL(url);
 }
 
-bool KafkaHTMLPart::saveDocument(const KURL &url)
-{
-	if(url.isLocalFile())
-	{
-		QFile file(url.path());
-		if(file.open(IO_WriteOnly))
-		{
-			QTextStream stream(&file);
-
-			DOM::Node node = static_cast<DOM::Node>(document());
-			if(!node.isNull())
-				stream << node.toHTML() << endl;
-			else
-			{
-				KMessageBox::error(0L, i18n("Couldn't save file %1!").arg(url.path()));
-				file.close();
-				return false;
-			}
-
-			file.close();
-			return true;
-		}
-	}
-	else
-		KMessageBox::information(0L, i18n("Remote saving is not done yet! Sorry!"));
-
-	return false;
-}
-
 bool KafkaHTMLPart::readOnly()
 {
 	return d->m_readOnly;
@@ -174,50 +145,6 @@ bool KafkaHTMLPart::readOnly()
 void KafkaHTMLPart::setReadOnly(bool value)
 {
 	d->m_readOnly = value;
-}
-
-bool KafkaHTMLPart::insertNode(DOM::Node node, DOM::Node panode, bool insertBefore)
-{
-	DOM::Node parentNode = panode.parentNode();
-	if(parentNode.isNull())
-		return false;
-
-	kdDebug(25001) << "KafkaHTMLPart::insertNode() - Node (" <<
-		parentNode.nodeName().string() << ").insertNode(" <<
-		node.nodeName().string() << ")" << endl;
-
-	DOM::Node nextSibling;
-	if(insertBefore)
-		nextSibling = panode;
-	else
-		nextSibling = panode.nextSibling();
-
-	if(nextSibling.isNull())
-		panode.appendChild(node);
-	else
-		parentNode.insertBefore(node, nextSibling);
-
-	panode.applyChanges();
-
-	emit domNodeInserted(node, false);
-	emit domChanged();
-	return true;
-}
-
-bool KafkaHTMLPart::insertNode(DOM::Node node, bool insertBefore)
-{
-	return insertNode(node, m_currentNode, insertBefore);
-}
-
-bool KafkaHTMLPart::removeNode(DOM::Node node)
-{
-	DOM::Node temp = node.parentNode();
-	emit domNodeIsAboutToBeRemoved(node, true);
-	temp.removeChild(node);
-	temp.applyChanges();
-
-	emit domChanged();
-	return true;
 }
 
 void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position)
@@ -1284,23 +1211,6 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 void KafkaHTMLPart::khtmlDrawContentsEvent(khtml::DrawContentsEvent *event)
 {
 	KHTMLPart::khtmlDrawContentsEvent(event);
-}
-
-DOM::Node KafkaHTMLPart::createNode(const QString &NodeName)
-{
-	//this will change with the futur DTDs support
-	DOM::Node dn;
-        DOM::DOMString _nodename(NodeName);
-	if(NodeName == "TEXT")
-		return document().createTextNode("");
-	try
-	{
-		dn =  document().createElement(_nodename);
-	} catch(DOM::DOMException e)
-	{
-		return DOM::Node();
-	}
-	return dn;
 }
 
 void KafkaHTMLPart::showDomTree()

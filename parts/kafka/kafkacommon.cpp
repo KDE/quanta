@@ -18,6 +18,10 @@
 #include <qptrdict.h>
 
 #include <kdebug.h>
+#include <dom/dom_exception.h>
+#include <dom/dom_doc.h>
+#include <dom/dom_element.h>
+#include <dom/dom_text.h>
 
 #include "../../parser/node.h"
 #include "../../parser/tag.h"
@@ -1689,6 +1693,153 @@ Node* kafkaCommon::getNodeFromSubLocation(QValueList<int> loc, int locOffset)
 	}
 
 	return getNodeFromLocation(list);
+}
+
+bool kafkaCommon::insertDomNode(DOM::Node node, DOM::Node parent, DOM::Node nextSibling,
+	DOM::Node rootNode)
+{
+	if(node.isNull())
+		return false;
+
+	if(parent.isNull())
+	{
+		if(rootNode.isNull())
+			return false;
+		parent = rootNode;
+	}
+
+	try{
+		parent.insertBefore(node, nextSibling);
+#ifdef HEAVY_DEBUG
+	}catch(DOM::DOMException e)
+	{
+		kdDebug(25001)<< "kafkaCommon::insertDomNode() - ERROR code :" << e.code << endl;
+#else
+	}catch(DOM::DOMException)
+	{
+#endif
+		return false;
+	}
+	return true;
+}
+
+bool kafkaCommon::removeDomNode(DOM::Node node)
+{
+	DOM::Node parent = node.parentNode();
+
+	if(parent.isNull())
+		return false;
+
+	try
+	{
+		parent.removeChild(node);
+#ifdef HEAVY_DEBUG
+	}catch(DOM::DOMException e)
+	{
+		kdDebug(25001)<< "kafkaCommon::removeDomNode() - ERROR code :" << e.code << endl;
+#else
+	}catch(DOM::DOMException)
+	{
+#endif
+		return false;
+	}
+	return true;
+}
+
+DOM::Node kafkaCommon::createDomNode(const QString &nodeName, DOM::Document rootNode)
+{
+	//this will change with the futur multi-DTDs support
+	DOM::Node dn;
+	try
+	{
+		dn =  rootNode.createElement(nodeName);
+#ifdef HEAVY_DEBUG
+	} catch(DOM::DOMException e)
+	{
+		kdDebug(25001)<< "kafkaCommon::createDomNode() - ERROR code :" << e.code << endl;
+#else
+	} catch(DOM::DOMException)
+	{
+#endif
+		return DOM::Node();
+	}
+	return dn;
+}
+
+DOM::Node kafkaCommon::createTextDomNode(const QString &textString, DOM::Document rootNode)
+{
+	DOM::Node dn;
+	try
+	{
+		dn = rootNode.createTextNode(textString);
+	}catch(DOM::DOMException)
+	{
+		return DOM::Node();
+	}
+	return dn;
+}
+
+DOM::Node kafkaCommon::createDomNodeAttribute(const QString &attrName, DOM::Document rootNode)
+{
+	DOM::Node attr;
+	try
+	{
+		attr = rootNode.createAttribute(attrName);
+#ifdef HEAVY_DEBUG
+	} catch(DOM::DOMException e)
+	{
+		kdDebug(25001)<< "kafkaCommon::createDomNodeAttribute() - ERROR code :" << e.code << endl;
+#else
+	} catch(DOM::DOMException)
+	{
+#endif
+		return DOM::Node();
+	}
+	return attr;
+}
+
+bool kafkaCommon::insertDomNodeAttribute(DOM::Node node, DOM::Node attr)
+{
+	if(node.isNull())
+		return false;
+
+	try{
+		node.attributes().setNamedItem(attr);
+#ifdef HEAVY_DEBUG
+	}catch(DOM::DOMException e)
+	{
+		kdDebug(25001)<< "kafkaCommon::insertDomNodeAttribute() - ERROR code:" << e.code << endl;
+#else
+	}catch(DOM::DOMException)
+	{
+#endif
+		return false;
+	}
+	return true;
+}
+
+bool kafkaCommon::editDomNodeAttribute(DOM::Node node, const QString &attrName,
+	const QString &attrValue, DOM::Document rootNode)
+{
+	DOM::Node attr;
+
+	if(node.isNull())
+		return false;
+
+	attr = node.attributes().getNamedItem(attrName);
+	if(attr.isNull())
+	{
+		//let's create it
+		attr = createDomNodeAttribute(attrName, rootNode);
+		if(attr.isNull())
+			return false;
+		insertDomNodeAttribute(node, attr);
+	}
+
+	//set the new value
+	attr.setNodeValue(attrValue);
+
+	return true;
 }
 
 #ifdef HEAVY_DEBUG
