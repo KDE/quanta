@@ -3,16 +3,16 @@
 <TAGS>
 <tag name="form" hasScript="1" hasCore="1" hasI18n="1">
 
-    <attr name="action" type="input">
-        <text>action</text>
+    <attr name="action" type="url">
+        <text>Action</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="3" />
     </attr>
 
     <attr name="method" type="list">
-        <text>method</text>
+        <text>Method</text>
         <textlocation col="0" row="1" />
-        <location col="1" row="1"/>
+        <location col="1" row="1" colspan="3"/>
         <items>
                 <item>get</item>
                 <item>post</item>
@@ -20,7 +20,7 @@
     </attr>
 
     <attr name="enctype" type="list">
-        <text>enctype</text>
+        <text>Enctype</text>
         <textlocation col="0" row="2" />
         <location col="1" row="2" colspan="3"/>
         <items>
@@ -30,8 +30,8 @@
     </attr>
 
     <attr name="accept" type="list">
-        <text>enctype</text>
-        <textlocation col="0" row="2" />
+        <text>Accept</text>
+        <textlocation col="0" row="3" />
         <location col="1" row="3" colspan="3"/>
         <items>
           <item>text/html</item>
@@ -51,13 +51,22 @@
     </attr>
 
     <attr name="accept-charset" type="input">
-        <text>Accept charset</text>
-        <textlocation col="2" row="3" />
-        <location col="3" row="3"/>
+        <text>Accept-charset</text>
+        <textlocation col="0" row="4" />
+        <location col="1" row="4" colspan="3"/>
     </attr>
 
-    <attr name="onsubmit" type="input" />
-    <attr name="onreset" type="input" />
+    <attr name="onsubmit" type="input">
+        <text>Onsubmit</text>
+        <textlocation col="0" row="5" />
+        <location col="1" row="5" colspan="3"/>
+    </attr>
+
+    <attr name="onreset" type="input">
+        <text>Onreset</text>
+        <textlocation col="0" row="6" />
+        <location col="1" row="6" colspan="3"/>
+    </attr>
 
 <children>
 <child name="address" />

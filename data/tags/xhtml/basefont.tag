@@ -4,21 +4,21 @@
 <tag name="basefont" single="1">
 
     <attr name="color" type="color">
-        <text>color</text>
-        <textlocation col="0" row="2" />
-        <location col="2" row="2"  />
+        <text>Color</text>
+        <textlocation col="0" row="0" />
+        <location col="1" row="0"  />
     </attr>
 
     <attr name="face" type="input">
-        <text>face</text>
-        <textlocation col="0" row="3" />
-        <location col="1" row="3" colspan="2" />
+        <text>Face</text>
+        <textlocation col="0" row="1" />
+        <location col="1" row="1" />
     </attr>
 
     <attr name="size" type="list">
-        <text>size</text>
-        <textlocation col="0" row="4" />
-        <location col="1" row="4" colspan="2" />
+        <text>Size</text>
+        <textlocation col="0" row="2" />
+        <location col="1" row="2" />
         <items>
                 <item>1</item>
                 <item>2</item>
@@ -30,7 +30,12 @@
         </items>
     </attr>
 
-    <attr name="id" type="input" />
+    <attr name="id" type="input" >
+        <text>Id</text>
+        <textlocation col="0" row="3" />
+        <location col="1" row="3" />
+    </attr>
+
 
 </tag>
 </TAGS>

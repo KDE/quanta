@@ -4,33 +4,33 @@
 <tag name="a" hasCore="1" hasI18n="1" hasScript="1" hasFocus="1">
 
     <attr name="href" type="url">
-        <text>href</text>
+        <text>Href</text>
         <textlocation col="0" row="0" />
-        <location col="1" row="0" colspan="3"/>
+        <location col="1" row="0" />
     </attr>
 
     <attr name="name" type="input">
-        <text>name</text>
+        <text>Name</text>
         <textlocation col="0" row="1" />
-        <location col="1" row="1" colspan="3" />
+        <location col="1" row="1"  />
     </attr>
 
     <attr name="rel" type="input">
-        <text>rel</text>
+        <text>Rel</text>
         <textlocation col="0" row="2" />
         <location col="1" row="2" />
     </attr>
 
     <attr name="rev" type="input">
-        <text>rev</text>
-        <textlocation col="2" row="2" />
-        <location col="3" row="2" />
+        <text>Rev</text>
+        <textlocation col="0" row="3" />
+        <location col="1" row="3" />
     </attr>
 
     <attr name="type" type="list">
-        <text>type</text>
-        <textlocation col="0" row="3" />
-        <location col="1" row="3" />
+        <text>Type</text>
+        <textlocation col="0" row="4" />
+        <location col="1" row="4" />
         <items>
           <item>text/html</item>
           <item>image/jpeg</item>
@@ -49,31 +49,35 @@
         </items>
     </attr>
 
-    <attr name="onfocus" type="input">
-        <text>onfocus</text>
-        <textlocation col="0" row="8" />
-        <location col="1" row="8" colspan="3" />
+    <attr name="hreflang" type="input">
+        <text>Hreflang</text>
+        <textlocation col="0" row="5" />
+        <location col="1" row="5" />
     </attr>
 
-    <attr name="onblur" type="input">
-        <text>onblur</text>
-        <textlocation col="0" row="9" />
-        <location col="1" row="9" colspan="3" />
+    <attr name="charset" type="input">
+        <text>Charset</text>
+        <textlocation col="0" row="6" />
+        <location col="1" row="6" />
     </attr>
 
-    <attr name="hreflang" type="input" />
-    <attr name="charset" type="input" />
-    <attr name="accesskey" type="input" />
-    <attr name="tabindex" type="input" />
     <attr name="shape" type="list">
-     <items>
+        <text>Shape</text>
+        <textlocation col="0" row="7" />
+        <location col="1" row="7" />
+    <items>
       <item>rect</item>
       <item>circle</item>
       <item>poly</item>
       <item>default</item>
      </items>
     </attr>
-    <attr name="coords" type="input" />
+
+    <attr name="coords" type="input">
+        <text>Coords</text>
+        <textlocation col="0" row="8" />
+        <location col="1" row="8" />
+    </attr>
 
 <children>
 <child name="abbr" />

@@ -3,12 +3,17 @@
 <TAGS>
 <tag name="head" hasI18n="1">
 
-    <attr name="profile" type="url">
-        <text>Profile</text>
+     <attr name="id" type="input">
+        <text>Id</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
     </attr>
-   <attr name="id" type="input" />
+
+    <attr name="profile" type="url">
+        <text>Profile</text>
+        <textlocation col="0" row="1" />
+        <location col="1" row="1" colspan="2" />
+    </attr>
 
 <children>
 <child name="base" />

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="area" hasScript="1" hasCore="1" hasI18n="1" single="1">
+<tag name="area" hasFocus="1" hasScript="1" hasCore="1" hasI18n="1" single="1">
 
     <attr name="shape" type="list">
-        <text>shape</text>
+        <text>Shape</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2"/>
         <items>
@@ -15,52 +15,29 @@
         </items>
     </attr>
 
-    <attr name="coords" type="text">
-        <text>coords</text>
+    <attr name="coords" type="input">
+        <text>Coords</text>
         <textlocation col="0" row="1" />
         <location col="1" row="1"  colspan="2"/>
     </attr>
 
     <attr name="href" type="url">
-        <text>href</text>
+        <text>Href</text>
         <textlocation col="0" row="3" />
         <location col="1" row="3"  colspan="2"/>
     </attr>
 
     <attr name="nohref" type="check">
-        <text>nohref</text>
+        <text>Nohref</text>
+        <textlocation col="0" row="4" />
+        <location col="1" row="4" colspan="2"/>
+    </attr>
+
+    <attr name="alt" type="input">
+        <text>Alt</text>
         <textlocation col="0" row="5" />
         <location col="1" row="5" colspan="2"/>
     </attr>
 
-    <attr name="alt" type="input">
-        <text>alt</text>
-        <textlocation col="0" row="6" />
-        <location col="1" row="6" colspan="2"/>
-    </attr>
-
-    <attr name="tabindex" type="input">
-        <text>tabindex</text>
-        <textlocation col="0" row="7" />
-        <location col="1" row="7" colspan="2"/>
-    </attr>
-
-    <attr name="onfocus" type="input">
-        <text>OnFocus</text>
-        <textlocation col="0" row="8" />
-        <location col="1" row="8" colspan="2"/>
-    </attr>
-
-    <attr name="onblur" type="input">
-        <text>OnBlur</text>
-        <textlocation col="0" row="9" />
-        <location col="1" row="9" colspan="2"/>
-    </attr>
-
-    <attr name="accesskey" type="input">
-        <text>accesskey</text>
-        <textlocation col="0" row="10" />
-        <location col="1" row="10" colspan="2"/>
-    </attr>
 </tag>
 </TAGS>

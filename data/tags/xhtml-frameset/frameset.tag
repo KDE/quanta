@@ -4,27 +4,27 @@
 <tag name="frameset" hasCore="1">
 
    <attr name="rows" type="input">
-        <text>rows</text>
+        <text>Rows</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2"/>
     </attr>
 
     <attr name="cols" type="input">
-        <text>cols</text>
+        <text>Cols</text>
         <textlocation col="0" row="1" />
         <location col="1" row="1"  colspan="2"/>
     </attr>
 
     <attr name="onload" type="input">
-        <text>onload</text>
-        <textlocation col="0" row="3" />
-        <location col="1" row="3"  colspan="2"/>
+        <text>Onload</text>
+        <textlocation col="0" row="2" />
+        <location col="1" row="2"  colspan="2"/>
     </attr>
 
     <attr name="onunload" type="input">
-        <text>onunload</text>
-        <textlocation col="0" row="4" />
-        <location col="1" row="4"  colspan="2"/>
+        <text>Onunload</text>
+        <textlocation col="0" row="3" />
+        <location col="1" row="3"  colspan="2"/>
     </attr>
 
 <children>

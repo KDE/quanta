@@ -3,8 +3,8 @@
 <TAGS>
 <tag name="blockquote" hasScript="1" hasCore="1" hasI18n="1">
 
-    <attr name="cite" type="url">
-        <text>cite</text>
+    <attr name="cite" type="input">
+        <text>Cite</text>
         <textlocation col="0" row="0" />
         <tooltip>This is not widely supported</tooltip>
         <location col="1" row="0" colspan="2" />

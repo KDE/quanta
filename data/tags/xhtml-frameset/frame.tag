@@ -4,25 +4,25 @@
 <tag name="frame" hasCore="1" single="1">
 
     <attr name="name" type="input">
-        <text>name</text>
+        <text>Name</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2"/>
     </attr>
 
     <attr name="src" type="url">
-        <text>src</text>
+        <text>Src</text>
         <textlocation col="0" row="1" />
         <location col="1" row="1"  colspan="2"/>
     </attr>
 
     <attr name="longdesc" type="input">
-        <text>longdesc</text>
+        <text>Longdesc</text>
         <textlocation col="0" row="3" />
         <location col="1" row="3"  colspan="2"/>
     </attr>
 
     <attr name="frameborder" type="list">
-        <text>frameborder</text>
+        <text>Frameborder</text>
         <textlocation col="0" row="4" />
         <location col="1" row="4"  colspan="2"/>
         <items>
@@ -32,24 +32,24 @@
     </attr>
 
     <attr name="marginwidth" type="input">
-        <text>marginwidth</text>
+        <text>Marginwidth</text>
         <textlocation col="0" row="5" />
         <location col="1" row="5" colspan="2"/>
     </attr>
 
     <attr name="marginheight" type="input">
-        <text>marginheight</text>
+        <text>Marginheight</text>
         <textlocation col="0" row="6" />
         <location col="1" row="6" colspan="2"/>
     </attr>
 
     <attr name="noresize" type="check">
-        <text>noresize</text>
+        <text>Noresize</text>
         <location col="1" row="7" colspan="2"/>
     </attr>
 
     <attr name="scrolling" type="list">
-        <text>scrolling</text>
+        <text>Scrolling</text>
         <textlocation col="0" row="8" />
         <location col="1" row="8" colspan="2"/>
         <items>

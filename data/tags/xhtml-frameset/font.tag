@@ -4,22 +4,22 @@
 <tag name="font" hasCore="1" hasI18n="1">
 
     <attr name="color" type="color">
-        <text>color</text>
-        <textlocation col="0" row="2" />
+        <text>Color</text>
+        <textlocation col="0" row="0" />
         <tooltip>Font color</tooltip>
-        <location col="1" row="2"  />
+        <location col="1" row="0"  />
     </attr>
 
     <attr name="face" type="input">
-        <text>face</text>
-        <textlocation col="0" row="3" />
-        <location col="1" row="3" colspan="2" />
+        <text>Face</text>
+        <textlocation col="0" row="1" />
+        <location col="1" row="1" />
     </attr>
 
     <attr name="size" type="list">
-        <text>size</text>
-        <textlocation col="0" row="4" />
-        <location col="1" row="4"/>
+        <text>Size</text>
+        <textlocation col="0" row="2" />
+        <location col="1" row="2"/>
         <items>
                 <item>+1</item>
                 <item>-1</item>
@@ -29,14 +29,21 @@
                 <item>-3</item>
                 <item>+4</item>
                 <item>-4</item>
+                <item>1</item>
+                <item>2</item>
+                <item>3</item>
+                <item>4</item>
+                <item>5</item>
+                <item>6</item>
+                <item>7</item>
         </items>
     </attr>
 
 <children>
 <child name="a" />
 <child name="abbr" />
-<child name="acronym" />
 <child name="applet" />
+<child name="acronym" />
 <child name="b" />
 <child name="basefont" />
 <child name="bdo" />
@@ -77,4 +84,3 @@
 
 </tag>
 </TAGS>
-

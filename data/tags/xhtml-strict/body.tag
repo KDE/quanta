@@ -3,15 +3,15 @@
 <TAGS>
 <tag name="body" hasScript="1" hasCore="1" hasI18n="1">
     <attr name="onload" type="input">
-        <text>onload</text>
-        <textlocation col="0" row="7" />
-        <location col="1" row="7" colspan="2" />
+        <text>Onload</text>
+        <textlocation col="0" row="0" />
+        <location col="1" row="0" colspan="2" />
     </attr>
 
     <attr name="onunload" type="input">
-        <text>onunload</text>
-        <textlocation col="0" row="8" />
-        <location col="1" row="8" colspan="2" />
+        <text>Onunload</text>
+        <textlocation col="0" row="1" />
+        <location col="1" row="1" colspan="2" />
     </attr>
 
 <children>

@@ -1,39 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="li" hasCore="1" hasI18n="1" hasScript="1" optional="1">
-
-    <attr name="type" type="list">
-        <text>type</text>
-        <textlocation col="0" row="0" />
-        <location col="1" row="0" colspan="2" />
-        <items>
-            <item>disk</item>
-            <item>square</item>
-            <item>circle</item>
-            <item>1</item>
-            <item>a</item>
-            <item>A</item>
-            <item>i</item>
-            <item>I</item>
-        </items>
-    </attr>
-
-    <attr name="value" type="input">
-        <text>value</text>
-        <textlocation col="0" row="1" />
-        <location col="1" row="1" colspan="2" />
-    </attr>
-
-    <attr name="compact" type="check">
-        <text>compact</text>
-        <location col="0" row="2" colspan="2" />
-    </attr>
+<tag name="li" hasCore="1" hasI18n="1" hasScript="1">
 
     <stoppingtags>
         <stoppingtag name="li" />
     </stoppingtags>
-
 <children>
 <child name="a" />
 <child name="abbr" />

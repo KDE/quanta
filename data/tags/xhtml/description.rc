@@ -2,11 +2,10 @@
 Name = -//W3C//DTD XHTML 1.0 Transitional//EN
 NickName = XHTML 1.0 Transitional
 URL = http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd
-DoctypeString = HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
-Inherits = -//W3C//DTD XHTML 1.0 Strict//EN
+DoctypeString = html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
 DefaultExtension = html
-Groups = Core, I18n, Script, Focus
-NumOfPages = 3
+Groups = Core, I18n, Script, Focus, Others
+NumOfPages = 4
 CaseSensitive = true
 
 [Toolbars]
@@ -25,6 +24,9 @@ Attributes = onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,on
 [Focus]
 Attributes = accesskey, tabindex, onfocus, onblur
 
+[Others]
+Attributes = name, longdesc, ismap, usemap
+
 [Page1]
 Title = Core and i18n
 Groups = Core, I18n
@@ -37,8 +39,12 @@ Groups = Script
 Title= Focus
 Groups=Focus
 
+[Page4]
+Title= Others
+Groups=Others
+
 [Extra rules]
-BooleanAttributes = simple
+BooleanAttributes = complex
 Single Tag Style = XML
 StructGroupsCount = 3
 
