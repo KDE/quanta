@@ -181,12 +181,32 @@ void Node::setNodeValue(QString value)
 
 Node* Node::lastChild()
 {
-	Node *n;
+	Node *n, *m;
 	n = child;
 	while(n)
+	{
+		m = n;
+		n = n->next;
+	}
+	return m;
+}
+
+ Node *Node::nextNE()
+ {
+	Node *n = next;
+	while(n && n->tag->type == Tag::Empty)
 		n = n->next;
 	return n;
-}
+ }
+
+ Node *Node::prevNE()
+ {
+	Node *n = prev;
+	while(n && n->tag->type == Tag::Empty)
+		n = n->prev;
+	return n;
+ }
+
 
 #ifdef BUILD_KAFKAPART
 bool Node::hasForChild(Node *node)
@@ -214,7 +234,7 @@ Node *Node::getClosingNode()
 {
 	Node* n = next;
 
-	if(tag && tag->type == Tag::XmlTag && !tag->single)
+	if(next && tag && tag->type == Tag::XmlTag && !tag->single)
 	{
 		while(n->tag->type == Tag::Empty)
 			n = n->next;

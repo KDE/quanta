@@ -532,6 +532,33 @@ bool QuantaCommon::closesTag(Tag *tag1, Tag *tag2)
   return true;
 }
 
+bool QuantaCommon::closesTag(QString namespaceName, QString tagName, bool caseSensitive,
+	QString namespaceName2, QString tagName2, bool caseSensitive2)
+{
+	QString tag1Name, tag2Name;
+	if(namespaceName.isEmpty())
+	{
+		if(!namespaceName.isEmpty())
+			return false;//namespace missmatch
+		tag1Name = caseSensitive ? tagName : tagName.upper();
+		tag2Name = caseSensitive2 ? tagName2 : tagName2.upper();
+		if("/" + tag1Name != tag2Name)
+			return false;//not the closing tag
+	}
+	else
+	{
+		if(namespaceName2.isEmpty())
+			return false;//namespace missmatch
+		tag1Name = caseSensitive ? (namespaceName + tagName) : (namespaceName.upper() +
+			tagName.upper());
+		tag2Name = caseSensitive2 ? (namespaceName2 + tagName2) : (namespaceName2.upper() +
+			tagName2.upper());
+		if("/" + tag1Name != tag2Name)
+			return false; //namespace missmatch or not the closing tag
+	}
+	return true;
+}
+
 KQPasteAction::KQPasteAction( const QString& text,
                             const QString& icon,
                             const KShortcut& cut,

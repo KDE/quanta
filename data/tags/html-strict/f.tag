@@ -3,7 +3,7 @@
 <TAGS>
 <tag name="fieldset" hasCore="1" hasI18n="1" hasScript="1">
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
 <chid name="legend" />
  <child name="tt" />
  <child name="i" />

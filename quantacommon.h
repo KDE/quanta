@@ -174,6 +174,8 @@ pointer must be deleted by the caller!! */
   static void normalizeStructure(QString f,QStringList& l);
   /**Returns true if tag2 is the closing pair of tag1. It's namespace aware.*/
   static bool closesTag(Tag *tag1, Tag *tag2);
+  static bool closesTag(QString namespaceName, QString tagName, bool caseSensitive,
+    QString namespaceName2, QString tagName2, bool caseSensitive2);
 };
 
 

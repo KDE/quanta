@@ -7,7 +7,7 @@
     <stoppingtag name="dd" />
   </stoppingtags>
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -73,7 +73,7 @@
     <location col="1" row="1" colspan="2" />
   </attr>
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -129,7 +129,7 @@
 
 <tag name="dfn" hasCore="1" hasI18n="1" hasScript="1">
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -179,7 +179,7 @@
         </items>
     </attr>
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -251,7 +251,7 @@
     <stoppingtag name="dd" />
   </stoppingtags>
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />

@@ -1037,6 +1037,26 @@ void QuantaView::slotInsertChar(const QString &selected)
   }
 }
 
+Node *QuantaView::showTagDialogAndReturnNode(QString tag, QString attr)
+{
+#ifdef BUILD_KAFKAPART
+  Node *n;
+  if(writeExists())
+  {
+    Document *w = write();
+
+    TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), attr, baseURL());
+    if (dlg->exec())
+    {
+      n= dlg->buildNode(w);
+    }
+
+    delete dlg;
+  }
+  return n;
+#endif
+}
+
 /** Insert a new tag by bringing up the TagDialog. */
 void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
 {
@@ -1068,5 +1088,4 @@ KURL QuantaView::baseURL()
 
   return base;
 }
-
 

@@ -3358,6 +3358,11 @@ void QuantaApp::slotDocumentProperties()
 #ifdef BUILD_KAFKAPART
   if(view()->writeExists())
   {
+    if(view()->write()->defaultDTD()->name.contains("HTML", false) == 0)
+    {
+      KMessageBox::information(this, i18n("The Document Properties Dialog is only for HTML and XHTML."));
+      return;
+    }
     htmlDocumentProperties *htmlPropsDlg = new htmlDocumentProperties(this);
     htmlPropsDlg->exec();
     delete htmlPropsDlg;

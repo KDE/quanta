@@ -3,7 +3,7 @@
 <TAGS>
 <tag name="i" hasCore="1" hasI18n="1" hasScript="1">
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -268,7 +268,7 @@
   </attr>
 
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
   <child name="tt" />
  <child name="i" />
  <child name="b" />

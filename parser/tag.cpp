@@ -352,7 +352,7 @@ void Tag::editAttribute(const QString& attrName, const QString& attrValue)
   for (uint i = 0 ; i < attrs.count(); i++)
   {
     if ( attrName == attrs[i].name ||
-      (!dtd->caseSensitive && attrs[i].name == attrName.lower()))
+      (!dtd->caseSensitive && attrs[i].name.lower() == attrName.lower()))
     {
       attr = attrs[i];
       attr.value = attrValue;

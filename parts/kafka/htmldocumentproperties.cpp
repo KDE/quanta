@@ -559,12 +559,13 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet &modifs)
 		lastHtmlChild = lastHtmlChild->next;
 	while(allTheNodes)
 	{
+		n = allTheNodes->next;
 		tagName = allTheNodes->tag->name;
 		if(tagName.left(1) == "/")
 			tagName = tagName.right(tagName.length() - 1);
 		if(qHead->isChild(tagName))
 		{
-			//TODO:LOG this into the modif!!
+			/*//TODO:LOG this into the modif!!
 			allTheNodes->parent = headNode;
 			if(lastHeadChild)
 			{
@@ -575,12 +576,13 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet &modifs)
 			{
 				headNode->child = allTheNodes;
 			}
-			lastHeadChild = allTheNodes;
+			lastHeadChild = allTheNodes;*/
+			kafkaCommon::moveNode(allTheNodes, headNode, 0L, modifs);
 		}
 		else if(bodyNodeCreated && htmlNodeCreated && qBody->isChild(tagName))
 		{
 			//TODO:log!!
-			allTheNodes->parent = bodyNode;
+			/**allTheNodes->parent = bodyNode;
 			if(lastBodyChild)
 			{
 				lastBodyChild->next = allTheNodes;
@@ -590,20 +592,23 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet &modifs)
 			{
 				bodyNode->child = allTheNodes;
 			}
-			lastBodyChild = allTheNodes;
+			lastBodyChild = allTheNodes;*/
+			kafkaCommon::moveNode(allTheNodes, bodyNode, 0L, modifs);
 		}
 		else
 		{
 			//TODO:log? no.
-			allTheNodes->parent = htmlNode;
+			/**allTheNodes->parent = htmlNode;
 			lastHtmlChild->next = allTheNodes;
 			allTheNodes->prev = lastHtmlChild;
-			lastHtmlChild = allTheNodes;
+			lastHtmlChild = allTheNodes;*/
+			kafkaCommon::moveNode(allTheNodes, htmlNode, 0L, modifs);
 		}
-		n = allTheNodes->next;
+		/**n = allTheNodes->next;
 		if(allTheNodes->next)
 			allTheNodes->next->prev = 0L;
 		allTheNodes->next = 0L;
+		allTheNodes = n;*/
 		allTheNodes = n;
 	}
 }

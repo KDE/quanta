@@ -407,11 +407,7 @@ void QuantaApp::initView()
       topList.append(url);
 
   fTab = new FilesTreeView(topList, ftabdock);
-#ifdef BUILD_KAFKAPART
   aTab = new EnhancedTagAttributeTree(atabdock);
-#else
-  aTab = new TagAttributeTree(atabdock);
-#endif
   pTab = new ProjectTreeView(ptabdock );
   tTab = new TemplatesTreeView("" , ttabdock);
   dTab = new DocTreeView(dtabdock);

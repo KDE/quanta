@@ -34,6 +34,7 @@
 //app includes
 
 class QTag;
+class Node;
 
 //an attribute of a tag looks like:
 typedef struct Attribute{
@@ -218,6 +219,8 @@ public:
   /** Returns true if tag is a possible child of this tag, or if
   there are no children defined */
   bool isChild(const QString& tag);
+  //prefer using this variant, it handle Text nodes!
+  bool isChild(Node *node);
 
   /** No descriptions */
   QString fileName();

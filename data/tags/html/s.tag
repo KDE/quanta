@@ -52,7 +52,7 @@
 
 <tag name="samp" hasCore="1" hasI18n="1" hasScript="1">
 <children>
- <child name="#PCDATA" />
+ <child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -150,7 +150,7 @@
 
 <tag name="small" hasCore="1" hasI18n="1" hasScript="1">
 <children>
- <child name="#PCDATA" />
+ <child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -194,7 +194,7 @@
 
 <tag name="span" hasCore="1" hasI18n="1" hasScript="1">
 <children>
- <child name="#PCDATA" />
+ <child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -238,7 +238,7 @@
 
 <tag name="strong" hasCore="1" hasI18n="1" hasScript="1">
 <children>
- <child name="#PCDATA" />
+ <child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -315,13 +315,13 @@
     </attr>
 
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
 </children>
 </tag>
 
 <tag name="sub" hasCore="1" hasI18n="1" hasScript="1">
 <children>
- <child name="#PCDATA" />
+ <child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -364,7 +364,7 @@
 </tag>
 <tag name="sup" hasCore="1" hasI18n="1" hasScript="1">
 <children>
- <child name="#PCDATA" />
+ <child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />

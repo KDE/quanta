@@ -314,7 +314,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs, int modifLocation)
 					undoRedo::NodeAndChildsRemoved || (*it2).type ==
 					undoRedo::NodeTreeRemoved)
 				{
-					(*it2).node->groupElementLists.clear();
+					//(*it2).node->groupElementLists.clear();
 					if((*it2).type == undoRedo::NodeRemoved)
 					{
 						(*it2).node->prev = 0L;
@@ -1409,52 +1409,30 @@ void undoRedo::reloadQuantaEditor(bool force)
 		{
 			_node->tag->setStr(kafkaInterface->generateCodeFromNode(_node, bLine, bCol, eLine, eCol));
 			_node->tag->setTagPosition(bLine, bCol, eLine, eCol);
+			//kdDebug(25001)<< "POS1 " << bLine <<  " " <<  bCol << " " << eLine << " " << eCol << endl;
+			kafkaCommon::applyIndentation(_node, 2, 0);
+			//int a, b, c, d;
+			//_node->tag->beginPos(a,b);
+			//_node->tag->endPos(c,d);
+			//kdDebug(25001)<< "POS2 " << a <<  " " <<  b << " " << c << " " << d << endl;
 			_node->tag->cleanStrBuilt = true;
-			if(_node->nextSibling())
-			{
-				text = _node->tag->tagStr();
-				n = _node->nextSibling();
-				depth = 0;
-				while(n->parent)
-				{
-					depth++;
-					n = n->parent;
-	                        }
-				n = _node->nextSibling();
-				n->tag->beginPos(bLine2, bCol2);
-				if(_node->tag->type == Tag::Empty)
-				{
-					if(n->tag->cleanStrBuilt || n->tag->type == Tag::Empty || n->tag->type == Tag::Text )
-					{
-						//n->tag->beginPos(eLine, eCol);
-						//eCol--;
-					}
-					else
-					{
-						eLine++;
-						eCol = 2*depth;
-						text += "\n";
-						for(i = 0; i < eCol; i++)
-							text += "  ";
-					}
-				}
-				/**else if(_node->tag->type == Tag::Empty)
-				{
-
-				}*/
-				_node->tag->setTagPosition(bLine, bCol, eLine, eCol);
-				_node->tag->setStr(text);
-				kafkaCommon::fitsNodesPosition(n, eCol - bCol2 + 1, eLine - bLine2);
-			}
 		}
-		_node->tag->beginPos(bLine, bCol);
+		//_node->tag->beginPos(bLine, bCol);
 		//i can't stop redraw events of Kate!
 		//m_doc->editIf->insertText(bLine, bCol, _node->tag->tagStr());
-		allText += _node->tag->tagStr();
+		//allText += _node->tag->tagStr();
 		_node->tag->endPos(bLine, bCol);
 		bCol++;
 		_node = _node->nextSibling();
 	}
+
+	_node = baseNode;
+	while(_node)
+	{
+		allText += _node->tag->tagStr();
+		_node = _node->nextSibling();
+	}
+
 	//temp
 	m_doc->editIf->removeText(0, 0, m_doc->editIf->numLines() - 1,
 		m_doc->editIf->lineLength(m_doc->editIf->numLines() - 1));

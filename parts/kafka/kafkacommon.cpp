@@ -72,6 +72,58 @@ Node *kafkaCommon::getNextNode(Node *node, bool &goUp, Node *endNode)
 	}
 }
 
+Node* kafkaCommon::getNextNodeNE(Node *node, bool &goUp, Node *endNode)
+{
+	Node *n = node;
+	while(n && n->tag->type == Tag::Empty)
+		n = getNextNode(n, goUp, endNode);
+	return n;
+}
+
+Node* kafkaCommon::getPrevNode(Node *node, Node *endNode)
+{
+	Node *n = node;
+
+	if(!node)
+		return 0L;
+
+	if(n->prev && n->prev->child)
+	{
+		n = n->prev;
+		if(n == endNode)
+			return 0L;
+		while(n->child)
+		{
+			n = n->child;
+			while(n && n->next)
+				n = n->next;
+			if(n == endNode)
+				return 0L;
+		}
+	}
+	else if(n->prev)
+	{
+		n = n->prev;
+		if(n == endNode)
+			return 0L;
+	}
+	else
+	{
+		n = n->parent;
+		if(n == endNode)
+			return 0L;
+	}
+	return n;
+}
+
+Node* kafkaCommon::getPrevNodeNE(Node *node, Node *endNode)
+{
+	Node *n = node;
+	while(n && n->tag->type == Tag::Empty)
+		getPrevNode(node, endNode);
+	return n;
+}
+
 DOM::Node kafkaCommon::getNextDomNode(DOM::Node node, bool &goUp, bool returnParentNode, DOM::Node endNode)
 {
 	if(node.isNull())
@@ -103,6 +155,315 @@ DOM::Node kafkaCommon::getNextDomNode(DOM::Node node, bool &goUp, bool returnPar
 	}
 }
 
+void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
+{
+	Node *parent, *nextNE, *realPrevNE, *realNextNE, *realPrev, *realNext;
+	int nonInlineDepth = 0, nonInlineDepth2 = 0, i;
+	bool b = false;
+	QString indentation1, indentation2, smallIndentation2;
+
+	if(!node)
+		return;
+
+	nextNE = getNextNodeNE(node, b);
+	realPrevNE = node->prevNE();
+	realNextNE = node->nextNE();
+	realPrev = node->prev;
+	realNext = node->next;
+
+	//compute the "non-inline depth" of the Node and of the next NE (not Empty) Node
+	// i.e. we count how many non-inline parent they have.
+	parent = node->parent;
+	while(parent)
+	{
+		if(getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
+			nonInlineDepth++;
+		parent = parent->parent;
+	}
+
+	parent = nextNE->parent;
+	while(parent)
+	{
+		if(getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
+			nonInlineDepth2++;
+		parent = parent->parent;
+	}
+
+	parent = node->parent;
+
+	if(!parent || getNodeDisplay(parent->tag->name, true) != kafkaCommon::inlineDisplay)
+	{
+		//prepare the indentation
+		indentation1 = "\n";
+		for(i = 1; i <= nbOfSpaces * nonInlineDepth; i++)
+			indentation1 += " ";
+		for(i = 1; i <= nbOfTabs * nonInlineDepth; i++)
+			indentation1 += "\t";
+
+		indentation2 = "\n";
+		for(i = 1; i <= nbOfSpaces * nonInlineDepth2; i++)
+			indentation2 += " ";
+		for(i = 1; i <= nbOfTabs * nonInlineDepth2; i++)
+			indentation2 += "\t";
+
+		smallIndentation2 = "\n";
+		for(i = 1; i <= nbOfSpaces * (nonInlineDepth2 - 1); i++)
+			smallIndentation2 += " ";
+		for(i = 1; i <= nbOfTabs * (nonInlineDepth2 - 1); i++)
+			smallIndentation2 += "\t";
+		//kdDebug(25001)<< "CURNODE:" << node->tag->name << endl;
+
+		//test and add indentations if necessary
+		if(!realPrevNE || (realPrevNE && getNodeDisplay(node->tag->name, true) != kafkaCommon::inlineDisplay) ||
+			(realPrevNE && getNodeDisplay(node->tag->name, true) == kafkaCommon::inlineDisplay &&
+			getNodeDisplay(realPrevNE->tag->name, true) != kafkaCommon::inlineDisplay))
+		{
+			//kdDebug(25001)<< "BOO1" << endl;
+			if(node->tag->type == Tag::Text)
+			{
+				//kdDebug(25001)<< "BOO2" << endl;
+				//node->tag->setStr(indentation1 + node->tag->tagStr());
+				setTagStringAndFitsNodes(node, indentation1 + node->tag->tagStr());
+			}
+			else if(realPrev && realPrev->tag->type == Tag::Empty)
+			{
+				//kdDebug(25001)<< "BOO3" << endl;
+				//realPrev->tag->setStr(indentation1);
+				setTagStringAndFitsNodes(realPrev, indentation1);
+			}
+		}
+
+		if(!realNextNE || (realNextNE && getNodeDisplay(node->tag->name, true) != kafkaCommon::inlineDisplay) ||
+			(realNextNE && getNodeDisplay(node->tag->name, true) == kafkaCommon::inlineDisplay &&
+			getNodeDisplay(realNextNE->tag->name, true) != kafkaCommon::inlineDisplay))
+		{
+			//kdDebug(25001)<< "BOO4" << endl;
+			if(node->tag->type == Tag::Text)
+			{
+				//kdDebug(25001)<< "BOO5" << endl;
+				//node->tag->setStr(node->tag->tagStr() + indentation2);
+				setTagStringAndFitsNodes(node, node->tag->tagStr() + indentation2);
+			}
+			else if(realNext && realNext->tag->type == Tag::Empty)
+			{
+				//kdDebug(25001)<< "BOO6" << endl;
+				if(realNext->nextNE())
+					//realNext->tag->setStr(indentation2);
+					setTagStringAndFitsNodes(realNext, indentation2);
+				else
+					//realNext->tag->setStr(smallIndentation2);
+					setTagStringAndFitsNodes(realNext, smallIndentation2);
+			}
+		}
+	}
+	else
+	{
+		//The parent is inline, so no indentation.
+		//Nothing to do.
+	}
+}
+
+void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2, NodeModifsSet &modifs)
+{
+	Node *parent, *child, *node, *emptyNode = 0L, *emptyNode2 = 0L;
+	int nbEmptyNodes = 0;
+	bool lastChild = false, firstChild = false;
+
+	if(!n1 || !n2 || n1 == n2 || n1->tag->type == Tag::Empty || n2->tag->type == Tag::Empty)
+		return;
+
+	if(n1->parent == n2 || n2->parent == n1)
+	{
+		//kdDebug(25001)<< "BOO1" << endl;
+		if(n1->parent == n2)
+		{
+			//kdDebug(25001)<< "BOO2" << endl;
+			child = n1;
+			parent = n2;
+			if(n2->firstChild() == n1)
+				firstChild = true;
+			if(n2->lastChild() == n1)
+				lastChild = true;
+		}
+		else
+		{
+			//kdDebug(25001)<< "BOO2-1" << endl;
+			child = n2;
+			parent = n1;
+			if(n1->firstChild() == n2)
+				firstChild = true;
+			if(n1->lastChild() == n2)
+				lastChild = true;
+		}
+
+		//counting the Empty Nodes and deleting them to have only one empty node.
+		if(firstChild)
+		{
+			//kdDebug(25001)<< "BOO3" << endl;
+			node = child->prev;
+			while(node)
+			{
+				if(node->tag->type == Tag::Empty)
+					nbEmptyNodes++;
+				node = node->prev;
+			}
+			node = child->prev;
+			while(nbEmptyNodes > 1)
+			{
+				extractAndDeleteNode(node, modifs, false, false);
+				nbEmptyNodes--;
+				node = child->prev;
+			}
+			if(nbEmptyNodes == 1)
+				emptyNode = child->prev;
+		}
+
+		nbEmptyNodes = 0;
+		if(lastChild)
+		{
+			//kdDebug(25001)<< "BOO4" << endl;
+			node = child->next;
+			while(node)
+			{
+				if(node->tag->type == Tag::Empty)
+					nbEmptyNodes++;
+				node = node->next;
+			}
+			node = child->next;
+			while(nbEmptyNodes > 1)
+			{
+				extractAndDeleteNode(node, modifs, false, false);
+				nbEmptyNodes--;
+				node = child->next;
+			}
+			if(nbEmptyNodes == 1)
+				emptyNode2 = child->next;
+		}
+
+		//adding/deleting a empty node if necessary
+		if(firstChild)
+		{
+			if(getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
+			{
+				if(child->tag->type != Tag::Text && !emptyNode)
+				{
+				//kdDebug(25001)<< "BOO5" << endl;
+					createAndInsertNode("", "", Tag::Empty, n2->tag->write(), parent, child, child, modifs, false);
+				}
+			}
+			else
+			{
+				if(child->tag->type == Tag::Text && emptyNode)
+				{
+					//kdDebug(25001)<< "BOO6" << endl;
+					extractAndDeleteNode(emptyNode, modifs, false, false);
+				}
+			}
+		}
+
+		if(lastChild)
+		{
+			if(getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
+			{
+				if(child->tag->type != Tag::Text && !emptyNode2)
+				{
+					//kdDebug(25001)<< "BOO7" << endl;
+					createAndInsertNode("", "", Tag::Empty, n2->tag->write(), parent, 0L, 0L, modifs, false);
+				}
+			}
+			else
+			{
+				if(child->tag->type == Tag::Text && emptyNode2)
+				{
+					//kdDebug(25001)<< "BOO8" << endl;
+					extractAndDeleteNode(emptyNode2, modifs, false, false);
+				}
+			}
+		}
+	}
+	else
+	{
+		if(n1->next != n2)
+		{
+			//counting the Empty Nodes and deleting them to have only one empty node.
+			node = n1->next;
+			while(node && node != n2)
+			{
+				if(node->tag->type == Tag::Empty)
+					nbEmptyNodes++;
+				node = node->next;
+			}
+			node = n1->next;
+			while(nbEmptyNodes > 1 || (nbEmptyNodes > 0 && n1->getClosingNode() == n2))
+			{
+				extractAndDeleteNode(node, modifs, false, false);
+				nbEmptyNodes--;
+				node = n1->next;
+			}
+			if(nbEmptyNodes == 1)
+				emptyNode = n1->next;
+
+			if(n1->getClosingNode() == n2 && n1->child && n1->child->tag->type == Tag::Empty)
+				emptyNode = n1->child;
+		}
+
+		//adding/deleting a empty node if necessary
+		parent = n1->parent;
+		if(!parent || getNodeDisplay(parent->tag->name) != kafkaCommon::inlineDisplay)
+		{
+			if(getNodeDisplay(n1->tag->name) != kafkaCommon::inlineDisplay)
+			{
+				if(n2->tag->type == Tag::Text && emptyNode)
+				{
+				//kdDebug(25001)<< "BOO9" << endl;
+					extractAndDeleteNode(emptyNode, modifs, false, false);
+				}
+				else if(n2->tag->type != Tag::Text && !emptyNode)
+				{
+					if(n1->getClosingNode() == n2)
+					{
+					//kdDebug(25001)<< "BOO10" << endl;
+						createAndInsertNode("", "", Tag::Empty, n2->tag->write(), n1, 0L, 0L, modifs, false);
+					}
+					else
+					{
+					//kdDebug(25001)<< "BOO11" << endl;
+						createAndInsertNode("", "", Tag::Empty, n2->tag->write(), parent, n2, n2, modifs, false);
+					}
+				}
+			}
+			else
+			{
+				if((n2->tag->type == Tag::Text ||
+					getNodeDisplay(n2->tag->name) == kafkaCommon::inlineDisplay) && emptyNode)
+				{
+				//kdDebug(25001)<< "BOO12" << endl;
+					extractAndDeleteNode(emptyNode, modifs, false, false);
+				}
+				else if(n2->tag->type != Tag::Text &&
+					getNodeDisplay(n2->tag->name) != kafkaCommon::inlineDisplay && !emptyNode)
+				{
+					if(n1->getClosingNode() == n2)
+					{
+					//kdDebug(25001)<< "BOO13" << endl;
+						createAndInsertNode("", "", Tag::Empty, n2->tag->write(), n1, 0L, 0L, modifs, false);
+					}
+					else
+					{
+					//kdDebug(25001)<< "BOO14" << endl;
+						createAndInsertNode("", "", Tag::Empty, n2->tag->write(), parent, n2, n2, modifs, false);
+					}
+				}
+			}
+		}
+		else
+		{
+			if(emptyNode)
+				extractAndDeleteNode(emptyNode, modifs, false, false);
+		}
+	}
+}
+
 void kafkaCommon::fitsNodesPosition(Node* startNode, int colMovement, int lineMovement, int colEnd, int lineEnd)
 {
 	bool b = false;
@@ -110,7 +471,8 @@ void kafkaCommon::fitsNodesPosition(Node* startNode, int colMovement, int lineMo
 	int beginLine, beginCol, lastLine, lastCol;
 	Node *node = startNode;
 
-	if(!node) return;
+	if(!node)
+		return;
 
 	node->tag->beginPos(SNbeginLine, SNbeginCol);
 	//node->tag->endPos(SNlastLine, SNlastCol);
@@ -152,112 +514,48 @@ void kafkaCommon::fitsNodesPosition(Node* startNode, int colMovement, int lineMo
 	}
 }
 
-void kafkaCommon::coutTree(Node *node, int indent)
+int kafkaCommon::getNodeDisplay(const QString &nodeNam, bool closingNodeToo)
 {
-#ifdef HEAVY_DEBUG
-	QString output, dots;
-	int bLine, bCol, eLine, eCol, j;
-	if(!node)
-		kdDebug(25001)<< "kafkaCommon::coutTree() - bad node!" << endl;
-	while (node)
+	QString nodeName = nodeNam.lower();
+	if(closingNodeToo && nodeName.startsWith("/"))
+		nodeName = nodeName.mid(1);
+	if(nodeName == "html" || nodeName == "head" || nodeName == "meta" ||
+		nodeName == "link" || nodeName == "style" || nodeName == "option" ||
+		nodeName == "optgroup" || nodeName == "area" || nodeName == "param" ||
+		nodeName == "thead" || nodeName == "tbody" || nodeName == "dt" ||
+		nodeName == "tfoot" || nodeName == "col" || nodeName == "colgroup" ||
+		nodeName == "tr" || nodeName == "td" || nodeName == "th" || nodeName == "caption" ||
+		nodeName == "ins" || nodeName == "legend")
+		return kafkaCommon::noneDisplay;
+	else if(nodeName == "body" || nodeName == "p" || nodeName == "div" ||
+		nodeName == "blockquote" || nodeName == "isindex" ||
+		nodeName == "center" || nodeName == "hr" || nodeName == "h1" ||
+		nodeName == "h2" || nodeName == "h3" || nodeName == "h4" || nodeName == "h5" ||
+		nodeName == "h6" || nodeName == "table" ||
+		nodeName == "ul" || nodeName == "menu" || nodeName == "dir" || nodeName == "ol" ||
+		nodeName == "li" || nodeName == "ul" || nodeName == "dd" || nodeName == "dl" ||
+		 nodeName == "form" || nodeName == "fieldset" ||
+		nodeName == "pre" || nodeName == "noscript" || nodeName == "noframes" ||
+		nodeName == "frameset" || nodeName == "frame" ||
+		nodeName == "address" || nodeName == "del")
+		return kafkaCommon::blockDisplay;
+	else if(nodeName == "q" || nodeName == "u" || nodeName == "i" || nodeName == "b" ||
+		nodeName == "cite" || nodeName == "em" || nodeName == "var" || nodeName == "em" ||
+		nodeName == "tt" || nodeName == "code" || nodeName == "kbd" || nodeName == "samp" ||
+		 nodeName == "big" || nodeName == "small" || nodeName == "s" || nodeName == "strike" ||
+		  nodeName == "sub" || nodeName == "sup" || nodeName == "abbr" || nodeName == "title" ||
+		 nodeName == "acronym" || nodeName == "a" || nodeName == "bdo" ||
+		 nodeName == "font" || nodeName == "#text" || nodeName == "strong" || nodeName == "dfn" ||
+		 nodeName == "img" ||  nodeName == "applet" ||  nodeName == "object" ||  nodeName == "basefont" ||
+		 nodeName == "br" ||  nodeName == "script" ||  nodeName == "map" || nodeName == "span" ||
+		 nodeName == "iframe" || nodeName == "input" || nodeName == "select" || nodeName == "textarea" ||
+		 nodeName == "label" || nodeName == "button" )
+		 return kafkaCommon::inlineDisplay;
+	else
 	{
-		dots = "";
-		dots.fill('.', indent);
-		output = dots;
-		node->tag->beginPos(bLine, bCol);
-		node->tag->endPos(eLine, eCol);
-		if (node->tag->type != Tag::Text)
-			output += node->tag->name.replace('\n'," ");
-		else
-			output+= node->tag->tagStr().replace('\n'," ");
-		kdDebug(25001) << output <<" (" << node->tag->type << ") "<<
-			node << " at pos " << bLine << ":" << bCol << " - " <<
-			eLine << ":" << eCol << endl;
-		kdDebug(25001)<< dots << "prev " << node->prev << " next " << node->next << " parent " <<
-			node->parent << " child " << node->child << endl;
-		for(j = 0; j < node->tag->attrCount(); j++)
-		{
-			kdDebug(21005)<< " attr" << j << " " <<
-				node->tag->getAttribute(j).nameLine << ":" <<
-				node->tag->getAttribute(j).nameCol << " - " <<
-				node->tag->getAttribute(j).valueLine << ":" <<
-				node->tag->getAttribute(j).valueCol << endl;
-		}
-
-		if (node->child)
-			coutTree(node->child, indent + 4);
-		if(node == node->next || (node->next && node == node->next->next) ||
-			(node->next && node->next->next && node == node->next->next->next) ||
-			(node->next && node->next->next && node->next->next->next &&
-			node == node->next->next->next->next) || (node->next && node->next->next &&
-			node->next->next->next && node->next->next->next->next && node ==
-			node->next->next->next->next->next))
-		{
-			//try to detect invalid pointers.
-			kdDebug(25001)<< "ERROR - node == node->[..]next" << endl;
-			return;
-		}
-		node = node->next;
+		kdDebug(25001)<< "kafkaCommon::getNodeType() - ERROR " << nodeName <<" not found" << endl;
+		return kafkaCommon::noneDisplay;
 	}
-#endif
-}
-
-QValueList<int> kafkaCommon::getLocation(Node * node)
-{
-	QValueList<int> loc;
-	int i = 0;
-
-	while(node)
-	{
-		i = 1;
-		while(node->prev)
-		{
-			i++;
-			node = node->prev;
-		}
-		loc.prepend(i);
-		node = node->parent;
-	}
-	return loc;
-}
-
-Node* kafkaCommon::getNodeFromLocation(QValueList<int> loc)
-{
-	QValueList<int>::iterator it;
-	Node *node = baseNode;
-	Node *m = 0L;
-	int i;
-
-	if(!node) return 0L;
-	for(it = loc.begin(); it != loc.end(); it++)
-	{
-		if(!node)
-			return 0L;
-		for(i = 1; i < (*it); i++)
-		{
-			if(!node->next)
-				return 0L;
-			node = node->next;
-		}
-		m = node;
-		node = node->child;
-	}
-	return m;
-}
-
-Node* kafkaCommon::getNodeFromSubLocation(QValueList<int> loc, int locOffset)
-{
-	QValueList<int>::iterator it = loc.begin();
-	QValueList<int> list;
-	int i;
-
-	for(i = 0; i < locOffset; i++)
-	{
-		list.append((*it));
-		it++;
-	}
-
-	return getNodeFromLocation(list);
 }
 
 Node* kafkaCommon::createNode(QString nodeName, QString tagString, int nodeType, Document *doc)
@@ -279,20 +577,18 @@ Node* kafkaCommon::createNode(QString nodeName, QString tagString, int nodeType,
 	return node;
 }
 
-void kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling, NodeModifsSet &modifs)
+Node* kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling, NodeModifsSet &modifs,
+	bool indentation, bool merge)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::insertNode()" << endl;
-#ifdef HEAVY_DEBUG
-	coutTree(baseNode, 2);
-#endif
 #endif
 	NodeModif modif;
 	Node *n;
-	bool nodeIsFirstChild = false;
+	bool nodeIsFirstChild = false /**b = false*/;
 
 	if(!node)
-		return;
+		return 0L;
 
 	//place the new Node.
 	if(parentNode)
@@ -337,10 +633,47 @@ void kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling, No
 	modif.childsNumber2 = 0;
 	modif.location = kafkaCommon::getLocation(node);
 	modifs.NodeModifList.append(modif);
+
+	//Then try to merge with the siblings
+	if(merge)
+	{
+		if(node->prev)
+		{
+			n = node->prev;
+			if(mergeNodes(node->prev, node, modifs))
+				node = n;
+		}
+		if(node->next)
+		{
+			mergeNodes(node, node->next, modifs);
+		}
+	}
+
+	//Then add/remove if necessary Empty Nodes in order to let the undo/redo system make a nice indentation
+	if(indentation)
+	{
+		if(node->prevNE())
+			fitIndentationNodes(node->prevNE(), node, modifs);
+		else if(node->parent)
+			fitIndentationNodes(node->parent, node, modifs);
+
+		//fitIndentationNodes(node, getNextNodeNE(node, b), modifs);
+		if(node->child)
+			fitIndentationNodes(node, node->child, modifs);
+		else if(node->nextNE())
+			fitIndentationNodes(node, node->nextNE(), modifs);
+		else if(node->parent )
+			fitIndentationNodes(node, node->parent, modifs);
+	}
+
+#ifdef HEAVY_DEBUG
+	coutTree(baseNode, 2);
+#endif
+	return node;
 }
 
 Node *kafkaCommon::insertNode(Node *newNode, Node *parent, Node *nextSibling, Node *nextEndSibling,
-	NodeModifsSet &modifs)
+	NodeModifsSet &modifs, bool indentation)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::insertNode()1" << endl;
@@ -352,7 +685,7 @@ Node *kafkaCommon::insertNode(Node *newNode, Node *parent, Node *nextSibling, No
 		return 0L;
 
 	//place the new Node.
-	insertNode(newNode, parent, nextSibling, modifs);
+	newNode = insertNode(newNode, parent, nextSibling, modifs, indentation);
 
 	if(!newNode->tag->single && newNode->tag->type == Tag::XmlTag)
 	{
@@ -361,7 +694,7 @@ Node *kafkaCommon::insertNode(Node *newNode, Node *parent, Node *nextSibling, No
 		nodeEnd->closesPrevious = true;
 
 		//place the new closing Node.
-		insertNode(nodeEnd, parent, nextEndSibling, modifs);
+		nodeEnd = insertNode(nodeEnd, parent, nextEndSibling, modifs, indentation);
 	}
 
 	//If nextSibling != nextEndSibling, move all Nodes between node and nodeEnd as child of node
@@ -379,7 +712,7 @@ Node *kafkaCommon::insertNode(Node *newNode, Node *parent, Node *nextSibling, No
 	return newNode;
 }
 
-bool kafkaCommon::insertNode(Node *newNode, Node *parent, Node *startNodeToSurround,
+Node* kafkaCommon::insertNode(Node *newNode, Node *parent, Node *startNodeToSurround,
 	Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet &modifs)
 {
 #ifdef LIGHT_DEBUG
@@ -424,7 +757,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSu
 	{
 		parentQTag = QuantaCommon::tagFromDTD(parent->tag->dtd, parent->tag->name);
 		if(parentQTag)
-			parentRelationOK = parentQTag->isChild(newNode->tag->name);
+			parentRelationOK = parentQTag->isChild(newNode);
 		else
 			parentRelationOK = false;
 	}
@@ -442,7 +775,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSu
 	curNode = startNodeToSurround;
 	while(curNode)
 	{
-		if(newNodeQTag->isChild(curNode->tag->name) || curNode->tag->type == Tag::Text)
+		if(newNodeQTag->isChild(curNode))
 		{
 			if(curNode == startNodeToSurround)
 			{
@@ -536,7 +869,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 	while(parentNode && parentNode != commonParent)
 	{
 		parentNodeQTag = QuantaCommon::tagFromDTD(parentNode->tag->dtd, parentNode->tag->name);
-		if(parentNodeQTag && parentNodeQTag->isChild(newNode->tag->name))
+		if(parentNodeQTag && parentNodeQTag->isChild(newNode))
 			lastValidStartParent = parentNode;
 		parentNode = parentNode->parent;
 	}
@@ -544,7 +877,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 	while(parentNode && parentNode != commonParent)
 	{
 		parentNodeQTag = QuantaCommon::tagFromDTD(parentNode->tag->dtd, parentNode->tag->name);
-		if(parentNodeQTag && parentNodeQTag->isChild(newNode->tag->name))
+		if(parentNodeQTag && parentNodeQTag->isChild(newNode))
 			lastValidEndParent = parentNode;
 		parentNode = parentNode->parent;
 	}
@@ -627,7 +960,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 }
 
 Node *kafkaCommon::createAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
-	Node *parent, Node *nextSibling, Node *nextEndSibling, NodeModifsSet &modifs)
+	Node* parent, Node* nextSibling, NodeModifsSet &modifs, bool indentation, bool merge)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::createAndInsertNode() - nodeName :" << nodeName <<
@@ -639,7 +972,25 @@ Node *kafkaCommon::createAndInsertNode(QString nodeName, QString tagString, int 
 	node = createNode(nodeName, tagString, nodeType, doc);
 
 	//insert the new Node.
-	insertNode(node, parent, nextSibling, nextEndSibling, modifs);
+	insertNode(node, parent, nextSibling, modifs, indentation, merge);
+
+	return node;
+}
+
+Node *kafkaCommon::createAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+	Node *parent, Node *nextSibling, Node *nextEndSibling, NodeModifsSet &modifs, bool indentation)
+{
+#ifdef LIGHT_DEBUG
+	kdDebug(25001)<< "kafkaCommon::createAndInsertNode()2- nodeName :" << nodeName <<
+		" - tagStr :" << tagString << " - nodeType :" << nodeType << endl;
+#endif
+	Node *node;
+
+	//create the new Node.
+	node = createNode(nodeName, tagString, nodeType, doc);
+
+	//insert the new Node.
+	insertNode(node, parent, nextSibling, nextEndSibling, modifs, indentation);
 
 	return node;
 }
@@ -649,7 +1000,7 @@ Node *kafkaCommon::createAndInsertNode(QString nodeName, QString tagString, int 
 	NodeModifsSet &modifs)
 {
 #ifdef LIGHT_DEBUG
-	kdDebug(25001)<< "kafkaCommon::createAndInsertNode()2 - nodeName :" << nodeName <<
+	kdDebug(25001)<< "kafkaCommon::createAndInsertNode()3 - nodeName :" << nodeName <<
 		" - tagStr :" << tagString << " - nodeType :" << nodeType << endl;
 #endif
 	Node *node;
@@ -708,138 +1059,6 @@ bool kafkaCommon::DTDcreateAndInsertNode(QString nodeName, QString tagString, in
 	//insert the new Node.
 	return DTDinsertNode(node, startNode, startOffset, endNode, endOffset, modifs);
 
-/**	QValueList<int> startNodeLocation, endNodeLocation;
-	QValueList<int>::iterator itStart, itEnd;
-	Node *commonParent, *commonParentStartChild, *commonParentEndChild, *parentNode, *node;
-	Node *lastValidStartParent = 0L, *lastValidEndParent = 0L, *newParentNode, *child, *next;
-	QTag *parentNodeQTag;
-	NodeModif modif;
-	int locOffset = 1;
-
-	if(!startNode || !endNode)
-		return false;
-	if(startNode == endNode)
-	{
-		if(DTDcreateAndInsertNode(nodeName, tagString, nodeType, doc, startNode->parent, startNode,
-			startNode, startOffset, endOffset, modifs))
-			return true;
-		else
-			return false;
-	}
-
-	//First search for the common parent of startNode and endNode.
-	startNodeLocation = getLocation(startNode);
-	endNodeLocation = getLocation(endNode);
-	itStart = startNodeLocation.begin();
-	itEnd = endNodeLocation.begin();
-	while(itStart != startNodeLocation.end() && itEnd != endNodeLocation.end() &&
-		(*itStart) == (*itEnd))
-	{
-		commonParent = getNodeFromSubLocation(startNodeLocation, locOffset);
-		itStart++;
-		itEnd++;
-		locOffset++;
-	}
-	if(itStart != startNodeLocation.end())
-		commonParentStartChild = getNodeFromSubLocation(startNodeLocation, locOffset);
-	else
-		commonParentStartChild = commonParent;
-	if(itEnd != endNodeLocation.end())
-		commonParentEndChild = getNodeFromSubLocation(endNodeLocation, locOffset);
-	else
-		commonParentEndChild = commonParent;
-
-	//Now look if at least one of the parent Nodes between startNode and commonParent
-	//can have nodeName as child. If so for startNode and endNode, let's find the last
-	//parent Nodes which can have nodeName as child.
-	parentNode = startNode->parent;
-	while(parentNode && parentNode != commonParent)
-	{
-		parentNodeQTag = QuantaCommon::tagFromDTD(doc->defaultDTD(), parentNode->tag->name);
-		if(parentNodeQTag && parentNodeQTag->isChild(nodeName))
-			lastValidStartParent = parentNode;
-		parentNode = parentNode->parent;
-	}
-	parentNode = endNode->parent;
-	while(parentNode && parentNode != commonParent)
-	{
-		parentNodeQTag = QuantaCommon::tagFromDTD(doc->defaultDTD(), parentNode->tag->name);
-		if(parentNodeQTag && parentNodeQTag->isChild(nodeName))
-			lastValidEndParent = parentNode;
-		parentNode = parentNode->parent;
-	}
-
-	if(!lastValidEndParent || !lastValidStartParent)
-		return false;
-
-	//OK now, we are sure the node can be inserted. Start the work by splitting
-	//startNode and endNode if necessary
-	if(startNode->tag->type == Tag::Text && startOffset != 0)
-	{
-		if(splitNode(startNode, startOffset, modifs))
-			startNode = startNode->next;
-	}
-	if(endNode->tag->type == Tag::Text && endOffset != 0)
-	{
-		splitNode(endNode, endOffset, modifs);
-	}
-
-	//Then we "split" the lastValidStartParent - startNode subtree into two : the first part is untouched
-	// and the second will be surrounded by the new Node. Same thing for endNode.
-	node = startNode;
-	parentNode = startNode->parent;
-	while(parentNode && parentNode != lastValidStartParent)
-	{
-		if(node != parentNode->firstChild())
-		{
-			//node is not the first Child of parentNode, we have to duplicate parentNode, and put node and
-			//all its next sibling as child of the new parentNode.
-			newParentNode = createAndInsertNode(parentNode->tag->name, parentNode->tag->tagStr(),
-				parentNode->tag->type, parentNode->tag->write(), parentNode->parentNode(),
-				parentNode, parentNode, modifs);
-			child = parentNode->firstChild();
-			while(child && child != startNode)
-			{
-				next = child->next;
-				moveNode(child, newParentNode, 0L, modifs);
-				child = next;
-			}
-		}
-		node = parentNode;
-		parentNode = parentNode->parent;
-	}
-	node = endNode;
-	parentNode = endNode->parent;
-	while(parentNode && parentNode != lastValidEndParent)
-	{
-		if(node != parentNode->lastChild())
-		{
-			//node is not the last Child of parentNode, we have to duplicate parentNode, and put all
-			//the next sibling of node as child of the new parentNode
-			newParentNode = createAndInsertNode(parentNode->tag->name, parentNode->tag->tagStr(),
-				parentNode->tag->type, parentNode->tag->write(), parentNode->parentNode(),
-				parentNode, parentNode, modifs);
-			child = parentNode->firstChild();
-			while(child)
-			{
-				next = child->next;
-				moveNode(child, newParentNode, 0L, modifs);
-				if(child == endNode)
-					break;
-				child = next;
-			}
-		}
-		node = parentNode;
-		parentNode = parentNode->parent;
-	}
-
-
-	//Then we apply the recursive function to add the new Node when necessary/possible.
-	bool addingStarted = false;
-	int level = 0;
-	addNodeRecursively(nodeName, tagString, nodeType, doc, startNode,
-		endNode, commonParentStartChild, addingStarted, level, modifs);
-	return true;*/
 }
 
 bool kafkaCommon::addNodeRecursively(Node *newNode, Node* startNode, Node *endNode,
@@ -861,7 +1080,7 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node* startNode, Node *endNo
 	{
 		currentNodeParentQTag = QuantaCommon::tagFromDTD(currentNode->parent->tag->dtd,
 			currentNode->parent->tag->name);
-		if(currentNodeParentQTag->isChild(newNode->tag->name))
+		if(currentNodeParentQTag->isChild(newNode))
 			validCurNodeParent = true;
 	}
 
@@ -871,8 +1090,7 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node* startNode, Node *endNo
 		{
 			//do nothing
 		}
-		else if((newNodeQTag->isChild(currentNode->tag->name) || currentNode->tag->type == Tag::Text) &&
-			validCurNodeParent)
+		else if((newNodeQTag->isChild(currentNode)) && validCurNodeParent)
 		{
 #ifdef HEAVY_DEBUG
 				kdDebug(25001)<< "kafkaCommon::addNodeRevursively() [" << level <<
@@ -921,7 +1139,7 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node* startNode, Node *endNo
 					endSelection->next, modifs);
 			}
 		}
-		else//(!newNodeQTag->isChild(currentNode->tag->name))
+		else//(!newNodeQTag->isChild(currentNode))
 		{
 #ifdef HEAVY_DEBUG
 				kdDebug(25001)<< "kafkaCommon::addNodeRevursively() [" << level <<
@@ -1000,16 +1218,22 @@ Node *kafkaCommon::duplicateNode(Node *node)
 }
 
 Node* kafkaCommon::extractNode(Node *node, NodeModifsSet &modifs, bool deleteChildren,
-	bool /**mergeAndFormat*/)
+	bool indentation)
 {
 	NodeModif modif;
 	Node *lastChild, *curNode;
+	Node *parent, *prevNE, *nextNE, *child, *n1 = 0L, *n2 = 0L;
 
 	if(!node)
 		return 0L;
 
 	if(!node->child)
 		deleteChildren = true;
+
+	parent = node->parent;
+	nextNE = node->nextNE();
+	prevNE = node->prevNE();
+	child = node->child;
 
 	//logging
 	if(deleteChildren)
@@ -1076,6 +1300,24 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet &modifs, bool deleteChi
 		node->child = 0L;
 
 	modifs.NodeModifList.append(modif);
+
+	//then add/remove if necessary Empty Nodes in order to let the undo/redo system make a nice indentation
+	if(indentation)
+	{
+		if(prevNE)
+			n1 = prevNE;
+		else if(parent)
+			n1 = parent;
+
+		if(!deleteChildren && child)
+			n2 = child;
+		else if(nextNE)
+			n2 = nextNE;
+		else if(parent)
+			n2 = parent;
+
+		fitIndentationNodes(n1, n2, modifs);
+	}
 	return node;
 }
 
@@ -1084,14 +1326,16 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool d
 {
 	NodeModif modif;
 	Node  *curNode, *nodePrev, *nodeNext, *nodeNext2, *n, *n2;
-	QString nodeName, closingNodeName;
-	bool isSingle;
+	QString nodeName, closingNodeName, namespaceName, namespaceName2;
+	bool isSingle, caseSensitive, caseSensitive2;
 
 	if(!node)
 		return;
 
 	isSingle = node->tag->single;
 	nodeName = node->tag->name;
+	namespaceName = node->tag->nameSpace;
+	caseSensitive = node->tag->dtd->caseSensitive;
 	nodePrev = node->prev;
 	nodeNext = node->next;
 	if(!node->child)
@@ -1111,9 +1355,13 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool d
 			{
 				nodeNext2 = curNode->next;
 				closingNodeName = curNode->tag->name;
+				namespaceName2 = curNode->tag->nameSpace;
+				caseSensitive2 = curNode->tag->dtd->caseSensitive;
 				extractNode(curNode, modifs, deleteChildren, mergeAndFormat);
 				curNode = nodeNext2;
-				if(closingNodeName == ("/" + nodeName))
+				if(QuantaCommon::closesTag(namespaceName, nodeName, caseSensitive,
+					namespaceName2, closingNodeName, caseSensitive2))
+				//if(closingNodeName == ("/" + nodeName))
 					break;
 			}
 			nodeNext = curNode;
@@ -1128,7 +1376,7 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool d
 		while(n && n2 && n != nodeNext)
 		{
 			if(!n->child)
-				kafkaCommon::mergeNodes(n, n2, modifs);
+				mergeNodes(n, n2, modifs);
 			n = n2;
 			n2 = n2->next;
 		}
@@ -1169,7 +1417,7 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet &modifs)
 	modifs.NodeModifList.append(modif);
 
 	createAndInsertNode("#text", tagStr.right(tagStr.length() - offset), Tag::Text, n->tag->write(),
-		n->parent, n->next, n->next, modifs);
+		n->parent, n->next, modifs, false, false);
 	return true;
 }
 
@@ -1189,6 +1437,8 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet &modifs)
 		modif.location = getLocation(n);
 		modifs.NodeModifList.append(modif);
 		n->tag->setStr(n->tag->tagStr() + n2->tag->tagStr());
+		if(n->tag->type == Tag::Text || n2->tag->type == Tag::Text)
+			n->tag->type = Tag::Text;
 		kafkaCommon::extractAndDeleteNode(n2, modifs, false, false, false);
 
 		return true;
@@ -1196,39 +1446,237 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet &modifs)
 	return false;
  }
 
-int kafkaCommon::getNodeType(QString nodeName)
+bool kafkaCommon::isInline(const QString &nodeNam)
 {
-	nodeName = nodeName.lower();
-	if(nodeName == "html" || nodeName == "head" || nodeName == "meta" || nodeName == "title" ||
-		nodeName == "link" || nodeName == "style" || nodeName == "script" || nodeName == "option" ||
-		nodeName == "optgroup" || nodeName == "area" || nodeName == "param" || nodeName == "noframes" ||
-		nodeName == "ins" || nodeName == "img" || nodeName == "applet")
-		return kafkaCommon::noneDisplay;
-	else if(nodeName == "body" || nodeName == "p" || nodeName == "div" || nodeName == "address" ||
-		nodeName == "blockquote" || nodeName == "iframe" || nodeName == "object" ||
-		nodeName == "center" || nodeName == "hr" || nodeName == "map" || nodeName == "h1" ||
-		nodeName == "h2" || nodeName == "h3" || nodeName == "h4" || nodeName == "h5" ||
-		nodeName == "h6" || nodeName == "table" || nodeName == "thead" || nodeName == "tbody" ||
-		nodeName == "tfoot" || nodeName == "col" || nodeName == "colgroup" ||
-		nodeName == "tr" || nodeName == "td" || nodeName == "th" || nodeName == "caption" ||
-		nodeName == "ul" || nodeName == "menu" || nodeName == "dir" || nodeName == "ol" ||
-		nodeName == "li" || nodeName == "ul" || nodeName == "dd" || nodeName == "dl" ||
-		nodeName == "dt" || nodeName == "form" || nodeName == "legend" || nodeName == "fieldset" ||
-		nodeName == "button" || nodeName == "pre" || nodeName == "input" || nodeName == "select" ||
-		nodeName == "frameset" || nodeName == "frame" || nodeName == "strong" || nodeName == "em" ||
-		nodeName == "address" || nodeName == "del")
-		return kafkaCommon::blockDisplay;
-	else if(nodeName == "q" || nodeName == "u" || nodeName == "i" || nodeName == "b" ||
-		nodeName == "cite" || nodeName == "em" || nodeName == "var" ||
+	QString nodeName = nodeNam.lower();
+	if(nodeName == "q" || nodeName == "u" || nodeName == "i" || nodeName == "b" ||
+		nodeName == "cite" || nodeName == "em" || nodeName == "var" || nodeName == "em" ||
 		nodeName == "tt" || nodeName == "code" || nodeName == "kbd" || nodeName == "samp" ||
-		 nodeName == "big" || nodeName == "small" || nodeName == "s" || nodeName == "strike" ||
-		  nodeName == "sub" || nodeName == "sup" || nodeName == "abbr" ||
-		 nodeName == "acronym" || nodeName == "a" || nodeName == "bdo" ||
-		 nodeName == "font")
-		 return kafkaCommon::inlineDisplay;
+		nodeName == "big" || nodeName == "small" || nodeName == "s" || nodeName == "strike" ||
+		nodeName == "sub" || nodeName == "sup" || nodeName == "abbr" ||
+		nodeName == "acronym" || nodeName == "a" || nodeName == "bdo" ||
+		nodeName == "font" || nodeName == "#text" || nodeName == "strong" || nodeName == "dfn" ||
+		nodeName == "img" ||  nodeName == "applet" ||  nodeName == "object" ||  nodeName == "basefont" ||
+		nodeName == "br" ||  nodeName == "script" ||  nodeName == "map" || nodeName == "span" ||
+		nodeName == "iframe" || nodeName == "input" || nodeName == "select" || nodeName == "textarea" ||
+		nodeName == "label" || nodeName == "button" )
+		return true;
+	else
+		return false;
+}
+
+void kafkaCommon::getEndPosition(QString tagString, int bLine, int bCol, int &eLine, int &eCol)
+{
+	int result, oldResult;
+
+	result = tagString.find("\n", 0);
+	if(result == -1)
+	{
+		eLine = bLine;
+		eCol = bCol + tagString.length() - 1;
+	}
 	else
 	{
-		kdDebug(25001)<< "kafkaCommon::getNodeType() - ERROR node Name not found" << endl;
-		return kafkaCommon::noneDisplay;
+		eLine = bLine;
+		while(result != -1)
+		{
+			eLine++;
+			oldResult = result;
+			result = tagString.find("\n", result + 1);
+		}
+		eCol = tagString.length() - oldResult - 2;
 	}
+}
+
+void kafkaCommon::getEndPosition(Node *node, int bLine, int bCol, int &eLine, int &eCol)
+{
+	if(!node)
+	{
+		eLine = 0;
+		eCol = 0;
+		return;
+	}
+
+	getEndPosition(node->tag->tagStr(), bLine, bCol, eLine, eCol);
+}
+
+void kafkaCommon::setTagString(Node *node, QString newTagString)
+{
+	int eLine, eCol, bLine, bCol;
+
+	if(!node)
+		return;
+
+	node->tag->beginPos(bLine, bCol);
+	node->tag->setStr(newTagString);
+	getEndPosition(node, bLine, bCol, eLine, eCol);
+	node->tag->setTagPosition(bLine, bCol, eLine, eCol);
+}
+
+void kafkaCommon::setTagStringAndFitsNodes(Node *node, QString newTagString)
+{
+	int eLine, eCol, oldELine, oldECol;
+	bool b = false;
+
+	if(!node)
+		return;
+
+	node->tag->endPos(oldELine, oldECol);
+	setTagString(node, newTagString);
+	node->tag->endPos(eLine, eCol);
+
+	fitsNodesPosition(getNextNode(node, b), eCol - oldECol, eLine - oldELine);
+}
+
+QValueList<int> kafkaCommon::getLocation(Node * node)
+{
+	QValueList<int> loc;
+	int i = 0;
+
+	while(node)
+	{
+		i = 1;
+		while(node->prev)
+		{
+			i++;
+			node = node->prev;
+		}
+		loc.prepend(i);
+		node = node->parent;
+	}
+	return loc;
+}
+
+QValueList<int> kafkaCommon::getLocation(DOM::Node domNode)
+{
+	QValueList<int> loc;
+	int i = 0;
+
+	while(!domNode.isNull())
+	{
+		i = 1;
+		while(!domNode.previousSibling().isNull())
+		{
+			i++;
+			domNode = domNode.previousSibling();
+		}
+		loc.prepend(i);
+		domNode = domNode.parentNode();
+	}
+	return loc;
+}
+
+Node* kafkaCommon::getNodeFromLocation(QValueList<int> loc)
+{
+	QValueList<int>::iterator it;
+	Node *node = baseNode;
+	Node *m = 0L;
+	int i;
+
+	if(!node) return 0L;
+	for(it = loc.begin(); it != loc.end(); it++)
+	{
+		if(!node)
+			return 0L;
+		for(i = 1; i < (*it); i++)
+		{
+			if(!node->next)
+				return 0L;
+			node = node->next;
+		}
+		m = node;
+		node = node->child;
+	}
+	return m;
+}
+
+DOM::Node kafkaCommon::getNodeFromLocation(QValueList<int> loc, DOM::Node rootNode)
+{
+	QValueList<int>::iterator it;
+	DOM::Node node = rootNode;
+	DOM::Node m;
+	int i;
+
+	if(rootNode.isNull())
+		return DOM::Node();
+
+	for(it = loc.begin(); it != loc.end(); it++)
+	{
+		if(node.isNull())
+			return DOM::Node();
+		for(i = 1; i < (*it); i++)
+		{
+			if(node.nextSibling().isNull())
+				return DOM::Node();
+			node = node.nextSibling();
+		}
+		m = node;
+		node = node.firstChild();
+	}
+	return m;
+}
+
+Node* kafkaCommon::getNodeFromSubLocation(QValueList<int> loc, int locOffset)
+{
+	QValueList<int>::iterator it = loc.begin();
+	QValueList<int> list;
+	int i;
+
+	for(i = 0; i < locOffset; i++)
+	{
+		list.append((*it));
+		it++;
+	}
+
+	return getNodeFromLocation(list);
+}
+
+void kafkaCommon::coutTree(Node *node, int indent)
+{
+#ifdef HEAVY_DEBUG
+	QString output, dots;
+	int bLine, bCol, eLine, eCol, j;
+	if(!node)
+		kdDebug(25001)<< "kafkaCommon::coutTree() - bad node!" << endl;
+	while (node)
+	{
+		dots = "";
+		dots.fill('.', indent);
+		output = dots;
+		node->tag->beginPos(bLine, bCol);
+		node->tag->endPos(eLine, eCol);
+		if (node->tag->type != Tag::Text)
+			output += node->tag->name.replace('\n'," ");
+		else
+			output+= node->tag->tagStr().replace('\n'," ");
+		kdDebug(25001) << output <<" (" << node->tag->type << ") "<<
+			node << " at pos " << bLine << ":" << bCol << " - " <<
+			eLine << ":" << eCol << endl;
+		kdDebug(25001)<< dots << "  +++ prev " << node->prev << " next " << node->next << " parent " <<
+			node->parent << " child " << node->child << endl;
+		for(j = 0; j < node->tag->attrCount(); j++)
+		{
+			kdDebug(25001)<< dots << " *** attr" << j << " " <<
+				node->tag->getAttribute(j).nameLine << ":" <<
+				node->tag->getAttribute(j).nameCol << " - " <<
+				node->tag->getAttribute(j).valueLine << ":" <<
+				node->tag->getAttribute(j).valueCol << endl;
+		}
+
+		if (node->child)
+			coutTree(node->child, indent + 4);
+		if(node == node->next || (node->next && node == node->next->next) ||
+			(node->next && node->next->next && node == node->next->next->next) ||
+			(node->next && node->next->next && node->next->next->next &&
+			node == node->next->next->next->next) || (node->next && node->next->next &&
+			node->next->next->next && node->next->next->next->next && node ==
+			node->next->next->next->next->next))
+		{
+			//try to detect invalid pointers.
+			kdDebug(25001)<< "ERROR - node == node->[..]next" << endl;
+			return;
+		}
+		node = node->next;
+	}
+#endif
 }

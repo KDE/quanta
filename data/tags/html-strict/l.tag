@@ -24,7 +24,7 @@
   </attr>
 
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -77,7 +77,7 @@
   </attr>
 
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />
@@ -141,7 +141,7 @@
         <location col="0" row="2" colspan="2" />
     </attr>
 <children>
-<child name="#PCDATA" />
+<child name="#text" />
  <child name="tt" />
  <child name="i" />
  <child name="b" />

@@ -14,6 +14,11 @@
  ***************************************************************************/
 
 #include "qtag.h"
+#include "node.h"
+#include "tag.h"
+#ifdef BUILD_KAFKAPART
+#include <kdebug.h>
+#endif
 
 QTag::QTag()
 {
@@ -162,6 +167,17 @@ Attribute* QTag::attribute(const QString& name)
 
 bool QTag::isChild(const QString& tag)
 {
-  QString tagName = parentDTD->caseSensitive ? tag : tag.upper();
+ QString tagName = tag;
+  tagName = parentDTD->caseSensitive ? tagName : tagName.upper();
   return (childTags.isEmpty() || childTags.contains(tagName));
+}
+
+bool QTag::isChild(Node *node)
+{
+  if(node->tag->type == Tag::Text)
+    return (childTags.isEmpty() || childTags.contains("#text") || childTags.contains("#TEXT"));
+  else if(node->tag->type == Tag::Empty)
+    return true;
+  else
+    return isChild(node->tag->name);
 }

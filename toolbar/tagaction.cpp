@@ -126,7 +126,10 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
      if ( otag.attribute("useDialog","false") == "true" && QuantaCommon::isKnownTag(w->defaultDTD()->name, name))
      {
 #ifdef BUILD_KAFKAPART
-
+       if(m_view->hadLastFocus() == QuantaView::kafkaFocus)
+         insertOutputInTheNodeTree("", "", m_view->showTagDialogAndReturnNode(name, attr));
+       else
+         m_view->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
 #else
        m_view->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
        //FIXME: get the output
@@ -182,6 +185,11 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 #endif
      }
   }
+
+#ifdef BUILD_KAFKAPART
+  if(m_view->hadLastFocus() != QuantaView::kafkaFocus)
+  {
+#endif
 
   if ( type == "text" )
     w->insertTag( tag.namedItem("text").toElement().text() );
@@ -310,7 +318,9 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
       KMessageBox::error(quantaApp, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible!</qt>").arg(command + " " + args).arg(command), i18n("Script not found"));
     }
   }
-
+#ifdef BUILD_KAFKAPART
+ }
+#endif
 }
 
 void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
@@ -481,7 +491,7 @@ void TagAction::slotTimeout()
 }
 
 #ifdef BUILD_KAFKAPART
-void TagAction::insertOutputInTheNodeTree(QString str1, QString str2)
+void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "TagAction::insertOutputInTheNodeTree() - str1 : " << str1 <<
@@ -493,9 +503,12 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2)
 	DOM::Node domNode;
 	DOM::Range range;
 	QString tagName;
-	QTag *qtag;
-	Node *node, *startContainer, *endContainer;
+	QTag *qtag, *tagNameQTag;
+	Node *node2, *startContainer, *endContainer, *nodeParent;
 	int offset;
+
+	if(!node && str1 == "")
+		return;
 
 	modifs.cursorX = 0;
 	modifs.cursorY = 0;
@@ -506,16 +519,24 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2)
 	if(m_view->hadLastFocus() == QuantaView::kafkaFocus)
 	{
 		//m_view->reloadQuantaView();
-
-		tagName = str1.mid(1, str1.length() - 2);
+		if(node)
+			tagName = node->tag->name;
+		else
+			tagName = str1.mid(1, str1.length() - 2);
 		kafkaPart->getCurrentNode(domNode, offset);
-		node = wkafka->searchCorrespondingNode(domNode);
+		node2 = wkafka->searchCorrespondingNode(domNode);
 		kdDebug(25001)<< "BOO"<< endl;
-		if(!node)
+
+		if(!node2)
 			return;
 			kdDebug(25001)<< "BOO2"<< endl;
+
+		nodeParent = node2;
+		if(node2->tag->type == Tag::Text)
+			nodeParent = nodeParent->parent;
 		qtag = QuantaCommon::tagFromDTD(quantaApp->view()->write()->defaultDTD(),
-			domNode.nodeName().string());
+			nodeParent->tag->name);
+		tagNameQTag = QuantaCommon::tagFromDTD(quantaApp->view()->write()->defaultDTD(), tagName);
 		range = kafkaPart->selection();
 		if(kafkaPart->hasSelection())
 		{
@@ -525,19 +546,28 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2)
 			if(!startContainer || !endContainer)
 				return;
 				kdDebug(25001)<< "BOO4-2"<< endl;
-			kafkaCommon::DTDcreateAndInsertNode(tagName, "", Tag::XmlTag, m_view->write(),
-				startContainer, range.startOffset(), endContainer, range.endOffset(), modifs);
+			if(node)
+				kafkaCommon::DTDinsertNode(node, startContainer, range.startOffset(),
+					endContainer, range.endOffset(), modifs);
+			else
+				kafkaCommon::DTDcreateAndInsertNode(tagName, "", Tag::XmlTag, m_view->write(),
+					startContainer, range.startOffset(), endContainer, range.endOffset(), modifs);
 		}
 		else
 		{
 		kdDebug(25001)<< "BOO4"<< endl;
-			if(kafkaCommon::getNodeType(tagName) != kafkaCommon::inlineDisplay)
+			if(tagNameQTag && (kafkaCommon::isInline(tagName) || tagNameQTag->isSingle()))
 			{
-				if((qtag && qtag->isChild(tagName)) || domNode.nodeType() == DOM::Node::TEXT_NODE)
+				//can the current Node has for child tagName?
+				if(qtag && qtag->isChild(tagName))
 				{
-					kafkaCommon::splitNode(node, offset, modifs);
-					kafkaCommon::createAndInsertNode(tagName, "", Tag::XmlTag, m_view->write(),
-						node->parent, node->next, node->next, modifs);
+					kafkaCommon::splitNode(node2, offset, modifs);
+					if(node)
+						kafkaCommon::insertNode(node, node2->parent, node2->next,
+							node2->next, modifs);
+					else
+						kafkaCommon::createAndInsertNode(tagName, "", Tag::XmlTag, m_view->write(),
+							node2->parent, node2->next, node2->next, modifs);
 				}
 			}
 		}
@@ -547,13 +577,6 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2)
 	}
 	else
 		m_view->write()->insertTag(str1, str2);
-}
-
-void TagAction::insertTag(QString , QString )
-{
-	//TEMPORARY and dirty Function to insert Tag.
-	//It reload quanta, insert the tag if necessary/possible and refresh kafka
-
 }
 #endif
 

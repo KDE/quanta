@@ -48,6 +48,7 @@ namespace Kate
   class View;
 }
 class QSplitter;
+class Node;
 
 /** The QuantaView class provides the view widget for the QuantaApp
  * instance.  The View instance inherits QWidget as a base class and
@@ -126,6 +127,14 @@ public:
  // void resizeEvent (QResizeEvent *);
   /** Insert a new tag by bringing up the TagDialog. */
   void insertNewTag(QString tag, QString attr = QString::null,bool insertInLine = true);
+  
+  /**
+   * Show a TagDialog of Node tag, with attrs attr.
+   * @param tag The name of the new Node to create.
+   * @param attr The string containing the attrs of the new Node to create.
+   * @return Returns a new Node created according to the contents of the TagDialog.
+   */
+  Node *showTagDialogAndReturnNode(QString tag, QString attr = QString::null);
   /** Returns the baseURL of the document. */
   KURL baseURL();
   /** True if a Document object exists, false otherwise. */

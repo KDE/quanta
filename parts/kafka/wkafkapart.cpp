@@ -23,6 +23,7 @@
 #include <kstandarddirs.h>
 #include <ktexteditor/editinterface.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
 //#include <kglobal.h>
 //#include <kcharsets.h>
 
@@ -103,6 +104,18 @@ WKafkaPart::~WKafkaPart()
 
 void WKafkaPart::loadDocument(Document *doc)
 {
+// i18n reserve
+QString a = i18n("Selector");QString b = i18n("Attribute");QString c = i18n("Class");
+QString d = i18n("Pseudo-class");QString e = i18n("CSS rules");QString f = i18n("Universal selector");
+QString g = i18n("Linked stylesheets");QString h = i18n("Embedded stylesheets");QString i = i18n("Inline style attribute");
+QString j = i18n("Link");QString k = i18n("Priority");QString l = i18n("ID");
+QString m = i18n("Browser support");QString n = i18n("Pseudo-element");QString o = i18n("Imported");
+QString p = i18n("Inheritance");QString q = i18n("Inherited");QString r = i18n("");
+
+QString s = i18n("Name");QString tt = i18n("Undo");QString u = i18n("Redo");
+QString v = i18n("Undo/Redo history");QString w = i18n("CSS styles");
+//end
+
 #ifdef LIGHT_DEBUG
 	kdDebug(25001) << "WKafkaPart::loadDocument()" << endl;
 #endif
@@ -1228,13 +1241,17 @@ QString WKafkaPart::generateCodeFromNode(Node *_node, int bLine, int bCol, int &
 			eLine = bLine;
 		}
 	}
+	/**else if(_node->tag->type == Tag::Empty)
+	{
+		text = " ";
+		eCol = bCol;
+		eLine = bLine;
+	}*/
 	else
 	{
 		//default behavior : return node->tag->tagStr()
 		text = _node->tag->tagStr();
-		bCol += text.length();
-		eCol = bCol - 1;
-		eLine = bLine;
+		kafkaCommon::getEndPosition(text, bLine, bCol, eLine, eCol);
 	}
 	return text;
 }

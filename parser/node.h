@@ -92,6 +92,10 @@ public:
  void setParent(Node *nodeParent) {parent = nodeParent;}
  //If Node is of type XmlTag, return the corresponding XmlTagEnd if available
  Node *getClosingNode();
+ //Return the first next non-Empty Node
+ Node *nextNE();
+ //Return the first prev non-Empty Node
+ Node *prevNE();
 
  int size();
 

@@ -394,7 +394,10 @@ Node *TagDialog::buildNode(Document *w)
 	node = kafkaCommon::createNode(dtdTag->name(), "", Tag::XmlTag, w);
 
 	while (it.current())
+	{
 		node->tag->editAttribute(QuantaCommon::attrCase(it.currentKey()), *it.current());
+		++it;
+	}
 
 	return node;
 }
