@@ -260,12 +260,13 @@ void KafkaWidget::normalize(DOM::Node _node)
 	}
 }
 
-void KafkaWidget::keyReturn(bool ctrlPressed)
+void KafkaWidget::keyReturn(bool specialPressed)
 {
 	//WARNING : HTML-specific function
-	DOM::Node text, text2, pDomNode, pDomNode2, brDomNode;
+	DOM::Node text, text2, pDomNode, pDomNode2, brDomNode, tmp, PNode;
 	int focus;
 //	QTag *qTag;
+	bool childOfP;
 
 	if(m_currentNode.isNull())
 		return;
@@ -275,7 +276,21 @@ void KafkaWidget::keyReturn(bool ctrlPressed)
 	focus = w->getAttrs(m_currentNode)->chCurFoc();
 	if (focus == kNodeAttrs::textNode)
 	{
-		//First split if necessary the text
+		//First determine if the current Node is a child of a P
+		childOfP = false;
+		tmp = m_currentNode;
+		while(!tmp.isNull())
+		{
+			if(tmp.nodeName().string().lower() == "p")
+			{
+				PNode = tmp;
+				childOfP = true;
+				break;
+			}
+			tmp = tmp.parentNode();
+		}
+
+		//Then split if necessary the text
 		if(d->m_cursorOffset == 0)
 			text2 = m_currentNode;
 		else if((unsigned)d->m_cursorOffset ==
@@ -288,6 +303,30 @@ void KafkaWidget::keyReturn(bool ctrlPressed)
 			emit domNodeModified(m_currentNode);
 			emit domNodeInserted(text2, false);
 		}
+
+		if(!specialPressed)
+		{
+			if(childOfP)
+			{
+
+			}
+			else
+			{
+
+			}
+		}
+		else
+		{
+			if(childOfP)
+			{
+
+			}
+			else
+			{
+
+			}
+		}
+
 
 		//Then look if we are in a area which can handle a P
 		//and if it is ok and necessary, insert the current text in a P
@@ -357,10 +396,10 @@ void KafkaWidget::keyReturn(bool ctrlPressed)
 			d->m_cursorOffset = 0;
 		/**}*/
 
+#ifdef HEAVY_DEBUG
 		kdDebug(25001)<< "CURNODE : " << m_currentNode.nodeName().string() << ":"
 			<< m_currentNode.nodeValue().string() << " : " << d->m_cursorOffset << endl;
 		QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
-		//setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 				kdDebug(25001)<< "CURNODE : " << m_currentNode.nodeName().string() << ":"
 			<< m_currentNode.nodeValue().string() << " : " << d->m_cursorOffset << endl;
 		//emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
@@ -369,6 +408,7 @@ void KafkaWidget::keyReturn(bool ctrlPressed)
 		postprocessCursorPosition();
 				kdDebug(25001)<< "CURNODE : " << m_currentNode.nodeName().string() << ":"
 			<< m_currentNode.nodeValue().string() << " : " << d->m_cursorOffset << endl;
+#endif
 	}
 }
 
@@ -643,7 +683,7 @@ void KafkaWidget::keyDeleteNodes(DOM::Node &startNode, long &offset, bool backsp
 
 void KafkaWidget::keyDelete()
 {
-	kNodeAttrs *attrs, *attrsNextSibling, *attrsTmp;
+	kNodeAttrs *attrs, *attrsTmp;
 	int focus, childPosition;
 	DOM::Node _nodeParent, _node, _nodeNext, temp, tempParent, nextSibling, nodeNextNext;
 	DOM::Node toplevelBlock, toplevelBlock2, startNode, endNode, startNode2, endNode2;
@@ -815,6 +855,8 @@ void KafkaWidget::keyDelete()
 				childOfCommonParent = temp;
 				temp = temp.nextSibling();
 			}
+			if(temp.isNull())
+				break;
 			childOfCommonParent2 = temp;
 			commonParent = temp.parentNode();
 			attrsTmp = w->getAttrs(temp);
@@ -844,8 +886,8 @@ void KafkaWidget::keyDelete()
 			startNode2IsNotInline = false;
 			temp = startNode2;
 			attrsTmp = w->getAttrs(temp);
-			if(attrsTmp && attrsTmp->chCurFoc() == kNodeAttrs::singleNodeAndItself ||
-				attrsTmp->chCurFoc() == kNodeAttrs::no)
+			if(attrsTmp && (attrsTmp->chCurFoc() == kNodeAttrs::singleNodeAndItself ||
+				attrsTmp->chCurFoc() == kNodeAttrs::no))
 				startNode2IsNotInline = true;
 			while(!temp.isNull() && !temp.nextSibling().isNull() &&
 				((kafkaCommon::isInline(temp) && (temp.nextSibling().isNull() ||
@@ -941,71 +983,9 @@ void KafkaWidget::keyDelete()
 					attrsTmp = w->getAttrs(temp);
 				}
 			}
-
-			//FIRST CASE: it is one of _node's parent : try to move all the children of the next
-			//neightbour BLOCK, or text/inline of the parent here.
-			/**if(isParent)
-			{
-				attrsNextSibling = 0L;
-				if(!_nodeNext.nextSibling().isNull())
-				{
-					nextSibling = _nodeNext.nextSibling();
-					attrsNextSibling = w->getAttrs(nextSibling);
-				}
-				if(attrsNextSibling && attrsNextSibling->chCurFoc() == kNodeAttrs::blockNode)
-				{
-					while(nextSibling.hasChildNodes())
-					{
-						emit domNodeIsAboutToBeRemoved(nextSibling.firstChild(), true);
-						temp = nextSibling.removeChild(nextSibling.firstChild());
-						_nodeNext.insertBefore(temp, DOM::Node());
-						emit domNodeInserted(temp, true);
-					}
-					emit domNodeIsAboutToBeRemoved(nextSibling, false);
-					_nodeNext.parentNode().removeChild(nextSibling);
-					normalize(_nodeNext);
-					break;
-				}
-				elsenormalize
-				{
-					while(_nodeNext.parentNode().hasChildNodes())
-					{
-						attrsNextSibling = w->getAttrs(_nodeNext.nextSibling());
-						if(attrsNextSibling &&
-							(attrsNextSibling->chCurFoc() == kNodeAttrs::textNode ||
-							attrsNextSibling->chCurFoc() == kNodeAttrs::inlineNode))
-						{
-							emit domNodeIsAboutToBeRemoved(_nodeNext.nextSibling(), true);
-							temp = _nodeNext.parentNode().removeChild(_nodeNext.nextSibling());
-							_nodeNext.insertBefore(temp, DOM::Node());
-							emit domNodeInserted(temp, true);
-						}
-						else
-						{
-							normalize(_nodeNext);
-							break;
-						}
-					}
-				}
-			}
-			//SECOND CASE: it is not a parent of _node. Thus we can delete it and safely stop.
-			else
-			{
-				while(_nodeNext.hasChildNodes())
-				{
-					emit domNodeIsAboutToBeRemoved(_nodeNext.firstChild(), true);
-					temp = _nodeNext.removeChild(_nodeNext.firstChild());
-					_nodeNext.parentNode().insertBefore(temp, _nodeNext);
-					emit domNodeInserted(temp, true);
-				}
-				_nodeParent = _nodeNext.parentNode();
-				emit domNodeIsAboutToBeRemoved(_nodeNext, false);
-				_nodeNext.parentNode().removeChild(_nodeNext);
-				normalize(_nodeParent);
-			}*/
 			break;
 		}
-		//Else if the nextNode is a BLOCK, or a invisible Node, Inline Node
+		//Else if the nextNode is a BLOCK, or an invisible Node, Inline Node
 		//which can be deleted, delete it!
 		else if(attrs->chCurFoc() == kNodeAttrs::singleNodeAndItself || ((attrs->chCurFoc() ==
 			kNodeAttrs::no || attrs->chCurFoc() == kNodeAttrs::inlineNode) &&
@@ -1088,14 +1068,25 @@ void KafkaWidget::keyDelete()
 
 void KafkaWidget::keyBackspace()
 {
-	kNodeAttrs *attrs;
-	int focus;
-	DOM::Node _nodeParent, _node, _nodePrev, oldCurrentNode;
-	bool _goingTowardsRootNode;
+	kNodeAttrs *attrs, *attrsTmp;
+	int focus, childPosition;
+	DOM::Node _nodeParent, _node, _nodePrev, oldCurrentNode, temp, tempParent, prevSibling, nodePrevPrev;
+	DOM::Node toplevelBlock, toplevelBlock2, startNode, endNode, startNode2, endNode2;
+	DOM::Node childOfCommonParent, childOfCommonParent2, commonParent;
+	bool _goingTowardsRootNode, singleNodeDeleted, isParent, prevIsBlock, endNodeIsNotInline, boolTmp;
+	QString text;
 
 	if(m_currentNode.isNull())
 		return;
+
 	attrs = w->getAttrs(m_currentNode);
+
+#ifdef HEAVY_DEBUG
+	kdDebug(25001)<< "m_currentNode(" << m_currentNode.handle() << ") : " << m_currentNode.nodeName() <<
+		endl;
+#endif
+
+	//OLD PART, to be removed or #ifdef'ed
 	if(attrs->chCurFoc() == kNodeAttrs::textNode && d->m_cursorOffset != 0)
 	{//if we are in the middle of some text, we remove one letter
 		if(!attrs->cbMod())
@@ -1115,7 +1106,7 @@ void KafkaWidget::keyBackspace()
 		emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 		return;
 	}
-	if(attrs->chCurFoc() != kNodeAttrs::no && attrs->chCurFoc() != kNodeAttrs::textNode &&
+	if(attrs->chCurFoc() == kNodeAttrs::singleNodeAndItself &&
 		d->m_cursorOffset != 0)
 	{//if we delete ourselves, which node will be m_currentNode??
 		if(!attrs->cbDel())
@@ -1179,21 +1170,27 @@ void KafkaWidget::keyBackspace()
 
 	}
 
+	//Beginning of the actual keyBackspace
 	_node = m_currentNode;
-	_nodePrev = m_currentNode;
-	oldCurrentNode = m_currentNode;
 	_goingTowardsRootNode = false;
+	singleNodeDeleted = false;
+	_nodePrev = getPrevNode(_node, _goingTowardsRootNode);
+	oldCurrentNode = m_currentNode;
 
-	while(1)
+	while(!_nodePrev.isNull())
 	{
-		_nodePrev = getPrevNode(_nodePrev, _goingTowardsRootNode);
+#ifdef LIGHT_DEBUG
+		kdDebug(25001)<< "KafkaWidget::keyBackspace() - currentNode: " <<
+			_nodePrev.nodeName().string() << endl;
+#endif
 
-		//second part : depending of the node, we choose what to do
-		if(_nodePrev == 0)
-			return;
 		attrs = w->getAttrs(_nodePrev);
+
+		//If this Node can't be deleted, we stop here.
 		if(!attrs->cbDel())
 			return;
+
+		//If we are in a TEXT node, we remove a letter
 		if(attrs->chCurFoc() == kNodeAttrs::textNode)
 		{
 			if((static_cast<DOM::CharacterData>(_nodePrev)).length() != 0)
@@ -1224,9 +1221,188 @@ void KafkaWidget::keyBackspace()
 				continue;
 			}
 		}
-		else if(attrs->chCurFoc() ==
-			kNodeAttrs::singleNodeAndItself || ((attrs->chCurFoc() ==
-			kNodeAttrs::no) &&
+		//Else if the current Node if a BLOCK which can be entered/leaved e.g. H1, P
+		else if(attrs->chCurFoc() == kNodeAttrs::blockNode)
+		{
+			//First look if it is one of _node's parent
+			isParent = false;
+			temp = _node;
+			while(!temp.isNull())
+			{
+				if(_nodePrev == temp)
+					isParent = true;
+				temp = temp.parentNode();
+			}
+
+			//1 - Locate the toplevel blocks
+			temp = _nodePrev;
+			if(isParent)
+			{
+				toplevelBlock2 = temp;
+				while(temp.parentNode().firstChild() == temp && w->getAttrs(temp.parentNode()) &&
+					w->getAttrs(temp.parentNode())->chCurFoc() == kNodeAttrs::blockNode)
+					temp = temp.parentNode();
+				childOfCommonParent2 = temp;
+				temp = temp.previousSibling();
+			}
+			if(temp.isNull())
+				break;
+			childOfCommonParent = temp;
+			commonParent = temp.parentNode();
+			attrsTmp = w->getAttrs(temp);
+			prevIsBlock = (attrsTmp && attrsTmp->chCurFoc() == kNodeAttrs::blockNode);
+			while(!temp.isNull() && temp.hasChildNodes() && w->getAttrs(temp.lastChild()) &&
+				w->getAttrs(temp.lastChild())->chCurFoc() == kNodeAttrs::blockNode)
+				temp = temp.lastChild();
+			toplevelBlock = temp;
+
+			//2 - Determine the Nodes which could be moved
+			if(!toplevelBlock.isNull() && toplevelBlock.hasChildNodes())
+				endNode = toplevelBlock.lastChild();
+			else if(!childOfCommonParent2.isNull() && !childOfCommonParent2.previousSibling().isNull())
+				endNode = childOfCommonParent2.previousSibling();
+			endNodeIsNotInline = false;
+			temp = endNode;
+			attrsTmp = w->getAttrs(temp);
+			if(attrsTmp && (attrsTmp->chCurFoc() == kNodeAttrs::singleNodeAndItself ||
+				attrs->chCurFoc() == kNodeAttrs::no))
+				endNodeIsNotInline = true;
+			while(!temp.isNull() && !temp.previousSibling().isNull() &&
+				((kafkaCommon::isInline(temp) && (temp.previousSibling().isNull() ||
+				kafkaCommon::isInline(temp.previousSibling())))))
+				temp = temp.previousSibling();
+			startNode = temp;
+
+			if(!toplevelBlock2.isNull() && toplevelBlock2.hasChildNodes())
+				startNode2 = toplevelBlock2.firstChild();
+			else if(!childOfCommonParent.isNull() && !childOfCommonParent.nextSibling().isNull())
+				startNode2 = childOfCommonParent.nextSibling();
+			temp = startNode2;
+			while(!temp.isNull() && !temp.nextSibling().isNull() &&
+				((kafkaCommon::isInline(temp) && (temp.nextSibling().isNull() ||
+				kafkaCommon::isInline(temp.nextSibling())))))
+				temp = temp.nextSibling();
+			endNode2 = temp;
+
+			//3 - Move Nodes.
+			if(!endNode.isNull() && endNodeIsNotInline)
+			{
+				emit domNodeIsAboutToBeRemoved(endNode, true);
+				endNode.parentNode().removeChild(endNode);
+			}
+			else if(isParent && !prevIsBlock)
+			{
+				if(kafkaCommon::parentSupports(toplevelBlock2, startNode, endNode,
+					w->getCurrentDoc()->defaultDTD()))
+					moveDomNodes(toplevelBlock2, startNode, endNode, toplevelBlock2.firstChild(),
+						true);
+				else
+				{
+					if(kafkaCommon::parentSupports(commonParent, startNode2, endNode2,
+						w->getCurrentDoc()->defaultDTD()))
+						moveDomNodes(commonParent, startNode2, endNode2,
+							childOfCommonParent2, true);
+					else
+					{
+						//Damn it! What to do??
+					}
+				}
+			}
+			else if(isParent && prevIsBlock)
+			{
+				if(kafkaCommon::parentSupports(toplevelBlock2, startNode, endNode,
+					w->getCurrentDoc()->defaultDTD()))
+					moveDomNodes(toplevelBlock2, startNode, endNode, toplevelBlock2.firstChild(),
+						true);
+				else
+				{
+					if(kafkaCommon::parentSupports(commonParent, startNode, endNode,
+						w->getCurrentDoc()->defaultDTD()) && kafkaCommon::parentSupports(
+						commonParent, startNode2, endNode2, w->getCurrentDoc()->defaultDTD()))
+					{
+						moveDomNodes(commonParent, startNode, endNode, childOfCommonParent,
+							false);
+						moveDomNodes(commonParent, startNode2, endNode2, childOfCommonParent2,
+							true);
+					}
+					else
+					{
+						//Damn it! What to do??
+					}
+				}
+			}
+			else if(!isParent && prevIsBlock)
+			{
+				if(kafkaCommon::parentSupports(commonParent, startNode, endNode,
+					w->getCurrentDoc()->defaultDTD()))
+					moveDomNodes(commonParent, startNode, endNode, childOfCommonParent, false);
+				else
+				{
+					//Damn it! What to do??
+				}
+			}
+			if(!startNode2.isNull() && startNode2.nodeType() == DOM::Node::TEXT_NODE)
+			{
+				//normalize(startNode2.parentNode());
+				temp = startNode2.previousSibling();
+				if(!temp.isNull() && temp.nodeType() == DOM::Node::TEXT_NODE)
+				{
+					boolTmp = false;
+					if(m_currentNode == startNode2)
+					{
+						m_currentNode = temp;
+						d->m_cursorOffset += temp.nodeValue().length();
+						boolTmp = true;
+					}
+					text = temp.nodeValue().string() + startNode2.nodeValue().string();
+					tempParent = temp.parentNode();
+					emit domNodeIsAboutToBeRemoved(startNode2, true);
+					tempParent.removeChild(startNode2);
+
+					temp.setNodeValue(text);
+					emit domNodeModified(temp);
+					
+					if(boolTmp)
+						QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
+				}
+
+			}
+
+			//4 - Delete empty Block Nodes.
+			if(!toplevelBlock.isNull())
+			{
+				temp = toplevelBlock;
+				attrsTmp = w->getAttrs(temp);
+				while(attrsTmp && attrsTmp->chCurFoc() == kNodeAttrs::blockNode &&
+					!temp.hasChildNodes())
+				{
+					tempParent = temp.parentNode();
+					emit domNodeIsAboutToBeRemoved(temp, true);
+					tempParent.removeChild(temp);
+					temp = tempParent;
+					attrsTmp = w->getAttrs(temp);
+				}
+			}
+			if(!toplevelBlock2.isNull())
+			{
+				temp = toplevelBlock2;
+				attrsTmp = w->getAttrs(temp);
+				while(attrsTmp && attrsTmp->chCurFoc() == kNodeAttrs::blockNode &&
+					!temp.hasChildNodes())
+				{
+					tempParent = temp.parentNode();
+					emit domNodeIsAboutToBeRemoved(temp, true);
+					tempParent.removeChild(temp);
+					temp = tempParent;
+					attrsTmp = w->getAttrs(temp);
+				}
+			}
+			break;
+		}
+		//Else if the prevNode is a BLOCK or an invisible Node, Inline Node
+		//which can be deleted, delete it!
+		else if(attrs->chCurFoc() ==	kNodeAttrs::singleNodeAndItself || ((attrs->chCurFoc() ==
+			kNodeAttrs::no || attrs->chCurFoc() == kNodeAttrs::inlineNode) &&
 			!_nodePrev.hasChildNodes()))
 		{
 #ifdef LIGHT_DEBUG
@@ -1238,11 +1414,11 @@ void KafkaWidget::keyBackspace()
 			emit domNodeIsAboutToBeRemoved(_nodePrev, true);
 			_nodeParent.removeChild(_nodePrev);
 			//normalize(_nodeParent);
-			if(focus != kNodeAttrs::no)
+			if(focus == kNodeAttrs::singleNodeAndItself)
 			{
 				postprocessCursorPosition();
 				//merge the previous DOM::Node if it is a text.
-				//domNodeIsAboutToBeRemoved() had already done it in the Node tree.
+				//domNodeIsAboutToBeRemoved() is already done it in the Node tree.
 				_nodePrev = _node.previousSibling();
 				if(!_nodePrev.isNull() && _nodePrev.nodeType() == DOM::Node::TEXT_NODE)
 				{
@@ -1250,49 +1426,11 @@ void KafkaWidget::keyBackspace()
 					_nodeParent = _nodePrev.parentNode();
 					_nodeParent.removeChild(_node);
 				}
-				return;
+				break;
 			}
 			_nodePrev = _node;
-			continue;
 		}
-		/**else if(d->TagsDeletable.contains(_nodePrev.nodeName().string().upper()))
-		{//if it is a deletable tag, remove it
-			kdDebug(25001)<< "KafkaWidget::keyBackspace() - deleting a TagDeletable"
-				<< endl;
-			if((_nodePrev.previousSibling() != 0) &&
-				_nodePrev.previousSibling().nodeType() == DOM::Node::TEXT_NODE &&
-				_node.nodeType() == DOM::Node::TEXT_NODE &&
-				_nodePrev.parentNode() == _nodePrev.previousSibling().parentNode())
-			{//to avoid a bug due to normalize()
-				m_currentNode = _nodePrev.previousSibling();
-				d->m_cursorOffset = (static_cast<DOM::CharacterData>(m_currentNode)).length();
-				emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
-			}
-			_nodeParent = _nodePrev.parentNode();
-			emit domNodeIsAboutToBeRemoved(_nodePrev, true);
-			_nodeParent.removeChild(_nodePrev);
-			//_nodeParent.normalize();
-			//normalize(_nodeParent);
-			_nodeParent.applyChanges();
-			postprocessCursorPosition();
-			return;
-		}
-		else if(d->TagsTextDeletable.contains(_nodePrev.nodeName().string().upper()))
-		{//if it is a Text deletable tag
-			if(!_nodePrev.hasChildNodes())
-			{//if we go up and we can delete the tag, delete it :)
-				kdDebug(25001)<< "KafkaWidget::keyBackspace() - deleting" <<
-					" a TagTextDeletable" << endl;
-				emit domNodeIsAboutToBeRemoved(_nodePrev, true);
-				_nodePrev.parentNode().removeChild(_nodePrev);
-				_nodePrev = _node;
-				continue;
-			}
-			else if(_goingTowardsRootNode && _nodePrev.childNodes().length() >= 1)
-			{
-				continue;
-			}
-		}*/
+		_nodePrev = getPrevNode(_nodePrev, _goingTowardsRootNode);
 	}
 }
 
@@ -1527,7 +1665,9 @@ void KafkaWidget::postprocessCursorPosition()
 #endif
 				break;
 			}
-			else if(attrs2->chCurFoc() == kNodeAttrs::singleNodeAndItself)
+			else if(attrs2->chCurFoc() == kNodeAttrs::singleNodeAndItself ||
+				attrs2->chCurFoc() == kNodeAttrs::inlineNode ||
+				attrs2->chCurFoc() == kNodeAttrs::blockNode)
 				break;
 			else
 				continue;
@@ -1754,7 +1894,10 @@ void KafkaWidget::moveDomNodes(DOM::Node newParent, DOM::Node startNode, DOM::No
 		{
 			domNodeNext = domNode.nextSibling();
 			//emit domNodeIsAboutToBeRemoved(domNode, true);
-			emit domNodeIsAboutToBeMoved(domNode, newParent, refNode);
+			if(!refNode.isNull())
+				emit domNodeIsAboutToBeMoved(domNode, newParent, refNode.nextSibling());
+			else
+				emit domNodeIsAboutToBeMoved(domNode, newParent, DOM::Node());
 			domNode = domNode.parentNode().removeChild(domNode);
 			if(!refNode.isNull())
 				newParent.insertBefore(domNode, refNode.nextSibling());

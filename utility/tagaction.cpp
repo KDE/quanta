@@ -575,6 +575,8 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 		qTagList = nodeQTag->parents();
 #ifdef HEAVY_DEBUG
 		kdDebug(25001)<< "nodeQTag name : " << nodeQTag->name() << endl;
+		/**kdDebug(25001)<< nodeQTag->isChild("#text", false) << endl;
+		kdDebug(25001)<< nodeQTag->isChild("#text", true) << endl;*/
 #endif
 		for(qTag = qTagList.first(); qTag; qTag = qTagList.next())
 		{

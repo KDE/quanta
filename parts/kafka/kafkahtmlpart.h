@@ -250,9 +250,10 @@ private:
 
 	/**
 	 * Break the current line.
-	 * @param ctrlPressed If ctrl is pressed, we try to insert a BR, otherwise we try to insert a P.
+	 * @param specialPressed If a special touch is pressed e.g. ctrl, we try to insert a BR,
+	 * otherwise we try to insert a P.
 	 */
-	void keyReturn(bool ctrlPressed);
+	void keyReturn(bool specialPressed);
 
 	/**
 	 * Postprocess the cursor position, i.e. when the cursor is between two
