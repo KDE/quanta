@@ -2799,7 +2799,7 @@ void QuantaApp::processDTD(const QString& documentType)
 
   if (!w->isUntitled())
   {
-    m_messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL(0, KURL::StripFileProtocol)));
+    m_messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(DTDs::ref()->getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL(0, KURL::StripFileProtocol)), false);
   }
   loadToolbarForDTD(w->getDTDIdentifier());
   StructTreeView::ref()->useOpenLevelSetting = true;
