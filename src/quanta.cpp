@@ -3822,11 +3822,13 @@ bool QuantaApp::queryClose()
   {
     saveOptions();
     exitingFlag = true;
+    parser->setParsingEnabled(false);
     canExit = ViewManager::ref()->closeAll(false);
     if (canExit)
        canExit = Project::ref()->queryClose();
     if (canExit)
         canExit = removeToolbars();
+    parser->setParsingEnabled(true);
   }
   if (canExit)
     emit eventHappened("quanta_exit", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
