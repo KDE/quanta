@@ -157,8 +157,9 @@ void KQApplicationPrivate::init()
     }
     delete splash;
     splash = 0L;
-    quantaApp->recoverCrashed();
+    
     quantaApp->loadInitialProject(initialProject);
+    quantaApp->recoverCrashed();
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
     {
       KURL url;

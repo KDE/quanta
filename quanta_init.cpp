@@ -245,21 +245,19 @@ void QuantaApp::initQuanta()
 
   m_config->setGroup("General Options");
 
-  qConfig.autosaveEntryKey = "Autosave List";
-  if(!m_config->hasKey(qConfig.autosaveEntryKey))
+  if(!m_config->hasKey("Autosave List"))
   {
-   m_config->writeEntry(qConfig.autosaveEntryKey,QString::null);
+   m_config->writeEntry("Autosave List",QString::null);
    m_config->sync();
   }
-  qConfig.autosaveEntryList = m_config->readEntry(qConfig.autosaveEntryKey,qConfig.autosaveEntryList);
+  qConfig.autosaveEntryList = m_config->readEntry("Autosave List",qConfig.autosaveEntryList);
 
-  qConfig.backedupFilesEntryKey="List of backedup files";
-  if(!m_config->hasKey(qConfig.backedupFilesEntryKey))
+  if(!m_config->hasKey("List of backedup files"))
   {
-   m_config->writeEntry(qConfig.backedupFilesEntryKey,QString::null);
+   m_config->writeEntry("List of backedup files",QString::null);
    m_config->sync();
   }
-  qConfig.backedupFilesEntryList = m_config->readEntry(qConfig.backedupFilesEntryKey,qConfig.backedupFilesEntryList);
+  qConfig.backedupFilesEntryList = m_config->readEntry("List of backedup files",qConfig.backedupFilesEntryList);
 }
 
 
@@ -2234,17 +2232,18 @@ void QuantaApp::recoverCrashed()
           //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
           //is dropped
             QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
-            QFile::remove(autosavedVersion.path());
-            slotFileOpenRecent(originalVersion);
+            
+            //slotFileOpenRecent(originalVersion);
           }
           delete dlg;
        }
      }
-     m_config->setGroup("General Options");
-     m_config->writeEntry(qConfig.autosaveEntryKey,QString::null);
-     m_config->writeEntry(qConfig.backedupFilesEntryKey,QString::null);
+     if(QFile::exists(autosavedVersion.path())) QFile::remove(autosavedVersion.path());     
     }
   }
+  m_config->setGroup("General Options");
+  m_config->writeEntry("Autosave List",QString::null);
+  m_config->writeEntry("List of backedup files",QString::null);
   qConfig.autosaveEntryList = "";
 }
 

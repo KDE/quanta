@@ -2009,11 +2009,11 @@ void Document::createBackup(KConfig* config)
        QStringList entryList = QStringList::split(",",qConfig.autosaveEntryList);
        entryList.append(autosaveDocumentEntryValue);
        qConfig.autosaveEntryList = entryList.join(",");
-       config->writeEntry(qConfig.autosaveEntryKey,qConfig.autosaveEntryList);
+       config->writeEntry("Autosave List",qConfig.autosaveEntryList);
        QStringList bkEntryList = QStringList::split(",",qConfig.backedupFilesEntryList);
        bkEntryList.append(url().path());
        qConfig.backedupFilesEntryList = bkEntryList.join(",");
-       config->writeEntry(qConfig.backedupFilesEntryKey,qConfig.backedupFilesEntryList);
+       config->writeEntry("List of backedup files",qConfig.backedupFilesEntryList);
        config->sync();
        setBackupEntry(true);
      }
@@ -2046,12 +2046,12 @@ void Document::removeBackup(KConfig *config)
  QStringList entryList = QStringList::split(",",qConfig.autosaveEntryList);
  entryList.remove(autosaveDocumentEntryValue);
  qConfig.autosaveEntryList = entryList.join(",");
- config->writeEntry(qConfig.autosaveEntryKey,qConfig.autosaveEntryList);
+ config->writeEntry("Autosave List",qConfig.autosaveEntryList);
 
  QStringList bkEntryList = QStringList::split(",",qConfig.backedupFilesEntryList);
  bkEntryList.remove(url().path());
  qConfig.backedupFilesEntryList = bkEntryList.join(",");
- config->writeEntry(qConfig.backedupFilesEntryKey,qConfig.backedupFilesEntryList);
+ config->writeEntry("List of backedup files",qConfig.backedupFilesEntryList);
  config->sync();
 
  setBackupEntry(false);
@@ -2059,31 +2059,35 @@ void Document::removeBackup(KConfig *config)
  if(QFile::exists(autosaveDocumentEntryValue))
     QFile::remove(autosaveDocumentEntryValue);
 }
-/** creates a string by hashing a little the path string of this document */
+/** creates a string by hashing a bit the path string of this document */
 QString Document::hashedFilePath(const QString& p)
 {
- if(p.length() == 1)
+ switch(p.length())
  {
-  int c = int(p[0]);
-  return QString::number(c,10)+"P";
+  case 1: {
+           int c = int(p[0]);
+           return QString::number(c,10)+"P";
+          }
+     
+  case 2: {
+           int c = int(p[1])*2;
+           return QString::number(c,10)+"P";
+          }
+     
+  default:{
+           uint i;
+           int sign = 1, 
+	       sum = 0;
+           for (i = 0; i < (p.length()-1); i++)
+           {
+            sum += int(p[i]) + int(p[i+1])*sign;
+            sign *= -1;
+           }
+           if( sum >= 0 ) return QString::number(sum,10)+"P";
+           else                 return QString::number(sum*(-1),10)+"n";
+          }
  }
-
- if(p.length() == 2)
- {
-  int c = int(p[1])*2;
-  return QString::number(c,10)+"P";
- }
-
- uint i;
- int sign = 1;
- int sum = 0;
- for (i = 0; i < (p.length()-1); i++)
- {
-  sum += int(p[i]) + int(p[i+1])*sign;
-  sign *= -1;
- }
- if( sum >= 0 ) return QString::number(sum,10)+"P";
- else                 return QString::number(sum*(-1),10)+"N";
+ 
 }
 
 #include "document.moc"

@@ -92,9 +92,7 @@ typedef struct QConfig{
           QString windowLayout;
 	  int autosaveInterval;
           QString autosaveEntryList;
-	  QString autosaveEntryKey;
 	  QString backedupFilesEntryList;
-	  QString backedupFilesEntryKey;
 
           //spelling options
           KSpellConfig *spellConfig;
