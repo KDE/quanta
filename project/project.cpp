@@ -333,7 +333,7 @@ void Project::writeConfig(KConfig *config)
 void Project::slotOpenProject()
 {
   KURL url = KFileDialog::getOpenURL( QString::null,
-                       "*.wpj *.webprj"+i18n("|Project files\n*|All Files"), this);
+                       "*.wpj *.webprj"+i18n("|Project Files\n*|All Files"), this);
 
   if( !url.isEmpty() )
   {

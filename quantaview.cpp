@@ -332,7 +332,7 @@ void QuantaView::initActions()
                         this, SLOT( slotTagMisc() ),
                         actionCollection, "tag_misc" );
 
-    (void) new KAction( i18n( "Frame wizard..." ), "frame", 0,
+    (void) new KAction( i18n( "Frame Wizard..." ), "frame", 0,
                         this, SLOT( slotFrameWizard() ),
                         actionCollection, "tag_frame_wizard" );
 

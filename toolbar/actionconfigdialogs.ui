@@ -44,7 +44,7 @@
                             <bool>false</bool>
                         </property>
                         <property name="text">
-                            <string>&amp;Delete action</string>
+                            <string>&amp;Delete Action</string>
                         </property>
                     </widget>
                     <widget class="QPushButton" row="2" column="1">
@@ -52,7 +52,7 @@
                             <cstring>addAction</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;New action</string>
+                            <string>&amp;New Action</string>
                         </property>
                         <property name="autoDefault">
                             <bool>true</bool>
@@ -105,7 +105,7 @@
                             </sizepolicy>
                         </property>
                         <property name="text">
-                            <string>Toolbar and action tree</string>
+                            <string>Toolbar &amp; Action Tree</string>
                         </property>
                     </widget>
                     <widget class="KListView" row="1" column="1" rowspan="1" colspan="3">
@@ -224,7 +224,7 @@
                             <bool>false</bool>
                         </property>
                         <property name="title">
-                            <string>Action properties</string>
+                            <string>Action Properties</string>
                         </property>
                         <grid>
                             <property name="name">
@@ -376,7 +376,7 @@
                                     <cstring>textLabel2</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Container toolbars</string>
+                                    <string>Container toolbars:</string>
                                 </property>
                             </widget>
                             <widget class="QComboBox" row="0" column="2" rowspan="1" colspan="3">
@@ -423,7 +423,7 @@
                                     <cstring>buttonGroup13</cstring>
                                 </property>
                                 <property name="title">
-                                    <string>Detailed settings</string>
+                                    <string>Detailed Settings</string>
                                 </property>
                                 <grid>
                                     <property name="name">

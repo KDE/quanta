@@ -213,7 +213,7 @@
                                             <cstring>TextLabel2_3</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>From Left</string>
+                                            <string>From left:</string>
                                         </property>
                                     </widget>
                                     <widget class="QSpinBox">
@@ -248,7 +248,7 @@
                                             <cstring>TextLabel1_3</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>From Top</string>
+                                            <string>From top:</string>
                                         </property>
                                     </widget>
                                     <widget class="QSpinBox">
@@ -412,7 +412,7 @@
                                     <cstring>tlFrameSource</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Frame source</string>
+                                    <string>Frame source:</string>
                                 </property>
                             </widget>
                             <widget class="QLabel">
@@ -420,7 +420,7 @@
                                     <cstring>tlFrameName</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Frame name</string>
+                                    <string>Frame name:</string>
                                 </property>
                             </widget>
                         </vbox>
@@ -490,7 +490,7 @@
                                 <cstring>tlId</cstring>
                             </property>
                             <property name="text">
-                                <string>id</string>
+                                <string>Id:</string>
                             </property>
                         </widget>
                         <widget class="QLabel">
@@ -498,7 +498,7 @@
                                 <cstring>TextLabel2_2</cstring>
                             </property>
                             <property name="text">
-                                <string>class</string>
+                                <string>Class:</string>
                             </property>
                         </widget>
                         <widget class="QLabel">
@@ -506,7 +506,7 @@
                                 <cstring>TextLabel3</cstring>
                             </property>
                             <property name="text">
-                                <string>style</string>
+                                <string>Style:</string>
                             </property>
                         </widget>
                         <widget class="QLabel">
@@ -514,7 +514,7 @@
                                 <cstring>TextLabel4</cstring>
                             </property>
                             <property name="text">
-                                <string>title</string>
+                                <string>Title:</string>
                             </property>
                         </widget>
                         <widget class="QLabel">
@@ -522,7 +522,7 @@
                                 <cstring>TextLabel6</cstring>
                             </property>
                             <property name="text">
-                                <string>longdesc</string>
+                                <string>Long description:</string>
                             </property>
                         </widget>
                     </vbox>

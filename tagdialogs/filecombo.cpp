@@ -91,7 +91,7 @@ void FileCombo::setText( const QString &_txt )
 
 void FileCombo::slotFileSelect()
 {
-  KFileDialog *dlg = new KFileDialog(baseURL.url(), i18n("*|All files"), this, "", true);
+  KFileDialog *dlg = new KFileDialog(baseURL.url(), i18n("*|All Files"), this, "", true);
   dlg->setMode(KFile::File | KFile::Directory | KFile::ExistingOnly);
   dlg->exec();
   KURL url = dlg->selectedURL();
