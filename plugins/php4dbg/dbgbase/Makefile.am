@@ -31,7 +31,7 @@ EXTRA_DIST = \
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$
 
-CFLAGS = -O2 -g -Wall
-CXXFLAGS = -O2 -g -Wall
+CFLAGS = -O2 -g
+CXXFLAGS = -O2 -g
 #DEFS = -I. -I$(srcdir) -I$(top_srcdir) -DDBG_USE_STDALLOCA -DPHP_DEBUG -D_DEBUG
 DEFS = -I. -I$(srcdir) -I$(top_srcdir) -DDBG_USE_STDALLOCA

@@ -118,7 +118,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   
   dbg = new PHP4Debugger(0L,0L);
   connect( dbg,           SIGNAL(message(QString)),
-           messageOutput, SLOT(showMessage(QString)) );
+           messageOutput, SLOT(php4Debug(QString)) );
   dbg->init();
   
 #warning temp disable php3 debug for devel php4 dbg

@@ -18,7 +18,7 @@ HRESULT IdeSite::initialize(RequestorBase *req, int dbg_ver, char *dbg_descr)
   sockaddr_in addr;
   requestor->getserveraddr(&addr);
   
-  QString mes = "\n:SESSIONSTART:";
+  QString mes = "::log:Start session on ";
   mes+=inet_ntoa(addr.sin_addr);
   emit message(mes);
   
@@ -29,15 +29,27 @@ HRESULT IdeSite::handleerror(int errtype, char *errmsg, BRACTION *action)
 {
   assert(requestor!=NULL);
   
+  long mod_no = 0,line_no = 0;
+  std::string mod_name;
+  HRESULT hr;
+ 
+  hr = requestor->getcurloc(&mod_no,&line_no);
+  if (SUCCEEDED(hr)) hr = requestor->requestdocfilename(mod_no, &mod_name);
+ 
   QString t;
-  t.sprintf("%s=%d:","errtype",errtype);
+  QString mes;
   
-  QString mes = "\n:BREAKERROR:";
-  mes+=t;
+  if (SUCCEEDED(hr)) 
+  {
+    mes = mod_name.data();
+    t.sprintf(":%d:",line_no);
+    mes += t;
+  }
+  else mes+="::";
+  mes+="error:";
   mes+=errmsg;
-  emit message(mes);
   
-  print_location();
+  emit message(mes);
   
   *action=BR_CONTINUE;
   
@@ -48,14 +60,29 @@ HRESULT IdeSite::handlebreakpoint(BRREASON reason, BRACTION *action)
 {
   assert(requestor!=NULL);
   
+  long mod_no = 0,line_no = 0;
+  std::string mod_name;
+  HRESULT hr;
+ 
+  hr = requestor->getcurloc(&mod_no,&line_no);
+  if (SUCCEEDED(hr)) hr = requestor->requestdocfilename(mod_no, &mod_name);
+ 
   QString t;
+  QString mes;
+  
+  if (SUCCEEDED(hr)) 
+  {
+    mes = mod_name.data();
+    t.sprintf(":%d:",line_no);
+    mes += t;
+  }
+  else mes+="::";
+  mes+="breakpoint:";
+  
   t.sprintf("%s=%d:","reason",reason);
-  
-  QString mes = "\n:BREAKPOINT:";
   mes+=t;
-  emit message(mes);
   
-  print_location();
+  emit message(mes);
   
   *action=BR_CONTINUE;
   
@@ -69,7 +96,7 @@ HRESULT IdeSite::close()
   sockaddr_in addr;
   requestor->getserveraddr(&addr);
   
-  QString mes = "\n:SESSIONEND:";
+  QString mes = "::log:Stop session on ";
   mes+=inet_ntoa(addr.sin_addr);
   emit message(mes);
   

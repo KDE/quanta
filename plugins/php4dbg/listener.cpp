@@ -47,12 +47,12 @@ void Listener::log(ListenerLogKind kind, char *message,...)
   
   QString mes;
   
-  mes.sprintf("\n:LOG:");
+  mes.sprintf("::log:");
   
   switch ((int)kind) {
-    case 0: mes+="MSG:";break;
-    case 1: mes+="WRN:";break;
-    case 2: mes+="ERR:";break;
+    case 0: mes+="Message - ";break;
+    case 1: mes+="Warning - ";break;
+    case 2: mes+="Error - ";break;
   }
   mes+=buf;
   
