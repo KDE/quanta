@@ -551,8 +551,8 @@ int Document::createTempFile()
  closeTempFile();
  tempFile = new KTempFile(tmpDir);
  tempFile->setAutoDelete(true);
- tempFile->textStream()->setEncoding(QTextStream::Locale);
-// tempFile->textStream()->setCodec(QTextCodec::codecForName(dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding()));
+// tempFile->textStream()->setEncoding(QTextStream::Locale);
+ tempFile->textStream()->setCodec(QTextCodec::codecForName(dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding()));
  * (tempFile->textStream()) << editIf->text();
 
  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
