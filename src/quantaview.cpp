@@ -882,7 +882,7 @@ bool QuantaView::saveModified(bool ask)
 
       case KMessageBox::No :
            {
-	     m_document->removeBackup(quantaApp->config());
+      	     m_document->removeBackup(quantaApp->config());
       	     completed=true;
 	   }
            break;
@@ -895,7 +895,8 @@ bool QuantaView::saveModified(bool ask)
            completed=false;
            break;
     }
-  }
+  } else
+    m_document->removeBackup(quantaApp->config());
   return completed;
 }
 
