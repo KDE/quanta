@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32061">
+<kpartgui name="quanta" version="32062">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -125,7 +125,7 @@
   </Menu>
 
   <Merge/>
-  
+
   <Menu name="tools"><text>T&amp;ools</text>
     <Merge/>
     <Separator/>
@@ -215,6 +215,10 @@
   </ToolBar>
 
   <Menu name="popup_editor">
+    <Action name="edit_cut" />
+    <Action name="edit_copy" />
+    <Action name="edit_paste" />
+    <Separator/>
     <Action name="edit_current_tag"/>
     <Action name="select_tag_area"/>
     <Action name="context_help"/>

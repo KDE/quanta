@@ -544,8 +544,6 @@ private:
 
   KProcess* m_execCommandPS;
   QString m_scriptOutput;
-  // remember the old actions for the context menu
-  KAction *m_oldContextCut, *m_oldContextCopy, *m_oldContextPaste;
 
 protected: // Protected attributes
   /** Timer to refresh the structure tree. */

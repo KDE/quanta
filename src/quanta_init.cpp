@@ -249,7 +249,6 @@ void QuantaInit::initQuanta()
 
   QPopupMenu *contextMenu = (QPopupMenu*)(m_quanta->guiFactory())->container("popup_editor", m_quanta);
   connect(contextMenu, SIGNAL(aboutToShow()), m_quanta, SLOT(slotContextMenuAboutToShow()));
-  contextMenu->insertSeparator(0);  // XML gui does not support a separator at the beginning
 
   connect(m_quanta->m_messageOutput, SIGNAL(clicked(const QString&, int, int)),
           m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));

@@ -239,9 +239,6 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
    connect(this, SIGNAL(dockWidgetHasUndocked(KDockWidget *)), this, SLOT(slotDockWidgetHasUndocked(KDockWidget *)));
   connect(tabWidget(), SIGNAL(initiateDrag(QWidget *)), this, SLOT(slotTabDragged(QWidget*)));
 
-  m_oldContextCut = 0L;
-  m_oldContextCopy = 0L;
-  m_oldContextPaste = 0L;
   m_oldKTextEditor = 0L;
   m_previewToolView = 0L;
   m_documentationToolView = 0L;
@@ -1836,29 +1833,6 @@ void QuantaApp::slotContextMenuAboutToShow()
   if (w)
   {
     QPopupMenu *popup = static_cast<QPopupMenu*>(factory()->container("popup_editor",this));
-    if (popup) {
-      if (m_oldContextCut) {
-        m_oldContextCut->unplug(popup);
-      }
-      KTextEditor::View* view = w->view();
-      m_oldContextCut = view->actionCollection()->action("edit_cut");
-      if (m_oldContextCut)
-        m_oldContextCut->plug(popup, 0);
-
-      if (m_oldContextCopy) {
-        m_oldContextCopy->unplug(popup);
-      }
-      m_oldContextCopy = view->actionCollection()->action("edit_copy");
-      if (m_oldContextCopy)
-        m_oldContextCopy->plug(popup, 1);
-
-      if (m_oldContextPaste) {
-        m_oldContextPaste->unplug(popup);
-      }
-      m_oldContextPaste = view->actionCollection()->action("edit_paste");
-      if (m_oldContextPaste)
-        m_oldContextPaste->plug(popup, 2);
-    }
     QString name;
     uint line, col;
     int bl, bc, el, ec;
@@ -4711,22 +4685,6 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
 
 void QuantaApp::slotFileClosed()
 {
-   QPopupMenu *popup = static_cast<QPopupMenu*>(factory()->container("popup_editor",this));
-   if (popup)
-   {
-      if (m_oldContextCut) {
-          m_oldContextCut->unplug(popup);
-      }
-      if (m_oldContextCopy) {
-          m_oldContextCopy->unplug(popup);
-      }
-        if (m_oldContextPaste) {
-          m_oldContextPaste->unplug(popup);
-      }
-   }
-   m_oldContextCopy = 0L;
-   m_oldContextCut = 0L;
-   m_oldContextPaste = 0L;
 }
 
 void QuantaApp::slotCVSCommandExecuted(const QString& command, const QStringList& files)
