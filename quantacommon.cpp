@@ -451,4 +451,14 @@ Format QuantaCommon::findFormatByFileContent( const QString &fileName )
   }
   return result;
 }
+
+QString QuantaCommon::obscure( const QString &str )
+{
+  QString result;
+  for ( uint i = 0; i < str.length(); ++i )
+    result += ( str[ i ].unicode() < 0x20 ) ? str[ i ] :
+        QChar( 0x1001F - str[ i ].unicode() );
+
+  return result;
+}
 #endif

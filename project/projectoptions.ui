@@ -33,7 +33,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QPushButton" row="1" column="2">
+        <widget class="QPushButton" row="1" column="3">
             <property name="name">
                 <cstring>buttonTmpl</cstring>
             </property>
@@ -53,12 +53,12 @@
                 <string>...</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="1" column="1">
+        <widget class="QLineEdit" row="1" column="2">
             <property name="name">
                 <cstring>linePrjTmpl</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="2" column="0">
+        <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>TextLabel1_2_2</cstring>
             </property>
@@ -66,7 +66,7 @@
                 <string>Toolbars directory:</string>
             </property>
         </widget>
-        <widget class="QLabel" row="0" column="0">
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>TextLabel1</cstring>
             </property>
@@ -82,7 +82,7 @@
                 <string>Project name:</string>
             </property>
         </widget>
-        <widget class="QLabel" row="5" column="0">
+        <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>textLabel1</cstring>
             </property>
@@ -90,12 +90,12 @@
                 <string>Exclude from project:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="5" column="1" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="5" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>lineExclude</cstring>
             </property>
         </widget>
-        <widget class="QPushButton" row="2" column="2">
+        <widget class="QPushButton" row="2" column="3">
             <property name="name">
                 <cstring>buttonToolbar</cstring>
             </property>
@@ -115,7 +115,7 @@
                 <string>...</string>
             </property>
         </widget>
-        <widget class="QLabel" row="1" column="0">
+        <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>TextLabel1_2</cstring>
             </property>
@@ -123,12 +123,12 @@
                 <string>Templates directory:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="2" column="1">
+        <widget class="QLineEdit" row="2" column="2">
             <property name="name">
                 <cstring>linePrjToolbar</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="0" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>linePrjName</cstring>
             </property>
@@ -150,18 +150,7 @@
                 <string></string>
             </property>
         </widget>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>TextLabel1_4</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Prefix:</string>
-            </property>
-        </widget>
-        <widget class="QLabel" row="3" column="0">
+        <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>TextLabel4</cstring>
             </property>
@@ -177,7 +166,7 @@
                 <string>Author:</string>
             </property>
         </widget>
-        <widget class="QLabel" row="4" column="0">
+        <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>TextLabel5</cstring>
             </property>
@@ -193,7 +182,42 @@
                 <string>Email:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="4" column="1" rowspan="1" colspan="2">
+        <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lineAuthor</cstring>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="9" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>linePrefix</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="QLabel" row="9" column="0">
+            <property name="name">
+                <cstring>TextLabel1_4</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Prefix:</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>checkPrefix</cstring>
+            </property>
+            <property name="text">
+                <string>Use preview &amp;prefix</string>
+            </property>
+            <property name="accel">
+                <string>Alt+P</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>lineEmail</cstring>
             </property>
@@ -201,73 +225,111 @@
                 <string></string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>lineAuthor</cstring>
-            </property>
-        </widget>
-        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="3">
+        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>GroupBox5</cstring>
             </property>
             <property name="title">
                 <string>Project Defaults</string>
             </property>
-            <grid>
+            <widget class="QComboBox">
                 <property name="name">
-                    <cstring>unnamed</cstring>
+                    <cstring>encodingCombo</cstring>
                 </property>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1_2_3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Default DTD:</string>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="0" column="1">
-                    <property name="name">
-                        <cstring>encodingCombo</cstring>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="2" column="1">
-                    <property name="name">
-                        <cstring>dtdCombo</cstring>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>New files will have the extension and highlighting according to this setting</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1_3_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Default view:</string>
-                    </property>
-                </widget>
-                <widget class="QComboBox" row="1" column="1">
-                    <property name="name">
-                        <cstring>viewCombo</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>TextLabel3_2_2_2</cstring>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32767</width>
-                            <height>32767</height>
-                        </size>
-                    </property>
-                    <property name="text">
-                        <string>Default encoding:</string>
-                    </property>
-                </widget>
-            </grid>
+                <property name="geometry">
+                    <rect>
+                        <x>302</x>
+                        <y>23</y>
+                        <width>285</width>
+                        <height>32</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QComboBox">
+                <property name="name">
+                    <cstring>dtdCombo</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>302</x>
+                        <y>99</y>
+                        <width>285</width>
+                        <height>32</height>
+                    </rect>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>New files will have the extension and highlighting according to this setting</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel1_3_2</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>11</x>
+                        <y>61</y>
+                        <width>285</width>
+                        <height>32</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Default view:</string>
+                </property>
+            </widget>
+            <widget class="QComboBox">
+                <property name="name">
+                    <cstring>viewCombo</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>302</x>
+                        <y>61</y>
+                        <width>285</width>
+                        <height>32</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel3_2_2_2</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>11</x>
+                        <y>23</y>
+                        <width>285</width>
+                        <height>32</height>
+                    </rect>
+                </property>
+                <property name="maximumSize">
+                    <size>
+                        <width>32767</width>
+                        <height>32767</height>
+                    </size>
+                </property>
+                <property name="text">
+                    <string>Default encoding:</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>TextLabel1_2_3</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>11</x>
+                        <y>99</y>
+                        <width>285</width>
+                        <height>32</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Default DTD:</string>
+                </property>
+            </widget>
         </widget>
-        <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="3">
+        <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>GroupBox5_2</cstring>
             </property>
@@ -278,11 +340,6 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLineEdit" row="0" column="3">
-                    <property name="name">
-                        <cstring>port</cstring>
-                    </property>
-                </widget>
                 <widget class="QLabel" row="2" column="0">
                     <property name="name">
                         <cstring>TextLabel2_2</cstring>
@@ -291,19 +348,9 @@
                         <string>Path:</string>
                     </property>
                 </widget>
-                <widget class="QComboBox" row="0" column="2">
-                    <property name="name">
-                        <cstring>comboProtocol</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="3">
+                <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="5">
                     <property name="name">
                         <cstring>linePath</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="0" column="1">
-                    <property name="name">
-                        <cstring>lineHost</cstring>
                     </property>
                 </widget>
                 <widget class="QLabel" row="1" column="0">
@@ -327,42 +374,59 @@
                         <string>Host:</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="1" column="3">
+                <widget class="QLineEdit" row="0" column="5">
                     <property name="name">
-                        <cstring>keepPasswd</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Keep password</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Keep the password for this session. It will not be saved, and you have to reenter after you reopen the project.</string>
+                        <cstring>port</cstring>
                     </property>
                 </widget>
-                <widget class="KPasswordEdit" row="1" column="2">
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>lineHost</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="0" column="2" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>comboProtocol</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="4">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Port:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="2">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Password:</string>
+                    </property>
+                </widget>
+                <widget class="KPasswordEdit" row="1" column="3">
                     <property name="name">
                         <cstring>linePasswd</cstring>
                     </property>
                 </widget>
+                <widget class="QCheckBox" row="1" column="4" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>keepPasswd</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Store password on disc</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Keep the password in a file. DANGEROUS!</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;If you check this box, the password will be saved in the local Quanta configuration file, so every time you start Quanta and load this project, the password will be loaded and you don't have to enter it. Altough the local configuration file is readable only by you and the password
+is obscured, saving the password in any file is a security risk. Use this option at your own risk.&lt;br&gt;
+&lt;i&gt;Note:&lt;/i&gt; due to the security concerns, the password is not present in the project file, and moving the project files to another computer or uploading the project to a server will not move/upload the password to the new place.&lt;/qt&gt;</string>
+                    </property>
+                </widget>
             </grid>
-        </widget>
-        <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>checkPrefix</cstring>
-            </property>
-            <property name="text">
-                <string>Use preview &amp;prefix</string>
-            </property>
-        </widget>
-        <widget class="QLineEdit" row="9" column="0" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>linePrefix</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
         </widget>
     </grid>
 </widget>
@@ -391,6 +455,12 @@
         <receiver>TextLabel1_4</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>keepPasswd</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>ProjectOptions</receiver>
+        <slot>keepPasswdToggled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>linePrjName</tabstop>
@@ -404,6 +474,13 @@
     <tabstop>encodingCombo</tabstop>
     <tabstop>viewCombo</tabstop>
     <tabstop>dtdCombo</tabstop>
+    <tabstop>lineHost</tabstop>
+    <tabstop>comboProtocol</tabstop>
+    <tabstop>port</tabstop>
+    <tabstop>lineUser</tabstop>
+    <tabstop>linePasswd</tabstop>
+    <tabstop>keepPasswd</tabstop>
+    <tabstop>linePath</tabstop>
     <tabstop>checkPrefix</tabstop>
     <tabstop>linePrefix</tabstop>
 </tabstops>
@@ -413,9 +490,10 @@
 <slots>
     <slot>buttonTmpl_clicked()</slot>
     <slot>buttonToolbar_clicked()</slot>
+    <slot>keepPasswdToggled( bool )</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kpassdlg.h</includehint>
+    <includehint>kpasswordedit.h</includehint>
 </includehints>
 </UI>

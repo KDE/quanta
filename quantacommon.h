@@ -154,6 +154,7 @@ pointer must be deleted by the caller!! */
 
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
   static Format findFormatByFileContent( const QString& fileName );
+  static QString obscure( const QString &str );
 #endif
 };
 

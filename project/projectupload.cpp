@@ -90,7 +90,7 @@ void  ProjectUpload::initProjectInfo(Project *prg)
   keepPasswd->setChecked(p->keepPasswd);
   if (p->keepPasswd)
   {
-    linePasswd->setText(p->passwd);
+    linePasswd->insert(p->passwd);
   } else
   {
     linePasswd->clear();
@@ -153,8 +153,8 @@ void ProjectUpload::slotBuildTree()
        int uploadTime = el.attribute("upload_time","1").toInt();
        int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
        el.setAttribute("modified_time", modifiedTime);
-       kdDebug(24000) << "Last upload at: " << uploadTime << endl;
-       kdDebug(24000) << "Last modified at: " << modifiedTime << endl;
+//       kdDebug(24000) << "Last upload at: " << uploadTime << endl;
+//       kdDebug(24000) << "Last modified at: " << modifiedTime << endl;
 
        if ( uploadTime < modifiedTime)
        {
@@ -218,11 +218,12 @@ void ProjectUpload::startUpload()
   baseUrl->setPort(port->text().toInt());
   baseUrl->setHost(lineHost->text());
   baseUrl->setPath(path);
-  baseUrl->setPass(linePasswd->text());
+  password = linePasswd->password();
+  baseUrl->setPass(password);
   if (keepPasswd->isChecked())
   {
      p->keepPasswd = true;
-     p->passwd = linePasswd->text();
+     p->passwd = password;
   } else
   {
      p->keepPasswd = false;
@@ -236,9 +237,10 @@ void ProjectUpload::startUpload()
   totalProgress->setTotalSteps(selectedNum);
   uploadInProgress = true;
   suspendUpload = false;
+  user = lineUser->text();
   KURL u = *baseUrl;
   u.setPath("");
-  u.setUser(lineUser->text());
+  u.setUser(user);
   if (QExtFileInfo::exists(u))
   {
     upload();
@@ -255,8 +257,6 @@ void ProjectUpload::startUpload()
 void ProjectUpload::upload()
 {
   if ( stopUpload ) return;
-  QString pass = linePasswd->text();
-  QString user = lineUser->text();
   KURL dir;
   KURL to;
 
@@ -277,10 +277,10 @@ void ProjectUpload::upload()
       }
 
       to.setUser( user );
-      to.setPass( pass );
+      to.setPass( password );
 
       dir.setUser( user );
-      dir.setPass( pass );
+      dir.setPass( password );
 
       if ( !madeDirs.contains(dir) )
       {
@@ -407,7 +407,7 @@ void ProjectUpload::slotUploadNext()
       if ( el.nodeName() == "item"  &&  el.attribute("url") == QuantaCommon::qUrl(currentURL) )
       {
         el.setAttribute( "upload_time", el.attribute("modified_time") );
-        kdDebug(24000) << "Upload time for " << el.attribute("url") << " is: " << el.attribute("upload_time") << "\n";
+//        kdDebug(24000) << "Upload time for " << el.attribute("url") << " is: " << el.attribute("upload_time") << "\n";
         break;
       }
     }

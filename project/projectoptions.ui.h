@@ -9,6 +9,8 @@
 
 #include <kfiledialog.h>
 #include <kdeversion.h>
+#include <kmessagebox.h>
+#include <klocale.h>
 
 void ProjectOptions::buttonTmpl_clicked()
 {
@@ -30,4 +32,13 @@ void ProjectOptions::buttonToolbar_clicked()
    {
      linePrjToolbar->setText(url.url());
    }
+}
+
+
+void ProjectOptions::keepPasswdToggled( bool )
+{
+  if (keepPasswd->isChecked())
+  {
+      KMessageBox::information(this, i18n("<qt>Saving the password is not recommended. Please read the <b>What's This</b> information for this checkbox.</qt>"), i18n("Security warning"), "SavePasswordWarning"); 
+  }
 }

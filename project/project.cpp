@@ -63,6 +63,10 @@
 #include <kio/netaccess.h>
 #include <kurlrequesterdlg.h>
 #include <kurlrequester.h>
+#include <kprotocolinfo.h>
+#include <kpassdlg.h>
+#include <kstringhandler.h>
+#include <kdeversion.h>
 
 // application headers
 #include "../dialogs/copyto.h"
@@ -87,7 +91,6 @@ Project::Project( QWidget *, const char *name )
   projectName = QString::null;
   config = 0L;
   m_modified=false;
-  olfwprj=false;
   usePreviewPrefix=false;
   m_defaultDTD = qConfig.defaultDocType;
   excludeRx.setPattern(".*~$");
@@ -463,6 +466,16 @@ void Project::slotLoadProject(const KURL &a_url)
         dom.setContent( &f );
         f.close();
         loadProjectXML();
+        //load the password for this project
+        KConfig *config = quantaApp->config();
+        config->setGroup("Projects");
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
+        passwd = QuantaCommon::obscure(config->readEntry(projectName, ""));
+#else
+        passwd = KStringHandler::obscure(config->readEntry(projectName, ""));
+#endif
+        keepPasswd = !passwd.isEmpty();
+        storePasswdInFile = keepPasswd;
         openCurrentView();
         emit newProjectLoaded();
       } else
@@ -1169,6 +1182,38 @@ void Project::slotOptions()
   optionsPage->lineAuthor->setText( author );
   optionsPage->lineEmail->setText( email );
 
+  QDomElement uploadEl = dom.firstChild().firstChild().namedItem("upload").toElement();
+
+  optionsPage->lineHost->setText(uploadEl.attribute("remote_host",""));
+  optionsPage->lineUser->setText(uploadEl.attribute("user",""));
+  optionsPage->linePath->setText(uploadEl.attribute("remote_path",""));
+  optionsPage->port->setText( uploadEl.attribute("remote_port","") );
+  optionsPage->keepPasswd->setChecked(storePasswdInFile);
+  if (storePasswdInFile)
+  {
+    optionsPage->linePasswd->insert(passwd);
+  } else
+  {
+    optionsPage->linePasswd->clear();
+  }
+
+  QString def_p = uploadEl.attribute("remote_protocol","ftp");
+  QStringList protocols = KProtocolInfo::protocols();
+  protocols.sort();
+  for ( uint i = 0; i < protocols.count(); i++ )
+  {
+    QString p = protocols[i];
+    if ( KProtocolInfo::supportsWriting(p) &&
+         KProtocolInfo::supportsMakeDir(p) &&
+         KProtocolInfo::supportsDeleting(p) )
+    {
+      optionsPage->comboProtocol->insertItem(p);
+      if ( p == def_p )
+        optionsPage->comboProtocol->setCurrentItem( optionsPage->comboProtocol->count()-1 );
+    }
+  }
+
+
   QString excludeStr;
   for (uint i = 0; i < excludeList.count(); i++)
   {
@@ -1371,7 +1416,38 @@ void Project::slotOptions()
         el.setAttribute("projectview", defaultView);
        }
     }
+
+    QString path = optionsPage->linePath->text();
+    if (!path.startsWith("/"))
+      path.prepend("/");
+    uploadEl.setAttribute("remote_host", optionsPage->lineHost->text() );
+    uploadEl.setAttribute("remote_path", path);
+    uploadEl.setAttribute("remote_port", optionsPage->port->text() );
+    uploadEl.setAttribute("user", optionsPage->lineUser->text() );
+    uploadEl.setAttribute("remote_protocol", optionsPage->comboProtocol->currentText() );
+
     loadProjectXML();
+
+    KConfig *config = quantaApp->config();
+    config->setGroup("Projects");
+    if (optionsPage->keepPasswd->isChecked())
+    {
+      passwd = optionsPage->linePasswd->password();
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
+      config->writeEntry(projectName, QuantaCommon::obscure(passwd));
+#else
+      config->writeEntry(projectName, KStringHandler::obscure(passwd));
+#endif
+      keepPasswd = true;
+    }
+    else
+    {
+      config->deleteEntry(projectName);
+      keepPasswd = false;
+      passwd = "";
+    }
+    storePasswdInFile = keepPasswd;
+    config->sync();
     m_modified = true;
 
     emit setProjectName( projectName );

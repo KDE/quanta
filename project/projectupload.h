@@ -30,7 +30,7 @@
   */
 
 class KURL;
-  
+
 class ProjectUpload : public ProjectUploadS
 {
   Q_OBJECT
@@ -56,7 +56,7 @@ protected slots:
   virtual void resizeEvent( QResizeEvent * );
   virtual void reject();
 
-private:  
+private:
   void buildSelectedItemList();
   KURL::List modified; // modified files
   KURL::List toUpload; // list of files , still didn't uploaded
@@ -68,6 +68,8 @@ private:
   bool stopUpload;
   bool uploadInProgress;
   bool suspendUpload;
+  QString password;
+  QString user;
 
   void initProjectInfo(Project *p);
 

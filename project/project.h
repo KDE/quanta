@@ -180,7 +180,7 @@ private:
   KConfig *config;
 
   bool m_modified;
-  bool olfwprj; //for internal use
+  bool storePasswdInFile;
 
   QBuffer buff;
   QRegExp excludeRx;
