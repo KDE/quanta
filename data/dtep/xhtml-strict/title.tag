@@ -2,7 +2,7 @@
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="title" hasI18n="1">
-     <attr name="id" type="input">
+     <attr name="id" type="list" source="dcop" interface="QuantaIf" method="idSelectors()" arguments="" >
         <text>Id</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />

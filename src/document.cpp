@@ -1198,6 +1198,14 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
       values = new QStringList(quantaApp->selectors(tagName));
       deleteValues = true;
     }
+  } else
+  if (attribute.lower() == "id")
+  {
+    if (!values)
+    {
+      values = new QStringList(quantaApp->idSelectors());
+      deleteValues = true;
+    }
   }
   if (values)
   {

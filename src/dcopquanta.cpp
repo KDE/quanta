@@ -14,11 +14,11 @@
  *                                                                         *
  ***************************************************************************/
 
-//kde includes 
+//kde includes
 
 //qt includes
 #include <qregexp.h>
- 
+
 //app includes
 #include "dcopquanta.h"
 #include "node.h"
@@ -28,7 +28,7 @@ extern GroupElementMapList globalGroupMap;
 DCOPQuanta::DCOPQuanta() : DCOPObject("QuantaIf")
 {
 }
- 
+
 QStringList DCOPQuanta::selectors(const QString& tag)
 {
   QStringList selectorList;
@@ -40,7 +40,7 @@ QStringList DCOPQuanta::selectors(const QString& tag)
     {
       QString selectorName = key.mid(10);
       QString tmpStr;
-      int index = selectorName.find(QRegExp("\\.|\\#|\\:"));          
+      int index = selectorName.find(QRegExp("\\.|\\#|\\:"));
       if (index != -1)
       {
         tmpStr = selectorName.left(index).lower();
@@ -51,6 +51,26 @@ QStringList DCOPQuanta::selectors(const QString& tag)
       if (tmpStr.isEmpty() || tag.lower() == tmpStr || tmpStr == "*")
       {
         selectorList << selectorName.mid(index + 1).replace('.',' ');
+      }
+     }
+  }
+  return selectorList;
+}
+
+QStringList DCOPQuanta::idSelectors()
+{
+  QStringList selectorList;
+  GroupElementMapList::Iterator it;
+  for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
+  {
+    QString key = it.key();
+    if (key.startsWith("Selectors|"))
+    {
+      QString selectorName = key.mid(10);
+      QString tmpStr;
+      if (selectorName.startsWith("#"))
+      {
+          selectorList << selectorName.mid(1);
       }
      }
   }

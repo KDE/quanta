@@ -89,7 +89,7 @@
     <textlocation col="0" row="3" />
     <location col="1" row="3" colspan="2" />
   </attr>
-  <attr name="id" type="input">
+  <attr name="id" type="list" source="dcop" interface="QuantaIf" method="idSelectors()" arguments="" >
     <text>Id</text>
     <textlocation col="0" row="4" />
     <location col="1" row="4" colspan="2" />

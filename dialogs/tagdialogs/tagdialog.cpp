@@ -174,28 +174,16 @@ void TagDialog::parseTag()
     Tagxml *extraPage = 0L;
     dtdConfig->setGroup(QString("Page%1").arg(i));
     QString title = dtdConfig->readEntry("Title");
-    QStrList groupList;
-    dtdConfig->readListEntry("Groups", groupList);
+    QStringList groupList;
+    groupList = dtdConfig->readListEntry("Groups");
     QDomDocument extraDoc; //build an internal tag XML for the groups
     bool addPage = false;
     QString docString = "<!DOCTYPE TAGS>\n<TAGS>\n";
     docString += QString("<tag name=\"Page%1\">\n").arg(i);
-/*    AttributeList *attrs = new AttributeList;
     for (uint j = 0; j < groupList.count(); j++)
     {
-      QString groupName = QString(groupList.at(j)).stripWhiteSpace();
-      if (dtdTag->commonGroups.contains(groupName)) //add the attributes of this common tag to a new tab
-      {
-        AttributeList *groupAttrs = dtdTag->parentDTD->commonAttrs->find(groupName);
-        for (uint k = 0; k < groupAttrs->count(); k++)
-        {
-          attrs->append(groupAttrs->at(k));
-        }
-        addPage = true;
-      }
+       groupList[j] = groupList[j].stripWhiteSpace();
     }
-    docString += QuantaCommon::xmlFromAttributes(attrs); */
-
     QDomDocument commonDoc;
     QString commonFileName = QFileInfo(dtdTag->fileName()).dirPath() + "/common.tag";
     if (QFile(commonFileName).exists())
@@ -210,7 +198,7 @@ void TagDialog::parseTag()
         {
           QDomNode node = nodeList.item(j);
           QString nodeTagName = node.toElement().attribute("name");
-          if (groupList.contains(nodeTagName)) //add the attributes of this common tag to a new tab
+          if (groupList.contains(nodeTagName) && dtdTag->commonGroups.contains(nodeTagName)) //add the attributes of this common tag to a new tab
           {
             QString s;
             QTextStream str(&s, IO_ReadWrite);
@@ -244,8 +232,8 @@ void TagDialog::parseTag()
 
             }
             docString += s;
+            addPage = true;
           }
-          addPage = true;
         }
         commonFile.close();
       }

@@ -3898,6 +3898,11 @@ QStringList QuantaApp::selectors(const QString &tag)
   return dcopQuanta->selectors(tag);
 }
 
+QStringList QuantaApp::idSelectors()
+{
+  return dcopQuanta->idSelectors();
+}
+
 void QuantaApp::slotEditCurrentTag()
 {
   Document *w = ViewManager::ref()->activeDocument();

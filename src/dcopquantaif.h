@@ -26,6 +26,7 @@ class DCOPQuantaIf : virtual public DCOPObject
   k_dcop:
 
   virtual QStringList selectors(const QString &tag) = 0;
+  virtual QStringList idSelectors() = 0;
 };
- 
+
 #endif

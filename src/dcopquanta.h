@@ -25,8 +25,9 @@ class DCOPQuanta : public DCOPQuantaIf
 public:
   DCOPQuanta();
   ~DCOPQuanta() {};
-  
+
   virtual QStringList selectors(const QString& tag);
+  virtual QStringList idSelectors();
 };
 
 #endif
