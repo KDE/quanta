@@ -1,28 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="head" hasI18n="1">
-    
+
     <attr name="profile" type="url">
-        <text>Profile</text>
+        <text>profile</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
     </attr>
 
-    <spacer orientation="h">
-        <location col="0" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="1" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="2" row="8" />
-    </spacer>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="3" />
-    </spacer>
+<children>
+<child name="link" />
+<child name="meta" />
+<child name="object" />
+<child name="title" />
+</children>
 
 </tag>
 </TAGS>

@@ -74,6 +74,9 @@ public:
        WARNING: it doesn't behave like DOM::Node::nextSibling() which give the next Node, or 0L if there is no next Node */
  Node *nextSibling();
  Node *previousSibling();
+ /** Returns the next node, or the parent's next, if next doesn't exists,
+  or the granparent's next, if parent's next doesn't exists, etc. */
+ Node *nextNotChild();
  int size();
 
  #ifdef BUILD_KAFKAPART

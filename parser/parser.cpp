@@ -1542,7 +1542,7 @@ Node *Parser::rebuild(Document *w)
          {
             next->prev = node;
             node->next = next;
-         } else // else append it as the fist child of the previous
+         } else // else append it as the first child of the previous
          {
            prev->child = next;
            next->prev = 0L;
@@ -1585,7 +1585,7 @@ Node *Parser::rebuild(Document *w)
 
    QString invalidStr = QString("Invalid area: %1,%2,%3,%4").arg(bLine).arg(bCol).arg(eLine).arg(eCol);
    kdDebug(24000) << invalidStr << "\n";
-
+   coutTree(baseNode,  2);
    //something strange has happened, like moving text with D&D inside the editor
    if (eLine < bLine || (eLine == bLine && eCol <= bCol))
    {
@@ -1607,6 +1607,8 @@ Node *Parser::rebuild(Document *w)
    firstNode->child = 0L;
    Node *lastInserted = 0L;
    node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
+   kdDebug(24000) << "After parseArea: "<< endl;
+   coutTree(baseNode,  2);
 
    Node *swapNode = firstNode->nextSibling();
    Node *p = (lastInserted)?lastInserted->nextSibling():lastInserted;
@@ -1695,23 +1697,7 @@ Node *Parser::rebuild(Document *w)
         modifs.NodeModifList.append(modif);
         //delete lastInserted;
         lastInserted = lastNode;
-        if (lastNode->next)
-        {
-          lastNode = lastNode->next;
-        } else
-        {
-          while (lastNode)
-          {
-            if (lastNode->parent && lastNode->parent->next)
-            {
-              lastNode = lastNode->parent->next;
-              break;
-            } else
-            {
-              lastNode = lastNode->parent;
-            }
-          }
-        }
+        lastNode = lastNode->nextNotChild();
       }
 
     node = lastInserted;
@@ -1737,7 +1723,7 @@ Node *Parser::rebuild(Document *w)
         }
       }
 
-    if (goUp)
+    if (goUp) //lastnode closes the node->parent
     {
       if (lastNode->prev)
         lastNode->prev->next = 0L;
@@ -1753,33 +1739,25 @@ Node *Parser::rebuild(Document *w)
       lastNode->closesPrevious = true;
     } else
     {
+     /* if (node->tag->type == Tag::XmlTag)
+      {
+        node->child = lastNode;
+        node->next = 0L;
+        lastNode->parent = node;
+        lastNode->prev = 0L;
+      } else*/
+      {
       if (lastNode->prev && lastNode->prev->next == lastNode)
           lastNode->prev->next = 0L;
       node->next = lastNode;
       lastNode->prev = node;
       lastNode->parent = node->parent;
-    }
-    node = lastNode;
-    if (lastNode->next)
-    {
-      lastNode = lastNode->next;
-    } else
-    {
-      while (lastNode)
-      {
-        if (lastNode->parent && lastNode->parent->next)
-        {
-          lastNode = lastNode->parent->next;
-          break;
-        } else
-        {
-          lastNode = lastNode->parent;
-        }
       }
     }
-
-    }
+    node = lastNode;
+    lastNode = lastNode->nextNotChild();
    }
+ }
    /**kdDebug(24000)<< "END"<< endl;
    coutTree(baseNode,  2);
    kdDebug(24000)<< "************* End User Modification *****************" << endl;*/

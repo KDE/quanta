@@ -129,6 +129,29 @@ Node *Node::previousSibling()
   return result;
 }
 
+Node *Node::nextNotChild()
+{
+  if (next)
+      return next;
+  else
+  {
+    Node *n = this;
+    while (n)
+    {
+      if (n->parent && n->parent->next)
+      {
+        n = n->parent->next;
+        break;
+      } else
+      {
+        n = n->parent;
+      }
+    }
+
+    return n;
+  }
+}
+
 int Node::size()
 {
   int l = tag->size();

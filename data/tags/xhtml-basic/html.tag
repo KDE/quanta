@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="html" hasI18n="1">
-    
+
     <attr name="XHTML" type="input">
-        <text>Version</text>
+        <text>XHTML</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="2" />
     </attr>
@@ -13,22 +14,11 @@
         <textlocation col="0" row="1" />
         <location col="1" row="1" colspan="2" />
     </attr>
-	
-    <spacer orientation="h">
-        <location col="0" row="8" />
-    </spacer>
 
-    <spacer orientation="h">
-        <location col="1" row="8" />
-    </spacer>
-
-    <spacer orientation="h">
-        <location col="2" row="8" />
-    </spacer>
-
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="3" />
-    </spacer>
+<children>
+<child name="body" />
+<child name="head" />
+</children>
 
 </tag>
 </TAGS>

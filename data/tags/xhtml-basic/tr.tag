@@ -1,42 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE TAGS>
 <TAGS>
 <tag name="tr" hasCore="1" hasI18n="1" optional="1">
 
     <attr name="align" type="list">
-        <text>Align</text>
+        <text>align</text>
         <textlocation col="0" row="0" />
         <items>
             <item>left</item>
             <item>center</item>
             <item>right</item>
+            <item>justify</item>
+            <item>char</item>
         </items>
         <location col="1" row="0" colspan="1" />
     </attr>
 
     <attr name="valign" type="list">
-        <text>VAlign</text>
+        <text>valign</text>
         <textlocation col="0" row="1"  />
         <items>
             <item>baseline</item>
             <item>bottom</item>
-            <item>bottom</item>
-            <item>center</item>
+            <item>middle</item>
             <item>top</item>
         </items>
         <location col="1" row="1" colspan="1" />
     </attr>
 
-    <spacer orientation="v">
-        <location col="0" row="5" colspan="4" />
-    </spacer>
-    
-    <spacer orientation="v">
-        <location col="0" row="9" colspan="4" />
-    </spacer>
-   
     <stoppingtags>
         <stoppingtag name="tr" />
         <stoppingtag name="tfoot" />
     </stoppingtags>
+
+<children>
+<child name="td" />
+<child name="th" />
+</children>
 </tag>
 </TAGS>

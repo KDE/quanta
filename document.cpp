@@ -764,7 +764,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       showCodeCompletions( getTagCompletions(line, column) );
       handled = true;
     } else
-    if (string == ">" && !tagName.isEmpty() &&
+    if (string == ">" && !tagName.isEmpty() && tagName[0] != '!' &&
         tagName[0] != '/' && qConfig.closeTags &&
         currentDTD(true)->family == Xml) //close unknown tags
     {
@@ -824,6 +824,7 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
     }
     else if ( string == " " )
          {
+            kdDebug(24000) << "TagName: " << tagName << endl;
            bool showAttributes = true;
            Node *node = parser->nodeAt(line, column);
            if (node)
@@ -1728,7 +1729,7 @@ void Document::slotDelayedTextChanged()
     if (qConfig.updateClosingTags)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
-      node = parser->nodeAt(line, column, false);
+      node = parser->nodeAt(line, column, true);
       if (node)
       {
         Tag *tag;
