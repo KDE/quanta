@@ -79,6 +79,12 @@ void TagAttributeTree::setCurrentNode(Node *node)
   }
   if (group)
      group->setOpen(true);
+  if (!node->tag->nameSpace.isEmpty())
+  {
+    group = new TopLevelItem(this, group, i18n("Namespace"));
+        item = new AttributeBoolItem(this, group, i18n("name"), node->tag->nameSpace);
+
+  }
   if (qTag)
   {
     group = new TopLevelItem(this, group, i18n("Attributes"));

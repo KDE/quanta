@@ -76,6 +76,13 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
    pos++;
  }
  name = m_tagStr.mid(1, pos - 1);
+  int nameSpacePos = name.find(':');
+  if (nameSpacePos != -1)
+  {
+    nameSpace = name.left(nameSpacePos);
+    name = name.mid(++nameSpacePos);
+    m_nameCol += nameSpacePos;
+  }
  QString attrStr;
  TagAttr attr;
  int sPos = ++pos;

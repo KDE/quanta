@@ -127,6 +127,7 @@ public:
   //TODO: write setting/retrieving methods for the below attributes, and add
   //them the m_ prefix
   QString name;
+  QString nameSpace;
   QString cleanStr;
   int type;   //one of the TokenType
   bool single; // tags like <tag />
