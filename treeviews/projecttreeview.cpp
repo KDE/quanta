@@ -370,9 +370,9 @@ void ProjectTreeView::slotCreateFolder()
   {
      KURL url = currentURL();
      if (currentKFileTreeViewItem()->isDir())
-       url.setPath(url.path() + "/" + folderName);
+       url.setPath(url.path() + "/" + folderName + "/");
      else
-       url.setPath(url.directory() + "/" + folderName);
+       url.setPath(url.directory() + "/" + folderName +"/");
      if (QExtFileInfo::createDir(url))
      {
         emit insertToProject(url);
