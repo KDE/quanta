@@ -26,6 +26,7 @@
 #include <qcheckbox.h>
 #include <qtextstream.h>
 #include <qtabbar.h>
+#include <qtimer.h>
 #include <qradiobutton.h>
 
 // include files for KDE
