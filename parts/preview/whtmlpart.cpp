@@ -58,14 +58,9 @@ bool WHTMLPart::openURL(const KURL& url)
 {
   if (url == m_previewedURL)
   {
-    KHTMLView *html = view();
-    int xOffset = html->contentsX();
-    int yOffset = html->contentsY();
-    closeURL();
-    begin(url, xOffset, yOffset);
-    write(m_previewedText);
-    end();
-    return true;
+    KURL previewURL = url;
+    previewURL.setPath(url.path()  + ".preview");
+    return KHTMLPart::openURL(previewURL);
   } else
     return KHTMLPart::openURL(url);
 }

@@ -32,6 +32,7 @@
 #include <qradiobutton.h>
 #include <qimage.h>
 #include <qtimer.h>
+#include <qtextcodec.h>
 #include <qtextstream.h>
 #include <qtextedit.h>
 #include <qiodevice.h>
@@ -730,15 +731,32 @@ void QuantaApp::slotRepaintPreview()
     if (w->isUntitled())
     {
       m_htmlPart->begin(Project::ref()->projectBaseURL(), xOffset, yOffset);
+      m_htmlPart->write(text);
+      m_htmlPart->end();
     } else
     {
       url = Project::ref()->urlWithPrefix(w->url());
       m_htmlPart->setPreviewedURL(url, text);
-      m_htmlPart->begin(url, xOffset, yOffset);
+      KURL previewURL = url;
+      previewURL.setPath(url.path() + ".preview");
+      //save the content to disk, so preview with prefix works
+      KTempFile *tmpFile = new KTempFile(tmpDir);
+      QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
+      tmpFile->setAutoDelete(true);
+      QString encoding = quantaApp->defaultEncoding();
+      KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
+      if (encodingIf)
+        encoding = encodingIf->encoding();
+      if (encoding.isEmpty())
+        encoding = "utf8";  //final fallback
+      tmpFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
+      *(tmpFile->textStream()) << w->editIf->text();
+      tmpFile->close();
+      QExtFileInfo::copy(KURL::fromPathOrURL(tempFileName), previewURL, -1, true);
+      delete tmpFile;
+      m_htmlPart->openURL(url);
       m_htmlPart->addToHistory(url.url());
     }
-    m_htmlPart->write(text);
-    m_htmlPart->end();
    }
   m_htmlPart->show();
 }
@@ -1335,16 +1353,15 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     Document *w = view->document();
     if (w)
     {
-//        restoreFromTempfile(w);
-        w->view()->setFocus();
+      KURL url = Project::ref()->urlWithPrefix(w->url());
+      url.setPath(url.path() + ".preview");
+      KIO::NetAccess::del(url, this);
+      w->view()->setFocus();
     }
   }
 
-
+  KToggleAction *ta = 0L;
   int viewLayout = view->currentViewsLayout();
-
-   KToggleAction *ta = 0L;
-
   if (viewLayout == QuantaView::SourceOnly)
     ta = (KToggleAction *) actionCollection()->action( "show_quanta_editor" );
   else if (viewLayout == QuantaView::VPLOnly)

@@ -1951,12 +1951,15 @@ void Document::checkDirtyStatus()
       fileName = url().path();
   if (m_dirty)
   {
+    createTempFile();
     if (!fileName.isEmpty())
     {
       QDateTime modifTime = QFileInfo(fileName).lastModified();
       if (modifTime == m_modifTime)
         m_dirty = false;
-      /*
+    }
+    if (m_dirty)
+    {
       //check if the file is changed, also by file content. Might help to reduce
       //unwanted warning on NFS
       QFile f(fileName);
@@ -1964,11 +1967,11 @@ void Document::checkDirtyStatus()
       if (f.open(IO_ReadOnly) && tmpFile.open(IO_ReadOnly))
       {
         QString encoding = quantaApp->defaultEncoding();
-         KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
-         if (encodingIf)
-            encoding = encodingIf->encoding();
-         if (encoding.isEmpty())
-             encoding = "utf8";  //final fallback
+        KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
+        if (encodingIf)
+        encoding = encodingIf->encoding();
+        if (encoding.isEmpty())
+        encoding = "utf8";  //final fallback
 
         QString content;
         QTextStream stream(&f);
@@ -1983,11 +1986,10 @@ void Document::checkDirtyStatus()
           m_dirty = false;
         }
         f.close();
-    } */
+      }
     }
     if (m_dirty)
     {
-      createTempFile();
       DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, false, this);
       DirtyDialog *w = static_cast<DirtyDialog*>(dlg->mainWidget());
       QString kompareStr = KStandardDirs::findExe("kompare");
@@ -2001,10 +2003,10 @@ void Document::checkDirtyStatus()
           m_doc->setModified(false);
           m_doc->openURL(url());
       }
-      closeTempFile();
       m_modifTime = QFileInfo(fileName).lastModified();
       delete dlg;
     }
+    closeTempFile();
     m_dirty = false;
   }
 }
