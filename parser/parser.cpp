@@ -1074,6 +1074,8 @@ Node *Parser::rebuild(Document *w)
       if ( (lastInserted->tag->type == Tag::Empty || lastInserted->tag->type == Tag::Text) &&
             (lastNode->tag->type == Tag::Empty || lastNode->tag->type == Tag::Text))
       {
+        if (lastNode->prev)
+          lastNode->prev->next = 0L;
         lastNode->prev = lastInserted->prev;
         if (lastInserted->prev)
             lastInserted->prev->next = lastNode;

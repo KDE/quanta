@@ -86,7 +86,9 @@ Node* createTextNode(Document *write, Node *node, int eLine, int eCol, Node *par
   if (node)
   {
     node->tag->endPos(bLine, bCol);
-  }
+  } else
+  if (parentNode)
+    parentNode->tag->endPos(bLine, bCol);
   if (parentNode)
     dtd = parentNode->tag->dtd();
   eCol--;
@@ -177,9 +179,18 @@ Node* createScriptTagNode(Document *write, const AreaStruct &area, const QString
   nodeNum++;
   node->tag = tag;
   node->insideSpecial = true;
-  if (parentNode && !parentNode->child)
+  if (parentNode)
   {
-    parentNode->child = node;
+    if (!parentNode->child)
+        parentNode->child = node;
+    else
+    {
+        Node *n = parentNode->child;
+        while (n->next)
+          n = n->next;
+        n->next = node;
+        node->prev = n;
+    }
   } else
   if (currentNode)
   {
