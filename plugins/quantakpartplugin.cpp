@@ -249,4 +249,15 @@ void QuantaKPartPlugin::showGui(bool show)
   guiVisible = show;
 }
 
+QWidget *QuantaKPartPlugin::widget()
+{
+  if (isLoaded()) {
+    return m_part->widget();
+  } else {
+    return NULL;
+  }
+}
+
+
+
 #include "quantakpartplugin.moc"
