@@ -116,6 +116,9 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
         - more supported CVS commands in the context menus:
             - update to HEAD
             - update to tag/date
+            - revert
+            - add 
+            - remove 
         - added possibility to execute CVS commands on the main project directory
       
 

@@ -67,8 +67,22 @@ CVSService::CVSService(KActionCollection *ac)
   action = new KAction(i18n("&HEAD"), "vcs_update", 0, this, SLOT(slotUpdateToHead()), ac);
 #endif
   action->plug(updateToMenu);
-  action = new KAction(i18n("&Revert"), "reload", 0, this, SLOT(slotRevert()), ac);
+  action = new KAction(i18n("Re&vert"), "reload", 0, this, SLOT(slotRevert()), ac);
   action->plug(m_menu);
+  m_menu->insertSeparator();
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
+  action = new KAction(i18n("&Add to Repository..."), 0, this, SLOT(slotAdd()), ac);
+#else
+  action = new KAction(i18n("&Add to Repository..."), "vcs_add", 0, this, SLOT(slotAdd()), ac);
+#endif
+  action->plug(m_menu);
+#if KDE_VERSION < KDE_MAKE_VERSION(3,2,90)
+  action = new KAction(i18n("&Remove from Repository..."), 0, this, SLOT(slotRemove()), ac);
+#else
+  action = new KAction(i18n("&Remove from Repository..."), "vcs_remove", 0, this, SLOT(slotRemove()), ac);
+#endif
+  action->plug(m_menu);
+    
   m_cvsJob = 0L;
   m_repository = 0L;
   m_cvsService =0L;
@@ -264,7 +278,6 @@ void CVSService::slotCommit(const QStringList &files)
    }
 }
 
-
 void CVSService::slotRevert()
 {
   QStringList files;
@@ -299,11 +312,79 @@ void CVSService::slotRevert(const QStringList &files)
   }
 }
 
+void CVSService::slotAdd()
+{
+  QStringList files;
+  if (!m_defaultFile.isEmpty())
+  {
+    if (m_defaultFile.startsWith(m_repositoryPath))
+    {
+      files += m_defaultFile.remove(m_repositoryPath);
+      slotAdd(files);
+    } else
+    {
+      notInRepository();
+    }
+  }
+}
+
+void CVSService::slotAdd(const QStringList &files)
+{
+  if (m_repository && !m_appId.isEmpty() && (KMessageBox::questionYesNoList(0, i18n("Add the following files to repository?"), files, i18n("CVS Add")) == KMessageBox::Yes))
+  {
+    emit clearMessages();
+    emit showMessage(i18n("Adding file to the repository..."), false);
+    m_files = files;
+    m_job = m_cvsService->add(files, false);
+    m_cvsCommand = "add";
+    m_cvsJob = new CvsJob_stub(m_job.app(), m_job.obj());
+
+    connectDCOPSignal(m_job.app(), m_job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
+    connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
+    connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
+    m_cvsJob->execute();
+  }
+}
+
+void CVSService::slotRemove()
+{
+  QStringList files;
+  if (!m_defaultFile.isEmpty())
+  {
+    if (m_defaultFile.startsWith(m_repositoryPath))
+    {
+      files += m_defaultFile.remove(m_repositoryPath);
+      slotRemove(files);
+    } else
+    {
+      notInRepository();
+    }
+  }
+}
+
+void CVSService::slotRemove(const QStringList &files)
+{
+  if (m_repository && !m_appId.isEmpty() && (KMessageBox::warningContinueCancelList(0, i18n("<qt>Remove the following files to repository?<br>This will remove your <b>working copy</b> as well!</qt>"), files, i18n("CVS Remove")) == KMessageBox::Continue))
+  {
+    emit clearMessages();
+    emit showMessage(i18n("Removing files from the repository..."), false);
+    m_files = files;
+    m_job = m_cvsService->remove(files, true);
+    m_cvsCommand = "remove";
+    m_cvsJob = new CvsJob_stub(m_job.app(), m_job.obj());
+
+    connectDCOPSignal(m_job.app(), m_job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
+    connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
+    connectDCOPSignal(m_job.app(), m_job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
+    m_cvsJob->execute();
+  }
+}
+
 void CVSService::slotJobExited(bool normalExit, int exitStatus)
 {
     if (!normalExit)
     {
-        KMessageBox::sorry(0, i18n("<qt>The CVS command <b>%1</b>has failed. The error code was <i>%2</i>.</qt>").arg(m_cvsCommand).arg(exitStatus), i18n("Command Failed"));
+        KMessageBox::sorry(0, i18n("<qt>The CVS command <b>%1</b> has failed. The error code was <i>%2</i>.</qt>").arg(m_cvsCommand).arg(exitStatus), i18n("Command Failed"));
     }
     if (exitStatus == 0)
     {
