@@ -760,12 +760,15 @@ void Project::slotRenameFinished( KIO::Job * job)
     {
       el = nl.item(i).toElement();
       tmpString = el.attribute("url");
-      oldString = tmpString;
-      tmpString = tmpString.replace(QRegExp(oldStr),newStr);
-      if (oldString != tmpString )
+      if (tmpString.startsWith(oldStr))
       {
-        el.setAttribute("url",tmpString);
-        el.setAttribute("upload_time","");
+        oldString = tmpString;
+        tmpString = tmpString.replace(oldStr,newStr);
+        if (oldString != tmpString )
+        {
+          el.setAttribute("url",tmpString);
+          el.setAttribute("upload_time","");
+        }
       }
     }
     oldURL = KURL();
@@ -773,6 +776,7 @@ void Project::slotRenameFinished( KIO::Job * job)
     modified = true;
 
     emit reloadTree( fileNameList(), false );
+    emit newStatus();
   }
 }
 
@@ -1220,27 +1224,19 @@ void Project::slotOptions()
     el.setAttribute("encoding", m_defaultEncoding);
     el.setAttribute("newfiles", m_newFileType);
 
- 		el = dom.firstChild().firstChild().namedItem("author").toElement();
- 		if (el.isNull())
- 		{
- 		  el = dom.createElement("author");
-		  dom.firstChild().firstChild().appendChild( el );
-          el.appendChild( dom.createTextNode( author ) );
- 		} else
- 		{
- 		  el.firstChild().setNodeValue(author);
- 		}
+    el = dom.firstChild().firstChild().namedItem("author").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = dom.createElement("author");
+    dom.firstChild().firstChild().appendChild( el );
+    el.appendChild( dom.createTextNode( author ) );
 
- 		el = dom.firstChild().firstChild().namedItem("email").toElement();
- 		if (el.isNull())
- 		{
- 		  el = dom.createElement("email");
-		  dom.firstChild().firstChild().appendChild( el );
-          el.appendChild( dom.createTextNode( email ) );
- 		} else
- 		{
- 		  el.firstChild().setNodeValue(email);
- 		}
+    el = dom.firstChild().firstChild().namedItem("email").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = dom.createElement("email");
+    dom.firstChild().firstChild().appendChild( el );
+    el.appendChild( dom.createTextNode( email ) );
 
     el = dom.firstChild().firstChild().namedItem("defaultDTD").toElement();
     if(el.isNull())

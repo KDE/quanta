@@ -165,7 +165,8 @@ void RescanPrj::slotListDone(KIO::Job *)
     listView->addItem(urlEntry.url, urlEntry.size, urlEntry.date);
     progress->advance(1);
   }
-  
+
+  progress->setTotalSteps(1);  
   progress->setValue(0);
   progress->setTextEnabled(false);
   slotSelect();
