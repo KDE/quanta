@@ -73,7 +73,7 @@ public:
 
   static bool checkProjectDel(const KURL& target, QWidget* window, bool confirm = true);
 
-  static KURL adjustURL(KURL url);
+  static KURL adjustURL(const KURL &url);
 
   static void errorMsg(QWidget* window = 0);
 

@@ -328,8 +328,7 @@
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>Current:
-[none]</string>
+                        <string>Current: [none]</string>
                     </property>
                     <property name="alignment">
                         <set>WordBreak|AlignVCenter</set>

@@ -22,7 +22,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kfileitem.h>
- 
+
 #include "quantanetaccess.h"
 #include "project.h"
 
@@ -85,7 +85,7 @@ bool QuantaNetAccess::dircopy( const KURL::List & srcList, const KURL & target, 
     for ( KURL::List::ConstIterator it = srcList.begin(); it != srcList.end(); ++it ) {
       url = target;
       url.adjustPath(+1);
-      url.setFileName((*it).fileName());    
+      url.setFileName((*it).fileName());
       checkProjectInsert(url, window, confirm);
     }
   } else {
@@ -98,11 +98,14 @@ bool QuantaNetAccess::dircopy( const KURL::List & srcList, const KURL & target, 
 
 bool QuantaNetAccess::move( const KURL::List& srcList, const KURL& target, QWidget* window, bool confirm )
 {
+  KURL targetURL = adjustURL(target);
   bool oldConfirm = confirm;
-  bool targetInProject = Project::ref()->projectBaseURL().isParentOf(target);
+  bool targetInProject = Project::ref()->projectBaseURL().isParentOf(targetURL);
+  KURL url;
   for ( KURL::List::ConstIterator it = srcList.begin(); it != srcList.end(); ++it ) {
     //don't ask if move is inside of the project
-    if (targetInProject && Project::ref()->projectBaseURL().isParentOf(*it) )
+    url = adjustURL(*it);
+    if (targetInProject && Project::ref()->projectBaseURL().isParentOf(url) )
     {
       confirm = false;
     }
@@ -111,13 +114,13 @@ bool QuantaNetAccess::move( const KURL::List& srcList, const KURL& target, QWidg
     confirm = oldConfirm;
     }
   }
-  bool ok = KIO::NetAccess::move( srcList, target, window );
+  bool ok = KIO::NetAccess::move( srcList, targetURL, window );
   if (ok) {
     KURL url;
     for ( KURL::List::ConstIterator it = srcList.begin(); it != srcList.end(); ++it ) {
       url = target;
       url.adjustPath(+1);
-      url.setFileName((*it).fileName());    
+      url.setFileName((*it).fileName());
       checkProjectInsert(url, window, confirm);
    }
   } else {
@@ -151,10 +154,10 @@ bool QuantaNetAccess::mkdir( const KURL & url, QWidget* window, int permissions,
     if (confirm)
       errorMsg(window);
   }
-  return ok;  
+  return ok;
 }
 
-                    
+
 void QuantaNetAccess::checkProjectInsert(const KURL& target, QWidget* window, bool confirm)
 {
   if ( !Project::ref()->hasProject()) return;
@@ -173,7 +176,7 @@ void QuantaNetAccess::checkProjectInsert(const KURL& target, QWidget* window, bo
   }
 }
 
-                    
+
 bool QuantaNetAccess::checkProjectRemove(const KURL& src, QWidget* window, bool confirm)
 {
   if ( !Project::ref()->hasProject() ) return true;
@@ -192,7 +195,7 @@ bool QuantaNetAccess::checkProjectRemove(const KURL& src, QWidget* window, bool 
   return true;
 }
 
-                    
+
 bool QuantaNetAccess::checkProjectDel(const KURL& src, QWidget* window, bool confirm)
 {
   if ( !Project::ref()->hasProject() ) return true;
@@ -217,15 +220,16 @@ bool QuantaNetAccess::checkProjectDel(const KURL& src, QWidget* window, bool con
   return true;
 }
 
-KURL QuantaNetAccess::adjustURL(KURL url)
-  {
-    if ( url.isLocalFile() )
-    {
-      QDir dir(url.path());
-      url.setPath(dir.canonicalPath());
+KURL QuantaNetAccess::adjustURL(const KURL &url)
+{
+   KURL u = url;
+   if ( u.isLocalFile() )
+   {
+      QDir dir(u.path());
+      u.setPath(dir.canonicalPath());
     }
-    return url;
-  }
+    return u;
+}
 
 
 void QuantaNetAccess::errorMsg(QWidget* window)
