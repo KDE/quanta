@@ -110,30 +110,39 @@ void AbbreviationDlg::slotNewGroup()
 
 void AbbreviationDlg::slotAddDTEP()
 {
-   QStringList lst = DTDs::ref()->nickNameList(false);
-   for (uint i = 0; i < dtepList->count(); i++)
+  QStringList lst = DTDs::ref()->nickNameList(false);
+  for (uint i = 0; i < dtepList->count(); i++)
      lst.remove(dtepList->text(i));
   bool ok = false;
-  QString res = KInputDialog::getItem(
+  QStringList res = KInputDialog::getItemList(
                   i18n( "Add DTEP" ),
-                  i18n( "Select a DTEP:" ), lst, 0, false, &ok, this );
+                  i18n( "Select a DTEP:" ), lst, 0, true, &ok, this );
   if (ok)
   {
-      dtepList->insertItem(res);
-      m_currentAbbrev->dteps.append(DTDs::ref()->getDTDNameFromNickName(res));
+    dtepList->insertStringList(res);
+    for (QStringList::ConstIterator it = res.constBegin(); it != res.constEnd(); ++it)
+    {
+      m_currentAbbrev->dteps.append(DTDs::ref()->getDTDNameFromNickName(*it));
+    }
   }
 }
 
 void AbbreviationDlg::slotRemoveDTEP()
 {
-  int currentItem = dtepList->currentItem();
-  if (currentItem == -1)
+  bool hasSelected = false;
+  for (uint i = 0; i < dtepList->count(); i++)
+  {
+    if (dtepList->isSelected(i))
+    {
+      m_currentAbbrev->dteps.remove(DTDs::ref()->getDTDNameFromNickName(dtepList->text(i)));
+      dtepList->removeItem(i);
+      i--;
+      hasSelected = true;
+    }
+  }
+  if (!hasSelected)
   {
     KMessageBox::error(this, i18n("<qt>Select a DTEP from the list before using <b>Remove</b>.</qt>"), i18n("No DTEP Selected"));
-  } else
-  {
-    m_currentAbbrev->dteps.remove(DTDs::ref()->getDTDNameFromNickName(dtepList->currentText()));
-    dtepList->removeItem(currentItem);
   }
 }
 
