@@ -794,6 +794,7 @@ void TableEditor::slotInsertRow()
         tableNode.node->tag->parse("<td>", m_write);
       }
       tableRowTags.append(tableNode);
+      setCellText(m_dataTable, num, i, "");
     }
     QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->at(num);
     if (it != m_tableTags->end())
@@ -814,6 +815,7 @@ void TableEditor::slotInsertCol()
   m_dataTable->setColumnWidth(num, 150);
   if (m_createNodes) {
     TableNode tableNode;
+    int i = 0;
     for (QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
       tableNode.merged = false;
       tableNode.node = new Node(0L);
@@ -826,6 +828,8 @@ void TableEditor::slotInsertCol()
         tableNode.node->tag->parse("<td>", m_write);
       }
       (*it).append(tableNode);
+      setCellText(m_dataTable, i, num, "");
+      i++;
     }
   }
   m_colSpin->setValue(m_dataTable->numCols());
