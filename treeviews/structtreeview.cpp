@@ -26,6 +26,7 @@
 #include <kiconloader.h>
 #include <kpopupmenu.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <ktexteditor/view.h>
@@ -691,14 +692,18 @@ void StructTreeView::slotOpenFile()
     QuantaCommon::setUrl(url, text.stripWhiteSpace());
     KURL baseUrl = QExtFileInfo::path(write->url());
     url = QExtFileInfo::toAbsolute(url, baseUrl);
-    if ( QuantaCommon::checkMimeGroup(url,"text" ) )
+    if (QExtFileInfo::exists(url))
     {
-      emit openFile(url);
-    }
-    else if ( QuantaCommon::checkMimeGroup(url,"image" ) )
-    {
-      emit openImage( url );
-    }
+      if (QuantaCommon::checkMimeGroup(url, "text" ))
+      {
+        emit openFile(url);
+      }
+      else if (QuantaCommon::checkMimeGroup(url," image" ))
+      {
+        emit openImage(url);
+      }
+    } else
+      KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exists or it is not reachable.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
   }
 }
 

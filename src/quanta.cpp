@@ -1850,6 +1850,7 @@ void QuantaApp::slotContextMenuAboutToShow()
               pos = group.definitionRx.search(node->tag->cleanStr, pos);
               if (pos != -1)
               {
+                QString cleanName = node->tag->cleanStr.mid(pos, group.definitionRx.matchedLength());
                 name = tagStr.mid(pos, group.definitionRx.matchedLength());
                 node->tag->beginPos(bl, bc);
                 QString tmpStr = tagStr.left(pos);
@@ -1862,8 +1863,12 @@ void QuantaApp::slotContextMenuAboutToShow()
                 el = bl + newLines;
                 ec = (newLines > 0) ? l - name.findRev('\n') : bc + l - 1;
                 pos += l;
-                group.definitionRx.search(name);
-                name = group.definitionRx.cap(1);
+                int p = group.definitionRx.search(cleanName);
+                if (p != -1)
+                {
+                  name = name.mid(p, group.definitionRx.matchedLength());
+                } else
+                  name = "";
                 if (QuantaCommon::isBetween(line, col, bl, bc, el, ec) == 0)
                 {
                   break;
@@ -1906,7 +1911,7 @@ void QuantaApp::slotContextMenuAboutToShow()
         QuantaCommon::setUrl(urlUnderCursor, name.stripWhiteSpace());
         KURL baseUrl = QExtFileInfo::path(w->url());
         urlUnderCursor = QExtFileInfo::toAbsolute(urlUnderCursor, baseUrl);
-        action->setText(i18n("Open File: %1").arg(urlUnderCursor.prettyURL()));
+        action->setText(i18n("Open File: %1").arg(KStringHandler::lsqueeze(urlUnderCursor.prettyURL(0, KURL::StripFileProtocol), 80)));
         action->setEnabled(true);
       } else
       {
@@ -2034,16 +2039,22 @@ void QuantaApp::slotContextMenuAboutToShow()
 
 void QuantaApp::slotOpenFileUnderCursor()
 {
-  if ( QuantaCommon::checkMimeGroup(urlUnderCursor,"text" ) )
+  if (QExtFileInfo::exists(urlUnderCursor))
   {
-    slotFileOpen( urlUnderCursor, defaultEncoding() );
-  }
-  else if ( QuantaCommon::checkMimeGroup(urlUnderCursor,"image" ) )
+    if (QuantaCommon::checkMimeGroup(urlUnderCursor, "text" ))
+    {
+      slotFileOpen(urlUnderCursor, defaultEncoding());
+    }
+    else if (QuantaCommon::checkMimeGroup(urlUnderCursor, "image" ))
+    {
+      slotShowPreviewWidget(true);
+      slotImageOpen(urlUnderCursor);
+    }
+  } else
   {
-    slotShowPreviewWidget(true);
-    slotImageOpen( urlUnderCursor );
-  }
+    KMessageBox::error(this, i18n("<qt>The file <b>%1</b> does not exists or it is not reachable.</qt>").arg(urlUnderCursor.prettyURL(0, KURL::StripFileProtocol)));
 
+  }
 }
 
 /** No descriptions */
