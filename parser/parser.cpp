@@ -122,6 +122,13 @@ bool Parser::scriptParser(Node *startNode)
             ec = node_bc + pos2;
           }
           s = text.mid(pos, pos2 - pos + 1);
+        } else
+        {
+          el = node_el;
+          ec = node_ec;
+          s = write->text(bl, bc, el, ec);
+          pos = -1;
+        }
           //build the tag
           Tag *tag = new Tag();
           tag->setWrite(write);
@@ -151,10 +158,6 @@ bool Parser::scriptParser(Node *startNode)
           found = true;
           currentNode = specialAreaParser(node);
           col = pos2 + 1;
-        } else
-        {
-          pos = -1;
-        }
       }
     }
   }
@@ -1048,15 +1051,7 @@ Node* Parser::specialAreaParser(Node *startNode)
         }
 
       }
-    } else
-  {
-    eLine = el;
-    eCol = ec - specialEndStr.length();
-  }
-  } else
-  {
-    eLine = el;
-    eCol = ec - specialEndStr.length();
+    }
   }
   if (eLine != -1)
   {
@@ -1079,6 +1074,11 @@ Node* Parser::specialAreaParser(Node *startNode)
     startNode->tag->single = false;
     parseForScriptGroup(node);
     rootNode = node;
+  }
+  else
+  {
+    eLine = el;
+    eCol = ec - specialEndStr.length();
   }
 
 //if the block has no nodes inside, create a Text node with its content.
