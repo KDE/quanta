@@ -26,3 +26,4 @@ TagQuickTable::TagQuickTable(QWidget *parent, const char *name)
 
 TagQuickTable::~TagQuickTable(){
 }
+#include "tagquicktable.moc"

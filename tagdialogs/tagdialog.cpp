@@ -336,3 +336,4 @@ void TagDialog::parseAttributes( QString attrs )
   	
 }
 
+#include "tagdialog.moc"

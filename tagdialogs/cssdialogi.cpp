@@ -226,3 +226,4 @@ QString CSSDialogI::data()
 
 
 
+#include "cssdialogi.moc"

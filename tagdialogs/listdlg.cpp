@@ -58,3 +58,4 @@ int ListDlg::getEntryNum()
 {
    return listbox->currentItem();
 }
+#include "listdlg.moc"

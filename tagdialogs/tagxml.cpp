@@ -234,3 +234,4 @@ void Tagxml::writeAttributes( QDict<QString> *d )
 
 }
 
+#include "tagxml.moc"

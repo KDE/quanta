@@ -114,3 +114,4 @@ void TagQuickStart::slotColorLink (const QString &newColor){colorLink ->setColor
 void TagQuickStart::slotColorALink(const QString &newColor){colorALink->setColor(QColor(newColor));}
 void TagQuickStart::slotColorVLink(const QString &newColor){colorVLink->setColor(QColor(newColor));}
 
+#include "tagquickstart.moc"

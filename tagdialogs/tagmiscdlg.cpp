@@ -47,3 +47,4 @@ void TagMiscDlg::slotShowHelp()
    kapp->invokeHelp("tag-misc","quanta");
 }
 
+#include "tagmiscdlg.moc"

@@ -105,3 +105,4 @@ void TagMailDlg::slotShowHelp()
 //FIXME: "tag-mail" should be replaced with the real help section tag
    kapp->invokeHelp("tag-mail","quanta");
 }
+#include "tagmaildlg.moc"
