@@ -37,7 +37,7 @@
 
     <attr name="vlink" type="color">
         <text>Visited link color</text>
-        <location col="0" row="5" />
+        <textlocation col="0" row="5" />
         <tooltip>Depricated in HTML 4.0 </tooltip>
         <location col="2" row="5"  />
     </attr>

@@ -133,7 +133,7 @@
     
     <attr name="onchange" type="input">
       <text>On change</text>
-      <location col="2" row="9" colspan="1" />
+      <textlocation col="2" row="9" colspan="1" />
       <location col="3" row="9" colspan="1" />
     </attr>
 
