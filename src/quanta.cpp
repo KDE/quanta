@@ -4637,6 +4637,7 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
         }
         if (!closeButtonsOnly)
         {
+            tab->setTabReorderingEnabled(true);
             tab->setTabPosition(QTabWidget::Bottom);
             connect(tab, SIGNAL( contextMenu( QWidget *, const QPoint & ) ), ViewManager::ref(), SLOT(slotTabContextMenu( QWidget *, const QPoint & ) ) );
             setTabWidgetVisibility(KMdi::AlwaysShowTabs);
