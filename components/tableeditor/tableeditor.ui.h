@@ -573,10 +573,16 @@ QString TableEditor::readModifiedTable()
     tableString += indent(2);
     tableString += "</" + QuantaCommon::tagCase(m_tfoot->name) +">";
   }
-  //isert the <tbody> tag
+  //insert the <tbody> tag
+  if (!m_tbody)
+  {
+    m_tbody = new Tag();
+    newNum++;
+    m_tbody->parse("<tbody>", m_write);
+  }
   tableString += indent(2);
   tableString += m_tbody->toString();
-  kdDebug(24000) << "tbody" << endl;
+  kdDebug(24000) << "tbody" << endl; 
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
   m_dataTable = tableData;
