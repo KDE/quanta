@@ -22,6 +22,8 @@
 #include "parser/node.h"
 #include "parser/parser.h"
 
+#define DEFAULT_DTD QString("-//W3C//DTD HTML 4.01 Transitional//EN")
+
 class QuantaApp;
 class QString;
 class KURL;

@@ -1903,7 +1903,8 @@ void QuantaApp::processDTD(QString documentType)
        found =true;
      }
     }
-    dlg->dtdCombo->insertItem(i18n("Create new DTD info."));
+
+//    dlg->dtdCombo->insertItem(i18n("Create new DTD info."));
     if (foundName.isEmpty())
     {
       dlg->messageLabel->setText(i18n("No DTD info was found. Choose a DTD or create a new one."));
@@ -1912,6 +1913,15 @@ void QuantaApp::processDTD(QString documentType)
     {
       dlg->messageLabel->setText(i18n("This DTD is not known for Quanta. Choose a DTD or create a new one."));
       dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(foundName));
+    }
+
+    for (int i = 0; i < dlg->dtdCombo->count(); i++)
+    {
+      if (dlg->dtdCombo->text(i) == QuantaCommon::getDTDNickNameFromName(defaultDocType))
+      {
+        dlg->dtdCombo->setCurrentItem(i);
+        break;
+      }
     }
     if (!found && dlg->exec())
     {
@@ -1935,15 +1945,17 @@ void QuantaApp::slotToolsChangeDTD()
   DTDSelectDialog *dlg = new DTDSelectDialog(this);
   Document *w = view->write();
   int i=0;
-  int pos =0;
+  int pos = -1;
   QDictIterator<DTDStruct> it(*dtds);
+  int defaultIndex = 0;
   for( ; it.current(); ++it )
   {
     dlg->dtdCombo->insertItem(it.current()->nickName);
     if (it.current()->name == w->getDTDIdentifier()) pos = i;
+    if (it.current()->name == defaultDocType) defaultIndex = i;
     i++;
   }
-
+  if (pos == -1) pos = defaultIndex;
   dlg->dtdCombo->setCurrentItem(pos);
   dlg->messageLabel->setText(i18n("Change the current DTD."));
   dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier()));

@@ -69,7 +69,10 @@ void QuantaView::slotEditCurrentTag()
   Document *w = write();
   uint line,col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
-  QString dtdName = w->findDTDName(line, 0); //call currentTag, so should be before
+  QString dtdName = w->findDTDName(line, 0);
+  DTDStruct *dtd = dtds->find(dtdName);
+  if (!dtd) dtd = dtds->find(w->getDTDIdentifier());
+  if (!dtd) dtd = dtds->find(defaultDocType);
   Tag *tag = w->tagAt(-1,-1,dtdName);
   if (tag)
   {
@@ -172,7 +175,7 @@ void QuantaView::slotTagQuickStart(){
 	TagQuickStart *quickDlg = new TagQuickStart( doc->basePath(), this, i18n("Generate HTML Text"));
 
   if ( quickDlg->exec() ) {
-  	QString tag = QString("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\">\n")+QuantaCommon::tagCase("<html>\n")
+  	QString tag = QString("<!DOCTYPE HTML PUBLIC \""+DEFAULT_DTD+"\">\n")+QuantaCommon::tagCase("<html>\n")
   	                  +space+QuantaCommon::tagCase("<head>\n")+space+QuantaCommon::tagCase("  <title>");
   	if ( !QString(quickDlg->lineTitle->text()).isEmpty())
 	   		tag += quickDlg->lineTitle->text();

@@ -43,15 +43,14 @@ CSSEditor::CSSEditor (QString code, QWidget* parent, const char* name)
 
 	// Ok, done. Now, let's parse all the selectors
   selectors = QStringList::split ("}", code);
-  QStringList::Iterator it = selectors.begin();
-  do
+  QStringList::Iterator it;
+  for ( it = selectors.begin(); it != selectors.end(); ++it )
   {
 		if ((*it).simplifyWhiteSpace() == "")
 			it = selectors.remove (it);
 		else
 			*it += "}";
-    if (it != selectors.end()) it++;
-	} while (it != selectors.end());
+  }
 
 	slotShowSelectors();
 }
@@ -131,9 +130,10 @@ void CSSEditor::slotRemoveSelector()
 void CSSEditor::slotShowSelectors()
 {
 	listRules->clear();
-	QStringList::Iterator it = selectors.begin();
-	for (; it != selectors.end(); it++)
+	QStringList::Iterator it;
+	for (uint i = 0; i < selectors.count(); i++)
   {
+    it = selectors.at(i);
 		QString name = (*it).mid(0, (*it).find("{"));
 		listRules->insertItem(name.simplifyWhiteSpace());
 	}

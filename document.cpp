@@ -770,6 +770,8 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
   unsigned int line,col;
   viewCursorIf->cursorPositionReal(&line,&col);
   DTDStruct* dtd = dtds->find(findDTDName(line, 0));
+  if (!dtd) dtd = dtds->find(dtdName);
+  if (!dtd) dtd = dtds->find(defaultDocType);
   if (completion.type == "attribute")
   {
     viewCursorIf->setCursorPositionReal(line,col-1);
@@ -799,9 +801,6 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
 */
 void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,QString *string )
 {
-/*  uint line, col;
-  viewCursorIf->cursorPositionReal(&line, &col);
-  DTDStruct* dtd = dtds->find(findDTDName(line, 0));*/
   int pos = completion->userdata.find("|");
   QString s = completion->userdata.left(pos);
   completion->userdata.remove(0,pos+1);
@@ -831,6 +830,8 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
  if (useAutoCompletion)
  {
   DTDStruct* dtd = dtds->find(findDTDName(line, 0));
+  if (!dtd) dtd = dtds->find(dtdName);
+  if (!dtd) dtd = dtds->find(defaultDocType);
   if (dtd)
   {
     if (dtd->family == Xml)
@@ -1288,6 +1289,8 @@ void Document::codeCompletionRequested()
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
   DTDStruct* dtd = dtds->find(findDTDName(line, 0));
+  if (!dtd) dtd = dtds->find(dtdName);
+  if (!dtd) dtd = dtds->find(defaultDocType);
   if (dtd)
   {
     if (dtd->family == Xml)
@@ -1308,6 +1311,8 @@ void Document::codeCompletionHintRequested()
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
   DTDStruct* dtd = dtds->find(findDTDName(line, 0));
+  if (!dtd) dtd = dtds->find(dtdName);
+  if (!dtd) dtd = dtds->find(defaultDocType);
   if (dtd)
   {
     if (dtd->family == Script)
@@ -1346,7 +1351,7 @@ QString Document::findWordRev(const QString& textToSearch)
 /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
 void Document::xmlCodeCompletion(DTDStruct *dtd, int line, int col)
 {
-  Tag * tag = tagAt(line,col);
+  Tag * tag = tagAt(line,col,dtd->name);
   if (tag)
   {
     int bLine, bCol;

@@ -480,7 +480,7 @@ void QuantaApp::readOptions()
   attrsQuotation = config->readEntry("Attribute quotation", "double");
   useCloseTag = config->readBoolEntry("Close tag if optional", true);
   useAutoCompletion = config->readBoolEntry("Auto completion",true);
-  defaultDocType = config->readEntry("Default DTD","-//W3C//DTD HTML 4.01//EN");
+  defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
 
   previewPosition   = config->readEntry("Preview position","Right");
 
@@ -930,6 +930,8 @@ void QuantaApp::initTagDict()
   {
     readTagDir(*it);
   }
+
+  if (!dtds->find(defaultDocType)) defaultDocType = DEFAULT_DTD;
 }
 
 void QuantaApp::initActions()
