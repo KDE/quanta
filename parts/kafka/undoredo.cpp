@@ -20,14 +20,14 @@
 //end debug only
 #include <qtabwidget.h>
 
+#include <kapplication.h>
+#include <kconfig.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/editinterfaceext.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/viewcursorinterface.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
 #include <dom/dom_node.h>
 #include <dom/dom_exception.h>
 
@@ -190,8 +190,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSel
     return;
   }
 
-  QString quantarc_path(KGlobal::dirs()->findResourceDir("config", "quantarc"));
-  KConfig* config = new KConfig(quantarc_path + "quantarc", true);
+  KConfig* config = kapp->config();
   config->setGroup("Kate Document Defaults");
   int indentationWidth = config->readNumEntry("Indentation Width", 4);
   
