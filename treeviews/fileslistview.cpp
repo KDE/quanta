@@ -48,7 +48,7 @@ FilesListView::FilesListView( QString dir, QStringList dirList, QWidget *parent,
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( "Name" );
+  addColumn( i18n("Name") );
 
   loadDir( dir );
 

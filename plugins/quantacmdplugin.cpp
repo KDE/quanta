@@ -27,6 +27,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qregexp.h>
+#include <qfile.h>
 
 /* OTHER INCLUDES */
 #include "quantacmdplugin.h"
@@ -49,7 +50,7 @@ QuantaCmdPlugin::~QuantaCmdPlugin()
     unload();
 }
 
-bool QuantaCmdPlugin::isLoaded() 
+bool QuantaCmdPlugin::isLoaded()
 {
   return m_process != 0;
 }
@@ -59,11 +60,11 @@ bool QuantaCmdPlugin::unload()
   if(m_process)
     delete m_process;
   m_process = 0;
-    
+
   m_firstOutput = TRUE;
 
   setRunning(FALSE);
-  
+
   return TRUE;
 }
 
@@ -85,7 +86,7 @@ bool QuantaCmdPlugin::load()
   QString loc = location(); // locate first if location not specified
   if(loc.isEmpty())
   {
-    const char *fn = fileName().latin1();
+    const char *fn = QFile::encodeName(fileName());
     KStandardDirs *dirs = QuantaCommon::pluginDirs("exe");
     loc = dirs->findResource("exe", fn);
     delete dirs;
@@ -153,7 +154,7 @@ void QuantaCmdPlugin::writeStdout(KProcess *, char *a_buffer, int a_len)
   }
   else if(ow == i18n("Konsole"))
   {
-    fprintf(stdin, text.latin1());
+    fprintf(stdin, text.local8Bit());
   }
   else if(ow == i18n("None"))
   {
@@ -161,7 +162,7 @@ void QuantaCmdPlugin::writeStdout(KProcess *, char *a_buffer, int a_len)
   else
     qWarning("Unknown output window %s", ow.latin1());
   /* TODO : More output options */
-  
+
 
   emit wroteStdout(text);
 }
@@ -180,7 +181,7 @@ void QuantaCmdPlugin::writeStderr(KProcess *, char *a_buffer, int a_len)
   }
   else if(ow == i18n("Konsole"))
   {
-    fprintf(stdin, text.latin1());
+    fprintf(stdin, text.local8Bit());
   }
   else if(ow == i18n("None"))
   {

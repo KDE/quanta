@@ -57,15 +57,15 @@
 FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *name)
 	: FileManage(parent,name)
 {
-	topURLList = topList;	
-	
+	topURLList = topList;
+
 	setRootIsDecorated( true );
   header()->hide();
   setSorting(0);
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( "Name" );
+  addColumn( i18n("Name") );
 
 	setFocusPolicy(QWidget::ClickFocus);
 
@@ -74,7 +74,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
 	folderMenu -> insertItem( i18n("List Mode"), this ,SLOT(slotNewMode()));
 */  
 	folderMenu -> insertItem( i18n("Add Folder to Top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
-	
+
 	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
 						this, SLOT(slotSelectFile(QListViewItem *)));
 	connect(	this, SIGNAL(returnPressed(QListViewItem *)),
@@ -87,11 +87,11 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
 
 	connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
 						this, SLOT(slotSelectImage(QListViewItem *)));
-						
+
 	connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
 					 this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
-					
-						
+
+
 	// generate top list of directories
 	for (uint i = 0; i <  topURLList.count(); i++)
 	{
@@ -144,13 +144,13 @@ void FilesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 	if (item)
   {
   	setSelected(item, true);
-  	
+
   	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
   	if ( f )
     {
       fileMenu->popup( point);
     }
-  	
+
   	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
   	if ( d )
   	{
@@ -162,8 +162,8 @@ void FilesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
       {
         folderMenu ->changeItem( ID_TOP, i18n("Add Folder to Top"));
       }
-  	
-  	  if ( d->text(0) == "Home" || d->text(0) == "Root" )
+
+  	  if ( d->text(0) == i18n("Home directory") || d->text(0) == i18n("Root directory") )
       {
   	    folderMenu ->setItemEnabled( ID_TOP, false);
       }
@@ -171,7 +171,7 @@ void FilesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
       {
         folderMenu ->setItemEnabled( ID_TOP, true );
       }
-  	
+
   	  folderMenu->popup( point);
    }
  }

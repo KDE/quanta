@@ -18,14 +18,15 @@
 #include "previewfontoptions.h"
 #include "previewfontoptions.moc"
 #include <kfontdialog.h>
+#include <klocale.h>
 
 PreviewFontOptions::PreviewFontOptions(QWidget *parent, const char *name ) : QTabWidget(parent,name)
 {
 	stdFont = new KFontChooser (this, "standard font", false);
 	fixedFont = new KFontChooser (this, "fixed font", true);
 
-	addTab( stdFont, "Standard");
-	addTab( fixedFont, "Fixed");
+	addTab( stdFont, i18n("Standard"));
+	addTab( fixedFont, i18n("Fixed"));
 }
 
 

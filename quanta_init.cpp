@@ -78,7 +78,7 @@
 #include "plugins/quantaplugineditor.h"
 
 #include "plugins/php3dbg/debugger.h"
-#include "plugins/php4dbg/debugger.h"        
+#include "plugins/php4dbg/debugger.h"
 #include "plugins/spellchecker.h"
 
 #include "parser/parser.h"
@@ -126,7 +126,7 @@ QuantaApp::~QuantaApp()
      delete p_toolbar->menu;
    if (p_toolbar->guiClient) delete p_toolbar->guiClient;
  }
- 
+
  toolbarList.clear();
  delete spellChecker;
 }
@@ -175,7 +175,7 @@ void QuantaApp::initQuanta()
   createGUI( QString::null, false /* conserveMemory */ );
 
   initPlugins  ();
-  
+
   m_tagsMenu = new QPopupMenu(this);
   KAction *editTagAction =
            new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
@@ -183,7 +183,7 @@ void QuantaApp::initQuanta()
                         actionCollection(), "edit_current_tag" );
   editTagAction->plug(m_tagsMenu);
   m_tagsMenu->insertSeparator();
-  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,TAGS_MENU_PLACE);                                                                     
+  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,TAGS_MENU_PLACE);
 
   pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
@@ -268,17 +268,17 @@ void QuantaApp::initProject()
           pTab,     SLOT  (slotRemoveFromProject(int)));
   connect(project,  SIGNAL(templateURLChanged(const KURL &)),
           tTab,     SLOT  (slotSetTemplateURL(const KURL &)));
-          
+
   connect(fLTab,    SIGNAL(insertDirInProject(const KURL&)),
           project,  SLOT  (slotAddDirectory(const KURL&)));
   connect(fTTab,    SIGNAL(insertDirInProject(const KURL&)),
           project,  SLOT  (slotAddDirectory(const KURL&)));
-          
+
   connect(fLTab,    SIGNAL(insertFileInProject(const KURL&)),
           project,  SLOT  (slotInsertFile(const KURL&)));
   connect(fTTab,    SIGNAL(insertFileInProject(const KURL&)),
           project,  SLOT  (slotInsertFile(const KURL&)));
-          
+
   connect(pTab,     SIGNAL(renameInProject(const KURL&)),
           project,  SLOT  (slotRename(const KURL&)));
   connect(pTab,     SIGNAL(removeFromProject(const KURL&)),
@@ -368,7 +368,7 @@ void QuantaApp::initView()
 
   rightWidgetStack = new QWidgetStack( maindock );
   bottomWidgetStack = new QWidgetStack( bottdock);
-  
+
   view = new QuantaView( rightWidgetStack );
 
 
@@ -406,17 +406,17 @@ void QuantaApp::initView()
   bottomWidgetStack->addWidget(messageOutput, 0);
 //  bottomWidgetStack->addWidget( htmlpart   ->view(), 1 );
 //  bottomWidgetStack->addWidget( htmlPartDoc->view(), 2 );
-  
+
   connect(   fTTab,SIGNAL(openFile  (const KURL &, const QString&)),
             this, SLOT(slotFileOpen(const KURL &, const QString&)));
   connect(   fLTab,SIGNAL(openFile  (const KURL &, const QString&)),
             this, SLOT(slotFileOpen(const KURL &, const QString&)));
-            
+
   connect(   fTTab,SIGNAL(openImage(const KURL&)),
             this, SLOT  (slotImageOpen(const KURL&)));
   connect(   fLTab,SIGNAL(openImage(const KURL&)),
             this, SLOT  (slotImageOpen(const KURL&)));
-            
+
   connect(  fLTab,SIGNAL(changeMode()),
             this, SLOT(slotSwapLeftPanelMode()));
   connect(  fTTab,SIGNAL(changeMode()),
@@ -444,7 +444,7 @@ void QuantaApp::initView()
             this, SLOT(slotInsertTag(const KURL &, DirInfo)));
   connect(   pTab,SIGNAL(insertTag(const KURL &, DirInfo)),
             this, SLOT(slotInsertTag(const KURL &, DirInfo)));
-            
+
   connect(   fLTab,SIGNAL(activatePreview()),
             this, SLOT(slotActivatePreview()));
   connect(   fTTab,SIGNAL(activatePreview()),
@@ -558,7 +558,7 @@ void QuantaApp::saveOptions()
     writeDockConfig(config);
     saveMainWindowSettings(config);
     spellChecker->writeConfig(config);
-    config->sync(); 
+    config->sync();
   }
 }
 
@@ -597,7 +597,7 @@ void QuantaApp::readOptions()
 /* List Mode disabled!!
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
 */
-  fTab->raiseWidget(0);  
+  fTab->raiseWidget(0);
 
   fileRecent ->loadEntries(config);
 
@@ -711,13 +711,12 @@ void QuantaApp::openLastFiles()
 
   config->setGroup("General Options");
 
-  QStrList urls;
-   config->readListEntry("List of opened files", urls);
+  QStringList urls = config->readListEntry("List of opened files");
 
-  for ( urls.last();urls.current();urls.prev() )
+  for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
   {
     KURL fu;
-    QuantaCommon::setUrl(fu, QString(urls.current()));
+    QuantaCommon::setUrl(fu, *it);
 
     if ( !isPrj || fu.isLocalFile() )
       doc->openDocument( fu );
@@ -1138,8 +1137,8 @@ void QuantaApp::initTagDict()
       }
     }
   }
-    
-  
+
+
   scriptBeginRx.setCaseSensitive(false);
   scriptBeginRx.setPattern(scriptBeginRxStr);
   scriptEndRx.setCaseSensitive(false);
@@ -1397,7 +1396,7 @@ void QuantaApp::initActions()
     saveAsPrjViewAction = new KAction( i18n( "Save Project View As..." ), 0,
                         project, SLOT( slotSaveAsProjectView() ),
                         actionCollection(), "project_view_save_as" );
-                         
+
 
 
     insertFileAction = new KAction( i18n( "&Insert Files..." ), 0,
@@ -1448,7 +1447,7 @@ void QuantaApp::initActions()
 
     showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"),0, actionCollection(), "view_dtd_toolbar");//,view,SLOT(slotHideToolbar()),actionCollection(),"view_dtd_toolbar");
     connect(showDTDToolbar, SIGNAL(toggled(bool)), this, SLOT(slotToggleDTDToolbar(bool)));
-    
+
 
     new KAction(i18n("Complete Text"),CTRL+Key_Space,this,SLOT(slotShowCompletion()),actionCollection(),"show_completion");
     new KAction(i18n("Completion Hints"),CTRL+SHIFT+Key_Space,this,SLOT(slotShowCompletionHint()),actionCollection(),"show_completion_hint");
@@ -1500,11 +1499,11 @@ void QuantaApp::slotBuildPluginMenu()
 
 /** Runs the plugin specified by id */
 void QuantaApp::slotPluginRun(int a_id)
-{ 
+{
   QString pluginName = m_pluginMenu->text(a_id);
   if(pluginName.isEmpty() || pluginName == "&Edit" || pluginName == "&Validate")
     return;
-    
+
   if(pluginName != QString::null)
   {
     QuantaPlugin *plugin = m_pluginInterface->plugin(pluginName);
@@ -1531,7 +1530,7 @@ void QuantaApp::slotPluginRun(int a_id)
       }
       plugin->load();
       plugin->run();
-    }    
+    }
   }
 }
 
@@ -1565,7 +1564,7 @@ void QuantaApp::slotPluginsValidate()
       {
         slotPluginsEdit();
       }
-      return;      
+      return;
     }
   }
   statusBar()->message(i18n("All plugins validated successfully."));
