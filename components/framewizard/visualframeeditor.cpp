@@ -24,7 +24,7 @@
 #include <khtmlview.h>
 
 #include "fwglobal.h"
-#include "lib/qextfileinfo.h"
+#include "qextfileinfo.h"
 
 
 static int cancelledPixels(int n){

@@ -18,7 +18,7 @@
 #include "treenode.h"
 
 #include "fwglobal.h"
-#include "lib/qextfileinfo.h"
+#include "qextfileinfo.h"
 
 #include <qobject.h>
 #include <qfile.h>
