@@ -1534,7 +1534,7 @@ void QuantaApp::reparse(bool force)
     Document *w = m_view->write();
     if (force)
     {
-      baseNode = parser->parse(w);
+      baseNode = parser->parse(w, true);
     }
 
     if ( stabdock->isVisible() && (w->hasChanged() || force))

@@ -123,7 +123,6 @@ void KafkaWidget::newDocument()
 	begin();
 	write(newPageHTMLCode);
 	end();
-	putCursorAtFirstAvailableLocation();
 
 }
 
@@ -1324,8 +1323,14 @@ void KafkaWidget::setCurrentNode(DOM::Node node, int offset)
 void KafkaWidget::putCursorAtFirstAvailableLocation()
 {
 	kNodeAttrs *attrs = 0L;
-	DOM::Node node = document();
+	DOM::Node node = w->body;
         bool b = false;
+
+#ifdef HEAVY_DEBUG
+	w->coutLinkTree(baseNode, 2);
+	kafkaCommon::coutTree(baseNode, 2);
+	kafkaCommon::coutDomTree(document(), 2);
+#endif
 
 	while(!node.isNull())
 	{
@@ -1339,7 +1344,11 @@ void KafkaWidget::putCursorAtFirstAvailableLocation()
 			break;
 		}
 		attrs = w->getAttrs(node);
-		if(!attrs) return;
+		if(!attrs)
+		{
+			node = w->body;
+			break;
+		}
 		if(node.nodeType() == DOM::Node::TEXT_NODE)
 			break;
 	}

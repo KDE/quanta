@@ -150,6 +150,8 @@ void KafkaDocument::loadDocument(Document *doc)
 	//create a empty document with a basic tree : HTML, HEAD, BODY
 	m_kafkaPart->newDocument();
 
+	// When loading a weird html file in khtml (e.g. without BODY or HTML), khtml takes care
+	// to create the necessary tags. But as we are handling directly the Nodes, we have to handle this!!
 	// creating and linking an empty node to the root DOM::Node (#document) and
 	// to HEAD, HTML, BODY
 	node = new Node(0L);
@@ -237,6 +239,9 @@ void KafkaDocument::unloadDocument()
 	while(m_kafkaPart->document().hasChildNodes())
 		m_kafkaPart->document().removeChild(m_kafkaPart->document().firstChild());
 	m_currentDoc = 0L;
+
+	html = body = head = DOM::Node();
+
 	_docLoaded = false;
 	node = baseNode;
 	while(node)
@@ -678,6 +683,10 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node domNode, Node *nodeParent
 		kdDebug(25001)<< "Node* KafkaDocument::buildNodeFromKafkaNode(DOM::Node, 2xNode*)" <<
 			" *ERROR* - empty _domNode"<< endl;
 	}
+
+	//nodeParent can be the false body node which is not in the tree.
+	if(nodeParent->tag->notInTree)
+		nodeParent = 0L;
 
 	/**_node = new Node(_nodeParent);*/
 	if(domNode.nodeType() == DOM::Node::TEXT_NODE)
