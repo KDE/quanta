@@ -1051,11 +1051,11 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
   KTextEditor::CompletionEntry completion;
   QTag *tag = QuantaCommon::tagFromDTD(dtd, tagName);
   startsWith = startsWith.upper();
-  switch (dtd->family)
+  if (tag)
   {
-     case Xml:
-          {
-            if (tag)
+    switch (dtd->family)
+    {
+      case Xml:
             {
               completion.type = "attribute";
               completion.userdata = startsWith+"|"+tag->name();
@@ -1078,28 +1078,28 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
                 QDictIterator<DTDStruct> it(*dtds);
                 for( ; it.current(); ++it )
                 {
-                 completion.type = "doctypeList";
-                 completion.text = it.current()->nickName;
-                 completions->append(completion);
+                completion.type = "doctypeList";
+                completion.text = it.current()->nickName;
+                completions->append(completion);
                 }
               }
-            } // if (tag)
-            break;
-          }
-     case Script:
-          {
-            completion.userdata = startsWith+"|"+tag->name();
-            completion.type = "script";
-            AttributeList *list = tag->attributes();
-            for (uint i = 0; i < list->count(); i++)
-            {
-              QString item = list->at(i)->name;
-              completion.text = item;
-              completion.comment = list->at(i)->type;
-              completions->append( completion );
+              break;
             }
-          }
-    }
+      case Script:
+            {
+              completion.userdata = startsWith+"|"+tag->name();
+              completion.type = "script";
+              AttributeList *list = tag->attributes();
+              for (uint i = 0; i < list->count(); i++)
+              {
+                QString item = list->at(i)->name;
+                completion.text = item;
+                completion.comment = list->at(i)->type;
+                completions->append( completion );
+              }
+            }
+      }
+    } // if (tag)
 
 //  completionInProgress = true;
   return completions;
