@@ -171,6 +171,8 @@ work correctly. */
 
   /** returns the word under the cursor */
   QString currentWord();
+  /** Opens the url. The url must be valid and the file pointed to it must exists. */
+  void open(const KURL &url, const QString &encoding);
 
   bool busy;
 
@@ -225,9 +227,13 @@ public slots:
 signals:
  /** Emitted when the internal text editor got the focus */
   void editorGotFocus();
+  void openingFailed(const KURL &url);
+  void openingCompleted(const KURL &url);
 
 private slots:
   void slotReplaceChar();
+  void slotOpeningCompleted();
+  void slotOpeningFailed(const QString &errorMessage);
 
 private:
 
@@ -289,7 +295,6 @@ private:
   bool scriptAutoCompletion(int line, int col);
   /** Returns true if the number of " (excluding \") inside text is even. */
   bool evenQuotes(const QString &text);
-
 };
 
 #endif

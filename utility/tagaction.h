@@ -97,6 +97,7 @@ private:
     QString m_inputFileName;
     MessageOutput *m_appMessages;
     QStringList m_argsList;
+    uint m_killCount;
 };
 
 

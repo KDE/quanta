@@ -45,7 +45,8 @@ public slots:
 
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
-  void slotOpeningCompleted();
+  void slotOpeningCompleted(const KURL &url);
+  void slotOpeningFailed(const KURL &url);
 
 signals:
   void newStatus();

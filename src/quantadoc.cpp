@@ -165,38 +165,23 @@ bool switchToExisting)
   }
   Document *w = ViewManager::ref()->activeDocument();
   bool loaded = false;
-  if ( !url.isEmpty() && QExtFileInfo::exists(url))
+  if (!url.isEmpty())
   {
-    //see if we can watch this file
-    if (url.isLocalFile() && QFileInfo(url.path()).exists())
+    if (QExtFileInfo::exists(url))
     {
-       fileWatcher->addFile(url.path());
-       kdDebug(24000) << "addFile[openDocument]: " << url.path() << endl;
+       if (encoding.isEmpty())
+          encoding = quantaApp->defaultEncoding();
+       w->disconnect(SIGNAL(openingFailed(const KURL&)));
+       connect(w, SIGNAL(openingFailed(const KURL&)), this, SLOT(slotOpeningFailed(const KURL&)));
+       w->disconnect(SIGNAL(openingCompleted(const KURL&)));
+       connect(w, SIGNAL(openingCompleted(const KURL&)), this, SLOT(slotOpeningCompleted(const KURL&)));
+       w->open(url, encoding);
     }
-
-    if (encoding.isEmpty())
-        encoding = quantaApp->defaultEncoding();
-
-    KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
-    if (encodingIf)
-       encodingIf->setEncoding(encoding);
-
-    connect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
-    if (w->doc()->openURL( url ))
+    else
     {
-      loaded = true;
+      slotOpeningFailed(url);
     }
-  }
-  if (!loaded && !url.isEmpty()) //the open of the document has failed*/
-  {
-    bool signalStatus = signalsBlocked();
-    blockSignals(false);
-    emit hideSplash();
-    KMessageBox::error(quantaApp, i18n("<qt>Cannot open document <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
-    ViewManager::ref()->removeActiveView();
-    blockSignals(signalStatus);
-  }
-  if (url.isEmpty())
+  } else
   {
     quantaApp->reparse(true);
     KTextEditor::HighlightingInterface* highlightIf = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
@@ -226,24 +211,27 @@ bool switchToExisting)
   quantaApp->enableIdleTimer(idleTimerStatus);
 }
 
-void QuantaDoc::slotOpeningCompleted()
+void QuantaDoc::slotOpeningFailed(const KURL &url)
 {
-  Document *w = ViewManager::ref()->activeDocument();
-  w->setDirtyStatus(false);
-  //  kdDebug(24000) << "Text: " << w->editIf->text() << endl;
+    bool signalStatus = signalsBlocked();
+    blockSignals(false);
+    emit hideSplash();
+    //Seems to be not needed anymore since KDE 3.2, but keep until it's completely verified
+/*
+    KMessageBox::error(quantaApp, i18n("<qt>Cannot open document <b>%1</b>.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)));
+*/
+    ViewManager::ref()->removeActiveView();
+    blockSignals(signalStatus);
+}
 
-  quantaApp->fileRecent->addURL( w->url() );
-
+void QuantaDoc::slotOpeningCompleted(const KURL &url)
+{
+  quantaApp->fileRecent->addURL(url);
   quantaApp->slotRepaintPreview();
-
-  w->createTempFile();
-  w->view()->setFocus();
   quantaApp->processDTD();
   quantaApp->reparse(true);
-
-  quantaApp->debugger()->fileOpened(w->url().prettyURL(0, KURL::StripFileProtocol));
+  quantaApp->debugger()->fileOpened(url.prettyURL(0, KURL::StripFileProtocol));
   quantaApp->slotNewStatus();
-  disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
 }
 
 /** show popup menu with list of attributes for current tag */

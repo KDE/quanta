@@ -353,6 +353,11 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
     {
       KMessageBox::error(quantaApp, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible.</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
       ViewManager::ref()->activeView()->setFocus();
+      if (loopStarted)
+      {
+          qApp->exit_loop();
+          loopStarted = false;
+      }
       return false;
     }
   }
@@ -527,6 +532,7 @@ void TagAction::execute()
       timer->start(180*1000, true);
       QExtFileInfo internalFileInfo;
       loopStarted = true;
+      m_killCount = 0;
       internalFileInfo.enter_loop();
       delete timer;
   }
@@ -535,12 +541,23 @@ void TagAction::execute()
 /** Timeout occurred while waiting for some network function to return. */
 void TagAction::slotTimeout()
 {
-  if (KMessageBox::questionYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding")) == KMessageBox::Yes)
+  if ((m_killCount == 0) && (KMessageBox::questionYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding")) == KMessageBox::Yes))
   {
     if (::kill(-proc->pid(), SIGTERM))
     {
+      m_killCount++;
       return;
     }
+  }
+  if (m_killCount > 0)
+  {
+    ::kill(-proc->pid(), SIGKILL);
+    if (loopStarted)
+    {
+        qApp->exit_loop();
+        loopStarted = false;
+    }
+    return;
   }
   timer->start(180*1000, true);
 }

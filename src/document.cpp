@@ -2466,4 +2466,43 @@ void Document::convertCase()
   }
 }
 
+void Document::open(const KURL &url, const QString &encoding)
+{
+    //see if we can watch this file
+    if (url.isLocalFile())
+    {
+       fileWatcher->addFile(url.path());
+       kdDebug(24000) << "addFile[Document::open]: " << url.path() << endl;
+    }
+    KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
+    if (encodingIf)
+       encodingIf->setEncoding(encoding);
+    connect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
+    connect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
+    if (!m_doc->openURL(url))
+      emit openingFailed(url);
+}
+
+void Document::slotOpeningCompleted()
+{
+  disconnect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
+  m_dirty = false;
+  createTempFile();
+  m_view->setFocus();
+  emit openingCompleted(url());
+}
+
+void Document::slotOpeningFailed(const QString &errorMessage)
+{
+  Q_UNUSED(errorMessage); //TODO: append the error message to our own error message
+  disconnect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
+  KURL u = url();
+  if (u.isLocalFile())
+  {
+      fileWatcher->removeFile(u.path());
+      kdDebug(24000) << "removeFile[Document::slotOpeningFailed]: " << u.path() << endl;
+  }
+  emit openingFailed(u);
+}
+
 #include "document.moc"
