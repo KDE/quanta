@@ -41,7 +41,7 @@ QString DCOPSettings::dtep()
     return DTDs::ref()->getDTDNickNameFromName(Project::ref()->defaultDTD());
   }
   else
-    return qConfig.defaultDocType;
+    return DTDs::ref()->getDTDNickNameFromName(qConfig.defaultDocType);
 }
 
 QString DCOPSettings::quotationChar()

@@ -48,7 +48,7 @@
     </compiler>
     <run>
       <mainprogram>quanta/src/quanta_be</mainprogram>
-      <programargs>--nologo --unique</programargs>
+      <programargs>--nologo</programargs>
       <terminal>false</terminal>
       <envvars/>
       <directoryradio>build</directoryradio>
