@@ -284,7 +284,10 @@ void QuantaDoc::closeDocument()
       if (!w->isUntitled())
         fileWatcher->removeFile(w->url().path());
     }
-    if ( !quantaApp->view()->removeWrite()) openDocument( KURL() );
+    if ( !quantaApp->view()->removeWrite())
+    {
+      openDocument( KURL() );
+    }
   }
 }
 

@@ -127,7 +127,8 @@ QWidget* QuantaView::removeWrite()
   {
     m_writeTab->removePage( m_writeTab->currentPage() );
   }
-  return m_writeTab->currentPage(); //don't call write() here
+  oldWrite = dynamic_cast<Document*>(m_writeTab->currentPage()); //don't call write() here
+  return oldWrite;
 }
 
 void QuantaView::initActions()

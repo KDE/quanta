@@ -1445,6 +1445,7 @@ void QuantaApp::initActions()
     KStdAction::deselect(m_view, SLOT(slotDeselectAll()),actionCollection());
     (void) new KAction( i18n( "&Toggle Block Selection" ), Key_F4, m_view,
                         SLOT( toggleVertical() ), actionCollection(), "set_verticalSelect" );
+    new KAction(i18n("Toggle &Insert"), Key_Insert, m_view, SLOT(toggleInsert()), actionCollection(), "set_insert" );
 
 
     KStdAction::find(m_view, SLOT(slotFind()), actionCollection());
@@ -1514,16 +1515,16 @@ void QuantaApp::initActions()
     // File actions
     //
     KStdAction::openNew( this, SLOT( slotFileNew()  ), actionCollection());
-    KStdAction::open   ( this, SLOT( slotFileOpen() ), actionCollection(), "qfile_open");
+    KStdAction::open   ( this, SLOT( slotFileOpen() ), actionCollection(), "file_open");
     KStdAction::close  ( this, SLOT( slotFileClose()), actionCollection());
 
     fileRecent =  KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
-                                         actionCollection(), "qfile_open_recent");
+                                         actionCollection(), "file_open_recent");
     fileRecent->setMaxItems(32);
 
     (void) new KAction( i18n( "Close All" ), 0, this,
                         SLOT( slotFileCloseAll() ),
-                        actionCollection(), "close_all" );
+                        actionCollection(), "file_close_all" );
 
     saveAction = KStdAction::save(this, SLOT( slotFileSave() ),actionCollection());
 
@@ -1531,7 +1532,7 @@ void QuantaApp::initActions()
 
     saveAllAction = new KAction( i18n( "Save All..." ), UserIcon("save_all"), SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
                         this, SLOT( slotFileSaveAll() ),
-                        actionCollection(), "save_all" );
+                        actionCollection(), "file_save_all" );
 
     saveAsLocalTemplateAction = new KAction( i18n( "Save as Local Template..." ), 0,
                         this, SLOT( slotFileSaveAsLocalTemplate() ),

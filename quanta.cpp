@@ -687,7 +687,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
   newWrite->checkDirtyStatus();
-  if (newWrite != m_view->oldWrite)
+  if (newWrite != m_view->oldWrite && sTab)
     sTab->useOpenLevelSetting = true;
   reparse(true);
   //slotNewUndo();
@@ -1695,7 +1695,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    do
    {
      uint index = 0;
-     do
+     while (index < xml_clients.count())
      {
        name = newName;
        if (index == 0)
@@ -1718,7 +1718,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
        {
          index++;
        }
-     } while (index < xml_clients.count());
+     }
    } while (name == newName && found);
    name = newName;
 

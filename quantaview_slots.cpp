@@ -735,6 +735,13 @@ void QuantaView::toggleVertical()
   }
 }
 
+void QuantaView::toggleInsert()
+{
+  if (writeExists())
+  {
+    write()->kate_view->setOverwriteMode(!write()->kate_view->isOverwriteMode());
+  }
+}
 
 
 void QuantaView::slotFind ()

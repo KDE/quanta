@@ -120,6 +120,7 @@ public slots:
   void slotSelectAll ();
   void slotDeselectAll ();
   void toggleVertical ();
+  void toggleInsert();
 
   void slotFind ();
   void slotFindAgain ();
