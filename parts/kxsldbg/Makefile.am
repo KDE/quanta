@@ -61,7 +61,7 @@ kxsldbg_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 shellrcdir   = $(kde_datadir)/kxsldbg
 shellrc_DATA = kxsldbg_shell.rc
 
-messages:
+messages: rc.cpp
 	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \
 	if test -n "$$LIST"; then \
 	 $(XGETTEXT) $$LIST -o $(podir)/kxsldbg.pot; \
