@@ -20,6 +20,7 @@
 #include <unistd.h>
 
 //qt includes
+#include <qdir.h>
 #include <qdom.h>
 
 //kde includes
@@ -186,6 +187,11 @@ void TagAction::insertTag()
     {
       args = command.mid(pos+1);
       command = command.left(pos);
+    }
+    if (command.startsWith("~"))
+    {
+      command = command.mid(1);
+      command.prepend(QDir::homeDirPath());
     }
     *proc << command.stripWhiteSpace();
     args = args.stripWhiteSpace();
