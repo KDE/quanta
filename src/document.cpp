@@ -2475,19 +2475,13 @@ void Document::convertCase()
 
 void Document::open(const KURL &url, const QString &encoding)
 {
-    //see if we can watch this file
-    if (url.isLocalFile())
-    {
-       fileWatcher->addFile(url.path());
-       kdDebug(24000) << "addFile[Document::open]: " << url.path() << endl;
-    }
     KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
     if (encodingIf)
        encodingIf->setEncoding(encoding);
     connect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
     connect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
     if (!m_doc->openURL(url))
-      emit openingFailed(url);
+      slotOpeningFailed(QString::null);
     if (!url.isLocalFile())
     {
       QExtFileInfo internalFileInfo;
@@ -2497,14 +2491,20 @@ void Document::open(const KURL &url, const QString &encoding)
 
 void Document::slotOpeningCompleted()
 {
-  if (!url().isLocalFile())
+  KURL u = url();
+  if (!u.isLocalFile())
     qApp->exit_loop();
+  else
+  {
+      fileWatcher->addFile(u.path());
+      kdDebug(24000) << "addFile[Document::open]: " << u.path() << endl;
+  }
   disconnect(m_doc, SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
   m_dirty = false;
   createTempFile();
   m_view->setFocus();
   processDTD();
-  emit openingCompleted(url());
+  emit openingCompleted(u);
 }
 
 void Document::slotOpeningFailed(const QString &errorMessage)
@@ -2513,13 +2513,7 @@ void Document::slotOpeningFailed(const QString &errorMessage)
   if (!url().isLocalFile())
     qApp->exit_loop();
   disconnect(m_doc, SIGNAL(canceled(const QString&)), this, SLOT(slotOpeningFailed(const QString&)));
-  KURL u = url();
-  if (u.isLocalFile())
-  {
-      fileWatcher->removeFile(u.path());
-      kdDebug(24000) << "removeFile[Document::slotOpeningFailed]: " << u.path() << endl;
-  }
-  emit openingFailed(u);
+  emit openingFailed(url());
 }
 
 void Document::processDTD(const QString& documentType)
