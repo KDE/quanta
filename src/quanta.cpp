@@ -1653,16 +1653,17 @@ void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
 
 void QuantaApp::openDoc(const QString& url)
 {
-  if (url.startsWith("/"))
-    url.prepend("file:");
-  KURL u(url);
+  QString urlStr = url;
+  if (urlStr.startsWith("/"))
+    urlStr.prepend("file:");
+  KURL u(urlStr);
   if (u == m_htmlPartDoc->url())
     return;
 
   m_htmlPartDoc->closeURL();
   m_htmlPartDoc->openURL(u);
   m_htmlPartDoc->show();
-  m_htmlPartDoc->addToHistory(url);
+  m_htmlPartDoc->addToHistory(urlStr);
 }
 
 void QuantaApp::slotContextHelp()
