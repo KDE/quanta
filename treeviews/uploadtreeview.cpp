@@ -122,15 +122,10 @@ void UploadTreeView::selectAllUnderNode( QListViewItem* it, bool select )
 
   for( ; itIter != 0; itIter = itIter->nextSibling() )
   {
-    //if ( dynamic_cast<UploadTreeFolder *>(itIter) )
-    {
-          itIter->setSelected(select);
-      selectAllUnderNode(itIter, select);
-    } //else
-    {
-      if (itIter->isSelected() != select)
-          itIter->setSelected(select);
-    }
+    itIter->setSelected(select);
+    selectAllUnderNode(itIter, select);
+    if (itIter->isSelected() != select)
+        itIter->setSelected(select);
   }
 }
 
@@ -143,7 +138,7 @@ void UploadTreeView::slotSelectFile( QListViewItem *it )
     selectAllUnderNode( it, it->isSelected() );
   }
 
-//set the correct checkbox for this item, if it was a folder  
+//set the correct checkbox for this item, if it was a folder
   int hadCheckFlags = checkboxTree(it);
   if ( itF )
   {
@@ -177,7 +172,7 @@ void UploadTreeView::slotSelectFile( QListViewItem *it )
       itFile->setWhichPixmap("check_clear");
       itFile->setSelected(false);
     }
-    itF = dynamic_cast<UploadTreeFile*>(it)->parentFolder;
+    itF = itFile->parentFolder;
   }
 
   //iterate through the item's parents and set the correct checkboxes for them
@@ -188,7 +183,7 @@ void UploadTreeView::slotSelectFile( QListViewItem *it )
     //check if the item has any children's selected
     QListViewItemIterator iter(itF->firstChild());
     while ( iter.current() && iter.current() != itF->nextSibling())
-    {    
+    {
        if ( iter.current()->isSelected() )
        {
          hasSelected = true;
@@ -265,7 +260,8 @@ QListViewItem* UploadTreeView::findItem(const QString& path )
   while ( ( i = item.find('/') ) >= 0 )
   {
     it = findFolder( it, item.left(i) );
-    if ( it == 0 ) return 0;
+    if ( it == 0 )
+         return 0;
     item.remove(0,i+1);
   }
 
@@ -284,7 +280,7 @@ QListViewItem* UploadTreeView::findItem(const QString& path )
 }
 
 UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString size )
-{ 
+{
   QString item = a_url.path(); //TODO: do with real KURL's
   QString fname = item;
   int i;
@@ -409,7 +405,7 @@ QListViewItem* UploadTreeView::itemByUrl(const KURL& a_url)
       url = fileItem->m_url;
     } else
     {
-      folderItem = dynamic_cast<UploadTreeFolder*>(it.current());
+      folderItem = static_cast<UploadTreeFolder*>(it.current());
       url = folderItem->m_url;
     }
     if (url == a_url)
