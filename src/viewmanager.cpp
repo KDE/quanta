@@ -101,11 +101,11 @@ void ViewManager::createNewDocument()
 #ifdef ENABLE_EDITORS
   KTextEditor::Document *doc =
                               KTextEditor::EditorChooser::createDocument(
-                                0,
+                                view,
                                 "KTextEditor::Document"
                                 );
 #else
-  KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", 0, "KTextEditor::Document");
+  KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", view, "KTextEditor::Document");
 #endif
   Document *w = new Document(doc, 0L);
   QString encoding = quantaApp->defaultEncoding();
@@ -133,7 +133,7 @@ void ViewManager::createNewDocument()
   view->activated(); //the previous activate does not call this, because it detects that the view was not changed (createView() also calls activate())
   m_lastActiveView = view;
   m_lastActiveEditorView = view;
-  quantaApp->newCursorPosition("", 1, 1);
+  quantaApp->newCursorPosition("", 1 , 1);
 }
 
 bool ViewManager::removeView(QuantaView *view, bool force)

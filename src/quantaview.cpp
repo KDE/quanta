@@ -122,7 +122,8 @@ QuantaView::~QuantaView()
 
 bool QuantaView::mayRemove()
 {
-   if (m_plugin)
+    emit hidePreview();
+    if (m_plugin)
    {
        m_plugin->unload(false);
    } else
@@ -228,6 +229,7 @@ void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
 {
    if (widget)
    {
+      ToolbarTabWidget::ref()->reparent(0, 0, QPoint(), false);
       m_customWidget = widget;
       m_splitter->hide();
       widget->reparent(m_documentArea, 0, QPoint(), true);
@@ -242,6 +244,8 @@ void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
    } else
    if (m_customWidget)
    {
+      ToolbarTabWidget::ref()->reparent(this, 0, QPoint(), qConfig.enableDTDToolbar);
+      m_viewLayout->addWidget(ToolbarTabWidget::ref(), 0 , 0);
       m_customWidget = 0L; //avoid infinite recursion
       int currentViewsLayout = m_currentViewsLayout;
       m_currentViewsLayout = -1; //force loading of this layout
@@ -258,6 +262,10 @@ void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
                 break;
       }
    }
+  if (m_documentArea->height() + ToolbarTabWidget::ref()->height() > height() && ToolbarTabWidget::ref()->isVisible())
+    resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
+  else if (ToolbarTabWidget::ref()->isHidden())
+    resize(width(), height());
 }
 
 
