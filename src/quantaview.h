@@ -111,7 +111,7 @@ public:
 #endif
 
  /** Called when this view become the active one */
-  void activated();
+  void activated(bool resizeView = true);
  /** Called when this view lost the active status */
   void deactivated();
 

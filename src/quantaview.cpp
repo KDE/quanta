@@ -763,7 +763,7 @@ KURL QuantaView::baseURL()
   return base;
 }
 
-void QuantaView::activated()
+void QuantaView::activated(bool resizeView)
 {
   if (!m_document)
   {
@@ -800,6 +800,8 @@ void QuantaView::activated()
             break;
         }
   }
+  if (resizeView)
+    resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
 }
 
 
