@@ -135,7 +135,7 @@ HasFileName = true
 FileNameRx = .*\||#.*
 
 [StructGroup_3]
-Name = Links (link)
+Name = Resources (link)
 No_Name = No Links (link)
 Icon = www
 Tag = link(href)

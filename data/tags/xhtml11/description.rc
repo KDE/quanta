@@ -41,7 +41,7 @@ List =!doctype,?
 [Extra rules]
 BooleanAttributes = simple
 Single Tag Style = XML
-StructGroupsCount = 2
+StructGroupsCount = 3
 
 [Parsing rules]
 SpecialAreas = <!-- -->
@@ -50,8 +50,8 @@ SpecialTags = script(language)
 MayContain = php, css
 
 [StructGroup_1]
-Name = Images
-No_Name = No Images
+Name = Images (anchor)
+No_Name = No Images (anchor)
 Icon = image
 Tag = img(src)
 HasFileName = true
@@ -63,3 +63,10 @@ Icon = www
 Tag = a(name,href)
 HasFileName = true
 FileNameRx = .*\||#.*
+
+[StructGroup_3]
+Name = Resources (link)
+No_Name = No Links (link)
+Icon = www
+Tag = link(href)
+HasFileName = true
