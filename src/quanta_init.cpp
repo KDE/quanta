@@ -264,6 +264,7 @@ void QuantaInit::initQuanta()
   m_quanta->slotFileNew();
   m_quanta->slotNewStatus();
   initToolBars();
+  Project::ref()->setProjectToolbarVisible(m_quanta->factory()->container("project_toolbar", m_quanta)->isShown());
   Project::ref()->slotShowProjectToolbar(Project::ref()->hasProject());
   KTipDialog::showTip(m_quanta);
 

@@ -2570,7 +2570,16 @@ void Project::slotShowProjectToolbar(bool show)
   {
     QWidget *w = quantaApp->factory()->container("project_toolbar", quantaApp);
     if (w)
-      w->setShown(show);
+    {
+      if (show && m_projectToolbarVisible)
+        w->setShown(true);
+      else
+      if (!show)
+      {
+        m_projectToolbarVisible = w->isShown();
+        w->setShown(false);
+      }
+    }
   }
 }
 

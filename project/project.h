@@ -114,6 +114,7 @@ public:
   QStringList tasks();
   QMap<QString, TeamMember> allMembers();
   bool eventsEnabled();
+  void setProjectToolbarVisible(bool visible) {m_projectToolbarVisible = visible;}
 
   /** Called when an url was moved inside the project with drag &drop */
   void urlMoved(const KURL& srcURL, const KURL &destURL);
@@ -186,6 +187,7 @@ private:
   Project(KMainWindow *parent);
 
   ProjectPrivate *d;
+  bool m_projectToolbarVisible;
 };
 
 #endif
