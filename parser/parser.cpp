@@ -247,7 +247,7 @@ Node * Parser::subParse( Node * parent, QString tag )
 
 int Parser::tokenType()
 {
-  pos = skipSpaces();
+  skipSpaces();
 
   if ( pos >= (int) s.length() )
     return EndText;
@@ -255,23 +255,23 @@ int Parser::tokenType()
   if ( s[pos] != '<')
     return Text;
 
-  if ( s.mid(pos,2) == "</" )
+  if ( s[pos+1] == '/' )
     return TagEnd;
+
+  if ( s[pos+1] == '?' )
+    return PHP;
 
   if ( s.mid(pos,4) ==  "<!--" )
     return Comment;
 
-  if ( s.mid(pos,2) == "<?" )
-    return PHP;
 
   return TagStart;
 }
 
 int Parser::skipSpaces()
 {
-  int tpos = pos;
-  while ( s[tpos].isSpace() ) tpos++;
-  return tpos;
+  while ( s[pos].isSpace() ) pos++;
+  return pos;
 }
 
 Tag Parser::parseTag()
@@ -303,21 +303,25 @@ QString Parser::parseTagEnd()
 
 void Parser::parseText()
 {
-  while ( s[pos]!='<' && !s[pos].isNull() ) pos++;
+  int len = s.length();
+  while ( s[pos] != '<' && pos < len ) pos++;
 }
 
 
 void Parser::parseComment()
 {
-  while ( s.mid(pos,3) != "-->" && !s[pos].isNull() ) pos++;
-  if ( !s[pos].isNull() )
+  int len = s.length();
+  while ( s.mid(pos,3) != "-->" && pos < len ) pos++;
+  if ( s < len )
     pos+=3;
 }
 
 void Parser::parsePHP()
 {
-  while ( s.mid(pos,2) != "?>" && !s[pos].isNull() ) pos++;
-  if ( !s[pos].isNull() )
+  int len = s.length();
+
+  while ( s.mid(pos,2) != "?>" && pos < len ) pos++;
+  if ( s < len )
     pos+=2;
 }
 

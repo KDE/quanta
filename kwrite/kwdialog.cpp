@@ -309,7 +309,7 @@ EditConfigTab::EditConfigTab(QWidget *parent, KWrite *kWrite)
 
   opt[1] = new QCheckBox(i18n("Replace &tabs with spaces"), this);
   cbLayout->addWidget(opt[1], 0, AlignLeft);
-  opt[1]->setChecked(configFlags & flags[1]);
+  opt[1]->setChecked( true );
 
   opt[2] = new QCheckBox(i18n("&Remove trailing spaces"), this);
   cbLayout->addWidget(opt[2], 0, AlignLeft);
@@ -366,7 +366,9 @@ EditConfigTab::EditConfigTab(QWidget *parent, KWrite *kWrite)
 void EditConfigTab::getData(KWrite *kWrite)
 {
   int configFlags, z;
-  
+
+  opt[1]->setChecked( true );
+
   configFlags = kWrite->config();
   for (z = 0; z < numFlags; z++) {
     configFlags &= ~flags[z];

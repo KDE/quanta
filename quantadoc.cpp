@@ -455,6 +455,7 @@ Document* QuantaDoc::newWrite(QWidget *parent)
     i++;
 
  	write = new Document( writeDoc, parent, "write" , fname);
+ 	app->config->setGroup("General Options");
  	write -> readConfig( app->config );
  	write -> setHl( hl->nameFind( "HTML"));
  	write -> installPopup( rbMenu );

@@ -38,6 +38,7 @@ struct TagAttr {
 };
 
 class KSpell;
+class KConfig;
 class QStringList;
 
 class Document : public KWrite  {
@@ -93,6 +94,8 @@ public slots:
 
 public:
 
+  void readConfig(KConfig *);
+  void writeConfig(KConfig *);
   //bool hasFileName() { return (fileName() != 0 ); };
 
   QString findBeginOfTag( QString tag, int x, int y);

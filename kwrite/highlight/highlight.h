@@ -97,6 +97,7 @@ class KeywordData {
     int len;
 };
 */
+
 class HlKeyword : public HlItemWw {
   public:
     HlKeyword(int attribute, int context);
@@ -105,7 +106,9 @@ class HlKeyword : public HlItemWw {
     void addList(const char **);
     virtual const QChar *checkHgl(const QChar *);
   protected:
-    QStringList words;
+    QDict <char> *words;
+    int maxlen; // max. len of keyword;
+//    QStringList words;
 };
 
 class HlInt : public HlItemWw {

@@ -41,6 +41,7 @@
 #include "resource.h"
 #include "document.h"
 
+#include "kwrite/kwdoc.h"
 #include "kwrite/kwview.h"
 
 #include "project/project.h"
@@ -318,6 +319,7 @@ void QuantaApp::initMenuBar()
   ///////////////////////////////////////////////////////////////////
   // menuBar entry editMenu
   editMenu = new QPopupMenu();
+  editMenu ->setCheckable(true);
 
   editMenu->insertItem(UserIcon("undo"),i18n("&Undo"), ID_EDIT_UNDO);
   editMenu->insertItem(UserIcon("redo"),i18n("&Redo"), ID_EDIT_REDO);
@@ -328,9 +330,10 @@ void QuantaApp::initMenuBar()
   editMenu->insertItem(UserIcon("cut"), 	i18n("Cu&t"), 	ID_EDIT_CUT);
   editMenu->insertItem(UserIcon("copy"), 	i18n("&Copy"), 	ID_EDIT_COPY);
   editMenu->insertItem(UserIcon("paste"), i18n("&Paste"), ID_EDIT_PASTE);
-  editMenu->insertItem(i18n("Select &All"),       ID_EDIT_SELECT_ALL);
+  editMenu->insertItem(i18n("Select A&ll"),       ID_EDIT_SELECT_ALL);
   editMenu->insertItem(i18n("&Deselect All"),     ID_EDIT_DESELECT_ALL);
-  editMenu->insertItem(i18n("Invert &Selection"), ID_EDIT_INVERT_SELECT);
+  editMenu->insertItem(i18n("&Invert Selection"), ID_EDIT_INVERT_SELECT);
+  editMenu->insertItem(i18n("&Vertical Selection"), ID_EDIT_VERTICAL_SELECT);
 
   editMenu->insertSeparator();
 
@@ -421,7 +424,7 @@ void QuantaApp::initMenuBar()
   optionsMenu->insertItem(i18n("&Editor options..."),   ID_OPTIONS_EDITOR);
   optionsMenu->insertItem(i18n("Configure &key bindings..."),   ID_OPTIONS_KEYS);
   optionsMenu->insertSeparator();
-  optionsMenu->insertItem(i18n("&General options..."),  ID_OPTIONS );
+  optionsMenu->insertItem(UserIcon("options"), i18n("&General options..."),  ID_OPTIONS );
 
 
   ///////////////////////////////////////////////////////////////////
@@ -791,6 +794,7 @@ void QuantaApp::checkCommand(int id_, bool stat)
 {
   ///////////////////////////////////////////////////////////////////
   viewMenu ->setItemChecked( id_, stat);
+  editMenu ->setItemChecked( id_, stat);
 	toolBar()->setButton(      id_, stat);
 }
 
@@ -854,6 +858,7 @@ QuantaDoc *QuantaApp::getDocument() const
 void QuantaApp::saveOptions()
 {	
   config->setGroup("General Options");
+  doc->write()->writeConfig(config);
   config->writeEntry("Geometry", size());
   config->writeEntry("Show Toolbar", toolBar()->isVisible());
   config->writeEntry("Show Statusbar",statusBar()->isVisible());
@@ -917,13 +922,17 @@ void QuantaApp::readOptions()
   attrCapital = config->readBoolEntry("Capitals for attr", false);
   useCloseTag = config->readBoolEntry("Use close tag if optional", true);
 
-  previewPosition = config->readEntry("Preview position","Right");
+  previewPosition   = config->readEntry("Preview position","Right");
 
   int mode = config->readNumEntry("Left panel mode", 1);
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
 
   hSplit->setPos( config->readNumEntry("HSplit position", 1000) );
   vSplit->setPos( config->readNumEntry("VSplit position", 250 ) );
+
+  if ( vSplit->getPos() == 0 )
+        checkCommand( ID_VIEW_TREE, false );
+  else  checkCommand( ID_VIEW_TREE, true  );
 
   sTab->setFollowCursor( config->readBoolEntry("Follow Cursor", true ) );
 

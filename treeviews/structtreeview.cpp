@@ -245,8 +245,8 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
 
   config->setGroup("Parser options");
 		
-  QString handleMBM = config->readEntry("MBM","Find tag and open tree");
-	QString handleLBM = config->readEntry("LBM","Find tag");
+  QString handleMBM = config->readEntry("MBM","Find tag");
+	QString handleLBM = config->readEntry("LBM","Find tag and open tree");
 	QString handleDoubleClick = config->readEntry("Double click","Select tag area");
 
 	setSelected(item, true);

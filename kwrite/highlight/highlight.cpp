@@ -27,6 +27,7 @@
 #include <qregexp.h>
 #include <qfile.h>
 #include <qlabel.h>
+#include <qdict.h>
 
 #include <qlayout.h>
 #include <qgrid.h>
@@ -544,34 +545,49 @@ KeywordData::~KeywordData() {
 HlKeyword::HlKeyword(int attribute, int context)
   : HlItemWw(attribute,context) {
 //  words.setAutoDelete(true);
+  words = new QDict<char>(503);  // add by pdima
+  maxlen = 0;
 }
 
 HlKeyword::~HlKeyword() {
+  delete words;                  // add by pdima
 }
 
 
 void HlKeyword::addWord(const QString &word) {
 //  KeywordData *word;
 //  word = new KeywordData(s);
-  words.append(word);
+//  words.append(word); // commented by pdima
+    words->insert( word, (char *)1L );
+    int len  = word.length();
+    if ( len > maxlen ) maxlen=len;
 }
 
 void HlKeyword::addList(const char **list) {
 
   while (*list) {
-    words.append(*list);
+//    words.append(*list);
 //    addWord(*list);
+    words->insert( QString(*list), (char *)1L );
+    int len  = strlen(*list);
+    if ( len > maxlen ) maxlen=len;
     list++;
   }
 }
 
 const QChar *HlKeyword::checkHgl(const QChar *s) {
 
-  for (QStringList::Iterator it = words.begin(); it != words.end(); ++it) {
-    if (memcmp(s, (*it).unicode(), (*it).length()*sizeof(QChar)) == 0) {
-      return s + (*it).length();
-    }
+  for ( int i=1; i<=maxlen; i++ ) {
+  	if ( words->find( QString(s,i) ) )
+  		return s+i;
   }
+  	
+
+//  for (QStringList::Iterator it = words.begin(); it != words.end(); ++it) {
+//    if (memcmp(s, (*it).unicode(), (*it).length()*sizeof(QChar)) == 0) {
+//      return s + (*it).length();
+//    }
+//  }
   return 0L;
 }
 

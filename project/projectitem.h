@@ -18,7 +18,7 @@
 #ifndef PROJECTITEM_H
 #define PROJECTITEM_H
 
-#include <qwidget.h>
+#include <qstring.h>
 #include <time.h>
 
 /**project file properties

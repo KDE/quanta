@@ -686,3 +686,14 @@ int Document::xy2pos( int x, int y )
 	return (pos);
 }
 
+void Document::readConfig(KConfig *config)
+{
+  KWrite::readConfig( config );
+  doc()->readConfig( config );
+}
+
+void Document::writeConfig(KConfig *config)
+{
+  KWrite::writeConfig( config );
+  doc()->writeConfig( config );
+}

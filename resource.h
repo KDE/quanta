@@ -70,6 +70,7 @@
 #define ID_EDIT_INDENT              11160
 #define ID_EDIT_UNINDENT            11170
 #define ID_EDIT_CLEAN_INDENT        11180
+#define ID_EDIT_VERTICAL_SELECT     11190
 
 
 ///////////////////////////////////////////////////////////////////

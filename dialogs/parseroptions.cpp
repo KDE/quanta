@@ -40,8 +40,8 @@ ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* nam
 		this->config = config;
 		config->setGroup("Parser options");
 		
-		QString handleMBM = config->readEntry("MBM", i18n("Find tag and open tree"));
-		QString handleLBM = config->readEntry("LBM", i18n("Find tag"));
+		QString handleMBM = config->readEntry("MBM", i18n("Find tag"));
+		QString handleLBM = config->readEntry("LBM", i18n("Find tag and open tree"));
 		QString handleRBM = config->readEntry("RBM", i18n("Popup menu"));
 		QString handleDoubleClick = config->readEntry("Double click", i18n("Select tag area"));
 		
@@ -140,7 +140,7 @@ ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* nam
 
     spinExpand = new QSpinBox( this, "spinExpand" );
     spinExpand->setMaximumSize( QSize( 70, 32767 ) );
-    spinExpand->setValue( config->readNumEntry("Expand level", 0) );
+    spinExpand->setValue( config->readNumEntry("Expand level", 4) );
 
     grid->addWidget( spinExpand, 1, 1 );
 

@@ -147,6 +147,10 @@ void QuantaApp::commandCallback(int id_)
          slotEditInvertSelect();
          break;
 
+    case ID_EDIT_VERTICAL_SELECT:
+         slotEditVerticalSelect();
+         break;
+
     case ID_EDIT_SEARCH:
          slotEditSearch();
          break;
@@ -207,6 +211,10 @@ void QuantaApp::commandCallback(int id_)
          slotShowPreview();
          break;
 
+    case ID_VIEW_TREE:
+         slotShowLeftPanel();
+         break;
+
     case ID_PROJECT_NEW:
     		 project	-> newProject();
     		 leftPanel-> showPage( (QWidget *)pTab );
@@ -242,10 +250,9 @@ void QuantaApp::commandCallback(int id_)
 
     case ID_OPTIONS_EDITOR:
          doc->write()->editorOptions();
-         break;
 
-    case ID_OPTIONS_COLORS:
-         // doc->write()->colDlg();
+         config->setGroup("General Options");
+         doc->write()->writeConfig(config);
          break;
 
     case ID_OPTIONS_HIGHLIGHT:
@@ -622,6 +629,18 @@ void QuantaApp::slotEditInvertSelect()
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
+void QuantaApp::slotEditVerticalSelect()
+{
+  slotStatusMsg(i18n("Vertical Selection..."));
+
+  doc->write()->toggleVertical();
+
+  bool stat = editMenu -> isItemChecked( ID_EDIT_VERTICAL_SELECT );
+  checkCommand( ID_EDIT_VERTICAL_SELECT, !stat );
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
 void QuantaApp::slotEditIndent()
 {
   slotStatusMsg(i18n("Indent..."));
@@ -877,7 +896,7 @@ void QuantaApp::slotOptions()
 				    KDialogBase::Ok, this, "tabdialog");
 				
 	// Tag Style options
-  QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, UserIcon( "tagstyle" ) );
+  QVBox *page=kd->addVBoxPage(i18n("Tag Style"), QString::null, BarIcon("kwrite", KIcon::SizeMedium ) );
   StyleOptions *styleOptions = new StyleOptions( (QWidget *)page );
 
   styleOptions->checkTagsCapital->setChecked( tagsCapital);
@@ -886,7 +905,7 @@ void QuantaApp::slotOptions()
 
 
   // Files Masks options
-  page=kd->addVBoxPage(i18n("Files Masks"), QString::null, UserIcon( "filesmask" ) );
+  page=kd->addVBoxPage(i18n("Files Masks"), QString::null, BarIcon("files", KIcon::SizeMedium ) );
   FilesMask *filesMask = new FilesMask( (QWidget *)page );
 
   filesMask->lineHTML->setText( fileMaskHtml );
@@ -895,15 +914,12 @@ void QuantaApp::slotOptions()
   filesMask->lineText->setText( fileMaskText );
 
   // Preview options
-  page=kd->addVBoxPage(i18n("Preview"), QString::null, UserIcon( "previewoptions" ) );
+  page=kd->addVBoxPage(i18n("Preview"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
   PreviewOptions *previewOptions = new PreviewOptions( (QWidget *)page );
 
   previewOptions->setPosition( previewPosition );
 
-  // Keys options
-//  page=kd->addVBoxPage(i18n("Keys"), QString::null, UserIcon( "keysconfig" ) );
-
-  page=kd->addVBoxPage(i18n("Parser"), QString::null, UserIcon( "filesmask" ) );
+  page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
 
 //  KGuiCmdConfigTab *keys = new KGuiCmdConfigTab((QWidget *)page, KGuiCmdManager::self());
@@ -1003,6 +1019,8 @@ void QuantaApp::slotActivatePreview()
 
 void QuantaApp::slotShowPreview()
 {
+	static hSplitPos = 1000;
+	
 	WHTMLPart *part = htmlPart();
 	if ( !part ) return;
 	QWidgetStack *s = (QWidgetStack *)part->parent();
@@ -1011,16 +1029,52 @@ void QuantaApp::slotShowPreview()
 		disableCommand(ID_VIEW_BACK);
 		disableCommand(ID_VIEW_FORWARD);
 		disableCommand(ID_VIEW_REPAINT);
+		
+		if ( previewPosition == "Bottom" )
+		{
+	      hSplitPos = hSplit->getPos();
+	      hSplit -> setPos( 1000 );
+	  }
+		
 		s->raiseWidget( 0 );
 	}
 	else {
 		enableCommand(ID_VIEW_BACK);
 		enableCommand(ID_VIEW_FORWARD);
 		enableCommand(ID_VIEW_REPAINT);
+		
+	  if ( previewPosition == "Bottom" )
+	  {
+	    if ( (hSplit -> getPos()) > 800 && hSplitPos > 800 )
+	         hSplit -> setPos(800);
+	    else hSplit -> setPos( hSplitPos );
+	
+	    hSplitPos = hSplit->getPos();
+	  }
+		
 		s->raiseWidget( 1 );
 		repaintPreview(false);
 	}
 	checkCommand( ID_VIEW_PREVIEW, !stat );
+}
+
+void QuantaApp::slotShowLeftPanel()
+{
+	static vSplitPos = 0;
+	
+	bool stat = viewMenu -> isItemChecked( ID_VIEW_TREE );
+	
+	if ( stat )
+	{
+    vSplitPos = vSplit->getPos();
+    vSplit -> setPos( 0 );
+	}
+	else {
+    if ( vSplitPos == 0 ) vSplitPos = 250;
+    vSplit -> setPos( vSplitPos );
+	  vSplitPos = vSplit->getPos();
+	}
+	checkCommand( ID_VIEW_TREE, !stat );
 }
 
 void QuantaApp::slotNewLineColumn()

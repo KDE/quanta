@@ -207,6 +207,7 @@ class QuantaApp : public KTMainWindow
     void slotEditSelectAll();
     void slotEditDeselectAll();
     void slotEditInvertSelect();
+    void slotEditVerticalSelect();
     void slotEditSearch();
     void slotEditSearchAgain();
     void slotEditReplace();
@@ -253,6 +254,7 @@ class QuantaApp : public KTMainWindow
     void slotActivatePreview();
     /** show preview ( F6 )*/
     void slotShowPreview();
+    void slotShowLeftPanel();
 
     /** Repaint preview ( slot ) */
     void slotViewRepaint();
