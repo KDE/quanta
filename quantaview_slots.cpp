@@ -22,6 +22,7 @@
 
 #include <qregexp.h>
 #include <qdir.h>
+#include <qcstring.h>
 
 // include files for KDE
 #include <kapp.h>
@@ -49,6 +50,9 @@
 #include "tagdialogs/tagquicklistdlg.h"
 #include "tagdialogs/tagquicktable.h"
 #include "tagdialogs/cssdialogi.h"
+
+#include "toolbar/toolbars.h"
+#include "qdom.h"
 
 
 //#include "dialogs/toolbarconfig.h"
@@ -153,7 +157,7 @@ void QuantaView::slotTagFormTextArea()
 /** insert Radio Button tag */
 void QuantaView::slotTagFormRadio()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type", "radio");
+  TagDialog *dlg = new TagDialog( write(), "input", "type='radio'");
   dlg->show();
 }
 
@@ -166,34 +170,34 @@ void QuantaView::slotTagForm()
 /** insert check button */
 void QuantaView::slotTagFormCheck()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type", "checkbox");
+  TagDialog *dlg = new TagDialog( write(), "input", "type='checkbox'");
   dlg->show();
 }
 
 /** insert line edit */
 void QuantaView::slotTagFormLineEdit()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type", "text");
+  TagDialog *dlg = new TagDialog( write(), "input", "type='text'");
   dlg->show();
 }
 
 /** insert password button */
 void QuantaView::slotTagFormPas()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type", "password");
+  TagDialog *dlg = new TagDialog( write(), "input", "type='password'");
   dlg->show();
 }
 
 /** submit */
 void QuantaView::slotTagFormSubmit()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type", "submit");
+  TagDialog *dlg = new TagDialog( write(), "input", "type='submit'");
   dlg->show();
 }
 /** reset */
 void QuantaView::slotTagFormReset()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type", "reset");
+  TagDialog *dlg = new TagDialog( write(), "input", "type='reset'");
   dlg->show();
 }
 
@@ -431,45 +435,77 @@ void QuantaView::slotNewCurPos()
    emit newCurPos();
 }
 
-/** configure toolbar "other" */
-void QuantaView::slotToolBarConfig()
-{
- /* KConfig *config = new KConfig( KApplication::localconfigdir()+"/quanta_toolbar" );
-  ToolBarConfig *dlg = new ToolBarConfig( config, this, "Configure toolbar...");
-  if ( dlg->exec() )
-  {
-    dlg->saveConfig();
-    config->sync();
-
-    readUserToolBarConfig( config );
-  }
-  delete dlg;
-  config->sync();
-  delete config; */
-}
 
 /** slot for user toolbar */
 void QuantaView::userToolbarCallback(int id)
-{/*
-  ToolBarData *data = userToolBar->at(id);
-  curData = data;
+{
 
-  if ( data->type == ToolBarData::Tag ) {
-    if ( data->haveEndTag )
-    {
-      write()->insertTag( data->tag, data->endTag );
-    }
-    else {
-      write()->insertTag( data->tag );
-    }
+  space="";
+	space.fill( ' ',write()->currentColumn() );
+
+  QDomElement action = app->toolbars->action(id);
+  QString type = action.attribute("type","");
+
+  if ( type == "tag" ) {
+     QDomElement  tag = action.namedItem("tag").toElement();
+     QDomElement xtag = action.namedItem("xtag").toElement();
+
+     if ( tag.attribute("useDialog","false") == "true" ) {
+         QString s = tag.text();
+
+         if ( s[0] == '<' )
+            s.remove(0,1);
+
+         if ( s.right(1) == ">" )
+            s.remove( s.length()-1, 1 );
+
+         s = s.stripWhiteSpace();
+
+         int i = 0;
+         while ( !s[i].isSpace() && !s[i].isNull() )	i++;
+
+         QString name = s.left(i);
+
+         s = s.remove(0,i).stripWhiteSpace();
+
+         TagDialog *dlg = new TagDialog( write(), name, s, xtag.attribute("inLine","true") == "true" );
+         dlg->show();
+
+     }
+     else {
+       if ( xtag.attribute("use","false") == "true" ) {
+         if ( xtag.attribute("inLine","true") == "true" )
+           write()->insertTag( tag.text(), xtag.text() );
+         else
+           write()->insertTag( tag.text()+"\n"+space+"  ", "\n"+space+xtag.text() );
+       }
+       else
+         write()->insertTag( tag.text() );
+     }
   }
 
-  if ( data->type == ToolBarData::Script ) {
+  if ( type == "text" )
+    write()->insertTag( action.namedItem("text").toElement().text() );
 
-    KProcess *proc = new KProcess();
+  if ( type == "standard" ) {
+    QString name = action.namedItem("standard").toElement().text();
+
+    if ( name == "Quick start" ) slotTagQuickStart();
+    if ( name == "Quick list" )  slotTagQuickList();
+    if ( name == "Quick table" ) slotTagQuickTable();
+    if ( name == "CSS" ) slotInsertCSS();
+    if ( name == "Insert color" ) slotTagColor();
+  }
+
+  if ( type == "script" ) {
+
+  	KProcess *proc = new KProcess();
     proc ->clearArguments();
 
-    QString command = data->script;
+    QDomElement script = action.namedItem("script").toElement();
+    QString command = script.text();
+
+
     if ( write()->hasFileName() ) {
       QString fname = write()->fileName();
       if ( fname.left(5) == "file:")
@@ -478,74 +514,119 @@ void QuantaView::userToolbarCallback(int id)
     }
 
     *proc << "sh";
-    *proc << "-c" << command.data();
+    *proc << "-c" << command;
 
     beginOfScriptOutput = true;
+    beginOfScriptError  = true;
 
     connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
                  SLOT(  slotGetScriptOutput(KProcess*,char*,int)));
+
+		connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
+                 SLOT(  slotGetScriptError(KProcess*,char*,int)));
+
     proc->start(KProcess::NotifyOnExit, KProcess::All);
 
     QString buffer;
-    switch ( data->input )
-    {
-      case ToolBarData::None:
-      break;
 
-      case ToolBarData::SelectedText:
-        buffer = write()->markedText();
-        proc->writeStdin( buffer.data(), buffer.length() );
-      break;
+    QString inputType = script.attribute("input","none");
+    scriptOutputDest = script.attribute("output","none");
+    scriptErrorDest  = script.attribute("error","none");
 
-      case ToolBarData::CurrentDoc:
-        buffer = write()->text();
-        proc->writeStdin( buffer.data(), buffer.length() );
-      break;
+    if ( inputType == "current" ) {
+    	buffer = write()->text();
+      proc->writeStdin( buffer.local8Bit(), buffer.length() );
+    }
+
+    if ( inputType == "selected" ) {
+    	buffer = write()->markedText();
+      proc->writeStdin( buffer.local8Bit(), buffer.length() );
     }
     proc->closeStdin();
-  } */
+  }
+
 }
 
 
 /** get output */
 void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
-{ /*
-  QString output = QString(buffer,buflen+1);
-  ToolBarData *data = curData;
+{
 
-  switch ( data->output )
-  {
-    case ToolBarData::None:
-    break;
+  QString output(buffer);
+  output.truncate(buflen);
 
-    case ToolBarData::InsInCurPos:
-      write()->insertTag(output);
-    break;
+  if ( scriptOutputDest == "cursor" )
+  	write()->insertTag(output);
 
-    case ToolBarData::ReplaceCurDoc:
-      if ( beginOfScriptOutput )
-        write()->setText("");
-      write()->insertTag(output);
-    break;
+  if ( scriptOutputDest == "message" ) {
 
-    case ToolBarData::CreateNewDoc:
-      if ( beginOfScriptOutput )
-        doc->newDocument();
-      write()->insertTag(output);
-    break;
-
-    case ToolBarData::InMesWindow:
-      if ( beginOfScriptOutput ) {
-        if ( !app->viewMenu->isItemChecked(ID_VIEW_MES) )
-          app->slotViewMes();
-        app->mesOutput->clear();
-        app->mesOutput->insertAtEnd("Script output:\n");
-        app->mesOutput->insertAtEnd(output);
+			if ( beginOfScriptOutput ) {
+        //if ( !app->viewMenu->isItemChecked(ID_VIEW_MES) )
+        //  app->slotViewMes();
+        app->messageOutput->clear();
+        app->messageOutput->insertAtEnd("Script output:\n");
+        app->messageOutput->insertAtEnd(output);
       }
       else
-        app->mesOutput->insertAtEnd(output);
-    break;
+        app->messageOutput->insertAtEnd(output);  	
+  }	
+
+  if ( scriptOutputDest == "new" ) {
+		 if ( beginOfScriptOutput )
+        doc->newDocument();
+     write()->insertTag(output);
   }
 
-  beginOfScriptOutput = false; */
+  if ( scriptOutputDest == "replace" ) {
+		 if ( beginOfScriptOutput )
+        write()->setText("");
+     write()->insertTag(output);
+  }
+
+  beginOfScriptOutput = false;
+
+}
+
+/** get output */
+void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
+{
+
+  QString output(buffer);
+  output.truncate(buflen);
+
+  if ( scriptErrorDest == "merge" ) {
+  	scriptErrorDest = scriptOutputDest;
+  	beginOfScriptError = beginOfScriptOutput;
+  }
+
+  if ( scriptErrorDest == "cursor" )
+  	write()->insertTag(output);
+
+  if ( scriptErrorDest == "message" ) {
+
+			if ( beginOfScriptError ) {
+        //if ( !app->viewMenu->isItemChecked(ID_VIEW_MES) )
+        //  app->slotViewMes();
+        app->messageOutput->clear();
+        app->messageOutput->insertAtEnd("Script output:\n");
+        app->messageOutput->insertAtEnd(output);
+      }
+      else
+        app->messageOutput->insertAtEnd(output);  	
+  }	
+
+  if ( scriptErrorDest == "new" ) {
+		 if ( beginOfScriptError )
+        doc->newDocument();
+     write()->insertTag(output);
+  }
+
+  if ( scriptErrorDest == "replace" ) {
+		 if ( beginOfScriptError )
+        write()->setText("");
+     write()->insertTag(output);
+  }
+
+  beginOfScriptError = false;
+
 }

@@ -38,6 +38,7 @@
 #include "widgets/wtoolbar.h"
 #include "kwrite/kwview.h"
 #include "kwrite/highlight/highlight.h"
+#include "toolbar/toolbars.h"
 
 QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	: QWidget( parent, name)
@@ -47,105 +48,9 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	
 	QGridLayout *layout = new QGridLayout( this );
 	
-  QTabBar *tabBar = new QTabBar( this);
+  tabBar = new QTabBar( this);
+  toolbarStack = new QWidgetStack(this);
 
-  QWidgetStack *toolbarStack = new QWidgetStack(this);
-
-  bStandard = new WToolBar( app );
-	bFonts    = new WToolBar( app );
-	bTables   = new WToolBar( app );
-	bForms    = new WToolBar( app );
-	bLists    = new WToolBar( app );
-	bUser     = new WToolBar( app );
-	
-  // Insert button in tool bars Standard
-	bStandard->insertButton( UserIcon("quick_start"), ID_TAG_QUICKSTART, true, i18n("Quick Start"));
-  bStandard->insertSeparator();
-  bStandard->insertButton( UserIcon("tag_bold"),ID_TAG_BOLD, true, i18n("Bold"));
-	bStandard->insertButton( UserIcon("tag_i"),		ID_TAG_I,    true, i18n("Italic"));
-	bStandard->insertButton( UserIcon("tag_u"),		ID_TAG_U,    true, i18n("Underline"));
-  bStandard->insertSeparator();
-  bStandard->insertButton( UserIcon("tag_p"),   ID_TAG_P,    true, i18n("Paragraph"));
-  bStandard->insertButton( UserIcon("tag_br"),  ID_TAG_BR,   true, i18n("New line"));
-  bStandard->insertButton( UserIcon("tag_nbsp"),ID_TAG_NBSP, true, i18n("Non breaking space"));
-  bStandard->insertSeparator();
-  bStandard->insertButton( UserIcon("tag_a"),    ID_TAG_A,     true, i18n("Insert Anchor"));
-  bStandard->insertButton( UserIcon("tag_image"),ID_TAG_IMAGE, true, i18n("Insert Image"));
-  bStandard->insertButton( UserIcon("tag_hr"),   ID_TAG_HR,    true, i18n("Horizontal Rule"));
-  bStandard->insertButton( UserIcon("tag_comm"), ID_TAG_COMM,  true, i18n("Comment"));
-  bStandard->insertSeparator();
-  bStandard->insertButton( UserIcon("div_left"),   ID_TAG_DIV_LEFT,   true, i18n("Align Left"));
-  bStandard->insertButton( UserIcon("div_center"), ID_TAG_DIV_CENTER, true, i18n("Align Center"));
-  bStandard->insertButton( UserIcon("div_right"),  ID_TAG_DIV_RIGHT,  true, i18n("Align Right"));
-  bStandard->insertButton( UserIcon("div_justify"),ID_TAG_DIV_JUSTIFY,true, i18n("Align Justify"));
-  bStandard->insertSeparator();
-  bStandard->insertButton( UserIcon("css"),ID_TAG_CSS,true, i18n("CSS"));
-
-  // Insert button in tool bars Fonts
-	bFonts->insertButton( UserIcon("tag_font"), ID_TAG_FONT, true, i18n("Font"));
-  bFonts->insertSeparator();
-	bFonts->insertButton( UserIcon("font_inc"), ID_TAG_FONT_INC, true, i18n("Font Size +1"));
-	bFonts->insertButton( UserIcon("font_dec"), ID_TAG_FONT_DEC, true, i18n("Font Size -1"));
-  bFonts->insertSeparator();
-  bFonts->insertButton( UserIcon("tag_pre"), ID_TAG_PRE, true, i18n("Pre-Formated"));
-  bFonts->insertButton( UserIcon("tag_sub"), ID_TAG_SUB, true, i18n("Subscript"));
-  bFonts->insertButton( UserIcon("tag_sup"), ID_TAG_SUP, true, i18n("Superscript"));
-  bFonts->insertSeparator();
-  bFonts->insertButton( UserIcon("tag_h1"), ID_TAG_H1, true, i18n("Head 1"));
-	bFonts->insertButton( UserIcon("tag_h2"), ID_TAG_H2, true, i18n("Head 2"));
-	bFonts->insertButton( UserIcon("tag_h3"), ID_TAG_H3, true, i18n("Head 3"));
-	bFonts->insertButton( UserIcon("tag_h4"), ID_TAG_H4, true, i18n("Head 4"));
-	bFonts->insertButton( UserIcon("tag_h5"), ID_TAG_H5, true, i18n("Head 5"));
-	
-	// Insert button in tool bars Tables
-	bTables->insertButton( UserIcon("quick_table"), ID_TAG_QUICK_TABLE,  true, i18n("Quick Table"));
-  bTables->insertSeparator();
-	bTables->insertButton( UserIcon("tag_table"),    	ID_TAG_TABLE,        true, i18n("Table"));
-	bTables->insertButton( UserIcon("tag_table_row"),	ID_TAG_TABLE_ROW,    true, i18n("Table Row"));
-	bTables->insertButton( UserIcon("table_head"),		ID_TAG_TABLE_HEAD,   true, i18n("Table Head"));
-	bTables->insertButton( UserIcon("table_data"),		ID_TAG_TABLE_DATA,   true, i18n("Table Data"));
-  bTables->insertSeparator();
-	bTables->insertButton( UserIcon("tag_th"),     ID_TAG_TH,     true, i18n("Table Head"));
-	bTables->insertButton( UserIcon("tag_tr"),     ID_TAG_TR,     true, i18n("Table Row"));
-	bTables->insertButton( UserIcon("tag_td"),     ID_TAG_TD,     true, i18n("Table Data"));
-	bTables->insertButton( UserIcon("tag_caption"),ID_TAG_CAPTION,true, i18n("Caption"));
-	
-	// Insert button in tool bars Lists
-	bLists->insertButton( UserIcon("quick_list"), ID_TAG_QUICK_LIST, true, i18n("Quick List"));
-  bLists->insertSeparator();
-	bLists->insertButton( UserIcon("tag_ul"), ID_TAG_UL, true, i18n("Unordered list"));
-	bLists->insertButton( UserIcon("tag_ol"), ID_TAG_OL, true, i18n("Ordered List"));
-	bLists->insertButton( UserIcon("tag_li"), ID_TAG_LI, true, i18n("List Item"));
-  bLists->insertSeparator();
-  bLists->insertButton( UserIcon("tag_dl"), ID_TAG_DL, true, i18n("Definition List"));
-  bLists->insertButton( UserIcon("tag_dt"), ID_TAG_DT, true, i18n("Definition Term"));
-  bLists->insertButton( UserIcon("tag_dd"), ID_TAG_DD, true, i18n("Definition"));
-	
-	// Insert button in tool bars Forms
-	bForms->insertButton( UserIcon("form"),  ID_TAG_FORM, true, i18n("Form"));
-	bForms->insertSeparator();
-	bForms->insertButton( UserIcon("radio"),     ID_TAG_RADIO,     true, i18n("Radio Button"));
-	bForms->insertButton( UserIcon("check"),     ID_TAG_CHECK,     true, i18n("Check Box"));
-	bForms->insertButton( UserIcon("select"),    ID_TAG_SELECT,    true, i18n("Select"));
-	bForms->insertButton( UserIcon("lineedit"),  ID_TAG_LINEEDIT, true, i18n("Text"));
-	bForms->insertButton( UserIcon("linepas"),   ID_TAG_LINEPAS, true, i18n("Password"));
-	bForms->insertButton( UserIcon("textarea"),  ID_TAG_TEXTAREA, true, i18n("Text Area"));
-	bForms->insertButton( UserIcon("submit"),    ID_TAG_SUBMIT,    true, i18n("Submit"));
-	bForms->insertButton( UserIcon("reset"),     ID_TAG_RESET,     true, i18n("Reset"));
-
-	
-	toolbarStack->addWidget( bStandard, tabBar->insertTab( new QTab( i18n( "Standard"))));
-	toolbarStack->addWidget( bFonts,		tabBar->insertTab( new QTab( i18n( "Fonts"))));
-	toolbarStack->addWidget( bTables,		tabBar->insertTab( new QTab( i18n( "Tables"))));
-	toolbarStack->addWidget( bLists,		tabBar->insertTab( new QTab( i18n( "Lists"))));
-	toolbarStack->addWidget( bForms,		tabBar->insertTab( new QTab( i18n( "Forms"))));
-
-	bStandard -> setFocusPolicy(QWidget::NoFocus);
-	bFonts		-> setFocusPolicy(QWidget::NoFocus);
-	bTables		-> setFocusPolicy(QWidget::NoFocus);
-	bLists		-> setFocusPolicy(QWidget::NoFocus);
-	bForms		-> setFocusPolicy(QWidget::NoFocus);
-	
 	tabBar 			-> setFocusPolicy(QWidget::NoFocus);
 	toolbarStack-> setFocusPolicy(QWidget::NoFocus);
 	
@@ -157,13 +62,6 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
   layout->addWidget( toolbarStack ,1,0);
   layout->addWidget( writeTab     ,2,0);
 
-  connect( bStandard, SIGNAL(clicked(int)), this, SLOT(slotToolbarCallback(int)) );
-  connect( bFonts,    SIGNAL(clicked(int)), this, SLOT(slotToolbarCallback(int)) );
-  connect( bTables,   SIGNAL(clicked(int)), this, SLOT(slotToolbarCallback(int)) );
-  connect( bForms,    SIGNAL(clicked(int)), this, SLOT(slotToolbarCallback(int)) );
-  connect( bLists,    SIGNAL(clicked(int)), this, SLOT(slotToolbarCallback(int)) );
-  connect( bUser,     SIGNAL(clicked(int)), this, SLOT(userToolbarCallback(int)) );
-
   connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(slotUpdateStatus(const QString &)));
   connect( tabBar,		SIGNAL(selected(int)), toolbarStack, SLOT(raiseWidget(int)));
 
@@ -173,6 +71,44 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 
 QuantaView::~QuantaView()
 {
+}
+
+void QuantaView::updateToolBars( ToolBars *t)
+{
+  // remove all items from toolbar
+  for ( WToolBar *tb = wtoolbars.first(); tb!=0; tb = wtoolbars.next() ) {
+    int id = toolbarStack->id(tb);
+    toolbarStack->removeWidget(tb);
+    tabBar->removeTab( tabBar->tab(id) );
+  }
+  wtoolbars.clear();
+
+  // insert toolbars
+  for ( int i=0; i < t->count(); i++ ) {
+    WToolBar *tb = new WToolBar(app);
+    tb -> setFocusPolicy(QWidget::NoFocus);
+    wtoolbars.append(tb);
+
+    QDomNodeList list = t->actions(i);
+    for ( unsigned int ai=0; ai<list.count(); ai++ ) {
+
+      QDomElement el = list.item(ai).toElement();
+      int id = el.attribute("id","-1").toInt();
+
+      if ( el.attribute("type") != "separator")
+        tb->insertButton( t->actionIcon(id),  el.attribute("id","-1").toInt(), true, i18n( el.attribute("name","") ));
+      else
+        tb->insertSeparator();
+    }
+
+    toolbarStack->addWidget( tb, tabBar->insertTab( new QTab( i18n( t->toolbarName(i) ))));
+
+    connect( tb, SIGNAL(clicked(int)), this, SLOT(userToolbarCallback(int)));
+  }
+
+  tabBar->repaint();
+  toolbarStack->raiseWidget( wtoolbars.first() );
+
 }
 
 QuantaDoc *QuantaView::getDocument() const

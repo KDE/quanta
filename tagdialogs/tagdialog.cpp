@@ -62,16 +62,19 @@ extern bool attrCapital; // use capital letters for attributes of tag
 extern bool useCloseTag; // use close tag if optional
 
 
-TagDialog::TagDialog( Document *write, QString tag ,QString attr, QString val)
+TagDialog::TagDialog( Document *write, QString tag ,QString attr,bool insertInLine )
     : QTabDialog( 0L, tag)
 {
   this->write = write;
   dict = new QDict<QString>(1,false);
+  this->insertInLine = insertInLine;
 
   if ( tag )
   {
     this->tag = tag;
-    if ( !attr.isNull() && !val.isNull() ) dict->insert( attr , new QString(val) );
+    if ( !attr.isNull() ) {
+      parseAttributes(attr);
+    }
     fEdit = false; // new tag
   }
   else {
@@ -235,6 +238,13 @@ void TagDialog::formeTag()
 
   QString secondPartOfTag = QString("</")+tagCase(tag)+">";
 
+  if ( !insertInLine ) {
+    QString space="";
+  	space.fill( ' ', write->currentColumn() );
+    newTag += "\n" + space + "  ";
+    secondPartOfTag = "\n" + space + secondPartOfTag;
+  }
+
   if ( ( singleTags->find( tag.upper() )!= -1 ) ||
      ( ( optionalTags->find(tag.upper())!= -1 ) && (!useCloseTag)))
           secondPartOfTag = "";
@@ -281,3 +291,63 @@ QString TagDialog::basePath()
 		
 	return QDir::currentDirPath()+"/";
 }
+
+void TagDialog::parseAttributes( QString attrs )
+{
+  QString t = attrs;
+
+  t = t.stripWhiteSpace();
+
+  while ( !t.isEmpty() ) {
+  	
+  	int i = 0;
+  	while ( !t[i].isSpace() && !t[i].isNull() && t[i] != '=' )	i++;
+  	
+  	QString attr = t.left(i);
+  	QString *value = new QString();
+  	
+  	t = t.remove(0,i).stripWhiteSpace();
+  	
+  	if ( t[0] == '=' ) {
+  		t = t.remove(0,1).stripWhiteSpace();
+  		
+  		if ( t[0] == '"' ) {
+  			i = 1;
+  			while ( t[i] != '"' && !t[i].isNull() ) i++;
+  			if ( t[i] == '"' )
+  				*value = t.mid(1,i-1);
+  			else
+  			  *value = t.mid(1,i);
+  			t = t.remove(0,i+1).stripWhiteSpace();
+  		}
+  		else
+  		if ( t[0] == '\'' ) {
+  			i = 1;
+  			while ( t[i] != '\'' && !t[i].isNull() ) i++;
+  			if ( t[i] == '\'' )
+  				*value = t.mid(1,i-1);
+  			else
+  			  *value = t.mid(1,i);
+  			t = t.remove(0,i+1).stripWhiteSpace();
+  		}
+  		else {
+  		
+    		i=0;
+  	  	while ( !t[i].isSpace() && !t[i].isNull() )	i++;
+    	
+    		*value = t.left(i);
+    		t = t.remove(0,i).stripWhiteSpace();
+  		}
+  		
+  		// debug ( name+" , "+attr[attrcount]+"="+value[attrcount]+";" );
+  		
+  		
+  		
+  	
+   }
+   qDebug("attr :%s; value :%s;",attr.data(),value->data() );
+   dict->insert( attr , value );
+ }
+  	
+}
+

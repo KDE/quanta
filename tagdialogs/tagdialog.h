@@ -42,8 +42,16 @@ extern QStrList *quotedAttribs; // list of attribs, that have quoted values ( al
 class TagDialog : public QTabDialog  {
    Q_OBJECT
 public:
-  /** constructor: edit tag if "tag" == 0L or insert new tag if tag != 0L */
-	TagDialog( Document *write, QString tag = QString::null, QString attr = QString::null, QString val = QString::null);
+  /**
+    constructor: edit tag if "tag" == 0L or insert new tag if tag != 0L
+    attr format: "attr1='value1' attr2='value2'..."
+    insertInLine :
+        true : <a></a>
+        false: <a>
+               </a>
+
+  */
+	TagDialog( Document *write, QString tag = QString::null, QString attr = QString::null, bool insertInLine = true );
 	~TagDialog();
 	/**  */
   void parseTag();
@@ -64,14 +72,16 @@ public:
   QString tag;
 
 public slots: // Public slots
-  /**  */
   void slotAccept();
 
 private:
+  bool insertInLine;
   /** convert tag to upper or lower case */
   QString tagCase( QString tag);
   /** convert attribute of tag to upper or lower case */
   QString attrCase( QString  attr);
+
+  void parseAttributes( QString attrs );
 };
 
 #endif

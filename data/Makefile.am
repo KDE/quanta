@@ -1,10 +1,10 @@
-
-EXTRA_DIST = tagdata.rc 
+EXTRA_DIST = tagdata.rc toolbars.rc
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/quanta/
 	$(mkinstalldirs) $(kde_datadir)/quanta/doc
 	$(mkinstalldirs) $(kde_datadir)/quanta/tags
+	$(INSTALL_DATA) toolbars.rc $(kde_datadir)/quanta/toolbars.rc	
 	$(INSTALL_DATA) $(srcdir)/tagdata.rc $(kde_datadir)/quanta/tagdata.rc
 	$(INSTALL_DATA) $(srcdir)/base.tag $(kde_datadir)/quanta/tags/base.tag
 	$(INSTALL_DATA) $(srcdir)/body.tag $(kde_datadir)/quanta/tags/body.tag

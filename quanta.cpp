@@ -21,6 +21,8 @@
 #include <qpainter.h>
 #include <qwidgetstack.h>
 #include <qtabwidget.h>
+#include <qfile.h>
+#include <qtextstream.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -64,6 +66,9 @@
 #include "treeviews/doctreeview.h"
 
 #include "parser/parser.h"
+
+#include "toolbar/toolbarconfigi.h"
+#include "toolbar/toolbars.h"
 
 
 
@@ -254,6 +259,10 @@ void QuantaApp::commandCallback(int id_)
     		
     case ID_OPTIONS_KEYS:
     		 slotOptionsConfigureKeys();
+    		 break;
+    		
+    case ID_OPTIONS_TOOLBARS:
+    		 slotOptionsConfigureToolbars();
     		 break;
 
     case ID_OPTIONS_EDITOR:
@@ -912,6 +921,32 @@ void QuantaApp::slotOptionsConfigureKeys()
 
 	KKeyDialog::configureKeys(keyAccel);
 	
+}
+
+void QuantaApp::slotOptionsConfigureToolbars()
+{
+  ToolBarConfig *dlg = new ToolBarConfigI( toolbars, 0, "toolbars config", true );
+//  QDomDocument oldDoc = toolbars->d.cloneNode().toDocument();
+
+  if ( dlg->exec() ) {
+    view->updateToolBars(toolbars);
+    QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/toolbars.rc" );
+    f.open( IO_ReadWrite | IO_Truncate );
+    QTextStream qts(&f);
+    toolbars->d.save(qts,0);
+    f.close();
+  }
+  else {
+//    toolbars->d = oldDoc;
+    QFile f( locate("appdata","toolbars.rc") );
+		f.open( IO_ReadOnly );
+		toolbars->d.clear();
+		toolbars->d.setContent( &f );
+		f.close();
+  }
+
+  delete ( dlg );
+		
 }
 
 

@@ -1,16 +1,18 @@
-
 bin_PROGRAMS = quanta
 quanta_SOURCES = qextfileinfo.cpp quantaview_slots.cpp document.cpp quantaview_init.cpp quanta_init.cpp quantaview.cpp quantadoc.cpp quanta.cpp main.cpp 
-quanta_LDADD   = ./widgets/libwidgets.a ./kwrite/libkwrite.a ./treeviews/libtreeviews.a ./kwrite/highlight/libhighlight.a ./tagdialogs/libtagdialogs.a ./dialogs/libdialogs.a ./parser/libparser.a ./project/libproject.a -lkparts -lkhtml -lkjs -lktexteditor -lkspell -lkfile -lkdeui -lkdecore -lqt -lXext -lX11 $(LIBSOCKET)
+quanta_LDADD   = ./widgets/libwidgets.a ./kwrite/libkwrite.a ./treeviews/libtreeviews.a ./kwrite/highlight/libhighlight.a ./tagdialogs/libtagdialogs.a ./dialogs/libdialogs.a ./parser/libparser.a ./project/libproject.a ./toolbar/libtoolbar.a -lkparts -lkhtml -lkjs -lktexteditor -lkspell -lkfile -lkdeui -lkdecore -lqt -lXext -lX11 $(LIBSOCKET)
 
-SUBDIRS = icons widgets kwrite treeviews tagdialogs data dialogs parser project 
+SUBDIRS = icons widgets kwrite treeviews tagdialogs data dialogs parser project toolbar 
 
-EXTRA_DIST = main.cpp quanta.cpp quanta.h quantadoc.cpp quantadoc.h quantaview.cpp quantaview.h resource.h quanta.desktop quanta_init.cpp quantaview_init.cpp document.cpp document.h quantaview_slots.cpp qextfileinfo.cpp qextfileinfo.h 
+EXTRA_DIST = main.cpp quanta.cpp quanta.h quantadoc.cpp quantadoc.h quantaview.cpp quantaview.h resource.h quanta.desktop quanta.xpm mini-quanta.xpm quanta_init.cpp quantaview_init.cpp document.cpp document.h quantaview_slots.cpp qextfileinfo.cpp qextfileinfo.h 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/Applications/
 	$(INSTALL_DATA) $(srcdir)/quanta.desktop $(kde_appsdir)/Applications/quanta.desktop
 	$(mkinstalldirs) $(kde_icondir)/locolor/32x32/apps/
+	$(INSTALL_DATA) quanta.xpm $(kde_icondir)/locolor/32x32/apps/quanta.xpm
+	$(mkinstalldirs) $(kde_icondir)/locolor/16x16/apps/
+	$(INSTALL_DATA) mini-quanta.xpm $(kde_icondir)/locolor/16x16/apps/quanta.xpm
 
 uninstall-local:
 	-rm -f $(kde_appsdir)/Applications/quanta.desktop

@@ -19,6 +19,7 @@
 
 // QT includes
 #include <qframe.h>
+#include <qsizepolicy.h>
 
 // KDE includes
 
@@ -40,6 +41,8 @@ void WToolBar::fixingSize()
 	
 	enableMoving(false);
 	enableFloating(false);
+	
+	setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Minimum ) );
 }
 
 void WToolBar::insertSeparator()
@@ -58,24 +61,5 @@ void WToolBar::insertSeparator()
   insertWidget( 7,0,  w2);
 #else
   insertLineSeparator();
-#endif
-}
-
-void WToolBar::insertSeparator( KToolBar *t )
-{
-#ifdef OLD_SEPARATORS
-	QFrame *f  = new QFrame ( t );
-	QWidget *w1= new QWidget( t );
-	QWidget *w2= new QWidget( t );
-	
-  f -> setFrameStyle( QFrame::VLine | QFrame::Sunken );
-  w1-> setMinimumWidth( 7 );
-  w2-> setMinimumWidth( 7 );
-
-  t -> insertWidget( 7,0,  w1);
-  t -> insertWidget( 0,16, f );
-  t -> insertWidget( 7,0,  w2);
-#else
-  t->insertLineSeparator();
 #endif
 }

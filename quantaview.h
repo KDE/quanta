@@ -24,6 +24,7 @@
 
 // include files for Qt
 #include <qwidget.h>
+#include <qlist.h>
 
 class QuantaApp;
 class QuantaDoc;
@@ -33,6 +34,9 @@ class WToolBar;
 class Document;
 class QTabWidget;
 class KProcess;
+class ToolBars;
+class QTabBar;
+class QWidgetStack;
 
 /** The QuantaView class provides the view widget for the QuantaApp instance.	
  * The View instance inherits QWidget as a base class and represents the view object of a KTMainWindow. As QuantaView is part of the
@@ -84,6 +88,8 @@ class QuantaView : public QWidget
 	  QString tagCase( const char*  tag);
   	/** convert attribute of tag to upper or lower case */
   	QString attrCase( const char*  attr);
+  	
+  	void updateToolBars( ToolBars *);
 
 	public slots:
 	
@@ -152,8 +158,6 @@ insert color in the text */
   void slotTagGt();
   /** insert <br> tag */
   void slotTagBr();
-  /** Add new kwrite class to
-      writeStack and return id in stack */
   /** insert date */
   void slotTagDate();
   /** for select form */
@@ -179,10 +183,9 @@ insert color in the text */
   void slotTagFormSubmit();
   /** slot for user toolbar */
   void userToolbarCallback(int);
-  /** configure toolbar "other" */
-  void slotToolBarConfig();
 
   void slotGetScriptOutput(KProcess *proc, char *buffer, int buflen);
+  void slotGetScriptError (KProcess *proc, char *buffer, int buflen);
 
   signals: // Signals
   /**  */
@@ -195,25 +198,19 @@ insert color in the text */
   	QuantaApp *app;
   	QuantaDoc *doc;
   	
-  	/** tool bar Standard */
-  	WToolBar *bStandard;
-  	/** tool bar fonts */
-  	WToolBar *bFonts;
-  	/** tool bar fonts */
-  	WToolBar *bTables;
-  	/** tool bar tables */
-  	WToolBar *bForms;
-  	/** tool bar forms */
-  	WToolBar *bLists;
-  	/** tool bar user */
-  	WToolBar *bUser;
+  	QList <WToolBar> wtoolbars;
+  	QTabBar *tabBar;
+  	QWidgetStack *toolbarStack;
   	
-  	QTabWidget *writeTab;
-  	
+  	QTabWidget   *writeTab;
     /** collum of cursor position */
     int column;
     QString space;
 
+    bool beginOfScriptOutput;
+    bool beginOfScriptError;
+    QString scriptOutputDest;
+    QString scriptErrorDest;
 };
 
 #endif // QUANTAVIEW_H

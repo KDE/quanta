@@ -60,6 +60,8 @@
 
 #include "parser/parser.h"
 
+#include "toolbar/toolbars.h"
+
 QString fileMaskHtml 	= "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* ";
 QString fileMaskPhp 	= "*.*PHP* *.*php* ";
 QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";
@@ -429,8 +431,9 @@ void QuantaApp::initMenuBar()
   optionsMenu->insertItem(i18n("Highlighting Mode"), highlightMenu );
   connect( highlightMenu, SIGNAL(activated(int)), this, SLOT(slotSetHl(int)));
 
-  optionsMenu->insertItem(i18n("&Editor Options..."),   ID_OPTIONS_EDITOR);
-  optionsMenu->insertItem(i18n("Configure &Key Bindings..."),   ID_OPTIONS_KEYS);
+  optionsMenu->insertItem(i18n("&Editor options..."),   ID_OPTIONS_EDITOR);
+  optionsMenu->insertItem(i18n("Configure &key bindings..."),   ID_OPTIONS_KEYS);
+  optionsMenu->insertItem(i18n("Configure &toolbars..."),   ID_OPTIONS_TOOLBARS);
   optionsMenu->insertSeparator();
   optionsMenu->insertItem(UserIcon("options"), i18n("&General Options..."),  ID_OPTIONS );
 
@@ -489,6 +492,15 @@ void QuantaApp::initMenuBar()
 
 void QuantaApp::initToolBar()
 {
+
+  QFile f( locate("appdata","toolbars.rc") );
+
+	f.open( IO_ReadOnly );
+
+	QDomDocument doc;
+	doc.setContent( &f );
+  toolbars = new ToolBars(doc);
+  
   ///////////////////////////////////////////////////////////////////
   // TOOLBAR
   toolBar()->insertButton(UserIcon("new"),     ID_FILE_NEW,      true, i18n("New File"));
@@ -632,6 +644,7 @@ void QuantaApp::initView()
   ////////////////////////////////////////////////////////////////////
   // create the main widget here that is managed by KTMainWindow's view-region and
   // connect the widget to your document to display document contents.
+
 	
   topWidgetStack = new QWidgetStack( this );
 
@@ -722,6 +735,8 @@ void QuantaApp::initView()
   doc->addView( view );
   setView( topWidgetStack );
   setCaption( doc->getTitle());
+
+  view->updateToolBars(toolbars);
 
   connect( 	fTTab,SIGNAL(openFile(QString)),
   					this, SLOT(slotFileOpen(QString)));

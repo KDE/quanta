@@ -51,6 +51,7 @@ class FilesTreeView;
 class StructTreeView;
 class ProjectTreeView;
 class Project;
+class ToolBars;
 class GrepDialog;
 
 /**
@@ -271,6 +272,8 @@ class QuantaApp : public KTMainWindow
     /** configure keybindings */
     void slotOptionsConfigureKeys();
 
+    void slotOptionsConfigureToolbars();
+
     /** set highlight of document */
     void slotSetHl(int);
 
@@ -370,6 +373,8 @@ class QuantaApp : public KTMainWindow
         /** parsered tree of document  */
     Node *node;
     Parser *parser;
+
+    ToolBars *toolbars;
 };
  
 #endif // QUANTA_H
