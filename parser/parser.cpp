@@ -149,7 +149,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         currentNode = m_saParser->parseArea(area, foundText, "", node, false, true);
         line = m_saParser->lastParsedLine();
         textLine = ParserCommon::getLine(write, line, endLine, endCol);
-        col = m_saParser->lastParsedColumn();
+        col = m_saParser->lastParsedColumn() + 1;
         continue;
       } else
       //if we have found an XML tag start ("<")
@@ -166,11 +166,12 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         bool firstOpenFound = false;
         bool insideSingleQuotes = false;
         bool insideDoubleQuotes = false;
-        //fint he matching ">" in the document
+        //find the matching ">" in the document
         while (line <= endLine && openNum > 0)
         {
           textLine = ParserCommon::getLine(write, line, endLine, endCol);
-          for (uint i = sCol; i < textLine.length(); i++)
+	  uint textLineLen = textLine.length();
+          for (uint i = sCol; i < textLineLen; i++)
           {
             if (i == 0 || (i > 0 && textLine[i-1] != '\\'))
             {
@@ -489,11 +490,12 @@ Node *Parser::parse(Document *w, bool force)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines) - 1, &lastNode);
   kdDebug(24000) << "Parsing time ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
   m_parsingNeeded = false;
- /*
+/*
  treeSize = 0;
+ kdDebug(24000) << "Basenode : " << m_node << endl;
  coutTree(m_node, 2);
  kdDebug(24000) << "Size of tree: " << treeSize << endl;
- */
+*/
 
 //FIXME: What is the use of two pointer to the same Node???
  baseNode = m_node;
@@ -516,35 +518,35 @@ Node *Parser::parse(Document *w, bool force)
 
 void Parser::coutTree(Node *node, int indent)
 {
-         QString output;
-        int bLine, bCol, eLine, eCol, j;
-        if (!node)
-           kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
-        while (node)
-        {
-                output = "";
-                output.fill('.', indent);
-                node->tag->beginPos(bLine, bCol);
-                node->tag->endPos(eLine, eCol);
-                if (node->tag->type != Tag::Text)
-                        output += node->tag->name.replace('\n'," ");
-                else
-                        output+= node->tag->tagStr().replace('\n'," ");
-                kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
-                        bLine << ":" << bCol << " - " << eLine << ":" << eCol << endl;
-                for(j = 0; j < node->tag->attrCount(); j++)
-                {
-                        kdDebug(24000)<< " attr" << j << " " <<
-                                node->tag->getAttribute(j).nameLine << ":" <<
-                                node->tag->getAttribute(j).nameCol << " - " <<
-                                node->tag->getAttribute(j).valueLine << ":" <<
-                                node->tag->getAttribute(j).valueCol << endl;
-                }
+    QString output;
+    int bLine, bCol, eLine, eCol, j;
+    if (!node)
+        kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
+    while (node)
+    {
+            output = "";
+            output.fill('.', indent);
+            node->tag->beginPos(bLine, bCol);
+            node->tag->endPos(eLine, eCol);
+            if (node->tag->type != Tag::Text)
+                    output += node->tag->name.replace('\n'," ");
+            else
+                    output+= node->tag->tagStr().replace('\n'," ");
+            kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
+                    bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << endl;
+            for(j = 0; j < node->tag->attrCount(); j++)
+            {
+                    kdDebug(24000)<< " attr" << j << " " <<
+                            node->tag->getAttribute(j).nameLine << ":" <<
+                            node->tag->getAttribute(j).nameCol << " - " <<
+                            node->tag->getAttribute(j).valueLine << ":" <<
+                            node->tag->getAttribute(j).valueCol << endl;
+            }
 
-                if (node->child)
-                        coutTree(node->child, indent + 4);
-                node = node->next;
-        }
+            if (node->child)
+                    coutTree(node->child, indent + 4);
+            node = node->next;
+    }
 }
 
 
@@ -552,7 +554,7 @@ void Parser::coutTree(Node *node, int indent)
 const DTDStruct * Parser::currentDTD(int line, int col)
 {
   const DTDStruct *dtd = m_dtd;
-  Node *node = nodeAt(line, col, false);
+  Node *node = nodeAt(line, col, false, true);
   if (node)
   {
     dtd = node->tag->dtd;
@@ -563,7 +565,7 @@ const DTDStruct * Parser::currentDTD(int line, int col)
 
 /** Returns the node for position (line, column). As more than one node can
 contain the same area, it return the "deepest" node. */
-Node *Parser::nodeAt(int line, int col, bool findDeepest)
+Node *Parser::nodeAt(int line, int col, bool findDeepest, bool exact)
 {
   if (!write)
       return 0L;
@@ -599,7 +601,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
         {
           int parentEl, parentEc;
           node->parent->tag->endPos(parentEl, parentEc);
-          if (QuantaCommon::isBetween(line, col, bl, bc, parentEl, parentEc) == 0)
+          if (!exact && QuantaCommon::isBetween(line, col, bl, bc, parentEl, parentEc) == 0)
           {
             node = node->parent;
           }
@@ -609,7 +611,8 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
     } else
     if (result == -1)
     {
-      node = node->parent;
+      if (node->parent)
+          node = node->parent;
       break; //we found the node
     } else
     {
@@ -638,7 +641,7 @@ Node *Parser::nodeAt(int line, int col, bool findDeepest)
   if (node && (el < line || (el == line && ec + 1 < col)))
   {
     Node *n = node->nextSibling();
-    if (n && n->nextSibling()) //don't set it to the last, always empty node
+    if (n /*&& n->nextSibling()*/) //don't set it to the last, always empty node
       node = n;
   }
   return node;

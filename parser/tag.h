@@ -50,8 +50,8 @@ struct TagAttr {
   int nameLine, nameCol;  //where the attr name begins
   int valueLine, valueCol;//where the attr value begins
   bool quoted;            //quote or not the attribute
-  bool special;           //true if the attribute is not a real one, instead it's only part 
-                          //of a special area that's present in the tag. Example: 
+  bool special;           //true if the attribute is not a real one, instead it's only part
+                          //of a special area that's present in the tag. Example:
                           //Tag: <a <? echo $a ?> href="x">, <?, echo, $a and ?> are special attributes
                           //This is important, otherwise they would be wrongly treated as booleans.
 };
@@ -143,18 +143,18 @@ public:
 
   enum TokenType {
     Unknown = 0,
-    XmlTag,
-    XmlTagEnd,
-    Text,
-    Comment,
-    CSS,
-    ScriptTag,
-    ScriptStructureBegin,
-    ScriptStructureEnd,
-    LocalVariable,
-    GlobalVariable,
+    XmlTag, //1
+    XmlTagEnd, //2
+    Text, //3
+    Comment, //4
+    CSS, //5
+    ScriptTag, //6
+    ScriptStructureBegin, //7
+    ScriptStructureEnd, //8
+    LocalVariable, //9
+    GlobalVariable, //10
     NeedsParsing = 500,
-    Empty,
+    Empty, //501
     Skip = 1000 }; // types of token
 
   //TODO: write setting/retrieving methods for the below attributes, and add

@@ -40,7 +40,7 @@ class SAParser;
 
 typedef QMap<QString, GroupElementMapList> IncludedGroupElements;
 typedef QMap<QString, IncludedGroupElements> IncludedGroupElementsMap;
- 
+
 
 class Parser: public QObject {
 
@@ -59,7 +59,7 @@ public:
 
   /** Returns the node for position (line, column). As more than one node can
   contain the same area, it return the "deepest" node. */
-  Node *nodeAt(int line, int col, bool findDeepest = true);
+  Node *nodeAt(int line, int col, bool findDeepest = true, bool exact = false);
 
   /** Rebuild the nodes */
   Node *rebuild(Document *w);
@@ -67,7 +67,7 @@ public:
   const DTDStruct * currentDTD(int line, int col);
   /** Remove the found groups from the memeber variables */
   void clearGroups();
-  void parseIncludedFiles();  
+  void parseIncludedFiles();
 
   /** Enable/Disable parsing. */
   void setSAParserEnabled(bool enabled);
@@ -90,17 +90,17 @@ public:
   IncludedGroupElementsMap includedMap;
   bool parsingEnabled;
   bool m_treeReparsed;
-  
+
 public slots:
-  void slotParseInDetail();  
+  void slotParseInDetail();
  /** Remove the found groups from the memeber variables */
   void cleanGroups();
 
 private slots:
   void slotIncludedFileChanged(const QString& fileName);
-    
+
 signals:
-  void nodeTreeChanged();  
+  void nodeTreeChanged();
   void rebuildStructureTree();
 
 private:
@@ -123,7 +123,7 @@ private:
   contain any scripts. */
   bool parseScriptInsideTag(Node *startNode);
 
-  /** Parses the node for Script groups (functions, variables, selectors, etc.) */  
+  /** Parses the node for Script groups (functions, variables, selectors, etc.) */
   void parseForScriptGroup(Node *node);
   /** Parses the node for XML groups (specific tags)*/
   void parseForXMLGroup(Node *node);
@@ -148,12 +148,12 @@ private:
    */
   void logReparse(NodeModifsSet *modifs, Document *w);
 
-  
+
   SAParser *m_saParser; //the special area parser object
-  
+
   /** Maybe we should move to a separate, special area parsing class */
   Node* specialAreaParsingDone(int &lastLine, int &lastCol);
-  
+
 };
 
 
