@@ -20,8 +20,6 @@ QXsldbgView::QXsldbgView(QWidget *parent)
 {
   setVScrollBarMode(QScrollView::Auto);
   setHScrollBarMode(QScrollView::Auto);
-  setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
-  setMinimumSize(500,400);
   cursorVisible = FALSE;
   _line = 0;
   _row = 0;
