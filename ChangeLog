@@ -57,6 +57,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
           correctly [#80289, #97437]
         - correctly select modified files for upload [#94167]
         - fix a bug in the auto tag updating: do not update non-XML tags [#95743]
+        - don't crash in case of corrupted quantarc
 
   - behavioral/user interface changes:
         - Toolbars->Add User Toolbar renamed to New User Toolbar

@@ -163,7 +163,9 @@ void Project::loadLastProject(bool reload)
     if (KURL::fromPathOrURL( projectList[i] ).isLocalFile())
    {
       projectList.remove( projectList.at(i) );
-      tempList.remove( tempList.at(i) );
+      QStringList::Iterator it = tempList.at(i);
+      if (it != tempList.end())
+        tempList.remove(it);
       --i;
     }
   }
