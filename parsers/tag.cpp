@@ -279,14 +279,14 @@ QString Tag::attributeValue(int index)
   return val;
 }
 
-QString Tag::attributeValue(QString attr)
+QString Tag::attributeValue(const QString &attr, bool ignoreCase)
 {
  QString val = "";
  for (uint i = 0 ; i < attrs.count(); i++)
  {
 
   if ( attr == attrs[i].name ||
-      (!m_dtd->caseSensitive && attrs[i].name == attr.lower()))
+       ((!m_dtd->caseSensitive || ignoreCase) && attrs[i].name.lower() == attr.lower()))
   {
     val = attrs[i].value;
     break;
@@ -296,12 +296,12 @@ QString Tag::attributeValue(QString attr)
 }
 
 /** Check if this tag has the attr attribute defined */
-bool Tag::hasAttribute( const QString &attr )
+bool Tag::hasAttribute(const QString &attr, bool ignoreCase)
 {
   for (uint i = 0; i < attrs.count(); i++)
   {
     if ( attrs[i].name ==  attr ||
-         (!m_dtd->caseSensitive && attrs[i].name == attr.lower()))
+         ((!m_dtd->caseSensitive || ignoreCase) && attrs[i].name.lower() == attr.lower()))
       return true;
   }
   return false;

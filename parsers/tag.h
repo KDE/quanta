@@ -73,7 +73,7 @@ public:
   /** Return the attribute value at index*/
   QString attributeValue(int index);
   /** Return the value of attr*/
-  QString attributeValue(QString attr);
+  QString attributeValue(const QString &attr, bool ignoreCase = false);
   /** Add an attribute */
   void addAttribute(TagAttr attr) {attrs.append(attr);}
   /** Get the attribute number index */
@@ -87,7 +87,7 @@ public:
   /** Returns the quotation status of the attribute */
   bool isQuotedAttribute(int index) const {return attrs[index].quoted;}
   /** Check if this tag has the attr attribute defined */
-  bool hasAttribute( const QString &attr );
+  bool hasAttribute(const QString &attr, bool ignoreCase = false);
   /** set the coordinates of a tag attribute */
   void setAttributePosition(int index, int bLineName, int bColName, int bLineValue, int bColValue);
   /** Set the coordinates of tag inside the document */

@@ -429,7 +429,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
               m_colSpin->setValue(col);
           TableNode tableN = mergeMatrix[nRow - 1][col];
           Node *n = tableN.node;
-          setCellText(m_dataTable, nRow - 1, col, i18n("Merged with (%1, %2).").arg(tableN.mergedRow).arg(tableN.mergedCol));
+          setCellText(m_dataTable, nRow - 1, col, i18n("Merged with (%1, %2).").arg(tableN.mergedRow + 1).arg(tableN.mergedCol + 1));
           m_dataTable->item(nRow-1, col)->setEnabled(false);
           tableNode.node = new Node(0L);
           tableNode.node->tag = new Tag(*(n->tag));
@@ -460,7 +460,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           tableNode.merged = false;
           tableRowTags.append(tableNode);
         }
-        QString colspanValue = n->tag->attributeValue("colspan");
+        QString colspanValue = n->tag->attributeValue("colspan", true);
         int colValue = 1;
         int lastCol = nCol;
         if (!colspanValue.isEmpty())
@@ -488,7 +488,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           } else
             colValue = 1;
         }
-        QString rowspanValue = n->tag->attributeValue("rowspan");
+        QString rowspanValue = n->tag->attributeValue("rowspan", true);
         if (!rowspanValue.isEmpty())
         {
           bool ok;
@@ -895,11 +895,12 @@ void TableEditor::slotRemoveCol()
   int i = 0;
   int j = 0;
   for (QValueList<QValueList<TableNode> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
+      j = 0;
       for (QValueList<TableNode>::Iterator it2 = (*it).begin(); it2 != (*it).end(); ++it2) {
         if ((*it2).merged && (*it2).mergedCol == m_col) {
           (*it2).merged = false;
           setCellText(m_dataTable, i, j, tagContent((*it2).node));
-          m_dataTable->item(i, i)->setEnabled(true);
+          m_dataTable->item(i, j)->setEnabled(true);
         }
         j++;
       }
@@ -1198,7 +1199,7 @@ void TableEditor::configureCell(int row, int col, Node * node)
    item->setHeader(node->tag->name.lower() == "th");
    // Horizontal alignment
    Qt::AlignmentFlags flags;
-   QString align = node->tag->attributeValue("align");
+   QString align = node->tag->attributeValue("align", true);
    if (align == "right")
      flags = Qt::AlignRight;
    else if (align == "center")
@@ -1211,7 +1212,7 @@ void TableEditor::configureCell(int row, int col, Node * node)
      flags = Qt::AlignLeft;
    item->setAlignment(flags);
    // Vertical alignment
-   QString valign = node->tag->attributeValue("valign");
+   QString valign = node->tag->attributeValue("valign", true);
    if (valign == "top")
      flags = Qt::AlignTop;
    else if (valign == "bottom")

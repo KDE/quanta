@@ -4,6 +4,11 @@ Version 3.3.2 (Release date: xx-10-2004; Started 07-10-2004):
   - bugfixes:
         - don't crash after editing a cell of a newly inserted row/column in the
           table editor
+        - show the right index of the main cell in case of merged rows in a table
+        - don't crash on column removal form a table
+        - read the tables correctly also if the doctype definition is wrong
+          (for example HTML tables inside XHTML)
+ 
 	
 Version 3.3.1 (Release date: xx-10-2004; Started 20-08-2004):
   - bugfixes:
