@@ -26,7 +26,7 @@
 #include <qtabwidget.h>
 #include <qwidgetstack.h>
 #include <qlayout.h>
-// #include <qtoolbutton.h>
+#include <qeventloop.h>
 #include <qtimer.h>
 #include <qdom.h>
 #include <qfile.h>
@@ -746,7 +746,7 @@ void QuantaApp::openLastFiles()
 
     if (!isPrj || fu.isLocalFile())
         m_doc->openDocument(fu, QString::null, false);
-    kapp->processEvents();
+    kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
   }
   m_doc->blockSignals(false);
   m_view->writeTab()->blockSignals(false);

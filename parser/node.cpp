@@ -15,8 +15,11 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+//qt includes
+#include <qlistview.h>
 
 #include "node.h"
+#include "tag.h"
 
 Node::Node( Node *parent )
 {

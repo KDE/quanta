@@ -20,6 +20,7 @@
 
 //qt includes
 #include <qlistview.h>
+#include <qeventloop.h>
 #include <qfileinfo.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
@@ -160,7 +161,7 @@ void ProjectUpload::slotBuildTree()
    }
  }
  totalText->setText(i18n("Building the tree..."));
- kapp->processEvents();
+ kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
  list->checkboxTree();
  list->show();
  totalText->setText(i18n("Total:"));

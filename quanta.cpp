@@ -38,6 +38,7 @@
 #include <qdockarea.h>
 #include <qdom.h>
 #include <qspinbox.h>
+#include <qeventloop.h>
 
 // include files for KDE
 #include <kcombobox.h>
@@ -168,7 +169,7 @@ void QuantaApp::slotFileOpen()
  for (KURL::List::Iterator i=data.urls.begin(); i != data.urls.end(); ++i)
  {
    slotFileOpen( *i , data.encoding);
-   kapp->processEvents();
+   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
  }
  m_doc->blockSignals(false);
  m_view->writeTab()->blockSignals(false);

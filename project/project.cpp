@@ -41,6 +41,7 @@
 #include <qurloperator.h>
 #include <qlineedit.h>
 #include <qregexp.h>
+#include <qeventloop.h>
 
 // include files for KDE
 #include <kurl.h>
@@ -1480,7 +1481,7 @@ void Project::openCurrentView()
           {
             quantaApp->slotLoadToolbarFile(url);
           }
-          kapp->processEvents();
+          kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
         }
         break;
       }

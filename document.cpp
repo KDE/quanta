@@ -568,8 +568,9 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
 
     if (!handled)
     {
+      DTDStruct *lastDTD = completionDTD;
       completionDTD = defaultDTD();
-      if (completionDTD->family == Xml)
+      if (lastDTD != completionDTD && completionDTD->family == Xml)
       {
         xmlAutoCompletion(line, column, string);
       }
@@ -610,8 +611,9 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
           //complete character codes
           //showCodeCompletions( getCharacterCompletions() );
     } else
-    if (string == ">" && tagName[0] != '/' && qConfig.closeTags
-        && currentDTD(true)->family == Xml) //close unknown tags
+    if (string == ">" && !tagName.isEmpty() &&
+        tagName[0] != '/' && qConfig.closeTags &&
+        currentDTD(true)->family == Xml) //close unknown tags
     {
       //add closing tag if wanted
       column++;

@@ -24,8 +24,8 @@
   *@author Dmitry Poplavsky
   */
 
-#include "tag.h"
-#include "qlistview.h"
+class Tag;
+class QListViewItem;
 
 #ifdef BUILD_KAFKAPART
 #include <dom/dom_node.h>
