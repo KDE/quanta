@@ -3,6 +3,7 @@
 
 #include <kaction.h>
 #include <qstring.h>
+#include <qdom.h>
 
 class QuantaView;
 class KProcess;
@@ -22,7 +23,7 @@ public:
     /**
      * Create an insert from dom element.
      */
-    TagAction( QDomElement *element, QObject* parent, const char* name, QuantaView *view );
+    TagAction( QDomElement *element, QuantaView *view, KActionCollection* );
 
     virtual ~TagAction();
     
@@ -31,7 +32,7 @@ public:
 
 protected slots:
     virtual void insertTag();
-    virtual void runScript();
+    
     virtual void slotGetScriptOutput( KProcess *, char *buffer, int buflen );
     virtual void slotGetScriptError( KProcess *, char *buffer, int buflen );
     virtual void scriptDone();
@@ -43,7 +44,7 @@ private:
     QString scriptOutputDest;
     QString scriptErrorDest;
   
-    QDomElement *tag;
+    QDomElement tag;
     QuantaView *view_;
 };
 

@@ -26,8 +26,11 @@ ActionEditDlg::ActionEditDlg( KActionCollection *col, QWidget* parent, const cha
    QValueList<KAction*> actions = col->actions();
    
    QValueList<KAction*>::Iterator it;
-   for( it = actions.begin(); it != actions.end(); ++it )
-        actionsList->insertItem( UserIcon((*it)->icon()), (*it)->plainText() );
+   for( it = actions.begin(); it != actions.end(); ++it ) {
+      KAction *action = *it;
+      if ( action->inherits("TagAction"))
+          actionsList->insertItem( UserIcon( action->icon()), action->plainText() );
+   }
 
 }
 

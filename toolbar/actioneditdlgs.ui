@@ -11,13 +11,13 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>509</width>
+            <width>505</width>
             <height>494</height>
         </rect>
     </property>
     <property stdset="1">
         <name>caption</name>
-        <string>MyDialog</string>
+        <string>Actions configuration</string>
     </property>
     <property stdset="1">
         <name>sizeGripEnabled</name>

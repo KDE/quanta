@@ -1,40 +1,40 @@
 <!DOCTYPE actionsconfig >
-<action>
-  
-  <action useTextButton="0" textButton="" icon="tag_bold" type="tag" id="1001" name="Bold" >
+<actions>
+
+  <action icon="tag_bold" type="tag" name="tag_b" text="Bold" >
    <tag useDialog="false" >&lt;b></tag>
    <xtag use="true" inLine="true" >&lt;/b></xtag>
    <tooltip>The &lt;b>B&lt;/b> element suggests that text be rendered as &lt;i>bold text&lt;/i>.
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  <action useTextButton="0" textButton="" icon="tag_i" type="tag" id="1002" name="Italic" >
+
+  <action icon="tag_i" type="tag" name="tag_i" text="Italic" >
    <tag useDialog="false" >&lt;i></tag>
    <xtag use="true" inLine="true" >&lt;/i></xtag>
    <tooltip>The &lt;b>I&lt;/b> element suggests that text be rendered as &lt;i>italic text&lt;/i>.
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  <action icon="tag_u" type="tag" id="1003" name="Underline" >
+
+  <action icon="tag_u" type="tag" name="tag_u" text="Underline" >
    <tag>&lt;u></tag>
    <xtag use="true" >&lt;/u></xtag>
    <tooltip>The &lt;b>U&lt;/b> element, deprecated in HTML 4.0, suggests that text be rendered as &lt;i>underlined text&lt;/i>.
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  
-  <action icon="tag_br" type="tag" id="1004" name="New line" >
+
+
+  <action icon="tag_br" type="tag" name="tag_br" text="New line" >
    <tag>&lt;br></tag>
    <tooltip>The &lt;b>BR&lt;/b> element forces a &lt;i>break&lt;/i> in the current line of text.
      &lt;br>- CLEAR=[ left | all | right | none ] (clear floating objects)
      &lt;br>- core attributes
    </tooltip>
   </action>
-  
-  <action icon="tag_p" type="tag" id="1005" name="Paragraph" >
+
+  <action icon="tag_p" type="tag" name="tag_p" text="Paragraph" >
    <tag>&lt;p></tag>
    <xtag use="true" >&lt;/p></xtag>
    <tooltip>The &lt;b>P&lt;/b> element defines a &lt;i>paragraph&lt;/i>.
@@ -42,68 +42,68 @@
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  <action icon="tag_nbsp" type="text" id="1006" name="Non breaking space" >
+
+  <action icon="tag_nbsp" type="text" name="tag_nbsp" text="Non breaking space" >
    <text>&amp;nbsp;</text>
    <tooltip>Inserting &lt;b>nbsp&lt;/b>.
      Non breaking &lt;i>space&lt;/i>.
    </tooltip>
   </action>
-  
-  <action icon="tag_a" type="tag" id="1007" name="Anchor" >
+
+  <action icon="tag_a" type="tag" name="tag_a" text="Anchor" >
    <tag useDialog="true" >&lt;a></tag>
    <xtag use="true" >&lt;/a></xtag>
    <tooltip>The &lt;b>A&lt;/b> element denotes an &lt;i>anchor&lt;/i>--a hypertext link or the destination of a link.
      The &lt;b>HREF&lt;/b> attribute specifies a hypertext link to another resource, such as an &lt;i>HTML&lt;/i> document or a &lt;i>JPEG&lt;/i> image.
    </tooltip>
   </action>
-  
-  <action icon="tag_image" type="tag" id="1008" name="Image" >
+
+  <action icon="tag_image" type="tag" name="tag_img" text="Image" >
    <tag useDialog="true" >&lt;img></tag>
    <tooltip>The &lt;b>IMG&lt;/b> element specifies an &lt;i>inline&lt;/i> image.
      The required &lt;b>SRC&lt;/b> attribute specifies the location of the image.
    </tooltip>
   </action>
-  
-  <action icon="tag_hr" type="tag" id="1009" name="Horisontal rule" >
+
+  <action icon="tag_hr" type="tag" name="tag_hr" text="Horisontal rule" >
    <tag>&lt;hr></tag>
    <tooltip>The &lt;b>HR&lt;/b> element defines a &lt;i>horizontal rule&lt;/i> for visual browsers.
      While this element is inherently presentational, it can be used structurally as a section divider.
    </tooltip>
   </action>
-  
-  <action icon="tag_comm" type="tag" id="1010" name="Comment" >
+
+  <action icon="tag_comm" type="tag" name="tag_comment" text="Comment" >
    <tag>&lt;!--</tag>
    <xtag use="true" >--></xtag>
    <tooltip>The &lt;b>!-- -->&lt;/b> element &lt;i>comment&lt;/i> a text inside.
    </tooltip>
   </action>
-  
-  <action icon="div_left" type="tag" id="1011" name="Align left" >
+
+  <action icon="div_left" type="tag" name="tag_div_left" text="Align left" >
    <tag>&lt;div align=&quot;left&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>left&lt;/i>
      suggests the horizontal alignment for the content of the division to &lt;i>left&lt;/i>.
    </tooltip>
   </action>
-  
-  <action icon="div_center" type="tag" id="1012" name="Align center" >
+
+  <action icon="div_center" type="tag" name="tag_div_center" text="Align center" >
    <tag>&lt;div align=&quot;center&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>center&lt;/i> or &lt;b>CENTER&lt;/b>
      suggests the horizontal alignment for the content of the division to &lt;i>center&lt;/i>.
    </tooltip>
   </action>
-  
-  <action icon="div_right" type="tag" id="1013" name="Align right" >
+
+  <action icon="div_right" type="tag" name="tag_div_right" text="Align right" >
    <tag>&lt;div align=&quot;right&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>right&lt;/i>
      suggests the horizontal alignment for the content of the division to &lt;i>right&lt;/i>.
    </tooltip>
   </action>
-  
-  <action icon="div_justify" type="tag" id="1014" name="Align justify" >
+
+  <action icon="div_justify" type="tag" name="tag_div_justify" text="Align justify" >
    <tag>&lt;div align=&quot;justify&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
    <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>justify&lt;/i>
@@ -111,52 +111,52 @@
    </tooltip>
   </action>
 
-  <action  icon="tag_font" type="tag" id="2000" name="Font" >
+  <action  icon="tag_font" type="tag" name="tag_font" text="Font" >
    <tag useDialog="true" >&lt;font></tag>
    <xtag use="true" >&lt;/font></xtag>
    <tooltip>The &lt;b>FONT&lt;/b> element allows authors to suggest rudimentary &lt;i>font changes&lt;/i>.
    </tooltip>
   </action>
-  
-  <action  icon="font_inc" type="tag" id="2002" name="Font size+1" >
+
+  <action  icon="font_inc" type="tag" name="tag_font_inc" text="Font size+1" >
    <standard>Quick start</standard>
    <tag useDialog="false" >&lt;font size=&quot;+1&quot;></tag>
    <xtag use="true" >&lt;/font></xtag>
    <tooltip>This &lt;b>SIZE=+1&lt;/b> element allows to &lt;i>increase&lt;/i> font.
    </tooltip>
   </action>
-  
-  <action  icon="font_dec" type="tag" id="2003" name="Font size-1" >
+
+  <action  icon="font_dec" type="tag" name="tag_font_dec" text="Font size-1" >
    <tag useDialog="false" >&lt;font size=&quot;-1&quot;></tag>
    <xtag use="true" >&lt;/font></xtag>
    <tooltip>This &lt;b>SIZE=-1&lt;/b> element allows to &lt;i>decrease&lt;/i> font.
    </tooltip>
   </action>
-  
-  <action  icon="tag_pre" type="tag" id="2005" name="Pre" >
+
+  <action  icon="tag_pre" type="tag" name="tag_pre" text="Pre" >
    <tag useDialog="false" >&lt;pre></tag>
    <xtag use="true" inLine="false" >&lt;/pre></xtag>
    <tooltip>The &lt;b>PRE&lt;/b> element allows to view &lt;i>preformatted&lt;/i> text.
    </tooltip>
   </action>
-  
-  <action  icon="tag_sub" type="tag" id="2006" name="Subscript" >
+
+  <action  icon="tag_sub" type="tag" name="tag_sub" text="Subscript" >
    <tag useDialog="false" >&lt;sub></tag>
    <xtag use="true" >&lt;/sub></xtag>
    <tooltip>The &lt;b>SUB&lt;/b> element is used for &lt;i>subscripts&lt;/i>.
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  <action  icon="tag_sup" type="tag" id="2007" name="Superscropt" >
+
+  <action  icon="tag_sup" type="tag" name="tag_sup" text="Superscropt" >
    <tag useDialog="false" >&lt;sup></tag>
    <xtag use="true" >&lt;/sup></xtag>
    <tooltip>The &lt;b>SUP&lt;/b> element is used for &lt;i>superscripts&lt;/i>.
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  <action  icon="tag_h1" type="tag" id="2009" name="Head  1 level" >
+
+  <action  icon="tag_h1" type="tag" name="tag_h1" text="Head  1 level" >
    <tag useDialog="false" >&lt;h1></tag>
    <xtag use="true" >&lt;/h1></xtag>
    <tooltip>The &lt;b>H1&lt;/b> element defines a &lt;i>level-one heading&lt;/i>.
@@ -164,8 +164,8 @@
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  <action  icon="tag_h2" type="tag" id="2010" name="Head  2 level" >
+
+  <action  icon="tag_h2" type="tag" name="tag_h2" text="Head  2 level" >
    <tag useDialog="false" >&lt;h2></tag>
    <xtag use="true" >&lt;/h2></xtag>
    <tooltip>The &lt;b>H2&lt;/b> element defines a &lt;i>level-two heading&lt;/i>.
@@ -173,8 +173,8 @@
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  <action  icon="tag_h3" type="tag" id="2011" name="Head  3 level" >
+
+  <action  icon="tag_h3" type="tag" name="tag_h3" text="Head  3 level" >
    <tag useDialog="false" >&lt;h3></tag>
    <xtag use="true" >&lt;/h3></xtag>
    <tooltip>The &lt;b>H3&lt;/b> element defines a &lt;i>level-three heading&lt;/i>.
@@ -182,8 +182,8 @@
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  <action  icon="tag_h4" type="tag" id="2012" name="Head  4 level" >
+
+  <action  icon="tag_h4" type="tag" name="tag_h4" text="Head  4 level" >
    <tag useDialog="false" >&lt;h4></tag>
    <xtag use="true" >&lt;/h4></xtag>
    <tooltip>The &lt;b>H4&lt;/b> element defines a &lt;i>level-four heading&lt;/i>.
@@ -191,8 +191,8 @@
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  <action  icon="tag_h5" type="tag" id="2013" name="Head  5 level" >
+
+  <action  icon="tag_h5" type="tag" name="tag_h5" text="Head  5 level" >
    <tag useDialog="false" >&lt;h5></tag>
    <xtag use="true" >&lt;/h5></xtag>
    <tooltip>The &lt;b>H5&lt;/b> element defines a &lt;i>level-five heading&lt;/i>.
@@ -200,135 +200,135 @@
      &lt;br>- common attributes
    </tooltip>
   </action>
-  
-  <action  icon="quick_table" type="standard" id="3002" name="Quick table" >
-   <standard>Quick table</standard>
-  </action>
-  
-  <action useTextButton="0" textButton="" icon="tag_table" type="tag" id="3004" name="Table" >
+
+  <action icon="tag_table" type="tag" name="tag_table" text="Table" >
    <tag useDialog="true" >&lt;table></tag>
    <xtag use="true" inLine="false" >&lt;/table></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="table_head" type="tag" id="3005" name="Table head ( with dialog )" >
+
+  <action icon="table_head" type="tag" name="tag_table_head" text="Table head ( with dialog )" >
    <tag useDialog="true" >&lt;th></tag>
    <xtag use="true" inLine="true" >&lt;/th></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="tag_table_body" type="tag" id="3013" name="Table body ( with dialog )" >
+
+  <action icon="tag_table_body" type="tag" name="tag_table_body" text="Table body ( with dialog )" >
    <tag useDialog="true" >&lt;tbody></tag>
    <xtag use="true" inLine="true" >&lt;/tbody></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="tag_table_row" type="tag" id="3006" name="Table row ( with dialog )" >
+
+  <action icon="tag_table_row" type="tag" name="tag_table_row" text="Table row ( with dialog )" >
    <tag useDialog="true" >&lt;tr></tag>
    <xtag use="true" inLine="false" >&lt;/tr></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="table_data" type="tag" id="3007" name="Table data ( with dialog )" >
+
+  <action icon="table_data" type="tag" name="tag_table_data" text="Table data ( with dialog )" >
    <tag useDialog="true" >&lt;td></tag>
    <xtag use="true" inLine="true" >&lt;/td></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="" type="separator" id="3008" name="" />
-  <action useTextButton="0" textButton="" icon="tag_th" type="tag" id="3009" name="Table head" >
+
+  <action icon="tag_th" type="tag" name="tag_th" text="Table head" >
    <tag useDialog="false" >&lt;th></tag>
    <xtag use="true" inLine="true" >&lt;/th></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="tag_tbody" type="tag" id="3014" name="Table body" >
+
+  <action icon="tag_tbody" type="tag" name="tag_tbody" text="Table body" >
    <tag useDialog="false" >&lt;tbody></tag>
    <xtag use="true" inLine="true" >&lt;/tbody></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="tag_tr" type="tag" id="3010" name="Table row" >
+
+  <action icon="tag_tr" type="tag" name="tag_tr" text="Table row" >
    <tag useDialog="false" >&lt;tr></tag>
    <xtag use="true" inLine="false" >&lt;/tr></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="tag_td" type="tag" id="3011" name="Table data" >
+
+  <action icon="tag_td" type="tag" name="tag_td" text="Table data" >
    <tag useDialog="false" >&lt;td></tag>
    <xtag use="true" inLine="true" >&lt;/td></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="tag_caption" type="tag" id="3012" name="Caption" >
+
+  <action icon="tag_caption" type="tag" name="tag_caption" text="Caption" >
    <tag useDialog="false" >&lt;caption></tag>
    <xtag use="true" inLine="true" >&lt;/caption></xtag>
   </action>
- </tabbar>
- <tabbar name="Lists" >
-  <action useTextButton="0" textButton="" icon="quick_list" type="standard" id="4000" name="Quick List" >
-   <standard>Quick list</standard>
-  </action>
-  <action useTextButton="0" textButton="" icon="" type="separator" id="4001" name="" />
-  <action useTextButton="0" textButton="" icon="tag_ul" type="tag" id="4002" name="Unordered list" >
+
+  <action icon="tag_ul" type="tag" name="tag_ul" text="Unordered list" >
    <tag useDialog="false" >&lt;ul></tag>
    <xtag use="true" inLine="false" >&lt;/ul></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="tag_ol" type="tag" id="4003" name="Ordered List" >
+
+  <action icon="tag_ol" type="tag" name="tag_ol" text="Ordered List" >
    <tag useDialog="false" >&lt;ol></tag>
    <xtag use="true" inLine="false" >&lt;/ol></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="tag_li" type="tag" id="4004" name="List item" >
+
+  <action icon="tag_li" type="tag" name="tag_li" text="List item" >
    <tag useDialog="false" >&lt;li></tag>
    <xtag use="true" inLine="true" >&lt;/li></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="" type="separator" id="4005" name="" />
-  <action useTextButton="0" textButton="" icon="tag_dl" type="tag" id="4006" name="Definiion List" >
-   <tag useDialog="true" >&lt;dl></tag>
+
+  <action icon="tag_dl" type="tag" name="tag_dl" text="Definiion List" >
+   <tag useDialog="false" >&lt;dl></tag>
    <xtag use="true" inLine="false" >&lt;/dl></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="tag_dt" type="tag" id="4007" name="Definition Term" >
+
+  <action icon="tag_dt" type="tag" name="tag_dt" text="Definition Term" >
    <tag useDialog="false" >&lt;dt></tag>
    <xtag use="true" inLine="true" >&lt;/dt></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="tag_dd" type="tag" id="4008" name="Definition" >
+
+  <action icon="tag_dd" type="tag" name="tag_dd" text="Definition" >
    <tag useDialog="false" >&lt;dd></tag>
    <xtag use="true" inLine="true" >&lt;/dd></xtag>
   </action>
- </tabbar>
- <tabbar name="Forms" >
-  <action useTextButton="0" textButton="" icon="form" type="tag" id="5002" name="Form" >
+
+  <action icon="form" type="tag" name="tag_form" text="Form" >
    <tag useDialog="true" >&lt;form></tag>
    <xtag use="true" inLine="false" >&lt;/form></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="" type="separator" id="5003" name="" />
-  <action useTextButton="0" textButton="" icon="select" type="tag" id="5006" name="Select" >
+
+  <action icon="select" type="tag" name="tag_form_select" text="Select" >
    <tag useDialog="true" >&lt;select></tag>
    <xtag use="true" inLine="false" >&lt;/select></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="textarea" type="tag" id="5009" name="Text area" >
+
+  <action icon="textarea" type="tag" name="tag_form_textarea" text="Text area" >
    <tag useDialog="false" >&lt;textarea></tag>
    <xtag use="true" inLine="true" >&lt;/textarea></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="lineedit" type="tag" id="5007" name="Input text" >
+
+  <action icon="lineedit" type="tag" name="tag_form_lineedit" text="Input text" >
    <tag useDialog="true" >&lt;input type=&quot;text&quot;></tag>
    <xtag use="false" inLine="true" />
   </action>
-  <action useTextButton="0" textButton="" icon="linepas" type="tag" id="5008" name="Input password" >
+
+  <action icon="linepas" type="tag" name="tag_form_passedit" text="Input password" >
    <tag useDialog="true" >&lt;input type=&quot;password&quot;></tag>
    <xtag use="false" inLine="true" />
   </action>
-  <action useTextButton="0" textButton="" icon="check" type="tag" id="5005" name="Check button" >
+
+  <action icon="check" type="tag" name="tag_form_check" text="Check button" >
    <tag useDialog="true" >&lt;input type=&quot;checkbox&quot;></tag>
    <xtag use="false" inLine="true" ></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="radio" type="tag" id="5004" name="Radio button" >
+
+  <action icon="radio" type="tag" name="tag_form_radio" text="Radio button" >
    <tag useDialog="true" >&lt;input type=&quot;radio&quot;></tag>
    <xtag use="false" inLine="true" ></xtag>
   </action>
-  <action useTextButton="0" textButton="" icon="" type="separator" id="5010" name="" />
-  <action useTextButton="0" textButton="" icon="submit" type="tag" id="5011" name="Submit" >
+
+  <action icon="submit" type="tag" name="tag_form_submit" text="Submit" >
    <tag useDialog="true" >&lt;input type=&quot;submit&quot;></tag>
    <xtag use="false" inLine="true" />
   </action>
-  <action useTextButton="0" textButton="" icon="reset" type="tag" id="5012" name="Reset" >
+
+  <action icon="reset" type="tag" name="tag_form_reset" text="Reset" >
    <tag useDialog="true" >&lt;input type=&quot;reset&quot;></tag>
    <xtag use="false" inLine="true" />
   </action>
- </tabbar>
- <tabbar name="Other" >
-  <action useTextButton="0" textButton="" icon="date" type="script" id="1016" name="Time" >
+
+  <action icon="date" type="script" name="tag_date" text="Time" >
    <script output="cursor" error="none" input="none" >date</script>
   </action>
-  <action useTextButton="0" textButton="" icon="color" type="standard" id="5000" name="Insert color" >
-   <standard>Insert color</standard>
-  </action>
-  <action useTextButton="0" textButton="" icon="" type="separator" id="5001" name="" />
-  <action useTextButton="0" textButton="" icon="mini-modules" type="standard" id="1015" name="Insert CSS" >
-   <standard>CSS</standard>
-  </action>
- </tabbar>
-</tabbars>
+
+</actions>
 

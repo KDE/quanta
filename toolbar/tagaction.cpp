@@ -11,14 +11,12 @@
 #include <qdom.h>
 #include <klocale.h>
 
-TagAction::TagAction( QDomElement *element, QObject* parent, const char* , QuantaView *view )
-  : KAction( element->attribute("text",""), 0, parent, element->attribute("name","") ),
-    tag(element),
+TagAction::TagAction( QDomElement *element, QuantaView *view,KActionCollection *collection )
+  : KAction( element->attribute("text"), 0, collection, element->attribute("name") ),
+    tag(*element),
     view_(view)
-    
-  
 {
-   setIcon( tag->attribute("icon","") );
+   setIcon( tag.attribute("icon","") );
    if ( view_ )
         connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }
@@ -32,17 +30,17 @@ TagAction::~TagAction()
 
 void TagAction::insertTag()
 {
-    if ( !view_ ) 
-       return;
-       
+  if ( !view_ ) 
+     return;
+  
   QString space="";
 	space.fill( ' ',view_->write()->currentColumn() );
 
-  QString type = tag->attribute("type","");
+  QString type = tag.attribute("type","");
 
   if ( type == "tag" ) {
-     QDomElement otag = (tag->namedItem("tag")).toElement();
-     QDomElement xtag = (tag->namedItem("xtag")).toElement();
+     QDomElement otag = (tag.namedItem("tag")).toElement();
+     QDomElement xtag = (tag.namedItem("xtag")).toElement();
 
      if ( otag.attribute("useDialog","false") == "true" ) {
          QString s = otag.text();
@@ -79,14 +77,14 @@ void TagAction::insertTag()
   }
 
   if ( type == "text" )
-    view_->write()->insertTag( tag->namedItem("text").toElement().text() );
+    view_->write()->insertTag( tag.namedItem("text").toElement().text() );
 
   if ( type == "script" ) {
 
    	KProcess *proc = new KProcess();
     proc ->clearArguments();
 
-    QDomElement script = tag->namedItem("script").toElement();
+    QDomElement script = tag.namedItem("script").toElement();
     QString command = script.text();
 
 

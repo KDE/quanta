@@ -61,6 +61,7 @@ class Project;
 class ToolBars;
 class GrepDialog;
 class MessageOutput;
+class QDomDocument;
 
 /**
   * The base class for Quanta application windows. 
@@ -269,6 +270,8 @@ class QuantaApp : public KMainWindow
       *cutAction, *copyAction, *findNextAction, *backAction, *forwardAction,
       *closeprjAction, *insertFileAction, *insertDirAction, 
       *rescanPrjDirAction, *uploadProjectAction, *projectOptionAction;
+      
+    QDomDocument *actions;
 };
  
 #endif // QUANTA_H
