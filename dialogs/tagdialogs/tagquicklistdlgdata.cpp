@@ -13,7 +13,7 @@
 #include "tagquicklistdlg.h"
 #include <qspinbox.h>
 #include <qlabel.h>
-#include <qpushbutton.h>
+#include <kpushbutton.h>
 #include <qradiobutton.h>
 #include <kstdguiitem.h>
 
@@ -31,10 +31,9 @@ void  TagQuickListDlg::initDialog()
   spinBoxRows->setMinimumSize(0,0);
   spinBoxRows->setRange(1,99);
 
-  buttonOk= new QPushButton(this,"NoName");
+  buttonOk= new KPushButton(KStdGuiItem::ok()this,"NoName");
   buttonOk->setGeometry(10,110,100,30);
   buttonOk->setMinimumSize(0,0);
-  buttonOk->setText(i18n("&OK"));
 
   QLabel_2= new QLabel(this,"NoName");
   QLabel_2->setGeometry(10,40,100,30);

@@ -80,6 +80,7 @@
 #include <kparts/partmanager.h>
 #include <kparts/part.h>
 #include <kstringhandler.h>
+#include <kstdguiitem.h>
 
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/encodinginterface.h>
@@ -3620,7 +3621,7 @@ QString QuantaApp::saveCurrentFile()
                                     i18n("The file must be saved before external preview.\n"
                                          "Do you want to save and preview?"),
                                     i18n("Save Before Preview"),
-                                    i18n("&Yes"),i18n("&No"), "AskForSaveBeforePreview")
+                                    KStdGuiItem::yes(),KStdGuiItem::no(), "AskForSaveBeforePreview")
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
@@ -4231,7 +4232,7 @@ void QuantaApp::slotViewInKFM()
                                     i18n("The file must be saved before external preview.\n"
                                          "Do you want to save and preview?"),
                                     i18n("Save Before Preview"),
-                                    i18n("&Yes"),i18n("&No"), "AskForSaveBeforePreview")
+                                    KStdGuiItem::yes(),KStdGuiItem::no(), "AskForSaveBeforePreview")
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
@@ -4265,7 +4266,7 @@ void QuantaApp::slotViewInLynx()
     if ( KMessageBox::questionYesNo(this,
                                     i18n("The file must be saved before external preview.\n"
                                          "Do you want to save and preview?"),
-                                    i18n("Save Before Preview"),i18n("&Yes"),i18n("&No"), "AskForSaveBeforePreview")
+                                    i18n("Save Before Preview"),KStdGuiItem::yes(),KStdGuiItem::no(), "AskForSaveBeforePreview")
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
