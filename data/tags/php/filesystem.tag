@@ -111,7 +111,7 @@
 	<tag name="flock" type="function" returnType="bool">
 		<attr name="fp" type="int" status="optional"></attr>
 		<attr name="operation" type="int" status="optional"></attr>
-		<attr name="&wouldblock" type="int" status="optional"></attr>
+		<attr name="&amp;wouldblock" type="int" status="optional"></attr>
 	</tag>
 	<tag name="fopen" type="function" returnType="int">
 		<attr name="filename" type="string" status="optional"></attr>

@@ -11,7 +11,7 @@
 		<attr name="b" type="resource" status="optional"></attr>
 	</tag>
 	<tag name="gmp_clrbit" type="function" returnType="resource">
-		<attr name="&a" type="resource" status="optional"></attr>
+		<attr name="&amp;a" type="resource" status="optional"></attr>
 		<attr name="index" type="int" status="optional"></attr>
 	</tag>
 	<tag name="gmp_cmp" type="function" returnType="int">
@@ -123,7 +123,7 @@
 		<attr name="start" type="int" status="optional"></attr>
 	</tag>
 	<tag name="gmp_setbit" type="function" returnType="resource">
-		<attr name="&a" type="resource" status="optional"></attr>
+		<attr name="&amp;a" type="resource" status="optional"></attr>
 		<attr name="index" type="int" status="optional"></attr>
 		<attr name="set_clear" type="bool" status="optional"></attr>
 	</tag>

@@ -26,7 +26,7 @@
 		<attr name="domain" type="int" status="optional"></attr>
 		<attr name="type" type="int" status="optional"></attr>
 		<attr name="protocol" type="int" status="optional"></attr>
-		<attr name="&fd" type="array" status="optional"></attr>
+		<attr name="&amp;fd" type="array" status="optional"></attr>
 	</tag>
 	<tag name="socket_create" type="function" returnType="resource">
 		<attr name="domain" type="int" status="optional"></attr>
@@ -40,13 +40,13 @@
 	</tag>
 	<tag name="socket_getpeername" type="function" returnType="bool">
 		<attr name="socket" type="resource" status="optional"></attr>
-		<attr name="&addr" type="string" status="optional"></attr>
-		<attr name="&port" type="int" status="optional"></attr>
+		<attr name="&amp;addr" type="string" status="optional"></attr>
+		<attr name="&amp;port" type="int" status="optional"></attr>
 	</tag>
 	<tag name="socket_getsockname" type="function" returnType="bool">
 		<attr name="socket" type="resource" status="optional"></attr>
-		<attr name="&addr" type="string" status="optional"></attr>
-		<attr name="&port" type="int" status="optional"></attr>
+		<attr name="&amp;addr" type="string" status="optional"></attr>
+		<attr name="&amp;port" type="int" status="optional"></attr>
 	</tag>
 	<tag name="socket_iovec_add" type="function" returnType="bool">
 		<attr name="iovec" type="resource" status="optional"></attr>
@@ -95,25 +95,25 @@
 	</tag>
 	<tag name="socket_recvfrom" type="function" returnType="int">
 		<attr name="socket" type="resource" status="optional"></attr>
-		<attr name="&buf" type="string" status="optional"></attr>
+		<attr name="&amp;buf" type="string" status="optional"></attr>
 		<attr name="len" type="int" status="optional"></attr>
 		<attr name="flags" type="int" status="optional"></attr>
-		<attr name="&name" type="string" status="optional"></attr>
-		<attr name="&port" type="int" status="optional"></attr>
+		<attr name="&amp;name" type="string" status="optional"></attr>
+		<attr name="&amp;port" type="int" status="optional"></attr>
 	</tag>
 	<tag name="socket_recvmsg" type="function" returnType="bool">
 		<attr name="socket" type="resource" status="optional"></attr>
 		<attr name="iovec" type="resource" status="optional"></attr>
-		<attr name="&control" type="array" status="optional"></attr>
-		<attr name="&controllen" type="int" status="optional"></attr>
-		<attr name="&flags" type="int" status="optional"></attr>
-		<attr name="&addr" type="string" status="optional"></attr>
-		<attr name="&port" type="int" status="optional"></attr>
+		<attr name="&amp;control" type="array" status="optional"></attr>
+		<attr name="&amp;controllen" type="int" status="optional"></attr>
+		<attr name="&amp;flags" type="int" status="optional"></attr>
+		<attr name="&amp;addr" type="string" status="optional"></attr>
+		<attr name="&amp;port" type="int" status="optional"></attr>
 	</tag>
 	<tag name="socket_select" type="function" returnType="int">
-		<attr name="&read" type="resource" status="optional"></attr>
-		<attr name="&write" type="resource" status="optional"></attr>
-		<attr name="&except" type="resource" status="optional"></attr>
+		<attr name="&amp;read" type="resource" status="optional"></attr>
+		<attr name="&amp;write" type="resource" status="optional"></attr>
+		<attr name="&amp;except" type="resource" status="optional"></attr>
 		<attr name="tv_sec" type="int" status="optional"></attr>
 		<attr name="tv_usec" type="int" status="optional"></attr>
 	</tag>

@@ -9,7 +9,7 @@
 	<tag name="yaz_ccl_parse" type="function" returnType="int">
 		<attr name="id" type="int" status="optional"></attr>
 		<attr name="query" type="string" status="optional"></attr>
-		<attr name="& result" type="array" status="optional"></attr>
+		<attr name="&amp; result" type="array" status="optional"></attr>
 	</tag>
 	<tag name="yaz_close" type="function" returnType="int">
 		<attr name="id" type="int" status="optional"></attr>
@@ -52,7 +52,7 @@
 	</tag>
 	<tag name="yaz_scan_result" type="function" returnType="array">
 		<attr name="id" type="int" status="optional"></attr>
-		<attr name="& result" type="array" status="optional"></attr>
+		<attr name="&amp; result" type="array" status="optional"></attr>
 	</tag>
 	<tag name="yaz_scan" type="function" returnType="int">
 		<attr name="id" type="int" status="optional"></attr>

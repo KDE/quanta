@@ -2,7 +2,7 @@
 <tags>	<tag name="OCIBindByName" type="function" returnType="int">
 		<attr name="stmt" type="int" status="optional"></attr>
 		<attr name="ph_name" type="string" status="optional"></attr>
-		<attr name="& variable" type="mixed" status="optional"></attr>
+		<attr name="&amp; variable" type="mixed" status="optional"></attr>
 		<attr name="length" type="int" status="optional"></attr>
 		<attr name="type" type="int" status="optional"></attr>
 	</tag>
@@ -85,12 +85,12 @@
 	</tag>
 	<tag name="OCIFetchInto" type="function" returnType="int">
 		<attr name="stmt" type="int" status="optional"></attr>
-		<attr name="& result" type="array" status="optional"></attr>
+		<attr name="&amp; result" type="array" status="optional"></attr>
 		<attr name="mode" type="int" status="optional"></attr>
 	</tag>
 	<tag name="OCIFetchStatement" type="function" returnType="int">
 		<attr name="stmt" type="int" status="optional"></attr>
-		<attr name="& variable" type="array" status="optional"></attr>
+		<attr name="&amp; variable" type="array" status="optional"></attr>
 	</tag>
 	<tag name="OCIFreeCollection" type="function" returnType="string">
 		<attr name="lob" type="object" status="optional"></attr>
