@@ -3187,8 +3187,9 @@ void QuantaApp::slotLoadToolbarForDTD(const QString& dtdName)
 }
 
 /** Remove the toolbar named "name". */
-bool QuantaApp::slotRemoveToolbar(const QString& name)
+bool QuantaApp::slotRemoveToolbar(const QString& a_name)
 {
+  QString name = a_name;  // increase reference counter for this string
   ToolbarEntry *p_toolbar = m_toolbarList[name];
   QRegExp i18ntabnameRx("\\si18ntabname=\"[^\"]*\"");
   QRegExp idRx("\\sid=\"[^\"]*\"");
