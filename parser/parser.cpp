@@ -460,7 +460,18 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
             } else
             {
               if (parentNode)
-                  parentNode->child = node;
+              {
+                Node *n = parentNode->child;
+                while (n && n->next)
+                    n = n->next;
+                if (!n)
+                    parentNode->child = node;
+                else
+                {
+                   n->next = node;
+                   node->prev = n;
+                }
+              }
             }
             if (!textTag->single)
                 parentNode = node;
@@ -756,6 +767,7 @@ Node* Parser::specialAreaParser(Node *startNode)
   Tag *tag;
   Node *node;
   Node *currentNode = startNode->child;
+  Node *startNodeChild = startNode->child;
   Node *rootNode = startNode;
   Node *nextToRoot = rootNode;
   if (rootNode->next)
@@ -1092,7 +1104,7 @@ Node* Parser::specialAreaParser(Node *startNode)
   }
 
 //if the block has no nodes inside, create a Text node with its content.
-  if (currentNode == startNode->child)
+  if (currentNode == startNodeChild)
   {
     tag = new Tag(*startNode->tag);
     s = write->text(bLine, bCol, eLine, eCol);
