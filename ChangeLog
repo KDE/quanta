@@ -46,6 +46,7 @@ Version 3.2.2 (Release data: xx-xx-2004; Started 01-03-2004):
         - use the correct quotation and case when inserting a link to a file from the treeviews [#76663]
         - fix preview when preview prefix is used
         - don't crash when parsing an included file.[#76478]
+        - give an error message when saving to remote files failed
     
     - behavioral changes:
         - remove the < and > from the misc. tag

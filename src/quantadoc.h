@@ -80,6 +80,8 @@ public slots:
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
   void slotOpeningCompleted();  
+  void slotSavingCompleted();  
+  void slotSavingFailed(const QString& error);  
 
 signals:
   void newStatus();
@@ -89,6 +91,8 @@ signals:
 
 private:
   KPopupMenu *attribMenu;
+  bool m_saveResult;
+  bool m_eventLoopStarted;
 };
 
 #endif // QUANTADOC_H
