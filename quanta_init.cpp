@@ -1026,6 +1026,7 @@ uint QuantaApp::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagL
  int errorLine, errorCol;
  if (!m_doc->setContent( &f, &errorMsg, &errorLine, &errorCol ))
  {
+   emit showSplash(false);
    KMessageBox::error(this, i18n("<qt>The DTD tag file %1 is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>").arg(fileName).arg(errorMsg).arg(errorLine).arg(errorCol),
    i18n("Invalid tag file"));
    kdWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol << endl;
@@ -1707,6 +1708,7 @@ void QuantaApp::initActions()
     KStdAction::openNew( this, SLOT( slotFileNew()  ), ac);
     KStdAction::open   ( this, SLOT( slotFileOpen() ), ac, "file_open");
     KStdAction::close  ( this, SLOT( slotFileClose()), ac);
+    (void) new KAction(i18n("Close Other Tabs"), 0, m_view, SLOT(slotCloseOtherTabs()), ac, "close_other_tabs");
 
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
     fileRecent =  new KQRecentFilesAction(i18n("Open &Recent"), "fileopen", 0,

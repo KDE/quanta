@@ -200,16 +200,70 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
           xmlElementPtr child_ptr = xmlGetDtdElementDesc(DTD::dtd_ptr, list_ptr[i]);
           if (child_ptr && child_ptr->content && child_ptr->content->ocur)
           {
-            /*if (child_ptr->content->ocur == XML_ELEMENT_CONTENT_PLUS)
+            //if (child_ptr->content->ocur == XML_ELEMENT_CONTENT_PLUS)
+            //{
+//              stream << " usage=\"required\"";
+  //          }
+            QString ocur;
+            switch (child_ptr->content->ocur)
             {
-              stream << " usage=\"required\"";
-            }*/
-            stream << " usage=\"" << QString("%1").arg(child_ptr->content->ocur) << "\"";
+              case 1: {ocur = "once"; break;}
+              case 2: {ocur = "opt"; break;}
+              case 3: {ocur = "mult"; break;}
+              case 4: {ocur = "plus"; break;}
+            }
+            stream << " usage=\"" << ocur << "\"";
+            QString name = QString((const char*)child_ptr->content->name);
+            if (name == "#PCDATA")
+               name == "#text";
+            stream << " name2=\"" << name << "\"";
           }
           stream << " />" << endl;
         }
+
         stream << "</children>" << endl;
       }
+      /*
+      xmlElementContentPtr content_ptr = el_ptr->content;
+      if (content_ptr)
+      {
+        stream << "<children>" << endl;
+        while (content_ptr)
+        {
+          if (!QString((const char*)content_ptr->name).isEmpty())
+          {
+            stream << "  <child name=\"" << QString((const char*)content_ptr->name) << "\"";
+            QString ocur;
+            switch (content_ptr->ocur)
+            {
+              case 1: {ocur = "once"; break;}
+              case 2: {ocur = "opt"; break;}
+              case 3: {ocur = "mult"; break;}
+              case 4: {ocur = "plus"; break;}
+            }
+            stream << " usage=\"" << ocur << "\"";
+            stream << " />" << endl;
+          }
+          if (content_ptr->c1)
+              content_ptr = content_ptr->c1;
+          else if (content_ptr->c2)
+              content_ptr = content_ptr->c2;
+          else
+          {
+            if (content_ptr == el_ptr->content)
+              break;
+            if (content_ptr->parent)
+            {
+              if (content_ptr == content_ptr->parent->c1)
+                  content_ptr->c1 = 0L;
+              else
+                  content_ptr->c2 = 0L;
+            }
+            content_ptr = content_ptr->parent;
+          }
+        }
+        stream << "</children>" << endl;
+      } */
       stream << "</tag>" << endl
              << "</TAGS>" << endl;
       file.close();

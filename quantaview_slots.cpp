@@ -1089,3 +1089,11 @@ KURL QuantaView::baseURL()
   return base;
 }
 
+void QuantaView::slotCloseOtherTabs()
+{
+  for (int i = 0; i < m_writeTab->count(); i++)
+  {
+    if (i != m_writeTab->currentPageIndex())
+      quantaApp->slotClosePage(m_writeTab->page(i));
+  }
+}

@@ -127,7 +127,7 @@ public:
  // void resizeEvent (QResizeEvent *);
   /** Insert a new tag by bringing up the TagDialog. */
   void insertNewTag(QString tag, QString attr = QString::null,bool insertInLine = true);
-  
+
   /**
    * Show a TagDialog of Node tag, with attrs attr.
    * @param tag The name of the new Node to create.
@@ -233,6 +233,9 @@ public slots:
    * Useful when we want to set it when kafka doesn't have the fovus.
    */
   void slotSetKafkaCursorPosition(DOM::Node node, int offset);
+
+  /** closes all the other but active tabs */
+  void slotCloseOtherTabs();
 
 signals:
   void newCurPos();
