@@ -1752,16 +1752,19 @@ KURL QuantaApp::saveToolBar(const QString& toolbarName, const KURL& destFile)
 
 //TODO: Implement saving in non-local dirs (first in a temp file, than copy it to the dest)
   KTar tar(tarFile.path(), "application/x-gzip");
-  tar.open(IO_WriteOnly);
-  tar.writeFile(QFileInfo(tarFile.path()).baseName()+".toolbar", "user", "group", buffer.buffer().size(), buffer.buffer().data());
-  tar.writeFile(QFileInfo(tarFile.path()).baseName()+".actions", "user", "group", buffer2.buffer().size(), buffer2.buffer().data());
+  if (!tar.open(IO_WriteOnly))
+      return KURL();
+  if (!tar.writeFile(QFileInfo(tarFile.path()).baseName()+".toolbar", "user", "group", buffer.buffer().size(), buffer.buffer().data()))
+      return KURL();
+  if (!tar.writeFile(QFileInfo(tarFile.path()).baseName()+".actions", "user", "group", buffer2.buffer().size(), buffer2.buffer().data()))
+      return KURL();
   tar.close();
 
   return tarFile;
 }
 
 /** Saves a toolbar as local or project specific. */
-void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
+bool QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
 {
   int query;
   KURL url;
@@ -1786,7 +1789,7 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
                     i18n( "Save Toolbar" ),
                     i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
     if ( !ok )
-      return;
+      return false;
 
     toolbarName = res;
   } else
@@ -1806,7 +1809,8 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
   	  url = KFileDialog::getSaveURL(project->toolbarURL.url(), "*"+toolbarExtension, this);
   	}
 
-    if (url.isEmpty()) return;
+    if (url.isEmpty()) 
+        return false;
 
     if ( project->hasProject() )  projectToolbarsURL = project->toolbarURL;
     if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
@@ -1825,8 +1829,15 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
   if( query != KMessageBox::Cancel )
   {
     KURL tarName = saveToolBar(toolbarName, url);
+    if (tarName.isEmpty())
+    {
+      //save error, but we can't introduce new string, so I have to reuse another one
+     KMessageBox::error(this, i18n("Saving of the document\n%1\nfailed.\nMaybe you should try to save in another directory.").arg(tarName.prettyURL()));
+     return false;
+    }
     if (!localToolbar) project->insertFile(tarName, true);
   }
+  return true;
 }
 
 /** Saves a toolbar as localspecific. */
@@ -1880,7 +1891,7 @@ void QuantaApp::slotAddToolbar()
 
 
 /** Removes a user toolbar from the toolbars. */
-void QuantaApp::slotRemoveToolbar()
+bool QuantaApp::slotRemoveToolbar()
 {
  ToolbarTabWidget *tb = view->toolbarTab;
  int i;
@@ -1900,9 +1911,9 @@ void QuantaApp::slotRemoveToolbar()
                  i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
 
  if (ok)
- {
-   removeToolbar(res.lower());
- }
+   return removeToolbar(res.lower());
+ else
+   return false;    
 
 }
 
@@ -1975,7 +1986,7 @@ void QuantaApp::slotSendToolbar()
 }
 
 /** Ask for save all the modified user toolbars. */
-void QuantaApp::saveModifiedToolbars()
+bool QuantaApp::saveModifiedToolbars()
 {
  QDictIterator<ToolbarEntry> it(toolbarList);
  QString s1, s2;
@@ -2005,11 +2016,13 @@ void QuantaApp::saveModifiedToolbars()
        {
          bool local = true;
          if (project->hasProject() && p_toolbar->url.url().startsWith(project->baseURL.url())) local = false;
-         slotSaveToolbar(local, it.currentKey());
+         if (!slotSaveToolbar(local, it.currentKey()))
+	     return false;
        }
      }
    }
  }
+ return true;
 }
 
 
@@ -2270,7 +2283,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
 }
 
 /** Remove the toolbar named "name". */
-void QuantaApp::removeToolbar(const QString& name)
+bool QuantaApp::removeToolbar(const QString& name)
 {
   ToolbarEntry *p_toolbar = toolbarList[name];
   if (p_toolbar)
@@ -2292,13 +2305,17 @@ void QuantaApp::removeToolbar(const QString& name)
      QString s2 = toolbarGUI->domDocument().toString();
      if ( s1 != s2 )
      {
-      if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(name),
-              i18n("Save Toolbar")) == KMessageBox::Yes)
+      int result = KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(name),
+              i18n("Save Toolbar"));
+      if (result == KMessageBox::Yes)
       {
         bool local = true;
         if (project->hasProject() && p_toolbar->url.url().startsWith(project->baseURL.url())) local = false;
-        slotSaveToolbar(local, name);
-      }
+        if (!slotSaveToolbar(local, name))
+	   return false;
+      } else
+      if (result == KMessageBox::Cancel)
+          return false;
      }
 
      guiFactory()->removeClient(toolbarGUI);
@@ -2310,6 +2327,7 @@ void QuantaApp::removeToolbar(const QString& name)
   }
 
   slotToggleDTDToolbar(!allToolbarsHidden());
+  return true;
 }
 
 /** Show or hide the DTD toolbar */

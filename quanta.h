@@ -280,11 +280,11 @@ public slots:
   /** Sends a toolbar in mail. */
   void slotSendToolbar();
   /** Removes a user toolbar from the toolbars. */
-  void slotRemoveToolbar();
+  bool slotRemoveToolbar();
   /** Adds a new, empty toolbar. */
   void slotAddToolbar();
   /** Saves a toolbar as local or project specific. */
-  void slotSaveToolbar(bool localToolbar = true, QString toolbarToSave = QString::null);
+  bool slotSaveToolbar(bool localToolbar = true, QString toolbarToSave = QString::null);
   /** Saves a toolbar as local specific. */
   void slotSaveLocalToolbar();
   /** Saves a toolbar as project specific. */
@@ -331,7 +331,7 @@ protected:
       return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)htmlPart())->child( 0L, "KParts::BrowserExtension" ));
   }
   /** Ask for save all the modified user toolbars. */
-  void saveModifiedToolbars();
+  bool saveModifiedToolbars();
   /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. */
   void readTagDir(QString &dirName);
   /** No descriptions */
@@ -362,7 +362,7 @@ protected:
   /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
   void loadToolbarForDTD(const QString& dtdName);
   /** Remove the toolbar named "name". */
-  void removeToolbar(const QString& name);
+  bool removeToolbar(const QString& name);
 
 private:
 
