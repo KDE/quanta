@@ -459,7 +459,7 @@ void StructTreeView::slotMouseClicked(int button, QListViewItem *item, const QPo
         slotGotoTag(item);
       }
 
-      if ( handleMBM == i18n("Select Tag Area"))
+      if ( handleMBM == i18n("Select tag area"))
            slotSelectTag();
 
       if ( handleMBM == i18n("Go to End of Tag"))

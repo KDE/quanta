@@ -205,7 +205,7 @@ void TableEditor::slotEditRow()
 
 void TableEditor::slotEditCol()
 {
-  KMessageBox::information(this, QString("Edit col: %1").arg(m_col + 1));
+  KMessageBox::information(this, i18n("Edit col: %1").arg(m_col + 1));
   TagDialog dlg(QuantaCommon::tagFromDTD(m_dtd,"col"));
   dlg.exec();
 }

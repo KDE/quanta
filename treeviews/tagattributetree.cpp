@@ -545,17 +545,17 @@ EnhancedTagAttributeTree::EnhancedTagAttributeTree(QWidget *parent, const char *
   attrTree->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
   widgetLayout->addMultiCellWidget( attrTree, 1, 1, 0, 3 );
 
-  nodeName = new QLabel(this, "Node Name");
+  nodeName = new QLabel(this, i18n( "Node Name" ));
   nodeName->setSizePolicy( QSizePolicy( QSizePolicy::MinimumExpanding, QSizePolicy::Fixed, 0, 0, nodeName->sizePolicy().hasHeightForWidth() ) );
 
   widgetLayout->addWidget( nodeName, 0, 0 );
-  deleteTag = new KPushButton(this, "Delete Tag");
+  deleteTag = new KPushButton(this, i18n( "Delete Tag" ));
   deleteTag->setPixmap(SmallIcon("editdelete"));
   deleteTag->setMaximumHeight(32);
   deleteTag->setMaximumWidth(32);
   QToolTip::add(deleteTag, i18n("Delete the current tag only."));
 
-  deleteAll = new KPushButton(this, "Delete All");
+  deleteAll = new KPushButton(this, i18n( "Delete All" ));
   deleteAll->setPixmap(SmallIcon("editdelete"));
   deleteAll->setMaximumHeight(32);
   deleteAll->setMaximumWidth(32);

@@ -34,7 +34,7 @@
 #include "tlpeditors.h"
 #include "fontfamilychooser.h"
 #include "project.h"
-    
+
 TLPEditor::TLPEditor(QWidget *parent, const char* name) : QHBox(parent,name){
   m_label = new QLabel(this);
   m_le = new QLineEdit(this);
@@ -65,7 +65,7 @@ void TLPEditor::setToolTip(QString s){
 
 URIEditor::URIEditor(QWidget *parent, const char* name) : TLPEditor(parent,name){
   m_Mode = Single;
-  setLabelText(" Uri  :");
+  setLabelText(i18n( " Uri  :" ));
   setButtonIcon("fileopen");
   setToolTip(i18n("Open the URI selector"));
 
@@ -79,32 +79,32 @@ void URIEditor::URI(const QString & s){
    u.setPath(s);
    emit valueChanged("url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
  }
- 
+
 void URIEditor::openFileDialog(){
-  
+
   KFileDialog* fd = new KFileDialog( Project::ref()->projectBaseURL().url(), "*.*", this, "file dialog", TRUE );
   switch(m_resourceType) {
     case image :   {
                              fd->setFilter( "*.png *.gif *.jpg *.mng|" + i18n("Image Files (*.png *.gif *.jpg *.mng)") +"\n*|" + i18n("All Files") );
                              KImageFilePreview *ip = new KImageFilePreview( fd );
                              fd->setPreviewWidget( ip );
-                            } 
+                            }
                              break;
     case audio :  fd->setFilter( "*.au *.aiff *.wav|" + i18n("Audio Files (*.au *.aiff *.wav)")+"\n*|" + i18n("All Files") );break;
     //case mousePointer :   fd->setFilter( "*.|" + i18n("Mouse Pointers (*.)")+"\n*|" + i18n("All Files") );break;
     case mousePointer :   fd->setFilter( "*|" + i18n("All Files") );break;
-    
+
     default:;
   }
-  
+
   bool multi=false;
-  
-  if( m_Mode == Single) fd->setMode(1); 
+
+  if( m_Mode == Single) fd->setMode(1);
   else {
     fd->setMode(4);
     multi=true;
   }
-  
+
   if( fd->exec() ){
     if( !multi)
       URI( fd->selectedFile() );
@@ -112,8 +112,8 @@ void URIEditor::openFileDialog(){
       QStringList selectedFiles = fd->selectedFiles();
       KURL u;
       for ( QStringList::Iterator it = selectedFiles.begin(); it != selectedFiles.end(); ++it )
-      {      
-        u.setPath(*it);   
+      {
+        u.setPath(*it);
         m_sFiles.append( "url(\'" + QExtFileInfo::toRelative(u, quantaApp->projectBaseURL()).path() + "\')");
       }
       emit valueChanged(m_sFiles.join(","));
@@ -123,7 +123,7 @@ void URIEditor::openFileDialog(){
 }
 
 fontEditor::fontEditor(QWidget *parent, const char* name) : TLPEditor(parent,name), m_initialValue(QString::null){
-  setLabelText(" Font  family :");
+  setLabelText(i18n( " Font  family :" ));
   setButtonIcon("fonts");
   setToolTip(i18n("Open font family chooser"));
   connect(m_pb, SIGNAL(clicked()), this, SLOT(openFontChooser()));

@@ -20,6 +20,7 @@
 
 #include <kdebug.h>
 #include <khtml_part.h>
+#include <klocale.h>
 #include <qstring.h>
 #include <qlayout.h>
 #include <dom/dom_text.h>
@@ -30,10 +31,10 @@ DOMTreeView::DOMTreeView(QWidget *parent, KHTMLPart *currentpart, const char * n
 {
     setCaption(name);
     setRootIsDecorated(true);
-    addColumn("Name");
-    addColumn("Value (limited to 20 char)");
-    addColumn("Length");
-    addColumn("ID");
+    addColumn(i18n( "Name" ));
+    addColumn(i18n( "Value (limited to 20 char)" ));
+    addColumn(i18n( "Length" ));
+    addColumn(i18n( "ID" ));
     addColumn("");
     setSorting(-1);
     part = currentpart;
@@ -142,7 +143,7 @@ KafkaDOMTreeDialog::KafkaDOMTreeDialog(QWidget *parent, KHTMLPart *part, const c
 	setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)1, 0, 0, sizePolicy().hasHeightForWidth() ) );
 	DialogLayout = new QGridLayout( this, 1, 1, 11, 6, "DialogLayout");
 	domview = new DOMTreeView(this, part, name);
-	domview->setTitle("Debugging KafkaWidget DOM Tree ");
+	domview->setTitle(i18n( "Debugging KafkaWidget DOM Tree " ));
         DialogLayout->addWidget(domview, 1,1);
 
 }
