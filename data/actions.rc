@@ -118,7 +118,7 @@
    </tooltip>
   </action>
 
-  <action  icon="font_inc" type="tag" name="tag_font_inc" text="Font size+1" >
+  <action  icon="font_inc" type="tag" name="tag_font_inc" text="Font Size+1" >
    <standard>Quick start</standard>
    <tag useDialog="false" >&lt;font size=&quot;+1&quot;></tag>
    <xtag use="true" >&lt;/font></xtag>
@@ -126,7 +126,7 @@
    </tooltip>
   </action>
 
-  <action  icon="font_dec" type="tag" name="tag_font_dec" text="Font size-1" >
+  <action  icon="font_dec" type="tag" name="tag_font_dec" text="Font Size-1" >
    <tag useDialog="false" >&lt;font size=&quot;-1&quot;></tag>
    <xtag use="true" >&lt;/font></xtag>
    <tooltip>This &lt;b>SIZE=-1&lt;/b> element allows to &lt;i>decrease&lt;/i> font.

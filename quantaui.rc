@@ -9,7 +9,7 @@
       <Separator />
       <Action name="file_save" />
       <Action name="file_save_as" />
-      <Menu name="save_as_template" append="save_merge"><text>Save As Template ...</text>
+      <Menu name="save_as_template" append="save_merge"><text>Save as Template</text>
       	<Action name="save_local_template"/>
       	<Action name="save_project_template"/>
         <Separator />
@@ -62,7 +62,7 @@
   </Menu>
 
     <Menu name="view"><text>&amp;View</text>
-      <Menu name="treeviews"><text>&amp;Tree views</text>
+      <Menu name="treeviews"><text>&amp;Tree Views</text>
          <Action name="show_ftab_tree"/>
          <Action name="show_ptab_tree"/>
          <Action name="show_ttab_tree"/>

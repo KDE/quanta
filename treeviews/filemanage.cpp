@@ -58,8 +58,8 @@ FileManage::FileManage( QWidget *parent, const char *name)
   fileMenu -> insertSeparator();
   fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"),     this ,SLOT(slotCopy()));
   fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),    this ,SLOT(slotPaste()));
-  fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
-  fileMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
+  fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
+  fileMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
   fileMenu -> insertSeparator();
   fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 
@@ -70,8 +70,8 @@ FileManage::FileManage( QWidget *parent, const char *name)
   folderMenu -> insertSeparator();
   folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"),     this ,SLOT(slotCopy()));
   folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),    this ,SLOT(slotPaste()));
-  folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
-  folderMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
+  folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
+  folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
   folderMenu -> insertSeparator();
   folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 

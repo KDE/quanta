@@ -866,9 +866,9 @@ void Project::slotNewProject()
   stack->addWidget( pnl, 0);
   stack->addWidget( pnw, 1 );
 
-  wiz->addPage( png,   i18n("<b>General project settings</b>"));
-  wiz->addPage( stack, i18n("<b>Insert files in project</b>"));
-  wiz->addPage( pnf,   i18n("<b>More project settings</b>"));
+  wiz->addPage( png,   i18n("<b>General Project Settings</b>"));
+  wiz->addPage( stack, i18n("<b>Insert Files in Project</b>"));
+  wiz->addPage( pnf,   i18n("<b>More Project Settings</b>"));
 
   wiz->setNextEnabled  ( png,   false );
   wiz->setBackEnabled  ( stack, true  );
@@ -1322,7 +1322,7 @@ void Project::slotGetMessages(QString data)
 
 void Project::slotRescanPrjDir()
 {
-  RescanPrj *dlg = new RescanPrj( fileNameList(), baseURL, this, i18n("New files in project's dir..."));
+  RescanPrj *dlg = new RescanPrj( fileNameList(), baseURL, this, i18n("New Files in Project's Directory"));
   if ( dlg->exec() )
   {
     insertFiles( dlg->files() );
@@ -1410,7 +1410,7 @@ void Project::slotOpenProjectView()
 
   bool ok = FALSE;
   QString res = QInputDialog::getItem(
-                  i18n("Open project view"),
+                  i18n("Open Project View"),
                   i18n("Select a project view to open."), list, 0, FALSE, &ok, this );
 
   if ( ok)
@@ -1424,14 +1424,14 @@ void Project::slotOpenProjectView()
 void Project::slotSaveAsProjectView(bool askForName)
 {
   KLineEditDlg dlg(i18n("Enter the name of the view:"), "", this);
-  dlg.setCaption(i18n("Save project view as"));
+  dlg.setCaption(i18n("Save Project View As"));
 
   if ( !askForName || dlg.exec() )
   {
     if (askForName) currentProjectView = dlg.text().lower();
     else
     {
-      if (KMessageBox::questionYesNo(this, i18n("Do you want to overwrite the project view named \"%1\" ?").arg(currentProjectView))
+      if (KMessageBox::questionYesNo(this, i18n("Do you want to overwrite the project view named \"%1\"?").arg(currentProjectView))
           == KMessageBox::No) return;
     }
     QDomNodeList nl = dom.elementsByTagName("projectview");

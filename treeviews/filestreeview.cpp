@@ -65,7 +65,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( i18n("Files tree"), 600 );
+  addColumn( i18n("Files Tree"), 600 );
 
   setFocusPolicy(QWidget::ClickFocus);
 

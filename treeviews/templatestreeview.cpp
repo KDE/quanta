@@ -68,8 +68,8 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   fileMenu -> insertItem( i18n("&New Directory..."),     this ,SLOT(slotNewDir()));
   fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"),     this ,SLOT(slotCopy()));
   fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),    this ,SLOT(slotPaste()));
-  fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
-  fileMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
+  fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
+  fileMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
   fileMenu -> insertSeparator();
   fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 
@@ -79,8 +79,8 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   folderMenu -> insertItem( i18n("&New Directory..."),     this ,SLOT(slotNewDir()));
   folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"),     this ,SLOT(slotCopy()));
   folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),    this ,SLOT(slotPaste()));
-  deleteMenuId = folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
-  folderMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
+  deleteMenuId = folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
+  folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
   folderMenu -> insertSeparator();
   folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 

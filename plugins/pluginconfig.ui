@@ -84,7 +84,7 @@
                             <cstring>PushButton9</cstring>
                         </property>
                         <property name="text">
-                            <string>OK</string>
+                            <string>&amp;OK</string>
                         </property>
                     </widget>
                     <widget class="QPushButton">
@@ -92,7 +92,7 @@
                             <cstring>PushButton10</cstring>
                         </property>
                         <property name="text">
-                            <string>Cancel</string>
+                            <string>&amp;Cancel</string>
                         </property>
                     </widget>
                 </hbox>
@@ -446,6 +446,6 @@
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kicondialog.h</includehint>
+    <includehint>kiconbutton.h</includehint>
 </includehints>
 </UI>

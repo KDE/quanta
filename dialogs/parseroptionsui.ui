@@ -42,7 +42,7 @@
             </rect>
         </property>
         <property name="title">
-            <string>Structure Tree Look and Feel</string>
+            <string>Structure Tree Look &amp;&amp; Feel</string>
         </property>
         <widget class="QLayoutWidget">
             <property name="name">

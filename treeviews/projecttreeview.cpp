@@ -55,7 +55,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn( i18n("Project files"), 600 );
+  addColumn( i18n("Project Files"), 600 );
 
   setFocusPolicy(QWidget::ClickFocus);
   
@@ -69,12 +69,12 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   fileMenu -> insertItem( i18n("Open With..."), this, SLOT(slotOpenWith()));
   openInQuantaId = fileMenu -> insertItem( i18n("Open in Quanta"), this, SLOT(slotOpenInQuanta()));
   fileMenu -> insertSeparator();
-  fileMenu -> insertItem(  UserIcon("delete"),i18n("Remove From Disc (and project)..."), this, SLOT(slotRemove()));
-  fileMenu -> insertItem( i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
+  fileMenu -> insertItem(  UserIcon("delete"),i18n("Remove From Disc (and project)"), this, SLOT(slotRemove()));
+  fileMenu -> insertItem( i18n("Remove From Project"),this ,SLOT(slotRemoveFromProject(int)));
   fileMenu -> insertItem( i18n("Upload File..."), this, SLOT(slotUploadSingleURL()));
   fileMenu -> insertSeparator();
   fileMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
-  fileMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
+  fileMenu -> insertItem( i18n("Properties"), this, SLOT(slotProperties()));
   fileMenu -> insertSeparator();
   fileMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
   fileMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
@@ -83,12 +83,12 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
   folderMenu -> insertItem( UserIcon("open"), i18n("&Open"), this, SLOT(slotOpen()));
    folderMenu -> insertSeparator();
-  folderMenu -> insertItem( UserIcon("delete"),i18n("Remove From Disc (and project)..."), this, SLOT(slotRemove()));
-  folderMenu -> insertItem( i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
+  folderMenu -> insertItem( UserIcon("delete"),i18n("Remove From Disc (and project)"), this, SLOT(slotRemove()));
+  folderMenu -> insertItem( i18n("Remove From Project"),this ,SLOT(slotRemoveFromProject(int)));
   folderMenu -> insertItem( i18n("Upload Folder..."), this, SLOT(slotUploadSingleURL()));
   folderMenu -> insertSeparator();
    folderMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
-  folderMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
+  folderMenu -> insertItem( i18n("Properties"), this, SLOT(slotProperties()));
   folderMenu -> insertSeparator();
   folderMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
   folderMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));

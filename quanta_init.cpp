@@ -1390,7 +1390,7 @@ void QuantaApp::initActions()
                         SLOT(toggleLineNumbers()), actionCollection(), "view_line_numbers");
 
 //help
-   (void) new KAction(i18n("Ti&p of the day"), "idea", "", this,
+   (void) new KAction(i18n("Ti&p of the Day"), "idea", "", this,
       SLOT(slotHelpTip()), actionCollection(), "help_tip");
 
   #if (KDE_VERSION > 308)
@@ -1436,17 +1436,17 @@ void QuantaApp::initActions()
                         this, SLOT( slotFileSaveAll() ),
                         actionCollection(), "save_all" );
 
-    saveAsLocalTemplateAction = new KAction( i18n( "Save As Local Template" ), 0,
+    saveAsLocalTemplateAction = new KAction( i18n( "Save as Local Template" ), 0,
                         this, SLOT( slotFileSaveAsLocalTemplate() ),
                         actionCollection(), "save_local_template" );
-    saveAsProjectTemplateAction = new KAction( i18n( "Save As Project Template" ), 0,
+    saveAsProjectTemplateAction = new KAction( i18n( "Save as Project Template" ), 0,
                         this, SLOT( slotFileSaveAsProjectTemplate() ),
                         actionCollection(), "save_project_template" );
 
-    saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection To Local Template File" ), 0,
+    saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection to Local Template File" ), 0,
                         this, SLOT( slotFileSaveSelectionAsLocalTemplate() ),
                         actionCollection(), "save_selection_local_template" );
-    saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection To Project Template File" ), 0,
+    saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection to Project Template File" ), 0,
                         this, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
                         actionCollection(), "save_selection_project_template" );
 
@@ -1481,7 +1481,7 @@ void QuantaApp::initActions()
                         this, SLOT( slotHelpHomepage() ),
                         actionCollection(), "help_homepage" );
 
-    (void) new KAction( i18n( "Make a &Donation" ), 0,
+    (void) new KAction( i18n( "Make &Donation" ), 0,
                         this, SLOT( slotMakeDonation() ),
                         actionCollection(), "help_donation" );
 
@@ -1572,7 +1572,7 @@ void QuantaApp::initActions()
     project -> projectRecent =
       KStdAction::openRecent(project, SLOT(slotOpenProject(const KURL&)),
                              actionCollection(), "project_open_recent");
-    project->projectRecent->setText(i18n("Open Recent Project..."));
+    project->projectRecent->setText(i18n("Open Recent Project"));
 
     saveprjAction =  new KAction( i18n( "&Save Project" ), SmallIcon("save"), 0,
                          project, SLOT( slotSaveProject() ),
