@@ -123,6 +123,7 @@
 
 #include "parser/parser.h"
 #include "parser/dtd.h"
+#include "parser/dtdparser.h"
 
 #include "messages/messageoutput.h"
 
@@ -3619,10 +3620,13 @@ void QuantaApp::slotLoadDTD()
   KURL url = KFileDialog::getOpenURL("", "*.dtd", this);
   if (!url.isEmpty())
   {
-    DTD dtdParser(url, KGlobal::dirs()->saveLocation("data") + "quanta/dtep");
+/*    DTD dtdParser(url, KGlobal::dirs()->saveLocation("data") + "quanta/dtep");
     dtdParser.parseDTD();
     //dtdParser.printContents();
     dtdParser.writeTagFiles();
+*/
+    DTDParser dtdParser(url, KGlobal::dirs()->saveLocation("data") + "quanta/dtep");
+    dtdParser.parse();
   }
 }
 
