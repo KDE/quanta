@@ -183,6 +183,9 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
    QuantaView *qView = static_cast<QuantaView*>(view);
    qView->activated();
 
+#ifdef DEBUG_PARSER
+  kdDebug(24000) << "Calling clearGroups from ViewManager::slotViewActivated" << endl;
+#endif
   parser->clearGroups();
   parser->setSAParserEnabled(true);
   quantaApp->reparse(true); //FIXME

@@ -29,51 +29,46 @@
 
 GroupElementMapList globalGroupMap;
 
-Node::Node( Node *parent )
+Node::Node(Node *parent)
 {
-    this->parent = parent;
-    prev = next = child = 0L;
-    tag = 0L;
-    groupTag = 0L;
-    group = 0L;
-    mainListItem = 0L;
-    opened = false;
-    removeAll = true;
-    closesPrevious = false;
-    insideSpecial = false;
-    _closingNode = 0L;
-    m_rootNode = 0L;
-    m_leafNode = 0L;
-    groupElementLists.clear();
+  this->parent = parent;
+  prev = next = child = 0L;
+  tag = 0L;
+  mainListItem = 0L;
+  opened = false;
+  removeAll = true;
+  closesPrevious = false;
+  insideSpecial = false;
+  _closingNode = 0L;
+  m_rootNode = 0L;
+  m_leafNode = 0L;
 }
 
 
 Node::~Node()
 {
-    //It has no use, except to know when it crash why it has crashed.
-    //If it has crashed here, the Node doesn't exist anymore.
-    // If it has crashed the next line, it is a GroupElements bug.
-    tag->setCleanStrBuilt(false);
+  //It has no use, except to know when it crash why it has crashed.
+  //If it has crashed here, the Node doesn't exist anymore.
+  // If it has crashed the next line, it is a GroupElements bug.
+  tag->setCleanStrBuilt(false);
 
-    detachNode();
-    if (prev && prev->next == this)
-        prev->next = 0L;
-    if (parent && parent->child == this)
-        parent->child = 0L;
-    if (removeAll)
-    {
-        delete child;
-        child = 0L;
-        delete next;
-        next = 0L;
-    }
+  detachNode();
+  if (prev && prev->next == this)
+      prev->next = 0L;
+  if (parent && parent->child == this)
+      parent->child = 0L;
+  if (removeAll)
+  {
+    delete child;
+    child = 0L;
+    delete next;
+    next = 0L;
+  }
 
-    delete tag;
-    tag = 0L;
-    delete groupTag;
-    groupTag = 0L;
-    delete m_rootNode;
-    delete m_leafNode;
+  delete tag;
+  tag = 0L;
+  delete m_rootNode;
+  delete m_leafNode;
 }
 
 void Node::save(QDomElement& element) const
@@ -101,7 +96,7 @@ void Node::save(QDomElement& element) const
             _closingNode->save(child_element);
         }
     }
-    
+
     Q_ASSERT(tag);
     child_element = element.ownerDocument().createElement("tag");
     element.appendChild(child_element);
@@ -469,51 +464,39 @@ int Node::size()
 
 void Node::operator =(Node* node)
 {
-    (*this) = (*node);
-    prev = 0L;
-    next = 0L;
-    parent = 0L;
-    child = 0L;
-    mainListItem = 0L;
-    groupElementLists.clear();
-    group = 0L;
-    groupTag = 0L;
-    setRootNode(0L);
-    setLeafNode(0L);
-    tag = new Tag(*(node->tag));
+  (*this) = (*node);
+  prev = 0L;
+  next = 0L;
+  parent = 0L;
+  child = 0L;
+  mainListItem = 0L;
+  m_groupElements.clear();
+  setRootNode(0L);
+  setLeafNode(0L);
+  tag = new Tag(*(node->tag));
 }
 
 void Node::detachNode()
 {
-    //Remove the references to this node from the list of group elements.
-    //They are actually stored in globalGroupMap.
-    QPtrListIterator<GroupElementList> iter(groupElementLists);
-    GroupElementList *groupElementList;
-    while ((groupElementList = iter.current()) != 0)
-    {
-        ++iter;
-        GroupElementList::Iterator it = groupElementList->begin();
-        while (it != groupElementList->end())
-        {
-            if ((*it).node == this)
-            {
-                // it = groupElementList->erase(it);
-                (*it).node = 0L;
-                (*it).tag = 0L;
-                (*it).deleted = true;
-            }
-            else
-                ++it;
-        }
-    }
+  //Remove the references to this node from the list of group elements.
+  //They are actually stored in globalGroupMap.
+  for (QValueListIterator<GroupElement*> it = m_groupElements.begin(); it != m_groupElements.end(); ++it)
+  {
+    GroupElement *groupElement = (*it);
+    groupElement->node = 0L;
+    groupElement->deleted = true;
+#ifdef DEBUG_PARSER
+    kdDebug(24001) << "GroupElement scheduled for deletion: " << groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
+#endif
+  }
 
-    QValueListIterator<QListViewItem*> listItem;
-    for ( listItem = listItems.begin(); listItem != listItems.end(); ++listItem)
-    {
-        static_cast<StructTreeTag*>(*listItem)->node = 0L;
-        static_cast<StructTreeTag*>(*listItem)->groupTag = 0L;
-    }
-    mainListItem = 0L;
-    listItems.clear();
-    groupElementLists.clear();
+  QValueListIterator<QListViewItem*> listItem;
+  for ( listItem = listItems.begin(); listItem != listItems.end(); ++listItem)
+  {
+    static_cast<StructTreeTag*>(*listItem)->node = 0L;
+    static_cast<StructTreeTag*>(*listItem)->groupTag = 0L;
+  }
+  mainListItem = 0L;
+  listItems.clear();
+  m_groupElements.clear();
 }

@@ -49,35 +49,31 @@ typedef struct Attribute{
         QString arguments;
       };
 
-//the groups in structure tree are defined with the help of:
-typedef struct StructTreeGroup{
-        QString name;        //the name of the group
-        QString noName;      //the text when there are no elements in the group
-        QString icon;        //the icon of the group
-        QRegExp definitionRx; //regular experssion to help us find the group element definition - for pseudo DTDs
-        QRegExp usageRx; //regexp to find the usage of a group element in the document
-        QRegExp searchRx;    //regular experssion to help us find the group - for pseudo DTDs
-        bool hasSearchRx;    //true if searchRx should be used
-        bool isMinimalSearchRx; // true if the searchRx should be non-greedy
-        QRegExp clearRx;     //clear the text matched from the result of the searchRx search - for pseudo DTDs
-        QString tag;         //tags belonging to this group - for real DTDs
-        int tagType;     //the tag type for which this is valid
-        QStringList attributes; //the attributes of the above tag to be displayed - for real DTDs
-        QRegExp autoCompleteAfterRx;  //holds the char after the autocompletion box should be shown for this group elements. Null, if autocompletion shouldn't be used
-        QRegExp removeFromAutoCompleteWordRx;
-        bool hasFileName;  //the group contains filename(s)
-        bool parseFile;   //parse the files belonging to this group
-        QRegExp fileNameRx; //delete the matches of this regexp to obtain a filename (eg. linked, included file name)
-      };
+class XMLStructGroup {
+  public:
+    QString name;   ///<the name of the group
+    QString noName; ///<the text when there are no elements in the group
+    QString icon;   ///<the icon of the group
+    QStringList attributes; ///<the attributes of the above tag to be displayed
+    bool hasFileName;     ///<the group contains filename(s)
+    QRegExp fileNameRx;   ///<delete the matches of this regexp to obtain a filename (eg. linked, included file name)
+};
 
-typedef struct XMLStructGroup {
-          QString name;
-          QString noName;
-          QString icon;
-          QStringList attributes;
-          bool hasFileName;
-          QRegExp fileNameRx;
-        };
+
+//the groups in structure tree are defined with the help of:
+class StructTreeGroup:public XMLStructGroup {
+  public:
+    QRegExp definitionRx; //regular experssion to help us find the group element definition - for pseudo DTDs
+    QRegExp usageRx; //regexp to find the usage of a group element in the document
+    bool hasDefinitionRx;    //true if searchRx should be used
+    bool isMinimalDefinitionRx; // true if the searchRx should be non-greedy
+    QRegExp typeRx;   //regular experssion to help us find the group element type from the definition string - for pseudo DTDs
+    int tagType;     //the tag type for which this is valid
+    QRegExp autoCompleteAfterRx;  //holds the char after the autocompletion box should be shown for this group elements. Null, if autocompletion shouldn't be used
+    QRegExp removeFromAutoCompleteWordRx;
+    bool parseFile;   //parse the files belonging to this group
+};
+
 
 typedef QPtrList<Attribute> AttributeList;
 typedef QDict<AttributeList> AttributeListDict;
@@ -199,6 +195,7 @@ defined in the structure after the keyword have local scope */
      int variableGroupIndex; ///< the index of the structure tree group holding the variables. -1 if there is no such group.
      int functionGroupIndex; ///< the index of the structure tree group holding the functions. -1 if there is no such group.
      int classGroupIndex; ///< the index of the structure tree group holding the classes. -1 if there is no such group.
+     int objectGroupIndex; ///< the index of the structure tree group holding the classes. -1 if there is no such group.
      mutable QRegExp memberAutoCompleteAfter; ///< the regular expression after which a list with the existing member methods and variables for a class should be shown. Makes sense only if the language supports classes.
 
     };

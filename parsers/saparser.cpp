@@ -722,6 +722,9 @@ Node *SAParser::parsingDone()
           kdDebug(24001) << "Emitting rebuildStructureTree from parsingDone (use return values). Enable parsing." << endl;
 #endif
           emit rebuildStructureTree(false);
+#ifdef DEBUG_PARSER
+          kdDebug(24000) << "Calling cleanGroups from SAParser::parsingDone" << endl;
+#endif
           emit cleanGroups();
         }
     }
@@ -960,6 +963,9 @@ void SAGroupParser::slotParseForScriptGroup()
     {
       if (m_lastGroupParsed)
       {
+#ifdef DEBUG_PARSER
+        kdDebug(24000) << "Calling cleanGroups from SAGroupParser::slotParseForScriptGroup" << endl;
+#endif
         emit cleanGroups();
         m_lastGroupParsed = false;
       }
@@ -983,7 +989,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
   QString title;
   QString tmpStr;
   StructTreeGroup group;
-  GroupElement groupElement;
+  GroupElement *groupElement;
   GroupElementList* groupElementList;
   KURL baseURL = QExtFileInfo::path(m_parent->write()->url());
   QString str = node->tag->cleanStr;
@@ -994,7 +1000,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
   for (it = dtd->structTreeGroups.begin(); it != dtd->structTreeGroups.end(); ++it)
   {
     group = *it;
-    if (!group.hasSearchRx ||
+    if (!group.hasDefinitionRx ||
         node->tag->type == Tag::XmlTag ||
         node->tag->type == Tag::XmlTagEnd ||
         node->tag->type == Tag::Comment ||
@@ -1003,13 +1009,13 @@ void SAGroupParser::parseForScriptGroup(Node *node)
         )
       continue;
     pos = 0;
-    group.searchRx.setMinimal(group.isMinimalSearchRx);
+    group.definitionRx.setMinimal(group.isMinimalDefinitionRx);
     while (pos != -1)
     {
-      pos = group.searchRx.search(str, pos);
+      pos = group.definitionRx.search(str, pos);
       if (pos != -1) //the Node is part of this group
       {
-        title = tagStr.mid(pos, group.searchRx.matchedLength());
+        title = tagStr.mid(pos, group.definitionRx.matchedLength());
         node->tag->beginPos(bl, bc);
         tmpStr = tagStr.left(pos);
         int newLines = tmpStr.contains('\n');
@@ -1025,9 +1031,9 @@ void SAGroupParser::parseForScriptGroup(Node *node)
         //get the list of elements which are present in this group and
         //have the same title. For example get the list of all group
         //element which are variable and the matched string was "$i"
-        QString s = title;
-        groupElementList = & (globalGroupMap[group.name + "|" + s.remove(group.clearRx)]);
-        GroupElementList::Iterator elIt;
+        int cap1Pos = str.find(group.definitionRx.cap(1));
+        QString s = tagStr.mid(cap1Pos, group.definitionRx.cap(1).length());
+        groupElementList = & (globalGroupMap[group.name + "|" + s]);
         //Create a new tag which point to the exact location of the matched string.
         //For example when the group defined PHP variables it
         //points to "$i" in a node which originally contained "print $i + 1"
@@ -1047,9 +1053,11 @@ void SAGroupParser::parseForScriptGroup(Node *node)
           }
         }
 
-        groupElement.deleted = false;
-        groupElement.tag = newTag;
-        groupElement.node = node;
+        groupElement = new GroupElement;
+        groupElement->deleted = false;
+        groupElement->tag = newTag;
+        groupElement->node = node;
+        groupElement->group = const_cast<StructTreeGroup*>(&(*it));
         //Find out if the current node is inside a script structure or not.
         //This is used to define local/global scope of the group elements.
         Node *tmpNode = node;
@@ -1059,28 +1067,33 @@ void SAGroupParser::parseForScriptGroup(Node *node)
         }
         if (tmpNode && tmpNode->tag->type == Tag::ScriptStructureBegin)
         {
-          groupElement.parentNode = tmpNode;
+          groupElement->parentNode = tmpNode;
         } else
         {
-          groupElement.parentNode = 0L;
+          groupElement->parentNode = 0L;
         }
-        groupElement.global = true;
+        groupElement->global = true;
         tmpNode = node->parent;
         while (tmpNode && tmpNode->tag->dtd() == dtd)
         {
           if ( tmpNode->tag->type == Tag::ScriptStructureBegin && tmpNode->tag->dtd()->localScopeKeywordsRx.search(tmpNode->tag->cleanStr) != -1)
           {
-            groupElement.global = false;
-            groupElement.parentNode = tmpNode;
+            groupElement->global = false;
+            groupElement->parentNode = tmpNode;
             break;
           }
           tmpNode = tmpNode->parent;
         }
+        if (!group.typeRx.pattern().isEmpty() && group.typeRx.search(title) != -1)
+          groupElement->type = group.typeRx.cap(1);
+#ifdef DEBUG_PARSER
+       kdDebug(24001) << "GroupElement created: " <<groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
+#endif
         //store the pointer to the group element list where this node was put
         //used to clear the corresponding entry from the group element lists
         //when the node is deleted (eg. $i was deleted, so it should be deleted
         //from the "variables | $i" group element list as well)
-        node->groupElementLists.append(groupElementList);
+        node->m_groupElements.append(groupElement);
         groupElementList->append(groupElement);
         //if a filename may be present in the title, extract it
         if (group.hasFileName && group.parseFile)
@@ -1093,8 +1106,6 @@ void SAGroupParser::parseForScriptGroup(Node *node)
           ParserCommon::includedFilesDTD.append(dtd);
           ParserCommon::includeWatch->addFile(url.path());
         }
-        node->groupTag = newTag;
-
       }
     }
   }

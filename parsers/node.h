@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sun Apr 16 2000
     copyright            : (C) 2000 by Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2001-2003 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,23 +18,18 @@
 #ifndef NODE_H
 #define NODE_H
 
-
-/**
-  *@author Dmitry Poplavsky
-  */
-
 #include <qptrlist.h>
 #include <qvaluelist.h>
 #include <qmap.h>
-class QDomElement;
-
-class Tag;
-class QListViewItem;
-struct XMLStructGroup;
-
 #include <dom/dom_node.h>
 
+class QDomElement;
+class QListViewItem;
+
+class Tag;
 class Node;
+class StructTreeGroup;
+class XMLStructGroup;
 
 struct GroupElement{
     /*The node which contains the element */
@@ -45,14 +40,16 @@ struct GroupElement{
     Node *parentNode;
     bool global;
     bool deleted;
+    QString type;
+    XMLStructGroup *group; ///<is part of this group
   };
 
-typedef QValueList<GroupElement> GroupElementList;
+typedef QValueList<GroupElement*> GroupElementList;
 typedef QMap<QString, GroupElementList> GroupElementMapList;
 
 /**
  * A Node is a basic unit of a Tree. It keeps track of his parent, his left neighbour, his right neighbour
- * and his first child. 
+ * and his first child.
  * It contains some functions to navigate through the tree, but some more are located at kafkacommon.h
  * (and should be moved here...)
  * It also contains a pointer to a Tag object which contains informations about the contents of the Node.
@@ -72,7 +69,7 @@ public:
   * The groupElementsList is cleared.
   */
  void operator =(Node* node);
- 
+
  /** For Kafka copy/paste */
  void save(QDomElement& element) const;
  bool load(QDomElement const& element);
@@ -151,12 +148,12 @@ public:
  void setRootNode(DOM::Node *rootNode) {m_rootNode = rootNode;}
  void setLeafNode(DOM::Node *leafNode) {m_leafNode = leafNode;}
  Node* _closingNode;
- 
+
  /**
   * The contents of the Node is inside the Tag. Should _never_ be null.
   */
  Tag *tag;
- 
+
  QValueList<QListViewItem *> listItems; ///<points to the listview items which represents this node in the structure tree
  QListViewItem *mainListItem; ///< the main listview item (from under the root node) associated with this node
  bool closesPrevious; //this node "closes" the tag from previous node
@@ -165,24 +162,12 @@ public:
  bool insideSpecial; //true if the node is part of a special area
  bool specialInsideXml; //< true if the node is a special area defined inside a tag, like the PHP in <a href="<? echo $a ?>">
  QString fileName; //the node is in this file. If empty, it's in the current document
+ QValueList<GroupElement*> m_groupElements; ///< all the group elements pointing to this node
 
-//The below fields are set during parsing for XML groups. See the
-//description.rc and the Parser::parseForXMLGroup(Node *node)
- Tag *groupTag; //points to a copy of the node tag. The name of the tag is set according to the container group rules.
- XMLStructGroup *group; //points to the container group
-
-//pointer list to all of the group element lists. For example, the node is part of
-//"function | foo" and "variable | $i" group. In this case the list has two pointers.
-//if "$i" appeared more than once in the node, the second pointer points to a list
-//with more than one elements. The original group element lists are in
-// globalGroupMap
- QPtrList<GroupElementList> groupElementLists;
-
- 
 private:
   /**
    * For VPL use.
-   * Usually for a XmlTag or Text Node there is one corresponding DOM::Node. But sdmetimes there are more 
+   * Usually for a XmlTag or Text Node there is one corresponding DOM::Node. But sdmetimes there are more
    * e.g. in the DOM::Node tree the TABLE DOM::Node require the TBODY DOM::Node even if not necessary according
    * to the specs. So m_rootNode points to the TABLE DOM::Node and m_leafNode points to the TBODY DOM::Node.
    */

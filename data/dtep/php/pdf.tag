@@ -230,7 +230,7 @@
 		<attr name="y" type="float" status="required"></attr>
 	</tag>
 	<tag name="pdf_new" type="function" returnType="resource" version="PHP 4 &gt;= 4.0.5, PHP 5">
-		<attr name="</methodparam>" type="" status="required"></attr>
+		<attr name="&lt;/methodparam&gt;" type="" status="required"></attr>
 	</tag>
 	<tag name="pdf_open_ccitt" type="function" returnType="int" version="PHP 4 &gt;= 4.0.5, PHP 5">
 		<attr name="pdfdoc" type="resource" status="required"></attr>

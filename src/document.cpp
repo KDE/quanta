@@ -1050,7 +1050,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
       GroupElementList elementList = it.data();
       for (uint i = 0; i < elementList.count(); i++)
       {
-        if (elementList[i].parentNode == 0L || elementList[i].global)
+        if (elementList[i]->parentNode == 0L || elementList[i]->global)
         {
           completion.text = it.key().section('|', -1);
           completions->append( completion );
@@ -1058,11 +1058,11 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(Node *no
         } else
         {
           Node *n = node;
-          while (n && n != elementList[i].parentNode)
+          while (n && n != elementList[i]->parentNode)
           {
             n = n->parent;
           }
-          if (n == elementList[i].parentNode)
+          if (n == elementList[i]->parentNode)
           {
             completion.text = it.key().section('|', -1);
             completions->append( completion );
@@ -1115,7 +1115,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   QString textLine = editIf->textLine(line).left(col);
   QString word = findWordRev(textLine, completionDTD).upper();
   QString classStr = "";
-  if (completionDTD->classGroupIndex != -1)
+  if (completionDTD->classGroupIndex != -1 && completionDTD->objectGroupIndex != -1)
   {
     textLine = textLine.left(textLine.length() - word.length());
     int pos = completionDTD->memberAutoCompleteAfter.searchRev(textLine);
@@ -1126,7 +1126,21 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
       pos = r->searchRev(textLine);
       if (pos != -1)
       {
-        classStr = r->cap(1);
+        QString objStr = r->cap(1);
+        GroupElementList groupElementList = globalGroupMap[completionDTD->structTreeGroups[completionDTD->objectGroupIndex].name + "|" + objStr];
+        for (GroupElementList::Iterator it = groupElementList.begin(); it != groupElementList.end(); ++it)
+        {
+          if (!(*it)->tag)
+            continue;
+#ifdef DEBUG_PARSER
+          kdDebug(24001) << "GroupElement: " << (*it) << " " << (*it)->tag->area().bLine << " " << (*it)->tag->area().bCol << " "<< (*it)->tag->area().eLine << " "<< (*it)->tag->area().eCol << " " << (*it)->tag->tagStr() << " " << (*it)->type << endl;
+#endif
+          if (!(*it)->type.isEmpty())
+          {
+            classStr = (*it)->type;
+            break;
+          }
+        }
       }
     }
   }

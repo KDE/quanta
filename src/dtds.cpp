@@ -462,6 +462,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     tmpStr = dtdConfig->readEntry("MemberAutoCompleteAfter").stripWhiteSpace();
     dtd->memberAutoCompleteAfter.setPattern(tmpStr);
   }
+  dtd->objectGroupIndex = dtdConfig->readNumEntry("ObjectGroupIndex", 0) - 1;
 
   //read the definition of different structure groups, like links, images, functions
   //classes, etc.
@@ -485,23 +486,10 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
         group.definitionRx.setPattern(tmpStr);
         tmpStr = dtdConfig->readEntry("UsageRx").stripWhiteSpace();
         group.usageRx.setPattern(tmpStr);
-        tmpStr = dtdConfig->readEntry("SearchRx").stripWhiteSpace();
-        group.searchRx.setPattern(tmpStr);
-        group.hasSearchRx = !group.searchRx.pattern().isEmpty();
-        group.isMinimalSearchRx = dtdConfig->readBoolEntry("SearchRx_Minimal", false);
-        group.clearRx = dtdConfig->readEntry("ClearRx").stripWhiteSpace();
-        tagStr = dtdConfig->readEntry("Tag").stripWhiteSpace();
-        group.tag = "";
-        if (!tagStr.isEmpty())
-        {
-          attrRx.search(tagStr);
-          tmpStr = attrRx.cap();
-          tmpStrList = QStringList::split(',', tmpStr.mid(1, tmpStr.length()-2));
-          group.tag = tagStr.left(tagStr.find('(')).lower();
-          group.attributes.clear();
-          for (uint i = 0; i < tmpStrList.count(); i++)
-            group.attributes += tmpStrList[i].stripWhiteSpace();
-        }
+        tmpStr = dtdConfig->readEntry("TypeRx").stripWhiteSpace();
+        group.typeRx.setPattern(tmpStr);
+        group.hasDefinitionRx = !group.definitionRx.pattern().isEmpty();
+        group.isMinimalDefinitionRx = dtdConfig->readBoolEntry("SearchRx_Minimal", false);
         tagStr = dtdConfig->readEntry("TagType", "Text").stripWhiteSpace();
         if (tagStr == "XmlTag")
             group.tagType = Tag::XmlTag;

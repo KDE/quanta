@@ -447,6 +447,9 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     if (ec == -1)
         ec = 0;
     AreaStruct area(el, ec, endLine, endCol);
+#ifdef DEBUG_PARSER
+    kdDebug(24000) << "Calling cleanGroups from Parser::parseArea" << endl;
+#endif
     cleanGroups();
     m_saParser->setParsingEnabled(true);
     currentNode = m_saParser->parseArea(area, "", "", parentNode, true, true); //TODO: don't parse in detail here
@@ -1237,13 +1240,17 @@ void Parser::clearGroups()
     elementIt = list->begin();
     while (elementIt != list->end())
     {
-       if (!(*elementIt).deleted)
+      GroupElement *groupElement = (*elementIt);
+#ifdef DEBUG_PARSER
+      kdDebug(24001) << "GroupElement deleted: " <<groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
+#endif
+      if (!groupElement->deleted)
        {
-          Node *n = (*elementIt).node;
-          n->groupElementLists.clear();
-          n->groupTag = 0L;
-          delete (*elementIt).tag;
+         Node *n = groupElement->node;
+         n->m_groupElements.clear();
+         delete groupElement->tag;
        }
+       delete groupElement;
        elementIt = list->erase(elementIt);
     }
   }
@@ -1270,8 +1277,14 @@ void Parser::cleanGroups()
     elementIt = list->begin();
     while (elementIt != list->end())
     {
-       if ((*elementIt).deleted)
+      GroupElement *groupElement = (*elementIt);
+      if (groupElement->deleted)
        {
+#ifdef DEBUG_PARSER
+         kdDebug(24001) << "GroupElement deleted: " <<groupElement << " "<< groupElement->tag->area().bLine << " " << groupElement->tag->area().bCol << " "<< groupElement->tag->area().eLine << " "<< groupElement->tag->area().eCol << " " << groupElement->tag->tagStr() << " " << groupElement->type << endl;
+#endif
+         delete groupElement->tag;
+         delete groupElement;
          elementIt = list->erase(elementIt);
        } else
        {
@@ -1307,7 +1320,7 @@ void Parser::parseIncludedFiles()
         listCount = it.data().count();
         for (uint i = 0 ; i < listCount; i++)
         {
-          delete it.data()[i].node;
+          delete it.data()[i]->node;
         }
       }
     }
@@ -1412,15 +1425,16 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
           for (it = dtd->structTreeGroups.begin(); it != dtd->structTreeGroups.end(); ++it)
           {
             group = *it;
+            if (!group.hasDefinitionRx)
+              continue;
             int pos = 0;
             while (pos != -1)
             {
-              pos = group.searchRx.search(foundStr, pos);
+              pos = group.definitionRx.search(foundStr, pos);
               if (pos != -1)
               {
-                QString s = content.mid(areaPos + pos, group.searchRx.matchedLength());
+                QString s = group.definitionRx.cap(1);
                 pos += s.length();
-                s.remove(group.clearRx);
                 if (!(*elements)[group.name].contains(s))
                 {
                   Tag *tag = new Tag();
@@ -1433,9 +1447,9 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                   Node *node = new Node(0L);
                   node->tag = tag;
                   node->fileName = fileName;
-                  GroupElement groupElement;
-                  groupElement.node = node;
-                  groupElement.parentNode = 0L;
+                  GroupElement *groupElement = new GroupElement;
+                  groupElement->node = node;
+                  groupElement->parentNode = 0L;
                   GroupElementList *groupElementList = &(*elements)[group.name][s];
                   groupElementList->append(groupElement);
                 }
@@ -1483,8 +1497,17 @@ void Parser::parseForXMLGroup(Node *node)
     title = title.left(title.length()-3);
     title.remove('\n');
     newTag->name = title;
-    node->groupTag = newTag;
-    node->group = const_cast<XMLStructGroup*>(&(xmlGroupIt.data()));
+
+    GroupElement *groupElement = new GroupElement;
+    groupElement->deleted = false;
+    groupElement->tag = newTag;
+    groupElement->node = node;
+    groupElement->parentNode = 0L;
+    groupElement->global = true;
+    groupElement->group = const_cast<XMLStructGroup*>(&(xmlGroupIt.data()));
+    node->m_groupElements.append(groupElement);
+    GroupElementList* groupElementList = & (globalGroupMap[group.name + "|" + title]);
+    groupElementList->append(groupElement);
   }
 }
 

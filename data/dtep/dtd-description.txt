@@ -125,13 +125,57 @@ ScriptRegExp = OBSOLETE, don't use.
 AttributeAutoCompletionAfter = CHAR. Similar to the TagAutoCompletionAfter, but
     for tag attributes. It's "(" by default and ":" for CSS. Not used for real
     DTDs.
+VariableGroupIndex = the index value of the group that defines variables.
+    -1 if there is no such group, otherwise the group must exists.
+FunctionGroupIndex = the index value of the group that defines functions.
+    -1 if there is no such group, otherwise the group must exists.
+ClassGroupIndex = the index value of the group that defines classes.
+    -1 if there is no such group, otherwise the group must exists.
+ObjectGroupIndex = the index value of the group that defines objects.
+    ClassGroupIndex must be defined, otherwise this doesn't make sense.
+    -1 if there is no such group, otherwise the group must exists.
+MemberAutoCompleteAfter = a regular expersion which defines when may a member
+    variable/method appear after a class' usage. Example:
+      - we have a class called "foo" with some member variables
+      - the object of type "foo" is used in the document as $objFoo
+      - the members can appear as $objFoo->member or $objFoo.member
+      - in the above case this entry shoul look like (?:->|\.)$ (autocomplete
+      if the object is followed by -> or .)
+    The regular experssion must be terminated with "$" (match end of line).
 
 
 [StructGroup_1]
-SearchRx = regular expression used to find text areas in the pseudo DTD, which
-    will belong to this group
-ClearRx = regular experssion used to clear unwanted text/chars from the above
-    search result. The cleaned string will appear in the structure tree.
+DefinitionRx = regular expression used to find text areas in the pseudo DTD, which
+    will belong to this group. The first captured area should be the actual name
+    of the group entry.
+    Example:
+      \bclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*
+    The first captured area (between "(" and ")") holds the class name.
+UsageRx = to find an usage of an element of the group.
+    Example:
+      - classes are defined as  "class foo {...}"
+      - classes are used as $objFoo
+    Example 2:
+      - variables are defined as "int i"
+      - variables are used as @i
+    Example 3:
+      - variables are defined as $i
+      - variables are used as $i. In this case UsageRx is the same as
+        DefinitionRx
+TypeRx = regular experssion to find the type of the element. The pattern is
+      searched on the result of DefinitionRx match and the first captured areas
+      will hold the element type. Example (simplified):
+        DefinitionRx =\$+([a-zA-Z]+)=new\\s[a-zA-Z]+;
+        TypeRx = new\\s([a-zA-Z]+);
+        This will match strings like "$fooObj=new foo;". Now this string is
+        searched and it will find "new foo;", where "foo" is the first
+        captured text (the regular expression matching foo is between brackets).
+        So the type of "$fooObj" is "foo".
+
+
+SearchRx = OBSOLETED by DefinitionRx. Don't use it.
+ClearRx = OBSOLETED by DefinitionRx. Don't use it.
+
 
 
 [Parsing rules]

@@ -26,7 +26,7 @@
 		<attr name="output" type="string" status="required"></attr>
 	</tag>
 	<tag name="apd_get_active_symbols" type="function" returnType="array" version="">
-		<attr name="</methodparam>" type="" status="required"></attr>
+		<attr name="&lt;/methodparam&gt;" type="" status="required"></attr>
 	</tag>
 	<tag name="apd_set_pprof_trace" type="function" returnType="void" version="">
 		<attr name="dump_directory" type="string" status="optional"></attr>

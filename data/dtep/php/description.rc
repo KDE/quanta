@@ -19,6 +19,7 @@ TagAutoCompleteAfter = none
 VariableGroupIndex = 2
 FunctionGroupIndex = 3
 ClassGroupIndex = 4
+ObjectGroupIndex = 5
 MemberAutoCompleteAfter = (?:\.|->)$
 
 [Parsing rules]
@@ -36,11 +37,11 @@ MayContain = php
 Name = Inclusions
 No_Name = No Inclusions
 Icon = attach
-SearchRx = (?:include|require)(?:_once)?(?:\\s+(?:\$\w+\\s*)?|\\s*\((?:\\s+|\\s*\$\w+\\s*)\)\\s*);
-SearchRx_Minimal = true
-ClearRx = \n
+DefinitionRx = ((?:include|require)(?:_once)?(?:\\s+(?:\$\w+\\s*)?|\\s*\((?:\\s+|\\s*\$\w+\\s*)\)\\s*);)
+DefinitionRx_Minimal = true
 HasFileName = true
 ParseFile = true
+New_FileNameRx_Not_Used = (?:include|require)(?:_once)?(\\s+(?:\$\w+\\s*)?|\\s*\((?:\\s+|\\s*\$\w+\\s*)\)\\s*);
 FileNameRx = (?:^include|^require|^include_once|^require_once|\(|\)|\"|\'|;$)
 
 [StructGroup_2]
@@ -51,27 +52,18 @@ DefinitionRx = \$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]
 UsageRx = \$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)
 AutoCompleteAfter = \$+[a-zA-Z0-9_\x7f-\xff]*$
 
-SearchRx = \$+[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*
-ClearRx = \$
-
 [StructGroup_3]
 Name = Functions
 No_Name = No Functions
 Icon = mini-modules
 DefinitionRx = \bfunction[\\s]+([0-9a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1})
 
-SearchRx = \bfunction[\\s]+[0-9a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1}
-ClearRx = function[\\s]+
-
 [StructGroup_4]
 Name = Classes
 No_Name = No Classes
 Icon = classnew
-DefinitonRx = \bclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*
+DefinitionRx = \bclass[\\s]+([0-9a-zA-Z_\x7f-\xff]*)[\\s]*
 UsageRx = \B\$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)$
-
-SearchRx = \bclass[\\s]+[0-9a-zA-Z_\x7f-\xff]*[\\s]*
-ClearRx = (?:class[\s]+|\n)
 AutoCompleteAfter = \bnew[\\s]+$
 RemoveFromAutoCompleteWord = \bnew[\\s]*
 
@@ -79,5 +71,5 @@ RemoveFromAutoCompleteWord = \bnew[\\s]*
 Name = Objects
 No_Name = No Objects
 Icon = classnew
-SearchRx =  \$+[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\\s]*=[\\s]*new[\\s]
-ClearRx = (?:=[\\s]*new[\\s]|\$)
+DefinitionRx =\$+([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\\s]*=[\\s]*new[\\s]*[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\\s]*
+TypeRx = [\\s]*new[\\s]*([a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)[\\s]*

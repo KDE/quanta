@@ -1845,16 +1845,16 @@ void QuantaApp::slotContextMenuAboutToShow()
           group = node->tag->dtd()->structTreeGroups[i];
           if (group.hasFileName)
           {
-            if (!group.hasSearchRx )
+            if (!group.hasDefinitionRx )
               continue;
             tagStr =  node->tag->tagStr();
             int pos = 0;
             while (pos != -1)
             {
-              pos = group.searchRx.search(node->tag->cleanStr, pos);
+              pos = group.definitionRx.search(node->tag->cleanStr, pos);
               if (pos != -1)
               {
-                name = tagStr.mid(pos, group.searchRx.matchedLength());
+                name = tagStr.mid(pos, group.definitionRx.matchedLength());
                 node->tag->beginPos(bl, bc);
                 QString tmpStr = tagStr.left(pos);
                 int newLines = tmpStr.contains('\n');
@@ -1866,7 +1866,8 @@ void QuantaApp::slotContextMenuAboutToShow()
                 el = bl + newLines;
                 ec = (newLines > 0) ? l - name.findRev('\n') : bc + l - 1;
                 pos += l;
-                name.remove(group.clearRx);
+                group.definitionRx.search(name);
+                name = group.definitionRx.cap(1);
                 if (QuantaCommon::isBetween(line, col, bl, bc, el, ec) == 0)
                 {
                   break;
@@ -1878,7 +1879,7 @@ void QuantaApp::slotContextMenuAboutToShow()
             }
             name.remove(group.fileNameRx);
             if (!name.isEmpty())
-            break;
+              break;
           }
         }
       } else
@@ -4617,7 +4618,7 @@ void QuantaApp::slotCut()
       QString::null, "show cut unavailable");
     */
     KafkaDocument::ref()->slotCut();
-    return;    
+    return;
   }
   if(w)
   {
