@@ -104,7 +104,6 @@ public:
 
 public slots:
   void slotTagMail();
-  void slotTagQuickStart();
   void slotTagQuickList();
   void slotTagQuickTable();
   void slotTagColor();

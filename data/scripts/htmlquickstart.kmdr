@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>374</width>
-            <height>557</height>
+            <height>559</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -255,17 +255,17 @@ echo "$DTD"</string>
                 <widget class="ComboBox" row="0" column="1">
                     <item>
                         <property name="text">
-                            <string>HTML 4.0.1 Transitional</string>
+                            <string>HTML 4.01 Transitional</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>HTML 4.0.1 Strict</string>
+                            <string>HTML 4.01 Strict</string>
                         </property>
                     </item>
                     <item>
                         <property name="text">
-                            <string>HTML 4.0.1 Frameset</string>
+                            <string>HTML 4.01 Frameset</string>
                         </property>
                     </item>
                     <item>

@@ -262,44 +262,6 @@ void QuantaView::slotTagMisc()
   delete miscDlg;
 }
 
-
-/** quick html text generate */
-void QuantaView::slotTagQuickStart()
-{
-  if (!writeExists()) return;
-
-  TagQuickStart *quickDlg = new TagQuickStart( quantaApp->projectBaseURL(), this, i18n("Generate HTML Text"));
-
-  if ( quickDlg->exec() )
-   {
-    const QString chset = quantaApp->defaultEncoding();
-    DTDStruct *dtd = write()->defaultDTD();
-    QString tag = QString("<!DOCTYPE" + dtd->doctypeStr +">\n")+QuantaCommon::tagCase("<html>\n")
-                  + space + QuantaCommon::tagCase("<head>\n")+ space + QuantaCommon::tagCase("  <title>");
-    if ( !QString(quickDlg->lineTitle->text()).isEmpty())
-         tag += quickDlg->lineTitle->text();
-    tag += QuantaCommon::tagCase("</title>\n")+space+
-           "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + chset + "\">\n"+
-           space+"  <meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"+space+
-           QuantaCommon::tagCase("</head>\n")+space+QuantaCommon::tagCase("<body");
-    if ( !QString(quickDlg->lineBGImage->text()).isEmpty())
-         tag += QuantaCommon::attrCase(" background=")+qConfig.attrValueQuotation+quickDlg->lineBGImage->text()+qConfig.attrValueQuotation;
-    if ( !QString(quickDlg->comboBGColor->currentText()).isEmpty())
-         tag += QuantaCommon::attrCase(" bgcolor=")+qConfig.attrValueQuotation+quickDlg->comboBGColor->currentText()+qConfig.attrValueQuotation;
-    if ( !QString(quickDlg->comboTextColor->currentText()).isEmpty())
-         tag += QuantaCommon::attrCase(" text=")+qConfig.attrValueQuotation+quickDlg->comboTextColor->currentText()+qConfig.attrValueQuotation;
-    if ( !QString(quickDlg->comboLinkColor->currentText()).isEmpty())
-         tag += QuantaCommon::attrCase(" link=")+qConfig.attrValueQuotation+quickDlg->comboLinkColor->currentText()+qConfig.attrValueQuotation;
-    if ( !QString(quickDlg->comboALinkColor->currentText()).isEmpty())
-         tag += QuantaCommon::attrCase(" alink=")+qConfig.attrValueQuotation+quickDlg->comboALinkColor->currentText()+qConfig.attrValueQuotation;
-    if ( !QString(quickDlg->comboVLinkColor->currentText()).isEmpty())
-         tag += QuantaCommon::attrCase(" vlink=")+qConfig.attrValueQuotation+quickDlg->comboVLinkColor->currentText()+qConfig.attrValueQuotation;
-    tag += QString(">\n")+space+QString("  ");
-    write()->insertTag(tag,QString("\n")+space+QuantaCommon::tagCase("</body>\n")+space+QuantaCommon::tagCase("</html>"));
-  }
-  delete quickDlg;
-}
-
 /** do quick list */
 void QuantaView::slotTagQuickList()
 {
