@@ -605,11 +605,9 @@ void FilesTreeView::slotProperties()
         itemRenamed(url, propDlg->kurl());
       }
     }
-    delete propDlg;
   } else
   {
-    KPropertiesDialog *propDlg = new KPropertiesDialog(url, this);
-    Q_UNUSED(propDlg);
+    (void) new KPropertiesDialog(url, this);
   }
 }
 

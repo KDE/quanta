@@ -529,8 +529,6 @@ void TemplatesTreeView::slotProperties()
     slotPropertiesApplied();
     slotReload();
    }
-
-  delete propDlg;
 }
 
 
