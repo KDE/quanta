@@ -96,7 +96,7 @@ void QuantaApp::slotFileNew()
 
 void QuantaApp::slotFileOpen()
 {
-  KURL url = KFileDialog::getOpenURL( QDir::homeDirPath(), QString::null, this);
+  KURL url = KFileDialog::getOpenURL( QString::null, QString::null, this);
     
   if ( !url.url().isEmpty() ) slotFileOpen( url );
 }
@@ -431,7 +431,7 @@ void QuantaApp::slotUpdateStatus(const QString &)
 
 void QuantaApp::slotOptionsConfigureKeys()
 {
-	KKeyDialog::configureKeys( actionCollection(), QString::null, true, this );
+	KKeyDialog::configureKeys( actionCollection(), xmlFile(), true, this );
 }
 
 void QuantaApp::slotOptionsConfigureToolbars()
