@@ -41,14 +41,15 @@ public slots:
   void slotChangeNames(const QString &);
   void slotButtonTmpl();
   void slotButtonToolbar();
-  void slotLinePrjTmpl(const QString &);
-  void slotLinePrjToolbar(const QString &);
   void slotProtocolChanged(const QString& protocol);
 
 
 signals:
   void setBaseURL(const KURL&);
   void enableNextButton(QWidget *, bool);
+  
+private:
+  KURL baseUrl;  
 };
 
 #endif
