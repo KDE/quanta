@@ -163,10 +163,12 @@ void KQApplicationPrivate::init()
       QuantaCommon::setUrl(url, *it);
       quantaApp->slotFileOpen(url, quantaApp->defaultEncoding());  // load initial files
     }
+    delete splash;
+    splash = 0L;
     quantaApp->openLastFiles();
   }
   args->clear();
-  if (splash) delete splash;
+  delete splash;
 }
 
 #include "kqapp.moc"

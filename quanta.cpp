@@ -2863,6 +2863,7 @@ void QuantaApp::slotToolsChangeDTD()
     dlg->dtdCombo->setCurrentItem(pos);
     dlg->messageLabel->setText(i18n("Change the current DTD."));
     dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier()));
+    dlg->useClosestMatching->setShown(false);
     if (dlg->exec())
     {
       w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
