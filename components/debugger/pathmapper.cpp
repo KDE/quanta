@@ -57,6 +57,9 @@ QString PathMapper::mapLocalPathToServer(const QString &localpath)
   if(localpath.isEmpty())
     return localpath;
     
+  if(m_localBasedir == "/" && m_serverBasedir == "/")
+    return localpath;
+    
   QString newpath = translate(localpath, m_localBasedir, m_serverBasedir);
   
   // If no translation occurred, check and see if some of the other translations does
