@@ -374,9 +374,7 @@ void QuantaApp::initView()
   connect( sTab, SIGNAL(needReparse()),    SLOT(reparse()));
   connect( dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
 
-// [MB02] : Connections for drag and drop on view
-//  connect(getView()->write()->view(), SIGNAL(insertFile(QString)), this, SLOT(slotInsertFile(QString)));
-// connect(getView(), SIGNAL(insertTag(QString, DirInfo)), this, SLOT(slotInsertTag(QString, DirInfo)));
+  connect(getView(), SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
 
   setMainDockWidget( maindock );
   setView(maindock);
