@@ -25,12 +25,26 @@ quanta_METASOURCES = AUTO
 # the library search path.
 quanta_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
+# some parts got own messages targets. No need to duplicate their messages
 messages: rc.cpp
-	$(EXTRACTRC) `find . -name "*.ui"` >> rc.cpp
-	$(EXTRACTRC) `find . -name "*.rc"` >> rc.cpp
-	$(EXTRACTRC) `find . -name "*.kmdr"` >> rc.cpp
-	$(EXTRACTRC) $(top_srcdir)/quanta/data/chars >> rc.cpp
-	$(XGETTEXT) `find . -name "*.cpp"` -o $(podir)/quanta.pot
+	find . -type d | grep -v CVS | sed -e 's,$$,/,' > dirs
+	mfs=`find . -name Makefile.am | xargs egrep -l '^messages:'` ;\
+	for dir in $$mfs; do \
+	  if test ! "$$dir" = "./Makefile.am"; then \
+	    dir=`dirname $$dir` ;\
+	    egrep -v "^$$dir" dirs > dirs.new && mv dirs.new dirs ;\
+	  fi ;\
+	done
+	egrep -v "/tests" dirs > dirs.new && mv dirs.new dirs ;\
+	dirs=`cat dirs` ;\
+	find $$dirs -maxdepth 1 -name "*.cpp" -print > files ;\
+	find $$dirs -maxdepth 1 -name "*.cc" -print >> files ;\
+	find $$dirs -maxdepth 1 -name "*.h" -print >> files ;\
+	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.ui"` >> rc.cpp
+	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.rc"` >> rc.cpp
+	$(EXTRACTRC) `find $$dirs -maxdepth 1 -name "*.kmdr"` >> rc.cpp
+	$(EXTRACTRC) data/chars >> rc.cpp
+	$(XGETTEXT) rc.cpp `cat files` -o $(podir)/quanta.pot
 
 KDE_ICON = quanta
 
