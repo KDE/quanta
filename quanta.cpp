@@ -902,7 +902,7 @@ void QuantaApp::slotActivatePreview()
   WHTMLPart *part = htmlPart();
   if ( !part ) return;
   QWidgetStack *s = widgetStackOfHtmlPart();
-  previousWidgetId = s->id(s->visibleWidget());
+  previousWidgetList.push_back(s->id(s->visibleWidget()));
   s->raiseWidget(1);
 }
 
@@ -921,7 +921,13 @@ void QuantaApp::slotShowPreview()
 
 	if ( stat )
   {
-    s->raiseWidget(previousWidgetId);
+    int id = 0;
+    if (!previousWidgetList.empty())
+    {
+      id = previousWidgetList.last();
+      previousWidgetList.pop_back();
+    }
+    s->raiseWidget(id);
 
 //FIXME:
 //Restore the original doc from the temp file.
@@ -954,7 +960,7 @@ void QuantaApp::slotShowPreview()
 	  {
 	  }
 
-    previousWidgetId = s->id(s->visibleWidget());
+    previousWidgetList.push_back(s->id(s->visibleWidget()));
     s->raiseWidget(1);
 		repaintPreview(false);
 	}
@@ -1057,7 +1063,7 @@ void QuantaApp::slotDockChanged()
   if ( dtabdock->isVisible() )
   {
     static bool first = true;
-    previousWidgetId = s->id(s->visibleWidget());
+    previousWidgetList.push_back(s->id(s->visibleWidget()));
     s->raiseWidget(2);
     if ( first )
     {
@@ -1069,7 +1075,20 @@ void QuantaApp::slotDockChanged()
   else {
     if ( docTabOpened )
     {
-      s->raiseWidget(previousWidgetId);
+      int id = 0;
+      previousWidgetList.remove(2);
+      if (s->id(s->visibleWidget()) == 2)
+      {
+        if (!previousWidgetList.empty())
+        {
+          id = previousWidgetList.last();
+          previousWidgetList.pop_back();
+        }
+      } else
+      {
+        id = s->id(s->visibleWidget());
+      }
+      s->raiseWidget(id);
       docTabOpened = false;
     }
     if ( !exitingFlag )
@@ -1130,8 +1149,15 @@ void QuantaApp::slotContextHelp()
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (  id_w == 1 || id_w == 2 )
   {
-    if ( !m_oldTreeViewWidget->isVisible() ) m_oldTreeViewWidget->changeHideShowState();
-      s->raiseWidget(previousWidgetId);
+    if ( !m_oldTreeViewWidget->isVisible() )
+        m_oldTreeViewWidget->changeHideShowState();
+    int id = 0;
+    if (!previousWidgetList.empty())
+    {
+      id = previousWidgetList.last();
+      previousWidgetList.pop_back();
+    }
+    s->raiseWidget(id);
   }
   else
   {
@@ -1140,6 +1166,7 @@ void QuantaApp::slotContextHelp()
 
     if ( url )
     {
+      previousWidgetList.push_back(s->id(s->visibleWidget()));
       if (ftabdock->isVisible()) m_oldTreeViewWidget = ftabdock;
       if (ptabdock->isVisible()) m_oldTreeViewWidget = ptabdock;
       if (ttabdock->isVisible()) m_oldTreeViewWidget = ttabdock;
@@ -1147,7 +1174,6 @@ void QuantaApp::slotContextHelp()
       if (dtabdock->isVisible()) m_oldTreeViewWidget = dtabdock;
       if (!dtabdock->isVisible()) dtabdock->changeHideShowState();
 
-      previousWidgetId = s->id(s->visibleWidget());
       s->raiseWidget(2);
       htmlPartDoc->view()->setFocus();
 

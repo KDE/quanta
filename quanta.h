@@ -30,6 +30,7 @@
 #endif
 
 // include files for Qt
+#include <qvaluelist.h>
 #include <qstrlist.h>
 #include <qptrlist.h>
 
@@ -481,7 +482,7 @@ protected: // Protected attributes
   KDockWidget *m_oldTreeViewWidget;
 
   /** The id of the widget visible before doing the preview */
-  int previousWidgetId;  
+  QValueList<int> previousWidgetList;
 };
  
 #endif // QUANTA_H
