@@ -978,13 +978,11 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   if (!handled)
   {
     QString s = editIf->textLine(line).left(column + 1);
-    int pos = s.findRev('&');
-    if (pos != -1)
+    if (s.endsWith("&"))
     {
-      s = s.mid(pos + 1);
-      //complete character codes
-      showCodeCompletions( getCharacterCompletions(s) );
-      handled = true;
+        //complete character codes
+        showCodeCompletions( getCharacterCompletions("") );
+        handled = true;
     }
   }
  return handled;
@@ -1381,7 +1379,31 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
 /** Return a list of character completions (like &nbsp; ...) */
 QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(const QString& startsWith)
 {
-  QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
+  QValueList<KTextEditor::CompletionEntry> *completions = 0L;
+      
+  //first search for entities defined in the document
+  const DTDStruct *dtdDTD = DTDs::ref()->find("dtd");
+  if (dtdDTD)
+  {
+    StructTreeGroup group;
+    for (uint j = 0; j < dtdDTD->structTreeGroups.count(); j++)
+    {
+      group = dtdDTD->structTreeGroups[j];
+      if (!group.autoCompleteAfterRx.pattern().isEmpty() &&
+          group.autoCompleteAfterRx.search("&") != -1)
+      {
+        uint line, col;
+        viewCursorIf->cursorPositionReal(&line, &col);
+        Node *node = parser->nodeAt(line, col, false);
+        completions = getGroupCompletions(node, group, line, col);
+        break;
+      }
+    }
+  }
+  
+  //now add the character codes
+  if (!completions)
+   completions = new QValueList<KTextEditor::CompletionEntry>();
 
   KTextEditor::CompletionEntry completion;
   completion.type = "charCompletion";
@@ -1401,6 +1423,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
       completions->append( completion );
     }
   }
+  
   return completions;
 }
 
@@ -1945,9 +1968,12 @@ bool Document::xmlCodeCompletion(int line, int col)
     if (pos != -1)
     {
       s = s.mid(pos + 1);
-      //complete character codes
-      showCodeCompletions( getCharacterCompletions(s) );
-      handled = true;
+      if (!s.stripWhiteSpace().isEmpty())
+      {
+        //complete character codes
+        showCodeCompletions(getCharacterCompletions(s));
+        handled = true;
+      }
     }
   }
   return handled;

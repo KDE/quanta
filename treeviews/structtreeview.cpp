@@ -382,8 +382,14 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel, bool gr
         StructTreeTag *groupTag = groups[groupId];
         if (groupTag->childCount() == 0)
         {
-          //kdDebug(24000) << "No elements in group: " << groupId << " " << groupTag->text(0) << endl;
-          groupTag->setText(0, i18n(parsingDTD->structTreeGroups[i].noName.utf8()) + " [" + parsingDTD->nickName+"]");
+          if (qConfig.showEmptyNodes)
+          {
+            //kdDebug(24000) << "No elements in group: " << groupId << " " << groupTag->text(0) << endl;
+            groupTag->setText(0, i18n(parsingDTD->structTreeGroups[i].noName.utf8()) + " [" + parsingDTD->nickName+"]");
+          } else
+          {
+            groupTag->setVisible(false);
+          }
         }
         groupId++;
       }
@@ -396,8 +402,14 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel, bool gr
         StructTreeTag *groupTag = groups[groupId];
         if (groupTag->childCount() == 0)
         {
-          //kdDebug(24000) << "No elements in group: " << groupId << " " << groupTag->text(0) << endl;
-          groupTag->setText(0, i18n(it.data().noName.utf8()) + " [" + parsingDTD->nickName+"]");
+          if (qConfig.showEmptyNodes)
+          {
+            //kdDebug(24000) << "No elements in group: " << groupId << " " << groupTag->text(0) << endl;
+            groupTag->setText(0, i18n(it.data().noName.utf8()) + " [" + parsingDTD->nickName+"]");
+          } else
+          {
+            groupTag->setVisible(false);
+          }
         }
         i++;
         groupId++;
