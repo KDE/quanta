@@ -22,6 +22,7 @@
 #include <kparts/part.h>
 
 /* QT INCLUDES */
+#include <qguardedptr.h>
 #include <qobject.h>
 
 class QString;
@@ -114,7 +115,7 @@ protected:
   /** True, if it is not a user added plugin. Special handling code may be necessary for standard plugins. */
   bool m_standard;
   bool m_isRunning;
-  KParts::ReadOnlyPart *m_part;
+  QGuardedPtr<KParts::ReadOnlyPart> m_part;
   bool m_readOnlyPart;
   QuantaView *m_view;
   KToggleAction *m_action;

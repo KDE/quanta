@@ -59,6 +59,7 @@ QuantaPlugin::QuantaPlugin()
  m_part = 0L;
  m_view = 0L;
  m_pluginToolView = 0L;
+ m_targetWidget = 0L;
 }
 
 QuantaPlugin::~QuantaPlugin()
@@ -275,7 +276,7 @@ bool QuantaPlugin::validatePluginInfo(const QString & /*a_name*/,
 /** Returns whether the plugin is loaded or not */
 bool QuantaPlugin::isLoaded()
 {
-  return m_part != 0;
+  return m_targetWidget != 0L;
 }
 
 bool QuantaPlugin::unload(bool remove)
@@ -286,7 +287,7 @@ bool QuantaPlugin::unload(bool remove)
   disconnect( m_part, SIGNAL(setStatusBarText(const QString &)),
            quantaApp, SLOT(slotStatusMsg( const QString & )));
 
-  delete m_part;
+  delete (KParts::ReadOnlyPart*) m_part;
   m_part = 0;
   delete m_targetWidget;
   m_targetWidget = 0L;
