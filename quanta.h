@@ -181,6 +181,8 @@ class QuantaApp : public KMainWindow
     void slotOptionsConfigureKeys();
 
     void slotOptionsConfigureToolbars();
+    
+    void slotOptionsConfigureActions();
 
     /** set highlight and eol */
     void slotSetHl(int);

@@ -7,13 +7,18 @@
 
 #include "actioneditdlgs.h"
 
+class KActionCollection;
+
 /** configure actions
   *@author Dmitry Poplavsky
   */
-
+  
 class ActionEditDlg : public ActionEditDlgS {
   Q_OBJECT
-  ActionEditDlg( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+  
+public:
+  
+  ActionEditDlg( KActionCollection *col, QWidget* parent = 0, const char* name = 0, bool modal = true, WFlags fl = 0 );
   ~ActionEditDlg();
   
 public slots:

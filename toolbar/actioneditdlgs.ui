@@ -714,7 +714,7 @@
             <class>KIconButton</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>MyCustomWidget1</cstring>
+                <cstring>actionIcon</cstring>
             </property>
             <property stdset="1">
                 <name>sizePolicy</name>
@@ -733,8 +733,8 @@
             <property stdset="1">
                 <name>maximumSize</name>
                 <size>
-                    <width>48</width>
-                    <height>48</height>
+                    <width>32</width>
+                    <height>32</height>
                 </size>
             </property>
         </widget>

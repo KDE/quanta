@@ -8,10 +8,48 @@
  ***************************************************************************/
 
  /***************************************************************************
-    copyright            : (C) 2000 by Dmitry Poplavsky 
+    copyright            : (C) 2001 by Dmitry Poplavsky 
     email                : dima@kde.org
  ***************************************************************************/
 
 
 #include "actioneditdlg.h"
+#include <kaction.h>
+#include <kiconloader.h>
+#include <kicondialog.h>
+
+ActionEditDlg::ActionEditDlg( KActionCollection *col, QWidget* parent, const char* name, bool modal, WFlags fl )
+    :ActionEditDlgS( parent, name, modal, fl )
+{
+   actionIcon->setIconType(KIcon::User,0,true);
+   
+   QValueList<KAction*> actions = col->actions();
+   
+   QValueList<KAction*>::Iterator it;
+   for( it = actions.begin(); it != actions.end(); ++it )
+        actionsList->insertItem( UserIcon((*it)->icon()), (*it)->plainText() );
+
+}
+
+ActionEditDlg::~ActionEditDlg()
+{
+}
+
+
+
+void ActionEditDlg::deleteAction()
+{
+    
+}
+
+void ActionEditDlg::newAction()
+{
+    
+}
+
+void ActionEditDlg::actionSelected()
+{
+    
+}
+
 

@@ -74,6 +74,8 @@
 
 #include "messages/messageoutput.h"
 
+#include "toolbar/actioneditdlg.h"
+
 #include <kedittoolbar.h>
 #include <kaction.h>
 
@@ -461,6 +463,13 @@ void QuantaApp::slotOptionsConfigureToolbars()
     KEditToolbar dlg( actionCollection(), QString::null, true, this );
     
     if ( dlg.exec() ) createGUI();
+}
+
+void QuantaApp::slotOptionsConfigureActions()
+{
+    ActionEditDlg dlg( actionCollection(), this, "actions_edit_dlg", true); //actionCollection(), QString::null, true, this );
+    
+    dlg.exec();
 }
 
 

@@ -818,6 +818,10 @@ void QuantaApp::initActions()
     (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0, 
                         doc, SLOT( editorOptions() ),
                         actionCollection(), "editor_options" );
+                        
+    (void) new KAction( i18n( "Configure &Actions..." ), UserIcon("ball"),0, 
+                        this, SLOT( slotOptionsConfigureActions() ),
+                        actionCollection(), "conf_actions" );
 
     KStdAction::keyBindings      ( this, SLOT( slotOptionsConfigureKeys() ),     actionCollection(), "keys_bind" );
     KStdAction::configureToolbars( this, SLOT( slotOptionsConfigureToolbars() ), actionCollection(), "conf_toolbars" );
