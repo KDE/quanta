@@ -135,7 +135,7 @@
                 <cstring>buttonCollapse</cstring>
             </property>
             <property name="text">
-                <string>C&amp;ollapse All</string>
+                <string>Co&amp;llapse All</string>
             </property>
         </widget>
         <spacer row="7" column="1">

@@ -740,7 +740,7 @@ void QuantaInit::initActions()
 
     // Tool actions
 
-    (void) new KAction( i18n( "Context &Help..." ), CTRL+Key_H,
+    (void) new KAction( i18n( "&Context Help..." ), CTRL+Key_H,
                         m_quanta, SLOT( slotContextHelp() ),
                         ac, "context_help" );
 
@@ -817,7 +817,7 @@ void QuantaInit::initActions()
 #endif
 
      m_quanta->showPreviewAction =
-      new KToolBarPopupAction( i18n( "Pr&eview" ), "preview", Key_F6,
+      new KToolBarPopupAction( i18n( "&Preview" ), "preview", Key_F6,
                          m_quanta, SLOT( slotShowPreview() ),
                          ac, "show_preview" );
 
