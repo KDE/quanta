@@ -41,10 +41,6 @@ public:
   bool newDocument(const KURL&, bool switchToExisting = true);
   void openDocument(const KURL&, const QString& a_encoding = QString::null, bool switchToExisting = true);
 
-  // for kwrites
-  void readConfig(KConfig *);
-  void writeConfig(KConfig *);
-
 public slots:
   /** close documents. */
   /** show popup menu with list of attributes for current tag */

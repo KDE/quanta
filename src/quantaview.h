@@ -222,6 +222,9 @@ protected:
    * triggers the update of the other view.
    */
   virtual void timerEvent(QTimerEvent *e );
+  /** Reimplemented, as we never should delete the ToolBarTabWidget singleton, which
+  might be the child of this view */
+  virtual void closeEvent(QCloseEvent *e);
 
 #endif
 };

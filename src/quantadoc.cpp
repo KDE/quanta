@@ -146,7 +146,9 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
     if (encoding.isEmpty())
         encoding = quantaApp->defaultEncoding();
 
-    dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
+  KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
+  if (encodingIf)
+      encodingIf->setEncoding(encoding);
 
 #if KDE_IS_VERSION(3,1,90)
     connect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
@@ -195,39 +197,6 @@ void QuantaDoc::slotOpeningCompleted()
 #if KDE_IS_VERSION(3,1,90)
    disconnect(w->doc(), SIGNAL(completed()), this, SLOT(slotOpeningCompleted()));
 #endif
-}
-
-
-
-void QuantaDoc::readConfig( KConfig *config )
-{
-//FIXME:
-/*
-  config -> sync();
-  QTabWidget *docTab =quantaApp->view()->writeTab();
-  Document *w;
-  for (int i = docTab->count() -1; i >=0; i--)
-  {
-    w = dynamic_cast<Document*>(docTab->page(i));
-    if (w)
-    {
-      config->setGroup("General Options");
-      w -> readConfig( config );
-    }
-  } */
-}
-
-void QuantaDoc::writeConfig( KConfig *config )
-{
-//FIXME:
-/*
-  if (quantaApp->view()->writeExists())
-  {
-    config->setGroup("General Options");
-    write()-> writeConfig( config );
-    config -> sync();
-    readConfig( config );
-  } */
 }
 
 /** show popup menu with list of attributes for current tag */

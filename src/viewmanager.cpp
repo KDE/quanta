@@ -20,6 +20,7 @@
 #include <kmdimainfrm.h>
 #include <kurl.h>
 #include <ktexteditor/encodinginterface.h>
+#include <ktexteditor/editorchooser.h>
 
 //app includes
 #ifdef BUILD_KAFKAPART
@@ -63,17 +64,20 @@ void ViewManager::createNewDocument()
    while ( isOpened(KURL("file:/"+i18n("Untitled%1").arg(i)))) i++;
   QString fname = i18n("Untitled%1").arg(i);
 
+#ifdef ENABLE_EDITORS
   KTextEditor::Document *doc =
-  KTextEditor::createDocument ("libkatepart", quantaApp, "KTextEditor::Document");
-/*                               KTextEditor::EditorChooser::createDocument(
-                                quantaApp->view->writeTab(),
+                              KTextEditor::EditorChooser::createDocument(
+                                quantaApp,
                                 "KTextEditor::Document"
-                                );*/
-
+                                );
+#else
+  KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", quantaApp, "KTextEditor::Document");
+#endif
   Document *w = new Document(doc, quantaApp);
-  w->readConfig(quantaApp->config());
   QString encoding = quantaApp->defaultEncoding();
-  dynamic_cast<KTextEditor::EncodingInterface*>(doc)->setEncoding(encoding);
+  KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(doc);
+  if (encodingIf)
+      encodingIf->setEncoding(encoding);
 
   KTextEditor::View * v = w->view();
 
@@ -81,7 +85,9 @@ void ViewManager::createNewDocument()
   connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *) TemplatesTreeView::ref(), SLOT(slotDragInsert(QDropEvent *)));
 
   w->setUntitledUrl( fname );
-  dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view())->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
+  KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view());
+  if (popupIf)
+     popupIf->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
 
   quantaApp->setFocusProxy(w->view());
   w->view()->setFocusPolicy(QWidget::WheelFocus);
@@ -111,7 +117,7 @@ bool ViewManager::removeView(QuantaView *view, bool force)
         quantaApp->closeWindow(view);
         if (!quantaApp->activeWindow())
         {
-      //      createNewDocument();
+            createNewDocument();
         }
         return true;
        }
@@ -156,7 +162,6 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
   if (m_lastActiveView->document())
   {
     m_lastActiveEditorView = m_lastActiveView;
-    kdDebug(24000) << "Last active view: " << m_lastActiveEditorView->document()->url() << endl;
   }
 }
 
@@ -265,9 +270,17 @@ void ViewManager::closeAll(bool createNew)
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   QuantaView *view;
   ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
+  //save the children first to a list, as removing invalidates our iterator
+  QValueList<KMdiChildView *> children;
   for (it->first(); !it->isDone(); it->next())
   {
-      view = dynamic_cast<QuantaView*>(it->currentItem());
+      children.append(it->currentItem());
+  }
+  delete it;
+  QValueListIterator<KMdiChildView *> childIt;
+  for (childIt = children.begin(); childIt != children.end(); ++childIt)
+  {
+      view = dynamic_cast<QuantaView*>(*childIt);
       if (view)
       {
           Document *w = view->document();
@@ -288,14 +301,16 @@ void ViewManager::closeAll(bool createNew)
                  quantaApp->closeWindow(view);
               } else
               {
-                delete it;
+                kdDebug(24000) << "CloseAll cancelled" << endl;
                connect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
                 return;
                }
+          } else
+          {
+              quantaApp->closeWindow(view);
           }
       }
   }
-  delete it;
   connect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
   if (createNew)
       createNewDocument();

@@ -436,7 +436,10 @@ bool QuantaApp::slotFileSaveAs()
 #endif
     QString encoding;
     encoding = data.encoding;
-    dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
+    KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
+    if (encodingIf)
+       encodingIf->setEncoding(encoding);
+
     if (w->checkOverwrite(saveUrl) == KMessageBox::Yes && view->saveDocument(saveUrl))
     {
       oldURL = saveUrl;
@@ -687,9 +690,13 @@ void QuantaApp::slotRepaintPreview()
   KParts::BrowserExtension *browserExtension = KParts::BrowserExtension::childObject(m_htmlPart);
   KParts::URLArgs  args(true, browserExtension->xOffset(), browserExtension->yOffset());
   browserExtension->setURLArgs( args );
+  QString encoding = defaultEncoding();
+  KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(w->doc());
+  if (encodingIf)
+      encoding = encodingIf->encoding();
 
   KURL url;
-  m_htmlPart->setEncoding(dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding(), true);
+  m_htmlPart->setEncoding(encoding, true);
   QStringList list;
   if (m_noFramesPreview)
   {
@@ -1489,7 +1496,20 @@ void QuantaApp::slotContextHelp()
     Document *w = ViewManager::ref()->activeDocument();
     if (w)
     {
-        QString currentWord = ViewManager::ref()->activeDocument()->kate_view->currentWord();
+        QString currentWord = "";
+        reparse(true);
+        uint line, col;
+        w->viewCursorIf->cursorPositionReal(&line, &col);
+        Node *node = parser->nodeAt(line, col);
+        if (node && node->tag->type == Tag::XmlTag)
+        {
+           currentWord = node->tag->name;
+        } else
+        {
+            //TODO: This is Kate specific!
+            if (w->kate_view)
+               currentWord = w->kate_view->currentWord();
+        }
         QString *url = dTab->contextHelp(currentWord);
         openDoc(*url);
     }
@@ -3653,10 +3673,6 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry("Show Close Buttons", qConfig.showCloseButtons);
 
-    Document *w = ViewManager::ref()->activeDocument();
-     if (w)
-        w->writeConfig(m_config);
-
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);
 
@@ -3669,7 +3685,6 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Show DTD Select Dialog", qConfig.showDTDSelectDialog);
 
     m_config->setGroup("Quanta View");
-   // m_doc->writeConfig(m_config); // kwrites
     Project::ref()->writeConfig(m_config); // project
     manager()->writeConfig(m_config);
     //saveMainWindowSettings(m_config);

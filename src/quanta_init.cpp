@@ -575,7 +575,6 @@ void QuantaInit::readOptions()
 #endif
 //  m_quanta->showMessagesAction->setChecked( m_quanta->bottdock->parent() != 0L );
 
-  m_quanta->m_doc->readConfig(m_config); // kwrites
   Project::ref()->readConfig(m_config); // project
 
   m_config->setGroup  ("General Options");

@@ -117,9 +117,6 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 
 QuantaView::~QuantaView()
 {
-    if (m_customWidget)
-      m_customWidget->reparent(0L, 0, QPoint(), false);
-    delete m_document;
 }
 
 bool QuantaView::mayRemove()
@@ -561,6 +558,17 @@ void QuantaView::timerEvent( QTimerEvent *e )
 }
 
 #endif
+
+void QuantaView::closeEvent(QCloseEvent *e)
+{
+  //be sure that ToolbarTabWidget is not a child of the view
+  ToolbarTabWidget::ref()->reparent(0L, 0, QPoint(), false);
+  if (m_customWidget)
+     m_customWidget->reparent(0L, 0, QPoint(), false);
+  delete m_document;
+  m_document = 0L;
+  e->accept();
+}
 
 void QuantaView::slotVPLLoadingError(Node *)
 {

@@ -89,12 +89,24 @@ Document::Document(KTextEditor::Document *doc,
   m_view = m_doc->createView(parent, 0L);
   completionInProgress = false;
   // remove the unwanted actions
-  m_view->actionCollection()->take(m_view->actionCollection()->action( "file_export" ));
-  m_view->actionCollection()->take(m_view->actionCollection()->action( "file_save" ));
-  m_view->actionCollection()->take(m_view->actionCollection()->action( "file_save_as" ));
-  m_view->actionCollection()->take(m_view->actionCollection()->action( "file_reload" ));
-  m_view->actionCollection()->take(m_view->actionCollection()->action( "edit_undo" ));
-  m_view->actionCollection()->take(m_view->actionCollection()->action( "edit_redo" ));
+  KAction *a = m_view->actionCollection()->action( "file_export" );
+  if (a)
+      m_view->actionCollection()->take(a);
+  a =  m_view->actionCollection()->action( "file_save" );
+  if (a)
+    m_view->actionCollection()->take(a);
+  a = m_view->actionCollection()->action( "file_save_as" );
+  if (a)
+    m_view->actionCollection()->take(a);
+  a = m_view->actionCollection()->action( "file_reload" );
+  if (a)
+    m_view->actionCollection()->take(a);
+  a = m_view->actionCollection()->action( "edit_undo" );
+  if (a)
+    m_view->actionCollection()->take(a);
+  a = m_view->actionCollection()->action( "edit_redo" );
+  if (a)
+    m_view->actionCollection()->take(a);
   KAction *viewborderAction = m_view->actionCollection()->action( "view_border" );
   if (viewborderAction)
     viewborderAction->setShortcut(Qt::SHIFT + Qt::Key_F9);
@@ -113,10 +125,13 @@ Document::Document(KTextEditor::Document *doc,
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(m_view);
   markIf = dynamic_cast<KTextEditor::MarkInterface *>(m_doc);
   KTextEditor::MarkInterfaceExtension* iface = dynamic_cast<KTextEditor::MarkInterfaceExtension*>( m_doc );
-  iface->setPixmap(KTextEditor::MarkInterface::markType10, SmallIcon("stop"));
-  iface->setPixmap(KTextEditor::MarkInterface::markType02, SmallIcon("debug_breakpoint"));
-  iface->setDescription(KTextEditor::MarkInterface::markType02, i18n("Breakpoint"));
-  iface->setPixmap(KTextEditor::MarkInterface::markType05, SmallIcon("debug_currentline"));
+  if (iface)
+  {
+    iface->setPixmap(KTextEditor::MarkInterface::markType10, SmallIcon("stop"));
+    iface->setPixmap(KTextEditor::MarkInterface::markType02, SmallIcon("debug_breakpoint"));
+    iface->setDescription(KTextEditor::MarkInterface::markType02, i18n("Breakpoint"));
+    iface->setPixmap(KTextEditor::MarkInterface::markType05, SmallIcon("debug_currentline"));
+  }
 
   // FIXME: This is allows user to set breakpoints and bookmarks by clicking or rightclicking on the icon border. However, it needs some additional code to
   // work for breakpoints and has been disabled to prevent confusion.
@@ -343,18 +358,6 @@ void Document::replaceSelected(const QString &s)
 
 }
 
-void Document::readConfig(KConfig *config)
-{
-  bool m = m_doc->isModified();
-  configIf->readConfig( config );
-  m_doc->setModified(m);
-}
-
-void Document::writeConfig(KConfig *config)
-{
-  configIf->writeConfig( config );
-}
-
 /** No descriptions */
 void Document::insertFile(const KURL& url)
 {
@@ -401,10 +404,14 @@ void Document::insertText(const QString &text, bool adjustCursor, bool reparse)
   if(adjustCursor)
   {
     unsigned textLength = text.length();
-    unsigned int wordWrapAt = kate_doc->wordWrapAt();
+    unsigned int wordWrapAt = 80; //TODO: get a good value for non Kate editors
+    if (kate_doc)
+        wordWrapAt = kate_doc->wordWrapAt();
     uint i=0, j=0;
     int wordLength;
-    bool noWordWrap = !(kate_doc->wordWrap());
+    bool noWordWrap = false; //TODO: get a good value for non Kate editors
+    if (kate_doc)
+      noWordWrap = !(kate_doc->wordWrap());
     const char *ascii = text.latin1(); // use ascii for maximum speed
     bool lineLock =false;
 
@@ -559,8 +566,13 @@ int Document::createTempFile()
  closeTempFile();
  tempFile = new KTempFile(tmpDir);
  tempFile->setAutoDelete(true);
-// tempFile->textStream()->setEncoding(QTextStream::Locale);
- tempFile->textStream()->setCodec(QTextCodec::codecForName(dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding()));
+ QString encoding = quantaApp->defaultEncoding();
+ KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
+ if (encodingIf)
+      encoding = encodingIf->encoding();
+ if (encoding.isEmpty())
+     encoding = "utf8";  //final fallback
+ tempFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
  * (tempFile->textStream()) << editIf->text();
 
  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
@@ -1770,15 +1782,19 @@ void Document::checkDirtyStatus()
       QFile tmpFile(m_tempFileName);
       if (f.open(IO_ReadOnly) && tmpFile.open(IO_ReadOnly))
       {
-        QString encoding = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding();
+        QString encoding = quantaApp->defaultEncoding();
+         KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
+         if (encodingIf)
+            encoding = encodingIf->encoding();
+         if (encoding.isEmpty())
+             encoding = "utf8";  //final fallback
+
         QString content;
         QTextStream stream(&f);
-//        stream.setEncoding(QTextStream::UnicodeUTF8);
         stream.setCodec(QTextCodec::codecForName(encoding));
         content = stream.read();
         QString tmpContent;
         QTextStream tmpStream(&tmpFile);
-//        tmpStream.setEncoding(QTextStream::UnicodeUTF8);
         tmpStream.setCodec(QTextCodec::codecForName(encoding));
         tmpContent = tmpStream.read();
         if (content == tmpContent)
@@ -2130,11 +2146,15 @@ void Document::activateRepaintView(bool activation)
 
 void Document::setErrorMark(int line)
 {
+  if (!markIf)
+    return;
   markIf->addMark(line, KTextEditor::MarkInterface::markType10);
 }
 
 void Document::clearErrorMarks()
 {
+  if (!markIf)
+    return;
   QPtrList<KTextEditor::Mark> marks = markIf->marks();
   KTextEditor::Mark* mark;
   for (mark = marks.first(); mark; mark = marks.next())
@@ -2177,8 +2197,13 @@ void Document::createBackup(KConfig* config)
      QStringList backedupFilesEntryList = config->readListEntry("List of backedup files");
      QStringList autosavedFilesEntryList = config->readListEntry("List of autosaved files");
 #endif
-     QString encoding = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding();
-     if(!autosavedFilesEntryList.contains(m_backupPathValue))
+     QString encoding = quantaApp->defaultEncoding();
+     KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
+     if (encodingIf)
+         encoding = encodingIf->encoding();
+     if (encoding.isEmpty())
+         encoding = "utf8";  //final fallback
+    if(!autosavedFilesEntryList.contains(m_backupPathValue))
      {
        autosavedFilesEntryList.append(m_backupPathValue);
        config->writeEntry("List of autosaved files", autosavedFilesEntryList);

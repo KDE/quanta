@@ -93,10 +93,6 @@ public:
   inserted.*/
   bool insertChildTags(QTag *tag, QTag* lastTag = 0L);
 
-  void readConfig (KConfig *);
-  void writeConfig(KConfig *);
-
-
   QPoint getGlobalCursorPos();
   QString find(const QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
   QString findRev(const QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
