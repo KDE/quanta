@@ -1115,7 +1115,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
     //parent Nodes which can have nodeName as child.
     parentNode = startNode->parent;
     oldParentNode = startNode;
-    while(parentNode && parentNode != commonParent->parent)
+    while(parentNode && commonParent && parentNode != commonParent->parent)
     {
         parentNodeQTag = QuantaCommon::tagFromDTD(parentNode);
         if(parentNodeQTag && parentNodeQTag->isChild(newNode) &&
@@ -1130,7 +1130,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
     }
     parentNode = endNode->parent;
     oldParentNode = endNode;
-    while(parentNode && parentNode != commonParent->parent)
+    while(parentNode && commonParent &&  parentNode != commonParent->parent)
     {
         parentNodeQTag = QuantaCommon::tagFromDTD(parentNode);
         if(parentNodeQTag && parentNodeQTag->isChild(newNode) &&
