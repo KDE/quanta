@@ -10,7 +10,7 @@ CaseSensitive = true
 
 [Toolbars]
 Location = html
-Names = standard, fonts, tables, lists, forms, other, debug
+Names = standard, style, tables, lists, forms, other, debug
 
 [Focus]
 Attributes = accesskey, tabindex, onfocus, onblur
