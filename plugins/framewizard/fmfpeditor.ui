@@ -1,0 +1,468 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>fmFPeditor</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>fmFPeditor</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>484</width>
+            <height>431</height>
+        </rect>
+    </property>
+    <property name="maximumSize">
+        <size>
+            <width>3200</width>
+            <height>4300</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>Frame Properties</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QTabWidget" row="0" column="0">
+            <property name="name">
+                <cstring>tw</cstring>
+            </property>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Common</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="FileChooser" row="0" column="1">
+                        <property name="name">
+                            <cstring>fc</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>tlFrameSource</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Frame source</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>tlFrameName</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Frame name</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="1" column="1">
+                        <property name="name">
+                            <cstring>leName</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QGroupBox" row="3" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>gbMargins</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Margins</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QLabel" row="0" column="0">
+                                <property name="name">
+                                    <cstring>TextLabel2_3</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>From Left</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>AlignCenter</set>
+                                </property>
+                            </widget>
+                            <widget class="QSpinBox" row="0" column="1">
+                                <property name="name">
+                                    <cstring>sbLeft</cstring>
+                                </property>
+                                <property name="suffix">
+                                    <string>px</string>
+                                </property>
+                                <property name="value">
+                                    <number>10</number>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="0" column="2">
+                                <property name="name">
+                                    <cstring>TextLabel1_3</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>From Top</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>AlignCenter</set>
+                                </property>
+                            </widget>
+                            <widget class="QSpinBox" row="0" column="3">
+                                <property name="name">
+                                    <cstring>sbTop</cstring>
+                                </property>
+                                <property name="suffix">
+                                    <string>px</string>
+                                </property>
+                                <property name="value">
+                                    <number>10</number>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QButtonGroup" row="2" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>bgNoresize</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Resize</string>
+                        </property>
+                        <property name="exclusive">
+                            <bool>false</bool>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QRadioButton" row="0" column="0">
+                                <property name="name">
+                                    <cstring>rbResizeYes</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Yes</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="0" column="1">
+                                <property name="name">
+                                    <cstring>rbResizeNo</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>No</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QButtonGroup" row="4" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>bgScrolling</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Scrolling</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QRadioButton" row="0" column="0">
+                                <property name="name">
+                                    <cstring>rbScrollingYes</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Yes</string>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="0" column="2">
+                                <property name="name">
+                                    <cstring>rbScrollingAuto</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Auto</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="0" column="1">
+                                <property name="name">
+                                    <cstring>rbScrollingNo</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>No</string>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                    <widget class="QButtonGroup" row="5" column="0" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>bgBorder</cstring>
+                        </property>
+                        <property name="title">
+                            <string>Border</string>
+                        </property>
+                        <grid>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
+                                <number>11</number>
+                            </property>
+                            <property name="spacing">
+                                <number>6</number>
+                            </property>
+                            <widget class="QRadioButton" row="0" column="0">
+                                <property name="name">
+                                    <cstring>rbBorderYes</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Yes</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget class="QRadioButton" row="0" column="1">
+                                <property name="name">
+                                    <cstring>rbBorderNo</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>No</string>
+                                </property>
+                                <property name="checked">
+                                    <bool>false</bool>
+                                </property>
+                            </widget>
+                        </grid>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QWidget">
+                <property name="name">
+                    <cstring>tab</cstring>
+                </property>
+                <attribute name="title">
+                    <string>Others</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>tlId</cstring>
+                        </property>
+                        <property name="text">
+                            <string>id</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>TextLabel2_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>class</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>TextLabel3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>style</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>TextLabel4</cstring>
+                        </property>
+                        <property name="text">
+                            <string>title</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="4" column="0">
+                        <property name="name">
+                            <cstring>TextLabel6</cstring>
+                        </property>
+                        <property name="text">
+                            <string>longdesc</string>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="0" column="1">
+                        <property name="name">
+                            <cstring>leId</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="1" column="1">
+                        <property name="name">
+                            <cstring>leClass</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="2" column="1">
+                        <property name="name">
+                            <cstring>leStyle</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="3" column="1">
+                        <property name="name">
+                            <cstring>leTitle</cstring>
+                        </property>
+                    </widget>
+                    <widget class="QLineEdit" row="4" column="1">
+                        <property name="name">
+                            <cstring>leLongdesc</cstring>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+        </widget>
+        <widget class="QLayoutWidget" row="1" column="0">
+            <property name="name">
+                <cstring>Layout8</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer1</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>55</width>
+                            <height>0</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>pbOk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;OK</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>pbCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </grid>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>FileChooser</class>
+        <header location="global">filechooser.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>0</hordata>
+            <verdata>1</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+        <signal>selected(int)</signal>
+        <signal>signal(int)</signal>
+    </customwidget>
+</customwidgets>
+<images>
+    <image name="image0">
+        <data format="XPM.GZ" length="45">789cd3d7528808f055d0d2e72a2e492cc94c5648ce482c52d04a29cdcdad8c8eb5ade6523250004143a55a6b2e0026630c4f</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>pbOk</sender>
+        <signal>clicked()</signal>
+        <receiver>fmFPeditor</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>pbCancel</sender>
+        <signal>clicked()</signal>
+        <receiver>fmFPeditor</receiver>
+        <slot>reject()</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="global" impldecl="in implementation">qregexp.h</include>
+    <include location="global" impldecl="in declaration">qmap.h</include>
+    <include location="global" impldecl="in declaration">qlistview.h</include>
+    <include location="global" impldecl="in declaration">qstring.h</include>
+    <include location="local" impldecl="in implementation">fmfpeditor.ui.h</include>
+</includes>
+<slots>
+    <slot returnType="QString">getIdValue()</slot>
+    <slot returnType="QString">getSrcValue()</slot>
+    <slot returnType="QString">getClassValue()</slot>
+    <slot returnType="QString">getLongdescValue()</slot>
+    <slot returnType="QString">getTitleValue()</slot>
+    <slot returnType="QString">getStyleValue()</slot>
+    <slot returnType="QString">getNameValue()</slot>
+    <slot returnType="QString">getNoresizeValue()</slot>
+    <slot returnType="QString">getScrollingValue()</slot>
+    <slot returnType="QString">getFrameborderValue()</slot>
+    <slot returnType="QString">getMarginwidthValue()</slot>
+    <slot returnType="QString">getMarginheightValue()</slot>
+    <slot>setup( QMap&lt;QString, QString&gt; m )</slot>
+    <slot returnType="QMap&lt;QString,QString&gt;">getAttributeMap()</slot>
+    <slot>init()</slot>
+</slots>
+<pixmapinproject/>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>filechooser.h</includehint>
+</includehints>
+</UI>

@@ -78,7 +78,6 @@
 
 void QuantaView::slotEditCurrentTag()
 {
-
   if (!writeExists()) return;
 
   Document *w = write();
