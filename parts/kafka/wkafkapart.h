@@ -27,6 +27,7 @@ class Document;
 class Node;
 class Parser;
 
+#include <qmap.h>
 #include <qobject.h>
 
 #include "kafkahtmlpart.h"
@@ -100,6 +101,10 @@ public slots:
 	void slotDomNodeAboutToBeDeleted(DOM::Node *_node);
 
 private:
+	QString getSpecialChar(QString encodedChar);
+	QString getEncodedChar(QString specialChar);
+	QMap<QString, QString> specialChars;
+	QMap<QString, QString> encodedChars;
 	KafkaHTMLPart *_kafkaPart;
 	Document *_currentDoc;
 	Node *_rootNode;

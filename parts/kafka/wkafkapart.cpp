@@ -19,7 +19,11 @@
 #include <dom/dom_exception.h>
 #include <dom/dom_string.h>
 #include <kdebug.h>
+#include <kstandarddirs.h>
+
 #include <qregexp.h>
+#include <qfile.h>
+#include <qtextstream.h>
 
 #include "../../document.h"
 #include "../../parser/node.h"
@@ -35,6 +39,22 @@ WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 	_docLoaded = false;
 	_rootNode = 0L;
 	_currentDoc = 0L;
+	QFile file( locate("appdata","chars") );
+	QString tmp;
+	if ( file.open(IO_ReadOnly) )
+	{
+		QTextStream t( &file );        // use a text stream
+		while ( !t.eof() )
+		{
+			tmp = t.readLine();
+			int begin = tmp.find("(")+1;
+			int length = tmp.find(")") - begin;
+			specialChars.insert(tmp.left(1),tmp.mid(begin, length));
+			encodedChars.insert(tmp.mid(begin, length), tmp.left(1));
+		}
+		file.close();
+	}
+
 }
 
 WKafkaPart::~WKafkaPart()
@@ -49,10 +69,18 @@ void WKafkaPart::loadDocument(Document *doc)
 	if(!doc) return;
 	_currentDoc = doc;
 	/**TEMPORARY kafkaPart loading
-	kafkaPart->openDocument(m_view->write()->url());
-	previousWidgetList.push_back(s->id(s->visibleWidget()));
-	s->raiseWidget(4);*/
-
+	_kafkaPart->openDocument(_currentDoc->url());*/
+	if(_currentDoc->text(0,0,10,10).stripWhiteSpace() == "")
+	{//set a minimum Nodes to be able to write if the document is empty(dirty here)
+		DOM::Node _tmpNode = _kafkaPart->createNode("HTML");
+		_kafkaPart->htmlDocument().appendChild(_tmpNode);
+		DOM::Node _tmpNode2 = _kafkaPart->createNode("BODY");
+		_tmpNode.appendChild(_tmpNode2);
+		_tmpNode = _kafkaPart->createNode("TEXT");
+		_tmpNode2.appendChild(_tmpNode);
+		_kafkaPart->finishedLoading();
+		return;
+	}
 
 	_currentDoc->parseVariables();
 	_rootNode = _parser->parse(_currentDoc );
@@ -93,10 +121,14 @@ void WKafkaPart::loadDocument(Document *doc)
 				break;
 
 				case Tag::ScriptTag:
+					//avoid to enter inside scripts
+					goingUp = true;
 					//TODO:create little icons
 				break;
 
 				case Tag::ScriptStructureBegin:
+					//avoid to enter inside scripts
+					goingUp = true;
 					//TODO:create little icons
 				break;
 
@@ -184,7 +216,7 @@ void WKafkaPart::synchronizeXMLTag(Node* _node)
 	DOM::Node attr;
 	int i;
 
-	if(!_node->tag->single && _node->next->opened)
+	if(!_node->tag->single && _node->next && _node->next->opened)
 	{
 		//TODO: ERROR missing closing tags, set the kafka behavior according to this
 		return;
@@ -213,6 +245,7 @@ void WKafkaPart::synchronizeXMLTag(Node* _node)
 			newNode = _node->parent->kafkaNodeEnd.appendChild(newNode);
 		} catch(DOM::DOMException e)
 		{kdDebug(25001)<< "WKafkart::loadDocument() *ERROR* - code : " << e.code << endl;}
+		//_node->parent->kafkaNodeEnd.applyChanges();
 		if(newNode.nodeName().string() == "TABLE")
 		{
 			newNode2 = _kafkaPart->createNode("TBODY");
@@ -256,7 +289,10 @@ void WKafkaPart::synchronizeTextTag(Node* _node)
 	DOM::Node _nextNode;
 
 	newNode = _kafkaPart->createNode("TEXT");
+	//remplace all spaces/tab/return into one single space
 	NodeValue = _node->tag->tagStr().replace(QRegExp("\\s+"), " ");
+	//remplace encoded characters by their real value
+	NodeValue = NodeValue.replace(QRegExp("&([^;]+);"), getSpecialChar("\\1") );
 	/**if(NodeValue.left(1) == " " || NodeValue.right(1) == " ")
 	{//try to remove duplicate spaces between two nodes
 		if(NodeValue.left(1) == " ")
@@ -278,6 +314,7 @@ void WKafkaPart::synchronizeTextTag(Node* _node)
 			_node->parent->kafkaNodeEnd.appendChild(newNode);
 		} catch(DOM::DOMException e)
 		{kdDebug(25001)<< "WKafkart::loadDocument() *ERROR* - code : " << e.code << endl;}
+		_node->parent->kafkaNodeEnd.applyChanges();
 	}
 	else//we suppose it is on the top of the tree
 	{
@@ -292,3 +329,19 @@ void WKafkaPart::synchronizeTextTag(Node* _node)
 	_node->kafkaNodeEnd = newNode;
 	kdDebug(25001)<< "Added text DOM::Node : " << newNode.nodeName().string() << endl;
 }
+
+QString WKafkaPart::getSpecialChar(QString encodedChar)
+{
+	QMap<QString, QString>::Iterator it = encodedChars.find(encodedChar);
+	if(it == encodedChars.end())
+		return "";
+	return it.data();
+}
+
+QString WKafkaPart::getEncodedChar(QString specialChar)
+{
+	QMap<QString, QString>::Iterator it = specialChars.find(specialChar);
+	if(it == specialChars.end())
+		return "";
+	return it.data();
+	}
