@@ -147,8 +147,9 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
       item->setOpen(level < openLevel);
 
       if ( (!qConfig.showEmptyNodes && currentNode->tag->type == Tag::Empty) ||
-           (!qConfig.showClosingTags && currentNode->tag->type == Tag::XmlTagEnd ||
-            currentNode->tag->type == Tag::ScriptStructureEnd) )
+           (!qConfig.showClosingTags &&
+            (currentNode->tag->type == Tag::XmlTagEnd ||
+             currentNode->tag->type == Tag::ScriptStructureEnd) ) )
       {
         item->setVisible(false);
       }

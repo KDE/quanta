@@ -931,7 +931,8 @@ void QuantaApp::slotOptions()
     htmlpart->write( "" );
     htmlpart->end();
 
-    repaintPreview(true);     
+    repaintPreview(true);
+    reparse(true);
   }
 
   config->sync();

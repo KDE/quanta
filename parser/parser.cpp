@@ -142,8 +142,8 @@ bool Parser::scriptParser(Node *startNode)
           currentNode = node;
           found = true;
 
-          currentNode = specialAreaParser(node);
-
+          currentNode = specialAreaParser(node); //Why??
+          //specialAreaParser(node);
           col = pos2 + 1;
         } else
           pos = -1;
@@ -509,8 +509,10 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           node->tag->type = Tag::Comment;
         } else
         {
-          node = specialAreaParser(node);
-          //node->tag->type = Tag::ScriptTag;
+          //specialAreaParser(node);
+          if (!rootNode)
+              rootNode = node;
+          node = specialAreaParser(node); //Why was so?
         }
       }
       else if (tag->type == Tag::XmlTag)
@@ -900,8 +902,8 @@ Node* Parser::specialAreaParser(Node *startNode)
         if (goUp)
             node->closesPrevious = true;
 
-
-        s = tagStr.mid(startPos, lastPos2 - startPos);
+        int l = name.length();
+        s = tagStr.mid(startPos + l + 1, lastPos2 - startPos - l - 1);
         eLine = bLine + s.contains('\n');
         n = s.findRev('\n');
         if (n == -1)
@@ -909,7 +911,7 @@ Node* Parser::specialAreaParser(Node *startNode)
           eCol = lastPos2 - startPos + bCol - 1;
         } else
         {
-          eCol = lastPos2 - n - 2 - startPos;
+          eCol = lastPos2 - n - 3 - startPos  - l;
         }
         tag = new Tag();
         tag->type = Tag::ScriptStructureEnd;
@@ -1232,18 +1234,9 @@ Node *Parser::rebuild(Document *w)
      node->tag->endPos(el, ec);
      text = w->text(bl, bc, el, ec);
      tagStr = node->tag->tagStr();
-
- /*    if (node->parent)
-     {
-       node->parent->tag->endPos(bl, bc);
-     }*/
      if ( tagStr != text ||
           node->tag->type == Tag::Empty ||
           node->insideSpecial
-          /*||
-          ( node->tag->type == Tag::ScriptTag &&
-            (el < bl || (el == bl && ec < bc)) ) */
-
         )
      {
        node = node->previousSibling();
@@ -1286,7 +1279,14 @@ Node *Parser::rebuild(Document *w)
      node = node->nextSibling();
    }
 
-   node = firstNode->nextSibling();
+   if (firstNode && !firstNode->insideSpecial)
+   {
+     node = firstNode->nextSibling();
+   } else
+   {
+//     node = m_node;
+     return parse(write);
+   }
    if (node)
        node->tag->beginPos(bLine, bCol);
    if (lastNode)
@@ -1525,7 +1525,7 @@ Node *Parser::rebuild(Document *w)
 
     }
    }
- }  
+ }
  //coutTree(m_node, 2);
  //cout << "\n";
  kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
