@@ -331,6 +331,8 @@ void QuantaApp::initView()
             this, SLOT(slotFileOpen(const KURL &)));
   connect(   pTab, SIGNAL(openImage  (QString)),
             this, SLOT(slotImageOpen(QString)));
+  connect(   pTab, SIGNAL(loadToolbarFile  (QString)),
+            this, SLOT(slotLoadToolbarFile(QString)));
 
   connect(   tTab, SIGNAL(openImage  (QString)),
             this, SLOT(slotImageOpen(QString)));

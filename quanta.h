@@ -250,9 +250,9 @@ class QuantaApp : public KDockMainWindow
   /** Saves a toolbar as project specific. */
   void slotSaveProjectToolbar();
   /** Load an user toolbar from the disk. */
+  void slotLoadToolbarFile(QString fileName);
+  /** Load an user toolbar from the disk. */
   void slotLoadToolbar();
-  /** No descriptions */
-  void slotNewToolbarConfig();
 
  private slots:
 	

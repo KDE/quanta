@@ -49,6 +49,8 @@ ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
 					 this,				SLOT(slotChangeNames(const QString &)));
   connect( linePrjTmpl, SIGNAL(textChanged(const QString &)), SLOT(slotLinePrjFile(const QString &)));
   connect( buttonTmpl,  SIGNAL(clicked()), SLOT(slotButtonTmpl()));
+  connect( linePrjToolbar, SIGNAL(textChanged(const QString &)), SLOT(slotLinePrjFile(const QString &)));
+  connect( buttonToolbar,  SIGNAL(clicked()), SLOT(slotButtonToolbar()));
 }
 
 ProjectNewGeneral::~ProjectNewGeneral(){
@@ -68,7 +70,8 @@ void ProjectNewGeneral::slotLinePrjFile( const QString & )
 	if ( 	linePrjFile->text().isEmpty() ||
 				linePrjName->text().isEmpty() ||
 				linePrjDir ->text().isEmpty() ||
-        linePrjTmpl->text().isEmpty())
+        linePrjTmpl->text().isEmpty() ||
+        linePrjToolbar->text().isEmpty())
 				emit enableNextButton( this, false );
 	else	emit enableNextButton( this, true  );
 }
@@ -104,10 +107,22 @@ void ProjectNewGeneral::slotButtonTmpl()
   "Select project template directory..."));
 }                                          
 
+void ProjectNewGeneral::slotButtonToolbar()
+{
+  linePrjToolbar->setText( KFileDialog::getExistingDirectory(linePrjToolbar->text(), this,
+  "Select project toolbar & actions directory..."));
+}
+
+void ProjectNewGeneral::slotLinePrjToolbar(const QString &Str)
+{
+  linePrjToolbar->setText(Str + "/toolbars");
+}
+
 void ProjectNewGeneral::slotLinePrjTmpl(const QString &Str)
 {
   linePrjTmpl->setText(Str + "/templates");
 }
+
 
 #include "projectnewgeneral.moc"
 

@@ -38,7 +38,9 @@ public slots:
 	void slotLinePrjFile(const QString &);
 	void slotChangeNames(const QString &);
   void slotButtonTmpl();
+  void slotButtonToolbar();
   void slotLinePrjTmpl(const QString &);
+  void slotLinePrjToolbar(const QString &);
 
 		
 signals:

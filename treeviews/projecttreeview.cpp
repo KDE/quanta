@@ -64,7 +64,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	
 	fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
 	fileMenu -> insertItem(					  			   i18n("Open with..."), 		this ,SLOT(slotOpenWith()));
-	fileMenu -> insertItem(					  			   i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
+	openInQuantaId = fileMenu -> insertItem(					  			   i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem(	UserIcon("delete"),i18n("Remove from disc (and project)"), 	 this ,SLOT(slotRemove()));
 	fileMenu -> insertItem(					  			   i18n("Remove from project"),this ,SLOT(slotRemoveFromProject(int)));
@@ -128,7 +128,14 @@ void ProjectTreeView::slotMenu(QListViewItem *item, const QPoint& point, int)
 	setSelected(item, true);
 	
 	ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( item);
-	if ( f ) fileMenu->popup( point);
+	if ( f )
+  {
+    if (QFileInfo(currentFileName()).extension() == "toolbar")
+    {
+     fileMenu->changeItem(openInQuantaId, i18n("Load toolbar file"));
+    }
+    fileMenu->popup( point);
+  }
 	
 	ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( item);
 	if ( d ) 
@@ -281,6 +288,12 @@ void ProjectTreeView::slotOpenInQuanta()
  if ( !currentItem() ) return;
 	
  KURL url(currentFileName());
+
+ if (QFileInfo(currentFileName()).extension() == "toolbar")
+ {
+  emit loadToolbarFile(currentFileName());
+  return;
+ }
 
  QString mimetype = KMimeType::findByFileContent(currentFileName())->name();
 

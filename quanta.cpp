@@ -575,45 +575,36 @@ void QuantaApp::slotOptionsConfigureKeys()
 
 void QuantaApp::slotOptionsConfigureToolbars()
 {
- saveMainWindowSettings( KGlobal::config(), "MainWindow" );
+// saveMainWindowSettings( KGlobal::config(), "MainWindow" );
+
+ //clear all the actions - this is also to avoid duplicate actions in the list
+ QDictIterator<KXMLGUIClient> iter(toolbarGUIClientList);
+ QDomNodeList nodeList;
+ KAction *action;
+ for( ; iter.current(); ++iter )
+ {
+   nodeList = iter.current()->domDocument().elementsByTagName("Action");
+   int actionCount = iter.current()->actionCollection()->count();
+   for (int i = 0; i < actionCount; i++)
+   {
+    action = iter.current()->actionCollection()->action(0);
+    iter.current()->actionCollection()->take(action);
+   }
+ }
+
  KEditToolbar dlg(factory(), this);
- connect(&dlg,SIGNAL(newToolbarConfig()),this,SLOT(slotNewToolbarConfig()));
 
-/*    
- KEditToolbar dlg(QString::null, true, this );
- if ( dlg.exec() )
+ int result = dlg.exec();
+
+ QString actionName;
+ QDictIterator<KXMLGUIClient> it(toolbarGUIClientList);
+ for( ; it.current(); ++it )
  {
-  // clear tags toolbars
-  int tabNum = view->toolbarTab->count();
-  for (int i=0; i < tabNum; i++ )
-  {
-    view->toolbarTab->removePage( view->toolbarTab->page(0) );
-  }
-  createGUI();
- }             */
-
- if (dlg.exec())
- {
-
-  KAction *action;
-  QString actionName;
-  QDomNodeList nodeList;
-
-  QDictIterator<KXMLGUIClient> it(toolbarGUIClientList);
-  for( ; it.current(); ++it )
-  {
     //remove all inserted toolbars
-    factory()->removeClient(it.current());
+    if (result == QDialog::Accepted) factory()->removeClient(it.current());
 
+    //plug the actions in again
     nodeList = it.current()->domDocument().elementsByTagName("Action");
-    //clear all the actions
-    int actionCount = it.current()->actionCollection()->count();
-    for (int i = 0; i < actionCount; i++)
-    {
-     action = it.current()->actionCollection()->action(0);
-     it.current()->actionCollection()->take(action);
-    }
-    //plug them in again
     for (uint i = 0; i < nodeList.count(); i++)
     {
       actionName = nodeList.item(i).toElement().attribute("name");
@@ -623,14 +614,9 @@ void QuantaApp::slotOptionsConfigureToolbars()
         it.current()->actionCollection()->insert(action);
       }
     }
-
     //and add them again. Is there a better way to do this?
-    factory()->addClient(it.current());
-   }
-
-//  view->toolbarTab->setCurrentPage(0);
+    if (result == QDialog::Accepted) factory()->addClient(it.current());
  }
-
 }
 
 void QuantaApp::slotOptionsConfigureActions()
@@ -1299,15 +1285,11 @@ void QuantaApp::slotSyntaxCheckDone()
       delete doc2;
     }
 }
-/** Load an user toolbar from the disk. */
-void QuantaApp::slotLoadToolbar()
+
+/** Load an user toolbar file from the disk. */
+void QuantaApp::slotLoadToolbarFile(QString fileName)
 {
- KURL url;
-
- url = KFileDialog::getOpenURL(doc->basePath(), "*.toolbar\n*", this);
- if (url.isEmpty()) return;
-
- ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(url.path());
+ ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(fileName);
  QDomNodeList nodeList = toolbarGUI->domDocument().elementsByTagName("ToolBar");
  QString name = nodeList.item(0).toElement().attribute("tabname");
 
@@ -1349,12 +1331,12 @@ void QuantaApp::slotLoadToolbar()
 
 //Load the actions from the associated .action file
  QString actionFile;
- if (QFileInfo(url.path()).extension(false) != "toolbar")
+ if (QFileInfo(fileName).extension(false) != "toolbar")
  {
-   actionFile = url.path() + ".actions";
+   actionFile = fileName + ".actions";
  }else
  {
-   actionFile = QFileInfo(url.path()).dirPath() + "/"+QFileInfo(url.path()).baseName()+".actions";
+   actionFile = QFileInfo(fileName).dirPath() + "/"+QFileInfo(fileName).baseName()+".actions";
  }
 
  QDomDocument actionDom;
@@ -1372,7 +1354,7 @@ void QuantaApp::slotLoadToolbar()
    //if there is no such action yet, add to the available actions
    if (! actionCollection()->action(actionName))
    {
-     actions()->firstChild().appendChild(el);
+     m_actions->firstChild().appendChild(el);
      TagAction *a = new TagAction(&el, view, actionCollection() );
      actionCollection()->insert(a);
    }
@@ -1387,6 +1369,8 @@ void QuantaApp::slotLoadToolbar()
  nodeList = toolbarGUI->domDocument().elementsByTagName("ToolBar");
  nodeList.item(0).toElement().setAttribute("name",name.lower());
  nodeList.item(0).toElement().setAttribute("tabname",name);
+ nodeList = toolbarGUI->domDocument().elementsByTagName("text");
+ nodeList.item(0).toElement().firstChild().setNodeValue(name);
 
  * (tempFile->textStream()) << toolbarGUI->domDocument().toString();
  tempFile->close();
@@ -1415,6 +1399,19 @@ void QuantaApp::slotLoadToolbar()
 
  tempFileList.append(tempFile);
  toolbarGUIClientList.insert(name.lower(),toolbarGUI);
+}
+
+/** Load an user toolbar from the disk. */
+void QuantaApp::slotLoadToolbar()
+{
+ KURL url;
+
+ url = KFileDialog::getOpenURL(doc->basePath(), "*.toolbar\n*", this);
+ if (! url.isEmpty())
+ {
+   slotLoadToolbarFile(url.path());
+ }
+
 }
 
 QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
@@ -1530,12 +1527,12 @@ void QuantaApp::slotSaveToolbar(bool localToolbar)
   	  url = KFileDialog::getSaveURL(locateLocal("data","quanta/toolbars/"), "*.toolbar\n*", this);
   	} else
   	{
-  	  url = KFileDialog::getSaveURL(doc->basePath()+"toolbars/", "*.toolbar\n*", this);
+  	  url = KFileDialog::getSaveURL(project->toolbarDir, "*.toolbar\n*", this);
   	}
 
     if (url.isEmpty()) return;
 
-    if ( project->hasProject() )  projectToolbarsDir = doc->basePath()+"toolbars/";
+    if ( project->hasProject() )  projectToolbarsDir = project->toolbarDir;
     if ( ((!localToolbar) && (KURL(projectToolbarsDir).isParentOf(url)) ) ||
           ((localToolbar) && (KURL(locateLocal("data","quanta/toolbars/")).isParentOf(url))) )
     {
@@ -1692,15 +1689,5 @@ void QuantaApp::slotSendToolbar()
   }
   delete mailDlg;
 }
-
-/** No descriptions */
-void QuantaApp::slotNewToolbarConfig()
-{
-// applyMainWindowSettings( KGlobal::config());//, "MainWindow" );
-//search for another toolbar with the same name
-
- view->toolbarTab->setCurrentPage(0);
-}
-
 
 #include "quanta.moc"

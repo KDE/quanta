@@ -144,6 +144,7 @@ public:
   QString basePath;
   QString remoteDir;
   QString templateDir;
+  QString toolbarDir;
 
   QString previewPrefix;
   bool usePreviewPrefix;

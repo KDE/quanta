@@ -504,6 +504,11 @@ void Project::loadProjectXML()
     templateDir = basePath + "templates";
   else
     templateDir = no.firstChild().nodeValue();
+  no = dom.firstChild().firstChild().namedItem("toolbars");
+  if(no.isNull()) // compatability
+    toolbarDir = basePath + "toolbars";
+  else
+    toolbarDir = no.firstChild().nodeValue();
 		
   QDomNodeList nl = dom.firstChild().firstChild().childNodes();
 	
@@ -848,6 +853,7 @@ void Project::slotAcceptCreateProject()
   name     = png->linePrjName->text();
   basePath = png->linePrjDir ->text();
   templateDir = png->linePrjTmpl->text();
+  toolbarDir = png->linePrjToolbar->text();
   email    = png->lineEmail  ->text();
   author   = png->lineAuthor ->text();
   if ( basePath.right(1) != "/" )	basePath += "/";
@@ -877,6 +883,10 @@ void Project::slotAcceptCreateProject()
   el = dom.createElement("templates");
   dom.firstChild().firstChild().appendChild( el );
   el.appendChild( dom.createTextNode( templateDir ) );
+
+  el = dom.createElement("toolbars");
+  dom.firstChild().firstChild().appendChild( el );
+  el.appendChild( dom.createTextNode( toolbarDir ) );
 
   QStringList list;
   if ( png->type() == "Local" ) list = pnl->files();
@@ -915,6 +925,9 @@ void Project::slotAcceptCreateProject()
     dir.mkdir(templateDir, true);
  }
 
+
+ QDir tDir;
+ tDir.mkdir(toolbarDir, true);
 	
  emit closeFiles();
  emit setBasePath( basePath );
@@ -957,6 +970,7 @@ void Project::options()
 	png->linePrjName->setText( name );
 	png->linePrjFile->setText( url.url() );
   png->linePrjTmpl->setText( templateDir );
+  png->linePrjToolbar->setText( toolbarDir );
 	png->lineAuthor ->setText( author );
 	png->lineEmail  ->setText( email );
 	
@@ -967,8 +981,13 @@ void Project::options()
 	{
 		name        	= png->linePrjName->text();
     templateDir = png->linePrjTmpl->text();
+    toolbarDir = png->linePrjToolbar->text();
 		author		= png->lineAuthor ->text();
 		email			= png->lineEmail	->text();
+
+    QDir dir;
+    dir.mkdir(templateDir,true);
+    dir.mkdir(toolbarDir,true);
 		
 		previewPrefix = pnf->linePrefix->text();
 		if ( (previewPrefix.right(1) !="/") && (! previewPrefix.isEmpty()) )
@@ -1016,6 +1035,18 @@ void Project::options()
     else
     {
       el.firstChild().setNodeValue(templateDir);
+    }
+
+    el = dom.firstChild().firstChild().namedItem("toolbars").toElement();
+    if(el.isNull())
+    {
+      el = dom.createElement("toolbars");
+      dom.firstChild().firstChild().appendChild(el);
+      el.appendChild(dom.createTextNode(toolbarDir));
+    }
+    else
+    {
+      el.firstChild().setNodeValue(toolbarDir);
     }
  		
  		modified = true;

@@ -69,6 +69,7 @@ signals: // Signals
   void removeFolderFromProject( QString );
   void uploadSingleFile( QString );
   void uploadSingleFolder( QString );
+  void loadToolbarFile( QString );
 
 public:
   ProjectTreeFolder *projectDir;
@@ -79,6 +80,8 @@ private:
 	
 	QPopupMenu *fileMenu;
 	QPopupMenu *folderMenu;
+
+  int openInQuantaId;
 };
 
 #endif
