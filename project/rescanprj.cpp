@@ -96,7 +96,7 @@ void RescanPrj::addEntries(KIO::Job *,const KIO::UDSEntryList &list)
          prjFileList.findIndex(name) == -1 )
     {
 	    this->list.append(name);
-  	    
+	    
   	  QString s;
       s.sprintf( "%i", size );
   	    

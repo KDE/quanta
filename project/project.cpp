@@ -679,20 +679,18 @@ void Project::slotAcceptCreateProject()
 {
   closeProject();
   
-  name = png->linePrjName->text();
+  name     = png->linePrjName->text();
+  basePath = png->linePrjDir ->text();
+  email    = png->lineEmail  ->text();
+	author   = png->lineAuthor ->text();
+	
+  if ( basePath.right(1) != "/" )	basePath += "/";
+  
 	url  = KURL( basePath+png->linePrjFile->text());
 
   createEmptyDom();
-	
-	email = png->lineEmail->text();
-	author = png->lineAuthor->text();
-	basePath = png->linePrjDir->text();
-	if ( basePath.right(1) != "/" )	basePath += "/";
-	
+
 	QExtFileInfo::createDir( basePath );
-	
-	name = png->linePrjName->text();
-	url  = KURL( basePath+png->linePrjFile->text());
 	
 	if ( pnf->checkPrefix->isChecked() ) 
 	{
