@@ -42,6 +42,7 @@ TagAttributeTree::TagAttributeTree(QWidget *parent, const char *name)
   addColumn(i18n("Value"));
   setResizeMode(QListView::LastColumn);
   m_node = 0L;
+  m_parentItem = 0L;
   rebuildEnabled = true;
 }
 
@@ -51,11 +52,11 @@ TagAttributeTree::~TagAttributeTree()
 
 void TagAttributeTree::setCurrentNode(Node *node)
 {
-  m_parentItem = 0L;
   m_node = node;
   emit newNodeSelected(node);
   if (!rebuildEnabled)
       return;
+  m_parentItem = 0L;
   clear();
   if (!node)
       return;
@@ -184,7 +185,8 @@ void TagAttributeTree::setCurrentItem( QListViewItem *item )
 
 void TagAttributeTree::slotParentSelected(int index)
 {
-  setCurrentNode(m_parentItem->node(index));
+  if (m_parentItem)
+      setCurrentNode(m_parentItem->node(index));
 }
 
 void TagAttributeTree::slotCollapsed(QListViewItem *item)
