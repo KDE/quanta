@@ -1314,6 +1314,7 @@ void QuantaApp::slotShowPreviewWidget(bool show)
 {
   QuantaView *view = ViewManager::ref()->activeView();
   if (!view) return;
+  if (m_previewVisible == show) return;
   if (show)
   {
     if (qConfig.previewPosition == "Editor")
@@ -1337,6 +1338,7 @@ void QuantaApp::slotShowPreviewWidget(bool show)
   } else
   {
     m_noFramesPreview = false;
+    m_previewVisible = false;
     m_htmlPart->view()->reparent(this, 0, QPoint(), false);
     m_htmlPart->view()->resize(0, 0);
     m_htmlPart->view()->hide();
@@ -1350,7 +1352,6 @@ void QuantaApp::slotShowPreviewWidget(bool show)
        delete m_previewToolView;
        m_previewToolView = 0L;
    }
-    m_previewVisible = false;
     Document *w = view->document();
     if (w)
     {

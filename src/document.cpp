@@ -565,19 +565,28 @@ int Document::createTempFile()
  closeTempFile();
  tempFile = new KTempFile(tmpDir);
  tempFile->setAutoDelete(true);
- QString encoding = quantaApp->defaultEncoding();
- KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
- if (encodingIf)
-      encoding = encodingIf->encoding();
- if (encoding.isEmpty())
-     encoding = "utf8";  //final fallback
- tempFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
- * (tempFile->textStream()) << editIf->text();
-
  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
- tempFile->close();
- //kdDebug(24000) << "Creating tempfile " << m_tempFileName << " for " << url() << endl;
- return 1;
+ if (isUntitled())
+ {
+    QString encoding = quantaApp->defaultEncoding();
+    KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
+    if (encodingIf)
+          encoding = encodingIf->encoding();
+    if (encoding.isEmpty())
+        encoding = "utf8";  //final fallback
+    tempFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
+    * (tempFile->textStream()) << editIf->text();
+
+    m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
+    tempFile->close();
+ } else
+ {
+    tempFile->close();
+    tempFile->unlink();
+    QExtFileInfo::copy(url(), KURL::fromPathOrURL(m_tempFileName));
+ }
+// kdDebug(24000) << "Creating tempfile " << m_tempFileName << " for " << url() << endl;
+return 1;
 }
 
 /** No descriptions */
@@ -608,10 +617,30 @@ QString Document::tempFileName()
 /** No descriptions */
 bool Document::saveIt()
 {
- bool modifyStatus = m_doc->isModified();
- save();
- m_doc->setModified(modifyStatus);
- return true;   //not used yet
+//use our own save method, as otherwise the modified flag of the KTextEditor::Document is reset
+  KTempFile *tmpFile = new KTempFile(tmpDir);
+  QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
+  tmpFile->setAutoDelete(true);
+  QString encoding = quantaApp->defaultEncoding();
+  KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
+  if (encodingIf)
+        encoding = encodingIf->encoding();
+  if (encoding.isEmpty())
+      encoding = "utf8";  //final fallback
+  tmpFile->textStream()->setCodec(QTextCodec::codecForName(encoding));
+  *(tmpFile->textStream()) << editIf->text();
+  tmpFile->close();
+  QString fileName;
+  fileName = url().path();
+  if (url().isLocalFile())
+    fileWatcher->removeFile(fileName);
+  QExtFileInfo::copy(KURL::fromPathOrURL(tempFileName), url(), -1, true);
+  m_dirty = false;
+  if (url().isLocalFile())
+    fileWatcher->addFile(fileName);
+  tmpFile->unlink();
+  delete tmpFile;
+  return true;   //not used yet
 }
 
 /** This will return the current tag name at the given position.
