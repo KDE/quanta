@@ -155,10 +155,6 @@ void QuantaInit::initQuanta()
   initProject();
   initActions();
 
-  // Initialize debugger
-  m_quanta->m_debugger = new DebuggerManager(m_quanta);
-  connect(Project::ref(), SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
-          m_quanta->m_debugger, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
 
   DTDs::ref();  // create the class, must be before readOptions() !
   readOptions();
@@ -176,6 +172,11 @@ void QuantaInit::initQuanta()
   addToolTreeView(m_quanta->scriptTab, i18n("Scripts"), BarIcon("run"), KDockWidget::DockLeft);
   m_quanta->m_messageOutputView = addToolTreeView(m_quanta->m_messageOutput, i18n("Messages"), SmallIcon("openterm"), KDockWidget::DockBottom);
   m_quanta->m_problemsOutputView = addToolTreeView(m_quanta->m_problemOutput, i18n("Problems"), SmallIcon("info"), KDockWidget::DockBottom);
+
+    // Initialize debugger
+  m_quanta->m_debugger = new DebuggerManager(m_quanta);
+  connect(Project::ref(), SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
+          m_quanta->m_debugger, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
 
   m_config->setGroup  ("General Options");
   QString layout = m_config->readEntry("Window layout", "Default");
