@@ -1,0 +1,23 @@
+[General]
+Name = -//OASIS//DTD DocBook XML V4.2//EN
+NickName = Docbook 4.2
+URL = http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd
+DoctypeString = book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+DefaultExtension = docbook
+Groups = Core
+NumOfPages = 1
+CaseSensitive = true
+
+[Toolbars]
+Location = docbook
+Names = standard, fonts, tables, lists, forms, other
+
+[Core]
+Attributes=arch,condition,conformance,id,lang,os,remap,role,revision,revisionflag,security,userlevel,vendor,xreflabel
+
+[Page1]
+Title = Core
+Groups = Core
+
+[Extra tags]
+List = !DOCTYPE
