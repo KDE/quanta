@@ -105,7 +105,16 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
     w = ViewManager::ref()->activeDocument();
     if (w && !w->isModified() &&
          w->isUntitled() && !w->busy)
-         return true;
+    {
+    //workaround for some strange Katepart behavior. If there is a highlighting mode
+    //selected and new content is loaded, the highlighting is reset to None. To avoid this
+    //remove the untitled document and create a new one, where we don't set the
+    //highlighting
+        ViewManager::ref()->removeActiveView();
+        w = ViewManager::ref()->activeDocument();
+        if (w && !w->isModified() && w->isUntitled() && !w->busy)
+            return true;
+    }
 
     // now we can create new kwrite
     ViewManager::ref()->createNewDocument();
@@ -175,11 +184,11 @@ bool switchToExisting)
   }
   if (url.isEmpty())
   {
-    quantaApp->processDTD();
     quantaApp->reparse(true);
     KTextEditor::HighlightingInterface* highlightIf = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
     if (highlightIf)
     {
+      kdDebug(24000) << highlightIf->hlMode() << endl;
       QString hlName;
       int htmlIdx, xmlIdx;
       for (uint i = 0; i < highlightIf->hlModeCount(); i++)
