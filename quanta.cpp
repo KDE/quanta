@@ -775,7 +775,8 @@ void QuantaApp::slotShowPreview()
       doc2->saveAs(origUrl);
       delete doc2;
     }
-		doc ->write()->setFocus();
+	doc ->write()->view()->setFocus();
+
 	}
 	else {
 //		enableCommand(ID_VIEW_BACK);

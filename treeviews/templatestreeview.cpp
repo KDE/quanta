@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 // QT includes
+#include <qcheckbox.h>
 #include <qdir.h>
 #include <qpixmap.h>
 #include <qheader.h>
@@ -27,10 +28,16 @@
 #include <kstddirs.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
+#include <kcombobox.h>
 
 #include "templatestreeview.h"
 #include "filestreefolder.h"
 #include "filestreefile.h"
+#include "newtemplatedirdlg.h"
+
+const QString textMenu = i18n("Insert as text");
+const QString binaryMenu = i18n("Insert binary (as link)");
+const QString docMenu = i18n("New document based on this");
 
 TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *parent, const char *name )
 {
@@ -46,6 +53,7 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 //	fileMenu -> insertItem(i18n("Insert as text in document"), 	this ,SLOT(slotInsertInDocument()));
 //	fileMenu -> insertItem(i18n("New document based on this"), 	this ,SLOT(slotNewDocument()));
 	fileMenu -> insertSeparator();
+	fileMenu -> insertItem( i18n("&New directory"), 		this ,SLOT(slotNewDir()));
 	fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
 	fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
 	fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
@@ -58,6 +66,7 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 	
 //	folderMenu -> insertItem( i18n("Add folder to top"), this ,SLOT(slotAddToTop()), 0, ID_TOP, 0);
 //	folderMenu -> insertSeparator();
+	folderMenu -> insertItem( i18n("&New directory"), 		this ,SLOT(slotNewDir()));
 	folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
 	folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
 	deleteMenuId = folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete"),   this ,SLOT(slotDelete()));
@@ -157,9 +166,9 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
    QString menuText = "";
 
    dotFile.readLine(s,100);
-   if (s.upper().contains("TEXT")) menuText = i18n("Insert as text");
-   if (s.upper().contains("IMAGE")) menuText = i18n("Insert image (as a link)");
-   if (s.upper().contains("TEMPLATE")) menuText = i18n("New document based on this");
+   if (s.upper().contains("TEXT")) menuText = textMenu;
+   if (s.upper().contains("IMAGE")) menuText = binaryMenu;
+   if (s.upper().contains("TEMPLATE")) menuText = docMenu;
 
    if (menuText.isEmpty())
    {
@@ -222,10 +231,71 @@ void TemplatesTreeView::slotInsert()
 {
  QString menuText = fileMenu->text(openId);
 
- if (menuText == i18n("Insert as text")) slotInsertInDocument();
- if (menuText == i18n("Insert image (as a link)")) slotInsertTag();
- if (menuText == i18n("New document based on this")) slotNewDocument();
+ if (menuText == textMenu) slotInsertInDocument();
+ if (menuText == binaryMenu) slotInsertTag();
+ if (menuText == docMenu) slotNewDocument();
 }
 
 
 #include "templatestreeview.moc"
+/** No descriptions */
+void TemplatesTreeView::slotNewDir()
+{
+  NewTemplateDirDlg *createDirDlg = new NewTemplateDirDlg(this,i18n("Create new template directory"));
+  createDirDlg->typesCombo->insertItem("text/all");
+  createDirDlg->typesCombo->insertItem("image/all");
+  createDirDlg->typesCombo->insertItem("template/all");
+
+  QListViewItem *item = currentItem();
+  QString startDir = "";
+	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+	if ( f )
+  {
+   startDir = currentFileName();
+  } else
+  {
+   startDir = currentFileName() + "/dummy_file";
+  }
+
+   QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
+
+   while ((!dotFileInfo.exists()) && (dotFileInfo.dirPath() != "/"))
+   {
+    dotFileInfo.setFile(QFileInfo(dotFileInfo.dirPath()).dirPath()+"/.dirinfo");
+   }
+   QFile dotFile(dotFileInfo.filePath());
+   dotFile.open(IO_ReadOnly);
+
+   QString s;
+   dotFile.readLine(s,100);
+
+   if (s.isEmpty())
+   {
+    createDirDlg->parentAttr->setText(i18n("&Inherit parrent attribute (nothing)"));
+   } else
+   {
+     createDirDlg->parentAttr->setText(i18n("&Inherit parrent attribute (%1)").arg(s));
+   }
+   if (createDirDlg->exec())
+   {
+    QDir dir;
+
+    startDir = QFileInfo(startDir).dirPath();
+    if (!dir.mkdir(startDir+"/"+createDirDlg->dirName->text()))
+    {
+      KMessageBox::error(this,i18n("Error while creating the new directory.\n \
+                   Maybe you don't have permission to write in the %1 directory.").arg(startDir));
+      return;
+    }
+    if (! createDirDlg->parentAttr->isChecked())
+    {
+     QFile dirFile(startDir+"/"+createDirDlg->dirName->text()+"/.dirinfo");
+     dirFile.open(IO_WriteOnly);
+     QTextStream dirStream(&dirFile);
+     dirStream << createDirDlg->typesCombo->currentText();
+     dirFile.flush();
+     dirFile.close();
+    }
+    slotReload();
+   }
+}

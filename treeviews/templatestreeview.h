@@ -43,6 +43,8 @@ public slots:
   void slotNewDocument();
   /** Insert the template as text, image, new document. */
   void slotInsert();
+  /** No descriptions */
+  void slotNewDir();
   virtual void slotReload();
 
 private:
