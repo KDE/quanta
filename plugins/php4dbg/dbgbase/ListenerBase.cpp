@@ -18,17 +18,17 @@
 #include <assert.h>
 
 ListenerBase::~ListenerBase() {
-	DBGTRACE("ListenerBase::~ListenerBase\n");
+	//DBGTRACE("ListenerBase::~ListenerBase\n");
 	stop(true);
 	th_list.clear();
 }
 
-int ListenerBase::start(cfgprm *cfg, void *extcfg) {
-	DBGTRACE("ListenerBase::start\n");
+int ListenerBase::start(cfgprm *cfg, void * /*extcfg*/) {
+	//DBGTRACE("ListenerBase::start\n");
 	fcfg = *cfg;
 	
 	if (listensock) {
-		DBGTRACE("socket was not closed.\n");
+		//DBGTRACE("socket was not closed.\n");
 		dbh_close_socket(listensock);
 		listensock = 0;
 	}
@@ -38,18 +38,19 @@ int ListenerBase::start(cfgprm *cfg, void *extcfg) {
 		fstatus = LSTNRS_initerror;
 		switch (listensock) {
 			case -1: 
-				DBGTRACE("API socket()");
+				//DBGTRACE("API socket()");
 				break;
 			case -2:
-				DBGTRACE("API bind()");
+				//DBGTRACE("API bind()");
 				break;
 			case -3:
-				DBGTRACE("API gethostbyname()");
+				//DBGTRACE("API gethostbyname()");
 				break;
-			default:
-				DBGTRACE("socket creation");
+			default: 
+				//DBGTRACE("socket creation");
+        break;
 		}
-		DBGTRACE(" failed (err=%d). ",listensock);
+		//DBGTRACE(" failed (err=%d). ",listensock);
 		listensock = 0;	
 	} else {
 		_error = 0;
@@ -61,7 +62,7 @@ int ListenerBase::start(cfgprm *cfg, void *extcfg) {
 void ListenerBase::stop(bool stopclients) {
 	TH_LIST::iterator p;
 
-	DBGTRACE("ListenerBase::stop\n");
+	//DBGTRACE("ListenerBase::stop\n");
 	if (listensock > 0) {
 		dbh_close_socket(listensock);
 		listensock = 0;
@@ -127,18 +128,18 @@ void ListenerBase::logstatus() {
 
 	switch (fstatus) {
 		case LSTNRS_notinitialized:
-			log(LSTNRL_warn,"listener is not initialized,yet.");
+			log(LSTNRL_warn,(char *)("listener is not initialized,yet."));
 			break;
 		case LSTNRS_initerror:
 			oserrnostr(buf, sizeof(buf), _error);
-			snprintf(sbuf, sizeof(sbuf)-1, "Error '%s' (OSERR=%d) occured.", buf, _error);
+			snprintf(sbuf, sizeof(sbuf)-1, (char *)"Error '%s' (OSERR=%d) occured.", buf, _error);
 			log(LSTNRL_error,sbuf);
 			break;
 		case LSTNRS_stopped:
-			log(LSTNRL_warn,"listener has been stopped.");
+			log(LSTNRL_warn,(char *)"listener has been stopped.");
 			break;
 		case LSTNRS_ok:
-			log(LSTNRL_msg,"listener is working properly.");
+			log(LSTNRL_msg,(char *)"listener is working properly.");
 			break;
 		default:
 			snprintf(sbuf, sizeof(sbuf)-1, "unknown status %d.", fstatus);

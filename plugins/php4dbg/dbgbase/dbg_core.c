@@ -70,7 +70,8 @@ DBGAPI int dbg_packet_add_frame(dbg_packet *pack, framename frname, void *data, 
 	if (!dbg_packet_update_limit(pack, asize)) {
 		return 0;
 	}
-	(char *) p = (char *) (pack->buf) + pack->size;
+	/*(char *) p = (char *) (pack->buf) + pack->size;*/
+  p = (dbg_frame* ) ( (char *) (pack->buf) + pack->size );
 	p->size = datasize;
 	memcpy(&(p->name), frname, sizeof(p->name));
 	
@@ -79,16 +80,16 @@ DBGAPI int dbg_packet_add_frame(dbg_packet *pack, framename frname, void *data, 
 	return (char*)FRAME_DATA_PTR(p) - (char*)pack->buf;
 }
 
-int dbg_sock_read(char *buf, int bufsize, int socket, int timeoutms) {
+int dbg_sock_read(char *buf, int bufsize, int a_socket, int timeoutms) {
 	fd_set rset;
 	struct timeval timeout;
 	int ret_val;
 
-	if (socket <= 0) {
+	if (a_socket <= 0) {
 		return 0;
 	}
 	FD_ZERO(&rset);
-	FD_SET((unsigned int)socket, &rset);
+	FD_SET((unsigned int)a_socket, &rset);
 	if (timeoutms >= 0) {
 		timeout.tv_sec = timeoutms / 1000;
 		timeout.tv_usec = (timeoutms>1000) ? 0 : timeoutms * 1000;
@@ -96,12 +97,12 @@ int dbg_sock_read(char *buf, int bufsize, int socket, int timeoutms) {
 		timeout.tv_sec = 0;
 		timeout.tv_usec = 0;
 	}
-	ret_val = select(socket + 1, &rset, NULL, NULL, &timeout);
+	ret_val = select(a_socket + 1, &rset, NULL, NULL, &timeout);
 	if (ret_val != 1) {	
 		if (ret_val < 0) return -1;
 		return 0;
 	}
-	ret_val = SREAD(socket, buf, bufsize);	
+	ret_val = SREAD(a_socket, buf, bufsize);	
 	return (ret_val) ? (ret_val):(-1);
 }
 
@@ -116,13 +117,14 @@ DBGAPI dbg_frame *dbg_packet_nextframe(dbg_packet *pack, dbg_frame *frame) {
 
 	s = pack->size;
 	p = pack->buf;
-	while (s >= sizeof(dbg_frame)) {
+	while (s >= (long)sizeof(dbg_frame)) {
 		frsize = p->size + sizeof(dbg_frame);
 		is_eq = (p == frame);
-		(char *) p += frsize;
+/*		(char *) p += frsize;*/
+    p = (dbg_frame*) ( (char*)p + frsize);
 		s -= frsize;
 		if (is_eq) {
-			if (s < sizeof(dbg_frame)) return NULL;
+			if (s < (long)sizeof(dbg_frame)) return NULL;
 			return p;
 		}
 	}
@@ -135,12 +137,13 @@ DBGAPI dbg_frame* dbg_packet_findfirstframe(dbg_packet *pack, framename frname) 
 
 	s = pack->size;
 	p = pack->buf;
-	while (s >= sizeof(dbg_frame)) {
+	while (s >= (long)sizeof(dbg_frame)) {
 		if (strncmp(p->name, frname, sizeof(frname)) == 0) {
 			return p;
 		}
 		frsize = p->size + sizeof(dbg_frame);
-		(char *) p += frsize;
+/*		(char *) p += frsize;*/
+    p = (dbg_frame*) ( (char*)p + frsize);
 		s -= frsize;
 	}
 	return NULL;
@@ -153,25 +156,26 @@ DBGAPI dbg_frame* dbg_packet_findnextframe(dbg_packet *pack, framename frname, d
 	p = dbg_packet_nextframe(pack, frame);
 
 	s = (p) ? pack->size - ((char*)p - (char*)pack->buf) : 0;
-	while (s >= sizeof(dbg_frame)) {
+	while (s >= (long)sizeof(dbg_frame)) {
 		if (strncmp(p->name, frname, sizeof(frname)) == 0) {
 			return p;
 		}
 		frsize = p->size + sizeof(dbg_frame);
-		(char *) p += frsize;
+/*		(char *) p += frsize;*/
+    p = (dbg_frame*) ( (char*)p + frsize);
 		s -= frsize;
 	}
 	return NULL;
 }
 
-DBGAPI int dbg_packet_send(int cmd , dbg_packet *pack, int socket, int flags) {
+DBGAPI int dbg_packet_send(int cmd , dbg_packet *pack, int a_socket, int flags) {
 	dbg_header_struct *packetbuf;
 	dbg_frame *p;
 	int packsize, frsize, *v, i;
 	int ret_val, sz, tosend, chunksz, sentsz;
 	char *pchunk;
 
-	if (socket <= 0) {
+	if (a_socket <= 0) {
 		return -1;
 	}	
 	packsize = sizeof(dbg_header_struct) + ((pack!=NULL)? pack->size:0);
@@ -183,12 +187,14 @@ DBGAPI int dbg_packet_send(int cmd , dbg_packet *pack, int socket, int flags) {
 	packetbuf->flags = htonl(flags);
 	packetbuf->bodysize = htonl(pack!=NULL?pack->size:0);
 	if (pack && pack->size) {
-		(char *)p = (char *)packetbuf + sizeof(dbg_header_struct);
-		sz = pack->size;
+/*		(char *)p = (char *)packetbuf + sizeof(dbg_header_struct); */
+		p =(dbg_frame*) ((char *)packetbuf + sizeof(dbg_header_struct)); 
+    sz = pack->size;
 		memcpy(p, pack->buf, pack->size); /* copy data */
 		while (sz>0) { /* update all ints to be Big-Endian */
 			if (strcmp(p->name, FRAME_RAWDATA) != 0) { 
-				(char *)v = (char *)p + sizeof(*p);
+			/*	(char *)v = (char *)p + sizeof(*p);*/
+        v =(int*)( (char *)p + sizeof(*p) );
 				for (i=0; i<p->size/(int)sizeof(*v); i++) {
 					*v = htonl(*v);
 					v++;
@@ -201,7 +207,8 @@ DBGAPI int dbg_packet_send(int cmd , dbg_packet *pack, int socket, int flags) {
 			}
 			frsize = p->size + sizeof(dbg_frame);
 			p->size = htonl(p->size);
-			(char *) p += frsize;
+/*		(char *) p += frsize;*/
+      p = (dbg_frame*) ( (char*)p + frsize);
 			sz-=frsize;
 		}
 	}
@@ -212,7 +219,7 @@ DBGAPI int dbg_packet_send(int cmd , dbg_packet *pack, int socket, int flags) {
 	ret_val = 0;
 	while  (tosend > 0) {
 		chunksz = (tosend > CHUNKSIZE) ? CHUNKSIZE:tosend;
-		ret_val = SSEND(socket, pchunk, chunksz);
+		ret_val = SSEND(a_socket, pchunk, chunksz);
 		if (ret_val <= 0) break;
 		sentsz+=ret_val;
 		pchunk+=ret_val;
@@ -224,7 +231,7 @@ DBGAPI int dbg_packet_send(int cmd , dbg_packet *pack, int socket, int flags) {
 	return 0;
 }
 
-int dbg_packet_recv_body(dbg_packet *pack, int bodysize, int socket, int timeoutms) {
+int dbg_packet_recv_body(dbg_packet *pack, int bodysize, int a_socket, int timeoutms) {
 	dbg_frame *p;
 	int *v, i;
 	int ret_val = 0;
@@ -241,13 +248,13 @@ int dbg_packet_recv_body(dbg_packet *pack, int bodysize, int socket, int timeout
 	is_first = 1;
 	while (restsize > 0) {
 		if (is_first) {
-			chunksz = (restsize>(CHUNKSIZE-sizeof(dbg_header_struct))) ? CHUNKSIZE-sizeof(dbg_header_struct):restsize;
+			chunksz = (restsize>(long)(CHUNKSIZE-sizeof(dbg_header_struct))) ? CHUNKSIZE-sizeof(dbg_header_struct):restsize;
 			is_first = 0;
 		} 
 		else {
 			chunksz = (restsize>CHUNKSIZE) ? CHUNKSIZE:restsize;
 		}
-		ret_val = dbg_sock_read(pchunk, chunksz, socket, timeoutms);
+		ret_val = dbg_sock_read(pchunk, chunksz, a_socket, timeoutms);
 		if (ret_val<=0) break;
 		restsize -= ret_val;
 		recvsz += ret_val;
@@ -258,12 +265,14 @@ int dbg_packet_recv_body(dbg_packet *pack, int bodysize, int socket, int timeout
 		if (ret_val < 0) return -1;
 		return 0;
 	}
-	(char *) p = (char *) (pack->buf) + pack->size;
+/*	(char *) p = (char *) (pack->buf) + pack->size;*/
+	p =(dbg_frame*) ( (char *) (pack->buf) + pack->size);
 	restsize = bodysize;
 	while (restsize > 0) {
 		p->size = ntohl(p->size);
 		if (strcmp(p->name, FRAME_RAWDATA) != 0) { /* make all ints back system-depended Big- or Little- Endian*/
-			(char *)v = (char *)p + sizeof(*p);
+/*			(char *)v = (char *)p + sizeof(*p); */
+			v = (int*)((char *)p + sizeof(*p));
 			for (i=0; i<p->size/(int)sizeof(*v); i++) {
 				*v = ntohl(*v);
 				v++;
@@ -279,7 +288,8 @@ int dbg_packet_recv_body(dbg_packet *pack, int bodysize, int socket, int timeout
 			dbg_packet_clear(pack);
 			return 0;
 		}
-		(char *) p += frsize;
+/*		(char *) p += frsize;*/
+    p = (dbg_frame*) ( (char*)p + frsize);
 		restsize -= frsize;
 		if (restsize < 0) {
 			dbg_packet_clear(pack);
@@ -290,12 +300,12 @@ int dbg_packet_recv_body(dbg_packet *pack, int bodysize, int socket, int timeout
 	return bodysize;
 }
 
-DBGAPI int dbg_packet_recv(dbg_header_struct *hdr, dbg_packet *pack, int socket, int timeoutms) {
+DBGAPI int dbg_packet_recv(dbg_header_struct *hdr, dbg_packet *pack, int a_socket, int timeoutms) {
 	int ret_val;
 
 	if (!pack || !hdr) return 0;
 	dbg_packet_clear(pack);
-	ret_val = dbg_sock_read((char *) hdr, sizeof(dbg_header_struct), socket, timeoutms);
+	ret_val = dbg_sock_read((char *) hdr, sizeof(dbg_header_struct), a_socket, timeoutms);
 	if ((ret_val != sizeof(dbg_header_struct)) || 
 		(hdr->sync != DBGSYNC)) {		
 		memset(hdr,0,sizeof(dbg_header_struct));
@@ -312,7 +322,7 @@ DBGAPI int dbg_packet_recv(dbg_header_struct *hdr, dbg_packet *pack, int socket,
 		return 0;
 	}
 	if (hdr->bodysize) {
-		if (!dbg_packet_recv_body(pack, hdr->bodysize, socket, timeoutms)) {
+		if (!dbg_packet_recv_body(pack, hdr->bodysize, a_socket, timeoutms)) {
 			memset(hdr,0,sizeof(dbg_header_struct));
 			return 0;
 		}
@@ -326,7 +336,7 @@ DBGAPI int dbg_packet_add_rawdata(dbg_packet *pack, const char *data, int datasi
 	int id, bodyofs;
 	
 	if (!data && datasize) return 0;
-	bodyofs = dbg_packet_add_frame(pack, FRAME_RAWDATA, NULL, datasize + sizeof(dbg_rawdata_body));
+	bodyofs = dbg_packet_add_frame(pack, (char*)FRAME_RAWDATA, NULL, datasize + sizeof(dbg_rawdata_body));
 	if (!bodyofs) {
 		return 0;
 	}
@@ -347,7 +357,7 @@ DBGAPI int dbg_packet_findrawdata(dbg_packet *pack, int rawid, char **data, int 
 	*datasize = 0;
 	*data = NULL;
 	if (rawid <= 0) return 0;
-	fr = dbg_packet_findfirstframe(pack, FRAME_RAWDATA);
+	fr = dbg_packet_findfirstframe(pack, (char *)FRAME_RAWDATA);
 	while (fr) {
 		body =(dbg_rawdata_body *) FRAME_DATA_PTR(fr);
 		if ((int)body->rawid == rawid) {
@@ -355,7 +365,7 @@ DBGAPI int dbg_packet_findrawdata(dbg_packet *pack, int rawid, char **data, int 
 			*datasize = body->datasize;
 			return sizeof(dbg_rawdata_body) + (*datasize);
 		}
-		fr = dbg_packet_findnextframe(pack, FRAME_RAWDATA, fr);
+		fr = dbg_packet_findnextframe(pack, (char *)FRAME_RAWDATA, fr);
 	}
 	return 0;
 }

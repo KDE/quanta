@@ -60,7 +60,7 @@ int ThreadBase::ack(int cmd, dbg_packet *pack) {
 	return ret_val;
 }
 
-int ThreadBase::process_cmd(int cmd, dbg_packet *pack, int client_flags) {
+int ThreadBase::process_cmd(int cmd, dbg_packet *pack, int /* client_flags */) {
 	dbg_frame *p;
 	dbg_error_body *err;
 	char *str;
@@ -112,7 +112,7 @@ int ThreadBase::process_cmd(int cmd, dbg_packet *pack, int client_flags) {
 
 		flags |= DBGF_STARTED;
 
-		frame = dbg_packet_findfirstframe(pack,FRAME_VER);
+		frame = dbg_packet_findfirstframe(pack,(char*)FRAME_VER);
 		if (frame!=NULL) {
 			body = (dbg_version_body*)FRAME_DATA_PTR(frame);
 			dbg_ver = ((body->major_version & 0xFF) << 8) | (body->minor_version & 0xFF);
@@ -142,7 +142,7 @@ int ThreadBase::process_cmd(int cmd, dbg_packet *pack, int client_flags) {
 	if (!(flags & DBGF_STARTED) || fsite == NULL) return 0;
 	
 	if (is_error) {
-		p = dbg_packet_findfirstframe(pack, FRAME_ERROR);
+		p = dbg_packet_findfirstframe(pack,(char*) FRAME_ERROR);
 		if (!p) return 0;
 		err = (dbg_error_body *)FRAME_DATA_PTR(p);
 		errmsg = NULL;
@@ -236,7 +236,7 @@ void ThreadBase::submitbreakpoints(dbg_packet *pack) {
 	BREAKPOINTLIST::iterator it;
 
 	if (breakpointlist.size() == 0) return;
-	DBGTRACE("ThreadBase::submitbreakpoints\n");	
+	////DBGTRACE("ThreadBase::submitbreakpoints\n");	
 
 	for (it = breakpointlist.begin(); it != breakpointlist.end(); it++) {		
 		bps.line_no = it->line_no;
@@ -244,7 +244,7 @@ void ThreadBase::submitbreakpoints(dbg_packet *pack) {
 		bps.status = (int)(it->state);
 		bps.imod_name = dbg_packet_add_string(pack, it->mod_name);
 
-		dbg_packet_add_frame(pack, FRAME_BPS, &bps, sizeof(bps));
+		dbg_packet_add_frame(pack, (char*)FRAME_BPS, &bps, sizeof(bps));
 	}
 	breakpointlist.clear();
 }
@@ -264,7 +264,7 @@ HRESULT ThreadBase::getdbgversion(
 	char *dbg_descr;
 	HRESULT hr;
 
-	DBGTRACE("ThreadBase::getdbgversion\n");
+	//DBGTRACE("ThreadBase::getdbgversion\n");
 	if (!sdbg_descr && !dbg_ver) return E_POINTER;
 
 	if (!(flags & DBGF_WAITACK)) return E_FAIL;
@@ -277,12 +277,12 @@ HRESULT ThreadBase::getdbgversion(
 	lstnr_ver.major_version = DBG_API_MAJOR_VESION;
 	lstnr_ver.minor_version = DBG_API_MINOR_VESION;
 	lstnr_ver.idescription = dbg_packet_add_string(&pack, DBG_API_DESCRIPTION);
-	dbg_packet_add_frame(&pack, FRAME_VER, &lstnr_ver, sizeof(lstnr_ver));
+	dbg_packet_add_frame(&pack, (char*)FRAME_VER, &lstnr_ver, sizeof(lstnr_ver));
 	
 	hr = E_FAIL;
 	ret_val = request(&hdr, &pack);
 	if (ret_val) {
-		frame = dbg_packet_findfirstframe(&pack,FRAME_VER);
+		frame = dbg_packet_findfirstframe(&pack,(char*)FRAME_VER);
 		if (frame!=NULL) {
 			body = (dbg_version_body*)FRAME_DATA_PTR(frame);
 			*dbg_ver = ((body->major_version & 0xFF) << 8) | (body->minor_version & 0xFF);
@@ -312,13 +312,13 @@ HRESULT ThreadBase::getdoclist(
 
 	if (!doclist) return E_POINTER;
 
-	DBGTRACE("ThreadBase::getdoclist\n");
+	//DBGTRACE("ThreadBase::getdoclist\n");
 	if (fdoclist.size()==0) {
 		if (!(flags & DBGF_WAITACK)) return E_FAIL;
 		
 		fdoclist.clear();
 		dbg_packet_new(&pack);
-		dbg_packet_add_frame(&pack, FRAME_SRC_TREE, NULL, 0);
+		dbg_packet_add_frame(&pack, (char*)FRAME_SRC_TREE, NULL, 0);
 		ret_val = request(&hdr, &pack);
 		if (ret_val>0) {
 			fdoclist.assign(&pack);
@@ -339,7 +339,7 @@ HRESULT ThreadBase::getlinesinfolist(
 	DOCLIST::iterator it;
 	int ret_val;
 
-	DBGTRACE("ThreadBase::getlinesdata\n");
+	//DBGTRACE("ThreadBase::getlinesdata\n");
 	if (!linesinfolist) return E_POINTER;
 	
 	if (!(flags & DBGF_WAITACK)) return E_FAIL;
@@ -353,11 +353,11 @@ HRESULT ThreadBase::getlinesinfolist(
 	if (mod_no==0) {
 		for (it = fdoclist.begin(); it!=fdoclist.end(); it++) {
 			req.mod_no = (*it).mod_no;
-			dbg_packet_add_frame(&pack, FRAME_SRCLINESINFO, &req, sizeof(req));
+			dbg_packet_add_frame(&pack, (char*)FRAME_SRCLINESINFO, &req, sizeof(req));
 		}
 	} else {
 		req.mod_no = mod_no;
-		dbg_packet_add_frame(&pack, FRAME_SRCLINESINFO, &req, sizeof(req));
+		dbg_packet_add_frame(&pack, (char*)FRAME_SRCLINESINFO, &req, sizeof(req));
 	}
 	ret_val = request(&hdr, &pack);
 	if (ret_val>0) {
@@ -378,12 +378,13 @@ HRESULT ThreadBase::requestdocsrc(
 	dbg_source_request src_req;
 	dbg_source_body *src_body;	
 	int ret_val, errcnt = 0;
-	int fpos, fullsize, siz;
+	int fpos, siz;
+  int fullsize = 0;
 	bool firsttime = true;
 	char *str;
 	bool ok;
 
-	DBGTRACE("ThreadBase::requestdocsrc\n");
+	//DBGTRACE("ThreadBase::requestdocsrc\n");
 	if (!(flags & DBGF_WAITACK)) return E_FAIL;
 
 	if (!mod_name) return E_POINTER;
@@ -395,9 +396,9 @@ HRESULT ThreadBase::requestdocsrc(
 	while (true) {
 		src_req.from_filepos = fpos;
 		dbg_packet_clear(&pack);
-		dbg_packet_add_frame(&pack, FRAME_SOURCE, &src_req, sizeof(src_req));
+		dbg_packet_add_frame(&pack, (char*)FRAME_SOURCE, &src_req, sizeof(src_req));
 		ret_val = request(&hdr, &pack);
-		frame = (ret_val > 0)? dbg_packet_findfirstframe(&pack,FRAME_SOURCE) : NULL;
+		frame = (ret_val > 0)? dbg_packet_findfirstframe(&pack,(char*)FRAME_SOURCE) : NULL;
 		ok = (frame!=NULL);
 		if (ok) {
 			src_body = (dbg_source_body*) FRAME_DATA_PTR(frame);
@@ -437,7 +438,7 @@ HRESULT ThreadBase::requestdocparent(
 	HRESULT hr;
 	DOCLIST::iterator it;
 
-	DBGTRACE("ThreadBase::requestdocparent\n");
+	//DBGTRACE("ThreadBase::requestdocparent\n");
 
 	hr=getdoclist(&fdoclist);
 	if (FAILED(hr)) return hr;
@@ -461,7 +462,7 @@ HRESULT ThreadBase::requestdocfilename(
 	HRESULT hr;
 	DOCLIST::iterator it;
 
-	DBGTRACE("ThreadBase::requestdocfilename\n");
+	//DBGTRACE("ThreadBase::requestdocfilename\n");
 
 	hr=getdoclist(&fdoclist);
 	if (FAILED(hr)) return hr;
@@ -495,7 +496,7 @@ HRESULT ThreadBase::evaluate(
 	int ret_val, siz;
 	bool ok = false;
 
-	DBGTRACE("ThreadBase::evaluate()\n");
+	//DBGTRACE("ThreadBase::evaluate()\n");
 	if (!serial_str) return E_POINTER;
 	*serial_str = "";
 	if (!(flags & DBGF_WAITACK)) return E_FAIL;
@@ -506,11 +507,11 @@ HRESULT ThreadBase::evaluate(
 	dbg_packet_new(&pack);
 	eval.scope_id = scope_id;
 	eval.istr = (expr) ? dbg_packet_add_string(&pack, expr) : 0;
-	dbg_packet_add_frame(&pack, FRAME_EVAL, &eval, sizeof(eval));
+	dbg_packet_add_frame(&pack, (char*)FRAME_EVAL, &eval, sizeof(eval));
 
 	ret_val = request(&hdr, &pack);
 	if (ret_val>0) {
-		frame = dbg_packet_findfirstframe(&pack, FRAME_EVAL);
+		frame = dbg_packet_findfirstframe(&pack, (char*)FRAME_EVAL);
 		while (frame) {
 			evalbody = (dbg_eval_body *)FRAME_DATA_PTR(frame);
 			if ((evalbody->istr == 0 &&  !expr) ||
@@ -530,7 +531,7 @@ HRESULT ThreadBase::evaluate(
 				}
 				break;
 			}
-			frame = dbg_packet_findnextframe(&pack, FRAME_EVAL, frame);
+			frame = dbg_packet_findnextframe(&pack, (char*)FRAME_EVAL, frame);
 		}
 	}
 	dbg_packet_free(&pack);
@@ -560,11 +561,11 @@ HRESULT ThreadBase::getbreakpointlist(
 	BREAKPOINTLIST::iterator it;
 	BPOINTITEM bpm;
 
-	DBGTRACE("ThreadBase::getbreakpointlist\n");
+	//DBGTRACE("ThreadBase::getbreakpointlist\n");
 	if (!(flags & DBGF_WAITACK) || !bplist) return E_FAIL;
 
 	dbg_packet_new(&pack);
-	dbg_packet_add_frame(&pack, FRAME_BPR, NULL, 0);
+	dbg_packet_add_frame(&pack, (char*)FRAME_BPR, NULL, 0);
 
 	bplist->clear();
 	ret_val = request(&hdr, &pack);
