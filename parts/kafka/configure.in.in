@@ -1,12 +1,21 @@
 # Process user input to configure
-build_wysiwyg="no"
+build_wysiwyg="yes"
 AC_ARG_WITH(kafkapart,
-[  --with-kafkapart        build kafka WYSIWYG editor (experimental) (default=no)],
+[  --without-kafkapart     don't build the WYSIWYG editor mode (requires KDE 3.2)],
 [case "${enableval}" in
-       yes) build_wysiwyg="yes" ;;
-       no)  build_wysiwyg="no" ;;
-       *)   build_wysiwyg="yes" ;;
+       no) build_wysiwyg="yes" ;;
+       yes)  build_wysiwyg="no" ;;
+       *)   build_wysiwyg="no" ;;
      esac])
+
+KDE_VERSION=""
+AC_MSG_CHECKING(for KDE version)
+KDE_VERSION=`kde-config --version | grep KDE`
+AC_MSG_RESULT("$KDE_VERSION")
+if test "x`echo $KDE_VERSION | grep 3.1.92`" = "x"; then
+    echo "The KDE version is too old, WYSIWYG mode disabled!"
+    build_wysiwyg="no"
+fi    
 
 if test "$build_wysiwyg" = "yes"; then
   CXXFLAGS="$CXXFLAGS -DBUILD_KAFKAPART"
