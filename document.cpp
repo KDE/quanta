@@ -110,6 +110,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   m_backupEntry = false;
   //path of the backup copy file of the document
   m_backupPathValue = QString::null;
+  userTagList.setAutoDelete(true);
 
   connect( m_doc,  SIGNAL(charactersInteractivelyInserted (int ,int ,const QString&)),
            this,  SLOT(slotCharactersInserted(int ,int ,const QString&)) );
@@ -260,7 +261,15 @@ void Document::changeTagAttribute(Tag *tag, const QString& attrName, const QStri
     }
   } else
   {
-    tag->endPos(line, col);
+    index = tag->attrCount() - 1;
+    if (tag->attribute(index) == "/")
+    {
+      tag->attributeNamePos(index, line, col);
+      col--;
+    } else
+    {
+      tag->endPos(line, col);
+    }
     if (attrValue.isEmpty())
     {
       value = "";
@@ -764,15 +773,17 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   bool handled = false;
   tagName = getTagNameAt(line, column);
   tag = QuantaCommon::tagFromDTD(completionDTD, tagName);
-  if (!tag) tag = userTagList.find(tagName.lower());
+  if (!tag)
+     tag = userTagList.find(tagName.lower());
 
+  QString s = editIf->textLine(line).left(column + 1);
+  int i = column;
+  while (i > 0 && s[i].isSpace())
+    i--;
+  s = s.left(i + 1);
+  
   if ( !tag || tagName.isEmpty() )  //we are outside of any tag
   {
-    QString s = editIf->textLine(line).left(column + 1);
-    int i = column;
-    while (i > 0 && s[i].isSpace())
-      i--;
-    s = s.left(i + 1);
 
     if ( s.endsWith(completionDTD->tagAutoCompleteAfter) )  // a tag is started
     {
@@ -813,7 +824,8 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   }
   else  // we are inside of a tag
   {
-    if ( string == ">" && tagName[0] != '/' && !tagName.endsWith("/") && tag)
+    if ( string == ">" && tagName[0] != '/' && !tagName.endsWith("/") &&
+         !s.endsWith("/>") && tag)
     {
       if ( tag->parentDTD->singleTagStyle == "xml" &&
            (tag->isSingle() || (!qConfig.closeOptionalTags && tag->isOptional()))
@@ -865,7 +877,6 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
           {
             int bl, bc;
             node->tag->beginPos(bl, bc);
-            QString s;
             if (node->tag->attrCount() > 0)
             {
               s = editIf->text(bl, bc, line, column);
@@ -1148,6 +1159,26 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
 
   bool deleteValues;
   QStringList *values = tagAttributeValues(completionDTD->name,tagName, attribute, deleteValues);
+  if (attribute.lower() == "class")
+  {
+    if (!values)
+    {
+      values = new QStringList();
+      deleteValues = true;
+      for ( QStringList::Iterator it = parser->selectors.begin(); it != parser->selectors.end(); ++it )
+      {
+        int index = (*it).find('.');
+        if (index != -1)
+        {
+          QString tmpStr = (*it).left(index);
+          if (tmpStr.isEmpty() || tagName.lower() == tmpStr)
+          {
+            values->append((*it).mid(index + 1));
+          }
+        }
+      }
+    }
+  }
   if (values)
   {
     for ( QStringList::Iterator it = values->begin(); it != values->end(); ++it )
@@ -1350,7 +1381,8 @@ bool Document::scriptAutoCompletion(int line, int column)
    QString textLine = s.left(i);
    QString word = findWordRev(textLine, completionDTD);
    QTag *tag = completionDTD->tagsList->find(word);
-   if (!tag) tag = userTagList.find(word.lower());
+   if (!tag) 
+     tag = userTagList.find(word.lower());
    if (tag)
    {
      QStringList argList;

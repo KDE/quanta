@@ -219,6 +219,8 @@ public slots:
   void slotFileReload();
   void slotFileReloadAll();
   void slotFileClose();
+  /** Close the document specified in the parameter if it's opened */
+  void slotFileClose(const KURL &url);
   void slotFileCloseAll();
   void slotFilePrint();
   void slotFileNext();
@@ -262,6 +264,7 @@ public slots:
   void slotShowProjectTree();
 
   void slotShowBottDock(bool force = false);
+  void slotShowMainDock(bool force = false);
   void slotShowProblemsDock(bool force = false);
   void slotShowFTabDock();
   void slotShowPTabDock();

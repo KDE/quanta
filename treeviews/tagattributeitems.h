@@ -72,6 +72,7 @@ public:
     AttributeItem(QListViewItem* parent, const QString& title, const QString& title2);
     AttributeItem(EditableTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
     AttributeItem(EditableTree *listView, const QString& title, const QString& title2);
+    AttributeItem(EditableTree *listView, const QString& title, const QString& title2, QListViewItem* after);
 
     virtual ~AttributeItem();
     virtual void replaceCurrentEditor();

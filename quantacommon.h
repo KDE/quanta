@@ -140,6 +140,8 @@ public:
   static QTag* tagFromDTD(const QString& dtdName, const QString& tag);
   /** Returns the QTag object for the tag "tag" from the DTD. */
   static QTag* tagFromDTD(DTDStruct* dtd, const QString& tag);
+  /** Returns the QTag object for the node "node" from node's DTD. */
+  static QTag* tagFromDTD(Node *node);
   /** Returns an XML style string containing the GUI for attributes. */
   static QString xmlFromAttributes(AttributeList* attributes);
   /** Returns the DTD name (identifier) corresponding to the DTD's nickname */

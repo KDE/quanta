@@ -173,6 +173,7 @@ void ProjectUpload::slotBuildTree()
       expandAll();
  list->show();
  totalText->setText(i18n("Total:"));
+ totalProgress->setTotalSteps(1);
  totalProgress->setValue(0);
 }
 

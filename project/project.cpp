@@ -1033,6 +1033,7 @@ void Project::slotRemove(const KURL& urlToRemove)
       else break;
     }
   }
+  emit closeFile(urlToRemove);
   emit reloadTree( m_projectFiles, false );
   emit newStatus();
 }

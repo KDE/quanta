@@ -1083,6 +1083,7 @@ void Parser::clearGroups()
   m_groups.clear();
   includedFiles.clear();
   includedFilesDTD.clear();
+  selectors.clear();
   delete includeWatch;
   includeWatch = new KDirWatch();
   connect(includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
@@ -1388,7 +1389,11 @@ void Parser::parseForScriptGroup(Node *node)
         newTag->setTagPosition(area);
         newTag->setStr(title);
         newTag->name = s;
-
+        
+        if (dtd->name == "text/css" && group.name == "Selectors")
+        {
+          selectors.append(s);
+        }
         groupElement.tag = newTag;
         groupElement.node = node;
         //Find out if the current node is inside a script structure or not.

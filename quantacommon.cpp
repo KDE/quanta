@@ -181,12 +181,14 @@ AttributeList*  QuantaCommon::tagAttributes(const QString& dtdName, const QStrin
 
   return attrs;
 }
+
 /** Returns the QTag object for the tag "tag" from the DTD named "dtdname". */
 QTag* QuantaCommon::tagFromDTD(const QString& dtdName, const QString& tag)
 {
   DTDStruct* dtd = dtds->find(dtdName.lower());
   return tagFromDTD(dtd, tag);
 }
+
 /** Returns the QTag object for the tag "tag" from the DTD. */
 QTag* QuantaCommon::tagFromDTD(DTDStruct *dtd, const QString& tag)
 {
@@ -198,6 +200,15 @@ QTag* QuantaCommon::tagFromDTD(DTDStruct *dtd, const QString& tag)
   }
 
  return qtag;
+}
+
+/** Returns the QTag object for the node "node" from node's DTD. */
+QTag* QuantaCommon::tagFromDTD(Node *node)
+{
+  if(!node || !node->tag)
+    return 0L;
+
+  return tagFromDTD(node->tag->dtd, node->tag->name);
 }
 
 /** Returns an XML style string containing the GUI for attributes. */

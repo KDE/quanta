@@ -213,6 +213,38 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
           pos++;
     sPos = pos++;
  }
+ 
+ //add the tag to the document usertag list if it's not present in the dtd
+  if (m_tagStr.startsWith("<") && m_tagStr.endsWith(">") && dtd)
+  {
+    //QString tagName = (m_parsingDTD->caseSensitive) ? name : name.upper();
+    QString tagName = name.lower();
+    //add the new xml tags to the userTagList
+    if ( !QuantaCommon::isKnownTag(dtd->name, tagName) &&
+          name[0] != '/' )
+    {
+      QTag *newTag = m_write->userTagList.find(tagName);
+      bool insertNew = !newTag;
+      if (insertNew)
+      {
+        newTag = new QTag();
+        newTag->setName(name);
+        newTag->parentDTD = dtd;
+      }
+      for (int i = 0; i >attrCount(); i++)
+      {
+        Attribute *attr = new Attribute;
+        attr->name = attribute(i);
+        attr->values.append(attributeValue(i));
+        newTag->addAttribute(attr);
+        delete attr;
+      }
+      if (insertNew)
+      {
+        m_write->userTagList.insert(tagName, newTag);
+      }
+    }
+  }
 }
 
 
@@ -273,7 +305,8 @@ void Tag::setAttributePosition(int index, int bLineName, int bColName, int bLine
   attr.valueLine = bLineValue;
   attr.valueCol = bColValue;
   attrs.remove(attrs.at(index));
-  attrs.append(attr);
+  //attrs.append(attr);
+  attrs.insert(attrs.at(index) ,attr);
 }
 
 /** Set the coordinates of tag inside the document */

@@ -314,6 +314,8 @@ void QuantaApp::initProject()
 
   connect(m_project,  SIGNAL(openFile    (const KURL &, const QString&)),
           this,     SLOT  (slotFileOpen(const KURL &, const QString&)));
+  connect(m_project,  SIGNAL(closeFile   (const KURL &)),
+          this,     SLOT  (slotFileClose(const KURL &)));
   connect(m_project,  SIGNAL(reloadTree(const KURL::List & ,bool)),
           pTab,     SLOT  (slotReloadTree(const KURL::List &,bool)));
   connect(m_project,  SIGNAL(setBaseURL(const KURL&)),
@@ -865,7 +867,7 @@ void QuantaApp::openLastFiles()
  //   kapp->eventLoop()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
   }
   m_config->sync();
-  m_doc->blockSignals(false);
+  m_doc->blockSignals(false);  
   m_view->writeTab()->blockSignals(false);
   Document *w = m_view->write();
   if (w) //w==0 might happen on quick close on startup
@@ -2357,6 +2359,8 @@ void QuantaApp::recoverCrashed(QStringList& recoveredFileNameList)
      }
     }
   }
+  
+  m_view->writeTab()->blockSignals(false);
  }
  void QuantaApp::execCommandPS(const QString& cmd)
  {

@@ -173,6 +173,20 @@ AttributeItem::AttributeItem(EditableTree *listView, const QString& title, const
   lin2->hide();
 }
 
+AttributeItem::AttributeItem(EditableTree *listView, const QString& title, const QString& title2,
+  QListViewItem* after)
+: KListViewItem(listView, after, title, title2)
+{
+  m_listView = listView;
+  lin = new QLineEdit( m_listView->viewport() );
+  lin2 = new QLineEdit( m_listView->viewport() );
+  lin2->setText(title);
+  lin->setText(title2);
+  QObject::connect( lin, SIGNAL( returnPressed() ), m_listView, SLOT( editorContentChanged() ) );
+  lin->hide();
+  lin2->hide();
+}
+
 AttributeItem::~AttributeItem()
 {
   if(lin)

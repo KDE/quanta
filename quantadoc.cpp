@@ -99,6 +99,7 @@ KURL::List QuantaDoc::openedFiles(bool noUntitled)
 
 bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
 {
+  quantaApp->slotShowMainDock(true);
   bool newfile = false;
   QString furl = url.url();
   if ( furl.isEmpty() ) newfile = true;

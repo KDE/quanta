@@ -181,30 +181,33 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         item->setVisible(false);
       }
       currentNode->listItem = item;
-      if (currentNode->tag->dtd->family == Xml &&
-          currentNode->groupTag &&
-          groupIds.contains(currentNode->group->name))
+      if (currentNode->tag->dtd->family == Xml)
       {
-        XMLStructGroup *group = currentNode->group;
-        StructTreeTag *groupItem = groups[groupIds[group->name]];
-        QListViewItem* insertAfter = 0L;
-        QListViewItem* insertUnder = groupItem;
-        if (groupItems.contains(currentNode->groupTag->name))
-            insertUnder = groupItems[currentNode->groupTag->name];
-        if (lastItemInGroup.contains(group->name))
-            insertAfter = lastItemInGroup[group->name];
-
-        StructTreeTag *item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), currentNode, currentNode->groupTag->name, insertAfter);
-        item->groupTag = currentNode->groupTag;
-        if (insertUnder == groupItem)
+        if (currentNode->groupTag &&
+            groupIds.contains(currentNode->group->name))
         {
-          groupItems[currentNode->groupTag->name] = item;
-          lastItemInGroup[group->name] = item;
+          XMLStructGroup *group = currentNode->group;
+          StructTreeTag *groupItem = groups[groupIds[group->name]];
+          QListViewItem* insertAfter = 0L;
+          QListViewItem* insertUnder = groupItem;
+          if (groupItems.contains(currentNode->groupTag->name))
+              insertUnder = groupItems[currentNode->groupTag->name];
+          if (lastItemInGroup.contains(group->name))
+              insertAfter = lastItemInGroup[group->name];
+  
+          StructTreeTag *item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), currentNode, currentNode->groupTag->name, insertAfter);
+          item->groupTag = currentNode->groupTag;
+          if (insertUnder == groupItem)
+          {
+            groupItems[currentNode->groupTag->name] = item;
+            lastItemInGroup[group->name] = item;
+          }
+          item->hasOpenFileMenu = group->hasFileName;
+          item->fileNameRx = group->fileNameRx;
+  
         }
-        item->hasOpenFileMenu = group->hasFileName;
-        item->fileNameRx = group->fileNameRx;
-
       }
+      
       //go to the child node, if it exists
       if (currentNode->child)
       {
@@ -319,45 +322,6 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     }
   }
 }
-
-/*TODO: move this code to some other place
-      case Tag::XmlTag:
-           {
-             QString name = currentNode->tag->name;
-             //QString tagName = (m_parsingDTD->caseSensitive) ? name : name.upper();
-             QString tagName = name.lower();
-             //add the new xml tags to the userTagList
-             if ( !QuantaCommon::isKnownTag(m_parsingDTD->name, tagName) &&
-                   startWithLetterRx.exactMatch(name) )
-             {
-               Document *w = currentNode->tag->write();
-               QTag *newTag = w->userTagList.find(tagName);
-               bool insertNew = !newTag;
-               if (insertNew)
-               {
-                 newTag = new QTag();
-                 newTag->setName(name);
-                 newTag->parentDTD = m_parsingDTD;
-               }
-               for (int i = 0; i < currentNode->tag->attrCount(); i++)
-               {
-                 Attribute *attr = new Attribute;
-                 attr->name = currentNode->tag->attribute(i);
-                 attr->values.append(currentNode->tag->attributeValue(i));
-                 newTag->addAttribute(attr);
-                 delete attr;
-               }
-               if (insertNew)
-               {
-                 w->userTagList.insert(tagName, newTag);
-               }
-             }
-
-             item = new StructTreeTag(parent, currentNode, currentNode->tag->name, lastItem);
-             parseForGroups = true;
-             break;
-           }
-*/
 
 /** Delete the items */
 void StructTreeView::deleteList()

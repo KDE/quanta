@@ -213,7 +213,7 @@ void QuantaApp::slotFileOpen()
 void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
 {
   m_doc->openDocument( url, encoding );
-  m_view->write()->view()->setFocus();
+  slotUpdateStatus(m_view->write());
 }
 
 void QuantaApp::slotFileOpenRecent(const KURL &url)
@@ -499,6 +499,14 @@ void QuantaApp::slotFileClose()
  }
 
 }
+
+void QuantaApp::slotFileClose(const KURL &url)
+{
+  Document *w = m_doc->isOpened(url);
+  if (w)
+    slotClosePage(w);
+}
+
 
 void QuantaApp::slotFileCloseAll()
 {
@@ -1714,6 +1722,20 @@ void QuantaApp::slotShowProblemsDock(bool force)
     m_problemOutput->showMessage(i18n("Switch to the Structure Tree in order to turn on the error recognition.\n"));
   }
 }
+
+void QuantaApp::slotShowMainDock(bool force)
+{
+  if (!force)
+      maindock->changeHideShowState();
+  else
+  {
+    if (!maindock->isVisible())
+      maindock->changeHideShowState();
+    maindock->show();
+  }
+}
+
+
 void QuantaApp::slotShowBottDock(bool force)
 {
   if ( bottdock->parent() == 0L )
@@ -4103,7 +4125,7 @@ void QuantaApp::slotReloadStructTreeView()
 
 QString QuantaApp::saveCurrentFile()
 {
-  if (!view()->writeExists()) 
+  if (!view()->writeExists())
     return QString::null;
   Document *w = view()->write();
   if (w->isModified())

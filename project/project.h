@@ -124,6 +124,7 @@ public slots:
 signals:
 
   void openFile( const KURL&, const QString& );
+  void closeFile( const KURL&);
   void closeFiles();
 
   void setBaseURL( const KURL& url );

@@ -48,6 +48,7 @@ ProjectTreeBranch::ProjectTreeBranch(KFileTreeView *parent, const KURL& url,
                                      KFileTreeViewItem *branchRoot)
     : FilesTreeBranch(parent, url, name, pix, showHidden, branchRoot)
 {
+  setAutoUpdate(false);
 }
 
 KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,

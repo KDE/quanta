@@ -88,6 +88,7 @@ public:
   IncludedGroupElementsMap includedMap;
   bool parsingEnabled;
   int nodeNum;
+  QStringList selectors; //holds the CSS selectors
 
 private slots:
   void slotIncludedFileChanged(const QString& fileName);
