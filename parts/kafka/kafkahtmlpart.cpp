@@ -49,6 +49,7 @@
 #include "wkafkapart.h"
 #include "undoredo.h"
 #include "nodeproperties.h"
+#include "tagactionset.h"
 #include "document.h"
 #include "resource.h"
 #include "quanta.h"

@@ -26,6 +26,8 @@ class KActionSeparator;
 
 #include <qobject.h>
 class QWidget;
+class KActionSet;
+class KActionMenu;
 
 class Node;
 class NodeModifsSet;

@@ -46,7 +46,7 @@ const QStringList HTMLColors(QStringList::split(",",QString("aliceblue,antiquewh
   const QStringList frequencyUnits(QStringList::split(",",QString("Hz,kHz")));
   const QStringList angleUnits(QStringList::split(",",QString("deg,rad,grad")));
   const QStringList timeUnits(QStringList::split(",",QString("s,ms")));
-};                                                                   
+}
 
                                                                    
 class mySpinBox : public QSpinBox{
