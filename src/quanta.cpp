@@ -897,6 +897,7 @@ void QuantaApp::slotNewStatus()
 
 void QuantaApp::slotOptionsConfigureKeys()
 {
+  Document *w = ViewManager::ref()->activeDocument();
   KKeyDialog dlg( false, this );
   QPtrList<KXMLGUIClient> clients = guiFactory()->clients();
   for( QPtrListIterator<KXMLGUIClient> it( clients );
@@ -907,8 +908,6 @@ void QuantaApp::slotOptionsConfigureKeys()
   {
   // this is needed for when we have multiple embedded kateparts and change one of them.
     // it also needs to be done to their views, as they too have actioncollections to update
-    //FIXME: In case of resetting an action to the default shortcut, it doesn't work.
-    // The problem might be in reloadXML()
       if( const QPtrList<KParts::Part> * partlist = m_partManager->parts() )
       {
           QPtrListIterator<KParts::Part> it( *partlist );
@@ -916,14 +915,31 @@ void QuantaApp::slotOptionsConfigureKeys()
           {
               if ( KTextEditor::Document * doc = dynamic_cast<KTextEditor::Document*>( part ) )
               {
+                  KActionPtrList actionList = doc->actionCollection()->actions();
+                  KActionPtrList::Iterator actionIt;
+                  if (!w || w->doc() != doc)
+                  {
+                    for ( actionIt = actionList.begin(); actionIt != actionList.end(); ++actionIt )
+                    {
+                        (*actionIt)->setShortcut((*actionIt)->shortcutDefault());
+                    }
+                  }
                   doc->reloadXML();
 
                   QPtrList<KTextEditor::View> const & list = doc->views();
                   QPtrListIterator<KTextEditor::View> itt( list );
                   while( KTextEditor::View * view = itt.current() )
                   {
-                      view->reloadXML();
-                      ++itt;
+                     if (!w || w->view() != view)
+                     {
+                        actionList = view->actionCollection()->actions();
+                        for ( actionIt = actionList.begin(); actionIt != actionList.end(); ++actionIt )
+                        {
+                            (*actionIt)->setShortcut((*actionIt)->shortcutDefault());
+                        }
+                     }
+                     view->reloadXML();
+                     ++itt;
                   }
               }
               ++it;
