@@ -145,7 +145,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
   m_folderMenu = new KPopupMenu(this);
 
-  m_folderMenu->insertItem(SmallIcon("empty"), i18n("&Create New"), createNewMenu);
+  m_folderMenu->insertItem(SmallIconSet("filenew"), i18n("&Create New"), createNewMenu);
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("up"), i18n("&Upload Folder..."), this, SLOT(slotUploadSingleURL()));
   m_folderMenu->insertItem(SmallIcon("up"), i18n("&Quick Folder Upload"), this, SLOT(slotQuickUploadURL()));
@@ -159,7 +159,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   m_projectMenu = new KPopupMenu(this);
-  m_projectMenu->insertItem(SmallIcon("empty"), i18n("&Create New"), createNewMenu);
+  m_projectMenu->insertItem(SmallIconSet("filenew"), i18n("&Create New"), createNewMenu);
   m_projectMenu->insertSeparator();
   m_projectMenu->insertItem(SmallIcon("up"), i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
   m_projectMenu->insertItem(SmallIcon("reload"), i18n("Re&scan Project Folder..."), this, SLOT(slotRescan()));

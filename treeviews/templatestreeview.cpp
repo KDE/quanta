@@ -160,6 +160,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("&New Folder..."), this, SLOT(slotNewDir()));
   m_folderMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
   m_folderMenu->insertItem(SmallIcon("network"), i18n("&Upload Template..."), this, SLOT(slotUploadTemplate()));
+  m_downloadMenuId = m_folderMenu->insertItem(SmallIcon("network"), i18n("&Download Template..."), this, SIGNAL(downloadTemplate()));
   m_insertFolderInProject = m_folderMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertDirInProject()));
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
@@ -168,7 +169,6 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
   m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("revert"), i18n("&Reload"), this, SLOT(slotReload()));
-  m_downloadMenuId = m_folderMenu->insertItem(SmallIcon("network"), i18n("&Download Template..."), this, SIGNAL(downloadTemplate()));
 
   m_emptyAreaMenu = new KPopupMenu(this);
   m_emptyAreaMenu->insertItem(SmallIcon("network"), i18n("&Download Template..."), this, SIGNAL(downloadTemplate()));
