@@ -381,6 +381,7 @@ protected slots:
   void slotOpenFileUnderCursor();
   void slotUploadFile();
   void slotUploadOpenedFiles();
+  void slotDeleteFile();
   /** Called after there was no user activity - cursor movement - for xx ms*/
   void slotIdleTimerExpired();
 

@@ -2055,6 +2055,9 @@ void QuantaApp::initActions()
 
     new KAction(i18n("Open File: none"), 0, this, SLOT(slotOpenFileUnderCursor()), ac, "open_file_under_cursor");
     new KAction(i18n("Upload..."), 0, this, SLOT(slotUploadFile()), ac, "upload_file");
+    new KAction(i18n("Delete File"), 0, this, SLOT(slotDeleteFile()), ac, "delete_file");
+
+    QString ss = i18n("Upload Opened Project Files...");
 /*    new KAction(i18n("Upload Opened Project Files"), 0, this, SLOT(slotUploadOpenedFiles()), ac, "upload_opened_files"); */
 
     m_actions = new QDomDocument();

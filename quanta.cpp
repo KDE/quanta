@@ -80,6 +80,8 @@
 #include <ktexteditor/dynwordwrapinterface.h>
 #include <ktexteditor/encodinginterface.h>
 
+#include <kio/netaccess.h>
+
 #include <kate/view.h>
 
 #if KDE_IS_VERSION(3,1,90)
@@ -3552,6 +3554,24 @@ void QuantaApp::slotUploadFile()
 
 void QuantaApp::slotUploadOpenedFiles()
 {
+}
+
+void QuantaApp::slotDeleteFile()
+{
+  KURL url = m_view->write()->url();
+  if (KMessageBox::questionYesNo(this,
+                   i18n("<qt>Do you really want to delete the file <b>%1</b> ?</qt>")
+                   .arg(url.prettyURL(0, KURL::StripFileProtocol)),
+                   i18n("Delete File")) == KMessageBox::Yes)
+  {
+    if (KIO::NetAccess::del(url))
+    {
+      if (m_project->hasProject())
+        m_project->slotRemove(url);
+    }
+    m_view->write()->setModified(false); //don't ask for save
+    slotFileClose();
+  }
 }
 
 void QuantaApp::slotFind ()

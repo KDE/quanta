@@ -464,9 +464,9 @@ void FilesTreeView::slotDelete()
     KURL url = currentURL();
     QString msg;
     if ( currentKFileTreeViewItem()->isDir() )
-      msg = i18n("Do you really want to delete folder \n%1 ?\n").arg(url.path());
+      msg = i18n("<qt>Do you really want to delete folder <b>%1</b> ?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
     else
-      msg = i18n("Do you really want to delete file \n%1 ?\n").arg(url.path());
+      msg = i18n("<qt>Do you really want to delete file <b>%1</b> ?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol));
 
     if ( KMessageBox::warningYesNo(this, msg) == KMessageBox::Yes )
     {
