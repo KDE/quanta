@@ -243,7 +243,7 @@ QString TagDialog::getAttributeString()
 }
 
 /**Return the value of the attribute specified by attr. */
-QString TagDialog::getAttribute(QString attr)
+QString TagDialog::getAttribute(const QString& attr)
 {
  QString attrStr = getAttributeString()+" ";
  int pos = attrStr.upper().find(attr.upper());

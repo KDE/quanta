@@ -239,8 +239,10 @@ void Tagxml::readAttributes( QDict<QString> *d )
      name = attr->attrName();
      value = attr->value();
 
-     if ( value.isEmpty() ) d->remove(name);
-    else {
+     if ( value.isEmpty() )
+        d->remove(name);
+     else
+     {
       if ( dynamic_cast<Attr_check *>(attr) ) // checkbox
       {
         if (m_dtd->booleanAttributes == "simple")
@@ -258,7 +260,12 @@ void Tagxml::readAttributes( QDict<QString> *d )
           d->replace(name, new QString(value));
         }
       }
-      else
+      if (dynamic_cast<Attr_file *>(attr))
+      {
+        value = KURL::encode_string(value);
+        d->replace(name, new QString(value));
+      } else
+        value.replace(QRegExp("&(?!amp;)"), "&amp;");
         d->replace(name, new QString(value) );
     }
 
@@ -279,9 +286,13 @@ void Tagxml::writeAttributes( QDict<QString> *d )
 
      QString *v = d->find(name);
      if ( v ) {
+       v->replace("&amp;","&");
        if ( dynamic_cast<Attr_check *>(attr) ) // checkbox
-        value = "checked";
-      else
+         value = "checked";
+       else
+       if ( dynamic_cast<Attr_file *>(attr))
+         value = KURL::decode_string(value);
+       else
          value = *v;
     }
     else value = "";

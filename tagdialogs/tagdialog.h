@@ -67,7 +67,7 @@ public:
   /** Return all the attributes in one string*/
   QString getAttributeString();
   /**Return the value of the attribute specified by attr. */
-  QString getAttribute(QString attr);
+  QString getAttribute(const QString& attr);
   /** Insert the new tag into the Document*/
   void insertTag(Document *w, bool insertInLine = true);
 
