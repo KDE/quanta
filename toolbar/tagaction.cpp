@@ -69,7 +69,7 @@ TagAction::~TagAction()
 
 void TagAction::insertTag()
 {
-  if ( !m_view )
+  if ( !m_view || !m_view->writeExists())
      return;
 
   QString space="";

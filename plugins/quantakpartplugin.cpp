@@ -36,6 +36,7 @@
 #include "quantaplugininterface.h"
 #include "quantaplugin.h"
 #include "../quanta.h"
+#include "../quantaview.h"
 #include "../quantacommon.h"
 #include "../resource.h"
 #include "../messages/messageoutput.h"
@@ -81,17 +82,17 @@ bool QuantaKPartPlugin::load()
   QString ow = outputWindow();
   if(ow == i18n("Editor View"))
   {
-    QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
+    QuantaView *view = quantaApp->getView();
 
     QFileInfo partInfo(loc);
-    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), stack, 0, stack, 0, QStringList(arguments()));
+    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), view->writeTab, 0, view->writeTab, 0, QStringList(arguments()));
     if(!m_part)
     {
       qWarning("Failed to create KPart");
       return FALSE;
     }
 
-    stack->addWidget(m_part->widget());
+    view->addWrite(m_part->widget(), m_name);
   }
   else if(ow == i18n("Output Dock"))
   {

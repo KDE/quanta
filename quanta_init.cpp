@@ -752,14 +752,18 @@ bool QuantaApp::queryClose()
       for (int i = view->writeTab->count() -1; i >=0; i--)
       {
         w = dynamic_cast<Document*>(view->writeTab->page(i));
-        w->setModified(false);
+        if (w)
+           w->setModified(false);
       }
-      
+
       project->slotCloseProject();
       do
       {
-        w = view->write();
-        w->closeTempFile();
+        if (view->writeExists())
+        {
+          w = view->write();
+          w->closeTempFile();
+        }
       }while (view->removeWrite());
     }
   }

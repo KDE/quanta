@@ -92,7 +92,7 @@ KURL::List QuantaDoc::openedFiles(bool noUntitled)
     for (int i = 0; i < tab->count(); i++) 
     {
       Document *w = dynamic_cast<Document *>(tab->page(i));
-      if ( !w->isUntitled() || !noUntitled )
+      if ( w && (!w->isUntitled() || !noUntitled) )
         list.append( w->url() );
     }
   }
@@ -256,7 +256,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
   for (int i = docTab->count() -1; i >=0; i--) 
   {
     w = dynamic_cast<Document*>(docTab->page(i));
-    if ( w->isModified() )
+    if ( w && w->isModified() )
     {
       if (!w->isUntitled())
           fileWatcher->removeFile(w->url().path());
@@ -283,10 +283,13 @@ void QuantaDoc::closeDocument()
 {
   if (saveModified())
   {
-    Document *w = write();
-    w->closeTempFile();
-    if (!w->isUntitled())
-       fileWatcher->removeFile(w->url().path());
+    if (quantaApp->view->writeExists())
+    {
+      Document *w = write();
+      w->closeTempFile();
+      if (!w->isUntitled())
+        fileWatcher->removeFile(w->url().path());
+    }
     if ( !quantaApp->view->removeWrite()) openDocument( KURL() );
   }
 }
@@ -324,22 +327,23 @@ void QuantaDoc::readConfig( KConfig *config )
   for (int i = docTab->count() -1; i >=0; i--)
   {
     w = dynamic_cast<Document*>(docTab->page(i));
-    config->setGroup("General Options");
-
-    w -> readConfig( config );
+    if (w)
+    {
+      config->setGroup("General Options");
+      w -> readConfig( config );
+    }
   }
 }
 
 void QuantaDoc::writeConfig( KConfig *config )
 {
-  config->setGroup("General Options");
-
-  write()-> writeConfig( config );
-  config -> sync();
-
-  // read the config
-  // with all kwrite
-  readConfig( config );
+  if (quantaApp->view->writeExists())
+  {
+    config->setGroup("General Options");
+    write()-> writeConfig( config );
+    config -> sync();
+    readConfig( config );
+  }
 }
 
 bool QuantaDoc::saveModified()
@@ -405,7 +409,7 @@ bool QuantaDoc::isModifiedAll()
   for (int i = docTab->count() -1; i >=0; i--)
   {
     w = dynamic_cast<Document*>(docTab->page(i));
-    if ( w->isModified() ) modified = true;
+    if (w && w->isModified() ) modified = true;
   }
 
   return modified;
@@ -684,11 +688,12 @@ Document* QuantaDoc::isOpened(const KURL& url)
   QTabWidget *tab = quantaApp->getView()->writeTab;
   for (int i = 0; i < tab->count(); i++)
   {
-    if (dynamic_cast<Document*>(tab->page(i))->url() == url)
+    w = dynamic_cast<Document*>(tab->page(i));
+    if (w && w->url() == url)
     {
-      w = dynamic_cast<Document*>(tab->page(i));
       break;
     }
+    w = 0L;
   }
   return w;
 }

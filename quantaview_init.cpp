@@ -107,26 +107,29 @@ Document* QuantaView::write()
 }
 
 /** Add new kwrite class to writeStack and return id in stack */
-void QuantaView::addWrite( Document* w , QString label )
+void QuantaView::addWrite( QWidget* w , QString label )
 {
   QIconSet emptyIcon ( UserIcon("empty1x16"));
   writeTab->addTab  ( w,  emptyIcon,  label.section("/",-1) );
   writeTab->setTabToolTip(w, label);
   writeTab->showPage( w );
-  connect( w->view(),
-           SIGNAL(cursorPositionChanged()), this, SLOT(slotNewCurPos()));
+  if (dynamic_cast<Document *>(w))
+  {
+    connect( dynamic_cast<Document*>(w)->view(),
+             SIGNAL(cursorPositionChanged()), this, SLOT(slotNewCurPos()));
+  }
 }
 
 /** remove KWrite class from stack, return id of new KWrite */
-Document* QuantaView::removeWrite()
+QWidget* QuantaView::removeWrite()
 {
+  writeTab->removePage( writeTab->currentPage() );
   if (writeExists())
   {
     Document *w = write();
-    writeTab->removePage( w );
     delete w;
   }
-  return dynamic_cast<Document *>(writeTab->currentPage()); //don't call write() here
+  return writeTab->currentPage(); //don't call write() here
 }
 
 void QuantaView::initActions()

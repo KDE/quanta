@@ -63,10 +63,10 @@ class QuantaView : public QWidget
     Document* write();
     
     /** Add new kwrite class to writeStack and return id in stack */
-    void addWrite( Document* w , QString label );
+    void addWrite( QWidget* w , QString label );
     
     /** remove KWrite class from stack, return id of new KWrite */
-    Document* removeWrite();
+    QWidget* removeWrite();
     
     /** initialise tags menu */
     void initMenu();

@@ -201,35 +201,41 @@ void QuantaApp::slotFileSave()
 
 void QuantaApp::slotFileSaveAs()
 {
-  Document *w = view->write();
-  KURL oldURL = w->url();
-  w->checkDirtyStatus();
-  fileWatcher->stopScan();
-  if (w->kate_view->saveAs() == Kate::View::SAVE_OK)
+  if (view->writeExists())
   {
-    w->createTempFile();
-
-    KURL url = w->doc()->url();
-
-    if ( ( project->hasProject() ) &&
-         ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project ?").arg(url.url())) )
-       )  
+    Document *w = view->write();
+    KURL oldURL = w->url();
+    w->checkDirtyStatus();
+    fileWatcher->stopScan();
+    if (w->kate_view->saveAs() == Kate::View::SAVE_OK)
     {
-      project->insertFile(url,true);
-    }
+      w->createTempFile();
 
-    if ( oldURL != url )
-    {
-      doc->changeFileTabName();
+      KURL url = w->doc()->url();
+
+      if ( ( project->hasProject() ) &&
+          ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project ?").arg(url.url())) )
+        )
+      {
+        project->insertFile(url,true);
+      }
+
+      if ( oldURL != url )
+      {
+        doc->changeFileTabName();
+      }
+      slotUpdateStatus(w);
     }
-    slotUpdateStatus(w);
+    fileWatcher->startScan();
   }
-  fileWatcher->startScan();
 }
 
 void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 {
 //TODO: Saving is limited to local files...
+
+  if (!view->writeExists()) return;
+
   KURL url;
   int query;
   KURL projectTemplateURL;
@@ -354,7 +360,8 @@ void QuantaApp::slotFilePrev()
 
 void QuantaApp::slotFilePrint()
 {
- dynamic_cast<KTextEditor::PrintInterface*>(view->write()->doc())->printDialog();
+ if (view->writeExists())
+     dynamic_cast<KTextEditor::PrintInterface*>(view->write()->doc())->printDialog();
 }
 
 void QuantaApp::slotFileQuit()
@@ -437,6 +444,7 @@ void QuantaApp::slotViewRepaint()
 /** repaint preview */
 void QuantaApp::repaintPreview( bool clear )
 {
+  if (!view->writeExists()) return;
   static QString oldtext = "";
 
   previewCopyMade = false;
@@ -524,37 +532,40 @@ void QuantaApp::slotImageOpen(const KURL& url)
 /** insert <img> tag for images or <a> for other */
 void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 {
-  KURL baseURL = projectBaseURL();
-  KURL relURL = QExtFileInfo::toRelative( url, baseURL);
-  QString urlStr = relURL.url();
-  if (relURL.protocol() == baseURL.protocol())
-      urlStr = relURL.path();
-  Document *w = view->write();
-  bool isImage = false;
-  
-  if (!dirInfo.preText.isEmpty() || !dirInfo.postText.isEmpty())
+  if (view->writeExists())
   {
-     w->insertTag(dirInfo.preText+urlStr+dirInfo.postText);
-  } else
-  {
-    if (url.isLocalFile())
+    KURL baseURL = projectBaseURL();
+    KURL relURL = QExtFileInfo::toRelative( url, baseURL);
+    QString urlStr = relURL.url();
+    if (relURL.protocol() == baseURL.protocol())
+        urlStr = relURL.path();
+    Document *w = view->write();
+    bool isImage = false;
+
+    if (!dirInfo.preText.isEmpty() || !dirInfo.postText.isEmpty())
     {
-       QImage img(url.path());
-      if ( !img.isNull() )
+      w->insertTag(dirInfo.preText+urlStr+dirInfo.postText);
+    } else
+    {
+      if (url.isLocalFile())
       {
-        QString width,height;
-        width.setNum( img.width () );
-        height.setNum( img.height() );
-        w->insertTag("<img src=\""+urlStr+"\" width=\""+width+"\" height=\""+height+"\" border=\"0\">");
-        isImage = true;
+        QImage img(url.path());
+        if ( !img.isNull() )
+        {
+          QString width,height;
+          width.setNum( img.width () );
+          height.setNum( img.height() );
+          w->insertTag("<img src=\""+urlStr+"\" width=\""+width+"\" height=\""+height+"\" border=\"0\">");
+          isImage = true;
+        }
+      }
+      if (!isImage)
+      {
+        w->insertTag( "<a href=\""+urlStr+"\">","</a>");
       }
     }
-    if (!isImage)
-    {
-      w->insertTag( "<a href=\""+urlStr+"\">","</a>");
-    }
+  //  w->view()->setFocus();
   }
-//  w->view()->setFocus();
 }
 
 ////////////////////////
@@ -644,6 +655,8 @@ void QuantaApp::slotNewUndo()
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
   Document *newWrite = dynamic_cast<Document *>(w);
+
+  if (!newWrite) return;
   dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
   newWrite->checkDirtyStatus();
   if (newWrite != view->oldWrite)
@@ -978,8 +991,9 @@ void QuantaApp::slotActivatePreview()
 
 void QuantaApp::slotShowPreview()
 {
+  if (!view->writeExists()) return;
   WHTMLPart *part = htmlPart();
-   QWidgetStack *s = widgetStackOfHtmlPart();
+  QWidgetStack *s = widgetStackOfHtmlPart();
   Document *w = view->write();
 
   if ( !s ) return;
@@ -1098,25 +1112,31 @@ void QuantaApp::reparse(bool force)
 
 void QuantaApp::setCursorPosition( int row, int col )
 {
-  Document *w = view->write();
+  if (view->writeExists())
+  {
+    Document *w = view->write();
 
-  int numLines = w->editIf->numLines();
+    int numLines = w->editIf->numLines();
 
-  if ( row < numLines )
-    w->viewCursorIf->setCursorPositionReal(row, col);
-  else
-    w->viewCursorIf->setCursorPositionReal(numLines - 1, col);
+    if ( row < numLines )
+      w->viewCursorIf->setCursorPositionReal(row, col);
+    else
+      w->viewCursorIf->setCursorPositionReal(numLines - 1, col);
+  }
 }
 
 void QuantaApp::gotoFileAndLine(QString filename, int line )
 {
   if ( !filename.isEmpty() ) doc->openDocument( filename );
 
-  Document *w = view->write();
-  int numLines = w->editIf->numLines();
-  if ( numLines > line && line >= 0 )
+  if (view->writeExists())
   {
-    w->viewCursorIf->setCursorPositionReal(line, 0);
+    Document *w = view->write();
+    int numLines = w->editIf->numLines();
+    if ( numLines > line && line >= 0 )
+    {
+      w->viewCursorIf->setCursorPositionReal(line, 0);
+    }
   }
 }
 
@@ -1156,17 +1176,20 @@ void QuantaApp::slotDockChanged()
 
 void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
 {
-  Document *w = view->write();
-  int numLines = w->editIf->numLines();
+  if (view->writeExists())
+  {
+    Document *w = view->write();
+    int numLines = w->editIf->numLines();
 
-  if ( line1 > numLines-1 )
-    line1 = numLines-1;
+    if ( line1 > numLines-1 )
+      line1 = numLines-1;
 
-  if ( line2 > numLines-1 )
-    line2 = numLines-1;
+    if ( line2 > numLines-1 )
+      line2 = numLines-1;
 
-  w->viewCursorIf->setCursorPositionReal(line2, col2);
-  w->selectionIf->setSelection(line1, col1, line2, col2);
+    w->viewCursorIf->setCursorPositionReal(line2, col2);
+    w->selectionIf->setSelection(line1, col1, line2, col2);
+  }
 }
 
 void QuantaApp::openDoc( QString url )
@@ -1266,34 +1289,37 @@ void QuantaApp::viewMenuAboutToShow()
 
 void QuantaApp::slotToolSyntaxCheck()
 {
-//  slotFileSave();
-  Document *w = view->write();
-
-  if ( doc->isModified() )
+  if (view->writeExists())
   {
-    w->saveIt();
-  }
+  //  slotFileSave();
+    Document *w = view->write();
 
-  if ( !w->isUntitled() )
-  {
-    QString fname = w->url().prettyURL();
-    if ( fname.left(5) == "file:" ) fname.remove(0,5);
+    if ( doc->isModified() )
+    {
+      w->saveIt();
+    }
 
-    KProcess *p = new KProcess();
-    *p << "perl";
-    *p << locate("lib","quanta/plugins/weblint");
-    *p << "-x" << "Netscape";
-    *p << fname;
+    if ( !w->isUntitled() )
+    {
+      QString fname = w->url().prettyURL();
+      if ( fname.left(5) == "file:" ) fname.remove(0,5);
 
-    connect( p, SIGNAL(processExited(KProcess *)),
-             messageOutput, SLOT(weblintFinished()) );
-    connect( p, SIGNAL(processExited(KProcess *)),
-             this, SLOT(slotSyntaxCheckDone()) );
-    connect( p, SIGNAL(receivedStdout(KProcess *, char *, int)),
-             messageOutput, SLOT( processWebLint(KProcess *, char *, int)) );
+      KProcess *p = new KProcess();
+      *p << "perl";
+      *p << locate("lib","quanta/plugins/weblint");
+      *p << "-x" << "Netscape";
+      *p << fname;
+
+      connect( p, SIGNAL(processExited(KProcess *)),
+              messageOutput, SLOT(weblintFinished()) );
+      connect( p, SIGNAL(processExited(KProcess *)),
+              this, SLOT(slotSyntaxCheckDone()) );
+      connect( p, SIGNAL(receivedStdout(KProcess *, char *, int)),
+              messageOutput, SLOT( processWebLint(KProcess *, char *, int)) );
 
 
-    p->start( KProcess::NotifyOnExit, KProcess::Stdout);
+      p->start( KProcess::NotifyOnExit, KProcess::Stdout);
+    }
   }
 }
 
@@ -1415,41 +1441,50 @@ void QuantaApp::slotNewProjectLoaded()
 /** No descriptions */
 void QuantaApp::slotInsertFile(const KURL& url)
 {
-  view->write()->insertFile(url);
+  if (view->writeExists())
+  {
+    view->write()->insertFile(url);
+  }
 }
 
 
 //Kate releated
 void QuantaApp::setEOLMenuAboutToShow()
 {
-  int eol = view->write()->kate_view->getEol();
-  eol = eol>=0? eol: 0;
-  setEndOfLine->setCurrentItem( eol );
+  if (view->writeExists())
+  {
+    int eol = view->write()->kate_view->getEol();
+    eol = eol>=0? eol: 0;
+    setEndOfLine->setCurrentItem( eol );
+  }
 }
 
 void QuantaApp::bookmarkMenuAboutToShow()
 {
-  pm_bookmark->clear ();
-  bookmarkToggle->plug (pm_bookmark);
-  bookmarkClear->plug (pm_bookmark);
-
-  Document *w = view->write();
-  markList = dynamic_cast<KTextEditor::MarkInterface*>(w->doc())->marks();
-//Based on Kate code
-  bool hassep = false;
-  for (int i=0; (uint) i < markList.count(); i++)
+  if (view->writeExists())
   {
-    if (markList.at(i)->type & Kate::Document::markType01)
+    pm_bookmark->clear ();
+    bookmarkToggle->plug (pm_bookmark);
+    bookmarkClear->plug (pm_bookmark);
+
+    Document *w = view->write();
+    markList = dynamic_cast<KTextEditor::MarkInterface*>(w->doc())->marks();
+  //Based on Kate code
+    bool hassep = false;
+    for (int i=0; (uint) i < markList.count(); i++)
     {
-      if (!hassep) {
-        pm_bookmark->insertSeparator ();
-        hassep = true;
+      if (markList.at(i)->type & Kate::Document::markType01)
+      {
+        if (!hassep) {
+          pm_bookmark->insertSeparator ();
+          hassep = true;
+        }
+        QString bText = w->editIf->textLine(markList.at(i)->line);
+        bText.truncate(32);
+        bText.append ("...");
+        pm_bookmark->insertItem ( QString("%1 - \"%2\"").arg(markList.at(i)->line+1).arg(bText),
+                                  this, SLOT (gotoBookmark(int)), 0, i );
       }
-      QString bText = w->editIf->textLine(markList.at(i)->line);
-      bText.truncate(32);
-      bText.append ("...");
-      pm_bookmark->insertItem ( QString("%1 - \"%2\"").arg(markList.at(i)->line+1).arg(bText),
-                                 this, SLOT (gotoBookmark(int)), 0, i );
     }
   }
 }
@@ -1462,28 +1497,31 @@ void QuantaApp::gotoBookmark (int n)
 /** No descriptions */
 void QuantaApp::slotSyntaxCheckDone()
 {
-//FIXME:
-//Restore the original doc from the temp file.
-//We should find a better synchronous method to copy the temp file to the current one.
-//A method for this is also a good idea.
-  Document *w = view->write();
-
-  fileWatcher->stopScan();
-  if (doc->isModified())
+  if (view->writeExists())
   {
-    KURL origUrl = w->url();
-    KURL tempUrl;
-    tempUrl.setPath(w->tempFileName());
+  //FIXME:
+  //Restore the original doc from the temp file.
+  //We should find a better synchronous method to copy the temp file to the current one.
+  //A method for this is also a good idea.
+    Document *w = view->write();
 
-    KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
-                                  QString::null,
-                                  this, 0,
-                                  this, 0 );
-    doc2->openURL(tempUrl);
-    doc2->saveAs(origUrl);
-    delete doc2;
+    fileWatcher->stopScan();
+    if (doc->isModified())
+    {
+      KURL origUrl = w->url();
+      KURL tempUrl;
+      tempUrl.setPath(w->tempFileName());
+
+      KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
+                                    QString::null,
+                                    this, 0,
+                                    this, 0 );
+      doc2->openURL(tempUrl);
+      doc2->saveAs(origUrl);
+      delete doc2;
+    }
+    fileWatcher->startScan();
   }
-  fileWatcher->startScan();
 }
 
 /** Load an user toolbar file from the disk. */
@@ -2099,70 +2137,73 @@ void QuantaApp::processDTD(QString documentType)
 /** No descriptions */
 void QuantaApp::slotToolsChangeDTD()
 {
-  DTDSelectDialog *dlg = new DTDSelectDialog(this);
-  Document *w = view->write();
-  int pos = -1;
-  int defaultIndex = 0;
-  
-  Tag *tag = 0L;
-  w->findDTDName(&tag);
-  QString oldDtdName = w->getDTDIdentifier();
-  QString defaultDocType = project->defaultDTD();
-  QDictIterator<DTDStruct> it(*dtds);
-  QStringList lst;
-  for (; it.current(); ++it)
+  if (view->writeExists())
   {
-    if (it.current()->family == Xml)
+    DTDSelectDialog *dlg = new DTDSelectDialog(this);
+    Document *w = view->write();
+    int pos = -1;
+    int defaultIndex = 0;
+
+    Tag *tag = 0L;
+    w->findDTDName(&tag);
+    QString oldDtdName = w->getDTDIdentifier();
+    QString defaultDocType = project->defaultDTD();
+    QDictIterator<DTDStruct> it(*dtds);
+    QStringList lst;
+    for (; it.current(); ++it)
     {
-      lst << it.current()->nickName;
-    }
-  }
-  lst.sort();
-  
-  QString oldDtdNickName = QuantaCommon::getDTDNickNameFromName(oldDtdName);
-  QString defaultDtdNickName = QuantaCommon::getDTDNickNameFromName(defaultDocType);
-  for(uint i = 0; i < lst.count(); i++)
-  {
-    dlg->dtdCombo->insertItem(lst[i]);
-    if (lst[i] == oldDtdNickName) pos = i;
-    if (lst[i] == defaultDtdNickName) defaultIndex = i;
-  }
-  
-  if (pos == -1) pos = defaultIndex;
-  dlg->dtdCombo->setCurrentItem(pos);
-  dlg->messageLabel->setText(i18n("Change the current DTD."));
-  dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier()));
-  if (dlg->exec())
-  {
-    w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
-    if (dlg->convertDTD->isChecked())
-    {
-      if (tag)
+      if (it.current()->family == Xml)
       {
-         QDict<QString> attrDict;
-         uint tagCase = qConfig.tagCase;
-         qConfig.tagCase = 2; //upper case
-         w->changeTag(tag, &attrDict);
-         qConfig.tagCase = tagCase;
-         uint line, col;
-         w->viewCursorIf->cursorPositionReal(&line, &col);
-         if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
-         DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
-         w->insertText(dtd->doctypeStr);
-         delete tag;
-      } else
-      {
-        w->viewCursorIf->setCursorPositionReal(0,0);
-        DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
-        w->insertText("<!DOCTYPE" + dtd->doctypeStr + ">\n");
+        lst << it.current()->nickName;
       }
     }
+    lst.sort();
+
+    QString oldDtdNickName = QuantaCommon::getDTDNickNameFromName(oldDtdName);
+    QString defaultDtdNickName = QuantaCommon::getDTDNickNameFromName(defaultDocType);
+    for(uint i = 0; i < lst.count(); i++)
+    {
+      dlg->dtdCombo->insertItem(lst[i]);
+      if (lst[i] == oldDtdNickName) pos = i;
+      if (lst[i] == defaultDtdNickName) defaultIndex = i;
+    }
+
+    if (pos == -1) pos = defaultIndex;
+    dlg->dtdCombo->setCurrentItem(pos);
+    dlg->messageLabel->setText(i18n("Change the current DTD."));
+    dlg->currentDTD->setText(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier()));
+    if (dlg->exec())
+    {
+      w->setDTDIdentifier(QuantaCommon::getDTDNameFromNickName(dlg->dtdCombo->currentText()));
+      if (dlg->convertDTD->isChecked())
+      {
+        if (tag)
+        {
+          QDict<QString> attrDict;
+          uint tagCase = qConfig.tagCase;
+          qConfig.tagCase = 2; //upper case
+          w->changeTag(tag, &attrDict);
+          qConfig.tagCase = tagCase;
+          uint line, col;
+          w->viewCursorIf->cursorPositionReal(&line, &col);
+          if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
+          DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+          w->insertText(dtd->doctypeStr);
+          delete tag;
+        } else
+        {
+          w->viewCursorIf->setCursorPositionReal(0,0);
+          DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+          w->insertText("<!DOCTYPE" + dtd->doctypeStr + ">\n");
+        }
+      }
+    }
+
+    loadToolbarForDTD(w->getDTDIdentifier());
+    reparse(true);
+
+    delete dlg;
   }
-
-  loadToolbarForDTD(w->getDTDIdentifier());
-  reparse(true);
-
-  delete dlg;
 }
 
 /** No descriptions */
@@ -2322,8 +2363,11 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
 /** No descriptions */
 void QuantaApp::slotParsingDTDChanged(QString newDTDName)
 {
-  view->write()->setParsingDTD(newDTDName);
-  reparse(false);
+  if (view->writeExists())
+  {
+    view->write()->setParsingDTD(newDTDName);
+    reparse(false);
+  }
 }
 
 /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
@@ -2442,104 +2486,118 @@ bool QuantaApp::allToolbarsHidden()
 /** No descriptions */
 void QuantaApp::slotEmailDTD()
 {
-  Document *w = view->write();
-  QStringList lst;
-  int current = 0;
-  int i = 0;
-  QDictIterator<DTDStruct> it(*dtds);
-  for( ; it.current(); ++it )
+  if (view->writeExists())
   {
-    lst << it.current()->nickName;
-    if (it.current()->name == w->getDTDIdentifier()) current = i;
-    i++;
-  }
-  lst.sort();
-  bool ok = FALSE;
-  QString res = QInputDialog::getItem(
-                  i18n( "Send DTD" ),
-                  i18n( "Please select a DTD:" ), lst, current, FALSE, &ok, this );
+    Document *w = view->write();
+    QStringList lst;
+    int current = 0;
+    int i = 0;
+    QDictIterator<DTDStruct> it(*dtds);
+    for( ; it.current(); ++it )
+    {
+      lst << it.current()->nickName;
+      if (it.current()->name == w->getDTDIdentifier()) current = i;
+      i++;
+    }
+    lst.sort();
+    bool ok = FALSE;
+    QString res = QInputDialog::getItem(
+                    i18n( "Send DTD" ),
+                    i18n( "Please select a DTD:" ), lst, current, FALSE, &ok, this );
 
-  if (!ok)
-    return;
+    if (!ok)
+      return;
 
-  QString dtdName = QuantaCommon::getDTDNameFromNickName(res);
+    QString dtdName = QuantaCommon::getDTDNameFromNickName(res);
 
-  QStringList dtdFile;
+    QStringList dtdFile;
 
-  QString prefix="quanta";
-  KTempFile* tempFile = new KTempFile(tmpDir, ".tgz");
-  tempFile->setAutoDelete(true);
+    QString prefix="quanta";
+    KTempFile* tempFile = new KTempFile(tmpDir, ".tgz");
+    tempFile->setAutoDelete(true);
 
-//pack the .tag files and the description.rc into a .tgz file
-  KTar tar(tempFile->name(), "application/x-gzip");
-  tar.open(IO_WriteOnly);
+  //pack the .tag files and the description.rc into a .tgz file
+    KTar tar(tempFile->name(), "application/x-gzip");
+    tar.open(IO_WriteOnly);
 
-  KURL dirURL;
-  dirURL.setPath(dtds->find(dtdName)->fileName);
-  dirURL.setPath(dirURL.directory(false));
+    KURL dirURL;
+    dirURL.setPath(dtds->find(dtdName)->fileName);
+    dirURL.setPath(dirURL.directory(false));
 
-  KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*");
-  for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
-  {
-    QString name = (*it_f).fileName();
+    KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*");
+    for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+    {
+      QString name = (*it_f).fileName();
 
-    QFile file(dirURL.path()+name);
-    file.open(IO_ReadOnly);
-    QByteArray bArray = file.readAll();
-    tar.writeFile(dirURL.fileName()+"/"+name, "user", "group", bArray.size(), bArray.data());
-    file.close();
+      QFile file(dirURL.path()+name);
+      file.open(IO_ReadOnly);
+      QByteArray bArray = file.readAll();
+      tar.writeFile(dirURL.fileName()+"/"+name, "user", "group", bArray.size(), bArray.data());
+      file.close();
 
-  }
-  tar.close();
-  
-  tempFile->close();
-  tempFileList.append(tempFile);
+    }
+    tar.close();
 
-  dtdFile += tempFile->name();
-  
+    tempFile->close();
+    tempFileList.append(tempFile);
 
-  TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTD in email"));
-  QString toStr;
-  QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] DTD definition tarball.\n\nHave fun.\n");
-  QString titleStr;
-  QString subjectStr;
+    dtdFile += tempFile->name();
 
-  mailDlg->TitleLabel->setText(i18n("Content"));
-  mailDlg->titleEdit->setFixedHeight(60);
-  mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
-  mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
-  if ( mailDlg->exec() ) 
-  {
-   if ( !mailDlg->lineEmail->text().isEmpty())
-   {
-     toStr = +mailDlg->lineEmail->text();
-     subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus DTD"):mailDlg->lineSubject->text();
-     if ( !mailDlg->titleEdit->text().isEmpty())
-        message = mailDlg->titleEdit->text();
-  } else
-  {
-    KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error sending e-mail"));
+
+    TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTD in email"));
+    QString toStr;
+    QString message = i18n("Hi,\n This is a Quanta Plus [http://quanta.sourceforge.net] DTD definition tarball.\n\nHave fun.\n");
+    QString titleStr;
+    QString subjectStr;
+
+    mailDlg->TitleLabel->setText(i18n("Content"));
+    mailDlg->titleEdit->setFixedHeight(60);
+    mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
+    mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
+    if ( mailDlg->exec() )
+    {
+    if ( !mailDlg->lineEmail->text().isEmpty())
+    {
+      toStr = +mailDlg->lineEmail->text();
+      subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus DTD"):mailDlg->lineSubject->text();
+      if ( !mailDlg->titleEdit->text().isEmpty())
+          message = mailDlg->titleEdit->text();
+    } else
+    {
+      KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error sending e-mail"));
+      delete mailDlg;
+      return;
+    }
+
+    QString nullString="";
+    kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, dtdFile);
+    }
     delete mailDlg;
-    return;
   }
-
-   QString nullString="";
-   kapp->invokeMailer(toStr, nullString, nullString, subjectStr, message, nullString, dtdFile);
-  }
-  delete mailDlg;
-
 }
 
 /** Returns the interface number for the currently active editor. */
 int QuantaApp::currentEditorIfNum() const
 {
-  return view->write()->editIf->editInterfaceNumber();
+  if (view->writeExists())
+  {
+    return view->write()->editIf->editInterfaceNumber();
+  } else
+  {
+    return -1;
+  }
 }
 
 /** Return the URL of the currently active document */
 QString QuantaApp::currentURL() const
 {
-  return view->write()->url().url();
+  if (view->writeExists())
+  {
+    return view->write()->url().url();
+  } else
+  {
+    return "";
+  }
 }
 
 

@@ -79,6 +79,8 @@
 void QuantaView::slotEditCurrentTag()
 {
 
+  if (!writeExists()) return;
+
   Document *w = write();
   uint line,col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
@@ -111,6 +113,8 @@ void QuantaView::slotEditCurrentTag()
 /** edit tag */
 void QuantaView::slotInsertCSS()
 {
+  if (!writeExists()) return;
+
   Document *w = write();
   QString code="";
 
@@ -158,6 +162,8 @@ void QuantaView::slotInsertCSS()
 /** for <a href=mailto> tag  */
 void QuantaView::slotTagMail()
 {
+  if (!writeExists()) return;
+
   TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Email Link (mailto)"));
 
   if ( mailDlg->exec() ) {
@@ -181,10 +187,10 @@ void QuantaView::slotTagMail()
 
 /** Add the starting and closing text for a
 user specified tag. */
-//FIXME: In the future, the user should freely specify his tags in external files, and Quanta
-// will automatically use them
 void QuantaView::slotTagMisc()
 {
+ if (!writeExists()) return;
+
  static QString element = "";
  static bool addClosingTag = true;
 
@@ -210,7 +216,10 @@ void QuantaView::slotTagMisc()
 
 
 /** quick html text generate */
-void QuantaView::slotTagQuickStart(){
+void QuantaView::slotTagQuickStart()
+{
+  if (!writeExists()) return;
+
   TagQuickStart *quickDlg = new TagQuickStart( quantaApp->projectBaseURL(), this, i18n("Generate HTML Text"));
 
   if ( quickDlg->exec() )
@@ -245,7 +254,10 @@ void QuantaView::slotTagQuickStart(){
 }
 
 /** do quick list */
-void QuantaView::slotTagQuickList(){
+void QuantaView::slotTagQuickList()
+{
+  if (!writeExists()) return;
+
   TagQuickListDlg *listDlg = new TagQuickListDlg(this,i18n("Generate List"));
   if ( listDlg->exec() ) {
     int i;
@@ -274,6 +286,8 @@ void QuantaView::slotTagQuickList(){
 /** for quick create table */
 void QuantaView::slotTagQuickTable()
 {
+  if (!writeExists()) return;
+
   int y,x;
 
   TagQuickTable *quickDlg = new TagQuickTable(write(), this,i18n("Generate Table"));
@@ -357,7 +371,9 @@ void QuantaView::slotTagQuickTable()
 }
 
 /** Open color Dialog and insert color in the text */
-void QuantaView::slotTagColor(){
+void QuantaView::slotTagColor()
+{
+  if (!writeExists()) return;
   QColor color;
 
   if (KColorDialog::getColor( color )) {
@@ -370,7 +386,9 @@ void QuantaView::slotTagColor(){
 }
 
 /** insert date */
-void QuantaView::slotTagDate(){
+void QuantaView::slotTagDate()
+{
+  if (!writeExists()) return;
   time_t tektime;
   time( &tektime);
   QString stime = ctime( &tektime);
@@ -379,12 +397,15 @@ void QuantaView::slotTagDate(){
 }
 
 /** for select form */
-void QuantaView::slotTagSelect(){
+void QuantaView::slotTagSelect()
+{
+  if (!writeExists()) return;
   write()->insertTag(QuantaCommon::tagCase("<select")+ QuantaCommon::attrCase("name")+QuantaCommon::tagCase("=\"\"><option>"),QuantaCommon::tagCase("</select>"));
 }
 
 void QuantaView::slotViewInNetscape()
 {
+  if (!writeExists()) return;
   Document *w = write();
   if (w->isModified())
   {
@@ -419,6 +440,7 @@ void QuantaView::slotViewInNetscape()
 
 void QuantaView::slotViewInKFM()
 {
+  if (!writeExists()) return;
   Document *w = write();
   if (w->isModified())
   {
@@ -451,6 +473,7 @@ void QuantaView::slotViewInKFM()
 
 void QuantaView::slotViewInLynx()
 {
+  if (!writeExists()) return;
   Document *w = write();
   if (w->isModified())
   {
@@ -509,119 +532,129 @@ void QuantaView::slotNewCurPos()
 /** get output */
 void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
 {
-  Document *w = write();
-
-  QString output(QString::fromLocal8Bit(buffer));
-  output.truncate(buflen);
-
-  if ( scriptOutputDest == "cursor" )
-    w->insertTag(output);
-
-  if ( scriptOutputDest == "message" ) {
-
-      if ( beginOfScriptOutput ) {
-        //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
-        //  quantaApp->slotViewMes();
-        quantaApp->messageOutput->clear();
-        quantaApp->messageOutput->insertItem(i18n("Script output:\n"));
-      }
-
-      quantaApp->messageOutput->showMessage(output);
-  }
-
-  if ( scriptOutputDest == "new" )
+  if (writeExists())
   {
-     if ( beginOfScriptOutput )
-        doc->openDocument( KURL() );
-     w->insertTag(output);
+    Document *w = write();
+
+    QString output(QString::fromLocal8Bit(buffer));
+    output.truncate(buflen);
+
+    if ( scriptOutputDest == "cursor" )
+      w->insertTag(output);
+
+    if ( scriptOutputDest == "message" ) {
+
+        if ( beginOfScriptOutput ) {
+          //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
+          //  quantaApp->slotViewMes();
+          quantaApp->messageOutput->clear();
+          quantaApp->messageOutput->insertItem(i18n("Script output:\n"));
+        }
+
+        quantaApp->messageOutput->showMessage(output);
+    }
+
+    if ( scriptOutputDest == "new" )
+    {
+      if ( beginOfScriptOutput )
+          doc->openDocument( KURL() );
+      w->insertTag(output);
+    }
+
+    if ( scriptOutputDest == "replace" )
+    {
+      if ( beginOfScriptOutput ) w->editIf->clear();
+      w->insertTag(output);
+    }
+
+    beginOfScriptOutput = false;
   }
-
-  if ( scriptOutputDest == "replace" )
-  {
-     if ( beginOfScriptOutput ) w->editIf->clear();
-     w->insertTag(output);
-  }
-
-  beginOfScriptOutput = false;
-
 }
 
 /** get output */
 void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
 {
-  Document *w = write();
-
-  QString output(QString::fromLocal8Bit(buffer));
-  output.truncate(buflen);
-
-  if ( scriptErrorDest == "merge" ) {
-    scriptErrorDest = scriptOutputDest;
-    beginOfScriptError = beginOfScriptOutput;
-  }
-
-  if ( scriptErrorDest == "cursor" )
-    w->insertTag(output);
-
-  if ( scriptErrorDest == "message" ) {
-
-      if ( beginOfScriptError ) {
-        //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
-        //  quantaApp->slotViewMes();
-        quantaApp->messageOutput->clear();
-        quantaApp->messageOutput->insertItem(i18n("Script output:\n"));
-      }
-
-      quantaApp->messageOutput->showMessage( output );
-  }
-
-  if ( scriptErrorDest == "new" )
+  if (writeExists())
   {
-     if ( beginOfScriptError )
-        doc->openDocument( KURL() );
-     w->insertTag(output);
+    Document *w = write();
+
+    QString output(QString::fromLocal8Bit(buffer));
+    output.truncate(buflen);
+
+    if ( scriptErrorDest == "merge" ) {
+      scriptErrorDest = scriptOutputDest;
+      beginOfScriptError = beginOfScriptOutput;
+    }
+
+    if ( scriptErrorDest == "cursor" )
+      w->insertTag(output);
+
+    if ( scriptErrorDest == "message" ) {
+
+        if ( beginOfScriptError ) {
+          //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
+          //  quantaApp->slotViewMes();
+          quantaApp->messageOutput->clear();
+          quantaApp->messageOutput->insertItem(i18n("Script output:\n"));
+        }
+
+        quantaApp->messageOutput->showMessage( output );
+    }
+
+    if ( scriptErrorDest == "new" )
+    {
+      if ( beginOfScriptError )
+          doc->openDocument( KURL() );
+      w->insertTag(output);
+    }
+
+    if ( scriptErrorDest == "replace" )
+    {
+      if ( beginOfScriptError ) write()->editIf->clear();
+      w->insertTag(output);
+    }
+
+    beginOfScriptError = false;
   }
-
-  if ( scriptErrorDest == "replace" )
-  {
-     if ( beginOfScriptError ) write()->editIf->clear();
-     w->insertTag(output);
-  }
-
-  beginOfScriptError = false;
-
 }
 
 /** insert clipboard contents (but quote them for HTML first) */
 void QuantaView::slotPasteHTMLQuoted()
 {
-  Document *w = write();
-  QClipboard *cb = qApp->clipboard();
-  QString text = cb->text();
-
-  if ( ( !text.isNull() ) && (!text.isEmpty() ) )
+  if (writeExists())
   {
-    text.replace( QRegExp( "&" ), "&amp;" );
-    text.replace( QRegExp( "<" ), "&lt;" );
-    text.replace( QRegExp( "\"" ), "&quot;" );
-    unsigned int line, col;
-    w->viewCursorIf->cursorPositionReal(&line, &col);
-    w->editIf->insertText(line, col, text );
+    Document *w = write();
+    QClipboard *cb = qApp->clipboard();
+    QString text = cb->text();
+
+    if ( ( !text.isNull() ) && (!text.isEmpty() ) )
+    {
+      text.replace( QRegExp( "&" ), "&amp;" );
+      text.replace( QRegExp( "<" ), "&lt;" );
+      text.replace( QRegExp( "\"" ), "&quot;" );
+      unsigned int line, col;
+      w->viewCursorIf->cursorPositionReal(&line, &col);
+      w->editIf->insertText(line, col, text );
+    }
   }
 }
 
 /** insert clipboard contents (but quote them as a URL first) */
 void QuantaView::slotPasteURLEncoded()
 {
-  Document *w = write();
-  QClipboard *cb = qApp->clipboard();
-  QString text = cb->text();
-
-  if ( ( !text.isNull() ) && (!text.isEmpty() ) )
+  if (writeExists())
   {
-    text = KURL::encode_string( text );
-    unsigned int line, col;
-    w->viewCursorIf->cursorPositionReal(&line, &col);
-    w->editIf->insertText(line, col, text );
+    Document *w = write();
+    QClipboard *cb = qApp->clipboard();
+    QString text = cb->text();
+
+    if ( ( !text.isNull() ) && (!text.isEmpty() ) )
+    {
+      text = KURL::encode_string( text );
+      unsigned int line, col;
+      w->viewCursorIf->cursorPositionReal(&line, &col);
+      w->editIf->insertText(line, col, text );
+    }
   }
 }
 
@@ -631,213 +664,302 @@ void QuantaView::slotPasteURLEncoded()
 
 void QuantaView::slotUndo ()
 {
-  bool updateClosing = qConfig.updateClosingTags;
-  qConfig.updateClosingTags = false;
-  dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->undo();
-  qConfig.updateClosingTags = updateClosing;
+  if (writeExists())
+  {
+    bool updateClosing = qConfig.updateClosingTags;
+    qConfig.updateClosingTags = false;
+    dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->undo();
+    qConfig.updateClosingTags = updateClosing;
+  }
 }
 
 void QuantaView::slotRedo ()
 {
-  bool updateClosing = qConfig.updateClosingTags;
-  qConfig.updateClosingTags = false;
-  dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->redo();
-  qConfig.updateClosingTags = updateClosing;
+  if (writeExists())
+  {
+    bool updateClosing = qConfig.updateClosingTags;
+    qConfig.updateClosingTags = false;
+    dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->redo();
+    qConfig.updateClosingTags = updateClosing;
+  }
 }
 
 void QuantaView::slotCut ()
 {
-  dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->cut();
+  if (writeExists())
+  {
+    dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->cut();
+  }
 }
 
 void QuantaView::slotCopy ()
 {
-  dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->copy();
+  if (writeExists())
+  {
+    dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->copy();
+  }
 }
 
 void QuantaView::slotPaste ()
 {
-  dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->paste();
+  if (writeExists())
+  {
+    dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->paste();
+  }
 }
 
 void QuantaView::slotSelectAll ()
 {
-  write()->selectionIf->selectAll();
+  if (writeExists())
+  {
+    write()->selectionIf->selectAll();
+  }
 }
 
 void QuantaView::slotDeselectAll ()
 {
-  write()->selectionIf->clearSelection ();
+  if (writeExists())
+  {
+    write()->selectionIf->clearSelection ();
+  }
 }
 
 void QuantaView::toggleVertical()
 {
-  dynamic_cast<KTextEditor::BlockSelectionInterface*>(write()->doc())->toggleBlockSelectionMode();
+  if (writeExists())
+  {
+    dynamic_cast<KTextEditor::BlockSelectionInterface*>(write()->doc())->toggleBlockSelectionMode();
+  }
 }
 
 
 
 void QuantaView::slotFind ()
 {
-  write()->kate_view->find();
+  if (writeExists())
+  {
+    write()->kate_view->find();
+  }
 }
 
 void QuantaView::slotFindAgain ()
 {
-  write()->kate_view->findAgain(false);
+  if (writeExists())
+  {
+    write()->kate_view->findAgain(false);
+  }
 }
 
 void QuantaView::slotFindAgainB ()
 {
-   write()->kate_view->findPrev();
+  if (writeExists())
+  {
+    write()->kate_view->findPrev();
+  }
 }
 
 void QuantaView::slotReplace ()
 {
-   write()->kate_view->replace();
+  if (writeExists())
+  {
+    write()->kate_view->replace();
+  }
 }
 
 
 void QuantaView::slotIndent()
 {
-  write()->kate_view->indent();
+  if (writeExists())
+  {
+    write()->kate_view->indent();
+  }
 }
 
 void QuantaView::slotUnIndent()
 {
-   write()->kate_view->unIndent();
+  if (writeExists())
+  {
+    write()->kate_view->unIndent();
+  }
 }
 
 void QuantaView::slotCleanIndent()
 {
-   write()->kate_view->cleanIndent();
+  if (writeExists())
+  {
+    write()->kate_view->cleanIndent();
+  }
 }
 
 void QuantaView::slotComment ()
 {
-  write()->kate_view->comment(); //this is not working correctly in KATE 3.0.x
+  if (writeExists())
+  {
+    write()->kate_view->comment(); //this is not working correctly in KATE 3.0.x
+  }
 }
 
 void QuantaView::slotUnComment ()
 {
-  write()->kate_view->uncomment();
+  if (writeExists())
+  {
+    write()->kate_view->uncomment();
+  }
 }
 
 
 void QuantaView::slotApplyWordWrap ()
 {
-  write()->kate_doc->applyWordWrap();
+  if (writeExists())
+  {
+    write()->kate_doc->applyWordWrap();
+  }
 }
 
 void QuantaView::slotGotoLine ()
 {
-  write()->kate_view->gotoLine();
+  if (writeExists())
+  {
+    write()->kate_view->gotoLine();
+  }
 }
 
 void QuantaView::slotSpellcheck ()
 {
+  if (writeExists())
+  {
 #if KDE_VERSION >= 308
     quantaApp->spellChecker->spellCheck(write()->doc());
 #else
     write()->kate_doc->spellcheck();
 #endif
+  }
 }
 
 void QuantaView::toggleBookmark ()
 {
-  KTextEditor::MarkInterface *markIf = dynamic_cast<KTextEditor::MarkInterface*>(write()->doc());
-  uint line, col;
-  write()->viewCursorIf->cursorPositionReal(&line, &col);
-  int mark = markIf->mark(line);
-  if (mark == KTextEditor::MarkInterface::markType01)
+  if (writeExists())
   {
-    markIf->removeMark(line, mark);
-  } else
-  {
-    markIf->addMark(line, KTextEditor::MarkInterface::markType01);
+    KTextEditor::MarkInterface *markIf = dynamic_cast<KTextEditor::MarkInterface*>(write()->doc());
+    uint line, col;
+    write()->viewCursorIf->cursorPositionReal(&line, &col);
+    int mark = markIf->mark(line);
+    if (mark == KTextEditor::MarkInterface::markType01)
+    {
+      markIf->removeMark(line, mark);
+    } else
+    {
+      markIf->addMark(line, KTextEditor::MarkInterface::markType01);
+    }
   }
 }
 
 void QuantaView::clearBookmarks ()
 {
-  dynamic_cast<KTextEditor::MarkInterface*>(write()->doc())->clearMarks();  
+  if (writeExists())
+  {
+    dynamic_cast<KTextEditor::MarkInterface*>(write()->doc())->clearMarks();
+  }
 }
 
 void QuantaView::gotoMark (KTextEditor::Mark *mark)
 {
-  if (mark->type == KTextEditor::MarkInterface::markType01)
+  if (writeExists())
   {
-    Document *w = write();
-    w->viewCursorIf->setCursorPositionReal(mark->line, 0);    
+    if (mark->type == KTextEditor::MarkInterface::markType01)
+    {
+      Document *w = write();
+      w->viewCursorIf->setCursorPositionReal(mark->line, 0);
+    }
   }
 }
 
 void QuantaView::toggleIconBorder ()
 {
-  write()->kate_view->toggleIconBorder ();
-  qConfig.iconBar = quantaApp->viewBorder->isChecked();
+  if (writeExists())
+  {
+    write()->kate_view->toggleIconBorder ();
+    qConfig.iconBar = quantaApp->viewBorder->isChecked();
+  }
 }
 
 void QuantaView::toggleDynamicWordWrap()
 {
 #if (KDE_VERSION > 308)
-  qConfig.dynamicWordWrap = !qConfig.dynamicWordWrap ;
-  dynamic_cast<KTextEditor::DynWordWrapInterface *>(write()->view())->setDynWordWrap(qConfig.dynamicWordWrap);
+  if (writeExists())
+  {
+    qConfig.dynamicWordWrap = !qConfig.dynamicWordWrap ;
+    dynamic_cast<KTextEditor::DynWordWrapInterface *>(write()->view())->setDynWordWrap(qConfig.dynamicWordWrap);
+  }
 #endif
 }
 
 void QuantaView::toggleLineNumbers()
 {
-  write()->kate_view->toggleLineNumbersOn();
-  qConfig.lineNumbers = quantaApp->viewLineNumbers->isChecked();
+  if (writeExists())
+  {
+    write()->kate_view->toggleLineNumbersOn();
+    qConfig.lineNumbers = quantaApp->viewLineNumbers->isChecked();
+  }
 }
 
 void QuantaView::slotEditorOptions()
 {
-  dynamic_cast<KTextEditor::ConfigInterface *>(write()->doc())->configDialog();
-  write()->writeConfig(quantaApp->config);
-  quantaApp->config->sync();
-  
-  quantaApp->config->setGroup("Kate View");
-  qConfig.lineNumbers = quantaApp->config->readBoolEntry("LineNumbers", false);
-  qConfig.iconBar = quantaApp->config->readBoolEntry("Iconbar", false);
-  qConfig.dynamicWordWrap = quantaApp->config->readBoolEntry("DynamicWordWrap",false);
-  quantaApp->viewBorder->setChecked(qConfig.iconBar);
-  quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
+  if (writeExists())
+  {
+    dynamic_cast<KTextEditor::ConfigInterface *>(write()->doc())->configDialog();
+    write()->writeConfig(quantaApp->config);
+    quantaApp->config->sync();
+
+    quantaApp->config->setGroup("Kate View");
+    qConfig.lineNumbers = quantaApp->config->readBoolEntry("LineNumbers", false);
+    qConfig.iconBar = quantaApp->config->readBoolEntry("Iconbar", false);
+    qConfig.dynamicWordWrap = quantaApp->config->readBoolEntry("DynamicWordWrap",false);
+    quantaApp->viewBorder->setChecked(qConfig.iconBar);
+    quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
 #if (KDE_VERSION > 308)
-  quantaApp->viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
-#endif  
+    quantaApp->viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
+#endif
+  }
 }
 
 void QuantaView::setEol(int which)
 {
-  write()->kate_view->setEol( which );
+  if (writeExists())
+  {
+    write()->kate_view->setEol( which );
+  }
 }
 
 /** insert special character */
 void QuantaView::slotInsertChar(const QString &selected)
 {
-  int begin = selected.find("(")+1;
-  int length = selected.find(")") - begin;
-  QString part = selected.mid(begin, length);
-  write()->insertTag(part);
+  if (writeExists())
+  {
+    int begin = selected.find("(")+1;
+    int length = selected.find(")") - begin;
+    QString part = selected.mid(begin, length);
+    write()->insertTag(part);
+  }
 }
 
 /** Insert a new tag by bringing up the TagDialog. */
 void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
 {
-
-  Document *w = write();
-
-  TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), attr, baseURL());
-  if (dlg->exec())
+  if (writeExists())
   {
-   dlg->insertTag(w, insertInLine);
-  }
+    Document *w = write();
 
-  delete dlg;
+    TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), attr, baseURL());
+    if (dlg->exec())
+    {
+    dlg->insertTag(w, insertInLine);
+    }
+
+    delete dlg;
+  }
 }
-/** Returns the baseURL of the document. */    
+/** Returns the baseURL of the document. */
 KURL QuantaView::baseURL()
 {
   Document *w = write();
