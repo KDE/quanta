@@ -558,7 +558,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Geometry", size());
 
     m_config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
-    m_config->writeEntry("Show DTD Toolbar", qConfig.enableDTDToolbar);
+    m_config->writeEntry("Show DTD Toolbar", showDTDToolbar->isChecked());
     m_config->writeEntry("Show Statusbar", statusBar()->isVisible());
 
     m_config->writeEntry("Markup mimetypes", qConfig.markupMimeTypes  );
