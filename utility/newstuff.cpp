@@ -13,7 +13,7 @@
  *                                                                         *
  ***************************************************************************/
  //qt includes
- #include <qfileinfo.h>
+#include <qfileinfo.h>
 
 //kde includes
 #include <kglobal.h>

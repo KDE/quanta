@@ -29,7 +29,7 @@ quanta_LDADD = $(top_builddir)/quanta/project/libproject.la \
 	$(top_builddir)/quanta/parts/preview/libpreview.la \
 	$(top_builddir)/quanta/utility/libutility.la \
 	$(top_builddir)/lib/libquantamodule.la \
-	-lkatepartinterfaces $(LIB_KAFKA) $(LIB_CVSSERVICE) \
+	-lkatepartinterfaces -lknewstuff $(LIB_KAFKA) $(LIB_CVSSERVICE)  \
 	$(LIB_KMDI) $(LIBXML_LIBS) $(LIBXSLT_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
 #       $(top_builddir)/lib/compatibility/libcompat.la
 
@@ -50,7 +50,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_srcdir)/quanta/parts/kafka \
 	-I$(top_srcdir)/quanta/messages \
 	-I$(top_srcdir)/lib \
-	-I$(top_srcdir)/lib/newstuff \
 	-I$(top_builddir)/quanta/dialogs \
 	-I$(top_builddir)/quanta/dialogs/tagdialogs \
 	-I$(top_builddir)/quanta/dialogs/settings \
@@ -58,7 +57,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_builddir)/quanta/components/framewizard \
 	-I$(top_builddir)/quanta/components/tableeditor \
 	-I$(top_builddir)/quanta/plugins \
-	$(KAFKAINCLUDE) $(CVSSERVICE_INCLUDE) $(KMDI_INCLUDES) $(KNEWSTUFF_INCLUDES) $(all_includes)
+	$(KAFKAINCLUDE) $(CVSSERVICE_INCLUDE) $(KMDI_INCLUDES) \
+	 $(QNEWSTUFF_INCLUDES) $(all_includes)
 #       -I$(top_srcdir)/lib/compatibility
 
 quanta_METASOURCES = AUTO

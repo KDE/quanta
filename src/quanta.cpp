@@ -206,8 +206,6 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   toolbarList.setAutoDelete(true);
   userToolbarsCount = 0;
   baseNode = 0L;
-  m_newDTEPStuff = 0L;
-  m_newToolbarStuff = 0L;
   currentToolbarDTD = QString::null;
   m_config=kapp->config();
   idleTimer = new QTimer(this);
@@ -257,7 +255,16 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
 
 QuantaApp::~QuantaApp()
 {
-  
+  delete m_newDTEPStuff;
+  m_newDTEPStuff = 0L;
+  delete m_newToolbarStuff;
+  m_newToolbarStuff = 0L;
+  delete m_newTemplateStuff;
+  m_newTemplateStuff = 0L;
+  delete m_newScriptStuff;
+  m_newScriptStuff = 0L;
+  delete m_newDTEPStuff;
+  m_newDocStuff = 0L;
  // disconnect(m_htmlPart, SIGNAL(destroyed(QObject *)));
  // disconnect(m_htmlPartDoc, SIGNAL(destroyed(QObject *)));
   disconnect(this, SIGNAL(lastChildViewClosed()), ViewManager::ref(), SLOT(slotLastViewClosed()));
@@ -2645,7 +2652,8 @@ void QuantaApp::slotUploadToolbar()
     return;
   if (!m_newToolbarStuff)
     m_newToolbarStuff = new QNewToolbarStuff("quanta/toolbar", this);
-  tempDirList.append(m_newToolbarStuff->uploadResource(tempFileName));
+//  tempDirList.append(m_newToolbarStuff->uploadResource(tempFileName));
+  m_newToolbarStuff->uploadResource(tempFileName);
 }
 
 void QuantaApp::slotRenameToolbar()
@@ -3486,7 +3494,8 @@ void QuantaApp::slotUploadDTEP()
     return;
   if (!m_newDTEPStuff)
     m_newDTEPStuff = new QNewDTEPStuff("quanta/dtep", this);
-  tempDirList.append(m_newDTEPStuff->uploadResource(tempFileName));
+//  tempDirList.append(m_newDTEPStuff->uploadResource(tempFileName));
+  m_newDTEPStuff->uploadResource(tempFileName);
 }
 
 void QuantaApp::slotSmartTagInsertion()
@@ -3516,7 +3525,8 @@ void QuantaApp::slotUploadTemplate(const QString &fileName)
 {
   if (!m_newTemplateStuff)
     m_newTemplateStuff = new QNewTemplateStuff("quanta/template", this);
-  tempDirList.append(m_newTemplateStuff->uploadResource(fileName));
+//  tempDirList.append(m_newTemplateStuff->uploadResource(fileName));
+  m_newTemplateStuff->uploadResource(fileName);
 }
 
 void QuantaApp::slotDownloadScript()
@@ -3530,7 +3540,8 @@ void QuantaApp::slotUploadScript(const QString &fileName)
 {
   if (!m_newScriptStuff)
     m_newScriptStuff = new QNewScriptStuff("quanta/script", this);
-  tempDirList.append(m_newScriptStuff->uploadResource(fileName));
+//  tempDirList.append(m_newScriptStuff->uploadResource(fileName));
+  m_newScriptStuff->uploadResource(fileName);
 }
 
 void QuantaApp::slotDownloadDoc()

@@ -20,20 +20,23 @@
 #include <qobject.h>
 
 //app includes
+#ifdef COMPAT_NEWSTUFFSECURE
 #include "qnewstuff.h"
-
+#else
+#include <knewstuff/knewstuffsecure.h>
+#endif
 /**
 Makes possible downloading and installing a DTEP resource files from a server.
 
 @author Andras Mantia
 */
-class QNewDTEPStuff: public QNewStuff
+class QNewDTEPStuff: public KNewStuffSecure
 {
    Q_OBJECT
 
 public:
     QNewDTEPStuff(const QString &type,  QWidget *parentWidget=0)
-      :QNewStuff(type, parentWidget){};
+      :KNewStuffSecure(type, parentWidget){};
     ~QNewDTEPStuff() {};
 
 private:
@@ -45,13 +48,13 @@ Makes possible downloading and installing a Toolbar resource files from a server
 
 @author Andras Mantia
 */
-class QNewToolbarStuff: public QNewStuff
+class QNewToolbarStuff: public KNewStuffSecure
 {
    Q_OBJECT
 
 public:
     QNewToolbarStuff(const QString &type,  QWidget *parentWidget=0)
-      :QNewStuff(type, parentWidget){};
+      :KNewStuffSecure(type, parentWidget){};
     ~QNewToolbarStuff() {};
 
 private:
@@ -63,13 +66,13 @@ Makes possible downloading and installing a template resource files from a serve
 
 @author Andras Mantia
 */
-class QNewTemplateStuff: public QNewStuff
+class QNewTemplateStuff: public KNewStuffSecure
 {
    Q_OBJECT
 
 public:
     QNewTemplateStuff(const QString &type,  QWidget *parentWidget=0)
-      :QNewStuff(type, parentWidget){};
+      :KNewStuffSecure(type, parentWidget){};
     ~QNewTemplateStuff() {};
 
 private:
@@ -81,13 +84,13 @@ Makes possible downloading and installing a script resource files from a server.
 
 @author Andras Mantia
 */
-class QNewScriptStuff: public QNewStuff
+class QNewScriptStuff: public KNewStuffSecure
 {
    Q_OBJECT
 
 public:
     QNewScriptStuff(const QString &type,  QWidget *parentWidget=0)
-      :QNewStuff(type, parentWidget){};
+      :KNewStuffSecure(type, parentWidget){};
     ~QNewScriptStuff() {};
 
 private:
@@ -99,13 +102,13 @@ Makes possible downloading and installing a documentation resource files from a 
 
 @author Andras Mantia
  */
-class QNewDocStuff: public QNewStuff
+class QNewDocStuff: public KNewStuffSecure
 {
   Q_OBJECT
 
   public:
     QNewDocStuff(const QString &type,  QWidget *parentWidget=0)
-  :QNewStuff(type, parentWidget){};
+  :KNewStuffSecure(type, parentWidget){};
     ~QNewDocStuff() {};
 
   private:
