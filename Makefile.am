@@ -28,10 +28,11 @@ quanta_LDADD = \
 		-lkfile\
 		-lkhtml\
 		-lkspell
-LDFLAGS =  -s -lktexteditor
+LDFLAGS =   -lktexteditor
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/kwrite\
 		-I$(top_srcdir)/quanta/kwrite/highlight
+CXXFLAGS = -g3 
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 quanta_METASOURCES = AUTO
 quanta_SOURCES = \
@@ -64,8 +65,7 @@ EXTRA_DIST = \
 		resource.h\
 		quanta_actions.cpp\
 		quanta_actions.h\
-		quantaui.rc\
-		newstuff.h
+		quantaui.rc
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

@@ -203,7 +203,7 @@
     <Action name="save_all"     group="file_operations" />
     <Separator/>
   </ToolBar>
-  <ToolBar name="editToolBar" noMerge="1" fullWidth="false">
+  <ToolBar name="mainEditToolBar" noMerge="1" fullWidth="false">
   <text>Editor Toolbar</text>
     <Action name="edit_cut"  />
     <Action name="edit_copy" />
@@ -217,7 +217,8 @@
     <Action name="edit_find_next"/>
     <Separator/>
   </ToolBar>
-  <ToolBar name="naviToolBar" noMerge="1"><text>Navigation Toolbar</text>
+  <ToolBar name="mainNaviToolBar" noMerge="1">
+  <text>Navigation Toolbar</text>
     <Action name="show_tree"/>
     <Action name="show_preview"/>
     <Action name="show_messages"/>
@@ -227,7 +228,7 @@
     <Separator/>
   </ToolBar>
   
-  <ToolBar name="charStylesToolBar" fullWidth="false" hidden="true">
+  <ToolBar name="charStylesToolBar" hidden="true">
   <text>Character Styles ToolBar</text>
     <Action name="tag_b"/>
     <Action name="tag_i"/>
@@ -239,7 +240,7 @@
     <Action name="tag_font_dec"/>
   </ToolBar>
 
-  <ToolBar name="objectsToolBar" fullWidth="false" hidden="true">
+  <ToolBar name="objectsToolBar" hidden="true">
   <text>Objects ToolBar</text>
     <Action name="tag_img"/>
     <Action name="tag_a"/>
@@ -254,7 +255,7 @@
     <Action name="tag_date"/>
   </ToolBar>
 
-  <ToolBar name="paragraphStylesToolBar" fullWidth="false" hidden="true">
+  <ToolBar name="paragraphStylesToolBar" hidden="true">
   <text>Paragraph Styles ToolBar</text>
     <Action name="tag_h1"/>
     <Action name="tag_h2"/>
@@ -266,7 +267,7 @@
     <Action name="tag_pre"/>
   </ToolBar>
 
-  <ToolBar name="TextFlowStylesToolBar" fullWidth="false" hidden="true">
+  <ToolBar name="TextFlowStylesToolBar" hidden="true">
   <text>Text Flow Styles ToolBar</text>
     <Action name="tag_div_left"/>
     <Action name="tag_div_center"/>
@@ -274,7 +275,7 @@
     <Action name="tag_div_justify"/>
   </ToolBar>
 
-  <ToolBar name="TablesToolBar" fullWidth="false" hidden="true">
+  <ToolBar name="TablesToolBar" hidden="true">
   <text>Tables ToolBar</text>
     <Action name="tag_table"/>
     <Action name="tag_table_row"/>
@@ -287,7 +288,7 @@
     <Action name="tag_caption"/>
   </ToolBar>
 
-  <ToolBar name="FormsToolBar" fullWidth="false" hidden="true">
+  <ToolBar name="FormsToolBar" hidden="true">
   <text>Forms ToolBar</text>
     <Action name="tag_form"/>
     <Separator lineSeparator="true"/>
@@ -303,7 +304,7 @@
     <Action name="tag_form_reset"/>
   </ToolBar>
 
-  <ToolBar name="ListsToolBar" fullWidth="false" hidden="true">
+  <ToolBar name="ListsToolBar" hidden="true">
   <text>Lists ToolBar</text>
     <Action name="tag_ul"/>
     <Action name="tag_ol"/>

@@ -127,6 +127,24 @@ QuantaApp::QuantaApp()
   initActions();
   createGUI( QString::null, false );
 
+  QListIterator<KToolBar> itT = toolBarIterator();
+  
+  int i=0;
+  
+  while ( itT.current() )
+  {
+    debug("*");
+    QString toolbarName((*itT)->name());
+    
+    if ( toolbarName.left(4) != "main" )
+    {
+      view->toolbarStack->addWidget( (*itT), i++ );
+    }
+    ++itT;
+  }
+  
+  view->toolbarStack->raiseWidget( 0 );
+  
   initContextMenu();
 #endif
 	
@@ -529,7 +547,6 @@ void QuantaApp::initMenuBar()
 
 void QuantaApp::initToolBar()
 {
-
   QFile f( locate("appdata","toolbars.rc") );
 
 	f.open( IO_ReadOnly );
@@ -537,13 +554,13 @@ void QuantaApp::initToolBar()
 	QDomDocument doc;
 	doc.setContent( &f );
   toolbars = new ToolBars(doc);
-  
+
   ///////////////////////////////////////////////////////////////////
   // TOOLBAR
 #ifndef NEW_STUFF
   toolBar()->insertButton(UserIcon("tree_win"),   ID_VIEW_TREE,     true, i18n("View tree"));
   toolBar()->insertButton(UserIcon("preview"),    ID_VIEW_PREVIEW,  true, i18n("Preview"));
-  toolBar()->insertButton(UserIcon("output_win"),    ID_VIEW_MES,      true, i18n("Show Messages"));
+  toolBar()->insertButton(UserIcon("output_win"), ID_VIEW_MES,      true, i18n("Show Messages"));
 
   toolBar()->setToggle(ID_VIEW_PREVIEW);
   toolBar()->setToggle(ID_VIEW_TREE);
