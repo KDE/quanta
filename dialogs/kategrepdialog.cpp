@@ -344,7 +344,7 @@ void GrepDialog::slotSearch()
         files = KShellProcess::quote(*it++);
 
     for ( ; it != tokens.end(); it++ )
-        files = files + " -o -name " + KProcess::quote(*it);
+        files = files + " -o -name " + KShellProcess::quote(*it);
 
     status_label->setText(i18n("Searching..."));
 
@@ -360,7 +360,7 @@ void GrepDialog::slotSearch()
     command += " \\( -name ";
     command += files;
     command += " \\) -print | xargs grep -n -e ";
-    command += KProcess::quote(pattern);
+    command += KShellProcess::quote(pattern);
     command += " /dev/null";
     
     childproc = new KShellProcess();
