@@ -223,16 +223,21 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 {
 	int focus = w->getAttrs(node)->chCurFoc();
 	int cbModified = w->getAttrs(node)->cbMod();
+
 	if(position < 0) return;//nothing to do if something is selected
 	if(focus == kNodeAttrs::no || !cbModified) return;//can't add text in this Node.
 	if(focus == kNodeAttrs::textNode && node.nodeType() == DOM::Node::TEXT_NODE)
 	{
 		try
 		{
+			kdDebug(25001)<< "TEMP nodeValue: " << node.nodeValue() << endl;
+			kdDebug(25001)<< "TEMP offset :" << d->m_cursorOffset << endl;
 			DOM::DOMString textNode = node.nodeValue();
 			DOM::DOMString textSplitted = textNode.split(position);
 			node.setNodeValue(textNode + text + textSplitted);
 			d->m_cursorOffset += text.length();
+			kdDebug(25001)<< "TEMP nodeValue apres: " << node.nodeValue() << endl;
+			kdDebug(25001)<< "TEMP offset apres:" << d->m_cursorOffset << endl;
 			emit domNodeModified(node);
 			kdDebug(25001) << "KafkaHTMLPart::insertText() - added text" << endl;
 		} catch(DOM::DOMException e)
@@ -311,6 +316,8 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 				"ERROR - code : " << e.code << endl;
 		}
 	}
+	document().updateRendering();
+	view()->updateContents();
 	setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 	emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 }
@@ -479,9 +486,9 @@ void KafkaHTMLPart::normalize(DOM::Node _node)
 {
 	kdDebug(25001)<< "KafkaHTMLPart::normalize()" << endl;
 	DOM::Node childNode = _node.firstChild();
-	while(childNode != 0 && w->getAttrs(childNode)->chCurFoc() == kNodeAttrs::textNode)
+	while(!childNode.isNull() && w->getAttrs(childNode)->chCurFoc() == kNodeAttrs::textNode)
 	{
-		while(childNode.nextSibling() != 0 &&
+		while(!childNode.nextSibling().isNull() &&
 			w->getAttrs(childNode.nextSibling())->chCurFoc() ==
 			kNodeAttrs::textNode )
 		{
@@ -491,7 +498,7 @@ void KafkaHTMLPart::normalize(DOM::Node _node)
 			emit domNodeIsAboutToBeRemoved(childNode.nextSibling(), true);
 			_node.removeChild(childNode.nextSibling());
 		}
-		if(childNode.nextSibling() != 0)
+		if(!childNode.nextSibling().isNull())
 			childNode = childNode.nextSibling();
 		else
 			return;
@@ -1025,6 +1032,15 @@ void KafkaHTMLPart::keyDelete()
 			if(focus != kNodeAttrs::no)
 			{
 				postprocessCursorPosition();
+				//merge the next DOM::Node if it is a text.
+				//domNodeIsAboutToBeRemoved() had already done it in the Node tree.
+				_nodeNext = _node.nextSibling();
+				if(!_nodeNext.isNull() && _nodeNext.nodeType() == DOM::Node::TEXT_NODE)
+				{
+					_node.setNodeValue(_node.nodeValue() + _nodeNext.nodeValue());
+					_nodeParent = _nodeNext.parentNode();
+					_nodeParent.removeChild(_nodeNext);
+				}
 				return;
 			}
 			_nodeNext = _node;
@@ -1206,6 +1222,15 @@ void KafkaHTMLPart::keyBackspace()
 			if(focus != kNodeAttrs::no)
 			{
 				postprocessCursorPosition();
+				//merge the previous DOM::Node if it is a text.
+				//domNodeIsAboutToBeRemoved() had already done it in the Node tree.
+				_nodePrev = _node.previousSibling();
+				if(!_nodePrev.isNull() && _nodePrev.nodeType() == DOM::Node::TEXT_NODE)
+				{
+					_nodePrev.setNodeValue(_nodePrev.nodeValue() + _node.nodeValue());
+					_nodeParent = _nodePrev.parentNode();
+					_nodeParent.removeChild(_node);
+				}
 				return;
 			}
 			_nodePrev = _node;
@@ -1392,13 +1417,13 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 
 void KafkaHTMLPart::makeCursorVisible(int xMargin, int yMargin)
 {
-	DOM::Range range;
+	/**DOM::Range range;
 	if(m_currentNode == 0)
 		return;
 	kdDebug(25001)<< "KafkaHTMLPart::makeCursorVisible()" << endl;
 	int X, Y, dummy;
 	getCursor(m_currentNode, d->m_cursorOffset, X, Y, dummy);
-	view()->ensureVisible (X, Y, xMargin, yMargin);
+	view()->ensureVisible (X, Y, xMargin, yMargin);*/
 	//does not work... ???
 	/**range = selection();
 	try{

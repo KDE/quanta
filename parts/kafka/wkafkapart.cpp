@@ -1288,7 +1288,7 @@ void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
 		return;
 	}
 #ifdef HEAVY_DEBUG
-	kdDebug(25001)<< "WKafkaPart::getQuantaCursorPosition() - decodedText:"<< decodedText << ":" << endl;
+//	kdDebug(25001)<< "WKafkaPart::getQuantaCursorPosition() - decodedText:"<< decodedText << ":" << endl;
 #endif
 	if(_currentNode->tag->type == Tag::Text)
 	{
@@ -1296,7 +1296,7 @@ void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
 		{
 			curChar = decodedText[offset - currentOffset];
 #ifdef HEAVY_DEBUG
-			kdDebug(24000)<< "CurChar:" << QString(curChar) << ": oldChar:" << QString(oldChar) << endl;
+//			kdDebug(24000)<< "CurChar:" << QString(curChar) << ": oldChar:" << QString(oldChar) << endl;
 #endif
 			encodedChar = getEncodedChar(QString(curChar), QString(oldChar));
 			if(encodedChar == "&nbsp;")
@@ -1306,10 +1306,10 @@ void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
 			while(!found)
 			{
 #ifdef HEAVY_DEBUG
-				kdDebug(25001)<< "look 4 :" << encodedChar << ": found :" <<
-					currentLine.mid(curCol, encodedChar.length()) << endl;
-				kdDebug(25001)<< "pos " << curLine << ":" << curCol << endl;
-				kdDebug(25001)<< "endPos " << endLine << ":" << endCol << endl;
+//				kdDebug(25001)<< "look 4 :" << encodedChar << ": found :" <<
+//					currentLine.mid(curCol, encodedChar.length()) << endl;
+//				kdDebug(25001)<< "pos " << curLine << ":" << curCol << endl;
+//				kdDebug(25001)<< "endPos " << endLine << ":" << endCol << endl;
 #endif
 				if(encodedChar != " " && encodedChar == currentLine.mid(curCol, encodedChar.length()))
 					found = true;
@@ -1511,7 +1511,7 @@ void WKafkaPart::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 		name == "noframes" || name == "pre" || name == "s" || name == "samp" ||
 		name == "small" || name == "span" || name == "strike" || name == "strong" || name == "sub" ||
 		name == "sup" || name == "tt" || name == "u" || name == "var" || name == "a" ||
-		name == "blockquote" || name == "br" || name == "div" || name == "dl" || name == "dt" ||
+		name == "blockquote" || name == "div" || name == "dl" || name == "dt" ||
 		name == "em" || name == "form" || name == "h1" || name == "h2" || name == "h3" ||
 		name == "h4" || name == "h5" || name == "h6" || name == "ins" || name == "li" ||
 		name == "ol" || name == "p" || name == "q" ||  name == "tt" || name == "ul")
@@ -1524,7 +1524,8 @@ void WKafkaPart::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 		props->setCCEnter(true);
 	}
 	else if(name == "applet" || name == "button" || name == "img" || name == "map" || name == "object" ||
-		name == "hr" || name == "input" || name == "select" || name == "table" || name == "textarea")
+		name == "hr" || name == "input" || name == "select" || name == "table" || name == "textarea" ||
+		 name == "br")
 	{
 		props->setCBDeleted(true);
 		props->setCBModified(true);

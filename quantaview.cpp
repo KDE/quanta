@@ -703,6 +703,7 @@ void QuantaView::timerEvent( QTimerEvent *e )
 {
   kdDebug(25001)<< "QuantaView::timerEvent" << endl;
   int offset;
+  uint oldCurCol, oldCurLine;
   DOM::Node node;
 
   if (kafkaInterface->isLoaded() && currentViewsLayout == QuantaView::QuantaAndKafkaViews && writeExists())
@@ -721,7 +722,9 @@ void QuantaView::timerEvent( QTimerEvent *e )
       //write()->docUndoRedo->syncQuantaView();
       write()->docUndoRedo->reloadQuantaEditor();
       kafkaInterface->getQuantaCursorPosition(curLine, curCol);
-      write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+      write()->viewCursorIf->cursorPositionReal(&oldCurLine, &oldCurCol);
+      if(oldCurCol != (uint)curCol || oldCurLine != (uint)curLine)
+        write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
     }
   }
 }
