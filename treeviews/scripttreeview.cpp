@@ -85,18 +85,18 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   m_localDir->excludeFilterRx.setPattern(excludeString);
 
   m_fileMenu = new KPopupMenu(this);
-  m_fileMenu->insertItem(SmallIcon("info"), i18n("Description"), this, SLOT(slotProperties()));
-  m_fileMenu->insertItem(SmallIcon("run"), i18n("Run Script"), this, SLOT(slotRun()));
+  m_fileMenu->insertItem(SmallIcon("info"), i18n("&Description"), this, SLOT(slotProperties()));
+  m_fileMenu->insertItem(SmallIcon("run"), i18n("&Run Script"), this, SLOT(slotRun()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(i18n("Edit Script"), this, SLOT(slotEditScript()));
-  m_fileMenu->insertItem(i18n("Edit in Quanta"), this, SLOT(slotEditInQuanta()));
-  m_fileMenu->insertItem(i18n("Edit Description"), this, SLOT(slotEditDescription()));
+  m_fileMenu->insertItem(i18n("&Edit Script"), this, SLOT(slotEditScript()));
+  m_fileMenu->insertItem(i18n("Edit in &Quanta"), this, SLOT(slotEditInQuanta()));
+  m_fileMenu->insertItem(i18n("Edi&t Description"), this, SLOT(slotEditDescription()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(UserIcon("ball"), i18n("Assign Action"), this, SLOT(slotAssignAction()));
-  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in Email"), this, SLOT(slotSendScriptInMail()));
+  m_fileMenu->insertItem(UserIcon("ball"), i18n("&Assign Action"), this, SLOT(slotAssignAction()));
+  m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("&Send in Email"), this, SLOT(slotSendScriptInMail()));
 
   m_folderMenu = new KPopupMenu(this);
-  m_downloadMenuId = m_folderMenu->insertItem(i18n("Do&wnload Script..."), this, SIGNAL(downloadScript()));
+  m_downloadMenuId = m_folderMenu->insertItem(SmallIcon("network"), i18n("&Download Script..."), this, SIGNAL(downloadScript()));
 
 
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),

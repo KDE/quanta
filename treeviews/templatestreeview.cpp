@@ -141,7 +141,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   i18nToType[i18n("Document Template")] = "template/all";
   i18nToType[i18n("Site Template")] = "site/all";
 
-  m_fileMenu = new KPopupMenu();
+  m_fileMenu = new KPopupMenu(this);
 
   m_openId = m_fileMenu->insertItem(i18n("Open"), this ,SLOT(slotInsert()));
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
@@ -154,7 +154,7 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
 
-  m_folderMenu = new KPopupMenu();
+  m_folderMenu = new KPopupMenu(this);
 
   m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("&New Folder..."), this, SLOT(slotNewDir()));
   m_folderMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E&mail..."), this, SLOT(slotSendInMail()));
@@ -166,7 +166,10 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
   m_reloadMenuId = m_folderMenu->insertItem(SmallIcon("revert"), i18n("&Reload"), this, SLOT(slotReload()));
-  m_downloadMenuId = m_folderMenu->insertItem(i18n("Do&wnload Template..."), this, SIGNAL(downloadTemplate()));
+  m_downloadMenuId = m_folderMenu->insertItem(SmallIcon("network"), i18n("&Download Template..."), this, SIGNAL(downloadTemplate()));
+
+  m_emptyAreaMenu = new KPopupMenu(this);
+  m_emptyAreaMenu->insertItem(SmallIcon("network"), i18n("&Download Template..."), this, SIGNAL(downloadTemplate()));
 
   addColumn(i18n("Templates"), -1);
   addColumn(i18n("Group"), -1);
@@ -248,7 +251,11 @@ void TemplatesTreeView::slotInsertInDocument()
 
 void TemplatesTreeView::slotMenu(KListView*, QListViewItem *item, const QPoint &point)
 {
-  if ( !item ) return;
+  if (!item)
+  {
+    m_emptyAreaMenu->popup(point);
+    return;
+  }
   setSelected(item, true);
   bool hasProject = m_projectName;
   m_folderMenu->setItemVisible(m_insertFolderInProject, hasProject);

@@ -62,7 +62,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
   m_contextMenu  = new KPopupMenu(this);
   m_menuReload = m_contextMenu->insertItem(i18n("&Reload"), this, SLOT(slotReloadProjectDocs()));
-  m_contextMenu->insertItem(i18n("&Download Documentation..."), this, SIGNAL(downloadDoc()));
+  m_contextMenu->insertItem(SmallIcon("network"), i18n("&Download Documentation..."), this, SIGNAL(downloadDoc()));
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
 }

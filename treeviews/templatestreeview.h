@@ -134,6 +134,7 @@ private:
   KURL globalURL;
   KPopupMenu *m_fileMenu;
   KPopupMenu *m_folderMenu;
+  KPopupMenu *m_emptyAreaMenu;
   DirInfo m_dirInfo;
   DirInfo m_parentDirInfo;
   int m_insertFileInProject;
