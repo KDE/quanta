@@ -166,3 +166,4 @@ bool KafkaPropertyEditor::paintCell ( QListViewItem *it, QPainter * p, const QCo
 		if (!plugin) return false;
 		return plugin->paintProperty ( it->text(1), p ,  cg,  column, width, height, align );
 	}
+#include "kafkapropertyeditor.moc"
