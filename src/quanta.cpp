@@ -3924,7 +3924,8 @@ bool QuantaApp::queryClose()
   bool canExit = true;
   if (quantaStarted)
   {
-    saveOptions();
+    m_config->setGroup("General Options");
+    m_config->writePathEntry("List of opened files", ViewManager::ref()->openedFiles().toStringList());
     parser->setParsingEnabled(false);
     canExit = ViewManager::ref()->closeAll(false);
     if (canExit)
@@ -3935,6 +3936,7 @@ bool QuantaApp::queryClose()
   }
   if (canExit)
   {
+    saveOptions();
    // kdDebug(24000) << "Quanta will exit" << endl;
     emit eventHappened("quanta_exit", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
   }
@@ -3985,7 +3987,6 @@ void QuantaApp::saveOptions()
       aliasList.append(fTab->topURLAliases[(*it2).url()]);
     }
     m_config->writePathEntry("Top folder aliases", aliasList);
-    m_config->writePathEntry("List of opened files", ViewManager::ref()->openedFiles().toStringList());
     m_config->writeEntry("Version", QUANTA_VERSION); // version
     m_config->writeEntry("Close Buttons", qConfig.showCloseButtons);
     m_config->writeEntry("MDI mode", mdiMode());
