@@ -1676,13 +1676,13 @@ void QuantaApp::slotContextMenuAboutToShow()
     Node *node = parser->nodeAt(line, col, false);
     if (node)
     {
-      StructTreeGroup group;
-      for (uint i = 0; i < node->tag->dtd->structTreeGroups.count(); i++)
+      if (node->tag->dtd->family == Script)
       {
-        group = node->tag->dtd->structTreeGroups[i];
-        if (group.hasFileName)
+        StructTreeGroup group;
+        for (uint i = 0; i < node->tag->dtd->structTreeGroups.count(); i++)
         {
-          if (node->tag->dtd->family == Script)
+          group = node->tag->dtd->structTreeGroups[i];
+          if (group.hasFileName)
           {
             if (!group.hasSearchRx )
               continue;
@@ -1715,23 +1715,26 @@ void QuantaApp::slotContextMenuAboutToShow()
                 }
               }
             }
-          } else
-          if (node->tag->name.lower() == group.tag)
-          {
-            for (uint j = 0; j < group.attributes.count(); j++)
-            {
-              if (node->tag->hasAttribute(group.attributes[j]))
-              {
-                name.append(node->tag->attributeValue(group.attributes[j]));
-                name.append(" | ");
-              }
-            }
-            name = name.left(name.length()-3);
-            name.remove('\n');
+            name.remove(group.fileNameRx);
+            if (!name.isEmpty())
+            break;
           }
-          name.remove(group.fileNameRx);
-          if (!name.isEmpty())
-          break;
+        }
+      } else
+      {
+        QMap<QString, XMLStructGroup>::ConstIterator it = node->tag->dtd->xmlStructTreeGroups.find(node->tag->name.lower());
+
+        if (it != node->tag->dtd->xmlStructTreeGroups.end())
+        {
+          XMLStructGroup group = it.data();
+          for (uint j = 0; j <group.attributes.count(); j++ )
+            if (node->tag->hasAttribute(group.attributes[j]))
+            {
+              name.append(node->tag->attributeValue(group.attributes[j]));
+              name.append(" | ");
+            }
+          name = name.left(name.length()-3);
+          name.remove('\n');
         }
       }
     }

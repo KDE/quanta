@@ -1325,60 +1325,89 @@ void QuantaApp::readTagDir(QString &dirName)
  if (structGroupsCount > MAX_STRUCTGROUPSCOUNT)
      structGroupsCount = MAX_STRUCTGROUPSCOUNT; //max. 10 groups
 
- StructTreeGroup group;
- QRegExp attrRx("\\([^\\)]*\\)");
- QString tagStr;
- for (uint index = 1; index <= structGroupsCount; index++)
+ if (dtd->family == Script)
  {
-   dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
-   //new code
-   group.name = dtdConfig->readEntry("Name").stripWhiteSpace();
-   group.noName = dtdConfig->readEntry("No_Name").stripWhiteSpace();
-   group.icon = dtdConfig->readEntry("Icon").stripWhiteSpace();
-   group.searchRx = dtdConfig->readEntry("SearchRx").stripWhiteSpace();
-   group.hasSearchRx = !group.searchRx.pattern().isEmpty();
-   group.clearRx = dtdConfig->readEntry("ClearRx").stripWhiteSpace();
-   tagStr = dtdConfig->readEntry("Tag").stripWhiteSpace();
-   group.tag = "";
-   if (!tagStr.isEmpty())
-   {
-     attrRx.search(tagStr);
-     tmpStr = attrRx.cap();
-     tmpStrList = QStringList::split(',', tmpStr.mid(1, tmpStr.length()-2));
-     group.tag = tagStr.left(tagStr.find('(')).lower();
-     group.attributes.clear();
-     for (uint i = 0; i < tmpStrList.count(); i++)
-       group.attributes += tmpStrList[i].stripWhiteSpace();
-   }
-   tagStr = dtdConfig->readEntry("TagType");
-   if (tagStr == "XmlTag")
-       group.tagType = Tag::XmlTag;
-   else if (tagStr == "XmlTagEnd")
-       group.tagType = Tag::XmlTagEnd;
-   else if (tagStr == "Text")
-       group.tagType = Tag::Text;
-   else if (tagStr == "Comment")
-       group.tagType = Tag::Comment;
-   else if (tagStr == "CSS")
-       group.tagType = Tag::CSS;
-   else if (tagStr == "ScriptTag")
-       group.tagType = Tag::ScriptTag;
-   else if (tagStr == "ScriptStructureBegin")
-       group.tagType = Tag::ScriptStructureBegin;
-   else if (tagStr == "ScriptStructureEnd")
-       group.tagType = Tag::ScriptStructureEnd;
-   else group.tagType = -1;
-   tmpStr = dtdConfig->readEntry("AutoCompleteAfter").stripWhiteSpace();
-   group.autoCompleteAfterRx.setPattern(tmpStr);
-   tmpStr = dtdConfig->readEntry("RemoveFromAutoCompleteWord").stripWhiteSpace();
-   group.removeFromAutoCompleteWordRx.setPattern(tmpStr);
-   group.hasFileName = dtdConfig->readBoolEntry("HasFileName", false);
-   group.parseFile = dtdConfig->readBoolEntry("ParseFile", false);
-   tmpStr = dtdConfig->readEntry("FileNameRx").stripWhiteSpace();
-   group.fileNameRx.setPattern(tmpStr);
-   dtd->structTreeGroups.append(group);
- }
-
+    StructTreeGroup group;
+    QRegExp attrRx("\\([^\\)]*\\)");
+    QString tagStr;
+    for (uint index = 1; index <= structGroupsCount; index++)
+    {
+      dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
+      //new code
+      group.name = dtdConfig->readEntry("Name").stripWhiteSpace();
+      group.noName = dtdConfig->readEntry("No_Name").stripWhiteSpace();
+      group.icon = dtdConfig->readEntry("Icon").stripWhiteSpace();
+      group.searchRx = dtdConfig->readEntry("SearchRx").stripWhiteSpace();
+      group.hasSearchRx = !group.searchRx.pattern().isEmpty();
+      group.clearRx = dtdConfig->readEntry("ClearRx").stripWhiteSpace();
+      tagStr = dtdConfig->readEntry("Tag").stripWhiteSpace();
+      group.tag = "";
+      if (!tagStr.isEmpty())
+      {
+        attrRx.search(tagStr);
+        tmpStr = attrRx.cap();
+        tmpStrList = QStringList::split(',', tmpStr.mid(1, tmpStr.length()-2));
+        group.tag = tagStr.left(tagStr.find('(')).lower();
+        group.attributes.clear();
+        for (uint i = 0; i < tmpStrList.count(); i++)
+          group.attributes += tmpStrList[i].stripWhiteSpace();
+      }
+      tagStr = dtdConfig->readEntry("TagType");
+      if (tagStr == "XmlTag")
+          group.tagType = Tag::XmlTag;
+      else if (tagStr == "XmlTagEnd")
+          group.tagType = Tag::XmlTagEnd;
+      else if (tagStr == "Text")
+          group.tagType = Tag::Text;
+      else if (tagStr == "Comment")
+          group.tagType = Tag::Comment;
+      else if (tagStr == "CSS")
+          group.tagType = Tag::CSS;
+      else if (tagStr == "ScriptTag")
+          group.tagType = Tag::ScriptTag;
+      else if (tagStr == "ScriptStructureBegin")
+          group.tagType = Tag::ScriptStructureBegin;
+      else if (tagStr == "ScriptStructureEnd")
+          group.tagType = Tag::ScriptStructureEnd;
+      else group.tagType = -1;
+      tmpStr = dtdConfig->readEntry("AutoCompleteAfter").stripWhiteSpace();
+      group.autoCompleteAfterRx.setPattern(tmpStr);
+      tmpStr = dtdConfig->readEntry("RemoveFromAutoCompleteWord").stripWhiteSpace();
+      group.removeFromAutoCompleteWordRx.setPattern(tmpStr);
+      group.hasFileName = dtdConfig->readBoolEntry("HasFileName", false);
+      group.parseFile = dtdConfig->readBoolEntry("ParseFile", false);
+      tmpStr = dtdConfig->readEntry("FileNameRx").stripWhiteSpace();
+      group.fileNameRx.setPattern(tmpStr);
+      dtd->structTreeGroups.append(group);
+    }
+  } else
+  {
+    XMLStructGroup group;
+    QRegExp attrRx("\\([^\\)]*\\)");
+    QString tagName;
+    for (uint index = 1; index <= structGroupsCount; index++)
+    {
+      dtdConfig->setGroup(QString("StructGroup_%1").arg(index));
+      group.name = dtdConfig->readEntry("Name").stripWhiteSpace();
+      group.noName = dtdConfig->readEntry("No_Name").stripWhiteSpace();
+      group.icon = dtdConfig->readEntry("Icon").stripWhiteSpace();
+      QString tagStr = dtdConfig->readEntry("Tag").stripWhiteSpace();
+      if (!tagStr.isEmpty())
+      {
+        attrRx.search(tagStr);
+        tmpStr = attrRx.cap();
+        tmpStrList = QStringList::split(',', tmpStr.mid(1, tmpStr.length()-2));
+        tagName = tagStr.left(tagStr.find('(')).lower();
+        group.attributes.clear();
+        for (uint i = 0; i < tmpStrList.count(); i++)
+          group.attributes += tmpStrList[i].stripWhiteSpace();
+        group.hasFileName = dtdConfig->readBoolEntry("HasFileName", false);
+        tmpStr = dtdConfig->readEntry("FileNameRx").stripWhiteSpace();
+        group.fileNameRx.setPattern(tmpStr);
+        dtd->xmlStructTreeGroups.insert(tagName, group);
+      }
+    }
+  }
  //read the abbreviations files
   QString abbrevFile = dirName;
   if (dirName.startsWith(qConfig.globalDataDir))

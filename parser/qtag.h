@@ -64,6 +64,15 @@ typedef struct StructTreeGroup{
         QRegExp fileNameRx; //delete the matches of this regexp to obtain a filename (eg. linked, included file name)
       };
 
+typedef struct XMLStructGroup {
+          QString name;
+          QString noName;
+          QString icon;
+          QStringList attributes;
+          bool hasFileName;
+          QRegExp fileNameRx;
+        };
+
 typedef QPtrList<Attribute> AttributeList;
 typedef QDict<AttributeList> AttributeListDict;
 
@@ -161,6 +170,7 @@ typedef struct DTDStruct
 
 /* A list of structure tree groups definition */
      QValueList<StructTreeGroup> structTreeGroups;
+     QMap<QString, XMLStructGroup> xmlStructTreeGroups;
 
 /****************** END FOR THE NEW PARSER **********************/
      QStringList toolbars;

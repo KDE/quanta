@@ -89,6 +89,8 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
       pos++;
     }
     attr.name = m_tagStr.mid(sPos, pos - sPos);
+    if (dtd && !dtd->caseSensitive)
+        attr.name = attr.name.lower();
     attr.nameLine = m_tagStr.left(sPos).contains('\n') + beginLine;
     if (attr.nameLine == beginLine)
         attr.nameCol = sPos + beginCol;

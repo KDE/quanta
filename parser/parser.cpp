@@ -1578,13 +1578,13 @@ void Parser::parseForGroups(Node *currentNode)
   str = currentNode->tag->cleanStr;
   tagStr = currentNode->tag->tagStr();
   dtd = currentNode->tag->dtd;
-  for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
+  if (dtd->family == Script)
   {
-    group = dtd->structTreeGroups[i];
-    if (dtd->family == Script)
+    for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
     {
+      group = dtd->structTreeGroups[i];
       if (!group.hasSearchRx)
-        continue;
+         continue;
       groupElementMapList = &m_groups[group.name];
       pos = 0;
       while (pos != -1)
@@ -1640,35 +1640,38 @@ void Parser::parseForGroups(Node *currentNode)
           }
         }
       }
-    } else
+    }
+  } else
+  {
+    QMap<QString, XMLStructGroup>::ConstIterator it = dtd->xmlStructTreeGroups.find(node->tag->name.lower());
+    if (it != dtd->xmlStructTreeGroups.end())
     {
-      if (currentNode->tag->name.lower() == group.tag)
+      XMLStructGroup group = it.data();
+      groupElementMapList = &m_groups[group.name];
+      node = new Node(0L);
+      Tag *newTag = new Tag(*currentNode->tag);
+      title = "";
+      for (uint j = 0; j < group.attributes.count(); j++)
       {
-        groupElementMapList = &m_groups[group.name];
-        node = new Node(0L);
-        Tag *newTag = new Tag(*currentNode->tag);
-        title = "";
-        for (uint j = 0; j < group.attributes.count(); j++)
+        if (newTag->hasAttribute(group.attributes[j]))
         {
-          if (newTag->hasAttribute(group.attributes[j]))
-          {
             title.append(newTag->attributeValue(group.attributes[j]).left(100));
             title.append(" | ");
-          }
         }
-        title = title.left(title.length()-3);
-        title.remove('\n');
-        newTag->name = title;
-
-        node->tag = newTag;
-        groupElement.node = node;
-        groupElement.originalNode = currentNode;
-        groupElement.parentNode = 0L; //doesn\t matter
-        groupElementList = & (*groupElementMapList)[title];
-        groupElementList->append(groupElement);
       }
+      title = title.left(title.length()-3);
+      title.remove('\n');
+      newTag->name = title;
+
+      node->tag = newTag;
+      groupElement.node = node;
+      groupElement.originalNode = currentNode;
+      groupElement.parentNode = 0L; //doesn\t matter
+      groupElementList = & (*groupElementMapList)[title];
+      groupElementList->append(groupElement);
     }
-  }
+ }
+
 }
 
 void Parser::clearGroups()
@@ -1717,11 +1720,11 @@ void Parser::parseForGroups()
     str = currentNode->tag->cleanStr;
     tagStr = currentNode->tag->tagStr();
     dtd = currentNode->tag->dtd;
-    for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
+    if (dtd->family == Script)
     {
-      group = dtd->structTreeGroups[i];
-      if (dtd->family == Script)
+      for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
       {
+        group = dtd->structTreeGroups[i];
         if (!group.hasSearchRx)
           continue;
         groupElementMapList = &m_groups[group.name];
@@ -1779,36 +1782,37 @@ void Parser::parseForGroups()
             }
           }
         }
-      } else
+      }
+    } else
+    {
+      QMap<QString, XMLStructGroup>::ConstIterator it = dtd->xmlStructTreeGroups.find(currentNode->tag->name.lower());
+      if (it != dtd->xmlStructTreeGroups.end())
       {
-        if (currentNode->tag->name.lower() == group.tag)
+        XMLStructGroup group = it.data();
+        groupElementMapList = &m_groups[group.name];
+        node = new Node(0L);
+        Tag *newTag = new Tag(*currentNode->tag);
+        title = "";
+        for (uint j = 0; j < group.attributes.count(); j++)
         {
-          groupElementMapList = &m_groups[group.name];
-          node = new Node(0L);
-          Tag *newTag = new Tag(*currentNode->tag);
-          title = "";
-          for (uint j = 0; j < group.attributes.count(); j++)
+          if (newTag->hasAttribute(group.attributes[j]))
           {
-            if (newTag->hasAttribute(group.attributes[j]))
-            {
               title.append(newTag->attributeValue(group.attributes[j]).left(100));
               title.append(" | ");
-            }
           }
-          title = title.left(title.length()-3);
-          title.remove('\n');
-          newTag->name = title;
-
-          node->tag = newTag;
-          groupElement.node = node;
-          groupElement.originalNode = currentNode;
-          groupElement.parentNode = 0L; //doesn\t matter
-          groupElementList = & (*groupElementMapList)[title];
-          groupElementList->append(groupElement);
-          break;
         }
+        title = title.left(title.length()-3);
+        title.remove('\n');
+        newTag->name = title;
+
+        node->tag = newTag;
+        groupElement.node = node;
+        groupElement.originalNode = currentNode;
+        groupElement.parentNode = 0L; //doesn\t matter
+        groupElementList = & (*groupElementMapList)[title];
+        groupElementList->append(groupElement);
       }
-    }
+  }
     //Go to the next node
     currentNode = currentNode->nextSibling();
   }
