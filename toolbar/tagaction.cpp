@@ -156,7 +156,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
       command.replace("%f", fname );
     }
 
-    pid_t pid = getpid();
+    pid_t pid = ::getpid();
     command.replace("%pid", QString("%1").arg(pid));
     QString buffer;
     QString inputType = script.attribute("input","none");
@@ -211,6 +211,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
+      ::setpgid(proc->pid(), 0);
       if (!inputFromFile)
       {
         if ( inputType == "current" || inputType == "selected" )
@@ -388,7 +389,7 @@ void TagAction::slotTimeout()
 {
   if (KMessageBox::warningYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(tag.attribute("text")), i18n("Action not responding")) == KMessageBox::Yes)
   {
-    if (proc->kill(SIGKILL))
+    if (::kill(-proc->pid(), SIGKILL))
     {
       return;
     }
