@@ -182,6 +182,7 @@
 #include "spellchecker.h"
 #include "quanta_init.h"
 #include "viewmanager.h"
+#include "debuggerui.h"
 
 
 const QString resourceDir = QString(PACKAGE) + "/";
@@ -1016,17 +1017,23 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
 #else
   dlg = new KEditToolbar(factory(), this);
 #endif
-
+ KMenuBar *mb = menuBar();
+ KActionCollection *ac = actionCollection();
  //remove the manually added menus BEFORE the dlg shows up
- menuBar()->removeItem(menuBar()->idAt(TAGS_MENU_PLACE));
- menuBar()->removeItem(menuBar()->idAt(PLUGINS_MENU_PLACE));
-
- connect( dlg, SIGNAL( newToolbarConfig() ), SLOT( slotNewToolbarConfig() ) );
- dlg->exec();
- delete dlg;
- QPopupMenu *menu = 0L;
- QString toolbarName;
+ if (m_debugger->UI())
+ {
+    m_debugger->UI()->hideMenu();
+ }
+  for (uint i = 0 ; i < mb->count(); i++)
+  {
+       if (mb->text(mb->idAt(i)) == i18n("&Window"))
+       {
+          mb->removeItem(mb->idAt(i));
+          break;
+       }
+  }
  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
+ QString toolbarName;
  for (int i = 0; i < tb->count(); i++)
  {
    toolbarName = tb->label(i);
@@ -1034,11 +1041,26 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
    if (p_toolbar)
    {
     delete p_toolbar->menu;
+    p_toolbar->menu = 0L;
+   }
+ }
+
+ connect( dlg, SIGNAL( newToolbarConfig() ), SLOT( slotNewToolbarConfig() ) );
+ dlg->exec();
+ delete dlg;
+ QPopupMenu *menu = 0L;
+ m_tagsMenu = static_cast<QPopupMenu*>(factory()->container("tags", this));
+ for (int i = 0; i < tb->count(); i++)
+ {
+   toolbarName = tb->label(i);
+   p_toolbar = quantaApp->toolbarList[toolbarName.lower()];
+   if (p_toolbar)
+   {
     menu = new QPopupMenu(m_tagsMenu);
     nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("Action");
     for (uint i = 0; i < nodeList.count(); i++)
     {
-      KAction *action = actionCollection()->action(nodeList.item(i).toElement().attribute("name"));
+      KAction *action = ac->action(nodeList.item(i).toElement().attribute("name"));
       if (action)
           action->plug(menu);
     }
@@ -1048,9 +1070,21 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
    }
  }
 
- //add the menus
- menuBar()->insertItem(i18n("Plu&gins"), m_pluginInterface->pluginMenu(), -1, PLUGINS_MENU_PLACE);
- menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);
+  //add back the menus
+ m_pluginInterface->setPluginMenu(static_cast<QPopupMenu*>(factory()->container("plugins", this)));
+ m_pluginInterface->readConfig();
+  for (uint i = 0 ; i < mb->count(); i++)
+  {
+       if (mb->text(mb->idAt(i)) == i18n("&Settings"))
+       {
+          mb->insertItem(i18n("&Window"), windowMenu(), -1, i);
+          break;
+       }
+  }
+ if (m_debugger->UI())
+ {
+    m_debugger->UI()->showMenu();
+ }
  tb->setCurrentPage(currentPageIndex);
 }
 
@@ -1387,7 +1421,7 @@ void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber
   kdDebug(24000) << "newCursorPosition" << endl;
   Q_UNUSED(file);
   typingInProgress = true;
-  if (m_idleTimerEnabled)
+  if (m_idleTimerEnabled && idleTimer)
     idleTimer->start(500, true);
  // updateTreeViews();
   QString linenumber;

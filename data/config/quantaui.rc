@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32047">
+<kpartgui name="quanta" version="32048">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -107,6 +107,18 @@
     <Action name="load_dtep" />
     <Action name="send_dtep"/>
   </Menu>
+
+  <Menu name="tags">
+  <text>&amp;Tags</text>
+  <Action name="edit_current_tag" />
+  <Action name="select_tag_area" />
+  <Separator />
+  </Menu>
+
+  <Menu name="plugins">
+  <text>Plu&amp;gins</text>
+  </Menu>
+
   <Menu name="tools"><text>T&amp;ools</text>
     <Action name="tools_document_properties" />
     <Action name="tools_change_case" />
@@ -210,8 +222,8 @@
       <Action name="debug_breakpoints_toggle" />
       <Action name="debug_breakpoints_clear" />
     </Menu>
-  </Menu>  
-  
+  </Menu>
+
   <ActionProperties>
     <Action accel="Ctrl+Return" name="tag_br" />
     <Action accel="Ctrl+Minus"  name="tag_hr" />

@@ -67,6 +67,7 @@ public:
   virtual QuantaPlugin *plugin(const QString &);
   /** Gets the plugin menu */
   virtual QPopupMenu *pluginMenu() {return m_pluginMenu;};
+  void setPluginMenu(QPopupMenu *pluginMenu) {m_pluginMenu = pluginMenu;}
 
 private:
   /** The constructor is privat because we use singleton patter.

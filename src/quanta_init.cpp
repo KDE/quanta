@@ -214,8 +214,8 @@ void QuantaInit::initQuanta()
     showToolbarAction->setChecked(true);
   }
 
-  m_quanta->menuBar()->insertItem(i18n("Plu&gins"), m_quanta->m_pluginInterface->pluginMenu(),
-                                  -1, PLUGINS_MENU_PLACE);
+  m_quanta->m_pluginInterface->setPluginMenu(static_cast<QPopupMenu*>(m_quanta->factory()->container("plugins", m_quanta)));
+  m_quanta->m_pluginInterface->readConfig();
 
 //Compatility code (read the action shortcuts from quantaui.rc)
 //TODO: Remove after upgrade from 3.1 is not supported
@@ -239,12 +239,16 @@ void QuantaInit::initQuanta()
 
   //m_quanta->applyMainWindowSettings(m_config);
 
-  m_quanta->m_tagsMenu = new QPopupMenu(m_quanta);
-  m_quanta->editTagAction->plug(m_quanta->m_tagsMenu);
-  m_quanta->selectTagAreaAction->plug(m_quanta->m_tagsMenu);
-  m_quanta->m_tagsMenu->insertSeparator();
-  m_quanta->menuBar()->insertItem(i18n("&Tags"), m_quanta->m_tagsMenu, -1, TAGS_MENU_PLACE);
-  m_quanta->menuBar()->insertItem(i18n("&Window"), m_quanta->windowMenu(), -1, 10);
+  m_quanta->m_tagsMenu =   static_cast<QPopupMenu*>(m_quanta->factory()->container("tags", m_quanta));
+  KMenuBar *mb = m_quanta->menuBar();
+  for (uint i = 0 ; i < mb->count(); i++)
+  {
+       if (mb->text(mb->idAt(i)) == i18n("&Settings"))
+       {
+          mb->insertItem(i18n("&Window"), m_quanta->windowMenu(), -1, i);
+          break;
+       }
+  }
   KActionMenu *toolviewMenu = (KActionMenu*)(m_quanta->actionCollection()->action("kmdi_toolview_menu"));
   if (toolviewMenu)
   toolviewMenu->plug(m_quanta->windowMenu());
@@ -1007,11 +1011,11 @@ void QuantaInit::initPlugins()
   // TODO : read option from plugins.rc to see if we should validate the plugins
 
   m_quanta->m_pluginInterface = QuantaPluginInterface::ref(m_quanta);
+
   connect(m_quanta->m_pluginInterface, SIGNAL(hideSplash()),
           m_quanta, SLOT(slotHideSplash()));
   connect(m_quanta->m_pluginInterface, SIGNAL(statusMsg(const QString &)),
           m_quanta, SLOT(slotStatusMsg(const QString & )));
-  m_quanta->m_pluginInterface->readConfig();
 }
 
 

@@ -39,7 +39,6 @@
 
 QuantaPluginInterface::QuantaPluginInterface(QWidget *parent)
 {
-  m_pluginMenu = new QPopupMenu(parent);
   m_parent = parent;
    (void) new KAction( i18n( "Configure &Plugins..." ), 0, 0,
                         this, SLOT( slotPluginsEdit() ),

@@ -31,8 +31,6 @@
 #endif
 
 #define DEFAULT_DTD QString("-//W3C//DTD HTML 4.01 Transitional//EN")
-#define TAGS_MENU_PLACE 6
-#define PLUGINS_MENU_PLACE 7
 
 class QString;
 class DCOPReply;
