@@ -881,7 +881,34 @@ void SAParser::slotParseNodeInDetail()
         parseArea(area, m_currentNode->tag->tagStr(), "", m_currentNode, true, m_synchronous);
     } else
     {
+      Node *node = m_currentNode;
       m_currentNode = m_currentNode->nextSibling();
+      if (node->tag->type == Tag::Comment)
+      {
+         Node *commentNode = new Node(node);
+         int line, col;
+         AreaStruct area;
+         node->tag->endPos(line, col);
+         area.bLine = line;
+         area.bCol = col + 1;
+         if (m_currentNode)
+           m_currentNode->tag->beginPos(line, col);
+        else
+         {
+            line = m_write->editIf->numLines() - 1;
+            col = m_write->editIf->lineLength(area.eLine);
+         }
+         area.eLine = line;
+         area.eCol = col - 1;
+         if (area.eCol < 0)
+         {
+             area.eLine--;
+             area.eCol = m_write->editIf->lineLength(area.eLine);
+         }
+         Tag *tag = new Tag(area, m_write, node->tag->dtd(), false);
+         commentNode->tag = tag;
+         node->child = commentNode;
+      }
       if (m_currentNode)
       {
 #ifdef DEBUG_PARSER
