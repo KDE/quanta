@@ -3,7 +3,7 @@ bin_PROGRAMS = quanta
 
 ## INCLUDES were found outside kdevelop specific part
 
-quanta_SOURCES = quantacommon.cpp quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp quantaview_init.cpp main.cpp document.cpp kqapp.cpp qextfileinfo.cpp quanta.cpp 
+quanta_SOURCES = quantacommon.cpp quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp quantaview_init.cpp main.cpp document.cpp kqapp.cpp qextfileinfo.cpp quanta.cpp dcopwindowmanagerif.skel
 quanta_LDADD   = ./project/libproject.a ./plugins/libplugins.a ./widgets/libwidgets.a ./parser/libparser.a ./treeviews/libtreeviews.a ./toolbar/libtoolbar.a ./tagdialogs/libtagdialogs.a ./dialogs/libdialogs.a -lkatepartinterfaces -lkabc $(top_builddir)/quanta/dialogs/libdialogs.a $(top_builddir)/quanta/parser/libparser.a $(top_builddir)/quanta/project/libproject.a $(top_builddir)/quanta/tagdialogs/libtagdialogs.a $(top_builddir)/quanta/treeviews/libtreeviews.a $(top_builddir)/quanta/widgets/libwidgets.a $(top_builddir)/quanta/toolbar/libtoolbar.a $(top_builddir)/quanta/messages/libmessages.a $(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.a $(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.a $(top_builddir)/quanta/plugins/php3dbg/libphp3dbg.a $(LIB_KSPELL) $(LIB_KFILE) $(LIB_KHTML) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) -lXext -lX11 $(LIBSOCKET)
 
 SUBDIRS = data messages dialogs tagdialogs toolbar treeviews parser widgets plugins project 
