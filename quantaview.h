@@ -100,8 +100,6 @@ class QuantaView : public QWidget
 
 	public slots:
 
-	  /** Callback for toolbar with tags. */
-	  void slotToolbarCallback( int id );
   /** insert <img > tag */
   void slotTagImg();
   /** for <a href> tag */

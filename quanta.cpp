@@ -76,344 +76,9 @@
 
 #include "messages/messageoutput.h"
 
-#include "newstuff.h"
-#ifdef NEW_STUFF
-
 #include <kedittoolbar.h>
 #include <kaction.h>
 
-#endif
-
-
-/////////////////////////////////////////////////////////////////////
-// SLOT CALLBACK IMPLEMENTATION
-/////////////////////////////////////////////////////////////////////
-
-void QuantaApp::commandCallback(int id_)
-{
-  switch (id_)
-  {
-    case ID_FILE_NEW_WINDOW:
-         slotFileNewWindow();
-    	 break;
-
-    case ID_FILE_NEW:
-    	 slotFileNew();
-         break;
-
-    case ID_FILE_OPEN:
-         slotFileOpen();
-         break;
-
-    case ID_FILE_SAVE:
-         slotFileSave();
-         break;
-
-    case ID_FILE_SAVE_AS:
-         slotFileSaveAs();
-         break;
-
-    case ID_FILE_SAVE_ALL:
-         slotFileSaveAll();
-         break;
-
-    case ID_FILE_CLOSE:
-         slotFileClose();
-         break;
-
-    case ID_FILE_CLOSE_ALL:
-         slotFileCloseAll();
-         break;
-
-    case ID_FILE_NEXT:
-        slotFileNext();
-        break;
-
-    case ID_FILE_PREV:
-        slotFilePrev();
-        break;
-
-    case ID_FILE_PRINT:
-         slotFilePrint();
-         break;
-
-    case ID_FILE_QUIT:
-         slotFileQuit();
-         break;
-
-    case ID_EDIT_CUT:
-         slotEditCut();
-         break;
-
-    case ID_EDIT_COPY:
-         slotEditCopy();
-         break;
-
-    case ID_EDIT_PASTE:
-         slotEditPaste();
-         break;
-
-    case ID_EDIT_UNDO:
-         slotEditUndo();
-         break;
-
-    case ID_EDIT_REDO:
-         slotEditRedo();
-         break;
-
-    case ID_EDIT_UREDO_HISTORY:
-         slotURedoHistory();
-         break;
-
-    case ID_EDIT_SELECT_ALL:
-         slotEditSelectAll();
-         break;
-
-    case ID_EDIT_DESELECT_ALL:
-         slotEditDeselectAll();
-         break;
-
-    case ID_EDIT_INVERT_SELECT:
-         slotEditInvertSelect();
-         break;
-
-    case ID_EDIT_VERTICAL_SELECT:
-         slotEditVerticalSelect();
-         break;
-
-    case ID_EDIT_SEARCH:
-         slotEditSearch();
-         break;
-
-    case ID_EDIT_SEARCH_AGAIN:
-         slotEditSearchAgain();
-         break;
-
-    case ID_EDIT_REPLACE:
-         slotEditReplace();
-         break;
-
-    case ID_EDIT_FIND_IN_FILES:
-         slotEditFindInFiles();
-         break;
-
-    case ID_EDIT_INDENT:
-         slotEditIndent();
-         break;
-
-    case ID_EDIT_UNINDENT:
-         slotEditUnindent();
-         break;
-
-    case ID_EDIT_GOTO_LINE:
-         slotEditGotoLine();
-         break;
-
-    case ID_EDIT_CLEAN_INDENT:
-         slotEditCleanIndent();
-         break;
-
-    case ID_EDIT_CURRENT_TAG:
-         view->slotEditCurrentTag();
-         break;
-
-    case ID_EDIT_SPELL:
-    		 view->write()->slotSpellCheck();
-    		 break;
-  
-    case ID_VIEW_TOOLBAR:
-         slotViewToolBar();
-         break;
-
-    case ID_VIEW_STATUSBAR:
-         slotViewStatusBar();
-         break;
-
-    case ID_VIEW_REPAINT:
-         slotViewRepaint();
-         break;
-
-    case ID_VIEW_BACK:
-         htmlPartDoc->back();
-         break;
-
-    case ID_VIEW_FORWARD:
-         htmlPartDoc->forward();
-         break;
-
-    case ID_VIEW_PREVIEW:
-         slotShowPreview();
-         break;
-
-    case ID_VIEW_TREE:
-         slotShowLeftPanel();
-         break;
-         
-    case ID_VIEW_MES:
-         slotViewMessages();
-         break;
-
-    case ID_VIEW_FTP:
-         slotFtpClient();
-         break;
-         
-    case ID_VIEW_PREV_FILE:
-       slotFilePrev();
-       break;
-       
-    case ID_VIEW_NEXT_FILE:
-       slotFileNext();
-       break;
-           
-    case ID_TOOL_SYNTAX_CHECK:
-       slotToolSyntaxCheck();
-       break;
-
-    case ID_PROJECT_NEW:
-    		 project	-> newProject();
-    		 leftPanel-> showPage( (QWidget *)pTab );
-    		 break;
-
-    case ID_PROJECT_OPEN:
-    		 project	-> openProject();
-    		 leftPanel-> showPage( (QWidget *)pTab );
-    		 break;
-    		
-    case ID_PROJECT_CLOSE:
-    		 project	-> closeProject();
-    		 leftPanel-> showPage( (QWidget *)fTab );
-    		 break;
-    		
-    case ID_PROJECT_ADD_FILE:
-    		 project  -> addFiles();
-    		 leftPanel-> showPage( (QWidget *)pTab );
-    		 break;
-    		
-    case ID_PROJECT_ADD_DIRECTORY:
-    		 project  -> addDirectory();
-    		 leftPanel-> showPage( (QWidget *)pTab );
-    		 break;
-    		 
-    case ID_PROJECT_RESCAN_FILES:
-       project  -> slotRescanPrjDir();
-       break;
-    		
-    case ID_PROJECT_PROPERTIES:
-    		 project  -> options();
-    		 break;
-    		
-    case ID_PROJECT_UPLOAD_PROJECT:
-    		 project  -> upload();
-    		 break;
-
-    case ID_OPTIONS:
-    		 slotOptions();
-    		 break;
-    		
-    case ID_OPTIONS_KEYS:
-    		 slotOptionsConfigureKeys();
-    		 break;
-    		
-    case ID_OPTIONS_TOOLBARS:
-    		 slotOptionsConfigureToolbars();
-    		 break;
-
-    case ID_OPTIONS_EDITOR:
-         doc->write()->editorOptions();
-
-         config->setGroup("General Options");
-         doc->writeConfig(config);
-         break;
-
-    case ID_OPTIONS_HIGHLIGHT:
-         doc->write()->hlDlg();
-         break;
-
-    case ID_CONTEXT_HELP:
-         contextHelp();
-         break;
-         
-    default:
-         break;
-  }
-}
-
-void QuantaApp::statusCallback(int id_)
-{
-  switch (id_)
-  {
-    case ID_FILE_NEW_WINDOW:
-         slotStatusHelpMsg(i18n("Opens a new application window"));
-         break;
-
-    case ID_FILE_NEW:
-         slotStatusHelpMsg(i18n("Creates a new document"));
-         break;
-
-    case ID_FILE_OPEN:
-         slotStatusHelpMsg(i18n("Opens an existing document"));
-         break;
-
-    case ID_FILE_OPEN_RECENT:
-         slotStatusHelpMsg(i18n("Opens a recently used file"));
-         break;
-
-    case ID_FILE_SAVE:
-         slotStatusHelpMsg(i18n("Saves the actual document"));
-         break;
-
-    case ID_FILE_SAVE_AS:
-         slotStatusHelpMsg(i18n("Saves the actual document as..."));
-         break;
-
-    case ID_FILE_CLOSE:
-         slotStatusHelpMsg(i18n("Closes the actual document"));
-         break;
-		case ID_FILE_NEXT:
-    			 slotStatusHelpMsg(i18n("Go to next file"));
-		     break;
-
-		case ID_FILE_PREV:
-    			 slotStatusHelpMsg(i18n("Go to previous file"));
-			   break;
-
-
-    case ID_FILE_PRINT:
-         slotStatusHelpMsg(i18n("Prints out the actual document"));
-         break;
-
-    case ID_FILE_QUIT:
-         slotStatusHelpMsg(i18n("Quits the application"));
-         break;
-
-    case ID_EDIT_CUT:
-         slotStatusHelpMsg(i18n("Cuts the selected section and puts it to the clipboard"));
-         break;
-
-    case ID_EDIT_COPY:
-         slotStatusHelpMsg(i18n("Copies the selected section to the clipboard"));
-         break;
-
-    case ID_EDIT_PASTE:
-         slotStatusHelpMsg(i18n("Pastes the clipboard contents to actual position"));
-         break;
-
-    case ID_VIEW_TOOLBAR:
-         slotStatusHelpMsg(i18n("Enables/disables the toolbar"));
-         break;
-
-    case ID_VIEW_STATUSBAR:
-         slotStatusHelpMsg(i18n("Enables/disables the statusbar"));
-         break;
-
-    default:
-         break;
-  }
-}
-
-/////////////////////////////////////////////////////////////////////
-// SLOT IMPLEMENTATION
-/////////////////////////////////////////////////////////////////////
 
 void QuantaApp::slotFileNewWindow()
 {
@@ -462,8 +127,8 @@ void QuantaApp::slotFileOpen( QString fileToOpen )
 void QuantaApp::slotFileOpenRecent(int id_)
 {
   slotStatusMsg(i18n("Opening file..."));
-	
-  doc->openDocument(recentFilesMenu->text(id_));
+#warning open recent file
+//  doc->openDocument(recentFilesMenu->text(id_));
   setCaption(doc->getTitle());
 
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
@@ -474,7 +139,8 @@ void QuantaApp::slotProjectOpenRecent(int id_)
   slotStatusMsg(i18n("Opening project..."));
 	
   project->closeProject();
-  project->loadProject (recentProjectsMenu->text(id_));
+#warning open project recent  
+//  project->loadProject (recentProjectsMenu->text(id_));
   leftPanel-> showPage( (QWidget *)pTab );
 
   setCaption(doc->getTitle());
@@ -590,13 +256,6 @@ void QuantaApp::slotFilePrev()
 void QuantaApp::slotFilePrint()
 {
   slotStatusMsg(i18n("Printing..."));
-
-  QPrinter printer;
-  if (printer.setup(this))
-  {
-   // view->print(&printer);
-//   #warning add print from source or html
-  }
 
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
@@ -752,8 +411,8 @@ void QuantaApp::slotEditVerticalSelect()
 
   doc->write()->toggleVertical();
 
-  bool stat = editMenu -> isItemChecked( ID_EDIT_VERTICAL_SELECT );
-  checkCommand( ID_EDIT_VERTICAL_SELECT, !stat );
+//  bool stat = editMenu -> isItemChecked( ID_EDIT_VERTICAL_SELECT );
+//  checkCommand( ID_EDIT_VERTICAL_SELECT, !stat );
 
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
@@ -797,40 +456,18 @@ void QuantaApp::slotEditGotoLine()
 void QuantaApp::slotViewToolBar()
 {
   slotStatusMsg(i18n("Toggle the toolbar..."));
-  ///////////////////////////////////////////////////////////////////
-  // turn Toolbar on or off
-#ifndef NEW_STUFF  
-  if( viewMenu->isItemChecked(ID_VIEW_TOOLBAR))
-  {
-    viewMenu->setItemChecked(ID_VIEW_TOOLBAR, false);
-    enableToolBar(KToolBar::Hide);
-  }
-  else
-  {
-    viewMenu->setItemChecked(ID_VIEW_TOOLBAR, true);
-    enableToolBar(KToolBar::Show);
-  }		
-#endif
+
+#warning view tool bar  
+  
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 void QuantaApp::slotViewStatusBar()
 {
   slotStatusMsg(i18n("Toggle the statusbar..."));
-  ///////////////////////////////////////////////////////////////////
-  //turn Statusbar on or off
-#ifndef NEW_STUFF    
-  if( viewMenu->isItemChecked(ID_VIEW_STATUSBAR))
-  {
-    viewMenu->setItemChecked(ID_VIEW_STATUSBAR, false);
-    enableStatusBar(KStatusBar::Hide);
-  }
-  else
-  {
-    viewMenu->setItemChecked(ID_VIEW_STATUSBAR, true);
-    enableStatusBar(KStatusBar::Show);
-  }
-#endif
+
+#warning view status bar  
+  
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
@@ -853,7 +490,8 @@ void QuantaApp::slotStatusHelpMsg(const QString &text)
 
 
 /** Repaint preview */
-void QuantaApp::slotViewRepaint(){
+void QuantaApp::slotViewRepaint()
+{
 	slotStatusMsg(i18n("Repainting..."));
 	
 	repaintPreview( true );
@@ -971,7 +609,6 @@ void QuantaApp::slotInsertTag( QString file )
    else {
      doc->write()->insertTag("<a href=\""+shortName+"\">","</a>");
    }
-
 }
 
 
@@ -981,7 +618,7 @@ void QuantaApp::slotInsertTag( QString file )
 /** slot for new modify flag */
 void QuantaApp::slotNewStatus()
 {
-	
+/*	
   if ( doc->isModified() )
   {
     enableCommand(ID_FILE_SAVE);
@@ -995,7 +632,7 @@ void QuantaApp::slotNewStatus()
     }
     else enableCommand(ID_FILE_SAVE_ALL);
   }
-	
+*/	
   QDictIterator<Document> it( *(doc->docList) );
 
   QIconSet floppyIcon( UserIcon("save_small"));
@@ -1021,6 +658,8 @@ void QuantaApp::slotNewUndo()
 {
 	int state = doc->write()->undoState();
 	// undo/redo
+#warning need rewrite statuses	
+/*  
   if(state & 1)
  		enableCommand( ID_EDIT_UNDO);
   else
@@ -1029,13 +668,14 @@ void QuantaApp::slotNewUndo()
     enableCommand( ID_EDIT_REDO);
   else
     disableCommand(ID_EDIT_REDO);
-
+*/
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
 /** slot for new mark flag */
 void QuantaApp::slotNewMarkStatus()
 {
+/*  
 	if ( doc->write()->hasMarkedText() ) {
 		enableCommand(ID_EDIT_CUT);
     enableCommand(ID_EDIT_COPY);
@@ -1044,6 +684,7 @@ void QuantaApp::slotNewMarkStatus()
 		disableCommand(ID_EDIT_CUT);
     disableCommand(ID_EDIT_COPY);
 	}
+*/	
 	slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
@@ -1059,43 +700,14 @@ void QuantaApp::slotUpdateStatus(const QString &)
 
 void QuantaApp::slotOptionsConfigureKeys()
 {
-#ifdef NEW_STUFF
 	KKeyDialog::configureKeys( actionCollection(), QString::null, true, this );
-#else
-	KKeyDialog::configureKeys(keyAccel);
-#endif
 }
 
 void QuantaApp::slotOptionsConfigureToolbars()
 {
-#ifdef NEW_STUFF
     KEditToolbar dlg( actionCollection(), QString::null, true, this );
-    if ( dlg.exec() )
-        createGUI();
-#else
-
-  ToolBarConfig *dlg = new ToolBarConfigI( toolbars, 0, "toolbars config", true );
-//  QDomDocument oldDoc = toolbars->d.cloneNode().toDocument();
-
-  if ( dlg->exec() ) {
-    view->updateToolBars(toolbars);
-    QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/toolbars.rc" );
-    f.open( IO_ReadWrite | IO_Truncate );
-    QTextStream qts(&f);
-    toolbars->d.save(qts,0);
-    f.close();
-  }
-  else {
-//    toolbars->d = oldDoc;
-    QFile f( locate("appdata","toolbars.rc") );
-		f.open( IO_ReadOnly );
-		toolbars->d.clear();
-		toolbars->d.setContent( &f );
-		f.close();
-  }
-
-  delete ( dlg );
-#endif // NEW_STUFF		
+    
+    if ( dlg.exec() ) createGUI();
 }
 
 
@@ -1131,11 +743,6 @@ void QuantaApp::slotOptions()
 
   previewOptions->setPosition( previewPosition );
 
-  // preview fonts
-  //page=kd->addVBoxPage(i18n("Fonts"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
-  //PreviewFontOptions *previewFontOptions = new PreviewFontOptions( (QWidget *)page );
-
-
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
 
@@ -1158,7 +765,7 @@ void QuantaApp::slotOptions()
       s = widgetStackOfHtmlPart();
       s ->raiseWidget( 0 );
 	 	}
-    checkCommand( ID_VIEW_PREVIEW, false );
+//    checkCommand( ID_VIEW_PREVIEW, false );
 
   	previewPosition = previewOptions->position();
   	
@@ -1185,21 +792,6 @@ void QuantaApp::slotOptions()
   saveOptions();
 
   delete kd;
-}
-
-////////////////////////
-// editor commands
-///////////////////////
-void QuantaApp::doCursorCommand(int /*cmdNum*/) {
-  //view->write()->doCursorCommand(cmdNum);
-}
-
-void QuantaApp::doEditCommand(int /*cmdNum*/) {
-  //view->write()->doEditCommand(cmdNum);
-}
-
-void QuantaApp::doStateCommand(int /*cmdNum*/) {
-  //view->write()->doStateCommand(cmdNum);
 }
 
 void QuantaApp::slotSwapLeftPanelMode()
@@ -1230,13 +822,14 @@ void QuantaApp::slotActivatePreview()
 	WHTMLPart *part = htmlPart();
 	if ( !part ) return;
 	QWidgetStack *s = widgetStackOfHtmlPart();
-	
+/*	
 	enableCommand(ID_VIEW_BACK);
   enableCommand(ID_VIEW_FORWARD);
 	enableCommand(ID_VIEW_REPAINT);
+*/	
 	s->raiseWidget( 1 );
 	
-	checkCommand( ID_VIEW_PREVIEW, true );
+//	checkCommand( ID_VIEW_PREVIEW, true );
 }
 
 void QuantaApp::slotShowPreview()
@@ -1247,21 +840,16 @@ void QuantaApp::slotShowPreview()
 	if ( !s ) return;
 	if ( !part ) return;
 
-#ifdef NEW_STUFF
 	static int hSplitPos = 1000;
 	static int vSplitPos = 250;
 
-    KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
+  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
 	bool stat = !ta->isChecked();
-#else	
-	static int hSplitPos = 1000;
-	bool stat = viewMenu -> isItemChecked( ID_VIEW_PREVIEW );
-#endif
 
 	if ( stat ) {
-		disableCommand(ID_VIEW_BACK);
-		disableCommand(ID_VIEW_FORWARD);
-		disableCommand(ID_VIEW_REPAINT);
+//		disableCommand(ID_VIEW_BACK);
+//		disableCommand(ID_VIEW_FORWARD);
+//		disableCommand(ID_VIEW_REPAINT);
 		
 		if ( previewPosition == "Bottom" )
 		{
@@ -1273,9 +861,9 @@ void QuantaApp::slotShowPreview()
 		doc ->write()->setFocus();
 	}
 	else {
-		enableCommand(ID_VIEW_BACK);
-		enableCommand(ID_VIEW_FORWARD);
-		enableCommand(ID_VIEW_REPAINT);
+//		enableCommand(ID_VIEW_BACK);
+//		enableCommand(ID_VIEW_FORWARD);
+//		enableCommand(ID_VIEW_REPAINT);
 		
 	  if ( previewPosition == "Bottom" )
 	  {
@@ -1289,21 +877,15 @@ void QuantaApp::slotShowPreview()
 		s->raiseWidget( 1 );
 		repaintPreview(false);
 	}
-	checkCommand( ID_VIEW_PREVIEW, !stat );
+//	checkCommand( ID_VIEW_PREVIEW, !stat );
 }
 
 void QuantaApp::slotShowLeftPanel()
 {
-#ifdef NEW_STUFF
 	static int vSplitPos = 250;
 
-    KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_tree" );
+  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_tree" );
 	bool stat = !ta->isChecked();
-#else	
-	static int vSplitPos = 0;
-
-	bool stat = viewMenu -> isItemChecked( ID_VIEW_TREE );
-#endif
 
 	if ( stat )
 	{
@@ -1315,7 +897,7 @@ void QuantaApp::slotShowLeftPanel()
     vSplit -> setPos( vSplitPos );
 	  vSplitPos = vSplit->getPos();
 	}
-	checkCommand( ID_VIEW_TREE, !stat );
+//	checkCommand( ID_VIEW_TREE, !stat );
 }
 
 void QuantaApp::slotNewLineColumn()
@@ -1430,6 +1012,7 @@ void QuantaApp::openDoc( QString url )
 
 void QuantaApp::updateNavButtons( bool back, bool forward )
 {
+/*   
    if ( back )
    	  enableCommand(ID_VIEW_BACK);
    else
@@ -1439,7 +1022,7 @@ void QuantaApp::updateNavButtons( bool back, bool forward )
    	  enableCommand(ID_VIEW_FORWARD);
    else
    		disableCommand(ID_VIEW_FORWARD);
-   		
+*/   		
 }
 
 void QuantaApp::contextHelp()
@@ -1460,29 +1043,17 @@ void QuantaApp::contextHelp()
 
 void QuantaApp::slotSetHl( int _hl )
 {
-#ifndef NEW_STUFF 
-  HlManager *hl = new HlManager();
-  doc->write()->setHl( hl->nameFind( highlightMenu->text( _hl )) );
-  delete hl;
-#else
   doc->write()->setHl(_hl);
-#endif
 }
 
 void QuantaApp::slotSetEol( int _eol )
 {
-#ifndef NEW_STUFF   
-  HlManager *hl = new HlManager();
-  doc->write()->setEol( hl->nameFind( highlightMenu->text( _eol )) );
-  delete hl;
-#else
   doc->write()->setEol(_eol);
-#endif
 }
-
 
 void QuantaApp::slotFtpClient()
 {
+/*	
 	bool stat = toolMenu -> isItemChecked( ID_VIEW_FTP );
 	toolMenu->setItemChecked(ID_VIEW_FTP, !stat);
 	
@@ -1513,16 +1084,13 @@ void QuantaApp::slotFtpClient()
 	  }
 	}
 	else debug("Library not found");
+*/	
 }
 
 void QuantaApp::slotViewMessages()
 {
-#ifdef NEW_STUFF
-    KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_messages" );
+  KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_messages" );
 	bool stat = !ta->isChecked();
-#else	
-  bool stat = viewMenu -> isItemChecked( ID_VIEW_MES );
-#endif
   
   static int oldpos = (hSplit->getPos() > 850) ? 850 : hSplit->getPos();
   
@@ -1534,11 +1102,6 @@ void QuantaApp::slotViewMessages()
     hSplit->setPos(1000);
   }
   else hSplit->setPos(oldpos);
-  
-#ifndef NEW_STUFF
-  viewMenu->setItemChecked(ID_VIEW_MES, !stat);
-  checkCommand( ID_VIEW_MES, !stat );
-#endif
 }
 
 void QuantaApp::slotToolSyntaxCheck()
