@@ -1033,6 +1033,12 @@ Node *Parser::rebuild(Document *w)
 
    firstNode->child = 0L;
    Node *lastInserted = 0L;
+   //this makes sure that the first found node it put right after the firstNode
+   if (firstNode->next && firstNode->next == lastNode)
+   {
+      firstNode->next->prev = 0L;
+      firstNode->next = 0L;
+   }
    node = parseArea(area.bLine, area.bCol, area.eLine, area.eCol, &lastInserted, firstNode);
 
 #ifdef BUILD_KAFKAPART

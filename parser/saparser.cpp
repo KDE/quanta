@@ -63,7 +63,7 @@ void SAParser::init(Node *node, Document* write)
 
 bool SAParser::slotParseOneLine()
 {
-  if (!m_parsingEnabled && !m_synchronous)
+  if ((!m_parsingEnabled || !baseNode) && !m_synchronous)
   {
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "slotParseOneLine - interrupted" << endl;
@@ -330,7 +330,10 @@ bool SAParser::slotParseOneLine()
 
           s_currentContext.area.eLine = s_line;
           s_currentContext.area.eCol = areaEndPos - 1;
-          if (s_fullParse)
+          //Always create a node between the opening and closing special area nodes.
+          //This fixes the "commnet loss" bug when editing in VPL and autocompletion
+          //for simple special areas like <? a ?>
+          if (s_fullParse || !s_parentNode->child)
           {
             if ( s_currentNode &&
                 (s_currentNode->tag->type == Tag::Text ||
@@ -828,7 +831,7 @@ void SAParser::slotParseNodeInDetail()
 #ifdef DEBUG_PARSER
   kdDebug(24001) << "slotParseNodeInDetail. Enabled: " << m_parsingEnabled << " Synch: " << m_synchronous << endl; //this is really heavy debug information, enable only when really needed
 #endif
-  if (m_currentNode && m_parsingEnabled)
+  if (m_currentNode && m_parsingEnabled && baseNode)
   {
     if (m_currentNode->insideSpecial &&
         m_currentNode->tag->type != Tag::Comment &&
@@ -885,33 +888,6 @@ void SAParser::slotParseNodeInDetail()
     {
       Node *node = m_currentNode;
       m_currentNode = m_currentNode->nextSibling();
-      if (node && node->tag && node->tag->type == Tag::Comment) //node and node->tag might be 0 when closing the document...
-      {
-         Node *commentNode = new Node(node);
-         int line, col;
-         AreaStruct area;
-         node->tag->endPos(line, col);
-         area.bLine = line;
-         area.bCol = col + 1;
-         if (m_currentNode)
-           m_currentNode->tag->beginPos(line, col);
-        else
-         {
-            line = m_write->editIf->numLines() - 1;
-            col = m_write->editIf->lineLength(area.eLine);
-         }
-         area.eLine = line;
-         area.eCol = col - 1;
-         if (area.eCol < 0)
-         {
-             area.eLine--;
-             area.eCol = m_write->editIf->lineLength(area.eLine);
-         }
-         Tag *tag = new Tag(area, m_write, node->tag->dtd(), false);
-         commentNode->tag = tag;
-         commentNode->insideSpecial = true;
-         node->child = commentNode;
-      }
       if (m_currentNode)
       {
 #ifdef DEBUG_PARSER
@@ -948,7 +924,7 @@ void SAGroupParser::slotParseForScriptGroup()
 #ifdef DEBUG_PARSER
   kdDebug(24001) << "slotParseForScriptGroup. Synch: " << m_synchronous << endl;
 #endif
-  if (!m_parent->parsingEnabled())
+  if (!m_parent->parsingEnabled() || (!baseNode && !m_synchronous))
   {
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "slotParseForScriptGroup aborted. Synch: " << m_synchronous << endl;
