@@ -819,10 +819,18 @@ void Project::slotRename(const KURL& url)
       //set the class global attributes
       oldURL = QExtFileInfo::toRelative(url, baseURL);
       newURL = QExtFileInfo::toRelative(newUrl, baseURL);
-      //start the rename job
 
-      KIO::SimpleJob *job = KIO::rename( url, newUrl, true );
-      connect( job, SIGNAL( result( KIO::Job *) ), SLOT( slotRenameFinished( KIO::Job *) ));
+      bool proceed = true;
+      if (QExtFileInfo::exists(newUrl))
+      {
+        proceed = KMessageBox::questionYesNo(this, i18n("A file with the same name already exists.\nDo you want to overwrite it?"),i18n("Overwrite")) == KMessageBox::Yes;
+      }
+      if (proceed)
+      {
+       //start the rename job
+        KIO::SimpleJob *job = KIO::rename( url, newUrl, true );
+        connect( job, SIGNAL( result( KIO::Job *) ), SLOT( slotRenameFinished( KIO::Job *) ));
+      }	
     }
   }
 }
