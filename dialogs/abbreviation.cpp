@@ -48,6 +48,7 @@ void Abbreviation::slotDTDChanged(const QString& newDTDName)
 {
   saveTemplates();
   templatesList->clear();
+  codeEdit->clear();
   oldItem = 0L;
   QString dtdName = QuantaCommon::getDTDNameFromNickName(newDTDName);
   m_dtd = dtds->find(dtdName.lower());
