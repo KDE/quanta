@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 
   aboutData.addCredit("Jens Herden",
     I18N_NOOP("Improvements to the treeview code; code review and cleanup"),
-    "jhe@epost.de");
+    "jens@kdewebdev.org");
 
   aboutData.addCredit("Andrea Bergia",
     I18N_NOOP("Original CSS editor"),
