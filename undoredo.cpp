@@ -439,8 +439,10 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool ge
 	QValueList<int> loc;
 	Tag *_tag;
 	QString text, totalText;
+#ifdef BUILD_KAFKAPART
 	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
 	KafkaHTMLPart *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaPart();
+#endif
 
 	if(_nodeModif.type == undoRedo::NodeTreeAdded)
 	{
@@ -604,6 +606,7 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool ge
 				bCol2 = bCol;
 				eLine2 = bLine2;
 				eCol2 = bCol2;
+#ifdef BUILD_KAFKAPART
 				if(_node->tag->type == Tag::Text)
 					text = kafkaInterface->getEncodedText(text, bLine2, bCol2, eLine2, eCol2);
 				else if(_node->tag->type == Tag::XmlTag || _node->tag->type == Tag::XmlTagEnd)
@@ -611,6 +614,7 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool ge
 				else
 					kdDebug(25001)<< "undoRedo::UndoNodeModif - ERROR can't generate text for type "
 						<< _node->tag->type << endl;
+#endif
 				_node->tag->setStr(text);
 				_node->tag->setTagPosition(bLine2, bCol2, eLine2, eCol2);
 			}
@@ -861,7 +865,9 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool ge
 							bCol3++;
 							j--;
 						}
+#ifdef BUILD_KAFKAPART
 						text += kafkaInterface->getEncodedText(text, bLine3, bCol3 + 1, eLine, eCol);
+#endif
 					}
 					else if(n->tag->type == Tag::XmlTag || n->tag->type == Tag::XmlTagEnd)
 					{
@@ -905,7 +911,9 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool ge
 							bCol2 = 2*i;
 							eCol = 2*i;
 						}
+#ifdef BUILD_KAFKAPART
 						text = kafkaInterface->generateCodeFromNode(n, bLine2, bCol2, eLine, eCol);
+#endif
 					}
 					n->tag->setStr(text);
 					n->tag->setTagPosition(bLine2, bCol2, eLine, eCol);
