@@ -1664,12 +1664,16 @@ void Document::checkDirtyStatus()
       //check if the file is changed, also by file content. Might help to reduce
       //unwanted warning on NFS
       QFile f(fileName);
-      if (f.open(IO_ReadOnly))
+      QFile tmpFile(m_tempFileName);
+      if (f.open(IO_ReadOnly) && tmpFile.open(IO_ReadOnly))
       {
         QString content;
         QTextStream stream(&f);
         content = stream.read();
-        if (content == editIf->text())
+        QString tmpContent;
+        QTextStream tmpStream(&tmpFile);
+        tmpContent = tmpStream.read();
+        if (content == tmpContent)
         {
           m_dirty = false;
         }
