@@ -33,12 +33,12 @@ class NodeModifsSet;
 /**
 @author Paulo Moura Guedes
 */
-class TagActionSet : public QObject
+class TagActionSetAbstract : public QObject
 {
     Q_OBJECT
 public:
-    TagActionSet(QObject *parent = 0, const char *name = 0);
-    virtual ~TagActionSet();
+    TagActionSetAbstract(QObject *parent = 0, const char *name = 0);
+    virtual ~TagActionSetAbstract();
     
     DOM::Node const& currentDomNode() const {return m_currentDomNode;}
 
@@ -55,14 +55,36 @@ protected:
     
 protected:
     Node* m_currentNode;
-    KActionSeparator* m_separator;
 
 private:
     DOM::Node m_currentDomNode;
 };
 
 
-class TableTagActionSet : public TagActionSet
+class TagActionSet : public TagActionSetAbstract
+{
+    Q_OBJECT
+public:
+    TagActionSet(QObject *parent = 0, const char *name = 0);
+    virtual ~TagActionSet() {}
+    
+    virtual bool isInTagContext() const;
+    virtual void initActions(QWidget* parent);
+    virtual bool fillWithTagActions(QWidget* widget, DOM::Node const& node);
+    virtual void unplugAllActions(QWidget* widget) const;
+    
+public slots:
+    void slotApplySourceIndentation();
+
+protected:
+    virtual void initActionMenus(QWidget* widget);
+
+private:
+    KActionSeparator* m_separator;
+};
+
+
+class TableTagActionSet : public TagActionSetAbstract
 {
     Q_OBJECT
 public:
@@ -122,6 +144,8 @@ private:
     void clearCellContents(Node* tdNode, NodeModifsSet* modifs);
     
 private:
+    KActionSeparator* m_separator;
+        
     KActionMenu* m_tableActionMenu_0;
     KActionMenu* m_insertActionMenu_1;
     KActionMenu* m_removeActionMenu_1;

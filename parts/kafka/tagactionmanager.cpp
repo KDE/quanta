@@ -59,6 +59,10 @@ void TagActionManager::initActions(QWidget* parent)
     
     m_actionCollection = new KActionCollection(parent);
     
+    TagActionSet* general(new TagActionSet());
+    general->initActions(parent);
+    m_tagActionSets.append(general);
+        
     TableTagActionSet* table(new TableTagActionSet());
     table->initActions(parent);
     m_tagActionSets.append(table);
@@ -66,7 +70,7 @@ void TagActionManager::initActions(QWidget* parent)
 
 void TagActionManager::fillWithTagActions(QWidget* widget, DOM::Node const& node)
 {
-    TagActionSet* tagActionSet = 0;
+    TagActionSetAbstract* tagActionSet = 0;
     for(tagActionSet = m_tagActionSets.first(); tagActionSet; tagActionSet = m_tagActionSets.next())
         tagActionSet->fillWithTagActions(widget, node);
 }

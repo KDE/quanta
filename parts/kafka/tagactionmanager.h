@@ -27,6 +27,7 @@ class Node;
 #include <qptrlist.h>
 class QWidget;
 
+class TagActionSetAbstract;
 class TagActionSet;
 class TableTagActionSet;
 
@@ -41,7 +42,6 @@ public:
     static TagActionManager* self();
     ~TagActionManager();
 
-    void initActions(QWidget* parent);
     void fillWithTagActions(QWidget* widget, DOM::Node const& node);
 
     KActionCollection* actionCollection() const
@@ -54,11 +54,13 @@ private:
     TagActionManager(TagActionManager const&)
     {}
 
+    void initActions(QWidget* parent);
+
 private:
     static TagActionManager* s_mSelf;
 
     KActionCollection* m_actionCollection;
-    QPtrList<TagActionSet> m_tagActionSets;
+    QPtrList<TagActionSetAbstract> m_tagActionSets;
 };
 
 #endif

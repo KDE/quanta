@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <kapplication.h>
+#include <kconfig.h>
 #include <kactioncollection.h>
 #include <kactionclasses.h>
 #include <dom/dom_node.h>
@@ -38,16 +40,14 @@
 #include "resource.h"
 
 
-TagActionSet::TagActionSet(QObject *parent, const char *name)
-        : QObject(parent, name), m_currentNode(0), m_separator(0)
-{
-    m_separator = new KActionSeparator();
-}
-
-TagActionSet::~TagActionSet()
+TagActionSetAbstract::TagActionSetAbstract(QObject *parent, const char *name)
+        : QObject(parent, name), m_currentNode(0)
 {}
 
-Node* TagActionSet::parentTag(Node* node, QString const& tagName)
+TagActionSetAbstract::~TagActionSetAbstract()
+{}
+
+Node* TagActionSetAbstract::parentTag(Node* node, QString const& tagName)
 {
     Q_ASSERT(node);
 
@@ -58,7 +58,7 @@ Node* TagActionSet::parentTag(Node* node, QString const& tagName)
     return aux;
 }
 
-Node* TagActionSet::firstChildTag(Node* startParentNode, QString const& tagName)
+Node* TagActionSetAbstract::firstChildTag(Node* startParentNode, QString const& tagName)
 {
     Node* aux = startParentNode;
     while(aux && aux->nodeName().lower() != tagName)
@@ -71,7 +71,7 @@ Node* TagActionSet::firstChildTag(Node* startParentNode, QString const& tagName)
     return aux;
 }
 
-bool TagActionSet::fillWithTagActions(QWidget* /*widget*/, DOM::Node const& node)
+bool TagActionSetAbstract::fillWithTagActions(QWidget* /*widget*/, DOM::Node const& node)
 {
     m_currentDomNode = node;
     m_currentNode = KafkaDocument::ref()->getNode(m_currentDomNode);
@@ -81,9 +81,111 @@ bool TagActionSet::fillWithTagActions(QWidget* /*widget*/, DOM::Node const& node
 
 //_____________________________________________________________________________
 
+TagActionSet::TagActionSet(QObject *parent, const char *name)
+    : TagActionSetAbstract(parent, name), m_separator(0)
+{
+    m_separator = new KActionSeparator();
+}
+
+bool TagActionSet::isInTagContext() const
+{
+    return true;
+}
+
+void TagActionSet::initActionMenus(QWidget* /*widget*/)
+{
+}
+
+void TagActionSet::initActions(QWidget* /*parent*/)
+{
+    KActionCollection* ac(TagActionManager::self()->actionCollection());
+
+    QString actionName = "apply_source_indentation";
+    new KAction(i18n("Apply source indentation"), 0, this,
+                SLOT(slotApplySourceIndentation()),
+                ac, actionName);
+}
+
+bool TagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& node)
+{
+    bool validNode = TagActionSetAbstract::fillWithTagActions(widget, node);
+
+    if(!validNode || !isInTagContext())
+    {
+        unplugAllActions(widget);
+        return false;
+    }
+
+    m_separator->unplugAll();
+    
+    KActionCollection* ac(TagActionManager::self()->actionCollection());
+
+    KAction* applySourceIndentationAction = ac->action("apply_source_indentation");
+    Q_ASSERT(applySourceIndentationAction);
+
+    if(!applySourceIndentationAction->isPlugged(widget))
+    {
+        applySourceIndentationAction->plug(widget);
+    }
+    m_separator->plug(widget);
+    
+    return true;
+}
+
+void TagActionSet::unplugAllActions(QWidget* widget) const
+{
+    KActionCollection* ac(TagActionManager::self()->actionCollection());
+
+    KAction* applySourceIndentationAction = ac->action("apply_source_indentation");
+    Q_ASSERT(applySourceIndentationAction);
+    
+    applySourceIndentationAction->unplug(widget);
+    m_separator->unplugAll();
+}
+
+void TagActionSet::slotApplySourceIndentation()
+{
+    QuantaView* view = ViewManager::ref()->activeView();
+    NodeModifsSet *modifs = new NodeModifsSet();
+
+    KConfig* config = kapp->config();
+    config->setGroup("Kate Document Defaults");
+    int indentationWidth = config->readNumEntry("Indentation Width", 4);
+  
+  //Once the changes have been made, we will generate the "clean" string for Text Nodes only, and
+  //we will add the empty indentation Nodes.
+    int eLine, eCol;
+    Node* node = baseNode;
+    while(node)
+    {
+        if(/*!node->tag->cleanStrBuilt() && */node->tag->type == Tag::Text)
+        {
+            if(!node->insideSpecial)
+            {
+                node->tag->setStr(KafkaDocument::ref()->generateCodeFromNode(node, 0, 0, eLine, eCol, false));
+                node->tag->setCleanStrBuilt(true);
+            }
+        }
+        if(/*!node->tag->indentationDone() && */!node->insideSpecial)
+        {
+            kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node, modifs);
+            bool goUp = false;
+            kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp), modifs);
+            kafkaCommon::applyIndentation(node, indentationWidth, 0, modifs, qConfig.inlineNodeIndentation);
+        }
+        node = node->nextSibling();
+    }
+
+    view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+}
+        
+//_____________________________________________________________________________
+
 TableTagActionSet::TableTagActionSet(QObject *parent, const char *name)
-        : TagActionSet(parent, name), m_tableActionMenu_0(0), m_insertActionMenu_1(0)
-{}
+    : TagActionSetAbstract(parent, name), m_separator(0), m_tableActionMenu_0(0), m_insertActionMenu_1(0)
+{
+    m_separator = new KActionSeparator();
+}
 
 bool TableTagActionSet::isInTagContext() const
 {
@@ -182,7 +284,7 @@ void TableTagActionSet::initActions(QWidget* parent)
 
 bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& node)
 {
-    bool validNode = TagActionSet::fillWithTagActions(widget, node);
+    bool validNode = TagActionSetAbstract::fillWithTagActions(widget, node);
 
     if(!validNode || !isInTagContext(/*node*/))
     {
@@ -190,6 +292,8 @@ bool TableTagActionSet::fillWithTagActions(QWidget* widget, DOM::Node const& nod
         return false;
     }
 
+    m_separator->unplugAll();
+    
     KActionCollection* ac(TagActionManager::self()->actionCollection());
 
     // Table
@@ -763,7 +867,6 @@ void TableTagActionSet::slotMergeSelectedCells()
             child = next;
         }
         
-        //if(!aux->hasChildNodes())
         kafkaCommon::extractAndDeleteNode(aux, modifs);
         
         ++count;
