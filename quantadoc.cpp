@@ -445,7 +445,7 @@ Document* QuantaDoc::newWrite()
                                 );*/
   Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->project(),
                              quantaApp->m_pluginInterface, quantaApp->view()->writeTab());
-
+  w->readConfig(quantaApp->config());
   QString encoding = quantaApp->defaultEncoding();
   dynamic_cast<KTextEditor::EncodingInterface*>(doc)->setEncoding(encoding);
 

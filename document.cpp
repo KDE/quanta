@@ -102,6 +102,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   connect( m_doc, SIGNAL(textChanged()), SLOT(slotTextChanged()));
 
 //  setFocusProxy(m_view);
+
 }
 
 Document::~Document()
@@ -1853,9 +1854,9 @@ bool Document::eventFilter(QObject *object, QEvent *event)
         if(event->type() == QEvent::Paint && !repaintEnabled)
                 return true;
         else if(event->type() == QEvent::FocusIn )
-		kdDebug(24000)<< "focusin" << endl;
-	else if(event->type() == QEvent::FocusOut)
-		kdDebug(24000)<< "focusout" << endl;
+    kdDebug(24000)<< "focusin" << endl;
+  else if(event->type() == QEvent::FocusOut)
+    kdDebug(24000)<< "focusout" << endl;
         else
                 return false;
 }

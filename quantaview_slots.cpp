@@ -975,10 +975,17 @@ void QuantaView::slotEditorOptions()
     write()->writeConfig(config);
     config->sync();
 
+#if KDE_IS_VERSION(3,1,90)
+    config->setGroup("Kate View Defaults");
+    qConfig.lineNumbers = config->readBoolEntry("Line Numbers", false);
+    qConfig.iconBar = config->readBoolEntry("Icon Bar", false);
+    qConfig.dynamicWordWrap = config->readBoolEntry("Dynamic Word Wrap",false);
+#else
     config->setGroup("Kate View");
     qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);
     qConfig.iconBar = config->readBoolEntry("Iconbar", false);
     qConfig.dynamicWordWrap = config->readBoolEntry("DynamicWordWrap",false);
+#endif
     quantaApp->viewBorder->setChecked(qConfig.iconBar);
     quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
     quantaApp->viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
