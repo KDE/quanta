@@ -20,7 +20,8 @@
 #include "document.h"
 #include "resource.h"
 #include "quantacommon.h"
-#include "viewmanager.h"
+#include "project.h"
+#include "dtds.h"
 
 DCOPSettings::DCOPSettings() : DCOPObject("SettingsIf")
 {
@@ -35,9 +36,10 @@ QString DCOPSettings::encoding()
 
 QString DCOPSettings::dtep()
 {
-  Document *w = ViewManager::ref()->activeDocument();
-  if (w)
-    return w->defaultDTD()->nickName;
+  if (Project::ref()->hasProject())
+  {
+    return DTDs::ref()->getDTDNickNameFromName(Project::ref()->defaultDTD());
+  }
   else
     return qConfig.defaultDocType;
 }
