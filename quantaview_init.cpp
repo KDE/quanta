@@ -124,11 +124,14 @@ void QuantaView::addWrite( QWidget* w , QString label )
 /** remove KWrite class from stack, return id of new KWrite */
 QWidget* QuantaView::removeWrite()
 {
-  writeTab->removePage( writeTab->currentPage() );
   if (writeExists())
   {
     Document *w = write();
+    writeTab->removePage(w);
     delete w;
+  } else
+  {
+    writeTab->removePage( writeTab->currentPage() );
   }
   return writeTab->currentPage(); //don't call write() here
 }
