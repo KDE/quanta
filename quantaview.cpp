@@ -30,6 +30,7 @@
 #include <qwidget.h>
 #include <qsplitter.h>
 #include <qpoint.h>
+#include <qscrollview.h>
 
 // include files for KDE
 #include <kaction.h>
@@ -102,11 +103,16 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   oldTab = 0L;
 
   currentViewsLayout = QuantaView::QuantaViewOnly;//TODO: load it from the config
-    #ifdef BUILD_KAFKAPART
+#ifdef BUILD_KAFKAPART
   kafkaInterface = new WKafkaPart(0, 0, "KafkaHTMLPart");
   kafkaInterface->getKafkaPart()->view()->setMinimumHeight(50);
   splitter = new QSplitter(Qt::Vertical, 0);
-  #endif
+
+  connect(kafkaInterface->getKafkaPart(), SIGNAL(hasFocus(bool)),
+    this, SLOT(slotKafkaGetFocus(bool)));
+  connect(kafkaInterface, SIGNAL(newCursorPosition(int,int)), this, SLOT(slotSetQuantaCursorPosition(int, int)));
+  curCol = curLine = curOffset = 0;
+#endif
 
   setAcceptDrops(TRUE); // [MB02] Accept drops on the view
 }
@@ -143,7 +149,7 @@ void QuantaView::addWrite( QWidget* w , QString label )
   if(writeExists() && oldLayout != QuantaView::QuantaViewOnly)
   {
     disconnect(write()->view(), SIGNAL(gotFocus(Kate::View *)),
-      kafkaInterface, SLOT(slotQuantaGetFocus(Kate::View *)));
+      this, SLOT(slotQuantaGetFocus(Kate::View *)));
     kafkaInterface->getKafkaPart()->view()->hide();
     kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
     if(kafkaInterface->isLoaded())
@@ -164,10 +170,14 @@ void QuantaView::addWrite( QWidget* w , QString label )
 #ifdef BUILD_KAFKAPART
   if(dynamic_cast<Document *>(w))
     connect((dynamic_cast<Document *>(w))->view(), SIGNAL(gotFocus(Kate::View *)),
-      kafkaInterface, SLOT(slotQuantaGetFocus(Kate::View *)));
+      this, SLOT(slotQuantaGetFocus(Kate::View *)));
 #endif
   m_writeTab->showPage( w );
 #ifdef BUILD_KAFKAPART
+  if(write()->defaultDTD()->name.contains("HTML", false) == 0)
+  {
+    slotShowQuantaEditor();
+  }
   if(oldLayout == QuantaView::QuantaAndKafkaViews)
   {
     slotShowKafkaAndQuanta();
@@ -218,7 +228,7 @@ QWidget* QuantaView::removeWrite()
     m_writeTab->removePage(w);
 #ifdef BUILD_KAFKAPART
     disconnect(w->view(), SIGNAL(gotFocus(Kate::View *)),
-      kafkaInterface, SLOT(slotQuantaGetFocus(Kate::View *)));
+      this, SLOT(slotQuantaGetFocus(Kate::View *)));
 #endif
     delete w;
   }/* else
@@ -237,8 +247,12 @@ QWidget* QuantaView::removeWrite()
   else
   {
     connect(write()->view(), SIGNAL(gotFocus(Kate::View *)),
-      kafkaInterface, SLOT(slotQuantaGetFocus(Kate::View *)));
-    if(oldLayout == QuantaView::QuantaAndKafkaViews)
+      this, SLOT(slotQuantaGetFocus(Kate::View *)));
+    if(write()->defaultDTD()->name.contains("HTML", false) == 0)
+    {
+      slotShowQuantaEditor();
+    }
+    else if(oldLayout == QuantaView::QuantaAndKafkaViews)
     {
       slotShowKafkaAndQuanta();
     }
@@ -269,7 +283,7 @@ void QuantaView::updateViews()
   {
     if(_doc)
       disconnect(_doc->view(), SIGNAL(gotFocus(Kate::View *)),
-        kafkaInterface, SLOT(slotQuantaGetFocus(Kate::View *)));
+        this, SLOT(slotQuantaGetFocus(Kate::View *)));
     kafkaInterface->getKafkaPart()->view()->hide();
     kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
     if(kafkaInterface->isLoaded())
@@ -294,7 +308,11 @@ void QuantaView::updateViews()
    else
    {
      connect(write()->view(), SIGNAL(gotFocus(Kate::View *)),
-       kafkaInterface, SLOT(slotQuantaGetFocus(Kate::View *)));
+       this, SLOT(slotQuantaGetFocus(Kate::View *)));
+     if(write()->defaultDTD()->name.contains("HTML", false) == 0)
+     {
+       slotShowQuantaEditor();
+     }
      if(oldLayout == QuantaView::QuantaAndKafkaViews)
      {
        slotShowKafkaAndQuanta();
@@ -428,6 +446,7 @@ void QuantaView::slotShowQuantaEditor()
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
   if(ta)
     ta->setChecked(true);
+  killTimer(viewUpdateTimer);
   if(!writeExists())
   {
     currentViewsLayout = QuantaView::QuantaViewOnly;
@@ -442,18 +461,28 @@ void QuantaView::slotShowQuantaEditor()
   {
     kafkaInterface->getKafkaPart()->view()->hide();
     kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
+    write()->docUndoRedo->reloadQuantaEditor();
+    kafkaInterface->getQuantaCursorPosition(curLine, curCol);
+    write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
     write()->view()->reparent(write(), 0, QPoint(), true);
     currentViewsLayout = QuantaView::QuantaViewOnly;
     resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
     write()->view()->show();
+    write()->view()->setFocus();
   }
   else if(currentViewsLayout == QuantaView::QuantaAndKafkaViews)
   {
     _splittSizes = splitter->sizes();
     kafkaInterface->getKafkaPart()->view()->hide();
     kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
+    if(kafkaInterface->getKafkaPart()->view()->hasFocus())
+    {
+    	write()->docUndoRedo->reloadQuantaEditor();
+	kafkaInterface->getQuantaCursorPosition(curLine, curCol);
+	write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+    }
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
     write()->view()->reparent(write(), 0, QPoint(), true);
@@ -470,15 +499,29 @@ void QuantaView::slotShowQuantaEditor()
 void QuantaView::slotShowKafkaPart()
 {
 #ifdef BUILD_KAFKAPART
+  DOM::Node node;
+  int offset, id;
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_view" );
-  if(ta)
-    ta->setChecked(true);
+  KToggleAction *ta2 = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
+
+  killTimer(viewUpdateTimer);
   if(!writeExists())
   {
     currentViewsLayout = QuantaView::KafkaViewOnly;
+    if(ta)
+      ta->setChecked(true);
     return;
   }
-  int id = quantaApp->rightWidget()->id(quantaApp->rightWidget()->visibleWidget());
+  if(write()->defaultDTD()->name.contains("HTML", false) == 0)
+  {
+    KMessageBox::information(this, i18n("Sorry, for the moment, the VPL Mode doesn't support the current DTD : %1").arg(write()->defaultDTD()->nickName));
+    if(ta2)
+      ta2->setChecked(true);
+    return;
+  }
+  if(ta)
+    ta->setChecked(true);
+  id = quantaApp->rightWidget()->id(quantaApp->rightWidget()->visibleWidget());
   if(id == 1 || id == 2)
     quantaApp->rightWidget()->raiseWidget(0);
   if(currentViewsLayout == QuantaView::QuantaViewOnly)
@@ -487,10 +530,13 @@ void QuantaView::slotShowKafkaPart()
     write()->view()->reparent(0, 0, QPoint(), false);
     if(!kafkaInterface->isLoaded())
       kafkaInterface->loadDocument(write());
+    kafkaInterface->getKafkaCursorPosition(node, offset);
+    kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);
     kafkaInterface->getKafkaPart()->view()->reparent(write(), 0, QPoint(), true);
     currentViewsLayout = QuantaView::KafkaViewOnly;
     resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
     kafkaInterface->getKafkaPart()->view()->show();
+    kafkaInterface->getKafkaPart()->view()->setFocus();
   }
   else if(currentViewsLayout == QuantaView::KafkaViewOnly)
     return;
@@ -516,13 +562,26 @@ void QuantaView::slotShowKafkaAndQuanta()
 {
 #ifdef BUILD_KAFKAPART
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_kafka_and_quanta" );
-  if(ta)
-    ta->setChecked(true);
+  KToggleAction *ta2 = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
+  int curCol, curLine, offset;
+  DOM::Node node;
+
   if(!writeExists())
   {
     currentViewsLayout = QuantaView::QuantaAndKafkaViews;
+    if(ta)
+      ta->setChecked(true);
     return;
   }
+  if(write()->defaultDTD()->name.contains("HTML", false) == 0)
+  {
+    KMessageBox::information(this, i18n("Sorry, for the moment, the VPL Mode doesn't support the current DTD : %1").arg(write()->defaultDTD()->nickName));
+    if(ta2)
+      ta2->setChecked(true);
+    return;
+  }
+  if(ta)
+    ta->setChecked(true);
   int id = quantaApp->rightWidget()->id(quantaApp->rightWidget()->visibleWidget());
   if(id == 1 || id == 2)
     quantaApp->rightWidget()->raiseWidget(0);
@@ -533,6 +592,10 @@ void QuantaView::slotShowKafkaAndQuanta()
     splitter->show();
     if(!kafkaInterface->isLoaded())
       kafkaInterface->loadDocument(write());
+    if(currentViewsLayout == QuantaView::KafkaViewOnly)
+    {
+      write()->docUndoRedo->reloadQuantaEditor();
+    }
     kafkaInterface->getKafkaPart()->view()->reparent(splitter, 0, QPoint(), true);
     splitter->moveToFirst(kafkaInterface->getKafkaPart()->view());
     kafkaInterface->getKafkaPart()->view()->show();
@@ -553,9 +616,23 @@ void QuantaView::slotShowKafkaAndQuanta()
     splitter->setCollapsible(kafkaInterface->getKafkaPart()->view(), false);
 #endif
     splitter->show();
+    viewUpdateTimer = startTimer(4000);
   }
   else
-    return;
+  {
+    if(write()->view()->hasFocus())
+    {
+      kafkaInterface->getKafkaPart()->view()->setFocus();
+      kafkaInterface->getKafkaCursorPosition(node, offset);
+      kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);
+    }
+    else if(kafkaInterface->getKafkaPart()->view()->hasFocus())
+    {
+      write()->view()->setFocus();
+      kafkaInterface->getQuantaCursorPosition(curLine, curCol);
+      write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+    }
+  }
   currentViewsLayout = QuantaView::QuantaAndKafkaViews;
 #endif
 }
@@ -571,6 +648,81 @@ void QuantaView::resize(int width, int height)
     kafkaInterface->getKafkaPart()->view()->resize(width,height);
   else if(currentViewsLayout == QuantaView::QuantaAndKafkaViews)
     splitter->resize(width,height);
+#endif
+}
+
+void QuantaView::slotKafkaGetFocus(bool focus)
+{
+#ifdef BUILD_KAFKAPART
+  kdDebug(25001)<< "QuantaView::slotKafkaGetFocus(" << focus << ")" << endl;
+  int contentsX, contentsY;
+  if(focus)
+  {
+    if(currentViewsLayout == QuantaView::QuantaAndKafkaViews && currentFocus == QuantaView::quantaFocus)
+    {
+      contentsX = kafkaInterface->getKafkaPart()->view()->contentsX();
+      contentsY = kafkaInterface->getKafkaPart()->view()->contentsY();
+      kdDebug(25001)<< "contents pos " << contentsX << ":" << contentsY << endl;
+      write()->docUndoRedo->reloadKafkaEditor();
+      //doesn't work!
+      kafkaInterface->getKafkaPart()->view()->setContentsPos(contentsX, contentsY);
+    }
+  }
+  currentFocus = QuantaView::kafkaFocus;
+#endif
+}
+
+void QuantaView::slotQuantaGetFocus(Kate::View *)
+{
+#ifdef BUILD_KAFKAPART
+  kdDebug(25001)<< "QuantaView::slotQuantaGetFocus(true)" << endl;
+  if(currentViewsLayout == QuantaView::QuantaAndKafkaViews && currentFocus == QuantaView::kafkaFocus)
+    write()->docUndoRedo->reloadQuantaEditor();
+  currentFocus = QuantaView::quantaFocus;
+#endif
+}
+
+#ifdef BUILD_KAFKAPART
+void QuantaView::timerEvent( QTimerEvent *e )
+{
+  if (e->timerId() == viewUpdateTimer && kafkaInterface->isLoaded() &&
+     currentViewsLayout == QuantaView::QuantaAndKafkaViews && writeExists())
+  {
+    if(write()->view()->hasFocus())
+    {
+      //Update kafka view
+      //write()->docUndoRedo->syncKafkaView();
+    }
+    else if(kafkaInterface->getKafkaPart()->view()->hasFocus())
+    {
+      //Update quanta view
+      //write()->docUndoRedo->syncQuantaView();
+      write()->docUndoRedo->reloadQuantaEditor();
+      kafkaInterface->getQuantaCursorPosition(curLine, curCol);
+      write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+    }
+  }
+}
+#endif
+
+void QuantaView::slotSetQuantaCursorPosition(int col, int line)
+{
+#ifdef BUILD_KAFKAPART
+	curCol = col;
+	curLine = line;
+	if(currentViewsLayout == QuantaView::QuantaAndKafkaViews || currentViewsLayout == QuantaView::QuantaViewOnly)
+		write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+#endif
+}
+
+
+void QuantaView::slotSetKafkaCursorPosition(DOM::Node node, int offset)
+{
+#ifdef BUILD_KAFKAPART
+	curNode = node;
+	curOffset = offset;
+        if(currentViewsLayout == QuantaView::QuantaAndKafkaViews || currentViewsLayout == QuantaView::KafkaViewOnly)
+	{}
 #endif
 }
 

@@ -36,6 +36,9 @@ Tag::Tag()
   m_nameLine = -1;
   m_nameCol = -1;
   validXMLTag = true;
+#ifdef BUILD_KAFKAPART
+  cleanStrBuilt = true;
+#endif
 }
 
 Tag::Tag( const Tag &t)

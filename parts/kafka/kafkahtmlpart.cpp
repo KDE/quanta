@@ -29,17 +29,20 @@
 #include <dom/dom_text.h>
 #include <dom/dom_exception.h>
 #include <dom/dom_string.h>
+#include <dom/dom2_range.h>
 #include <khtml_events.h>
 
 #include <qfile.h>
 #include <qpainter.h>
 #include <qtextstream.h>
 #include <qstringlist.h>
-#ifdef KAFKA_DEBUG_UTILITIES
+#ifdef HEAVY_DEBUG
 #include <qdialog.h>
 #endif
 
+#ifdef HEAVY_DEBUG
 #include "domtreeview.h"
+#endif
 #include "wkafkapart.h"
 #include "nodeproperties.h"
 #include "kafkahtmlpart.moc"
@@ -66,6 +69,9 @@ public:
 		original node X pos like a good text editor :=) */
 	bool stuckCursorHorizontalPos;
 	int stuckedCursorPosX;
+#ifdef HEAVY_DEBUG
+	KafkaDOMTreeDialog *domdialog;
+#endif
 };
 
 KafkaHTMLPart::KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, WKafkaPart *part,
@@ -86,8 +92,8 @@ KafkaHTMLPart::KafkaHTMLPart(QWidget *parent, QWidget *widgetParent, WKafkaPart 
 	view()->installEventFilter(this);
 
 //for debug purposes, we add a DOM tree view
-#ifdef KAFKA_DEBUG_UTILITIES
-	domdialog = new KafkaDOMTreeDialog(view(), this);
+#ifdef HEAVY_DEBUG
+	d->domdialog = new KafkaDOMTreeDialog(view(), this);
 #endif
 	//IMPORTANT:without him, no document() is created in khtmlPart
 	begin();
@@ -1365,12 +1371,29 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 
 void KafkaHTMLPart::makeCursorVisible(int xMargin, int yMargin)
 {
+	DOM::Range range;
 	if(m_currentNode == 0)
 		return;
-	kdDebug(25001)<< "KafkaHTMLPart::makeCursorVisible" << endl;
+	kdDebug(25001)<< "KafkaHTMLPart::makeCursorVisible()" << endl;
 	int X, Y, dummy;
 	getCursor(m_currentNode, d->m_cursorOffset, X, Y, dummy);
 	view()->ensureVisible (X, Y, xMargin, yMargin);
+	//does not work... ???
+	/**range = selection();
+	try{
+		range.setStart(m_currentNode, d->m_cursorOffset);
+	}
+	catch(DOM::RangeException e)
+	{
+		//ignore
+		kdDebug(25001)<< "KafkaHTMLPart::makeCursorVisible() - ERROR " << e.code << endl;
+		return;
+	}
+	catch(DOM::DOMException e)
+	{
+		kdDebug(25001)<< "KafkaHTMLPart::makeCursorVisible() - ERROR " << e.code << endl;
+	}*/
+	//range.setEnd(m_currentNode, d->m_cursorOffset);
 }
 
 void KafkaHTMLPart::postprocessCursorPosition()
@@ -1489,6 +1512,7 @@ void KafkaHTMLPart::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
 		KApplication::setOverrideCursor(Qt::ibeamCursor);
 	else
 		KApplication::setOverrideCursor(Qt::arrowCursor);
+	KHTMLPart::khtmlMouseMoveEvent(event);
 	//temporaly disable that, give some weird result on khtml CVS20030303
 	/**
 	DOM::Node mouseNode = event->innerNode();
@@ -1543,8 +1567,9 @@ void KafkaHTMLPart::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
 	}*/
 }
 
-void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
+void KafkaHTMLPart::khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event)
 {
+	KHTMLPart::khtmlMouseReleaseEvent(event);
 	kNodeAttrs *attrs;
 	if(event->innerNode() == 0)
 	{
@@ -1596,31 +1621,34 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 	{
 		if(!m_currentNode.hasChildNodes())
 		{
-			m_currentNode.appendChild(document().createTextNode(""));
-			emit domNodeInserted(m_currentNode.firstChild(), false);
-			m_currentNode = m_currentNode.firstChild();
+			try {
+				m_currentNode.appendChild(document().createTextNode(""));
+			} catch(DOM::DOMException e)
+			{
+				d->m_cursorOffset = -1;
+			}
+			if(!m_currentNode.firstChild().isNull())
+			{
+				emit domNodeInserted(m_currentNode.firstChild(), false);
+				m_currentNode = m_currentNode.firstChild();
+			}
 		}
 		else
 		{
 			int tmpX = 0, tmpY = 0, finalX = 0, finalY = 0;
 			DOM::Node _tmp;
 			DOM::Node _node = m_currentNode;
-			bool _firstNode;
 			while(_node.hasChildNodes())
 			{
-				_firstNode = true;
 				_node = _node.firstChild();
 				tmpX = 0; tmpY = 0; finalX = 0; finalY = 0;
-				do
+				_tmp = _node;//default, dirty
+				while(!_node.isNull())
 				{
-					if(!_firstNode)
-						_node = _node.nextSibling();
-					else
-						_firstNode = false;
 					tmpX = (_node.getRect().left() +
-						_node.getRect().right())/2;
+					_node.getRect().right())/2;
 					tmpY = (_node.getRect().top() +
-						_node.getRect().bottom())/2;
+					_node.getRect().bottom())/2;
 					if(((tmpX - event->x())*(tmpX - event->x()) +
 						(tmpY - event->y())*(tmpY - event->y())) <
 						((finalX - event->x())*(finalX - event->x()) +
@@ -1630,7 +1658,8 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 						finalY = tmpY;
 						_tmp = _node;
 					}
-				}while(!_node.nextSibling().isNull());
+					_node = _node.nextSibling();
+				}
 				_node = _tmp;
 			}
 			m_currentNode = _node;
@@ -1687,8 +1716,9 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 	emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
 }
 
-void KafkaHTMLPart::khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event)
+void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 {
+	KHTMLPart::khtmlMousePressEvent(event);
 	/**m_currentNode = event->innerNode();
 
 	if(m_currentNode.nodeType() == DOM::Node::TEXT_NODE)
@@ -1800,13 +1830,22 @@ DOM::Node KafkaHTMLPart::createNode(QString NodeName)
 
 void KafkaHTMLPart::showDomTree()
 {
-		domdialog->show();
+#ifdef HEAVY_DEBUG
+	d->domdialog->show();
+#endif
 }
 
 void KafkaHTMLPart::getCurrentNode(DOM::Node &_currentNode, int &offset)
 {
 	_currentNode = m_currentNode;
 	offset = d->m_cursorOffset;
+}
+
+void KafkaHTMLPart::setCurrentNode(DOM::Node node, int offset)
+{
+	m_currentNode = node;
+	d->m_cursorOffset = offset;
+	makeCursorVisible();
 }
 
 void KafkaHTMLPart::finishedLoading()

@@ -679,11 +679,11 @@ void QuantaView::slotUndo ()
   {
     bool updateClosing = qConfig.updateClosingTags;
     qConfig.updateClosingTags = false;
-#ifdef BUILD_KAFKAPART
-    write()->docUndoRedo.undo(false);
-#else
+//#ifdef BUILD_KAFKAPART
+//    write()->docUndoRedo.undo(false);
+//#else
     dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->undo();
-#endif
+//#endif
     qConfig.updateClosingTags = updateClosing;
   }
 }
@@ -694,11 +694,11 @@ void QuantaView::slotRedo ()
   {
     bool updateClosing = qConfig.updateClosingTags;
     qConfig.updateClosingTags = false;
-#ifdef BUILD_KAFKAPART
-    write()->docUndoRedo.redo(false);
-#else
+//#ifdef BUILD_KAFKAPART
+//    write()->docUndoRedo.redo(false);
+//#else
     dynamic_cast<KTextEditor::UndoInterface*>(write()->doc())->redo();
-#endif
+//#endif
     qConfig.updateClosingTags = updateClosing;
   }
 }

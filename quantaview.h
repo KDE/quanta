@@ -39,6 +39,14 @@ class QDropEvent;
 class QPopupMenu;
 class ToolbarTabWidget;
 class WKafkaPart;
+namespace DOM
+{
+	class Node;
+}
+namespace Kate
+{
+	class View;
+}
 class QSplitter;
 
 /** The QuantaView class provides the view widget for the QuantaApp
@@ -177,6 +185,30 @@ public slots:
   void slotShowKafkaPart();
   void slotShowKafkaAndQuanta();
 
+  /**
+   * Called whenever the kafkaHTMLPart widget get/lost the focus.
+   */
+  void slotKafkaGetFocus(bool focus);
+
+  /**
+   * Called whenever the KTextEditor::View widget get the focus.
+   */
+  void slotQuantaGetFocus(Kate::View *view);
+
+  /**
+   * Called when we want to set the Quanta cursor.
+   * Record the position until Quanta get the focus again.
+   * Useful when we want to set it when quanta doesn't have the focus.
+   */
+  void slotSetQuantaCursorPosition(int col, int line);
+
+  /**
+   * Called when we want to set the kafka cursor.
+   * Record the position until kafka get the focus.
+   * Useful when we want to set it when kafka doesn't have the fovus.
+   */
+  void slotSetKafkaCursorPosition(DOM::Node node, int offset);
+
 signals:
   void newCurPos();
   /** emit when select document from tabbar */
@@ -200,6 +232,14 @@ private:
   WKafkaPart *kafkaInterface;
   QSplitter *splitter;
   QValueList<int> _splittSizes;
+  int currentFocus;
+  enum focuses {
+	  quantaFocus = 0,
+	  kafkaFocus
+  };
+  int viewUpdateTimer;
+  int curCol, curLine, curOffset;
+  DOM::Node curNode;
 #endif
   int currentViewsLayout;
 
@@ -214,6 +254,15 @@ private:
 protected:
   virtual void dropEvent(QDropEvent *e);
   virtual void dragEnterEvent(QDragEnterEvent *e);
+
+#ifdef BUILD_KAFKAPART
+  /**
+   * The timer event, called by the kafkaUpdateTimer and quantaTimerUpdate which
+   * triggers the update of the other view.
+   */
+  virtual void timerEvent(QTimerEvent *e );
+
+#endif
 };
 
 #endif // QUANTAVIEW_H

@@ -60,7 +60,7 @@
 Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
                    Project *project, QuantaPluginInterface *a_pIf,
                    QWidget *parent, const char *name, WFlags f )
-  : QWidget(parent, name, f), docUndoRedo(this)
+  : QWidget(parent, name, f)
 {
   m_dirty   = false;
   busy    = false;
@@ -88,6 +88,9 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
   m_parsingDTD = dtdName;
   reparseEnabled = true;
   repaintEnabled = true;
+#ifdef BUILD_KAFKAPART
+  docUndoRedo = new undoRedo(this);
+#endif
 
   //need access to plugin interface. and we can't get to app from here ..
   m_pluginInterface = a_pIf;
@@ -770,7 +773,9 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       //add closing tag if wanted
       column++;
       editIf->insertText(line, column, "</" + tagName + ">");
-      docUndoRedo.dontAddModifsSet(2);
+#ifdef BUILD_KAFKAPART
+      docUndoRedo->dontAddModifsSet(2);
+#endif
       viewCursorIf->setCursorPositionReal( line, column );
       handled = true;
     } else
@@ -781,7 +786,9 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
       {
         node = node->parent;
         editIf->insertText(line, column + 1, node->tag->name + ">");
-        docUndoRedo.dontAddModifsSet(2);
+#ifdef BUILD_KAFKAPART
+        docUndoRedo->dontAddModifsSet(2);
+#endif
         viewCursorIf->setCursorPositionReal( line, column + node->tag->name.length() + 2);
         handled = true;
       }
@@ -796,7 +803,9 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
          )
       {
         editIf->insertText(line, column, " /");
-        docUndoRedo.dontAddModifsSet(2);
+#ifdef BUILD_KAFKAPART
+        docUndoRedo->dontAddModifsSet(2);
+#endif
         viewCursorIf->setCursorPositionReal( line, column+3 );
         handled = true;
       }
@@ -806,7 +815,9 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
         //add closing tag if wanted
         column++;
         editIf->insertText(line, column, "</" + tagName + ">");
-        docUndoRedo.dontAddModifsSet(2);
+#ifdef BUILD_KAFKAPART
+        docUndoRedo->dontAddModifsSet(2);
+#endif
         viewCursorIf->setCursorPositionReal( line, column );
         handled = true;
       }
@@ -1807,7 +1818,9 @@ void Document::slotDelayedTextChanged()
                 }
               }
               viewCursorIf->setCursorPositionReal(bl, bc);
-              docUndoRedo.mergeNextModifsSet();
+#ifdef BUILD_KAFKAPART
+              docUndoRedo->mergeNextModifsSet();
+#endif
               baseNode = parser->rebuild(this);
               viewCursorIf->setCursorPositionReal(line, column);
               reparseEnabled = true;
@@ -1902,14 +1915,13 @@ void Document::paste()
 
 bool Document::eventFilter(QObject *object, QEvent *event)
 {
-        if(event->type() == QEvent::Paint && !repaintEnabled)
-                return true;
-        else if(event->type() == QEvent::FocusIn )
+  if(event->type() == QEvent::Paint && !repaintEnabled)
+    return true;
+  else if(event->type() == QEvent::FocusIn )
     kdDebug(24000)<< "focusin" << endl;
   else if(event->type() == QEvent::FocusOut)
     kdDebug(24000)<< "focusout" << endl;
-        else
-                return false;
+  return false;
 }
 
 /** returns all the areas that are between tag and it's closing pair */

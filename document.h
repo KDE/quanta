@@ -36,7 +36,9 @@
 #include <ktexteditor/markinterface.h>
 
 
-#include "undoredo.h"
+#ifdef BUILD_KAFKAPART
+#include "parts/kafka/undoredo.h"
+#endif
 #include "parser/qtag.h"
 
 /**
@@ -182,8 +184,10 @@ work correctly. */
   /** Hold the list of user tags (real or not, like functions) that are in the document*/
   QTagList userTagList;
   Kate::View *kate_view;
+#ifdef BUILD_KAFKAPART
   /** The undo/redo stack */
-  undoRedo docUndoRedo;
+  undoRedo *docUndoRedo;
+#endif
 
 protected:
   bool eventFilter(QObject *object, QEvent *event);

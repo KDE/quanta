@@ -213,7 +213,9 @@ void QuantaApp::slotFileSave()
     else
     {
       m_doc->saveDocument( w->url() );
-      view()->write()->docUndoRedo.fileSaved();
+#ifdef BUILD_KAFKAPART
+      view()->write()->docUndoRedo->fileSaved();
+#endif
     }
 
 
@@ -242,8 +244,9 @@ bool QuantaApp::slotFileSaveAs()
       {
         m_project->insertFile(data.url, true);
       }
-
-      view()->write()->docUndoRedo.fileSaved();
+#ifdef BUILD_KAFKAPART
+      view()->write()->docUndoRedo->fileSaved();
+#endif
       slotUpdateStatus(w);
       result = true;
     }
@@ -313,8 +316,9 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
   }
 
   if (projectTemplate) m_project->insertFile(fileName, true);
-
-  view()->write()->docUndoRedo.fileSaved();
+#ifdef BUILD_KAFKAPART
+  view()->write()->docUndoRedo->fileSaved();
+#endif
   slotUpdateStatus(w);
 }
 
@@ -726,8 +730,6 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
       statusBar()->show();
     }
   }
-  m_view->updateViews();
-  m_view->oldTab = w;
 
   Document *newWrite = dynamic_cast<Document *>(w);
   if (!newWrite)
@@ -771,12 +773,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
    repaintPreview(true);
   }
   #ifdef BUILD_KAFKAPART
-   /**if(kafkaPart->getCurrentDoc() &&
-     m_view->write() &&
-    kafkaPart->getCurrentDoc()->url() != m_view->write()->url())
-   {
-     kafkaPart->unloadDocument();
-   }*/
+  m_view->updateViews();
+  m_view->oldTab = w;
   #endif
   slotNewLineColumn();
 

@@ -30,18 +30,11 @@
 #include <qevent.h>
 
 #include <dom/dom_node.h>
-#include <dom/dom2_range.h>
 #include <dom/dom_element.h>
 
 #include "kafkahtmlview.h"
 
 
-//*** if you want a very useful DOMTreeView attached to the kafkahtmlPart ***//
-#define KAFKA_DEBUG_UTILITIES
-
-#ifdef KAFKA_DEBUG_UTILITIES
-class KafkaDOMTreeDialog;
-#endif
 
 class DOMString;
 class KafkaHTMLPartPrivate;
@@ -102,7 +95,7 @@ public:
 	 * @param The name of the DOM::Node to be created
 	 * @return Return the DOM::Node created
 	 */
-	 DOM::Node createNode(QString NodeName);
+	DOM::Node createNode(QString NodeName);
 
 	/**
 	 * Category: Standart Function
@@ -110,7 +103,14 @@ public:
 	 * @param _currentNode The Node which has the cursor focus.
 	 * @param offset The offset of the cursor in _currentNode.
 	 */
-	 void getCurrentNode(DOM::Node &_currentNode, int &offset);
+	void getCurrentNode(DOM::Node &_currentNode, int &offset);
+
+	/**
+	 * Set the focus.
+	 * @param node The DOM::Node which will get the focus.
+	 * @param offset The offset of the cursor if node is a DOM::Node::TEXT_NODE
+	 */
+	void setCurrentNode(DOM::Node node, int offset);
 
 	 /**
 	 * Category : Standart Function
@@ -138,7 +138,7 @@ public:
 	 * For debugging purposes only, shows the kafka DOM tree
 	 * @return Return the view widget
 	 */
-	 void showDomTree();
+	void showDomTree();
 
 public slots:
 	/**
@@ -277,12 +277,6 @@ protected:
 
 
 private:
-//for debugging purposes
-#ifdef KAFKA_DEBUG_UTILITIES
-	KafkaDOMTreeDialog *domdialog;
-#endif
-//end
-
 	/**
 	 * Move the cursor one position left.
 	 */
@@ -335,7 +329,6 @@ private:
 	 */
 	void paintCursor(QPainter *p);
 	DOM::Node m_currentNode;
-	DOM::Range m_currentSelection;
 	KafkaHTMLPartPrivate *d;
 	WKafkaPart *w;
 	friend class KafkaHTMLPartPrivate;

@@ -15,13 +15,16 @@
  *                                                                         *
  ***************************************************************************/
 
+#ifdef HEAVY_DEBUG
+
 #include <kdebug.h>
 #include <khtml_part.h>
 #include <qstring.h>
 #include <qlayout.h>
 #include <dom/dom_text.h>
 #include "domtreeview.moc"
-//#include "xml/dom_nodeimpl.h"
+
+#include "kafkacommon.h"
 
 DOMTreeView::DOMTreeView(QWidget *parent, KHTMLPart *currentpart, const char * name) : KListView(parent, name)
 {
@@ -148,4 +151,6 @@ KafkaDOMTreeDialog::~KafkaDOMTreeDialog()
 {
 
 }
+
+#endif
 

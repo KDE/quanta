@@ -256,7 +256,9 @@ bool QuantaDoc::saveAll(bool dont_ask)
       docTab->showPage(w);
       if ( dont_ask && !w->isUntitled())
       {
-        w->docUndoRedo.fileSaved();
+#ifdef BUILD_KAFKAPART
+        w->docUndoRedo->fileSaved();
+#endif
         w->save();
         w->closeTempFile();
         w->createTempFile();
@@ -265,7 +267,9 @@ bool QuantaDoc::saveAll(bool dont_ask)
       else
       {
         if ( !saveModified() ) flagsave = false;
-        else w->docUndoRedo.fileSaved();
+#ifdef BUILD_KAFKAPART
+        else w->docUndoRedo->fileSaved();
+#endif
       }
 
       if (w->url().isLocalFile()) fileWatcher->addFile(w->url().path());

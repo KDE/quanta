@@ -30,10 +30,13 @@ class Document;
 class Node;
 class Parser;
 class kNodeAttrs;
+class NodeModifsSet;
+class NodeTranslator;
 
 #include <qmap.h>
 #include <qobject.h>
 #include <qptrdict.h>
+
 #include "kafkahtmlpart.h"
 
 /**
@@ -130,23 +133,26 @@ public:
 	void buildNodeFromKafkaNode(Node *_node, DOM::Node _domNode);
 
 	/**
-	 * This function creates and synchronize a Node from the DOM::Node.
+	 * This function creates and synchronize a Node from the DOM::Node. It adds 
+	 * the closing Node if necessary, and the node and its closing Node can surround Nodes
+	 * and thus make them its childs. Usefull when adding a Node on a selected range of Nodes.
 	 * It also create empty Nodes between Nodes.
 	 * @param _domNode The Node returned is synchronized from this DOM::Node.
 	 * @param _nodeParent The parent Node of the Node returned.
-	 * @param addedClosingNode Returns if the closing Node was created.
-	 * @param addedLeftEmptyNode Returns if an Empty Node was created next to the node returned.
-	 * @param addedRightEmptyNode Returns if an Empty Node was created next to the node
-	 * returned, or next to the closing Node if created.
-	 * @param _nodePrev The Node the Node returned will be placed after. If null, it will
-	 * be placed as the first child of _nodeParent.
-	 * @param appendChild Specifies if a Node without previous Node should be placed as the last
-	 * child of _nodeParent in case we don't know the previous Node.
-	 * @return Returns a new Node created from the DOM::Node.
+	 * @param _beginNode The new Node will be placed before or within _beginNode.
+	 * @param beginOffset NOT IMLEMENTED If set to 0 or -1, the new Node will be placed before _beginNode, 
+	 * else _beginNode will be splitted at offset #beginOffset and the new Node will be placed 
+	 * inbetween.
+	 * @param _endNode NOT IMPLEMENTED If not null and if the new Node has a closing tag, set the closing node 
+	 * after or within _endNode.
+	 * @param endOffset NOT IMPLEMENTED If set to -1, the closing node will be placed after _endNode, else _endNode
+	 * will be splitted at offset #endOffset and the closing Node will be placed inbetween.
+	 * @param modifs The NodeModifSet to log the changes made.
+	 * @return Returns the new main Node created from the DOM::Node.
 	*/
 	Node * buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
-		bool &addedClosingNode, bool &addedLeftEmptyNode, bool &addedRightEmptyNode,
-		Node *_nodePrev = 0L, bool appendChild = false);
+		Node *_beginNode, int beginOffset, Node *_endNode, int endOffset,
+		NodeModifsSet &modifs);
 
 	/**
 	 * This function returns the XML-encoded character (e.g. &nbsp;)
@@ -180,18 +186,6 @@ public:
 	QString generateCodeFromNode(Node *_node, int bLine, int bCol, int &eLine, int &eCol);
 
 	/**
-	 * This function returns the next Node after _node.
-	 * @param _node It is the Node from which we want the next Node.
-	 * @param goingTowardsRootNode This boolean specifies if we should go up or down in the tree.
-	 * For a normal use, It must be set to false at the
-	 * beginning and then the same boolean must be used when using
-	 * several times this function.
-	 * @param endNode Specifies at which Node the search should end.
-	 * @return Returns the next Node.
-	 */
-	Node *getNextNode(Node *_node, bool &goingTowardsRootNode, Node *endNode = 0L);
-
-	/**
 	 * This function search the corresponding quanta Node to the kafka DOM::Node
 	 * @param _domNode The DOM::Node we seek its corresponding Node.
 	 * @return The Node corresponding to _domNode.
@@ -201,9 +195,10 @@ public:
 	/**
 	 * Returns the cursor position in the kafka editor corresponding to the cursor
 	 * position in the Quanta editor.
-	 * @return Returns the cursor position in the kafka editor.
+	 * @param domNode Returns the DOM::Node in which the cursor is located.
+	 * @param offset Returns the offset of the cursor.
 	 */
-	int getKafkaCursorPosition();
+	void getKafkaCursorPosition(DOM::Node &domNode, int &offset);
 
 	/**
 	 * Returns the cursor position in the Quanta editor corresponding to the cursor
@@ -242,19 +237,6 @@ signals:
 
 public slots:
 	/**
-	 * Updates the Kafka tree when possible from the modified Quanta tree,
-	 * else reloads the kafka tree.
-	 * @param tryToUpdate Specifies wheter or not we should try to update
-	 * the Kafka tree instead of rebuilding it from scratch.
-	 */
-	void slotUpdateKafkaTree(bool tryToUpdate = true);
-
-	/**
-	 * Updates the Quanta tree from the modified Kafka tree.
-	 */
-	void slotUpdateQuantaTree();
-
-	/**
 	 * Called whenever a DOM::Node is inserted in the Kafka tree.
 	 * @param _domNode is the Node inserted.
 	 * @param insertChilds Specifies if the _domNode's child should be inserted
@@ -279,48 +261,14 @@ public slots:
 	 */
 	void slotdomNodeNewCursorPos(DOM::Node _domNode, int offset);
 
-	/**
-	 * Called whenever the kafkaHTMLPart widget get/lost the focus.
-	 */
-	 void slotKafkaGetFocus(bool focus);
-
-	 /**
-	  * Called whenever the KTextEditor::View widget get the focus.
-	  */
-	  void slotQuantaGetFocus(Kate::View *view);
-
-protected:
-
-	/**
-	 * The timer event, called by the kafkaUpdateTimer and quantaTimerUpdate which
-	 * triggers the update of the other view.
-	 */
-	virtual void timerEvent(QTimerEvent *e );
-
 private:
-	/**
-	 * Fits the Nodes position when a change occurs in the kafka tree.
-	 * @param _startNode The Node where the update starts
-	 * @param colMovement The number of column that should be
-	 * added/retrieved from the column position
-	 * @param lineMovement The number of lines that should be
-	 * added/retrieved from the line position
-	 * @param colEnd The column position where the update should stop
-	 * @param lineEnd The line position where the update should stop
-	 */
-	void fitsNodesPosition(Node* _startNode, int colMovement,
-		int lineMovement = 0, int colEnd = -2, int lineEnd = -2);
-
-	/** For debugging purpose. It prints the quanta internal tree to stdout */
-	void coutTree(Node *node, int indent);
-
-	int kafkaUpdateTimer;
-	int quantaUpdateTimer;
 	QMap<QString, QString> decodedChars;
 	QMap<QString, QString> encodedChars;
 	QPtrDict<kNodeAttrs> domNodeProps;
 	KafkaHTMLPart *_kafkaPart;
 	Document *_currentDoc;
+	//use a QPtrList aferwards
+	NodeTranslator *mainTranslator;
 
 	bool _docLoaded;
 

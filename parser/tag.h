@@ -135,6 +135,11 @@ public:
   DTDStruct* dtd; //the tag belongs to this DTD
   QString structBeginStr; //if it's a special block, contains the block beginning definition string (like <? or <style language="foo">)
   bool validXMLTag; //false if the closing ">" was not found
+#ifdef BUILD_KAFKAPART
+  //specifies if we need to build the clean tag string from the attrs
+  // or the text without entities
+  bool cleanStrBuilt;
+#endif
 
 private:
   int beginLine; //where the tag begins in the doc

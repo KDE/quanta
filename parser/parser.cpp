@@ -39,6 +39,9 @@
 #include "../document.h"
 #include "../quanta.h"
 #include "../qextfileinfo.h"
+#ifdef BUILD_KAFKAPART
+#include "../parts/kafka/kafkacommon.h"
+#endif
 
 //kde includes
 #include <kapplication.h>
@@ -1311,9 +1314,13 @@ Node *Parser::rebuild(Document *w)
  QTime t;
  t.start();
  uint line, col;
+#ifdef BUILD_KAFKAPART
  NodeModifsSet modifs;
  NodeModif modif;
+#endif
 
+#ifdef BUILD_KAFKAPART
+ kdDebug(24000)<< "Node *Parser::rebuild()" << endl;
  quantaApp->oldCursorPos(line, col);
  modifs.cursorX = col;
  modifs.cursorY = line;
@@ -1321,11 +1328,13 @@ Node *Parser::rebuild(Document *w)
  modifs.cursorX2 = col;
  modifs.cursorY2 = line;
  modifs.isModified = w->isModified();
+#endif
  /**kdDebug(24000)<< "************* Begin User Modification *****************" << endl;
   //debug!
   coutTree(m_node, 2);*/
  if (w != write || !m_node)
  {
+#ifdef BUILD_KAFKAPART
    //going to return
    if(baseNode)
    {
@@ -1337,7 +1346,8 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo.addNewModifsSet(modifs, false);
+   w->docUndoRedo->addNewModifsSet(modifs, false);
+#endif
    return parse(w);
  } else
  {
@@ -1440,6 +1450,7 @@ Node *Parser::rebuild(Document *w)
    } else
    {
 //     node = m_node;
+#ifdef BUILD_KAFKAPART
    //going to return
    if(baseNode)
    {
@@ -1451,7 +1462,8 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo.addNewModifsSet(modifs, false);
+   w->docUndoRedo->addNewModifsSet(modifs, false);
+#endif
    return parse(w);
 
    }
@@ -1487,14 +1499,17 @@ Node *Parser::rebuild(Document *w)
      if (next && next->closesPrevious)
       next->closesPrevious = false;
 
+#ifdef BUILD_KAFKAPART
       modif.type = undoRedo::NodeRemoved;
-      modif.location = w->docUndoRedo.getLocation(node);
+      modif.location = kafkaCommon::getLocation(node);
       node->parent = 0L;
       node->next = 0L;
       node->prev = 0L;
       node->child = 0L;
       modif.node = node;
-     //delete node;
+#else
+     delete node;
+#endif
      node = 0L;
      i = 0;
      j = 0;
@@ -1574,9 +1589,11 @@ Node *Parser::rebuild(Document *w)
        if (node)
            node->child = next;
      }
+#ifdef BUILD_KAFKAPART
      modif.childsNumber = i;
      modif.childsNumber2 = j;
      modifs.NodeModifList.append(modif);
+#endif
      node = nextNode;
     /** //debug!
      kdDebug(24000)<< "Node removed!" << endl;
@@ -1588,6 +1605,7 @@ Node *Parser::rebuild(Document *w)
    //something strange has happened, like moving text with D&D inside the editor
    if (eLine < bLine || (eLine == bLine && eCol <= bCol))
    {
+#ifdef BUILD_KAFKAPART
    //going to return
    if(baseNode)
    {
@@ -1599,7 +1617,8 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo.addNewModifsSet(modifs, false);
+   w->docUndoRedo->addNewModifsSet(modifs, false);
+#endif
    return parse(w);
 
    }
@@ -1607,18 +1626,20 @@ Node *Parser::rebuild(Document *w)
    Node *lastInserted = 0L;
    node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
 
+#ifdef BUILD_KAFKAPART
    Node *swapNode = firstNode->nextSibling();
    Node *p = (lastInserted)?lastInserted->nextSibling():lastInserted;
    while(swapNode != p)
    {
       modif.type = undoRedo::NodeAdded;
-      modif.location = w->docUndoRedo.getLocation(swapNode);
+      modif.location = kafkaCommon::getLocation(swapNode);
       modif.node = 0L;
       modif.childsNumber = 0;
       modif.childsNumber2 = 0;
       modifs.NodeModifList.append(modif);
       swapNode = swapNode->nextSibling();
    }
+#endif
 
 
    //another stange case: the parsed area contains a special area without end
@@ -1634,6 +1655,7 @@ Node *Parser::rebuild(Document *w)
      delete lastNode;
      lastNode = 0L;
    //going to return
+#ifdef BUILD_KAFKAPART
    if(baseNode)
    {
      modif.type = undoRedo::NodeTreeRemoved;
@@ -1644,7 +1666,8 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo.addNewModifsSet(modifs, false);
+   w->docUndoRedo->addNewModifsSet(modifs, false);
+#endif
    return parse(w);
    }
 
@@ -1661,7 +1684,9 @@ Node *Parser::rebuild(Document *w)
         lastNode->parent = lastInserted->parent;
         lastInserted->tag->beginPos(bLine, bCol);
         lastNode->tag->endPos(eLine, eCol);
+#ifdef BUILD_KAFKAPART
         Tag *_tag = new Tag(*(lastNode->tag));
+#endif
         lastNode->tag->setTagPosition(bLine, bCol, eLine, eCol);
         QString s = write->text(bLine, bCol, eLine, eCol);
         lastNode->tag->setStr(s);
@@ -1675,9 +1700,9 @@ Node *Parser::rebuild(Document *w)
         if (lastInserted->parent && lastInserted->parent->child == lastInserted)
             //lastInserted->parent->child = lastInserted->next; lastInserted has no next!
            lastInserted->parent->child = lastNode;
-        //lastInserted->removeAll = false;
+#ifdef BUILD_KAFKAPART
        //here, lastNode is at the pos of lastInserted.
-        modif.location =  w->docUndoRedo.getLocation(lastNode);
+        modif.location = kafkaCommon::getLocation(lastNode);
         modif.type = undoRedo::NodeRemoved;
         lastInserted->prev = 0L;
         lastInserted->next = 0L;
@@ -1687,12 +1712,15 @@ Node *Parser::rebuild(Document *w)
         modif.childsNumber = 0;
         modif.childsNumber2 = 0;
         modifs.NodeModifList.append(modif);
-        modif.location =  w->docUndoRedo.getLocation(lastNode);
+        modif.location = kafkaCommon::getLocation(lastNode);
         modif.type = undoRedo::NodeModified;
         modif.node = 0L;
         modif.tag = _tag;
         modifs.NodeModifList.append(modif);
-        //delete lastInserted;
+#else
+	lastInserted->removeAll = false;
+        delete lastInserted;
+#endif
         lastInserted = lastNode;
         lastNode = lastNode->nextNotChild();
       }
@@ -1750,7 +1778,9 @@ Node *Parser::rebuild(Document *w)
 /*   kdDebug(24000)<< "END"<< endl;
    coutTree(baseNode,  2);
    kdDebug(24000)<< "************* End User Modification *****************" << endl;*/
-   w->docUndoRedo.addNewModifsSet(modifs, false);
+#ifdef BUILD_KAFKAPART
+   w->docUndoRedo->addNewModifsSet(modifs, false);
+#endif
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
  /*

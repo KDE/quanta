@@ -15,57 +15,142 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <dom/dom_node.h>
 #include <kdebug.h>
+
 #include "../../parser/node.h"
+#include "../../parser/tag.h"
+#include "../../resource.h"
 
 #include "kafkacommon.h"
 
-Node *kafkaCommon::getNextNode(Node *_node, bool &goingTowardsRootNode, Node *endNode)
+Node *kafkaCommon::getNextNode(Node *node, bool &goUp, Node *endNode)
 {
 	//goto next node, my favorite part :)
-	if(!_node) return 0L;
-	if(goingTowardsRootNode)
+	if(!node) return 0L;
+	if(goUp)
 	{
-		if(_node->next)
+		if(node->next)
 		{
-			goingTowardsRootNode = false;
-			if(_node->next == endNode)
+			goUp = false;
+			if(node->next == endNode)
 				return 0L;
-			return _node->next;
+			return node->next;
 		}
 		else
 		{
-			if(_node->parent == endNode)
+			if(node->parent == endNode)
 				return 0L;
-			return getNextNode(_node->parent, goingTowardsRootNode);
+			return getNextNode(node->parent, goUp);
 		}
 	}
 	else
 	{
-		if(_node->child)
+		if(node->child)
 		{
-			if(_node->child == endNode)
+			if(node->child == endNode)
 				return 0L;
-			return _node->child;
+			return node->child;
 		}
-		else if(_node->next)
+		else if(node->next)
 		{
-			if(_node->next == endNode)
+			if(node->next == endNode)
 				return 0L;
-			return _node->next;
+			return node->next;
 		}
 		else
 		{
-			goingTowardsRootNode = true;
-			if(_node->parent == endNode)
+			goUp = true;
+			if(node->parent == endNode)
 				return 0L;
-			return getNextNode(_node->parent, goingTowardsRootNode);
+			return getNextNode(node->parent, goUp);
 		}
+	}
+}
+
+DOM::Node kafkaCommon::getNextDomNode(DOM::Node node, bool &goUp, bool returnParentNode, DOM::Node endNode)
+{
+	if(node.isNull())
+		return 0L;
+	if(node.hasChildNodes() && !goUp)
+	{
+		if(endNode == node.firstChild())
+			return 0L;
+		else
+			return node.firstChild();
+	}
+	else if(!node.nextSibling().isNull())
+	{
+		goUp = false;
+		if(endNode == node.nextSibling())
+			return 0L;
+		else
+			return node.nextSibling();
+	}
+	else
+	{
+		goUp = true;
+		if(node.parentNode().isNull() || endNode == node.parentNode())
+			return 0L;
+		if(returnParentNode)
+			return node.parentNode();
+		else
+			return getNextDomNode(node.parentNode(), goUp, returnParentNode, endNode);
+	}
+}
+
+void kafkaCommon::fitsNodesPosition(Node* startNode, int colMovement, int lineMovement, int colEnd, int lineEnd)
+{
+	bool b = false;
+	int j, SNbeginLine, SNbeginCol/**, SNlastLine, SNlastCol*/;
+	int beginLine, beginCol, lastLine, lastCol;
+	Node *node = startNode;
+
+	if(!node) return;
+
+	node->tag->beginPos(SNbeginLine, SNbeginCol);
+	//node->tag->endPos(SNlastLine, SNlastCol);
+
+	while(node)
+	{
+		node->tag->beginPos(beginLine, beginCol);
+		node->tag->endPos(lastLine, lastCol);
+		if(beginLine >= lineEnd && beginCol >= colEnd &&
+			colEnd != -2 && lineEnd != -2)
+			return;
+		if(beginLine == SNbeginLine && lastLine == SNbeginLine)
+			node->tag->setTagPosition(beginLine + lineMovement,
+				beginCol + colMovement, lastLine + lineMovement,
+				lastCol + colMovement);
+		else if(beginLine == SNbeginLine)//&&lastLine != SNbeginLine
+			node->tag->setTagPosition(beginLine + lineMovement,
+				beginCol + colMovement, lastLine + lineMovement,
+				lastCol);
+		else
+			node->tag->setTagPosition(beginLine + lineMovement,
+				beginCol, lastLine + lineMovement, lastCol);
+		for(j = 0; j < node->tag->attrCount(); j++)
+		{
+			if(node->tag->getAttribute(j).nameLine == SNbeginLine)
+			{
+				node->tag->getAttribute(j).nameLine += lineMovement;
+				node->tag->getAttribute(j).nameCol += colMovement;
+				node->tag->getAttribute(j).valueLine += lineMovement;
+				node->tag->getAttribute(j).valueCol += colMovement;
+			}
+			else
+			{
+				node->tag->getAttribute(j).nameLine += lineMovement;
+				node->tag->getAttribute(j).valueLine += lineMovement;
+			}
+		}
+		node = getNextNode(node, b);
 	}
 }
 
 void kafkaCommon::coutTree(Node *node, int indent)
 {
+#ifdef HEAVY_DEBUG
 	QString output;
 	int bLine, bCol, eLine, eCol, j;
 	if(!node)
@@ -95,4 +180,49 @@ void kafkaCommon::coutTree(Node *node, int indent)
 			coutTree(node->child, indent + 4);
 		node = node->next;
 	}
+#endif
 }
+
+QValueList<int> kafkaCommon::getLocation(Node * node)
+{
+	QValueList<int> loc;
+	int i = 0;
+
+	while(node)
+	{
+		i = 1;
+		while(node->prev)
+		{
+			i++;
+			node = node->prev;
+		}
+		loc.prepend(i);
+		node = node->parent;
+	}
+	return loc;
+}
+	
+Node* kafkaCommon::getNodeFromLocation(QValueList<int> loc)
+{
+	QValueList<int>::iterator it;
+	Node *node = baseNode;
+	Node *m = 0L;
+	int i;
+
+	if(!node) return 0L;
+	for(it = loc.begin(); it != loc.end(); it++)
+	{
+		if(!node)
+			return 0L;
+		for(i = 1; i < (*it); i++)
+		{
+			if(!node->next)
+				return 0L;
+			node = node->next;
+		}
+		m = node;
+		node = node->child;
+	}
+	return m;
+}
+
