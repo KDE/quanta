@@ -147,3 +147,5 @@ QMap<QString,QString> fmFPeditor::getAttributeMap(){
   return map;
 }
 
+
+#include "fmfpeditor.moc"

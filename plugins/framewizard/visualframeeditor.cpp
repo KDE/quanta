@@ -379,3 +379,5 @@ void VisualFrameEditor::draw2(treeNode *n, QWidget* parent){
       
       }
 }
+
+#include "visualframeeditor.moc"

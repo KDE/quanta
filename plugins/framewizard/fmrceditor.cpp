@@ -33,3 +33,5 @@ void fmRCeditor::setLabelText(QString s)
 {
     tl->setText(s);
 }
+
+#include "fmrceditor.moc"
