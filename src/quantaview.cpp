@@ -386,7 +386,7 @@ void QuantaView::initActions()
                         this, SLOT( slotPasteURLEncoded() ),
                         actionCollection, "edit_paste_url_encoded" );
 
-    (void) new KAction( i18n( "Insert CSS..." ),"mini-modules", 0,
+    (void) new KAction( i18n( "Insert CSS..." ),"css", 0,
                         this, SLOT( slotInsertCSS() ),
                         actionCollection, "insert_css" );
 

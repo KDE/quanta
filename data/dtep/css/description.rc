@@ -9,6 +9,10 @@ CaseSensitive = true
 Family = 2
 TopLevel = true
 
+[Toolbars]
+Location = css
+Names = css
+
 [Extra rules]
 StructGroupsCount = 1
 MinusAllowedInWord = true
