@@ -224,9 +224,7 @@ void QuantaView::slotTagQuickStart()
    {
     const QString chset = QTextCodec::codecForLocale()->mimeName();
     DTDStruct *dtd = write()->defaultDTD();
-    QString s = dtd->url;
-    if (!s.isEmpty()) s = "\n\t\t\"" + s + "\"";
-    QString tag = QString("<!DOCTYPE HTML PUBLIC \"" + dtd->name + s +"\">\n")+QuantaCommon::tagCase("<html>\n")
+    QString tag = QString("<!DOCTYPE" + dtd->doctypeStr +">\n")+QuantaCommon::tagCase("<html>\n")
                   + space + QuantaCommon::tagCase("<head>\n")+ space + QuantaCommon::tagCase("  <title>");
     if ( !QString(quickDlg->lineTitle->text()).isEmpty())
          tag += quickDlg->lineTitle->text();

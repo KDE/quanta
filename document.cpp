@@ -184,7 +184,7 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
   }
   tagStr = "<"+QuantaCommon::tagCase(tag->name)+tagStr;
 
-  if ( qTag && qTag->parentDTD->singleTagStyle == "xml" &&
+  if (  dict && !dict->isEmpty() && qTag && qTag->parentDTD->singleTagStyle == "xml" &&
        (qTag->isSingle() || (!qConfig.closeOptionalTags && qTag->isOptional()))
      )
   {
@@ -386,7 +386,7 @@ void Document::insertText(const QString &text, bool adjustCursor)
 
   reparseEnabled = true;
   baseNode = parser->rebuild(this);
-  if (qConfig.instantUpdate)
+  if (qConfig.instantUpdate && quantaApp->structTreeVisible())
         quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
 }
 
