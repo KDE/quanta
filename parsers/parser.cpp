@@ -908,6 +908,7 @@ Node *Parser::rebuild(Document *w)
  kdDebug(24000) << "Rebuild started. " << endl;
  QTime t;
  t.start();
+ clearGroups();
 
 #ifdef BUILD_KAFKAPART
   //If VPL is loaded, there shouldn't be any rebuild
@@ -949,7 +950,7 @@ Node *Parser::rebuild(Document *w)
       )
    {
 #ifdef BUILD_KAFKAPART
- //    logReparse(modifs, w);
+     logReparse(modifs, w);
 #endif
      return parse(w);
    }

@@ -96,14 +96,14 @@
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
         <cflags>-DKDE_NO_COMPAT</cflags>
-        <cxxflags>-DKDE_NO_COMPAT</cxxflags>
-        <f77flags/>
-        <cppflags/>
-        <ldflags/>
+        <cxxflags>-DKDE_NO_COMPAT -DDEBUG_PARSER</cxxflags>
+        <f77flags></f77flags>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
       </all>
       <withoutkafka>
         <configargs>--enable-debug=full --without-kommander --without-kafkapart --prefix=/opt/kde3</configargs>
@@ -159,7 +159,7 @@
     </groups>
     <tree>
       <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidepatterns></hidepatterns>
+      <hidepatterns/>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
@@ -182,20 +182,21 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell/>
-      <programargs/>
+      <dbgshell></dbgshell>
+      <programargs></programargs>
       <gdbpath>/usr/bin/</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
     </general>
     <display>
       <staticmembers>false</staticmembers>
       <demanglenames>true</demanglenames>
+      <outputradix>10</outputradix>
     </display>
   </kdevdebugger>
   <cppsupportpart>
@@ -233,10 +234,10 @@
   </kdevcvs>
   <kdevfilecreate>
     <filetypes>
-      <type icon="source_cpp" ext="cpp" create="template" name="C++ source" >
+      <type icon="source_cpp" ext="cpp" name="C++ source" create="template" >
         <descr>A new empty C++ file.</descr>
       </type>
-      <type icon="source_h" ext="h" create="template" name="C/C++ header" >
+      <type icon="source_h" ext="h" name="C/C++ header" create="template" >
         <descr>A new empty header file for C or C++.</descr>
       </type>
     </filetypes>
