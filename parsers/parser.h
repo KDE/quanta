@@ -70,6 +70,7 @@ public:
   void parseIncludedFiles();  
 
   /** Enable/Disable parsing. */
+  void setSAParserEnabled(bool enabled);
   void setParsingEnabled(bool enabled) {m_parsingEnabled = enabled;}
   bool isParsingEnabled() {return m_parsingEnabled;}
   void setParsingNeeded(bool needed) {m_parsingNeeded = needed;}

@@ -443,6 +443,7 @@ Node *Parser::parse(Document *w, bool force)
   if(!m_parsingEnabled && !force)
     return baseNode;
 
+  bool saParserEnabled = m_saParser->parsingEnabled();
   m_saParser->setParsingEnabled(false); 
   m_saParser->init(0L, w);
  // clearGroups();
@@ -480,7 +481,8 @@ Node *Parser::parse(Document *w, bool force)
 #endif
 
  emit nodeTreeChanged();
- QTimer::singleShot(0, this, SLOT(slotParseInDetail()));
+ if (saParserEnabled)
+   QTimer::singleShot(0, this, SLOT(slotParseInDetail()));
  return m_node;
 }
 
@@ -930,6 +932,7 @@ Node *Parser::rebuild(Document *w)
  kdDebug(24000) << "Rebuild started. " << endl;
  QTime t;
  t.start();
+ bool saParserEnabled = m_saParser->parsingEnabled();
 
 #ifdef BUILD_KAFKAPART
   //If VPL is loaded, there shouldn't be any rebuild
@@ -1158,7 +1161,8 @@ Node *Parser::rebuild(Document *w)
 // cout << "\n";
 
  m_saParser->init(m_node, w);
- QTimer::singleShot(0, this, SLOT(slotParseInDetail())); 
+ if (saParserEnabled)
+   QTimer::singleShot(0, this, SLOT(slotParseInDetail())); 
  emit nodeTreeChanged();
  m_parsingNeeded = false;
  return m_node;
@@ -1489,6 +1493,11 @@ bool Parser::parseScriptInsideTag(Node *startNode)
 void Parser::slotParseInDetail()
 {
   m_saParser->parseInDetail(false);
+}
+
+void Parser::setSAParserEnabled(bool enabled)
+{
+  m_saParser->setParsingEnabled(enabled);
 }
 
 #include "parser.moc"

@@ -792,7 +792,7 @@ void SAParser::parseInDetail(bool synchronous)
 void SAParser::slotParseNodeInDetail()
 {
 #ifdef DEBUG_PARSER
- // kdDebug(24001) << "slotParseNodeInDetail. Enabled: " << m_parsingEnabled << " Synch: " << m_synchronous << endl; //this is really heavy debug information, enable only when really needed
+  kdDebug(24001) << "slotParseNodeInDetail. Enabled: " << m_parsingEnabled << " Synch: " << m_synchronous << endl; //this is really heavy debug information, enable only when really needed
 #endif  
   if (m_currentNode && m_parsingEnabled)
   {

@@ -345,6 +345,8 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
   if (typingInProgress)
     return;
   deleteList();
+  if (!node)
+    return;
   groupsCount = m_parsingDTD->structTreeGroups.count();
   write = w;
   write->clearErrorMarks();

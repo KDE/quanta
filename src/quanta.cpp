@@ -924,9 +924,12 @@ void QuantaApp::slotClosePage(QWidget *w)
     QWidget *oldPage = writeTab->currentPage();
     if (oldPage != w)
         writeTab->showPage(w);
+    parser->setSAParserEnabled(false);    
     m_doc->closeDocument();
     if (oldPage != w)
         writeTab->showPage(oldPage);
+    kdDebug(24000) << "Calling reparse from close " << endl;    
+    parser->setSAParserEnabled(true);    
     reparse(true);
   }
   if (!writeTab->currentPage())
@@ -964,6 +967,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
        plugin->showGui(true);
     m_view->oldTab = w;
     m_view->toolbarTab()->hide();
+    parser->setSAParserEnabled(false);
+    slotReloadStructTreeView();
     return;
   }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
@@ -971,6 +976,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   if (newWrite != m_view->oldWrite)
     StructTreeView::ref()->useOpenLevelSetting = true;
   parser->clearGroups();
+  kdDebug(24000) << "Calling reparse from update " << endl;
+  parser->setSAParserEnabled(true);
   reparse(true);
   slotNewStatus();
   slotNewLineColumn();
@@ -4018,8 +4025,9 @@ void QuantaApp::slotReloadStructTreeView()
     int expandLevel = qConfig.expandLevel;
     if (expandLevel == 0)
         expandLevel = 40;
-    StructTreeView::ref()->slotReparse(w, baseNode , expandLevel );
-  }
+    StructTreeView::ref()->slotReparse(w, baseNode, expandLevel);
+  } else
+    StructTreeView::ref()->slotReparse(0L, 0L, 0); //delete the tree
 }
 
 QString QuantaApp::saveCurrentFile()
