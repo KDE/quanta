@@ -852,7 +852,7 @@ void QuantaInit::initActions()
     kafkaSelectAction->setItems(list2);
     connect(kafkaSelectAction, SIGNAL(activated(int)), m_quanta, SLOT(slotShowKafkaPartl(int)));*/
 #endif
-     
+
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),
                         m_quanta, SLOT(slotRepaintPreview()),
@@ -970,7 +970,7 @@ void QuantaInit::initActions()
       m_quanta->m_actions->setContent(s);
     }
 
-    // create the preview action 
+    // create the preview action
     m_quanta->showPreviewAction =
       new KToolBarPopupAction( i18n( "&Preview" ), "preview", Key_F6,
                          m_quanta, SLOT( slotToggleShowPreview() ),
@@ -980,29 +980,29 @@ void QuantaInit::initActions()
                                   m_quanta, SLOT(slotShowNoFramesPreview()),
                                   ac, "show_preview_no_frames" );
     act->plug(m_quanta->showPreviewAction->popupMenu());
-    
+
     act = new KAction( i18n( "View with &Konqueror" ), "konqueror", CTRL+Key_F6,
                         m_quanta, SLOT( slotViewInKFM() ),
                         ac, "view_with_konqueror" );
     act->plug(m_quanta->showPreviewAction->popupMenu());
-    
+
     act = ac->action("view_with_mozilla");
     if (act)
       act->plug(m_quanta->showPreviewAction->popupMenu());
-    
+
     act = ac->action("view_with_netscape");
     if (act)
       act->plug(m_quanta->showPreviewAction->popupMenu());
-    
+
     act = ac->action("view_with_opera");
     if (act)
-      act->plug(m_quanta->showPreviewAction->popupMenu());  
+      act->plug(m_quanta->showPreviewAction->popupMenu());
 
     act = new KAction( i18n( "View with L&ynx" ), "terminal", SHIFT+Key_F6,
                         m_quanta, SLOT( slotViewInLynx() ),
                         ac, "view_with_lynx" );
     act->plug(m_quanta->showPreviewAction->popupMenu());
-     
+
 
     (void) new KAction( i18n( "Table Editor..." ), "quick_table", 0,
                         m_quanta, SLOT( slotTagEditTable() ),
@@ -1333,6 +1333,7 @@ void QuantaInit::checkRuntimeDependencies()
      CVSService::ref(m_quanta->actionCollection())->setAppId(appId);
      connect(CVSService::ref(), SIGNAL(clearMessages()), m_quanta->m_messageOutput, SLOT(clear()));
      connect(CVSService::ref(), SIGNAL(showMessage(const QString&, bool)), m_quanta->m_messageOutput, SLOT(showMessage(const QString&, bool)));
+     //connect(CVSService::ref(), SIGNAL(statusMsg(const QString &)),  m_quanta, SLOT(slotStatusMsg(const QString & )));
      m_quanta->fTab->plugCVSMenu();
      pTab->plugCVSMenu();
   }

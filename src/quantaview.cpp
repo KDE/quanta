@@ -151,6 +151,7 @@ bool QuantaView::mayRemove()
             fileWatcher->removeFile(m_document->url().path());
             kdDebug(24000) << "removeFile[mayRemove]: " << m_document->url().path() << endl;
           }
+          quantaApp->menuBar()->activateItemAt(-1);
           quantaApp->guiFactory()->removeClient(m_document->view());
       }
 /*      kdDebug(24000) << "Calling reparse from close " << endl;

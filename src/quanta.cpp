@@ -3845,8 +3845,10 @@ void QuantaApp::slotActivePartChanged(KParts::Part * part)
       KAction *bookmarkAction = m_oldKTextEditor->actionCollection()->action("bookmarks");
       if (bookmarkAction)
       {
-        bookmarkAction->unplug(menuBar());
-        bookmarkAction->plug(menuBar(), BOOKMARK_MENU_POSITION);
+        KMenuBar *mb = menuBar();
+        mb->activateItemAt(-1);
+        bookmarkAction->unplug(mb);
+        bookmarkAction->plug(mb, BOOKMARK_MENU_POSITION);
       }
   }
 }
