@@ -151,6 +151,7 @@ bool QuantaDoc::newDocument( const KURL& url )
   else // select opened
   {
     w = m_docList->find( furl );	
+    w->checkDirtyStatus();
     app ->view->writeTab->showPage( w );
   	return false; // don't need loadURL
   }

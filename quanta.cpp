@@ -2011,8 +2011,9 @@ void QuantaApp::slotToolsChangeDTD()
 void QuantaApp::focusInEvent(QFocusEvent* e)
 {
  KDockMainWindow::focusInEvent(e);
-
- view->write()->view()->setFocus();
+ Document *w = view->write();
+ w->view()->setFocus();
+ w->checkDirtyStatus();
 }
 
 /** No descriptions */
