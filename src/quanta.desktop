@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Quanta Plus
+Name[br]=Quanta+
 Name[sv]=Quanta plus
 Name[ta]=குவாண்டா ப்ளஸ்
 Exec=quanta
@@ -9,6 +10,7 @@ Type=Application
 MimeType=text/html;application/x-webprj
 DocPath=quanta/index.html
 GenericName=Web Development Environment
+GenericName[ar]=بيئة تطوير للشبكة العنكبوتية
 GenericName[bg]=Разработка на уеб приложения
 GenericName[ca]=Entorn de desenvolupament web
 GenericName[da]=Internetudviklingsomgivelser
@@ -35,6 +37,7 @@ GenericName[tg]=Муҳити такмили Web
 GenericName[tr]=Web Geliştirme Ortamı
 GenericName[zh_CN]=Web 开发环境
 Comment=Web Development Environment
+Comment[ar]=بيئة تطوير للشبكة العنكبوتية
 Comment[bg]=Среда за разработка на уеб приложения
 Comment[ca]=Entorn de desenvolupament web
 Comment[da]=Internetudviklingsomgivelser
