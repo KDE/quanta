@@ -177,6 +177,8 @@ QuantaView* ViewManager::activeView()
 
 void ViewManager::slotViewActivated(KMdiChildView *view)
 {
+   if (m_lastActiveView == view)
+     return;
    if (m_lastActiveView)
      m_lastActiveView->deactivated();
    QuantaView *qView = static_cast<QuantaView*>(view);

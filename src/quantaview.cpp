@@ -779,15 +779,29 @@ KURL QuantaView::baseURL()
   return base;
 }
 
+void QuantaView::refreshWindow()
+{
+  if (!m_document)
+  {
+    if (m_plugin)
+       quantaApp->partManager()->setActivePart(m_plugin->part(), m_plugin->widget());
+       resize(width(), height());
+  } else
+  {
+      if (m_documentArea->height() + ToolbarTabWidget::ref()->height() > height() && ToolbarTabWidget::ref()->isVisible())
+        resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
+      else if (ToolbarTabWidget::ref()->isHidden())
+        resize(width(), height());
+  }
+}
+
 void QuantaView::activated()
 {
   if (!m_document)
   {
     parser->setSAParserEnabled(false);
     quantaApp->slotReloadStructTreeView();
-    if (m_plugin)
-       quantaApp->partManager()->setActivePart(m_plugin->part(), m_plugin->widget());
-       resize(width(), height());
+    refreshWindow();
     return;
   }
   ToolbarTabWidget::ref()->reparent(this, 0, QPoint(), qConfig.enableDTDToolbar);
@@ -817,10 +831,7 @@ void QuantaView::activated()
             break;
         }
   }
-  if (m_documentArea->height() + ToolbarTabWidget::ref()->height() > height() && ToolbarTabWidget::ref()->isVisible())
-    resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
-  else if (ToolbarTabWidget::ref()->isHidden())
-    resize(width(), height());
+  refreshWindow();
  }
 
 

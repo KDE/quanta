@@ -16,6 +16,7 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - don't be confused by quotation marks inside a script area which is inside a tag value
           (like <a href="<? echo "foo" ?>">) [#80683]
         - don't crash when closing a project while the preview is visible in the editor area
+        - show the debug toolbar immediately after a debugger is selected
 
   - behavioral/user interface changes:
         - enable the configure toolbars item in the toolbar context menu [#80643]
@@ -25,6 +26,7 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
   - enhancements:
         - warn about missing runtime dependencies
         - make the browser part configuration available from the Settings menu
+        - faster switching between documents
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:

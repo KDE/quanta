@@ -118,6 +118,8 @@ public:
   void resizeEvent(QResizeEvent* e);
  /** Resize the current view */
   void resize(int width, int height);
+  /** Redraws the view, resizes the components to their correct size */
+  void refreshWindow();
 
  /** Updates the icon at the name on the view tab */
   void updateTab();
