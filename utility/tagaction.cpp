@@ -213,7 +213,7 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
     if ( inputType == "current" ) {
       buffer = w->editIf->text();
     } else
-    if ( inputType == "selected" ) {
+    if ( inputType == "selected" && w->selectionIf) {
       buffer = w->selectionIf->selection();
     }
     command.replace("%input", buffer);
@@ -371,7 +371,8 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
        int line = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndLine();
        int col = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndCol();
        w->viewCursorIf->setCursorPositionReal(line, col);
-       w->selectionIf->removeSelectedText();
+       if (w->selectionIf) 
+        w->selectionIf->removeSelectedText();
      }
      w->insertTag( text );
   } else
@@ -430,7 +431,8 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
        int line = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndLine();
        int col = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndCol();
        w->viewCursorIf->setCursorPositionReal(line, col);
-       w->selectionIf->removeSelectedText();
+       if (w->selectionIf)
+        w->selectionIf->removeSelectedText();
      }
      w->insertTag( text );
   } else
@@ -646,6 +648,7 @@ void TagAction::insertOutputInTheNodeTree(const QString &str1, const QString &st
             hasSelection = kafkaPart->hasSelection();
         }
         else
+        if (view->document()->selectionIfExt)
         {
             wkafka->translateQuantaIntoNodeCursorPosition(line, col, &dummy, nodeOffset);
             startCol = view->document()->selectionIfExt->selStartCol();

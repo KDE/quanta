@@ -556,7 +556,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate, bool selectionOnly)
 
   KTempFile *tempFile = new KTempFile(tmpDir);
   tempFile->setAutoDelete(true);
-  if (selectionOnly)
+  if (selectionOnly && w->selectionIf)
   {
     QString content;
     content = w->selectionIf->selection();
@@ -1642,7 +1642,8 @@ void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
       line2 = numLines-1;
 
     w->viewCursorIf->setCursorPositionReal(line2, col2);
-    w->selectionIf->setSelection(line1, col1, line2, col2);
+    if (w->selectionIf)
+      w->selectionIf->setSelection(line1, col1, line2, col2);
   }
 }
 
@@ -1944,7 +1945,7 @@ void QuantaApp::slotContextMenuAboutToShow()
       QString word;
 
       // If we have a selection made, thats what we want to use for watching, setting etc
-      if(w->selectionIf->hasSelection())
+      if (w->selectionIf && w->selectionIf->hasSelection())
       {
         word = w->selectionIf->selection();
       }
@@ -4118,7 +4119,9 @@ void QuantaApp::slotEditCurrentTag()
     if ( QuantaCommon::isKnownTag(tag->dtd()->name,tagName) )
     {
       isUnknown = false;
-      QString selection(w->selectionIf->selection());
+      QString selection;
+      if (w->selectionIf)
+        selection = w->selectionIf->selection();
       TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(tag->dtd(),tagName), tag, selection, ViewManager::ref()->activeView()->baseURL() );
       if (dlg->exec())
       {
@@ -4145,7 +4148,9 @@ void QuantaApp::slotEditCurrentTag()
           if ( QuantaCommon::isKnownTag(dtd->name, tag->name) )
           {
             isUnknown = false;
-            QString selection(w->selectionIf->selection());
+            QString selection;
+            if (w->selectionIf)
+              selection = w->selectionIf->selection();
             TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtd, tag->name), tag, selection, ViewManager::ref()->activeView()->baseURL() );
             if (dlg->exec())
             {

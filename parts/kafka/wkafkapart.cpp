@@ -1438,7 +1438,8 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 
 	if(offset == -1)
 	{
-		m_currentDoc->selectionIf->setSelection(curLine, curCol, endLine, endCol + 1);
+    if (m_currentDoc->selectionIf)
+		  m_currentDoc->selectionIf->setSelection(curLine, curCol, endLine, endCol + 1);
 		line = endLine;
 		col = endCol + 1;
 		return;

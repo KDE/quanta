@@ -748,7 +748,9 @@ void QuantaView::insertNewTag(const QString &tag, const QString &attr, bool inse
 {
   if (m_document)
   {
-    QString selection(m_document->selectionIf->selection());
+    QString selection;
+    if (m_document->selectionIf)  
+      selection = m_document->selectionIf->selection();
     TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(m_document->getDTDIdentifier(), tag), selection, attr, baseURL());
     if (dlg->exec())
     {

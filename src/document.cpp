@@ -240,7 +240,7 @@ void Document::insertTag(const QString &s1, const QString &s2)
 {
   QString selection;
 
-  if (selectionIf->hasSelection())
+  if (selectionIf && selectionIf->hasSelection())
   {
     reparseEnabled = false;
     selection = selectionIf->selection();
@@ -361,23 +361,26 @@ void Document::changeTagAttribute(Tag *tag, const QString& attrName, const QStri
 //  slotDelayedTextChanged();
 }
 
-/**  */
+
 void Document::selectText(int x1, int y1, int x2, int y2 )
 {
-  selectionIf->setSelection(x1, y1, x2, y2);
+  if (selectionIf)
+    selectionIf->setSelection(x1, y1, x2, y2);
 }
 
 
 void Document::replaceSelected(const QString &s)
 {
- unsigned int line, col;
-
- viewCursorIf->cursorPositionReal(&line, &col);
- reparseEnabled = false;
- selectionIf->removeSelectedText();
- reparseEnabled = true;
- editIf->insertText(line, col, s);
-
+  if (selectionIf) 
+  {
+    unsigned int line, col;
+    
+    viewCursorIf->cursorPositionReal(&line, &col);
+    reparseEnabled = false;
+    selectionIf->removeSelectedText();
+    reparseEnabled = true;
+    editIf->insertText(line, col, s);
+  }
 }
 
 void Document::insertFile(const KURL& url)

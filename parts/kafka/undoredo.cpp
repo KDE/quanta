@@ -1415,7 +1415,8 @@ void undoRedo::syncQuantaCursorAndSelection()
     domNode, (int)offsetBegin, curLine, curCol);
   KafkaDocument::ref()->translateKafkaIntoQuantaCursorPosition(
     domNodeEnd, (int)offsetEnd, curLine2, curCol2);
-  view->document()->selectionIf->setSelection(curLine, curCol, curLine2, curCol2);
+  if (view->document()->selectionIf)
+    view->document()->selectionIf->setSelection(curLine, curCol, curLine2, curCol2);
 }
 
 void undoRedo::debugOutput()
