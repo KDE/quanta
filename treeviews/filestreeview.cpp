@@ -153,7 +153,9 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
 
   m_emptyMenu->insertItem(i18n("New Top Folder..."), this, SLOT(slotNewTopFolder()), 0, -1 , 0);
 
-  addColumn(i18n("Files Tree"), 600);
+  addColumn(i18n("Files Tree"), -1);
+  addColumn("");
+  setFullWidth(true);
 
   connect(this, SIGNAL(executed(QListViewItem *)),
           this, SLOT(slotSelectFile(QListViewItem *)));
@@ -442,7 +444,8 @@ void FilesTreeView::slotPaste()
     KURL::List list( QStringList::split( QChar('\n'), cb->text() ) );
 
     KURL url = currentURL();
-    url.setFileName("");   // don't paste on files but in dirs
+    if ( ! currentKFileTreeViewItem()->isDir() )
+      url.setFileName("");   // don't paste on files but in dirs
     KIO::Job *job = KIO::copy( list, url);
     connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
     progressBar->setTotalSteps(100);

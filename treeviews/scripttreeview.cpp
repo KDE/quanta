@@ -52,7 +52,9 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn(i18n("Scripts"), 600);
+  addColumn(i18n("Scripts"), -1);
+  addColumn("");
+  setFullWidth(true);
 
   KURL url;
   url.setPath(qConfig.globalDataDir + "quanta/scripts/");

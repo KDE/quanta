@@ -46,7 +46,9 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn(i18n("Name"), 600);
+  addColumn(i18n("Name"), -1);
+  addColumn("");
+  setFullWidth(true);
 
   projectDocFolder = new KListViewItem(this, i18n("Project documentation"));
   projectDocFolder->setOpen(true);

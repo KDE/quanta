@@ -102,7 +102,9 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   setSorting( 0 );
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn(i18n("Templates"), 600);
+  addColumn(i18n("Templates"), -1);
+  addColumn("");
+  setFullWidth(true);
 
   KURL url;
   url.setPath(qConfig.globalDataDir + "quanta/templates/");
@@ -680,7 +682,8 @@ void TemplatesTreeView::slotPaste()
           list += url;
     }
     url = currentURL();
-    url.setFileName("");   // don't paste on files but in dirs
+    if ( ! currentKFileTreeViewItem()->isDir() )
+      url.setFileName("");   // don't paste on files but in dirs
     KIO::Job *job = KIO::copy( list, url);
     connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
   }

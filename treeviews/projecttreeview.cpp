@@ -73,7 +73,9 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
-  addColumn(i18n("Project Files"), 600);
+  addColumn(i18n("Project Files"), -1);
+  addColumn("");
+  setFullWidth(true);
 
   setFocusPolicy(QWidget::ClickFocus);
 

@@ -9,7 +9,8 @@ CaseSensitive = true
 Location = xsl
 Names = fonts
 
-[Extra tags]
-
-
 [Extra rules]
+
+[Parsing rules]
+SpecialAreas = <!-- -->, <?xml ?>
+SpecialAreaNames = comment, XML PI
