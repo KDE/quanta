@@ -592,19 +592,22 @@ void StructTreeView::setParsingDTD(const QString dtdName)
 void StructTreeView::slotOpenFile()
 {
   StructTreeTag *item = dynamic_cast<StructTreeTag*>(currentItem());
-  QString text = item->node->tag->name;
-  text.remove(item->fileNameRx);
-  KURL url;
-  QuantaCommon::setUrl(url, text.stripWhiteSpace());
-  KURL baseUrl = QExtFileInfo::path(write->url());
-  url = QExtFileInfo::toAbsolute(url, baseUrl);
-  if ( QuantaCommon::checkMimeGroup(url,"text" ) )
+  if (item->node)
   {
-    emit openFile( url, quantaApp->defaultEncoding() );
-  }
-  else if ( QuantaCommon::checkMimeGroup(url,"image" ) )
-  {
-    emit activatePreview();
-    emit openImage( url );
+    QString text = item->node->tag->name;
+    text.remove(item->fileNameRx);
+    KURL url;
+    QuantaCommon::setUrl(url, text.stripWhiteSpace());
+    KURL baseUrl = QExtFileInfo::path(write->url());
+    url = QExtFileInfo::toAbsolute(url, baseUrl);
+    if ( QuantaCommon::checkMimeGroup(url,"text" ) )
+    {
+      emit openFile( url, quantaApp->defaultEncoding() );
+    }
+    else if ( QuantaCommon::checkMimeGroup(url,"image" ) )
+    {
+      emit activatePreview();
+      emit openImage( url );
+    }
   }
 }
