@@ -195,17 +195,17 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
   for ( uint i = 0; i< attributes->count();i++)
   {
     Attribute *attribute = attributes->at(i);
-    QString name = attribute->name.left(1).upper()+attribute->name.right(attribute->name.length()-1);   
+    QString name = attribute->name.left(1).upper()+attribute->name.right(attribute->name.length()-1);
     stream << "  <attr name=\"" + attribute->name +"\"type=\""+attribute->type+"\"";
-    if (!attribute->defaultValue.isEmpty())        
-        stream  << " defaultValue=\"" + attribute->defaultValue + "\"";    
-    if (!attribute->status.isEmpty()) 
-        stream  << " status=\"" + attribute->status + "\"";    
+    if (!attribute->defaultValue.isEmpty())
+        stream  << " defaultValue=\"" + attribute->defaultValue + "\"";
+    if (!attribute->status.isEmpty())
+        stream  << " status=\"" + attribute->status + "\"";
         stream << ">" << endl;
-        stream << "    <text>" << name << "</text>" << endl;    
-        if (attribute->type != "check")    
-        {      
-          stream  << "    <textlocation col=\"0\" row=\"" << row << "\" />" << endl;    
+        stream << "    <text>" << name << "</text>" << endl;
+        if (attribute->type != "check")
+        {
+          stream  << "    <textlocation col=\"0\" row=\"" << row << "\" />" << endl;
         }
         stream  << "    <location col=\"1\" row=\"" << row << "\" />" << endl;
 
@@ -260,9 +260,9 @@ QString QuantaCommon::getDTDNickNameFromName(QString name)
   return nickName;
 }
 
-  /** Returns 0 if the (line,col) is inside the area specified by the other 
+  /** Returns 0 if the (line,col) is inside the area specified by the other
 arguments,      -1 if it is before the area and 1 if it is after. */
-int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, 
+int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine,
 int eCol){
   int pos = 0;
   if (line < bLine || (line == bLine && (col < bCol) )) pos = -1; //it is before
@@ -271,8 +271,8 @@ int eCol){
  return pos;
 }
 
-/** Returns a pointer to a KStandardDirs object usable for plugin searchup. type 
-is the plugin binary type (exe or lib). The returned pointer must be deleted by 
+/** Returns a pointer to a KStandardDirs object usable for plugin searchup. type
+is the plugin binary type (exe or lib). The returned pointer must be deleted by
 the caller!! */KStandardDirs* QuantaCommon::pluginDirs(const char *type)
 {
  KStandardDirs *dirs = new KStandardDirs();
@@ -319,7 +319,7 @@ bool QuantaCommon::checkMimeType(const KURL& url, const QString& type)
  if (mimetype == type)
  {
    status = true;
- } 
+ }
  return status;
 }
 
@@ -355,7 +355,7 @@ QString QuantaCommon::qUrl(const KURL &url)
 /** No descriptions */
 void QuantaCommon::dirCreationError(QWidget *widget, const KURL& url)
 {
-  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory or that the connection to\n\"%2\"\n is valid!")                           
+  KMessageBox::error(widget, i18n("Can't create directory \n\"%1\".\nCheck that you have write permission in the parent directory or that the connection to\n\"%2\"\n is valid!")
                              .arg(url.prettyURL())
                              .arg(url.protocol()+"://"+url.user()+"@"+url.host()));
 }
@@ -410,6 +410,9 @@ Format QuantaCommon::findFormatByFileContent( const QString &fileName )
   if (v.isValid())
      result.text = v.toBool();
 
+  if (mime->name().startsWith("inode/"))
+     return result;
+
   QFile f(fileName);
   if (f.open(IO_ReadOnly))
   {
@@ -418,5 +421,7 @@ Format QuantaCommon::findFormatByFileContent( const QString &fileName )
      if ((l > 2) && (buf[0] == GZIP_MAGIC1) && (buf[1] == GZIP_MAGIC2))
         result.compression = Format::GZipCompression;
   }
+  if ((ulong) f.size() == 0)
+    result.text = true;
   return result;
 }

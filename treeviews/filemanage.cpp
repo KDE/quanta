@@ -47,7 +47,7 @@ FileManage::FileManage( QWidget *parent, const char *name)
 	: QListView( parent, name )
 {
 	fileMenu = new QPopupMenu();
-	
+
 	fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
 	fileMenu -> insertItem(					  			   i18n("Open With..."), 		this ,SLOT(slotOpenWith()));
 	fileMenu -> insertItem(					  			   i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
@@ -124,7 +124,7 @@ void FileManage::slotOpenWith()
   	KURL::List list;
 	  KURL urlToOpen = currentURL();
 	  list.append( urlToOpen );
-	
+
 	  KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
   	kfowh->displayOpenWithDialog( list );
     delete kfowh;
@@ -198,7 +198,7 @@ void FileManage::slotInsertDirInProject()
   }
 }
 
-void FileManage::slotInsertTag() 
+void FileManage::slotInsertTag()
 {
   if (currentItem() )
   {
