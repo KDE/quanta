@@ -38,7 +38,7 @@
 #include "kqapp.h"
 
 QuantaApp *quantaApp = 0L; //global pointer to the main application object
-#define SPLASH_PICTURE "quantalogo_be"
+#define SPLASH_PICTURE "quantalogo"
 
 KSplash::KSplash()
  : QFrame( 0L, QString("Quanta")+QUANTA_VERSION,
