@@ -215,6 +215,15 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 			m_wkafkapart->getKafkaWidget()->document());
 	}
 
+    // THEN add a tooltip indicating the content of the name attribute
+    if(node->rootNode() && node->rootNode()->nodeName().string().lower() == "input")
+    {
+        domNode = *(node->rootNode());
+        QString text = node->tag->attributeValue("name");
+        kafkaCommon::editDomNodeAttribute(domNode, "input", m_wkafkapart->defaultDTD(),
+                                          "title", text, m_wkafkapart->getKafkaWidget()->document());
+    }
+
 	//THEN add a blue dotted border to DL, OL, UL tags
 	if(node->rootNode())
 	{
@@ -225,7 +234,7 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 				m_wkafkapart->getKafkaWidget()->document());
 		}
 	}
-
+    
 	//THEN add a minimal border for borderless tables
 	//TODO: make it configurable, and look if CSS hasn't defined a border first
 	if(node->rootNode() && node->rootNode()->nodeName().string().lower() == "table")

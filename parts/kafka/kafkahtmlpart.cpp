@@ -1821,17 +1821,6 @@ void KafkaWidget::khtmlMouseMoveEvent(khtml::MouseMoveEvent *event)
         KApplication::setOverrideCursor(Qt::ibeamCursor);
     else
         KApplication::setOverrideCursor(Qt::arrowCursor);
-
-    Node* kafka_node_under_mouse = w->getNode(mouseNode);
-    if(!kafka_node_under_mouse || !kafka_node_under_mouse->firstChild())
-        return;
-    //kdDebug(25001) << "Node: " << kafka_node_under_mouse->firstChild()->tag->tagStr() << endl;
-    if(kafka_node_under_mouse->firstChild()->nodeName().lower() == "input")
-    {
-        QString const title = kafka_node_under_mouse->firstChild()->tag->attributeValue("name");
-        kdDebug(25001) << "NAME attr: " << title << endl;
-        kafkaCommon::setTitleAttribute(mouseNode, document(), title);
-    }
     
     KHTMLPart::khtmlMouseMoveEvent(event);
 }
