@@ -127,6 +127,13 @@ work correctly. */
   void scriptCodeCompletion(DTDStruct *dtd, int line, int col);
   /** Bring up the code completion tooltip. */
   void codeCompletionHintRequested();
+  /** No descriptions */
+  bool dirty() {return m_dirty;};
+  void setDirtyStatus(bool status) {m_dirty = status;};
+  /** Ask for user confirmation if the file was changed outside. */
+  void checkDirtyStatus();
+  /** Save the document and reset the dirty status. */
+  void save();
   /** Splits the document content in a QStringList (m_text). Must be called before find/findRev function is used in order to have an updated content. */
 
   bool oldstat;
@@ -194,6 +201,8 @@ private:
 protected: // Protected attributes
   /**  */
   bool completionInProgress;
+  /** True if the document is dirty (has been modified outside). */
+  bool m_dirty;
 };
 
 #endif

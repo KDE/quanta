@@ -32,6 +32,7 @@
 #include <kconfig.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
+#include <kdirwatch.h>
 
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/highlightinginterface.h>
@@ -55,11 +56,7 @@
 #include "quantaview.h"
 
 #include "qextfileinfo.h"
-
 #include "resource.h"
-
-//#include "kwrite/kwdoc.h"
-//#include "kwrite/highlight/highlight.h"
 
 #include "project/project.h"
 
@@ -69,6 +66,8 @@ QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObje
 
   m_docList = new QDict<Document>(1);
 
+  fileWatcher = new KDirWatch(this);
+  connect(fileWatcher, SIGNAL(dirty(const QString&)),SLOT(slotFileDirty(const QString&)));
 
   attribMenu = new KPopupMenu(i18n("Tag :"));
   connect( attribMenu, SIGNAL(activated(int)), this, SLOT(slotInsertAttrib(int)));
@@ -166,11 +165,18 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
   {
 //    write()->busy = true;
 
+    //see if we can watch this file
+    if (url.isLocalFile() && QFileInfo(url.path()).exists())
+    {
+       fileWatcher->addFile(url.path());
+    }
+
     Document *w = write();
     if (encoding.isEmpty()) encoding = defaultEncoding;
     w->kate_doc->setEncoding(encoding);
     if (w->doc()->openURL( url ))
     {
+      w->setDirtyStatus(false);
       QDictIterator<Document> it(*m_docList);
 
    	  QString defUrl;
@@ -180,15 +186,15 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
   	    ++it;
    	  }
 
-    app ->view->writeTab->showPage( w );
-    changeFileTabName(defUrl);
-    app->fileRecent->addURL( w->url() );
+      app ->view->writeTab->showPage( w );
+      changeFileTabName(defUrl);
+      app->fileRecent->addURL( w->url() );
 
-    emit newStatus();
-    app->repaintPreview();
+      emit newStatus();
+      app->repaintPreview();
 
-    app->processDTD();
-    app->reparse();
+      app->processDTD();
+      app->reparse();
     }
   }
   write()->createTempFile();
@@ -230,13 +236,15 @@ void QuantaDoc::saveDocument(const KURL& url)
 
   if ( !url.url().isEmpty())
   {
+    fileWatcher->removeFile(w->url().path());
     if (!w->doc()->saveAs( url ))
     {
       KMessageBox::error(app, i18n("Saving of the document failed.\nMaybe you should try to save in another directory."));
     }
     w->closeTempFile();
     w->createTempFile();
-//  w->setURL( url, false );
+    w->setDirtyStatus(false);
+    if (w->url().isLocalFile()) fileWatcher->addFile(w->url().path());
   }
 
   // fix
@@ -246,12 +254,6 @@ void QuantaDoc::saveDocument(const KURL& url)
 
   return;
 }
-  /*
-void QuantaDoc::finishSaveURL(KWrite *_w)
-{
-  Document *w = (Document *)_w;
-  w -> busy = false;
-}   */
 
 bool QuantaDoc::saveAll(bool dont_ask)
 {
@@ -272,7 +274,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
 
       if ( dont_ask ) 
       {
-      	w->doc()->save();
+      	w->save();
         w->closeTempFile();
         w->createTempFile();
       	if ( w->isModified() ) flagsave = false;
@@ -292,6 +294,7 @@ void QuantaDoc::closeDocument()
 {
 	if ( !saveModified() ) return;
   write()->closeTempFile();
+  fileWatcher->removeFile(write()->url().path());
 	m_docList->remove( url().url() );
 	if ( !app->view->removeWrite()) openDocument( KURL() );
 }
@@ -304,6 +307,7 @@ void QuantaDoc::closeAll()
     {
 	    if ( !saveModified() ) return;
       write()->closeTempFile();
+      fileWatcher->removeFile(write()->url().path());
 		  m_docList->remove( url().url() );
     }
 	}
@@ -708,5 +712,18 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
 void QuantaDoc::undoHistory() {/*write()->undoHistory();*/}
 void QuantaDoc::invertSelect(){/*write()->invertSelection();*/}
 
+
+/** Called when a file on the disk has changed. */
+void QuantaDoc::slotFileDirty(const QString& fileName)
+{
+  QDictIterator<Document> it( *m_docList );
+
+  while ( Document *w = it.current() )
+  {
+    if ( w->url().path()==fileName ) w->setDirtyStatus(true);
+    ++it;
+  }
+
+}
 
 #include "quantadoc.moc"

@@ -610,7 +610,9 @@ void QuantaApp::slotNewUndo()
 
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
-  if (dynamic_cast<Document *>(w) != view->oldWrite)
+  Document *newWrite = dynamic_cast<Document *>(w);
+  newWrite->checkDirtyStatus();
+  if (newWrite != view->oldWrite)
     sTab->useOpenLevelSetting = true;
   reparse();
 	slotNewUndo();
@@ -628,7 +630,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   guiFactory()->addClient(dynamic_cast<Document *>(w)->view());
 */
 
-  dynamic_cast<Document *>(w)->readConfig(config);
+  newWrite->readConfig(config);
 
   Document *currentWrite = view->write();
   currentWrite->view()->resize(view->writeTab->size().width()-5, view->writeTab->size().height()-35);
@@ -2038,5 +2040,6 @@ void QuantaApp::slotHelpHomepage()
 {
   kapp->invokeBrowser("http://quanta.sourceforge.net");
 }
+
 
 #include "quanta.moc"

@@ -33,77 +33,74 @@
 // forward declaration of the Quanta classes
 class QuantaApp;
 class QuantaView;
-class KWrite;
 class Document;
 
 class KConfig;
+class KDirWatch;
 
 class QuantaDoc : public QObject
 {
   Q_OBJECT
 
-  friend class QuantaApp;
-  friend class QuantaView;
+friend class QuantaApp;
+friend class QuantaView;
 
-  public:
+public:
     
-    QuantaDoc( QuantaApp *app, QWidget *parent, const char *name=0);
-    ~QuantaDoc();
-    
-    void openDocument (const KURL&, QString encoding = QString::null);
-    void saveDocument (const KURL&);
-    void closeDocument();    
-        
-    void prevDocument();
-    void nextDocument();
-    
-    KURL    url();
-		QString basePath();
-    
-    bool isModified();
-    bool isModifiedAll();
-    void setModified(bool flag = true);
-    
-    /// "save modified" - asks the user 
-    /// for saving if the document is modified
-    bool saveModified();	
-    bool saveAll(bool dont_ask=true);
+  QuantaDoc( QuantaApp *app, QWidget *parent, const char *name=0);
+  ~QuantaDoc();
 
-    Document *write();
-    Document *newWrite(QWidget *parent);
+  void openDocument (const KURL&, QString encoding = QString::null);
+  void saveDocument (const KURL&);
+  void closeDocument();
+
+  void prevDocument();
+  void nextDocument();
+
+  KURL    url();
+	QString basePath();
+
+  bool isModified();
+  bool isModifiedAll();
+  void setModified(bool flag = true);
+
+  /// "save modified" - asks the user
+  /// for saving if the document is modified
+  bool saveModified();	
+  bool saveAll(bool dont_ask=true);
+
+  Document *write();
+  Document *newWrite(QWidget *parent);
 		
-		// for kwrites
-		void  readConfig( KConfig * );
-		void writeConfig( KConfig * );
+	// for kwrites
+	void  readConfig( KConfig * );
+	void writeConfig( KConfig * );
 		
-		QStringList openedFiles(bool noUntitled=true);
+	QStringList openedFiles(bool noUntitled=true);
   /** No descriptions */
-   QDict<Document> *docList() {return m_docList;}
-   void changeFileTabName(QString oldUrl, QString newUrl = QString::null );
+  QDict<Document> *docList() {return m_docList;}
+  void changeFileTabName(QString oldUrl, QString newUrl = QString::null );
 		
-  private:
-    bool newDocument (const KURL&);
+private:
+  bool newDocument (const KURL&);
 	
-  public slots:
-    /** close documents. */
-    void closeAll();
-    
- //   void finishLoadURL(KWrite *);
- //   void finishSaveURL(KWrite *);
+public slots:
+  /** close documents. */
+  void closeAll();
+  /** show popup menu with list of attributes for current tag */
+  void slotInsertAttrib      ( int id );
+  void slotAttribPopup();
 
-    /** show popup menu with list of attributes for current tag */
-    void slotInsertAttrib      ( int id );
-    void slotAttribPopup();
-
-    void undoHistory();
-    void invertSelect();
+  void undoHistory();
+  void invertSelect();
+  /** Called when a file on the disk has changed. */
+  void slotFileDirty(const QString& fileName);
  	
-  signals:
-    void newStatus();
-    void title(QString);
+signals:
+  void newStatus();
+  void title(QString);
 
-  private:
-  	
+private:
   	QuantaApp *app;
     /** list with documents( kwrites ) */
     QDict<Document> *m_docList;
@@ -111,7 +108,7 @@ class QuantaDoc : public QObject
     //KWriteManager *writeManager;
 
     KPopupMenu *attribMenu;
-
+    KDirWatch *fileWatcher;
 
 };
 

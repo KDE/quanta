@@ -369,7 +369,7 @@ void QuantaView::slotViewInNetscape()
       }
       else
       {
-       w->doc()->save();
+       w->save();
       }
     } else
     {
@@ -403,7 +403,7 @@ void QuantaView::slotViewInKFM()
       }
       else
       {
-       w->doc()->save();
+       w->save();
       }
     } else
     {
@@ -435,7 +435,7 @@ void QuantaView::slotViewInLynx()
       }
       else
       {
-       w->doc()->save();
+       w->save();
       }
     } else
     {

@@ -47,6 +47,7 @@
 Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget *parent,
                    const char *name, WFlags f ) : QWidget(parent, name, f)
 {
+  m_dirty   = false;
   busy    = false;
   oldstat = false;
   _doc = doc;
@@ -740,7 +741,7 @@ bool Document::saveIt()
  bool modifyStatus = _doc->isModified();
  _doc->save();
  _doc->setModified(modifyStatus);
-
+ m_dirty = false;
  return true;   //not used yet
 }
 
@@ -1432,6 +1433,29 @@ void Document::scriptCodeCompletion(DTDStruct *dtd, int line, int col)
 void Document::slotCompletionAborted()
 {
  completionInProgress = false;
+}
+
+/** Ask for user confirmation if the file was changed outside. */
+void Document::checkDirtyStatus()
+{
+  if (m_dirty)
+  {
+    if (KMessageBox::questionYesNo(this,
+        i18n("The file was changed outside of the Quanta editor.\nDo you want to reload the modified file?\n\n\
+If you choose Cancel and subsequently save the file, you will lose those modifications."),
+        i18n("File changed")) == KMessageBox::Yes)
+    {
+      _doc->openURL(url());
+    }
+    m_dirty = false;
+  }
+}
+
+/** Save the document and reset the dirty status. */
+void Document::save()
+{
+  _doc->save();
+  m_dirty = false;
 }
 
 
