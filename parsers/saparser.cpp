@@ -128,7 +128,7 @@ bool SAParser::slotParseOneLine()
           if (!s_contextFound && commentPos != -1)  //is it a comment?
           {
             if ( (commentPos < groupKeywordPos || groupKeywordPos == -1) &&
-                (commentPos <= specialAreaPos || specialAreaPos == -1) &&
+                (commentPos < specialAreaPos || specialAreaPos == -1) &&
                 (commentPos < areaEndPos || areaEndPos == -1) )
             {
               s_context.type = Comment;

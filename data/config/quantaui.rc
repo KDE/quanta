@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32039">
+<kpartgui name="quanta" version="32040">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -176,7 +176,7 @@
     <Action name="project_open_recent" />
     <Separator/>
     <Action name="file_save"    />
-    <Action name="save_all"     />
+    <Action name="file_save_all"     />
   </ToolBar>
 
   <ToolBar name="mainEditToolBar" noMerge="1">
