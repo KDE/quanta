@@ -244,7 +244,7 @@ class QuantaApp : public KDockMainWindow
   /** Adds a new, empty toolbar. */
   void slotAddToolbar();
   /** Saves a toolbar as local or project specific. */
-  void slotSaveToolbar(bool localToolbar = true);
+  void slotSaveToolbar(bool localToolbar = true, QString toolbarToSave = QString::null);
   /** Saves a toolbar as local specific. */
   void slotSaveLocalToolbar();
   /** Saves a toolbar as project specific. */
@@ -253,6 +253,8 @@ class QuantaApp : public KDockMainWindow
   void slotLoadToolbarFile(const KURL& url);
   /** Load an user toolbar from the disk. */
   void slotLoadToolbar();
+  /** Load a global toolbar from the disk. */
+  void slotLoadGlobalToolbar();
 
  private slots:
 	
@@ -265,6 +267,8 @@ class QuantaApp : public KDockMainWindow
 	  KParts::BrowserExtension *browserExtension() {
       return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)htmlPart())->child( 0L, "KParts::BrowserExtension" ));
     }
+  /** Ask for save all the modified user toolbars. */
+  void saveModifiedToolbars();
 	
   private:
     /** project class */
@@ -359,6 +363,7 @@ class QuantaApp : public KDockMainWindow
     QPtrList<KTextEditor::Mark> markList;
     QPtrList<KTempFile> tempFileList;
     QDict<KXMLGUIClient> toolbarGUIClientList;
+    QDict<QDomDocument> toolbarDomList;
 
     uint userToolbarsCount;
   /**  */

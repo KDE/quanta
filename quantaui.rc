@@ -1,6 +1,6 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
 <kpartgui name="quanta" version="2">
-  <MenuBar>
+  <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
       <Action name="file_new"/>    
@@ -57,7 +57,7 @@
     <Separator/>
   </Menu>
 
-  <Menu name="bookmarks"><text>&amp;Bookmarks</text>
+  <Menu name="bookmarks" noMerge="1"><text>&amp;Bookmarks</text>
     <Action name="edit_bookmarkToggle" />
     <Action name="edit_bookmarksClear" />
     <Separator />
@@ -71,6 +71,7 @@
 
     <Menu name="toolbars" noMerge="1"><text>Too&amp;lbars</text>
       <Menu name="toolbars_load"><text>&amp;Load Toolbars</text>
+        <Action name="toolbars_load_global"/>
         <Action name="toolbars_load_user"/>
         <Action name="toolbars_load_project"/>
       </Menu>
@@ -172,7 +173,7 @@
       <Action name="tag_misc"/>
     </Menu>
     
-    <Menu name="qview"><text>&amp;View</text>
+    <Menu name="qview" noMerge="1"><text>&amp;View</text>
       <Action name="show_ftab_tree"/>
       <Action name="show_ptab_tree"/>
       <Action name="show_ttab_tree"/>
@@ -190,7 +191,7 @@
       <Action name="view_with_lynx"/>
     </Menu>
          
-    <Menu name="qproject"><text>&amp;Project</text>
+    <Menu name="qproject" noMerge="1"><text>&amp;Project</text>
       <Action name="new_project"/>
       <Action name="open_project"/>
       <Action name="project_open_recent"/>
@@ -205,7 +206,7 @@
       <Action name="project_options"/>
     </Menu>
     
-    <Menu name="settings"><text>&amp;Settings</text>
+    <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
       <Action name="view_toolbar"/>
       <Action name="view_statusbar"/>
       <Action name="show_messages"/>
@@ -224,8 +225,17 @@
       <Action name="highlight_options"/>
     </Menu>
 
-    <Menu name="help"><text>&amp;Help</text>
+    <Menu name="help" noMerge="1"><text>&amp;Help</text>
+      <Action name="help_contents" />
+      <Action name="help_whats_this" />
+      <Separator />
       <Action name="context_help"/>
+      <Separator />
+      <Action name="help_report_bug" />
+      <Separator />
+      <Action name="help_about_app" />
+      <Action name="help_about_kde" />
+
     </Menu>
     
   </MenuBar>

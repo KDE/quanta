@@ -72,7 +72,7 @@ AUTODIRS =
 AWK = gawk
 CC = gcc
 CONF_FILES =  $(top_srcdir)/./admin/configure.in.min $(top_srcdir)/configure.in.in
-CPP = gcc -E
+CPP = cpp
 CXX = g++
 CXXCPP = g++ -E
 DCOPIDL = /opt/kde3/bin/dcopidl
@@ -236,7 +236,7 @@ qt_libraries = /usr/lib/qt3/lib
 x_includes = /usr/X11R6/include
 x_libraries = /usr/X11R6/lib
 
-EXTRA_DIST = docbook.toolbar.tgz 
+EXTRA_DIST = docbook.toolbar.tgz kde_docbook.toolbar.tgz 
 subdir = quanta/data/toolbars
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -379,11 +379,20 @@ install-data-local:
 #>- 	$(INSTALL_DATA) $(srcdir)/docbook.toolbar.tgz ${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
 #>+ 1
 	$(INSTALL_DATA) $(srcdir)/docbook.toolbar.tgz $(DESTDIR)${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
+#>- 	$(mkinstalldirs) ${kde_datadir}/quanta/toolbars/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)${kde_datadir}/quanta/toolbars/
+#>- 	$(INSTALL_DATA) $(srcdir)/kde_docbook.toolbar.tgz ${kde_datadir}/quanta/toolbars/kde_docbook.toolbar.tgz
+#>+ 1
+	$(INSTALL_DATA) $(srcdir)/kde_docbook.toolbar.tgz $(DESTDIR)${kde_datadir}/quanta/toolbars/kde_docbook.toolbar.tgz
 
 uninstall-local:
 #>- 	-rm -f ${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
 #>+ 1
 	-rm -f $(DESTDIR)${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
+#>- 	-rm -f ${kde_datadir}/quanta/toolbars/kde_docbook.toolbar.tgz
+#>+ 1
+	-rm -f $(DESTDIR)${kde_datadir}/quanta/toolbars/kde_docbook.toolbar.tgz
 
 ####### kdevelop will overwrite this part!!! (end)############
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

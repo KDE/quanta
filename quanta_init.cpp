@@ -98,7 +98,9 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 {
   tempFileList.setAutoDelete(true);
   toolbarGUIClientList.setAutoDelete(true);
+  toolbarDomList.setAutoDelete(true);
   userToolbarsCount = 0;
+
   setHighlight = 0;
   grepDialog  = 0L;
   exitingFlag = false;
@@ -600,6 +602,7 @@ bool QuantaApp::queryExit()
 {
   exitingFlag = true;
   saveOptions();
+  saveModifiedToolbars();
   bool canExit = doc->saveAll(false);
   if (canExit)
   {
@@ -953,7 +956,8 @@ void QuantaApp::initActions()
     projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"),0,this, SLOT(slotLoadToolbarFile(const KURL&)),
                            actionCollection(), "toolbars_load_project");
 
-    new KAction(i18n("&Load User Toolbar"), 0, this, SLOT(slotLoadToolbar()), actionCollection(), "toolbars_load_user");
+    new KAction(i18n("Load &Global Toolbar"), 0, this, SLOT(slotLoadGlobalToolbar()), actionCollection(), "toolbars_load_global");
+    new KAction(i18n("Load &Local Toolbar"), 0, this, SLOT(slotLoadToolbar()), actionCollection(), "toolbars_load_user");
     new KAction(i18n("Save As &Local Toolbar"),  0, this, SLOT(slotSaveLocalToolbar()), actionCollection(), "toolbars_save_local");
     new KAction(i18n("Save As &Project Toolbar"),  0, this, SLOT(slotSaveProjectToolbar()), actionCollection(), "toolbars_save_project");
     new KAction(i18n("&Add User Toolbar"),  0, this, SLOT(slotAddToolbar()), actionCollection(), "toolbars_add");

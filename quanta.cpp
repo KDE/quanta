@@ -318,6 +318,7 @@ void QuantaApp::slotFilePrint()
 void QuantaApp::slotFileQuit()
 {
   saveOptions();
+  saveModifiedToolbars();
 
   if(memberList)
   {
@@ -873,7 +874,7 @@ void QuantaApp::slotNewLineColumn()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse()
 {
-	if ( stabdock->isVisible() )
+	if ( ( stabdock->isVisible() ) && (view->write()) )
 	{
 		Node *node = parser->parse( view->write()->editIf->text() );
 		//sTab->s = parser->s;
@@ -1335,29 +1336,45 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
 //FIXME: This is weird. The first time it read uncorrectly the data:
 //  <DOCTYPE ... instead of <!DOCTYPE ...
 // What to do? Re-read again... ;-)
-  KArchiveFile* file = (KArchiveFile *) tar.directory()->entry(QFileInfo(fileName).baseName()+".actions");
-  buffer = (QBuffer*) file->device();
-  str.setDevice(buffer);
-  actionContent = str.read();
-  buffer->close();
+  QString base = QFileInfo(fileName).baseName();
+  KArchiveFile* file = (KArchiveFile *) tar.directory()->entry(base+".actions");
+  if (file)
+  {
+    buffer = (QBuffer*) file->device();
+    str.setDevice(buffer);
+    actionContent = str.read();
+    buffer->close();
+  }
 
 //read the toolbar file
-  file = (KArchiveFile *) tar.directory()->entry(QFileInfo(fileName).baseName()+".toolbar");
-  buffer = (QBuffer*) file->device();
-  str.setDevice(buffer);
-  toolbarContent = str.read();
-  buffer->close();
-  delete buffer;
+  file = (KArchiveFile *) tar.directory()->entry(base+".toolbar");
+  if (file)
+  {
+    buffer = (QBuffer*) file->device();
+    str.setDevice(buffer);
+    toolbarContent = str.read();
+    buffer->close();
+    delete buffer;
+  }
 
 //read the action file
   file = (KArchiveFile *) tar.directory()->entry(QFileInfo(fileName).baseName()+".actions");
-  buffer = (QBuffer*) file->device();
-  str.setDevice(buffer);
-  actionContent = str.read();
-  buffer->close();
-  delete buffer;
+  if (file)
+  {
+    buffer = (QBuffer*) file->device();
+    str.setDevice(buffer);
+    actionContent = str.read();
+    buffer->close();
+    delete buffer;
+  }
 
   tar.close();
+
+  if ( (toolbarContent.isEmpty()) || (actionContent.isEmpty()))
+  {
+    KMessageBox::error(this, i18n("Cannot load the toolbars from the archive.\nCheck that the filenames inside the archives begin as the archive name!"));
+    return;
+  }
 
  } else //to support loading of separate .toolbar, .action files
  {
@@ -1428,6 +1445,10 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
   if (found) break;
  }
 
+ QDomDocument *dom = new QDomDocument();
+ dom->setContent(toolbarContent);
+ toolbarDomList.insert(name.lower(), dom);
+
 //setup the actions
  QDomDocument actionDom;
  actionDom.setContent(actionContent);
@@ -1491,7 +1512,20 @@ void QuantaApp::slotLoadToolbar()
 {
  KURL url;
 
- url = KFileDialog::getOpenURL(doc->basePath(), "*.toolbar.tgz\n*", this);
+ url = KFileDialog::getOpenURL(locateLocal("data","quanta/toolbars/"), "*.toolbar.tgz\n*", this);
+ if (! url.isEmpty())
+ {
+   slotLoadToolbarFile(url.path());
+ }
+
+}
+
+/** Load an user toolbar from the disk. */
+void QuantaApp::slotLoadGlobalToolbar()
+{
+ KURL url;
+
+ url = KFileDialog::getOpenURL(KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png")+"quanta/toolbars/", "*.toolbar.tgz\n*", this);
  if (! url.isEmpty())
  {
    slotLoadToolbarFile(url.path());
@@ -1520,7 +1554,14 @@ QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
   QDomNodeList nodeList, nodeList2;
   QStringList actionNameList;
 
+/*
+  QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
+  f.open( IO_ReadWrite | IO_Truncate );
+  QTextStream qts(&f);
+  m_actions->save(qts,0);
+  f.close();
   QString s = actions()->toString();
+*/
 
   toolStr << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n");
   actStr << QString("<!DOCTYPE actionsconfig>\n<actions>\n");
@@ -1555,12 +1596,19 @@ QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
             {
                 nodeList2.item(k).save(actStr,1);
             }
-          }       
+          }
+     
        }
       }
   }
   toolStr << QString("\n</kpartgui>");
   actStr << QString("\n</actions>");
+
+  toolbarDomList.remove(toolbarName.lower());
+  QDomDocument *dom = new QDomDocument();
+  dom->setContent(toolStr.read());
+  toolbarDomList.insert(toolbarName.lower(), dom);
+
   buffer.close();
   buffer2.close();
 
@@ -1574,30 +1622,37 @@ QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
 }
 
 /** Saves a toolbar as local or project specific. */
-void QuantaApp::slotSaveToolbar(bool localToolbar)
+void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
 {
   KURL url;
   int query;
   QString projectToolbarsDir;
+  QString toolbarName;
 
-  QTabWidget *tb = view->toolbarTab;
-
-  ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Save toolbar"));
-  QComboBox * combo = new QComboBox(dlg);
-  dlg->nameEdit->hide();
-  combo->setGeometry(QRect(135,25,115,24));
-  for (int i = 0; i < tb->count(); i++)
+  if (toolbarToSave.isEmpty())
   {
-    combo->insertItem(tb->label(i));
-  }
+    QTabWidget *tb = view->toolbarTab;
+    ToolBarsDlg * dlg = new ToolBarsDlg(this, i18n("Save toolbar"));
+    QComboBox * combo = new QComboBox(dlg);
+    dlg->nameEdit->hide();
+    combo->setGeometry(QRect(135,25,115,24));
+    for (int i = 0; i < tb->count(); i++)
+    {
+      combo->insertItem(tb->label(i));
+      if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) combo->setCurrentItem(i);
+    }
 
-  if (! dlg->exec())
-  {
+    if (! dlg->exec())
+    {
+      delete dlg;
+      return;
+    }
+    toolbarName = combo->currentText().lower();
     delete dlg;
-    return;
+  } else
+  {
+    toolbarName = toolbarToSave;
   }
-  QString toolbarName = combo->currentText().lower();
-  delete dlg;
  
 
   do {
@@ -1665,6 +1720,10 @@ void QuantaApp::slotAddToolbar()
   view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
   tempFileList.append(tempFile);
   toolbarGUIClientList.insert(name.lower(),toolbarGUI);
+
+  QDomDocument *dom = new QDomDocument(toolbarGUI->domDocument());
+  toolbarDomList.insert(name.lower(), dom);
+
  }
 
  delete dlg;
@@ -1681,26 +1740,39 @@ void QuantaApp::slotRemoveToolbar()
  QComboBox * combo = new QComboBox(dlg);
  dlg->nameEdit->hide();
  combo->setGeometry(QRect(135,25,115,24));
+ int j =0;
  for (i = 0; i < tb->count(); i++)
  {
-  if (toolbarGUIClientList[tb->label(i).lower()]) combo->insertItem(tb->label(i));
+  if (toolbarGUIClientList[tb->label(i).lower()])
+  {
+    combo->insertItem(tb->label(i));
+    if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) combo->setCurrentItem(j);
+    j++;
+  }
  }
 
  if (dlg->exec())
  {
-   i = 0;
-   while (combo->currentText() != tb->label(i))
-   {
-    i++;
-   }
-   tb->removePage(tb->page(i));
-//   delete tb->page(i); // not sure if we need to do this or not
 
    KXMLGUIClient* toolbarGUI = toolbarGUIClientList[combo->currentText().lower()];
+
    if (toolbarGUI)
    {
+    //check if the toolbar's XML GUI was modified or not
+    QString s1 = toolbarDomList[combo->currentText().lower()]->toString();
+    QString s2 = toolbarGUI->domDocument().toString();
+    if ( s1 != s2 )
+    {
+     if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(combo->currentText()),
+             i18n("Save toolbar")) == KMessageBox::Yes)
+     {
+       slotSaveToolbar(true, combo->currentText().lower() );
+     }
+    }
+
     factory()->removeClient(toolbarGUI);
     toolbarGUIClientList.remove(combo->currentText().lower());
+    toolbarDomList.remove(combo->currentText().lower());
    }
  }
 
@@ -1719,6 +1791,7 @@ void QuantaApp::slotSendToolbar()
   for (int i = 0; i < tb->count(); i++)
   {
     combo->insertItem(tb->label(i));
+    if ( tb->tabLabel(tb->currentPage()) == tb->label(i) ) combo->setCurrentItem(i);
   }
 
   if (! dlg->exec())
@@ -1770,6 +1843,28 @@ void QuantaApp::slotSendToolbar()
 
   }
   delete mailDlg;
+}
+
+/** Ask for save all the modified user toolbars. */
+void QuantaApp::saveModifiedToolbars()
+{
+ QDictIterator<QDomDocument> it(toolbarDomList);
+ QString s1, s2;
+ for( ; it.current(); ++it )
+ {
+   s1 = it.current()->toString();
+   s2 = toolbarGUIClientList[it.currentKey()]->domDocument().toString();
+
+   if ( (s1 != s2) && (!s1.isEmpty()) )
+   {
+     if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(it.currentKey()),
+             i18n("Save toolbar")) == KMessageBox::Yes)
+     {
+       slotSaveToolbar(true, it.currentKey() );
+     }
+   }
+   toolbarDomList.remove(it.currentKey());
+ }
 }
 
 #include "quanta.moc"

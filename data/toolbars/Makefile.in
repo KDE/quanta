@@ -1,4 +1,5 @@
 # Makefile.in generated automatically by automake 1.5 from Makefile.am.
+# KDE tags expanded automatically by am_edit - $Revision$ 
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
@@ -234,14 +235,16 @@ qt_libraries = @qt_libraries@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
 
-EXTRA_DIST = docbook.toolbar.tgz 
+EXTRA_DIST = docbook.toolbar.tgz kde_docbook.toolbar.tgz 
 subdir = quanta/data/toolbars
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 DIST_SOURCES =
 DIST_COMMON = Makefile.am Makefile.in
-all: all-am
+#>- all: all-am
+#>+ 1
+all: docs-am  all-am
 
 .SUFFIXES:
 
@@ -254,12 +257,16 @@ clean-libtool:
 distclean-libtool:
 	-rm -f libtool
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+#>- 	cd $(top_srcdir) && \
+#>- $(AUTOMAKE) --gnu  quanta/data/toolbars/Makefile
+#>+ 3
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  quanta/data/toolbars/Makefile
+	$(AUTOMAKE) --gnu  quanta/data/toolbars/Makefile
+	cd $(top_srcdir) && perl admin/am_edit quanta/data/toolbars/Makefile.in
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
-	  CONFIG_HEADERS= CONFIG_LINKS= \
-	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+	CONFIG_HEADERS= CONFIG_LINKS= \
+	CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
 uninstall-info-am:
 tags: TAGS
 TAGS:
@@ -272,19 +279,19 @@ distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
-	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
-	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
-	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
-	    $(mkinstalldirs) "$(distdir)/$$dir"; \
-	  fi; \
-	  if test -d $$d/$$file; then \
-	    cp -pR $$d/$$file $(distdir) \
-	    || exit 1; \
-	  else \
-	    test -f $(distdir)/$$file \
-	    || cp -p $$d/$$file $(distdir)/$$file \
-	    || exit 1; \
-	  fi; \
+	if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	$(mkinstalldirs) "$(distdir)/$$dir"; \
+	fi; \
+	if test -d $$d/$$file; then \
+	cp -pR $$d/$$file $(distdir) \
+	|| exit 1; \
+	else \
+	test -f $(distdir)/$$file \
+	|| cp -p $$d/$$file $(distdir)/$$file \
+	|| exit 1; \
+	fi; \
 	done
 check-am: all-am
 check: check-am
@@ -303,8 +310,8 @@ install-am: all-am
 installcheck: installcheck-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
-	  `test -z '$(STRIP)' || \
-	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
+	`test -z '$(STRIP)' || \
+	echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
 
 clean-generic:
@@ -315,7 +322,9 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-am
+#>- clean: clean-am
+#>+ 1
+clean: kde-rpo-clean  clean-am
 
 clean-am: clean-generic clean-libtool mostlyclean-am
 
@@ -363,13 +372,58 @@ uninstall-am: uninstall-info-am uninstall-local
 
 
 install-data-local:
-	$(mkinstalldirs) ${kde_datadir}/quanta/toolbars/
-	$(INSTALL_DATA) $(srcdir)/docbook.toolbar.tgz ${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
+#>- 	$(mkinstalldirs) ${kde_datadir}/quanta/toolbars/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)${kde_datadir}/quanta/toolbars/
+#>- 	$(INSTALL_DATA) $(srcdir)/docbook.toolbar.tgz ${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
+#>+ 1
+	$(INSTALL_DATA) $(srcdir)/docbook.toolbar.tgz $(DESTDIR)${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
+#>- 	$(mkinstalldirs) ${kde_datadir}/quanta/toolbars/
+#>+ 1
+	$(mkinstalldirs) $(DESTDIR)${kde_datadir}/quanta/toolbars/
+#>- 	$(INSTALL_DATA) $(srcdir)/kde_docbook.toolbar.tgz ${kde_datadir}/quanta/toolbars/kde_docbook.toolbar.tgz
+#>+ 1
+	$(INSTALL_DATA) $(srcdir)/kde_docbook.toolbar.tgz $(DESTDIR)${kde_datadir}/quanta/toolbars/kde_docbook.toolbar.tgz
 
 uninstall-local:
-	-rm -f ${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
+#>- 	-rm -f ${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
+#>+ 1
+	-rm -f $(DESTDIR)${kde_datadir}/quanta/toolbars/docbook.toolbar.tgz
+#>- 	-rm -f ${kde_datadir}/quanta/toolbars/kde_docbook.toolbar.tgz
+#>+ 1
+	-rm -f $(DESTDIR)${kde_datadir}/quanta/toolbars/kde_docbook.toolbar.tgz
 
 ####### kdevelop will overwrite this part!!! (end)############
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
+
+#>+ 2
+docs-am:
+
+#>+ 6
+force-reedit:
+		cd $(top_srcdir) && \
+	$(AUTOMAKE) --gnu  quanta/data/toolbars/Makefile
+	cd $(top_srcdir) && perl admin/am_edit quanta/data/toolbars/Makefile.in
+
+
+#>+ 2
+final:
+	$(MAKE) all-am
+#>+ 2
+final-install:
+	$(MAKE) install-am
+#>+ 2
+no-final:
+	$(MAKE) all-am
+#>+ 2
+no-final-install:
+	$(MAKE) install-am
+#>+ 3
+cvs-clean:
+	$(MAKE) admindir=$(top_srcdir)/admin -f $(top_srcdir)/admin/Makefile.common cvs-clean
+
+#>+ 3
+kde-rpo-clean:
+	-rm -f *.rpo
