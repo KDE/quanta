@@ -1762,7 +1762,8 @@ void Project::slotRemove(const KURL& urlToRemove)
 
   KURL url;
   bool isFolder = d->m_projectFiles.isFolder(urlToRemove);
-  ProjectList::Iterator it( d->m_projectFiles );
+  ProjectList projectFiles = d->m_projectFiles;
+  ProjectList::Iterator it(projectFiles);
   for ( ; it.current(); ++it)
   {
     url = *(it.current());
