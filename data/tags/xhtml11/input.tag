@@ -95,7 +95,7 @@
       <location col="3" row="5" colspan="1" />
       <tooltip>NA in NS4</tooltip>
     </attr>
-    
+
     <attr name="accesskey" type="input">
       <text>Accesskey</text>
       <textlocation col="2" row="6" colspan="1" />
@@ -111,6 +111,6 @@
            <item>application/x-www-form-urlencoded</item>
            <item>multipart/form-data</item>
         </items>
-			
+		</attr>
 </tag>
 </TAGS>

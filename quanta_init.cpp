@@ -912,7 +912,15 @@ uint QuantaApp::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagL
  QFile f( fileName );
  f.open( IO_ReadOnly );
  QDomDocument *m_doc = new QDomDocument();
- m_doc->setContent( &f );
+ QString errorMsg;
+ int errorLine, errorCol;
+ if (!m_doc->setContent( &f, &errorMsg, &errorLine, &errorCol ))
+ {
+   KMessageBox::error(this, i18n("<qt>The DTD tag file %1 is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>").arg(fileName).arg(errorMsg).arg(errorLine).arg(errorCol),
+   i18n("Invalid tag file"));
+   kdWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol << endl;
+ }
+
  f.close();
  QDomNodeList nodeList = m_doc->elementsByTagName("tag");
  uint numOfTags = nodeList.count();
