@@ -248,7 +248,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
               tag->name.truncate(tag->name.length() - 1);
         }
         //the tag we found indicates the beginning of a special area, like <script type=... >
-        if (m_dtd->specialTags.contains(tag->name.lower()))
+        if (m_dtd->specialTags.contains(tag->name.lower()) && !tag->single)
         {
         //TODO: handle goUp here
           Node *node = new Node(parentNode);
@@ -551,8 +551,8 @@ void Parser::coutTree(Node *node, int indent)
             else
                     output+= node->tag->tagStr().replace('\n'," ");
             kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
-                    bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << endl;
-            for(j = 0; j < node->tag->attrCount(); j++)
+                    bLine << ":" << bCol << " - " << eLine << ":" << eCol << " This: "<< node << " Parent: " << node->parent << " Prev: " << node->prev << " Next: " << node->next << "Child: " << node->child << endl;
+ /*           for(j = 0; j < node->tag->attrCount(); j++)
             {
                     kdDebug(24000)<< " attr" << j << " " <<
                             node->tag->getAttribute(j).nameLine << ":" <<
@@ -560,7 +560,7 @@ void Parser::coutTree(Node *node, int indent)
                             node->tag->getAttribute(j).valueLine << ":" <<
                             node->tag->getAttribute(j).valueCol << endl;
             }
-
+*/
             if (node->child)
                     coutTree(node->child, indent + 4);
             node = node->next;

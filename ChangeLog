@@ -7,7 +7,9 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - correctly size the DTD toolbar even when just one toolbar is loaded [#81063]
         - remove the backup files in every case when the document was saved and
           don't warn about their presence on the next startup
-        - don't hang when parsing (broken) PHP code, like  <a href="<? foo ?>"">.
+        - don't hang when parsing (broken) PHP code, like  <a href="<? foo ?>"">
+        - don't treat text after a special area start tag as part of the special area, if the
+          starting tag is a single tag (like <style type="text/css" />) [#80491]
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:
