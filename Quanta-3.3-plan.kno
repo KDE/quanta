@@ -63,7 +63,7 @@
 
 \CurrentEntry 1 Script Debug
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
-<p><br /><span style="font-weight:600">Wishes that needs explanation:</span><br />* I'd like to see the ability to add preprocessing to the file being sent to PHP so I could request back data that would take a lot of edits to the page without editing, but via automation.<br /><br /><span style="font-weight:600">Todo:</span><br /><span style="font-weight:600">General Quanta debugger integration</span><br />* Enable breakpoint setting in KTextEditors icon border<br />* Verify that gubed.kmdr is up to date<br />* Finish new file mapping<br />* Messages dock is cleared when using 'time'<br /><br /><span style="font-weight:600">Gubed Plugin<br /></span>* Less pointless messages to the messages dock<br /></p>
+<p><br />The TODO list is for Gubed integration is now kept and managed at the Gubed SF page,<br />http://sourceforge.net/projects/gubed/ (tracker and tasks)<br /></p>
 </body></html>
 
 

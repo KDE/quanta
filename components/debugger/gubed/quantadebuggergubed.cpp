@@ -483,6 +483,11 @@ void QuantaDebuggerGubed::processCommand(const QString& data)
   {
     debuggerInterface()->haveBreakpoint(mapServerPathToLocal(data.left(data.find(':'))), data.mid(data.find(':') + 1).toLong());
   }
+  // There is a breakpoint set in this file/line
+  else if(m_command == "clearbreakpoint")
+  {
+    debuggerInterface()->havenoBreakpoint(mapServerPathToLocal(data.left(data.find(':'))), data.mid(data.find(':') + 1).toLong());
+  }
   // We're about to debug a file..
   else if(m_command == "initialize")
   {
@@ -519,7 +524,7 @@ void QuantaDebuggerGubed::processCommand(const QString& data)
   // Reached en of an include
   else if(m_command == "end")
   {
-    debuggerInterface()->showStatus(i18n("At end of include %1").arg(data), true);
+    //debuggerInterface()->showStatus(i18n("At end of include %1").arg(data), true);
     return;
   }
   // Check protocol version

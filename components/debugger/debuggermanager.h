@@ -58,6 +58,7 @@ class DebuggerManager : public QObject
 
     // Breakpoints
     void haveBreakpoint (const QString& file, int line);
+    void havenoBreakpoint (const QString& file, int line);
     void refreshBreakpoints();
     DebuggerBreakpoint *newDebuggerBreakpoint();
 

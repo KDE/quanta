@@ -46,6 +46,11 @@ void QuantaDebuggerInterface::haveBreakpoint (const QString& file, int line)
   return m_manager->haveBreakpoint(file, line);
 }
 
+void QuantaDebuggerInterface::havenoBreakpoint (const QString& file, int line)
+{
+  return m_manager->havenoBreakpoint(file, line);
+}
+
 // Public help functions
 bool QuantaDebuggerInterface::showStatus(const QString& message, bool log)
 {

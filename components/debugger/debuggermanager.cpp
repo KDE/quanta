@@ -112,6 +112,10 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
       projectNode.appendChild(nodeDbg);
     }
 
+    // Load this project's mapped paths
+    m_pathmapper->readConfig();
+
+    // Load this projects debugger's settings
     nodeThisDbg = nodeDbg.namedItem(m_client->getName());
     if(nodeThisDbg.isNull())
     {
@@ -120,7 +124,7 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
     }
 
     m_client->readConfig(nodeThisDbg);
-
+    
     m_debuggerui = new DebuggerUI(this, "debuggerui");
   }
 
@@ -133,53 +137,69 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
 
 void DebuggerManager::initActions()
 {
+  KAction * newaction;
   KActionCollection *ac = quantaApp->actionCollection();
   if(!ac)
     return;
 
   //Debugger, breakpoint
-  new KAction(i18n("Toggle &Breakpoint"), SmallIcon("debug_breakpoint"), Qt::CTRL+Qt::SHIFT+Qt::Key_B,
-              this, SLOT(toggleBreakpoint()), ac, "debug_breakpoints_toggle");
-  new KAction(i18n("&Clear Breakpoints"), 0,
-              this, SLOT(clearBreakpoints()), ac, "debug_breakpoints_clear");
-  new KAction(i18n("Break When..."), SmallIcon("math_int"), 0,
-              this, SLOT(slotConditionalBreakpoint()), ac, "debug_conditional_break");
-  new KAction(i18n("Break When..."), SmallIcon("math_int"), 0,
-              this, SLOT(slotConditionalBreakpoint()), ac, "debug_conditional_breakdialog");
+  newaction = new KAction(i18n("Toggle &Breakpoint"), SmallIcon("debug_breakpoint"), Qt::CTRL+Qt::SHIFT+Qt::Key_B, this, SLOT(toggleBreakpoint()), ac, "debug_breakpoints_toggle");
+  newaction->setToolTip(i18n("Toggles a breakpoint at the current cursor location"));
+  
+  newaction = new KAction(i18n("&Clear Breakpoints"), 0, this, SLOT(clearBreakpoints()), ac, "debug_breakpoints_clear");
+  newaction->setToolTip(i18n("Clears all breakpoints"));
+  
+  newaction = new KAction(i18n("Break When..."), SmallIcon("math_int"), 0, this, SLOT(slotConditionalBreakpoint()), ac, "debug_conditional_break");
+  newaction->setToolTip(i18n("Adds a new conditional breakpoint"));
+  
+  newaction = new KAction(i18n("Break When..."), SmallIcon("math_int"), 0, this, SLOT(slotConditionalBreakpoint()), ac, "debug_conditional_breakdialog");
+  newaction->setToolTip(i18n("Adds a new conditional breakpoint"));
 
   // Execution
-  new KAction(i18n("Send HTTP R&equest"), SmallIcon("debug_currentline"), 0,
-              this, SLOT(slotDebugRequest()), ac, "debug_request");
-  new KAction(i18n("&Run"), SmallIcon("debug_run"), 0,
-              this, SLOT(slotDebugRun()), ac, "debug_run");
-  new KAction(i18n("&Leap"), SmallIcon("debug_leap"), 0,
-              this, SLOT(slotDebugLeap()), ac, "debug_leap");
-  new KAction(i18n("&Step"), SmallIcon("debug_stepover"), 0,
-              this, SLOT(slotDebugStepOver()), ac, "debug_stepover");
-  new KAction(i18n("Step &Into"), SmallIcon("debug_stepinto"), 0,
-              this, SLOT(slotDebugStepInto()), ac, "debug_stepinto");
-  new KAction(i18n("S&kip"), SmallIcon("debug_skip"), 0,
-              this, SLOT(slotDebugSkip()), ac, "debug_skip");
-  new KAction(i18n("Step &Out"), SmallIcon("debug_stepout"), 0,
-              this, SLOT(slotDebugStepOut()), ac, "debug_stepout");
-  new KAction(i18n("&Pause"), SmallIcon("debug_pause"), 0,
-              this, SLOT(slotDebugPause()), ac, "debug_pause");
-  new KAction(i18n("Kill"), SmallIcon("debug_kill"), 0,
-              this, SLOT(slotDebugKill()), ac, "debug_kill");
-  new KAction(i18n("Start Session"), SmallIcon("debug_connect"), 0,
-              this, SLOT(slotDebugStartSession()), ac, "debug_connect");
-  new KAction(i18n("End Session"), SmallIcon("debug_disconnect"), 0,
-              this, SLOT(slotDebugEndSession()), ac, "debug_disconnect");
+  newaction = new KAction(i18n("Send HTTP R&equest"), SmallIcon("debug_currentline"), 0, this, SLOT(slotDebugRequest()), ac, "debug_request");
+  newaction->setToolTip(i18n("Initiate HTTP Request to the server with debugging activated"));
+  
+  newaction = new KAction(i18n("&Run"), SmallIcon("debug_run"), 0, this, SLOT(slotDebugRun()), ac, "debug_run");
+  newaction->setToolTip(i18n("Executes the script showing every line of execution to the user (slow). If a script is currenlty not being debugged, the next script started will start in run mode"));
+  
+  newaction = new KAction(i18n("&Leap"), SmallIcon("debug_leap"), 0, this, SLOT(slotDebugLeap()), ac, "debug_leap");
+  newaction->setToolTip(i18n("Executes the script without showing every line of execution to the user (fast). If a script is currenlty not being debugged, the next script started will start in leap mode"));
+  
+  newaction = new KAction(i18n("&Step"), SmallIcon("debug_stepover"), 0, this, SLOT(slotDebugStepOver()), ac, "debug_stepover");
+  newaction->setToolTip(i18n("Executes the next line of execution, but does not step into functions or includes"));
+  
+  newaction = new KAction(i18n("Step &Into"), SmallIcon("debug_stepinto"), 0, this, SLOT(slotDebugStepInto()), ac, "debug_stepinto");
+  newaction->setToolTip(i18n("Executes the next line of execution and steps into it if it's a function call or inclusion of a file"));
+  
+  newaction = new KAction(i18n("S&kip"), SmallIcon("debug_skip"), 0, this, SLOT(slotDebugSkip()), ac, "debug_skip");
+  newaction->setToolTip(i18n("Skips the next command of execution and makes the next command the current one"));
+  
+  newaction = new KAction(i18n("Step &Out"), SmallIcon("debug_stepout"), 0, this, SLOT(slotDebugStepOut()), ac, "debug_stepout");
+  newaction->setToolTip(i18n("Executes the rest of the commands in the current function/file and pauses when it's done (when it reaches a higher level in the backtrace)"));
+  
+  newaction = new KAction(i18n("&Pause"), SmallIcon("debug_pause"), 0, this, SLOT(slotDebugPause()), ac, "debug_pause");
+  newaction->setToolTip(i18n("Pauses the scripts if it's running or leaping. If a script is currently not being debugged, it will start in paused mode when started"));
+  newaction = new KAction(i18n("Kill"), SmallIcon("debug_kill"), 0, this, SLOT(slotDebugKill()), ac, "debug_kill");
+  newaction->setToolTip(i18n("Kills the currently running script"));
+  
+  newaction = new KAction(i18n("Start Session"), SmallIcon("debug_connect"), 0, this, SLOT(slotDebugStartSession()), ac, "debug_connect");
+  newaction->setToolTip(i18n("Starts the debugger internally (Makes debugging possible)"));
+  
+  newaction = new KAction(i18n("End Session"), SmallIcon("debug_disconnect"), 0, this, SLOT(slotDebugEndSession()), ac, "debug_disconnect");
+  newaction->setToolTip(i18n("Stops the debugger internally (debugging not longer possible)"));
 
   // Variables
-  new KAction(i18n("Watch Variable"), SmallIcon("math_brace"), 0,
-              this, SLOT(slotAddWatch()), ac, "debug_addwatch");
-  new KAction(i18n("Watch Variable"), SmallIcon("math_brace"), 0,
-              this, SLOT(slotAddWatch()), ac, "debug_addwatchdialog");
-  new KAction(i18n("Set Value of Variable"), SmallIcon("edit"), 0,
-              this, SLOT(slotVariableSet()), ac, "debug_variable_set");
-  new KAction(i18n("Set Value of Variable"), SmallIcon("edit"), 0,
-              this, SLOT(slotVariableSet()), ac, "debug_variable_setdialog");
+  newaction = new KAction(i18n("Watch Variable"), SmallIcon("math_brace"), 0, this, SLOT(slotAddWatch()), ac, "debug_addwatch");
+  newaction->setToolTip(i18n("Adds a variable to the watch list"));
+  
+  newaction = new KAction(i18n("Watch Variable"), SmallIcon("math_brace"), 0, this, SLOT(slotAddWatch()), ac, "debug_addwatchdialog");
+  newaction->setToolTip(i18n("Adds a varibale to the watch list"));
+  
+  newaction = new KAction(i18n("Set Value of Variable"), SmallIcon("edit"), 0, this, SLOT(slotVariableSet()), ac, "debug_variable_set");
+  newaction->setToolTip(i18n("Changes the value of a variable"));
+  
+  newaction = new KAction(i18n("Set Value of Variable"), SmallIcon("edit"), 0, this, SLOT(slotVariableSet()), ac, "debug_variable_setdialog");
+  newaction->setToolTip(i18n("Changes the value of a variable"));
 
   enableAction("*", false);
 
@@ -446,6 +466,15 @@ void DebuggerManager::haveBreakpoint (const QString& file, int line)
   setMark(file, line, true, KTextEditor::MarkInterface::markType02);
 }
 
+// The debug server told us we DONT have a breakpoint, remove it
+void DebuggerManager::havenoBreakpoint (const QString& file, int line)
+{
+  DebuggerBreakpoint* br = new DebuggerBreakpoint(file, line);
+  m_breakpointList->remove(br);
+  setMark(file, line, false, KTextEditor::MarkInterface::markType02);
+  m_breakpointList->remove(br);
+}
+
 // New current line
 bool DebuggerManager::setActiveLine (const QString& file, int line )
 {
@@ -534,6 +563,9 @@ void DebuggerManager::toggleBreakpoint ()
       {
         m_client->addBreakpoint(br);
       }
+      else
+        // Trigger pathmapper to make sure we have a valid translation...
+        m_pathmapper->mapLocalPathToServer(w->url().prettyURL(0, KURL::StripFileProtocol));
     }
     else
     {

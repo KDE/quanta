@@ -38,6 +38,7 @@ class QuantaDebuggerInterface : public DebuggerInterface
 
     // Breakpoints
     void haveBreakpoint (const QString& file, int line) ;
+    void havenoBreakpoint (const QString& file, int line) ;
     void refreshBreakpoints();
 
     // Public help functions

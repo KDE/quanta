@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>PathMapperDialogS</class>
 <widget class="QDialog">
     <property name="name">
@@ -69,10 +69,18 @@
                     <property name="name">
                         <cstring>lineLocalPath</cstring>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This is where the local part of path is specified. If a file is located on the computer running Quanta at "/home/user/htdocs/project/file.php" and that file is located on the server as "/var/www/project/file.php", local basedir should be "/home/user/htdocs/" and server basedir should be "/var/www/".
+The quanta will know that files starting with "/home/user/project/" on the local computer, will start with "/var/www/" on the remote computer.</string>
+                    </property>
                 </widget>
                 <widget class="QLineEdit" row="1" column="1">
                     <property name="name">
                         <cstring>lineServerPath</cstring>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This is where the server part of path is specified. If a file is located on the computer running Quanta at "/home/user/htdocs/project/file.php" and that file is located on the server as "/var/www/project/file.php", local basedir should be "/home/user/htdocs/" and server basedir should be "/var/www/".
+The quanta will know that files starting with "/home/user/project/" on the local computer, will start with "/var/www/" on the remote computer.</string>
                     </property>
                 </widget>
             </grid>
@@ -176,7 +184,7 @@
                         </property>
                     </column>
                     <property name="name">
-                        <cstring>listView1</cstring>
+                        <cstring>listHistory</cstring>
                     </property>
                     <property name="frameShape">
                         <enum>StyledPanel</enum>
@@ -189,6 +197,9 @@
                     </property>
                     <property name="resizeMode">
                         <enum>AllColumns</enum>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This is a list of previously used mappings. Click on one to use it</string>
                     </property>
                 </widget>
             </hbox>
@@ -236,26 +247,80 @@
                         <string>Original path:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="1" column="1">
+                <widget class="KLed" row="1" column="2">
                     <property name="name">
-                        <cstring>lineServerSample</cstring>
+                        <cstring>ledTranslationExists</cstring>
                     </property>
-                    <property name="enabled">
-                        <bool>false</bool>
+                    <property name="minimumSize">
+                        <size>
+                            <width>22</width>
+                            <height>22</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>22</width>
+                            <height>22</height>
+                        </size>
+                    </property>
+                    <property name="state">
+                        <enum>On</enum>
+                    </property>
+                    <property name="shape">
+                        <enum>Circular</enum>
+                    </property>
+                    <property name="look">
+                        <enum>Raised</enum>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Indicates wether the translated path exists on disk or not</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This indicator tells you wether the translated path exists on local disk or not.</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="0" column="1">
+                <widget class="QLineEdit" row="1" column="1">
                     <property name="name">
-                        <cstring>lineLocalSample</cstring>
+                        <cstring>lineTranslated</cstring>
                     </property>
                     <property name="enabled">
                         <bool>false</bool>
+                    </property>
+                    <property name="paletteForegroundColor">
+                        <color>
+                            <red>0</red>
+                            <green>0</green>
+                            <blue>0</blue>
+                        </color>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This field shows what the "original path" above will look like after translation.</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>linePath</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="paletteForegroundColor">
+                        <color>
+                            <red>0</red>
+                            <green>0</green>
+                            <blue>0</blue>
+                        </color>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>This filed shows the path currently needed to be translated.</string>
                     </property>
                 </widget>
             </grid>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+</customwidgets>
 <connections>
     <connection>
         <sender>buttonOk</sender>
@@ -270,5 +335,11 @@
         <slot>reject()</slot>
     </connection>
 </connections>
+<slots>
+    <slot>slotHistoryclicked()</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kled.h</includehint>
+</includehints>
 </UI>

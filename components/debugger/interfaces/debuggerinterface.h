@@ -39,6 +39,7 @@ class DebuggerInterface : public QObject
 
     // Breakpoints
     virtual void haveBreakpoint (const QString& file, int line) = 0;
+    virtual void havenoBreakpoint (const QString& file, int line) = 0;
 
     // Public help functions
     virtual bool showStatus(const QString& message, bool log) = 0;
