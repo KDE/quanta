@@ -29,8 +29,6 @@
 #include "docfolder.h"
 #include "docitem.h"
 
-#include "pix/mini-book1.xpm"
-#include "pix/mini-book2.xpm"
 
 DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath)
   : QListViewItem(parent)
@@ -56,7 +54,7 @@ DocFolder::DocFolder(QListViewItem *parent, QString _name, KConfig *config, QStr
     if ( item[0] == '#' ) { // current item is folder
       item++; // remove leading #
       DocFolder *el = new DocFolder(this, QString(item), config, basePath);
-      el->setPixmap( 0, QPixmap((const char**)mini_book1_xpm) );
+      el->setPixmap( 0, UserIcon("mini-book1") );
       el->setOpen( false );
     }
   }
@@ -85,7 +83,7 @@ DocFolder::DocFolder(QListView *parent, QString _name, KConfig *config, QString 
     if ( item[0] == '#' ) { // current item is folder
       item++; // remove leading #
       DocFolder *el = new DocFolder(this, QString(item), config, basePath);
-      el->setPixmap( 0, QPixmap((const char**)mini_book1_xpm) );
+      el->setPixmap( 0, UserIcon("mini-book1") );
       el->setOpen( false );
     }
   }
@@ -113,9 +111,9 @@ void DocFolder::setOpen( bool o)
   QListViewItem::setOpen( o );
   if ( !topLevel ) {
       if (o)
-  		  setPixmap( 0, QPixmap((const char**)mini_book2_xpm) );
+  		  setPixmap( 0, UserIcon("mini-book2") );
       else
-  		  setPixmap( 0, QPixmap((const char**)mini_book1_xpm) );
+  		  setPixmap( 0, UserIcon("mini-book1") );
   } else {
       if (o)
     		setPixmap( 0, SmallIcon("folder_open") );
