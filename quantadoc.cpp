@@ -21,12 +21,28 @@
 #include <qwidget.h>
 #include <qtabwidget.h>
 #include <qtabbar.h>
+#include <qlayout.h>
 
 // include files for KDE
 #include <klocale.h>
 #include <kaction.h>
+#include <kconfig.h>
 #include <kpopupmenu.h>
 #include <kmessagebox.h>
+
+#include <ktexteditor/configinterface.h>
+#include <ktexteditor/highlightinginterface.h>
+#include <ktexteditor/popupmenuinterface.h>
+#include <ktexteditor/markinterface.h>
+#include <ktexteditor/undointerface.h>
+#include <ktexteditor/viewcursorinterface.h>
+#include <ktexteditor/clipboardinterface.h>
+#include <ktexteditor/selectioninterface.h>
+
+
+#include <klibloader.h>
+#include <ktrader.h>
+
 
 // application specific includes
 #include "document.h"
@@ -38,8 +54,8 @@
 
 #include "resource.h"
 
-#include "kwrite/kwdoc.h"
-#include "kwrite/highlight/highlight.h"
+//#include "kwrite/kwdoc.h"
+//#include "kwrite/highlight/highlight.h"
 
 #include "project/project.h"
 
@@ -139,12 +155,12 @@ bool QuantaDoc::newDocument( const KURL& url )
   {
     if ( write() ) // check if first kwrite exists
     {
-      // no modi and new -> we can remove
-      if ( !write()->isModified() &&
-            write()->isUntitled() && !write()->busy) return true;
+      // no modi and new -> we can remove                           !!!!
+/*      if ( !write()->isModified() &&
+            write()->isUntitled() && !write()->busy) return true; */
     }
     // now we can create new kwrite
-    Document *w = newWrite( app->view->writeTab );
+    Document *w = newWrite( app->view->writeTab);
     
     if ( newfile ) furl = w->url().url();
     
@@ -155,11 +171,14 @@ bool QuantaDoc::newDocument( const KURL& url )
   else // select opened
   {
   	 Document *w = docList->find( furl );	
-
+#ifdef USE_KDOCKTABGROUP
+  	app ->view->writeTab->setVisiblePage( w );
+#else
     app ->view->writeTab->showPage( w );
-
+#endif
   	return false; // don't need loadURL
-  }    
+  }
+
   return true;
 }
 
@@ -167,12 +186,37 @@ void QuantaDoc::openDocument(const KURL& url)
 {
   if ( !newDocument( url )) return;
   if ( !url.url().isEmpty()) {
-    write()->busy = true;
-    write()->loadURL( url );
+//    write()->busy = true;
+    if (write()->doc()->openURL( url ))
+    {
+      Document *w = write();
+
+      QDictIterator<Document> it(*docList);
+
+    	QString defUrl;
+    	while ( it.current() )
+    	{
+ 	      if ( w == it.current() ) defUrl = it.currentKey();
+    	  ++it;
+    	}
+ 	
+     app ->view->writeTab->showPage( w );
+  	
+     changeFileTabName(defUrl);
+
+     app->fileRecent->addURL( w->url() );
+
+     emit newStatus();
+     app->repaintPreview();
+
+     app->reparse();
+    }
+
   }
   emit title( url.url() );
 }
 
+/*!!!!
 void QuantaDoc::finishLoadURL(KWrite *_w)
 {
   Document *w = (Document *)_w;
@@ -186,7 +230,11 @@ void QuantaDoc::finishLoadURL(KWrite *_w)
  	  ++it;
  	}
  	
+#ifdef USE_KDOCKTABGROUP
+  	app ->view->writeTab->setVisiblePage( w );
+#else
     app ->view->writeTab->showPage( w );
+#endif
  	
  changeFileTabName(defUrl);
   
@@ -197,7 +245,7 @@ void QuantaDoc::finishLoadURL(KWrite *_w)
   
   w -> busy = false;
   app->reparse();
-}
+}     */
 
 void QuantaDoc::saveDocument(const KURL& url)
 {
@@ -205,9 +253,8 @@ void QuantaDoc::saveDocument(const KURL& url)
 
   if ( !url.url().isEmpty()) 
   {
-    write()->busy = true;
-    write()->writeURL( url );
-    write()->  setURL( url, false );
+    write()->doc()->saveAs( url );
+//    write()->setURL( url, false );
   }
   
   // fix
@@ -217,34 +264,41 @@ void QuantaDoc::saveDocument(const KURL& url)
 
   return;
 }
-
+  /*
 void QuantaDoc::finishSaveURL(KWrite *_w)
 {
   Document *w = (Document *)_w;
   w -> busy = false;
-}
+}   */
 
 bool QuantaDoc::saveAll(bool dont_ask)
 {
   bool flagsave = true;
 
 //FIXME: I don't like the switching through the pages... We must optimize this. (Andras)
+#ifdef USE_KDOCKTABGROUP
+  Document *currentDoc = static_cast<Document*>(app ->view->writeTab->visiblePage());
+#else
  Document *currentDoc = static_cast<Document*>(app ->view->writeTab->currentPage());
+#endif
 
   QDictIterator<Document> it( *docList );
 
   while ( Document *w = it.current() ) 
   {
-    if ( w->isModified() ) 
+    if ( w->isModified() )
     {
-
+#ifdef USE_KDOCKTABGROUP
+  	app ->view->writeTab->setVisiblePage( w );
+#else
     app ->view->writeTab->showPage( w );
+#endif
 
       QString oldUrl = w->url().url();
 
       if ( dont_ask ) 
       {
-      	w->save();
+      	w->doc()->save();
       	if ( w->isModified() ) flagsave = false;
       }
       else
@@ -255,8 +309,11 @@ bool QuantaDoc::saveAll(bool dont_ask)
     ++it;
   }
 
+#ifdef USE_KDOCKTABGROUP
+  	app ->view->writeTab->setVisiblePage( currentDoc );
+#else
     app ->view->writeTab->showPage( currentDoc );
-
+#endif
   return flagsave;
 }
 
@@ -293,8 +350,6 @@ void QuantaDoc::readConfig( KConfig *config )
     w -> readConfig( config );
     ++it;
   }
-  
-  app->verticalSelectAction->setChecked(write()->isVerticalSelect());
 }
 
 void QuantaDoc::writeConfig( KConfig *config )
@@ -353,7 +408,7 @@ bool QuantaDoc::saveModified()
 
 bool QuantaDoc::isModified()
 {
-	return write()->isModified();
+  return write()->isModified();
 }
 
 bool QuantaDoc::isModifiedAll()
@@ -380,50 +435,57 @@ Document* QuantaDoc::write()
 	return app->view->write();
 }
 
-// options of kwrite
-void QuantaDoc::editorOptions()
-{
-  write()->editorOptions();
-  
-  writeConfig( app->config );
-}
 
-// highlighting dlg
-void QuantaDoc::highlightings()
-{
-  write()->hlDlg();
-  
-  writeConfig( app->config );
-}
-
-Document* QuantaDoc::newWrite(QWidget *parent)
+Document* QuantaDoc::newWrite(QWidget *_parent)
 {
   int i = 1;
   QString fname;
   while ( docList->find( fname.sprintf("Untitled%i.html",i) ) ) i++;
   
-  HlManager *hl   = new HlManager();
-  KWriteDoc *wDoc = new KWriteDoc(hl);
-  Document  *w    = new Document (wDoc, basePath(), parent );
-  
+//  KTextEditor::Document *doc = KTextEditor::createDocument("katepart");
+
+//  KTrader::OfferList offers = KTrader::self()->query( "KTextEditor/Document");
+//  KService::Ptr service = *offers.begin();
+//  KLibFactory *factory = KLibLoader::self()->factory(service->library().latin1() );
+
+  KLibFactory *factory = KLibLoader::self()->factory( "libkatepart" );
+
+  KTextEditor::Document *doc =//(KTextEditor::Document *) factory->create (0L, "kate", "KTextEditor::Document");
+  static_cast<KTextEditor::Document *>(factory->create( this, 0, "KTextEditor::Document" ) );
+
+  Document  *w    = new Document (basePath(), doc, _parent);
+  KTextEditor::View * v = w->view();
+
  	app-> config->setGroup("General Options");
- 	w  -> readConfig      ( app->config );
- 	w  -> setHl           ( hl->nameFind( "HTML"));
+
+  dynamic_cast<KTextEditor::ConfigInterface *>(w->doc())->readConfig(app->config);
+  w  -> readConfig      ( app->config );
+
+//FIXME:set to HTML
+//  dynamic_cast<KTextEditor::HighlightingInterface *>(w->doc())->setHlMode(11);
+  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)app->factory()->container("popup_editor", app));
+//  dynamic_cast<KTextEditor::PopupMenuInterface *>(v)->installPopup((QPopupMenu *)app->factory()->container("rb_popup", app));
+
+
  	w  -> setUntitledUrl  ( fname );
- 	
- 	w  -> installPopup( (QPopupMenu *)app->factory()->container("popup_editor", app));
+// 	w  -> installPopup( (QPopupMenu *)app->factory()->container("popup_editor", app));
 
  	w->parentWidget()->setFocusProxy(w);
- 	connect( w, SIGNAL(newStatus    ()),app, SLOT(slotNewStatus    ()));
- 	connect( w, SIGNAL(newUndo      ()),app, SLOT(slotNewUndo      ()));
- 	connect( w, SIGNAL(newMarkStatus()),app, SLOT(slotNewMarkStatus()));
- 	connect( w, SIGNAL(statusMsg(const QString &)),app, SLOT(slotStatusMsg(const QString &)));
+
+ 	connect( v, SIGNAL(newStatus()),app, SLOT(slotNewStatus()));
+/* !!!!
+ 	connect( dynamic_cast<KTextEditor::UndoInterface *>(v), SIGNAL(undoChanged()),
+           app, SLOT(slotNewUndo()) );
+*/
+
+// 	connect( w, SIGNAL(statusMsg(const QString &)),app, SLOT(slotStatusMsg(const QString &)));
  	
- 	connect( w, SIGNAL(finishLoadURL(KWrite *)), this, SLOT(finishLoadURL(KWrite *)));
- 	connect( w, SIGNAL(finishSaveURL(KWrite *)), this, SLOT(finishSaveURL(KWrite *)));
+//FIXME: should this remain?
+// 	connect( w, SIGNAL(finishLoadURL(KWrite *)), this, SLOT(finishLoadURL(KWrite *)));
+// 	connect( w, SIGNAL(finishSaveURL(KWrite *)), this, SLOT(finishSaveURL(KWrite *)));
  	
- 	w->clearFocus();
- 	w->setFocus();
+// 	w->clearFocus();
+// 	w->setFocus();
  	
  	return w;
 }
@@ -516,10 +578,11 @@ void QuantaDoc::prevDocument()
 {
 #ifdef   USE_KDOCKTABGROUP
   KDockTabGroup *tab = app->view->writeTab;
+  Document *d = dynamic_cast <Document*> (tab->visiblePage());
 #else
   QTabWidget *tab = app->view->writeTab;
-#endif
   Document *d =dynamic_cast<Document*>(tab->currentPage());
+#endif
 
   Document *new_d;
 
@@ -536,18 +599,22 @@ void QuantaDoc::prevDocument()
  		new_d = it.current();
  	}
 
+#ifdef 	USE_KDOCKTABGROUP
+	tab->setVisiblePage( new_d );
+#else
  	tab->showPage( new_d );
+#endif
 }
 
 void QuantaDoc::nextDocument()
 {
 #ifdef   USE_KDOCKTABGROUP
   KDockTabGroup *tab = app->view->writeTab;
+  Document *d = dynamic_cast <Document*> (tab->visiblePage());
 #else
   QTabWidget *tab = app->view->writeTab;
-#endif
   Document *d =dynamic_cast<Document*>(tab->currentPage());
-
+#endif
   Document *new_d = 0 , *prev = 0;
 
   QDictIterator<Document> it(*docList);
@@ -567,15 +634,24 @@ void QuantaDoc::nextDocument()
  	if ( prev )
  		new_d = prev;
  	
+#ifdef 	USE_KDOCKTABGROUP
+	tab->setVisiblePage( new_d );
+#else
  	tab->showPage( new_d );
+#endif
 }
 
 void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
 {
 	if ( newUrl.isNull() ) newUrl = url().url();
          
+#ifdef USE_KDOCKTABGROUP
+	if ( app->view->writeTab->pageCaption(write()) != QExtFileInfo::shortName( newUrl ))
+		  app->view->writeTab->setPageCaption( write(), QExtFileInfo::shortName( newUrl ));
+#else
 	if ( app->view->writeTab->tabLabel(write()) != QExtFileInfo::shortName( newUrl ))
 		  app->view->writeTab->changeTab( write(), QExtFileInfo::shortName( newUrl ));
+#endif
 	
   if ( oldUrl != newUrl )
   {
@@ -626,42 +702,20 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
         }
     }     	
  		
+#ifdef USE_KDOCKTABGROUP
+ 		if ( app->view->writeTab->pageCaption(it1.current()) != shortUrl)
+ 		  app->view->writeTab->setPageCaption( it1.current() , shortUrl );
+#else
 		if ( app->view->writeTab->tabLabel(it1.current()) != shortUrl)
  		  app->view->writeTab->changeTab( it1.current() , shortUrl );
-
+#endif 		
  		++it1;
  	}
 }
 
 /// SLOTS
                                
-void QuantaDoc::cut()         {write()->cut();}
-void QuantaDoc::copy()        {write()->copy();}
-void QuantaDoc::paste()       {write()->paste();}
-void QuantaDoc::undo()        {write()->undo();}
-void QuantaDoc::redo()        {write()->redo();}
-void QuantaDoc::undoHistory() {write()->undoHistory();}
-void QuantaDoc::selectAll()   {write()->selectAll();}
-void QuantaDoc::deselectAll() {write()->deselectAll();}
-void QuantaDoc::find()        {write()->find();}
-void QuantaDoc::findAgain()   {write()->findAgain();}
-void QuantaDoc::replace()     {write()->replace();}
-void QuantaDoc::invertSelect(){write()->invertSelection();}
-void QuantaDoc::indent()      {write()->indent();}
-void QuantaDoc::unindent()    {write()->unIndent();}
-void QuantaDoc::cleanIndent() {write()->cleanIndent();}
-void QuantaDoc::gotoLine()    {write()->gotoLine();}
-void QuantaDoc::setHl(int _hl)  {write()->setHl(_hl);}
-void QuantaDoc::setEol(int _eol){write()->setEol(_eol);}
+void QuantaDoc::undoHistory() {/*write()->undoHistory();*/}
+void QuantaDoc::invertSelect(){/*write()->invertSelection();*/}
 
-void QuantaDoc::verticalSelect()
-{
-  QDictIterator<Document> it( *docList );
-  
-  while ( Document *w = it.current() ) 
-  {
-    w -> toggleVertical();
-    ++it;
-  }
-}
 #include "quantadoc.moc"
