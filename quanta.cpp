@@ -376,7 +376,6 @@ void QuantaApp::slotFilePrint()
 void QuantaApp::slotFileQuit()
 {
   saveOptions();
-
   if(memberList)
   {
     for(unsigned int i= 0; i< memberList->count(); i++)
@@ -2561,12 +2560,17 @@ void QuantaApp::slotHelpHomepage()
 void QuantaApp::loadToolbarForDTD(const QString& dtdName)
 {
  DTDStruct *oldDtd = dtds->find(currentToolbarDTD);
- if (!oldDtd && !currentToolbarDTD.isEmpty()) oldDtd = dtds->find(m_project->defaultDTD());
+ if (!oldDtd && !currentToolbarDTD.isEmpty())
+    oldDtd = dtds->find(m_project->defaultDTD());
 
  QString fileName;
  DTDStruct *newDtd = dtds->find(dtdName);
- if (!newDtd) newDtd = dtds->find(m_project->defaultDTD());
- if (!newDtd) newDtd = dtds->find(qConfig.defaultDocType); //extreme case
+ if (!newDtd)
+ {
+    newDtd = dtds->find(m_project->defaultDTD());
+    if (!newDtd)
+        newDtd = dtds->find(qConfig.defaultDocType); //extreme case
+ }
 
  ToolbarEntry *p_toolbar;
  if (newDtd != oldDtd)

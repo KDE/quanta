@@ -552,6 +552,9 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry ("Enable Debugger", debuggerStyle!="None");
     m_config->writeEntry ("PHP Debugger style", debuggerStyle);
+
+    m_view->write()->writeConfig(m_config);
+
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);
 
@@ -567,7 +570,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("LineNumbers", qConfig.lineNumbers);
     m_config->writeEntry("Iconbar", qConfig.iconBar);
     m_config->writeEntry("DynamicWordWrap",qConfig.dynamicWordWrap);
-    m_doc->writeConfig(m_config); // kwrites
+   // m_doc->writeConfig(m_config); // kwrites
     m_project->writeConfig(m_config); // project
     writeDockConfig(m_config);
     saveMainWindowSettings(m_config);
@@ -754,11 +757,12 @@ bool QuantaApp::queryClose()
   bool canExit = true;
   if (quantaStarted)
   {
-    exitingFlag = true;
     saveOptions();
+    exitingFlag = true;
     canExit = m_doc->saveAll(false);
     if (canExit)
     {
+      disconnect( m_view->writeTab(),SIGNAL(currentChanged(QWidget*)), this,     SLOT(slotUpdateStatus(QWidget*)));
       removeToolbars();
       //avoid double question about saving files, so set the "modified"
       //flags to "false". This is safe here.
@@ -769,7 +773,6 @@ bool QuantaApp::queryClose()
         if (w)
            w->setModified(false);
       }
-
       m_project->slotCloseProject();
       do
       {

@@ -45,7 +45,7 @@ CSSSelectorEditor::CSSSelectorEditor(QString code, bool editSelector,
 {
   // UI things
   setCaption(name);
-    
+
     lineSelector->setEnabled (editSelector);
 
   connect(buttonOk, SIGNAL(clicked()), SLOT(accept()));
@@ -84,7 +84,7 @@ QString CSSSelectorEditor::code()
     if (f_weight != "normal" && !f_weight.isEmpty())
       temp += " " + f_weight;
 
-    // If the previous properties aren't set, and the size and the family are 
+    // If the previous properties aren't set, and the size and the family are
     //blank or the
     // default, we don't insert the font rule at all
     if ((f_size == "normal" || f_size.isEmpty()) && f_family.isEmpty() && temp == "font:")
@@ -121,7 +121,7 @@ QString CSSSelectorEditor::code()
 
   // Create the background position, but leave it empty if it is the default
   QString b_pos;
-  if ( !b_pos_x.isEmpty() && b_pos_x != "left" && b_pos_x != "0" && b_pos_x != "0 %" ) 
+  if ( !b_pos_x.isEmpty() && b_pos_x != "left" && b_pos_x != "0" && b_pos_x != "0 %" )
   {
     b_pos += b_pos_y + " " + b_pos_x;
   }
@@ -352,8 +352,8 @@ QString CSSSelectorEditor::code()
     text = lineSelector->text() + " {";
     if (! inlin)
       text += "\n";
-    for (QStringList::Iterator it = properties.begin(); it != properties.end(); 
-      it++) 
+    for (QStringList::Iterator it = properties.begin(); it != properties.end();
+      it++)
        {
       if (! inlin)
         text += "\t";
@@ -386,7 +386,7 @@ void CSSSelectorEditor::widgetFromCode(QString code)
     lineSelector->setText(sel.simplifyWhiteSpace());
 
     // Split the code into a list of pairs property: value
-    QString values_code = code.mid(sel.length() + 1, code.find("}") - 
+    QString values_code = code.mid(sel.length() + 1, code.find("}") -
 1).simplifyWhiteSpace();
     values = QStringList::split( ";", values_code);
   } else {
@@ -402,12 +402,12 @@ void CSSSelectorEditor::widgetFromCode(QString code)
     QString pvalue = p.mid(p.find(":") + 1).simplifyWhiteSpace();
 
     // Remove chars that could be in the string (errors)
-    pname = pname.replace(QRegExp(":"), "");
-    pname = pname.replace(QRegExp("\\{"), "");
-    pname = pname.replace(QRegExp("\\}"), "");
-    pvalue = pvalue.replace(QRegExp(":"), "");
-    pvalue = pvalue.replace(QRegExp("\\{"), "");
-    pvalue = pvalue.replace(QRegExp("\\}"), "");
+    pname = pname.remove(':');
+    pname = pname.remove('{');
+    pname = pname.remove('}');
+    pvalue = pvalue.remove(':');
+    pvalue = pvalue.remove('{');
+    pvalue = pvalue.remove('}');
 
     // Now the bigger if even done in my life: let's insert all the
     // properties into their widgets

@@ -89,7 +89,7 @@ KURL::List QuantaDoc::openedFiles(bool noUntitled)
   if (quantaApp->view()) //need to check otherwise it may crash on exit
   {
     QTabWidget *tab = quantaApp->view()->writeTab();
-    for (int i = 0; i < tab->count(); i++) 
+    for (int i = 0; i < tab->count(); i++)
     {
       Document *w = dynamic_cast<Document *>(tab->page(i));
       if ( w && (!w->isUntitled() || !noUntitled) )
@@ -249,7 +249,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
 
   QTabWidget *docTab =quantaApp->view()->writeTab();
   Document *w;
-  for (int i = docTab->count() -1; i >=0; i--) 
+  for (int i = docTab->count() -1; i >=0; i--)
   {
     w = dynamic_cast<Document*>(docTab->page(i));
     if ( w && w->isModified() )
@@ -266,7 +266,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
       }
       else
         if ( !saveModified() ) flagsave = false;
-       
+
       if (w->url().isLocalFile()) fileWatcher->addFile(w->url().path());
     }
   }
@@ -292,24 +292,28 @@ void QuantaDoc::closeDocument()
 
 void QuantaDoc::closeAll()
 {
+  QuantaView *view = quantaApp->view();
+  disconnect( view->writeTab(), SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
   Document *w;
   do
   {
-    if (quantaApp->view()->writeExists())
+    if (view->writeExists())
     {
       if (saveModified() )
       {
-        w = write();
+        w = view->write();
         w->closeTempFile();
         if (!w->isUntitled())
             fileWatcher->removeFile(w->url().path());
       } else
       {
+        connect( view->writeTab(), SIGNAL(currentChanged(QWidget*)), quantaApp,   SLOT(slotUpdateStatus(QWidget*)));
         return; //save failed, so don't close anything
       }
     }
   }
-  while ( quantaApp->view()->removeWrite());
+  while (  view->removeWrite());
+  connect( view->writeTab(), SIGNAL(currentChanged(QWidget*)), quantaApp,   SLOT(slotUpdateStatus(QWidget*)));
 
   //all documents were removed, so open an empty one
   openDocument( KURL() );
@@ -663,7 +667,7 @@ void QuantaDoc::invertSelect(){/*write()->invertSelection();*/}
 void QuantaDoc::slotFileDirty(const QString& fileName)
 {
   Document *w;
-  
+
   QTabWidget *tab = quantaApp->view()->writeTab();
   for( int i = 0; i < tab->count(); i++)
   {
