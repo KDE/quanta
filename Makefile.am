@@ -19,5 +19,5 @@ messages: rc.cpp
 	$(EXTRACTRC) extrafiles >> rc.cpp ;\
 	cat extrafiles | perl -e 'while(<STDIN>) { if (/\<action .* text="(.*)"/) { print "i18n(\"$$1\");\n"; }}' >> rc.cpp
 	(cd data && $(PREPARETIPS) >> ../tips.cpp)
-	$(XGETTEXT) --from-code=UTF-8 rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
+	$(XGETTEXT) rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
 	rm -f extrafiles tips.cpp files dirs
