@@ -23,6 +23,7 @@
 #include <kparts/componentfactory.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include "qextfileinfo.h"
 
 #include "quanta.h"
 #include "quantadoc.h"
@@ -363,7 +364,12 @@ bool DebuggerManager::setActiveLine (QString file, int line )
   QString filename = file;
 
   // Find new position in editor
-  quantaApp->gotoFileAndLine(filename, line, 0);
+  if(ViewManager::ref()->isOpened(filename) || QExtFileInfo::exists(filename))
+    quantaApp->gotoFileAndLine(filename, line, 0);
+  else
+  {
+    kdDebug(24000) << k_lineinfo << "File does not exist: " << filename << endl;
+  }
 
   // Remove old active line mark
   setMark(m_currentFile, m_currentLine, false, KTextEditor::MarkInterface::markType05);

@@ -347,7 +347,8 @@ void QuantaDebuggerGubed::processCommand(QString data)
   // See what command we got and act accordingly..
   if(m_command == "commandme")
   {
-    sendCommand("sendactiveline", "");
+    //sendCommand("sendactiveline", "");
+    debuggerInterface()->setActiveLine(mapServerPathToLocal(data.left(data.find(':'))), data.mid(data.find(':') + 1).toLong());
     sendWatches();
     if(m_executionState == RunDisplay)
       sendCommand("wait", "");
@@ -515,7 +516,7 @@ void QuantaDebuggerGubed::sendWatches()
 // Send a command to gubed
 bool QuantaDebuggerGubed::sendCommand(QString command, QString data)
 {
-  //kdDebug(24000) << k_funcinfo << ", command: " << command << ", data " << data << endl;
+  kdDebug(24000) << k_lineinfo << ", command: " << command << ", data " << data << endl;
   if(!m_socket || m_socket->socketStatus() != KExtendedSocket::connected)
     return false;
 
@@ -752,17 +753,20 @@ QString QuantaDebuggerGubed::mapServerPathToLocal(QString serverpath)
 {
 
   // Translate filename from server to local
-  if(serverpath.startsWith(m_serverBasedir, false))
-    serverpath.remove(0, m_serverBasedir.length());
+  if(!serverpath.startsWith(m_serverBasedir, false))
+  return serverpath;
 
+  serverpath.remove(0, m_serverBasedir.length());
   return m_localBasedir + serverpath;
 }
 
 // Map a local filepath to a server one using project settings
 QString QuantaDebuggerGubed::mapLocalPathToServer(QString localpath)
 {
-  if(localpath.startsWith(m_localBasedir, false))
-    localpath.remove(0, m_localBasedir.length());
+  if(!localpath.startsWith(m_localBasedir, false))
+    return localpath;
+
+  localpath.remove(0, m_localBasedir.length());
   return m_serverBasedir + localpath;
 }
 
