@@ -139,9 +139,6 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   connect(this, SIGNAL(open(QListViewItem *)),
           this,  SLOT(slotSelectFile(QListViewItem *)));
 
-  connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
-          this, SLOT(slotDropped(KURL::List&, KURL&)));
-
   setAcceptDrops(true);
   connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
           this, SLOT(slotDropped(KURL::List&, KURL&)));
