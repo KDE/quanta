@@ -1,36 +1,38 @@
-/****************************************************************************
-** ui.h extension file, included from the uic-generated form implementation.
-**
-** If you wish to add, delete or rename functions or slots use
-** Qt Designer which will update this file, preserving your code. Create an
-** init() function in place of a constructor, and a destroy() function in
-** place of a destructor.
-*****************************************************************************/
 /***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; version 2 of the License.               *
- *                                                                         *
+                           tableeditor.cpp  -  table editor dialog
+    begin              : Thu 15 Apr 2004
+    copyright          : (C) 2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
-/* Copyright: (C) 2003 Andras Mantia <amantia@kde.org> */
-
+/***************************************************************************
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; version 2 of the License.
+ *
+ ***************************************************************************/
+ 
 //kde includes
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kmessagebox.h>
-#include <kpopupmenu.h>
 #include <kiconloader.h>
+#include <klocale.h>
+#include <kmessagebox.h>
 #include <kparts/componentfactory.h>
+#include <kpopupmenu.h>
+#include <kpushbutton.h>
 #include <ktexteditor/document.h>
 #include <ktexteditor/editinterface.h>
 
 //qt includes
+#include <qcheckbox.h>
+#include <qiconset.h>
+#include <qlineedit.h>
+#include <qobject.h>
 #include <qpoint.h>
 #include <qrect.h>
+#include <qspinbox.h>
 #include <qstring.h>
-#include <qiconset.h>
 
 //own includes
 #include "tagdialog.h"
@@ -42,14 +44,17 @@
 #include "quanta.h"
 #include "resource.h"
 #include "tableitem.h"
+#include "tableeditor.h"
 
 int newNum;
 
-void TableEditor::init()
+TableEditor::TableEditor(QWidget* parent, const char* name) 
+  : TableEditorS(parent, name)
 {
   m_popup = new KPopupMenu();
   m_cellEditId = m_popup->insertItem(i18n("&Edit Cell Properties"), this ,SLOT(slotEditCell()));
-  m_rowEditId = m_popup->insertItem(i18n("Edit &Row Properties"), this ,SLOT(slotEditRow()));//  m_colEditId = m_popup->insertItem(i18n("Edit &Column Properties"), this ,SLOT(slotEditCol()));
+  m_rowEditId = m_popup->insertItem(i18n("Edit &Row Properties"), this ,SLOT(slotEditRow()));
+  //  m_colEditId = m_popup->insertItem(i18n("Edit &Column Properties"), this ,SLOT(slotEditCol()));
   m_mergeSeparatorId = m_popup->insertSeparator();
   m_mergeCellsId = m_popup->insertItem(i18n("Merge Cells"), this, SLOT(slotMergeCells()));
   m_unmergeCellsId = m_popup->insertItem(i18n("Break Merging"), this, SLOT(slotUnmergeCells()));
@@ -84,9 +89,31 @@ void TableEditor::init()
   m_tableRows = 0L;
   m_createNodes = true;
   newNum += 7;
+  
+  connect(headerColSpinBox, SIGNAL(valueChanged(int)), SLOT(slotAddRemoveCol(int)));
+  connect(headerRowSpinBox, SIGNAL(valueChanged(int)), SLOT(slotAddRemoveRow(int)));
+  connect(rowSpinBox, SIGNAL(valueChanged(int)), SLOT(slotAddRemoveRow(int)));
+  connect(colSpinBox, SIGNAL(valueChanged(int)), SLOT(slotAddRemoveCol(int)));
+  connect(footerRowSpinBox, SIGNAL(valueChanged(int)), SLOT(slotAddRemoveRow(int)));
+  connect(footerColSpinBox, SIGNAL(valueChanged(int)), SLOT(slotAddRemoveCol(int)));
+  connect(tableData, SIGNAL(contextMenuRequested(int,int,const QPoint&)),
+    SLOT(slotContextMenuRequested(int,int,const QPoint&)));
+  connect(pushButton7, SIGNAL(clicked()), SLOT(slotEditTable()));
+  connect(pushButton7_2, SIGNAL(clicked()), SLOT(slotEditTableBody()));
+  connect(pushButton7_3, SIGNAL(clicked()), SLOT(slotEditTableHeader()));
+  connect(pushButton7_4, SIGNAL(clicked()), SLOT(slotEditTableFooter()));
+  connect(headerTableData, SIGNAL(contextMenuRequested(int,int,const QPoint&)),
+    SLOT(slotContextMenuRequested(int,int,const QPoint&)));
+  connect(footerTableData, SIGNAL(contextMenuRequested(int,int,const QPoint&)),
+    SLOT(slotContextMenuRequested(int,int,const QPoint&)));
+  connect(tabWidget, SIGNAL(currentChanged(QWidget*)), SLOT(slotTabChanged(QWidget*)));
+  connect(buttonHelp, SIGNAL(clicked()), SLOT(slotHelpInvoked()));
+  connect(tableData, SIGNAL(valueChanged(int,int)), SLOT(slotEditCellText(int,int)));
+  connect(headerTableData, SIGNAL(valueChanged(int,int)), SLOT(slotEditCellText(int,int)));
+  connect(footerTableData, SIGNAL(valueChanged(int,int)), SLOT(slotEditCellText(int,int)));
 }
 
-void TableEditor::destroy()
+TableEditor::~TableEditor()
 {
   delete m_popup;
   delete m_tbody;
@@ -1113,7 +1140,6 @@ void TableEditor::slotHelpInvoked()
   kapp->invokeHelp("table-editor","quanta");
 }
 
-// Set defaults for table: enable word wrap, fit content, allow swapping col/rows with D&D
 void TableEditor::configureTable( QTable * table )
 {
   if (!table)
@@ -1128,13 +1154,11 @@ void TableEditor::configureTable( QTable * table )
   table->setRowMovingEnabled(true);
 }
 
-// Wrapper for setText to use TableItem instead of QTableItem
 void TableEditor::setCellText( QTable * table, int row, int col, const QString & text )
 {
    table->setItem(row, col, new TableItem(table, QTableItem::OnTyping, text));
 }
 
-// Configure TableItem from tag attributes
 void TableEditor::configureCell(int row, int col, Node * node)
 {
    TableItem* item = (TableItem*) m_dataTable->item(row, col);

@@ -1,5 +1,5 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>TableEditor</class>
+<class>TableEditorS</class>
 <comment>/***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -13,14 +13,14 @@
 <author>Andras Mantia &lt;amantia@kde.org&gt;</author>
 <widget class="KDialog">
     <property name="name">
-        <cstring>TableEditor</cstring>
+        <cstring>TableEditorS</cstring>
     </property>
     <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
             <width>695</width>
-            <height>769</height>
+            <height>773</height>
         </rect>
     </property>
     <property name="caption">
@@ -588,88 +588,22 @@
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>headerColSpinBox</sender>
-        <signal>valueChanged(int)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotAddRemoveCol(int)</slot>
-    </connection>
-    <connection>
-        <sender>headerRowSpinBox</sender>
-        <signal>valueChanged(int)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotAddRemoveRow(int)</slot>
-    </connection>
-    <connection>
-        <sender>rowSpinBox</sender>
-        <signal>valueChanged(int)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotAddRemoveRow(int)</slot>
-    </connection>
-    <connection>
-        <sender>colSpinBox</sender>
-        <signal>valueChanged(int)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotAddRemoveCol(int)</slot>
-    </connection>
-    <connection>
         <sender>footerCheckBox</sender>
         <signal>toggled(bool)</signal>
         <receiver>frame3_2</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
-        <sender>footerRowSpinBox</sender>
-        <signal>valueChanged(int)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotAddRemoveRow(int)</slot>
-    </connection>
-    <connection>
-        <sender>footerColSpinBox</sender>
-        <signal>valueChanged(int)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotAddRemoveCol(int)</slot>
-    </connection>
-    <connection>
-        <sender>tableData</sender>
-        <signal>contextMenuRequested(int,int,const QPoint&amp;)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotContextMenuRequested(int,int,const QPoint&amp;)</slot>
-    </connection>
-    <connection>
         <sender>buttonOk</sender>
         <signal>clicked()</signal>
-        <receiver>TableEditor</receiver>
+        <receiver>TableEditorS</receiver>
         <slot>accept()</slot>
     </connection>
     <connection>
         <sender>buttonCancel</sender>
         <signal>clicked()</signal>
-        <receiver>TableEditor</receiver>
+        <receiver>TableEditorS</receiver>
         <slot>reject()</slot>
-    </connection>
-    <connection>
-        <sender>pushButton7</sender>
-        <signal>clicked()</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotEditTable()</slot>
-    </connection>
-    <connection>
-        <sender>pushButton7_2</sender>
-        <signal>clicked()</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotEditTableBody()</slot>
-    </connection>
-    <connection>
-        <sender>pushButton7_3</sender>
-        <signal>clicked()</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotEditTableHeader()</slot>
-    </connection>
-    <connection>
-        <sender>pushButton7_4</sender>
-        <signal>clicked()</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotEditTableFooter()</slot>
     </connection>
     <connection>
         <sender>headerCheckBox</sender>
@@ -682,48 +616,6 @@
         <signal>toggled(bool)</signal>
         <receiver>pushButton7_4</receiver>
         <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>headerTableData</sender>
-        <signal>contextMenuRequested(int,int,const QPoint&amp;)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotContextMenuRequested(int,int,const QPoint&amp;)</slot>
-    </connection>
-    <connection>
-        <sender>footerTableData</sender>
-        <signal>contextMenuRequested(int,int,const QPoint&amp;)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotContextMenuRequested(int,int,const QPoint&amp;)</slot>
-    </connection>
-    <connection>
-        <sender>tabWidget</sender>
-        <signal>currentChanged(QWidget*)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotTabChanged(QWidget*)</slot>
-    </connection>
-    <connection>
-        <sender>buttonHelp</sender>
-        <signal>clicked()</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotHelpInvoked()</slot>
-    </connection>
-    <connection>
-        <sender>tableData</sender>
-        <signal>valueChanged(int,int)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotEditCellText(int,int)</slot>
-    </connection>
-    <connection>
-        <sender>headerTableData</sender>
-        <signal>valueChanged(int,int)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotEditCellText(int,int)</slot>
-    </connection>
-    <connection>
-        <sender>footerTableData</sender>
-        <signal>valueChanged(int,int)</signal>
-        <receiver>TableEditor</receiver>
-        <slot>slotEditCellText(int,int)</slot>
     </connection>
 </connections>
 <tabstops>
@@ -748,95 +640,6 @@
     <tabstop>footerTableData</tabstop>
     <tabstop>tabWidget</tabstop>
 </tabstops>
-<includes>
-    <include location="local" impldecl="in declaration">kurl.h</include>
-    <include location="local" impldecl="in declaration">qvaluelist.h</include>
-    <include location="local" impldecl="in declaration">document.h</include>
-    <include location="local" impldecl="in implementation">tableeditor.ui.h</include>
-</includes>
-<forwards>
-    <forward>class KPopupMenu</forward>
-    <forward>class Tag</forward>
-    <forward>struct DTDStruct</forward>
-    <forward>class Node</forward>
-    <forward>typedef struct TableNode {   Node *node; bool merged; int mergedRow; int mergedCol; }  </forward>
-    <forward>typedef struct NestedTable{ Node *node; int row; int col; int bLine; int bCol; int eLine; int eCol; QString nestedData;}</forward>
-    <forward>class Parser</forward>
-</forwards>
-<variables>
-    <variable>QValueList&lt;Tag*&gt; m_colTags;</variable>
-    <variable>int m_unmergeCellsId;</variable>
-    <variable>int m_mergeSeparatorId;</variable>
-    <variable>int m_mergeCellsId;</variable>
-    <variable>bool m_createNodes;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableTags;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableFooterTags;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableHeaderTags;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableFooterRows;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableHeaderRows;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableRows;</variable>
-    <variable>Document* m_write;</variable>
-    <variable>Tag *m_table;</variable>
-    <variable>Tag *m_tfoot;</variable>
-    <variable>Tag *m_thead;</variable>
-    <variable>int newVariable;</variable>
-    <variable>Tag *m_tbody;</variable>
-    <variable>int m_colEditId;</variable>
-    <variable>int m_rowEditId;</variable>
-    <variable>int m_cellEditId;</variable>
-    <variable>int m_col;</variable>
-    <variable>int m_row;</variable>
-    <variable>KPopupMenu *m_popup;</variable>
-    <variable>KURL m_baseURL;</variable>
-    <variable>const DTDStruct *m_dtd;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableDataTags;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableDataRows;</variable>
-    <variable>QTable *m_dataTable;</variable>
-    <variable>int m_bLine, m_bCol, m_eLine, m_eCol;</variable>
-    <variable>QValueList&lt;NestedTable&gt; m_nestedTables;</variable>
-    <variable>int m_editChildId;</variable>
-    <variable>QSpinBox *m_rowSpin;</variable>
-    <variable>QSpinBox *m_colSpin;</variable>
-</variables>
-<slots>
-    <slot>slotContextMenuRequested( int row, int col, const QPoint &amp; pos )</slot>
-    <slot>slotEditCell()</slot>
-    <slot>slotEditCellText( int r, int )</slot>
-    <slot>slotEditRow()</slot>
-    <slot>slotEditCol()</slot>
-    <slot>slotEditTable()</slot>
-    <slot>slotEditTableBody()</slot>
-    <slot>slotEditTableHeader()</slot>
-    <slot>slotEditTableFooter()</slot>
-    <slot>slotTabChanged( QWidget * w )</slot>
-    <slot>slotInsertRow()</slot>
-    <slot>slotInsertCol()</slot>
-    <slot>slotAddRemoveRow( int num )</slot>
-    <slot>slotAddRemoveCol( int num )</slot>
-    <slot>slotRemoveRow()</slot>
-    <slot>slotRemoveCol()</slot>
-    <slot>slotMergeCells()</slot>
-    <slot>slotUnmergeCells()</slot>
-    <slot>slotEditChildTable()</slot>
-    <slot access="protected">slotHelpInvoked()</slot>
-</slots>
-<functions>
-    <function>init()</function>
-    <function>destroy()</function>
-    <function returnType="bool">setTableArea( int bLine, int bCol, int eLine, int eCol, Parser * docParser )</function>
-    <function>setBaseURL( const KURL &amp; url )</function>
-    <function returnType="QString">readModifiedTable()</function>
-    <function access="protected" returnType="QString">indent( int n )</function>
-    <function access="protected" returnType="QString">cellValue( int row, int col )</function>
-    <function access="protected" returnType="QString">tableToString()</function>
-    <function access="protected" returnType="QString">tagContent( Node * node )</function>
-    <function>createNewTable( Document * write, const DTDStruct * dtd )</function>
-    <function access="protected">deleteList( QValueList&lt;TableNode&gt; * table )</function>
-    <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt; &gt; * matrix )</function>
-    <function>configureTable( QTable * table )</function>
-    <function>setCellText( QTable * table, int row, int col, const QString &amp; text )</function>
-    <function>configureCell( int row, int col, Node * node )</function>
-</functions>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>kdialog.h</includehint>
