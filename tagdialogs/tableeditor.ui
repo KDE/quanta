@@ -687,32 +687,33 @@
     <forward>struct DTDStruct</forward>
     <forward>class Document</forward>
     <forward>class Node</forward>
-    <forward>typedef struct TableNode {   Node *node;   bool isFromDocument;  }  </forward>
+    <forward>typedef struct TableNode {   Node *node;   bool isFromDocument;  bool merged; int mergedRow; int mergedCol; }  </forward>
 </forwards>
 <variables>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableTags;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableFooterTags;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableHeaderTags;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableFooterRows;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableHeaderRows;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableRows;</variable>
-    <variable>Document* m_write;</variable>
-    <variable>Tag *m_table;</variable>
-    <variable>Tag *m_tfoot;</variable>
-    <variable>Tag *m_thead;</variable>
-    <variable>int newVariable;</variable>
-    <variable>Tag *m_tbody;</variable>
-    <variable>int m_colEditId;</variable>
-    <variable>int m_rowEditId;</variable>
-    <variable>int m_cellEditId;</variable>
-    <variable>int m_col;</variable>
-    <variable>int m_row;</variable>
-    <variable>KPopupMenu *m_popup;</variable>
-    <variable>KURL m_baseURL;</variable>
-    <variable>DTDStruct *m_dtd;</variable>
-    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableDataTags;</variable>
-    <variable>QValueList&lt;TableNode&gt; *m_tableDataRows;</variable>
     <variable>QTable *m_dataTable;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableDataRows;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableDataTags;</variable>
+    <variable>DTDStruct *m_dtd;</variable>
+    <variable>KURL m_baseURL;</variable>
+    <variable>KPopupMenu *m_popup;</variable>
+    <variable>int m_row;</variable>
+    <variable>int m_col;</variable>
+    <variable>int m_cellEditId;</variable>
+    <variable>int m_rowEditId;</variable>
+    <variable>int m_colEditId;</variable>
+    <variable>Tag *m_tbody;</variable>
+    <variable>int newVariable;</variable>
+    <variable>Tag *m_thead;</variable>
+    <variable>Tag *m_tfoot;</variable>
+    <variable>Tag *m_table;</variable>
+    <variable>Document* m_write;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableRows;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableHeaderRows;</variable>
+    <variable>QValueList&lt;TableNode&gt; *m_tableFooterRows;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableHeaderTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableFooterTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;TableNode&gt; &gt; *m_tableTags;</variable>
+    <variable>bool m_createNodes;</variable>
 </variables>
 <slots>
     <slot>slotContextMenuRequested( int row, int col, const QPoint &amp; pos )</slot>
