@@ -192,6 +192,7 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
   }
   tagStr.append(">");
 
+  reparseEnabled = false;
   int bLine, bCol, eLine, eCol;
   tag->beginPos(bLine,bCol);
   tag->endPos(eLine,eCol);

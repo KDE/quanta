@@ -102,12 +102,15 @@ void QuantaCommon::setUrl(KURL &url, const QString& urlString)
  {
    url = urlString;
  }*/
+  KURL oldUrl = url;
   url = urlString;
   if (!KProtocolInfo::isKnownProtocol(url))
   {
+    url = oldUrl;
     url.setPath(urlString);
-    url.setProtocol("file");
-  }	   
+    if (url.protocol().isEmpty())
+       url.setProtocol("file");
+  }
 }
 
 /** No descriptions */
@@ -325,7 +328,7 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
  }
  if (!status && mimetype == "x-zerosize")
      status = true;
-     
+
  return status;
 }
 
