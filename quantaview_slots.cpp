@@ -73,6 +73,7 @@ void QuantaView::slotEditCurrentTag()
   DTDStruct *dtd = dtds->find(dtdName);
   if (!dtd) dtd = dtds->find(w->getDTDIdentifier());
   if (!dtd) dtd = dtds->find(defaultDocType);
+  dtdName = dtd->name;
   Tag *tag = w->tagAt(-1,-1,dtdName);
   if (tag)
   {
