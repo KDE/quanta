@@ -789,7 +789,8 @@ Node *SAParser::parsingDone()
       n->next = s_next;
       if (s_next)
         s_next->prev = n;
-      m_currentNode = m_currentNode->nextSibling();
+      if (m_currentNode)  
+        m_currentNode = m_currentNode->nextSibling();
       if (m_currentNode)
       {
         kdDebug(24000) << "Calling slotParseNodeInDetail from place 2" << endl;
@@ -824,7 +825,7 @@ void SAParser::parseInDetail(bool synchronous)
 void SAParser::slotParseNodeInDetail()
 {
   kdDebug(24000) << "slotParseNodeInDetail " << m_parsingEnabled << endl; 
-  if (m_parsingEnabled || m_synchronous)
+  if (m_currentNode && (m_parsingEnabled || m_synchronous))
   {
     if (m_currentNode->tag->type == Tag::ScriptTag)
     {
