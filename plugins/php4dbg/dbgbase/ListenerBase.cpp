@@ -11,9 +11,7 @@
                            the world-wide-web at http://dd.cron.ru/license
  ***************************************************************************/
 
-#include "dbg_core.h"
 #include "ListenerBase.h"
-#include "ThreadBase.h"
 #include <stdio.h>
 #include <assert.h>
 

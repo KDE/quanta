@@ -14,7 +14,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "ListenerGlobals.h"
-#include "string.h"
 
 #ifdef WIN32
 #include <Windows.h>
