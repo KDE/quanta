@@ -48,6 +48,7 @@ public:
 
   /** No descriptions */
   void readDir(const KURL& url);
+  virtual KURL currentURL();
   /** Get a list of items for whom the url == p_url. */
   QPtrList<QListViewItem> getItems(const KURL& p_url);
 
@@ -66,7 +67,6 @@ public slots:
   virtual void slotProperties();
 
 protected:
-  virtual KURL currentURL();
   virtual void itemRenamed(const KURL& , const KURL& ) {};
   void addFileInfoPage(KPropertiesDialog *propDlg);
 
