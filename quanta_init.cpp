@@ -88,6 +88,19 @@ QDict <QStrList> *tagsDict;
 
 // extern KGuiCmdManager cmdMngr;
 
+//
+// Enable this define to test the KAction/XMLGUI code (Rich).
+//
+// #define NEW_STUFF
+//
+
+#ifdef NEW_STUFF
+
+#include <kaction.h>
+#include <kstdaction.h>
+
+#endif // NEW_STUFF
+
 QuantaApp::QuantaApp()
 {
   grepDialog	= 0;
@@ -98,6 +111,7 @@ QuantaApp::QuantaApp()
 
   ///////////////////////////////////////////////////////////////////
   // call inits to invoke all other construction parts
+#ifndef NEW_STUFF
   initMenuBar();
   initToolBar();
   initStatusBar();
@@ -105,7 +119,19 @@ QuantaApp::QuantaApp()
   initDocument();
   initView();
   initKeyAccel();
-	initProject();
+  initProject();
+#else
+  initMenuBar();
+  initStatusBar();
+  initTagDict();
+  initDocument();
+  initView();
+  initProject();
+  doc->newDocument();
+
+  initActions();
+  createGUI( QString::null, false );
+#endif
 	
   readOptions();
   
@@ -149,7 +175,9 @@ QuantaApp::QuantaApp()
   disableCommand(ID_BOOKMARKS_ADD);
   disableCommand(ID_BOOKMARKS_CLEAR);
 
-	doc->newDocument();
+#ifndef NEW_STUFF
+  doc->newDocument();
+#endif
 }
 
 QuantaApp::~QuantaApp()
@@ -516,7 +544,7 @@ void QuantaApp::initToolBar()
   
   ///////////////////////////////////////////////////////////////////
   // TOOLBAR
-
+#ifndef NEW_STUFF
   toolBar()->insertButton(UserIcon("tree_win"),   ID_VIEW_TREE,     true, i18n("View tree"));
   toolBar()->insertButton(UserIcon("preview"),    ID_VIEW_PREVIEW,  true, i18n("Preview"));
 
@@ -529,7 +557,7 @@ void QuantaApp::initToolBar()
   toolBar()->insertButton(BarIcon("reload"),    ID_VIEW_REPAINT, true, i18n("Reload Preview"));
   
   toolBar()->setFullSize(false);
-  
+
   toolbar1 = new KToolBar(this);
   toolbar1->setFullSize(false);
   
@@ -541,9 +569,9 @@ void QuantaApp::initToolBar()
 
   toolbar1->insertButton(UserIcon("save"),    ID_FILE_SAVE,     true, i18n("Save File"));
   toolbar1->insertButton(UserIcon("save_all"),ID_FILE_SAVE_ALL, true, i18n("Save All Files"));
-  
+
   addToolBar(toolbar1);
-  
+
   toolbar2 = new KToolBar(this);
   toolbar2->setFullSize(false);
   
@@ -572,6 +600,7 @@ void QuantaApp::initToolBar()
   
   connect(toolBar(), SIGNAL(clicked(int)), SLOT(commandCallback(int)));
   connect(toolBar(), SIGNAL(pressed(int)), SLOT(statusCallback(int)));
+#endif
 }
 
 void QuantaApp::initStatusBar()
@@ -759,7 +788,9 @@ void QuantaApp::initView()
   setView( topWidgetStack );
   setCaption( doc->getTitle());
 
+#ifndef NEW_STUFF
   view->updateToolBars(toolbars);
+#endif
 
   connect( 	fTTab,SIGNAL(openFile(QString)),
   					this, SLOT(slotFileOpen(QString)));
@@ -858,9 +889,12 @@ void QuantaApp::enableCommand(int id_)
   ///////////////////////////////////////////////////////////////////
   // enable menu and toolbar functions by their ID's
   menuBar()->setItemEnabled(id_, true);
+
+#ifndef NEW_STUFF
   toolBar()->setItemEnabled(id_, true);
   toolbar1->setItemEnabled(id_, true);
   toolbar2->setItemEnabled(id_, true);
+#endif
 }
 
 void QuantaApp::disableCommand(int id_)
@@ -868,20 +902,27 @@ void QuantaApp::disableCommand(int id_)
   ///////////////////////////////////////////////////////////////////
   // disable menu and toolbar functions by their ID's
   menuBar()->setItemEnabled(id_, false);
+
+#ifndef NEW_STUFF
   toolBar()->setItemEnabled(id_, false);
   toolbar1->setItemEnabled(id_, false);
   toolbar2->setItemEnabled(id_, false);
+#endif
 }
 
 /** check button/item in stat */
 void QuantaApp::checkCommand(int id_, bool stat)
 {
   ///////////////////////////////////////////////////////////////////
+#ifndef NEW_STUFF
+
   viewMenu ->setItemChecked( id_, stat);
   editMenu ->setItemChecked( id_, stat);
+
 	toolBar()->setButton(      id_, stat);
 	toolbar1->setButton(      id_, stat);
 	toolbar2->setButton(      id_, stat);
+#endif
 }
 
 void QuantaApp::addRecentFile(const QString &file)
@@ -946,9 +987,12 @@ void QuantaApp::saveOptions()
   config->setGroup("General Options");
   doc->write()->writeConfig(config);
   config->writeEntry("Geometry", size());
+
+#ifndef NEW_STUFF
   config->writeEntry("Show Toolbar", toolBar()->isVisible());
   config->writeEntry("Show Toolbar File", toolbar1->isVisible());
   config->writeEntry("Show Toolbar Edit", toolbar2->isVisible());
+#endif // NEW_STUFF
   config->writeEntry("Show Statusbar",statusBar()->isVisible());
   config->writeEntry("ToolBarPos", (int) toolBar()->barPos());
   config->writeEntry("Recent Files", recentFiles);
@@ -1030,7 +1074,11 @@ void QuantaApp::readOptions()
   sTab->setFollowCursor( config->readBoolEntry("Follow Cursor", true ) );
 
   bool bViewStatusbar = config->readBoolEntry("Show Statusbar", true);
+
+#ifndef NEW_STUFF
   viewMenu->setItemChecked(ID_VIEW_STATUSBAR, bViewStatusbar);
+#endif
+
   if(!bViewStatusbar)
   {
     enableStatusBar(KStatusBar::Hide);
@@ -1048,11 +1096,13 @@ void QuantaApp::readOptions()
   recentProjects.setAutoDelete(true);
   config->readListEntry("Recent Projects", recentProjects);
 
+#ifndef NEW_STUFF
   for (int i=0; i < (int) recentFiles.count(); i++)
     recentFilesMenu->insertItem(recentFiles.at(i));
 
   for (int i=0; i < (int) recentProjects.count(); i++)
     recentProjectsMenu->insertItem(recentProjects.at(i));
+#endif // NEW_STUFF
 
   QSize size=config->readSizeEntry("Geometry");
   if(!size.isEmpty())
@@ -1167,3 +1217,169 @@ void QuantaApp::initTagDict()
     tagsDict->insert(tag, attrList);
   }
 }
+
+#ifdef NEW_STUFF
+
+void QuantaApp::initActions()
+{
+    //
+    // File actions
+    //
+
+    KStdAction::openNew( this, SLOT( slotFileNew() ), actionCollection() );
+    KStdAction::open( this, SLOT( slotFileOpen() ), actionCollection() );
+    // TODO recent files
+    KStdAction::close( this, SLOT( slotFileClose() ), actionCollection() );
+
+    (void) new KAction( i18n( "Close All" ), 0, this, SLOT( slotFileCloseAll() ),
+                        actionCollection(), "close_all" );
+
+    KStdAction::save( this, SLOT( slotFileSave() ), actionCollection() );
+    KStdAction::saveAs( this, SLOT( slotFileSaveAs() ), actionCollection() );
+
+    (void) new KAction( i18n( "Save All..." ), UserIcon("save_all"), 0,
+                        this, SLOT( slotFileSaveAll() ),
+                        actionCollection(), "save_all" );
+
+    KStdAction::quit( this, SLOT( slotFileQuit() ), actionCollection() );
+
+    //
+    // Edit actions
+    //
+
+    KStdAction::undo( this, SLOT( slotEditUndo()), actionCollection());
+    KStdAction::redo( this, SLOT( slotEditRedo()), actionCollection());
+
+    KAction *undoRedo = new KAction( i18n( "Undo/Redo &History..."), 0, this, SLOT( slotURedoHistory()),
+                                     actionCollection(), "undo_history" );
+    undoRedo->setGroup( "edit_undo_merge" );
+    // TODO: Manually plug this to the right place (or figure out how to do it in XMLGUI)
+
+    KStdAction::cut( this, SLOT( slotEditCut()), actionCollection());
+    KStdAction::copy( this, SLOT( slotEditCopy()), actionCollection());
+    KStdAction::paste( this, SLOT( slotEditPaste()), actionCollection());
+    KStdAction::selectAll( this, SLOT( slotEditSelectAll()), actionCollection());
+
+    (void) new KAction(  i18n( "&Unselect All"), 0, this, SLOT( slotEditDeselectAll()),
+                         actionCollection(), "unselect_all" );
+    (void) new KAction(  i18n( "&Invert Selection"), 0, this, SLOT( slotEditInvertSelect()),
+                         actionCollection(), "invert_selection" );
+    (void) new KAction(  i18n( "&Vertical Selection"), 0, this, SLOT( slotEditVerticalSelect()),
+                         actionCollection(), "vertical_selection" );
+
+    KStdAction::find( this, SLOT( slotEditSearch()), actionCollection());
+    KStdAction::findNext( this, SLOT( slotEditSearchAgain()), actionCollection());
+    KStdAction::replace( this, SLOT( slotEditReplace()), actionCollection());
+
+    (void) new KAction( i18n( "Find In Files" ), UserIcon("find"), CTRL+ALT+Key_F,
+                        this, SLOT( slotEditFindInFiles() ),
+                        actionCollection(), "find_in_files" );
+
+    //
+    // Tool actions
+    //
+
+    KStdAction::gotoLine( this, SLOT( slotEditGotoLine() ), actionCollection() )
+        ->setAccel( CTRL+Key_G );
+
+    (void) new KAction( i18n( "&Indent" ), ALT+SHIFT+Key_Right, this, SLOT( slotEditIndent() ),
+                        actionCollection(), "indent" );
+    (void) new KAction( i18n( "&Unindent" ), ALT+SHIFT+Key_Left, this, SLOT( slotEditUnindent() ),
+                        actionCollection(), "unindent" );
+    (void) new KAction( i18n( "&Clean Indentation" ), 0, this, SLOT( slotEditCleanIndent() ),
+                        actionCollection(), "clean_indentation" );
+
+    (void) new KAction( i18n( "Context &Help..." ), CTRL+Key_H, this, SLOT( contextHelp() ),
+                        actionCollection(), "context_help" );
+    KAction *tagAttr = new KAction( i18n( "Tag &Attributes" ), ALT+Key_Down,
+                                    doc, SLOT( slotAttribPopup() ),
+                                    actionCollection(), "tag_attributes" );
+    QAccel *menuKey = new QAccel( this );
+    menuKey->connectItem( menuKey->insertItem( Key_Menu ),
+                          tagAttr, SLOT( activate() ) );
+
+    (void) new KAction( i18n( "&Edit Current Tag..." ), Key_F4, view, SLOT( slotEditCurrentTag() ),
+                        actionCollection(), "edit_current_tag" );
+
+    KStdAction::spelling( view->write(), SLOT( slotSpellCheck() ), actionCollection() )
+        ->setAccel( Key_F9 );
+    (void) new KAction( i18n( "&FTP Client..." ), UserIcon("ftpclient"), 0, 
+                        this, SLOT( slotFtpClient() ),
+                        actionCollection(), "ftp_client" );
+
+    //
+    // View actions
+    //
+
+    KStdAction::showToolbar( this, SLOT( slotViewToolBar() ), actionCollection() );
+    KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), actionCollection() );
+
+    (void) new KAction( i18n( "Show Tr&ee" ), CTRL+Key_T, this, SLOT( slotShowLeftPanel() ),
+                        actionCollection(), "show_tree" );
+    (void) new KAction( i18n( "Show &Messages" ), CTRL+Key_B, this, SLOT( slotViewMessages() ),
+                        actionCollection(), "show_messages" );
+    (void) new KAction( i18n( "&Preview" ), Key_F6, this, SLOT( slotShowPreview() ),
+                        actionCollection(), "show_preview" );
+
+    KStdAction::back( htmlPartDoc, SLOT( back() ), actionCollection() );
+    KStdAction::forward( htmlPartDoc, SLOT( forward() ), actionCollection() );
+
+    (void) new KAction( i18n( "&Reload" ), "reload", KStdAccel::key(KStdAccel::Reload)
+                        , this, SLOT( slotViewRepaint() ),
+                        actionCollection(), "reload" );
+
+    //    (void) new KAction( i18n( "Open Document In Netscape" ), 0, this, SLOT( slotViewInNetscape() ),
+    //                        actionCollection(), "open_with_netscape" );
+    //    (void) new KAction( i18n( "Open Document In Konqueror" ), 0, this, SLOT( slotViewInKFM() ),
+    //                        actionCollection(), "open_with_konqueror" );
+
+    (void) new KAction( i18n( "Previous File" ), CTRL+ALT+Key_Right, this, SLOT( slotFilePrev() ),
+                        actionCollection(), "previous_file" );
+    (void) new KAction( i18n( "Next File" ), CTRL+ALT+Key_Left, this, SLOT( slotFileNext() ),
+                        actionCollection(), "next_file" );
+
+    //
+    // Project actions
+    //
+
+    (void) new KAction( i18n( "&New Project..." ), 0, project, SLOT( newProject() ),
+                        actionCollection(), "new_project" );
+    (void) new KAction( i18n( "&Open Project..." ), UserIcon("openprj"), 0,
+                        project, SLOT( openProject() ),
+                        actionCollection(), "open_project" );
+    // TODO: Recent projects
+    (void) new KAction( i18n( "&Close Project" ), 0, project, SLOT( closeProject() ),
+                        actionCollection(), "close_project" );
+
+    (void) new KAction( i18n( "&Insert File(s)..." ), 0, project, SLOT( addFiles() ),
+                        actionCollection(), "insert_file" );
+    (void) new KAction( i18n( "&Insert Directory..." ), 0, project, SLOT( addDirectory() ),
+                        actionCollection(), "insert_directory" );
+
+    (void) new KAction( i18n( "&Upload Project..." ), Key_F8, project, SLOT( upload() ),
+                        actionCollection(), "upload_project" );
+    (void) new KAction( i18n( "&Project Options..." ), Key_F7, project, SLOT( options() ),
+                        actionCollection(), "project_options" );
+
+    //
+    // Options actions
+    //
+
+    (void) new KAction( i18n( "&Hightlighting..." ), 0, doc->write(), SLOT( hlDlg() ),
+                        actionCollection(), "highlight_options" );
+    // TODO: Highlighting mode
+    //    (void) new KAction( i18n( "&Editor Options..." ), 0, doc->write(), SLOT( editorOptions() ),
+    //                        actionCollection(), "editor_options" );
+
+    KStdAction::keyBindings( this, SLOT( slotOptionsConfigureKeys() ), actionCollection() );
+    KStdAction::configureToolbars( this, SLOT( slotOptionsConfigureToolbars() ), actionCollection() );
+    KStdAction::preferences( this, SLOT( slotOptions() ), actionCollection() );
+}
+
+#else
+void QuantaApp::initActions()
+{
+    // Prevent a linker error!
+}
+
+#endif // NEW_STUFF

@@ -128,6 +128,12 @@ class QuantaApp : public KTMainWindow
      * @see KApplication#getHelpMenu
      */
     void initMenuBar();
+
+    /**
+     * Creates the KActions.
+     */
+    void initActions();
+
     /** this creates the toolbars.
      */
     void initToolBar();
