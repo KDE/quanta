@@ -781,7 +781,7 @@ void QuantaView::refreshWindow()
        resize(width(), height());
   } else
   {
-    if (m_documentArea->height() + ToolbarTabWidget::ref()->height() > height() && !ToolbarTabWidget::ref()->isHidden() && !ToolbarTabWidget::ref()->isVisible()) //don't use isVisible alone instead of isHidden!
+    if (m_documentArea->height() + ToolbarTabWidget::ref()->height() > height() && !ToolbarTabWidget::ref()->isHidden() && !ToolbarTabWidget::ref()->isVisible()) //don't use isVisible alone instead of isHidden! This combination is strange, but works...
         resize(m_documentArea->width(), m_documentArea->height() - ToolbarTabWidget::ref()->height());
       else if (ToolbarTabWidget::ref()->isHidden())
         resize(width(), height());

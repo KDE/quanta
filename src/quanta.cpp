@@ -2941,6 +2941,8 @@ void QuantaApp::slotEditDTD()
         i18n( "Send DTD" ),
     i18n( "Please select a DTD:" ), lst, lst.findIndex(nickName), FALSE, &ok, this );
 
+    QString s = i18n("Create a new DTEP description");
+    s = i18n("Load DTEP description from disk");
     if (!ok)
       return;
 
