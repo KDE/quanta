@@ -15,10 +15,13 @@
 
 //qt include
 #include <qpopupmenu.h>
+#include <qtextedit.h>
 
 //kde includes
 #include <dcopref.h>
 #include <kaction.h>
+#include <kcombobox.h>
+#include <klistbox.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
@@ -28,17 +31,19 @@
 #include <cvsjob_stub.h>
 
 #include "cvsservice.h"
-#include "viewmanager.h"
-#include "document.h"
+#include "cvscommitdlgs.h"
 
 CVSService::CVSService(KActionCollection *ac)
 {
   m_menu = new QPopupMenu;
-  KAction *action = new KAction(i18n("&Update"), 0, this, SLOT(slotUpdate()), ac);
+  KAction *action = new KAction(i18n("&Commit"), 0, this, SLOT(slotCommit()), ac);
+  action->plug(m_menu);
+  action = new KAction(i18n("&Update"), 0, this, SLOT(slotUpdate()), ac);
   action->plug(m_menu);
   m_cvsJob = 0L;
   m_repository = 0L;
   m_cvsService =0L;
+  m_commitDlg = new CVSCommitDlgS();
 }
 
 CVSService::~CVSService()
@@ -49,6 +54,7 @@ CVSService::~CVSService()
   delete m_repository;
   m_repository = 0L;
   m_cvsService = 0L;
+  delete m_commitDlg;
 }
 
 void CVSService::setAppId(const QCString &id)
@@ -79,12 +85,11 @@ void CVSService::slotUpdate()
   {
      if (m_defaultFile.startsWith(m_repositoryPath))
      {
-       files += m_defaultFile.remove(m_repositoryPath);
-       slotUpdate(files);
+         files += m_defaultFile.remove(m_repositoryPath);
+         slotUpdate(files);
      } else
      {
-       emit clearMessages();
-       emit showMessage(i18n("Error: \"%1\" is not part of the\n\"%2\" repository.").arg(m_defaultFile).arg(m_repositoryPath), false);
+         notInRepository();
      }
   }
 }
@@ -95,6 +100,44 @@ void CVSService::slotUpdate(const QStringList &files)
    {
       emit clearMessages();
       DCOPRef job = m_cvsService->update(files, true, true, true, "");
+      m_cvsJob = new CvsJob_stub( job.app(), job.obj() );
+
+      connectDCOPSignal(job.app(), job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
+      connectDCOPSignal(job.app(), job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
+      connectDCOPSignal(job.app(), job.obj(), "receivedStderr(QString)", "slotReceivedStdout(QString)", true);
+      m_cvsJob->execute();
+   }
+}
+
+void CVSService::slotCommit()
+{
+  QStringList files;
+  if (!m_defaultFile.isEmpty())
+  {
+     if (m_defaultFile.startsWith(m_repositoryPath))
+     {
+         files += m_defaultFile.remove(m_repositoryPath);
+         slotCommit(files);
+     } else
+     {
+         notInRepository();
+     }
+  }
+}
+
+void CVSService::slotCommit(const QStringList &files)
+{
+   m_commitDlg->fileList->clear();
+   m_commitDlg->fileList->insertStringList(files);
+   m_commitDlg->logEdit->clear();
+
+   if (m_repository && !m_appId.isEmpty() && m_commitDlg->exec())
+   {
+      QString message = m_commitDlg->logEdit->text();
+      if (message != m_commitDlg->messageCombo->currentText())
+          m_commitDlg->messageCombo->insertItem(message, 0);
+      emit clearMessages();
+      DCOPRef job = m_cvsService->commit(files, message, true);
       m_cvsJob = new CvsJob_stub( job.app(), job.obj() );
 
       connectDCOPSignal(job.app(), job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
@@ -118,6 +161,12 @@ void CVSService::slotJobExited(bool normalExit, int exitStatus)
 void CVSService::slotReceivedStdout(QString output)
 {
    emit showMessage(output, false);
+}
+
+void CVSService::notInRepository()
+{
+    emit clearMessages();
+    emit showMessage(i18n("Error: \"%1\" is not part of the\n\"%2\" repository.").arg(m_defaultFile).arg(m_repositoryPath), false);
 }
 
  #include "cvsservice.moc"

@@ -1,0 +1,147 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>CVSCommitDlgS</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>CVSCommitDlgS</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>600</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>CVS Commit </string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="KListBox" row="1" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>fileList</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Commit the following files:</string>
+            </property>
+        </widget>
+        <widget class="KComboBox" row="3" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>messageCombo</cstring>
+            </property>
+            <property name="duplicatesEnabled">
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget class="QLabel" row="2" column="0">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>Older &amp;messages:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>messageCombo</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="4" column="0">
+            <property name="name">
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Log message:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>logEdit</cstring>
+            </property>
+        </widget>
+        <widget class="QTextEdit" row="5" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>logEdit</cstring>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="6" column="3">
+            <property name="name">
+                <cstring>cancelButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Cancel</string>
+            </property>
+            <property name="accel">
+                <string>Alt+C</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="6" column="2">
+            <property name="name">
+                <cstring>okButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;OK</string>
+            </property>
+            <property name="accel">
+                <string>Alt+O</string>
+            </property>
+            <property name="default">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <spacer row="6" column="1">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>80</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<customwidgets>
+</customwidgets>
+<connections>
+    <connection>
+        <sender>okButton</sender>
+        <signal>clicked()</signal>
+        <receiver>CVSCommitDlgS</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>cancelButton</sender>
+        <signal>clicked()</signal>
+        <receiver>CVSCommitDlgS</receiver>
+        <slot>reject()</slot>
+    </connection>
+    <connection>
+        <sender>messageCombo</sender>
+        <signal>activated(const QString&amp;)</signal>
+        <receiver>logEdit</receiver>
+        <slot>setText(const QString&amp;)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>fileList</tabstop>
+    <tabstop>messageCombo</tabstop>
+    <tabstop>logEdit</tabstop>
+    <tabstop>okButton</tabstop>
+    <tabstop>cancelButton</tabstop>
+</tabstops>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klistbox.h</includehint>
+</includehints>
+</UI>

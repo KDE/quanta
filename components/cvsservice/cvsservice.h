@@ -26,6 +26,8 @@ class CvsJob_stub;
 class CvsService_stub;
 class Repository_stub;
 
+class CVSCommitDlgS;
+
 /** @short This class manages the CVS repositories from withing Quanta with the help of "cvsservice"
  *
  */
@@ -58,6 +60,9 @@ public:
 public slots:
   void slotUpdate();
   void slotUpdate(const QStringList &files);
+  void slotCommit();
+  void slotCommit(const QStringList &files);
+
   virtual void slotJobExited(bool normalExit, int exitStatus);
   virtual void slotReceivedStdout(QString output);
 
@@ -67,6 +72,7 @@ signals:
 
 private:
   CVSService(KActionCollection *ac);
+  void notInRepository();
 
   QCString m_appId;
   QPopupMenu *m_menu;
@@ -75,6 +81,7 @@ private:
   CvsService_stub *m_cvsService;
   QString m_defaultFile;
   QString m_repositoryPath;
+  CVSCommitDlgS *m_commitDlg;
 };
 
 #endif

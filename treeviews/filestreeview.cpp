@@ -53,6 +53,10 @@
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "viewmanager.h"
+#include "project.h"
+#ifdef ENABLE_CVSSERVICE
+#include "cvsservice.h"
+#endif
 
 //FilesTreeViewItem implementation
 FilesTreeViewItem::FilesTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
@@ -302,6 +306,19 @@ void FilesTreeView::itemDescChanged(KFileTreeViewItem* , const QString& )
 void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPoint &point)
 {
   Q_UNUSED(listView);
+#ifdef ENABLE_CVSSERVICE
+  KURL url = currentURL();
+  if (Project::ref()->contains(url))
+    CVSService::ref()->setRepository(Project::ref()->projectBaseURL().path());
+  else
+    CVSService::ref()->setRepository(url.directory());
+  if (url.isLocalFile())
+  {
+    CVSService::ref()->setCurrentFile(url.path());
+  }
+  else
+    CVSService::ref()->setCurrentFile("");
+#endif
   if (item)
   {
     bool hasProject = !m_projectName.isNull();
@@ -804,6 +821,17 @@ void FilesTreeView::slotDocumentClosed()
   {
     iter.current()->repaint();
   }
+}
+
+void FilesTreeView::plugCVSMenu()
+{
+#ifdef ENABLE_CVSSERVICE
+  m_fileMenu->insertSeparator();
+  m_fileMenu->insertItem(SmallIcon("cervisia"), i18n("CVS"), CVSService::ref()->menu());
+  m_folderMenu->insertSeparator();
+  m_folderMenu->insertItem(SmallIcon("cervisia"), i18n("CVS"), CVSService::ref()->menu());
+#endif
+
 }
 
 #include "filestreeview.moc"

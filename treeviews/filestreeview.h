@@ -87,6 +87,7 @@ public:
   FilesTreeView(KConfig *config, QWidget *parent, const char *name = 0L);
   virtual ~FilesTreeView();
   KURL::List topURLList;
+  void plugCVSMenu();
 
 public slots:
   virtual void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);

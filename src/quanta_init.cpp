@@ -1289,6 +1289,8 @@ void QuantaInit::checkRuntimeDependencies()
      CVSService::ref(m_quanta->actionCollection())->setAppId(appId);
      connect(CVSService::ref(), SIGNAL(clearMessages()), m_quanta->m_messageOutput, SLOT(clear()));
      connect(CVSService::ref(), SIGNAL(showMessage(const QString&, bool)), m_quanta->m_messageOutput, SLOT(showMessage(const QString&, bool)));
+     m_quanta->fTab->plugCVSMenu();
+     pTab->plugCVSMenu();
   }
 #endif
 

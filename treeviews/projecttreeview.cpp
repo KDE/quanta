@@ -42,6 +42,9 @@
 #include "quantacommon.h"
 #include "qextfileinfo.h"
 #include "resource.h"
+#ifdef ENABLE_CVSSERVICE
+#include "cvsservice.h"
+#endif
 
 //ProjectTreeBranch implementation
 ProjectTreeBranch::ProjectTreeBranch(KFileTreeView *parent, const KURL& url,
@@ -151,6 +154,16 @@ ProjectTreeView::~ProjectTreeView(){
 void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const QPoint& point)
 {
   Q_UNUSED(listView);
+#ifdef ENABLE_CVSSERVICE
+  KURL url = currentURL();
+  CVSService::ref()->setRepository(m_baseURL.path());
+  if (url.isLocalFile())
+  {
+    CVSService::ref()->setCurrentFile(url.path());
+  }
+  else
+    CVSService::ref()->setCurrentFile("");
+#endif
   KFileTreeViewItem *curItem = currentKFileTreeViewItem();
   if ( item && curItem)
   {
