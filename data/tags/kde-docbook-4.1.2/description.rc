@@ -18,3 +18,10 @@ Attributes=arch,condition,conformance,id,lang,os,remap,role,revision,revisionfla
 [Page1]
 Title = Core
 Groups = Core
+
+[Extra rules]
+Single Tag Style = XML
+
+[Parsing rules]
+SpecialAreas = <!-- -->
+SpecialAreaNames = comment
