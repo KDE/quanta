@@ -121,7 +121,7 @@ public:
 
        @return true if close is possible
   */
-  bool Project::queryClose();
+  bool queryClose();
 
 public slots:
 
@@ -147,6 +147,8 @@ public slots:
   void slotChangeDocumentFolderStatus(const KURL& url, bool status);
 
   void slotReloadProjectDocs();
+
+  void slotShowProjectToolbar(bool show);
 
   void setModified(bool b = true);
 

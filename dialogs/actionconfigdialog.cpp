@@ -776,17 +776,21 @@ void ActionConfigDialog::slotNewAction()
   item->setText(0, actionText);
   item->setPixmap(0, BarIcon("ball"));
   allActionsItem->sortChildItems(0, true);
-  if (!currentItem->parent() || currentItem->parent() == allActionsItem)
+  if (currentItem->parent() && currentItem->parent() == allActionsItem)
   {
      actionTreeView->setCurrentItem(item);
   } else
   {
-    item = new KListViewItem(currentItem->parent(), currentItem);
+    QListViewItem *parentItem = currentItem->parent();
+    if (!parentItem)
+      parentItem = currentItem;
+
+    item = new KListViewItem(parentItem, currentItem);
     item->setText(0, actionText);
     item->setText(2, currentAction->name());
     item->setPixmap(0, BarIcon("ball"));
     actionTreeView->setCurrentItem(item);
-    toolbarListBox->insertItem(currentItem->parent()->text(0));
+    toolbarListBox->insertItem(parentItem->text(0));
     toolbarListBox->setCurrentItem(0);
     toolbarListBox->setSelected(0, true);
   }

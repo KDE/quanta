@@ -307,7 +307,7 @@ bool ViewManager::saveAll(bool dont_ask)
                     flagsave = false;
               }
           }
-	  view->updateTab();
+          view->updateTab();
       }
   }
   delete it;

@@ -82,7 +82,10 @@ KQApplication::KQApplication()
      int mdiMode = config->readNumEntry("MDI mode", KMdi::IDEAlMode);
      QString layout = config->readEntry("Window layout", "Default");
      if (layout == "Default")
+     {
          mdiMode = KMdi::IDEAlMode;
+         config->writeEntry("Window layout", "Default");
+     }
      quantaApp = new QuantaApp(mdiMode);
      config->setGroup("General Options");
     if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
@@ -151,7 +154,10 @@ int KQUniqueApplication::newInstance()
     int mdiMode = config->readNumEntry("MDI mode", KMdi::IDEAlMode);
     QString layout = config->readEntry("Window layout", "Default");
     if (layout == "Default")
+    {
         mdiMode = KMdi::IDEAlMode;
+        config->writeEntry("Window layout", "Default");
+    }
     quantaApp = new QuantaApp(mdiMode);
     config->setGroup("General Options");
     if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))

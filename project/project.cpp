@@ -73,6 +73,7 @@
 #include <kinputdialog.h>
 #include <kactioncollection.h>
 #include <kiconloader.h>
+#include <kxmlguifactory.h>
 
 // application headers
 #include "copyto.h"
@@ -98,6 +99,7 @@
 #include "eventconfigurationdlg.h"
 #include "qpevents.h"
 #include "uploadprofiles.h"
+#include "quanta.h"
 
 extern QString simpleMemberStr;
 extern QString taskLeaderStr;
@@ -215,6 +217,7 @@ void ProjectPrivate::adjustActions()
   saveSelectionAsProjectTemplateAction->setEnabled(projectExists);
 
   adjustViewActions();
+  parent->slotShowProjectToolbar(projectExists);
 }
 
 
@@ -430,7 +433,6 @@ void ProjectPrivate::loadProjectXML()
   {
     previewPrefix = KURL::fromPathOrURL( tmpString );
   }
-
   usePreviewPrefix = ( projectNode.toElement().attribute("usePreviewPrefix") == "1");
   m_defaultEncoding = projectNode.toElement().attribute("encoding");
   if (m_defaultEncoding.isEmpty())
@@ -1118,7 +1120,7 @@ void ProjectPrivate::slotCloseProject()
   // empty dom tree
   dom.clear();
   m_events->clear();
-  config->writePathEntry("Last Project", QString());
+  config->writePathEntry("Last Project", QString::null);
   init();
   parent->closeFiles();
   parent->newProjectLoaded(projectName, baseURL, templateURL);
@@ -1372,11 +1374,11 @@ void ProjectPrivate::writeConfig()
     if (projectList.contains( projectURL.url() ) == 0)
     {
       projectList.append( projectURL.url() );
-      config->writeEntry("OpenProjects", projectList);
+      config->writePathEntry("OpenProjects", projectList);
       // add the temp file to list
       projectList = config->readPathListEntry("ProjectTempFiles");
       projectList.append(m_tmpProjectFile);
-      config->writeEntry("ProjectTempFiles", projectList);
+      config->writePathEntry("ProjectTempFiles", projectList);
     }
   }
   // save recent projects
@@ -1395,11 +1397,11 @@ void ProjectPrivate::removeFromConfig(const QString & urlStr)
   if ( i > -1)
   {
     projectList.remove( projectList.at(i) );
-    config->writeEntry("OpenProjects", projectList);
+    config->writePathEntry("OpenProjects", projectList);
     // remove the temp file from list
     projectList = config->readPathListEntry("ProjectTempFiles");
     projectList.remove( projectList.at(i) );
-    config->writeEntry("ProjectTempFiles", projectList);
+    config->writePathEntry("ProjectTempFiles", projectList);
   }
   config->sync();
 }
@@ -1526,7 +1528,12 @@ void Project::insertFile(const KURL& nameURL, bool repaint )
       el = d->dom.createElement("item");
       el.setAttribute("url", QuantaCommon::qUrl( QExtFileInfo::toRelative(url, d->baseURL) ));
       d->dom.firstChild().firstChild().appendChild( el );
-      d->m_projectFiles.insert( new ProjectURL(url, "", 1, false, el) );
+      KURL u = url.upURL();
+      ProjectURL *parentURL = d->m_projectFiles.find(u);
+      int uploadStatus = 1;
+      if (parentURL)
+        uploadStatus = parentURL->uploadStatus;
+      d->m_projectFiles.insert( new ProjectURL(url, "", uploadStatus, false, el) );
     }
     url.setPath(url.directory(false));
   }
@@ -1583,8 +1590,8 @@ void Project::loadLastProject(bool reload)
         d->m_tmpProjectFile = tempPath;
         d->loadProjectFromTemp(url, d->m_tmpProjectFile);
         // the lists might have changed
-        d->config->writeEntry("OpenProjects", projectList);
-        d->config->writeEntry("ProjectTempFiles", tempList);
+        d->config->writePathEntry("OpenProjects", projectList);
+        d->config->writePathEntry("ProjectTempFiles", tempList);
         d->config->sync();
         return;
       }
@@ -1593,8 +1600,8 @@ void Project::loadLastProject(bool reload)
     tempList.remove( tempList.at(0) );
   }
   // the lists might have changed
-  d->config->writeEntry("OpenProjects", projectList);
-  d->config->writeEntry("ProjectTempFiles", tempList);
+  d->config->writePathEntry("OpenProjects", projectList);
+  d->config->writePathEntry("ProjectTempFiles", tempList);
   // now we look for the last project
   urlPath = d->config->readPathEntry("Last Project");
   QuantaCommon::setUrl(url, urlPath);
@@ -2543,6 +2550,16 @@ bool Project::queryClose()
       emit eventHappened("after_project_close", d->baseURL.url(), QString::null);
   }
   return canExit;
+}
+
+void Project::slotShowProjectToolbar(bool show)
+{
+  if (quantaApp && quantaApp->factory())
+  {
+    QWidget *w = quantaApp->factory()->container("project_toolbar", quantaApp);
+    if (w)
+      w->setShown(show);
+  }
 }
 
 #include "project.moc"

@@ -242,7 +242,7 @@ void QuantaInit::initQuanta()
   }
   KActionMenu *toolviewMenu = (KActionMenu*)(m_quanta->actionCollection()->action("kmdi_toolview_menu"));
   if (toolviewMenu)
-  toolviewMenu->plug(m_quanta->windowMenu());
+     toolviewMenu->plug(m_quanta->windowMenu());
 
   QPopupMenu *toolbarsMenu  = (QPopupMenu*)(m_quanta->guiFactory())->container("toolbars_load", m_quanta);
   connect(toolbarsMenu, SIGNAL(aboutToShow()), m_quanta, SLOT(slotBuildPrjToolbarsMenu()));
@@ -266,6 +266,7 @@ void QuantaInit::initQuanta()
   m_quanta->slotFileNew();
   m_quanta->slotNewStatus();
   initToolBars();
+  Project::ref()->slotShowProjectToolbar(Project::ref()->hasProject());
   KTipDialog::showTip(m_quanta);
 
   //get the PID of this running instance
@@ -543,7 +544,7 @@ void QuantaInit::readOptions()
 
   qConfig.previewPosition   = m_config->readEntry("Preview area","Editor");
   qConfig.docPosition   = m_config->readEntry("Documentation area","Tab");
-  
+
   qConfig.smartTagInsertion = m_config->readBoolEntry("Smart Tag Insertion", false);
   KAction *action = quantaApp->actionCollection()->action("smart_tag_insertion");
   (static_cast<KToggleAction* >(action))->setChecked(qConfig.smartTagInsertion);
@@ -1149,7 +1150,7 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
           entryIt = autosavedFilesEntryList.remove(entryIt);
         }
       }
-      m_config->writeEntry("List of autosaved files", autosavedFilesEntryList);
+      m_config->writePathEntry("List of autosaved files", autosavedFilesEntryList);
 
       autosavedUrlsList = autosavedFilesEntryList;
 
@@ -1159,7 +1160,7 @@ void QuantaInit::recoverCrashed(QStringList& recoveredFileNameList)
         if ((*entryIt) == (*backedUpUrlsIt))
           entryIt = backedupFilesEntryList.remove(entryIt);
       }
-      m_config->writeEntry("List of backedup files", backedupFilesEntryList);
+      m_config->writePathEntry("List of backedup files", backedupFilesEntryList);
      }
     }
   }

@@ -1,7 +1,7 @@
 /***************************************************************************
                           quantaview.cpp  -  description
                              -------------------
-    begin                : ���� 9 13:29:57 EEST 2000
+    begin                : ï¿½ï¿½ï¿½ï¿½ 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
                            (C) 2001-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
@@ -138,7 +138,7 @@ bool QuantaView::mayRemove()
      if (m_customWidget)
          m_customWidget->reparent(0L, 0, QPoint(), false);
      if (!saveModified())
-         return false;
+          return false;
      if (dynamic_cast<QuantaView *>(quantaApp->activeWindow()) == this)
      {
          parser->setSAParserEnabled(false);
@@ -649,7 +649,7 @@ void QuantaView::reloadBothViews(bool force)
 /** reload the Kafka view from the Node Tree. Set force to true if you want to reload even if not necessary. */
 void QuantaView::reloadVPLView(bool force)
 {
-  if (m_kafkaReloadingEnabled || force)
+  if (m_document && (m_kafkaReloadingEnabled || force))
       m_document->docUndoRedo->reloadKafkaEditor(force);
 }
 

@@ -74,7 +74,7 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
         topURLList.append(url);
   }
 
-  m_fileMenu = new KPopupMenu();
+  m_fileMenu = new KPopupMenu(this);
 
   m_fileMenu->insertItem(SmallIcon("fileopen"), i18n("&Open"), this ,SLOT(slotOpen()));
   m_fileMenu->insertItem(i18n("Open &With..."), this, SLOT(slotOpenWith()));
@@ -188,8 +188,8 @@ void FilesTreeView::slotMenu(KListView* listView, QListViewItem *item, const QPo
       m_fileMenu->setItemVisible(m_menuClose, isFileOpen(currentURL()));
       m_fileMenu->popup( point);
     } else {
-      m_folderMenu ->setItemVisible( m_menuDel, true );
-      m_folderMenu ->setItemVisible( m_menuTop, true );
+      m_folderMenu->setItemVisible( m_menuDel, true );
+      m_folderMenu->setItemVisible( m_menuTop, true );
       m_folderMenu->setItemVisible(m_menuPasteFolder, isPathInClipboard());
       KURL url = curItem->url();
       if ( curItem == curItem->branch()->root() )

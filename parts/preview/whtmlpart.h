@@ -58,7 +58,6 @@ protected:
 private:
   QStrList history;
   unsigned int hpos;
-
 };
 
 #endif

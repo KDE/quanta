@@ -384,7 +384,7 @@ esac</string>
                             </property>
                             <property name="associations" stdset="0">
                                 <stringlist>
-                                    <string></string>
+                                    <string>@null</string>
                                     <string></string>
                                     <string># Are we just checking well-formedness?
 @ComboBox2
