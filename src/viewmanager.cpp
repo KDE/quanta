@@ -290,6 +290,7 @@ bool ViewManager::saveAll(bool dont_ask)
                   w->save();
                   w->closeTempFile();
                   w->createTempFile();
+                  w->removeBackup(quantaApp->config());
                   if (w->isModified())
                       flagsave = false;
               } else
