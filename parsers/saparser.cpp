@@ -34,7 +34,7 @@
 #include "quantacommon.h"
 #include "dtds.h"
 
-//#undef DEBUG_PARSER
+#undef DEBUG_PARSER
 
 extern GroupElementMapList globalGroupMap;
 
@@ -43,14 +43,13 @@ SAParser::SAParser()
   m_write = 0L;
   m_baseNode = 0L;
   m_currentNode = 0L;
-  m_selectors = new QStringList();
   m_quotesRx = QRegExp("\"|'");
   includeWatch = 0L;
+  m_lastGroupParsed = false;
 }
 
 SAParser::~SAParser()
 {
-  delete m_selectors;
   delete includeWatch;
 }
 
@@ -59,6 +58,7 @@ void SAParser::init(Node *node, Document* write)
   m_baseNode = node; 
   m_write = write;
   m_dtd = write->defaultDTD();
+  m_lastGroupParsed = false;
 }
 
 void SAParser::parseForScriptGroup(Node *node)
@@ -126,10 +126,6 @@ void SAParser::parseForScriptGroup(Node *node)
         newTag->setStr(title);
         newTag->name = s;
         
-        if (dtd->name == "text/css" && group.name == "Selectors")
-        {
-          m_selectors->append(s);
-        }
         if (dtd->name == "php" && group.name == "Functions")
         {
           QTag *qTag = m_write->userTagList.find(s.lower());
@@ -141,6 +137,7 @@ void SAParser::parseForScriptGroup(Node *node)
           }          
         }
         
+        groupElement.deleted = false;
         groupElement.tag = newTag;
         groupElement.node = node;
         //Find out if the current node is inside a script structure or not.
@@ -815,7 +812,6 @@ Node *SAParser::parsingDone()
           kdDebug(24000) << "Calling slotParseNodeInDetail from parsingDone (use return values)" << endl;
 #endif          
           QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
-          emit rebuildStructureTree();
           return m_lastParsedNode;
         }
         else
@@ -825,6 +821,7 @@ Node *SAParser::parsingDone()
           kdDebug(24000) << "Emitting rebuildStructureTree from parsingDone (use return values). Enable parsing." << endl;
 #endif          
           emit rebuildStructureTree();
+          emit cleanGroups();
         }
     }
     m_currentNode = 0L;
@@ -858,6 +855,7 @@ Node *SAParser::parsingDone()
 #ifdef DEBUG_PARSER    
     kdDebug(24000) << "Calling slotParseForScriptGroup from parsingDone. Synch:" << m_synchronous << endl;
 #endif    
+    m_lastGroupParsed = true;
     slotParseForScriptGroup();
   }
   
@@ -1010,12 +1008,17 @@ void SAParser::slotParseForScriptGroup()
 #ifdef DEBUG_PARSER  
     kdDebug(24000) << "slotParseForScriptGroup done." << endl;
 #endif    
-    if (!m_synchronous)
+    if (m_lastGroupParsed && !m_synchronous)
     {
 #ifdef DEBUG_PARSER
       kdDebug(24000) << "Emitting rebuildStructureTree from slotParseForScriptGroup." << endl;
 #endif
       emit rebuildStructureTree();
+      if (m_lastGroupParsed)
+      {
+        emit cleanGroups();
+        m_lastGroupParsed = false;
+      }
     }
   }
 }

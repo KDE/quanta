@@ -45,6 +45,7 @@ struct GroupElement{
     /*The parent node indicating the beginning of a structure */
     Node *parentNode;
     bool global;
+    bool deleted;
   };
 
 typedef QValueList<GroupElement> GroupElementList;

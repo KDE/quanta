@@ -44,6 +44,7 @@ Node::Node( Node *parent )
   m_rootNode = 0L;
   m_leafNode = 0L;
 #endif
+  groupElementLists.setAutoDelete(false);
   groupElementLists.clear();
 }
 
@@ -68,11 +69,15 @@ Node::~Node()
     {
       if ((*it).node == this)
       {
-        it = groupElementList->erase(it);
+       // it = groupElementList->erase(it);
+        (*it).node = 0L;
+        (*it).tag = 0L;
+        (*it).deleted = true;
       } else
         ++it;
     }
   }
+  groupElementLists.clear();
   if (prev && prev->next == this)
       prev->next = 0L;
   if (parent && parent->child == this)

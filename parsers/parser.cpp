@@ -66,6 +66,9 @@ Parser::Parser()
   m_parsingNeeded = true;
   m_saParser = new SAParser();
   connect(m_saParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
+  connect(m_saParser, SIGNAL(cleanGroups()), SLOT(cleanGroups()));
+  m_saParser->includeWatch = new KDirWatch();
+  connect(m_saParser->includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
 }
 
 Parser::~Parser()
@@ -436,9 +439,11 @@ Node *Parser::parse(Document *w, bool force)
   if(!m_parsingEnabled && !force)
     return baseNode;
 
+  ParserCommon::includedFiles.clear();
+  ParserCommon::includedFilesDTD.clear();
   m_saParser->setParsingEnabled(false); 
   m_saParser->init(0L, w);
-  clearGroups();
+ // clearGroups();
   if (baseNode)
   {
     delete baseNode;
@@ -1165,7 +1170,33 @@ void Parser::clearGroups()
   globalGroupMap.clear();
   ParserCommon::includedFiles.clear();
   ParserCommon::includedFilesDTD.clear();
-  m_saParser->selectors()->clear();
+  delete m_saParser->includeWatch;
+  m_saParser->includeWatch = new KDirWatch();
+  connect(m_saParser->includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
+}
+
+void Parser::cleanGroups()
+{
+  GroupElementMapList::Iterator it;
+  GroupElementList::Iterator elementIt;
+  GroupElementList *list;
+  for (it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it)
+  {
+    list = & it.data();
+    //Clear the group element list and also remove the group tag which
+    //was created in parseForXMLGroup/parseForScriptGroup methods.
+    elementIt = list->begin();
+    while (elementIt != list->end())
+    {
+       if ((*elementIt).deleted)
+       {
+         elementIt = list->erase(elementIt);
+       } else
+       {
+         ++elementIt;
+       }
+    }
+  }
   delete m_saParser->includeWatch;
   m_saParser->includeWatch = new KDirWatch();
   connect(m_saParser->includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
@@ -1433,11 +1464,6 @@ bool Parser::parseScriptInsideTag(Node *startNode)
 void Parser::slotParseInDetail()
 {
   m_saParser->parseInDetail(false);
-}
-
-QStringList* Parser::selectors()
-{
-  return m_saParser->selectors();
 }
 
 #include "parser.moc"

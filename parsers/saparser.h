@@ -71,9 +71,7 @@ public:
                   
   void parseInDetail(bool synchronous);     
   
-  QStringList* selectors() {return m_selectors;}
-  
-  KDirWatch *includeWatch;
+  KDirWatch *includeWatch; 
 
 private slots:
   /** Parses one line and calls itself with a singleshot timer to parse the next line. */
@@ -83,6 +81,7 @@ private slots:
   
 signals:
   void rebuildStructureTree();  
+  void cleanGroups();
   
 private:
   //private methods
@@ -107,6 +106,7 @@ private:
   };  
   
   //private member variables
+  bool m_lastGroupParsed;
   bool m_parsingEnabled;  
   bool m_synchronous;
   Document* m_write;
@@ -115,7 +115,6 @@ private:
   Node* m_currentNode; ///< the currently parsed script node for details. Changes only after the whole area between m_currentNode and m_currentNode->next is parsed.
   int m_lastParsedLine, m_lastParsedCol;
   const DTDStruct *m_dtd;
-  QStringList *m_selectors; //holds the CSS selectors
   QRegExp m_quotesRx;
 
   bool s_contextFound;

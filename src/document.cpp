@@ -1166,18 +1166,24 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
     {
       values = new QStringList();
       deleteValues = true;
-      for ( QStringList::Iterator it = parser->selectors()->begin(); it != parser->selectors()->end(); ++it )
+      GroupElementMapList::Iterator it;
+      for ( it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it )
       {
-        int index = (*it).find('.');
-        if (index != -1)
+        QString key = it.key();
+        if (key.startsWith("Selectors|"))
         {
-          QString tmpStr = (*it).left(index);
-          if (tmpStr.isEmpty() || tagName.lower() == tmpStr || tmpStr == "*")
+          QString selectorName = key.mid(10);
+          int index = selectorName.find('.');
+          if (index != -1)
           {
-            values->append((*it).mid(index + 1).replace('.',' '));
+            QString tmpStr = selectorName.left(index);
+            if (tmpStr.isEmpty() || tagName.lower() == tmpStr || tmpStr == "*")
+            {
+              values->append(selectorName.mid(index + 1).replace('.',' '));
+            }
           }
-        }
-      }
+         }
+       }
     }
   }
   if (values)

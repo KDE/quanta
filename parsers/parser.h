@@ -86,14 +86,14 @@ public:
       Only for debugging purposes. */
   void coutTree(Node *node, int indent);
 
-  QStringList *selectors();
-  
   IncludedGroupElementsMap includedMap;
   bool parsingEnabled;
   bool m_treeReparsed;
   
 public slots:
   void slotParseInDetail();  
+ /** Remove the found groups from the memeber variables */
+  void cleanGroups();
 
 private slots:
   void slotIncludedFileChanged(const QString& fileName);
