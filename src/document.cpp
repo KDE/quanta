@@ -1940,24 +1940,28 @@ void Document::slotDelayedTextChanged(bool forced)
           {
             if (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd)
             {
-              if (node->tag->name == currentNode->tag->name )
+              if (node->tag->nameSpace + node->tag->name == currentNode->tag->nameSpace + currentNode->tag->name )
               {
                 num++;
               }
-              if ( updateClosing && QuantaCommon::closesTag(currentNode->tag, node->tag) ||
-                  !updateClosing && QuantaCommon::closesTag(node->tag, currentNode->tag) )
+              if ( (updateClosing && QuantaCommon::closesTag(currentNode->tag, node->tag)) ||
+                  (!updateClosing && QuantaCommon::closesTag(node->tag, currentNode->tag)) )
               {
                 num--;
               }
               if (num == 0)
               {
                 reparseEnabled = false;
-                node->tag->namePos(bl, bc);
+                node->tag->beginPos(bl, bc);
+                bc++;
 #ifdef BUILD_KAFKAPART
                 if(editIfExt)
                   editIfExt->editBegin();
 #endif
-                editIf->removeText(bl, bc, bl, bc + node->tag->name.length());
+                int len = node->tag->name.length();
+                if (!node->tag->nameSpace.isEmpty())
+                  len += 1 + node->tag->nameSpace.length();
+                editIf->removeText(bl, bc, bl, bc + len);
                 if (updateClosing)
                 {
                   editIf->insertText(bl, bc, "/"+newName);
