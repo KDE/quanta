@@ -710,7 +710,7 @@ void QuantaInit::initActions()
 
     KStdAction::saveAs( m_quanta, SLOT( slotFileSaveAs() ), ac );
 
-    m_quanta->saveAllAction = new KAction( i18n( "Save All..." ), UserIconSet("save_all"), SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
+    m_quanta->saveAllAction = new KAction( i18n( "Save All..." ), UserIcon("save_all"), SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
                         m_quanta, SLOT( slotFileSaveAll() ),
                         ac, "file_save_all" );
     (void)  new KAction(i18n("Reloa&d"), UserIconSet("reload"), CTRL+Key_F5, m_quanta,
