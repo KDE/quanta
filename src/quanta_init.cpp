@@ -110,6 +110,7 @@
 
 #include "dtds.h"
 #include "spellchecker.h"
+#include "qpevents.h"
 
 QuantaInit::QuantaInit(QuantaApp * quantaApp)
         : QObject()
@@ -1046,6 +1047,8 @@ void QuantaInit::initActions()
                         ac, "insert_char" );
     connect( char_action, SIGNAL(activated()),
              m_quanta, SLOT(slotInsertChar()) );
+
+    connect(m_quanta, SIGNAL(eventHappened(const QString&)), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&)));
 }
 
 /** Initialize the plugin architecture. */

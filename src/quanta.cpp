@@ -380,41 +380,13 @@ void QuantaApp::slotFileOpenRecent(const KURL &url)
   ViewManager::ref()->activeDocument()->view()->setFocus();
 }
 
-bool QuantaApp::handleEvent(const EventAction& ev)
-{
-  return true; //Disable even handling
-  if (ev.type == EventAction::Internal)
-  {
-    if (ev.action == "email")
-    {
-       QString receiver = ev.arguments[0];
-       TeamMember member;
-       if (receiver == "teamleader")
-         member = Project::ref()->teamLeader();
-       else if (receiver.startsWith("subprojectleader-"))
-         member = Project::ref()->subprojectLeader(receiver.remove("subprojectleader-"));
-       else if (receiver.startsWith("taskleader-"))
-         member = Project::ref()->taskLeader(receiver.remove("taskleader-"));
-
-       kapp->invokeMailer(member.name + "<" + member.email + ">", ev.arguments[1], "");
-       return true;
-    } else
-      KMessageBox::sorry(this, i18n("Unsupported internal event."));
-  } else
-  if (ev.type == EventAction::External)
-  {
-      KMessageBox::sorry(this, i18n("External event actions are not yet supported."));
-  } else
-      KMessageBox::sorry(this, i18n("Unknown event type."));
-  return false;
-}
-
 void QuantaApp::slotFileSave()
 {
   QuantaView* view=ViewManager::ref()->activeView();
   Document *w = view->document();
   if (w)
   {
+    emit eventHappened("before_save");
     w->checkDirtyStatus();
     if ( w->isUntitled() )
       slotFileSaveAs();
@@ -425,13 +397,7 @@ void QuantaApp::slotFileSave()
       w->docUndoRedo->fileSaved();
 #endif
     }
-    EventActions *events = Project::ref()->events();
-    if (events && events->contains("after_save") && Project::ref()->contains(w->url()))
-    {
-       EventAction ev = (*events)["after_save"];
-       ev.arguments << i18n("The file %1 was saved").arg(QExtFileInfo::toRelative(w->url(), Project::ref()->projectBaseURL()).path());
-       handleEvent(ev);
-    }
+    emit eventHappened("after_save");
   }
 }
 

@@ -21,6 +21,7 @@
 #include <qwidget.h>
 
 #include "projecturl.h"
+#include "qpevents.h"
 
 class QDom;
 class ProjectPrivate;
@@ -34,32 +35,6 @@ class ProjectList;
 class KConfig;
 class KMainWindow;
 
-/** Describes an event action. */
-struct EventAction {
- /** Possible event types */
-  enum Types {
-     Internal = 0,
-     External = 1
-  };
-  /** The type of the event. See @ref Types */
-  uint type;
-  /** the name of the action to be executed. In case of external events
-     this is the name of the script, in case of internal events it can be one of the
-     following: "email"
-  */
-  QString action;
-  /** The arguments for the event action. It is different for each action.
-  */
-  QStringList arguments;
-};
-
-/** The configured events. The key is the event name, the data is the event description.
-For example: events["before_save"] points to the event data that needs to be used
-before a file is saved. Possible key names are: before_save, after_save, after_open,
-after_project_open, after_project_save, before_upload, after_upload, after_project_add,
-after_project_remove, after_commit
-*/
-typedef  QMap<QString, EventAction> EventActions;
 
 
 struct TeamMember {
@@ -141,7 +116,7 @@ public:
   QValueList<SubProject>* subprojects();
   QMap<QString, TeamMember> allMembers();
 
-  /** uploads the project file 
+  /** uploads the project file
       @return false if there was nothing to upload or an error occured during upload
   */
   bool uploadProjectFile();
