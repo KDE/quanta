@@ -1,6 +1,8 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = 48x48 32x32 22x22 16x16 
+SUBDIRS = 22x22 16x16 
+
+KDE_ICON = quanta
 
 ####### kdevelop will overwrite this part!!! (end)############
 datadir = ${kde_datadir}/quanta/toolbar
