@@ -49,6 +49,10 @@
 
 #define ID_FILE_LINT                10100
 
+#define ID_FILE_NEXT                10091
+#define ID_FILE_PREV                10092
+
+
 
 ///////////////////////////////////////////////////////////////////
 // Edit-menu entries
@@ -90,7 +94,10 @@
 #define ID_VIEW_IN_KFM              12110
 #define ID_VIEW_IN_NETSCAPE         12120
 #define ID_VIEW_IN_KFM2             12130
-#define ID_VIEW_FTP									12140
+#define ID_VIEW_FTP								12140
+#define ID_VIEW_PREV_FILE						12150
+#define ID_VIEW_NEXT_FILE						12160
+
 
 
 ///////////////////////////////////////////////////////////////////

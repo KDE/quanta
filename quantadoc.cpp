@@ -52,6 +52,8 @@ QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObje
     pViewList = new QList<QuantaView>();
   }
 
+  docList = new QDict<Document>(1);
+
   pViewList->setAutoDelete(true);
   rbMenu = 0L;
 
@@ -65,7 +67,7 @@ QuantaDoc::QuantaDoc( QuantaApp *app, QWidget *parent, const char *name) : QObje
 
   connect( attribCoreMenu, SIGNAL(activated(int)), this, SLOT(slotInsertCoreAttrib(int)));
 
-
+  
   attribEventsMenu = new QPopupMenu();
   for ( attr = lScript->first(); lScript->current(); attr = lScript->next() )
     attribEventsMenu->insertItem( attr, lScript->at() );
@@ -103,7 +105,7 @@ void QuantaDoc::setTitle(const QString &_t)
 
 QString QuantaDoc::getTitle()
 {
-  if ( docList.count() )
+  if ( docList->count() )
   	return QString("[")+getAbsFilePath()+"]";
   else
 		return title;
@@ -130,11 +132,11 @@ void QuantaDoc::changeFileName( QString oldname )
   if ( newname.left(5) == "file:" ) newname.remove(0,5);
   if ( oldname.left(5) == "file:" ) oldname.remove(0,5);
 
-  docList.remove( oldname );
-  docList.insert( newname, write() );
+  docList->remove( oldname );
+  docList->insert( newname, write() );
 
-  QDictIterator<Document> it1(docList);
-  QDictIterator<Document> it2(docList);
+  QDictIterator<Document> it1(*docList);
+  QDictIterator<Document> it2(*docList);
 
  	int i,len;
  	while ( it1.current() )
@@ -175,7 +177,7 @@ void QuantaDoc::changeFileName( QString oldname )
 bool QuantaDoc::saveAll(bool dont_ask){
   bool flagsave = true;
 
-  QDictIterator<Document> it( docList ); // iterator for dict
+  QDictIterator<Document> it( *docList ); // iterator for dict
 
   while ( Document *twrite = it.current() ) {
     ++it;
@@ -205,7 +207,7 @@ void QuantaDoc::writeConfig( KConfig *config )
 {
   write()->writeConfig( config );
 
-  QDictIterator<Document> it( docList ); // iterator for dict
+  QDictIterator<Document> it( *docList ); // iterator for dict
 
   while ( Document *twrite = it.current() ) {
     ++it;
@@ -270,7 +272,7 @@ void QuantaDoc::closeDocument()
 	
 	if ( fname.left(5) == "file:" ) fname.remove(0,5);
 	
-	docList.remove( fname );
+	docList->remove( fname );
 	
 	if ( !( app->view->removeWrite() ) )
     newDocument();
@@ -283,7 +285,7 @@ void QuantaDoc::closeDocument()
 
 void QuantaDoc::closeAll()
 {
-	QDictIterator<Document> it( docList ); // iterator for dict
+	QDictIterator<Document> it( *docList ); // iterator for dict
 
 	QString fname;
 	
@@ -293,7 +295,7 @@ void QuantaDoc::closeAll()
   	
   	fname = write()->fileName();
 		if ( fname.left(5) == "file:" ) fname.remove(0,5);
-		docList.remove( fname );
+		docList->remove( fname );
 	}
 	while ( app->view->removeWrite() ) ;
 
@@ -314,7 +316,7 @@ bool QuantaDoc::isModifiedAll()
 {
   bool modified = false;
 
-  QDictIterator<Document> it( docList ); // iterator for dict
+  QDictIterator<Document> it( *docList ); // iterator for dict
 
   while ( Document *twrite = it.current() ) {
     if ( twrite->isModified() ) modified = true;
@@ -343,13 +345,13 @@ bool QuantaDoc::newDocument( const char* name )
 
   if ( fileName.left(5) == "file:" ) fileName.remove(0,5);
 
-  if ( !docList.find( fileName ) || fnew )
+  if ( !docList->find( fileName ) || fnew )
   {
   	if ( write() )
  	    if ( !write()->hasFileName() && !write()->isModified() && !fnew )
  	    {
  	    	QString t = write()->fileName();
- 	    	docList.remove( t );
+ 	    	docList->remove( t );
  	      app->view->removeWrite();
  	  }
 
@@ -364,12 +366,12 @@ bool QuantaDoc::newDocument( const char* name )
   	
   	app->view->addWrite( w, shortName );
   	
-  	docList.insert( fileName, w );
+  	docList->insert( fileName, w );
   	
   	setModified( false );
   }
   else {
-  	Document *w = docList.find( fileName );
+  	Document *w = docList->find( fileName );
   	app->view->writeTab->showPage( w );
   }
 
@@ -461,7 +463,7 @@ Document* QuantaDoc::newWrite(QWidget *parent)
   // find first free Untitledxx.html
   int i = 1;
   QString fname;
-  while ( docList.find( fname = fname.sprintf("Untitled%i.html",i) ) )
+  while ( docList->find( fname = fname.sprintf("Untitled%i.html",i) ) )
     i++;
 
  	write = new Document( writeDoc, parent, "write" , fname);
@@ -487,7 +489,7 @@ bool QuantaDoc::needRepaintPreview()
 void QuantaDoc::slotRequestOpenedFiles()
 {
 	QStringList list;
-	QDictIterator<Document> it( docList ); // iterator for dict
+	QDictIterator<Document> it( *docList ); // iterator for dict
 
   while ( Document *twrite = it.current() )
   {
@@ -560,14 +562,12 @@ void QuantaDoc::slotAttribPopup()
 
 void QuantaDoc::slotInsertAttrib( int id )
 {
-//  id = id - KPM_FirstItem;
   write()->currentTag();
   QString tag = write()->getTagAttr(0);
   if ( tagsList->find( tag.upper()) != -1 ) {
 
     QStrList *list = tagsDict->find( tag.data() );
 
-    //write()->insertTag( QString(" &")+list->at(id)+"=\"","\"" );
     write()->insertAttrib( list->at(id) );
 
   }
@@ -576,11 +576,61 @@ void QuantaDoc::slotInsertAttrib( int id )
 void QuantaDoc::slotInsertCoreAttrib( int id )
 {
   write()->insertAttrib( lCore->at(id) );
-//  write()->insertTag( QString(" ")+lCore->at(id)+"=\"","\"" );
 }
 
 void QuantaDoc::slotInsertEventsAttrib( int id )
 {
 	write()->insertAttrib( lScript->at(id) );
-//  write()->insertTag( QString(" ")+lScript->at(id)+"=\"","\"" );
+}
+
+void QuantaDoc::prevDocument()
+{
+  QTabWidget *tab = app->view->writeTab;
+
+  Document *d = (Document*)tab->currentPage();
+  Document *new_d;
+
+  QDictIterator<Document> it(*docList);
+
+  new_d = it.toFirst();
+
+ 	while ( it.current() != d )
+ 		++it;
+ 		
+ 	++it;
+ 	
+ 	if ( it.current() ) {
+ 		new_d = it.current();
+ 	}
+ 	
+ 	tab->showPage( new_d );
+}
+
+void QuantaDoc::nextDocument()
+{
+
+  QTabWidget *tab = app->view->writeTab;
+
+  Document *d = (Document*)tab->currentPage();
+  Document *new_d = 0 , *prev = 0;
+
+  QDictIterator<Document> it(*docList);
+
+  while ( it.current() ) {
+  	  new_d = it.current();
+ 		++it;
+ 	}
+ 	
+ 	
+  it.toFirst();
+
+ 	while ( it.current() != d ) {
+ 	  prev = it.current();
+ 		++it;
+ 	}
+ 	
+ 	if ( prev )
+ 		new_d = prev;
+ 	
+ 	tab->showPage( new_d );
 }

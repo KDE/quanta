@@ -200,6 +200,9 @@ class QuantaApp : public KTMainWindow
     void slotFileClose();
     void slotFileCloseAll();
     void slotFilePrint();
+    void slotFileNext();
+		void slotFilePrev();
+
     /** closes all open windows by calling close() on each memberList item until the list is empty, then quits the application.
      * If queryClose() returns false because the user canceled the saveModified() dialog, the closing breaks.
      */
@@ -266,6 +269,8 @@ class QuantaApp : public KTMainWindow
 
     void slotFtpClient();
     void slotFtpClientClose();
+    
+    void slotInsertTag(QString);
 
     /** Repaint preview ( slot ) */
     void slotViewRepaint();

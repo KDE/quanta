@@ -19,6 +19,8 @@
 #include <qimage.h>
 #include <qpixmap.h>
 
+#include <kfontdialog.h>
+
 /*
  *  Constructs a PreviewOptionsS which is a child of 'parent', with the 
  *  name 'name' and widget flags set to 'f' 
@@ -33,6 +35,7 @@ PreviewOptionsS::PreviewOptionsS( QWidget* parent,  const char* name, WFlags fl 
     grid = new QGridLayout( this ); 
     grid->setSpacing( 6 );
     grid->setMargin( 11 );
+
 
     pixmap = new QLabel( this, "PixmapLabel2" );
     pixmap->setScaledContents( TRUE );

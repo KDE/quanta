@@ -62,7 +62,7 @@
 
 #include "toolbar/toolbars.h"
 
-QString fileMaskHtml 	= "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* ";
+QString fileMaskHtml 	= "*.*html *.*htm *.php* *.asp *.cfm *.css *.inc* *.*HTML *.*HTM *.PHP* *.ASP *.CFM *.CSS *.INC* *.xml *.XML";
 QString fileMaskPhp 	= "*.*PHP* *.*php* ";
 QString fileMaskJava  = "*.jss *.js *.JSS *.JS ";
 QString fileMaskText  = "*.txt *.TXT ";
@@ -231,6 +231,12 @@ void QuantaApp::initKeyAccel()
   keyAccel->insertItem("goto line", ALT+Key_N);
   keyAccel->connectItem("goto line",this,SLOT(slotEditGotoLine()));
 
+  keyAccel->insertItem("Next file",CTRL+ALT+Key_Right);
+	keyAccel->connectItem("Next file", this, SLOT(slotFileNext()));
+
+	keyAccel->insertItem("Previous file",CTRL+ALT+Key_Left);
+	keyAccel->connectItem("Previous file", this, SLOT(slotFilePrev()));
+
   keyAccel->readSettings();
 
   keyAccel->connectItem(KStdAccel::New,   this, SLOT(slotFileNew()));
@@ -275,6 +281,8 @@ void QuantaApp::initKeyAccel()
   keyAccel->changeMenuAccel(viewMenu, ID_VIEW_IN_NETSCAPE, "Preview in Netscape");
   keyAccel->changeMenuAccel(viewMenu, ID_VIEW_REPAINT,     "Refresh Preview");
   keyAccel->changeMenuAccel(viewMenu, ID_VIEW_PREVIEW,     "Preview");
+  keyAccel->changeMenuAccel(viewMenu, ID_VIEW_PREV_FILE,     "Previous file");
+  keyAccel->changeMenuAccel(viewMenu, ID_VIEW_NEXT_FILE,     "Next file");
 
   keyAccel->changeMenuAccel(toolMenu, ID_EDIT_CURRENT_TAG, "Edit current tag");
   keyAccel->changeMenuAccel(toolMenu, ID_ATTRIB_POPUP,     "Tag attributes");
@@ -387,6 +395,9 @@ void QuantaApp::initMenuBar()
   viewMenu->insertSeparator();
   viewMenu->insertItem(i18n("Open Document In Netscape"), ID_VIEW_IN_NETSCAPE);
   viewMenu->insertItem(i18n("Open Document In Konqueror"),      ID_VIEW_IN_KFM2);
+  viewMenu->insertSeparator();
+  viewMenu->insertItem(i18n("Previous file"), ID_VIEW_PREV_FILE);
+  viewMenu->insertItem(i18n("Next file"),      ID_VIEW_NEXT_FILE);
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry insertMenu
@@ -451,7 +462,7 @@ void QuantaApp::initMenuBar()
   											"Dmitry Poplavsky\n"\
   											"Alexander Yakovlev\n"\
   											"Eric Laffoon\n\n"\
-  											"dima@kde.org\n"\
+  											"pdima@kde.org\n"\
   											"yshurik@kde.org\n"\
   											"sequitur@kde.org\n\n"\
   											"http://quanta.sourceforge.net/"
@@ -766,6 +777,14 @@ void QuantaApp::initView()
   connect( 	pTab, SIGNAL(openImage(QString)),
   					this, SLOT(slotImageOpen(QString)));
   					
+  connect( 	fTTab,SIGNAL(insertTag(QString)),
+  					this, SLOT(slotInsertTag(QString)));
+  connect( 	fLTab,SIGNAL(insertTag(QString)),
+  					this, SLOT(slotInsertTag(QString)));
+  connect( 	pTab,SIGNAL(insertTag(QString)),
+  					this, SLOT(slotInsertTag(QString)));
+  					
+  					
   connect( 	fLTab,SIGNAL(activatePreview()),
   					this, SLOT(slotActivatePreview()));
   connect( 	fTTab,SIGNAL(activatePreview()),
@@ -927,7 +946,7 @@ void QuantaApp::saveOptions()
   // save list of open files
 
   QStrList fileList;
-  QDictIterator<Document> it( doc->docList ); // iterator for dict
+  QDictIterator<Document> it( *(doc->docList) ); // iterator for dict
 
   while ( Document *twrite = it.current() ) {
     if ( twrite->hasFileName() )
@@ -1037,7 +1056,7 @@ void QuantaApp::openLastFiles()
   	leftPanel-> showPage( (QWidget *)pTab );
   }
 
-  if ( doc->docList.count() == 0 ) // no documents opened
+  if ( doc->docList->count() == 0 ) // no documents opened
   {
   	
   }

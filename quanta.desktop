@@ -1,8 +1,12 @@
-[Desktop Entry]
-Name=Quanta Plus
-Exec=quanta
-Icon=quanta
+# KDE Config File  
+[KDE Desktop Entry]
 Type=Application
-MimeType=text/html
-Comment=Web Development Environment
-Comment[ru]=Среда разработки веб-проектов
+Exec=quanta -caption "%c" %i %m  
+Icon=quanta.xpm
+MiniIcon=quanta.png
+DocPath=quanta/index.html
+Comment=Powerful HTML-editor
+Comment[de]=
+Terminal=0
+Name=Quanta
+Name[de]=Quanta

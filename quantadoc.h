@@ -84,6 +84,10 @@ class QuantaDoc : public QObject
     /** saves the document under filename and format.*/	
     bool saveDocument(const QString &filename, const char *format=0);
     /** returns the pathname of the current document file*/
+        /** navigation between opened files */
+    void nextDocument();
+    void prevDocument();
+
     QString getAbsFilePath();
     /** sets the filename of the document */
     void setTitle(const QString &_t);
@@ -137,7 +141,7 @@ class QuantaDoc : public QObject
   	/** doc's attributes */
     QString title;
     /** list with documents( kwrites ) */
-    QDict<Document> docList;
+    QDict<Document> *docList;
     /** manager for bookmarks */
     KWriteManager *writeManager;
     QPopupMenu *rbMenu;

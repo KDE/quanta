@@ -57,9 +57,9 @@
 #include "dialogs/filemasks.h"
 #include "dialogs/styleoptionss.h"
 #include "dialogs/previewoptions.h"
+#include "dialogs/previewfontoptions.h"
 #include "dialogs/parseroptions.h"
 #include "dialogs/grepdialog.h"
-
 
 #include "treeviews/filestreeview.h"
 #include "treeviews/fileslistview.h"
@@ -115,6 +115,14 @@ void QuantaApp::commandCallback(int id_)
     case ID_FILE_CLOSE_ALL:
          slotFileCloseAll();
          break;
+
+    case ID_FILE_NEXT:
+        slotFileNext();
+        break;
+
+    case ID_FILE_PREV:
+        slotFilePrev();
+        break;
 
     case ID_FILE_PRINT:
          slotFilePrint();
@@ -235,6 +243,14 @@ void QuantaApp::commandCallback(int id_)
     case ID_VIEW_FTP:
          slotFtpClient();
          break;
+         
+    case ID_VIEW_PREV_FILE:
+       slotFilePrev();
+       break;
+       
+    case ID_VIEW_NEXT_FILE:
+       slotFileNext();
+       break;    
 
     case ID_PROJECT_NEW:
     		 project	-> newProject();
@@ -332,6 +348,14 @@ void QuantaApp::statusCallback(int id_)
     case ID_FILE_CLOSE:
          slotStatusHelpMsg(i18n("Closes the actual document"));
          break;
+		case ID_FILE_NEXT:
+    			 slotStatusHelpMsg(i18n("Go to next file"));
+		     break;
+
+		case ID_FILE_PREV:
+    			 slotStatusHelpMsg(i18n("Go to previous file"));
+			   break;
+
 
     case ID_FILE_PRINT:
          slotStatusHelpMsg(i18n("Prints out the actual document"));
@@ -457,6 +481,11 @@ void QuantaApp::slotFileSaveAs()
                                                i18n("*|All files"), this, i18n("Save as..."));
   if(!newName.isEmpty())
   {
+    bool addToProject = false;
+    if ( project->hasProject() ) 
+      addToProject = ( KMessageBox::Yes == KMessageBox::questionYesNo(0,"Add file\n " +newName+"\n to project ? ") );
+
+
     QFileInfo saveAsInfo(newName);
     doc->setTitle(saveAsInfo.fileName());
 
@@ -464,6 +493,9 @@ void QuantaApp::slotFileSaveAs()
     addRecentFile(newName);
 
     setCaption(doc->getTitle());
+
+    if ( addToProject ) 
+      project->insertFile(newName,true);
   }
 
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
@@ -515,6 +547,24 @@ void QuantaApp::slotFileCloseAll()
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
 
+void QuantaApp::slotFileNext()
+{
+   slotStatusMsg(i18n("Go to next file..."));
+
+   doc->nextDocument();
+
+   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
+void QuantaApp::slotFilePrev()
+{
+   slotStatusMsg(i18n("Go to previous file..."));
+
+   doc->prevDocument();
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
 
 void QuantaApp::slotFilePrint()
 {
@@ -524,7 +574,7 @@ void QuantaApp::slotFilePrint()
   if (printer.setup(this))
   {
    // view->print(&printer);
-   #warning add print from source or html
+//   #warning add print from source or html
   }
 
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
@@ -878,6 +928,28 @@ void QuantaApp::slotImageOpen( QString fileToOpen )
   part->show();
 }
 
+
+/** insert <img> tag for images or <a> for other */
+void QuantaApp::slotInsertTag( QString file )
+{
+ 	QImage img;
+  QExtFileInfo ifile( file );
+  ifile.convertToRelative( doc->basePath() );
+	QString shortName = ifile.filePath();
+	
+   if ( img.load(file) )  { // image
+     QString w,h;
+     w.setNum( img.width() );
+	   h.setNum( img.height() );
+	   doc->write()->insertTag("<img src=\""+shortName+"\" width=\""+w+"\" height=\""+h+"\" border=\"0\">");
+   } 
+   else {
+     doc->write()->insertTag("<a href=\""+shortName+"\">","</a>");
+   }
+
+}
+
+
 ////////////////////////
 // status slots
 ///////////////////////
@@ -899,7 +971,7 @@ void QuantaApp::slotNewStatus()
     else enableCommand(ID_FILE_SAVE_ALL);
   }
 	
-  QDictIterator<Document> it( doc->docList );
+  QDictIterator<Document> it( *(doc->docList) );
 
   QIconSet floppyIcon( UserIcon("save_small"));
   QIconSet emptyIcon ( UserIcon("empty1x16"));
@@ -1025,6 +1097,11 @@ void QuantaApp::slotOptions()
   PreviewOptions *previewOptions = new PreviewOptions( (QWidget *)page );
 
   previewOptions->setPosition( previewPosition );
+
+  // preview fonts
+  //page=kd->addVBoxPage(i18n("Fonts"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
+  //PreviewFontOptions *previewFontOptions = new PreviewFontOptions( (QWidget *)page );
+
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
