@@ -2,7 +2,12 @@
 <kpartgui name="quanta" version="2">
   <MenuBar>
 
-    <Menu name="file" ><text>&amp;File</text>
+    <Menu name="file" noMerge="1"><text>&amp;File</text>
+      <Action name="file_new"/>    
+      <Action name="file_open"/>    
+      <Action name="file_open_recent"/>    
+      <Separator />
+      <Action name="file_save" />
       <Menu name="save_as_template" append="save_merge"><text>Save As Template</text>
       	<Action name="save_local_template"/>
       	<Action name="save_project_template"/>
@@ -11,7 +16,11 @@
         <Action name="save_selection_project_template" />
       </Menu>
       <Action name="save_all" append="save_merge"/>
+      <Separator />
+      <Action name="file_close" />
       <Action name="close_all" append="close_merge"/>
+      <Separator />
+      <Action name="file_quit" />
     </Menu>
 
    <Menu name="edit" noMerge="1"><text>&amp;Edit</text>
@@ -59,7 +68,7 @@
       <Action name="syntax_check"/>
     </Menu>
 
-    <Menu name="toolbars" ><text>Too&amp;lbars</text>
+    <Menu name="toolbars" noMerge="1"><text>Too&amp;lbars</text>
       <Menu name="toolbars_load"><text>&amp;Load Toolbars</text>
         <Action name="toolbars_load_user"/>
         <Action name="toolbars_load_project"/>
@@ -75,7 +84,7 @@
       <Action name="toolbars_send"/>
     </Menu>
 
-    <Menu name="qinsert"><text>&amp;Insert</text>
+    <Menu name="qinsert" noMerge="1"><text>&amp;Insert</text>
       <Action name="tag_quick_start"/>
       <Action name="tag_quick_list"/>
       <Action name="tag_quick_table"/>

@@ -1,1 +1,4 @@
-image/all
+Type=file/all
+PostText=
+PreText=
+UsePrePostText=false

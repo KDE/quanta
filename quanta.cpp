@@ -523,7 +523,7 @@ void QuantaApp::slotNewStatus()
   projectOptionAction->setEnabled(projectExists);
   saveAsProjectTemplateAction->setEnabled(projectExists);
   saveSelectionAsProjectTemplateAction->setEnabled(projectExists);
-  actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
+  
   if (projectExists)
   {
     QStringList toolbarList = QExtFileInfo::allFiles(project->toolbarDir+"/", "*.toolbar.tgz");
@@ -538,6 +538,7 @@ void QuantaApp::slotNewStatus()
     projectToolbarFiles->clearURLList();
   }
   actionCollection()->action("toolbars_load_project")->setEnabled(projectExists);
+  actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
 
   viewBorder->setChecked(view->write()->kate_view->iconBorder());
   viewLineNumbers->setChecked(view->write()->kate_view->lineNumbersOn());
@@ -602,6 +603,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
  int currentPageIndex = view->toolbarTab->currentPageIndex();
 
  //clear all the actions - this is also to avoid duplicate actions in the list
+
  QDictIterator<KXMLGUIClient> iter(toolbarGUIClientList);
  QDomNodeList nodeList;
  KAction *action;
@@ -614,11 +616,11 @@ void QuantaApp::slotOptionsConfigureToolbars()
     iter.current()->actionCollection()->take(action);
    }
  }
-
+  
  KEditToolbar dlg(factory(), this);
 
  int result = dlg.exec();
-
+     
  QString actionName;
  QDictIterator<KXMLGUIClient> it(toolbarGUIClientList);
  for( ; it.current(); ++it )
@@ -639,7 +641,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
     }
     //and add them again. Is there a better way to do this?
     if (result == QDialog::Accepted) factory()->addClient(it.current());
- }
+ }     
 
  view->toolbarTab->setCurrentPage(currentPageIndex);
 }
