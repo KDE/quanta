@@ -3,6 +3,7 @@
                              -------------------
     begin                : Fri Sep 20 2002
     copyright            : (C) 2002 by Marc Britton
+                           (C) 2003 by Andras Mantia <amantia@kde.org>
     email                : consume@optushome.com.au
  ***************************************************************************/
 
@@ -83,22 +84,11 @@ void QuantaPluginEditor::addPlugin()
   {
     // plugin accepted, create the proper type
     QuantaPlugin *newPlugin = 0;
-    QString pluginType = configDlg->pluginType->currentText();
-    if(pluginType == i18n("KPart"))
-      newPlugin = new QuantaKPartPlugin();
-    else if(pluginType == i18n("Command Line"))
-      newPlugin = new QuantaCmdPlugin();
-    else
-    {
-      qWarning("Tried to create unknown plugin type %s", pluginType.latin1());
-      return;
-    }
+    newPlugin = new QuantaPlugin();
 
     newPlugin->setPluginName(configDlg->pluginName->text());
     newPlugin->setFileName(configDlg->pluginFileName->text());
-    newPlugin->setType(configDlg->pluginType->currentText());
     newPlugin->setLocation(configDlg->location->text());
-    newPlugin->setArguments(configDlg->arguments->text());
     newPlugin->setOutputWindow(configDlg->outputWindow->currentText());
     newPlugin->setStandard(false);
     newPlugin->setIcon(configDlg->iconButton->icon());
@@ -132,30 +122,23 @@ void QuantaPluginEditor::configurePlugin()
     QuantaPluginConfig *configDlg = new QuantaPluginConfig(this, "pluginConfig");
     QuantaPlugin *curPlugin = m_plugins.find(key);
 
-    configDlg->pluginType->setCurrentText(curPlugin->type());
-    configDlg->updateWindows(curPlugin->type()); //FIXME : hack
     configDlg->outputWindow->setCurrentText(curPlugin->outputWindow());
     configDlg->pluginName->setText(curPlugin->pluginName());
     configDlg->pluginFileName->setText(curPlugin->fileName());
     configDlg->location->setText(curPlugin->location());
-    configDlg->arguments->setText(curPlugin->arguments());
     configDlg->iconButton->setIcon(curPlugin->icon());
     configDlg->inputBox->setCurrentItem(curPlugin->input());
-    if (curPlugin->isA("QuantaKPartPlugin"))
-        configDlg->readOnlyBox->setChecked(static_cast<QuantaKPartPlugin*>(curPlugin)->readOnlyPart());
+    configDlg->readOnlyBox->setChecked(curPlugin->readOnlyPart());
 
     if(configDlg->exec())
     {
       curPlugin->setPluginName(configDlg->pluginName->text());
       curPlugin->setFileName(configDlg->pluginFileName->text());
-      curPlugin->setType(configDlg->pluginType->currentText());
       curPlugin->setLocation(configDlg->location->text());
-      curPlugin->setArguments(configDlg->arguments->text());
       curPlugin->setOutputWindow(configDlg->outputWindow->currentText());
       curPlugin->setIcon(configDlg->iconButton->icon());
       curPlugin->setInput(configDlg->inputBox->currentItem());
-      if (curPlugin->isA("QuantaKPartPlugin"))
-          static_cast<QuantaKPartPlugin*>(curPlugin)->setReadOnlyPart(configDlg->readOnlyBox->isChecked());
+      curPlugin->setReadOnlyPart(configDlg->readOnlyBox->isChecked());
     }
 
     delete configDlg;
@@ -176,7 +159,6 @@ void QuantaPluginEditor::refreshPlugins()
     QuantaPlugin *curPlugin = it.current();
 
     newItem->setText(0, curPlugin->pluginName());
-    newItem->setText(1, curPlugin->type());
 
     QPixmap statusIcon;
     bool isValid = QuantaPlugin::validatePlugin(curPlugin);
@@ -184,12 +166,11 @@ void QuantaPluginEditor::refreshPlugins()
       statusIcon = SmallIcon("pluginValid", KGlobal::instance());
     else
       statusIcon = SmallIcon("pluginInvalid", KGlobal::instance());
-    newItem->setPixmap(2, statusIcon);
+    newItem->setPixmap(1, statusIcon);
 
-    newItem->setText(3, curPlugin->location());
-    newItem->setText(4, curPlugin->fileName());
-    newItem->setText(5, curPlugin->arguments());
-    newItem->setText(6, curPlugin->outputWindow());
+    newItem->setText(2, curPlugin->location());
+    newItem->setText(3, curPlugin->fileName());
+    newItem->setText(4, curPlugin->outputWindow());
 
     pluginList->insertItem(newItem);
   }

@@ -3,6 +3,7 @@
                              -------------------
     begin                : Mon Sep 16 2002
     copyright            : (C) 2002 by Marc Britton
+                           (C) 2003 by Andras Mantia <amantia@kde.org>
     email                : consume@optushome.com.au
  ***************************************************************************/
 
@@ -40,10 +41,6 @@ class QuantaPluginInterface : public QObject
 public:
   QuantaPluginInterface();
   ~QuantaPluginInterface();
-  /** Returns a list of the known types */
-  static QStringList pluginTypes();
-  /** Returns the list of the available output windows */
-  static QStringList outputWindows(const QString &);
   /** Reads the rc file */
   virtual void readConfig();
   /** Write the rc file */

@@ -6,4 +6,7 @@
 <action shortcut="" icon="quick_start.png" type="script" tooltip="Kommander Quick Start Dialog" name="tag_quick_start" text="Quick Start Dialog" >
 <script output="new" error="message" input="none" >kmdr-executor %scriptdir/htmlquickstart.kmdr</script>
 </action>
+<action shortcut="" icon="kompare" type="script" tooltip="" name="kompare_script" text="Kompare" >
+<script output="message" error="message" input="none" >kompare</script>
+</action>
 </actions>

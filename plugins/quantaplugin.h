@@ -3,6 +3,7 @@
                              -------------------
     begin                : Mon Sep 16 2002
     copyright            : (C) 2002 by Marc Britton
+                           (C) 2003 by Andras Mantia <amantia@kde.org>
     email                : consume@optushome.com.au
  ***************************************************************************/
 
@@ -19,6 +20,7 @@
 #define QUANTAPLUGIN_H
 
 /* KDE INCLUDES */
+#include <kparts/part.h>
 
 /* QT INCLUDES */
 #include <qobject.h>
@@ -36,27 +38,26 @@ class QuantaPlugin : public QObject
   Q_OBJECT
 public:
   QuantaPlugin();
-  QuantaPlugin(const QString &, const QString &, const QString &, const QString &, const QString &, const QString &, const QString &);
   ~QuantaPlugin();
   virtual bool isRunning() const;
   /** Gets the superficial plugin name */
   virtual QString pluginName() const;
   /** Gets the location of the plugin */
   virtual QString location() const;
-  /** Gets the plugin's type */
-  virtual QString type() const;
   /** Gets the plugin's standard attribute */
   virtual bool isStandard() const;
-  /** Gets the program's arguments */
-  virtual QString arguments() const;
   /** Gets the output window */
   virtual QString outputWindow() const;
   /** Returns true if the plugin specified by a_plugin is valid, false otherwise */
   static bool validatePlugin(QuantaPlugin *);
   /** Returns true if the options of a plugin are valid, otherwise false */
-  static bool validatePluginInfo(const QString &, const QString &, const QString &,
-              const QString &, const QString &, const QString &);
+  static bool validatePluginInfo(const QString &, const QString &,
+              const QString &, const QString &);
 
+  virtual void addWidget();
+  virtual void removeWidget();
+  void showGui(bool show);
+  QWidget *widget();
   KToggleAction *m_action;
 public slots:
   /** Sets whether the plugin is running or not */
@@ -73,10 +74,6 @@ public slots:
   virtual void setPluginName(const QString &);
   /** Sets the output window */
   virtual void setOutputWindow(const QString &);
-  /** Sets the plugin's arguments */
-  virtual void setArguments(const QString &);
-  /** Sets the plugin's type */
-  virtual void setType(const QString &);
   /** Sets the plugin's standard attribute */
   virtual void setStandard(bool isStandard);
   /** Sets the location of the plugin */
@@ -97,6 +94,8 @@ public slots:
   void setStandardName(const QString& a_stdName);
   /** No descriptions */
   QString standardName();
+  void setReadOnlyPart(bool a_readOnlyPart) {m_readOnlyPart = a_readOnlyPart;}
+  bool readOnlyPart() {return m_readOnlyPart;}
 signals:
   void pluginStarted();
   void pluginStopped();
@@ -105,14 +104,15 @@ protected:
   QString m_fileName;
   QString m_name;
   QString m_location;
-  QString m_type;
   QString m_icon;
-  QString m_arguments;
   QString m_outputWindow;
   int m_input;
   /** True, if it is not a user added plugin. Special handling code may be necessary for standard plugins. */
   bool m_standard;
   bool m_isRunning;
+  KParts::ReadOnlyPart *m_part;
+  bool guiVisible;
+  bool m_readOnlyPart;
 private: // Private attributes
   /**  */
   QString m_standardName;

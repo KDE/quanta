@@ -476,12 +476,10 @@ void QuantaApp::slotFileClose()
     QDictIterator<QuantaPlugin> it(plugins);
 
     for(;it.current() != 0;++it) {
-      QuantaKPartPlugin *curPlugin = dynamic_cast <QuantaKPartPlugin *>(it.current());
-      if (curPlugin) {
-        QWidget *pluginWidget = curPlugin->widget();
-        if (pluginWidget && pluginWidget == kietWidget) {
-          curPlugin->unload();
-        }
+      QuantaPlugin *curPlugin = it.current();
+      QWidget *pluginWidget = curPlugin->widget();
+      if (pluginWidget && pluginWidget == kietWidget) {
+        curPlugin->unload();
       }
    }
  }
@@ -801,20 +799,20 @@ void QuantaApp::slotClosePage(QWidget *w)
 {
   QTabWidget *writeTab = m_view->writeTab();
   QString tabTitle = writeTab->tabLabel(w);
-  QuantaKPartPlugin *plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
+  QuantaPlugin *plugin = m_pluginInterface->plugin(tabTitle);
   if (plugin)
   {
     plugin->unload();
     plugin->m_action->setChecked(false);
   } else
   {
-      QWidget *oldPage = writeTab->currentPage();
-      if (oldPage != w)
-          writeTab->showPage(w);
-      m_doc->closeDocument();
-      if (oldPage != w)
-          writeTab->showPage(oldPage);
-      reparse(true);
+    QWidget *oldPage = writeTab->currentPage();
+    if (oldPage != w)
+        writeTab->showPage(w);
+    m_doc->closeDocument();
+    if (oldPage != w)
+        writeTab->showPage(oldPage);
+    reparse(true);
   }
   if (!writeTab->currentPage())
   {
@@ -826,7 +824,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 {
 //remove the GUI of the plugin, if the last visible tab was a plugin
   QString tabTitle =m_view->writeTab()->tabLabel(m_view->oldTab);
-  QuantaKPartPlugin *plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
+  QuantaPlugin *plugin = m_pluginInterface->plugin(tabTitle);
   if (plugin)
   {
     plugin->showGui(false);
@@ -843,7 +841,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   {
 //add the GUI for the currently visible plugin
     tabTitle = m_view->writeTab()->tabLabel(w);
-    plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
+    plugin = m_pluginInterface->plugin(tabTitle);
     if (plugin)
        plugin->showGui(true);
     return;

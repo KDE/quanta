@@ -1647,7 +1647,8 @@ void Document::checkDirtyStatus()
     {
       createTempFile();
       DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, false, this);
-      if (!m_pluginInterface || !(m_pluginInterface->pluginAvailable("kompare")))
+      QString kompareStr = KStandardDirs::findExe("kompare");
+      if (kompareStr.isEmpty())
       {
         dlg->buttonCompare->setEnabled(false);
         dlg->buttonLoad->setChecked(true);

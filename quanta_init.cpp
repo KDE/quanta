@@ -2221,7 +2221,7 @@ void QuantaApp::recoverCrashed()
           delete dlg->warningLabel;
           dlg->warningLabel = 0L;
           dlg->adjustSize();
-          if (!m_pluginInterface || !(m_pluginInterface->pluginAvailable("kompare")))
+          if (!KStandardDirs::findExe("kompare").isEmpty())
           {
             dlg->buttonCompare->setEnabled(false);
             dlg->buttonLoad->setChecked(true);

@@ -3,6 +3,7 @@
                              -------------------
     begin                : Mon Sep 16 2002
     copyright            : (C) 2002 by Marc Britton
+                           (C) 2003 by Andras Mantia <amantia@kde.org>
     email                : consume@optushome.com.au
  ***************************************************************************/
 
@@ -20,37 +21,41 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kaction.h>
+#include <kparts/componentfactory.h>
+#include <kparts/part.h>
+#include <klocale.h>
+#include <kdockwidget.h>
+#include <kdebug.h>
+#include <kmessagebox.h>
 
 /* QT INCLUDES */
 #include <qstring.h>
 #include <qfile.h>
 #include <qfileinfo.h>
+#include <qwidget.h>
+#include <qwidgetstack.h>
+#include <qstringlist.h>
+#include <qobject.h>
 
 /* OTHER INCLUDES */
 #include "quantaplugin.h"
 #include "../resource.h"
 #include "../quanta.h"
+#include "../quantaview.h"
+#include "../document.h"
+#include "../quantacommon.h"
+#include "../resource.h"
+#include "../messages/messageoutput.h"
+#include "../project/project.h"
+
 
 QuantaPlugin::QuantaPlugin()
  : m_isRunning(false)
 {
+ guiVisible = false;
+ m_readOnlyPart = true;
  m_action = 0L;
  m_icon = "";
-}
-
-QuantaPlugin::QuantaPlugin(const QString &a_name, const QString &a_type,
-  const QString &a_location, const QString &a_fileName, const QString &a_arguments,
-    const QString &a_outputWindow, const QString &a_icon)
-{
-  setPluginName(a_name);
-  setIcon(a_icon);
-  setType(a_type);
-  setLocation(a_location);
-  setFileName(a_fileName);
-  setArguments(a_arguments);
-  setOutputWindow(a_outputWindow);
-  m_standard = false;
-  load();
 }
 
 QuantaPlugin::~QuantaPlugin()
@@ -85,12 +90,111 @@ QString QuantaPlugin::location() const
 
 bool QuantaPlugin::load()
 {
-    return FALSE;
+  if(isLoaded())
+    return false;
+
+  QString loc = location();
+  if(loc.isEmpty())
+  {
+    KStandardDirs *dirs = QuantaCommon::pluginDirs("lib");
+    loc = dirs->findResource("lib", fileName());
+    delete dirs;
+  }
+  else
+  {
+    loc += QString("/") + fileName();
+  }
+
+  QFileInfo partInfo(loc);
+  QString ow = outputWindow();
+  QWidget *targetWidget;
+  if(ow == i18n("Editor Tab"))
+  {
+    targetWidget = quantaApp->view();
+  } else
+  if(ow == i18n("Editor Frame"))
+  {
+    targetWidget = quantaApp->rightWidget();
+  }
+  else if(ow == i18n("Message Frame"))
+  {
+    targetWidget = quantaApp->bottomWidget();
+  }
+  else
+  {
+    KMessageBox::error(quantaApp, i18n("Invalid output window setting!"));
+    return false;
+  }
+  if (m_readOnlyPart)
+    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), targetWidget, 0, targetWidget, 0 );
+  else
+    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadWritePart>(partInfo.baseName().latin1(), targetWidget, 0, targetWidget, 0 );
+  if(!m_part)
+  {
+    KMessageBox::error(quantaApp, i18n("<qt>The <b>%1</b> plugin could not be loaded!<br>Possible reasons are:<br>    - <b>%2</b> is not installed;<br>    - the file <i>%3</i> is not installed or it is not reachable.").arg(m_name).arg(m_name).arg(m_fileName));
+    return false;
+  }
+  return true;
 }
 
 bool QuantaPlugin::run()
 {
-    return FALSE;
+  if(!isLoaded())
+    load();
+
+  if(isLoaded())
+  {
+    bool result = true;
+    if (quantaApp->view()->writeExists())
+    {
+      switch (m_input)
+      {
+        case 1: { result = m_part->openURL(quantaApp->view()->write()->url());
+                  break;
+                }
+        case 2: { KURL url = quantaApp->view()->write()->url();
+                  url.setPath(url.directory());
+                  url.adjustPath(1);
+                  result = m_part->openURL(url);
+                  break;
+                }
+        case 3: { KURL url;
+                  if (quantaApp->project()->hasProject() &&
+                      quantaApp->project()->contains(quantaApp->view()->write()->url()))
+                      url = quantaApp->projectBaseURL();
+                  else
+                  {
+                    url = quantaApp->view()->write()->url();
+                    url.setPath(url.directory());
+                    url.adjustPath(1);
+                  }
+                  result = m_part->openURL(url);
+                  break;
+                }
+        default: ;
+      }
+    } else
+    {
+      if (m_input == 3 && quantaApp->project()->hasProject()) //open project dir
+          result = m_part->openURL(quantaApp->projectBaseURL());
+    }
+    if (!result)
+    {
+      unload();
+      return false;
+    }
+    showGui(true);
+    addWidget();
+    setRunning(true);
+    connect( m_part, SIGNAL(setStatusBarText(const QString &)),
+           quantaApp, SLOT(slotStatusMsg( const QString & )));
+
+
+    emit pluginStarted();
+
+    return true;
+  }
+  return false;
 }
 
 bool QuantaPlugin::toggle()
@@ -109,29 +213,6 @@ bool QuantaPlugin::toggle()
     }
     return result;
   }
-}
-
-
-/** Sets the plugin's type */
-void QuantaPlugin::setType(const QString &a_type)
-{
-  m_type = a_type;
-}
-
-/** Gets the plugin's type */
-QString QuantaPlugin::type() const
-{
-  return m_type;
-}
-
-void QuantaPlugin::setArguments(const QString &a_arguments)
-{
-  m_arguments = a_arguments;
-}
-
-QString QuantaPlugin::arguments() const
-{
-  return m_arguments;
 }
 
 /** Returns the file name of the plugin */
@@ -162,16 +243,16 @@ bool QuantaPlugin::validatePlugin(QuantaPlugin *a_plugin)
 {
   if(a_plugin)
   {
-    return QuantaPlugin::validatePluginInfo(a_plugin->pluginName(), a_plugin->type(),
-                         a_plugin->location(), a_plugin->fileName(), a_plugin->arguments(),
+    return QuantaPlugin::validatePluginInfo(a_plugin->pluginName(),
+                         a_plugin->location(), a_plugin->fileName(),
                          a_plugin->outputWindow());
   }
   return FALSE;
 }
 
 /** Returns true if the information of a plugin is valid, otherwise false */
-bool QuantaPlugin::validatePluginInfo(const QString & /*a_name*/, const QString &a_type,
-    const QString &a_location, const QString &a_fileName, const QString &/*a_arguments*/, const QString &/*a_outputWindow*/)
+bool QuantaPlugin::validatePluginInfo(const QString & /*a_name*/,
+    const QString &a_location, const QString &a_fileName, const QString &/*a_outputWindow*/)
 {
   bool valid = true;
   // look the file up if location is null
@@ -186,22 +267,10 @@ bool QuantaPlugin::validatePluginInfo(const QString & /*a_name*/, const QString 
   }
   else
   {
-    // lookup
-    QString lookupType;
-    if(a_type == i18n("KPart"))
-      lookupType = "lib";
-    else if(a_type == i18n("Command Line"))
-      lookupType = "exe";
-    else
-    {
-      qWarning("QuantaPlugin::validatePluginInfo - Tried to lookup invalid plugin type \'%s\'", a_type.latin1());
-      valid = false;
-    }
-
     if (valid)
     {
-      KStandardDirs *dirs = QuantaCommon::pluginDirs(lookupType);
-      if(dirs->findResource(lookupType, a_fileName).isNull())
+      KStandardDirs *dirs = QuantaCommon::pluginDirs("lib");
+      if(dirs->findResource("lib", a_fileName).isNull())
         valid = false;
       delete dirs;
     }
@@ -212,12 +281,26 @@ bool QuantaPlugin::validatePluginInfo(const QString & /*a_name*/, const QString 
 /** Returns whether the plugin is loaded or not */
 bool QuantaPlugin::isLoaded()
 {
-  return FALSE;
+  return m_part != 0;
 }
 
 bool QuantaPlugin::unload()
 {
-  return FALSE;
+  if(!isLoaded())
+    return FALSE;
+
+  disconnect( m_part, SIGNAL(setStatusBarText(const QString &)),
+           quantaApp, SLOT(slotStatusMsg( const QString & )));
+
+  showGui(false);
+  removeWidget();
+  delete m_part;
+  m_part = 0;
+  setRunning(false);
+
+  emit pluginStopped();
+
+  return true;
 }
 
 bool QuantaPlugin::isRunning() const
@@ -262,6 +345,73 @@ void QuantaPlugin::setIcon(const QString& a_icon)
 {
   m_icon = a_icon;
   if (m_action) m_action->setIcon(a_icon);
+}
+
+void QuantaPlugin::addWidget()
+{
+  QString ow = outputWindow();
+  if(ow == i18n("Message Frame"))
+  {
+    QWidgetStack *stack = quantaApp->bottomWidget();
+    stack->addWidget(m_part->widget(), 3);
+    stack->raiseWidget(m_part->widget());
+  }
+  else if (ow == i18n("Editor Frame"))
+  {
+    QWidgetStack *stack = quantaApp->rightWidget();
+    stack->addWidget(m_part->widget(), 3);
+    stack->raiseWidget(m_part->widget());
+  } else if (ow == i18n("Editor Tab"))
+  {
+    QuantaView *view = quantaApp->view();
+    view->addWrite(m_part->widget(), m_name);
+    view->writeTab()->showPage(m_part->widget());
+  }
+
+  m_part->widget()->show();
+}
+
+void QuantaPlugin::removeWidget()
+{
+  QString ow = outputWindow();
+  if(ow == i18n("Message Frame"))
+  {
+    QWidgetStack *stack = quantaApp->bottomWidget();
+    stack->removeWidget(m_part->widget());
+    stack->raiseWidget(0);
+  }
+  else if(ow == i18n("Editor Frame"))
+  {
+    QWidgetStack *stack = quantaApp->rightWidget();
+    stack->removeWidget(m_part->widget());
+    stack->raiseWidget(0);
+  }
+  else if(ow == i18n("Editor Tab"))
+  {
+    quantaApp->view()->writeTab()->removePage(m_part->widget());
+  }
+}
+
+void QuantaPlugin::showGui(bool show)
+{
+  if (show)
+  {
+    if (!guiVisible)
+       quantaApp->guiFactory()->addClient(m_part);
+  } else
+  {
+    quantaApp->guiFactory()->removeClient(m_part);
+  }
+  guiVisible = show;
+}
+
+QWidget *QuantaPlugin::widget()
+{
+  if (isLoaded()) {
+    return m_part->widget();
+  } else {
+    return NULL;
+  }
 }
 
 #include "quantaplugin.moc"

@@ -3,6 +3,7 @@
                              -------------------
     begin                : Sat Sep 21 2002
     copyright            : (C) 2002 by Marc Britton
+                           (C) 2003 by Andras Mantia <amantia@kde.org>
     email                : consume@optushome.com.au
  ***************************************************************************/
 
@@ -43,11 +44,9 @@ QuantaPluginConfig::QuantaPluginConfig(QWidget *a_parent, const char *a_name)
   connect(pluginName, SIGNAL(textChanged(const QString &)), this, SLOT(nameChanged(const QString &)));
   connect(locationButton, SIGNAL(clicked()), this, SLOT(selectLocation()));
 
-  connect(pluginType, SIGNAL(activated(const QString &)), this, SLOT(updateWindows(const QString &)));
-
-  pluginType->insertStringList(QuantaPluginInterface::pluginTypes());
-  updateWindows(pluginType->currentText()); //force an update
-
+  QStringList windows;
+  windows << i18n("Editor Tab") << i18n("Editor Frame") << i18n("Message Frame");
+  outputWindow->insertStringList(windows);
   iconButton->setStrictIconSize(false);
 //  iconButton->
 }
@@ -60,9 +59,7 @@ void QuantaPluginConfig::accept()
 {
   if(validateCheckBox->isChecked())
   {
-    bool isValid = QuantaPlugin::validatePluginInfo(pluginName->text(),
-                   pluginType->currentText(), location->text(), pluginFileName->text(),
-                   arguments->text(), outputWindow->currentText());
+    bool isValid = QuantaPlugin::validatePluginInfo(pluginName->text(), location->text(), pluginFileName->text(), outputWindow->currentText());
 
       if(!isValid)
       {
@@ -87,31 +84,9 @@ void QuantaPluginConfig::selectLocation()
 
 void QuantaPluginConfig::nameChanged(const QString &a_text)
 {
-  QString type = pluginType->currentText();
-
   QString text = a_text;
-  if(type == i18n("KPart"))
-    text = QString("lib") + text + ".so";
-  else if(type == i18n("Command Line"))
-    ;
-
-  else
-    qWarning("QuantaPluginConfig::nameChanged - Unknown plugin type \'%s\'", type.latin1());
-
+  text = "lib" + text + ".so";
   pluginFileName->setText(text.lower());
 }
-
-/** Updates the windows combobox based on the type */
-void QuantaPluginConfig::updateWindows(const QString &a_type)
-{
-  if(a_type == i18n("KPart"))
-    widgetStack->raiseWidget(1);
-  else
-    widgetStack->raiseWidget(0);
-  QStringList windows = QuantaPluginInterface::outputWindows(a_type);
-  outputWindow->clear();
-  outputWindow->insertStringList(windows);
-}
-
 
 #include "quantapluginconfig.moc"

@@ -3,6 +3,7 @@
                              -------------------
     begin                : Sat Sep 21 2002
     copyright            : (C) 2002 by Marc Britton
+                           (C) 2003 by Andras Mantia <amantia@kde.org>
     email                : consume@optushome.com.au
  ***************************************************************************/
 
@@ -39,8 +40,6 @@ public slots:
   void selectLocation();
   /** Updates other widgets based on the name */
   void nameChanged(const QString &);
-  /** Updates the windows combobox based on the type */
-  void updateWindows(const QString &);
 };
 
 #endif

@@ -10,17 +10,8 @@ Type=KPart
 Input=3
 
 [General]
-Plugins=KFileReplace, kompare,CVS Management (Cervisia),XSLT debugger
+Plugins=KFileReplace, CVS Management (Cervisia),XSLT debugger
 SearchPaths=
-
-[kompare]
-Arguments=
-FileName=kompare
-Icon=kompare
-Location=
-OutputWindow=Message Window
-Standard=false
-Type=Command Line
 
 [KFileReplace]
 Arguments=

@@ -3,6 +3,7 @@
                              -------------------
     begin                : Mon Sep 16 2002
     copyright            : (C) 2002 by Marc Britton
+                           (C) 2003 by Andras Mantia <amantia@kde.org>
     email                : consume@optushome.com.au
  ***************************************************************************/
 
@@ -20,6 +21,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kmessagebox.h>
 
 /* QT INCLUDES */
 #include <qdict.h>
@@ -70,9 +72,7 @@ void QuantaPluginInterface::readConfigFile(const QString& configFile)
     config->setGroup(*it);
 
     QuantaPlugin *newPlugin = 0;
-    QString pluginType = config->readEntry("Type", "Command Line");
-    if (pluginType == "KPart") pluginType = i18n("KPart");
-    if (pluginType == "Command Line") pluginType = i18n("Command Line");
+    QString pluginType = config->readEntry("Type", "KPart");
     bool isStandard = config->readBoolEntry("Standard",false);
 /*    if (isStandard)
     {
@@ -83,33 +83,33 @@ void QuantaPluginInterface::readConfigFile(const QString& configFile)
       }
     } else */
     {
-      if(pluginType == i18n("KPart"))
-        newPlugin = new QuantaKPartPlugin();
-      else if(pluginType == i18n("Command Line"))
-        newPlugin = new QuantaCmdPlugin();
-    }
-    if (!newPlugin)
-    {
-      qWarning("Unknown plugin type: %s", pluginType.latin1());
-      continue;
+      if (pluginType == "Command Line")
+      {
+        KMessageBox::error(quantaApp, i18n("<qt><b>%1</b> is a command line plugin. Command line plugins are not supported anymore.<br>Please use script actions instead of them.</qt>").arg(*it), i18n("Unsupported plugin type"));
+        continue;
+      }
+
+      newPlugin = new QuantaPlugin();
     }
     newPlugin->setStandard(isStandard);
     newPlugin->setPluginName(*it);
     newPlugin->setFileName(config->readEntry("FileName"));
     newPlugin->setLocation(config->readEntry("Location"));
-    newPlugin->setType(pluginType);
-    newPlugin->setArguments(config->readEntry("Arguments"));
     newPlugin->setIcon(config->readEntry("Icon"));
     QString type = config->readEntry("OutputWindow");
-    if (type == "Editor Tab" || type == "Editor View") type = i18n("Editor Tab"); //TODO: Remove the check against Editor View after 3.2
-    if (type == "Editor Frame") type = i18n("Editor Frame");
-    if (type == "Message Frame" || type == "Output Dock") type = i18n("Message Frame");//TODO: Remove the check against Output Dock after 3.2
-    if (type == "Message Window") type = i18n("Message Window");
-    if (type == "Konsole") type = i18n("Konsole");
+    if (type == "Editor Tab" || type == "Editor View")
+      type = i18n("Editor Tab"); //TODO: Remove the check against Editor View after 3.2
+    if (type == "Editor Frame")
+      type = i18n("Editor Frame");
+    if (type == "Message Frame" || type == "Output Dock")
+      type = i18n("Message Frame");//TODO: Remove the check against Output Dock after 3.2
+    if (type == "Message Window")
+      type = i18n("Message Window");
+    if (type == "Konsole")
+      type = i18n("Konsole");
     newPlugin->setOutputWindow(type);
     newPlugin->setInput(config->readNumEntry("Input", 0));
-    if (newPlugin->isA("QuantaKPartPlugin"))
-        static_cast<QuantaKPartPlugin*>(newPlugin)->setReadOnlyPart(config->readBoolEntry("ReadOnly", true));
+    newPlugin->setReadOnlyPart(config->readBoolEntry("ReadOnly", true));
 
     m_plugins.insert(*it, newPlugin);
   }
@@ -150,14 +150,10 @@ void QuantaPluginInterface::writeConfig()
     if(curPlugin)
     {
       config->writeEntry("FileName", curPlugin->fileName());
-      QString type =  curPlugin->type();
-      if (type == i18n("KPart")) type = "KPart";
-      if (type == i18n("Command Line")) type = "Command Line";
-      config->writeEntry("Type", type);
+      config->writeEntry("Type", "KPart"); //not used, but just to be compatible
       config->writeEntry("Location", curPlugin->location());
-      config->writeEntry("Arguments", curPlugin->arguments());
       config->writeEntry("Icon", curPlugin->icon());
-      type = curPlugin->outputWindow();
+      QString type = curPlugin->outputWindow();
       if (type == i18n("Editor Tab")) type = "Editor Tab";
       if (type == i18n("Editor Frame")) type = "Editor Frame";
       if (type == i18n("Message Frame")) type = "Message Frame";
@@ -167,8 +163,7 @@ void QuantaPluginInterface::writeConfig()
       config->writeEntry("Input", curPlugin->input());
       config->writeEntry("Standard", curPlugin->isStandard());
       if (curPlugin->isStandard()) config->writeEntry("Standard Name", curPlugin->standardName());
-      if (curPlugin->isA("QuantaKPartPlugin"))
-          config->writeEntry("ReadOnly", static_cast<QuantaKPartPlugin*>(curPlugin)->readOnlyPart());
+      config->writeEntry("ReadOnly", curPlugin->readOnlyPart());
     }
   }
   config->sync();
@@ -223,32 +218,6 @@ void QuantaPluginInterface::setSearchPaths(QStringList a_searchPaths)
 QStringList QuantaPluginInterface::searchPaths()
 {
   return qConfig.pluginSearchPaths;
-}
-
-QStringList QuantaPluginInterface::pluginTypes()
-{
-  QStringList types;
-  types << i18n("KPart");
-  types << i18n("Command Line");
-
-  return types;
-}
-
-QStringList QuantaPluginInterface::outputWindows(const QString &a_type)
-{
-  QStringList windows;
-
-  if(a_type == i18n("KPart"))
-  {
-    windows << i18n("Editor Tab") << i18n("Editor Frame") << i18n("Message Frame"); // TODO
-  }
-  else if(a_type == i18n("Command Line"))
-  {
-    windows << i18n("Message Window") << i18n("Konsole") << i18n("None");
-  }
-  else
-    qWarning("QuantaPluginInterface::outputWindows - Unknown type %s", a_type.latin1());
-  return windows;
 }
 
 /** Gets the plugin specified by a_name */
