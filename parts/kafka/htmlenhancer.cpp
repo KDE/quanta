@@ -133,6 +133,26 @@ bool HTMLEnhancer::enhanceNode(Node *node, DOM::Node parentDNode, DOM::Node next
 			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
 		}
 	}
+	
+	//THEN if it is a comment, add a little icon ;o)
+	if(node->tag->type == Tag::Comment && m_showIconForScripts)
+	{
+#ifdef LIGHT_DEBUG
+		kdDebug(25001)<< "HTMLTranslator::translateNode() - Comment" << endl;
+#endif
+		filename = m_stddirs->findResource("data", "kafkapart/pics/comment.png" );
+		if(!filename.isEmpty())
+		{
+			//FIXME DTD!
+			domNode = kafkaCommon::createDomNode("IMG", m_wkafkapart->defaultDTD(),
+				m_wkafkapart->getKafkaWidget()->document());
+			kafkaCommon::editDomNodeAttribute(domNode, "IMG", m_wkafkapart->defaultDTD(), "src",
+				filename, m_wkafkapart->getKafkaWidget()->document());
+			if(!kafkaCommon::insertDomNode(domNode, parentDNode, nextDNode))
+				return false;
+			m_wkafkapart->connectDomNodeToQuantaNode(domNode, node);
+		}
+	}
 
 	//THEN add a TBODY tag if necessary
 	if(node->rootNode() && node->rootNode()->nodeName().string().lower() == "table")
