@@ -1213,10 +1213,8 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 		return;
 	}
 
-#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
 	if(m_doc->editIfExt)
 		m_doc->editIfExt->editBegin();
-#endif
 	sourceIterator = documentIterator;
 
 	updateClosing = qConfig.updateClosingTags;
@@ -1263,11 +1261,8 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 		m_doc->editIf->lineLength(m_doc->editIf->numLines() - 1));
 	m_doc->editIf->insertText(0, 0, allText);
 	//m_doc->editIf->setText(allText);
-#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
-
 	if(m_doc->editIfExt)
 		m_doc->editIfExt->editEnd();
-#endif
 	if(syncQuantaCursor)
 		syncQuantaCursorAndSelection();
 

@@ -31,10 +31,6 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/editinterface.h>
 
-#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
-#include <ktexteditor/editinterfaceext.h>
-#endif
-
 #include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/codecompletioninterface.h>
@@ -42,6 +38,7 @@
 
 
 #ifdef BUILD_KAFKAPART
+#include <ktexteditor/editinterfaceext.h>
 #include "parts/kafka/undoredo.h"
 #endif
 #include "parser/qtag.h"
@@ -183,7 +180,7 @@ work correctly. */
   KTextEditor::ViewCursorInterface *viewCursorIf;
   KTextEditor::SelectionInterface *selectionIf;
   KTextEditor::EditInterface *editIf;
-#if 0 //TODO: Enable when the editinterfaceext is in the CVS...
+#ifdef BUILD_KAFKAPART
   KTextEditor::EditInterfaceExt *editIfExt;
 #endif
   KTextEditor::CursorInterface *cursorIf;
