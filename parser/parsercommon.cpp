@@ -168,6 +168,8 @@ Node* createScriptTagNode(Document *write, const AreaStruct &area, const QString
   tag->dtd = DTDs::ref()->find(dtd->specialAreaNames[areaName]);
   if (!tag->dtd)
       tag->dtd = dtd;
+  if (!tag->dtd)
+      kdDebug(24000) << "createScriptTagNode: dtd is 0L!!! for " << areaName << endl;
   tag->name = i18n("%1 block").arg(dtd->specialAreaNames[areaName].upper());
   tag->type = Tag::ScriptTag;
 

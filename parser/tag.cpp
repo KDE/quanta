@@ -215,7 +215,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
           pos++;
     sPos = pos++;
  }
- 
+
  //add the tag to the document usertag list if it's not present in the dtd
   if (m_tagStr.startsWith("<") && m_tagStr.endsWith(">") && dtd)
   {

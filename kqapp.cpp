@@ -100,13 +100,13 @@ KQApplication::~KQApplication()
 {
 }
 
+
 KQUniqueApplication::KQUniqueApplication()
  : KUniqueApplication()
 {
   KGlobal::dirs()->addPrefix(PREFIX);
   dcopClient()->registerAs("quanta", false);
 }
-
 
 KQUniqueApplication::~KQUniqueApplication()
 {
@@ -123,7 +123,7 @@ int KQUniqueApplication::newInstance()
 #else
 	KWin::activateWindow( mainWidget()->winId() );
 #endif
-	  
+
     quantaApp = static_cast<QuantaApp*>(mainWidget());
     for (int i = 0; i < args->count(); i++)
     {

@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2001-2003 by Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -606,7 +606,7 @@ void QuantaApp::slotStatusMsg(const QString &msg)
   statusBar()->changeItem(" " + KStringHandler::csqueeze(msg, progressBar->x() / statusBar()->fontMetrics().width('a')), IDS_STATUS);
 #endif
   statusBar()->repaint();
-  kapp->processEvents();
+  kapp->processEvents(QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers);
   statusbarTimer->start(10000, true);
 }
 

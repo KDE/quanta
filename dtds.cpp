@@ -1,8 +1,8 @@
 /***************************************************************************
-                             dtds.cpp  
+                             dtds.cpp
                              -------------------
     begin                : 12.02.2004  (extract from quanta_init and others)
-    
+
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev <pdima@users.sourceforge.net,yshurik@linuxfan.com>
                            (C) 2001-2003 by Andras Mantia <amantia@kde.org>
                            (C) 2000, 2003 by Eric Laffoon <sequitur@kde.org>
@@ -48,11 +48,12 @@
 const QString m_rcFilename("description.rc");
 
 /**
-  This constructor reads the dictionary of known dtd's, the attributes and tags will be loaded 
+  This constructor reads the dictionary of known dtd's, the attributes and tags will be loaded
   on the first access to one dtd.
 */
 DTDs::DTDs()
 {
+  connect(this, SIGNAL(hideSplash()), quantaApp, SLOT(slotHideSplash()));
 //  kdDebug(24000) << "dtds::dtds" << endl;
   m_dict = new QDict<DTDStruct>(119, false); //optimized for max 119 DTD. This should be enough.
   m_dict->setAutoDelete(true);
@@ -91,13 +92,13 @@ DTDs::~DTDs()
   delete m_doc;
 }
 
-  
 
-void DTDs::removeDTD(DTDStruct *dtd) 
+
+void DTDs::removeDTD(DTDStruct *dtd)
 {
   if (dtd)
   {
-    delete dtd->tagsList; 
+    delete dtd->tagsList;
     dtd->tagsList = 0L;
     delete dtd->commonAttrs;
     dtd->commonAttrs = 0L;
@@ -120,7 +121,7 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
   if (m_dict->find(dtdName.lower()))
   {
     delete dtdConfig;
-    kdDebug(24000) << "dtds::readTagDir from " << dirName 
+    kdDebug(24000) << "dtds::readTagDir from " << dirName
                    << " canceled, DTD " << dtdName << " found in memory" << endl;
     return false;
   }
@@ -153,41 +154,41 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
     int pos = tmpStr.find('(');
     dtd->definitionTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
   }
-  
-    
+
+
   m_dict->insert(dtdName.lower(), dtd); //insert the structure into the dictionary
   delete dtdConfig;
- 
-  if (!loadAll) 
+
+  if (!loadAll)
   {
     dtd->loaded = false;
     return true;
-  }  
-  
+  }
+
   dtd->loaded = readTagDir2(dtd);
   return dtd->loaded;
 }
 
 
 /** Reads the tag files and the description.rc from dtd in order to
-    build up the internal DTD and tag structures.     
+    build up the internal DTD and tag structures.
     */
 bool DTDs::readTagDir2(DTDStruct *dtd)
 {
 //  kdDebug(24000) << "dtds::readTagDir2:" << dtd->name << " at " << dtd->fileName << endl;
-    
+
   if (!QFile::exists(dtd->fileName)) return false;
 
   kapp->setOverrideCursor( QCursor(Qt::WaitCursor) );
-  quantaApp->slotStatusMsg(i18n("loading DTD's..."));
+//  quantaApp->slotStatusMsg(i18n("Loading DTD's..."));
 
   KConfig *dtdConfig = new KConfig(dtd->fileName, true);
-  
+
   //read the general DTD info
   dtdConfig->setGroup("General");
   dtd->commonAttrs = new AttributeListDict();
   dtd->commonAttrs->setAutoDelete(true);
-  
+
   bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
   dtd->url = dtdConfig->readEntry("URL");
   dtd->doctypeStr = dtdConfig->readEntry("DoctypeString");
@@ -199,11 +200,11 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   dtd->doctypeStr.prepend(' ');
   dtd->inheritsTagsFrom = dtdConfig->readEntry("Inherits").lower();
-  
+
   dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");
   dtd->caseSensitive = caseSensitive;
   int numOfTags = 0;
-  
+
   //read the attributes for each common group
   QStrList * groupList = new QStrList();
   dtdConfig->readListEntry("Groups", *groupList); //read the common groups
@@ -212,7 +213,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     AttributeList *commonAttrList = new AttributeList;      //no need to delete it
     commonAttrList->setAutoDelete(true);
     QString groupName = QString(groupList->at(i)).stripWhiteSpace();
-  
+
     dtdConfig->setGroup(groupName);
     QStrList *attrList = new QStrList();
     dtdConfig->readListEntry("Attributes", * attrList);
@@ -226,11 +227,11 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       commonAttrList->append(attr);
     }
     delete attrList;
-  
+
     dtd->commonAttrs->insert(groupName, commonAttrList);
   }
   delete groupList;
-  
+
   QTagList *tagList = new QTagList(119, false); //max 119 tag in a DTD
   tagList->setAutoDelete(true);
   //read all the tag files
@@ -248,7 +249,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
       numOfTags += readTagFile(tmpStr, dtd, tagList);
     }
   }
-  
+
   //read the toolbars
   dtdConfig->setGroup("Toolbars");
   tmpStr = dtdConfig->readPathEntry("Location"); //holds the location of the toolbars
@@ -261,7 +262,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   {
     dtd->toolbars[i] = tmpStr + dtd->toolbars[i].stripWhiteSpace() + toolbarExtension;
   }
-  
+
   //read the extra tags and their attributes
   dtdConfig->setGroup("Extra tags");
   dtd->defaultAttrType = dtdConfig->readEntry("DefaultAttrType","input");
@@ -274,7 +275,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   {
     QTag *tag = new QTag();
     tag->setName(QString(extraTagsList.at(i)).stripWhiteSpace());
-  
+
     tmpStr = (dtd->caseSensitive) ? tag->name() : tag->name().upper();
     if (tagList->find(tmpStr)) //the tag is already defined in a .tag file
     {
@@ -335,10 +336,10 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   dtd->tagsList = tagList;
   dtd->tagsList->setAutoDelete(true);
-  
-  
+
+
   /**** Code for the new parser *****/
-  
+
   dtdConfig->setGroup("Parsing rules");
   //Which DTD can be present in this one?
   dtd->insideDTDs = dtdConfig->readListEntry("MayContain");
@@ -389,7 +390,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     int pos = tmpStr.find('(');
     dtd->specialTags[tmpStr.left(pos).stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1).stripWhiteSpace();
   }
-  
+
   //static const QString quotationStr = "\\\\\"|\\\\'";
   rxStr = "\\\\\"|\\\\'|";
   QStringList commentsList = dtdConfig->readListEntry("Comments");
@@ -408,9 +409,9 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     dtd->comments[tmpStr] = tmpStr2;
   }
   dtd->commentsStartRx.setPattern(rxStr.left(rxStr.length()-1));
-  
+
   /**** End of code for the new parser *****/
-  
+
   //read the definition of a structure, and the structure keywords
   QStringList structKeywords = dtdConfig->readListEntry("StructKeywords",';');
   if (structKeywords.count() !=0 )
@@ -427,7 +428,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     tmpStr = "\\b[\\d\\S\\w]+\\b";
   }
   dtd->structKeywordsRx.setPattern(tmpStr);
-  
+
   structKeywords = dtdConfig->readListEntry("LocalScopeKeywords",';');
   if (structKeywords.count() !=0 )
   {
@@ -443,12 +444,12 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     tmpStr = "\\b[\\d\\S\\w]+\\b";
   }
   dtd->localScopeKeywordsRx.setPattern(tmpStr);
-  
+
   dtd->structRx.setPattern(dtdConfig->readEntry("StructRx","\\{|\\}").stripWhiteSpace());
   dtd->structBeginStr = dtdConfig->readEntry("StructBeginStr","{").stripWhiteSpace();
   dtd->structEndStr = dtdConfig->readEntry("StructEndStr","}").stripWhiteSpace();
-  
-  
+
+
   dtdConfig->setGroup("Extra rules");
   dtd->minusAllowedInWord = dtdConfig->readBoolEntry("MinusAllowedInWord", false);
   tmpStr = dtdConfig->readEntry("TagAutoCompleteAfter", "<").stripWhiteSpace();
@@ -468,18 +469,18 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   dtd->tagSeparator = dtdConfig->readEntry("TagSeparator").stripWhiteSpace().at(0);
   if (dtd->tagSeparator.isNull())
       dtd->tagSeparator = dtd->attributeSeparator;
-  
+
   dtd->booleanAttributes = dtdConfig->readEntry("BooleanAttributes","extended");
   dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
   dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
   dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
-  
+
   //read the definition of different structure groups, like links, images, functions
   //classes, etc.
   uint structGroupsCount = dtdConfig->readNumEntry("StructGroupsCount", 0);
   if (structGroupsCount > MAX_STRUCTGROUPSCOUNT)
       structGroupsCount = MAX_STRUCTGROUPSCOUNT; //max. 10 groups
-  
+
   if (dtd->family == Script)
   {
       StructTreeGroup group;
@@ -586,7 +587,7 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     abbrevFile.append("abbreviations");
     if (!QFile::exists(abbrevFile))
         abbrevFile = dirName + "abbreviations";
-  
+
   QFile f(abbrevFile);
   if (f.open(IO_ReadOnly))
   {
@@ -603,15 +604,14 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   }
   delete dtdConfig;
   dtd->loaded = true;
-  resolveInherited(dtd); 
-  quantaApp->slotStatusMsg("");
+  resolveInherited(dtd);
   kapp->restoreOverrideCursor();
   return true;
 }
 
 
 void DTDs::resolveInherited (DTDStruct *dtd)
-{  
+{
   //Resolve the inheritence
   if (!dtd->inheritsTagsFrom.isEmpty())
   {
@@ -662,28 +662,28 @@ void DTDs::resolveInherited (DTDStruct *dtd)
     }
   dtd->specialAreaStartRx.setPattern(specialAreaStartRxStr.left(specialAreaStartRxStr.length() - 1));
   };
-}  
+}
 
- 
+
 
 /** Reads the tags for the tag files. Returns the number of read tags. */
 uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList)
 {
 //  kdDebug(24000) << "dtds::readTagFile:" << fileName << endl;
  QFile f(fileName);
- if (! f.exists()) 
+ if (! f.exists())
    kdDebug(24000) << "dtds::readTagFile file does not exist:" << fileName << endl;
  else
  {
    bool result = f.open( IO_ReadOnly );
-   if (! result) kdDebug(24000) << "dtds::readTagFile unable to open:" << fileName 
+   if (! result) kdDebug(24000) << "dtds::readTagFile unable to open:" << fileName
                                 << " Status: " << f.status() << endl;
  }
  QString errorMsg;
  int errorLine, errorCol;
  if (!m_doc->setContent( &f, &errorMsg, &errorLine, &errorCol ))
  {
-   emit showSplash(false);
+   emit hideSplash();
    KMessageBox::error(0L, i18n("<qt>The DTD tag file %1 is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>").arg(fileName).arg(errorMsg).arg(errorLine).arg(errorCol),
    i18n("Invalid Tag File"));
    kdWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol << endl;
@@ -914,7 +914,6 @@ void DTDs::slotLoadDTEP()
 }
 
 
-
 /** Returns the DTD name (identifier) corresponding to the DTD's nickname */
 QString DTDs::getDTDNameFromNickName(const QString& nickName)
 {
@@ -937,13 +936,13 @@ QStringList DTDs::nickNameList(bool topLevelOnly)
   for( ; it.current(); ++it )
   {
     if (!topLevelOnly || it.current()->toplevel)
-    {  
+    {
       nickList << it.current()->nickName;
     }
   }
   nickList.sort();
   return nickList;
-}  
+}
 
 
 /** returns the known names */
@@ -954,18 +953,18 @@ QStringList DTDs::nameList(bool topLevelOnly)
   for( ; it.current(); ++it )
   {
     if (!topLevelOnly || it.current()->toplevel)
-    {  
+    {
       nameList << it.current()->name;
     }
   }
   nameList.sort();
   return nameList;
-}  
+}
 
 
 /** find a DTD for a given mimetype */
 const DTDStruct * DTDs::DTDfromMimeType(const QString &mimetype)
-{  
+{
   QDictIterator<DTDStruct> it(*m_dict);
   for( ; it.current(); ++it )
   {

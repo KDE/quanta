@@ -421,6 +421,5 @@ void Node::detachNode()
     static_cast<StructTreeTag*>(listItem)->node = 0L;
     static_cast<StructTreeTag*>(listItem)->groupTag = 0L;
   }
-
   groupElementLists.clear();
 }

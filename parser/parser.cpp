@@ -136,6 +136,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         if (!rootNode)
             rootNode = currentNode;
         QString foundText = m_dtd->specialAreaStartRx.cap();
+        if (parentNode && parentNode == currentNode) //some strange cases, but it's possible, eg.: <a href="<? foo ?>""></a><input size="<? foo ?>" >
+           parentNode = parentNode->parent;
         //create a toplevel node for the special area
         AreaStruct area(line, specialStartPos, line, specialStartPos + foundText.length() - 1);
         Node *node = ParserCommon::createScriptTagNode(write, area, foundText, m_dtd, parentNode, currentNode);
@@ -242,7 +244,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
               tag->name.truncate(tag->name.length() - 1);
         }
         //the tag we found indicates the beginning of a special area, like <script type=... >
-        if (m_dtd->specialTags.contains(tag->name.lower()))
+        if (m_dtd->specialTags.contains(tag->name.lower()) && !tag->single)
         {
         //TODO: handle goUp here
           Node *node = new Node(parentNode);
@@ -261,7 +263,17 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           if (!rootNode)
               rootNode = node;
           //find the DTD that needs to be used for the special area
-          QString s = tag->attributeValue(m_dtd->specialTags[tag->name.lower()]);
+          QString tmpStr = m_dtd->specialTags[tag->name.lower()];
+          int defPos = tmpStr.find('[');
+          QString defValue;
+          if (defPos != 0)
+          {
+            defValue = tmpStr.mid(defPos+1, tmpStr.findRev(']')-defPos-1).stripWhiteSpace();
+            tmpStr = tmpStr.left(defPos);
+          }
+          QString s = tag->attributeValue(tmpStr);
+          if (s.isEmpty())
+            s = defValue;
           const DTDStruct *dtd = DTDs::ref()->find(s);
           if (!dtd)
               dtd = m_dtd;
@@ -1421,6 +1433,9 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                 {
                   Tag *tag = new Tag();
                   tag->name = s;
+                  tag->dtd = dtd;
+                  if (!tag->dtd)
+                    kdDebug(24000) << "parser:1433: dtd is 0L!!! for " << s << endl;
                   QString s2 = content.left(areaPos + pos);
                   int newLineNum = s2.contains('\n');
                   int tmpCol = s2.length() - s2.findRev('\n') - 1;

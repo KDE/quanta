@@ -3,7 +3,7 @@
                              -------------------
     begin                : Tue Jun 6 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com>
-                           (C) 2001-2003 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -111,8 +111,6 @@ Document::Document(KTextEditor::Document *doc,
   docUndoRedo = new undoRedo(this);
 #endif
 
-  //need access to plugin interface. and we can't get to app from here ..
-  m_pluginInterface = a_pIf;
   //each document remember wheter it has a entry in quantarc
   m_backupEntry = false;
   //path of the backup copy file of the document
@@ -131,8 +129,6 @@ Document::Document(KTextEditor::Document *doc,
   connect( m_view, SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString *)),
            this,  SLOT(  slotFilterCompletion(KTextEditor::CompletionEntry*,QString *)) );
   connect( m_doc, SIGNAL(textChanged()), SLOT(slotTextChanged()));
-  
- // installEventFilter(this);
 
 //  setFocusProxy(m_view);
 }
@@ -169,7 +165,7 @@ bool Document::eventFilter ( QObject * watched, QEvent * e )
     kdDebug(24000) << "eventFilter : AccelOverride : " << ke->key() << endl;
 //    kdDebug(24000) << "              type          : " << ke->type() << endl;
 //    kdDebug(24000) << "              state         : " << ke->state() << endl;
-    typingInProgress = true;    
+    typingInProgress = true;
   }
   return false;
 }
@@ -616,7 +612,7 @@ QString Document::getTagNameAt(int line, int col )
       pos = 0;
       while (pos < (int)textLine.length() &&
             !textLine[pos].isSpace() &&
-            textLine[pos] != '>') 
+            textLine[pos] != '>')
             pos++;
       name = textLine.left(pos).stripWhiteSpace();
       pos = name.find(":");
@@ -637,7 +633,7 @@ QString Document::getTagNameAt(int line, int col )
       }
     }
  }
- 
+
  return name;
 }
 
@@ -755,7 +751,7 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
- if ( (string == ">") || 
+ if ( (string == ">") ||
       (string == "<") )
  {
    slotDelayedTextChanged(true);
@@ -819,11 +815,11 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
   while (i > 0 && s[i].isSpace())
     i--;
   s = s.left(i + 1);
-  
+
   if ( !tag || tagName.isEmpty() || namespacecompletion)  //we are outside of any tag
   {
 
-    if (s.endsWith(completionDTD->tagAutoCompleteAfter) || 
+    if (s.endsWith(completionDTD->tagAutoCompleteAfter) ||
         namespacecompletion)  // a tag is started, either with < or <namespace:
     {
       //we need to complete a tag name
@@ -910,7 +906,6 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
     }
     else if ( string == " " )
          {
-           kdDebug(24000) << "TagName: " << tagName << endl;
            QString textLine = editIf->textLine(line);
            if (!QuantaCommon::insideCommentsOrQuotes(column, textLine, completionDTD))
            {
@@ -1354,7 +1349,7 @@ bool Document::scriptAutoCompletion(int line, int column)
  Node *node = parser->nodeAt(line, column);
  if (node->parent)
    node = node->parent;
- else if (node->prev)  
+ else if (node->prev)
    node = node->prev;
  int bl, bc;
  node->tag->beginPos(bl, bc);
@@ -1389,7 +1384,7 @@ bool Document::scriptAutoCompletion(int line, int column)
    QTag *tag = 0L;
    if (!word.isEmpty())
     tag = completionDTD->tagsList->find(word);
-   if (!tag) 
+   if (!tag)
      tag = userTagList.find(word.lower());
    if (tag)
    {
@@ -1763,7 +1758,7 @@ void Document::checkDirtyStatus()
       QFile tmpFile(m_tempFileName);
       if (f.open(IO_ReadOnly) && tmpFile.open(IO_ReadOnly))
       {
-        QString encoding = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding();  
+        QString encoding = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding();
         QString content;
         QTextStream stream(&f);
         stream.setCodec(QTextCodec::codecForName(encoding));
@@ -1863,7 +1858,7 @@ void Document::slotDelayedTextChanged(bool forced)
      reparseEnabled = false;
      return;
    }
-   
+
     uint line, column;
     QString oldNodeName = "";
     Node *node;
@@ -1873,9 +1868,8 @@ void Document::slotDelayedTextChanged(bool forced)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
       node = parser->nodeAt(line, column, false);
-      if ( node &&
-           (node->tag->type==Tag::XmlTag || node->tag->type == Tag::XmlTagEnd)
-	 )
+      if (node &&
+          (node->tag->type==Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) )
       {
         Tag *tag;
         tag = new Tag(*node->tag);
@@ -1899,7 +1893,7 @@ void Document::slotDelayedTextChanged(bool forced)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
       node = parser->nodeAt(line, column, false);
-      if (node && 
+      if (node &&
           node->tag->nameSpace + node->tag->name != currentNode->tag->nameSpace + currentNode->tag->name &&
           (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) && node->tag->validXMLTag)
       {
@@ -1912,7 +1906,6 @@ void Document::slotDelayedTextChanged(bool forced)
           delete currentNode;
           currentNode = previousNode;
         } else
-        if (previousNode)
         {
           delete previousNode;
           previousNode = 0L;
@@ -2203,7 +2196,7 @@ void Document::removeBackup(KConfig *config)
   QStringList backedupFilesEntryList = config->readListEntry("List of backedup files");
   QStringList autosavedFilesEntryList = config->readListEntry("List of autosaved files");
 #endif
-  
+
   autosavedFilesEntryList.remove(m_backupPathValue);
   config->writeEntry("List of autosaved files",autosavedFilesEntryList);
   backedupFilesEntryList.remove(url().path() + "." + qConfig.quantaPID);
@@ -2233,10 +2226,11 @@ QString Document::hashFilePath(const QString& p)
   default: {
              int sign = 1,
                  sum = 0;
-             for (uint i = 0; i < (p.length() - 1); i++)
+	     uint plen = p.length();
+             for (uint i = 0; i+1 < plen; i++)
              {
-              sum += int(p[i]) + int(p[i + 1]) * sign;
-              sign *= -1;
+               sum += int(p[i]) + int(p[i + 1]) * sign;
+               sign *= -1;
              }
              if( sum >= 0 )
                return QString::number(sum, 10) + "P" + qConfig.quantaPID;

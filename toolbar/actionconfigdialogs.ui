@@ -10,7 +10,7 @@
  *                                                                         *
  ***************************************************************************/
 </comment>
-<author>Andras Mantia &lt;amantia@freemail.hu&gt;</author>
+<author>Andras Mantia &lt;amantia@kde.org&gt;</author>
 <widget class="QDialog">
     <property name="name">
         <cstring>ActionConfigDialogS</cstring>
@@ -45,7 +45,7 @@
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QPushButton" row="2" column="3">
+                    <widget class="KPushButton" row="2" column="3">
                         <property name="name">
                             <cstring>deleteAction</cstring>
                         </property>
@@ -971,6 +971,7 @@
 </tabstops>
 <includes>
     <include location="global" impldecl="in implementation">kkeybutton.h</include>
+    <include location="global" impldecl="in implementation">kpushbutton.h</include>
 </includes>
 <slots>
     <slot>buttonOk_clicked()</slot>

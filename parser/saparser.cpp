@@ -226,6 +226,8 @@ bool SAParser::slotParseOneLine()
                 tag->setWrite(m_write);
                 tag->setTagPosition(s_line, groupKeywordPos, s_line, s_col);
                 tag->dtd = s_dtd;
+                if (!tag->dtd)
+                    kdDebug(24000) << "saparser:231: dtd is 0L!!! for " << foundText << endl;
                 tag->type = Tag::ScriptStructureEnd;
                 tag->single = true;
                 Node *node = new Node(s_currentContext.parentNode);
@@ -345,6 +347,8 @@ bool SAParser::slotParseOneLine()
           tag->setTagPosition(s_line, areaEndPos, s_line, m_lastParsedCol);
           tag->parse(s_areaEndString, m_write);
           tag->dtd = s_dtd;
+                if (!tag->dtd)
+                    kdDebug(24000) << "saparser:341: dtd is 0L!!! for " << tag->tagStr() << endl;
           tag->type = Tag::XmlTagEnd;
           tag->validXMLTag = false; //FIXME: this is more or less a workaround. We should introduce and handle Tag::ScriptTagEnd
           tag->single = true;
@@ -1045,7 +1049,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
           groupElement.parentNode = 0L;
         }
         groupElement.global = true;
-        tmpNode = node;
+        tmpNode = node->parent;
         while (tmpNode && tmpNode->tag->dtd == dtd)
         {
           if ( tmpNode->tag->type == Tag::ScriptStructureBegin && tmpNode->tag->dtd->localScopeKeywordsRx.search(tmpNode->tag->cleanStr) != -1)

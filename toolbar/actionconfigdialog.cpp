@@ -23,6 +23,7 @@
 #include <qmultilineedit.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
+#include <qregexp.h>
 
 //kde includes
 #include <kconfig.h>
@@ -637,10 +638,18 @@ void ActionConfigDialog::saveCurrentAction()
           QListViewItem *after = listItem->firstChild();
           while ( after && after->nextSibling() && after->nextSibling()->depth()!=0 )
           {
+            if (after->text(2) == currentAction->name())
+            {
+                placeOnToolbar = false;
+                break;
+            }
             after = after->nextSibling();
           }
-          listItem = new KListViewItem(listItem, after, lineText->text(), currentAction->shortcut().toString(), currentAction->name());
-          listItem->setPixmap(0, BarIcon(actionIcon->icon()));
+          if (placeOnToolbar)
+          {
+              listItem = new KListViewItem(listItem, after, lineText->text(), currentAction->shortcut().toString(), currentAction->name());
+              listItem->setPixmap(0, BarIcon(actionIcon->icon()));
+          }
         }
       }
       KXMLGUIFactory::saveConfigFile(p_toolbar->guiClient->domDocument(),
