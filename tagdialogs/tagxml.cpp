@@ -292,7 +292,8 @@ void Tagxml::writeAttributes( QDict<QString> *d )
 
 void Tagxml::focusToFirstItem()
 {
-  m_firstItem->setFocus();
+  if (m_firstItem)
+      m_firstItem->setFocus();
 }
 
 #include "tagxml.moc"
