@@ -167,6 +167,8 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
         valueStartPos = pos;
         while (pos < strLength && !m_tagStr[pos].isSpace())
           pos++;
+        if (pos == strLength)
+          pos--;
         attr.value = m_tagStr.mid(valueStartPos, pos - valueStartPos);
       }
       attr.valueLine = m_tagStr.left(valueStartPos).contains('\n') + beginLine;

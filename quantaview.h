@@ -131,7 +131,6 @@ public:
 public slots:
   void slotTagMail();
   void slotTagQuickList();
-  void slotTagQuickTable();
   void slotTagEditTable();
   void slotTagColor();
   void slotTagDate();

@@ -330,11 +330,7 @@ void QuantaView::initActions()
 {
     KActionCollection *actionCollection = quantaApp->actionCollection();
 
-    (void) new KAction( i18n( "Quick Table..." ), "quick_table", 0,
-                        this, SLOT( slotTagQuickTable() ),
-                        actionCollection, "tag_quick_table" );
-
-    (void) new KAction( i18n( "Edit Table..." ), "quick_table", 0,
+    (void) new KAction( i18n( "Table Editor..." ), "quick_table", 0,
                         this, SLOT( slotTagEditTable() ),
                         actionCollection, "tag_edit_table" );
 

@@ -699,6 +699,7 @@
     <forward>typedef struct TableNode {   Node *node; bool merged; int mergedRow; int mergedCol; }  </forward>
 </forwards>
 <variables>
+    <variable>QValueList&lt;Tag*&gt; m_colTags;</variable>
     <variable>int m_unmergeCellsId;</variable>
     <variable>int m_mergeSeparatorId;</variable>
     <variable>int m_mergeCellsId;</variable>
@@ -758,7 +759,7 @@
     <function access="protected" returnType="QString">tableToString()</function>
     <function access="protected" returnType="QString">tagContent( Node * node )</function>
     <function access="protected">deleteList( QValueList&lt;TableNode&gt; * table )</function>
-    <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt; &gt; * matrix )</function>
+    <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt;&gt; * matrix )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

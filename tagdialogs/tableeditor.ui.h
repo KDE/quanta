@@ -402,9 +402,11 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
         }
       }
     }
-    else if (tagName=="caption")
+    else if (tagName == "caption")
     {
       captionText->setText(tagContent(n));
+    } else if (tagName == "col" || tagName == "colgroup") {
+      m_colTags.append(n->tag);
     }
     n = n->nextSibling();
   }
@@ -493,6 +495,10 @@ QString TableEditor::readModifiedTable()
   tableString += "<" + QuantaCommon::tagCase("caption") + ">";
   tableString += captionText->text();
   tableString += "</" + QuantaCommon::tagCase("caption") + ">";
+  for (QValueList<Tag*>::Iterator it = m_colTags.begin(); it != m_colTags.end(); ++it) {
+    tableString += indent(2);
+    tableString += (*it)->toString();
+  }
   if (headerCheckBox->isChecked() && headerTableData->numRows() > 0) {
     //insert the <thead> tag
     tableString += indent(2);
@@ -823,9 +829,23 @@ void TableEditor::slotMergeCells()
   bRow = selection.bottomRow();
   lCol = selection.leftCol();
   rCol = selection.rightCol();
-  TableNode mainTableNode = (*m_tableTags)[tRow][lCol];
-  mainTableNode.node->tag->editAttribute("colspan", QString("%1").arg(rCol - lCol + 1));
-  mainTableNode.node->tag->editAttribute("rowSpan", QString("%1").arg(bRow - tRow + 1));
+  TableNode *mainTableNode = &((*m_tableTags)[tRow][lCol]);
+  mainTableNode->node->tag->editAttribute("colspan", QString("%1").arg(rCol - lCol + 1));
+  mainTableNode->node->tag->editAttribute("rowSpan", QString("%1").arg(bRow - tRow + 1));
+  for (int i = 0; i < bRow - tRow + 1; i++)
+    for (int j = 0; j < rCol - lCol + 1; j++) {
+      if (i != 0 || j != 0) {
+        m_dataTable->setText(tRow + i, lCol + j, i18n("Merged with (%1, %2).").arg(tRow).arg(lCol));
+        m_dataTable->item(tRow + i, lCol + j)->setEnabled(false);
+        TableNode *tableNode = &((*m_tableTags)[tRow + i][lCol + j]);
+        tableNode->node = new Node(0L);
+        newNum++;
+        tableNode->node->tag = new Tag(*(mainTableNode->node->tag));
+        tableNode->merged = true;
+        tableNode->mergedRow = tRow;
+        tableNode->mergedCol = lCol;
+      }
+    }
 }
 
 
@@ -848,6 +868,8 @@ void TableEditor::slotUnmergeCells()
   for (int row = tRow; row <= bRow; ++row)
     for (int col = lCol; col <= rCol; ++col) {
       TableNode tableNode = (*m_tableTags)[row][col];
+      if (!tableNode.merged)
+        continue;
       TableNode newTableNode;
       int i = 0;
       int j = 0;
