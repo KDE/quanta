@@ -473,6 +473,7 @@ void QuantaInit::initView()
 
   connect(sTab, SIGNAL(newCursorPosition(int,int)), m_quanta, SLOT(setCursorPosition(int,int)));
   connect(sTab, SIGNAL(selectArea(int,int,int,int)), m_quanta, SLOT( selectArea(int,int,int,int)));
+  connect(sTab, SIGNAL(selectTagArea(Node*)), m_quanta->m_view, SLOT(slotSelectTagArea(Node*)));
   connect(sTab, SIGNAL(needReparse()), m_quanta, SLOT(slotForceReparse()));
   connect(sTab, SIGNAL(parsingDTDChanged(const QString&)), m_quanta, SLOT(slotParsingDTDChanged(const QString&)));
   connect(sTab, SIGNAL(openFile(const KURL &)),
