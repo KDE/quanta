@@ -3,6 +3,7 @@ Type=Service
 Name=Gubed
 Name[ta]=குபெட்
 Comment=Quanta debugger plugin to interact with the Gubed PHP debugger, see http://gubed.sf.net
+Comment[ar]=وظيفة إضافية لمدقق Quanta للتفاعل مع مدقق Gubed PHP, للمزيد من المعلومات راجع http://gubed.sf.net
 Comment[ca]=Conector per a depurador de Quanta per interactuar amb el depurador Gubed PHP, consulteu http://gubed.sf.net
 Comment[da]=Quanta fejlretter-plugin til at virke sammen med Gubed PHP fejlretter, se http://gubed.sf.net
 Comment[de]=Debug-Komponente von Quanta für die Unterstützung des Gubed PHP-Debuggers. Näheres siehe http://gubed.sf.net
