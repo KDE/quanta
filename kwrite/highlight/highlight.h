@@ -1,6 +1,4 @@
 /*
-  $Id$
-
    Copyright (C) 1998, 1999 Jochen Wilhelmy
                             digisnap@cs.tu-berlin.de
 

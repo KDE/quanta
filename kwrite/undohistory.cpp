@@ -1,6 +1,4 @@
 /*
-  $Id$
-
   Copyright (C) 1999 Glen Parker <glenebob@nwlink.com>
 
   This library is free software; you can redistribute it and/or

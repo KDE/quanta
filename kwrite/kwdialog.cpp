@@ -1,4 +1,3 @@
-// $Id$
 // Dialogs
 
 #include <stdio.h>

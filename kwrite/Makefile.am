@@ -1,5 +1,3 @@
-# $Id$
-
 INCLUDES = $(all_includes)
 
 libkwrite_a_METASOURCES = AUTO

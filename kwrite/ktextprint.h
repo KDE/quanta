@@ -1,5 +1,3 @@
-// $Id$
-
 #ifndef _KTEXTPRINT_H_
 #define _KTEXTPRINT_H_
 
