@@ -399,7 +399,7 @@ void QuantaApp::initMenuBar()
   projectMenu->insertItem(i18n("&Insert file(s)"),   ID_PROJECT_ADD_FILE);
   projectMenu->insertItem(i18n("Insert &directory"), ID_PROJECT_ADD_DIRECTORY);
 //  projectMenu->insertItem(i18n("Rescan project's directory"), ID_PROJECT_RESCAN_FILES);
-//  projectMenu->insertItem(UserIcon("file_properties.xpm"), i18n("&File properties"), ID_PROJECT_FILE_PROPERTIES);
+//  projectMenu->insertItem(UserIcon("file_properties"), i18n("&File properties"), ID_PROJECT_FILE_PROPERTIES);
 //  projectMenu->insertSeparator();
 //  projectMenu->insertItem(i18n("Weblint"), ID_FILE_LINT);
 //  projectMenu->insertSeparator();

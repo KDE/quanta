@@ -28,10 +28,10 @@ ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name)
 {
 	initDialog();
 	
-	buttonDir				->setPixmap( UserIcon("open.xpm") );
-	buttonImagesDir	->setPixmap( UserIcon("open.xpm") );
-	buttonCgiDir		->setPixmap( UserIcon("open.xpm") );
-	buttonScriptsDir->setPixmap( UserIcon("open.xpm") );
+	buttonDir				->setPixmap( UserIcon("open") );
+	buttonImagesDir	->setPixmap( UserIcon("open") );
+	buttonCgiDir		->setPixmap( UserIcon("open") );
+	buttonScriptsDir->setPixmap( UserIcon("open") );
 	
 	connect( linePrjName, SIGNAL(textChanged(const QString&)),
 	         this, SLOT(slotNameChanged(const QString&)) );

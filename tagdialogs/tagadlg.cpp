@@ -28,7 +28,7 @@ TagADlg::TagADlg(QWidget *parent, const char *name)
 {
 	setCaption(name);
 	initDialog();
-	buttonHREF  ->setPixmap( UserIcon("open.xpm") );
+	buttonHREF  ->setPixmap( UserIcon("open") );
 	
 	connect( buttonHREF, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
 }

@@ -27,7 +27,7 @@ ProjectNewGetFiles::ProjectNewGetFiles(QWidget *parent, const char *name)
 {
 	initDialog();
 	
-	buttonEditRcFile->setPixmap( UserIcon("configure.xpm") );
+	buttonEditRcFile->setPixmap( UserIcon("configure") );
 	
 	connect( buttonEditRcFile, SIGNAL(clicked()), SLOT(slotEditRcFile()));
 }

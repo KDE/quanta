@@ -27,7 +27,7 @@ TagFormInput::TagFormInput(QWidget *parent, const char *name)
 {
 	initDialog();
 	
-	buttonSrc ->setPixmap( UserIcon("open.xpm") );
+	buttonSrc ->setPixmap( UserIcon("open") );
 	
 	connect( buttonSrc, SIGNAL(clicked()), this, SLOT(slotSrcSelect()) );
 	connect( comboType, SIGNAL(activated(int)), this, SLOT(slotTypeChange(int)) );

@@ -36,13 +36,13 @@ ToolBarConfig::ToolBarConfig(KConfig *config, QWidget *parent, const char *name)
 	setCaption( name );
 	initDialog();
 	
-	buttonNew   ->setPixmap( Icon("new.xpm") );
-	buttonUp    ->setPixmap( Icon("up.xpm") );
-	buttonDown  ->setPixmap( Icon("down.xpm") );
-	buttonDel   ->setPixmap( Icon("delete.xpm") );
-	buttonIcon  ->setPixmap( Icon("open.xpm") );
-	buttonKIconEdit->setPixmap( Icon("mini/kiconedit.xpm") );
-	buttonConfigScript->setPixmap( Icon("configure.xpm") );
+	buttonNew   ->setPixmap( Icon("new") );
+	buttonUp    ->setPixmap( Icon("up") );
+	buttonDown  ->setPixmap( Icon("down") );
+	buttonDel   ->setPixmap( Icon("delete") );
+	buttonIcon  ->setPixmap( Icon("open") );
+	buttonKIconEdit->setPixmap( Icon("mini/kiconedit") );
+	buttonConfigScript->setPixmap( Icon("configure") );
 	
 	groupBox->insert(radioInsertTag);
 	groupBox->insert(radioExecuteScript);

@@ -200,7 +200,9 @@ Document* QuantaView::write()
 /** Add new kwrite class to writeStack and return id in stack */
 void QuantaView::addWrite( Document* w , QString label )
 {
-	writeTab->addTab( w, label );
+	QIconSet emptyIcon ( UserIcon("empty1x16"));
+	
+	writeTab->addTab( w,  emptyIcon,  label );
 	writeTab->showPage( w );
 	
 	connect( w, SIGNAL(newCurPos()), this, SLOT(slotNewCurPos()));

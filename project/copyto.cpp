@@ -26,7 +26,7 @@ CopyTo::CopyTo(QString dir, QWidget *parent, const char *name)
 	setCaption(name);
 	
 	lineDir->setText( dir.data() );
-	buttonDir->setPixmap( UserIcon("open.xpm") );
+	buttonDir->setPixmap( UserIcon("open") );
 	
 	connect( buttonOk,    SIGNAL(clicked()), SLOT(accept()) );
 	connect( buttonCancel,SIGNAL(clicked()), SLOT(reject()) );

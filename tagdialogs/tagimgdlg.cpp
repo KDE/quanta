@@ -35,8 +35,8 @@ TagImgDlg::TagImgDlg(QWidget *parent, const char *name)
 	setCaption(name);
 	initDialog();
 	
-	buttonImgSource     ->setPixmap( UserIcon("open.xpm") );
-	buttonRecalcImgSize ->setPixmap( UserIcon("repaint.xpm") );
+	buttonImgSource     ->setPixmap( UserIcon("open") );
+	buttonRecalcImgSize ->setPixmap( UserIcon("repaint") );
 	comboAlign       		->insertStrList(align);
 	
 	connect( buttonImgSource, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );

@@ -66,7 +66,7 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 /*	
 	RBMenuFile = new KPopupMenu("Project's file");
 	
-	RBMenuFile -> insertItem( UserIcon("open.xpm"),  i18n("&Open"),       this, SLOT(slotFileOpen()), 0, ID_PROJECT_FILE_OPEN);
+	RBMenuFile -> insertItem( UserIcon("open"),  i18n("&Open"),       this, SLOT(slotFileOpen()), 0, ID_PROJECT_FILE_OPEN);
 	RBMenuFile -> insertItem( i18n("&Insert tag"), this, SLOT(slotFileTag()), 0, ID_PROJECT_FILE_TAG);
 	RBMenuFile -> insertSeparator();
 	RBMenuFile -> insertItem( i18n("Remove file from project"), this, SLOT(slotRemoveFromProject()), 0, ID_PROJECT_REMOVE_FROM_PROJECT);
@@ -110,9 +110,9 @@ void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel
 	if ( !parent ) {
 		top = new StructTreeTag( this, "Document structure" );
 		images = new StructTreeTag( this, "Images" );
-		images->setPixmap( 0, UserIcon("image.xpm") );
+		images->setPixmap( 0, UserIcon("image") );
 		links = new StructTreeTag( this, "Links" );
-		links->setPixmap( 0, UserIcon("html.xpm") );
+		links->setPixmap( 0, UserIcon("html") );
 		
 		createList(node, top, openLevel-1 );
 		top->setOpen( topOpened );

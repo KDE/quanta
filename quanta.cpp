@@ -820,8 +820,8 @@ void QuantaApp::slotNewStatus()
 	
   QDictIterator<Document> it( doc->docList );
 
-  QIconSet floppyIcon( UserIcon("save_small.xpm"));
-  QIconSet emptyIcon ( UserIcon("empty1x16.xpm"));
+  QIconSet floppyIcon( UserIcon("save_small"));
+  QIconSet emptyIcon ( UserIcon("empty1x16"));
 
   QTabWidget *wTab = view->writeTab;
   while ( Document *twrite = it.current() )
