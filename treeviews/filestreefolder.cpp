@@ -126,10 +126,12 @@ void FilesTreeFolder::setOpen( bool open )
 }
 
 /** retun full name of the folder */
-QString FilesTreeFolder::fullName(QListViewItem *)
+QString FilesTreeFolder::fullName(QListViewItem *item)
 {
 	QString s;
 	
+//  if (!item) item = this;
+
   if ( parentFolder )
   {
 		s = parentFolder->fullName();
@@ -158,7 +160,7 @@ void FilesTreeFolder::setup()
 /** reload file list */
 void FilesTreeFolder::reloadList()
 {
-
+  saveOpenStatus();
   setOpen( false );
 
   QListViewItem *child;
@@ -166,6 +168,7 @@ void FilesTreeFolder::reloadList()
     removeItem( child );
 
   setOpen( true );
+  restoreOpenStatus();
 }
 
 /** need for sorting */
@@ -180,4 +183,48 @@ QString FilesTreeFolder::key ( int, bool ) const
 
 FilesTreeFolder::~FilesTreeFolder()
 {
+}
+/** No descriptions */
+void FilesTreeFolder::saveOpenStatus()
+{
+ QListViewItem *child = firstChild();
+ FilesTreeFolder *folder;
+
+ openedList.clear();
+ QString s;
+
+ while (child)
+ {
+    folder = dynamic_cast<FilesTreeFolder *> (child);
+  	if ( folder )
+    {
+     s = folder->fullName();
+     folder->saveOpenStatus();
+     if (folder->isOpen())
+     {
+        openedList.append(s);
+     }
+    }
+    child = child->nextSibling();
+ }
+}
+/** No descriptions */
+void FilesTreeFolder::restoreOpenStatus()
+{
+ QListViewItem *child = firstChild();
+ FilesTreeFolder *folder;
+ QString s;
+
+ while (child )
+   {
+    folder = dynamic_cast<FilesTreeFolder *> (child);
+  	if ( folder )
+    {
+      s = folder->fullName();
+      if (openedList.contains(s))
+         folder->setOpen(true);
+      folder->restoreOpenStatus();
+    }
+    child = child->nextSibling();
+   }
 }

@@ -178,4 +178,13 @@ used as a base file correctly.\n Do you still want to continue?","Wrong type") !
 	  emit insertFile(currentFileName());
 	}
 }
+
+void TemplatesTreeView::slotReload()
+{
+  globalDir->reloadList();
+  localDir->reloadList();
+  if (projectDir)
+    projectDir->reloadList();
+}
+
 #include "templatestreeview.moc"

@@ -115,6 +115,7 @@ void FilesTreeView::slotReload()
 {
 
   FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( currentItem()->parent());
+
   if (d)
     d->reloadList();
 

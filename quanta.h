@@ -39,6 +39,7 @@
 #include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
 #include <kate/document.h>
+#include <ktempfile.h>
 
 // forward declaration
 class QuantaDoc;
@@ -226,7 +227,9 @@ class QuantaApp : public KDockMainWindow
   void slotNewProjectLoaded();
   /** No descriptions */
   void slotInsertFile(QString);
-	  
+
+ private slots:
+	
   public:
 
 	  	
@@ -328,8 +331,15 @@ class QuantaApp : public KDockMainWindow
     QDomDocument *m_actions;
 
     QPtrList<KTextEditor::Mark> markList;
+  /**  */
+  bool previewCopyMade;
+  /**  */
+  KTempFile *previewTmpFile;
 
 
+signals: // Signals
+  /** The tree views should be updated due to some changes on the disk. */
+  void reloadTreeviews();
 };
  
 #endif // QUANTA_H

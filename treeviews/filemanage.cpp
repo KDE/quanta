@@ -157,7 +157,8 @@ void FileManage::slotProperties()
 
 void FileManage::slotJobFinished( KIO::Job *)
 {
-  slotReload();
+//  slotReload();
+ emit reloadTreeviews();
 }
 
 void FileManage::slotInsertInProject()
@@ -179,3 +180,4 @@ void FileManage::slotInsertTag()
 }
 
 #include "filemanage.moc"
+

@@ -25,11 +25,12 @@
 #include <qfile.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
-#include <qtextstream.h>
 #include <qtabbar.h>
 #include <qradiobutton.h>
 #include <qimage.h>
 #include <qtimer.h>
+#include <qtextstream.h>
+#include <qiodevice.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -46,6 +47,7 @@
 #include <kdockwidget.h>
 #include <kstatusbar.h>
 #include <kprocess.h>
+#include <ktempfile.h>
 
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
@@ -342,6 +344,8 @@ void QuantaApp::repaintPreview( bool clear )
 {
   static QString oldtext = "";
 
+  previewCopyMade = false;
+
   WHTMLPart *part = htmlPart();
   QWidgetStack *s = widgetStackOfHtmlPart();
 	
@@ -364,16 +368,27 @@ void QuantaApp::repaintPreview( bool clear )
 
   QString url;
   if (!doc->write()->isUntitled())	
- {
+  {
 //if it's	not untitled, than it was loaded from somewhere. In this case show it from that place
-	url = doc->write()->url().url();
-	if ( doc->isModified() ) doc->saveDocument( doc->url() );
+	  url = doc->write()->url().url();
+/*
+    //First make a backup copy
+    previewTmpFile = new KTempFile();//(QFileInfo(url).dirPath());
+    QTextStream stream(previewTmpFile->fstream(), IO_ReadWrite);
+    QString s= doc->write()->editIf->text() ;
+    stream << s;
+    previewTmpFile->close();
+
+    previewCopyMade = true;
+  */
+	  if ( doc->isModified() ) doc->saveDocument( doc->url() );
 	
-	url = project->urlWithPrefix(doc->write()->url());
+	  url = project->urlWithPrefix(doc->write()->url());
 	
-	part->begin(url, xOffset, yOffset );
-	part->openURL( KURL(url) );		
- } else  //the document is Untitled, preview the text from it
+	  part->begin(url, xOffset, yOffset );
+	  part->openURL( KURL(url) );		
+//	  part->openURL(previewTmpFile->name());		
+  } else  //the document is Untitled, preview the text from it
  {
   	QString text = doc->write()->editIf->text();
     if ( text == oldtext ) return;
@@ -537,6 +552,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 
   view->write()->view()->resize(view->writeTab->size().width()-5, view->writeTab->size().height()-35);
   view->oldWrite = view->write();
+
+  emit reloadTreeviews();
 }
 
 void QuantaApp::slotOptionsConfigureKeys()
@@ -722,6 +739,13 @@ void QuantaApp::slotShowPreview()
 //		disableCommand(ID_VIEW_REPAINT);
 		
 		s   ->raiseWidget( 0 );
+/*
+    if (previewCopyMade)
+    {
+      previewTmpFile->unlink();
+      previewCopyMade = false;
+    }
+*/
 		doc ->write()->setFocus();
 	}
 	else {
@@ -861,7 +885,7 @@ void QuantaApp::selectArea(int col1, int row1, int col2, int row2)
     row2 = numLines-1;
     
   view->write()->viewCursorIf->setCursorPosition(row2, col2);
-  view->write()->selectionIf->setSelection(col1, row1, col2, row2);
+  view->write()->selectionIf->setSelection(row1, col1, row2, col2);
 }
 
 void QuantaApp::openDoc( QString url )
@@ -1122,7 +1146,12 @@ void QuantaApp::slotNewProjectLoaded()
             this, SLOT(slotInsertFile(QString)));
   connect(   tTab,SIGNAL(insertTag(QString)),
             this, SLOT(slotInsertTag(QString)));
+  connect(this, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
+  connect(fTTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
+  connect(tTab, SIGNAL(reloadTreeviews()), fTTab, SLOT (slotReload()));
+  connect(tTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
 }
+
 /** No descriptions */
 void QuantaApp::slotInsertFile(QString fileName)
 {

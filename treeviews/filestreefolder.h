@@ -21,6 +21,7 @@
 #include <qlistview.h>
 #include <qpopupmenu.h>
 #include <qstring.h>
+#include <qstringlist.h>
 #include <qfile.h>
 
 class FilesTreeFolder: public QListViewItem
@@ -43,6 +44,7 @@ public:
     QFile file;
     FilesTreeFolder * parentFolder;
     QString folderName;
+    QStringList openedList;
 
     bool readable;
     bool opened;
@@ -51,6 +53,12 @@ public:
 public slots: // Public slots
   	/** reload file list */
   	void reloadList();
+private: // Private methods
+  /** No descriptions */
+  void restoreOpenStatus();
+private: // Private methods
+  /** No descriptions */
+  void saveOpenStatus();
 };
 
 

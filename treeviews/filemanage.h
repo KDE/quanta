@@ -63,6 +63,9 @@ signals:
 	
 	void jobFinished();
 	void changeMode();
+
+  /** No descriptions */
+  void reloadTreeviews();
 	
 public:
 	QPopupMenu *fileMenu;

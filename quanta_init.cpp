@@ -344,7 +344,17 @@ void QuantaApp::initView()
             this, SLOT(slotActivatePreview()));
   connect(   pTab, SIGNAL(activatePreview()),
             this, SLOT(slotActivatePreview()));
-            
+
+  connect(this, SIGNAL(reloadTreeviews()), fTTab, SLOT (slotReload()));
+//  connect(this, SIGNAL(reloadTreeviews()), pTab, SLOT (slotReload()));
+  connect(this, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
+
+  connect(fTTab, SIGNAL(reloadTreeviews()), fTTab, SLOT (slotReload()));
+  connect(fTTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
+  connect(tTab, SIGNAL(reloadTreeviews()), fTTab, SLOT (slotReload()));
+  connect(tTab, SIGNAL(reloadTreeviews()), tTab, SLOT (slotReload()));
+
+
   connect(  htmlpart,       SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
   connect(  htmlPartDoc,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
   connect(  htmlPartDoc,    SIGNAL(updateStatus(bool, bool)), SLOT(updateNavButtons( bool, bool)));

@@ -41,6 +41,7 @@ public slots:
   void slotMenu(QListViewItem *item, const QPoint &point, int);
   /** No descriptions */
   void slotNewDocument();
+  virtual void slotReload();
 
 private:
 	QString basePath;
