@@ -740,10 +740,13 @@ void Parser::deleteNodes(Node *firstNode, Node *lastNode, NodeModifsSet *modifs)
     modif = new NodeModif();
     modif->setType(NodeModif::NodeRemoved);
     modif->setLocation(kafkaCommon::getLocation(node));
+    if(prev)
+      prev->next = 0L;
+    if(parent && parent->child == node)
+      parent->child = 0L;
     node->parent = 0L;
     node->next = 0L;
     node->prev = 0L;
-    node->child = 0L;
     modif->setNode(node);
 #else
     delete node;
@@ -964,6 +967,10 @@ Node *Parser::rebuild(Document *w)
         modif = new NodeModif();
 	modif->setType(NodeModif::NodeRemoved);
         modif->setLocation(kafkaCommon::getLocation(lastNode));
+        if(lastInserted->prev)
+          lastInserted->prev->next = 0L;
+        if(lastInserted->parent && lastInserted->parent->child == lastInserted)
+          lastInserted->parent->child = 0L;
         lastInserted->prev = 0L;
         lastInserted->next = 0L;
         lastInserted->parent = 0L;
