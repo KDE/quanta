@@ -20,25 +20,27 @@
 #include <qspinbox.h>
 
 specialSB::specialSB(QWidget *parent, const char *name ) : QHBox(parent,name) {
-  m_sb=new QSpinBox(this);
-  m_cb=new QComboBox(this);
-  connect(m_cb, SIGNAL(activated ( const QString & )), this, SLOT(cbValueSlot(const QString&)));
-  connect(m_sb, SIGNAL(valueChanged ( const QString & )), this, SLOT(sbValueSlot(const QString&)));
+  sb=new QSpinBox(this);
+  cb=new QComboBox(this);
+  connect(cb, SIGNAL(activated ( const QString & )), this, SLOT(cbValueSlot(const QString&)));
+  connect(sb, SIGNAL(valueChanged ( const QString & )), this, SLOT(sbValueSlot(const QString&)));
 
 }
 
 specialSB::~specialSB(){
-  delete m_cb;
-  delete m_sb;
+  if(cb) delete cb;
+  cb = 0;
+  if(sb) delete sb;
+  sb = 0;
 }
 
 void specialSB::cbValueSlot(const QString& s){
-  m_cbValue=s;
-  emit valueChanged( m_sbValue + m_cbValue );
+  cbValue=s;
+  emit valueChanged( sbValue + cbValue );
 }
 void specialSB::sbValueSlot(const QString& s){
-  m_sbValue=s;
-  emit valueChanged( m_sbValue + m_cbValue);
+  sbValue=s;
+  emit valueChanged( sbValue + cbValue);
 }
 
 frequencyEditor::frequencyEditor(QWidget *parent, const char *name ) : specialSB(parent,name) {
@@ -65,11 +67,6 @@ lengthEditor::lengthEditor(QWidget *parent, const char *name ) : specialSB(paren
   getComboBox()->insertItem("px");
   getComboBox()->insertItem("em");
   getComboBox()->insertItem("ex");
-  getComboBox()->insertItem("in");
-  getComboBox()->insertItem("cm");
-  getComboBox()->insertItem("mm");
-  getComboBox()->insertItem("pt");
-  getComboBox()->insertItem("pc");
   getSpinBox()->setMaxValue(99999);
 }
 
