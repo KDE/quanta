@@ -110,13 +110,14 @@ var_options = hasCore, hasI18n, hasScript
 [Extra rules]
 BooleanAttributes = simple
 Single Tag Style = html
-StructGroupsCount = 2
+StructGroupsCount = 3
 
 [Parsing rules]
 SpecialAreas = <!-- -->
 SpecialAreaNames = comment
 SpecialTags = script(language)
 MayContain = php, css
+
 
 [StructGroup_1]
 Name = Images
@@ -126,14 +127,19 @@ Tag = img(src)
 HasFileName = true
 
 [StructGroup_2]
-Name = Links
-No_Name = No Links
+Name = Links (anchor)
+No_Name = No Links (anchor)
 Icon = www
 Tag = a(name,href)
 HasFileName = true
 FileNameRx = .*\||#.*
 
-
+[StructGroup_3]
+Name = Resources (link)
+No_Name = No Links (link)
+Icon = www
+Tag = link(href)
+HasFileName = true
 
 
 
