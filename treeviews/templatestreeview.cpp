@@ -67,7 +67,7 @@
 const QString textMenu = I18N_NOOP("Insert as &Text");
 const QString binaryMenu = I18N_NOOP("Insert &Link to File");
 const QString docMenu = I18N_NOOP("&New Document Based on This");
-const QString siteMenu = I18N_NOOP("New &Folder Based on This");
+const QString siteMenu = I18N_NOOP("&Extract Site Template To...");
 const QString textType = I18N_NOOP("Text snippet");
 const QString binaryType = I18N_NOOP("Binary file");
 const QString documentType = I18N_NOOP("Document template");

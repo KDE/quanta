@@ -112,6 +112,7 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
 
   m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("New Top &Folder..."), this, SLOT(slotNewTopFolder()));
   m_menuTop = m_folderMenu->insertItem(i18n("&Add Folder to Top"), this, SLOT(slotAddToTop()));
+  m_folderMenu->insertItem(i18n("Create Site &Template..."), this, SLOT(slotCreateSiteTemplate()));
   m_folderMenu->insertSeparator();
   m_insertFolderInProject = m_folderMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertDirInProject()));
   m_folderMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));
@@ -291,7 +292,7 @@ void FilesTreeView::plugCVSMenu()
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("cervisia"), i18n("C&VS"), CVSService::ref()->menu());
 #endif
-
 }
+
 
 #include "filestreeview.moc"

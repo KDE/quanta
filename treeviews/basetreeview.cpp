@@ -39,8 +39,12 @@
 #include <kpropertiesdialog.h>
 #include <kfiledialog.h>
 #include <kprogress.h>
+#include <kstandarddirs.h>
 #include <kurldrag.h>
 #include <kurl.h>
+#include <kurlrequesterdlg.h>
+#include <ktar.h>
+#include <ktempfile.h>
 #include <kapplication.h>
 #include <kcursor.h>
 #include <kprotocolinfo.h>
@@ -48,6 +52,7 @@
 // app includes
 #include "basetreeview.h"
 #include "fileinfodlg.h"
+#include "project.h"
 #include "resource.h"
 #include "quanta.h"
 #include "qextfileinfo.h"
@@ -828,6 +833,78 @@ void BaseTreeView::slotRenameFinished(KIO::Job *job)
   } else {
     emit renamed(m_oldURL, m_newURL);
   }
+}
+
+void BaseTreeView::slotCreateSiteTemplate()
+{
+   QString startDir;
+   if (Project::ref()->hasProject())
+   {
+     startDir = Project::ref()->templateURL.url();
+   } else
+   {
+     startDir = locateLocal("data", resourceDir + "templates/");
+   }
+   KURL targetURL;
+
+   KURLRequesterDlg urlRequester(startDir, i18n("Site template file"), this, "req", true);
+   bool valid;
+   do {
+     valid = false;
+     if (!urlRequester.exec())
+       return;
+     targetURL = urlRequester.selectedURL();
+     if (targetURL.url().startsWith(KURL::fromPathOrURL(locateLocal("data", resourceDir + "templates/")).url()))
+       valid = true;
+    if (Project::ref()->hasProject() && targetURL.url().startsWith(Project::ref()->templateURL.url()))
+      valid = true;
+    if (!valid)
+      KMessageBox::error(this, i18n("Templates should be saved to the local or project template folder."));
+   }while (!valid);
+
+   KURL url = currentURL();
+   //TODO: Implement creation from remote folders as well. Requires downloading of the files to a
+   //temporary directory
+   if (url.protocol() != "file")
+   {
+       KMessageBox::sorry(this, i18n("Currently you can create site templates only from local folders."), i18n("Unsupported Feature"));
+       return;
+   }
+
+   KTempFile *tempFile = new KTempFile(tmpDir);
+   tempFile->setAutoDelete(true);
+   tempFile->close();
+   KTar tar(tempFile->name(), "application/x-gzip");
+   bool error = false;
+   if (tar.open(IO_WriteOnly))
+   {
+      KURL::List fileList = QExtFileInfo::allFiles(url, "*");
+      for (KURL::List::Iterator it = fileList.begin(); it != fileList.end(); ++it)
+      {
+         if (!(*it).path().endsWith("/"))
+         {
+           QFile f((*it).path());
+           if (f.open(IO_ReadOnly))
+           {
+              QByteArray buffer(f.readAll());
+              if (!tar.writeFile((*it).path().remove(url.path()), "user", "group", buffer.size(), buffer.data()))
+              {
+                  error = true;
+              }
+              f.close();
+           } else
+             error = true;
+         }
+      }
+      tar.close();
+   } else
+      error = true;
+   if (!QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), targetURL, -1, true, this))
+     error = true;
+
+   if (error)
+     KMessageBox::error(this, i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)).arg(targetURL.prettyURL(0, KURL::StripFileProtocol)), i18n("Template Creation Error"));
+   delete tempFile;
 }
 
 #include "basetreeview.moc"

@@ -188,6 +188,10 @@ protected slots:
    */
   virtual void slotRenameItem(QListViewItem* kvtvi, const QString & newText, int col);
   void slotRenameFinished(KIO::Job *job);
+  /**
+  create a site template tarball from the selected directory
+  */
+  virtual void slotCreateSiteTemplate();
 
 protected:
   /**

@@ -149,6 +149,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("Remove From &Disc (and Project)"), this, SLOT(slotRemove()));
   m_folderMenu->insertItem(i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
   m_folderMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload Folder..."), this, SLOT(slotUploadSingleURL()));
+  m_folderMenu->insertItem(i18n("Create Site &Template..."), this, SLOT(slotCreateSiteTemplate()));
   m_folderMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
   m_folderMenu->insertSeparator();
   m_setDocumentRootId = m_folderMenu->insertItem(i18n("Document-&base folder"), this, SLOT(slotChangeDocumentFolderStatus()));
