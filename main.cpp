@@ -37,7 +37,11 @@ static const char *description =
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
 
 static const char *othertext =
-	I18N_NOOP("We hope you enjoy Quanta Plus.\n\nQuanta Plus is not in any way affiliated with \nany commercial versions of Quanta. The \nprimary coders from the original team \nleft the GPL'd version to produce a \ncommercial product.");
+	I18N_NOOP("Our goal is to be nothing less than the best possible tool for\n \
+working with tagging and scripting languages.\
+\n\nQuanta Plus is not in any way affiliated with any commercial\n \
+versions of Quanta. \
+\n\nWe hope you enjoy Quanta Plus.\n\n");
 	
 
 static KCmdLineOptions options[] =
@@ -54,7 +58,7 @@ int main(int argc, char *argv[])
 	KAboutData
 		aboutData( "quanta", I18N_NOOP("Quanta"),
 		VERSION, description, KAboutData::License_GPL_V2,
-		"(c) 2000, 2001",
+		"(c) 2000, 2001, 2002",
 		othertext,
 		"http://quanta.sourceforge.net"
 		);
@@ -69,6 +73,18 @@ int main(int argc, char *argv[])
  	aboutData.addCredit("Richard Moore",
     "Coding and tag dialog definition documentation and more",
     "rich@kde.org");
+
+  aboutData.addCredit("Marc Britton",
+    "Various fixes, scripting dialog system",
+    "consume@optushome.com.au");
+
+  aboutData.addCredit("Robert Nickel",
+    "Documentation, many cool parsing scripts to automate \ndevelopment",
+    "robert@artnickel.com");
+
+  aboutData.addCredit("Jason P. Hanley",
+    "Various fixes, foundational code for DTD parsing and other \nDTD related work",
+    "jphanley@buffalo.edu");
 
   aboutData.addCredit("Matthew Colton",
     "Cool splash screen for many version releases of Quanta",
