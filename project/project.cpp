@@ -96,6 +96,7 @@
 #include "teammembersdlg.h"
 #include "eventconfigurationdlg.h"
 #include "qpevents.h"
+#include "uploadprofiles.h"
 
 extern QString simpleMemberStr;
 extern QString taskLeaderStr;
@@ -276,6 +277,7 @@ void ProjectPrivate::init()
   m_subprojectLeaders.clear();
   m_subprojects.clear();
   m_simpleMembers.clear();
+  UploadProfiles::ref()->clear();
 }
 
 
@@ -655,6 +657,9 @@ void ProjectPrivate::loadProjectXML()
 
   if (m_projectFiles.readFromXML(dom, baseURL, templateURL, excludeRx))
    m_modified = true;
+  // read the profiles and create treeviews for them
+  UploadProfiles::ref()->readFromXML(dom);
+ 
   parent->statusMsg(QString::null);
   parent->newProjectLoaded(projectName, baseURL, templateURL);
   parent->reloadTree(&(m_projectFiles), true, treeStatusFromXML());
@@ -1455,8 +1460,7 @@ void Project::loadLastProject(bool reload)
         KMessageBox::questionYesNo(d->m_parent, i18n("<qt>An unsaved project file was found.<br> Do you want to open it?</qt>") )
         == KMessageBox::Yes))
     {
-      d->m_tmpProjectFile = tempPath;
-      d->loadProjectFromTemp(url, d->m_tmpProjectFile);
+      d->loadProjectFromTemp(url, tempPath);
       return;
     }
   }

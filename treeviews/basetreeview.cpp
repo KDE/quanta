@@ -299,6 +299,18 @@ BaseTreeView::BaseTreeView(QWidget *parent, const char *name)
 
   connect(this, SIGNAL(executed(QListViewItem *)),
           this, SLOT(slotSelectFile(QListViewItem *)));
+  
+  connect(this, SIGNAL(openFile(const KURL &)),
+          quantaApp, SLOT(slotFileOpen(const KURL &)));
+  
+  connect(this, SIGNAL(openImage(const KURL &)),
+          quantaApp, SLOT(slotImageOpen(const KURL &)));
+  
+  connect(this, SIGNAL(closeFile(const KURL &)),
+          quantaApp, SLOT(slotFileClose(const KURL &)));
+  
+  connect(this, SIGNAL(insertTag(const KURL &, DirInfo)),
+          quantaApp, SLOT(slotInsertTag(const KURL &, DirInfo)));
 }
 
 

@@ -2,12 +2,12 @@ noinst_LTLIBRARIES = libproject.la
 METASOURCES = AUTO
 
 libproject_la_SOURCES = projectoptions.ui projectnewgenerals.ui \
-				projectnewgeneral.cpp projectnewlocals.ui projectnewlocal.cpp rescanprj.cpp rescanprjdir.ui \
-				projectnewfinals.ui projectuploads.ui projectnewfinal.cpp projectupload.cpp project.cpp \
-				projectnewwebs.ui projectnewweb.cpp uploadprofiledlgs.ui projectlist.cpp \
-				membereditdlgs.ui teammembersdlgs.ui teammembersdlg.cpp membereditdlg.cpp \
-		subprojecteditdlgs.ui eventconfigurationdlgs.ui eventeditordlgs.ui eventconfigurationdlg.cpp \
-	eventeditordlg.cpp
+	projectnewgeneral.cpp projectnewlocals.ui projectnewlocal.cpp rescanprj.cpp rescanprjdir.ui \
+	projectnewfinals.ui projectuploads.ui projectnewfinal.cpp projectupload.cpp project.cpp \
+	projectnewwebs.ui projectnewweb.cpp uploadprofiledlgs.ui projectlist.cpp \
+	membereditdlgs.ui teammembersdlgs.ui teammembersdlg.cpp membereditdlg.cpp \
+	subprojecteditdlgs.ui eventconfigurationdlgs.ui eventeditordlgs.ui eventconfigurationdlg.cpp \
+	eventeditordlg.cpp uploadprofiles.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/quanta/parsers \

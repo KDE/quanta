@@ -472,15 +472,7 @@ void QuantaInit::initView()
 
   connect(m_quanta, SIGNAL(reloadAllTrees()),
           m_quanta->fTab, SLOT(slotReloadAllTrees()));
-  connect(m_quanta->fTab, SIGNAL(openFile(const KURL &)),
-          m_quanta, SLOT(slotFileOpen(const KURL &)));
-  connect(m_quanta->fTab, SIGNAL(openImage(const KURL&)),
-          m_quanta, SLOT  (slotImageOpen(const KURL&)));
 
-  connect(pTab, SIGNAL(openFile(const KURL &)),
-          m_quanta, SLOT(slotFileOpen(const KURL &)));
-  connect(pTab, SIGNAL(openImage  (const KURL&)),
-          m_quanta, SLOT(slotImageOpen(const KURL&)));
   connect(pTab, SIGNAL(loadToolbarFile  (const KURL&)),
           m_quanta, SLOT(slotLoadToolbarFile(const KURL&)));
   connect(m_viewManager, SIGNAL(viewActivated(const KURL&)),
@@ -495,43 +487,15 @@ void QuantaInit::initView()
   connect(m_viewManager, SIGNAL(documentClosed(const KURL&)),
           m_quanta->fTab, SLOT(slotDocumentClosed(const KURL&)));
 
-  connect(m_quanta->fTab, SIGNAL(closeFile   (const KURL &)),
-          m_quanta, SLOT  (slotFileClose(const KURL &)));
-  connect(pTab, SIGNAL(closeFile   (const KURL &)),
-          m_quanta, SLOT  (slotFileClose(const KURL &)));
-  connect(tTab, SIGNAL(closeFile   (const KURL &)),
-          m_quanta, SLOT  (slotFileClose(const KURL &)));
-
-  connect(m_quanta->fTab, SIGNAL(closeFile   (const KURL &)),
-          m_quanta, SLOT  (slotFileClose(const KURL &)));
-  connect(pTab, SIGNAL(closeFile   (const KURL &)),
-          m_quanta, SLOT  (slotFileClose(const KURL &)));
-  connect(tTab, SIGNAL(closeFile   (const KURL &)),
-          m_quanta, SLOT  (slotFileClose(const KURL &)));
-
-  connect(tTab, SIGNAL(openImage  (const KURL&)),
-          m_quanta, SLOT(slotImageOpen(const KURL&)));
-  connect(tTab, SIGNAL(openFile(const KURL &)),
-          m_quanta, SLOT(slotFileOpen(const KURL &)));
   connect(tTab, SIGNAL(insertFile  (const KURL &)),
           m_quanta, SLOT(slotInsertFile(const KURL &)));
-  connect(tTab, SIGNAL(insertTag(const KURL &, DirInfo)),
-          m_quanta, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
-  connect(m_quanta->scriptTab, SIGNAL(openFile(const KURL &)),
-          m_quanta, SLOT(slotFileOpen(const KURL &)));
   connect(m_quanta->scriptTab, SIGNAL(openFileInPreview(const KURL &)),
           m_quanta, SLOT(slotOpenFileInPreview(const KURL &)));
   connect(m_quanta->scriptTab, SIGNAL(showPreviewWidget(bool)),
           m_quanta, SLOT(slotShowPreviewWidget(bool)));
   connect(m_quanta->scriptTab, SIGNAL(assignActionToScript(const KURL &, const QString&)),
           m_quanta, SLOT(slotAssignActionToScript(const KURL &, const QString&)));
-
-
-  connect(m_quanta->fTab, SIGNAL(insertTag(const KURL &, DirInfo)),
-          m_quanta, SLOT(slotInsertTag(const KURL &, DirInfo)));
-  connect(pTab, SIGNAL(insertTag(const KURL &, DirInfo)),
-          m_quanta, SLOT(slotInsertTag(const KURL &, DirInfo)));
 
   connect(m_quanta->m_htmlPart, SIGNAL(onURL(const QString&)),
               m_quanta, SLOT(slotStatusMsg(const QString&)));

@@ -851,6 +851,8 @@ KURL TemplatesTreeView::filterTemplate()
    filterAction->setOutputFile(tempFile->file());
    filterAction->setInputFileName(url.path());
    filterAction->execute();
+   filterAction->setOutputFile(0L);
+   filterAction->setInputFileName(QString::null);
    tempFile->close();
    tempFileList.append(tempFile);
    url.setPath(tempFile->name());
