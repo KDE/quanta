@@ -153,7 +153,6 @@ KWriteView::KWriteView(KWrite *write, KWriteDoc *doc, bool HandleOwnDND)
   yScroll = new QScrollBar(QScrollBar::Vertical,write);
   connect(xScroll,SIGNAL(valueChanged(int)),SLOT(changeXPos(int)));
   connect(yScroll,SIGNAL(valueChanged(int)),SLOT(changeYPos(int)));
-  connect(yScroll,SIGNAL(valueChanged(int)),kWrite,SIGNAL(scrollValueChanged(int)));
 
   xPos = 0;
   yPos = 0;
