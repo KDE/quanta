@@ -175,5 +175,5 @@ KVMAllocator::map(Block *block)
 void 
 KVMAllocator::unmap(Block *block)
 {
-   munmap(block->mmap, block->length);
+   munmap((char*)block->mmap, block->length);
 }
