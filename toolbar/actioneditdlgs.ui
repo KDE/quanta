@@ -390,7 +390,7 @@
                                             <cstring>outputCursor_2</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>Inser in cursor position</string>
+                                            <string>Insert in cursor position</string>
                                         </property>
                                     </widget>
                                     <widget class="QRadioButton" row="2" column="0">
