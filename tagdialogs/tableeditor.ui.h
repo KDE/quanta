@@ -21,6 +21,8 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kiconloader.h>
+#include <kparts/componentfactory.h>
+#include <ktexteditor/editinterface.h>
 
 //qt includes
 #include <qpoint.h>
@@ -36,6 +38,7 @@
 
 #include "../document.h"
 #include "../quantacommon.h"
+#include "../quanta.h"
 #include "../resource.h"
 
 int newNum;
@@ -175,15 +178,15 @@ void TableEditor::slotEditTableBody()
 }
 
 
-bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
+bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser *docParser )
 {
   m_bLine = bLine;
   m_bCol = bCol;
   m_eLine = eLine;
   m_eCol = eCol;
   m_createNodes = false; //don't create the cell and row content when adding a new cell/row
-  Node *node = parser->nodeAt(bLine, bCol + 1);
-  Node *lastNode = parser->nodeAt(eLine, eCol);
+  Node *node = docParser->nodeAt(bLine, bCol + 1);
+  Node *lastNode = docParser->nodeAt(eLine, eCol);
   if (node)
     kdDebug(24000) << "node = " << node->tag->name << endl;
   if (lastNode)
@@ -963,30 +966,90 @@ void TableEditor::slotUnmergeCells()
 
 void TableEditor::slotEditChildTable()
 {
+  bool tempDocCreated = false;
+  bool error = false;
+  QValueList<NestedTable>::Iterator errorIt;
+  Parser *localParser;
+  Document *w;
+  Node *savedBaseNode;
+  NestedTable table;
+
   for (QValueList<NestedTable>::Iterator it = m_nestedTables.begin(); it != m_nestedTables.end(); ++it) {
-    NestedTable table = *it;
+    table = *it;
     if (table.row == m_row  && table.col == m_col) {
       QString cellData = m_dataTable->text(table.row, table.col);
       int pos = cellData.find(table.nestedData);
       if (pos == -1) {
         KMessageBox::error(this, i18n("Cannot edit the child table. Most probably you modified the cell containing the table manually."), i18n("Cannot read table"));
-        m_nestedTables.erase(it);
-        return;
+        error = true;
+        errorIt = it;
+        break;
       }
+      //create a new editor object and save the current state of the table there
+      KTextEditor::Document *doc =
+  KTextEditor::createDocument ("libkatepart", 0L, "KTextEditor::Document");
+      w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->project(),
+                             quantaApp->m_pluginInterface, 0L);
+      QString tableData = readModifiedTable();
+      w->editIf->insertText(0, 0, tableData);
+      localParser = new Parser();
+      savedBaseNode = baseNode; //we must save it as it's deleted in the localParser->parse();
+      baseNode = 0L;
+      baseNode = localParser->parse(w);
+      tempDocCreated = true;
+      //try to find the child table position
+      int pos2 = tableData.find(cellData);
+      if (pos2 != -1)
+        pos2 = tableData.find(table.nestedData, pos2);
+      if (pos2 == -1) {
+        KMessageBox::error(this, i18n("Cannot edit the child table. Most probably you modified the cell containing the table manually."), i18n("Cannot read table"));
+        error = true;
+        errorIt = it;
+        break;
+      }
+      tableData = tableData.left(pos2);
+      table.bLine = tableData.contains('\n');
+      pos2 = tableData.findRev('\n');
+      if (pos2 != -1) {
+        table.bCol = tableData.length() - pos2;
+      } else {
+        table.bCol = tableData.length();
+      }
+      Node *childTableNode = localParser->nodeAt(table.bLine, table.bCol);
+      if (!childTableNode->next || !QuantaCommon::closesTag(childTableNode->tag, childTableNode->next->tag)) {
+        KMessageBox::error(this, i18n("Cannot find the closing tag of the child table. Most probably you've introduced unclosed tags in the table and have broken its consistency."), i18n("Cannot read table"));
+        error = true;
+        errorIt = it;
+        break;
+      }
+      childTableNode->next->tag->endPos(table.eLine, table.eCol);
       TableEditor editor;
       editor.setBaseURL(m_baseURL);
-      editor.setTableArea(table.bLine, table.bCol, table.eLine, table.eCol);
+      editor.setTableArea(table.bLine, table.bCol, table.eLine, table.eCol, localParser);
       if (editor.exec()) {
        int length = table.nestedData.length();
        (*it).nestedData =  editor.readModifiedTable();
        cellData.replace(pos, length, (*it).nestedData);
        m_dataTable->setText(table.row, table.col, cellData);
-
-       m_nestedTables.erase(it);
-       m_dataTable->item(table.row, table.col)->setPixmap(QPixmap());
-       m_dataTable->updateCell(table.row, table.col);
-     }
-      break;
+      }
+      //cleanup on success
+      delete baseNode;
+      baseNode = savedBaseNode;
+      delete localParser;
+      delete w;
+      return;
+    }
+  }
+  //cleanup on error
+  if (error) {
+    m_nestedTables.erase(errorIt);
+    m_dataTable->item(table.row, table.col)->setPixmap(QPixmap());
+    m_dataTable->updateCell(table.row, table.col);
+    if (tempDocCreated) {
+      delete baseNode;
+      baseNode = savedBaseNode;
+      delete localParser;
+      delete w;
     }
   }
 }

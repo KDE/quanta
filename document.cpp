@@ -128,9 +128,12 @@ void Document::resizeEvent(QResizeEvent *e)
 {
   QWidget::resizeEvent(e);
   QWidget *wd=dynamic_cast<QWidget*>(parent());
-  int w = wd->width() -5 ;
-  int h = wd->height() - 9;
-  quantaApp->view()->resize(w,h);
+  if (wd)
+  {
+    int w = wd->width() -5 ;
+    int h = wd->height() - 9;
+    quantaApp->view()->resize(w,h);
+  }
 }
 
 void Document::setUntitledUrl(QString url)

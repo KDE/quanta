@@ -436,7 +436,7 @@ void QuantaView::slotTagEditTable()
   if (tableExists)
   {
     editor.setBaseURL(baseURL());
-    tableRead = editor.setTableArea(bLine, bCol, eLine, eCol);
+    tableRead = editor.setTableArea(bLine, bCol, eLine, eCol, parser);
     if (!tableRead)
     {
       KMessageBox::error(this, i18n("The table structure is invalid. Most probably you forgot to close some tags."), i18n("Cannot read the table"));

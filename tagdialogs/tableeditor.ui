@@ -736,6 +736,7 @@
     <forward>class Node</forward>
     <forward>typedef struct TableNode {   Node *node; bool merged; int mergedRow; int mergedCol; }  </forward>
     <forward>typedef struct NestedTable{ Node *node; int row; int col; int bLine; int bCol; int eLine; int eCol; QString nestedData;}</forward>
+    <forward>class Parser</forward>
 </forwards>
 <variables>
     <variable>QValueList&lt;Tag*&gt; m_colTags;</variable>
@@ -793,7 +794,7 @@
 <functions>
     <function>init()</function>
     <function>destroy()</function>
-    <function returnType="bool">setTableArea( int bLine, int bCol, int eLine, int eCol )</function>
+    <function returnType="bool">setTableArea( int bLine, int bCol, int eLine, int eCol, Parser * docParser )</function>
     <function>setBaseURL( const KURL &amp; url )</function>
     <function returnType="QString">readModifiedTable()</function>
     <function access="protected" returnType="QString">indent( int n )</function>
