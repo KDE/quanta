@@ -18,8 +18,6 @@
    Boston, MA 02111-1307, USA.
 */
 
-// $Id$
-
 #include "kategrepdialog.h"
 #include <qlayout.h>
 #include <qpushbutton.h>
@@ -362,11 +360,11 @@ void GrepDialog::slotSearch()
     command += " \\) -print | xargs grep -n -e ";
     command += KProcess::quote(pattern);
     command += " /dev/null";
-    
+
     childproc = new KProcess();
     childproc->setUseShell(true);
     *childproc << command;
-    
+
     connect( childproc, SIGNAL(processExited(KProcess *)),
          SLOT(childExited()) );
     connect( childproc, SIGNAL(receivedStdout(KProcess *, char *, int)),

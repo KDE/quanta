@@ -369,7 +369,6 @@ void Document::insertFile(const KURL& url)
   {
     QTextStream stream( &file );
     stream.setEncoding(QTextStream::UnicodeUTF8);
-//  kate_view->insertText(stream.read());
     insertText(stream.read());
     file.close();
   } else

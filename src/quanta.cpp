@@ -83,16 +83,16 @@
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/markinterface.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/printinterface.h>
 #include <ktexteditor/popupmenuinterface.h>
 #include <ktexteditor/dynwordwrapinterface.h>
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/undointerface.h>
+#include <ktexteditor/view.h>
 
 #include <kio/netaccess.h>
-
-#include <kate/view.h>
 
 #if KDE_IS_VERSION(3,1,90)
 #include <ktabwidget.h>
@@ -897,29 +897,62 @@ void QuantaApp::slotNewStatus()
 
 void QuantaApp::slotOptionsConfigureKeys()
 {
-  KKeyDialog::configure( actionCollection(), this, true);
-  QDomDocument doc;
-  doc.setContent(KXMLGUIFactory::readConfigFile(xmlFile(), instance()));
-  QDomNodeList nodeList = doc.elementsByTagName("ActionProperties");
-  QDomNode node = nodeList.item(0).firstChild();
-  while (!node.isNull())
+  KKeyDialog dlg( false, this );
+  QPtrList<KXMLGUIClient> clients = guiFactory()->clients();
+  for( QPtrListIterator<KXMLGUIClient> it( clients );
+       it.current(); ++it ) {
+    dlg.insert( (*it)->actionCollection() );
+  }
+  if ( dlg.configure() == KKeyDialog::Accepted )
   {
-    if (node.nodeName() == "Action")
-    {
-      TagAction *action = dynamic_cast<TagAction*>(actionCollection()->action(node.toElement().attribute("name")));
-      if (action)
+  // this is needed for when we have multiple embedded kateparts and change one of them.
+    // it also needs to be done to their views, as they too have actioncollections to update
+    //FIXME: In case of resetting an action to the default shortcut, it doesn't work.
+    // The problem might be in reloadXML()
+      if( const QPtrList<KParts::Part> * partlist = m_partManager->parts() )
       {
-        action->setModified(true);
-        QDomElement el = action->data();
-        el.setAttribute("shortcut", action->shortcut().toString());
-        el = node.toElement();
-        node = node.nextSibling();
-        el.parentNode().removeChild(el);
-      } else
-      {
-        node = node.nextSibling();
+          QPtrListIterator<KParts::Part> it( *partlist );
+          while ( KParts::Part* part = it.current() )
+          {
+              if ( KTextEditor::Document * doc = dynamic_cast<KTextEditor::Document*>( part ) )
+              {
+                  doc->reloadXML();
+
+                  QPtrList<KTextEditor::View> const & list = doc->views();
+                  QPtrListIterator<KTextEditor::View> itt( list );
+                  while( KTextEditor::View * view = itt.current() )
+                  {
+                      view->reloadXML();
+                      ++itt;
+                  }
+              }
+              ++it;
+          }
       }
-    }
+
+      QDomDocument doc;
+      doc.setContent(KXMLGUIFactory::readConfigFile(xmlFile(), instance()));
+      QDomNodeList nodeList = doc.elementsByTagName("ActionProperties");
+      QDomNode node = nodeList.item(0).firstChild();
+      while (!node.isNull())
+      {
+        if (node.nodeName() == "Action")
+        {
+          TagAction *action = dynamic_cast<TagAction*>(actionCollection()->action(node.toElement().attribute("name")));
+          if (action)
+          {
+            action->setModified(true);
+            QDomElement el = action->data();
+            el.setAttribute("shortcut", action->shortcut().toString());
+            el = node.toElement();
+            node = node.nextSibling();
+            el.parentNode().removeChild(el);
+          } else
+          {
+            node = node.nextSibling();
+          }
+        }
+      }
   }
 }
 
