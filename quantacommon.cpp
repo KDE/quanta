@@ -200,3 +200,16 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
 
  return xmlStr;
 }
+
+/** Returns list of values for attribute */
+QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, QString attribute)
+{
+  AttributeList* attrs = tagAttributes(dtdName, tag); 
+  Attribute *attr;
+  for ( attr = attrs->first(); attr; attr = attrs->next() ) {
+    if (attr->name == attribute) {
+      return &attr->values;
+    }
+  }
+  return 0L;
+}

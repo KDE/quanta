@@ -49,6 +49,8 @@ public:
   static QTag* tagFromDTD(QString dtdName, QString tag);
   /** Returns an XML style string containing the GUI for attributes. */
   static QString xmlFromAttributes(AttributeList* attributes);
+  /** Returns list of values for attribute */
+  static QStringList* tagAttributeValues(QString dtdName, QString tag, QString attribute);
 
 };
 

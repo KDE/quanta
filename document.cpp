@@ -850,8 +850,18 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
 {
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
 
-  //need to get this information from something
+  KTextEditor::CompletionEntry completion;
+  completion.type = "attributeValue";
+  completion.userdata = tag + "," + attribute;
 
+  QStringList *values = QuantaCommon::tagAttributeValues(dtdName,tag,attribute);
+  if (values) {
+    for ( QStringList::Iterator it = values->begin(); it != values->end(); ++it ) {
+      completion.text = *it;
+      completions->append( completion );
+    }
+  }
+  
   return completions;
 }
 

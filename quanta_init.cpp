@@ -684,8 +684,28 @@ void QuantaApp::setAttributes(QDomDocument *dom, QTag* tag)
      attr->name = n.toElement().attribute("name");
      attr->type = n.toElement().attribute("type","input");
      attr->defaultValue = n.toElement().attribute("defaultValue");
-     attr->status = n.toElement().attribute("status");
-
+     attr->status = n.toElement().attribute("status");   
+    
+     if ( attr->type == "list" ) {
+       QDomElement el = n.toElement();
+       for ( QDomElement attrEl = el.firstChild().toElement(); !attrEl.isNull(); attrEl = attrEl.nextSibling().toElement() ) {
+         if ( attrEl.tagName() == "items" ) {
+           QDomElement item = attrEl.firstChild().toElement();
+           while ( !item.isNull() ) {
+             attr->values.append( item.text() );
+             item = item.nextSibling().toElement();
+           }
+         }
+       }
+     } else if ( attr->type == "check" ) {
+       attr->values.append("true");
+       attr->values.append("false");
+     } else if ( attr->type == "color" ) {
+     } else if ( attr->type == "url" ) {
+     } else if ( attr->type == "input" ) {
+     } else {
+     }
+     
      if (!attr->name.isEmpty())
      {
        tag->addAttribute(attr);
