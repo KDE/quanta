@@ -96,7 +96,7 @@ bool QuantaKPartPlugin::load()
   else if(ow == i18n("Output Dock"))
   {
     QFileInfo partInfo(loc);
-	KDockWidget *outDock = quantaApp->outputDockWidget();
+    KDockWidget *outDock = quantaApp->outputDockWidget();
     m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), outDock, 0, outDock, 0, QStringList(arguments()));
     if(!m_part)
     {

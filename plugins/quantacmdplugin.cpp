@@ -73,9 +73,12 @@ bool QuantaCmdPlugin::load()
   if(isLoaded())
     return FALSE;
 
-  m_process = new KShellProcess;
+  m_process = new KProcess;
+  m_process->setUseShell(true);
 
   QString args = arguments();
+  if (!args.isEmpty())
+     args = KProcess::quote(args);
 
   /* TODO
   QString text = quantaApp->getDoc()->write()->editIf->text();
@@ -86,7 +89,7 @@ bool QuantaCmdPlugin::load()
   QString loc = location(); // locate first if location not specified
   if(loc.isEmpty())
   {
-    const char *fn = QFile::encodeName(fileName());
+    QString fn = fileName();
     KStandardDirs *dirs = QuantaCommon::pluginDirs("exe");
     loc = dirs->findResource("exe", fn);
     delete dirs;
@@ -100,12 +103,12 @@ bool QuantaCmdPlugin::load()
   if(ow == i18n("Konsole"))
   {
     QString kon = locate("exe", "konsole");
-    *m_process << kon << "-e" << loc;
+    *m_process << kon << "-e " << KProcess::quote(loc);
     *m_process << args; // FIXME : Do we need to tokenize arguments here?
   }
   else if(ow == i18n("Message Window"))
   {
-    *m_process << loc << args;
+    *m_process << KProcess::quote(loc) << args;
   }
   else
     qWarning("Unknown output window %s", ow.latin1());
@@ -121,7 +124,7 @@ bool QuantaCmdPlugin::run()
   if(isLoaded())
   {
     connect(m_process, SIGNAL(receivedStdout(KProcess *, char *, int)), SLOT(writeStdout(KProcess *, char *, int)));
-	connect(m_process, SIGNAL(receivedStderr(KProcess *, char *, int)), SLOT(writeStderr(KProcess *, char *, int)));
+    connect(m_process, SIGNAL(receivedStderr(KProcess *, char *, int)), SLOT(writeStderr(KProcess *, char *, int)));
     connect(m_process, SIGNAL(processExited(KProcess *)), SLOT(cleanupProcess(KProcess *)));
     if(!m_process->start(KProcess::NotifyOnExit, KProcess::AllOutput))
     {
@@ -129,7 +132,7 @@ bool QuantaCmdPlugin::run()
       unload();
       return FALSE;
     }
-	emit pluginStarted();
+    emit pluginStarted();
   }
   else
     return FALSE;
