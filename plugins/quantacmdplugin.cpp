@@ -19,6 +19,8 @@
 #include <cstdio>
 
 /* KDE INCLUDES */
+#include <kdebug.h>
+#include <kmessagebox.h>
 #include <kprocess.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
@@ -75,7 +77,7 @@ bool QuantaCmdPlugin::load()
     return FALSE;
 
   m_process = new KProcess;
-  m_process->setUseShell(true);
+ // m_process->setUseShell(true);
 
   QString args = arguments();
 
@@ -115,14 +117,17 @@ bool QuantaCmdPlugin::load()
   {
     QString kon = locate("exe", "konsole");
     *m_process << kon << "-e " << KProcess::quote(loc);
-    *m_process << args; // FIXME : Do we need to tokenize arguments here?
+    if (!args.isEmpty())
+        *m_process << args; // FIXME : Do we need to tokenize arguments here?
   }
   else if(ow == i18n("Message Window"))
   {
-    *m_process << KProcess::quote(loc) << args;
+    *m_process << loc;
+    if (!args.isEmpty())
+        *m_process << args;
   }
   else
-    qWarning("Unknown output window %s", ow.latin1());
+    KMessageBox::error(quantaApp, i18n("Invalid output window setting!"));
 
   return TRUE;
 }
@@ -144,7 +149,7 @@ bool QuantaCmdPlugin::run()
 
     if(!m_process->start(KProcess::NotifyOnExit, KProcess::AllOutput))
     {
-      qWarning("Unable to start process");
+      KMessageBox::error(quantaApp, i18n("<qt>The <b>%1</b> plugin could not be loaded!<br>Possible reasons are:<br>    - <b>%2</b> is not installed;<br>    - the file <i>%3</i> is not installed or it is not reachable.").arg(m_name).arg(m_name).arg(m_fileName));
       unload();
       return FALSE;
     }
@@ -179,7 +184,7 @@ void QuantaCmdPlugin::writeStdout(KProcess *, char *a_buffer, int a_len)
   {
   }
   else
-    qWarning("Unknown output window %s", ow.latin1());
+    kdWarning(24000) << "Unknown output window " << ow << endl;
   /* TODO : More output options */
 
 
@@ -206,7 +211,7 @@ void QuantaCmdPlugin::writeStderr(KProcess *, char *a_buffer, int a_len)
   {
   }
   else
-    qWarning("Unknown output window %s", ow.latin1());
+    kdWarning(24000) << "Unknown output window " << ow << endl;
   /* TODO : More output options */
 
   emit wroteStderr(text);

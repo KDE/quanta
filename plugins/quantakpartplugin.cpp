@@ -80,12 +80,6 @@ bool QuantaKPartPlugin::load()
     loc += QString("/") + fileName();
   }
 
-  if(loc.isEmpty())
-  {
-    kdWarning() << "QuantaKPartPlugin::run - null location\n";
-    return false;
-  }
-
   QFileInfo partInfo(loc);
   QString ow = outputWindow();
   QWidget *targetWidget;
@@ -103,7 +97,7 @@ bool QuantaKPartPlugin::load()
   }
   else
   {
-    kdWarning() << "QuantaKPartPlugin::load - Unknown output window:" << ow << "!\n";
+    KMessageBox::error(quantaApp, i18n("Invalid output window setting!"));
     return false;
   }
   if (m_readOnlyPart)
@@ -112,7 +106,7 @@ bool QuantaKPartPlugin::load()
     m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadWritePart>(partInfo.baseName().latin1(), targetWidget, 0, targetWidget, 0, QStringList(arguments()));
   if(!m_part)
   {
-    kdDebug(24000) << "Failed to create KPart\n";
+    KMessageBox::error(quantaApp, i18n("<qt>The <b>%1</b> plugin could not be loaded!<br>Possible reasons are:<br>    - <b>%2</b> is not installed;<br>    - the file <i>%3</i> is not installed or it is not reachable.").arg(m_name).arg(m_name).arg(m_fileName));
     return false;
   }
   return true;
