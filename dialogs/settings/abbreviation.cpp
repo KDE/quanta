@@ -98,7 +98,7 @@ void AbbreviationDlg::slotNewGroup()
    {
       if (qConfig.abbreviations.contains(groupName))
       {
-          KMessageBox::error(this, i18n("<qt>There is already an abbreviation group called <b>%1</b>. Choose an unique name for the new group.</qt>"), i18n("Group already exists"));
+          KMessageBox::error(this, i18n("<qt>There is already an abbreviation group called <b>%1</b>. Choose an unique name for the new group.</qt>").arg(groupName), i18n("Group already exists"));
           QTimer::singleShot(0, this, SLOT(slotNewGroup()));
       } else
       {
@@ -117,7 +117,7 @@ void AbbreviationDlg::slotAddDTEP()
   bool ok = false;
   QString res = KInputDialog::getItem(
                   i18n( "Add DTEP" ),
-                  i18n( "Please select a DTEP:" ), lst, 0, false, &ok, this );
+                  i18n( "Select a DTEP:" ), lst, 0, false, &ok, this );
   if (ok)
   {
       dtepList->insertItem(res);
@@ -130,7 +130,7 @@ void AbbreviationDlg::slotRemoveDTEP()
   int currentItem = dtepList->currentItem();
   if (currentItem == -1)
   {
-    KMessageBox::error(this, i18n("<qt>Select a DTEP from the list before using <i>Remove</i>.</qt>"), i18n("No DTEP Selected"));
+    KMessageBox::error(this, i18n("<qt>Select a DTEP from the list before using <b>Remove</b>.</qt>"), i18n("No DTEP Selected"));
   } else
   {
     currentAbbrev->dteps.remove(DTDs::ref()->getDTDNameFromNickName(dtepList->currentText()));

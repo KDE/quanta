@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>AbbreviationDlgS</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -140,6 +140,14 @@
             <property name="name">
                 <cstring>templatesList</cstring>
             </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
             <property name="resizeMode">
                 <enum>LastColumn</enum>
             </property>
@@ -166,7 +174,7 @@
                 <enum>Vertical</enum>
             </property>
             <property name="sizeType">
-                <enum>Expanding</enum>
+                <enum>Preferred</enum>
             </property>
             <property name="sizeHint">
                 <size>
