@@ -1736,11 +1736,30 @@ void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
               }
               if (pos == -1)
                   pos = foundStr.length();
-            //  structPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
               for (int j = structPos; j < pos + 1; j++)
               {
                 foundStr[j] = ' ';
               }
+              int openBracketPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
+              openBracketPos = foundStr.find('(', openBracketPos);
+              openNum = 1;
+              if (openBracketPos != -1)
+              {
+                int closeBracketPos = openBracketPos;
+                while (closeBracketPos < structPos && openNum !=0)
+                {
+                  if (foundStr[closeBracketPos] == '(')
+                      openNum++;
+                  if (foundStr[closeBracketPos] == ')')
+                      openNum--;
+                  closeBracketPos++;
+                }
+                for (int j = openBracketPos; j < closeBracketPos; j++)
+                {
+                  foundStr[j] = ' ';
+                }
+              }
+
               structPos =  pos + 1;
             }
           }
