@@ -576,7 +576,7 @@ int Document::createTempFile()
 
  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
  tempFile->close();
-
+kdDebug(24000) << "Creating tempfile " << m_tempFileName << " for " << url() << endl;
  return 1;
 }
 

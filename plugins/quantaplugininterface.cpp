@@ -43,7 +43,7 @@ QuantaPluginInterface::QuantaPluginInterface(QWidget *parent)
    (void) new KAction( i18n( "Configure &Plugins..." ), 0, 0,
                         this, SLOT( slotPluginsEdit() ),
                         ((KMainWindow*)parent)->actionCollection(), "configure_plugins" );
-
+  m_pluginMenu = 0L;
   // m_plugins.setAutoDelete(TRUE);
 }
 
@@ -126,7 +126,8 @@ void QuantaPluginInterface::readConfig()
   // read the global plugins.rc
   configFile = qConfig.globalDataDir + resourceDir + "plugins.rc";
   readConfigFile(configFile);
-  buildPluginMenu();
+  if (m_pluginMenu)
+    buildPluginMenu();
 }
 
 /** Writes the plugin settings to the rc file */

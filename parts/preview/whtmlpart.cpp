@@ -14,11 +14,14 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
-#include "whtmlpart.h"
-#include "whtmlpart.moc"
+//kde includes
+#include <khtmlview.h>
 #include <kconfig.h>
 #include <khtml_settings.h>
+
+//app includes
+#include "whtmlpart.h"
+#include "whtmlpart.moc"
 
 WHTMLPart::WHTMLPart(QWidget *parent, const char *name )
   : KHTMLPart(parent,name)
@@ -32,6 +35,7 @@ WHTMLPart::WHTMLPart(QWidget *parent, const char *name )
    const KHTMLSettings * set = settings();
 
    const_cast<KHTMLSettings*>(set)->init( &konqConfig, false );
+   view()->installEventFilter(this);
 
 //   setCharset( konqConfig.readEntry("DefaultEncoding") );
 //   setEncoding( konqConfig.readEntry("DefaultEncoding") );
@@ -113,4 +117,12 @@ KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget * parentWidget, const char 
    return new WHTMLPart(parentWidget, widgetName);
 }
 
-
+bool WHTMLPart::eventFilter(QObject *watched, QEvent *e)
+{
+  if (watched == view() && e->type() == QEvent::FocusOut)
+    emit previewHasFocus(false);
+  else
+  if (watched == view() && e->type() == QEvent::FocusIn)
+    emit previewHasFocus(true);
+  return false;
+}

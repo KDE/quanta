@@ -166,6 +166,7 @@ void QuantaInit::initQuanta()
           m_quanta->m_debugger, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
   connect(m_quanta->m_debugger, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
 
+  m_quanta->m_pluginInterface->readConfig(); //call here as well, so the plugin actions are created before the GUI
 
   //m_quanta->KDockMainWindow::createGUI( QString::null, false /* conserveMemory */ );
   m_quanta->createShellGUI(true);
@@ -215,8 +216,7 @@ void QuantaInit::initQuanta()
   }
 
   m_quanta->m_pluginInterface->setPluginMenu(static_cast<QPopupMenu*>(m_quanta->factory()->container("plugins", m_quanta)));
-  m_quanta->m_pluginInterface->readConfig();
-
+ m_quanta->m_pluginInterface->readConfig(); //call here as well to build the menu
 //Compatility code (read the action shortcuts from quantaui.rc)
 //TODO: Remove after upgrade from 3.1 is not supported
   QDomDocument doc;
@@ -448,6 +448,7 @@ void QuantaInit::initView()
   m_quanta->m_htmlPart->view()->setIcon(UserIcon("preview"));
   m_quanta->m_htmlPart->view()->setCaption(i18n("Preview"));
   m_quanta->slotNewPart(m_quanta->m_htmlPart, false);
+  connect(m_quanta->m_htmlPart, SIGNAL(previewHasFocus(bool)), m_quanta, SLOT(slotPreviewHasFocus(bool)));
 
 
   m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta, "docHTML");

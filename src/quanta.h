@@ -254,6 +254,8 @@ public slots:
   void slotShowPreview();
   void slotShowPreviewWidget(bool show);
   void slotHidePreview() {slotShowPreviewWidget(false);}
+  /** Called when the preview widget got or lost the focus */
+  void slotPreviewHasFocus(bool focus);
 
   void slotShowMessagesView();
   void slotShowProblemsView();

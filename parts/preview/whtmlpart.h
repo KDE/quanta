@@ -42,9 +42,11 @@ public slots:
   void back();
 
   void addToHistory( QString url );
+  virtual bool eventFilter(QObject *watched, QEvent *e);
 
 signals:
   void updateStatus( bool back, bool forward );
+  void previewHasFocus(bool focus);
 
 protected:
   virtual void urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs args = KParts::URLArgs());

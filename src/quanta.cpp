@@ -1374,6 +1374,19 @@ void QuantaApp::slotShowPreviewWidget(bool show)
   }
 }
 
+void QuantaApp::slotPreviewHasFocus(bool focus)
+{
+/*
+   if (m_previewToolView)
+   {
+      if (focus)
+        slotRepaintPreview();
+      else
+        slotShowPreview();
+   }
+   */
+}
+
 void QuantaApp::slotShowPreview()
 {
   Document *w  =ViewManager::ref()->activeDocument();
@@ -1401,6 +1414,7 @@ void QuantaApp::slotShowPreview()
           fileWatcher->removeFile(origUrl.path());
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());
+      kdDebug(24000) << "Restoring tempfile " << w->tempFileName() << " for " << w->url() << endl;
 //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
 //is dropped
       QExtFileInfo::copy(tempUrl, origUrl, -1, true, false, this);
