@@ -496,12 +496,11 @@ Node *Parser::parse(Document *w, bool force)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines) - 1, &lastNode);
   kdDebug(24000) << "Parsing time ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
   m_parsingNeeded = false;
-/*
+
  treeSize = 0;
  kdDebug(24000) << "Basenode : " << m_node << endl;
  coutTree(m_node, 2);
  kdDebug(24000) << "Size of tree: " << treeSize << endl;
-*/
 
 //FIXME: What is the use of two pointer to the same Node???
  baseNode = m_node;
@@ -982,9 +981,9 @@ Node *Parser::rebuild(Document *w)
 // kdDebug(24000)<< "Node *Parser::rebuild()" << endl;
  modifs->setIsModified(w->isModified());
 #endif
- /**kdDebug(24000)<< "************* Begin User Modification *****************" << endl;
+ //**kdDebug(24000)<< "************* Begin User Modification *****************" << endl;
   //debug!
-  coutTree(m_node, 2);*/
+  coutTree(m_node, 2);//*/
  if (w != write || !m_node) //the document has changed or the top node does not exists => parse completely
  {
 #ifdef BUILD_KAFKAPART
@@ -1217,9 +1216,9 @@ Node *Parser::rebuild(Document *w)
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
 
-/* treeSize = 0;
+ treeSize = 0;
  coutTree(m_node, 2);
- kdDebug(24000) << "Size of tree: " << treeSize << endl; */
+ kdDebug(24000) << "Size of tree: " << treeSize << endl;
 // cout << "\n";
 
  m_saParser->init(m_node, w);
