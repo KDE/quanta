@@ -153,7 +153,10 @@ void TagAction::insertTag()
       args = command.mid(pos+1);
       command = command.left(pos);
     }
-    *proc << command << args;
+    *proc << command.stripWhiteSpace();
+    args = args.stripWhiteSpace();
+    if (!args.isEmpty())
+      *proc << args;
 
     firstOutput = true;
     firstError  = true;
