@@ -3,7 +3,6 @@
 <p>Initial Version 2004-01-21 Eric Laffoon<br />(this is semi obsoleted by being in CVS)<br /><br />Please list the topics and date you add or change like so...<br /><br />Date Who Where                              What<br />03-12 McC New Features::Script Debug - changed<br />01-21 ELL Plugins::Knowit Planner - added<br />01-21 ELL New Features::KMDI - added<br />01-21 ELL FE::Toolbars::Phase 2 explanation - added</p>
 </body></html>
 
-
 \NewEntry 0 Feature Enhancements
 
 \NewEntry 1 Actions
@@ -45,7 +44,6 @@
 <p></p>
 </body></html>
 
-
 \NewEntry 1 Templates
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
 <p>This was never really finished.<br />1) Linked information needs to be managed so that linked files are uploaded maintaining the links<br />2) tgz groupings need to be added as a new type<br />3) I need to search for the rest of the list I had assembled</p>
@@ -65,7 +63,7 @@
 
 \CurrentEntry 1 Script Debug
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
-<p>I would very much like to see the work on integrating debuggers progress. Along with that I'd like to see the ability to add preprocessing to the file being sent to PHP so I could request back data that would take a lot of edits to the page without editing, but via automation.<br /><br />Todo:<br /><br /><span style="font-weight:600">PHPSebuggerInterface<br /></span>* Make it load the PHPDebugSocket from a shared object (plugin) to allow for different debuggers. What debugger to load should probably be a project setting.<br />* Only create PHPDebugSocket when a project is opened (not at Quanta startup) and it has a debugger chosen.<br />* Recreate PHPDebugSocket when switching projects<br />* Enable breakpoint setting in KTextEditors icon border<br /><br /><span style="font-weight:600">PHPDebugSocket </span><br /><br /><span style="font-weight:600">PHPDebugGubed<br />* </span>Send own breakpoints to Gubed at connection/initialization<br />* Add watch functionality<br />* Find reason to delayed socket communication<br />* About two tons of other stuff</p>
+<p><br /><span style="font-weight:600">Wishes that needs explanation:</span><br />* I'd like to see the ability to add preprocessing to the file being sent to PHP so I could request back data that would take a lot of edits to the page without editing, but via automation.<br /><br /><span style="font-weight:600">Todo:</span><br /><span style="font-weight:600">General Quanta debugger integration</span><br />* Enable breakpoint setting in KTextEditors icon border<br />* Verify that gubed.kmdr is up to date<br />* Finish new file mapping<br />* Messages dock is cleared when using 'time'<br /><br /><span style="font-weight:600">Gubed Plugin<br /></span>* Less pointless messages to the messages dock<br /></p>
 </body></html>
 
 
@@ -73,7 +71,6 @@
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">
 <p>We need to bring this feature to Quanta ASAP.</p>
 </body></html>
-
 
 \NewEntry 1 Form Debug
 <html><head><meta name="qrichtext" content="1" /></head><body style="font-size:10pt;font-family:Helvetica">

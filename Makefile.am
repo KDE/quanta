@@ -22,3 +22,4 @@ messages: rc.cpp
 	find . -name "*.tag" -print | xargs cat | perl -e 'while(<STDIN>) { if (/\<tag .* comment="(.*)"/) { print "i18n(\"$$1\");\n"; }}' >> rc.cpp
 	$(XGETTEXT) rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
 	rm -f extrafiles tips.cpp files dirs
+_SOURCES =  pathmapper.cpp

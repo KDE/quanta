@@ -21,6 +21,7 @@
 
 #include "debuggerbreakpointlist.h"
 #include "debuggerbreakpoint.h"
+#include "debuggerclient.h"
 #include "debuggermanager.h"
 #include "debuggerui.h"
 #include "resource.h"
@@ -98,6 +99,20 @@ int DebuggerBreakpointList::remove(DebuggerBreakpoint* bp)
 
 void DebuggerBreakpointList::clear()
 {
+  BreakpointList_t::iterator it;
+
+  for(it = m_breakpointList->begin(); it != m_breakpointList->end(); ++it)
+  {
+
+    // Remove it from the bp-list
+    quantaApp->debugger()->UI()->deleteBreakpoint(*(*it));
+
+    // Remove editor markpoint if there is one...
+    quantaApp->debugger()->setMark((*it)->filePath(), (*it)->line(), false, KTextEditor::MarkInterface::markType02);
+
+    if(quantaApp->debugger()->client())
+      quantaApp->debugger()->client()->removeBreakpoint((*it));
+  }
   m_breakpointList->clear();
 }
 

@@ -194,7 +194,7 @@ void DebuggerManager::initClientActions()
     // Get actioncollection and add appropriate actions depending on capabilities of the debugger
     if(m_client->supports(DebuggerClientCapabilities::LineBreakpoints))
       enableAction("debug_breakpoints_toggle", true);
-    if(m_client->supports(DebuggerClientCapabilities::ClearAllBreakpoints))
+    if(m_client->supports(DebuggerClientCapabilities::LineBreakpoints))
       enableAction("debug_breakpoints_clear", true);
   }
 }
@@ -548,12 +548,6 @@ void DebuggerManager::toggleBreakpoint ()
 }
 void DebuggerManager::clearBreakpoints ()
 {
-  DebuggerBreakpoint *bp;
-
-  m_breakpointList->rewind();
-  while((bp = m_breakpointList->next()))
-    setMark(bp->filePath(), bp->line(), false, KTextEditor::MarkInterface::markType02);
-
   m_breakpointList->clear();
 }
 

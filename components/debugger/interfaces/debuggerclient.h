@@ -38,7 +38,6 @@ namespace DebuggerClientCapabilities
     // Breakpoint related
     LineBreakpoints = 2000,
     ConditionalBreakpoints,
-    ClearAllBreakpoints,
 
     // Variable related
     Watches = 4000,
