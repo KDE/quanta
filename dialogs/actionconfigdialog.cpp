@@ -79,6 +79,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->label(i);
+    toolbarName.replace(r, "");
     item = new KListViewItem(actionTreeView, oldItem, i18n(toolbarName.utf8()));
     actionTreeView->insertItem(item);
 
@@ -95,12 +96,12 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
           if (action)
           {
             oldActionItem = new KListViewItem(item, oldActionItem, action->text().replace(r,""), action->shortcut().toString(), action->name());
-            oldActionItem->setPixmap(0, BarIcon(action->icon()) );
+            oldActionItem->setPixmap(0, SmallIcon(action->icon()) );
           }
         }
         node = node.nextSibling();
       }
-      if (tb->label(tb->currentPageIndex()) == toolbarName)
+      if (tb->label(tb->currentPageIndex()).replace(r, "") == toolbarName)
       {
          item->setOpen(true);
          if (item->firstChild())
@@ -130,7 +131,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   {
     action = quantaApp->actionCollection()->action(i);
     item = new KListViewItem(allActionsItem, action->text().replace(r, ""),  action->shortcut().toString(), action->name());
-    item->setPixmap(0, BarIcon(action->icon()) );
+    item->setPixmap(0, SmallIcon(action->icon()) );
   }
   allActionsItem->sortChildItems(0, true);
 
@@ -222,7 +223,7 @@ void ActionConfigDialog::slotEditToolbar()
             if (action)
             {
               oldItem = new KListViewItem(item, oldItem, action->text().replace(QRegExp("\\&(?!\\&)"),""), action->shortcut().toString(), action->name());
-              oldItem->setPixmap(0, BarIcon(action->icon()));
+              oldItem->setPixmap(0, SmallIcon(action->icon()));
             }
           }
           node = node.nextSibling();
@@ -469,7 +470,7 @@ void ActionConfigDialog::saveCurrentAction()
     listItem = it.current();
     if (listItem->depth() > 0 && listItem->text(2) == currentAction->name())
     {
-      listItem->setPixmap(0, BarIcon(actionIcon->icon()));
+      listItem->setPixmap(0, SmallIcon(actionIcon->icon()));
       listItem->setText(0, lineText->text());
       listItem->setText(1, currentAction->shortcut().toString());
     }
@@ -644,7 +645,7 @@ void ActionConfigDialog::saveCurrentAction()
           if (placeOnToolbar)
           {
               listItem = new KListViewItem(listItem, after, lineText->text(), currentAction->shortcut().toString(), currentAction->name());
-              listItem->setPixmap(0, BarIcon(actionIcon->icon()));
+              listItem->setPixmap(0, SmallIcon(actionIcon->icon()));
           }
         }
       }
@@ -774,7 +775,7 @@ void ActionConfigDialog::slotNewAction()
   currentAction->setText(actionText);
   item->setText(2, currentAction->name());
   item->setText(0, actionText);
-  item->setPixmap(0, BarIcon("ball"));
+  item->setPixmap(0, SmallIcon("ball"));
   allActionsItem->sortChildItems(0, true);
   if (currentItem->parent() && currentItem->parent() == allActionsItem)
   {
@@ -788,7 +789,7 @@ void ActionConfigDialog::slotNewAction()
     item = new KListViewItem(parentItem, currentItem);
     item->setText(0, actionText);
     item->setText(2, currentAction->name());
-    item->setPixmap(0, BarIcon("ball"));
+    item->setPixmap(0, SmallIcon("ball"));
     actionTreeView->setCurrentItem(item);
     if (parentItem != allActionsItem)
     {

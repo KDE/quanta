@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>ActionConfigDialogS</class>
 <comment>A dialog box where you can configure the actions and the toolbars holding the actions.
 
@@ -20,7 +20,7 @@
             <x>0</x>
             <y>0</y>
             <width>751</width>
-            <height>559</height>
+            <height>628</height>
         </rect>
     </property>
     <property name="caption">
@@ -326,6 +326,9 @@
                                 <property name="text">
                                     <string></string>
                                 </property>
+                                <property name="iconSize">
+                                    <number>22</number>
+                                </property>
                             </widget>
                             <widget class="QLineEdit" row="1" column="2" rowspan="1" colspan="2">
                                 <property name="name">
@@ -421,7 +424,7 @@
                                     <cstring>textLabel3</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>Ty&amp;pe:</string>
+                                    <string>T&amp;ype:</string>
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>typeCombo</cstring>
@@ -771,7 +774,7 @@
 </customwidgets>
 <images>
     <image name="image0">
-        <data format="XPM.GZ" length="767">789ca5914d6b83401086effe8ac5b94968a2442fa53f21a1c742e9619c9d7573480af93884d2ffde7db51577632190773cece3c3b0a3b32cccdbebc614cbec74e6f34e8c783e9ac25ef6fbebfbc7cb57965795094fb93265bec8f2272366fb79509c299c69d507e881bce692d74007945a2aa981fa8bcd805d8f36a0050ad02a0a6881da58d506c840e7986b06b6035a65e9479acdc38642664d78dd3b4a0dc57db7f7fc6b6e7aa2cba786b86d998624a60de121941a9a666a184bf8abc890a8eb9c47798a26088bead4a3124376ecf0d1f710c9d89118193b7c327532f2ec1f9ddbcfdde6fb39fb018b77a05c</data>
+        <data format="PNG" length="339">89504e470d0a1a0a0000000d4948445200000016000000160806000000c4b46c3b0000011a494441541895d595318ac3301045bf1617ba860c7b83ade6186149b104f6762952e418aa72838551b324e9d2aa3028852c90a3911c9c75b1bf195bd85f6ffe085b596bb186de56715dd3b87be621220af9bdb556cdbd334b9c4c7333220a69fd71d324d51a1e110589ee990e9ac4b596ff240a49b5f67315512c1994a4c9a920a2100e5fc0c7262e9c8e500dbad6a6e5714ba6e37538d4a95465b8b2717aa9ffac3b66caa3cb37918d4f470000334343c3c3cfd6beefe789d5760f66c6e57a010640771a7ef070cec11833a900b0fbde157997c76da4d5d0b17691c83907f36e26b5a5c2586df738f319eed7c536070ff73312663549a295898198dd42d2a4226366c6ed7a9b662a90b66845e3c7e92e55f3ebf68afedfafe90ee225a4cc1198386d0000000049454e44ae426082</data>
     </image>
 </images>
 <connections>
@@ -990,7 +993,6 @@
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
     <includehint>klistview.h</includehint>
-    <includehint>kpushbutton.h</includehint>
     <includehint>kicondialog.h</includehint>
     <includehint>kkeybutton.h</includehint>
     <includehint>klistbox.h</includehint>
