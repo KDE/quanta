@@ -28,7 +28,7 @@ public:
     QPushButton* buttonCancel;
     QPushButton* buttonOk;
     KURLRequester* urlRequester;
-
+    void languageChange();
 
 protected:
     QGridLayout* CopyToSLayout;
