@@ -3,7 +3,7 @@
                              -------------------
     begin                : ?? ???  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    								  (C) 2001 by Andras Mantia
+                           (C) 2001-2003 by Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -1082,7 +1082,7 @@ void QuantaApp::readTagDir(QString &dirName)
  }
  dtd->tagsList = tagList;
 
- 
+
 /**** Code for the new parser *****/
 
  dtdConfig->setGroup("Parsing rules");
@@ -1102,35 +1102,53 @@ void QuantaApp::readTagDir(QString &dirName)
    {
      tmpStrList = QStringList::split(" ",specialAreasList[i].stripWhiteSpace());
      tmpStr = tmpStrList[0].stripWhiteSpace();
-     rxStr.append("(?:"+QuantaCommon::makeRxCompatible(tmpStr)+")|");
+     rxStr.append(QuantaCommon::makeRxCompatible(tmpStr)+"|");
      dtd->specialAreas[tmpStr] = tmpStrList[1].stripWhiteSpace();
      dtd->specialAreaNames[tmpStr] = specialAreaNameList[i];
    }
  }
- dtd->specialAreaStartRx.setPattern(rxStr.left(rxStr.length() - 1));
-
+ if (rxStr.isEmpty())
+ {
+   dtd->specialAreaStartRx.setPattern("");
+ } else
+ {
+  dtd->specialAreaStartRx.setPattern(rxStr.left(rxStr.length() - 1));
+ }
  //Read the special tags
  tmpStrList = dtdConfig->readListEntry("SpecialTags");
  for (uint i = 0; i < tmpStrList.count(); i++)
- { 
+ {
    tmpStr = tmpStrList[i].stripWhiteSpace();
    int pos = tmpStr.find('(');
    dtd->specialTags[tmpStr.left(pos)] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1);
  }
- 
- static const QString quotationStr = "\\\\\"|\\\\'";
- tmpStr = dtdConfig->readEntry("CommentsRx","<!--.*-->").stripWhiteSpace().replace(QRegExp("\\"),"\\\\");
- dtd->commentsRx.setPattern("("+tmpStr+"|"+quotationStr+")");
- 
+
+ //static const QString quotationStr = "\\\\\"|\\\\'";
+ rxStr = "\\\\\"|\\\\'|";
+ QStringList commentsList = dtdConfig->readListEntry("Comments");
+ QString tmpStr2;
+ for (uint i = 0; i < commentsList.count(); i++)
+ {
+   tmpStrList = QStringList::split(" ",commentsList[i].stripWhiteSpace());
+   tmpStr = tmpStrList[0].stripWhiteSpace();
+   rxStr += QuantaCommon::makeRxCompatible(tmpStr);
+   rxStr += "|";
+   tmpStr2 = tmpStrList[1].stripWhiteSpace();
+   if (tmpStr2 == "EOL")
+       tmpStr2 = '\n';
+   dtd->comments[tmpStr] = tmpStr2;
+ }
+ dtd->commentsStartRx.setPattern(rxStr.left(rxStr.length()-1));
+
  //Read the tags that define this DTD
  tmpStrList = dtdConfig->readListEntry("Tags");
  for (uint i = 0; i < tmpStrList.count(); i++)
  {
    tmpStr = tmpStrList[i].stripWhiteSpace();
    int pos = tmpStr.find('(');
-   dtd->definitionTags[tmpStrList[i].stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1);  
+   dtd->definitionTags[tmpStrList[i].stripWhiteSpace()] = tmpStr.mid(pos+1, tmpStr.findRev(')')-pos-1);
  }
- 
+
  //Read the areas that define the areas
  QStringList definitionAreaBorders = dtdConfig->readListEntry("AreaBorders");
  for (uint i = 0; i < definitionAreaBorders.count(); i++)
@@ -1307,7 +1325,7 @@ void QuantaApp::initTagDict()
       {
         tmpStr = mapIt.key();
         dtd->specialAreas[tmpStr] = mapIt.data();
-        dtd->specialAreaNames[tmpStr] = dtd->insideDTDs[i];       
+        dtd->specialAreaNames[tmpStr] = dtd->insideDTDs[i];
         specialAreaStartRxStr.append("(?:"+ QuantaCommon::makeRxCompatible(tmpStr)+")|");
       }
       

@@ -2,7 +2,7 @@
                           qtag.h  -  description
                              -------------------
     begin                : Thu Aug 15 2002
-    copyright            : (C) 2002 by Andras Mantia
+    copyright            : (C) 2002, 2003 by Andras Mantia
     email                : amantia@freemail.hu
  ***************************************************************************/
 
@@ -92,7 +92,7 @@ typedef struct DTDStruct
      QString booleanFalse;            //"false" or "0" or whatever
      QString singleTagStyle;          //"xml" or "html" (<tag/> or <tag>)
      QString defaultAttrType;         //"input", "string" or whatever
-     
+
 /****************** FOR THE NEW PARSER **********************/     
 
 /* Special, not to be parsed areas. It is the area of the nested DTD's 
@@ -118,15 +118,15 @@ typedef struct DTDStruct
      QRegExp     specialAreaStartRx;
 
 /* For each special tag name, holds an attribute name. This attribute is used to
-   figure out the DTD which is valid in the special tag area. 
-   E.g for the <script language="php">, the entry is "script"->"language".  
+   figure out the DTD which is valid in the special tag area.
+   E.g for the <script language="php">, the entry is "script"->"language".
    Special tags are skipped during parsing and parsed later according to
    their DTD definition.
 */
-     QMap<QString, QString> specialTags;  
+     QMap<QString, QString> specialTags;
 
-/* A list of DTDs that can be present inside the DTD. 
-   For each DTD specified here the definitionAreaBegin/definitionAreaEnd is 
+/* A list of DTDs that can be present inside the DTD.
+   For each DTD specified here the definitionAreaBegin/definitionAreaEnd is
    copied to specialAreaBegin/specialAreaEnd (and the specialAreaStartRx is
    updated) and the definitionTags are added to the specialTags.
    Basicly this means that we use the DTD definitions when building
@@ -141,22 +141,25 @@ typedef struct DTDStruct
    It is stored in (area_begin_str,area_end_str) pairs. E.g (<?,?>)
 */
      QMap<QString, QString> definitionAreas;
-     
-/* Regular experssion to match the possible comment types */     
-     QRegExp commentsRx;
-          
-/* How does a structure starts in this DTD. Eg. "{" or "begin".*/     
-     QString structBeginStr;   
-/* How does a structure ends in this DTD. Eg. "}" or "end".*/     
+
+/* Start/end pairs for comments. Eg. (//,\n); (<!--,-->)  */
+     QMap<QString, QString> comments;
+
+/* Regular experssion to match the start of the comments (//, <!--)*/
+     QRegExp commentsStartRx;
+
+/* How does a structure starts in this DTD. Eg. "{" or "begin".*/
+     QString structBeginStr;
+/* How does a structure ends in this DTD. Eg. "}" or "end".*/
      QString structEndStr;
 /* A regular experssion to match the structe begin or end. */
      QRegExp structRx;
 /* Regular experssion to match the possible keywords that can appear before
    a structure, like "function", "for", etc. */
-     QRegExp structKeywordsRx;  
-     
-/* A list of structure tree groups definition */     
-     QValueList<StructTreeGroup> structTreeGroups;     
+     QRegExp structKeywordsRx;
+
+/* A list of structure tree groups definition */
+     QValueList<StructTreeGroup> structTreeGroups;
 /****************** END FOR THE NEW PARSER **********************/
      
      QString structKeywordsRxStr;        //regular expression to match the keywords that can appear before a structrue

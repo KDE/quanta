@@ -121,7 +121,6 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
          default:
             {
               title = tag->tagStr().left(70).stripWhiteSpace();
-              title.replace(newLineRx," ");
             }
 
 
@@ -129,9 +128,9 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
     } else
     {
       title = a_title;
-      title.replace(newLineRx," ");
     }
 
+    title.replace(newLineRx," ");
     setText(0, title);
   }
 }

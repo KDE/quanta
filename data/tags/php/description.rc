@@ -24,7 +24,7 @@ StructGroupsCount = 4
 [Parsing rules]
 AreaBorders = <? ?>, <* *>
 Tags = script(language)
-CommentsRx = //[^\n]*|/\*.*\*/
+Comments = // EOL, /* */
 StructKeywords = for;foreach;if;else;elseif;while;do;switch;declare;function;class
 StructBeginStr = {
 StructEndStr = }
@@ -43,19 +43,19 @@ ClearRx = \n
 Name = Variables
 No_Name = No Variables
 Icon = abs
-SearchRx = \$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*
+SearchRx = \$+[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*
 ClearRx = \$
 
 [StructGroup_3]
 Name = Functions
 No_Name = No Functions
 Icon = mini-modules
-SearchRx = function[\\s]+[a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1}
+SearchRx = \bfunction[\\s]+[0-9a-zA-Z_\x7f-\xff]*[\\s]*(?:\(.*\)){0,1}
 ClearRx = function[\\s]+
 
 [StructGroup_4]
 Name = Classes
 No_Name = No Classes
 Icon = classnew
-SearchRx = class[\\s]+[a-zA-Z_\x7f-\xff]*[\\s]*
+SearchRx = \bclass[\\s]+[0-9a-zA-Z_\x7f-\xff]*[\\s]*
 ClearRx = (?:class[\s]+|\n)

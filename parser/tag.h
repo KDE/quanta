@@ -2,7 +2,7 @@
                           tag.h  -  description
                              -------------------
     begin                : Sun Sep 1 2002
-    copyright            : (C) 2002 by Andras Mantia
+    copyright            : (C) 2002, 2003 by Andras Mantia
     email                : amantia@freemail.hu
  ***************************************************************************/
 
@@ -82,7 +82,7 @@ public:
   /** Where the attr value at index begins in the document */
   void attributeValuePos(int index, int &line, int &col) {line = attrs[index].valueLine; col = attrs[index].valueCol;}
   /** Set the internal string which is parsed */
-  void setStr(const QString &p_tagStr) {m_tagStr = p_tagStr;}
+  void setStr(const QString &p_tagStr) {m_tagStr = p_tagStr; cleanStr = m_tagStr;}
   /** Get the tag in string format */
   QString tagStr() {return m_tagStr;};
   /** Get the document where the tag lies */
@@ -101,6 +101,7 @@ public:
   //TODO: write setting/retrieving methods for the below attributes, and add
   //them the m_ prefix
 	QString name;
+  QString cleanStr;
   int type;   //one of the TokenType
 	bool single; // tags like <tag />
   bool closingMissing; //closing tag is optional and missing

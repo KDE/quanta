@@ -2,7 +2,7 @@
                           tag.cpp  -  description
                              -------------------
     begin                : Sun Sep 1 2002
-    copyright            : (C) 2002 by Andras Mantia
+    copyright            : (C) 2002, 2003 by Andras Mantia
     email                : amantia@freemail.hu
  ***************************************************************************/
 
@@ -32,6 +32,7 @@ Tag::Tag()
   closingMissing = false;
   attrCount = 0;
   structBeginStr = "";
+  cleanStr = "";
 }
 
 Tag::Tag( const Tag &t)
@@ -45,6 +46,7 @@ Tag::Tag( const Tag &t)
   endLine = t.endLine;
   endCol = t.endCol;
   m_tagStr = t.m_tagStr;
+  cleanStr = t.cleanStr;
   m_write = t.m_write;
   type = t.type;
   structBeginStr = t.structBeginStr;
@@ -141,6 +143,7 @@ void Tag::parseAttr( QString text, int &line, int &col)
 void Tag::parse(const QString &p_tagStr, Document *p_write)
 {
  m_tagStr = p_tagStr;
+ cleanStr = m_tagStr;
  m_write = p_write;
 
  attrCount = 0;
