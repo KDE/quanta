@@ -230,7 +230,7 @@ public slots:
   void slotEditFindInFiles();
   void openLastFiles();
   /// open url in documentation window
-  void openDoc(QString url );
+  void openDoc(const QString& url);
 
   void slotContextHelp();
 

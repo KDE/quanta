@@ -466,9 +466,9 @@ void QuantaApp::slotFileClose()
   if (m_view->writeExists())
   {
   //[MB]  QWidget *activeWidget = rightWidgetStack->visibleWidget();
-  #ifdef BUILD_KAFKAPART
+#ifdef BUILD_KAFKAPART
     //kafkaPart->unloadDocument();
-  #endif
+#endif
     m_doc->closeDocument();
     WHTMLPart *part = m_htmlPart;
     part->closeURL();
@@ -806,33 +806,41 @@ void QuantaApp::slotNewStatus()
     QIconSet mimeIcon (KMimeType::pixmapForURL(w->url(), 0, KIcon::Small));
     if (mimeIcon.isNull())
       mimeIcon = QIconSet(SmallIcon("document"));
-    bool block=wTab->signalsBlocked();
-    wTab->blockSignals(true);
+    QString label = wTab->tabLabel(w);
+    QString urlStr = QExtFileInfo::shortName(w->url().path());
 #if KDE_IS_VERSION(3,1,90)
     if (qConfig.showCloseButtons)
     {
-      if (w->isModified())
+      if (w->isModified() && label == urlStr)
       {
-        wTab->changeTab( w, SmallIcon("fileclose"), QExtFileInfo::shortName(w->url().path()) + " " + i18n("[modified]"));
+        wTab->setTabLabel(w, urlStr + " " + i18n("[modified]"));
       } else
+      if (!w->isModified() && label != urlStr)
       {
-        wTab->changeTab( w, SmallIcon("fileclose"), QExtFileInfo::shortName(w->url().path()));
+        wTab->setTabLabel(w, urlStr);
       }
     } else
 #endif
     {
-      if ( w->isModified() )
-        wTab->changeTab( w, UserIcon("save_small"), wTab->tabLabel(w));
-      else
-        wTab->changeTab( w, mimeIcon,  wTab->tabLabel(w));
+      if (w->isModified() && label == urlStr)
+      {
+        wTab->changeTab(w, UserIcon("save_small"), urlStr + " " + i18n("[modified]"));
+      }else
+      if (w->isModified() && label != urlStr)
+      {
+        wTab->changeTab(w, mimeIcon, urlStr);
+      }
     }
 //This is a really dirty fix for the QTabWidget problem. After the changeTab call,
 //it will reset itself and you will see the first tabs, even if the actual page is on
 //a tab eg. at the end, and it won't be visible now. This is really confusing.
 //I thought it is fixed in QT 3.x, but it is not. :-(
+
     int pageId = wTab->currentPageIndex();
-//    wTab->setCurrentPage(pageId-1);
-//    wTab->setCurrentPage(pageId);
+    bool block=wTab->signalsBlocked();
+    wTab->blockSignals(true);
+    wTab->setCurrentPage(0);
+    wTab->setCurrentPage(pageId);
     wTab->blockSignals(block);
  }
 }
@@ -924,9 +932,9 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   {
     slotRepaintPreview();
   }
-  #ifdef BUILD_KAFKAPART
+#ifdef BUILD_KAFKAPART
   m_view->updateViews();
-  #endif
+#endif
   m_view->oldTab = w;
   slotNewLineColumn();
 
@@ -1397,6 +1405,7 @@ void QuantaApp::slotShowProjectTree()
 
 void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
 {
+  Q_UNUSED(file);
   idleTimer->start(250, true);
   QString linenumber;
   linenumber = i18n("Line: %1 Col: %2").arg(lineNumber).arg(columnNumber);
@@ -1594,18 +1603,17 @@ void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
   }
 }
 
-void QuantaApp::openDoc( QString url )
+void QuantaApp::openDoc(const QString& url)
 {
-   static QString oldUrl("");
+  KURL u;
+  u.setPath(url);
+  if (u == m_htmlPartDoc->url())
+    return;
 
-   if ( url == oldUrl ) return;
-
-   m_htmlPartDoc->closeURL();
-   m_htmlPartDoc->openURL(url);
-   m_htmlPartDoc->show();
-   m_htmlPartDoc->addToHistory(url);
-
-   oldUrl = url;
+  m_htmlPartDoc->closeURL();
+  m_htmlPartDoc->openURL(u);
+  m_htmlPartDoc->show();
+  m_htmlPartDoc->addToHistory(url);
 }
 
 void QuantaApp::slotContextHelp()
@@ -1627,8 +1635,8 @@ void QuantaApp::slotContextHelp()
   }
   else
   {
-    QString currentW =m_view->write()->kate_view->currentWord();
-    QString *url = dTab->contextHelp( currentW);
+    QString currentWord = m_view->write()->kate_view->currentWord();
+    QString *url = dTab->contextHelp(currentWord);
 
     if ( url )
     {
@@ -1712,7 +1720,7 @@ void QuantaApp::viewMenuAboutToShow()
 QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomElement &element, int &id )
 {
 
-  QString tabname = element.attribute( "tabname", "" );
+  QString tabname = element.attribute( "i18ntabname", "" );
 
   if ( element.tagName().lower() == "toolbar" && !tabname.isEmpty() )
   {
@@ -1762,7 +1770,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
         toolbarTab->setFixedHeight(tb->height() + toolbarTab->tabHeight());
 
     }
-    toolbarTab->insertTab(tb, i18n(tabname));
+    toolbarTab->insertTab(tb, tabname);
     qInstallMsgHandler( oldHandler );
 
     connect(tb, SIGNAL(removeAction(const QString&, const QString&)),
@@ -2086,6 +2094,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    //search for another toolbar with the same name
    QPtrList<KXMLGUIClient> xml_clients = guiFactory()->clients();
    QString newName = name;
+   QString i18nName = i18n(name);
    QString origName = name;
    bool found = false;
    int count = 2;
@@ -2103,6 +2112,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
          if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
          {
            newName = origName + QString(" (%1)").arg(count);
+           i18nName = i18n(origName) + QString(" (%1)").arg(count);
            count++;
            found = true;
            break;
@@ -2132,10 +2142,12 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    tempFile->setAutoDelete(true);
 
    nodeList = toolbarDom->elementsByTagName("ToolBar");
-   nodeList.item(0).toElement().setAttribute("name",name.lower());
-   nodeList.item(0).toElement().setAttribute("tabname",name);
+   QDomElement el = nodeList.item(0).toElement();
+   el.setAttribute("name", name.lower());
+   el.setAttribute("tabname", name);
+   el.setAttribute("i18ntabname", i18nName);
    nodeList = toolbarDom->elementsByTagName("text");
-   nodeList.item(0).toElement().firstChild().setNodeValue(name);
+   el.firstChild().setNodeValue(name);
 
    * (tempFile->textStream()) << toolbarDom->toString();
    tempFile->close();
@@ -2148,7 +2160,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    for (uint i = 0; i < nodeList.count(); i++)
    {
     QDomNode node = nodeList.item(i).cloneNode();
-    QDomElement el = node.toElement();
+    el = node.toElement();
     QString actionName = el.attribute("name");
     //if there is no such action yet, add to the available actions
     if (! actionCollection()->action(actionName))
@@ -2299,7 +2311,7 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
           while (! n.isNull())
           {
            QDomElement e = n.toElement();
-           if (e.tagName()=="Action")
+           if (e.tagName() == "Action")
            {
              TagAction *action = dynamic_cast<TagAction*>(actionCollection()->action(e.attribute("name")));
              if (action)
@@ -2307,14 +2319,18 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
                action->data().save(actStr,1);
                action->setModified(false);
              }
-           }
-           if (e.tagName()=="_Separator_")
+           } else
+           if (e.tagName() == "_Separator_")
            {
              e.setTagName("Separator");
            }
            n = n.nextSibling();
           }
+          QDomElement e = nodeList.item(0).toElement();
+          QString i18nName = e.attribute("i18ntabname");
+          e.removeAttribute("i18ntabname");
           nodeList.item(i).save(toolStream,2);
+          e.setAttribute("i18ntabname", i18nName);
         }
       }
   }
@@ -2465,8 +2481,8 @@ void QuantaApp::slotAddToolbar()
 
   KTempFile* tempFile = new KTempFile(tmpDir);
   tempFile->setAutoDelete(true);
-  * (tempFile->textStream()) << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n<ToolBar name=\"%1\" tabname=\"%2\">\n<text>%3</text>\n</ToolBar>\n</kpartgui>\n")\
-               .arg(name.lower()).arg(name).arg(name);
+  * (tempFile->textStream()) << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n<ToolBar name=\"%1\" tabname=\"%2\" i18ntabname=\"%3\">\n<text>%4</text>\n</ToolBar>\n</kpartgui>\n")\
+               .arg(name.lower()).arg(name).arg(name).arg(name);
   tempFile->close();
 
   ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
@@ -2640,6 +2656,7 @@ void QuantaApp::slotRenameToolbar(const QString& name)
       p_toolbar->name = dlg.text();
       QDomElement el = p_toolbar->guiClient->domDocument().firstChild().firstChild().toElement();
       el.setAttribute("tabname", p_toolbar->name);
+      el.removeAttribute("i18ntabname");
       el.setAttribute("name", p_toolbar->name.lower());
       QDomNodeList nodeList = p_toolbar->guiClient->domDocument().elementsByTagName("text");
       nodeList.item(0).firstChild().setNodeValue(p_toolbar->name);
@@ -2889,7 +2906,6 @@ void QuantaApp::processDTD(const QString& documentType)
           break;
         }
       }
-
       if (!found && qConfig.showDTDSelectDialog)
       {
         emit showSplash(false);
@@ -3149,6 +3165,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
 bool QuantaApp::slotRemoveToolbar(const QString& name)
 {
   ToolbarEntry *p_toolbar = toolbarList[name];
+  QRegExp i18ntabnameRx("\\si18ntabname=\"[^\"]*\"");
   if (p_toolbar)
   {
     KXMLGUIClient* toolbarGUI = p_toolbar->guiClient;
@@ -3180,6 +3197,8 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
      //check if the toolbar's XML GUI was modified or not
      QString s1 = p_toolbar->dom->toString();
      QString s2 = toolbarGUI->domDocument().toString();
+     s1.remove(i18ntabnameRx);
+     s2.remove(i18ntabnameRx);
      bool useToolbarGUI = true;
      if ( s1 != s2 /*|| actionsModified */)
      {
@@ -3732,7 +3751,9 @@ void QuantaApp::slotAutosaveTimer()
   {
     w = dynamic_cast<Document*>(docTab->page(i));
     if (w)
+    {
       w->createBackup(m_config);
+    }
   }
 }
 
