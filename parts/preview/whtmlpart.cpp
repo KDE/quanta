@@ -22,6 +22,7 @@
 //kde includes
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kdeversion.h>
 #include <khtml_settings.h>
 #include <khtmlview.h>
 #include <klocale.h>
@@ -177,7 +178,11 @@ void WHTMLPart::slotViewSource()
   QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
   tmpFile->setAutoDelete(true);
   tmpFile->textStream()->setCodec(QTextCodec::codecForName("utf8"));
+#if KDE_IS_VERSION(3,1,91)  
+  *(tmpFile->textStream()) << documentSource();
+#else
   *(tmpFile->textStream()) << document().toString().string();
+#endif  
   tmpFile->close();
   tempFileList.append(tmpFile);
   emit showPreview(false);

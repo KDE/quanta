@@ -52,9 +52,11 @@ namespace DTD
 {
   QString dirName;
   xmlDtdPtr dtd_ptr; /* Pointer to the parsed DTD */
+  QTextStream entityStream;
 }
 
 void saveElement(xmlElementPtr elem, xmlBufferPtr buf);
+void saveEntity(xmlEntityPtr entity, xmlBufferPtr buf);
 
 DTDParser::DTDParser(const KURL& dtdURL, const QString &dtepDir)
 {
@@ -81,8 +83,9 @@ bool DTDParser::parse()
     xmlErrorPtr errorPtr = xmlGetLastError();
     if (errorPtr != NULL)
     {
-      errorStr = QString::fromLatin1(errorPtr->message);
-      QString s;
+      QString s = QString::fromLatin1(errorPtr->message);
+      if (!s.isEmpty())
+        errorStr = s;
       s = QString::fromLatin1(errorPtr->str1);
       if (!s.isEmpty())
         errorStr += "<br>" + s;
@@ -92,11 +95,10 @@ bool DTDParser::parse()
       s = QString::fromLatin1(errorPtr->str2);
       if (!s.isEmpty())
         errorStr += "<br>" + s;
-      xmlFreeFunc(errorPtr);
+      xmlResetError(errorPtr);
     }
     KMessageBox::error(0, i18n("<qt>Error while parsing the DTD.<br>The error message is:<br><i>%1</i></qt>").arg(errorStr));
-     return false;
-//          xmlGenericError(xmlGenericErrorContext,                          "Could not parse %s\n", argv[1]);
+    return false;
   }
   KDialogBase dlg(0L, 0L, true, i18n("DTD - > DTEP Conversion"), KDialogBase::Ok | KDialogBase::Cancel);
   DTEPCreationDlg w(&dlg);
@@ -135,6 +137,21 @@ bool DTDParser::parse()
      KMessageBox::error(0, i18n("No elements were found in the DTD."));
      return false;
   }
+  if (DTD::dtd_ptr->entities)
+  {
+    QFile file( DTD::dirName + "entities.tag" );
+    if ( file.open( IO_WriteOnly ) )
+    {
+      DTD::entityStream.setDevice(&file);
+      DTD::entityStream.setEncoding(QTextStream::UnicodeUTF8);
+      DTD::entityStream << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
+      DTD::entityStream << "<!DOCTYPE TAGS>" << endl
+          << "<TAGS>" << endl;
+      xmlHashScan((xmlEntitiesTablePtr)DTD::dtd_ptr->entities, (xmlHashScanner)saveEntity, 0);
+      DTD::entityStream << "</TAGS>" << endl;
+      file.close();
+    }
+  }  
   xmlFreeDtd(DTD::dtd_ptr);
   writeDescriptionRC();
 
@@ -295,6 +312,16 @@ void saveElement(xmlElementPtr elem, xmlBufferPtr buf)
       file.close();
     }
  }
+}
+
+void saveEntity(xmlEntityPtr entity, xmlBufferPtr buf)
+{
+  Q_UNUSED(buf);
+  if (entity)
+  {
+    QString name = QString((const char*)entity->name);
+    DTD::entityStream << "<tag name=\"" << name << "\" type=\"entity\" />" << endl << endl;
+  }
 }
 
 QString DTDParser::dirName()
