@@ -685,6 +685,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
  QString name;
 // QDictIterator<KXMLGUIClient> it(toolbarGUIClientList);
  //for( ; it.current(); ++it )
+ menu = 0L;
  KXMLGUIClient *guiClient = 0;
  QPtrList<KXMLGUIClient> guiClients = factory()->clients();
  for (uint i = 0; i < guiClients.count(); i++)
@@ -708,7 +709,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
       if (action)
       {
         guiClient->actionCollection()->insert(action);
-        action->plug(menu);
+        if (menu) action->plug(menu);
       }
     }
     //and add them again. Is there a better way to do this?
