@@ -96,7 +96,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
   setFocusPolicy(QWidget::ClickFocus);
 
-  m_projectDir =  new ProjectTreeBranch( this, KURL(), i18n("No project"), SmallIcon("ptab"), true);
+  m_projectDir =  new ProjectTreeBranch( this, KURL(), i18n("No Project"), SmallIcon("ptab"), true);
   addBranch(m_projectDir);
   m_projectDir->root()->setEnabled(false);
 
@@ -111,8 +111,8 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("Remove From &Disc (and Project)"), this, SLOT(slotRemove()));
   m_fileMenu->insertItem( i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
   m_fileMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload File..."), this, SLOT(slotUploadSingleURL()));
-  m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
+  m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
  
   m_folderMenu = new KPopupMenu(this);
@@ -120,11 +120,11 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("Remove From &Disc (and Project)"), this, SLOT(slotRemove()));
   m_folderMenu->insertItem(i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
   m_folderMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload Folder..."), this, SLOT(slotUploadSingleURL()));
-  m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
+  m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
 
-  m_projectMenu = new QPopupMenu(this);
+  m_projectMenu = new KPopupMenu(this);
   m_projectMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
   m_projectMenu->insertItem(SmallIcon("reload"), i18n("Re&scan Project Folder..."), this, SLOT(slotRescan()));
   m_projectMenu->insertItem(i18n("Project &Properties..."), this, SLOT(slotOptions()));
@@ -195,8 +195,12 @@ void ProjectTreeView::slotReload()
       m_projectNameStr += "["+m_baseURL.protocol()+"://"+m_baseURL.user()+"@"+m_baseURL.host()+"]";
     }
     m_projectDir =  new ProjectTreeBranch( this, m_baseURL, m_projectNameStr, UserIcon("ptab"), true);
+    setDragEnabled(true);
+    setRootIsDecorated(true);
   } else {
     m_projectDir =  new ProjectTreeBranch( this, m_baseURL, i18n("No Project"), UserIcon("ptab"), true);
+    setDragEnabled(false);
+    setRootIsDecorated(false);
   }
 
   connect(m_projectDir, SIGNAL(populateFinished(KFileTreeViewItem*)),
