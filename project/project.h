@@ -26,6 +26,7 @@
 
 #include <kio/job.h>
 
+
 /**project
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
@@ -53,7 +54,7 @@ public:
 	bool hasProject();
 	KURL::List fileNameList(bool check = false);
 	void loadProjectXML();
-	
+
   void insertFile( const KURL& nameURL, bool repaint );
   void insertFiles( const KURL& pathURL, const QString& mask );
   void insertFiles( KURL::List files );
@@ -73,7 +74,7 @@ public:
   virtual const QString& defaultDTD();
   virtual const QString& defaultEncoding() {return m_defaultEncoding;}
   virtual const QString& newFileType() {return m_newFileType;}
-  
+
 public slots:
 
   void slotNewProject();
@@ -97,13 +98,13 @@ public slots:
 	void slotRemove(const KURL& urlToRemove);
 
 	void slotAcceptCreateProject();
-	
+
   void slotSelectProjectType(const QString &);
 
   void slotEnableMessages();
   void slotDisableMessages();
   void slotGetMessages(QString);
-  
+
   void slotRescanPrjDir();
   /** Saves a project view (group of files & toolbars) asking for a name if askForName==true. */
   void slotSaveAsProjectView(bool askForName = true);
@@ -111,17 +112,17 @@ public slots:
   void slotOpenProjectView();
   /** Saves a project view (group of files & toolbars) without asking for a name. */
   void slotSaveProjectView();
-  
+
 signals:
-	
+
 	void openFile( const KURL&, const QString& );
 	void closeFiles();
-	
+
 	void setBaseURL( const KURL& url );
 	void setProjectName( QString );
-	
+
 	void showTree();
-	void reloadTree(const KURL::List&, bool);
+	void reloadTree(const KURL::List &, bool);
 	
   void setLocalFiles( bool );
 

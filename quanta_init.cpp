@@ -241,8 +241,8 @@ void QuantaApp::initProject()
 
   connect(project,  SIGNAL(openFile    (const KURL &, const QString&)),
           this,     SLOT  (slotFileOpen(const KURL &, const QString&)));
-  connect(project,  SIGNAL(reloadTree(const KURL::List& ,bool)),
-          pTab,     SLOT  (slotReloadTree(const KURL::List&,bool)));
+  connect(project,  SIGNAL(reloadTree(const KURL::List & ,bool)),
+          pTab,     SLOT  (slotReloadTree(const KURL::List &,bool)));
   connect(project,  SIGNAL(setBaseURL(const KURL&)),
           pTab,     SLOT  (slotSetBaseURL(const KURL&)));
   connect(project,  SIGNAL(setProjectName(QString)),
@@ -1240,23 +1240,23 @@ void QuantaApp::initActions()
     // View actions
 
     showFTabAction =
-      new KToggleAction( i18n( "Show Files Tree" ), 0,
+      new KToggleAction( i18n( "Show Files Tree" ), UserIcon("ftab"), 0,
                          this, SLOT( slotShowFTabDock() ),
                          actionCollection(), "show_ftab_tree" );
     showPTabAction =
-      new KToggleAction( i18n( "Show Project Tree" ), 0,
+      new KToggleAction( i18n( "Show Project Tree" ), UserIcon("ptab"), 0,
                          this, SLOT( slotShowPTabDock() ),
                          actionCollection(), "show_ptab_tree" );
     showTTabAction =
-      new KToggleAction( i18n( "Show Templates Tree" ), 0,
+      new KToggleAction( i18n( "Show Templates Tree" ), UserIcon("ttab"), 0,
                          this, SLOT( slotShowTTabDock() ),
                          actionCollection(), "show_ttab_tree" );
     showSTabAction =
-      new KToggleAction( i18n( "Show Structure Tree" ), 0,
+      new KToggleAction( i18n( "Show Structure Tree" ), BarIcon ("view_sidetree"), 0,
                          this, SLOT( slotShowSTabDock() ),
                          actionCollection(), "show_stab_tree" );
     showDTabAction =
-      new KToggleAction( i18n( "Show Documentation Tree" ), 0,
+      new KToggleAction( i18n( "Show Documentation Tree" ), BarIcon ("contents2"), 0,
                          this, SLOT( slotShowDTabDock() ),
                          actionCollection(), "show_dtab_tree" );
 
@@ -1384,6 +1384,9 @@ void QuantaApp::initActions()
 
     new KAction(i18n("Complete Text"),CTRL+Key_Space,this,SLOT(slotShowCompletion()),actionCollection(),"show_completion");
     new KAction(i18n("Completion Hints"),CTRL+SHIFT+Key_Space,this,SLOT(slotShowCompletionHint()),actionCollection(),"show_completion_hint");
+
+    KStdAction::back   ( this, SLOT( slotBack() ),    actionCollection(), "w_back" );
+    KStdAction::forward( this, SLOT( slotForward() ), actionCollection(), "w_forward" );
 }
 
 /** Initialize the plugin architecture. */

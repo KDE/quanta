@@ -27,10 +27,9 @@
 #include "projecttreefile.h"
 #include "projecttreefolder.h"
 #include "../resource.h"
-#include "../quantacommon.h"
 
 ProjectTreeFile::ProjectTreeFile( ProjectTreeFolder *parent, QString name, const KURL& p_url)
-    : FilesTreeFile( parent, name, p_url )
+    : FilesTreeFile( parent, name, p_url)
 {
   url = p_url;
 }

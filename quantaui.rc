@@ -170,8 +170,8 @@
   <ToolBar name="mainToolBar" noMerge="1" fullWidth="false">
   <text>Main Toolbar</text>
     <Action name="file_new"     />
-    <Action name="open_project" />
-    <Action name="file_open"    />
+    <Action name="qfile_open"    />
+    <Action name="project_open" />
     <Separator/>
     <Action name="file_save"    />
     <Action name="save_all"     />
@@ -199,12 +199,12 @@
 
   <ToolBar name="mainNaviToolBar" noMerge="1">
   <text>Navigation Toolbar</text>
-    <Action name="show_tree"/>
-    <Action name="show_preview"/>
     <Action name="show_messages"/>
+    <Action name="show_preview"/>
+    <Action name="reload"/>
+    <Separator/>
     <Action name="w_back"/>
     <Action name="w_forward"/>
-    <Action name="reload"/>
     <Separator/>
   </ToolBar>
   

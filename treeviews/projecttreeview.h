@@ -66,8 +66,6 @@ public slots: // Public slots
   void slotRemoveDeleted();
 
 signals: // Signals
-	void open( QListViewItem *name );
- // void insertTag( QString );
   void renameInProject( const KURL& );
   void removeFromProject( const KURL& );
   /** No descriptions */
@@ -96,6 +94,9 @@ protected:
 private slots: // Private slots
   /** No descriptions */
   void slotUploadProject();
+protected slots: // Protected slots
+  /** No descriptions */
+  void slotOnItem(QListViewItem* item);
 };
 
 #endif

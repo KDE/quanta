@@ -116,6 +116,7 @@ KURL::List Project::fileNameList(bool check)
       if (fi.exists()) list.append(url);
     } else
     {
+//      entry.toolTip = el.attribute("tooltip", url.prettyURL());
 	    list.append(url);
     }
   }

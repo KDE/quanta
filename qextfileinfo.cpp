@@ -181,16 +181,18 @@ KURL QExtFileInfo::home()
 
 bool QExtFileInfo::exists(const KURL& a_url)
 {
+// Andras: Don't use it now, as it brings up an extra dialog and need manual
+// intervention when usign fish
+// return KIO::NetAccess::exists(a_url, false);
+
+// No dialog when stating.
  if ( a_url.isLocalFile() )
  {
     return QFile::exists( a_url.path() );
  } else
  {
-  KURL url = a_url;
-  //TODO: THIS IS A HACK!!!! WE SHOULD FIX THE PROBLEM INSTEAD!
-   if (a_url.path().endsWith("/") && a_url.protocol() != "fish" ) url.setPath(a_url.path()+"dummy_file");
   QExtFileInfo internalFileInfo;
-  return internalFileInfo.internalExists(url);
+  return internalFileInfo.internalExists(a_url);
  }
 }
 
@@ -234,9 +236,13 @@ bool QExtFileInfo::internalExists(const KURL& url)
 {
   bJobOK = true;
  // kdDebug(24000)<<"QExtFileInfo::internalExists"<<endl;
-  KIO::Job * job = KIO::stat( url, false);
+  KIO::StatJob * job = KIO::stat( url, false);
+  job->setDetails(0);
+  job->setSide(false); //check the url for writing
   connect( job, SIGNAL( result (KIO::Job *) ),
            this, SLOT( slotResult (KIO::Job *) ) );
+
+  //To avoid lock-ups, start a timer.         
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), SLOT(slotTimeout()));
   timer->start(10*1000, true);         

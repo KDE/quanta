@@ -112,6 +112,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
 	connect(this, SIGNAL(open(QListViewItem *)),
           this, SLOT(slotSelectFile(QListViewItem *)));
+  connect(this, SIGNAL(onItem(QListViewItem *)), SLOT(slotOnItem(QListViewItem*)));        
 }
 
 ProjectTreeView::~ProjectTreeView(){
@@ -182,6 +183,7 @@ void ProjectTreeView::slotSetProjectName( QString name )
 
 void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNewTree)
 {
+  urlList = a_urlList;
   if (buildNewTree)
   {
     if (projectDir) delete projectDir;
@@ -198,13 +200,22 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
     }
     projectDir = new ProjectTreeFolder(this, projectNameStr, KURL());
     projectDir->setPixmap( 0, UserIcon("mini-modules") );
+    projectDir->setOpen(true);
+  } else
+  {
+    slotRemoveDeleted();
+    QListViewItemIterator it(this);
+    QListViewItem *item;   
+    for ( ; it.current(); ++it )
+    {
+      item = it.current();
+      if (item->isOpen())
+      {
+        item->setOpen(false);
+        item->setOpen(true);
+      }
+    }
   }
-  urlList = a_urlList;
-  projectDir->setOpen( false );
-
-  if (!buildNewTree) slotRemoveDeleted();
-
-  projectDir->setOpen(true);
 
   projectDir->sortChildItems(0,true);
   quantaApp->slotStatusMsg( i18n("Ready."));
@@ -420,6 +431,11 @@ void ProjectTreeView::slotRemoveDeleted()
       delete item;
     }
   }
+}
+
+/** No descriptions */
+void ProjectTreeView::slotOnItem(QListViewItem* item)
+{
 }
 
 

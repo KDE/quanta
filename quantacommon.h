@@ -60,7 +60,7 @@ typedef struct QConfig{
           QString imageMimeTypes;
           QString textMimeTypes;
 
-        }; 
+        };
 
 class QString;
 class KURL;
