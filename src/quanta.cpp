@@ -482,6 +482,10 @@ bool QuantaApp::slotFileSaveAs()
         Project::ref()->insertFile(saveUrl, true);
       }
 #ifdef BUILD_KAFKAPART
+      if(ViewManager::ref()->activeView() &&
+            ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+        w->docUndoRedo->reloadQuantaEditor();
+      
       w->docUndoRedo->fileSaved();
 #endif
 //      slotUpdateStatus(w); //FIXME:
@@ -561,6 +565,10 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
   if (projectTemplate)
       Project::ref()->insertFile(url, true);
 #ifdef BUILD_KAFKAPART
+  if(ViewManager::ref()->activeView() &&
+        ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
+    w->docUndoRedo->reloadQuantaEditor();
+      
   w->docUndoRedo->fileSaved();
 #endif
 }
