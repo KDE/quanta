@@ -31,7 +31,7 @@ void  TagQuickListDlg::initDialog()
   spinBoxRows->setMinimumSize(0,0);
   spinBoxRows->setRange(1,99);
 
-  buttonOk= new KPushButton(KStdGuiItem::ok()this,"NoName");
+  buttonOk= new KPushButton(KStdGuiItem::ok(),this,"NoName");
   buttonOk->setGeometry(10,110,100,30);
   buttonOk->setMinimumSize(0,0);
 
