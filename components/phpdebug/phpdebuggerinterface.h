@@ -54,4 +54,3 @@ class PHPDebuggerInterface : public QObject {
 
 #endif
 
-//#include "phpdebuggerinterface.moc"

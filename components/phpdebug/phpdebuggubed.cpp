@@ -283,3 +283,5 @@ void PHPDebugGubed::fileOpened(KURL file)
 {
   sendCommand("reinitialize", "");
 }
+
+#include "phpdebuggubed.moc"

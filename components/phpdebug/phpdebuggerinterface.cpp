@@ -275,5 +275,4 @@ void PHPDebuggerInterface::fileOpened(KURL file)
   m_debugsocket->fileOpened(mapLocalPathToServer(file.prettyURL(0, KURL::StripFileProtocol)));
 }
 
-// No, Andras, I always get errors here! :)
-//#include "phpdebuggerinterface.moc"
+#include "phpdebuggerinterface.moc"
