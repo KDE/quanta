@@ -110,10 +110,11 @@ void QuantaPluginInterface::readConfig()
     newPlugin->setArguments(config->readEntry("Arguments"));
     newPlugin->setIcon(config->readEntry("Icon"));
     QString type = config->readEntry("OutputWindow");
-    if (type == "Editor View") type = i18n("Editor View");
+    if (type == "Editor Tab") type = i18n("Editor Tab");
+    if (type == "Editor Frame") type = i18n("Editor Frame");
+    if (type == "Message Frame") type = i18n("Message Frame");
     if (type == "Message Window") type = i18n("Message Window");
     if (type == "Konsole") type = i18n("Konsole");
-  if (type == "Output Dock") type = i18n("Output Dock");
     newPlugin->setOutputWindow(type);
 
     m_plugins.insert(newPlugin->pluginName(), newPlugin);
@@ -149,10 +150,11 @@ void QuantaPluginInterface::writeConfig()
       config->writeEntry("Arguments", curPlugin->arguments());
       config->writeEntry("Icon", curPlugin->icon());
       type = curPlugin->outputWindow();
-      if (type == i18n("Editor View")) type = "Editor View";
+      if (type == i18n("Editor Tab")) type = "Editor Tab";
+      if (type == i18n("Editor Frame")) type = "Editor Frame";
+      if (type == i18n("Message Frame")) type = "Message Frame";
       if (type == i18n("Message Window")) type = "Message Window";
       if (type == i18n("Konsole")) type = "Konsole";
-    if (type == i18n("Output Dock")) type = "Output Dock";
       config->writeEntry("OutputWindow", type);
       config->writeEntry("Standard", curPlugin->isStandard());
       if (curPlugin->isStandard()) config->writeEntry("Standard Name", curPlugin->standardName());
@@ -231,7 +233,7 @@ QStringList QuantaPluginInterface::outputWindows(const QString &a_type)
 
   if(a_type == i18n("KPart"))
   {
-    windows << i18n("Editor View") << i18n("Output Dock"); // TODO
+    windows << i18n("Editor Tab") << i18n("Editor Frame") << i18n("Message Frame"); // TODO
   }
   else if(a_type == i18n("Command Line"))
   {

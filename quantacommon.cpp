@@ -313,7 +313,8 @@ int eCol){
 
 /** Returns a pointer to a KStandardDirs object usable for plugin searchup. type 
 is the plugin binary type (exe or lib). The returned pointer must be deleted by 
-the caller!! */KStandardDirs* QuantaCommon::pluginDirs(const char *type)
+the caller!! */
+KStandardDirs* QuantaCommon::pluginDirs(const char *type)
 {
  KStandardDirs *dirs = new KStandardDirs();
  dirs->addKDEDefaults();
