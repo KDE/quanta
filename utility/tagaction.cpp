@@ -318,7 +318,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
       m_appMessages->clear();
-      m_appMessages->showMessage( i18n("\"%1\" script started.\n").arg(actionText()) );
+      m_appMessages->showMessage( i18n("The \"%1\" script started.\n").arg(actionText()) );
       if (!inputFromFile)
       {
         if ( inputType == "current" || inputType == "selected" )
@@ -383,7 +383,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
     if ( firstOutput )
     {
       quantaApp->slotShowMessagesView();
-      m_appMessages->showMessage( i18n( "\"%1\" script output:\n" ).arg( actionText() ) );
+      m_appMessages->showMessage( i18n( "The \"%1\" script output:\n" ).arg( actionText() ) );
     }
     m_appMessages->showMessage( text );
   } else
@@ -442,7 +442,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
     if ( firstError )
     {
       quantaApp->slotShowMessagesView();
-      m_appMessages->showMessage( i18n( "\"%1\" script output:\n" ).arg(actionText()) );
+      m_appMessages->showMessage( i18n( "The \"%1\" script output:\n" ).arg(actionText()) );
     }
     m_appMessages->showMessage( text );
   }
@@ -484,7 +484,7 @@ void TagAction::slotProcessExited(KProcess *)
     qApp->exit_loop();
     loopStarted = false;
   }
-  m_appMessages->showMessage( i18n("\nThe \"%1\" script has exited.\n").arg(actionText()) );
+  m_appMessages->showMessage( i18n("The \"%1\" script has exited.").arg(actionText()) );
 }
 
 void TagAction::execute()
