@@ -478,7 +478,7 @@
                                                         <cstring>useActionDialog</cstring>
                                                     </property>
                                                     <property name="text">
-                                                        <string>Run "Edit tag" dialog if avaible</string>
+                                                        <string>Run "Edit tag" dialog if available</string>
                                                     </property>
                                                     <property name="checked">
                                                         <bool>true</bool>

@@ -52,12 +52,12 @@ void FrameWizard::split()
 	QString currNodeLabel = currSA;
 	QString senderName=sender()->name();
 	if(senderName=="pbHorizontal"){
-	    split = showRCeditorDlg(i18n("Enter the desidered number of rows"));
+	    split = showRCeditorDlg(i18n("Enter the desired number of rows"));
 	    if(split>=2)
 		   vfe->split(currNodeLabel,split,"h");
 	}
 	else if(senderName=="pbVertical"){
-	    split = showRCeditorDlg(i18n("Enter the desidered number of columns"));
+	    split = showRCeditorDlg(i18n("Enter the desired number of columns"));
 	    if(split>=2)
 		vfe->split(currNodeLabel,split,"v");
 	}

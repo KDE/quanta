@@ -630,7 +630,7 @@ verdana, sans-serif</string>
                             <string>Property font-size</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>Insert here the value for the property font-size. Allowed values are one of the litteral absolute values [xx-small, x-small, small, medium, large, x-large, xx-large], one of the relative values [smaller, larger]. You can also write a numerical value, followed by its measuring unit. For example: 12pt, 23px, 5cm, 7mm, 6em.</string>
+                            <string>Insert here the value for the property font-size. Allowed values are one of the literal absolute values [xx-small, x-small, small, medium, large, x-large, xx-large], one of the relative values [smaller, larger]. You can also write a numerical value, followed by its measuring unit. For example: 12pt, 23px, 5cm, 7mm, 6em.</string>
                         </property>
                     </widget>
                     <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
@@ -1531,7 +1531,7 @@ verdana, sans-serif</string>
                             <string>Property line-height</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>Insert here the value for the property line-height. You can specify: "normal", a number of line (for example 2 to make a line height double than the normal), a percetages value and a numerical value, followed by them measuring unit. For example: 6, 3%, 12pt, 23px, 5cm, 7mm, 6em.</string>
+                            <string>Insert here the value for the property line-height. You can specify: "normal", a number of line (for example 2 to make a line height double than the normal), a percentages value and a numerical value, followed by them measuring unit. For example: 6, 3%, 12pt, 23px, 5cm, 7mm, 6em.</string>
                         </property>
                     </widget>
                     <spacer row="5" column="1">
@@ -1596,8 +1596,8 @@ verdana, sans-serif</string>
                             <string>Insert here the value for the property text-transform. Allowed values are:
 - none (default)
 - capitalize, which make the first letter of each word appear uppercase and the others lowercase Like This Example
-- uppercase, which make all the text appears in uppercase charachters LIKE THIS ONE
-- lowercase, which make all the text appears in uppercase charachters like this</string>
+- uppercase, which make all the text appears in uppercase characters LIKE THIS ONE
+- lowercase, which make all the text appears in uppercase characters like this</string>
                         </property>
                     </widget>
                     <widget class="KComboBox" row="6" column="2">
@@ -1622,7 +1622,7 @@ verdana, sans-serif</string>
                             <string>Property text-indent</string>
                         </property>
                         <property name="whatsThis" stdset="0">
-                            <string>Insert here the value for the property text-indent. Allowed values are percetages values and numerical values, followed by them measuring unit. For example: 3%, 12pt, 23px, 5cm, 7mm, 6em.</string>
+                            <string>Insert here the value for the property text-indent. Allowed values are percentages values and numerical values, followed by them measuring unit. For example: 3%, 12pt, 23px, 5cm, 7mm, 6em.</string>
                         </property>
                     </widget>
                     <spacer row="6" column="1">

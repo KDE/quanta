@@ -193,14 +193,14 @@ public slots:
 	/**
 	 * Category: HTML Editing Functions
 	 * Moves the cursor x-characters to the left
-	 * @param value Specifies the charachters to move to the left
+	 * @param value Specifies the characters to move to the left
 	 */
 	void nextOffset(int value);
 
 	/**
 	 * Category: HTML Editing Functions
 	 * Moves the cursor x-characters to the right
-	 * @param value Specifies the charachters to move to the right
+	 * @param value Specifies the characters to move to the right
 	 */
 	void previousOffset(int value);
 

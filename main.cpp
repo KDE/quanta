@@ -72,8 +72,8 @@ int main(int argc, char *argv[])
 
    aboutData.addAuthor("Eric Laffoon",I18N_NOOP("Project Lead - public liason"), "sequitur@kde.org");
    aboutData.addAuthor("Andras Mantia",I18N_NOOP("Program Lead - bug squisher"), "amantia@freemail.hu");
-   aboutData.addAuthor("Dmitry Poplavsky",I18N_NOOP("Inactive - left for commerical version"), "dima@kde.org");
-   aboutData.addAuthor("Alexander Yakovlev",I18N_NOOP("Inactive - left for commerical version"), "yshurik@kde.org");
+   aboutData.addAuthor("Dmitry Poplavsky",I18N_NOOP("Inactive - left for commercial version"), "dima@kde.org");
+   aboutData.addAuthor("Alexander Yakovlev",I18N_NOOP("Inactive - left for commercial version"), "yshurik@kde.org");
 
    aboutData.addCredit("Richard Moore",
     I18N_NOOP("Coding and tag dialog definition documentation and more"),
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     "gav@creolmail.org");
 
   aboutData.addCredit("Ted Pibil",
-    I18N_NOOP("Addition and maintainence of DTDs"),
+    I18N_NOOP("Addition and maintenance of DTDs"),
     "ted@pibil.org");
 
   aboutData.addCredit("Nicolas Deschildre",

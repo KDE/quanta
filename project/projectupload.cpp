@@ -247,7 +247,7 @@ void ProjectUpload::startUpload()
     upload();
   } else
   {
-    if (KMessageBox::warningYesNo(this, i18n("%1 seems to be unaccesible.\nDo you want to proceed with upload?")
+    if (KMessageBox::warningYesNo(this, i18n("%1 seems to be unaccessible.\nDo you want to proceed with upload?")
                                          .arg(u.prettyURL())) == KMessageBox::Yes)
     {
       upload();
