@@ -29,7 +29,25 @@
     <property name="associations" stdset="0">
         <stringlist>
             <string></string>
-            <string></string>
+            <string>@execBegin
+quanta=`dcop quanta-@parentPid`
+if [ -z "$quanta" ]; then
+    quanta=`dcop quanta`
+    if [ ! -z "$quanta" ]; then
+       quantadcop=quanta
+    fi
+else
+    quantadcop=quanta-@parentPid
+fi
+
+if [ ! -z "$quantadcop" ]; then
+   encoding=`dcop $quantadcop SettingsIf encoding`
+   dcop @dcopid KommanderIf setSelection ComboMetachar $encoding
+   dcop @dcopid KommanderIf setChecked CBMetaChar true
+   dtep=`dcop $quantadcop SettingsIf dtep`
+   dcop @dcopid KommanderIf setCurrentListItem DTEPselect "$dtep"
+fi
+@execEnd</string>
             <string></string>
         </stringlist>
     </property>
@@ -403,25 +421,7 @@ echo '&lt;/head&gt;'</string>
                         <string></string>
                     </property>
                     <property name="populationText">
-                        <string>@execBegin
-quanta=`dcop quanta-@parentPid`
-if [ -z "$quanta" ]; then
-    quanta=`dcop quanta`
-    if [ ! -z "$quanta" ]; then
-       quantadcop=quanta
-    fi
-else
-    quantadcop=quanta-@parentPid
-fi
-
-if [ ! -z "$quantadcop" ]; then
-   encoding=`dcop $quantadcop SettingsIf encoding`
-   dcop @dcopid KommanderIf setCurrentListItem ComboMetachar $encoding
-   dcop @dcopid KommanderIf setChecked CBMetaChar true
-   dtep=`dcop $quantadcop SettingsIf dtep`
-   dcop @dcopid KommanderIf setCurrentListItem DTEPselect "$dtep"
-fi
-@execEnd</string>
+                        <string></string>
                     </property>
                     <property name="associations" stdset="0">
                         <stringlist>
@@ -598,22 +598,22 @@ echo "$PADDING&lt;/style&gt;"</string>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>UTF-8</string>
+                                    <string>utf-8</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>UTF-16</string>
+                                    <string>utf-16</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>KOI8-R</string>
+                                    <string>koi8-r</string>
                                 </property>
                             </item>
                             <item>
                                 <property name="text">
-                                    <string>KOI8-U</string>
+                                    <string>koi8-u</string>
                                 </property>
                             </item>
                             <item>
