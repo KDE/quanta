@@ -597,7 +597,7 @@ void KafkaDocument::buildNodeFromKafkaNode(Node *_node, DOM::Node _domNode)
 }
 
 Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
-	Node *_beginNode, int beginOffset, Node *_endNode, int endOffset, NodeModifsSet &modifs)
+	Node *_beginNode, int beginOffset, Node *_endNode, int endOffset, NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "Node* KafkaDocument::buildNodeFromKafkaNode() - DOM::Node 2xNode* int: " <<
@@ -605,7 +605,7 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodePare
 #endif
 	Node *_node, *_nodeXmlEnd = 0L, *_emptyNode, *n = 0L;
 	Tag *_tag, *_tagEnd, *_tagEmptyNode;
-	NodeModif modif;
+	NodeModif *modif;
 
 	if(_domNode.isNull())
 	{
@@ -671,12 +671,10 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodePare
 	_node->tag = _tag;
 	_tag->setWrite(m_currentDoc);
 	_tag->cleanStrBuilt = false;
-	modif.type = undoRedo::NodeAdded;
-	modif.node = 0L;
-	modif.childsNumber = 0;
-	modif.childsNumber2 = 0;
-	modif.location = kafkaCommon::getLocation(_node);
-	modifs.NodeModifList.append(modif);
+	modif = new NodeModif();
+	modif->setType(NodeModif::NodeAdded);
+	modif->setLocation(kafkaCommon::getLocation(_node));
+	modifs->addNodeModif(modif);
 	if(_domNode.nodeType() == DOM::Node::TEXT_NODE)
 	{
 		_tag->type = Tag::Text;
@@ -707,8 +705,9 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodePare
 			if(_node->next)
 				_node->next->prev = _nodeXmlEnd;
 			_node->next = _nodeXmlEnd;
-			modif.location = kafkaCommon::getLocation(_nodeXmlEnd);
-			modifs.NodeModifList.append(modif);
+			modif = new NodeModif();
+			modif->setLocation(kafkaCommon::getLocation(_nodeXmlEnd));
+			modifs->addNodeModif(modif);
 
 			_tagEnd = new Tag();
 			_nodeXmlEnd->tag = _tagEnd;
@@ -746,8 +745,10 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodePare
 		if(_node->parent && _node->parent->child == _node)
 			_node->parent->child = _emptyNode;
 		_emptyNode->parent = _node->parent;
-		modif.location = kafkaCommon::getLocation(_emptyNode);
-		modifs.NodeModifList.append(modif);
+		modif = new NodeModif();
+		modif->setType(NodeModif::NodeAdded);
+		modif->setLocation(kafkaCommon::getLocation(_emptyNode));
+		modifs->addNodeModif(modif);
 	}
 	if(_tag->single)
 		n = _node->nextSibling();
@@ -783,8 +784,10 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodePare
 			_node->next = _emptyNode;
 			_emptyNode->parent = _node->parent;
 		}
-		modif.location = kafkaCommon::getLocation(_emptyNode);
-		modifs.NodeModifList.append(modif);
+		modif = new NodeModif();
+		modif->setType(NodeModif::NodeAdded);
+		modif->setLocation(kafkaCommon::getLocation(_emptyNode));
+		modifs->addNodeModif(modif);
 	}
 	return _node;
 }
@@ -1273,17 +1276,12 @@ void KafkaDocument::slotDomNodeInserted(DOM::Node _domNode, bool insertChilds)
 	Node *_nodeParent = 0L, *_nodeNext = 0L, *_node = 0L;
 	DOM::Node tmpDomNode;
 	bool b = false;
-	NodeModifsSet modifs;
+	NodeModifsSet *modifs;
 
 #ifdef LIGHT_DEBUG
 	QTime t;
 	t.start();
 #endif
-	modifs.cursorX = 0;
-	modifs.cursorY = 0;
-	modifs.cursorX2 = 0;
-	modifs.cursorY2 = 0;
-	modifs.isModified = true;//TODO:determine this
 
 	_nodeParent = getNode(_domNode.parentNode());
 
@@ -1304,6 +1302,7 @@ void KafkaDocument::slotDomNodeInserted(DOM::Node _domNode, bool insertChilds)
 		}
 	}
 
+	modifs = new NodeModifsSet();
 	_node = buildNodeFromKafkaNode(_domNode, _nodeParent, _nodeNext, 0, 0L, 0, modifs);
 
 	if(insertChilds && _domNode.hasChildNodes())
@@ -1339,19 +1338,13 @@ void KafkaDocument::slotDomNodeModified(DOM::Node _domNode)
 		kdDebug(25001)<< "KafkaDocument::slotDomNodeModfied() - DOM::Node: NULL" << endl;
 #endif
 	Node *_node = 0L;
-	NodeModifsSet modifs;
-	NodeModif modif;
+	NodeModifsSet *modifs;
+	NodeModif *modif;
 
 #ifdef LIGHT_DEBUG
 	QTime t;
 	t.start();
 #endif
-	modifs.cursorX = 0;
-	modifs.cursorY = 0;
-	modifs.cursorX2 = 0;
-	modifs.cursorY2 = 0;
-	modifs.isModified = true;//TODO:determine this
-	modif.type = undoRedo::NodeModified;
 
 	//first look which Node correspond to this DOM::Node
 	_node = getNode(_domNode);
@@ -1363,13 +1356,15 @@ void KafkaDocument::slotDomNodeModified(DOM::Node _domNode)
 		return;
 	}
 
-	modif.tag = new Tag(*(_node->tag));
-	modif.location = kafkaCommon::getLocation(_node);
-	modif.node = 0L;
+	modif = new NodeModif();
+	modif->setType(NodeModif::NodeModified);
+	modif->setTag(new Tag(*(_node->tag)));
+	modif->setLocation(kafkaCommon::getLocation(_node));
 
 	buildNodeFromKafkaNode(_node, _domNode);
 
-	modifs.NodeModifList.append(modif);
+	modifs = new NodeModifsSet();
+	modifs->addNodeModif(modif);
 	m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 
 #ifdef LIGHT_DEBUG
@@ -1396,8 +1391,8 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 	Tag *_tag;
 	int i;
 	bool hasClosingNode = false, b;
-	NodeModifsSet modifs;
-	NodeModif modif;
+	NodeModifsSet *modifs;
+	NodeModif *modif;
 
 #ifdef LIGHT_DEBUG
 	QTime t;
@@ -1412,11 +1407,7 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		return;
 	}
 
-	modifs.cursorX = 0;
-	modifs.cursorY = 0;
-	modifs.cursorX2 = 0;
-	modifs.cursorY2 = 0;
-	modifs.isModified = true;//TODO:determine this
+	modifs = new NodeModifsSet();
 
 	if(_node->prev)
 	{
@@ -1425,7 +1416,9 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		_node = _node->prev;
 		if(_node && _node->tag->type == Tag::Empty)
 		{
-			modif.location = kafkaCommon::getLocation(_node);
+			modif = new NodeModif();
+			modif->setType(NodeModif::NodeRemoved);
+			modif->setLocation(kafkaCommon::getLocation(_node));
 			if(_node->parent && _node->parent->child == _node)
 				_node->parent->child = _node->next;
 			if(_node->prev)
@@ -1438,21 +1431,19 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 			_node->prev = 0L;
 			_node->next = 0L;
 			_node->child = 0L;
-			modif.type = undoRedo::NodeRemoved;
-			modif.node = _node;
-			modif.childsNumber = 0;
-			modif.childsNumber2 = 0;
-			modifs.NodeModifList.append(modif);
+			modif->setNode(_node);
+			modifs->addNodeModif(modif);
 		}
 		_node = _nodeNext;
 	}
 
 	//delete the Node
+	modif = new NodeModif();
 	if(deleteChilds)
-		modif.type = undoRedo::NodeAndChildsRemoved;
+		modif->setType(NodeModif::NodeAndChildsRemoved);
 	else
-		modif.type = undoRedo::NodeRemoved;
-	modif.location = kafkaCommon::getLocation(_node);
+		modif->setType(NodeModif::NodeRemoved);
+	modif->setLocation(kafkaCommon::getLocation(_node));
 
 	if(_node->next && _node->next->closesPrevious)
 		hasClosingNode = true;
@@ -1515,11 +1506,10 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 	_node->next = 0L;
 	_node->prev = 0L;
 	_node->child = 0L;
-	modif.node = _node;
-	modif.childsNumber2 = 0;
+	modif->setNode(_node);
 	//delete _node;
-	modif.childsNumber = i;
-	modifs.NodeModifList.append(modif);
+	modif->setChildrenMovedUp(i);
+	modifs->addNodeModif(modif);
 	_node = _nodeNext;
 
 	if(hasClosingNode)
@@ -1536,12 +1526,11 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		_node->next = 0L;
 		_node->prev = 0L;
 		_node->child = 0L;
-		modif.type = undoRedo::NodeRemoved;
-		modif.location = kafkaCommon::getLocation(_node);
-		modif.node = _node;
-		modif.childsNumber = 0;
-		modif.childsNumber2 = 0;
-		modifs.NodeModifList.append(modif);
+		modif = new NodeModif();
+		modif->setType(NodeModif::NodeRemoved);
+		modif->setLocation(kafkaCommon::getLocation(_node));
+		modif->setNode(_node);
+		modifs->addNodeModif(modif);
 		//delete _node;
 		_node = _nodeNext;
 	}
@@ -1549,7 +1538,9 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 	if(_node && _node->tag->type == Tag::Empty)
 	{
 		//delete the next empty tag if present
-		modif.location = kafkaCommon::getLocation(_node);
+		modif = new NodeModif();
+		modif->setType(NodeModif::NodeRemoved);
+		modif->setLocation(kafkaCommon::getLocation(_node));
 		if(_node->parent && _node->parent->child == _node)
 			_node->parent->child = _node->next;
 		if(_node->prev)
@@ -1561,11 +1552,8 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		_node->prev = 0L;
 		_node->next = 0L;
 		_node->child = 0L;
-		modif.type = undoRedo::NodeRemoved;
-		modif.node = _node;
-		modif.childsNumber = 0;
-		modif.childsNumber2 = 0;
-		modifs.NodeModifList.append(modif);
+		modif->setNode(_node);
+		modifs->addNodeModif(modif);
 		_node = _nodeNext;
 	}
 
@@ -1574,17 +1562,18 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 	{
 		//merge two consecutive emtpy/text Nodes
 		_tag = new Tag(*(_node->prev->tag));
-		modif.type = undoRedo::NodeModified;
-		modif.location = kafkaCommon::getLocation(_node->prev);
-		modif.node = 0L;
-		modif.tag = _tag;
-		modifs.NodeModifList.append(modif);
+		modif = new NodeModif();
+		modif->setType(NodeModif::NodeModified);
+		modif->setLocation(kafkaCommon::getLocation(_node->prev));
+		modif->setTag(_tag);
+		modifs->addNodeModif(modif);
 		_node->prev->tag->setStr(_node->prev->tag->tagStr() + _node->tag->tagStr());
 		//_node->prev->tag->cleanStrBuilt = false;
 		if(!(_node->tag->type == Tag::Empty && _node->prev->tag->type == Tag::Empty))
 			_node->prev->tag->type = Tag::Text;
-		modif.type = undoRedo::NodeRemoved;
-		modif.location = kafkaCommon::getLocation(_node);
+		modif = new NodeModif();
+		modif->setType(NodeModif::NodeRemoved);
+		modif->setLocation(kafkaCommon::getLocation(_node));
 		if(_node->parent && _node->parent->child == _node)
 			_node->parent->child = _node->next;
 		if(_node->prev)
@@ -1595,10 +1584,9 @@ void KafkaDocument::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteC
 		_node->prev = 0L;
 		_node->next = 0L;
 		_node->child = 0L;
-		modif.childsNumber = 0;
-		modif.childsNumber2 = 0;
-		modif.node = _node;
-		modif.location = kafkaCommon::getLocation(_node);
+		modif->setNode(_node);
+		modif->setLocation(kafkaCommon::getLocation(_node));
+		modifs->addNodeModif(modif);
 	}
 	m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 

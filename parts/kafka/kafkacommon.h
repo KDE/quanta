@@ -161,7 +161,8 @@ public:
 	/**
 	 * Create a simple Node, without taking care of building the closing Node.
 	 */
-	static Node* createNode(const QString &nodeName, const QString &tagString, int nodeType, Document *doc);
+	static Node* createNode(const QString &nodeName, const QString &tagString, int nodeType,
+		Document *doc);
 
 	/**
 	 * Insert node in the tree. WARNING This function will log that node was added.
@@ -170,11 +171,12 @@ public:
 	 * @param parentNode This Node will be the parent of node.
 	 * @param nextSibling This Node will be the next Sibling of Node. If null, node will be appened at
 	 * the child list of parentNode.
-	 * @param modifs The changes made are logged into modifs.
+	 * @param modifs The changes made are logged into modifs. Put 0L if you don't want to log
+	 * and if you know what you're doing!
 	 * @param merge Try to merge with the siblings if possible.
 	 * @return Returns a pointer to the node inserted.
 	 */
-	static Node* insertNode(Node *node, Node* parentNode, Node* nextSibling, NodeModifsSet &modifs,
+	static Node* insertNode(Node *node, Node* parentNode, Node* nextSibling, NodeModifsSet *modifs,
 		bool merge = true);
 
 	/**
@@ -193,7 +195,7 @@ public:
 	 * @return Returns a pointer to the node inserted.
 	 */
 	static Node *insertNode(Node *newNode, Node *parent, Node *nextSibling, Node *nextEndSibling,
-		NodeModifsSet &modifs);
+		NodeModifsSet *modifs);
 
 	/**
 	 * It behaves essentially like the above function except that it can split the endNodeToSurround and
@@ -207,7 +209,7 @@ public:
 	 * @param endOffset The last Node will be splitted at offset endOffset, the left part will be enclosed.
 	 */
 	static Node* insertNode(Node *newNode, Node *parent, Node *startNodeToSurround,
-		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet &modifs);
+		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet *modifs);
 
 	/**
 	 * It behaves essentially like the above function except that it will insert the new Node only if the DTD
@@ -218,7 +220,7 @@ public:
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
 	static bool DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSurround,
-		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet &modifs,
+		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet *modifs,
 		bool generateElements = true);
 
 	/**
@@ -233,7 +235,7 @@ public:
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
 	static bool DTDinsertNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
-		int endOffset, NodeModifsSet &modifs);
+		int endOffset, NodeModifsSet *modifs);
 
 	/**
 	 * Create a Node of name nodeName, of type nodeType, (see tag.h) connected to the document doc,
@@ -248,7 +250,7 @@ public:
 	 * @return Returns a pointer to the newly created Node.
 	 */
 	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
-		Document *doc, Node* parent, Node* nextSibling, NodeModifsSet &modifs, bool merge = true);
+		Document *doc, Node* parent, Node* nextSibling, NodeModifsSet *modifs, bool merge = true);
 
 	/**
 	 * It behaves essentially like the above function except that it reate its closing Node if necessary
@@ -261,7 +263,7 @@ public:
 	 * @param modifs The changes made are logged into modifs.
 	 */
 	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
-		Document *doc, Node *parent, Node *nextSibling, Node *nextEndSibling, NodeModifsSet &modifs);
+		Document *doc, Node *parent, Node *nextSibling, Node *nextEndSibling, NodeModifsSet *modifs);
 
 	/**
 	 * It behaves essentially like the above function except that if necessary, it will split the Nodes.
@@ -275,7 +277,7 @@ public:
 	 */
 	static Node *createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
 	Document *doc, Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset,
-	int endOffset, NodeModifsSet &modifs);
+	int endOffset, NodeModifsSet *modifs);
 
 	/**
 	 * It behaves essentially like the above function except that it will insert the new Node only if the DTD
@@ -287,7 +289,7 @@ public:
 	 */
 	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
 	Document *doc, Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset,
-	int endOffset, NodeModifsSet &modifs, bool generateElements = true);
+	int endOffset, NodeModifsSet *modifs, bool generateElements = true);
 
 	/**
 	 * It behaves essentially like the above function except that the new Tag can surround any subtree. If
@@ -301,7 +303,7 @@ public:
 	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
 	 */
 	static bool DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
-	Document *doc, Node *startNode, int startOffset, Node *endNode, int endOffset, NodeModifsSet &modifs);
+	Document *doc, Node *startNode, int startOffset, Node *endNode, int endOffset, NodeModifsSet *modifs);
 
 	/**
 	 * For internal use. From startNode to endNode, it add where possible/necessary a new Node in order
@@ -312,7 +314,7 @@ public:
 	 * MUST BE set to 0.
 	 */
 	static bool addNodeRecursively(Node *newNode, Node* startNode, Node *endNode, Node* currentNode,
-		bool &addingStarted, int level, NodeModifsSet &modifs);
+		bool &addingStarted, int level, NodeModifsSet *modifs);
 
 	/**
 	 * Create a copy of Node. It use the Node copy operator and add some kafka-specific flags :
@@ -331,7 +333,7 @@ public:
 	 * if the children of node are legal childs of the parent of node.
 	 * @return Returns the node extracted with its childs
 	 */
-	static Node* extractNode(Node *node, NodeModifsSet &modifs, bool removeChildren = true);
+	static Node* extractNode(Node *node, NodeModifsSet *modifs, bool removeChildren = true);
 
 	/**
 	 * It behaves essentially the above function.
@@ -339,7 +341,7 @@ public:
 	 * when necessary.
 	 * @param deleteClosingTag Delete the closingTag if node isn't single.
 	 */
-	static void extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool deleteChildren = true,
+	static void extractAndDeleteNode(Node *node, NodeModifsSet *modifs, bool deleteChildren = true,
 		bool deleteClosingTag = true, bool mergeAndFormat = true);
 
 	/**
@@ -349,7 +351,7 @@ public:
 	 * @param newNextSibling The new next Sibling of nodeToMove.
 	 * @param modifs The changes made are logged into modifs.
 	 */
-	static void moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibling, NodeModifsSet &modifs);
+	static void moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibling, NodeModifsSet *modifs);
 
 	/**
 	 * Split a Text Node at offset offset. If offset or n is invalid, nothing is done.
@@ -358,14 +360,15 @@ public:
 	 * @param modifs The change made are logged into modifs.
 	 * @return Returns if the node was splitted.
 	 */
-	static bool splitNode(Node *n, int offset, NodeModifsSet &modifs);
+	static bool splitNode(Node *n, int offset, NodeModifsSet *modifs);
 
 	/**
 	 * If n and n2 are both Text or Empty Nodes, merge them into one.
+	 * WARNING if merging occurs, n2 is deleted.
 	 * @param modifs The changes made are logged into modifs.
 	 * @return Returns true if the Nodes were merged, else false.
 	 */
-	static bool mergeNodes(Node *n, Node *n2, NodeModifsSet &modifs);
+	static bool mergeNodes(Node *n, Node *n2, NodeModifsSet *modifs);
 
 
 	/** ----------------------- NODE MODIFICATIONS -------------------------------------*/

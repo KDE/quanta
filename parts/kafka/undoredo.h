@@ -19,6 +19,7 @@
 #define UNDOREDO_H
 
 #include <qvaluelist.h>
+#include <qptrlist.h>
 #include <qobject.h>
 #include "../../parser/node.h"
 
@@ -27,49 +28,186 @@ class Document;
 /**
  * The basic unit of the undo/redo system : a Node modification.
  */
-typedef struct NodeModif
+class NodeModif
 {
-	/** For all : Type of the Node modification : Added, removed, modified, moved,...
-	cf undoRedo::NodeModification */
-	int type;
-	/** For all: Location of the Node added/modified/removed/moved */
-	QValueList<int> location;
-	/** For Node move : Initial location of the Node moved */
-	QValueList<int> location2;
-	/** For Node deletion: Store the deleted Node. */
-	Node *node;
-	/** For Node modification : Store the old tag */
-	Tag *tag;
-	/** For non-XmlEnd Node deletion without its childs : number of childs which are moved up*/
-	int childsNumber;
-	/** For XmlEnd Node deletion : number of right neighbours moved down*/
-	int childsNumber2;
+public:
+	NodeModif();
+	~NodeModif();
+
+	/**
+	 * For all NodeModifs : Type of the Node modification : Added, removed, modified, moved,...
+	 * cf the NodeModification enumeration.
+	 * WARNING The type MUST be set first!!
+	 * @param type The type of the NodeModif, as described in the NodeModification enumeration.
+	 */
+	void setType(int type){m_type = type;}
+
+	/**
+	 * Returns the current type of the NodeModif.
+	 */
+	int type() {return m_type;}
+
+	/**
+	 * For all type : Location of the Node added/modified/removed/moved.
+	 * @param location The location of the Node, cf kafkaCommon::getNodeLocation()
+	 */
+	void setLocation(QValueList<int> location) {m_location = location;}
+
+	/**
+	 * Returns the location of the Node which have been modified.
+	 */
+	QValueList<int> location() {return m_location;}
+
+	/**
+	 * For Node move : Final location of the Node moved.
+	 * @param location The final location of the Node moved, cf kafkaCommon::getNodeLocation()
+	 */
+	void setFinalLocation(QValueList<int> location) {m_finalLocation = location;}
+
+	/**
+	 * Returns the final location of the Node which was moved.
+	 */
+	QValueList<int> finalLocation() {return m_finalLocation;}
+
+	/**
+	 * For Node deletion: Store the deleted Node.
+	 * @param node The deleted node.
+	 */
+	void setNode(Node *node);
+
+	/**
+	 * Returns the deleted Node.
+	 */
+	Node *node() {return m_node;}
+
+	/**
+	 * For Node modification : Store the old tag
+	 * @param tag The original tag.
+	 */
+	void setTag(Tag *tag);
+
+	/**
+	 * Returns the original Tag.
+	 */
+	Tag *tag() {return m_tag;}
+
+	/**
+	 * For non-XmlEnd Node deletion without its children.
+	 * @param childrenNumber The number of children which are moved up
+	 * at the location where was the deleted Node.
+	 */
+	void setChildrenMovedUp(int childrenNumber) {m_childrenMovedUp = childrenNumber;}
+
+	/**
+	 * Returns the number of childs which were moved up.
+	 */
+	int childrenMovedUp() {return m_childrenMovedUp;}
+
+	/**
+	 * For XmlEnd Node deletion : number of  moved down
+	 * @param number The number of right neighbours which are moved down.
+	 */
+	void setNeighboursMovedDown(int number) {m_neighboursMovedDown = number;}
+
+	/**
+	 * Returns the number of right neighbours which were moved down.
+	 */
+	int neighboursMovedDown() {return m_neighboursMovedDown;}
+
+	/** All the possible Node modifications */
+	enum NodeModification {
+		//A complete Node Tree is added. Implemented.
+		NodeTreeAdded = 0,
+		//WARNING : not tested yet.
+		//A Node and its childs are added. Implemented.
+		NodeAndChildsAdded,
+		//A Node is added. Implemented.
+		NodeAdded,
+		//WARNING : do not use this if the node type or the node name change.
+		//A Node is modified. Implemented.
+		NodeModified,
+		//a Node is removed. Implemented.
+		NodeRemoved,
+		//WARNING : not tested yet.
+		//A Node and its childs are removed. Implemented.
+		NodeAndChildsRemoved,
+		//The complete Node tree is removed. Implemented.
+		NodeTreeRemoved,
+		// WARNING : node movement is only node-based, e.g. you can't use it for Drag'n'Drop
+		//use NodeRemoved and NodeAdded instead
+		//WARNING : NodeMoved not implemented, because it has no use for the moment.
+		NodeMoved,
+		//WARNING : NodeAndChildsMoved not implemented for the same reason.
+		NodeAndChildsMoved
+	};
+
+	private:
+	int m_type;
+	QValueList<int> m_location, m_finalLocation;
+	Node *m_node;
+	Tag *m_tag;
+	int m_childrenMovedUp;
+	int m_neighboursMovedDown;
 };
 
 /**
  * A NodeModifsSet contains all the Node modifications made by one user input.
  */
-typedef struct NodeModifsSet
+class NodeModifsSet
 {
-	/** The list of Node Modification resulting of one user input. */
-	QValueList<NodeModif> NodeModifList;
-	/** The position of the cursor before the user input. */
+public:
+	NodeModifsSet();
+	~NodeModifsSet();
+
+	/**
+	 * Add a new NodeModif to the list of NodeModifs.
+	 */
+	void addNodeModif(NodeModif *nodeModif) {m_nodeModifList.append(nodeModif);}
+
+	/**
+	 * Returns the list of NodeModifs.
+	 */
+	QPtrList<NodeModif> nodeModifList() {return m_nodeModifList;}
+
+	/**
+	 * Set the Modified flag AFTER the user input.
+	 */
+	void setIsModified(bool isModified) {m_isModified = isModified;}
+
+	/**
+	 * Returns the Modified flag.
+	 */
+	bool isModified(){return m_isModified;}
+
+	/**
+	 * Set a description to the user input.
+	 */
+	void setDescription(const QString &description) {m_description = description;}
+
+	/**
+	 * Returns the description of the user input.
+	 */
+	QString description() {return m_description;}
+
+private:
+	QPtrList<NodeModif> m_nodeModifList;
+	bool m_isModified;
+	QString m_description;
+
+	/**TODO:see later for a common cursor position. */
 	uint cursorX;
 	uint cursorY;
 	/** The position of the cursor after the user input */
 	uint cursorX2;
 	uint cursorY2;
-	/** The state of the document after the user input */
-	bool isModified;
-	/** The description of the user input. For a future Undo history */
-	QString description;
+
 };
 
 /**
  * This class, basically a new undo/redo system, also helps KafkaDocument to synchronize the
  * kafka and quanta view.
  */
-class undoRedo : public QValueList<NodeModifsSet>, public QObject
+class undoRedo : public QObject
 {
 public:
 	/**
@@ -97,7 +235,7 @@ public:
 	 * @param modifLocation Specifies where the modification was made
 	 * cf undoRedo::modificationLocation.
 	 */
-	void addNewModifsSet(NodeModifsSet modifs, int modifLocation);
+	void addNewModifsSet(NodeModifsSet *modifs, int modifLocation);
 
 	/**
 	 * Ignores the ModifSet that will come in the number'th position. Useful when
@@ -169,33 +307,6 @@ public:
 	 */
 	void reloadQuantaEditor(bool force = false, bool syncQuantaCursor = true);
 
-	/** All the possible Node modifications */
-	enum NodeModification {
-		//A complete Node Tree is added. Implemented.
-		NodeTreeAdded = 0,
-		//WARNING : not tested yet.
-		//A Node and its childs are added. Implemented.
-		NodeAndChildsAdded,
-		//A Node is added. Implemented.
-		NodeAdded,
-		//WARNING : do not use this if the node type or the node name change.
-		//A Node is modified. Implemented.
-		NodeModified,
-		//a Node is removed. Implemented.
-		NodeRemoved,
-		//WARNING : not tested yet.
-		//A Node and its childs are removed. Implemented.
-		NodeAndChildsRemoved,
-		//The complete Node tree is removed. Implemented.
-		NodeTreeRemoved,
-		/** WARNING : node movement is only node-based, e.g. you can't use it for Drag'n'Drop
-		use NodeRemoved and NodeAdded instead */
-		//WARNING : NodeMoved not implemented, because it has no use for the moment.
-		NodeMoved,
-		//WARNING : NodeAndChildsMoved not implemented for the same reason.
-		NodeAndChildsMoved
-	};
-
 public slots:
 
 	/**
@@ -248,15 +359,19 @@ private:
 
 private:
 	/**
+	 * The main undoRedo list which contains the NodeModifsSet.
+	 */
+	QPtrList<NodeModifsSet> m_undoList;
+	/**
 	 * The undoRedo list iterators which point the current location of each component in
 	 * the undoRedo list.
 	 * documentIterator point the current location of the Node Tree.
 	 * sourceIterator point the current location of the source view (kate).
 	 * kafkaIterator point the current location of the VPL view (kafka).
 	 */
-	QValueList<NodeModifsSet>::iterator documentIterator;
-	QValueList<NodeModifsSet>::iterator sourceIterator;
-	QValueList<NodeModifsSet>::iterator kafkaIterator;
+	QPtrListIterator<NodeModifsSet> documentIterator;
+	QPtrListIterator<NodeModifsSet> sourceIterator;
+	QPtrListIterator<NodeModifsSet> kafkaIterator;
 	int m_listLimit;
 	bool m_merging;
 	bool addingText;

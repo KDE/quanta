@@ -67,9 +67,9 @@ private:
 	 * head nodes, and moving if necessary all the existing Nodes.
 	 * @param modifs The changes are logged for the undo/redo system.
 	 */
-	void addBasicNodes(NodeModifsSet &modifs);
+	void addBasicNodes(NodeModifsSet *modifs);
 	//must be called after addBasicnodes
-	void addBasicCssNodes(NodeModifsSet &modifs);
+	void addBasicCssNodes(NodeModifsSet *modifs);
 	void loadMetaNode(Node *node);
 	void loadCSS(Node *node);
 

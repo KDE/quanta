@@ -1223,7 +1223,7 @@ void Parser::coutTree(Node *node, int indent)
          QString output;
         int bLine, bCol, eLine, eCol, j;
         if(!node)
-                kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
+                kdDebug(24000)<< "Parser::coutTree() - bad node!" << endl;
         while (node)
         {
                 output = "";
@@ -1341,19 +1341,13 @@ Node *Parser::rebuild(Document *w)
  t.start();
  uint line, col;
 #ifdef BUILD_KAFKAPART
- NodeModifsSet modifs;
- NodeModif modif;
+ NodeModifsSet *modifs = new NodeModifsSet();
+ NodeModif *modif;
 #endif
 
 #ifdef BUILD_KAFKAPART
  kdDebug(24000)<< "Node *Parser::rebuild()" << endl;
- quantaApp->oldCursorPos(line, col);
- modifs.cursorX = col;
- modifs.cursorY = line;
- w->viewCursorIf->cursorPositionReal(&line, &col);
- modifs.cursorX2 = col;
- modifs.cursorY2 = line;
- modifs.isModified = w->isModified();
+ modifs->setIsModified(w->isModified());
 #endif
  /**kdDebug(24000)<< "************* Begin User Modification *****************" << endl;
   //debug!
@@ -1364,14 +1358,15 @@ Node *Parser::rebuild(Document *w)
    //going to return
    if(baseNode)
    {
-     modif.type = undoRedo::NodeTreeRemoved;
-     modif.node = baseNode;
-     modifs.NodeModifList.append(modif);
+     modif = new NodeModif();
+     modif->setType(NodeModif::NodeTreeRemoved);
+     modif->setNode(baseNode);
+     modifs->addNodeModif(modif);
      baseNode = 0L;
    }
-   modif.type = undoRedo::NodeTreeAdded;
-   modif.node = 0L;
-   modifs.NodeModifList.append(modif);
+   modif = new NodeModif();
+   modif->setType(NodeModif::NodeTreeAdded);
+   modifs->addNodeModif(modif);
    w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
 #endif
    return parse(w);
@@ -1480,14 +1475,15 @@ Node *Parser::rebuild(Document *w)
    //going to return
    if(baseNode)
    {
-     modif.type = undoRedo::NodeTreeRemoved;
-     modif.node = baseNode;
-     modifs.NodeModifList.append(modif);
+     modif = new NodeModif();
+     modif->setType(NodeModif::NodeTreeRemoved);
+     modif->setNode(baseNode);
+     modifs->addNodeModif(modif);
      baseNode = 0L;
    }
-   modif.type = undoRedo::NodeTreeAdded;
-   modif.node = 0L;
-   modifs.NodeModifList.append(modif);
+   modif = new NodeModif();
+   modif->setType(NodeModif::NodeTreeAdded);
+   modifs->addNodeModif(modif);
    w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
 #endif
    return parse(w);
@@ -1526,13 +1522,14 @@ Node *Parser::rebuild(Document *w)
       next->closesPrevious = false;
 
 #ifdef BUILD_KAFKAPART
-      modif.type = undoRedo::NodeRemoved;
-      modif.location = kafkaCommon::getLocation(node);
+      modif = new NodeModif();
+      modif->setType(NodeModif::NodeRemoved);
+      modif->setLocation(kafkaCommon::getLocation(node));
       node->parent = 0L;
       node->next = 0L;
       node->prev = 0L;
       node->child = 0L;
-      modif.node = node;
+      modif->setNode(node);
 #else
      delete node;
      nodeNum--;
@@ -1617,9 +1614,9 @@ Node *Parser::rebuild(Document *w)
            node->child = next;
      }
 #ifdef BUILD_KAFKAPART
-     modif.childsNumber = i;
-     modif.childsNumber2 = j;
-     modifs.NodeModifList.append(modif);
+     modif->setChildrenMovedUp(i);
+     modif->setNeighboursMovedDown(j);
+     modifs->addNodeModif(modif);
 #endif
      node = nextNode;
     /** //debug!
@@ -1636,14 +1633,15 @@ Node *Parser::rebuild(Document *w)
    //going to return
    if(baseNode)
    {
-     modif.type = undoRedo::NodeTreeRemoved;
-     modif.node = baseNode;
-     modifs.NodeModifList.append(modif);
+     modif = new NodeModif();
+     modif->setType(NodeModif::NodeTreeRemoved);
+     modif->setNode(baseNode);
+     modifs->addNodeModif(modif);
      baseNode = 0L;
    }
-   modif.type = undoRedo::NodeTreeAdded;
-   modif.node = 0L;
-   modifs.NodeModifList.append(modif);
+   modif = new NodeModif();
+   modif->setType(NodeModif::NodeTreeAdded);
+   modifs->addNodeModif(modif);
    w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
 #endif
    return parse(w);
@@ -1658,12 +1656,10 @@ Node *Parser::rebuild(Document *w)
    Node *p = (lastInserted)?lastInserted->nextSibling():lastInserted;
    while(swapNode != p)
    {
-      modif.type = undoRedo::NodeAdded;
-      modif.location = kafkaCommon::getLocation(swapNode);
-      modif.node = 0L;
-      modif.childsNumber = 0;
-      modif.childsNumber2 = 0;
-      modifs.NodeModifList.append(modif);
+      modif = new NodeModif();
+      modif->setType(NodeModif::NodeAdded);
+      modif->setLocation(kafkaCommon::getLocation(swapNode));
+      modifs->addNodeModif(modif);
       swapNode = swapNode->nextSibling();
    }
 #endif
@@ -1686,14 +1682,15 @@ Node *Parser::rebuild(Document *w)
 #ifdef BUILD_KAFKAPART
    if(baseNode)
    {
-     modif.type = undoRedo::NodeTreeRemoved;
-     modif.node = baseNode;
-     modifs.NodeModifList.append(modif);
+     modif = new NodeModif();
+     modif->setType(NodeModif::NodeTreeRemoved);
+     modif->setNode(baseNode);
+     modifs->addNodeModif(modif);
      baseNode = 0L;
    }
-   modif.type = undoRedo::NodeTreeAdded;
-   modif.node = 0L;
-   modifs.NodeModifList.append(modif);
+   modif = new NodeModif();
+   modif->setType(NodeModif::NodeTreeAdded);
+   modifs->addNodeModif(modif);
    w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
 #endif
    return parse(w);
@@ -1729,22 +1726,22 @@ Node *Parser::rebuild(Document *w)
             //lastInserted->parent->child = lastInserted->next; lastInserted has no next!
            lastInserted->parent->child = lastNode;
 #ifdef BUILD_KAFKAPART
-       //here, lastNode is at the pos of lastInserted.
-        modif.location = kafkaCommon::getLocation(lastNode);
-        modif.type = undoRedo::NodeRemoved;
+        //here, lastNode is at the pos of lastInserted.
+        modif = new NodeModif();
+        modif->setType(NodeModif::NodeRemoved);
+        modif->setLocation(kafkaCommon::getLocation(lastNode));
         lastInserted->prev = 0L;
         lastInserted->next = 0L;
         lastInserted->parent = 0L;
         lastInserted->child = 0L;
-        modif.node = lastInserted;
-        modif.childsNumber = 0;
-        modif.childsNumber2 = 0;
-        modifs.NodeModifList.append(modif);
-        modif.location = kafkaCommon::getLocation(lastNode);
-        modif.type = undoRedo::NodeModified;
-        modif.node = 0L;
-        modif.tag = _tag;
-        modifs.NodeModifList.append(modif);
+        modif->setNode(lastInserted);
+        modifs->addNodeModif(modif);
+
+        modif = new NodeModif();
+        modif->setType(NodeModif::NodeModified);
+        modif->setLocation(kafkaCommon::getLocation(lastNode));
+        modif->setTag(_tag);
+        modifs->addNodeModif(modif);
 #else
 	lastInserted->removeAll = false;
         delete lastInserted;

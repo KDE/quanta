@@ -364,17 +364,11 @@ void TagAttributeTree::editorContentChanged()
       TagAttr attr;
       DOM::Node domNode;
       bool foundAttr = false, nodeModified= false;
-      NodeModifsSet modifs;
-      NodeModif modif;
-      modifs.cursorX = 0;
-      modifs.cursorY = 0;
-      modifs.cursorX2 = 0;
-      modifs.cursorY2 = 0;
-      modifs.isModified = true;//TODO:determine this
-      modif.type = undoRedo::NodeModified;
-      modif.tag = new Tag(*(m_node->tag));
-      modif.location = kafkaCommon::getLocation(m_node);
-      modif.node = 0L;
+      NodeModifsSet *modifs = new NodeModifsSet();
+      NodeModif *modif = new NodeModif();
+      modif->setType(NodeModif::NodeModified);
+      modif->setTag(new Tag(*(m_node->tag)));
+      modif->setLocation(kafkaCommon::getLocation(m_node));
 
       for(i = 0; i < m_node->tag->attrCount(); i++)
       {
@@ -438,7 +432,7 @@ void TagAttributeTree::editorContentChanged()
              m_node->_leafNode.appendChild(domNode.firstChild());
         }
 
-        modifs.NodeModifList.append(modif);
+        modifs->addNodeModif(modif);
         quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
       }
 #ifdef HEAVY_DEBUG
@@ -566,20 +560,15 @@ void EnhancedTagAttributeTree::deleteSubTree()
 {
 #ifdef BUILD_KAFKAPART
   Node *oldCurNode;
-  NodeModifsSet modifs;
+  NodeModifsSet *modifs;
   int curLine, curCol, offset;
   DOM::Node domNode;
   QValueList<int> loc;
-  
-  modifs.cursorX = 0;
-  modifs.cursorY = 0;
-  modifs.cursorX2 = 0;
-  modifs.cursorY2 = 0;
-  modifs.isModified = true;//TODO
 
   if(!curNode || !quantaApp->view()->writeExists())
     return;
 
+  //Save the cursor position in kafka/quanta
   if(quantaApp->view()->hadLastFocus() == QuantaView::quantaFocus)
     curNode->tag->beginPos(curLine, curCol);
   else
@@ -587,8 +576,10 @@ void EnhancedTagAttributeTree::deleteSubTree()
     quantaApp->view()->getKafkaInterface()->getKafkaWidget()->getCurrentNode(domNode, offset);
     if(!domNode.previousSibling().isNull())
       domNode = domNode.previousSibling();
-    else
+    else if(!domNode.parentNode().isNull())
       domNode = domNode.parentNode();
+    else
+      domNode = quantaApp->view()->getKafkaInterface()->getKafkaWidget()->document();
     if(domNode.nodeType() == DOM::Node::TEXT_NODE)
       offset = domNode.nodeValue().length();
     else
@@ -596,13 +587,17 @@ void EnhancedTagAttributeTree::deleteSubTree()
     loc = kafkaCommon::getLocation(domNode);
   }
 
+  //Remove the Nodes
   oldCurNode = curNode;
   curNode = 0L;
   attrTree->setCurrentNode(curNode);
+
+  modifs = new NodeModifsSet();
   kafkaCommon::extractAndDeleteNode(oldCurNode, modifs);
 
   quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
+  //set the cursor position in kafka/quanta
   if(quantaApp->view()->hadLastFocus() == QuantaView::quantaFocus)
     quantaApp->view()->write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
   else
@@ -649,17 +644,12 @@ void EnhancedTagAttributeTree::deleteNode()
   int curLine, curCol, offset;
   DOM::Node domNode;
   QValueList<int> loc;
-
-  NodeModifsSet modifs;
-  modifs.cursorX = 0;
-  modifs.cursorY = 0;
-  modifs.cursorX2 = 0;
-  modifs.cursorY2 = 0;
-  modifs.isModified = true;//TODO
+  NodeModifsSet *modifs;
 
   if(!curNode || !quantaApp->view()->writeExists())
     return;
 
+  //Save the cursor position in kafka/quanta
   if(quantaApp->view()->hadLastFocus() == QuantaView::quantaFocus)
     curNode->tag->beginPos(curLine, curCol);
   else
@@ -667,19 +657,24 @@ void EnhancedTagAttributeTree::deleteNode()
     quantaApp->view()->getKafkaInterface()->getKafkaWidget()->getCurrentNode(domNode, offset);
     if(!domNode.previousSibling().isNull())
       domNode = domNode.previousSibling();
-    else
+    else if(!domNode.parentNode().isNull())
       domNode = domNode.parentNode();
+    else
+      domNode = quantaApp->view()->getKafkaInterface()->getKafkaWidget()->document();
     if(domNode.nodeType() == DOM::Node::TEXT_NODE)
       offset = domNode.nodeValue().length();
     else
      offset = 0;
     loc = kafkaCommon::getLocation(domNode);
   }
+
+  //remove the Nodes
   oldCurNode = curNode;
   oldCurNodeParent = curNode->parent;
   curNode = 0L;
   attrTree->setCurrentNode(curNode);
 
+  modifs = new NodeModifsSet();
   kafkaCommon::extractAndDeleteNode(oldCurNode, modifs, false);
 
   //Then we see if the new parent - child relationships are valid, and if not, delete the child and restart
@@ -706,6 +701,7 @@ void EnhancedTagAttributeTree::deleteNode()
 
   quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
+  //set the cursor position in kafka/quanta
   if(quantaApp->view()->hadLastFocus() == QuantaView::quantaFocus)
     quantaApp->view()->write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
   else

@@ -504,7 +504,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 #endif
 	KafkaWidget *kafkaPart = m_view->getKafkaInterface()->getKafkaWidget();
 	KafkaDocument *wkafka = m_view->getKafkaInterface();
-	NodeModifsSet modifs;
+	NodeModifsSet *modifs;
 	DOM::Node domNode;
 	DOM::Range range;
 	QString tagName;
@@ -517,14 +517,9 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 	if(!node && str1 == "" || node && str1 != "")
 		return;
 
-	modifs.cursorX = 0;
-	modifs.cursorY = 0;
-	modifs.cursorX2 = 0;
-	modifs.cursorY2 = 0;
-	modifs.isModified = true;//TODO:determine this
-
 	if(m_view->hadLastFocus() == QuantaView::kafkaFocus)
 	{
+		modifs = new NodeModifsSet();
 		if(!node && str1 != "")
 		{
 			//We build the node from the str1

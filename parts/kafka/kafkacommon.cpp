@@ -286,8 +286,9 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
 	Node *parent, *child, *node, *emptyNode = 0L, *emptyNode2 = 0L;
 	int nbEmptyNodes = 0;
 	bool lastChild = false, firstChild = false;
-	//We don't want to log the modifications made to Empty Nodes / addition of whitespaces in Text Nodes
-	NodeModifsSet modifs;
+	//We don't want to log the modifications made to Empty Nodes /
+	//addition of whitespaces in Text Nodes, so let's create a dummy one.
+	NodeModifsSet *modifs = new NodeModifsSet();
 
 	if(!n1 || !n2 || n1 == n2 || n1->tag->type == Tag::Empty || n2->tag->type == Tag::Empty)
 		return;
@@ -482,6 +483,8 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
 				extractAndDeleteNode(emptyNode, modifs, false, false);
 		}
 	}
+
+	delete modifs;
 }
 
 void kafkaCommon::fitsNodesPosition(Node* startNode, int colMovement, int lineMovement, int colEnd, int lineEnd)
@@ -603,13 +606,13 @@ Node* kafkaCommon::createNode(const QString &nodeName, const QString &tagString,
 	return node;
 }
 
-Node* kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling, NodeModifsSet &modifs,
-	bool merge)
+Node* kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling,
+	NodeModifsSet *modifs, bool merge)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::insertNode()" << endl;
 #endif
-	NodeModif modif;
+	NodeModif* modif;
 	Node *n;
 	bool nodeIsFirstChild = false;
 
@@ -653,12 +656,13 @@ Node* kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling, N
 	node->next = nextSibling;
 
 	//log this.
-	modif.type = undoRedo::NodeAdded;
-	modif.node = 0L;
-	modif.childsNumber = 0;
-	modif.childsNumber2 = 0;
-	modif.location = kafkaCommon::getLocation(node);
-	modifs.NodeModifList.append(modif);
+	if(modifs)
+	{
+		modif = new NodeModif();
+		modif->setType(NodeModif::NodeAdded);
+		modif->setLocation(getLocation(node));
+		modifs->addNodeModif(modif);
+	}
 
 	//Then try to merge with the siblings
 	if(merge)
@@ -682,13 +686,12 @@ Node* kafkaCommon::insertNode(Node *node, Node* parentNode, Node* nextSibling, N
 }
 
 Node *kafkaCommon::insertNode(Node *newNode, Node *parent, Node *nextSibling, Node *nextEndSibling,
-	NodeModifsSet &modifs)
+	NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::insertNode()1" << endl;
 #endif
 	Node *n, *nodeEnd;
-	NodeModif modif;
 
 	if(!newNode)
 		return 0L;
@@ -718,7 +721,7 @@ Node *kafkaCommon::insertNode(Node *newNode, Node *parent, Node *nextSibling, No
 }
 
 Node* kafkaCommon::insertNode(Node *newNode, Node *parent, Node *startNodeToSurround,
-	Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet &modifs)
+	Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::insertNode()2" << endl;
@@ -745,7 +748,7 @@ Node* kafkaCommon::insertNode(Node *newNode, Node *parent, Node *startNodeToSurr
 }
 
 bool kafkaCommon::DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSurround,
-	Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet &modifs,
+	Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet *modifs,
 	bool generateElements)
 {
 #ifdef LIGHT_DEBUG
@@ -783,7 +786,9 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSu
 	//Build the list of Mandatory childs e.g. TABLE - TD - TR
 	qTagList.append(newNodeQTag);
 	qTag = newNodeQTag;
-	kdDebug(25001)<< "CURNODEEE: " << qTag->name()<< endl;
+#ifdef LIGHT_DEBUG
+	kdDebug(25001)<< "current QNode: " << qTag->name()<< endl;
+#endif
 	while(generateElements && qTag)
 	{
 		lastListQTag = qTag;
@@ -793,7 +798,9 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSu
 			{
 				qTag = QuantaCommon::tagFromDTD(qTag->parentDTD, it.key());
 				qTagList.append(qTag);
+#ifdef HEAVY_DEBUG
 				kdDebug(25001)<< "Mandatory node: " << qTag->name()<< endl;
+#endif
 				break;
 			}
 		}
@@ -881,9 +888,12 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSu
 					}
 					if(qTag == qTagList.getLast())
 					{
-						node = createNode("#text", "&nbsp;", Tag::Text, newNode->tag->write());
-						node->tag->cleanStrBuilt = true;
-						insertNode(node, nodeParent, nodeParent->firstChild(), 0L, modifs);
+						if(generateElements && !nodeParent->hasChildNodes())
+						{
+							node = createNode("#text", "&nbsp;", Tag::Text, newNode->tag->write());
+							node->tag->cleanStrBuilt = true;
+							insertNode(node, nodeParent, nodeParent->firstChild(), 0L, modifs);
+						}
 						//dirty thing to exit the while loop  when (startNodeToSurd == endNodeToSurd) ;-)
 						startNodeToSurround = newNode;
 					}
@@ -898,7 +908,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSu
 }
 
 bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
-	int endOffset, NodeModifsSet &modifs)
+	int endOffset, NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::DTDinsertNode()2" << endl;
@@ -1040,8 +1050,9 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
 	return true;
 }
 
-Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
-	Document *doc, Node* parent, Node* nextSibling, NodeModifsSet &modifs, bool merge)
+Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &tagString,
+	int nodeType, Document *doc, Node* parent, Node* nextSibling, NodeModifsSet *modifs,
+	bool merge)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::createAndInsertNode() - nodeName :" << nodeName <<
@@ -1058,8 +1069,9 @@ Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &t
 	return node;
 }
 
-Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
-	Document *doc, Node *parent, Node *nextSibling, Node *nextEndSibling, NodeModifsSet &modifs)
+Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &tagString,
+	int nodeType, Document *doc, Node *parent, Node *nextSibling, Node *nextEndSibling,
+	NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::createAndInsertNode()2- nodeName :" << nodeName <<
@@ -1076,9 +1088,9 @@ Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &t
 	return node;
 }
 
-Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
-	Document *doc, Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset,
-	int endOffset, NodeModifsSet &modifs)
+Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &tagString,
+	int nodeType, Document *doc, Node *parent, Node *startNodeToSurround,
+	Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::createAndInsertNode()3 - nodeName :" << nodeName <<
@@ -1102,7 +1114,7 @@ Node *kafkaCommon::createAndInsertNode(const QString &nodeName, const QString &t
 
 bool kafkaCommon::DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString,
 	int nodeType, Document *doc, Node *parent, Node *startNodeToSurround, Node *endNodeToSurround,
-	int startOffset, int endOffset, NodeModifsSet &modifs, bool generateElements)
+	int startOffset, int endOffset, NodeModifsSet *modifs, bool generateElements)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::DTDcreateAndInsertNode() - nodeName :" << nodeName <<
@@ -1122,8 +1134,9 @@ bool kafkaCommon::DTDcreateAndInsertNode(const QString &nodeName, const QString 
 }
 
 
-bool kafkaCommon::DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString, int nodeType,
-	Document *doc, Node *startNode, int startOffset, Node *endNode, int endOffset, NodeModifsSet &modifs)
+bool kafkaCommon::DTDcreateAndInsertNode(const QString &nodeName, const QString &tagString,
+	int nodeType, Document *doc, Node *startNode, int startOffset, Node *endNode, int endOffset,
+	NodeModifsSet *modifs)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "kafkaCommon::DTDcreateAndInsertNode()2 - nodeName : " << nodeName <<
@@ -1143,7 +1156,7 @@ bool kafkaCommon::DTDcreateAndInsertNode(const QString &nodeName, const QString 
 }
 
 bool kafkaCommon::addNodeRecursively(Node *newNode, Node* startNode, Node *endNode,
-	Node *currentNode, bool &addingStarted, int level, NodeModifsSet &modifs)
+	Node *currentNode, bool &addingStarted, int level, NodeModifsSet *modifs)
 {
 #ifdef HEAVY_DEBUG
 	kdDebug(25001)<< "kafkaCommon::addNodeRevursively() [" << level << "] - currentNode :" <<
@@ -1288,9 +1301,9 @@ Node *kafkaCommon::duplicateNode(Node *node)
 	return newNode;
 }
 
-Node* kafkaCommon::extractNode(Node *node, NodeModifsSet &modifs, bool deleteChildren)
+Node* kafkaCommon::extractNode(Node *node, NodeModifsSet *modifs, bool deleteChildren)
 {
-	NodeModif modif;
+	NodeModif *modif;
 	Node *lastChild, *curNode;
 	Node *parent, *prevNE, *nextNE, *child;
 
@@ -1306,14 +1319,15 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet &modifs, bool deleteChi
 	child = node->child;
 
 	//logging
-	if(deleteChildren)
-		modif.type = undoRedo::NodeAndChildsRemoved;
-	else
-		modif.type = undoRedo::NodeRemoved;
-	modif.location = kafkaCommon::getLocation(node);
-	modif.node = node;
-	modif.childsNumber = 0;
-	modif.childsNumber2 = 0;
+	if(modifs)
+	{
+		modif = new NodeModif();
+		if(deleteChildren)
+			modif->setType(NodeModif::NodeAndChildsRemoved);
+		else
+			modif->setType(NodeModif::NodeRemoved);
+		modif->setLocation(getLocation(node));
+	}
 
 	//starting to extract.
 	if(node == baseNode)
@@ -1369,12 +1383,16 @@ Node* kafkaCommon::extractNode(Node *node, NodeModifsSet &modifs, bool deleteChi
 	if(!deleteChildren)
 		node->child = 0L;
 
-	modifs.NodeModifList.append(modif);
+	if(modifs)
+	{
+		modif->setNode(node);
+		modifs->addNodeModif(modif);
+	}
 
 	return node;
 }
 
-void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool deleteChildren,
+void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet *modifs, bool deleteChildren,
 	bool deleteClosingTag, bool mergeAndFormat)
 {
 	NodeModif modif;
@@ -1401,22 +1419,29 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool d
 		curNode = nodeNext;
 		while(curNode && curNode->tag->type == Tag::Empty)
 			curNode = curNode->next;
-		if(curNode && QuantaCommon::closesTag(node->tag,curNode->tag))
+		if(curNode)
 		{
-			curNode = nodeNext;
-			while(curNode)
+			closingNodeName = curNode->tag->name;
+			namespaceName2 = curNode->tag->nameSpace;
+			caseSensitive2 = curNode->tag->dtd->caseSensitive;
+			if(QuantaCommon::closesTag(namespaceName, nodeName, caseSensitive,
+				namespaceName2, closingNodeName, caseSensitive2))
 			{
-				nodeNext2 = curNode->next;
-				closingNodeName = curNode->tag->name;
-				namespaceName2 = curNode->tag->nameSpace;
-				caseSensitive2 = curNode->tag->dtd->caseSensitive;
-				curNode = extractNode(curNode, modifs, deleteChildren);
-				curNode = nodeNext2;
-				if(QuantaCommon::closesTag(namespaceName, nodeName, caseSensitive,
-					namespaceName2, closingNodeName, caseSensitive2))
-					break;
+				curNode = nodeNext;
+				while(curNode)
+				{
+					nodeNext2 = curNode->next;
+					closingNodeName = curNode->tag->name;
+					namespaceName2 = curNode->tag->nameSpace;
+					caseSensitive2 = curNode->tag->dtd->caseSensitive;
+					curNode = extractNode(curNode, modifs, deleteChildren);
+					curNode = nodeNext2;
+					if(QuantaCommon::closesTag(namespaceName, nodeName, caseSensitive,
+						namespaceName2, closingNodeName, caseSensitive2))
+						break;
+				}
+				nodeNext = curNode;
 			}
-			nodeNext = curNode;
 		}
 	}
 
@@ -1425,44 +1450,44 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool d
 	{
 		n = nodePrev;
 		n2 = nodePrev->next;
-		while(n && n2 && n != nodeNext)
+		while(n && n2 && n2->prev != nodeNext)
 		{
-			if(!n->child)
-				mergeNodes(n, n2, modifs);
-			n = n2;
-			n2 = n2->next;
+			if(!mergeNodes(n, n2, modifs))
+				break;
+			n2 = n->next;
 		}
 	}
 }
 
 void kafkaCommon::moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibling,
-	NodeModifsSet &modifs)
+	NodeModifsSet *modifs)
 {
-	NodeModif modif;
-	NodeModifsSet modifs2;
+	NodeModif *modif;
 	Node *newNode;
 
 	//DON'T log the removal and addition of the same Node!! When spliting the undoRedo stack
 	//it will delete the remove NodeModif and thus the Node inside which is the Node inserted.
-	modif.node = 0L;
-	modif.childsNumber = 0;
-	modif.childsNumber2 = 0;
-	modif.type = undoRedo::NodeAndChildsMoved;
+	if(modifs)
+	{
+		modif = new NodeModif();
+		modif->setType(NodeModif::NodeAndChildsMoved);
+		modif->setLocation(getLocation(nodeToMove));
+	}
 
 	//extract the old Node.
-	modif.location = kafkaCommon::getLocation(nodeToMove);
-	newNode = extractNode(nodeToMove, modifs2, true);
+	newNode = extractNode(nodeToMove, 0L, true);
 
 	//insert the new Node.
-	insertNode(newNode, newParent, newNextSibling, modifs2);
-	modif.location2 = kafkaCommon::getLocation(newNode);
+	insertNode(newNode, newParent, newNextSibling, 0L);
+	modif->setFinalLocation(getLocation(newNode));
 
-	modifs.NodeModifList.append(modif);
+	if(modifs)
+		modifs->addNodeModif(modif);
 }
 
-bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet &modifs)
+bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet *modifs)
 {
-	NodeModif modif;
+	NodeModif *modif;
 	Tag *tag;
 	QString tagStr;
 
@@ -1472,19 +1497,25 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet &modifs)
 	tag = new Tag(*(n->tag));
 	tagStr = n->tag->tagStr();
 	n->tag->setStr(tagStr.left(offset));
-	modif.type = undoRedo::NodeModified;
-	modif.tag = tag;
-	modif.location = getLocation(n);
-	modifs.NodeModifList.append(modif);
+
+	//logging
+	if(modifs)
+	{
+		modif = new NodeModif();
+		modif->setType(NodeModif::NodeModified);
+		modif->setTag(tag);
+		modif->setLocation(getLocation(n));
+		modifs->addNodeModif(modif);
+	}
 
 	createAndInsertNode("#text", tagStr.right(tagStr.length() - offset), Tag::Text, n->tag->write(),
 		n->parent, n->next, modifs, false);
 	return true;
 }
 
- bool kafkaCommon::mergeNodes(Node *n, Node *n2, NodeModifsSet &modifs)
+ bool kafkaCommon::mergeNodes(Node *n, Node *n2, NodeModifsSet *modifs)
  {
- 	NodeModif modif;
+ 	NodeModif *modif;
 	Tag *tag;
 	if(!n || !n2)
 		return false;
@@ -1493,10 +1524,16 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet &modifs)
 		n2->tag->type == Tag::Text))
 	{
 		tag = new Tag(*(n->tag));
-		modif.type = undoRedo::NodeModified;
-		modif.tag = tag;
-		modif.location = getLocation(n);
-		modifs.NodeModifList.append(modif);
+
+		//logging
+		if(modifs)
+		{
+			modif = new NodeModif();
+			modif->setType(NodeModif::NodeModified);
+			modif->setTag(tag);
+			modif->setLocation(getLocation(n));
+			modifs->addNodeModif(modif);
+		}
 		n->tag->setStr(n->tag->tagStr() + n2->tag->tagStr());
 		if(n->tag->type == Tag::Text || n2->tag->type == Tag::Text)
 			n->tag->type = Tag::Text;
@@ -1655,7 +1692,7 @@ DOM::Node kafkaCommon::getNodeFromLocation(QValueList<int> loc, DOM::Node rootNo
 {
 	QValueList<int>::iterator it;
 	DOM::Node node = rootNode;
-	DOM::Node m;
+	DOM::Node m = rootNode;
 	int i;
 
 	if(rootNode.isNull())

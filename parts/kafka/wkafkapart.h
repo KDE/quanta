@@ -157,7 +157,7 @@ public:
 	*/
 	Node * buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
 		Node *_beginNode, int beginOffset, Node *_endNode, int endOffset,
-		NodeModifsSet &modifs);
+		NodeModifsSet *modifs);
 
 
 	/* ------------------------------- TEXT ENTITIES ENCODING/DECODING ---------------------*/

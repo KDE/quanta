@@ -232,11 +232,15 @@ void KafkaWidget::normalize(DOM::Node _node)
 void KafkaWidget::keyReturn()
 {
 	//Temporary HTML-specific function
-	//TODO:CHANGE AND USE <P> instead of <BR>
+	//TODO:CHANGE AND USE <P> instead of <BR> when possible
 	DOM::Node brNode, secondPartOfText;
 	int focus;
 
-	if(m_currentNode.isNull()) return;
+	if(m_currentNode.isNull())
+		return;
+	if(!w->getAttrs(m_currentNode))
+		return;
+
 	focus = w->getAttrs(m_currentNode)->chCurFoc();
 	if (focus == kNodeAttrs::textNode)
 	{

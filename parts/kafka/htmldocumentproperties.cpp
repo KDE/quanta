@@ -329,16 +329,11 @@ void htmlDocumentProperties::aboutToClose()
 	Node *node, *nodeNext;
 	NodeLinkedViewItem *item;
 	TagAttr attr;
-	NodeModifsSet modifs;
+	NodeModifsSet *modifs = new NodeModifsSet();
 	KURL url, baseURL;
 	QString finalURL;
 	//TODO:see for !doctype
 
-	modifs.cursorX = 0;
-	modifs.cursorY = 0;
-	modifs.cursorX2 = 0;
-	modifs.cursorY2 = 0;
-	modifs.isModified = true;//TODO:determine this
 	//set the TITLE if necessary.
 	if(titleDirty)
 	{
@@ -346,8 +341,8 @@ void htmlDocumentProperties::aboutToClose()
 		{
 			addBasicNodes(modifs);
 			//create title
-			titleNode = kafkaCommon::createAndInsertNode("title", "", Tag::XmlTag, quantaApp->view()->write(),
-				headNode, 0L, 0L, modifs);
+			titleNode = kafkaCommon::createAndInsertNode("title", "", Tag::XmlTag,
+				quantaApp->view()->write(), headNode, 0L, 0L, modifs);
 		}
 		node = titleNode->child;
 		if(node && (node->next || node->tag->type != Tag::Text))
@@ -362,8 +357,8 @@ void htmlDocumentProperties::aboutToClose()
 		if(!titleNode->child)
 		{
 			//create text!
-			node = kafkaCommon::createAndInsertNode("", title->text(),Tag::Text, quantaApp->view()->write(),
-				titleNode, 0L, 0L, modifs);
+			node = kafkaCommon::createAndInsertNode("", title->text(),Tag::Text,
+				quantaApp->view()->write(), titleNode, 0L, 0L, modifs);
 		}
 		else
 			node->tag->setStr(quantaApp->view()->getKafkaInterface()->getEncodedText(title->text()));
@@ -500,7 +495,7 @@ void htmlDocumentProperties::aboutToClose()
 	close();
 }
 
-void htmlDocumentProperties::addBasicCssNodes(NodeModifsSet &modifs)
+void htmlDocumentProperties::addBasicCssNodes(NodeModifsSet *modifs)
 {
 	if(CSSNode || !htmlNode || !headNode)
 		return;
@@ -511,11 +506,10 @@ void htmlDocumentProperties::addBasicCssNodes(NodeModifsSet &modifs)
 	CSSNode->tag->name = "style |  block";
 }
 
-void htmlDocumentProperties::addBasicNodes(NodeModifsSet &modifs)
+void htmlDocumentProperties::addBasicNodes(NodeModifsSet *modifs)
 {
 	Node *allTheNodes, /***htmlEnd, *headEnd, *bodyEnd,*/ *lastHeadChild, *lastBodyChild, *lastHtmlChild;
 	Node *n;
-	NodeModif modif;
 	bool htmlNodeCreated = false, bodyNodeCreated = false;
 	QTag *qHead, *qBody;
 	QString tagName;
