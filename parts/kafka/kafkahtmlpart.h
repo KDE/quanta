@@ -278,6 +278,7 @@ private:
 	void keyDown();
 	void keyBackspace();
 	void keyDelete();
+	void keyReturn();
 	//temporary universam method to get cursor coordinates
 	bool getCursor(DOM::Node _node, int offset, int &_x, int &_y, int &height);
 	void postprocessCursorPosition();

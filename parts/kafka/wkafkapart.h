@@ -87,7 +87,7 @@ public slots:
 	void slotUpdateQuantaTree();
 
 	/**
-	 * Called whenever a DOM::Node is inserted in the Quanta tree.
+	 * Called whenever a DOM::Node is inserted in the Kafka tree.
 	 * @param _domNode is the Node inserted.
 	 */
 	void slotDomNodeInserted(DOM::Node _domNode);
@@ -99,7 +99,7 @@ public slots:
 	void slotDomNodeModified(DOM::Node _domNode);
 
 	/**
-	 * Called whenever a DOM::Node is about to be removed from the Quanta tree.
+	 * Called whenever a DOM::Node is about to be removed from the Kafka tree.
 	 * @param _domNode is the Node to be deleted.
 	 * @param deleteChilds Specifies if we should delete the child nodes of _node
 	 */
