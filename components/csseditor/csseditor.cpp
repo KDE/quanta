@@ -152,7 +152,7 @@ void CSSEditor::setCurrentPropOn(const QString& s){
   if( (m_currentProp = static_cast<myCheckListItem*>(lvPaged->findItem( s,0 )) )) 
     m_currentProp->setOn(true); 
         
-  if( m_currentProp->depth() ) {
+  if( m_currentProp && m_currentProp->depth() ) {
     myCheckListItem *p = static_cast<myCheckListItem*>(m_currentProp->parent());
     while(p) {
       p->setOn(true);

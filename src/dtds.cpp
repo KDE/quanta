@@ -110,7 +110,7 @@ void DTDs::removeDTD(DTDStruct *dtd)
     build up the internal DTD and tag structures. */
 bool DTDs::readTagDir(const QString &dirName, bool loadAll)
 {
-  kdDebug(24000) << "dtds::readTagDir:" << dirName << "  all:" << loadAll << endl;
+ // kdDebug(24000) << "dtds::readTagDir:" << dirName << "  all:" << loadAll << endl;
   QString tmpStr = dirName + m_rcFilename;
   if (!QFile::exists(tmpStr))
      return false;
@@ -165,7 +165,7 @@ bool DTDs::readTagDir(const QString &dirName, bool loadAll)
     */
 bool DTDs::readTagDir2(DTDStruct *dtd)
 {
-  kdDebug(24000) << "dtds::readTagDir2:" << dtd->name << " at " << dtd->fileName << endl;
+//  kdDebug(24000) << "dtds::readTagDir2:" << dtd->name << " at " << dtd->fileName << endl;
     
   if (!QFile::exists(dtd->fileName)) return false;
 

@@ -13,6 +13,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
         - always enable the Open and Open Project buttons
         - don't let the attribute tree to grow if the tag name is very long
         - creation of templates directory failed in some cases when using the new project wizard
+        - don't crash the CSS editor on invalid CSS
         - various parsing fixes        
         - report bugs for "quanta" module, not for "quanta_be"        
     - performance:

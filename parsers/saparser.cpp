@@ -749,6 +749,7 @@ Node *SAParser::parsingDone()
           emit detailedParsingDone();
         }
     }
+    m_currentNode = 0L;
     return m_lastParsedNode;
   }
   if (!s_currentNode)
@@ -803,6 +804,7 @@ Node *SAParser::parsingDone()
         emit detailedParsingDone();
       }
   }
+  m_currentNode = 0L;
   return s_currentNode;
 }
 
