@@ -37,7 +37,7 @@
 DTD::DTD(const KURL &dtdURL, const QString &dtepDir)
 {
   m_dtdURL = dtdURL;
-  m_dtepDir = dtepDir + "/"+QFileInfo(dtdURL.fileName()).baseName();
+  m_dtepDir = dtepDir + "/"+QFileInfo(dtdURL.fileName()).baseName(); //TODO: get the dir name from the DTD or from the user
 }
 
 DTD::~DTD()
@@ -111,6 +111,12 @@ void DTD::writeTagFiles()
       kdDebug(24000) << "Unable to write tag file: " << file.name() << endl;
     }
   }
+
+  KConfig config(dirName + "description.rc");
+  config.setGroup("General");
+  config.writeEntry("Name", QFileInfo(m_dtdURL.fileName()).baseName()); //TODO: get from the DTD!
+  config.writeEntry("NickName", QFileInfo(m_dtdURL.fileName()).baseName()); //TODO: get from the user!
+  config.sync();
 }
 
 bool DTD::parseDTD(const KURL &url)

@@ -32,7 +32,7 @@ class Document;
 /**
  * For heavy debug including Node Tree in stdout printing, a DOM::Node tree widget.
  */
-#define HEAVY_DEBUG
+//#define HEAVY_DEBUG
 
 /**
  * Light debugging, including functions name in stdout printing.
