@@ -610,7 +610,6 @@ void FilesTreeView::slotReload()
     {
       kftvi = dynamic_cast<KFileTreeViewItem*> (it.current());
       if ( kftvi && kftvi->isDir() && kftvi->isOpen()) {
-        kftvi->setListed( false ); // force re-read
         kftvi->branch()->populate(kftvi->url(), kftvi);
       }
     }
