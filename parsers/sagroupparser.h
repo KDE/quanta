@@ -21,6 +21,7 @@
 #include <qobject.h>
 
 //forward definitions
+class Document;
 class Node;
 class SAParser;
 
@@ -32,7 +33,7 @@ class SAGroupParser : public QObject
 Q_OBJECT
 public:
   public:
-    SAGroupParser(SAParser *parent, Node *startNode, Node *endNode, bool synchronous, bool parsingLastNode, bool paringLastGroup);
+    SAGroupParser(SAParser *parent, Document *write, Node *startNode, Node *endNode, bool synchronous, bool parsingLastNode, bool paringLastGroup);
     ~SAGroupParser() {};
 
 
@@ -53,6 +54,7 @@ public:
     SAParser *m_parent;
     Node* g_node;
     Node* g_endNode;
+    Document *m_write;
     int m_count;
 };
 

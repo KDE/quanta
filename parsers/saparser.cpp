@@ -375,7 +375,7 @@ bool SAParser::slotParseOneLine()
 //            slotParseForScriptGroup();
             if (!m_synchronous)
             {
-              SAGroupParser *groupParser = new SAGroupParser(this, g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
+              SAGroupParser *groupParser = new SAGroupParser(this, write(), g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
               connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
               connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
               connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
@@ -771,7 +771,7 @@ Node *SAParser::parsingDone()
     //parse for groups only when doing aynchronous detailed parsing
     if (!m_synchronous)
     {
-            SAGroupParser *groupParser = new SAGroupParser(this, g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
+            SAGroupParser *groupParser = new SAGroupParser(this, write(), g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
             connect(groupParser, SIGNAL(rebuildStructureTree(bool)), SIGNAL(rebuildStructureTree(bool)));
             connect(groupParser, SIGNAL(cleanGroups()), SIGNAL(cleanGroups()));
             connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));

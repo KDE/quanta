@@ -35,7 +35,7 @@
 
 extern GroupElementMapList globalGroupMap;
 
-SAGroupParser::SAGroupParser(SAParser *parent, Node *startNode, Node *endNode, bool synchronous, bool parsingLastNode, bool paringLastGroup)
+SAGroupParser::SAGroupParser(SAParser *parent, Document *write, Node *startNode, Node *endNode, bool synchronous, bool parsingLastNode, bool paringLastGroup)
 {
   g_node = startNode;
   g_endNode = endNode;
@@ -43,61 +43,62 @@ SAGroupParser::SAGroupParser(SAParser *parent, Node *startNode, Node *endNode, b
   m_lastGroupParsed = paringLastGroup;
   m_parsingLastNode = parsingLastNode;
   m_parent = parent;
+  m_write = write;
   m_count = 0;
 }
 
 void SAGroupParser::slotParseForScriptGroup()
 {
 #ifdef DEBUG_PARSER
-  //kdDebug(24001) << "slotParseForScriptGroup. Synch: " << m_synchronous << endl;
+    //kdDebug(24001) << "slotParseForScriptGroup. Synch: " << m_synchronous << endl;
 #endif
-  if (!m_parent->parsingEnabled() || (!baseNode && !m_synchronous))
-{
+  if ((m_parent && !m_parent->parsingEnabled()) || (!baseNode && !m_synchronous))
+  {
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "slotParseForScriptGroup aborted. Synch: " << m_synchronous << endl;
 #endif
     return;
-}
+  }
 
   if (g_node && g_node != g_endNode )
-{
-  if (g_node->tag && (g_node->tag->type == Tag::Text || g_node->tag->type == Tag::ScriptStructureBegin))
-    parseForScriptGroup(g_node);
-  g_node = g_node->nextSibling();
-  if (m_synchronous)
   {
-    slotParseForScriptGroup();
-    return;
-  }
-  else
-  {
+    if (g_node->tag && (g_node->tag->type == Tag::Text || g_node->tag->type == Tag::ScriptStructureBegin))
+      parseForScriptGroup(g_node);
+    g_node = g_node->nextSibling();
+    if (m_synchronous)
+    {
+      slotParseForScriptGroup();
+      return;
+    }
+    else
+    {
 #ifdef DEBUG_PARSER
-      //  kdDebug(24001) << "Calling slotParseForScriptGroup from slotParseForScriptGroup." << endl;
+      //kdDebug(24001) << "Calling slotParseForScriptGroup from slotParseForScriptGroup." << endl;
 #endif
       QTimer::singleShot(0, this, SLOT(slotParseForScriptGroup()));
-  }
-} else
-{
+    }
+  } else
+  {
 #ifdef DEBUG_PARSER
     kdDebug(24001) << "slotParseForScriptGroup done." << endl;
 #endif
     if (m_lastGroupParsed && m_parsingLastNode && !m_synchronous)
-{
-  if (m_lastGroupParsed)
-  {
+    {
+      if (m_lastGroupParsed)
+      {
 #ifdef DEBUG_PARSER
         kdDebug(24000) << "Calling cleanGroups from SAGroupParser::slotParseForScriptGroup" << endl;
         kdDebug(24000) << m_count << " GroupElement created." << endl;
 #endif
         emit cleanGroups();
         m_lastGroupParsed = false;
-  }
+      }
 #ifdef DEBUG_PARSER
-      kdDebug(24001) << "Emitting rebuildStructureTree from slotParseForScriptGroup." << endl;
+        kdDebug(24001) << "Emitting rebuildStructureTree from slotParseForScriptGroup." << endl;
 #endif
-      emit rebuildStructureTree(true);
-}
-}
+        emit rebuildStructureTree(true);
+    }
+  }
 }
 
 void SAGroupParser::parseForScriptGroup(Node *node)
@@ -114,7 +115,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
   StructTreeGroup group;
   GroupElement *groupElement;
   GroupElementList* groupElementList;
-  KURL baseURL = QExtFileInfo::path(m_parent->write()->url());
+  KURL baseURL = QExtFileInfo::path(m_write->url());
   QString str = node->tag->cleanStr;
   QString tagStr = node->tag->tagStr();
   const DTDStruct* dtd = node->tag->dtd();
@@ -199,7 +200,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
 
         if (group.appendToTags)
         {
-          QTag *qTag = m_parent->write()->userTagList.find(s.lower());
+          QTag *qTag = m_write->userTagList.find(s.lower());
           if (!qTag)
           {
             QTag *qTag = new QTag();
@@ -211,10 +212,11 @@ void SAGroupParser::parseForScriptGroup(Node *node)
                 if ((*it)->group->name == group.parentGroup)
                 {
                   qTag->className = (*it)->tag->name;
+                  break;
                 }
               }
             }
-            m_parent->write()->userTagList.insert(s.lower(), qTag);
+            m_write->userTagList.insert(s.lower(), qTag);
           }
         }
 

@@ -86,6 +86,7 @@ public:
   /** Print the doc structure tree to the standard output.
       Only for debugging purposes. */
   void coutTree(Node *node, int indent);
+  void synchParseInDetail();
 
   IncludedGroupElementsMap includedMap;
   bool parsingEnabled;
@@ -123,8 +124,6 @@ private:
   contain any scripts. */
   bool parseScriptInsideTag(Node *startNode);
 
-  /** Parses the node for Script groups (functions, variables, selectors, etc.) */
-  void parseForScriptGroup(Node *node);
   /** Parses the node for XML groups (specific tags)*/
   void parseForXMLGroup(Node *node);
   /** Determines the area that should be reparsed.

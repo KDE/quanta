@@ -1607,6 +1607,11 @@ void Parser::slotParseInDetail()
   m_saParser->parseInDetail(false);
 }
 
+void Parser::synchParseInDetail()
+{
+  m_saParser->parseInDetail(false);
+}
+
 void Parser::setSAParserEnabled(bool enabled)
 {
   m_saParser->setParsingEnabled(enabled);

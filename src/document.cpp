@@ -87,6 +87,8 @@
 
 #include "dtds.h"
 
+#include "sagroupparser.h"
+
 #define STEP 1
 
 extern GroupElementMapList globalGroupMap;
@@ -1138,6 +1140,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
                  break;
   }
   Node *node = parser->nodeAt(line, col);
+  Node *n = node;
   if (node && node->tag->type != Tag::XmlTag)
       node = node->parent;
   if (node && node->tag->type != Tag::XmlTag)
@@ -1148,6 +1151,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
   QString textLine = editIf->textLine(line).left(col);
   QString word = findWordRev(textLine, completionDTD).upper();
   QString classStr = "";
+  QString objStr;
   if (completionDTD->classGroupIndex != -1 && completionDTD->objectGroupIndex != -1)
   {
     textLine = textLine.left(textLine.length() - word.length());
@@ -1159,24 +1163,58 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
       pos = r->searchRev(textLine);
       if (pos != -1)
       {
-        QString objStr = r->cap(1);
-        GroupElementList groupElementList = globalGroupMap[completionDTD->structTreeGroups[completionDTD->objectGroupIndex].name + "|" + objStr];
-        for (GroupElementList::Iterator it = groupElementList.begin(); it != groupElementList.end(); ++it)
+        objStr = r->cap(1);
+        if (objStr == "this")
         {
-          if (!(*it)->tag)
-            continue;
-#ifdef DEBUG_PARSER
-          kdDebug(24000) << "GroupElement: " << (*it) << " " << (*it)->tag->area().bLine << " " << (*it)->tag->area().bCol << " "<< (*it)->tag->area().eLine << " "<< (*it)->tag->area().eCol << " " << (*it)->tag->tagStr() << " " << (*it)->type << endl;
-#endif
-          if (!(*it)->type.isEmpty())
+          QString parentGroupStr = "";
+          bool classFound = false;
+          while (n && !classFound)
           {
-            classStr = (*it)->type;
-            break;
+            //Need to parser for groups, as the node tree is rebuilt before
+            //autocompletion and none of the node has links to group elements
+            //at this position.
+            SAGroupParser *gParser = new SAGroupParser(0L, this, n, n->nextSibling(), true, false, false);
+            gParser->slotParseForScriptGroup();
+            for (QValueList<GroupElement *>::Iterator it = n->m_groupElements.begin(); it != n->m_groupElements.end(); ++it)
+            {
+              if (parentGroupStr.isEmpty() && (*it)->group->appendToTags)
+              {
+                parentGroupStr = (*it)->group->parentGroup;
+              }
+              if (!parentGroupStr.isEmpty() && (*it)->group->name == parentGroupStr)
+              {
+                classStr = (*it)->tag->name;
+                classFound = true;
+              }
+              //detach the groupelement from the node
+              (*it)->node = 0L;
+              (*it)->deleted = true;
+            }
+            delete gParser;
+            n = n->parent;
+          }
+        } else
+        {
+          GroupElementList groupElementList = globalGroupMap[completionDTD->structTreeGroups[completionDTD->objectGroupIndex].name + "|" + objStr];
+          for (GroupElementList::Iterator it = groupElementList.begin(); it != groupElementList.end(); ++it)
+          {
+            if (!(*it)->tag)
+              continue;
+#ifdef DEBUG_PARSER
+            kdDebug(24000) << "GroupElement: " << (*it) << " " << (*it)->tag->area().bLine << " " << (*it)->tag->area().bCol << " "<< (*it)->tag->area().eLine << " "<< (*it)->tag->area().eCol << " " << (*it)->tag->tagStr() << " " << (*it)->type << endl;
+#endif
+            if (!(*it)->type.isEmpty())
+            {
+              classStr = (*it)->type;
+              break;
+            }
           }
         }
       }
     }
   }
+  if (!objStr.isEmpty() && classStr.isEmpty()) //the class cannot be identified for the object
+    return completions;
   completion.userdata = word +"|";
   QStringList tagNameList;
   QMap<QString, QString> comments;
