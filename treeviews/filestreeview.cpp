@@ -212,10 +212,9 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
                 emit openImage( urlToOpen );
              } else //it is an unknown type, maybe binary
              {
-               if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
-                   Do you want to open with an external program or run it?"),i18n("Unknown Type")) == KMessageBox::Yes)
+               if (denyBinaryInsert() == KMessageBox::Yes)
                {
-                 new KRun(urlToOpen, 0, true );
+                 emit openFile( urlToOpen, quantaApp->defaultEncoding() );
                }
              }
        }
@@ -239,7 +238,10 @@ void FilesTreeView::slotSelectAnyFile(QListViewItem *item)
            emit openFile( urlToOpen, quantaApp->defaultEncoding() );
          } else     //Don't allow to open binary files
          {
-           denyBinaryInsert();
+           if (denyBinaryInsert() == KMessageBox::Yes)
+           {
+             emit openFile( urlToOpen, quantaApp->defaultEncoding() );
+           }
          }
        } //if (!urlToOpen.isEmpty())
     }

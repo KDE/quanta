@@ -134,7 +134,10 @@ void TemplatesTreeView::slotInsertInDocument()
    emit insertFile(url);
  } else
  {
-   denyBinaryInsert();
+   if (denyBinaryInsert() == KMessageBox::Yes)
+   {
+     emit insertFile(url);
+   }
  }
 
 }
@@ -179,10 +182,7 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 void TemplatesTreeView::slotNewDocument()
 {
  KURL url = currentURL();
- if (! QuantaCommon::checkMimeGroup(url, "text"))
- {
-   denyBinaryInsert();
- } else
+ if (QuantaCommon::checkMimeGroup(url, "text") || denyBinaryInsert() == KMessageBox::Yes)
  {
    QListViewItem *item = currentItem();
    if (item )
@@ -548,9 +548,8 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
    {
      if(dirInfo.mimeType == "text/all") // default to inserting in document
      {
-      if(!mimeType.contains("text", false))
+      if(!mimeType.contains("text", false) && denyBinaryInsert() != KMessageBox::Yes)
       {
-        denyBinaryInsert();
         return;
       }
       emit insertFile(localFileName);
@@ -564,9 +563,8 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
      else
      if(dirInfo.mimeType == "template/all")
      {
-       if(!mimeType.contains("text", false))
+       if(!mimeType.contains("text", false) && denyBinaryInsert() != KMessageBox::Yes)
        {
-         denyBinaryInsert();
          return;
        }
        emit openFile(KURL(), quantaApp->defaultEncoding());

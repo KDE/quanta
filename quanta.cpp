@@ -859,6 +859,8 @@ void QuantaApp::slotOptions()
   fileMasks->lineImage->setText( qConfig.imageMimeTypes );
   fileMasks->lineText->setText( qConfig.textMimeTypes );
   fileMasks->showDTDSelectDialog->setChecked(qConfig.showDTDSelectDialog);
+  m_config->setGroup("Notification Messages");
+  fileMasks->warnBinaryOpening->setChecked(m_config->readEntry("Open Everything") != "Yes");
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
   fileMasks->encodingCombo->insertStringList( availableEncodingNames );
@@ -944,6 +946,8 @@ void QuantaApp::slotOptions()
     qConfig.imageMimeTypes = fileMasks->lineImage->text();
     qConfig.textMimeTypes = fileMasks->lineText->text();
     qConfig.showDTDSelectDialog = fileMasks->showDTDSelectDialog->isChecked();
+    m_config->setGroup("Notification Messages");
+    m_config->writeEntry("Open Everything", fileMasks->warnBinaryOpening->isChecked() ? "" : "Yes");
 
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
 

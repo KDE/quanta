@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>521</width>
-            <height>359</height>
+            <width>536</width>
+            <height>362</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -190,7 +190,15 @@
                 </widget>
             </grid>
         </widget>
-        <spacer row="4" column="0">
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>showDTDSelectDialog</cstring>
+            </property>
+            <property name="text">
+                <string>Show the DTD selection dialog when loading files with unknown DTD</string>
+            </property>
+        </widget>
+        <spacer row="5" column="0">
             <property name="name">
                 <cstring>spacer2</cstring>
             </property>
@@ -203,16 +211,16 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>40</height>
+                    <height>70</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>showDTDSelectDialog</cstring>
+                <cstring>warnBinaryOpening</cstring>
             </property>
             <property name="text">
-                <string>Show the DTD selection dialog when loading files with unknown DTD</string>
+                <string>Warn about opening binary/unknown files</string>
             </property>
         </widget>
     </grid>
