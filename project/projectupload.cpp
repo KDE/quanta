@@ -309,7 +309,7 @@ void ProjectUpload::upload()
         }
       }
 
-      qDebug("%s -> %s", from.url().data(), to.url().data() );
+     // qDebug("%s -> %s", from.url().data(), to.url().data() );
       if (!from.fileName(false).isEmpty() && fileItem)
       {
         KIO::FileCopyJob *job = KIO::file_copy( from, to, fileItem->permissions(), true, false, false );
