@@ -2223,7 +2223,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    p_toolbar->url = url;
    p_toolbar->visible = true;
    p_toolbar->user = true; //TODO
-   toolbarList.insert(name.lower(), p_toolbar);
+   toolbarList.insert(i18nName.lower(), p_toolbar);
 
    slotToggleDTDToolbar(!allToolbarsHidden());
  }
@@ -2696,7 +2696,7 @@ bool QuantaApp::removeToolbars()
   while (it.current())
   {
     toolbarNameList += it.current()->name.lower();
-    if (!slotRemoveToolbar(it.current()->name.lower()))
+    if (!slotRemoveToolbar(i18n(it.current()->name).lower()))
         return false;
   }
 
@@ -3095,7 +3095,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
   ToolbarEntry *p_toolbar;
   if (m_debugger->UI())
   {
-    p_toolbar = toolbarList["debug"];
+    p_toolbar = toolbarList[i18n("Debug").lower()];
     if (p_toolbar)
     {
         guiFactory()->removeClient(p_toolbar->guiClient);

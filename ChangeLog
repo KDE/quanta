@@ -26,6 +26,7 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - don't crash when inserting a dot in an empty CSS file [#82143]
         - make uploading of empty folders possible [#82127]
         - fix removal of action containing &
+        - fix toolbar configuration and removal for non-English versions
 
   - behavioral/user interface changes:
         - enable the configure toolbars item in the toolbar context menu [#80643]
