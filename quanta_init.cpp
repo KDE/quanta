@@ -210,14 +210,12 @@ void QuantaApp::initQuanta()
 
   refreshTimer = new QTimer( this );
   connect( refreshTimer, SIGNAL(timeout()), SLOT(reparse()) );
-//BACKPORT begin 
+  refreshTimer->start( qConfig.refreshFrequency*1000, false ); //update the structure tree every 5 seconds
   if (qConfig.refreshFrequency == 0)
   {
     refreshTimer->stop();
   }
-//BACKPORT end  
 
-//Delay the calls as they contain dialog popups. That may crash Quanta!
   slotFileNew();
   initToolBars();
 
@@ -659,9 +657,11 @@ void QuantaApp::readOptions()
   qConfig.dynamicWordWrap = config->readBoolEntry("DynamicWordWrap",false);
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
+
 #if (KDE_VERSION > 308)
   viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
-#endif  
+#endif
+
   readDockConfig(config);
 
   showPreviewAction  ->setChecked( false );
@@ -775,8 +775,9 @@ bool QuantaApp::queryExit()
         w = dynamic_cast<Document*>(view->writeTab->page(i));
         w->setModified(false);
       }
-      
+
       project->slotCloseProject();
+      Document *w;
       do
       {
         w = view->write();
@@ -1111,12 +1112,7 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->booleanTrue = dtdConfig->readEntry("BooleanTrue","true");
  dtd->booleanFalse = dtdConfig->readEntry("BooleanFalse","false");
  dtd->singleTagStyle = dtdConfig->readEntry("Single Tag Style", "html").lower();
- dtd->structGroups = dtdConfig->readListEntry("StructGroups",';');
- for (uint i = 0; i < dtd->structGroups.count(); i++)
- {
-  dtd->groupsRxs.append(dtdConfig->readEntry(QString("RegExp%1").arg(i)).stripWhiteSpace());
-  dtd->groupsClearRxs.append(dtdConfig->readEntry(QString("RegExp%1_clear").arg(i)).stripWhiteSpace());
- }
+
  dtds->insert(dtdName.lower(), dtd);//insert the taglist into the full list
 
  delete dtdConfig;

@@ -53,7 +53,7 @@ void SpellChecker::writeConfig(KConfig *config)
   config->writeEntry("IgnoreList", qConfig.spellConfig->ignoreList());
   config->writeEntry("ReplaceAllList", qConfig.spellConfig->replaceAllList());
   config->writeEntry("Client", qConfig.spellConfig->client());
-#endif
+#endif  
 }
 
 /** Read the KSpell configuration from the Quanta configuration file. */
@@ -81,7 +81,7 @@ void SpellChecker::readConfig(KConfig *config)
   qConfig.spellConfig->setReplaceAllList(replaceAllList);
   int client = config->readNumEntry("Client", defaultConfig->client());
   qConfig.spellConfig->setClient(client);
-  
+
   delete defaultConfig;
 #endif  
 }

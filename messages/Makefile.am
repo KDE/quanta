@@ -14,7 +14,3 @@ libmessages_a_SOURCES = \
 		messageitemphp.cpp\
 		messageitemweblint.cpp\
 		messageitemphp4.cpp
-AM_CFLAGS = 
-AM_CXXFLAGS = 
-AM_FFLAGS = 
-SUBDIRS = 

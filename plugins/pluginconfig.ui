@@ -298,30 +298,6 @@
                 </rect>
             </property>
         </spacer>
-        <widget class="KIconButton">
-            <property name="name">
-                <cstring>iconButton</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>435</x>
-                    <y>15</y>
-                    <width>50</width>
-                    <height>50</height>
-                </rect>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
         <widget class="QLayoutWidget">
             <property name="name">
                 <cstring>layout7</cstring>
@@ -410,6 +386,30 @@
             </property>
             <property name="text">
                 <string>Name:</string>
+            </property>
+        </widget>
+        <widget class="KIconButton">
+            <property name="name">
+                <cstring>iconButton</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>435</x>
+                    <y>15</y>
+                    <width>50</width>
+                    <height>50</height>
+                </rect>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string></string>
             </property>
         </widget>
     </widget>
