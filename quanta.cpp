@@ -52,6 +52,7 @@
 #include "dialogs/styleoptions.h"
 #include "dialogs/previewoptions.h"
 #include "dialogs/parseroptions.h"
+#include "dialogs/grepdialog.h"
 
 
 #include "treeviews/filestreeview.h"
@@ -164,6 +165,10 @@ void QuantaApp::commandCallback(int id_)
 
     case ID_EDIT_REPLACE:
          slotEditReplace();
+         break;
+
+    case ID_EDIT_FIND_IN_FILES:
+         slotEditFindInFiles();
          break;
 
     case ID_EDIT_INDENT:
@@ -618,6 +623,20 @@ void QuantaApp::slotEditReplace()
   slotStatusMsg(i18n("Replace..."));
 
   doc->write()->replace();
+
+  slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
+}
+
+void QuantaApp::slotEditFindInFiles()
+{
+  slotStatusMsg(i18n("Search in Files..."));
+
+  if (!grepDialog) {
+      grepDialog = new GrepDialog( ".", this, "grep_dialog" );
+      connect( grepDialog, SIGNAL( itemSelected( const QString &, int ) ),
+               this, SLOT( gotoFileAndLine( const QString &, int ) ) );
+  }
+  grepDialog->show();
 
   slotStatusMsg(i18n(IDS_STATUS_DEFAULT));
 }
@@ -1127,7 +1146,15 @@ void QuantaApp::reparse()
 void QuantaApp::setCursorPosition( int row, int col )
 {
   view->write()->setCursorPosition( row, col );
-	view->write()->view()->setFocus();
+  view->write()->view()->setFocus();
+}
+
+void QuantaApp::gotoFileAndLine( const QString &filename, int line )
+{
+  doc->openDocument( filename );
+  setCaption(doc->getTitle());
+  view->write()->setCursorPosition( line, 0 );
+  view->write()->view()->setFocus();
 }
 
 /*

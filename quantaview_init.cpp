@@ -65,19 +65,19 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	bStandard->insertButton( UserIcon("tag_i"),		ID_TAG_I,    true, i18n("Italic"));
 	bStandard->insertButton( UserIcon("tag_u"),		ID_TAG_U,    true, i18n("Underline"));
   bStandard->insertSeparator();
-	bStandard->insertButton( UserIcon("tag_br"),  ID_TAG_BR,   true, i18n("New line"));
+	bStandard->insertButton( UserIcon("tag_br"),  ID_TAG_BR,   true, i18n("New Line"));
   bStandard->insertButton( UserIcon("tag_p"),   ID_TAG_P,    true, i18n("Paragraph"));
-  bStandard->insertButton( UserIcon("tag_nbsp"),ID_TAG_NBSP, true, i18n("Non breaking space"));
+  bStandard->insertButton( UserIcon("tag_nbsp"),ID_TAG_NBSP, true, i18n("Non-Breaking Space"));
   bStandard->insertSeparator();
-  bStandard->insertButton( UserIcon("tag_a"),    ID_TAG_A,     true, i18n("Insert anchor"));
-  bStandard->insertButton( UserIcon("tag_image"),ID_TAG_IMAGE, true, i18n("Insert image"));
-  bStandard->insertButton( UserIcon("tag_hr"),   ID_TAG_HR,    true, i18n("Horizontal rule"));
+  bStandard->insertButton( UserIcon("tag_a"),    ID_TAG_A,     true, i18n("Insert Anchor"));
+  bStandard->insertButton( UserIcon("tag_image"),ID_TAG_IMAGE, true, i18n("Insert Image"));
+  bStandard->insertButton( UserIcon("tag_hr"),   ID_TAG_HR,    true, i18n("Horizontal Rule"));
   bStandard->insertButton( UserIcon("tag_comm"), ID_TAG_COMM,  true, i18n("Comment"));
   bStandard->insertSeparator();
-  bStandard->insertButton( UserIcon("div_left"),   ID_TAG_DIV_LEFT,   true, i18n("Align left"));
-  bStandard->insertButton( UserIcon("div_center"), ID_TAG_DIV_CENTER, true, i18n("Align center"));
-  bStandard->insertButton( UserIcon("div_right"),  ID_TAG_DIV_RIGHT,  true, i18n("Align right"));
-  bStandard->insertButton( UserIcon("div_justify"),ID_TAG_DIV_JUSTIFY,true, i18n("Align justify"));
+  bStandard->insertButton( UserIcon("div_left"),   ID_TAG_DIV_LEFT,   true, i18n("Align Left"));
+  bStandard->insertButton( UserIcon("div_center"), ID_TAG_DIV_CENTER, true, i18n("Align Center"));
+  bStandard->insertButton( UserIcon("div_right"),  ID_TAG_DIV_RIGHT,  true, i18n("Align Right"));
+  bStandard->insertButton( UserIcon("div_justify"),ID_TAG_DIV_JUSTIFY,true, i18n("Align Justify"));
   bStandard->insertSeparator();
   bStandard->insertButton( UserIcon("css"),ID_TAG_CSS,true, i18n("CSS"));
 
@@ -85,10 +85,10 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
   // Insert button in tool bars Fonts
 	bFonts->insertButton( UserIcon("tag_font"), ID_TAG_FONT, true, i18n("Font"));
   bFonts->insertSeparator();
-	bFonts->insertButton( UserIcon("font_inc"), ID_TAG_FONT_INC, true, i18n("Font size +1"));
-	bFonts->insertButton( UserIcon("font_dec"), ID_TAG_FONT_DEC, true, i18n("Font size -1"));
+	bFonts->insertButton( UserIcon("font_inc"), ID_TAG_FONT_INC, true, i18n("Font Size +1"));
+	bFonts->insertButton( UserIcon("font_dec"), ID_TAG_FONT_DEC, true, i18n("Font Size -1"));
   bFonts->insertSeparator();
-  bFonts->insertButton( UserIcon("tag_pre"), ID_TAG_PRE, true, i18n("Pre formated"));
+  bFonts->insertButton( UserIcon("tag_pre"), ID_TAG_PRE, true, i18n("Pre-Formated"));
   bFonts->insertButton( UserIcon("tag_sub"), ID_TAG_SUB, true, i18n("Subscript"));
   bFonts->insertButton( UserIcon("tag_sup"), ID_TAG_SUP, true, i18n("Superscript"));
   bFonts->insertSeparator();
@@ -99,38 +99,38 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	bFonts->insertButton( UserIcon("tag_h5"), ID_TAG_H5, true, i18n("Head 5"));
 	
 	// Insert button in tool bars Tables
-	bTables->insertButton( UserIcon("quick_table"), ID_TAG_QUICK_TABLE,  true, i18n("Quick table"));
+	bTables->insertButton( UserIcon("quick_table"), ID_TAG_QUICK_TABLE,  true, i18n("Quick Table"));
   bTables->insertSeparator();
 	bTables->insertButton( UserIcon("tag_table"),    	ID_TAG_TABLE,        true, i18n("Table"));
-	bTables->insertButton( UserIcon("tag_table_row"),	ID_TAG_TABLE_ROW,    true, i18n("Table row"));
-	bTables->insertButton( UserIcon("table_head"),		ID_TAG_TABLE_HEAD,   true, i18n("Table head"));
-	bTables->insertButton( UserIcon("table_data"),		ID_TAG_TABLE_DATA,   true, i18n("Table data"));
+	bTables->insertButton( UserIcon("tag_table_row"),	ID_TAG_TABLE_ROW,    true, i18n("Table Row"));
+	bTables->insertButton( UserIcon("table_head"),		ID_TAG_TABLE_HEAD,   true, i18n("Table Head"));
+	bTables->insertButton( UserIcon("table_data"),		ID_TAG_TABLE_DATA,   true, i18n("Table Data"));
   bTables->insertSeparator();
-	bTables->insertButton( UserIcon("tag_th"),     ID_TAG_TH,     true, i18n("Table head"));
-	bTables->insertButton( UserIcon("tag_tr"),     ID_TAG_TR,     true, i18n("Table row"));
-	bTables->insertButton( UserIcon("tag_td"),     ID_TAG_TD,     true, i18n("Table data"));
+	bTables->insertButton( UserIcon("tag_th"),     ID_TAG_TH,     true, i18n("Table Head"));
+	bTables->insertButton( UserIcon("tag_tr"),     ID_TAG_TR,     true, i18n("Table Row"));
+	bTables->insertButton( UserIcon("tag_td"),     ID_TAG_TD,     true, i18n("Table Data"));
 	bTables->insertButton( UserIcon("tag_caption"),ID_TAG_CAPTION,true, i18n("Caption"));
 	
 	// Insert button in tool bars Lists
-	bLists->insertButton( UserIcon("quick_list"), ID_TAG_QUICK_LIST, true, i18n("Quick list"));
+	bLists->insertButton( UserIcon("quick_list"), ID_TAG_QUICK_LIST, true, i18n("Quick List"));
   bLists->insertSeparator();
 	bLists->insertButton( UserIcon("tag_ul"), ID_TAG_UL, true, i18n("Unordered list"));
-	bLists->insertButton( UserIcon("tag_ol"), ID_TAG_OL, true, i18n("Ordered list"));
-	bLists->insertButton( UserIcon("tag_li"), ID_TAG_LI, true, i18n("List item"));
+	bLists->insertButton( UserIcon("tag_ol"), ID_TAG_OL, true, i18n("Ordered List"));
+	bLists->insertButton( UserIcon("tag_li"), ID_TAG_LI, true, i18n("List Item"));
   bLists->insertSeparator();
-  bLists->insertButton( UserIcon("tag_dl"), ID_TAG_DL, true, i18n("Definition list"));
-  bLists->insertButton( UserIcon("tag_dt"), ID_TAG_DT, true, i18n("Definition term"));
+  bLists->insertButton( UserIcon("tag_dl"), ID_TAG_DL, true, i18n("Definition List"));
+  bLists->insertButton( UserIcon("tag_dt"), ID_TAG_DT, true, i18n("Definition Term"));
   bLists->insertButton( UserIcon("tag_dd"), ID_TAG_DD, true, i18n("Definition"));
 	
 	// Insert button in tool bars Forms
 	bForms->insertButton( UserIcon("form"),  ID_TAG_FORM, true, i18n("Form"));
 	bForms->insertSeparator();
-	bForms->insertButton( UserIcon("radio"),     ID_TAG_RADIO,     true, i18n("Radio button"));
-	bForms->insertButton( UserIcon("check"),     ID_TAG_CHECK,     true, i18n("Check box"));
+	bForms->insertButton( UserIcon("radio"),     ID_TAG_RADIO,     true, i18n("Radio Button"));
+	bForms->insertButton( UserIcon("check"),     ID_TAG_CHECK,     true, i18n("Check Box"));
 	bForms->insertButton( UserIcon("select"),    ID_TAG_SELECT,    true, i18n("Select"));
 	bForms->insertButton( UserIcon("lineedit"),  ID_TAG_LINEEDIT, true, i18n("Text"));
 	bForms->insertButton( UserIcon("linepas"),   ID_TAG_LINEPAS, true, i18n("Password"));
-	bForms->insertButton( UserIcon("textarea"),  ID_TAG_TEXTAREA, true, i18n("Text area"));
+	bForms->insertButton( UserIcon("textarea"),  ID_TAG_TEXTAREA, true, i18n("Text Area"));
 	bForms->insertButton( UserIcon("submit"),    ID_TAG_SUBMIT,    true, i18n("Submit"));
 	bForms->insertButton( UserIcon("reset"),     ID_TAG_RESET,     true, i18n("Reset"));
 
@@ -436,13 +436,13 @@ void QuantaView::initMenu()
   app->insertFormsMenu    = mForms;
   app->insertListsMenu    = mLists;
 
-  insertMenu->insertItem( UserIcon("quick_start"), i18n("Quick Start"), ID_TAG_QUICKSTART);
-  insertMenu->insertItem( UserIcon("quick_table"),   i18n("Quick table"),  ID_TAG_QUICK_TABLE);
-  insertMenu->insertItem( UserIcon("quick_list"), i18n("Quick list"), ID_TAG_QUICK_LIST);
+  insertMenu->insertItem( UserIcon("quick_start"), i18n("Quick Start..."), ID_TAG_QUICKSTART);
+  insertMenu->insertItem( UserIcon("quick_table"),   i18n("Quick Table..."),  ID_TAG_QUICK_TABLE);
+  insertMenu->insertItem( UserIcon("quick_list"), i18n("Quick List..."), ID_TAG_QUICK_LIST);
   insertMenu->insertSeparator();
-  insertMenu->insertItem( UserIcon("tag_image"),i18n("Insert image"),    ID_TAG_IMAGE);
-  insertMenu->insertItem( UserIcon("tag_a"),    i18n("Insert anchor"),   ID_TAG_A);
-  insertMenu->insertItem( UserIcon("tag_font"),      i18n("Font"),      ID_TAG_FONT);
+  insertMenu->insertItem( UserIcon("tag_image"),i18n("Insert Image..."),    ID_TAG_IMAGE);
+  insertMenu->insertItem( UserIcon("tag_a"),    i18n("Insert Anchor..."),   ID_TAG_A);
+  insertMenu->insertItem( UserIcon("tag_font"),      i18n("Font..."),      ID_TAG_FONT);
   insertMenu->insertSeparator();
 	
   insertMenu->insertItem( i18n("Standard"), mStandard, ID_MENU_STANDARD);
@@ -452,9 +452,9 @@ void QuantaView::initMenu()
   insertMenu->insertItem( i18n("Lists"),    mLists,    ID_MENU_LISTS);
 
   insertMenu->insertSeparator();
-  insertMenu->insertItem( UserIcon("color"),   i18n("Color"),   ID_TAG_COLOR);
+  insertMenu->insertItem( UserIcon("color"),   i18n("Color..."),   ID_TAG_COLOR);
 	insertMenu->insertItem( UserIcon("date"),    i18n("Date"),    ID_TAG_DATE);
-	insertMenu->insertItem( UserIcon("tag_mail"),i18n("E-Mail"),  ID_TAG_MAIL);
+	insertMenu->insertItem( UserIcon("tag_mail"),i18n("E-Mail..."),  ID_TAG_MAIL);
 
   // Insert button in menu Standard
   mStandard->insertItem( UserIcon("tag_bold"),  i18n("Bold"),       ID_TAG_BOLD);
@@ -463,21 +463,21 @@ void QuantaView::initMenu()
 	
   mStandard->insertSeparator();
 
-	mStandard->insertItem( UserIcon("tag_br"),  i18n("New line"),           ID_TAG_BR);
+  mStandard->insertItem( UserIcon("tag_br"),  i18n("New Line"),           ID_TAG_BR);
   mStandard->insertItem( UserIcon("tag_p"),   i18n("Paragraph"),          ID_TAG_P);
-  mStandard->insertItem( UserIcon("tag_nbsp"),i18n("Non breaking space"), ID_TAG_NBSP);
+  mStandard->insertItem( UserIcon("tag_nbsp"),i18n("Non-Breaking Space"), ID_TAG_NBSP);
 	
   mStandard->insertSeparator();
 
-  mStandard->insertItem( UserIcon("tag_hr"),   i18n("Horizontal rule"), ID_TAG_HR);
+  mStandard->insertItem( UserIcon("tag_hr"),   i18n("Horizontal Rule"), ID_TAG_HR);
   mStandard->insertItem( UserIcon("tag_comm"), i18n("Comment"),         ID_TAG_COMM);
 
   mStandard->insertSeparator();
 
-  mStandard->insertItem( UserIcon("div_left"),   i18n("Align left"),    ID_TAG_DIV_LEFT);
-  mStandard->insertItem( UserIcon("div_center"), i18n("Align center"),  ID_TAG_DIV_CENTER);
-  mStandard->insertItem( UserIcon("div_right"),  i18n("Align right"),   ID_TAG_DIV_RIGHT);
-  mStandard->insertItem( UserIcon("div_justify"),i18n("Align justify"), ID_TAG_DIV_JUSTIFY);
+  mStandard->insertItem( UserIcon("div_left"),   i18n("Align Left"),    ID_TAG_DIV_LEFT);
+  mStandard->insertItem( UserIcon("div_center"), i18n("Align Center"),  ID_TAG_DIV_CENTER);
+  mStandard->insertItem( UserIcon("div_right"),  i18n("Align Right"),   ID_TAG_DIV_RIGHT);
+  mStandard->insertItem( UserIcon("div_justify"),i18n("Align Justify"), ID_TAG_DIV_JUSTIFY);
 
   mStandard->insertSeparator();
 
@@ -487,16 +487,16 @@ void QuantaView::initMenu()
   	
 	// Insert button in menu Fonts
 	mFonts->insertItem( UserIcon("tag_font"),      i18n("Font"),      ID_TAG_FONT);
-	mFonts->insertItem( UserIcon("tag_font_base"), i18n("Base font"), ID_TAG_FONT_BASE);
+	mFonts->insertItem( UserIcon("tag_font_base"), i18n("Base Font"), ID_TAG_FONT_BASE);
 	
   mFonts->insertSeparator();
 
-	mFonts->insertItem( UserIcon("font_inc"), i18n("Font size +1"), ID_TAG_FONT_INC);
-	mFonts->insertItem( UserIcon("font_dec"), i18n("Font size -1"), ID_TAG_FONT_DEC);
+	mFonts->insertItem( UserIcon("font_inc"), i18n("Font Size +1"), ID_TAG_FONT_INC);
+	mFonts->insertItem( UserIcon("font_dec"), i18n("Font Size -1"), ID_TAG_FONT_DEC);
 	
   mFonts->insertSeparator();
 
-  mFonts->insertItem( UserIcon("tag_pre"), i18n("Pre formated"),  ID_TAG_PRE);
+  mFonts->insertItem( UserIcon("tag_pre"), i18n("Pre Formated"),  ID_TAG_PRE);
   mFonts->insertItem( UserIcon("tag_sub"), i18n("Subscript"),     ID_TAG_SUB);
   mFonts->insertItem( UserIcon("tag_sup"), i18n("Superscript"),   ID_TAG_SUP);
 
@@ -511,39 +511,39 @@ void QuantaView::initMenu()
 	
 	// Insert button in menu Tables
 	mTables->insertItem( UserIcon("tag_table"),     i18n("Table"),        ID_TAG_TABLE);
-	mTables->insertItem( UserIcon("tag_table_row"), i18n("Table row"),    ID_TAG_TABLE_ROW);
-	mTables->insertItem( UserIcon("table_head"),    i18n("Table head"),   ID_TAG_TABLE_HEAD);
-	mTables->insertItem( UserIcon("table_data"),    i18n("Table data"),   ID_TAG_TABLE_DATA);
+	mTables->insertItem( UserIcon("tag_table_row"), i18n("Table Row"),    ID_TAG_TABLE_ROW);
+	mTables->insertItem( UserIcon("table_head"),    i18n("Table Head"),   ID_TAG_TABLE_HEAD);
+	mTables->insertItem( UserIcon("table_data"),    i18n("Table Data"),   ID_TAG_TABLE_DATA);
 	
   mTables->insertSeparator();
 	
-	mTables->insertItem( UserIcon("tag_th"),     i18n("Table head"),  ID_TAG_TH);
-	mTables->insertItem( UserIcon("tag_tr"),     i18n("Table row"),   ID_TAG_TR);
-	mTables->insertItem( UserIcon("tag_td"),     i18n("Table data"),  ID_TAG_TD);
+	mTables->insertItem( UserIcon("tag_th"),     i18n("Table Head"),  ID_TAG_TH);
+	mTables->insertItem( UserIcon("tag_tr"),     i18n("Table Row"),   ID_TAG_TR);
+	mTables->insertItem( UserIcon("tag_td"),     i18n("Table Data"),  ID_TAG_TD);
 	mTables->insertItem( UserIcon("tag_caption"),i18n("Caption"),     ID_TAG_CAPTION);
 	
 	
 	// Insert button in menu Forms
 	mForms->insertItem( UserIcon("form"),      i18n("Form"),          ID_TAG_FORM);
-	mForms->insertItem( UserIcon("radio"),     i18n("Radio button"),  ID_TAG_RADIO);
-	mForms->insertItem( UserIcon("check"),     i18n("Check box"),     ID_TAG_CHECK);
+	mForms->insertItem( UserIcon("radio"),     i18n("Radio Button"),  ID_TAG_RADIO);
+	mForms->insertItem( UserIcon("check"),     i18n("Check Box"),     ID_TAG_CHECK);
 	mForms->insertItem( UserIcon("select"),    i18n("Select"),        ID_TAG_SELECT);
 	mForms->insertItem( UserIcon("lineedit"),  i18n("Text"),          ID_TAG_LINEEDIT);
 	mForms->insertItem( UserIcon("linepas"),   i18n("Password"),      ID_TAG_LINEPAS);
-	mForms->insertItem( UserIcon("textarea"),  i18n("Text area"),     ID_TAG_TEXTAREA);
+	mForms->insertItem( UserIcon("textarea"),  i18n("Text Area"),     ID_TAG_TEXTAREA);
 	mForms->insertItem( UserIcon("submit"),    i18n("Submit"),        ID_TAG_SUBMIT);
 	mForms->insertItem( UserIcon("reset"),     i18n("Reset"),         ID_TAG_RESET);
 	
 	
 	// Insert button in menu Lists
-	mLists->insertItem( UserIcon("tag_ul"), i18n("Unordered list"), ID_TAG_UL);
-	mLists->insertItem( UserIcon("tag_ol"), i18n("Ordered list"),   ID_TAG_OL)	;
-	mLists->insertItem( UserIcon("tag_li"), i18n("List item"),      ID_TAG_LI);
+	mLists->insertItem( UserIcon("tag_ul"), i18n("Unordered List"), ID_TAG_UL);
+	mLists->insertItem( UserIcon("tag_ol"), i18n("Ordered List"),   ID_TAG_OL)	;
+	mLists->insertItem( UserIcon("tag_li"), i18n("List Item"),      ID_TAG_LI);
 	
   mLists->insertSeparator();
 
-  mLists->insertItem( UserIcon("tag_dl"), i18n("Definition list"),  ID_TAG_DL);
-  mLists->insertItem( UserIcon("tag_dt"), i18n("Definition term"),  ID_TAG_DT);
+  mLists->insertItem( UserIcon("tag_dl"), i18n("Definition List"),  ID_TAG_DL);
+  mLists->insertItem( UserIcon("tag_dt"), i18n("Definition Term"),  ID_TAG_DT);
   mLists->insertItem( UserIcon("tag_dd"), i18n("Definition"),       ID_TAG_DD);
 
   mLists->insertSeparator();

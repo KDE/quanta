@@ -51,7 +51,7 @@ class FilesTreeView;
 class StructTreeView;
 class ProjectTreeView;
 class Project;
-
+class GrepDialog;
 
 /**
   * The base class for Quanta application windows. It sets up the main
@@ -213,6 +213,7 @@ class QuantaApp : public KTMainWindow
     void slotEditSearch();
     void slotEditSearchAgain();
     void slotEditReplace();
+    void slotEditFindInFiles();
     void slotEditIndent();
     void slotEditUnindent();
     void slotEditCleanIndent();
@@ -277,6 +278,8 @@ class QuantaApp : public KTMainWindow
 	  void reparse();
 	
 	  void setCursorPosition( int row, int col );
+      void gotoFileAndLine( const QString &filename, int line );
+
 	  void selectArea(int col1, int row1, int col2, int row2);
 	
 	  void slotSelectMessageWidget();
@@ -353,6 +356,9 @@ class QuantaApp : public KTMainWindow
 
     /** Messaage output window */
     MessageOutput *messageOutput;
+
+    /** Grep window */
+    GrepDialog *grepDialog;
 
     /** qtabwidget for left panel */
     QTabWidget *leftPanel;

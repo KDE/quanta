@@ -60,6 +60,7 @@
 #define ID_EDIT_SEARCH							11060
 #define ID_EDIT_SEARCH_AGAIN				11070
 #define ID_EDIT_REPLACE							11080
+#define ID_EDIT_FIND_IN_FILES							11081
 #define ID_EDIT_GOTO_LINE           11090
 #define ID_EDIT_CURRENT_TAG         11100
 #define ID_EDIT_SPELL			          11110

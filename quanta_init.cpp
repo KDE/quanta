@@ -87,6 +87,7 @@ QDict <QStrList> *tagsDict;
 
 QuantaApp::QuantaApp()
 {
+  grepDialog = 0;
   config=kapp->config();
 
   parser = new Parser();
@@ -333,15 +334,19 @@ void QuantaApp::initMenuBar()
 
   editMenu->insertSeparator();
 
-  editMenu->insertItem(UserIcon("find"),      i18n("&Search"),      ID_EDIT_SEARCH);
-  editMenu->insertItem(UserIcon("findnext"),  i18n("Search &again"),ID_EDIT_SEARCH_AGAIN);
-  editMenu->insertItem(UserIcon("replace"),   i18n("R&eplace"),     ID_EDIT_REPLACE);
+  editMenu->insertItem(UserIcon("find"),      i18n("&Search..."),      ID_EDIT_SEARCH);
+  editMenu->insertItem(UserIcon("findnext"),  i18n("Search &Again"),ID_EDIT_SEARCH_AGAIN);
+  editMenu->insertItem(UserIcon("replace"),   i18n("R&eplace..."),     ID_EDIT_REPLACE);
+
+  editMenu->insertSeparator();
+
+  editMenu->insertItem(UserIcon("find"), i18n("Search In &Files"), ID_EDIT_FIND_IN_FILES );
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry toolMenu
   toolMenu = new QPopupMenu();
 
-  toolMenu->insertItem( i18n("&Goto line"),         ID_EDIT_GOTO_LINE);
+  toolMenu->insertItem( i18n("&Goto Line..."),         ID_EDIT_GOTO_LINE);
 
   toolMenu->insertSeparator();
 
@@ -351,32 +356,32 @@ void QuantaApp::initMenuBar()
 
   toolMenu->insertSeparator();
 
-  toolMenu->insertItem( i18n("Context help"),  		  ID_CONTEXT_HELP);
-  toolMenu->insertItem( i18n("Tag attributes"),  		ID_ATTRIB_POPUP);
-  toolMenu->insertItem( i18n("&Edit current tag"),  ID_EDIT_CURRENT_TAG);
+  toolMenu->insertItem( i18n("Context Help..."),  		  ID_CONTEXT_HELP);
+  toolMenu->insertItem( i18n("Tag Attributes"),  		ID_ATTRIB_POPUP);
+  toolMenu->insertItem( i18n("&Edit Current Tag..."),  ID_EDIT_CURRENT_TAG);
 
   toolMenu->insertSeparator();
 
-  toolMenu->insertItem(UserIcon("spellcheck"),i18n("Spe&ll checker"),ID_EDIT_SPELL);
+  toolMenu->insertItem(UserIcon("spellcheck"),i18n("Spe&lling..."),ID_EDIT_SPELL);
 
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry viewMenu
   viewMenu = new QPopupMenu();
   viewMenu->setCheckable(true);
-  viewMenu->insertItem(i18n("&Toolbar"), 	ID_VIEW_TOOLBAR);
-  viewMenu->insertItem(i18n("&Statusbar"),ID_VIEW_STATUSBAR);
+  viewMenu->insertItem(i18n("Show &Toolbar"), 	ID_VIEW_TOOLBAR);
+  viewMenu->insertItem(i18n("Show &Statusbar"),ID_VIEW_STATUSBAR);
 
-  viewMenu->insertItem(UserIcon("tree_win"),	i18n("&Tree"),    ID_VIEW_TREE);
-  viewMenu->insertItem(i18n("&Messages window"), ID_VIEW_MES);
+  viewMenu->insertItem(UserIcon("tree_win"),	i18n("Show Tr&ee"),    ID_VIEW_TREE);
+  viewMenu->insertItem(i18n("Show &Messages"), ID_VIEW_MES);
   viewMenu->insertItem(UserIcon("preview"), 	i18n("&Preview"), ID_VIEW_PREVIEW);
   viewMenu->insertSeparator();
   viewMenu->insertItem(UserIcon("back"),   		i18n("&Back"), 		ID_VIEW_BACK);
   viewMenu->insertItem(UserIcon("forward"),   i18n("&Forward"), ID_VIEW_FORWARD);
-  viewMenu->insertItem(UserIcon("repaint"),   i18n("&Refresh preview"), ID_VIEW_REPAINT);
+  viewMenu->insertItem(UserIcon("repaint"),   i18n("&Refresh Preview"), ID_VIEW_REPAINT);
   viewMenu->insertSeparator();
-  viewMenu->insertItem(i18n("Open document in Netscape"), ID_VIEW_IN_NETSCAPE);
-	viewMenu->insertItem(i18n("Open document in KFM"),      ID_VIEW_IN_KFM2);
+  viewMenu->insertItem(i18n("Open Document In Netscape"), ID_VIEW_IN_NETSCAPE);
+  viewMenu->insertItem(i18n("Open Document In Konqueror"),      ID_VIEW_IN_KFM2);
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry insertMenu
@@ -387,13 +392,13 @@ void QuantaApp::initMenuBar()
   ///////////////////////////////////////////////////////////////////
   // menuBar entry projectMenu
   projectMenu = new QPopupMenu();
-  projectMenu->insertItem(i18n("&Create new"),    ID_PROJECT_NEW);
-  projectMenu->insertItem(UserIcon("openprj"),    i18n("&Open project"),  ID_PROJECT_OPEN);
-  projectMenu->insertItem(i18n("Open &recent project"),recentProjectsMenu, ID_PROJECT_OPEN_RECENT);
-  projectMenu->insertItem(i18n("&Close"),         ID_PROJECT_CLOSE);
+  projectMenu->insertItem(i18n("&New Project..."),    ID_PROJECT_NEW);
+  projectMenu->insertItem(UserIcon("openprj"),    i18n("&Open Project..."),  ID_PROJECT_OPEN);
+  projectMenu->insertItem(i18n("Open &Recent Project"),recentProjectsMenu, ID_PROJECT_OPEN_RECENT);
+  projectMenu->insertItem(i18n("&Close Project"),         ID_PROJECT_CLOSE);
   projectMenu->insertSeparator();
-  projectMenu->insertItem(i18n("&Insert file(s)"),   ID_PROJECT_ADD_FILE);
-  projectMenu->insertItem(i18n("Insert &directory"), ID_PROJECT_ADD_DIRECTORY);
+  projectMenu->insertItem(i18n("&Insert File(s)"),   ID_PROJECT_ADD_FILE);
+  projectMenu->insertItem(i18n("Insert &Directory"), ID_PROJECT_ADD_DIRECTORY);
 //  projectMenu->insertItem(i18n("Rescan project's directory"), ID_PROJECT_RESCAN_FILES);
 //  projectMenu->insertItem(UserIcon("file_properties"), i18n("&File properties"), ID_PROJECT_FILE_PROPERTIES);
 //  projectMenu->insertSeparator();
@@ -407,9 +412,9 @@ void QuantaApp::initMenuBar()
   ///////////////////////////////////////////////////////////////////
   // menuBar entry bookmarksmenu
   bookmarksMenu = new QPopupMenu();
-  bookmarksMenu->insertItem(i18n("&Set bookmark"),   ID_BOOKMARKS_SET);
-  bookmarksMenu->insertItem(UserIcon("bookmark"),    i18n("&Add bookmark"),   ID_BOOKMARKS_ADD);
-  bookmarksMenu->insertItem(i18n("&Clear bookmarks"),ID_BOOKMARKS_CLEAR);
+  bookmarksMenu->insertItem(i18n("&Set Bookmark"),   ID_BOOKMARKS_SET);
+  bookmarksMenu->insertItem(UserIcon("bookmark"),    i18n("&Add Bookmark"),   ID_BOOKMARKS_ADD);
+  bookmarksMenu->insertItem(i18n("&Clear Bookmarks"),ID_BOOKMARKS_CLEAR);
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry optionsmenu
@@ -421,13 +426,13 @@ void QuantaApp::initMenuBar()
   for (int z = 0; z < HlManager::self()->highlights(); z++)
     highlightMenu -> insertItem( i18n(HlManager::self()->hlName(z)) );
 
-  optionsMenu->insertItem(i18n("Highlighting mode"), highlightMenu );
+  optionsMenu->insertItem(i18n("Highlighting Mode"), highlightMenu );
   connect( highlightMenu, SIGNAL(activated(int)), this, SLOT(slotSetHl(int)));
 
-  optionsMenu->insertItem(i18n("&Editor options..."),   ID_OPTIONS_EDITOR);
-  optionsMenu->insertItem(i18n("Configure &key bindings..."),   ID_OPTIONS_KEYS);
+  optionsMenu->insertItem(i18n("&Editor Options..."),   ID_OPTIONS_EDITOR);
+  optionsMenu->insertItem(i18n("Configure &Key Bindings..."),   ID_OPTIONS_KEYS);
   optionsMenu->insertSeparator();
-  optionsMenu->insertItem(UserIcon("options"), i18n("&General options..."),  ID_OPTIONS );
+  optionsMenu->insertItem(UserIcon("options"), i18n("&General Options..."),  ID_OPTIONS );
 
 
   ///////////////////////////////////////////////////////////////////
@@ -509,7 +514,7 @@ void QuantaApp::initToolBar()
   WToolBar::insertSeparator( toolBar() );
 
   toolBar()->insertButton(UserIcon("find"),  		ID_EDIT_SEARCH,  			true, i18n("Search"));
-  toolBar()->insertButton(UserIcon("findnext"),	ID_EDIT_SEARCH_AGAIN, true, i18n("Search again"));
+  toolBar()->insertButton(UserIcon("findnext"),	ID_EDIT_SEARCH_AGAIN, true, i18n("Search Again"));
 
   WToolBar::insertSeparator( toolBar() );
 
@@ -564,9 +569,9 @@ void QuantaApp::initDocument()
   kwritePopupMenu->insertItem(UserIcon("undo"),i18n("&Undo"), ID_EDIT_UNDO );
   kwritePopupMenu->insertItem(UserIcon("redo"),i18n("&Redo"), ID_EDIT_REDO );
   kwritePopupMenu->insertSeparator();
-  kwritePopupMenu->insertItem( i18n("Context help"),  		ID_CONTEXT_HELP );
-  kwritePopupMenu->insertItem( i18n("Tag attributes"),  	ID_ATTRIB_POPUP);
-  kwritePopupMenu->insertItem( i18n("&Edit current tag"), ID_EDIT_CURRENT_TAG);
+  kwritePopupMenu->insertItem( i18n("Context Help"),  		ID_CONTEXT_HELP );
+  kwritePopupMenu->insertItem( i18n("Tag Attributes"),  	ID_ATTRIB_POPUP);
+  kwritePopupMenu->insertItem( i18n("&Edit Current Tag"), ID_EDIT_CURRENT_TAG);
 
   connect(kwritePopupMenu, SIGNAL(activated(int)), SLOT(commandCallback(int)));
   connect(kwritePopupMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
