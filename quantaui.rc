@@ -339,8 +339,8 @@
     <Action name="file_open"/>
     <Action name="file_save"/>
       <Menu name="save_selection_as_template" append="save_merge"><text>Save selection as template</text>
-      	<Action name="save_section_project_template"/>
-      	<Action name="save_section_local_template"/>
+      	<Action name="save_selection_project_template"/>
+      	<Action name="save_selection_local_template"/>
       </Menu>
     <Action name="file_close"/>
     <Action name="file_list"/>
