@@ -2026,7 +2026,7 @@ void QuantaApp::slotContextMenuAboutToShow()
       action = actionCollection()->action("debug_variable_set");
       if(action)
       {
-        action->setText(i18n("Set value of '%1'").arg(word));
+        action->setText(i18n("Set Value of '%1'").arg(word));
         action->setEnabled(!word.isEmpty());
 
         if(!action->isPlugged(popup))
@@ -2037,7 +2037,7 @@ void QuantaApp::slotContextMenuAboutToShow()
       action = actionCollection()->action("debug_conditional_break");
       if(action)
       {
-        action->setText(i18n("Break when %1...").arg(word));
+        action->setText(i18n("Break When %1...").arg(word));
         action->setEnabled(!word.isEmpty());
 
         if(!action->isPlugged(popup))
@@ -3767,7 +3767,7 @@ void QuantaApp::slotDeleteFile(QuantaView *view)
   Document *w = view->document();
   KURL url = w->url();
 /*  if (KMessageBox::questionYesNo(this,
-                   i18n("<qt>Do you really want to delete the file <b>%1</b> ?</qt>")
+                   i18n("<qt>Do you really want to delete the file <b>%1</b>?</qt>")
                    .arg(url.prettyURL(0, KURL::StripFileProtocol)),
                    i18n("Delete File")) == KMessageBox::Yes)
   {

@@ -190,7 +190,7 @@ bool QuantaNetAccess::checkProjectRemove(const KURL& src, QWidget* window, bool 
   if ( Project::ref()->projectBaseURL().isParentOf(url) && Project::ref()->contains(url) )
   {
     if ( !confirm ||
-          KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Remove from Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") )
+          KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") )
     {
       Project::ref()->slotRemove(url);
     } else {
@@ -208,7 +208,7 @@ bool QuantaNetAccess::checkProjectDel(const KURL& src, QWidget* window, bool con
   if ( Project::ref()->projectBaseURL().isParentOf(url) && Project::ref()->contains(url) )
   {
     if ( !confirm ||
-          KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b><br> and remove it from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Delete and Remove from Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteAndRemoveFromProject") )
+          KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b><br> and remove it from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Delete & Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteAndRemoveFromProject") )
     {
       Project::ref()->slotRemove(url);
     } else
@@ -217,7 +217,7 @@ bool QuantaNetAccess::checkProjectDel(const KURL& src, QWidget* window, bool con
     }
   } else {
     if (confirm) {
-      return (KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b>  ?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Delete File or Folder"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteFileOrFolder") );
+      return (KMessageBox::Yes == KMessageBox::warningYesNo(window, i18n("<qt>Do you really want to delete <br><b>%1</b>?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Delete File or Folder"), KStdGuiItem::yes(), KStdGuiItem::no(), "DeleteFileOrFolder") );
     }
   }
   return true;

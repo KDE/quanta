@@ -13,7 +13,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Set value of variable</string>
+        <string>Set Value of Variable</string>
     </property>
     <property name="sizeGripEnabled">
         <bool>true</bool>

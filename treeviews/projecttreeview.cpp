@@ -372,7 +372,7 @@ void ProjectTreeView::slotRemoveFromProject(int askForRemove)
   {
     KURL url = currentURL();
     if ( !askForRemove ||
-         KMessageBox::warningYesNo(this,i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Remove from Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") == KMessageBox::Yes )
+         KMessageBox::warningYesNo(this,i18n("<qt>Do you really want to remove <br><b>%1</b><br> from the project?</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)), i18n("Remove From Project"), KStdGuiItem::yes(), KStdGuiItem::no(), "RemoveFromProject") == KMessageBox::Yes )
     {
       if ( currentKFileTreeViewItem()->isDir() ) url.adjustPath(+1);
       emit removeFromProject(url);

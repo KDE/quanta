@@ -141,9 +141,9 @@ void DebuggerManager::initActions()
               this, SLOT(toggleBreakpoint()), ac, "debug_breakpoints_toggle");
   new KAction(i18n("&Clear Breakpoints"), 0,
               this, SLOT(clearBreakpoints()), ac, "debug_breakpoints_clear");
-  new KAction(i18n("Break when..."), SmallIcon("math_int"), 0,
+  new KAction(i18n("Break When..."), SmallIcon("math_int"), 0,
               this, SLOT(slotConditionalBreakpoint()), ac, "debug_conditional_break");
-  new KAction(i18n("Break when..."), SmallIcon("math_int"), 0,
+  new KAction(i18n("Break When..."), SmallIcon("math_int"), 0,
               this, SLOT(slotConditionalBreakpoint()), ac, "debug_conditional_breakdialog");
 
   // Execution
@@ -153,7 +153,7 @@ void DebuggerManager::initActions()
               this, SLOT(slotDebugLeap()), ac, "debug_leap");
   new KAction(i18n("&Step"), SmallIcon("debug_stepover"), 0,
               this, SLOT(slotDebugStepOver()), ac, "debug_stepover");
-  new KAction(i18n("Step &into"), SmallIcon("debug_stepinto"), 0,
+  new KAction(i18n("Step &Into"), SmallIcon("debug_stepinto"), 0,
               this, SLOT(slotDebugStepInto()), ac, "debug_stepinto");
   new KAction(i18n("S&kip"), SmallIcon("debug_skip"), 0,
               this, SLOT(slotDebugSkip()), ac, "debug_skip");
@@ -169,13 +169,13 @@ void DebuggerManager::initActions()
               this, SLOT(slotDebugEndSession()), ac, "debug_disconnect");
 
   // Variables
-  new KAction(i18n("Watch variable"), SmallIcon("math_brace"), 0,
+  new KAction(i18n("Watch Variable"), SmallIcon("math_brace"), 0,
               this, SLOT(slotAddWatch()), ac, "debug_addwatch");
-  new KAction(i18n("Watch variable"), SmallIcon("math_brace"), 0,
+  new KAction(i18n("Watch Variable"), SmallIcon("math_brace"), 0,
               this, SLOT(slotAddWatch()), ac, "debug_addwatchdialog");
-  new KAction(i18n("Set value of variable"), SmallIcon("edit"), 0,
+  new KAction(i18n("Set Value of Variable"), SmallIcon("edit"), 0,
               this, SLOT(slotVariableSet()), ac, "debug_variable_set");
-  new KAction(i18n("Set value of variable"), SmallIcon("edit"), 0,
+  new KAction(i18n("Set Value of Variable"), SmallIcon("edit"), 0,
               this, SLOT(slotVariableSet()), ac, "debug_variable_setdialog");
 
 }
@@ -258,7 +258,7 @@ void DebuggerManager::slotAddWatch()
     return;
 
 
-  QString watch = KInputDialog::getText(i18n("Add watch"), i18n("Specify variable to watch"), quantaApp->popupWord);
+  QString watch = KInputDialog::getText(i18n("Add Watch"), i18n("Specify variable to watch:"), quantaApp->popupWord);
   quantaApp->popupWord = "";
   if(!watch.isEmpty())
   {
@@ -291,7 +291,7 @@ void DebuggerManager::slotConditionalBreakpoint()
   if(!m_client)
     return;
 
-  QString condition = KInputDialog::getText(i18n("Add conditional breakpoint"), i18n("Specify expression to break at (when true)"), quantaApp->popupWord);
+  QString condition = KInputDialog::getText(i18n("Add Conditional Breakpoint"), i18n("Specify expression to break at (when true):"), quantaApp->popupWord);
   quantaApp->popupWord = "";
   if(!condition.isEmpty())
   {
