@@ -1798,10 +1798,12 @@ void Project::slotDeleteProjectView()
   {
     for (uint i = 0; i < nl.count(); i++)
     {
-      el = nl.item(i).cloneNode().toElement();
+      QDomNode node = nl.item(i);
+      el = node.cloneNode().toElement();
       if (el.attribute("name") == res)
       {
-        el.parentNode().removeChild(el);
+        node.parentNode().removeChild(node);
+        slotSaveProject();
         break;
       }
     }

@@ -9,7 +9,7 @@
  ***************************************************************************/
 </comment>
 <author>(C) 2002 Andras Mantia &lt;amantia@kde.org&gt;</author>
-<widget class="QDialog">
+<widget class="QWidget">
     <property name="name">
         <cstring>DirtyDialog</cstring>
     </property>
@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>610</width>
-            <height>351</height>
+            <width>571</width>
+            <height>201</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -32,7 +32,7 @@
     <property name="minimumSize">
         <size>
             <width>400</width>
-            <height>350</height>
+            <height>200</height>
         </size>
     </property>
     <property name="caption">
@@ -42,6 +42,22 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>textLabel</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>The file was changed outside of the Quanta editor.</string>
+            </property>
+        </widget>
         <widget class="QButtonGroup" row="1" column="0">
             <property name="name">
                 <cstring>ButtonGroup2</cstring>
@@ -73,20 +89,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Use the version from disk (will lose the current content)</string>
-                    </property>
-                </widget>
-                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>buttonCompare</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Compare the two versions and load the result</string>
-                    </property>
-                    <property name="checked">
-                        <bool>true</bool>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Use Kompare if available. Otherwise this checkbox is disabled.</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="3" column="1">
@@ -125,98 +127,26 @@
                         </size>
                     </property>
                 </spacer>
+                <widget class="QRadioButton" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>buttonCompare</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Compare the two versions and load the result</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Use Kompare if available. Otherwise this checkbox is disabled.</string>
+                    </property>
+                </widget>
             </grid>
-        </widget>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>textLabel</cstring>
-            </property>
-            <property name="text">
-                <string>The file was changed outside of the Quanta editor.</string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget" row="2" column="0">
-            <property name="name">
-                <cstring>layout1</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer3_2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>90</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>okButton</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>&amp;OK</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>Spacer1</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Preferred</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>50</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>cancelButton</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Cancel</string>
-                    </property>
-                </widget>
-            </hbox>
         </widget>
     </grid>
 </widget>
 <tabstops>
     <tabstop>buttonCompare</tabstop>
-    <tabstop>okButton</tabstop>
-    <tabstop>cancelButton</tabstop>
     <tabstop>buttonIgnore</tabstop>
     <tabstop>buttonLoad</tabstop>
 </tabstops>

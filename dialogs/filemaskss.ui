@@ -298,6 +298,11 @@
     <tabstop>buttonDefault</tabstop>
     <tabstop>encodingCombo</tabstop>
     <tabstop>defaultDTDCombo</tabstop>
+    <tabstop>showDTDSelectDialog</tabstop>
+    <tabstop>warnBinaryOpening</tabstop>
+    <tabstop>showSplash</tabstop>
+    <tabstop>showCloseButton</tabstop>
+    <tabstop>sbAutoSave</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -93,6 +93,7 @@
 #include "parser/parser.h"
 #include "dialogs/filemasks.h"
 #include "dialogs/dirtydlg.h"
+#include "dialogs/dirtydialog.h"
 
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManagerIf")
 {
@@ -2221,7 +2222,8 @@ void QuantaApp::recoverCrashed()
           emit showSplash(false);
           DirtyDlg *dlg = new DirtyDlg(autosavedVersion.path(), originalVersion.path(), false, this);
           dlg->setCaption(i18n("Restore file"));
-          dlg->textLabel->setText(i18n("<qt>A backup copy of a file was found:<br><br>"
+          DirtyDialog *w = static_cast<DirtyDialog*>(dlg->mainWidget());
+          w->textLabel->setText(i18n("<qt>A backup copy of a file was found:<br><br>"
            "Original file: <b>%1</b><br>"
            "Original file size: <b>%2</b><br>"
            "Original file last modified on: <b>%3</b><br><br>"
@@ -2231,15 +2233,16 @@ void QuantaApp::recoverCrashed()
            .arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
            .arg(KIO::convertSize(origSize)).arg(origTime)
            .arg(KIO::convertSize(backupSize)).arg(backupTime));
-          dlg->buttonLoad->setText(i18n("&Restore the file from backup"));
-          dlg->buttonIgnore->setText(i18n("Do &not restore the file from backup"));
-          delete dlg->warningLabel;
-          dlg->warningLabel = 0L;
+          w->buttonLoad->setText(i18n("&Restore the file from backup"));
+          w->buttonIgnore->setText(i18n("Do &not restore the file from backup"));
+          delete w->warningLabel;
+          w->warningLabel = 0L;
+          w->setMinimumHeight(320);
           dlg->adjustSize();
           if (!KStandardDirs::findExe("kompare").isEmpty())
           {
-            dlg->buttonCompare->setEnabled(false);
-            dlg->buttonLoad->setChecked(true);
+            w->buttonCompare->setEnabled(false);
+            w->buttonLoad->setChecked(true);
           }
           if (dlg->exec())
           {

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32027">
+<kpartgui name="quanta" version="32028">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -151,11 +151,10 @@
   </Menu>
   <Menu name="tools"><text>T&amp;ools</text>
     <Action name="tools_document_properties" />
+    <Action name="file_list"/>
     <Separator/>
     <Action name="tidy_check" />
     <Action name="kompare_script" />
-    <Separator/>
-    <Action name="file_list"/>
   </Menu>
 
 

@@ -2,7 +2,7 @@
                           dirtydlg.h  -  description
                              -------------------
     begin                : Fri Sep 13 2002
-    copyright            : (C) 2002 by Andras Mantia
+    copyright            : (C) 2002, 2003 by Andras Mantia
     email                : amantia@kde.org
  ***************************************************************************/
 
@@ -17,33 +17,25 @@
 #ifndef DIRTYDLG_H
 #define DIRTYDLG_H
 
-#include <qwidget.h>
 // kde includes
 #include <kio/jobclasses.h>
 
-#include "dirtydialog.h"
-
-/**
-  *@author Andras Mantia
-  */
+class DirtyDialog;
+class KDialogBase;
 
 class KProcess;
 class QCloseEvent;
 
-class DirtyDlg : public DirtyDialog  {
+class DirtyDlg : public KDialogBase  {
    Q_OBJECT
+
 public:
   DirtyDlg(const QString& srcName, const QString& destName, bool createBackup = false, QWidget *parent=0, const char *name=0);
   ~DirtyDlg();
-protected: // Protected attributes
-  KURL m_src;
-  KURL m_dest;
-  bool m_busy;
-  bool m_createBackup;
-  int  m_permissions;
+
 protected slots: // Protected slots
   /** No descriptions */
-   void slotOKPressed();
+   void slotOk();
   /** No descriptions */
   void slotCompareDone(KProcess*);
   /** No descriptions */
@@ -51,6 +43,13 @@ protected slots: // Protected slots
   /** No descriptions */
   virtual void closeEvent(QCloseEvent* ev);
 
+protected: // Protected attributes
+  KURL m_src;
+  KURL m_dest;
+  bool m_busy;
+  bool m_createBackup;
+  int  m_permissions;
+  DirtyDialog* m_mainWidget;
 };
 
 #endif

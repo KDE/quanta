@@ -3427,9 +3427,8 @@ void QuantaApp::slotDocumentProperties()
       KMessageBox::information(this, i18n("The Document Properties Dialog is only for HTML and XHTML."));
       return;
     }
-    htmlDocumentProperties *htmlPropsDlg = new htmlDocumentProperties(this);
-    htmlPropsDlg->exec();
-    delete htmlPropsDlg;
+    htmlDocumentProperties htmlPropsDlg(this);
+    htmlPropsDlg.exec();
   }
 #endif
 }

@@ -2,7 +2,7 @@
                           dirtydlg.cpp  -  description
                              -------------------
     begin                : Fri Sep 13 2002
-    copyright            : (C) 2002 by Andras Mantia <amantia@kde.org>
+    copyright            : (C) 2002, 2003 by Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -19,6 +19,8 @@
 #include <qpushbutton.h>
 
 //kde includes
+#include <kdialogbase.h>
+#include <klocale.h>
 #include <kprocess.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
@@ -26,36 +28,37 @@
 #include <kfileitem.h>
 
 //app includes
+#include "dirtydialog.h"
 #include "dirtydlg.h"
 #include "../resource.h"
 #include "../qextfileinfo.h"
 
-DirtyDlg::DirtyDlg(const QString& srcName, const QString& destName, bool createBackup, QWidget *parent, const char *name ) : DirtyDialog(parent,name)
+DirtyDlg::DirtyDlg(const QString& srcName, const QString& destName, bool createBackup, QWidget *parent, const char *name ) : KDialogBase(parent, name, true, i18n("File Changed"), KDialogBase::Ok | KDialogBase::Cancel)
 {
  m_src.setPath(srcName);
  m_dest.setPath(destName);
- connect(okButton,SIGNAL(clicked()),SLOT(slotOKPressed()));
- connect(cancelButton,SIGNAL(clicked()),SLOT(reject()));
  m_busy = false;
  m_createBackup = createBackup;
+ m_mainWidget = new DirtyDialog(this);
+ setMainWidget(m_mainWidget);
 }
 
 DirtyDlg::~DirtyDlg(){
 }
 /** No descriptions */
-void DirtyDlg::slotOKPressed()
+void DirtyDlg::slotOk()
 {
- if (buttonCompare->isChecked())
+ if (m_mainWidget->buttonCompare->isChecked())
  {
    m_busy = true;
    KProcess *proc = new KProcess();
    *proc << "kompare" << m_src.path() << m_dest.path();
    proc->start();
    connect(proc, SIGNAL(processExited(KProcess*)),SLOT(slotCompareDone(KProcess*)));
-   okButton->setEnabled(false);
-   cancelButton->setEnabled(false);
+   enableButton(KDialogBase::Ok, false);
+   enableButton(KDialogBase::Cancel, false);
  } else
- if (buttonLoad->isChecked())
+ if (m_mainWidget->buttonLoad->isChecked())
  {
     accept();
  } else
@@ -100,8 +103,10 @@ void DirtyDlg::slotResult(KIO::Job *)
 /** No descriptions */
 void DirtyDlg::closeEvent(QCloseEvent* ev)
 {
-  if(m_busy) ev->ignore();
-  else ev->accept();
+  if (m_busy)
+    ev->ignore();
+  else
+    ev->accept();
 }
 
 #include "dirtydlg.moc"

@@ -48,6 +48,7 @@
 #include "document.h"
 #include "resource.h"
 #include "dialogs/dirtydlg.h"
+#include "dialogs/dirtydialog.h"
 #include "project/project.h"
 #include "plugins/quantaplugininterface.h"
 
@@ -1669,11 +1670,12 @@ void Document::checkDirtyStatus()
     {
       createTempFile();
       DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, false, this);
+      DirtyDialog *w = static_cast<DirtyDialog*>(dlg->mainWidget());
       QString kompareStr = KStandardDirs::findExe("kompare");
       if (kompareStr.isEmpty())
       {
-        dlg->buttonCompare->setEnabled(false);
-        dlg->buttonLoad->setChecked(true);
+        w->buttonCompare->setEnabled(false);
+        w->buttonLoad->setChecked(true);
       }
       if (dlg->exec())
       {

@@ -40,6 +40,7 @@ public:
 
 /**
  * The HTML Document properties dialog.
+ * TODO: Use KDialogBase so it looks more consistent with the rest of the dialogs
  */
 class htmlDocumentProperties : public htmlDocumentPropertiesui
 {
