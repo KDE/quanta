@@ -1410,6 +1410,7 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
           }
           QuantaCommon::removeCommentsAndQuotes(foundStr, dtd);
           
+          //gather the starting position of structures
           QValueList<uint> structPositions;
           int structPos = 0;
           while (structPos !=-1)
@@ -1422,16 +1423,17 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
             }
           }          
           
+          //go through the list of found structures and search for groups
           int structEndPosition = 0;
           QString savedStr = foundStr;
           for (uint i = 0; i < structPositions.count(); i++)
           {
             foundStr = savedStr;
             uint structBeginPos = structPositions[i];
-            //find the structure blocks and remove the text inside them
             structPos = structBeginPos;
             int openNum = 1;
             int pos = structPos + dtd->structBeginStr.length();
+            //find the corresponding structure closing string
             while (openNum !=0 && pos != -1)
             {
               pos = dtd->structRx.search(foundStr, pos);
@@ -1450,11 +1452,17 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
             QString spaces;
             spaces.fill(' ', pos - structPos + 1);
             foundStr.replace(structPos, pos - structPos + 1, spaces);
+            
+            //FIXME: This code replaces the content between ( ) with
+            //empty spaces. This is quite PHP (or functions) //specific, and it's done in order to not find variables
+            //declared as function arguments. A generic way is needed
+            //to exclude unwanted areas.
             int openBracketPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
             openBracketPos = foundStr.find('(', openBracketPos);
             openNum = 1;
             if (openBracketPos != -1)
             {
+              openBracketPos++;
               int closeBracketPos = openBracketPos;
               while (closeBracketPos < structPos && openNum !=0)
               {
@@ -1464,10 +1472,12 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                     openNum--;
                 closeBracketPos++;
               }
+              closeBracketPos--;
               spaces.fill(' ', closeBracketPos - openBracketPos);
               foundStr.replace(openBracketPos, closeBracketPos - openBracketPos, spaces);
             }
 
+            //now check which groups are present in this area
             structPos =  pos + 1;
             QValueList<StructTreeGroup>::ConstIterator it;
             for (it = dtd->structTreeGroups.begin(); it != dtd->structTreeGroups.end(); ++it)
@@ -1482,10 +1492,12 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
                 if (pos != -1)
                 {
                   int l;
+                  QString ss = group.definitionRx.cap();
                   if (group.definitionRx.pos(1) > pos)
                   {
                     pos = group.definitionRx.pos(1);
                     l = group.definitionRx.cap(1).length();
+                    ss = group.definitionRx.cap(1);
                   }
                   else
                   {

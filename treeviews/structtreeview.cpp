@@ -559,6 +559,7 @@ void StructTreeView::slotGotoClosingTag()
 
 void StructTreeView::slotSelectTag()
 {
+  bool newFileOpened = false;
   QListViewItem *item = currentItem();
   StructTreeTag *it = dynamic_cast<StructTreeTag*>(item);
   if (!m_dirty && it && it->node)
@@ -592,12 +593,16 @@ void StructTreeView::slotSelectTag()
       it->node->tag->endPos(eLine, eCol);
       eCol--;
       emit openFile(url);
+      newFileOpened = true;
 
     }
     emit selectArea( bLine, bCol, eLine, eCol + 1);
 
-    setSelected(item, true);
-    it->node->tag->write()->view()->setFocus();
+    if (!newFileOpened)
+    {
+      setSelected(item, true);
+      it->node->tag->write()->view()->setFocus();
+    }
   }
 }
 
