@@ -89,9 +89,9 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
          if ( !ltext.isNull() )
            label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text()+":") );
 
-          if ( tip != QString::null )
+          if ( !tip.isNull() )
               QToolTip::add( label, tip );
-          if ( whatsThis != QString::null )
+          if ( !whatsThis.isNull() )
               QWhatsThis::add( label, whatsThis );
 
          grid->addMultiCellWidget( label, row, row+rowspan, col,  col+colspan );
@@ -109,9 +109,9 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
            QLabel *label = new QLabel(this);
            label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text()+":") );
 
-          if ( tip != QString::null )
+          if ( !tip.isNull() )
               QToolTip::add( label, tip );
-          if ( whatsThis != QString::null )
+          if ( !whatsThis.isNull() )
               QWhatsThis::add( label, whatsThis );
           grid->addMultiCellWidget( label, textrow, textrow+textrowspan, textcol,  textcol+textcolspan );
         }
@@ -123,9 +123,9 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
            KLineEdit *w = new KLineEdit(this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
 
-             if ( tip != QString::null )
+             if ( !tip.isNull() )
                  QToolTip::add( w, tip );
-             if ( whatsThis != QString::null )
+             if ( !whatsThis.isNull() )
                  QWhatsThis::add( w, whatsThis );
 
            Attr_line *attr = new Attr_line(&el,w);
@@ -141,9 +141,9 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
             if ( !ltext.isNull() )
               w->setText( ltext.text() );
           
-             if ( tip != QString::null )
+             if ( !tip.isNull() )
                  QToolTip::add( w, tip );
-             if ( whatsThis != QString::null )
+             if ( !whatsThis.isNull() )
                  QWhatsThis::add( w, whatsThis );
 
            Attr_check *attr = new Attr_check(&el,w);
@@ -155,9 +155,9 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
            QComboBox *w = new QComboBox(true,this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
           
-             if ( tip != QString::null )
+             if ( !tip.isNull() )
                  QToolTip::add( w, tip );
-             if ( whatsThis != QString::null )
+             if ( !whatsThis.isNull() )
                  QWhatsThis::add( w, whatsThis );
 
            Attr_list *attr = new Attr_list(&el,w);
@@ -169,9 +169,9 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
            ColorCombo *w = new ColorCombo(this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
           
-             if ( tip != QString::null )
+             if ( !tip.isNull() )
                  QToolTip::add( w, tip );
-             if ( whatsThis != QString::null )
+             if ( !whatsThis.isNull() )
                  QWhatsThis::add( w, whatsThis );
 
            Attr_color *attr = new Attr_color(&el,w);
@@ -183,9 +183,9 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
            FileCombo *w = new FileCombo(baseURL, this);
            grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
 
-             if ( tip != QString::null )
+             if ( !tip.isNull() )
                  QToolTip::add( w, tip );
-             if ( whatsThis != QString::null )
+             if ( !whatsThis.isNull() )
                  QWhatsThis::add( w, whatsThis );
 
            Attr_file *attr = new Attr_file(&el,w);

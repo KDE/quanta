@@ -78,7 +78,7 @@ void QuantaPluginConfig::accept()
 void QuantaPluginConfig::selectLocation()
 {
   QString pluginLocation = KFileDialog::getExistingDirectory(QString::null, this, i18n("Select Plugin Directory"));
-  if(pluginLocation != QString::null)
+  if(!pluginLocation.isNull())
   {
     location->setText(pluginLocation);
   }

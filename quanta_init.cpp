@@ -1701,7 +1701,7 @@ void QuantaApp::slotPluginRun(int a_id)
   if(pluginName.isEmpty() || pluginName == "&Edit" || pluginName == "&Validate")
     return;
 
-  if(pluginName != QString::null)
+  if(!pluginName.isNull())
   {
     QuantaPlugin *plugin = m_pluginInterface->plugin(pluginName);
     if(plugin)
