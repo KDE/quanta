@@ -249,35 +249,6 @@
             </stringlist>
         </property>
     </widget>
-    <widget class="CheckBox">
-        <property name="name">
-            <cstring>CBHeadClose</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>20</x>
-                <y>340</y>
-                <width>70</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>/head</string>
-        </property>
-        <property name="checked">
-            <bool>true</bool>
-        </property>
-        <property name="associations" stdset="0">
-            <stringlist>
-                <string></string>
-                <string></string>
-                <string>&lt;/head&gt;</string>
-            </stringlist>
-        </property>
-    </widget>
     <widget class="LineEdit">
         <property name="name">
             <cstring>LEStyle</cstring>
@@ -841,6 +812,35 @@ echo '@CBCVS
             <bool>true</bool>
         </property>
     </widget>
+    <widget class="CheckBox">
+        <property name="name">
+            <cstring>CBHeadClose</cstring>
+        </property>
+        <property name="enabled">
+            <bool>false</bool>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>340</y>
+                <width>70</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>/head</string>
+        </property>
+        <property name="checked">
+            <bool>true</bool>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string></string>
+                <string></string>
+                <string>&lt;/head&gt;</string>
+            </stringlist>
+        </property>
+    </widget>
     <widget class="ComboBox">
         <item>
             <property name="text">
@@ -893,13 +893,16 @@ strict='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.
 frameset='&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"&gt;'
 
 xhtml1trans='&lt;?xml version="1.0" encoding="@ComboMetachar"?&gt;
-&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;'
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;'
 
 xhtml1strict='&lt;?xml version="1.0" encoding="@ComboMetachar"?&gt;
-&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;'
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;'
 
 xhtml1frameset='&lt;?xml version="1.0" encoding="@ComboMetachar"?&gt;
-&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"&gt;'
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;'
 
 case "$dtep" in 
   "HTML 4.0.1 Transitional" ) 
