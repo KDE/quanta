@@ -146,11 +146,11 @@ Document::Document(KTextEditor::Document *doc,
   a = m_view->actionCollection()->action("view_border");
   if (a)
     a->setShortcut(Qt::SHIFT + Qt::Key_F9);
-  
+
   a = m_view->actionCollection()->action("view_folding_markers");
   if (a)
     a->setShortcut(Qt::SHIFT + Qt::Key_F11);
-  
+
   KActionMenu *bookmarkAction = dynamic_cast<KActionMenu*>(m_view->actionCollection()->action( "bookmarks" ));
   if (bookmarkAction)
   {
@@ -158,7 +158,7 @@ Document::Document(KTextEditor::Document *doc,
     //kdDebug(24000) << "Bookmarks found!" << endl;
     //bookmarkAction->insert(quantaApp->actionCollection()->action( "file_quit" ));
   }
- 
+
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
   editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
@@ -176,9 +176,8 @@ Document::Document(KTextEditor::Document *doc,
     iface->setPixmap(KTextEditor::MarkInterface::markType05, SmallIcon("debug_currentline"));
   }
 
-  // FIXME: This is allows user to set breakpoints and bookmarks by clicking or rightclicking on the icon border. However, it needs some additional code to
-  // work for breakpoints and has been disabled to prevent confusion.
-  //iface->setMarksUserChangable(KTextEditor::MarkInterface::markType01 + KTextEditor::MarkInterface::markType02);
+  // This is allows user to set breakpoints and bookmarks by clicking or rightclicking on the icon border.
+  iface->setMarksUserChangable(KTextEditor::MarkInterface::markType01 + KTextEditor::MarkInterface::markType02);
 
   tempFile = 0;
   m_tempFileName = QString::null;
@@ -208,6 +207,8 @@ Document::Document(KTextEditor::Document *doc,
   connect(m_view, SIGNAL(gotFocus(Kate::View*)), SIGNAL(editorGotFocus()));
 
   connect(fileWatcher, SIGNAL(dirty(const QString&)), SLOT(slotFileDirty(const QString&)));
+
+  connect(m_doc, SIGNAL(marksChanged()), this, SLOT(slotMarksChanged()));
 }
 
 Document::~Document()
@@ -371,10 +372,10 @@ void Document::selectText(int x1, int y1, int x2, int y2 )
 
 void Document::replaceSelected(const QString &s)
 {
-  if (selectionIf) 
+  if (selectionIf)
   {
     unsigned int line, col;
-    
+
     viewCursorIf->cursorPositionReal(&line, &col);
     reparseEnabled = false;
     selectionIf->removeSelectedText();
@@ -1384,12 +1385,12 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
 {
   QValueList<KTextEditor::CompletionEntry> *completions = 0L;
   QMap<QString, KTextEditor::CompletionEntry> completionMap;
-      
+
   //first search for entities defined in the document
   const DTDStruct *dtdDTD = DTDs::ref()->find("dtd");
   if (dtdDTD)
   {
-    StructTreeGroup group;    
+    StructTreeGroup group;
     for (uint j = 0; j < dtdDTD->structTreeGroups.count(); j++)
     {
       group = dtdDTD->structTreeGroups[j];
@@ -1410,10 +1411,10 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
       }
     }
   }
-  
+
   if (!completions)
     completions = new QValueList<KTextEditor::CompletionEntry>();
-  
+
   KTextEditor::CompletionEntry completion;
   completion.type = "charCompletion";
   //add the entities from the tag files
@@ -1433,7 +1434,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
       }
     }
   }
-  
+
   QValueList<KTextEditor::CompletionEntry> *completions2 = new QValueList<KTextEditor::CompletionEntry>();
   for (QMap<QString, KTextEditor::CompletionEntry>::ConstIterator it = completionMap.constBegin(); it != completionMap.constEnd(); ++it)
   {
@@ -1457,7 +1458,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getCharacterCompletions(cons
       completions->append( completion );
     }
   }
-    
+
   return completions;
 }
 
@@ -1614,7 +1615,7 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& inserte
  if (s[i] == completionDTD->tagSeparator)
  {
   while (i > 0 && s[i] != completionDTD->tagAutoCompleteAfter)
-    i--;  
+    i--;
   s = s.left(i + 1);
  }
 
@@ -1688,9 +1689,9 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& inserte
      }
    }
  }
- if ( !handled && !argHintVisible && 
-      (completionRequested || 
-       (s[i] == completionDTD->tagAutoCompleteAfter && (insertedString == " " || insertedString[0] == completionDTD->tagAutoCompleteAfter)) || 
+ if ( !handled && !argHintVisible &&
+      (completionRequested ||
+       (s[i] == completionDTD->tagAutoCompleteAfter && (insertedString == " " || insertedString[0] == completionDTD->tagAutoCompleteAfter)) ||
        completionDTD->tagAutoCompleteAfter == '\1' || (!completionDTD->memberAutoCompleteAfter.pattern().isEmpty() && completionDTD->memberAutoCompleteAfter.searchRev(s) != -1))
        )
  {
@@ -1849,7 +1850,7 @@ void Document::codeCompletionRequested()
   completionRequested = true;
   completionInProgress = false;
   argHintVisible = false;
-  hintRequested = false; 
+  hintRequested = false;
   handleCodeCompletion();
   completionRequested = false;
 }
@@ -1911,7 +1912,7 @@ void Document::codeCompletionHintRequested()
 //    int pos = textLine.findRev("(");
 //    int pos2 = textLine.findRev(")");
     //if (pos > pos2 )
-    hintRequested = true; 
+    hintRequested = true;
     scriptAutoCompletion(line, col - 1, "");
   }
   completionRequested = false;
@@ -2827,6 +2828,76 @@ void Document::slotFileDirty(const QString& fileName)
     {
       checkDirtyStatus();
     }
+  }
+}
+
+void Document::slotMarksChanged()
+{
+  QPtrList<KTextEditor::Mark> marks = markIf->marks();
+
+  QValueList<KTextEditor::Mark>::iterator it;
+  KTextEditor::Mark* mark;
+
+  //delete all modified/removed marks
+  bool found = false;
+  for (it = m_breakpointMarks.begin(); it != m_breakpointMarks.end(); ++it)
+  {
+    //see if this mark was removed
+    for (mark = marks.first(); mark; mark = marks.next())
+    {
+      //skip if is not a breakpoint mark
+      if(!((*it).type & KTextEditor::MarkInterface::markType02))
+      {
+        continue;
+      }
+
+      if (mark->line == (*it).line)
+      {
+        found = true;
+        break;
+      }
+    }
+
+    //mark doesn't exists anymore, inform everyone
+    if (!found)
+    {
+      emit breakpointUnmarked(this, (*it).line);
+    }
+
+    found = false;
+  }
+
+  //inform everyone about new/modified breakpoints
+  found = false;
+  for (mark = marks.first(); mark; mark = marks.next())
+  {
+    //skip if is not a breakpoint mark
+    if(!(mark->type & KTextEditor::MarkInterface::markType02))
+    {
+      continue;
+    }
+
+    for (it = m_breakpointMarks.begin(); it != m_breakpointMarks.end(); ++it)
+    {
+      if ((*it).line == mark->line)
+      {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found)
+    {
+      emit breakpointMarked(this, mark->line);
+    }
+    found = false;
+  }
+
+  //load the new marks
+  m_breakpointMarks.clear();
+  for (mark = marks.first(); mark; mark = marks.next())
+  {
+    m_breakpointMarks.append(*mark);
   }
 }
 

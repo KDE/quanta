@@ -56,6 +56,7 @@ namespace KTextEditor
   class SelectionInterfaceExt;
   class View;
   class ViewCursorInterface;
+  class Mark;
 }
 
 class Document : public QWidget{
@@ -237,7 +238,11 @@ signals:
   void editorGotFocus();
   void openingFailed(const KURL &url);
   void openingCompleted(const KURL &url);
-  
+
+  void breakpointMarked(Document*, int);
+  void breakpointUnmarked(Document*, int);
+
+
 private slots:
   void slotReplaceChar();
   void slotOpeningCompleted();
@@ -245,6 +250,7 @@ private slots:
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
 
+  void slotMarksChanged();
 private:
 
   QString untitledUrl;
@@ -283,6 +289,8 @@ private:
   //a bug: the box is not showing up if it is called from slotCompletionDone)
   int m_lastLine, m_lastCol;
   QValueList<KTextEditor::CompletionEntry>* m_lastCompletionList;
+
+  QValueList<KTextEditor::Mark> m_breakpointMarks;
 
   /** Get list of possibile variable name completions */
   QValueList<KTextEditor::CompletionEntry>* getGroupCompletions(Node *node, const StructTreeGroup& groupName, int line, int col);

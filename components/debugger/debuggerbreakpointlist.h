@@ -32,11 +32,13 @@ class DebuggerBreakpointList
     ~DebuggerBreakpointList();
 
     void add(DebuggerBreakpoint*);
-    int remove(DebuggerBreakpoint*);
+    void remove(DebuggerBreakpoint*);
     //int remove(QString filePath, int line);
     void clear();
     bool exists(DebuggerBreakpoint*);
     //bool exists(QString filePath, int line);
+
+    DebuggerBreakpoint* retrieve(const QString& filePath, int line);
 
     void rewind();
     DebuggerBreakpoint* next();

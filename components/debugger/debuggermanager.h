@@ -28,6 +28,7 @@ class DebuggerUI;
 class DebuggerVariable;
 class DebuggerBreakpoint;
 class PathMapper;
+class Document;
 
 class DebuggerManager : public QObject
 {
@@ -44,6 +45,10 @@ class DebuggerManager : public QObject
     // Internal help functions
     void initActions();
     void initClientActions();
+
+    void connectBreakpointSignals(Document*);
+    void disconnectBreakpointSignals(Document*);
+
     QString m_currentFile;
     long m_currentLine;
 
@@ -101,6 +106,10 @@ class DebuggerManager : public QObject
 
     // Initiation
     void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
+
+  private slots:
+    void slotBreakpointMarked(Document*, int);
+    void slotBreakpointUnmarked(Document*, int);
 
   signals:
     void hideSplash();

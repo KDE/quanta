@@ -44,9 +44,8 @@ void DebuggerBreakpointList::add(DebuggerBreakpoint* bp)
   m_breakpointList->push_front(bp);
 }
 
-int DebuggerBreakpointList::remove(DebuggerBreakpoint* bp)
+void DebuggerBreakpointList::remove(DebuggerBreakpoint* bp)
 {
-  int count = 0;
   BreakpointList_t::iterator it;
   BreakpointList_t::iterator end = m_breakpointList->end();
 
@@ -67,11 +66,9 @@ int DebuggerBreakpointList::remove(DebuggerBreakpoint* bp)
 
       it = m_breakpointList->remove(it);
       delete tmp;
-      count++;
+      break;
     }
   }
-
-  return count;
 }
 
 /*int DebuggerBreakpointList::remove(QString filePath, int line)
@@ -96,6 +93,22 @@ int DebuggerBreakpointList::remove(DebuggerBreakpoint* bp)
 
   return count;
 }*/
+
+DebuggerBreakpoint* DebuggerBreakpointList::retrieve(const QString& filePath, int line)
+{
+  BreakpointList_t::iterator it;
+  BreakpointList_t::iterator end = m_breakpointList->end();
+
+  for(it = m_breakpointList->begin(); it != end; ++it)
+  {
+    if(((*it)->filePath() == filePath) &&
+        ((*it)->line()    == line))
+    {
+      return (*it);
+    }
+  }
+  return 0;
+}
 
 void DebuggerBreakpointList::clear()
 {

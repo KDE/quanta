@@ -462,6 +462,13 @@ void DebuggerManager::fileOpened(const QString& file)
     }
   }
 
+  //lets keep the eye on toggling bp's through the editor margin
+  ::Document* qdoc = ViewManager::ref()->isOpened(file)->document();
+  if(qdoc)
+  {
+    connectBreakpointSignals(qdoc);
+  }
+
   // Also, if we have a debug-session, let the debugger know...
   if(m_client)
     m_client->fileOpened(file);
@@ -471,7 +478,7 @@ void DebuggerManager::fileOpened(const QString& file)
 void DebuggerManager::refreshBreakpoints()
 {
   // Update bp-list from editors
-  // ...TODO
+  // ...TODO (Is this still needed?)
 
   // Resend bps
   m_breakpointList->rewind();
@@ -537,6 +544,8 @@ void DebuggerManager::setMark(const QString& filename, long line, bool set, int 
     ::Document* qdoc = ViewManager::ref()->isOpened(filename)->document();
     if(qdoc)
     {
+      disconnectBreakpointSignals(qdoc);
+
       KTextEditor::Document* doc = qdoc->doc();
       if(doc)
       {
@@ -549,8 +558,27 @@ void DebuggerManager::setMark(const QString& filename, long line, bool set, int 
             markIf->removeMark(line, mark);
         }
       }
+      connectBreakpointSignals(qdoc);
     }
   }
+}
+
+void DebuggerManager::connectBreakpointSignals(Document* qdoc)
+{
+  connect(qdoc, SIGNAL(breakpointMarked(Document*, int)),
+    this, SLOT(slotBreakpointMarked(Document*, int)));
+
+  connect(qdoc, SIGNAL(breakpointUnmarked(Document*, int)),
+    this, SLOT(slotBreakpointUnmarked(Document*, int)));
+}
+
+void DebuggerManager::disconnectBreakpointSignals(Document* qdoc)
+{
+  disconnect(qdoc, SIGNAL(breakpointMarked(Document*, int)),
+    this, SLOT(slotBreakpointMarked(Document*, int)));
+
+  disconnect(qdoc, SIGNAL(breakpointUnmarked(Document*, int)),
+    this, SLOT(slotBreakpointUnmarked(Document*, int)));
 }
 
 // Show a status message and optionally put it on the log
@@ -611,6 +639,30 @@ void DebuggerManager::clearBreakpoints ()
 DebuggerBreakpoint *DebuggerManager::newDebuggerBreakpoint()
 {
   return new DebuggerBreakpoint();
+}
+
+void DebuggerManager::slotBreakpointMarked(Document* qdoc, int line)
+{
+  DebuggerBreakpoint* br = new DebuggerBreakpoint(qdoc->url().prettyURL(0, KURL::StripFileProtocol), line);
+  m_breakpointList->add(br);
+  if(m_client && m_client->isActive())
+  {
+    m_client->addBreakpoint(br);
+  }
+}
+
+void DebuggerManager::slotBreakpointUnmarked(Document* qdoc, int line)
+{
+  QString filePath = qdoc->url().prettyURL(0, KURL::StripFileProtocol);
+
+  DebuggerBreakpoint* br = m_breakpointList->retrieve(filePath, line);
+
+  if(m_client && m_client->isActive())
+  {
+    m_client->removeBreakpoint(br);
+  }
+
+  m_breakpointList->remove(br);
 }
 
 #include "debuggermanager.moc"
