@@ -279,18 +279,19 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
             s = Project::ref()->projectBaseURL().url();
           args.replace("%projectbase", s);
       }
-      pos = args.find("%userarguments");
-      if (pos != -1)
+      QStringList argsList1 = QStringList::split(' ', args);
+      QStringList argsList;
+      for (uint i = 0; i < argsList1.count(); i++)
       {
-        QString s;
-        /*for (uint i = 0; i <m_argsList.count(); i++)
+        if (argsList1[i] == "%userarguments")
         {
-          s += "\""+m_argsList[i]+"\" ";
-      }*/
-        s = m_argsList.join(" ");
-        args.replace("%userarguments", s);
+          for (uint j = 0; j < m_argsList.count(); j++)
+          {
+            argsList.append(m_argsList[j]);
+          }      
+        } else
+          argsList.append(argsList1[i]);
       }
-      QStringList argsList = QStringList::split(' ', args);
       m_argsList.clear();
       *proc << argsList;
     }
