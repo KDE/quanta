@@ -141,7 +141,6 @@
                         </property>
                         <property name="text">
                             <string>C&amp;aption:</string>
-
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>captionText</cstring>
@@ -244,7 +243,6 @@
                         </property>
                         <property name="text">
                             <string>&amp;Table Properties</string>
-
                         </property>
                     </widget>
                     <widget class="KPushButton" row="1" column="3">
@@ -253,7 +251,6 @@
                         </property>
                         <property name="text">
                             <string>&amp;Body Properties</string>
-
                         </property>
                     </widget>
                 </grid>
@@ -334,7 +331,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Header &amp;rows:</string>
-
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>headerRowSpinBox</cstring>
@@ -403,7 +399,6 @@
                         </property>
                         <property name="text">
                             <string>&amp;Header Properties</string>
-
                         </property>
                     </widget>
                 </grid>
@@ -467,7 +462,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Footer &amp;rows:</string>
-
                                 </property>
                                 <property name="buddy" stdset="0">
                                     <cstring>footerRowSpinBox</cstring>
@@ -553,7 +547,6 @@
                         </property>
                         <property name="text">
                             <string>&amp;Footer properties:</string>
-
                         </property>
                     </widget>
                 </grid>
@@ -583,14 +576,14 @@
     <connection>
         <sender>rowSpinBox</sender>
         <signal>valueChanged(int)</signal>
-        <receiver>tableData</receiver>
-        <slot>setNumRows(int)</slot>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveRow(int)</slot>
     </connection>
     <connection>
         <sender>colSpinBox</sender>
         <signal>valueChanged(int)</signal>
-        <receiver>tableData</receiver>
-        <slot>setNumCols(int)</slot>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveCol(int)</slot>
     </connection>
     <connection>
         <sender>footerCheckBox</sender>
@@ -730,6 +723,12 @@
     <slot>slotEditTableHeader()</slot>
     <slot>slotEditTableFooter()</slot>
     <slot>slotTabChanged( QWidget * w )</slot>
+    <slot>slotInsertRow()</slot>
+    <slot>slotInsertCol()</slot>
+    <slot>slotAddRemoveRow( int num )</slot>
+    <slot>slotAddRemoveCol( int num )</slot>
+    <slot>slotRemoveRow()</slot>
+    <slot>slotRemoveCol()</slot>
 </slots>
 <functions>
     <function>init()</function>

@@ -424,8 +424,8 @@ void QuantaView::slotTagEditTable()
   {
     QString tableString = editor.readModifiedTable();
     w->activateParser(false);
-    w->editIf->removeText(bl, bc, el, ec + 1);
-    w->viewCursorIf->setCursorPositionReal((uint)bl, (uint)bc);
+    w->editIf->removeText(bLine, bCol, eLine, eCol + 1);
+    w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
     w->insertText(tableString, false);
   }
 }

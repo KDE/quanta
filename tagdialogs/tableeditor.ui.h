@@ -42,7 +42,7 @@ void TableEditor::init()
   m_colEditId = m_popup->insertItem(i18n("Edit &Column Properties"), this ,SLOT(slotEditCol()));
   m_popup->insertSeparator();
   m_popup->insertItem(i18n("&Insert Row"), this, SLOT(slotInsertRow()));
-  m_popup->insertItem(i18n("Insert Co&lumn"), this, SLOT(slotInsertColumn()));
+  m_popup->insertItem(i18n("Insert Co&lumn"), this, SLOT(slotInsertCol()));
   m_popup->insertSeparator();
   m_popup->insertItem(i18n("Edit &Table Properties"), this, SLOT(slotEditTable()));
   m_row = m_col = -1;
@@ -427,7 +427,7 @@ QString TableEditor::cellValue( int row, int col )
   if (!m_dataTable || !m_tableTags)
     return QString::null;
  QString str;
- Node *node= (*m_tableTags)[row][col];
+ Node *node = (*m_tableTags)[row][col];
  if (!node)
    return QString::null;
 
@@ -443,8 +443,14 @@ QString TableEditor::tableToString()
     QString tableStr;
     for (int i = 0; i < m_dataTable->numRows(); i++) {
       tableStr += indent(4);
-      Tag *tag = (*m_tableRows)[i]->tag;
-      tableStr += tag->toString();
+      Node *node = (*m_tableRows)[i];
+      Tag *tag = 0L;
+      if (node)
+          tag = node->tag;
+      if (tag)
+        tableStr += tag->toString();
+      else
+        tableStr += QuantaCommon::tagCase("<tr>");
       for (int j = 0; j < m_dataTable->numCols(); j++)  {
         if ((*m_tableTags)[i][j])
         {
@@ -453,7 +459,10 @@ QString TableEditor::tableToString()
         }
       }
       tableStr += indent(4);
-      tableStr += "</" + QuantaCommon::tagCase(tag->name) +">";
+      if (tag)
+        tableStr += "</" + QuantaCommon::tagCase(tag->name) +">";
+      else
+        tableStr += QuantaCommon::tagCase("</tr>");
     }
   return tableStr;
 }
@@ -484,4 +493,87 @@ QString TableEditor::tagContent(Node *node)
   }
  content = m_write->text(bl, bc, el, ec);
  return content;
+}
+
+
+void TableEditor::slotInsertRow()
+{
+  int num = m_dataTable->numRows();
+  if (m_row >= 0)
+     num = m_row;
+  m_dataTable->insertRows(num);
+  QValueList<Node *>::Iterator rowIt = m_tableRows->at(num);
+  if (rowIt != m_tableRows->end())
+    m_tableRows->insert(rowIt, 0L);
+  else
+    m_tableRows->append(0L);
+  QValueList<Node*> tableRowTags;
+  for (int i = 0; i < m_dataTable->numCols(); i++)
+    tableRowTags.append(0L);
+  QValueList<QValueList<Node*> >::Iterator it = m_tableTags->at(num);
+  if (it != m_tableTags->end())
+    m_tableTags->insert(it, tableRowTags);
+  else
+    m_tableTags->append(tableRowTags);
+  rowSpinBox->setValue(num + 1);
+}
+
+
+void TableEditor::slotInsertCol()
+{
+  int num = m_dataTable->numCols();
+  if (m_col >= 0)
+      num = m_col;
+  m_dataTable->insertColumns(num);
+  for (QValueList<QValueList<Node*> >::Iterator it = m_tableTags->begin(); it != m_tableTags->end(); ++it) {
+    (*it).append(0L);
+  }
+
+  colSpinBox->setValue(num + 1);
+}
+
+
+void TableEditor::slotAddRemoveRow( int num )
+{
+  m_row = -1;
+  int numRows = m_dataTable->numRows();
+  if (num > numRows) {
+    for (int i = numRows; i < num; i++) {
+      slotInsertRow();
+    }
+  }
+  else {
+    for (int i = num; i < numRows; i++) {
+      slotRemoveRow();
+    }
+  }
+}
+
+
+void TableEditor::slotAddRemoveCol( int num )
+{
+  m_col = -1;
+  int numCols = m_dataTable->numCols();
+  if (num > numCols) {
+    for (int i = numCols; i < num; i++) {
+      slotInsertCol();
+    }
+  }
+  else {
+    for (int i = num; i < numCols; i++) {
+      slotRemoveCol();
+    }
+  }
+}
+
+
+void TableEditor::slotRemoveRow()
+{
+
+}
+
+
+void TableEditor::slotRemoveCol()
+{
+
 }
