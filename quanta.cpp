@@ -468,7 +468,24 @@ void QuantaApp::slotFileClose()
     part->end();
 
     slotUpdateStatus(m_view->write());
-  }
+  } else {
+    QWidget *kietWidget;
+    kietWidget = m_view->writeTab()->currentPage();
+
+    QDict<QuantaPlugin> plugins = m_pluginInterface->plugins();
+    QDictIterator<QuantaPlugin> it(plugins);
+
+    for(;it.current() != 0;++it) {
+      QuantaKPartPlugin *curPlugin = dynamic_cast <QuantaKPartPlugin *>(it.current());
+      if (curPlugin) {
+        QWidget *pluginWidget = curPlugin->widget();
+        if (pluginWidget && pluginWidget == kietWidget) {
+          curPlugin->unload();
+        }
+      }
+   }
+ }
+
 }
 
 void QuantaApp::slotFileCloseAll()

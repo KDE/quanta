@@ -38,6 +38,7 @@ public:
   QuantaKPartPlugin();
   ~QuantaKPartPlugin();
   void showGui(bool show);
+  QWidget *widget();
   virtual void addWidget();
   virtual void removeWidget();
 public slots:
