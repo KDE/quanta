@@ -79,7 +79,11 @@ void oserrnostr(char *buf, int bufsize, int err) {
 	}
 #else
 	{
-	  strerror_r(err, buf, bufsize);
+#if defined(__NetBSD__)
+   strncpy (buf, strerror (err), bufsize);
+#else
+   strerror_r(err, buf, bufsize);
+#endif
 	}
 #endif
 
