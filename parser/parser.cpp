@@ -329,9 +329,9 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       tag = new Tag();
       tag->setTagPosition(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
       QString tagStr = write->text(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
+      tag->dtd = m_dtd;
       tag->parse(tagStr , write);
       tag->type = Tag::XmlTag;
-      tag->dtd = m_dtd;
       tag->validXMLTag = (openNum == 0);
       tag->single = QuantaCommon::isSingleTag(m_dtd->name, tag->name);
       if (tag->name[0] == '/')
@@ -363,9 +363,9 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           tag->setTagPosition(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
           QString tagStr = write->text(tagStartLine, tagStartPos, tagEndLine, tagEndCol);
           tag->type = Tag::NeedsParsing;
+          tag->dtd = dtds->find(s);
           tag->parse(tagStr, write);
           tag->single = true;
-          tag->dtd = dtds->find(s);
           if (!tag->dtd)
               tag->dtd = m_dtd;  //fallback
           tag->name += " | "+i18n("%1 block").arg(s);

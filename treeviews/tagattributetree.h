@@ -33,31 +33,16 @@ public:
   ~TagAttributeTree();
 
   void newCursorPosition(Node *node);
+  virtual void setCurrentItem( QListViewItem *i );
 
-private slots:
-  void slotItemRenamed(QListViewItem *item);
+public slots:
+  void editorContentChanged();
 
 private:
   Node *m_node;
+  bool rebuildEnabled;
 
 };
-
-
-class TopLevelItem : public KListViewItem
-{
-
-public:
-    TopLevelItem(TagAttributeTree *parent, const QString& title);
-    TopLevelItem(TagAttributeTree *parent, QListViewItem* after, const QString& title);
-
-    virtual ~TopLevelItem();
-
-protected:
-
-    void paintCell( QPainter *p, const QColorGroup &cg,
-                    int column, int width, int align );
-};
-
 
 #endif
 

@@ -89,6 +89,8 @@ void Tag::parseAttr( QString text, int &line, int &col)
    if (text[col] == '=') //an attribute value comes
    {
      attr.name = text.mid(begin, col-begin).stripWhiteSpace();
+     if (dtd && !dtd->caseSensitive)
+        attr.name = attr.name.lower();
      attr.nameLine = line;
      attr.nameCol = begin;
      col++;
@@ -200,20 +202,20 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
   }
 }
 
-QString Tag::attribute(uint index)
+QString Tag::attribute(int index)
 {
   QString attr="";
-  if ( index != -1 && index < attrs.count() )
+  if ( index != -1 && index < (int)attrs.count() )
   {
    attr = attrs[index].name;
   }
   return attr;
 }
 
-QString Tag::attributeValue(uint index)
+QString Tag::attributeValue(int index)
 {
   QString val = "";
-  if ( index != -1 && index < attrs.count() )
+  if ( index != -1 && index < (int)attrs.count() )
   {
     val = attrs[index].value;
   }
@@ -226,7 +228,8 @@ QString Tag::attributeValue(QString attr)
  for (uint i = 0 ; i < attrs.count(); i++)
  {
 
-  if ( attr.upper() == attrs[i].name.upper())
+  if ( attr == attrs[i].name ||
+      (!dtd->caseSensitive && attrs[i].name == attr.lower()))
   {
     val = attrs[i].value;
     break;
@@ -240,7 +243,8 @@ bool Tag::hasAttribute( const QString &attr )
 {
   for (uint i = 0; i < attrs.count(); i++)
   {
-    if ( attrs[i].name.lower() ==  attr.lower()  )
+    if ( attrs[i].name ==  attr ||
+         (!dtd->caseSensitive && attrs[i].name == attr.lower()))
       return true;
   }
   return false;
@@ -261,7 +265,9 @@ int Tag::attributeIndex(QString attr)
   int index = -1;
   uint i = 0;
   do{
-    if (attrs[i].name == attr) index = i;
+    if (attrs[i].name == attr ||
+       (!dtd->caseSensitive && attrs[i].name == attr.lower()))
+       index = i;
     i++;
   } while (index == -1 && i < attrs.count());
   return index;
@@ -331,7 +337,7 @@ void Tag::attributeNamePos(int index, int &line, int &col)
 {
  line = -1;
  col = -1;
- if ( index != -1 && index < attrs.count() )
+ if ( index != -1 && index < (int)attrs.count() )
  {
   line = attrs[index].nameLine;
   col = attrs[index].nameCol;
@@ -342,7 +348,7 @@ void Tag::attributeValuePos(int index, int &line, int &col)
 {
  line = -1;
  col = -1;
- if ( index != -1 && index < attrs.count() )
+ if ( index != -1 && index < (int)attrs.count() )
  {
   line = attrs[index].valueLine;
   col = attrs[index].valueCol;

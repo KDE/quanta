@@ -492,9 +492,10 @@ void QuantaApp::initView()
 
   ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-  KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+//  KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
   dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-  atabdock->manualDock(w, KDockWidget::DockBottom, 70);
+//  atabdock->manualDock(w, KDockWidget::DockBottom, 70);
+  atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
 
   KDockManager *mng = stabdock->dockManager();
   connect(mng, SIGNAL(change()), this, SLOT(slotDockChanged()));

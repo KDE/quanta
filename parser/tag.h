@@ -63,9 +63,9 @@ public:
   /** Parse the p_tagStr in p_write and build up the tag's attributes and values */
   void parse (const QString &p_tagStr, Document *p_write);
   /** Return the attribute at index*/
-  QString attribute(uint index);
+  QString attribute(int index);
   /** Return the attribute value at index*/
-  QString attributeValue(uint index);
+  QString attributeValue(int index);
   /** Return the value of attr*/
   QString attributeValue(QString attr);
   /** Add an attribute */
