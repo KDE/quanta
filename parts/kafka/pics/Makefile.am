@@ -1,2 +1,2 @@
-quantadir = $(kde_datadir)/kafkapart/pics
-quanta_DATA = php.png
+kafkapartpicsdir = $(kde_datadir)/kafkapart/pics
+kafkapartpics_DATA = php.png

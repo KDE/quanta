@@ -859,8 +859,8 @@ bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 				{
 					kdDebug(25001) << "KafkaHTMLPart::eventFilter() Text - " <<
 						keyevent->text() << endl;
-					if(/**keyevent->key() >= Key_Space &&*/ keyevent->key() !=
-						Key_unknown && !readOnly())
+					if(/**keyevent->key() >= Key_Space &&*/ /**keyevent->key() !=
+						Key_unknown && */!readOnly())
 						insertText(keyevent->text(), -1);
 					makeCursorVisible();
 				}

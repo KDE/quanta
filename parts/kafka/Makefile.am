@@ -8,3 +8,6 @@
   libkafkalibrary_la_METASOURCES = AUTO
   libkafkalibrary_la_LDFLAGS = $(all_libraries)
   libkafkalibrary_la_LIBADD = $(LIB_KHTML)
+
+  kafkapartdir = $(kde_datadir)/kafkapart
+  kafkapart_DATA = entities

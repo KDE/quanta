@@ -22,6 +22,7 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <ktexteditor/editinterface.h>
+#include <kstandarddirs.h>
 //#include <kglobal.h>
 //#include <kcharsets.h>
 
@@ -59,7 +60,9 @@ WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 	mainEnhancer =  new HTMLEnhancer(this);
 	domNodeProps.setAutoDelete(false);
 
-	QFile file( locate("appdata","chars") );
+	KStandardDirs *m_stddirs = new KStandardDirs();
+	QFile file( m_stddirs->findResource("data", "kafkapart/entities" )/**locate("appdata","chars") */);
+	delete m_stddirs;
 	QString tmp;
 	if ( file.open(IO_ReadOnly) )
 	{
@@ -67,8 +70,9 @@ WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 		while ( !t.eof() )
 		{
 			tmp = t.readLine();
+			if(tmp.left(2) == "//") continue;//comments
 			int begin = tmp.find("(") + 1;
-			if(begin == (-1 + 1)) break;//"(" not found : invalid line
+			if(begin == (-1 + 1)) continue;//"(" not found : invalid line
 			int length = tmp.find(")") - begin;
 			decodedChars.insert(tmp.left(1), tmp.mid(begin, length));
 			encodedChars.insert(tmp.mid(begin, length), tmp.left(1));

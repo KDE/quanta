@@ -1362,13 +1362,11 @@ void undoRedo::reloadQuantaEditor(bool force)
 	bCol = 0;
 	while(_node)
 	{
-		kdDebug(25001)<< "NODE" << endl;
 		if(!_node->tag->cleanStrBuilt)
 		{
 			_node->tag->setStr(kafkaInterface->generateCodeFromNode(_node, bLine, bCol, eLine, eCol));
 			_node->tag->setTagPosition(bLine, bCol, eLine, eCol);
 			_node->tag->cleanStrBuilt = true;
-			kdDebug(25001)<< "NODE FLASLE : " << _node->tag->tagStr() << endl;
 			if(_node->nextSibling())
 			{
 				text = _node->tag->tagStr();
