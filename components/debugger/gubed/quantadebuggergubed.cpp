@@ -17,21 +17,25 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
+#include <qlineedit.h>
+#include <kdeversion.h>
 
 #include "debuggerclient.h"
 #include "quantadebuggergubed.h"
 #include "debuggerinterface.h"
 #include "debuggerbreakpoint.h"
+#include "gubedsettings.h" 
+#include "debuggervariable.h"
+#include "variableslistview.h"
 
-
-K_EXPORT_COMPONENT_FACTORY( libquantadebuggergubed,
+K_EXPORT_COMPONENT_FACTORY( quantadebuggergubed,
                             KGenericFactory<QuantaDebuggerGubed>("quantadebuggergubed"))
 
 QuantaDebuggerGubed::QuantaDebuggerGubed (QObject *parent, const char* name, const QStringList&)
    : DebuggerClient (parent, name)
 {
   // Create a socket object and set up its signals
-  m_socket = new QSocket();
+  m_socket = new QSocket(this);
   connect(m_socket, SIGNAL(error(int)), this, SLOT(slotError(int)));
   connect(m_socket, SIGNAL(connected()), this, SLOT(slotConnected()));
   connect(m_socket, SIGNAL(connectionClosed()), this, SLOT(slotConnectionClosed()));
@@ -39,30 +43,36 @@ QuantaDebuggerGubed::QuantaDebuggerGubed (QObject *parent, const char* name, con
 
 }
 
+QuantaDebuggerGubed::~QuantaDebuggerGubed ()
+{
+  if(m_socket)
+    delete m_socket;
+}
+
 // Try to make a connection to the gubed server
-bool QuantaDebuggerGubed::startSession() 
+void QuantaDebuggerGubed::startSession() 
 {
   QString host;
   Q_UINT16 port;
   
   // Get host from project settings
-  host = debuggerInterface()->debugServerHost();
+  host = serverHost;
   if(host.isEmpty())
     host = "localhost"; // Default to localhost
     
   // Get port from project settings
-  port = debuggerInterface()->debugServerPort().toUInt();
-  port = 0;
+  port = serverPort.toUInt();
   if(port <= 0)
     port = 8026;  // Deault if not specified
-    
+
+  debuggerInterface()->enableAction("debug_connect", true);    
   m_socket->connectToHost(host, port);
-  
-  return true;
+  //kdDebug(24000) << "QuantaDebuggerGubed::startSession " << host << ", " << port << endl;
+
 }
 
 
-bool QuantaDebuggerGubed::endSession() 
+void QuantaDebuggerGubed::endSession() 
 {
   // Close the socket
   m_socket->close();
@@ -70,22 +80,29 @@ bool QuantaDebuggerGubed::endSession()
   // Fake a connection closed signal
   slotConnectionClosed();
   
-  return true;
 }
 
 // Return capabilities of gubed
-const uint QuantaDebuggerGubed::getCapabilities()
+const uint QuantaDebuggerGubed::supports(DebuggerClient::Capabilities cap)
 {
-   return CapBreakpoints
-        + CapWatches
-        + CapStepInto
-        + CapSkip
-        + CapPause
-        + CapKill
-        + CapRun
-        + CapRunDisplay
-        + CapConnect
-        ;
+  switch(cap)
+  {
+    case DebuggerClient::LineBreakpoints:
+    case DebuggerClient::StartSession:
+    case DebuggerClient::EndSession:
+    case DebuggerClient::Kill:
+    case DebuggerClient::Pause:
+    case DebuggerClient::Run:
+    case DebuggerClient::RunDisplay:
+    case DebuggerClient::Skip:
+    case DebuggerClient::StepInto:
+    case DebuggerClient::Watches:
+      return true;
+      
+    default: 
+      return false;
+  }
+  
 }
 
 // Socket errors
@@ -145,7 +162,7 @@ void QuantaDebuggerGubed::slotReadyRead()
 
     // New current line
     else if(m_command == "setactiveline")
-      debuggerInterface()->setActiveLine(data.left(data.find(':')), data.mid(data.find(':') + 1).toLong());
+      debuggerInterface()->setActiveLine(mapServerPathToLocal(data.left(data.find(':'))), data.mid(data.find(':') + 1).toLong());
 
     // A debugging session is running 
     else if(m_command == "debuggingon")
@@ -177,14 +194,18 @@ void QuantaDebuggerGubed::slotReadyRead()
     // There is a breakpoint set in this file/line
     else if(m_command == "breakpoint")
     {
-      debuggerInterface()->haveBreakpoint(data.left(data.find(':')), data.mid(data.find(':') + 1).toLong());
+      debuggerInterface()->haveBreakpoint(mapServerPathToLocal(data.left(data.find(':'))), data.mid(data.find(':') + 1).toLong());
     }
     // We're about to debug a file..
     else if(m_command == "initialize")
     {
-      debuggerInterface()->setActiveLine(data.left(data.find(':')), 0);
+      debuggerInterface()->setActiveLine(mapServerPathToLocal(data.left(data.find(':'))), 0);
       sendCommand("havesource", "");
       debuggingState(true);
+    }
+    else if(m_command == "watch")
+    {
+      showWatch(data);
     }
     else
       // Unimplemented command - log to debug output
@@ -200,9 +221,7 @@ void QuantaDebuggerGubed::slotReadyRead()
 void QuantaDebuggerGubed::debuggingState(bool enable)
 {
   debuggerInterface()->enableAction("debug_kill", enable);
-  debuggerInterface()->enableAction("debug_stepover", enable);
   debuggerInterface()->enableAction("debug_stepinto", enable);
-  debuggerInterface()->enableAction("debug_stepout", enable);
   debuggerInterface()->enableAction("debug_skip", enable);
 }
 
@@ -225,70 +244,172 @@ bool QuantaDebuggerGubed::sendCommand(QString command, QString data)
 
 // Return name of debugger
 QString QuantaDebuggerGubed::getName() {
-   return i18n("Gubed");      // i18n ??
+   return "Gubed";      // no i18n on the name
+}
+
+void QuantaDebuggerGubed::showWatch(QString data)
+{
+  debuggerInterface()->parsePHPVariables(data);
+  //DebuggerVariable *var = debuggerInterface()->newDebuggerVariable("test", "testvalue", DebuggerVariableTypes::Scalar);
+  //debuggerInterface()->addVariable(var);
 }
 
 // Run boy, run (and show whats happening)
-bool QuantaDebuggerGubed::run()
+void QuantaDebuggerGubed::run()
 {
    sendCommand("rundisplay", "");
-   return true;
 }
 
 // Go as fast as possible and dont update current line or watches
-bool QuantaDebuggerGubed::leap()
+void QuantaDebuggerGubed::leap()
 {
    sendCommand("runnodisplay", "");
-   return true;
 }
 
 // Step into function
-bool QuantaDebuggerGubed::stepInto()
+void QuantaDebuggerGubed::stepInto()
 {
    sendCommand("next", "");
-   return true;
 }
 
 // Skip next function
-bool QuantaDebuggerGubed::skip()
+void QuantaDebuggerGubed::skip()
 {
    sendCommand("skip", "");
-   return true;
 }
 
 // Kill the running script
-bool QuantaDebuggerGubed::kill()
+void QuantaDebuggerGubed::kill()
 {
    sendCommand("kill", "");
-   return true;
 }
 
 // Pause execution
-bool QuantaDebuggerGubed::pause()
+void QuantaDebuggerGubed::pause()
 {
    sendCommand("pause", "");
-   return true;
 }
 
 
 // Add a breakpoint
-bool QuantaDebuggerGubed::addBreakpoint (DebuggerBreakpoint* breakpoint)
+void QuantaDebuggerGubed::addBreakpoint (DebuggerBreakpoint* breakpoint)
 {
-  sendCommand("breakpoint", breakpoint->filePath() + ":" + QString::number(breakpoint->line()));
-  return true;
+  sendCommand("breakpoint", mapLocalPathToServer(breakpoint->filePath()) + ":" + QString::number(breakpoint->line()));
 }
  
 // Clear a breakpoint 
-bool QuantaDebuggerGubed::removeBreakpoint(DebuggerBreakpoint* breakpoint)
+void QuantaDebuggerGubed::removeBreakpoint(DebuggerBreakpoint* breakpoint)
 {
-  sendCommand("clearpoint", breakpoint->filePath() + ":" + QString::number(breakpoint->line()));
-  return true;
+  sendCommand("clearpoint", mapLocalPathToServer(breakpoint->filePath()) + ":" + QString::number(breakpoint->line()));
 }
 
 // A file was opened...
-void QuantaDebuggerGubed::fileOpened(QString file)
+void QuantaDebuggerGubed::fileOpened(QString)
 {
   sendCommand("reinitialize", "");
+}
+
+// Read configuration
+void QuantaDebuggerGubed::readConfig(QDomNode node)
+{
+  // Server
+  QDomNode valuenode = node.namedItem("serverhost");
+  serverHost = valuenode.firstChild().nodeValue(); 
+  
+  valuenode = node.namedItem("serverport");
+  serverPort = valuenode.firstChild().nodeValue(); 
+  
+  valuenode = node.namedItem("localbasedir");
+  localBasedir = valuenode.firstChild().nodeValue(); 
+  
+  valuenode = node.namedItem("serverbasedir");
+  serverBasedir = valuenode.firstChild().nodeValue(); 
+  
+
+}
+
+
+// Show configuration
+void QuantaDebuggerGubed::showConfig(QDomNode node)
+{
+  GubedSettings set;
+  
+  readConfig(node);
+  set.lineServerHost->setText(serverHost);
+  set.lineServerPort->setText(serverPort);
+  set.lineLocalBasedir->setText(localBasedir);
+  set.lineServerBasedir->setText(serverBasedir);
+  
+  if(set.exec() == QDialog::Accepted )
+  {
+    QDomElement el;
+    
+    el = node.namedItem("serverhost").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = node.ownerDocument().createElement("serverhost");
+    node.appendChild( el );
+    serverHost = set.lineServerHost->text();
+    el.appendChild(node.ownerDocument().createTextNode(serverHost));
+    
+    el = node.namedItem("serverport").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = node.ownerDocument().createElement("serverport");
+    node.appendChild( el );
+    serverPort = set.lineServerPort->text();
+    el.appendChild( node.ownerDocument().createTextNode(serverPort) );
+    
+    el = node.namedItem("localbasedir").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = node.ownerDocument().createElement("localbasedir");
+    node.appendChild( el );
+    localBasedir = set.lineLocalBasedir->text();
+    el.appendChild( node.ownerDocument().createTextNode(localBasedir) );
+    
+    el = node.namedItem("serverbasedir").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = node.ownerDocument().createElement("serverbasedir");
+    node.appendChild( el );
+    serverBasedir = set.lineServerBasedir->text();
+    el.appendChild( node.ownerDocument().createTextNode(serverBasedir) );
+    
+  }
+}
+
+
+// Map a server filepath to a local one using project settings
+QString QuantaDebuggerGubed::mapServerPathToLocal(QString serverpath)
+{
+#if KDE_IS_VERSION(3,2,0)   
+   // Translate filename from server to local
+   if(serverpath.startsWith(serverBasedir, false))
+      serverpath.remove(0, serverBasedir.length());
+#else
+   QString lPath = serverpath.lower();
+   QString lBaseDir = serverBasedir.lower();
+   if(lPath.startsWith(lBaseDir))
+      serverpath.remove(0, serverBasedir.length());
+#endif
+
+   return localBasedir + serverpath;
+}
+
+// Map a local filepath to a server one using project settings
+QString QuantaDebuggerGubed::mapLocalPathToServer(QString localpath)
+{
+#if KDE_IS_VERSION(3,2,0)   
+    if(localpath.startsWith(localBasedir, false))
+       localpath.remove(0, localBasedir.length());
+#else
+   QString lPath = localpath.lower();
+   QString lBaseDir = localBasedir.lower();
+   if(lPath.startsWith(lBaseDir))
+      localpath.remove(0, localBasedir.length());
+#endif
+   return serverBasedir + localpath;
 }
 
 #include "quantadebuggergubed.moc"

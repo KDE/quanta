@@ -22,6 +22,8 @@
 #include <qstring.h>
 #include <kurl.h>
 
+#include "debuggervariable.h"
+
 class DebuggerInterface : public QObject {
   Q_OBJECT
 
@@ -40,9 +42,10 @@ class DebuggerInterface : public QObject {
   
     virtual void enableAction(QString action, bool enable) = 0;
     virtual void fileOpened(QString file) = 0;
-  
-    virtual QString debugServerHost() = 0;
-    virtual QString debugServerPort() = 0;
+
+    virtual DebuggerVariable* newDebuggerVariable(const QString& name, const QString& value, int type) = 0;  
+    virtual void addVariable(DebuggerVariable*) = 0;
+    virtual void parsePHPVariables(const QString &) = 0;
 };
 
 #endif

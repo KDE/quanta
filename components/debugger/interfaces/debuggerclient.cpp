@@ -19,6 +19,8 @@
 #include "debuggerinterface.h"
 #include <kdebug.h>
 #include <klocale.h>
+#include <kmessagebox.h>
+
 
 // CTor
 DebuggerClient::DebuggerClient(QObject *parent, const char* name) 
@@ -27,10 +29,6 @@ DebuggerClient::DebuggerClient(QObject *parent, const char* name)
   m_active = false;
 }
 
-// DTor
-DebuggerClient::~DebuggerClient() 
-{
-}
 
 DebuggerInterface* DebuggerClient::debuggerInterface() 
 {
@@ -44,66 +42,83 @@ bool DebuggerClient::isActive()
 }
 
 // Unimplemented defaults - Pause execution
-bool DebuggerClient::pause()
+void DebuggerClient::pause()
 {
-   return false;
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Pause")), i18n("Unsupported debugger function"));
+
 }
 
 // Unimplemented defaults - step over
-bool DebuggerClient::stepOver()
+void DebuggerClient::stepOver()
 {
-   return false;
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Over")), i18n("Unsupported debugger function"));
+
 }
 
 // Unimplemented defaults - step out
-bool DebuggerClient::stepOut()
+void DebuggerClient::stepOut()
 {
-   return false;
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Out")), i18n("Unsupported debugger function"));
+
 }
 
 // Unimplemented defaults - run
-bool DebuggerClient::run()
+void DebuggerClient::run()
 {
-   return false;
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Run")), i18n("Unsupported debugger function"));
 }
 // Unimplemented defaults - leap
-bool DebuggerClient::leap()
+void DebuggerClient::leap()
 {
-   return false;
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Leap")), i18n("Unsupported debugger function"));
 }
 // Unimplemented defaults - skip
-bool DebuggerClient::skip()
+void DebuggerClient::skip()
 {
-   return false;
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Skip")), i18n("Unsupported debugger function"));
 }
 // Unimplemented defaults - stepInto
-bool DebuggerClient::stepInto()
+void DebuggerClient::stepInto()
 {
-   return false;
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Into")), i18n("Unsupported debugger function"));
 }
 // Unimplemented defaults - kill
-bool DebuggerClient::kill()
+void DebuggerClient::kill()
 {
-   return false;
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Kill")), i18n("Unsupported debugger function"));
+
 }
 
 // Unimplemented defaults
-void DebuggerClient::fileOpened(QString file)
+void DebuggerClient::fileOpened(QString)
 {
    return;
 }
 
 // Unimplemented defaults
-bool DebuggerClient::addBreakpoint(DebuggerBreakpoint* breakpoint)
+void DebuggerClient::addBreakpoint(DebuggerBreakpoint*)
 {
-   return false;
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Set Breakpoint")), i18n("Unsupported debugger function"));
+
 } 
 
 // Unimplemented defaults
-bool DebuggerClient::removeBreakpoint(DebuggerBreakpoint* breakpoint)
+void DebuggerClient::removeBreakpoint(DebuggerBreakpoint*)
 {
-   return false;
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Remove Breakpoint")), i18n("Unsupported debugger function"));
 }
 
+
+// Unimplemented defaults
+void DebuggerClient::showConfig(QDomNode)
+{
+   KMessageBox::error(NULL, i18n("%1 does not have any specific settings.").arg(this->getName()), i18n("Settings"));
+}
+
+// Unimplemented defaults
+void DebuggerClient::readConfig(QDomNode)
+{
+   
+}
 
 

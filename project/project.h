@@ -138,7 +138,11 @@ public slots:
   /** Deletes a project view */
   void slotDeleteProjectView();
   void slotFileDescChanged(const KURL& url, const QString& desc);
-
+  
+  /** Debugger options */
+  void slotDebuggerOptions();
+  void slotDebuggerChanged(const QString &debugger);
+  
 signals:
 
   void openFile( const KURL&, const QString& );
@@ -170,10 +174,7 @@ public:
   KURL templateURL;
   KURL toolbarURL;
 
-  QString debugServerBasedir;
-  QString debugLocalBasedir;
-  QString debugServerHost;
-  QString debugServerPort;
+  QString debuggerClient;
 
   KURL previewPrefix;
   bool usePreviewPrefix;
@@ -224,7 +225,9 @@ private:
   QBuffer buff;
   QRegExp excludeRx;
   QStringList excludeList;
-
+  
+  QString m_debuggerClientEdit;
+  
   KAction
     *closeprjAction, *insertFileAction, *insertDirAction,
     *uploadProjectAction,  *rescanPrjDirAction,

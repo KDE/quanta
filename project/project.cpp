@@ -67,6 +67,7 @@
 #include <kstringhandler.h>
 #include <kdeversion.h>
 #include <kmainwindow.h>
+#include <kparts/componentfactory.h>
 
 #if KDE_IS_VERSION(3, 1, 90)
 #include <kinputdialog.h>
@@ -93,6 +94,7 @@
 #include "quantacommon.h"
 #include "quanta.h" //TODO: should get rid of it
 #include "dtds.h"
+#include "debuggerclient.h"
 
 #include "viewmanager.h"
 
@@ -701,14 +703,8 @@ void Project::loadProjectXML()
   currentProjectView = no.toElement().attribute("projectview");
 
   // Debugger
-  no = projectNode.namedItem("debugserverbasedir");
-  debugServerBasedir = no.firstChild().nodeValue();
-  no = projectNode.namedItem("debuglocalbasedir");
-  debugLocalBasedir = no.firstChild().nodeValue();
-  no = projectNode.namedItem("debugserverhost");
-  debugServerHost = no.firstChild().nodeValue();
-  no = projectNode.namedItem("debugserverport");
-  debugServerPort = no.firstChild().nodeValue();
+  no = projectNode.namedItem("debuggerclient");
+  debuggerClient = no.firstChild().nodeValue();
 
   no = projectNode.namedItem("templates");
   tmpString = no.firstChild().nodeValue();
@@ -1357,12 +1353,29 @@ void Project::slotOptions()
   optionsPage.lineAuthor->setText( author );
   optionsPage.lineEmail->setText( email );
 
-  // Debugger
-  optionsPage.lineDebugServerBasedir->setText(debugServerBasedir);
-  optionsPage.lineDebugLocalBasedir->setText(debugLocalBasedir);
-  optionsPage.lineDebugServerHost->setText(debugServerHost);
-  optionsPage.lineDebugServerPort->setText(debugServerPort);
+  // Signals to handle debugger settings
+  connect(optionsPage.buttonDebuggerOptions, SIGNAL(clicked()),
+          this, SLOT(slotDebuggerOptions()));
+  connect(optionsPage.comboDebuggerClient, SIGNAL(activated(const QString &)),
+          this, SLOT(slotDebuggerChanged(const QString &)));
 
+  
+  // Debuggers Combo
+  KTrader::OfferList offers = KTrader::self()->query("Quanta/Debugger");
+  KTrader::OfferList::ConstIterator iterDbg;
+  optionsPage.comboDebuggerClient->clear();
+  optionsPage.comboDebuggerClient->insertItem(i18n("No debugger"));
+  int idxDbg = 0;
+  m_debuggerClientEdit = debuggerClient;
+  for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg) 
+  {
+    KService::Ptr service = *iterDbg;
+    optionsPage.comboDebuggerClient->insertItem(service->name());
+    idxDbg++;
+    if(debuggerClient == service->name())
+      optionsPage.comboDebuggerClient->setCurrentItem(idxDbg);
+  }
+  
   QDomElement uploadEl = dom.firstChild().firstChild().namedItem("upload").toElement();
 
   optionsPage.lineHost->setText(uploadEl.attribute("remote_host",""));
@@ -1474,10 +1487,7 @@ void Project::slotOptions()
     email      = optionsPage.lineEmail  ->text();
 
     // Debugger
-    debugServerBasedir = optionsPage.lineDebugServerBasedir->text();
-    debugLocalBasedir = optionsPage.lineDebugLocalBasedir->text();
-    debugServerHost = optionsPage.lineDebugServerHost->text();
-    debugServerPort = optionsPage.lineDebugServerPort->text();
+    debuggerClient = optionsPage.comboDebuggerClient->currentText();
 
     m_defaultDTD = DTDs::ref()->getDTDNameFromNickName(optionsPage.dtdCombo->currentText()).lower();
     m_defaultEncoding  = optionsPage.encodingCombo->currentText();
@@ -1525,33 +1535,12 @@ void Project::slotOptions()
     el.appendChild( dom.createTextNode( email ) );
 
     // Debugger
-    el = dom.firstChild().firstChild().namedItem("debugserverbasedir").toElement();
+    el = dom.firstChild().firstChild().namedItem("debuggerclient").toElement();
     if (!el.isNull())
        el.parentNode().removeChild(el);
-    el = dom.createElement("debugserverbasedir");
+    el = dom.createElement("debuggerclient");
     dom.firstChild().firstChild().appendChild( el );
-    el.appendChild( dom.createTextNode( debugServerBasedir ) );
-
-    el = dom.firstChild().firstChild().namedItem("debuglocalbasedir").toElement();
-    if (!el.isNull())
-       el.parentNode().removeChild(el);
-    el = dom.createElement("debuglocalbasedir");
-    dom.firstChild().firstChild().appendChild( el );
-    el.appendChild( dom.createTextNode( debugLocalBasedir ) );
-
-    el = dom.firstChild().firstChild().namedItem("debugserverhost").toElement();
-    if (!el.isNull())
-       el.parentNode().removeChild(el);
-    el = dom.createElement("debugserverhost");
-    dom.firstChild().firstChild().appendChild( el );
-    el.appendChild( dom.createTextNode( debugServerHost ) );
-
-    el = dom.firstChild().firstChild().namedItem("debugserverport").toElement();
-    if (!el.isNull())
-       el.parentNode().removeChild(el);
-    el = dom.createElement("debugserverport");
-    dom.firstChild().firstChild().appendChild( el );
-    el.appendChild( dom.createTextNode( debugServerPort ) );
+    el.appendChild( dom.createTextNode( debuggerClient ) );
 
 
     excludeStr = optionsPage.lineExclude->text();
@@ -1673,6 +1662,51 @@ void Project::slotOptions()
     emit reloadTree( m_projectFiles, false );
     emit newStatus();
   }
+}
+
+void Project::slotDebuggerOptions() 
+{
+  // Debuggers Combo
+  KTrader::OfferList offers = KTrader::self()->query("Quanta/Debugger");
+  KTrader::OfferList::ConstIterator iterDbg;
+  for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg) 
+  {
+    KService::Ptr service = *iterDbg;
+    if(m_debuggerClientEdit == service->name())
+    {
+      int errCode = 0;
+      DebuggerClient::DebuggerClient* dbg = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode); 
+      if(dbg) 
+      {
+        QDomNode projectNode = dom.firstChild().firstChild();
+        QDomNode nodeThisDbg;
+        QDomNode nodeDbg  = projectNode.namedItem("debuggers");
+        if(nodeDbg.isNull()) 
+        {
+          nodeDbg = dom.createElement("debuggers");
+          projectNode.appendChild(nodeDbg);
+        }
+        
+        nodeThisDbg = nodeDbg.namedItem(service->name());
+        if(nodeThisDbg.isNull())
+        {
+          nodeThisDbg = dom.createElement(service->name());
+          nodeDbg.appendChild(nodeThisDbg);
+        }
+        dbg->showConfig(nodeThisDbg);
+        delete dbg;
+      }
+      else 
+      {
+        KMessageBox::error(NULL, i18n("<qt>Unable to load the debugger plugin, error code %1 was returned: <b>%2</b>.</qt>").arg(errCode).arg(KLibLoader::self()->lastErrorMessage()), i18n("Debugger Error"));
+      }
+    }
+  }
+}
+
+void Project::slotDebuggerChanged(const QString &debugger) 
+{
+  m_debuggerClientEdit = debugger;
 }
 
 void Project::slotUpload()

@@ -24,6 +24,7 @@
 class DebuggerClient;
 class QuantaDebuggerInterface; 
 class DebuggerBreakpointList; 
+class DebuggerUI;
 
 class DebuggerManager : public QObject {
   Q_OBJECT 
@@ -33,19 +34,21 @@ class DebuggerManager : public QObject {
     DebuggerClient *m_client;
     QuantaDebuggerInterface * m_interface;
     DebuggerBreakpointList *m_breakpointList;
+    DebuggerUI * m_debuggerui;
     
     // Internal help functions
     void setMark(QString, long, bool, int);
     void initActions();
     void initClientActions();
-    QString mapServerPathToLocal(QString serverpath);
-    QString mapLocalPathToServer(QString localpath);
     QString m_currentFile;
     long m_currentLine;
     
   public:
     DebuggerManager(QObject *myparent);
     ~DebuggerManager();
+    
+    // Access to memebers
+    DebuggerUI * UI() { return m_debuggerui; };
     
     // Breakpoints
     void haveBreakpoint (QString file, int line);
@@ -75,6 +78,9 @@ class DebuggerManager : public QObject {
     // Connection related slots
     void slotDebugStartSession();
     void slotDebugEndSession();  
+    
+    // Initiation
+    void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
 };
 
 #endif

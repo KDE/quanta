@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
 <class>ProjectOptions</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>723</width>
-            <height>665</height>
+            <width>748</width>
+            <height>864</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -102,7 +102,7 @@
                 <cstring>GroupBox5</cstring>
             </property>
             <property name="title">
-                <string>Project Defaults</string>
+                <string>Pro&amp;ject Defaults</string>
             </property>
             <grid>
                 <property name="name">
@@ -260,7 +260,7 @@
                 <cstring>GroupBox5_2</cstring>
             </property>
             <property name="title">
-                <string>Project Upload</string>
+                <string>Proje&amp;ct Upload</string>
             </property>
             <grid>
                 <property name="name">
@@ -341,7 +341,10 @@
                         <cstring>keepPasswd</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Store password on disc</string>
+                        <string>Store p&amp;assword on disc</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+A</string>
                     </property>
                     <property name="toolTip" stdset="0">
                         <string>Keep the password in a file. DANGEROUS!</string>
@@ -370,6 +373,16 @@ is obscured, saving the password in any file is a security risk. Use this option
                 <string>Email:</string>
             </property>
         </widget>
+        <widget class="QLayoutWidget" row="12" column="0">
+            <property name="name">
+                <cstring>layout4</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+            </hbox>
+        </widget>
         <spacer row="11" column="1">
             <property name="name">
                 <cstring>spacer2</cstring>
@@ -383,10 +396,26 @@ is obscured, saving the password in any file is a security risk. Use this option
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>70</height>
+                    <height>40</height>
                 </size>
             </property>
         </spacer>
+        <widget class="QLineEdit" row="10" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>linePrefix</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
         <widget class="QLabel" row="10" column="0">
             <property name="name">
                 <cstring>TextLabel1_4</cstring>
@@ -411,36 +440,10 @@ is obscured, saving the password in any file is a security risk. Use this option
                 </sizepolicy>
             </property>
             <property name="text">
-                <string>Use preview &amp;prefix</string>
+                <string>&amp;Use preview prefix</string>
             </property>
             <property name="accel">
-                <string>Alt+P</string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget" row="12" column="0">
-            <property name="name">
-                <cstring>layout4</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-            </hbox>
-        </widget>
-        <widget class="QLineEdit" row="10" column="1" rowspan="1" colspan="3">
-            <property name="name">
-                <cstring>linePrefix</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
+                <string>Alt+U</string>
             </property>
         </widget>
         <widget class="QGroupBox" row="8" column="0" rowspan="1" colspan="4">
@@ -454,99 +457,55 @@ is obscured, saving the password in any file is a security risk. Use this option
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QPushButton" row="0" column="2">
                     <property name="name">
-                        <cstring>lblDebuggerLocalBasedir</cstring>
+                        <cstring>buttonDebuggerOptions</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>5</vsizetype>
+                            <hsizetype>4</hsizetype>
+                            <vsizetype>0</vsizetype>
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>Local Basedir:</string>
+                        <string>Optio&amp;ns</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+N</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
+                <widget class="QComboBox" row="0" column="1">
                     <property name="name">
-                        <cstring>lblDebuggerServerBasedir</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>Server Basedir:</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>lineDebugServerBasedir</cstring>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>lineDebugLocalBasedir</cstring>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="2" column="1">
-                    <property name="name">
-                        <cstring>lineDebugServerHost</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>lblDebuggerServerHost</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>Server Host:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="2">
-                    <property name="name">
-                        <cstring>lblDebuggerServerPort</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>Server Port:</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="2" column="3">
-                    <property name="name">
-                        <cstring>lineDebugServerPort</cstring>
+                        <cstring>comboDebuggerClient</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>5</hsizetype>
                             <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
+                            <horstretch>4</horstretch>
                             <verstretch>0</verstretch>
                         </sizepolicy>
+                    </property>
+                    <property name="autoCompletion">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>lblDebugger</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Debugger:</string>
                     </property>
                 </widget>
             </grid>
@@ -604,6 +563,8 @@ is obscured, saving the password in any file is a security risk. Use this option
     <tabstop>linePasswd</tabstop>
     <tabstop>keepPasswd</tabstop>
     <tabstop>linePath</tabstop>
+    <tabstop>comboDebuggerClient</tabstop>
+    <tabstop>buttonDebuggerOptions</tabstop>
     <tabstop>checkPrefix</tabstop>
     <tabstop>linePrefix</tabstop>
 </tabstops>

@@ -21,22 +21,7 @@
 #include <qserversocket.h>
 #include <qobject.h>
 #include <kurl.h>
-
-const uint CapBreakpoints=1;
-const uint CapWatches=2;
-const uint CapBacktraces=4;
-const uint CapStepInto=16;
-const uint CapStepOver=32;
-const uint CapSkip=64;
-const uint CapPause=128;
-const uint CapKill=256;
-const uint CapRun=512;
-const uint CapRunDisplay=1024;
-const uint CapConditionalBreaks=2048;
-const uint CapStepOut=4096;
-const uint CapClearAllBreakpoints=8192;
-const uint CapConnect=8192*2;
-
+#include <qdom.h>
 
 class DebuggerInterface;
 class DebuggerBreakpoint;
@@ -46,32 +31,57 @@ class DebuggerClient : public QObject
   private:
   protected:
     DebuggerClient(QObject *parent, const char* name);
-    ~DebuggerClient();
-    
+
     bool m_active;
     
   public:
-  
-    virtual const uint getCapabilities() = 0;
-    virtual bool startSession() = 0;
-    virtual bool endSession() = 0;
+     enum Capabilities {
+      StartSession = 1000,
+      EndSession,
+      LineBreakpoints = 2000,
+      ConditionalBreakpoints,
+      ClearAllBreakpoints,
+      
+      Watches = 4000,
+      
+      Run = 5000,
+      RunDisplay,
+      Pause,
+      Kill,
+      StepInto,
+      StepOver,
+      StepOut,
+      Skip
+    };
+     
+    virtual const uint supports(DebuggerClient::Capabilities) = 0;
+    virtual void startSession() = 0;
+    virtual void endSession() = 0;
     virtual QString getName() = 0;
     
-    virtual bool run();
-    virtual bool leap();
-    virtual bool skip();
-    virtual bool stepOver();
-    virtual bool stepInto();
-    virtual bool stepOut();
-    virtual bool kill();
-    virtual bool pause();
+    // Execution control
+    virtual void run();
+    virtual void leap();
+    virtual void skip();
+    virtual void stepOver();
+    virtual void stepInto();
+    virtual void stepOut();
+    virtual void kill();
+    virtual void pause();
 
+    // Settings
+    virtual void readConfig(QDomNode node);
+    virtual void showConfig(QDomNode node);
+    
+    // Misc
     virtual void fileOpened(QString file);
-    virtual bool addBreakpoint(DebuggerBreakpoint* breakpoint);
-    virtual bool removeBreakpoint(DebuggerBreakpoint* breakpoint);
+    virtual void addBreakpoint(DebuggerBreakpoint* breakpoint);
+    virtual void removeBreakpoint(DebuggerBreakpoint* breakpoint);
 
     bool isActive();    
     DebuggerInterface *debuggerInterface();
+
+
 };
 
 #endif

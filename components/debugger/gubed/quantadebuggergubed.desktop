@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Gubed
-Comment=
+Comment=Quanta debugger plugin to interact with the Gubed PHP debugger, see http://gubed.sf.net
 Icon=kdbg
 ServiceTypes=Quanta/Debugger
 X-KDE-Library=quantadebuggergubed

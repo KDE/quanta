@@ -37,6 +37,7 @@
 #include "messageoutput.h"
 #include "viewmanager.h"
 #include "quantaview.h"
+#include "debuggerui.h"
 
 
 DebuggerManager::DebuggerManager(QObject *myparent) 
@@ -46,15 +47,73 @@ DebuggerManager::DebuggerManager(QObject *myparent)
   
   // Create objects
   m_breakpointList = new DebuggerBreakpointList();
+  m_debuggerui = new DebuggerUI(this, "debuggerui");
   m_interface = new QuantaDebuggerInterface(this, "interface");
-  m_client = (DebuggerClient*)KParts::ComponentFactory::createInstanceFromLibrary<DebuggerClient>("libquantadebuggergubed", this);
+  m_client = NULL; 
+}
+
+void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KURL &, const KURL &)
+{
+  if(m_client)
+  {
+    delete m_client;
+    m_client = NULL;
+  }
+  enableAction("*", false);
+    
+  kdDebug(24000) << "DebuggerManager::slotNewProjectLoaded " << projectname << ", " << Project::ref()->debuggerClient << endl;
+  
+  // Load new client
+  if(!projectname.isEmpty())
+  {
+    
+    KTrader::OfferList offers = KTrader::self()->query("Quanta/Debugger");
+    KTrader::OfferList::ConstIterator iterDbg;
+    for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg) 
+    {
+      KService::Ptr service = *iterDbg;
+      if(Project::ref()->debuggerClient == service->name())
+      {
+        int errCode = 0;
+        m_client = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode); 
+//    m_client = (DebuggerClient*)KParts::ComponentFactory::createInstanceFromLibrary<DebuggerClient>("quantadebuggergubed", this);
+
+        kdDebug(24000) << service->name() << " (" << m_client << ")" << endl;
+      
+        if(!m_client)
+          KMessageBox::error(NULL, i18n("<qt>Unable to load the debugger plugin, error code %1 was returned: <b>%2</b>.</qt>").arg(errCode).arg(KLibLoader::self()->lastErrorMessage()), i18n("Debugger Error"));
+        break;
+      }
+    }
+  }
+  
+  // Tell client to load its settings
+  if(m_client)
+  {
+    QDomNode nodeThisDbg;
+    QDomNode projectNode = Project::ref()->dom.firstChild().firstChild();
+    QDomNode nodeDbg  = projectNode.namedItem("debuggers");  
+    if(nodeDbg.isNull()) 
+    {
+      nodeDbg = Project::ref()->dom.createElement("debuggers");
+      projectNode.appendChild(nodeDbg);
+    }
+    
+    nodeThisDbg = nodeDbg.namedItem(m_client->getName());
+    if(nodeThisDbg.isNull())
+    {
+      nodeThisDbg = Project::ref()->dom.createElement(m_client->getName());
+      nodeDbg.appendChild(nodeThisDbg);
+    }
+    
+    m_client->readConfig(nodeThisDbg);
+  }
   
   initClientActions();
   
   // Disable all debugactions that need a session (ie not breakpoints, etc)
-  enableAction("*", false);
-  enableAction("debug_connect", true);
- 
+  slotDebugStartSession();
+  
 }
 
 void DebuggerManager::initActions()
@@ -68,54 +127,42 @@ void DebuggerManager::initActions()
         this, SLOT(toggleBreakpoint()), ac, "debug_breakpoints_toggle");
   new KAction(i18n("&Clear Breakpoints"), 0, 
         this, SLOT(clearBreakpoints()), ac, "debug_breakpoints_clear");
+      
+  new KAction(i18n("&Run"), SmallIcon("debug_run"), 0,
+        this, SLOT(slotDebugRun()), ac, "debug_run");
+  new KAction(i18n("&Leap"), SmallIcon("debug_leap"), 0,
+        this, SLOT(slotDebugLeap()), ac, "debug_leap");
+  new KAction(i18n("&Step"), SmallIcon("debug_stepover"), 0,
+        this, SLOT(slotDebugStepOver()), ac, "debug_stepover");
+  new KAction(i18n("Step &into"), SmallIcon("debug_stepinto"), 0,
+        this, SLOT(slotDebugStepInto()), ac, "debug_stepinto");
+  new KAction(i18n("S&kip"), SmallIcon("debug_skip"), 0,
+        this, SLOT(slotDebugSkip()), ac, "debug_skip");
+  new KAction(i18n("Step &Out"), SmallIcon("debug_stepout"), 0,
+        this, SLOT(slotDebugStepOut()), ac, "debug_stepout");
+  new KAction(i18n("&Pause"), SmallIcon("debug_pause"), 0,
+        this, SLOT(slotDebugPause()), ac, "debug_pause");
+  new KAction(i18n("Kill"), SmallIcon("debug_kill"), 0,
+        this, SLOT(slotDebugKill()), ac, "debug_kill");
+  new KAction(i18n("Start Session"), SmallIcon("debug_connect"), 0,
+        this, SLOT(slotDebugStartSession()), ac, "debug_connect");
+  new KAction(i18n("End Session"), SmallIcon("debug_disconnect"), 0,
+        this, SLOT(slotDebugEndSession()), ac, "debug_disconnect");
+
   
 }
 
 void DebuggerManager::initClientActions()
-{
-  KActionCollection *ac = quantaApp->actionCollection();
-  if(!ac)
-    return;
-    
+{  
   if(m_client)
   {
-    uint cap = m_client->getCapabilities();
-    
     // Get actioncollection and add appropriate actions depending on capabilities of the debugger
-    ac->action("debug_breakpoints_toggle")->setEnabled(cap & CapBreakpoints);
-    ac->action("debug_breakpoints_clear")->setEnabled(cap & CapClearAllBreakpoints);
+    if(!m_client->supports(DebuggerClient::LineBreakpoints))
+      enableAction("debug_breakpoints_toggle", false);
+    if(!m_client->supports(DebuggerClient::ClearAllBreakpoints))
+      enableAction("debug_breakpoints_clear", false);
     
-    if(cap & CapRunDisplay)
-      new KAction(i18n("&Run"), SmallIcon("debug_run"), 0,
-            this, SLOT(slotDebugRun()), ac, "debug_run");
-    if(cap & CapRun)
-      new KAction(i18n("&Leap"), SmallIcon("debug_leap"), 0,
-            this, SLOT(slotDebugLeap()), ac, "debug_leap");
-    if(cap & CapStepOver)
-      new KAction(i18n("&Step"), SmallIcon("debug_stepover"), 0,
-            this, SLOT(slotDebugStepOver()), ac, "debug_stepover");
-    if(cap & CapStepInto)
-      new KAction(i18n("Step &into"), SmallIcon("debug_stepinto"), 0,
-            this, SLOT(slotDebugStepInto()), ac, "debug_stepinto");
-    if(cap & CapSkip)
-      new KAction(i18n("S&kip"), SmallIcon("debug_skip"), 0,
-            this, SLOT(slotDebugSkip()), ac, "debug_skip");
-    if(cap & CapStepOut)
-      new KAction(i18n("Step &Out"), SmallIcon("debug_stepout"), 0,
-            this, SLOT(slotDebugStepOut()), ac, "debug_stepout");
-    if(cap & CapPause)
-      new KAction(i18n("&Pause"), SmallIcon("debug_pause"), 0,
-            this, SLOT(slotDebugPause()), ac, "debug_pause");
-    if(cap & CapKill)
-      new KAction(i18n("Kill"), SmallIcon("debug_kill"), 0,
-            this, SLOT(slotDebugKill()), ac, "debug_kill");
-    if(cap & CapConnect)
-    {
-      new KAction(i18n("Start Session"), SmallIcon("debug_connect"), 0,
-            this, SLOT(slotDebugStartSession()), ac, "debug_connect");
-      new KAction(i18n("End Session"), SmallIcon("debug_disconnect"), 0,
-            this, SLOT(slotDebugEndSession()), ac, "debug_disconnect");
-    }
+    enableAction("*", false); 
   }
 }
 
@@ -157,8 +204,7 @@ void DebuggerManager::slotDebugStartSession()
   if(!m_client)
     return;
   
-  if(!m_client->startSession())
-      KMessageBox::error(NULL, i18n("This debugger (%1) does not support the \"%2\" instruction.").arg(m_client->getName()).arg(i18n("Connect")), i18n("Unsupported debugger function"));
+  m_client->startSession();
 }
 
 void DebuggerManager::slotDebugEndSession()
@@ -166,8 +212,7 @@ void DebuggerManager::slotDebugEndSession()
   if(!m_client)
     return;
   
-  if(!m_client->endSession())
-      KMessageBox::error(NULL, i18n("This debugger (%1) does not support the \"%2\" instruction.").arg(m_client->getName()).arg(i18n("Disconnect")), i18n("Unsupported debugger function"));
+  m_client->endSession();
 }
 
 void DebuggerManager::slotDebugRun()
@@ -175,8 +220,7 @@ void DebuggerManager::slotDebugRun()
   if(!m_client)
     return;
   
-  if(!m_client->run())
-      KMessageBox::error(NULL, i18n("This debugger (%1) does not support the \"%2\" instruction.").arg(m_client->getName()).arg(i18n("Run")), i18n("Unsupported debugger function"));
+  m_client->run();
 }
 
 void DebuggerManager::slotDebugLeap()
@@ -184,8 +228,7 @@ void DebuggerManager::slotDebugLeap()
   if(!m_client)
     return;
   
-  if(!m_client->leap())
-      KMessageBox::error(NULL, i18n("This debugger (%1) does not support the \"%2\" instruction.").arg(m_client->getName()).arg(i18n("Leap")), i18n("Unsupported debugger function"));
+  m_client->leap();
 
 }
 void DebuggerManager::slotDebugSkip()
@@ -193,8 +236,7 @@ void DebuggerManager::slotDebugSkip()
   if(!m_client)
     return;
   
-  if(!m_client->skip())
-      KMessageBox::error(NULL, i18n("This debugger (%1) does not support the \"%2\" instruction.").arg(m_client->getName()).arg(i18n("Skip")), i18n("Unsupported debugger function"));
+  m_client->skip();
 
 }
 void DebuggerManager::slotDebugStepOver()
@@ -202,8 +244,7 @@ void DebuggerManager::slotDebugStepOver()
   if(!m_client)
     return;
   
-  if(!m_client->stepOver())
-      KMessageBox::error(NULL, i18n("This debugger (%1) does not support the \"%2\" instruction.").arg(m_client->getName()).arg(i18n("Step")), i18n("Unsupported debugger function"));
+  m_client->stepOver();
 
 }
 void DebuggerManager::slotDebugStepInto()
@@ -211,8 +252,7 @@ void DebuggerManager::slotDebugStepInto()
   if(!m_client)
     return;
   
-  if(!m_client->stepInto())
-      KMessageBox::error(NULL, i18n("This debugger (%1) does not support the \"%2\" instruction.").arg(m_client->getName()).arg(i18n("Step Into")), i18n("Unsupported debugger function"));
+  m_client->stepInto();
 
 }
 void DebuggerManager::slotDebugPause()
@@ -220,8 +260,7 @@ void DebuggerManager::slotDebugPause()
   if(!m_client)
     return;
   
-  if(!m_client->pause())
-      KMessageBox::error(NULL, i18n("This debugger (%1) does not support the \"%2\" instruction.").arg(m_client->getName()).arg(i18n("Pause")), i18n("Unsupported debugger function"));
+  m_client->pause();
 
 }
 void DebuggerManager::slotDebugKill()
@@ -229,8 +268,7 @@ void DebuggerManager::slotDebugKill()
   if(!m_client)
     return;
   
-  if(!m_client->kill())
-      KMessageBox::error(NULL, i18n("This debugger (%1) does not support the \"%2\" instruction.").arg(m_client->getName()).arg(i18n("Kill")), i18n("Unsupported debugger function"));
+  m_client->kill();
 
 }
 void DebuggerManager::slotDebugStepOut()
@@ -238,8 +276,7 @@ void DebuggerManager::slotDebugStepOut()
   if(!m_client)
     return;
   
-  if(!m_client->stepOut())
-      KMessageBox::error(NULL, i18n("This debugger (%1) does not support the \"%2\" instruction.").arg(m_client->getName()).arg(i18n("Step Out")), i18n("Unsupported debugger function"));
+  m_client->stepOut();
 
 }
 
@@ -250,54 +287,21 @@ void DebuggerManager::fileOpened(QString file)
   if(!m_client)
     return;
   
-  m_client->fileOpened(mapLocalPathToServer(file));
+  m_client->fileOpened(file);
 }
 
 
 // The debug server told us we have a breakpoint, mark it in the file
 void DebuggerManager::haveBreakpoint (QString file, int line)
 {
-  setMark(mapServerPathToLocal(file), line, true, KTextEditor::MarkInterface::markType02);
-}
-
-
-// Map a server filepath to a local one using project settings
-QString DebuggerManager::mapServerPathToLocal(QString serverpath)
-{
-#if KDE_IS_VERSION(3,2,0)   
-   // Translate filename from server to local
-   if(serverpath.startsWith(Project::ref()->debugServerBasedir, false))
-      serverpath.remove(0, Project::ref()->debugServerBasedir.length());
-#else
-   QString lPath = serverpath.lower();
-   QString lBaseDir = Project::ref()->debugServerBasedir.lower();
-   if(lPath.startsWith(lBaseDir))
-      serverpath.remove(0, Project::ref()->debugServerBasedir.length());
-#endif
-
-   return Project::ref()->debugLocalBasedir + serverpath;
-}
-
-// Map a local filepath to a server one using project settings
-QString DebuggerManager::mapLocalPathToServer(QString localpath)
-{
-#if KDE_IS_VERSION(3,2,0)   
-    if(localpath.startsWith(Project::ref()->debugLocalBasedir, false))
-       localpath.remove(0, Project::ref()->debugLocalBasedir.length());
-#else
-   QString lPath = localpath.lower();
-   QString lBaseDir = Project::ref()->debugLocalBasedir.lower();
-   if(lPath.startsWith(lBaseDir))
-      localpath.remove(0, Project::ref()->debugLocalBasedir.length());
-#endif
-   return Project::ref()->debugServerBasedir + localpath;
+  setMark(file, line, true, KTextEditor::MarkInterface::markType02);
 }
 
 // New current line
 bool DebuggerManager::setActiveLine (QString file, int line )
 {
   //Get local filename
-  QString filename = mapServerPathToLocal(file);
+  QString filename = file;
 
   // Find new position in editor
   quantaApp->gotoFileAndLine(filename, line, 0);
@@ -362,7 +366,7 @@ void DebuggerManager::toggleBreakpoint ()
     uint line, col;
     w->viewCursorIf->cursorPositionReal(&line, &col);
     
-    DebuggerBreakpoint* br = new DebuggerBreakpoint(mapLocalPathToServer(w->url().prettyURL(0, KURL::StripFileProtocol)), line);
+    DebuggerBreakpoint* br = new DebuggerBreakpoint(w->url().prettyURL(0, KURL::StripFileProtocol), line);
 
     if(!m_breakpointList->exists(br))
     {

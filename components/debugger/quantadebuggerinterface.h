@@ -21,6 +21,7 @@
 #include <qobject.h>
 #include <qstring.h>
 #include "debuggerinterface.h"
+#include "debuggervariable.h"
 
 class DebuggerManager;
 
@@ -43,9 +44,10 @@ class QuantaDebuggerInterface : public DebuggerInterface {
   
     void enableAction(QString action, bool enable);
     void fileOpened(QString file) ;
-  
-    QString debugServerHost();
-    QString debugServerPort();
+    
+    DebuggerVariable* newDebuggerVariable(const QString& name, const QString& value, int type);
+    void addVariable(DebuggerVariable*);
+    void parsePHPVariables(const QString &);
 };
 
 #endif

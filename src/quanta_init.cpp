@@ -157,6 +157,8 @@ void QuantaInit::initQuanta()
 
   // Initialize debugger
   m_quanta->m_debugger = new DebuggerManager(m_quanta);
+  connect(Project::ref(), SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
+          m_quanta->m_debugger, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
 
   DTDs::ref();  // create the class, must be before readOptions() !
   readOptions();

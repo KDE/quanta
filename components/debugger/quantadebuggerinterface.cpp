@@ -29,6 +29,7 @@
 #include "debuggerinterface.h"
 #include "quantadebuggerinterface.h"
 #include "debuggermanager.h"
+#include "debuggerui.h"
 
 QuantaDebuggerInterface::QuantaDebuggerInterface (QObject *myparent, const char* name) 
  : DebuggerInterface(myparent, name)
@@ -38,16 +39,6 @@ QuantaDebuggerInterface::QuantaDebuggerInterface (QObject *myparent, const char*
 
 QuantaDebuggerInterface::~QuantaDebuggerInterface () 
 {
-}
-
-QString QuantaDebuggerInterface::debugServerHost() 
-{
-  return Project::ref()->debugServerHost;
-}
-
-QString QuantaDebuggerInterface::debugServerPort()
-{
-  return Project::ref()->debugServerPort;
 }
 
 void QuantaDebuggerInterface::haveBreakpoint (QString file, int line) 
@@ -76,6 +67,19 @@ void QuantaDebuggerInterface::fileOpened(QString file)
   m_manager->fileOpened(file);
 }
 
+DebuggerVariable* QuantaDebuggerInterface::newDebuggerVariable(const QString& name, const QString& value, int type)
+{
+  return new DebuggerVariable(name, value, type);
+}
 
+void QuantaDebuggerInterface::addVariable(DebuggerVariable* var)
+{
+  m_manager->UI()->addVariable(var);
+}
+
+void QuantaDebuggerInterface::parsePHPVariables(const QString &varstring)
+{
+  m_manager->UI()->parsePHPVariables(varstring);
+}
 
 #include "quantadebuggerinterface.moc"

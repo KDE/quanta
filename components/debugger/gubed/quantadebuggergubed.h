@@ -21,6 +21,7 @@
 #include <qsocket.h>
 #include <qptrlist.h>
 #include <kurl.h>
+#include <qdom.h>
 
 #include "debuggerclient.h"
 
@@ -29,19 +30,22 @@ class QuantaDebuggerGubed : public DebuggerClient {
   
   public:
     QuantaDebuggerGubed(QObject *parent, const char* name, const QStringList&);
-    const uint getCapabilities();
+    ~QuantaDebuggerGubed();
+    
+    // Manager interaction
+    const uint supports(DebuggerClient::Capabilities);
     
     // Execution control
-    bool run();
-    bool leap();
-    bool skip();
-    bool stepInto();
-    bool pause();
-    bool kill();
+    void run();
+    void leap();
+    void skip();
+    void stepInto();
+    void pause();
+    void kill();
     
     // Connection
-    bool startSession();
-    bool endSession();
+    void startSession();
+    void endSession();
     
     // Return name of debugger
     QString getName();
@@ -49,17 +53,30 @@ class QuantaDebuggerGubed : public DebuggerClient {
     // New file opened in quanta
     void fileOpened(QString file);
     
+    // Settings
+    void readConfig(QDomNode node);
+    void showConfig(QDomNode node);
+    
     // Breakpoints
-    bool addBreakpoint(DebuggerBreakpoint* breakpoint);
-    bool removeBreakpoint(DebuggerBreakpoint* breakpoint);
+    void addBreakpoint(DebuggerBreakpoint* breakpoint);
+    void removeBreakpoint(DebuggerBreakpoint* breakpoint);
   
   private:
     QSocket *m_socket;
     QString m_command;
     
+    QString serverBasedir;
+    QString localBasedir;
+    QString serverPort;
+    QString serverHost;    
+    
     bool sendCommand(QString, QString);
     void debuggingState(bool enable);
     
+    QString mapServerPathToLocal(QString serverpath);
+    QString mapLocalPathToServer(QString localpath);
+    void showWatch(QString data);
+
   public slots:
     // Socket slots
     void slotConnected();
