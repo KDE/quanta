@@ -153,8 +153,7 @@ undoRedo::undoRedo(Document *doc)
   kdDebug(25001)<< "undoRedo::undoRedo() - *doc" << endl;
 #endif
   //TODO:add it to the config
-  //temp: set to 3 to avoid too much memory consumption until the new undo/redo system works.
-  m_listLimit = 3;
+  m_listLimit = 50;
   m_merging = false;
   m_mergeNext = false;
   m_loggingEnabled = false;
