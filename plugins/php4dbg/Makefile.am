@@ -1,6 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = dbgbase 
+SUBDIRS = dbgbase
 
 EXTRA_DIST = idesite.cpp debugger.cpp listener.h listener.cpp thread.h idesite.h thread.cpp debugger.h 
 
@@ -8,8 +8,7 @@ EXTRA_DIST = idesite.cpp debugger.cpp listener.h listener.cpp thread.h idesite.h
 
 noinst_LIBRARIES = libphp4dbg.a
 
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/quanta/plugins/php4dbg/dbgbase
+INCLUDES = -I$(top_srcdir)/quanta/plugins/php4dbg/dbgbase $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libphp4dbg_a_METASOURCES = AUTO
 libphp4dbg_a_SOURCES = \
@@ -19,3 +18,6 @@ libphp4dbg_a_SOURCES = \
 		idesite.cpp
 #DEFS = -I. -I$(srcdir) -I$(top_srcdir) -DPHP_DEBUG -D_DEBUG
 #DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 

@@ -12,3 +12,7 @@ EXTRA_DIST = parser.cpp tag.h tag.cpp parser.h node.h node.cpp dtd.cpp dtd.h qta
 
 ####### kdevelop will overwrite this part!!! (end)############
 
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 
+SUBDIRS = 

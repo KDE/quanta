@@ -297,6 +297,30 @@ Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
       tag->setWrite(this);
       tag->setStr(tagStr);
       tag->name = tagStr.left(tagStr.find("{")).simplifyWhiteSpace();
+      QRegExp fnRx = QRegExp("function[\\s]*",false);
+      if (tag->name.contains(fnRx)) //it is a function
+      {
+        QString name = tag->name.replace(fnRx,"");
+        QString paramStr = name.mid(name.find('(')+1);
+        paramStr = paramStr.left(paramStr.find(')',-1));
+        name = name.left(name.find('(')).stripWhiteSpace();
+        if (!userTagList.find(name))
+        {
+          QTag *newTag = new QTag();
+          newTag->setName(name);
+          newTag->type = "function";
+          newTag->parentDTD = dtds->find(m_parsingDTD);
+          QStringList params = QStringList::split(",",paramStr);
+          for (uint i = 0; i < params.count(); i++)
+          {
+            Attribute *attr = new Attribute;
+            attr->name = params[i].stripWhiteSpace();
+            newTag->addAttribute(attr);           
+            delete attr;
+          }
+          userTagList.insert(name, newTag);
+        }
+      }
     }
   }
 
@@ -355,6 +379,29 @@ Tag *Document::findXMLTag(int line, int col, bool forwardOnly, bool useSimpleRx)
       if (tag->name == "!--") tag->type = Tag::Comment;
       if (scriptBeginRx.search(tag->name) == 0) tag->type = Tag::ScriptTag;
       if (foundText.right(2) == "/>") tag->single = true;
+
+      if (tag->type == Tag::XmlTag &&
+          !QuantaCommon::isKnownTag(m_parsingDTD, tag->name) )
+      {
+        QTag *newTag = userTagList.find(tag->name);
+        bool insertNew = !newTag;     
+        if (insertNew)
+        {
+          newTag = new QTag();
+          newTag->setName(tag->name);
+          newTag->parentDTD = dtds->find(m_parsingDTD);
+        }
+        for (int i = 0; i < tag->attrCount; i++)
+        {
+           Attribute *attr = new Attribute;
+           attr->name = tag->attribute(i);
+           attr->values.append(tag->attributeValue(i));
+           newTag->addAttribute(attr);
+           delete attr;
+        }
+        if (insertNew)
+            userTagList.insert(tag->name, newTag);
+      }
   }
 
   return tag;
@@ -927,7 +974,8 @@ bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
   tagName = getTagNameAt(dtd, line, column);
 
   tag = QuantaCommon::tagFromDTD(dtd, tagName);
-
+  if (!tag) tag = userTagList.find(tagName);
+  
   if ( !tag || tagName.isEmpty() )  //we are outside of any tag
   {
     if ( string == "<" )  // a tag is started
@@ -1033,6 +1081,15 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(DTDStruct 
     }
   }
 
+  QDictIterator<QTag> it2(userTagList);
+  for( ; it2.current(); ++it2 )
+  {
+    if (it2.current()->name().upper().startsWith(word))
+    {
+      tagNameList += it2.current()->name();
+    }
+  }
+  
   tagNameList.sort();
   for (uint i = 0; i < tagNameList.count(); i++)
   {
@@ -1050,12 +1107,17 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
   QValueList<KTextEditor::CompletionEntry> *completions = new QValueList<KTextEditor::CompletionEntry>();
   KTextEditor::CompletionEntry completion;
   QTag *tag = QuantaCommon::tagFromDTD(dtd, tagName);
+  if (!tag)
+  {
+    QString searchForTag = (dtd->caseSensitive) ? tagName : tagName.upper();
+    tag = userTagList.find(searchForTag);
+  }
   startsWith = startsWith.upper();
   if (tag)
   {
     switch (dtd->family)
     {
-      case Xml:
+       case Xml:
             {
               completion.type = "attribute";
               completion.userdata = startsWith+"|"+tag->name();
@@ -1085,7 +1147,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions( DTD
               }
               break;
             }
-      case Script:
+       case Script:
             {
               completion.userdata = startsWith+"|"+tag->name();
               completion.type = "script";
@@ -1235,6 +1297,7 @@ bool Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const 
    QString textLine = editIf->textLine(line).left(column);
    QString word = findWordRev(textLine);
    QTag *tag = dtd->tagsList->find(word);
+   if (!tag) tag = userTagList.find(word);
    if (tag)
    {
      QStringList argList;

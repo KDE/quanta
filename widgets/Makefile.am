@@ -14,3 +14,7 @@ EXTRA_DIST = whtmlpart.h whtmlpart.cpp
 
 INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 
+SUBDIRS = 

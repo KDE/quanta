@@ -14,4 +14,8 @@ EXTRA_DIST = docfolder.h filestreeview.cpp filestreefolder.cpp docitem.h project
 
 #noinst_LIBRARIES = libtreeviews.a
 
-INCLUDES = $(all_includes) -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/quanta/dialogs
+INCLUDES = -I$(top_srcdir)/quanta -I$(top_srcdir)/quanta/dialogs $(all_includes) -I$(top_builddir)/quanta/dialogs
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 
+SUBDIRS = 

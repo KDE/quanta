@@ -17,3 +17,7 @@ libdbgbase_a_SOURCES = \
 		dbg_core.c
 #DEFS = -I. -I$(srcdir) -I$(top_srcdir) -DDBG_USE_STDALLOCA -DPHP_DEBUG -D_DEBUG
 DEFS = -I. -I$(srcdir) -I$(top_srcdir) -DDBG_USE_STDALLOCA -DHAVE_CONFIG_H
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 
+SUBDIRS = 

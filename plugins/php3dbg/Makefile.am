@@ -11,3 +11,7 @@ DEFS = -I. -I$(srcdir) -I$(top_srcdir)
 libphp3dbg_a_METASOURCES = AUTO
 libphp3dbg_a_SOURCES = \
 		debugger.cpp
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 
+SUBDIRS = 

@@ -24,6 +24,8 @@ QTag::QTag()
  optional = false;
  tagName = "";
  m_fileName = "";
+ type = "xmltag";
+ returnType = "";
 
 }
 
@@ -54,7 +56,9 @@ void QTag::addAttribute(Attribute* attr)
 {
  if (attr)
  {
-  Attribute* a = new Attribute;
+  Attribute* a = attribute(attr->name);
+  bool createNew = !a;
+  if (createNew) a = new Attribute;
   a->name = attr->name;
   a->type = attr->type;
   for ( QStringList::Iterator it = attr->values.begin(); it != attr->values.end(); ++it )
@@ -63,7 +67,7 @@ void QTag::addAttribute(Attribute* attr)
   }
   a->defaultValue = attr->defaultValue;
   a->status = attr->status;
-  attrs.append(a);
+  if (createNew) attrs.append(a);
  }
 }
 /** Returns the number of attributes for the tag. */
@@ -138,3 +142,18 @@ QTag QTag::operator = (QTag &t)
   return *this;
 }
 
+/** Returns the attribute with name, or 0 if the tag does not have any attribute with name. */
+Attribute* QTag::attribute(QString& name)
+{
+ Attribute *attr = 0L;
+ for (uint i = 0; i < attrs.count(); i++)
+ {
+   if (attrs.at(i)->name == name)
+   {
+     attr = attrs.at(i);
+     break;
+   }
+ }
+ 
+ return attr;
+}

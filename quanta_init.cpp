@@ -654,8 +654,9 @@ void QuantaApp::readOptions()
   qConfig.dynamicWordWrap = config->readBoolEntry("DynamicWordWrap",false);
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
+#if (KDE_VERSION > 308)
   viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
-  
+#endif  
   readDockConfig(config);
 
   showPreviewAction  ->setChecked( false );
@@ -761,8 +762,16 @@ bool QuantaApp::queryExit()
     canExit = doc->saveAll(false);
     if (canExit)
     {
-      project->slotCloseProject();
+      //avoid double question about saving files, so set the "modified"
+      //flags to "false". This is safe here.
       Document *w;
+      for (int i = view->writeTab->count() -1; i >=0; i--)
+      {
+        w = dynamic_cast<Document*>(view->writeTab->page(i));
+        w->setModified(false);
+      }
+      
+      project->slotCloseProject();
       do
       {
         w = view->write();

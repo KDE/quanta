@@ -96,7 +96,7 @@ private slots: // Private slots
   void slotUploadProject();
 protected slots: // Protected slots
   /** No descriptions */
-  void slotOnItem(QListViewItem* item);
+//  void slotOnItem(QListViewItem* item);
 };
 
 #endif

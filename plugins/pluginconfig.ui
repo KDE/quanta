@@ -441,8 +441,11 @@
     <tabstop>PushButton9</tabstop>
     <tabstop>PushButton10</tabstop>
 </tabstops>
+<includes>
+    <include location="global" impldecl="in implementation">kicondialog.h</include>
+</includes>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
-    <includehint>kiconbutton.h</includehint>
+    <includehint>kicondialog.h</includehint>
 </includehints>
 </UI>

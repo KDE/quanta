@@ -12,6 +12,9 @@ EXTRA_DIST = actioneditdlg.h tagaction.cpp actioneditdlg.cpp actioneditdlgs.ui t
 
 ####### kdevelop will overwrite this part!!! (end)############
 
-INCLUDES = $(all_includes)\
-		-I$(top_srcdir)/quanta/tagdialogs
+INCLUDES = -I$(top_srcdir)/quanta/tagdialogs $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 
+SUBDIRS = 

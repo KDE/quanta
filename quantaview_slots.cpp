@@ -818,7 +818,9 @@ void QuantaView::slotEditorOptions()
   qConfig.dynamicWordWrap = quantaApp->config->readBoolEntry("DynamicWordWrap",false);
   quantaApp->viewBorder->setChecked(qConfig.iconBar);
   quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
+#if (KDE_VERSION > 308)
   quantaApp->viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
+#endif  
 }
 
 void QuantaView::setEol(int which)

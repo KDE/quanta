@@ -105,8 +105,8 @@ bool WHTMLPart::forwardEnable()
    return hpos < history.count()-1;
 }
 
-KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget *parentWidget, const char *widgetName,
-                                            QObject *parent, const char *name,
+KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget * parentWidget, const char *widgetName,
+                                            QObject */*parent*/, const char * /*name*/,
                                             const QString &, QString &,
                                             QStringList &, const QStringList &)
 {

@@ -11,3 +11,7 @@ libtagdialogs_a_SOURCES = selectoreditors.ui cssselectoreditor.cpp csseditors.ui
 EXTRA_DIST = tagimgdlgdata.cpp tagquicktable.h tagquicktabledata.cpp colorcombo.cpp tagwidget.cpp tagquickstart.h tagxml.cpp tagimgdlg.cpp pictureview.cpp tagdialog.h tagquicklistdlg.h tagattr.cpp tagdialog.cpp tagquicklistdlgdata.cpp tagquickstart.cpp tagquickstarts.ui tagattr.h tagxml.h tagquicktable.cpp pictureview.h tagquicklistdlg.cpp colorcombo.h tagwidget.h filecombo.cpp filecombo.h tagimgdlg.h tagmaildlg.cpp tagmaildlg.h tagmail.ui listdlg.cpp listdlg.h tagmisc.ui tagmiscdlg.cpp tagmiscdlg.h quicktable.ui tagquicktableitem.cpp tagquicktableitem.h csseditor.cpp csseditor.h csseditors.ui cssselectoreditor.cpp cssselectoreditor.h selectoreditors.ui 
 
 ####### kdevelop will overwrite this part!!! (end)############
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 
+SUBDIRS = 

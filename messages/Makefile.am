@@ -1,5 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
+
 EXTRA_DIST = messageoutput.h messageitem.cpp messageoutput.cpp messageitemweblint.cpp messageitemphp4.h messageitem.h messageitemphp4.cpp messageitemphp.h messageitemphp.cpp messageitemweblint.h 
 
 ####### kdevelop will overwrite this part!!! (end)############
@@ -13,3 +14,7 @@ libmessages_a_SOURCES = \
 		messageitemphp.cpp\
 		messageitemweblint.cpp\
 		messageitemphp4.cpp
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 
+SUBDIRS = 

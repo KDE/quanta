@@ -675,7 +675,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
  QDomNodeList nodeList;
  KAction *action;
  QPopupMenu *menu;
- ToolbarEntry *p_toolbar;
+ ToolbarEntry *p_toolbar = 0L;
  QDictIterator<ToolbarEntry> iter(toolbarList);
  for( ; iter.current(); ++iter )
  {

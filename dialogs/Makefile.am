@@ -12,3 +12,7 @@ EXTRA_DIST = grepdialog.cpp previewoptions.h styleoptionss.ui filemasks.cpp file
 
 ####### kdevelop will overwrite this part!!! (end)############
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 
+SUBDIRS = 

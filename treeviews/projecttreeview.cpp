@@ -112,7 +112,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
 	connect(this, SIGNAL(open(QListViewItem *)),
           this, SLOT(slotSelectFile(QListViewItem *)));
-  connect(this, SIGNAL(onItem(QListViewItem *)), SLOT(slotOnItem(QListViewItem*)));        
+//  connect(this, SIGNAL(onItem(QListViewItem *)), SLOT(slotOnItem(QListViewItem*)));        
 }
 
 ProjectTreeView::~ProjectTreeView(){
@@ -434,9 +434,9 @@ void ProjectTreeView::slotRemoveDeleted()
 }
 
 /** No descriptions */
-void ProjectTreeView::slotOnItem(QListViewItem* item)
+/*void ProjectTreeView::(QListViewItem* item)
 {
 }
-
+*/
 
 #include "projecttreeview.moc"

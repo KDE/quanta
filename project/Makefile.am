@@ -12,4 +12,9 @@ EXTRA_DIST = projectnewweb.cpp projectnewwebs.ui projectnewweb.h rescanprj.h pro
 
 ####### kdevelop will overwrite this part!!! (end)############
 
-INCLUDES = $(all_includes) -I$(top_builddir)/quanta/dialogs
+INCLUDES = -I$(top_srcdir)/quanta/dialogs $(all_includes) -I$(top_builddir)/quanta/dialogs
+AM_CFLAGS = 
+AM_CXXFLAGS = 
+AM_FFLAGS = 
+SUBDIRS = 
+libproject_a_LIBADD = 
