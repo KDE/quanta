@@ -697,6 +697,7 @@ void QuantaApp::slotRepaintPreview()
 {
   Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
+  if (!m_previewVisible && !m_previewToolView) return;
 
   previewCopyMade = false;
 
@@ -1287,7 +1288,6 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     m_previewVisible = true;
   } else
   {
-    m_previewVisible = false;
     m_noFramesPreview = false;
     if (qConfig.previewPosition == "Editor")
     {
@@ -1301,8 +1301,10 @@ void QuantaApp::slotShowPreviewWidget(bool show)
     {
       //hiding the preview when it's in a toolview means that the current tab has changed,
       //so we just repaint the content.
+        m_previewVisible = true;
         slotRepaintPreview();
     }
+    m_previewVisible = false;
     if (view->document())
         view->document()->view()->setFocus();
   }
