@@ -422,7 +422,7 @@ void QuantaApp::saveOptions()
   doc    ->writeConfig(config); // kwrites
   project->writeConfig(config); // project
   
-  fileRecent            ->saveEntries(config, "Files");
+  fileRecent            ->saveEntries(config);
 }
 
 
@@ -455,11 +455,12 @@ void QuantaApp::readOptions()
   
 #warning Check for statusbar  
 
-  fileRecent ->loadEntries(config, "Files");
+  fileRecent ->loadEntries(config);
   
   doc    ->readConfig(config); // kwrites
   project->readConfig(config); // project
 
+  config->setGroup("General Options");
   resize( config->readSizeEntry("Geometry", &QSize(800,580)));
 }
 
@@ -632,13 +633,11 @@ void QuantaApp::initActions()
                          doc, SLOT( invertSelect()),
                          actionCollection(), "invert_selection" );
                          
-    KToggleAction *verticalSelectAction =
+    verticalSelectAction =
            new KToggleAction(  i18n( "&Vertical Selection"), 0, 
                                doc, SLOT( verticalSelect()),
                                actionCollection(), "vertical_selection" );
                                
-    verticalSelectAction->setChecked(false);
-
     (void) new KAction( i18n( "&Find" ), UserIcon("find"), KStdAccel::key(KStdAccel::Find),
                         doc, SLOT( find() ),
                         actionCollection(), "edit_find" );

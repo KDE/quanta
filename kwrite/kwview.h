@@ -553,6 +553,7 @@ class KWrite : public KTextEditor::View, virtual public KWriteIface {
      * Asks the user for permission and returns the message box result and defaults to
      * KMessageBox::Yes in case of doubt
      */
+  public:  
     int checkOverwrite( KURL u );
 
 //text access

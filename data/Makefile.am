@@ -5,10 +5,9 @@
 SUBDIRS = icons po doc tags 
 datadir = ${kde_datadir}/quanta
 
-data_DATA = tagdata.rc toolbars.rc syntax.xml actions.rc 
+data_DATA = tagdata.rc syntax.xml actions.rc 
 EXTRA_DIST = \
 		tagdata.rc\
-		toolbars.rc\
 		syntax.xml\
 		actions.rc
 ##############################################################

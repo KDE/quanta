@@ -75,7 +75,7 @@ class QuantaDoc : public QObject
 		void  readConfig( KConfig * );
 		void writeConfig( KConfig * );
 		
-		QStringList openedFiles();
+		QStringList openedFiles(bool noUntitled=true);
 		
   private:
     bool newDocument (const KURL&);

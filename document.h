@@ -57,6 +57,8 @@ public:
   void editorOptions();
 
   KURL url();
+  void setURL(KURL,bool);
+  
   bool isUntitled();
   void setUntitledUrl(QString);
   
@@ -91,6 +93,9 @@ public:
 
   void readConfig (KConfig *);
   void writeConfig(KConfig *);
+  
+  bool  isVerticalSelect();
+  void setVerticalSelect(bool);
 
   QString findBeginOfTag( QString tag, int x, int y);
   QString findEndOfTag  ( QString tag, int x, int y);

@@ -20,6 +20,7 @@
 #include <kapp.h>
 #include <kwin.h>
 #include <klocale.h>
+#include <kaction.h>
 #include <kdialogbase.h>
 #include <kiconloader.h>
 #include <kspell.h>
@@ -55,6 +56,11 @@ KURL Document::url()
   return ( isUntitled() ) ? KURL(untitledUrl) : kWriteDoc->url();
 }
 
+void Document::setURL(KURL url,bool f)
+{
+  kWriteDoc->setURL( url, f );
+}
+
 // kwrite addons
 
 void Document::insertTag(QString s1,QString s2)
@@ -87,10 +93,7 @@ void Document::insertTag(QString s1,QString s2)
 	  kWriteDoc->insert( c, s1);
   }
 
-
   kWriteDoc->updateViews();
-	
-
 }
 
 QString Document::getLine(int y)
@@ -695,10 +698,28 @@ void Document::readConfig(KConfig *config)
 {
   KWrite::readConfig( config );
   doc() ->readConfig( config );
+  
+  HlManager *hlManager = doc()->hlManager;
+  
+  ItemFont      defaultFont;
+  ItemStyleList defaultStyleList;
+  
+  hlManager->getDefaults(defaultStyleList,defaultFont);
+  hlManager->setDefaults(defaultStyleList,defaultFont);
 }
 
 void Document::writeConfig(KConfig *config)
 {
   KWrite::writeConfig( config );
   doc() ->writeConfig( config );
+}
+
+bool Document::isVerticalSelect()
+{
+  return ( config() & KWriteView::cfVerticalSelect );
+}
+
+void Document::setVerticalSelect(bool f)
+{
+  setConfig(configFlags | KWriteView::cfVerticalSelect);
 }

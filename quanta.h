@@ -47,6 +47,7 @@ class WHTMLPart;
 class KHTMLView;
 
 class KAction;
+class KToggleAction;
 class QListViewItem;
 class KRecentFilesAction;
 
@@ -265,6 +266,8 @@ class QuantaApp : public KMainWindow
     
     // ACTIONS
     KRecentFilesAction *fileRecent;
+    
+    KToggleAction *verticalSelectAction;
     
     KAction *saveAction, *saveAllAction, *undoAction, *redoAction,
       *cutAction, *copyAction, *findNextAction, *backAction, *forwardAction,

@@ -86,14 +86,15 @@ QString QuantaDoc::basePath()
 	return (write()->isUntitled()) ? QExtFileInfo::home() : QExtFileInfo::path( furl );
 }
 
-QStringList QuantaDoc::openedFiles()
+QStringList QuantaDoc::openedFiles(bool noUntitled)
 {
   QStringList list;
   QDictIterator<Document> it( *docList );
   
   while ( Document *w = it.current() )
   {
-    list.append( it.currentKey() );
+    if ( !w->isUntitled() || !noUntitled )
+      list.append( it.currentKey() );
     ++it;
   }
   
@@ -134,8 +135,6 @@ bool QuantaDoc::newDocument( const KURL& url )
 
 void QuantaDoc::openDocument(const KURL& url)
 {
-  debug( url.url() );
-  
   if ( !newDocument( url )) return;
 
   QString defUrl = this->url().url();
@@ -162,6 +161,7 @@ void QuantaDoc::saveDocument(const KURL& url)
   if ( !url.url().isEmpty()) 
   {
     write()->writeURL( url );
+    write()->  setURL( url, false );
   }
   
   changeFileTabName( defUrl );
@@ -227,13 +227,15 @@ void QuantaDoc::readConfig( KConfig *config )
 
   QDictIterator<Document> it( *docList );
 
-  config->setGroup("General Options");
-  
   while ( Document *w = it.current() ) 
   {
+    config->setGroup("General Options");
+    
     w -> readConfig( config );
     ++it;
   }
+  
+  app->verticalSelectAction->setChecked(write()->isVerticalSelect());
 }
 
 void QuantaDoc::writeConfig( KConfig *config )
@@ -544,24 +546,28 @@ void QuantaDoc::changeFileTabName( QString oldUrl )
 }
 
 /// SLOTS
-
-void QuantaDoc::cut()        {write()->cut();}
-void QuantaDoc::copy()       {write()->copy();}
-void QuantaDoc::paste()      {write()->paste();}
-void QuantaDoc::undo()       {write()->undo();}
-void QuantaDoc::redo()       {write()->redo();}
-void QuantaDoc::undoHistory(){write()->undoHistory();}
-void QuantaDoc::selectAll()  {write()->selectAll();}
-void QuantaDoc::deselectAll(){write()->deselectAll();}
-void QuantaDoc::find()       {write()->find();}
-void QuantaDoc::findAgain()  {write()->findAgain();}
-void QuantaDoc::replace()    {write()->replace();}
-
+                               
+void QuantaDoc::cut()         {write()->cut();}
+void QuantaDoc::copy()        {write()->copy();}
+void QuantaDoc::paste()       {write()->paste();}
+void QuantaDoc::undo()        {write()->undo();}
+void QuantaDoc::redo()        {write()->redo();}
+void QuantaDoc::undoHistory() {write()->undoHistory();}
+void QuantaDoc::selectAll()   {write()->selectAll();}
+void QuantaDoc::deselectAll() {write()->deselectAll();}
+void QuantaDoc::find()        {write()->find();}
+void QuantaDoc::findAgain()   {write()->findAgain();}
+void QuantaDoc::replace()     {write()->replace();}
 void QuantaDoc::invertSelect(){write()->invertSelection();}
                                        
 void QuantaDoc::verticalSelect()
 {
-  write()->toggleVertical();
-#warning fix toggle
+  QDictIterator<Document> it( *docList );
+  
+  while ( Document *w = it.current() ) 
+  {
+    w -> toggleVertical();
+    ++it;
+  }
 }
 

@@ -336,7 +336,9 @@ class KWriteDoc : public KTextEditor::Document {
     TextLine::List contents;
     KWBuffer *buffer;
     QColor colors[5];
+  public:
     HlManager *hlManager;
+  protected:
     Highlight *m_highlight;
     int m_numAttribs;
     static const int maxAttribs;

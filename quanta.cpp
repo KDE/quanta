@@ -97,8 +97,8 @@ void QuantaApp::slotFileNew()
 
 void QuantaApp::slotFileOpen()
 {
-  KURL url = KURL( KFileDialog::getOpenURL( QDir::homeDirPath(), 
-                   i18n("*|All files"), this, i18n("Open File...")));
+  KURL url = KFileDialog::getOpenURL( QDir::homeDirPath(), QString::null, this);
+    
   slotFileOpen( url );
 }
 
@@ -122,12 +122,22 @@ void QuantaApp::slotFileSave()
 
 void QuantaApp::slotFileSaveAs()
 {
-  KURL url =
-    KFileDialog::getSaveURL(doc->basePath(),
-                            i18n("*|All files"), this, i18n("Save as..."));
+  KURL url;
+  int query;
+
+  do {
+    query = KMessageBox::Yes;
+    
+    url = KFileDialog::getSaveURL(doc->basePath(), QString::null, this);
+    
+    if (url.isEmpty()) return;
+
+    query = doc->write()->checkOverwrite( url );
+  } 
+  while (query != KMessageBox::Yes);
+
+  if( query == KMessageBox::Cancel ) return;
                             
-  if( url.url().isEmpty() ) return;
-  
   doc->saveDocument( url );
     
   bool addToProject = false;
