@@ -71,6 +71,7 @@ class MessageOutput;
 class QDomDocument;
 class ActionEditDlg;
 
+class PHP3Debugger;
 class PHP4Debugger;
 
 /**
@@ -198,6 +199,9 @@ class QuantaApp : public KDockMainWindow
     void slotOptionsConfigureToolbars();
     void slotOptionsConfigureActions();
 
+    void enablePhp3Debug(bool);
+    void enablePhp4Debug(bool);
+    
     /** reparse current document and initialize node. */
 	  void reparse();
 	
@@ -274,9 +278,11 @@ class QuantaApp : public KDockMainWindow
     
     QTimer *statusbarTimer;
 
+    // debugger
     int phpDebugPort;
-    
-    PHP4Debugger* dbg;
+    PHP3Debugger* dbg3;
+    PHP4Debugger* dbg4;
+    QString debuggerStyle;
     
     // ACTIONS
     KRecentFilesAction *fileRecent;

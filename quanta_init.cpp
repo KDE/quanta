@@ -57,7 +57,7 @@
 #include "treeviews/doctreeview.h"
 #include "treeviews/structtreeview.h"
 
-#include "phpdebug/phpdebugserversocket.h"
+#include "plugins/php3dbg/debugger.h"
 #include "plugins/php4dbg/debugger.h"
 
 #include "parser/parser.h"
@@ -115,35 +115,6 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   doc->newDocument( KURL() );
   
   readOptions();
-  
-  dbg = new PHP4Debugger(0L,0L);
-  connect( dbg,           SIGNAL(message(QString)),
-           messageOutput, SLOT(php4Debug(QString)) );
-  dbg->init();
-  
-#warning temp disable php3 debug for devel php4 dbg
-/*  
-  PhpDebugServerSocket *debugger = 
-    new PhpDebugServerSocket( phpDebugPort,0,0);
-    
-  connect( debugger,      SIGNAL(newConnect()),
-           messageOutput, SLOT(newPhpConnect()) );
-  connect( debugger,      SIGNAL(endConnect()),
-           messageOutput, SLOT(endPhpConnect()) );
-  connect( debugger,      SIGNAL(data(QString)),
-           messageOutput, SLOT(phpDebug(QString)) );
-           
-  if ( !debugger->ok() ) {
-    QString s;
-    messageOutput->insertItem("Can't bind port "+
-      s.sprintf("%i",phpDebugPort)+" , PHP3 debugger disabled" );
-  }
-  else {
-    QString s;
-    messageOutput->insertItem("PHP3 Debugger listens port "+
-      s.sprintf("%i",phpDebugPort)+"" );
-  }
-*/  
 
   connect( messageOutput, SIGNAL(clicked(const QString&,int)),
            this,          SLOT(gotoFileAndLine(const QString&,int)));
@@ -156,7 +127,6 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 
 QuantaApp::~QuantaApp()
 {
-  delete dbg;
 }
 
 void QuantaApp::initStatusBar()
@@ -409,7 +379,11 @@ void QuantaApp::saveOptions()
   doc    ->writeConfig(config); // kwrites
   project->writeConfig(config); // project
   
-  fileRecent            ->saveEntries(config);
+  config->setGroup  ("General Options");
+  
+  fileRecent->saveEntries(config);
+  config->writeEntry ("Enable Debugger", debuggerStyle!="None");
+  config->writeEntry ("PHP Debugger style", debuggerStyle);
   
   writeDockConfig();
 }
@@ -462,6 +436,50 @@ void QuantaApp::readOptions()
   
   doc    ->readConfig(config); // kwrites
   project->readConfig(config); // project
+  
+  debuggerStyle = "None";
+  config->setGroup  ("General Options");
+  if (config->readBoolEntry("Enable Debugger", true))
+    if (config->readEntry("PHP Debugger style","PHP4") == "PHP4") 
+         enablePhp4Debug(true);
+    else enablePhp3Debug(true);
+}
+
+void QuantaApp::enablePhp3Debug(bool enable)
+{
+  if (enable) {
+    dbg3 = new PHP3Debugger( phpDebugPort,0,0);
+          
+    connect( dbg3,          SIGNAL(newConnect()),
+             messageOutput, SLOT(newPhpConnect()) );
+    connect( dbg3,          SIGNAL(endConnect()),
+             messageOutput, SLOT(endPhpConnect()) );
+    connect( dbg3,          SIGNAL(data(QString)),
+             messageOutput, SLOT(phpDebug(QString)) );
+                 
+    if ( !dbg3->ok() ) {
+      QString s;
+      messageOutput->insertItem("Can't bind port "+
+        s.sprintf("%i",phpDebugPort)+" , PHP3 debugger disabled" );
+    }
+    else {
+      QString s;
+      messageOutput->insertItem("PHP3 Debugger listens port "+
+        s.sprintf("%i",phpDebugPort)+"" );
+    }
+    debuggerStyle = "PHP3";
+  } else delete dbg3;
+}
+
+void QuantaApp::enablePhp4Debug(bool enable)
+{
+  if (enable) {
+    dbg4 = new PHP4Debugger(0L,0L);
+    connect( dbg4,          SIGNAL(message(QString)),
+             messageOutput, SLOT(php4Debug(QString)) );
+    dbg4->init();
+    debuggerStyle = "PHP4";
+  } else delete dbg4;
 }
 
 void QuantaApp::openLastFiles()

@@ -26,6 +26,7 @@
 #include <qcheckbox.h>
 #include <qtextstream.h>
 #include <qtabbar.h>
+#include <qradiobutton.h>
 
 // include files for KDE
 #include <kiconloader.h>
@@ -59,6 +60,7 @@
 #include "dialogs/previewoptions.h"
 #include "dialogs/previewfontoptions.h"
 #include "dialogs/parseroptions.h"
+#include "dialogs/debuggeroptionss.h"
 #include "dialogs/grepdialog.h"
 
 #include "treeviews/filestreeview.h"
@@ -66,7 +68,6 @@
 #include "treeviews/filestreefolder.h"
 #include "treeviews/structtreeview.h"
 #include "treeviews/structtreetag.h"
-
 #include "treeviews/doctreeview.h"
 
 #include "parser/parser.h"
@@ -522,7 +523,13 @@ void QuantaApp::slotOptions()
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
+  
+  page=kd->addVBoxPage(i18n("PHP Debug"), QString::null, BarIcon("gear", KIcon::SizeMedium ) );
+  DebuggerOptionsS *debuggerOptions = new DebuggerOptionsS( (QWidget *)page );
 
+  if (debuggerStyle=="PHP3") debuggerOptions->radioPhp3->setChecked(true);
+  if (debuggerStyle=="None") debuggerOptions->checkDebugger->setChecked(false);
+  
   if ( kd->exec() )
   {
     tagsCapital = styleOptionsS->checkTagsCapital->isChecked();
@@ -536,6 +543,20 @@ void QuantaApp::slotOptions()
 
     parserOptions->updateConfig();
 
+    if (!debuggerOptions->checkDebugger->isChecked()) {
+      if (debuggerStyle=="PHP3") enablePhp3Debug(false);
+      if (debuggerStyle=="PHP4") enablePhp4Debug(false);
+      debuggerStyle="None";
+    } else if (debuggerOptions->radioPhp3->isChecked()) {
+      if (   debuggerStyle=="PHP4") enablePhp4Debug(false);
+      if (!(debuggerStyle=="PHP3")) enablePhp3Debug(true);
+      debuggerStyle="PHP3";
+    } else {
+      if (   debuggerStyle=="PHP3") enablePhp3Debug(false);
+      if (!(debuggerStyle=="PHP4")) enablePhp4Debug(true);
+      debuggerStyle="PHP4";
+    }
+    
     QWidgetStack *s;
     if ( htmlPart() )
     {

@@ -2,7 +2,7 @@
 ####   Makefile.am generated automatically by KDEStudio   ####
 #### WARNING! All changes made in this part will be lost! ####
 ##############################################################
-SUBDIRS = plugins messages phpdebug toolbar data widgets treeviews tagdialogs project parser dialogs kwrite 
+SUBDIRS = plugins messages toolbar data widgets treeviews tagdialogs project parser dialogs kwrite 
 bin_PROGRAMS = quanta
 
 
@@ -17,10 +17,10 @@ quanta_LDADD = \
 		$(top_builddir)/quanta/treeviews/libtreeviews.a\
 		$(top_builddir)/quanta/widgets/libwidgets.a\
 		$(top_builddir)/quanta/toolbar/libtoolbar.a\
-		$(top_builddir)/quanta/phpdebug/libphpdebug.a\
 		$(top_builddir)/quanta/messages/libmessages.a\
 		$(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.a\
 		$(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.a\
+		$(top_builddir)/quanta/plugins/php3dbg/libphp3dbg.a\
 		-lSM -lICE\
 		-lX11 $\
 		-lpng -lz -lm\

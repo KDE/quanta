@@ -68,6 +68,10 @@ int main(int argc, char *argv[])
     "Danish translation",
     "claus_h@image.dk");
     
+  aboutData.addCredit("Dmitri Dmitrienko",
+    "Part of a code for PHP4 Debugger",
+    "dd@cron.ru");
+    
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	
