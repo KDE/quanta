@@ -29,26 +29,24 @@
   */
 
 class CopyTo : public CopyToS  {
-   Q_OBJECT
+Q_OBJECT
 public: 
 	CopyTo(QString dir, QWidget *parent=0, const char *name=0);
 	~CopyTo();
-	
+
 	QString copy( QString rname );
 	QStringList copy( QStringList rfiles );
+	QString fname; 
 
 public slots: // Public slots
-  void slotDirChange();	
-  
-  void endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool);
-  void slotResult( KIO::Job *);
+	void endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool);
+	void slotResult( KIO::Job *);
 
 signals:
-  void addFilesToProject(QString,CopyTo*);
-  
-public:
-  QString fname; 
+	void addFilesToProject(QString,CopyTo*);
 
+private:
+	QString mInitialDir;
 };
 
 #endif

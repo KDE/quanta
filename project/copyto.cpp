@@ -26,36 +26,31 @@
 #include <kio/jobclasses.h>
 #include <kfiledialog.h>
 #include <kiconloader.h>
+#include "kurlrequester.h"
 
 CopyTo::CopyTo(QString dir, QWidget *parent, const char *name)
     : CopyToS(parent,name,true)
 {
-	setCaption(name);
-	
-	lineDir->setText( dir.data() );
-	lineDir->setFocus();
-	buttonDir->setPixmap( UserIcon("open") );
+
+	mInitialDir = dir;
+
+	urlRequester->setMode( KFile::Directory | KFile::ExistingOnly);
+	urlRequester->setURL( dir );
+	urlRequester->setFocus();
 	
 	connect( buttonOk,    SIGNAL(clicked()), SLOT(accept()) );
 	connect( buttonCancel,SIGNAL(clicked()), SLOT(reject()) );
-	connect( buttonDir,   SIGNAL(clicked()), SLOT(slotDirChange()));
 }
 
 CopyTo::~CopyTo(){
 }
 
-/** change dir */
-void CopyTo::slotDirChange()
-{
-  QString dir = lineDir->text();
-  dir = KFileDialog::getExistingDirectory( dir, this);
-  if ( !dir.isEmpty() )
-      lineDir->setText( dir );
-}
-
 QString CopyTo::copy( QString rname )
 {
-	QString path = lineDir->text();
+  if ( urlRequester->url().isEmpty() )
+	  urlRequester->setURL(mInitialDir);
+	
+  QString path = urlRequester->url();
 
   if ( path.right(1) != "/" ) path.append("/");
 
@@ -91,7 +86,7 @@ void CopyTo::slotResult( KIO::Job *)
 
 QStringList CopyTo::copy( QStringList rfiles )
 {
-	QString path = lineDir->text();
+  QString path = urlRequester->url();
 
   if ( path.right(1) != "/" ) path.append("/");
 

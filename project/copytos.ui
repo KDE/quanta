@@ -1,118 +1,70 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>CopyToS</class>
-<widget>
-    <class>QDialog</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QDialog">
+    <property name="name">
         <cstring>CopyToS</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
             <width>376</width>
-            <height>81</height>
+            <height>84</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
-        <string>Form1</string>
+    <property name="caption">
+        <string>Files: Copy to project...</string>
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="1"  column="2"  rowspan="1"  colspan="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="1" column="2">
+            <property name="name">
                 <cstring>buttonCancel</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>Cancel</string>
             </property>
         </widget>
-        <widget row="1"  column="1" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="1" column="1">
+            <property name="name">
                 <cstring>buttonOk</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Ok</string>
+            <property name="text">
+                <string>&amp;OK</string>
             </property>
-            <property stdset="1">
-                <name>default</name>
+            <property name="default">
                 <bool>true</bool>
             </property>
         </widget>
-        <spacer row="1"  column="0" >
-            <property>
-                <name>name</name>
+        <spacer row="1" column="0">
+            <property name="name">
                 <cstring>Spacer1</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Horizontal</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
         </spacer>
-        <widget row="0"  column="3" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>buttonDir</cstring>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                </sizepolicy>
-            </property>
-            <property stdset="1">
-                <name>maximumSize</name>
-                <size>
-                    <width>27</width>
-                    <height>27</height>
-                </size>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>...</string>
-            </property>
-        </widget>
-        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>lineDir</cstring>
+        <widget class="KURLRequester" row="0" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>urlRequester</cstring>
             </property>
         </widget>
     </grid>
 </widget>
 <tabstops>
-    <tabstop>lineDir</tabstop>
-    <tabstop>buttonDir</tabstop>
     <tabstop>buttonOk</tabstop>
     <tabstop>buttonCancel</tabstop>
 </tabstops>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -549,7 +549,10 @@ KTextEditor::Document* Document::doc()
 /** Returns true if the document was modified. */
 bool Document::isModified()
 {
-  return _doc->isModified();
+  if ( _doc )	
+   return _doc->isModified();
+  else
+   return false;	  
 }
 /** Sets the modifiedFlag value. */
 void Document::setModified(bool flag)
