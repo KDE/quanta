@@ -46,7 +46,7 @@ CSSEditor::CSSEditor (QString code, QWidget* parent, const char* name)
   QStringList::Iterator it;
   for ( it = selectors.begin(); it != selectors.end(); ++it )
   {
-    if ((*it).simplifyWhiteSpace() == "")
+    if ((*it).simplifyWhiteSpace().isEmpty())
       it = selectors.remove (it);
     else
       *it += "}";

@@ -77,17 +77,17 @@ QString CSSSelectorEditor::code()
     // Special case for inline rule
     QString temp = "font:";
 
-    if (f_style != "normal" && f_style != "")
+    if (f_style != "normal" && !f_style.isEmpty())
       temp += " " + f_style;
-    if (f_variant != "normal" && f_variant != "")
+    if (f_variant != "normal" && !f_variant.isEmpty())
       temp += " " + f_variant;
-    if (f_weight != "normal" && f_weight != "")
+    if (f_weight != "normal" && !f_weight.isEmpty())
       temp += " " + f_weight;
 
     // If the previous properties aren't set, and the size and the family are 
     //blank or the
     // default, we don't insert the font rule at all
-    if ((f_size == "normal" || f_size == "") && f_family == "" && temp == "font:")
+    if ((f_size == "normal" || f_size.isEmpty()) && f_family.isEmpty() && temp == "font:")
       temp = "";
     else
       temp += " " + f_size + " " + f_family + ";\n";
@@ -95,20 +95,20 @@ QString CSSSelectorEditor::code()
     properties += temp;
   } else {
     // Every properties is splitted on a different line
-    if (f_family != "" && f_family != "")
+    if (!f_family.isEmpty())
       properties += "font-family: " + f_family;
-    if (f_size != "medium" && f_size != "")
+    if (f_size != "medium" && !f_size.isEmpty())
       properties += "font-size: " + f_size;
-    if (f_style != "normal" && f_style != "")
+    if (f_style != "normal" && !f_style.isEmpty())
       properties += "font-style: " + f_style;
-    if (f_variant != "normal" && f_variant != "")
+    if (f_variant != "normal" && !f_variant.isEmpty())
       properties += "font-variant: " + f_variant;
-    if (f_weight != "normal" && f_weight != "")
+    if (f_weight != "normal" && !f_weight.isEmpty())
       properties += "font-weight: " + f_weight;
   }
 
   // Text color
-  if (ccomboColor->colorName() != "")
+  if (!ccomboColor->colorName().isEmpty())
     properties += "color: " + ccomboColor->colorName();
 
   // Background
@@ -120,8 +120,8 @@ QString CSSSelectorEditor::code()
   QString b_pos_y = QuantaCommon::i18n2normal(comboBGPositionTop->currentText());
 
   // Create the background position, but leave it empty if it is the default
-  QString b_pos = "";
-  if ( b_pos_x != "" && b_pos_x != "left" && b_pos_x != "0" && b_pos_x != "0 %" ) 
+  QString b_pos;
+  if ( !b_pos_x.isEmpty() && b_pos_x != "left" && b_pos_x != "0" && b_pos_x != "0 %" ) 
   {
     b_pos += b_pos_y + " " + b_pos_x;
   }
@@ -131,57 +131,56 @@ QString CSSSelectorEditor::code()
   if ( checkBGInline->isChecked() ) {
        // Generate the inline rule
     QString temp = "background: ";
-    if (b_color != "transparent" && b_color != "")
+    if (b_color != "transparent" && !b_color.isEmpty())
       temp += " " + b_color;
-    if (b_img != "none" && b_img != "")
+    if (b_img != "none" && !b_img.isEmpty())
       temp += " " + b_img;
-    if (b_repeat != "repeat" && b_repeat != "")
+    if (b_repeat != "repeat" && !b_repeat.isEmpty())
       temp += " " + b_repeat;
-    if (b_att != "scroll" && b_att != "")
+    if (b_att != "scroll" && !b_att.isEmpty())
       temp += " " + b_att;
-    if (b_pos != "")
+    if (!b_pos.isEmpty())
       temp += " " + b_pos;
     if (temp != "background: ")
       properties += temp + ";\n";
   } else {
        // One line for background rule
-    if (b_color != "transparent" && b_color != "")
+    if (b_color != "transparent" && !b_color.isEmpty())
       properties += "background-color: " + b_color;
-    if (b_img != "none" && b_img != "")
+    if (b_img != "none" && !b_img.isEmpty())
       properties += "background-image: " + b_img;
-    if (b_repeat != "repeat" && b_repeat != "")
+    if (b_repeat != "repeat" && !b_repeat.isEmpty())
       properties += "background-repeat: " + b_repeat;
-    if (b_att != "scroll" && b_att != "")
+    if (b_att != "scroll" && !b_att.isEmpty())
       properties += "background-attachment: " + b_att;
-    if (b_pos != "")
+    if (!b_pos.isEmpty())
       properties += "background-position: " + b_pos;
   }
 
   // Let's add some others text properties
-  QString t;
-  t = QuantaCommon::i18n2normal(comboWordSpacing->currentText());
-  if (t != "normal" && t != "")
+  QString t = QuantaCommon::i18n2normal(comboWordSpacing->currentText());
+  if (t != "normal" && !t.isEmpty())
     properties +=  "word-spacing: " + t;
   t = QuantaCommon::i18n2normal(comboLetterSpacing->currentText());
-  if (t != "normal" && t != "")
+  if (t != "normal" && !t.isEmpty())
     properties += "letter-spacing: " + t;
   t = QuantaCommon::i18n2normal(comboTextDecoration->currentText());
-  if (t != "none" && t != "")
+  if (t != "none" && !t.isEmpty())
     properties += "text-decoration: " + t;
   t = QuantaCommon::i18n2normal(comboTextTransform->currentText());
-  if (t != "none" && t != "")
+  if (t != "none" && !t.isEmpty())
     properties += "text-transform: " + t;
   t = QuantaCommon::i18n2normal(comboTextAlign->currentText());
-  if (t != "left" && t != "")
+  if (t != "left" && !t.isEmpty())
     properties += "text-align: " + t;
   t = QuantaCommon::i18n2normal(comboVerticalAlign->currentText());
-  if (t != "baseline" && t != "")
+  if (t != "baseline" && !t.isEmpty())
     properties += "vertical-align: " + t;
   t = QuantaCommon::i18n2normal(comboTextIndent->currentText());
-  if (t != "0" && t != "")
+  if (t != "0" && !t.isEmpty())
     properties += "text-indent: " + t;
   t = QuantaCommon::i18n2normal(comboLineHeight->currentText());
-  if (t != "normal" && t != "")
+  if (t != "normal" && !t.isEmpty())
     properties += "line-height: " + t;
 
   // Now, let's add the margin
@@ -204,13 +203,13 @@ QString CSSSelectorEditor::code()
     else if (temp != "margin: " && temp != "margin: 0 0 0 0")
       properties += temp + ";\n";
   } else {
-    if (mt != "0" && mt != "")
+    if (mt != "0" && !mt.isEmpty())
       properties += "margin-top: " + mt;
-    if (mr != "0" && mr != "")
+    if (mr != "0" && !mr.isEmpty())
       properties += "margin-right: " + mr;
-    if (mb != "0" && mb != "")
+    if (mb != "0" && !mb.isEmpty())
       properties += "margin-bottom: " + mb;
-    if (ml != "0" && ml != "")
+    if (ml != "0" && !ml.isEmpty())
     properties += "margin-left: " + ml;
   }
 
@@ -231,13 +230,13 @@ QString CSSSelectorEditor::code()
     else if (temp != "padding: " && temp != "padding: 0 0 0 0")
       properties += temp + ";\n";
   } else {
-    if (pt != "0" && pt != "")
+    if (pt != "0" && !pt.isEmpty())
       properties += "padding-top: " + pt;
-    if (pr != "0" && pr != "")
+    if (pr != "0" && !pr.isEmpty())
       properties += "padding-right: " + pr;
-    if (pb != "0" && pb != "")
+    if (pb != "0" && !pb.isEmpty())
       properties += "padding-bottom: " + pb;
-    if (pl != "0" && pl != "")
+    if (pl != "0" && !pl.isEmpty())
       properties += "padding-left: " + pl;
   }
 
@@ -271,25 +270,25 @@ QString CSSSelectorEditor::code()
 
   if ( radioBorderWCS->isChecked() ) {
     // 3 rules: border-width, border-style, border-color
-    if ( b_w != "medium medium medium medium" && b_w != "" )
+    if ( b_w != "medium medium medium medium" && !b_w.isEmpty() )
       properties += "border-width: " + b_w;
-    if ( b_s != "none none none none" && b_s != "" )
+    if ( b_s != "none none none none" && !b_s.isEmpty() )
       properties += "border-style: " + b_s;
-    if ( b_c != "" )
+    if ( !b_c.isEmpty() )
       properties += "border-color: " + b_c;
   } else if ( radioBorderSides->isChecked() ) {
     // 4 rules: top, right, bottom, left -border
-    if ( b_t != "medium none" && b_t != "" )
+    if ( b_t != "medium none" && !b_t.isEmpty() )
       properties += "border-top: " + b_t;
-    if ( b_r != "medium none" && b_r != "" )
+    if ( b_r != "medium none" && !b_r.isEmpty() )
       properties += "border-right: " + b_r;
-    if ( b_b != "medium none" && b_b != "" )
+    if ( b_b != "medium none" && !b_b.isEmpty() )
       properties += "border-bottom: " + b_b;
-    if ( b_l != "medium none" && b_l != "" )
+    if ( b_l != "medium none" && !b_l.isEmpty() )
       properties += "border-left: " + b_l;
   } else if ( radioBorderOnly->isChecked() ) {
     // 1 rule: border
-    if ( b_t != "medium none" && b_t != "" )
+    if ( b_t != "medium none" && !b_t.isEmpty() )
       properties += "border: " + b_t;
   }
 
@@ -318,35 +317,35 @@ QString CSSSelectorEditor::code()
     // All in one rule
     QString temp, t;
     t = QuantaCommon::i18n2normal(comboListStyleType->currentText());
-    if (t != "disc" && t != "")
+    if (t != "disc" && !t.isEmpty())
       temp += " " + t;
     t = QuantaCommon::i18n2normal(comboListStylePosition->currentText());
-    if (t != "outside" && t != "")
+    if (t != "outside" && !t.isEmpty())
       temp += " " + t;
     t = fcomboListStyleImage->text();
-    if (t != "")
+    if (!t.isEmpty())
       temp += " " + t;
     temp = temp.simplifyWhiteSpace();
-    if (temp != "")
+    if (!temp.isEmpty())
       properties += "list-style: " + temp + ";\n";
   } else {
     // 3 rules
     QString t;
     t = QuantaCommon::i18n2normal(comboListStyleType->currentText());
-    if (t != "disc" && t != "")
+    if (t != "disc" && !t.isEmpty())
       properties += "list-style-type: " + t;
     t = QuantaCommon::i18n2normal(comboListStylePosition->currentText());
-    if (t != "outside" && t != "")
+    if (t != "outside" && !t.isEmpty())
       properties += "list-style-position: " + t;
     t = fcomboListStyleImage->text();
-    if (t != "")
+    if (!t.isEmpty())
       properties += "list-style-image: " + t;
   }
 
   // Let's create the final CSS code
   if (properties.size() == 0)
     return "";
-  QString text="";
+  QString text;
   if (lineSelector->isEnabled()) {
     bool inlin = checkCodeInline->isChecked();
 
