@@ -39,7 +39,7 @@
    <tag>&lt;hr></tag>
   </action>
   <action icon="tag_comm" type="tag" id="1010" name="Comment" >
-   <tag>&lt;?--</tag>
+   <tag>&lt;!--</tag>
    <xtag use="true" >--></xtag>
   </action>
   <action type="separator" id="0" />

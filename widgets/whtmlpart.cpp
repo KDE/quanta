@@ -16,11 +16,15 @@
  ***************************************************************************/
 
 #include "whtmlpart.h"
+#include <kconfig.h>
 
 WHTMLPart::WHTMLPart(QWidget *parent, const char *name )
 	: KHTMLPart(parent,name)
 {
    hpos = 0;
+   // get settings from konq.
+   //KConfig konqConfig("konquerorrc",false,true);
+   //konqConfig.setGroup("HTML Settings");
 }
 
 WHTMLPart::~WHTMLPart()

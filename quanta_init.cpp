@@ -715,7 +715,6 @@ void QuantaApp::initView()
   vSplit->setPos( 25);
   hSplit->setPos( 100);
 
-
   htmlPartRight	 = new WHTMLPart( rightWidgetStack,  "rightHTML");
   htmlPartBottom = new WHTMLPart( bottomWidgetStack, "bottomHTML");
   htmlPartTop    = new WHTMLPart( topWidgetStack, 	 "topHTML");
