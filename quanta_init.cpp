@@ -1916,7 +1916,7 @@ void QuantaApp::initActions()
     m_project->projectRecent->setIcon("folder_new");
 #endif
     m_project->projectRecent->setMaxItems(32);
-    m_project->projectRecent->setWhatsThis(1i8n("Open Project"));
+    m_project->projectRecent->setWhatsThis(i18n("Open Project"));
     connect(m_project->projectRecent, SIGNAL(activated()), m_project, SLOT(slotOpenProject()));
 
 
