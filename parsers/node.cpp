@@ -64,16 +64,10 @@ Node::~Node()
       parent->child = 0L;
   if (removeAll)
   {
-    if (child)
-    {
-      delete child;
-      child = 0L;
-    }
-    if (next)
-    {
-      delete next;
-      next = 0L;
-    }
+    delete child;
+    child = 0L;
+    delete next;
+    next = 0L;
   }
   
   delete tag; 
@@ -81,10 +75,8 @@ Node::~Node()
   delete groupTag; 
   groupTag = 0L;
 #ifdef BUILD_KAFKAPART
-  if(m_rootNode)
-    delete m_rootNode;
-  if(m_leafNode)
-    delete m_leafNode;
+  delete m_rootNode;
+  delete m_leafNode;
 #endif
 }
 

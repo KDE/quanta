@@ -1894,8 +1894,7 @@ void Document::slotDelayedTextChanged(bool forced)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
       node = parser->nodeAt(line, column, false);
-      if (node &&
-          (node->tag->type==Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) )
+      if (node)
       {
         Tag *tag;
         tag = new Tag(*node->tag);
@@ -1932,7 +1931,6 @@ void Document::slotDelayedTextChanged(bool forced)
           delete currentNode;
           currentNode = previousNode;
         } else
-        if (previousNode)
         {
           delete previousNode;
           previousNode = 0L;

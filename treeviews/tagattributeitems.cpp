@@ -189,10 +189,8 @@ AttributeItem::AttributeItem(EditableTree *listView, const QString& title, const
 
 AttributeItem::~AttributeItem()
 {
-  if(lin)
-    delete lin;
-  if(lin2)
-    delete lin2;
+  delete lin;
+  delete lin2;
 }
 
 void AttributeItem::paintCell(QPainter *p, const QColorGroup &cg,
