@@ -26,7 +26,6 @@
 #include "quantacommon.h"
 #include "structtreetag.h"
 #include "kafkacommon.h"
-#include "wkafkapart.h"
 
 GroupElementMapList globalGroupMap;
 
@@ -167,7 +166,6 @@ bool Node::load(QDomElement const& element)
     specialInsideXml = QString(element.attribute("specialInsideXml")).toInt();  // bool
     fileName = element.attribute("fileName");                         // QString
 
-    kafkaCommon::restorePastedNode(this, KafkaDocument::ref()->getCurrentDoc());
     //kafkaCommon::coutTree(this, 3);
     
     return true;

@@ -2292,6 +2292,10 @@ void KafkaDocument::slotPaste()
     
     if(KafkaDragObject::decode(e, node))
     {
+        bool go_up = false;
+        for(Node* aux = node; aux; aux = kafkaCommon::getNextNode(aux, go_up))
+            kafkaCommon::restorePastedNode(aux, getCurrentDoc());
+        
         NodeSelectionInd selection_ind;
         selection_ind.fillWithVPLCursorSelection();
     
