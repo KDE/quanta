@@ -293,6 +293,7 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
       actionText.replace(QRegExp("\\&(?!\\&)"),"");
       lineText->setText(actionText);
       lineToolTip->setText( el.attribute("tooltip") );
+      selectedShortcut = action->shortcut();
       QString shortcutText = action->shortcut().toString();
       if (shortcutText.isEmpty())
       {
@@ -460,10 +461,10 @@ void ActionConfigDialog::saveCurrentAction()
   s = "";
   if (customShortcut->isChecked())
   {
-    s = shortcutKeyButton->text();
+    s = selectedShortcut.toString();
   }
   el.setAttribute("shortcut", s);
-  currentAction->setShortcut(KShortcut(s));
+  currentAction->setShortcut(selectedShortcut);
 
 //update the tree view
   QListViewItem *listItem;
@@ -697,12 +698,12 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
         for (uint i = 0; i < ac->count(); i++)
         {
           KAction *action = ac->action(i);
-          if (action->shortcut().toString().contains(shortcutText))
+          if (action != currentAction && action->shortcut().toString().contains(shortcutText))
           {
             global = action->text();
             break;
           }
-          if (!shortcutText2.isEmpty() && action->shortcut().toString().contains(shortcutText))
+          if (!shortcutText2.isEmpty() && action != currentAction &&  action->shortcut().toString().contains(shortcutText))
           {
             shortcutText = shortcutText2;
             global = action->text();
@@ -718,6 +719,7 @@ void ActionConfigDialog::slotShortcutCaptured(const KShortcut &shortcut)
   {
     shortcutKeyButton->setText(shortcutText);
     buttonApply->setEnabled(true);
+    selectedShortcut = shortcut;
   } else
   {
     global.replace('&',"");
@@ -751,6 +753,7 @@ void ActionConfigDialog::slotNewAction()
   el.setAttribute( "icon", "ball" );
 
   currentAction = new TagAction(&el, quantaApp->actionCollection());
+  selectedShortcut = KShortcut();
   static_cast<TagAction*>(currentAction)->setModified(true);
   QListViewItem *currentItem = actionTreeView->currentItem();
   QListViewItem *item = new KListViewItem(allActionsItem);

@@ -24,6 +24,11 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
     	- don't insert the closing tag for a Tag action if it is not requested to do so.
         - fix restoration of the toolbar visibility setting [#79082]
         - hide/show the plugin toolbar as well when Show Toolbar is unchecked/checked [#79082]
+        - don't ask for copying a file to the project if it is under the project directory (happened
+          with symlinked files and projects)
+        - color with bold in the Files Tree the opened files, even if they are under a symlinked
+          directory
+        - don't save the shortcuts as localized strings [#80115]
 
     - performance:
         - parse the included files less often

@@ -230,7 +230,7 @@ QuantaView* ViewManager::isOpened(const KURL& url)
   {
       QDir dir(url2.path());
       url2.setPath(dir.canonicalPath());
- }
+  }
   KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
   QuantaView *view;
   for (it->first(); !it->isDone(); it->next())
