@@ -2081,6 +2081,7 @@ void Parser::parseForScriptGroup(Node *node)
         )
       continue;
     pos = 0;
+    group.searchRx.setMinimal(group.isMinimalSearchRx);
     while (pos != -1)
     {
       pos = group.searchRx.search(str, pos);

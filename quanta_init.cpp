@@ -1413,6 +1413,7 @@ void QuantaApp::readTagDir(QString &dirName)
       group.icon = dtdConfig->readEntry("Icon").stripWhiteSpace();
       group.searchRx = dtdConfig->readEntry("SearchRx").stripWhiteSpace();
       group.hasSearchRx = !group.searchRx.pattern().isEmpty();
+      group.isMinimalSearchRx = dtdConfig->readBoolEntry("SearchRx_Minimal", false);
       group.clearRx = dtdConfig->readEntry("ClearRx").stripWhiteSpace();
       tagStr = dtdConfig->readEntry("Tag").stripWhiteSpace();
       group.tag = "";
@@ -2236,13 +2237,13 @@ void QuantaApp::recoverCrashed()
           //TODO: Replace with KIO::NetAccess::file_copy, when KDE 3.1 support
           //is dropped
             QExtFileInfo::copy(autosavedVersion, originalVersion, -1, true, false, this);
-            
+
             //slotFileOpenRecent(originalVersion);
           }
           delete dlg;
        }
      }
-     if(QFile::exists(autosavedVersion.path())) QFile::remove(autosavedVersion.path());     
+     if(QFile::exists(autosavedVersion.path())) QFile::remove(autosavedVersion.path());
     }
   }
   m_config->setGroup("General Options");

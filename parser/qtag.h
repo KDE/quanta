@@ -53,6 +53,7 @@ typedef struct StructTreeGroup{
         QString icon;        //the icon of the group
         QRegExp searchRx;    //regular experssion to help us find the group - for pseudo DTDs
         bool hasSearchRx;    //true if searchRx should be used
+        bool isMinimalSearchRx; // true if the searchRx should be non-greedy
         QRegExp clearRx;     //clear the text matched from the result of the searchRx search - for pseudo DTDs
         QString tag;         //tags belonging to this group - for real DTDs
         int tagType;     //the tag type for which this is valid
