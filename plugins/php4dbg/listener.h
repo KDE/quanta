@@ -16,7 +16,11 @@ public:
         
   int socket() { return listensock; }
   TH_LIST* getthlist() { return &th_list; }
-  void log(ListenerLogKind kind, char *message,...);
+  void log(ListenerLogKind kind, char *message,...)
+#ifdef __GNUC__
+  __attribute__ (( format ( printf, 3,4 ) ))
+#endif
+      ;
   void destroy_client_p(ThreadBase *client) { client->destroy(); }
   
 protected:
