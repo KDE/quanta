@@ -47,6 +47,6 @@ void ProjectOptions::keepPasswdToggled( bool )
 {
   if (keepPasswd->isChecked())
   {
-      KMessageBox::information(this, i18n("<qt>Saving the password is not recommended. Please read the <b>What's This</b> information for this checkbox.</qt>"), i18n("Security warning"), "SavePasswordWarning");
+      KMessageBox::information(this, i18n("<qt>Saving the password is not recommended. Please read the <b>What's This</b> information for this checkbox.</qt>"), i18n("Security Warning"), "SavePasswordWarning");
   }
 }

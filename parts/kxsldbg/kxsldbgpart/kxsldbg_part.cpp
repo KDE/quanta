@@ -699,7 +699,7 @@ void KXsldbgPart::slotGotoXPath()
 void KXsldbgPart::slotProcResolveItem(QString URI)
 {
   if (!URI.isEmpty()){
-    QMessageBox::information(m_editWidget, i18n("SystemID or PublicID resolution result"),
+    QMessageBox::information(m_editWidget, i18n("SystemID or PublicID Resolution Result"),
         i18n("SystemID or PublicID has been resolved to\n.%1").arg(URI),
 	QMessageBox::Ok);
   }

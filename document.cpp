@@ -2134,7 +2134,7 @@ void Document::convertCase()
 {
   int tagCase = 0;
   int attrCase = 0;
-  KDialogBase dlg(this, 0L, false, i18n("Change tag and attribute case"), KDialogBase::Ok | KDialogBase::Cancel);
+  KDialogBase dlg(this, 0L, false, i18n("Change Tag & Attribute Case"), KDialogBase::Ok | KDialogBase::Cancel);
   CaseWidget w(&dlg);
   dlg.setMainWidget(&w);
   DTDStruct *dtd = defaultDTD();

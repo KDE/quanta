@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>500</width>
-            <height>123</height>
+            <height>158</height>
         </rect>
     </property>
     <property name="minimumSize">
@@ -19,7 +19,7 @@
         </size>
     </property>
     <property name="caption">
-        <string></string>
+        <string>CaseWidget</string>
     </property>
     <grid>
         <property name="name">
@@ -30,7 +30,7 @@
                 <cstring>buttonGroup2</cstring>
             </property>
             <property name="title">
-                <string>Tag case</string>
+                <string>Tag Case</string>
             </property>
             <grid>
                 <property name="name">
@@ -70,7 +70,7 @@
                 <cstring>buttonGroup3</cstring>
             </property>
             <property name="title">
-                <string>Attribute case</string>
+                <string>Attribute Case</string>
             </property>
             <grid>
                 <property name="name">

@@ -1684,11 +1684,11 @@ void Project::slotOpenProjectView()
 #if KDE_IS_VERSION(3, 1, 90)
   QString res = KInputDialog::getItem(
                   i18n("Open Project View"),
-                  i18n("Select a project view to open."), list, 0, FALSE, &ok, this );
+                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, this );
 #else
   QString res = QInputDialog::getItem(
                   i18n("Open Project View"),
-                  i18n("Select a project view to open."), list, 0, FALSE, &ok, this );
+                  i18n("Select a project view to open:"), list, 0, FALSE, &ok, this );
 #endif
   if ( ok)
   {
@@ -1788,11 +1788,11 @@ void Project::slotDeleteProjectView()
 #if KDE_IS_VERSION(3, 1, 90)
   QString res = KInputDialog::getItem(
                   i18n("Delete Project View"),
-                  i18n("Select a project view to delete."), list, 0, FALSE, &ok, this );
+                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, this );
 #else
   QString res = QInputDialog::getItem(
                   i18n("Delete Project View"),
-                  i18n("Select a project view to delete."), list, 0, FALSE, &ok, this );
+                  i18n("Select a project view to delete:"), list, 0, FALSE, &ok, this );
 #endif
   if ( ok)
   {

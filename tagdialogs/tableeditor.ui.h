@@ -984,7 +984,7 @@ void TableEditor::slotEditChildTable()
       QString cellData = m_dataTable->text(table.row, table.col);
       int pos = cellData.find(table.nestedData);
       if (pos == -1) {
-        KMessageBox::error(this, i18n("Cannot edit the child table. Most probably you modified the cell containing the table manually."), i18n("Cannot read table"));
+        KMessageBox::error(this, i18n("Cannot edit the child table. Most probably you modified the cell containing the table manually."), i18n("Cannot Read Table"));
         error = true;
         errorIt = it;
         break;
@@ -1006,7 +1006,7 @@ void TableEditor::slotEditChildTable()
       if (pos2 != -1)
         pos2 = tableData.find(table.nestedData, pos2);
       if (pos2 == -1) {
-        KMessageBox::error(this, i18n("Cannot edit the child table. Most probably you modified the cell containing the table manually."), i18n("Cannot read table"));
+        KMessageBox::error(this, i18n("Cannot edit the child table. Most probably you modified the cell containing the table manually."), i18n("Cannot Read Table"));
         error = true;
         errorIt = it;
         break;
@@ -1021,7 +1021,7 @@ void TableEditor::slotEditChildTable()
       }
       Node *childTableNode = localParser->nodeAt(table.bLine, table.bCol);
       if (!childTableNode->next || !QuantaCommon::closesTag(childTableNode->tag, childTableNode->next->tag)) {
-        KMessageBox::error(this, i18n("Cannot find the closing tag of the child table. Most probably you've introduced unclosed tags in the table and have broken its consistency."), i18n("Cannot read table"));
+        KMessageBox::error(this, i18n("Cannot find the closing tag of the child table. Most probably you've introduced unclosed tags in the table and have broken its consistency."), i18n("Cannot Read Table"));
         error = true;
         errorIt = it;
         break;

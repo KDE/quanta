@@ -315,7 +315,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
       proc->closeStdin();
     } else
     {
-      KMessageBox::error(quantaApp, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible!</qt>").arg(command + " " + args).arg(command), i18n("Script not found"));
+      KMessageBox::error(quantaApp, i18n("<qt>There was an error running <b>%1</b>.<br>Check that you have the <i>%2</i> executable installed and it is accessible!</qt>").arg(command + " " + args).arg(command), i18n("Script Not Found"));
     }
   }
 #ifdef BUILD_KAFKAPART
@@ -480,7 +480,7 @@ void TagAction::execute()
 /** Timeout occurred while waiting for some network function to return. */
 void TagAction::slotTimeout()
 {
-  if (KMessageBox::warningYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(tag.attribute("text")), i18n("Action not responding")) == KMessageBox::Yes)
+  if (KMessageBox::warningYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(tag.attribute("text")), i18n("Action Not Responding")) == KMessageBox::Yes)
   {
     if (::kill(-proc->pid(), SIGTERM))
     {

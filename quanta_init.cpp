@@ -1057,7 +1057,7 @@ uint QuantaApp::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagL
  {
    emit showSplash(false);
    KMessageBox::error(this, i18n("<qt>The DTD tag file %1 is not valid.<br> The error message is: <i>%2 in line %3, column %4.</i></qt>").arg(fileName).arg(errorMsg).arg(errorLine).arg(errorCol),
-   i18n("Invalid tag file"));
+   i18n("Invalid Tag File"));
    kdWarning() << fileName << ": " << errorMsg << ": " << errorLine << "," << errorCol << endl;
  }
 
@@ -1846,7 +1846,7 @@ void QuantaApp::initActions()
                         ac, "tools_document_properties" );
 #endif
 
-    (void) new KAction( i18n( "&Convert Tag and Attribute Case..."), 0,
+    (void) new KAction( i18n( "&Convert Tag && Attribute Case..."), 0,
                         this, SLOT(slotConvertCase()),
                         ac, "tools_change_case");
 
@@ -2045,10 +2045,10 @@ void QuantaApp::initActions()
     new KAction(i18n("Load &Local Toolbar..."), 0, this, SLOT(slotLoadToolbar()), ac, "toolbars_load_user");
     new KAction(i18n("Save as &Local Toolbar..."), 0, this, SLOT(slotSaveLocalToolbar()), ac, "toolbars_save_local");
     new KAction(i18n("Save as &Project Toolbar..."), 0, this, SLOT(slotSaveProjectToolbar()), ac, "toolbars_save_project");
-    new KAction(i18n("&Add User Toolbar"),  0, this, SLOT(slotAddToolbar()), ac, "toolbars_add");
-    new KAction(i18n("&Remove User Toolbar"), 0, this, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
-    new KAction(i18n("Re&name User Toolbar"), 0, this, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
-    new KAction(i18n("Send Toolbar in E-&Mail"), 0, this, SLOT(slotSendToolbar()), ac, "toolbars_send");
+    new KAction(i18n("&Add User Toolbar..."),  0, this, SLOT(slotAddToolbar()), ac, "toolbars_add");
+    new KAction(i18n("&Remove User Toolbar..."), 0, this, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
+    new KAction(i18n("Re&name User Toolbar..."), 0, this, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
+    new KAction(i18n("Send Toolbar in E-&Mail..."), 0, this, SLOT(slotSendToolbar()), ac, "toolbars_send");
 
     showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
     connect(showDTDToolbar, SIGNAL(toggled(bool)), this, SLOT(slotToggleDTDToolbar(bool)));
@@ -2245,7 +2245,7 @@ void QuantaApp::recoverCrashed()
        {
           emit showSplash(false);
           DirtyDlg *dlg = new DirtyDlg(autosavedVersion.path(), originalVersion.path(), false, this);
-          dlg->setCaption(i18n("Restore file"));
+          dlg->setCaption(i18n("Restore File"));
           DirtyDialog *w = static_cast<DirtyDialog*>(dlg->mainWidget());
           w->textLabel->setText(i18n("<qt>A backup copy of a file was found:<br><br>"
            "Original file: <b>%1</b><br>"

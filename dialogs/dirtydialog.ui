@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>573</width>
-            <height>222</height>
+            <width>609</width>
+            <height>288</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -80,7 +80,7 @@
                         <cstring>buttonIgnore</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Do not load the modified version from disk.</string>
+                        <string>&amp;Do not load the modified version from disk</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton" row="1" column="0" rowspan="1" colspan="2">
