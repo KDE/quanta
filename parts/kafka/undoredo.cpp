@@ -168,7 +168,7 @@ undoRedo::~undoRedo()
 #endif
 }
 
-void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSelection *selection)
+void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSelection *selection, bool encodeText)
 {
 #ifdef LIGHT_DEBUG
   kdDebug(25001)<< "undoRedo::addNewModifsSet() - NodeModifsSet type: " << modifLocation << endl;
@@ -204,7 +204,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSel
     {
       if(!node->insideSpecial)
       {
-        node->tag->setStr(KafkaDocument::ref()->generateCodeFromNode(node, 0, 0, foo, foo2, true));
+        node->tag->setStr(KafkaDocument::ref()->generateCodeFromNode(node, 0, 0, foo, foo2, encodeText));
         node->tag->setCleanStrBuilt(true);
       }
     }

@@ -2332,6 +2332,6 @@ void KafkaDocument::slotPaste()
             cursorNode = 0; // use selection_ind
         kafkaCommon::DTDInsertNodeSubtree(node, selection_ind, &cursorNode, cursorOffset, modifs);
         
-        m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+        m_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif, 0, false);
     }
 }

@@ -278,7 +278,7 @@ public:
    * and the selection to 'selection'. Only work when the focus is in VPL for the moment.
    * cf undoRedo::modificationLocation.
    */
-  void addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSelection *selection = 0L);
+  void addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSelection *selection = 0L, bool encodeText = true);
 
   /**
    * TEMPORARY function.

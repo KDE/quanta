@@ -109,18 +109,18 @@ void Node::save(QDomElement& element) const
     element.setAttribute("specialInsideXml", specialInsideXml);             // bool
     element.setAttribute("fileName", fileName);                         // QString
 
-    QString s_element;
+/*    QString s_element;
     QTextStream stream(&s_element, IO_WriteOnly);
-    element.save(stream, 3);
+    element.save(stream, 3);*/
     //kdDebug(25001) << "Load:\n" << s_element << endl;
     //kdDebug(25001) << "Save:\n" << element.ownerDocument().toString() << endl;
 }
 
 bool Node::load(QDomElement const& element)
 {
-    QString s_element;
+/*    QString s_element;
     QTextStream stream(&s_element, IO_WriteOnly);
-    element.save(stream, 3);
+    element.save(stream, 3);*/
     //kdDebug(25001) << "Load:\n" << s_element << endl;
 
     QDomNodeList list = element.childNodes();
