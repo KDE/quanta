@@ -36,18 +36,20 @@ public slots:
   void slotEditInQuanta();
   void slotEditDescription();
   void slotRun();
+  void slotAssignAction();
   void slotSendScriptInMail();
 
 signals:
   void openFileInPreview(const KURL&);
   void hidePreview();
+  void assignActionToScript(const KURL&, const QString&);
 
 private:
   KURL infoFile(const KURL& a_url);
+  QString infoOptionValue(const KURL& a_infoURL, const QString& a_optionName);
 
   FilesTreeFolder *m_globalDir;
   FilesTreeFolder *m_localDir;
-
 };
 
 #endif

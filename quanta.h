@@ -314,6 +314,9 @@ public slots:
   void slotRemoveAction(const QString&, const QString& actionName);
   /** Edit the action */
   void slotEditAction(const QString&);
+  /** Creates a script action for a_scriptURL using the a_interpreter as the script
+  interpreter application */
+  void slotAssignActionToScript(const KURL&a_scriptURL, const QString& a_interpreter);
 
   /** No descriptions */
   void slotToolsChangeDTD();

@@ -77,7 +77,7 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   fileMenu->insertItem(i18n("Edit in Quanta"), this ,SLOT(slotEditInQuanta()));
   fileMenu->insertItem(i18n("Edit Description"), this ,SLOT(slotEditDescription()));
   fileMenu->insertSeparator();
-  //fileMenu->insertItem(i18n("Assign Action"), this ,SLOT(slotOpen()));
+  fileMenu->insertItem(i18n("Assign Action"), this ,SLOT(slotAssignAction()));
   fileMenu->insertItem(i18n("Send in E-Mail"), this ,SLOT(slotSendScriptInMail()));
 
 
@@ -130,25 +130,10 @@ void ScriptTreeView::slotEditScript()
   FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(currentItem());
   if (f)
   {
+    emit hidePreview();
     KURL urlToOpen = currentURL();
     KURL infoUrl = infoFile(urlToOpen);
-    QString editApp;
-    QString execApp;
-    QFile f(infoUrl.path());
-    if (f.open(IO_ReadOnly))
-    {
-      QDomDocument doc;
-      doc.setContent(&f);
-      f.close();
-      QDomNodeList nodes = doc.elementsByTagName("options");
-      if (nodes.count() > 0)
-      {
-        QDomElement el = nodes.item(0).toElement();
-        execApp = el.attribute("interpreter");
-        editApp = el.attribute("editor");
-      }
-    }
-    emit hidePreview();
+    QString editApp = infoOptionValue(infoUrl, "editor");
     if (editApp.isEmpty())
         emit openFile(urlToOpen, quantaApp->defaultEncoding());
     else
@@ -168,20 +153,7 @@ void ScriptTreeView::slotRun()
   {
     KURL urlToOpen = currentURL();
     KURL infoUrl = infoFile(urlToOpen);
-    QString execApp;
-    QFile f(infoUrl.path());
-    if (f.open(IO_ReadOnly))
-    {
-      QDomDocument doc;
-      doc.setContent(&f);
-      f.close();
-      QDomNodeList nodes = doc.elementsByTagName("options");
-      if (nodes.count() > 0)
-      {
-        QDomElement el = nodes.item(0).toElement();
-        execApp = el.attribute("interpreter");
-      }
-    }
+    QString execApp = infoOptionValue(infoUrl, "interpreter");
     if (execApp.isEmpty())
     {
         KURL::List list;
@@ -206,6 +178,20 @@ void ScriptTreeView::slotEditInQuanta()
     KURL urlToOpen = currentURL();
     emit hidePreview();
     emit openFile(urlToOpen, quantaApp->defaultEncoding());
+  }
+}
+
+void ScriptTreeView::slotAssignAction()
+{
+  FilesTreeFile *f = dynamic_cast<FilesTreeFile*>(currentItem());
+  if (f)
+  {
+    KURL url = currentURL();
+    KURL infoURL = infoFile(url);
+    QString execApp = infoOptionValue(infoURL, "interpreter");
+    if (execApp.isEmpty())
+        execApp = "sh";
+    emit assignActionToScript(url, execApp);
   }
 }
 
@@ -287,6 +273,23 @@ KURL ScriptTreeView::infoFile(const KURL& a_url)
   return url;
 }
 
-
+QString ScriptTreeView::infoOptionValue(const KURL& a_infoURL, const QString& a_optionName)
+{
+  QString value;
+  QFile f(a_infoURL.path());
+  if (f.open(IO_ReadOnly))
+  {
+    QDomDocument doc;
+    doc.setContent(&f);
+    f.close();
+    QDomNodeList nodes = doc.elementsByTagName("options");
+    if (nodes.count() > 0)
+    {
+      QDomElement el = nodes.item(0).toElement();
+      value = el.attribute(a_optionName);
+    }
+  }
+  return value;
+}
 
  #include "scripttreeview.moc"

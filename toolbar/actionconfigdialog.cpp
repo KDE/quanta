@@ -744,6 +744,7 @@ void ActionConfigDialog::slotNewAction()
     toolbarListBox->setCurrentItem(0);
     toolbarListBox->setSelected(0, true);
   }
+  actionTreeView->ensureItemVisible(item);
   buttonApply->setEnabled(true);
 }
 
@@ -769,6 +770,7 @@ void ActionConfigDialog::slotDeleteAction()
         ++it;
       }
     }
+    slotSelectionChanged(actionTreeView->currentItem());
   }
 }
 
@@ -829,6 +831,12 @@ void ActionConfigDialog::slotTextChanged()
 void ActionConfigDialog::slotTextChanged(const QString&)
 {
   buttonApply->setEnabled(true);
+}
+
+void ActionConfigDialog::createScriptAction(const QString& a_name, const QString& a_script)
+{
+  actionTreeView->setCurrentItem(allActionsItem);
+  slotNewAction();
 }
 
 #include "actionconfigdialog.moc"

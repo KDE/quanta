@@ -2645,6 +2645,13 @@ void QuantaApp::slotEditAction(const QString& actionName)
   dlg.exec();
 }
 
+void QuantaApp::slotAssignActionToScript(const KURL& a_scriptURL, const QString& a_interpreter)
+{
+  ActionConfigDialog dlg(this, "actions_config_dlg");
+  dlg.createScriptAction(a_scriptURL.fileName(), a_interpreter + " " + a_scriptURL.path());
+  dlg.exec();
+}
+
 /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
 void QuantaApp::processDTD(const QString& documentType)
 {
