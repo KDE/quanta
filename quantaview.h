@@ -156,7 +156,7 @@ user specified tag. */
   void slotTagMisc();
 
 /** Kate releated slots */
-/*
+//Edit
     void slotUndo ();
     void slotRedo ();
 
@@ -166,25 +166,35 @@ user specified tag. */
 
     void slotSelectAll ();
     void slotDeselectAll ();
+    void toggleVertical ();
 
     void slotFind ();
     void slotFindAgain ();
     void slotFindAgainB ();
     void slotReplace ();
-    void slotEditCommand ();
+
     void slotIndent();
     void slotUnIndent();
-    void slotSpellcheck ();
-    void slotGotoLine ();
-    void setEol(int);
-    void slotSetHl (uint n);
-  	void exportAs(const QString&);
+    void slotComment ();
+    void slotUnComment ();
+    void slotApplyWordWrap ();
 
+//Tools
+    void slotGotoLine ();
+    void slotSpellcheck ();
+
+//Bookmarks
     void toggleBookmark();
     void clearBookmarks();
+    void gotoMark (KTextEditor::Mark *mark);
 
-    void slotComment ();
-    void slotUnComment ();  */
+
+//Settings
+    void toggleIconBorder ();
+    void toggleLineNumbers();
+    void editorOptions ();
+    void setEol(int);
+
 
   signals:
     void newCurPos();

@@ -38,6 +38,7 @@
 #include "kqapp.h"
 #include "widgets/whtmlpart.h"
 #include <kparts/browserextension.h>
+#include <kate/document.h>
 
 // forward declaration
 class QuantaDoc;
@@ -189,7 +190,9 @@ class QuantaApp : public KDockMainWindow
     
     void viewMenuAboutToShow();
     void settingsMenuAboutToShow();
-//    void setEOLMenuAboutToShow();
+    void setEOLMenuAboutToShow();
+    void bookmarkMenuAboutToShow();
+    void gotoBookmark (int n);
 
     void slotMessageWidgetEnable();
     void slotMessageWidgetDisable();
@@ -315,7 +318,17 @@ class QuantaApp : public KDockMainWindow
       
     KAction *editUndo, *editRedo, *bookmarkToggle, *bookmarkClear;
 
+    KToggleAction *viewBorder;
+    KToggleAction *viewLineNumbers;
+    Kate::ActionMenu *setHighlight;
+
+    QPopupMenu* pm_set;
+    QPopupMenu* pm_bookmark;
+
     QDomDocument *m_actions;
+
+    QPtrList<KTextEditor::Mark> markList;
+
 
 };
  

@@ -1,8 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 bin_PROGRAMS = quanta
 
-INCLUDES = $(all_includes)
-
 quanta_SOURCES = quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp quantaview_init.cpp main.cpp document.cpp kqapp.cpp qextfileinfo.cpp quanta.cpp 
 quanta_LDADD   = ./project/libproject.a ./treeviews/libtreeviews.a ./tagdialogs/libtagdialogs.a -lkatepartinterfaces -lkabc $(top_builddir)/quanta/dialogs/libdialogs.a $(top_builddir)/quanta/parser/libparser.a $(top_builddir)/quanta/project/libproject.a $(top_builddir)/quanta/tagdialogs/libtagdialogs.a $(top_builddir)/quanta/treeviews/libtreeviews.a $(top_builddir)/quanta/widgets/libwidgets.a $(top_builddir)/quanta/toolbar/libtoolbar.a $(top_builddir)/quanta/messages/libmessages.a $(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.a $(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.a $(top_builddir)/quanta/plugins/php3dbg/libphp3dbg.a $(LIB_KSPELL) $(LIB_KFILE) $(LIB_KHTML) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) -lXext -lX11 $(LIBSOCKET)
 
@@ -30,4 +28,7 @@ kdelnk_DATA = quanta.desktop
 # this is where the XML-GUI resource file goes
 rcdir = $(kde_datadir)/quanta
 rc_DATA = quantaui.rc
+
+
+INCLUDES = $(all_includes) -I$(top_builddir)/quanta/dialogs -I$(top_builddir)/quanta/tagdialogs -I$(top_builddir)/quanta/toolbar
 

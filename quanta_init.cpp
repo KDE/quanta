@@ -110,9 +110,12 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   initActions();
   createGUI( QString::null, false );
 
-  QPopupMenu* pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
-  connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow())); 
-  
+  pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
+  connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));
+
+  pm_bookmark  = (QPopupMenu*)guiFactory()->container("bookmarks", this);
+  connect(pm_bookmark, SIGNAL(aboutToShow()), this, SLOT(bookmarkMenuAboutToShow()));
+
   QPopupMenu* pm_view = (QPopupMenu*)guiFactory()->container("qview", this);
   connect(pm_view,SIGNAL(aboutToShow()), this, SLOT(viewMenuAboutToShow()));
 
@@ -125,6 +128,8 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );
   t->start( 2000, false );
   slotFileNew();
+
+  setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
 
 }
 
@@ -454,11 +459,13 @@ void QuantaApp::readOptions()
 
   if (!config->readBoolEntry("Show Toolbar",   true)) {
     toolBar("mainToolBar")    ->hide();
+    toolBar("mainEditToolBar")    ->hide();
     toolBar("mainNaviToolBar")->hide();
    showToolbarAction  ->setChecked(false);
  } else
  {
     toolBar("mainToolBar")    ->show();
+    toolBar("mainEditToolBar")    ->show();
     toolBar("mainNaviToolBar")->show();
  }
   if (!config->readBoolEntry("Show Statusbar", true))
@@ -628,8 +635,10 @@ void QuantaApp::initTagDict()
 
 void QuantaApp::initActions()
 {
-/*
+
     //Kate actions
+
+//Edit menu
     editUndo = KStdAction::undo(view, SLOT(slotUndo()),actionCollection());
     editRedo = KStdAction::redo(view, SLOT(slotRedo()), actionCollection());
 
@@ -639,12 +648,14 @@ void QuantaApp::initActions()
 
     KStdAction::selectAll(view, SLOT(slotSelectAll()), actionCollection());
     KStdAction::deselect(view, SLOT(slotDeselectAll()),actionCollection());
+    (void) new KAction( i18n( "&Toggle block selection" ), Key_F4, view,
+                        SLOT( toggleVertical() ), actionCollection(), "set_verticalSelect" );
+
 
     KStdAction::find(view, SLOT(slotFind()), actionCollection());
     KStdAction::findNext(view, SLOT(slotFindAgain()), actionCollection());
     KStdAction::findPrev(view, SLOT(slotFindAgainB()), actionCollection(), "edit_find_prev");
     KStdAction::replace(view, SLOT(slotReplace()), actionCollection());
-
 
     new KAction(i18n("&Indent"), "indent", CTRL+Key_I, view,
                 SLOT(slotIndent()), actionCollection(), "edit_indent");
@@ -656,29 +667,40 @@ void QuantaApp::initActions()
     new KAction(i18n("Unc&omment"),
                 CTRL+SHIFT+Qt::Key_NumberSign, view, SLOT(slotUnComment()),
                 actionCollection(), "edit_uncomment");
+    new KAction(i18n("Apply Word Wrap"), "", 0, view, SLOT(slotApplyWordWrap()),
+                actionCollection(), "edit_apply_wordwrap");
 
-    new KAction(i18n("Editing Co&mmand..."), Qt::CTRL+Qt::Key_M, view,
-                SLOT(slotEditCommand()),actionCollection(), "edit_cmd");
 
+
+//Tools menu
     KStdAction::gotoLine(view, SLOT(slotGotoLine()), actionCollection());
+    KStdAction::spelling(view, SLOT(slotSpellcheck()), actionCollection());
 
+//Bookmarks
     bookmarkToggle = new KAction(i18n("Toggle &Bookmark"), Qt::CTRL+Qt::Key_B,
           view, SLOT(toggleBookmark()), actionCollection(), "edit_bookmarkToggle");
     bookmarkClear = new KAction(i18n("Clear Bookmarks"), 0, view,
           SLOT(clearBookmarks()), actionCollection(), "edit_bookmarksClear");
 
-    KStdAction::spelling(view, SLOT(slotSpellcheck()), actionCollection());
+//Settings
+  viewBorder =  new KToggleAction(i18n("Show &Icon Border"), Qt::SHIFT+Qt::Key_F9, view,
+                    SLOT(toggleIconBorder()), actionCollection(), "view_border");
+  viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F9, view,
+                        SLOT(toggleLineNumbers()), actionCollection(), "view_line_numbers");
+
+  (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0,
+                      view, SLOT( editorOptions() ), actionCollection(), "editor_options" );
+
 
     setEndOfLine = new KSelectAction(i18n("&End of Line"), 0, actionCollection(),"set_eol");
     connect(setEndOfLine, SIGNAL(activated(int)), view, SLOT(setEol(int)));
     connect(setEndOfLine->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(setEOLMenuAboutToShow()));
+
     QStringList list;
     list.append("&Unix");
     list.append("&Windows/Dos");
     list.append("&Macintosh");
     setEndOfLine->setItems(list);
-
-         */
 
 
     // File actions
@@ -716,13 +738,13 @@ void QuantaApp::initActions()
                         actionCollection(), "file_list" );
 
     // Edit actions
-
+ /*
     KAction *undoRedo 
       = new KAction( i18n( "Undo/Redo &History..."), 0, 
                      doc, SLOT( undoHistory()),
                      actionCollection(), "undo_history" );
-                                     
-    undoRedo->setGroup( "edit_undo_merge" );
+
+    undoRedo->setGroup( "edit_undo_merge" ); */
 
     (void) new KAction( i18n( "Find In Files" ),
                         UserIcon("find"), CTRL+ALT+Key_F,
@@ -730,8 +752,6 @@ void QuantaApp::initActions()
                         actionCollection(), "find_in_files" );
 
     // Tool actions
-    //
-
 
     (void) new KAction( i18n( "Context &Help..." ), CTRL+Key_H, 
                         this, SLOT( contextHelp() ),
@@ -750,8 +770,8 @@ void QuantaApp::initActions()
                         actionCollection(), "syntax_check" );
     
     // View actions
-    //
-    showFTabAction = 
+
+    showFTabAction =
       new KToggleAction( i18n( "Show Files Tree" ), 0,
                          this, SLOT( slotShowFTabDock() ),
                          actionCollection(), "show_ftab_tree" );

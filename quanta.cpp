@@ -106,7 +106,7 @@ void QuantaApp::setTitle(QString title)
 void QuantaApp::slotFileNew()
 {
   doc->openDocument( KURL() );
-  slotUpdateStatus(view->write());
+//  slotUpdateStatus(view->write());
 }
 
 void QuantaApp::slotFileOpen()
@@ -148,6 +148,8 @@ void QuantaApp::slotFileSave()
   	slotFileSaveAs();
   else
   	doc->saveDocument( doc->url() );
+
+  slotUpdateStatus(view->write());
 }
 
 void QuantaApp::slotFileSaveAs()
@@ -173,6 +175,8 @@ void QuantaApp::slotFileSaveAs()
   if ( project->hasProject() ) 
     if ( KMessageBox::Yes == KMessageBox::questionYesNo(0,"Add file\n " +url.url()+"\n to project ? "))
       project->insertFile(url.url(),true);
+
+  slotUpdateStatus(view->write());
 }
 
 void QuantaApp::saveAsTemplate(bool projectTemplate)
@@ -210,12 +214,14 @@ void QuantaApp::saveAsTemplate(bool projectTemplate)
   if( query == KMessageBox::Cancel ) return;
 
   doc->saveDocument( url );
+  slotUpdateStatus(view->write());
 }
 
 void QuantaApp::slotFileSaveAsLocalTemplate()
 {
 	saveAsTemplate(false);
 }
+
 void QuantaApp::slotFileSaveAsProjectTemplate()
 {
 	saveAsTemplate(true);
@@ -224,6 +230,7 @@ void QuantaApp::slotFileSaveAsProjectTemplate()
 void QuantaApp::slotFileSaveAll()
 {
 	doc->saveAll();
+  slotUpdateStatus(view->write());
 }
 
 void QuantaApp::slotFileClose()
@@ -268,14 +275,14 @@ void QuantaApp::slotFileQuit()
 {
   saveOptions();
 
-  KMainWindow* w;
   if(memberList)
   {
-    for(w=memberList->first(); w!=0; w=memberList->first())
+    for(unsigned int i= 0; i< memberList->count(); i++)
     {
-      if(!w->close()) break;
+      memberList->at(i)->close();
     }
   }	
+
 }
 
 
@@ -293,14 +300,17 @@ void QuantaApp::slotEditFindInFiles()
 void QuantaApp::slotViewToolBar()
 {
   QToolBar *mbar = toolBar("mainToolBar");
+  QToolBar *ebar = toolBar("mainEditToolBar");
   QToolBar *nbar = toolBar("mainNaviToolBar");
   
   if(mbar->isVisible()) {
     mbar->hide();
+    ebar->hide();
     nbar->hide();
   }
   else {
     nbar->show();
+    ebar->show();
     mbar->show();
   }
 }
@@ -454,6 +464,10 @@ void QuantaApp::slotNewStatus()
   uploadProjectAction->setEnabled(project->hasProject());
   projectOptionAction->setEnabled(project->hasProject());
 
+  viewBorder->setChecked(view->write()->kate_view->iconBorder());
+  viewLineNumbers->setChecked(view->write()->kate_view->lineNumbersOn());
+
+  setHighlight->updateMenu (view->write()->kate_doc);
 
   QIconSet floppyIcon( UserIcon("save_small"));
   QIconSet  emptyIcon( UserIcon("empty1x16" ));
@@ -510,24 +524,14 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 	slotNewLineColumn();
 
 //Add the Kate menus
-
+/*
   if (view->oldWrite != 0L)
   {
     view->oldWrite->writeConfig(config);
     guiFactory()->removeClient(view->oldWrite->view());
-    guiFactory()->unplugActionList(view->oldWrite->view(), "kate_actions");
-    view->oldWrite->view()->actionCollection()->setWidget(dynamic_cast<Document *>(w)->view());
   }
-/*
-  QPtrList<KAction> al;
-  for (int i=0; i < dynamic_cast<Document *>(w)->view()->actionCollection()->count(); i++)
-  {
-    al.append(dynamic_cast<Document *>(w)->view()->actionCollection()->action(i));
-  }
-*/
   guiFactory()->addClient(dynamic_cast<Document *>(w)->view());
-//  guiFactory()->plugActionList(dynamic_cast<Document *>(w)->view(), "kate_actions", al);
-
+*/
 
   dynamic_cast<Document *>(w)->readConfig(config);
 
@@ -967,6 +971,12 @@ void QuantaApp::slotShowBottDock()
 void QuantaApp::settingsMenuAboutToShow()
 {
   showMessagesAction->setChecked( bottdock->isVisible() );
+//Plug the Highlight menu
+  setHighlight->unplug(pm_set);
+  setHighlight->plug(pm_set);
+//Plug the End of line menu
+  setEndOfLine->unplug(pm_set);
+  setEndOfLine->plug(pm_set);
 }
 
 void QuantaApp::viewMenuAboutToShow()
@@ -1119,15 +1129,46 @@ void QuantaApp::slotInsertFile(QString fileName)
   doc->write()->insertFile(fileName);
 }
 
-/*
+
 //Kate releated
 void QuantaApp::setEOLMenuAboutToShow()
 {
-  int eol = view->write()->view()->getEol();
+  int eol = view->write()->kate_view->getEol();
   eol = eol>=0? eol: 0;
   setEndOfLine->setCurrentItem( eol );
 }
 
-  */
+void QuantaApp::bookmarkMenuAboutToShow()
+{
+  pm_bookmark->clear ();
+  bookmarkToggle->plug (pm_bookmark);
+  bookmarkClear->plug (pm_bookmark);
+
+  markList = view->write()->kate_doc->marks();
+//Based on Kate code
+  bool hassep = false;
+  for (int i=0; (uint) i < markList.count(); i++)
+  {
+    if (markList.at(i)->type&Kate::Document::markType01)
+    {
+      if (!hassep) {
+        pm_bookmark->insertSeparator ();
+        hassep = true;
+      }
+      QString bText = view->write()->kate_doc->textLine(markList.at(i)->line);
+      bText.truncate(32);
+      bText.append ("...");
+      pm_bookmark->insertItem ( QString("%1 - \"%2\"").arg(markList.at(i)->line).arg(bText),
+                                 this, SLOT (gotoBookmark(int)), 0, i );
+    }
+  }
+}
+
+void QuantaApp::gotoBookmark (int n)
+{
+  view->gotoMark (markList.at(n));
+}
+
+
 
 #include "quanta.moc"

@@ -32,6 +32,8 @@
 #include <kprocess.h>
 #include <kcolordlg.h>
 
+#include <ktexteditor/configinterface.h>
+
 // application specific includes
 #include "document.h"
 #include "quanta.h"
@@ -642,121 +644,141 @@ void QuantaView::slotPasteURLEncoded()
 
 
 /** Kate releated slots. */
-/*
+
 
 void QuantaView::slotUndo ()
 {
-  write()->doc()->undo();
+  write()->kate_doc->undo();
 }
 
 void QuantaView::slotRedo ()
 {
-  write()->doc()->redo();
+  write()->kate_doc->redo();
 }
 
 void QuantaView::slotCut ()
 {
-  write()->view()->cut();
+  write()->kate_view->cut();
 }
 
 void QuantaView::slotCopy ()
 {
-  write()->view()->copy();
+  write()->kate_view->copy();
 }
 
 void QuantaView::slotPaste ()
 {
-  write()->view()->paste();
+  write()->kate_view->paste();
 }
 
 void QuantaView::slotSelectAll ()
 {
-  write()->doc()->selectAll();
+  write()->kate_doc->selectAll();
 }
 
 void QuantaView::slotDeselectAll ()
 {
-  write()->doc()->clearSelection ();
+  write()->kate_doc->clearSelection ();
 }
+
+void QuantaView::toggleVertical()
+{
+  write()->kate_doc->toggleBlockSelectionMode();
+}
+
+
 
 void QuantaView::slotFind ()
 {
-  write()->view()->find();
+  write()->kate_view->find();
 }
 
 void QuantaView::slotFindAgain ()
 {
-  write()->view()->findAgain(false);
+  write()->kate_view->findAgain(false);
 }
 
 void QuantaView::slotFindAgainB ()
 {
-   write()->view()->findPrev();
+   write()->kate_view->findPrev();
 }
 
 void QuantaView::slotReplace ()
 {
-   write()->view()->replace();
+   write()->kate_view->replace();
 }
 
-void QuantaView::slotEditCommand ()
-{
-   write()->view()->slotEditCommand();
-}
 
 void QuantaView::slotIndent()
 {
-  write()->view()->indent();
+  write()->kate_view->indent();
 }
 
 void QuantaView::slotUnIndent()
 {
-   write()->view()->unIndent();
-}
-
-void QuantaView::slotSpellcheck ()
-{
-   write()->doc()->spellcheck();
-}
-
-void QuantaView::slotGotoLine ()
-{
-   write()->view()->gotoLine();
-}
-
-void QuantaView::setEol(int which)
-{
-   write()->view()->setEol( which );
-}
-
-void QuantaView::slotSetHl (uint n)
-{
-   write()->doc()->setHlMode(n);
-}
-
-
-void QuantaView::exportAs(const QString& filter)
-{
-   write()->doc()->exportAs(filter);
-}
-
-void QuantaView::toggleBookmark ()
-{
-  write()->view()->toggleBookmark();
-}
-
-void QuantaView::clearBookmarks ()
-{
-   write()->doc()->clearMarks();
+   write()->kate_view->unIndent();
 }
 
 void QuantaView::slotComment ()
 {
-   write()->view()->comment();
+   write()->kate_view->comment();
 }
 
 void QuantaView::slotUnComment ()
 {
-   write()->view()->uncomment();
+   write()->kate_view->uncomment();
 }
-         */
+
+
+void QuantaView::slotApplyWordWrap ()
+{
+  write()->kate_doc->applyWordWrap();
+}
+
+void QuantaView::slotGotoLine ()
+{
+   write()->kate_view->gotoLine();
+}
+
+void QuantaView::slotSpellcheck ()
+{
+   write()->kate_doc->spellcheck();
+}
+
+void QuantaView::toggleBookmark ()
+{
+  write()->kate_view->toggleBookmark();
+}
+
+void QuantaView::clearBookmarks ()
+{
+   write()->kate_doc->clearMarks();
+}
+
+void QuantaView::gotoMark (KTextEditor::Mark *mark)
+{
+  write()->kate_view->gotoMark (mark);
+}
+
+void QuantaView::toggleIconBorder ()
+{
+  write()->kate_view->toggleIconBorder ();
+}
+
+void QuantaView::toggleLineNumbers()
+{
+  write()->kate_view->toggleLineNumbersOn();
+}
+
+void QuantaView::editorOptions()
+{
+  dynamic_cast<KTextEditor::ConfigInterface *>(write()->doc())->configDialog();
+  write()->writeConfig(app->config);
+}
+
+void QuantaView::setEol(int which)
+{
+   write()->kate_view->setEol( which );
+}
+
+
