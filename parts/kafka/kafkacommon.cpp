@@ -34,6 +34,7 @@
 #include "undoredo.h"
 #include "cursors.h"
 
+#include <cassert>
 
 Node *kafkaCommon::getNextNode(Node *node, bool &goUp, Node *endNode)
 {
