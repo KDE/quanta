@@ -419,7 +419,11 @@ void QuantaView::slotTagEditTable()
   }
   if (editor.exec())
   {
-    editor.readModifiedTable();
+    QString tableString = editor.readModifiedTable();
+    w->activateParser(false);
+    w->editIf->removeText(bl, bc, el, ec + 1);
+    w->viewCursorIf->setCursorPositionReal((uint)bl, (uint)bc);
+    w->insertText(tableString);
   }
 }
 

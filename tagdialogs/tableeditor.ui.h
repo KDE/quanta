@@ -353,11 +353,14 @@ QString TableEditor::readModifiedTable()
 {
   QString tableString;
   tableString = m_table->toString();  
+  tableString += indent(2);
+  tableString += "<" + QuantaCommon::tagCase("caption") + ">";
+  tableString += captionText->text();
+  tableString += "</" + QuantaCommon::tagCase("caption") + ">";
   if (headerCheckBox->isChecked()) {
     //insert the <thead> tag
     tableString += indent(2);
-    tableString = m_thead->toString();  
-    tableString += indent(4);
+    tableString += m_thead->toString();  
     
     kdDebug(24000) << "thead" << endl;
     m_tableTags = m_tableHeaderTags;
@@ -370,8 +373,7 @@ QString TableEditor::readModifiedTable()
   if (footerCheckBox->isChecked()) {
     //insert the <tfoot> tag
     tableString += indent(2);
-    tableString = m_tfoot->toString();  
-    tableString += indent(4);
+    tableString += m_tfoot->toString();  
     
     kdDebug(24000) << "tfoot" << endl;
     m_tableTags = m_tableFooterTags;
@@ -383,7 +385,7 @@ QString TableEditor::readModifiedTable()
   }
   //isert the <tbody> tag
   tableString += indent(2);
-  tableString = m_tbody->toString(); 
+  tableString += m_tbody->toString(); 
   kdDebug(24000) << "tbody" << endl;
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
@@ -396,7 +398,7 @@ QString TableEditor::readModifiedTable()
   tableString += "</" + QuantaCommon::tagCase(m_table->name) + ">";
   tableString += "\n";
   
-  kdDebug(24000) << tableString << endl;
+  //kdDebug(24000) << tableString << endl;
   return tableString;
 }
 
@@ -416,10 +418,8 @@ QString TableEditor::cellValue( int row, int col )
     return QString::null;
  QString str;
  Node *node= (*m_tableTags)[row][col];
- if (!node){
-   kdDebug(24000) << QString("NODE = NULL!!! for %1, %2").arg(row).arg(col) << endl;
-   return "";
- }
+ if (!node)  
+   return QString::null;
  
  str = node->tag->toString();
  str += m_dataTable->text(row, col);
@@ -432,14 +432,17 @@ QString TableEditor::tableToString()
 {
     QString tableStr;
     for (int i = 0; i < m_dataTable->numRows(); i++) {
-      tableStr += indent(6);
+      tableStr += indent(4);
       Tag *tag = (*m_tableRows)[i]->tag;
       tableStr += tag->toString();
       for (int j = 0; j < m_dataTable->numCols(); j++)  {
-        tableStr += indent(8);
-        tableStr += cellValue(i, j);
+        if ((*m_tableTags)[i][j])
+        {
+          tableStr += indent(6);
+          tableStr += cellValue(i, j);
+        }
       }	
-      tableStr += indent(6);
+      tableStr += indent(4);
       tableStr += "</" + QuantaCommon::tagCase(tag->name) +">";  
     }    
   return tableStr;  
@@ -449,7 +452,7 @@ QString TableEditor::tableToString()
 QString TableEditor::tagContent(Node *node)
 {
   if (!node)
-    return "";
+    return QString::null;
   QString content;
   int bl, bc, el, ec;
   node->tag->endPos(bl, bc);
@@ -466,7 +469,7 @@ QString TableEditor::tagContent(Node *node)
       node->next->tag->beginPos(el, ec);
       ec--;
     } else {
-      return "";
+      return QString::null;
     }
   }
  content = m_write->text(bl, bc, el, ec);
