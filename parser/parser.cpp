@@ -1599,33 +1599,62 @@ void Parser::parseForGroups()
     for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
     {
       group = dtd->structTreeGroups[i];
-      if (!group.hasSearchRx)
-        continue;
-      groupElementMapList = &m_groups[group.name];
-      pos = 0;
-      while (pos != -1)
+      if (dtd->family == Script)
       {
-        pos = group.searchRx.search(str, pos);
-        if (pos != -1)
+        if (!group.hasSearchRx)
+          continue;
+        groupElementMapList = &m_groups[group.name];
+        pos = 0;
+        while (pos != -1)
         {
-          title = tagStr.mid(pos, group.searchRx.matchedLength());
-          Tag *newTag = new Tag(*currentNode->tag);
-          newTag->beginPos(bl, bc);
-          tmpStr = tagStr.left(pos);
-          int newLines = tmpStr.contains('\n');
-          bl += newLines;
-          int l = tmpStr.findRev('\n'); //the last EOL
-          bc = (l == -1) ? bc+pos : pos - l - 1;
-          newLines = title.contains('\n');
-          l = title.length();
-          el = bl + newLines;
-          ec = (newLines > 0) ? l - title.findRev('\n') : bc + l - 1;
-          newTag->setTagPosition(bl, bc, el, ec);
-          newTag->setStr(title);
-          pos += l;
-          title.replace(group.clearRx,"");
-          newTag->name = title;
+          pos = group.searchRx.search(str, pos);
+          if (pos != -1)
+          {
+            title = tagStr.mid(pos, group.searchRx.matchedLength());
+            Tag *newTag = new Tag(*currentNode->tag);
+            newTag->beginPos(bl, bc);
+            tmpStr = tagStr.left(pos);
+            int newLines = tmpStr.contains('\n');
+            bl += newLines;
+            int l = tmpStr.findRev('\n'); //the last EOL
+            bc = (l == -1) ? bc+pos : pos - l - 1;
+            newLines = title.contains('\n');
+            l = title.length();
+            el = bl + newLines;
+            ec = (newLines > 0) ? l - title.findRev('\n') : bc + l - 1;
+            newTag->setTagPosition(bl, bc, el, ec);
+            newTag->setStr(title);
+            pos += l;
+            title.replace(group.clearRx,"");
+            newTag->name = title;
+            node = new Node(0L);
+            node->tag = newTag;
+            groupElement.node = node;
+            groupElement.parentNode = currentNode;
+            groupElementList = & (*groupElementMapList)[title];
+            groupElementList->append(groupElement);
+          }
+        }
+      } else
+      {
+        if (currentNode->tag->name.lower() == group.tag)
+        {
+          groupElementMapList = &m_groups[group.name];
           node = new Node(0L);
+          Tag *newTag = new Tag(*currentNode->tag);
+          title = "";
+          for (uint j = 0; j < group.attributes.count(); j++)
+          {
+            if (newTag->hasAttribute(group.attributes[j]))
+            {
+              title.append(newTag->attributeValue(group.attributes[j]).left(100));
+              title.append(" | ");
+            }
+          }
+          title = title.left(title.length()-3);
+          title.remove('\n');
+          newTag->name = title;
+
           node->tag = newTag;
           groupElement.node = node;
           groupElement.parentNode = currentNode;
