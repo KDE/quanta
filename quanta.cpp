@@ -1200,12 +1200,12 @@ void QuantaApp::slotShowTemplatesTree()
 void QuantaApp::slotNewLineColumn()
 {
   idleTimer->start(250, true);
-  
+
   QString linenumber;
   oldCursorLine = cursorLine;
   oldCursorCol = cursorCol;
   m_view->write()->viewCursorIf->cursorPositionReal(&cursorLine, &cursorCol);
-  linenumber = i18n("Line: %1 Col: %2").arg(cursorLine+1).arg()cursorCol+1);
+  linenumber = i18n("Line: %1 Col: %2").arg(cursorLine+1).arg(cursorCol+1);
   statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
 }
 
