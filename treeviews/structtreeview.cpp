@@ -111,6 +111,117 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 StructTreeView::~StructTreeView(){
 }
 
+void StructTreeView::buildTree(Node *baseNode, int openLevel)
+{
+  if (baseNode) 
+  {
+    top = new StructTreeTag( this, i18n("Document Structure") );
+    top->setOpen(topOpened);
+    
+    Node *currentNode = baseNode;
+    StructTreeTag *currentItem = top; //after this
+    StructTreeTag *item;
+    StructTreeTag *parentItem = top; //under this
+    int level = 0;
+    QString title;
+    
+    while (currentNode)
+    {
+      switch (currentNode->tag->type)
+      {
+        case Tag::XmlTag:
+             {
+               title = currentNode->tag->name;
+               break;
+             }
+        case Tag::Text:
+             {
+               title = currentNode->tag->tagStr();      
+               title = title.left(70).stripWhiteSpace();
+               title.replace( QRegExp("&nbsp;|\\n")," ");
+               break;
+             }
+        case Tag::Comment:
+             {
+               title = "comment";
+               break;
+             }
+        case Tag::ScriptStructureBegin:
+             { 
+               title = currentNode->tag->name;
+               break;
+             }
+        case Tag::ScriptTag:
+             {
+               title = currentNode->tag->name;
+               break;
+             }
+        default:
+             {
+               title = currentNode->tag->tagStr().left(70).stripWhiteSpace();
+             }
+             
+      }
+      item = new StructTreeTag(parentItem, currentNode,
+                               title, currentItem);
+      item->setOpen(level < openLevel);
+      
+      if (currentNode->tag->type == Tag::XmlTagEnd)
+          item->setVisible(false);
+                               
+      currentNode->listItem = item;                               
+      //go to the child node, if it exists
+      if (currentNode->child)
+      {
+        currentNode = currentNode->child;
+        parentItem = item;
+        currentItem = 0L;
+        level++;
+      } else
+      { 
+        //go to the next node if it exists
+        if (currentNode->next) 
+        {
+          currentNode = currentNode->next;
+          currentItem = item;
+        } else
+        {
+          //go up some levels, to the parent, if the node has no child or next
+          while (currentNode)
+          {
+            level--;
+            parentItem = dynamic_cast<StructTreeTag*>(parentItem->parent());
+            if (currentNode->parent && currentNode->parent->next)
+            {
+              currentNode = currentNode->parent->next;
+              break;
+            } else
+            {
+              currentNode = currentNode->parent;
+            }
+          }
+          if (currentNode)
+          {
+            if (currentNode->prev)
+                currentItem = dynamic_cast<StructTreeTag*>(currentNode->prev->listItem);
+            if (currentNode->parent)  
+            {
+              parentItem = dynamic_cast<StructTreeTag*>(currentNode->parent->listItem);
+            }
+            else  
+            {
+              parentItem = top;
+              
+            }
+            
+          }
+              
+        }
+      }
+    }
+  }
+}
+
 /** create items in the level */
 void StructTreeView::createList(Node *node, StructTreeTag *parent, int openLevel )
 { 
@@ -433,7 +544,8 @@ void StructTreeView::slotReparse(Node* node, int openLevel)
   t.start();
   deleteList();
   write = node->tag->write(); 
-  createList(node,0L,openLevel);
+  //createList(node,0L,openLevel);
+  buildTree(node, openLevel);
   
   kdDebug(24000) << "StructTreeView building: " << t.elapsed() << " ms\n";
   

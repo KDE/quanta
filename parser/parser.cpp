@@ -652,7 +652,6 @@ void Parser::parseInside(Node *startNode)
             lastPos2 = pos + s.length();
           }
         }
-        bLine += name.contains("\n");
         pos = 0;
         if (matchNum != 0) 
             lastPos2 = str.length();
@@ -675,6 +674,7 @@ void Parser::parseInside(Node *startNode)
         tag->type = Tag::ScriptStructureBegin;
         tag->single = true;
 
+        bLine += name.contains("\n");
         if ( bLine > el ||                //the beginning of the tag is after the end of the
             (bLine == el && bCol > ec) )  //root, so go up one level
         {

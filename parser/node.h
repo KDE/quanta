@@ -24,6 +24,7 @@
   */
 
 #include "tag.h"
+#include "qlistview.h"
 
 class Node {
 
@@ -35,7 +36,8 @@ public:
 	Node *prev;
 	Node *parent;
 	Node *child;
-	
+  
+  QListViewItem *listItem;	
 	Tag *tag;
   bool opened;
 };

@@ -22,6 +22,7 @@ Node::Node( Node *parent )
   this->parent = parent;
   prev = next = child = 0L;
   tag = 0L;
+  listItem = 0L;
   opened = false;
 }
 

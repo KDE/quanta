@@ -92,6 +92,7 @@ signals:
   void parsingDTDChanged(QString);
 
 private:
+  void buildTree(Node *baseNode, int openLevel);
   /** create items in the level */
   void createList(Node *node, StructTreeTag *parent = 0L, int openLevel = 3);	
   /** Do the recursive opening or closing of the trees */

@@ -93,7 +93,16 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *p_node, QString name, 
 	
   if ( sname == "comment" ) {
 	  setPixmap( 0, UserIcon("tag_comm") );
-		setText(0,"");
+    //TODO: make it generic
+    QString text = node->tag->tagStr();
+    text.replace(QRegExp("&nbsp;|\\n")," ");
+    text.replace(QRegExp("<!--"),"");
+    text.replace(QRegExp("-->"),"");
+    text.replace(QRegExp("/*"),"");
+    text.replace(QRegExp("*/"),"");
+    text.replace(QRegExp("^//"),"");
+    text.replace(QRegExp("^#"),"");
+		setText(0,text.stripWhiteSpace());
 	}
 
   if ( sname.contains("css", false) ) {
