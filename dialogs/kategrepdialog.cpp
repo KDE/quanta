@@ -341,7 +341,7 @@ void GrepDialog::slotSearch()
     QStringList tokens = QStringList::split ( ",", files_temp, FALSE );
     QStringList::Iterator it = tokens.begin();
     if (it != tokens.end())
-        files = KProcess::quote(*it++);
+        files = KShellProcess::quote(*it++);
 
     for ( ; it != tokens.end(); it++ )
         files = files + " -o -name " + KProcess::quote(*it);
@@ -354,7 +354,7 @@ void GrepDialog::slotSearch()
 
 
     QString command = "find ";
-    command += KProcess::quote(dir_combo->url());
+    command += KShellProcess::quote(dir_combo->url());
     if (!recursive_box->isChecked())
         command += " -maxdepth 1";
     command += " \\( -name ";
@@ -363,8 +363,8 @@ void GrepDialog::slotSearch()
     command += KProcess::quote(pattern);
     command += " /dev/null";
     
-    childproc = new KProcess();
-    childproc->setUseShell(true);
+    childproc = new KShellProcess();
+//    childproc->setUseShell(true); //use KShellProcess in order to compile under KDE 3.0.x
     *childproc << command;
     
     connect( childproc, SIGNAL(processExited(KProcess *)),
