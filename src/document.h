@@ -265,6 +265,7 @@ private:
 
   bool changed;
   bool completionInProgress;
+  bool argHintVisible;
   bool reparseEnabled;
   bool repaintEnabled;
   /** True if the document is dirty (has been modified outside). */
@@ -301,6 +302,7 @@ private:
   bool scriptAutoCompletion(int line, int col);
   /** Returns true if the number of " (excluding \") inside text is even. */
   bool evenQuotes(const QString &text);
+  void handleCodeCompletion();
 };
 
 #endif

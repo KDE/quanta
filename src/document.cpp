@@ -111,6 +111,7 @@ Document::Document(KTextEditor::Document *doc,
   m_view = 0L; //needed, because createView() calls processEvents() and the "this" may be deleted before m_view gets a value => crash on delete m_view;
   m_view = m_doc->createView(parent, 0L);
   completionInProgress = false;
+  argHintVisible = false;
   // remove the unwanted actions
   KAction *a = m_view->actionCollection()->action( "file_export" );
   if (a)
@@ -703,6 +704,7 @@ QString Document::getTagNameAt(int line, int col )
 /** Show the code completions passed in as an argument */
 void Document::showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions ) {
   codeCompletionIf->showCompletionBox( *completions, false );
+  argHintVisible = false;
 }
 
 /** Once the completed text has been inserted into the document we
@@ -712,6 +714,7 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
 {
   unsigned int line,col;
   completionInProgress = false;
+  argHintVisible = false;
   viewCursorIf->cursorPositionReal(&line,&col);
   const DTDStruct* dtd = currentDTD();
 /*  if (completion.type == "charCompletion")
@@ -844,11 +847,12 @@ void Document::slotCharactersInserted(int line, int column, const QString& strin
    slotDelayedTextChanged(true);
  }
  bool handled = false;
+ kdDebug(24000) << completionInProgress << endl;
  if (qConfig.useAutoCompletion)
  {
   if (completionInProgress)
   {
-    codeCompletionRequested();
+    handleCodeCompletion();
   } else
   {
     completionDTD = currentDTD();
@@ -1525,6 +1529,7 @@ bool Document::scriptAutoCompletion(int line, int column)
       arguments = tag->returnType +" "+tag->name() + "("+arguments.left(arguments.length()-1)+")";
       argList.append(arguments);
       codeCompletionIf->showArgHint(argList, "()" , completionDTD->attributeSeparator);
+      argHintVisible = true;
      } else
      {
        arguments = tag->name() + ": " + tag->attributeAt(0)->name + ";";
@@ -1552,12 +1557,11 @@ bool Document::scriptAutoCompletion(int line, int column)
      }
    }
  }
- if ( !handled && (s[i] == completionDTD->tagAutoCompleteAfter || completionDTD->tagAutoCompleteAfter == '\1'))
+ if ( !handled && (s[i] == completionDTD->tagAutoCompleteAfter || completionDTD->tagAutoCompleteAfter == '\1') && !argHintVisible)
  {
    showCodeCompletions(getTagCompletions(line, column + 1));
    handled = true;
  }
-
  return handled;
 }
 
@@ -1706,6 +1710,13 @@ QString Document::findRev(const QRegExp& regExp, int sLine, int sCol, int& fbLin
 
 /** Code completion was requested by the user. */
 void Document::codeCompletionRequested()
+{
+  completionInProgress = false;
+  argHintVisible = false;
+  handleCodeCompletion();
+}
+
+void Document::handleCodeCompletion()
 {
   slotDelayedTextChanged(true);
   bool handled = false;
@@ -1874,7 +1885,8 @@ bool Document::xmlCodeCompletion(int line, int col)
 /** No descriptions */
 void Document::slotCompletionAborted()
 {
- completionInProgress = false;
+  completionInProgress = false;
+  argHintVisible = false;
 }
 
 /** Ask for user confirmation if the file was changed outside. */
