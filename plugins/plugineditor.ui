@@ -73,7 +73,7 @@
                         <cstring>addSearchPathButton</cstring>
                     </property>
                     <property name="text">
-                        <string>Add</string>
+                        <string>Add...</string>
                     </property>
                 </widget>
             </hbox>
@@ -114,7 +114,7 @@
                                 <cstring>addButton</cstring>
                             </property>
                             <property name="text">
-                                <string>Add</string>
+                                <string>Add...</string>
                             </property>
                             <property name="default">
                                 <bool>true</bool>
@@ -125,7 +125,7 @@
                                 <cstring>configureButton</cstring>
                             </property>
                             <property name="text">
-                                <string>Configure</string>
+                                <string>Configure...</string>
                             </property>
                         </widget>
                         <widget class="QPushButton">

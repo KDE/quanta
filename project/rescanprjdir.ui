@@ -194,7 +194,7 @@
                     <cstring>TextLabel2</cstring>
                 </property>
                 <property name="text">
-                    <string>&lt;b&gt;Add new files in project&lt;/b&gt;</string>
+                    <string>&lt;b&gt;Add New Files in Project&lt;/b&gt;</string>
                 </property>
             </widget>
             <widget class="Line" row="1" column="0" rowspan="1" colspan="2">

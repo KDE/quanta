@@ -1436,17 +1436,17 @@ void QuantaApp::initActions()
                         this, SLOT( slotFileSaveAll() ),
                         actionCollection(), "save_all" );
 
-    saveAsLocalTemplateAction = new KAction( i18n( "Save as Local Template" ), 0,
+    saveAsLocalTemplateAction = new KAction( i18n( "Save as Local Template..." ), 0,
                         this, SLOT( slotFileSaveAsLocalTemplate() ),
                         actionCollection(), "save_local_template" );
-    saveAsProjectTemplateAction = new KAction( i18n( "Save as Project Template" ), 0,
+    saveAsProjectTemplateAction = new KAction( i18n( "Save as Project Template..." ), 0,
                         this, SLOT( slotFileSaveAsProjectTemplate() ),
                         actionCollection(), "save_project_template" );
 
-    saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection to Local Template File" ), 0,
+    saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection to Local Template File..." ), 0,
                         this, SLOT( slotFileSaveSelectionAsLocalTemplate() ),
                         actionCollection(), "save_selection_local_template" );
-    saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection to Project Template File" ), 0,
+    saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection to Project Template File..." ), 0,
                         this, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
                         actionCollection(), "save_selection_project_template" );
 

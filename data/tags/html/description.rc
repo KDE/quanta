@@ -23,7 +23,7 @@ Attributes = lang, dir
 Attributes = onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,onmouseout,onkeypress,onkeydown,onkeyup
 
 [Page1]
-Title = Core and i18n
+Title = Core && i18n
 Groups = Core, I18n
 
 [Page2]

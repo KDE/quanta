@@ -26,7 +26,7 @@ Attributes = onclick,ondblclick,onmousedown,onmouseup,onmouseover,onmousemove,on
 Attributes = accesskey, tabindex, onfocus, onblur
 
 [Page1]
-Title = Core and i18n
+Title = Core && i18n
 Groups = Core, I18n
 
 [Page2]

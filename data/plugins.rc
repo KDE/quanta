@@ -1,4 +1,4 @@
-[CVS management (Cervisia)]
+[CVS Management (Cervisia)]
 Arguments=
 FileName=kde3/libcervisiapart.so
 Icon=cervisia
@@ -9,10 +9,10 @@ Standard Name=cervisia_kpart
 Type=KPart
 
 [General]
-Plugins=kompare,CVS management (Cervisia)
+Plugins=Kompare,CVS Management (Cervisia)
 SearchPaths=
 
-[kompare]
+[Kompare]
 Arguments=
 FileName=kompare
 Icon=kompare

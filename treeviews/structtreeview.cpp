@@ -82,10 +82,10 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
 
   popupMenu = new QPopupMenu();
 
-  popupMenu -> insertItem( i18n("Show Groups For..."), dtdMenu);
+  popupMenu -> insertItem( i18n("Show Groups For"), dtdMenu);
   popupMenu -> insertSeparator();
   popupMenu -> insertItem( i18n("Select Tag Area"), this ,SLOT(slotSelectTag()));
-  popupMenu -> insertItem( i18n("Go To End Of Tag"), this ,SLOT(slotGotoClosingTag()));
+  popupMenu -> insertItem( i18n("Go to End of Tag"), this ,SLOT(slotGotoClosingTag()));
   popupMenu -> insertSeparator();
   popupMenu -> insertItem( i18n("Open Subtrees"), this ,SLOT(slotOpenSubTree()));
   popupMenu -> insertItem( i18n("Close Subtrees"),this ,SLOT(slotCloseSubTree()));

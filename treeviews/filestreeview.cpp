@@ -98,13 +98,13 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
     KURL url = topURLList[i];
     if (url.isLocalFile() && url.path() == "/")
     {
-      FilesTreeFolder *dir = new FilesTreeFolder( this, i18n("Root directory"), url);
+      FilesTreeFolder *dir = new FilesTreeFolder( this, i18n("Root Directory"), url);
       dir->setPixmap( 0, SmallIcon("folder_red"));
        dir->setOpen( false);
     } else
       if (url.isLocalFile() && url.path() == QDir::homeDirPath()+"/")
       {
-        FilesTreeFolder *dir = new FilesTreeFolder( this, i18n("Home directory"), url);
+        FilesTreeFolder *dir = new FilesTreeFolder( this, i18n("Home Directory"), url);
         dir->setPixmap( 0, SmallIcon("folder_home"));
         dir->setOpen( true );
       } else
@@ -167,7 +167,7 @@ void FilesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
         folderMenu ->changeItem( ID_TOP, i18n("Add Folder to Top"));
       }
 
-      if ( d->text(0) == i18n("Home directory") || d->text(0) == i18n("Root directory") )
+      if ( d->text(0) == i18n("Home Directory") || d->text(0) == i18n("Root Directory") )
       {
         folderMenu ->setItemEnabled( ID_TOP, false);
       }
@@ -224,7 +224,7 @@ void FilesTreeView::slotSelectFile(QListViewItem *item)
              } else //it is an unknown type, maybe binary
              {
                if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
-                   Do you want to open with an external program or run it?"),i18n("Unknown type")) == KMessageBox::Yes)
+                   Do you want to open with an external program or run it?"),i18n("Unknown Type")) == KMessageBox::Yes)
                {
                  KFileOpenWithHandler fowh;
                  new KRun(urlToOpen, 0, true );
