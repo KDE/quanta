@@ -50,6 +50,8 @@ struct GroupElement{
 
 typedef QValueList<GroupElement> GroupElementList;
 typedef QMap<QString, GroupElementList> GroupElementMapList;
+typedef QMap<QString, QStringList> IncludedGroupsElements;
+typedef QMap<QString, IncludedGroupsElements> IncludedGroupsElementsMap;
 
 class Parser {
 public:
@@ -86,8 +88,12 @@ public:
 
   /** Parse for groups (variables, inclusions) in the node. */
   void parseForGroups();
+  void parseIncludedFiles();
 
   QMap<QString, GroupElementMapList> m_groups; //a list of groups (variables, inclusions)
+  QStringList includedFiles;
+  QPtrList<DTDStruct> includedFilesDTD;
+  IncludedGroupsElementsMap includedMap;
 
 private:
   Node* m_node;       //the internal Node pointer

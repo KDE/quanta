@@ -1295,6 +1295,7 @@ void QuantaApp::readTagDir(QString &dirName)
    tmpStr = dtdConfig->readEntry("RemoveFromAutoCompleteWord").stripWhiteSpace();
    group.removeFromAutoCompleteWordRx.setPattern(tmpStr);
    group.hasFileName = dtdConfig->readBoolEntry("HasFileName", false);
+   group.parseFile = dtdConfig->readBoolEntry("ParseFile", false);
    tmpStr = dtdConfig->readEntry("FileNameRx").stripWhiteSpace();
    group.fileNameRx.setPattern(tmpStr);
    dtd->structTreeGroups.append(group);

@@ -22,6 +22,7 @@
 #include <qstringlist.h>
 #include <qstrlist.h>
 #include <qdatetime.h>
+#include <qfile.h>
 
 //standard library includes
 #include <stdio.h>
@@ -35,6 +36,7 @@
 #include "../resource.h"
 #include "../quantacommon.h"
 #include "../document.h"
+#include "../qextfileinfo.h"
 
 //kde includes
 #include <kapplication.h>
@@ -647,6 +649,7 @@ Node *Parser::parse(Document *w)
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
   t.restart();
   parseForGroups();
+  parseIncludedFiles();
   kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
  /*
  treeSize = 0;
@@ -1589,6 +1592,8 @@ void Parser::parseForGroups()
     }
   }
   m_groups.clear();
+  includedFiles.clear();
+  includedFilesDTD.clear();
 
   GroupElementList* groupElementList;
   GroupElementMapList* groupElementMapList;
@@ -1638,7 +1643,7 @@ void Parser::parseForGroups()
             newTag->setTagPosition(bl, bc, el, ec);
             newTag->setStr(title);
             pos += l;
-            title.replace(group.clearRx,"");
+            title.remove(group.clearRx);
             newTag->name = title;
             node = new Node(0L);
             node->tag = newTag;
@@ -1646,6 +1651,12 @@ void Parser::parseForGroups()
             groupElement.parentNode = currentNode;
             groupElementList = & (*groupElementMapList)[title];
             groupElementList->append(groupElement);
+            if (group.hasFileName && group.parseFile)
+            {
+              title.remove(group.fileNameRx);
+              includedFiles += title.stripWhiteSpace();
+              includedFilesDTD.append(dtd);
+            }
           }
         }
       } else
@@ -1682,3 +1693,45 @@ void Parser::parseForGroups()
 }
 
 
+void Parser::parseIncludedFiles()
+{
+  includedMap.clear();
+  if (write->url().isLocalFile())
+  {
+    StructTreeGroup group;
+    KURL baseURL =  QExtFileInfo::path(write->url());
+    for (uint i = 0; i < includedFiles.count(); i++)
+    {
+      KURL url;
+      QuantaCommon::setUrl(url, includedFiles[i]);
+      url = QExtFileInfo::toAbsolute(url, baseURL);
+      QString content;
+      QFile file(url.path());
+      if (file.open(IO_ReadOnly))
+      {
+        IncludedGroupsElements *elements = &includedMap[url.path()];
+        QTextStream str(&file);
+        content = str.read();
+        file.close();
+        DTDStruct *dtd = includedFilesDTD.at(i);
+        for (uint j = 0; j < dtd->structTreeGroups.count(); j++)
+        {
+          group = dtd->structTreeGroups[j];
+          int pos = 0;
+          while (pos != -1)
+          {
+            pos = group.searchRx.search(content, pos);
+            if (pos != -1)
+            {
+              QString s = content.mid(pos, group.searchRx.matchedLength());
+              pos += s.length();
+              s.remove(group.clearRx);
+              if (!(*elements)[group.name].contains(s))
+                  (*elements)[group.name] += s;
+            }
+          }
+        }
+      }
+    }
+  }
+}

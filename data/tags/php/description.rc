@@ -39,6 +39,7 @@ Icon = attach
 SearchRx = (?:include|require|include_once|require_once)[\\s]+(?:(?:(?:\(|\"|\')+[^\)]*(?:\)|\"|\')+)|(?:\$.*))
 ClearRx = \n
 HasFileName = true
+ParseFile = true
 FileNameRx = (?:include|require|include_once|require_once|\(|\)|\"|\')
 
 [StructGroup_2]

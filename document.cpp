@@ -741,6 +741,22 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(const St
       completions->append( completion );
     }
   }
+  IncludedGroupsElementsMap elements = parser->includedMap;
+  IncludedGroupsElementsMap::Iterator it2;
+  for ( it2 = elements.begin(); it2 != elements.end(); ++it2 )
+  {
+    QStringList list = it2.data()[group.name];
+    for (uint i = 0; i < list.count(); i++)
+    {
+      if (list[i].startsWith(word) && list[i] != word)
+      {
+        completion.text = list[i];
+        completions->append( completion );
+      }
+    }
+  }
+
+
   return completions;
 }
 
