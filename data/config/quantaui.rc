@@ -150,7 +150,6 @@
             <Action name="view_dtd_toolbar" />
             <Action name="options_show_statusbar" />
             <Separator/>
-            <Action name="general_options" />
             <Action name="preview_options" />
             <Action name="configure_actions" />
             <Action name="configure_plugins" />
@@ -158,6 +157,7 @@
             <Separator/>
             <Action name="options_configure_toolbars" />
             <Action name="configure_shortcuts" />
+            <Action name="general_options" />
         </Menu>
         <Menu noMerge="1" name="help" >
             <text>&amp;Help</text>
