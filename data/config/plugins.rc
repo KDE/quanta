@@ -10,7 +10,7 @@ Type=KPart
 Input=3
 
 [General]
-Plugins=KFileReplace, CVS Management (Cervisia),XSLT Debugger, KImageMapEditor
+Plugins=KFileReplace, CVS Management (Cervisia),XSLT Debugger, KImageMapEditor, Link Checker
 SearchPaths=
 
 [KFileReplace]
@@ -45,4 +45,12 @@ ReadOnly=true
 Standard=false
 Type=KPart
 
-
+[Link Checker]
+FileName=kde3/libklinkstatuspart.la
+Icon=klinkstatus
+Input=1
+Location=
+OutputWindow=Editor Tab
+ReadOnly=true
+Standard=false
+Type=KPart

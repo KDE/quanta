@@ -1,0 +1,295 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>Gubed_install</class>
+<comment>Simple script to make installation of the Gubed PHP debugger server easier.</comment>
+<author>(C) 2004 Andras Mantia &lt;amantia@kde.org&gt;</author>
+<widget class="Dialog">
+    <property name="name">
+        <cstring>Gubed_install</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>578</width>
+            <height>327</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Gubed Installation v0.1</string>
+    </property>
+    <property name="associations" stdset="0">
+        <stringlist>
+            <string>
+</string>
+        </stringlist>
+    </property>
+    <widget class="CloseButton">
+        <property name="name">
+            <cstring>CancelButton</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>490</x>
+                <y>289</y>
+                <width>77</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Cancel</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string></string>
+            </stringlist>
+        </property>
+    </widget>
+    <spacer>
+        <property name="name">
+            <cstring>Spacer1</cstring>
+        </property>
+        <property name="orientation">
+            <enum>Horizontal</enum>
+        </property>
+        <property name="sizeType">
+            <enum>Expanding</enum>
+        </property>
+        <property name="sizeHint">
+            <size>
+                <width>332</width>
+                <height>0</height>
+            </size>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>302</y>
+                <width>332</width>
+                <height>16</height>
+            </rect>
+        </property>
+    </spacer>
+    <spacer>
+        <property name="name">
+            <cstring>Spacer2</cstring>
+        </property>
+        <property name="orientation">
+            <enum>Vertical</enum>
+        </property>
+        <property name="sizeType">
+            <enum>Expanding</enum>
+        </property>
+        <property name="sizeHint">
+            <size>
+                <width>0</width>
+                <height>175</height>
+            </size>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>416</x>
+                <y>108</y>
+                <width>16</width>
+                <height>175</height>
+            </rect>
+        </property>
+    </spacer>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>Layout5</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>11</y>
+                <width>556</width>
+                <height>62</height>
+            </rect>
+        </property>
+        <grid>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLabel" row="1" column="0">
+                <property name="name">
+                    <cstring>TextLabel2</cstring>
+                </property>
+                <property name="text">
+                    <string>Target directory:</string>
+                </property>
+            </widget>
+            <widget class="QLabel" row="0" column="0">
+                <property name="name">
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property name="text">
+                    <string>Archive name:</string>
+                </property>
+            </widget>
+            <widget class="FileSelector" row="0" column="1">
+                <property name="name">
+                    <cstring>gubedArchive</cstring>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText</string>
+                    </stringlist>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>Select the archive containing Gubed (tar.bz2 format)</string>
+                </property>
+            </widget>
+            <widget class="FileSelector" row="1" column="1">
+                <property name="name">
+                    <cstring>targetDirectory</cstring>
+                </property>
+                <property name="associations" stdset="0">
+                    <stringlist>
+                        <string>@widgetText</string>
+                    </stringlist>
+                </property>
+                <property name="selectionType">
+                    <enum>Directory</enum>
+                </property>
+                <property name="toolTip" stdset="0">
+                    <string>The target directory (example /var/www)</string>
+                </property>
+            </widget>
+        </grid>
+    </widget>
+    <widget class="CheckBox">
+        <property name="name">
+            <cstring>runServerCheck</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>11</x>
+                <y>79</y>
+                <width>473</width>
+                <height>23</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Run the server after installation has finished</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>RUN_SERVER=false</string>
+                <string></string>
+                <string>RUN_SERVER=true</string>
+            </stringlist>
+        </property>
+        <property name="toolTip" stdset="0">
+            <string>If checked the server will be run in the background after the installation has finished</string>
+        </property>
+    </widget>
+    <widget class="CheckBox">
+        <property name="name">
+            <cstring>logViewCheck</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>110</y>
+                <width>340</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>View installation log</string>
+        </property>
+        <property name="checked">
+            <bool>true</bool>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string></string>
+                <string></string>
+                <string>VIEW_LOG=true</string>
+            </stringlist>
+        </property>
+        <property name="toolTip" stdset="0">
+            <string>Uncheck this if you don't want to see the installation log. The log may provide important information in case of installation failure.</string>
+        </property>
+    </widget>
+    <widget class="CloseButton">
+        <property name="name">
+            <cstring>InstallButton</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>349</x>
+                <y>289</y>
+                <width>135</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Start installation</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>@logViewCheck
+@runServerCheck
+echo "Archive name: @gubedArchive"
+echo "Target directory: @targetDirectory"
+mkdir /tmp/gubed-install
+cd /tmp/gubed-install
+echo "Extracting the archive..." &gt; /tmp/gubed-install-log
+tar xfj @gubedArchive  &gt;&gt; /tmp/gubed-install-log
+dirName=`ls`
+cd $dirName
+echo "Compiling the server..."  &gt;&gt; /tmp/gubed-install-log
+cd Server
+echo "Running autogen.sh..."  &gt;&gt; /tmp/gubed-install-log
+./autogen.sh &gt;&gt; /tmp/gubed-install-log
+echo "Running configure..."  &gt;&gt; /tmp/gubed-install-log
+./configure  &gt;&gt; /tmp/gubed-install-log
+echo "Running make..." &gt;&gt; /tmp/gubed-install-log
+make  &gt;&gt; /tmp/gubed-install-log
+
+echo "Installing the server..." &gt;&gt; /tmp/gubed-install-log
+cd /tmp/gubed-install
+cp -r $dirName "@targetDirectory"
+
+if  test "$RUN_SERVER" == "true"
+then
+  echo "Running the server..." &gt;&gt; /tmp/gubed-install-log
+  cd "@targetDirectory"
+  cd $dirName
+  cd Server/src
+  ./gbdServer &amp;
+fi
+
+if  test "$VIEW_LOG" == "true"
+then
+   kwrite /tmp/gubed-install-log &amp;
+   sleep 10
+fi
+
+echo "Cleaning up..."
+rm /tmp/gubed-install-log
+cd /tmp/gubed-install
+find . | xargs rm -f &gt; /dev/null
+cd /tmp/gubed-install
+cd $dirName
+rm -f "docs/Theory of operation" &gt; /dev/null
+cd /tmp/gubed-install
+find . | xargs rmdir -p &gt; /dev/null
+rmdir /tmp/gubed-install &gt; /dev/null
+</string>
+            </stringlist>
+        </property>
+        <property name="writeStdout">
+            <bool>true</bool>
+        </property>
+    </widget>
+</widget>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type=text/xsl href=info.xsl ?>
+<!DOCTYPE QuantaScriptInfo>
+<INFO>
+<options editor="kmdr-editor" interpreter="kmdr-executor" />
+<name>gubed_install</name>
+<author>Andras Mantia</author>
+<email>amantia@kde.org</email>
+<website>http://quanta.sf.net</website>
+<version>0.1</version>
+<license>GPL</license>
+<about>Simple script to make installation of the Gubed PHP debugger server easier.</about>
+</INFO>
