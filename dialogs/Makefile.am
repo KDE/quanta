@@ -8,6 +8,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/lib \
 	-I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/quanta/parsers \
 	-I$(top_srcdir)/quanta/src \
-	$(all_includes)
+	$(KMDI_INCLUDES) $(all_includes)
 
 SUBDIRS = settings tagdialogs

@@ -21,6 +21,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <kdeversion.h>
 
 #include "quanta.h"
 #include "quantaview.h"
@@ -215,8 +216,15 @@ bool PHPDebuggerInterface::removeBreakpoint ( KURL file, int line )
 QString PHPDebuggerInterface::mapServerPathToLocal(QString serverpath)
 {
    // Translate filename from server to local
+#if KDE_IS_VERSION(3,2,0)   
    if(serverpath.startsWith(Project::ref()->debugServerBasedir, false))
       serverpath.remove(0, Project::ref()->debugServerBasedir.length());
+#else
+   QString lServerPath = serverpath.lower();
+   QString lBaseDir = Project::ref()->debugServerBasedir.lower();
+   if(lServerPath.startsWith(lBaseDir))
+      serverpath.remove(0, Project::ref()->debugServerBasedir.length());
+#endif      
 
    return Project::ref()->debugLocalBasedir + serverpath;
 }
