@@ -3769,10 +3769,14 @@ void QuantaApp::slotFind()
 {
   KAction *a = 0L;
   int id = 0;
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (s)
-    id = s->id(s->visibleWidget());
-  if (id == 0 && m_view->writeExists())
+  QWidget *w = focusWidget();
+  if (m_htmlPart->view() == w || m_htmlPartDoc->view() == w)
+  {
+    QWidgetStack *s = widgetStackOfHtmlPart();
+    if (s)
+      id = s->id(s->visibleWidget());
+  }
+  if (id <= 0 && m_view->writeExists())
   {
     a = m_view->write()->view()->actionCollection()->action("edit_find");
   } else
@@ -3792,10 +3796,14 @@ void QuantaApp::slotFindAgain ()
 {
   KAction *a = 0L;
   int id = 0;
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (s)
-    id = s->id(s->visibleWidget());
-  if (id == 0 && m_view->writeExists())
+  QWidget *w = focusWidget();
+  if (m_htmlPart->view() == w || m_htmlPartDoc->view() == w)
+  {
+    QWidgetStack *s = widgetStackOfHtmlPart();
+    if (s)
+      id = s->id(s->visibleWidget());
+  }
+  if (id <= 0 && m_view->writeExists())
   {
     a = m_view->write()->view()->actionCollection()->action("edit_find_next");
   } else
@@ -3815,10 +3823,14 @@ void QuantaApp::slotFindAgainB ()
 {
   KAction *a = 0L;
   int id = 0;
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if (s)
-    id = s->id(s->visibleWidget());
-  if (id == 0 && m_view->writeExists())
+  QWidget *w = focusWidget();
+  if (m_htmlPart->view() == w || m_htmlPartDoc->view() == w)
+  {
+    QWidgetStack *s = widgetStackOfHtmlPart();
+    if (s)
+      id = s->id(s->visibleWidget());
+  }
+  if (id <= 0 && m_view->writeExists())
   {
     a = m_view->write()->view()->actionCollection()->action("edit_find_prev");
   } else
