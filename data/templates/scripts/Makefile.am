@@ -1,6 +1,6 @@
 SUBDIRS = php perl javascript
 
-templatesscriptsdir = $(kde_datadir)/quanta/templates/scripts
+templatesscriptsdir = ${quanta_datadir}/templates/scripts
 templatesscripts_DATA = dirinfo
 
 install-data-hook:

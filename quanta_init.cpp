@@ -108,7 +108,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   currentToolbarDTD = QString::null;
   m_config=kapp->config();
 
-  qConfig.globalDataDir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png");
+  qConfig.globalDataDir = KGlobal::dirs()->findResourceDir("data",resourceDir + "toolbar/quantalogo.png");
   if (qConfig.globalDataDir.isEmpty())
   {
     quantaStarted = false;
@@ -264,7 +264,7 @@ void QuantaApp::initQuanta()
 
   //get the PID of this running instance
   qConfig.quantaPID = QString::number(int(getpid()), 10);
-  qConfig.backupDirPath = KGlobal::instance()->dirs()->saveLocation("data", "quanta/backups/");
+  qConfig.backupDirPath = KGlobal::instance()->dirs()->saveLocation("data", resourceDir + "backups/");
 
   m_config->setGroup("General Options");
 
@@ -2087,7 +2087,7 @@ void QuantaApp::initActions()
     int el, ec;
     m_actions = new QDomDocument();
 //load the global actions
-    QFile f(qConfig.globalDataDir + "quanta/actions.rc");
+    QFile f(qConfig.globalDataDir + resourceDir + "actions.rc");
     if ( f.open( IO_ReadOnly ))
     {
       if (m_actions->setContent(&f, &error, &el, &ec))

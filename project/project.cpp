@@ -1222,7 +1222,7 @@ void Project::slotAcceptCreateProject()
       if (pnf->insertGlobalTemplates->isChecked())
       {
         KURL url;
-        QuantaCommon::setUrl(url, qConfig.globalDataDir + "quanta/templates/");
+        QuantaCommon::setUrl(url, qConfig.globalDataDir + resourceDir + "templates/");
         slotAddDirectory(url, false);
         QuantaCommon::setUrl(templateURL, "templates/");
         createTemplateDir = false;
@@ -1230,7 +1230,7 @@ void Project::slotAcceptCreateProject()
       if (pnf->insertLocalTemplates->isChecked())
       {
         KURL url;
-        QuantaCommon::setUrl(url, locateLocal("data", "quanta/templates/"));
+        QuantaCommon::setUrl(url, locateLocal("data", resourceDir + "templates/"));
         slotAddDirectory(url, false);
         QuantaCommon::setUrl(templateURL, "templates/");
         createTemplateDir = false;

@@ -108,14 +108,14 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   setShowSortIndicator(true);
   
   KURL url;
-  url.setPath(qConfig.globalDataDir + "quanta/templates/");
+  url.setPath(qConfig.globalDataDir + resourceDir + "templates/");
   m_globalDir = new FilesTreeBranch(this, url, i18n("Global Templates"), SmallIcon("ttab"));
   addBranch(m_globalDir);
 
   QDir dir(url.path(), "", QDir::All & !QDir::Hidden);
   m_globalDir->root()->setExpandable(dir.count() != 2);     //   . and .. are always there
 
-  url.setPath(locateLocal("data","quanta/templates/"));
+  url.setPath(locateLocal("data", resourceDir + "templates/"));
   m_localDir = new FilesTreeBranch(this, url, i18n("Local Templates"), SmallIcon("ttab"));
   addBranch(m_localDir);
 

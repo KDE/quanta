@@ -1,2 +1,2 @@
-templatesdocumentshtmldir = $(kde_datadir)/quanta/templates/documents/html
+templatesdocumentshtmldir = ${quanta_datadir}/templates/documents/html
 templatesdocumentshtml_DATA = demo.html

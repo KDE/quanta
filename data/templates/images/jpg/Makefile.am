@@ -1,2 +1,2 @@
-templatesimagesjpgdir = $(kde_datadir)/quanta/templates/images/jpg
+templatesimagesjpgdir = ${quanta_datadir}/templates/images/jpg
 templatesimagesjpg_DATA = demo.jpg

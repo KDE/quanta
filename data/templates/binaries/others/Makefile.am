@@ -1,2 +1,2 @@
-templatesbinariesothersdir = $(kde_datadir)/quanta/templates/binaries/others
+templatesbinariesothersdir = ${quanta_datadir}/templates/binaries/others
 templatesbinariesothers_DATA = print.pdf

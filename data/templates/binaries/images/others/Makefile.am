@@ -1,2 +1,2 @@
-templatesbinariesimagesothersdir = $(kde_datadir)/quanta/templates/binaries/images/others
+templatesbinariesimagesothersdir = ${quanta_datadir}/templates/binaries/images/others
 templatesbinariesimagesothers_DATA = demo.tif

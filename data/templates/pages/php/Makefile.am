@@ -1,2 +1,2 @@
-templatespagesphpdir = $(kde_datadir)/quanta/templates/pages/php
+templatespagesphpdir = ${quanta_datadir}/templates/pages/php
 templatespagesphp_DATA = demo.php

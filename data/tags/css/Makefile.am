@@ -1,4 +1,4 @@
-quantadir = ${kde_datadir}/quanta/dtep/css
+quantadir = ${quanta_datadir}/dtep/css
 
 quanta_DATA = description.rc background.tag border-bottom-color.tag border-bottom-style.tag \
 border-bottom-width.tag border-bottom.tag border-collapse.tag border-color.tag \

@@ -60,7 +60,7 @@ static KCmdLineOptions options[] =
 int main(int argc, char *argv[])
 {
   KAboutData
-    aboutData( "quanta", I18N_NOOP("Quanta"),
+    aboutData( PACKAGE, I18N_NOOP("Quanta"),
     VERSION, description, KAboutData::License_GPL_V2,
     "(c) 2000, 2001, 2002",
     othertext,

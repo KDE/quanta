@@ -1,5 +1,5 @@
 SUBDIRS = doc tags icons templates toolbars scripts
 
-quantadir = ${kde_datadir}/quanta
+quantadir = ${quanta_datadir}
 
 quanta_DATA = plugins.rc actions.rc chars tips

@@ -356,7 +356,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
   KURL projectTemplateURL;
   Document *w = m_view->write();
   w->checkDirtyStatus();
-  QString localTemplateDir = locateLocal("data","quanta/templates/");
+  QString localTemplateDir = locateLocal("data",resourceDir + "templates/");
 
   do {
     query = KMessageBox::Yes;
@@ -366,7 +366,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
       url = KFileDialog::getSaveURL(m_project->templateURL.url(), QString::null, this);
     } else
     {
-      url = KFileDialog::getSaveURL(locateLocal("data","quanta/templates/"), QString::null, this);
+      url = KFileDialog::getSaveURL(locateLocal("data",resourceDir + "templates/"), QString::null, this);
     }
 
     if (url.isEmpty()) return;
@@ -2287,7 +2287,7 @@ void QuantaApp::slotLoadToolbar()
 {
  KURL url;
 
- url = KFileDialog::getOpenURL(locateLocal("data","quanta/toolbars/"), "*"+toolbarExtension, this);
+ url = KFileDialog::getOpenURL(locateLocal("data",resourceDir + "toolbars/"), "*"+toolbarExtension, this);
  if (! url.isEmpty())
  {
    slotLoadToolbarFile(url.path());
@@ -2299,7 +2299,7 @@ void QuantaApp::slotLoadGlobalToolbar()
 {
  KURL url;
 
- url = KFileDialog::getOpenURL(qConfig.globalDataDir +"quanta/toolbars/", "*"+toolbarExtension+"\n*", this);
+ url = KFileDialog::getOpenURL(qConfig.globalDataDir +resourceDir + "toolbars/", "*"+toolbarExtension+"\n*", this);
  if (! url.isEmpty())
  {
    slotLoadToolbarFile(url.path());
@@ -2410,7 +2410,7 @@ bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, con
   KURL url;
   KURL projectToolbarsURL;
   QString toolbarName;
-  QString localToolbarsDir = locateLocal("data","quanta/toolbars/");
+  QString localToolbarsDir = locateLocal("data",resourceDir + "toolbars/");
 
   if (toolbarToSave.isEmpty())
   {
@@ -2748,7 +2748,7 @@ bool QuantaApp::removeToolbars()
     }
   }
 
-  QFile f(KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
+  QFile f(KGlobal::instance()->dirs()->saveLocation("data")+resourceDir + "actions.rc" );
   if (f.open( IO_ReadWrite | IO_Truncate ))
   {
     if (!m_actions->firstChild().firstChild().isNull())
@@ -3138,7 +3138,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
     {
       KURL url;
       //first load the local version if it exists
-      fileName = locateLocal("data", "quanta/toolbars/"+newDtd->toolbars[i]);
+      fileName = locateLocal("data", resourceDir + "toolbars/"+newDtd->toolbars[i]);
       QuantaCommon::setUrl(url, fileName);
       if (QExtFileInfo::exists(url))
       {
@@ -3146,7 +3146,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
         newToolbars += url;
       } else
       {
-        fileName = qConfig.globalDataDir + "quanta/toolbars/"+newDtd->toolbars[i];
+        fileName = qConfig.globalDataDir + resourceDir + "toolbars/"+newDtd->toolbars[i];
         QuantaCommon::setUrl(url, fileName);
         if (QExtFileInfo::exists(url))
         {
@@ -3160,10 +3160,10 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
       for (uint i = 0; i < oldDtd->toolbars.count(); i++)
       {
         KURL url;
-        QString fileName = qConfig.globalDataDir + "quanta/toolbars/"+oldDtd->toolbars[i];
+        QString fileName = qConfig.globalDataDir + resourceDir + "toolbars/"+oldDtd->toolbars[i];
         QuantaCommon::setUrl(url, fileName);
         KURL urlLocal;
-        fileName = locateLocal("data", "quanta/toolbars/"+oldDtd->toolbars[i]);
+        fileName = locateLocal("data", resourceDir + "toolbars/"+oldDtd->toolbars[i]);
         QuantaCommon::setUrl(urlLocal, fileName);
         if (newToolbars.contains(url) == 0)
         {
@@ -3918,7 +3918,7 @@ void QuantaApp::slotLoadDTD()
   KURL url = KFileDialog::getOpenURL("", "*.dtd", this);
   if (!url.isEmpty())
   {
-    DTDParser dtdParser(url, KGlobal::dirs()->saveLocation("data") + "quanta/dtep");
+    DTDParser dtdParser(url, KGlobal::dirs()->saveLocation("data") + resourceDir + "dtep");
     if (dtdParser.parse())
     {
       QString dirName = dtdParser.dirName();
@@ -3975,7 +3975,7 @@ void QuantaApp::slotLoadDTEP()
         KURL src;
         src.setPath(dirName);
         KURL target;
-        QString destDir = KGlobal::dirs()->saveLocation("data") + "quanta/dtep/";
+        QString destDir = KGlobal::dirs()->saveLocation("data") + resourceDir + "dtep/";
         target.setPath(destDir + src.fileName());
         KIO::copy( src, target, false); //don't care about the result
       }

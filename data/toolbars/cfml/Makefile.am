@@ -1,2 +1,2 @@
 quanta_DATA = fonts.toolbar.tgz forms.toolbar.tgz lists.toolbar.tgz other.toolbar.tgz standard.toolbar.tgz tables.toolbar.tgz cfml.toolbar.tgz
-quantadir = ${kde_datadir}/quanta/toolbars/cfml
+quantadir = ${quanta_datadir}/toolbars/cfml

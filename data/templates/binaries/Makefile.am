@@ -1,6 +1,6 @@
 SUBDIRS = images others
 
-templatesbinariesdir = $(kde_datadir)/quanta/templates/binaries
+templatesbinariesdir = ${quanta_datadir}/templates/binaries
 templatesbinaries_DATA = dirinfo
 
 install-data-hook:

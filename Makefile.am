@@ -7,16 +7,16 @@ endif
 #SUBDIRS = data dialogs messages parser parts plugins project tagdialogs toolbar treeviews widgets $(KMDI_SUBDIR)
 SUBDIRS = data dialogs messages parser parts plugins project tagdialogs toolbar treeviews widgets
 
-bin_PROGRAMS = quanta
-
-quanta_SOURCES = quantacommon.cpp quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp main.cpp document.cpp kqapp.cpp qextfileinfo.cpp quanta.cpp dcopwindowmanagerif.skel
-
 if BUILD_WYSIWYG
 LIB_KAFKA = $(top_builddir)/quanta/parts/kafka/libkafkalibrary.la
 endif
 
 # Make merging simple
 LIB_KMDI =
+
+bin_PROGRAMS = quanta
+
+quanta_SOURCES = quantacommon.cpp quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp main.cpp document.cpp kqapp.cpp qextfileinfo.cpp quanta.cpp dcopwindowmanagerif.skel
 
 quanta_LDADD = $(LIB_KAFKA) $(LIB_KMDI) $(top_builddir)/quanta/project/libproject.la $(top_builddir)/quanta/plugins/libplugins.la $(top_builddir)/quanta/widgets/libwidgets.la $(top_builddir)/quanta/parser/libparser.la $(top_builddir)/quanta/treeviews/libtreeviews.la $(top_builddir)/quanta/toolbar/libtoolbar.la $(top_builddir)/quanta/tagdialogs/libtagdialogs.la $(top_builddir)/quanta/dialogs/libdialogs.la $(top_builddir)/quanta/messages/libmessages.la $(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.la $(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.la $(top_builddir)/quanta/plugins/framewizard/libframewizard.la $(top_builddir)/quanta/plugins/csseditor/libcsseditor.la $(top_builddir)/quanta/plugins/php3dbg/libphp3dbg.la -lkatepartinterfaces $(LIBXML_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
 
@@ -55,15 +55,21 @@ messages: rc.cpp
 	$(XGETTEXT) rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
 	rm -f extrafiles tips.cpp files dirs 
 
-KDE_ICON = quanta
-
 # this is where the kdelnk file will go
 kdelnkdir = $(kde_appsdir)/Development
 kdelnk_DATA = quanta.desktop
 
 # this is where the XML-GUI resource file goes
-rcdir = $(kde_datadir)/quanta
+rcdir = ${quanta_datadir}
 rc_DATA = quantaui.rc
+
+if QUANTAUIRC_HOOK
+install-data-hook:
+	@mv $(DESTDIR)$(rcdir)/quantaui.rc $(DESTDIR)$(rcdir)/$(PACKAGE)ui.rc
+else
+install-data-hook:
+#no hook        
+endif        
 
 if BUILD_WYSIWYG
 KAFKAINCLUDE = -I$(top_builddir)/quanta/parts/kafka

@@ -25,7 +25,7 @@
 #include <kiconloader.h>
 #include <kstandarddirs.h>
 #include <kglobalsettings.h>
-#include <kdeversion.h>
+#include <dcopclient.h>
 
 #include "quantacommon.h"
 #include "project/project.h"
@@ -34,6 +34,7 @@
 
 
 QuantaApp *quantaApp = 0L; //global pointer to the main application object
+const QString resourceDir = QString(PACKAGE) + "/";
 
 KSplash::KSplash()
  : QFrame( 0L, QString("Quanta")+VERSION,
@@ -66,6 +67,7 @@ KQApplication::KQApplication()
    splash = 0L;
 
    KGlobal::dirs()->addPrefix(PREFIX);
+   dcopClient()->registerAs("quanta", true);
 
 //FIXME: Do not hide the problem, but really fix the session restoration.
 //I have no idea how to do it, but it may be broken because of delayed
@@ -102,6 +104,7 @@ KQUniqueApplication::KQUniqueApplication()
  : KUniqueApplication()
 {
   KGlobal::dirs()->addPrefix(PREFIX);
+  dcopClient()->registerAs("quanta", false);
 }
 
 

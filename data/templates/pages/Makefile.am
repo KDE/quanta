@@ -1,6 +1,6 @@
 SUBDIRS = php html docbook
 
-templatespagesdir = $(kde_datadir)/quanta/templates/pages
+templatespagesdir = ${quanta_datadir}/templates/pages
 templatespages_DATA = dirinfo
 
 install-data-hook:

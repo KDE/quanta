@@ -1,2 +1,2 @@
-templatesscriptsjavascriptdir = $(kde_datadir)/quanta/templates/scripts/javascript
+templatesscriptsjavascriptdir = ${quanta_datadir}/templates/scripts/javascript
 templatesscriptsjavascript_DATA = demo.js

@@ -111,4 +111,4 @@ yaz.tag \
 zip.tag \
 zlib.tag
 
-dtepphpdir = ${kde_datadir}/quanta/dtep/php
+dtepphpdir = ${quanta_datadir}/dtep/php

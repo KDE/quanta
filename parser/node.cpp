@@ -90,6 +90,13 @@ Node::~Node()
   }
   if ( tag ) { delete tag; tag = 0L;}
   if ( groupTag ) { delete groupTag; groupTag = 0L;}
+
+#ifdef BUILD_KAFKAPART
+  if(m_rootNode)
+    delete m_rootNode;
+  if(m_leafNode)
+    delete m_leafNode;
+#endif
 }
 
 Node *Node::nextSibling()

@@ -57,7 +57,7 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   setFullWidth(true);
   
   KURL url;
-  url.setPath(qConfig.globalDataDir + "quanta/scripts/");
+  url.setPath(qConfig.globalDataDir + resourceDir + "scripts/");
 
   m_globalDir = new FilesTreeBranch(this, url, i18n("Global scripts"), SmallIcon("run"));
   addBranch(m_globalDir);
@@ -67,7 +67,7 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
     m_globalDir->root()->setExpandable(true);     //   . and .. are always there
     m_globalDir->setOpen( true );
   }
-  url.setPath(locateLocal("data","quanta/scripts/"));
+  url.setPath(locateLocal("data", resourceDir + "scripts/"));
   m_localDir = new FilesTreeBranch(this, url, i18n("Local scripts"), SmallIcon("run"));
   addBranch(m_localDir);
 

@@ -1,2 +1,2 @@
-toolbarxmldir = $(kde_datadir)/quanta/toolbars/xml
+toolbarxmldir = ${quanta_datadir}/toolbars/xml
 toolbarxml_DATA = fonts.toolbar.tgz

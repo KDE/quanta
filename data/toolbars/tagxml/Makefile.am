@@ -1,2 +1,2 @@
-tagxmldir = $(kde_datadir)/quanta/toolbars/tagxml
+tagxmldir = ${quanta_datadir}/toolbars/tagxml
 tagxml_DATA = tagxml.toolbar.tgz

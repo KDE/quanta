@@ -3,5 +3,5 @@ quanta_DATA = all.tag annotation.tag any.tag anyAttribute.tag appInfo.tag attrib
     length.tag list.tag maxInclusive.tag maxLength.tag minInclusive.tag minLength.tag notation.tag pattern.tag redefine.tag restriction.tag schema.tag \
     selector.tag sequence.tag simpleContent.tag simpleType.tag totalDigits.tag union.tag unique.tag whiteSpace.tag minExclusive.tag maxExclusive.tag
 
-quantadir = ${kde_datadir}/quanta/dtep/xml-schema
+quantadir = ${quanta_datadir}/dtep/xml-schema
 

@@ -1,6 +1,6 @@
 SUBDIRS = html others scripts 
 
-templatesdocumentsdir = $(kde_datadir)/quanta/templates/documents
+templatesdocumentsdir = ${quanta_datadir}/templates/documents
 templatesdocuments_DATA = dirinfo
 
 install-data-hook:

@@ -1,4 +1,4 @@
-cssxmldir= ${kde_datadir}/quanta/csseditor
+cssxmldir= ${quanta_datadir}/csseditor
 cssxml_DATA = config.xml pseudo.xml atrules.xml 
 
 KDE_ICON = quanta

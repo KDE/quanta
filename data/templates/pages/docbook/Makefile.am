@@ -1,2 +1,2 @@
-templagespagesdocbookdir = $(kde_datadir)/quanta/templates/pages/docbook
+templagespagesdocbookdir = ${quanta_datadir}/templates/pages/docbook
 templagespagesdocbook_DATA = demo.docbook

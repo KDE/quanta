@@ -1,2 +1,2 @@
-templatespagesspecialdir = $(kde_datadir)/quanta/templates/pages/special
+templatespagesspecialdir = ${quanta_datadir}/templates/pages/special
 templatespagesspecial_DATA = demo.txt

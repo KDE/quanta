@@ -122,7 +122,7 @@ void QuantaPluginInterface::readConfig()
   if (QFileInfo(configFile).exists())
       readConfigFile(configFile);
   // read the global plugins.rc
-  configFile = qConfig.globalDataDir +"quanta/plugins.rc";
+  configFile = qConfig.globalDataDir + resourceDir + "plugins.rc";
   readConfigFile(configFile);
 }
 
