@@ -483,7 +483,7 @@ void QuantaApp::slotFileClose()
     WHTMLPart *part = m_htmlPart;
     part->closeURL();
     part->begin(Project::ref()->projectBaseURL());
-    part->write( "" );
+    part->write("");
     part->end();
 
     slotUpdateStatus(m_view->writeTab()->currentPage());
@@ -693,6 +693,7 @@ void QuantaApp::slotRepaintPreview()
     }
    }
  part->end();
+ part->setEncoding(dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding(), true);
  part->show();
 }
 

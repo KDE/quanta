@@ -551,7 +551,8 @@ int Document::createTempFile()
  closeTempFile();
  tempFile = new KTempFile(tmpDir);
  tempFile->setAutoDelete(true);
- tempFile->textStream()->setEncoding(QTextStream::UnicodeUTF8);
+ tempFile->textStream()->setEncoding(QTextStream::Locale);
+// tempFile->textStream()->setCodec(QTextCodec::codecForName(dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding()));
  * (tempFile->textStream()) << editIf->text();
 
  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
@@ -1770,13 +1771,16 @@ void Document::checkDirtyStatus()
       QFile tmpFile(m_tempFileName);
       if (f.open(IO_ReadOnly) && tmpFile.open(IO_ReadOnly))
       {
+        QString encoding = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding();  
         QString content;
         QTextStream stream(&f);
-        stream.setEncoding(QTextStream::UnicodeUTF8);
+//        stream.setEncoding(QTextStream::UnicodeUTF8);
+        stream.setCodec(QTextCodec::codecForName(encoding));
         content = stream.read();
         QString tmpContent;
         QTextStream tmpStream(&tmpFile);
-        tmpStream.setEncoding(QTextStream::UnicodeUTF8);
+//        tmpStream.setEncoding(QTextStream::UnicodeUTF8);
+        tmpStream.setCodec(QTextCodec::codecForName(encoding));
         tmpContent = tmpStream.read();
         if (content == tmpContent)
         {
