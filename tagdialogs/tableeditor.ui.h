@@ -138,7 +138,7 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
   int tableArea = -1; //0 = thead, 1 = tbody, 2 = tfoot; -1 = invalid
   QSpinBox *rowSpin = 0L;
   QSpinBox *colSpin = 0L;
-  QTable *table = 0L;
+  m_dataTable = 0L;
   QValueList<Node*> tableRowTags;
   Node *n = node;  
   while (n != lastNode->nextSibling())
@@ -154,7 +154,7 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       countRows = true;
       rowSpin = headerRowSpinBox;
       colSpin = headerColSpinBox;
-      table = headerTableData;
+      m_dataTable= headerTableData;
       m_tableTags = m_tableHeaderTags;
       m_tableRows = m_tableHeaderRows;
       tableArea = 0;
@@ -168,7 +168,7 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       nCol = nRow = maxCol = 0;
       rowSpin = 0L;
       colSpin = 0L;
-      table = 0L;
+      m_dataTable = 0L;
       tableArea = -1;
     }
     else if (tagName == "tfoot")
@@ -178,7 +178,7 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       colSpin = footerColSpinBox;
       m_tableTags = m_tableFooterTags;
       m_tableRows = m_tableFooterRows;
-      table = footerTableData;
+      m_dataTable = footerTableData;
       countRows = true;
       tableArea = 2;
       m_tfoot = new Tag(*(n->tag));  
@@ -191,7 +191,7 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       nCol = nRow = maxCol = 0;
       rowSpin = 0L;
       colSpin = 0L;
-      table = 0L;
+      m_dataTable = 0L;
       tableArea = -1;
     }
     else if (tagName == "tbody")
@@ -200,7 +200,7 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       colSpin = colSpinBox;
       m_tableTags = m_tableDataTags;
       m_tableRows = m_tableDataRows;
-      table = tableData;
+      m_dataTable = tableData;
       countRows = true;
       tableArea = 1;
       m_tbody = new Tag(*(n->tag));
@@ -215,7 +215,7 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       m_tableRows = 0L;
       rowSpin = 0L;
       colSpin = 0L;
-      table = 0L;
+      m_dataTable = 0L;
       tableArea = -1;
     }
     else if (tagName == "tr")
@@ -233,6 +233,10 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       if (countRows)
       {
         maxCol = (nCol > maxCol) ? nCol : maxCol;
+        for (int i = 0; i < maxCol - nCol; i++)
+        {
+          tableRowTags.append(0L);                                   
+        }
         m_tableTags->append(tableRowTags);
       }
     }
@@ -241,27 +245,12 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       if (countRows)
       {
         nCol++;
-        if (rowSpin && colSpin && table)
+        if (rowSpin && colSpin && m_dataTable)
         {
-          QString content;
-          int bl, bc, el, ec;
-          n->tag->endPos(bl, bc);
-          bc++;
-          if (n->next)
-          {
-            n->next->tag->beginPos(el, ec);
-            ec--;
-          }
-          else
-          {
-            el = eLine;
-            ec = eCol;
-          }
-          content = m_write->text(bl, bc, el, ec);
           rowSpin->setValue(nRow);
           if (colSpin->value() < nCol)
             colSpin->setValue(nCol);
-          table->setText(nRow - 1, nCol - 1, content);
+          m_dataTable->setText(nRow - 1, nCol - 1, tagContent(n));
           tableRowTags.append(n);       
         }
         QString colspanValue = n->tag->attributeValue("colspan");
@@ -277,17 +266,17 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
               colSpin->setValue(nCol);
             for (int i = 0; i < value - 1; i++)
             {
-              table->setText(nRow - 1, lastCol + i, i18n("Merged with column #%1.").arg(lastCol));
-              table->item(nRow-1, lastCol + i)->setEnabled(false);
+              m_dataTable->setText(nRow - 1, lastCol + i, i18n("Merged with column #%1.").arg(lastCol));
+              m_dataTable->item(nRow-1, lastCol + i)->setEnabled(false);
               tableRowTags.append(n);                                   
             }
           }
         }
       }
     }  
-    else if (tagName=="caption" && n->child)
+    else if (tagName=="caption")
     {
-      captionText->setText(n->child->tag->tagStr());
+      captionText->setText(tagContent(n));
     }
     n = n->nextSibling();
   }
@@ -295,7 +284,7 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
   //by default the current page is the data handling page
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
-  
+  m_dataTable = tableData;
   //just for testing
   /*
   for (uint i = 0; i < m_tableDataTags.count(); i++)
@@ -303,22 +292,8 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
     for (uint j = 0; j < m_tableDataTags[i].count(); j++)      
     {
          Node *n = m_tableDataTags[i][j];
-         QString content;
-          int bl, bc, el, ec;
-          n->tag->endPos(bl, bc);
-          bc++;
-          if (n->next)
-          {
-            n->next->tag->beginPos(el, ec);
-            ec--;
-          }
-          else
-          {
-            el = eLine;
-            ec = eCol;
-          }
           content = m_write->text(bl, bc, el, ec);
-          kdDebug(24000) << QString("Table[%1, %2] = %3").arg(i).arg(j).arg(content) << endl;
+          kdDebug(24000) << QString("Table[%1, %2] = %3").arg(i).arg(j).arg(tagContent(n)) << endl;
           kdDebug(24000) << QString("TableData[%1, %2] = %3").arg(i).arg(j).arg(tableData->text(i, j)) << endl;         
     }
   }
@@ -355,17 +330,145 @@ void TableEditor::slotTabChanged( QWidget *w)
     case 0: { 
       m_tableTags = m_tableDataTags;
       m_tableRows = m_tableDataRows;
+      m_dataTable = tableData;
       break;
     }
    case 1: {
       m_tableTags = m_tableHeaderTags;
       m_tableRows = m_tableHeaderRows;
+      m_dataTable = headerTableData;
       break;
     }
      case 2: {
       m_tableTags = m_tableFooterTags;
       m_tableRows = m_tableFooterRows;
+      m_dataTable = footerTableData;
       break;
     }
   }
+}
+
+
+QString TableEditor::readModifiedTable()
+{
+  QString tableString;
+  tableString = m_table->toString();  
+  if (headerCheckBox->isChecked()) {
+    //insert the <thead> tag
+    tableString += indent(2);
+    tableString = m_thead->toString();  
+    tableString += indent(4);
+    
+    kdDebug(24000) << "thead" << endl;
+    m_tableTags = m_tableHeaderTags;
+    m_tableRows = m_tableHeaderRows;
+    m_dataTable = headerTableData;
+    tableString += tableToString();	
+    tableString += indent(2);
+    tableString += "</" + QuantaCommon::tagCase(m_thead->name) +">";  
+  }
+  if (footerCheckBox->isChecked()) {
+    //insert the <tfoot> tag
+    tableString += indent(2);
+    tableString = m_tfoot->toString();  
+    tableString += indent(4);
+    
+    kdDebug(24000) << "tfoot" << endl;
+    m_tableTags = m_tableFooterTags;
+    m_tableRows = m_tableFooterRows;
+    m_dataTable = footerTableData;
+    tableString += tableToString();
+    tableString += indent(2);
+    tableString += "</" + QuantaCommon::tagCase(m_tfoot->name) +">";  
+  }
+  //isert the <tbody> tag
+  tableString += indent(2);
+  tableString = m_tbody->toString(); 
+  kdDebug(24000) << "tbody" << endl;
+  m_tableTags = m_tableDataTags;
+  m_tableRows = m_tableDataRows;
+  m_dataTable = tableData;
+  tableString += tableToString();
+  //close the <tbody> and <table> tags
+  tableString += indent(2);
+  tableString += "</" + QuantaCommon::tagCase(m_tbody->name) +">";
+  tableString += "\n";
+  tableString += "</" + QuantaCommon::tagCase(m_table->name) + ">";
+  tableString += "\n";
+  
+  kdDebug(24000) << tableString << endl;
+  return tableString;
+}
+
+
+QString TableEditor::indent( int n )
+{
+  QString str;
+  str.fill(' ', n);
+  str.prepend('\n');
+  return str;
+}
+
+
+QString TableEditor::cellValue( int row, int col )
+{
+  if (!m_dataTable || !m_tableTags)
+    return QString::null;
+ QString str;
+ Node *node= (*m_tableTags)[row][col];
+ if (!node){
+   kdDebug(24000) << QString("NODE = NULL!!! for %1, %2").arg(row).arg(col) << endl;
+   return "";
+ }
+ 
+ str = node->tag->toString();
+ str += m_dataTable->text(row, col);
+ str += "</" + QuantaCommon::tagCase(node->tag->name) + ">"; 
+ return str;
+}
+
+
+QString TableEditor::tableToString()
+{
+    QString tableStr;
+    for (int i = 0; i < m_dataTable->numRows(); i++) {
+      tableStr += indent(6);
+      Tag *tag = (*m_tableRows)[i]->tag;
+      tableStr += tag->toString();
+      for (int j = 0; j < m_dataTable->numCols(); j++)  {
+        tableStr += indent(8);
+        tableStr += cellValue(i, j);
+      }	
+      tableStr += indent(6);
+      tableStr += "</" + QuantaCommon::tagCase(tag->name) +">";  
+    }    
+  return tableStr;  
+}
+
+
+QString TableEditor::tagContent(Node *node)
+{
+  if (!node)
+    return "";
+  QString content;
+  int bl, bc, el, ec;
+  node->tag->endPos(bl, bc);
+  bc++;
+  if (node->next)
+  {
+    node->next->tag->beginPos(el, ec);
+    ec--;
+  }
+  else
+  {
+    Node *n = node->nextSibling();
+    if (n) {
+      node->next->tag->beginPos(el, ec);
+      ec--;
+    } else {
+      return "";
+    }
+  }
+ content = m_write->text(bl, bc, el, ec);
+ return content; 
 }

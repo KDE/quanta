@@ -34,6 +34,7 @@
 
 // include files for KDE
 #include <kconfig.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <kprocess.h>
 #include <kcolordialog.h>
@@ -410,13 +411,16 @@ void QuantaView::slotTagEditTable()
     l.remove(l.begin());
   }
 
-  TableEditor *editor = new TableEditor();
+  TableEditor editor;
   if (tableExists)
   {
-    editor->setBaseURL(baseURL());
-    editor->setTableArea(bl, bc, el, ec);
+    editor.setBaseURL(baseURL());
+    editor.setTableArea(bl, bc, el, ec);
   }
-  editor->exec();
+  if (editor.exec())
+  {
+    editor.readModifiedTable();
+  }
 }
 
 /** for quick create table */

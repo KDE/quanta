@@ -75,9 +75,9 @@ public:
   /** Remove the attribute number index */
   void deleteAttribute(uint index) {attrs.remove(attrs.at(index));}
   /** Overwrite the attribute attrName's value with attrValue if existing, else creating the attribute */
-  void editAttribute(QString attrName, QString attrValue);
+  void editAttribute(const QString& attrName, const QString& attrValue);
   /** Delete the attribute attrName */
-  void deleteAttribute(QString attrName);
+  void deleteAttribute(const QString& attrName);
   /** Returns the quotation status of the attribute */
   bool isQuotedAttribute(int index) const {return attrs[index].quoted;}
   /** Check if this tag has the attr attribute defined */
@@ -109,6 +109,10 @@ public:
 
   void namePos(int &line, int &col);
   int attrCount() const {return attrs.count();}
+  /** modify the attributes of tag accoording to the attrDict*/
+  void modifyAttributes(QDict<QString> *attrDict);
+  /** returns the tag as a string */
+  QString toString();
 
   int size();
 

@@ -689,28 +689,29 @@
     <forward>class Node</forward>
 </forwards>
 <variables>
-    <variable>QValueList&lt;Node *&gt; *m_tableDataRows;</variable>
-    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableDataTags;</variable>
-    <variable>DTDStruct *m_dtd;</variable>
-    <variable>KURL m_baseURL;</variable>
-    <variable>KPopupMenu *m_popup;</variable>
-    <variable>int m_row;</variable>
-    <variable>int m_col;</variable>
-    <variable>int m_cellEditId;</variable>
-    <variable>int m_rowEditId;</variable>
-    <variable>int m_colEditId;</variable>
-    <variable>Tag *m_tbody;</variable>
-    <variable>int newVariable;</variable>
-    <variable>Tag *m_thead;</variable>
-    <variable>Tag *m_tfoot;</variable>
-    <variable>Tag *m_table;</variable>
-    <variable>Document* m_write;</variable>
-    <variable>QValueList&lt;Node *&gt; *m_tableRows;</variable>
-    <variable>QValueList&lt;Node *&gt; *m_tableHeaderRows;</variable>
-    <variable>QValueList&lt;Node *&gt; *m_tableFooterRows;</variable>
-    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableHeaderTags;</variable>
-    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableFooterTags;</variable>
     <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableFooterTags;</variable>
+    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableHeaderTags;</variable>
+    <variable>QValueList&lt;Node *&gt; *m_tableFooterRows;</variable>
+    <variable>QValueList&lt;Node *&gt; *m_tableHeaderRows;</variable>
+    <variable>QValueList&lt;Node *&gt; *m_tableRows;</variable>
+    <variable>Document* m_write;</variable>
+    <variable>Tag *m_table;</variable>
+    <variable>Tag *m_tfoot;</variable>
+    <variable>Tag *m_thead;</variable>
+    <variable>int newVariable;</variable>
+    <variable>Tag *m_tbody;</variable>
+    <variable>int m_colEditId;</variable>
+    <variable>int m_rowEditId;</variable>
+    <variable>int m_cellEditId;</variable>
+    <variable>int m_col;</variable>
+    <variable>int m_row;</variable>
+    <variable>KPopupMenu *m_popup;</variable>
+    <variable>KURL m_baseURL;</variable>
+    <variable>DTDStruct *m_dtd;</variable>
+    <variable>QValueList&lt;QValueList&lt;Node*&gt; &gt; *m_tableDataTags;</variable>
+    <variable>QValueList&lt;Node *&gt; *m_tableDataRows;</variable>
+    <variable>QTable *m_dataTable;</variable>
 </variables>
 <slots>
     <slot>slotContextMenuRequested( int row, int col, const QPoint &amp; pos )</slot>
@@ -728,6 +729,11 @@
     <function>destroy()</function>
     <function>setTableArea( int bLine, int bCol, int eLine, int eCol )</function>
     <function>setBaseURL( const KURL &amp; url )</function>
+    <function returnType="QString">readModifiedTable()</function>
+    <function access="protected" returnType="QString">indent( int n )</function>
+    <function access="protected" returnType="QString">cellValue( int row, int col )</function>
+    <function access="protected" returnType="QString">tableToString()</function>
+    <function access="protected" returnType="QString">tagContent( Node * node )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

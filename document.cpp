@@ -163,7 +163,7 @@ void Document::insertTag(QString s1,QString s2)
 /** Change the current tag's attributes with those from dict */
 void Document::changeTag(Tag *tag, QDict<QString> *dict )
 {
-  QDictIterator<QString> it( *dict ); // iterator for dict
+ /* QDictIterator<QString> it( *dict ); // iterator for dict
   QDict<QString> oldAttr(1,false);
   QString tagStr = "";
   QTag *qTag = QuantaCommon::tagFromDTD(currentDTD(true), tag->name);
@@ -200,7 +200,9 @@ void Document::changeTag(Tag *tag, QDict<QString> *dict )
   {
     tagStr.append(" /");
   }
-  tagStr.append(">");
+  tagStr.append(">");*/
+  tag->modifyAttributes(dict);
+  QString tagStr = tag->toString();
 
   reparseEnabled = false;
   int bLine, bCol, eLine, eCol;

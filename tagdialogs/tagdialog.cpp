@@ -211,7 +211,6 @@ void TagDialog::insertAttribute(QString *attr, QString *value)
   dict->insert( *attr , value );
 }
 
-
 /** Return the attributes in QDict<QString> format*/
 QDict<QString> * TagDialog::getAttributes()
 {
@@ -227,17 +226,17 @@ QString TagDialog::getAttributeString()
   QString attrStr("");
 
   while ( it.current() ) {
-    QString attr  = it.currentKey();
+    QString attr  = QuantaCommon::attrCase(it.currentKey());
     QString val   = *it.current();
 
     QString attrval = " ";  // attr=value
 
     if ( !val.isEmpty() ) {
-        attrval += QuantaCommon::attrCase(attr) + "=" + qConfig.attrValueQuotation + val + qConfig.attrValueQuotation;
+        attrval += attr + "=" + qConfig.attrValueQuotation + val + qConfig.attrValueQuotation;
     } else
-      attrval += QuantaCommon::attrCase(attr); // for checkboxes dont print =""
+      attrval += attr; // for checkboxes dont print =""
 
-    attrStr = attrval+attrStr;
+    attrStr = attrval + attrStr;
 
     ++it;
   }

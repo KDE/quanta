@@ -23,6 +23,8 @@
 
 #include "tag.h"
 #include "../document.h"
+#include "../quantacommon.h"
+#include "../resource.h"
 
 Tag::Tag()
 {
@@ -318,7 +320,7 @@ void Tag::attributeValuePos(int index, int &line, int &col)
  }
 }
 
-void Tag::editAttribute(QString attrName, QString attrValue)
+void Tag::editAttribute(const QString& attrName, const QString& attrValue)
 {
   TagAttr attr;
 
@@ -341,7 +343,7 @@ void Tag::editAttribute(QString attrName, QString attrValue)
   attrs.append(attr);
 }
 
-void Tag::deleteAttribute(QString attrName)
+void Tag::deleteAttribute(const QString& attrName)
 {
   for (uint i = 0 ; i < attrs.count(); i++)
   {
@@ -351,4 +353,64 @@ void Tag::deleteAttribute(QString attrName)
       attrs.remove(attrs.at(i));
     }
   }
+}
+
+void Tag::modifyAttributes(QDict<QString> *attrDict)
+{
+  QTag *qTag = QuantaCommon::tagFromDTD(dtd, name);
+  QDictIterator<QString> it(*attrDict);
+  QString attribute;
+  QString value;
+  while ( it.current() )
+  {
+    attribute = it.currentKey();
+    value = *(it.current());
+    if (qTag && qTag->parentDTD->singleTagStyle == "xml" && attribute=="/")
+    {
+     ++it;
+     continue;
+    }
+    editAttribute(attribute, value);
+    ++it;
+  }
+}
+
+QString Tag::toString()
+{
+  QTag *qTag = QuantaCommon::tagFromDTD(dtd, name);
+  QValueList<TagAttr>::Iterator it;
+  TagAttr attr;
+  QString attrString;
+  QString tagString;
+  for (it = attrs.begin(); it != attrs.end(); ++it)
+  {
+    attr = *it;
+    attrString = " ";
+    if (attr.value.isEmpty())
+    {
+      attrString.append(attr.name);
+    } else
+    {
+      attrString.append(attr.name + "=");
+      if (!attr.value.startsWith("\\\"") && !attr.value.startsWith("\\\'"))
+          attrString.append(qConfig.attrValueQuotation);
+      attrString.append(attr.value);
+      if (!attr.value.endsWith("\\\"") && !attr.value.endsWith("\\\'"))
+          attrString.append(qConfig.attrValueQuotation);
+    }
+    tagString.prepend(attrString);
+  }
+  attrString = "<" + QuantaCommon::tagCase(name);
+  tagString.prepend(attrString);
+
+  if (attrs.isEmpty() && qTag && qTag->parentDTD->singleTagStyle == "xml" &&
+      (qTag->isSingle() ||
+      (!qConfig.closeOptionalTags && qTag->isOptional()) || single)
+     )
+  {
+    tagString.append(" /");
+  }
+  tagString.append(">");
+
+  return tagString;
 }
