@@ -35,6 +35,7 @@
 #include <kwin.h>
 #include <klocale.h>
 #include <kaction.h>
+#include <kactionclasses.h>
 #include <kdialogbase.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
@@ -148,7 +149,15 @@ Document::Document(KTextEditor::Document *doc,
   KAction *viewborderAction = m_view->actionCollection()->action( "view_border" );
   if (viewborderAction)
     viewborderAction->setShortcut(Qt::SHIFT + Qt::Key_F9);
-
+  
+  KActionMenu *bookmarkAction = dynamic_cast<KActionMenu*>(m_view->actionCollection()->action( "bookmarks" ));
+  if (bookmarkAction)
+  {
+    m_view->actionCollection()->take(bookmarkAction);
+    //kdDebug(24000) << "Bookmarks found!" << endl;
+    //bookmarkAction->insert(quantaApp->actionCollection()->action( "file_quit" ));
+  }
+ 
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
   editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);

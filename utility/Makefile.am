@@ -3,7 +3,7 @@ noinst_LTLIBRARIES = libutility.la
 METASOURCES = AUTO
 
 libutility_la_SOURCES = quantacommon.cpp tagaction.cpp toolbartabwidget.cpp \
-		toolbarxmlgui.cpp newstuff.cpp quantanetaccess.cpp qpevents.cpp
+			toolbarxmlgui.cpp newstuff.cpp quantanetaccess.cpp qpevents.cpp quantabookmarks.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/src \
 	-I$(top_srcdir)/quanta/parsers \

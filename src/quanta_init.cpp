@@ -108,6 +108,7 @@
 #include "dtds.h"
 #include "spellchecker.h"
 #include "qpevents.h"
+#include "quantabookmarks.h"
 
 #include "tagactionmanager.h"
 #include "tagactionset.h"
@@ -1024,6 +1025,10 @@ void QuantaInit::initActions()
     connect(m_quanta, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
     connect(m_quanta->doc(), SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
     connect(ViewManager::ref(), SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
+
+    QuantaBookmarks *m_bookmarks = new QuantaBookmarks();
+    m_bookmarks->createActions(ac);
+    connect(m_bookmarks, SIGNAL(gotoFileAndLine(const QString&, int, int)), m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
 }
 
 /** Initialize the plugin architecture. */
