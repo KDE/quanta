@@ -25,7 +25,7 @@ MemberAutoCompleteAfter = (?:\.|->)$
 [Parsing rules]
 AreaBorders = <? ?>, <* *>, <% %>
 Tags = script(language)
-Comments = // EOL, /* */, # EOLs
+Comments = // EOL, /* */, # EOL
 StructKeywords = for;foreach;if;else;elseif;while;do;switch;declare;function;class
 LocalScopeKeywords=function;class
 StructBeginStr = {
