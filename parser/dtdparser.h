@@ -28,11 +28,19 @@ class DTDParser {
 public:
   DTDParser(const KURL& dtdURL, const QString &dtepDir);
   ~DTDParser();
+  QString dirName();
   bool parse();
+
+protected:
+  void writeDescriptionRC();
 
 private:
   KURL m_dtdURL;
   QString m_dtepDir;
+  QString m_name;
+  QString m_nickName;
+  QString m_doctype;
+  QString m_dtdURLLine;
   QDict<Attribute> m_tags;
 };
 

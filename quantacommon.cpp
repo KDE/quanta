@@ -209,7 +209,7 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
   {
     Attribute *attribute = attributes->at(i);
     QString name = attribute->name.left(1).upper()+attribute->name.right(attribute->name.length()-1);
-    stream << "  <attr name=\"" + attribute->name +"\"type=\""+attribute->type+"\"";
+    stream << "  <attr name=\"" + attribute->name +"\" type=\""+attribute->type+"\"";
     if (!attribute->defaultValue.isEmpty())
         stream  << " defaultValue=\"" + attribute->defaultValue + "\"";
     if (!attribute->status.isEmpty())
