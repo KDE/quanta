@@ -209,9 +209,6 @@
             <property name="text">
                 <string>&amp;OK</string>
             </property>
-            <property name="accel">
-                <string>Alt+O</string>
-            </property>
         </widget>
         <spacer row="11" column="5">
             <property name="name">
@@ -363,9 +360,6 @@
             </property>
             <property name="text">
                 <string>&amp;Cancel</string>
-            </property>
-            <property name="accel">
-                <string>Alt+C</string>
             </property>
         </widget>
         <widget class="KLineEdit" row="1" column="1" rowspan="1" colspan="6">
