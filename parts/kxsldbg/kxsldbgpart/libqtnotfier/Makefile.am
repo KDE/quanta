@@ -5,7 +5,7 @@ lib_LTLIBRARIES = libqtnotfier.la
 ## INCLUDES were found outside kdevelop specific part
 
 libqtnotfier_la_LDFLAGS = -version-info $(XSLDBG_VERSION_INFO)
-libqtnotfier_la_LIBADD = -lxslt
+libqtnotfier_la_LIBADD = $(LIBXSLT_LIBS)
 libqtnotfier_la_METASOURCES = AUTO
 
 libqtnotfier_la_SOURCES = xsldbgthread.cpp xsldbgnotifier.cpp xsldbgevent.cpp xsldbgdebuggerbase.cpp qtnotifier2.cpp 

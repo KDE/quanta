@@ -383,7 +383,45 @@ void QuantaView::slotTagQuickList()
 
 void QuantaView::slotTagEditTable()
 {
+  if (!writeExists()) return;
+  Document *w = write();
+  QStringList list = w->tagAreas("table", true, true);
+  bool tableExists = false;
+  uint line, col;
+  w->viewCursorIf->cursorPositionReal(&line, &col);
+  int bl, bc, el, ec;
+  QStringList l;
+  QStringList l2;
+  for (QStringList::Iterator it = list.begin(); it != list.end(); ++it)
+  {
+    QuantaCommon::normalizeStructure(*it, l2);
+    l = QStringList::split('\n', *it, true);
+    QStringList coordList = QStringList::split(',', l[0], true);
+    bl = coordList[0].toInt();
+    bc = coordList[1].toInt();
+    el = coordList[2].toInt();
+    ec = coordList[3].toInt();
+    if (QuantaCommon::isBetween(line, col, bl, bc, el, ec) == 0)
+    {
+      kdDebug(24000) << "coordList = " << coordList << endl;
+      tableExists = true;
+      break;
+    }
+    l.remove(l.begin());
+  }
+
   TableEditor *editor = new TableEditor();
+  //editor->setTableContent(l2);
+  if (tableExists)
+  {
+      Node *node = parser->nodeAt(bl, bc + 1);
+      Node *lastNode = parser->nodeAt(el, ec);
+      if (node)
+      kdDebug(24000) << "node = " << node->tag->name << endl;
+      if (lastNode)
+      kdDebug(24000) << "lastnode = " << lastNode->tag->name << endl;
+      kdDebug(24000) << "L2 = " << l2 << endl;
+  }
   editor->exec();
 }
 
