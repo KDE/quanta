@@ -76,7 +76,7 @@ enum Item_styles { dsNormal,dsKeyword,dsDataType,dsDecVal,dsBaseN,dsFloat,
 const char *phpKeywords[] = {
   "break", "case", "endfor", "default", "exit", "else", "array",
   "for", "if", "endif",
-  "return", "or","and",
+  "return", "or","and","reset","global",
   "switch","xor","elseif","endwhile","do","continue",
   "while", "class", "new", "this","extends","function", "var","int","integer",
   "real","float","double","string", "object", "include", "require", 0L};
