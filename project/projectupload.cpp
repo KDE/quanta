@@ -135,9 +135,9 @@ void ProjectUpload::slotBuildTree()
  totalProgress->setValue(0);
  totalText->setText(i18n("Scanning project files..."));
 
- QDict<KFileItem> projectDirFiles = QExtFileInfo::allFilesDetailed(m_project->baseURL, "*");
+ QDict<KFileItem> projectDirFiles = QExtFileInfo::allFilesDetailed(m_project->projectBaseURL(), "*");
 
- KURL u = m_project->baseURL;
+ KURL u = m_project->projectBaseURL();
  KURL absUrl = u;
  for (uint i = 0; i < nl.count(); i++)
  {
@@ -146,7 +146,7 @@ void ProjectUpload::slotBuildTree()
    if (startUrl.isEmpty() || (s.startsWith(strUrl) && isDirectory) || s == strUrl)
    {
      QuantaCommon::setUrl(u, s);
-     absUrl.setPath(m_project->baseURL.path(1)+u.path());
+     absUrl.setPath(m_project->projectBaseURL().path(1)+u.path());
      KFileItem *p_item = projectDirFiles.find(absUrl.url());
      if (!p_item)
        continue;
@@ -296,7 +296,7 @@ void ProjectUpload::upload()
       }
 
 
-      KURL from = QExtFileInfo::toAbsolute(currentURL, m_project->baseURL);
+      KURL from = QExtFileInfo::toAbsolute(currentURL, m_project->projectBaseURL());
       to = *baseUrl;
       to.addPath( currentURL.path() );
       if (to.fileName(false).isEmpty())

@@ -162,30 +162,28 @@ signals:
 
 public:
   QDomDocument dom;
-
-  KURL    projectURL;
-  QString projectName;
-
-  KURL baseURL;
+  QString debuggerClient;
+    /** Holds the upload password. It is not saved, and it is lost after the project is closed. */
+  QString passwd;
+  bool keepPasswd;
+  QString email;
   KURL templateURL;
   KURL toolbarURL;
 
-  QString debuggerClient;
+private:
+
+/** Point to the .webprj file */
+  KURL    projectURL;
+  QString projectName;
+/** Points to the directory of the .webprj file */
+  KURL baseURL;
 
   KURL previewPrefix;
   bool usePreviewPrefix;
 
-  QString email;
   QString author;
 
   KRecentFilesAction *projectRecent;
-
-    /** Holds the upload password. It is not saved, and it is lost after the project is closed. */
-  QString passwd;
-  /**  */
-  bool keepPasswd;
-
-private:
 
   /** The constructor is privat because we use singleton patter.
    *  If you need the class use Project::ref() for

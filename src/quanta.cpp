@@ -843,7 +843,7 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 void QuantaApp::slotNewStatus()
 {
   fileRecent->setEnabled(true);
-  Project::ref()->projectRecent->setEnabled(true);
+  actionCollection()->action("project_open_recent")->setEnabled(true);
   QuantaView *view = ViewManager::ref()->activeView();
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
@@ -3210,7 +3210,7 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
         case KMessageBox::Yes:
              {
                 bool local = true;
-                if (Project::ref()->hasProject() && p_toolbar->url.url().startsWith(Project::ref()->baseURL.url())) local = false;
+                if (Project::ref()->hasProject() && p_toolbar->url.url().startsWith(Project::ref()->projectBaseURL().url())) local = false;
                 if (!saveToolbar(local, p_toolbar->name))
                     return false;
                 break;
@@ -3218,7 +3218,7 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
         case KMessageBox::Continue:
              {
                 bool local = true;
-                if (Project::ref()->hasProject() && p_toolbar->url.url().startsWith(Project::ref()->baseURL.url())) local = false;
+                if (Project::ref()->hasProject() && p_toolbar->url.url().startsWith(Project::ref()->projectBaseURL().url())) local = false;
                 if (!saveToolbar(local, p_toolbar->name, p_toolbar->url))
                     return false;
                 break;
