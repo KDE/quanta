@@ -348,6 +348,7 @@ void QuantaDoc::closeDocument()
       w->closeTempFile();
       if (!w->isUntitled())
         fileWatcher->removeFile(w->url().path());
+      quantaApp->guiFactory()->removeClient(w->view());
     }
     quantaApp->view()->removeWrite();
     bool lastDocClosed = true;
@@ -385,6 +386,7 @@ void QuantaDoc::closeAll()
         w->closeTempFile();
         if (!w->isUntitled())
             fileWatcher->removeFile(w->url().path());
+        quantaApp->guiFactory()->removeClient(w->view());
       } else
       {
         connect( view->writeTab(), SIGNAL(currentChanged(QWidget*)), quantaApp,   SLOT(slotUpdateStatus(QWidget*)));

@@ -963,6 +963,7 @@ void QuantaApp::slotClosePage(QWidget *w)
   {
     m_doc->openDocument(KURL());
   }
+  slotUpdateStatus(writeTab->currentPage());
 }
 
 void QuantaApp::slotUpdateStatus(QWidget* w)
@@ -993,11 +994,11 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
     return;
   }
 
+  KTextEditor::View * oldView = newWrite->view();
+  m_partManager->setActivePart(newWrite->doc(), oldView);
   newWrite->checkDirtyStatus();
   if (newWrite != m_view->oldWrite)
   {
-  KTextEditor::View * oldView = newWrite->view();
-  m_partManager->setActivePart(newWrite->doc(), oldView);
     StructTreeView::ref()->useOpenLevelSetting = true;
    }
   parser->clearGroups();
