@@ -194,8 +194,9 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
         ev.arguments << argument1;
         handleEvent(ev);
       }
-  } else
-    KMessageBox::sorry(0L, i18n("<qt>Unsupported event <b>%1</b>.</qt>"), i18n("Event Handling Error"));
+  }
+  if (!m_eventNames.contains(name))
+    KMessageBox::sorry(0L, i18n("<qt>Unsupported event <b>%1</b>.</qt>").arg(name), i18n("Event Handling Error"));
 }
 
 bool QPEvents::handleEvent(const EventAction& ev)
