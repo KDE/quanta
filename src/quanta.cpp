@@ -3362,6 +3362,12 @@ void QuantaApp::slotEmailDTEP()
     tar.close();
     dtdFile += tempFileName;
 
+    /*
+    if (!m_newDTEPStuff)
+      m_newDTEPStuff = new QNewDTEPStuff("quanta/dtep", this);
+    m_newDTEPStuff->uploadResource(tempFileName);
+    return;
+    */
 
     TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Send DTEP in Email"));
     QString toStr;
