@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>Quick_Table</class>
 <widget class="QDialog">
     <property name="name">
@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>477</width>
-            <height>494</height>
+            <height>456</height>
         </rect>
     </property>
     <property name="caption">
@@ -21,428 +21,312 @@
     <property name="name>" stdset="0">
         <cstring>Quick_Table</cstring>
     </property>
-    <spacer>
-        <property name="name" stdset="0">
-            <cstring>Spacer3</cstring>
-        </property>
-        <property name="orientation">
-            <enum>Horizontal</enum>
-        </property>
-        <property name="sizeType">
-            <enum>Expanding</enum>
-        </property>
-        <property name="sizeHint">
-            <size>
-                <width>20</width>
-                <height>20</height>
-            </size>
-        </property>
-    </spacer>
-    <widget class="QLayoutWidget">
+    <grid>
         <property name="name">
-            <cstring>Layout1</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>30</x>
-                <y>445</y>
-                <width>428</width>
-                <height>40</height>
-            </rect>
-        </property>
-        <hbox>
+        <widget class="QTextEdit" row="6" column="2" rowspan="2" colspan="1">
             <property name="name">
-                <cstring>unnamed</cstring>
+                <cstring>CaptionTextEdit</cstring>
             </property>
-            <property name="margin">
-                <number>0</number>
+            <property name="enabled">
+                <bool>false</bool>
             </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>buttonHelp</cstring>
-                </property>
-                <property name="text">
-                    <string>&amp;Help</string>
-                </property>
-                <property name="autoDefault">
-                    <bool>true</bool>
-                </property>
-            </widget>
-            <spacer>
-                <property name="name" stdset="0">
-                    <cstring>Horizontal Spacing2</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>20</height>
-                    </size>
-                </property>
-            </spacer>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>buttonOk</cstring>
-                </property>
-                <property name="text">
-                    <string>&amp;OK</string>
-                </property>
-                <property name="autoDefault">
-                    <bool>true</bool>
-                </property>
-                <property name="default">
-                    <bool>true</bool>
-                </property>
-            </widget>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>buttonCancel</cstring>
-                </property>
-                <property name="text">
-                    <string>&amp;Cancel</string>
-                </property>
-                <property name="autoDefault">
-                    <bool>true</bool>
-                </property>
-            </widget>
-        </hbox>
-    </widget>
-    <widget class="QLayoutWidget">
-        <property name="name">
-            <cstring>Layout5</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>5</x>
-                <y>300</y>
-                <width>125</width>
-                <height>110</height>
-            </rect>
-        </property>
-        <grid>
+        </widget>
+        <widget class="QLabel" row="0" column="2">
             <property name="name">
-                <cstring>unnamed</cstring>
+                <cstring>TextLabel1</cstring>
             </property>
-            <property name="margin">
-                <number>0</number>
+            <property name="text">
+                <string>Settings for COL - Double click to edit</string>
             </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <spacer row="1" column="0">
-                <property name="name" stdset="0">
-                    <cstring>Spacer4</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>20</height>
-                    </size>
-                </property>
-            </spacer>
-            <widget class="QCheckBox" row="0" column="0">
-                <property name="name">
-                    <cstring>useCaption</cstring>
-                </property>
+        </widget>
+        <widget class="QListView" row="1" column="2" rowspan="5" colspan="1">
+            <column>
                 <property name="text">
-                    <string>&amp;Add caption</string>
+                    <string>Columns</string>
                 </property>
-            </widget>
-        </grid>
-    </widget>
-    <widget class="Line">
-        <property name="name">
-            <cstring>Line2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>5</x>
-                <y>420</y>
-                <width>465</width>
-                <height>16</height>
-            </rect>
-        </property>
-        <property name="frameShape" stdset="0">
-            <enum>HLine</enum>
-        </property>
-        <property name="frameShadow">
-            <enum>Sunken</enum>
-        </property>
-        <property name="orientation">
-            <enum>Horizontal</enum>
-        </property>
-    </widget>
-    <widget class="QTextEdit">
-        <property name="name">
-            <cstring>CaptionTextEdit</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>140</x>
-                <y>300</y>
-                <width>325</width>
-                <height>110</height>
-            </rect>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>TextLabel1</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>145</x>
-                <y>15</y>
-                <width>243</width>
-                <height>16</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Settings for COL - Double click to edit</string>
-        </property>
-    </widget>
-    <widget class="QLayoutWidget">
-        <property name="name">
-            <cstring>Layout10</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>5</x>
-                <y>5</y>
-                <width>120</width>
-                <height>275</height>
-            </rect>
-        </property>
-        <vbox>
+                <property name="clickable">
+                    <bool>false</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Width</string>
+                </property>
+                <property name="clickable">
+                    <bool>false</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>Align</string>
+                </property>
+                <property name="clickable">
+                    <bool>false</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>VAlign</string>
+                </property>
+                <property name="clickable">
+                    <bool>false</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property name="text">
+                    <string>CSS Class</string>
+                </property>
+                <property name="clickable">
+                    <bool>false</bool>
+                </property>
+                <property name="resizable">
+                    <bool>true</bool>
+                </property>
+            </column>
+        <item>
+            <property name="text">
+                <string>Column-1</string>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+            <property name="pixmap">
+                <pixmap></pixmap>
+            </property>
+            <property name="pixmap">
+                <pixmap></pixmap>
+            </property>
+            <property name="pixmap">
+                <pixmap></pixmap>
+            </property>
+            <property name="pixmap">
+                <pixmap></pixmap>
+            </property>
+            <property name="pixmap">
+                <pixmap></pixmap>
+            </property>
+        </item>
             <property name="name">
-                <cstring>unnamed</cstring>
+                <cstring>ColumnsListView</cstring>
             </property>
-            <property name="margin">
-                <number>0</number>
+            <property name="enabled">
+                <bool>false</bool>
             </property>
-            <property name="spacing">
-                <number>6</number>
+        </widget>
+        <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>useCols</cstring>
             </property>
-            <widget class="QLayoutWidget">
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="text">
+                <string>&amp;Use COL-s</string>
+            </property>
+        </widget>
+        <widget class="QSpinBox" row="0" column="1">
+            <property name="name">
+                <cstring>SpinBoxCol</cstring>
+            </property>
+            <property name="minValue">
+                <number>1</number>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Number of columns</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>TextLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>Cols:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>TextLabel3_2</cstring>
+            </property>
+            <property name="text">
+                <string>Rows:</string>
+            </property>
+        </widget>
+        <widget class="QSpinBox" row="1" column="1">
+            <property name="name">
+                <cstring>SpinBoxRow</cstring>
+            </property>
+            <property name="minValue">
+                <number>1</number>
+            </property>
+            <property name="toolTip" stdset="0">
+                <string>Number of columns</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>useCaption</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Add caption</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="9" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>Layout1</cstring>
+            </property>
+            <hbox>
                 <property name="name">
-                    <cstring>Layout6</cstring>
+                    <cstring>unnamed</cstring>
                 </property>
-                <grid>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>6</number>
+                </property>
+                <widget class="QPushButton">
                     <property name="name">
-                        <cstring>unnamed</cstring>
+                        <cstring>buttonHelp</cstring>
                     </property>
-                    <property name="margin">
-                        <number>0</number>
+                    <property name="text">
+                        <string>&amp;Help</string>
                     </property>
-                    <property name="spacing">
-                        <number>6</number>
+                    <property name="autoDefault">
+                        <bool>true</bool>
                     </property>
-                    <widget class="QSpinBox" row="0" column="1">
-                        <property name="name">
-                            <cstring>SpinBoxCol</cstring>
-                        </property>
-                        <property name="minValue">
-                            <number>1</number>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Number of columns</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="0" column="0">
-                        <property name="name">
-                            <cstring>TextLabel3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Cols:</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>TextLabel3_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Rows:</string>
-                        </property>
-                    </widget>
-                    <widget class="QSpinBox" row="1" column="1">
-                        <property name="name">
-                            <cstring>SpinBoxRow</cstring>
-                        </property>
-                        <property name="minValue">
-                            <number>1</number>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Number of columns</string>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>useCols</cstring>
-                </property>
-                <property name="enabled">
-                    <bool>true</bool>
-                </property>
-                <property name="text">
-                    <string>&amp;Use COL-s</string>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>useTHead</cstring>
-                </property>
-                <property name="text">
-                    <string>Insert &amp;header</string>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>useTFoot</cstring>
-                </property>
-                <property name="text">
-                    <string>Insert &amp;footer</string>
-                </property>
-            </widget>
-            <spacer>
-                <property name="name" stdset="0">
-                    <cstring>Spacer2</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>20</height>
-                    </size>
-                </property>
-            </spacer>
-        </vbox>
-    </widget>
-    <widget class="QListView">
-        <column>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Horizontal Spacing2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonOk</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;OK</string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>buttonCancel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                    <property name="autoDefault">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="Line" row="8" column="0" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>Line2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>HLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>useTHead</cstring>
+            </property>
             <property name="text">
-                <string>Columns</string>
+                <string>Insert &amp;header</string>
             </property>
-            <property name="clickable">
-                <bool>false</bool>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>useTFoot</cstring>
             </property>
-            <property name="resizeable">
-                <bool>true</bool>
-            </property>
-        </column>
-        <column>
             <property name="text">
-                <string>Width</string>
+                <string>Insert &amp;footer</string>
             </property>
-            <property name="clickable">
-                <bool>false</bool>
+        </widget>
+        <spacer row="5" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>Spacer2</cstring>
             </property>
-            <property name="resizeable">
-                <bool>true</bool>
+            <property name="orientation">
+                <enum>Vertical</enum>
             </property>
-        </column>
-        <column>
-            <property name="text">
-                <string>Align</string>
+            <property name="sizeType">
+                <enum>Expanding</enum>
             </property>
-            <property name="clickable">
-                <bool>false</bool>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>140</height>
+                </size>
             </property>
-            <property name="resizeable">
-                <bool>true</bool>
+        </spacer>
+        <spacer row="7" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>Spacer4</cstring>
             </property>
-        </column>
-        <column>
-            <property name="text">
-                <string>VAlign</string>
+            <property name="orientation">
+                <enum>Vertical</enum>
             </property>
-            <property name="clickable">
-                <bool>false</bool>
+            <property name="sizeType">
+                <enum>Expanding</enum>
             </property>
-            <property name="resizeable">
-                <bool>true</bool>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>80</height>
+                </size>
             </property>
-        </column>
-        <column>
-            <property name="text">
-                <string>CSS Class</string>
-            </property>
-            <property name="clickable">
-                <bool>false</bool>
-            </property>
-            <property name="resizeable">
-                <bool>true</bool>
-            </property>
-        </column>
-    <item>
-        <property name="text">
-            <string>Column-1</string>
-        </property>
-        <property name="text">
-            <string></string>
-        </property>
-        <property name="text">
-            <string></string>
-        </property>
-        <property name="text">
-            <string></string>
-        </property>
-        <property name="text">
-            <string></string>
-        </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
-    </item>
-        <property name="name">
-            <cstring>ColumnsListView</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>140</x>
-                <y>35</y>
-                <width>325</width>
-                <height>250</height>
-            </rect>
-        </property>
-    </widget>
+        </spacer>
+    </grid>
 </widget>
 <connections>
     <connection>

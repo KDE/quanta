@@ -8,194 +8,56 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>545</width>
-            <height>341</height>
+            <width>613</width>
+            <height>323</height>
         </rect>
     </property>
     <property name="caption">
         <string>Configure Plugin</string>
     </property>
-    <widget class="QLayoutWidget">
+    <grid>
         <property name="name">
-            <cstring>Layout8</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>11</x>
-                <y>296</y>
-                <width>523</width>
-                <height>34</height>
-            </rect>
-        </property>
-        <hbox>
+        <widget class="QGroupBox" row="0" column="0">
             <property name="name">
-                <cstring>unnamed</cstring>
+                <cstring>GroupBox2</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>1</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
             <property name="margin">
                 <number>0</number>
             </property>
-            <property name="spacing">
-                <number>6</number>
+            <property name="midLineWidth">
+                <number>0</number>
             </property>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>validateCheckBox</cstring>
-                </property>
-                <property name="text">
-                    <string>Validate plugin</string>
-                </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
-            </widget>
-            <spacer>
-                <property name="name">
-                    <cstring>Spacer10</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>20</height>
-                    </size>
-                </property>
-            </spacer>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>Layout41</cstring>
-                </property>
-                <hbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <property name="margin">
-                        <number>0</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QPushButton">
-                        <property name="name">
-                            <cstring>PushButton9</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;OK</string>
-                        </property>
-                    </widget>
-                    <widget class="QPushButton">
-                        <property name="name">
-                            <cstring>PushButton10</cstring>
-                        </property>
-                        <property name="text">
-                            <string>&amp;Cancel</string>
-                        </property>
-                    </widget>
-                </hbox>
-            </widget>
-        </hbox>
-    </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>GroupBox2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>11</x>
-                <y>8</y>
-                <width>523</width>
-                <height>279</height>
-            </rect>
-        </property>
-        <property name="sizePolicy">
-            <sizepolicy>
-                <hsizetype>7</hsizetype>
-                <vsizetype>5</vsizetype>
-                <horstretch>1</horstretch>
-                <verstretch>0</verstretch>
-            </sizepolicy>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="midLineWidth">
-            <number>0</number>
-        </property>
-        <property name="title">
-            <string>Plugin Options</string>
-        </property>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout15</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>165</x>
-                    <y>63</y>
-                    <width>350</width>
-                    <height>200</height>
-                </rect>
+            <property name="title">
+                <string>Plugin Options</string>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLineEdit" row="3" column="0" rowspan="1" colspan="2">
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel3_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Name:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="4" column="1" rowspan="1" colspan="3">
                     <property name="name">
                         <cstring>arguments</cstring>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget" row="0" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>Layout37</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <spacer>
-                            <property name="name">
-                                <cstring>Spacer9</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Expanding</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QComboBox">
-                            <property name="name">
-                                <cstring>pluginType</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>3</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <spacer row="4" column="0">
+                <spacer row="5" column="1">
                     <property name="name">
                         <cstring>Spacer8</cstring>
                     </property>
@@ -207,50 +69,12 @@
                     </property>
                     <property name="sizeHint">
                         <size>
-                            <width>168</width>
+                            <width>237</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
-                <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>Layout35</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <property name="spacing">
-                            <number>6</number>
-                        </property>
-                        <widget class="QLineEdit">
-                            <property name="name">
-                                <cstring>location</cstring>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>The exact location of the plugin. If not set the global search paths setting is used.</string>
-                            </property>
-                        </widget>
-                        <widget class="QPushButton">
-                            <property name="name">
-                                <cstring>locationButton</cstring>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>28</width>
-                                    <height>32767</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string>...</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
-                <widget class="QComboBox" row="4" column="1">
+                <widget class="QComboBox" row="5" column="2" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>outputWindow</cstring>
                     </property>
@@ -263,7 +87,7 @@
                         </sizepolicy>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="2" column="0" rowspan="1" colspan="2">
+                <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="3">
                     <property name="name">
                         <cstring>pluginFileName</cstring>
                     </property>
@@ -271,74 +95,59 @@
                         <string>The plugin executable or library name (with extension).</string>
                     </property>
                 </widget>
-            </grid>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer4</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Fixed</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>25</width>
-                    <height>20</height>
-                </size>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>405</x>
-                    <y>30</y>
-                    <width>25</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </spacer>
-        <widget class="KIconButton">
-            <property name="name">
-                <cstring>iconButton</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>435</x>
-                    <y>15</y>
-                    <width>50</width>
-                    <height>50</height>
-                </rect>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout7</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>70</y>
-                    <width>148</width>
-                    <height>190</height>
-                </rect>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel" row="0" column="0">
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>location</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The exact location of the plugin. If not set the global search paths setting is used.</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="1" column="2">
+                    <property name="name">
+                        <cstring>locationButton</cstring>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>28</width>
+                            <height>32767</height>
+                        </size>
+                    </property>
+                    <property name="text">
+                        <string>...</string>
+                    </property>
+                </widget>
+                <spacer row="2" column="1">
+                    <property name="name">
+                        <cstring>Spacer9</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>170</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QComboBox" row="2" column="2" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>pluginType</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
                         <cstring>TextLabel4</cstring>
                     </property>
@@ -346,7 +155,7 @@
                         <string>Type:</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="4" column="0">
+                <widget class="QLabel" row="5" column="0">
                     <property name="name">
                         <cstring>TextLabel1</cstring>
                     </property>
@@ -354,7 +163,7 @@
                         <string>Output window:</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="3" column="0">
+                <widget class="QLabel" row="4" column="0">
                     <property name="name">
                         <cstring>TextLabel5</cstring>
                     </property>
@@ -362,7 +171,7 @@
                         <string>Program arguments:</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0">
+                <widget class="QLabel" row="2" column="0">
                     <property name="name">
                         <cstring>TextLabel3</cstring>
                     </property>
@@ -370,7 +179,7 @@
                         <string>Location:</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="2" column="0">
+                <widget class="QLabel" row="3" column="0">
                     <property name="name">
                         <cstring>TextLabel4_2</cstring>
                     </property>
@@ -378,41 +187,116 @@
                         <string>File name:</string>
                     </property>
                 </widget>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>pluginName</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>The plugin name as it appears in the Plugins menu.</string>
+                    </property>
+                </widget>
+                <spacer row="0" column="3">
+                    <property name="name">
+                        <cstring>spacer6</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>40</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="KIconButton" row="0" column="2">
+                    <property name="name">
+                        <cstring>iconButton</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>0</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>48</width>
+                            <height>48</height>
+                        </size>
+                    </property>
+                    <property name="maximumSize">
+                        <size>
+                            <width>48</width>
+                            <height>48</height>
+                        </size>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                </widget>
             </grid>
         </widget>
-        <widget class="QLineEdit">
+        <widget class="QLayoutWidget" row="1" column="0">
             <property name="name">
-                <cstring>pluginName</cstring>
+                <cstring>layout8</cstring>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>167</x>
-                    <y>25</y>
-                    <width>230</width>
-                    <height>22</height>
-                </rect>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>The plugin name as it appears in the Plugins menu.</string>
-            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>validateCheckBox</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Validate plugin</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer10</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>224</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>PushButton9</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;OK</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>PushButton10</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>TextLabel3_2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>146</width>
-                    <height>34</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Name:</string>
-            </property>
-        </widget>
-    </widget>
+    </grid>
 </widget>
 <connections>
     <connection>

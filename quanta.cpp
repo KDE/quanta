@@ -1987,7 +1987,7 @@ void QuantaApp::slotSendToolbar()
   QString titleStr;
   QString subjectStr;
 
-  mailDlg->TitleLabel->setText(i18n("Content"));
+  mailDlg->TitleLabel->setText(i18n("Content:"));
   mailDlg->titleEdit->setFixedHeight(60);
   mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
   mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
@@ -2557,7 +2557,7 @@ void QuantaApp::slotEmailDTD()
     QString titleStr;
     QString subjectStr;
 
-    mailDlg->TitleLabel->setText(i18n("Content"));
+    mailDlg->TitleLabel->setText(i18n("Content:"));
     mailDlg->titleEdit->setFixedHeight(60);
     mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
     mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
