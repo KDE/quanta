@@ -101,8 +101,11 @@ public:
   /** Returns true if the document was modified. */
   bool isModified();
 
-  /** Creates a temporary file where the url is backed up. */
-  int createTempFile();
+  /** Creates a temporary file where the url is backed up.
+  *  If dump is true the editor content is saved to the temporary file,
+  *  otherwise a copy of the original file is created.
+  */
+  int createTempFile(bool dump = false);
   /** No descriptions */
   int closeTempFile();
   /** No descriptions */

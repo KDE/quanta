@@ -403,7 +403,7 @@ bool QuantaApp::slotFileSaveAs()
     if (!w->isUntitled() && oldURL.isLocalFile())
     {
         fileWatcher->removeFile(oldURL.path());
-//        kdDebug(24000) << "removeFile: " << oldURL.path() << endl;
+        kdDebug(24000) << "removeFile[slotFileSaveAs]: " << oldURL.path() << endl;
     }
     QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
 
@@ -472,7 +472,7 @@ bool QuantaApp::slotFileSaveAs()
     if (oldURL.isLocalFile())
     {
         fileWatcher->addFile(oldURL.path());
-//        kdDebug(24000) << "addFile: " << oldURL.path() << endl;
+        kdDebug(24000) << "addFile[slotFileSaveAs]: " << oldURL.path() << endl;
     }
   }
   return result;
@@ -1446,7 +1446,7 @@ void QuantaApp::restoreFromTempfile(Document *w)
   if (!w->isUntitled() && origUrl.isLocalFile())
   {
       fileWatcher->removeFile(origUrl.path());
-//      kdDebug(24000) << "removeFile: " << origUrl.path() << endl;
+      kdDebug(24000) << "removeFile[restoreFromTempfile]: " << origUrl.path() << endl;
   }
   KURL tempUrl;
   tempUrl.setPath(w->tempFileName());
@@ -1461,7 +1461,7 @@ void QuantaApp::restoreFromTempfile(Document *w)
   }
   if (origUrl.isLocalFile())
   {
-//      kdDebug(24000) << "addFile: " << origUrl.path() << endl;
+      kdDebug(24000) << "addFile[restoreFromTempfile]: " << origUrl.path() << endl;
       fileWatcher->addFile(origUrl.path());
   }
 }

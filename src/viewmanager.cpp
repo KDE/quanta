@@ -342,7 +342,7 @@ void ViewManager::closeAll(bool createNew)
                  if (!w->isUntitled() && w->url().isLocalFile())
                  {
                    fileWatcher->removeFile(w->url().path());
-//                   kdDebug(24000) << "removeFile: " << w->url().path() << endl;
+                   kdDebug(24000) << "removeFile[closeAll]: " << w->url().path() << endl;
                  }
                  quantaApp->guiFactory()->removeClient(w->view());
                  if (view == m_lastActiveEditorView)

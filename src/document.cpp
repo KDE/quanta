@@ -544,13 +544,13 @@ void Document::setModified(bool flag)
 }
 
 /** Creates a temporary file where the url is backed up. */
-int Document::createTempFile()
+int Document::createTempFile(bool dump)
 {
  closeTempFile();
  tempFile = new KTempFile(tmpDir);
  tempFile->setAutoDelete(true);
  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
- if (isUntitled())
+ if (isUntitled() || dump)
  {
     QString encoding = quantaApp->defaultEncoding();
     KTextEditor::EncodingInterface* encodingIf = dynamic_cast<KTextEditor::EncodingInterface*>(m_doc);
@@ -617,11 +617,17 @@ bool Document::saveIt()
   QString fileName;
   fileName = url().path();
   if (url().isLocalFile())
+  {
     fileWatcher->removeFile(fileName);
+    kdDebug(24000) << "removeFile[saveIt]: " <<url().path() << endl;
+  }
   QExtFileInfo::copy(KURL::fromPathOrURL(tempFileName), url(), -1, true);
-  m_dirty = false;
   if (url().isLocalFile())
+  {
     fileWatcher->addFile(fileName);
+    kdDebug(24000) << "addFile[saveIt]: " << url().path() << endl;
+  }
+  m_dirty = false;
   tmpFile->unlink();
   delete tmpFile;
   return true;   //not used yet
@@ -1868,7 +1874,7 @@ void Document::checkDirtyStatus()
     }
     if (m_dirty)
     {
-      createTempFile();
+      createTempFile(true);
       DirtyDlg *dlg = new DirtyDlg(url().path(), m_tempFileName, false, this);
       DirtyDialog *w = static_cast<DirtyDialog*>(dlg->mainWidget());
       QString kompareStr = KStandardDirs::findExe("kompare");
@@ -1897,11 +1903,11 @@ void Document::save()
     QString fileName;
     fileName = url().path();
     fileWatcher->removeFile(fileName);
-//    kdDebug(24000) << "removeFile: " << fileName << endl;
+    kdDebug(24000) << "removeFile[save]: " << fileName << endl;
     m_doc->save();
     m_dirty = false;
     fileWatcher->addFile(fileName);
-//    kdDebug(24000) << "addFile: " << fileName << endl;
+    kdDebug(24000) << "addFile[save]: " << fileName << endl;
   } else
   {
     m_doc->save();

@@ -158,7 +158,7 @@ bool switchToExisting)
     if (url.isLocalFile() && QFileInfo(url.path()).exists())
     {
        fileWatcher->addFile(url.path());
-//       kdDebug(24000) << "addFile: " << url.path() << endl;
+       kdDebug(24000) << "addFile[openDocument]: " << url.path() << endl;
     }
 
     if (encoding.isEmpty())
