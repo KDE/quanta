@@ -603,6 +603,11 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 			else
 				parentNode = body;
 
+			//Set the visual enhancements.
+			ptDomNode = new DOM::Node(newNode);
+			node->setLeafNode(ptDomNode);
+			mainEnhancer->enhanceNode(node, parentNode, nextNode);
+
 			if(nextNode.isNull())
 			{
 				if(!kafkaCommon::insertDomNode(newNode, parentNode))
@@ -625,9 +630,6 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 					return false;
 				}
 			}
-			ptDomNode = new DOM::Node(newNode);
-			node->setLeafNode(ptDomNode);
-			mainEnhancer->enhanceNode(node, parentNode, nextNode);
 		}
 		else
 		{
