@@ -297,6 +297,11 @@ void QuantaInit::initQuanta()
     file.close();
   }
 
+  QString infoCss = tmpDir;
+  infoCss.replace(QRegExp("/quanta$"),"");
+  infoCss += "/info.css";
+  KIO::NetAccess::copy(KURL().fromPathOrURL(qConfig.globalDataDir + resourceDir + "scripts/info.css"), KURL().fromPathOrURL(infoCss));
+
 }
 
 void QuantaInit::initToolBars()

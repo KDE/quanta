@@ -16,4 +16,4 @@ INCLUDES = -I$(top_srcdir)/quanta/utility \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/quanta/dialogs/tagdialogs \
 	-I$(top_builddir)/quanta/components/csseditor \
-	$(KMDI_INCLUDES) $(all_includes)
+	$(KMDI_INCLUDES) $(LIBXML_CFLAGS) $(LIBXSLT_CFLAGS) $(all_includes)

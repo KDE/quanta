@@ -25,7 +25,7 @@ quanta_be_LDADD = $(top_builddir)/quanta/project/libproject.la \
 	$(top_builddir)/quanta/utility/libutility.la \
 	$(top_builddir)/lib/libquantamodule.la \
 	$(top_builddir)/lib/compatibility/libcompat.la \
-	-lkatepartinterfaces $(LIB_KAFKA) $(LIB_KMDI) $(LIBXML_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
+	-lkatepartinterfaces $(LIB_KAFKA) $(LIB_KMDI) $(LIBXML_LIBS) $(LIBXSLT_LIBS) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
 
 AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_srcdir)/quanta/plugins \

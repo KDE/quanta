@@ -242,6 +242,8 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_oldKTextEditor = 0L;
   m_previewToolView = 0L;
   m_documentationToolView = 0L;
+
+
 }
 
 QuantaApp::~QuantaApp()
@@ -275,6 +277,9 @@ QuantaApp::~QuantaApp()
    if (tmpDirs[i].contains("kde-"))
       tmpDir = tmpDirs[i];
  }
+ QString infoCss = tmpDir;
+ infoCss += "quanta/info.css";
+ KIO::NetAccess::del(KURL().fromPathOrURL(infoCss));
  QDir dir;
  dir.rmdir(tmpDir + "quanta");
 

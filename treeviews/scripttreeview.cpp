@@ -25,6 +25,7 @@
 #include <ktar.h>
 #include <ktempfile.h>
 #include <kurl.h>
+#include <kdebug.h>
 
 //qt includes
 #include <qdir.h>
@@ -37,11 +38,26 @@
 #include <qstringlist.h>
 #include <qtextedit.h>
 
+//other includes
+#include <libxml/xmlmemory.h>
+#include <libxml/debugXML.h>
+#include <libxml/HTMLtree.h>
+#include <libxml/xmlIO.h>
+#include <libxml/DOCBparser.h>
+#include <libxml/xinclude.h>
+#include <libxml/catalog.h>
+#include <libxslt/xslt.h>
+#include <libxslt/xsltInternals.h>
+#include <libxslt/transform.h>
+#include <libxslt/xsltutils.h>
+
 //app includes
 #include "scripttreeview.h"
 #include "resource.h"
 #include "quantacommon.h"
 #include "tagmaildlg.h"
+
+extern int xmlLoadExtDtdDefaultValue;
 
 ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name)
@@ -286,7 +302,29 @@ KURL ScriptTreeView::infoFile(const KURL& url)
   //fileName.truncate(fileName.length() - QFileInfo(fileName).extension().length() - 1);
   fileName.append(".info");
   returnUrl.setFileName(fileName);
-  return returnUrl;
+  KTempFile *tempFile = new KTempFile(tmpDir);
+  tempFile->setAutoDelete(true);
+//apply the stylesheet
+  xsltStylesheetPtr cur = NULL;
+  xmlDocPtr doc, res;
+  xmlSubstituteEntitiesDefault(1);
+  xmlLoadExtDtdDefaultValue = 1;
+  QString xslFile = qConfig.globalDataDir + resourceDir + "scripts/info.xsl";
+  cur = xsltParseStylesheetFile(xmlCharStrndup(xslFile.utf8(), xslFile.utf8().length()));
+  doc = xmlParseFile(returnUrl.path().utf8());
+  res = xsltApplyStylesheet(cur, doc, 0);
+  xsltSaveResultToFile(tempFile->fstream(), res, cur);
+
+  xsltFreeStylesheet(cur);
+  xmlFreeDoc(res);
+  xmlFreeDoc(doc);
+
+  xsltCleanupGlobals();
+  xmlCleanupParser();
+  tempFile->close();
+
+  tempFileList.append(tempFile);
+  return KURL().fromPathOrURL(tempFile->name());
 }
 
 QString ScriptTreeView::infoOptionValue(const KURL& infoURL, const QString& optionName)
