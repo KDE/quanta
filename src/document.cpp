@@ -1561,15 +1561,24 @@ bool Document::scriptAutoCompletion(int line, int column)
  {
    QString textLine = s.left(i);
    QString word = findWordRev(textLine, completionDTD);
-   QTag *tag = 0L;
+   QValueList<QTag *> tags;
    if (!word.isEmpty())
-    tag = completionDTD->tagsList->find(word);
-   if (!tag)
-     tag = userTagList.find(word.lower());
-   if (tag)
    {
+      tags.append(userTagList.find(word.lower()));
+      QDictIterator<QTag> it(*(completionDTD->tagsList));
+      for( ; it.current(); ++it )
+      {
+        if (it.currentKey() == word)
+          tags.append(it.current());
+      }
+   }
+   QStringList argList;
+   for (QValueList<QTag*>::ConstIterator it = tags.constBegin(); it != tags.constEnd(); ++it)
+   {
+     QTag *tag = *it;
+     if (!tag)
+       continue;
      kdDebug(24000) << tag->name() << endl;
-     QStringList argList;
      QString arguments;
      if (tag->type != "property")
      {
