@@ -42,10 +42,19 @@
             <property name="name">
                 <cstring>codeEdit</cstring>
             </property>
+            <property name="textFormat">
+                <enum>PlainText</enum>
+            </property>
         </widget>
         <widget class="QLabel" row="6" column="0">
             <property name="name">
                 <cstring>textLabel2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
             </property>
             <property name="text">
                 <string>&amp;Code</string>
@@ -100,20 +109,23 @@
                 <bool>true</bool>
             </property>
         </widget>
-        <widget class="QPushButton" row="3" column="2">
-            <property name="name">
-                <cstring>removeButton</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Remove</string>
-            </property>
-        </widget>
         <widget class="QPushButton" row="2" column="2">
             <property name="name">
                 <cstring>addButton</cstring>
             </property>
             <property name="text">
                 <string>&amp;Add</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0">
+            <property name="name">
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Templates:</string>
+            </property>
+            <property name="buddy" stdset="0">
+                <cstring>templatesList</cstring>
             </property>
         </widget>
         <spacer row="5" column="2">
@@ -129,19 +141,24 @@
             <property name="sizeHint">
                 <size>
                     <width>20</width>
-                    <height>110</height>
+                    <height>115</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QLabel" row="1" column="0">
+        <widget class="QPushButton" row="3" column="2">
             <property name="name">
-                <cstring>textLabel3</cstring>
+                <cstring>removeButton</cstring>
             </property>
             <property name="text">
-                <string>&amp;Templates:</string>
+                <string>&amp;Remove</string>
             </property>
-            <property name="buddy" stdset="0">
-                <cstring>templatesList</cstring>
+        </widget>
+        <widget class="QPushButton" row="4" column="2">
+            <property name="name">
+                <cstring>editButton</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Edit</string>
             </property>
         </widget>
     </grid>
@@ -171,12 +188,19 @@
         <receiver>Abbreviations</receiver>
         <slot>slotRemoveTemplate()</slot>
     </connection>
+    <connection>
+        <sender>editButton</sender>
+        <signal>clicked()</signal>
+        <receiver>Abbreviations</receiver>
+        <slot>slotEditTemplate()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>dtdCombo</tabstop>
     <tabstop>templatesList</tabstop>
     <tabstop>addButton</tabstop>
     <tabstop>removeButton</tabstop>
+    <tabstop>editButton</tabstop>
     <tabstop>codeEdit</tabstop>
 </tabstops>
 <slots>
@@ -185,8 +209,8 @@
     <slot>slotDTDChanged(const QString&amp;)</slot>
     <slot>slotAddTemplate()</slot>
     <slot>slotRemoveTemplate()</slot>
-    <slot>slotEditTemplate()</slot>
     <slot>templatesList_currentChanged(QListViewItem*)</slot>
+    <slot>slotEditTemplate()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

@@ -111,6 +111,25 @@ void Abbreviation::slotRemoveTemplate()
   }
 }
 
+void Abbreviation::slotEditTemplate()
+{
+  QListViewItem *item = templatesList->currentItem();
+  if (!item)
+      return;
+  CodeTemplateDlgS dlg(this);
+  dlg.templateEdit->setText(item->text(0));
+  dlg.descriptionEdit->setText(item->text(1));
+  dlg.exec();
+  if (dlg.result() == QDialog::Accepted)
+  {
+    m_dtd->abbreviations.remove(item->text(0)+" "+item->text(1));
+    item->setText(0, dlg.templateEdit->text());
+    item->setText(1, dlg.descriptionEdit->text());
+    m_dtd->abbreviations.insert(item->text(0) + " " + item->text(1), codeEdit->text());
+  }
+}
+
+
 void Abbreviation::saveTemplates()
 {
   if (!m_dtd)

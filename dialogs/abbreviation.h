@@ -28,6 +28,7 @@ private slots:
   void slotTemplateSelectionChanged(QListViewItem*);
   void slotAddTemplate();
   void slotRemoveTemplate();
+  void slotEditTemplate();
 
 private:
   DTDStruct *m_dtd;
