@@ -100,7 +100,7 @@ void TagAction::insertTag()
      QString name = attr.left(i);
      attr = attr.remove(0,i).stripWhiteSpace();
 
-     if ( otag.attribute("useDialog","false") == "true" )
+     if ( otag.attribute("useDialog","false") == "true" && QuantaCommon::isKnownTag(w->defaultDTD()->name, name))
      {
 
          m_view->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");

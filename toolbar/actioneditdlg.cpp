@@ -64,7 +64,7 @@ public:
 
 void replaceDomItem( QDomElement &el, QString name, QString value )
   {
-    QDomDocument document = el.ownerDocument();
+    QDomDocument document;// = el.ownerDocument();
     QDomElement item = el.namedItem(name).toElement();
     if ( !item.isNull() )
       el.removeChild(item);
@@ -258,9 +258,6 @@ void ActionEditDlg::saveAction( TagAction *a )
 
     a->setText( lineText->text() );
     a->setIcon( actionIcon->icon() );
-
-    QDomDocument document = el.ownerDocument();
-
 
     if ( stab == i18n("Tag") )
     {
