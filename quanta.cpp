@@ -145,7 +145,7 @@ void QuantaApp::slotFileNew()
 
 void QuantaApp::slotFileOpen()
 {
- QString myEncoding = QString::fromLatin1(QTextCodec::codecForName(defaultEncoding().latin1())->name());
+ QString myEncoding = defaultEncoding();
 
  KateFileDialog *dialog = new KateFileDialog (QString::null,myEncoding, this, i18n ("Open File"));
  KateFileDialogData data = dialog->exec();

@@ -432,6 +432,13 @@ Document* QuantaDoc::newWrite()
 
   Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->getProject(),
                              quantaApp->m_pluginInterface, quantaApp->view->writeTab);
+  QString encoding = quantaApp->defaultEncoding();
+#if KDE_VERSION >= 308
+  dynamic_cast<KTextEditor::EncodingInterface*>(doc)->setEncoding(encoding);
+#else
+  w->kate_doc->setEncoding(encoding);
+#endif
+
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
