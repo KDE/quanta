@@ -1433,7 +1433,7 @@ void Project::loadLastProject(bool reload)
   KURL url;
   QuantaCommon::setUrl(url, urlPath);
   // test if an unsaved remote project is available
-  if (! url.isLocalFile() && ! tempPath.isEmpty())
+  if (! url.isLocalFile() && ! tempPath.isEmpty() && KIO::NetAccess::exists(url, false, d->m_parent) )
   {
     KURL tempURL = KURL().fromPathOrURL(tempPath);
     if (reload ||
@@ -1443,6 +1443,7 @@ void Project::loadLastProject(bool reload)
     {
       d->m_tmpProjectFile = tempPath;
       d->loadProjectFromTemp(url, d->m_tmpProjectFile);
+      return;
     }
   }
   if ( reload && (!urlPath.isEmpty() && url.isValid()))
