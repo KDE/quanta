@@ -1166,15 +1166,11 @@ void Project::slotAcceptCreateProject()
 
 void Project::slotOptions()
 {
-  QDialog *dlg = new QDialog(quantaApp, i18n("Project Options"), true);
+  QDialog *dlg = new QDialog(quantaApp, "project_options", true);
+  dlg->setCaption(i18n("Project Options"));
   KURL url;
 
   ProjectOptions* optionsPage = new ProjectOptions(dlg );
-
-  //dlg->addTab( optionsPage, i18n("General") );
-
-  dlg->setOkButton();
-  dlg->setCancelButton();
 
   optionsPage->linePrjName->setText( projectName );
   url = QExtFileInfo::toRelative(templateURL, baseURL);
