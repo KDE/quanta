@@ -169,8 +169,11 @@ void TagAction::insertTag()
       args = command.mid(pos+1);
       command = command.left(pos);
     }
-    *proc << command << args;
-    firstOutput = true;
+    *proc << command.stripWhiteSpace();
+    args = args.stripWhiteSpace();
+    if (!args.isEmpty())
+      *proc << args;
+      firstOutput = true;
     firstError  = true;
 
     connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
