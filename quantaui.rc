@@ -146,7 +146,6 @@
       <Separator/>
       <Action name="set_eol"/>
       <Action name="set_highlight"/>
-      <Action name="highlight_options"/>
     </Menu>
 
     <Menu name="help" noMerge="1"><text>&amp;Help</text>

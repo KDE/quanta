@@ -45,6 +45,7 @@
 #include "../quantadoc.h"
 #include "../quantaview.h"
 #include "../quantacommon.h"
+#include "../document.h"
 
 class ActionListItem : public QListBoxPixmap {
 private:
@@ -352,6 +353,7 @@ void ActionEditDlg::saveAction( TagAction *a )
 
     quantaApp->menuBar()->insertItem(i18n("P&lugins"), quantaApp->pluginMenu(), -1, PLUGINS_MENU_PLACE);
     quantaApp->menuBar()->insertItem(i18n("&Tags"),quantaApp->tagsMenu(),-1,TAGS_MENU_PLACE);
+    quantaApp->getView()->write()->kate_view->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
   }
 
 }

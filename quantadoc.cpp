@@ -424,7 +424,6 @@ Document* QuantaDoc::newWrite()
   quantaApp->config->writeEntry("TabWidth",tabWidth);
   w->readConfig( quantaApp->config );
  	w->setUntitledUrl( fname );
-  w->kate_view->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
 
   for (unsigned int i=0; i< w->kate_doc->hlModeCount(); i++)
   {
@@ -434,6 +433,7 @@ Document* QuantaDoc::newWrite()
       break;
     }
   }
+  w->kate_view->installPopup((QPopupMenu *)quantaApp->factory()->container("popup_editor", quantaApp));
 
  	quantaApp->setFocusProxy(w->view());
   w->view()->setFocusPolicy(QWidget::WheelFocus);

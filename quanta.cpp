@@ -614,6 +614,7 @@ void QuantaApp::slotNewUndo()
 
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
+  view->write()->kate_view->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
   Document *newWrite = dynamic_cast<Document *>(w);
   newWrite->checkDirtyStatus();
   if (newWrite != view->oldWrite)
@@ -663,10 +664,12 @@ void QuantaApp::slotOptionsConfigureToolbars()
 
  KEditToolbar dlg(factory(), this);
 
+ //remove the manually added menus BEFORE the dlg shows up
+ menuBar()->removeItem(menuBar()->idAt(TAGS_MENU_PLACE));
+ menuBar()->removeItem(menuBar()->idAt(PLUGINS_MENU_PLACE));
+
  int result = dlg.exec();
 
- menuBar()->removeItem(quantaApp->menuBar()->idAt(TAGS_MENU_PLACE));
- menuBar()->removeItem(quantaApp->menuBar()->idAt(PLUGINS_MENU_PLACE));
  QString actionName;
  QString name;
 // QDictIterator<KXMLGUIClient> it(toolbarGUIClientList);
@@ -719,8 +722,10 @@ void QuantaApp::slotOptionsConfigureToolbars()
     }
  }
 
+ //add the menus
  menuBar()->insertItem(i18n("P&lugins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);
+ view->write()->kate_view->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
  view->toolbarTab->setCurrentPage(currentPageIndex);
 }
 
