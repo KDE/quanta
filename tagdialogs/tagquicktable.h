@@ -30,20 +30,26 @@
   *@author Dmitry Poplavsky & Yacovlev Alexander
   */
 
+class Document;
+
 class TagQuickTable : public Quick_Table{
    Q_OBJECT
 public: 
-	TagQuickTable(QWidget *parent=0, const char *name=0);
+	TagQuickTable(Document *write, QWidget *parent=0, const char *name=0);
 	~TagQuickTable();
 
 public:
 
-private: 
+private:
+  Document *write;
+
 public slots: // Public slots
   /** No descriptions */
   void slotChangeColumnNumber(int columnNum);
   /** No descriptions */
   void slotEditColumn(QListViewItem *item);
+  /** No descriptions */
+  void slotEditHeader();
 };
 
 #endif

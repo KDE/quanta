@@ -3,6 +3,7 @@
                              -------------------
     begin                : Sat Apr 1 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
+                           (C) 2002 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -24,8 +25,6 @@
 #include <kstandarddirs.h>
 #include <ktexteditor/viewcursorinterface.h>
 
-#include "../document.h"
-
 #include "tagdialog.h"
 
 #include "corewidgetdlg.h"
@@ -34,6 +33,8 @@
 #include "tagwidget.h"
 #include "tagimgdlg.h"
 #include "tagxml.h"
+
+#include "../document.h"
 
 
 extern QStrList *tagsList; // list of known tags
@@ -52,25 +53,15 @@ extern bool attrCapital; // use capital letters for attributes of tag
 extern bool useCloseTag; // use close tag if optional
 
 
-TagDialog::TagDialog( Document *write, QString tag ,QString attr,bool insertInLine )
+TagDialog::TagDialog(QString tag ,QString attr)
     : QTabDialog( 0L, tag, true)
 {
-  this->write = write;
   dict = new QDict<QString>(1,false);
-  this->insertInLine = insertInLine;
+  this->tag = tag;
 
-  if ( tag )
+  if ( !attr.isNull() )
   {
-    this->tag = tag;
-    if ( !attr.isNull() ) {
-      parseAttributes(attr);
-    }
-    fEdit = false; // new tag
-  }
-  else {
-    write->currentTag();
-    this->tag = QString(write->getTagAttr(0));
-    fEdit = true; // edit tag
+    parseAttributes(attr);
   }
 
   mainDlg = 0L;
@@ -108,15 +99,16 @@ void TagDialog::parseTag()
 
   QStringList tagsDirs = KGlobal::instance()->dirs()->findDirs("appdata", "tags");
 
-  for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it ) {
+  for ( QStringList::Iterator it = tagsDirs.begin(); it != tagsDirs.end(); ++it )
+  {
   	QString tagDir = *it;
   	QDir dir(tagDir, "*.tag");
   	QStringList files = dir.entryList();
   	
-  	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f ) {
-  	
+  	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+    {
   	   if ( *it_f != t+".tag" )
-  	   	 continue;
+         continue;
   	
   		 QString fname = tagDir + *it_f ;
   		 QFile f( fname );
@@ -137,18 +129,9 @@ void TagDialog::parseTag()
   }
 
 
-  if ( !findXMLConfig ) {
-     if ( t == "img" )       mainDlg = new TagImgDlg( this);
-  }
-
-  if ( fEdit ) {
-    for (int i=1; i < write->tagAttrNum; i++ )
-    {
-      QString *attr = new QString(write->getTagAttr(i));
-      QString *val = new QString(write->getTagAttrValue(i));
-
-      dict->insert( *attr , val );
-    }
+  if ( !findXMLConfig )
+  {
+    if ( t == "img" ) mainDlg = new TagImgDlg( this);
   }
 
   t = t.upper();
@@ -172,28 +155,27 @@ void TagDialog::parseTag()
   if ( t.lower() == "img" ) ((TagImgDlg *)mainDlg)->writeAttributes( dict ); }
   else 											((Tagxml    *)mainDlg)->writeAttributes( dict );
 }
-/**  */
-void TagDialog::slotAccept()
+
+/** Insert an attribute to dict*/
+void TagDialog::insertAttribute(QString *attr, QString *value)
 {
-
-  if ( mainDlg )   ((Tagxml *)mainDlg)->readAttributes( dict );
-  if ( coreDlg )   coreDlg->readAttributes( dict );
-  if ( eventsDlg ) eventsDlg->readAttributes( dict );
-
-  if ( fEdit )
-    write->changeCurrentTag( dict );
-  else
-    formeTag();
-
-  accept();
+ dict->insert( *attr , value );
 }
 
-/** form new tag from dict */
-void TagDialog::formeTag()
+
+/** Return the attributes in QDict<QString> format*/
+QDict<QString> * TagDialog::getAttributes()
+{
+  return dict;
+}
+
+
+/** Return all the attributes in one string*/
+QString TagDialog::getAttributeString()
 {
   QDictIterator<QString> it( *dict );
 
-  QString newTag("");
+  QString attrStr("");
 
   while ( it.current() ) {
     QString attr  = it.currentKey();
@@ -212,27 +194,39 @@ void TagDialog::formeTag()
     } else
       attrval += attrCase(attr); // for checkboxes dont print =""
 
-    newTag = attrval+newTag;
+    attrStr = attrval+attrStr;
 
     ++it;
   }
+  return attrStr;
+}
 
-  newTag = QString("<")+tagCase(tag)+newTag+">";
+/**Return the value of the attribute specified by attr. */
+QString TagDialog::getAttribute(QString &attr)
+{
+ QString attrStr = getAttributeString()+" ";
+ int pos = attrStr.upper().find(attr.upper());
+ if (pos != -1)
+ {
+   pos = attrStr.find("=",pos+1) + 1;
+   return attrStr.mid(pos, attrStr.find(" ",pos) - pos);
+ }
+ else
+ {
+  return QString::null;
+ }
 
-  QString secondPartOfTag = QString("</")+tagCase(tag)+">";
+}
 
-  if ( !insertInLine ) {
-    QString space="";
-  	space.fill( ' ',write->viewCursorIf->cursorColumn() );
-    newTag += "\n" + space + "  ";
-    secondPartOfTag = "\n" + space + secondPartOfTag;
-  }
+/**  */
+void TagDialog::slotAccept()
+{
 
-  if ( ( singleTags->find( tag.upper() )!= -1 ) ||
-     ( ( optionalTags->find(tag.upper())!= -1 ) && (!useCloseTag)))
-          secondPartOfTag = "";
+  if ( mainDlg )   ((Tagxml *)mainDlg)->readAttributes( dict );
+  if ( coreDlg )   coreDlg->readAttributes( dict );
+  if ( eventsDlg ) eventsDlg->readAttributes( dict );
 
-  write->insertTag( newTag, secondPartOfTag);
+  accept();
 }
 
 /** convert tag to upper or lower case */
@@ -262,17 +256,23 @@ QString TagDialog::attrCase( QString  attr)
 }
 
 /** return document path */
-QString TagDialog::basePath()
+QString TagDialog::getBasePath()
 {
-	if ( !write->isUntitled() )
+ return basePath;
+}
+
+/** set document path */
+void TagDialog::setBasePath(Document *w)
+{
+	if ( !w->isUntitled() )
 	{
-		QString name = write->url().prettyURL();
+		QString name = w->url().prettyURL();
 		if ( name.left(5) == "file:" ) name.remove(0,5);
 		QFileInfo fileInfo( name );
-		return fileInfo.dirPath()+"/";
+		basePath = fileInfo.dirPath()+"/";
 	} else
 	{
-    	return  write->basePath;
+    basePath = w->basePath;
 	}
 		
 	//return QDir::currentDirPath()+"/";
@@ -336,5 +336,29 @@ void TagDialog::parseAttributes( QString attrs )
  }
   	
 }
+
+/** Insert the new tag into the Document*/
+void TagDialog::insertTag(Document *w, bool insertInLine)
+{
+   QString newTag = getAttributeString();
+   newTag = QString("<")+tagCase(tag)+newTag+">";
+
+   QString secondPartOfTag = QString("</")+tagCase(tag)+">";
+
+   if ( !insertInLine )
+   {
+    QString space="";
+  	space.fill( ' ',w->viewCursorIf->cursorColumn() );
+    newTag += "\n" + space + "  ";
+    secondPartOfTag = "\n" + space + secondPartOfTag;
+   }
+
+   if ( ( singleTags->find( tag.upper() )!= -1 ) ||
+      ( ( optionalTags->find(tag.upper())!= -1 ) && (!useCloseTag)))
+          secondPartOfTag = "";
+
+   w->insertTag( newTag, secondPartOfTag);
+}
+
 
 #include "tagdialog.moc"

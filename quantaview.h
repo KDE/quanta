@@ -94,6 +94,8 @@ class QuantaView : public QWidget
   	void updateToolBars( ToolBars *);
   /** No descriptions */
   void resizeEvent (QResizeEvent *);
+  /** Insert a new tag by bringing up the TagDialog. */
+  void insertNewTag(QString tag, QString attr = QString::null,bool insertInLine = true);
 
 	public slots:
 

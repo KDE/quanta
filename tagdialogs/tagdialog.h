@@ -3,6 +3,7 @@
                              -------------------
     begin                : Sat Apr 1 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
+                           (C) 2002 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -24,7 +25,7 @@
 #include <qstrlist.h>
 
 /**class for insert/edit tags
-  *@author Yacovlev Alexander & Dmitry Poplavsky
+  *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
 
 class Document;
@@ -52,31 +53,40 @@ public:
                </a>
 
   */
-	TagDialog( Document *write, QString tag = QString::null, QString attr = QString::null, bool insertInLine = true );
+	TagDialog(QString tag = QString::null, QString attr = QString::null);
 	~TagDialog();
+  /** Insert an attribute to dict*/
+  void insertAttribute(QString *attr, QString *value);
 	/**  */
   void parseTag();
-  /** forme new tag */
-  void formeTag();
   /** returen doc path */
-	QString basePath();
-	
+	QString getBasePath();
+  /** set document path */
+  void setBasePath(Document *w);
+
+  /** Return the attributes in QDict<QString> format*/
+  QDict<QString> * getAttributes();
+  /** Return all the attributes in one string*/
+  QString getAttributeString();
+  /**Return the value of the attribute specified by attr. */
+  QString getAttribute(QString &attr);
+  /** Insert the new tag into the Document*/
+  void insertTag(Document *w, bool insertInLine = true);
+
 public:
-  bool  fEdit;
 
   CoreWidgetDlg 	*coreDlg;
   EventsWidgetDlg *eventsDlg;
   QWidget 				*mainDlg;
 
-  Document *write;
   QDict<QString> *dict;
   QString tag;
+  QString basePath;
 
 public slots: // Public slots
   void slotAccept();
 
 private:
-  bool insertInLine;
   /** convert tag to upper or lower case */
   QString tagCase( QString tag);
   /** convert attribute of tag to upper or lower case */

@@ -31,7 +31,7 @@
 
 TagWidget::TagWidget(QObject *parent, const char *)
 {
-	this->basePath = ((TagDialog *)parent)->basePath();
+	this->basePath = ((TagDialog *)parent)->getBasePath();
 }
 
 TagWidget::~TagWidget(){

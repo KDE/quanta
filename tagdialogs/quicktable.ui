@@ -117,128 +117,6 @@
     </widget>
     <widget class="QLayoutWidget">
         <property name="name">
-            <cstring>Layout10</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>5</x>
-                <y>5</y>
-                <width>120</width>
-                <height>275</height>
-            </rect>
-        </property>
-        <vbox>
-            <property name="name">
-                <cstring>unnamed</cstring>
-            </property>
-            <property name="margin">
-                <number>0</number>
-            </property>
-            <property name="spacing">
-                <number>6</number>
-            </property>
-            <widget class="QLayoutWidget">
-                <property name="name">
-                    <cstring>Layout6</cstring>
-                </property>
-                <grid>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <property name="margin">
-                        <number>0</number>
-                    </property>
-                    <property name="spacing">
-                        <number>6</number>
-                    </property>
-                    <widget class="QSpinBox" row="0" column="1">
-                        <property name="name">
-                            <cstring>SpinBoxCol</cstring>
-                        </property>
-                        <property name="minValue">
-                            <number>1</number>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Number of columns</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="0" column="0">
-                        <property name="name">
-                            <cstring>TextLabel3</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Cols</string>
-                        </property>
-                    </widget>
-                    <widget class="QLabel" row="1" column="0">
-                        <property name="name">
-                            <cstring>TextLabel3_2</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Rows</string>
-                        </property>
-                    </widget>
-                    <widget class="QSpinBox" row="1" column="1">
-                        <property name="name">
-                            <cstring>SpinBoxRow</cstring>
-                        </property>
-                        <property name="minValue">
-                            <number>1</number>
-                        </property>
-                        <property name="toolTip" stdset="0">
-                            <string>Number of columns</string>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>useCols</cstring>
-                </property>
-                <property name="enabled">
-                    <bool>true</bool>
-                </property>
-                <property name="text">
-                    <string>&amp;Use COL-s</string>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>useTHead</cstring>
-                </property>
-                <property name="text">
-                    <string>Insert &amp;header</string>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>useTFoot</cstring>
-                </property>
-                <property name="text">
-                    <string>Insert &amp;footer</string>
-                </property>
-            </widget>
-            <spacer>
-                <property name="name" stdset="0">
-                    <cstring>Spacer2</cstring>
-                </property>
-                <property name="orientation">
-                    <enum>Vertical</enum>
-                </property>
-                <property name="sizeType">
-                    <enum>Expanding</enum>
-                </property>
-                <property name="sizeHint">
-                    <size>
-                        <width>20</width>
-                        <height>20</height>
-                    </size>
-                </property>
-            </spacer>
-        </vbox>
-    </widget>
-    <widget class="QLayoutWidget">
-        <property name="name">
             <cstring>Layout5</cstring>
         </property>
         <property name="geometry">
@@ -442,6 +320,144 @@
         <property name="text">
             <string>Settings for COL - Double click to edit</string>
         </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>editHeader</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>25</x>
+                <y>205</y>
+                <width>102</width>
+                <height>30</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>PushButton4</string>
+        </property>
+    </widget>
+    <widget class="QLayoutWidget">
+        <property name="name">
+            <cstring>Layout10</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>5</x>
+                <y>5</y>
+                <width>120</width>
+                <height>275</height>
+            </rect>
+        </property>
+        <vbox>
+            <property name="name">
+                <cstring>unnamed</cstring>
+            </property>
+            <property name="margin">
+                <number>0</number>
+            </property>
+            <property name="spacing">
+                <number>6</number>
+            </property>
+            <widget class="QLayoutWidget">
+                <property name="name">
+                    <cstring>Layout6</cstring>
+                </property>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>0</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="QSpinBox" row="0" column="1">
+                        <property name="name">
+                            <cstring>SpinBoxCol</cstring>
+                        </property>
+                        <property name="minValue">
+                            <number>1</number>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Number of columns</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="0" column="0">
+                        <property name="name">
+                            <cstring>TextLabel3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Cols</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>TextLabel3_2</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Rows</string>
+                        </property>
+                    </widget>
+                    <widget class="QSpinBox" row="1" column="1">
+                        <property name="name">
+                            <cstring>SpinBoxRow</cstring>
+                        </property>
+                        <property name="minValue">
+                            <number>1</number>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Number of columns</string>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>useCols</cstring>
+                </property>
+                <property name="enabled">
+                    <bool>true</bool>
+                </property>
+                <property name="text">
+                    <string>&amp;Use COL-s</string>
+                </property>
+            </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>useTHead</cstring>
+                </property>
+                <property name="text">
+                    <string>Insert &amp;header</string>
+                </property>
+            </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>useTFoot</cstring>
+                </property>
+                <property name="text">
+                    <string>Insert &amp;footer</string>
+                </property>
+            </widget>
+            <spacer>
+                <property name="name" stdset="0">
+                    <cstring>Spacer2</cstring>
+                </property>
+                <property name="orientation">
+                    <enum>Vertical</enum>
+                </property>
+                <property name="sizeType">
+                    <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
+            </spacer>
+        </vbox>
     </widget>
 </widget>
 <connections>

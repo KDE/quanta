@@ -68,8 +68,9 @@ void TagAction::insertTag()
 
          s = s.remove(0,i).stripWhiteSpace();
 
-         TagDialog *dlg = new TagDialog( view_->write(), name, s, xtag.attribute("inLine","true") == "true" );
-         dlg->show();
+         view_->insertNewTag(name, s, xtag.attribute("inLine","true") == "true");
+//         TagDialog *dlg = new TagDialog( view_->write(), name, s, xtag.attribute("inLine","true") == "true" );
+//         dlg->show();
 
      }
      else {

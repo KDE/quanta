@@ -24,13 +24,18 @@
 #include "tagquicktable.h"
 #include "tagquicktableitem.h"
 #include "quicktablecolumnedit.h"
+#include "tagdialog.h"
+#include "../document.h"
 
-TagQuickTable::TagQuickTable(QWidget *parent, const char *name)
+
+TagQuickTable::TagQuickTable(Document *write, QWidget *parent, const char *name)
     : Quick_Table(parent,name,true)
 {
+  this->write = write;
 	setCaption(name);
   connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
 	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
+	connect( editHeader, SIGNAL(clicked()), SLOT(slotEditHeader()) );
   connect( SpinBoxCol, SIGNAL(valueChanged(int)), SLOT(slotChangeColumnNumber(int)));
   connect( ColumnsListView, SIGNAL(doubleClicked ( QListViewItem*)), SLOT(slotEditColumn(QListViewItem *)));
 }
@@ -79,4 +84,14 @@ void TagQuickTable::slotEditColumn(QListViewItem *item)
   }
 }
 
+/** No descriptions */
+void TagQuickTable::slotEditHeader()
+{
+
+  TagDialog *dlg = new TagDialog("thead");
+  if (dlg->exec()) dlg->insertTag(write);
+  delete dlg;
+}
+
 #include "tagquicktable.moc"
+

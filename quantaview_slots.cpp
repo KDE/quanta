@@ -3,6 +3,7 @@
                              -------------------
     begin                : Thu Mar 9 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
+                           (C) 2002 by Andras Mantia
     email                : pdima@mail.univ.kiev.ua
  ***************************************************************************/
 
@@ -66,10 +67,29 @@ void QuantaView::slotEditCurrentTag()
   w->currentTag();
   QString tag = w->getTagAttr(0);
 
-  if ( tagsList->find( tag.upper()) != -1 ) {
-    TagDialog *dlg = new TagDialog( w );
-    dlg->show();
-  } else {
+  if ( tagsList->find( tag.upper()) != -1 )
+  {
+    QString attrs = "";
+    for (int i=1; i < w->tagAttrNum; i++ )
+    {
+//      QString *attr = new QString(w->getTagAttr(i));
+//      QString *val = new QString(w->getTagAttrValue(i));
+//      dlg->insertAttribute(attr,val);
+     attrs += QString(w->getTagAttr(i)) + "=" + QString(w->getTagAttrValue(i)) + " ";
+    }
+
+    TagDialog *dlg = new TagDialog( tag, attrs );
+
+
+    if (dlg->exec())
+    {
+     w->changeCurrentTag( dlg->getAttributes() );
+    }
+
+    delete dlg;
+  }
+  else
+  {
     QString message = i18n("Unknown tag : ");
     message += tag;
     app->slotStatusMsg( message.data() );
@@ -87,125 +107,108 @@ void QuantaView::slotInsertCSS()
     w->insertTag( dlg->data() );
   }
 
-  delete (dlg);
+  delete dlg;
 }
 
 
 /** for <a href> tag */
 void QuantaView::slotTagA()
 {
-  TagDialog *dlg = new TagDialog( write(), "a");
-  dlg->show();
+  insertNewTag("a");
 }
 
 /** insert <img > tag */
 void QuantaView::slotTagImg()
 {
-  TagDialog *dlg = new TagDialog( write(), "img");
-  dlg->show();
+  insertNewTag("img");
 }
 
 /** insert  <font> tag in document */
 void QuantaView::slotTagFont()
 {
-  TagDialog *dlg = new TagDialog( write(), "font");
-  dlg->show();
+  insertNewTag("font");
 }
 
 /** insert tag <basefont> */
 void QuantaView::slotTagBaseFont()
 {
-  TagDialog *dlg = new TagDialog( write(), "basefont");
-  dlg->show();
+  insertNewTag("basefont");
 }
 
 /** for tag <table> */
 void QuantaView::slotTagTable()
 {
-  TagDialog *dlg = new TagDialog( write(), "table");
-  dlg->show();
+  insertNewTag("table");
 }
 
 /** for row properties */
 void QuantaView::slotTagTableRow()
 {
-  TagDialog *dlg = new TagDialog( write(), "tr");
-  dlg->show();
+  insertNewTag("tr");
 }
 
 /** head properties */
 void QuantaView::slotTagTableHead()
 {
-  TagDialog *dlg = new TagDialog( write(), "th");
-  dlg->show();
+  insertNewTag("th");
 }
 
 /** table data properties */
 void QuantaView::slotTagTableData()
 {
-  TagDialog *dlg = new TagDialog( write(), "td");
-  dlg->show();
+  insertNewTag("td");
 }
 
 // tbody
 void QuantaView::slotTagTableBody()
 {
-  TagDialog *dlg = new TagDialog( write(), "tbody");
-  dlg->show();
+  insertNewTag("tbody");
 }
 
 /** insert TextArea tag */
 void QuantaView::slotTagFormTextArea()
 {
-  TagDialog *dlg = new TagDialog( write(), "textarea");
-  dlg->show();
+  insertNewTag("textarea");
 }
 
 /** insert Radio Button tag */
 void QuantaView::slotTagFormRadio()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type='radio'");
-  dlg->show();
+  insertNewTag("input", "type='radio'");
 }
 
 void QuantaView::slotTagForm()
 {
-  TagDialog *dlg = new TagDialog( write(), "form");
-  dlg->show();
+  insertNewTag("form");
 }
 
 /** insert check button */
 void QuantaView::slotTagFormCheck()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type='checkbox'");
-  dlg->show();
+  insertNewTag("input", "type='checkbox'");
 }
 
 /** insert line edit */
 void QuantaView::slotTagFormLineEdit()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type='text'");
-  dlg->show();
+  insertNewTag("input", "type='text'");
 }
 
 /** insert password button */
 void QuantaView::slotTagFormPas()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type='password'");
-  dlg->show();
+  insertNewTag("input", "type='password'");
 }
 
 /** submit */
 void QuantaView::slotTagFormSubmit()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type='submit'");
-  dlg->show();
+  insertNewTag("input", "type='submit'");
 }
 /** reset */
 void QuantaView::slotTagFormReset()
 {
-  TagDialog *dlg = new TagDialog( write(), "input", "type='reset'");
-  dlg->show();
+  insertNewTag("input", "type='reset'");
 }
 
 
@@ -323,7 +326,7 @@ void QuantaView::slotTagQuickTable()
 {
 	int y,x;
 
-	TagQuickTable *quickDlg = new TagQuickTable(this,i18n("Generate table..."));
+	TagQuickTable *quickDlg = new TagQuickTable(write(), this,i18n("Generate table..."));
 	
   if ( quickDlg->exec() )
   {
@@ -886,4 +889,19 @@ void QuantaView::slotInsertChar(const QString &selected){
     int length = selected.find(")") - begin;
 	QString part = selected.mid(begin, length);
     write()->insertTag(part);
+}
+
+/** Insert a new tag by bringing up the TagDialog. */
+void QuantaView::insertNewTag(QString tag, QString attr,bool insertInLine)
+{
+  Document *w = write();
+
+  TagDialog *dlg = new TagDialog(tag, attr);
+  dlg->setBasePath(w); //It is very important to call this function!!!
+  if (dlg->exec())
+  {
+   dlg->insertTag(w, insertInLine);
+  }
+
+  delete dlg;
 }
