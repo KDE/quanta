@@ -69,3 +69,4 @@ void QuantaView::insertTag( const char *tag)
   else
       write()->insertTag( QString("<")+startTag+">", QString("</")+startTag+">");
 }
+#include "quantaview.moc"

@@ -742,3 +742,4 @@ void Document::insertFile(QString fileName)
   	
   kWriteDoc->updateViews();
 }
+#include "document.moc"

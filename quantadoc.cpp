@@ -698,3 +698,4 @@ void QuantaDoc::verticalSelect()
     ++it;
   }
 }
+#include "quantadoc.moc"

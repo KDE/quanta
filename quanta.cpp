@@ -1116,3 +1116,4 @@ void QuantaApp::slotInsertFile(QString fileName)
 {
   doc->write()->insertFile(fileName);
 }
+#include "quanta.moc"
