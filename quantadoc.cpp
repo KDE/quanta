@@ -232,6 +232,9 @@ bool QuantaDoc::saveDocument(const KURL& url)
     {
       fileWatcher->addFile(w->url().path());
     }
+  } else
+  {
+    result = false;
   }
 
   // fix
