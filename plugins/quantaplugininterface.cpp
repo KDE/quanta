@@ -83,7 +83,7 @@ void QuantaPluginInterface::readConfigFile(const QString& configFile)
     {
       if (pluginType == "Command Line")
       {
-        KMessageBox::error(quantaApp, i18n("<qt><b>%1</b> is a command line plugin. Command line plugins are not supported anymore.<br>Please use script actions instead of them.</qt>").arg(*it), i18n("Unsupported plugin type"));
+        KMessageBox::information(quantaApp, i18n("<qt><b>%1</b> is a command line plugin. We have removed support for command line plugins. However, the functionality has not been lost as script actions can still be used to run commandline tools. </qt>").arg(*it), i18n("Unsupported plugin type"), "CommandLinePluginWarning");
         continue;
       }
 
