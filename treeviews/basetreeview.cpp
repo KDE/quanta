@@ -737,20 +737,18 @@ void BaseTreeView::slotReload()
 
 void BaseTreeView::reload(BaseTreeBranch *btb)
 {
-  if (btb)
+  // remember the old status
+  QStringList folderToOpen;
+  btb->addOpenFolder(&folderToOpen);
+  KURL url = btb->rootUrl();
+  // remove and open again
+  removeBranch(btb);
+  btb = dynamic_cast<BaseTreeBranch *>(newBranch(url));
+  if (btb) {
+    btb->folderToOpen = folderToOpen;
+    btb->reopenFolder();
     btb->updateOpenFolder();
-
-//   // remember the old status
-//   QStringList folderToOpen;
-//   btb->addOpenFolder(&folderToOpen);
-//   KURL url = btb->rootUrl();
-//   // remove and open again
-//   removeBranch(btb);
-//   btb = dynamic_cast<BaseTreeBranch *>(newBranch(url));
-//   if (btb) {
-//     btb->folderToOpen = folderToOpen;
-//     btb->reopenFolder();
-//   }
+  }
 }
 
 
