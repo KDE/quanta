@@ -151,9 +151,10 @@ class QuantaView : public QWidget
     void gotoMark (KTextEditor::Mark *mark);
 
 //Settings
-    void toggleIconBorder ();
+    void toggleDynamicWordWrap();
+    void toggleIconBorder();
     void toggleLineNumbers();
-    void slotEditorOptions ();
+    void slotEditorOptions();
     void setEol(int);
 
 

@@ -534,6 +534,8 @@ void QuantaApp::saveOptions()
     config->writeEntry("Close tags", qConfig.closeTags);
     config->writeEntry("Auto completion", qConfig.useAutoCompletion);
 
+//    config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
+
     config->writeEntry("Default encoding", qConfig.defaultEncoding);
     config->writeEntry("Default DTD", qConfig.defaultDocType);
     config->writeEntry("New File Type", qConfig.newFileType);
@@ -639,13 +641,14 @@ void QuantaApp::readOptions()
   slotToggleDTDToolbar(qConfig.enableDTDToolbar);
   showDTDToolbar->setEnabled(qConfig.enableDTDToolbar);
 
+  config->setGroup("Kate View");
   qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);
   qConfig.iconBar = config->readBoolEntry("Iconbar", false);
+  qConfig.dynamicWordWrap = config->readBoolEntry("DynamicWordWrap",false);
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
-  viewBorder->setChecked(qConfig.iconBar);
-  viewLineNumbers->setChecked(qConfig.lineNumbers);
-
+  viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
+  
   readDockConfig(config);
 
   showPreviewAction  ->setChecked( false );
@@ -1209,6 +1212,12 @@ void QuantaApp::initActions()
                     SLOT(toggleIconBorder()), actionCollection(), "view_border");
   viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F9, view,
                         SLOT(toggleLineNumbers()), actionCollection(), "view_line_numbers");
+
+  if (KDE_VERSION >= 308)
+  {
+    viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F12, view,
+                              SLOT(toggleDynamicWordWrap()), actionCollection(), "view_dynamic_word_wrap");
+  }                                                         
 
   (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0,
                       view, SLOT( slotEditorOptions() ), actionCollection(), "editor_options" );

@@ -47,6 +47,7 @@
 
 #if KDE_VERSION >= 308
 #include <ktexteditor/encodinginterface.h>
+#include <ktexteditor/dynwordwrapinterface.h>
 #endif
 
 #include <kparts/componentfactory.h>
@@ -125,6 +126,11 @@ bool QuantaDoc::newDocument( const KURL& url )
     w->kate_view->setLineNumbersOn(qConfig.lineNumbers);
     quantaApp->viewBorder->setChecked(qConfig.iconBar);
     quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
+
+  #if (KDE_VERSION > 308)
+    dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
+    quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
+  #endif
   }
   else // select opened
   {
@@ -183,6 +189,11 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
       write()->kate_view->setLineNumbersOn(qConfig.lineNumbers);
       quantaApp->viewBorder->setChecked(qConfig.iconBar);
       quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
+
+  #if (KDE_VERSION > 308)
+      dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
+      quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
+  #endif
 
       write()->createTempFile();
       emit title( write()->url().prettyURL() );
@@ -423,7 +434,7 @@ Document* QuantaDoc::newWrite()
   //[MB02] connect all kate views for drag and drop
   connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)quantaApp->tTab, SLOT(slotDragInsert(QDropEvent *)));
 
-  quantaApp->config->setGroup("General Options");
+  quantaApp->config->setGroup("Kate Document");
   int tabWidth = quantaApp->config->readNumEntry("TabWidth",4);
   quantaApp->config->writeEntry("TabWidth",tabWidth);
   w->readConfig( quantaApp->config );

@@ -580,9 +580,10 @@ void Document::writeConfig(KConfig *config)
 {
   dynamic_cast<KTextEditor::ConfigInterface*>(m_doc)->writeConfig( config );
   //store the line number & icon border setting also in the General section
-  config->setGroup("General Options");
+  config->setGroup("Kate View");
   config->writeEntry("LineNumbers", qConfig.lineNumbers);
   config->writeEntry("Iconbar", qConfig.iconBar);
+  config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
 }
 
 /** No descriptions */

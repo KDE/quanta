@@ -63,11 +63,11 @@
 
     <Menu name="view"><text>&amp;View</text>
       <Menu name="treeviews"><text>&amp;Tree views</text>
-          <Action name="show_ftab_tree"/>
-	  <Action name="show_ptab_tree"/>
-    	  <Action name="show_ttab_tree"/>
-          <Action name="show_stab_tree"/>
-          <Action name="show_dtab_tree"/>
+         <Action name="show_ftab_tree"/>
+         <Action name="show_ptab_tree"/>
+         <Action name="show_ttab_tree"/>
+         <Action name="show_stab_tree"/>
+         <Action name="show_dtab_tree"/>
       </Menu>
       <Separator/>
       <Action name="view_toolbar"/>
@@ -77,6 +77,7 @@
       <Separator />
       <Action name="view_border"/>
       <Action name="view_line_numbers"/>
+      <Action name="view_dynamic_word_wrap"/>
       <Separator/>
       <Action name="show_preview"/>
       <Separator/>

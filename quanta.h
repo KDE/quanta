@@ -439,6 +439,7 @@ private:
 
   KToggleAction *viewBorder;
   KToggleAction *viewLineNumbers;
+  KToggleAction *viewDynamicWordWrap;
   Kate::ActionMenu *setHighlight;
 
   QPopupMenu* pm_set;

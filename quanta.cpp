@@ -62,6 +62,7 @@
 #include <kcharsets.h>
 #include <kdirwatch.h>
 #include <kspell.h>
+#include <kdeversion.h>
 
 #include <kparts/componentfactory.h>
 
@@ -70,6 +71,11 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/printinterface.h>
 #include <ktexteditor/popupmenuinterface.h>
+
+#if (KDE_VERSION > 308)
+#include <ktexteditor/dynwordwrapinterface.h>
+#endif
+
 
 #include <kate/view.h>
 
@@ -579,6 +585,9 @@ void QuantaApp::slotNewStatus()
     viewBorder->setChecked(w->kate_view->iconBorder());
     viewLineNumbers->setChecked(w->kate_view->lineNumbersOn());
 
+#if (KDE_VERSION > 308)
+     viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
+#endif
     if (setHighlight) setHighlight->updateMenu (w->kate_doc);
 
     QIconSet floppyIcon( UserIcon("save_small"));
@@ -639,6 +648,10 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
   
+#if (KDE_VERSION > 308)
+  viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->dynWordWrap());
+#endif
+
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (s->id(s->visibleWidget()) == 1)
   {

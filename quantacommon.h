@@ -51,6 +51,7 @@ typedef struct QConfig{
           QString defaultEncoding;
           bool lineNumbers;
           bool iconBar;
+          bool dynamicWordWrap;
 
           //parser options
           bool useMimeTypes;

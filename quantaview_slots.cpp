@@ -37,11 +37,15 @@
 #include <kprocess.h>
 #include <kcolordlg.h>
 #include <kmessagebox.h>
+#include <kdeversion.h>
 
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/clipboardinterface.h>
 #include <ktexteditor/selectioninterface.h>
 
+#if (KDE_VERSION > 308)
+#include <ktexteditor/dynwordwrapinterface.h>
+#endif
 
 // application specific includes
 #include "quantacommon.h"
@@ -788,6 +792,14 @@ void QuantaView::toggleIconBorder ()
   qConfig.iconBar = quantaApp->viewBorder->isChecked();
 }
 
+void QuantaView::toggleDynamicWordWrap()
+{
+#if (KDE_VERSION > 308)
+  qConfig.dynamicWordWrap = !qConfig.dynamicWordWrap ;
+  dynamic_cast<KTextEditor::DynWordWrapInterface *>(write()->view())->setDynWordWrap(qConfig.dynamicWordWrap);
+#endif
+}
+
 void QuantaView::toggleLineNumbers()
 {
   write()->kate_view->toggleLineNumbersOn();
@@ -799,6 +811,14 @@ void QuantaView::slotEditorOptions()
   dynamic_cast<KTextEditor::ConfigInterface *>(write()->doc())->configDialog();
   write()->writeConfig(quantaApp->config);
   quantaApp->config->sync();
+  
+  quantaApp->config->setGroup("Kate View");
+  qConfig.lineNumbers = quantaApp->config->readBoolEntry("LineNumbers", false);
+  qConfig.iconBar = quantaApp->config->readBoolEntry("Iconbar", false);
+  qConfig.dynamicWordWrap = quantaApp->config->readBoolEntry("DynamicWordWrap",false);
+  quantaApp->viewBorder->setChecked(qConfig.iconBar);
+  quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
+  quantaApp->viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
 }
 
 void QuantaView::setEol(int which)
