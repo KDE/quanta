@@ -1254,6 +1254,7 @@ void undoRedo::reloadQuantaEditor(bool force)
 	m_doc->editIf->removeText(0, 0, m_doc->editIf->numLines() - 1,
 		m_doc->editIf->lineLength(m_doc->editIf->numLines() - 1));
 	m_doc->editIf->insertText(0, 0, allText);
+	//m_doc->editIf->setText(allText);
 	qConfig.updateClosingTags = updateClosing;
 	m_doc->activateRepaintView(true);
 	m_doc->activateParser(true);

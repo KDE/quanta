@@ -704,7 +704,10 @@ bool WKafkaPart::buildKafkaNodeFromNode(Node *_node, bool insertNode)
 
 		for(i = 0; i < _node->tag->attrCount(); i++)
 		{
+			try{
 			attr = _kafkaPart->htmlDocument().createAttribute(_node->tag->attribute(i));
+			}catch(DOM::DOMException e){}
+
 			if(!attr.isNull())
 			{
 				attr.setNodeValue(_node->tag->attributeValue(i));
