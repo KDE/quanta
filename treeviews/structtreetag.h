@@ -18,8 +18,6 @@
 #ifndef STRUCTTREETAG_H
 #define STRUCTTREETAG_H
 
-#include <qwidget.h>
-
 #include <klistview.h>
 
 class Tag;

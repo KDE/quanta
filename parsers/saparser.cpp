@@ -99,7 +99,7 @@ void SAParser::parseForScriptGroup(Node *node)
       pos = group.searchRx.search(str, pos);
       if (pos != -1) //the Node is part of this group
       {
-         title = tagStr.mid(pos, group.searchRx.matchedLength());
+        title = tagStr.mid(pos, group.searchRx.matchedLength());
         node->tag->beginPos(bl, bc);
         tmpStr = tagStr.left(pos);
         int newLines = tmpStr.contains('\n');
@@ -490,9 +490,10 @@ bool SAParser::slotParseOneLine()
           if (s_fullParse)  
           {
             g_node = s_parentNode->child;
-            g_endNode = s_currentNode;
+           /* g_endNode = s_currentNode;
             if (g_node && g_node == g_endNode)
-              g_endNode = s_parentNode->next;
+              g_endNode = s_parentNode->next;*/
+            g_endNode = node;
 #ifdef DEBUG_PARSER            
             kdDebug(24000) << "Calling slotParseForScriptGroup from slotParseOneLine." << endl;
 #endif            

@@ -954,6 +954,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   newWrite->checkDirtyStatus();
   if (newWrite != m_view->oldWrite)
     StructTreeView::ref()->useOpenLevelSetting = true;
+  parser->clearGroups();
   reparse(true);
   slotNewStatus();
   slotNewLineColumn();

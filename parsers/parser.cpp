@@ -46,6 +46,7 @@
 #include "undoredo.h"
 #endif
 #include "dtds.h"
+#include "structtreetag.h"
 
 //kde includes
 #include <kapplication.h>
@@ -439,8 +440,6 @@ Node *Parser::parse(Document *w, bool force)
   if(!m_parsingEnabled && !force)
     return baseNode;
 
-  ParserCommon::includedFiles.clear();
-  ParserCommon::includedFilesDTD.clear();
   m_saParser->setParsingEnabled(false); 
   m_saParser->init(0L, w);
  // clearGroups();
@@ -460,10 +459,6 @@ Node *Parser::parse(Document *w, bool force)
   if (maxLines >= 0)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines) - 1, &lastNode);
   kdDebug(24000) << "Parsing time ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
-//  t.restart();
-  t.restart();
-  parseIncludedFiles();
-  kdDebug(24000) << "External parser: " << t.elapsed() << " ms\n";
   m_parsingNeeded = false;
  /*
  treeSize = 0;
@@ -1160,11 +1155,17 @@ void Parser::clearGroups()
     list = & it.data();
     //Clear the group element list and also remove the group tag which
     //was created in parseForXMLGroup/parseForScriptGroup methods.
-    for (elementIt = list->begin(); elementIt != list->end(); ++elementIt)
+    elementIt = list->begin();
+    while (elementIt != list->end())
     {
-      (*elementIt).node->groupElementLists.clear();
-      (*elementIt).node->groupTag = 0L;
-      delete (*elementIt).tag;
+       if (!(*elementIt).deleted)
+       {
+          Node *n = (*elementIt).node;
+          n->groupElementLists.clear();
+          n->groupTag = 0L;
+          delete (*elementIt).tag;
+       }
+       elementIt = list->erase(elementIt);
     }
   }
   globalGroupMap.clear();
@@ -1201,6 +1202,7 @@ void Parser::cleanGroups()
   delete m_saParser->includeWatch;
   m_saParser->includeWatch = new KDirWatch();
   connect(m_saParser->includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
+  parseIncludedFiles();
 }
 
 void Parser::parseIncludedFiles()
@@ -1232,6 +1234,7 @@ void Parser::parseIncludedFiles()
       parseIncludedFile(ParserCommon::includedFiles[i], ParserCommon::includedFilesDTD.at(i));
     }
   }
+  emit rebuildStructureTree();
 }
 
 void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
