@@ -4075,7 +4075,7 @@ QString QuantaApp::saveCurrentFile()
                                     i18n("The file must be saved before external preview.\n"
                                          "Do you want to save and preview?"),
                                     i18n("Save Before Preview"),
-                                    i18n("&Yes"),i18n("&No"), "AskForSaveBeforePreview")
+                                    KStdGuiItem::yes(),KStdGuiItem::no(), "AskForSaveBeforePreview")
          == KMessageBox::Yes)
     {
       if (w->isUntitled())
