@@ -167,6 +167,16 @@ void UploadTreeView::slotSelectFile( QListViewItem *it )
   }
   else
   {
+    UploadTreeFile *itFile = static_cast<UploadTreeFile*>(it);
+    if (it->isSelected())
+    {
+      itFile->setWhichPixmap("check");
+      itFile->setSelected(true);
+    } else
+    {
+      itFile->setWhichPixmap("check_clear");
+      itFile->setSelected(false);
+    }
     itF = dynamic_cast<UploadTreeFile*>(it)->parentFolder;
   }
 
