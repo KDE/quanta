@@ -170,7 +170,6 @@ Document::Document(KTextEditor::Document *doc,
   tempFile = 0;
   m_tempFileName = QString::null;
   dtdName = Project::ref()->defaultDTD();
-  m_parsingDTD = dtdName;
   reparseEnabled = true;
   repaintEnabled = true;
   docUndoRedo = new undoRedo(this);
@@ -1334,13 +1333,10 @@ QString Document::getDTDIdentifier()
 }
 
 /** Sets the DTD identifier */
-void Document::setDTDIdentifier(QString id)
+void Document::setDTDIdentifier(const QString &id)
 {
   dtdName = id.lower();
-  if (DTDs::ref()->find(dtdName))
-  {
-    m_parsingDTD = dtdName;
-  }
+  m_groupsForDTEPs.clear();
 }
 
 /** Get a pointer to the current active DTD. If fallback is true, this always gives back a valid and known DTD pointer: the active, the document specified and in last case the application default document type. */
@@ -1957,16 +1953,23 @@ void Document::save()
   kdDebug(24000) << "Document " << url() << " saved." << endl;
 }
 
-/** No descriptions */
-void Document::setParsingDTD(const QString& dtdName)
+void Document::enableGroupsForDTEP(const QString& dtepName, bool enable)
 {
-  m_parsingDTD = dtdName;
+  if (m_groupsForDTEPs.isEmpty())
+    m_groupsForDTEPs = m_DTEPList;
+  if (enable)
+  {
+    if (m_groupsForDTEPs.contains(dtepName) == 0)
+      m_groupsForDTEPs.append(dtepName);
+  } else
+  {
+    m_groupsForDTEPs.remove(dtepName);
+  }
 }
 
-/** No descriptions */
-QString Document::parsingDTD()
+void Document::resetGroupsForDTEPList()
 {
- return m_parsingDTD;
+  m_groupsForDTEPs.clear();
 }
 
 /** Returns true if the number of " (excluding \") inside text is even. */
@@ -2655,6 +2658,28 @@ void Document::slotFileDirty(const QString& fileName)
       checkDirtyStatus();
     }
   }
+}
+
+void Document::resetDTEPs()
+{
+  m_DTEPList.clear();
+  m_DTEPList.append(defaultDTD()->name);
+}
+
+void Document::addDTEP(const QString &dtepName)
+{
+  if (m_DTEPList.contains(dtepName) == 0)
+  {
+    m_DTEPList.append(dtepName);
+  }
+}
+
+QStringList Document::groupsForDTEPs()
+{
+  if (m_groupsForDTEPs.isEmpty())
+    return m_DTEPList;
+  else
+    return m_groupsForDTEPs;
 }
 
 #include "document.moc"

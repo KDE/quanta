@@ -3246,12 +3246,18 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
 
 
 /** No descriptions */
-void QuantaApp::slotParsingDTDChanged(const QString& newDTDName)
+void QuantaApp::slotShowGroupsForDTEP(const QString& dtepName, bool show)
 {
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
-    w->setParsingDTD(newDTDName);
+    if (dtepName == "clear")
+    {
+      w->resetGroupsForDTEPList();
+    } else
+    {
+      w->enableGroupsForDTEP(dtepName, show);
+    }
     w->setChanged(true);
     reparse(false);
   }
@@ -3786,7 +3792,7 @@ void QuantaApp::slotReloadStructTreeView(bool groupOnly)
   Document *w = ViewManager::ref()->activeDocument();
    if (StructTreeView::ref()->isVisible() && w)
   {
-    StructTreeView::ref()->setParsingDTD(w->parsingDTD());
+    StructTreeView::ref()->setParsingDTDs(w->groupsForDTEPs());
     int expandLevel = qConfig.expandLevel;
     if (expandLevel == 0)
         expandLevel = 40;

@@ -636,6 +636,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
     else
       s_dtd = m_dtd; //fallback when there is no s_parentNode
   }
+  m_write->addDTEP(s_dtd->name);
   s_searchForSpecialAreas = (s_dtd->specialAreas.count() > 0);
   s_col = s_startCol + areaStartString.length();
   s_line = s_startLine;

@@ -19,7 +19,7 @@
 #define STRUCTTREEVIEW_H
 
 #include <qmap.h>
-#include <qwidget.h>
+#include <qvaluelist.h>
 
 #include <klistview.h>
 
@@ -37,7 +37,6 @@ class QTime;
 
 class StructTreeView : public KListView  {
    Q_OBJECT
-//friend class QuantaApp;
 public:
 
   /**
@@ -62,17 +61,9 @@ public:
   void showTagAtPos(Node *node);
   /** Delete the items */
   void deleteList(bool groupOnly);
-  /** Set the View as... menu to dtdName. */
-  void setParsingDTD(const QString dtdName);
+  void setParsingDTDs(const QStringList &parsingDTDList);
 
-  StructTreeTag *top;
-  StructTreeTag *groups[5];
-  uint groupsCount;
-
-  bool topOpened;
-  bool groupOpened[5];
   bool useOpenLevelSetting;
-
 
 public slots: // Public slots
   /** repaint document structure */
@@ -103,8 +94,7 @@ signals:
   void selectArea(int col1, int row1, int col2, int row2 );
   void needReparse();
   void onTag( const QString &tag );
-  /** No descriptions */
-  void parsingDTDChanged(const QString&);
+  void showGroupsForDTEP(const QString& dtep, bool show);
   void openFile(const KURL&);
   void openImage(const KURL&);
 
@@ -128,9 +118,16 @@ private:
   StructTreeTag *lastTag;
   KConfig *config;
   QStringList dtdList;
+  QValueList<const DTDStruct*> m_parsingDTDList;
   int openFileMenuId;
   QMap<QString, uint> groupIds;
   bool m_dirty;
+  StructTreeTag *top;
+  QValueList<StructTreeTag*> groups;
+  uint groupsCount;
+
+  bool topOpened;
+  QValueList<bool> groupOpened;
 
 protected: // Protected methods
   /** Do a reparse before showing. */
@@ -141,8 +138,6 @@ protected slots: // Protected slots
   void slotDTDChanged(int id);
 
 protected: // Protected attributes
-  /**  */
-  const DTDStruct* m_parsingDTD;
   Document *write;
   QTime timer;
 };

@@ -73,10 +73,12 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
 
   dtdMenu = new KPopupMenu(this);
 
+  dtdMenu->insertItem(i18n("All Present DTEP"));
+  dtdMenu->insertSeparator();
   dtdList = DTDs::ref()->nickNameList();
   for(uint i = 0; i < dtdList.count(); i++ )
   {
-    dtdMenu->insertItem(dtdList[i],i,-1);
+    dtdMenu->insertItem(dtdList[i], i, -1);
   }
 
   connect(dtdMenu, SIGNAL(activated(int)), this, SLOT(slotDTDChanged(int)));
@@ -135,133 +137,145 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel, bool groupOnly)
   QString title;
   QString tagStr;
   QString tmpStr;
-  if (m_parsingDTD->family == Script)
+  int groupId = 0;
+  const DTDStruct* parsingDTD;
+  for (uint index = 0; index < m_parsingDTDList.count(); index++)
   {
-    StructTreeGroup group;
-    for (uint i = 0; i < groupsCount; i++)
+    parsingDTD = m_parsingDTDList[index];
+    if (parsingDTD->family == Script)
     {
-        group = m_parsingDTD->structTreeGroups[i];
-        groups[i] = new StructTreeTag(this, i18n(group.name.utf8()) + " ["+m_parsingDTD->nickName+"]");
+      StructTreeGroup group;
+      uint gCount = parsingDTD->structTreeGroups.count();
+      for (uint i = 0; i < gCount; i++)
+      {
+        group = parsingDTD->structTreeGroups[i];
+        StructTreeTag *groupTag = new StructTreeTag(this, i18n(group.name.utf8()) + " [" + parsingDTD->nickName+"]");
         if (!group.icon.isEmpty())
         {
-          groups[i]->setPixmap(0, SmallIcon(group.icon));
+          groupTag->setPixmap(0, SmallIcon(group.icon));
         }
-        groups[i]->setOpen(groupOpened[i]);
-    }
-  } else
-  {
-    QMap<QString, XMLStructGroup>::ConstIterator it;
-    uint i = 0;
-    for (it = m_parsingDTD->xmlStructTreeGroups.begin(); it != m_parsingDTD->xmlStructTreeGroups.end(); ++it)
-    {
-      XMLStructGroup group = it.data();
-      groups[i] = new StructTreeTag(this, i18n(group.name.utf8()) + " ["+m_parsingDTD->nickName+"]");
-      if (!group.icon.isEmpty())
-      {
-        groups[i]->setPixmap(0, SmallIcon(group.icon));
+        groupTag->setOpen(groupOpened[groupId]);
+        groups.append(groupTag);
+        groupIds.insert(group.name + parsingDTD->name, groupId);
+        groupId++;
       }
-      groups[i]->setOpen(groupOpened[i]);
-      groupIds.insert(group.name, i);
-      i++;
-    }
+    } else
+    {
+      QMap<QString, XMLStructGroup>::ConstIterator it;
+      for (it = parsingDTD->xmlStructTreeGroups.begin(); it != parsingDTD->xmlStructTreeGroups.end(); ++it)
+      {
+        XMLStructGroup group = it.data();
+        StructTreeTag *groupTag = new StructTreeTag(this, i18n(group.name.utf8()) + " [" + parsingDTD->nickName+"]");
+        if (!group.icon.isEmpty())
+        {
+          groupTag->setPixmap(0, SmallIcon(group.icon));
+        }
+        groupTag->setOpen(groupOpened[groupId]);
+        groups.append(groupTag);
+        groupIds.insert(group.name + parsingDTD->name, groupId);
+        groupId++;
+      }
 
+    }
   }
+  groupsCount = groupId;
   QMap<QString, QListViewItem*> lastItemInGroup;
   QMap<QString, QListViewItem*> groupItems;
   if (!groupOnly)
   {
-  while (currentNode)
-  {
-    title = "";
-    item = new StructTreeTag(parentItem, currentNode, title, currentItem);
-    item->setOpen(level < openLevel);
-    currentNode->mainListItem = item;
+    while (currentNode)
+    {
+      title = "";
+      item = new StructTreeTag(parentItem, currentNode, title, currentItem);
+      item->setOpen(level < openLevel);
+      currentNode->mainListItem = item;
 
-    if ( (!qConfig.showEmptyNodes && currentNode->tag->type == Tag::Empty) ||
-          (!qConfig.showClosingTags &&
-          (currentNode->tag->type == Tag::XmlTagEnd ||
-            currentNode->tag->type == Tag::ScriptStructureEnd) ) )
-    {
-      item->setVisible(false);
-    }
-    if (currentNode->tag->dtd()->family == Xml)
-    {
-      if (currentNode->groupTag &&
-          groupIds.contains(currentNode->group->name))
+      if ( (!qConfig.showEmptyNodes && currentNode->tag->type == Tag::Empty) ||
+            (!qConfig.showClosingTags &&
+            (currentNode->tag->type == Tag::XmlTagEnd ||
+              currentNode->tag->type == Tag::ScriptStructureEnd) ) )
       {
-        XMLStructGroup *group = currentNode->group;
-        StructTreeTag *groupItem = groups[groupIds[group->name]];
-        QListViewItem* insertAfter = 0L;
-        QListViewItem* insertUnder = groupItem;
-        if (groupItems.contains(currentNode->groupTag->name))
-            insertUnder = groupItems[currentNode->groupTag->name];
-        if (lastItemInGroup.contains(group->name))
-            insertAfter = lastItemInGroup[group->name];
-
-        StructTreeTag *item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), currentNode, currentNode->groupTag->name, insertAfter);
-        item->groupTag = currentNode->groupTag;
-        if (insertUnder == groupItem)
-        {
-          groupItems[currentNode->groupTag->name] = item;
-          lastItemInGroup[group->name] = item;
-        }
-        item->hasOpenFileMenu = group->hasFileName;
-        item->fileNameRx = group->fileNameRx;
-
+        item->setVisible(false);
       }
-    }
-
-    //go to the child node, if it exists
-    if (currentNode->child)
-    {
-      currentNode = currentNode->child;
-      parentItem = item;
-      currentItem = 0L;
-      level++;
-    } else
-    {
-      //go to the next node if it exists
-      if (currentNode->next)
+      const DTDStruct *dtd = currentNode->tag->dtd();
+      if (dtd->family == Xml)
       {
-        currentNode = currentNode->next;
-        currentItem = item;
+        if (currentNode->groupTag &&
+            groupIds.contains(currentNode->group->name + dtd->name))
+        {
+          XMLStructGroup *group = currentNode->group;
+          StructTreeTag *groupItem = groups[groupIds[group->name + dtd->name]];
+          QListViewItem* insertAfter = 0L;
+          QListViewItem* insertUnder = groupItem;
+          if (groupItems.contains(currentNode->groupTag->name))
+              insertUnder = groupItems[currentNode->groupTag->name];
+          if (lastItemInGroup.contains(group->name))
+              insertAfter = lastItemInGroup[group->name];
+
+          StructTreeTag *item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), currentNode, currentNode->groupTag->name, insertAfter);
+          item->groupTag = currentNode->groupTag;
+          if (insertUnder == groupItem)
+          {
+            groupItems[currentNode->groupTag->name] = item;
+            lastItemInGroup[group->name] = item;
+          }
+          item->hasOpenFileMenu = group->hasFileName;
+          item->fileNameRx = group->fileNameRx;
+
+        }
+      }
+
+      //go to the child node, if it exists
+      if (currentNode->child)
+      {
+        currentNode = currentNode->child;
+        parentItem = item;
+        currentItem = 0L;
+        level++;
       } else
       {
-        //go up some levels, to the parent, if the node has no child or next
-        while (currentNode)
+        //go to the next node if it exists
+        if (currentNode->next)
         {
-          level--;
-          //parentItem = dynamic_cast<StructTreeTag*>(parentItem->parent());
-          if (currentNode->parent && currentNode->parent->next)
+          currentNode = currentNode->next;
+          currentItem = item;
+        } else
+        {
+          //go up some levels, to the parent, if the node has no child or next
+          while (currentNode)
           {
-            currentNode = currentNode->parent->next;
-            break;
-          } else
-          {
-            currentNode = currentNode->parent;
+            level--;
+            //parentItem = dynamic_cast<StructTreeTag*>(parentItem->parent());
+            if (currentNode->parent && currentNode->parent->next)
+            {
+              currentNode = currentNode->parent->next;
+              break;
+            } else
+            {
+              currentNode = currentNode->parent;
+            }
           }
-        }
-        if (currentNode)
-        {
-          if (currentNode->prev)
-              currentItem = static_cast<StructTreeTag*>(currentNode->prev->mainListItem);
-          if (currentNode->parent)
+          if (currentNode)
           {
-            parentItem = static_cast<StructTreeTag*>(currentNode->parent->mainListItem);
-            if (!parentItem)
+            if (currentNode->prev)
+                currentItem = static_cast<StructTreeTag*>(currentNode->prev->mainListItem);
+            if (currentNode->parent)
+            {
+              parentItem = static_cast<StructTreeTag*>(currentNode->parent->mainListItem);
+              if (!parentItem)
+              {
+                parentItem = top;
+              }
+            }
+            else
             {
               parentItem = top;
             }
           }
-          else
-          {
-            parentItem = top;
-          }
-        }
 
+        }
       }
     }
-  }
   }
   GroupElementList* groupElementList;
   QListViewItem *insertUnder;
@@ -269,57 +283,64 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel, bool groupOnly)
   QListViewItem *listItem;
   GroupElementMapList::Iterator it;
   IncludedGroupElementsMap::Iterator externalIt;
-  if (m_parsingDTD->family == Script)
+  for (uint index = 0; index < m_parsingDTDList.count(); index++)
   {
-    StructTreeGroup group;
-    for (uint i = 0; i < groupsCount; i++)
+    parsingDTD = m_parsingDTDList[index];
+    if (parsingDTD->family == Script)
     {
-      group = m_parsingDTD->structTreeGroups[i];
-      QString name = group.name+"|";
-      for (it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it)
+      StructTreeGroup group;
+      uint gCount = parsingDTD->structTreeGroups.count();
+      for (uint i = 0; i < gCount; i++)
       {
-        insertUnder = groups[i];
-        insertAfter = insertUnder;
-        bool first = true;
-        if (it.key().startsWith(name))
+        group = parsingDTD->structTreeGroups[i];
+        groupId = groupIds[group.name + parsingDTD->name];
+        QString name = group.name+"|";
+        StructTreeTag *groupTag = groups[groupId];
+        for (it = globalGroupMap.begin(); it != globalGroupMap.end(); ++it)
         {
-          groupElementList = & (it.data());
-          QString title = it.key().section('|', -1);
-          GroupElementList::Iterator groupElementIt;
-          for (groupElementIt = groupElementList->begin(); groupElementIt != groupElementList->end(); ++groupElementIt)
+          insertUnder = groupTag;
+          insertAfter = insertUnder;
+          bool first = true;
+          if (it.key().startsWith(name))
           {
-            listItem = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), (*groupElementIt).node, title, insertAfter);
-            static_cast<StructTreeTag*>(listItem)->groupTag = (*groupElementIt).tag;
-            static_cast<StructTreeTag*>(listItem)->hasOpenFileMenu = group.hasFileName;
-            static_cast<StructTreeTag*>(listItem)->fileNameRx = group.fileNameRx;
-            if (first)
+            groupElementList = & (it.data());
+            QString title = it.key().section('|', -1);
+            GroupElementList::Iterator groupElementIt;
+            for (groupElementIt = groupElementList->begin(); groupElementIt != groupElementList->end(); ++groupElementIt)
             {
-              insertUnder = listItem;
-              first = false;
+              listItem = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), (*groupElementIt).node, title, insertAfter);
+              static_cast<StructTreeTag*>(listItem)->groupTag = (*groupElementIt).tag;
+              static_cast<StructTreeTag*>(listItem)->hasOpenFileMenu = group.hasFileName;
+              static_cast<StructTreeTag*>(listItem)->fileNameRx = group.fileNameRx;
+              if (first)
+              {
+                insertUnder = listItem;
+                first = false;
+              }
+              insertAfter = listItem;
             }
-            insertAfter = listItem;
           }
         }
-      }
-      for (externalIt = parser->includedMap.begin(); externalIt != parser->includedMap.end(); ++externalIt)
-      {
-        insertUnder = new StructTreeTag(static_cast<StructTreeTag*>(groups[i]), 0L, externalIt.key(), groups[i]);
-        insertAfter = insertUnder;
-        IncludedGroupElements elements = externalIt.data();
-        GroupElementMapList::Iterator elIt;
-        for (elIt = elements[group.name].begin(); elIt != elements[group.name].end(); ++elIt)
+        for (externalIt = parser->includedMap.begin(); externalIt != parser->includedMap.end(); ++externalIt)
         {
-          listItem = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), elIt.data()[0].node, elIt.key(), insertAfter);
-          static_cast<StructTreeTag*>(listItem)->hasOpenFileMenu = group.hasFileName;
-          static_cast<StructTreeTag*>(listItem)->fileNameRx = group.fileNameRx;
-          insertAfter = listItem;
+          insertUnder = new StructTreeTag(static_cast<StructTreeTag*>(groupTag), 0L, externalIt.key(), groupTag);
+          insertAfter = insertUnder;
+          IncludedGroupElements elements = externalIt.data();
+          GroupElementMapList::Iterator elIt;
+          for (elIt = elements[group.name].begin(); elIt != elements[group.name].end(); ++elIt)
+          {
+            listItem = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), elIt.data()[0].node, elIt.key(), insertAfter);
+            static_cast<StructTreeTag*>(listItem)->hasOpenFileMenu = group.hasFileName;
+            static_cast<StructTreeTag*>(listItem)->fileNameRx = group.fileNameRx;
+            insertAfter = listItem;
+          }
+          if (!insertUnder->firstChild())
+              delete insertUnder;
+          else
+              insertUnder->sortChildItems(0, true);
         }
-        if (!insertUnder->firstChild())
-            delete insertUnder;
-        else
-            insertUnder->sortChildItems(0, true);
+        groupTag->sortChildItems(0, true);
       }
-      groups[i]->sortChildItems(0, true);
     }
   }
 }
@@ -335,10 +356,10 @@ void StructTreeView::deleteList(bool groupOnly)
   }
   for (uint i = 0; i < groupsCount; i++)
   {
-    groupOpened[i] = groups[i]->isOpen();
+    groupOpened.append(groups[i]->isOpen());
     delete groups[i];
-    groups[i] = 0L;
   }
+  groups.clear();
   groupIds.clear();
   groupsCount = 0;
 }
@@ -352,35 +373,44 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel, bool gr
   deleteList(groupOnly);
   if (!node)
     return;
-  groupsCount = m_parsingDTD->structTreeGroups.count();
   write = w;
   write->clearErrorMarks();
   buildTree(node, openLevel, groupOnly);
 
   kdDebug(24000) << "StructTreeView building: " << timer.elapsed() << " ms\n";
 
-  if (m_parsingDTD->family == Script)
+  const DTDStruct *parsingDTD;
+  int groupId = 0;
+  for (uint index = 0; index < m_parsingDTDList.count(); index++)
   {
-    for (uint i = 0; i < groupsCount; i++)
+    parsingDTD = m_parsingDTDList[index];
+    if (parsingDTD->family == Script)
     {
-      if (groups[i]->childCount() == 0)
+      uint gCount = parsingDTD->structTreeGroups.count();
+      StructTreeTag *groupTag = groups[groupId];
+      for (uint i = 0; i < gCount; i++)
       {
-        groups[i]->setText(0, i18n(m_parsingDTD->structTreeGroups[i].noName.utf8()) + " ["+m_parsingDTD->nickName+"]");
+        if (groupTag->childCount() == 0)
+        {
+          groupTag->setText(0, i18n(parsingDTD->structTreeGroups[i].noName.utf8()) + " [" + parsingDTD->nickName+"]");
+        }
+        groupId++;
+      }
+    } else
+    {
+      QMap<QString, XMLStructGroup>::ConstIterator it;
+      uint i = 0;
+      for (it = parsingDTD->xmlStructTreeGroups.begin(); it != parsingDTD->xmlStructTreeGroups.end(); ++it)
+      {
+        StructTreeTag *groupTag = groups[groupId];
+        if (groupTag->childCount() == 0)
+        {
+          groupTag->setText(0, i18n(it.data().noName.utf8()) + " [" + parsingDTD->nickName+"]");
+        }
+        i++;
+        groupId++;
       }
     }
-  } else
-  {
-    QMap<QString, XMLStructGroup>::ConstIterator it;
-    uint i = 0;
-    for (it = m_parsingDTD->xmlStructTreeGroups.begin(); it != m_parsingDTD->xmlStructTreeGroups.end(); ++it)
-    {
-      if (groups[i]->childCount() == 0)
-      {
-        groups[i]->setText(0, i18n(it.data().noName.utf8()) + " ["+m_parsingDTD->nickName+"]");
-      }
-      i++;
-    }
-    groupsCount = i;
   }
   useOpenLevelSetting = false;
   m_dirty = false;
@@ -643,18 +673,32 @@ void StructTreeView::showEvent(QShowEvent* /*ev*/)
 void StructTreeView::slotDTDChanged(int id)
 {
   QString text = dtdMenu->text(id);
-  QString dtdName = DTDs::ref()->getDTDNameFromNickName(text);
-  emit parsingDTDChanged(dtdName.lower());
+  if (dtdMenu->indexOf(id) > 0)
+  {
+    QString dtdName = DTDs::ref()->getDTDNameFromNickName(text);
+    emit showGroupsForDTEP(dtdName, !dtdMenu->isItemChecked(id));
+  } else
+    emit showGroupsForDTEP("clear", true);
 }
-/** Set the Parse As... menu to dtdName. */
-void StructTreeView::setParsingDTD(const QString dtdName)
+
+void StructTreeView::setParsingDTDs(const QStringList &parsingDTDList)
 {
-  QString dtdNickName = DTDs::ref()->getDTDNickNameFromName(dtdName);
+  m_parsingDTDList.clear();
   for (uint i = 0; i < dtdList.count(); i++)
   {
-    dtdMenu->setItemChecked(i, dtdList[i] == dtdNickName);
+    dtdMenu->setItemChecked(i, false);
   }
-  m_parsingDTD = DTDs::ref()->find(dtdName); //this should always exist
+  QString dtdNickName;
+  for (QStringList::ConstIterator it = parsingDTDList.constBegin(); it != parsingDTDList.constEnd(); ++it)
+  {
+    dtdNickName = DTDs::ref()->getDTDNickNameFromName(*it);
+    for (uint i = 0; i < dtdList.count(); i++)
+    {
+      if (dtdList[i] == dtdNickName)
+        dtdMenu->setItemChecked(i, true);
+    }
+    m_parsingDTDList.append(DTDs::ref()->find(*it));
+  }
 }
 
 void StructTreeView::slotOpenFile()

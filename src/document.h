@@ -119,7 +119,7 @@ public:
   /** Returns the DTD identifier for the document */
   QString getDTDIdentifier();
   /** Sets the DTD identifier */
-  void setDTDIdentifier(QString id);
+  void setDTDIdentifier(const QString &id);
   /** Get a pointer to the current active DTD. If fallback is true, this always gives back a valid and known DTD pointer: the active, the document specified and in last case the application default document type. */
   const DTDStruct* currentDTD(bool fallback = true);
   /** Get a pointer to the default DTD (document, or app). */
@@ -142,10 +142,10 @@ work correctly. */
   void checkDirtyStatus();
   /** Save the document and reset the dirty status. */
   void save();
-  /** No descriptions */
-  QString parsingDTD();
-  /** No descriptions */
-  void setParsingDTD(const QString& dtdName);
+  /** Enable or disable the visibility of groups for a DTEP.*/
+  void enableGroupsForDTEP(const QString& dtepName, bool enable = true);
+  /** Clears the selected DTEP list */
+  void resetGroupsForDTEPList();
   /** Find the word until the first word boundary backwards */
   QString findWordRev(const QString& textToSearch, const DTDStruct *dtd = 0L);
   /** Returns the changed status since the last query. Resets changed.*/
@@ -176,6 +176,15 @@ work correctly. */
   void open(const KURL &url, const QString &encoding);
   /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
   void processDTD(const QString& documentType = QString::null);
+
+  /** Resets the list of DTEPs found in the document */
+  void resetDTEPs();
+  /** Adds a DTEP to the list of DTEPs present in the document */
+  void addDTEP(const QString &dtepName);
+  /** Returns the list of DTEPs that should appear in the structure tree. By default
+      this is the list of DTEPs present in the document, but the user can turn on/
+      off them with the help of RMB->Show Groups For in the structure tree */
+  QStringList groupsForDTEPs();
 
   bool busy;
 
@@ -268,7 +277,8 @@ private:
   bool m_dirty;
   Project *m_project;
   /** Parse the document according to this DTD. */
-  QString m_parsingDTD;
+  QStringList m_groupsForDTEPs; ///< The list of the DTEPs for which the groups should appear in the structure tree
+  QStringList m_DTEPList; ///< The list of all DTEPs found in the document
   //stores the data after an autocompletion. Used when bringing up the
   //autocompletion box delayed with the singleshot timer (workaround for
   //a bug: the box is not showing up if it is called from slotCompletionDone)

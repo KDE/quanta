@@ -342,8 +342,10 @@ public slots:
   void slotShowCompletion();
   /** No descriptions */
   void slotShowCompletionHint();
-  /** No descriptions */
-  void slotParsingDTDChanged(const QString& newDTDName);
+  /** Show or hide the groups for dtepName in the structure tree.
+    The special value of "clear" for dtepName means show groups
+    for all DTEPs found in the document.*/
+  void slotShowGroupsForDTEP(const QString& dtepName, bool show);
   /** No descriptions */
   void slotBuildPrjToolbarsMenu();
 
@@ -357,7 +359,7 @@ public slots:
   /** Show the Document Properties Dialog */
   void slotDocumentProperties();
   /** Show the Document Properties Dialog
-   * If forceInsertionOfMinimalTree and the user haven't modified something in the dialog, 
+   * If forceInsertionOfMinimalTree and the user haven't modified something in the dialog,
    * it will anyway insert a Minimal tree (HTML, BODY, ...)
    */
   void documentProperties(bool forceInsertionOfMinimalTree = false);

@@ -496,7 +496,7 @@ void QuantaInit::initView()
   connect(sTab, SIGNAL(selectArea(int,int,int,int)), m_quanta, SLOT( selectArea(int,int,int,int)));
   connect(sTab, SIGNAL(selectTagArea(Node*)), m_quanta, SLOT(slotSelectTagArea(Node*)));
   connect(sTab, SIGNAL(needReparse()), m_quanta, SLOT(slotForceReparse()));
-  connect(sTab, SIGNAL(parsingDTDChanged(const QString&)), m_quanta, SLOT(slotParsingDTDChanged(const QString&)));
+  connect(sTab, SIGNAL(showGroupsForDTEP(const QString&, bool)), m_quanta, SLOT(slotShowGroupsForDTEP(const QString&, bool)));
   connect(sTab, SIGNAL(openFile(const KURL &)),
           m_quanta, SLOT  (slotFileOpen(const KURL &)));
   connect(sTab, SIGNAL(openImage  (const KURL&)),

@@ -57,6 +57,8 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
           not just the directories.
         - don't allow to change the template type in the properties of a file as
           it's valid per-directory.
+        - by default show the groups for all DTEPs present in the document
+        - allow showing the groups for more than one DTEP
 
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and

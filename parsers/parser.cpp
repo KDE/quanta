@@ -478,7 +478,7 @@ Node *Parser::parse(Document *w, bool force)
 {
   QTime t;
   t.start();
- QuantaView *view = ViewManager::ref()->activeView();
+  QuantaView *view = ViewManager::ref()->activeView();
   //If VPL is loaded, there shouldn't be any rebuild
   if(view && view->hadLastFocus() == QuantaView::VPLFocus && !force)
     return m_node;
@@ -500,6 +500,7 @@ Node *Parser::parse(Document *w, bool force)
   Node *lastNode;
   write = w;
   m_dtd = w->defaultDTD();
+  w->resetDTEPs();
   maxLines = w->editIf->numLines() - 1;
   parsingEnabled = true;
   nodeNum = 0;
@@ -1076,7 +1077,7 @@ Node *Parser::rebuild(Document *w)
         if (lastInserted->parent && lastInserted->parent->child == lastInserted)
             //lastInserted->parent->child = lastInserted->next; lastInserted has no next!
            lastInserted->parent->child = lastNode;
-           
+
         //here, lastNode is at the pos of lastInserted.
         modif = new NodeModif();
         modif->setType(NodeModif::NodeRemoved);
