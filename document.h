@@ -141,8 +141,9 @@ work correctly. */
   void setParsingDTD(const QString& dtdName);
   /** Find the word until the first word boundary backwards */
   QString findWordRev(const QString& textToSearch, DTDStruct *dtd = 0L);
+  /** Returns the changed status since the last query. Resets changed.*/
+  bool hasChanged();
 
-  bool oldstat;
   bool busy;
   KURL baseURL;
 
@@ -153,9 +154,6 @@ work correctly. */
   KTextEditor::ConfigInterface* configIf;
 
   Kate::Document *kate_doc;
-  /** Hold the list of variables that are in the document (e.g $variable for PHP variables) */
-  QStringList variableList;
-  QStringList includeList;
   /** Hold the list of user tags (real or not, like functions) that are in the document*/
   QTagList userTagList;
   Kate::View *kate_view;
@@ -196,6 +194,20 @@ private:
   /*The DTD valid in the place where the completion was invoked.*/
   DTDStruct *completionDTD;
 
+  bool changed;
+  bool completionInProgress;
+  bool reparseEnabled;
+  /** True if the document is dirty (has been modified outside). */
+  bool m_dirty;
+  Project *m_project;
+  /** Parse the document according to this DTD. */
+  QString m_parsingDTD;
+  //stores the data after an autocompletion. Used when bringing up the
+  //autocompletion box delayed with the singleshot timer (workaround for
+  //a bug: the box is not showing up if it is called from slotCompletionDone)
+  int m_lastLine, m_lastCol;
+  QValueList<KTextEditor::CompletionEntry>* m_lastCompletionList;
+
   /** Get list of possibile variable name completions */
   QValueList<KTextEditor::CompletionEntry>* getGroupCompletions(Node *node, const StructTreeGroup& groupName, int line, int col);
   /** Get list of possibile tag name completions */
@@ -216,23 +228,6 @@ private:
   bool xmlAutoCompletion(int , int , const QString & );
   /** Called whenever a user inputs text in a script type document. */
   bool scriptAutoCompletion(int line, int col);
-
-
-protected: // Protected attributes
-  /**  */
-  bool completionInProgress;
-  bool reparseEnabled;
-  /** True if the document is dirty (has been modified outside). */
-  bool m_dirty;
-  Project *m_project;
-  /** Parse the document according to this DTD. */
-  QString m_parsingDTD;
-  //stores the data after an autocompletion. Used when bringing up the
-  //autocompletion box delayed with the singleshot timer (workaround for
-  //a bug: the box is not showing up if it is called from slotCompletionDone)
-  int m_lastLine, m_lastCol;
-  QValueList<KTextEditor::CompletionEntry>* m_lastCompletionList;
-protected: // Protected methods
   /** Returns true if the number of " (excluding \") inside text is even. */
   bool evenQuotes(const QString &text);
 

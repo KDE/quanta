@@ -667,8 +667,6 @@ void QuantaApp::slotNewStatus()
     wTab->setCurrentPage(pageId-1);
     wTab->setCurrentPage(pageId);
     wTab->blockSignals(block);
-
-    w->oldstat = w->isModified();
  }
 }
 
@@ -1218,11 +1216,14 @@ void QuantaApp::reparse(bool force)
       baseNode = parser->parse(w);
     }
 
-    sTab->setParsingDTD(w->parsingDTD());
-    int expandLevel = qConfig.expandLevel;
-    if (expandLevel == 0)
-        expandLevel = 40;
-    sTab->slotReparse(w, baseNode , expandLevel );
+    if (w->hasChanged() || force)
+    {
+      sTab->setParsingDTD(w->parsingDTD());
+      int expandLevel = qConfig.expandLevel;
+      if (expandLevel == 0)
+          expandLevel = 40;
+      sTab->slotReparse(w, baseNode , expandLevel );
+    }
 
     if (force)
     {

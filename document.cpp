@@ -62,7 +62,7 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 {
   m_dirty   = false;
   busy    = false;
-  oldstat = false;
+  changed = false;
   m_doc = doc;
   m_view = m_doc->createView(this, 0L);
   completionInProgress = false;
@@ -1550,6 +1550,7 @@ bool Document::evenQuotes(const QString &text)
 /** No descriptions */
 void Document::slotTextChanged()
 {
+  changed = true;
   if (reparseEnabled)
   {
     //delay the handling, otherwise we may get wrong values for (line,column)
@@ -1716,5 +1717,13 @@ QStringList* Document::tagAttributeValues(const QString& dtdName, const QString&
   }
   return values;
 }
+
+bool Document::hasChanged()
+{
+  bool b = changed;
+  changed = false;
+  return b;
+}
+
 
 #include "document.moc"
