@@ -1,0 +1,144 @@
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<class>FourButtonMessageBox</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>FourButtonMessageBox</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>424</width>
+            <height>109</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>FourButtonMessageBox</string>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="0">
+            <property name="name">
+                <cstring>pixmapLabel</cstring>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32</width>
+                    <height>32</height>
+                </size>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="1">
+            <property name="name">
+                <cstring>textLabel</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>user1Button</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Save</string>
+                    </property>
+                </widget>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>user2Button</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Save &amp;As</string>
+                    </property>
+                </widget>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>user3Button</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Don't Save</string>
+                    </property>
+                </widget>
+                <widget class="KPushButton">
+                    <property name="name">
+                        <cstring>cancelButton</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Cancel</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer row="1" column="1">
+            <property name="name">
+                <cstring>spacer1</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Fixed</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>16</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>cancelButton</sender>
+        <signal>clicked()</signal>
+        <receiver>FourButtonMessageBox</receiver>
+        <slot>cancelButton_clicked()</slot>
+    </connection>
+    <connection>
+        <sender>user1Button</sender>
+        <signal>clicked()</signal>
+        <receiver>FourButtonMessageBox</receiver>
+        <slot>user1Button_clicked()</slot>
+    </connection>
+    <connection>
+        <sender>user2Button</sender>
+        <signal>clicked()</signal>
+        <receiver>FourButtonMessageBox</receiver>
+        <slot>user2Button_clicked()</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="local" impldecl="in implementation">fourbuttonmessagebox.ui.h</include>
+</includes>
+<variables>
+    <variable>int m_status;</variable>
+</variables>
+<slots>
+    <slot>cancelButton_clicked()</slot>
+    <slot>user1Button_clicked()</slot>
+    <slot>user2Button_clicked()</slot>
+    <slot>user3Button_clicked()</slot>
+</slots>
+<functions>
+    <function specifier="non virtual" returnType="int">status()</function>
+</functions>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>kpushbutton.h</includehint>
+</includehints>
+</UI>

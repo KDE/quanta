@@ -105,6 +105,7 @@
 #include "dialogs/debuggeroptionss.h"
 #include "dialogs/dtdselectdialog.h"
 #include "dialogs/donationdialog.h"
+#include "dialogs/fourbuttonmessagebox.h"
 
 #include "treeviews/filestreeview.h"
 #include "treeviews/filestreefolder.h"
@@ -2137,16 +2138,19 @@ KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFi
 
 //TODO: Implement saving in non-local dirs (first in a temp file, than copy it to the dest)
   KTar tar(tarFile.path(), "application/x-gzip");
-  tar.open(IO_WriteOnly);
-  tar.writeFile(QFileInfo(tarFile.path()).baseName()+".toolbar", "user", "group", buffer.buffer().size(), buffer.buffer().data());
-  tar.writeFile(QFileInfo(tarFile.path()).baseName()+".actions", "user", "group", buffer2.buffer().size(), buffer2.buffer().data());
+  if (!tar.open(IO_WriteOnly))
+      return KURL();
+  if (!tar.writeFile(QFileInfo(tarFile.path()).baseName()+".toolbar", "user", "group", buffer.buffer().size(), buffer.buffer().data()))
+      return KURL();
+  if (!tar.writeFile(QFileInfo(tarFile.path()).baseName()+".actions", "user", "group", buffer2.buffer().size(), buffer2.buffer().data()))
+      return KURL();
   tar.close();
 
   return tarFile;
 }
 
 /** Saves a toolbar as local or project specific. */
-void QuantaApp::saveToolbar(bool localToolbar,const QString& toolbarToSave)
+bool QuantaApp::saveToolbar(bool localToolbar, const QString& toolbarToSave, const KURL& destURL)
 {
   int query;
   KURL url;
@@ -2171,7 +2175,7 @@ void QuantaApp::saveToolbar(bool localToolbar,const QString& toolbarToSave)
                     i18n( "Save Toolbar" ),
                     i18n( "Please select a toolbar:" ), lst, current, FALSE, &ok, this );
     if ( !ok )
-      return;
+      return false;
 
     toolbarName = res;
   } else
@@ -2179,39 +2183,55 @@ void QuantaApp::saveToolbar(bool localToolbar,const QString& toolbarToSave)
     toolbarName = toolbarToSave;
   }
 
+  if (destURL.isEmpty())
+  {
+    do {
+      query = KMessageBox::Yes;
 
-  do {
+      if (localToolbar)
+      {
+        url = KFileDialog::getSaveURL(localToolbarsDir, "*"+toolbarExtension, this);
+      } else
+      {
+        url = KFileDialog::getSaveURL(m_project->toolbarURL.url(), "*"+toolbarExtension, this);
+      }
+
+      if (url.isEmpty())
+          return false;
+
+      if (m_project->hasProject())
+          projectToolbarsURL = m_project->toolbarURL;
+      if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
+            ((localToolbar) && (KURL(localToolbarsDir).isParentOf(url))) )
+      {
+        query = m_view->write()->checkOverwrite( url );
+      } else
+      {
+        if (!localToolbar)
+            localToolbarsDir = projectToolbarsURL.prettyURL();
+        KMessageBox::sorry(0,i18n("You must save the toolbars in the following directory: \n\n%1")
+                                  .arg(localToolbarsDir));
+        query = KMessageBox::No;
+      }
+    } while (query != KMessageBox::Yes);
+  } else
+  {
+    url = destURL;
     query = KMessageBox::Yes;
-
-    if (localToolbar)
-    {
-      url = KFileDialog::getSaveURL(localToolbarsDir, "*"+toolbarExtension, this);
-    } else
-    {
-      url = KFileDialog::getSaveURL(m_project->toolbarURL.url(), "*"+toolbarExtension, this);
-    }
-
-    if (url.isEmpty()) return;
-
-    if ( m_project->hasProject() )  projectToolbarsURL = m_project->toolbarURL;
-    if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
-          ((localToolbar) && (KURL(localToolbarsDir).isParentOf(url))) )
-    {
-      query = m_view->write()->checkOverwrite( url );
-    } else
-    {
-      if (!localToolbar) localToolbarsDir = projectToolbarsURL.prettyURL();
-      KMessageBox::sorry(0,i18n("You must save the toolbars in the following directory: \n\n%1")
-                                .arg(localToolbarsDir));
-      query = KMessageBox::No;
-    }
-  } while (query != KMessageBox::Yes);
-
+  }
   if( query != KMessageBox::Cancel )
   {
     KURL tarName = saveToolbarToFile(toolbarName, url);
-    if (!localToolbar) m_project->insertFile(tarName, true);
+    if (tarName.isEmpty())
+    {
+      KMessageBox::error(this, i18n("An error happened while saving the \"%1\" toolbar.\n" \
+      "Check that you have write permissions for \"%2\"").arg(toolbarName).arg(url.prettyURL().remove("file:")));
+      return false;
+    }
+    if (!localToolbar)
+        m_project->insertFile(tarName, true);
   }
+  return true;
 }
 
 /** Saves a toolbar as localspecific. */
@@ -2265,7 +2285,7 @@ void QuantaApp::slotAddToolbar()
 
 
 /** Removes a user toolbar from the toolbars. */
-void QuantaApp::slotRemoveToolbar()
+bool QuantaApp::slotRemoveToolbar()
 {
  ToolbarTabWidget *tb = m_view->toolbarTab();
  int i;
@@ -2286,8 +2306,9 @@ void QuantaApp::slotRemoveToolbar()
 
  if (ok)
  {
-   slotRemoveToolbar(res.lower());
- }
+   return slotRemoveToolbar(res.lower());
+ } else
+   return false;
 
 }
 
@@ -2423,7 +2444,7 @@ void QuantaApp::slotRenameToolbar(const QString& name)
 }
 
 /** Ask for save all the modified user toolbars. */
-void QuantaApp::removeToolbars()
+bool QuantaApp::removeToolbars()
 {
   QDictIterator<ToolbarEntry> it(toolbarList);
   ToolbarEntry *p_toolbar;
@@ -2431,7 +2452,8 @@ void QuantaApp::removeToolbars()
   {
     p_toolbar = it.current();
     ++it;
-    slotRemoveToolbar(p_toolbar->name.lower());
+    if (!slotRemoveToolbar(p_toolbar->name.lower()))
+        return false;
   }
 
   QString s = "<!DOCTYPE actionsconfig>\n<actions>\n</actions>\n";
@@ -2459,6 +2481,7 @@ void QuantaApp::removeToolbars()
     f.remove();
   }
 
+ return true;
 }
 
 void QuantaApp::slotDeleteAction(KAction *action)
@@ -2853,7 +2876,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
 }
 
 /** Remove the toolbar named "name". */
-void QuantaApp::slotRemoveToolbar(const QString& name)
+bool QuantaApp::slotRemoveToolbar(const QString& name)
 {
   ToolbarEntry *p_toolbar = toolbarList[name];
   if (p_toolbar)
@@ -2889,17 +2912,55 @@ void QuantaApp::slotRemoveToolbar(const QString& name)
      QString s2 = toolbarGUI->domDocument().toString();
      if ( s1 != s2 /*|| actionsModified */)
      {
-      if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(p_toolbar->name),
-              i18n("Save Toolbar")) == KMessageBox::Yes)
+      int result;
+      if (p_toolbar->url.isEmpty())
       {
-        bool local = true;
-        if (m_project->hasProject() && p_toolbar->url.url().startsWith(m_project->baseURL.url())) local = false;
-        saveToolbar(local, name);
+         result = KMessageBox::questionYesNoCancel(this, i18n("Toolbar \"%1\" is new and unsaved. Do you want to save before remove?").arg(p_toolbar->name),
+              i18n("Save Toolbar"));
+      } else
+      {
+         FourButtonMessageBox dlg(this, 0, true);
+         dlg.textLabel->setText(i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(p_toolbar->name));
+         dlg.setCaption(i18n("Save Toolbar"));
+         dlg.pixmapLabel->setPixmap(BarIcon("messagebox_info", KIcon::SizeMedium));
+         dlg.exec();
+         result = dlg.status();
+         switch (result)
+         {
+           case -1: result = KMessageBox::Cancel;
+                    break;
+           case  1: result = KMessageBox::Continue; //hack - this means Save
+                    break;
+           case  2: result = KMessageBox::Yes; //hack - this means Save As
+                    break;
+           case  3: result = KMessageBox::No; //this means Don't Save
+                    break;
+         }
+       }
+      switch (result)
+      {
+        case KMessageBox::Yes:
+             {
+                bool local = true;
+                if (m_project->hasProject() && p_toolbar->url.url().startsWith(m_project->baseURL.url())) local = false;
+                if (!saveToolbar(local, name))
+                    return false;
+                break;
+             }
+        case KMessageBox::Continue:
+             {
+                bool local = true;
+                if (m_project->hasProject() && p_toolbar->url.url().startsWith(m_project->baseURL.url())) local = false;
+                if (!saveToolbar(local, name, p_toolbar->url))
+                    return false;
+                break;
+             }
+        case KMessageBox::Cancel: return false;
+
       }
      }
-
      guiFactory()->removeClient(toolbarGUI);
-     if (p_toolbar->menu) delete p_toolbar->menu;
+     delete p_toolbar->menu;
 //unplug the actions and remove them if they are not used in other places
      nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
      for (uint i = 0; i < nodeList.count(); i++)
@@ -2914,13 +2975,14 @@ void QuantaApp::slotRemoveToolbar(const QString& name)
          }
        }
      }
-     if (p_toolbar->dom) delete p_toolbar->dom;
-     if (p_toolbar->guiClient) delete p_toolbar->guiClient;
+     delete p_toolbar->dom;
+     delete p_toolbar->guiClient;
      toolbarList.remove(name);
     }
   }
 
   slotToggleDTDToolbar(!allToolbarsHidden());
+  return true;
 }
 
 /** Show or hide the DTD toolbar */

@@ -169,9 +169,11 @@ void ActionConfigDialog::slotRemoveToolbar()
   {
     if ( KMessageBox::questionYesNo(this, i18n("Do you really want to remove the \"%1\" toolbar?").arg(s)) == KMessageBox::Yes )
     {
-      quantaApp->slotRemoveToolbar(s.lower());
-      actionTreeView->setCurrentItem(allActionsItem);
-      delete item;
+      if (quantaApp->slotRemoveToolbar(s.lower()))
+      {
+        actionTreeView->setCurrentItem(allActionsItem);
+        delete item;
+      }
     }
   }
 }

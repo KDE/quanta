@@ -834,9 +834,10 @@ bool QuantaApp::queryClose()
     exitingFlag = true;
     canExit = m_doc->saveAll(false);
     if (canExit)
+        canExit = removeToolbars();
+    if (canExit)
     {
       disconnect( m_view->writeTab(),SIGNAL(currentChanged(QWidget*)), this,     SLOT(slotUpdateStatus(QWidget*)));
-      removeToolbars();
       //avoid double question about saving files, so set the "modified"
       //flags to "false". This is safe here.
       Document *w;

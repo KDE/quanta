@@ -275,7 +275,7 @@ public slots:
   /** Sends a toolbar in mail. */
   void slotSendToolbar();
   /** Removes a user toolbar from the toolbars. */
-  void slotRemoveToolbar();
+  bool slotRemoveToolbar();
   /** Adds a new, empty toolbar. */
   void slotAddToolbar();
   /** Saves a toolbar as local specific. */
@@ -289,7 +289,7 @@ public slots:
   /** Load a global toolbar from the disk. */
   void slotLoadGlobalToolbar();
   /** Remove the toolbar named "name". */
-  void slotRemoveToolbar(const QString& name);
+  bool slotRemoveToolbar(const QString& name);
   /** Rename the toolbar named "name". */
   void slotRenameToolbar(const QString& name);
   /** Rename the toolbar. */
@@ -350,7 +350,7 @@ protected:
   }
   void initToolBars();
   /** Ask for save all the modified user toolbars. */
-  void removeToolbars();
+  bool removeToolbars();
   /** Returns true if all toolbars are hidden, false otherwise. */
   bool allToolbarsHidden() const;
   /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. */
@@ -374,7 +374,7 @@ protected:
   virtual bool queryClose();
   void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
   /** Saves a toolbar as local or project specific. */
-  void saveToolbar(bool localToolbar = true, const QString& toolbarToSave = QString::null);
+  bool saveToolbar(bool localToolbar = true, const QString& toolbarToSave = QString::null, const KURL& destURL = KURL());
   /** Saves the toolbar and the actions. Returns the name of the actions file*/
   KURL saveToolbarToFile(const QString& toolbarName,const KURL& destFile);
   /** Show the toolbar which is in url. If it was not loaded yet, it loads the
