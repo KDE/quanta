@@ -76,6 +76,18 @@
 
 #include "messages/messageoutput.h"
 
+//
+// Enable this define to test the KAction/XMLGUI code (Rich).
+//
+#define NEW_STUFF
+//
+
+#ifdef NEW_STUFF
+
+#include <kedittoolbar.h>
+
+#endif
+
 
 /////////////////////////////////////////////////////////////////////
 // SLOT CALLBACK IMPLEMENTATION
@@ -1045,13 +1057,21 @@ void QuantaApp::slotUpdateStatus(const QString &)
 
 void QuantaApp::slotOptionsConfigureKeys()
 {
-
+#ifdef NEW_STUFF
+	KKeyDialog::configureKeys( actionCollection(), QString::null, true, this );
+#else
 	KKeyDialog::configureKeys(keyAccel);
-	
+#endif
 }
 
 void QuantaApp::slotOptionsConfigureToolbars()
 {
+#ifdef NEW_STUFF
+    KEditToolbar dlg( actionCollection(), QString::null, true, this );
+    if ( dlg.exec() )
+        createGUI();
+#else
+
   ToolBarConfig *dlg = new ToolBarConfigI( toolbars, 0, "toolbars config", true );
 //  QDomDocument oldDoc = toolbars->d.cloneNode().toDocument();
 
@@ -1073,7 +1093,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
   }
 
   delete ( dlg );
-		
+#endif // NEW_STUFF		
 }
 
 
