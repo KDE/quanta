@@ -77,7 +77,7 @@ private:
 };
 
 /**
-Makes possible downloading and installing a template resource files from a server.
+Makes possible downloading and installing a script resource files from a server.
 
 @author Andras Mantia
 */
@@ -92,6 +92,24 @@ public:
 
 private:
      virtual void installResource();
+};
+
+/**
+Makes possible downloading and installing a documentation resource files from a server.
+
+@author Andras Mantia
+ */
+class QNewDocStuff: public QNewStuff
+{
+  Q_OBJECT
+
+  public:
+    QNewDocStuff(const QString &type,  QWidget *parentWidget=0)
+  :QNewStuff(type, parentWidget){};
+    ~QNewDocStuff() {};
+
+  private:
+    virtual void installResource();
 };
 
 #endif

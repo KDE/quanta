@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Mar 4 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2002 Andras Mantia <amantia@kde.org>
+                           (C) 2002, 2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -53,40 +53,7 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
   projectDocFolder = new KListViewItem(this, i18n("Project Documentation"));
   projectDocFolder->setOpen(true);
-
-  QStringList docDirs = KGlobal::instance()->dirs()->findDirs("appdata", "doc");
-
-  for ( QStringList::Iterator it = docDirs.begin(); it != docDirs.end(); ++it )
-  {
-     QString docDir = *it;
-     QDir dir(docDir, "*.docrc");
-     QStringList files = dir.entryList();
-
-     for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
-     {
-       KConfig config( docDir + *it_f );
-       config.setGroup("Tree");
-
-       QString relDocDir = config.readEntry("Doc dir");
-
-       DocFolder *folder = new DocFolder(this, config.readEntry("Top Element"), &config , QDir::cleanDirPath(docDir+relDocDir)+"/");
-       folder->setPixmap( 0, SmallIcon("folder_open") );
-       folder->topLevel = true;
-       folder->setOpen( true );
-
-       config.setGroup("Context");
-       QStrList list;
-       config.readListEntry("ContextList", list );
-
-       for ( unsigned int i=0; i<list.count(); i++ )
-       {
-        QString keyword = list.at(i);
-        QString *url = new QString(QDir::cleanDirPath(docDir + relDocDir + "/" + config.readEntry( list.at(i) )));
-        contextHelpDict->insert( keyword, url );
-      }
-      }
-  }
-
+  slotRefreshTree();
   setFocusPolicy(QWidget::ClickFocus);
 
   connect(this, SIGNAL(executed(QListViewItem *)), SLOT(clickItem(QListViewItem *)) );
@@ -94,13 +61,57 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
   connect(this, SIGNAL(doubleClicked(QListViewItem *)), SLOT(slotDoubleClicked(QListViewItem *)));
 
   m_contextMenu  = new KPopupMenu(this);
-  m_contextMenu->insertItem(i18n("&Reload"), this, SLOT(slotReloadProjectDocs()));
+  m_menuReload = m_contextMenu->insertItem(i18n("&Reload"), this, SLOT(slotReloadProjectDocs()));
+  m_contextMenu->insertItem(i18n("&Download Documentation..."), this, SIGNAL(downloadDoc()));
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
 }
 
 
 DocTreeView::~DocTreeView(){
+}
+
+void DocTreeView::slotRefreshTree()
+{
+  for (QValueList<DocFolder *>::Iterator it = m_folderList.begin(); it != m_folderList.end(); ++it)
+  {
+    delete *it;
+  }
+  m_folderList.clear();
+  QStringList docDirs = KGlobal::instance()->dirs()->findDirs("appdata", "doc");
+
+  for ( QStringList::Iterator it = docDirs.begin(); it != docDirs.end(); ++it )
+  {
+    QString docDir = *it;
+    QDir dir(docDir, "*.docrc");
+    QStringList files = dir.entryList();
+
+    for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+    {
+      KConfig config( docDir + *it_f );
+      config.setGroup("Tree");
+
+      QString relDocDir = config.readEntry("Doc dir");
+
+      DocFolder *folder = new DocFolder(this, config.readEntry("Top Element"), &config , QDir::cleanDirPath(docDir+relDocDir)+"/");
+      folder->setPixmap( 0, SmallIcon("folder_open") );
+      folder->topLevel = true;
+      folder->setOpen(true);
+      m_folderList.append(folder);
+
+      config.setGroup("Context");
+      QStrList list;
+      config.readListEntry("ContextList", list );
+
+      for ( unsigned int i=0; i<list.count(); i++ )
+      {
+        QString keyword = list.at(i);
+        QString *url = new QString(QDir::cleanDirPath(docDir + relDocDir + "/" + config.readEntry( list.at(i) )));
+        contextHelpDict->insert( keyword, url );
+      }
+    }
+  }
+
 }
 
 void DocTreeView::clickItem( QListViewItem *)
@@ -145,13 +156,16 @@ void DocTreeView::slotAddProjectDoc(const KURL& url)
 
 void DocTreeView::slotMenu(KListView *, QListViewItem *item, const QPoint &point)
 {
-  if (!item) return;
-  setSelected(item, true);
-
-  if ( currentItem() == projectDocFolder)
+  m_contextMenu->setItemVisible(m_menuReload, false);
+  if (item)
   {
-    m_contextMenu->popup(point);
+    setSelected(item, true);
+    if (currentItem() == projectDocFolder)
+    {
+      m_contextMenu->setItemVisible(m_menuReload, true);
+    }
   }
+  m_contextMenu->popup(point);
 }
 
 void DocTreeView::slotNewProjectLoaded(const QString &, const KURL &, const KURL &)

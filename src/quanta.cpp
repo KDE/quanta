@@ -249,6 +249,11 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_documentationToolView = 0L;
   m_previewedDocument = 0L;
   m_previewVisible =  false;
+  m_newDTEPStuff = 0L;
+  m_newToolbarStuff = 0L;
+  m_newTemplateStuff = 0L;
+  m_newScriptStuff = 0L;
+  m_newDocStuff = 0L;
   emit eventHappened("quanta_start", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
 }
 
@@ -3439,6 +3444,16 @@ void QuantaApp::slotDownloadScript()
     if (!m_newScriptStuff)
       m_newScriptStuff = new QNewScriptStuff("quanta/script", this);
     m_newScriptStuff->download();
+}
+
+void QuantaApp::slotDownloadDoc()
+{
+  if (!m_newDocStuff)
+  {
+    m_newDocStuff = new QNewDocStuff("quanta/documentation", this);
+    connect(m_newDocStuff, SIGNAL(installFinished()), dTab, SLOT(slotRefreshTree()));
+  }
+  m_newDocStuff->download();
 }
 
 void QuantaApp::slotCodeFormatting()

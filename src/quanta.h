@@ -57,6 +57,7 @@ class QNewDTEPStuff;
 class QNewToolbarStuff;
 class QNewTemplateStuff;
 class QNewScriptStuff;
+class QNewDocStuff;
 
 class QTabWidget;
 class QWidgetStack;
@@ -417,6 +418,8 @@ protected slots:
   void slotDownloadTemplate();
   /** Downloads a script from the main server */
   void slotDownloadScript();
+  /** Downloads a documentation from the main server */
+  void slotDownloadDoc();
   /** Shows tip of the day */
   void slotHelpTip();
   /** Show the user mailing list sign up */
@@ -588,6 +591,7 @@ protected: // Protected attributes
   QNewToolbarStuff *m_newToolbarStuff;
   QNewTemplateStuff *m_newTemplateStuff;
   QNewScriptStuff *m_newScriptStuff;
+  QNewDocStuff *m_newDocStuff;
 
 public: //TODO: check if it's worth to make a read method for them
   QDict<ToolbarEntry> toolbarList;

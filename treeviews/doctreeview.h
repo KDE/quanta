@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Mar 4 2000
     copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky <pdima@mail.univ.kiev.ua>
-                           (C) 2002 Andras Mantia <amantia@kde.org>
+                           (C) 2002, 2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,8 +18,11 @@
 #ifndef DOCTREEVIEW_H
 #define DOCTREEVIEW_H
 
+//qt includes
 #include <qdict.h>
+#include <qvaluelist.h>
 
+//kde includes
 #include <klistview.h>
 
 class DocFolder;
@@ -36,16 +39,19 @@ public:
   DocTreeView(QWidget *parent=0, const char *name=0);
   ~DocTreeView();
 
-  QString *contextHelp( QString keyword );
+  QString *contextHelp(QString keyword);
 
 public slots:
   void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
   void slotReloadProjectDocs();
   void slotAddProjectDoc(const KURL& url);
+  /** Re-reads the documentation directories. */
+  void slotRefreshTree();
 
 signals:
   void openURL(const QString& );
   void reloadProjectDocs();
+  void downloadDoc();
 
 private slots:
   void clickItem( QListViewItem *);
@@ -55,9 +61,11 @@ private slots:
 
 private:
 
-  QDict <QString> *contextHelpDict;
+  QDict<QString> *contextHelpDict;
+  QValueList<DocFolder *> m_folderList;
   KListViewItem *projectDocFolder;
   KPopupMenu *m_contextMenu;
+  int m_menuReload;
 };
 
 #endif

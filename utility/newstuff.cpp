@@ -111,5 +111,21 @@ void QNewScriptStuff::installResource()
         KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded script tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("Script Installation Error"));
 }
 
+void QNewDocStuff::installResource()
+{
+  bool ok = true;
+  KTar tar(m_tarName, "application/x-gzip");
+  if (tar.open(IO_ReadOnly))
+  {
+    const KArchiveDirectory *directory = tar.directory();
+    QString docDir =KGlobal::dirs()->saveLocation("data") + resourceDir + "doc/";
+    directory->copyTo(docDir, true);
+    tar.close();
+  } else
+    ok = false;
+
+    if (!ok)
+      KMessageBox::error(parentWidget(), i18n("There was an error with the downloaded script tarball file. Possible causes are damaged archive or invalid directory structure in the archive."), i18n("Documentation Installation Error"));
+}
 
 #include "newstuff.moc"
