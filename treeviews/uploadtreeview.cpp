@@ -58,7 +58,7 @@ int UploadTreeView::checkboxTree( QListViewItem *it )
 	else
   {
     itIter = it->firstChild();
-    if (!itIter) itIter = it;
+    if (!itIter && dynamic_cast<UploadTreeFile *>(it)) itIter = it;
   }
   // bitFlag structure: (0/1)all children exist (0/1)no children exist.
   // We don't need some children as a bit flag, because that's implied if the bits are "00".
