@@ -2214,8 +2214,8 @@ void QuantaApp::recoverCrashed()
            "Backup created on: <b>%5</b><br><br>"
            "</qt>")
            .arg(originalVersion.prettyURL(0, KURL::StripFileProtocol ))
-           .arg(origSize).arg(origTime)
-           .arg(backupSize).arg(backupTime));
+           .arg(KIO::convertSize(origSize)).arg(origTime)
+           .arg(KIO::convertSize(backupSize)).arg(backupTime));
           dlg->buttonLoad->setText(i18n("&Restore the file from backup"));
           dlg->buttonIgnore->setText(i18n("Do &not restore the file from backup"));
           delete dlg->warningLabel;
