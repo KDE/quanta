@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QuantaScriptInfo>
 <INFO>
-<options editor="kmdr-editor" interpreter="kmdr-executor" />
+<options editor="kmdr-editor" interpreter="kmdr-executor -c quanta" />
 <name>htmlquickstart</name>
 <author>Eric Laffoon / Frederik Nosi</author>
 <email>sequitur@kde.org</email>

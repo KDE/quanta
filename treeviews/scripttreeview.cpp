@@ -191,7 +191,9 @@ void ScriptTreeView::slotRun()
     else
     {
       KProcess *proc = new KProcess();
-      *proc << execApp << urlToOpen.path();
+      QStringList argsList = QStringList::split(' ', execApp);
+      *proc << argsList;
+      *proc << urlToOpen.path();
       proc->start(KProcess::DontCare);
     }
   }

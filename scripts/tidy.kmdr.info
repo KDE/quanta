@@ -1,6 +1,6 @@
 <!DOCTYPE QuantaScriptInfo>
 <INFO>
-<options editor="kmdr-editor" interpreter="kmdr-executor" />
+<options editor="kmdr-editor" interpreter="kmdr-executor -c quanta" />
 <name>tidy</name>
 <author>Robert Nickel</author>
 <email>robert@artnickel.com</email>

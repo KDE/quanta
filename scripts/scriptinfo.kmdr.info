@@ -2,7 +2,7 @@
 <?xml-stylesheet type=text/xsl href=info.xsl ?>
 <!DOCTYPE QuantaScriptInfo>
 <INFO>
-<options editor="kmdr-editor" interpreter="kmdr-executor" />
+<options editor="kmdr-editor" interpreter="kmdr-executor -c quanta" />
 <name>scriptinfo.kmdr</name>
 <author>Eric Laffoon</author>
 <email>sequitur@kde.org</email>
