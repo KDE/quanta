@@ -37,6 +37,8 @@
 #include "../quantacommon.h"
 
 
+extern bool useCloseTag;
+
 TagAction::TagAction( QDomElement *element, QuantaView *view,KActionCollection *collection )
   : KAction( element->attribute("text"), 0, collection, element->attribute("name") ),
     tag(*element),
@@ -96,13 +98,19 @@ void TagAction::insertTag()
        if (!attr.isEmpty())
           s1 += " "+QuantaCommon::attrCase(attr);
        s1 += ">";
-       QString s2 = "</" + QuantaCommon::tagCase(name) + ">";
+       QString s2;
+       if (useCloseTag)
+          s2 = "</" + QuantaCommon::tagCase(name) + ">";
        if ( xtag.attribute("use","false") == "true" )
        {
          if ( xtag.attribute("inLine","true") == "true" )
+         {
            view_->write()->insertTag( s1, s2 );
+         }
          else
+         {
            view_->write()->insertTag( s1+"\n"+space+"  ", "\n"+space+s2 );
+         }
        }
        else
          view_->write()->insertTag( s1 );

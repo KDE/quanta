@@ -317,8 +317,11 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
    }
 
    if ( ( singleTags->find( tag.upper() )!= -1 ) ||
-      ( ( optionalTags->find(tag.upper())!= -1 ) && (!useCloseTag)))
-          secondPartOfTag = "";
+//      ( ( optionalTags->find(tag.upper())!= -1 ) && (!useCloseTag)))
+         (!useCloseTag) )
+   {
+     secondPartOfTag = "";
+   }
 
    w->insertTag( newTag, secondPartOfTag);
 }

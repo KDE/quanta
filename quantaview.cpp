@@ -39,9 +39,14 @@ void QuantaView::insertTag( const char *tag)
   QString startTag = QuantaCommon::tagCase(tag);
 
   if ( ( singleTags->find( startTag.upper() )!= -1 ) ||
-     ( ( optionalTags->find(startTag.upper())!= -1 ) && (!useCloseTag)))
+//     ( ( optionalTags->find(startTag.upper())!= -1 ) && (!useCloseTag)))
+     (!useCloseTag))
+  {
       write()->insertTag( QString("<")+QuantaCommon::tagCase(startTag)+">" );
+  }
   else
+  {
       write()->insertTag( QString("<")+QuantaCommon::tagCase(startTag)+">", QString("</")+QuantaCommon::tagCase(startTag)+">");
+  }
 }
 #include "quantaview.moc"
