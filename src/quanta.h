@@ -116,7 +116,7 @@ class QuantaApp : public KMdiMainFrm, public DCOPWindowManagerIf
 friend class QuantaInit;
 
 public:
-  QuantaApp();
+  QuantaApp(int mdiMode);
   ~QuantaApp();
 
   QuantaDoc  *doc() const {return m_doc; }

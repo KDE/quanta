@@ -182,7 +182,7 @@ const QString resourceDir = QString(PACKAGE) + "/";
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)
 static void silenceQToolBar(QtMsgType, const char *){}
 
-QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta", KMdi::IDEAlMode )
+QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta", (KMdi::MdiMode) mdiMode)
 {
   setXMLFile("quanta_beui.rc");
   m_quantaInit = new QuantaInit(this);
@@ -3719,7 +3719,7 @@ void QuantaApp::saveOptions()
 #endif
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry("Close Buttons", qConfig.showCloseButtons);
-    m_config->writeEntry("MDI mode", "IDEAl"); //FIXME: save the actual mode
+    m_config->writeEntry("MDI mode", mdiMode());
 
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);

@@ -80,8 +80,10 @@ KQApplication::KQApplication()
    }
    else */
    {
-     quantaApp = new QuantaApp();
-     KConfig *config = quantaApp->config();
+     KConfig *config = kapp->config();
+     config->setGroup("General Options");
+     int mdiMode = config->readNumEntry("MDI mode", KMdi::IDEAlMode);
+     quantaApp = new QuantaApp(mdiMode);
      config->setGroup("General Options");
      if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
      {
@@ -135,8 +137,10 @@ int KQUniqueApplication::newInstance()
   else
   {
     splash = 0L;
-    quantaApp = new QuantaApp();
-    KConfig *config = quantaApp->config();
+    KConfig *config = kapp->config();
+    config->setGroup("General Options");
+    int mdiMode = config->readNumEntry("MDI mode", KMdi::IDEAlMode);
+    quantaApp = new QuantaApp(mdiMode);
     config->setGroup("General Options");
     if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
     {

@@ -590,8 +590,8 @@ void QuantaInit::readOptions()
 
   m_config->setGroup  ("General Options");
   QString layout = m_config->readEntry("Window layout", "Default");
-  QString mdiMode = m_config->readEntry("MDI mode", "");
-  if (!mdiMode.isEmpty() && layout != "Default")
+  int mdiMode = m_config->readNumEntry("MDI mode", -1);
+  if (mdiMode != -1 && layout != "Default")
       m_quanta->readDockConfig(m_config);
   qConfig.windowLayout = "Custom";
 }
