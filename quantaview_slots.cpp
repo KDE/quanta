@@ -634,6 +634,7 @@ void QuantaView::slotPasteHTMLQuoted()
       text.replace( "&", "&amp;" );
       text.replace( "<", "&lt;" );
       text.replace( "\"", "&quot;" );
+      text.replace( ">", "&gt;" );
       unsigned int line, col;
       w->viewCursorIf->cursorPositionReal(&line, &col);
       w->editIf->insertText(line, col, text );
