@@ -1144,7 +1144,7 @@ void Project::uploadFile(QString file)
 	emit saveAllFiles();
 	QString fname = QExtFileInfo::toRelative( file, basePath);
 
-	ProjectUpload *dlg = new ProjectUpload(fname, this, 0, i18n("Upload project's files..."));
+	ProjectUpload *dlg = new ProjectUpload(fname, this, 0, i18n("Upload project's files..."), false, Qt::WDestructiveClose);
   dlg->show();
   //ProjectUpload *dlg = new ProjectUpload(fname, this, 0, i18n("Upload project's files..."));
   //dlg->exec();

@@ -82,7 +82,7 @@ void QuantaView::slotEditCurrentTag()
     if ( QuantaCommon::isKnownTag(dtd->name,tagName) )
     {
       isUnknown = false;
-      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtd,tagName), tag );
+      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtd,tagName), tag, basePath() );
       if (dlg->exec())
       {
        w->changeTag(tag, dlg->getAttributes() );

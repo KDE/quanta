@@ -49,8 +49,8 @@
 #include <kcompletion.h>
 
 
-ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const char* name)
-  :ProjectUploadS( parent, name, true, 0)
+ProjectUpload::ProjectUpload(QString file, Project* prg, QWidget *parent, const char* name, bool modal, WFlags fl)
+  :ProjectUploadS( parent, name, modal, fl)
 {
     initProjectInfo(prg);
 

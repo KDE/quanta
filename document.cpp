@@ -887,6 +887,7 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
+ bool handled = false;
  if (qConfig.useAutoCompletion)
  {
   if (completionInProgress)
@@ -897,31 +898,37 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
     DTDStruct* dtd = currentDTD();
     if (dtd->family == Xml)
     {
-      xmlAutoCompletion(dtd, line, column, string);
+      handled = xmlAutoCompletion(dtd, line, column, string);
     }
     if (dtd->family == Script)
     {
-      scriptAutoCompletion(dtd, line, column, string);
+      handled = scriptAutoCompletion(dtd, line, column, string);
     }
 
-    dtd = defaultDTD();
-    if (dtd->family == Xml)
+    if (!handled)
     {
-      xmlAutoCompletion(dtd, line, column, string);
-    }
-    if (dtd->family == Script)
-    {
-      scriptAutoCompletion(dtd, line, column, string);
+      dtd = defaultDTD();
+      if (dtd->family == Xml)
+      {
+        xmlAutoCompletion(dtd, line, column, string);
+      }
+      if (dtd->family == Script)
+      {
+        scriptAutoCompletion(dtd, line, column, string);
+      }
     }
   }
  }
 }
 
-/** Called whenever a user inputs text in an XML type document. */
-void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QString & string)
+/** Called whenever a user inputs text in an XML type document.
+    Returns true if the code completionw as handled.
+*/
+bool Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QString & string)
 {
   QTag *tag;
   QString tagName;
+  bool handled = false;
   tagName = getTagNameAt(dtd, line, column);
 
   tag = QuantaCommon::tagFromDTD(dtd, tagName);
@@ -932,6 +939,7 @@ void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
     {
       //we need to complete a tag name
       showCodeCompletions( getTagCompletions(dtd, line, column) );
+      handled = true;
     }
     else if ( string == "&")
          {
@@ -950,6 +958,7 @@ void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
       column++;
       editIf->insertText(line, column, "</" + tagName + ">");
       viewCursorIf->setCursorPositionReal( line, column );
+      handled = true;
     }
     else if ( string == " " )
          {
@@ -962,8 +971,11 @@ void Document::xmlAutoCompletion(DTDStruct* dtd, int line, int column, const QSt
                QString textLine = editIf->textLine(line).left(column-1);
                QString attribute = textLine.mid(textLine.findRev(' ')+1);
                showCodeCompletions( getAttributeValueCompletions(dtd, tagName, attribute) );
+               handled = true;
               }
   } // else - we are inside of a tag
+
+ return handled;
 }
 
 
@@ -1233,9 +1245,10 @@ QString Document::findDTDName(int startLine, int endLine, bool searchPseudoDTD)
 }
 
 /** Called whenever a user inputs text in a script type document. */
-void Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const QString & string)
+bool Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const QString & string)
 {
-  if (string == "(")  //if we need to list the arguments of a function
+ bool handled = false;
+ if (string == "(")  //if we need to list the arguments of a function
  {
    QString textLine = editIf->textLine(line).left(column);
    QString word = findWordRev(textLine);
@@ -1258,8 +1271,10 @@ void Document::scriptAutoCompletion(DTDStruct *dtd, int line, int column, const 
      arguments = tag->returnType +" "+tag->name() + "("+arguments.left(arguments.length()-1)+")";
      argList.append(arguments);
      codeCompletionIf->showArgHint(argList, "()" ,",");
+     handled = true;
    }
  }
+ return handled;
 }
 
 /** Retriwes the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
@@ -1395,28 +1410,32 @@ QString Document::findRev(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbC
 /** Code completion was requested by the user. */
 void Document::codeCompletionRequested()
 {
+  bool handled = false;
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
   DTDStruct* dtd = currentDTD();
   if (dtd->family == Xml)
   {
-    xmlCodeCompletion(dtd, line, col);
+    handled = xmlCodeCompletion(dtd, line, col);
 
   }
   if (dtd->family == Script)
   {
-    scriptCodeCompletion(dtd, line, col);
-  }           /*
-  dtd = defaultDTD();
-  if (dtd->family == Xml)
-  {
-    xmlCodeCompletion(dtd, line, col);
-
+    handled = scriptCodeCompletion(dtd, line, col);
   }
-  if (dtd->family == Script)
+  if (!handled)
   {
-    scriptCodeCompletion(dtd, line, col);
-  }             */
+    dtd = defaultDTD();
+    if (dtd->family == Xml)
+    {
+      xmlCodeCompletion(dtd, line, col);
+
+    }
+    if (dtd->family == Script)
+    {
+      scriptCodeCompletion(dtd, line, col);
+    }             
+  }
   completionInProgress = true;
 }
 
@@ -1459,8 +1478,9 @@ QString Document::findWordRev(const QString& textToSearch)
 
 
 /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
-void Document::xmlCodeCompletion(DTDStruct *dtd, int line, int col)
+bool Document::xmlCodeCompletion(DTDStruct *dtd, int line, int col)
 {
+  bool handled = false;
   Tag * tag = tagAt(dtd,line,col);
   if (tag)
   {
@@ -1471,6 +1491,7 @@ void Document::xmlCodeCompletion(DTDStruct *dtd, int line, int col)
     if (col <= (int)(bCol+tag->name.length()+1)) //we are inside a tag name, so show the possible tags
     {
      showCodeCompletions( getTagCompletions(dtd, line, col) );
+     handled = true;
     } else
     {
       index = tag->valueIndexAtPos(line,col);
@@ -1479,6 +1500,7 @@ void Document::xmlCodeCompletion(DTDStruct *dtd, int line, int col)
         tag->attributeValuePos(index, bLine, bCol);
         s = tag->attributeValue(index).left(col - bCol);
         showCodeCompletions( getAttributeValueCompletions(dtd, tag->name, tag->attribute(index), s) );
+        handled = true;
       } else
       {
         index = tag->attributeIndexAtPos(line,col);
@@ -1494,23 +1516,45 @@ void Document::xmlCodeCompletion(DTDStruct *dtd, int line, int col)
             s="";
           }
           showCodeCompletions( getAttributeCompletions(dtd, tag->name, s) );
+          handled = true;
         }
       }
     }
     delete tag;
   }
+  return handled;
 }
 /** Code completion is manually invoked for script type languages. */
-void Document::scriptCodeCompletion(DTDStruct *dtd, int line, int col)
+bool Document::scriptCodeCompletion(DTDStruct *dtd, int line, int col)
 {
+ bool handled = false;
  QString s = text(line,col,line,col);
  if (s == "(")
  {
    scriptAutoCompletion(dtd,line,col,s);
+   handled = true;
  } else
  {
-   showCodeCompletions(getTagCompletions(dtd, line, col));
+   bool goAhead = true;
+   int pos;
+   s = editIf->textLine(line);
+   pos = s.findRev("<",col);
+   if (pos != -1)
+   {
+     s = text(line, pos+1,line,col);
+     QRegExp rx("[A-Za-z0-9_]*",false);
+     if (rx.exactMatch(s))
+     {
+       goAhead = false;
+     }
+   }
+   if (goAhead)
+   {
+     showCodeCompletions(getTagCompletions(dtd, line, col));
+     handled = true;
+   }
  }
+ return handled;
 }
 /** No descriptions */
 void Document::slotCompletionAborted()

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
-<language name="PHP" version="1.03" kateversion="2.0" section="Scripts"
+<language name="PHP" version="1.04" kateversion="2.0" section="Scripts"
 extensions="*.php;*.php3;*.wml;*.phtml"
 mimetype="text/x-php4-src;text/x-php3-src;text/vnd.wap.wml">
 	<highlighting>
@@ -2699,9 +2699,10 @@ mimetype="text/x-php4-src;text/x-php3-src;text/vnd.wap.wml">
 				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?php" />
 				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?" />
 				<RegExpr attribute="HTML Tag" context="scripts" String="&lt;\s*(SCRIPT|Script|script)\s*" />
-			        <RegExpr attribute="HTML Tag" context="htmltag" String="&lt;\s*\/?\s*[a-zA-Z_:][a-zA-Z0-9._:-]*" />
+			 	<RegExpr attribute="HTML Tag" context="htmltag" String="&lt;\s*\/?\s*[a-zA-Z_:][a-zA-Z0-9._:-]*" />
+				<StringDetect attribute="HTML Comment" context="htmlcomment" String="&lt;!--" />
 			</context>
-			<context name="phpsource" attribute="Normal Text" lineEndContext="#stay">
+			<context name="phpsource" attribute="PHP Text" lineEndContext="#stay">
 				<StringDetect attribute="Keyword" context="#pop" String="?&gt;" />
 				<Detect2Chars attribute="Comment" context="onelinecomment" char="/" char1="/" />
 				<Detect2Chars attribute="Comment" context="twolinecomment" char="/" char1="&#42;" />
@@ -2749,22 +2750,32 @@ mimetype="text/x-php4-src;text/x-php3-src;text/vnd.wap.wml">
 			<context name="htmltag" attribute="Identifier" lineEndContext="#stay">
 				<Detect2Chars attribute="HTML Tag" context="#push" char="/" char1="&gt;" />
 				<DetectChar attribute="HTML Tag" context="#push" char="&gt;"/>
-				<RegExpr attribute="Normal Text" context="identifiers" String="\s*=\s*"/>
+				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?php" />
+				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?" />
+				<RegExpr attribute="Identifier" context="identifiers" String="\s*=\s*"/>
 			</context>
-
-			<context name="identifiers" attribute="Normal Text" lineEndContext="#stay">
+			<context name="htmlcomment" attribute="HTML Comment" lineEndContext="#stay">
+				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?php" />
+				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?" />
+				<StringDetect attribute="HTML Comment" context="#pop" String="--&gt;" />
+			</context>
+			<context name="identifiers" attribute="Identifier" lineEndContext="#stay">
 				<RegExpr attribute="String" context="#pop" String="\s*#?[a-zA-Z0-9]*" />
-         			<DetectChar attribute="Types" context="types1" char="'" />
-    				<DetectChar attribute="Types" context="types2" char="&quot;" />
+    			<DetectChar attribute="Types" context="types1" char="'" />
+    			<DetectChar attribute="Types" context="types2" char="&quot;" />
 			</context>
 
 			<context name="types1" attribute="Types" lineEndContext="#stay">
+				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?php" />
+				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?" />
    				<DetectChar attribute="Types" context="#pop#pop" char="'" />
    			</context>
 
 			<context name="types2" attribute="Types" lineEndContext="#stay">
+				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?php" />
+				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?" />
 				<DetectChar attribute="Types" context="#pop#pop" char="&quot;" />
-       			</context>
+    		</context>
 
 			<context name="scripts" attribute="Normal Text" lineEndContext="#stay">
 				<Detect2Chars attribute="Comment" context="onelinecomment" char="/" char1="/" />
@@ -2772,8 +2783,8 @@ mimetype="text/x-php4-src;text/x-php3-src;text/vnd.wap.wml">
 				<keyword attribute="Control Structures" context="#stay" String="control structures" />
 				<keyword attribute="Keyword" context="#stay" String="keywords" />
 				<keyword attribute="Function" context="#stay" String="functions" />
-				<StringDetect attribute="Keyword" context="php" String="&lt;?php"/>
-				<StringDetect attribute="Keyword" context="php" String="&lt;?"/>
+				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?php"/>
+				<StringDetect attribute="Keyword" context="phpsource" String="&lt;?"/>
 				<RegExpr attribute="HTML Tag" context="#pop" String="&lt;\s*\/\s*(SCRIPT|Script|script)\s*&gt;" />
 
 				<DetectChar attribute="String" context="doblequotestring" char="&quot;" />
@@ -2791,6 +2802,7 @@ mimetype="text/x-php4-src;text/x-php3-src;text/vnd.wap.wml">
 		</contexts>
 		<itemDatas>
 			<itemData name="Normal Text" defStyleNum="dsNormal" />
+			<itemData name="PHP Text" defStyleNum="dsNormal" />
 			<itemData name="Keyword" defStyleNum="dsKeyword" />
 			<itemData name="Function" defStyleNum="dsKeyword" color="#0000FF" selColor="#00ffff" bold="0" italic="0"/>
 			<itemData name="Operator" defStyleNum="dsKeyword" color="#00F000" selColor="#ffffff" bold="1" italic="0"/>
@@ -2806,6 +2818,7 @@ mimetype="text/x-php4-src;text/x-php3-src;text/vnd.wap.wml">
 			<itemData name="Other" defStyleNum="dsOthers" />
 
 			<itemData name="HTML Tag" defStyleNum="dsKeyword" color="#0F0000" selColor="#ffffff" bold="1" italic="0"/>
+			<itemData name="HTML Comment" defStyleNum="dsComment" />
 			<itemData name="Identifier" defStyleNum="dsOthers"/>
 			<itemData name="Types" defStyleNum="dsDataType"/>
 

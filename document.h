@@ -127,8 +127,6 @@ work correctly. */
   QString text(int bLine, int bCol, int eLine, int eCol);
   /** Code completion was requested by the user. */
   void codeCompletionRequested();
-  /** Code completion is manually invoked for script type languages. */
-  void scriptCodeCompletion(DTDStruct *dtd, int line, int col);
   /** Bring up the code completion tooltip. */
   void codeCompletionHintRequested();
   /** No descriptions */
@@ -184,6 +182,8 @@ private:
   Tag *findScriptTag(int line, int col, QRegExp tagRx);
   Tag *findText(int line, int col, bool forwardOnly = false);
 
+  /** Find the word until the first word boundary backwards */
+  QString findWordRev(const QString& textToSearch);
   /** Brings up list of code completions */
   void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
   /** Get list of possibile tag name completions */
@@ -195,13 +195,13 @@ private:
   /** Get list of possibile completions in normal text input (nt creating a tag) */
   QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
   /** Called whenever a user inputs text in an XML type document. */
-  void xmlAutoCompletion(DTDStruct*,int , int , const QString & );
+  bool xmlAutoCompletion(DTDStruct*,int , int , const QString & );
   /** Called whenever a user inputs text in a script type document. */
-  void scriptAutoCompletion(DTDStruct*,int , int , const QString & );
-  /** Find the word until the first word boundary backwards */
-  QString findWordRev(const QString& textToSearch);
+  bool scriptAutoCompletion(DTDStruct*,int , int , const QString & );
   /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
-  void xmlCodeCompletion(DTDStruct *dtd, int line, int col);
+  bool xmlCodeCompletion(DTDStruct *dtd, int line, int col);
+  /** Code completion is manually invoked for script type languages. */
+  bool scriptCodeCompletion(DTDStruct *dtd, int line, int col);
 protected: // Protected attributes
   /**  */
   bool completionInProgress;
