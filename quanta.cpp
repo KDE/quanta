@@ -905,3 +905,15 @@ void QuantaApp::slotForward()
   if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlpart->forward();
   if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 1 ) htmlPartDoc->forward();
 }
+
+void QuantaApp::slotMessageWidgetEnable()
+{
+  if ( !bottdock->isVisible() )
+    bottdock->changeHideShowState();
+}
+
+void QuantaApp::slotMessageWidgetDisable()
+{
+  if ( bottdock->isVisible() )
+    bottdock->changeHideShowState();
+}

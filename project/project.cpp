@@ -70,6 +70,7 @@ Project::Project( QWidget *, const char *name )
   this->name=QString::null;
   this->config = 0L;
   this->modified=false;
+  this->olfwprj=false;
 }
 
 Project::~Project()
@@ -364,7 +365,7 @@ void Project::loadProject(const KURL &url)
   if ( !url.isLocalFile() )
   {
     emit statusMsg(i18n("Loading project %s").arg(url.url()));
-
+    emit checkOpenAction(false);
     // clear
     QByteArray b;
     buff.setBuffer(b);
@@ -405,6 +406,7 @@ void Project::loadProject(const KURL &url)
 
 void Project::slotProjectReadFinish(KIO::Job *job)
 {
+  emit checkOpenAction(true);
   if ( job->error() ) job->showErrorDialog();
   
   QString s(buff.buffer());
@@ -416,11 +418,12 @@ void Project::slotProjectReadFinish(KIO::Job *job)
   // we finish load project
   // and now very cool if we load
   // remote "last opened" files
-  // for this ftp session
+  // for this first ftp session
+  if (olfwprj) return;
   config->setGroup("General Options");
 
   QStrList urls;
-   config->readListEntry("List of opened files", urls);
+    config->readListEntry("List of opened files", urls);
 
   for ( urls.last();urls.current();urls.prev() )
   {
@@ -429,6 +432,7 @@ void Project::slotProjectReadFinish(KIO::Job *job)
     if ( !fu.isLocalFile() ) 
       emit openFile( fu );
   }
+  olfwprj=true;
 }
 
 void Project::slotProjectReadData(KIO::Job *,const QByteArray &data)

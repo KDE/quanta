@@ -183,6 +183,9 @@ class QuantaApp : public KDockMainWindow
     void viewMenuAboutToShow();
     void settingsMenuAboutToShow();
     
+    void slotMessageWidgetEnable();
+    void slotMessageWidgetDisable();
+    
     /** repaint preview */
     void repaintPreview( bool clear = false);
 
@@ -276,7 +279,8 @@ class QuantaApp : public KDockMainWindow
     KAction *saveAction, *saveAllAction, *undoAction, *redoAction,
       *cutAction, *copyAction, *findNextAction, *backAction, *forwardAction,
       *closeprjAction, *insertFileAction, *insertDirAction, 
-      *rescanPrjDirAction, *uploadProjectAction, *projectOptionAction;
+      *newPrjAction, *openPrjAction, *rescanPrjDirAction, *uploadProjectAction,
+      *projectOptionAction;
 
     QDomDocument *actions;
 };

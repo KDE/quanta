@@ -115,6 +115,7 @@ signals:
   void saveAllFiles();
   void newStatus();
   void statusMsg(QString);
+  void checkOpenAction(bool);
 
 public:
   QDomDocument dom;
@@ -144,6 +145,7 @@ private:
 	KConfig *config;
 	
 	bool modified;
+	bool olfwprj; //for internal use
 	
   QBuffer buff;
 };

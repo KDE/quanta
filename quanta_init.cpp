@@ -24,8 +24,6 @@
 #include <qlayout.h>
 #include <qtoolbutton.h>
 
-#include <qprogressbar.h>
-
 // include files for KDE
 #include <kiconloader.h>
 #include <kmessagebox.h>
@@ -149,16 +147,7 @@ void QuantaApp::initStatusBar()
   statusbarTimer = new QTimer(this);
   connect(statusbarTimer,SIGNAL(timeout()),this,SLOT(statusBarTimeout()));
   
-//  int h = statusBar()->fontMetrics().height();
-  
-//  QProgressBar *progressBar = new QProgressBar();
-  
-//  progressBar->setProgress(100);
-//  progressBar->setMinimumSize(QSize(200,h));
-//  progressBar->setMaximumSize(QSize(200,h));
-  
   statusBar()->insertItem(i18n(IDS_DEFAULT),IDS_STATUS, 1);
-//  statusBar()->addWidget(progressBar);
   statusBar()->insertFixedItem(" XXX ",     IDS_INS_OVR  );
   statusBar()->insertFixedItem(" * ",       IDS_MODIFIED );
   statusBar()->insertFixedItem(i18n("Line: 00000 Col: 000"), IDS_STATUS_CLM, true);
@@ -184,13 +173,13 @@ void QuantaApp::initProject()
 {
   project = new Project(this);
   
-  connect(project,   SIGNAL(openFile    (KURL &)),
+  connect(project,  SIGNAL(openFile    (KURL &)),
           this,     SLOT  (slotFileOpen(KURL &)));
-  connect(project,   SIGNAL(reloadTree(QStringList,bool,bool)),
+  connect(project,  SIGNAL(reloadTree(QStringList,bool,bool)),
           pTab,     SLOT  (slotReloadTree(QStringList,bool,bool)));
-  connect(project,   SIGNAL(setBasePath(QString)),
+  connect(project,  SIGNAL(setBasePath(QString)),
           pTab,     SLOT  (slotSetBasePath(QString)));
-  connect(project,   SIGNAL(setProjectName(QString)),
+  connect(project,  SIGNAL(setProjectName(QString)),
           pTab,     SLOT  (slotSetProjectName(QString)));
   connect(project,  SIGNAL(closeFiles()),
           doc,      SLOT  (closeAll()));
@@ -207,19 +196,19 @@ void QuantaApp::initProject()
   connect(fTTab,    SIGNAL(insertFileInProject(QString)),
           project,  SLOT  (insertFile(QString)));
           
-  connect(pTab,      SIGNAL(removeFileFromProject(QString)),
+  connect(pTab,     SIGNAL(removeFileFromProject(QString)),
           project,  SLOT  (slotRemoveFile(QString)));
-  connect(pTab,      SIGNAL(removeFolderFromProject(QString)),
+  connect(pTab,     SIGNAL(removeFolderFromProject(QString)),
           project,  SLOT  (slotRemoveFolder(QString)));
-  connect(pTab,      SIGNAL(uploadSingleFile(QString)),
+  connect(pTab,     SIGNAL(uploadSingleFile(QString)),
           project,  SLOT  (uploadFile(QString)));
-  connect(pTab,      SIGNAL(uploadSingleFolder(QString)),
+  connect(pTab,     SIGNAL(uploadSingleFolder(QString)),
           project,  SLOT  (uploadFile(QString)));
           
   connect(project,  SIGNAL(selectMessageWidget()),
-          this,      SLOT  (slotSelectMessageWidget()));
+          this,     SLOT  (slotMessageWidgetEnable()));
   connect(project,  SIGNAL(disableMessageWidget()),
-          this,      SLOT  (slotDisableMessageWidget()));
+          this,     SLOT  (slotMessageWidgetDisable()));
           
   connect(project,  SIGNAL(messages(QString)),
           messageOutput, SLOT(showMessage(QString)));
@@ -639,14 +628,9 @@ void QuantaApp::initActions()
                         this, SLOT( contextHelp() ),
                         actionCollection(), "context_help" );
                         
-    KAction *tagAttr 
-      = new KAction( i18n( "Tag &Attributes" ), ALT+Key_Down,
-                     doc, SLOT( slotAttribPopup() ),
-                     actionCollection(), "tag_attributes" );
-                     
-    QAccel *menuKey = new QAccel( this );
-//    menuKey->connectItem( menuKey->insertItem( Key_Menu ),
-//                          tagAttr, SLOT( activate() ) );
+    (void) new KAction( i18n( "Tag &Attributes" ), ALT+Key_Down,
+                        doc, SLOT( slotAttribPopup() ),
+                        actionCollection(), "tag_attributes" );
 
     (void) new KAction( i18n( "&Edit Current Tag..." ), Key_F4, 
                         view, SLOT( slotEditCurrentTag() ),
@@ -723,17 +707,24 @@ void QuantaApp::initActions()
 
     // Project actions
     //
-    (void) new KAction( i18n( "&New Project..." ), 0, 
+    newPrjAction = new KAction( i18n( "&New Project..." ), 0, 
                         project, SLOT( newProject() ),
                         actionCollection(), "new_project" );
                         
-    (void) new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
+    openPrjAction = new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
                         project, SLOT( openProject() ),
                         actionCollection(), "open_project" );
                         
     project -> projectRecent =
       KStdAction::openRecent(project, SLOT(openProject(const KURL&)),
                              actionCollection(), "project_open_recent");
+                             
+    connect(project,                SIGNAL(checkOpenAction(bool)),
+            newPrjAction,           SLOT(setEnabled(bool)));
+    connect(project,                SIGNAL(checkOpenAction(bool)),
+            openPrjAction,          SLOT(setEnabled(bool)));
+    connect(project,                SIGNAL(checkOpenAction(bool)),
+            project->projectRecent, SLOT(setEnabled(bool)));
     
     closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0, 
                          project, SLOT( closeProject() ),
