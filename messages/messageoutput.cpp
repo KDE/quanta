@@ -15,6 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <klocale.h>
+
 #include "messageoutput.h"
 #include "messageitem.h"
 #include "messageitemphp.h"
@@ -141,7 +143,9 @@ void MessageOutput::processWebLint( KProcess *p, char *buffer, int len )
       new MessageItemWebLint( this, s.left(endPos) );
       s.remove(0,endPos+1);
     }
-    new MessageItemWebLint( this, s );
+    if( ! s.isEmpty() ) {
+      new MessageItemWebLint( this, s );
+    }
    // setBottomItem(count()-1);
     s = ""; 
   }
@@ -152,4 +156,5 @@ void MessageOutput::weblintFinished()
 {
    clear();
    processWebLint(0,0,0); // show output
+   new MessageItemWebLint( this, i18n("Syntax check done.") );
 }
