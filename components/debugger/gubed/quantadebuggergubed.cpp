@@ -322,7 +322,7 @@ void QuantaDebuggerGubed::slotReadyRead()
 {
 
   // Data from gubed
-  while(m_socket && (m_socket->bytesAvailable() > 0 || m_buffer.length() >= m_datalen))
+  while(m_socket && (m_socket->bytesAvailable() > 0 || m_buffer.length() >= (unsigned long)m_datalen))
   {
     int bytes;
     QString data;
