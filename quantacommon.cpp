@@ -37,6 +37,7 @@
 #include <ktoolbar.h>
 #include <ktoolbarbutton.h>
 #include <kapplication.h>
+#include <kstringhandler.h>
 #include <qwhatsthis.h>
 #include <qtimer.h>
 #include <qclipboard.h>
@@ -644,6 +645,8 @@ void KQPasteAction::menuAboutToShow()
       }
     }
     QString clipboardText = qApp->clipboard()->text(QClipboard::Clipboard);
+    clipboardText.replace("&", "&&");
+    clipboardText = KStringHandler::csqueeze(clipboardText, 45);
     if (list.isEmpty())
         list << clipboardText;
     bool found = false;
@@ -664,7 +667,11 @@ void KQPasteAction::menuItemActivated( int id)
     if (client->isAttached() && client->isApplicationRegistered("klipper"))
     {
       DCOPRef klipper("klipper","klipper");
-      DCOPReply reply = klipper.call("setClipboardContents", m_popup->text(id));
+      DCOPReply reply = klipper.call("getClipboardHistoryItem(int)", m_popup->indexOf(id));
+      if (!reply.isValid())
+        return;
+      QString clipboardText = reply;
+      reply = klipper.call("setClipboardContents(QString)", clipboardText);
       if (reply.isValid())
         kdDebug(24000) << "Clipboard: " << qApp->clipboard()->text(QClipboard::Clipboard) << endl;
     }

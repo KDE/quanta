@@ -51,10 +51,21 @@ struct TagAttr {
   bool quoted;            //quote or not the attribute
 };
 
+struct AreaStruct{
+   AreaStruct() {bLine = bCol = eLine = eCol = -1;}
+   AreaStruct(int bl, int bc, int el, int ec) {bLine = bl; bCol = bc; eLine = el; eCol = ec;}
+   int bLine;
+   int bCol;
+   int eLine;
+   int eCol;
+};
+
+
 class Tag {
 public:
   Tag();
-  Tag( const Tag&);
+  Tag(const Tag&);
+  Tag(const AreaStruct &area, Document *write, DTDStruct *dtd = 0L, bool doParse = false);
   ~Tag();
   Tag operator = ( const Tag& );
 
@@ -82,10 +93,14 @@ public:
   bool hasAttribute( const QString &attr );
   /** Set the coordinates of tag inside the document */
   void setTagPosition(int bLine, int bCol, int eLine, int eCol);
+  /** Set the coordinates of tag inside the document, but using an AreaStruct as argument */
+  void setTagPosition(const AreaStruct &area);
   /** Where the tag begins in the document */
-  void beginPos(int &bLine, int &bCol) const {bLine = beginLine; bCol = beginCol;}
+  void beginPos(int &bLine, int &bCol) const {bLine = m_area.bLine; bCol = m_area.bCol;}
   /** Where the tag ends in the document */
-  void endPos(int &eLine, int &eCol) const {eLine = endLine; eCol = endCol;}
+  void endPos(int &eLine, int &eCol) const {eLine = m_area.eLine; eCol = m_area.eCol;}
+  /** Return the tag area */
+  AreaStruct area() const {return m_area;}
   /** Where the attr at index begins in the document */
   void attributeNamePos(int index, int &line, int &col);
   /** Where the attr value at index begins in the document */
@@ -155,10 +170,9 @@ public:
 #endif
 
 private:
-  int beginLine; //where the tag begins in the doc
-  int beginCol;
-  int endLine;   //where the tag ends in the doc
-  int endCol;
+  void init();
+
+  AreaStruct m_area; //where the tag is in the doc
   int m_nameLine;//where the tag name begins
   int m_nameCol;
 

@@ -15,8 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
- #ifndef KAFKARESOURCE_H
- #define KAFKARESOURCE_H
+#ifndef KAFKARESOURCE_H
+#define KAFKARESOURCE_H
 
 /**
  * A few globals variables avoiding to use the quantaApp global variables :
@@ -30,5 +30,5 @@ class KafkaWidget;
 extern KafkaWidget *kafkaWidget;
 extern KafkaDocument *kafkaDoc;
 
- #endif
+#endif
 

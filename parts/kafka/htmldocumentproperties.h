@@ -15,8 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
- #ifndef HTMLDOCUMENTPROPERTIES_H
- #define HTMLDOCUMENTPROPERTIES_H
+#ifndef HTMLDOCUMENTPROPERTIES_H
+#define HTMLDOCUMENTPROPERTIES_H
 
 class Node;
 class NodeModifsSet;
@@ -78,4 +78,4 @@ private:
 	bool titleDirty, linkDirty;
 };
 
- #endif
+#endif

@@ -26,20 +26,24 @@
 
 Tag::Tag()
 {
-  name = "";
-  dtd = 0L;
-  type = Unknown;
-  single = false;
-  closingMissing = false;
-  structBeginStr = "";
-  cleanStr = "";
-  m_nameLine = -1;
-  m_nameCol = -1;
-  validXMLTag = true;
-#ifdef BUILD_KAFKAPART
-  cleanStrBuilt = true;
-  notInTree = false;
-#endif
+  init();
+}
+
+Tag::Tag(const AreaStruct &area, Document *write, DTDStruct *dtd, bool doParse)
+{
+  init();
+  QString s = write->text(area);
+  m_area = area;
+  this->dtd = dtd;
+  if (doParse)
+  {
+    parse(s, write);
+  } else
+  {
+    m_write = write;
+    m_tagStr = s;
+    cleanStr = s;
+  }
 }
 
 Tag::Tag( const Tag &t)
@@ -49,10 +53,7 @@ Tag::Tag( const Tag &t)
   dtd = t.dtd;
   single = t.single;
   closingMissing = t.closingMissing;
-  beginLine = t.beginLine;
-  beginCol = t.beginCol;
-  endLine = t.endLine;
-  endCol = t.endCol;
+  m_area = t.m_area;
   m_tagStr = t.m_tagStr;
   cleanStr = t.cleanStr;
   m_write = t.m_write;
@@ -72,6 +73,25 @@ Tag::~Tag()
 {
 }
 
+void Tag::init()
+{
+  name = "";
+  dtd = 0L;
+  m_write = 0L;
+  type = Unknown;
+  single = false;
+  closingMissing = false;
+  structBeginStr = "";
+  cleanStr = "";
+  m_nameLine = -1;
+  m_nameCol = -1;
+  validXMLTag = true;
+#ifdef BUILD_KAFKAPART
+  cleanStrBuilt = true;
+  notInTree = false;
+#endif
+}
+
 void Tag::parse(const QString &p_tagStr, Document *p_write)
 {
  attrs.clear();
@@ -84,8 +104,8 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
    type = Text;
    return;
  }
- m_nameLine = beginLine;
- m_nameCol = beginCol + 1;
+ m_nameLine = m_area.bLine;
+ m_nameCol = m_area.bCol + 1;
  uint pos = 1;
  while (pos < strLength &&
         !m_tagStr[pos].isSpace() && m_tagStr[pos] != '>' && m_tagStr[pos] != '\n')
@@ -120,9 +140,9 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
       attr.name = attr.name.left(attr.name.length() - 1).lower();
       if (!attr.name.stripWhiteSpace().isEmpty())
       {
-        attr.nameLine = m_tagStr.left(sPos).contains('\n') + beginLine;
-        if (attr.nameLine == beginLine)
-            attr.nameCol = sPos + beginCol;
+        attr.nameLine = m_tagStr.left(sPos).contains('\n') + m_area.bLine;
+        if (attr.nameLine == m_area.bLine)
+            attr.nameCol = sPos + m_area.bCol;
         else
             attr.nameCol = m_tagStr.left(sPos).section('\n',-1).length();
         attr.value = (dtd != 0) ? dtd->booleanTrue : QString("checked");
@@ -135,9 +155,9 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
     }
     if (dtd && !dtd->caseSensitive)
         attr.name = attr.name.lower();
-    attr.nameLine = m_tagStr.left(sPos).contains('\n') + beginLine;
-    if (attr.nameLine == beginLine)
-        attr.nameCol = sPos + beginCol;
+    attr.nameLine = m_tagStr.left(sPos).contains('\n') + m_area.bLine;
+    if (attr.nameLine == m_area.bLine)
+        attr.nameCol = sPos + m_area.bCol;
     else
         attr.nameCol = m_tagStr.left(sPos).section('\n',-1).length();
 
@@ -179,9 +199,9 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
           pos--;
         attr.value = m_tagStr.mid(valueStartPos, pos - valueStartPos);
       }
-      attr.valueLine = m_tagStr.left(valueStartPos).contains('\n') + beginLine;
-      if (attr.valueLine == beginLine)
-          attr.valueCol = valueStartPos + beginCol;
+      attr.valueLine = m_tagStr.left(valueStartPos).contains('\n') + m_area.bLine;
+      if (attr.valueLine == m_area.bLine)
+          attr.valueCol = valueStartPos + m_area.bCol;
       else
           attr.valueCol = m_tagStr.left(valueStartPos).section('\n',-1).length();
     }
@@ -247,10 +267,16 @@ bool Tag::hasAttribute( const QString &attr )
 /** Set the coordinates of tag inside the document */
 void Tag::setTagPosition(int bLine, int bCol, int eLine, int eCol)
 {
-  beginLine = bLine;
-  beginCol = bCol;
-  endLine = eLine;
-  endCol = eCol;
+  m_area.bLine = bLine;
+  m_area.bCol = bCol;
+  m_area.eLine = eLine;
+  m_area.eCol = eCol;
+}
+
+/** Set the coordinates of tag inside the document, but using an AreaStruct as argument */
+void Tag::setTagPosition(const AreaStruct &area)
+{
+  m_area = area;
 }
 
 /** Return the index of attr. */

@@ -165,7 +165,7 @@ void KQApplicationPrivate::init()
     quantaApp->loadInitialProject(initialProject);
     //recoverCrashed manages the autosaved copies
     quantaApp->recoverCrashed(initialFiles);
-      
+
     for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
     {
       KURL url;

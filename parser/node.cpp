@@ -37,9 +37,9 @@ Node::Node( Node *parent )
   removeAll = true;
   closesPrevious = false;
   insideSpecial = false;
-  #ifdef BUILD_KAFKAPART
+#ifdef BUILD_KAFKAPART
   _closingNode = 0L;
-  #endif
+#endif
   groupElementLists.clear();
 }
 

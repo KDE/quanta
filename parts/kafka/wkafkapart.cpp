@@ -281,8 +281,10 @@ void KafkaDocument::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 
 	if(_domNode.isNull())
 	{
+#ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "KafkaDocument::connectDomNodeToQuantaNode()" <<
 			" - WARNING empty DOM::Node" << endl;
+#endif
 	}
 	/**qtag = QuantaCommon::tagFromDTD(m_currentDoc->defaultDTD(),
 		_domNode.nodeName().string());*/

@@ -1427,6 +1427,13 @@ QString Document::text(int bLine, int bCol, int eLine, int eCol) const
  return t;
 }
 
+//TODO: profile which one is used more often and time critical places and use
+//that one as the default and call from that one the other version
+QString Document::text(const AreaStruct &area) const
+{
+  return text(area.bLine, area.bCol, area.eLine, area.eCol);
+}
+
 QString Document::find(const QRegExp& regExp, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
 {
 

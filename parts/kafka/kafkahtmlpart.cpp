@@ -134,7 +134,9 @@ void KafkaWidget::newDocument()
 
 void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
 {
+#ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "KafkaWidget::insertText text " << text << " pos " << position << endl;
+#endif
 	int focus = w->getAttrs(node)->chCurFoc();
 
 	if(position < 0) return;//nothing to do if something is selected
@@ -146,7 +148,9 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
 		node.setNodeValue(textNode + text + textSplitted);
 		d->m_cursorOffset += text.length();
 		emit domNodeModified(node);
+#ifdef LIGHT_DEBUG
 		kdDebug(25001) << "KafkaWidget::insertText() - added text" << endl;
+#endif
 	}
 	else if(position == 0 && node.nodeName().string().lower() == "body")
 	{
@@ -156,7 +160,9 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
 		m_currentNode = textNode;
 		d->m_cursorOffset = text.length();
 		emit domNodeInserted(textNode, false);
+#ifdef LIGHT_DEBUG
 		kdDebug(25001) << "KafkaWidget::insertText() - added text - 1" << endl;
+#endif
 	}
 	else if(position == 0)
 	{
@@ -166,7 +172,9 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
 		m_currentNode = textNode;
 		d->m_cursorOffset = text.length();
 		emit domNodeInserted(textNode, false);
+#ifdef LIGHT_DEBUG
 		kdDebug(25001) << "KafkaWidget::insertText() - added text - 2" << endl;
+#endif
 	}
 	else if(position == 3 || (position == 1 && (focus == kNodeAttrs::singleNode ||
 		focus == kNodeAttrs::singleNodeAndItself)))
@@ -177,7 +185,9 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
 		m_currentNode = textNode;
 		d->m_cursorOffset = text.length();
 		emit domNodeInserted(textNode, false);
+#ifdef LIGHT_DEBUG
 		kdDebug(25001) << "KafkaWidget::insertText() - added text - 3" << endl;
+#endif
 	}
 	else if(position == 1)
 	{
@@ -189,7 +199,9 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
 		m_currentNode = textNode;
 		d->m_cursorOffset = text.length();
 		emit domNodeInserted(textNode, false);
+#ifdef LIGHT_DEBUG
 		kdDebug(25001) << "KafkaWidget::insertText() - added text - 4" << endl;
+#endif
 	}
 	//document().updateRendering();
 	QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
@@ -209,7 +221,9 @@ void KafkaWidget::insertText(const QString &text, int position)
 
 void KafkaWidget::normalize(DOM::Node _node)
 {
+#ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "KafkaWidget::normalize()" << endl;
+#endif
 	DOM::Node childNode = _node.firstChild();
 	while(!childNode.isNull() && w->getAttrs(childNode)->chCurFoc() == kNodeAttrs::textNode)
 	{
@@ -290,7 +304,9 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 
 	if(event->type() == QEvent::FocusIn)
 	{
+#ifdef LIGHT_DEBUG
 		kdDebug(25001) << "KafkaWidget::eventFilter() FocusIn" << endl;
+#endif
 		emit hasFocus(true);
 		if(!d->cursorTimer)
 			{
@@ -302,7 +318,9 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 
 	if(event->type() == QEvent::FocusOut)
 	{
+#ifdef LIGHT_DEBUG
 		kdDebug(25001) << "KafkaWidget::eventFilter() FocusOut" << endl;
+#endif
 		emit hasFocus(false);
 		if(d->cursorTimer)
 		{
@@ -319,38 +337,50 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 		switch(keyevent->key())
 		{
 			case Key_Left:
+#ifdef LIGHT_DEBUG
 				kdDebug(25001) << "KafkaWidget::eventFilter() Left" << endl;
+#endif
 				//previousOffset(1);
 				d->stuckCursorHorizontalPos = false;
 				//forgetEvent = true;//to avoid the scrolling of the page
 				break;
 
 			case Key_Right:
+#ifdef LIGHT_DEBUG
 				kdDebug(25001) << "KafkaWidget::eventFilter() Right" << endl;
+#endif
 				//nextOffset(1);
 				d->stuckCursorHorizontalPos = false;
 				//forgetEvent = true;
 				break;
 
 			case Key_Backspace:
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::eventFilter() Backspace" << endl;
+#endif
 				keyBackspace();
 				d->stuckCursorHorizontalPos = false;
 				break;
 
 			case Key_Delete:
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::eventFilter() Delete" << endl;
+#endif
 				keyDelete();
 				d->stuckCursorHorizontalPos = false;
 				break;
 
 			case Key_Up:
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::eventFilter() Up" << endl;
+#endif
 				//keyUp();
 				//forgetEvent = true;
 				break;
 			case Key_Down:
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::eventFilter() Down" << endl;
+#endif
 				//keyDown();
 				//forgetEvent = true;
 				break;
@@ -369,7 +399,9 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 			case Key_BackTab:
 				break;
 			case Key_Return:
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::eventFilter() Return" << endl;
+#endif
 				keyReturn();
 				d->stuckCursorHorizontalPos = false;
 				break;
@@ -410,14 +442,18 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 				kdDebug(25001) << "KafkaWidget::eventFilter() Text" << endl;
 				if(m_currentNode.isNull())
 				{
+#ifdef LIGHT_DEBUG
 					kdDebug(25001)<< "KafkaWidget::eventFilter() - DOM::Node NULL" << endl;
+#endif
 					break;
 				}
 				else if(w->getAttrs(m_currentNode)->chCurFoc() !=
 					kNodeAttrs::no || m_currentNode.nodeName().string().lower() == "body")
 				{
+#ifdef LIGHT_DEBUG
 					kdDebug(25001) << "KafkaWidget::eventFilter() Text - " <<
 						keyevent->text() << endl;
+#endif
 					if(( keyevent->state() & Qt::ShiftButton) || ( keyevent->state() == Qt::NoButton))
 						insertText(keyevent->text(), -1);
 					makeCursorVisible();
@@ -458,7 +494,9 @@ void KafkaWidget::keyDelete()
 	{//if we are in the middle of some text, we remove one letter
 		if(!attrs->cbMod())
 			return;
+#ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "KafkaWidget::keyDelete() - one letter removed - 1" << endl;
+#endif
 		DOM::DOMString nodeText = m_currentNode.nodeValue();
 		DOM::DOMString textSplitted = nodeText.split(d->m_cursorOffset + 1);
 		nodeText.split(d->m_cursorOffset);
@@ -474,8 +512,9 @@ void KafkaWidget::keyDelete()
 	{//if we delete ourselves, which node will be m_currentNode??
 		if(!attrs->cbDel())
 			return;
-		kdDebug(25001)<< "KafkaWidget::keyDelete() - deleting a Node - 2" <<
-			endl;
+#ifdef LIGHT_DEBUG
+		kdDebug(25001)<< "KafkaWidget::keyDelete() - deleting a Node - 2" << endl;
+#endif
 		DOM::Node _node = m_currentNode;
 		bool b = false;
 		while(1)
@@ -548,8 +587,10 @@ void KafkaWidget::keyDelete()
 		{
 			if((static_cast<DOM::CharacterData>(_nodeNext)).length() != 0)
 			{//if we are in text, remove a letter
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::keyDelete() - one letter" <<
 					" removed - 2" << endl;
+#endif
 				DOM::DOMString nodeText = _nodeNext.nodeValue();
 				DOM::DOMString textSplitted = nodeText.split(1);
 				_nodeNext.setNodeValue(textSplitted);
@@ -559,8 +600,10 @@ void KafkaWidget::keyDelete()
 			}
 			else
 			{//if we are in an empty text
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::keyDelete() - deleting" <<
 					"empty #text" << endl;
+#endif
 				_nodeParent = _nodeNext.parentNode();
 				emit domNodeIsAboutToBeRemoved(_nodeNext, true);
 				_nodeParent.removeChild(_nodeNext);
@@ -575,8 +618,10 @@ void KafkaWidget::keyDelete()
 			kNodeAttrs::no || attrs->chCurFoc() == kNodeAttrs::left) &&
 			!_nodeNext.hasChildNodes()))
 		{
+#ifdef LIGHT_DEBUG
 			kdDebug(25001)<< "KafkaWidget::keyDelete() - deleting" <<
 				" a Node" << endl;
+#endif
 			_nodeParent = _nodeNext.parentNode();
 			focus = w->getAttrs(_nodeNext)->chCurFoc();
 			emit domNodeIsAboutToBeRemoved(_nodeNext, true);
@@ -644,7 +689,9 @@ void KafkaWidget::keyBackspace()
 	{//if we are in the middle of some text, we remove one letter
 		if(!attrs->cbMod())
 			return;
+#ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "KafkaWidget::keyBackspace() - one letter removed - 1" << endl;
+#endif
 		DOM::DOMString nodeText = m_currentNode.nodeValue();
 		DOM::DOMString textSplitted = nodeText.split(d->m_cursorOffset);
 		nodeText.split(d->m_cursorOffset - 1);
@@ -662,7 +709,9 @@ void KafkaWidget::keyBackspace()
 	{//if we delete ourselves, which node will be m_currentNode??
 		if(!attrs->cbDel())
 			return;
+#ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "KafkaWidget::keyBackspace() - deleting a TagDeletable - 2" << endl;
+#endif
 		DOM::Node _node = m_currentNode;
 		bool b = false;
 		while(1)
@@ -738,8 +787,10 @@ void KafkaWidget::keyBackspace()
 		{
 			if((static_cast<DOM::CharacterData>(_nodePrev)).length() != 0)
 			{//if we are in text, remove a letter
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::keyBackspace() - one" <<
 					" letter removed - 2" << endl;
+#endif
 				DOM::DOMString nodeText = _nodePrev.nodeValue();
 				nodeText.split((static_cast<DOM::CharacterData>(_nodePrev)).length() - 1);
 				_nodePrev.setNodeValue(nodeText);
@@ -750,8 +801,10 @@ void KafkaWidget::keyBackspace()
 			}
 			else
 			{//if we are in an empty text
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::keyBackspace() - deleting" <<
 					" empty #text" << endl;
+#endif
 				_nodeParent = _nodePrev.parentNode();
 				emit domNodeIsAboutToBeRemoved(_nodePrev, true);
 				_nodeParent.removeChild(_nodePrev);
@@ -765,8 +818,10 @@ void KafkaWidget::keyBackspace()
 			kNodeAttrs::no || attrs->chCurFoc() == kNodeAttrs::left) &&
 			!_nodePrev.hasChildNodes()))
 		{
+#ifdef LIGHT_DEBUG
 			kdDebug(25001)<< "KafkaWidget::keyBackspace() - deleting" <<
 				" a Node" << endl;
+#endif
 			_nodeParent = _nodePrev.parentNode();
 			focus = w->getAttrs(_nodePrev)->chCurFoc();
 			emit domNodeIsAboutToBeRemoved(_nodePrev, true);
@@ -845,9 +900,11 @@ DOM::Node KafkaWidget::getNextNode(DOM::Node _node, bool &goingTowardsRootNode, 
 	if(_node.hasChildNodes() && goingTowardsRootNode == false &&
 		(attrs->ccanEnter() || dontBlock))
 	{//if we can descend to a child node, we do it
+#ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "KafkaWidget::getNextNode() - descending from node : " <<
 			_node.nodeName().string() << " to " <<
 			_node.firstChild().nodeName().string() << endl;
+#endif
 		if(_endNode == _node.firstChild())
 			return 0;
 		return _node.firstChild();
@@ -855,9 +912,11 @@ DOM::Node KafkaWidget::getNextNode(DOM::Node _node, bool &goingTowardsRootNode, 
 	if(_node.nextSibling() != 0)
 	{//else if there is a sibling, we move to it
 		goingTowardsRootNode = false;
+#ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "KafkaWidget::getNextNode() - going from node : " <<
 			_node.nodeName().string() <<
 		 	" to " << _node.nextSibling().nodeName().string() << endl;
+#endif
 		if(_endNode == _node.nextSibling())
 			return 0;
 		return _node.nextSibling();
@@ -871,13 +930,21 @@ DOM::Node KafkaWidget::getNextNode(DOM::Node _node, bool &goingTowardsRootNode, 
 			w->getAttrs(_node.parentNode())->ccanEnter() || dontBlock)
 		{
 			if(!_node.parentNode().isNull())
+			{
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::getNextNode() - going" <<
 					" up from node : " << _node.nodeName().string() <<
 				 	" to " << _node.parentNode().nodeName().string() << endl;
+#endif
+			}
 			else
+			{
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::getNextNode() - going" <<
 					" up from node : " << _node.nodeName().string() <<
 					" to an empty Node" << endl;
+#endif
+			}
 			if(skipParentNodes)
 			{
 				if(_endNode == _node.parentNode())
@@ -914,9 +981,11 @@ DOM::Node KafkaWidget::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, 
 	if(_node.hasChildNodes() && goingTowardsRootNode == false &&
 		(attrs->ccanEnter() || dontBlock))
 	{//if we can descend to a child node, we do it
+#ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "KafkaWidget::getPrevNode() - descending from node : " <<
 			_node.nodeName().string() << " to " <<
 			_node.lastChild().nodeName().string() << endl;
+#endif
 		if(_endNode == _node.lastChild())
 			return DOM::Node();
 		return _node.lastChild();
@@ -924,9 +993,11 @@ DOM::Node KafkaWidget::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, 
 	if(_node.previousSibling() != 0)
 	{//else if there is a sibling, we move to it
 		goingTowardsRootNode = false;
+#ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "KafkaWidget::getPrevNode() - going from node : " <<
 			_node.nodeName().string() <<
 		 	" to " << _node.previousSibling().nodeName().string() << endl;
+#endif
 		if(_endNode == _node.previousSibling())
 			return DOM::Node();
 		return _node.previousSibling();
@@ -940,13 +1011,21 @@ DOM::Node KafkaWidget::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode, 
 			w->getAttrs(_node.parentNode())->ccanEnter() || dontBlock)
 		{
 			if(!_node.parentNode().isNull())
+			{
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::getPrevNode() - going up from" <<
 					" node : " << _node.nodeName().string() << " to " <<
 					_node.parentNode().nodeName().string() << endl;
+#endif
+			}
 			else
+			{
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::getPrevNode() - going up from" <<
 					" node : " << _node.nodeName().string() << " to an " <<
 					"empty Node" << endl;
+#endif
+			}
 			if (skipParentNodes)
 			{
 				if(_endNode == _node.parentNode())
@@ -1007,7 +1086,9 @@ void KafkaWidget::postprocessCursorPosition()
 
 	if(!attrs)
 	{
+#ifdef LIGHT_DEBUG
 		kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition() - WARNING no Attrs!! " << endl;
+#endif
 		return;
 	}
 
@@ -1028,9 +1109,11 @@ void KafkaWidget::postprocessCursorPosition()
 				d->m_cursorOffset = (static_cast<DOM::CharacterData>(_nextNode)).length();
 				setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 				emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
+#ifdef LIGHT_DEBUG
 				kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition()" <<
 					" - new currentNode :" <<
 					m_currentNode.nodeName().string() << endl;
+#endif
 				break;
 			}
 			else if(attrs2->chCurFoc() == kNodeAttrs::singleNode ||
@@ -1062,8 +1145,10 @@ void KafkaWidget::postprocessCursorPosition()
 					setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 					emit domNodeNewCursorPos(m_currentNode,
 						d->m_cursorOffset);
+#ifdef LIGHT_DEBUG
 					kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition()" <<
 						" - new currentNode :" << m_currentNode.nodeName().string() << endl;
+#endif
 					break;
 				}
 				else if(attrs2->chCurFoc() == kNodeAttrs::singleNode ||
@@ -1074,8 +1159,10 @@ void KafkaWidget::postprocessCursorPosition()
 					d->m_cursorOffset = 1;
 					setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 					emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
+#ifdef LIGHT_DEBUG
 					kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition()" <<
 						" - new currentNode :" << m_currentNode.nodeName().string() << endl;
+#endif
 					break;
 				}
 				else
@@ -1101,8 +1188,10 @@ void KafkaWidget::postprocessCursorPosition()
 					d->m_cursorOffset = 0;
 					setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 					emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);
+#ifdef LIGHT_DEBUG
 					kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition() " <<
 						"- new currentNode :" << m_currentNode.nodeName().string() << endl;
+#endif
 					break;
 				}
 				else
@@ -1198,7 +1287,9 @@ void KafkaWidget::slotNewCursorPos(const DOM::Node &domNode, long offset)
 {
 	m_currentNode = domNode;
 	d->m_cursorOffset = (int)offset;
+#ifdef LIGHT_DEBUG
 	kdDebug(25001)<<"KafkaWidget::slotNewCursorPos() offset : " << d->m_cursorOffset << endl;
+#endif
 	if(quantaApp->aTab && quantaApp->view() &&
 		quantaApp->view()->hadLastFocus() == QuantaView::kafkaFocus)
 		quantaApp->aTab->setCurrentNode(w->getNode(domNode));

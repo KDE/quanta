@@ -91,10 +91,10 @@ public:
  bool hasChildNodes() {return child;}
 
  /** Others functions. */
- #ifdef BUILD_KAFKAPART
+#ifdef BUILD_KAFKAPART
  // check if Node has node in its child subtree (and grand-child,...)
  bool hasForChild(Node *node);
- #endif
+#endif
  void setParent(Node *nodeParent) {parent = nodeParent;}
  //If Node is of type XmlTag, return the corresponding XmlTagEnd if available
  Node *getClosingNode();
@@ -105,11 +105,11 @@ public:
 
  int size();
 
- #ifdef BUILD_KAFKAPART
+#ifdef BUILD_KAFKAPART
  DOM::Node _rootNode;
  DOM::Node _leafNode;
  Node* _closingNode;
- #endif
+#endif
  QListViewItem *listItem; //points to the listview item which represents this node in the structure tree
  Tag *tag;
  bool closesPrevious; //this node "closes" the tag from previous node

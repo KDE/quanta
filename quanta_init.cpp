@@ -546,7 +546,7 @@ void QuantaApp::initView()
   connect(sTab, SIGNAL(showPreviewWidget(bool)),
           this, SLOT(slotShowPreviewWidget(bool)));
 
-  connect(dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
+  connect(dTab, SIGNAL(openURL(const QString&)), SLOT(openDoc(const QString&)));
 
   connect(m_view, SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
 
@@ -776,10 +776,10 @@ void QuantaApp::readOptions()
 
   m_previewVisible = false;
   m_noFramesPreview = false;
-  #ifdef BUILD_KAFKAPART
-  showKafkaAction    ->setChecked( false );
-  #endif
-  showMessagesAction ->setChecked( bottdock->parent() != 0L );
+#ifdef BUILD_KAFKAPART
+  showKafkaAction->setChecked( false );
+#endif
+  showMessagesAction->setChecked( bottdock->parent() != 0L );
 
   m_doc    ->readConfig(m_config); // kwrites
   m_project->readConfig(m_config); // project
@@ -816,8 +816,8 @@ void QuantaApp::enablePhp3Debug(bool enable)
              m_messageOutput, SLOT(newPhpConnect()) );
     connect( dbg3,          SIGNAL(endConnect()),
              m_messageOutput, SLOT(endPhpConnect()) );
-    connect( dbg3,          SIGNAL(data(QString)),
-             m_messageOutput, SLOT(phpDebug(QString)) );
+    connect( dbg3,          SIGNAL(data(const QString&)),
+             m_messageOutput, SLOT(phpDebug(const QString&)) );
 
     if ( !dbg3->ok() )
         m_messageOutput->insertItem(i18n("Can't bind port %1, PHP3 debugger disabled").arg(phpDebugPort));
@@ -1897,7 +1897,7 @@ void QuantaApp::initActions()
                          this, SLOT( slotShowProblemsDock() ),
                          ac, "show_problems" );
 
-    #ifdef BUILD_KAFKAPART
+#ifdef BUILD_KAFKAPART
     KToggleAction *ta;
       ta =
       new KToggleAction( i18n( "&Source Editor") , "show_quanta_editor", ALT+Key_F9,
@@ -1923,7 +1923,7 @@ void QuantaApp::initActions()
     list2.append(i18n("&Both editors"));
     kafkaSelectAction->setItems(list2);
     connect(kafkaSelectAction, SIGNAL(activated(int)), this, SLOT(slotShowKafkaPartl(int)));*/
-    #endif
+#endif
 
      showPreviewAction =
       new KToolBarPopupAction( i18n( "Pr&eview" ), "preview", Key_F6,

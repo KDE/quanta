@@ -15,9 +15,9 @@
  *                                                                         *
  ***************************************************************************/
 
- #include "../../parser/node.h"
+#include "../../parser/node.h"
 
- #include "nodeproperties.h"
+#include "nodeproperties.h"
 
 kNodeAttrs::kNodeAttrs()
 {

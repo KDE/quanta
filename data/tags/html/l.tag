@@ -154,6 +154,11 @@
         <text>compact</text>
         <location col="0" row="2" colspan="2" />
     </attr>
+<stoppingtags>
+    <stoppingtag name="li" />
+    <stoppingtag name="ul" />    
+    <stoppingtag name="ol" />    
+</stoppingtags>    
 <children>
  <child name="#text" />
   <child name="tt" />

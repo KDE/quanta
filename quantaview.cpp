@@ -165,8 +165,10 @@ void QuantaView::addWrite( QWidget* w , QString label )
     }
   }
 #endif
-  QIconSet emptyIcon ( UserIcon("empty16x16"));
-  m_writeTab->addTab  ( w,  emptyIcon,  label.section("/",-1) );
+  if (qConfig.showCloseButtons)
+    m_writeTab->addTab(w, SmallIcon("fileclose"), label.section("/",-1));
+  else
+    m_writeTab->addTab(w, SmallIcon("document"), label.section("/",-1));
   m_writeTab->setTabToolTip(w, label);
   Document *wr = dynamic_cast<Document *>(w);
 #ifdef BUILD_KAFKAPART
@@ -873,7 +875,9 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
 #ifdef BUILD_KAFKAPART
 void QuantaView::timerEvent( QTimerEvent *e )
 {
+#ifdef LIGHT_DEBUG
   kdDebug(25001)<< "QuantaView::timerEvent" << endl;
+#endif
   DOM::Node node;
 
   if (kafkaInterface->isLoaded() && currentViewsLayout == QuantaView::QuantaAndKafkaViews && writeExists())

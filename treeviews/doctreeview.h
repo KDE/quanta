@@ -39,7 +39,7 @@ public:
   void addProjectDoc(const KURL& url);
 
 signals:
-  void openURL( QString );
+  void openURL(const QString& );
 
 private slots:
   void clickItem( QListViewItem *);

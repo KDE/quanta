@@ -5,9 +5,9 @@
     copyright            : (C) 2001 by Dmitri Dmitrienko
     email                : dd@cron.ru
     www                  : http://dd.cron.ru
-    license              : This source file is subject to version 1.00 of 
-                           the License,  that is bundled with this package 
-                           in the file LICENSE, and is available at through 
+    license              : This source file is subject to version 1.00 of
+                           the License,  that is bundled with this package
+                           in the file LICENSE, and is available at through
                            the world-wide-web at http://dd.cron.ru/license
  ***************************************************************************/
 #ifndef _DBG_CORE_H_
@@ -55,41 +55,41 @@
 
 
 #ifdef PHP_WIN32
-  #ifdef DBG_EXPORTS
-    #define DBGAPI __declspec(dllexport)
-  #else
-    #ifdef DBG_IMPORTS
-      #define DBGAPI __declspec(dllimport)
-    #endif
-  #endif
+#  ifdef DBG_EXPORTS
+#    define DBGAPI __declspec(dllexport)
+#  else
+#    ifdef DBG_IMPORTS
+#      define DBGAPI __declspec(dllimport)
+#    endif
+#  endif
 #endif
 
 #ifdef PHP_WIN32
-  #include <windows.h>
-  #include <windef.h>
-  #include <winsock.h>
+#  include <windows.h>
+#  include <windef.h>
+#  include <winsock.h>
 #else
-  #if defined(__FreeBSD__) || defined(__OpenBSD__)
-    #include <sys/types.h>
-  #endif        
-  #include <sys/socket.h>
-  #include <unistd.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
-  #include <netdb.h>
-  #include <sys/time.h>
+#  if defined(__FreeBSD__) || defined(__OpenBSD__)
+#    include <sys/types.h>
+#  endif
+#  include <sys/socket.h>
+#  include <unistd.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#  include <netdb.h>
+#  include <sys/time.h>
 #endif
 
 
 #ifndef DBGAPI
-  #define DBGAPI
+#  define DBGAPI
 #endif
 
 
 #ifdef PHP_WIN32
-  #define SCLOSE(a) closesocket(a)
+#  define SCLOSE(a) closesocket(a)
 #else
-  #define SCLOSE(a) close(a)
+#  define SCLOSE(a) close(a)
 #endif
 #define SSEND(a,b,c) send(a,b,c,0)
 #define SREAD(a,b,c) recv(a,b,c,0)
@@ -101,7 +101,7 @@
 /* debugger_flags */
 /* state: */
 #define DBGF_STARTED		0x0001		/* debugger has been started */
-#define DBGF_FINISHED		0x0002		/* DBGC_END notification has been sent */		
+#define DBGF_FINISHED		0x0002		/* DBGC_END notification has been sent */
 #define DBGF_WAITACK		0x0004		/* awaiting replay|request */
 #define	DBGF_UNSYNC			0x0008		/* protocol has been unsynchronized */
 /* execution:  */
@@ -123,7 +123,7 @@ typedef struct {
 } dbg_header_struct;
 
 typedef char framename[4];
-/* packet frame structure. All packets must have a header, 
+/* packet frame structure. All packets must have a header,
   also they may have a body that consists of one ore more frames packed all together */
 typedef struct {
 	framename name;
@@ -179,9 +179,9 @@ typedef struct tag_dbg_stack_body {				/* FRAME_STACK */
 } dbg_stack_body;
 
 typedef struct tag_dbg_source_body {			/*FRAME_SOURCE*/
-	dbgint mod_no;		
+	dbgint mod_no;
 	dbgint from_filepos;		/* file offset */
-	dbgint error;				/* 0 = ok */	
+	dbgint error;				/* 0 = ok */
 	dbgint full_size;
 	dbgint imod_name;			/* ID of mod_name string */
 	dbgint itext;				/* ID of text rawdata */
@@ -206,8 +206,8 @@ typedef struct tag_dbg_error_body {				/* FRAME_ERROR */
 
 typedef struct tag_dbg_eval_body {				/*FRAME_EVAL*/
 	dbgint istr;
-	dbgint iresult;	
-	dbgint ierror;	
+	dbgint iresult;
+	dbgint ierror;
 } dbg_eval_body;
 
 typedef struct tag_dbg_bpr_body { /* FRAME_BPR */
@@ -248,7 +248,7 @@ typedef struct tag_dbg_eval_request { /* FRAME_EVAL */
 typedef struct tag_dbg_bps_request {			/* FRAME_BPS */
 	dbgint mod_no;
 	dbgint line_no;
-	dbgint status;					
+	dbgint status;
 	dbgint imod_name;
 } dbg_bps_request;
 
@@ -282,7 +282,7 @@ typedef struct {
 	int lastrawid;
 } dbg_packet;
 
-/* Let packet buffer grows by 128byte-inctrements. 
+/* Let packet buffer grows by 128byte-inctrements.
    It reduces reallocation frequency if we add a lot of small frames to one packet. */
 
 #define PACKET_LIMIT_ROUND(s) \

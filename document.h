@@ -54,6 +54,7 @@ class Tag;
 class Node;
 class Project;
 class QuantaPluginInterface;
+struct AreaStruct;
 
 class Document : public QWidget{
    Q_OBJECT
@@ -135,6 +136,8 @@ public:
   /** Retrives the text from the specified rectangle. The KTextEditor::EditInterface::text seems to not
 work correctly. */
   QString text(int bLine, int bCol, int eLine, int eCol) const;
+  /** Same as the above, but using AreaStruct as an argument */
+  QString text(const AreaStruct &area) const;
   /** Code completion was requested by the user. */
   void codeCompletionRequested();
   /** Bring up the code completion tooltip. */

@@ -1234,7 +1234,9 @@ bool undoRedo::UndoNodeModifInKafka(NodeModif &/**_nodeModif*/)
 
 void undoRedo::reloadKafkaEditor(bool force, bool syncKafkaCursor)
 {
+#ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "undoRedo::reloadKafkaEditor()" << endl;
+#endif
 
 	if(kafkaIterator == documentIterator && !force)
 	{
@@ -1262,7 +1264,9 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
 	bool updateClosing;
 
+#ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "undoRedo::reloadQuantaEditor()" << endl;
+#endif
 
 	if(documentIterator == sourceIterator && !force)
 	{

@@ -5,9 +5,9 @@
     copyright            : (C) 2001 by Dmitri Dmitrienko
     email                : dd@cron.ru
     www                  : http://dd.cron.ru
-    license              : This source file is subject to version 1.00 of 
-                           the License,  that is bundled with this package 
-                           in the file LICENSE, and is available at through 
+    license              : This source file is subject to version 1.00 of
+                           the License,  that is bundled with this package
+                           in the file LICENSE, and is available at through
                            the world-wide-web at http://dd.cron.ru/license
  ***************************************************************************/
 
@@ -33,36 +33,36 @@
 #include <vector>
 
 #ifdef WIN32
-  #include "Windows.h"
-  #include "Winerror.h"
+#  include "Windows.h"
+#  include "Winerror.h"
 #else
-  #ifndef _HRESULT_DEFINED
-    #define _HRESULT_DEFINED
+#  ifndef _HRESULT_DEFINED
+#    define _HRESULT_DEFINED
     typedef long HRESULT;
-	#define S_OK							((HRESULT)0x00000000L)
-	#define S_FALSE							((HRESULT)0x00000001L)
-	#define E_FAIL							((HRESULT)0x80004005L)
-	#define E_POINTER						((HRESULT)0x80004003L)
-	#define SUCCEEDED(Status)				((HRESULT)(Status) >= 0)
-	#define FAILED(Status)					((HRESULT)(Status) < 0)
-  #endif
+#      define S_OK							((HRESULT)0x00000000L)
+#      define S_FALSE							((HRESULT)0x00000001L)
+#      define E_FAIL							((HRESULT)0x80004005L)
+#      define E_POINTER						((HRESULT)0x80004003L)
+#      define SUCCEEDED(Status)				((HRESULT)(Status) >= 0)
+#      define FAILED(Status)					((HRESULT)(Status) < 0)
+#  endif
 #endif
 
 #ifdef PHP_WIN32
-  #define	snprintf _snprintf
-  #define	vsnprintf _vsnprintf
+#  define	snprintf _snprintf
+#  define	vsnprintf _vsnprintf
 #else
-  #ifndef stricmp
-    #define	stricmp strcasecmp
-  #endif
+#  ifndef stricmp
+#    define	stricmp strcasecmp
+#  endif
 #endif
 
 
 #ifdef _DEBUG
   void __dbgtrace(const char *str,...);
-  #define DBGTRACE __dbgtrace
+#  define DBGTRACE __dbgtrace
 #else
-  #define DBGTRACE
+#  define DBGTRACE
 #endif
 
 typedef struct cfgprmtag {

@@ -576,7 +576,10 @@ int kafkaCommon::getNodeDisplay(const QString &nodeNam, bool closingNodeToo)
 		 return kafkaCommon::inlineDisplay;
 	else
 	{
-		kdDebug(25001)<< "kafkaCommon::getNodeType() - ERROR " << nodeName <<" not found" << endl;
+#ifdef LIGHT_DEBUG
+		kdDebug(25001)<< "kafkaCommon::getNodeType() - ERROR " << nodeName <<
+			" not found" << endl;
+#endif
 		return kafkaCommon::noneDisplay;
 	}
 }
