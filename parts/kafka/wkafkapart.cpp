@@ -34,6 +34,7 @@
 #include <qdatetime.h>
 
 #include "document.h"
+#include "viewmanager.h"
 #include "quanta.h"
 #include "quantacommon.h"
 #include "resource.h"
@@ -1150,6 +1151,47 @@ void KafkaDocument::translateQuantaIntoKafkaCursorPosition(uint curLine, uint cu
 #endif
 }
 
+void KafkaDocument::translateQuantaIntoNodeCursorPosition(uint line, uint col, Node **node, int &offset)
+{
+  int curCol, curLine, beginCol, beginLine;
+  QString currentLine;
+  
+  *node = parser->nodeAt(line, col, false);
+  
+  offset = 0;
+  if(!*node)
+   return;
+  
+  if((*node)->tag->cleanStrBuilt)
+  {
+    (*node)->tag->beginPos(beginLine, beginCol);
+    curLine = beginLine;
+    curCol = beginCol;
+    while(curLine < (signed)line)
+    {
+      currentLine = ViewManager::ref()->activeDocument()->editIf->textLine(curLine);
+      if(curLine == beginLine)
+        offset += (signed)currentLine.length() - beginCol;
+      else
+        offset += (signed)currentLine.length();
+      offset++;
+      curLine++;
+    }
+    if(beginLine != (signed)line)
+      offset += col;
+    else
+      offset += col - beginCol;
+  }
+  else
+  {
+    //TODO
+  }
+#ifdef LIGHT_DEBUG
+  kdDebug(25001)<< "KafkaDocument::translateQuantaIntoNodeCursorPosition() - " << *node <<
+    ":" << offset << endl;
+#endif
+}
+
 long KafkaDocument::translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset)
 {
 	Node *node;
@@ -1529,6 +1571,24 @@ void KafkaDocument::translateNodeIntoKafkaCursorPosition(Node *node, int offset,
 		domNode = DOM::Node();
 		domNodeOffset = 0;
 	}
+}
+
+void KafkaDocument::translateNodeIntoQuantaCursorPosition(Node *node, int offset, uint &line, uint &col)
+{
+  int curCol, curLine, curOffset;
+  
+  node->tag->beginPos(curLine, curCol);
+  line = curLine;
+  col = curCol;
+  curOffset = offset;
+  while(curOffset > 0)
+  {
+    if(node->tag->tagStr()[offset - curOffset] == '\n')
+      line++;
+    else
+      col++;
+    curOffset--;
+  }
 }
 
 bool KafkaDocument::insertDomNode(DOM::Node node, DOM::Node parent,

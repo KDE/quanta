@@ -1043,7 +1043,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
     QTag *parentNodeQTag, *newNodeQTag, *lastNewNodeQTag;
     NodeModif modif;
     int locOffset = 1;
-    bool newNodeIsInline;
+    bool newNodeIsInline, isAfter;
 
     if(!startNode || !endNode || !newNode || !doc)
     {
@@ -1090,7 +1090,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
     //If newNode isn't inline, move commonParent to the closest non inline node
     newNodeIsInline = isInline(newNode->tag->name);
     if(!newNodeIsInline && commonParent && (isInline(commonParent->tag->name) ||
-                                            commonParent->tag->type == Tag::Text))
+      commonParent->tag->type == Tag::Text || commonParent->tag->type == Tag::Empty))
     {
         oldCommonParent = commonParent;
         commonParent = commonParent->parent;
@@ -1140,15 +1140,15 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
         parentNode = parentNode->parent;
     }
 
-    if(!lastValidEndParent || !lastValidStartParent)
+    /**if(!lastValidEndParent || !lastValidStartParent)
     {
         delete newNode;
         return false;
-    }
+    }*/
 
     //OK now, we are sure the node can be inserted. Start the work by splitting
     //startNode and endNode if necessary
-    if(startNode->tag->type == Tag::Text)
+    if(startNode->tag->type == Tag::Text || startNode->tag->type == Tag::Empty)
     {
         if(splitNode(startNode, startOffset, modifs))
         {
@@ -1177,7 +1177,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
             startNode = startNode->nextSibling();
         }
     }
-    if(endNode->tag->type == Tag::Text)
+    if(endNode->tag->type == Tag::Text || endNode->tag->type == Tag::Empty)
     {
         if(!splitNode(endNode, endOffset, modifs) && endOffset == 0)
         {
@@ -1193,7 +1193,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
     // and the second will be surrounded by the new Node. Same thing for endNode.
     node = startNode;
     parentNode = startNode->parent;
-    while(parentNode && parentNode != lastValidStartParent)
+    while(lastValidStartParent && parentNode && parentNode != lastValidStartParent)
     {
         if(node != parentNode->firstChild())
         {
@@ -1217,7 +1217,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
     }
     node = endNode;
     parentNode = endNode->parent;
-    while(parentNode && parentNode != lastValidEndParent)
+    while(lastValidEndParent && parentNode && parentNode != lastValidEndParent)
     {
         if(node != parentNode->lastChild())
         {
@@ -1251,13 +1251,26 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
     }
 
     //Now if startNode is after endNode, this means that a selectionless insertion is being done.
+    //(This is due to the text splitting)
     //Let's insert it and return
-    if(compareNodePosition(startNode, endNode) == kafkaCommon::isAfter)
+    isAfter = (compareNodePosition(startNode, endNode) == kafkaCommon::isAfter);
+    if(isAfter || (startNode == endNode && startOffset == endOffset && 
+      (signed)startNode->tag->tagStr().length() == startOffset))
     {
-        parentNodeQTag = QuantaCommon::tagFromDTD(commonParent);
-        if(parentNodeQTag->isChild(newNode))
+        if(isAfter)
+          parentNodeQTag = QuantaCommon::tagFromDTD(commonParent);
+        else if((signed)startNode->tag->tagStr().length() == startOffset && startNode->tag->type == Tag::XmlTag)
+          parentNodeQTag = QuantaCommon::tagFromDTD(startNode);
+        else if((signed)startNode->tag->tagStr().length() == startOffset && startNode->tag->type == Tag::XmlTagEnd)
+          parentNodeQTag = QuantaCommon::tagFromDTD(startNode->parent);
+        if(!parentNodeQTag || (parentNodeQTag && parentNodeQTag->isChild(newNode)))
         {
-            insertNodeSubtree(newNode, commonParent, commonParentStartChild, modifs);
+            if(isAfter)
+              insertNodeSubtree(newNode, commonParent, commonParentStartChild, modifs);
+            else if((signed)startNode->tag->tagStr().length() == startOffset && startNode->tag->type == Tag::XmlTag)
+              insertNodeSubtree(newNode, startNode, 0L, modifs);
+            else if((signed)startNode->tag->tagStr().length() == startOffset && startNode->tag->type == Tag::XmlTagEnd)
+              insertNodeSubtree(newNode, startNode->parent, startNode->next, modifs);
             //<TEMPORARY>
             (*cursorNode) = lastNewNode;
             cursorOffset = 0;
@@ -1404,10 +1417,6 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
                                      Node* currentNode, bool &examinationStarted, bool &addingStarted, int level,
                                      NodeModifsSet *modifs)
 {
-#ifdef HEAVY_DEBUG
-    kdDebug(25001)<< "kafkaCommon::addNodeRevursively() [" << level << "] - currentNode :" <<
-    currentNode->tag->name << "("<< currentNode->tag->type << ")" << endl;
-#endif
 
     QTag *leafNodeQTag, *currentNodeParentQTag;
     Node *startSelection = 0L, *endSelection = 0L, *oldCurrentNode, *copyNewNode;
@@ -1426,9 +1435,17 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
 
     while(currentNode)
     {
-        //If currentNode is the startExaminationNode, let's start to examine Nodes
+#ifdef HEAVY_DEBUG
+        kdDebug(25001)<< "kafkaCommon::addNodeRevursively() [" << level << "] - currentNode :" <<
+        currentNode->tag->name << "("<< currentNode->tag->type << ")(" << currentNode << ")" << endl;
+#endif
+        //If currentNode is the startExaminationNode, let's start to examine Nodes (=> search the startNode)
         if(currentNode == startExaminationNode)
-            examinationStarted = true;
+          examinationStarted = true;
+            
+        //If currentNode is the startNode, let's start to try to add Nodes.
+        if(currentNode == startNode)
+          addingStarted = true;
 
         //If the currentNode is text or XmlTag, and if it is DTD valid to insert the node Subtree and
         //if the examination has started and currentNode doesn't have endExaminationNode as
@@ -1501,6 +1518,17 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
                                       endSelection->next, modifs);
                 }
             }
+            
+            //TESTING: If this Node is, or has for child startNode, let's start to add newNode
+            /**if(currentNode->hasForChild(startNode) || currentNode == startNode)
+            {
+#ifdef HEAVY_DEBUG
+                kdDebug(25001)<< "kafkaCommon::addNodeRevursively() [" << level <<
+                "] -  This Node has the startNode as Child : " << currentNode->tag->name << endl;
+#endif
+
+                addingStarted = true;
+            }*/
 
             //Let's try to surround some of the childs of currentNode.
             if(currentNode->child)
@@ -1516,7 +1544,8 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
         {
             if(selectionInProgress)
             {
-                if(currentNode->tag->type == Tag::XmlTag && currentNode->getClosingNode())
+                if((currentNode->tag->type == Tag::XmlTag || currentNode->tag->type == Tag::ScriptTag) &&
+                  currentNode->getClosingNode())
                     endSelection = currentNode->getClosingNode();
                 else
                     endSelection = currentNode;
@@ -2095,7 +2124,8 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet *modifs)
     QString tagStr;
     Node *node;
 
-    if(!n || n->tag->type != Tag::Text || offset <= 0 || offset >= (signed)n->tag->tagStr().length())
+    if(!n || (n->tag->type != Tag::Text && n->tag->type != Tag::Empty) || offset <= 0 || offset >=
+      (signed)n->tag->tagStr().length())
         return false;
 
     tag = new Tag(*(n->tag));
@@ -2112,8 +2142,12 @@ bool kafkaCommon::splitNode(Node *n, int offset, NodeModifsSet *modifs)
         modifs->addNodeModif(modif);
     }
 
-    node = createAndInsertNode("#text", tagStr.right(tagStr.length() - offset), Tag::Text, n->tag->write(),
-                               n->parent, n->next, modifs, false);
+    if(n->tag->type == Tag::Text)
+      node = createAndInsertNode("#text", tagStr.right(tagStr.length() - offset), Tag::Text, n->tag->write(),
+        n->parent, n->next, modifs, false);
+    else
+      node = createAndInsertNode("", tagStr.right(tagStr.length() - offset), Tag::Empty, n->tag->write(),
+        n->parent, n->next, modifs, false);
 
     //Node's string is a part of n's clean string
     node->tag->cleanStrBuilt = true;

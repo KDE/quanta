@@ -101,6 +101,8 @@
     <Separator/>
     <Action name="toolbars_send"/>
     <Action name="toolbars_download"/>
+    <Separator/>
+    <Action name="smart_tag_insertion"/>
   </Menu>
 
   <Menu name="dtds"><text>&amp;DTD</text>

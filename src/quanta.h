@@ -398,6 +398,8 @@ protected slots:
   void slotUploadDTEP();
   /** Downloads a toolbar from the main server */
   void slotDownloadToolbar();
+  /** Enable/Disable Smart Tag Insertion */
+  void slotSmartTagInsertion();
   /** Downloads a template from the main server */
   void slotDownloadTemplate();
   /** Downloads a script from the main server */
@@ -481,6 +483,9 @@ protected:
   /** Makes the tabwidget look and behave like we want. If closeButtonsOnly is true,
   only the close button behavior is changed. */
   void initTabWidget(bool closeButtonsOnly = false);
+  
+
+  bool eventFilter(QObject *object, QEvent *event);
 
   ScriptTreeView *scriptTab;
 

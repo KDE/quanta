@@ -555,6 +555,10 @@ void QuantaInit::readOptions()
   qConfig.previewPosition   = m_config->readEntry("Preview area","Editor");
   qConfig.docPosition   = m_config->readEntry("Documentation area","Tab");
 
+  qConfig.smartTagInsertion = m_config->readBoolEntry("Smart Tag Insertion", false);
+  KAction *action = quantaApp->actionCollection()->action("smart_tag_insertion");
+  (static_cast<KToggleAction* >(action))->setChecked(qConfig.smartTagInsertion);
+  
   QSize s(800,580);
   m_quanta->resize( m_config->readSizeEntry("Geometry", &s));
   qConfig.autosaveInterval = m_config->readNumEntry("Autosave interval", 1);
@@ -865,6 +869,11 @@ void QuantaInit::initActions()
     new KAction(i18n("Re&name User Toolbar..."), 0, m_quanta, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
     new KAction(i18n("Send Toolbar in E&mail..."), "mail_send", 0, m_quanta, SLOT(slotSendToolbar()), ac, "toolbars_send");
     new KAction(i18n("&Download Toolbar..." ), "network", 0, m_quanta, SLOT(slotDownloadToolbar()), ac, "toolbars_download" );
+    
+#ifdef BUILD_KAFKAPART
+    KToggleAction *toggle = new KToggleAction( i18n("Smart Tag Insertion"), 0, ac, "smart_tag_insertion");
+    connect(toggle, SIGNAL(toggled(bool)), m_quanta, SLOT(slotSmartTagInsertion()));
+#endif
 
     m_quanta->showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
 

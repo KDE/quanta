@@ -50,6 +50,7 @@ namespace KTextEditor
   class EditInterfaceExt;
   class MarkInterface;
   class SelectionInterface;
+  class SelectionInterfaceExt;
   class View;
   class ViewCursorInterface;
 }
@@ -180,6 +181,7 @@ work correctly. */
 
   KTextEditor::ViewCursorInterface *viewCursorIf;
   KTextEditor::SelectionInterface *selectionIf;
+  KTextEditor::SelectionInterfaceExt *selectionIfExt;
   KTextEditor::EditInterface *editIf;
 #ifdef BUILD_KAFKAPART
   KTextEditor::EditInterfaceExt *editIfExt;

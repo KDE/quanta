@@ -242,12 +242,21 @@ public:
 	 * @param offset Returns the offset of the cursor.
 	 */
 	void translateQuantaIntoKafkaCursorPosition(uint line, uint col, DOM::Node &domNode, int &offset);
+        
+        /**
+         * Returns the internal Node offset corresponding to the Quanta cursor position.
+         * @param line The quanta line cursor position.
+         * @param col The quanta column cursor position.
+         * @param node Returns the node where is located the node internal offset.
+         * @param Returns the node internal corresponding offset.
+         */
+        void translateQuantaIntoNodeCursorPosition(uint line, uint col, Node **node, int &offset);
 
 	/**
 	 * Returns the internal Node offset corresponding to the kafka cursor position.
 	 * @param domNode The kafka DOM::Node cursor position.
 	 * @param domNodeOffset The kafka offset cursor position.
-	 * @return  Returns the node internal corresponding offset.
+	 * @return Returns the node internal corresponding offset.
 	 */
 	long translateKafkaIntoNodeCursorPosition(DOM::Node domNode, long domNodeOffset);
 
@@ -269,7 +278,16 @@ public:
 	 */
 	void translateNodeIntoKafkaCursorPosition(Node *node, int offset, DOM::Node &domNode,
 		long &domNodeOffset);
-
+                
+        /**
+         * Returns the quanta cursor position corresponding to the internal Node offset.
+         * @param node The node.
+         * @param offset The internal offset of Node.
+         * @param line Returns the line position of the corresponding Quanta cursor.
+         * @param col Returns the col position of the corresponding Quanta cursor.
+         */      
+        void translateNodeIntoQuantaCursorPosition(Node *node, int offset, uint &line, uint &col);
+         
 
 	/** ----------------- DOM::NODE TREE MODIFICATIONS --------------------*/
 
