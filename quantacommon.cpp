@@ -333,7 +333,7 @@ bool QuantaCommon::checkMimeGroup(const KURL& url, const QString& group)
          status = v.toBool();
    }
  }
- if (!status && mimetype == "x-zerosize")
+ if (!status && group == "text" && mimetype == "x-zerosize")
      status = true;
 
  return status;

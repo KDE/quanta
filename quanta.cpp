@@ -673,9 +673,8 @@ void QuantaApp::slotImageOpen(const KURL& url)
   slotShowPreviewWidget(true);
   WHTMLPart *part = m_htmlPart;
   QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
-  text += url.path(); //TODO
+  text += url.url(); //TODO
   text += "\">\n</div>\n</body>\n</html>\n";
-  text.replace(QChar('\"'), qConfig.attrValueQuotation);
   part->closeURL();
   part->begin( projectBaseURL() );
   part->write( text );
