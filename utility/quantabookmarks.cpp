@@ -227,6 +227,7 @@ void QuantaBookmarks::bookmarkMenuAboutToShow()
   m_othersMenuList.clear();
   m_others.clear();
   m_bookmarksMenu->clear();
+  marksChanged();
   
   Document *doc = m_viewManager->activeDocument();
   QValueList<Document*> openedDocuments = m_viewManager->openedDocuments();
