@@ -21,6 +21,7 @@
 #include <qlineedit.h>
 #include <qslider.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <kdeversion.h>
 #include <errno.h>
 
@@ -46,7 +47,10 @@ QuantaDebuggerGubed::QuantaDebuggerGubed (QObject *parent, const char* name, con
   m_socket = NULL;
   m_server = NULL;
   m_errormask = 1794;
-  m_executionState = Pause;
+  m_defaultExecutionState = Pause;
+  setExecutionState(m_defaultExecutionState);
+
+
   m_datalen = -1;
 }
 
@@ -85,6 +89,7 @@ void QuantaDebuggerGubed::startSession()
       m_socket->startAsyncConnect();
       debuggerInterface()->enableAction("debug_connect", true);
       debuggerInterface()->enableAction("debug_disconnect", false);
+      debuggerInterface()->enableAction("debug_request", false);
       kdDebug(24000) << k_funcinfo << ", proxy:" << m_serverHost << ", " << m_serverPort.toUInt() << endl;
     }
   }
@@ -106,18 +111,17 @@ void QuantaDebuggerGubed::startSession()
         m_server = NULL;
         debuggerInterface()->enableAction("debug_connect", true);
         debuggerInterface()->enableAction("debug_disconnect", false);
+        debuggerInterface()->enableAction("debug_request", false);
       }
       else
       {
         debuggerInterface()->enableAction("debug_connect", false);
         debuggerInterface()->enableAction("debug_disconnect", true);
+        debuggerInterface()->enableAction("debug_request", true);
       }
     }
   }
-  debuggerInterface()->enableAction("debug_run", true);
-  debuggerInterface()->enableAction("debug_leap", true);
-  debuggerInterface()->enableAction("debug_pause", true);
-
+  setExecutionState(m_defaultExecutionState);
 }
 
 
@@ -145,6 +149,7 @@ void QuantaDebuggerGubed::endSession()
 
   // Fake a connection closed signal
   slotConnectionClosed(0);
+  debuggerInterface()->enableAction("debug_request", false);
   debuggerInterface()->enableAction("debug_run", false);
   debuggerInterface()->enableAction("debug_leap", false);
   debuggerInterface()->enableAction("debug_pause", false);
@@ -175,6 +180,13 @@ void QuantaDebuggerGubed::setExecutionState(State newstate)
   }
 
   m_executionState = newstate;
+
+  if(debuggerInterface()) {
+    debuggerInterface()->enableAction("debug_run", m_executionState != RunDisplay);
+    debuggerInterface()->enableAction("debug_leap", m_executionState != RunNoDisplay);
+    debuggerInterface()->enableAction("debug_pause", m_executionState != Pause);
+  }
+
   kdDebug(24000) << k_funcinfo << ", " << m_executionState << endl;
 
 }
@@ -264,6 +276,7 @@ void QuantaDebuggerGubed::slotConnected()
   sendCommand("wait" ,"");
   debuggerInterface()->enableAction("debug_connect", false);
   debuggerInterface()->enableAction("debug_disconnect", true);
+  debuggerInterface()->enableAction("debug_request", false);
 
   m_active = true;
 }
@@ -272,6 +285,10 @@ void QuantaDebuggerGubed::slotConnected()
 void QuantaDebuggerGubed::slotConnectionClosed(int state)
 {
   kdDebug(24000) << k_funcinfo << ", state: " << state << ", m_server: " << m_server << ", m_socket" << m_socket << endl;
+
+  // Check if we have more data to read
+  slotReadyRead();
+  kdDebug(24000) << k_funcinfo << "buffer: " << m_buffer << endl;
 
   if(m_socket)
   {
@@ -286,9 +303,9 @@ void QuantaDebuggerGubed::slotConnectionClosed(int state)
   debuggerInterface()->enableAction("*", false);
   debuggerInterface()->enableAction("debug_connect", m_useproxy == 1 || m_server == NULL);
   debuggerInterface()->enableAction("debug_disconnect", m_useproxy == 0 && m_server != NULL);
-  debuggerInterface()->enableAction("debug_run", true);
-  debuggerInterface()->enableAction("debug_leap", true);
-  debuggerInterface()->enableAction("debug_pause", true);
+  setExecutionState(m_defaultExecutionState);
+
+  debuggerInterface()->enableAction("debug_request", true);
   debuggerInterface()->enableAction("debug_breakpoints_toggle", true);
   debuggerInterface()->enableAction("debug_breakpoints_clear", true);
 
@@ -301,18 +318,22 @@ void QuantaDebuggerGubed::slotConnectionClosed(int state)
 void QuantaDebuggerGubed::slotReadyRead()
 {
 
-  // Data from gubed comes in line terminated pairs
-  while(m_socket && m_socket->bytesAvailable() > 0)
+  // Data from gubed
+  while(m_socket && (m_socket->bytesAvailable() > 0 || m_buffer.length() > 0))
   {
+    int bytes;
     QString data;
 
-    // Read all available bytes from socket and append them to the buffer
-    int bytes = m_socket->bytesAvailable();
-    char* buffer = new char[bytes + 1];
-    m_socket->readBlock(buffer, bytes);
-    buffer[bytes] = 0;
-    m_buffer += buffer;
-    delete buffer;
+    if(m_socket && m_socket->bytesAvailable() > 0)
+    {
+      // Read all available bytes from socket and append them to the buffer
+      bytes = m_socket->bytesAvailable();
+      char* buffer = new char[bytes + 1];
+      m_socket->readBlock(buffer, bytes);
+      buffer[bytes] = 0;
+      m_buffer += buffer;
+      delete buffer;
+    }
 
     while(1)
     {
@@ -560,6 +581,21 @@ void QuantaDebuggerGubed::showWatch(QString data)
   debuggerInterface()->parsePHPVariables(data);
 }
 
+// Send HTTP Request
+void QuantaDebuggerGubed::request()
+{
+  QString request;
+  request = debuggerInterface()->activeFile();
+
+  if(request.startsWith(m_localBasedir, false))
+    request.remove(0, m_localBasedir.length());
+
+  request = m_startsession + request;
+  kdDebug(24000) << k_funcinfo << ", request: " << request << endl;
+  debuggerInterface()->sendRequest(request);
+}
+
+
 // Run boy, run (and show whats happening)
 void QuantaDebuggerGubed::run()
 {
@@ -687,6 +723,17 @@ void QuantaDebuggerGubed::readConfig(QDomNode node)
   if(m_listenPort.isEmpty())
     m_listenPort = "8016";
 
+  valuenode = node.namedItem("startsession");
+  m_startsession = valuenode.firstChild().nodeValue();
+  if(m_startsession.isEmpty())
+    m_startsession = "http://localhost/Gubed/StartSession.php?gbdScript=/";
+
+  valuenode = node.namedItem("defaultexecutionstate");
+  if(valuenode.firstChild().nodeValue().isEmpty())
+    m_defaultExecutionState = Pause;
+  else
+    m_defaultExecutionState = (State)valuenode.firstChild().nodeValue().toUInt();
+
   valuenode = node.namedItem("useproxy");
   m_useproxy = valuenode.firstChild().nodeValue() == "1";
 
@@ -713,6 +760,8 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
   set.lineServerListenPort->setText(m_listenPort);
   set.checkUseProxy->setChecked(m_useproxy);
   set.sliderDisplayDelay->setValue(m_displaydelay);
+  set.lineStartSession->setText(m_startsession);
+  set.comboDefaultExecutionState->setCurrentItem((int)m_defaultExecutionState);
 
   set.checkBreakOnNotice->setChecked(QuantaDebuggerGubed::Notice & m_errormask);
   set.checkBreakOnWarning->setChecked(QuantaDebuggerGubed::Warning & m_errormask);
@@ -771,6 +820,23 @@ void QuantaDebuggerGubed::showConfig(QDomNode node)
     node.appendChild( el );
     m_listenPort = set.lineServerListenPort->text();
     el.appendChild( node.ownerDocument().createTextNode(m_listenPort) );
+
+    el = node.namedItem("startsession").toElement();
+    if (!el.isNull())
+      el.parentNode().removeChild(el);
+    el = node.ownerDocument().createElement("startsession");
+    node.appendChild( el );
+    m_startsession = set.lineStartSession->text();
+    el.appendChild(node.ownerDocument().createTextNode(m_startsession));
+
+    el = node.namedItem("defaultexecutionstate").toElement();
+    if (!el.isNull())
+      el.parentNode().removeChild(el);
+    el = node.ownerDocument().createElement("defaultexecutionstate");
+    node.appendChild( el );
+    m_defaultExecutionState = (State)set.comboDefaultExecutionState->currentItem();
+    el.appendChild(node.ownerDocument().createTextNode(QString::number(m_defaultExecutionState)));
+
 
     el = node.namedItem("displaydelay").toElement();
     if (!el.isNull())

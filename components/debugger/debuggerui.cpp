@@ -24,11 +24,13 @@
 #include "quantacommon.h"
 #include "quanta.h"
 #include "resource.h"
+#include "whtmlpart.h"
 
 #include <kiconloader.h>
 #include <kdockwidget.h>
 #include <klocale.h>
 #include <qstring.h>
+#include <khtmlview.h>
 #include <kmditoolviewaccessor.h>
 
 DebuggerUI::DebuggerUI(QObject *parent, const char *name)
@@ -46,6 +48,13 @@ DebuggerUI::DebuggerUI(QObject *parent, const char *name)
   m_debuggerBreakpointView->setCaption(i18n("Breakpoints"));
   m_debuggerBreakpointViewTVA = quantaApp->addToolWindow(m_debuggerBreakpointView, KDockWidget::DockBottom, quantaApp->getMainDockWidget());
   showMenu();
+
+  // Debug HTML preview
+  m_preview = new WHTMLPart(quantaApp, "debug_output");
+  //m_preview->view()->resize(0, 0);
+  m_preview->view()->setIcon(UserIcon("debug_run"));
+  m_preview->view()->setCaption(i18n("Debug output"));
+  m_previewTVA = quantaApp->addToolWindow(m_preview->view(), KDockWidget::DockBottom, quantaApp->getMainDockWidget());
 
   // Show debugger toolbar
   quantaApp->toolBar("debugger_toolbar")->show();
@@ -66,7 +75,9 @@ DebuggerUI::~DebuggerUI()
 
   // Remove breakpointlist
   quantaApp->deleteToolWindow(m_debuggerBreakpointViewTVA);
+  quantaApp->deleteToolWindow(m_previewTVA);
   m_debuggerBreakpointViewTVA = 0L;
+  m_previewTVA = 0L;
 }
 
 void DebuggerUI::showMenu()
@@ -108,6 +119,11 @@ void DebuggerUI::showBreakpoint(const DebuggerBreakpoint &bp)
 void DebuggerUI::deleteBreakpoint(const DebuggerBreakpoint &bp)
 {
   m_debuggerBreakpointView->deleteBreakpoint(bp);
+}
+
+void DebuggerUI::sendRequest(const KURL &url)
+{
+  m_preview->openURL(url);
 }
 
 /*void DebuggerUI::preWatchUpdate()

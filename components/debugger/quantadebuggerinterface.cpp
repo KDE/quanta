@@ -25,6 +25,9 @@
 #include "quantadebuggerinterface.h"
 #include "debuggermanager.h"
 #include "debuggerui.h"
+#include "project.h"
+#include "viewmanager.h"
+#include "document.h"
 
 class DebuggerBreakpoint;
 
@@ -61,6 +64,18 @@ void QuantaDebuggerInterface::enableAction(QString action, bool enable)
 void QuantaDebuggerInterface::fileOpened(QString file)
 {
   m_manager->fileOpened(file);
+}
+
+void QuantaDebuggerInterface::sendRequest(const KURL &url)
+{
+  m_manager->UI()->sendRequest(url);
+}
+
+const QString QuantaDebuggerInterface::activeFile()
+{
+  //kdDebug(24000) << k_funcinfo << ", BaseURL " << Project::ref()->projectBaseURL().path() << ", active doc : " << ViewManager::ref()->activeDocument()->url().path() << endl;
+
+  return ViewManager::ref()->activeDocument()->url().path();
 }
 
 /*DebuggerVariable* QuantaDebuggerInterface::newDebuggerVariable(const QString& name, const QString& value, int type)

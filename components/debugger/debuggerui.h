@@ -23,11 +23,12 @@
 #include <qptrlist.h>
 #include <kmditoolviewaccessor.h>
 
-
 class VariablesListView;
 class DebuggerBreakpointView;
 class DebuggerBreakpoint;
 class DebuggerVariable;
+class WHTMLPart;
+class KURL;
 
 class DebuggerUI : public QObject
 {
@@ -46,6 +47,7 @@ class DebuggerUI : public QObject
     void showBreakpoint(const DebuggerBreakpoint& bp);
     void deleteBreakpoint(const DebuggerBreakpoint& bp);
     void parsePHPVariables(const QString &);
+    void sendRequest(const KURL &url);
 
     void showMenu();
     void hideMenu();
@@ -53,9 +55,12 @@ class DebuggerUI : public QObject
   private:
     VariablesListView* m_variablesListView;
     KMdiToolViewAccessor* m_variableListViewTVA;
+    KMdiToolViewAccessor* m_previewTVA;
     DebuggerBreakpointView* m_debuggerBreakpointView;
     KMdiToolViewAccessor* m_debuggerBreakpointViewTVA;
     int m_debuggerMenuID;
+
+    WHTMLPart *m_preview;
 };
 
 #endif

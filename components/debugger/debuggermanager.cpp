@@ -146,6 +146,8 @@ void DebuggerManager::initActions()
               this, SLOT(slotConditionalBreakpoint()), ac, "debug_conditional_breakdialog");
 
   // Execution
+  new KAction(i18n("Send HTTP R&equest"), SmallIcon("debug_currentline"), 0,
+              this, SLOT(slotDebugRequest()), ac, "debug_request");
   new KAction(i18n("&Run"), SmallIcon("debug_run"), 0,
               this, SLOT(slotDebugRun()), ac, "debug_run");
   new KAction(i18n("&Leap"), SmallIcon("debug_leap"), 0,
@@ -192,7 +194,6 @@ void DebuggerManager::initClientActions()
       enableAction("debug_breakpoints_toggle", true);
     if(m_client->supports(DebuggerClientCapabilities::ClearAllBreakpoints))
       enableAction("debug_breakpoints_clear", true);
-
   }
 }
 
@@ -213,6 +214,7 @@ void DebuggerManager::enableAction(QString action, bool enable)
   if(action == "*")
   {
     // Enable/Disable all session related actions + connect/disconnect
+    enableAction("debug_request", enable);
     enableAction("debug_run", enable);
     enableAction("debug_leap", enable);
     enableAction("debug_pause", enable);
@@ -321,6 +323,14 @@ void DebuggerManager::slotDebugEndSession()
     return;
 
   m_client->endSession();
+}
+
+void DebuggerManager::slotDebugRequest()
+{
+  if(!m_client)
+    return;
+
+  m_client->request();
 }
 
 void DebuggerManager::slotDebugRun()

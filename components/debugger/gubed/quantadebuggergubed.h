@@ -39,7 +39,7 @@ class QuantaDebuggerGubed : public DebuggerClient
     // Execution states
     enum State
     {
-      Pause,
+      Pause = 0,
       RunDisplay,
       RunNoDisplay
     };
@@ -60,6 +60,7 @@ class QuantaDebuggerGubed : public DebuggerClient
     const uint supports(DebuggerClientCapabilities::Capabilities);
 
     // Execution control
+    void request();
     void run();
     void leap();
     void skip();
@@ -102,9 +103,10 @@ class QuantaDebuggerGubed : public DebuggerClient
     QString m_localBasedir;
     QString m_serverPort;
     QString m_serverHost;
+    QString m_startsession;
     QString m_listenPort;
     bool    m_useproxy;
-    State   m_executionState;
+    State   m_executionState, m_defaultExecutionState;
     long    m_errormask;
     long    m_displaydelay;
 

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32063">
+<kpartgui name="quanta" version="32065">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -233,13 +233,16 @@
       <Action name="debug_disconnect" />
     </Menu>
     <Menu name="debug_execution"><text>&amp;Execution</text>
+      <Action name="debug_request" />
+      <Separator />
+      <Action name="debug_pause" />
       <Action name="debug_run" />
       <Action name="debug_leap" />
+      <Separator />
       <Action name="debug_stepover" />
       <Action name="debug_stepinto" />
       <Action name="debug_stepout" />
       <Action name="debug_skip" />
-      <Action name="debug_pause" />
       <Separator />
       <Action name="debug_kill" />
     </Menu>
@@ -256,13 +259,16 @@
 
   <ToolBar name="debugger_toolbar" noMerge="1">
     <text>Debugger Toolbar</text>
+    <Action name="debug_request" />
+    <Separator />
+    <Action name="debug_pause" />
     <Action name="debug_run" />
     <Action name="debug_leap" />
+    <Separator />
     <Action name="debug_stepover" />
     <Action name="debug_stepinto" />
     <Action name="debug_stepout" />
     <Action name="debug_skip" />
-    <Action name="debug_pause" />
     <Separator />
     <Action name="debug_kill" />
     <Separator />

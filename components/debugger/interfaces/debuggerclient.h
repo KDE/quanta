@@ -71,6 +71,7 @@ class DebuggerClient : public QObject
     virtual QString getName() = 0;
 
     // Execution control
+    virtual void request();
     virtual void run();
     virtual void leap();
     virtual void skip();
@@ -91,6 +92,8 @@ class DebuggerClient : public QObject
     virtual void addWatch(const QString &);
     virtual void removeWatch(DebuggerVariable*);
     virtual void variableSetValue(const DebuggerVariable &variable);
+
+    void unSupportedAction(const QString &action);
 
     bool isActive();
     DebuggerInterface *debuggerInterface();

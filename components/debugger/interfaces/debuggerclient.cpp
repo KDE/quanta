@@ -41,51 +41,62 @@ bool DebuggerClient::isActive()
   return m_active;
 }
 
+void DebuggerClient::unSupportedAction(const QString &action)
+{
+  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(action), i18n("Unsupported Debugger Function"));
+
+}
+
 // Unimplemented defaults - Pause execution
 void DebuggerClient::pause()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Pause")), i18n("Unsupported Debugger Function"));
+ unSupportedAction(i18n("Pause"));
+}
 
+// Unimplemented defaults - Send Request
+void DebuggerClient::request()
+{
+ unSupportedAction(i18n("Send HTTP Request"));
 }
 
 // Unimplemented defaults - step over
 void DebuggerClient::stepOver()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Over")), i18n("Unsupported Debugger Function"));
+  unSupportedAction(i18n("Step Over"));
 
 }
 
 // Unimplemented defaults - step out
 void DebuggerClient::stepOut()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Out")), i18n("Unsupported Debugger Function"));
+  unSupportedAction(i18n("Step Out"));
 
 }
 
 // Unimplemented defaults - run
 void DebuggerClient::run()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Run")), i18n("Unsupported Debugger Function"));
+  unSupportedAction(i18n("Run"));
 }
 // Unimplemented defaults - leap
 void DebuggerClient::leap()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Leap")), i18n("Unsupported Debugger Function"));
+  unSupportedAction(i18n("Leap"));
 }
 // Unimplemented defaults - skip
 void DebuggerClient::skip()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Skip")), i18n("Unsupported Debugger Function"));
+  unSupportedAction(i18n("Skip"));
 }
 // Unimplemented defaults - stepInto
 void DebuggerClient::stepInto()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Step Into")), i18n("Unsupported Debugger Function"));
+  unSupportedAction(i18n("Step Into"));
 }
 // Unimplemented defaults - kill
 void DebuggerClient::kill()
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Kill")), i18n("Unsupported Debugger Function"));
+  unSupportedAction(i18n("Kill"));
 
 }
 
@@ -98,14 +109,14 @@ void DebuggerClient::fileOpened(QString)
 // Unimplemented defaults
 void DebuggerClient::addBreakpoint(DebuggerBreakpoint*)
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Set Breakpoint")), i18n("Unsupported Debugger Function"));
+  unSupportedAction(i18n("Set Breakpoint"));
 
 }
 
 // Unimplemented defaults
 void DebuggerClient::removeBreakpoint(DebuggerBreakpoint*)
 {
-  KMessageBox::error(NULL, i18n("The current debugger, %1, does not support the \"%2\" instruction.").arg(this->getName()).arg(i18n("Remove Breakpoint")), i18n("Unsupported Debugger Function"));
+  unSupportedAction(i18n("Remove Breakpoint"));
 }
 
 

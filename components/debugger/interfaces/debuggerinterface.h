@@ -45,6 +45,8 @@ class DebuggerInterface : public QObject
 
     virtual void enableAction(QString action, bool enable) = 0;
     virtual void fileOpened(QString file) = 0;
+    virtual void sendRequest(const KURL &url) = 0;
+    virtual const QString activeFile() = 0;
 
     // Watch handling
     //virtual void preWatchUpdate() = 0;

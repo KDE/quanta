@@ -70,6 +70,7 @@ class DebuggerManager : public QObject
 
   public slots:
     /** Execution control slots **/
+    void slotDebugRequest();
     void slotDebugRun();
     void slotDebugLeap();
     void slotDebugSkip();
