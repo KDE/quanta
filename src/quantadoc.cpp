@@ -266,7 +266,7 @@ bool QuantaDoc::saveDocument(const KURL& url)
   }
 
   // fix
-  if ( oldURL != url )
+  if (oldURL != w->url())
   {
     changeFileTabName();
   }
