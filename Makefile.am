@@ -74,4 +74,4 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/quanta.desktop $(kde_appsdir)/Office/quanta.desktop
 
 uninstall-local:
-	-rm -f $(kde_appsdir)/Applications/quanta.desktop
+	-rm -f $(kde_appsdir)/Office/quanta.desktop
