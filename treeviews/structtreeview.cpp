@@ -77,6 +77,7 @@ StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *nam
   {
     dtdMenu->insertItem(dtdList[i],i,-1);
   }
+
   connect(dtdMenu, SIGNAL(activated(int)), this, SLOT(slotDTDChanged(int)));
 
   popupMenu = new KPopupMenu(this);
@@ -154,11 +155,13 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
           groups[i]->setPixmap(0, SmallIcon(group.icon));
         }
         groups[i]->setOpen(groupOpened[i]);
+        groupIds.insert(group.name, i);
         i++;
       }
 
     }
-
+    QMap<QString, QListViewItem*> lastItemInGroup;
+    QMap<QString, QListViewItem*> groupItems;
     while (currentNode)
     {
       title = "";
@@ -173,6 +176,27 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
         item->setVisible(false);
       }
       currentNode->listItem = item;
+      if (currentNode->groupTag && groupIds.contains(currentNode->group->name))
+      {
+        XMLStructGroup *group = currentNode->group;
+        StructTreeTag *groupItem = groups[groupIds[group->name]];
+        QListViewItem* insertAfter = 0L;
+        QListViewItem* insertUnder = groupItem;
+        if (groupItems.contains(currentNode->groupTag->name))
+            insertUnder = groupItems[currentNode->groupTag->name];
+        if (lastItemInGroup.contains(group->name))
+            insertAfter = lastItemInGroup[group->name];
+
+        StructTreeTag *item = new StructTreeTag(static_cast<StructTreeTag*>(insertUnder), currentNode, currentNode->groupTag->name, insertAfter);
+        if (insertUnder == groupItem)
+        {
+          groupItems[currentNode->groupTag->name] = item;
+          lastItemInGroup[group->name] = item;
+        }
+        item->hasOpenFileMenu = group->hasFileName;
+        item->fileNameRx = group->fileNameRx;
+
+      }
       //go to the child node, if it exists
       if (currentNode->child)
       {
@@ -286,7 +310,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
     for (xmlGroupIt = m_parsingDTD->xmlStructTreeGroups.begin(); xmlGroupIt != m_parsingDTD->xmlStructTreeGroups.end(); ++xmlGroupIt)
     {
       group = xmlGroupIt.data();
-      groupElementMapList = &(parser->m_groups[group.name]);
+  /*    groupElementMapList = &(parser->m_groups[group.name]);
       for (it = groupElementMapList->begin(); it != groupElementMapList->end(); ++it)
       {
         insertUnder = groups[i];
@@ -305,7 +329,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
           }
           insertAfter = item;
         }
-      }
+      } */
       for (externalIt = parser->includedMap.begin(); externalIt != parser->includedMap.end(); ++externalIt)
       {
         insertUnder = new StructTreeTag(static_cast<StructTreeTag*>(groups[i]), 0L, externalIt.key(), groups[i]);
@@ -372,19 +396,20 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
 /** Delete the items */
 void StructTreeView::deleteList()
 {
- if ( top )
- {
-  topOpened = top->isOpen();
-  delete top;
-  top = 0L;
- }
- for (uint i = 0; i < groupsCount; i++)
- {
-   groupOpened[i] = groups[i]->isOpen();
-   delete groups[i];
-   groups[i] = 0L;
- }
- groupsCount = 0;
+  if ( top )
+  {
+    topOpened = top->isOpen();
+    delete top;
+    top = 0L;
+  }
+  for (uint i = 0; i < groupsCount; i++)
+  {
+    groupOpened[i] = groups[i]->isOpen();
+    delete groups[i];
+    groups[i] = 0L;
+  }
+  groupIds.clear();
+  groupsCount = 0;
 }
 
 /** repaint document structure */
@@ -419,6 +444,7 @@ void StructTreeView::slotReparse(Document *w, Node* node, int openLevel)
       }
       i++;
     }
+    groupsCount = i;
   }
   useOpenLevelSetting = false;
 }

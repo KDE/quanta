@@ -19,6 +19,7 @@
 #ifndef STRUCTTREEVIEW_H
 #define STRUCTTREEVIEW_H
 
+#include <qmap.h>
 #include <qwidget.h>
 
 #include <klistview.h>
@@ -109,6 +110,7 @@ private:
   KConfig *config;
   QStringList dtdList;
   int openFileMenuId;
+  QMap<QString, uint> groupIds;
 
 protected: // Protected methods
   /** Do a reparse before showing. */

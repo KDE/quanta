@@ -20,6 +20,7 @@
 
 #include "node.h"
 #include "tag.h"
+#include "qtag.h"
 
 Node::Node( Node *parent )
 {
@@ -27,6 +28,7 @@ Node::Node( Node *parent )
   prev = next = child = 0L;
   tag = 0L;
   groupTag = 0L;
+  group = 0L;
   listItem = 0L;
   opened = false;
   removeAll = true;

@@ -541,7 +541,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       }
       else if (tag->type == Tag::XmlTag)
            {
-             xmlGroupIt = node->tag->dtd->xmlStructTreeGroups.find(tag->name.lower());
+             xmlGroupIt = node->tag->dtd->xmlStructTreeGroups.find(node->tag->name.lower());
              if (xmlGroupIt != node->tag->dtd->xmlStructTreeGroups.end())
              {
                 XMLStructGroup group = xmlGroupIt.data();
@@ -559,6 +559,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
                 title.remove('\n');
                 newTag->name = title;
                 node->groupTag = newTag;
+                node->group = const_cast<XMLStructGroup*>(&(xmlGroupIt.data()));
              }
              //search for scripts inside the XML tag
              scriptParser(node);
@@ -1801,7 +1802,7 @@ void Parser::parseForGroups()
           }
         }
       }
-    } else
+    } /*else
     {
       QMap<QString, XMLStructGroup>::ConstIterator it = dtd->xmlStructTreeGroups.find(currentNode->tag->name.lower());
       if (it != dtd->xmlStructTreeGroups.end())
@@ -1830,7 +1831,7 @@ void Parser::parseForGroups()
         groupElementList = & (*groupElementMapList)[title];
         groupElementList->append(groupElement);
       }
-  }
+  }*/
     //Go to the next node
     currentNode = currentNode->nextSibling();
   }
