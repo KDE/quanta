@@ -489,6 +489,12 @@ void Project::slotLoadProject(const KURL &a_url)
       {
         baseURL = url;
         baseURL.setPath(url.directory(true, true));
+        if (baseURL.isLocalFile())
+        {
+          QDir dir(baseURL.path());
+          baseURL.setPath(dir.canonicalPath());
+          baseURL.adjustPath(-1);
+        }
         dom.setContent( &f );
         f.close();
         loadProjectXML();
@@ -535,7 +541,7 @@ void Project::loadProjectXML()
   if ( !tmpString.isEmpty())
   {
     QuantaCommon::setUrl(previewPrefix, tmpString);
-    previewPrefix.adjustPath(1);
+    previewPrefix.adjustPath(-1);
     if (tmpString != previewPrefix.url()) //compatibility
     {
       projectNode.toElement().setAttribute("previewPrefix",previewPrefix.url());
@@ -1134,7 +1140,7 @@ void Project::slotAcceptCreateProject()
       m_defaultEncoding  = pnf->encodingCombo->currentText();
 
       QuantaCommon::setUrl(previewPrefix, pnf->linePrefix->text());
-      previewPrefix.adjustPath(1);
+      previewPrefix.adjustPath(-1);
 
       usePreviewPrefix = pnf->checkPrefix->isChecked();
 
@@ -1394,7 +1400,7 @@ void Project::slotOptions()
     }
 
     QuantaCommon::setUrl(previewPrefix,optionsPage.linePrefix->text()+"/");
-    previewPrefix.adjustPath(1);
+    previewPrefix.adjustPath(-1);
     usePreviewPrefix = optionsPage.checkPrefix->isChecked();
 
     QDomElement el;

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>858</width>
-            <height>662</height>
+            <width>672</width>
+            <height>535</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -33,7 +33,7 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QPushButton" row="1" column="5">
+        <widget class="QPushButton" row="1" column="4">
             <property name="name">
                 <cstring>buttonTmpl</cstring>
             </property>
@@ -53,7 +53,7 @@
                 <string>...</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="1" column="2" rowspan="1" colspan="3">
+        <widget class="QLineEdit" row="1" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>linePrjTmpl</cstring>
             </property>
@@ -96,12 +96,12 @@
                 <string>Exclude from project:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="5" column="2" rowspan="1" colspan="4">
+        <widget class="QLineEdit" row="5" column="2" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>lineExclude</cstring>
             </property>
         </widget>
-        <widget class="QPushButton" row="2" column="5">
+        <widget class="QPushButton" row="2" column="4">
             <property name="name">
                 <cstring>buttonToolbar</cstring>
             </property>
@@ -129,12 +129,12 @@
                 <string>Templates directory:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="2" column="2" rowspan="1" colspan="3">
+        <widget class="QLineEdit" row="2" column="2" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>linePrjToolbar</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="0" column="2" rowspan="1" colspan="4">
+        <widget class="QLineEdit" row="0" column="2" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>linePrjName</cstring>
             </property>
@@ -188,12 +188,12 @@
                 <string>Email:</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="4">
+        <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>lineAuthor</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="4">
+        <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="3">
             <property name="name">
                 <cstring>lineEmail</cstring>
             </property>
@@ -201,7 +201,7 @@
                 <string></string>
             </property>
         </widget>
-        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="6">
+        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="5">
             <property name="name">
                 <cstring>GroupBox5</cstring>
             </property>
@@ -262,7 +262,7 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="6">
+        <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="5">
             <property name="name">
                 <cstring>GroupBox5_2</cstring>
             </property>
@@ -361,7 +361,7 @@ is obscured, saving the password in any file is a security risk. Use this option
                 </widget>
             </grid>
         </widget>
-        <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="6">
+        <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="5">
             <property name="name">
                 <cstring>checkPrefix</cstring>
             </property>
@@ -380,34 +380,7 @@ is obscured, saving the password in any file is a security risk. Use this option
                 <string>Alt+P</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="9" column="1" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>linePrefix</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>5</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-        </widget>
-        <widget class="QLabel" row="9" column="0">
-            <property name="name">
-                <cstring>TextLabel1_4</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Prefix:</string>
-            </property>
-        </widget>
-        <spacer row="10" column="3">
+        <spacer row="11" column="2">
             <property name="name">
                 <cstring>spacer1</cstring>
             </property>
@@ -424,7 +397,7 @@ is obscured, saving the password in any file is a security risk. Use this option
                 </size>
             </property>
         </spacer>
-        <widget class="QPushButton" row="10" column="1" rowspan="1" colspan="2">
+        <widget class="QPushButton" row="11" column="1">
             <property name="name">
                 <cstring>pushButton3</cstring>
             </property>
@@ -440,7 +413,7 @@ is obscured, saving the password in any file is a security risk. Use this option
                 <string>&amp;OK</string>
             </property>
         </widget>
-        <widget class="QPushButton" row="10" column="4">
+        <widget class="QPushButton" row="11" column="3">
             <property name="name">
                 <cstring>pushButton3_2</cstring>
             </property>
@@ -448,6 +421,50 @@ is obscured, saving the password in any file is a security risk. Use this option
                 <string>&amp;Cancel</string>
             </property>
         </widget>
+        <widget class="QLabel" row="9" column="0">
+            <property name="name">
+                <cstring>TextLabel1_4</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Prefix:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="9" column="1" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>linePrefix</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <spacer row="10" column="1">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>95</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
 <connections>
