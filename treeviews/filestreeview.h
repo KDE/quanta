@@ -21,13 +21,22 @@
 #include <qwidget.h>
 #include <qstrlist.h>
 
+#include <kconfig.h>
+
 #include "filemanage.h"
 
 class FilesTreeFolder;
+class QuantaPropertiesPageDlg;
 
 /**
-  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
   */
+
+typedef struct DirInfo{
+      QString mimeType;
+      QString preText;
+      QString postText;
+    };
 
 class FilesTreeView : public FileManage  {
    Q_OBJECT
@@ -46,6 +55,12 @@ public slots:
 	
 	void slotNewMode();
 	virtual void slotReload();
+  /** No descriptions */
+  void writeDirInfo(QString dirInfoFile="");
+  /** No descriptions */
+  void readDirinfo();
+  virtual void slotProperties();
+  virtual void slotPropertiesApplied();
 	
 signals:
 	void activatePreview();
@@ -59,7 +74,10 @@ public:
 	FilesTreeFolder *homeDir;
   FilesTreeFolder *rootDir;
 
+  QuantaPropertiesPageDlg *quantaProperties;
   QStrList dirList;
+  /**  */
+  DirInfo dirInfo;
 };
 
 #endif

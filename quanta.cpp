@@ -468,6 +468,8 @@ void QuantaApp::slotInsertTag(QString url)
    }
    else
      doc->write()->insertTag( "<a href=\""+furl+"\">","</a>");
+
+  doc->write()->view()->setFocus();
 }
 
 ////////////////////////

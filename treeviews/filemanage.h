@@ -42,7 +42,7 @@ public slots:
 	void slotCopy();
 	void slotPaste();
 	void slotDelete();
-	void slotProperties();
+	virtual void slotProperties();
 	
 	void slotInsertInProject();
 	void slotInsertDirInProject();
@@ -51,6 +51,8 @@ public slots:
 	
 	virtual void slotReload();
 	void slotJobFinished( KIO::Job *);
+  /** No descriptions */
+  virtual void slotPropertiesApplied();
 	
 signals:
 	void open( QListViewItem *name );

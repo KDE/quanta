@@ -2,7 +2,7 @@
                           filestreeview.cpp  -  description
                              -------------------
     begin                : Thu Jun 1 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -18,9 +18,14 @@
 #define ID_TOP  777
 
 // QT includes
+#include <qcheckbox.h>
 #include <qdir.h>
 #include <qpixmap.h>
 #include <qheader.h>
+#include <qframe.h>
+#include <qlayout.h>
+#include <qfileinfo.h>
+#include <qtextedit.h>
 
 // KDE includes
 #include <krun.h>
@@ -29,12 +34,16 @@
 #include <kopenwith.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
+#include <kpropertiesdialog.h>
+#include <kcombobox.h>
 
 // app includes
+
 #include "filemanage.h"
 #include "filestreefile.h"
 #include "filestreefolder.h"
 #include "filestreeview.h"
+#include "quantapropertiespagedlg.h"
 
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
@@ -264,4 +273,170 @@ void FilesTreeView::slotAddToTop()
 	  }
 	}
 }
+
+void FilesTreeView::slotProperties()
+{
+  if ( !currentItem() ) return;
+
+  KPropertiesDialog *propDlg = new KPropertiesDialog( KURL( currentFileName() ), this, 0L, false, false);
+
+  QFrame *quantaPage = propDlg->dialog()->addPage(i18n("Quanta directory"));
+  QVBoxLayout *topLayout = new QVBoxLayout( quantaPage);
+  quantaProperties = new QuantaPropertiesPageDlg( quantaPage, i18n("Quanta") );
+
+  quantaProperties->typesCombo->insertItem("text/all");
+  quantaProperties->typesCombo->insertItem("binary/all");
+  quantaProperties->typesCombo->insertItem("template/all");
+
+  readDirinfo();
+
+  quantaProperties->typesCombo->setCurrentItem(dirInfo.mimeType);
+
+  QListViewItem *item = currentItem();
+  QString startDir = "";
+	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+	if ( f )
+  {
+   startDir = currentFileName();
+  } else
+  {
+   startDir = currentFileName() + "/dummy_file";
+  }
+  QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
+  if (!dotFileInfo.exists()) quantaProperties->parentAttr->setChecked(true);
+  if (dirInfo.mimeType.isEmpty())
+   {
+    quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (nothing)"));
+   } else
+   {
+    quantaProperties->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(dirInfo.mimeType));
+   }
+   if (!dirInfo.preText.isEmpty())
+   {
+    quantaProperties->preTextEdit->setText(dirInfo.preText);
+    quantaProperties->usePreText->setChecked(true);
+   }
+   if (!dirInfo.postText.isEmpty())
+   {
+    quantaProperties->postTextEdit->setText(dirInfo.postText);
+    quantaProperties->usePostText->setChecked(true);
+   }
+
+   topLayout->addWidget( quantaProperties );
+//   connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied) );
+
+   if (propDlg->exec())
+   {
+    slotPropertiesApplied();
+    slotReload();
+   }
+
+  delete propDlg;
+}
+
+
+/** No descriptions */
+void FilesTreeView::slotPropertiesApplied()
+{
+  bool changed = false;
+  DirInfo localDirInfo;
+
+  if (!quantaProperties->parentAttr->isChecked())
+  {
+    localDirInfo.mimeType = quantaProperties->typesCombo->currentText();
+  } else
+  {
+    localDirInfo.mimeType = dirInfo.mimeType;
+  }
+
+  if (quantaProperties->usePreText->isChecked())
+  {
+    localDirInfo.preText = quantaProperties->preTextEdit->text();
+  } else
+  {
+    localDirInfo.preText = dirInfo.preText;
+  }
+  if (quantaProperties->usePostText->isChecked())
+  {
+    localDirInfo.postText = quantaProperties->postTextEdit->text();
+  } else
+  {
+    localDirInfo.postText = dirInfo.postText;
+  }
+
+  if ( (dirInfo.mimeType != localDirInfo.mimeType) ||
+       (dirInfo.preText != localDirInfo.preText) ||
+       (dirInfo.postText != localDirInfo.postText))
+  {
+    dirInfo.mimeType = localDirInfo.mimeType;
+    dirInfo.preText = localDirInfo.preText;
+    dirInfo.postText = localDirInfo.postText;
+    writeDirInfo();
+  }
+
+
+}
+
+/** No descriptions */
+void FilesTreeView::readDirinfo()
+{
+  QListViewItem *item = currentItem();
+  QString startDir = "";
+
+	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+	if ( f )
+  {
+   startDir = currentFileName();
+  } else
+  {
+   startDir = currentFileName() + "/dummy_file";
+  }
+
+  QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
+
+  while ((!dotFileInfo.exists()) && (dotFileInfo.dirPath() != "/"))
+  {
+   dotFileInfo.setFile(QFileInfo(dotFileInfo.dirPath()).dirPath()+"/.dirinfo");
+  }
+
+  KConfig *config = new KConfig(dotFileInfo.filePath());
+  dirInfo.mimeType = config->readEntry("Type");
+  dirInfo.preText = config->readEntry("PreText");
+  dirInfo.postText = config->readEntry("PostText");
+
+  delete config;
+}
+
+/** No descriptions */
+void FilesTreeView::writeDirInfo(QString dirInfoFile)
+{
+  QListViewItem *item = currentItem();
+  QString startDir = "";
+
+  if (dirInfoFile.isEmpty())
+  {
+	  FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+	  if ( f )
+    {
+      startDir = currentFileName();
+    } else
+    {
+      startDir = currentFileName() + "/dummy_file";
+    }
+  } else
+  {
+    startDir = dirInfoFile;
+  }
+
+  QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
+
+  KConfig *config = new KConfig(dotFileInfo.filePath());
+  config->writeEntry("Type", dirInfo.mimeType);
+  config->writeEntry("PreText", dirInfo.preText);
+  config->writeEntry("PostText", dirInfo.postText);
+  config->sync();
+
+  delete config;
+}
+
 #include "filestreeview.moc"

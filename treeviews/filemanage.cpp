@@ -149,9 +149,9 @@ void FileManage::slotProperties()
 {
   if ( !currentItem() ) return;
 
-  KPropertiesDialog *propDlg = new KPropertiesDialog( KURL( currentFileName() ) );
+  KPropertiesDialog *propDlg = new KPropertiesDialog( KURL( currentFileName() ));
 
-  connect( propDlg, SIGNAL( applied() ), this , SLOT( slotReload() ) );
+  connect( propDlg, SIGNAL( applied() ), this , SLOT( slotPropertiesApplied) );
 }
 
 
@@ -179,5 +179,10 @@ void FileManage::slotInsertTag()
   emit insertTag( currentFileName() );
 }
 
-#include "filemanage.moc"
+/** No descriptions */
+void FileManage::slotPropertiesApplied()
+{
 
+}
+
+#include "filemanage.moc"

@@ -91,10 +91,10 @@ void Document::insertTag(QString s1,QString s2)
 		  selection = selectionIf->selection();
       selectionIf->removeSelectedText();
   	}
-/*
+
 	unsigned int line,col; // cursor position
-  viewCursorIf->cursorPosition(&line,&col);
-  editIf->insertText(line, col, s1+selection+s2);
+  viewCursorIf->cursorPositionReal(&line,&col);
+/*  editIf->insertText(line, col, s1+selection+s2);
 
    KTextEditor::WordWrapInterface *ww = dynamic_cast<KTextEditor::WordWrapInterface*>(_doc);
    if ( (ww->wordWrap()) && ((col+s1.length()) > ww->wordWrapAt()) )
@@ -109,6 +109,7 @@ void Document::insertTag(QString s1,QString s2)
   */
 
  kate_view->insertText(s1+selection+s2);
+// viewCursorIf->setCursorPosition(pos2y(line),pos2x(col));
  for (unsigned int i=0; i < s2.length(); i++)
    kate_view->cursorLeft();
 }

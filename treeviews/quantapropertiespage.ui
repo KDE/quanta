@@ -1,0 +1,149 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>QuantaPropertiesPage</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>QuantaPropertiesPage</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>312</width>
+            <height>334</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Quanta properties</string>
+    </property>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>TextLabel1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>15</x>
+                <y>20</y>
+                <width>45</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Type:</string>
+        </property>
+    </widget>
+    <widget class="KComboBox">
+        <property name="name">
+            <cstring>typesCombo</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>100</x>
+                <y>15</y>
+                <width>160</width>
+                <height>30</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QCheckBox">
+        <property name="name">
+            <cstring>usePostText</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>210</y>
+                <width>212</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Use pos&amp;t-text</string>
+        </property>
+    </widget>
+    <widget class="QCheckBox">
+        <property name="name">
+            <cstring>parentAttr</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>60</y>
+                <width>285</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;Inherit ype from parent (nothing)</string>
+        </property>
+    </widget>
+    <widget class="QCheckBox">
+        <property name="name">
+            <cstring>usePreText</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>90</y>
+                <width>212</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Use &amp;pre-text</string>
+        </property>
+    </widget>
+    <widget class="QTextEdit">
+        <property name="name">
+            <cstring>preTextEdit</cstring>
+        </property>
+        <property name="enabled">
+            <bool>false</bool>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>115</y>
+                <width>285</width>
+                <height>85</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QTextEdit">
+        <property name="name">
+            <cstring>postTextEdit</cstring>
+        </property>
+        <property name="enabled">
+            <bool>false</bool>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>235</y>
+                <width>285</width>
+                <height>85</height>
+            </rect>
+        </property>
+    </widget>
+</widget>
+<connections>
+    <connection>
+        <sender>parentAttr</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>typesCombo</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>usePreText</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>preTextEdit</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>usePostText</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>postTextEdit</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

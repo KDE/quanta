@@ -33,6 +33,7 @@
 #include <kcombobox.h>
 
 #include "templatestreeview.h"
+#include "templatestreeview.moc"
 #include "filestreefolder.h"
 #include "filestreefile.h"
 #include "newtemplatedirdlg.h"
@@ -171,7 +172,7 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 
    dotFile.readLine(s,100);
    if (s.upper().contains("TEXT")) menuText = textMenu;
-   if (s.upper().contains("IMAGE")) menuText = binaryMenu;
+   if (s.upper().contains("BINARY")) menuText = binaryMenu;
    if (s.upper().contains("TEMPLATE")) menuText = docMenu;
 
    if (menuText.isEmpty())
@@ -240,68 +241,53 @@ void TemplatesTreeView::slotInsert()
  if (menuText == docMenu) slotNewDocument();
 }
 
-
-#include "templatestreeview.moc"
 /** No descriptions */
 void TemplatesTreeView::slotNewDir()
 {
   NewTemplateDirDlg *createDirDlg = new NewTemplateDirDlg(this,i18n("Create new template directory"));
   createDirDlg->typesCombo->insertItem("text/all");
-  createDirDlg->typesCombo->insertItem("image/all");
+  createDirDlg->typesCombo->insertItem("binary/all");
   createDirDlg->typesCombo->insertItem("template/all");
 
-  QListViewItem *item = currentItem();
-  QString startDir = "";
-	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-	if ( f )
-  {
-   startDir = currentFileName();
-  } else
-  {
-   startDir = currentFileName() + "/dummy_file";
-  }
+  readDirinfo();
 
-   QFileInfo dotFileInfo(QFileInfo(startDir).dirPath()+"/.dirinfo");
-
-   while ((!dotFileInfo.exists()) && (dotFileInfo.dirPath() != "/"))
+   if (dirInfo.mimeType.isEmpty())
    {
-    dotFileInfo.setFile(QFileInfo(dotFileInfo.dirPath()).dirPath()+"/.dirinfo");
-   }
-   QFile dotFile(dotFileInfo.filePath());
-   dotFile.open(IO_ReadOnly);
-
-   QString s;
-   dotFile.readLine(s,100);
-
-   if (s.isEmpty())
-   {
-    createDirDlg->parentAttr->setText(i18n("&Inherit parrent attribute (nothing)"));
+    createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (nothing)"));
    } else
    {
-     createDirDlg->parentAttr->setText(i18n("&Inherit parrent attribute (%1)").arg(s));
+     createDirDlg->parentAttr->setText(i18n("&Inherit parent attribute (%1)").arg(dirInfo.mimeType));
    }
    if (createDirDlg->exec())
    {
     QDir dir;
 
-    startDir = QFileInfo(startDir).dirPath();
-    if (!dir.mkdir(startDir+"/"+createDirDlg->dirName->text()))
-    {
+   QListViewItem *item = currentItem();
+   QString startDir = "";
+	 FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+	 if ( f )
+   {
+    startDir = currentFileName();
+   } else
+   {
+    startDir = currentFileName() + "/dummy_file";
+   }
+   startDir = QFileInfo(startDir).dirPath();
+   if (!dir.mkdir(startDir+"/"+createDirDlg->dirName->text()))
+   {
       KMessageBox::error(this,i18n("Error while creating the new directory.\n \
                    Maybe you don't have permission to write in the %1 directory.").arg(startDir));
       return;
-    }
-    if (! createDirDlg->parentAttr->isChecked())
-    {
-     QFile dirFile(startDir+"/"+createDirDlg->dirName->text()+"/.dirinfo");
-     dirFile.open(IO_WriteOnly);
-     QTextStream dirStream(&dirFile);
-     dirStream << createDirDlg->typesCombo->currentText();
-     dirFile.flush();
-     dirFile.close();
-    }
-    slotReload();
    }
+   if (! createDirDlg->parentAttr->isChecked())
+   {
+      dirInfo.mimeType = createDirDlg->typesCombo->currentText();
+      dirInfo.preText = "";
+      dirInfo.postText = "";
+      writeDirInfo(startDir+"/"+createDirDlg->dirName->text()+"/.dirinfo");
+   }
+   slotReload();
+  }
 }
 /** No descriptions */
 QDragObject * TemplatesTreeView::dragObject ()
