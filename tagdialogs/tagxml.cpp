@@ -107,7 +107,7 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
          if ( !ltext.isNull() && (type!="check") ) //if there is a text label for the attribute
         {
            QLabel *label = new QLabel(this);
-           label->setText( ltext.text() );
+           label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text()+":") );
 
           if ( tip != QString::null )
               QToolTip::add( label, tip );
