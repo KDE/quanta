@@ -90,7 +90,7 @@ void SpellChecker::spellCheck(KTextEditor::Document *document)
     m_currentDoc = document;
     m_currentDoc->setModified(true);
     m_kspell = new KSpell( 0, i18n("Spellcheck"),
-                            this, SLOT(ready()), qConfig.spellConfig );
+                            this, SLOT(ready()), qConfig.spellConfig, true, false, KSpell::HTML);
 
      connect( m_kspell, SIGNAL(death()),
               this, SLOT(spellCleanDone()) );
