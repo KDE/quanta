@@ -1184,6 +1184,7 @@ void QuantaApp::initActions()
     KStdAction::deselect(view, SLOT(slotDeselectAll()),actionCollection());
     (void) new KAction( i18n( "&Toggle Block Selection" ), Key_F4, view,
                         SLOT( toggleVertical() ), actionCollection(), "set_verticalSelect" );
+    (void) new KAction(i18n("Toggle &Insert"), Key_Insert, view, SLOT(toggleInsert()), actionCollection(), "set_insert" );
 
 
     KStdAction::find(view, SLOT(slotFind()), actionCollection());

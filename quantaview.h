@@ -129,7 +129,8 @@ class QuantaView : public QWidget
     void slotSelectAll ();
     void slotDeselectAll ();
     void toggleVertical ();
-
+    void toggleInsert();
+    
     void slotFind ();
     void slotFindAgain ();
     void slotFindAgainB ();

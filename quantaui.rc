@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="31001">
+<kpartgui name="quanta" version="31002">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -41,6 +41,7 @@
     <Action name="edit_select_all" />
     <Action name="edit_deselect"/>
     <Action name="set_verticalSelect"/>
+    <Action name="set_insert"/>
     <Separator />
     <Action name="edit_find" />
     <Action name="edit_find_next" />

@@ -702,6 +702,10 @@ void QuantaView::toggleVertical()
   dynamic_cast<KTextEditor::BlockSelectionInterface*>(write()->doc())->toggleBlockSelectionMode();
 }
 
+void QuantaView::toggleInsert()
+{
+  write()->kate_view->setOverwriteMode(!write()->kate_view->isOverwriteMode());
+}
 
 
 void QuantaView::slotFind ()
