@@ -77,7 +77,8 @@ KQApplication::KQApplication()
      if (args->isSet("logo")) splash = new KSplash();
      quantaApp = new QuantaApp();
      setMainWidget(quantaApp);
-     QTimer::singleShot(10, this, SLOT( slotInit()));
+     //QTimer::singleShot(10, this, SLOT( slotInit()));
+     slotInit();
    }
 }
 
@@ -121,7 +122,8 @@ int KQUniqueApplication::newInstance()
 
     quantaApp = new QuantaApp();
     setMainWidget(quantaApp);
-    QTimer::singleShot(10, this, SLOT( slotInit()));
+   // QTimer::singleShot(10, this, SLOT( slotInit()));
+    slotInit();
   }
 
   return 0;
@@ -157,7 +159,7 @@ void KQApplicationPrivate::init()
       KURL url;
       QuantaCommon::setUrl(url, *it);
       quantaApp->slotFileOpen(url, quantaApp->defaultEncoding());  // load initial files
-    }    
+    }
     quantaApp->openLastFiles();
   }
   args->clear();
