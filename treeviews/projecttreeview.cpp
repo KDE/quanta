@@ -129,7 +129,8 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(i18n("Insert &Tag"), this, SLOT(slotInsertTag()));
   m_menuClose = m_fileMenu->insertItem(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
   m_fileMenu->insertSeparator();
-  m_fileMenu->insertItem(SmallIcon("up"), i18n("&Upload File"), this, SLOT(slotQuickUploadURL()));
+  m_fileMenu->insertItem(SmallIcon("up"), i18n("&Upload File..."), this, SLOT(slotUploadSingleURL()));
+  m_fileMenu->insertItem(SmallIcon("up"), i18n("&Quick File Upload"), this, SLOT(slotQuickUploadURL()));
   m_fileMenu->insertItem(i18n("Re&name"), this, SLOT(slotStartRename()));
   m_fileMenu->insertItem( i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
