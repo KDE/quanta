@@ -744,7 +744,7 @@ Node *SAParser::parsingDone()
     } else
     {
       n = s_currentNode;
-      while (n->prev)
+      while (n && n->prev)
         n = n->prev;
       s_currentNode = n;
     }
@@ -769,7 +769,7 @@ Node *SAParser::parsingDone()
 
   if (s_fullParse && m_currentNode)
   {
-      if (m_useNext)
+      if (m_useNext && s_currentNode)
       {
         Node *n = s_currentNode;
         n->next = s_next;
