@@ -190,7 +190,7 @@
                 <cstring>showScriptsIcon</cstring>
             </property>
             <property name="text">
-                <string>Show an icon at the location of scripts</string>
+                <string>Show an icon where scripts are located</string>
             </property>
         </widget>
     </grid>
