@@ -93,7 +93,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
 
 
 	// generate top list of directories
-	for (uint i = 0; i <  topURLList.count(); i++)
+	for (uint i = 0; i <  topList.count(); i++)
 	{
 	  KURL url = topURLList[i];
     if (url.isLocalFile() && url.path() == "/")
@@ -109,7 +109,7 @@ FilesTreeView::FilesTreeView(KURL::List topList, QWidget *parent, const char *na
     	  dir->setOpen( true );
       } else
       {
-	      FilesTreeFolder *dir = new FilesTreeFolder( this, url.path(), url);
+	      FilesTreeFolder *dir = new FilesTreeFolder( this, url.fileName()+" ["+url.path()+"]", url);
 	      dir->setPixmap( 0, SmallIcon("kdisknav") );
     	  dir->setOpen( false);
       }
@@ -277,20 +277,21 @@ void FilesTreeView::slotAddToTop()
   FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( currentItem() );
 	if ( d )
 	{
-    KURL url = currentURL();
+    KURL url(currentURL().url());
 	  if ( d->parentFolder )      //it is not a top folder
 	  { // add
       if (topURLList.findIndex(url) == -1)
       {
         url.setPath(url.path(-1));
-  	    FilesTreeFolder *dir = new FilesTreeFolder( this , url.fileName(), url); //FIXME: Why doesn't add to the TOP as the first item??
+  	    FilesTreeFolder *dir = new FilesTreeFolder( this , url.fileName() +" ["+url.path()+"]", url); //FIXME: Why doesn't add to the TOP as the first item??
    	    dir->setPixmap( 0, SmallIcon("kdisknav") );
   	    dir->setOpen( false);
   	    topURLList.append(url);
   	  }
     } else
     { // remove
-	    topURLList.remove( url );
+      url.adjustPath(-1);
+      topURLList.remove(url);
 	    delete(d);
 	  }
 	}

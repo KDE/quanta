@@ -177,10 +177,6 @@ void QuantaApp::initQuanta()
   initPlugins  ();
 
   m_tagsMenu = new QPopupMenu(this);
-  KAction *editTagAction =
-           new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
-                        view, SLOT( slotEditCurrentTag() ),
-                        actionCollection(), "edit_current_tag" );
   editTagAction->plug(m_tagsMenu);
   m_tagsMenu->insertSeparator();
   menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1,TAGS_MENU_PLACE);
@@ -1158,6 +1154,10 @@ void QuantaApp::initTagDict()
 
 void QuantaApp::initActions()
 {
+
+  editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
+                        view, SLOT( slotEditCurrentTag() ),
+                        actionCollection(), "edit_current_tag" );
 
     //Kate actions
 

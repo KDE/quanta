@@ -436,6 +436,7 @@ private:
     *openPrjViewAction, *savePrjViewAction, *saveAsPrjViewAction;
 
   KAction *editUndo, *editRedo, *bookmarkToggle, *bookmarkClear;
+  KAction *editTagAction;
 
   KToggleAction *viewBorder;
   KToggleAction *viewLineNumbers;
