@@ -29,9 +29,6 @@
 #include "quanta.h"
 #include "kwrite/kwview.h"
 
-#ifndef VERSION
-  #define VERSION "2.0"
-#endif
 
 static const char *description =
 	I18N_NOOP("Quanta Plus Web Development Environment");

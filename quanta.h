@@ -18,6 +18,9 @@
 #ifndef QUANTA_H
 #define QUANTA_H
  
+#ifndef VERSION
+  #define VERSION "2"
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -39,8 +42,11 @@ class QuantaView;
 class WSplitter;
 class QTabWidget;
 class QWidgetStack;
+
 class WHTMLPart;
 class KHTMLView;
+
+class KAction;
 class QListViewItem;
 class KRecentFilesAction;
 
@@ -96,17 +102,12 @@ class QuantaApp : public KMainWindow
     void initProject();
     void initTagDict();
     
-    
-    virtual bool queryClose();
     virtual bool queryExit();
-    virtual void saveProperties(KConfig *_cfg);
-    virtual void readProperties(KConfig *_cfg);
     
+    void setHSplit(int);
+    void setVSplit(int);
 
   public slots:
-    
-    void addRecentFile   (const QString &file);
-    void addRecentProject(const QString &file);
     
     void slotFileNew ();
     void slotFileOpen();
@@ -134,8 +135,7 @@ class QuantaApp : public KMainWindow
     
     void slotToolSyntaxCheck();
 
-    /** open url in documentation window
-     */
+    /// open url in documentation window
     void openDoc( QString url );
 
     void updateNavButtons( bool back, bool forward );
@@ -209,14 +209,10 @@ class QuantaApp : public KMainWindow
     Project *project;
 
     /** return htmlPart or 0L if use previewPosition=="Disabled" */
-    WHTMLPart *htmlPart();
+    WHTMLPart    *htmlPart();
     QWidgetStack *widgetStackOfHtmlPart();
-
-    /** contains the recently used filenames */
-    KRecentFilesAction *fileRecent;
-    KRecentFilesAction *projectRecent;
     
-    // CONFIG
+    // config
     KConfig *config;
 
     /** widget stack for left panel */
@@ -264,6 +260,15 @@ class QuantaApp : public KMainWindow
     ToolBars *toolbars;
 
     int phpDebugPort;
+    
+    // ACTIONS
+    KRecentFilesAction *fileRecent;
+    KRecentFilesAction *projectRecent;
+    
+    KAction *saveAction, *saveAllAction, *undoAction, *redoAction,
+      *cutAction, *copyAction, *findNextAction, *backAction, *forwardAction,
+      *closeprjAction, *insertFileAction, *insertDirAction, 
+      *rescanPrjDirAction, *uploadProjectAction, *projectOptionAction;
 };
  
 #endif // QUANTA_H

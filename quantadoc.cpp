@@ -86,6 +86,20 @@ QString QuantaDoc::basePath()
 	return (write()->isUntitled()) ? QExtFileInfo::home() : QExtFileInfo::path( furl );
 }
 
+QStringList QuantaDoc::openedFiles()
+{
+  QStringList list;
+  QDictIterator<Document> it( *docList );
+  
+  while ( Document *w = it.current() )
+  {
+    list.append( it.currentKey() );
+    ++it;
+  }
+  
+  return list;
+}
+
 bool QuantaDoc::newDocument( const KURL& url )
 {
   bool newfile = false;
@@ -213,6 +227,8 @@ void QuantaDoc::readConfig( KConfig *config )
 
   QDictIterator<Document> it( *docList );
 
+  config->setGroup("General Options");
+  
   while ( Document *w = it.current() ) 
   {
     w -> readConfig( config );
@@ -222,6 +238,8 @@ void QuantaDoc::readConfig( KConfig *config )
 
 void QuantaDoc::writeConfig( KConfig *config )
 {
+  config->setGroup("General Options");
+  
   write()-> writeConfig( config );
   config -> sync();
 
@@ -305,6 +323,16 @@ Document* QuantaDoc::write()
 void QuantaDoc::editorOptions()
 {
   write()->editorOptions();
+  
+  writeConfig( app->config );
+}
+
+// highlighting dlg
+void QuantaDoc::highlightings()
+{
+  write()->hlDlg();
+  
+  writeConfig( app->config );
 }
 
 Document* QuantaDoc::newWrite(QWidget *parent)
@@ -322,8 +350,7 @@ Document* QuantaDoc::newWrite(QWidget *parent)
  	w  -> setHl           ( hl->nameFind( "HTML"));
  	w  -> setUntitledUrl  ( fname );
  	
-#warning need convert to xml gui 	
- 	w  -> installPopup( rbMenu );
+ 	w  -> installPopup( (QPopupMenu *)app->factory()->container("popup_editor", app));
 
  	connect( w, SIGNAL(newStatus    ()),app, SLOT(slotNewStatus    ()));
  	connect( w, SIGNAL(newUndo      ()),app, SLOT(slotNewUndo      ()));
@@ -335,7 +362,7 @@ Document* QuantaDoc::newWrite(QWidget *parent)
 /** show popup menu with list of attributes for current tag */
 void QuantaDoc::slotAttribPopup()
 {
-  
+/*  
   attribMenu->clear();
 
   write()->currentTag();
@@ -359,9 +386,9 @@ void QuantaDoc::slotAttribPopup()
     while ( item ) {
       if ( !((lCore->find(item)!=-1) || (lI18n->find(item)!=-1) || (lScript->find(item)!=-1))) {
         haveAttributes = true;
-        attribMenu->insertItem( item , /* KPM_FirstItem+ */list->at() );
+        attribMenu->insertItem( item , list->at() );
         if ( attrList.find(item) != -1 )
-          attribMenu->setItemEnabled( /* KPM_FirstItem+ */list->at(), false );
+          attribMenu->setItemEnabled( list->at(), false );
       }
       item = list->next();
     }
@@ -379,7 +406,7 @@ void QuantaDoc::slotAttribPopup()
     if ( !haveAttributes )
       return;              // don't show empty menu, may be core dumped
 
-    attribMenu->setActiveItem( /* KPM_FirstItem */ 0);
+    attribMenu->setActiveItem( 0);
 
     QPoint globalPos = write()->getGlobalCursorPos();
     attribMenu->exec( globalPos );
@@ -389,6 +416,7 @@ void QuantaDoc::slotAttribPopup()
     message += tag;
     app->slotStatusMsg( message.data() );
   }
+  */
 }
 
 void QuantaDoc::slotInsertAttrib( int id )
@@ -481,7 +509,7 @@ void QuantaDoc::changeFileTabName( QString oldUrl )
   QDictIterator<Document> it2(*docList);
 
  	int i,len;
- 	while ( it1.current() && it1.current() != it2.current() )
+ 	while ( it1.current() )
  	{
  		QString name1 = it1.currentKey();
  		
@@ -508,8 +536,6 @@ void QuantaDoc::changeFileTabName( QString oldUrl )
  			++it2;
  		}
  		QString shortUrl = name1.right( len );
- 		
- 		debug( shortUrl );
  		
  		app->view->writeTab->changeTab( it1.current() , shortUrl );
  		

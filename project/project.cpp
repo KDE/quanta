@@ -201,6 +201,25 @@ void Project::createEmptyDom()
   loadProject( projectFileName );
 }
 
+void Project::readConfig (KConfig *config)
+{
+  config->setGroup  ("Projects");
+  QString url = config->readEntry("Last Project");
+  
+  if ( url.isEmpty()) return;
+  
+  closeProject();
+  loadProject ( url );
+}
+
+void Project::writeConfig(KConfig *config)
+{
+  config->setGroup  ("Projects");
+  config->writeEntry("Last Project", projectFileName);
+  
+  saveProject();
+}
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 // SLOTS implementation

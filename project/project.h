@@ -30,10 +30,13 @@
 
 class QWizard;
 class QWidgetStack;
-class ProjectNewGeneral;
-class ProjectNewLocal;
+
+class KConfig;
+
 class ProjectNewWeb;
+class ProjectNewLocal;
 class ProjectNewFinal;
+class ProjectNewGeneral;
 
 class Project : public QWidget  {
    Q_OBJECT
@@ -50,6 +53,9 @@ public:
 
   void createEmptyDom();
 
+  void  readConfig(KConfig *);
+  void writeConfig(KConfig *);
+  
 public slots:
 
   void newProject();

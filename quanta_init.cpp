@@ -392,114 +392,51 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
 
 }
 
-void QuantaApp::addRecentFile(const QString &file)
-{
-/*  
-  if(recentFiles.find(file) == -1)
-  {
-    if( recentFiles.count() < 5)
-    {
-      recentFiles.insert(0, file);
-    }
-    else
-    {
-      recentFiles.remove(4);
-      recentFiles.insert(0, file);
-    }
-    recentFilesMenu->clear();
-    for ( int i=0 ; i < (int) recentFiles.count(); i++)
-    {
-      recentFilesMenu->insertItem(recentFiles.at(i));
-    }
-  }
-*/    
-}
-
-void QuantaApp::addRecentProject(const QString &file)
-{
-/*  
-  if(recentProjects.find(file) == -1)
-  {
-    if( recentProjects.count() < 5)
-    {
-      recentProjects.insert(0, file);
-    }
-    else
-    {
-      recentProjects.remove(4);
-      recentProjects.insert(0, file);
-    }
-    
-    recentProjectsMenu->clear();
-    for ( int i=0 ; i < (int) recentProjects.count(); i++)
-    {
-      recentProjectsMenu->insertItem(recentProjects.at(i));
-    }
-    
-  }
-*/  
-}
-
 void QuantaApp::saveOptions()
 {	
-  config->setGroup("General Options");
-  doc->write()->writeConfig(config);
-  config->writeEntry("Geometry", size());
-
-  config->writeEntry("Show Statusbar",statusBar()->isVisible());
+  config->setGroup  ("General Options");
   
-  fileRecent->saveEntries(config);
-#warning fix   
-  //config->writeEntry("Recent Projects", recentProjects);
+  config->writeEntry("Geometry", size());
+  config->writeEntry("Show Statusbar",statusBar()->isVisible());
 
-  config->writeEntry("Html mask", fileMaskHtml );
+  config->writeEntry("Html mask",   fileMaskHtml  );
   config->writeEntry("Images mask", fileMaskImage );
-  config->writeEntry("Php mask", fileMaskPhp );
-  config->writeEntry("Java mask", fileMaskJava );
-  config->writeEntry("Text mask", fileMaskText );
+  config->writeEntry("Php mask",    fileMaskPhp   );
+  config->writeEntry("Java mask",   fileMaskJava  );
+  config->writeEntry("Text mask",   fileMaskText  );
 
-  config->writeEntry("Capitals for tags", tagsCapital);
-  config->writeEntry("Capitals for attr", attrCapital);
-  config->writeEntry("Use close tag if optional", useCloseTag);
+  config->writeEntry("Capitals for tags",     tagsCapital);
+  config->writeEntry("Capitals for attr",     attrCapital);
+  config->writeEntry("Close tag if optional", useCloseTag);
 
   config->writeEntry("Preview position", previewPosition);
 
-  config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
-
   config->writeEntry("HSplit position", hSplit->getPos() );
   config->writeEntry("VSplit position", vSplit->getPos() );
+  
+  config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
 
   config->writeEntry("Follow Cursor", sTab->followCursor() );
 
   config->writeEntry("PHP Debugger Port", phpDebugPort );
   
-  // save list of open files
-
-  QStrList fileList;
-  QDictIterator<Document> it( *(doc->docList) ); // iterator for dict
-
-  while ( Document *w = it.current() ) 
-  {
-    if ( !w->isUntitled() ) fileList.append(w->url().url());
-    ++it;
-  }
-
-  config->writeEntry("List of opened files", fileList);
   config->writeEntry("Top folders",          fTTab->dirList);
-
-  if ( project->hasProject() )
-  {
-    project->saveProject();
-    config->writeEntry("Last Project", project->projectFileName);
-  }
-  else config->writeEntry("Last Project", "");
+  config->writeEntry("List of opened files", doc->openedFiles());
+  
+  config->writeEntry ("Version", VERSION); // version
+  
+  doc    ->writeConfig(config); // kwrites
+  project->writeConfig(config); // project
+  
+  fileRecent   ->saveEntries(config, "Files");
+  projectRecent->saveEntries(config, "Projects");
 }
 
 
 void QuantaApp::readOptions()
 {
-	
   config->setGroup("General Options");
+  //if (2>config->readNumEntry("Version",0)) config = new KConfig();
 
   fileMaskHtml  = config->readEntry("Html mask", 	fileMaskHtml)	+" ";
   fileMaskImage = config->readEntry("Images mask",fileMaskImage)+" ";
@@ -507,100 +444,59 @@ void QuantaApp::readOptions()
   fileMaskJava  = config->readEntry("Java mask", 	fileMaskJava)	+" ";
   fileMaskText  = config->readEntry("Text mask", 	fileMaskText)	+" ";
 
-  tagsCapital = config->readBoolEntry("Capitals for tags", false);
-  attrCapital = config->readBoolEntry("Capitals for attr", false);
-  useCloseTag = config->readBoolEntry("Use close tag if optional", true);
+  tagsCapital = config->readBoolEntry("Capitals for tags",     false);
+  attrCapital = config->readBoolEntry("Capitals for attr",     false);
+  useCloseTag = config->readBoolEntry("Close tag if optional", true);
 
   previewPosition   = config->readEntry("Preview position","Right");
 
+  setHSplit( config->readNumEntry("HSplit position", 850));
+  setVSplit( config->readNumEntry("VSplit position", 300));
+  
+  phpDebugPort = config->readNumEntry("PHP Debugger Port", 7869);
+  
+  sTab->setFollowCursor( config->readBoolEntry("Follow Cursor", true));
+  
   int mode = config->readNumEntry("Left panel mode", 0);
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
-
-  hSplit->setPos( config->readNumEntry("HSplit position", 850) );
-  vSplit->setPos( config->readNumEntry("VSplit position", 300 ) );
   
-  if ( hSplit->getPos() < 1000 )
-  {
-#warning Check action for message output    
-    int pos = hSplit->getPos();
-    hSplit->setPos( (pos > 850) ? 850 : pos);
-  }
-
-  phpDebugPort = config->readNumEntry("PHP Debugger Port", 7869 );
-/*  
-  if ( vSplit->getPos() == 0 )
-        checkCommand( ID_VIEW_TREE, false );
-  else  checkCommand( ID_VIEW_TREE, true  );
-*/
-  sTab->setFollowCursor( config->readBoolEntry("Follow Cursor", true ) );
-
-  bool bViewStatusbar = config->readBoolEntry("Show Statusbar", true);
-
 #warning Check for statusbar  
-  
-  if(!bViewStatusbar)
-  {
-//    enableStatusBar(KStatusBar::Hide);
-  }
 
-//  recentProjects.setAutoDelete(true);
-//  config->readListEntry("Recent Projects", recentProjects);
+  fileRecent   ->loadEntries(config, "Files");
+  projectRecent->loadEntries(config, "Projects");
 
-
-  fileRecent->loadEntries(config);
-#warning TODO reading recent projects  
-/*
-  for (int i=0; i < (int) recentProjects.count(); i++)
-    recentProjectsMenu->insertItem(recentProjects.at(i));
-*/
-
-  QSize size=config->readSizeEntry("Geometry");
-  if(!size.isEmpty())
-  {
-    resize(size);
-  } else
-  	resize( QSize(800,580) );
+  resize( config->readSizeEntry("Geometry", &QSize(800,580)));
 }
 
 void QuantaApp::openLastFiles()
 {
   config->setGroup("General Options");
 
-  QString projectFileName = config->readEntry("Last Project");
-  QFileInfo fi( projectFileName );
+  QStrList urls;
+ 	config->readListEntry("List of opened files", urls);
 
-  if ( projectFileName.isEmpty() || !fi.exists() )
-  {	  	
-	  QStrList fileList;
-  	config->readListEntry("List of opened files",fileList);
-
-//	  for ( fileList.last();fileList.current();fileList.prev() )
-//      doc->openDocument( QString(fileList.current()) );
-  }
-  else {
-  	project->loadProject( projectFileName );
-  	leftPanel-> showPage( (QWidget *)pTab );
-  }
-
-  if ( doc->docList->count() == 0 ) // no documents opened
+  for ( urls.last();urls.current();urls.prev() )
   {
-  	
+    doc->openDocument( KURL(urls.current()) );
   }
 }
 
-void QuantaApp::saveProperties(KConfig *)
+#warning Check action for message output and tree
+void QuantaApp::setHSplit(int i)
 {
-    doc->saveAll();
+  hSplit -> setPos(i);
+/*  
+  if ( hSplit->getPos() < 1000 )
+  {
+
+    int pos = hSplit->getPos();
+    hSplit->setPos( (pos > 850) ? 850 : pos);
+  }*/
 }
 
-
-void QuantaApp::readProperties(KConfig *)
+void QuantaApp::setVSplit(int i)
 {
-}		
-
-bool QuantaApp::queryClose()
-{
-  return true;
+  vSplit -> setPos(i);
 }
 
 bool QuantaApp::queryExit()
@@ -632,18 +528,18 @@ void QuantaApp::initTagDict()
 
   config->setGroup("Tags");
 
-  config->readListEntry("TagsCore", *tagsCore);
-  config->readListEntry("TagsI18n", *tagsI18n);
-  config->readListEntry("TagsScript", *tagsScript);
+  config->readListEntry("TagsCore",       *tagsCore);
+  config->readListEntry("TagsI18n",       *tagsI18n);
+  config->readListEntry("TagsScript",     *tagsScript);
   config->readListEntry("Quoted Attribs", *quotedAttribs);
 
-  config->readListEntry("Core", *lCore);
-  config->readListEntry("I18n", *lI18n);
+  config->readListEntry("Core",    *lCore);
+  config->readListEntry("I18n",    *lI18n);
   config->readListEntry("Scripts", *lScript);
 
   config->readListEntry("TagsList", *tagsList);
 
-  config->readListEntry("Single tags", *singleTags);
+  config->readListEntry("Single tags",   *singleTags);
   config->readListEntry("Optional tags", *optionalTags);
 
   char *tag, *t;
@@ -690,13 +586,13 @@ void QuantaApp::initActions()
                         SLOT( slotFileCloseAll() ),
                         actionCollection(), "close_all" );
                         
-    (void) new KAction( i18n( "&Save" ), UserIcon("save"), KStdAccel::key(KStdAccel::Save),
+    saveAction = new KAction( i18n( "&Save" ), UserIcon("save"), KStdAccel::key(KStdAccel::Save),
                         this, SLOT( slotFileSave() ),
                         actionCollection(), "file_save" );
     
     KStdAction::saveAs( this, SLOT( slotFileSaveAs() ), actionCollection() );
 
-    (void) new KAction( i18n( "Save All..." ), UserIcon("save_all"), 0,
+    saveAllAction = new KAction( i18n( "Save All..." ), UserIcon("save_all"), 0,
                         this, SLOT( slotFileSaveAll() ),
                         actionCollection(), "save_all" );
 
@@ -704,11 +600,11 @@ void QuantaApp::initActions()
 
     // Edit actions
     //
-    (void) new KAction( i18n( "&Undo" ), UserIcon("undo"), KStdAccel::key(KStdAccel::Undo),
+    undoAction = new KAction( i18n( "&Undo" ), UserIcon("undo"), KStdAccel::key(KStdAccel::Undo),
                         doc, SLOT( undo() ),
                         actionCollection(), "edit_undo" );
                         
-    (void) new KAction( i18n( "&Redo" ), UserIcon("redo"), KStdAccel::key(KStdAccel::Redo),
+    redoAction = new KAction( i18n( "&Redo" ), UserIcon("redo"), KStdAccel::key(KStdAccel::Redo),
                         doc, SLOT( redo() ),
                         actionCollection(), "edit_redo" );
 
@@ -719,11 +615,11 @@ void QuantaApp::initActions()
                                      
     undoRedo->setGroup( "edit_undo_merge" );
     
-    (void) new KAction( i18n( "Cu&t" ), UserIcon("cut"), KStdAccel::key(KStdAccel::Cut),
+    cutAction = new KAction( i18n( "Cu&t" ), UserIcon("cut"), KStdAccel::key(KStdAccel::Cut),
                         doc, SLOT( cut() ),
                         actionCollection(), "edit_cut" );
                         
-    (void) new KAction( i18n( "&Copy" ), UserIcon("copy"), KStdAccel::key(KStdAccel::Copy),
+    copyAction = new KAction( i18n( "&Copy" ), UserIcon("copy"), KStdAccel::key(KStdAccel::Copy),
                         doc, SLOT( copy() ),
                         actionCollection(), "edit_copy" );   
                         
@@ -741,15 +637,18 @@ void QuantaApp::initActions()
                          doc, SLOT( invertSelect()),
                          actionCollection(), "invert_selection" );
                          
-    (void) new KAction(  i18n( "&Vertical Selection"), 0, 
-                         doc, SLOT( verticalSelect()),
-                         actionCollection(), "vertical_selection" );
+    KToggleAction *verticalSelectAction =
+           new KToggleAction(  i18n( "&Vertical Selection"), 0, 
+                               doc, SLOT( verticalSelect()),
+                               actionCollection(), "vertical_selection" );
+                               
+    verticalSelectAction->setChecked(false);
 
     (void) new KAction( i18n( "&Find" ), UserIcon("find"), KStdAccel::key(KStdAccel::Find),
                         doc, SLOT( find() ),
                         actionCollection(), "edit_find" );
                         
-    KStdAction::findNext( doc, SLOT( findAgain()), actionCollection());
+    findNextAction = KStdAction::findNext( doc, SLOT( findAgain()), actionCollection());
     KStdAction::replace ( doc, SLOT( replace()),   actionCollection());
 
     (void) new KAction( i18n( "Find In Files" ), 
@@ -801,27 +700,27 @@ void QuantaApp::initActions()
     
     // View actions
     //
-    KToggleAction *showTree = 
+    KToggleAction *showTreeAction = 
       new KToggleAction( i18n( "Show &Tree" ), "tree_win", CTRL+Key_T,
                          this, SLOT( slotShowLeftPanel() ),
                          actionCollection(), "show_tree" );
                          
-    KToggleAction *showMessages 
-      = new KToggleAction( i18n( "Show &Messages" ), "output_win", CTRL+Key_M,
-                           this, SLOT( slotViewMessages() ),
-                           actionCollection(), "show_messages" );
+    KToggleAction *showMessagesAction = 
+      new KToggleAction( i18n( "Show &Messages" ), "output_win", CTRL+Key_M,
+                         this, SLOT( slotViewMessages() ),
+                         actionCollection(), "show_messages" );
                            
-    KToggleAction *showPreview 
-      = new KToggleAction( i18n( "Pr&eview" ), "preview", Key_F6,
-                           this, SLOT( slotShowPreview() ),
-                           actionCollection(), "show_preview" );
+    KToggleAction *showPreviewAction = 
+      new KToggleAction( i18n( "Pr&eview" ), "preview", Key_F6,
+                         this, SLOT( slotShowPreview() ),
+                         actionCollection(), "show_preview" );
     
-    showTree    ->setChecked( true );
-    showMessages->setChecked( true );
-    showPreview ->setChecked( false );
+    showTreeAction    ->setChecked( true );
+    showMessagesAction->setChecked( true );
+    showPreviewAction ->setChecked( false );
                            
-    KStdAction::back   ( htmlPartDoc, SLOT( back() ),    actionCollection(), "doc_back" );
-    KStdAction::forward( htmlPartDoc, SLOT( forward() ), actionCollection(), "doc_forward" );
+       backAction = KStdAction::back   ( htmlPartDoc, SLOT( back() ),    actionCollection(), "doc_back" );
+    forwardAction = KStdAction::forward( htmlPartDoc, SLOT( forward() ), actionCollection(), "doc_forward" );
 
     (void) new KAction( i18n( "&Reload preview" ), "reload",
                         KStdAccel::key(KStdAccel::Reload),
@@ -862,27 +761,27 @@ void QuantaApp::initActions()
       KStdAction::openRecent(this, SLOT(slotProjectOpenRecent(const KURL&)),
                              actionCollection(), "project_open_recent");
     
-    (void) new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0, 
-                        project, SLOT( closeProject() ),
-                        actionCollection(), "close_project" );
+    closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0, 
+                         project, SLOT( closeProject() ),
+                         actionCollection(), "close_project" );
 
-    (void) new KAction( i18n( "&Insert File(s)..." ), 0, 
+    insertFileAction = new KAction( i18n( "&Insert File(s)..." ), 0, 
                         project, SLOT( addFiles() ),
                         actionCollection(), "insert_file" );
                         
-    (void) new KAction( i18n( "&Insert Directory..." ), 0, 
+    insertDirAction = new KAction( i18n( "&Insert Directory..." ), 0, 
                         project, SLOT( addDirectory() ),
                         actionCollection(), "insert_directory" );
                         
-    (void) new KAction( i18n( "&Rescan project directory" ), SmallIcon("reload"), 0, 
+    rescanPrjDirAction = new KAction( i18n( "&Rescan project directory" ), SmallIcon("reload"), 0, 
                         project, SLOT( slotRescanPrjDir() ),
                         actionCollection(), "rescan_prjdir" );
 
-    (void) new KAction( i18n( "&Upload Project..." ), Key_F8, 
+    uploadProjectAction = new KAction( i18n( "&Upload Project..." ), Key_F8, 
                         project, SLOT( upload() ),
                         actionCollection(), "upload_project" );
                         
-    (void) new KAction( i18n( "&Project Options..." ), Key_F7, 
+    projectOptionAction = new KAction( i18n( "&Project Options..." ), Key_F7, 
                         project, SLOT( options() ),
                         actionCollection(), "project_options" );
     
@@ -892,7 +791,7 @@ void QuantaApp::initActions()
     KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), actionCollection(), "view_statusbar" );
     
     (void) new KAction( i18n( "&Highlightings and Fonts" ), 0, 
-                        doc->write(), SLOT( hlDlg() ),
+                        doc, SLOT( highlightings() ),
                         actionCollection(), "highlight_options" );
                         
     KSelectAction *setHighlight =
