@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>DonationDialog</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -133,7 +133,7 @@ is the future of software, but it is no guarantee of success. How many open sour
                 <enum>Raised</enum>
             </property>
             <property name="text">
-                <string>&lt;a href="http://quanta.sourceforge.net/main1.php?actfile=donate"&gt;Donate&lt;/a&gt; through  PayPal now.</string>
+                <string>&lt;a href="http://kdewebdev.org/donate.php"&gt;Donate&lt;/a&gt; through  PayPal now.</string>
             </property>
         </widget>
     </grid>
@@ -147,4 +147,9 @@ is the future of software, but it is no guarantee of success. How many open sour
     <slot>init()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kpushbutton.h</includehint>
+    <includehint>ktextbrowser.h</includehint>
+    <includehint>ktextbrowser.h</includehint>
+</includehints>
 </UI>

@@ -3078,7 +3078,7 @@ void QuantaApp::slotMakeDonation()
 
 void QuantaApp::slotHelpHomepage()
 {
-  kapp->invokeBrowser("http://quanta.sourceforge.net");
+  kapp->invokeBrowser("http://kdewebdev.org");
 }
 
 void QuantaApp::slotHelpUserList()
