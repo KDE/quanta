@@ -1,0 +1,676 @@
+<?xml version="1.01" encoding="UTF-8"?><!DOCTYPE highlighting>
+<highlighting>
+<language name="C++">
+<keywords>
+ <keyword> asm </keyword>
+ <keyword> catch </keyword>
+ <keyword> class </keyword>
+ <keyword> const_cast </keyword>
+ <keyword> const </keyword>
+ <keyword> delete </keyword>
+ <keyword> dynamic_cast </keyword>
+ <keyword> explicit </keyword>
+ <keyword> export </keyword>
+ <keyword> false </keyword>
+ <keyword> friend </keyword>
+ <keyword> inline </keyword>
+ <keyword> namespace </keyword>
+ <keyword> new </keyword>
+ <keyword> operator </keyword>
+ <keyword> private </keyword>
+ <keyword> protected </keyword>
+ <keyword> public </keyword>
+ <keyword> reinterpret_cast </keyword>
+ <keyword> static_cast </keyword>
+ <keyword> template </keyword>
+ <keyword> this </keyword>
+ <keyword> throw </keyword>
+ <keyword> true </keyword>
+ <keyword> try </keyword>
+ <keyword> typeid </keyword>
+ <keyword> typename </keyword>
+ <keyword> using </keyword>
+ <keyword> virtual </keyword>
+ <keyword> and_eq </keyword>
+ <keyword> and </keyword>
+ <keyword> bitand </keyword>
+ <keyword> bitor </keyword>
+ <keyword> compl </keyword>
+ <keyword> not_eq </keyword>
+ <keyword> not </keyword>
+ <keyword> or_eq </keyword>
+ <keyword> or </keyword>
+ <keyword> xor_eq </keyword>
+ <keyword> xor </keyword>
+ <keyword> bad_cast </keyword>
+ <keyword> bad_typeid </keyword>
+ <keyword> except </keyword>
+ <keyword> finally </keyword>
+ <keyword> type_info </keyword>
+ <keyword> xalloc </keyword>
+ <keyword> Q_EXPORT </keyword>
+ <keyword> Q_OBJECT </keyword>
+ <keyword> K_DCOP </keyword>
+ <keyword> SLOT </keyword>
+ <keyword> SIGNAL </keyword>
+ <keyword> slots </keyword>
+ <keyword> signals </keyword>
+ <keyword> Q_PROPERTY </keyword>
+ <keyword> Q_ENUMS </keyword>
+ <keyword> Q_SETS </keyword>
+ <keyword> Q_OVERRIDE </keyword>
+ <keyword> Q_CLASSINFO </keyword>
+ <keyword> TRUE </keyword>
+ <keyword> FALSE </keyword>
+</keywords>
+<types>
+ <type> bool </type>
+ <type> wchar_t </type>
+ <type> mutable </type>
+ <type> uint </type>
+</types>
+</language>
+
+<language name="C">
+<keywords>
+   <keyword> break </keyword>
+   <keyword> case </keyword>
+   <keyword> continue </keyword>
+   <keyword> default </keyword>
+   <keyword> do </keyword>
+   <keyword> else </keyword>
+   <keyword> enum </keyword>
+   <keyword> extern </keyword>
+   <keyword> for </keyword>
+   <keyword> goto </keyword>
+   <keyword> if </keyword>
+   <keyword> return </keyword>
+   <keyword> sizeof </keyword>
+   <keyword> struct </keyword>
+   <keyword> switch </keyword>
+   <keyword> typedef </keyword>
+   <keyword> union </keyword>
+   <keyword> while </keyword>
+</keywords>
+<types>
+    <type> auto </type>
+    <type> char </type>
+    <type> const </type>
+    <type> double </type>
+    <type> float </type>
+    <type> int </type>
+    <type> long </type>
+    <type> register </type>
+    <type> short </type>
+    <type> signed </type>
+    <type> static </type>
+    <type> unsigned </type>
+    <type> void </type>
+    <type> volatile </type>
+</types>
+</language>
+
+<language name="Objective-C">
+<keywords>
+ <keyword> @class </keyword>
+ <keyword> @defs </keyword>
+ <keyword> @encode </keyword>
+ <keyword> @end </keyword>
+ <keyword> @implementation </keyword>
+ <keyword> @interface </keyword>
+ <keyword> @private </keyword>
+ <keyword> @protected </keyword>
+ <keyword> @protocol </keyword>
+ <keyword> @public </keyword>
+ <keyword> @selector </keyword>
+ <keyword> self </keyword>
+ <keyword> super </keyword>
+</keywords>
+<types>
+ <type> auto </type>
+ <type> char </type>
+ <type> const </type>
+ <type> double </type>
+ <type> float </type>
+ <type> int </type>
+ <type> long </type>
+ <type> register </type>
+ <type> short </type>
+ <type> signed </type>
+ <type> static </type>
+ <type> unsigned </type>
+ <type> void </type>
+ <type> volatile </type>
+</types>
+</language>
+
+<language name="IDL">
+<keywords>
+ <keyword> module </keyword>
+ <keyword> interface </keyword>
+ <keyword> struct </keyword>
+ <keyword> case </keyword>
+ <keyword> enum </keyword>
+ <keyword> typedef </keyword>
+ <keyword> signal </keyword>
+ <keyword> slot </keyword>
+ <keyword> attribute </keyword>
+ <keyword> readonly </keyword>
+ <keyword> context </keyword>
+ <keyword> oneway </keyword>
+ <keyword> union </keyword>
+ <keyword> in </keyword>
+ <keyword> out </keyword>
+ <keyword> inout </keyword>
+</keywords>
+<types>
+  <type> long </type>
+  <type> short </type>
+  <type> unsigned </type>
+  <type> double </type>
+  <type> octet </type>
+  <type> sequence </type>
+  <type> char </type>
+  <type> wchar </type>
+  <type> string </type>
+  <type> wstring </type>
+  <type> any </type>
+  <type> fixed </type>
+  <type> Object </type>
+  <type> void </type>
+  <type> boolean </type>
+</types>
+</language>
+<language name="Java">
+<keywords>
+ <keyword> abstract </keyword>
+ <keyword> break </keyword>
+ <keyword> case </keyword>
+ <keyword> cast </keyword>
+ <keyword> catch </keyword>
+ <keyword> class </keyword>
+ <keyword> continue </keyword>
+ <keyword> default </keyword>
+ <keyword> do </keyword>
+ <keyword> else </keyword>
+ <keyword> extends </keyword>
+ <keyword> false </keyword>
+ <keyword> finally </keyword>
+ <keyword> for </keyword>
+ <keyword> future </keyword>
+ <keyword> generic </keyword>
+ <keyword> goto </keyword>
+ <keyword> if </keyword>
+ <keyword> implements </keyword>
+ <keyword> import </keyword>
+ <keyword> inner </keyword>
+ <keyword> instanceof </keyword>
+ <keyword> interface </keyword>
+ <keyword> native </keyword>
+ <keyword> new </keyword>
+ <keyword> null </keyword>
+ <keyword> operator </keyword>
+ <keyword> outer </keyword>
+ <keyword> package </keyword>
+ <keyword> private </keyword>
+ <keyword> protected </keyword>
+ <keyword> public </keyword>
+ <keyword> rest </keyword>
+ <keyword> return </keyword>
+ <keyword> super </keyword>
+ <keyword> switch </keyword>
+ <keyword> synchronized </keyword>
+ <keyword> this </keyword>
+ <keyword> throws </keyword>
+ <keyword> throw </keyword>
+ <keyword> transient </keyword>
+ <keyword> true </keyword>
+ <keyword> try </keyword>
+ <keyword> var </keyword>
+ <keyword> volatile </keyword>
+ <keyword> while </keyword>
+</keywords>
+<types>
+  <type> boolean </type>
+  <type> byte </type>
+  <type> char </type>
+  <type> const </type>
+  <type> double </type>
+  <type> final </type>
+  <type> float </type>
+  <type> int </type>
+  <type> long </type>
+  <type> short </type>
+  <type> static </type>
+</types>
+</language>
+<language name="Bash">
+  <keywords>
+  <keyword> break </keyword>
+  <keyword> case </keyword>
+  <keyword> done </keyword>
+  <keyword> do </keyword>
+  <keyword> elif </keyword>
+  <keyword> else </keyword>
+  <keyword> esac </keyword>
+  <keyword> exit </keyword>
+  <keyword> export </keyword>
+  <keyword> fi </keyword>
+  <keyword> for </keyword>
+  <keyword> function </keyword>
+  <keyword> if </keyword>
+  <keyword> in </keyword>
+  <keyword> return </keyword>
+  <keyword> select </keyword>
+  <keyword> then </keyword>
+  <keyword> until </keyword>
+  <keyword> while </keyword>
+  <keyword> . </keyword>
+</keywords>
+</language>
+<language name="Modula 2">
+<keywords>
+ <keyword> BEGIN </keyword>
+ <keyword> CONST </keyword>
+ <keyword> DEFINITION </keyword>
+ <keyword> DIV </keyword>
+ <keyword> DO </keyword>
+ <keyword> ELSE </keyword>
+ <keyword> ELSIF </keyword>
+ <keyword> END </keyword>
+ <keyword> FOR </keyword>
+ <keyword> FROM </keyword>
+ <keyword> IF </keyword>
+ <keyword> IMPLEMENTATION </keyword>
+ <keyword> IMPORT </keyword>
+ <keyword> MODULE </keyword>
+ <keyword> MOD </keyword>
+ <keyword> PROCEDURE </keyword>
+ <keyword> RECORD </keyword>
+ <keyword> REPEAT </keyword>
+ <keyword> RETURN </keyword>
+ <keyword> THEN </keyword>
+ <keyword> TYPE </keyword>
+ <keyword> VAR </keyword>
+ <keyword> WHILE </keyword>
+ <keyword> WITH </keyword>
+ <keyword> | </keyword>
+</keywords>
+</language>
+
+<language name="Ada">
+<keywords>
+ <keyword> abort </keyword>
+ <keyword> abs </keyword>
+ <keyword> accept </keyword>
+ <keyword> access </keyword>
+ <keyword> all </keyword>
+ <keyword> and </keyword>
+ <keyword> array </keyword>
+ <keyword> at </keyword>
+ <keyword> begin </keyword>
+ <keyword> body </keyword>
+ <keyword> case </keyword>
+ <keyword> constant </keyword>
+ <keyword> declare </keyword>
+ <keyword> delay </keyword>
+ <keyword> delta </keyword>
+ <keyword> digits </keyword>
+ <keyword> do </keyword>
+ <keyword> else </keyword>
+ <keyword> elsif </keyword>
+ <keyword> end </keyword>
+ <keyword> entry </keyword>
+ <keyword> exception </keyword>
+ <keyword> exit </keyword>
+ <keyword> for </keyword>
+ <keyword> function </keyword>
+ <keyword> generic </keyword>
+ <keyword> goto </keyword>
+ <keyword> if </keyword>
+ <keyword> in </keyword>
+ <keyword> is </keyword>
+ <keyword> limited </keyword>
+ <keyword> loop </keyword>
+ <keyword> mod </keyword>
+ <keyword> new </keyword>
+ <keyword> not </keyword>
+ <keyword> null </keyword>
+ <keyword> of </keyword>
+ <keyword> or </keyword>
+ <keyword> others </keyword>
+ <keyword> out </keyword>
+ <keyword> package </keyword>
+ <keyword> pragma </keyword>
+ <keyword> private </keyword>
+ <keyword> procedure </keyword>
+ <keyword> raise </keyword>
+ <keyword> range </keyword>
+ <keyword> rem </keyword>
+ <keyword> record </keyword>
+ <keyword> renames </keyword>
+ <keyword> return </keyword>
+ <keyword> reverse </keyword>
+ <keyword> select </keyword>
+ <keyword> separate </keyword>
+ <keyword> subtype </keyword>
+ <keyword> task </keyword>
+ <keyword> terminate </keyword>
+ <keyword> then </keyword>
+ <keyword> type </keyword>
+ <keyword> use </keyword>
+ <keyword> when </keyword>
+ <keyword> while </keyword>
+ <keyword> with </keyword>
+ <keyword> xor </keyword>
+</keywords>
+</language>
+
+<language name="Perl">
+<keywords>
+  <keyword> and </keyword>
+  <keyword> bless </keyword>
+  <keyword> caller </keyword>
+  <keyword> cmp </keyword>
+  <keyword> continue </keyword>
+  <keyword> dbmclose </keyword>
+  <keyword> dbmopen </keyword>
+  <keyword> do </keyword>
+  <keyword> die </keyword>
+  <keyword> dump </keyword>
+  <keyword> each </keyword>
+  <keyword> else </keyword>
+  <keyword> elsif </keyword>
+  <keyword> eq </keyword>
+  <keyword> eval </keyword>
+  <keyword> exit </keyword>
+  <keyword> foreach </keyword>
+  <keyword> for </keyword>
+  <keyword> ge </keyword>
+  <keyword> goto </keyword>
+  <keyword> gt </keyword>
+  <keyword> if </keyword>
+  <keyword> import </keyword>
+  <keyword> last </keyword>
+  <keyword> le </keyword>
+  <keyword> local </keyword>
+  <keyword> lt </keyword>
+  <keyword> my </keyword>
+  <keyword> next </keyword>
+  <keyword> ne </keyword>
+  <keyword> not </keyword>
+  <keyword> no </keyword>
+  <keyword> ! </keyword>
+  <keyword> or </keyword>
+  <keyword> || </keyword>
+  <keyword> package </keyword>
+  <keyword> ref </keyword>
+  <keyword> redo </keyword>
+  <keyword> require </keyword>
+  <keyword> return </keyword>
+  <keyword> sub </keyword>
+  <keyword> tied </keyword>
+  <keyword> tie </keyword>
+  <keyword> unless </keyword>
+  <keyword> until </keyword>
+  <keyword> untie </keyword>
+  <keyword> use </keyword>
+  <keyword> wantarray </keyword>
+  <keyword> while </keyword>
+  <keyword> xor </keyword>
+</keywords>
+</language>
+<language name="Python">
+<keywords>
+ <keyword> and </keyword>
+ <keyword> assert </keyword>
+ <keyword> break </keyword>
+ <keyword> class </keyword>
+ <keyword> continue </keyword>
+ <keyword> def </keyword>
+ <keyword> del </keyword>
+ <keyword> elif </keyword>
+ <keyword> else </keyword>
+ <keyword> except </keyword>
+ <keyword> exec </keyword>
+ <keyword> finally </keyword>
+ <keyword> for </keyword>
+ <keyword> from </keyword>
+ <keyword> global </keyword>
+ <keyword> if </keyword>
+ <keyword> import </keyword>
+ <keyword> in </keyword>
+ <keyword> is </keyword>
+ <keyword> lambda </keyword>
+ <keyword> not </keyword>
+ <keyword> or </keyword>
+ <keyword> pass </keyword>
+ <keyword> print </keyword>
+ <keyword> raise </keyword>
+ <keyword> return </keyword>
+ <keyword> try </keyword>
+ <keyword> while </keyword>
+</keywords>
+</language>
+
+<language name="Sather">
+<keywords>
+ <keyword> and </keyword>
+ <keyword> assert </keyword>
+ <keyword> attr </keyword>
+ <keyword> break! </keyword>
+ <keyword> case </keyword>
+ <keyword> class </keyword>
+ <keyword> const </keyword>
+ <keyword> else </keyword>
+ <keyword> elsif </keyword>
+ <keyword> end </keyword>
+ <keyword> exception </keyword>
+ <keyword> external </keyword>
+ <keyword> false </keyword>
+ <keyword> if </keyword>
+ <keyword> include </keyword>
+ <keyword> initial </keyword>
+ <keyword> is </keyword>
+ <keyword> ITER </keyword>
+ <keyword> loop </keyword>
+ <keyword> new </keyword>
+ <keyword> or </keyword>
+ <keyword> post </keyword>
+ <keyword> pre </keyword>
+ <keyword> private </keyword>
+ <keyword> protect </keyword>
+ <keyword> quit </keyword>
+ <keyword> raise </keyword>
+ <keyword> readonly </keyword>
+ <keyword> result </keyword>
+ <keyword> return </keyword>
+ <keyword> ROUT </keyword>
+ <keyword> SAME </keyword>
+ <keyword> self </keyword>
+ <keyword> shared </keyword>
+ <keyword> then </keyword>
+ <keyword> true </keyword>
+ <keyword> typecase </keyword>
+ <keyword> type </keyword>
+ <keyword> until! </keyword>
+ <keyword> value </keyword>
+ <keyword> void </keyword>
+ <keyword> when </keyword>
+ <keyword> while! </keyword>
+ <keyword> yield </keyword>
+ <keyword> abstract </keyword>
+ <keyword> any </keyword>
+ <keyword> bind </keyword>
+ <keyword> fork </keyword>
+ <keyword> guard </keyword>
+ <keyword> immutable </keyword>
+ <keyword> inout </keyword>
+ <keyword> in </keyword>
+ <keyword> lock </keyword>
+ <keyword> once </keyword>
+ <keyword> out </keyword>
+ <keyword> parloop </keyword>
+ <keyword> partial </keyword>
+ <keyword> par </keyword>
+ <keyword> spread </keyword>
+ <keyword> stub </keyword>
+</keywords>
+<types>
+ <type> $OB </type>
+ <type> ARRAY </type>
+ <type> AREF </type>
+ <type> AVAL </type>
+ <type> BOOL </type>
+ <type> CHAR </type>
+ <type> EXT_OB </type>
+ <type> FLTDX </type>
+ <type> FLTD </type>
+ <type> FLTX </type>
+ <type> FLTI </type>
+ <type> FLT </type>
+ <type> INTI </type>
+ <type> INT </type>
+ <type> $REHASH </type>
+ <type> STR </type>
+ <type> SYS </type>
+ <type> create </type>
+ <type> invariant </type>
+ <type> main </type>
+ <type> aget </type>
+ <type> aset </type>
+ <type> div </type>
+ <type> is_eq </type>
+ <type> is_geq </type>
+ <type> is_gt </type>
+ <type> is_leq </type>
+ <type> is_lt </type>
+ <type> is_neq </type>
+ <type> minus </type>
+ <type> mod </type>
+ <type> negate </type>
+ <type> not </type>
+ <type> plus </type>
+ <type> pow </type>
+ <type> times </type>
+</types>
+</language>
+<language name="Pascal">
+<keywords>
+ <keyword> and </keyword>
+ <keyword> array </keyword>
+ <keyword> asm </keyword>
+ <keyword> begin </keyword>
+ <keyword> case </keyword>
+ <keyword> const </keyword>
+ <keyword> div </keyword>
+ <keyword> do </keyword>
+ <keyword> downto </keyword>
+ <keyword> else </keyword>
+ <keyword> end </keyword>
+ <keyword> for </keyword>
+ <keyword> function </keyword>
+ <keyword> goto </keyword>
+ <keyword> if </keyword>
+ <keyword> implementation </keyword>
+ <keyword> in </keyword>
+ <keyword> interface </keyword>
+ <keyword> label </keyword>
+ <keyword> mod </keyword>
+ <keyword> nil </keyword>
+ <keyword> not </keyword>
+ <keyword> of </keyword>
+ <keyword> on </keyword>
+ <keyword> operator </keyword>
+ <keyword> or </keyword>
+ <keyword> packed </keyword>
+ <keyword> procedure </keyword>
+ <keyword> program </keyword>
+ <keyword> record </keyword>
+ <keyword> repeat </keyword>
+ <keyword> self </keyword>
+ <keyword> set </keyword>
+ <keyword> shl </keyword>
+ <keyword> shr </keyword>
+ <keyword> then </keyword>
+ <keyword> to </keyword>
+ <keyword> type </keyword>
+ <keyword> unit </keyword>
+ <keyword> until </keyword>
+ <keyword> uses </keyword>
+ <keyword> var </keyword>
+ <keyword> while </keyword>
+ <keyword> with </keyword>
+ <keyword> xor </keyword>
+ <keyword> break </keyword>
+ <keyword> continue </keyword>
+ <keyword> constructor </keyword>
+ <keyword> destructor </keyword>
+ <keyword> inherited </keyword>
+ <keyword> inline </keyword>
+ <keyword> object </keyword>
+ <keyword> private </keyword>
+ <keyword> protected </keyword>
+ <keyword> public </keyword>
+ <keyword> as </keyword>
+ <keyword> at </keyword>
+ <keyword> automated </keyword>
+ <keyword> class </keyword>
+ <keyword> dispinterface </keyword>
+ <keyword> except </keyword>
+ <keyword> exports </keyword>
+ <keyword> finalization </keyword>
+ <keyword> finally </keyword>
+ <keyword> initialization </keyword>
+ <keyword> is </keyword>
+ <keyword> library </keyword>
+ <keyword> on </keyword>
+ <keyword> property </keyword>
+ <keyword> published </keyword>
+ <keyword> raise </keyword>
+ <keyword> resourcestring </keyword>
+ <keyword> threadvar </keyword>
+ <keyword> try </keyword>
+ <keyword> dispose </keyword>
+ <keyword> exit </keyword>
+ <keyword> false </keyword>
+ <keyword> new </keyword>
+ <keyword> true </keyword>
+</keywords>
+<types>
+ <type> Integer </type>
+ <type> Cardinal </type>
+ <type> ShortInt </type>
+ <type> SmallInt  </type>
+ <type> LongInt </type>
+ <type> Int64 </type>
+ <type> Byte </type>
+ <type> Word </type>
+ <type> LongWord </type>
+ <type> Char </type>
+ <type> AnsiChar </type>
+ <type> WideChar </type>
+ <type> Boolean </type>
+ <type> ByteBool </type>
+ <type> WordBool </type>
+ <type> LongBool </type>
+ <type> Single </type>
+ <type> Double </type>
+ <type> Extended </type>
+ <type> Comp </type>
+ <type> Currency </type>
+ <type> Real </type>
+ <type> Real48 </type>
+ <type> String </type>
+ <type> ShortString </type>
+ <type> AnsiString </type>
+ <type> WideString </type>
+ <type> Pointer </type>
+ <type> Variant</type>
+ <type> File </type>
+ <type> Text </type>
+</types>
+</language>
+</highlighting>
+
+

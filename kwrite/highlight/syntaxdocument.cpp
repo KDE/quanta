@@ -30,7 +30,15 @@
 
 SyntaxDocument::SyntaxDocument() : QDomDocument()
 {
-    QString syntaxPath = locate("data", "kwrite/syntax.xml");
+// *******************************************************************
+// quanta highlightings
+// *******************************************************************
+// REPLACE
+//    QString syntaxPath = locate("data", "kwrite/syntax.xml");
+    QString syntaxPath = locate("data", "quanta/syntax.xml");
+// *******************************************************************
+// end of quanta highlightings
+// *******************************************************************
     if( !syntaxPath.isEmpty() )
     {
         QFile f( syntaxPath );
@@ -40,7 +48,16 @@ SyntaxDocument::SyntaxDocument() : QDomDocument()
             KMessageBox::error( 0L, i18n("Can't open %1").arg(syntaxPath) );
         f.close();
     } else
-        KMessageBox::error( 0L, i18n("File share/apps/kwrite/syntax.xml not found ! Check your installation!") );
+// *******************************************************************
+// quanta highlightings
+// *******************************************************************
+// REPLACE
+//        KMessageBox::error( 0L, i18n("File share/apps/kwrite/syntax.xml not found ! Check your installation!") );
+    KMessageBox::error( 0L, i18n("File share/apps/quanta/syntax.xml not found ! Check your installation!") );
+// *******************************************************************
+// end of quanta highlightings
+// *******************************************************************
+    
 }
 
 SyntaxDocument::~SyntaxDocument()
