@@ -3,4 +3,11 @@
 
 EXTRA_DIST = demo.txt 
 
+install-data-local:
+	$(mkinstalldirs) ${kde_datadir}/quanta/templates/text/others/
+	$(INSTALL_DATA) $(srcdir)/demo.txt ${kde_datadir}/quanta/templates/text/others/demo.txt
+
+uninstall-local:
+	-rm -f ${kde_datadir}/quanta/templates/text/others/demo.txt
+
 ####### kdevelop will overwrite this part!!! (end)############

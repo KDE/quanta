@@ -521,16 +521,13 @@ void Document::writeConfig(KConfig *config)
 /** No descriptions */
 void Document::insertFile(QString fileName)
 {
-  unsigned int line, col;
-
   QFile file(fileName);
 
   file.open(IO_ReadOnly);
 
   QTextStream stream( &file );
 
-  viewCursorIf->cursorPosition(&line, &col);
-  editIf->insertText(line, col, stream.read());
+  kate_view->insertText(stream.read());
 
   file.close();
 }

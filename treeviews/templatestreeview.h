@@ -41,6 +41,8 @@ public slots:
   void slotMenu(QListViewItem *item, const QPoint &point, int);
   /** No descriptions */
   void slotNewDocument();
+  /** Insert the template as text, image, new document. */
+  void slotInsert();
   virtual void slotReload();
 
 private:
@@ -50,7 +52,8 @@ private:
   	FilesTreeFolder *localDir;
   /**  */
   int deleteMenuId;
-  	FilesTreeFolder *projectDir;
+  int openId;
+  FilesTreeFolder *projectDir;
 	
 signals: // Signals
   /** No descriptions */

@@ -761,7 +761,7 @@ void QuantaApp::slotShowPreview()
 //FIXME:
 //Restore the original doc from the temp file.
 //We should find a better synchronous method to copy the temp file to the current one.
-
+//which works also for non local files
     if (doc->isModified())
     {
       KURL origUrl = doc->write()->url();

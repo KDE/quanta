@@ -40,11 +40,11 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 
 	fileMenu = new QPopupMenu();
 	
-	fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
-	fileMenu -> insertItem(i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
-	fileMenu -> insertItem(i18n("Insert tag"), 	this ,SLOT(slotInsertTag()));
-	fileMenu -> insertItem(i18n("Insert as text in document"), 	this ,SLOT(slotInsertInDocument()));
-	fileMenu -> insertItem(i18n("New document based on this"), 	this ,SLOT(slotNewDocument()));
+	openId = fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotInsert()));
+  fileMenu -> insertItem(i18n("Open for editing"), 	this ,SLOT(slotOpen()));
+//	fileMenu -> insertItem(i18n("Insert tag"), 	this ,SLOT(slotInsertTag()));
+//	fileMenu -> insertItem(i18n("Insert as text in document"), 	this ,SLOT(slotInsertInDocument()));
+//	fileMenu -> insertItem(i18n("New document based on this"), 	this ,SLOT(slotNewDocument()));
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
 	fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
@@ -110,8 +110,8 @@ TemplatesTreeView::TemplatesTreeView(const QString& projectBasePath, QWidget *pa
 	connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
 					 this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
 					
-	connect(	this, SIGNAL(openInQuanta(QListViewItem *)),
-						this,	SLOT(slotSelectAnyFile(QListViewItem *)));
+	connect(	this, SIGNAL(open(QListViewItem *)),
+						this,	SLOT(slotSelectFile(QListViewItem *)));
 						
 }
 
@@ -141,7 +141,37 @@ void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 	setSelected(item, true);
 	
 	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-	if ( f ) fileMenu->popup( point);
+	if ( f )
+  {
+   QFileInfo fileInfo(currentFileName());
+   QFileInfo dotFileInfo(fileInfo.dirPath()+"/.dirinfo");
+
+   while ((!dotFileInfo.exists()) && (dotFileInfo.dirPath() != "/"))
+   {
+    dotFileInfo.setFile(QFileInfo(dotFileInfo.dirPath()).dirPath()+"/.dirinfo");
+   }
+   QFile dotFile(dotFileInfo.filePath());
+   dotFile.open(IO_ReadOnly);
+
+   QString s;
+   QString menuText = "";
+
+   dotFile.readLine(s,100);
+   if (s.upper().contains("TEXT")) menuText = i18n("Insert as text");
+   if (s.upper().contains("IMAGE")) menuText = i18n("Insert image (as a link)");
+   if (s.upper().contains("TEMPLATE")) menuText = i18n("New document based on this");
+
+   if (menuText.isEmpty())
+   {
+     fileMenu->setItemEnabled(openId, false);
+   } else
+   {
+     fileMenu->setItemEnabled(openId, true);
+     fileMenu->changeItem(openId, menuText);
+   }
+
+   fileMenu->popup( point);
+  }
 	
 	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
 	if ( d )
@@ -186,5 +216,16 @@ void TemplatesTreeView::slotReload()
   if (projectDir)
     projectDir->reloadList();
 }
+
+/** Insert the template as text, image, new document. */
+void TemplatesTreeView::slotInsert()
+{
+ QString menuText = fileMenu->text(openId);
+
+ if (menuText == i18n("Insert as text")) slotInsertInDocument();
+ if (menuText == i18n("Insert image (as a link)")) slotInsertTag();
+ if (menuText == i18n("New document based on this")) slotNewDocument();
+}
+
 
 #include "templatestreeview.moc"
