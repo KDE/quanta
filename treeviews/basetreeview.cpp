@@ -93,8 +93,8 @@ void BaseTreeViewToolTip::maybeTip( const QPoint &pos )
       text = kftvi->fileItem()->getToolTipText();
       if ( !desc.isEmpty() )
         text.prepend("&nbsp;<i>" + desc + "</i><br>");
-      text.prepend("&nbsp;<b>" + kftvi->url().filename() + "</b><br>");  //  add the filename on top
-    } else 
+      text.prepend("&nbsp;<b>" + kftvi->url().fileName() + "</b><br>");  //  add the filename on top
+    } else
     {  // show something for the branchroot
       text = item->text(0);
       if ( ! item->text(1).isEmpty() )
@@ -308,7 +308,7 @@ void BaseTreeBranch::updateOpenFolder()
 BaseTreeView::BaseTreeView(QWidget *parent, const char *name)
 : KFileTreeView(parent, name), fileInfoDlg(0), m_saveOpenFolder(false)
 {
-  m_parent = parent; 
+  m_parent = parent;
   QToolTip::remove(viewport());  // remove the tooltip from QListView
   m_tooltip = new BaseTreeViewToolTip(viewport(), this);
   setFrameStyle( Panel | Sunken );
@@ -1024,7 +1024,7 @@ void BaseTreeView::restoreLayout(KConfig *config, const QString &group)
   KListView::restoreLayout(config, group);
   KConfigGroupSaver saver(config, group);
   setShowToolTips( config->readBoolEntry("ShowToolTips", true) );
-  
+
   if (! m_saveOpenFolder || ! qConfig.saveTrees)
     return;
 
