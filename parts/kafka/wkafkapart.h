@@ -29,6 +29,7 @@ class Parser;
 
 #include <qmap.h>
 #include <qobject.h>
+//#include <qptrdict.h>
 
 #include "kafkahtmlpart.h"
 
@@ -87,18 +88,22 @@ public slots:
 
 	/**
 	 * Called whenever a DOM::Node is inserted in the Quanta tree.
+	 * @param _domNode is the Node inserted.
 	 */
 	void slotDomNodeInserted(DOM::Node _domNode);
 
 	/**
 	 * Called whenever DOM::Node's attributes are modified.
+	 * @param _domNode is the Node modified.
 	 */
 	void slotDomNodeModified(DOM::Node _domNode);
 
 	/**
 	 * Called whenever a DOM::Node is about to be removed from the Quanta tree.
+	 * @param _domNode is the Node to be deleted.
+	 * @param deleteChilds Specifies if we should delete the child nodes of _node
 	 */
-	void slotDomNodeAboutToBeRemoved(DOM::Node _domNode);
+	void slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChilds);
 
 	/**
 	 * Called whenever a DOM::Node get the focus
@@ -107,66 +112,133 @@ public slots:
 
 signals:
 	/**
-	 * Called when a DOM::Node get the focus
+	 * Called whenever a DOM::Node get the focus
 	 */
 	void newCursorPosition(int col, int row);
 
+	/**
+	 * Called whenever a DOM::Node get the focus
+	 */
+	void nodeGetFocus(Node *_node);
+
 private:
-	/** This function returns the special XML character (e.g. space, é,...)
-	  * from its encoded form (e.g. &nbsp;)
-	  * @return Returns the special character.
-	  */
-
-	QString getSpecialChar(QString encodedChar);
-	/** This function returns the XML-encoded character (e.g. &nbsp;)
-	  * from the XML special character (e.g. space, é,...)
-	  * @param encodeWhiteSpaces Specifies if it should encode the whitespaces
-	  * @return Returns the XML-encoded character.
-	  */
-
-	QString getEncodedChar(QString specialChar, bool encodeWhiteSpaces = true);
-	/** For debugging purpose. It prints the quanta internal tree to stdout */
-
-	void coutTree(Node *node, int indent);
-	/** This function returns the next Node after _node.
-	  * @param _node It is the Node from which we want the next Node.
-	  * @goingTowardsRootNode This boolean must be set to false at the
-	  * beginning and then the same boolean must be used when using
-	  * multiple times this function.
-	  * @return Returns the next Node.
-	  */
-
-	Node *getNextNode(Node *_node, bool &goingTowardsRootNode);
-	/** This function search the corresponding quanta Node to the kafka DOM::Node
-	  * @param _domNode The DOM::Node we seek its corresponding Node.
-	  * @return The Node corresponding to _domNode.
-	  */
-
-	Node *searchCorrespondingNode(DOM::Node _domNode);
-	/** Loads one kafka XML DOM::Node from a quanta XML Node
-	  * @param _node The Node we build a DOM::Node.
-	  */
-
-	void synchronizeXMLTag(Node* _node);
-	/** Loads one kafka Text DOM::Node from a quanta Text Node
+	/**
+	 * Loads one kafka XML DOM::Node from a quanta XML Node
 	 * @param _node The Node we build a DOM::Node.
 	 */
+	void synchronizeXMLTag(Node* _node);
 
+	/**
+	 * Loads one kafka Text DOM::Node from a quanta Text Node
+	 * @param _node The Node we build a DOM::Node.
+	 */
 	void synchronizeTextTag(Node* _node);
-	/** Fits the Nodes position when a change occurs in the kafka tree.
-	  * @param _startNode The Node where the update starts
-	  * @param colMovement The number of column that should be
-	  * added/retrieved from the column position
-	  * @param lineMovement The number of lines that should be
-	  * added/retrieved from the line position
-	  * @param colEnd The column position where the update should stop
-	  * @param lineEnd The line position where the update should stop
-	  */
 
+	/**
+	 * This function returns the special XML character (e.g. space, ï¿½...)
+	 * from its encoded form (e.g. &nbsp;)
+	 * @return Returns the special character.
+	 */
+	QString getSpecialChar(QString encodedChar);
+
+	/**
+	 * This function returns the text decoded from its XML-encoded form.
+	 * @param encodedText The text to decode.
+	 * @return Returns the text decoded.
+	 */
+	QString getDecodedText(QString encodedText);
+
+	/**
+	 * This function synchronizes the Node from the DOM::Node. If the Node is a text Node,
+	 * we try to keep its indentation while updating it.
+	 * @param _node The Node to synchronize.
+	 * @param _domNode The Node is synchronized from this DOM::Node.
+	 */
+	void buildNodeFromKafkaNode(Node *_node, DOM::Node _domNode);
+
+	/**
+	 * This function creates and synchronize a Node from the DOM::Node.
+	 * @param _domNode The Node returned is synchronized from this DOM::Node.
+	 * @param _nodeParent The parent Node of the Node returned.
+	 * @param _nodePrev The Node the Node returned will be placed after. If null, it will
+	 * be placed as the first child of _nodeParent.
+	 * @return Returns a new Node* created from the DOM::Node.
+	*/
+	Node * buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent, Node *_nodePrev = 0L);
+
+	/**
+	 * This function returns the XML-encoded character (e.g. &nbsp;)
+	 * from the XML special character (e.g. space, ï¿½...)
+	 * @param encodeWhiteSpaces Specifies if it should encode the whitespaces
+	 * @return Returns the XML-encoded character.
+	 */
+	QString getEncodedChar(QString specialChar, bool encodeWhiteSpaces = true);
+
+	/**
+	 * This function returns the text with all the special XML characters encoded.
+	 * @param decodedText The text to encode.
+	 * @return Return the XML-encoded text.
+	 */
+	QString getEncodedText(QString decodedText);
+
+	/**
+	 * This function generates the DTD code corresponding to the node.
+	 * @param _node The Node we want to generate its code.
+	 * @return Returns the DTD code.
+	 */
+	QString generateCodeFromNode(Node *_node);;
+
+	/**
+	 * This function returns the next Node after _node.
+	 * @param _node It is the Node from which we want the next Node.
+	 * @goingTowardsRootNode This boolean must be set to false at the
+	 * beginning and then the same boolean must be used when using
+	 * multiple times this function.
+	 * @return Returns the next Node.
+	 */
+	Node *getNextNode(Node *_node, bool &goingTowardsRootNode);
+
+	/**
+	 * This function search the corresponding quanta Node to the kafka DOM::Node
+	 * @param _domNode The DOM::Node we seek its corresponding Node.
+	 * @return The Node corresponding to _domNode.
+	 */
+	Node *searchCorrespondingNode(DOM::Node _domNode);
+
+	/**
+	 * Fits the Nodes position when a change occurs in the kafka tree.
+	 * @param _startNode The Node where the update starts
+	 * @param colMovement The number of column that should be
+	 * added/retrieved from the column position
+	 * @param lineMovement The number of lines that should be
+	 * added/retrieved from the line position
+	 * @param colEnd The column position where the update should stop
+	 * @param lineEnd The line position where the update should stop
+	 */
 	void fitsNodesPosition(Node* _startNode, int colMovement,
 		int lineMovement = 0, int colEnd = -2, int lineEnd = -2);
+
+	/**
+	 * Returns the cursor position in the kafka editor corresponding to the cursor
+	 * position in the Quanta editor.
+	 * @return Returns the cursor position in the kafka editor.
+	 */
+	int getKafkaCursorPosition();
+
+	/**
+	 * Returns the cursor position in the Quanta editor corresponding to the cursor
+	 * position in the kafka editor.
+	 * @param line Returns the line cursor position.
+	 * @param col Returns the col cursor position.
+	 */
+	void getQuantaCursorPosition(int &line, int &col);
+
+	/** For debugging purpose. It prints the quanta internal tree to stdout */
+	void coutTree(Node *node, int indent);
+
 	QMap<QString, QString> specialChars;
 	QMap<QString, QString> encodedChars;
+	//QPtrDict<Node> domNodeToNode;
 	KafkaHTMLPart *_kafkaPart;
 	Document *_currentDoc;
 	Node *_rootNode;

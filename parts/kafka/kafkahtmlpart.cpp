@@ -219,7 +219,7 @@ bool KafkaHTMLPart::insertNode(DOM::Node node, bool insertBefore)
 bool KafkaHTMLPart::removeNode(DOM::Node node)
 {
 	DOM::Node temp = node.parentNode();
-	emit domNodeIsAboutToBeRemoved(node);
+	emit domNodeIsAboutToBeRemoved(node, true);
 	temp.removeChild(node);
 	temp.applyChanges();
 
@@ -244,7 +244,7 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 		} catch(DOM::DOMException e){kdDebug(25001)<< "KafkaHTMLPart::insertText() ERROR - code : " << e.code << endl;}
 		emit domNodeModified(node);
 	}
-	else if(d->TagsDeletable.contains(node.nodeName().string()))
+	else if(d->TagsDeletable.contains(node.nodeName().string().upper()))
 	{
 		try
 		{
@@ -283,7 +283,7 @@ void KafkaHTMLPart::keyRight()
 
 //some checks
 	/**	if(m_currentNode.isNull() || !(m_currentNode.nodeType() == DOM::Node::TEXT_NODE
-		|| d->TagsDeletable.contains(m_currentNode.nodeName().string())))
+		|| d->TagsDeletable.contains(m_currentNode.nodeName().string().upper())))
 	{
 		kdDebug(25001)<< "KafkaHTMLPart::keyRight() - Bad Node" << endl;
 		return;
@@ -293,7 +293,7 @@ void KafkaHTMLPart::keyRight()
 		kdDebug(25001)<< "KafkaHTMLPart::keyRight() - Bad Node" << endl;
 		return;
 	}
-	if(d->TagsDeletable.contains(m_currentNode.nodeName().string()) &&
+	if(d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()) &&
 		d->m_cursorOffset > 1)
 	{
 		kdError(25001)<< "KafkaHTMLPart::keyLeft() - Invalid offset" << endl;
@@ -307,7 +307,7 @@ void KafkaHTMLPart::keyRight()
 		postprocessCursorPosition();
 		return;
 	}
-	else if(d->TagsDeletable.contains(m_currentNode.nodeName().string()) &&
+	else if(d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()) &&
 		d->m_cursorOffset == 0)
 	{
 		kdDebug(25001)<< "KafkaHTMLPart::keyRight() - Moving one pos right " << endl;
@@ -325,7 +325,7 @@ void KafkaHTMLPart::keyRight()
 		_node = getNextNode(_node, b);
 		if(_node == 0 || (_node.nodeType() == DOM::Node::TEXT_NODE
 			&& (static_cast<DOM::CharacterData>(_node)).length() != 0)
-			|| d->TagsDeletable.contains(_node.nodeName().string()))
+			|| d->TagsDeletable.contains(_node.nodeName().string().upper()))
 		{
 			_nodeCursor = _node;
 			break;
@@ -338,6 +338,7 @@ void KafkaHTMLPart::keyRight()
 	{
 		d->m_cursorOffset = 1;
 		m_currentNode = _nodeCursor;
+		emit domNodeGetFocus(m_currentNode);
 		postprocessCursorPosition();
 	}
 	kdDebug(25001)<< "KafkaHTMLPart::keyRight() - new cursorNode = "
@@ -363,7 +364,7 @@ void KafkaHTMLPart::keyLeft()
 
 	//some checks
 /**	if(m_currentNode.isNull() || !(m_currentNode.nodeType() == DOM::Node::TEXT_NODE
-		|| d->TagsDeletable.contains(m_currentNode.nodeName().string())))
+		|| d->TagsDeletable.contains(m_currentNode.nodeName().string().upper())))
 	{
 		kdDebug(25001)<< "KafkaHTMLPart::keyLeft() - Bad Node" << endl;
 		return;
@@ -373,14 +374,14 @@ void KafkaHTMLPart::keyLeft()
 		kdDebug(25001)<< "KafkaHTMLPart::keyLeft() - Bad Node" << endl;
 		return;
 	}
-	if(d->TagsDeletable.contains(m_currentNode.nodeName().string()) &&
+	if(d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()) &&
 		d->m_cursorOffset > 1)
 	{
 		kdError(25001)<< "KafkaHTMLPart::keyLeft() - Invalid offset" << endl;
 	}
 
 	if((m_currentNode.nodeType() == DOM::Node::TEXT_NODE ||
-		d->TagsDeletable.contains(m_currentNode.nodeName().string())) &&
+		d->TagsDeletable.contains(m_currentNode.nodeName().string().upper())) &&
 		d->m_cursorOffset > 0)
 	{
 		kdDebug(25001)<< "KafkaHTMLPart::keyLeft() - Moving one pos left1 " << endl;
@@ -399,7 +400,7 @@ void KafkaHTMLPart::keyLeft()
 		_node = getPrevNode(_node, b);
 		if(_node == 0 || (_node.nodeType() == DOM::Node::TEXT_NODE
 			&& (static_cast<DOM::CharacterData>(_node)).length() != 0)
-			|| d->TagsDeletable.contains(_node.nodeName().string()))
+			|| d->TagsDeletable.contains(_node.nodeName().string().upper()))
 		{
 			_nodeCursor = _node;
 			break;
@@ -416,8 +417,8 @@ void KafkaHTMLPart::keyLeft()
 		if(_nodeCursor.nodeType() == DOM::Node::TEXT_NODE)
 			d->m_cursorOffset = (static_cast<DOM::CharacterData>(_nodeCursor)).length() - 1;
 		//if _nodeCursor is a TagDeletable, it keeps the same cursorOffset
-
 		m_currentNode = _nodeCursor;
+		emit domNodeGetFocus(m_currentNode);
 		postprocessCursorPosition();
 	}
 	kdDebug(25001)<< "KafkaHTMLPart::keyLeft() - new cursorNode = "
@@ -437,7 +438,7 @@ void KafkaHTMLPart::normalize(DOM::Node _node)
 			childNode.setNodeValue(childNode.nodeValue() +
 				childNode.nextSibling().nodeValue());
 			emit domNodeModified(childNode);
-			emit domNodeIsAboutToBeRemoved(childNode.nextSibling());
+			emit domNodeIsAboutToBeRemoved(childNode.nextSibling(), true);
 			_node.removeChild(childNode.nextSibling());
 		}
 		if(childNode.nextSibling() != 0)
@@ -474,7 +475,7 @@ void KafkaHTMLPart::keyUp()
 					break;
 				else if(_node.nodeType() == DOM::Node::TEXT_NODE)
 					tmpOffset = (static_cast<DOM::CharacterData>(_node)).length();
-				else if(d->TagsDeletable.contains(_node.nodeName().string()))
+				else if(d->TagsDeletable.contains(_node.nodeName().string().upper()))
 					tmpOffset = 1;
 			}
 			if(getCursor(_node, tmpOffset, tmpX, tmpY, tmpH))
@@ -508,6 +509,7 @@ void KafkaHTMLPart::keyUp()
 	{
 		kdDebug(25001)<< "KafkaHTMLPart::keyUp() - final node changed" << endl;
 		m_currentNode = _finalNode;
+		emit domNodeGetFocus(m_currentNode);
 		d->m_cursorOffset = finalOffset;
 		postprocessCursorPosition();
 		if(!d->stuckCursorHorizontalPos)
@@ -542,7 +544,7 @@ void KafkaHTMLPart::keyDown()
 				break;
 			if((_node.nodeType() == DOM::Node::TEXT_NODE &&
 				(unsigned)tmpOffset < (static_cast<DOM::CharacterData>(_node)).length()) ||
-				(d->TagsDeletable.contains(_node.nodeName().string()) && tmpOffset == 0))
+				(d->TagsDeletable.contains(_node.nodeName().string().upper()) && tmpOffset == 0))
 				tmpOffset++;
 			else
 			{
@@ -550,7 +552,7 @@ void KafkaHTMLPart::keyDown()
 				if(_node == 0)
 					break;
 				else if(_node.nodeType() == DOM::Node::TEXT_NODE ||
-					d->TagsDeletable.contains(_node.nodeName().string()))
+					d->TagsDeletable.contains(_node.nodeName().string().upper()))
 					tmpOffset = 0;
 			}
 			if(getCursor(_node, tmpOffset, tmpX, tmpY, tmpH))
@@ -584,6 +586,7 @@ void KafkaHTMLPart::keyDown()
 	{
 		kdDebug(25001)<< "KafkaHTMLPart::keyDown() - final node changed" << endl;
 		m_currentNode = _finalNode;
+		emit domNodeGetFocus(m_currentNode);
 		d->m_cursorOffset = finalOffset;
 		postprocessCursorPosition();
 		if(!d->stuckCursorHorizontalPos)
@@ -724,7 +727,7 @@ bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 				if(m_currentNode.isNull())
 					break;
 				else if(m_currentNode.nodeType() == DOM::Node::TEXT_NODE ||
-					d->TagsDeletable.contains(m_currentNode.nodeName().string()))
+					d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()))
 				{
 					kdDebug(25001) << "KafkaHTMLPart::eventFilter() Text - " <<
 						keyevent->text() << endl;
@@ -766,11 +769,11 @@ void KafkaHTMLPart::keyDelete()
 		nodeText.split(d->m_cursorOffset);
 		m_currentNode.setNodeValue(nodeText + textSplitted);
 		m_currentNode.parentNode().applyChanges();
-		postprocessCursorPosition();
 		emit domNodeModified(m_currentNode);
+		postprocessCursorPosition();
 		return;
 	}
-	if(d->TagsDeletable.contains(m_currentNode.nodeName().string()) &&
+	if(d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()) &&
 		d->m_cursorOffset == 0)
 	{//if we delete ourselves, which node will be m_currentNode??
 		kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting a TagDeletable - 2" << endl;
@@ -784,9 +787,10 @@ void KafkaHTMLPart::keyDelete()
 			if(_node == 0)
 				break;
 			if(_node.nodeType() == DOM::Node::TEXT_NODE ||
-				d->TagsDeletable.contains(_node.nodeName().string()))
+				d->TagsDeletable.contains(_node.nodeName().string().upper()))
 			{
 				m_currentNode = _node;
+				emit domNodeGetFocus(m_currentNode);
 				d->m_cursorOffset = 0;
 				keyBackspace();
 				return;
@@ -794,11 +798,12 @@ void KafkaHTMLPart::keyDelete()
 		}
 		//here, there is no node right and left that can have the cursor focus
 		_node = m_currentNode.parentNode();
-		emit domNodeIsAboutToBeRemoved(m_currentNode);
+		emit domNodeIsAboutToBeRemoved(m_currentNode, true);
 		_node.removeChild(m_currentNode);
 		m_currentNode = htmlDocument().createTextNode("");
 		_node.appendChild(m_currentNode);
 		emit domNodeInserted(m_currentNode);
+		emit domNodeGetFocus(m_currentNode);
 	}
 
 	DOM::Node _nodeParent;
@@ -832,18 +837,18 @@ void KafkaHTMLPart::keyDelete()
 			{//if we are in an empty text
 				kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting empty #text" << endl;
 				_nodeParent = _nodeNext.parentNode();
-				emit domNodeIsAboutToBeRemoved(_nodeNext);
+				emit domNodeIsAboutToBeRemoved(_nodeNext, true);
 				_nodeParent.removeChild(_nodeNext);
 				_nodeParent.applyChanges();
 				_nodeNext = _node;
 				continue;
 			}
 		}
-		else if(d->TagsDeletable.contains(_nodeNext.nodeName().string()))
+		else if(d->TagsDeletable.contains(_nodeNext.nodeName().string().upper()))
 		{//if it is a deletable tag, remove it
 			kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting a TagDeletable" << endl;
 			_nodeParent = _nodeNext.parentNode();
-			emit domNodeIsAboutToBeRemoved(_nodeNext);
+			emit domNodeIsAboutToBeRemoved(_nodeNext, true);
 			_nodeParent.removeChild(_nodeNext);
 			//_nodeParent.normalize();
 			normalize(_nodeParent);
@@ -851,12 +856,12 @@ void KafkaHTMLPart::keyDelete()
 			postprocessCursorPosition();
 			return;
 		}
-		else if(d->TagsTextDeletable.contains(_nodeNext.nodeName().string()))
+		else if(d->TagsTextDeletable.contains(_nodeNext.nodeName().string().upper()))
 		{//if it is a Text deletable tag
 			if(!_nodeNext.hasChildNodes())
 			{//if we go up and we can delete the tag, delete it :)
 				kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting a TagTextDeletable" << endl;
-				emit domNodeIsAboutToBeRemoved(_nodeNext);
+				emit domNodeIsAboutToBeRemoved(_nodeNext, true);
 				_nodeNext.parentNode().removeChild(_nodeNext);
 				_nodeNext = _node;
 				continue;
@@ -866,11 +871,11 @@ void KafkaHTMLPart::keyDelete()
 				continue;
 			}
 		}
-		else if(d->TagsTransparentelyDeletable.contains(_nodeNext.nodeName().string()))
+		else if(d->TagsTransparentelyDeletable.contains(_nodeNext.nodeName().string().upper()))
 		{
 			kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting a TagTransparentlyDeletable" << endl;
 			_nodeParent = _nodeNext.parentNode();
-			emit domNodeIsAboutToBeRemoved(_nodeNext);
+			emit domNodeIsAboutToBeRemoved(_nodeNext, true);
 			_nodeParent.removeChild(_nodeNext);
 			//_nodeParent.normalize();
 			normalize(_nodeParent);
@@ -878,11 +883,11 @@ void KafkaHTMLPart::keyDelete()
 			_nodeNext = _node;
 			continue;
 		}
-		else if(d->TagsMoveable.contains(_nodeNext.nodeName().string()))
+		else if(d->TagsMoveable.contains(_nodeNext.nodeName().string().upper()))
 		{
 			kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - moving a MoveableTag" << endl;
 			DOM::Node tmp;
-			emit domNodeIsAboutToBeRemoved(_nodeNext);
+			emit domNodeIsAboutToBeRemoved(_nodeNext, true);
 			tmp = _nodeNext.parentNode().removeChild(_nodeNext);
 			_node.parentNode().insertBefore(tmp,_node);
 			_nodeNext.parentNode().applyChanges();
@@ -905,11 +910,11 @@ void KafkaHTMLPart::keyBackspace()
 		m_currentNode.setNodeValue(nodeText + textSplitted);
 		m_currentNode.parentNode().applyChanges();
 		d->m_cursorOffset--;
-		postprocessCursorPosition();
 		emit domNodeModified(m_currentNode);
+		postprocessCursorPosition();
 		return;
 	}
-	if(d->TagsDeletable.contains(m_currentNode.nodeName().string()) &&
+	if(d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()) &&
 		d->m_cursorOffset == 1)
 	{//if we delete ourselves, which node will be m_currentNode??
 		kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting a TagDeletable - 2" << endl;
@@ -923,13 +928,15 @@ void KafkaHTMLPart::keyBackspace()
 			if(_node.nodeType() == DOM::Node::TEXT_NODE)
 			{
 				m_currentNode = _node;
+				emit domNodeGetFocus(m_currentNode);
 				d->m_cursorOffset = (static_cast<DOM::CharacterData>(_node)).length();
 				keyDelete();
 				return;
 			}
-			if(d->TagsDeletable.contains(_node.nodeName().string()))
+			if(d->TagsDeletable.contains(_node.nodeName().string().upper()))
 			{
 				m_currentNode = _node;
+				emit domNodeGetFocus(m_currentNode);
 				d->m_cursorOffset = 1;
 				keyDelete();
 				return;
@@ -943,9 +950,10 @@ void KafkaHTMLPart::keyBackspace()
 			if(_node == 0)
 				break;
 			if(_node.nodeType() == DOM::Node::TEXT_NODE ||
-				d->TagsDeletable.contains(_node.nodeName().string()))
+				d->TagsDeletable.contains(_node.nodeName().string().upper()))
 			{
 				m_currentNode = _node;
+				emit domNodeGetFocus(m_currentNode);
 				d->m_cursorOffset = 0;
 				keyBackspace();
 				return;
@@ -953,11 +961,12 @@ void KafkaHTMLPart::keyBackspace()
 		}
 		//here, there is no node right and left that can have the cursor focus
 		_node = m_currentNode.parentNode();
-		emit domNodeIsAboutToBeRemoved(m_currentNode);
+		emit domNodeIsAboutToBeRemoved(m_currentNode, true);
 		_node.removeChild(m_currentNode);
 		m_currentNode = htmlDocument().createTextNode("");
 		_node.appendChild(m_currentNode);
 		emit domNodeInserted(m_currentNode);
+		emit domNodeGetFocus(m_currentNode);
 
 	}
 
@@ -1003,24 +1012,25 @@ void KafkaHTMLPart::keyBackspace()
 			{//if we are in an empty text
 				kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting empty #text" << endl;
 				_nodeParent = _nodePrev.parentNode();
-				emit domNodeIsAboutToBeRemoved(_nodePrev);
+				emit domNodeIsAboutToBeRemoved(_nodePrev, true);
 				_nodeParent.removeChild(_nodePrev);
 				_nodeParent.applyChanges();
 				_nodePrev = _node;
 				continue;
 			}
 		}
-		else if(d->TagsDeletable.contains(_nodePrev.nodeName().string()))
+		else if(d->TagsDeletable.contains(_nodePrev.nodeName().string().upper()))
 		{//if it is a deletable tag, remove it
 			kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting a TagDeletable" << endl;
 			if((_nodePrev.previousSibling() != 0) && _nodePrev.previousSibling().nodeType() == DOM::Node::TEXT_NODE &&
 				_node.nodeType() == DOM::Node::TEXT_NODE && _nodePrev.parentNode() == _nodePrev.previousSibling().parentNode())
 			{//to avoid a bug due to normalize()
 				m_currentNode = _nodePrev.previousSibling();
+				emit domNodeGetFocus(m_currentNode);
 				d->m_cursorOffset = (static_cast<DOM::CharacterData>(m_currentNode)).length();
 			}
 			_nodeParent = _nodePrev.parentNode();
-			emit domNodeIsAboutToBeRemoved(_nodePrev);
+			emit domNodeIsAboutToBeRemoved(_nodePrev, true);
 			_nodeParent.removeChild(_nodePrev);
 			//_nodeParent.normalize();
 			normalize(_nodeParent);
@@ -1028,12 +1038,12 @@ void KafkaHTMLPart::keyBackspace()
 			postprocessCursorPosition();
 			return;
 		}
-		else if(d->TagsTextDeletable.contains(_nodePrev.nodeName().string()))
+		else if(d->TagsTextDeletable.contains(_nodePrev.nodeName().string().upper()))
 		{//if it is a Text deletable tag
 			if(!_nodePrev.hasChildNodes())
 			{//if we go up and we can delete the tag, delete it :)
 				kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting a TagTextDeletable" << endl;
-				emit domNodeIsAboutToBeRemoved(_nodePrev);
+				emit domNodeIsAboutToBeRemoved(_nodePrev, true);
 				_nodePrev.parentNode().removeChild(_nodePrev);
 				_nodePrev = _node;
 				continue;
@@ -1043,7 +1053,7 @@ void KafkaHTMLPart::keyBackspace()
 				continue;
 			}
 		}
-		else if(d->TagsTransparentelyDeletable.contains(_nodePrev.nodeName().string()))
+		else if(d->TagsTransparentelyDeletable.contains(_nodePrev.nodeName().string().upper()))
 		{
 			kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - deleting a TagTransparentlyDeletable" << endl;
 			if((_nodePrev.previousSibling() != 0) && _nodePrev.previousSibling().nodeType() == DOM::Node::TEXT_NODE &&
@@ -1060,18 +1070,18 @@ void KafkaHTMLPart::keyBackspace()
 				}
 			}
 			_nodeParent = _nodePrev.parentNode();
-			emit domNodeIsAboutToBeRemoved(_nodePrev);
+			emit domNodeIsAboutToBeRemoved(_nodePrev, true);
 			_nodeParent.removeChild(_nodePrev);
 			//_nodeParent.normalize();
 			normalize(_nodeParent);
 			_nodeParent.applyChanges();
 			continue;
 		}
-		else if(d->TagsMoveable.contains(_nodePrev.nodeName().string()))
+		else if(d->TagsMoveable.contains(_nodePrev.nodeName().string().upper()))
 		{
 			kdDebug(25001)<< "KafkaHTMLPart::keyBackspace() - moving a MoveableTag" << endl;
 			DOM::Node tmp;
-			emit domNodeIsAboutToBeRemoved(_nodePrev);
+			emit domNodeIsAboutToBeRemoved(_nodePrev, true);
 			tmp = _nodePrev.parentNode().removeChild(_nodePrev);
 			_nodePrev.parentNode().appendChild(tmp);
 			_nodePrev.parentNode().applyChanges();
@@ -1086,8 +1096,8 @@ DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode
 	if(_node == 0)
 		return 0;
 	if(_node.hasChildNodes() && goingTowardsRootNode == false &&
-		!d->BlockingTags.contains(_node.nodeName().string()) &&
-		!d->TagsDeletable.contains(_node.nodeName().string()))
+		!d->BlockingTags.contains(_node.nodeName().string().upper()) &&
+		!d->TagsDeletable.contains(_node.nodeName().string().upper()))
 	{//if we can descend to a child node, we do it
 		kdDebug(25001)<< "KafkaHTMLPart::getNextNode() - descending from node : " <<
 			_node.nodeName().string() << " to " <<
@@ -1105,7 +1115,7 @@ DOM::Node KafkaHTMLPart::getNextNode(DOM::Node _node, bool &goingTowardsRootNode
 	if(_node.nextSibling() == 0)
 	{//else if there is no sibling, we go up if we can
 		goingTowardsRootNode = true;
-		if(!d->BlockingTags.contains(_node.parentNode().nodeName().string()))
+		if(!d->BlockingTags.contains(_node.parentNode().nodeName().string().upper()))
 		{
 			kdDebug(25001)<< "KafkaHTMLPart::getNextNode() - going up from node : " <<
 				_node.nodeName().string() << " to " <<
@@ -1124,8 +1134,8 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 	if(_node == 0)
 		return 0;
 	if(_node.hasChildNodes() && goingTowardsRootNode == false &&
-		!d->BlockingTags.contains(_node.nodeName().string()) &&
-		!d->TagsDeletable.contains(_node.nodeName().string()))
+		!d->BlockingTags.contains(_node.nodeName().string().upper()) &&
+		!d->TagsDeletable.contains(_node.nodeName().string().upper()))
 	{//if we can descend to a child node, we do it
 		kdDebug(25001)<< "KafkaHTMLPart::getPrevNode() - descending from node : " <<
 			_node.nodeName().string() << " to " <<
@@ -1142,7 +1152,7 @@ DOM::Node KafkaHTMLPart::getPrevNode(DOM::Node _node, bool &goingTowardsRootNode
 	if(_node.previousSibling() == 0)
 	{//else if there is no sibling, we go up if we can
 		goingTowardsRootNode = true;
-		if(!d->BlockingTags.contains(_node.parentNode().nodeName().string()))
+		if(!d->BlockingTags.contains(_node.parentNode().nodeName().string().upper()))
 		{
 			kdDebug(25001)<< "KafkaHTMLPart::getPrevNode() - going up from node : " <<
 				_node.nodeName().string() << " to " <<
@@ -1186,18 +1196,19 @@ void KafkaHTMLPart::postprocessCursorPosition()
 				(static_cast<DOM::CharacterData>(_nextNode)).length() != 0)
 			{
 				m_currentNode = _nextNode;
+				emit domNodeGetFocus(m_currentNode);
 				d->m_cursorOffset = (static_cast<DOM::CharacterData>(_nextNode)).length();
 				kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition() - new currentNode :"
 					<< m_currentNode.nodeName().string() << endl;
 				break;
 			}
-			else if(d->TagsDeletable.contains(_nextNode.nodeName().string()))
+			else if(d->TagsDeletable.contains(_nextNode.nodeName().string().upper()))
 				break;
 			else
 				continue;
 		}
 	}
-	else if(d->TagsDeletable.contains(m_currentNode.nodeName().string()))
+	else if(d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()))
 	{
 		if(d->m_cursorOffset == 0)
 		{
@@ -1211,14 +1222,16 @@ void KafkaHTMLPart::postprocessCursorPosition()
 					(static_cast<DOM::CharacterData>(_nextNode)).length() != 0)
 				{
 					m_currentNode = _nextNode;
+					emit domNodeGetFocus(m_currentNode);
 					d->m_cursorOffset = (static_cast<DOM::CharacterData>(_nextNode)).length();
 					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition() - new currentNode :"
 						<< m_currentNode.nodeName().string() << endl;
 					break;
 				}
-				else if(d->TagsDeletable.contains(_nextNode.nodeName().string()))
+				else if(d->TagsDeletable.contains(_nextNode.nodeName().string().upper()))
 				{
 					m_currentNode = _nextNode;
+					emit domNodeGetFocus(m_currentNode);
 					d->m_cursorOffset = 1;
 					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition() - new currentNode :"
 						<< m_currentNode.nodeName().string() << endl;
@@ -1236,12 +1249,13 @@ void KafkaHTMLPart::postprocessCursorPosition()
 				_nextNode = getNextNode(_nextNode, b);
 				if(_nextNode == 0)
 					break;
-				else if(d->TagsDeletable.contains(_nextNode.nodeName().string()))
+				else if(d->TagsDeletable.contains(_nextNode.nodeName().string().upper()))
 					break;
 				else if(_nextNode.nodeType() == DOM::Node::TEXT_NODE &&
 					(static_cast<DOM::CharacterData>(_nextNode)).length() != 0)
 				{
 					m_currentNode = _nextNode;
+					emit domNodeGetFocus(m_currentNode);
 					d->m_cursorOffset = 0;
 					kdDebug(25001)<< "kafkaHTMLPart::postprocessCursorPosition() - new currentNode :"
 						<< m_currentNode.nodeName().string() << endl;
@@ -1329,9 +1343,9 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 	d->stuckCursorHorizontalPos = false;
 	/** TEMPORARY before - i hope - khtml changes*/
 	//look for the child node which has really the cursor focus
-	if((d->TagsTextDeletable.contains(m_currentNode.nodeName().string()) ||
-		d->TagsDeletable.contains(m_currentNode.nodeName().string()) ||
-		d->BlockingTags.contains(m_currentNode.nodeName().string())) &&
+	if((d->TagsTextDeletable.contains(m_currentNode.nodeName().string().upper()) ||
+		d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()) ||
+		d->BlockingTags.contains(m_currentNode.nodeName().string().upper())) &&
 		m_currentNode.hasChildNodes())
 	{
 		DOM::Node _node = m_currentNode.firstChild();
@@ -1367,8 +1381,8 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 	}
 	//theses nodes can't have the cursor focus : using Pythagore to get the
 	//nearest node that can have the cursor focus
-	if(d->TagsTextDeletable.contains(m_currentNode.nodeName().string()) ||
-		d->BlockingTags.contains(m_currentNode.nodeName().string()))
+	if(d->TagsTextDeletable.contains(m_currentNode.nodeName().string().upper()) ||
+		d->BlockingTags.contains(m_currentNode.nodeName().string().upper()))
 	{
 		if(!m_currentNode.hasChildNodes())
 		{
@@ -1412,8 +1426,8 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 		}
 	}
 
-	if(d->TagsDeletable.contains(m_currentNode.nodeName().string()) ||
-		d->BlockingTags.contains(m_currentNode.nodeName().string()))
+	if(d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()) ||
+		d->BlockingTags.contains(m_currentNode.nodeName().string().upper()))
 	{//TODO:allow the resizing of theses nodes
 		kdDebug(25001)<< "KafkaHTMLPart::khtmlMousePressEvent() - upcoming selection"
 			<< endl;
@@ -1452,6 +1466,7 @@ void KafkaHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 	d->drawCursor = true;
 	d->cursorOn = true;
 	view()->updateContents();
+	emit domNodeGetFocus(m_currentNode);
 }
 
 void KafkaHTMLPart::khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event)
@@ -1474,7 +1489,7 @@ void KafkaHTMLPart::khtmlDrawContentsEvent(khtml::DrawContentsEvent *event)
 	try
 	{
 		if(m_currentNode.nodeType() == DOM::Node::TEXT_NODE ||
-		d->TagsDeletable.contains(m_currentNode.nodeName().string()))
+		d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()))
 		{
 			QPainter *p = event->painter();
 			if(d->cursorOn)
@@ -1491,7 +1506,7 @@ bool KafkaHTMLPart::getCursor(DOM::Node _node, int offset, int &_x, int &_y, int
 		_node.getCursor(offset, _x, _y, height);
 		return true;
 	}
-	else if(d->TagsDeletable.contains(_node.nodeName().string()))
+	else if(d->TagsDeletable.contains(_node.nodeName().string().upper()))
 	{
 		if(_node.nodeName().string() == "BR")
 		{//TODO:fix the BR case
@@ -1524,7 +1539,7 @@ void KafkaHTMLPart::paintCursor(QPainter *p)
 	if(m_currentNode == 0)
 		return;
 	if(m_currentNode.nodeType() == DOM::Node::TEXT_NODE ||
-		d->TagsDeletable.contains(m_currentNode.nodeName().string()))
+		d->TagsDeletable.contains(m_currentNode.nodeName().string().upper()))
 	kdDebug(25001) << "KafkaHTMLPart::paintCursor() - Node:" <<
 		m_currentNode.nodeName().string() << ":" << (static_cast<DOM::CharacterData>(m_currentNode)).length() <<
 		" ; offset :" << d->m_cursorOffset << endl;
@@ -1560,6 +1575,12 @@ void KafkaHTMLPart::showDomTree()
 		domdialog->show();
 }
 
+void KafkaHTMLPart::getCurrentNode(DOM::Node &_currentNode, int &offset)
+{
+	_currentNode = m_currentNode;
+	offset = d->m_cursorOffset;
+}
+
 void KafkaHTMLPart::finishedLoading()
 {
 	DOM::Node _node = htmlDocument();
@@ -1574,10 +1595,11 @@ void KafkaHTMLPart::finishedLoading()
 			_node = htmlDocument();
 			break;
 		}
-		if(_node.nodeType() == DOM::Node::TEXT_NODE || d->TagsDeletable.contains(_node.nodeName().string()))
+		if(_node.nodeType() == DOM::Node::TEXT_NODE || d->TagsDeletable.contains(_node.nodeName().string().upper()))
 			break;
 	}
 	m_currentNode = _node;
+	emit domNodeGetFocus(m_currentNode);
         d->m_cursorOffset = 0;
 }
 

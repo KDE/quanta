@@ -98,10 +98,18 @@ public:
 	/**
 	 * Category: Standart Function
 	 * Called to create new DOM::Nodes
-	 * @param the name of the DOM::Node to be created
+	 * @param The name of the DOM::Node to be created
 	 * @return Return the DOM::Node created
 	 */
 	 DOM::Node createNode(QString NodeName);
+
+	/**
+	 * Category: Standart Function
+	 * Returns the current Node (which has the focus) and its offset.
+	 * @param _currentNode The Node which has the cursor focus.
+	 * @param offset The offset of the cursor in _currentNode.
+	 */
+	 void getCurrentNode(DOM::Node &_currentNode, int &offset);
 
 	/**
 	 * Category: Temporary function
@@ -199,24 +207,32 @@ signals:
 
 	/**
 	 * Category: HTML Editing Signal
-	 * Is emitted whenever a dom Node is inserted to the tree
-	 * @param _node is the node created
+	 * Is emitted whenever a dom Node is inserted to the tree.
+	 * @param _node is the node created.
 	 */
 	void domNodeInserted(DOM::Node _node);
 
 	/**
 	 * Category: HTML Editing Signal
-	 * Is emitted whenever a DOM node has its properties modified
-	 * @param _node is the node modified
+	 * Is emitted whenever a DOM node has its properties modified.
+	 * @param _node is the node modified.
 	 */
 	void domNodeModified(DOM::Node _node);
 
 	/**
 	 * Category: HTML Editing Signal
-	 * Is emitted whenever a DOM node is about to be removed from the tree
-	 * @param _node is the node to be deleted
+	 * Is emitted whenever a DOM node is about to be removed from the tree.
+	 * @param _node is the node to be deleted.
+	 * @param deleteChilds Specifies if we should delete the child nodes of _node.
 	 */
-	void domNodeIsAboutToBeRemoved(DOM::Node _node);
+	void domNodeIsAboutToBeRemoved(DOM::Node _node, bool deleteChilds);
+
+	/**
+	 * Category: HTML Editing Signal
+	 * Is emitted whenever a new DOM::Node get the focus
+	 * @param _domNode The DOM::Node which has got the focus.
+	 */
+	void domNodeGetFocus(DOM::Node _domNode);
 
 protected:
 	bool eventFilter(QObject *object, QEvent *event);

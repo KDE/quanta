@@ -37,6 +37,7 @@
 #include "wkafkapart.moc"
 
 WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
+/**:domNodeToNode(1021)*/
 {
 	_kafkaPart = new KafkaHTMLPart(parent, widgetParent, name);
 	_kafkaPart->showDomTree();
@@ -52,9 +53,10 @@ WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 		while ( !t.eof() )
 		{
 			tmp = t.readLine();
-			int begin = tmp.find("(")+1;
+			int begin = tmp.find("(") + 1;
+			if(begin == 0) break;//"(" not found : invalid line
 			int length = tmp.find(")") - begin;
-			specialChars.insert(tmp.left(1),tmp.mid(begin, length));
+			specialChars.insert(tmp.left(1), tmp.mid(begin, length));
 			encodedChars.insert(tmp.mid(begin, length), tmp.left(1));
 		}
 		file.close();
@@ -64,8 +66,11 @@ WKafkaPart::WKafkaPart(QWidget *parent, QWidget *widgetParent, const char *name)
 		this, SLOT(slotDomNodeInserted(DOM::Node)));
 	connect(_kafkaPart, SIGNAL(domNodeModified(DOM::Node)),
 		this, SLOT(slotDomNodeModified(DOM::Node)));
-	connect(_kafkaPart, SIGNAL(domNodeIsAboutToBeRemoved(DOM::Node)),
-		this, SLOT(slotDomNodeAboutToBeRemoved(DOM::Node)));
+	connect(_kafkaPart, SIGNAL(domNodeIsAboutToBeRemoved(DOM::Node, bool)),
+		this, SLOT(slotDomNodeAboutToBeRemoved(DOM::Node, bool)));
+
+	connect(_kafkaPart, SIGNAL(domNodeGetFocus(DOM::Node)),
+		this, SLOT(slotDomNodeGetFocus(DOM::Node)));
 }
 
 WKafkaPart::~WKafkaPart()
@@ -164,6 +169,7 @@ void WKafkaPart::loadDocument(Document *doc)
 	_kafkaPart->finishedLoading();
 	_docLoaded = true;
 	kdDebug(25001)<< "WKafkaPart::loadDocument() in " << t.elapsed() << " ms only!" << endl;
+	//coutTree(_rootNode, 2);
 }
 
 void WKafkaPart::unloadDocument()
@@ -195,13 +201,8 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode)
 	/** TODO: avoid to put all the nodes in the same line */
 	kdDebug(25001)<< "WKafkaPart::slotDomNodeInserted() node :" <<
 		_domNode.nodeName().string() << endl;
-	Node *_nodeParent = 0L, *_nodePrev = 0L, *_node = 0L;
-	Node *_nodeNext = 0L, *_nodeXmlEnd = 0L, *__nextNode = 0L;
-	Tag *_tag = 0L, *_tagEnd = 0L;
-	long i;
-	int j, col, line, foo = 0, taglenCol, taglenLine;
-	int beginCol, beginLine, lastCol, lastLine, attrLine, attrCol;
-	int NNbeginLine, NNbeginCol, NNlastLine, NNlastCol;
+	Node *_nodeParent = 0L, *_nodePrev = 0L, *_node = 0L, *__nextNode = 0L;
+	int beginCol, beginLine, lastCol, lastLine, taglenCol, taglenLine;
 	bool b = false;
 
 	/** FIRST PART: create the new Quanta node and insert it into the tree */
@@ -214,7 +215,9 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode)
 	}
 	if(!_rootNode)
 	{//we are in the case when a minimal kafka tree has been set
-		//TODO
+		kdDebug(25001)<< "WKafkaPart::slotDomNodeModified() - *ERROR* " <<
+			"createBasicQuantaTree() not yet implemented" << endl;
+		//TODO:createBasicQuantaTree();
 	}
 
 	//TODO:remplace with a QPtrDict
@@ -238,233 +241,43 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode)
 		kdDebug(25001)<< "_nodePrev name:" << _nodePrev->tag->name << endl;
 	}
 
-	_node = new Node(_nodeParent);
-	_node->kafkaAddon = new kNodeProperties();
-	_node->kafkaAddon->_rootNode = _domNode;
-	//TODO:handle the special case of TABLE which need absolutely TBODY
-	_node->kafkaAddon->_leafNode = _domNode;
-	_node->prev = _nodePrev;
-	if(_nodePrev)
-	{
-		_nodeNext = _nodePrev->next;
-		_nodePrev->next = _node;
-	}
-	if(_nodeNext)
-	{
-		_node->next = _nodeNext;
-		_nodeNext->prev = _node;
-	}
-	else
-	{
-		if(_nodeParent->child)
-		{
-			_node->next = _nodeParent->child;
-			_nodeParent->child->prev = _node;
-		}
-		else
-			_node->next = 0L;
-	}
-
-	if(_nodePrev)
-	{
-		if(_nodePrev->kafkaAddon && _nodePrev->kafkaAddon->_closingNode)
-			_nodePrev->kafkaAddon->_closingNode->tag->endPos(beginLine, beginCol);
-		else
-			_nodePrev->tag->endPos(beginLine, beginCol);
-		beginCol++;
-	}
-	else if(_nodeParent)
-	{
-		_nodeParent->tag->endPos(beginLine, beginCol);
-		beginCol++;
-	}
-	else
-	{
-		beginLine = 1;
-		beginCol = 0;
-	}
-
-	_tag = new Tag();
-	if(_domNode.nodeType() == DOM::Node::TEXT_NODE)
-	{//if it is some text
-		kdDebug(25001)<< "slotDomNodeInserted() - _domNode.type == TEXT_NODE" << endl;
-		QString domText = _domNode.nodeValue().string();
-		QString Encodedchar;
-		j = -1;
-		while((unsigned)++j < domText.length())
-		{
-			Encodedchar == getEncodedChar(QString(domText[j]), false);
-			if(Encodedchar != "")
-			{
-				domText.remove(j,1);
-				domText.insert(j, Encodedchar);
-				j += Encodedchar.length() - 1;
-			}
-		}
-
-		j = -1;
-		while((unsigned)++j < domText.length())
-		{
-			if(domText[j].isSpace())
-			{
-				while((unsigned)++j < domText.length() && domText[j].isSpace())
-				{
-					domText.remove(j, 1);
-					domText.insert(j, "&nbsp;");
-					j += 5;
-
-				}
-			}
-		}
-		_tag->setStr(domText);
-		_tag->setTagPosition(beginLine, beginCol, beginLine, beginCol +
-			domText.length());
-		_tag->setWrite(_currentDoc);
-		_tag->type = Tag::Text;
-		_tag->single = true;
-		_node->tag = _tag;
-		_tag->dtd = _rootNode->tag->dtd;
-		/** SECOND PART: insert the HTML code in the editor*/
-		kdDebug(25001)<< "slotDomNodeInserted() - insert text1:" << beginLine <<
-			":" << beginCol << ":" << domText << endl;
-		_currentDoc->editIf->insertText(beginLine, beginCol, domText);
-	}
-	else
-	{//it is an element
-		kdDebug(25001)<< "slotDomNodeInserted() - _domNode.type != TEXT_NODE" << endl;
-		_tag->name = _domNode.nodeName().string();
-		_tag->setTagPosition(beginLine, beginCol, beginLine, beginCol +
-			 _tag->name.length() + 2);
-		for(i = 0; (unsigned)i < _domNode.attributes().length(); i++)
-		{
-			TagAttr attr;
-			attr.name = _domNode.attributes().item(i).nodeName().string();
-			attr.value = _domNode.attributes().item(i).nodeValue().string();
-			if(_tag->attrCount() != 0)
-			{
-				attrCol = _tag->getAttribute(_tag->attrCount() - 1).valueCol +
-					 _tag->getAttribute(_tag->attrCount() -
-					  1).value.length() + 1;
-				attrLine = _tag->getAttribute(_tag->attrCount() - 1).valueLine;
-			}
-			else
-			{
-				attrCol = beginCol + + 1 + _tag->name.length() + 1;
-				attrLine = beginLine;
-			}
-			attr.nameCol = attrCol;
-			attr.nameLine = attrLine;
-			attr.valueCol = attrCol + _tag->name.length() + 1;
-			attr.valueLine = attrLine;
-			attr.quoted = true;
-			_tag->addAttribute(attr);
-		}
-		_tag->type = Tag::XmlTag;
-		_tag->setWrite(_currentDoc);
-		_node->tag = _tag;
-		/**some random problem with parser::nodeAt in Document::currentDTD method*/
-		_tag->dtd = _rootNode->tag->dtd;
-		_tag->single = QuantaCommon::isSingleTag(_rootNode->tag->dtd->name,
-			 _tag->name);
-
-		/** SECOND PART: insert the HTML code in the editor*/
-
-		QString text = "<" + QuantaCommon::tagCase(_tag->name);
-		lastCol = beginCol + text.length() + 1;
-		lastLine = beginLine;
-		_currentDoc->editIf->insertText(beginLine, beginCol, text);
-		kdDebug(25001)<< "slotDomNodeInserted() - insert text1:" << beginLine <<
-			":" << beginCol << ":" << text << endl;
-		for(j = 0; j < _tag->attrCount(); j++)
-		{
-			text = _tag->attribute(j) + "=";
-			if(_tag->isQuotedAttribute(j)) text += "\"";
-			text += _tag->attributeValue(j);
-			if(_tag->isQuotedAttribute(j)) text += "\"";
-			_tag->attributeNamePos(j, line, col);
-			_currentDoc->editIf->insertText(line, col, text);
-			kdDebug(25001)<< "slotDomNodeInserted() - insert text2:" << line <<
-				":" << col << ":" << text << endl;
-			_tag->attributeValuePos(j, line, col);
-			lastCol = col + _tag->attributeValue(j).length() +
-				((_tag->isQuotedAttribute(j))?2:0);
-			lastLine = line;
-		}
-		text = "";
-		if ( _tag->dtd->singleTagStyle == "xml" &&
-			(_tag->single || (!qConfig.closeOptionalTags &&
-			QuantaCommon::isOptionalTag(_tag->dtd->name, _tag->name))))
-		{
-			text = "/";
-			foo = 1;
-		}
-		else foo = 0;
-		text += ">";
-		kdDebug(25001)<< "slotDomNodeInserted() - insert text3:" << lastLine <<
-			":" << lastCol << ":" << text << endl;
-		_currentDoc->editIf->insertText(lastLine, lastCol, text);
-		lastCol += foo;
-		_tag->setTagPosition(beginLine, beginCol, lastLine, lastCol);
-		/** temporary XmlTagEnd inserting TODO:make it work for node with childs */
-		if(!_tag->single)
-		{
-			_nodeXmlEnd = new Node(_nodeParent);
-			_node->kafkaAddon->_closingNode = _nodeXmlEnd;
-			_nodeXmlEnd->prev = _node;
-			_nodeXmlEnd->next = _node->next;
-			_node->next = _nodeXmlEnd;
-			_tagEnd = new Tag();
-			_nodeXmlEnd->tag = _tagEnd;
-			_tagEnd->single = true;
-			lastCol++;
-			_currentDoc->editIf->insertText(lastLine, lastCol, "</" +
-				 _tag->name + ">");
-			_tagEnd->setTagPosition(lastLine, lastCol, lastLine, lastCol + 2 +
-				 _tag->name.length());
-			lastCol = lastCol + 2 + _tag->name.length();
-		}
-		/** end temp*/
-
-	}
+	_node = buildNodeFromKafkaNode(_domNode, _nodeParent, _nodePrev);
 
 	/** THIRD PART: change the neighbour Tag positions */
 
+	_node->tag->beginPos(beginLine, beginCol);
+	_node->tag->endPos(lastLine, lastCol);
 	taglenCol = lastCol - beginCol;
+	taglenLine = lastLine - beginLine;
+	b = true;
 	__nextNode = getNextNode(_node, b);
-	fitsNodesPosition(__nextNode, taglenCol, taglenLine);
-	/**while(__nextNode)
-	{
-		__nextNode->tag->beginPos(NNbeginLine, NNbeginCol);
-		__nextNode->tag->endPos(NNlastLine, NNlastCol);
-		if(NNbeginLine != beginLine) break;
-		__nextNode->tag->setTagPosition(NNbeginLine, NNbeginCol +
-			taglenCol, NNlastLine, NNlastCol + taglenCol);
-		for(j = 0; j < __nextNode->tag->attrCount(); j++)
-		{
-			if(__nextNode->tag->getAttribute(j).nameLine != lastLine)
-				break;
-			//__nextNode->tag->getAttribute(j).nameLine += taglenLine;
-			__nextNode->tag->getAttribute(j).nameCol += taglenCol;
-			//__nextNode->tag->getAttribute(j).valueLine += taglenLine;
-			__nextNode->tag->getAttribute(j).valueCol += taglenCol;
-		}
-		__nextNode = getNextNode(__nextNode, b);
-	}*/
+	fitsNodesPosition(__nextNode, taglenCol + 1, taglenLine);
 
 	baseNode = parser->parse(_currentDoc);
+	//coutTree(_rootNode, 2);
 }
 
 void WKafkaPart::slotDomNodeModified(DOM::Node _domNode)
 {
 	kdDebug(25001)<< "WKafkaPart::slotDomNodeModified()" << endl;
 	Node *_node = 0L;
+	int beginLine, beginCol, endLine, endCol;
+	int oldTaglenCol, oldTaglenLine, taglenCol, taglenLine;
+	bool b = false;
+
+	/** FIRST PART: modify the Quanta Node corresponding to the kafka Node and
+		insert the HTML code in the editor */
+
 	if(!_rootNode)
 	{//we are in the case when a minimal kafka tree has been set
+		kdDebug(25001)<< "WKafkaPart::slotDomNodeModified() - *ERROR* " <<
+			"createBasicQuantaTree() not yet implemented" << endl;
 		//TODO:createBasicQuantaTree();
 		return;
 	}
 	//first look which Node correspond to this DOM::Node
 	_node = searchCorrespondingNode(_domNode);
+	//_node = domNodeToNode[_domNode];
 
 	if(!_node)
 	{//DOM::Node not found, maybe was it created before
@@ -473,13 +286,28 @@ void WKafkaPart::slotDomNodeModified(DOM::Node _domNode)
 		return;
 	}
 
-	if(_domNode.nodeType() == DOM::Node::TEXT_NODE)
-	{//"parse" the new text : spaces when possible else &nbsp;
-		//parsing here...
-	}
+	_node->tag->beginPos(beginLine, beginCol);
+	_node->tag->endPos(endLine, endCol);
+	_currentDoc->editIf->removeText(beginLine, beginCol, endLine, endCol + 1);
+	oldTaglenCol = endCol - beginCol;
+	oldTaglenLine = endLine - beginLine;
+	buildNodeFromKafkaNode(_node, _domNode);
+
+	/** SECOND PART: change the neighbour Tag positions */
+
+	_node->tag->beginPos(beginLine, beginCol);
+	_node->tag->endPos(endLine, endCol);
+	taglenCol = endCol - beginCol;
+	taglenLine = endLine - beginLine;
+	_node = getNextNode(_node, b);
+	fitsNodesPosition(_node, taglenCol - oldTaglenCol, taglenLine - oldTaglenLine);
+
+	//coutTree(_rootNode, 2);
+	//I still don't know why it crashs if i don't reparse... :/
+	baseNode = parser->parse(_currentDoc);
 }
 
-void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode)
+void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChilds)
 {
 	/** TODO: for the moment, it delete _domNode and all its childs*/
 	/** TODO: make the 3rd step works for nodes which take more than 1 line */
@@ -492,12 +320,11 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode)
 	int startLine, startCol, endLine, endCol;
 	int taglenCol, taglenLine, closingTaglenCol, closingTaglenLine;
 	int startLine2, startCol2, endLine2, endCol2;
-	bool hasClosingNode = false;
-	bool deleteChilds = true;
+	bool hasClosingNode = false, b;
 
 	/** FIRST PART: remove the HTML code from the editor*/
 
-	coutTree(_rootNode, 2);
+	//coutTree(_rootNode, 2);
 
 	_node = searchCorrespondingNode(_domNode);
 	if(!_node)
@@ -521,8 +348,8 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode)
 		_nodeParentClosingBackup = _node->kafkaAddon->_closingNode->parent;
 		_node->kafkaAddon->_closingNode->tag->beginPos(startLine2, startCol2);
 		_node->kafkaAddon->_closingNode->tag->endPos(endLine2, endCol2);
-		closingTaglenCol = startCol - endCol;
-		closingTaglenLine = startLine - endLine;
+		closingTaglenCol = startCol2 - endCol2;
+		closingTaglenLine = startLine2 - endLine2;
 		if(!deleteChilds)
 			_currentDoc->editIf->removeText(startLine2, startCol2, endLine2,
 				endCol2 + 1);
@@ -608,7 +435,14 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode)
 
 	/** THIRD PART: change the neighbour Tag positions */
 
-	if(hasClosingNode)
+	b = true;
+	if(_nodeParentBackup)
+		_nodeParentBackup = getNextNode(_nodeParentBackup, b);
+	b = true;
+	if(_nodeParentClosingBackup)
+		_nodeParentClosingBackup = getNextNode(_nodeParentClosingBackup, b);
+
+	if(hasClosingNode && !deleteChilds)
 	{
 		if(_nodeChilds)
 		{
@@ -617,29 +451,35 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode)
 		}
 		_tmpNode = (_nodeNextClosingBackup)?_nodeNextClosingBackup:
 			_nodeParentClosingBackup;
-		fitsNodesPosition(_tmpNode, taglenCol + closingTaglenCol,taglenLine +
+		fitsNodesPosition(_tmpNode, - taglenCol - closingTaglenCol - 1, - taglenLine -
 			closingTaglenCol);
+	}
+	else if(hasClosingNode)//&& deleteChilds
+	{
+		_tmpNode = (_nodeNextClosingBackup)?_nodeNextClosingBackup:
+			_nodeParentClosingBackup;
+		fitsNodesPosition(_tmpNode, startCol - endCol2 - 1, endLine - endLine2);
 	}
 	else
 	{
 		_tmpNode = (_nodeNextBackup)?_nodeNextBackup:_nodeParentBackup;
-		fitsNodesPosition(_tmpNode, taglenCol, taglenLine);
+		fitsNodesPosition(_tmpNode, - taglenCol, - taglenLine - 1);
 	}
 
-	coutTree(_rootNode, 2);
+	//coutTree(_rootNode, 2);
 
 	baseNode = parser->parse(_currentDoc);
 }
 
 void WKafkaPart::slotDomNodeGetFocus(DOM::Node _domNode)
 {
-	/**Node *_node = searchCorrespondingNode(_domNode);
+	Node *_node = searchCorrespondingNode(_domNode);
 	if(_node)
 	{
 		int line, col;
-		_node->tag->beginPos(line, col);
-		emit newCursorPosition( line, col);
-	}*/
+		getQuantaCursorPosition(line, col);
+		emit newCursorPosition(line, col);
+	}
 }
 
 void WKafkaPart::synchronizeXMLTag(Node* _node)
@@ -657,6 +497,7 @@ void WKafkaPart::synchronizeXMLTag(Node* _node)
 	newNode = _kafkaPart->createNode(_node->tag->name);
 	if (newNode.nodeName().string().upper() != _node->tag->name.upper())
 		return;
+	//domNodeToNode.insert(newNode, _node);
 
 	for(i = 0; i < _node->tag->attrCount(); i++)
 	{
@@ -689,14 +530,15 @@ void WKafkaPart::synchronizeXMLTag(Node* _node)
 		{kdDebug(25001)<< "WKafkart::synchronizeXMLTag() *ERROR* - code : " <<
 			e.code << endl;}
 		//_node->parent->kafkaNodeEnd.applyChanges();
-		if(newNode.nodeName().string() == "TABLE")
+		if(newNode.nodeName().string().upper() == "TABLE")
 		{
 			newNode2 = _kafkaPart->createNode("TBODY");
+			//domNodeToNode.insert(newNode2, _node);
 			try
 			{
 				newNode2 = newNode.appendChild(newNode2);
 			} catch(DOM::DOMException e)
-			{kdDebug(25001)<< "WKafkart::synchronizeXMLTag() *ERROR* - code : " <<
+			{kdDebug(25001)<< "WKafkart::synchronizeXMLTag() *ERROR2* - code : " <<
 				e.code << endl;}
 			_node->kafkaAddon->_leafNode = newNode2;
 		}
@@ -710,7 +552,7 @@ void WKafkaPart::synchronizeXMLTag(Node* _node)
 		{
 			newNode = _kafkaPart->htmlDocument().appendChild(newNode);
 		} catch(DOM::DOMException e)
-		{kdDebug(25001)<< "WKafkart::synchronizeXMLTag() *ERROR* - code : " <<
+		{kdDebug(25001)<< "WKafkart::synchronizeXMLTag() *ERROR3* - code : " <<
 			e.code << endl;}
 		kdDebug(25001)<< "WKafkaPart::synchronizeXMLTag() *WARNING* - adding" <<
 		" node to the root node" << endl;
@@ -723,7 +565,7 @@ void WKafkaPart::synchronizeXMLTag(Node* _node)
 		_node->kafkaAddon->_rootNode.nodeName().string() <<
 		" - Node : " << _node->tag->tagStr() <<
 		" - parent DOM::Node : " <<
-			_node->parent->kafkaAddon->_rootNode.nodeName().string() <<
+			_node->parent->kafkaAddon->_leafNode.nodeName().string() <<
 		" - parent Node : " << _node->parent->tag->tagStr() << endl;
 	else
 	kdDebug(25001)<< "Added DOM::Node : " <<
@@ -738,11 +580,8 @@ void WKafkaPart::synchronizeTextTag(Node* _node)
 	DOM::Node _nextNode;
 
 	newNode = _kafkaPart->createNode("TEXT");
-	//remplace all spaces/tab/return into one single space
-	NodeValue = _node->tag->tagStr().replace(QRegExp("\\s+"), " ");
-	//remplace encoded characters by their real value
-	NodeValue = NodeValue.replace(QRegExp("&([^;]+);"), getSpecialChar("\\1") );
-	newNode.setNodeValue(NodeValue);
+	//domNodeToNode.insert(newNode, _node);
+	newNode.setNodeValue(getDecodedText(_node->tag->tagStr()));
 	if (newNode.isNull())
 		return;
 
@@ -765,7 +604,7 @@ void WKafkaPart::synchronizeTextTag(Node* _node)
 		{
 			newNode = _kafkaPart->htmlDocument().appendChild(newNode);
 		} catch(DOM::DOMException e)
-		{kdDebug(25001)<< "WKafkart::synchronizeTextTag() *ERROR* - code : " <<
+		{kdDebug(25001)<< "WKafkart::synchronizeTextTag() *ERROR2* - code : " <<
 			e.code << endl;}
 		kdDebug(25001)<< "WKafkaPart::synchronizeTextTag() *WARNING* - adding" <<
 			" node to the root node" << endl;
@@ -792,9 +631,82 @@ QString WKafkaPart::getEncodedChar(QString specialChar, bool encodeWhiteSpaces)
 	return it.data();
 	}
 
+QString WKafkaPart::getDecodedText(QString encodedText)
+{
+	QString decodedChar;
+	int i, j;
+
+	i = -1;
+	while((unsigned)++i < encodedText.length())
+	{
+		if(encodedText[i].isSpace())
+		{
+			encodedText.remove(i, 1);
+			encodedText.insert(i, " ");
+			while((unsigned)++i < encodedText.length() && encodedText[i].isSpace())
+			{
+				encodedText.remove(i, 1);
+				i--;
+			}
+		}
+	}
+	i = -1;
+	while((unsigned)++i < encodedText.length())
+	{
+		if(QString(encodedText[i]) == "&")
+		{
+			j = i;
+			while((unsigned)++i < encodedText.length() &&
+				QString(encodedText[i]) != ";")
+				{}
+			decodedChar = getSpecialChar(encodedText.mid(j, i - j + 1));
+			encodedText.remove(j, i - j + 1);
+			//TODO:set a special behavior if the encoded symbol doesn't exist
+			encodedText.insert(j, decodedChar);
+			i = j + decodedChar.length() - 1;
+		}
+	}
+
+	return encodedText;
+}
+
+QString WKafkaPart::getEncodedText(QString decodedText)
+{
+	QString Encodedchar;
+	int i;
+
+	i = -1;
+	while((unsigned)++i < decodedText.length())
+	{
+		Encodedchar = getEncodedChar(QString(decodedText[i]), false);
+		if(Encodedchar != "")
+		{
+			decodedText.remove(i,1);
+			decodedText.insert(i, Encodedchar);
+			i += Encodedchar.length() - 1;
+		}
+	}
+
+	i = -1;
+	while((unsigned)++i < decodedText.length())
+	{
+		if(decodedText[i].isSpace())
+		{
+			while((unsigned)++i < decodedText.length() && decodedText[i].isSpace())
+			{
+				decodedText.remove(i, 1);
+				decodedText.insert(i, "&nbsp;");
+				i += 5;
+			}
+		}
+	}
+	return decodedText;
+}
+
 Node *WKafkaPart::getNextNode(Node *_node, bool &goingTowardsRootNode)
 {
 	//goto next node, my favorite part :)
+	if(!_node) return 0L;
 	if(goingTowardsRootNode)
 	{
 		if(_node->next)
@@ -803,7 +715,7 @@ Node *WKafkaPart::getNextNode(Node *_node, bool &goingTowardsRootNode)
 			return _node->next;
 		}
 		else
-			return _node->parent;
+			return getNextNode(_node->parent, goingTowardsRootNode);
 	}
 	else
 	{
@@ -814,7 +726,7 @@ Node *WKafkaPart::getNextNode(Node *_node, bool &goingTowardsRootNode)
 		else
 		{
 			goingTowardsRootNode = true;
-			return _node->parent;
+			return getNextNode(_node->parent, goingTowardsRootNode);
 		}
 	}
 }
@@ -875,6 +787,8 @@ void WKafkaPart::fitsNodesPosition(Node* _startNode, int colMovement, int lineMo
 	int beginLine, beginCol, lastLine, lastCol;
 	Node *_node = _startNode;
 
+	if(!_node) return;
+
 	_startNode->tag->beginPos(SNbeginLine, SNbeginCol);
 	_startNode->tag->endPos(SNlastLine, SNlastCol);
 
@@ -885,10 +799,14 @@ void WKafkaPart::fitsNodesPosition(Node* _startNode, int colMovement, int lineMo
 		if(beginLine >= lineEnd && beginCol >= colEnd &&
 			colEnd != -2 && lineEnd != -2)
 			return;
-		if(beginLine == SNbeginLine)
+		if(beginLine == SNbeginLine && lastLine == SNlastLine)
 			_node->tag->setTagPosition(beginLine + lineMovement,
 				beginCol + colMovement, lastLine + lineMovement ,
 				lastCol + colMovement);
+		else if(beginLine == SNbeginLine)//&&lastLine != SNlastLine
+			_node->tag->setTagPosition(beginLine + lineMovement,
+				beginCol + colMovement, lastLine + lineMovement ,
+				lastCol);
 		else
 			_node->tag->setTagPosition(beginLine + lineMovement,
 				beginCol, lastLine + lineMovement, lastCol);
@@ -909,4 +827,293 @@ void WKafkaPart::fitsNodesPosition(Node* _startNode, int colMovement, int lineMo
 		}
 		_node = getNextNode(_node, b);
 	}
+}
+
+QString WKafkaPart::generateCodeFromNode(Node *_node)
+{
+	QString text;
+	int j;
+
+	if(!_node) return "";
+
+	if(_node->tag->type == Tag::XmlTag)
+	{
+		text = "<" + QuantaCommon::tagCase(_node->tag->name);
+		for(j = 0; j < _node->tag->attrCount(); j++)
+		{
+			text += " ";
+			text += _node->tag->attribute(j);
+			text += "=";
+			if(_node->tag->isQuotedAttribute(j)) text += "\"";
+			text += _node->tag->attributeValue(j);
+			if(_node->tag->isQuotedAttribute(j)) text += "\"";
+		}
+		if ( _node->tag->dtd->singleTagStyle == "xml" &&
+			(_node->tag->single || (!qConfig.closeOptionalTags &&
+			QuantaCommon::isOptionalTag(_node->tag->dtd->name, _node->tag->name))))
+			text += "/";
+		text += ">";
+	}
+	else if(_node->tag->type == Tag::XmlTagEnd)
+	{
+		text = "</" + QuantaCommon::tagCase(_node->tag->name) + ">";
+	}
+	else if(_node->tag->type == Tag::Text)
+	{
+		text = _node->tag->tagStr();
+	}
+
+	return text;
+}
+
+void WKafkaPart::buildNodeFromKafkaNode(Node *_node, DOM::Node _domNode)
+{
+	kdDebug(25001)<< "void WKafkaPart::buildNodeFromKafkaNode(Node*, DOM::Node)" << endl;
+	QString domText;
+	long i;
+	int beginLine, beginCol, endLine, endCol, attrLine, attrCol;
+
+	if(!_node) return;
+
+	_node->tag->beginPos(beginLine, beginCol);
+
+	if(_domNode.nodeType() == DOM::Node::TEXT_NODE)
+	{
+		domText = getEncodedText(_domNode.nodeValue().string());
+		//TODO:try to keep the indentation
+		_node->tag->setStr(domText);
+		_node->tag->setTagPosition(beginLine, beginCol, beginLine, beginCol +
+			domText.length() - 1);
+		_currentDoc->editIf->insertText(beginLine, beginCol,
+			generateCodeFromNode(_node));
+	}
+	else
+	{
+		while(_node->tag->attrCount())
+			_node->tag->deleteAttribute(0);
+		for(i = 0; (unsigned)i < _domNode.attributes().length(); i++)
+		{
+			TagAttr attr;
+			attr.name = _domNode.attributes().item(i).nodeName().string();
+			attr.value = _domNode.attributes().item(i).nodeValue().string();
+			if(_node->tag->attrCount() != 0)
+			{
+				attrCol = _node->tag->getAttribute(_node->tag->attrCount() -
+					1).valueCol + _node->tag->getAttribute(
+					_node->tag->attrCount() - 1).value.length() + 1;
+				attrLine = _node->tag->getAttribute(_node->tag->attrCount() -
+					1).valueLine;
+			}
+			else
+			{
+				attrCol = beginCol + + 1 + _node->tag->name.length() + 1;
+				attrLine = beginLine;
+			}
+			attr.nameCol = attrCol;
+			attr.nameLine = attrLine;
+			attr.valueCol = attrCol + _node->tag->name.length() + 1;
+			attr.valueLine = attrLine;
+			attr.quoted = true;
+			_node->tag->addAttribute(attr);
+		}
+
+		QString text = generateCodeFromNode(_node);
+		_node->tag->setStr(text);
+		_currentDoc->editIf->insertText(beginLine, beginCol, text);
+		endLine = beginLine;
+		endCol = beginCol + text.length() - 1;
+		_node->tag->setTagPosition(beginLine, beginCol, endLine, endCol);
+	}
+
+}
+
+Node * WKafkaPart::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent, Node *_nodePrev )
+{
+	kdDebug(25001)<< "Node* WKafkaPart::buildNodeFromKafkaNode(DOM::Node, 2xNode*)" << endl;
+	Node *_node, *_nodeNext, *_nodeXmlEnd;
+	Tag *_tag, *_tagEnd;
+	int beginLine, beginCol, endLine, endCol;
+
+	if(!_nodeParent) return 0L;
+
+	_node = new Node(_nodeParent);
+	_node->kafkaAddon = new kNodeProperties();
+	_node->kafkaAddon->_rootNode = _domNode;
+	//TODO:handle the special case of TABLE which need absolutely TBODY
+	_node->kafkaAddon->_leafNode = _domNode;
+	_node->prev = _nodePrev;
+	if(_nodePrev)
+	{
+		_nodeNext = _nodePrev->next;
+		_nodePrev->next = _node;
+	}
+	if(_nodeNext)
+	{
+		_node->next = _nodeNext;
+		_nodeNext->prev = _node;
+	}
+	else
+	{
+		if(_nodeParent->child)
+		{
+			_node->next = _nodeParent->child;
+			_nodeParent->child->prev = _node;
+		}
+		else
+			_node->next = 0L;
+	}
+
+	if(_nodePrev)
+	{
+		if(_nodePrev->kafkaAddon && _nodePrev->kafkaAddon->_closingNode)
+			_nodePrev->kafkaAddon->_closingNode->tag->endPos(beginLine, beginCol);
+		else
+			_nodePrev->tag->endPos(beginLine, beginCol);
+		beginCol++;
+	}
+	else if(_nodeParent)
+	{
+		_nodeParent->tag->endPos(beginLine, beginCol);
+		beginCol++;
+	}
+	else
+	{
+		beginLine = 1;
+		beginCol = 1;
+	}
+
+	_tag = new Tag();
+	if(_domNode.nodeType() == DOM::Node::TEXT_NODE)
+	{//if it is some text
+		_node->tag = _tag;
+		_tag->setWrite(_currentDoc);
+		_tag->type = Tag::Text;
+		_tag->single = true;
+		_tag->dtd = _rootNode->tag->dtd;
+		_tag->setTagPosition(beginLine, beginCol, -1, -1);
+		buildNodeFromKafkaNode(_node, _domNode);
+	}
+	else
+	{//it is an element
+		_node->tag = _tag;
+		_tag->setWrite(_currentDoc);
+		_tag->type = Tag::XmlTag;
+		_tag->single = QuantaCommon::isSingleTag(_rootNode->tag->dtd->name,
+			 _tag->name);
+		/**some random problem with parser::nodeAt in Document::currentDTD method*/
+		_tag->dtd = _rootNode->tag->dtd;
+		_tag->name = _domNode.nodeName().string();
+		_tag->setTagPosition(beginLine, beginCol, -1, -1);
+		buildNodeFromKafkaNode(_node, _domNode);
+
+		if(!_tag->single)
+		{
+			_nodeXmlEnd = new Node(_nodeParent);
+			_node->kafkaAddon->_closingNode = _nodeXmlEnd;
+			_nodeXmlEnd->prev = _node;
+			_nodeXmlEnd->next = _node->next;
+			_node->next->prev = _nodeXmlEnd;
+			_node->next = _nodeXmlEnd;
+
+			_tagEnd = new Tag();
+			_nodeXmlEnd->tag = _tagEnd;
+			_tagEnd->setWrite(_currentDoc);
+			_tagEnd->type = Tag::XmlTagEnd;
+			_tagEnd->single = true;
+			_tagEnd->dtd = _rootNode->tag->dtd;
+			_tagEnd->name = _tag->name;
+			//temp adding node code to editor
+			QString text = generateCodeFromNode(_nodeXmlEnd);
+			_node->tag->endPos(endLine, endCol);
+			_currentDoc->editIf->insertText(endLine, endCol + 1, text);
+			_tagEnd->setTagPosition(endLine, endCol + 1, endLine, endCol + 1 +
+				text.length() - 1);
+
+			//end tmp
+		}
+
+	}
+	return _node;
+}
+
+void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
+{
+	/**DOM::Node _currentDomNode;
+	Node *_currentNode;
+	QString decodedText, Encodedchar;
+	int offset, i, currentOffset = 0;
+	int beginLine, beginCol, finalLine = -1, finalCol = -1, finalLinearPos = -1;
+
+	_kafkaPart->getCurrentNode(_currentDomNode, offset);
+	if(_currentDomNode.isNull()) return;
+	decodedText = _currentDomNode.nodeValue().string();
+	_currentNode = searchCorrespondingNode(_currentDomNode);
+	_currentNode->tag->beginPos(beginLine, beginCol);
+
+	i = -1;
+	if(offset == 0)
+	{
+		line = beginLine;
+		col = beginCol;
+		return;
+	}
+	while((unsigned)++i < decodedText.length())
+	{
+		beginCol++;
+		Encodedchar = getEncodedChar(QString(decodedText[i]), false);
+		currentOffset++;
+		if(Encodedchar != "")
+		{
+			decodedText.remove(i,1);
+			decodedText.insert(i, Encodedchar);
+			i += Encodedchar.length() - 1;
+			beginCol += Encodedchar.length() - 1;
+		}
+		kdDebug(25001)<< QString(decodedText[i]) << "<=>" <<
+			_currentDoc->editIf->text(beginLine, beginCol, beginLine, beginCol) << endl;
+		if(QString(decodedText[i]) !=
+			_currentDoc->editIf->text(beginLine, beginCol, beginLine, beginCol))
+		{
+			kdDebug(25001)<< "NewLine!" << endl;
+			beginLine++;
+			beginCol = Encodedchar.length() - 1;
+		}
+		if(currentOffset == offset)
+		{
+			finalLine = beginLine;
+			finalCol = beginCol;
+			finalLinearPos = i;
+			break;
+		}
+	}
+	if(finalLinearPos == -1) return;
+
+	i = -1;
+	while((unsigned)++i < decodedText.length())
+	{
+		if(decodedText[i].isSpace())
+		{
+			while((unsigned)++i < decodedText.length() && decodedText[i].isSpace())
+			{
+				if(finalLinearPos >= i)
+				{
+					finalCol += 5;
+					finalLinearPos += 5;
+				}
+				decodedText.remove(i, 1);
+				decodedText.insert(i, "&nbsp;");
+				i += 5;
+			}
+		}
+	}
+	kdDebug(25001)<< line << ":" << col << endl;
+	line = finalLine;
+	col = finalCol;*/
+	return;
+}
+
+int WKafkaPart::getKafkaCursorPosition()
+{
+	//TODO:to do it :=)
+	return -1;
 }

@@ -72,6 +72,8 @@ public:
   void addAttribute(TagAttr _attr) {attrs.append(_attr);}
   /** Get the attribute number index */
   TagAttr getAttribute(uint index) {return attrs[index];}
+  /** Remove the attribute number index */
+  void deleteAttribute(uint index) {attrs.remove(attrs.at(index));}
   /** Returns the quotation status of the attribute */
   bool isQuotedAttribute(int index) {return attrs[index].quoted;}
   /** Check if this tag has the attr attribute defined */
