@@ -48,7 +48,7 @@
 #endif
 #include <kdebug.h>
 
-#if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)
+#if KDE_IS_VERSION(3,1,90)
 #include <ktabwidget.h>
 #endif
 
@@ -70,7 +70,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
 {
   doc = quantaApp->doc();
   initActions();
-#if KDE_VERSION >= KDE_MAKE_VERSION(3,1,90)
+#if KDE_IS_VERSION(3,1,90)
   m_writeTab = new KTabWidget(this);
   static_cast<KTabWidget*>(m_writeTab)->setHoverCloseButton(true);
   connect(m_writeTab, SIGNAL(closeRequest(QWidget *)), quantaApp, SLOT(slotClosePage(QWidget *)));
