@@ -283,31 +283,24 @@ bool QuantaApp::slotFileSaveAs()
     if(ptabdock->isVisible())
     {
       saveAsUrl = pTab->currentURL();
-      saveAsPath = saveAsUrl.url();
+      if (pTab->currentKFileTreeViewItem() && pTab->currentKFileTreeViewItem()->isDir())
+        saveAsPath = saveAsUrl.url();
+      else
+        saveAsPath = saveAsUrl.directory(); 	
       gotPath = true;
     }
     else if(ftabdock->isVisible())
     {
       saveAsUrl = fTab->currentURL();
-      saveAsPath = saveAsUrl.url();
+      if (fTab->currentKFileTreeViewItem() && fTab->currentKFileTreeViewItem()->isDir())
+        saveAsPath = saveAsUrl.url();
+      else
+        saveAsPath = saveAsUrl.directory(); 
       gotPath = true;
     }
 
-    if(gotPath)
-    {
-      if(saveAsPath.isEmpty())
-        saveAsPath = Project::ref()->projectBaseURL().url();
-      else
-      {
-        QFileInfo saveAsPathInfo = QFileInfo(saveAsPath);
-        if(saveAsPathInfo.isFile())
-          saveAsPath = saveAsUrl.directory();
-      }
-    }
-    else
-    {
+    if (!gotPath || saveAsPath.isEmpty())
       saveAsPath = Project::ref()->projectBaseURL().url();
-    }
 
     QString saveAsFileName = "";
     if (!(oldURL.fileName()).isEmpty())
