@@ -24,8 +24,6 @@
 
 VisualFrameEditor::VisualFrameEditor(QWidget * parent, const char * name) : QHBox(parent,name){
   t = new tree;
-  splitterList.setAutoDelete(true);
-  SAList.setAutoDelete(true);
 }
 VisualFrameEditor::~VisualFrameEditor(){
   if(t) delete t;
@@ -68,14 +66,12 @@ void VisualFrameEditor::paintEvent ( QPaintEvent * ){
   QObjectList* ch = queryList("SelectableArea");
   for (uint i = 0; i < ch->count(); i++)
   {
-    QObject *o = ch->at(i);
-    removeChild(o);
+    removeChild(ch->at(i));
   }
   ch = queryList("QSplitter");
   for (uint i = 0; i < ch->count(); i++)
   {
-    QObject *o = ch->at(i);
-    removeChild(o);
+    removeChild(ch->at(i));
   }
   draw2(t->getRoot(),this);
   show();
@@ -98,7 +94,6 @@ void VisualFrameEditor::draw2(treeNode *n, QWidget* parent){
 
     if(n->hasChildren()) {
         QSplitter *splitter = new QSplitter(parent);
-        splitterList.append(splitter);
 	if(n->getSplit() == "v") splitter->setOrientation(QSplitter::Horizontal);
 	if(n->getSplit() == "h") splitter->setOrientation(QSplitter::Vertical);
 	n->firstChild();
@@ -109,7 +104,6 @@ void VisualFrameEditor::draw2(treeNode *n, QWidget* parent){
     }
     else{
 	SelectableArea *te=new SelectableArea(parent);
-        SAList.append(te);
         te->setIdLabel( n->getLabel() );
        // te->setMinimumSize(QSize(20,25));
         te->setSource(n->getAtts()->getSrc());

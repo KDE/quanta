@@ -30,8 +30,6 @@ class VisualFrameEditor : public QHBox  {
 private:
   tree *t;
   QWidget *form;
-  QPtrList<QSplitter> splitterList;
-  QPtrList<SelectableArea> SAList;
   void draw2(treeNode *n, QWidget* parent);
 public:
 	VisualFrameEditor( QWidget * parent = 0, const char * name = 0);
