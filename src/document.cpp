@@ -1368,10 +1368,16 @@ QString Document::findDTDName(Tag **tag)
 bool Document::scriptAutoCompletion(int line, int column)
 {
  bool handled = false;
- 
- QString s = editIf->textLine(line).left(column + 1);
+ Node *node = parser->nodeAt(line, column);
+ if (node->parent)
+   node = node->parent;
+ else if (node->prev)  
+   node = node->prev;
+ int bl, bc;
+ node->tag->beginPos(bl, bc);
+ QString s = text(bl, bc, line, column);
  QString s2 = s;
- int i = column;
+ int i = s.length() - 1;
  while (i > 0 && s[i].isSpace())
    i--;
  while (i > 0 && (s[i].isLetterOrNumber() || s[i] == '_' ||
@@ -1874,6 +1880,8 @@ void Document::slotDelayedTextChanged(bool forced)
      reparseEnabled = false;
      return;
    }
+   if (!baseNode)
+     baseNode = parser->parse(this, true);
    
     uint line, column;
     QString oldNodeName = "";

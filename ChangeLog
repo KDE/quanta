@@ -54,6 +54,7 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
     - enhancements:
       - improve document type recognition (treat escaped quote marks as normal quotes) [#61873]
       - improve namespace support in the autocompletion    
+      - improve multiline script autocompletion      
 
 Version 3.2-CVS-1 (Release Date: xx-xx-200x; Started: 25-11-2002)
 NOTE: Minimum KDE 3.1 is required.

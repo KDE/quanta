@@ -1297,6 +1297,8 @@ void Parser::parseIncludedFile(const QString& fileName, const DTDStruct *dtd)
               }
               if (pos == -1)
                   pos = foundStr.length();
+/*              kdDebug(24000) << "length: " << foundStr.length() << endl;    
+              kdDebug(24000) << "index: " << structPos << " length: " << pos - structPos + 1 << endl; */
               foundStr.replace(structPos, pos - structPos + 1, &space, pos - structPos + 1);
               int openBracketPos = foundStr.findRev(dtd->structKeywordsRx, structPos);
               openBracketPos = foundStr.find('(', openBracketPos);
