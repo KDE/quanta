@@ -30,8 +30,8 @@ class ProjectTreeFolder;
 class ProjectTreeFile : public FilesTreeFile  {
 friend class Project;
 public: 
-	ProjectTreeFile( ProjectTreeFolder *parent,  QString name, const KURL& p_url);
-	~ProjectTreeFile();
+  ProjectTreeFile( ProjectTreeFolder *parent,  QString name, const KURL& p_url);
+  ~ProjectTreeFile();
 
 public:
   QString fname;

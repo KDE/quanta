@@ -55,7 +55,7 @@ bool CervisiaPlugin::run()
 
     setRunning(TRUE);
 
-	emit pluginStarted();
+  emit pluginStarted();
 
     return TRUE;
   }

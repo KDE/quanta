@@ -48,12 +48,12 @@ class CopyTo;
 class Project : public QWidget  {
    Q_OBJECT
 public:
-	Project( QWidget *parent=0, const char *name=0);
-	~Project();
-	
-	bool hasProject();
-	KURL::List fileNameList(bool check = false);
-	void loadProjectXML();
+  Project( QWidget *parent=0, const char *name=0);
+  ~Project();
+  
+  bool hasProject();
+  KURL::List fileNameList(bool check = false);
+  void loadProjectXML();
 
   void insertFile( const KURL& nameURL, bool repaint );
   void insertFiles( const KURL& pathURL, const QString& mask );
@@ -93,10 +93,10 @@ public slots:
   void slotInsertFilesAfterCopying(const KURL& url, CopyTo*);
   void slotRenameFinished( KIO::Job *);
 
-	void slotRename(const KURL& url);
-	void slotRemove(const KURL& urlToRemove);
+  void slotRename(const KURL& url);
+  void slotRemove(const KURL& urlToRemove);
 
-	void slotAcceptCreateProject();
+  void slotAcceptCreateProject();
 
   void slotSelectProjectType(const QString &);
 
@@ -114,15 +114,15 @@ public slots:
 
 signals:
 
-	void openFile( const KURL&, const QString& );
-	void closeFiles();
+  void openFile( const KURL&, const QString& );
+  void closeFiles();
 
-	void setBaseURL( const KURL& url );
-	void setProjectName( QString );
+  void setBaseURL( const KURL& url );
+  void setProjectName( QString );
 
-	void showTree();
-	void reloadTree(const KURL::List &, bool);
-	
+  void showTree();
+  void reloadTree(const KURL::List &, bool);
+  
   void setLocalFiles( bool );
 
   void messages( QString );
@@ -165,20 +165,20 @@ public:
   bool keepPasswd;
 
 private:
-	QWizard *wiz;
-	QWidgetStack *stack;
+  QWizard *wiz;
+  QWidgetStack *stack;
   QString currentProjectView;
-	
-	ProjectNewGeneral		*png;
-	ProjectNewLocal		  *pnl;
-	ProjectNewWeb 			*pnw;
-	ProjectNewFinal 		*pnf;
-	
-	KConfig *config;
-	
-	bool modified;
-	bool olfwprj; //for internal use
-	
+  
+  ProjectNewGeneral    *png;
+  ProjectNewLocal      *pnl;
+  ProjectNewWeb       *pnw;
+  ProjectNewFinal     *pnf;
+  
+  KConfig *config;
+  
+  bool modified;
+  bool olfwprj; //for internal use
+  
   QBuffer buff;
 protected: // Protected attributes
   /** Default DTD for this project. */

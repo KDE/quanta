@@ -28,30 +28,30 @@ class QStringList;
 class CSSEditor : public CSSEditorS  {
    Q_OBJECT
 public:
-	CSSEditor(QString code, QWidget *parent=0, const char *name=0);
-	~CSSEditor();
+  CSSEditor(QString code, QWidget *parent=0, const char *name=0);
+  ~CSSEditor();
 
-	QString code();
+  QString code();
 
 protected slots:
-	/** Show the window to add a selector */
-	void slotAddSelector();
+  /** Show the window to add a selector */
+  void slotAddSelector();
 
-	/** Show the window to edit an existing selector */
-	void slotEditSelector();
+  /** Show the window to edit an existing selector */
+  void slotEditSelector();
 
-	/** Ask to remove an existing selector */
-	void slotRemoveSelector();
+  /** Ask to remove an existing selector */
+  void slotRemoveSelector();
 
-	/** Copy a selector into anothers */
-	void slotCopySelector();
+  /** Copy a selector into anothers */
+  void slotCopySelector();
 
-	/** Place all the selector contained in the string list into the list box */
-	void slotShowSelectors ();
-	
+  /** Place all the selector contained in the string list into the list box */
+  void slotShowSelectors ();
+  
 protected:
-	/** All the parsed selectors, in the form "Selector { css code } */
-	QStringList selectors;
+  /** All the parsed selectors, in the form "Selector { css code } */
+  QStringList selectors;
 };
 
 #endif

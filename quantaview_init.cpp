@@ -50,11 +50,11 @@
 #include "toolbar/tagaction.h"
 
 QuantaView::QuantaView(QWidget *parent, const char *name )
-	: QWidget( parent, name)
+  : QWidget( parent, name)
 {
   doc = quantaApp->doc;
-	initActions();
-	
+  initActions();
+  
   writeTab = new QTabWidget(this);
   writeTab ->setTabPosition( QTabWidget::Bottom );
   connect( writeTab,SIGNAL(currentChanged(QWidget*)), quantaApp, SLOT(slotUpdateStatus(QWidget*)));
@@ -73,7 +73,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   toolbarTab->removePage(tb);
   delete tb;
   
-	QGridLayout *layout = new QGridLayout( this );
+  QGridLayout *layout = new QGridLayout( this );
   layout->setRowStretch(0,0);
   layout->setRowStretch(1,1);
   layout->addWidget( toolbarTab     ,0,0);
@@ -109,11 +109,11 @@ Document* QuantaView::write()
 /** Add new kwrite class to writeStack and return id in stack */
 void QuantaView::addWrite( Document* w , QString label )
 {
-	QIconSet emptyIcon ( UserIcon("empty1x16"));
-	writeTab->addTab  ( w,  emptyIcon,  label.section("/",-1) );
+  QIconSet emptyIcon ( UserIcon("empty1x16"));
+  writeTab->addTab  ( w,  emptyIcon,  label.section("/",-1) );
   writeTab->setTabToolTip(w, label);
-	writeTab->showPage( w );
-	connect( w->view(),
+  writeTab->showPage( w );
+  connect( w->view(),
            SIGNAL(cursorPositionChanged()), this, SLOT(slotNewCurPos()));
 }
 

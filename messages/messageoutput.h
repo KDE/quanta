@@ -31,32 +31,32 @@ weblint output
 class MessageOutput : public QListBox  {
    Q_OBJECT
 public: 
-	MessageOutput(QWidget *parent=0, const char *name=0);
-	~MessageOutput();
-	
-public slots:	
+  MessageOutput(QWidget *parent=0, const char *name=0);
+  ~MessageOutput();
+  
+public slots:  
   /**  */
-	void insertItem( QString s );
-	/** insert message for each line of s */
-	void showMessage( QString s );
-	void addToLastItem( QString s );
-	
-	/** php3 debugger stuff */
-	void phpDebug(QString s);
-	void newPhpConnect();
-	void endPhpConnect();
-	
-	/** php4 debugger stuff */
-	void php4Debug(QString s);
-	
-	
-	/** weblint stuff */
-	void processWebLint( KProcess *, char *, int );
-	void weblintFinished();
-	
-	
+  void insertItem( QString s );
+  /** insert message for each line of s */
+  void showMessage( QString s );
+  void addToLastItem( QString s );
+  
+  /** php3 debugger stuff */
+  void phpDebug(QString s);
+  void newPhpConnect();
+  void endPhpConnect();
+  
+  /** php4 debugger stuff */
+  void php4Debug(QString s);
+  
+  
+  /** weblint stuff */
+  void processWebLint( KProcess *, char *, int );
+  void weblintFinished();
+  
+  
 public:
-  uint maxItems() { return max_items; }	
+  uint maxItems() { return max_items; }  
   void setMaxItems( uint items ) {  max_items = items; }
   /** remove first items , if count > max_items  */
   void checkMaxItems();

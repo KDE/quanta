@@ -38,9 +38,9 @@ struct URLListEntry{
 class RescanPrj : public RescanPrjDir  {
    Q_OBJECT
 public: 
-	RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent=0, const char *name=0, bool modal = true);
-	~RescanPrj();
-	
+  RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent=0, const char *name=0, bool modal = true);
+  ~RescanPrj();
+  
 public slots:
   void slotSelect();
   void slotDeselect();

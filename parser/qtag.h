@@ -176,10 +176,10 @@ typedef struct DTDStruct
 
 class QTag {
 public: 
-	QTag();
-	QTag(  QTag&);
-	~QTag();
-	QTag operator = ( QTag& );
+  QTag();
+  QTag(  QTag&);
+  ~QTag();
+  QTag operator = ( QTag& );
   /** Add an attribute to the tag. */
   void addAttribute(Attribute* attr);
   /** Returns the number of attributes for the tag. */

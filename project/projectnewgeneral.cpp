@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    								       (C) 2001-2002 by Andras Mantia <amantia@freemail.hu>
+                           (C) 2001-2002 by Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -38,43 +38,43 @@
 #include "../quantacommon.h"
 
 ProjectNewGeneral::ProjectNewGeneral(QWidget *parent, const char *name )
-	: ProjectNewGeneralS(parent,name)
+  : ProjectNewGeneralS(parent,name)
 {
-	imagelabel->setPixmap( UserIcon("wiznewprjglb") );
-	linePrjName->setFocus();
+  imagelabel->setPixmap( UserIcon("wiznewprjglb") );
+  linePrjName->setFocus();
 
-	QStringList protocols = KProtocolInfo::protocols();
+  QStringList protocols = KProtocolInfo::protocols();
   protocols.sort();
-	for ( uint i=0; i<protocols.count(); i++ )
-	{
-		QString p = protocols[i];
-		if ( KProtocolInfo::supportsWriting(p) &&
-		     KProtocolInfo::supportsMakeDir(p) &&
-		     KProtocolInfo::supportsDeleting(p) &&
+  for ( uint i=0; i<protocols.count(); i++ )
+  {
+    QString p = protocols[i];
+    if ( KProtocolInfo::supportsWriting(p) &&
+         KProtocolInfo::supportsMakeDir(p) &&
+         KProtocolInfo::supportsDeleting(p) &&
          p != "file" )
-		{
-			comboProtocol->insertItem(p);
-		}
-	}
+    {
+      comboProtocol->insertItem(p);
+    }
+  }
   comboProtocol->setCurrentItem(0);
 
   slotProtocolChanged(i18n("Local"));
 
-	connect(comboProtocol, SIGNAL(activated(const QString&)), SLOT(slotProtocolChanged(const QString &)));
-	connect( linePrjFile, SIGNAL(textChanged(const QString &)),
-					 this,				SLOT(slotLinePrjFile(const QString &)));
-	connect( linePrjName, SIGNAL(textChanged(const QString &)),
-					 this,				SLOT(slotLinePrjFile(const QString &)));
-	connect( linePrjDir,  SIGNAL(textChanged(const QString &)),
-					 this,				SLOT(slotLinePrjFile(const QString &)));
+  connect(comboProtocol, SIGNAL(activated(const QString&)), SLOT(slotProtocolChanged(const QString &)));
+  connect( linePrjFile, SIGNAL(textChanged(const QString &)),
+           this,        SLOT(slotLinePrjFile(const QString &)));
+  connect( linePrjName, SIGNAL(textChanged(const QString &)),
+           this,        SLOT(slotLinePrjFile(const QString &)));
+  connect( linePrjDir,  SIGNAL(textChanged(const QString &)),
+           this,        SLOT(slotLinePrjFile(const QString &)));
   connect( linePrjDir,  SIGNAL(textChanged(const QString &)),
            this,        SLOT(slotLinePrjTmpl(const QString &)));
   connect( linePrjDir,  SIGNAL(textChanged(const QString &)),
            this,        SLOT(slotLinePrjToolbar(const QString &)));
-	connect( buttonDir,		SIGNAL(clicked()),
-					 this,				SLOT(slotButtonDir()));
-	connect( linePrjName, SIGNAL(textChanged(const QString &)),
-					 this,				SLOT(slotChangeNames(const QString &)));
+  connect( buttonDir,    SIGNAL(clicked()),
+           this,        SLOT(slotButtonDir()));
+  connect( linePrjName, SIGNAL(textChanged(const QString &)),
+           this,        SLOT(slotChangeNames(const QString &)));
   connect( linePrjTmpl, SIGNAL(textChanged(const QString &)), SLOT(slotLinePrjFile(const QString &)));
   connect( buttonTmpl,  SIGNAL(clicked()), SLOT(slotButtonTmpl()));
   connect( linePrjToolbar, SIGNAL(textChanged(const QString &)), SLOT(slotLinePrjFile(const QString &)));
@@ -103,13 +103,13 @@ void ProjectNewGeneral::slotButtonDir()
 
 void ProjectNewGeneral::slotLinePrjFile( const QString & )
 {
-	if ( 	linePrjFile->text().isEmpty() ||
-				linePrjName->text().isEmpty() ||
-				linePrjDir ->text().isEmpty() ||
+  if (   linePrjFile->text().isEmpty() ||
+        linePrjName->text().isEmpty() ||
+        linePrjDir ->text().isEmpty() ||
         linePrjTmpl->text().isEmpty() ||
         linePrjToolbar->text().isEmpty())
-				emit enableNextButton( this, false );
-	else
+        emit enableNextButton( this, false );
+  else
   {
     KURL url;
     url.setHost(lineHost->text());
@@ -122,7 +122,7 @@ void ProjectNewGeneral::slotLinePrjFile( const QString & )
     url.adjustPath(1);
     if (!url.path().startsWith("/")) url.setPath("/"+url.path());
 
-  	emit setBaseURL(url);
+    emit setBaseURL(url);
  }
 
   emit enableNextButton( this, true  );
@@ -130,11 +130,11 @@ void ProjectNewGeneral::slotLinePrjFile( const QString & )
 
 void ProjectNewGeneral::slotChangeNames( const QString &text )
 {
-	int i;
-	QString fname = text.lower();
-	while( (i=fname.find(" ")) >=0 ) fname.remove(i,1);
+  int i;
+  QString fname = text.lower();
+  while( (i=fname.find(" ")) >=0 ) fname.remove(i,1);
 
-	linePrjFile->setText( fname+".webprj" );
+  linePrjFile->setText( fname+".webprj" );
 
   QString dir = "";
   QString oldDir = linePrjDir->text();
@@ -152,14 +152,14 @@ void ProjectNewGeneral::slotChangeNames( const QString &text )
     dir = oldDir;
   }
   
-	linePrjDir ->setText(dir);
+  linePrjDir ->setText(dir);
 }
 
 QString ProjectNewGeneral::type()
 {
-//	if ( radioCvs  ->isChecked() ) return "CVS";
-	if ( radioLocal->isChecked() ) return "Local";
-	if ( radioWeb  ->isChecked() ) return "Web";
+//  if ( radioCvs  ->isChecked() ) return "CVS";
+  if ( radioLocal->isChecked() ) return "Local";
+  if ( radioWeb  ->isChecked() ) return "Web";
   return "Local";
 }
 

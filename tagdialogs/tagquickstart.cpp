@@ -37,31 +37,31 @@
 TagQuickStart::TagQuickStart(const KURL& a_baseURL, QWidget *parent, const char *name)
     : TagQuickStartS(parent,name,true)
 {
-	baseURL = a_baseURL;
-	setCaption(name);
+  baseURL = a_baseURL;
+  setCaption(name);
 
-	colorBG   ->setColor("#ffffff");
-	colorText ->setColor("#000000");
-	colorLink ->setColor("#0000a0");
-	colorALink->setColor("#008080");
-	colorVLink->setColor("#c06060");
+  colorBG   ->setColor("#ffffff");
+  colorText ->setColor("#000000");
+  colorLink ->setColor("#0000a0");
+  colorALink->setColor("#008080");
+  colorVLink->setColor("#c06060");
 
-	connect( buttonFileSelect, SIGNAL(clicked()),SLOT(slotFileSelect()) );
+  connect( buttonFileSelect, SIGNAL(clicked()),SLOT(slotFileSelect()) );
 
-	connect( colorBG,    SIGNAL(activated(const QColor &)), this, SLOT(slotBGColor   (const QColor &)) );
-	connect( colorText,  SIGNAL(activated(const QColor &)), this, SLOT(slotTextColor (const QColor &)) );
-	connect( colorLink,  SIGNAL(activated(const QColor &)), this, SLOT(slotLinkColor (const QColor &)) );
-	connect( colorALink, SIGNAL(activated(const QColor &)), this, SLOT(slotALinkColor(const QColor &)) );
-	connect( colorVLink, SIGNAL(activated(const QColor &)), this, SLOT(slotVLinkColor(const QColor &)) );
+  connect( colorBG,    SIGNAL(activated(const QColor &)), this, SLOT(slotBGColor   (const QColor &)) );
+  connect( colorText,  SIGNAL(activated(const QColor &)), this, SLOT(slotTextColor (const QColor &)) );
+  connect( colorLink,  SIGNAL(activated(const QColor &)), this, SLOT(slotLinkColor (const QColor &)) );
+  connect( colorALink, SIGNAL(activated(const QColor &)), this, SLOT(slotALinkColor(const QColor &)) );
+  connect( colorVLink, SIGNAL(activated(const QColor &)), this, SLOT(slotVLinkColor(const QColor &)) );
 
-	connect( comboBGColor,    SIGNAL(activated(const QString &)), this, SLOT(slotColorBG   (const QString &)) );
-	connect( comboTextColor,  SIGNAL(activated(const QString &)), this, SLOT(slotColorText (const QString &)) );
-	connect( comboLinkColor,  SIGNAL(activated(const QString &)), this, SLOT(slotColorLink (const QString &)) );
-	connect( comboALinkColor, SIGNAL(activated(const QString &)), this, SLOT(slotColorALink(const QString &)) );
-	connect( comboVLinkColor, SIGNAL(activated(const QString &)), this, SLOT(slotColorVLink(const QString &)) );
+  connect( comboBGColor,    SIGNAL(activated(const QString &)), this, SLOT(slotColorBG   (const QString &)) );
+  connect( comboTextColor,  SIGNAL(activated(const QString &)), this, SLOT(slotColorText (const QString &)) );
+  connect( comboLinkColor,  SIGNAL(activated(const QString &)), this, SLOT(slotColorLink (const QString &)) );
+  connect( comboALinkColor, SIGNAL(activated(const QString &)), this, SLOT(slotColorALink(const QString &)) );
+  connect( comboVLinkColor, SIGNAL(activated(const QString &)), this, SLOT(slotColorVLink(const QString &)) );
 
-	connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
-	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
+  connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
+  connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
 }
 
 TagQuickStart::~TagQuickStart(){
@@ -71,7 +71,7 @@ TagQuickStart::~TagQuickStart(){
 void TagQuickStart::slotFileSelect()
 {
 
-	KURL url = KFileDialog::getOpenURL( baseURL.url(), i18n("*.gif *.png *.jpg| Image files\n*|All files"));
+  KURL url = KFileDialog::getOpenURL( baseURL.url(), i18n("*.gif *.png *.jpg| Image files\n*|All files"));
 
   if ( !url.isEmpty() )
   {
@@ -82,32 +82,32 @@ void TagQuickStart::slotFileSelect()
 
 void TagQuickStart::slotBGColor(const QColor &)
 {
-	QString color = colorBG->colorName();
-	comboBGColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
+  QString color = colorBG->colorName();
+  comboBGColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
 }
 
 void TagQuickStart::slotTextColor(const QColor &)
 {
-	QString color = colorText->colorName();
-	comboTextColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
+  QString color = colorText->colorName();
+  comboTextColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
 }
 
 void TagQuickStart::slotLinkColor(const QColor &)
 {
-	QString color = colorLink->colorName();
-	comboLinkColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
+  QString color = colorLink->colorName();
+  comboLinkColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
 }
 
 void TagQuickStart::slotALinkColor(const QColor &)
 {
-	QString color = colorALink->colorName();
-	comboALinkColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
+  QString color = colorALink->colorName();
+  comboALinkColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
 }
 
 void TagQuickStart::slotVLinkColor(const QColor &)
 {
-	QString color = colorVLink->colorName();
-	comboVLinkColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
+  QString color = colorVLink->colorName();
+  comboVLinkColor->insertItem( (color[0]=='#') ? color.upper() : color ,0);
 }
 
 void TagQuickStart::slotColorBG   (const QString &newColor){colorBG   ->setColor(QColor(newColor));}

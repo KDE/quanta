@@ -50,15 +50,15 @@ public:
                </a>
 
   */
-	TagDialog(QTag* dtdTag, Tag* tag, KURL a_baseURL = KURL());
-	TagDialog(QTag* dtdTag, QString attrs=QString::null, KURL a_baseURL = KURL());
-	~TagDialog();
+  TagDialog(QTag* dtdTag, Tag* tag, KURL a_baseURL = KURL());
+  TagDialog(QTag* dtdTag, QString attrs=QString::null, KURL a_baseURL = KURL());
+  ~TagDialog();
   /** Insert an attribute to dict*/
   void insertAttribute(QString *attr, QString *value);
-	/**  */
+  /**  */
   void parseTag();
   /** returen doc path */
-	KURL baseURL();
+  KURL baseURL();
 
 
   /** Return the attributes in QDict<QString> format*/

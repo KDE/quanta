@@ -36,8 +36,8 @@ class QuantaCmdPlugin : public QuantaPlugin
 {
   Q_OBJECT
 public: 
-	QuantaCmdPlugin();
-	~QuantaCmdPlugin();
+  QuantaCmdPlugin();
+  ~QuantaCmdPlugin();
 protected:
   bool m_firstOutput;
   KProcess *m_process;

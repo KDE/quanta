@@ -30,7 +30,7 @@ ProjectTreeFolder::ProjectTreeFolder(QListView *parentListView, ProjectTreeFolde
   filesTreeList.setAutoDelete( true );
 
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
-	else                    setPixmap( 0, SmallIcon("folder") );
+  else                    setPixmap( 0, SmallIcon("folder") );
   
   QString fname = name;
   parentView =  dynamic_cast<ProjectTreeView*>(parentListView);
@@ -44,7 +44,7 @@ ProjectTreeFolder::ProjectTreeFolder(QListView *parentListView, const QString &n
   filesTreeList.setAutoDelete( true );
 
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
-	else                    setPixmap( 0, SmallIcon("folder") );
+  else                    setPixmap( 0, SmallIcon("folder") );
 
   parentView =  dynamic_cast<ProjectTreeView*>(parentListView);
   url = p_url;
@@ -73,7 +73,7 @@ void ProjectTreeFolder::setOpen( bool open )
     setPixmap( 0, SmallIcon("folder_open") );
   else
     setPixmap( 0, SmallIcon("folder") );
-  	
+    
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
 }
 

@@ -33,7 +33,7 @@
 
 TagWidget::TagWidget(QObject *parent, const char *)
 {
-	baseURL = ((TagDialog *)parent)->baseURL();
+  baseURL = ((TagDialog *)parent)->baseURL();
 }
 
 TagWidget::~TagWidget(){

@@ -24,20 +24,20 @@
 class CSSSelectorEditor : public CSSEditSelectorS  {
    Q_OBJECT
 public:
-	CSSSelectorEditor(QString code, bool editSelector,
-		QWidget *parent=0, const char *name=0);
-	~CSSSelectorEditor();
+  CSSSelectorEditor(QString code, bool editSelector,
+    QWidget *parent=0, const char *name=0);
+  ~CSSSelectorEditor();
 
-	/** Get the CSS code based on the widget's values */
-	QString code();
+  /** Get the CSS code based on the widget's values */
+  QString code();
 
 protected:
-	/** From the code, insert the values on the widgets */
-	void widgetFromCode(QString);
+  /** From the code, insert the values on the widgets */
+  void widgetFromCode(QString);
 
-	/** Split a string in the form top [right]? [bottom]? [left]? into the
-	four variables */
-	void splitValueTRBL(QString value, QString&, QString&, QString&, QString&);
+  /** Split a string in the form top [right]? [bottom]? [left]? into the
+  four variables */
+  void splitValueTRBL(QString value, QString&, QString&, QString&, QString&);
 };
 
 #endif

@@ -25,16 +25,16 @@
 #include <kiconloader.h>
 
 PreviewOptions::PreviewOptions(QWidget *parent, const char *name)
-	: PreviewOptionsS(parent,name)
+  : PreviewOptionsS(parent,name)
 {
-	connect(radioBottom, SIGNAL(toggled(bool)),
-					this,	SLOT(slotToggle()));
-	connect(radioRight, SIGNAL(toggled(bool)),
-					this,	SLOT(slotToggle()));
-	connect(radioDisabled, SIGNAL(toggled(bool)),
-					this,	SLOT(slotToggle()));
-	connect(radioFullworkspace, SIGNAL(toggled(bool)),
-					this,	SLOT(slotToggle()));
+  connect(radioBottom, SIGNAL(toggled(bool)),
+          this,  SLOT(slotToggle()));
+  connect(radioRight, SIGNAL(toggled(bool)),
+          this,  SLOT(slotToggle()));
+  connect(radioDisabled, SIGNAL(toggled(bool)),
+          this,  SLOT(slotToggle()));
+  connect(radioFullworkspace, SIGNAL(toggled(bool)),
+          this,  SLOT(slotToggle()));
 }
 
 PreviewOptions::~PreviewOptions(){
@@ -42,30 +42,30 @@ PreviewOptions::~PreviewOptions(){
 
 void PreviewOptions::setPosition( QString position )
 {
-	radioBottom->setChecked(true);
+  radioBottom->setChecked(true);
 
-	if ( position == "Disabled") radioDisabled->setChecked(true);
-	if ( position == "Bottom"  ) radioBottom->setChecked(true);
-	if ( position == "Right"   ) radioRight->setChecked(true);
-	if ( position == "FWSpace" ) radioFullworkspace->setChecked(true);
+  if ( position == "Disabled") radioDisabled->setChecked(true);
+  if ( position == "Bottom"  ) radioBottom->setChecked(true);
+  if ( position == "Right"   ) radioRight->setChecked(true);
+  if ( position == "FWSpace" ) radioFullworkspace->setChecked(true);
 }
 
 QString PreviewOptions::position()
 {
-	QString position = "Bottom";
+  QString position = "Bottom";
 
-	if ( radioBottom->isChecked() 				) position = "Bottom";
-	if ( radioRight->isChecked()					) position = "Right";
-	if ( radioFullworkspace->isChecked() 	) position = "FWSpace";
-	if ( radioDisabled->isChecked()				) position = "Disabled";
+  if ( radioBottom->isChecked()         ) position = "Bottom";
+  if ( radioRight->isChecked()          ) position = "Right";
+  if ( radioFullworkspace->isChecked()   ) position = "FWSpace";
+  if ( radioDisabled->isChecked()        ) position = "Disabled";
 
-	return position;
+  return position;
 }
 
 void PreviewOptions::slotToggle()
 {
-	if ( radioBottom->isChecked() 				) pixmap->setPixmap( UserIcon("preview1") );
-	if ( radioRight->isChecked()					) pixmap->setPixmap( UserIcon("preview2") );
-	if ( radioFullworkspace->isChecked() 	) pixmap->setPixmap( UserIcon("preview3") );
-	if ( radioDisabled->isChecked()				) pixmap->setPixmap( UserIcon("preview4") );
+  if ( radioBottom->isChecked()         ) pixmap->setPixmap( UserIcon("preview1") );
+  if ( radioRight->isChecked()          ) pixmap->setPixmap( UserIcon("preview2") );
+  if ( radioFullworkspace->isChecked()   ) pixmap->setPixmap( UserIcon("preview3") );
+  if ( radioDisabled->isChecked()        ) pixmap->setPixmap( UserIcon("preview4") );
 }

@@ -26,14 +26,14 @@ class KConfig;
 class PreviewOptions : public PreviewOptionsS  {
    Q_OBJECT
 public: 
-	PreviewOptions(QWidget *parent=0, const char *name=0);
-	~PreviewOptions();
+  PreviewOptions(QWidget *parent=0, const char *name=0);
+  ~PreviewOptions();
 
-	QString position();
-	void setPosition( QString );
-	
+  QString position();
+  void setPosition( QString );
+  
 public slots:
-	void slotToggle();
+  void slotToggle();
 };
 
 #endif

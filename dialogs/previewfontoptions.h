@@ -32,9 +32,9 @@ class KFontChooser;
 class PreviewFontOptions : public QTabWidget  {
    Q_OBJECT
 public: 
-	PreviewFontOptions(QWidget *parent=0, const char *name=0);
-	~PreviewFontOptions();
-	
+  PreviewFontOptions(QWidget *parent=0, const char *name=0);
+  ~PreviewFontOptions();
+  
   KFontChooser *stdFont, *fixedFont;
 };
 

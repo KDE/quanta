@@ -26,8 +26,8 @@ class FileMasks : public FileMasksS
 {
    Q_OBJECT
 public: 
-	FileMasks(QWidget *parent=0, const char *name=0);
-	~FileMasks();
+  FileMasks(QWidget *parent=0, const char *name=0);
+  ~FileMasks();
 
 public slots:
   void setToDefault();

@@ -35,8 +35,8 @@ class Document;
 class TagQuickTable : public Quick_Table{
    Q_OBJECT
 public: 
-	TagQuickTable(Document *write, QWidget *parent=0, const char *name=0);
-	~TagQuickTable();
+  TagQuickTable(Document *write, QWidget *parent=0, const char *name=0);
+  ~TagQuickTable();
 
 public:
 

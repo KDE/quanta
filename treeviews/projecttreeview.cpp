@@ -57,46 +57,46 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   setLineWidth( 2 );
   addColumn( i18n("Project files"), 600 );
 
-	setFocusPolicy(QWidget::ClickFocus);
-	
-	projectDir =  new ProjectTreeFolder( this, i18n("No project"), KURL());
-	projectDir -> setPixmap( 0, SmallIcon("folder"));
-	projectDir -> setOpen( true );
+  setFocusPolicy(QWidget::ClickFocus);
+  
+  projectDir =  new ProjectTreeFolder( this, i18n("No project"), KURL());
+  projectDir -> setPixmap( 0, SmallIcon("folder"));
+  projectDir -> setOpen( true );
 
-	fileMenu = new QPopupMenu(this);
+  fileMenu = new QPopupMenu(this);
 
-	fileMenu -> insertItem( UserIcon("open"), i18n("&Open"), this, SLOT(slotOpen()));
-	fileMenu -> insertItem( i18n("Open With..."), this, SLOT(slotOpenWith()));
-	openInQuantaId = fileMenu -> insertItem( i18n("Open in Quanta"), this, SLOT(slotOpenInQuanta()));
-	fileMenu -> insertSeparator();
-	fileMenu -> insertItem(	UserIcon("delete"),i18n("Remove From Disc (and project)..."), this, SLOT(slotRemove()));
-	fileMenu -> insertItem( i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
-	fileMenu -> insertItem( i18n("Upload File..."), this, SLOT(slotUploadSingleURL()));
-	fileMenu -> insertSeparator();
-	fileMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
-	fileMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
-	fileMenu -> insertSeparator();
-	fileMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
-	fileMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
+  fileMenu -> insertItem( UserIcon("open"), i18n("&Open"), this, SLOT(slotOpen()));
+  fileMenu -> insertItem( i18n("Open With..."), this, SLOT(slotOpenWith()));
+  openInQuantaId = fileMenu -> insertItem( i18n("Open in Quanta"), this, SLOT(slotOpenInQuanta()));
+  fileMenu -> insertSeparator();
+  fileMenu -> insertItem(  UserIcon("delete"),i18n("Remove From Disc (and project)..."), this, SLOT(slotRemove()));
+  fileMenu -> insertItem( i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
+  fileMenu -> insertItem( i18n("Upload File..."), this, SLOT(slotUploadSingleURL()));
+  fileMenu -> insertSeparator();
+  fileMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
+  fileMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
+  fileMenu -> insertSeparator();
+  fileMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
+  fileMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
 
-	folderMenu = new QPopupMenu(this);
+  folderMenu = new QPopupMenu(this);
 
-	folderMenu -> insertItem( UserIcon("open"), i18n("&Open"), this, SLOT(slotOpen()));
- 	folderMenu -> insertSeparator();
-	folderMenu -> insertItem( UserIcon("delete"),i18n("Remove From Disc (and project)..."), this, SLOT(slotRemove()));
-	folderMenu -> insertItem( i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
-	folderMenu -> insertItem( i18n("Upload Folder..."), this, SLOT(slotUploadSingleURL()));
-	folderMenu -> insertSeparator();
- 	folderMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
-	folderMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
-	folderMenu -> insertSeparator();
-	folderMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
-	folderMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
+  folderMenu -> insertItem( UserIcon("open"), i18n("&Open"), this, SLOT(slotOpen()));
+   folderMenu -> insertSeparator();
+  folderMenu -> insertItem( UserIcon("delete"),i18n("Remove From Disc (and project)..."), this, SLOT(slotRemove()));
+  folderMenu -> insertItem( i18n("Remove From Project..."),this ,SLOT(slotRemoveFromProject(int)));
+  folderMenu -> insertItem( i18n("Upload Folder..."), this, SLOT(slotUploadSingleURL()));
+  folderMenu -> insertSeparator();
+   folderMenu -> insertItem( i18n("Rename..."), this, SLOT(slotRename()));
+  folderMenu -> insertItem( i18n("Properties..."), this, SLOT(slotProperties()));
+  folderMenu -> insertSeparator();
+  folderMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
+  folderMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
 
   projectMenu = new QPopupMenu(this);
-	projectMenu -> insertItem( i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
-	projectMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
-	projectMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
+  projectMenu -> insertItem( i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
+  projectMenu -> insertItem(SmallIcon("reload"),i18n( "&Rescan Project Directory" ),  this, SLOT(slotRescan()));
+  projectMenu -> insertItem(i18n( "Project &Options" ),  this, SLOT(slotOptions()));
   
 
 
@@ -107,10 +107,10 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   connect(this, SIGNAL(returnPressed(QListViewItem *)),
           this, SLOT  (slotSelectFile(QListViewItem *)));
 
-	connect(this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
+  connect(this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
           this, SLOT  (slotMenu(QListViewItem*, const QPoint&, int)));
 
-	connect(this, SIGNAL(open(QListViewItem *)),
+  connect(this, SIGNAL(open(QListViewItem *)),
           this, SLOT(slotSelectFile(QListViewItem *)));
 //  connect(this, SIGNAL(onItem(QListViewItem *)), SLOT(slotOnItem(QListViewItem*)));        
 }
@@ -121,14 +121,14 @@ ProjectTreeView::~ProjectTreeView(){
 KURL ProjectTreeView::currentURL()
 {
   KURL url;
-	QListViewItem *item = currentItem();
- 	ProjectTreeFolder *folderItem = dynamic_cast<ProjectTreeFolder *> (item);
+  QListViewItem *item = currentItem();
+   ProjectTreeFolder *folderItem = dynamic_cast<ProjectTreeFolder *> (item);
   if ( folderItem )
   {
     url = folderItem->url;
   } else
   {
-   	ProjectTreeFile *fileItem = dynamic_cast<ProjectTreeFile *> (item);
+     ProjectTreeFile *fileItem = dynamic_cast<ProjectTreeFile *> (item);
     if ( fileItem )
     {
       url = fileItem->url;
@@ -172,13 +172,13 @@ void ProjectTreeView::slotMenu(QListViewItem *item, const QPoint& point, int)
 
 void ProjectTreeView::slotSetBaseURL( const KURL& url )
 {
-	baseURL = url;
+  baseURL = url;
 }
 
 void ProjectTreeView::slotSetProjectName( QString name )
 {
-	projectName = name;
-	projectDir->setText( 0, name);
+  projectName = name;
+  projectDir->setText( 0, name);
 }
 
 void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNewTree)
@@ -223,22 +223,22 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
 
 void ProjectTreeView::slotOpen()
 {
-	QListViewItem *item =  currentItem();
-	ProjectTreeFolder *f = dynamic_cast<ProjectTreeFolder *>(item);
+  QListViewItem *item =  currentItem();
+  ProjectTreeFolder *f = dynamic_cast<ProjectTreeFolder *>(item);
 
-	if (item && !f)
+  if (item && !f)
   {
-   	KURL urlToOpen = currentURL();
+     KURL urlToOpen = currentURL();
 
-   	if ( QuantaCommon::checkMimeGroup(urlToOpen,"text" ) )
-   	{
-   		emit openFile( urlToOpen, quantaApp->defaultEncoding() );
-   	}
-   	else if ( QuantaCommon::checkMimeGroup(urlToOpen,"image" ) )
-   	{
-   		emit activatePreview();
-   		emit openImage( urlToOpen ); 
-   	} else
+     if ( QuantaCommon::checkMimeGroup(urlToOpen,"text" ) )
+     {
+       emit openFile( urlToOpen, quantaApp->defaultEncoding() );
+     }
+     else if ( QuantaCommon::checkMimeGroup(urlToOpen,"image" ) )
+     {
+       emit activatePreview();
+       emit openImage( urlToOpen ); 
+     } else
       if (KMessageBox::questionYesNo(this,i18n("This file cannot be opened in Quanta. \n \
           Do you want to open with an external program or run it?"),i18n("Unknown type")) == KMessageBox::Yes)
       {
@@ -250,14 +250,14 @@ void ProjectTreeView::slotOpen()
 
 void ProjectTreeView::slotOpenWith()
 {
-	if (currentItem())
+  if (currentItem())
   {
-   	KURL::List list;
-  	KURL urlToOpen = currentURL();
-  	list.append( urlToOpen );
+     KURL::List list;
+    KURL urlToOpen = currentURL();
+    list.append( urlToOpen );
 
-  	KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
-  	kfowh -> displayOpenWithDialog( list);
+    KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
+    kfowh -> displayOpenWithDialog( list);
   }
 }
 
@@ -286,7 +286,7 @@ void ProjectTreeView::slotRemove()
 {
   KURL url = currentURL();
   QListViewItem *item = currentItem();
-	if ( item &&
+  if ( item &&
        KMessageBox::warningYesNo(this,i18n("Do you really want to remove \n%1\nfrom disk ?")
                                       .arg(url.prettyURL()))== KMessageBox::Yes )
   {
@@ -321,9 +321,9 @@ void ProjectTreeView::slotRename()
 
 void ProjectTreeView::slotUploadSingleURL()
 {
-	if (currentItem())
+  if (currentItem())
   {
-	  emit uploadSingleURL(currentURL());
+    emit uploadSingleURL(currentURL());
   }
 }
 

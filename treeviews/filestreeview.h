@@ -43,8 +43,8 @@ class FilesTreeView : public FileManage  {
 
 public:
   FilesTreeView(QWidget *parent=0L, const char *name=0L):FileManage(parent,name){};
-	FilesTreeView(KURL::List topList, QWidget *parent=0L, const char *name=0L);
-	~FilesTreeView();
+  FilesTreeView(KURL::List topList, QWidget *parent=0L, const char *name=0L);
+  ~FilesTreeView();
 
   /** No descriptions */
   void readDir(const KURL& url);
@@ -52,21 +52,21 @@ public:
   QPtrList<QListViewItem> getItems(const KURL& p_url);
 
   KURL::List topURLList;
-	
+  
 public slots:
-	void slotMenu(QListViewItem *, const QPoint &, int);
-	void slotSelectFile   (QListViewItem *);
-	void slotSelectAnyFile(QListViewItem *);
-	void slotSelectImage  (QListViewItem *);
-	void slotAddToTop     ();
-	void slotNewMode();
+  void slotMenu(QListViewItem *, const QPoint &, int);
+  void slotSelectFile   (QListViewItem *);
+  void slotSelectAnyFile(QListViewItem *);
+  void slotSelectImage  (QListViewItem *);
+  void slotAddToTop     ();
+  void slotNewMode();
   /** No descriptions */
   virtual void slotInsertTag();
-	virtual void slotReload();
+  virtual void slotReload();
   virtual void slotProperties();
-		
+    
 protected:
-	virtual KURL currentURL();
+  virtual KURL currentURL();
   virtual void itemRenamed(const KURL& , const KURL& ) {};
   void addFileInfoPage(KPropertiesDialog *propDlg);
 
@@ -79,9 +79,9 @@ protected slots: // Private slots
   virtual void slotDirListDeleteItem(KFileItem *item);
 
 signals:
-	void activatePreview();
-	void openFile(const KURL&, const QString& );
-	void openImage(const KURL&);
+  void activatePreview();
+  void openFile(const KURL&, const QString& );
+  void openImage(const KURL&);
 };
 
 #endif

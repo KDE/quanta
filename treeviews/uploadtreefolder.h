@@ -33,25 +33,25 @@ class KURL;
   
 class UploadTreeFolder : public KListViewItem  {
 public:
-	UploadTreeFolder( const KURL &a_url, QListView * parent, const char * name);
-	UploadTreeFolder( const KURL &a_url, UploadTreeFolder * parent, const char * name );
-	virtual ~UploadTreeFolder();
+  UploadTreeFolder( const KURL &a_url, QListView * parent, const char * name);
+  UploadTreeFolder( const KURL &a_url, UploadTreeFolder * parent, const char * name );
+  virtual ~UploadTreeFolder();
 
-	/** used for sorting */
-	virtual QString key ( int column, bool ascending ) const;
+  /** used for sorting */
+  virtual QString key ( int column, bool ascending ) const;
   QString fullName();
   KURL url() {return m_url;}
 
-	virtual void setOpen( bool );
-	void setup();
+  virtual void setOpen( bool );
+  void setup();
   void setWhichPixmap( QString pixmap );
 
 public:
-	UploadTreeFolder * parentFolder;
-	KURL m_url;
+  UploadTreeFolder * parentFolder;
+  KURL m_url;
 
 public slots: // Public slots
-	void reloadList();
+  void reloadList();
 
 };
 

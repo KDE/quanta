@@ -38,11 +38,11 @@
 
 
 static const char *description =
-	I18N_NOOP("Quanta Plus Web Development Environment");
+  I18N_NOOP("Quanta Plus Web Development Environment");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
 
 static const char *othertext =
-	I18N_NOOP("Our goal is to be nothing less than the best possible tool for\n \
+  I18N_NOOP("Our goal is to be nothing less than the best possible tool for\n \
 working with tagging and scripting languages.\
 \n\nQuanta Plus is not in any way affiliated with any commercial\n \
 versions of Quanta. \
@@ -60,22 +60,22 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char *argv[])
 {
-	KAboutData
-		aboutData( "quanta", I18N_NOOP("Quanta"),
-		VERSION, description, KAboutData::License_GPL_V2,
-		"(c) 2000, 2001, 2002",
-		othertext,
-		"http://quanta.sourceforge.net"
-		);
+  KAboutData
+    aboutData( "quanta", I18N_NOOP("Quanta"),
+    VERSION, description, KAboutData::License_GPL_V2,
+    "(c) 2000, 2001, 2002",
+    othertext,
+    "http://quanta.sourceforge.net"
+    );
 
-	//aboutData.otherText(&othertext);
+  //aboutData.otherText(&othertext);
 
- 	aboutData.addAuthor("Eric Laffoon",I18N_NOOP("Project Lead - public liason"), "sequitur@kde.org");
- 	aboutData.addAuthor("Andras Mantia",I18N_NOOP("Program Lead - bug squisher"), "amantia@freemail.hu");
- 	aboutData.addAuthor("Dmitry Poplavsky",I18N_NOOP("Inactive - left for commerical version"), "dima@kde.org");
- 	aboutData.addAuthor("Alexander Yakovlev",I18N_NOOP("Inactive - left for commerical version"), "yshurik@kde.org");
+   aboutData.addAuthor("Eric Laffoon",I18N_NOOP("Project Lead - public liason"), "sequitur@kde.org");
+   aboutData.addAuthor("Andras Mantia",I18N_NOOP("Program Lead - bug squisher"), "amantia@freemail.hu");
+   aboutData.addAuthor("Dmitry Poplavsky",I18N_NOOP("Inactive - left for commerical version"), "dima@kde.org");
+   aboutData.addAuthor("Alexander Yakovlev",I18N_NOOP("Inactive - left for commerical version"), "yshurik@kde.org");
 
- 	aboutData.addCredit("Richard Moore",
+   aboutData.addCredit("Richard Moore",
     I18N_NOOP("Coding and tag dialog definition documentation and more"),
     "rich@kde.org");
 
@@ -129,11 +129,11 @@ int main(int argc, char *argv[])
   KApplication *app;
 
   if (isUnique) {
-//	if (!KQUniqueApplication::start())
-//		exit(0);
-	app = new KQUniqueApplication;
+//  if (!KQUniqueApplication::start())
+//    exit(0);
+  app = new KQUniqueApplication;
   } else {
-	app = new KQApplication;
+  app = new KQApplication;
   }
 
   qInitNetworkProtocols();

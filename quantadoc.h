@@ -64,24 +64,24 @@ public:
 
   /// "save modified" - asks the user
   /// for saving if the document is modified
-  bool saveModified();	
+  bool saveModified();  
   bool saveAll(bool dont_ask=true);
 
   Document *write();
   Document *newWrite();
-		
-	// for kwrites
-	void  readConfig( KConfig * );
-	void writeConfig( KConfig * );
-		
-	KURL::List openedFiles(bool noUntitled=true);
+    
+  // for kwrites
+  void  readConfig( KConfig * );
+  void writeConfig( KConfig * );
+    
+  KURL::List openedFiles(bool noUntitled=true);
   void changeFileTabName(KURL newURL = KURL() );
-		
+    
 private:
   bool newDocument (const KURL&);
   /** Check if url is opened or not. */
   Document* isOpened(const KURL& url);
-	
+  
 public slots:
   /** close documents. */
   void closeAll();
@@ -94,7 +94,7 @@ public slots:
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
   void slotOpenCompleted();
- 	
+   
 signals:
   void newStatus();
   void title(QString);

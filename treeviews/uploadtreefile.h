@@ -27,21 +27,21 @@
 
 class UploadTreeFile : public KListViewItem  {
 public: 
-	UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QString, QString);
-	UploadTreeFile( QListView *parent, const KURL &a_url, QString, QString );
-	~UploadTreeFile();
-	
+  UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QString, QString);
+  UploadTreeFile( QListView *parent, const KURL &a_url, QString, QString );
+  ~UploadTreeFile();
+  
   void setWhichPixmap( QString );
 
-	/** used for sorting */
-	virtual QString key ( int column, bool ascending ) const;
+  /** used for sorting */
+  virtual QString key ( int column, bool ascending ) const;
   /** No descriptions */
   KURL url();
 
 public:
-	UploadTreeFolder * parentFolder;
-	KURL m_url;
-	bool isDir;
+  UploadTreeFolder * parentFolder;
+  KURL m_url;
+  bool isDir;
 };
 
 #endif

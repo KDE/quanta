@@ -32,10 +32,10 @@
 
 
 TagMailDlg::TagMailDlg(QWidget *parent, const char *name)
-	:TagMail(parent,name,true)
+  :TagMail(parent,name,true)
 {
   setCaption(name);
-	
+  
   connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );
   connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
   connect( buttonHelp,SIGNAL(clicked()),this,SLOT(slotShowHelp()));
@@ -57,30 +57,30 @@ void TagMailDlg::slotSelectAddress()
   for( it = addressBook->begin(); it != addressBook->end(); ++it ) {
     QStringList emails = (*it).emails();
     QString n = (*it).prefix() + " " +
-		(*it).givenName() + " " +
-		(*it).additionalName() + " " +
-	        (*it).familyName() + " " +
-		(*it).suffix();
+    (*it).givenName() + " " +
+    (*it).additionalName() + " " +
+          (*it).familyName() + " " +
+    (*it).suffix();
     n = n.simplifyWhiteSpace();
     for( unsigned int i = 0; i < emails.count(); ++i ) {
       if (!emails[i].isEmpty()) {
-	if (n.isEmpty() || (emails[i].find( "<" ) != -1))
-	  addr = "";
-	else { /* do we really need quotes around this name ? */
-	  if (n.find(QRegExp("[^ 0-9A-Za-z\\x0080-\\xFFFF]")) != -1)
-	    addr = "\"" + n + "\" ";
-	  else
-	    addr = n + " ";
-	}
-	email = emails[i];
-	if (!addr.isEmpty() && (email.find( "<" ) == -1)
-	    && (email.find( ">" ) == -1)
-	    && (email.find( "," ) == -1))
-	  addr += "<" + email + ">";
-	else
-	  addr += email;
-	addr.stripWhiteSpace();
-	result.append( addr );
+  if (n.isEmpty() || (emails[i].find( "<" ) != -1))
+    addr = "";
+  else { /* do we really need quotes around this name ? */
+    if (n.find(QRegExp("[^ 0-9A-Za-z\\x0080-\\xFFFF]")) != -1)
+      addr = "\"" + n + "\" ";
+    else
+      addr = n + " ";
+  }
+  email = emails[i];
+  if (!addr.isEmpty() && (email.find( "<" ) == -1)
+      && (email.find( ">" ) == -1)
+      && (email.find( "," ) == -1))
+    addr += "<" + email + ">";
+  else
+    addr += email;
+  addr.stripWhiteSpace();
+  result.append( addr );
       }
     }
   }

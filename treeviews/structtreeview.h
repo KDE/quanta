@@ -39,9 +39,9 @@ class StructTreeView : public KListView  {
    Q_OBJECT
 friend class QuantaApp;
 public: 
-	StructTreeView(Parser *parser, KConfig *config, QWidget *parent=0, const char *name=0);
-	~StructTreeView();
-	
+  StructTreeView(Parser *parser, KConfig *config, QWidget *parent=0, const char *name=0);
+  ~StructTreeView();
+  
 
   void setFollowCursor(bool);
   bool followCursor() { return followCursorFlag; }
@@ -52,13 +52,13 @@ public:
   /** Set the View as... menu to dtdName. */
   void setParsingDTD(const QString dtdName);
 
-	StructTreeTag *top;
-	StructTreeTag *groups[5];
+  StructTreeTag *top;
+  StructTreeTag *groups[5];
   uint groupsCount;
-	
-	Parser *parser;
+  
+  Parser *parser;
 
-	bool topOpened;
+  bool topOpened;
   bool groupOpened[5];
   bool useOpenLevelSetting;
 

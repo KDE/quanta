@@ -56,7 +56,7 @@ protected slots:
   virtual void resizeEvent( QResizeEvent * );
   virtual void reject();
 
-private:	
+private:  
   void buildSelectedItemList();
   KURL::List modified; // modified files
   KURL::List toUpload; // list of files , still didn't uploaded

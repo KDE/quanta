@@ -45,93 +45,93 @@ QDomNode findChild( QDomNode &parent, QString name );
 
 class Attr
 {
-	public:
-		Attr( QDomElement *el, QWidget * ){ domEl = el; name = domEl->attribute("name",""); };
-		virtual ~Attr(){};
-	
-		virtual QString value()=0;
-	 	virtual void setValue( QString )=0;
-	 	
-	 	QString attrName();
-	 	
-	 	
-	protected:
- 	  QDomElement *domEl;
- 	  QString name;
+  public:
+    Attr( QDomElement *el, QWidget * ){ domEl = el; name = domEl->attribute("name",""); };
+    virtual ~Attr(){};
+  
+    virtual QString value()=0;
+     virtual void setValue( QString )=0;
+     
+     QString attrName();
+     
+     
+  protected:
+     QDomElement *domEl;
+     QString name;
 };
 
 
 class Attr_line : public Attr
 {
-	protected:
-  	QLineEdit *line;
-  	
-	public:
-		Attr_line( QDomElement *el, QWidget *w ) : Attr(el,w)
-				{  line = (QLineEdit *)w; }
-		virtual ~Attr_line(){};
-	
-		virtual QString value() { return line->text(); }
-	 	virtual void setValue( QString s ) { line->setText(s); }
+  protected:
+    QLineEdit *line;
+    
+  public:
+    Attr_line( QDomElement *el, QWidget *w ) : Attr(el,w)
+        {  line = (QLineEdit *)w; }
+    virtual ~Attr_line(){};
+  
+    virtual QString value() { return line->text(); }
+     virtual void setValue( QString s ) { line->setText(s); }
 };
 
 
 class Attr_color : public Attr
 {
-	protected:
-  	ColorCombo *color;
-  	
-	public:
-		Attr_color( QDomElement *el, QWidget *w ) : Attr(el,w)
-				{ color = (ColorCombo *)w; }
-		virtual ~Attr_color(){};
-	
-		virtual QString value() {  return color->colorName(); }
-	 	virtual void setValue( QString s ) { color->setColorName(s); }
+  protected:
+    ColorCombo *color;
+    
+  public:
+    Attr_color( QDomElement *el, QWidget *w ) : Attr(el,w)
+        { color = (ColorCombo *)w; }
+    virtual ~Attr_color(){};
+  
+    virtual QString value() {  return color->colorName(); }
+     virtual void setValue( QString s ) { color->setColorName(s); }
 };
 
 class Attr_file : public Attr
 {
-	protected:
-  	FileCombo *file;
-  	
-	public:
-		Attr_file( QDomElement *el, QWidget *w ) : Attr(el,w)
-				{ file = (FileCombo *)w; }
-		virtual ~Attr_file(){};
-	
-		virtual QString value() {  return file->text(); }
-	 	virtual void setValue( QString s ) { file->setText(s); }
+  protected:
+    FileCombo *file;
+    
+  public:
+    Attr_file( QDomElement *el, QWidget *w ) : Attr(el,w)
+        { file = (FileCombo *)w; }
+    virtual ~Attr_file(){};
+  
+    virtual QString value() {  return file->text(); }
+     virtual void setValue( QString s ) { file->setText(s); }
 };
 
 class Attr_list : public Attr
 {
-	protected:
-		QComboBox *combo;
-		
-	public:
-		Attr_list( QDomElement *el, QWidget *w );
-		virtual ~Attr_list(){};
-	
-		virtual QString value() { return combo->currentText(); }
-	 	virtual void setValue( QString s );
-		
+  protected:
+    QComboBox *combo;
+    
+  public:
+    Attr_list( QDomElement *el, QWidget *w );
+    virtual ~Attr_list(){};
+  
+    virtual QString value() { return combo->currentText(); }
+     virtual void setValue( QString s );
+    
 };
 
 
 class Attr_check : public Attr
 {
-	protected:
-		QCheckBox *check;
-		
-	public:
-		Attr_check( QDomElement *el, QWidget *w ) : Attr(el,w)
-				{ check = (QCheckBox *)w; }
-		virtual ~Attr_check(){};
-	
-		virtual QString value() { return check->isChecked() ? "checked" : "unchecked" ; }
-	 	virtual void setValue( QString s ) { check->setChecked( !s.isEmpty() ); }
-		
+  protected:
+    QCheckBox *check;
+    
+  public:
+    Attr_check( QDomElement *el, QWidget *w ) : Attr(el,w)
+        { check = (QCheckBox *)w; }
+    virtual ~Attr_check(){};
+  
+    virtual QString value() { return check->isChecked() ? "checked" : "unchecked" ; }
+     virtual void setValue( QString s ) { check->setChecked( !s.isEmpty() ); }
+    
 };
 
 

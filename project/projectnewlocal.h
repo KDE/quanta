@@ -32,12 +32,12 @@ class CopyTo;
 class ProjectNewLocal : public ProjectNewLocalS  {
    Q_OBJECT
 public: 
-	ProjectNewLocal(QWidget *parent=0, const char *name=0);
-	~ProjectNewLocal();
-	
-	KURL::List files();
-	KURL::List projectFiles();
-	
+  ProjectNewLocal(QWidget *parent=0, const char *name=0);
+  ~ProjectNewLocal();
+  
+  KURL::List files();
+  KURL::List projectFiles();
+  
 public slots:
   void slotSetFiles(bool);
   void setBaseURL(const KURL& a_baseURL);
@@ -49,8 +49,8 @@ public slots:
   virtual void resizeEvent( QResizeEvent * );
 
 private:
-	KURL baseURL;
-	KURL::List fileList;
+  KURL baseURL;
+  KURL::List fileList;
 };
 
 #endif

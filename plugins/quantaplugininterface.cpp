@@ -113,7 +113,7 @@ void QuantaPluginInterface::readConfig()
     if (type == "Editor View") type = i18n("Editor View");
     if (type == "Message Window") type = i18n("Message Window");
     if (type == "Konsole") type = i18n("Konsole");
-	if (type == "Output Dock") type = i18n("Output Dock");
+  if (type == "Output Dock") type = i18n("Output Dock");
     newPlugin->setOutputWindow(type);
 
     m_plugins.insert(newPlugin->pluginName(), newPlugin);
@@ -152,7 +152,7 @@ void QuantaPluginInterface::writeConfig()
       if (type == i18n("Editor View")) type = "Editor View";
       if (type == i18n("Message Window")) type = "Message Window";
       if (type == i18n("Konsole")) type = "Konsole";
-	  if (type == i18n("Output Dock")) type = "Output Dock";
+    if (type == i18n("Output Dock")) type = "Output Dock";
       config->writeEntry("OutputWindow", type);
       config->writeEntry("Standard", curPlugin->isStandard());
       if (curPlugin->isStandard()) config->writeEntry("Standard Name", curPlugin->standardName());

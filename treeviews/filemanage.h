@@ -45,32 +45,32 @@ class FileManage : public KListView {
 Q_OBJECT
 public:
   FileManage();
-	FileManage( QWidget *parent, const char *name );
-	~FileManage();
+  FileManage( QWidget *parent, const char *name );
+  ~FileManage();
 
-	QPopupMenu *fileMenu;
+  QPopupMenu *fileMenu;
   QPopupMenu *folderMenu;
   KDirLister *dirLister;
 
-public slots:	
-	void slotOpen();
-	void slotOpenWith();
-	void slotOpenInQuanta();
-	void slotCopy();
-	void slotPaste();
-	void slotDelete();
-	virtual void slotProperties();
-	
-	void slotInsertInProject();
-	void slotInsertDirInProject();
-	
-	virtual void slotInsertTag();
-	
-	virtual void slotReload();
-	void slotJobFinished( KIO::Job *);
+public slots:  
+  void slotOpen();
+  void slotOpenWith();
+  void slotOpenInQuanta();
+  void slotCopy();
+  void slotPaste();
+  void slotDelete();
+  virtual void slotProperties();
+  
+  void slotInsertInProject();
+  void slotInsertDirInProject();
+  
+  virtual void slotInsertTag();
+  
+  virtual void slotReload();
+  void slotJobFinished( KIO::Job *);
   /** No descriptions */
   virtual void slotPropertiesApplied();
-	
+  
 protected slots: // Private slots
   /** No descriptions */
   virtual void slotDirListNewItems(const KFileItemList& items);
@@ -86,21 +86,21 @@ protected slots: // Private slots
   virtual void slotDirListClearURL(const KURL& _url);
 
 protected:
-	virtual KURL currentURL();
+  virtual KURL currentURL();
   int denyBinaryInsert();
   DirInfo dirInfo;
 
 signals:
-	void open( QListViewItem *name );
-	void openInQuanta( QListViewItem *name );
-	
-	void insertDirInProject( const KURL& );
-	void insertFileInProject( const KURL& );
-	
-	void insertTag(const KURL &, DirInfo);
-	
-	void jobFinished();
-	void changeMode();
+  void open( QListViewItem *name );
+  void openInQuanta( QListViewItem *name );
+  
+  void insertDirInProject( const KURL& );
+  void insertFileInProject( const KURL& );
+  
+  void insertTag(const KURL &, DirInfo);
+  
+  void jobFinished();
+  void changeMode();
 
   /** No descriptions */
   void reloadTreeviews();

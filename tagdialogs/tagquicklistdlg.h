@@ -36,21 +36,21 @@
 class TagQuickListDlg : public QDialog  {
    Q_OBJECT
 public: 
-	TagQuickListDlg(QWidget *parent=0, const char *name=0);
-	~TagQuickListDlg();
+  TagQuickListDlg(QWidget *parent=0, const char *name=0);
+  ~TagQuickListDlg();
 
 public:
-	void initDialog();
-	//Generated area. DO NOT EDIT!!!(begin)
-	QLabel *QLabel_1;
-	QSpinBox *spinBoxRows;
-	QPushButton *buttonOk;
-	QLabel *QLabel_2;
-	QRadioButton *radioOrdered;
-	QRadioButton *radioUnordered;
-	QPushButton *buttonCancel;
-	QButtonGroup *groupBox;
-	//Generated area. DO NOT EDIT!!!(end)
+  void initDialog();
+  //Generated area. DO NOT EDIT!!!(begin)
+  QLabel *QLabel_1;
+  QSpinBox *spinBoxRows;
+  QPushButton *buttonOk;
+  QLabel *QLabel_2;
+  QRadioButton *radioOrdered;
+  QRadioButton *radioUnordered;
+  QPushButton *buttonCancel;
+  QButtonGroup *groupBox;
+  //Generated area. DO NOT EDIT!!!(end)
 
 private: 
 };

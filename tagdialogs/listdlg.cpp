@@ -26,7 +26,7 @@
 #include <qstringlist.h>
 
 ListDlg::ListDlg(QStringList &entryList,QWidget* parent, const char *name )
-	:KDialogBase(parent,name),    listbox(new KListBox(this))
+  :KDialogBase(parent,name),    listbox(new KListBox(this))
 {
    CHECK_PTR(listbox);
    setMainWidget(listbox);

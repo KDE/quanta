@@ -33,9 +33,9 @@ TagQuickTable::TagQuickTable(Document *write, QWidget *parent, const char *name)
     : Quick_Table(parent,name,true)
 {
   this->write = write;
-	setCaption(name);
+  setCaption(name);
   connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
-	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
+  connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
   connect( SpinBoxCol, SIGNAL(valueChanged(int)), SLOT(slotChangeColumnNumber(int)));
   connect( ColumnsListView, SIGNAL(doubleClicked ( QListViewItem*)), SLOT(slotEditColumn(QListViewItem *)));
 }

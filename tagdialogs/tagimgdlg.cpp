@@ -39,17 +39,17 @@ static const char *align[] = { "", "left", "right", "top", "bottom", "middle",0}
 TagImgDlg::TagImgDlg(QWidget *parent, const char *name)
   : QWidget(parent,name), TagWidget(parent,name)
 {
-	img = 0L;
-	setCaption(name);
-	initDialog();
+  img = 0L;
+  setCaption(name);
+  initDialog();
 
-	buttonImgSource     ->setPixmap( UserIcon("open") );
-	buttonRecalcImgSize ->setPixmap( UserIcon("repaint") );
-	comboAlign       		->insertStrList(align);
+  buttonImgSource     ->setPixmap( UserIcon("open") );
+  buttonRecalcImgSize ->setPixmap( UserIcon("repaint") );
+  comboAlign           ->insertStrList(align);
 
-	connect( buttonImgSource, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
-	connect( buttonRecalcImgSize, SIGNAL(clicked()), this, SLOT(slotRecalcImgSize()) );
-	connect( lineImgSource, SIGNAL( returnPressed()), this, SLOT(slotLineFileSelect()) );
+  connect( buttonImgSource, SIGNAL(clicked()), this, SLOT(slotFileSelect()) );
+  connect( buttonRecalcImgSize, SIGNAL(clicked()), this, SLOT(slotRecalcImgSize()) );
+  connect( lineImgSource, SIGNAL( returnPressed()), this, SLOT(slotLineFileSelect()) );
 }
 
 TagImgDlg::~TagImgDlg(){
@@ -62,10 +62,10 @@ void TagImgDlg::slotImageSet(const KURL& imageURL)
  if (imageURL.isLocalFile())
  {
   QString file = imageURL.path();
-	widgetImg->slotSetImage( file);
+  widgetImg->slotSetImage( file);
 
-	img = new QImage(file);
-	if ( !img->isNull() )
+  img = new QImage(file);
+  if ( !img->isNull() )
   {
     QString s;
     s.setNum( img->width() );
@@ -81,11 +81,11 @@ void TagImgDlg::slotRecalcImgSize()
 {
   if ( img ) {
     QString s;
-	  s.setNum( img->width() );
-	  lineWidth->setText( s );
-	  s.setNum( img->height() );
-	  lineHeight->setText( s );
-	}
+    s.setNum( img->width() );
+    lineWidth->setText( s );
+    s.setNum( img->height() );
+    lineHeight->setText( s );
+  }
 }
 
 /** select image */

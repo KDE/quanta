@@ -27,9 +27,9 @@
 
 class TagQuickTableItem : public QListViewItem  {
 public:
-	TagQuickTableItem(QListView *parent=0);
-	TagQuickTableItem(QListView *parent, QString label1);
-	~TagQuickTableItem();
+  TagQuickTableItem(QListView *parent=0);
+  TagQuickTableItem(QListView *parent, QString label1);
+  ~TagQuickTableItem();
   /** No descriptions */
   virtual int compare(QListViewItem *i, int col, bool ascending) const;
 };

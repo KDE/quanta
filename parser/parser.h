@@ -42,8 +42,8 @@ struct DTDListNode {
 
 class Parser {
 public:
-	Parser();
-	~Parser();
+  Parser();
+  ~Parser();
 
   /** Searches for scripts inside the text from startNode. It looks only for the
   script begin/and delimiters, and not for the <script> or other special tags.
@@ -58,7 +58,7 @@ public:
 
   /** Parse the whole text from Document w and build the internal structure tree
   from Nodes */
-	Node *parse(Document *w);
+  Node *parse(Document *w);
 
   /** Parses the found special (like script, css and such) areas.*/
   Node* specialAreaParser(Node *startNode);
@@ -76,7 +76,7 @@ public:
   /** No descriptions */
   DTDStruct * currentDTD(int line, int col);
 
-	QString m_text;  //FIXME: having an internal copy of text is absolutely useless
+  QString m_text;  //FIXME: having an internal copy of text is absolutely useless
 
 private:
   Node* m_node;       //the internal Node pointer

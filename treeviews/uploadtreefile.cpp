@@ -31,8 +31,8 @@
 UploadTreeFile::UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QString date, QString size )
     : KListViewItem( parent, a_url.fileName(), "", date, size )
 {
-	m_url = a_url;
-	isDir = false;
+  m_url = a_url;
+  isDir = false;
   parentFolder = parent;
 
   setWhichPixmap("check_clear");
@@ -42,8 +42,8 @@ UploadTreeFile::UploadTreeFile( UploadTreeFolder *parent, const KURL &a_url, QSt
 UploadTreeFile::UploadTreeFile( QListView *parent, const KURL &a_url, QString date, QString size )
     : KListViewItem( parent, a_url.fileName(), "", date, size )
 {
-	m_url = a_url;
-	isDir = false;
+  m_url = a_url;
+  isDir = false;
   parentFolder = 0L;
 
   //setPixmap( 1, SmallIcon("check") );

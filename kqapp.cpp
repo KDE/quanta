@@ -34,16 +34,16 @@ QuantaApp *quantaApp = 0L; //global pointer to the main application object
 
 KSplash::KSplash()
  : QFrame( 0L, QString("Quanta")+VERSION,
-	QWidget::WStyle_NoBorder | QWidget::WStyle_Customize)
+   QWidget::WStyle_NoBorder | QWidget::WStyle_Customize)
 {
-	QPixmap pm( UserIcon("quantalogo") );
+   QPixmap pm( UserIcon("quantalogo") );
 
-	setBackgroundPixmap(pm);
-	setGeometry( QApplication::desktop()->width ()/2-225,
-				QApplication::desktop()->height()/2-150,
-							450, 300 );
-	setLineWidth(0);
-	show();
+   setBackgroundPixmap(pm);
+   setGeometry( QApplication::desktop()->width ()/2-225,
+            QApplication::desktop()->height()/2-150,
+                     450, 300 );
+   setLineWidth(0);
+   show();
 }
 
 

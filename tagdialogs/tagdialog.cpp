@@ -114,9 +114,9 @@ void TagDialog::parseTag()
     //read the tag file it is available
     if (QFileInfo(dtdTag->fileName()).exists())
     {
- 		 QFile f( dtdTag->fileName() );
-		 f.open( IO_ReadOnly );
-	   if ( doc.setContent( &f ) )
+      QFile f( dtdTag->fileName() );
+     f.open( IO_ReadOnly );
+     if ( doc.setContent( &f ) )
      {
        for ( QDomNode n = doc.firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
        {
@@ -288,7 +288,7 @@ void TagDialog::parseAttributes( QString attrs )
   while ( !t.isEmpty() )
   {
     int i = 0;
-    while ( !t[i].isSpace() && !t[i].isNull() && t[i] != '=' )	i++;
+    while ( !t[i].isSpace() && !t[i].isNull() && t[i] != '=' )  i++;
 
     QString attr = t.left(i);
     QString *value = new QString();
@@ -296,37 +296,37 @@ void TagDialog::parseAttributes( QString attrs )
     t = t.remove(0,i).stripWhiteSpace();
 
    if ( t[0] == '=' ) {
-  		t = t.remove(0,1).stripWhiteSpace();
+      t = t.remove(0,1).stripWhiteSpace();
 
-  		if ( t[0] == '"' ) {
-  			i = 1;
-  			while ( t[i] != '"' && !t[i].isNull() ) i++;
-  			if ( t[i] == '"' )
-  				*value = t.mid(1,i-1);
-  			else
-  			  *value = t.mid(1,i);
-  			t = t.remove(0,i+1).stripWhiteSpace();
-  		}
-  		else
-  		if ( t[0] == '\'' ) {
-  			i = 1;
-  			while ( t[i] != '\'' && !t[i].isNull() ) i++;
-  			if ( t[i] == '\'' )
-  				*value = t.mid(1,i-1);
-  			else
-  			  *value = t.mid(1,i);
-  			t = t.remove(0,i+1).stripWhiteSpace();
-  		}
-  		else {
+      if ( t[0] == '"' ) {
+        i = 1;
+        while ( t[i] != '"' && !t[i].isNull() ) i++;
+        if ( t[i] == '"' )
+          *value = t.mid(1,i-1);
+        else
+          *value = t.mid(1,i);
+        t = t.remove(0,i+1).stripWhiteSpace();
+      }
+      else
+      if ( t[0] == '\'' ) {
+        i = 1;
+        while ( t[i] != '\'' && !t[i].isNull() ) i++;
+        if ( t[i] == '\'' )
+          *value = t.mid(1,i-1);
+        else
+          *value = t.mid(1,i);
+        t = t.remove(0,i+1).stripWhiteSpace();
+      }
+      else {
 
-    		i=0;
-  	  	while ( !t[i].isSpace() && !t[i].isNull() )	i++;
+        i=0;
+        while ( !t[i].isSpace() && !t[i].isNull() )  i++;
 
-    		*value = t.left(i);
-    		t = t.remove(0,i).stripWhiteSpace();
-  		}
+        *value = t.left(i);
+        t = t.remove(0,i).stripWhiteSpace();
+      }
 
-  		// debug ( name+" , "+attr[attrcount]+"="+value[attrcount]+";" );
+      // debug ( name+" , "+attr[attrcount]+"="+value[attrcount]+";" );
 
 
 
@@ -357,7 +357,7 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
    if ( !insertInLine )
    {
     QString space="";
-  	space.fill( ' ',w->viewCursorIf->cursorColumnReal() );
+    space.fill( ' ',w->viewCursorIf->cursorColumnReal() );
     newTag += "\n" + space + "  ";
     secondPartOfTag = "\n" + space + secondPartOfTag;
    }

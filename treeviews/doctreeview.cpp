@@ -53,33 +53,33 @@ DocTreeView::DocTreeView(QWidget *parent, const char *name )
 
   for ( QStringList::Iterator it = docDirs.begin(); it != docDirs.end(); ++it )
   {
-   	QString docDir = *it;
-   	QDir dir(docDir, "*.docrc");
-   	QStringList files = dir.entryList();
+     QString docDir = *it;
+     QDir dir(docDir, "*.docrc");
+     QStringList files = dir.entryList();
 
-   	for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
-   	{
-   		KConfig config( docDir + *it_f );
-   		config.setGroup("Tree");
+     for ( QStringList::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
+     {
+       KConfig config( docDir + *it_f );
+       config.setGroup("Tree");
 
-   		QString relDocDir = config.readEntry("Doc dir");
+       QString relDocDir = config.readEntry("Doc dir");
 
-   		DocFolder *folder = new DocFolder(this, config.readEntry("Top Element"), &config , QDir::cleanDirPath(docDir+relDocDir)+"/");
-   		folder->setPixmap( 0, SmallIcon("folder_open") );
-   	  folder->topLevel = true;
-   	  folder->setOpen( true );
+       DocFolder *folder = new DocFolder(this, config.readEntry("Top Element"), &config , QDir::cleanDirPath(docDir+relDocDir)+"/");
+       folder->setPixmap( 0, SmallIcon("folder_open") );
+       folder->topLevel = true;
+       folder->setOpen( true );
 
-   	  config.setGroup("Context");
-   	  QStrList list;
-   	  config.readListEntry("ContextList", list );
+       config.setGroup("Context");
+       QStrList list;
+       config.readListEntry("ContextList", list );
 
-   	  for ( unsigned int i=0; i<list.count(); i++ )
-   	  {
+       for ( unsigned int i=0; i<list.count(); i++ )
+       {
         QString keyword = list.at(i);
         QString *url = new QString(QDir::cleanDirPath(docDir + relDocDir + "/" + config.readEntry( list.at(i) )));
         contextHelpDict->insert( keyword, url );
       }
-    	}
+      }
   }
 
   setFocusPolicy(QWidget::ClickFocus);
@@ -93,26 +93,26 @@ DocTreeView::~DocTreeView(){
 
 void DocTreeView::clickItem( QListViewItem *)
 {
-	QListViewItem *it = currentItem();
-	if ( !it )
-		return;
-	DocItem *dit = dynamic_cast< DocItem *>(it);
-	if ( dit )
-	  if ( ! dit->url.isEmpty() )
-    		emit openURL( dit->url);
+  QListViewItem *it = currentItem();
+  if ( !it )
+    return;
+  DocItem *dit = dynamic_cast< DocItem *>(it);
+  if ( dit )
+    if ( ! dit->url.isEmpty() )
+        emit openURL( dit->url);
 
-	DocFolder *dfol = dynamic_cast< DocFolder *>(it);
-	if ( dfol )
-	  if ( ! dfol->url.isEmpty() )
-		  emit openURL( dfol->url );
-	//else
-	//  emit openURL( locate("appdata","doc/documentation.html") );
+  DocFolder *dfol = dynamic_cast< DocFolder *>(it);
+  if ( dfol )
+    if ( ! dfol->url.isEmpty() )
+      emit openURL( dfol->url );
+  //else
+  //  emit openURL( locate("appdata","doc/documentation.html") );
 }
 
 
 QString * DocTreeView::contextHelp( QString keyword )
 {
-	return contextHelpDict->find( keyword );
+  return contextHelpDict->find( keyword );
 }
 
 #include "doctreeview.moc"

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    								       (C) 2001, 2002 by Andras Mantia <amantia@freemail.hu>
+                           (C) 2001, 2002 by Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -30,26 +30,26 @@ class KURL;
 class ProjectNewGeneral : public ProjectNewGeneralS  {
    Q_OBJECT
 public: 
-	ProjectNewGeneral(QWidget *parent=0, const char *name=0);
-	~ProjectNewGeneral();
-	
-	QString type();
-	void setMargin(int);
-	
+  ProjectNewGeneral(QWidget *parent=0, const char *name=0);
+  ~ProjectNewGeneral();
+  
+  QString type();
+  void setMargin(int);
+  
 public slots:
-	void slotButtonDir();
-	void slotLinePrjFile(const QString &);
-	void slotChangeNames(const QString &);
+  void slotButtonDir();
+  void slotLinePrjFile(const QString &);
+  void slotChangeNames(const QString &);
   void slotButtonTmpl();
   void slotButtonToolbar();
   void slotLinePrjTmpl(const QString &);
   void slotLinePrjToolbar(const QString &);
   void slotProtocolChanged(const QString& protocol);
 
-		
+    
 signals:
   void setBaseURL(const KURL&);
-	void enableNextButton(QWidget *, bool);
+  void enableNextButton(QWidget *, bool);
 };
 
 #endif

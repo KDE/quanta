@@ -14,7 +14,7 @@
 
 void  TagQuickListDlg::initDialog()
 {
-	this->resize(230,150);
+  this->resize(230,150);
 
   QLabel_1= new QLabel(this,"NoName");
   QLabel_1->setGeometry(10,10,100,30);

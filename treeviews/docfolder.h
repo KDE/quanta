@@ -35,17 +35,17 @@ class KConfig;
 class DocFolder : public KListViewItem  {
 //   Q_OBJECT
 public:
-	DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath);
-	DocFolder(QListView *parent, QString _name, KConfig *config, QString basePath);
-	~DocFolder();
-	QString text( int column ) const;
-	void setup();
+  DocFolder(QListViewItem *parent, QString _name, KConfig *config, QString basePath);
+  DocFolder(QListView *parent, QString _name, KConfig *config, QString basePath);
+  ~DocFolder();
+  QString text( int column ) const;
+  void setup();
   /**  */
   void setOpen( bool o);
-	
+  
 public:
   QString url;
-  QString name;	
+  QString name;  
   bool topLevel;
 };
 

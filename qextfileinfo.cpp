@@ -3,7 +3,7 @@
     Copyright (C) 1998, 1999 Alexei Dets <dets@services.ru>
 
     Rewritten for Quanta Plus: (C) 2002 Andras Mantia <amantia@freemail.hu>
-	
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -100,8 +100,8 @@ KURL QExtFileInfo::toAbsolute(const KURL& urlToConvert,const KURL& baseURL)
 }
 
 /** All files in a dir.
-	The return will also contain the name of the subdirectories.
-	This is needed for empty directory adding/handling. (Andras)
+  The return will also contain the name of the subdirectories.
+  This is needed for empty directory adding/handling. (Andras)
   Currently works only for local directories
 */
 KURL::List QExtFileInfo::allFiles( const KURL& path, const QString& mask)
@@ -113,38 +113,38 @@ KURL::List QExtFileInfo::allFiles( const KURL& path, const QString& mask)
 KURL::List QExtFileInfo::allFilesRelative( const KURL& path, const QString& mask)
 {
   QExtFileInfo internalFileInfo;
-	KURL::List r = internalFileInfo.allFilesInternal( path, mask);
-	
-	KURL::List::Iterator it;
-	for ( it = r.begin(); it != r.end(); ++it )
-	{
-		*it = QExtFileInfo::toRelative( *it, path );
-	}
-	
-	return r;
+  KURL::List r = internalFileInfo.allFilesInternal( path, mask);
+  
+  KURL::List::Iterator it;
+  for ( it = r.begin(); it != r.end(); ++it )
+  {
+    *it = QExtFileInfo::toRelative( *it, path );
+  }
+  
+  return r;
 }
 
 bool QExtFileInfo::createDir( const KURL& path )
 {
-	int i=0;
+  int i=0;
   bool result;
   KURL dir1, dir2 = KURL();
-	while ( !exists(path) && dir2.path() != path.path() )
-	{
+  while ( !exists(path) && dir2.path() != path.path() )
+  {
     dir1 = path;
     dir2 = path;
 
-		dir1=cdUp(dir1);
-		while ( !exists(dir1) && dir1.path() != "/" )
-		{
+    dir1=cdUp(dir1);
+    while ( !exists(dir1) && dir1.path() != "/" )
+    {
       dir1=cdUp(dir1);
       dir2=cdUp(dir2);
     //  debug(d1);
     }
   //  dir2.setPath(dir2.path(-1));
-		result = KIO::NetAccess::mkdir(dir2);
-		i++;
-	}
+    result = KIO::NetAccess::mkdir(dir2);
+    i++;
+  }
  result = exists(path);
  return result; 
 }
@@ -153,12 +153,12 @@ KURL QExtFileInfo::cdUp(const KURL &url)
 {
   KURL u = url;
   QString dir = u.path(-1);
-	while ( !dir.isEmpty() && dir.right(1) != "/" )
+  while ( !dir.isEmpty() && dir.right(1) != "/" )
   {
     dir.remove( dir.length()-1,1);
   }
   u.setPath(dir);
-	return u;
+  return u;
 }
 
 QString QExtFileInfo::shortName(const QString &fname)

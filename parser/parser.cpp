@@ -171,19 +171,19 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   Node *parentNode = a_node;
   Node *currentNode = a_node;
   if (currentNode && (currentNode->tag->type != Tag::XmlTag ||
-			currentNode->tag->single))
+      currentNode->tag->single))
       parentNode = currentNode->parent;
   Tag *tag;
   textLine.append(write->text(startLine, startCol, startLine, write->editIf->lineLength(startLine)));
   while (line <= endLine)
   {
     if (line == endLine)
-		{
-			if (endCol > 0) 
-				textLine.truncate(endCol);
-			else
-				textLine = "";
-		}
+    {
+      if (endCol > 0) 
+        textLine.truncate(endCol);
+      else
+        textLine = "";
+    }
     nodeFound = false;
     goUp = false;
     tagStartPos = textLine.find('<', col);
@@ -202,12 +202,12 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       {
         textLine = write->editIf->textLine(line);
         if (line == endLine)
-				{
-					if (endCol >0)
-						textLine.truncate(endCol);
-					else
-						textLine = "";
-				}
+        {
+          if (endCol >0)
+            textLine.truncate(endCol);
+          else
+            textLine = "";
+        }
         pos = textLine.find(specialEndStr, pos);
         if (pos != -1)
         {
@@ -262,12 +262,12 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       {
         textLine = write->editIf->textLine(line);
         if (line == endLine)
-				{
-					if (endCol > 0)
+        {
+          if (endCol > 0)
             textLine.truncate(endCol);
-					else
-						textLine = "";
-				}
+          else
+            textLine = "";
+        }
         for (uint i = sCol; i < textLine.length(); i++)
         {
            if (i > 0 && textLine[i-1] != '\\')

@@ -54,10 +54,10 @@ class Document : public QWidget{
    Q_OBJECT
 
 public: 
-	Document(const KURL& p_baseURL, KTextEditor::Document *doc, Project *project,
+  Document(const KURL& p_baseURL, KTextEditor::Document *doc, Project *project,
            QuantaPluginInterface * =0,
            QWidget *parent = 0, const char *name = 0, WFlags f=0);
-	~Document();
+  ~Document();
 
   void resizeEvent(QResizeEvent* e);
 
@@ -183,14 +183,14 @@ private:
   QString untitledUrl;
 
   QString         spellText;
-	QValueList<int> *spellPos;
+  QValueList<int> *spellPos;
   KTextEditor::Document *m_doc;
   KTextEditor::View *m_view;
 
-	KTempFile *tempFile;
+  KTempFile *tempFile;
   QString m_tempFileName;
 
-	int spellMoved;
+  int spellMoved;
   QString dtdName;
 
   /** Brings up list of code completions */

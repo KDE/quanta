@@ -168,8 +168,8 @@ void QuantaApp::initQuanta()
   {
     QDomDocument doc;
      QFile f( uiFileName );
-		 f.open( IO_ReadOnly );
-	   if ( doc.setContent( &f ) )
+     f.open( IO_ReadOnly );
+     if ( doc.setContent( &f ) )
      {
        f.close();
        QDomElement el = doc.firstChild().toElement();
@@ -788,7 +788,7 @@ bool QuantaApp::queryClose()
       {
         w = view->write();
         w->closeTempFile();
-  	  }while (view->removeWrite());
+      }while (view->removeWrite());
     }
   }
   return canExit;

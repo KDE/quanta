@@ -55,19 +55,19 @@ struct TagAttr {
 
 class Tag {
 public: 
-	Tag();
-	Tag( const Tag&);
-	~Tag();
-	Tag operator = ( const Tag& );
-	
+  Tag();
+  Tag( const Tag&);
+  ~Tag();
+  Tag operator = ( const Tag& );
+  
   /** Parse the p_tagStr in p_write and build up the tag's attributes and values */
   void parse (const QString &p_tagStr, Document *p_write);
   /** Return the attribute at index*/
-	QString attribute(int index);
+  QString attribute(int index);
   /** Return the attribute value at index*/
-	QString attributeValue(int index);
+  QString attributeValue(int index);
   /** Return the value of attr*/
-	QString attributeValue(QString attr);
+  QString attributeValue(QString attr);
   /** Returns the quotation status of the attribute */
   bool isQuotedAttribute(int index) {return attrs[index].quoted;}
   /** Check if this tag has the attr attribute defined */
@@ -96,15 +96,15 @@ public:
   int valueIndexAtPos(int line, int col);
   /** Return the index of attr. */
   int attributeIndex(QString attr);
-	
+  
   enum TokenType {Unknown = 0, XmlTag,  XmlTagEnd, Text, Comment, CSS, ScriptTag, ScriptStructureBegin, ScriptStructureEnd, NeedsParsing = 500, Empty, Skip = 1000 }; // types of token
 
   //TODO: write setting/retrieving methods for the below attributes, and add
   //them the m_ prefix
-	QString name;
+  QString name;
   QString cleanStr;
   int type;   //one of the TokenType
-	bool single; // tags like <tag />
+  bool single; // tags like <tag />
   bool closingMissing; //closing tag is optional and missing
   int attrCount;
   DTDStruct* dtd; //the tag belongs to this DTD

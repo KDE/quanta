@@ -33,23 +33,23 @@ class KURL;
 class CopyTo : public CopyToS  {
 Q_OBJECT
 public: 
-	CopyTo(const KURL& dirURL, QWidget *parent=0, const char *name=0);
-	~CopyTo();
+  CopyTo(const KURL& dirURL, QWidget *parent=0, const char *name=0);
+  ~CopyTo();
 
-	KURL copy( const KURL& sourceURL);
-	KURL::List copy( KURL::List sourceList );
+  KURL copy( const KURL& sourceURL);
+  KURL::List copy( KURL::List sourceList );
 
-	KURL copiedURL;
+  KURL copiedURL;
 
 public slots: // Public slots
-	void endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool);
-	void slotResult( KIO::Job *);
+  void endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool);
+  void slotResult( KIO::Job *);
 
 signals:
-	void addFilesToProject(const KURL&,CopyTo*);
+  void addFilesToProject(const KURL&,CopyTo*);
 
 private:
-	KURL mInitialDirUrl;
+  KURL mInitialDirUrl;
 };
 
 #endif

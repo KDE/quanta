@@ -34,9 +34,9 @@ class KURL;
 
 class TagWidget {
 public:
-	TagWidget(QObject *parent=0, const char *name=0);
-	virtual ~TagWidget();
-	
+  TagWidget(QObject *parent=0, const char *name=0);
+  virtual ~TagWidget();
+  
   virtual void readAttributes( QDict<QString> * ) {};
   virtual void writeAttributes( QDict<QString> * ) {};
   /**  */

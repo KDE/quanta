@@ -21,9 +21,9 @@
 
 NewTemplateDirDlg::NewTemplateDirDlg(QWidget *parent, const char *name ) : TemplateDirForm(parent,name)
 {
-	setCaption(name);
+  setCaption(name);
   connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
-	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
+  connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
 }
 
 NewTemplateDirDlg::~NewTemplateDirDlg()

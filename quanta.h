@@ -176,7 +176,7 @@ public slots:
   void slotFileCloseAll();
   void slotFilePrint   ();
   void slotFileNext    ();
-	void slotFilePrev    ();
+  void slotFilePrev    ();
   void slotFileQuit    ();
 
   void slotImageOpen        (const KURL&);
@@ -256,11 +256,11 @@ public slots:
   void gotoFileAndLine  ( QString filename, int line );
 
   void selectArea(int line1, int col1, int line2, int col2);
-	
+  
   void setTitle(QString);
-	
+  
   void autoComplete();
-	
+  
   void slotShowOpenFileList();
   /** No descriptions */
   void slotNewProjectLoaded();
@@ -385,11 +385,11 @@ private:
   QWidgetStack *fTab;
 
   /** tabs for left panel */
-  ProjectTreeView  	*pTab;
-  DocTreeView 	*dTab;
-  FilesTreeView	*fTTab;
-  FilesListView		*fLTab;
-  TemplatesTreeView	 *tTab;
+  ProjectTreeView    *pTab;
+  DocTreeView   *dTab;
+  FilesTreeView  *fTTab;
+  FilesListView    *fLTab;
+  TemplatesTreeView   *tTab;
 
   QWidgetStack *rightWidgetStack;
   QWidgetStack *bottomWidgetStack;
@@ -403,7 +403,7 @@ private:
   KDockWidget *ftabdock;
   KDockWidget *stabdock;
 
- 	/** HTML class for preview */
+   /** HTML class for preview */
   WHTMLPart *htmlpart;
   WHTMLPart *htmlPartDoc;
 

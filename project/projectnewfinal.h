@@ -28,10 +28,10 @@
 class ProjectNewFinal : public ProjectNewFinalS  {
    Q_OBJECT
 public: 
-	ProjectNewFinal(QWidget *parent=0, const char *name=0);
-	~ProjectNewFinal();
-	
-	void setMargin(int);
+  ProjectNewFinal(QWidget *parent=0, const char *name=0);
+  ~ProjectNewFinal();
+  
+  void setMargin(int);
 };
 
 #endif

@@ -14,7 +14,7 @@
 
 void  TagQuickTable::initDialog()
 {
-	this->resize(230,120);
+  this->resize(230,120);
   this->setMinimumSize(0,0);
   spinBoxRows= new QSpinBox(this,"NoName");
   spinBoxRows->setGeometry(160,10,60,25);

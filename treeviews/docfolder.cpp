@@ -120,13 +120,13 @@ void DocFolder::setOpen( bool o)
   QListViewItem::setOpen( o );
   if ( !topLevel ) {
       if (o)
-  		  setPixmap( 0, UserIcon("mini-book2") );
+        setPixmap( 0, UserIcon("mini-book2") );
       else
-  		  setPixmap( 0, UserIcon("mini-book1") );
+        setPixmap( 0, UserIcon("mini-book1") );
   } else {
       if (o)
-    		setPixmap( 0, SmallIcon("folder_open") );
+        setPixmap( 0, SmallIcon("folder_open") );
       else
-  		  setPixmap( 0, SmallIcon("folder") );
+        setPixmap( 0, SmallIcon("folder") );
   }
 }

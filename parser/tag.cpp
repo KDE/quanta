@@ -51,7 +51,7 @@ Tag::Tag( const Tag &t)
   type = t.type;
   structBeginStr = t.structBeginStr;
 
-	for (int i=0; i<t.attrCount; i++)
+  for (int i=0; i<t.attrCount; i++)
   {
     attrs[i] = t.attrs[i];
   }
@@ -218,10 +218,10 @@ QString Tag::attributeValue(QString attr)
 /** Check if this tag has the attr attribute defined */
 bool Tag::hasAttribute( const QString &attr )
 {
-	for (int i=0; i < attrCount; i++)
-		if ( attrs[i].name.lower() ==  attr.lower()  )
-			return true;
-	return false;
+  for (int i=0; i < attrCount; i++)
+    if ( attrs[i].name.lower() ==  attr.lower()  )
+      return true;
+  return false;
 }
 
 /** Set the coordinates of tag inside the document */

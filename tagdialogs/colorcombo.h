@@ -39,47 +39,47 @@
  */
 class ColorCombo : public QComboBox
 {
-	Q_OBJECT
+  Q_OBJECT
 public:
-	ColorCombo( QWidget *parent = 0L, const char *name = 0L );
-	~ColorCombo();
+  ColorCombo( QWidget *parent = 0L, const char *name = 0L );
+  ~ColorCombo();
 
-	void setColor( const QColor &col );
-	void setColorName(QString color);
-	QString colorName();
-	/** 
-	 * Retrieve the currently selected color. 
-	 **/
-	QColor color();
-	
-	bool hasColor();
+  void setColor( const QColor &col );
+  void setColorName(QString color);
+  QString colorName();
+  /** 
+   * Retrieve the currently selected color. 
+   **/
+  QColor color();
+  
+  bool hasColor();
     
 public slots:
-	void slotActivated( int index );
-	void slotHighlighted( int index );
+  void slotActivated( int index );
+  void slotHighlighted( int index );
 
 signals:
-	void activated( const QColor &col );
-	void highlighted( const QColor &col );
+  void activated( const QColor &col );
+  void highlighted( const QColor &col );
 
 protected:
         /**
          * @reimplemented
          */
-	virtual void resizeEvent( QResizeEvent *re );
+  virtual void resizeEvent( QResizeEvent *re );
 
 private:
-	void createStandardPalette();
-	void addColors();
-	QColor customColor;
-	QColor internalcolor;
-	
-	bool hascolor;
-	
+  void createStandardPalette();
+  void addColors();
+  QColor customColor;
+  QColor internalcolor;
+  
+  bool hascolor;
+  
   QColor *standardPalette;
-	QString *standardPaletteNames;
+  QString *standardPaletteNames;
 
     
 };
 
-#endif	// __COLORCOMBO_H__
+#endif  // __COLORCOMBO_H__

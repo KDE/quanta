@@ -71,42 +71,42 @@ ProjectUpload::~ProjectUpload()
 void  ProjectUpload::initProjectInfo(Project *prg)
 {
 
-	p = prg;
+  p = prg;
 
-	baseUrl = new KURL();
+  baseUrl = new KURL();
 
-//	list->setMultiSelection(true);
+//  list->setMultiSelection(true);
 
   QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
 
-	lineHost -> setText(uploadEl.attribute("remote_host",""));
-	lineUser -> setText(uploadEl.attribute("user",""));
-	linePath -> setText(uploadEl.attribute("remote_path",""));
-	port -> setText( uploadEl.attribute("remote_port","") );
-	QString def_p = uploadEl.attribute("remote_protocol","ftp");
+  lineHost -> setText(uploadEl.attribute("remote_host",""));
+  lineUser -> setText(uploadEl.attribute("user",""));
+  linePath -> setText(uploadEl.attribute("remote_path",""));
+  port -> setText( uploadEl.attribute("remote_port","") );
+  QString def_p = uploadEl.attribute("remote_protocol","ftp");
   keepPasswd->setChecked(p->keepPasswd);
-	if (p->keepPasswd)
-	{
-	  linePasswd->setText(p->passwd);
-	} else
-	{
-	  linePasswd->clear();
-	}
+  if (p->keepPasswd)
+  {
+    linePasswd->setText(p->passwd);
+  } else
+  {
+    linePasswd->clear();
+  }
 
-	QStringList protocols = KProtocolInfo::protocols();
+  QStringList protocols = KProtocolInfo::protocols();
   protocols.sort();
-	for ( uint i=0; i<protocols.count(); i++ )
-	{
-		QString p = protocols[i];
-		if ( KProtocolInfo::supportsWriting(p) &&
-		     KProtocolInfo::supportsMakeDir(p) &&
-		     KProtocolInfo::supportsDeleting(p) )
-		{
-			comboProtocol->insertItem(p);
-			if ( p == def_p )
-				comboProtocol->setCurrentItem( comboProtocol->count()-1 );
-		}
-	}
+  for ( uint i=0; i<protocols.count(); i++ )
+  {
+    QString p = protocols[i];
+    if ( KProtocolInfo::supportsWriting(p) &&
+         KProtocolInfo::supportsMakeDir(p) &&
+         KProtocolInfo::supportsDeleting(p) )
+    {
+      comboProtocol->insertItem(p);
+      if ( p == def_p )
+        comboProtocol->setCurrentItem( comboProtocol->count()-1 );
+    }
+  }
 
 //  KCompletion *comp = linePath->completionObject();
 //  connect(linePath,SIGNAL(returnPressed(const QString&)),
@@ -192,43 +192,43 @@ void ProjectUpload::buildSelectedItemList()
 
 void ProjectUpload::startUpload()
 {
-	stopUpload = false;
-	QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
+  stopUpload = false;
+  QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
 
-	uploadEl.setAttribute("remote_host", lineHost->text() );
-	uploadEl.setAttribute("remote_path", linePath->text() );
-	uploadEl.setAttribute("remote_port", port->text() );
-	uploadEl.setAttribute("user", lineUser->text() );
-	uploadEl.setAttribute("remote_protocol", comboProtocol->currentText() );
+  uploadEl.setAttribute("remote_host", lineHost->text() );
+  uploadEl.setAttribute("remote_path", linePath->text() );
+  uploadEl.setAttribute("remote_port", port->text() );
+  uploadEl.setAttribute("user", lineUser->text() );
+  uploadEl.setAttribute("remote_protocol", comboProtocol->currentText() );
 
-	baseUrl->setProtocol( comboProtocol->currentText() );
-	baseUrl->setPort( port->text().toInt() );
-	baseUrl->setHost( lineHost->text() );
-	baseUrl->setPath( linePath->text() );
+  baseUrl->setProtocol( comboProtocol->currentText() );
+  baseUrl->setPort( port->text().toInt() );
+  baseUrl->setHost( lineHost->text() );
+  baseUrl->setPath( linePath->text() );
   baseUrl->setPass( linePasswd->text() );
-	if (keepPasswd->isChecked())
-	{
-	   p->keepPasswd = true;
-	   p->passwd = linePasswd->text();
-	} else
-	{
-	   p->keepPasswd = false;
-	   p->passwd = "";
-	}
+  if (keepPasswd->isChecked())
+  {
+     p->keepPasswd = true;
+     p->passwd = linePasswd->text();
+  } else
+  {
+     p->keepPasswd = false;
+     p->passwd = "";
+  }
 
   buildSelectedItemList();
   int selectedNum = toUpload.count();
   
-	totalProgress->setProgress(0);
-	totalProgress->setTotalSteps(selectedNum);
-	uploadInProgress = true;
-	suspendUpload = false;
+  totalProgress->setProgress(0);
+  totalProgress->setTotalSteps(selectedNum);
+  uploadInProgress = true;
+  suspendUpload = false;
   KURL u = *baseUrl;
   u.setPath("");
   u.setUser(lineUser->text());
   if (QExtFileInfo::exists(u))
   {
-  	upload();
+    upload();
   } else
   {
     if (KMessageBox::warningYesNo(this, i18n("%1 seems to be unaccesible.\nDo you want to proceed with upload?")
@@ -241,67 +241,67 @@ void ProjectUpload::startUpload()
 
 void ProjectUpload::upload()
 {
-	if ( stopUpload ) return;
-	QString pass = linePasswd->text();
-	QString user = lineUser->text();
+  if ( stopUpload ) return;
+  QString pass = linePasswd->text();
+  QString user = lineUser->text();
   KURL dir;
   KURL to;
 
-	for ( KURL::List::Iterator file = toUpload.begin(); file != toUpload.end(); ++file )
-	{
+  for ( KURL::List::Iterator file = toUpload.begin(); file != toUpload.end(); ++file )
+  {
       currentURL = *file;
       
-			KURL from = QExtFileInfo::toAbsolute(currentURL, p->baseURL);      
-			to = *baseUrl;
-			to.addPath( currentURL.path() );
-			if (to.fileName(false).isEmpty())
+      KURL from = QExtFileInfo::toAbsolute(currentURL, p->baseURL);      
+      to = *baseUrl;
+      to.addPath( currentURL.path() );
+      if (to.fileName(false).isEmpty())
       {
         dir = to;
       }
-			else
+      else
       {
         dir = to.upURL() ;
       }
 
-			to.setUser( user );
-			to.setPass( pass );
+      to.setUser( user );
+      to.setPass( pass );
 
-			dir.setUser( user );
-			dir.setPass( pass );
+      dir.setUser( user );
+      dir.setPass( pass );
 
-			if ( !madeDirs.contains(dir) )
-			{
-				madeDirs.append( dir );
+      if ( !madeDirs.contains(dir) )
+      {
+        madeDirs.append( dir );
         if (!QExtFileInfo::createDir(dir))
         {
           QuantaCommon::dirCreationError(this, dir.prettyURL());
           return;
         }
-			}
+      }
 
-			//qDebug("%s -> %s", from.url().data(), to.url().data() );
-			if (!from.fileName(false).isEmpty())
-			{
-				KIO::FileCopyJob *job = KIO::file_copy( from, to, -1, true, false, false );
+      //qDebug("%s -> %s", from.url().data(), to.url().data() );
+      if (!from.fileName(false).isEmpty())
+      {
+        KIO::FileCopyJob *job = KIO::file_copy( from, to, -1, true, false, false );
 
-				connect( job, SIGNAL( result( KIO::Job * ) ),this,
-				                  SLOT( uploadFinished( KIO::Job * ) ) );
-				connect( job, SIGNAL( percent( KIO::Job *,unsigned long ) ),
-				            this, SLOT( uploadProgress( KIO::Job *,unsigned long ) ) );
-				connect( job, SIGNAL( infoMessage( KIO::Job *,const QString& ) ),
-				            this, SLOT( uploadMessage( KIO::Job *,const QString& ) ) );
+        connect( job, SIGNAL( result( KIO::Job * ) ),this,
+                          SLOT( uploadFinished( KIO::Job * ) ) );
+        connect( job, SIGNAL( percent( KIO::Job *,unsigned long ) ),
+                    this, SLOT( uploadProgress( KIO::Job *,unsigned long ) ) );
+        connect( job, SIGNAL( infoMessage( KIO::Job *,const QString& ) ),
+                    this, SLOT( uploadMessage( KIO::Job *,const QString& ) ) );
 
-				labelCurFile->setText(i18n("Current: %1").arg(currentURL.fileName()));
-				currentProgress->setProgress( 0 );
-				return;
-			} else  //it is a dir, so just go to the next item
-			{
-				emit uploadNext();
-				return;
-			}
-	}
-	uploadInProgress = false;
-	reject();
+        labelCurFile->setText(i18n("Current: %1").arg(currentURL.fileName()));
+        currentProgress->setProgress( 0 );
+        return;
+      } else  //it is a dir, so just go to the next item
+      {
+        emit uploadNext();
+        return;
+      }
+  }
+  uploadInProgress = false;
+  reject();
 }
 
 void ProjectUpload::uploadFinished( KIO::Job *job )
@@ -319,17 +319,17 @@ void ProjectUpload::uploadFinished( KIO::Job *job )
 
 void ProjectUpload::uploadProgress ( KIO::Job *, unsigned long percent  )
 {
-	currentProgress->setProgress( percent );
+  currentProgress->setProgress( percent );
 }
 
 void ProjectUpload::uploadMessage ( KIO::Job *, const QString & msg )
 {
-  	labelCurFile->setText( currentURL.fileName() + " : " + msg );
+    labelCurFile->setText( currentURL.fileName() + " : " + msg );
 }
 
 void ProjectUpload::selectAll()
 {
-	list->selectAll(true);
+  list->selectAll(true);
   list->checkboxTree();
 }
 
@@ -346,7 +346,7 @@ void ProjectUpload::selectModified()
 
 void ProjectUpload::clearSelection()
 {
-	list->selectAll(false);
+  list->selectAll(false);
   list->checkboxTree();
 }
 
@@ -378,31 +378,31 @@ void ProjectUpload::slotUploadNext()
   if (!suspendUpload)
   {
     totalProgress->setProgress(totalProgress->progress()+1);
-  	QListViewItem *it = list->findItem( currentURL.path() );
-  	if (it)
+    QListViewItem *it = list->findItem( currentURL.path() );
+    if (it)
     {
      it->setSelected(false);
-  	 it->repaint();
+     it->repaint();
     }
     toUpload.remove( currentURL );
 
-  	//update upload time
-  	QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
-  	for ( unsigned int i = 0; i < nl.count(); i++ )
-  	{
-  		QDomElement el = nl.item(i).toElement();
-  		if ( el.nodeName() == "item"  &&  el.attribute("url") == QuantaCommon::qUrl(currentURL) )
-  		{
-  			//QDateTime stime;
-  			//stime.setTime_t(1);
-  			//el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
+    //update upload time
+    QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
+    for ( unsigned int i = 0; i < nl.count(); i++ )
+    {
+      QDomElement el = nl.item(i).toElement();
+      if ( el.nodeName() == "item"  &&  el.attribute("url") == QuantaCommon::qUrl(currentURL) )
+      {
+        //QDateTime stime;
+        //stime.setTime_t(1);
+        //el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
         time_t stime;
         time(&stime);
-  			el.setAttribute( "upload_time", (int)stime);
+        el.setAttribute( "upload_time", (int)stime);
         break;
-  		}
-  	}
-  	upload();
+      }
+    }
+    upload();
   }
 }
 
@@ -427,13 +427,13 @@ void ProjectUpload::reject()
   if (uploadInProgress)
   {
     suspendUpload = true;
-  	if (KMessageBox::questionYesNo(this,i18n("Do you really want to cancel the upload?"),
+    if (KMessageBox::questionYesNo(this,i18n("Do you really want to cancel the upload?"),
                                    i18n("Cancel upload")) == KMessageBox::No)
-  	{
-  	    suspendUpload = false;
-  	    emit uploadNext();
-  		return;
-  	}
+    {
+        suspendUpload = false;
+        emit uploadNext();
+      return;
+    }
   }
 
   QDialog::reject();

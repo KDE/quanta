@@ -33,8 +33,8 @@ class KConfig;
 class SpellChecker : public QObject  {
    Q_OBJECT
 public: 
-	SpellChecker(QObject *parent=0, const char *name=0);
-	~SpellChecker();
+  SpellChecker(QObject *parent=0, const char *name=0);
+  ~SpellChecker();
   /** Read the KSpell configuration from the Quanta configuration file. */
   void readConfig(KConfig *config);
   /** Write the KSpell configuration into the Quanta configuration file. */

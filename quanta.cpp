@@ -174,15 +174,15 @@ void QuantaApp::slotFileOpenRecent(const KURL &url )
 
   if ( (url.isLocalFile()) && (! QFileInfo(fn).exists()) )
  {
-  	if (KMessageBox::questionYesNo( this,
-  	     i18n("The file %1 does not exist.\n Do you want to remove from the list?").arg(fn) )
-  	     == KMessageBox::Yes)
-  	{
-    	fileRecent->removeURL(url);
-  	}
+    if (KMessageBox::questionYesNo( this,
+         i18n("The file %1 does not exist.\n Do you want to remove from the list?").arg(fn) )
+         == KMessageBox::Yes)
+    {
+      fileRecent->removeURL(url);
+    }
   } else
   {
-  	doc->openDocument( url );
+    doc->openDocument( url );
   }
   view->write()->view()->setFocus();
 }
@@ -192,9 +192,9 @@ void QuantaApp::slotFileSave()
   Document *w = view->write();
   w->checkDirtyStatus();
   if ( w->isUntitled() )
-  	slotFileSaveAs();
+    slotFileSaveAs();
   else
-  	doc->saveDocument( w->url() );
+    doc->saveDocument( w->url() );
 
   slotUpdateStatus(w);
 }
@@ -242,11 +242,11 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
     if (projectTemplate)
     {
-  	  url = KFileDialog::getSaveURL(project->templateURL.url(), QString::null, this);
-  	} else
-  	{
-  	  url = KFileDialog::getSaveURL(locateLocal("data","quanta/templates/"), QString::null, this);
-  	}
+      url = KFileDialog::getSaveURL(project->templateURL.url(), QString::null, this);
+    } else
+    {
+      url = KFileDialog::getSaveURL(locateLocal("data","quanta/templates/"), QString::null, this);
+    }
 
     if (url.isEmpty()) return;
 
@@ -254,7 +254,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
     if ( ((projectTemplate) && (projectTemplateURL.isParentOf(url)) ) ||
           ((! projectTemplate) && (KURL(localTemplateDir).isParentOf(url))) )
     {
-    	query = w->checkOverwrite( url );
+      query = w->checkOverwrite( url );
     } else
     {
       if (projectTemplate) localTemplateDir = projectTemplateURL.path(1);
@@ -291,7 +291,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
 void QuantaApp::slotFileSaveAsLocalTemplate()
 {
-	saveAsTemplate(false);
+  saveAsTemplate(false);
 }
 
 void QuantaApp::slotFileSaveAsProjectTemplate()
@@ -302,17 +302,17 @@ void QuantaApp::slotFileSaveAsProjectTemplate()
 
 void QuantaApp::slotFileSaveSelectionAsLocalTemplate()
 {
-	saveAsTemplate(false, true);
+  saveAsTemplate(false, true);
 }
 
 void QuantaApp::slotFileSaveSelectionAsProjectTemplate()
 {
-	saveAsTemplate(true, true);
+  saveAsTemplate(true, true);
 }
 
 void QuantaApp::slotFileSaveAll()
 {
-	doc->saveAll();
+  doc->saveAll();
   slotUpdateStatus(view->write());
 }
 
@@ -324,7 +324,7 @@ void QuantaApp::slotFileClose()
   part->closeURL();
   part->begin(projectBaseURL());
   part->write( "" );
- 	part->end();
+   part->end();
 
   slotUpdateStatus(view->write());
 }
@@ -337,7 +337,7 @@ void QuantaApp::slotFileCloseAll()
   part->closeURL();
   part->begin(projectBaseURL());
   part->write( "" );
- 	part->end();
+   part->end();
 
   slotNewStatus();
 }
@@ -431,7 +431,7 @@ void QuantaApp::slotStatusMsg(const QString &msg)
 /** Repaint preview */
 void QuantaApp::slotViewRepaint()
 {
-	repaintPreview( true );
+  repaintPreview( true );
 }
 
 /** repaint preview */
@@ -465,26 +465,26 @@ void QuantaApp::repaintPreview( bool clear )
   Document *w = view->write();
   if (!w->isUntitled())
   {
-//if it's	not untitled, than it was loaded from somewhere. In this case show it from that place
-	  url = w->url();
+//if it's  not untitled, than it was loaded from somewhere. In this case show it from that place
+    url = w->url();
 
-	  if ( doc->isModified() ) //doc->saveDocument( doc->url() );
+    if ( doc->isModified() ) //doc->saveDocument( doc->url() );
          w->saveIt();
 
-	  url = project->urlWithPrefix(url);
+    url = project->urlWithPrefix(url);
 
-	  part->begin(url, xOffset, yOffset );
-	  part->openURL( url );
+    part->begin(url, xOffset, yOffset );
+    part->openURL( url );
   } else  //the document is Untitled, preview the text from it
  {
-  	QString text = w->editIf->text();
+    QString text = w->editIf->text();
     if ( text == oldtext ) return;
-  	if ( text.isEmpty() )
-  	{
-    	text = i18n( "<center><h3>The current document is empty...</h3></center>" );
-  	}
+    if ( text.isEmpty() )
+    {
+      text = i18n( "<center><h3>The current document is empty...</h3></center>" );
+    }
     oldtext = text;
-	  part->begin( projectBaseURL(), xOffset, yOffset );
+    part->begin( projectBaseURL(), xOffset, yOffset );
     part->write( text );
  }
  part->end();
@@ -506,14 +506,14 @@ void QuantaApp::slotImageOpen(const KURL& url)
   if ( !s->id( s ->visibleWidget()) ) return;
 
     KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
-	ta->setChecked(true);
+  ta->setChecked(true);
 
-	QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
-	text += url.path(); //TODO
-	text += "\">\n</div>\n</body>\n</html>\n";
+  QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
+  text += url.path(); //TODO
+  text += "\">\n</div>\n</body>\n</html>\n";
 
-	part->closeURL();
-	part->begin( projectBaseURL() );
+  part->closeURL();
+  part->begin( projectBaseURL() );
   part->write( text.data() );
   part->end();
 
@@ -534,17 +534,17 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
   
   if (!dirInfo.preText.isEmpty() || !dirInfo.postText.isEmpty())
   {
-	   w->insertTag(dirInfo.preText+urlStr+dirInfo.postText);
+     w->insertTag(dirInfo.preText+urlStr+dirInfo.postText);
   } else
   {
     if (url.isLocalFile())
     {
-     	QImage img(url.path());
+       QImage img(url.path());
       if ( !img.isNull() )
       {
         QString width,height;
         width.setNum( img.width () );
-    	  height.setNum( img.height() );
+        height.setNum( img.height() );
         w->insertTag("<img src=\""+urlStr+"\" width=\""+width+"\" height=\""+height+"\" border=\"0\">");
         isImage = true;
       }
@@ -613,9 +613,9 @@ void QuantaApp::slotNewStatus()
     w = static_cast<Document*>(wTab->currentPage());
 
     if ( w->isModified() )
-   	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
+       wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
     else
-   	wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
+     wTab->changeTab( w,  emptyIcon,  wTab->tabLabel(w));
 
 //This is a really dirty fix for the QTabWidget problem. After the changeTab call,
 //it will reset itself and you will see the first tabs, even if the actual page is on
@@ -635,7 +635,7 @@ void QuantaApp::slotNewStatus()
 /** slot for new undo flag */
 void QuantaApp::slotNewUndo()
 {
-/*!!!!	int state = view->write()->undoState();
+/*!!!!  int state = view->write()->undoState();
 
   undoAction->setEnabled(state & 1);
   redoAction->setEnabled(state & 2);*/
@@ -680,7 +680,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 
 void QuantaApp::slotOptionsConfigureKeys()
 {
-	KKeyDialog::configureKeys( actionCollection(), xmlFile(), true, this );
+  KKeyDialog::configureKeys( actionCollection(), xmlFile(), true, this );
 }
 
 void QuantaApp::slotOptionsConfigureToolbars()
@@ -921,17 +921,17 @@ void QuantaApp::slotOptions()
     {
       s = widgetStackOfHtmlPart();
       s ->raiseWidget( 0 );
-	 	}
+     }
 //    checkCommand( ID_VIEW_PREVIEW, false );
 
-  	qConfig.previewPosition = previewOptions->position();
+    qConfig.previewPosition = previewOptions->position();
 
-  	htmlpart->closeURL();
-  	htmlpart->begin( projectBaseURL());
-  	htmlpart->write( "" );
-  	htmlpart->end();
+    htmlpart->closeURL();
+    htmlpart->begin( projectBaseURL());
+    htmlpart->write( "" );
+    htmlpart->end();
 
-  	repaintPreview(true);     
+    repaintPreview(true);     
   }
 
   config->sync();
@@ -944,56 +944,56 @@ void QuantaApp::slotOptions()
 
 void QuantaApp::slotSwapLeftPanelMode()
 {
-	if ( fTab->id( fTab->visibleWidget() ) == 0 )
-	{
-		FilesTreeFolder *p = dynamic_cast<FilesTreeFolder *>(fTTab->currentItem()->parent());
-		if (!p) return;
+  if ( fTab->id( fTab->visibleWidget() ) == 0 )
+  {
+    FilesTreeFolder *p = dynamic_cast<FilesTreeFolder *>(fTTab->currentItem()->parent());
+    if (!p) return;
 
-		QString dir = p->fullName();
+    QString dir = p->fullName();
 
-		fLTab->dir = dir;
-		fLTab->slotReload();
+    fLTab->dir = dir;
+    fLTab->slotReload();
 
-		fTab->raiseWidget(1);
-	}
-	else if ( fTab->id( fTab->visibleWidget() ) == 1 ) fTab->raiseWidget(0);
+    fTab->raiseWidget(1);
+  }
+  else if ( fTab->id( fTab->visibleWidget() ) == 1 ) fTab->raiseWidget(0);
 }
 
 
 void QuantaApp::slotActivatePreview()
 {
-	WHTMLPart *part = htmlPart();
-	if ( !part ) return;
-	QWidgetStack *s = widgetStackOfHtmlPart();
+  WHTMLPart *part = htmlPart();
+  if ( !part ) return;
+  QWidgetStack *s = widgetStackOfHtmlPart();
 /*
-	enableCommand(ID_VIEW_BACK);
+  enableCommand(ID_VIEW_BACK);
   enableCommand(ID_VIEW_FORWARD);
-	enableCommand(ID_VIEW_REPAINT);
+  enableCommand(ID_VIEW_REPAINT);
 */
-	s->raiseWidget( 1 );
+  s->raiseWidget( 1 );
 
-//	checkCommand( ID_VIEW_PREVIEW, true );
+//  checkCommand( ID_VIEW_PREVIEW, true );
 }
 
 void QuantaApp::slotShowPreview()
 {
-	WHTMLPart *part = htmlPart();
- 	QWidgetStack *s = widgetStackOfHtmlPart();
+  WHTMLPart *part = htmlPart();
+   QWidgetStack *s = widgetStackOfHtmlPart();
   Document *w = view->write();
 
-	if ( !s ) return;
-	if ( !part ) return;
+  if ( !s ) return;
+  if ( !part ) return;
 
 
   KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
-	bool stat = !ta->isChecked();
+  bool stat = !ta->isChecked();
 
-	if ( stat ) {
-//		disableCommand(ID_VIEW_BACK);
-//		disableCommand(ID_VIEW_FORWARD);
-//		disableCommand(ID_VIEW_REPAINT);
+  if ( stat ) {
+//    disableCommand(ID_VIEW_BACK);
+//    disableCommand(ID_VIEW_FORWARD);
+//    disableCommand(ID_VIEW_REPAINT);
 
-		s   ->raiseWidget( 0 );
+    s   ->raiseWidget( 0 );
 
 //FIXME:
 //Restore the original doc from the temp file.
@@ -1007,29 +1007,29 @@ void QuantaApp::slotShowPreview()
       tempUrl.setPath(w->tempFileName());
 
       KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
-			        								      QString::null,
-							    						      this, 0,
-									      			      this, 0 );
+                                    QString::null,
+                                    this, 0,
+                                    this, 0 );
       doc2->openURL(tempUrl);
       doc2->saveAs(origUrl);
       delete doc2;
     }
     fileWatcher->startScan();
-//	  w->view()->setFocus();
-	}
-	else {
-//		enableCommand(ID_VIEW_BACK);
-//		enableCommand(ID_VIEW_FORWARD);
-//		enableCommand(ID_VIEW_REPAINT);
+//    w->view()->setFocus();
+  }
+  else {
+//    enableCommand(ID_VIEW_BACK);
+//    enableCommand(ID_VIEW_FORWARD);
+//    enableCommand(ID_VIEW_REPAINT);
 
-	  if ( qConfig.previewPosition == "Bottom" )
-	  {
-	  }
+    if ( qConfig.previewPosition == "Bottom" )
+    {
+    }
 
-		s->raiseWidget( 1 );
-		repaintPreview(false);
-	}
-//	checkCommand( ID_VIEW_PREVIEW, !stat );
+    s->raiseWidget( 1 );
+    repaintPreview(false);
+  }
+//  checkCommand( ID_VIEW_PREVIEW, !stat );
 
 }
 
@@ -1046,8 +1046,7 @@ void QuantaApp::slotShowTemplatesTree()
 void QuantaApp::slotNewLineColumn()
 {
   QString linenumber;
-  unsigned int line;
-  unsigned int col;
+  uint line, col;
 
   view->write()->viewCursorIf->cursorPositionReal(&line, &col);
   sTab->showTagAtPos(line,col);
@@ -1077,20 +1076,17 @@ void QuantaApp::reparse(bool force)
     if (force)
     {
       baseNode = parser->parse(w);
-    } else
-    {
-//      baseNode = parser->rebuild(w);
     }
+
     sTab->setParsingDTD(w->parsingDTD());
     int expandLevel = qConfig.expandLevel;
     if (expandLevel == 0)
         expandLevel = 40;
-    sTab->slotReparse(w, baseNode , qConfig.expandLevel );
+    sTab->slotReparse(w, baseNode , expandLevel );
 
     if (force)
     {
-      uint line;
-      uint col;
+      uint line, col;
       w->viewCursorIf->cursorPositionReal(&line, &col);
       sTab->showTagAtPos(line,col);
     }
@@ -1134,21 +1130,21 @@ void QuantaApp::slotDockChanged()
   if ( dtabdock->isVisible() )
   {
     static bool first = true;
-//  	rightWidgetStack -> raiseWidget(2);
+//    rightWidgetStack -> raiseWidget(2);
     widgetStackOfHtmlPart()->raiseWidget(2);
-  	if ( first )
-  	{
-  		openDoc( locate("appdata","doc/intro.html") );
-  		first = false;
-  	}
-  	docTabOpened = true;
+    if ( first )
+    {
+      openDoc( locate("appdata","doc/intro.html") );
+      first = false;
+    }
+    docTabOpened = true;
   }
   else {
     if ( docTabOpened )
     {
-  //  	rightWidgetStack -> raiseWidget(0);
+  //    rightWidgetStack -> raiseWidget(0);
       widgetStackOfHtmlPart()->raiseWidget(0);
- 	    docTabOpened = false;
+       docTabOpened = false;
     }
     if ( !exitingFlag )
     {
@@ -1180,24 +1176,24 @@ void QuantaApp::openDoc( QString url )
 
    htmlPartDoc->closeURL();
    htmlPartDoc->openURL(url);
-	 htmlPartDoc->show();
-	 htmlPartDoc->addToHistory(url);
+   htmlPartDoc->show();
+   htmlPartDoc->addToHistory(url);
 
-	 oldUrl = url;
+   oldUrl = url;
 }
 /*
 void QuantaApp::updateNavButtons( bool back, bool forward )
 {
 
    if ( back )
-   	  enableCommand(ID_VIEW_BACK);
+       enableCommand(ID_VIEW_BACK);
    else
-   		disableCommand(ID_VIEW_BACK);
+       disableCommand(ID_VIEW_BACK);
 
    if ( forward )
-   	  enableCommand(ID_VIEW_FORWARD);
+       enableCommand(ID_VIEW_FORWARD);
    else
-   		disableCommand(ID_VIEW_FORWARD);
+       disableCommand(ID_VIEW_FORWARD);
 
 } */
 
@@ -1230,7 +1226,7 @@ void QuantaApp::slotContextHelp()
       widgetStackOfHtmlPart()->raiseWidget(2);
       htmlPartDoc->view()->setFocus();
 
-  		openDoc(*url);
+      openDoc(*url);
     }
   }
 }
@@ -1479,9 +1475,9 @@ void QuantaApp::slotSyntaxCheckDone()
     tempUrl.setPath(w->tempFileName());
 
     KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
- 	         								      QString::null,
- 	 				    						      this, 0,
- 	 						      			      this, 0 );
+                                  QString::null,
+                                  this, 0,
+                                  this, 0 );
     doc2->openURL(tempUrl);
     doc2->saveAs(origUrl);
     delete doc2;
@@ -1815,11 +1811,11 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
 
     if (localToolbar)
     {
-  	  url = KFileDialog::getSaveURL(localToolbarsDir, "*"+toolbarExtension, this);
-  	} else
-  	{
-  	  url = KFileDialog::getSaveURL(project->toolbarURL.url(), "*"+toolbarExtension, this);
-  	}
+      url = KFileDialog::getSaveURL(localToolbarsDir, "*"+toolbarExtension, this);
+    } else
+    {
+      url = KFileDialog::getSaveURL(project->toolbarURL.url(), "*"+toolbarExtension, this);
+    }
 
     if (url.isEmpty()) return;
 
@@ -1827,7 +1823,7 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
     if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
           ((localToolbar) && (KURL(localToolbarsDir).isParentOf(url))) )
     {
-    	query = doc->write()->checkOverwrite( url );
+      query = doc->write()->checkOverwrite( url );
     } else
     {
       if (!localToolbar) localToolbarsDir = projectToolbarsURL.prettyURL();
@@ -1968,13 +1964,13 @@ void QuantaApp::slotSendToolbar()
   mailDlg->titleEdit->setVScrollBarMode(QTextEdit::Auto);
   mailDlg->titleEdit->setHScrollBarMode(QTextEdit::Auto);
   if ( mailDlg->exec() ) {
-  	if ( !mailDlg->lineEmail->text().isEmpty())
-  	{
+    if ( !mailDlg->lineEmail->text().isEmpty())
+    {
       toStr = +mailDlg->lineEmail->text();
-	  	subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus toolbar"):mailDlg->lineSubject->text();
-    	if ( !mailDlg->titleEdit->text().isEmpty())
+      subjectStr = (mailDlg->lineSubject->text().isEmpty())?i18n("Quanta Plus toolbar"):mailDlg->lineSubject->text();
+      if ( !mailDlg->titleEdit->text().isEmpty())
         message = mailDlg->titleEdit->text();
-  	} else
+    } else
     {
       KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error sending e-mail"));
       delete mailDlg;
@@ -2338,13 +2334,13 @@ KURL QuantaApp::projectBaseURL()
      result = project->baseURL;
   } else
   {
-  	if  ( !view->writeExists() || view->write()->isUntitled() )
-  	{
-    	result = QExtFileInfo::home();
-  	} else
-  	{
-  		result = QExtFileInfo::path(view->write()->url());
-  	}
+    if  ( !view->writeExists() || view->write()->isUntitled() )
+    {
+      result = QExtFileInfo::home();
+    } else
+    {
+      result = QExtFileInfo::path(view->write()->url());
+    }
   }
   return result;
 }

@@ -26,12 +26,12 @@ class KURL;
 class TagQuickStart : public TagQuickStartS  {
    Q_OBJECT
 public: 
-	TagQuickStart( const KURL& a_baseURL, QWidget *parent=0, const char *name=0);
-	~TagQuickStart();
+  TagQuickStart( const KURL& a_baseURL, QWidget *parent=0, const char *name=0);
+  ~TagQuickStart();
 
 private:
-	KURL baseURL;
-	
+  KURL baseURL;
+  
 public slots: // Public slots
   
   void slotFileSelect();

@@ -85,12 +85,12 @@ QString QuantaPlugin::location() const
 
 bool QuantaPlugin::load()
 {
-		return FALSE;
+    return FALSE;
 }
   
 bool QuantaPlugin::run()
 {
-		return FALSE;
+    return FALSE;
 }
 
 bool QuantaPlugin::toggle()

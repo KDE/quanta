@@ -30,17 +30,17 @@
 ParserOptions::ParserOptions( KConfig *config, QWidget* parent,  const char* name )
     : ParserOptionsUI( parent, name )
 {
-		this->config = config;
-		config->setGroup("Parser options");
+    this->config = config;
+    config->setGroup("Parser options");
 
-		QString handleLBM = config->readEntry("LBM", i18n("Find Tag & Open Tree"));
-		QString handleMBM = config->readEntry("MBM", i18n("Nothing"));
-		QString handleRBM = config->readEntry("RBM", i18n("Popup Menu"));
-		QString handleDoubleClick = config->readEntry("Double click", i18n("Select Tag Area"));
+    QString handleLBM = config->readEntry("LBM", i18n("Find Tag & Open Tree"));
+    QString handleMBM = config->readEntry("MBM", i18n("Nothing"));
+    QString handleRBM = config->readEntry("RBM", i18n("Popup Menu"));
+    QString handleDoubleClick = config->readEntry("Double click", i18n("Select Tag Area"));
 
 
     if ( !name )
-		  setName( "ParserOptions" );
+      setName( "ParserOptions" );
 
     if ( handleLBM == i18n("Find Tag & Open Tree") )
     {
@@ -79,10 +79,10 @@ ParserOptions::~ParserOptions()
 void ParserOptions::updateConfig()
 {
 
-		config->setGroup("Parser options");
+    config->setGroup("Parser options");
 
-		config->writeEntry("MBM",comboMBM->currentText());
-		config->writeEntry("LBM",comboLBM->currentText());
-		config->writeEntry("RBM",comboRBM->currentText());
-		config->writeEntry("Double click",comboDoubleClick->currentText());
+    config->writeEntry("MBM",comboMBM->currentText());
+    config->writeEntry("LBM",comboLBM->currentText());
+    config->writeEntry("RBM",comboRBM->currentText());
+    config->writeEntry("Double click",comboDoubleClick->currentText());
 }

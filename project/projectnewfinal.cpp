@@ -28,9 +28,9 @@
 #include "projectnewfinal.moc"
 
 ProjectNewFinal::ProjectNewFinal(QWidget *parent, const char *name )
-	: ProjectNewFinalS(parent,name)
+  : ProjectNewFinalS(parent,name)
 {
-	imagelabel->setPixmap( UserIcon("wiznewprjfin") );
+  imagelabel->setPixmap( UserIcon("wiznewprjfin") );
 }
 
 ProjectNewFinal::~ProjectNewFinal(){

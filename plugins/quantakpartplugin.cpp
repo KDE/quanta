@@ -121,23 +121,23 @@ bool QuantaKPartPlugin::run()
   {
     quantaApp->guiFactory()->addClient(m_part);
 
-	QString ow = outputWindow();
-	if(ow == i18n("Output Dock"))
-	{
-		quantaApp->outputDockWidget()->setWidget(m_part->widget());
-	}
-	else if (i18n("Editor View"))
-	{
-    	QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
-    	stack->raiseWidget(m_part->widget());
-	}
+  QString ow = outputWindow();
+  if(ow == i18n("Output Dock"))
+  {
+    quantaApp->outputDockWidget()->setWidget(m_part->widget());
+  }
+  else if (i18n("Editor View"))
+  {
+      QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
+      stack->raiseWidget(m_part->widget());
+  }
 
     m_part->widget()->show();
 
     setRunning(TRUE);
 
-	emit pluginStarted();
-	
+  emit pluginStarted();
+  
     return TRUE;
   }
   return FALSE;
@@ -157,8 +157,8 @@ bool QuantaKPartPlugin::unload()
   }
   else if(ow == i18n("Editor View"))
   {
-	QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
-  	stack->removeWidget(m_part->widget());
+  QWidgetStack *stack = quantaApp->widgetStackOfHtmlPart();
+    stack->removeWidget(m_part->widget());
     stack->raiseWidget(0);
   }
 

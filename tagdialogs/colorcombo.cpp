@@ -67,25 +67,25 @@
 #define STANDARD_PAL_SIZE 17
 
 ColorCombo::ColorCombo( QWidget *parent, const char *name )
-	: QComboBox( parent, name )
+  : QComboBox( parent, name )
 {
-	customColor.setRgb( 255, 255, 255 );
-	internalcolor.setRgb( 255, 255, 255 );
+  customColor.setRgb( 255, 255, 255 );
+  internalcolor.setRgb( 255, 255, 255 );
 
-	hascolor = false;
+  hascolor = false;
 
-	createStandardPalette();
+  createStandardPalette();
 
-	addColors();
+  addColors();
 
-	connect( this, SIGNAL( activated(int) ), SLOT( slotActivated(int) ) );
-	connect( this, SIGNAL( highlighted(int) ), SLOT( slotHighlighted(int) ) );
+  connect( this, SIGNAL( activated(int) ), SLOT( slotActivated(int) ) );
+  connect( this, SIGNAL( highlighted(int) ), SLOT( slotHighlighted(int) ) );
 }
 
 ColorCombo::~ColorCombo()
 {
-	delete []standardPalette;
-	delete []standardPaletteNames;
+  delete []standardPalette;
+  delete []standardPaletteNames;
 }
 
 /**
@@ -93,10 +93,10 @@ ColorCombo::~ColorCombo()
  */
 void ColorCombo::setColor( const QColor &col )
 {
-	internalcolor = col;
-	hascolor = true;
+  internalcolor = col;
+  hascolor = true;
 
-	addColors();
+  addColors();
 }
 
 
@@ -116,157 +116,157 @@ bool ColorCombo::hasColor() {
 void ColorCombo::setColorName( QString color )
 {
 
-	QColor c(color);
+  QColor c(color);
 
-	if ( c.isValid() && !color.isEmpty() ) {
-		setColor( c );
-	}
-	else {
-		hascolor = false;
-		addColors();
-	}
+  if ( c.isValid() && !color.isEmpty() ) {
+    setColor( c );
+  }
+  else {
+    hascolor = false;
+    addColors();
+  }
 
 }
 
 QString ColorCombo::colorName()
 {
-	if ( hascolor ) {
-		int i;
+  if ( hascolor ) {
+    int i;
 
-		for ( i = 0; i < STANDARD_PAL_SIZE; i++ )
-			if ( standardPalette[i] == internalcolor )
-				  return standardPaletteNames[i];
+    for ( i = 0; i < STANDARD_PAL_SIZE; i++ )
+      if ( standardPalette[i] == internalcolor )
+          return standardPaletteNames[i];
 
-		return internalcolor.name();
+    return internalcolor.name();
 
-	}
-	else
-		return "";
+  }
+  else
+    return "";
 }
 
 
 void ColorCombo::resizeEvent( QResizeEvent *re )
 {
-	QComboBox::resizeEvent( re );
+  QComboBox::resizeEvent( re );
 
-	addColors();
+  addColors();
 }
 
 void ColorCombo::slotActivated( int index )
 {
-	hascolor = ( index != 0);
+  hascolor = ( index != 0);
 
-	if ( index == 1 )
-	{
-	  if ( KColorDialog::getColor( customColor ) == QDialog::Accepted )
-		{
-			QRect rect( 0, 0, width(), 20 );
-			QPixmap pixmap( rect.width(), rect.height() );
-			QPainter painter;
-			QPen pen;
+  if ( index == 1 )
+  {
+    if ( KColorDialog::getColor( customColor ) == QDialog::Accepted )
+    {
+      QRect rect( 0, 0, width(), 20 );
+      QPixmap pixmap( rect.width(), rect.height() );
+      QPainter painter;
+      QPen pen;
 
-			if ( qGray( customColor.rgb() ) < 128 )
-				pen.setColor( white );
-			else
-				pen.setColor( black );
+      if ( qGray( customColor.rgb() ) < 128 )
+        pen.setColor( white );
+      else
+        pen.setColor( black );
 
-			painter.begin( &pixmap );
-			QBrush brush( customColor );
-			painter.fillRect( rect, brush );
-			painter.setPen( pen );
-			painter.drawText( 2, painter.fontMetrics().height(),
-					  i18n("Custom...") );
-			painter.end();
+      painter.begin( &pixmap );
+      QBrush brush( customColor );
+      painter.fillRect( rect, brush );
+      painter.setPen( pen );
+      painter.drawText( 2, painter.fontMetrics().height(),
+            i18n("Custom...") );
+      painter.end();
 
-			changeItem( pixmap, 1 );
-			pixmap.detach();
-		}
+      changeItem( pixmap, 1 );
+      pixmap.detach();
+    }
 
-		internalcolor = customColor;
-	}
-	else
-	  if ( index > 1 )
-			internalcolor = standardPalette[ index - 2 ];
+    internalcolor = customColor;
+  }
+  else
+    if ( index > 1 )
+      internalcolor = standardPalette[ index - 2 ];
 
-	emit activated( internalcolor );
+  emit activated( internalcolor );
 }
 
 void ColorCombo::slotHighlighted( int index )
 {
-	if ( index < 2 )
-		internalcolor = customColor;
-	else
-		internalcolor = standardPalette[ index - 2 ];
+  if ( index < 2 )
+    internalcolor = customColor;
+  else
+    internalcolor = standardPalette[ index - 2 ];
 
-	emit highlighted( internalcolor );
+  emit highlighted( internalcolor );
 }
 
 void ColorCombo::addColors()
 {
-	QRect rect( 0, 0, width(), 20 );
-	QPixmap pixmap( rect.width(), rect.height() );
-	QPainter painter;
-	QPen pen;
-	int i;
+  QRect rect( 0, 0, width(), 20 );
+  QPixmap pixmap( rect.width(), rect.height() );
+  QPainter painter;
+  QPen pen;
+  int i;
 
-	clear();
+  clear();
 
-	for ( i = 0; i < STANDARD_PAL_SIZE; i++ )
-		if ( standardPalette[i] == internalcolor ) break;
+  for ( i = 0; i < STANDARD_PAL_SIZE; i++ )
+    if ( standardPalette[i] == internalcolor ) break;
 
-	if ( i == STANDARD_PAL_SIZE )
-		customColor = internalcolor;
+  if ( i == STANDARD_PAL_SIZE )
+    customColor = internalcolor;
 
-	insertItem( i18n("None") );
+  insertItem( i18n("None") );
 
-	if ( qGray( customColor.rgb() ) < 128 )
-		pen.setColor( white );
-	else
-		pen.setColor( black );
+  if ( qGray( customColor.rgb() ) < 128 )
+    pen.setColor( white );
+  else
+    pen.setColor( black );
 
-	painter.begin( &pixmap );
-	QBrush brush( customColor );
-	painter.fillRect( rect, brush );
-	painter.setPen( pen );
+  painter.begin( &pixmap );
+  QBrush brush( customColor );
+  painter.fillRect( rect, brush );
+  painter.setPen( pen );
 
-	painter.drawText( 2, painter.fontMetrics().height(), i18n("Custom...") );
-	painter.end();
+  painter.drawText( 2, painter.fontMetrics().height(), i18n("Custom...") );
+  painter.end();
 
-	insertItem( pixmap );
-	pixmap.detach();
+  insertItem( pixmap );
+  pixmap.detach();
 
-	bool findColor = false;
+  bool findColor = false;
 
-	for ( i = 0; i < STANDARD_PAL_SIZE; i++ )
-	{
-		painter.begin( &pixmap );
-		QBrush brush( standardPalette[i] );
-		painter.fillRect( rect, brush );
-		painter.end();
+  for ( i = 0; i < STANDARD_PAL_SIZE; i++ )
+  {
+    painter.begin( &pixmap );
+    QBrush brush( standardPalette[i] );
+    painter.fillRect( rect, brush );
+    painter.end();
 
-		insertItem( pixmap );
-		pixmap.detach();
+    insertItem( pixmap );
+    pixmap.detach();
 
-		if ( standardPalette[i] == internalcolor ) {
-			setCurrentItem( i + 2 );
-			findColor = true;
-		}
-	}
+    if ( standardPalette[i] == internalcolor ) {
+      setCurrentItem( i + 2 );
+      findColor = true;
+    }
+  }
 
-	if ( !findColor )
-		setCurrentItem(1);
+  if ( !findColor )
+    setCurrentItem(1);
 
 
 
-	if ( !hascolor )
-		setCurrentItem(0);
+  if ( !hascolor )
+    setCurrentItem(0);
 
 }
 
 void ColorCombo::createStandardPalette()
 {
 
-	  standardPalette = new QColor [STANDARD_PAL_SIZE];
+    standardPalette = new QColor [STANDARD_PAL_SIZE];
 
     int i = 0;
 

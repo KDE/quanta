@@ -27,8 +27,8 @@
 class TagMailDlg : public TagMail  {
 Q_OBJECT
 public: 
-	TagMailDlg(QWidget *parent=0, const char *name=0);
-	~TagMailDlg();
+  TagMailDlg(QWidget *parent=0, const char *name=0);
+  ~TagMailDlg();
 private slots: // Private slots
   /** Select a mail address, using the KABC */
   void slotSelectAddress();

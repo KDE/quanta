@@ -23,11 +23,11 @@
 
 PreviewFontOptions::PreviewFontOptions(QWidget *parent, const char *name ) : QTabWidget(parent,name)
 {
-	stdFont = new KFontChooser (this, "standard font", false);
-	fixedFont = new KFontChooser (this, "fixed font", true);
+  stdFont = new KFontChooser (this, "standard font", false);
+  fixedFont = new KFontChooser (this, "fixed font", true);
 
-	addTab( stdFont, i18n("Standard"));
-	addTab( fixedFont, i18n("Fixed"));
+  addTab( stdFont, i18n("Standard"));
+  addTab( fixedFont, i18n("Fixed"));
 }
 
 

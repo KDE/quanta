@@ -34,13 +34,13 @@ class ProjectTreeFolder : public FilesTreeFolder  {
 friend class Project;
 
 public:
-	ProjectTreeFolder( QListView *parentListView, ProjectTreeFolder *parent, const KURL& p_url);
-	ProjectTreeFolder( QListView *parentListView, const QString& name, const KURL& p_url);
-	~ProjectTreeFolder();
-	
+  ProjectTreeFolder( QListView *parentListView, ProjectTreeFolder *parent, const KURL& p_url);
+  ProjectTreeFolder( QListView *parentListView, const QString& name, const KURL& p_url);
+  ~ProjectTreeFolder();
+  
   virtual void setOpen( bool open);
   void setup();
-	
+  
   /** insert item in file list */
   void insertItem(ProjectTreeFile *item, const KURL& url);
   /**  */

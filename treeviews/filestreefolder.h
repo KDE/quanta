@@ -42,8 +42,8 @@ public:
 
   QString text( int column ) const;
 
- 	/** used for sorting */
- 	virtual QString key ( int column, bool ascending ) const;
+   /** used for sorting */
+   virtual QString key ( int column, bool ascending ) const;
 
   void setup();
   /** No descriptions */
@@ -56,8 +56,8 @@ public:
   KURL url;
 
 public slots: // Public slots
-  	/** reload file list */
-  	void reloadList();
+    /** reload file list */
+    void reloadList();
 protected: // Protected methods
   /** No descriptions */
   virtual void dropped(QDropEvent *e);

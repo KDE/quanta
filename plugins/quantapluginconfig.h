@@ -30,8 +30,8 @@ class QuantaPluginConfig : public PluginConfig
 {
   Q_OBJECT
 public: 
-	QuantaPluginConfig(QWidget *, const char *);
-	~QuantaPluginConfig();
+  QuantaPluginConfig(QWidget *, const char *);
+  ~QuantaPluginConfig();
 public slots:
   /** Validates the dialog before accepting */
   void accept();

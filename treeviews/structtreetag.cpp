@@ -30,9 +30,9 @@
 
 
 StructTreeTag::StructTreeTag(QListView *parent, QString a_title)
-	: KListViewItem(parent, a_title)
+  : KListViewItem(parent, a_title)
 {
-	node = 0L;
+  node = 0L;
 
 }
 

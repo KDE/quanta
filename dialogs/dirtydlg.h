@@ -34,8 +34,8 @@ class QCloseEvent;
 class DirtyDlg : public DirtyDialog  {
    Q_OBJECT
 public: 
-	DirtyDlg(const QString& srcName, const QString& destName, QWidget *parent=0, const char *name=0);
-	~DirtyDlg();
+  DirtyDlg(const QString& srcName, const QString& destName, QWidget *parent=0, const char *name=0);
+  ~DirtyDlg();
 protected: // Protected attributes
   KURL m_src;
   KURL m_dest;

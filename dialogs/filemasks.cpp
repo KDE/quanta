@@ -25,9 +25,9 @@
 #include <kmimetype.h>
 
 FileMasks::FileMasks(QWidget *parent, const char *name)
-	:FileMasksS(parent,name)
+  :FileMasksS(parent,name)
 {
-	connect(buttonDefault, SIGNAL(clicked()), this, SLOT(setToDefault()));
+  connect(buttonDefault, SIGNAL(clicked()), this, SLOT(setToDefault()));
 }
 
 FileMasks::~FileMasks(){

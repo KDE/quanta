@@ -34,7 +34,7 @@
 UploadTreeFolder::UploadTreeFolder(const KURL &a_url, UploadTreeFolder * parent, const char * name )
     : KListViewItem( parent, name, "", "", "" )
 {
-	parentFolder = parent;
+  parentFolder = parent;
   m_url = a_url;
   m_url.adjustPath(1);
 
@@ -47,7 +47,7 @@ UploadTreeFolder::UploadTreeFolder(const KURL &a_url, UploadTreeFolder * parent,
 UploadTreeFolder::UploadTreeFolder(const KURL &a_url, QListView * parent, const char * name )
     : KListViewItem( parent, name, "", "", "" )
 {
-	parentFolder = 0L;
+  parentFolder = 0L;
   m_url = a_url;
   m_url.adjustPath(1);
 
@@ -66,15 +66,15 @@ void UploadTreeFolder::setOpen( bool open )
 //TODO: This should go away. Use url() instead.
 QString UploadTreeFolder::fullName()
 {
-	QString s="";
-	
+  QString s="";
+  
   if ( parentFolder )
   {
-		s = parentFolder->fullName();
-		s += m_url.fileName()+"/";
+    s = parentFolder->fullName();
+    s += m_url.fileName()+"/";
   }
   else {
-		s = m_url.fileName();
+    s = m_url.fileName();
   }
 
   return s;

@@ -82,8 +82,8 @@ typedef struct QConfig{
 
 class QuantaCommon {
 public: 
-	QuantaCommon();
-	~QuantaCommon();
+  QuantaCommon();
+  ~QuantaCommon();
 
   /** convert tag to upper or lower case */
   static QString tagCase( const QString tag);

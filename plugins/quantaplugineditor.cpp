@@ -103,7 +103,7 @@ void QuantaPluginEditor::addPlugin()
     newPlugin->setOutputWindow(configDlg->outputWindow->currentText());
     newPlugin->setStandard(false);
     newPlugin->setIcon(configDlg->iconButton->icon());
-	  QString pluginName = newPlugin->pluginName();
+    QString pluginName = newPlugin->pluginName();
     m_plugins.insert(pluginName, newPlugin);
     emit pluginsChanged();
   }
@@ -195,10 +195,10 @@ void QuantaPluginEditor::removePlugin()
   QListViewItem *currentItem = pluginList->currentItem();
   if(currentItem)
   {
-  	QuantaPlugin *plugin = m_plugins.find(currentItem->text(0));;
-  	if(plugin)
+    QuantaPlugin *plugin = m_plugins.find(currentItem->text(0));;
+    if(plugin)
     {
-   	  m_plugins.remove(plugin->pluginName());
+       m_plugins.remove(plugin->pluginName());
       delete plugin;
       emit pluginsChanged();
     }

@@ -22,7 +22,7 @@
 #include <khtml_settings.h>
 
 WHTMLPart::WHTMLPart(QWidget *parent, const char *name )
-	: KHTMLPart(parent,name)
+  : KHTMLPart(parent,name)
 {
    hpos = 0;
    // get settings from konq.
@@ -58,10 +58,10 @@ void  WHTMLPart::urlSelected ( const QString &url, int button, int state, const 
 void WHTMLPart::forward()
 {
   if ( forwardEnable() ) {
-  	hpos++;
-  	openURL( history.at(hpos) );
+    hpos++;
+    openURL( history.at(hpos) );
 
-  	emit updateStatus( backEnable() , forwardEnable() );
+    emit updateStatus( backEnable() , forwardEnable() );
   }
 }
 
@@ -69,10 +69,10 @@ void WHTMLPart::forward()
 void WHTMLPart::back()
 {
   if ( backEnable() ) {
-  	hpos--;
-  	openURL( history.at(hpos) );
+    hpos--;
+    openURL( history.at(hpos) );
 
-  	emit updateStatus( backEnable() , forwardEnable() );
+    emit updateStatus( backEnable() , forwardEnable() );
   }
 }
 
@@ -81,8 +81,8 @@ void WHTMLPart::addToHistory( QString url )
 {
 
    if ( history.count() > 0 )
-	   while ( hpos < history.count()-1  )
-  	 		history.removeLast();
+     while ( hpos < history.count()-1  )
+         history.removeLast();
 
    if ( !history.isEmpty() ) hpos++;
 

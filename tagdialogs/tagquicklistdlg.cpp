@@ -21,15 +21,15 @@
 TagQuickListDlg::TagQuickListDlg(QWidget *parent, const char *name)
     : QDialog(parent,name,true)
 {
-	setCaption(name);
+  setCaption(name);
 
-	initDialog();
+  initDialog();
 
-	groupBox->insert(radioOrdered);
-	groupBox->insert(radioUnordered);
+  groupBox->insert(radioOrdered);
+  groupBox->insert(radioUnordered);
 
-	connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
-	connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
+  connect( buttonOk, SIGNAL(clicked()), SLOT(accept()) );
+  connect( buttonCancel, SIGNAL(clicked()), SLOT(reject()) );
 }
 
 TagQuickListDlg::~TagQuickListDlg(){

@@ -24,24 +24,24 @@
 #include "../quantacommon.h"
 
 UploadTreeView::UploadTreeView( QWidget *parent, const char *name ) :
-	KListView(parent, name)
+  KListView(parent, name)
 {
-	setRootIsDecorated( true );
-	setSorting( 0 );
+  setRootIsDecorated( true );
+  setSorting( 0 );
   setMultiSelection(true);
 
-	setFrameStyle( Panel | Sunken );
-	setLineWidth( 2 );
-	addColumn( i18n("Name") );
+  setFrameStyle( Panel | Sunken );
+  setLineWidth( 2 );
+  addColumn( i18n("Name") );
   addColumn( i18n("Upload") );
-	addColumn( i18n("Size") );
-	addColumn( i18n("Date") );
+  addColumn( i18n("Size") );
+  addColumn( i18n("Date") );
 
-	setFocusPolicy(QWidget::ClickFocus);
+  setFocusPolicy(QWidget::ClickFocus);
 
   connect( this, SIGNAL(selectionChanged()), SLOT(slotSelectFile()));
-	connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
-						this, SLOT(slotSelectFile(QListViewItem *))); 
+  connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
+            this, SLOT(slotSelectFile(QListViewItem *))); 
 
 }
 
@@ -105,7 +105,7 @@ int UploadTreeView::checkboxTree( QListViewItem *it )
         }
 
       }
-	  }
+    }
     retVal = bitFlags;
   } 
 
@@ -116,13 +116,13 @@ int UploadTreeView::checkboxTree( QListViewItem *it )
 
 void UploadTreeView::selectAllUnderNode( QListViewItem* it, bool select )
 {
-	QListViewItem *itIter = 0;
-	if (it == 0) itIter = firstChild();
-	else itIter = it->firstChild();
+  QListViewItem *itIter = 0;
+  if (it == 0) itIter = firstChild();
+  else itIter = it->firstChild();
 
-	for( ; itIter != 0; itIter = itIter->nextSibling() )
-	{
-		//if ( dynamic_cast<UploadTreeFolder *>(itIter) )
+  for( ; itIter != 0; itIter = itIter->nextSibling() )
+  {
+    //if ( dynamic_cast<UploadTreeFolder *>(itIter) )
     {
           itIter->setSelected(select);
       selectAllUnderNode(itIter, select);
@@ -131,7 +131,7 @@ void UploadTreeView::selectAllUnderNode( QListViewItem* it, bool select )
       if (itIter->isSelected() != select)
           itIter->setSelected(select);
     }
-	}
+  }
 }
 
 void UploadTreeView::slotSelectFile( QListViewItem *it )
@@ -225,32 +225,32 @@ void UploadTreeView::slotSelectFile( )
 //TODO: This should search based on url's rather than on text(0)
 UploadTreeFolder* UploadTreeView::findFolder( UploadTreeFolder *it, const QString& folderName )
 {
-	QListViewItem *itIter = 0;
-	if (it == 0) itIter = firstChild();
-	else itIter = it->firstChild();
+  QListViewItem *itIter = 0;
+  if (it == 0) itIter = firstChild();
+  else itIter = it->firstChild();
 
-	for( ; itIter != 0; itIter = itIter->nextSibling() )
-	{
-		if ( itIter->text(0) == folderName )
-		{
-			return (UploadTreeFolder *)itIter;
-		}
-	}
+  for( ; itIter != 0; itIter = itIter->nextSibling() )
+  {
+    if ( itIter->text(0) == folderName )
+    {
+      return (UploadTreeFolder *)itIter;
+    }
+  }
   return 0;
 }
 
 UploadTreeFolder* UploadTreeView::printTree( UploadTreeFolder *it = 0, QString indent = "" )
 {
-	QListViewItem *itIter = 0;
-	if (it == 0) itIter = firstChild();
-	else itIter = it->firstChild();
+  QListViewItem *itIter = 0;
+  if (it == 0) itIter = firstChild();
+  else itIter = it->firstChild();
 
-	for( ; itIter != 0; itIter = itIter->nextSibling() )
-	{
+  for( ; itIter != 0; itIter = itIter->nextSibling() )
+  {
 //    cout << indent << itIter->text(0) << endl;
     if ( dynamic_cast<UploadTreeFolder *>(itIter) )
-    	printTree( (UploadTreeFolder *)itIter, indent + "  " );
-	}
+      printTree( (UploadTreeFolder *)itIter, indent + "  " );
+  }
   return 0;
 }
 
@@ -259,62 +259,62 @@ UploadTreeFolder* UploadTreeView::printTree( UploadTreeFolder *it = 0, QString i
 // peril.
 QListViewItem* UploadTreeView::findItem(const QString& path )
 {
-	QString item = path;
-	UploadTreeFolder *it = 0;
-	int i;
-	while ( ( i = item.find('/') ) >= 0 )
-	{
-		it = findFolder( it, item.left(i) );
-		if ( it == 0 ) return 0;
-		item.remove(0,i+1);
-	}
+  QString item = path;
+  UploadTreeFolder *it = 0;
+  int i;
+  while ( ( i = item.find('/') ) >= 0 )
+  {
+    it = findFolder( it, item.left(i) );
+    if ( it == 0 ) return 0;
+    item.remove(0,i+1);
+  }
 
-	QListViewItem *itIter = 0;
-	if ( it == 0 ) itIter = firstChild();
-	else itIter = it->firstChild();
+  QListViewItem *itIter = 0;
+  if ( it == 0 ) itIter = firstChild();
+  else itIter = it->firstChild();
 
-	for( ; itIter != 0; itIter = itIter->nextSibling() )
-	{
-		if ( itIter->text(0) == item )
-		{
-			return itIter;
-		}
-	}
-	return 0;
+  for( ; itIter != 0; itIter = itIter->nextSibling() )
+  {
+    if ( itIter->text(0) == item )
+    {
+      return itIter;
+    }
+  }
+  return 0;
 }
 
 UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString size )
 { 
   QString item = a_url.path(); //TODO: do with real KURL's
-	QString fname = item;
-	int i;
+  QString fname = item;
+  int i;
   uint col = 0;
-	UploadTreeFolder *it = 0;
+  UploadTreeFolder *it = 0;
   KURL u;
-	while ( ( i = item.find('/', col) ) >= 0 )
-	{
+  while ( ( i = item.find('/', col) ) >= 0 )
+  {
     if ( i!=0 )
     {
-  		UploadTreeFolder *itTemp = findFolder(it, item.mid(col, i - col));
-  		if ( itTemp == 0 )
-  		{
+      UploadTreeFolder *itTemp = findFolder(it, item.mid(col, i - col));
+      if ( itTemp == 0 )
+      {
         u = a_url;
         QuantaCommon::setUrl(u,item.left(i)+"/");
-  			if ( it == 0 )
-  			{
-  				it = new UploadTreeFolder(u, this, "");
-  			}
-  			else {
-  				it = new UploadTreeFolder(u, it, "");
-  			}
-  		}
-  		else
-  		{
-  			it = itTemp;
-  		}
+        if ( it == 0 )
+        {
+          it = new UploadTreeFolder(u, this, "");
+        }
+        else {
+          it = new UploadTreeFolder(u, it, "");
+        }
+      }
+      else
+      {
+        it = itTemp;
+      }
     }
     col = i + 1;
-	}
+  }
   UploadTreeFile *file = 0;
   if ( col < item.length() )
   {
@@ -327,7 +327,7 @@ UploadTreeFile* UploadTreeView::addItem(const KURL &a_url, QString date, QString
       file = new UploadTreeFile(it, a_url, date, size);
     }
   }
-	return file; 
+  return file; 
 }
 
 void UploadTreeView::expandAll( QListViewItem *it )

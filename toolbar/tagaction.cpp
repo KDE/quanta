@@ -77,7 +77,7 @@ void TagAction::insertTag()
 
   Document *w = m_view->write();
   w->viewCursorIf->cursorPositionReal(&line, &col);
-	space.fill( ' ', col);
+  space.fill( ' ', col);
 
   QString type = tag.attribute("type","");
 
@@ -92,7 +92,7 @@ void TagAction::insertTag()
          attr.remove( attr.length()-1, 1 );
      attr = attr.stripWhiteSpace();
      int i = 0;
-     while ( !attr[i].isSpace() && !attr[i].isNull() )	i++;
+     while ( !attr[i].isSpace() && !attr[i].isNull() )  i++;
      QString name = attr.left(i);
      attr = attr.remove(0,i).stripWhiteSpace();
 
@@ -133,7 +133,7 @@ void TagAction::insertTag()
 
   if ( type == "script" ) {
 
-   	KProcess *proc = new KProcess();
+     KProcess *proc = new KProcess();
     proc ->clearArguments();
 
     QDomElement script = tag.namedItem("script").toElement();
@@ -156,7 +156,7 @@ void TagAction::insertTag()
     connect( proc, SIGNAL(receivedStdout(   KProcess*,char*,int)), this,
                  SLOT(  slotGetScriptOutput(KProcess*,char*,int)));
 
-		connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
+    connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
                  SLOT(  slotGetScriptError(KProcess*,char*,int)));
 
     proc->start(KProcess::NotifyOnExit, KProcess::All);
@@ -168,12 +168,12 @@ void TagAction::insertTag()
     scriptErrorDest  = script.attribute("error","none");
 
     if ( inputType == "current" ) {
-    	buffer = w->editIf->text();
+      buffer = w->editIf->text();
       proc->writeStdin( buffer.local8Bit(), buffer.length() );
     }
 
     if ( inputType == "selected" ) {
-    	buffer = w->selectionIf->selection();
+      buffer = w->selectionIf->selection();
       proc->writeStdin( buffer.local8Bit(), buffer.length() );
     }
     proc->closeStdin();

@@ -33,12 +33,12 @@ class KURL;
 class FileCombo : public QWidget  {
    Q_OBJECT
 public: 
-	FileCombo(const KURL& a_baseURL, QWidget *parent=0, const char *name=0);
-	FileCombo(QWidget *parent=0, const char *name=0);
-	~FileCombo();
-	
-	QString text();
-	void setText( QString );
+  FileCombo(const KURL& a_baseURL, QWidget *parent=0, const char *name=0);
+  FileCombo(QWidget *parent=0, const char *name=0);
+  ~FileCombo();
+  
+  QString text();
+  void setText( QString );
   /** The select URL dialogs shows this URL, and the returned value is relative to this */
   void setBaseURL(const KURL& a_baseURL);
   /** The selected URL will be stored with absolute path if absolutePath is true */
@@ -46,7 +46,7 @@ public:
 
 public slots:
   void slotFileSelect();
-		
+    
 protected:
   KURL baseURL;
   bool m_absolutePath;

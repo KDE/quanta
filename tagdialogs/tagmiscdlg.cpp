@@ -26,7 +26,7 @@
 #include <qcheckbox.h>
 
 TagMiscDlg::TagMiscDlg(QString element, bool closeTag, QWidget *parent, const char *name)
-	:TagMisc(parent,name,true)
+  :TagMisc(parent,name,true)
 {
   setCaption(name);
   connect( buttonOk,     SIGNAL(clicked()), SLOT(accept()) );

@@ -397,10 +397,10 @@ KTextEditor::Document* Document::doc()
 bool Document::isModified()
 {
   bool modified = false;
-  if ( m_doc )	
+  if ( m_doc )  
    modified = m_doc->isModified();
 
-  return modified;	
+  return modified;  
 }
 /** Sets the modifiedFlag value. */
 void Document::setModified(bool flag)
@@ -1444,71 +1444,71 @@ void Document::slotTextChanged()
   {
     uint line, column;
     QString oldNodeName = "";
-		bool updateClosing = false;
-		Node *node;
+    bool updateClosing = false;
+    Node *node;
     if (qConfig.updateClosingTags)
-		{
-			viewCursorIf->cursorPositionReal(&line, &column);
-			node = parser->nodeAt(line, column);
-			if (node->tag->type != Tag::XmlTag && node->tag->type != Tag::XmlTagEnd)
-				node = node->previousSibling();
-			if (node && !node->tag->single && !node->tag->closingMissing 
-					&& node->tag->type == Tag::XmlTag)
-			{
-				oldNodeName = "/"+node->tag->name;
-				updateClosing = true;
-			}
-			if (node && node->tag->type == Tag::XmlTagEnd)
-			{
-				oldNodeName = node->tag->name.mid(1);
-				updateClosing = false;
-			}
-		}
+    {
+      viewCursorIf->cursorPositionReal(&line, &column);
+      node = parser->nodeAt(line, column);
+      if (node->tag->type != Tag::XmlTag && node->tag->type != Tag::XmlTagEnd)
+        node = node->previousSibling();
+      if (node && !node->tag->single && !node->tag->closingMissing
+          && node->tag->type == Tag::XmlTag)
+      {
+        oldNodeName = "/"+node->tag->name;
+        updateClosing = true;
+      }
+      if (node && node->tag->type == Tag::XmlTagEnd)
+      {
+        oldNodeName = node->tag->name.mid(1);
+        updateClosing = false;
+      }
+    }
     baseNode = parser->rebuild(this);
-		if (qConfig.updateClosingTags)
-		{
-			node = parser->nodeAt(line, column); 
-			QString newNodeName = node->tag->name;
-			if (!oldNodeName.isEmpty() && 
-					( (oldNodeName != "/"+newNodeName && updateClosing) ||
-						("/"+oldNodeName != newNodeName && !updateClosing)))
-			{
-				if (updateClosing)
-					node = node->nextSibling();
-				else
-					node = node->previousSibling();
-				while (node)
-				{
-					if (node->tag->name == oldNodeName)
-					{
+    if (qConfig.updateClosingTags)
+    {
+      node = parser->nodeAt(line, column);
+      QString newNodeName = node->tag->name;
+      if (!oldNodeName.isEmpty() &&
+          ( (oldNodeName != "/"+newNodeName && updateClosing) ||
+            ("/"+oldNodeName != newNodeName && !updateClosing)))
+      {
+        if (updateClosing)
+          node = node->nextSibling();
+        else
+          node = node->previousSibling();
+        while (node)
+        {
+          if (node->tag->name == oldNodeName)
+          {
             reparseEnabled = false;
-						int bl, bc, el, ec;
-						node->tag->beginPos(bl, bc);
-						node->tag->endPos(el, ec);
-						if (updateClosing)
-						{
-		  				editIf->removeText(bl, bc, el, ec);
-  						viewCursorIf->setCursorPositionReal(bl, bc);
-							insertText("</"+newNodeName, false);
-						}
-						else
-						{	
-							newNodeName[0] = '<';																					
-						  editIf->removeText(bl, bc, bl, bc + oldNodeName.length());
-  						viewCursorIf->setCursorPositionReal(bl, bc);
-							insertText(newNodeName, false);
-						}
-						baseNode = parser->rebuild(this);
-						viewCursorIf->setCursorPositionReal(line, column);
+            int bl, bc, el, ec;
+            node->tag->beginPos(bl, bc);
+            node->tag->endPos(el, ec);
+            if (updateClosing)
+            {
+              editIf->removeText(bl, bc, el, ec);
+              viewCursorIf->setCursorPositionReal(bl, bc);
+              insertText("</"+newNodeName, false);
+            }
+            else
+            {  
+              newNodeName[0] = '<';
+              editIf->removeText(bl, bc, bl, bc + oldNodeName.length());
+              viewCursorIf->setCursorPositionReal(bl, bc);
+              insertText(newNodeName, false);
+            }
+            baseNode = parser->rebuild(this);
+            viewCursorIf->setCursorPositionReal(line, column);
             reparseEnabled = true;
-						break;
-					}
-					if (updateClosing)
-						node = node->nextSibling();
-					else
-						node = node->previousSibling();
-				}
-			}
+            break;
+          }
+          if (updateClosing)
+            node = node->nextSibling();
+          else
+            node = node->previousSibling();
+        }
+      }
     }
 
     if (qConfig.instantUpdate)

@@ -26,8 +26,8 @@
 
 class ToolbarXMLGUI : public KXMLGUIClient  {
 public:
-	ToolbarXMLGUI(QString xmlFile);
-	~ToolbarXMLGUI();
+  ToolbarXMLGUI(QString xmlFile);
+  ~ToolbarXMLGUI();
 };
 
 #endif

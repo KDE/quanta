@@ -38,8 +38,8 @@ class QuantaPluginInterface : public QObject
 {
   Q_OBJECT
 public: 
-	QuantaPluginInterface();
-	~QuantaPluginInterface();
+  QuantaPluginInterface();
+  ~QuantaPluginInterface();
   /** Returns a list of the known types */
   static QStringList pluginTypes();
   /** Returns the list of the available output windows */

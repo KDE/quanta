@@ -60,42 +60,42 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
 {
   baseURL = projectBaseURL;
 
- 	fileMenu = new QPopupMenu();
-	
-	openId = fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotInsert()));
-  fileMenu -> insertItem(i18n("Open for Editing"), 	this ,SLOT(slotOpen()));
-	fileMenu -> insertSeparator();
-	fileMenu -> insertItem( i18n("&New Directory..."), 		this ,SLOT(slotNewDir()));
-	fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
-	fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
-	fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
-	fileMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
-	fileMenu -> insertSeparator();
-	fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
+   fileMenu = new QPopupMenu();
+  
+  openId = fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"),     this ,SLOT(slotInsert()));
+  fileMenu -> insertItem(i18n("Open for Editing"),   this ,SLOT(slotOpen()));
+  fileMenu -> insertSeparator();
+  fileMenu -> insertItem( i18n("&New Directory..."),     this ,SLOT(slotNewDir()));
+  fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"),     this ,SLOT(slotCopy()));
+  fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),    this ,SLOT(slotPaste()));
+  fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
+  fileMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
+  fileMenu -> insertSeparator();
+  fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 
 
-	folderMenu = new QPopupMenu();
+  folderMenu = new QPopupMenu();
 
-	folderMenu -> insertItem( i18n("&New Directory..."), 		this ,SLOT(slotNewDir()));
-	folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
-	folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
-	deleteMenuId = folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
-	folderMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
-	folderMenu -> insertSeparator();
-	folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
+  folderMenu -> insertItem( i18n("&New Directory..."),     this ,SLOT(slotNewDir()));
+  folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"),     this ,SLOT(slotCopy()));
+  folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),    this ,SLOT(slotPaste()));
+  deleteMenuId = folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
+  folderMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
+  folderMenu -> insertSeparator();
+  folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 
   KURL url;
-	url.setPath(qConfig.globalDataDir +"quanta/templates/");
- 	globalDir = new FilesTreeFolder( this , i18n("Global Templates"), url);
-	globalDir->setPixmap( 0, SmallIcon("folder"));
-	globalDir->setOpen( true );
+  url.setPath(qConfig.globalDataDir +"quanta/templates/");
+   globalDir = new FilesTreeFolder( this , i18n("Global Templates"), url);
+  globalDir->setPixmap( 0, SmallIcon("folder"));
+  globalDir->setOpen( true );
 
-	url.setPath(locateLocal("data","quanta/templates/"));
- 	localDir = new FilesTreeFolder( this , i18n("Local Templates"),url);
-	localDir->setPixmap( 0, SmallIcon("folder"));
-	localDir->setOpen( true );
+  url.setPath(locateLocal("data","quanta/templates/"));
+   localDir = new FilesTreeFolder( this , i18n("Local Templates"),url);
+  localDir->setPixmap( 0, SmallIcon("folder"));
+  localDir->setOpen( true );
 
-	setRootIsDecorated( true );
+  setRootIsDecorated( true );
   //header()->hide();
   setSorting( 0 );
 
@@ -103,20 +103,20 @@ TemplatesTreeView::TemplatesTreeView(const KURL& projectBaseURL, QWidget *parent
   setLineWidth( 2 );
   addColumn( i18n("Templates"), 600 );
 
-	setFocusPolicy(QWidget::ClickFocus);
+  setFocusPolicy(QWidget::ClickFocus);
 
-	connect(  this, SIGNAL(executed(QListViewItem *)),
-						this, SLOT(slotSelectFile(QListViewItem *)));
-	connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
-						this, SLOT(slotSelectImage(QListViewItem *)));
-	connect(	this, SIGNAL(returnPressed(QListViewItem *)),
-						this, SLOT(slotSelectFile(QListViewItem *)));
+  connect(  this, SIGNAL(executed(QListViewItem *)),
+            this, SLOT(slotSelectFile(QListViewItem *)));
+  connect(  this, SIGNAL(selectionChanged(QListViewItem *)),
+            this, SLOT(slotSelectImage(QListViewItem *)));
+  connect(  this, SIGNAL(returnPressed(QListViewItem *)),
+            this, SLOT(slotSelectFile(QListViewItem *)));
 
-	connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
-					 this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
+  connect( this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
+           this, SLOT(slotMenu(QListViewItem*, const QPoint&, int)));
 
-	connect(	this, SIGNAL(open(QListViewItem *)),
-						this,	SLOT(slotSelectFile(QListViewItem *)));
+  connect(  this, SIGNAL(open(QListViewItem *)),
+            this,  SLOT(slotSelectFile(QListViewItem *)));
 
   setAcceptDrops(true);
   setSelectionMode(QListView::Single);
@@ -142,19 +142,19 @@ void TemplatesTreeView::slotInsertInDocument()
 
 void TemplatesTreeView::slotMenu(QListViewItem *item, const QPoint &point, int)
 {
-	if ( !item ) return;
-	setSelected(item, true);
+  if ( !item ) return;
+  setSelected(item, true);
 
-	FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
-	if ( d )
-	{
-	  if ( d->text(0) == i18n("Global Templates") || d->text(0) == i18n("Local Templates" )
-	       || d->text(0) == i18n("Project Templates") )
-	        folderMenu ->setItemEnabled( deleteMenuId, false);
-	  else  folderMenu ->setItemEnabled( deleteMenuId, true );
+  FilesTreeFolder *d = dynamic_cast<FilesTreeFolder *>( item);
+  if ( d )
+  {
+    if ( d->text(0) == i18n("Global Templates") || d->text(0) == i18n("Local Templates" )
+         || d->text(0) == i18n("Project Templates") )
+          folderMenu ->setItemEnabled( deleteMenuId, false);
+    else  folderMenu ->setItemEnabled( deleteMenuId, true );
 
-	  folderMenu ->popup     ( point);
-	} else
+    folderMenu ->popup     ( point);
+  } else
   {
    readDirInfo();
 
@@ -188,13 +188,13 @@ void TemplatesTreeView::slotNewDocument()
    QListViewItem *item = currentItem();
    if (item )
    {
-    	FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
- 	    if ( parent && !dynamic_cast<FilesTreeFolder *>(item) )
+      FilesTreeFolder *parent = (FilesTreeFolder *) item->parent();
+       if ( parent && !dynamic_cast<FilesTreeFolder *>(item) )
       {
        emit openFile(KURL(), quantaApp->defaultEncoding());
- 	     emit insertFile(url);
+        emit insertFile(url);
       }
- 	 }
+    }
  }
 }
 
@@ -239,8 +239,8 @@ void TemplatesTreeView::slotNewDir()
 
    QListViewItem *item = currentItem();
    QString startDir = "";
-	 FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-	 if ( f )
+   FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+   if ( f )
    {
     startDir = currentURL().path();
    } else
@@ -373,7 +373,7 @@ void TemplatesTreeView::readDirInfo(QString startDir)
   if (startDir.isEmpty())
   {
     FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-  	if ( f )
+    if ( f )
     {
       startDir = currentURL().path();
     } else
@@ -406,8 +406,8 @@ void TemplatesTreeView::writeDirInfo(QString dirInfoFile)
 
   if (dirInfoFile.isEmpty())
   {
-	  FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-	  if ( f )
+    FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+    if ( f )
     {
       startDir = currentURL().path();
     } else
@@ -452,8 +452,8 @@ void TemplatesTreeView::slotProperties()
 
   QListViewItem *item = currentItem();
   QString startDir = "";
-	FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
-	if ( f )
+  FilesTreeFile *f = dynamic_cast<FilesTreeFile *>( item);
+  if ( f )
   {
    startDir = currentURL().path();
   } else

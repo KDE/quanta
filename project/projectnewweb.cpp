@@ -40,7 +40,7 @@
 #include "../treeviews/uploadtreeview.h"
 
 ProjectNewWeb::ProjectNewWeb(QWidget *parent, const char *name )
-	: ProjectNewWebS(parent,name)
+  : ProjectNewWebS(parent,name)
 {
   button->setEnabled(false);
   siteUrl->setFocus();
@@ -128,7 +128,7 @@ void ProjectNewWeb::slotStart()
         {
           start = true;
           button->setText( i18n("Stop") );
-        	emit enableNextButton((QWidget *)this->parent(),false);
+          emit enableNextButton((QWidget *)this->parent(),false);
         } else
         {
           KMessageBox::error(this, i18n("There was an error while trying to run the \"wget\" application.\
@@ -157,7 +157,7 @@ void ProjectNewWeb::slotStart()
 
     start = false;
     button->setText( i18n("Start") );
-  	emit enableNextButton((QWidget *)this->parent(),true);
+    emit enableNextButton((QWidget *)this->parent(),true);
   }
 }
 
@@ -165,10 +165,10 @@ void ProjectNewWeb::slotGetWgetExited(KProcess*)
 {
   KLed2->setState(KLed::Off);
   KLed1->setState(KLed::Off);
-	start = false;
+  start = false;
     button->setText( i18n("Start") );
     emit messages(i18n("wget finished...\n"));
-	emit enableNextButton((QWidget *)this->parent(),true);
+  emit enableNextButton((QWidget *)this->parent(),true);
 }
 
 void ProjectNewWeb::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
@@ -218,7 +218,7 @@ void ProjectNewWeb::slotGetWgetOutput(KProcess *, char *buffer, int buflen)
 
 QStringList ProjectNewWeb::files()
 {
-	return filesList;
+  return filesList;
 }
 
 void ProjectNewWeb::resizeEvent ( QResizeEvent *t )

@@ -27,8 +27,8 @@
 class TagMiscDlg : public TagMisc  {
 Q_OBJECT
 public:
-	TagMiscDlg(QString element, bool closeTag, QWidget *parent=0, const char *name=0);
-	~TagMiscDlg();
+  TagMiscDlg(QString element, bool closeTag, QWidget *parent=0, const char *name=0);
+  ~TagMiscDlg();
 private slots: // Private slots
    /** No descriptions */
   void slotShowHelp();

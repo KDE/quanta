@@ -35,10 +35,10 @@ selected item with the getEntry() method.
 class ListDlg : public KDialogBase  {
 Q_OBJECT
 public:
-	ListDlg(QStringList &entryList,QWidget* parent=0, const char *name =0);
-	~ListDlg();
-	QString getEntry();
-	int getEntryNum();
+  ListDlg(QStringList &entryList,QWidget* parent=0, const char *name =0);
+  ~ListDlg();
+  QString getEntry();
+  int getEntryNum();
 private: // Private attributes
   /**  */
   KListBox * listbox;

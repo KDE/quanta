@@ -40,34 +40,34 @@ class QImage;
 class TagImgDlg : public QWidget, TagWidget {
    Q_OBJECT
 public: 
-	TagImgDlg(QWidget *parent=0, const char *name=0);
-	~TagImgDlg();
+  TagImgDlg(QWidget *parent=0, const char *name=0);
+  ~TagImgDlg();
 
 public:
-	void initDialog();
-	//Generated area. DO NOT EDIT!!!(begin)
-	QLabel *labelImgSource;
-	KLineEdit *lineImgSource;
-	QPushButton *buttonImgSource;
-	QPushButton *buttonRecalcImgSize;
-	QLabel *QLabel_4;
-	KLineEdit *lineWidth;
-	QLabel *QLabel_5;
-	KLineEdit *lineHeight;
-	QLabel *QLabel_6;
-	KLineEdit *lineHSpace;
-	QLabel *QLabel_7;
-	KLineEdit *lineVSpace;
-	QLabel *QLabel_8;
-	KLineEdit *lineAltText;
-	QLabel *QLabel_9;
-	QSpinBox *spinBorder;
-	QLabel *QLabel_10;
-	QComboBox *comboAlign;
-	PictureView *widgetImg;
-	QPushButton *buttonOk;
-	QPushButton *buttonCancel;
-	//Generated area. DO NOT EDIT!!!(end)
+  void initDialog();
+  //Generated area. DO NOT EDIT!!!(begin)
+  QLabel *labelImgSource;
+  KLineEdit *lineImgSource;
+  QPushButton *buttonImgSource;
+  QPushButton *buttonRecalcImgSize;
+  QLabel *QLabel_4;
+  KLineEdit *lineWidth;
+  QLabel *QLabel_5;
+  KLineEdit *lineHeight;
+  QLabel *QLabel_6;
+  KLineEdit *lineHSpace;
+  QLabel *QLabel_7;
+  KLineEdit *lineVSpace;
+  QLabel *QLabel_8;
+  KLineEdit *lineAltText;
+  QLabel *QLabel_9;
+  QSpinBox *spinBorder;
+  QLabel *QLabel_10;
+  QComboBox *comboAlign;
+  PictureView *widgetImg;
+  QPushButton *buttonOk;
+  QPushButton *buttonCancel;
+  //Generated area. DO NOT EDIT!!!(end)
 
 private:
   QImage *img;

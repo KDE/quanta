@@ -26,8 +26,8 @@
 
 class CervisiaPlugin : public QuantaKPartPlugin  {
 public: 
-	CervisiaPlugin();
-	~CervisiaPlugin();
+  CervisiaPlugin();
+  ~CervisiaPlugin();
 public slots:
   virtual bool run();
   virtual bool unload();

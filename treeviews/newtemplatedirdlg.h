@@ -28,8 +28,8 @@
 class NewTemplateDirDlg : public TemplateDirForm  {
    Q_OBJECT
 public: 
-	NewTemplateDirDlg(QWidget *parent=0, const char *name=0);
-	~NewTemplateDirDlg();
+  NewTemplateDirDlg(QWidget *parent=0, const char *name=0);
+  ~NewTemplateDirDlg();
 };
 
 #endif

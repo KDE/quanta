@@ -130,14 +130,14 @@ void QuantaView::slotInsertCSS()
         w->text(eLine, eCol+1,eLine, eCol+1) == "}")
     {
       code = tag->tagStr();
-    	CSSSelectorEditor* dlg = new CSSSelectorEditor (code, false, this,
-    		i18n ("Edit selector"));
-    	if (dlg->exec())
+      CSSSelectorEditor* dlg = new CSSSelectorEditor (code, false, this,
+        i18n ("Edit selector"));
+      if (dlg->exec())
       {
         w->editIf->removeText(bLine, bCol-1, eLine, eCol+2);
         w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol-1);
         w->insertText(dlg->code());
-    	}
+      }
 
       delete dlg;
       insertNew = false;
@@ -145,11 +145,11 @@ void QuantaView::slotInsertCSS()
   }
   if (insertNew)
   {
-  	CSSSelectorEditor* dlg = new CSSSelectorEditor (code, true, this,
-  		i18n ("Insert a new selector"));
-  	if (dlg->exec()) {
-  		 w->insertTag( dlg->code() );
-  	}
+    CSSSelectorEditor* dlg = new CSSSelectorEditor (code, true, this,
+      i18n ("Insert a new selector"));
+    if (dlg->exec()) {
+       w->insertTag( dlg->code() );
+    }
     delete dlg;
   }
 
@@ -158,21 +158,21 @@ void QuantaView::slotInsertCSS()
 /** for <a href=mailto> tag  */
 void QuantaView::slotTagMail()
 {
-	TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Email Link (mailto)"));
+  TagMailDlg *mailDlg = new TagMailDlg( this, i18n("Email Link (mailto)"));
 
   if ( mailDlg->exec() ) {
-  	QString tag = QString(QuantaCommon::tagCase("<a"));
+    QString tag = QString(QuantaCommon::tagCase("<a"));
 
-  	if ( !QString(mailDlg->lineEmail->text()).isEmpty())
-  	{
-  		tag += QuantaCommon::attrCase(" href=\"")+"mailto:"+mailDlg->lineEmail->text();
-  	  	if ( !QString(mailDlg->lineSubject->text()).isEmpty())
-	   		tag += "?subject="+mailDlg->lineSubject->text();
-  	   	tag += "\"";
-  	}
+    if ( !QString(mailDlg->lineEmail->text()).isEmpty())
+    {
+      tag += QuantaCommon::attrCase(" href=\"")+"mailto:"+mailDlg->lineEmail->text();
+        if ( !QString(mailDlg->lineSubject->text()).isEmpty())
+         tag += "?subject="+mailDlg->lineSubject->text();
+         tag += "\"";
+    }
 
-  	if ( !QString(mailDlg->titleEdit->text()).isEmpty())
-	   		tag += QuantaCommon::attrCase(" title=\"")+mailDlg->titleEdit->text()+"\"";
+    if ( !QString(mailDlg->titleEdit->text()).isEmpty())
+         tag += QuantaCommon::attrCase(" title=\"")+mailDlg->titleEdit->text()+"\"";
     tag += QString(">");
     write()->insertTag(tag,QuantaCommon::tagCase("</a>"));
   }
@@ -191,19 +191,19 @@ void QuantaView::slotTagMisc()
  TagMiscDlg *miscDlg = new TagMiscDlg(element, addClosingTag, this, i18n("Misc. Tag"));
 
   if ( miscDlg->exec() ) {
-  	QString tag;
-  	element = miscDlg->elementName->text();
-  	if ( !element.isEmpty())
-  	{
-  		tag += "<" + QuantaCommon::attrCase(element)+">";
-  	  	if ( (addClosingTag = miscDlg->addClosingTag->isChecked()) == true)
+    QString tag;
+    element = miscDlg->elementName->text();
+    if ( !element.isEmpty())
+    {
+      tag += "<" + QuantaCommon::attrCase(element)+">";
+        if ( (addClosingTag = miscDlg->addClosingTag->isChecked()) == true)
         {
           write()->insertTag(tag,QuantaCommon::tagCase( "</"+QuantaCommon::attrCase(element)+">"));
         } else
         {
-		      write()->insertTag(tag,QuantaCommon::tagCase(""));
+          write()->insertTag(tag,QuantaCommon::tagCase(""));
         }
-  	}
+    }
   }
   delete miscDlg;
 }
@@ -211,33 +211,33 @@ void QuantaView::slotTagMisc()
 
 /** quick html text generate */
 void QuantaView::slotTagQuickStart(){
-	TagQuickStart *quickDlg = new TagQuickStart( quantaApp->projectBaseURL(), this, i18n("Generate HTML Text"));
+  TagQuickStart *quickDlg = new TagQuickStart( quantaApp->projectBaseURL(), this, i18n("Generate HTML Text"));
 
   if ( quickDlg->exec() )
    {
     const QString chset = QTextCodec::codecForLocale()->mimeName();
     QString s = dtds->find(DEFAULT_DTD)->url;
     if (!s.isEmpty()) s = "\n\t\t\"" + s + "\"";
-  	QString tag = QString("<!DOCTYPE HTML PUBLIC \""+DEFAULT_DTD+s+"\">\n")+QuantaCommon::tagCase("<html>\n")
-  	                  +space+QuantaCommon::tagCase("<head>\n")+space+QuantaCommon::tagCase("  <title>");
-  	if ( !QString(quickDlg->lineTitle->text()).isEmpty())
-	   		tag += quickDlg->lineTitle->text();
+    QString tag = QString("<!DOCTYPE HTML PUBLIC \""+DEFAULT_DTD+s+"\">\n")+QuantaCommon::tagCase("<html>\n")
+                      +space+QuantaCommon::tagCase("<head>\n")+space+QuantaCommon::tagCase("  <title>");
+    if ( !QString(quickDlg->lineTitle->text()).isEmpty())
+         tag += quickDlg->lineTitle->text();
     tag += QuantaCommon::tagCase("</title>\n")+space+
            "  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + chset + "\">\n"+
            space+"  <meta name=\"GENERATOR\" content=\"Quanta Plus\">\n"+space+
            QuantaCommon::tagCase("</head>\n")+space+QuantaCommon::tagCase("<body");
     if ( !QString(quickDlg->lineBGImage->text()).isEmpty())
-	   		tag += QuantaCommon::attrCase(" background=\"")+quickDlg->lineBGImage->text()+"\"";
-	  if ( !QString(quickDlg->comboBGColor->currentText()).isEmpty())
-	   		tag += QuantaCommon::attrCase(" bgcolor=\"")+quickDlg->comboBGColor->currentText()+"\"";
-	  if ( !QString(quickDlg->comboTextColor->currentText()).isEmpty())
-	   		tag += QuantaCommon::attrCase(" text=\"")+quickDlg->comboTextColor->currentText()+"\"";
-	  if ( !QString(quickDlg->comboLinkColor->currentText()).isEmpty())
-	   		tag += QuantaCommon::attrCase(" link=\"")+quickDlg->comboLinkColor->currentText()+"\"";
-	  if ( !QString(quickDlg->comboALinkColor->currentText()).isEmpty())
-	   		tag += QuantaCommon::attrCase(" alink=\"")+quickDlg->comboALinkColor->currentText()+"\"";
-	  if ( !QString(quickDlg->comboVLinkColor->currentText()).isEmpty())
-	   		tag += QuantaCommon::attrCase(" vlink=\"")+quickDlg->comboVLinkColor->currentText()+"\"";
+         tag += QuantaCommon::attrCase(" background=\"")+quickDlg->lineBGImage->text()+"\"";
+    if ( !QString(quickDlg->comboBGColor->currentText()).isEmpty())
+         tag += QuantaCommon::attrCase(" bgcolor=\"")+quickDlg->comboBGColor->currentText()+"\"";
+    if ( !QString(quickDlg->comboTextColor->currentText()).isEmpty())
+         tag += QuantaCommon::attrCase(" text=\"")+quickDlg->comboTextColor->currentText()+"\"";
+    if ( !QString(quickDlg->comboLinkColor->currentText()).isEmpty())
+         tag += QuantaCommon::attrCase(" link=\"")+quickDlg->comboLinkColor->currentText()+"\"";
+    if ( !QString(quickDlg->comboALinkColor->currentText()).isEmpty())
+         tag += QuantaCommon::attrCase(" alink=\"")+quickDlg->comboALinkColor->currentText()+"\"";
+    if ( !QString(quickDlg->comboVLinkColor->currentText()).isEmpty())
+         tag += QuantaCommon::attrCase(" vlink=\"")+quickDlg->comboVLinkColor->currentText()+"\"";
     tag += QString(">\n")+space+QString("  ");
     write()->insertTag(tag,QString("\n")+space+QuantaCommon::tagCase("</body>\n")+space+QuantaCommon::tagCase("</html>"));
   }
@@ -246,14 +246,14 @@ void QuantaView::slotTagQuickStart(){
 
 /** do quick list */
 void QuantaView::slotTagQuickList(){
-	TagQuickListDlg *listDlg = new TagQuickListDlg(this,i18n("Generate List"));
+  TagQuickListDlg *listDlg = new TagQuickListDlg(this,i18n("Generate List"));
   if ( listDlg->exec() ) {
-  	int i;
+    int i;
     int n = listDlg->spinBoxRows->value();
 
     QString tag;
     if ( listDlg->radioOrdered->isChecked())
-    	tag = QString("<ol>\n")+space;
+      tag = QString("<ol>\n")+space;
     else tag = QString("<ul>\n")+space;
 
     for ( i=0;i<n;i++)
@@ -263,7 +263,7 @@ void QuantaView::slotTagQuickList(){
         tag += QString("  <li> \n")+space;
 
     if ( listDlg->radioOrdered->isChecked())
-    	tag += QString("</ol>");
+      tag += QString("</ol>");
     else tag += QString("</ul>");
 
     write()->insertTag( QuantaCommon::tagCase(tag));
@@ -274,16 +274,16 @@ void QuantaView::slotTagQuickList(){
 /** for quick create table */
 void QuantaView::slotTagQuickTable()
 {
-	int y,x;
+  int y,x;
 
-	TagQuickTable *quickDlg = new TagQuickTable(write(), this,i18n("Generate Table"));
+  TagQuickTable *quickDlg = new TagQuickTable(write(), this,i18n("Generate Table"));
 
   if ( quickDlg->exec() )
   {
-  		y = quickDlg->SpinBoxRow->value();
-  		x = quickDlg->SpinBoxCol->value();
+      y = quickDlg->SpinBoxRow->value();
+      x = quickDlg->SpinBoxCol->value();
 
-  		QString tag = QString("<table>\n")+space;
+      QString tag = QString("<table>\n")+space;
 
       if (quickDlg->useCaption->isChecked())
       {
@@ -324,34 +324,34 @@ void QuantaView::slotTagQuickTable()
         }
       }
 
-  		if (quickDlg->useTHead->isChecked())
-  		{
-  			tag += "  <thead>\n";
-  			tag += "    <tr>\n";
- 		  	for ( int j=0;j<x;j++)
- 			  tag += QString("      <th scope=col>  </th>\n")+space;
-  			tag += "    </tr>\n";
-  			tag += "  </thead>\n";
-  		}
-  		if (quickDlg->useTFoot->isChecked())
-  		{
-  			tag += "  <tfoot>\n";
-  			tag += "    <tr>\n";
-  			tag += "    </tr>\n";
-  			tag += "  </tfoot>\n";
-  		}
-  	 	tag+="  <tbody>\n";
-     	for ( int i=0;i<y;i++)
-     	{
- 		  	tag += QString("    <tr>\n")+space;
- 		  	for ( int j=0;j<x;j++)
- 			  tag += QString("      <td>  </td>\n")+space;
- 		  	tag += QString("    </tr>\n")+space;
- 	 	}
- 	 	tag += "  </tbody>\n";
- 	 	tag += QString("</table>");
+      if (quickDlg->useTHead->isChecked())
+      {
+        tag += "  <thead>\n";
+        tag += "    <tr>\n";
+         for ( int j=0;j<x;j++)
+         tag += QString("      <th scope=col>  </th>\n")+space;
+        tag += "    </tr>\n";
+        tag += "  </thead>\n";
+      }
+      if (quickDlg->useTFoot->isChecked())
+      {
+        tag += "  <tfoot>\n";
+        tag += "    <tr>\n";
+        tag += "    </tr>\n";
+        tag += "  </tfoot>\n";
+      }
+       tag+="  <tbody>\n";
+       for ( int i=0;i<y;i++)
+       {
+         tag += QString("    <tr>\n")+space;
+         for ( int j=0;j<x;j++)
+         tag += QString("      <td>  </td>\n")+space;
+         tag += QString("    </tr>\n")+space;
+      }
+      tag += "  </tbody>\n";
+      tag += QString("</table>");
 
-  	write()->insertTag( QuantaCommon::tagCase(tag) );
+    write()->insertTag( QuantaCommon::tagCase(tag) );
   }
   delete quickDlg;
 }
@@ -360,13 +360,13 @@ void QuantaView::slotTagQuickTable()
 void QuantaView::slotTagColor(){
   QColor color;
 
-	if (KColorDialog::getColor( color )) {
-		char c[8];
-		sprintf(c,"#%2X%2X%2X",color.red(),color.green(),color.blue());
-		for (int i=0;i<7;i++) if (c[i] == ' ') c[i] = '0';
-		QString scolor = (char *)c;
-  	write()->insertTag(scolor);
-	}
+  if (KColorDialog::getColor( color )) {
+    char c[8];
+    sprintf(c,"#%2X%2X%2X",color.red(),color.green(),color.blue());
+    for (int i=0;i<7;i++) if (c[i] == ' ') c[i] = '0';
+    QString scolor = (char *)c;
+    write()->insertTag(scolor);
+  }
 }
 
 /** insert date */
@@ -515,11 +515,11 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
   output.truncate(buflen);
 
   if ( scriptOutputDest == "cursor" )
-  	w->insertTag(output);
+    w->insertTag(output);
 
   if ( scriptOutputDest == "message" ) {
 
-			if ( beginOfScriptOutput ) {
+      if ( beginOfScriptOutput ) {
         //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
         //  quantaApp->slotViewMes();
         quantaApp->messageOutput->clear();
@@ -531,14 +531,14 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
 
   if ( scriptOutputDest == "new" )
   {
-		 if ( beginOfScriptOutput )
+     if ( beginOfScriptOutput )
         doc->openDocument( KURL() );
      w->insertTag(output);
   }
 
   if ( scriptOutputDest == "replace" )
   {
-		 if ( beginOfScriptOutput ) w->editIf->clear();
+     if ( beginOfScriptOutput ) w->editIf->clear();
      w->insertTag(output);
   }
 
@@ -555,16 +555,16 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
   output.truncate(buflen);
 
   if ( scriptErrorDest == "merge" ) {
-  	scriptErrorDest = scriptOutputDest;
-  	beginOfScriptError = beginOfScriptOutput;
+    scriptErrorDest = scriptOutputDest;
+    beginOfScriptError = beginOfScriptOutput;
   }
 
   if ( scriptErrorDest == "cursor" )
-  	w->insertTag(output);
+    w->insertTag(output);
 
   if ( scriptErrorDest == "message" ) {
 
-			if ( beginOfScriptError ) {
+      if ( beginOfScriptError ) {
         //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
         //  quantaApp->slotViewMes();
         quantaApp->messageOutput->clear();
@@ -576,14 +576,14 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
 
   if ( scriptErrorDest == "new" )
   {
-		 if ( beginOfScriptError )
+     if ( beginOfScriptError )
         doc->openDocument( KURL() );
      w->insertTag(output);
   }
 
   if ( scriptErrorDest == "replace" )
   {
-		 if ( beginOfScriptError ) write()->editIf->clear();
+     if ( beginOfScriptError ) write()->editIf->clear();
      w->insertTag(output);
   }
 
@@ -811,9 +811,9 @@ void QuantaView::setEol(int which)
 /** insert special character */
 void QuantaView::slotInsertChar(const QString &selected)
 {
-	int begin = selected.find("(")+1;
+  int begin = selected.find("(")+1;
   int length = selected.find(")") - begin;
-	QString part = selected.mid(begin, length);
+  QString part = selected.mid(begin, length);
   write()->insertTag(part);
 }
 
@@ -836,13 +836,13 @@ KURL QuantaView::baseURL()
 {
   Document *w = write();
   KURL base;
-	if ( !w->isUntitled() )
-	{
+  if ( !w->isUntitled() )
+  {
     base = QuantaCommon::convertToPath(w->url());
-	} else
-	{
+  } else
+  {
     base = w->baseURL;
-	}
+  }
 
   return base;
 }

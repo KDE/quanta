@@ -32,8 +32,8 @@
 FilesTreeFile::FilesTreeFile( FilesTreeFolder *parent, QString name, const KURL& p_url)
     : KListViewItem( parent, name )
 {
-	url = p_url;
-	isDir = false;
+  url = p_url;
+  isDir = false;
 
   setDragEnabled(true);
   setDropEnabled(true);
@@ -42,8 +42,8 @@ FilesTreeFile::FilesTreeFile( FilesTreeFolder *parent, QString name, const KURL&
 FilesTreeFile::FilesTreeFile( QListView *parent, QString name, const KURL& p_url)
     : KListViewItem( parent, name )
 {
-	url = p_url;
-	isDir = false;
+  url = p_url;
+  isDir = false;
   setDragEnabled(true);
   setDropEnabled(true);
 }

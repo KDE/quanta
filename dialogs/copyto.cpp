@@ -37,14 +37,14 @@ CopyTo::CopyTo(const KURL& dirURL, QWidget *parent, const char *name)
     : CopyToS(parent,name,true)
 {
 
-	mInitialDirUrl = dirURL;
+  mInitialDirUrl = dirURL;
 
-	urlRequester->setMode( KFile::Directory | KFile::ExistingOnly);
-	urlRequester->setURL( dirURL.prettyURL() );
-	urlRequester->setFocus();
-	
-	connect( buttonOk,    SIGNAL(clicked()), SLOT(accept()) );
-	connect( buttonCancel,SIGNAL(clicked()), SLOT(reject()) );
+  urlRequester->setMode( KFile::Directory | KFile::ExistingOnly);
+  urlRequester->setURL( dirURL.prettyURL() );
+  urlRequester->setFocus();
+  
+  connect( buttonOk,    SIGNAL(clicked()), SLOT(accept()) );
+  connect( buttonCancel,SIGNAL(clicked()), SLOT(reject()) );
 }
 
 CopyTo::~CopyTo(){
@@ -58,7 +58,7 @@ KURL CopyTo::copy(const KURL& urlToCopy)
     targetDirURL = mInitialDirUrl;
   } else
   {
-	  QuantaCommon::setUrl(targetDirURL, urlRequester->url());
+    QuantaCommon::setUrl(targetDirURL, urlRequester->url());
   }
   targetDirURL.adjustPath(1);
 
@@ -102,7 +102,7 @@ KURL::List CopyTo::copy( KURL::List sourceList )
     targetDirURL = mInitialDirUrl;
   } else
   {
-	  QuantaCommon::setUrl(targetDirURL, urlRequester->url());
+    QuantaCommon::setUrl(targetDirURL, urlRequester->url());
   }
   bool doCopy = true;
   if (!QExtFileInfo::exists(targetDirURL))

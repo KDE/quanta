@@ -45,37 +45,37 @@ FileManage::FileManage()
 }
 
 FileManage::FileManage( QWidget *parent, const char *name)
-	: KListView( parent, name )
+  : KListView( parent, name )
 {
-	fileMenu = new QPopupMenu();
-	
-	fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
-	fileMenu -> insertItem(					  			   i18n("Open With..."), 		this ,SLOT(slotOpenWith()));
-	fileMenu -> insertItem(					  			   i18n("Open in Quanta"), 	this ,SLOT(slotOpenInQuanta()));
-	fileMenu -> insertItem(					  			   i18n("Insert Tag"), 	this ,SLOT(slotInsertTag()));
-	fileMenu -> insertSeparator();
-	fileMenu -> insertItem(					  			   i18n("Insert in Project..."),this ,SLOT(slotInsertInProject()));
-	fileMenu -> insertSeparator();
-	fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
-	fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
-	fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
-	fileMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
-	fileMenu -> insertSeparator();
-	fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
+  fileMenu = new QPopupMenu();
+  
+  fileMenu -> insertItem( UserIcon("open"),  i18n("&Open"),     this ,SLOT(slotOpen()));
+  fileMenu -> insertItem(                     i18n("Open With..."),     this ,SLOT(slotOpenWith()));
+  fileMenu -> insertItem(                     i18n("Open in Quanta"),   this ,SLOT(slotOpenInQuanta()));
+  fileMenu -> insertItem(                     i18n("Insert Tag"),   this ,SLOT(slotInsertTag()));
+  fileMenu -> insertSeparator();
+  fileMenu -> insertItem(                     i18n("Insert in Project..."),this ,SLOT(slotInsertInProject()));
+  fileMenu -> insertSeparator();
+  fileMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"),     this ,SLOT(slotCopy()));
+  fileMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),    this ,SLOT(slotPaste()));
+  fileMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
+  fileMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
+  fileMenu -> insertSeparator();
+  fileMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 
 
-	folderMenu = new QPopupMenu();
+  folderMenu = new QPopupMenu();
 
-	folderMenu -> insertItem(					  			   i18n("Insert in Project..."),this ,SLOT(slotInsertDirInProject()));
-	folderMenu -> insertSeparator();
-	folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"), 		this ,SLOT(slotCopy()));
-	folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),		this ,SLOT(slotPaste()));
-	folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
-	folderMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
-	folderMenu -> insertSeparator();
-	folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
+  folderMenu -> insertItem(                     i18n("Insert in Project..."),this ,SLOT(slotInsertDirInProject()));
+  folderMenu -> insertSeparator();
+  folderMenu -> insertItem( UserIcon("copy"),  i18n("&Copy"),     this ,SLOT(slotCopy()));
+  folderMenu -> insertItem( UserIcon("paste"), i18n("&Paste"),    this ,SLOT(slotPaste()));
+  folderMenu -> insertItem( UserIcon("delete"),i18n("&Delete..."),   this ,SLOT(slotDelete()));
+  folderMenu -> insertItem( i18n("Properties..."),   this ,SLOT(slotProperties()));
+  folderMenu -> insertSeparator();
+  folderMenu -> insertItem( i18n("Reload"),   this ,SLOT(slotReload()));
 
-	//setShowSortIndicator(true);
+  //setShowSortIndicator(true);
   dirLister = new KDirLister();
   dirLister->setShowingDotFiles(false);
   connect(dirLister, SIGNAL(clear()),SLOT(slotDirListClear()));
@@ -99,35 +99,35 @@ void FileManage::slotReload()
 // virtual method
 KURL FileManage::currentURL()
 {
-	return KURL();
+  return KURL();
 }
 
 void FileManage::slotOpen()
 {
-	if (currentItem())
+  if (currentItem())
   {
-	  emit open( currentItem() );
+    emit open( currentItem() );
   }
 }
 
 void FileManage::slotOpenInQuanta()
 {
-	if (currentItem() )
+  if (currentItem() )
   {
-	  emit openInQuanta( currentItem() );
+    emit openInQuanta( currentItem() );
   }
 }
 
 void FileManage::slotOpenWith()
 {
-	if (currentItem())
+  if (currentItem())
   {
-  	KURL::List list;
-	  KURL urlToOpen = currentURL();
-	  list.append( urlToOpen );
-	
-	  KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
-  	kfowh->displayOpenWithDialog( list );
+    KURL::List list;
+    KURL urlToOpen = currentURL();
+    list.append( urlToOpen );
+  
+    KFileOpenWithHandler *kfowh = new KFileOpenWithHandler();
+    kfowh->displayOpenWithDialog( list );
     delete kfowh;
   }
 }
@@ -143,7 +143,7 @@ void FileManage::slotCopy()
 
 void FileManage::slotPaste()
 {
-	if (currentItem())
+  if (currentItem())
   {
     QClipboard *cb = QApplication::clipboard();
     KURL::List list( QStringList::split( QChar('\n'), cb->text() ) );
@@ -185,17 +185,17 @@ void FileManage::slotJobFinished( KIO::Job *)
 
 void FileManage::slotInsertInProject()
 {
-	if (currentItem() )
+  if (currentItem() )
   {
-	  emit insertFileInProject( currentURL());
+    emit insertFileInProject( currentURL());
   }
 }
 
 void FileManage::slotInsertDirInProject()
 {
-	if ( currentItem() )
+  if ( currentItem() )
   {
-	  emit insertDirInProject( currentURL() );
+    emit insertDirInProject( currentURL() );
   }
 }
 

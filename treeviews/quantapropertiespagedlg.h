@@ -27,9 +27,9 @@
 
 class QuantaPropertiesPageDlg : public QuantaPropertiesPage  {
    Q_OBJECT
-public: 
-	QuantaPropertiesPageDlg(QWidget *parent=0, const char *name=0);
-	~QuantaPropertiesPageDlg();
+public:
+  QuantaPropertiesPageDlg(QWidget *parent=0, const char *name=0);
+  ~QuantaPropertiesPageDlg();
 };
 
 #endif

@@ -41,7 +41,7 @@
 #include "../resource.h"
 
 RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *parent, const char *name, bool modal )
-	: RescanPrjDir(parent,name,modal)
+  : RescanPrjDir(parent,name,modal)
 {
   setCaption(name);
 
@@ -60,16 +60,16 @@ RescanPrj::RescanPrj(KURL::List p_prjFileList, const KURL& p_baseURL, QWidget *p
            this,SLOT  (slotListDone(KIO::Job *)));
 
 
-	connect( buttonSelect,   SIGNAL(clicked()),
-	         this,           SLOT(slotSelect()));
-	connect( buttonDeselect, SIGNAL(clicked()),
-	         this,           SLOT(slotDeselect()));
-	connect( buttonInvert,   SIGNAL(clicked()),
-	         this,           SLOT(slotInvert()));
-	connect( buttonExpand,   SIGNAL(clicked()),
-	         this,           SLOT(slotExpand()));
-	connect( buttonCollapse, SIGNAL(clicked()),
-	         this,           SLOT(slotCollapse()));
+  connect( buttonSelect,   SIGNAL(clicked()),
+           this,           SLOT(slotSelect()));
+  connect( buttonDeselect, SIGNAL(clicked()),
+           this,           SLOT(slotDeselect()));
+  connect( buttonInvert,   SIGNAL(clicked()),
+           this,           SLOT(slotInvert()));
+  connect( buttonExpand,   SIGNAL(clicked()),
+           this,           SLOT(slotExpand()));
+  connect( buttonCollapse, SIGNAL(clicked()),
+           this,           SLOT(slotCollapse()));
 }
 
 RescanPrj::~RescanPrj(){
@@ -146,7 +146,7 @@ void RescanPrj::slotCollapse()
 
 KURL::List RescanPrj::files()
 {
-	KURL::List r;
+  KURL::List r;
 
   QListViewItem *item;
   QListViewItemIterator it(listView);

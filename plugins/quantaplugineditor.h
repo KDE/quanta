@@ -40,8 +40,8 @@ class QuantaPluginEditor : public PluginEditor
 {
   Q_OBJECT
 public: 
-	QuantaPluginEditor(QWidget *, const char *);
-	~QuantaPluginEditor();
+  QuantaPluginEditor(QWidget *, const char *);
+  ~QuantaPluginEditor();
   QDict<QuantaPlugin> plugins();
   /** No descriptions */
   QStringList searchPathList();

@@ -2,7 +2,7 @@
     From WebMaker - KDE HTML Editor
     Copyright (C) 1998, 1999 Alexei Dets <dets@services.ru>
     Rewritten for Quanta Plus: (C) 2002 Andras Mantia <amantia@freemail.hu>
-	
+  
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -28,8 +28,8 @@ public:
   QExtFileInfo() {};
   ~QExtFileInfo() {};
   
-	/** create to ralative short name */
-	static KURL toRelative(const KURL& urlToConvert,const KURL& baseURL);
+  /** create to ralative short name */
+  static KURL toRelative(const KURL& urlToConvert,const KURL& baseURL);
   /** convert relative filename to absolute */
   static KURL toAbsolute(const KURL& urlToConvert,const KURL& baseURL);
   /** recurse function for all files in dir */

@@ -40,8 +40,8 @@ FilesTreeFolder::FilesTreeFolder(QListView* parentListView, FilesTreeFolder *par
     : KListViewItem( parent )
 {
   parentView = dynamic_cast<FilesTreeView*>(parentListView);
-  parentFolder 	= parent;
-//  opened 		= false;
+  parentFolder   = parent;
+//  opened     = false;
   name = p_url.fileName();
   url = p_url;
   init();
@@ -65,8 +65,8 @@ FilesTreeFolder::~FilesTreeFolder()
 /** No descriptions */
 void FilesTreeFolder::init()
 {
-//  readable 	= true;
-//  showall 	= true;
+//  readable   = true;
+//  showall   = true;
   setDragEnabled(true);
   setDropEnabled(true);
   url.adjustPath(1);   //add an ending "/" to the directory urls
@@ -93,16 +93,16 @@ void FilesTreeFolder::setOpen( bool open )
 QString FilesTreeFolder::fullName()
 {
   QString s="";
-	
+  
 //  if (!item) item = this;
 
   if ( parentFolder )
   {
-		s = parentFolder->fullName();
-		s += url.path(1);
+    s = parentFolder->fullName();
+    s += url.path(1);
   }
   else {
-		s = url.path(1);
+    s = url.path(1);
   }
 
   return s;
@@ -111,7 +111,7 @@ QString FilesTreeFolder::fullName()
 /** return column text */
 QString FilesTreeFolder::text( int ) const
 {
-	return name;
+  return name;
 }
 
 /** setup */

@@ -36,21 +36,21 @@ class KURL;
 class ProjectNewWeb : public ProjectNewWebS  {
    Q_OBJECT
 public: 
-	ProjectNewWeb(QWidget *parent=0, const char *name=0);
-	~ProjectNewWeb();
-	
+  ProjectNewWeb(QWidget *parent=0, const char *name=0);
+  ~ProjectNewWeb();
+  
 public slots:
   void enableStart(const QString&);
-	void setCommandL(const QString&);
-	void setBaseURL(const KURL& a_baseURL);
-	
-	void slotStart();
-	
-	QStringList files();
-	
-	void slotGetWgetExited(KProcess *);
+  void setCommandL(const QString&);
+  void setBaseURL(const KURL& a_baseURL);
+  
+  void slotStart();
+  
+  QStringList files();
+  
+  void slotGetWgetExited(KProcess *);
   void slotGetWgetOutput(KProcess *proc, char *buffer, int buflen);
-	
+  
   virtual void resizeEvent( QResizeEvent * );
   
 signals:

@@ -35,25 +35,25 @@ class ProjectTreeFolder;
   */
 
 class ProjectTreeView : public FilesTreeView  {
-	friend class Project;
-	Q_OBJECT
+  friend class Project;
+  Q_OBJECT
 
 public: 
-	ProjectTreeView(QWidget *parent=0, const char *name=0);
-	virtual ~ProjectTreeView();
+  ProjectTreeView(QWidget *parent=0, const char *name=0);
+  virtual ~ProjectTreeView();
   /** Open a subfolder. */
   void openFolder(ProjectTreeFolder *folder);
-	
-	
+  
+  
 public slots: // Public slots
-	void slotOpen();
-	void slotOpenWith();
-	void slotOpenInQuanta();
-	void slotRemove();
-	void slotRemoveFromProject(int askForRemove=1);
-	void slotUploadSingleURL();
-	void slotRename();
-	
+  void slotOpen();
+  void slotOpenWith();
+  void slotOpenInQuanta();
+  void slotRemove();
+  void slotRemoveFromProject(int askForRemove=1);
+  void slotUploadSingleURL();
+  void slotRename();
+  
   void slotMenu(QListViewItem*, const QPoint&, int);
   void slotReloadTree(const KURL::List &a_urlList, bool buildNewtree);
   void slotSetBaseURL( const KURL& url );
@@ -80,16 +80,16 @@ public:
   ProjectTreeFolder *projectDir;
 
 private:
-	KURL baseURL;
+  KURL baseURL;
   KURL::List urlList;
   QPopupMenu *projectMenu;
-	QString projectName;
-	
+  QString projectName;
+  
   int openInQuantaId;
 
 protected:
   virtual void itemRenamed(const KURL& , const KURL& ) {};
-	virtual KURL currentURL();
+  virtual KURL currentURL();
 
 private slots: // Private slots
   /** No descriptions */
