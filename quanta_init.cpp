@@ -91,7 +91,7 @@ QDict <QStrList> *tagsDict;
 //
 // Enable this define to test the KAction/XMLGUI code (Rich).
 //
-//#define NEW_STUFF
+#define NEW_STUFF
 //
 
 #ifdef NEW_STUFF
@@ -1326,13 +1326,19 @@ void QuantaApp::initActions()
     KStdAction::showToolbar( this, SLOT( slotViewToolBar() ), actionCollection() );
     KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), actionCollection() );
 
-    (void) new KAction( i18n( "Show Tr&ee" ), "tree_win", CTRL+Key_T,
-                        this, SLOT( slotShowLeftPanel() ),
-                        actionCollection(), "show_tree" );
-    (void) new KAction( i18n( "Show &Messages" ), CTRL+Key_M, this, SLOT( slotViewMessages() ),
-                        actionCollection(), "show_messages" );
-    (void) new KAction( i18n( "&Preview" ), "preview", Key_F6, this, SLOT( slotShowPreview() ),
-                        actionCollection(), "show_preview" );
+    KToggleAction *showTree = new KToggleAction( i18n( "Show Tr&ee" ), "tree_win", CTRL+Key_T,
+                                                 this, SLOT( slotShowLeftPanel() ),
+                                                 actionCollection(), "show_tree" );
+    showTree->setChecked( true );
+
+    KToggleAction *showMessages = new KToggleAction( i18n( "Show &Messages" ), CTRL+Key_M,
+                                                     this, SLOT( slotViewMessages() ),
+                                                     actionCollection(), "show_messages" );
+    showMessages->setChecked( true );
+
+    KToggleAction *showPreview = new KToggleAction( i18n( "&Preview" ), "preview", Key_F6,
+                                                    this, SLOT( slotShowPreview() ),
+                                                    actionCollection(), "show_preview" );
 
     KStdAction::back( htmlPartDoc, SLOT( back() ), actionCollection() );
     KStdAction::forward( htmlPartDoc, SLOT( forward() ), actionCollection() );
@@ -1341,10 +1347,12 @@ void QuantaApp::initActions()
                         , this, SLOT( slotViewRepaint() ),
                         actionCollection(), "reload" );
 
-    //    (void) new KAction( i18n( "Open Document In Netscape" ), 0, this, SLOT( slotViewInNetscape() ),
-    //                        actionCollection(), "open_with_netscape" );
-    //    (void) new KAction( i18n( "Open Document In Konqueror" ), 0, this, SLOT( slotViewInKFM() ),
-    //                        actionCollection(), "open_with_konqueror" );
+    (void) new KAction( i18n( "View With Netscape" ), 0, view, SLOT( slotViewInNetscape() ),
+                        actionCollection(), "view_with_netscape" );
+    (void) new KAction( i18n( "View With Konqueror" ), 0, view, SLOT( slotViewInKFM() ),
+                        actionCollection(), "view_with_konqueror" );
+    (void) new KAction( i18n( "View With Lynx" ), 0, view, SLOT( slotViewInLynx() ),
+                        actionCollection(), "view_with_lynx" );
 
     (void) new KAction( i18n( "Previous File" ), CTRL+ALT+Key_Right, this, SLOT( slotFilePrev() ),
                         actionCollection(), "previous_file" );
@@ -1381,6 +1389,8 @@ void QuantaApp::initActions()
     (void) new KAction( i18n( "&Hightlighting..." ), 0, doc->write(), SLOT( hlDlg() ),
                         actionCollection(), "highlight_options" );
     // TODO: Highlighting mode
+
+    // TODO: Editor options needs it's own slot
     //    (void) new KAction( i18n( "&Editor Options..." ), 0, doc->write(), SLOT( editorOptions() ),
     //                        actionCollection(), "editor_options" );
 

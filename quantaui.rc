@@ -48,6 +48,10 @@
       <Separator/>
       <Action name="reload"/>
       <Separator/>
+      <Action name="view_with_netscape"/>
+      <Action name="view_with_konqueror"/>
+      <Action name="view_with_lynx"/>
+      <Separator/>
       <Action name="previous_file"/>
       <Action name="next_file"/>
     </Menu>
@@ -160,7 +164,7 @@
       <Action name="project_options"/>
     </Menu>
     <Menu name="settings"><text>&amp;Settings</text>
-      <Merge/>
+      <Action name="highlight_options"/>
       <Action name="vertical_selection"/>
     </Menu>
   </MenuBar>

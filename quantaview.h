@@ -171,6 +171,9 @@ insert color in the text */
   void slotViewInNetscape();
   /** check netscape status */
   void slotNetscapeStatus(KProcess *proc);
+  /** view in external browser lynx */
+  void slotViewInLynx();
+
   /** insert tags from tree view */
   void slotInsertTagFromTree(QString name);
 

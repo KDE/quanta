@@ -398,6 +398,16 @@ void QuantaView::slotViewInKFM(){
   }
 }
 
+/** view in KFM */
+void QuantaView::slotViewInLynx(){
+  write()->save();
+  if ( write()->hasFileName() ) {
+    KProcess *show = new KProcess();
+    *show << "konsole" << "--nohist" << "--notoolbar" << "-e" << "lynx" << write()->fileName();
+    show->start( KProcess::DontCare );
+  }
+}
+
 /** check netscape status */
 void QuantaView::slotNetscapeStatus(KProcess *proc){
   if ( proc->exitStatus() ) {

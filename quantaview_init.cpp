@@ -43,7 +43,7 @@
 //
 // Enable this define to test the KAction/XMLGUI code (Rich).
 //
-//#define NEW_STUFF
+#define NEW_STUFF
 //
 
 #ifdef NEW_STUFF
@@ -643,7 +643,10 @@ void QuantaView::initActions()
     start = start.arg( attrCase( I18N_NOOP("align%2") ) );
     start = start.arg( I18N_NOOP("=\"justify\"") );
     tagDivJustify->setTag( start, end );
-    // TODO: CSS
+
+    (void) new KAction( i18n( "Insert CSS..." ), 0,
+                        this, SLOT( slotInsertCSS() ),
+                        actionCollection, "insert_css" );
 
     //
     // Fonts

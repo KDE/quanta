@@ -85,6 +85,7 @@
 #ifdef NEW_STUFF
 
 #include <kedittoolbar.h>
+#include <kaction.h>
 
 #endif
 
@@ -1239,15 +1240,23 @@ void QuantaApp::slotActivatePreview()
 
 void QuantaApp::slotShowPreview()
 {
-	static int hSplitPos = 1000;
-	
 	WHTMLPart *part = htmlPart();
 	QWidgetStack *s = widgetStackOfHtmlPart();
 	
 	if ( !s ) return;
 	if ( !part ) return;
-	
+
+#ifdef NEW_STUFF
+	static int hSplitPos = 1000;
+	static int vSplitPos = 250;
+
+    KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_preview" );
+	bool stat = !ta->isChecked();
+#else	
+	static int hSplitPos = 1000;
 	bool stat = viewMenu -> isItemChecked( ID_VIEW_PREVIEW );
+#endif
+
 	if ( stat ) {
 		disableCommand(ID_VIEW_BACK);
 		disableCommand(ID_VIEW_FORWARD);
@@ -1284,10 +1293,17 @@ void QuantaApp::slotShowPreview()
 
 void QuantaApp::slotShowLeftPanel()
 {
+#ifdef NEW_STUFF
+	static int vSplitPos = 250;
+
+    KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_tree" );
+	bool stat = !ta->isChecked();
+#else	
 	static int vSplitPos = 0;
-	
+
 	bool stat = viewMenu -> isItemChecked( ID_VIEW_TREE );
-	
+#endif
+
 	if ( stat )
 	{
     vSplitPos = vSplit->getPos();
@@ -1484,7 +1500,12 @@ void QuantaApp::slotFtpClientClose()
 
 void QuantaApp::slotViewMessages()
 {
-  bool stat = viewMenu -> isItemChecked( ID_VIEW_MES );
+#ifdef NEW_STUFF
+    KToggleAction *ta = (KToggleAction *) actionCollection()->action( "show_messages" );
+	bool stat = !ta->isChecked();
+#else	
+    bool stat = viewMenu -> isItemChecked( ID_VIEW_MES );
+#endif
   
   static int oldpos = 850;
   int pos = hSplit->getPos();
@@ -1493,7 +1514,9 @@ void QuantaApp::slotViewMessages()
   if ( pos <= 850 && !stat )  hSplit->setPos(oldpos);
   if ( stat ) {hSplit->setPos(1000);oldpos=hSplit->getPos();}
   
+#ifndef NEW_STUFF
   viewMenu->setItemChecked(ID_VIEW_MES, !stat);
+#endif
 }
 
 void QuantaApp::slotGoToError( QString fname, int line ) 
