@@ -121,6 +121,7 @@ Version 3.4 (Release date: xx-xx-2005; Started 20-08-2004):
             - show log
             - add/remove to/from .cvsignore
         - added possibility to execute CVS commands on the main project directory
+        - view the rendered document source
       
 
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):

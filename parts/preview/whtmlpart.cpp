@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Aug 18 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2002 Andras Mantia <amantia@kde.org>
+                           (C) 2002, 2004, 2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -14,15 +14,23 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+ 
+//qt includes
+#include <qfileinfo.h>
+#include <qtextcodec.h>
+
 //kde includes
-#include <khtmlview.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <khtml_settings.h>
+#include <khtmlview.h>
+#include <klocale.h>
+#include <kpopupmenu.h>
+#include <ktempfile.h>
 
 //app includes
 #include "whtmlpart.h"
-#include "whtmlpart.moc"
+#include "resource.h"
 
 WHTMLPart::WHTMLPart(QWidget *parentWidget, const char *widgetName,
             QObject *parent, const char *name, GUIProfile prof)
@@ -39,6 +47,11 @@ WHTMLPart::WHTMLPart(QWidget *parentWidget, const char *widgetName,
 
    const_cast<KHTMLSettings*>(set)->init( &konqConfig, false );
    view()->installEventFilter(this);
+   
+   m_contextMenu = new KPopupMenu(parentWidget);
+   m_contextMenu->insertItem(i18n("View &Document Source"), this, SLOT(slotViewSource()));
+   
+   connect(this, SIGNAL(popupMenu(const QString&, const QPoint&)), SLOT(popupMenu(const QString&, const QPoint&)));
 
 //   setCharset( konqConfig.readEntry("DefaultEncoding") );
 //   setEncoding( konqConfig.readEntry("DefaultEncoding") );
@@ -149,3 +162,22 @@ bool WHTMLPart::eventFilter(QObject *watched, QEvent *e)
     emit previewHasFocus(true);
   return false;
 }
+
+void WHTMLPart::popupMenu(const QString &/*url*/, const QPoint &point)
+{
+  m_contextMenu->popup(point);  
+}
+
+void WHTMLPart::slotViewSource()
+{
+  KTempFile *tmpFile = new KTempFile(tmpDir, ".html");
+  QString tempFileName = QFileInfo(*(tmpFile->file())).filePath();
+  tmpFile->setAutoDelete(true);
+  tmpFile->textStream()->setCodec(QTextCodec::codecForName("utf8"));
+  *(tmpFile->textStream()) << document().toString().string();
+  tmpFile->close();
+  tempFileList.append(tmpFile);
+  emit openFile(KURL::fromPathOrURL(tmpFile->name()), "utf8");
+}
+
+#include "whtmlpart.moc"

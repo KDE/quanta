@@ -953,7 +953,7 @@ void QuantaInit::initActions()
                                   m_quanta, SLOT(slotShowNoFramesPreview()),
                                   ac, "show_preview_no_frames" );
     act->plug(m_quanta->showPreviewAction->popupMenu());
-
+    
     act = new KAction( i18n( "View with &Konqueror" ), "konqueror", Key_F12,
                         m_quanta, SLOT( slotViewInKFM() ),
                         ac, "view_with_konqueror" );

@@ -1453,6 +1453,7 @@ void QuantaApp::slotShowNoFramesPreview()
   slotToggleShowPreview();
 }
 
+
 void QuantaApp::newCursorPosition(const QString &file, int lineNumber, int columnNumber)
 {
   Q_UNUSED(file);
@@ -4864,6 +4865,7 @@ void QuantaApp::createPreviewPart()
   slotNewPart(m_htmlPart, false);
   connect(m_htmlPart, SIGNAL(previewHasFocus(bool)), this, SLOT(slotPreviewHasFocus(bool)));
   connect(m_htmlPart, SIGNAL(destroyed(QObject *)), this, SLOT(slotHTMLPartDeleted(QObject *)));
+  connect(m_htmlPart, SIGNAL(openFile(const KURL&, const QString&)), this, SLOT(slotFileOpen(const KURL&, const QString&)));
 
 }
 

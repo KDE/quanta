@@ -4,4 +4,4 @@ METASOURCES = AUTO
 
 libpreview_la_SOURCES = whtmlpart.cpp
 
-AM_CPPFLAGS = $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/quanta/utility $(all_includes)

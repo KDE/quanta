@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Aug 18 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2002 Andras Mantia <amantia@kde.org>
+                           (C) 2002, 2004, 2005 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,6 +21,7 @@
 #include <khtml_part.h>
 #include <qstrlist.h>
 
+class KPopupMenu;
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
@@ -45,13 +46,16 @@ public slots:
  */
   void forward();
   void back();
-
+  void popupMenu(const QString &url, const QPoint &point);
+  void slotViewSource();
+  
   void addToHistory(const QString &url);
   virtual bool eventFilter(QObject *watched, QEvent *e);
 
 signals:
   void updateStatus( bool back, bool forward );
   void previewHasFocus(bool focus);
+  void openFile(const KURL&, const QString&);
 
 protected:
   virtual void urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs args = KParts::URLArgs());
@@ -62,6 +66,7 @@ protected:
 
 private:
   KURL m_previewedURL;
+  KPopupMenu *m_contextMenu;
   QString m_previewedText;
   QStrList history;
   unsigned int hpos;
