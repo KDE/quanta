@@ -32,8 +32,7 @@ MayContain = php
 Name = Inclusions
 No_Name = No Inclusions
 Icon = attach
-SearchRx = (?:include|require)(?:_once)?\\s*[\\(]?(?:(['\"]).*\\1|\\$\\w+)\\s*[\\)]?\\s*;
-
+SearchRx = (?:include|require)(?:_once)?(?:\\s+(?:\$\w+\\s*)?|\\s*\((?:\\s+|\\s*\$\w+\\s*)\)\\s*);
 SearchRx_Minimal = true
 ClearRx = \n
 HasFileName = true
