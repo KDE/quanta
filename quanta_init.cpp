@@ -451,7 +451,7 @@ void QuantaApp::initMenuBar()
   											"Dmitry Poplavsky\n"\
   											"Alexander Yakovlev\n"\
   											"Eric Laffoon\n\n"\
-  											"pdima@kde.org\n"\
+  											"dima@kde.org\n"\
   											"yshurik@kde.org\n"\
   											"sequitur@kde.org\n\n"\
   											"http://quanta.sourceforge.net/"
