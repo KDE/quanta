@@ -698,6 +698,16 @@ void Project::loadProjectXML()
   no = projectNode.namedItem("autoload");
   currentProjectView = no.toElement().attribute("projectview");
 
+  // Debugger
+  no = projectNode.namedItem("debugserverbasedir");
+  debugServerBasedir = no.firstChild().nodeValue();
+  no = projectNode.namedItem("debuglocalbasedir");
+  debugLocalBasedir = no.firstChild().nodeValue();
+  no = projectNode.namedItem("debugserverhost");
+  debugServerHost = no.firstChild().nodeValue();
+  no = projectNode.namedItem("debugserverport");
+  debugServerPort = no.firstChild().nodeValue();
+  
   no = projectNode.namedItem("templates");
   tmpString = no.firstChild().nodeValue();
   templateURL = baseURL;
@@ -1337,6 +1347,12 @@ void Project::slotOptions()
   optionsPage.lineAuthor->setText( author );
   optionsPage.lineEmail->setText( email );
 
+  // Debugger
+  optionsPage.lineDebugServerBasedir->setText(debugServerBasedir);
+  optionsPage.lineDebugLocalBasedir->setText(debugLocalBasedir);
+  optionsPage.lineDebugServerHost->setText(debugServerHost);
+  optionsPage.lineDebugServerPort->setText(debugServerPort);
+
   QDomElement uploadEl = dom.firstChild().firstChild().namedItem("upload").toElement();
 
   optionsPage.lineHost->setText(uploadEl.attribute("remote_host",""));
@@ -1446,6 +1462,13 @@ void Project::slotOptions()
     projectName = optionsPage.linePrjName->text();
     author    = optionsPage.lineAuthor ->text();
     email      = optionsPage.lineEmail  ->text();
+    
+    // Debugger
+    debugServerBasedir = optionsPage.lineDebugServerBasedir->text();
+    debugLocalBasedir = optionsPage.lineDebugLocalBasedir->text();
+    debugServerHost = optionsPage.lineDebugServerHost->text();
+    debugServerPort = optionsPage.lineDebugServerPort->text();
+    
     m_defaultDTD = DTDs::ref()->getDTDNameFromNickName(optionsPage.dtdCombo->currentText()).lower();
     m_defaultEncoding  = optionsPage.encodingCombo->currentText();
 
@@ -1491,6 +1514,36 @@ void Project::slotOptions()
     dom.firstChild().firstChild().appendChild( el );
     el.appendChild( dom.createTextNode( email ) );
 
+    // Debugger
+    el = dom.firstChild().firstChild().namedItem("debugserverbasedir").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = dom.createElement("debugserverbasedir");
+    dom.firstChild().firstChild().appendChild( el );
+    el.appendChild( dom.createTextNode( debugServerBasedir ) );
+
+    el = dom.firstChild().firstChild().namedItem("debuglocalbasedir").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = dom.createElement("debuglocalbasedir");
+    dom.firstChild().firstChild().appendChild( el );
+    el.appendChild( dom.createTextNode( debugLocalBasedir ) );
+
+    el = dom.firstChild().firstChild().namedItem("debugserverhost").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = dom.createElement("debugserverhost");
+    dom.firstChild().firstChild().appendChild( el );
+    el.appendChild( dom.createTextNode( debugServerHost ) );
+
+    el = dom.firstChild().firstChild().namedItem("debugserverport").toElement();
+    if (!el.isNull())
+       el.parentNode().removeChild(el);
+    el = dom.createElement("debugserverport");
+    dom.firstChild().firstChild().appendChild( el );
+    el.appendChild( dom.createTextNode( debugServerPort ) );
+
+    
     excludeStr = optionsPage.lineExclude->text();
     el = dom.firstChild().firstChild().namedItem("exclude").toElement();
     if (!el.isNull())

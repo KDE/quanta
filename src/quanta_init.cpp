@@ -73,6 +73,7 @@
 #include <dcopclient.h>
 
 #include "project.h"
+#include "phpdebuggerinterface.h"
 
 #include "whtmlpart.h"
 #include "messageoutput.h"
@@ -145,6 +146,9 @@ void QuantaInit::initQuanta()
   initProject();
   initActions();
   
+  // Initialize debugger
+  m_quanta->m_debugger = new PHPDebuggerInterface();
+   
   DTDs::ref();  // create the class, must be before readOptions() !
   readOptions();
 
@@ -764,6 +768,11 @@ void QuantaInit::initActions()
                 ac, "edit_apply_wordwrap");
 
 
+//Debugger, breakpoints
+    new KAction(i18n("Toggle &Breakpoint"), SmallIcon("debug_breakpoint"), Qt::CTRL+Qt::SHIFT+Qt::Key_B,
+          m_quanta->m_view, SLOT(debugToggleBreakpoint()), ac, "debug_breakpoints_toggle");
+    new KAction(i18n("&Clear Breakpoints"), 0, m_quanta->m_view,
+          SLOT(debugClearBreakpoints()), ac, "debug_breakpoints_clear");
 
 //Tools menu
     KStdAction::gotoLine(m_quanta->m_view, SLOT(slotGotoLine()), ac, "edit_goto_line");

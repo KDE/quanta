@@ -17,8 +17,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>719</width>
-            <height>516</height>
+            <width>723</width>
+            <height>665</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -42,347 +42,421 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget" row="0" column="0">
+        <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
             <property name="name">
-                <cstring>layout7</cstring>
+                <cstring>TextLabel1_2_2</cstring>
+            </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Plain</enum>
+            </property>
+            <property name="text">
+                <string>Toolbars folder:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Exclude from project:</string>
+            </property>
+        </widget>
+        <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>Templates folder:</string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="2" column="3">
+            <property name="name">
+                <cstring>buttonToolbar</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>0</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32</width>
+                    <height>32767</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>...</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="2" column="2">
+            <property name="name">
+                <cstring>linePrjToolbar</cstring>
+            </property>
+        </widget>
+        <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>GroupBox5</cstring>
+            </property>
+            <property name="title">
+                <string>Project Defaults</string>
             </property>
             <grid>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
+                <widget class="QLabel" row="2" column="0">
                     <property name="name">
-                        <cstring>TextLabel1_2_2</cstring>
-                    </property>
-                    <property name="frameShape">
-                        <enum>NoFrame</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Plain</enum>
+                        <cstring>TextLabel1_2_3</cstring>
                     </property>
                     <property name="text">
-                        <string>Toolbars folder:</string>
+                        <string>Default DTD:</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="5" column="0" rowspan="1" colspan="2">
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
-                        <cstring>textLabel1</cstring>
+                        <cstring>TextLabel1_3_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Exclude from project:</string>
+                        <string>Default view:</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="1" column="0" rowspan="1" colspan="2">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>TextLabel1_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Templates folder:</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>checkPrefix</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>Use preview &amp;prefix</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget" row="11" column="0" rowspan="1" colspan="4">
-                    <property name="name">
-                        <cstring>layout4</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                    </hbox>
-                </widget>
-                <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>TextLabel4</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string>Author:</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="2" column="3">
-                    <property name="name">
-                        <cstring>buttonToolbar</cstring>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>0</width>
-                            <height>0</height>
-                        </size>
+                        <cstring>TextLabel3_2_2_2</cstring>
                     </property>
                     <property name="maximumSize">
                         <size>
-                            <width>32</width>
+                            <width>32767</width>
                             <height>32767</height>
                         </size>
                     </property>
                     <property name="text">
-                        <string>...</string>
+                        <string>Default encoding:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="2" column="2">
+                <widget class="QComboBox" row="0" column="1">
                     <property name="name">
-                        <cstring>linePrjToolbar</cstring>
+                        <cstring>encodingCombo</cstring>
                     </property>
                 </widget>
-                <widget class="QGroupBox" row="6" column="0" rowspan="1" colspan="4">
+                <widget class="QComboBox" row="1" column="1">
                     <property name="name">
-                        <cstring>GroupBox5</cstring>
-                    </property>
-                    <property name="title">
-                        <string>Project Defaults</string>
-                    </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLabel" row="2" column="0">
-                            <property name="name">
-                                <cstring>TextLabel1_2_3</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Default DTD:</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="1" column="0">
-                            <property name="name">
-                                <cstring>TextLabel1_3_2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Default view:</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="0" column="0">
-                            <property name="name">
-                                <cstring>TextLabel3_2_2_2</cstring>
-                            </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>32767</width>
-                                    <height>32767</height>
-                                </size>
-                            </property>
-                            <property name="text">
-                                <string>Default encoding:</string>
-                            </property>
-                        </widget>
-                        <widget class="QComboBox" row="0" column="1">
-                            <property name="name">
-                                <cstring>encodingCombo</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QComboBox" row="1" column="1">
-                            <property name="name">
-                                <cstring>viewCombo</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QComboBox" row="2" column="1">
-                            <property name="name">
-                                <cstring>dtdCombo</cstring>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>New files will have the extension and highlighting according to this setting</string>
-                            </property>
-                        </widget>
-                    </grid>
-                </widget>
-                <widget class="QLineEdit" row="1" column="2">
-                    <property name="name">
-                        <cstring>linePrjTmpl</cstring>
+                        <cstring>viewCombo</cstring>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+                <widget class="QComboBox" row="2" column="1">
                     <property name="name">
-                        <cstring>TextLabel1</cstring>
+                        <cstring>dtdCombo</cstring>
                     </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                    <property name="toolTip" stdset="0">
+                        <string>New files will have the extension and highlighting according to this setting</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget class="QLineEdit" row="1" column="2">
+            <property name="name">
+                <cstring>linePrjTmpl</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Project name:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="0" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>linePrjName</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>300</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QPushButton" row="1" column="3">
+            <property name="name">
+                <cstring>buttonTmpl</cstring>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>0</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <property name="maximumSize">
+                <size>
+                    <width>32</width>
+                    <height>32767</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>...</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="5" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lineExclude</cstring>
+            </property>
+        </widget>
+        <widget class="QLabel" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>TextLabel4</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Author:</string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lineEmail</cstring>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>lineAuthor</cstring>
+            </property>
+        </widget>
+        <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>GroupBox5_2</cstring>
+            </property>
+            <property name="title">
+                <string>Project Upload</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2_2</cstring>
                     </property>
                     <property name="text">
-                        <string>Project name:</string>
+                        <string>Path:</string>
                     </property>
                 </widget>
-                <widget class="QGroupBox" row="7" column="0" rowspan="1" colspan="4">
+                <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="5">
                     <property name="name">
-                        <cstring>GroupBox5_2</cstring>
+                        <cstring>linePath</cstring>
                     </property>
-                    <property name="title">
-                        <string>Project Upload</string>
+                </widget>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
+                        <cstring>TextLabel2</cstring>
                     </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLabel" row="2" column="0">
-                            <property name="name">
-                                <cstring>TextLabel2_2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Path:</string>
-                            </property>
-                        </widget>
-                        <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="5">
-                            <property name="name">
-                                <cstring>linePath</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="1" column="0">
-                            <property name="name">
-                                <cstring>TextLabel2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>User:</string>
-                            </property>
-                        </widget>
-                        <widget class="QLineEdit" row="1" column="1">
-                            <property name="name">
-                                <cstring>lineUser</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="0" column="0">
-                            <property name="name">
-                                <cstring>TextLabel4_2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Host:</string>
-                            </property>
-                        </widget>
-                        <widget class="QLineEdit" row="0" column="5">
-                            <property name="name">
-                                <cstring>port</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QLineEdit" row="0" column="1">
-                            <property name="name">
-                                <cstring>lineHost</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QComboBox" row="0" column="2" rowspan="1" colspan="2">
-                            <property name="name">
-                                <cstring>comboProtocol</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="0" column="4">
-                            <property name="name">
-                                <cstring>textLabel1_2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Port:</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="1" column="2">
-                            <property name="name">
-                                <cstring>textLabel2</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Password:</string>
-                            </property>
-                        </widget>
-                        <widget class="KPasswordEdit" row="1" column="3">
-                            <property name="name">
-                                <cstring>linePasswd</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QCheckBox" row="1" column="4" rowspan="1" colspan="2">
-                            <property name="name">
-                                <cstring>keepPasswd</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Store password on disc</string>
-                            </property>
-                            <property name="toolTip" stdset="0">
-                                <string>Keep the password in a file. DANGEROUS!</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>&lt;qt&gt;If you check this box, the password will be saved in the local Quanta configuration file, so every time you start Quanta and load this project, the password will be loaded and you don't have to enter it. Altough the local configuration file is readable only by you and the password
+                    <property name="text">
+                        <string>User:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
+                        <cstring>lineUser</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
+                        <cstring>TextLabel4_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Host:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="5">
+                    <property name="name">
+                        <cstring>port</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
+                        <cstring>lineHost</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="0" column="2" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>comboProtocol</cstring>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="0" column="4">
+                    <property name="name">
+                        <cstring>textLabel1_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Port:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="1" column="2">
+                    <property name="name">
+                        <cstring>textLabel2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Password:</string>
+                    </property>
+                </widget>
+                <widget class="KPasswordEdit" row="1" column="3">
+                    <property name="name">
+                        <cstring>linePasswd</cstring>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="1" column="4" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>keepPasswd</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Store password on disc</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Keep the password in a file. DANGEROUS!</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>&lt;qt&gt;If you check this box, the password will be saved in the local Quanta configuration file, so every time you start Quanta and load this project, the password will be loaded and you don't have to enter it. Altough the local configuration file is readable only by you and the password
 is obscured, saving the password in any file is a security risk. Use this option at your own risk.&lt;br&gt;
 &lt;i&gt;Note:&lt;/i&gt; due to the security concerns, the password is not present in the project file, and moving the project files to another computer or uploading the project to a server will not move/upload the password to the new place.&lt;/qt&gt;</string>
-                            </property>
-                        </widget>
-                    </grid>
-                </widget>
-                <widget class="QLabel" row="9" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1_4</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>Prefix:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="9" column="1" rowspan="1" colspan="3">
+            </grid>
+        </widget>
+        <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>TextLabel5</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>5</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Email:</string>
+            </property>
+        </widget>
+        <spacer row="11" column="1">
+            <property name="name">
+                <cstring>spacer2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>20</width>
+                    <height>70</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel" row="10" column="0">
+            <property name="name">
+                <cstring>TextLabel1_4</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Prefix:</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>checkPrefix</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>Use preview &amp;prefix</string>
+            </property>
+            <property name="accel">
+                <string>Alt+P</string>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="12" column="0">
+            <property name="name">
+                <cstring>layout4</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+            </hbox>
+        </widget>
+        <widget class="QLineEdit" row="10" column="1" rowspan="1" colspan="3">
+            <property name="name">
+                <cstring>linePrefix</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget class="QGroupBox" row="8" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>GroupBox5_debug</cstring>
+            </property>
+            <property name="title">
+                <string>Debugger</string>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
-                        <cstring>linePrefix</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                </widget>
-                <widget class="QLineEdit" row="0" column="2" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>linePrjName</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>300</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>TextLabel5</cstring>
+                        <cstring>lblDebuggerLocalBasedir</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -393,62 +467,86 @@ is obscured, saving the password in any file is a security risk. Use this option
                         </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>Email:</string>
+                        <string>Local Basedir:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="4" column="2" rowspan="1" colspan="2">
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
-                        <cstring>lineEmail</cstring>
+                        <cstring>lblDebuggerServerBasedir</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Server Basedir:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="1" column="1" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>lineDebugServerBasedir</cstring>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="0" column="1" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>lineDebugLocalBasedir</cstring>
                     </property>
                     <property name="text">
                         <string></string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="3" column="2" rowspan="1" colspan="2">
+                <widget class="QLineEdit" row="2" column="1">
                     <property name="name">
-                        <cstring>lineAuthor</cstring>
+                        <cstring>lineDebugServerHost</cstring>
                     </property>
                 </widget>
-                <spacer row="10" column="1">
+                <widget class="QLabel" row="2" column="0">
                     <property name="name">
-                        <cstring>spacer2</cstring>
+                        <cstring>lblDebuggerServerHost</cstring>
                     </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton" row="1" column="3">
-                    <property name="name">
-                        <cstring>buttonTmpl</cstring>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>0</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>32</width>
-                            <height>32767</height>
-                        </size>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
                     </property>
                     <property name="text">
-                        <string>...</string>
+                        <string>Server Host:</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="5" column="2" rowspan="1" colspan="2">
+                <widget class="QLabel" row="2" column="2">
                     <property name="name">
-                        <cstring>lineExclude</cstring>
+                        <cstring>lblDebuggerServerPort</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Server Port:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit" row="2" column="3">
+                    <property name="name">
+                        <cstring>lineDebugServerPort</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
                     </property>
                 </widget>
             </grid>

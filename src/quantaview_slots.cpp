@@ -75,6 +75,8 @@
 #include "spellchecker.h"
 #include "framewizard.h"
 
+#include "phpdebuggerinterface.h"
+
 #include "qdom.h"
 
 void QuantaView::slotEditCurrentTag()
@@ -959,7 +961,7 @@ void QuantaView::toggleBookmark ()
     int mark = markIf->mark(line);
     if (mark & KTextEditor::MarkInterface::markType01)
     {
-      markIf->removeMark(line, mark);
+      markIf->removeMark(line, KTextEditor::MarkInterface::markType01);
     } else
     {
       markIf->addMark(line, KTextEditor::MarkInterface::markType01);
@@ -1208,3 +1210,52 @@ void QuantaView::slotCloseOtherTabs()
   }
   m_writeTab->blockSignals(block);
 }
+
+
+void QuantaView::debugToggleBreakpoint ()
+{
+  if (writeExists())
+  {
+    KTextEditor::MarkInterface *markIf = dynamic_cast<KTextEditor::MarkInterface*>(write()->doc());
+    uint line, col;
+    write()->viewCursorIf->cursorPositionReal(&line, &col);
+    int mark = markIf->mark(line);
+    if (mark & KTextEditor::MarkInterface::markType02)
+    {
+      if(quantaApp->debugger()->removeBreakpoint(write()->url(), line))
+         markIf->removeMark(line, KTextEditor::MarkInterface::markType02);
+    }
+    else
+    {
+      if(quantaApp->debugger()->setBreakpoint(write()->url(), line))
+         markIf->addMark(line, KTextEditor::MarkInterface::markType02);
+    }
+  }
+}
+void QuantaView::debugClearBreakpoints ()
+{
+  if (writeExists())
+  {
+    KTextEditor::Mark* mark;
+    KTextEditor::MarkInterface *markinterface = dynamic_cast<KTextEditor::MarkInterface*>(write()->doc());
+    QPtrList<KTextEditor::Mark> marks= dynamic_cast<KTextEditor::MarkInterface*>(write()->doc())->marks();
+    for ( mark = marks.first(); mark; mark = marks.next() )
+    {
+      if(quantaApp->debugger()->removeBreakpoint(write()->url(), mark->line))
+         markinterface->removeMark(mark->line,  KTextEditor::MarkInterface::markType02);
+    }
+  }
+}
+void QuantaView::debugGotoBreakpoint (KTextEditor::Mark *mark)
+{
+  if (writeExists())
+  {
+    if (mark->type == KTextEditor::MarkInterface::markType02)
+    {
+      Document *w = write();
+      w->viewCursorIf->setCursorPositionReal(mark->line, 0);
+    }
+  }
+}
+
+

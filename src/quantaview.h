@@ -215,6 +215,11 @@ public slots:
   void slotPreviousBookmark();
   void slotNextBookmark();
 
+  //Breakpoints
+  void debugToggleBreakpoint();
+  void debugClearBreakpoints();
+  void debugGotoBreakpoint (KTextEditor::Mark *mark);
+
 //Settings
   void toggleDynamicWordWrap();
   void toggleIconBorder();

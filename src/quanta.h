@@ -80,6 +80,7 @@ class GrepDialog;
 class MessageOutput;
 class QDomDocument;
 class Document;
+class PHPDebuggerInterface;
 class QuantaInit;
 class KToolBarPopupAction;
 class KTempFile;
@@ -120,9 +121,10 @@ public:
 //TODO: check if we really need these "get" methods (and get rid o get)
   MessageOutput *messageOutput() const {return m_messageOutput;}
   MessageOutput *problemOutput() const {return m_problemOutput;}
-
+  
+  PHPDebuggerInterface *debugger() const {return m_debugger;}
+  
 /*  QPopupMenu *toolbarMenu(const QString& name);*/
-
 
   /** Returns the output dock widget */
 //   KDockWidget *outputDockWidget() const { return bottdock; }
@@ -395,6 +397,10 @@ private:
   /** Message output window */
   MessageOutput *m_messageOutput;
   MessageOutput *m_problemOutput;
+
+  // Debugger
+  PHPDebuggerInterface *m_debugger;
+  
   QuantaPluginInterface *m_pluginInterface;
 
   QPopupMenu *m_tagsMenu;

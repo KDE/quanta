@@ -170,6 +170,11 @@ public:
   KURL baseURL;
   KURL templateURL;
   KURL toolbarURL;
+  
+  QString debugServerBasedir;
+  QString debugLocalBasedir;
+  QString debugServerHost;
+  QString debugServerPort;
 
   KURL previewPrefix;
   bool usePreviewPrefix;

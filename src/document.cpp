@@ -103,6 +103,14 @@ Document::Document(KTextEditor::Document *doc,
   markIf = dynamic_cast<KTextEditor::MarkInterface *>(m_doc);
   KTextEditor::MarkInterfaceExtension* iface = dynamic_cast<KTextEditor::MarkInterfaceExtension*>( m_doc );
   iface->setPixmap(KTextEditor::MarkInterface::markType10, SmallIcon("stop"));
+  iface->setPixmap(KTextEditor::MarkInterface::markType02, SmallIcon("debug_breakpoint"));
+  iface->setDescription(KTextEditor::MarkInterface::markType02, i18n("Breakpoint"));
+  iface->setPixmap(KTextEditor::MarkInterface::markType05, SmallIcon("debug_currentline"));
+  
+  // FIXME: This is allows user to set breakpoints and bookmarks by clicking or rightclicking on the icon border. However, it needs some additional code to 
+  // work for breakpoints and has been disabled to prevent confusion. 
+  //iface->setMarksUserChangable(KTextEditor::MarkInterface::markType01 + KTextEditor::MarkInterface::markType02);
+  
   tempFile = 0;
   dtdName = Project::ref()->defaultDTD();
   m_parsingDTD = dtdName;

@@ -17,6 +17,7 @@ quanta_be_LDADD = $(top_builddir)/quanta/project/libproject.la \
 	$(top_builddir)/quanta/parsers/dtd/libdtdparser.la \
 	$(top_builddir)/quanta/treeviews/libtreeviews.la \
 	$(top_builddir)/quanta/dialogs/libdialogs.la \
+	$(top_builddir)/quanta/components/phpdebug/libphpdebug.la \
 	$(top_builddir)/quanta/dialogs/tagdialogs/libtagdialogs.la \
 	$(top_builddir)/quanta/dialogs/settings/libsettingsdialogs.la \
 	$(top_builddir)/quanta/messages/libmessages.la \
@@ -47,6 +48,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/quanta/dialogs \
 	-I$(top_builddir)/quanta/dialogs \
 	-I$(top_builddir)/quanta/dialogs/tagdialogs \
 	-I$(top_builddir)/quanta/dialogs/settings \
+	-I$(top_srcdir)/quanta/components/phpdebug \
 	-I$(top_builddir)/quanta/components/csseditor \
 	-I$(top_builddir)/quanta/components/framewizard \
 	-I$(top_builddir)/quanta/components/tableeditor \
