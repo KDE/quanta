@@ -619,7 +619,13 @@ bool Document::xmlAutoCompletion(int line, int column, const QString & string)
 
   if ( !tag || tagName.isEmpty() )  //we are outside of any tag
   {
-    if ( string == "<" )  // a tag is started
+    QString s = editIf->textLine(line).left(column + 1);
+    int i = column;
+    while (i > 0 && s[i].isSpace())
+      i--;
+    s = s.left(i + 1);
+
+    if ( s.endsWith(completionDTD->tagAutoCompleteAfter) )  // a tag is started
     {
       //we need to complete a tag name
       showCodeCompletions( getTagCompletions(line, column) );
@@ -996,8 +1002,7 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& string)
  while (i > 0 && s[i].isSpace())
    i--;
  s = s.left(i + 1);
- if (
-     s.endsWith(completionDTD->attrAutoCompleteAfter) ) //if we need to list the arguments of a function
+ if ( s.endsWith(completionDTD->attrAutoCompleteAfter) ) //if we need to list the arguments of a function
  {
    QString textLine = editIf->textLine(line).left(i);
    QString word = findWordRev(textLine, completionDTD);
@@ -1033,6 +1038,11 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& string)
 
      handled = true;
    }
+ } else
+ if ( s.endsWith(completionDTD->tagAutoCompleteAfter) )
+ {
+   showCodeCompletions(getTagCompletions(line, column));
+   handled = true;
  }
  //TODO: this is PHP specific. Make it generic
  if (string == "$")
