@@ -37,6 +37,7 @@
 #include "projecttreefolder.h"
 #include "projecttreeview.h"
 #include "filestreeview.h"
+#include "../quantacommon.h"
 
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
@@ -314,9 +315,12 @@ void ProjectTreeView::slotRemove()
 	  return;
 
 	
+  KURL url;
+  QuantaCommon::setUrl(url,currentFileName());
+
 	ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( currentItem() );
 	if ( d ) {
-		KIO::del( KURL( currentFileName() ) );
+		KIO::del( url );
 		emit removeFolderFromProject( currentFileName() );
 		delete( d );
 		return;
@@ -324,7 +328,7 @@ void ProjectTreeView::slotRemove()
 	
 	ProjectTreeFile *f = dynamic_cast<ProjectTreeFile *>( currentItem() );
 	if ( f ) {
-		KIO::del( KURL( currentFileName() ) );
+		KIO::del( url );
 		emit removeFileFromProject( currentFileName() );
 		delete( f );
 		return;

@@ -28,6 +28,7 @@
 
 //app includes
 #include "copyto.h"
+#include "../quantacommon.h"
 
 CopyTo::CopyTo(QString dir, QWidget *parent, const char *name)
     : CopyToS(parent,name,true)
@@ -65,7 +66,10 @@ QString CopyTo::copy( QString rname )
   fname = path + sname;
   if ( rname != fname ) 
   {
-    KIO::CopyJob *job = KIO::copy( KURL( rname ), KURL( fname ), true );
+    KURL sourceUrl, destUrl;
+    QuantaCommon::setUrl(sourceUrl, rname);
+    QuantaCommon::setUrl(destUrl, fname);
+    KIO::CopyJob *job = KIO::copy( sourceUrl, destUrl, true );
 //    connect( job, SIGNAL(copyingDone( KIO::Job *,const KURL&,const KURL&,bool,bool)),
 //                  SLOT  (endCopy( KIO::Job *,const KURL&,const KURL&,bool,bool)));
     connect( job, SIGNAL(result( KIO::Job *)),
@@ -106,7 +110,9 @@ QStringList CopyTo::copy( QStringList rfiles )
 
   if ( rfiles != sfiles ) 
   {
-    KIO::copy( KURL::List( rfiles ), KURL( path ), true );
+    KURL pathUrl;
+    QuantaCommon::setUrl(pathUrl, path);
+    KIO::copy( KURL::List( rfiles ), pathUrl, true );
   }
 
   return sfiles;

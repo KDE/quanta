@@ -14,9 +14,12 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
+//qt includes
 #include <qstring.h>
 #include <qdict.h>
+
+//kde includes
+#include <kurl.h>
 
 #include "quantacommon.h"
 
@@ -61,3 +64,15 @@ QString QuantaCommon::attrCase( const QString attr)
   return sAttr;
 }
 
+/** Set's up the url correctly from urlString. */
+void QuantaCommon::setUrl(KURL &url, QString urlString)
+{
+ if (urlString.at(0) == '/')
+ {
+   url.setPath(urlString);
+ }
+ else
+ {
+   url = urlString;
+ }
+}

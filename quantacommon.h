@@ -21,6 +21,7 @@
 #include <qptrlist.h>
 
 class QString;
+class KURL;
 /**Some common, mostly static functions.
   *@author Andras Mantia
   */
@@ -43,6 +44,8 @@ public:
   static QString tagCase( const QString tag);
   /** convert tag to upper or lower case */
   static QString attrCase( const QString attr);
+  /** Set's up the url correctly from urlString. */
+  static void setUrl(KURL &url, QString urlString);
 
 };
 

@@ -64,6 +64,7 @@
 #include "projectnewfinal.h"
 #include "projectupload.h"
 #include "rescanprj.h"
+#include "../quantacommon.h"
 
 extern QString globalDataDir;
 extern QString fileMaskHtml;
@@ -692,7 +693,10 @@ void Project::slotRenameFile (QString oldName)
       QString newFullName = QFileInfo(oldName).dirPath() + '/'+newName;
       if ( oldName != newFullName )
       {
-         KIO::SimpleJob *job = KIO::rename( KURL( oldName ), KURL(  newFullName ), true );
+         KURL oldUrl, newUrl;
+         QuantaCommon::setUrl(oldUrl, oldName);
+         QuantaCommon::setUrl(newUrl, newFullName);
+         KIO::SimpleJob *job = KIO::rename( oldUrl, newUrl, true );
          connect( job, SIGNAL( result( KIO::Job *) ), SLOT( renameFinished() ));
       }
 
@@ -736,7 +740,10 @@ void Project::slotRenameFolder (QString oldName)
 
       if ( dirName != newName )
       {
-         KIO::SimpleJob *job = KIO::rename( KURL( dirName ), KURL(  newName ), true );
+         KURL oldUrl, newUrl;
+         QuantaCommon::setUrl(oldUrl, dirName);
+         QuantaCommon::setUrl(newUrl, newName);
+         KIO::SimpleJob *job = KIO::rename( oldUrl, newUrl, true );
          connect( job, SIGNAL(result( KIO::Job *)), SLOT( renameFinished() ));
       }
 

@@ -35,6 +35,7 @@
 
 // Application includes
 #include "filemanage.h"
+#include "../quantacommon.h"
 
 FileManage::FileManage()
 {
@@ -130,7 +131,9 @@ void FileManage::slotPaste()
 
   KURL::List list( QStringList::split( QChar('\n'), cb->text() ) );
 
-  KIO::Job *job = KIO::copy( list, KURL( cfile.dirPath() ) );
+  KURL url;
+  QuantaCommon::setUrl(url,cfile.dirPath());
+  KIO::Job *job = KIO::copy( list, url);
   connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
 }
 
@@ -139,9 +142,12 @@ void FileManage::slotDelete()
   if ( !currentItem() ) return;
   
   if ( KMessageBox::warningYesNo(this,"Do you really want to delete file \n"+currentFileName()+" ?\n") == KMessageBox::Yes ) {
-  
-    KIO::Job *job = KIO::del( KURL( currentFileName() ) );
-    connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
+
+
+  KURL url;
+  QuantaCommon::setUrl(url,currentFileName());
+  KIO::Job *job = KIO::del(url);
+   connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotJobFinished( KIO::Job *) ) );
   }
 }
 
