@@ -210,14 +210,11 @@ void QuantaApp::initQuanta()
 
   refreshTimer = new QTimer( this );
   connect( refreshTimer, SIGNAL(timeout()), SLOT(reparse()) );
-//BACKPORT begin 
   if (qConfig.refreshFrequency == 0)
   {
     refreshTimer->stop();
   }
-//BACKPORT end  
 
-//Delay the calls as they contain dialog popups. That may crash Quanta!
   slotFileNew();
   initToolBars();
 
