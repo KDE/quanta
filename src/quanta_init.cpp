@@ -388,9 +388,11 @@ void QuantaInit::initView()
   connect(m_quanta, SIGNAL(viewActivated (KMdiChildView *)), m_viewManager, SLOT(slotViewActivated(KMdiChildView*)));
   connect(m_quanta, SIGNAL(lastChildViewClosed()), m_viewManager, SLOT(slotLastViewClosed()));
 //   connect(m_quanta, SIGNAL(viewDeactivated(KMdiChildView *)), m_viewManager, SLOT(slotViewDeactivated(KMdiChildView*)));
+#ifdef BUILD_KAFKAPART
    KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
    m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
    loadVPLConfig();
+#endif
    (void) ToolbarTabWidget::ref(quantaApp);
    m_config->setGroup  ("General Options");
    qConfig.toolviewTabs = m_config->readNumEntry("MDI style", 3);
