@@ -780,10 +780,10 @@ void ProjectUpload::loadRemoteUploadInfo()
    {
       QExtFileInfo::copy(url, u, -1, true);
       QFile f(tempFile->name());
+      int k = 0;
       if (url.protocol() == "ftp")
       {
         //fix for the KIO_FTP caused weirdness visible here
-        int k = 0;
         while (!f.exists() && k < 1000000) k++;
       }
       if (f.open(IO_ReadOnly))
