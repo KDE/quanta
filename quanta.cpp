@@ -1557,6 +1557,7 @@ void QuantaApp::reparse(bool force)
       Node *node = parser->nodeAt(line, col);
       if (stabdock->isVisible() && node)
          sTab->showTagAtPos(node);
+      aTab->setCurrentNode(node);
     }
   }
 

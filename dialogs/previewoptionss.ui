@@ -170,17 +170,6 @@
                                 <string>Bottom</string>
                             </property>
                         </widget>
-                        <widget class="QRadioButton" row="2" column="0">
-                            <property name="name">
-                                <cstring>radioFullworkspace</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="text">
-                                <string>Full workspace</string>
-                            </property>
-                        </widget>
                         <widget class="QRadioButton" row="3" column="0">
                             <property name="name">
                                 <cstring>radioDisabled</cstring>

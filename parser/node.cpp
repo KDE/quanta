@@ -71,7 +71,7 @@ Node::~Node()
         ++it;
     }
   }
-  if (prev)
+  if (prev && prev->next == this)
       prev->next = 0L;
   if (parent && parent->child == this)
       parent->child = 0L;
