@@ -4,7 +4,7 @@ bin_PROGRAMS = kxsldbg xsldbg
 ## INCLUDES were found outside kdevelop specific part
 
 kxsldbg_SOURCES = kxsldbg.cpp main.cpp
-kxsldbg_LDADD   = ./kxsldbgpart/libqtnotfier/libqtnotfier.la ./kxsldbgpart/libkxsldbgpart.la ./kxsldbgpart/libxsldbg/libxsldbg.la  $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
+kxsldbg_LDADD   = ./kxsldbgpart/libqtnotfier/libqtnotfier.la ./kxsldbgpart/libkxsldbgpart.la ./kxsldbgpart/libxsldbg/libxsldbg.la  $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBXSLT_LIBS) $(LIBXML_LIBS) $(LIBSOCKET)
 
 SUBDIRS = kxsldbgpart
 
