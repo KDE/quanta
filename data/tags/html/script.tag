@@ -9,6 +9,7 @@
         <items>
                 <item>text/html</item>
                 <item>text/css</item>
+		<item>text/php</item>
                 <item>text/javascript</item>
                 <item>application/x-javascript</item>
         </items>
@@ -19,6 +20,7 @@
         <textlocation col="0" row="1" />
         <location col="1" row="1" colspan="2" />
         <items>
+		<item>PHP</item>
                 <item>JavaScript</item>
                 <item>JavaScript1.2</item>
                 <item>JavaScript1.3</item>

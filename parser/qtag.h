@@ -53,6 +53,9 @@ typedef struct DTDStruct
      QTagList* tagsList;              //the list of all tags in the DTD
      QString fileName;                //the DTD decription.rc with path
      AttributeListDict* commonAttrs;  //the attributes of the common groups
+     QString scriptName;              //the name that can be the value of <script language=""> attribute
+     QStringList startTags;
+     QStringList endTags;
     };
 
 class QTag {

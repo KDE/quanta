@@ -869,8 +869,18 @@ void QuantaApp::readTagDir(QString &dirName)
      tagList->insert(tag->name().upper(),tag);
    }
  }
-
  dtd->tagsList = tagList;
+
+ dtdConfig->setGroup("Extra rules");
+ dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
+ int startEndVariations = dtdConfig->readNumEntry("Start/end variations");
+ for (uint i = 0 ; i < startEndVariations; i++)
+ {
+   dtd->startTags.append(dtdConfig->readEntry(QString("Start%1").arg(i)));
+   dtd->endTags.append(dtdConfig->readEntry(QString("End%1").arg(i)));
+ }
+
+
  dtds->insert(dtdName, dtd);//insert the taglist into the full list7
 
  delete dtdConfig;

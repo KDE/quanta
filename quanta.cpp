@@ -1865,7 +1865,7 @@ void QuantaApp::processDTD(QString documentType)
 
  if (documentType.isEmpty())
  {
-   foundName = w->findDTDName(0,0); //look up the whole file for DTD definition
+   foundName = w->findDTDName(-1,-1); //look up the whole file for DTD definition
    bool found = false;
    if (!foundName.isEmpty())   //!DOCTYPE found in file
    {

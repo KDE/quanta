@@ -1,0 +1,21 @@
+[General]
+Name = PHP
+Groups =
+NumOfPages = 0
+CaseSensitive = true
+
+[Extra tags]
+
+List = abs, acos, acosh, array
+
+abs = int
+acos = float
+
+[Extra rules]
+ScriptName = php
+
+Start/end variations = 2
+Start1 = <?
+End1 = ?>
+Start2 = <%
+End2 = %>

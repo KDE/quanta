@@ -915,12 +915,13 @@ void Document::setDTDIdentifier(QString id)
   dtdName = id;
 }
 
-/** Find the DTD name for a part of the document. Search all the document if startLine=endLine=0. */
+/** Find the DTD name for a part of the document. Search all the document if startLine=endLine=-1. */
 QString Document::findDTDName(int startLine, int endLine)
 {
  //Do some magic to find the document type
- if ( (startLine == 0) && (endLine ==0) )
+ if ( (startLine == -1) && (endLine == -1) )
  {
+   startLine = 0;
    endLine = editIf->numLines();
  }
  int i=startLine;
@@ -928,9 +929,12 @@ QString Document::findDTDName(int startLine, int endLine)
  int pos = 0;
  QString foundName = "";
  bool endReached;
+ uint line, col;
+ viewCursorIf->cursorPosition(&line,&col);
  do
  {
     QString s = editIf->textLine(i);
+    //search for !DOCTYPE definitions
     pos = s.find("!doctype",0,false);
     if (pos != -1) //parse the found !DOCTYPE tag
       {
@@ -949,10 +953,84 @@ QString Document::findDTDName(int startLine, int endLine)
           }
          }
       }
+    //search for script type definitions
+    QDictIterator<DTDStruct> it(*dtds);
+    for( ; it.current(); ++it )
+    {
+      DTDStruct *dtd = it.current();
+
+      if (!dtd->scriptName.isEmpty()) //it may be defined as <script language="name">
+      {
+        pos = s.find("<script",false);
+        if ( (pos != -1) && ( (line != i) || (pos < col) )) //script tag found
+        {
+          QString s2 = currentTag(i, pos+2);
+          s2 = getTagAttrValueByName("language");
+          if (s2.lower() == dtd->scriptName)
+          {
+            //now check if we are after the closing tag
+            bool afterClosingTag = false;
+            int j = i;
+            while (j != startLine - dir)
+            {
+              s2 = editIf->textLine(j);
+              pos = s2.find("</script",false);
+              if ( (pos != -1) && ( (line != j) || (pos < col) ) )
+              {
+               afterClosingTag = true;
+               break;
+              }
+              j -= dir;
+            }
+            if (!afterClosingTag) foundName = dtd->name;
+          } //if this script was found
+        } //if script tag was found
+      } //if it has a scriptName
+
+     for ( QStringList::Iterator tagIt = dtd->startTags.begin(); tagIt != dtd->startTags.end(); ++tagIt )
+     {
+       pos = s.find(*tagIt,false);
+       if ( (pos != -1) && ( (line != i) || (pos < col) )) //start tag found
+       {
+         //now check if we are after the closing tag
+         bool afterClosingTag = false;
+         int j = i;
+         while (j != startLine - dir)
+         {
+           QString s2 = editIf->textLine(j);
+           pos = s2.find(dtd->endTags[dtd->startTags.findIndex(*tagIt)],false);
+           if ( (pos != -1) && ( (line != j) || (pos < col) ) )
+           {
+             afterClosingTag = true;
+             break;
+           }
+           j -= dir;
+         }
+         if (!afterClosingTag) foundName = dtd->name;
+        } //if start tag was found
+     }
+    } //dtd->startTags interation (for cycle)
+
    i += dir;
    endReached = (dir < 0)?(i < endLine):(i > endLine);
  } while ((foundName.isEmpty()) && (!endReached));
 
  if (foundName.isEmpty()) foundName = dtdName;
  return foundName;
+}
+
+/** No descriptions */
+QString Document::getTagAttrValueByName(QString attr)
+{
+ QString val;
+ for (int i=0 ; i < tagAttrNum; i++)
+ {
+
+  if ( ( attr.upper() == getTagAttr(i).upper()) && tagAttr[i].valuelen )
+  {
+    val = tagAttr[i].value;
+    break;
+  }
+ }
+ return val;
 }
