@@ -436,6 +436,9 @@ void KafkaHTMLPart::normalize(DOM::Node _node)
 		{
 			childNode.setNodeValue(childNode.nodeValue() +
 				childNode.nextSibling().nodeValue());
+			emit domNodeModified(childNode);
+			emit domNodeIsAboutToBeDeleted(childNode.nextSibling());
+			_node.removeChild(childNode.nextSibling());
 		}
 	}
 }
@@ -826,7 +829,8 @@ void KafkaHTMLPart::keyDelete()
 			kdDebug(25001)<< "KafkaHTMLPart::keyDelete() - deleting a TagDeletable" << endl;
 			_nodeParent = _nodeNext.parentNode();
 			_nodeParent.removeChild(_nodeNext);
-			_nodeParent.normalize();
+			//_nodeParent.normalize();
+			normalize(_nodeParent);
 			_nodeParent.applyChanges();
 			postprocessCursorPosition();
 			return;
