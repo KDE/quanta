@@ -15,7 +15,7 @@ If you find an error (shouldn't be so hard ;-), could you report me please?
 
 1) History
 In early 2003, I was looking for a good HTML WYSIWYG editor, and I didn't find what I wanted! So I decided to code one. After a quick search, I've found a dead project, Kafka, in kdenonbeta, which was supposed to become an full-featured WYSIWYG editor based on khtml. But at this time (2000-2001 I think) khtml wasn't ready. So it was abandonned.
-Meanwhile khtml have been greatly improved, partially thanks to the Apple Safari merging. Then I started to hack kafka a bit, adding basic cursor navigation, insertion/deletion, and so on... But I quickly realised that it would be too hard and too long for me alone to come to a decent editor. So I was looking to join an existing project, and I choose Quanta+, basically because it was (and still is, in my humble opinion) the best HTML editor in the KDE environnement.
+Meanwhile khtml have been greatly improved, partially thanks to the Apple Safari merging. Then I started to hack kafka a bit, adding basic cursor navigation, insertion/deletion, and so on... But I quickly realised that it would be too hard and too long for me alone to come to a decent editor. So I was looking to join an existing project, and I choose Quanta+, basically because it was (and still is, in my humble opinion) the best HTML editor in the KDE environment.
 It seemed I came to Quanta+ exactly at the best time: they were considering to add WYSIWYG capabilities! So for now one year, I've been coded VPL during my free time, and I am not far from a stable status.
 
 
@@ -67,7 +67,7 @@ First have in mind that when editing a HTML file in Quanta, the Node Tree is alw
 
 Source (XML file) <=> Node tree <=> DOM::Node tree.
 
-Then when a change is made to the source file, Parser::rebuild is called and synchronize (not really, we will see this later) the corresponding DOM::Node. In the opposite, when a DOM::Node is modified, the corresponding Node is synchronized, and the the source file is modified. Of course, it is a little more complicated, but let's see this later.
+Then when a change is made to the source file, Parser::rebuild is called and synchronize (not really, we will see this later) the corresponding DOM::Node. In the opposite, when a DOM::Node is modified, the corresponding Node is synchronized, and the source file is modified. Of course, it is a little more complicated, but let's see this later.
 
 
 5) VPL classes.
@@ -77,9 +77,9 @@ VPL has several classes, but note sometimes it is not really object oriented, bu
 
 * KafkaDocument(wkafkapart.[h|cpp]): It takes care to load the DOM::Node tree from the Node tree, and when a change is made to the DOM::Node tree, it apply it in the Node tree. It basically takes care of the synchronization of the trees.
 
-* kafkaCommon(kafkacommon.[h|cpp]): A lot of usefull functions, some need to be moved... Everything for Node modification, Node tree modification, DOM::Node tree, DOM::Node modification is here.
+* kafkaCommon(kafkacommon.[h|cpp]): A lot of useful functions, some need to be moved... Everything for Node modification, Node tree modification, DOM::Node tree, DOM::Node modification is here.
 
-* undoRedo(undoredo.[h|cpp]): Not functionnal yet, but it is intended to provide undo/redo functionality to both VPL and Quanta. But you are invited to use its structures. See section ? for more informations.
+* undoRedo(undoredo.[h|cpp]): Not functional yet, but it is intended to provide undo/redo functionality to both VPL and Quanta. But you are invited to use its structures. See section ? for more informations.
 
 * kNodeAttrs(nodeproperties.[h|cpp]): We can easily put a link to a DOM::Node from a Node in the Node class, but the opposite is impossible (we can't derive them). So we have a link DOM::Node => kNodeAttrs => Node (thanks to a QPtrDict). And we also have some informations about the way to handle this node when editing VPL. (Be careful, one Node can be linked against several Nodes. See after.)
 
@@ -100,7 +100,7 @@ In fact, when you start modifying the Node tree, everything must be recorded. It
 * To provide undo/redo capabilities.
 * To know which Nodes have been modified and thus when synchronizing a view from another, to update only the modified Nodes.
 
-Finally a important boolean which needs to be mentionned: Tag::cleanStrBuilt
+Finally an important boolean which needs to be mentioned: Tag::cleanStrBuilt
 This boolean specifies if the string stored in Tag::tagStr() is valid. In fact, when a change is made to a DOM::Node and a Node is being modified, only its members are modified (the attrs, the name, the type), but the tag string is not rebuilt (to save some CPU).
 When reloading the source view, every tag with the Tag::cleanStrBuilt set to false has its string rebuilt.
 For text Nodes, if:
@@ -115,7 +115,7 @@ Question: But when a change is made in VPL, why not directly updating the source
 Answer: Because we will end up with a very unresponsive VPL! Updating two Nodes tree and a source view require a bit of CPU!
 
 7)TODO
-* Implement some missing things: copy/paste, bad cursor behavior,...
+* Implement some missing things: copy/paste, bad cursor behaviour,...
 * Port the quanta dialogs (table editor,...) so that they can work in VPL
 * Make VPL a KPart
 * Make undo/redo works
