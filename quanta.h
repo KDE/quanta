@@ -344,6 +344,11 @@ public slots:
 
   void slotExpandAbbreviation();
 
+  void slotFind ();
+  void slotFindAgain ();
+  void slotFindAgainB ();
+  void slotReplace ();
+
 /** Show the Document Properties Dialog */
   void slotDocumentProperties();
 
@@ -367,10 +372,9 @@ protected slots:
   void slotIdleTimerExpired();
 
 protected:
-  WHTMLPart *htmlPart();
   KParts::BrowserExtension *browserExtension()
   {
-      return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)htmlPart())->child( 0L, "KParts::BrowserExtension" ));
+      return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)m_htmlPart)->child( 0L, "KParts::BrowserExtension" ));
   }
   void initToolBars();
   /** Ask for save all the modified user toolbars. */
@@ -441,8 +445,8 @@ private:
   KDockWidget *scripttabdock;
 
    /** HTML class for preview */
-  WHTMLPart *htmlpart;
-  WHTMLPart *htmlPartDoc;
+  WHTMLPart *m_htmlPart;
+  WHTMLPart *m_htmlPartDoc;
 
   /** Grep window */
   GrepDialog *grepDialog;

@@ -852,40 +852,6 @@ void QuantaView::toggleInsert()
     quantaApp->statusBar()->changeItem(w->kate_view->isOverwriteMode() ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR); }
 }
 
-
-void QuantaView::slotFind ()
-{
-  if (writeExists())
-  {
-    write()->kate_view->find();
-  }
-}
-
-void QuantaView::slotFindAgain ()
-{
-  if (writeExists())
-  {
-    write()->kate_view->findAgain(false);
-  }
-}
-
-void QuantaView::slotFindAgainB ()
-{
-  if (writeExists())
-  {
-    write()->kate_view->findPrev();
-  }
-}
-
-void QuantaView::slotReplace ()
-{
-  if (writeExists())
-  {
-    write()->kate_view->replace();
-  }
-}
-
-
 void QuantaView::slotIndent()
 {
   if (writeExists())

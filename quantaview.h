@@ -103,8 +103,10 @@ public:
     KafkaViewOnly
   };
 
+#ifdef BUILD_KAFKAPART
   /** Reloads both views ONLY when changes have been made to the Node tree ONLY. */
   void reloadBothViews();
+#endif
 
   /** Resize the current view */
   void resize(int width, int height);
@@ -167,11 +169,6 @@ public slots:
   void slotDeselectAll ();
   void toggleVertical ();
   void toggleInsert();
-
-  void slotFind ();
-  void slotFindAgain ();
-  void slotFindAgainB ();
-  void slotReplace ();
 
   void slotIndent();
   void slotUnIndent();

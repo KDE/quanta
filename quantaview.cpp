@@ -441,12 +441,14 @@ void QuantaView::insertTag( const char *tag)
   }
 }
 
+#ifdef BUILD_KAFKAPART
 /** Reloads both views ONLY when changes have been made to the Node tree ONLY. */
 void QuantaView::reloadBothViews()
 {
 	write()->docUndoRedo->reloadQuantaEditor();
 	write()->docUndoRedo->reloadKafkaEditor(true);
 }
+#endif
 
 void QuantaView::slotShowQuantaEditor()
 {

@@ -413,19 +413,19 @@ void QuantaApp::initView()
 
   rightWidgetStack->setMinimumHeight(1);
 
-  htmlpart = new WHTMLPart(rightWidgetStack,"rightHTML");
-  htmlPartDoc = new WHTMLPart(rightWidgetStack, "docHTML");
+  m_htmlPart = new WHTMLPart(rightWidgetStack,"rightHTML");
+  m_htmlPartDoc = new WHTMLPart(rightWidgetStack, "docHTML");
 
   rightWidgetStack->addWidget(m_view, 0);
-  rightWidgetStack->addWidget(htmlpart->view(), 1);
-  rightWidgetStack->addWidget(htmlPartDoc->view(), 2);
+  rightWidgetStack->addWidget(m_htmlPart->view(), 1);
+  rightWidgetStack->addWidget(m_htmlPartDoc->view(), 2);
   rightWidgetStack->raiseWidget(0);
 
   messageOutput = new MessageOutput(bottomWidgetStack);
   messageOutput->setFocusPolicy(QWidget::NoFocus);
 
   bottomWidgetStack->addWidget(messageOutput, 0);
-//  bottomWidgetStack->addWidget( htmlpart   ->view(), 1 );
+//  bottomWidgetStack->addWidget( m_htmlPart   ->view(), 1 );
 //  bottomWidgetStack->addWidget( htmlPartDoc->view(), 2 );
 
   connect(fTab, SIGNAL(openFile  (const KURL &, const QString&)),
@@ -469,9 +469,9 @@ void QuantaApp::initView()
   connect(pTab, SIGNAL(showPreviewWidget(bool)),
           this, SLOT(slotShowPreviewWidget(bool)));
 
-  connect(htmlpart, SIGNAL(onURL(const QString&)),
+  connect(m_htmlPart, SIGNAL(onURL(const QString&)),
               this, SLOT(slotStatusMsg(const QString&)));
-  connect(htmlPartDoc, SIGNAL(onURL(const QString&)),
+  connect(m_htmlPartDoc, SIGNAL(onURL(const QString&)),
                  this, SLOT(slotStatusMsg(const QString&)));
 
   connect(m_view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
@@ -531,12 +531,6 @@ void QuantaApp::connectDockSignals(QObject *obj)
   connect(obj, SIGNAL( hasUndocked()), SLOT(slotDockStatusChanged()));
 }
 
-WHTMLPart * QuantaApp::htmlPart()
-{
-  return htmlpart;
-}
-
-
 QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
 {
   QWidgetStack *s;
@@ -548,10 +542,10 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
     s = rightWidgetStack;
   }
 //TODO: This should be done on startup and after the setting has changed
-  if (htmlpart->view()->parentWidget() != s)
+  if (m_htmlPart->view()->parentWidget() != s)
   {
-    s->addWidget( htmlpart->view(), 1 );
-    s->addWidget( htmlPartDoc->view(), 2 );
+    s->addWidget( m_htmlPart->view(), 1 );
+    s->addWidget( m_htmlPartDoc->view(), 2 );
   }
 
   return s;
@@ -1634,10 +1628,10 @@ void QuantaApp::initActions()
     new KAction(i18n("Toggle &Insert"), Key_Insert, m_view, SLOT(toggleInsert()), ac, "set_insert" );
 
 
-    KStdAction::find(m_view, SLOT(slotFind()), ac);
-    KStdAction::findNext(m_view, SLOT(slotFindAgain()), ac);
-    KStdAction::findPrev(m_view, SLOT(slotFindAgainB()), ac, "edit_find_prev");
-    KStdAction::replace(m_view, SLOT(slotReplace()), ac);
+    KStdAction::find(this, SLOT(slotFind()), ac);
+    KStdAction::findNext(this, SLOT(slotFindAgain()), ac);
+    KStdAction::findPrev(this, SLOT(slotFindAgainB()), ac, "edit_find_prev");
+    KStdAction::replace(this, SLOT(slotReplace()), ac);
 
     new KAction(i18n("&Indent"), "indent", CTRL+Key_I, m_view,
                 SLOT(slotIndent()), ac, "edit_indent");

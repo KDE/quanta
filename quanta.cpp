@@ -454,7 +454,7 @@ void QuantaApp::slotFileClose()
     //kafkaPart->unloadDocument();
   #endif
     m_doc->closeDocument();
-    WHTMLPart *part = htmlPart();
+    WHTMLPart *part = m_htmlPart;
     part->closeURL();
     part->begin(projectBaseURL());
     part->write( "" );
@@ -471,7 +471,7 @@ void QuantaApp::slotFileCloseAll()
 #endif
   m_doc->closeAll();
 
-  WHTMLPart *part = htmlPart();
+  WHTMLPart *part = m_htmlPart;
   part->closeURL();
   part->begin(projectBaseURL());
   part->write( "" );
@@ -578,7 +578,7 @@ void QuantaApp::repaintPreview( bool clear )
 {
   static QString oldtext = "";
 
-  WHTMLPart *part = htmlPart();
+  WHTMLPart *part = m_htmlPart;
   QWidgetStack *s = widgetStackOfHtmlPart();
 
   if ( !s ) return;
@@ -635,7 +635,7 @@ void QuantaApp::slotOpenFileInPreview(const KURL& a_url)
 {
   if ( qConfig.previewPosition == "Disabled" )
      return;
-  WHTMLPart *part = htmlPart();
+  WHTMLPart *part = m_htmlPart;
   if ( !part  )
      return;
   slotShowPreviewWidget(true);
@@ -650,7 +650,7 @@ void QuantaApp::slotImageOpen(const KURL& url)
      return;
 
   slotShowPreviewWidget(true);
-  WHTMLPart *part = htmlPart();
+  WHTMLPart *part = m_htmlPart;
   QString text = "<html>\n<body>\n<div align=\"center\">\n<img src=\"";
   text += url.path(); //TODO
   text += "\">\n</div>\n</body>\n</html>\n";
@@ -1166,7 +1166,7 @@ void QuantaApp::slotOptions()
     qConfig.spellConfig->setClient(spellOptions->client());
 
     QWidgetStack *s;
-    if ( htmlPart() )
+    if ( m_htmlPart )
     {
       s = widgetStackOfHtmlPart();
       s ->raiseWidget( 0 );
@@ -1202,10 +1202,10 @@ void QuantaApp::slotOptions()
     }
     qConfig.windowLayout = layout;
 
-    htmlpart->closeURL();
-    htmlpart->begin( projectBaseURL());
-    htmlpart->write( "" );
-    htmlpart->end();
+    m_htmlPart->closeURL();
+    m_htmlPart->begin( projectBaseURL());
+    m_htmlPart->write( "" );
+    m_htmlPart->end();
 
     repaintPreview(true);
     reparse(true);
@@ -1472,10 +1472,10 @@ void QuantaApp::openDoc( QString url )
 
    if ( url == oldUrl ) return;
 
-   htmlPartDoc->closeURL();
-   htmlPartDoc->openURL(url);
-   htmlPartDoc->show();
-   htmlPartDoc->addToHistory(url);
+   m_htmlPartDoc->closeURL();
+   m_htmlPartDoc->openURL(url);
+   m_htmlPartDoc->show();
+   m_htmlPartDoc->addToHistory(url);
 
    oldUrl = url;
 }
@@ -1514,7 +1514,7 @@ void QuantaApp::slotContextHelp()
       if (!dtabdock->isVisible()) dtabdock->changeHideShowState();
 
       s->raiseWidget(2);
-      htmlPartDoc->view()->setFocus();
+      m_htmlPartDoc->view()->setFocus();
 
       openDoc(*url);
     }
@@ -1690,8 +1690,8 @@ void QuantaApp::slotBack()
      slotFilePrev();
      return; //TODO: switching between files has precedence now!
   }
-  if ( s->id( s->visibleWidget()) == 1 ) htmlpart->back();
-  if ( s->id( s->visibleWidget()) == 2 ) htmlPartDoc->back();
+  if ( s->id( s->visibleWidget()) == 1 ) m_htmlPart->back();
+  if ( s->id( s->visibleWidget()) == 2 ) m_htmlPartDoc->back();
 }
 
 void QuantaApp::slotForward()
@@ -1702,8 +1702,8 @@ void QuantaApp::slotForward()
     slotFileNext();
     return; //TODO: switching between files has precedence now!
   }
-  if ( s->id( s->visibleWidget()) == 1 ) htmlpart->forward();
-  if ( s->id( s->visibleWidget()) == 2 ) htmlPartDoc->forward();
+  if ( s->id( s->visibleWidget()) == 1 ) m_htmlPart->forward();
+  if ( s->id( s->visibleWidget()) == 2 ) m_htmlPartDoc->forward();
 }
 
 void QuantaApp::slotMessageWidgetEnable()
@@ -3448,6 +3448,78 @@ void QuantaApp::slotUploadFile()
 
 void QuantaApp::slotUploadOpenedFiles()
 {
+}
+
+void QuantaApp::slotFind ()
+{
+  int id = 0;
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if (s)
+    id = s->id(s->visibleWidget());
+  if (id == 0 && m_view->writeExists())
+  {
+    m_view->write()->kate_view->find();
+  } else
+  if (id == 1)
+  {
+    m_htmlPart->findTextBegin();
+  } else
+  if (id == 2)
+  {
+    m_htmlPartDoc->findTextBegin();
+  }
+}
+
+void QuantaApp::slotFindAgain ()
+{
+  int id = 0;
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if (s)
+    id = s->id(s->visibleWidget());
+  if (id == 0 && m_view->writeExists())
+  {
+    m_view->write()->kate_view->findAgain(false);
+  } else
+  if (id == 1)
+  {
+    m_htmlPart->findTextNext("", true, true, false);
+  } else
+  if (id == 2)
+  {
+    m_htmlPartDoc->findTextNext("", true, true, false);
+  }
+}
+
+void QuantaApp::slotFindAgainB ()
+{
+  int id = 0;
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if (s)
+    id = s->id(s->visibleWidget());
+  if (id == 0 && m_view->writeExists())
+  {
+    m_view->write()->kate_view->findPrev();
+  } else
+  if (id == 1)
+  {
+    m_htmlPart->findTextNext("", false, true, false);
+  } else
+  if (id == 2)
+  {
+    m_htmlPartDoc->findTextNext("", false, true, false);
+  }
+}
+
+void QuantaApp::slotReplace ()
+{
+  int id = 0;
+  QWidgetStack *s = widgetStackOfHtmlPart();
+  if (s)
+    id = s->id(s->visibleWidget());
+  if (id == 0 && m_view->writeExists())
+  {
+    m_view->write()->kate_view->replace();
+  }
 }
 
 bool QuantaApp::structTreeVisible() const
