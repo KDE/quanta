@@ -1,6 +1,6 @@
 <!DOCTYPE TAGS>
 <TAGS>
-<tag name="div">
+<tag name="p">
 
     <label>
         <text>Alignment </text>

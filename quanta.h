@@ -71,6 +71,8 @@ class MessageOutput;
 class QDomDocument;
 class ActionEditDlg;
 
+class PHP4Debugger;
+
 /**
   * The base class for Quanta application windows. 
   */
@@ -273,6 +275,8 @@ class QuantaApp : public KDockMainWindow
     QTimer *statusbarTimer;
 
     int phpDebugPort;
+    
+    PHP4Debugger* dbg;
     
     // ACTIONS
     KRecentFilesAction *fileRecent;

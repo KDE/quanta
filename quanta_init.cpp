@@ -58,6 +58,7 @@
 #include "treeviews/structtreeview.h"
 
 #include "phpdebug/phpdebugserversocket.h"
+#include "plugins/php4dbg/debugger.h"
 
 #include "parser/parser.h"
 
@@ -115,6 +116,13 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   
   readOptions();
   
+  dbg = new PHP4Debugger(0L,0L);
+  connect( dbg,           SIGNAL(message(QString)),
+           messageOutput, SLOT(showMessage(QString)) );
+  dbg->init();
+  
+#warning temp disable php3 debug for devel php4 dbg
+/*  
   PhpDebugServerSocket *debugger = 
     new PhpDebugServerSocket( phpDebugPort,0,0);
     
@@ -137,7 +145,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
     messageOutput->insertItem("PHP3 Debugger listens port "+
       s.sprintf("%i",phpDebugPort)+"" );
   }
-  
+*/  
   QTimer *t = new QTimer( this );
   connect( t, SIGNAL(timeout()), SLOT(reparse()) );
   t->start( 2000, false );
@@ -146,6 +154,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
 
 QuantaApp::~QuantaApp()
 {
+  delete dbg;
 }
 
 void QuantaApp::initStatusBar()

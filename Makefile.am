@@ -19,6 +19,8 @@ quanta_LDADD = \
 		$(top_builddir)/quanta/toolbar/libtoolbar.a\
 		$(top_builddir)/quanta/phpdebug/libphpdebug.a\
 		$(top_builddir)/quanta/messages/libmessages.a\
+		$(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.a\
+		$(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.a\
 		-lSM -lICE\
 		-lX11 $\
 		-lpng -lz -lm\
@@ -27,8 +29,8 @@ quanta_LDADD = \
 		-lkdeui\
 		-lkfile\
 		-lkhtml\
-		-lkspell
-LDFLAGS =  -s -lktexteditor
+		-lkspell\
+		-lktexteditor
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/kwrite\
 		-I$(top_srcdir)/quanta/kwrite/highlight
