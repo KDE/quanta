@@ -191,20 +191,6 @@ public slots:
 	void insertText(const QString &text, int position);
 
 	/**
-	 * Category: HTML Editing Functions
-	 * Moves the cursor x-characters to the left
-	 * @param value Specifies the characters to move to the left
-	 */
-	void nextOffset(int value);
-
-	/**
-	 * Category: HTML Editing Functions
-	 * Moves the cursor x-characters to the right
-	 * @param value Specifies the characters to move to the right
-	 */
-	void previousOffset(int value);
-
-	/**
 	 * Puts all the child Text DOM::Node  into a "normal" form where only
 	* structure (e.g., elements, comments, processing instructions, CDATA
 	* sections, and entity references) separates Text nodes, i.e., there are
@@ -286,26 +272,9 @@ protected:
 	virtual void khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *event);
 	virtual void khtmlDrawContentsEvent(khtml::DrawContentsEvent *event);
 
-	virtual void timerEvent(QTimerEvent *e );
 
 
 private:
-	/**
-	 * Move the cursor one position left.
-	 */
-	void keyLeft();
-	/**
-	 * Move the cursor one position right.
-	 */
-	void keyRight();
-	/**
-	 * Move the cursor one position up.
-	 */
-	void keyUp();
-	/**
-	 * Move the cursor one position down.
-	 */
-	void keyDown();
 	/**
 	 * Delete one character/DOM::Node left to the cursor.
 	 */
@@ -318,10 +287,7 @@ private:
 	 * Break the current line.
 	 */
 	void keyReturn();
-	/**
-	 * Temporary universal method to get the cursor coordinates of a DOM::Node.
-	 */
-	bool getCursor(DOM::Node _node, int offset, int &_x, int &_y, int &height);
+
 	/**
 	 * Postprocess the cursor position, i.e. when the cursor is between two
 	 * DOM::Nodes, it set the cursor in the right node to make edition as
@@ -336,11 +302,7 @@ private:
 	 * and the edge of the widget.
 	 */
 	void makeCursorVisible(int xMargin = 50, int yMargin = 50);
-	/**
-	 * Paints the cursor.
-	 * @param p It requires a QPainter to draw the cursor :)
-	 */
-	void paintCursor(QPainter *p);
+
 	DOM::Node m_currentNode;
 	KafkaHTMLPartPrivate *d;
 	WKafkaPart *w;

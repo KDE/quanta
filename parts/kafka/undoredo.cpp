@@ -74,30 +74,12 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs, int modifLocation)
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "undoRedo::addNewModifsSet() - NodeModifsSet type: " << modifLocation << endl;
 #endif
-	QValueList<NodeModifsSet>::iterator it;
-	QValueList<NodeModif>::iterator it2, it3, it4;
+	QValueList<NodeModif>::iterator it2;
 	NodeModifsSet modifications;
-	Node *n;
 	QValueList<int> loc;
-	bool beginToMerge = false;
-	bool noMerge = false;
-	bool textTyped;
 	int curFocus;
 
-//#ifndef BUILD_KAFKAPART
-	//Delete the modifs
-	/**for(it2 = modifs.NodeModifList.begin(); it2 != modifs.NodeModifList.end(); it2++)
-	{
-		if((*it2).type == undoRedo::NodeRemoved || (*it2).type ==
-			undoRedo::NodeAndChildsRemoved || (*it2).type ==
-			undoRedo::NodeTreeRemoved)
-			delete (*it2).node;
-		else if((*it2).type == undoRedo::NodeModified)
-			delete (*it2).tag;
-	}
-	return;*/
-//#endif
-
+	// For the 3.2.x releases
 	/**if(m_mergeNext)
 	{
 		//we merge modifs with the previous NodeModifsSet
@@ -123,150 +105,10 @@ void undoRedo::addNewModifsSet(NodeModifsSet modifs, int modifLocation)
 		debugOutput();\
 #endif
 		return;
-	}
+	}*/
 
-	//we remove the unnecessary Node Modifs
-	//WARNING : this is based on the parser::rebuild() behavior
-	//any changes to it might compromise this!
-	//A NodeModifSet is supposed to be : X*NodeRemoved, X*NodeAdded, [NodeRemoved, NodeModified]
-	while(!modifs.NodeModifList.empty())
-	{
-		it3 = modifs.NodeModifList.fromLast();
-		if((*it3).type == undoRedo::NodeModified)
-		{
-			//A text node is merging, we don't wan't to touch this
-			it3--;
-			if(it3 == modifs.NodeModifList.begin())
-				break;
-			it3--;
-			if(it3 == modifs.NodeModifList.begin() || (*it3).type != undoRedo::NodeAdded)
-				break;
-		}
-		it2 = modifs.NodeModifList.begin();
-		if((*it2).type != undoRedo::NodeRemoved)
-			break;
-		while(it2 != modifs.NodeModifList.end() && (*it2).type == undoRedo::NodeRemoved)
-		{
-			it4 = it2;
-			it2++;
-		}
-		it2 = it4;
-		//comparing it3, last NodeAdded, and it2, last NodeRemoved
-		n = kafkaCommon::getNodeFromLocation((*it3).location);
-		if(!n)
-		{
-			kdDebug(25001)<< "undoRedo::addNewModifsSet - ERROR1 - merging failed" << endl;
-			break;
-		}
-		//kdDebug(24000)<< n->tag->tagStr() << " - " << (*it2).node->tag->tagStr() << endl;
-		if(n->tag->tagStr() == (*it2).node->tag->tagStr())
-		{
-			//One node is removed, and the same one is replaced. Delete this two NodeModifs.
-			modifs.NodeModifList.remove(it2);
-			modifs.NodeModifList.remove(it3);
-		}
-		else
-			break;
-	}
-	if(modifs.NodeModifList.empty())
-		return;
 
-	//Now merging, if possible, this NodeModifsSet. != of the first merging.
-	//adding a text => 1*undoRedo::NodeAdded, modifying a text => 1*undoRedo::NodeRemoved + 1*undoRedo::NodeAdded
-	//removing a text => 1*undoRedo::NodeRemoved.
-	//adding a tag: [1*undoRedo::NodeRemoved + 1*undoRedo::NodeAdded] + 1*undoRedo::NodeAdded
-	//modifying a tag : 1*undoRedo::NodeRemoved + 1*undoRedo::NodeAdded
-	//removing a tag => 1*undoRedo::NodeRemoved + 2*undoRedo::NodeAdded [+ 1*undoRedo::NodeAdded]
-	if(m_merging && sourceIterator != fromLast())
-	{
-		//we can't merge if we are in the middle of the undo stack
-		m_merging = false;
-	}
-	else if(modifs.NodeModifList.count() == 1 && modifs.NodeModifList.first().type == undoRedo::NodeAdded)
-	{
-		//the beginning of a text or a tag
-		m_merging = true;
-		beginToMerge = true;
-		m_currentLoc = modifs.NodeModifList.last().location;
-		addingText = true;
-	}
-	else if(modifs.NodeModifList.count() == 1 && modifs.NodeModifList.first().type == undoRedo::NodeRemoved)
-	{
-		//removing the last char of a text or tag
-		if(m_merging == true)
-		{
-			(*sourceIterator).NodeModifList.remove((*sourceIterator).NodeModifList.fromLast());
-			(*sourceIterator).NodeModifList.append(modifs.NodeModifList.last());
-			(*sourceIterator).cursorX2 = modifs.cursorX2;
-			(*sourceIterator).cursorY2 = modifs.cursorY2;
-			m_merging = false;
-			noMerge = true;
-		}
-		//else m_merging == false, simply append modifs
-	}
-	else if(modifs.NodeModifList.count() == 2 && modifs.NodeModifList[0].type == undoRedo::NodeRemoved &&
-		modifs.NodeModifList[1].type == undoRedo::NodeAdded && modifs.NodeModifList[0].location ==
-		modifs.NodeModifList[1].location)
-	{
-		n = kafkaCommon::getNodeFromLocation(modifs.NodeModifList[1].location);
-		textTyped = (n->tag->tagStr().length() >= modifs.NodeModifList[0].node->tag->tagStr().length());
-		if(m_merging == false || (addingText != textTyped && modifs.NodeModifList[0].node->tag->type == Tag::Text))
-		{
-			//we are editing a [new] text or tag
-			beginToMerge = true;
-			m_merging = true;
-			m_currentLoc = modifs.NodeModifList.last().location;
-		}
-		else if(modifs.NodeModifList[0].location == m_currentLoc && modifs.NodeModifList[1].location == m_currentLoc)
-		{
-			//we are editing a text or tag, and a merge was already started
-			(*sourceIterator).NodeModifList.remove((*sourceIterator).NodeModifList.fromLast());
-			(*sourceIterator).NodeModifList.append(modifs.NodeModifList.last());
-			(*sourceIterator).cursorX2 = modifs.cursorX2;
-			(*sourceIterator).cursorY2 = modifs.cursorY2;
-		}
-		else
-			m_merging = false;
-		addingText = textTyped;
-	}
-	else if((modifs.NodeModifList.count() == 3 || modifs.NodeModifList.count() == 4) &&
-		modifs.NodeModifList[0].type == undoRedo::NodeRemoved &&
-		modifs.NodeModifList[1].type == undoRedo::NodeAdded && modifs.NodeModifList[0].location ==
-		modifs.NodeModifList[1].location && modifs.NodeModifList.last().type == undoRedo::NodeAdded)
-	{
-		n = kafkaCommon::getNodeFromLocation(modifs.NodeModifList[2].location);
-		loc = m_currentLoc;
-		loc.last()++;
-		if(!n)
-		{
-			kdDebug(25001)<< "undoRedo::addNewModifsSet - ERROR2 - merging failed" << endl;
-			return;
-		}
-		if(m_merging == false || (m_merging == true && modifs.NodeModifList.count() == 3 && n->tag->tagStr().left(1) == "<"))
-		{
-			//Beginning a Tag or (||) starting a tag in a currently edited text.
-			m_merging = true;
-			beginToMerge = true;
-			m_currentLoc = modifs.NodeModifList.last().location;
-		}
-		else if(modifs.NodeModifList[0].location == m_currentLoc && modifs.NodeModifList[1].location == m_currentLoc &&
-		modifs.NodeModifList[2].location == loc)
-		{
-			//Adding the final ">" in the tag.
-			(*sourceIterator).NodeModifList.remove((*sourceIterator).NodeModifList.fromLast());
-			(*sourceIterator).NodeModifList.append(modifs.NodeModifList[1]);
-			(*sourceIterator).NodeModifList.append(modifs.NodeModifList[2]);
-			if(modifs.NodeModifList.count() == 4)
-				(*sourceIterator).NodeModifList.append(modifs.NodeModifList[3]);
-			(*sourceIterator).cursorX2 = modifs.cursorX2;
-			(*sourceIterator).cursorY2 = modifs.cursorY2;
-		}
-		else
-			m_merging = false;
-	}
-	else
-		m_merging = false;*/
-
+	// For the 3.2.x releases
 	/**if((!m_merging || beginToMerge) && !noMerge)
 	{*/
 		//inserting the NodeModifsSet
@@ -514,7 +356,6 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool ge
 	Tag *_tag;
 	QString text, totalText;
 	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
-	KafkaHTMLPart *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaPart();
 
 	if(_nodeModif.type == undoRedo::NodeTreeAdded)
 	{
@@ -1031,29 +872,7 @@ bool undoRedo::UndoNodeModif(NodeModif &_nodeModif, bool undoTextModifs, bool ge
 		{
 			//remove any reference to a now deleted QListViewItem
 			n->listItem = 0L;
-			/**if(generateText) <== Shouldn't be called
-			{
-				if(n->tag->type == Tag::Text)
-				{
-					bCol = eCol + 1;
-					bLine = eLine;
-					text = n->tag->tagStr();
-					text = kafkaInterface->getEncodedText(text, bLine, bCol, eLine, eCol);
-				}
-				else if(n->tag->type == Tag::XmlTag || n->tag->type == Tag::XmlTagEnd)
-				{
-					bCol = eCol + 1;
-					bLine = eLine;
-					text = kafkaInterface->generateCodeFromNode(n, bLine, bCol, eLine, eCol);
-				}
-				else
-				kdDebug(25001) <<"undoRedo::UndoNodeModif - ERROR2 can't generate text for type "
-					<< n->tag->type << endl;
-				n->tag->setStr(text);
-				n->tag->setTagPosition(bLine, bCol, eLine, eCol);
-			}
-			else*/
-				totalText += n->tag->tagStr();
+			totalText += n->tag->tagStr();
 			n = kafkaCommon::getNextNode(n, b);
 		}
 		if(undoTextModifs)
@@ -1377,11 +1196,9 @@ void undoRedo::reloadKafkaEditor(bool force)
 void undoRedo::reloadQuantaEditor(bool force)
 {
 	QString text, allText;
-	Node *_node = baseNode, *n;
-	int bCol, bLine, eCol, eLine, depth;
-	int bCol2, bLine2, eCol2, eLine2, i;
-        WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
-        KafkaHTMLPart *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaPart();
+	Node *_node = baseNode;
+	int bCol, bLine, eCol, eLine;
+	WKafkaPart *kafkaInterface = quantaApp->view()->getKafkaInterface();
 	bool updateClosing;
 
 	kdDebug(25001)<< "undoRedo::reloadQuantaEditor()" << endl;
@@ -1484,7 +1301,7 @@ bool undoRedo::syncKafkaView()
 #endif
 	QValueList<NodeModifsSet>::iterator it;
 	QValueList<NodeModif>::iterator it2;
-	bool undoKafkaView = true, success;
+	bool undoKafkaView = true;
 
 	if(kafkaIterator == sourceIterator)
 		return true;
@@ -1638,7 +1455,7 @@ bool undoRedo::syncQuantaView()
 #endif
 	QValueList<NodeModifsSet>::iterator it;
 	QValueList<NodeModif>::iterator it2;
-	bool undoQuantaView = true, success;
+	bool undoQuantaView = true;
 
 	if(kafkaIterator == sourceIterator)
 		return true;
@@ -1768,7 +1585,7 @@ void undoRedo::syncQuantaCursorAndSelection()
 {
 	KafkaHTMLPart *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaPart();
 	int curCol, curLine, curCol2, curLine2;
-	uint oldCurCol, oldCurLine, oldCurCol2, oldCurLine2;
+	uint oldCurCol, oldCurLine;
 	DOM::Node domNode;
 	int offset;
 	DOM::Range range(kafkaPart);

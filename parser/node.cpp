@@ -236,9 +236,9 @@ Node *Node::getClosingNode()
 
 	if(next && tag && tag->type == Tag::XmlTag && !tag->single)
 	{
-		while(n->tag->type == Tag::Empty)
+		while(n && n->tag->type == Tag::Empty)
 			n = n->next;
-		if (n->tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(tag, n->tag))
+		if (n && n->tag->type == Tag::XmlTagEnd && QuantaCommon::closesTag(tag, n->tag))
 			return n;
 	}
 	return 0L;

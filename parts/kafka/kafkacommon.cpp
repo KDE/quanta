@@ -1631,7 +1631,11 @@ Node* kafkaCommon::getNodeFromSubLocation(QValueList<int> loc, int locOffset)
 	return getNodeFromLocation(list);
 }
 
+#ifdef HEAVY_DEBUG
 void kafkaCommon::coutTree(Node *node, int indent)
+#else
+void kafkaCommon::coutTree(Node *, int)
+#endif
 {
 #ifdef HEAVY_DEBUG
 	QString output, dots;

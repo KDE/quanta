@@ -267,25 +267,6 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode, bool insertChilds)
 	modifs.cursorY2 = 0;
 	modifs.isModified = true;//TODO:determine this
 
-	/**if(_currentDoc->editIf->text().stripWhiteSpace() == "" && !(_domNode.nodeType() == DOM::Node::TEXT_NODE &&
-		_domNode.nodeValue() == ""))
-	{//we are in the case when a minimal kafka tree has been set
-		//TODO:change this : try to load the minimal tree from the quick start dialog.
-		baseNode = buildNodeFromKafkaNode(_kafkaPart->htmlDocument().firstChild(),
-			0L, 0L, 0, 0L, 0, modifs);
-		tmpDomNode = _kafkaPart->htmlDocument().firstChild();
-		while(!tmpDomNode.isNull())
-		{
-			tmpDomNode = kafkaCommon::getNextDomNode(tmpDomNode, b, false, _kafkaPart->htmlDocument());
-			if(tmpDomNode.isNull() || tmpDomNode.nodeName().string() == "#document")
-				break;
-			buildNodeFromKafkaNode(tmpDomNode,
-				searchCorrespondingNode(tmpDomNode.parentNode()),0L, 0, 0L, 0, modifs);
-		}
-		kafkaCommon::coutTree(baseNode, 2);
-		return;
-	}*/
-
 	_nodeParent = searchCorrespondingNode(_domNode.parentNode());
 
 	if(!_nodeParent)
@@ -353,25 +334,6 @@ void WKafkaPart::slotDomNodeModified(DOM::Node _domNode)
 	modifs.cursorY2 = 0;
 	modifs.isModified = true;//TODO:determine this
 	modif.type = undoRedo::NodeModified;
-
-	/**if(_currentDoc->editIf->text().stripWhiteSpace() == "")
-	{//we are in the case when a minimal kafka tree has been set
-		//TODO:CHANGE!!!
-		DOM::Node domNode;
-		bool b = false;
-		baseNode = buildNodeFromKafkaNode(_kafkaPart->htmlDocument().firstChild(),
-			0L, 0L, 0, 0L, 0, modifs);
-		domNode = _kafkaPart->htmlDocument().firstChild();
-		while(!domNode.isNull())
-		{
-			domNode = kafkaCommon::getNextDomNode(domNode, b);
-			if(domNode.isNull() || domNode.nodeName().string() == "#document") break;
-			buildNodeFromKafkaNode(domNode,
-				searchCorrespondingNode(domNode.parentNode()), 0L, 0, 0L, 0, modifs);
-		}
-		kafkaCommon::coutTree(baseNode, 2);
-		return;
-	}*/
 
 	//first look which Node correspond to this DOM::Node
 	_node = searchCorrespondingNode(_domNode);
@@ -876,7 +838,7 @@ Node * WKafkaPart::buildNodeFromKafkaNode(DOM::Node _domNode, Node *_nodeParent,
 	kdDebug(25001)<< "Node* WKafkaPart::buildNodeFromKafkaNode() - DOM::Node 2xNode* int: " <<
 		beginOffset << " Node* int: " << endOffset << " NodeModifsSet " << endl;
 #endif
-	Node *_node,  *_nodeNext = 0L, *_nodeXmlEnd = 0L, *_emptyNode, *n = 0L;
+	Node *_node, *_nodeXmlEnd = 0L, *_emptyNode, *n = 0L;
 	Tag *_tag, *_tagEnd, *_tagEmptyNode;
 	NodeModif modif;
 
@@ -1280,12 +1242,12 @@ kNodeAttrs *WKafkaPart::getAttrs(DOM::Node _domNode)
 	return domNodeProps[_domNode.handle()];
 }
 
-void WKafkaPart::slotdomNodeNewCursorPos(DOM::Node _domNode, int offset)
+void WKafkaPart::slotdomNodeNewCursorPos(DOM::Node, int)
 {
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "WKafkaPart::slotdomNodeNewCursorPos()" << endl;
 #endif
-	int line, col;
+	//int line, col;
 	//dont calculate cursor pos until the next view update
 	//getQuantaCursorPosition(line, col);
 	//emit newCursorPosition(line, col);
@@ -1511,7 +1473,6 @@ void WKafkaPart::translateQuantaIntoKafkaCursorPosition(uint curLine, uint curCo
 
 void WKafkaPart::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 {
-	QTag *qtag = 0L;
 	QString name;
 	kNodeAttrs *props;
 
@@ -1525,20 +1486,7 @@ void WKafkaPart::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 	props = new kNodeAttrs();
 	name = _domNode.nodeName().string().lower();
 
-	/**if(qtag)
-	{
-		kdDebug(25001)<< "WKafkaPart::connectDomNodeToQuantaNode() - " <<
-			"QTag name : " << qtag->name() <<
-			" canBeDeleted:" << qtag->canBeDeleted() <<
-			" canBeModified:" << qtag->canBeModified() <<
-			" canHaveCursorFocus:" << qtag->canHaveCursorFocus() <<
-			" cursorCanEnter:" << qtag->cursorCanEnter() << endl;
-		props->setCBDeleted(qtag->canBeDeleted());
-		props->setCBModified(qtag->canBeModified());
-		props->setCHCursorFocus(qtag->canHaveCursorFocus());
-		props->setCCEnter(qtag->cursorCanEnter());
-	}
-	else */if(_domNode.nodeType() == DOM::Node::TEXT_NODE)
+	if(_domNode.nodeType() == DOM::Node::TEXT_NODE)
 	{
 		props->setCBDeleted(true);
 		props->setCBModified(true);
