@@ -164,8 +164,9 @@ void QuantaInit::initQuanta()
   m_quanta->m_debugger = new DebuggerManager(m_quanta);
   connect(Project::ref(), SIGNAL(newProjectLoaded(const QString &, const KURL &, const KURL &)),
           m_quanta->m_debugger, SLOT(slotNewProjectLoaded(const QString &, const KURL &, const KURL &)));
-  
-  
+  connect(m_quanta->m_debugger, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
+
+
   //m_quanta->KDockMainWindow::createGUI( QString::null, false /* conserveMemory */ );
   m_quanta->createShellGUI(true);
 
@@ -284,18 +285,18 @@ void QuantaInit::initQuanta()
   connect(m_quanta->m_doc, SIGNAL(hideSplash()), m_quanta, SLOT(slotHideSplash()));
   connect(parser, SIGNAL(rebuildStructureTree()),
           m_quanta, SLOT(slotReloadStructTreeView()));
-  
+
   // Read list of characters
   QFile file(locate("appdata","chars"));
   if ( file.open(IO_ReadOnly) ) {    // file opened successfully
     QTextStream t( &file );        // use a text stream
     t.setEncoding(QTextStream::UnicodeUTF8);
     QString s;
-    while (!t.eof()) 
+    while (!t.eof())
       charList << i18n(t.readLine().utf8()); // line excluding '\n'
     file.close();
   }
-  
+
 }
 
 void QuantaInit::initToolBars()

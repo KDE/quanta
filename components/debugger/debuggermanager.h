@@ -11,7 +11,7 @@
  *   This program is free software; you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
  *   the Free Software Foundation; either version 2 of the License, or      *
- *   (at your option) any later version.                                    *                     
+ *   (at your option) any later version.                                    *
  *                                                                          *
  ***************************************************************************/
 
@@ -22,13 +22,13 @@
 #include <qstring.h>
 
 class DebuggerClient;
-class QuantaDebuggerInterface; 
-class DebuggerBreakpointList; 
+class QuantaDebuggerInterface;
+class DebuggerBreakpointList;
 class DebuggerUI;
 class DebuggerVariable;
 
 class DebuggerManager : public QObject {
-  Q_OBJECT 
+  Q_OBJECT
 
   private:
     // client
@@ -36,33 +36,33 @@ class DebuggerManager : public QObject {
     QuantaDebuggerInterface * m_interface;
     DebuggerBreakpointList *m_breakpointList;
     DebuggerUI * m_debuggerui;
-    
+
     // Internal help functions
     void setMark(QString, long, bool, int);
     void initActions();
     void initClientActions();
     QString m_currentFile;
     long m_currentLine;
-    
+
   public:
     DebuggerManager(QObject *myparent);
     ~DebuggerManager();
-    
+
     // Access to memebers
     DebuggerUI * UI() { return m_debuggerui; };
-    
+
     // Breakpoints
     void haveBreakpoint (QString file, int line);
-        
+
     // Public help functions
     bool showStatus(QString message, bool log);
     bool setActiveLine (QString file, int line);
-  
+
     void enableAction(QString action, bool enable);
     void fileOpened(QString file);
-  
+
     bool hasClient() { return m_client != 0; };
-    
+
   public slots:
     /** Execution control slots **/
     void slotDebugRun();
@@ -73,21 +73,24 @@ class DebuggerManager : public QObject {
     void slotDebugStepOut();
     void slotDebugPause();
     void slotDebugKill();
-    
+
     // Breakpoint
     void toggleBreakpoint();
     void clearBreakpoints();
-    
+
     // Watches
     void slotAddWatch(const QString &var);
     void slotRemoveVariable(DebuggerVariable* var);
-    
+
     // Connection related slots
     void slotDebugStartSession();
-    void slotDebugEndSession();  
-    
+    void slotDebugEndSession();
+
     // Initiation
     void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
+
+  signals:
+    void hideSplash();
 };
 
 #endif

@@ -11,7 +11,7 @@
  *   This program is free software; you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
  *   the Free Software Foundation; either version 2 of the License, or      *
- *   (at your option) any later version.                                    *          
+ *   (at your option) any later version.                                    *
  *                                                                          *
  ***************************************************************************/
 
@@ -40,16 +40,16 @@
 #include "debuggerui.h"
 
 
-DebuggerManager::DebuggerManager(QObject *myparent) 
+DebuggerManager::DebuggerManager(QObject *myparent)
  : QObject(myparent)
-{ 
+{
   initActions();
-  
+
   // Create objects
   m_breakpointList = new DebuggerBreakpointList();
   m_debuggerui = NULL;
   m_interface = new QuantaDebuggerInterface(this, "interface");
-  m_client = NULL; 
+  m_client = NULL;
 }
 
 void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KURL &, const KURL &)
@@ -60,66 +60,69 @@ void DebuggerManager::slotNewProjectLoaded(const QString &projectname, const KUR
     m_client = NULL;
   }
   enableAction("*", false);
-    
+
   if(m_debuggerui)
   {
     delete m_debuggerui;
     m_debuggerui = NULL;
   }
   //kdDebug(24000) << "DebuggerManager::slotNewProjectLoaded " << projectname << ", " << Project::ref()->debuggerClient << endl;
-  
+
   // Load new client
   if(!projectname.isEmpty())
   {
-    
+
     KTrader::OfferList offers = KTrader::self()->query("Quanta/Debugger");
     KTrader::OfferList::ConstIterator iterDbg;
-    for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg) 
+    for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg)
     {
       KService::Ptr service = *iterDbg;
       if(Project::ref()->debuggerClient == service->name())
       {
         int errCode = 0;
-        m_client = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode); 
-        
+        m_client = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode);
+
         //kdDebug(24000) << service->name() << " (" << m_client << ")" << endl;
-      
+
         if(!m_client)
+        {
+          emit hideSplash();
           KMessageBox::error(NULL, i18n("<qt>Unable to load the debugger plugin, error code %1 was returned: <b>%2</b>.</qt>").arg(errCode).arg(KLibLoader::self()->lastErrorMessage()), i18n("Debugger Error"));
+        }
         break;
       }
     }
   }
-  
+
   // Tell client to load its settings
   if(m_client)
   {
     QDomNode nodeThisDbg;
     QDomNode projectNode = Project::ref()->dom.firstChild().firstChild();
-    QDomNode nodeDbg  = projectNode.namedItem("debuggers");  
-    if(nodeDbg.isNull()) 
+    QDomNode nodeDbg  = projectNode.namedItem("debuggers");
+    if(nodeDbg.isNull())
     {
       nodeDbg = Project::ref()->dom.createElement("debuggers");
       projectNode.appendChild(nodeDbg);
     }
-    
+
     nodeThisDbg = nodeDbg.namedItem(m_client->getName());
     if(nodeThisDbg.isNull())
     {
       nodeThisDbg = Project::ref()->dom.createElement(m_client->getName());
       nodeDbg.appendChild(nodeThisDbg);
     }
-    
+
     m_client->readConfig(nodeThisDbg);
-    
+
     m_debuggerui = new DebuggerUI(this, "debuggerui");
   }
-  
+
   initClientActions();
-  
+
   // Disable all debugactions that need a session (ie not breakpoints, etc)
   slotDebugStartSession();
-  
+
 }
 
 void DebuggerManager::initActions()
@@ -127,13 +130,13 @@ void DebuggerManager::initActions()
   KActionCollection *ac = quantaApp->actionCollection();
   if(!ac)
     return;
-    
+
   //Debugger, breakpoint
   new KAction(i18n("Toggle &Breakpoint"), SmallIcon("debug_breakpoint"), Qt::CTRL+Qt::SHIFT+Qt::Key_B,
         this, SLOT(toggleBreakpoint()), ac, "debug_breakpoints_toggle");
-  new KAction(i18n("&Clear Breakpoints"), 0, 
+  new KAction(i18n("&Clear Breakpoints"), 0,
         this, SLOT(clearBreakpoints()), ac, "debug_breakpoints_clear");
-      
+
   new KAction(i18n("&Run"), SmallIcon("debug_run"), 0,
         this, SLOT(slotDebugRun()), ac, "debug_run");
   new KAction(i18n("&Leap"), SmallIcon("debug_leap"), 0,
@@ -156,11 +159,11 @@ void DebuggerManager::initActions()
         this, SLOT(slotDebugEndSession()), ac, "debug_disconnect");
 
   connect(quantaApp, SIGNAL(debuggerAddWatch(const QString&)), this, SLOT(slotAddWatch(const QString&)));
-  
+
 }
 
 void DebuggerManager::initClientActions()
-{  
+{
   if(m_client)
   {
     // Get actioncollection and add appropriate actions depending on capabilities of the debugger
@@ -168,14 +171,14 @@ void DebuggerManager::initClientActions()
       enableAction("debug_breakpoints_toggle", false);
     if(!m_client->supports(DebuggerClient::ClearAllBreakpoints))
       enableAction("debug_breakpoints_clear", false);
-    
-    enableAction("*", false); 
+
+    enableAction("*", false);
   }
 }
 
-DebuggerManager::~DebuggerManager() 
+DebuggerManager::~DebuggerManager()
 {
-  delete m_breakpointList; 
+  delete m_breakpointList;
   m_breakpointList = 0L;
   delete m_client;
   m_client = 0L;
@@ -189,7 +192,7 @@ void DebuggerManager::enableAction(QString action, bool enable)
 {
   if(action == "*")
   {
-    // Enable/Disable all session related actions + connect/disconnect  
+    // Enable/Disable all session related actions + connect/disconnect
     enableAction("debug_run", enable);
     enableAction("debug_leap", enable);
     enableAction("debug_pause", enable);
@@ -198,7 +201,7 @@ void DebuggerManager::enableAction(QString action, bool enable)
     enableAction("debug_stepinto", enable);
     enableAction("debug_stepout", enable);
     enableAction("debug_skip", enable);
-    
+
     enableAction("debug_connect", enable);
     enableAction("debug_disconnect", enable);
   }
@@ -215,16 +218,16 @@ void DebuggerManager::slotRemoveVariable(DebuggerVariable* var)
 {
   if(!m_client)
     return;
-  
+
   m_client->removeWatch(var);
-  
+
 }
 void DebuggerManager::slotAddWatch(const QString &var)
 {
   kdDebug(24000) << "DebuggerManager::slotAddWatch " << var << endl;
   if(!m_client)
     return;
-  
+
   m_client->addWatch(var);
 }
 
@@ -232,7 +235,7 @@ void DebuggerManager::slotDebugStartSession()
 {
   if(!m_client)
     return;
-  
+
   m_client->startSession();
 }
 
@@ -240,7 +243,7 @@ void DebuggerManager::slotDebugEndSession()
 {
   if(!m_client)
     return;
-  
+
   m_client->endSession();
 }
 
@@ -248,7 +251,7 @@ void DebuggerManager::slotDebugRun()
 {
   if(!m_client)
     return;
-  
+
   m_client->run();
 }
 
@@ -256,7 +259,7 @@ void DebuggerManager::slotDebugLeap()
 {
   if(!m_client)
     return;
-  
+
   m_client->leap();
 
 }
@@ -264,7 +267,7 @@ void DebuggerManager::slotDebugSkip()
 {
   if(!m_client)
     return;
-  
+
   m_client->skip();
 
 }
@@ -272,7 +275,7 @@ void DebuggerManager::slotDebugStepOver()
 {
   if(!m_client)
     return;
-  
+
   m_client->stepOver();
 
 }
@@ -280,7 +283,7 @@ void DebuggerManager::slotDebugStepInto()
 {
   if(!m_client)
     return;
-  
+
   m_client->stepInto();
 
 }
@@ -288,7 +291,7 @@ void DebuggerManager::slotDebugPause()
 {
   if(!m_client)
     return;
-  
+
   m_client->pause();
 
 }
@@ -296,7 +299,7 @@ void DebuggerManager::slotDebugKill()
 {
   if(!m_client)
     return;
-  
+
   m_client->kill();
 
 }
@@ -304,7 +307,7 @@ void DebuggerManager::slotDebugStepOut()
 {
   if(!m_client)
     return;
-  
+
   m_client->stepOut();
 
 }
@@ -315,7 +318,7 @@ void DebuggerManager::fileOpened(QString file)
 {
   if(!m_client)
     return;
-  
+
   m_client->fileOpened(file);
 }
 
@@ -338,7 +341,7 @@ bool DebuggerManager::setActiveLine (QString file, int line )
   // Remove old active line mark
   setMark(m_currentFile, m_currentLine, false, KTextEditor::MarkInterface::markType05);
 
- 
+
   // Update vars with active line
   m_currentFile = filename;
   m_currentLine = line;
@@ -376,7 +379,7 @@ void DebuggerManager::setMark(QString filename, long line, bool set, int mark)
 bool DebuggerManager::showStatus(QString message, bool log)
 {
    quantaApp->slotStatusMsg(m_client->getName() + ": " + message);
-   
+
    if(log)
    {
      if(!message.endsWith("\n"))
@@ -394,34 +397,34 @@ void DebuggerManager::toggleBreakpoint ()
   {
     uint line, col;
     w->viewCursorIf->cursorPositionReal(&line, &col);
-    
+
     DebuggerBreakpoint* br = new DebuggerBreakpoint(w->url().prettyURL(0, KURL::StripFileProtocol), line);
 
     if(!m_breakpointList->exists(br))
     {
-      m_breakpointList->add(br);     
+      m_breakpointList->add(br);
       setMark(w->url().prettyURL(0, KURL::StripFileProtocol), br->line(), true, KTextEditor::MarkInterface::markType02);
       if(m_client && m_client->isActive())
       {
         m_client->addBreakpoint(br);
-      }      
+      }
     }
     else
     {
       m_breakpointList->remove(br);
       setMark(w->url().prettyURL(0, KURL::StripFileProtocol), br->line(), false, KTextEditor::MarkInterface::markType02);
-      
+
       if(m_client && m_client->isActive())
       {
         m_client->removeBreakpoint(br);
-      }         
+      }
     }
   }
 }
 void DebuggerManager::clearBreakpoints ()
 {
   DebuggerBreakpoint *bp;
-  
+
   m_breakpointList->rewind();
   while((bp = m_breakpointList->next()))
     setMark(bp->filePath(), bp->line(), false, KTextEditor::MarkInterface::markType02);

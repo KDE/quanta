@@ -1359,7 +1359,7 @@ void Project::slotOptions()
   connect(optionsPage.comboDebuggerClient, SIGNAL(activated(const QString &)),
           this, SLOT(slotDebuggerChanged(const QString &)));
 
-  
+
   // Debuggers Combo
   KTrader::OfferList offers = KTrader::self()->query("Quanta/Debugger");
   KTrader::OfferList::ConstIterator iterDbg;
@@ -1368,7 +1368,7 @@ void Project::slotOptions()
   int idxDbg = 0;
   m_debuggerClientEdit = debuggerClient;
   optionsPage.buttonDebuggerOptions->setEnabled(false);
-  for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg) 
+  for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg)
   {
     KService::Ptr service = *iterDbg;
     optionsPage.comboDebuggerClient->insertItem(service->name());
@@ -1379,7 +1379,7 @@ void Project::slotOptions()
       optionsPage.buttonDebuggerOptions->setEnabled(true);
     }
   }
-  
+
   QDomElement uploadEl = dom.firstChild().firstChild().namedItem("upload").toElement();
 
   optionsPage.lineHost->setText(uploadEl.attribute("remote_host",""));
@@ -1668,29 +1668,29 @@ void Project::slotOptions()
   }
 }
 
-void Project::slotDebuggerOptions() 
+void Project::slotDebuggerOptions()
 {
   // Debuggers Combo
   KTrader::OfferList offers = KTrader::self()->query("Quanta/Debugger");
   KTrader::OfferList::ConstIterator iterDbg;
-  for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg) 
+  for(iterDbg = offers.begin(); iterDbg != offers.end(); ++iterDbg)
   {
     KService::Ptr service = *iterDbg;
     if(m_debuggerClientEdit == service->name())
     {
       int errCode = 0;
-      DebuggerClient::DebuggerClient* dbg = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode); 
-      if(dbg) 
+      DebuggerClient::DebuggerClient* dbg = KParts::ComponentFactory::createInstanceFromService<DebuggerClient::DebuggerClient>(service, this, 0, QStringList(), &errCode);
+      if(dbg)
       {
         QDomNode projectNode = dom.firstChild().firstChild();
         QDomNode nodeThisDbg;
         QDomNode nodeDbg  = projectNode.namedItem("debuggers");
-        if(nodeDbg.isNull()) 
+        if(nodeDbg.isNull())
         {
           nodeDbg = dom.createElement("debuggers");
           projectNode.appendChild(nodeDbg);
         }
-        
+
         nodeThisDbg = nodeDbg.namedItem(service->name());
         if(nodeThisDbg.isNull())
         {
@@ -1700,15 +1700,16 @@ void Project::slotDebuggerOptions()
         dbg->showConfig(nodeThisDbg);
         delete dbg;
       }
-      else 
+      else
       {
+        emit hideSplash();
         KMessageBox::error(NULL, i18n("<qt>Unable to load the debugger plugin, error code %1 was returned: <b>%2</b>.</qt>").arg(errCode).arg(KLibLoader::self()->lastErrorMessage()), i18n("Debugger Error"));
       }
     }
   }
 }
 
-void Project::slotDebuggerChanged(const QString &debugger) 
+void Project::slotDebuggerChanged(const QString &debugger)
 {
   m_debuggerClientEdit = debugger;
 }
