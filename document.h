@@ -208,8 +208,6 @@ private:
   QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
   /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
   bool xmlCodeCompletion(int line, int col);
-  /** Code completion is manually invoked for script type languages. */
-  bool scriptCodeCompletion(int line, int col);
   /** Returns list of values for attribute */
   QStringList* tagAttributeValues(const QString& dtdName, const QString& tag, const QString& attribute);
   /** Brings up list of code completions */

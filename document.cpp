@@ -478,6 +478,7 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
 {
   unsigned int line,col;
   completionInProgress = false;
+  kdDebug(24000) << "slotCompletionDone\n";
   viewCursorIf->cursorPositionReal(&line,&col);
   DTDStruct* dtd = currentDTD();
   if (completion.type == "attribute")
@@ -566,6 +567,8 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
 */
 void Document::slotCharactersInserted(int line,int column,const QString& string)
 {
+ kdDebug(24000) << "slotCharactersInserted: " << string << endl;
+ kdDebug(24000) << "completionInProgress: " << completionInProgress << endl;
  bool handled = false;
  if (qConfig.useAutoCompletion)
  {
@@ -591,7 +594,7 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
       completionDTD = defaultDTD();
       if (lastDTD != completionDTD && completionDTD->family == Xml)
       {
-        xmlAutoCompletion(line, column, string);
+        handled = xmlAutoCompletion(line, column, string);
       }
 /*TODO: Can the default DTD be a script?
       if (dtd->family == Script)
@@ -600,6 +603,7 @@ void Document::slotCharactersInserted(int line,int column,const QString& string)
       }
 */
     }
+    completionInProgress = handled;
   }
  }
 }
@@ -1001,10 +1005,14 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& string)
  int i = column;
  while (i > 0 && s[i].isSpace())
    i--;
+ while (i > 0 && s[i] != completionDTD->attrAutoCompleteAfter &&
+        s[i] != completionDTD->tagAutoCompleteAfter)
+   i--;
+ QString startStr = s.mid(i + 1).stripWhiteSpace();
  s = s.left(i + 1);
- if ( s.endsWith(completionDTD->attrAutoCompleteAfter) ) //if we need to list the arguments of a function
+ if ( s[i] == completionDTD->attrAutoCompleteAfter ) //if we need to list the arguments of a function
  {
-   QString textLine = editIf->textLine(line).left(i);
+   QString textLine = s.left(i);
    QString word = findWordRev(textLine, completionDTD);
    QTag *tag = completionDTD->tagsList->find(word);
    if (!tag) tag = userTagList.find(word.lower());
@@ -1033,19 +1041,19 @@ bool Document::scriptAutoCompletion(int line, int column, const QString& string)
        arguments = tag->name() + ": " + tag->attributeAt(0)->name + ";";
        argList.append(arguments);
        codeCompletionIf->showArgHint(argList, ":;" , completionDTD->attributeSeparator);
-       showCodeCompletions( getAttributeValueCompletions(tag->name(), tag->attributeAt(0)->name, ""));
+       showCodeCompletions( getAttributeValueCompletions(tag->name(), tag->attributeAt(0)->name, startStr));
      }
 
      handled = true;
    }
  } else
- if ( s.endsWith(completionDTD->tagAutoCompleteAfter) )
+ if ( s[i] == completionDTD->tagAutoCompleteAfter )
  {
-   showCodeCompletions(getTagCompletions(line, column));
+   showCodeCompletions(getTagCompletions(line, column + 1));
    handled = true;
- }
+ } else
  //TODO: this is PHP specific. Make it generic
- if (string == "$")
+ if (s[i] == completionDTD->varAutoCompleteAfter)
  {
    showCodeCompletions( getVariableCompletions(line, column) );
    handled = true;
@@ -1201,7 +1209,7 @@ void Document::codeCompletionRequested()
   }
   if (completionDTD->family == Script)
   {
-    handled = scriptCodeCompletion(line, col);
+    handled = scriptAutoCompletion(line, col - 1, "");
   }
   if (!handled)
   {
@@ -1211,12 +1219,6 @@ void Document::codeCompletionRequested()
       xmlCodeCompletion(line, col);
 
     }
-/* TODO: Can the default DTD be a script??
-    if (dtd->family == Script)
-    {
-      scriptCodeCompletion(dtd, line, col);
-    }
-*/
   }
 
   completionInProgress = true;
@@ -1234,7 +1236,7 @@ void Document::codeCompletionHintRequested()
 //    int pos = textLine.findRev("(");
 //    int pos2 = textLine.findRev(")");
     //if (pos > pos2 )
-       scriptCodeCompletion(line, col);
+       scriptAutoCompletion(line, col - 1,"");
   }
 }
 
@@ -1310,55 +1312,7 @@ bool Document::xmlCodeCompletion(int line, int col)
   }
   return handled;
 }
-/** Code completion is manually invoked for script type languages. */
-bool Document::scriptCodeCompletion(int line, int col)
-{
- bool handled = false;
- QString s = text(line, 0,line, col).section(completionDTD->attrAutoCompleteAfter,-1);
- if (s.stripWhiteSpace().isEmpty())
- {
-   scriptAutoCompletion(line, col, completionDTD->attrAutoCompleteAfter);
-   handled = true;
- } else
- {
-   bool goAhead = true; //go ahead and bring up completion box for XML tags
-   int pos;
-   s = editIf->textLine(line);
-   pos = s.findRev("$",col);
-   if (pos != -1)
-   {
-     s = text(line, pos+1,line,col);
-     QRegExp rx("[A-Za-z0-9_]*",false);
-     if (rx.exactMatch(s))
-     {
-       scriptAutoCompletion(line, col, "$");
-       goAhead = false;
-       handled = true;
-     }
-   }
 
-   if (goAhead)
-   {
-     s = editIf->textLine(line);
-     pos = s.findRev("<",col);
-     if (pos != -1)
-     {
-       s = text(line, pos+1,line,col);
-       QRegExp rx("[A-Za-z0-9_]*",false);
-       if (rx.exactMatch(s))
-       {
-         goAhead = false;
-       }
-     }
-     if (goAhead)
-     {
-       showCodeCompletions(getTagCompletions(line, col));
-       handled = true;
-     }
-   }
- }
- return handled;
-}
 /** No descriptions */
 void Document::slotCompletionAborted()
 {

@@ -17,7 +17,7 @@ AttributeSeparator = ;
 [Parsing rules]
 Tags = style(type)
 Comments = /* */
-StructKeywords = 
+StructKeywords =
 StructBeginStr = {
 StructEndStr = }
 StructRx = \\{|\\}

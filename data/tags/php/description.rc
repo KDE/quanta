@@ -21,6 +21,8 @@ ScriptRegExp = (<\?.+\?>) | (<\*.+\*>) | (<\%.+\%>)
 
 StructGroupsCount = 5
 
+VariableAutoCompleteAfter = $
+
 [Parsing rules]
 AreaBorders = <? ?>, <* *>, <% %>
 Tags = script(language)

@@ -178,9 +178,10 @@ typedef struct DTDStruct
 /* True if foo-foo2 should be considered as one word. False (default) otherwise. */
      bool minusAllowedInWord;
 
-     QString tagAutoCompleteAfter;
-     QString attrAutoCompleteAfter;
-     QString attributeSeparator;
+     QChar tagAutoCompleteAfter;
+     QChar attrAutoCompleteAfter;
+     QChar varAutoCompleteAfter;
+     QChar attributeSeparator;
     };
 
 class QTag {

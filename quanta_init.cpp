@@ -1203,12 +1203,14 @@ void QuantaApp::readTagDir(QString &dirName)
 
  dtdConfig->setGroup("Extra rules");
  dtd->minusAllowedInWord = dtdConfig->readBoolEntry("MinusAllowedInWord", false);
- dtd->tagAutoCompleteAfter = dtdConfig->readEntry("TagAutoCompleteAfter").stripWhiteSpace();
- dtd->attrAutoCompleteAfter = dtdConfig->readEntry("AttributeAutoCompleteAfter","(").stripWhiteSpace();
- dtd->attributeSeparator = dtdConfig->readEntry("AttributeSeparator").stripWhiteSpace();
- if (dtd->attributeSeparator.isEmpty())
+ dtd->tagAutoCompleteAfter = dtdConfig->readEntry("TagAutoCompleteAfter").stripWhiteSpace().at(0);
+ dtd->attrAutoCompleteAfter = dtdConfig->readEntry("AttributeAutoCompleteAfter","(").stripWhiteSpace().at(0);
+ dtd->varAutoCompleteAfter =dtdConfig->readEntry("VariableAutoCompleteAfter","$").stripWhiteSpace().at(0);
+
+ dtd->attributeSeparator = dtdConfig->readEntry("AttributeSeparator").stripWhiteSpace().at(0);
+ if (dtd->attributeSeparator.isNull())
  {
-   dtd->attributeSeparator = (dtd->family == Xml) ? "\"" : ",";
+   dtd->attributeSeparator = (dtd->family == Xml) ? '\"' : ',';
  }
  dtd->scriptName = (dtdConfig->readEntry("ScriptName")).lower();
  if (!dtd->scriptName.isEmpty())
