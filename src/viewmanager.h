@@ -63,9 +63,9 @@ public:
 /** Returns a list with the URLs of the opened documents */
   KURL::List openedFiles(bool noUntitled=true);
 
-  /** Returns the view holding the documentation widget. If there is no such view yet,
+  /** Returns the view holding the documentation widget. If create is true and there is no such view yet,
   it creates one. */
-  QuantaView *documentationView();
+  QuantaView *documentationView(bool create = true);
 
 public slots:
   void slotViewDeactivated(KMdiChildView *view);

@@ -353,36 +353,7 @@ void QuantaDoc::slotInsertAttrib( int id )
   }
 }
 
-void QuantaDoc::prevDocument()
-{
-//FIXME:
-/*
-  QTabWidget *tab = quantaApp->view()->writeTab();
-
-  int index = tab->currentPageIndex();
-  if (index > 0) index--;
-  else index = tab->count()-1;
-  tab->showPage(tab->page(index)); */
-}
-
-void QuantaDoc::nextDocument()
-{
-//FIXME:
-/*
-  QTabWidget *tab = quantaApp->view()->writeTab();
-
-  int index = tab->currentPageIndex();
-  if (index + 1 < tab->count() ) index++;
-  else index = 0;
-  tab->showPage(tab->page(index)); */
-}
-
-
 /// SLOTS
-
-void QuantaDoc::undoHistory() {/*write()->undoHistory();*/}
-void QuantaDoc::invertSelect(){/*write()->invertSelection();*/}
-
 
 /** Called when a file on the disk has changed. */
 void QuantaDoc::slotFileDirty(const QString& fileName)

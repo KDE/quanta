@@ -41,9 +41,6 @@ public:
   bool newDocument(const KURL&, bool switchToExisting = true);
   void openDocument(const KURL&, const QString& a_encoding = QString::null, bool switchToExisting = true);
 
-  void prevDocument();
-  void nextDocument();
-
   // for kwrites
   void readConfig(KConfig *);
   void writeConfig(KConfig *);
@@ -54,8 +51,6 @@ public slots:
   void slotInsertAttrib( int id );
   void slotAttribPopup();
 
-  void undoHistory();
-  void invertSelect();
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
   void slotOpeningCompleted();

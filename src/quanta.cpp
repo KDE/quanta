@@ -607,17 +607,6 @@ void QuantaApp::slotFileCloseAll()
   slotNewStatus();
 }
 
-void QuantaApp::slotFileNext()
-{
-   m_doc->nextDocument();
-}
-
-void QuantaApp::slotFilePrev()
-{
-   m_doc->prevDocument();
-}
-
-
 void QuantaApp::slotFileQuit()
 {
   close();
@@ -1638,30 +1627,26 @@ void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElemen
 
 void QuantaApp::slotBack()
 {
-//FIXME:
-/*  QWidgetStack *s = widgetStackOfHtmlPart();
-  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 0 )
-  {
-     slotFilePrev();
-     return; //TODO: switching between files has precedence now!
-  }
-  if ( s->id( s->visibleWidget()) == 1 ) m_htmlPart->back();
-  if ( s->id( s->visibleWidget()) == 2 ) m_htmlPartDoc->back();
-  */
+   if (ViewManager::ref()->documentationView(false)  == ViewManager::ref()->activeView())
+   {
+       m_htmlPartDoc->back();
+   } else
+   {
+      activatePrevWin();
+   }
+//FIXME: same for the preview
 }
 
 void QuantaApp::slotForward()
 {
-  //FIXME:
-  /*
-  QWidgetStack *s = widgetStackOfHtmlPart();
-  if ( rightWidgetStack->id( rightWidgetStack->visibleWidget()) == 0 )
-  {
-    slotFileNext();
-    return; //TODO: switching between files has precedence now!
-  }
-  if ( s->id( s->visibleWidget()) == 1 ) m_htmlPart->forward();
-  if ( s->id( s->visibleWidget()) == 2 ) m_htmlPartDoc->forward(); */
+   if (ViewManager::ref()->documentationView(false)  == ViewManager::ref()->activeView())
+   {
+       m_htmlPartDoc->forward();
+   } else
+   {
+      activateNextWin();
+   }
+  //FIXME: same for the preview
 }
 
 void QuantaApp::slotShowOpenFileList()

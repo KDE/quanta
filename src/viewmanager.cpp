@@ -301,9 +301,9 @@ bool ViewManager::isOneModified()
   return false;
 }
 
-QuantaView* ViewManager::documentationView()
+QuantaView* ViewManager::documentationView(bool create)
 {
-    if (!m_documentationView)
+    if (!m_documentationView && create)
     {
         m_documentationView = createView();
         m_documentationView->addCustomWidget(quantaApp->documentationPart()->view(), i18n("Documentation"));

@@ -208,8 +208,6 @@ public slots:
   /** Close the document specified in the parameter if it's opened */
   void slotFileClose(const KURL &url);
   void slotFileCloseAll();
-  void slotFileNext();
-  void slotFilePrev();
   void slotFileQuit();
 
   void slotOpenFileInPreview(const KURL&);
