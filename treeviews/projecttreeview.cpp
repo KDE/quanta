@@ -325,7 +325,6 @@ void ProjectTreeView::slotReloadTree( ProjectList *fileList, bool buildNewTree, 
   {
     if (m_projectDir)
     {
-      kdDebug(250) << "removebranch: " << m_projectDir << endl;
       removeBranch(m_projectDir);
       m_projectDir = 0L;
     }
@@ -334,7 +333,6 @@ void ProjectTreeView::slotReloadTree( ProjectList *fileList, bool buildNewTree, 
       btb->folderToOpen = folderToOpen;
       btb->reopenFolder();
     }
-    kdDebug(250) << "m_projectDir: " << m_projectDir << endl;
   } else
   {
     if (m_projectDir){

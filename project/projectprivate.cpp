@@ -997,8 +997,6 @@ void ProjectPrivate::getStatusFromTree()
 /** create new project */
 void ProjectPrivate::slotNewProject()
 {
-  kdDebug(250) << "slotNewProject " << endl;
-  slotCloseProject();
   QWizard *wiz = new QWizard(m_mainWindow, "new", true);
   wiz->setCaption(i18n("New Project Wizard"));
   wiz->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -1067,8 +1065,9 @@ void ProjectPrivate::slotNewProject()
   }
 
   png->linePrjName->setFocus();
-  if ( wiz->exec() )
+  if (wiz->exec())
   {
+    slotCloseProject();
     slotAcceptCreateProject();
   }
   delete wiz;
