@@ -1,0 +1,338 @@
+This document tries to give a little overview about Quanta classes and their
+interactions. The document is for Quanta+ 3.3 as of 27-05-2004.
+
+1. src directory
+-----------------
+- the main classes
+
+KSplash:  the splash screen class (used only for KDE < 3.2.3). Called from the
+               KQApplication classes.
+
+KQApplicationPrivate: the common class for the unique and non-unique mode
+                Quanta application.
+
+KQApplication: the non-unique version of the Quanta application.
+
+KQUniqueApplication: the unique version of the Quanta application.
+
+QuantaApp: the main window class of Quanta. The main purpose is to handle
+                  general user events and to process and provide general informations.
+                  As it inherits from KMdiMainFrm it also does some window managing
+                  jobs.
+                  There is one global object of this type called quantaApp, but it's
+                  recommended that you use the signal/slot mechanism instead of
+                  calling directly the QuantaApp methods. It interacts almost with
+                  every other class.
+
+QuantaInit: a class used only on startup to build the user interface, load the options,
+                  set up the signal/slot connections, etc. It has a very short life and can be
+                  imagined as a part of QuantaApp.
+
+QuantaDoc: an old class inherited from the pre-KMDI design of Quanta. The methods
+                   from it most probably belong somewhere else (eg. QuantaApp). The main
+                   tasks now are related to document opening and handling of some user
+                   events. There is only one object of this type.
+
+QuantaView: a QuantaView can be imagined as a visual representation of a document,
+                    plugin, part. It's the widget on a "tab" in the user interface. Each object
+                    may hold either a Document (real document), QuantaPlugin (a plugin) and/or
+                    a common widget (anything, like the preview part, documentation part).
+                    It has methods to save the document, switch between different view modes
+                    (VPL, source) and reacts to some events, like getting the focus.
+                    The views are managed by the ViewManager.
+
+ViewManager: singleton object which manages the QuantaView's. It has methods to
+                    create, remove, save views, reacts to view change, handles the
+                    tab context menus and the D&D of tabs. Interacts with QuantaApp and
+                    QuantaView.
+
+Document: an editable (KTextEditor) document with advanced, Quanta specific features.
+                 There is a 1-1 relation between a Document and QuantaView. Each view can
+                 have one Document and each Document can have only one view. Multiple
+                 views of the same document is not supported by Quanta at this moment.
+                 The class has methods to manipulate the KTextEditor::Document and
+                 KTextEditor::View via the various KTextEditor interfaces in an editor
+                 independent mode. Main tasks are:
+                    - react to user keypresses
+                    - handle autocompletion (when it should appear, what should appear in the
+                      completion box, autocompleting of child tags)
+                    - react to changes in the document and ask for a rebuild of the node tree
+                    - modify the closing/opening tags based on the node tree
+                    - create temporary files of opened documents (and after each save)
+                    - create backups of documents
+                    - handle text and tag insertion
+                    - handling tag modifications
+                    - react to changes made to the document outside of Quanta
+                    - detect the main DTD of the document. Each Document has a main DTD,
+                       but may contain other pseudo-DTDs inside.
+                    - provides convenience methods to work with text documents (find,
+                       findRev, findWordRev, currentWord, text selection)
+                    - keeps track of untitled and modified status
+
+DTDs: stores and loads the DTEPs from disk as they are requested. Works with
+           DTDStruct classes (structures). Interacts with every class which works with
+           DTEPs. Singleton.
+
+DCOP* classes: the DCOP interfaces of Quanta. WindowManagerIf is the general
+           purpose interface working mainly with views and files, implemented in the
+           QuantaApp class. SettingsIf is an interfaces towards various Quanta settings and
+           QuantaIf is an interface towards Quanta internals like selectors, used in some
+           of the DTEP definition files. The interfaces (except WindowManagerIf) have a separate implementation class.
+
+
+2. parsers directory
+---------------------
+- parsing and node tree related classes (yes, QTag might not belong here)
+
+Parser: parses a document and builds the node tree. It does a quick parsing of XML
+            tags, special areas are not parsed in detail, only their start and end region is
+            determined. For XML areas it parses also for groups and does a quick
+            parsing of included (XML) files as well. It has a method to parse only the
+            changed area of the document (rebuild) and a method to find the node from
+            the tree corresponding for a place in the document (nodeAt). It calls
+            the detailed special area parser in the background via a singleshot timer.
+            Interacts with the SAParser, StructureTreeView and any other class requesting
+            information from the node tree.
+            There is usually only one Parser object in the memory, but it is not a singleton
+            as it's used in the table editor as well.
+
+SAParser: special area (pseudo DTEP) parser. Parses scripts, CSS, etc. Can do a quick
+            or detailed parsing in synchronous or asynchronous mode. The later means that
+            the parsing is done in small steps, using singleshot timers to call the next step, so
+            the user interface is not blocked while the detailed, time consuming parsing is
+            done. The parsing is context based. Calls the special area group parser for
+            every special area node. Emits signals to indicate the ending of parsing and
+            the need of the structure tree rebuilding.
+
+SAGroupParser: the special area group parser called from SAParser. This can behave
+           asynchronously as well. Emits signals to indicate the ending of parsing and
+            the need of the rebuilding of the group part of the structure tree.
+
+ParserCommon: common (static) methods used by the Parser and SAParser, and holds
+           parser-global data structures as well.
+
+Node:  an element of the Node tree. Each Node has a parent, child, next and previous
+           Node (of course they can be NULL) and a Tag. The Tag cannot be NULL.
+           Each node appears at least once under the visual structure tree (mainListItem),
+           but can appear more than once if it's part of some structure groups (listItems)
+           There are convenience methods which helps navigating through the node tree and
+           some flags noting the status of the node. See the description of the class
+           attributes.
+
+Tag:  a parsed tag. Each node has a tag. A tag can be a real XML tags from the
+        document or some other special tag noting text, empty area, structure begin,
+        structure end, comment, etc. XML tags are parsed and it's possible to read
+        the available attributes and attribute values, modify them, etc. Each tag has a
+        DTD associated with it, meaning that "this tag was parsed and should be
+        interpreted as part of this DTD", holds the position in the document, the
+        original text found at that position, a cleaned version of that text (without
+        comments), etc. A Tag is not necessary a valid tag of the DTD. <foo foo1="foo">
+        is a tag in any DTD.
+
+QTag: a valid DTD tag. When the tagXML files are read, each DTDStruct will contain many
+        QTag objects describing the valid tags in that DTD. The QTag gives us the
+        possible attributes and their values, the relationship regarding other QTags and
+        some other status information (single, optional, etc.). A QTag can hold
+        information about pseudo-DTD tags, which are not real XML tags, but they can
+        describe methods, classes, functions, etc.
+
+DTDParser: parses a real DTD definition file and converts to tagXML.
+
+
+3. utility directory
+-------------------
+- helper, convenience classes; other classes not belonging anywhere else
+
+QuantaCommon: static convenience methods, used in many places.
+
+QConfig: holds the Quanta configuration settings.
+
+QuantaToolBar/ToolbarTabWidget/ToolbarXMLGUI: classes needed to make the
+              user toolbars work.
+
+TagAction: an extended KAction, which can be modified in Quanta. May be of three
+                types: Tag, Script, Text. Script actions can be executed in synchronous
+                (execute) or async. mode (insertTag). TagActions are usually put on the
+                user toolbars and under Tags menu, but they can be plugged anywhere
+                just like the normal KActions.
+
+
+4. treeviews directory
+-----------------------
+- classes dealing with the different treeviews
+
+FilesTreeView/FilesTreeBranch/FilesTreeViewItem: shows the file and directory
+                structure in a tree. Can show more than one tree at once. By default
+                it shows a tree starting with the root directory (/) and one starting with the
+                $HOME directory of the current user. It's possible to specify other
+                such top-level directories. The toplevel directories can be remote directories
+                as well. The class handles the events of the file and folder context menus and
+                communicates using signals with QuantaApp, for example to indicate that
+                a file must be opened.
+                It's an extension of the KFileTreeView.
+
+ProjectTree* : an extension of the FilesTree* classes to show the project files in a
+               tree. The project files are not what are under the project directory, but
+               only those that are listed in the .webprj file. Communicates with QuantaApp
+               and the Project object via signals. It's a singleton class.
+
+TemplatesTree*: an extension of the FilesTree* classes to show the three special
+               template directories (global, local and project template directory). Handles
+               template specific actions (insert, template settings, send in email), D&D.
+               It's a singleton.
+
+ScriptTreeView: an extension of FilesTreeView class which shows the global and
+               local script directories, makes possible to execute or edit the scripts,
+               view or edit their descriptions.
+
+StructTreeView: the visual representation of the internal node tree. Build the visual
+                tree from the node tree,  makes possible to navigate through the document
+                using the tree.
+
+StructTreeTag: an element of the structure tree. Every element has an associated Node
+                and the element is included in the listItems of the Node.
+                The problem checker is done in the constructor of the StructTreeTag element,
+                by verifying if the Node associated with the element holds a valid Tag for the
+                current DTD and the relation between the Node and the surrounding nodes
+                are valid in this DTD.
+
+UploadTree*: a treeview and it's file/folder elements with a special look. There is a
+                column with a 3 state checkbox. In case of folders checked means that
+                every element under the folder is checked, un-checked means that none
+                of the elements under the folder are checked and grayed means that some
+                elements (but not all) are checked. Used in the project upload dialog, the
+                project folder scanning dialog and in the new project wizard.
+
+TagAttributeTree/EnhancedTagAttributeTree/EditableTree/
+DualEditableTree/TopLevelItem/Attribute*: classes used to edit the attributes of a tag.
+
+DocTreeView/DocItem/DocFolder: the treeview and it's elements which show the
+                different loaded documentation files, including the project documentation.
+                The tree shows the documentation titles and the content is opened in a
+                HTML part embedded in a QuantaView or a separated toolview.
+
+
+5. project directory
+---------------------
+- project management related classes
+
+Project: the main project management class. Loads, stores, modifies the .webprj file.
+             Project related actions like project rescan, new project, project upload,
+             project properties, adding/removing files to the project are handled here.
+             It's a singleton.
+
+ProjectNew*: classes for different stages of the new project wizard. They are
+             instantiated from the Project object.
+
+ProjectUpload: class that handles uploading of project files. It has also a special mode
+            when the UI is minimized and in this mode the class can be used to modify
+            the upload profiles.
+
+RescanPrj: class that handles rescanning of the project directory and marking the
+            files that are under the directory but not in the .webprj file. It does not show
+            or mark the files that are excluded from the project in the project options.
+
+ProjectURL: an extended KURL with some status informations including description,
+            upload status and a note if the URL is a document-base folder or not.
+            Used inside Project and the other classes dealing with the project files (ProjectUpload, ProjectTreeView)
+
+
+6. plugins directory
+---------------------
+- (mainly) classes related to the plugin system
+
+QuantaPlugin: manages a configured Quanta plugin (a KPart). Takes care of loading and
+                     unloading of the part, embedding it in a widget and calling the part's
+                     openURL method with the configured argument. Special plugins that
+                     needs to have a more detailed communication with Quanta can have
+                     a plugin class inherited from QuantaPlugin.
+
+QuantaPluginInterface: the interface between QuantaApp and the QuantaPlugins. Reads
+                     the plugins, returns pointers to them on request, validates them, etc.
+
+QuantaPluginEditor and QuantaPluginConfig: classes which helps configuring the plugins.
+
+SpellChecker: Quanta specific spellchecker. Not a real QuantaPlugin and most probably
+                    it belongs to the utility directory.
+
+
+7. parts directory
+------------------
+- KParts used inside Quanta.
+
+WHTMLPart: simple KHTML based class which can display HTML pages. Used in preview
+                    and documentation.
+
+kafka directory: VPL related classes
+
+
+8. messages directory
+------------------------
+- messaging system
+
+MessageOutput/MessageItem: widget to show messages from external applications or
+                      from Quanta. Used to display the result of actions, but used by the
+                      Problem reporter as well. It has a methods to find the line and column
+                      number inside a message and clicking on a text containing the line and
+                      column moves the cursor in the editor to that position.
+
+
+9. dialogs directory
+---------------------
+- some dialog implementations used in Quanta. The settings subdirectory contains the
+widget implementations for the different Quanta setting pages, the tagdialog directory
+contains classes dealing with the tagXML dialogs.
+
+ActionConfigDialog: makes TagAction configuration possible. Displays all possible
+                      actions (not just TagActions) in a tree, all loaded user toolbars with
+                      the actions on them. TagActions can be created, deleted, modified and
+                      plugged/unplugged in a user toolbar.
+
+CopyTo: class which is used in many places to do asynchronous file copy. It signals
+              when the file copy is done and the object can be deleted. Mainly used
+              inside the Project* classes to add files to the project.
+
+DirtyDlg: dialog offering some possibilities for the user when a document was changed
+              outside of Quanta. In case of comparing the files it launches Kompare, waits
+              until it finishes and returns afterwards, this way blocking Quanta while Kompare
+              is running.
+
+FileCombo: widget class offering a combobox and a button to select files. Used in the
+              Tagxml class.
+
+SpecialCharDialog: a dialog which offers the user a list of special characters.
+
+AbbreviationDlg: handles the code abbreviations (adding/removing/editing them)
+
+FileMasks: a badly named class. Currently takes care of editing the environment settings.
+
+ParserOptions: make possible to finetune the parser and the structure tree behavior.
+
+PreviewOptions: another not so well named class, as currently it makes possible to
+                configure the UI look and behavior. Between others it offers possibility to
+                change the preview and documentation location, the tab and toolview
+                behavior, etc.
+
+tagdialogs directory: classes and widgets used to build a dialog from a tagXML file, which
+                makes possible to edit a tag in a document. Based on a Tag and the
+                corresponding QTag.
+
+
+10. components directory
+---------------------------
+- holds classes dealing with specific functions, many are DTD specific.
+
+csseditor directory: classes for the visual CSS editor
+
+cvsservice directory: a classes providing CVS functions for different context menus
+              (document context menu, treeview context menus) using cvsservice from
+              Cervisia.
+
+debugger directory: classes providing interface towards different debuggers, including
+              the Gubed PHP debugger.
+
+framewizard directory: classes for the visual HTML framewizard (frame editor)
+
+tableeditor directory: dialog to visually edit HTML tables
+
+
