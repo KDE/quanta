@@ -26,6 +26,8 @@
 #include <ktexteditor/editinterfaceext.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/viewcursorinterface.h>
+#include <kconfig.h>
+#include <kstandarddirs.h>
 #include <dom/dom_node.h>
 #include <dom/dom_exception.h>
 
@@ -188,6 +190,11 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSel
     return;
   }
 
+  QString quantarc_path(KGlobal::dirs()->findResourceDir("config", "quantarc"));
+  KConfig* config = new KConfig(quantarc_path + "quantarc", true);
+  config->setGroup("Kate Document Defaults");
+  int indentationWidth = config->readNumEntry("Indentation Width", 4);
+  
   //Once the changes have been made, we will generate the "clean" string for Text Nodes only, and
   //we will add the empty indentation Nodes.
   modifs->startOfIndentation();
@@ -207,8 +214,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSel
       kafkaCommon::fitIndentationNodes(kafkaCommon::getPrevNodeNE(node), node, modifs);
       goUp = false;
       kafkaCommon::fitIndentationNodes(node, kafkaCommon::getNextNodeNE(node, goUp), modifs);
-/*      kafkaCommon::applyIndentation(node, 2, 0, modifs); // TODO GET indentation spaces from settings*/
-      kafkaCommon::applyIndentation(node, 2, 0, modifs, qConfig.inlineNodeIndentation);
+      kafkaCommon::applyIndentation(node, indentationWidth, 0, modifs, qConfig.inlineNodeIndentation);
     }
     node = node->nextSibling();
   }
