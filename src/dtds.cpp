@@ -636,15 +636,24 @@ uint DTDs::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *
  for (uint i = 0; i < numOfTags; i++)
  {
     QDomNode n = nodeList.item(i);
+    QDomElement e = n.toElement();
+    if (e.attribute("type") == "class")
+    {
+      QString extends = e.attribute("extends");
+      QString name = e.attribute("name");
+      if (!name.isEmpty() && !extends.isEmpty())
+        parentDTD->classInheritance[name] = extends;
+      continue;
+    }
     QTag *tag = new QTag();
-    tag->setName(n.toElement().attribute("name"));
+    tag->setName(e.attribute("name"));
     tag->setFileName(fileName);
     tag->parentDTD = parentDTD;
     bool common = false;
     setAttributes(&n, tag, common);
     if (common)
     {
-      QString groupName = n.toElement().attribute("name");
+      QString groupName = e.attribute("name");
       AttributeList *attrs = tag->attributes();
       attrs->setAutoDelete(false);
       AttributeList *commonAttrList = new AttributeList;      //no need to delete it

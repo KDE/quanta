@@ -567,13 +567,13 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 
 	if(!node && str1.isEmpty() || node && !str1.isEmpty())
 		return;
-                
+
         //Three cases :
         //- Tag insertion in VPL
         //- Normal tag insertion in kate
         //- Smart tag insertion in kate
         smartTagInsertion = (view->hadLastFocus() == QuantaView::SourceFocus && qConfig.smartTagInsertion);
-        
+
         if(view->hadLastFocus() == QuantaView::VPLFocus || smartTagInsertion)
 	{
 		modifs = new NodeModifsSet();
@@ -607,7 +607,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 		//Checking if at least one parent of node can have a Text Node as child, otherwise
 		//it is impossible for the
 		//user to add this node. In that case, try to insert the Node in the closest parent accepting it.
-		//e.g. TR : a normal insertion would require to have the caret in the TABLE Node, but it is 
+		//e.g. TR : a normal insertion would require to have the caret in the TABLE Node, but it is
                 //impossible
 		nodeQTag = QuantaCommon::tagFromDTD(view->document()->defaultDTD(),
 			node->tag->name);
@@ -628,7 +628,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 			if(qTag == qTagList.getLast())
 				specialTagInsertion = true;
 		}
-                
+
                 if(view->hadLastFocus() == QuantaView::VPLFocus)
                 {
                   wkafka->translateKafkaIntoNodeCursorPosition(domNode, domNodeOffset, &dummy, nodeOffset);

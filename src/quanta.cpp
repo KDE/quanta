@@ -194,7 +194,7 @@ static void silenceQToolBar(QtMsgType, const char *){}
 
 QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta", (KMdi::MdiMode) mdiMode)
 {
-  setStandardToolBarMenuEnabled( true );
+  setStandardToolBarMenuEnabled(true);
   createStandardStatusBarAction();
   m_quantaInit = new QuantaInit(this);
   dcopSettings = new DCOPSettings;
@@ -3974,7 +3974,8 @@ void QuantaApp::slotEditCurrentTag()
     if ( QuantaCommon::isKnownTag(tag->dtd()->name,tagName) )
     {
       isUnknown = false;
-      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(tag->dtd(),tagName), tag, ViewManager::ref()->activeView()->baseURL() );
+      QString selection(w->selectionIf->selection());
+      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(tag->dtd(),tagName), tag, selection, ViewManager::ref()->activeView()->baseURL() );
       if (dlg->exec())
       {
         w->changeTag(tag, dlg->getAttributes() );
@@ -4673,11 +4674,11 @@ Node *QuantaApp::showTagDialogAndReturnNode(const QString &tag, const QString &a
   if(view && view->document())
   {
     Document *w = view->document();
-    
+
     QString selection;
     if(view->hadLastFocus() == QuantaView::VPLFocus)
         selection = KafkaDocument::ref()->getKafkaWidget()->selectedText();
-    
+
     TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(w->getDTDIdentifier(),tag), selection, attr, ViewManager::ref()->activeView()->baseURL());
     if (dlg->exec())
     {

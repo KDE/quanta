@@ -197,6 +197,7 @@ defined in the structure after the keyword have local scope */
      int classGroupIndex; ///< the index of the structure tree group holding the classes. -1 if there is no such group.
      int objectGroupIndex; ///< the index of the structure tree group holding the classes. -1 if there is no such group.
      mutable QRegExp memberAutoCompleteAfter; ///< the regular expression after which a list with the existing member methods and variables for a class should be shown. Makes sense only if the language supports classes.
+     QMap<QString, QString> classInheritance; ///<stores the inheritance tree
 
     };
 

@@ -49,6 +49,7 @@
 #include "wkafkapart.h"
 
 #include <ktexteditor/document.h>
+#include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/view.h>
 #include <ktexteditor/viewcursorinterface.h>
 
@@ -360,7 +361,7 @@ void QuantaView::slotSetSourceLayout()
    }
    if (m_kafkaDocument->isLoaded())
        m_kafkaDocument->unloadDocument();
-      
+
 //show the document if full size
    m_splitter->hide();
    m_document->view()->reparent(m_documentArea, 0, QPoint(), true);
@@ -609,7 +610,7 @@ void QuantaView::slotSourceGetFocus()
     action = quantaApp->actionCollection()->action("insert_char");
     if(action)
       action->setEnabled(true);
-      
+
     //TEMPORARY: Disable VPL undo/redo logging
     m_document->docUndoRedo->turnOn(false);
 
@@ -742,7 +743,8 @@ void QuantaView::insertNewTag(const QString &tag, const QString &attr, bool inse
 {
   if (m_document)
   {
-    TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(m_document->getDTDIdentifier(), tag), attr, baseURL());
+    QString selection(m_document->selectionIf->selection());
+    TagDialog *dlg = new TagDialog(QuantaCommon::tagFromDTD(m_document->getDTDIdentifier(), tag), selection, attr, baseURL());
     if (dlg->exec())
     {
       dlg->insertTag(m_document, insertInLine);

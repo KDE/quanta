@@ -3,7 +3,7 @@
 <TAGS>
 <tag name="a" hasCore="1" hasI18n="1" hasScript="1">
 
-   <attr name="href" type="input">
+   <attr name="href" type="input" source="selection">
         <text>href</text>
         <textlocation col="0" row="0" />
         <location col="1" row="0" colspan="3"/>
