@@ -1804,6 +1804,7 @@ void Parser::clearGroups()
     for (elementIt = list->begin(); elementIt != list->end(); ++elementIt)
     {
       (*elementIt).node->groupElementLists.clear();
+      (*elementIt).node->groupTag = 0L;
       delete (*elementIt).tag;
     }
   }
