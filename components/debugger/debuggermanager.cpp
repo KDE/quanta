@@ -468,7 +468,7 @@ bool DebuggerManager::setActiveLine (QString file, int line )
     quantaApp->gotoFileAndLine(filename, line, 0);
   else
   {
-    showStatus(i18n("Unable to open file %1, check your basedirs and mappings!").arg(filename), true);
+    showStatus(i18n("Unable to open file %1, check your basedirs and mappings.").arg(filename), true);
   }
 
   // Add new active line mark
