@@ -1295,7 +1295,8 @@ void QuantaApp::slotShowPreviewWidget(bool show)
         delete m_previewToolView;
         m_previewToolView = 0L;
     }
-    view->document()->setFocus();
+    if (view->document())
+        view->document()->setFocus();
   }
 
 #ifdef BUILD_KAFKAPART
