@@ -120,6 +120,8 @@ bool QuantaPlugin::load()
   if(!m_part)
   {
     KMessageBox::error(quantaApp, i18n("<qt>The <b>%1</b> plugin could not be loaded.<br>Possible reasons are:<br>    - <b>%2</b> is not installed;<br>    - the file <i>%3</i> is not installed or it is not reachable.").arg(m_name).arg(m_name).arg(m_fileName));
+    delete m_targetWidget;
+    m_targetWidget = 0L;
     return false;
   }
   m_part->setName(m_name);  // for better debug output
