@@ -21,14 +21,7 @@ class QTabWidget;
 class KPopupMenu;
 class QWidgetStack;
 class QTabBar;
-
-#ifdef private
-#undef private
-#endif
-#define private protected
-#include <ktoolbar.h>
-#undef private
-#define private private
+class KToolBar;
 
 class ToolbarTabWidget: public QTabWidget
 {
@@ -40,7 +33,7 @@ public:
   virtual ~ToolbarTabWidget(){};
 
   virtual void insertTab(QWidget * child, const QString & label);
-  virtual QWidget* page(int index) ;
+  virtual QWidget* page(int index);
   virtual QWidget* page(const QString& label);
   int tabHeight() const;
 

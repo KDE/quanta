@@ -14,6 +14,7 @@
 //qt includes
 #include <qevent.h>
 #include <qlayout.h>
+#include <qobjectlist.h>
 #include <qpoint.h>
 #include <qtabbar.h>
 #include <qwidgetstack.h>
@@ -24,6 +25,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
+#include <ktoolbar.h>
 #include <ktoolbarbutton.h>
 
 //app includes
@@ -173,20 +175,20 @@ void QuantaToolBar::mousePressEvent(QMouseEvent *e)
       m_toolbarTab->tabUnderMouse = m_toolbarTab->label(m_toolbarTab->currentPageIndex());
       m_popupMenu->insertTitle(i18n("Toolbar Menu") + " - "
                                + i18n(m_toolbarTab->tabUnderMouse));
-      Id2WidgetMap::Iterator it = id2widget.begin();
-      while (it != id2widget.end())
+      QObjectList* childrenList = queryList("KToolBarButton");
+      for (uint i = 0; i < childrenList->count(); i++)
       {
-        QPoint p1 = (*it)->parentWidget()->mapToGlobal((*it)->pos());
-        QPoint p2 = QPoint(p1.x() + (*it)->width(), p1.y()+(*it)->height());
-        if (dynamic_cast<KToolBarButton *>(*it) && QRect(p1, p2).contains(p))
+        KToolBarButton *w = static_cast<KToolBarButton*>(childrenList->at(i));
+        QPoint p1 = w->parentWidget()->mapToGlobal(w->pos());
+        QPoint p2 = QPoint(p1.x() + w->width(), p1.y()+w->height());
+        if (QRect(p1, p2).contains(p))
         {
-          currentActionName = dynamic_cast<KToolBarButton *>(*it)->textLabel();
+          currentActionName = w->textLabel();
           m_popupMenu->insertItem(i18n("Remove Action - %1").arg(currentActionName), this, SLOT(slotRemoveAction()));
           m_popupMenu->insertItem(i18n("Edit Action - %1").arg(currentActionName), this, SLOT(slotEditAction()));
           m_popupMenu->insertSeparator();
           break;
         }
-        ++it;
       }
       m_popupMenu->insertItem(i18n("Remove Toolbar"), m_toolbarTab, SLOT(slotRemoveToolbar()));
       m_popupMenu->insertItem(i18n("Rename Toolbar"), m_toolbarTab, SLOT(slotRenameToolbar()));

@@ -1433,6 +1433,9 @@ void Document::slotTextChanged()
   if (reparseEnabled)
   {
     //delay the handling, otherwise we may get wrong values for (line,column)
+    uint line, column;
+    viewCursorIf->cursorPositionReal(&line, &column);
+    kdDebug(24000) << QString("Before delayed: %1, %2 \n").arg(line).arg(column);
     QTimer::singleShot(0, this, SLOT(slotDelayedTextChanged()));
 //    slotDelayedTextChanged();
   }
@@ -1448,6 +1451,7 @@ void Document::slotDelayedTextChanged()
     if (qConfig.updateClosingTags)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
+      kdDebug(24000) << QString("Delayed: %1, %2 \n").arg(line).arg(column);
       node = parser->nodeAt(line, column, false);
       if (node)
       {
