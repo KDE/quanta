@@ -18,6 +18,7 @@
  #include "specialsb.h"
  #include <qcombobox.h>
  #include "csseditor_globals.h"
+ #include <qregexp.h>
  
 doubleEditorBase::doubleEditorBase(QWidget *parent, const char *name) : QHBox(parent,name){
 }
@@ -62,6 +63,22 @@ doubleLengthEditor::~doubleLengthEditor(){
   delete m_ssbDx;
 }
 
+void doubleLengthEditor::setInitialValue(QString sx, QString dx){
+  QRegExp pattern("\\d"+m_ssbSx->cbValueList().join("|"));
+  
+  if(sx.contains(pattern)) {
+    QString temp1(sx.stripWhiteSpace()),
+                 temp2(sx.stripWhiteSpace());
+    m_ssbSx->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
+  }
+  
+  if(dx.contains(pattern)) {
+    QString temp1(dx.stripWhiteSpace()),
+                 temp2(dx.stripWhiteSpace());
+    m_ssbDx->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
+  }
+}
+
 doubleComboBoxEditor::doubleComboBoxEditor(QWidget *parent, const char *name) : doubleEditorBase(parent,name){
   m_cbSx = new QComboBox(this);
   m_cbDx = new QComboBox(this);
@@ -86,6 +103,11 @@ doublePercentageEditor::doublePercentageEditor(QWidget *parent, const char *name
 doublePercentageEditor::~doublePercentageEditor(){
   delete m_sbSx;
   delete m_sbDx;
+}
+
+void doublePercentageEditor::setInitialValue(QString sx, QString dx){
+  m_sbSx->setValue(sx.remove("%").toInt());
+  m_sbDx->setValue(dx.remove("%").toInt());
 }
 
 #include "doubleeditors.moc"

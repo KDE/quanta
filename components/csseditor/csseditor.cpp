@@ -31,6 +31,7 @@
 #include <khtml_part.h>
 #include <khtmlview.h>
 #include <kstandarddirs.h>
+#include <kdebug.h>
 
 #include "propertysetter.h"
 #include "qmyhighlighter.h"
@@ -338,7 +339,7 @@ void CSSEditor::setMiniEditors(QListViewItem* i)
             QString typeName(values.item(k).toElement().attribute("type"));
             
             if( typeName == "spinbox") {
-              m_ps->setSpinBox(values.item(k).toElement().attribute("minValue"),
+              m_ps->setSpinBox("0", values.item(k).toElement().attribute("minValue"),
               values.item(k).toElement().attribute("maxValue"),
               values.item(k).toElement().attribute("suffix"));
             }
@@ -348,15 +349,15 @@ void CSSEditor::setMiniEditors(QListViewItem* i)
               m_ps->ComboBox()->lineEdit()->clear();
             }
                 
-            if( typeName == "length") m_ps->setLengthEditor(); 
-            if( typeName == "percentage") m_ps->setPercentageEditor();
-            if( typeName == "doubleLength") m_ps->setDoubleLengthEditor();     
-            if( typeName == "doublePercentage") m_ps->setDoublePercentageEditor();
-            if( typeName == "integer") m_ps->setSpinBox();        
+            if( typeName == "length") m_ps->setLengthEditor(m_properties[m_currentProp->text(0)]); 
+            if( typeName == "percentage") m_ps->setPercentageEditor(m_properties[m_currentProp->text(0)]);
+            if( typeName == "doubleLength") m_ps->setDoubleLengthEditor(m_properties[m_currentProp->text(0)]);     
+            if( typeName == "doublePercentage") m_ps->setDoublePercentageEditor(m_properties[m_currentProp->text(0)]);
+            if( typeName == "integer") m_ps->setSpinBox(m_properties[m_currentProp->text(0)]);        
             if( typeName == "number") m_ps->setLineEdit();  
-            if( typeName == "frequency") m_ps->setFrequencyEditor();           
-            if( typeName == "time") m_ps->setTimeEditor();               
-            if( typeName == "angle") m_ps->setAngleEditor();                         
+            if( typeName == "frequency") m_ps->setFrequencyEditor(m_properties[m_currentProp->text(0)]);           
+            if( typeName == "time") m_ps->setTimeEditor(m_properties[m_currentProp->text(0)]);               
+            if( typeName == "angle") m_ps->setAngleEditor(m_properties[m_currentProp->text(0)]);                         
           }
         }  
         else
@@ -449,7 +450,7 @@ QString CSSEditor::generateProperties(){
   QString props;
   QMap<QString,QString>::Iterator it;
   if(!SHckb->isChecked()) {
-    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) props+=( it.key() + " : " + it.data() + "; " );    
+    for ( it = m_properties.begin(); it != m_properties.end(); ++it ) props+=( it.key() + " : " + it.data().stripWhiteSpace() + "; " );    
     props.truncate(props.length()-1);//the last white space creates some problem: better remove it
     return props;  
   }  

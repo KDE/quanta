@@ -30,7 +30,7 @@ mySpinBox::mySpinBox( int minValue, int maxValue, int step, QWidget * parent, co
 
 mySpinBox::~mySpinBox(){}
 
-void mySpinBox::checkSuffix(const QString& s){// check if the suffix is present and how many times : it normalizes these times to one
+void mySpinBox::checkSuffix(const QString&){// check if the suffix is present and how many times : it normalizes these times to one
   if(!suffix().isEmpty()){
     const QString suf(suffix());
     QString t(editor()->text()); 
@@ -45,5 +45,6 @@ void mySpinBox::checkSuffix(const QString& s){// check if the suffix is present 
     }  
   }
 }
- 
+
+
 #include "csseditor_globals.moc"

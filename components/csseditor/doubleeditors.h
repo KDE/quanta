@@ -32,6 +32,7 @@ class doubleEditorBase : public QHBox {
   public:
     doubleEditorBase(QWidget *parent=0, const char *name=0);
     virtual ~doubleEditorBase(){}
+    virtual void setInitialValue(){}
 
    public slots:
      void sxValueSlot(const QString&);
@@ -50,6 +51,7 @@ class doublePercentageEditor : public doubleEditorBase {
   public:
     doublePercentageEditor(QWidget *parent=0, const char *name=0);
     virtual ~doublePercentageEditor();
+    virtual void setInitialValue(QString sx, QString dx);
 };
 
 class doubleComboBoxEditor : public doubleEditorBase {
@@ -74,6 +76,7 @@ class doubleLengthEditor : public doubleEditorBase {
   public:
     doubleLengthEditor(QWidget *parent=0, const char *name=0);
     virtual ~doubleLengthEditor();
+    virtual void setInitialValue(QString sx, QString dx);
 };
 
 #endif

@@ -27,10 +27,11 @@
 #include <qlabel.h>
 #include <qfontdatabase.h> 
 #include <qtooltip.h>
+#include <qregexp.h>
 
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
-//#include <kdebug.h>
+#include <kdebug.h>
 #include <kurl.h>
 #include <kdialog.h>
 #include <kiconloader.h>
@@ -96,11 +97,11 @@ void propertySetter::setComboBox()
   m_list.append(m_cb);
 }
 
-void propertySetter::setSpinBox(const QString& min, const QString& max, const QString& s)
+void propertySetter::setSpinBox(const QString& initialValue, const QString& min, const QString& max, const QString& s)
 {
   m_sb = new mySpinBox(min.toInt(), max.toInt(), 1, this);
   m_sb->setSuffix(s);
-  m_sb->setValue(0);
+  m_sb->setValue(initialValue.toInt());
   connect(m_sb, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
   m_list.append(m_sb);
 }
@@ -112,32 +113,69 @@ void propertySetter::setLineEdit()
   m_list.append(m_le);
 }
 
-void propertySetter::setLengthEditor(){
+void propertySetter::setLengthEditor(QString s){
   m_lE = new lengthEditor(this);
+  QRegExp pattern("\\d"+m_lE->cbValueList().join("|"));
+  
+  if(s.contains(pattern)) {
+    QString temp1(s.stripWhiteSpace()),
+                 temp2(s.stripWhiteSpace());
+  
+    m_lE->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
+  }
   connect(m_lE, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
   m_list.append(m_lE);
 }
 
-void propertySetter::setDoubleLengthEditor(){
+void propertySetter::setDoubleLengthEditor(QString s){
+  QString temp(s.simplifyWhiteSpace()),
+               sx(temp.section(" ",0,0)),
+               dx(temp.section(" ",1,1));
+
   m_dlE = new doubleLengthEditor(this);
+  m_dlE->setInitialValue(sx,dx);
   connect(m_dlE, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
   m_list.append(m_dlE);
 }
 
-void propertySetter::setFrequencyEditor(){
+void propertySetter::setFrequencyEditor(QString s){
   m_fe = new frequencyEditor(this);
+  QRegExp pattern("\\d"+m_fe->cbValueList().join("|"));
+  
+  if(s.contains(pattern)) {
+    QString temp1(s.stripWhiteSpace()),
+                 temp2(s.stripWhiteSpace());
+  
+    m_fe->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
+  }
   connect(m_fe, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
   m_list.append(m_fe);
 }
 
-void propertySetter::setTimeEditor(){
+void propertySetter::setTimeEditor(QString s){
   m_te = new timeEditor(this);
+  QRegExp pattern("\\d"+m_te->cbValueList().join("|"));
+  
+  if(s.contains(pattern)) {
+    QString temp1(s.stripWhiteSpace()),
+                 temp2(s.stripWhiteSpace());
+  
+    m_te->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
+  }
   connect(m_te, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
   m_list.append(m_te);
 }
 
-void propertySetter::setAngleEditor(){
+void propertySetter::setAngleEditor(QString s){
   m_ae = new angleEditor(this);
+  QRegExp pattern("\\d"+m_ae->cbValueList().join("|"));
+  
+  if(s.contains(pattern)) {
+    QString temp1(s.stripWhiteSpace()),
+                 temp2(s.stripWhiteSpace());
+  
+    m_ae->setInitialValue(temp1.remove(QRegExp("\\D")), temp2.remove(QRegExp("\\d")));
+  }
   connect(m_ae, SIGNAL(valueChanged(const QString&)), this ,SIGNAL(valueChanged(const QString&)));
   m_list.append(m_ae);
 }
@@ -148,9 +186,13 @@ void propertySetter::setUriEditor(){
   m_list.append(m_ue);
 }
 
-void propertySetter::setDoublePercentageEditor()
+void propertySetter::setDoublePercentageEditor(QString s)
 {
+  QString temp(s.simplifyWhiteSpace()),
+               sx(temp.section(" ",0,0)),
+               dx(temp.section(" ",1,1));
   m_dpe = new doublePercentageEditor(this);
+  m_dpe->setInitialValue(sx,dx);
   connect(m_dpe, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
   m_list.append(m_dpe);
 }
@@ -162,9 +204,9 @@ void propertySetter::setDoubleComboBoxEditor()
   m_list.append(m_dcbe);
 }
 
-void propertySetter::setPercentageEditor()
+void propertySetter::setPercentageEditor(QString s)
 {
-  m_pe = new percentageEditor(this);
+  m_pe = new percentageEditor(s, this);
   connect(m_pe, SIGNAL(valueChanged(const QString&)), this, SIGNAL(valueChanged(const QString&)));
   m_list.append(m_pe);
 }
@@ -299,9 +341,11 @@ void URIEditor::openFileDialog(){
   delete fd;
 }
 
-percentageEditor::percentageEditor(QWidget *parent, const char *name) : QHBox(parent,name)
+percentageEditor::percentageEditor(const QString& initialValue, QWidget *parent, const char *name) : QHBox(parent,name)
 {
+  QString temp(initialValue);
   m_sb = new mySpinBox(0,9999,1,this);
+  m_sb->setValue(temp.remove("%").toInt());
   m_sb->setSuffix("%");
   connect(m_sb, SIGNAL(valueChanged ( const QString & )), this, SIGNAL(valueChanged(const QString&)));
 }

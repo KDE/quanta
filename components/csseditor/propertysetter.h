@@ -96,7 +96,7 @@ class percentageEditor : public QHBox  {
    private:
      mySpinBox *m_sb;
    public:
-           percentageEditor(QWidget *parent=0, const char *name=0);
+           percentageEditor(const QString& initialValue="0",QWidget *parent=0, const char *name=0);
            ~percentageEditor();
    signals:
      void valueChanged(const QString&);  
@@ -130,17 +130,17 @@ class propertySetter : public QHBox  {
     ~propertySetter();
     void setFontEditor();
     void setComboBox();
-    void setSpinBox(const QString& min="0", const QString& max="9999", const QString& s=QString::null);
+    void setSpinBox(const QString& initialValue="0", const QString& min="0", const QString& max="9999", const QString& s=QString::null);
     void setLineEdit();
-    void setLengthEditor();
-    void setDoubleLengthEditor();
-    void setDoublePercentageEditor();
+    void setLengthEditor(QString s);
+    void setDoubleLengthEditor(QString s);
+    void setDoublePercentageEditor(QString s);
     void setDoubleComboBoxEditor();
-    void setPercentageEditor();
+    void setPercentageEditor(QString s);
     void setUriEditor();
-    void setFrequencyEditor();
-    void setTimeEditor();
-    void setAngleEditor();
+    void setFrequencyEditor(QString s);
+    void setTimeEditor(QString s);
+    void setAngleEditor(QString s);
     void setColorRequester();
     void setPredefinedColorListEditor();
     void reset();

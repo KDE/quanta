@@ -31,15 +31,13 @@ class specialSB : public QHBox {
   protected:
     QComboBox *m_cb;
     mySpinBox  *m_sb;
- 
-  private:
-    QString m_cbValue,
-                 m_sbValue;
 
    public:
            specialSB(QWidget *parent=0, const char *name=0);
            ~specialSB();
      void insertItem(QString s){ m_cb->insertItem(s); }
+     void setInitialValue(QString sbValue, QString cbValue);
+     QStringList cbValueList();
      
    public slots:
      void cbValueSlot(const QString&);

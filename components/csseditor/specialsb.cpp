@@ -38,6 +38,17 @@ void specialSB::sbValueSlot(const QString& s){
   emit valueChanged( s + m_cb->currentText());
 }
 
+void specialSB::setInitialValue(QString sbValue, QString cbValue){
+  m_sb->setValue(sbValue.toInt());
+  m_cb->setCurrentText(cbValue);
+}
+
+QStringList specialSB::cbValueList(){
+  QStringList l;
+  for(int i=0; i<m_cb->count();i++) l.append(m_cb->text(i));
+  return l;
+}
+
 frequencyEditor::frequencyEditor(QWidget *parent, const char *name ) : specialSB(parent,name) {
   m_cb->insertItem("Hz");
   m_cb->insertItem("kHz");

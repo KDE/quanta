@@ -20,9 +20,32 @@
 #include "shorthandformer.h"
 #include <qstringlist.h>
 #include "cssshpropertyparser.h"
-#include <qregexp.h>
 #include <kdebug.h>
 #include "csseditor_globals.h" 
+
+ QRegExp globalPercentagePattern("\\d%"),
+                          globalLengthPattern("\\dex|em|px|cm|pt|pc|in|mm"),
+                          globalColorPattern("#[\\w\\d]{6}"),
+                          globalNumberPattern("\\d*");
+                
+static const QString borderStyleValueString("none,hidden,dotted,dashed,solid,double,groove,ridge,inset,outset,inherit");               
+static const QString widthValueString("thin,medium,thick,inherit");
+static const QString listTypeValueString("disc,circle,square,decimal,decimal-leading-zero,lower-roman,upper-roman,lower-greek,lower-alpha,lower-latin,upper-alpha,upper-latin,hebrew,armenian,georgian,cjk-ideographic,hiragana,katakana,hiragana-iroha,katakana-iroha,none,inherit");
+static const QString fontSizeValueString("smaller,larger,xx-large,x-large,large,medium,small,x-small,xx-small,inherit");
+static const QString fontWeightValueString("900,800,700,600,500,400,300,200,100,lighter,bolder,normal,bold,inherit");
+static const QString fontStyleValueString("normal,small-caps,inherit");       
+static const QString fontVariantValueString("oblique,italic,normal,inherit");      
+static const QString backgroundRepeatValueString("repeat,repeat-x,repeat-y,no-repeat,inherit");
+             
+
+static const QStringList borderStyleValueList = QStringList::split(",",borderStyleValueString);
+static const QStringList widthValueList = QStringList::split(",",widthValueString);
+static const QStringList listTypeValueList = QStringList::split(",",listTypeValueString);
+static const QStringList fontSizeValueList = QStringList::split(",",fontSizeValueString);
+static const QStringList fontWeightValueList = QStringList::split(",",fontWeightValueString);
+static const QStringList fontStyleValueList = QStringList::split(",",fontStyleValueString);
+static const QStringList fontVariantValueList = QStringList::split(",",fontVariantValueString);
+static const QStringList backgroundRepeatValueList = QStringList::split(",",backgroundRepeatValueString);
 
 QStringList HTMLColorList(QStringList::split(",",HTMLColors));
 
@@ -216,7 +239,7 @@ QString ShorthandFormer::compress()
                                        
   QMap<QString,QString>::Iterator it;             
   for ( it = m_properties.begin(); it != m_properties.end(); ++it )           
-      props += ( it.key() + " : " + it.data() + "; " );
+      props += ( it.key() + " : " + it.data().stripWhiteSpace() + "; " );
     
   props.truncate(props.length()-1);//the last white space creates some problem: better remove it
   return props;  
@@ -230,15 +253,15 @@ QString ShorthandFormer::compressBorderProp(){
        allWidthSidesSet = false;    
    
   if(!border_left_color.isEmpty())
-     if( ( border_left_color == border_top_color ) && ( border_top_color == border_right_color ) && ( border_right_color == border_bottom_color ) )
+     if( ( border_left_color == border_top_color ) and ( border_top_color == border_right_color ) and ( border_right_color == border_bottom_color ) )
          allColorSidesSet = true;
           
    if(!border_left_style.isEmpty())  
-     if( ( border_left_style == border_top_style ) && ( border_top_style == border_right_style ) && ( border_right_style == border_bottom_style ) )
+     if( ( border_left_style == border_top_style ) and ( border_top_style == border_right_style ) and ( border_right_style == border_bottom_style ) )
        allStyleSidesSet = true;        
              
    if(!border_left_width.isEmpty())  
-     if( ( border_left_width == border_top_width ) && ( border_top_width == border_right_width ) && ( border_right_width == border_bottom_width ) )
+     if( ( border_left_width == border_top_width ) and ( border_top_width == border_right_width ) and ( border_right_width == border_bottom_width ) )
        allWidthSidesSet = true;          
                    
    if ( allColorSidesSet ) {
@@ -315,7 +338,7 @@ QString ShorthandFormer::compressFontProp(){
                props;
   //bool appendLineHeight = false;  
   
-  if( font_style.isEmpty() && font_variant.isEmpty() && font_weight.isEmpty() && font_size.isEmpty() && font_family.isEmpty() ) { 
+  if( font_style.isEmpty() and font_variant.isEmpty() and font_weight.isEmpty() and font_size.isEmpty() and font_family.isEmpty() ) { 
     if( !line_height.isEmpty() )
       props += ("line-height : " + line_height + "; ");
   }
@@ -384,90 +407,153 @@ QString ShorthandFormer::compressListStyleProp(){
 }
 
 QString ShorthandFormer::compressImplementation3( QString prop, QString p1, QString p2, QString p3){
-QString props;
-  if( !p1.isEmpty() ) 
-    props += (" " + p1 );
-  if( !p2.isEmpty() )
-    props += (" " + p2 );       
-  if( !p3.isEmpty() )                      
-    props += (" " + p3 );   
-  if( !props.isEmpty() )
-    return ( prop + " :" + props + "; ");    
+  QString props;
+  if( !p1.isEmpty() ) props += (" " + p1 );
+  if( !p2.isEmpty() ) props += (" " + p2 );       
+  if( !p3.isEmpty() ) props += (" " + p3 );   
+  if( !props.isEmpty() ) return ( prop + " :" + props + "; ");    
   return QString::null; 
 }
 
 QString ShorthandFormer::compressImplementation2( QString prop, QString after, QString before, QString defValue){
   QString props;                  
   if(after == before){
-    if(!after.isEmpty())
-      props+=( prop + " : " + after + "; ");
+    if(!after.isEmpty()) props+=( prop + " : " + after + "; ");
   }
   else {
-    if(before.isEmpty())
-      props+=( prop + " : " + defValue + " " + after + "; ");
+    if(before.isEmpty()) props+=( prop + " : " + defValue + " " + after + "; ");
     else   
-      if(pause_after.isEmpty())
-        props+=( prop + " : " + before + " " + defValue + "; ");
-      else  
-        props+=( prop + " : " + before + " " + after + "; ");
+      if(pause_after.isEmpty()) props+=( prop + " : " + before + " " + defValue + "; ");
+      else props+=( prop + " : " + before + " " + after + "; ");
   }   
   return props;
 }  
 
 QString ShorthandFormer::compressImplementation( QString prop, QString t, QString b, QString r, QString l, QString defValue){
- QString props, 
-              top(t.stripWhiteSpace()),
-              bottom(b.stripWhiteSpace()),
-              left(l.stripWhiteSpace()),
-              right(r.stripWhiteSpace());  
-               
-  unsigned int defaultValueOccurence = 0;
-
-  if( top == defValue ) defaultValueOccurence += 1;  
-  if( bottom == defValue ) defaultValueOccurence += 2;
-  if( left == defValue ) defaultValueOccurence += 4;
-  if( right == defValue ) defaultValueOccurence += 8; 
-  
-  switch( defaultValueOccurence ) {
-    case 1: if( left == right ) props   += ( prop +" : " + defValue + " "+ right + " " + bottom + "; "); 
-                 else props   += ( prop +" : " + defValue + " " + right + " " +bottom + " " + left +"; ");  
+  unsigned int boxSide = 0;
+  QString props, 
+               top(t.stripWhiteSpace()),
+               bottom(b.stripWhiteSpace()),
+               left(l.stripWhiteSpace()),
+               right(r.stripWhiteSpace());   
+              
+  if( !top.isEmpty() ) boxSide += 1;  
+  if( !bottom.isEmpty() ) boxSide += 2;
+  if( !left.isEmpty() ) boxSide += 4;
+  if( !right.isEmpty() ) boxSide += 8;    
+        
+  switch(boxSide) {
+    case 1: if( top != defValue ) props   += ( prop +" : " + top + " " + defValue + " " + defValue + "; "); 
+                 break; 
+     
+    case 2: if( bottom != defValue ) props   += ( prop + " : " + defValue + " " + defValue + " " + bottom + "; "); 
+                 break; 
+     
+    case 3: if( top != bottom ) props   += ( prop +" : " + top + " " + defValue + " " + bottom + "; ");
+                 else
+                    if( top!=defValue and top == bottom  ) props   += ( prop +" : " + top + " " + defValue +"; "); 
                  break;
-    case 2: if( left == right ) props   += ( prop +" : " + top + " " + right + " " + defValue + "; "); 
-                 else props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue +"; ");  
+     
+    case 4: if( left != defValue ) props   += ( prop +" : " + defValue + " " + defValue + " " + defValue +" " + left + "; "); 
+                 break; 
+     
+    case 5: if( left == defValue and top != defValue) props   += ( prop +" : " + top + " " + defValue + " " + defValue+ "; ");
+                 else
+                    if( left != defValue ) props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + left + "; "); 
                  break;
-    case 3: if( left == right ) props   += ( prop +" : " + defValue +" " + right + "; "); 
-                 else props   += ( prop +" : " + defValue + " " + right + " " + defValue + " " + left +"; ");
+     
+    case 6: if( left == defValue and bottom != defValue) props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + "; ");   
+                 else
+                    if( left != defValue ) props   += ( prop +" : " + defValue + " " +defValue + " " + bottom + " " + left + "; ");
                  break;
-    case 4: props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue + "; ");break;
-    case 5: props   += ( prop +" : " + defValue + " " + right + " " + bottom + " " + defValue + "; ");break;
-    case 6: props   += ( prop +" : " + top+ " " + right + " " + defValue + " " + defValue + "; ");break;
-    case 7: props   += ( prop +" : " + defValue + " " + right + " " + defValue  + " " + defValue + "; ");break;
-    case 8: props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + left +"; ");break;
-    case 9: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + " " + left +"; ");break;
-    case 10: props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + left +"; ");break;
-    case 11: props   += ( prop +" : " + defValue + " " + defValue + " " + defValue + " " + left +"; ");break;
-    case 12: if( top == bottom ) props   += ( prop +" : " + top + " " + defValue + "; "); 
-                   else props   += ( prop +" : " + top + " " + defValue + " " + bottom +  "; ");  
+     
+    case 7: if( left != defValue ) props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + left + "; ");
+                 else 
+                    if( top != defValue and top == bottom ) props   += ( prop +" : " + top + " " + defValue + "; "); 
+                    else
+                       if( top != defValue or bottom != defValue ) props   += ( prop +" : " + top + " " + defValue + " " + bottom  + "; "); 
+                 break;
+     
+    case 8: if( right != defValue ) props   += ( prop +" : " + defValue + " " + right + " " + defValue + " " + defValue + "; "); 
+                 break; 
+     
+    case 9: if( right == defValue and top != defValue) props   += ( prop +" : " + top + " " + defValue + " " + defValue + "; ");
+                 else
+                    if( right != defValue ) props   += ( prop +" : " + top + " " + right + " " + defValue + " " + defValue + "; "); 
+                 break;
+     
+    case 10: if( right == defValue and bottom != defValue) props += ( prop +" : " + defValue + " " + defValue + " " + bottom +"; ");
+                   else
+                      if( right !=defValue) props += ( prop +" : " + defValue + " " + right + " " + bottom + " " + defValue + "; ");  
                    break;
-    case 13: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom +  "; ");break;
-    case 14: props   += ( prop +" : " + top + " " + defValue + " " + defValue + "; ");break;
-    case 15: break;
-    default: if( !left.isEmpty() or !right.isEmpty() or !top.isEmpty() or !bottom.isEmpty())
-                  if( left == right && right == bottom && bottom == top  ) props   += ( prop +" : " + top +"; ");
-                  else
-                     if(  (top == bottom) && (left == right)) {
-                       if(left.isEmpty()) props   += ( prop +" : " + top + " " + defValue + " " + bottom +"; ");  
-                       else
-                         if(top.isEmpty()) props   += ( prop +" : " + defValue + " "+ left +"; ");  
-                           else props   += ( prop +" : " + top + " " + right +"; ");                   
-                     }
-                     else 
-                       if( (left == right) ) props  += ( prop + " : " + top + " " + right + " " + bottom + "; ");
-                       else props  += ( prop +" : " + top + " " + right + " " + bottom + " " + left +"; ");
+     
+    case 11: if( right != defValue ) 
+                      props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue + "; ");
+                  else 
+                     if( top != defValue and top == bottom ) props   += ( prop +" : " + top + " " + defValue + "; "); 
+                     else
+                       if( top != defValue or bottom != defValue ) props   += ( prop +" : " + top + " " + defValue + " " + bottom  + "; "); 
+                  break;
+     
+    case 12: if( right != left ) props += ( prop +" : " + defValue +" " + right + " " + defValue + " " + left +"; "); 
+                   else
+                      if( right != defValue and left == right ) props += ( prop +" : " + defValue + " " + right + "; " ); 
                     break;
-  }                        
-  return props;
+    
+    case 13: if( right != defValue and right == left ) props   += ( prop +" : " + top + " " +right + " " + defValue +"; ");
+                   else 
+                      if( right != defValue or  left != defValue ) props   += ( prop +" : " + top + " " + right + " " + defValue + " " + left +"; "); 
+                    break;
+     
+    case 14: if( right != defValue and right == left ) props   += ( prop +" : " + defValue + " " +right + " " + bottom +"; ");
+                   else 
+                      if( right != defValue or  left != defValue ) props   += ( prop +" : " + defValue + " " + right + " " +bottom + " " + left +"; "); 
+                    break;
+     
+    case 15: { 
+                      unsigned int defaultValueOccurence = 0;
+
+                      if( top == defValue ) defaultValueOccurence += 1;  
+                      if( bottom == defValue ) defaultValueOccurence += 2;
+                      if( left == defValue ) defaultValueOccurence += 4;
+                      if( right == defValue ) defaultValueOccurence += 8; 
+  
+                      switch( defaultValueOccurence ) {
+                        case 1: if( left == right ) props   += ( prop +" : " + defValue + " "+ right + " " + bottom + "; "); 
+                                     else props   += ( prop +" : " + defValue + " " + right + " " +bottom + " " + left +"; ");  
+                                     break;
+                        case 2: if( left == right ) props   += ( prop +" : " + top + " " + right + " " + defValue + "; "); 
+                                     else props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue +"; ");  
+                                     break;
+                        case 3: if( left == right ) props   += ( prop +" : " + defValue +" " + right + "; "); 
+                                     else props   += ( prop +" : " + defValue + " " + right + " " + defValue + " " + left +"; ");
+                                     break;
+                        case 4: props   += ( prop +" : " + top + " " + right + " " + bottom + " " + defValue + "; ");break;
+                        case 5: props   += ( prop +" : " + defValue + " " + right + " " + bottom + " " + defValue + "; ");break;
+                        case 6: props   += ( prop +" : " + top+ " " + right + " " + defValue + " " + defValue + "; ");break;
+                        case 7: props   += ( prop +" : " + defValue + " " + right + " " + defValue  + " " + defValue + "; ");break;
+                        case 8: props   += ( prop +" : " + top + " " + defValue + " " + bottom + " " + left +"; ");break;
+                        case 9: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom + " " + left +"; ");break;
+                        case 10: props   += ( prop +" : " + top + " " + defValue + " " + defValue + " " + left +"; ");break;
+                        case 11: props   += ( prop +" : " + defValue + " " + defValue + " " + defValue + " " + left +"; ");break;
+                        case 12: if( top == bottom ) props   += ( prop +" : " + top + " " + defValue + "; "); 
+                                       else props   += ( prop +" : " + top + " " + defValue + " " + bottom +  "; ");  
+                                       break;
+                        case 13: props   += ( prop +" : " + defValue + " " + defValue + " " + bottom +  "; ");break;
+                        case 14: props   += ( prop +" : " + top + " " + defValue + " " + defValue + "; ");break;
+                        case 15: break;
+                      default:break;
+                      }                        
+              }break;
+     
+     default:break; 
+   }
+   return props;
 }
+
+
+//+++++++++++++++++++++EXPANDING METHODS+++++++++++++++++++++++++++++++++++
+
 
 QMap<QString,QString> ShorthandFormer::expand( QString propertyName, QString propertyValue ){
   CSSSHPropertyParser parser(propertyValue);
@@ -517,7 +603,7 @@ QMap<QString,QString>  ShorthandFormer::expandImplementation(QString propertyNam
 
 QMap<QString,QString>  ShorthandFormer::expandBackgroundProp(QStringList l){
   QMap<QString,QString> expandedProps;       
-  if(l.count()==1 && l[0] == "inherit"){ // it works also as protection against wrong single value inserted
+  if(l.count()==1 and l[0] == "inherit"){ // it works also as protection against wrong single value inserted
     expandedProps["background-color"] = l[0];
     expandedProps["background-image"] = l[0];
     expandedProps["background-repeat"] = l[0];
@@ -525,35 +611,34 @@ QMap<QString,QString>  ShorthandFormer::expandBackgroundProp(QStringList l){
     expandedProps["background-position"] = l[0];
   }
   else { 
-    QRegExp percentagePattern("\\d*%"),
-                    lengthPattern("\\d*ex|em|px"),
-                    colorPattern("#[\\w\\d]{6}"),
-                    numberPattern("\\d*");
+
     QStringList::Iterator it = l.begin();
 
     while (  it != l.end() ) {  
-      if( (*it).contains("url(") or ((*it).stripWhiteSpace()) == "none" or ((*it).stripWhiteSpace()) == "inherit" ){
+      QString temp((*it).stripWhiteSpace());
+      if( (*it).contains("url(") or temp == "none" or temp == "inherit" ){
         expandedProps["background-image"] = (*it);
       }
       else
-      if( ((*it).stripWhiteSpace()) == "repeat" or ((*it).stripWhiteSpace()) == "repeat-x" or ((*it).stripWhiteSpace()) == "repeat-y" or ((*it).stripWhiteSpace()) == "no-repeat" or ((*it).stripWhiteSpace()) == "inherit" ) {
+      if( backgroundRepeatValueList.contains(temp)!=0 ) {
         expandedProps["background-repeat"] = (*it);
       }
       else
-      if( ((*it).stripWhiteSpace()) == "scroll" or ((*it).stripWhiteSpace()) == "fixed" or ((*it).stripWhiteSpace()) == "inherit"){
+      if( temp == "scroll" or temp == "fixed" or temp == "inherit"){
         expandedProps["background-attachment"] = (*it);
       }
       else
-      if( ((*it).stripWhiteSpace()) == "top" or ((*it).stripWhiteSpace()) == "center" or ((*it).stripWhiteSpace()) == "bottom" or ((*it).stripWhiteSpace()) == "left" or ((*it).stripWhiteSpace()) == "right" or (*it).contains(percentagePattern) or (*it).contains(lengthPattern) or ((*it).stripWhiteSpace()) == "inherit"){
+      if( (*it).contains(globalColorPattern) or HTMLColorList.contains((*it))!=0 or temp == "transparent" or temp == "inherit" ){
+        expandedProps["background-color"] = (*it);
+      } 
+      else
+      if( temp == "top" or temp == "center" or temp == "bottom" or temp == "left" or temp == "right" or (*it).contains(globalPercentagePattern) or (*it).contains(globalLengthPattern) or temp == "inherit"){
         if( expandedProps.contains("background-position") )
           expandedProps["background-position"] = ( expandedProps["background-position"] + " " + ((*it)) );
         else    
           expandedProps["background-position"] = (*it);
       }
-      else
-      if( (*it).contains(colorPattern) or HTMLColorList.contains((*it))!=0 or ((*it).stripWhiteSpace()) == "transparent" or ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["background-color"] = (*it);
-      }  
+       
       ++it;  
     }     
   }
@@ -562,25 +647,25 @@ QMap<QString,QString>  ShorthandFormer::expandBackgroundProp(QStringList l){
 
 QMap<QString,QString>  ShorthandFormer::expandBox(QString subPropName, QStringList l){
     
-    QMap<QString,QString> expandedProps;  
-    expandedProps["border-top-" + subPropName] = l[0];     
+  QMap<QString,QString> expandedProps;  
+  expandedProps["border-top-" + subPropName] = l[0];     
   switch(l.count()){
-  case 1 : 
+    case 1 : 
                 expandedProps["border-right-" + subPropName] = l[0];
                 expandedProps["border-bottom-" + subPropName] = l[0];
                 expandedProps["border-left-" + subPropName] = l[0];
                 break;
-  case 2 : 
+    case 2 : 
                 expandedProps["border-right-" + subPropName] = l[1];
                 expandedProps["border-bottom-" + subPropName] = l[0];
                 expandedProps["border-left-" + subPropName] = l[1];
                 break;
- case 3 : 
+    case 3 : 
                 expandedProps["border-right-" + subPropName] = l[1];
                 expandedProps["border-bottom-" + subPropName] = l[2];
                 expandedProps["border-left-" + subPropName] = l[1];
                 break;
- case 4 : 
+    case 4 : 
                 expandedProps["border-right-" + subPropName] = l[1];
                 expandedProps["border-bottom-" + subPropName] = l[2];
                 expandedProps["border-left-" + subPropName] = l[3];
@@ -592,9 +677,11 @@ QMap<QString,QString>  ShorthandFormer::expandBox(QString subPropName, QStringLi
 
 QMap<QString,QString>  ShorthandFormer::expandFontProp(QStringList l){
   QMap<QString,QString> expandedProps; 
-  QRegExp percentagePattern("/\\d*%"),
-                   lengthPattern("/\\d*ex|em|px"),
-                   numberPattern("/\\d*");
+
+  QRegExp percentagePattern("/"+globalPercentagePattern.pattern()),
+                  lengthPattern("/"+globalLengthPattern.pattern()),
+                  numberPattern("/"+globalNumberPattern.pattern());    
+                              
    QStringList fontPseudoSHFormValues;
    fontPseudoSHFormValues.append("caption"); 
    fontPseudoSHFormValues.append("icon");  
@@ -602,55 +689,42 @@ QMap<QString,QString>  ShorthandFormer::expandFontProp(QStringList l){
    fontPseudoSHFormValues.append("message-box");  
    fontPseudoSHFormValues.append("small-caption");  
    fontPseudoSHFormValues.append("status-bar");
-   if( l.count()==1 && fontPseudoSHFormValues.contains(l[0]) != 0) {
+  if( l.count()==1 and fontPseudoSHFormValues.contains(l[0]) != 0) {
     expandedProps["font"] = l[0];
     return expandedProps; 
-    }
-   else {               
-   QStringList::Iterator it = l.begin();
-    while (  it != l.end() ) { 
-      if( ((*it).stripWhiteSpace()) == "oblique" or ((*it).stripWhiteSpace()) == "italic" or ((*it).stripWhiteSpace()) == "normal" or ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["font-style"] = (*it);
-      }       
-      else
-      if( ((*it).stripWhiteSpace()) == "normal" or ((*it).stripWhiteSpace()) == "small-caps" or ((*it).stripWhiteSpace()) == "inherit"){
-          expandedProps["font-variant"] = (*it) ;
-      }      
-      else
-      if( ((*it).stripWhiteSpace()) == "900" or ((*it).stripWhiteSpace()) == "800" or ((*it).stripWhiteSpace()) == "700" or ((*it).stripWhiteSpace()) == "600" or ((*it).stripWhiteSpace()) == "500" or ((*it).stripWhiteSpace()) == "400" or ((*it).stripWhiteSpace()) == "300" or ((*it).stripWhiteSpace()) == "200" or ((*it).stripWhiteSpace()) == "100" or ((*it).stripWhiteSpace()) == "lighter" or ((*it).stripWhiteSpace()) == "bolder" or ((*it).stripWhiteSpace()) == "normal" or ((*it).stripWhiteSpace()) == "bold" or ((*it).stripWhiteSpace()) == "inherit"){
-        expandedProps["font-weight"] = (*it);
-      }
-      else
-      if( ((*it).stripWhiteSpace()) == "smaller" or ((*it).stripWhiteSpace()) == "larger" or ((*it).stripWhiteSpace()) == "xx-large" or ((*it).stripWhiteSpace()) == "x-large" or ((*it).stripWhiteSpace()) == "large" or ((*it).stripWhiteSpace()) == "medium" or ((*it).stripWhiteSpace()) == "small" or ((*it).stripWhiteSpace()) == "x-small" or ((*it).stripWhiteSpace()) == "xx-small" or ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["font-size"] = (*it);
-      }
-      else
-      if( (*it).contains(percentagePattern) or (*it).contains(numberPattern) or (*it).contains(lengthPattern) or (*it).stripWhiteSpace() == "/normal" or (*it).stripWhiteSpace() == "/inherit" ) {
-        expandedProps["line-height"] = ((*it).remove('/'));
-      }
-      else
-        expandedProps["font-family"] = (*it);
-      ++it;  
-    }  
-  return expandedProps;
+  }
+  else {               
+     QStringList::Iterator it = l.begin();
+      while (  it != l.end() ) { 
+        QString temp((*it).stripWhiteSpace());
+        if( fontStyleValueList.contains(temp)!=0  ) expandedProps["font-style"] = (*it);             
+        else
+          if( fontVariantValueList.contains(temp)!=0 ) expandedProps["font-variant"] = (*it) ;
+          else
+            if( fontWeightValueList.contains(temp)!=0) expandedProps["font-weight"] = (*it);
+            else
+               if( (fontSizeValueList.contains(temp)!=0 or (*it).contains(globalPercentagePattern)!=0  or (*it).contains(globalLengthPattern)!=0) and expandedProps["font-size"].isEmpty() )
+                 expandedProps["font-size"] = (*it);    
+               else
+                 if( (*it).contains(percentagePattern)!=0 or (*it).contains(numberPattern)!=0 or (*it).contains(lengthPattern)!=0 or temp == "/normal" or temp == "/inherit" ) 
+                   expandedProps["line-height"] = ((*it).remove('/'));
+                 else expandedProps["font-family"] = (*it);
+        ++it;  
+      }  
+    return expandedProps;
   }
 }    
 
 QMap<QString,QString> ShorthandFormer::expandListstyleProp( QStringList l){
   QMap<QString,QString> expandedProps;
   QStringList::Iterator it = l.begin();
-     while (  it != l.end() ) { 
-      if( (*it).contains("url(") or ((*it).stripWhiteSpace()) == "none" or ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["list-style-image"] = (*it);
-      }       
+    while (  it != l.end() ) { 
+      QString temp((*it).stripWhiteSpace());
+      if( (*it).contains("url(") or temp == "none" or temp == "inherit" ) expandedProps["list-style-image"] = (*it);
       else
-      if( ((*it).stripWhiteSpace()) == "disc" or ((*it).stripWhiteSpace()) == "circle" or ((*it).stripWhiteSpace()) == "square" or ((*it).stripWhiteSpace()) == "decimal" or ((*it).stripWhiteSpace()) == "decimal-leading-zero" or ((*it).stripWhiteSpace()) == "lower-roman" or ((*it).stripWhiteSpace()) == "upper-roman" or ((*it).stripWhiteSpace()) == "lower-greek" or ((*it).stripWhiteSpace()) == "lower-alpha" or ((*it).stripWhiteSpace()) == "lower-latin" or ((*it).stripWhiteSpace()) == "upper-alpha" or ((*it).stripWhiteSpace()) == "upper-latin" or ((*it).stripWhiteSpace()) == "hebrew" or ((*it).stripWhiteSpace()) == "armenian" or ((*it).stripWhiteSpace()) == "georgian" or ((*it).stripWhiteSpace()) == "cjk-ideographic" or ((*it).stripWhiteSpace()) == "hiragana" or ((*it).stripWhiteSpace()) == "katakana" or ((*it).stripWhiteSpace()) == "hiragana-iroha" or ((*it).stripWhiteSpace()) == "katakana-iroha" or ((*it).stripWhiteSpace()) == "none" or ((*it).stripWhiteSpace()) == "inherit"){
-          expandedProps["list-style-type"] = (*it) ;
-      }      
+      if( borderStyleValueList.contains(temp)!=0) expandedProps["list-style-type"] = (*it) ;           
       else
-      if( ((*it).stripWhiteSpace()) == "inside" or ((*it).stripWhiteSpace()) == "outside" or ((*it).stripWhiteSpace()) == "inherit"){
-        expandedProps["list-style-position"] = (*it);
-      }
+      if( temp == "inside" or temp == "outside" or temp == "inherit") expandedProps["list-style-position"] = (*it);     
       ++it;  
     }  
   return expandedProps;
@@ -658,31 +732,16 @@ QMap<QString,QString> ShorthandFormer::expandListstyleProp( QStringList l){
 
 QMap<QString,QString>  ShorthandFormer::expandOutlineProp( QStringList l){
   QMap<QString,QString> expandedProps;
-  QRegExp  lengthPattern("\\d*ex|em|px"),
-                    colorPattern("#[\\w\\d]{6}");
   QStringList::Iterator it = l.begin();
-     while (  it != l.end() ) { 
-      if( ((*it).stripWhiteSpace()) == "none" or 
-      ((*it).stripWhiteSpace()) == "hidden" or 
-      ((*it).stripWhiteSpace()) == "dotted" or 
-      ((*it).stripWhiteSpace()) == "dashed" or 
-      ((*it).stripWhiteSpace()) == "solid" or 
-      ((*it).stripWhiteSpace()) == "double" or 
-      ((*it).stripWhiteSpace()) == "groove" or
-      ((*it).stripWhiteSpace()) == "ridge" or
-      ((*it).stripWhiteSpace()) == "inset" or
-      ((*it).stripWhiteSpace()) == "outset" or    
-      ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps["outline-style"] = (*it);
-      }       
+    while (  it != l.end() ) { 
+      QString temp((*it).stripWhiteSpace());
+      if( borderStyleValueList.contains(temp)!=0 ) expandedProps["outline-style"] = (*it);            
       else
-      if(  (*it).contains(colorPattern) or HTMLColorList.contains((*it))!=0 or ((*it).stripWhiteSpace()) == "invert" or ((*it).stripWhiteSpace()) == "inherit"){
-          expandedProps["outline-color"] = (*it) ;
-      }      
+      if(  (*it).contains(globalColorPattern) or HTMLColorList.contains((*it))!=0 or temp == "invert" or temp == "inherit")
+          expandedProps["outline-color"] = (*it) ;           
       else
-      if( (*it).contains(lengthPattern) or ((*it).stripWhiteSpace()) == "thin" or ((*it).stripWhiteSpace()) == "medium" or ((*it).stripWhiteSpace()) == "thick" or ((*it).stripWhiteSpace()) == "inherit"){
-        expandedProps["outline-width"] = (*it);
-      }
+      if( (*it).contains(globalLengthPattern) or widthValueList.contains(temp)!=0)
+        expandedProps["outline-width"] = (*it);      
       ++it;  
     }  
   return expandedProps;
@@ -690,31 +749,17 @@ QMap<QString,QString>  ShorthandFormer::expandOutlineProp( QStringList l){
 
 QMap<QString,QString>  ShorthandFormer::expandBoxSide(QString subPropName, QStringList l){
   QMap<QString,QString> expandedProps;
-  QRegExp  lengthPattern("\\d*ex|em|px"),
-                    colorPattern("#[\\w\\d]{6}");
+
   QStringList::Iterator it = l.begin();                  
      while (  it != l.end() ) { 
-      if( ((*it).stripWhiteSpace()) == "none" or 
-      ((*it).stripWhiteSpace()) == "hidden" or 
-      ((*it).stripWhiteSpace()) == "dotted" or 
-      ((*it).stripWhiteSpace()) == "dashed" or 
-      ((*it).stripWhiteSpace()) == "solid" or 
-      ((*it).stripWhiteSpace()) == "double" or 
-      ((*it).stripWhiteSpace()) == "groove" or
-      ((*it).stripWhiteSpace()) == "ridge" or
-      ((*it).stripWhiteSpace()) == "inset" or
-      ((*it).stripWhiteSpace()) == "outset" or    
-      ((*it).stripWhiteSpace()) == "inherit" ){
-        expandedProps[subPropName + "-style"] = (*it);
-      }       
+       QString temp((*it).stripWhiteSpace());
+      if( borderStyleValueList.contains(temp)!=0 ) expandedProps[subPropName + "-style"] = (*it);           
       else
-      if(  (*it).contains(colorPattern) or HTMLColorList.contains((*it))!=0 or ((*it).stripWhiteSpace()) == "transparent" or ((*it).stripWhiteSpace()) == "inherit"){
-          expandedProps[subPropName + "-color"] = (*it) ;
-      }      
+      if(  (*it).contains(globalColorPattern) or HTMLColorList.contains((*it))!=0 or temp == "transparent" or temp == "inherit")
+          expandedProps[subPropName + "-color"] = (*it) ;     
       else
-      if( (*it).contains(lengthPattern) or ((*it).stripWhiteSpace()) == "thin" or ((*it).stripWhiteSpace()) == "medium" or ((*it).stripWhiteSpace()) == "thick" or ((*it).stripWhiteSpace()) == "inherit"){
-        expandedProps[subPropName + "-width"] = (*it);
-      }
+      if( (*it).contains(globalLengthPattern) or widthValueList.contains(temp)!=0)
+        expandedProps[subPropName + "-width"] = (*it);     
       ++it;  
     }  
   return expandedProps;
@@ -722,39 +767,24 @@ QMap<QString,QString>  ShorthandFormer::expandBoxSide(QString subPropName, QStri
 
 QMap<QString,QString>  ShorthandFormer::expandBorderProp(QStringList l){
   QMap<QString,QString> expandedProps;
-  QRegExp   lengthPattern("\\d*ex|em|px"),
-                    colorPattern("#[\\w\\d]{6}");
   QStringList::Iterator it = l.begin();                  
      while (  it != l.end() ) { 
-      if( ((*it).stripWhiteSpace()) == "none" or 
-      ((*it).stripWhiteSpace()) == "hidden" or 
-      ((*it).stripWhiteSpace()) == "dotted" or 
-      ((*it).stripWhiteSpace()) == "dashed" or 
-      ((*it).stripWhiteSpace()) == "solid" or 
-      ((*it).stripWhiteSpace()) == "double" or 
-      ((*it).stripWhiteSpace()) == "groove" or
-      ((*it).stripWhiteSpace()) == "ridge" or
-      ((*it).stripWhiteSpace()) == "inset" or
-      ((*it).stripWhiteSpace()) == "outset" or    
-      ((*it).stripWhiteSpace()) == "inherit" ){
+       QString temp((*it).stripWhiteSpace());
+      if( borderStyleValueList.contains(temp)!=0 ){
         expandedProps["border-top-style"] = (*it);
         expandedProps["border-left-style"] = (*it);
         expandedProps["border-right-style"] = (*it);
         expandedProps["border-bottom-style"] = (*it);
       }       
       else
-      if(  (*it).contains(colorPattern) or 
-           HTMLColorList.contains((*it))!=0 or 
-           ((*it).stripWhiteSpace()) == "transparent" or 
-           ((*it).stripWhiteSpace()) == "inherit")
-           {
-          expandedProps["border-top-color"] = (*it);
-          expandedProps["border-left-color"] = (*it);
-          expandedProps["border-right-color"] = (*it);
-          expandedProps["border-bottom-color"] = (*it);
+      if(  (*it).contains(globalColorPattern) or HTMLColorList.contains((*it))!=0 or temp == "transparent" or temp == "inherit"){
+        expandedProps["border-top-color"] = (*it);
+        expandedProps["border-left-color"] = (*it);
+        expandedProps["border-right-color"] = (*it);
+        expandedProps["border-bottom-color"] = (*it);
       }      
       else
-      if( (*it).contains(lengthPattern) or ((*it).stripWhiteSpace()) == "thin" or ((*it).stripWhiteSpace()) == "medium" or ((*it).stripWhiteSpace()) == "thick" or ((*it).stripWhiteSpace()) == "inherit"){
+      if( (*it).contains(globalLengthPattern) or widthValueList.contains(temp)!=0){
         expandedProps["border-top-width"] = (*it);
         expandedProps["border-left-width"] = (*it);
         expandedProps["border-right-width"] = (*it);

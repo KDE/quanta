@@ -18,6 +18,8 @@
 #ifndef CSSEDITOR_GLOBALS_H
 #define CSSEDITOR_GLOBALS_H
 #include <qspinbox.h>
+#include <qregexp.h>
+#include <qstringlist.h>
 
 const QString HTMLColors("aliceblue,antiquewhite,aqua,aquamarine,azure,beige,bisque,black,blanchedalmond,"
                                    "blue,blueviolet,brown,burlywood,cadetblue,chartreuse,chocolate,coral,cornflowerblue,"
@@ -37,9 +39,8 @@ const QString HTMLColors("aliceblue,antiquewhite,aqua,aquamarine,azure,beige,bis
                                    "salmon,sandybrown,seagreen,seashell,sienna,silver,skyblue,slateblue,slategray,snow,"
                                    "springgreen,steelblue,tan,teal,thistle,tomato,turquoise,violet,wheat,white,whitesmoke,"
                                    "yellow,yellowgreen");
-                                
-
-                                   
+                                                                   
+                                                                    
 class mySpinBox : public QSpinBox{
     Q_OBJECT
   public:
@@ -47,7 +48,8 @@ class mySpinBox : public QSpinBox{
     mySpinBox( int minValue, int maxValue, int step = 1, QWidget * parent = 0, const char * name = 0 );
     ~mySpinBox();
   public slots:
-    void checkSuffix(const QString& s);  
+    void checkSuffix(const QString&);  
 };
-                                                                   
+
+                                                          
 #endif
