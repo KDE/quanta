@@ -114,7 +114,12 @@ ScriptTreeView::~ScriptTreeView()
 
 void ScriptTreeView::slotMenu(KListView *, QListViewItem *item, const QPoint &point)
 {
-  if (!item) return;
+  if (!item)
+  {
+    m_folderMenu->setItemVisible(m_downloadMenuId, true);
+    m_folderMenu->popup(point);
+    return;
+  }
   setSelected(item, true);
 
   KFileTreeViewItem *curItem = currentKFileTreeViewItem();
@@ -125,10 +130,10 @@ void ScriptTreeView::slotMenu(KListView *, QListViewItem *item, const QPoint &po
   {
     if (curItem == curItem->branch()->root())
     {
-       m_folderMenu ->setItemVisible(m_downloadMenuId, true);
+      m_folderMenu->setItemVisible(m_downloadMenuId, true);
     } else
     {
-      m_folderMenu ->setItemVisible(m_downloadMenuId, false);
+      m_folderMenu->setItemVisible(m_downloadMenuId, false);
     }
     m_folderMenu->popup(point);
   }

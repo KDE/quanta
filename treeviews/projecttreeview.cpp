@@ -228,12 +228,12 @@ void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const Q
     CVSService::ref()->setCurrentFile("");
 #endif
   ProjectTreeViewItem *curItem = static_cast<ProjectTreeViewItem *>(currentKFileTreeViewItem());
-  if ( item && curItem)
+  if (item && curItem)
   {
     setSelected(item, true);
     if (curItem == curItem->branch()->root())
     {
-     m_projectMenu->popup( point);
+      m_projectMenu->popup(point);
     } else
     {
       if (!curItem->isDir())
@@ -257,6 +257,10 @@ void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const Q
         m_folderMenu->popup(point);
       }
     }
+  } else
+  {
+    setSelected(firstChild(), true);
+    m_projectMenu->popup(point);
   }
 }
 
