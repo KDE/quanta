@@ -41,16 +41,19 @@
 //kde includes
 #include <kapplication.h>
 #include <kdebug.h>
+#include <kdirwatch.h>
 #include <klocale.h>
 
 Parser::Parser()
 {
   m_node = 0L;
   oldMaxLines = 0;
+  includeWatch = 0L;
 }
 
 Parser::~Parser()
 {
+  delete includeWatch;
 }
 
 /** Searches for scripts inside the text from startNode. It looks only for the
@@ -1595,6 +1598,10 @@ void Parser::parseForGroups()
   includedFiles.clear();
   includedFilesDTD.clear();
 
+  KURL baseURL = QExtFileInfo::path(write->url());
+  delete includeWatch;
+  includeWatch = new KDirWatch();
+  connect(includeWatch, SIGNAL(dirty(const QString&)), SLOT(slotIncludedFileChanged(const QString&)));
   GroupElementList* groupElementList;
   GroupElementMapList* groupElementMapList;
   DTDStruct *dtd;
@@ -1654,8 +1661,12 @@ void Parser::parseForGroups()
             if (group.hasFileName && group.parseFile)
             {
               title.remove(group.fileNameRx);
-              includedFiles += title.stripWhiteSpace();
+              KURL url;
+              QuantaCommon::setUrl(url, title.stripWhiteSpace());
+              url = QExtFileInfo::toAbsolute(url, baseURL);
+              includedFiles += url.path();
               includedFilesDTD.append(dtd);
+              includeWatch->addFile(url.path());
             }
           }
         }
@@ -1698,40 +1709,56 @@ void Parser::parseIncludedFiles()
   includedMap.clear();
   if (write->url().isLocalFile())
   {
-    StructTreeGroup group;
-    KURL baseURL =  QExtFileInfo::path(write->url());
     for (uint i = 0; i < includedFiles.count(); i++)
     {
-      KURL url;
-      QuantaCommon::setUrl(url, includedFiles[i]);
-      url = QExtFileInfo::toAbsolute(url, baseURL);
-      QString content;
-      QFile file(url.path());
-      if (file.open(IO_ReadOnly))
+      parseIncludedFile(includedFiles[i], includedFilesDTD.at(i));
+    }
+  }
+}
+
+void Parser::parseIncludedFile(const QString& fileName, DTDStruct *dtd)
+{
+  StructTreeGroup group;
+  QString content;
+  QFile file(fileName);
+  if (file.open(IO_ReadOnly))
+  {
+    IncludedGroupElements *elements = &includedMap[fileName];
+    QTextStream str(&file);
+    content = str.read();
+    file.close();
+    for (uint j = 0; j < dtd->structTreeGroups.count(); j++)
+    {
+      group = dtd->structTreeGroups[j];
+      int pos = 0;
+      while (pos != -1)
       {
-        IncludedGroupsElements *elements = &includedMap[url.path()];
-        QTextStream str(&file);
-        content = str.read();
-        file.close();
-        DTDStruct *dtd = includedFilesDTD.at(i);
-        for (uint j = 0; j < dtd->structTreeGroups.count(); j++)
+        pos = group.searchRx.search(content, pos);
+        if (pos != -1)
         {
-          group = dtd->structTreeGroups[j];
-          int pos = 0;
-          while (pos != -1)
-          {
-            pos = group.searchRx.search(content, pos);
-            if (pos != -1)
-            {
-              QString s = content.mid(pos, group.searchRx.matchedLength());
-              pos += s.length();
-              s.remove(group.clearRx);
-              if (!(*elements)[group.name].contains(s))
-                  (*elements)[group.name] += s;
-            }
-          }
+          QString s = content.mid(pos, group.searchRx.matchedLength());
+          pos += s.length();
+          s.remove(group.clearRx);
+          if (!(*elements)[group.name].contains(s))
+              (*elements)[group.name] += s;
         }
       }
     }
   }
 }
+
+void Parser::slotIncludedFileChanged(const QString& fileName)
+{
+  int pos = includedFiles.findIndex(fileName);
+  if (pos != -1)
+  {
+    DTDStruct *dtd = includedFilesDTD.at(pos);
+    if (dtd)
+    {
+      includedMap[fileName].clear();
+      parseIncludedFile(fileName, dtd);
+    }
+  }
+}
+
+#include "parser.moc"

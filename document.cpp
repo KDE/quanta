@@ -741,8 +741,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getGroupCompletions(const St
       completions->append( completion );
     }
   }
-  IncludedGroupsElementsMap elements = parser->includedMap;
-  IncludedGroupsElementsMap::Iterator it2;
+  IncludedGroupElementsMap elements = parser->includedMap;
+  IncludedGroupElementsMap::Iterator it2;
   for ( it2 = elements.begin(); it2 != elements.end(); ++it2 )
   {
     QStringList list = it2.data()[group.name];

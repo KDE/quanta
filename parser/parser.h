@@ -18,6 +18,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <qobject.h>
 #include <qdict.h>
 #include <qstringlist.h>
 #include <qmap.h>
@@ -32,6 +33,7 @@
   */
 
 class Document;
+class KDirWatch;
 
 struct DTDListNode {
     DTDStruct *dtd;
@@ -50,10 +52,13 @@ struct GroupElement{
 
 typedef QValueList<GroupElement> GroupElementList;
 typedef QMap<QString, GroupElementList> GroupElementMapList;
-typedef QMap<QString, QStringList> IncludedGroupsElements;
-typedef QMap<QString, IncludedGroupsElements> IncludedGroupsElementsMap;
+typedef QMap<QString, QStringList> IncludedGroupElements;
+typedef QMap<QString, IncludedGroupElements> IncludedGroupElementsMap;
 
-class Parser {
+class Parser: public QObject {
+
+Q_OBJECT
+
 public:
   Parser();
   ~Parser();
@@ -93,7 +98,10 @@ public:
   QMap<QString, GroupElementMapList> m_groups; //a list of groups (variables, inclusions)
   QStringList includedFiles;
   QPtrList<DTDStruct> includedFilesDTD;
-  IncludedGroupsElementsMap includedMap;
+  IncludedGroupElementsMap includedMap;
+
+private slots:
+  void slotIncludedFileChanged(const QString& fileName);
 
 private:
   Node* m_node;       //the internal Node pointer
@@ -103,10 +111,13 @@ private:
   int maxLines; // how many lines are in the current document
   int oldMaxLines;
   int treeSize;
+  KDirWatch *includeWatch;
 
   /** Print the doc structure tree to the standard output.
       Only for debugging purposes. */
   void coutTree(Node *node, int indent);
+  void parseIncludedFile(const QString& fileName, DTDStruct *dtd);
+
 };
 
 #endif
