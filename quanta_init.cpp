@@ -777,7 +777,6 @@ bool QuantaApp::queryExit()
       }
 
       project->slotCloseProject();
-      Document *w;
       do
       {
         w = view->write();
