@@ -85,7 +85,7 @@ void  ProjectUpload::initProjectInfo(Project *prg)
 	linePath -> setText(uploadEl.attribute("remote_path",""));
 	port -> setText( uploadEl.attribute("remote_port","") );
 	QString def_p = uploadEl.attribute("remote_protocol","ftp");
-  keepPasswd->setChecked(p->keepPasswd);
+	keepPasswd->setChecked(p->keepPasswd);
 	if (p->keepPasswd)
 	{
 	  linePasswd->setText(p->passwd);
@@ -149,7 +149,8 @@ void ProjectUpload::slotBuildTree()
      {
        int uploadTime = el.attribute("upload_time","1").toInt();
        int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
-
+       el.setAttribute("modified_time", modifiedTime);
+       
        if ( uploadTime < modifiedTime )
        {
          modified.append( u );
@@ -399,13 +400,8 @@ void ProjectUpload::slotUploadNext()
   		QDomElement el = nl.item(i).toElement();
   		if ( el.nodeName() == "item"  &&  el.attribute("url") == QuantaCommon::qUrl(currentURL) )
   		{
-  			QDateTime stime;
-  			stime.setTime_t(1);
-  			el.setAttribute( "upload_time", stime.secsTo(QDateTime::currentDateTime() ) );
-/*        time_t stime;
-        time(&stime);
-  			el.setAttribute( "upload_time", (int)stime);*/
-        break;
+                el.setAttribute( "upload_time", el.attribute("modified_time") );
+	        break;
   		}
   	}
   	upload();
@@ -418,9 +414,7 @@ void ProjectUpload::clearProjectModified()
   for ( unsigned int i=0; i<nl.count(); i++ )
   {
     QDomElement el = nl.item(i).toElement();
-    QDateTime stime;
-    stime.setTime_t(1);
-    el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
+    el.setAttribute( "upload_time", el.attribute("modified_time") );
   }
   modified.clear();
   list->clearSelection();
