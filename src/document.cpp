@@ -166,19 +166,6 @@ Document::~Document()
  delete m_doc;
 }
 
-void Document::resizeEvent(QResizeEvent *e)
-{
-  QWidget::resizeEvent(e);
-  QWidget *wd=dynamic_cast<QWidget*>(parent());
-  if (wd)
-  {
-    int w = wd->width() -5 ;
-    int h = wd->height() - 9;
-    if (ViewManager::ref()->activeView())
-      ViewManager::ref()->activeView()->resize(w,h);//FIXME:
-  }
-}
-
 bool Document::eventFilter ( QObject * watched, QEvent * e )
 {
   Q_UNUSED(watched)

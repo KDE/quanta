@@ -64,7 +64,6 @@ public:
            QWidget *parent = 0, const char *name = 0, WFlags f=0);
   ~Document();
 
-  void resizeEvent(QResizeEvent* e);
   bool eventFilter ( QObject * watched, QEvent * e );
 
   KURL url();

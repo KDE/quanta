@@ -224,8 +224,10 @@ QuantaApp::QuantaApp() : DCOPObject("WindowManagerIf"), KMdiMainFrm( 0, "Quanta"
   m_partManager = new KParts::PartManager(this);
   // When the manager says the active part changes,
   // the builder updates (recreates) the GUI
-  connect(m_partManager, SIGNAL(activePartChanged(KParts::Part * )),
-          this, SLOT(slotActivePartChanged(KParts::Part * )));
+//  connect(m_partManager, SIGNAL(activePartChanged(KParts::Part * )),
+  //        this, SLOT(slotActivePartChanged(KParts::Part * )));
+
+  m_oldKTextEditor = 0L;
 }
 
 QuantaApp::~QuantaApp()
@@ -3576,21 +3578,29 @@ void QuantaApp::slotProcessTimeout()
   }
 }
 
+KParts::Part *oldPart = 0L;
 
 void QuantaApp::slotActivePartChanged(KParts::Part * part)
 {
+  if (oldPart)
+    guiFactory()->removeClient(part);
+  guiFactory()->addClient(part);
+  oldPart = part;
+  return;
   if (m_oldKTextEditor && part) // if part == 0L the pointer m_oldKTextEditor is not useable
   {
     guiFactory()->removeClient(m_oldKTextEditor);
     m_oldKTextEditor = 0L;
   }
-  createGUI(part);
+      createGUI(part);
   QWidget * activeWid = m_partManager->activeWidget();
   if ( activeWid && activeWid->inherits("KTextEditor::View"))
   {
     m_oldKTextEditor = dynamic_cast<KTextEditor::View *>(activeWid);
     if (m_oldKTextEditor)
       guiFactory()->addClient(m_oldKTextEditor);
+  } else
+  {
   }
 }
 
@@ -3664,7 +3674,7 @@ void QuantaApp::slotReportBug()
 
 void QuantaApp::slotNewPart(KParts::Part *newPart, bool setActiv)
 {
-  m_partManager->addPart(newPart, setActiv);
+//  m_partManager->addPart(newPart, setActiv);
 };
 
 

@@ -117,7 +117,8 @@ public:
  /** Called when this view lost the active status */
   void deactivated();
 
-  /** Resize the current view */
+  void resizeEvent(QResizeEvent* e);
+ /** Resize the current view */
   void resize(int width, int height);
 
   void insertTag( const char *tag);

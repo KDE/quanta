@@ -157,11 +157,13 @@ void QuantaView::addDocument(Document *document)
      return;
    m_document = document;
    m_document->view()->reparent(m_documentArea, 0, QPoint(), true);
+    m_document->view()->resize(m_documentArea->size());
    connect(m_document->view(), SIGNAL(gotFocus(Kate::View *)),
                   this, SLOT(slotSourceGetFocus(Kate::View *)));
     connect(m_document->view(), SIGNAL(cursorPositionChanged()), this, SIGNAL(cursorPositionChanged()));
 
-    setCaption(m_document->url().fileName());
+    setCaption(m_document->url().prettyURL());
+    setTabCaption(m_document->url().url());
 
 #ifdef BUILD_KAFKAPART
    m_kafkaDocument =KafkaDocument::ref();
@@ -231,11 +233,17 @@ void QuantaView::addDocument(Document *document)
 void QuantaView::addPlugin(QuantaPlugin *plugin)
 {
    m_plugin = plugin;
+   setMDICaption(m_plugin->name());
    m_splitter->hide();
-   if (m_plugin->widget())
-       m_plugin->widget()->reparent(m_documentArea, 0, QPoint(), false);
+   QWidget *w = m_plugin->widget();
+   if (w)
+   {
+       w->reparent(m_documentArea, 0, QPoint(), true);
+       w->resize(m_documentArea->size());
+   }
    m_documentArea->reparent(this, 0, QPoint(), true);
    m_viewLayout->addWidget(m_documentArea, 1, 0);
+   m_documentArea->show();
 }
 
 void QuantaView::slotSetSourceLayout()
@@ -588,12 +596,23 @@ void QuantaView::dropEvent(QDropEvent *e)
    emit dragInsert(e);
 }
 
+void QuantaView::resizeEvent(QResizeEvent *e)
+{
+  QWidget::resizeEvent(e);
+  resize(m_documentArea->width(), m_documentArea->height());
+}
+
 void QuantaView::resize(int width, int height)
 {
+  if (m_plugin && m_plugin->widget())
+  {
+      m_plugin->widget()->resize(width, height);
+      return;
+  }
   if (!m_document)
       return;
   if (m_currentViewsLayout == SourceOnly)
-    m_document->view()->resize(width,height);
+    m_document->view()->resize(width, height);
 #ifdef BUILD_KAFKAPART
   else
   if (m_currentViewsLayout == VPLOnly)
@@ -666,15 +685,19 @@ KURL QuantaView::baseURL()
 
 void QuantaView::activated()
 {
-  ToolbarTabWidget::ref()->reparent(this, 0, QPoint(), qConfig.enableDTDToolbar);
-  m_viewLayout->addWidget(ToolbarTabWidget::ref(), 0 , 0);
   if (!m_document)
   {
     parser->setSAParserEnabled(false);
     quantaApp->slotReloadStructTreeView(); //FIXME
+    if (m_plugin)
+//        quantaApp->partManager()->setActivePart(m_plugin->part(), m_plugin->widget());
+      quantaApp->guiFactory()->addClient(m_plugin->part());
     return;
   }
-  quantaApp->partManager()->setActivePart(m_document->doc(), m_document->view());
+  ToolbarTabWidget::ref()->reparent(this, 0, QPoint(), qConfig.enableDTDToolbar);
+  m_viewLayout->addWidget(ToolbarTabWidget::ref(), 0 , 0);
+  //quantaApp->partManager()->setActivePart(m_document->doc(), m_document->view());
+  quantaApp->guiFactory()->addClient(m_document->view());
   m_document->checkDirtyStatus();
   StructTreeView::ref()->useOpenLevelSetting = true;
   quantaApp->loadToolbarForDTD(m_document->getDTDIdentifier());
@@ -692,6 +715,11 @@ void QuantaView::deactivated()
         quantaApp->statusBar()->changeItem("", IDS_STATUS);
         quantaApp->statusBar()->show();
       }
+      quantaApp->guiFactory()->removeClient(m_plugin->part());
+  } else
+  if (m_document)
+  {
+    quantaApp->guiFactory()->removeClient(m_document->view());
   }
 
 }

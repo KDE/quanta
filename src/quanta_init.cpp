@@ -351,10 +351,15 @@ void QuantaInit::initView()
   connect(m_quanta, SIGNAL(viewActivated (KMdiChildView *)), m_viewManager, SLOT(slotViewActivated(KMdiChildView*)));
    connect(m_quanta, SIGNAL(viewDeactivated(KMdiChildView *)), m_viewManager, SLOT(slotViewDeactivated(KMdiChildView*)));
 
+#if KDE_IS_VERSION(3,2,90)
   m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3ICON);
+  m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
+#else
+  m_quanta->setIDEAlModeStyle(KMultiTabBar::KDEV3);
+#endif
+
   m_quanta->setStandardMDIMenuEnabled(true);
   m_quanta->setManagedDockPositionModeEnabled(true);
-  m_quanta->tabWidget()->setTabPosition( QTabWidget::Bottom );
 
   m_quanta->fTab = new FilesTreeView(m_config, m_quanta->actionCollection(), m_quanta, "filestree");
   addToolTreeView(m_quanta->fTab, i18n("Files"), UserIcon("ftab"), KDockWidget::DockLeft);
@@ -453,12 +458,13 @@ void QuantaInit::initView()
           m_quanta, SLOT(slotShowPreviewWidget(bool)));
   connect(pTab, SIGNAL(showPreviewWidget(bool)),
           m_quanta, SLOT(slotShowPreviewWidget(bool)));
-
+//FIXME:
+/*
   connect(m_quanta->m_htmlPart, SIGNAL(onURL(const QString&)),
               m_quanta, SLOT(slotStatusMsg(const QString&)));
   connect(m_quanta->m_htmlPartDoc, SIGNAL(onURL(const QString&)),
                  m_quanta, SLOT(slotStatusMsg(const QString&)));
-
+*/
   connect(sTab, SIGNAL(newCursorPosition(int,int)), m_quanta, SLOT(setCursorPosition(int,int)));
   connect(sTab, SIGNAL(selectArea(int,int,int,int)), m_quanta, SLOT( selectArea(int,int,int,int)));
   connect(sTab, SIGNAL(selectTagArea(Node*)), m_quanta, SLOT(slotSelectTagArea(Node*)));

@@ -58,6 +58,8 @@ public:
   virtual void addWidget();
   virtual void removeWidget();
   QWidget *widget();
+  KParts::ReadOnlyPart *part() {return m_part;}
+  QString name() {return m_name;}
   KToggleAction *m_action;
 public slots:
   /** Sets whether the plugin is running or not */
