@@ -1805,7 +1805,7 @@ void QuantaApp::slotSendToolbar()
   QStringList toolbarFile;
 
   QString prefix="quanta";
-  QString extension=".toolbar";
+  QString extension=".toolbar.tgz";
   KTempFile* tempFile = new KTempFile(locateLocal("tmp", prefix), extension);;
   tempFile->setAutoDelete(true);
   saveToolBar(toolbarName, tempFile->name());
@@ -1853,14 +1853,19 @@ void QuantaApp::saveModifiedToolbars()
  for( ; it.current(); ++it )
  {
    s1 = it.current()->toString();
-   s2 = toolbarGUIClientList[it.currentKey()]->domDocument().toString();
+   KXMLGUIClient* client = toolbarGUIClientList[it.currentKey()];
 
-   if ( (s1 != s2) && (!s1.isEmpty()) )
+   if (client)
    {
-     if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(it.currentKey()),
-             i18n("Save toolbar")) == KMessageBox::Yes)
+     s2 = client->domDocument().toString();
+
+     if ( (s1 != s2) && (!s1.isEmpty()) )
      {
-       slotSaveToolbar(true, it.currentKey() );
+       if (KMessageBox::questionYesNo(this, i18n("The toolbar \"%1\" was modified. Do you want to save before remove?").arg(it.currentKey()),
+             i18n("Save toolbar")) == KMessageBox::Yes)
+       {
+         slotSaveToolbar(true, it.currentKey() );
+       }
      }
    }
    toolbarDomList.remove(it.currentKey());
