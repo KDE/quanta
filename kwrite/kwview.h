@@ -44,6 +44,9 @@ class KToggleAction;
 class KRecentFilesAction;
 class KSelectAction;
 
+// quanta add
+class Document;
+
 namespace KIO { class FileCopyJob; }
 
 class KTempFile;
@@ -95,6 +98,22 @@ struct SConfig {
   PointStruc cursor;
   PointStruc startCursor;
   int flags;
+
+  // Set the pattern to be used for searching.
+  void setPattern(QString &newPattern);
+
+  // Search the given string.
+  int search(QString &text, int index);
+
+  // The length of the last match found using pattern or regExp.
+  int matchedLength;
+
+private:
+  QString m_pattern;
+
+  // The regular expression corresponding to pattern. Only guaranteed valid if
+  // flags has sfRegularExpression set.
+  QRegExp m_regExp;
 };
 
 struct LineRange {
@@ -108,13 +127,12 @@ struct BracketMark {
   int eXPos;
 };
 
-class Document;
-
 class KWriteView : public QWidget {
     Q_OBJECT
-    friend KWriteDoc;
-    friend KWrite;
-    friend Document;
+    friend class KWriteDoc;
+    friend class KWrite;
+    // quanta add
+    friend class Document;
   public:
     // a drop-aware container should set HandleOwnURIDrops = false and handle all URI drops
     // KWriteView will otherwise handle URI drops, but is slightly limited
@@ -168,7 +186,7 @@ class KWriteView : public QWidget {
       cfSingleSelection= 0x40000,
       cfTabIndents= 0x80000,
       cfPageUDMovesCursor= 0x100000,
-      cfShowTabs= 0x400000,
+      cfShowTabs= 0x200000,
       cfSpaceIndent= 0x400000,
       cfSmartHome = 0x800000};
 
@@ -189,7 +207,8 @@ class KWriteView : public QWidget {
      sfReplace=64,
      sfAgain=128,
      sfWrapped=256,
-     sfFinished=512};
+     sfFinished=512,
+     sfRegularExpression=1024};
 
 //update flags
     enum Update_flags {
@@ -341,9 +360,10 @@ class KWBookmark {
 
 class KWrite : public KTextEditor::View, virtual public KWriteIface {
     Q_OBJECT
-    friend KWriteView;
-    friend KWriteDoc;
-    friend Document;
+    friend class KWriteView;
+    friend class KWriteDoc;
+    // quanta add
+    friend class Document;
   public:
     /**
       The document can be used by more than one KWrite objects.
@@ -526,6 +546,14 @@ class KWrite : public KTextEditor::View, virtual public KWriteIface {
     QMap<KIO::Job *, NetData> m_mapNetData;
 
     KTempFile *m_tempSaveFile;
+
+    /*
+     * Check if the given URL already exists. Currently used by both save() and saveAs()
+     *
+     * Asks the user for permission and returns the message box result and defaults to
+     * KMessageBox::Yes in case of doubt
+     */
+    int checkOverwrite( KURL u );
 
 //text access
   public:

@@ -269,7 +269,7 @@ QString Document::currentTag()
   QString t = getLine(y);
   int x=0, i=0;
   
-  int tab = kWriteDoc->tabChars;
+  int tab = kWriteDoc->tabWidth();
   
   while (i<ox) 
   {

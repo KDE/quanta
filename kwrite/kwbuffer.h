@@ -27,8 +27,8 @@
 #include <qobject.h>
 #include <qtimer.h>
 
-#include "kwtextline.h"
-#include "kvmallocator.h"
+#include <kwtextline.h>
+#include <kvmallocator.h>
 
 class KWBufBlock;
 class KWBufFileLoader;

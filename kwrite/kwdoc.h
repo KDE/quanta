@@ -32,7 +32,7 @@
 #include <kparts/browserextension.h>
 
 #include "kwview.h"
-#include "highlight/highlight.h"
+#include "highlight.h"
 #include "ktexteditor.h"
 #include "kwbuffer.h"
 #include "kwtextline.h"
@@ -94,13 +94,15 @@ class KWActionGroup {
   @author Jochen Wilhelmy
 */
 
+// quanta add
 class Document;
 
 class KWriteDoc : public KTextEditor::Document {
     Q_OBJECT
-    friend KWriteView;
-    friend KWrite;
-    friend Document;
+    friend class KWriteView;
+    friend class KWrite;
+    // quanta add
+    friend class Document;
 
   public:
     KWriteDoc(HlManager *, const QString &path = QString::null,
@@ -154,6 +156,8 @@ class KWriteDoc : public KTextEditor::Document {
     int tabWidth() {return tabChars;}
     void setReadOnly(bool);
     bool isReadOnly() const;
+    void setNewDoc( bool );
+    bool isNewDoc() const;
     virtual void setReadWrite( bool );
     virtual bool isReadWrite() const;
     virtual void setModified(bool);
@@ -339,12 +343,16 @@ class KWriteDoc : public KTextEditor::Document {
     Attribute *m_attribs;
 
     int eolMode;
-  public:
+
     int tabChars;
     int m_tabWidth;
+// quanta add
+public:    
     int fontHeight;
+protected:
+// end of quanta add
     int fontAscent;
-  protected:
+
     QList<KWriteView> views;
     bool newDocGeometry;
 
@@ -360,6 +368,8 @@ class KWriteDoc : public KTextEditor::Document {
     bool m_singleSelection; // false: windows-like, true: X11-like
 
     bool readOnly;
+    bool newDoc;          // True if the file is a new document (used to determine whether
+                          // to check for overwriting files on save)
     bool modified;
 
     int foundLine;

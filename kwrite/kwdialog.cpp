@@ -43,8 +43,10 @@ SearchDialog::SearchDialog( QWidget *parent, QStringList &searchFor, QStringList
   m_search->setMinimumWidth( m_search->sizeHint().width() );
   m_search->lineEdit()->selectAll();
   QLabel *label = new QLabel( m_search, i18n( "&Text To Find:" ), page );
+  m_optRegExp = new QCheckBox( i18n( "Regular Expression" ), page );
   topLayout->addWidget( label );
   topLayout->addWidget( m_search );
+  topLayout->addWidget( m_optRegExp );
 
   if( flags & KWriteView::sfReplace )
   {
@@ -54,8 +56,10 @@ SearchDialog::SearchDialog( QWidget *parent, QStringList &searchFor, QStringList
     m_replace->insertStringList( replaceWith );
     m_replace->setMinimumWidth( m_search->sizeHint().width() );
     label = new QLabel( m_replace, i18n( "&Replace With:" ), page );
+    //m_optPlaceholders = new QCheckBox( i18n( "&Use Placeholders" ), page );
     topLayout->addWidget( label );
     topLayout->addWidget( m_replace );
+    //topLayout->addWidget( m_optPlaceholders );
   }
 
   QGroupBox *group = new QGroupBox( i18n( "Options" ), page );
@@ -83,6 +87,7 @@ SearchDialog::SearchDialog( QWidget *parent, QStringList &searchFor, QStringList
   m_opt1->setChecked( flags & KWriteView::sfCaseSensitive );
   m_opt2->setChecked( flags & KWriteView::sfWholeWords );
   m_opt3->setChecked( flags & KWriteView::sfFromCursor );
+  m_optRegExp->setChecked( flags & KWriteView::sfRegularExpression );
   m_opt4->setChecked( flags & KWriteView::sfBackward );
   m_opt5->setChecked( flags & KWriteView::sfSelected );
 
@@ -115,6 +120,7 @@ int SearchDialog::getFlags()
   if( m_opt3->isChecked() ) flags |= KWriteView::sfFromCursor;
   if( m_opt4->isChecked() ) flags |= KWriteView::sfBackward;
   if( m_opt5->isChecked() ) flags |= KWriteView::sfSelected;
+  if( m_optRegExp->isChecked() ) flags |= KWriteView::sfRegularExpression;
   if( m_replace )
   {
     if( m_opt6->isChecked() )
@@ -129,7 +135,21 @@ int SearchDialog::getFlags()
 void SearchDialog::slotOk()
 {
   if ( !m_search->currentText().isEmpty() )
-    accept();
+  {
+    if ( !m_optRegExp->isChecked() )
+    {
+      accept();
+    }
+    else
+    {
+      // Check for a valid regular expression.
+
+      QRegExp regExp( m_search->currentText() );
+
+      if ( regExp.isValid() )
+        accept();
+    }
+  }
 }
 
 // this dialog is not modal
@@ -364,15 +384,6 @@ EditConfigTab::EditConfigTab(QWidget *parent, KWrite *kWrite)
 void EditConfigTab::getData(KWrite *kWrite)
 {
   int configFlags, z;
-
-// *******************************************************************
-// quanta addons
-// *******************************************************************
-// ADDED FOR NO ANY TAB IN EDITOR ;)
-//  opt[1]->setChecked( true );
-// *******************************************************************
-// end of quanta addons
-// *******************************************************************
   
   configFlags = kWrite->config();
   for (z = 0; z < numFlags; z++) {

@@ -38,6 +38,7 @@ class SearchDialog : public KDialogBase
     QCheckBox *m_opt1;
     QCheckBox *m_opt2;
     QCheckBox *m_opt3;
+    QCheckBox *m_optRegExp;
     QCheckBox *m_opt4;
     QCheckBox *m_opt5;
     QCheckBox *m_opt6;

@@ -131,7 +131,7 @@ class KTextPrintDialog;
 
 class KTextPrintConfig : public QObject {
     Q_OBJECT
-    friend KTextPrintDialog;
+    friend class KTextPrintDialog;
   public:
     enum Media {
       A4,

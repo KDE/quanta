@@ -2184,6 +2184,10 @@ bool KWrite::writeFile(const QString &name) {
 
 
 void KWrite::loadURL(const KURL &url, int flags) {
+/*
+    TODO: Add newDoc code for non-local files. Currently this is not supported there
+          - Martijn Klingens
+*/
   KURL u(url);
 
   if (u.isMalformed()) {
@@ -2224,6 +2228,7 @@ void KWrite::loadURL(const KURL &url, int flags) {
         kWriteDoc->setURL( url, !(flags & KWriteView::lfNoAutoHl ) );
         kWriteDoc->updateViews();
         emit statusMsg( i18n( "New File : %1" ).arg( url.fileName() ) );
+        kWriteDoc->setNewDoc( true ); // File is new, check for overwrite!
       }
     }
   }
@@ -2231,6 +2236,10 @@ void KWrite::loadURL(const KURL &url, int flags) {
 
 
 void KWrite::writeURL(const KURL &url, int ) {
+/*
+    TODO: Add newDoc code for non-local files. Currently this is not supported there
+          - Martijn Klingens
+*/
 
     // url
     emit statusMsg(i18n("Saving..."));
@@ -2292,6 +2301,7 @@ void KWrite::writeURL(const KURL &url, int ) {
   {
       kWriteDoc->setModified( false );
       emit statusMsg( i18n( "Wrote %1" ).arg( url.fileName() ) );
+      kWriteDoc->setNewDoc( false ); // File is not new anymore
   }
 }
 
@@ -2407,12 +2417,49 @@ void KWrite::insertFile() {
 }
 
 KWrite::fileResult KWrite::save() {
+  int query = KMessageBox::Yes;
   if (isModified()) {
     if (!kWriteDoc->url().fileName().isEmpty() && ! isReadOnly()) {
+      // If document is new but has a name, check if saving it would
+      // overwrite a file that has been created since the new doc
+      // was created:
+      if( kWriteDoc->isNewDoc() )
+      {
+        query = checkOverwrite( kWriteDoc->url() );
+        if( query == KMessageBox::Cancel )
+          return CANCEL;
+      }
+      if( query == KMessageBox::Yes )
       writeURL(kWriteDoc->url(),!(KWriteView::lfNoAutoHl));
-    } else return saveAs();
+      else  // Do not overwrite already existing document:
+        return saveAs();
+    } // New, unnamed document:
+    else
+      return saveAs();
   } else emit statusMsg(i18n("No changes need to be saved"));
   return OK;
+}
+
+/*
+ * Check if the given URL already exists. Currently used by both save() and saveAs()
+ *
+ * Asks the user for permission and returns the message box result and defaults to
+ * KMessageBox::Yes in case of doubt
+ */
+int KWrite::checkOverwrite( KURL u )
+{
+  int query = KMessageBox::Yes;
+
+  if( u.isLocalFile() )
+  {
+    QFileInfo info;
+    QString name( u.path() );
+    info.setFile( name );
+    if( info.exists() )
+      query = KMessageBox::warningYesNoCancel( this,
+        i18n( "A Document with this Name already exists.\nDo you want to overwrite it?" ) );
+  }
+  return query;
 }
 
 KWrite::fileResult KWrite::saveAs() {
@@ -2425,17 +2472,12 @@ KWrite::fileResult KWrite::saveAs() {
     url = KFileDialog::getSaveURL(kWriteDoc->url().url(), QString::null,this);
     if (url.isEmpty()) return CANCEL;
 
-    KURL u(url);
-    if (u.isLocalFile()) {
-      QFileInfo info;
-      QString name(u.path());
-      info.setFile(name);
-      if (info.exists()) {
-        query = KMessageBox::warningYesNo(this,
-          i18n("A Document with this Name already exists.\nDo you want to overwrite it?"));
-      }
-    }
-  } while (query == KMessageBox::No);
+    query = checkOverwrite( url );
+  } 
+  while (query != KMessageBox::Yes);
+
+  if( query == KMessageBox::Cancel )
+    return CANCEL;
 
   writeURL(url);
   kWriteDoc->setURL( url, false );
@@ -2641,7 +2683,6 @@ void KWrite::replace() {
 //    searchAgain();
 
 void KWrite::findAgain() {
-
   initSearch(s, searchFlags | KWriteView::sfFromCursor |KWriteView::sfPrompt | KWriteView::sfAgain);
   if (s.flags & KWriteView::sfReplace) replaceAgain(); else searchAgain(s);
 }
@@ -2667,11 +2708,22 @@ void KWrite::gotoLine() {
 
 
 void KWrite::initSearch(SConfig &s, int flags) {
-  QString searchFor = searchForList.first();
 
   s.flags = flags;
+  s.setPattern(searchForList.first());
+
   if (s.flags & KWriteView::sfFromCursor) {
-    s.cursor = kWriteView->cursor;
+    // If we are continuing a backward search, make sure we do not get stuck
+    // at an existing match.
+    if ((s.flags & KWriteView::sfAgain) &&
+      (s.flags & KWriteView::sfBackward) &&
+      (s.cursor.x == kWriteView->cursor.x) &&
+      (s.cursor.y == kWriteView->cursor.y)) {
+      s.cursor.x--;
+    }
+    else {
+      s.cursor = kWriteView->cursor;
+    }
   } else {
     if (!(s.flags & KWriteView::sfBackward)) {
       s.cursor.x = 0;
@@ -2683,9 +2735,8 @@ void KWrite::initSearch(SConfig &s, int flags) {
     s.flags |= KWriteView::sfFinished;
   }
   if (!(s.flags & KWriteView::sfBackward)) {
-    if (!(s.cursor.x || s.cursor.y)) s.flags |= KWriteView::sfFinished;
-  } else {
-    s.startCursor.x -= searchFor.length();
+    if (!(s.cursor.x || s.cursor.y))
+      s.flags |= KWriteView::sfFinished;
   }
   s.startCursor = s.cursor;
 }
@@ -2706,19 +2757,18 @@ void KWrite::continueSearch(SConfig &s) {
 void KWrite::searchAgain(SConfig &s) {
   int query;
   PointStruc cursor;
-  int slen;
   QString str;
 
   QString searchFor = searchForList.first();
 
-  slen = searchFor.length();
   do {
     query = KMessageBox::Cancel;
     if (kWriteDoc->doSearch(s,searchFor)) {
       cursor = s.cursor;
-      if (!(s.flags & KWriteView::sfBackward)) s.cursor.x += slen;
+      if (!(s.flags & KWriteView::sfBackward))
+        s.cursor.x += s.matchedLength;
       kWriteView->updateCursor(s.cursor); //does deselectAll()
-      exposeFound(cursor,slen,(s.flags & KWriteView::sfAgain) ? 0 : KWriteView::ufUpdateOnScroll,false);
+      exposeFound(cursor,s.matchedLength,(s.flags & KWriteView::sfAgain) ? 0 : KWriteView::ufUpdateOnScroll,false);
     } else {
       if (!(s.flags & KWriteView::sfFinished)) {
         // ask for continue
@@ -2762,28 +2812,27 @@ void KWrite::replaceAgain() {
 }
 
 void KWrite::doReplaceAction(int result, bool found) {
-  int slen, rlen;
+  int rlen;
   PointStruc cursor;
   bool started;
 
   QString searchFor = searchForList.first();
   QString replaceWith = replaceWithList.first();
-  slen = searchFor.length();
   rlen = replaceWith.length();
 
   switch (result) {
     case KWriteView::srYes: //yes
       kWriteDoc->recordStart(kWriteView, s.cursor, configFlags,
         KWActionGroup::ugReplace, true);
-      kWriteDoc->recordReplace(s.cursor, slen, replaceWith);
+      kWriteDoc->recordReplace(s.cursor, s.matchedLength, replaceWith);
       replaces++;
       if (s.cursor.y == s.startCursor.y && s.cursor.x < s.startCursor.x)
-        s.startCursor.x += rlen - slen;
+        s.startCursor.x += rlen - s.matchedLength;
       if (!(s.flags & KWriteView::sfBackward)) s.cursor.x += rlen;
       kWriteDoc->recordEnd(kWriteView, s.cursor, configFlags | KWriteView::cfPersistent);
       break;
     case KWriteView::srNo: //no
-      if (!(s.flags & KWriteView::sfBackward)) s.cursor.x += slen;
+      if (!(s.flags & KWriteView::sfBackward)) s.cursor.x += s.matchedLength;
       break;
     case KWriteView::srAll: //replace all
       deleteReplacePrompt();
@@ -2796,10 +2845,10 @@ void KWrite::doReplaceAction(int result, bool found) {
               KWActionGroup::ugReplace);
             started = true;
           }
-          kWriteDoc->recordReplace(s.cursor, slen, replaceWith);
+          kWriteDoc->recordReplace(s.cursor, s.matchedLength, replaceWith);
           replaces++;
           if (s.cursor.y == s.startCursor.y && s.cursor.x < s.startCursor.x)
-            s.startCursor.x += rlen - slen;
+            s.startCursor.x += rlen - s.matchedLength;
           if (!(s.flags & KWriteView::sfBackward)) s.cursor.x += rlen;
         }
         if (started) kWriteDoc->recordEnd(kWriteView, s.cursor,
@@ -2817,9 +2866,9 @@ void KWrite::doReplaceAction(int result, bool found) {
     if (kWriteDoc->doSearch(s,searchFor)) {
       //text found: highlight it, show replace prompt if needed and exit
       cursor = s.cursor;
-      if (!(s.flags & KWriteView::sfBackward)) cursor.x += slen;
+      if (!(s.flags & KWriteView::sfBackward)) cursor.x += s.matchedLength;
       kWriteView->updateCursor(cursor); //does deselectAll()
-      exposeFound(s.cursor,slen,(s.flags & KWriteView::sfAgain) ? 0 : KWriteView::ufUpdateOnScroll,true);
+      exposeFound(s.cursor,s.matchedLength,(s.flags & KWriteView::sfAgain) ? 0 : KWriteView::ufUpdateOnScroll,true);
       if (replacePrompt == 0L) {
         replacePrompt = new ReplacePrompt(this);
         XSetTransientForHint(qt_xdisplay(),replacePrompt->winId(),topLevelWidget()->winId());
@@ -3496,7 +3545,10 @@ void KWrite::slotUpdate()
 }
 void KWrite::slotFileStatusChanged()
 {
-    setEndOfLine->setCurrentItem(getEol());
+  int eol = getEol()-1;
+  eol = eol>=0? eol: 0;
+
+    setEndOfLine->setCurrentItem(eol);
 
     if ( !doc()->url().isEmpty() )
         //set recent files popup menu
@@ -3532,4 +3584,51 @@ void KWrite::slotNewUndo()
 void KWrite::slotHighlightChanged()
 {
     setHighlight->setCurrentItem(getHl());
+}
+
+// Applies a new pattern to the search context.
+void SConfig::setPattern(QString &newPattern) {
+  bool regExp = (flags & KWriteView::sfRegularExpression);
+
+  m_pattern = newPattern;
+  if (regExp) {
+    m_regExp.setCaseSensitive(flags & KWriteView::sfCaseSensitive);
+    m_regExp.setPattern(m_pattern);
+  }
+}
+
+// Applies the search context to the given string, and returns whether a match was found. If one is,
+// the length of the string matched is also returned.
+int SConfig::search(QString &text, int index) {
+  bool regExp = (flags & KWriteView::sfRegularExpression);
+  bool caseSensitive = (flags & KWriteView::sfCaseSensitive);
+
+  if (flags & KWriteView::sfBackward) {
+    if (regExp) {
+      index = text.findRev(m_regExp, index);
+    }
+    else {
+      index = text.findRev(m_pattern, index, caseSensitive);
+    }
+  }
+  else {
+    if (regExp) {
+      index = text.find(m_regExp, index);
+    }
+    else {
+      index = text.find(m_pattern, index, caseSensitive);
+    }
+  }
+
+  // Work out the matched length.
+  if (index != -1)
+  {
+    if (regExp) {
+      m_regExp.match(text, index, &matchedLength, false);
+    }
+    else {
+      matchedLength = m_pattern.length();
+    }
+  }
+  return index;
 }

@@ -140,6 +140,7 @@ KWriteDoc::KWriteDoc(HlManager *hlManager, const QString &path,
 
   newDocGeometry = false;
   readOnly = false;
+  newDoc = false;
 
   modified = false;
 
@@ -402,6 +403,24 @@ void KWriteDoc::setReadOnly(bool m) {
 
 bool KWriteDoc::isReadOnly() const {
   return readOnly;
+}
+
+void KWriteDoc::setNewDoc( bool m )
+{
+//  KTextEditor::View *view;
+
+  if ( m != newDoc )
+  {
+    newDoc = m;
+////    if (readOnly) recordReset();
+//    for (view = m_views.first(); view != 0L; view = m_views.next() ) {
+//      emit static_cast<KWrite *>( view )->newStatus();
+//    }
+  }
+}
+
+bool KWriteDoc::isNewDoc() const {
+  return newDoc;
 }
 
 void KWriteDoc::setModified(bool m) {
@@ -775,19 +794,7 @@ void KWriteDoc::loadFile(QIODevice &dev) {
       stream >> ch;
       s = ch.latin1();
       if (ch.isPrint() || s == '\t') {
-// *******************************************************************
-// quanta highlightings
-// *******************************************************************
-        // REMOVED      
         textLine->append(&ch, 1);
-/*        if ( s == '\t' ) {
-          ch = ' ';
-          for (int i=0;i<tabChars;i++)
-            textLine->append( &ch, 1);
-        } else textLine->append( &ch, 1);*/
-// *******************************************************************
-// end of quanta highlightings
-// *******************************************************************        
       } else if (s == '\n' || s == '\r') {
         if (last != '\r' || s != '\n') {
           textLine = new TextLine();
@@ -2136,25 +2143,18 @@ void KWriteDoc::clearFileName() {
   }
 }
 
-
+// Applies the search context, and returns whether a match was found. If one is,
+// the length of the string matched is also returned.
 bool KWriteDoc::doSearch(SConfig &sc, const QString &searchFor) {
   int line, col;
   int searchEnd;
-//  int slen, blen, tlen;
-//  char *s, *b, *t;
-  QString str;
-  int slen, smlen, bufLen, tlen;
-  const QChar *s;
+  int bufLen, tlen;
   QChar *t;
   TextLine::Ptr textLine;
-  int z, pos, newPos;
+  int pos, newPos;
 
   if (searchFor.isEmpty()) return false;
-  str = (sc.flags & KWriteView::sfCaseSensitive) ? searchFor : searchFor.lower();
 
-  s = str.unicode();
-  slen = str.length();
-  smlen = slen*sizeof(QChar);
   bufLen = 0;
   t = 0L;
 
@@ -2188,31 +2188,35 @@ bool KWriteDoc::doSearch(SConfig &sc, const QString &searchFor) {
           pos = newPos;
         } while (pos < tlen);
       }
-      if (!(sc.flags & KWriteView::sfCaseSensitive)) for (z = 0; z < tlen; z++) t[z] = t[z].lower();
 
-      tlen -= slen;
-      if (sc.flags & KWriteView::sfWholeWords && tlen > 0) {
-        //whole word search
-        if (col == 0) {
-          if (!m_highlight->isInWord(t[slen])) {
-            if (memcmp(t, s, smlen) == 0) goto found;
-          }
-          col++;
-        }
+      QString text(t, tlen);
+      if (sc.flags & KWriteView::sfWholeWords) {
+        // Until the end of the line...
         while (col < tlen) {
-          if (!m_highlight->isInWord(t[col -1]) && !m_highlight->isInWord(t[col + slen])) {
-            if (memcmp(&t[col], s, smlen) == 0) goto found;
+          // ...find the next match.
+          col = sc.search(text, col);
+          if (col != -1) {
+            // Is the match delimited correctly?
+            if (((col == 0) || (!m_highlight->isInWord(t[col]))) &&
+              ((col + sc.matchedLength == tlen) || (!m_highlight->isInWord(t[col + sc.matchedLength])))) {
+              goto found;
+            }
+            else {
+              // Start again from the next character.
+              col++;
+            }
           }
-          col++;
+          else {
+            // No match.
+            break;
+          }
         }
-        if (!m_highlight->isInWord(t[col -1]) && memcmp(&t[col], s, smlen) == 0)
+      }
+      else {
+        // Non-whole-word search.
+        col = sc.search(text, col);
+        if (col != -1)
           goto found;
-      } else {
-        //normal search
-        while (col <= tlen) {
-          if (memcmp(&t[col], s, smlen) == 0) goto found;
-          col++;
-        }
       }
       col = 0;
       line++;
@@ -2225,7 +2229,7 @@ bool KWriteDoc::doSearch(SConfig &sc, const QString &searchFor) {
         col = -1;
       }
       searchEnd = selectStart;
-    } else searchEnd = 0;;
+    } else searchEnd = 0;
 
     while (line >= searchEnd) {
       textLine = getTextLine(line);
@@ -2245,33 +2249,39 @@ bool KWriteDoc::doSearch(SConfig &sc, const QString &searchFor) {
           pos = newPos;
         } while (pos < tlen);
       }
-      if (!(sc.flags & KWriteView::sfCaseSensitive)) for (z = 0; z < tlen; z++) t[z] = t[z].lower();
 
       if (col < 0 || col > tlen) col = tlen;
-      col -= slen;
-      if (sc.flags & KWriteView::sfWholeWords && tlen > slen) {
-        //whole word search
-        if (col + slen == tlen) {
-          if (!m_highlight->isInWord(t[col -1])) {
-            if (memcmp(&t[col], s, smlen) == 0) goto found;
-          }
-          col--;
-        }
-        while (col > 0) {
-          if (!m_highlight->isInWord(t[col -1]) && !m_highlight->isInWord(t[col+slen])) {
-            if (memcmp(&t[col],s,smlen) == 0) goto found;
-          }
-          col--;
-        }
-        if (!m_highlight->isInWord(t[slen]) && memcmp(t, s, smlen) == 0)
-          goto found;
-      } else {
-        //normal search
+
+      QString text(t, tlen);
+      if (sc.flags & KWriteView::sfWholeWords) {
+        // Until the beginning of the line...
         while (col >= 0) {
-          if (memcmp(&t[col],s,slen) == 0) goto found;
-          col--;
+          // ...find the next match.
+          col = sc.search(text, col);
+          if (col != -1) {
+            // Is the match delimited correctly?
+            if (((col == 0) || (!m_highlight->isInWord(t[col]))) &&
+              ((col + sc.matchedLength == tlen) || (!m_highlight->isInWord(t[col + sc.matchedLength])))) {
+              goto found;
+            }
+            else {
+              // Start again from the previous character.
+              col--;
+            }
+          }
+          else {
+            // No match.
+            break;
+          }
         }
       }
+      else {
+        // Non-whole-word search.
+        col = sc.search(text, col);
+        if (col != -1)
+          goto found;
+      }
+      col = -1;
       line--;
     }
   }
