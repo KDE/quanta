@@ -1,17 +1,6 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>TableEditorS</class>
-<comment>/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; version 2 of the License.               *
- *                                                                         *
- ***************************************************************************/
-
-/* Copyright: (C) 2003 Andras Mantia &lt;amantia@kde.org&gt; */
-</comment>
-<author>Andras Mantia &lt;amantia@kde.org&gt;</author>
-<widget class="KDialog">
+<widget class="QDialog">
     <property name="name">
         <cstring>TableEditorS</cstring>
     </property>
@@ -19,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>695</width>
-            <height>773</height>
+            <width>692</width>
+            <height>584</height>
         </rect>
     </property>
     <property name="caption">
@@ -30,85 +19,66 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="QLayoutWidget" row="1" column="0">
+        <widget class="KPushButton" row="1" column="3">
             <property name="name">
-                <cstring>Layout1</cstring>
+                <cstring>buttonCancel</cstring>
             </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>buttonHelp</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Help</string>
-                    </property>
-                    <property name="accel">
-                        <string>F1</string>
-                    </property>
-                    <property name="autoDefault">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>Horizontal Spacing2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>buttonOk</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;OK</string>
-                    </property>
-                    <property name="accel">
-                        <string></string>
-                    </property>
-                    <property name="autoDefault">
-                        <bool>true</bool>
-                    </property>
-                    <property name="default">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>buttonCancel</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Cancel</string>
-                    </property>
-                    <property name="accel">
-                        <string></string>
-                    </property>
-                    <property name="autoDefault">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-            </hbox>
+            <property name="text">
+                <string>Ca&amp;ncel</string>
+            </property>
+            <property name="autoDefault">
+                <bool>true</bool>
+            </property>
         </widget>
-        <widget class="QTabWidget" row="0" column="0">
+        <spacer row="1" column="1">
+            <property name="name">
+                <cstring>Horizontal Spacing2</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>16</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="KPushButton" row="1" column="2">
+            <property name="name">
+                <cstring>buttonOk</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;OK</string>
+            </property>
+            <property name="accel">
+                <string></string>
+            </property>
+            <property name="autoDefault">
+                <bool>true</bool>
+            </property>
+            <property name="default">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="1" column="0">
+            <property name="name">
+                <cstring>buttonHelp</cstring>
+            </property>
+            <property name="text">
+                <string>&amp;Help</string>
+            </property>
+            <property name="accel">
+                <string>F1</string>
+            </property>
+            <property name="autoDefault">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QTabWidget" row="0" column="0" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>tabWidget</cstring>
             </property>
@@ -117,24 +87,24 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>Main</string>
+                    <string>&amp;Main</string>
                 </attribute>
                 <grid>
                     <property name="name">
                         <cstring>unnamed</cstring>
                     </property>
-                    <widget class="QLabel" row="3" column="0" rowspan="1" colspan="5">
+                    <widget class="QLabel" row="3" column="0" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>textLabel5</cstring>
                         </property>
                         <property name="text">
-                            <string>Table &amp;data:</string>
+                            <string>Ta&amp;ble data:</string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>tableData</cstring>
                         </property>
                     </widget>
-                    <widget class="QTable" row="4" column="0" rowspan="1" colspan="5">
+                    <widget class="QTable" row="4" column="0" rowspan="1" colspan="4">
                         <property name="name">
                             <cstring>tableData</cstring>
                         </property>
@@ -146,8 +116,11 @@
                                 <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
-                        <property name="resizePolicy">
-                            <enum>Default</enum>
+                        <property name="vScrollBarMode">
+                            <enum>AlwaysOn</enum>
+                        </property>
+                        <property name="hScrollBarMode">
+                            <enum>AlwaysOn</enum>
                         </property>
                         <property name="numRows">
                             <number>0</number>
@@ -197,11 +170,11 @@
                         <property name="name">
                             <cstring>rowSpinBox</cstring>
                         </property>
+                        <property name="maxValue">
+                            <number>999</number>
+                        </property>
                         <property name="value">
                             <number>0</number>
-                        </property>
-			<property name="maxValue">
-                            <number>999</number>
                         </property>
                     </widget>
                     <widget class="QLabel" row="1" column="0">
@@ -225,7 +198,7 @@
                             <cstring>pushButton7_2</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Body Properties</string>
+                            <string>Bod&amp;y Properties</string>
                         </property>
                     </widget>
                     <widget class="KPushButton" row="0" column="3">
@@ -270,11 +243,11 @@
                         <property name="name">
                             <cstring>colSpinBox</cstring>
                         </property>
+                        <property name="maxValue">
+                            <number>999</number>
+                        </property>
                         <property name="value">
                             <number>0</number>
-                        </property>
-			<property name="maxValue">
-                            <number>999</number>
                         </property>
                     </widget>
                 </grid>
@@ -314,6 +287,12 @@
                                 <property name="resizePolicy">
                                     <enum>AutoOneFit</enum>
                                 </property>
+                                <property name="vScrollBarMode">
+                                    <enum>AlwaysOn</enum>
+                                </property>
+                                <property name="hScrollBarMode">
+                                    <enum>AlwaysOn</enum>
+                                </property>
                                 <property name="numRows">
                                     <number>0</number>
                                 </property>
@@ -351,7 +330,7 @@
                                 <property name="value">
                                     <number>0</number>
                                 </property>
-			    </widget>
+                            </widget>
                             <widget class="QLabel" row="0" column="0">
                                 <property name="name">
                                     <cstring>textLabel4_2</cstring>
@@ -367,9 +346,9 @@
                                 <property name="name">
                                     <cstring>headerColSpinBox</cstring>
                                 </property>
-				<property name="maxValue">
-	                            <number>999</number>
-    	    	                </property>
+                                <property name="maxValue">
+                                    <number>999</number>
+                                </property>
                             </widget>
                             <widget class="QLabel" row="1" column="0">
                                 <property name="name">
@@ -400,7 +379,7 @@
                             <cstring>headerCheckBox</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Insert table header</string>
+                            <string>Insert ta&amp;ble header</string>
                         </property>
                     </widget>
                     <spacer row="0" column="1">
@@ -468,6 +447,12 @@
                                 <property name="resizePolicy">
                                     <enum>AutoOneFit</enum>
                                 </property>
+                                <property name="vScrollBarMode">
+                                    <enum>AlwaysOn</enum>
+                                </property>
+                                <property name="hScrollBarMode">
+                                    <enum>AlwaysOn</enum>
+                                </property>
                                 <property name="numRows">
                                     <number>0</number>
                                 </property>
@@ -476,6 +461,9 @@
                                 </property>
                                 <property name="selectionMode">
                                     <enum>Single</enum>
+                                </property>
+                                <property name="focusStyle">
+                                    <enum>FollowStyle</enum>
                                 </property>
                             </widget>
                             <widget class="QSpinBox" row="0" column="1">
@@ -504,9 +492,9 @@
                                 <property name="name">
                                     <cstring>footerColSpinBox</cstring>
                                 </property>
-				<property name="maxValue">
-                        	    <number>999</number>
-                    		</property>
+                                <property name="maxValue">
+                                    <number>999</number>
+                                </property>
                             </widget>
                             <widget class="QLabel" row="1" column="0">
                                 <property name="name">
@@ -554,7 +542,7 @@
                             <cstring>footerCheckBox</cstring>
                         </property>
                         <property name="text">
-                            <string>&amp;Insert table footer</string>
+                            <string>Insert ta&amp;ble footer</string>
                         </property>
                     </widget>
                     <spacer row="0" column="1">
@@ -590,8 +578,6 @@
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <connections>
     <connection>
         <sender>headerCheckBox</sender>
@@ -631,15 +617,16 @@
     </connection>
 </connections>
 <tabstops>
+    <tabstop>tabWidget</tabstop>
     <tabstop>rowSpinBox</tabstop>
     <tabstop>colSpinBox</tabstop>
     <tabstop>pushButton7</tabstop>
     <tabstop>pushButton7_2</tabstop>
     <tabstop>captionText</tabstop>
     <tabstop>tableData</tabstop>
-    <tabstop>buttonHelp</tabstop>
     <tabstop>buttonOk</tabstop>
     <tabstop>buttonCancel</tabstop>
+    <tabstop>buttonHelp</tabstop>
     <tabstop>headerCheckBox</tabstop>
     <tabstop>pushButton7_3</tabstop>
     <tabstop>headerRowSpinBox</tabstop>
@@ -650,17 +637,6 @@
     <tabstop>footerRowSpinBox</tabstop>
     <tabstop>footerColSpinBox</tabstop>
     <tabstop>footerTableData</tabstop>
-    <tabstop>tabWidget</tabstop>
 </tabstops>
 <layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kdialog.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-</includehints>
 </UI>
