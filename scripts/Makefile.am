@@ -1,3 +1,3 @@
 quantadir = ${quanta_datadir}/scripts
 
-quanta_DATA = scriptinfo.kmdr dwt.pl dwt.kmdr dwt.kmdr.info tidy.kmdr tidy.kmdr.info checkxml.kmdr meinproc.kmdr xmlval.kmdr xsltproc.kmdr htmlquickstart.kmdr.info htmlquickstart.kmdr TemplateMagic.pl TemplateMagic.pl.info info.css externalpreview.sh info.xsl
+quanta_DATA = scriptinfo.kmdr scriptinfo.kmdr.info dwt.pl dwt.kmdr dwt.kmdr.info tidy.kmdr tidy.kmdr.info checkxml.kmdr checkxml.kmdr.info meinproc.kmdr meinproc.kmdr.info xmlval.kmdr xmlval.kmdr.info xsltproc.kmdr xsltproc.kmdr.info htmlquickstart.kmdr.info htmlquickstart.kmdr TemplateMagic.pl TemplateMagic.pl.info info.css externalpreview.sh info.xsl

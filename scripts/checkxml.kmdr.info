@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="info.xsl" ?>
+<!DOCTYPE QuantaScriptInfo>
+<INFO>
+<name>checkxml</name>
+<author>Chris Hornbaker</author>
+<email>jilks@openschooling.org</email>
+<website></website>
+<version>1.0</version>
+<license>GPL v2</license>
+<about>This Kommander script uses checkXML from kdelibs to validate KDE DocBook files.</about>
+</INFO>
+

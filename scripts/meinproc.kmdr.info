@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="info.xsl" ?>
+<!DOCTYPE QuantaScriptInfo>
+<INFO>
+<name>meinproc</name>
+<author>Chris Hornbaker</author>
+<email>jilks@openschooling.org</email>
+<website></website>
+<version>1.0</version>
+<license>GPL v2</license>
+<about>This Kommander script uses meinproc from kdelibs to convert KDE DocBook files to HTML files for viewing.</about>
+</INFO>
+
