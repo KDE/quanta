@@ -32,7 +32,7 @@
 #include "whtmlpart.h"
 #include "resource.h"
 
-WHTMLPart::WHTMLPart(QWidget *parentWidget, const char *widgetName,
+WHTMLPart::WHTMLPart(QWidget *parentWidget, const char *widgetName, bool enableViewSource, 
             QObject *parent, const char *name, GUIProfile prof)
   : KHTMLPart(parentWidget, widgetName, parent, name, prof)
 {
@@ -48,11 +48,14 @@ WHTMLPart::WHTMLPart(QWidget *parentWidget, const char *widgetName,
    const_cast<KHTMLSettings*>(set)->init( &konqConfig, false );
    view()->installEventFilter(this);
    
-   m_contextMenu = new KPopupMenu(parentWidget);
-   m_contextMenu->insertItem(i18n("View &Document Source"), this, SLOT(slotViewSource()));
-   
-   connect(this, SIGNAL(popupMenu(const QString&, const QPoint&)), SLOT(popupMenu(const QString&, const QPoint&)));
-
+   m_enableViewSource = enableViewSource;
+   if (m_enableViewSource)
+   {
+    m_contextMenu = new KPopupMenu(parentWidget);
+    m_contextMenu->insertItem(i18n("View &Document Source"), this, SLOT(slotViewSource()));
+    
+    connect(this, SIGNAL(popupMenu(const QString&, const QPoint&)), SLOT(popupMenu(const QString&, const QPoint&)));
+   }
 //   setCharset( konqConfig.readEntry("DefaultEncoding") );
 //   setEncoding( konqConfig.readEntry("DefaultEncoding") );
 //   setStandardFont( konqConfig.readEntry("StandardFont") );
@@ -144,13 +147,13 @@ bool WHTMLPart::forwardEnable()
    return hpos < history.count()-1;
 }
 
-KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget * parentWidget, const char *widgetName,
+KParts::ReadOnlyPart *WHTMLPart::createPart( QWidget * parentWidget, const char *widgetName, 
                                             QObject *parent, const char *name,
                                             const QString &, QString &,
                                             QStringList &, const QStringList &)
 {
   //kdDebug(24000) << "Create WHTMLPart: " << parentWidget << " " << widgetName << " " << parent << " " << name << endl;
-  return new WHTMLPart(parentWidget, widgetName, parent, name);
+  return new WHTMLPart(parentWidget, widgetName, m_enableViewSource, parent, name);
 }
 
 bool WHTMLPart::eventFilter(QObject *watched, QEvent *e)
@@ -177,6 +180,7 @@ void WHTMLPart::slotViewSource()
   *(tmpFile->textStream()) << document().toString().string();
   tmpFile->close();
   tempFileList.append(tmpFile);
+  emit showPreview(false);
   emit openFile(KURL::fromPathOrURL(tmpFile->name()), "utf8");
 }
 

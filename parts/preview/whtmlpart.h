@@ -29,7 +29,7 @@ class KPopupMenu;
 class WHTMLPart : public KHTMLPart  {
    Q_OBJECT
 public:
-  WHTMLPart(QWidget *parentWidget = 0, const char *widgetname = 0,
+  WHTMLPart(QWidget *parentWidget = 0, const char *widgetname = 0, bool enableViewSource = false,
             QObject *parent = 0, const char *name = 0, GUIProfile prof = DefaultGUI );
   virtual ~WHTMLPart();
 
@@ -55,6 +55,7 @@ public slots:
 signals:
   void updateStatus( bool back, bool forward );
   void previewHasFocus(bool focus);
+  void showPreview(bool show);
   void openFile(const KURL&, const QString&);
 
 protected:
@@ -70,6 +71,7 @@ private:
   QString m_previewedText;
   QStrList history;
   unsigned int hpos;
+  bool m_enableViewSource;
 };
 
 #endif

@@ -4846,7 +4846,7 @@ void QuantaApp::setTabToolTip(QWidget *w, const QString &toolTipStr)
 
 void QuantaApp::createPreviewPart()
 {
-  m_htmlPart = new WHTMLPart(this, "rightHTML");
+  m_htmlPart = new WHTMLPart(this, "rightHTML", true);
   m_htmlPart->view()->resize(0, 0);
   m_htmlPart->view()->setIcon(UserIcon("preview"));
   m_htmlPart->view()->setCaption(i18n("Preview"));
@@ -4854,6 +4854,7 @@ void QuantaApp::createPreviewPart()
   connect(m_htmlPart, SIGNAL(previewHasFocus(bool)), this, SLOT(slotPreviewHasFocus(bool)));
   connect(m_htmlPart, SIGNAL(destroyed(QObject *)), this, SLOT(slotHTMLPartDeleted(QObject *)));
   connect(m_htmlPart, SIGNAL(openFile(const KURL&, const QString&)), this, SLOT(slotFileOpen(const KURL&, const QString&)));
+  connect(m_htmlPart, SIGNAL(showPreview(bool)), this, SLOT(slotShowPreviewWidget(bool)));
 
 }
 
