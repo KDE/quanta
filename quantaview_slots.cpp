@@ -55,7 +55,7 @@
 #include "tagdialogs/tagquickstart.h"
 #include "tagdialogs/tagquicklistdlg.h"
 #include "tagdialogs/tagquicktable.h"
-#include "tagdialogs/cssdialogi.h"
+#include "tagdialogs/csseditor.h"
 #include "tagdialogs/tagmaildlg.h"
 #include "tagdialogs/tagmiscdlg.h"
 
@@ -103,14 +103,29 @@ void QuantaView::slotEditCurrentTag()
 /** edit tag */
 void QuantaView::slotInsertCSS()
 {
+ static const QString code =
+		"P {\n"
+			"\tfont-weight: bold; \n"
+			"\tcolor: green; \n"
+			"\tfont-style: italic; \n"
+			"\tfont-family: sans-serif;\n"
+		"}\n"
+		;
 
-  Document *w = write();
+ Document *w = write();
 
-  CSSDialogI *dlg = new CSSDialogI( doc->basePath(), 0L, "CSS dialog", true );
-  if ( dlg->exec() ) {
+ CSSEditor* dlg = new CSSEditor(code, 0L, "CSS Editor");
+ if (dlg->exec())
+ {
+   w->insertTag( dlg->code() );
+  // Todo
+ }
+
+/*  CSSDialogI *dlg = new CSSDialogI( doc->basePath(), 0L, "CSS dialog", true );
+ if ( dlg->exec() ) {
     w->insertTag( dlg->data() );
   }
-
+*/
   delete dlg;
 }
 
@@ -121,7 +136,7 @@ void QuantaView::slotTagMail()
 
   if ( mailDlg->exec() ) {
   	QString tag = QString(QuantaCommon::tagCase("<a"));
-  	
+
   	if ( !QString(mailDlg->lineEmail->text()).isEmpty())
   	{
   		tag += QuantaCommon::attrCase(" href=\"")+"mailto:"+mailDlg->lineEmail->text();
@@ -129,7 +144,7 @@ void QuantaView::slotTagMail()
 	   		tag += "?subject="+mailDlg->lineSubject->text();
   	   	tag += "\"";
   	}
-  	
+
   	if ( !QString(mailDlg->titleEdit->text()).isEmpty())
 	   		tag += QuantaCommon::attrCase(" title=\"")+mailDlg->titleEdit->text()+"\"";
     tag += QString(">");

@@ -1,9 +1,9 @@
 /***************************************************************************
-                          cssdialogi.h  -  description
+                          cssselectoreditor.h  -  description
                              -------------------
-    begin                : Thu Oct 5 2000
-    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
+    begin                : dom ago 25 2002
+    copyright            : (C) 2002 by Andras Mantia, Andrea Bergia
+    email                : amantia@freemail.hu, andreabergia@yahoo.it
  ***************************************************************************/
 
 /***************************************************************************
@@ -14,20 +14,24 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#ifndef CSSDIALOGI_H
-#define CSSDIALOGI_H
-#include "cssdialog.h"
 
-class CSSDialogI : public CSSDialog
-{ 
-    Q_OBJECT
+#include "selectoreditors.h"
 
+/** @author Andrea Bergia */
+class CSSSelectorEditor : public CSSEditSelectorS  {
+   Q_OBJECT
 public:
-    CSSDialogI( QString basePath, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
-    ~CSSDialogI();
+	CSSSelectorEditor(QString code, QWidget *parent=0, const char *name=0);
+	~CSSSelectorEditor();
 
-    QString data();
+	/** Get the CSS code based on the widget's values */
+	QString code();
 
+protected:
+	/** From the code, insert the values on the widgets */
+	void widgetFromCode(QString);
+
+	/** Split a string in the form top [right]? [bottom]? [left]? into the
+	four variables */
+	void splitValueTRBL(QString value, QString&, QString&, QString&, QString&);
 };
-
-#endif // CSSDIALOGI_H
