@@ -190,9 +190,9 @@ void QuantaApp::initQuanta()
   scriptBeginRx.setPattern("(<script)");
   scriptEndRx.setCaseSensitive(false);
   scriptEndRx.setPattern("(/script>)");
-  
+
   initStatusBar();
-  
+
   //defaultDocType must be read before the Project object is created!!
   m_config->setGroup("General Options");
   qConfig.defaultDocType = m_config->readEntry("Default DTD",DEFAULT_DTD);
@@ -203,7 +203,7 @@ void QuantaApp::initQuanta()
   initView     ();
   initProject  ();
   initActions();
-  
+
   DTDs::ref();  // create the class, must be before readOptions() !
   readOptions();
 
@@ -212,6 +212,24 @@ void QuantaApp::initQuanta()
   m_pluginInterface->readConfig();
 
   createGUI( QString::null, false /* conserveMemory */ );
+
+  KToggleAction *showToolbarAction = (KToggleAction *) actionCollection()->action( "view_toolbar" );
+  m_config->setGroup("General Options");
+  if (!m_config->readBoolEntry("Show Toolbar",true))
+  {
+    toolBar("mainToolBar")->hide();
+    toolBar("mainEditToolBar")->hide();
+    toolBar("mainNaviToolBar")->hide();
+    toolBar("mainPluginsToolBar")->hide();
+    showToolbarAction->setChecked(false);
+  } else
+  {
+    toolBar("mainToolBar")->show();
+    toolBar("mainEditToolBar")->show();
+    toolBar("mainNaviToolBar")->show();
+    toolBar("mainPluginsToolBar")->show();
+    showToolbarAction->setChecked(true);
+  }
 
 //Compatility code (read the action shortcuts from quantaui.rc)
 //TODO: Remove after upgrade from 3.1 is not supported
@@ -283,7 +301,7 @@ void QuantaApp::initQuanta()
   autosaveTimer->start(qConfig.autosaveInterval * 60000, false);
 
   connect(m_doc, SIGNAL(hideSplash()), SLOT(slotHideSplash()));
-  
+
   connect(parser, SIGNAL(rebuildStructureTree()), this, SLOT(slotReloadStructTreeView()));
 }
 
@@ -728,19 +746,6 @@ void QuantaApp::readOptions()
   resize( m_config->readSizeEntry("Geometry", &s));
   qConfig.autosaveInterval = m_config->readNumEntry("Autosave interval", 1);
 
-  KToggleAction *showToolbarAction = (KToggleAction *) actionCollection()->action( "view_toolbar" );
-  if (!m_config->readBoolEntry("Show Toolbar",true))
-  {
-    toolBar("mainToolBar")->hide();
-    toolBar("mainEditToolBar")->hide();
-    toolBar("mainNaviToolBar")->hide();
-    showToolbarAction->setChecked(false);
-  } else
-  {
-    toolBar("mainToolBar")->show();
-    toolBar("mainEditToolBar")->show();
-    toolBar("mainNaviToolBar")->show();
-  }
   if (!m_config->readBoolEntry("Show Statusbar", true))
   {
      showStatusbarAction->setChecked(false);
@@ -749,7 +754,7 @@ void QuantaApp::readOptions()
      showStatusbarAction->setChecked(true);
   }
   slotViewStatusBar();
-  showToolbarAction  ->setChecked(m_config->readBoolEntry("Show Toolbar",   true));
+//  showToolbarAction  ->setChecked(m_config->readBoolEntry("Show Toolbar",   true));
   qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
   showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
   qConfig.showCloseButtons = m_config->readBoolEntry("Show Close Buttons", true);
@@ -997,7 +1002,7 @@ void QuantaApp::initActions()
 
 
     KStdAction::find(this, SLOT(slotFind()), ac);
-    new KAction(i18n("Find &Next"), "findnext", KStdAccel::shortcut(KStdAccel::FindNext), this, 
+    new KAction(i18n("Find &Next"), "findnext", KStdAccel::shortcut(KStdAccel::FindNext), this,
                  SLOT(slotFindAgain()), ac, "edit_find_next");
     KStdAction::findPrev(this, SLOT(slotFindAgainB()), ac, "edit_find_prev");
     KStdAction::replace(this, SLOT(slotReplace()), ac);
