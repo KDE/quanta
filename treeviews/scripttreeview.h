@@ -16,10 +16,10 @@
 #define SCRIPTTREEVIEW_H
 
 //own includes
-#include "filestreeview.h"
+#include "basetreeview.h"
 
 /**
- * @short Treeview with all in Quanta available scripts.
+ * @short treeview with all in Quanta available scripts.
  *
  *   You can manage and excecute scripts from here.
  *
@@ -39,7 +39,7 @@
  *
  * @author Andras Mantia <amantia@kde.org>
  */
-class ScriptTreeView : public FilesTreeView  {
+class ScriptTreeView : public BaseTreeView  {
    Q_OBJECT
 
 
@@ -47,7 +47,7 @@ public:
    ScriptTreeView(QWidget *parent, const char *name = 0L);
   ~ScriptTreeView();
 
-public slots:
+protected slots:
 
   /**
    *  displays the RBM
@@ -128,21 +128,40 @@ public slots:
    */
   void slotProperties();
 
+protected:
+
+  /**
+   *  don't need this in the class but it is abstract in the base class
+   *  so I need to implement it
+   */
+  virtual KFileTreeBranch* newBranch(const KURL& url)
+  {
+    Q_UNUSED(url)
+    return 0l;
+  };
+
 signals:
 
   /**
-   *  emmited from @ref slotSelectFile to display the .info file
-   *
+   *  emited from @ref slotSelectFile to display the .info file
    */
   void openFileInPreview(const KURL&);
 
   /**
-   *  emmited from @ref slotAssignAction to open the assignment dialog
-   *
+   *  emited from @ref slotAssignAction to open the assignment dialog
    */
   void assignActionToScript(const KURL&, const QString&);
 
+  /**
+   *  emited to make the script describtion visible
+   */
+  void showPreviewWidget(bool);
+
 private:
+   /**
+    * make the default constructor private to force the use of the other one
+    */
+   ScriptTreeView() { };
 
   /**
    *  creates the URL of the .info file
@@ -166,6 +185,11 @@ private:
    *  @return the value of the option
    */
   QString infoOptionValue(const KURL& infoURL, const QString& optionName);
+
+  /**
+   *  remember the menu for manipulation
+   */
+  KPopupMenu *m_fileMenu;
 
 };
 

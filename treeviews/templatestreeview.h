@@ -17,13 +17,13 @@
 #define TEMPLATESTREEVIEW_H
 
 //own includes
-#include "filestreeview.h"
+#include "basetreeview.h"
 #include "quantacommon.h"
 
 //forward declarations
 class QuantaPropertiesPage;
 
-class TemplatesTreeBranch : public FilesTreeBranch {
+class TemplatesTreeBranch : public BaseTreeBranch {
 
 public:
   TemplatesTreeBranch(KFileTreeView *parent, const KURL& url,
@@ -36,7 +36,7 @@ public:
 };
 
 
-class TemplatesTreeView : public FilesTreeView  {
+class TemplatesTreeView : public BaseTreeView  {
    Q_OBJECT
 
 public:
@@ -110,12 +110,12 @@ public slots:
 
 private:
 
-  /** The constructor is privat because we use singleton patter.
+  /** The constructor is privat because we use singleton pattern.
    *  If you need the class use TemplatesTreeView::ref() for
    *  construction and reference
    */
   TemplatesTreeView(QWidget *parent, const char *name = 0L);
-  FilesTreeBranch *m_projectDir;
+  BaseTreeBranch *m_projectDir;
   int m_deleteMenuId;
   int m_openId;
   int m_reloadMenuId;
@@ -126,6 +126,14 @@ private:
   QString m_projectName;
   KURL localURL;
   KURL globalURL;
+  KPopupMenu *m_fileMenu;
+  KPopupMenu *m_folderMenu;
+  DirInfo m_dirInfo;
+  void writeTemplateInfo();
+  int m_insertFileInProject;
+  int m_insertFolderInProject;
+  int m_menuClose;                ///< remembers the menu entry
+  int m_menuPasteFolder;          ///< remembers the menu entry
 
 signals: // Signals
   /** No descriptions */
@@ -135,11 +143,9 @@ protected: // Protected methods
   KFileTreeBranch* newBranch(const KURL& url);
   /** No descriptions */
   virtual QDragObject * dragObject();
-  DirInfo m_dirInfo;
 //  virtual void startDrag();
   /** No descriptions */
   void contentsDropEvent(QDropEvent *event);
-  void writeTemplateInfo();
   bool acceptDrag(QDropEvent* e ) const;
 };
 

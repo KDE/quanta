@@ -41,9 +41,6 @@
 #include "viewmanager.h"
 #include "resource.h"
 #include "quanta.h"
-#include "scripttreeview.h"
-#include "projecttreeview.h"
-#include "templatestreeview.h"
 #include "toolbartabwidget.h"
 #include "parser.h"
 #include "qextfileinfo.h"
@@ -85,11 +82,7 @@ QuantaView* ViewManager::createView()
     connect(view, SIGNAL(hidePreview()), quantaApp, SLOT(slotChangePreviewStatus()));
     disconnect(view, SIGNAL(childWindowCloseRequest( KMdiChildView *)), 0, 0 );
     connect(view, SIGNAL(childWindowCloseRequest( KMdiChildView*)), this, SLOT(slotCloseRequest(KMdiChildView*)));
-
-    connect(view, SIGNAL(documentClosed()), ProjectTreeView::ref(), SLOT(slotDocumentClosed()));
-    connect(view, SIGNAL(documentClosed()), quantaApp->filesToolView(), SLOT(slotDocumentClosed()));
-    connect(view, SIGNAL(documentClosed()), TemplatesTreeView::ref(), SLOT(slotDocumentClosed()));
-    connect(view, SIGNAL(documentClosed()), quantaApp->scriptToolView(), SLOT(slotDocumentClosed()));
+    connect(view, SIGNAL(documentClosed()), this, SLOT(slotDocumentClosed()));
 
     return view;
 }
@@ -119,7 +112,7 @@ void ViewManager::createNewDocument()
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
-  connect(w->view(), SIGNAL(dropEventPass(QDropEvent *)), TemplatesTreeView::ref(), SLOT(slotDragInsert(QDropEvent *)));
+  connect(w->view(), SIGNAL(dropEventPass(QDropEvent *)), this, SIGNAL(dragInsert(QDropEvent *)));
 
   w->setUntitledUrl( fname );
   KTextEditor::PopupMenuInterface* popupIf = dynamic_cast<KTextEditor::PopupMenuInterface*>(w->view());
@@ -205,10 +198,7 @@ void ViewManager::slotViewActivated(KMdiChildView *view)
   Document *w = qView->document();
   if (w && !w->isUntitled() && Project::ref()->hasProject())
   {
-      KURL url = QExtFileInfo::toRelative(w->url(), Project::ref()->projectBaseURL());
-      KFileTreeViewItem *item = ProjectTreeView::ref()->findItem(ProjectTreeView::ref()->rootBranch(), url.path());
-      ProjectTreeView::ref()->ensureItemVisible(item);
-      ProjectTreeView::ref()->setSelected(item, true);
+    emit viewActivated(w->url());
   }
 }
 
@@ -525,6 +515,12 @@ void ViewManager::slotCloseRequest(KMdiChildView *widget)
    QuantaView *view = dynamic_cast<QuantaView *>(widget);
    if (view)
       removeView(view);
+}
+
+
+void ViewManager::slotDocumentClosed()
+{
+  emit documentClosed();
 }
 
 #include "viewmanager.moc"

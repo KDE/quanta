@@ -19,12 +19,13 @@
 #define PROJECTTREEVIEW_H
 
 //own includes
-#include "filestreeview.h"
+#include "basetreeview.h"
 #include "projecturl.h"
 
 class KIO::Job;
+class FileInfoDlg;
 
-class ProjectTreeViewItem : public FilesTreeViewItem {
+class ProjectTreeViewItem : public BaseTreeViewItem {
 
 public:
   ProjectTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch );
@@ -32,7 +33,7 @@ public:
   void paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int align);
 };
 
-class ProjectTreeBranch : public FilesTreeBranch {
+class ProjectTreeBranch : public BaseTreeBranch {
 
 public:
   ProjectTreeBranch(KFileTreeView *parent, const KURL& url,
@@ -49,7 +50,7 @@ public:
 
 
 
-class ProjectTreeView : public FilesTreeView  {
+class ProjectTreeView : public BaseTreeView  {
   Q_OBJECT
 
 public:
@@ -69,19 +70,26 @@ public:
   virtual ~ProjectTreeView();
   bool isDocumentFolder(const KURL &url);
   ProjectTreeBranch* rootBranch() {return m_projectDir;}
+  void plugCVSMenu();
 
 public slots: // Public slots
   void slotOpen();
   void slotLoadToolbar();
-  void slotRemove();
-
-  void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
   void slotReloadTree(const ProjectUrlList &a_fileList, bool buildNewtree);
-  /** Sets new project informations */
+  /** Sets new project information */
   void slotNewProjectLoaded(const QString &, const KURL &, const KURL &);
-  /** reloads the tree again with current settings */
-  void slotReload();
   virtual void slotPopulateFinished(KFileTreeViewItem* );
+  /** makes the url visible in the tree */
+  void slotViewActivated(const KURL&);
+
+protected slots:
+  /**
+  reloads the current branch
+  */
+  void slotReload();
+  void slotRemove();
+  void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
+  void slotRenameItem(QListViewItem* kvtvi, const QString & newText, int col);
 
 signals: // Signals
   void removeFromProject( const KURL& );
@@ -97,25 +105,29 @@ signals: // Signals
   void changeUploadStatus(const KURL& url, int status);
   void changeDocumentFolderStatus(const KURL& url, bool status);
   void reloadProject();
+  /**
+   *  emited to make the script describtion visible
+   */
+  void showPreviewWidget(bool);
 
 private:
   /** The constructor is privat because we use singleton patter.
    *  If you need the class use ProjectTreeView::ref() for
    *  construction and reference
    */
-  ProjectTreeView(QWidget *parent, const char *name);\
-  void reload();
+  ProjectTreeView(QWidget *parent, const char *name);
   void setUploadStatus(const KURL &url, int status);
 
   ProjectTreeBranch *m_projectDir;
-  KURL m_oldURL;
-  KURL m_newURL;
-  KURL m_baseURL;
-  KURL::List m_documentFolderList;
+  KPopupMenu *m_fileMenu;
+  KPopupMenu *m_folderMenu;
   KPopupMenu *m_projectMenu;
+  KURL m_documentRootURL;
+  ProjectTreeViewItem *m_documentRootItem;
+  KURL::List m_documentFolderList;
   KPopupMenu *m_uploadStatusMenu;
-  QString m_projectName;
   ProjectUrlList m_projectFiles;
+  int m_menuClose;                ///< remembers the menu entry
 
   int m_openInQuantaId;  ///< remembers the menu entry
   int m_setDocumentRootId;
@@ -124,8 +136,25 @@ private:
   int m_confirmUploadId;
 
 protected:
+  /**
+  creates a branch and adds this branch to the treeview
+  @param url the root of the branch
+  @return the new branch
+  */
+  virtual KFileTreeBranch* newBranch(const KURL& url);
+  /**
+  called when the description of an item was changed,
+  @param item the treeview item
+  @param newDesc the new description of item
+  */
   virtual void itemDescChanged(KFileTreeViewItem* item, const QString& newDesc);
-  virtual bool isProjectView() const { return true; }
+  /**
+  adds the Quanta fileinfopage to the properties dialog
+  overwritten to enable the file description
+  @param propDlg the dialog where to add the page
+  @return pointer to to just added page
+  */
+  virtual FileInfoDlg* addFileInfoPage(KPropertiesDialog *propDlg);
 
 private slots: // Private slots
   /** No descriptions */
@@ -136,9 +165,8 @@ private slots: // Private slots
   void slotRescan();
   void slotCreateFolder();
   void slotRemoveFromProject(int askForRemove = 1);
-  void slotRename();
   void slotUploadSingleURL();
-  void slotRenameFinished(KIO::Job *job);
+//  void slotRenameFinished(KIO::Job *job);
   void slotAlwaysUpload();
   void slotNeverUpload();
   void slotConfirmUpload();

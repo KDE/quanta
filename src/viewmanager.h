@@ -88,9 +88,16 @@ public slots:
   void slotTabContextMenu(QWidget *widget, const QPoint & point);
   /** called when the user requests to close a tab with the close button */
   void slotCloseRequest(KMdiChildView *widget);
+  /** called from the views and just emits the signal @ref documentClosed */
+  void slotDocumentClosed();
+
 signals:
   /** emitted when a file from the template view is dropped on a view */
   void dragInsert(QDropEvent *);
+  /** emitted when a view was activated */
+  void viewActivated(const KURL &);
+  /** emitted when a view was closed */
+  void documentClosed();
 
 private slots:
  /** called before the file list menu shows up, so it can be updated */

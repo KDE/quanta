@@ -485,6 +485,17 @@ void QuantaInit::initView()
           m_quanta, SLOT(slotImageOpen(const KURL&)));
   connect(pTab, SIGNAL(loadToolbarFile  (const KURL&)),
           m_quanta, SLOT(slotLoadToolbarFile(const KURL&)));
+  connect(m_viewManager, SIGNAL(viewActivated(const KURL&)),
+          pTab, SLOT(slotViewActivated(const KURL&)));
+
+  connect(m_viewManager, SIGNAL(documentClosed()),
+          pTab, SLOT(slotDocumentClosed()));
+  connect(m_viewManager, SIGNAL(documentClosed()),
+          tTab, SLOT(slotDocumentClosed()));
+  connect(m_viewManager, SIGNAL(documentClosed()),
+          m_quanta->scriptTab, SLOT(slotDocumentClosed()));
+  connect(m_viewManager, SIGNAL(documentClosed()),
+          m_quanta->fTab, SLOT(slotDocumentClosed()));
 
   connect(m_quanta->fTab, SIGNAL(closeFile   (const KURL &)),
           m_quanta, SLOT  (slotFileClose(const KURL &)));

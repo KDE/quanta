@@ -72,17 +72,17 @@ TemplatesTreeBranch::TemplatesTreeBranch(KFileTreeView *parent, const KURL& url,
                                          const QString& name, const QPixmap& pix,
                                          bool showHidden,
                                          KFileTreeViewItem *branchRoot)
-    : FilesTreeBranch(parent, url, name, pix, showHidden, branchRoot)
+    : BaseTreeBranch(parent, url, name, pix, showHidden, branchRoot)
 {
 }
 
 KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *parent,
                                                            KFileItem *fileItem )
 {
-  FilesTreeViewItem  *tvi = 0;
+  BaseTreeViewItem  *tvi = 0;
   if( parent && fileItem )
   {
-    tvi = new FilesTreeViewItem( parent, fileItem, this );
+    tvi = new BaseTreeViewItem( parent, fileItem, this );
     if (tvi && fileItem->isDir())
     {
       KURL url = fileItem->url();
@@ -110,7 +110,7 @@ KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *pa
 
 
 TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
-  : FilesTreeView(parent,name), m_projectDir(0)
+  : BaseTreeView(parent,name), m_projectDir(0)
 {
   m_fileMenu = new KPopupMenu();
 
@@ -138,29 +138,14 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
   m_reloadMenuId = m_folderMenu->insertItem(i18n("&Reload"), this, SLOT(slotReload()));
 
-  setRootIsDecorated( true );
-  //header()->hide();
-  setSorting( 0 );
-  setFrameStyle( Panel | Sunken );
-  setLineWidth( 2 );
   addColumn(i18n("Templates"), -1);
   addColumn(i18n("Group"), -1);
-  setFullWidth(true);
-  setShowSortIndicator(true);
 
   globalURL.setPath(qConfig.globalDataDir + resourceDir + "templates/");
   newBranch(globalURL);
 
   localURL.setPath(locateLocal("data", resourceDir + "templates/"));
   newBranch(localURL);
-
-  setFocusPolicy(QWidget::ClickFocus);
-
-  connect(this, SIGNAL(executed(QListViewItem *)),
-          this, SLOT(slotSelectFile(QListViewItem *)));
-
-  connect(this, SIGNAL(returnPressed(QListViewItem *)),
-          this, SLOT(slotReturnPressed(QListViewItem *)));
 
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
@@ -169,12 +154,9 @@ TemplatesTreeView::TemplatesTreeView(QWidget *parent, const char *name )
           this,  SLOT(slotSelectFile(QListViewItem *)));
 
   setAcceptDrops(true);
-  connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
-          this, SLOT(slotDropped(KURL::List&, KURL&)));
-
   setSelectionMode(QListView::Single);
-  setDropHighlighter(true);
   setDragEnabled(true);
+  restoreLayout( kapp->config(), className() );
 }
 
 TemplatesTreeView::~TemplatesTreeView()
@@ -184,7 +166,7 @@ TemplatesTreeView::~TemplatesTreeView()
 
 KFileTreeBranch* TemplatesTreeView::newBranch(const KURL& url)
 {
-  FilesTreeBranch *newBrnch;
+  BaseTreeBranch *newBrnch;
   if (url == globalURL)
   {
     newBrnch = new TemplatesTreeBranch(this, url, i18n("Global Templates"), SmallIcon("ttab"));
@@ -332,7 +314,7 @@ void TemplatesTreeView::slotSelectFile(QListViewItem *item)
 
 void TemplatesTreeView::slotOpen()
 {
-  FilesTreeView::slotSelectFile(currentItem());
+  BaseTreeView::slotSelectFile(currentItem());
 }
 
 /** No descriptions */
@@ -402,7 +384,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
   if (KURLDrag::canDecode(e))
   {
     // handles url drops
-    FilesTreeView::contentsDropEvent(e);
+    BaseTreeView::contentsDropEvent(e);
     return;
   }
   if (QTextDrag::canDecode(e))
@@ -445,7 +427,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
     }
   }
   // must be done to reset timer etc.
-  FilesTreeView::contentsDropEvent(e);
+  BaseTreeView::contentsDropEvent(e);
 }
 
 /** Reads a .dirinfo file from the selected item's path */
@@ -595,7 +577,7 @@ void TemplatesTreeView::slotProperties()
   addFileInfoPage(propDlg);
   if (propDlg->exec() == QDialog::Accepted)
    {
-//    slotPropertiesApplied();
+//TODO: move to slotPropertiesApplied
     if (url != propDlg->kurl())
     {
       itemRenamed(url, propDlg->kurl());
@@ -714,8 +696,7 @@ void TemplatesTreeView::slotDragInsert(QDropEvent *e)
 
 void TemplatesTreeView::slotNewProjectLoaded(const QString &projectName, const KURL &baseURL, const KURL &templateURL)
 {
-  Q_UNUSED(baseURL);
-  m_projectName = projectName;
+  BaseTreeView::slotNewProjectLoaded(projectName, baseURL, templateURL); // set m_projectName and m_projectBaseURL
   if (m_projectDir)
     removeBranch(m_projectDir);
   if (!templateURL.isEmpty())
@@ -904,7 +885,7 @@ void TemplatesTreeView::slotSendInMail()
 
 bool TemplatesTreeView::acceptDrag(QDropEvent* e ) const
 {
- return (FilesTreeView::acceptDrag(e) || QTextDrag::canDecode(e));
+ return (BaseTreeView::acceptDrag(e) || QTextDrag::canDecode(e));
 }
 
 

@@ -132,11 +132,13 @@
 #include "undoredo.h"
 #endif
 
+#include "filestreeview.h"
 #include "structtreeview.h"
 #include "doctreeview.h"
 #include "templatestreeview.h"
 #include "tagattributetree.h"
 #include "projecttreeview.h"
+#include "scripttreeview.h"
 
 #include "listdlg.h"
 #include "tagdialog.h"
@@ -3953,6 +3955,12 @@ void QuantaApp::saveOptions()
     saveMainWindowSettings(m_config);
     SpellChecker::ref()->writeConfig(m_config);
     writeDockConfig(m_config);
+    // save settings of treeviews
+    fTab->saveLayout( m_config, fTab->className() );
+    ProjectTreeView::ref()->saveLayout(m_config, ProjectTreeView::ref()->className() );
+    TemplatesTreeView::ref()->saveLayout(m_config, TemplatesTreeView::ref()->className() );
+    scriptTab->saveLayout(m_config, scriptTab->className() );
+
     m_config->sync();
   }
 }

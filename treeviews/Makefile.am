@@ -2,7 +2,7 @@ noinst_LTLIBRARIES = libtreeviews.la
 
 METASOURCES = AUTO
 
-libtreeviews_la_SOURCES = uploadtreeview.cpp uploadtreefolder.cpp uploadtreefile.cpp fileinfodlg.ui quantapropertiespage.ui newtemplatedirdlg.cpp templatedirform.ui templatestreeview.cpp projecttreeview.cpp structtreeview.cpp doctreeview.cpp docitem.cpp docfolder.cpp structtreetag.cpp filestreeview.cpp tagattributetree.cpp tagattributeitems.cpp scripttreeview.cpp
+libtreeviews_la_SOURCES = uploadtreeview.cpp uploadtreefolder.cpp uploadtreefile.cpp fileinfodlg.ui quantapropertiespage.ui newtemplatedirdlg.cpp templatedirform.ui templatestreeview.cpp projecttreeview.cpp structtreeview.cpp doctreeview.cpp docitem.cpp docfolder.cpp structtreetag.cpp filestreeview.cpp tagattributetree.cpp tagattributeitems.cpp scripttreeview.cpp basetreeview.cpp
 
 if include_cvsservice
 CVSSERVICE_INCLUDE = -I$(top_srcdir)/quanta/components/cvsservice

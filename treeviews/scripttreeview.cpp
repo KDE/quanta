@@ -19,7 +19,6 @@
 #include <kmessagebox.h>
 #include <kpopupmenu.h>
 #include <kprocess.h>
-#include <kpropertiesdialog.h>
 #include <krun.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
@@ -61,23 +60,16 @@
 extern int xmlLoadExtDtdDefaultValue;
 
 ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
-  : FilesTreeView(parent,name)
+  : BaseTreeView(parent,name)
 {
-  setRootIsDecorated( true );
-  //header()->hide();
-  setSorting( 0 );
-  setShowSortIndicator(true);
-  setFrameStyle( Panel | Sunken );
-  setLineWidth( 2 );
   addColumn(i18n("Scripts"), -1);
   addColumn("");
-  setFullWidth(true);
 
   KURL url;
   url.setPath(qConfig.globalDataDir + resourceDir + "scripts/");
 
-  FilesTreeBranch *m_globalDir;
-  m_globalDir = new FilesTreeBranch(this, url, i18n("Global scripts"), SmallIcon("run"), true);
+  BaseTreeBranch *m_globalDir;
+  m_globalDir = new BaseTreeBranch(this, url, i18n("Global scripts"), SmallIcon("run"), true);
   addBranch(m_globalDir);
 
   QDir dir(url.path(), "", QDir::All & !QDir::Hidden);
@@ -87,8 +79,8 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   }
   url.setPath(locateLocal("data", resourceDir + "scripts/"));
 
-  FilesTreeBranch *m_localDir;
-  m_localDir = new FilesTreeBranch(this, url, i18n("Local scripts"), SmallIcon("run"), true);
+  BaseTreeBranch *m_localDir;
+  m_localDir = new BaseTreeBranch(this, url, i18n("Local scripts"), SmallIcon("run"), true);
   addBranch(m_localDir);
 
   dir.setPath(url.path());
@@ -102,8 +94,6 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   m_globalDir->excludeFilterRx.setPattern(excludeString);
   m_localDir->excludeFilterRx.setPattern(excludeString);
 
-  setFocusPolicy(QWidget::ClickFocus);
-
   m_fileMenu = new KPopupMenu();
   m_fileMenu->insertItem(SmallIcon("info"), i18n("Description"), this, SLOT(slotProperties()));
   m_fileMenu->insertItem(SmallIcon("run"), i18n("Run Script"), this, SLOT(slotRun()));
@@ -116,15 +106,10 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(SmallIcon("mail_send"), i18n("Send in E-Mail"), this, SLOT(slotSendScriptInMail()));
 
 
-  connect(this, SIGNAL(executed(QListViewItem *)),
-          this, SLOT(slotSelectFile(QListViewItem *)));
-
-  connect(this, SIGNAL(returnPressed(QListViewItem *)),
-          this, SLOT(slotReturnPressed(QListViewItem *)));
-
   connect(this, SIGNAL(contextMenu(KListView*, QListViewItem*, const QPoint&)),
           this, SLOT(slotMenu(KListView*, QListViewItem*, const QPoint&)));
 
+  restoreLayout( kapp->config(), className() );
 }
 
 ScriptTreeView::~ScriptTreeView()
