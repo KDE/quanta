@@ -942,6 +942,14 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->name = dtdName.lower();
  dtd->nickName = dtdConfig->readEntry("NickName", dtdName);
  dtd->url = dtdConfig->readEntry("URL");
+ dtd->doctypeStr = dtdConfig->readEntry("DoctypeString");
+ if (dtd->doctypeStr.isEmpty())
+ {
+   dtd->doctypeStr = "PUBLIC \"" + dtdName + "\"";
+   if (!dtd->url.isEmpty())
+      dtd->doctypeStr += " \"" + dtd->url + "\"";
+ }
+ dtd->doctypeStr.prepend(' ');
  dtd->inheritsTagsFrom = dtdConfig->readEntry("Inherits");
 
  dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");

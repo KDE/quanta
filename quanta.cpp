@@ -2055,17 +2055,15 @@ void QuantaApp::processDTD(QString documentType)
       if (dlg->convertDTD->isChecked())
       {
         QDict<QString> attrDict;
+        uint tagCase = qConfig.tagCase;
+        qConfig.tagCase = 2; //upper case
         w->changeTag(tag, &attrDict);
+        qConfig.tagCase = tagCase;
         uint line, col;
         w->viewCursorIf->cursorPositionReal(&line, &col);
         if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
         DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
-        QString s = " public \""+dtd->name+"\" ";
-        if (!dtd->url.isEmpty())
-        {
-          s += "\n\t\t\"" + dtd->url +"\"";
-        }
-        w->insertText(QuantaCommon::attrCase(s));
+        w->insertText(dtd->doctypeStr);
         delete tag;
       }
     }
@@ -2128,28 +2126,21 @@ void QuantaApp::slotToolsChangeDTD()
       if (tag)
       {
          QDict<QString> attrDict;
+         uint tagCase = qConfig.tagCase;
+         qConfig.tagCase = 2; //upper case
          w->changeTag(tag, &attrDict);
+         qConfig.tagCase = tagCase;
          uint line, col;
          w->viewCursorIf->cursorPositionReal(&line, &col);
          if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
          DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
-         QString s = " public \""+dtd->name+"\" ";
-         if (!dtd->url.isEmpty())
-         {
-           s += "\n\t\t\"" + dtd->url +"\"";
-         }
-         w->insertText(QuantaCommon::attrCase(s));
+         w->insertText(dtd->doctypeStr);
          delete tag;
       } else
       {
         w->viewCursorIf->setCursorPositionReal(0,0);
         DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
-        QString s = " public \""+dtd->name+"\" ";
-        if (!dtd->url.isEmpty())
-        {
-          s += "\n\t\t\"" + dtd->url +"\"";
-        }
-        w->insertText(QuantaCommon::tagCase("<!doctype")+QuantaCommon::attrCase(s+"\">\n"));
+        w->insertText("<!DOCTYPE" + dtd->doctypeStr + ">\n");
       }
     }
   }

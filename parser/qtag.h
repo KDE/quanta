@@ -56,6 +56,7 @@ typedef struct DTDStruct
      QString name;                    //DTD name
      QString nickName;                //DTD nickname
      QString url;                     //the url of the DTD definition file
+     QString doctypeStr;              //the string that appears right after !doctype
      QString inheritsTagsFrom;        //Inherited DTD name
      QString defaultExtension;        //default extension when creating new files
      bool caseSensitive;              //the tags&attributes in DTD are case sensitive or not
@@ -72,10 +73,7 @@ typedef struct DTDStruct
      QString booleanFalse;            //"false" or "0" or whatever
      QString singleTagStyle;          //"xml" or "html" (<tag/> or <tag>)
      QString defaultAttrType;         //"input", "string" or whatever
-     
-     QStringList structGroups;        //group names to appear at the top of the Structure Tree
-     QStringList groupsRxs;           //the regexp which helps us to find the groups; valid only for script DTDs
-     QStringList groupsClearRxs;      //regexp to clear from the found group regex; valid only for script DTDs
+
      QStringList toolbars;
     };
 
@@ -108,8 +106,6 @@ public:
   QString fileName();
   /** No descriptions */
   void setFileName(QString& fileName);
-  /** Returns the attribute with name, or 0 if the tag does not have any attribute with name. */
-  Attribute* attribute(QString& name);
 
   /** The tag belongs to this DTD */
   DTDStruct *parentDTD;

@@ -2,6 +2,7 @@
 Name = -//W3C//DTD HTML 4.01 Transitional//EN
 NickName = HTML 4.01 Transitional
 URL = http://www.w3.org/TR/html4/loose.dtd
+DoctypeString = HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"
 DefaultExtension = html
 Groups = Core, I18n, Script
 NumOfPages = 2
@@ -114,4 +115,3 @@ location_options = single
 [Extra rules]
 BooleanAttributes = simple
 Single Tag Style = html
-StructGroups =  Images/No Images/image/(img,src); Links/No Links/www/(a,name,href)
