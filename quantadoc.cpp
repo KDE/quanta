@@ -251,14 +251,6 @@ bool QuantaDoc::saveDocument(const KURL& url)
     } else
     {
       w->closeTempFile();
-      if (dynamic_cast<KTextEditor::HighlightingInterface*>(wdoc)->hlMode()==0)
-       {
-         uint line,col;
-         w->viewCursorIf->cursorPositionReal(&line, &col);
-         wdoc->setModified(false); //workaround for fish
-         wdoc->openURL(url);
-         w->viewCursorIf->setCursorPosition(line, col);
-     }
       w->createTempFile();
       w->setDirtyStatus(false);
     }
