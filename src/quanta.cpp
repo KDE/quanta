@@ -699,7 +699,8 @@ void QuantaApp::slotRepaintPreview()
 {
   Document *w = ViewManager::ref()->activeDocument();
   if (!w) return;
-  if (!m_previewVisible && !m_previewToolView) return;
+  if (!m_previewVisible) return;
+  if (!m_previewToolView && qConfig.previewPosition != "Editor" ) return;
 
   previewCopyMade = false;
 
@@ -1880,26 +1881,26 @@ void QuantaApp::slotContextMenuAboutToShow()
           {
             word =  w->editIf->textLine(w->viewCursorIf->cursorLine());
             startpos = word.findRev(QRegExp("$|[^a-zA-Z0-9_]"), w->viewCursorIf->cursorColumn());
-            
+
             word.remove(0, startpos);
             if(word.left(1) != "$")
               word.remove(0, 1);;
-            
+
             word = word.left(word.find(QRegExp("[^a-zA-Z0-9_]"), 1));
           }
           startpos = word.find("\n");
           if(startpos > 0)
             word.remove(0, startpos);
-            
+
           popupWord = word;
-          if(word.length() > 15) 
+          if(word.length() > 15)
           {
             word.remove(0, 12);
             word += "...";
           }
           action->setText(i18n("Add Watch: %1").arg(word));
           action->setEnabled(word != "");
-          
+
           if(!action->isPlugged(popup))
             action->plug(popup);
         }
@@ -1911,7 +1912,7 @@ void QuantaApp::slotContextMenuAboutToShow()
       }
     }
   }
-  
+
 }
 
 void QuantaApp::slotDebuggerAddWatch()
