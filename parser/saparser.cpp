@@ -23,7 +23,7 @@
 #include <klocale.h>
 #include <kurl.h>
 
-//own includes  
+//own includes
 #include "saparser.h"
 #include "parsercommon.h"
 #include "node.h"
@@ -44,6 +44,7 @@ SAParser::SAParser()
   m_baseNode = 0L;
   m_currentNode = 0L;
   m_quotesRx = QRegExp("\"|'");
+  m_specialInsideXml = false;
 }
 
 SAParser::~SAParser()
@@ -52,7 +53,7 @@ SAParser::~SAParser()
 
 void SAParser::init(Node *node, Document* write)
 {
-  m_baseNode = node; 
+  m_baseNode = node;
   m_write = write;
   m_dtd = write->defaultDTD();
 }
@@ -63,7 +64,7 @@ bool SAParser::slotParseOneLine()
   if (!m_parsingEnabled && !m_synchronous)
   {
 #ifdef DEBUG_PARSER
-    kdDebug(24001) << "slotParseOneLine - interrupted" << endl;   
+    kdDebug(24001) << "slotParseOneLine - interrupted" << endl;
 #endif
     return false;
   }
@@ -159,6 +160,7 @@ bool SAParser::slotParseOneLine()
                 s_currentNode->tag->type = Tag::ScriptStructureBegin;
                 s_currentNode->tag->single = false;
                 s_currentNode->insideSpecial = true;
+                s_currentNode->specialInsideXml = m_specialInsideXml;
                 s_currentContext.lastNode = s_currentNode;
 
                 s_contextStack.push(s_currentContext);
@@ -172,12 +174,12 @@ bool SAParser::slotParseOneLine()
                   return true;
                 else
                 {
-#ifdef DEBUG_PARSER                  
+#ifdef DEBUG_PARSER
                   kdDebug(24001) << "Calling slotParseOneLine from parseArea (opening group struct)." << endl;
-#endif                  
+#endif
                   QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
                 }
-                return true;  
+                return true;
               } else  //it's a closing group structure element (like "}")
               {
                 if (s_currentContext.type != Group)
@@ -188,9 +190,9 @@ bool SAParser::slotParseOneLine()
                     return true;
                   else
                   {
-#ifdef DEBUG_PARSER                    
+#ifdef DEBUG_PARSER
                     kdDebug(24001) << "Calling slotParseOneLine from parseArea (closing group struct)." << endl;
-#endif                    
+#endif
                     QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
                   }
                   return true;
@@ -206,6 +208,7 @@ bool SAParser::slotParseOneLine()
                 else
                   s_currentNode = ParserCommon::createTextNode(m_write, s_currentNode, s_line, groupKeywordPos, s_currentContext.parentNode);
                 s_currentNode->insideSpecial = true;
+                s_currentNode->specialInsideXml = m_specialInsideXml;
 
                 s_previousContext = s_contextStack.pop();
                 s_currentContext.parentNode = s_previousContext.parentNode;
@@ -229,6 +232,7 @@ bool SAParser::slotParseOneLine()
                 nodeNum++;
                 node->tag = tag;
                 node->insideSpecial = true;
+                node->specialInsideXml = m_specialInsideXml;
                 if (s_currentContext.parentNode && !s_currentContext.parentNode->child)
                 {
                   s_currentContext.parentNode->child = node;
@@ -244,9 +248,9 @@ bool SAParser::slotParseOneLine()
                   return true;
                 else
                 {
-#ifdef DEBUG_PARSER                
+#ifdef DEBUG_PARSER
                   kdDebug(24001) << "Calling slotParseOneLine from parseArea (group structure)." << endl;
-#endif                  
+#endif
                   QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
                 }
                 return true;
@@ -269,13 +273,14 @@ bool SAParser::slotParseOneLine()
                 else
                   s_currentNode = ParserCommon::createTextNode(m_write, s_currentNode, s_line, specialAreaPos, s_currentContext.parentNode);
                 s_currentNode->insideSpecial = true;
+                s_currentNode->specialInsideXml = m_specialInsideXml;
               }
               //create a toplevel node for the included special area
               AreaStruct area(s_line, specialAreaPos, s_line, specialAreaPos + foundText.length() - 1);
               Node *node = ParserCommon::createScriptTagNode(m_write, area, foundText, s_dtd, s_currentContext.parentNode, s_currentNode);
-#ifdef DEBUG_PARSER              
+#ifdef DEBUG_PARSER
               kdDebug(24001) << "Parsing a nested area." << endl;
-#endif              
+#endif
               AreaStruct area2(s_line, specialAreaPos, s_endLine, s_endCol);
               SAParser *p = new SAParser();
               p->init(m_baseNode, m_write);
@@ -293,9 +298,9 @@ bool SAParser::slotParseOneLine()
               }
               else
               {
-#ifdef DEBUG_PARSER              
+#ifdef DEBUG_PARSER
                 kdDebug(24001) << "Calling slotParseOneLine from slotParseOneLine (nested area)." << endl;
-#endif                
+#endif
                 QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
                 return true;
               }
@@ -331,6 +336,7 @@ bool SAParser::slotParseOneLine()
               s_currentNode = ParserCommon::createTextNode(m_write, s_currentNode, s_line, areaEndPos, s_parentNode);
             }
             s_currentNode->insideSpecial = true;
+            s_currentNode->specialInsideXml = m_specialInsideXml;
           }
           //kdDebug(24000) << QString("Special area %1 ends at %2, %3").arg(s_dtd->name).arg(s_line).arg(lastCol) << endl;
 
@@ -347,11 +353,11 @@ bool SAParser::slotParseOneLine()
           Node *node = new Node(s_parentNode->parent);
           nodeNum++;
           s_parentNode->next = node;
-          node->prev = s_parentNode;          
+          node->prev = s_parentNode;
           node->tag = tag;
           node->closesPrevious = true;
-            
-          if (s_fullParse)  
+
+          if (s_fullParse)
           {
             Node *g_node, *g_endNode;
             g_node = s_parentNode->child;
@@ -359,9 +365,9 @@ bool SAParser::slotParseOneLine()
             if (g_node && g_node == g_endNode)
               g_endNode = s_parentNode->next;*/
             g_endNode = node;
-#ifdef DEBUG_PARSER            
+#ifdef DEBUG_PARSER
             kdDebug(24001) << "Calling slotParseForScriptGroup from slotParseOneLine." << endl;
-#endif            
+#endif
 //            slotParseForScriptGroup();
             SAGroupParser *groupParser = new SAGroupParser(this, g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
             connect(groupParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
@@ -369,14 +375,14 @@ bool SAParser::slotParseOneLine()
             connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
             groupParser->slotParseForScriptGroup();
           }
-            
+
           m_lastParsedNode = node;
           s_useReturnVars = true;
           if (!m_synchronous)
           {
-#ifdef DEBUG_PARSER          
+#ifdef DEBUG_PARSER
             kdDebug(24001) << "Calling parsingDone from slotParseOneLine (area end found)." << endl;
-#endif            
+#endif
             m_lastParsedNode = parsingDone();
           }
           return false; //parsing finished
@@ -397,6 +403,7 @@ bool SAParser::slotParseOneLine()
             {
               ParserCommon::appendAreaToTextNode(m_write, s_currentContext.area, s_currentNode);
               s_currentNode->insideSpecial = true;
+              s_currentNode->specialInsideXml = m_specialInsideXml;
             } else
             {
               //create a tag from the s_currentContext
@@ -417,6 +424,7 @@ bool SAParser::slotParseOneLine()
               nodeNum++;
               node->tag = tag;
               node->insideSpecial = true;
+              node->specialInsideXml = m_specialInsideXml;
               if (s_currentContext.parentNode && !s_currentContext.parentNode->child)
               {
                 s_currentContext.parentNode->child = node;
@@ -464,6 +472,7 @@ bool SAParser::slotParseOneLine()
             else
               s_currentNode = ParserCommon::createTextNode(m_write, 0L, s_line, pos, s_currentContext.parentNode);
             s_currentNode->insideSpecial = true;
+            s_currentNode->specialInsideXml = m_specialInsideXml;
           }
           s_previousContext = s_contextStack.pop();
           s_currentContext.parentNode = s_previousContext.parentNode;
@@ -504,6 +513,7 @@ bool SAParser::slotParseOneLine()
             nodeNum++;
             node->tag = tag;
             node->insideSpecial = true;
+            node->specialInsideXml = m_specialInsideXml;
             if (s_currentNode)
             {
               s_currentNode->next = node;
@@ -539,19 +549,19 @@ bool SAParser::slotParseOneLine()
       //slotParseOneLine();
     }
     else
-{    
-#ifdef DEBUG_PARSER    
+{
+#ifdef DEBUG_PARSER
       kdDebug(24001) << "Calling slotParseOneLine from slotParseOneLine." << endl;
-#endif      
+#endif
       QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
-}      
+}
   } else
-  {  
+  {
     if (!m_synchronous)
     {
-#ifdef DEBUG_PARSER  
+#ifdef DEBUG_PARSER
       kdDebug(24001) << "Calling parsingDone from slotParseOneLine." << endl;
-#endif    
+#endif
       parsingDone();
     }
     return false; //parsing finished
@@ -568,23 +578,26 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   m_synchronous = synchronous;
   s_parentNode = parentNode;
   s_fullParse = fullParse;
-#ifdef DEBUG_PARSER  
+#ifdef DEBUG_PARSER
   kdDebug(24001) << "parseArea full: " << s_fullParse << "  synch: " << m_synchronous <<endl;
-#endif  
+#endif
 
   int s_startLine = specialArea.bLine;
   int s_startCol = specialArea.bCol;
   s_endLine = specialArea.eLine;
   s_endCol = specialArea.eCol;
   //kdDebug(24000) << QString("Starting to parse at %1, %2 for %3").arg(s_startLine).arg(s_startCol).arg(areaStartString) << endl;
-  
+
   s_searchForAreaEnd = false;
   s_searchForForcedAreaEnd = false;
   s_dtd = 0L;
   if (s_parentNode && !areaStartString.isEmpty())
   {
-    s_dtd = DTDs::ref()->find(s_parentNode->tag->dtd->specialAreaNames[areaStartString]);
-    s_areaEndString = s_parentNode->tag->dtd->specialAreas[areaStartString];
+    const DTDStruct *parentDTD = m_dtd;
+    if (s_parentNode->parent)
+      parentDTD = s_parentNode->parent->tag->dtd;
+    s_dtd = DTDs::ref()->find(parentDTD->specialAreaNames[areaStartString]);
+    s_areaEndString = parentDTD->specialAreas[areaStartString];
     s_searchForAreaEnd = true;
   }
   if (!forcedAreaEndString.isEmpty())
@@ -617,7 +630,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
     else
       s_textLine = "";
   }
-     
+
   s_previousContext.type = Unknown;
   s_currentContext.type = Text;
   s_currentContext.area.bLine = s_line;
@@ -630,7 +643,7 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
   if (s_line <= s_endLine)
   {
     if (m_synchronous)
-    { 
+    {
       while (slotParseOneLine()); //actually this parses the whole area, as synchronous == true
       if (s_useReturnVars) //this is true if the special area end was found
       {
@@ -639,19 +652,19 @@ Node* SAParser::parseArea(const AreaStruct &specialArea,
     }
     else
     {
-#ifdef DEBUG_PARSER    
+#ifdef DEBUG_PARSER
       kdDebug(24001) << "Calling slotParseOneLine from parseArea." << endl;
-#endif      
+#endif
       QTimer::singleShot(0, this, SLOT(slotParseOneLine()));
       return 0L;
     }
-  } 
+  }
   if (m_synchronous) //if the special area end was not found and we are in synchronous mode
   {
     s_next = 0L;
-#ifdef DEBUG_PARSER  
+#ifdef DEBUG_PARSER
     kdDebug(24001) << "Calling parsingDone from parseArea." << endl;
-#endif      
+#endif
     s_currentNode = parsingDone();
     return s_currentNode;
   }
@@ -662,7 +675,7 @@ Node *SAParser::parsingDone()
 {
 #ifdef DEBUG_PARSER
   kdDebug(24001) << "parsingDone. Use return values:" << s_useReturnVars << endl;
-#endif  
+#endif
   if (s_useReturnVars)
   {
     if (s_fullParse)
@@ -673,23 +686,23 @@ Node *SAParser::parsingDone()
           n->next = s_next;
           if (s_next)
             s_next->prev = n;
-          n->prev = s_parentNode; 
+          n->prev = s_parentNode;
         }
         m_currentNode = n->nextSibling();
         if (m_currentNode)
         {
-#ifdef DEBUG_PARSER        
+#ifdef DEBUG_PARSER
           kdDebug(24001) << "Calling slotParseNodeInDetail from parsingDone (use return values)" << endl;
-#endif          
+#endif
           QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
           return m_lastParsedNode;
         }
         else
         {
-          m_parsingEnabled = true;  
-#ifdef DEBUG_PARSER          
+          m_parsingEnabled = true;
+#ifdef DEBUG_PARSER
           kdDebug(24001) << "Emitting rebuildStructureTree from parsingDone (use return values). Enable parsing." << endl;
-#endif          
+#endif
           emit rebuildStructureTree();
           emit cleanGroups();
         }
@@ -701,11 +714,13 @@ Node *SAParser::parsingDone()
   {
     s_currentNode = ParserCommon::createTextNode(m_write, s_parentNode, s_endLine, s_endCol, s_parentNode);
     s_currentNode->insideSpecial = true;
-  } 
+    s_currentNode->specialInsideXml = m_specialInsideXml;
+  }
   else if (s_parentNode && !s_parentNode->next)
   {
     s_currentNode = ParserCommon::createTextNode(m_write, s_currentNode, s_endLine, s_endCol, s_parentNode);
-    s_currentNode->insideSpecial = true;  
+    s_currentNode->insideSpecial = true;
+    s_currentNode->specialInsideXml = m_specialInsideXml;
   }
   if (s_fullParse)
   {
@@ -719,12 +734,12 @@ Node *SAParser::parsingDone()
       while (n->prev)
         n = n->prev;
       s_currentNode = n;
-    }    
+    }
     Node *g_node = n;
     Node *g_endNode = 0L;
-#ifdef DEBUG_PARSER    
+#ifdef DEBUG_PARSER
     kdDebug(24001) << "Calling slotParseForScriptGroup from parsingDone. Synch:" << m_synchronous << endl;
-#endif    
+#endif
 //    slotParseForScriptGroup();
             SAGroupParser *groupParser = new SAGroupParser(this, g_node, g_endNode, m_synchronous, m_parsingLastNode, true);
             connect(groupParser, SIGNAL(rebuildStructureTree()), SIGNAL(rebuildStructureTree()));
@@ -732,10 +747,10 @@ Node *SAParser::parsingDone()
             connect(groupParser, SIGNAL(parsingDone(SAGroupParser*)), SLOT(slotGroupParsingDone(SAGroupParser*)));
             groupParser->slotParseForScriptGroup();
   }
-  
+
   m_lastParsedLine = s_endLine;
   m_lastParsedCol = s_endCol;
-  
+
   if (s_fullParse && m_currentNode)
   {
       if (m_useNext)
@@ -748,18 +763,18 @@ Node *SAParser::parsingDone()
       m_currentNode = m_currentNode->nextSibling();
       if (m_currentNode)
       {
-#ifdef DEBUG_PARSER      
+#ifdef DEBUG_PARSER
         kdDebug(24001) << "Calling slotParseNodeInDetail from parsingDone." << endl;
-#endif        
+#endif
         QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
         emit rebuildStructureTree();
       }
       else
       {
-        m_parsingEnabled = true;  
-#ifdef DEBUG_PARSER        
+        m_parsingEnabled = true;
+#ifdef DEBUG_PARSER
         kdDebug(24001) << "Emitting detailedParsingDone from parsingDone. Enable parsing." << endl;
-#endif        
+#endif
         emit rebuildStructureTree();
       }
   }
@@ -771,9 +786,9 @@ void SAParser::parseInDetail(bool synchronous)
 {
   //synchronous = true; //for testing. Uncomment to test the parser in synchronous mode
 //  return; //for testing. Uncomment to disable the detailed parser
-#ifdef DEBUG_PARSER  
-  kdDebug(24001) << "parseInDetail. Enabled: " << m_parsingEnabled << endl; 
-#endif  
+#ifdef DEBUG_PARSER
+  kdDebug(24001) << "parseInDetail. Enabled: " << m_parsingEnabled << endl;
+#endif
   if (!m_parsingEnabled)
   {
     m_currentNode = m_baseNode;
@@ -781,9 +796,9 @@ void SAParser::parseInDetail(bool synchronous)
     m_synchronous = synchronous;
     if (m_currentNode)
     {
-#ifdef DEBUG_PARSER    
+#ifdef DEBUG_PARSER
       kdDebug(24001) << "Calling slotParseNodeInDetail from parseInDetail." << endl;
-#endif      
+#endif
       slotParseNodeInDetail();
     }
   }
@@ -793,17 +808,17 @@ void SAParser::slotParseNodeInDetail()
 {
 #ifdef DEBUG_PARSER
   kdDebug(24001) << "slotParseNodeInDetail. Enabled: " << m_parsingEnabled << " Synch: " << m_synchronous << endl; //this is really heavy debug information, enable only when really needed
-#endif  
+#endif
   if (m_currentNode && m_parsingEnabled)
   {
-    if (m_currentNode->tag->type == Tag::ScriptTag)
+    if (m_currentNode->insideSpecial)
     {
       m_parsingLastNode = true;
       Node *n = m_currentNode->nextSibling();
       while (n)
       {
         n = n->nextSibling();
-        if (n && n->tag->type == Tag::ScriptTag)
+        if (n && n->insideSpecial)
         {
           m_parsingLastNode = false;
           break;
@@ -825,42 +840,42 @@ void SAParser::slotParseNodeInDetail()
           m_currentNode->next->removeAll = false;
           delete m_currentNode->next;
           m_useNext = true;
-        } 
+        }
       } else
       {
         area.eLine = m_write->editIf->numLines() - 1;
         area.eCol = m_write->editIf->lineLength(area.eLine);
       }
-#ifdef DEBUG_PARSER      
+#ifdef DEBUG_PARSER
       kdDebug(24001) << "Calling parseArea from slotParseNodeInDetail." << endl;
-#endif      
+#endif
       QString areaStartString = m_currentNode->tag->tagStr();
-      if (m_currentNode->tag->dtd->specialAreaNames[areaStartString].isEmpty())      
+      if (m_currentNode->tag->dtd->specialAreaNames[areaStartString].isEmpty())
       {
         AreaStruct area2(m_currentNode->tag->area());
         area.bLine = area2.eLine;
         area.bCol = area2.eCol + 1;
-        parseArea(area, "", "</"+m_currentNode->tag->name+"\\s*>", m_currentNode, true, m_synchronous); 
+        parseArea(area, "", "</"+m_currentNode->tag->name+"\\s*>", m_currentNode, true, m_synchronous);
       }
       else
-        parseArea(area, m_currentNode->tag->tagStr(), "", m_currentNode, true, m_synchronous); 
+        parseArea(area, m_currentNode->tag->tagStr(), "", m_currentNode, true, m_synchronous);
     } else
     {
       m_currentNode = m_currentNode->nextSibling();
       if (m_currentNode)
       {
-#ifdef DEBUG_PARSER      
+#ifdef DEBUG_PARSER
 //        kdDebug(24001) << "Calling slotParseNodeInDetail from slotParseNodeInDetail." << endl; //this is really heavy debug information, enable only when really needed
-#endif        
+#endif
         QTimer::singleShot(0, this, SLOT(slotParseNodeInDetail()));
       } else
       {
-#ifdef DEBUG_PARSER      
+#ifdef DEBUG_PARSER
         kdDebug(24001) << "Emitting rebuildStructureTree from slotParseNodeInDetail." << endl;
-#endif        
+#endif
         emit rebuildStructureTree();
       }
-    }          
+    }
   }
 }
 
@@ -869,7 +884,7 @@ void SAParser::setParsingEnabled(bool enabled)
 {
 #ifdef DEBUG_PARSER
   kdDebug(24001) << "Parsing enabled: " << enabled << endl;
-#endif  
+#endif
   m_parsingEnabled = enabled;
 }
 
@@ -882,15 +897,15 @@ void SAGroupParser::slotParseForScriptGroup()
 {
 #ifdef DEBUG_PARSER
   kdDebug(24001) << "slotParseForScriptGroup. Synch: " << m_synchronous << endl;
-#endif  
+#endif
   if (!m_parent->parsingEnabled())
   {
-#ifdef DEBUG_PARSER  
+#ifdef DEBUG_PARSER
     kdDebug(24001) << "slotParseForScriptGroup aborted. Synch: " << m_synchronous << endl;
-#endif    
+#endif
     return;
-  }  
-   
+  }
+
   if (g_node && g_node != g_endNode )
   {
     if (g_node->tag && (g_node->tag->type == Tag::Text || g_node->tag->type == Tag::ScriptStructureBegin))
@@ -903,16 +918,16 @@ void SAGroupParser::slotParseForScriptGroup()
     }
     else
     {
-#ifdef DEBUG_PARSER      
+#ifdef DEBUG_PARSER
         kdDebug(24001) << "Calling slotParseForScriptGroup from slotParseForScriptGroup." << endl;
-#endif        
+#endif
       QTimer::singleShot(0, this, SLOT(slotParseForScriptGroup()));
     }
   } else
   {
-#ifdef DEBUG_PARSER  
+#ifdef DEBUG_PARSER
     kdDebug(24001) << "slotParseForScriptGroup done." << endl;
-#endif    
+#endif
     if (m_lastGroupParsed && m_parsingLastNode && !m_synchronous)
     {
 #ifdef DEBUG_PARSER
@@ -992,7 +1007,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
         newTag->setTagPosition(area);
         newTag->setStr(title);
         newTag->name = s;
-        
+
         if (dtd->name == "php" && group.name == "Functions")
         {
           QTag *qTag = m_parent->write()->userTagList.find(s.lower());
@@ -1001,9 +1016,9 @@ void SAGroupParser::parseForScriptGroup(Node *node)
             QTag *qTag = new QTag();
             qTag->setName(s.left(s.find('(')));
             m_parent->write()->userTagList.insert(s.lower(), qTag);
-          }          
+          }
         }
-        
+
         groupElement.deleted = false;
         groupElement.tag = newTag;
         groupElement.node = node;
@@ -1055,10 +1070,10 @@ void SAGroupParser::parseForScriptGroup(Node *node)
       }
     }
   }
-#ifdef DEBUG_PARSER  
+#ifdef DEBUG_PARSER
  if (t.elapsed() > 10)
      kdDebug(24001) << "Done: " << t.elapsed() << endl;
-#endif     
+#endif
 }
 
 

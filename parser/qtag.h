@@ -43,6 +43,10 @@ typedef struct Attribute{
         QStringList values;   //the possible values it can have
         QString defaultValue; //the default value
         QString status;       // "optional", "required","implied"
+        QString source;
+        QString interface;
+        QString method;
+        QString arguments;
       };
 
 //the groups in structure tree are defined with the help of:

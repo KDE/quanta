@@ -72,7 +72,12 @@ void QTag::addAttribute(Attribute* attr)
   }
   a->defaultValue = attr->defaultValue;
   a->status = attr->status;
-  if (createNew) attrs.append(a);
+  a->source = attr->source;
+  a->method = attr->method;
+  a->interface = attr->interface;
+  a->arguments = attr->arguments;
+  if (createNew) 
+    attrs.append(a);
  }
 }
 /** Returns the number of attributes for the tag. */

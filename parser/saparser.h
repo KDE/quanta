@@ -42,10 +42,10 @@ class SAParser: public QObject
 {
   Q_OBJECT
 
-public:  
+public:
   SAParser();
   virtual ~SAParser();
-  
+
   void setParsingEnabled(bool enabled);
   bool parsingEnabled() {return m_parsingEnabled;}
   Document *write() {return m_write;}
@@ -67,29 +67,30 @@ public:
                   const QString &forcedAreaEndString,
                   Node *parentNode,
                   bool fullParse, bool synchronous);
-  /** Returns the line where the last parsing run ended. */                  
+  /** Returns the line where the last parsing run ended. */
   int lastParsedLine() {return m_lastParsedLine;}
   /** Returns the column where the last parsing run ended. */
   int lastParsedColumn() {return m_lastParsedCol;}
-                  
-  void parseInDetail(bool synchronous);     
-  
-public slots:  
+
+  void parseInDetail(bool synchronous);
+  void setSpecialInsideXml(bool insideXml) {m_specialInsideXml = insideXml;}
+
+public slots:
   void slotGroupParsingDone(SAGroupParser *groupParser);
-  
+
 private slots:
   /** Parses one line and calls itself with a singleshot timer to parse the next line. */
   bool slotParseOneLine();
   void slotParseNodeInDetail();
-  
+
 signals:
-  void rebuildStructureTree();  
+  void rebuildStructureTree();
   void cleanGroups();
-  
+
 private:
   //private methods
   Node* parsingDone();
-  
+
   //private structures
   struct ContextStruct{
     int type;
@@ -104,12 +105,12 @@ private:
     Comment,
     QuotedString,
     Group
-  };  
-  
+  };
+
   //private member variables
   bool m_parsingLastNode;
   bool m_useNext;
-  bool m_parsingEnabled;  
+  bool m_parsingEnabled;
   bool m_synchronous;
   Document* m_write;
   Node* m_baseNode;
@@ -118,6 +119,7 @@ private:
   int m_lastParsedLine, m_lastParsedCol;
   const DTDStruct *m_dtd;
   QRegExp m_quotesRx;
+  bool m_specialInsideXml; //< true if the special area is defined inside a tag, like the PHP in <a href="<? echo $a ?>">
 
   bool s_contextFound;
   ContextStruct s_currentContext;
@@ -146,27 +148,27 @@ private:
 class SAGroupParser: public QObject {
 
  Q_OBJECT
- 
+
  public:
-   SAGroupParser(SAParser *parent, Node *startNode, Node *endNode, bool synchronous, bool parsingLastNode, bool paringLastGroup) 
+   SAGroupParser(SAParser *parent, Node *startNode, Node *endNode, bool synchronous, bool parsingLastNode, bool paringLastGroup)
      { g_node = startNode;
        g_endNode = endNode;
        m_synchronous = synchronous;
-       m_lastGroupParsed = paringLastGroup; 
+       m_lastGroupParsed = paringLastGroup;
        m_parsingLastNode = parsingLastNode;
        m_parent = parent;
      }
    ~SAGroupParser() {};
 
-    
+
  public slots:
   void slotParseForScriptGroup();
- 
+
  signals:
-  void rebuildStructureTree();  
+  void rebuildStructureTree();
   void cleanGroups();
   void parsingDone(SAGroupParser*);
- 
+
  private:
   void parseForScriptGroup(Node *node);
 
@@ -175,7 +177,7 @@ class SAGroupParser: public QObject {
   bool m_synchronous;
   SAParser *m_parent;
   Node* g_node;
-  Node* g_endNode; 
+  Node* g_endNode;
 };
 
 #endif
