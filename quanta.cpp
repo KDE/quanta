@@ -3594,7 +3594,7 @@ void QuantaApp::slotExpandAbbreviation()
         if (text.contains('\n'))
         {
           line += text.contains('\n');
-          col = text.length() - text.findRev('\n');
+          col = text.length() - text.findRev('\n') - 1;
         } else
         {
           col += pos;
