@@ -676,6 +676,7 @@ void Project::loadProjectXML()
     m_defaultEncoding = qConfig.defaultEncoding;
   }
   m_documentRootURL = baseURL;
+  m_documentRootURL.setPath("");
   tmpString = projectNode.toElement().attribute("documentRoot");
   if (!tmpString.isEmpty())
   {
