@@ -24,7 +24,7 @@
                 <cstring>textLabel1</cstring>
             </property>
             <property name="text">
-                <string>Configured Events:</string>
+                <string>Configured events:</string>
             </property>
         </widget>
         <widget class="KListView" row="1" column="0" rowspan="1" colspan="5">
@@ -105,9 +105,6 @@
             <property name="text">
                 <string>&amp;Add</string>
             </property>
-            <property name="accel">
-                <string>Alt+A</string>
-            </property>
         </widget>
         <widget class="KPushButton" row="2" column="2">
             <property name="name">
@@ -116,9 +113,6 @@
             <property name="text">
                 <string>&amp;Edit</string>
             </property>
-            <property name="accel">
-                <string>Alt+E</string>
-            </property>
         </widget>
         <widget class="KPushButton" row="2" column="4">
             <property name="name">
@@ -126,9 +120,6 @@
             </property>
             <property name="text">
                 <string>&amp;Delete</string>
-            </property>
-            <property name="accel">
-                <string>Alt+D</string>
             </property>
         </widget>
         <spacer row="2" column="3">

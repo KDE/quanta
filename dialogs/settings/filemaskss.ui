@@ -35,9 +35,6 @@
             <height>0</height>
         </size>
     </property>
-    <property name="caption">
-        <string>FileMasksS</string>
-    </property>
     <grid>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -94,9 +91,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Reset to Default</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="3" column="0">
@@ -202,9 +196,6 @@
             <property name="text">
                 <string>Show the DTD selection dialog when loading files with &amp;unknown DTD</string>
             </property>
-            <property name="accel">
-                <string>Alt+U</string>
-            </property>
         </widget>
         <widget class="QLabel" row="1" column="0">
             <property name="name">
@@ -238,9 +229,6 @@
             <property name="text">
                 <string>S&amp;how splashscreen on startup</string>
             </property>
-            <property name="accel">
-                <string>Alt+H</string>
-            </property>
         </widget>
         <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="2">
             <property name="name">
@@ -249,9 +237,6 @@
             <property name="text">
                 <string>&amp;Load last-opened project on startup</string>
             </property>
-            <property name="accel">
-                <string>Alt+L</string>
-            </property>
         </widget>
         <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="2">
             <property name="name">
@@ -259,9 +244,6 @@
             </property>
             <property name="text">
                 <string>L&amp;oad last-opened files on startup</string>
-            </property>
-            <property name="accel">
-                <string>Alt+O</string>
             </property>
         </widget>
         <widget class="QLayoutWidget" row="7" column="0">
@@ -322,9 +304,6 @@
                     <property name="text">
                         <string>Warn about opening &amp;binary/unknown files</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+B</string>
-                    </property>
                 </widget>
                 <widget class="QCheckBox" row="1" column="0">
                     <property name="name">
@@ -332,9 +311,6 @@
                     </property>
                     <property name="text">
                         <string>Warn when executing &amp;actions associated with events</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
                     </property>
                 </widget>
             </grid>
