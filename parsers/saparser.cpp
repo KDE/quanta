@@ -1046,7 +1046,7 @@ void SAGroupParser::parseForScriptGroup(Node *node)
           groupElement.parentNode = 0L;
         }
         groupElement.global = true;
-        tmpNode = node;
+        tmpNode = node->parent;
         while (tmpNode && tmpNode->tag->dtd == dtd)
         {
           if ( tmpNode->tag->type == Tag::ScriptStructureBegin && tmpNode->tag->dtd->localScopeKeywordsRx.search(tmpNode->tag->cleanStr) != -1)
