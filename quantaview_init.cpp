@@ -185,7 +185,9 @@ void QuantaView::initActions()
                         actionCollection, "insert_css" );
 
     // special-character combo
-    KSelectAction* char_action = new KSelectAction( actionCollection, "insert_char" );
+    KSelectAction* char_action = new KSelectAction(
+                        i18n( "Insert Special Character" ), 0,
+                        actionCollection, "insert_char" );
     connect( char_action, SIGNAL(activated(const QString &)),
              this, SLOT(slotInsertChar(const QString &)) );
     QStringList char_list;
