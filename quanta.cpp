@@ -727,8 +727,12 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   loadToolbarForDTD(newWrite->getDTDIdentifier());
 
   Document *currentWrite = m_view->write();
-  //currentWrite->view()->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
-  m_view->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
+#ifdef BUILD_KAFKAPART
+   m_view->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
+#else
+   currentWrite->view()->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
+#endif
+
   m_view->oldWrite = currentWrite;
   currentWrite->kate_view->setIconBorder(qConfig.iconBar);
   currentWrite->kate_view->setLineNumbersOn(qConfig.lineNumbers);

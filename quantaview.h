@@ -72,6 +72,7 @@ public:
 
   /** Return the WKafkaPart */
   WKafkaPart *getkafkaPart() {return kafkaInterface;}
+#endif
   /** Return the curren views layout*/
   int getViewsLayout() {return currentViewsLayout;}
 
@@ -83,7 +84,6 @@ public:
 
   /** Resize the current view */
   void resize(int width, int height);
-#endif
 
   /** Update the views when the current page changed. Called by quantaApp::slotUpdateStatus. */
   void updateViews();
@@ -202,8 +202,8 @@ private:
   QSplitter *splitter;
   QValueList<int> _splittSizes;
 #endif
-
   int currentViewsLayout;
+
   bool beginOfScriptOutput;
   bool beginOfScriptError;
   QString scriptOutputDest;

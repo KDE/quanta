@@ -100,8 +100,8 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   oldWrite = 0L;
   oldTab = 0L;
 
-  #ifdef BUILD_KAFKAPART
   currentViewsLayout = QuantaView::QuantaViewOnly;//TODO: load it from the config
+    #ifdef BUILD_KAFKAPART
   kafkaInterface = new WKafkaPart(0, 0, "KafkaHTMLPart");
   kafkaInterface->getKafkaPart()->view()->setMinimumHeight(50);
   #endif
@@ -508,17 +508,16 @@ void QuantaView::slotShowKafkaAndQuanta()
 #endif
 }
 
-#ifdef BUILD_KAFKAPART
-
 void QuantaView::resize(int width, int height)
 {
   if(currentViewsLayout == QuantaView::QuantaViewOnly)
     write()->view()->resize(width,height);
+#ifdef BUILD_KAFKAPART
   else if(currentViewsLayout == QuantaView::KafkaViewOnly)
     kafkaInterface->getKafkaPart()->view()->resize(width,height);
   else if(currentViewsLayout == QuantaView::QuantaAndKafkaViews)
     splitter->resize(width,height);
-}
 #endif
+}
 
 #include "quantaview.moc"
