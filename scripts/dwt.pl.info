@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type=text/xsl href=info.xsl ?>
+<!DOCTYPE QuantaScriptInfo>
+<INFO>
+<options editor="kwrite" interpreter="perl" />
+<name>dwt.pl</name>
+<author>Benjamin Stocker</author>
+<email>bstocker@4s-hosting.ch</email>
+<website>http://www.4s-hosting.ch/bstocker/dwt </website>
+<version></version>
+<license>GPL</license>
+<about>Internally used by the dwt.kmdr script.</about>
+</INFO>

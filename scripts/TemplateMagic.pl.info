@@ -10,5 +10,5 @@
 <version>2.0</version>
 <license>GPL</license>
 <about>This is mostly written by Robert and a result of a collaboration to      enhance Quanta templates and demonstrate uses for Kommander.      <br /><br />
-You can create fields in your templates by placing them in square brackets like so <strong>[fieldname:type]</strong> where type is text, file or filename.      File and filename being different in either contents or name. The fields      will be replaced with template insertion. This works with text and file      templates. Other fields and functionality are planned. If you enhance this script please send us a copy.</about>
+You can create fields in your templates by placing them in square brackets like so <strong>[fieldname:type]</strong> where type is text, file or filename.      File and filename being different in either contents or name. The fields      will be replaced with template insertion. This works with text (text/all) and document (template/all) templates. Other fields and functionality are planned. If you enhance this script please send us a copy.</about>
 </INFO>

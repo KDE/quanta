@@ -10,7 +10,7 @@
  *                                                                         *
  ***************************************************************************/
 </comment>
-<author>Andras Mantia &lt;amantia@freemail.hu&gt;</author>
+<author>Andras Mantia &lt;amantia@kde.org&gt;</author>
 <widget class="QDialog">
     <property name="name">
         <cstring>ActionConfigDialogS</cstring>

@@ -97,7 +97,7 @@ ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   }
 
   // here you define which files should not be visible for the users
-  const QString excludeString = ".*\\.info$|.*\\.css$";
+  const QString excludeString = ".*\\.info$|.*\\.css$|.*\\.xsl$";
   m_globalDir->excludeFilterRx.setPattern(excludeString);
   m_localDir->excludeFilterRx.setPattern(excludeString);
 
