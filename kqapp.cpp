@@ -137,21 +137,21 @@ void KQApplicationPrivate::init()
     {
       QString arg = args->url(i).url();
 
-      if(arg.findRev(QRegExp(QString(".+\\.webprj"))) != -1)
+      if(arg.findRev(QRegExp(".+\\.webprj")) != -1)
         initialProject = arg;
       else
         initialFiles += arg;
     }
 
     quantaApp->loadInitialProject(initialProject);
+    for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
+    {
+      KURL url;
+      QuantaCommon::setUrl(url, *it);
+      quantaApp->slotFileOpen(url, quantaApp->defaultEncoding());  // load initial files
+    }
     if (!quantaApp->getProject()->hasProject())
     {
-      for(QStringList::Iterator it = initialFiles.begin();it != initialFiles.end();++it)
-      {
-        KURL url;
-	QuantaCommon::setUrl(url, *it);
-        quantaApp->slotFileOpen(url, quantaApp->defaultEncoding());  // load initial files
-      }
       quantaApp->openLastFiles();
     }
   }
