@@ -18,6 +18,7 @@
 #include <qtabbar.h>
 #include <qwidgetstack.h>
 #include <qtabwidget.h>
+#include <qtab.h>
 
 //kde includes
 #include <kaction.h>
