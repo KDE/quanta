@@ -1,9 +1,9 @@
 /***************************************************************************
-                          filesmask.h  -  description
+                          previewoptions.h  -  description
                              -------------------
-    begin                : Fri May 19 2000
-    copyright            : (C) 2000 by Yacovlev Alexander & Dmitry Poplavsky
-    email                : pdima@mail.univ.kiev.ua
+    begin                : Wed Nov 1 2000
+    copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+    email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,21 +15,20 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef FILEMASKS_H
-#define FILEMASKS_H
+#ifndef PREVIEWOPTIONS_H
+#define PREVIEWOPTIONS_H
 
-#include "filemaskss.h"
+#include "previewoptionss.h"
 
+/**
+  *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
+  */
 
-class FileMasks : public FileMasksS
-{
+class PreviewOptions : public PreviewOptionsS  {
    Q_OBJECT
 public: 
-	FileMasks(QWidget *parent=0, const char *name=0);
-	~FileMasks();
-
-public slots:
-  void setToDefault();
+	PreviewOptions(QWidget *parent=0, const char *name=0);
+	~PreviewOptions();
 };
 
 #endif
