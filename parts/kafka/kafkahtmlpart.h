@@ -3,8 +3,8 @@
                              -------------------
 
     copyright            : (C) 2001 - The Kafka Team
-                                   (C) 2003, 2004 - Nicolas Deschildre
-    email                : kde-kafka@master.kde.org && nicolasdchd@ifrance.com
+                           (C) 2003, 2004 - Nicolas Deschildre
+    email                : kde-kafka@master.kde.org && ndeschildre@kdewebdev.org
  ***************************************************************************/
 
 /***************************************************************************

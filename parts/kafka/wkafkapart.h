@@ -3,7 +3,7 @@
                              -------------------
 
     copyright            : (C) 2003, 2004 - Nicolas Deschildre
-    email                : nicolasdchd@ifrance.com
+    email                : ndeschildre@kdewebdev.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -176,9 +176,11 @@ public:
 	/**
 	 * This function returns the text decoded from its XML-encoded form.
 	 * @param encodedText The text to decode.
+	 * @param translateWhiteSpacesAndLineBreaks Specifies if whiteSpaces and line breaks should be
+	 * compressed. Set it to false for PRE tag.
 	 * @return Returns the text decoded.
 	 */
-	QString getDecodedText(const QString &encodedText);
+	QString getDecodedText(const QString &encodedText, bool translateWhiteSpacesAndLineBreaks = true);
 
 	/**
 	 * This function returns the XML-encoded character (e.g. &nbsp;)
@@ -196,9 +198,12 @@ public:
 	 * @param bCol The start col of the returned encoded text.
 	 * @param eLine Returns the end line of the returned encoded text.
 	 * @param eCol Returns the end col of the return encoded text.
+	 * @param translateWhiteSpaces Specifies if we should translate the whitespaces
+	 * into &nbsp; Set it to false for PRE Tag.
 	 * @return Return the XML-encoded text.
 	 */
-	QString getEncodedText(const QString &decodedText, int bLine, int bCol, int &eLine, int &eCol);
+	QString getEncodedText(const QString &decodedText, int bLine, int bCol, int &eLine, int &eCol,
+		bool translateWhiteSpaces = true);
 
 	/**
 	 * This function behaves essentially like the above function except that it doesn't

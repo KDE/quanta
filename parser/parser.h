@@ -50,8 +50,8 @@ public:
   Node *parseArea(int startLine, int startCol, int endLine, int endCol, Node **lastNode, Node *a_node = 0L);
 
   /** Parse the whole text from Document w and build the internal structure tree
-  from Nodes */
-  Node *parse(Document *w);
+  from Nodes. Set force to true if you want to avoid the possible checks. */
+  Node *parse(Document *w, bool force = false);
 
   /** Returns the node for position (line, column). As more than one node can
   contain the same area, it return the "deepest" node. */

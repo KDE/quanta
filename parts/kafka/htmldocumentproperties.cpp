@@ -3,7 +3,7 @@
                              -------------------
 
     copyright            : (C) 2003, 2004 - Nicolas Deschildre
-    email                : nicolasdchd@ifrance.com
+    email                : ndeschildre@kdewebdev.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -26,15 +26,16 @@
 #include <klocale.h>
 #include <kdebug.h>
 
-#include "../../parser/node.h"
-#include "../../parser/tag.h"
-#include "../../parser/qtag.h"
-#include "../../resource.h"
-#include "../../quanta.h"
-#include "../../quantaview.h"
-#include "../../document.h"
-#include "../../treeviews/tagattributetree.h"
-#include "../../qextfileinfo.h"
+#include "node.h"
+#include "tag.h"
+#include "qtag.h"
+#include "resource.h"
+#include "quanta.h"
+#include "quantacommon.h"
+#include "quantaview.h"
+#include "document.h"
+#include "tagattributetree.h"
+#include "qextfileinfo.h"
 #include "kafkacommon.h"
 #include "wkafkapart.h"
 #include "undoredo.h"

@@ -3,8 +3,8 @@
                              -------------------
 
     copyright            : (C) 2001 - The Kafka Team
-                                   (C) 2003, 2004 - Nicolas Deschildre
-    email                : kde-kafka@master.kde.org && nicolasdchd@ifrance.com
+                           (C) 2003, 2004 - Nicolas Deschildre
+    email                : kde-kafka@master.kde.org && ndeschildre@kdewebdev.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -44,11 +44,11 @@
 #endif
 #include "wkafkapart.h"
 #include "nodeproperties.h"
-#include "../../document.h"
-#include "../../resource.h"
-#include "../../quanta.h"
-#include "../../quantaview.h"
-#include "../../treeviews/tagattributetree.h"
+#include "document.h"
+#include "resource.h"
+#include "quanta.h"
+#include "quantaview.h"
+#include "tagattributetree.h"
 #include "kafkahtmlpart.moc"
 
 class KafkaWidgetPrivate
@@ -123,7 +123,6 @@ void KafkaWidget::newDocument()
 	begin();
 	write(newPageHTMLCode);
 	end();
-	putCursorAtFirstAvailableLocation();
 
 }
 
@@ -132,7 +131,13 @@ void KafkaWidget::insertText(DOM::Node node, const QString &text, int position)
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "KafkaWidget::insertText text " << text << " pos " << position << endl;
 #endif
-	int focus = w->getAttrs(node)->chCurFoc();
+	int focus;
+	kNodeAttrs *attrs = w->getAttrs(node);
+
+	if(!attrs)
+		return;
+
+	focus = attrs->chCurFoc();
 
 	if(position < 0) return;//nothing to do if something is selected
 	//if(focus == kNodeAttrs::no || !cbModified) return;//can't add text in this Node.
@@ -505,8 +510,9 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 #endif
 					break;
 				}
-				else if(w->getAttrs(m_currentNode)->chCurFoc() !=
-					kNodeAttrs::no || m_currentNode.nodeName().string().lower() == "body")
+				else if(w->getAttrs(m_currentNode) &&
+					w->getAttrs(m_currentNode)->chCurFoc() != kNodeAttrs::no ||
+					m_currentNode.nodeName().string().lower() == "body")
 				{
 #ifdef LIGHT_DEBUG
 					kdDebug(25001) << "KafkaWidget::eventFilter() Text - " <<
@@ -1324,8 +1330,14 @@ void KafkaWidget::setCurrentNode(DOM::Node node, int offset)
 void KafkaWidget::putCursorAtFirstAvailableLocation()
 {
 	kNodeAttrs *attrs = 0L;
-	DOM::Node node = document();
+	DOM::Node node = w->body;
         bool b = false;
+
+#ifdef HEAVY_DEBUG
+	w->coutLinkTree(baseNode, 2);
+	kafkaCommon::coutTree(baseNode, 2);
+	kafkaCommon::coutDomTree(document(), 2);
+#endif
 
 	while(!node.isNull())
 	{
@@ -1339,7 +1351,11 @@ void KafkaWidget::putCursorAtFirstAvailableLocation()
 			break;
 		}
 		attrs = w->getAttrs(node);
-		if(!attrs) return;
+		if(!attrs)
+		{
+			node = w->body;
+			break;
+		}
 		if(node.nodeType() == DOM::Node::TEXT_NODE)
 			break;
 	}

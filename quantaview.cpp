@@ -492,22 +492,22 @@ void QuantaView::reloadQuantaView(bool force)
 void QuantaView::slotShowQuantaEditor()
 {
 #ifdef BUILD_KAFKAPART
+  int oldLayout = currentViewsLayout;
+  currentViewsLayout = QuantaView::QuantaViewOnly;
+
   KToggleAction *ta = (KToggleAction *) quantaApp->actionCollection()->action( "show_quanta_editor" );
   /**killTimer(quantaUpdateTimer);*/
   quantaApp->slotShowPreviewWidget(false);
   if(ta)
     ta->setChecked(true);
   if(!writeExists())
-  {
-    currentViewsLayout = QuantaView::QuantaViewOnly;
     return;
-  }
   int id = quantaApp->rightWidget()->id(quantaApp->rightWidget()->visibleWidget());
   if(id == 1 || id == 2)
     quantaApp->rightWidget()->raiseWidget(0);
-  if(currentViewsLayout == QuantaView::QuantaViewOnly)
+  if(oldLayout == QuantaView::QuantaViewOnly)
     return;
-  else if(currentViewsLayout == QuantaView::KafkaViewOnly)
+  else if(oldLayout == QuantaView::KafkaViewOnly)
   {
     kafkaInterface->getKafkaWidget()->view()->hide();
     kafkaInterface->getKafkaWidget()->view()->reparent(0, 0, QPoint(), false);
@@ -522,7 +522,7 @@ void QuantaView::slotShowQuantaEditor()
     write()->view()->show();
     write()->view()->setFocus();
   }
-  else if(currentViewsLayout == QuantaView::QuantaAndKafkaViews)
+  else if(oldLayout == QuantaView::QuantaAndKafkaViews)
   {
     _splittSizes = splitter->sizes();
     kafkaInterface->getKafkaWidget()->view()->hide();
@@ -536,7 +536,6 @@ void QuantaView::slotShowQuantaEditor()
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
     write()->view()->reparent(write(), 0, QPoint(), true);
-    currentViewsLayout = QuantaView::QuantaViewOnly;
     resize(writeTab()->size().width()-5, writeTab()->size().height()-35);
     write()->view()->show();
     //delete splitter;
@@ -565,7 +564,7 @@ void QuantaView::slotShowKafkaPart()
   }
   if(write()->defaultDTD()->name.contains("HTML", false) == 0)
   {
-    KMessageBox::information(this, i18n("Sorry, for the moment, the VPL Mode doesn't support the current DTD : %1").arg(write()->defaultDTD()->nickName));
+    KMessageBox::information(this, i18n("Sorry, for the moment, the VPL Mode does not support the current DTD : %1").arg(write()->defaultDTD()->nickName));
     if(ta2)
       ta2->setChecked(true);
     return;
@@ -608,8 +607,11 @@ void QuantaView::slotShowKafkaPart()
     splitter->reparent(0, 0, QPoint(), false);
     splitter->hide();
   }
-  if(oldViewsLayout == QuantaView::QuantaViewOnly && write()->editIf->text().stripWhiteSpace() == "")
+  if(oldViewsLayout == QuantaView::QuantaViewOnly && (!baseNode || (baseNode->tag->type == Tag::Empty &&
+    !baseNode->next && !baseNode->child)))
+  {
     quantaApp->slotDocumentProperties();
+  }
 #endif
 }
 
@@ -679,8 +681,11 @@ void QuantaView::slotShowKafkaAndQuanta()
       kafkaUpdateTimer = startTimer(qConfig.kafkaRefreshDelay);
     else if(currentFocus == QuantaView::kafkaFocus && !qConfig.quantaRefreshOnFocus)
       quantaUpdateTimer = startTimer(qConfig.quantaRefreshDelay);
-    if(oldViewsLayout == QuantaView::QuantaViewOnly && write()->editIf->text().stripWhiteSpace() == "")
+    if(oldViewsLayout == QuantaView::QuantaViewOnly && (!baseNode || (baseNode->tag->type == Tag::Empty &&
+      !baseNode->next && !baseNode->child)))
+    {
       quantaApp->slotDocumentProperties();
+    }
   }
   else
   {

@@ -3,7 +3,7 @@
                              -------------------
 
     copyright            : (C) 2003, 2004 - Nicolas Deschildre
-    email                : nicolasdchd@ifrance.com
+    email                : ndeschildre@kdewebdev.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -32,14 +32,15 @@
 #include <qtextstream.h>
 #include <qdatetime.h>
 
-#include "../../document.h"
-#include "../../quanta.h"
-#include "../../quantaview.h"
-#include "../../resource.h"
+#include "document.h"
+#include "quanta.h"
+#include "quantacommon.h"
+#include "quantaview.h"
+#include "resource.h"
 #include "undoredo.h"
-#include "../../parser/node.h"
-#include "../../parser/parser.h"
-#include "../../parser/tag.h"
+#include "node.h"
+#include "parser.h"
+#include "tag.h"
 #include "nodeproperties.h"
 #include "htmlenhancer.h"
 #include "kafkacommon.h"
@@ -149,6 +150,8 @@ void KafkaDocument::loadDocument(Document *doc)
 	//create a empty document with a basic tree : HTML, HEAD, BODY
 	m_kafkaPart->newDocument();
 
+	// When loading a weird html file in khtml (e.g. without BODY or HTML), khtml takes care
+	// to create the necessary tags. But as we are handling directly the Nodes, we have to handle this!!
 	// creating and linking an empty node to the root DOM::Node (#document) and
 	// to HEAD, HTML, BODY
 	node = new Node(0L);
@@ -236,6 +239,9 @@ void KafkaDocument::unloadDocument()
 	while(m_kafkaPart->document().hasChildNodes())
 		m_kafkaPart->document().removeChild(m_kafkaPart->document().firstChild());
 	m_currentDoc = 0L;
+
+	html = body = head = DOM::Node();
+
 	_docLoaded = false;
 	node = baseNode;
 	while(node)
@@ -525,7 +531,7 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 		if(node->tag->type == Tag::Text)
 		{
 			nodeValue = node->tag->tagStr();
-			nodeValue = getDecodedText(nodeValue);
+				nodeValue = getDecodedText(nodeValue, !kafkaCommon::hasParent(node, "pre"));
 			newNode.setNodeValue(nodeValue);
 		}
 
@@ -678,6 +684,10 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node domNode, Node *nodeParent
 			" *ERROR* - empty _domNode"<< endl;
 	}
 
+	//nodeParent can be the false body node which is not in the tree.
+	if(nodeParent->tag->notInTree)
+		nodeParent = 0L;
+
 	/**_node = new Node(_nodeParent);*/
 	if(domNode.nodeType() == DOM::Node::TEXT_NODE)
 	{
@@ -710,7 +720,7 @@ QString KafkaDocument::getDecodedChar(const QString &encodedChar)
 	return it.data();
 }
 
-QString KafkaDocument::getDecodedText(const QString &a_encodedText)
+QString KafkaDocument::getDecodedText(const QString &a_encodedText, bool translateWhiteSpacesAndLineBreaks)
 {
         QString encodedText = a_encodedText;
 	QString decodedChar;
@@ -720,7 +730,7 @@ QString KafkaDocument::getDecodedText(const QString &a_encodedText)
 #endif
 
 	i = -1;
-	while((unsigned)++i < encodedText.length())
+	while((unsigned)++i < encodedText.length() && translateWhiteSpacesAndLineBreaks)
 	{
 		if(encodedText[i].isSpace())
 		{
@@ -771,7 +781,8 @@ QString KafkaDocument::getEncodedChar(const QString &decodedChar, const QString 
 	return it.data();
 	}
 
-QString KafkaDocument::getEncodedText(const QString &a_decodedText, int bLine, int bCol, int &eLine, int &eCol)
+QString KafkaDocument::getEncodedText(const QString &a_decodedText, int bLine, int bCol, int &eLine, int &eCol,
+	bool translateWhiteSpaces)
 {
         QString decodedText = a_decodedText;
 	QString Encodedchar;
@@ -790,8 +801,11 @@ QString KafkaDocument::getEncodedText(const QString &a_decodedText, int bLine, i
 		previousDecodedChar = decodedChar;
 		decodedChar = QString(decodedText[i]);
 
-		Encodedchar = getEncodedChar(QString(decodedText[i]),
-			(i>=1)?previousDecodedChar:QString(""));
+		if(translateWhiteSpaces || !decodedText[i].isSpace())
+			Encodedchar = getEncodedChar(QString(decodedText[i]),
+				(i>=1)?previousDecodedChar:QString(""));
+		else
+			Encodedchar = decodedChar;
 		bCol += Encodedchar.length();
 
 		decodedText.remove(i,1);
@@ -898,7 +912,8 @@ QString KafkaDocument::generateCodeFromNode(Node *node, int bLine, int bCol, int
 	}
 	else if(node->tag->type == Tag::Text)
 	{
-		text = getEncodedText(node->tag->tagStr(), bLine, bCol, eLine, eCol);
+		text = getEncodedText(node->tag->tagStr(), bLine, bCol, eLine, eCol,
+			!kafkaCommon::hasParent(node, "pre"));
 		/** Can't use KGlobal::charsets()->toEntity() :
 		 * It translate all chars into entities! */
 	}

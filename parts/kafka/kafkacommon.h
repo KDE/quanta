@@ -3,7 +3,7 @@
                              -------------------
 
     copyright            : (C) 2003, 2004 - Nicolas Deschildre
-    email                : nicolasdchd@ifrance.com
+    email                : ndeschildre@kdewebdev.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -163,9 +163,8 @@ public:
 	};
 
 	/**
-	 * Remove the unnecessary whitespaces in a string : when a XML page is loaded,
-	 * a "group" of whitespace in a string is translated into a single whitespace.
-	 * e.g. this function returns : " a b cd " for parameter: "     a    b cd     "
+	 * Remove the indentation whitespaces in a string
+	 * e.g. this function returns : " a b  cd " for parameter: "     a b  cd     "
 	 * @param string The text to modify.
 	 * @param removeAllSpacesAtTheLeft Specifies if it should remove ALL spaces in the left
 	 * unlike the above example.
@@ -639,6 +638,12 @@ public:
 	 * It will return 0 if node has no parent Nodes, and -1 if node doesn't exists.
 	 */
 	static int nodeDepth(Node *node);
+
+	/**
+	 * Looks if node has a parent which is named name.
+	 * @return Returns the first parent which is named name or 0L if not found.
+	 */
+	static Node* hasParent(Node *node, const QString &name);
 
 
 	/** ----------------- DOM::NODE TREE MODIFICATIONS --------------------*/

@@ -3,7 +3,7 @@
                              -------------------
 
     copyright            : (C) 2003, 2004 - Nicolas Deschildre
-    email                : nicolasdchd@ifrance.com
+    email                : ndeschildre@kdewebdev.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -23,13 +23,14 @@
 #include <dom/dom_element.h>
 #include <dom/dom_text.h>
 
-#include "../../parser/node.h"
-#include "../../parser/tag.h"
-#include "../../document.h"
-#include "../../resource.h"
-#include "../../quantacommon.h"
+#include "node.h"
+#include "tag.h"
+#include "document.h"
+#include "resource.h"
+#include "quantacommon.h"
 
 #include "kafkacommon.h"
+#include "undoredo.h"
 
 Node *kafkaCommon::getNextNode(Node *node, bool &goUp, Node *endNode)
 {
@@ -304,7 +305,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
 			(prevNE && getNodeDisplay(node, true) == kafkaCommon::inlineDisplay &&
 			getNodeDisplay(prevNE, true) == kafkaCommon::blockDisplay))
 		{
-			if(node->tag->type == Tag::Text)
+			if(node->tag->type == Tag::Text && !kafkaCommon::hasParent(node, "pre"))
 			{
 				setTagStringAndFitsNodes(node, indentation1 + node->tag->tagStr());
 			}
@@ -323,7 +324,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
 			(nextNE && getNodeDisplay(node, true) == kafkaCommon::inlineDisplay &&
 			getNodeDisplay(nextNE, true) == kafkaCommon::blockDisplay))
 		{
-			if(node->tag->type == Tag::Text)
+			if(node->tag->type == Tag::Text && !kafkaCommon::hasParent(node, "pre"))
 			{
 				setTagStringAndFitsNodes(node, node->tag->tagStr() + indentation2);
 			}
@@ -331,7 +332,9 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs)
 			{
 				setTagStringAndFitsNodes(next, indentation2);
 			}
-			else if(next && next->tag->type == Tag::Text)
+			//If next's cleanStrBuilt is not true, the next node to be processed will be this
+			//one and the indentation spaces will be handled as real spaces.
+			else if(next && next->tag->type == Tag::Text && next->tag->cleanStrBuilt)
 			{
 				setTagStringAndFitsNodes(next, indentation2 + next->tag->tagStr());
 			}
@@ -519,7 +522,7 @@ void kafkaCommon::fitIndentationNodes(Node *n1, Node *n2)
 				}
 				else if(n2->tag->type != Tag::Text &&
 					getNodeDisplay(n2, true) == kafkaCommon::blockDisplay &&
-						!emptyNode)
+					n1->tag->type != Tag::Text && !emptyNode)
 				{
 					if(n1->getClosingNode() == n2)
 					{
@@ -656,7 +659,7 @@ int kafkaCommon::getNodeDisplay(Node *node, bool closingNodeToo)
 QString kafkaCommon::removeUnnecessaryWhitespaces(const QString &string,
 		bool removeAllSpacesAtTheLeft, bool removeAllSpacesAtTheRight)
 {
-	QString newString;
+	/**QString newString;
 	int i;
 
 	if(string.length() == 0)
@@ -674,6 +677,22 @@ QString kafkaCommon::removeUnnecessaryWhitespaces(const QString &string,
 	if(removeAllSpacesAtTheRight && newString.length() > 0 &&
 		newString[newString.length() - 1].isSpace())
 		newString = newString.mid(0, newString.length() - 1);
+
+	return newString;*/
+	QString newString;
+	bool hasLeftWhiteSpaces, hasRightWhiteSpaces;
+
+	if(string.length() == 0)
+		return "";
+
+	hasLeftWhiteSpaces = (string[0].isSpace());
+	hasRightWhiteSpaces = (string[newString.length() - 1].isSpace());
+
+	newString = string.stripWhiteSpace();
+	if(hasLeftWhiteSpaces && !removeAllSpacesAtTheLeft)
+		newString.insert(0, " ");
+	if(hasRightWhiteSpaces && !removeAllSpacesAtTheRight)
+		newString.insert(newString.length(), " ");
 
 	return newString;
 }
@@ -2491,6 +2510,19 @@ int kafkaCommon::nodeDepth(Node *node)
 	return depth;
 }
 
+Node* kafkaCommon::hasParent(Node *node, const QString &name)
+{
+	node = node->parent;
+	while(node)
+	{
+		if(node->tag->name.lower() == name.lower())
+			return node;
+		node = node->parent;
+	}
+
+	return 0L;
+}
+
 bool kafkaCommon::insertDomNode(DOM::Node node, DOM::Node parent, DOM::Node nextSibling,
 	DOM::Node rootNode)
 {
@@ -2722,8 +2754,8 @@ void kafkaCommon::coutTree(Node *node, int indent)
 			output += node->tag->name.replace('\n',"<return>");
 		else
 			output+= node->tag->tagStr().replace('\n',"<return>");
-		kdDebug(25001) << output <<" (" << node->tag->type << ") "<<
-			node << " at pos " << bLine << ":" << bCol << " - " <<
+		kdDebug(25001) << output <<" (" << node->tag->type << ", " << node->tag->cleanStrBuilt
+			<< ") "<< node << " at pos " << bLine << ":" << bCol << " - " <<
 			eLine << ":" << eCol << endl;
 		kdDebug(25001)<< dots << "  +++ prev " << node->prev << " next " << node->next << " parent " <<
 			node->parent << " child " << node->child << endl;

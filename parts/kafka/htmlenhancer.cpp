@@ -3,7 +3,7 @@
                              -------------------
 
     copyright            : (C) 2003, 2004 - Nicolas Deschildre
-    email                : nicolasdchd@ifrance.com
+    email                : ndeschildre@kdewebdev.org
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,15 +22,17 @@
 #include <kstandarddirs.h>
 #include <kconfig.h>
 
-#include "../../resource.h"
-#include "../../quanta.h"
-#include "../../quantaview.h"
-#include "../../document.h"
-#include "../../parser/tag.h"
-#include "../../parser/node.h"
+#include "resource.h"
+#include "quanta.h"
+#include "quantacommon.h"
+#include "quantaview.h"
+#include "document.h"
+#include "tag.h"
+#include "node.h"
 #include "wkafkapart.h"
 #include "nodeproperties.h"
 #include "kafkacommon.h"
+#include "qextfileinfo.h"
 
 #include "htmlenhancer.h"
 
