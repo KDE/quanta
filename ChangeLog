@@ -18,6 +18,9 @@ Version 3.3.1 (Release date: xx-10-2004; Started 20-08-2004):
         - always find the right action to edit, even if there are more actions with the same
            user visible name
 	
+   - enhancements:
+        - support loading of more than one toolbar at a time
+
 
 Version 3.3.0 (Release date: 18-08-2004; Started 07-05-2004):
 NOTE: Unfortunately I failed to update the changelog regulary, thus some new features and

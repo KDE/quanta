@@ -2307,12 +2307,11 @@ void QuantaApp::showToolbarFile(const KURL &url)
 /** Load an user toolbar from the disk. */
 void QuantaApp::slotLoadToolbar()
 {
- KURL url;
-
- url = KFileDialog::getOpenURL(locateLocal("data",resourceDir + "toolbars/"), "*"+toolbarExtension, this);
- if (! url.isEmpty())
+ KURL::List urls = KFileDialog::getOpenURLs(locateLocal("data",resourceDir + "toolbars/"), "*"+toolbarExtension, this);
+ if (!urls.isEmpty())
  {
-   slotLoadToolbarFile(url);
+   for (KURL::List::ConstIterator it = urls.constBegin(); it != urls.constEnd(); ++it)
+      slotLoadToolbarFile(*it);
  }
 }
 
