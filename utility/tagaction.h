@@ -19,7 +19,6 @@
 #define TAGACTION_H
 
 #include <kdeversion.h>
-
 #include <kaction.h>
 #include <kactioncollection.h>
 
@@ -27,7 +26,6 @@
 #include <qdom.h>
 
 class KMainWindow;
-enum KAction::ActivationReason;
 class QuantaView;
 class KProcess;
 class QDomElement;
