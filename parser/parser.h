@@ -61,7 +61,7 @@ public:
 	Node *parse(Document *w);
 
   /** Parses the found special (like script, css and such) areas.*/
-  void specialAreaParser(Node *startNode);
+  Node* specialAreaParser(Node *startNode);
 
   /** Returns the node for position (line, column). As more than one node can
   contain the same area, it return the "deepest" node. */
