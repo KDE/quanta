@@ -43,11 +43,14 @@
 #include "nodeproperties.h"
 #include "htmlenhancer.h"
 #include "kafkacommon.h"
-//#include "kafkaresource.h"
+#include "kafkaresource.h"
 
 #include "wkafkapart.moc"
 
 #define EDITOR_MAX_COL 50
+
+KafkaWidget *kafkaWidget;
+KafkaDocument *kafkaDoc;
 
 KafkaDocument::KafkaDocument(QWidget *parent, QWidget *widgetParent, const char *name)
 :domNodeProps(1021)
@@ -74,10 +77,10 @@ QString ab = i18n("Ident all");
 	kdDebug(25001)<< "KafkaDocument::KafkaDocument()" << endl;
 #endif
 
-//	kafkaDoc = this;
+	kafkaDoc = this;
 
 	m_kafkaPart = new KafkaWidget(parent, widgetParent,this, name);
-//	kafkaWidget = m_kafkaPart;
+	kafkaWidget = m_kafkaPart;
 	//m_kafkaPart->showDomTree();
 	_docLoaded = false;
 	m_currentDoc = 0L;
@@ -195,6 +198,9 @@ void KafkaDocument::loadDocument(Document *doc)
 
 	m_currentDoc->docUndoRedo->kafkaLoaded();
 	emit loaded();
+#ifdef HEAVY_DEBUG
+	coutLinkTree(baseNode, 2);
+#endif
 }
 
 void KafkaDocument::unloadDocument()
@@ -274,13 +280,15 @@ void KafkaDocument::connectDomNodeToQuantaNode(DOM::Node _domNode, Node *_node)
 
 	if(_domNode.isNull())
 	{
-		kdDebug(25001)<< "KafkaDocument::connectDomNodeToQuantaNode() *ERROR*" << endl;
-				return;
+		kdDebug(25001)<< "KafkaDocument::connectDomNodeToQuantaNode()" <<
+			" - WARNING empty DOM::Node" << endl;
 	}
 	/**qtag = QuantaCommon::tagFromDTD(m_currentDoc->defaultDTD(),
 		_domNode.nodeName().string());*/
+	else
+		name = _domNode.nodeName().string().lower();
+
 	props = new kNodeAttrs();
-	name = _domNode.nodeName().string().lower();
 
 	if(_domNode.nodeType() == DOM::Node::TEXT_NODE)
 	{
@@ -453,7 +461,12 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 		}
 
 		if(newNode.isNull())
+		{
+#ifdef LIGHT_DEBUG
+			kdDebug(25001)<< "KafkaDocument::buildKafkaNodeFromNode() - ERROR null newNode" << endl;
+#endif
 			return true;
+		}
 
 		connectDomNodeToQuantaNode(newNode, node);
 		if(node->tag->type == Tag::Text)
@@ -1205,6 +1218,47 @@ void KafkaDocument::readConfig(KConfig *m_config)
 DTDStruct* KafkaDocument::defaultDTD()
 {
 	return m_currentDoc->defaultDTD();
+}
+
+#ifdef HEAVY_DEBUG
+void KafkaDocument::coutLinkTree(Node *node, int indent)
+#else
+void KafkaDocument::coutLinkTree(Node *, int)
+#endif
+{
+#ifdef HEAVY_DEBUG
+	QString output, dots;
+	DOM::Node domNode;
+	Node *n = 0L;
+	if(!node)
+		kdDebug(25001)<< "kafkaDocument::coutTree() - bad node!" << endl;
+	while (node)
+	{
+		dots = "";
+		dots.fill('.', indent);
+		output = dots;
+		if (node->tag->type != Tag::Text)
+			output += node->tag->name.replace('\n'," ");
+		else
+			output+= node->tag->tagStr().replace('\n'," ");
+		output += " (";
+		output += node->tag->type;
+		output += ") ";
+		domNode = node->_rootNode;
+		n = 0L;
+		if(!domNode.isNull())
+		{
+			n = getNode(domNode);
+		}
+
+		kdDebug(25001) << output <<" (" << node << ") " << domNode.handle() << " - " << n <<endl;
+
+		if (node->child)
+			coutLinkTree(node->child, indent + 4);
+
+		node = node->next;
+	}
+#endif
 }
 
 void KafkaDocument::slotDomNodeInserted(DOM::Node _domNode, bool insertChilds)

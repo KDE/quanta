@@ -78,9 +78,12 @@ Document::Document(const KURL& p_baseURL, KTextEditor::Document *doc,
 
   kate_doc = dynamic_cast<Kate::Document*>(m_doc);
   kate_view = dynamic_cast<Kate::View*>(m_view);
-  kate_view->installEventFilter(this);
 
   editIf = dynamic_cast<KTextEditor::EditInterface *>(m_doc);
+  #ifdef BUILD_KAFKAPART
+  editIfExt = dynamic_cast<KTextEditor::EditInterfaceExt *>(m_doc);
+  cursorIf = dynamic_cast<KTextEditor::CursorInterface *>(m_doc);
+  #endif
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(m_doc);
   configIf = dynamic_cast<KTextEditor::ConfigInterface*>(m_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(m_view);
@@ -1870,6 +1873,10 @@ void Document::slotDelayedTextChanged()
             {
               reparseEnabled = false;
               node->tag->namePos(bl, bc);
+#ifdef BUILD_KAFKAPART
+              if(editIfExt)
+                editIfExt->editBegin();
+#endif
               editIf->removeText(bl, bc, bl, bc + node->tag->name.length());
               if (updateClosing)
               {
@@ -1882,6 +1889,10 @@ void Document::slotDelayedTextChanged()
                   column += (newName.length() - currentNode->tag->name.length());
                 }
               }
+#ifdef BUILD_KAFKAPART
+              if(editIfExt)
+                editIfExt->editEnd();
+#endif
               viewCursorIf->setCursorPositionReal(bl, bc);
 #ifdef BUILD_KAFKAPART
               docUndoRedo->mergeNextModifsSet();
@@ -1980,18 +1991,6 @@ void Document::paste()
   baseNode = parser->rebuild(this);
 }
 
-bool Document::eventFilter(QObject *object, QEvent *event)
-{
-	Q_UNUSED(object);
-  if(event->type() == QEvent::Paint && !repaintEnabled)
-    return true;
-  else if(event->type() == QEvent::FocusIn )
-    kdDebug(24000)<< "focusin" << endl;
-  else if(event->type() == QEvent::FocusOut)
-    kdDebug(24000)<< "focusout" << endl;
-  return false;
-}
-
 /** returns all the areas that are between tag and it's closing pair */
 QStringList Document::tagAreas(const QString& tag, bool includeCoordinates, bool skipFoundContent)
 {
@@ -2031,6 +2030,12 @@ QStringList Document::tagAreas(const QString& tag, bool includeCoordinates, bool
   }
 
   return result;
+}
+
+void Document::activateRepaintView(bool activation)
+{
+  repaintEnabled = activation;
+  m_view->setUpdatesEnabled(activation);
 }
 
 void Document::setErrorMark(int line)
@@ -2221,6 +2226,10 @@ void Document::convertCase()
       {
         if (tagCase !=0)
         {
+#ifdef BUILD_KAFKAPART
+          if(editIfExt)
+            editIfExt->editBegin();
+#endif
           node->tag->namePos(bl, bc);
           ec = bc + node->tag->name.length();
           editIf->removeText(bl, bc, bl, ec);
@@ -2231,12 +2240,20 @@ void Document::convertCase()
           else if (tagCase == 2)
             newName = newName.upper();
           editIf->insertText(bl, bc, newName);
+#ifdef BUILD_KAFKAPART
+          if(editIfExt)
+            editIfExt->editEnd();
+#endif
         }
         if (attrCase != 0)
         {
           QString newName;
           for (int i = 0; i < node->tag->attrCount(); i++)
           {
+#ifdef BUILD_KAFKAPART
+          if(editIfExt)
+            editIfExt->editBegin();
+#endif
             node->tag->attributeNamePos(i, bl, bc);
             newName = node->tag->attribute(i);
             ec = bc + newName.length();
@@ -2246,6 +2263,10 @@ void Document::convertCase()
             else if (attrCase == 2)
               newName = newName.upper();
             editIf->insertText(bl, bc, newName);
+#ifdef BUILD_KAFKAPART
+          if(editIfExt)
+            editIfExt->editEnd();
+#endif
           }
         }
       }

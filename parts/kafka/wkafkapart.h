@@ -259,6 +259,13 @@ public:
 	Document *getCurrentDoc() {return m_currentDoc;}
 
 	/**
+	 * Prints in stdout the current Node tree + Node->DOM::Node->Node relationship.
+	 * @node The startNode
+	 * @indent The number of little dots per parent relationship.
+	 */
+	void coutLinkTree(Node *node, int indent);
+
+	/**
 	 * In order to have khtml works whatever DTD is loaded, they must always exists
 	 * and be valid.
 	 */

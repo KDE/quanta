@@ -35,7 +35,7 @@ KafkaSyncOptions::KafkaSyncOptions( KConfig *config, QWidget* parent,  const cha
 
 	config->setGroup("Kafka Synchronization options");
 	QString sourceRefresh = config->readEntry("Source refresh", "delay");
-	int sourceRefreshDelay = config->readNumEntry("Source refresh delay", 4000);
+	int sourceRefreshDelay = config->readNumEntry("Source refresh delay", 500);
 	QString kafkaRefresh = config->readEntry("Kafka refresh", "focus");
 	int kafkaRefreshDelay = config->readNumEntry("Kafka refresh delay", 4000);
 

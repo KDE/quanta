@@ -1471,11 +1471,7 @@ void QuantaApp::reparse(bool force)
 
     if ( stabdock->isVisible() && (w->hasChanged() || force))
     {
-      sTab->setParsingDTD(w->parsingDTD());
-      int expandLevel = qConfig.expandLevel;
-      if (expandLevel == 0)
-          expandLevel = 40;
-          sTab->slotReparse(w, baseNode , expandLevel );
+      slotReloadStructTreeView();
     }
 
     if (force)
@@ -3877,6 +3873,19 @@ void QuantaApp::slotConvertCase()
   if (m_view->writeExists())
   {
     m_view->write()->convertCase();
+  }
+}
+
+void QuantaApp::slotReloadStructTreeView()
+{
+  if (m_view->writeExists())
+  {
+    Document *w = m_view->write();
+    sTab->setParsingDTD(w->parsingDTD());
+    int expandLevel = qConfig.expandLevel;
+    if (expandLevel == 0)
+        expandLevel = 40;
+    sTab->slotReparse(w, baseNode , expandLevel );
   }
 }
 

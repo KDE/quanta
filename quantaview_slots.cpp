@@ -461,10 +461,18 @@ void QuantaView::slotTagEditTable()
   {
     QString tableString = editor.readModifiedTable();
     w->activateParser(false);
+//#ifdef BUILD_KAFKAPART
+//          if(w->editIfExt)
+//            w->editIfExt->editBegin();
+//#endif
     if (eLine != bLine || (eLine == bLine && eCol != bCol))
       w->editIf->removeText(bLine, bCol, eLine, eCol + 1);
     w->viewCursorIf->setCursorPositionReal((uint)bLine, (uint)bCol);
     w->insertText(tableString, false);
+//#ifdef BUILD_KAFKAPART
+//          if(w->editIfExt)
+//            w->editIfExt->editEnd();
+//#endif
     w->viewCursorIf->setCursorPositionReal(line, col);
     quantaApp->reparse(true);
   }

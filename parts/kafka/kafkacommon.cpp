@@ -1394,7 +1394,6 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool d
 	if(!node->child)
 		deleteChildren = true;
 	node = extractNode(node, modifs, deleteChildren);
-	delete node;
 
 	//delete the closing Tag
 	if(!isSingle && deleteClosingTag && nodeNext)
@@ -1412,7 +1411,6 @@ void kafkaCommon::extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool d
 				namespaceName2 = curNode->tag->nameSpace;
 				caseSensitive2 = curNode->tag->dtd->caseSensitive;
 				curNode = extractNode(curNode, modifs, deleteChildren);
-				delete curNode;
 				curNode = nodeNext2;
 				if(QuantaCommon::closesTag(namespaceName, nodeName, caseSensitive,
 					namespaceName2, closingNodeName, caseSensitive2))

@@ -39,6 +39,7 @@ class QDropEvent;
 class QPopupMenu;
 class ToolbarTabWidget;
 class KafkaDocument;
+class KURL;
 namespace DOM
 {
   class Node;
@@ -46,6 +47,10 @@ namespace DOM
 namespace Kate
 {
   class View;
+}
+namespace KTextEditor
+{
+  class Mark;
 }
 class QSplitter;
 class Node;
@@ -110,6 +115,13 @@ public:
   void reloadKafkaView(bool force = false);
   /** reload the Quanta view from the Node Tree. Set force to true if you want to reload even if not necessary. */
   void reloadQuantaView(bool force = false);
+
+  /**
+   * Specifies if a kafka reload is mandatory. It is mandatory e.g. when a reparse have been made, otherwise
+   * the DOM::Node->Node link will be wrong.
+   */
+  bool needKafkaReload() {return m_needKafkaReload;}
+  void setNeedKafkaReload(bool kafkaReload) {m_needKafkaReload = kafkaReload;}
 #endif
 
   /** Resize the current view */
@@ -268,6 +280,7 @@ private:
   int kafkaUpdateTimer;
   int curCol, curLine, curOffset;
   DOM::Node curNode;
+  bool m_needKafkaReload;
 #endif
   int currentViewsLayout;
 

@@ -46,6 +46,7 @@
 #include "nodeproperties.h"
 #include "../../resource.h"
 #include "../../quanta.h"
+#include "../../quantaview.h"
 #include "../../treeviews/tagattributetree.h"
 #include "kafkahtmlpart.moc"
 
@@ -367,14 +368,7 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 				keyReturn();
 				d->stuckCursorHorizontalPos = false;
 				break;
-			case Key_Enter:/**
-				tmpNode = createNode("IMG");
-				attr = document().createAttribute("src");
-				attr.setNodeValue("/home/guest/wallpapers/matrix08-1024.jpg");
-				tmpNode.attributes().setNamedItem(attr);
-				m_currentNode.parentNode().appendChild(tmpNode);
-				d->stuckCursorHorizontalPos = false;
-				emit domNodeInserted(tmpNode, false);*/
+			case Key_Enter:
 				break;
 			case Key_Insert:
 				break;
@@ -419,13 +413,13 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
 				{
 					kdDebug(25001) << "KafkaWidget::eventFilter() Text - " <<
 						keyevent->text() << endl;
-					if(/**keyevent->key() >= Key_Space &&*/ /**keyevent->key() !=
-						Key_unknown && */keyevent->state() == Qt::NoButton)
+					if(( keyevent->state() & Qt::ShiftButton) || ( keyevent->state() == Qt::NoButton))
 						insertText(keyevent->text(), -1);
 					makeCursorVisible();
+#ifdef HEAVY_DEBUG
+				//w->coutLinkTree(baseNode, 2);
+#endif
 				}
-				//kdDebug(25001)<< "NAME : " << m_currentNode.nodeName().string().lower() << endl;
-				//if(keyevent->key() == Qt::Key_Space)
 				forgetEvent = true;
 				d->stuckCursorHorizontalPos = false;
 				break;
@@ -1005,6 +999,13 @@ void KafkaWidget::postprocessCursorPosition()
 	DOM::Node _prevNextNode;
 	DOM::Node _nextNode = m_currentNode;
 	bool b = false;
+
+	if(!attrs)
+	{
+		kdDebug(25001)<< "KafkaWidget::postprocessCursorPosition() - WARNING no Attrs!! " << endl;
+		return;
+	}
+
 	if(attrs->chCurFoc() == kNodeAttrs::textNode &&
 		d->m_cursorOffset == 0)
 	{
@@ -1197,6 +1198,7 @@ void KafkaWidget::slotNewCursorPos(const DOM::Node &domNode, long offset)
 	m_currentNode = domNode;
 	d->m_cursorOffset = (int)offset;
 	kdDebug(25001)<<"KafkaWidget::slotNewCursorPos() offset : " << d->m_cursorOffset << endl;
-	if(quantaApp->aTab)
+	if(quantaApp->aTab && quantaApp->view() &&
+		quantaApp->view()->hadLastFocus() == QuantaView::kafkaFocus)
 		quantaApp->aTab->setCurrentNode(w->getNode(domNode));
 }

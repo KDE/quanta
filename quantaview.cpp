@@ -43,6 +43,7 @@
 #ifdef BUILD_KAFKAPART
 #include <kconfig.h>
 #include "parts/kafka/wkafkapart.h"
+#include "parts/kafka/kafkacommon.h"
 #include <dom/dom_node.h>
 #include <dom/dom_string.h>
 #include <kate/view.h>
@@ -112,6 +113,7 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
     this, SLOT(slotKafkaGetFocus(bool)));
   connect(kafkaInterface, SIGNAL(newCursorPosition(int,int)), this, SLOT(slotSetQuantaCursorPosition(int, int)));
   curCol = curLine = curOffset = 0;
+  m_needKafkaReload = true;
 #endif
 
   setAcceptDrops(TRUE); // [MB02] Accept drops on the view
@@ -648,7 +650,6 @@ void QuantaView::slotShowKafkaAndQuanta()
     splitter->setCollapsible(kafkaInterface->getKafkaWidget()->view(), false);
 #endif
     splitter->show();
-    /**quantaUpdateTimer = startTimer(4000);*/
     killTimer(quantaUpdateTimer);
     killTimer(kafkaUpdateTimer);
     if(currentFocus == QuantaView::quantaFocus && !qConfig.kafkaRefreshOnFocus)
@@ -713,7 +714,10 @@ void QuantaView::slotKafkaGetFocus(bool focus)
         quantaUpdateTimer = startTimer(qConfig.quantaRefreshDelay);
       contentsX = kafkaInterface->getKafkaWidget()->view()->contentsX();
       contentsY = kafkaInterface->getKafkaWidget()->view()->contentsY();
-      write()->docUndoRedo->reloadKafkaEditor();
+
+      //Reload the kafka Editor only if Quanta was modified or if something has happened (e.g. a reparse)
+      //and NEED a kafka reload.
+      write()->docUndoRedo->reloadKafkaEditor(needKafkaReload());
       //doesn't work!
       kafkaInterface->getKafkaWidget()->view()->setContentsPos(contentsX, contentsY);
     }
@@ -796,6 +800,13 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
     write()->docUndoRedo->reloadQuantaEditor();
   }
 
+  currentFocus = QuantaView::quantaFocus;
+
+  //FIXME: the tree (and the output)is right, the pos aren't.
+  //quantaApp->slotForceReparse();
+  if(writeExists())
+    baseNode = parser->parse(write());
+
     //We enable some actions which doesn't work on kafka for the moment
     action = quantaApp->actionCollection()->action("tag_edit_table");
     if(action)
@@ -851,8 +862,6 @@ void QuantaView::slotQuantaGetFocus(Kate::View *)
     if(action)
       action->setEnabled(true);
 
-
-  currentFocus = QuantaView::quantaFocus;
 #endif
 }
 
@@ -914,7 +923,7 @@ void QuantaView::readConfig(KConfig *m_config)
   kdDebug(24000)<< "QuantaView::readConfig()" << endl;
   m_config->setGroup("Kafka Synchronization options");
   qConfig.quantaRefreshOnFocus = (m_config->readEntry("Source refresh", "delay") == "focus");
-  qConfig.quantaRefreshDelay = m_config->readNumEntry("Source refresh delay", 4000);
+  qConfig.quantaRefreshDelay = m_config->readNumEntry("Source refresh delay", 500);
   qConfig.kafkaRefreshOnFocus = (m_config->readEntry("Kafka refresh", "focus") == "focus");
   qConfig.kafkaRefreshDelay = m_config->readNumEntry("Kafka refresh delay", 4000);
   /**reloadUpdateTimers();*/

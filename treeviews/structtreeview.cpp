@@ -37,6 +37,7 @@
 #include "../resource.h"
 #include "../qextfileinfo.h"
 #include "../quanta.h"
+#include "../quantaview.h"
 
 #include "structtreetag.h"
 #include "structtreeview.h"

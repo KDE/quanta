@@ -33,6 +33,7 @@
 #include "node.h"
 #include "tag.h"
 #include "../resource.h"
+#include "../quantaview.h"
 #include "../quantacommon.h"
 #include "../document.h"
 #include "../quanta.h"
@@ -736,6 +737,10 @@ Node *Parser::parse(Document *w)
  coutTree(m_node, 2);
  kdDebug(24000) << "Size of tree: " << treeSize << endl;
  */
+
+ //We need to reload Kafka to refresh the DOM::Node->Node links.
+ quantaApp->view()->setNeedKafkaReload(true);
+
  return m_node;
 }
 

@@ -30,6 +30,8 @@
 #include <ktexteditor/view.h>
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/editinterface.h>
+#include <ktexteditor/editinterfaceext.h>
+#include <ktexteditor/cursorinterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/codecompletioninterface.h>
 #include <ktexteditor/markinterface.h>
@@ -164,7 +166,7 @@ work correctly. */
   QStringList tagAreas(const QString &tag, bool includeCoordinates, bool skipFoundContent);
 
   /** disable/enable the repaint of the Kate view */
-  void activateRepaintView(bool activation) {repaintEnabled = activation;}
+  void activateRepaintView(bool activation);
   bool RepaintViewActivated() {return repaintEnabled;}
 
   void setErrorMark(int line);
@@ -177,6 +179,8 @@ work correctly. */
   KTextEditor::ViewCursorInterface *viewCursorIf;
   KTextEditor::SelectionInterface *selectionIf;
   KTextEditor::EditInterface *editIf;
+  KTextEditor::EditInterfaceExt *editIfExt;
+  KTextEditor::CursorInterface *cursorIf;
   KTextEditor::CodeCompletionInterface *codeCompletionIf;
   KTextEditor::ConfigInterface* configIf;
   KTextEditor::MarkInterface* markIf;
@@ -205,10 +209,6 @@ work correctly. */
   void removeBackup(KConfig *config);
   /* create a string using document path string */
  static QString hashedFilePath(const QString& p);
-
-
-protected:
-  bool eventFilter(QObject *object, QEvent *event);
 
 public slots:
 

@@ -34,6 +34,7 @@
 #include "../../resource.h"
 #include "wkafkapart.h"
 #include "kafkacommon.h"
+#include "kafkaresource.h"
 
 #include "undoredo.h"
 
@@ -1209,6 +1210,9 @@ void undoRedo::reloadQuantaEditor(bool force)
 		return;
 	}
 
+	if(m_doc->editIfExt)
+		m_doc->editIfExt->editBegin();
+
 	sourceIterator = documentIterator;
 
 	updateClosing = qConfig.updateClosingTags;
@@ -1255,11 +1259,15 @@ void undoRedo::reloadQuantaEditor(bool force)
 		m_doc->editIf->lineLength(m_doc->editIf->numLines() - 1));
 	m_doc->editIf->insertText(0, 0, allText);
 	//m_doc->editIf->setText(allText);
+
+	if(m_doc->editIfExt)
+		m_doc->editIfExt->editEnd();
+
+	syncQuantaCursorAndSelection();
+
 	qConfig.updateClosingTags = updateClosing;
 	m_doc->activateRepaintView(true);
 	m_doc->activateParser(true);
-
-	syncQuantaCursorAndSelection();
 }
 
 bool undoRedo::RedoNodeModifInKafka(NodeModif &_nodeModif)
@@ -1587,8 +1595,9 @@ void undoRedo::syncQuantaCursorAndSelection()
 	KafkaWidget *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaWidget();
 	int curCol, curLine, curCol2, curLine2;
 	uint oldCurCol, oldCurLine;
-	DOM::Node domNode;
+	DOM::Node domNode, domNodeEnd;
 	int offset;
+	long offsetBegin, offsetEnd;
 	DOM::Range range(kafkaPart);
 
 	//Translate and set the cursor.
@@ -1600,11 +1609,11 @@ void undoRedo::syncQuantaCursorAndSelection()
  		quantaApp->view()->write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
 
 	//Translate and set the selection
-	range = kafkaPart->selection();
+	kafkaPart->selection(domNode, offsetBegin, domNodeEnd, offsetEnd);
 	quantaApp->view()->getKafkaInterface()->translateKafkaIntoQuantaCursorPosition(
-		range.startContainer(), (int)range.startOffset(), curLine, curCol);
+		domNode, (int)offsetBegin, curLine, curCol);
 	quantaApp->view()->getKafkaInterface()->translateKafkaIntoQuantaCursorPosition(
-		range.endContainer(), (int)range.endOffset(), curLine2, curCol2);
+		domNodeEnd, (int)offsetEnd, curLine2, curCol2);
 	quantaApp->view()->write()->selectionIf->setSelection(curLine, curCol, curLine2, curCol2);
 }
 

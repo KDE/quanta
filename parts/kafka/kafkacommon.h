@@ -324,6 +324,7 @@ public:
 
 	/**
 	 * Extract a Node from the Node Tree. WARNING this will log that the Node was removed.
+	 * This mean that the undo/redo system will delete it when necessary so don't reuse it!!!!
 	 * @param node The node to delete.
 	 * @param modifs The changes made are logged into modifs.
 	 * @param deleteChilds If we remove or move up the children. WARNING: it don't check
@@ -333,8 +334,9 @@ public:
 	static Node* extractNode(Node *node, NodeModifsSet &modifs, bool removeChildren = true);
 
 	/**
-	 * Extract and delete Node from the Tree.
-	 * It behaves essentially the above function except that it also delete node.
+	 * It behaves essentially the above function.
+	 * Extract and BUT NOT DELETE RIGHT NOW node from the Tree. The undo/redo system will delete it
+	 * when necessary.
 	 * @param deleteClosingTag Delete the closingTag if node isn't single.
 	 */
 	static void extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool deleteChildren = true,
@@ -544,6 +546,8 @@ public:
 
 	/**
 	 * Prints in stdout the current Node tree.
+	 * @node The startNode
+	 * @indent The number of little dots per parent relationship.
 	 */
 	static void coutTree(Node *node, int indent);
 

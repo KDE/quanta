@@ -765,14 +765,6 @@ void QuantaApp::readOptions()
 
 #ifdef BUILD_KAFKAPART
   quantaApp->view()->readConfig(m_config);
-  /**m_config->setGroup("Kafka Synchronization options");
-  qConfig.quantaRefreshOnFocus = (m_config->readEntry("Source refresh", "delay") == "focus");
-  qConfig.quantaRefreshDelay = m_config->readNumEntry("Source refresh delay", 4000);
-  qConfig.kafkaRefreshOnFocus = (m_config->readEntry("Kafka refresh", "focus") == "focus");
-  qConfig.kafkaRefreshDelay = m_config->readNumEntry("Kafka refresh delay", 4000);
-  view()->reloadUpdateTimers();*/
-  /**(static_cast<HTMLEnhancer *>(quantaApp->view()->getKafkaInterface()->mainEnhancer))->
-    showIconsForScripts(m_config->readBoolEntry("Show Scripts Icons", true));*/
 #endif
 
   m_previewVisible = false;
