@@ -385,7 +385,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
       quantaApp->slotShowMessagesView();
       m_appMessages->showMessage( i18n( "The \"%1\" script output:\n" ).arg( actionText() ) );
     }
-    m_appMessages->showMessage( text );
+    m_appMessages->showMessage( text, true );
   } else
   if ( scriptOutputDest == "file" )
   {
@@ -444,7 +444,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
       quantaApp->slotShowMessagesView();
       m_appMessages->showMessage( i18n( "The \"%1\" script output:\n" ).arg(actionText()) );
     }
-    m_appMessages->showMessage( text );
+    m_appMessages->showMessage( text, true );
   }
 
   firstError = false;
@@ -484,7 +484,7 @@ void TagAction::slotProcessExited(KProcess *)
     qApp->exit_loop();
     loopStarted = false;
   }
-  m_appMessages->showMessage( i18n("The \"%1\" script has exited.").arg(actionText()), false );
+  m_appMessages->showMessage( i18n("The \"%1\" script has exited.").arg(actionText()) );
 }
 
 void TagAction::execute()

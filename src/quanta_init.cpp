@@ -427,7 +427,7 @@ void QuantaInit::initView()
 
   m_quanta->m_messageOutput = new MessageOutput(m_quanta, "Messages");
   m_quanta->m_messageOutput->setFocusPolicy(QWidget::NoFocus);
-  m_quanta->m_messageOutput->showMessage(i18n("Message Window...\n"));
+  m_quanta->m_messageOutput->showMessage(i18n("Message Window..."));
 
   m_quanta->m_problemOutput = new MessageOutput(m_quanta, "Problems");
   m_quanta->m_problemOutput->setFocusPolicy(QWidget::NoFocus);

@@ -39,8 +39,9 @@ public:
 public slots:
   /**  */
   void insertItem(const QString& s );
-  /** insert message for each line of s */
-  void showMessage(const QString& s, bool append = true);
+  // Insert message for each line of string (EOL-separated).
+  void showMessage(const QString& s, bool append = false);
+  // Append string to the last item
   void addToLastItem(const QString& s );
   // Copy message content to clipboard
   void copyContent();
