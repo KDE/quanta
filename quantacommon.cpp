@@ -61,7 +61,7 @@ QuantaCommon::~QuantaCommon(){
 }
 
 /** convert tag to upper or lower case */
-QString QuantaCommon::tagCase( const QString tag)
+QString QuantaCommon::tagCase( const QString& tag)
 {
   QString sTag = tag;
 
@@ -75,7 +75,7 @@ QString QuantaCommon::tagCase( const QString tag)
 }
 
 /** convert attr of tag to upper or lower case */
-QString QuantaCommon::attrCase( const QString attr)
+QString QuantaCommon::attrCase( const QString& attr)
 {
   QString sAttr = attr;
 
@@ -89,12 +89,13 @@ QString QuantaCommon::attrCase( const QString attr)
 }
 
 /** Set's up the url correctly from urlString. */
-void QuantaCommon::setUrl(KURL &url, QString urlString)
+void QuantaCommon::setUrl(KURL &url, const QString& urlString)
 {
  if (urlString.find(":") == -1)
  {
    url.setPath(urlString);
-   if (url.protocol().isEmpty()) url.setProtocol("file");
+   if (url.protocol().isEmpty())
+       url.setProtocol("file");
  }
  else
  {
@@ -102,7 +103,7 @@ void QuantaCommon::setUrl(KURL &url, QString urlString)
  }
 }
 /** No descriptions */
-bool QuantaCommon::isSingleTag(QString dtdName, QString tag)
+bool QuantaCommon::isSingleTag(const QString& dtdName, const QString& tag)
 {
   bool single = false;
 
@@ -119,7 +120,7 @@ bool QuantaCommon::isSingleTag(QString dtdName, QString tag)
 }
 
 /** No descriptions */
-bool QuantaCommon::isOptionalTag(QString dtdName, QString tag)
+bool QuantaCommon::isOptionalTag(const QString& dtdName, const QString& tag)
 {
   bool optional = false;
 
@@ -135,7 +136,7 @@ bool QuantaCommon::isOptionalTag(QString dtdName, QString tag)
   return optional;
 }
 /** No descriptions */
-bool QuantaCommon::isKnownTag(QString dtdName, QString tag)
+bool QuantaCommon::isKnownTag(const QString& dtdName, const QString& tag)
 {
   bool known = false;
 
@@ -150,7 +151,7 @@ bool QuantaCommon::isKnownTag(QString dtdName, QString tag)
   return known;
 }
 
-AttributeList*  QuantaCommon::tagAttributes(QString dtdName, QString tag)
+AttributeList*  QuantaCommon::tagAttributes(const QString& dtdName, const QString& tag)
 {
   AttributeList* attrs = 0L;
 
@@ -166,13 +167,13 @@ AttributeList*  QuantaCommon::tagAttributes(QString dtdName, QString tag)
   return attrs;
 }
 /** Returns the QTag object for the tag "tag" from the DTD named "dtdname". */
-QTag* QuantaCommon::tagFromDTD(QString dtdName, QString tag)
+QTag* QuantaCommon::tagFromDTD(const QString& dtdName, const QString& tag)
 {
   DTDStruct* dtd = dtds->find(dtdName.lower());
   return tagFromDTD(dtd, tag);
 }
 /** Returns the QTag object for the tag "tag" from the DTD. */
-QTag* QuantaCommon::tagFromDTD(DTDStruct *dtd, QString tag)
+QTag* QuantaCommon::tagFromDTD(DTDStruct *dtd, const QString& tag)
 {
   QTag *qtag = 0;
   if (dtd)
@@ -226,48 +227,8 @@ QString QuantaCommon::xmlFromAttributes(AttributeList* attributes)
  return xmlStr;
 }
 
-/** Returns list of values for attribute */
-QStringList* QuantaCommon::tagAttributeValues(QString dtdName, QString tag, 
-QString attribute){
-  QStringList *values = 0L;
-  
-  DTDStruct* dtd = dtds->find(dtdName.lower());
-  if (dtd)
-  {
-    QString searchForAttr = (dtd->caseSensitive) ? attribute : 
-attribute.upper();    AttributeList* attrs = tagAttributes(dtdName, tag);
-    Attribute *attr;
-    if (attrs)
-    {
-      for ( attr = attrs->first(); attr; attr = attrs->next() )
-      {
-        QString attrName = (dtd->caseSensitive) ? attr->name : 
-attr->name.upper();        if (attrName == searchForAttr)
-        {
-          if (attr->type == "url") {
-            Project *project = quantaApp->getProject();
-            if (project->hasProject()) {
-              values = new 
-QStringList(project->fileNameList(true).toStringList());              
-values->append("mailto:" + project->email);            } else {
-              QDir dir = QDir(quantaApp->getDoc()->write()->url().directory());
-              values = new QStringList(dir.entryList());
-            }
-            break;
-          } else {
-            values = &attr->values;
-            break;
-          }
-        }
-      }
-    }
-  }   
-  return values;
-}
-
-
 /** Returns the DTD name (identifier) corresponding to the DTD's nickname */
-QString QuantaCommon::getDTDNameFromNickName(QString nickName)
+QString QuantaCommon::getDTDNameFromNickName(const QString& nickName)
 {
   QString name = nickName;
   QDictIterator<DTDStruct> it(*dtds);
@@ -284,7 +245,7 @@ QString QuantaCommon::getDTDNameFromNickName(QString nickName)
 }
 
 /** Returns the DTD iddentifier from the given nickname */
-QString QuantaCommon::getDTDNickNameFromName(QString name)
+QString QuantaCommon::getDTDNickNameFromName(const QString& name)
 {
   QString nickName = name;
   QDictIterator<DTDStruct> it(*dtds);
@@ -302,7 +263,7 @@ QString QuantaCommon::getDTDNickNameFromName(QString name)
 
   /** Returns 0 if the (line,col) is inside the area specified by the other 
 arguments,      -1 if it is before the area and 1 if it is after. */
-int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, 
+int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine,
 int eCol){
   int pos = 0;
   if (line < bLine || (line == bLine && (col < bCol) )) pos = -1; //it is before
@@ -408,7 +369,7 @@ void QuantaCommon::dirCreationError(QWidget *widget, const KURL& url)
 /**
 Adds the backslash before the special chars (like ?, *, . ) so the returned 
 string can be used in regular expressions.*/
-QString QuantaCommon::makeRxCompatible(const QString s)
+QString QuantaCommon::makeRxCompatible(const QString& s)
 {
   const uint max = 5; 
   const QRegExp rxs[max]={QRegExp("\\?"),

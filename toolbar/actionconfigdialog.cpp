@@ -62,7 +62,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   QListViewItem *item, *oldItem = allActionsItem;
   KAction *action;
   QString toolbarName;
-  QTabWidget *tb = quantaApp->getView()->toolbarTab;
+  QTabWidget *tb = quantaApp->view()->toolbarTab();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->label(i);
@@ -123,7 +123,7 @@ void ActionConfigDialog::slotAddToolbar()
   quantaApp->slotAddToolbar();
   QString toolbarName;
   QListViewItem *item;
-  QTabWidget *tb = quantaApp->getView()->toolbarTab;
+  QTabWidget *tb = quantaApp->view()->toolbarTab();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->label(i);
@@ -226,7 +226,7 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
       toolbarListBox->clear();
       int current = 0;
       int count = 0;
-      QTabWidget *tb = quantaApp->getView()->toolbarTab;
+      QTabWidget *tb = quantaApp->view()->toolbarTab();
       for (int i = 0; i < tb->count(); i++)
       {
         QString toolbarName = tb->label(i);
@@ -498,7 +498,7 @@ void ActionConfigDialog::saveCurrentAction()
         break;
       }
   }
-  QTabWidget *tb = quantaApp->getView()->toolbarTab;
+  QTabWidget *tb = quantaApp->view()->toolbarTab();
   for (int i = 0; i < tb->count(); i++)
   {
     QString toolbarName = tb->label(i);
@@ -722,7 +722,7 @@ void ActionConfigDialog::slotApply()
 
 void ActionConfigDialog::slotAddContainerToolbar()
 {
-  QTabWidget *tb = quantaApp->getView()->toolbarTab;
+  QTabWidget *tb = quantaApp->view()->toolbarTab();
   int i;
 
   QStringList lst;

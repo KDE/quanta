@@ -86,9 +86,9 @@ QuantaDoc::~QuantaDoc()
 KURL::List QuantaDoc::openedFiles(bool noUntitled)
 {
   KURL::List list;
-  if (quantaApp->getView()) //need to check otherwise it may crash on exit
+  if (quantaApp->view()) //need to check otherwise it may crash on exit
   {
-    QTabWidget *tab = quantaApp->getView()->writeTab;
+    QTabWidget *tab = quantaApp->view()->writeTab();
     for (int i = 0; i < tab->count(); i++) 
     {
       Document *w = dynamic_cast<Document *>(tab->page(i));
@@ -110,7 +110,7 @@ bool QuantaDoc::newDocument( const KURL& url )
   if (!isOpened(furl) || newfile)
   {
     // no modi and new -> we can remove                           !!!!
-    if (quantaApp->view->writeExists())
+    if (quantaApp->view()->writeExists())
     {
       w = write();
       if ( !w->isModified() &&
@@ -119,13 +119,13 @@ bool QuantaDoc::newDocument( const KURL& url )
 
     // now we can create new kwrite
     w = newWrite( );
-    w->readConfig(quantaApp->config);
+    w->readConfig(quantaApp->config());
 
     if ( newfile ) furl = w->url().url();
 
-    quantaApp ->view->addWrite( w, w->url().url() );
+    quantaApp->view()->addWrite( w, w->url().url() );
 
-    quantaApp->processDTD(quantaApp->getProject()->defaultDTD());
+    quantaApp->processDTD(quantaApp->project()->defaultDTD());
 
     w->kate_view->setIconBorder(qConfig.iconBar);
     w->kate_view->setLineNumbersOn(qConfig.lineNumbers);
@@ -141,23 +141,20 @@ bool QuantaDoc::newDocument( const KURL& url )
   {
     w = isOpened(furl);
     w->checkDirtyStatus();
-    quantaApp ->view->writeTab->showPage( w );
+    quantaApp->view()->writeTab()->showPage( w );
     return false; // don't need loadURL
   }
 
   return true;
 }
 
-void QuantaDoc::openDocument(const KURL& url, QString encoding)
+void QuantaDoc::openDocument(const KURL& url, const QString &a_encoding)
 {
-//  Document *ww = write();
-  //kdDebug() << k_funcinfo << "Encoding is: " << encoding << endl;
+  QString encoding = a_encoding;
   if ( !newDocument( url )) return;
   bool loaded = false;
   if ( !url.isEmpty() && QExtFileInfo::exists(url))
   {
-//    write()->busy = true;
-
     //see if we can watch this file
     if (url.isLocalFile() && QFileInfo(url.path()).exists())
     {
@@ -173,12 +170,12 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
       w->kate_doc->setEncoding(encoding);
     #endif
 
-    w->readConfig(quantaApp->config);
+    w->readConfig(quantaApp->config());
     if (w->doc()->openURL( url ))
     {
       w->setDirtyStatus(false);
 
-      quantaApp ->view->writeTab->showPage( w );
+      quantaApp->view()->writeTab()->showPage( w );
       changeFileTabName();
       quantaApp->fileRecent->addURL( w->url() );
 
@@ -205,12 +202,11 @@ void QuantaDoc::openDocument(const KURL& url, QString encoding)
       loaded = true;
     }
   }
- if (!loaded && !url.isEmpty()) //the open of the document has failed*/
- {
-   KMessageBox::error(quantaApp, i18n("Cannot open document \"%1\".").arg(url.prettyURL()));
-   closeDocument();
- }
- 
+  if (!loaded && !url.isEmpty()) //the open of the document has failed*/
+  {
+    KMessageBox::error(quantaApp, i18n("Cannot open document \"%1\".").arg(url.prettyURL()));
+    closeDocument();
+  }
 }
 
 void QuantaDoc::saveDocument(const KURL& url)
@@ -249,9 +245,9 @@ bool QuantaDoc::saveAll(bool dont_ask)
 {
   bool flagsave = true;
 
-  Document *currentDoc = static_cast<Document*>(quantaApp ->view->writeTab->currentPage());
+  Document *currentDoc = static_cast<Document*>(quantaApp->view()->writeTab()->currentPage());
 
-  QTabWidget *docTab =quantaApp->getView()->writeTab;
+  QTabWidget *docTab =quantaApp->view()->writeTab();
   Document *w;
   for (int i = docTab->count() -1; i >=0; i--) 
   {
@@ -275,7 +271,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
     }
   }
 
-  quantaApp->view->writeTab->showPage( currentDoc );
+  quantaApp->view()->writeTab()->showPage( currentDoc );
   return flagsave;
 }
 
@@ -283,14 +279,14 @@ void QuantaDoc::closeDocument()
 {
   if (saveModified())
   {
-    if (quantaApp->view->writeExists())
+    if (quantaApp->view()->writeExists())
     {
       Document *w = write();
       w->closeTempFile();
       if (!w->isUntitled())
         fileWatcher->removeFile(w->url().path());
     }
-    if ( !quantaApp->view->removeWrite()) openDocument( KURL() );
+    if ( !quantaApp->view()->removeWrite()) openDocument( KURL() );
   }
 }
 
@@ -299,7 +295,7 @@ void QuantaDoc::closeAll()
   Document *w;
   do
   {
-    if (quantaApp->view->writeExists())
+    if (quantaApp->view()->writeExists())
     {
       if (saveModified() )
       {
@@ -313,7 +309,7 @@ void QuantaDoc::closeAll()
       }
     }
   }
-  while ( quantaApp->view->removeWrite());
+  while ( quantaApp->view()->removeWrite());
 
   //all documents were removed, so open an empty one
   openDocument( KURL() );
@@ -322,7 +318,7 @@ void QuantaDoc::closeAll()
 void QuantaDoc::readConfig( KConfig *config )
 {
   config -> sync();
-  QTabWidget *docTab =quantaApp->getView()->writeTab;
+  QTabWidget *docTab =quantaApp->view()->writeTab();
   Document *w;
   for (int i = docTab->count() -1; i >=0; i--)
   {
@@ -337,7 +333,7 @@ void QuantaDoc::readConfig( KConfig *config )
 
 void QuantaDoc::writeConfig( KConfig *config )
 {
-  if (quantaApp->view->writeExists())
+  if (quantaApp->view()->writeExists())
   {
     config->setGroup("General Options");
     write()-> writeConfig( config );
@@ -349,7 +345,7 @@ void QuantaDoc::writeConfig( KConfig *config )
 bool QuantaDoc::saveModified()
 {
   bool completed=true;
-  QString fileName = quantaApp->getView()->writeTab->label(quantaApp->getView()->writeTab->currentPageIndex());
+  QString fileName = quantaApp->view()->writeTab()->label(quantaApp->view()->writeTab()->currentPageIndex());
 
   if( isModified() )
   {
@@ -391,7 +387,7 @@ bool QuantaDoc::saveModified()
 
 bool QuantaDoc::isModified()
 {
-  if (quantaApp->view->writeExists())
+  if (quantaApp->view()->writeExists())
   {
     return write()->isModified();
   } else
@@ -404,7 +400,7 @@ bool QuantaDoc::isModifiedAll()
 {
   bool modified = false;
 
-  QTabWidget *docTab =quantaApp->getView()->writeTab;
+  QTabWidget *docTab =quantaApp->view()->writeTab();
   Document *w;
   for (int i = docTab->count() -1; i >=0; i--)
   {
@@ -422,13 +418,13 @@ void QuantaDoc::setModified(bool flag)
 
 Document* QuantaDoc::write()
 {
-  return quantaApp->view->write();
+  return quantaApp->view()->write();
 }
 
 
 Document* QuantaDoc::newWrite()
 {
-  DTDStruct *dtd = dtds->find(quantaApp->project->defaultDTD());
+  DTDStruct *dtd = dtds->find(quantaApp->project()->defaultDTD());
 //  if (!dtd) dtd = dtds->find(qConfig.newFileType);   //fallback, but not really needed
   int i = 1;
   while ( isOpened("file:/"+i18n("Untitled%1.").arg(i)+dtd->defaultExtension)) i++;
@@ -438,20 +434,20 @@ Document* QuantaDoc::newWrite()
 #if KDE_VERSION > 308
   KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", this, "Kate::Document");
 /*                               KTextEditor::EditorChooser::createDocument(
-                                quantaApp->view->writeTab,
+                                quantaApp->view->writeTab(),
                                 "KTextEditor::Document"
                                 );*/
 #else
   KTextEditor::Document *doc = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>(
                                "KTextEditor/Document",
                                QString::null,
-                               quantaApp->view->writeTab, 0,
-                               quantaApp->view->writeTab, 0 );
+                               quantaApp->view->writeTab(), 0,
+                               quantaApp->view->writeTab(), 0 );
 #endif
   connect(doc, SIGNAL(completed()), SLOT(slotOpenCompleted()));
 
-  Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->getProject(),
-                             quantaApp->m_pluginInterface, quantaApp->view->writeTab);
+  Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->project(),
+                             quantaApp->m_pluginInterface, quantaApp->view()->writeTab());
 
   QString encoding = quantaApp->defaultEncoding();
 #if KDE_VERSION >= 308
@@ -463,19 +459,21 @@ Document* QuantaDoc::newWrite()
   KTextEditor::View * v = w->view();
 
   //[MB02] connect all kate views for drag and drop
-  connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)quantaApp->tTab, SLOT(slotDragInsert(QDropEvent *)));
+  connect((QObject *)w->view(), SIGNAL(dropEventPass(QDropEvent *)), (QObject *)quantaApp->gettTab(), SLOT(slotDragInsert(QDropEvent *)));
 
-  quantaApp->config->setGroup("Kate Document");
-  int tabWidth = quantaApp->config->readNumEntry("TabWidth",4);
-  quantaApp->config->writeEntry("TabWidth",tabWidth);
-  w->readConfig( quantaApp->config );
+  KConfig *config = quantaApp->config();
+  config->setGroup("Kate Document");
+  int tabWidth = config->readNumEntry("TabWidth",4);
+  config->writeEntry("TabWidth",tabWidth);
+  w->readConfig( config );
   w->setUntitledUrl( fname );
-
-  for (unsigned int i=0; i< dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->hlModeCount(); i++)
+  Project *project = quantaApp->project();
+  KTextEditor::HighlightingInterface *highlightinginterface = dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc());
+  for (unsigned int i=0; i< highlightinginterface->hlModeCount(); i++)
   {
-    if (quantaApp->project->defaultDTD().contains(dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->hlModeName(i).lower()))
+    if (project->defaultDTD().contains(highlightinginterface->hlModeName(i).lower()))
     {
-      dynamic_cast<KTextEditor::HighlightingInterface*>(w->doc())->setHlMode(i);
+      highlightinginterface->setHlMode(i);
       break;
     }
   }
@@ -558,9 +556,9 @@ void QuantaDoc::slotAttribPopup()
         attribMenu->setActiveItem( 0);
 
         QPoint globalPos = w->mapToGlobal(w->viewCursorIf->cursorCoordinates());
-        quantaApp->config->setGroup("Kate Document");
+        quantaApp->config()->setGroup("Kate Document");
         QFont font;
-        font.fromString(quantaApp->config->readEntry("Font"));
+        font.fromString(quantaApp->config()->readEntry("Font"));
         globalPos.setY(globalPos.y() + QFontMetrics(font).height());
         attribMenu->exec( globalPos );
       }
@@ -620,7 +618,7 @@ void QuantaDoc::slotInsertAttrib( int id )
 
 void QuantaDoc::prevDocument()
 {
-  QTabWidget *tab = quantaApp->view->writeTab;
+  QTabWidget *tab = quantaApp->view()->writeTab();
 
   int index = tab->currentPageIndex();
   if (index > 0) index--;
@@ -630,7 +628,7 @@ void QuantaDoc::prevDocument()
 
 void QuantaDoc::nextDocument()
 {
-  QTabWidget *tab = quantaApp->view->writeTab;
+  QTabWidget *tab = quantaApp->view()->writeTab();
 
   int index = tab->currentPageIndex();
   if (index + 1 < tab->count() ) index++;
@@ -638,19 +636,20 @@ void QuantaDoc::nextDocument()
   tab->showPage(tab->page(index));
 }
 
-void QuantaDoc::changeFileTabName(KURL newURL)
+void QuantaDoc::changeFileTabName(const KURL &newURL)
 {
   Document *w = write();
+  KURL url = newURL;
 
-  if (newURL.isEmpty())
+  if (url.isEmpty())
   {
-    newURL = w->url();
+    url = w->url();
   }
-
-  if ( quantaApp->view->writeTab->tabToolTip(w) != newURL.prettyURL() )
+  QTabWidget *tab = quantaApp->view()->writeTab();
+  if (tab->tabToolTip(w) != url.prettyURL() )
   {
-    quantaApp->view->writeTab->changeTab( w, QExtFileInfo::shortName(newURL.path()) );
-    quantaApp->view->writeTab->setTabToolTip( w, newURL.prettyURL() );
+    tab->changeTab( w, QExtFileInfo::shortName(url.path()));
+    tab->setTabToolTip( w, url.prettyURL() );
   }
 }
 
@@ -665,7 +664,7 @@ void QuantaDoc::slotFileDirty(const QString& fileName)
 {
   Document *w;
   
-  QTabWidget *tab = quantaApp->view->writeTab;
+  QTabWidget *tab = quantaApp->view()->writeTab();
   for( int i = 0; i < tab->count(); i++)
   {
     w = dynamic_cast<Document*>(tab->page(i));
@@ -685,7 +684,7 @@ void QuantaDoc::slotFileDirty(const QString& fileName)
 Document* QuantaDoc::isOpened(const KURL& url)
 {
   Document *w = 0L;
-  QTabWidget *tab = quantaApp->getView()->writeTab;
+  QTabWidget *tab = quantaApp->view()->writeTab();
   for (int i = 0; i < tab->count(); i++)
   {
     w = dynamic_cast<Document*>(tab->page(i));

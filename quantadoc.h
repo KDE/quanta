@@ -3,7 +3,7 @@
                              -------------------
     begin                : Втр Май  9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2001-2002 Andras Mantia <amantia@freemail.hu>
+                           (C) 2001-2003 Andras Mantia <amantia@freemail.hu>
     email                : pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com
  ***************************************************************************/
 
@@ -32,27 +32,21 @@
 #include <kurl.h>
 
 // forward declaration of the Quanta classes
-class QuantaApp;
-class QuantaView;
 class Document;
-
 class KConfig;
-class KDirWatch;
-             
+
 class QuantaDoc : public QObject
 {
   Q_OBJECT
 
-friend class QuantaApp;
-friend class QuantaView;
-
 public:
-    
-  QuantaDoc( QWidget *parent, const char *name=0);
+
+  QuantaDoc(QWidget *parent, const char *name=0);
   ~QuantaDoc();
 
-  void openDocument (const KURL&, QString encoding = QString::null);
-  void saveDocument (const KURL&);
+  bool newDocument(const KURL&);
+  void openDocument(const KURL&, const QString& a_encoding = QString::null);
+  void saveDocument(const KURL&);
   void closeDocument();
 
   void prevDocument();
@@ -61,32 +55,30 @@ public:
   bool isModified();
   bool isModifiedAll();
   void setModified(bool flag = true);
+  /** Check if url is opened or not. */
+  Document* isOpened(const KURL& url);
 
   /// "save modified" - asks the user
   /// for saving if the document is modified
-  bool saveModified();  
+  bool saveModified();
   bool saveAll(bool dont_ask=true);
 
+  // for kwrites
+  void readConfig(KConfig *);
+  void writeConfig(KConfig *);
+
+  KURL::List openedFiles(bool noUntitled=true);
+  void changeFileTabName(const KURL& newURL = KURL());
+
+private:
   Document *write();
   Document *newWrite();
-    
-  // for kwrites
-  void  readConfig( KConfig * );
-  void writeConfig( KConfig * );
-    
-  KURL::List openedFiles(bool noUntitled=true);
-  void changeFileTabName(KURL newURL = KURL() );
-    
-private:
-  bool newDocument (const KURL&);
-  /** Check if url is opened or not. */
-  Document* isOpened(const KURL& url);
-  
+
 public slots:
   /** close documents. */
   void closeAll();
   /** show popup menu with list of attributes for current tag */
-  void slotInsertAttrib      ( int id );
+  void slotInsertAttrib( int id );
   void slotAttribPopup();
 
   void undoHistory();
@@ -94,13 +86,13 @@ public slots:
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
   void slotOpenCompleted();
-   
+
 signals:
   void newStatus();
   void title(QString);
 
 private:
-    KPopupMenu *attribMenu;
+  KPopupMenu *attribMenu;
 };
 
 #endif // QUANTADOC_H

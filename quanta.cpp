@@ -134,16 +134,16 @@ static void silenceQToolBar(QtMsgType, const char *){}
 // SLOT IMPLEMENTATION
 /////////////////////////////////////////////////////////////////////
 
-void QuantaApp::setTitle(QString title)
+void QuantaApp::setTitle(const QString& title)
 {
   setCaption( "  [  "+title+"  ]  " );
 }
 
 void QuantaApp::slotFileNew()
 {
-  doc->openDocument( KURL() );
+  m_doc->openDocument( KURL() );
   if (!setHighlight)
-     setHighlight = view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
+     setHighlight = m_view->write()->kate_doc->hlActionMenu (i18n("&Highlight Mode"), actionCollection(), "set_highlight");
 }
 
 void QuantaApp::slotFileOpen()
@@ -161,13 +161,13 @@ void QuantaApp::slotFileOpen()
     slotFileOpen( *i , data.encoding);
  }
 
-  slotUpdateStatus(view->write());
+  slotUpdateStatus(m_view->write());
 }
 
 void QuantaApp::slotFileOpen( const KURL &url, const QString& encoding )
 {
-  doc->openDocument( url, encoding );
-  view->write()->view()->setFocus();
+  m_doc->openDocument( url, encoding );
+  m_view->write()->view()->setFocus();
 }
 
 void QuantaApp::slotFileOpenRecent(const KURL &url )
@@ -185,28 +185,28 @@ void QuantaApp::slotFileOpenRecent(const KURL &url )
     }
   } else
   {
-    doc->openDocument( url );
+    m_doc->openDocument( url );
   }
-  view->write()->view()->setFocus();
+  m_view->write()->view()->setFocus();
 }
 
 void QuantaApp::slotFileSave()
 {
-  Document *w = view->write();
+  Document *w = m_view->write();
   w->checkDirtyStatus();
   if ( w->isUntitled() )
     slotFileSaveAs();
   else
-    doc->saveDocument( w->url() );
+    m_doc->saveDocument( w->url() );
 
   slotUpdateStatus(w);
 }
 
 void QuantaApp::slotFileSaveAs()
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    Document *w = view->write();
+    Document *w = m_view->write();
     KURL oldURL = w->url();
     w->checkDirtyStatus();
     fileWatcher->stopScan();
@@ -216,16 +216,16 @@ void QuantaApp::slotFileSaveAs()
 
       KURL url = w->doc()->url();
 
-      if ( ( project->hasProject() ) &&
+      if ( ( m_project->hasProject() ) &&
           ( KMessageBox::Yes == KMessageBox::questionYesNo(0,i18n("Add file\n %1 \n to project ?").arg(url.url())) )
         )
       {
-        project->insertFile(url,true);
+        m_project->insertFile(url,true);
       }
 
       if ( oldURL != url )
       {
-        doc->changeFileTabName();
+        m_doc->changeFileTabName();
       }
       slotUpdateStatus(w);
     }
@@ -237,12 +237,12 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 {
 //TODO: Saving is limited to local files...
 
-  if (!view->writeExists()) return;
+  if (!m_view->writeExists()) return;
 
   KURL url;
   int query;
   KURL projectTemplateURL;
-  Document *w = view->write();
+  Document *w = m_view->write();
   w->checkDirtyStatus();
   QString localTemplateDir = locateLocal("data","quanta/templates/");
 
@@ -251,7 +251,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
     if (projectTemplate)
     {
-      url = KFileDialog::getSaveURL(project->templateURL.url(), QString::null, this);
+      url = KFileDialog::getSaveURL(m_project->templateURL.url(), QString::null, this);
     } else
     {
       url = KFileDialog::getSaveURL(locateLocal("data","quanta/templates/"), QString::null, this);
@@ -259,7 +259,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
 
     if (url.isEmpty()) return;
 
-    if ( project->hasProject() )  projectTemplateURL = project->templateURL;
+    if ( m_project->hasProject() )  projectTemplateURL = m_project->templateURL;
     if ( ((projectTemplate) && (projectTemplateURL.isParentOf(url)) ) ||
           ((! projectTemplate) && (KURL(localTemplateDir).isParentOf(url))) )
     {
@@ -289,11 +289,11 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
     templateFile.close();
   } else
   {
-    doc->saveDocument( url );
+    m_doc->saveDocument( url );
     fileName = url.path();
   }
 
-  if (projectTemplate) project->insertFile(fileName, true);
+  if (projectTemplate) m_project->insertFile(fileName, true);
 
   slotUpdateStatus(w);
 }
@@ -321,26 +321,26 @@ void QuantaApp::slotFileSaveSelectionAsProjectTemplate()
 
 void QuantaApp::slotFileSaveAll()
 {
-  doc->saveAll();
-  slotUpdateStatus(view->write());
+  m_doc->saveAll();
+  slotUpdateStatus(m_view->write());
 }
 
 void QuantaApp::slotFileClose()
 {
 //[MB]  QWidget *activeWidget = rightWidgetStack->visibleWidget();
-  doc->closeDocument();
+  m_doc->closeDocument();
   WHTMLPart *part = htmlPart();
   part->closeURL();
   part->begin(projectBaseURL());
   part->write( "" );
    part->end();
 
-  slotUpdateStatus(view->write());
+  slotUpdateStatus(m_view->write());
 }
 
 void QuantaApp::slotFileCloseAll()
 {
-  doc->closeAll();
+  m_doc->closeAll();
 
   WHTMLPart *part = htmlPart();
   part->closeURL();
@@ -353,18 +353,18 @@ void QuantaApp::slotFileCloseAll()
 
 void QuantaApp::slotFileNext()
 {
-   doc->nextDocument();
+   m_doc->nextDocument();
 }
 
 void QuantaApp::slotFilePrev()
 {
-   doc->prevDocument();
+   m_doc->prevDocument();
 }
 
 void QuantaApp::slotFilePrint()
 {
- if (view->writeExists())
-     dynamic_cast<KTextEditor::PrintInterface*>(view->write()->doc())->printDialog();
+ if (m_view->writeExists())
+     dynamic_cast<KTextEditor::PrintInterface*>(m_view->write()->doc())->printDialog();
 }
 
 void QuantaApp::slotFileQuit()
@@ -391,8 +391,8 @@ void QuantaApp::slotEditFindInFiles()
     KURL pBase = projectBaseURL();
     if (pBase.isLocalFile()) startDir = pBase.path(1);
     grepDialog = new GrepDialog( startDir, this, "grep_dialog" );
-    connect( grepDialog, SIGNAL( itemSelected   (QString , int)),
-             this,       SLOT  ( gotoFileAndLine(QString , int)));
+    connect( grepDialog, SIGNAL( itemSelected   (const QString& , int)),
+             this,       SLOT  ( gotoFileAndLine(const QString& , int)));
   }
   grepDialog->show();
   grepDialog->raise();
@@ -447,7 +447,7 @@ void QuantaApp::slotViewRepaint()
 /** repaint preview */
 void QuantaApp::repaintPreview( bool clear )
 {
-  if (!view->writeExists()) return;
+  if (!m_view->writeExists()) return;
   static QString oldtext = "";
 
   previewCopyMade = false;
@@ -473,16 +473,16 @@ void QuantaApp::repaintPreview( bool clear )
   browserExtension()->setURLArgs( args );
 
   KURL url;
-  Document *w = view->write();
+  Document *w = m_view->write();
   if (!w->isUntitled())
   {
 //if it's  not untitled, than it was loaded from somewhere. In this case show it from that place
     url = w->url();
 
-    if ( doc->isModified() ) //doc->saveDocument( doc->url() );
+    if ( m_doc->isModified() ) //m_doc->saveDocument( m_doc->url() );
          w->saveIt();
 
-    url = project->urlWithPrefix(url);
+    url = m_project->urlWithPrefix(url);
 
     part->begin(url, xOffset, yOffset );
     part->openURL( url );
@@ -535,14 +535,14 @@ void QuantaApp::slotImageOpen(const KURL& url)
 /** insert <img> tag for images or <a> for other */
 void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
     KURL baseURL = projectBaseURL();
     KURL relURL = QExtFileInfo::toRelative( url, baseURL);
     QString urlStr = relURL.url();
     if (relURL.protocol() == baseURL.protocol())
         urlStr = relURL.path();
-    Document *w = view->write();
+    Document *w = m_view->write();
     bool isImage = false;
 
     if (!dirInfo.preText.isEmpty() || !dirInfo.postText.isEmpty())
@@ -577,24 +577,24 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 /** slot for new modify flag */
 void QuantaApp::slotNewStatus()
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    Document *w = view->write();
+    Document *w = m_view->write();
     setTitle( w->url().prettyURL() );
 
-  /*  int  config   = w->config();
+  /*  int  m_config   = w->config();
     bool readOnly = w->isReadOnly();
 
     if (readOnly) statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
-    else          statusBar()->changeItem(config & KWriteView::cfOvr ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
+    else          statusBar()->changeItem(m_config & KWriteView::cfOvr ? i18n(" OVR ") : i18n(" INS "),IDS_INS_OVR);
                  */
     statusBar()->changeItem(w->isModified() ? " * " : "",IDS_MODIFIED);
 
-    saveAction   ->setEnabled(doc->isModified());
-    saveAllAction->setEnabled(doc->isModifiedAll());
-    saveprjAction->setEnabled(project->isModified());
+    saveAction   ->setEnabled(m_doc->isModified());
+    saveAllAction->setEnabled(m_doc->isModifiedAll());
+    saveprjAction->setEnabled(m_project->isModified());
    
-    bool projectExists = project->hasProject();
+    bool projectExists = m_project->hasProject();
     closeprjAction     ->setEnabled(projectExists);
     openPrjViewAction  ->setEnabled(projectExists);
     savePrjViewAction  ->setEnabled(projectExists);
@@ -623,7 +623,7 @@ void QuantaApp::slotNewStatus()
     QIconSet floppyIcon( UserIcon("save_small"));
     QIconSet  emptyIcon( UserIcon("empty1x16" ));
 
-    QTabWidget *wTab = view->writeTab;
+    QTabWidget *wTab = m_view->m_writeTab;
     w = static_cast<Document*>(wTab->currentPage());
 
     if ( w->isModified() )
@@ -658,17 +658,17 @@ void QuantaApp::slotNewUndo()
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
 //remove the GUI of the plugin, if the last visible tab was a plugin
-  QString tabTitle =view->writeTab->tabLabel(view->oldTab);
+  QString tabTitle =m_view->m_writeTab->tabLabel(m_view->oldTab);
   QuantaKPartPlugin *plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
   if (plugin)
     plugin->showGui(false);
-  view->oldTab = w;
+  m_view->oldTab = w;
 
   Document *newWrite = dynamic_cast<Document *>(w);
   if (!newWrite)
   {
 //add the GUI for the currently visible plugin
-    tabTitle = view->writeTab->tabLabel(w);
+    tabTitle = m_view->m_writeTab->tabLabel(w);
     plugin = dynamic_cast<QuantaKPartPlugin *>(m_pluginInterface->plugin(tabTitle));
     if (plugin)
        plugin->showGui(true);
@@ -676,7 +676,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   }
   dynamic_cast<KTextEditor::PopupMenuInterface*>(newWrite->view())->installPopup((QPopupMenu *)factory()->container("popup_editor", quantaApp));
   newWrite->checkDirtyStatus();
-  if (newWrite != view->oldWrite)
+  if (newWrite != m_view->oldWrite)
     sTab->useOpenLevelSetting = true;
   reparse(true);
   slotNewUndo();
@@ -685,10 +685,10 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 
   loadToolbarForDTD(newWrite->getDTDIdentifier());
 
-  newWrite->readConfig(config);
-  Document *currentWrite = view->write();
-  currentWrite->view()->resize(view->writeTab->size().width()-5, view->writeTab->size().height()-35);
-  view->oldWrite = currentWrite;
+  newWrite->readConfig(m_config);
+  Document *currentWrite = m_view->write();
+  currentWrite->view()->resize(m_view->m_writeTab->size().width()-5, m_view->m_writeTab->size().height()-35);
+  m_view->oldWrite = currentWrite;
   currentWrite->kate_view->setIconBorder(qConfig.iconBar);
   currentWrite->kate_view->setLineNumbersOn(qConfig.lineNumbers);
   viewBorder->setChecked(qConfig.iconBar);
@@ -715,7 +715,7 @@ void QuantaApp::slotOptionsConfigureKeys()
 
 void QuantaApp::slotOptionsConfigureToolbars()
 {
- int currentPageIndex = view->toolbarTab->currentPageIndex();
+ int currentPageIndex = m_view->m_toolbarTab->currentPageIndex();
 
  QDomNodeList nodeList;
  ToolbarEntry *p_toolbar = 0L;
@@ -745,7 +745,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
 
  QPopupMenu *menu = 0L;
  QString toolbarName;
- QTabWidget *tb = view->toolbarTab;
+ QTabWidget *tb = m_view->m_toolbarTab;
  for (int i = 0; i < tb->count(); i++)
  {
    toolbarName = tb->label(i);
@@ -770,13 +770,13 @@ void QuantaApp::slotOptionsConfigureToolbars()
  //add the menus
  menuBar()->insertItem(i18n("Plu&gins"), m_pluginMenu, -1, PLUGINS_MENU_PLACE);
  menuBar()->insertItem(i18n("&Tags"),m_tagsMenu,-1, TAGS_MENU_PLACE);
- view->toolbarTab->setCurrentPage(currentPageIndex);
+ m_view->m_toolbarTab->setCurrentPage(currentPageIndex);
 }
 
 void QuantaApp::slotNewToolbarConfig()
 {
  applyMainWindowSettings(KGlobal::config(), autoSaveGroup());
- view->toolbarTab->setCurrentPage(view->toolbarTab->currentPageIndex());
+ m_view->m_toolbarTab->setCurrentPage(m_view->m_toolbarTab->currentPageIndex());
 }
 
 void QuantaApp::slotOptionsConfigureActions()
@@ -835,7 +835,7 @@ void QuantaApp::slotOptions()
   previewOptions->setPosition( qConfig.previewPosition );
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
-  ParserOptions *parserOptions = new ParserOptions( config, (QWidget *)page );
+  ParserOptions *parserOptions = new ParserOptions( m_config, (QWidget *)page );
   QString name;
   int index;
   QDictIterator<DTDStruct> it(*dtds);
@@ -932,7 +932,7 @@ void QuantaApp::slotOptions()
     reparse(true);
   }
 
-  config->sync();
+  m_config->sync();
 
   saveOptions();
 
@@ -969,10 +969,10 @@ void QuantaApp::slotActivatePreview()
 
 void QuantaApp::slotShowPreview()
 {
-  if (!view->writeExists()) return;
+  if (!m_view->writeExists()) return;
   WHTMLPart *part = htmlPart();
   QWidgetStack *s = widgetStackOfHtmlPart();
-  Document *w = view->write();
+  Document *w = m_view->write();
 
   if ( !s ) return;
   if ( !part ) return;
@@ -990,7 +990,7 @@ void QuantaApp::slotShowPreview()
 //We should find a better synchronous method to copy the temp file to the current one.
 //which works also for non local files
     fileWatcher->stopScan();
-    if (doc->isModified())
+    if (m_doc->isModified())
     {
       KURL origUrl = w->url();
       KURL tempUrl;
@@ -1034,7 +1034,7 @@ void QuantaApp::slotNewLineColumn()
   QString linenumber;
   uint line, col;
 
-  view->write()->viewCursorIf->cursorPositionReal(&line, &col);
+  m_view->write()->viewCursorIf->cursorPositionReal(&line, &col);
   sTab->showTagAtPos(line,col);
   linenumber.sprintf(i18n("Line: %d Col: %d"),line+1,col+1);
 
@@ -1055,9 +1055,9 @@ void QuantaApp::slotForceReparse()
 /** reparse current document and initialize node. */
 void QuantaApp::reparse(bool force)
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    Document *w = view->write();
+    Document *w = m_view->write();
     w->parseVariables();
     if (force)
     {
@@ -1083,9 +1083,9 @@ void QuantaApp::reparse(bool force)
 
 void QuantaApp::setCursorPosition( int row, int col )
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    Document *w = view->write();
+    Document *w = m_view->write();
 
     int numLines = w->editIf->numLines();
 
@@ -1096,13 +1096,13 @@ void QuantaApp::setCursorPosition( int row, int col )
   }
 }
 
-void QuantaApp::gotoFileAndLine(QString filename, int line )
+void QuantaApp::gotoFileAndLine(const QString& filename, int line )
 {
-  if ( !filename.isEmpty() ) doc->openDocument( filename );
+  if ( !filename.isEmpty() ) m_doc->openDocument( filename );
 
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    Document *w = view->write();
+    Document *w = m_view->write();
     int numLines = w->editIf->numLines();
     if ( numLines > line && line >= 0 )
     {
@@ -1138,16 +1138,16 @@ void QuantaApp::slotDockChanged()
     }
     if ( !exitingFlag )
     {
-      if (view->writeExists()) view->write()->view()->setFocus();
+      if (m_view->writeExists()) m_view->write()->view()->setFocus();
     }
   }
 }
 
 void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    Document *w = view->write();
+    Document *w = m_view->write();
     int numLines = w->editIf->numLines();
 
     if ( line1 > numLines-1 )
@@ -1202,7 +1202,7 @@ void QuantaApp::slotContextHelp()
   }
   else
   {
-    QString currentW =view->write()->kate_view->currentWord();
+    QString currentW =m_view->write()->kate_view->currentWord();
     QString *url = dTab->contextHelp( currentW);
 
     if ( url )
@@ -1257,12 +1257,12 @@ void QuantaApp::viewMenuAboutToShow()
 
 void QuantaApp::slotToolSyntaxCheck()
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
   //  slotFileSave();
-    Document *w = view->write();
+    Document *w = m_view->write();
 
-    if ( doc->isModified() )
+    if ( m_doc->isModified() )
     {
       w->saveIt();
     }
@@ -1300,7 +1300,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
   {
 //avoid QToolBar warning in the log
     QtMsgHandler oldHandler = qInstallMsgHandler( silenceQToolBar );
-    KToolBar *tb = new KToolBar(view->toolbarTab, 0, true, true);
+    KToolBar *tb = new KToolBar(m_view->m_toolbarTab, 0, true, true);
     tb->loadState(element);
     tb->enableMoving(false);
     tb->setEnableContextMenu(true);
@@ -1326,7 +1326,7 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
         tb->insertLineSeparator();
       node = node.nextSibling();
     }
-    view->toolbarTab->addTab(tb, i18n(tabname));
+    m_view->m_toolbarTab->addTab(tb, i18n(tabname));
     qInstallMsgHandler( oldHandler );
     return tb;
   }
@@ -1341,10 +1341,10 @@ void QuantaApp::removeContainer( QWidget *container, QWidget *parent, QDomElemen
 
 /*  if ( container->parent() && QString(container->parent()->name()) == QString("ToolBar stack") ) {
     ((KToolBar*)container)->saveState( element );
-    int id = view->toolbarStack->id( container );
+    int id = m_view->toolbarStack->id( container );
     qDebug("id: %d",id);
-    view->toolbarStack->removeWidget( container );
-    view->tabBar->removeTab( view->tabBar->tab(id) );
+    m_view->toolbarStack->removeWidget( container );
+    m_view->tabBar->removeTab( m_view->tabBar->tab(id) );
   }
   else                                                */
     KMainWindow::removeContainer( container, parent, element, id );
@@ -1396,7 +1396,7 @@ void QuantaApp::slotShowOpenFileList()
   QStringList openList;
   KURL url;
   KURL baseURL = projectBaseURL();
-  fileList = doc->openedFiles(false);
+  fileList = m_doc->openedFiles(false);
 
 //A little trick. I fill in the list in reversed order.
   for (int i = fileList.count()-1;  i >=0 ; i--)
@@ -1410,22 +1410,22 @@ void QuantaApp::slotShowOpenFileList()
   {
   //This "complex" read-out is due to the reversed list.
     KURL docURL= fileList[openList.count() - listDlg.getEntryNum() - 1];
-    view->writeTab->showPage(doc->isOpened(docURL));
+    m_view->m_writeTab->showPage(m_doc->isOpened(docURL));
   }
 }
 
 /** No descriptions */
 void QuantaApp::slotNewProjectLoaded()
 {
-  tTab->slotSetTemplateURL(project->templateURL);
+  tTab->slotSetTemplateURL(m_project->templateURL);
 }
 
 /** No descriptions */
 void QuantaApp::slotInsertFile(const KURL& url)
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    view->write()->insertFile(url);
+    m_view->write()->insertFile(url);
   }
 }
 
@@ -1433,9 +1433,9 @@ void QuantaApp::slotInsertFile(const KURL& url)
 //Kate releated
 void QuantaApp::setEOLMenuAboutToShow()
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    int eol = view->write()->kate_view->getEol();
+    int eol = m_view->write()->kate_view->getEol();
     eol = eol>=0? eol: 0;
     setEndOfLine->setCurrentItem( eol );
   }
@@ -1443,13 +1443,13 @@ void QuantaApp::setEOLMenuAboutToShow()
 
 void QuantaApp::bookmarkMenuAboutToShow()
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
     pm_bookmark->clear ();
     bookmarkToggle->plug (pm_bookmark);
     bookmarkClear->plug (pm_bookmark);
 
-    Document *w = view->write();
+    Document *w = m_view->write();
     markList = dynamic_cast<KTextEditor::MarkInterface*>(w->doc())->marks();
   //Based on Kate code
     bool hassep = false;
@@ -1473,22 +1473,22 @@ void QuantaApp::bookmarkMenuAboutToShow()
 
 void QuantaApp::gotoBookmark (int n)
 {
-  view->gotoMark(markList.at(n));
+  m_view->gotoMark(markList.at(n));
 }
 
 /** No descriptions */
 void QuantaApp::slotSyntaxCheckDone()
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
   //FIXME:
   //Restore the original doc from the temp file.
   //We should find a better synchronous method to copy the temp file to the current one.
   //A method for this is also a good idea.
-    Document *w = view->write();
+    Document *w = m_view->write();
 
     fileWatcher->stopScan();
-    if (doc->isModified())
+    if (m_doc->isModified())
     {
       KURL origUrl = w->url();
       KURL tempUrl;
@@ -1640,7 +1640,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    }
 
    guiFactory()->addClient(toolbarGUI);
-   view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
+   m_view->m_toolbarTab->setCurrentPage(m_view->m_toolbarTab->count()-1);
 
    m_tagsMenu->insertItem(name,menu);
    p_toolbar->menu = menu;
@@ -1716,7 +1716,7 @@ void QuantaApp::slotLoadGlobalToolbar()
  }
 }
 
-KURL QuantaApp::saveToolBar(const QString& toolbarName, const KURL& destFile)
+KURL QuantaApp::saveToolbarToFile(const QString& toolbarName, const KURL& destFile)
 {
   KURL tarFile = destFile;
 
@@ -1795,7 +1795,7 @@ KURL QuantaApp::saveToolBar(const QString& toolbarName, const KURL& destFile)
 }
 
 /** Saves a toolbar as local or project specific. */
-void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
+void QuantaApp::saveToolbar(bool localToolbar,const QString& toolbarToSave)
 {
   int query;
   KURL url;
@@ -1805,7 +1805,7 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
 
   if (toolbarToSave.isEmpty())
   {
-    QTabWidget *tb = view->toolbarTab;
+    QTabWidget *tb = m_view->m_toolbarTab;
 
     QStringList lst;
     int current=0;
@@ -1837,16 +1837,16 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
       url = KFileDialog::getSaveURL(localToolbarsDir, "*"+toolbarExtension, this);
     } else
     {
-      url = KFileDialog::getSaveURL(project->toolbarURL.url(), "*"+toolbarExtension, this);
+      url = KFileDialog::getSaveURL(m_project->toolbarURL.url(), "*"+toolbarExtension, this);
     }
 
     if (url.isEmpty()) return;
 
-    if ( project->hasProject() )  projectToolbarsURL = project->toolbarURL;
+    if ( m_project->hasProject() )  projectToolbarsURL = m_project->toolbarURL;
     if ( ((!localToolbar) && (projectToolbarsURL.isParentOf(url)) ) ||
           ((localToolbar) && (KURL(localToolbarsDir).isParentOf(url))) )
     {
-      query = doc->write()->checkOverwrite( url );
+      query = m_view->write()->checkOverwrite( url );
     } else
     {
       if (!localToolbar) localToolbarsDir = projectToolbarsURL.prettyURL();
@@ -1858,20 +1858,20 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
 
   if( query != KMessageBox::Cancel )
   {          
-    KURL tarName = saveToolBar(toolbarName, url);
-    if (!localToolbar) project->insertFile(tarName, true);
+    KURL tarName = saveToolbarToFile(toolbarName, url);
+    if (!localToolbar) m_project->insertFile(tarName, true);
   }
 }
 
 /** Saves a toolbar as localspecific. */
 void QuantaApp::slotSaveLocalToolbar()
 {
-  slotSaveToolbar(true);
+  saveToolbar(true);
 }
 /** Saves a toolbar as project specific. */
 void QuantaApp::slotSaveProjectToolbar()
 {
- slotSaveToolbar(false);
+  saveToolbar(false);
 }
 
 /** Adds a new, empty toolbar. */
@@ -1893,7 +1893,7 @@ void QuantaApp::slotAddToolbar()
 
   ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
   factory()->addClient(toolbarGUI);
-  view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
+  m_view->m_toolbarTab->setCurrentPage(m_view->m_toolbarTab->count()-1);
   tempFileList.append(tempFile);
   ToolbarEntry *p_toolbar = new ToolbarEntry;
   p_toolbar->guiClient = toolbarGUI;
@@ -1915,7 +1915,7 @@ void QuantaApp::slotAddToolbar()
 /** Removes a user toolbar from the toolbars. */
 void QuantaApp::slotRemoveToolbar()
 {
- QTabWidget *tb = view->toolbarTab;
+ QTabWidget *tb = m_view->m_toolbarTab;
  int i;
 
  QStringList lst;
@@ -1943,7 +1943,7 @@ void QuantaApp::slotRemoveToolbar()
 /** Sends a toolbar in mail. */
 void QuantaApp::slotSendToolbar()
 {
-  QTabWidget *tb = view->toolbarTab;
+  QTabWidget *tb = m_view->m_toolbarTab;
 
   QStringList lst;
   int current = 0;
@@ -1970,7 +1970,7 @@ void QuantaApp::slotSendToolbar()
   tempFile->setAutoDelete(true);
   KURL tempURL;
   tempURL.setPath(tempFile->name());
-  saveToolBar(toolbarName, tempURL);
+  saveToolbarToFile(toolbarName, tempURL);
   tempFile->close();
   tempFileList.append(tempFile);
 
@@ -2048,11 +2048,11 @@ void QuantaApp::removeToolbars()
 
 
 /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
-void QuantaApp::processDTD(QString documentType)
+void QuantaApp::processDTD(const QString& documentType)
 {
- Document *w = view->write();
+ Document *w = m_view->write();
  QString foundName;
- QString projectDTD = project->defaultDTD();
+ QString projectDTD = m_project->defaultDTD();
  w->setDTDIdentifier(projectDTD);
  Tag *tag = 0L;
  if (documentType.isEmpty())
@@ -2061,7 +2061,7 @@ void QuantaApp::processDTD(QString documentType)
    bool found = false;
    if (!foundName.isEmpty())   //!DOCTYPE found in file
    {
-    DTDSelectDialog *dlg = new DTDSelectDialog(this);
+     DTDSelectDialog *dlg = new DTDSelectDialog(this);
      QStringList lst;
      QDictIterator<DTDStruct> it(*dtds);
      for( ; it.current(); ++it )
@@ -2130,17 +2130,17 @@ void QuantaApp::processDTD(QString documentType)
 /** No descriptions */
 void QuantaApp::slotToolsChangeDTD()
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
     DTDSelectDialog *dlg = new DTDSelectDialog(this);
-    Document *w = view->write();
+    Document *w = m_view->write();
     int pos = -1;
     int defaultIndex = 0;
 
     Tag *tag = 0L;
     w->findDTDName(&tag);
     QString oldDtdName = w->getDTDIdentifier();
-    QString defaultDocType = project->defaultDTD();
+    QString defaultDocType = m_project->defaultDTD();
     QDictIterator<DTDStruct> it(*dtds);
     QStringList lst;
     for (; it.current(); ++it)
@@ -2203,7 +2203,7 @@ void QuantaApp::slotToolsChangeDTD()
 void QuantaApp::focusInEvent(QFocusEvent* e)
 {
  KDockMainWindow::focusInEvent(e);
- Document *w = view->write();
+ Document *w = m_view->write();
  w->view()->setFocus();
  w->checkDirtyStatus();
 }
@@ -2211,13 +2211,13 @@ void QuantaApp::focusInEvent(QFocusEvent* e)
 /** No descriptions */
 void QuantaApp::slotShowCompletion()
 {
-  view->write()->codeCompletionRequested();
+  m_view->write()->codeCompletionRequested();
 }
 
 /** No descriptions */
 void QuantaApp::slotShowCompletionHint()
 {
-  view->write()->codeCompletionHintRequested();
+  m_view->write()->codeCompletionHintRequested();
 }
 
 /** No descriptions */
@@ -2238,11 +2238,11 @@ void QuantaApp::slotHelpHomepage()
 void QuantaApp::loadToolbarForDTD(const QString& dtdName)
 {
  DTDStruct *oldDtd = dtds->find(currentToolbarDTD);
- if (!oldDtd && !currentToolbarDTD.isEmpty()) oldDtd = dtds->find(project->defaultDTD());
+ if (!oldDtd && !currentToolbarDTD.isEmpty()) oldDtd = dtds->find(m_project->defaultDTD());
 
  QString fileName;
  DTDStruct *newDtd = dtds->find(dtdName);
- if (!newDtd) newDtd = dtds->find(project->defaultDTD());
+ if (!newDtd) newDtd = dtds->find(m_project->defaultDTD());
  if (!newDtd) newDtd = dtds->find(qConfig.defaultDocType); //extreme case
 
  ToolbarEntry *p_toolbar;
@@ -2297,7 +2297,7 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
       }
    }
 
-   view->toolbarTab->setCurrentPage(0);
+   m_view->m_toolbarTab->setCurrentPage(0);
  }
 
  currentToolbarDTD = newDtd->name;
@@ -2331,8 +2331,8 @@ void QuantaApp::removeToolbar(const QString& name)
               i18n("Save Toolbar")) == KMessageBox::Yes)
       {
         bool local = true;
-        if (project->hasProject() && p_toolbar->url.url().startsWith(project->baseURL.url())) local = false;
-        slotSaveToolbar(local, name);
+        if (m_project->hasProject() && p_toolbar->url.url().startsWith(m_project->baseURL.url())) local = false;
+        saveToolbar(local, name);
       }
      }
 
@@ -2363,21 +2363,21 @@ void QuantaApp::slotToggleDTDToolbar(bool show)
 {
   if (show)
   {
-    view->toolbarTab->show();
+    m_view->m_toolbarTab->show();
   } else
   {
-    view->toolbarTab->hide();
+    m_view->m_toolbarTab->hide();
   }
   qConfig.enableDTDToolbar = show;
 }
 
 
 /** No descriptions */
-void QuantaApp::slotParsingDTDChanged(QString newDTDName)
+void QuantaApp::slotParsingDTDChanged(const QString& newDTDName)
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    view->write()->setParsingDTD(newDTDName);
+    m_view->write()->setParsingDTD(newDTDName);
     reparse(false);
   }
 }
@@ -2386,17 +2386,17 @@ void QuantaApp::slotParsingDTDChanged(QString newDTDName)
 KURL QuantaApp::projectBaseURL()
 {
   KURL result;
-  if  ( project->hasProject())
+  if  ( m_project->hasProject())
   {
-     result = project->baseURL;
+     result = m_project->baseURL;
   } else
   {
-    if  ( !view->writeExists() || view->write()->isUntitled() )
+    if  ( !m_view->writeExists() || m_view->write()->isUntitled() )
     {
       result = QExtFileInfo::home();
     } else
     {
-      result = QExtFileInfo::path(view->write()->url());
+      result = QExtFileInfo::path(m_view->write()->url());
     }
   }
   return result;
@@ -2405,9 +2405,9 @@ KURL QuantaApp::projectBaseURL()
 /** No descriptions */
 void QuantaApp::slotBuildPrjToolbarsMenu()
 {
-    if (project && project->hasProject())
+    if (m_project && m_project->hasProject())
     {
-      KURL::List toolbarList = QExtFileInfo::allFiles(project->toolbarURL, "*"+toolbarExtension);
+      KURL::List toolbarList = QExtFileInfo::allFiles(m_project->toolbarURL, "*"+toolbarExtension);
       projectToolbarFiles->setMaxItems(toolbarList.count());
       for (uint i = 0; i < toolbarList.count(); i++)
       {
@@ -2423,9 +2423,9 @@ void QuantaApp::slotBuildPrjToolbarsMenu()
 QString QuantaApp::defaultEncoding()
 {
   QString encoding = qConfig.defaultEncoding;
-  if (project && project->hasProject())
+  if (m_project && m_project->hasProject())
   {
-    encoding = project->defaultEncoding();
+    encoding = m_project->defaultEncoding();
   } 
   return encoding;
 }
@@ -2498,9 +2498,9 @@ bool QuantaApp::allToolbarsHidden()
 /** No descriptions */
 void QuantaApp::slotEmailDTD()
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    Document *w = view->write();
+    Document *w = m_view->write();
     QStringList lst;
     int current = 0;
     int i = 0;
@@ -2591,24 +2591,24 @@ void QuantaApp::slotEmailDTD()
 /** Returns the interface number for the currently active editor. */
 int QuantaApp::currentEditorIfNum() const
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    return view->write()->editIf->editInterfaceNumber();
+    return m_view->write()->editIf->editInterfaceNumber();
   } else
   {
-    return view->oldWrite->editIf->editInterfaceNumber();
+    return m_view->oldWrite->editIf->editInterfaceNumber();
   }
 }
 
 /** Return the URL of the currently active document */
 QString QuantaApp::currentURL() const
 {
-  if (view->writeExists())
+  if (m_view->writeExists())
   {
-    return view->write()->url().url();
+    return m_view->write()->url().url();
   } else
   {
-    return view->oldWrite->url().url();
+    return m_view->oldWrite->url().url();
   }
 }
 

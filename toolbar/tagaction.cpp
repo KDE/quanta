@@ -42,7 +42,7 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   : KAction( element->attribute("text"), element->attribute("shortcut"), 0, 0, parent, element->attribute("name") ),
     tag(*element)
 {
-   m_view = quantaApp->getView();
+   m_view = quantaApp->view();
    setIcon( tag.attribute("icon","") );
 
    if ( m_view )
@@ -215,8 +215,8 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   {
     if ( firstOutput )
     {
-        quantaApp->getDoc()->openDocument( KURL() );
-        m_view = quantaApp->getView();
+        quantaApp->doc()->openDocument( KURL() );
+        m_view = quantaApp->view();
         w = m_view->write();
     }
     w->insertTag( text );
@@ -262,8 +262,8 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
   {
     if ( firstOutput )
     {
-        quantaApp->getDoc()->openDocument( KURL() );
-        m_view = quantaApp->getView();
+        quantaApp->doc()->openDocument( KURL() );
+        m_view = quantaApp->view();
         w = m_view->write();
     }
     w->insertTag( text );

@@ -50,31 +50,27 @@ class QuantaView : public QWidget
   Q_OBJECT
 
   friend class QuantaApp;
-  friend class QuantaDoc;
 
-  public:
-  
-    QuantaView(QWidget *parent = 0, const char *name=0);
-    ~QuantaView();
+public:
 
-    QTabWidget *getToolbarTab() const {return toolbarTab;}
+  QuantaView(QWidget *parent = 0, const char *name=0);
+  ~QuantaView();
 
-    /** return current KWrite class */
-    Document* write();
-    
-    /** Add new kwrite class to writeStack and return id in stack */
-    void addWrite( QWidget* w , QString label );
-    
-    /** remove KWrite class from stack, return id of new KWrite */
-    QWidget* removeWrite();
-    
-    /** initialise tags menu */
-    void initMenu();
+  QTabWidget *toolbarTab() const {return m_toolbarTab;}
+  QTabWidget *writeTab() const {return m_writeTab;}
 
-     void initActions();
+  /** return current KWrite class */
+  Document* write();
+  /** Add new kwrite class to writeStack and return id in stack */
+  void addWrite( QWidget* w , QString label );
+  /** remove KWrite class from stack, return id of new KWrite */
+  QWidget* removeWrite();
 
-    void insertTag( const char *tag);
-     
+  /** initialise tags menu */
+  void initMenu();
+  void initActions();
+  void insertTag( const char *tag);
+
   /** No descriptions */
   void resizeEvent (QResizeEvent *);
   /** Insert a new tag by bringing up the TagDialog. */
@@ -84,107 +80,100 @@ class QuantaView : public QWidget
   /** True if a Document object exists, false otherwise. */
   bool writeExists();
 
-  QTabWidget *writeTab;
+public slots:
 
-  public slots:
+  void slotTagMail();
+  void slotTagQuickStart();
+  void slotTagQuickList();
+  void slotTagQuickTable();
+  void slotTagColor();
+  void slotTagDate();
+  void slotTagSelect();
+  /** Add the starting and closing text for a
+  user specified tag. */
+  void slotTagMisc();
+  void slotEditCurrentTag();
 
-    void slotTagMail();
-    void slotTagQuickStart();
-    void slotTagQuickList();
-    void slotTagQuickTable();
-    void slotTagColor();
-    void slotTagDate();
-    void slotTagSelect();
-    
-    void slotInsertCSS();
-    
-    void slotNewCurPos();
-    
-    void slotEditCurrentTag();
-     
-    void slotViewInKFM();
-    void slotViewInNetscape();
-    void slotNetscapeStatus(KProcess *proc);
-    void slotViewInLynx();
-  
-    void slotGetScriptOutput(KProcess *proc, char *buffer, int buflen);
-    void slotGetScriptError (KProcess *proc, char *buffer, int buflen);
-  
-    void slotPasteHTMLQuoted();
-    void slotPasteURLEncoded();
-    /** Add the starting and closing text for a
-    user specified tag. */
-    void slotTagMisc();
-    void slotInsertChar(const QString &selected);
+  void slotInsertCSS();
+  void slotNewCurPos();
+
+  void slotViewInKFM();
+  void slotViewInNetscape();
+  void slotNetscapeStatus(KProcess *proc);
+  void slotViewInLynx();
+
+  void slotGetScriptOutput(KProcess *proc, char *buffer, int buflen);
+  void slotGetScriptError (KProcess *proc, char *buffer, int buflen);
+
+  void slotPasteHTMLQuoted();
+  void slotPasteURLEncoded();
+  void slotInsertChar(const QString &selected);
 
 /** Kate releated slots */
 //Edit
-    void slotUndo ();
-    void slotRedo ();
+  void slotUndo ();
+  void slotRedo ();
 
-    void slotCut ();
-    void slotCopy ();
-    void slotPaste ();
+  void slotCut ();
+  void slotCopy ();
+  void slotPaste ();
 
-    void slotSelectAll ();
-    void slotDeselectAll ();
-    void toggleVertical ();
+  void slotSelectAll ();
+  void slotDeselectAll ();
+  void toggleVertical ();
 
-    void slotFind ();
-    void slotFindAgain ();
-    void slotFindAgainB ();
-    void slotReplace ();
+  void slotFind ();
+  void slotFindAgain ();
+  void slotFindAgainB ();
+  void slotReplace ();
 
-    void slotIndent();
-    void slotUnIndent();
-    void slotCleanIndent();
-    void slotComment ();
-    void slotUnComment ();
-    void slotApplyWordWrap ();
+  void slotIndent();
+  void slotUnIndent();
+  void slotCleanIndent();
+  void slotComment ();
+  void slotUnComment ();
+  void slotApplyWordWrap ();
 
 //Tools
-    void slotGotoLine ();
-    void slotSpellcheck ();
+  void slotGotoLine ();
+  void slotSpellcheck ();
 
 //Bookmarks
-    void toggleBookmark();
-    void clearBookmarks();
-    void gotoMark (KTextEditor::Mark *mark);
+  void toggleBookmark();
+  void clearBookmarks();
+  void gotoMark (KTextEditor::Mark *mark);
 
 //Settings
-    void toggleDynamicWordWrap();
-    void toggleIconBorder();
-    void toggleLineNumbers();
-    void slotEditorOptions();
-    void setEol(int);
+  void toggleDynamicWordWrap();
+  void toggleIconBorder();
+  void toggleLineNumbers();
+  void slotEditorOptions();
+  void setEol(int);
 
+signals:
+  void newCurPos();
+  /** emit when select document from tabbar */
+  void writeSelected(int);
+  /** emitted when a file from the template view is dropped on the view */
+  void dragInsert(QDropEvent *);
 
-  signals:
-    void newCurPos();
-    
-    /** emit when select document from tabbar */
-    void writeSelected(int);
-    /** emitted when a file from the template view is dropped on the view */
-    void dragInsert(QDropEvent *);
-  
-  private:    
-    QuantaDoc *doc;
+private:
+  QuantaDoc *doc;
 
-    /** collum of cursor position */
-    int column;
-    QString space;
+  /** collum of cursor position */
+  int column;
+  QString space;
 
-    bool beginOfScriptOutput;
-    bool beginOfScriptError;
-    QString scriptOutputDest;
-    QString scriptErrorDest;
-public: // Public attributes
-  /**  */
+  bool beginOfScriptOutput;
+  bool beginOfScriptError;
+  QString scriptOutputDest;
+  QString scriptErrorDest;
+  QTabWidget *m_toolbarTab;
+  QTabWidget *m_writeTab;
   Document *oldWrite;
   QWidget *oldTab;
-  QTabWidget *toolbarTab;
-  /**  */
   QString dontShowSavePreview;
+
 protected:
   virtual void dropEvent(QDropEvent *e);
   virtual void dragEnterEvent(QDragEnterEvent *e);

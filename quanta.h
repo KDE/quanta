@@ -83,7 +83,6 @@ class Project;
 class GrepDialog;
 class MessageOutput;
 class QDomDocument;
-class ActionEditDlg;
 class Document;
 
 class PHP3Debugger;
@@ -107,30 +106,27 @@ class QuantaApp : public KDockMainWindow, virtual public DCOPWindowManagerIf
 {
   Q_OBJECT
 
-friend class QuantaDoc;
-friend class QuantaView;
-friend class ActionEditDlg;
-
 public:
-//TODO: make this private and create the "get" methods for them
-  StructTreeView *sTab;
-  QWidgetStack *rightWidgetStack;
-  QWidgetStack *bottomWidgetStack;
-  QDict<ToolbarEntry> toolbarList;
-
   QuantaApp();
   ~QuantaApp();
 
-  QuantaDoc  *getDoc()   { return doc; };
-  QuantaView *getView()  { return view;};
-  Project *getProject()  { return project; };
-  QPopupMenu *tagsMenu() { return m_tagsMenu;}
-  QPopupMenu *pluginMenu() { return m_pluginMenu;}
+  QuantaDoc  *doc() {return m_doc; }
+  QuantaView *view(){return m_view;}
+  Project *project(){return m_project; }
+  QPopupMenu *tagsMenu(){return m_tagsMenu;}
+  QPopupMenu *pluginMenu() {return m_pluginMenu;}
+  KConfig *config() {return m_config;}
+  QWidgetStack *rightWidget() {return rightWidgetStack;}
+  QWidgetStack *bottomWidget() {return bottomWidgetStack;}
+
+//TODO: check if we really need these "get" methods (and get rid o get)
+  SpellChecker *spellChecker() {return m_spellChecker;}
+  TemplatesTreeView *gettTab() {return tTab;}
+  StructTreeView *getsTab() {return sTab;}
+  MessageOutput *getMessageOutput() {return messageOutput;}
+
   QPopupMenu *toolbarMenu(const QString& name);
   ToolbarEntry *toolbarByURL(const KURL& url);
-  KToggleAction *showDTDToolbar;
-  /** True when the whole quanta is initalized. */
-  bool quantaStarted;
 
   MessageOutput *getMessages() { return messageOutput; }
   QWidgetStack *widgetStackOfHtmlPart();
@@ -139,16 +135,12 @@ public:
   KDockWidget *outputDockWidget() const { return bottdock; }
 
   /** Loads the initial project */
-  void loadInitialProject(QString url="");
+  void loadInitialProject(const QString& url);
 
-
-  /** from @see KXMLGUIBuilder, for toolbars in tabbar ( tags,... )
-   *
-   */
-  QWidget* createContainer( QWidget *parent, int index, const QDomElement &element, int &id );
-  void removeContainer( QWidget *container, QWidget *parent, QDomElement &element, int id );
+  QWidget* createContainer(QWidget *parent, int index, const QDomElement &element, int &id );
+  void removeContainer(QWidget *container, QWidget *parent, QDomElement &element, int id );
   /** Reads the DTD info from the file, tries to find the correct DTD and builds the tag/attribute list from the DTD file. */
-  void processDTD(QString documentType = QString::null);
+  void processDTD(const QString& documentType = QString::null);
   /** Returns the project's base URL if it exists, the HOME dir if there is no project and no opened document (or the current opened document was not saved yet), and the base URL of the opened document, if it is saved somewhere. */
   KURL projectBaseURL();
 
@@ -165,70 +157,68 @@ public:
   /** Remove the toolbar named "name". */
   void removeToolbar(const QString& name);
 
-public slots:
+signals: // Signals
+  /** The tree views should be updated due to some changes on the disk. */
+  void reloadTreeviews();
 
+public slots:
   /** Delayed initialization. */
   void initQuanta();
 
-  void slotFileNew ();
+  void slotFileNew();
   void slotFileOpen();
   void slotFileOpen( const KURL &, const QString& );
-  void slotFileSave    ();
-  void slotFileSaveAs  ();
-  void slotFileSaveAsLocalTemplate ();
-  void slotFileSaveAsProjectTemplate ();
-  void slotFileSaveSelectionAsLocalTemplate ();
-  void slotFileSaveSelectionAsProjectTemplate ();
-  void slotFileSaveAll ();
-  void slotFileClose   ();
+  void slotFileSave();
+  void slotFileSaveAs();
+  void slotFileSaveAsLocalTemplate();
+  void slotFileSaveAsProjectTemplate();
+  void slotFileSaveSelectionAsLocalTemplate();
+  void slotFileSaveSelectionAsProjectTemplate();
+  void slotFileSaveAll();
+  void slotFileClose();
   void slotFileCloseAll();
-  void slotFilePrint   ();
-  void slotFileNext    ();
-  void slotFilePrev    ();
-  void slotFileQuit    ();
+  void slotFilePrint();
+  void slotFileNext();
+  void slotFilePrev();
+  void slotFileQuit();
 
-  void slotImageOpen        (const KURL&);
-  void slotFileOpenRecent   (const KURL&);
-  void slotInsertTag        (const KURL&, DirInfo);
+  void slotImageOpen(const KURL&);
+  void slotFileOpenRecent(const KURL&);
+  void slotInsertTag(const KURL&, DirInfo);
 
-  void slotEditFindInFiles   ();
-
+  void slotEditFindInFiles();
   void slotToolSyntaxCheck();
-
   void openLastFiles();
   /// open url in documentation window
-  void openDoc( QString url );
+  void openDoc(QString url );
 
 //  void updateNavButtons( bool back, bool forward );
-
   void slotContextHelp();
 
   void slotBack();
   void slotForward();
 
-  void slotViewToolBar  ();
+  void slotViewToolBar();
   void slotViewStatusBar();
 
-  void statusBarTimeout ();
-  void slotStatusMsg    (const QString &text);
+  void statusBarTimeout();
+  void slotStatusMsg(const QString &text);
 
-  void slotNewUndo      ();
-  void slotNewStatus    ();
+  void slotNewUndo();
+  void slotNewStatus();
   void slotNewLineColumn();
-
-  void slotUpdateStatus (QWidget*);
+  void slotUpdateStatus(QWidget*);
 
   void slotDockChanged();
   void slotSwapLeftPanelMode();
 
+  /** repaint preview */
+  void repaintPreview( bool clear = false);
   void slotActivatePreview();
-
   /** show preview ( F6 )*/
   void slotShowPreview();
-
   void slotShowProjectTree();
   void slotShowTemplatesTree();
-
   /** Repaint preview ( slot ) */
   void slotViewRepaint();
 
@@ -243,13 +233,10 @@ public slots:
   void settingsMenuAboutToShow();
   void setEOLMenuAboutToShow();
   void bookmarkMenuAboutToShow();
-  void gotoBookmark (int n);
+  void gotoBookmark(int n);
 
   void slotMessageWidgetEnable();
   void slotMessageWidgetDisable();
-
-  /** repaint preview */
-  void repaintPreview( bool clear = false);
 
   /** options slots */
   void slotOptions();
@@ -261,15 +248,12 @@ public slots:
   void enablePhp3Debug(bool);
   void enablePhp4Debug(bool);
 
-  void setCursorPosition( int row, int col );
-  void gotoFileAndLine  ( QString filename, int line );
+  void setCursorPosition(int row, int col );
+  void gotoFileAndLine(const QString& filename, int line );
 
   void selectArea(int line1, int col1, int line2, int col2);
-  
-  void setTitle(QString);
-  
   void autoComplete();
-  
+
   void slotShowOpenFileList();
   /** No descriptions */
   void slotNewProjectLoaded();
@@ -283,8 +267,6 @@ public slots:
   void slotRemoveToolbar();
   /** Adds a new, empty toolbar. */
   void slotAddToolbar();
-  /** Saves a toolbar as local or project specific. */
-  void slotSaveToolbar(bool localToolbar = true, QString toolbarToSave = QString::null);
   /** Saves a toolbar as local specific. */
   void slotSaveLocalToolbar();
   /** Saves a toolbar as project specific. */
@@ -302,7 +284,7 @@ public slots:
   /** No descriptions */
   void slotShowCompletionHint();
   /** No descriptions */
-  void slotParsingDTDChanged(QString newDTDName);
+  void slotParsingDTDChanged(const QString& newDTDName);
   /** Runs the plugin specified by id */
   void slotPluginRun(int);
   /** Builds the plugins menu dynamically */
@@ -317,11 +299,8 @@ public slots:
   void slotReparse();
   void slotForceReparse();
 
-  /** Shows tip of the day */
-  void slotHelpTip();
 
 protected slots:
-  void initToolBars();
   /** No descriptions */
   void slotMakeDonation();
   /** No descriptions */
@@ -330,15 +309,21 @@ protected slots:
   void slotToggleDTDToolbar(bool show);
   /** No descriptions */
   void slotEmailDTD();
+  /** Shows tip of the day */
+  void slotHelpTip();
 
 protected:
+  WHTMLPart *htmlPart();
   KParts::BrowserExtension *browserExtension()
   {
       return static_cast<KParts::BrowserExtension *>(((KParts::ReadOnlyPart *)htmlPart())->child( 0L, "KParts::BrowserExtension" ));
   }
+  void initToolBars();
   /** Ask for save all the modified user toolbars. */
   void removeToolbars();
   /** Reads the tag files and the description.rc from tagDir in order to build up the internal DTD and tag structures. */
+  /** Returns true if all toolbars are hidden, false otherwise. */
+  bool allToolbarsHidden();
   void readTagDir(QString &dirName);
   /** No descriptions */
   virtual void focusInEvent(QFocusEvent*);
@@ -353,13 +338,15 @@ protected:
   void initTagDict();
 
   /** Reads the tags for the tag files. Returns the number of read tags. */
-  uint readTagFile(QString fileName, DTDStruct* parentDTD, QTagList *tagList);
+  uint readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList);
   /** Parse the dom document and retrieve the tag attributes */
   void setAttributes(QDomNode *dom, QTag *tag);
   virtual bool queryClose();
   void saveAsTemplate (bool projectTemplate, bool selectionOnly = false);
+  /** Saves a toolbar as local or project specific. */
+  void saveToolbar(bool localToolbar = true, const QString& toolbarToSave = QString::null);
   /** Saves the toolbar and the actions. Returns the name of the actions file*/
-  KURL saveToolBar(const QString& toolbarName,const KURL& destFile);
+  KURL saveToolbarToFile(const QString& toolbarName,const KURL& destFile);
   /** Show the toolbar which is in url. If it was not loaded yet, it loads the
       toolbar from the file */
   void showToolbarFile(const KURL &url);
@@ -367,36 +354,32 @@ protected:
   void initPlugins();
   /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
   void loadToolbarForDTD(const QString& dtdName);
+  void setTitle(const QString&);
 
 private:
-
   /** Messaage output window */
   MessageOutput *messageOutput;
-  
-  /** plugin classes */
-  QuantaPluginInterface *m_pluginInterface;
+
   QPopupMenu *m_pluginMenu;
   QPopupMenu *m_tagsMenu;
-    
+
   /** project class */
-  Project *project;
-
-  WHTMLPart    *htmlPart();
-  /** Returns true if all toolbars are hidden, false otherwise. */
-  bool allToolbarsHidden();
-
+  Project *m_project;
   // config
-  KConfig *config;
+  KConfig *m_config;
 
   /** widget stack for left panel */
   QWidgetStack *fTab;
+  QWidgetStack *rightWidgetStack;
+  QWidgetStack *bottomWidgetStack;
 
   /** tabs for left panel */
-  ProjectTreeView    *pTab;
-  DocTreeView   *dTab;
-  FilesTreeView  *fTTab;
-  FilesListView    *fLTab;
-  TemplatesTreeView   *tTab;
+  ProjectTreeView *pTab;
+  DocTreeView *dTab;
+  FilesTreeView *fTTab;
+  FilesListView *fLTab;
+  TemplatesTreeView *tTab;
+  StructTreeView *sTab;
 
   KDockWidget *leftdock;
   KDockWidget *maindock;
@@ -415,13 +398,12 @@ private:
   GrepDialog *grepDialog;
 
   // DOC & VIEW
-  QuantaDoc  *doc;
-  QuantaView *view;
+  QuantaDoc  *m_doc;
+  QuantaView *m_view;
 
   bool exitingFlag;
 
   /** parsered tree of document  */
-
   QTimer *statusbarTimer;
 
   // debugger
@@ -431,12 +413,12 @@ private:
   QString debuggerStyle;
 
   // ACTIONS
-  KRecentFilesAction *fileRecent;
   KRecentFilesAction *projectToolbarFiles;
 
   KToggleAction *showMessagesAction, *showTreeAction,
     *showFTabAction,*showPTabAction,*showTTabAction,*showSTabAction,*showDTabAction,
     *showToolbarAction,*showStatusbarAction,*showPreviewAction;
+  KToggleAction *showDTDToolbar;
 
   KSelectAction *setEndOfLine;
 
@@ -450,16 +432,13 @@ private:
   KAction *editUndo, *editRedo, *bookmarkToggle, *bookmarkClear;
   KAction *editTagAction;
 
-  KToggleAction *viewBorder;
-  KToggleAction *viewLineNumbers;
   //KToggleAction *viewFoldingMarkers;
-  KToggleAction *viewDynamicWordWrap;
   Kate::ActionMenu *setHighlight;
 
   QPopupMenu* pm_set;
   QPopupMenu* pm_bookmark;
 
-  QDomDocument *m_actions;
+  QDomDocument* m_actions;
 
   QPtrList<KTextEditor::Mark> markList;
   QPtrList<KTempFile> tempFileList;
@@ -468,25 +447,28 @@ private:
   bool previewCopyMade;
   KTempFile *previewTmpFile;
 
-signals: // Signals
-  /** The tree views should be updated due to some changes on the disk. */
-  void reloadTreeviews();
 protected: // Protected attributes
   /** Timer to refresh the structure tree. */
   QTimer *refreshTimer;
-  /**  */
   QString scriptBeginRxStr;
-  /**  */
   QString scriptEndRxStr;
   /** The toolbars for this DTD are currently shown to the user. */
   QString currentToolbarDTD;
-
-  SpellChecker *spellChecker;
-
+  SpellChecker *m_spellChecker;
   KDockWidget *m_oldTreeViewWidget;
-
   /** The id of the widget visible before doing the preview */
   int previousWidgetId;
+
+public: //TODO: check if it's worth to make a read method for them
+  QDict<ToolbarEntry> toolbarList;
+  KToggleAction *viewBorder;
+  KToggleAction *viewLineNumbers;
+  KToggleAction *viewDynamicWordWrap;
+  KRecentFilesAction *fileRecent;
+  /** plugin classes */
+  QuantaPluginInterface *m_pluginInterface;
+  /** True when the whole quanta is initalized. */
+  bool quantaStarted;
 };
- 
+
 #endif // QUANTA_H

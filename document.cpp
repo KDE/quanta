@@ -19,6 +19,7 @@
 #include <cctype>
 
 //QT includes
+#include <qdir.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qtextstream.h>
@@ -330,7 +331,7 @@ void Document::insertText(QString text, bool adjustCursor)
   reparseEnabled = true;
   baseNode = parser->rebuild(this);
   if (qConfig.instantUpdate)
-        quantaApp->sTab->slotReparse(this, baseNode , qConfig.expandLevel);
+        quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
 }
 
 /** Get the view of the document */
@@ -803,7 +804,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeValueCompletions
   completion.type = "attributeValue";
   completion.userdata = startsWith+"|"+tagName + "," + attribute;
 
-  QStringList *values = QuantaCommon::tagAttributeValues(dtd->name,tagName,attribute);
+  QStringList *values = tagAttributeValues(dtd->name,tagName,attribute);
   if (values)
   {
     for ( QStringList::Iterator it = values->begin(); it != values->end(); ++it )
@@ -1504,8 +1505,47 @@ void Document::slotDelayedTextChanged()
     }
 
     if (qConfig.instantUpdate)
-        quantaApp->sTab->slotReparse(this, baseNode , qConfig.expandLevel);
+        quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
 }
 
+/** Returns list of values for attribute */
+QStringList* Document::tagAttributeValues(const QString& dtdName, const QString& tag, const QString &attribute)
+{
+  QStringList *values = 0L;
+
+  DTDStruct* dtd = dtds->find(dtdName.lower());
+  if (dtd)
+  {
+    QString searchForAttr = (dtd->caseSensitive) ? attribute : attribute.upper();
+    AttributeList* attrs = QuantaCommon::tagAttributes(dtdName, tag);
+    Attribute *attr;
+    if (attrs)
+    {
+      for ( attr = attrs->first(); attr; attr = attrs->next() )
+      {
+        QString attrName = (dtd->caseSensitive) ? attr->name : attr->name.upper();        if (attrName == searchForAttr)
+        {
+          if (attr->type == "url") {
+            Project *project = quantaApp->project();
+            if (project->hasProject())
+            {
+              values = new QStringList(project->fileNameList(true).toStringList());
+              values->append("mailto:" + project->email);
+            } else
+            {
+              QDir dir = QDir(url().directory());
+              values = new QStringList(dir.entryList());
+            }
+            break;
+          } else {
+            values = &attr->values;
+            break;
+          }
+        }
+      }
+    }
+  }
+  return values;
+}
 
 #include "document.moc"

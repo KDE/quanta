@@ -92,9 +92,9 @@ bool QuantaCmdPlugin::load()
   }
   
   /* TODO
-  QString text = quantaApp->getDoc()->write()->editIf->text();
+  QString text = quantaApp->doc()->write()->editIf->text();
   args.replace(QRegExp("document"), text);
-  text = quantaApp->getDoc()->write()->selectionIf->selection();
+  text = quantaApp->doc()->write()->selectionIf->selection();
   args.replace(QRegExp("selection"), text); */
 
   QString loc = location(); // locate first if location not specified

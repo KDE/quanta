@@ -429,7 +429,7 @@ void QuantaView::slotViewInNetscape()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    KURL url = quantaApp->project->urlWithPrefix(w->url());
+    KURL url = quantaApp->project()->urlWithPrefix(w->url());
 
     *show << "netscape" << "-remote" << QString(QString("openURL(")+url.url()+")").data();
     connect( show, SIGNAL(processExited(KProcess *)), this, SLOT(slotNetscapeStatus(KProcess *)));
@@ -464,7 +464,7 @@ void QuantaView::slotViewInKFM()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    KURL url = quantaApp->project->urlWithPrefix(w->url());
+    KURL url = quantaApp->project()->urlWithPrefix(w->url());
     *show << "kfmclient" << "exec" << url.url();
     show->start( KProcess::DontCare );
   }
@@ -497,7 +497,7 @@ void QuantaView::slotViewInLynx()
   if ( !w->isUntitled() )
   {
     KProcess *show = new KProcess();
-    KURL url = quantaApp->project->urlWithPrefix(w->url());
+    KURL url = quantaApp->project()->urlWithPrefix(w->url());
     *show << "konsole"
           << "--nohist"
           << "--notoolbar"
@@ -516,7 +516,7 @@ void QuantaView::slotNetscapeStatus(KProcess *proc)
   if ( proc->exitStatus() )
   {
     KProcess *show = new KProcess();
-    KURL url = quantaApp->project->urlWithPrefix(write()->url());
+    KURL url = quantaApp->project()->urlWithPrefix(write()->url());
     *show << "netscape" << url.url();
     show->start( KProcess::DontCare );
   }
@@ -541,16 +541,18 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
     if ( scriptOutputDest == "cursor" )
       w->insertTag(output);
 
-    if ( scriptOutputDest == "message" ) {
-
-        if ( beginOfScriptOutput ) {
+    if ( scriptOutputDest == "message" )
+    {
+      MessageOutput *msgoutput = quantaApp->getMessageOutput();
+        if ( beginOfScriptOutput )
+	{
           //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
           //  quantaApp->slotViewMes();
-          quantaApp->messageOutput->clear();
-          quantaApp->messageOutput->insertItem(i18n("Script output:\n"));
+          msgoutput->clear();
+          msgoutput->insertItem(i18n("Script output:\n"));
         }
 
-        quantaApp->messageOutput->showMessage(output);
+        msgoutput->showMessage(output);
     }
 
     if ( scriptOutputDest == "new" )
@@ -588,16 +590,17 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
     if ( scriptErrorDest == "cursor" )
       w->insertTag(output);
 
-    if ( scriptErrorDest == "message" ) {
-
-        if ( beginOfScriptError ) {
+    if ( scriptErrorDest == "message" )
+    {
+      MessageOutput *msgoutput = quantaApp->getMessageOutput();
+      if ( beginOfScriptError ) {
           //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
           //  quantaApp->slotViewMes();
-          quantaApp->messageOutput->clear();
-          quantaApp->messageOutput->insertItem(i18n("Script output:\n"));
+          msgoutput->clear();
+          msgoutput->insertItem(i18n("Script output:\n"));
         }
 
-        quantaApp->messageOutput->showMessage( output );
+        msgoutput->showMessage( output );
     }
 
     if ( scriptErrorDest == "new" )
@@ -828,7 +831,7 @@ void QuantaView::slotSpellcheck ()
   if (writeExists())
   {
 #if KDE_VERSION >= 308
-    quantaApp->spellChecker->spellCheck(write()->doc());
+    quantaApp->spellChecker()->spellCheck(write()->doc());
 #else
     write()->kate_doc->spellcheck();
 #endif
@@ -906,14 +909,15 @@ void QuantaView::slotEditorOptions()
 {
   if (writeExists())
   {
+    KConfig *config = quantaApp->config();
     dynamic_cast<KTextEditor::ConfigInterface *>(write()->doc())->configDialog();
-    write()->writeConfig(quantaApp->config);
-    quantaApp->config->sync();
+    write()->writeConfig(config);
+    config->sync();
 
-    quantaApp->config->setGroup("Kate View");
-    qConfig.lineNumbers = quantaApp->config->readBoolEntry("LineNumbers", false);
-    qConfig.iconBar = quantaApp->config->readBoolEntry("Iconbar", false);
-    qConfig.dynamicWordWrap = quantaApp->config->readBoolEntry("DynamicWordWrap",false);
+    config->setGroup("Kate View");
+    qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);
+    qConfig.iconBar = config->readBoolEntry("Iconbar", false);
+    qConfig.dynamicWordWrap = config->readBoolEntry("DynamicWordWrap",false);
     quantaApp->viewBorder->setChecked(qConfig.iconBar);
     quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
 #if (KDE_VERSION > 308)

@@ -1538,7 +1538,7 @@ void Project::slotSaveAsProjectView(bool askForName)
     QDomElement el = dom.createElement("projectview");
     el.setAttribute("name", currentProjectView);
     QDomElement item;
-    QTabWidget *tab = quantaApp->getView()->writeTab;
+    QTabWidget *tab = quantaApp->view()->writeTab();
     for (int i = 0; i < tab->count(); i++)
     {
       Document *w = dynamic_cast<Document *>(tab->page(i));

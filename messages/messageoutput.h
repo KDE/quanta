@@ -62,7 +62,7 @@ public:
   void checkMaxItems();
   
 signals:
-  void clicked(QString fname, int line );
+  void clicked(const QString& fname, int line );
   
 protected slots:
   void clickItem( QListBoxItem *);  

@@ -90,7 +90,7 @@ signals:
   void needReparse();
   void onTag( const QString &tag );
   /** No descriptions */
-  void parsingDTDChanged(QString);
+  void parsingDTDChanged(const QString&);
 
 private:
   /** builds the structure tree */

@@ -99,31 +99,29 @@ public:
   ~QuantaCommon();
 
   /** convert tag to upper or lower case */
-  static QString tagCase( const QString tag);
+  static QString tagCase( const QString& tag);
   /** convert tag to upper or lower case */
-  static QString attrCase( const QString attr);
+  static QString attrCase( const QString& attr);
   /** Set's up the url correctly from urlString. */
-  static void setUrl(KURL &url, QString urlString);
+  static void setUrl(KURL &url, const QString& urlString);
   /** No descriptions */
-  static bool isSingleTag(QString dtdName, QString tag);
+  static bool isSingleTag(const QString& dtdName, const QString& tag);
   /** No descriptions */
-  static bool isOptionalTag(QString dtdName, QString tag);
+  static bool isOptionalTag(const QString& dtdName, const QString& tag);
   /** No descriptions */
-  static bool isKnownTag(QString dtdName, QString tag);
+  static bool isKnownTag(const QString& dtdName, const QString& tag);
   /** No descriptions */
-  static AttributeList*  tagAttributes(QString dtdName, QString tag);
+  static AttributeList* tagAttributes(const QString& dtdName, const QString& tag);
   /** Returns the QTag object for the tag "tag" from the DTD named "dtdname". */
-  static QTag* tagFromDTD(QString dtdName, QString tag);
+  static QTag* tagFromDTD(const QString& dtdName, const QString& tag);
   /** Returns the QTag object for the tag "tag" from the DTD. */
-  static QTag* tagFromDTD(DTDStruct * dtd, QString tag);
+  static QTag* tagFromDTD(DTDStruct* dtd, const QString& tag);
   /** Returns an XML style string containing the GUI for attributes. */
   static QString xmlFromAttributes(AttributeList* attributes);
-  /** Returns list of values for attribute */
-  static QStringList* tagAttributeValues(QString dtdName, QString tag, QString attribute);
   /** Returns the DTD name (identifier) corresponding to the DTD's nickname */
-  static QString getDTDNameFromNickName(QString nickName);
+  static QString getDTDNameFromNickName(const QString& nickName);
   /** Returns the DTD iddentifier from the given nickname */
-  static QString getDTDNickNameFromName(QString name);
+  static QString getDTDNickNameFromName(const QString& name);
   /** Returns 0 if the (line,col) is inside the area specified by the other arguments,
       -1 if it is before the area and 1 if it is after. */
   static int isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol);
@@ -148,12 +146,12 @@ pointer must be deleted by the caller!! */
   /**
   Adds the backslash before the special chars (like ?, *, . ) so the returned string can be used in regular expressions.
   */
-  static QString makeRxCompatible(const QString s);
+  static QString makeRxCompatible(const QString& s);
   /** Returns the translated a_str in English. A "back-translation" useful e.g in case of CSS elements selected from a listbox. */
   static QString i18n2normal(const QString& a_str);
 
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
-  static Format findFormatByFileContent( const QString &fileName );
+  static Format findFormatByFileContent( const QString& fileName );
 #endif
 };
 

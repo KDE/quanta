@@ -111,7 +111,7 @@ bool QTag::isOptional()
   return optional;
 }
 /** No descriptions */
-void QTag::setFileName(QString& fileName)
+void QTag::setFileName(const QString& fileName)
 {
   m_fileName = fileName;
 }
@@ -143,7 +143,7 @@ QTag QTag::operator = (QTag &t)
 }
 
 /** Returns the attribute with name, or 0 if the tag does not have any attribute with name. */
-Attribute* QTag::attribute(QString& name)
+Attribute* QTag::attribute(const QString& name)
 {
  Attribute *attr = 0L;
  for (uint i = 0; i < attrs.count(); i++)

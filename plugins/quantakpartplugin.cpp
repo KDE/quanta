@@ -86,15 +86,15 @@ bool QuantaKPartPlugin::load()
   QWidget *targetWidget;
   if(ow == i18n("Editor Tab"))
   {
-    targetWidget = quantaApp->bottomWidgetStack;
+    targetWidget = quantaApp->view();
   } else
   if(ow == i18n("Editor Frame"))
   {
-    targetWidget = quantaApp->rightWidgetStack;
+    targetWidget = quantaApp->rightWidget();
   }
   else if(ow == i18n("Message Frame"))
   {
-    targetWidget = quantaApp->outputDockWidget();
+    targetWidget = quantaApp->bottomWidget();
   }
   else
   {
@@ -149,20 +149,20 @@ void QuantaKPartPlugin::addWidget()
   QString ow = outputWindow();
   if(ow == i18n("Message Frame"))
   {
-    QWidgetStack *stack = quantaApp->bottomWidgetStack;
+    QWidgetStack *stack = quantaApp->bottomWidget();
     stack->addWidget(m_part->widget(), 3);
     stack->raiseWidget(m_part->widget());
   }
   else if (ow == i18n("Editor Frame"))
   {
-    QWidgetStack *stack = quantaApp->rightWidgetStack;
+    QWidgetStack *stack = quantaApp->rightWidget();
     stack->addWidget(m_part->widget(), 3);
     stack->raiseWidget(m_part->widget());
   } else if (ow == i18n("Editor Tab"))
   {
-    QuantaView *view = quantaApp->getView();
+    QuantaView *view = quantaApp->view();
     view->addWrite(m_part->widget(), m_name);
-    view->writeTab->showPage(m_part->widget());
+    view->writeTab()->showPage(m_part->widget());
   }
 
   m_part->widget()->show();
@@ -173,19 +173,19 @@ void QuantaKPartPlugin::removeWidget()
   QString ow = outputWindow();
   if(ow == i18n("Message Frame"))
   {
-    QWidgetStack *stack = quantaApp->bottomWidgetStack;
+    QWidgetStack *stack = quantaApp->bottomWidget();
     stack->removeWidget(m_part->widget());
     stack->raiseWidget(0);
   }
   else if(ow == i18n("Editor Frame"))
   {
-    QWidgetStack *stack = quantaApp->rightWidgetStack;
+    QWidgetStack *stack = quantaApp->rightWidget();
     stack->removeWidget(m_part->widget());
     stack->raiseWidget(0);
   }
   else if(ow == i18n("Editor Tab"))
   {
-    quantaApp->getView()->writeTab->removePage(m_part->widget());
+    quantaApp->view()->writeTab()->removePage(m_part->widget());
   }
 }
 

@@ -202,9 +202,9 @@ public:
   /** No descriptions */
   QString fileName();
   /** No descriptions */
-  void setFileName(QString& fileName);
+  void setFileName(const QString& fileName);
   /** Returns the attribute with name, or 0 if the tag does not have any attribute with name. */
-  Attribute* attribute(QString& name);
+  Attribute* attribute(const QString& name);
 
   /** The tag belongs to this DTD */
   DTDStruct *parentDTD;

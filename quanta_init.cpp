@@ -99,7 +99,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   userToolbarsCount = 0;
   baseNode = 0L;
   currentToolbarDTD = QString::null;
-  config=kapp->config();
+  m_config=kapp->config();
 
   qConfig.globalDataDir = KGlobal::dirs()->findResourceDir("data","quanta/toolbar/quantalogo.png");
   if (qConfig.globalDataDir.isEmpty())
@@ -117,7 +117,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   grepDialog  = 0L;
   exitingFlag = false;
   qConfig.spellConfig = new KSpellConfig();
-  spellChecker = new SpellChecker();
+  m_spellChecker = new SpellChecker();
 }
 
 QuantaApp::~QuantaApp()
@@ -135,7 +135,7 @@ QuantaApp::~QuantaApp()
  }
 
  toolbarList.clear();
- delete spellChecker;
+ delete m_spellChecker;
  QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
  QDir dir;
  dir.rmdir(tmpDirs[0] + "quanta");
@@ -166,7 +166,7 @@ void QuantaApp::initQuanta()
 
   createGUI( QString::null, false /* conserveMemory */ );
 
-  applyMainWindowSettings(config);
+  applyMainWindowSettings(m_config);
   initPlugins  ();
 
   m_tagsMenu = new QPopupMenu(this);
@@ -187,8 +187,8 @@ void QuantaApp::initQuanta()
   QPopupMenu *toolbarsMenu  = (QPopupMenu*)guiFactory()->container("toolbars_load", this);
   connect(toolbarsMenu, SIGNAL(aboutToShow()), this, SLOT(slotBuildPrjToolbarsMenu()));
 
-  connect(messageOutput, SIGNAL(clicked(QString,int)),
-          this, SLOT(gotoFileAndLine(QString,int)));
+  connect(messageOutput, SIGNAL(clicked(const QString&,int)),
+          this, SLOT(gotoFileAndLine(const QString&,int)));
 
   refreshTimer = new QTimer( this );
   connect(refreshTimer, SIGNAL(timeout()), SLOT(slotReparse()));
@@ -207,7 +207,7 @@ void QuantaApp::initQuanta()
 void QuantaApp::initToolBars()
 {
  if (toolbarList.count() == 0)
-     loadToolbarForDTD(project->defaultDTD());
+     loadToolbarForDTD(m_project->defaultDTD());
 }
 
 void QuantaApp::initStatusBar()
@@ -236,68 +236,68 @@ void QuantaApp::statusBarTimeout()
 
 void QuantaApp::initDocument()
 {
-  doc = new QuantaDoc(this);
-  connect(doc, SIGNAL(newStatus()),    this, SLOT(slotNewStatus()));
+  m_doc = new QuantaDoc(this);
+  connect(m_doc, SIGNAL(newStatus()),    this, SLOT(slotNewStatus()));
 }
 
 void QuantaApp::initProject()
 {
-  project = new Project(this);
+  m_project = new Project(this);
 
-  connect(project,  SIGNAL(openFile    (const KURL &, const QString&)),
+  connect(m_project,  SIGNAL(openFile    (const KURL &, const QString&)),
           this,     SLOT  (slotFileOpen(const KURL &, const QString&)));
-  connect(project,  SIGNAL(reloadTree(const KURL::List & ,bool)),
+  connect(m_project,  SIGNAL(reloadTree(const KURL::List & ,bool)),
           pTab,     SLOT  (slotReloadTree(const KURL::List &,bool)));
-  connect(project,  SIGNAL(setBaseURL(const KURL&)),
+  connect(m_project,  SIGNAL(setBaseURL(const KURL&)),
           pTab,     SLOT  (slotSetBaseURL(const KURL&)));
-  connect(project,  SIGNAL(setProjectName(QString)),
+  connect(m_project,  SIGNAL(setProjectName(QString)),
           pTab,     SLOT  (slotSetProjectName(QString)));
-  connect(project,  SIGNAL(closeFiles()),
-          doc,      SLOT  (closeAll()));
-  connect(project,  SIGNAL(showTree()),
+  connect(m_project,  SIGNAL(closeFiles()),
+          m_doc,      SLOT  (closeAll()));
+  connect(m_project,  SIGNAL(showTree()),
           this,     SLOT  (slotShowProjectTree()));
-  connect(project,  SIGNAL(removeFromProject(int)),
+  connect(m_project,  SIGNAL(removeFromProject(int)),
           pTab,     SLOT  (slotRemoveFromProject(int)));
-  connect(project,  SIGNAL(templateURLChanged(const KURL &)),
+  connect(m_project,  SIGNAL(templateURLChanged(const KURL &)),
           tTab,     SLOT  (slotSetTemplateURL(const KURL &)));
 
   connect(fLTab,    SIGNAL(insertDirInProject(const KURL&)),
-          project,  SLOT  (slotAddDirectory(const KURL&)));
+          m_project,  SLOT  (slotAddDirectory(const KURL&)));
   connect(fTTab,    SIGNAL(insertDirInProject(const KURL&)),
-          project,  SLOT  (slotAddDirectory(const KURL&)));
+          m_project,  SLOT  (slotAddDirectory(const KURL&)));
 
   connect(fLTab,    SIGNAL(insertFileInProject(const KURL&)),
-          project,  SLOT  (slotInsertFile(const KURL&)));
+          m_project,  SLOT  (slotInsertFile(const KURL&)));
   connect(fTTab,    SIGNAL(insertFileInProject(const KURL&)),
-          project,  SLOT  (slotInsertFile(const KURL&)));
+          m_project,  SLOT  (slotInsertFile(const KURL&)));
 
   connect(pTab,     SIGNAL(renameInProject(const KURL&)),
-          project,  SLOT  (slotRename(const KURL&)));
+          m_project,  SLOT  (slotRename(const KURL&)));
   connect(pTab,     SIGNAL(removeFromProject(const KURL&)),
-          project,  SLOT  (slotRemove(const KURL&)));
+          m_project,  SLOT  (slotRemove(const KURL&)));
   connect(pTab,     SIGNAL(uploadSingleURL(const KURL&)),
-          project,  SLOT  (slotUploadURL(const KURL&)));
+          m_project,  SLOT  (slotUploadURL(const KURL&)));
   connect(pTab,     SIGNAL(rescanProjectDir()),
-          project,  SLOT  (slotRescanPrjDir()));
+          m_project,  SLOT  (slotRescanPrjDir()));
   connect(pTab,     SIGNAL(showProjectOptions()),
-          project,  SLOT  (slotOptions()));
+          m_project,  SLOT  (slotOptions()));
   connect(pTab,     SIGNAL(uploadProject()),
-          project,  SLOT  (slotUpload()));
+          m_project,  SLOT  (slotUpload()));
 
-  connect(project,  SIGNAL(selectMessageWidget()),
+  connect(m_project,  SIGNAL(selectMessageWidget()),
           this,     SLOT  (slotMessageWidgetEnable()));
-  connect(project,  SIGNAL(disableMessageWidget()),
+  connect(m_project,  SIGNAL(disableMessageWidget()),
           this,     SLOT  (slotMessageWidgetDisable()));
 
-  connect(project,  SIGNAL(messages(QString)),
+  connect(m_project,  SIGNAL(messages(QString)),
           messageOutput, SLOT(showMessage(QString)));
 
-  connect(project,  SIGNAL(saveAllFiles()),
+  connect(m_project,  SIGNAL(saveAllFiles()),
           this, SLOT(slotFileSaveAll()));
-  connect(project,  SIGNAL(newStatus()),
+  connect(m_project,  SIGNAL(newStatus()),
           this, SLOT(slotNewStatus()));
 
-  connect(project,  SIGNAL(newProjectLoaded()),
+  connect(m_project,  SIGNAL(newProjectLoaded()),
           this,     SLOT  (slotNewProjectLoaded()));
 
 }
@@ -323,8 +323,8 @@ void QuantaApp::initView()
   dtabdock->setToolTipString(i18n("Documentation"));
 
   QStringList topStrList;
-  config->setGroup("General Options");
-  topStrList = config->readListEntry("Top folders");
+  m_config->setGroup("General Options");
+  topStrList = m_config->readListEntry("Top folders");
   KURL::List topList;
   KURL url;
   for (uint i = 0; i < topStrList.count(); i++)
@@ -355,13 +355,14 @@ void QuantaApp::initView()
 
   dTab  = new DocTreeView    ( dtabdock );
 
-  sTab = new StructTreeView( parser, config, stabdock ,"struct");
+  sTab = new StructTreeView( parser, m_config, stabdock ,"struct");
 
 
   rightWidgetStack = new QWidgetStack( maindock );
   bottomWidgetStack = new QWidgetStack( bottdock);
 
-  view = new QuantaView( rightWidgetStack );
+  m_view = new QuantaView( rightWidgetStack );
+  connect(m_view, SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
 
 
   maindock ->setWidget( rightWidgetStack );
@@ -387,7 +388,7 @@ void QuantaApp::initView()
   htmlpart       = new WHTMLPart( rightWidgetStack,  "rightHTML");
   htmlPartDoc    = new WHTMLPart( rightWidgetStack,  "docHTML");
 
-  rightWidgetStack->addWidget( view, 0 );
+  rightWidgetStack->addWidget( m_view, 0 );
   rightWidgetStack->addWidget( htmlpart   ->view(), 1 );
   rightWidgetStack->addWidget( htmlPartDoc->view(), 2 );
   rightWidgetStack->raiseWidget(0);
@@ -448,16 +449,16 @@ void QuantaApp::initView()
   connect(  htmlPartDoc,    SIGNAL(onURL(const QString&)), this, SLOT(slotStatusMsg(const QString&)));
 //  connect(  htmlPartDoc,    SIGNAL(updateStatus(bool, bool)), SLOT(updateNavButtons( bool, bool)));
 
-  connect( view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
+  connect( m_view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
 
   connect( sTab, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
 //  connect( sTab, SIGNAL(onTag(const QString &)), SLOT( slotStatusHelpMsg(const QString &)));
   connect( sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
   connect( sTab, SIGNAL(needReparse()),    SLOT(slotForceReparse()));
-  connect( sTab, SIGNAL(parsingDTDChanged(QString)), SLOT(slotParsingDTDChanged(QString)));
+  connect( sTab, SIGNAL(parsingDTDChanged(const QString&)), SLOT(slotParsingDTDChanged(const QString&)));
   connect( dTab, SIGNAL(openURL(QString)), SLOT(openDoc(QString)));
 
-  connect(getView(), SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
+  connect(m_view, SIGNAL(dragInsert(QDropEvent *)), tTab, SLOT(slotDragInsert(QDropEvent *)));
 
   setMainDockWidget( maindock );
   setView(maindock);
@@ -504,106 +505,106 @@ QWidgetStack *QuantaApp::widgetStackOfHtmlPart()
 
 void QuantaApp::saveOptions()
 {
-  if (config)
+  if (m_config)
   {
-    config->setGroup  ("General Options");
+    m_config->setGroup  ("General Options");
 
-    config->writeEntry("Geometry", size());
+    m_config->writeEntry("Geometry", size());
 
-    config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
-    config->writeEntry("Show DTD Toolbar", qConfig.enableDTDToolbar);
-    config->writeEntry("Show Statusbar", statusBar()->isVisible());
+    m_config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isVisible());
+    m_config->writeEntry("Show DTD Toolbar", qConfig.enableDTDToolbar);
+    m_config->writeEntry("Show Statusbar", statusBar()->isVisible());
 
-    config->writeEntry("Markup mimetypes", qConfig.markupMimeTypes  );
-    config->writeEntry("Script mimetypes", qConfig.scriptMimeTypes   );
-    config->writeEntry("Image mimetypes", qConfig.imageMimeTypes );
-    config->writeEntry("Text mimetypes", qConfig.textMimeTypes  );
+    m_config->writeEntry("Markup mimetypes", qConfig.markupMimeTypes  );
+    m_config->writeEntry("Script mimetypes", qConfig.scriptMimeTypes   );
+    m_config->writeEntry("Image mimetypes", qConfig.imageMimeTypes );
+    m_config->writeEntry("Text mimetypes", qConfig.textMimeTypes  );
 
-    config->writeEntry("Capitals for tags", qConfig.tagCase);
-    config->writeEntry("Capitals for attr", qConfig.attrCase);
-    config->writeEntry("Attribute quotation", qConfig.attrValueQuotation);
-    config->writeEntry("Close tag if optional", qConfig.closeOptionalTags);
-    config->writeEntry("Close tags", qConfig.closeTags);
-    config->writeEntry("Auto completion", qConfig.useAutoCompletion);
-    config->writeEntry("Update Closing Tags", qConfig.updateClosingTags);
+    m_config->writeEntry("Capitals for tags", qConfig.tagCase);
+    m_config->writeEntry("Capitals for attr", qConfig.attrCase);
+    m_config->writeEntry("Attribute quotation", qConfig.attrValueQuotation);
+    m_config->writeEntry("Close tag if optional", qConfig.closeOptionalTags);
+    m_config->writeEntry("Close tags", qConfig.closeTags);
+    m_config->writeEntry("Auto completion", qConfig.useAutoCompletion);
+    m_config->writeEntry("Update Closing Tags", qConfig.updateClosingTags);
 
-//    config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
+//    m_config->writeEntry("DynamicWordWrap", qConfig.dynamicWordWrap);
 
-    config->writeEntry("Default encoding", qConfig.defaultEncoding);
-    config->writeEntry("Default DTD", qConfig.defaultDocType);
+    m_config->writeEntry("Default encoding", qConfig.defaultEncoding);
+    m_config->writeEntry("Default DTD", qConfig.defaultDocType);
 
-    config->writeEntry("Preview position",qConfig.previewPosition);
-    config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
-    config->writeEntry("Follow Cursor", sTab->followCursor() );
-    config->writeEntry("PHP Debugger Port", phpDebugPort );
-    config->writeEntry("Top folders", fTTab->topURLList.toStringList());
-    config->writeEntry("List of opened files", doc->openedFiles().toStringList());
-    config->writeEntry("Version", VERSION); // version
-    config->writeEntry ("Enable Debugger", debuggerStyle!="None");
-    config->writeEntry ("PHP Debugger style", debuggerStyle);
-    config->deleteGroup("RecentFiles");
-    fileRecent->saveEntries(config);
+    m_config->writeEntry("Preview position",qConfig.previewPosition);
+    m_config->writeEntry("Left panel mode", fTab->id( fTab->visibleWidget()));
+    m_config->writeEntry("Follow Cursor", sTab->followCursor() );
+    m_config->writeEntry("PHP Debugger Port", phpDebugPort );
+    m_config->writeEntry("Top folders", fTTab->topURLList.toStringList());
+    m_config->writeEntry("List of opened files", m_doc->openedFiles().toStringList());
+    m_config->writeEntry("Version", VERSION); // version
+    m_config->writeEntry ("Enable Debugger", debuggerStyle!="None");
+    m_config->writeEntry ("PHP Debugger style", debuggerStyle);
+    m_config->deleteGroup("RecentFiles");
+    fileRecent->saveEntries(m_config);
 
-    config->setGroup("Parser Options");
-    config->writeEntry("Instant Update", qConfig.instantUpdate);
-    config->writeEntry("Show Empty Nodes", qConfig.showEmptyNodes);
-    config->writeEntry("Show Closing Tags", qConfig.showClosingTags);
-    config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
-    config->writeEntry("Expand Level", qConfig.expandLevel);
+    m_config->setGroup("Parser Options");
+    m_config->writeEntry("Instant Update", qConfig.instantUpdate);
+    m_config->writeEntry("Show Empty Nodes", qConfig.showEmptyNodes);
+    m_config->writeEntry("Show Closing Tags", qConfig.showClosingTags);
+    m_config->writeEntry("Refresh frequency", qConfig.refreshFrequency);
+    m_config->writeEntry("Expand Level", qConfig.expandLevel);
 
-    config->setGroup("Quanta View");
-    config->writeEntry("LineNumbers", qConfig.lineNumbers);
-    config->writeEntry("Iconbar", qConfig.iconBar);
-    config->writeEntry("DynamicWordWrap",qConfig.dynamicWordWrap);
-    doc    ->writeConfig(config); // kwrites
-    project->writeConfig(config); // project
-    writeDockConfig(config);
-    saveMainWindowSettings(config);
-    spellChecker->writeConfig(config);
-    config->sync();
+    m_config->setGroup("Quanta View");
+    m_config->writeEntry("LineNumbers", qConfig.lineNumbers);
+    m_config->writeEntry("Iconbar", qConfig.iconBar);
+    m_config->writeEntry("DynamicWordWrap",qConfig.dynamicWordWrap);
+    m_doc->writeConfig(m_config); // kwrites
+    m_project->writeConfig(m_config); // project
+    writeDockConfig(m_config);
+    saveMainWindowSettings(m_config);
+    m_spellChecker->writeConfig(m_config);
+    m_config->sync();
   }
 }
 
 
 void QuantaApp::readOptions()
 {
-  config->setGroup("General Options");
-  //if (2>config->readNumEntry("Version",0)) config = new KConfig();
+  m_config->setGroup("General Options");
+  //if (2>m_config->readNumEntry("Version",0)) m_config = new KConfig();
 
-  qConfig.markupMimeTypes = config->readEntry("Markup mimetypes", qConfig.markupMimeTypes);
-  qConfig.scriptMimeTypes = config->readEntry("Script mimetypes", qConfig.scriptMimeTypes);
-  qConfig.imageMimeTypes = config->readEntry("Image mimetypes", qConfig.imageMimeTypes);
-  qConfig.textMimeTypes = config->readEntry("Text mimetypes", qConfig.textMimeTypes);
+  qConfig.markupMimeTypes = m_config->readEntry("Markup mimetypes", qConfig.markupMimeTypes);
+  qConfig.scriptMimeTypes = m_config->readEntry("Script mimetypes", qConfig.scriptMimeTypes);
+  qConfig.imageMimeTypes = m_config->readEntry("Image mimetypes", qConfig.imageMimeTypes);
+  qConfig.textMimeTypes = m_config->readEntry("Text mimetypes", qConfig.textMimeTypes);
 
-  qConfig.tagCase = config->readNumEntry("Capitals for tags", 0);
-  qConfig.attrCase = config->readNumEntry("Capitals for attr", 0);
-  qConfig.attrValueQuotation = config->readEntry("Attribute quotation", "double");
-  qConfig.closeOptionalTags = config->readBoolEntry("Close tag if optional", true);
-  qConfig.closeTags = config->readBoolEntry("Close tags", true);
-  qConfig.useAutoCompletion = config->readBoolEntry("Auto completion",true);
-  qConfig.updateClosingTags = config->readBoolEntry("Update Closing Tags", true);
+  qConfig.tagCase = m_config->readNumEntry("Capitals for tags", 0);
+  qConfig.attrCase = m_config->readNumEntry("Capitals for attr", 0);
+  qConfig.attrValueQuotation = m_config->readEntry("Attribute quotation", "double");
+  qConfig.closeOptionalTags = m_config->readBoolEntry("Close tag if optional", true);
+  qConfig.closeTags = m_config->readBoolEntry("Close tags", true);
+  qConfig.useAutoCompletion = m_config->readBoolEntry("Auto completion",true);
+  qConfig.updateClosingTags = m_config->readBoolEntry("Update Closing Tags", true);
 
-  qConfig.defaultDocType = config->readEntry("Default DTD",DEFAULT_DTD);
+  qConfig.defaultDocType = m_config->readEntry("Default DTD",DEFAULT_DTD);
   if (! dtds->find(qConfig.defaultDocType))
      qConfig.defaultDocType = DEFAULT_DTD;
 
-  qConfig.defaultEncoding = config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
+  qConfig.defaultEncoding = m_config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
 
-  phpDebugPort = config->readNumEntry("PHP Debugger Port", 7869);
+  phpDebugPort = m_config->readNumEntry("PHP Debugger Port", 7869);
 
-  sTab->setFollowCursor( config->readBoolEntry("Follow Cursor", true));
+  sTab->setFollowCursor( m_config->readBoolEntry("Follow Cursor", true));
 
-  qConfig.previewPosition   = config->readEntry("Preview position","Right");
-  int mode = config->readNumEntry("Left panel mode", 0);
+  qConfig.previewPosition   = m_config->readEntry("Preview position","Right");
+  int mode = m_config->readNumEntry("Left panel mode", 0);
 /* List Mode disabled!!
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
 */
   fTab->raiseWidget(0);
 
   QSize s(800,580);
-  resize( config->readSizeEntry("Geometry", &s));
+  resize( m_config->readSizeEntry("Geometry", &s));
 
-  if (!config->readBoolEntry("Show Toolbar",true))
+  if (!m_config->readBoolEntry("Show Toolbar",true))
   {
     toolBar("mainToolBar")->hide();
     toolBar("mainEditToolBar")->hide();
@@ -615,7 +616,7 @@ void QuantaApp::readOptions()
     toolBar("mainEditToolBar")->show();
     toolBar("mainNaviToolBar")->show();
   }
-  if (!config->readBoolEntry("Show Statusbar", true))
+  if (!m_config->readBoolEntry("Show Statusbar", true))
   {
      statusBar()->hide();
   } else
@@ -623,51 +624,51 @@ void QuantaApp::readOptions()
       statusBar()->show();
      showStatusbarAction->setChecked(true);
   }
-  showToolbarAction  ->setChecked(config->readBoolEntry("Show Toolbar",   true));
-  showStatusbarAction->setChecked(config->readBoolEntry("Show Statusbar", true));
-  qConfig.enableDTDToolbar = config->readBoolEntry("Show DTD Toolbar",true);
+  showToolbarAction  ->setChecked(m_config->readBoolEntry("Show Toolbar",   true));
+  showStatusbarAction->setChecked(m_config->readBoolEntry("Show Statusbar", true));
+  qConfig.enableDTDToolbar = m_config->readBoolEntry("Show DTD Toolbar",true);
   showDTDToolbar->setChecked(qConfig.enableDTDToolbar);
 
-  fileRecent ->loadEntries(config);
+  fileRecent ->loadEntries(m_config);
 
-  config->setGroup("Parser Options");
-  qConfig.showEmptyNodes = config->readBoolEntry("Show Empty Nodes", false);
-  qConfig.showClosingTags = config->readBoolEntry("Show Closing Tags", false);
-  qConfig.instantUpdate = config->readBoolEntry("Instant Update", false);
-  qConfig.refreshFrequency = config->readNumEntry("Refresh frequency",5);
-  qConfig.expandLevel = config->readNumEntry("Expand Level", 4);
+  m_config->setGroup("Parser Options");
+  qConfig.showEmptyNodes = m_config->readBoolEntry("Show Empty Nodes", false);
+  qConfig.showClosingTags = m_config->readBoolEntry("Show Closing Tags", false);
+  qConfig.instantUpdate = m_config->readBoolEntry("Instant Update", false);
+  qConfig.refreshFrequency = m_config->readNumEntry("Refresh frequency",5);
+  qConfig.expandLevel = m_config->readNumEntry("Expand Level", 4);
 
-  config->setGroup("Quanta View");
-  qConfig.lineNumbers = config->readBoolEntry("LineNumbers", false);
-  qConfig.iconBar = config->readBoolEntry("Iconbar", false);
-  qConfig.dynamicWordWrap = config->readBoolEntry("DynamicWordWrap",false);
+  m_config->setGroup("Quanta View");
+  qConfig.lineNumbers = m_config->readBoolEntry("LineNumbers", false);
+  qConfig.iconBar = m_config->readBoolEntry("Iconbar", false);
+  qConfig.dynamicWordWrap = m_config->readBoolEntry("DynamicWordWrap",false);
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
 #if (KDE_VERSION > 308)
   viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
 #endif
-  readDockConfig(config);
+  readDockConfig(m_config);
 
   showPreviewAction  ->setChecked( false );
   showMessagesAction ->setChecked( bottdock->parent() != 0L );
 
-  doc    ->readConfig(config); // kwrites
-  project->readConfig(config); // project
+  m_doc    ->readConfig(m_config); // kwrites
+  m_project->readConfig(m_config); // project
 
-  if (view->writeExists() && view->write()->isUntitled())
+  if (m_view->writeExists() && m_view->write()->isUntitled())
   {
-    doc->closeDocument();
-    doc->newDocument(KURL());
+    m_doc->closeDocument();
+    m_doc->newDocument(KURL());
   }
 
   debuggerStyle = "None";
-  config->setGroup  ("General Options");
-  if (config->readBoolEntry("Enable Debugger", true))
-    if (config->readEntry("PHP Debugger style","PHP4") == "PHP4")
+  m_config->setGroup  ("General Options");
+  if (m_config->readBoolEntry("Enable Debugger", true))
+    if (m_config->readEntry("PHP Debugger style","PHP4") == "PHP4")
          enablePhp4Debug(true);
     else enablePhp3Debug(true);
 
-  spellChecker->readConfig(config);
+  m_spellChecker->readConfig(m_config);
 }
 
 void QuantaApp::enablePhp3Debug(bool enable)
@@ -706,17 +707,17 @@ void QuantaApp::openLastFiles()
   // we need to check config
   // because project now can be
   // in load stage ( remote prj )
-  config->setGroup  ("Projects");
-  QString pu = config->readEntry("Last Project");
+  m_config->setGroup  ("Projects");
+  QString pu = m_config->readEntry("Last Project");
 
   KURL u(pu);
   bool isPrj = true;
   if ( pu.isEmpty())    isPrj = false;
   if ( u.isMalformed()) isPrj = false;
 
-  config->setGroup("General Options");
+  m_config->setGroup("General Options");
 
-  QStringList urls = config->readListEntry("List of opened files");
+  QStringList urls = m_config->readListEntry("List of opened files");
 
   for ( QStringList::Iterator it = urls.begin(); it != urls.end(); ++it )
   {
@@ -724,17 +725,17 @@ void QuantaApp::openLastFiles()
     QuantaCommon::setUrl(fu, *it);
 
     if ( !isPrj || fu.isLocalFile() )
-      doc->openDocument( fu );
+      m_doc->openDocument( fu );
   }
 }
 
 /** Loads the initial project */
-void QuantaApp::loadInitialProject(QString url)
+void QuantaApp::loadInitialProject(const QString& url)
 {
   if(url.isNull())
-    project->readLastConfig();
+    m_project->readLastConfig();
   else
-    project->slotOpenProject(url);
+    m_project->slotOpenProject(url);
 }
 
 
@@ -746,28 +747,28 @@ bool QuantaApp::queryClose()
     exitingFlag = true;
     saveOptions();
     removeToolbars();
-    canExit = doc->saveAll(false);
+    canExit = m_doc->saveAll(false);
     if (canExit)
     {
       //avoid double question about saving files, so set the "modified"
       //flags to "false". This is safe here.
       Document *w;
-      for (int i = view->writeTab->count() -1; i >=0; i--)
+      for (int i = m_view->m_writeTab->count() -1; i >=0; i--)
       {
-        w = dynamic_cast<Document*>(view->writeTab->page(i));
+        w = dynamic_cast<Document*>(m_view->m_writeTab->page(i));
         if (w)
            w->setModified(false);
       }
 
-      project->slotCloseProject();
+      m_project->slotCloseProject();
       do
       {
-        if (view->writeExists())
+        if (m_view->writeExists())
         {
-          w = view->write();
+          w = m_view->write();
           w->closeTempFile();
         }
-      }while (view->removeWrite());
+      }while (m_view->removeWrite());
     }
   }
   return canExit;
@@ -876,17 +877,17 @@ void QuantaApp::setAttributes(QDomNode *dom, QTag* tag)
 }
 
 /** Reads the tags for the tag files. Returns the number of read tags. */
-uint QuantaApp::readTagFile(QString fileName, DTDStruct* parentDTD, QTagList *tagList)
+uint QuantaApp::readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList)
 {
  int numOfTags = 0;
 
  QFile f( fileName );
  f.open( IO_ReadOnly );
- QDomDocument *doc = new QDomDocument();
- doc->setContent( &f );
+ QDomDocument *m_doc = new QDomDocument();
+ m_doc->setContent( &f );
  f.close();
 
- for ( QDomNode n = doc->firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
+ for ( QDomNode n = m_doc->firstChild().firstChild(); !n.isNull(); n = n.nextSibling() )
  {
    if (n.nodeName() == "tag") //read a tag
    {
@@ -906,7 +907,7 @@ uint QuantaApp::readTagFile(QString fileName, DTDStruct* parentDTD, QTagList *ta
    }
  }
 
- delete doc;
+ delete m_doc;
  return numOfTags;
 }
 
@@ -1339,61 +1340,61 @@ void QuantaApp::initActions()
 {
 
     editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
-                        view, SLOT( slotEditCurrentTag() ),
+                        m_view, SLOT( slotEditCurrentTag() ),
                         actionCollection(), "edit_current_tag" );
 
     //Kate actions
 
 //Edit menu
-    editUndo = KStdAction::undo(view, SLOT(slotUndo()),actionCollection());
-    editRedo = KStdAction::redo(view, SLOT(slotRedo()), actionCollection());
+    editUndo = KStdAction::undo(m_view, SLOT(slotUndo()),actionCollection());
+    editRedo = KStdAction::redo(m_view, SLOT(slotRedo()), actionCollection());
 
-    KStdAction::cut(view, SLOT(slotCut()), actionCollection());
-    KStdAction::copy(view, SLOT(slotCopy()), actionCollection()) ;
-    KStdAction::paste(view, SLOT(slotPaste()), actionCollection());
+    KStdAction::cut(m_view, SLOT(slotCut()), actionCollection());
+    KStdAction::copy(m_view, SLOT(slotCopy()), actionCollection()) ;
+    KStdAction::paste(m_view, SLOT(slotPaste()), actionCollection());
 
-    KStdAction::selectAll(view, SLOT(slotSelectAll()), actionCollection());
-    KStdAction::deselect(view, SLOT(slotDeselectAll()),actionCollection());
-    (void) new KAction( i18n( "&Toggle Block Selection" ), Key_F4, view,
+    KStdAction::selectAll(m_view, SLOT(slotSelectAll()), actionCollection());
+    KStdAction::deselect(m_view, SLOT(slotDeselectAll()),actionCollection());
+    (void) new KAction( i18n( "&Toggle Block Selection" ), Key_F4, m_view,
                         SLOT( toggleVertical() ), actionCollection(), "set_verticalSelect" );
 
 
-    KStdAction::find(view, SLOT(slotFind()), actionCollection());
-    KStdAction::findNext(view, SLOT(slotFindAgain()), actionCollection());
-    KStdAction::findPrev(view, SLOT(slotFindAgainB()), actionCollection(), "edit_find_prev");
-    KStdAction::replace(view, SLOT(slotReplace()), actionCollection());
+    KStdAction::find(m_view, SLOT(slotFind()), actionCollection());
+    KStdAction::findNext(m_view, SLOT(slotFindAgain()), actionCollection());
+    KStdAction::findPrev(m_view, SLOT(slotFindAgainB()), actionCollection(), "edit_find_prev");
+    KStdAction::replace(m_view, SLOT(slotReplace()), actionCollection());
 
-    new KAction(i18n("&Indent"), "indent", CTRL+Key_I, view,
+    new KAction(i18n("&Indent"), "indent", CTRL+Key_I, m_view,
                 SLOT(slotIndent()), actionCollection(), "edit_indent");
-    new KAction(i18n("&Unindent"), "unindent", CTRL+SHIFT+Key_I, view,
+    new KAction(i18n("&Unindent"), "unindent", CTRL+SHIFT+Key_I, m_view,
                 SLOT(slotUnIndent()), actionCollection(), "edit_unindent");
-    new KAction(i18n("&Clean Indentation"), "cleanindent", 0, view,
+    new KAction(i18n("&Clean Indentation"), "cleanindent", 0, m_view,
                 SLOT(slotCleanIndent()), actionCollection(), "edit_cleanindent");
 
     new KAction(i18n("Co&mment"),  CTRL+Qt::Key_NumberSign,
-                view, SLOT(slotComment()), actionCollection(), "edit_comment");
+                m_view, SLOT(slotComment()), actionCollection(), "edit_comment");
     new KAction(i18n("Unc&omment"),
-                CTRL+SHIFT+Qt::Key_NumberSign, view, SLOT(slotUnComment()),
+                CTRL+SHIFT+Qt::Key_NumberSign, m_view, SLOT(slotUnComment()),
                 actionCollection(), "edit_uncomment");
-    new KAction(i18n("Apply Word Wrap"), "", 0, view, SLOT(slotApplyWordWrap()),
+    new KAction(i18n("Apply Word Wrap"), "", 0, m_view, SLOT(slotApplyWordWrap()),
                 actionCollection(), "edit_apply_wordwrap");
 
 
 
 //Tools menu
-    KStdAction::gotoLine(view, SLOT(slotGotoLine()), actionCollection(), "edit_goto_line");
-    KStdAction::spelling(view, SLOT(slotSpellcheck()), actionCollection());
+    KStdAction::gotoLine(m_view, SLOT(slotGotoLine()), actionCollection(), "edit_goto_line");
+    KStdAction::spelling(m_view, SLOT(slotSpellcheck()), actionCollection());
 
 //Bookmarks
     bookmarkToggle = new KAction(i18n("Toggle &Bookmark"), Qt::CTRL+Qt::Key_B,
-          view, SLOT(toggleBookmark()), actionCollection(), "bookmarks_toggle");
-    bookmarkClear = new KAction(i18n("Clear Bookmarks"), 0, view,
+          m_view, SLOT(toggleBookmark()), actionCollection(), "bookmarks_toggle");
+    bookmarkClear = new KAction(i18n("Clear Bookmarks"), 0, m_view,
           SLOT(clearBookmarks()), actionCollection(), "bookmarks_clear");
 
 //Settings
-  viewBorder =  new KToggleAction(i18n("Show &Icon Border"), Qt::SHIFT+Qt::Key_F9, view,
+  viewBorder =  new KToggleAction(i18n("Show &Icon Border"), Qt::SHIFT+Qt::Key_F9, m_view,
                     SLOT(toggleIconBorder()), actionCollection(), "view_border");
-  viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F11, view,
+  viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F11, m_view,
                         SLOT(toggleLineNumbers()), actionCollection(), "view_line_numbers");
 
 //help
@@ -1401,18 +1402,18 @@ void QuantaApp::initActions()
       SLOT(slotHelpTip()), actionCollection(), "help_tip");
 
   #if (KDE_VERSION > 308)
-//    viewFoldingMarkes =  new KToggleAction(i18n("Show Folding &Markers"), Key_F9, view,
+//    viewFoldingMarkes =  new KToggleAction(i18n("Show Folding &Markers"), Key_F9, m_view,
 //                              SLOT(toggleFoldingMarkers()), actionCollection(), "view_folding_markers");
-    viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F10, view,
+    viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F10, m_view,
                               SLOT(toggleDynamicWordWrap()), actionCollection(), "view_dynamic_word_wrap");
   #endif
 
   (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0,
-                      view, SLOT( slotEditorOptions() ), actionCollection(), "editor_options" );
+                      m_view, SLOT( slotEditorOptions() ), actionCollection(), "editor_options" );
 
 
     setEndOfLine = new KSelectAction(i18n("&End of Line"), 0, actionCollection(),"set_eol");
-    connect(setEndOfLine, SIGNAL(activated(int)), view, SLOT(setEol(int)));
+    connect(setEndOfLine, SIGNAL(activated(int)), m_view, SLOT(setEol(int)));
     connect(setEndOfLine->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(setEOLMenuAboutToShow()));
 
     QStringList list;
@@ -1493,7 +1494,7 @@ void QuantaApp::initActions()
                         actionCollection(), "help_donation" );
 
     (void) new KAction( i18n( "Tag &Attributes" ), ALT+Key_Down,
-                        doc, SLOT( slotAttribPopup() ),
+                        m_doc, SLOT( slotAttribPopup() ),
                         actionCollection(), "tag_attributes" );
 
     (void) new KAction( i18n( "&Change DTD Type" ), 0,
@@ -1547,15 +1548,15 @@ void QuantaApp::initActions()
                         actionCollection(), "reload" );
 
     (void) new KAction( i18n( "View with Net&scape" ), "netscape", ALT+Key_F6,
-                        view, SLOT( slotViewInNetscape() ),
+                        m_view, SLOT( slotViewInNetscape() ),
                         actionCollection(), "view_with_netscape" );
 
     (void) new KAction( i18n( "View with &Konqueror" ), "konqueror", CTRL+Key_F6,
-                        view, SLOT( slotViewInKFM() ),
+                        m_view, SLOT( slotViewInKFM() ),
                         actionCollection(), "view_with_konqueror" );
 
     (void) new KAction( i18n( "View with L&ynx" ), "terminal", SHIFT+Key_F6,
-                        view, SLOT( slotViewInLynx() ),
+                        m_view, SLOT( slotViewInLynx() ),
                         actionCollection(), "view_with_lynx" );
 
     (void) new KAction( i18n( "&Previous File" ), "1leftarrow", KStdAccel::back(),
@@ -1569,58 +1570,58 @@ void QuantaApp::initActions()
     // Project actions
     //
     newPrjAction = new KAction( i18n( "&New Project..." ), 0,
-                        project, SLOT( slotNewProject() ),
+                        m_project, SLOT( slotNewProject() ),
                         actionCollection(), "project_new" );
 
     openPrjAction = new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
-                        project, SLOT( slotOpenProject() ),
+                        m_project, SLOT( slotOpenProject() ),
                         actionCollection(), "project_open" );
 
-    project -> projectRecent =
-      KStdAction::openRecent(project, SLOT(slotOpenProject(const KURL&)),
+    m_project -> projectRecent =
+      KStdAction::openRecent(m_project, SLOT(slotOpenProject(const KURL&)),
                              actionCollection(), "project_open_recent");
-    project->projectRecent->setText(i18n("Open Recent Project"));
+    m_project->projectRecent->setText(i18n("Open Recent Project"));
 
     saveprjAction =  new KAction( i18n( "&Save Project" ), SmallIcon("save"), 0,
-                         project, SLOT( slotSaveProject() ),
+                         m_project, SLOT( slotSaveProject() ),
                          actionCollection(), "project_save" );
 
     closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0,
-                         project, SLOT( slotCloseProject() ),
+                         m_project, SLOT( slotCloseProject() ),
                          actionCollection(), "project_close" );
 
 
     openPrjViewAction = new KAction( i18n( "Open Project View..." ), 0,
-                        project, SLOT( slotOpenProjectView() ),
+                        m_project, SLOT( slotOpenProjectView() ),
                         actionCollection(), "project_view_open" );
 
     savePrjViewAction = new KAction( i18n( "Save Project View..." ), 0,
-                        project, SLOT( slotSaveProjectView() ),
+                        m_project, SLOT( slotSaveProjectView() ),
                         actionCollection(), "project_view_save" );
     saveAsPrjViewAction = new KAction( i18n( "Save Project View As..." ), 0,
-                        project, SLOT( slotSaveAsProjectView() ),
+                        m_project, SLOT( slotSaveAsProjectView() ),
                         actionCollection(), "project_view_save_as" );
 
 
 
     insertFileAction = new KAction( i18n( "&Insert Files..." ), 0,
-                        project, SLOT( slotAddFiles() ),
+                        m_project, SLOT( slotAddFiles() ),
                         actionCollection(), "project_insert_file" );
 
     insertDirAction = new KAction( i18n( "&Insert Directory..." ), 0,
-                        project, SLOT( slotAddDirectory() ),
+                        m_project, SLOT( slotAddDirectory() ),
                         actionCollection(), "project_insert_directory" );
 
     rescanPrjDirAction = new KAction( i18n( "&Rescan Project Directory" ), SmallIcon("reload"), 0,
-                        project, SLOT( slotRescanPrjDir() ),
+                        m_project, SLOT( slotRescanPrjDir() ),
                         actionCollection(), "project_rescan" );
 
     uploadProjectAction = new KAction( i18n( "&Upload Project..." ), Key_F8,
-                        project, SLOT( slotUpload() ),
+                        m_project, SLOT( slotUpload() ),
                         actionCollection(), "project_upload" );
 
     projectOptionAction = new KAction( i18n( "&Project Options..." ), Key_F7,
-                        project, SLOT( slotOptions() ),
+                        m_project, SLOT( slotOptions() ),
                         actionCollection(), "project_options" );
 
     // Options actions
@@ -1793,7 +1794,7 @@ void QuantaApp::slotPluginRun(int a_id)
 
 void QuantaApp::slotPluginsEdit()
 {
-  QuantaPluginEditor *editor = new QuantaPluginEditor(getView(), "plugin_editor");
+  QuantaPluginEditor *editor = new QuantaPluginEditor(view(), "plugin_editor");
   editor->setSearchPaths(m_pluginInterface->searchPaths());
   editor->setPlugins(m_pluginInterface->plugins());
 
@@ -1814,7 +1815,7 @@ void QuantaApp::slotPluginsValidate()
   {
     if(!QuantaPlugin::validatePlugin(it.current()))
     {
-      int answer = KMessageBox::warningYesNo(getView(), i18n("You have plugins installed that aren't currently valid. Do you want to edit the plugins?"), i18n("Invalid Plugins"));
+      int answer = KMessageBox::warningYesNo(m_view, i18n("You have plugins installed that aren't currently valid. Do you want to edit the plugins?"), i18n("Invalid Plugins"));
       if(answer == KMessageBox::Yes)
       {
         slotPluginsEdit();
