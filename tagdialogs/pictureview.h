@@ -35,7 +35,7 @@ public:
   void scale();
 public slots: // Public slots
   /** set image */
-  void slotSetImage( char * file );
+  void slotSetImage(QString& file );
 protected: // Protected methods
   /**  */
   virtual void resizeEvent ( QResizeEvent *  e);

@@ -49,11 +49,11 @@ TagImgDlg::~TagImgDlg(){
 }
 
 /** Choose new image */
-void TagImgDlg::slotImageSet( const char * file){
-	widgetImg->slotSetImage( (char *)file);
+void TagImgDlg::slotImageSet( QString file){
+	widgetImg->slotSetImage( file);
 
 	img = new QImage(file);
-	QString filename = file;
+//	QString filename = file;
 	if ( img->isNull() ) {
 		return;
 	}
@@ -89,11 +89,11 @@ void TagImgDlg::slotFileSelect()
 		QString shortName = file.filePath();
 		lineImgSource->setText(shortName);
 
-		slotImageSet( fileName.data() );
+		slotImageSet( fileName );
 }
 
 void TagImgDlg::slotLineFileSelect(){
-		slotImageSet( lineImgSource->text().data() );
+		slotImageSet( lineImgSource->text() );
 }
 
 void TagImgDlg::readAttributes( QDict<QString> *d )

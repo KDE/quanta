@@ -61,7 +61,7 @@ void PictureView::resizeEvent ( QResizeEvent *  e){
 }
 
 /** set image */
-void PictureView::slotSetImage( char * file ){
+void PictureView::slotSetImage(QString& file ){
 	pix->load( file );
 	picwidth  = pix->width();
 	picheight = pix->height();

@@ -72,7 +72,7 @@ private:
   QImage *img;
 public slots: // Public slots
   /** Choose new image */
-  void slotImageSet( const char * file);
+  void slotImageSet( QString file);
   /** select image */
   void slotFileSelect();
   void slotLineFileSelect();
