@@ -89,7 +89,7 @@ void ProjectNewGeneral::slotButtonDir()
                               i18n("Select Project Folder"));
    if (!url.isEmpty())
    {
-     linePrjDir->setText(url.url());
+     linePrjDir->setText(url.path());
    }
 }
 
@@ -166,7 +166,7 @@ void ProjectNewGeneral::slotButtonTmpl()
                               i18n("Select Project Template Folder"));
    if (!url.isEmpty())
    {
-     linePrjTmpl->setText(url.url());
+     linePrjTmpl->setText(url.path());
    }
 }
 
@@ -176,7 +176,7 @@ void ProjectNewGeneral::slotButtonToolbar()
                               i18n("Select Project Toolbar & Actions Folder"));
    if (!url.isEmpty())
    {
-     linePrjToolbar->setText(url.url());
+     linePrjToolbar->setText(url.path());
    }
 }
 
