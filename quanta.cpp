@@ -37,6 +37,7 @@
 #include <kdialogbase.h>
 #include <kkeydialog.h>
 #include <kstddirs.h>
+#include <klibloader.h>
 
 // application specific includes
 #include "quanta.h"
@@ -1432,25 +1433,36 @@ void QuantaApp::slotSetHl( int _hl )
 
 void QuantaApp::slotFtpClient()
 {
-/*	bool stat = toolMenu -> isItemChecked( ID_VIEW_FTP );
+	bool stat = toolMenu -> isItemChecked( ID_VIEW_FTP );
 	toolMenu->setItemChecked(ID_VIEW_FTP, !stat);
 	
 	// get the library loader instance
   KLibLoader *loader = KLibLoader::self();
   
-  KLibrary *lib = loader->library(QFile::encodeName("libftpclient"));
+  QString lib_name = "quanta/plugins/libftpclient.so";
+  
+  KLibrary *lib = 
+    loader->library(QFile::encodeName( lib_name ));
   
   if (lib)
 	{
 	  // get the init_ function
-	  QString init_func = QString("create_ftpclient");
-	  void *init = lib->symbol(init_func.utf8());
+	  QString funcname = QString("create_ftpclient");
+	  void *init = lib->symbol(funcname.utf8());
 	  if (init)
 	  {
-	    void (*func)() = (void(*)())init;
-      func();
+	    QDialog* (*func)(QWidget *, const char *); 
+	    func = (QDialog* (*)(QWidget *, const char *))init;
+      QDialog *dlg = func(0,"Small Ftp Client");
+      
+      dlg->exec();
+      
+      delete dlg;
+      
+      loader->unloadLibrary(QFile::encodeName( lib_name ));
 	  }
-	}*/
+	}
+	else debug("Library not found");
 }
 
 void QuantaApp::slotFtpClientClose()
