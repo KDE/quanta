@@ -282,8 +282,13 @@ bool TagAction::insertTag(bool inputFromFile, bool outputToFile)
       pos = args.find("%userarguments");
       if (pos != -1)
       {
-         QString s = m_argsList.join(" ");
-         args.replace("%userarguments", s);
+        QString s;
+        /*for (uint i = 0; i <m_argsList.count(); i++)
+        {
+          s += "\""+m_argsList[i]+"\" ";
+      }*/
+        s = m_argsList.join(" ");
+        args.replace("%userarguments", s);
       }
       QStringList argsList = QStringList::split(' ', args);
       m_argsList.clear();

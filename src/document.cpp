@@ -1188,7 +1188,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
       {
         if (!parentQTag || (parentQTag && parentQTag->isChild(tagName)))
         {
-          tagName = tag->name() + QString("%1").arg(i, 3);
+          tagName = tag->name() + QString("%1").arg(i, 10);
           tagNameList += tagName;
           comments.insert(tagName, tag->comment);
           i++;
@@ -1204,7 +1204,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
     if ((tag->className == classStr ||
          isDerivatedFrom(classStr, tag->className)) && tag->name().upper().startsWith(word))
     {
-      tagName = tag->name() + QString("%1").arg(i, 3);
+      tagName = tag->name() + QString("%1").arg(i, 10);
       tagNameList += tagName;
       comments.insert(tagName, tag->comment);
       i++;
@@ -1218,7 +1218,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
       completion.text = QuantaCommon::tagCase(tagNameList[i]);
     else
       completion.text = tagNameList[i];
-    completion.text = completion.text.left(completion.text.length() - 3);
+    completion.text = completion.text.left(completion.text.length() - 10);
     completion.comment = comments[tagNameList[i]];
     completions->append( completion );
   }
