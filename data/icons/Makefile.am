@@ -1,21 +1,10 @@
-#1########################################################!@#$
-####   Makefile.am generated automatically by KDEStudio   ####
-#### WARNING! All changes made in this part will be lost! ####
-##############################################################
-SUBDIRS = 48x48 32x32 22x22 16x16 
+####### kdevelop will overwrite this part!!! (begin)##########
+
+SUBDIRS = 16x16 22x22 32x32 48x48 
+
+EXTRA_DIST = wiznewprjweb.png wiznewprjloc.png quantalogo.png wiznewprjfin.png wiznewprjglb.png preview1.png preview2.png preview3.png preview4.png 
+
+####### kdevelop will overwrite this part!!! (end)############
 datadir = ${kde_datadir}/quanta/toolbar
 
 data_DATA = preview1.png preview2.png preview3.png preview4.png quantalogo.png wiznewprjweb.png wiznewprjglb.png wiznewprjfin.png wiznewprjloc.png 
-EXTRA_DIST = \
-		preview1.png\
-		preview2.png\
-		preview3.png\
-		preview4.png\
-		quantalogo.png\
-		wiznewprjweb.png\
-		wiznewprjglb.png\
-		wiznewprjfin.png\
-		wiznewprjloc.png
-##############################################################
-####                  END KDEStudio part                  ####
-#2########################################################!@#$

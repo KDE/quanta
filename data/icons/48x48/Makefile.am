@@ -1,16 +1,13 @@
-#1########################################################!@#$
-####   Makefile.am generated automatically by KDEStudio   ####
-#### WARNING! All changes made in this part will be lost! ####
-##############################################################
+####### kdevelop will overwrite this part!!! (begin)##########
+
+
+EXTRA_DIST = quanta.png 
+
+####### kdevelop will overwrite this part!!! (end)############
 
 datadir = ${kde_datadir}/quanta/toolbar
 
 data_DATA = quanta.png 
-EXTRA_DIST = \
-		quanta.png
-##############################################################
-####                  END KDEStudio part                  ####
-#2########################################################!@#$
 
 install-data-local:
 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/apps/

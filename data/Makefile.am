@@ -1,15 +1,10 @@
-#1########################################################!@#$
-####   Makefile.am generated automatically by KDEStudio   ####
-#### WARNING! All changes made in this part will be lost! ####
-##############################################################
-SUBDIRS = icons doc tags 
+####### kdevelop will overwrite this part!!! (begin)##########
+
+SUBDIRS = doc tags icons 
+
+EXTRA_DIST = syntax.xml tagdata.rc actions.rc 
+
+####### kdevelop will overwrite this part!!! (end)############
 datadir = ${kde_datadir}/quanta
 
 data_DATA = tagdata.rc syntax.xml actions.rc 
-EXTRA_DIST = \
-		tagdata.rc\
-		syntax.xml\
-		actions.rc
-##############################################################
-####                  END KDEStudio part                  ####
-#2########################################################!@#$

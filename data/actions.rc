@@ -65,7 +65,7 @@
    </tooltip>
   </action>
 
-  <action icon="tag_hr" type="tag" name="tag_hr" text="Horizontal rule" >
+  <action icon="tag_hr" type="tag" name="tag_hr" text="Horisontal rule" >
    <tag>&lt;hr></tag>
    <tooltip>The &lt;b>HR&lt;/b> element defines a &lt;i>horizontal rule&lt;/i> for visual browsers.
      While this element is inherently presentational, it can be used structurally as a section divider.
@@ -148,7 +148,7 @@
    </tooltip>
   </action>
 
-  <action  icon="tag_sup" type="tag" name="tag_sup" text="Superscropt" >
+  <action  icon="tag_sup" type="tag" name="tag_sup" text="Superscript" >
    <tag useDialog="false" >&lt;sup></tag>
    <xtag use="true" >&lt;/sup></xtag>
    <tooltip>The &lt;b>SUP&lt;/b> element is used for &lt;i>superscripts&lt;/i>.
@@ -266,7 +266,7 @@
    <xtag use="true" inLine="true" >&lt;/li></xtag>
   </action>
 
-  <action icon="tag_dl" type="tag" name="tag_dl" text="Definiion List" >
+  <action icon="tag_dl" type="tag" name="tag_dl" text="Definition List" >
    <tag useDialog="false" >&lt;dl></tag>
    <xtag use="true" inLine="false" >&lt;/dl></xtag>
   </action>
