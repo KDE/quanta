@@ -57,3 +57,5 @@ QString XsldbgDebuggerBase::fromUTF8(const xmlChar *text)
 }
 
 
+
+#include "xsldbgdebuggerbase.moc"
