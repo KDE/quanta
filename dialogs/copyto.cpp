@@ -58,11 +58,11 @@ KURL CopyTo::copy(const KURL& urlToCopy, const KURL& destination)
     KIO::NetAccess::stat(urlToCopy, entry);
     KFileItem item(entry, urlToCopy, false, true);
     destURL = targetDirURL;
-    destURL.setPath(destURL.path(1)+urlToCopy.fileName());
+    destURL.setPath(destURL.path(1) + urlToCopy.fileName());
     if (item.isDir())
         destURL.adjustPath(1);
 
-    KIO::CopyJob *job = KIO::copy( urlToCopy, destURL, true );
+    KIO::CopyJob *job = KIO::copy(urlToCopy, destURL, true);
     connect( job, SIGNAL(result( KIO::Job *)),
                   SLOT  (slotResult( KIO::Job *)));
 
@@ -105,7 +105,7 @@ KURL::List CopyTo::copy( KURL::List sourceList, const KURL& destination )
       KIO::NetAccess::stat(srcURL, entry);
       KFileItem item(entry, srcURL, false, true);
       KURL u = targetDirURL;
-      u.setPath(targetDirURL.path(1)+srcURL.fileName());
+      u.setPath(targetDirURL.path(1) + srcURL.fileName());
       if (item.isDir())
          u.adjustPath(1);
       m_destList.append(u);

@@ -802,13 +802,16 @@ void Project::slotAddDirectory(const KURL& p_dirURL, bool showDlg)
 
     if ( relURL.path().startsWith("/") || relURL.path().startsWith("."))
     {
-      KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
-      urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL(0, KURL::StripFileProtocol)));
-      urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
-      urlRequesterDlg->exec();
-      KURL destination = urlRequesterDlg->selectedURL();
-      delete urlRequesterDlg;
-
+      KURL destination = baseURL;
+      if (showDlg)
+      {
+        KURLRequesterDlg *urlRequesterDlg = new KURLRequesterDlg( baseURL.prettyURL(), this, "");
+        urlRequesterDlg->setCaption(i18n("%1: Copy to Project").arg(dirURL.prettyURL(0, KURL::StripFileProtocol)));
+        urlRequesterDlg->urlRequester()->setMode( KFile::Directory | KFile::ExistingOnly);
+        urlRequesterDlg->exec();
+        destination = urlRequesterDlg->selectedURL();
+        delete urlRequesterDlg;
+      }
       if ( (showDlg == false) ||
             (!destination.isEmpty()) )
       {
@@ -1199,21 +1202,21 @@ void Project::slotAcceptCreateProject()
 
      //setup the templates directory
       templateURL = baseURL;
-      bool  createTemplateDir = true;
+      bool createTemplateDir = true;
       if (pnf->insertGlobalTemplates->isChecked())
       {
         KURL url;
-        QuantaCommon::setUrl(url,qConfig.globalDataDir+"quanta/templates/");
+        QuantaCommon::setUrl(url, qConfig.globalDataDir + "quanta/templates/");
         slotAddDirectory(url, false);
-        QuantaCommon::setUrl(templateURL,"templates/");
+        QuantaCommon::setUrl(templateURL, "templates/");
         createTemplateDir = false;
       }
       if (pnf->insertLocalTemplates->isChecked())
       {
         KURL url;
-        QuantaCommon::setUrl(url,locateLocal("data","quanta/templates/"));
+        QuantaCommon::setUrl(url, locateLocal("data", "quanta/templates/"));
         slotAddDirectory(url, false);
-        QuantaCommon::setUrl(templateURL,"templates/");
+        QuantaCommon::setUrl(templateURL, "templates/");
         createTemplateDir = false;
       }
 
