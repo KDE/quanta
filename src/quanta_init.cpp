@@ -382,6 +382,8 @@ void QuantaInit::initProject()
   connect(tTab, SIGNAL(renamed(const KURL&, const KURL&)),
           m_project, SLOT(slotRenamed(const KURL&, const KURL&)));
 
+  connect(pTab, SIGNAL(insertToProject(const KURL&)),
+          m_project, SLOT(slotInsertFile(const KURL&)));
   connect(pTab, SIGNAL(removeFromProject(const KURL&)),
           m_project, SLOT(slotRemove(const KURL&)));
   connect(pTab, SIGNAL(uploadSingleURL(const KURL&)),

@@ -79,6 +79,7 @@ signals: // Signals
   void rescanProjectDir();
   /** No descriptions */
   void showProjectOptions();
+  void insertToProject(const KURL&);
   void uploadSingleURL( const KURL& );
   void loadToolbarFile( const KURL& );
   void uploadProject();
@@ -112,6 +113,7 @@ private slots: // Private slots
   void slotOptions();
   /** No descriptions */
   void slotRescan();
+  void slotCreateFolder();
   void slotRemoveFromProject(int askForRemove = 1);
   void slotRename();
   void slotUploadSingleURL();

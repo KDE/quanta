@@ -110,6 +110,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(i18n("Insert &Tag"), this, SLOT(slotInsertTag()));
   m_menuClose = m_fileMenu->insertItem(SmallIcon("fileclose"), i18n("Clos&e"), this, SLOT(slotClose()));
   m_fileMenu->insertSeparator();
+  m_fileMenu->insertItem( i18n("&Create Folder..."), this, SLOT(slotCreateFolder()));
   m_fileMenu->insertItem(SmallIcon("editdelete"), i18n("Remove From &Disc (and Project)"), this, SLOT(slotRemove()));
   m_fileMenu->insertItem( i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
   m_fileMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload File..."), this, SLOT(slotUploadSingleURL()));
@@ -119,6 +120,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
   m_folderMenu = new KPopupMenu(this);
 
+  m_folderMenu->insertItem( i18n("&Create Folder..."), this, SLOT(slotCreateFolder()));
   m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("Remove From &Disc (and Project)"), this, SLOT(slotRemove()));
   m_folderMenu->insertItem(i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
   m_folderMenu->insertItem(SmallIcon("dirsynch"), i18n("&Upload Folder..."), this, SLOT(slotUploadSingleURL()));
@@ -306,6 +308,24 @@ void ProjectTreeView::slotLoadToolbar()
       emit loadToolbarFile(urlToOpen);
    }
  }
+}
+
+void ProjectTreeView::slotCreateFolder()
+{
+  bool ok;
+  QString folderName = KInputDialog::getText(i18n("Create New Folder"), i18n("Folder name:"), "", &ok, this);
+  if (ok)
+  {
+     KURL url = currentURL();
+     if (currentKFileTreeViewItem()->isDir())
+       url.setPath(url.path() + "/" + folderName);
+     else
+       url.setPath(url.directory() + "/" + folderName);
+     if (QExtFileInfo::createDir(url))
+     {
+        emit insertToProject(url);
+     }
+  }
 }
 
 void ProjectTreeView::slotRemove()

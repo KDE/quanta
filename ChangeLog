@@ -89,6 +89,7 @@ Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
       - new DCOP interfaces and methods:
         - QuantaIf: selectors() and idSelectors()
         - SettingsIf: dtep(), encoding(), quotationChar()
+      - Create Folder... menu item added to the project tree context menu
 
     - enhancements:
       - improve multiline script autocompletion
