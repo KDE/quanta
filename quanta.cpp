@@ -811,6 +811,7 @@ void QuantaApp::slotConfigureToolbars(const QString& defaultToolbar)
  KEditToolbar *dlg;
 #if defined(KDE_MAKE_VERSION)
 #if KDE_VERSION < KDE_MAKE_VERSION(3,1,90)
+  Q_UNUSED(defaultToolbar);
   dlg = new KEditToolbar(factory(), this);
 #else
   //dlg = new KEditToolbar(defaultToolbar, factory());
@@ -1243,13 +1244,13 @@ void QuantaApp::reparse(bool force)
       baseNode = parser->parse(w);
     }
 
-    if (w->hasChanged() || force)
+    if ( stabdock->isVisible() && (w->hasChanged() || force))
     {
       sTab->setParsingDTD(w->parsingDTD());
       int expandLevel = qConfig.expandLevel;
       if (expandLevel == 0)
           expandLevel = 40;
-      sTab->slotReparse(w, baseNode , expandLevel );
+          sTab->slotReparse(w, baseNode , expandLevel );
     }
 
     if (force)
@@ -1257,7 +1258,7 @@ void QuantaApp::reparse(bool force)
       uint line, col;
       w->viewCursorIf->cursorPositionReal(&line, &col);
       Node *node = parser->nodeAt(line, col);
-      if (node)
+      if (stabdock->isVisible() && node)
          sTab->showTagAtPos(node);
     }
   }
@@ -1341,6 +1342,20 @@ void QuantaApp::slotDockChanged()
       if (m_view->writeExists()) m_view->write()->view()->setFocus();
     }
   }
+/*  if (stabdock->isVisible() && m_view->writeExists())
+  {
+    Document *w = m_view->write();
+    sTab->setParsingDTD(w->parsingDTD());
+    int expandLevel = qConfig.expandLevel;
+    if (expandLevel == 0)
+        expandLevel = 40;
+    sTab->slotReparse(w, baseNode , expandLevel );
+    uint line, col;
+    w->viewCursorIf->cursorPositionReal(&line, &col);
+    Node *node = parser->nodeAt(line, col);
+    if (node)
+        sTab->showTagAtPos(node);
+  } */
 }
 
 void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
@@ -3236,6 +3251,11 @@ void QuantaApp::slotUploadFile()
 
 void QuantaApp::slotUploadOpenedFiles()
 {
+}
+
+bool QuantaApp::structTreeVisible() const
+{
+  return stabdock->isVisible();
 }
 
 #include "quanta.moc"

@@ -1677,7 +1677,7 @@ void Document::slotDelayedTextChanged()
     }
 
     quantaApp->slotNewLineColumn();
-    if (qConfig.instantUpdate)
+    if (qConfig.instantUpdate && quantaApp->structTreeVisible())
         quantaApp->getsTab()->slotReparse(this, baseNode , qConfig.expandLevel);
 }
 

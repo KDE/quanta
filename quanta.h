@@ -161,6 +161,8 @@ public:
   /** reparse current document and initialize node. */
   void reparse(bool force);
 
+  bool structTreeVisible() const;
+
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */
   void reloadTreeviews();
