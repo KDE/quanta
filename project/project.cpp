@@ -36,7 +36,6 @@
 #include <qwidgetstack.h>
 #include <qbuttongroup.h>
 #include <qpushbutton.h>
-#include <qurloperator.h>
 #include <qlineedit.h>
 #include <qregexp.h>
 #include <qeventloop.h>

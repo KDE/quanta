@@ -59,13 +59,12 @@ static KCmdLineOptions options[] =
   // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
 
-#define PA
 int main(int argc, char *argv[])
 {
   KAboutData
     aboutData( QUANTA_PACKAGE, I18N_NOOP("Quanta"),
     QUANTA_VERSION, description, KAboutData::License_GPL_V2,
-    I18N_NOOP("(C) 2000, 2001, 2002, 2003, 2004  - The Quanta+ developers"),
+    I18N_NOOP("(C) 2000-2004 - The Quanta+ developers"),
     othertext,
     "http://quanta.sourceforge.net"
     );
@@ -200,13 +199,10 @@ int main(int argc, char *argv[])
           DCOPRef("quanta", QUANTA_PACKAGE).call("newInstance()");
           exit(0);
       }
-//  if (!KQUniqueApplication::start())
-//    exit(0);
   app = new KQUniqueApplication;
   } else {
   app = new KQApplication;
   }
-  qInitNetworkProtocols();
 
   return app->exec();
 }
