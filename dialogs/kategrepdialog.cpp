@@ -355,15 +355,12 @@ void GrepDialog::slotSearch()
 
     QString command = "find ";
     command += KProcess::quote(dir_combo->url());
-    command += "";
     if (!recursive_box->isChecked())
         command += " -maxdepth 1";
     command += " \\( -name ";
     command += files;
-    command += " \\) -print";
-    command += " | xargs ";
-    command += "grep -n ";
-    command += "-e " + KProcess::quote(pattern);
+    command += " \\) -print | xargs grep -n -e";
+    command += KProcess::quote(pattern);
     command += " /dev/null";
     
     childproc = new KProcess();
