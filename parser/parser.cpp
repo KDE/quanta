@@ -28,7 +28,7 @@
 //standard library includes
 #include <stdio.h>
 #include <ctype.h>
-//#include <iostream.h>
+#include <iostream.h>
 
 //app includes
 #include "parser.h"
@@ -51,7 +51,6 @@ static const QChar space(' ');
 Parser::Parser()
 {
   m_node = 0L;
-  write = 0L;
   oldMaxLines = 0;
   includeWatch = 0L;
   m_groups.clear();
@@ -182,10 +181,10 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   {
     if (endLine > 0)
         endLine--;
-    lastLineLength = write->editIf->lineLength(endLine) - 1;
+    lastLineLength = write->editIf->lineLength(endLine);
     endCol = lastLineLength;
   } else
-    lastLineLength = write->editIf->lineLength(endLine) - 1;
+    lastLineLength = write->editIf->lineLength(endLine);
   int specialAreaCount = m_dtd->specialAreas.count();
   bool nodeFound = false;
   bool goUp;
@@ -439,7 +438,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       tagStartPos--;
       QString s = write->text(el, ec + 1, tagStartLine, tagStartPos);
 
-      if ((el !=0 || ec !=0) && !(el == tagStartLine && ec == tagStartPos))
+      if (el !=0 || ec !=0)
       {
         textTag = new Tag();
         textTag->setStr(s);
@@ -691,7 +690,7 @@ Node *Parser::parse(Document *w)
   clearGroups();
   parsingEnabled = true;
   if (maxLines >= 0)
-      m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines) - 1, &lastNode);
+      m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
 //  t.restart();
 //  parseForGroups();
@@ -979,8 +978,8 @@ Node* Parser::specialAreaParser(Node *startNode)
       }
       tag->single = true;
       tag->dtd = dtd;
-      while ( rootNode->parent && (bLine > el || //the beginning of the tag is after the end of the
-            (bLine == el && bCol > ec) )) //root, so go up one level
+      while ( bLine > el ||               //the beginning of the tag is after the end of the
+            (bLine == el && bCol > ec) ) //root, so go up one level
       {
         currentNode = nextToRoot;
         rootNode = rootNode->parent;
@@ -1166,35 +1165,35 @@ Node* Parser::specialAreaParser(Node *startNode)
 
 void Parser::coutTree(Node *node, int indent)
 {
- 	QString output;
-	int bLine, bCol, eLine, eCol, j;
-	if(!node)
-		kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
-	while (node)
-	{
-		output = "";
-		output.fill('.', indent);
-		node->tag->beginPos(bLine, bCol);
-		node->tag->endPos(eLine, eCol);
-		if (node->tag->type != Tag::Text)
-			output += node->tag->name.replace('\n'," ");
-		else
-			output+= node->tag->tagStr().replace('\n'," ");
-		kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
-			bLine << ":" << bCol << " - " << eLine << ":" << eCol << endl;
-		for(j = 0; j < node->tag->attrCount(); j++)
-		{
-			kdDebug(24000)<< " attr" << j << " " <<
-				node->tag->getAttribute(j).nameLine << ":" <<
-				node->tag->getAttribute(j).nameCol << " - " <<
-				node->tag->getAttribute(j).valueLine << ":" <<
-				node->tag->getAttribute(j).valueCol << endl;
-		}
+         QString output;
+        int bLine, bCol, eLine, eCol, j;
+        if(!node)
+                kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
+        while (node)
+        {
+                output = "";
+                output.fill('.', indent);
+                node->tag->beginPos(bLine, bCol);
+                node->tag->endPos(eLine, eCol);
+                if (node->tag->type != Tag::Text)
+                        output += node->tag->name.replace('\n'," ");
+                else
+                        output+= node->tag->tagStr().replace('\n'," ");
+                kdDebug(24000) << output <<" (" << node->tag->type << ") at pos " <<
+                        bLine << ":" << bCol << " - " << eLine << ":" << eCol << endl;
+                for(j = 0; j < node->tag->attrCount(); j++)
+                {
+                        kdDebug(24000)<< " attr" << j << " " <<
+                                node->tag->getAttribute(j).nameLine << ":" <<
+                                node->tag->getAttribute(j).nameCol << " - " <<
+                                node->tag->getAttribute(j).valueLine << ":" <<
+                                node->tag->getAttribute(j).valueCol << endl;
+                }
 
-		if (node->child)
-			coutTree(node->child, indent + 4);
-		node = node->next;
-	}
+                if (node->child)
+                        coutTree(node->child, indent + 4);
+                node = node->next;
+        }
 }
 
 
@@ -1314,7 +1313,7 @@ Node *Parser::rebuild(Document *w)
    int bLine, bCol, eLine, eCol; //the coordinates of the invalid area
    bLine = bCol = 0;
    eLine = maxLines;
-   eCol = w->editIf->lineLength(maxLines) - 1;
+   eCol = w->editIf->lineLength(maxLines);
    QString text;
    QString tagStr;
    bool moveNodes = false;
@@ -1351,19 +1350,9 @@ Node *Parser::rebuild(Document *w)
      } else
      {
        firstNode = node;
-
-       //FirstNode might not be the first unchanged node e.g. text nodes
-       while(firstNode)
-       {
-         if(firstNode->tag->type != Tag::Text)
-           break;
-         firstNode->tag->endPos(el, ec);
-         text = w->text(el, ec + 1, el, ec + 1);
-         if(text == "<")
-           break;
-         else// a character has been added at the end of the text : this node is modified.
-          firstNode = firstNode->previousSibling();
-       }
+       //temporary : firstNode might not be the first unchanged node e.g. text nodes
+       while(firstNode->tag->type == Tag::Text)
+         firstNode = firstNode->previousSibling();
        break;
      }
    }
@@ -1572,8 +1561,7 @@ Node *Parser::rebuild(Document *w)
    node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
 
    Node *swapNode = firstNode->nextSibling();
-   Node *p = (lastInserted)?lastInserted->nextSibling():lastInserted;
-   while(swapNode != p)
+   while(swapNode != lastInserted->nextSibling())
    {
       modif.type = undoRedo::NodeAdded;
       modif.location = w->docUndoRedo.getLocation(swapNode);
@@ -2126,7 +2114,12 @@ void Parser::parseForScriptGroup(Node *node)
   for (uint i = 0; i < dtd->structTreeGroups.count(); i++)
   {
     group = dtd->structTreeGroups[i];
-    if (!group.hasSearchRx || group.tagType != node->tag->type)
+    if (!group.hasSearchRx ||
+        node->tag->type == Tag::XmlTag ||
+        node->tag->type == Tag::XmlTagEnd ||
+        node->tag->type == Tag::Comment ||
+        node->tag->type == Tag::Empty
+        )
       continue;
     pos = 0;
     while (pos != -1)

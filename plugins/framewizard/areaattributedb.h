@@ -46,7 +46,7 @@ class areaAttribute : public QObject{
       void setGeometry(QRect g) { geometry = g; }
 
     public slots:
-      void setGeometry(QRect g,QString l) { geometry = g; }
+      void setGeometry(QRect g,QString l) { geometry = g; Q_UNUSED(l);}
 };
 
 #endif

@@ -1369,7 +1369,7 @@ void QuantaApp::readTagDir(QString &dirName)
         for (uint i = 0; i < tmpStrList.count(); i++)
           group.attributes += tmpStrList[i].stripWhiteSpace();
       }
-      tagStr = dtdConfig->readEntry("TagType");
+      tagStr = dtdConfig->readEntry("TagType", "Text").stripWhiteSpace();
       if (tagStr == "XmlTag")
           group.tagType = Tag::XmlTag;
       else if (tagStr == "XmlTagEnd")

@@ -36,7 +36,7 @@ class VisualFrameEditor : public QHBox  {
       QPtrList<QSplitter> splitterList;
       QPtrList<SelectableArea> SAList;
       QStringList existingStructure;
-    
+
       void build(QString,QString);
       void setGeometries(QString);
       void draw2(treeNode *n, QWidget* parent);
