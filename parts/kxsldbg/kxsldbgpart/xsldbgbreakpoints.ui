@@ -149,7 +149,7 @@
                                 <cstring>lineNumberLabel</cstring>
                             </property>
                             <property name="text">
-                                <string>Line number :</string>
+                                <string>Line number:</string>
                             </property>
                         </widget>
                         <widget class="QLineEdit" row="3" column="1">

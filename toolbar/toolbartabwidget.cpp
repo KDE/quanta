@@ -38,8 +38,8 @@ ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, WFlags f
   m_popupMenu = new KPopupMenu(this);
   m_popupMenu->insertTitle(i18n("Toolbar Menu"), 1);
   m_popupMenu->insertItem(i18n("Remove Toolbar"), this, SLOT(slotRemoveToolbar()));
-  m_popupMenu->insertItem(i18n("Rename Toolbar"), this, SLOT(slotRenameToolbar()));
-  m_popupMenu->insertItem(i18n("Edit Toolbar"), this, SLOT(slotEditToolbar()));
+  m_popupMenu->insertItem(i18n("Rename Toolbar..."), this, SLOT(slotRenameToolbar()));
+  m_popupMenu->insertItem(i18n("Edit Toolbar..."), this, SLOT(slotEditToolbar()));
 }
 
 void ToolbarTabWidget::insertTab(QWidget * child, const QString & label )

@@ -32,7 +32,7 @@ DOMTreeView::DOMTreeView(QWidget *parent, KHTMLPart *currentpart, const char * n
     setRootIsDecorated(true);
     addColumn("Name");
     addColumn("Value (limited to 20 char)");
-    addColumn("length");
+    addColumn("Length");
     addColumn("ID");
     addColumn("");
     setSorting(-1);

@@ -235,7 +235,7 @@
                                     <cstring>addToolbar</cstring>
                                 </property>
                                 <property name="text">
-                                    <string>&amp;Add</string>
+                                    <string>&amp;Add...</string>
                                 </property>
                             </widget>
                             <widget class="QPushButton" row="7" column="3" rowspan="1" colspan="2">
@@ -529,7 +529,7 @@
                                                         </sizepolicy>
                                                     </property>
                                                     <property name="text">
-                                                        <string>&amp;Input::</string>
+                                                        <string>&amp;Input:</string>
                                                     </property>
                                                     <property name="buddy" stdset="0">
                                                         <cstring>inputBox</cstring>
@@ -543,12 +543,12 @@
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Current document</string>
+                                                            <string>Current Document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Selected text</string>
+                                                            <string>Selected Text</string>
                                                         </property>
                                                     </item>
                                                     <property name="name">
@@ -590,27 +590,27 @@
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Insert in cursor position</string>
+                                                            <string>Insert in Cursor Position</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Replace selection</string>
+                                                            <string>Replace Selection</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Replace current document</string>
+                                                            <string>Replace Current Document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Create a new document</string>
+                                                            <string>Create New Document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Message window</string>
+                                                            <string>Message Window</string>
                                                         </property>
                                                     </item>
                                                     <property name="name">
@@ -636,27 +636,27 @@
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Insert in cursor position</string>
+                                                            <string>Insert in Cursor Position</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Replace selection</string>
+                                                            <string>Replace Selection</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Replace current document</string>
+                                                            <string>Replace Current Document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Create a new document</string>
+                                                            <string>Create New Document</string>
                                                         </property>
                                                     </item>
                                                     <item>
                                                         <property name="text">
-                                                            <string>Message window</string>
+                                                            <string>Message Window</string>
                                                         </property>
                                                     </item>
                                                     <property name="name">

@@ -38,7 +38,7 @@ void colorRequester::init()
      QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
      myButton->setIconSet( iconSet );
      myButton->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
-     QToolTip::add(myButton, i18n("Open Color Dialog"));
+     QToolTip::add(myButton, i18n("Open color dialog"));
 
      setSpacing( KDialog::spacingHint() );
 

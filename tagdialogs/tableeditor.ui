@@ -129,7 +129,7 @@
                             <cstring>textLabel5</cstring>
                         </property>
                         <property name="text">
-                            <string>Table &amp;data</string>
+                            <string>Table &amp;data:</string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>tableData</cstring>
@@ -571,7 +571,7 @@
                             <bool>false</bool>
                         </property>
                         <property name="text">
-                            <string>&amp;Footer properties:</string>
+                            <string>&amp;Footer Properties</string>
                         </property>
                     </widget>
                 </grid>

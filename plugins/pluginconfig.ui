@@ -218,7 +218,7 @@
                 <widget class="QComboBox" row="4" column="2" rowspan="1" colspan="3">
                     <item>
                         <property name="text">
-                            <string>none</string>
+                            <string>None</string>
                         </property>
                     </item>
                     <item>
