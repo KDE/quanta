@@ -65,10 +65,12 @@ public slots:
 
   virtual void slotJobExited(bool normalExit, int exitStatus);
   virtual void slotReceivedStdout(QString output);
+  virtual void slotReceivedStderr(QString output);
 
 signals:
   void clearMessages();
   void showMessage(const QString &msg, bool append);
+  void commandExecuted(const QString& command, const QStringList& files);
 
 private:
   CVSService(KActionCollection *ac);
@@ -81,6 +83,8 @@ private:
   CvsService_stub *m_cvsService;
   QString m_defaultFile;
   QString m_repositoryPath;
+  QString m_cvsCommand;
+  QStringList m_files;
   CVSCommitDlgS *m_commitDlg;
 };
 

@@ -45,8 +45,11 @@ QPEvents::QPEvents(QObject *parent, const char *name)
    m_eventNames["after_upload"] = i18n("After upload");
    m_eventNames["after_project_add"] = i18n("After addition to project");
    m_eventNames["after_project_remove"] = i18n("After removal from project");
-   m_eventNames["after_commit"] = i18n("After committing to CVS");
+   m_eventNames["after_commit"] = i18n("After commit to CVS");
+   m_eventNames["after_update"] = i18n("After update from CVS");
    m_eventNames["after_file_move"] = i18n("After moving a file inside the project");
+   m_eventNames["quanta_start"] = i18n("Quanta start");
+   m_eventNames["quanta_exit"] = i18n("Quanta exit");
 //   m_eventNames["after_multiple_save"] = i18n("After saving more files at once (like Save All)");
 
    m_actionNames["email"] = i18n("Send email");
@@ -108,30 +111,35 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
             {
               ev.arguments << i18n("Document saved");
               ev.arguments << relativePath;
+              ev.arguments <<  url.path();
               handleEvent(ev);
             } else
             if (name == "before_save")
             {
               ev.arguments << i18n("About to save a document");
               ev.arguments << relativePath;
+              ev.arguments <<  url.path();
               handleEvent(ev);
             } else
             if (name == "after_open")
             {
               ev.arguments << i18n("Document opened");
               ev.arguments << relativePath;
+              ev.arguments <<  url.path();
               handleEvent(ev);
             } else
             if (name == "after_close")
             {
               ev.arguments << i18n("Document closed");
               ev.arguments << relativePath;
+              ev.arguments <<  url.path();
               handleEvent(ev);
             } else
             if (name == "before_close")
             {
               ev.arguments << i18n("About to close a document");
               ev.arguments << relativePath;
+              ev.arguments <<  url.path();
               handleEvent(ev);
             } else
             if (name == "after_project_open")
@@ -159,7 +167,33 @@ void QPEvents::slotEventHappened(const QString& name, const QString& argument1, 
                 handleEvent(ev);
             }
         }
-     }
+     }  else
+      if (name == "after_commit")
+      {
+        ev.arguments << i18n("Document committed");
+        ev.arguments << argument1;
+        ev.arguments << Project::ref()->projectBaseURL().path();
+        handleEvent(ev);
+      } else
+      if (name == "after_update")
+      {
+        ev.arguments << i18n("Document updated");
+        ev.arguments << argument1;
+        ev.arguments << Project::ref()->projectBaseURL().path();
+        handleEvent(ev);
+      } else
+      if (name == "quanta_start")
+      {
+        ev.arguments << i18n("Quanta has been started");
+        ev.arguments << argument1;
+        handleEvent(ev);
+      } else
+      if (name == "quanta_exit")
+      {
+        ev.arguments << i18n("Quanta is shutting down");
+        ev.arguments << argument1;
+        handleEvent(ev);
+      }
   }
 }
 

@@ -366,6 +366,9 @@ public slots:
   void slotUploadFile(QuantaView *view=0L);
   void slotDeleteFile(QuantaView *view=0L);
 
+  /** Called when the CVS command working on files was executed successfully. */
+  void slotCVSCommandExecuted(const QString &command, const QStringList &files);
+
 //Overridden KMdiMainFrm slots
   virtual void closeAllViews();
   virtual void closeActiveView();

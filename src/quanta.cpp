@@ -44,6 +44,8 @@
 #include <qclipboard.h>
 #include <qptrlist.h>
 #include <qbuffer.h>
+#include <qdatetime.h>
+
 
 // include files for KDE
 #include <kapplication.h>
@@ -247,6 +249,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_previewedDocument = 0L;
   m_previewVisible =  false;
   m_cvsMenuId = -1;
+  emit eventHappened("quanta_start", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
 }
 
 
@@ -3956,7 +3959,8 @@ bool QuantaApp::queryClose()
     if (canExit)
         canExit = removeToolbars();
   }
-
+  if (canExit)
+    emit eventHappened("quanta_exit", QDateTime::currentDateTime().toString(Qt::ISODate), QString::null);
   return canExit;
 }
 
@@ -4850,6 +4854,19 @@ void QuantaApp::slotFileClosed()
    m_oldContextCopy = 0L;
    m_oldContextCut = 0L;
    m_oldContextPaste = 0L;
+}
+
+void QuantaApp::slotCVSCommandExecuted(const QString& command, const QStringList& files)
+{
+   QString file;
+   for (uint i = 0; i < files.count(); i++)
+   {
+      file = files[i];
+    //  if (Project::ref()->contains(KURL::fromPathOrURL(file)))
+      {
+         emit eventHappened("after_" + command, file, QString::null);
+      }
+   }
 }
 
 //overridden KMdiMainFrm slots

@@ -99,12 +99,14 @@ void CVSService::slotUpdate(const QStringList &files)
    if (m_repository && !m_appId.isEmpty())
    {
       emit clearMessages();
+      m_files = files;
       DCOPRef job = m_cvsService->update(files, true, true, true, "");
+      m_cvsCommand = "update";
       m_cvsJob = new CvsJob_stub( job.app(), job.obj() );
 
       connectDCOPSignal(job.app(), job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
       connectDCOPSignal(job.app(), job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
-      connectDCOPSignal(job.app(), job.obj(), "receivedStderr(QString)", "slotReceivedStdout(QString)", true);
+      connectDCOPSignal(job.app(), job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
       m_cvsJob->execute();
    }
 }
@@ -137,28 +139,38 @@ void CVSService::slotCommit(const QStringList &files)
       if (message != m_commitDlg->messageCombo->currentText())
           m_commitDlg->messageCombo->insertItem(message, 0);
       emit clearMessages();
+      m_files = files;
       DCOPRef job = m_cvsService->commit(files, message, true);
+      m_cvsCommand = "commit";
       m_cvsJob = new CvsJob_stub( job.app(), job.obj() );
 
       connectDCOPSignal(job.app(), job.obj(), "jobExited(bool, int)", "slotJobExited(bool, int)", true);
       connectDCOPSignal(job.app(), job.obj(), "receivedStdout(QString)", "slotReceivedStdout(QString)", true);
-      connectDCOPSignal(job.app(), job.obj(), "receivedStderr(QString)", "slotReceivedStdout(QString)", true);
+      connectDCOPSignal(job.app(), job.obj(), "receivedStderr(QString)", "slotReceivedStderr(QString)", true);
       m_cvsJob->execute();
    }
 }
 
 void CVSService::slotJobExited(bool normalExit, int exitStatus)
 {
-    delete m_cvsJob;
-    m_cvsJob = 0L;
     if (!normalExit)
     {
-        KMessageBox::sorry(0, i18n("<qt>The CVS command has failed. The error was <i>%1</i>.</qt>").arg(exitStatus), i18n("Command Failed"));
-        return;
+        KMessageBox::sorry(0, i18n("<qt>The CVS command <b>%1</b>has failed. The error code was <i>%2</i>.</qt>").arg(m_cvsCommand).arg(exitStatus), i18n("Command Failed"));
     }
+    if (exitStatus == 0)
+    {
+        emit commandExecuted(m_cvsCommand, m_files);
+    }
+    delete m_cvsJob;
+    m_cvsJob = 0L;
 }
 
 void CVSService::slotReceivedStdout(QString output)
+{
+   emit showMessage(output, false);
+}
+
+void CVSService::slotReceivedStderr(QString output)
 {
    emit showMessage(output, false);
 }
