@@ -100,7 +100,7 @@ Comments = comma separated list of area borders for comments. EOL means end-of-l
 AppendCommonRules = true or false. If true, the following rules are automatically appended:
       SpecialAreas = <?xml ?>, <!-- -->, <! >
       SpecialAreaNames = XML PI, comment, DTD
-      Comments = <!-- -->  
+      Comments = <!-- -->
       Default is "true", so append the rules.
 SpecialTags = tagname(attributename) - specifies a tag which defines the start of
     a special area
@@ -137,9 +137,12 @@ ClearRx = regular experssion used to clear unwanted text/chars from the above
 [Parsing rules]
 AreaBorders = comma separated list of the area borders encapsulating this pseudo
     DTD. In case of PHP it is: <? ?>, <* *>, <% %>
-Tags = tagname(attribute). If the parent(real) DTD has a tag with tagname and
+Tags = tagname(attribute[defaultvalue]). If the parent(real) DTD has a tag with tagname and
     the attribute value of this tag is equal with the DTD name, the tag area
-    is parsed according to the rules of this DTD.
+    is parsed according to the rules of this DTD. If [defaultvalue] is present, it means that if the attribute
+    is not present in the tag it's taken as present with value = defaultvalue. Example:
+    Tags = style(type[text/css]) means that both <style> and <style type="text/css"> are
+    treated the same way and the DTD defined by this tag is named "text/css".
 Comments = comma separated list of area borders for comments. EOL means end-of-line.
     Eg: // EOL, /* */
 StructKeywords = ";" separated list of structure keywords. Structures are treated
