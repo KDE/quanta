@@ -3,7 +3,7 @@
                              -------------------
     begin                : ���� 9 13:29:57 EEST 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon <pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com>
-                           (C) 2001-2002 Andras Mantia <amantia@kde.org>
+                           (C) 2001-2004 Andras Mantia <amantia@kde.org>
  ***************************************************************************/
 
 /***************************************************************************
@@ -119,6 +119,9 @@ public:
  /** Resize the current view */
   void resize(int width, int height);
 
+ /** Updates the icon at the name on the view tab */
+  void updateTab();
+
   void insertTag( const char *tag);
 
   /** Insert a new tag by bringing up the TagDialog. */
@@ -134,6 +137,7 @@ public:
     SourceAndVPL,
     VPLOnly
   };
+
 
 public slots:
   void slotSetSourceLayout();

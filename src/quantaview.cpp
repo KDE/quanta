@@ -192,8 +192,6 @@ void QuantaView::addPlugin(QuantaPlugin *plugin)
    ToolbarTabWidget *m_toolbarTab = ToolbarTabWidget::ref(this);
    m_toolbarTab->reparent(0, 0, QPoint(), false);
    m_plugin = plugin;
-   setMDICaption(m_plugin->name());
-   setIcon(m_plugin->icon());
    m_splitter->hide();
    QWidget *w = m_plugin->widget();
    if (w)
@@ -204,6 +202,7 @@ void QuantaView::addPlugin(QuantaPlugin *plugin)
    m_documentArea->reparent(this, 0, QPoint(), true);
    m_viewLayout->addWidget(m_documentArea, 1, 0);
    activated();
+   updateTab();
 }
 
 void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
@@ -215,11 +214,65 @@ void QuantaView::addCustomWidget(QWidget *widget, const QString &label)
       m_customWidget->reparent(m_documentArea, 0, QPoint(), true);
       m_customWidget->resize(m_documentArea->size());
       if (!label.isEmpty())
-        setMDICaption(label);
+      {
+          widget->setCaption(label);
+          updateTab();
+      }
       m_documentArea->reparent(this, 0, QPoint(), false);
       m_viewLayout->addWidget(m_documentArea, 1, 0);
       m_documentArea->show();
    }
+}
+
+
+void QuantaView::updateTab()
+{
+    if (qConfig.showCloseButtons == "ShowAlways")
+    {
+        setIcon(SmallIcon("fileclose"));
+    }
+    if (m_document)
+    {
+        // try to set the icon from mimetype
+        QIconSet mimeIcon (KMimeType::pixmapForURL(m_document->url(), 0, KIcon::Small));
+        if (mimeIcon.isNull())
+          mimeIcon = QIconSet(SmallIcon("document"));
+        QString urlStr = QExtFileInfo::shortName(m_document->url().path());
+        if (m_document->isModified())
+        {
+            if (qConfig.showCloseButtons == "ShowAlways")
+            {
+               setMDICaption(urlStr + " " + i18n("[modified]"));
+            } else
+            {
+                setIcon(UserIcon("save_small"));
+                setMDICaption(urlStr);
+            }
+        } else
+        {
+          if (qConfig.showCloseButtons != "ShowAlways")
+          {
+             setIcon(mimeIcon.pixmap());
+          }
+          setMDICaption(urlStr);
+        }
+    } else
+    if (m_plugin)
+    {
+        if (qConfig.showCloseButtons != "ShowAlways")
+        {
+            setIcon(m_plugin->icon());
+        }
+       setMDICaption(m_plugin->name());
+    } else
+    if (m_customWidget)
+    {
+        if (qConfig.showCloseButtons != "ShowAlways")
+        {
+            setIcon(*(m_customWidget->icon()));
+        }
+        setMDICaption(m_customWidget->caption());
+    }
 }
 
 void QuantaView::slotSetSourceLayout()
@@ -554,7 +607,10 @@ void QuantaView::closeEvent(QCloseEvent *e)
   emit documentClosed();
   kdDebug(24000) << "Close event" << endl;
   QuantaView *currentWindow = dynamic_cast<QuantaView*>(quantaApp->activeWindow());
-  quantaApp->closeWindow(this); //important when the tab is closed with the close button
+  if (m_plugin)
+    m_plugin->unload();
+  else
+    quantaApp->closeWindow(this); //important when the tab is closed with the close button
   if (currentWindow == this)
       currentWindow = dynamic_cast<QuantaView*>(quantaApp->activeWindow());
   if (currentWindow)

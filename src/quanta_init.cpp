@@ -403,11 +403,15 @@ void QuantaInit::initView()
 
   m_quanta->m_htmlPart = new WHTMLPart(m_quanta, "rightHTML");
   m_quanta->m_htmlPart->view()->resize(0, 0);
+  m_quanta->m_htmlPart->view()->setIcon(UserIcon("preview"));
+  m_quanta->m_htmlPart->view()->setCaption(i18n("Preview"));
   m_quanta->slotNewPart(m_quanta->m_htmlPart, false);
 
 
   m_quanta->m_htmlPartDoc = new WHTMLPart(m_quanta, "docHTML");
   m_quanta->m_htmlPartDoc->view()->resize(0, 0);
+  m_quanta->m_htmlPartDoc->view()->setIcon(SmallIcon("contents"));
+  m_quanta->m_htmlPartDoc->view()->setCaption(i18n("Documentation"));
   m_quanta->slotNewPart(m_quanta->m_htmlPartDoc, false);
 
   connect(m_quanta->fTab, SIGNAL(openFile(const KURL &)),

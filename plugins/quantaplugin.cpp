@@ -111,7 +111,7 @@ bool QuantaPlugin::load()
 
   QFileInfo partInfo(loc);
   QString ow = outputWindow();
-  QWidget *m_targetWidget =  new QWidget(quantaApp);
+  m_targetWidget =  new QWidget(quantaApp);
   if (m_readOnlyPart)
       m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), m_targetWidget, 0, m_targetWidget, 0 );
   else

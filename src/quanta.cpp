@@ -95,9 +95,13 @@
 
 #include <kio/netaccess.h>
 
-#if KDE_IS_VERSION(3,1,90) || defined(COMPAT_KMDI)
+#if KDE_IS_VERSION(3,1,90)
 #include <ktabwidget.h>
 #include <kinputdialog.h>
+#endif
+
+#if defined(COMPAT_KMDI)
+#include <ktabwidget.h>
 #endif
 
 #include <time.h>
@@ -851,6 +855,7 @@ void QuantaApp::slotNewStatus()
 {
   fileRecent->setEnabled(true);
   Project::ref()->projectRecent->setEnabled(true);
+  QuantaView *view = ViewManager::ref()->activeView();
   Document *w = ViewManager::ref()->activeDocument();
   if (w)
   {
@@ -877,35 +882,10 @@ void QuantaApp::slotNewStatus()
 
     actionCollection()->action("toolbars_load_project")->setEnabled(projectExists);
     actionCollection()->action("toolbars_save_project")->setEnabled(projectExists);
-
-    // try to set the icon from mimetype
-    QIconSet mimeIcon (KMimeType::pixmapForURL(w->url(), 0, KIcon::Small));
-    if (mimeIcon.isNull())
-      mimeIcon = QIconSet(SmallIcon("document"));
-    QString urlStr = QExtFileInfo::shortName(w->url().path());
-    QuantaView *view = ViewManager::ref()->activeView();
-    if (w->isModified())
-    {
-       if (qConfig.showCloseButtons == "ShowAlways")
-       {
-          view->setIcon(SmallIcon("fileclose"));
-          view->setMDICaption(urlStr + " " + i18n("[modified]"));
-       } else
-       {
-          view->setIcon(UserIcon("save_small"));
-          view->setMDICaption(urlStr);
-       }
-    } else
-    {
-       if (qConfig.showCloseButtons == "ShowAlways")
-       {
-          view->setIcon(SmallIcon("fileclose"));
-       } else
-       {
-         view->setIcon(mimeIcon.pixmap());
-       }
-       view->setMDICaption(urlStr);
-    }
+ }
+ if (view)
+ {
+     view->updateTab();
  }
 }
 
@@ -1294,8 +1274,6 @@ void QuantaApp::slotShowPreviewWidget(bool show)
       view->addCustomWidget(m_htmlPart->view(), QString::null);
     } else
     {
-      m_htmlPart->view()->setIcon(UserIcon("preview"));
-      m_htmlPart->view()->setCaption(i18n("Preview"));
       if (!m_previewToolView)
         m_previewToolView = addToolWindow(m_htmlPart->view(), KDockWidget::DockBottom, getMainDockWidget());
       m_htmlPart->view()->show();
