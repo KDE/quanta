@@ -4772,16 +4772,25 @@ Node *QuantaApp::showTagDialogAndReturnNode(const QString &tag, const QString &a
 
 void QuantaApp::slotShowSourceEditor()
 {
-   ViewManager::ref()->activeView()->slotSetSourceLayout();
+  if (!showVPLAction->isChecked() && !showSourceAction->isChecked() && !showVPLSourceAction->isChecked())
+    showSourceAction->activate();
+  else
+    ViewManager::ref()->activeView()->slotSetSourceLayout();
 }
 
 void QuantaApp::slotShowVPLAndSourceEditor()
 {
-   ViewManager::ref()->activeView()->slotSetSourceAndVPLLayout();
+  if (!showVPLAction->isChecked() && !showSourceAction->isChecked() && !showVPLSourceAction->isChecked())
+    showSourceAction->activate();
+  else
+    ViewManager::ref()->activeView()->slotSetSourceAndVPLLayout();
 }
 
 void QuantaApp::slotShowVPLOnly()
 {
+  if (!showVPLAction->isChecked() && !showSourceAction->isChecked() && !showVPLSourceAction->isChecked())
+    showSourceAction->activate();
+  else
    ViewManager::ref()->activeView()->slotSetVPLOnlyLayout();
 }
 
@@ -5014,6 +5023,8 @@ void QuantaApp::slotTabMoved(int from, int to)
 
 void QuantaApp::slotTabAboutToMove(int from, int to)
 {
+  Q_UNUSED(from);
+  Q_UNUSED(to);
   disconnect(this, SIGNAL(viewActivated (KMdiChildView *)), ViewManager::ref(), SLOT(slotViewActivated(KMdiChildView*)));  
 }
 

@@ -582,7 +582,7 @@ void QuantaInit::readOptions()
   m_quanta->m_previewVisible = false;
   m_quanta->m_noFramesPreview = false;
 
-  m_quanta->showKafkaAction->setChecked( false );
+  m_quanta->showVPLAction->setChecked( false );
 
 
 //KNewStuff config
@@ -808,24 +808,23 @@ void QuantaInit::initActions()
     // View actions
 
 
-    KToggleAction *ta;
-      ta =
+    m_quanta->showSourceAction =
       new KToggleAction( i18n( "&Source Editor"), UserIcon ("view_text"), ALT+Key_F9,
                          m_quanta, SLOT( slotShowSourceEditor()),
                          ac, "show_quanta_editor");
-      ta->setExclusiveGroup("view");
+    m_quanta->showSourceAction->setExclusiveGroup("view");
 
-     m_quanta->showKafkaAction =
+    m_quanta->showVPLAction =
       new KToggleAction( i18n( "&VPL Editor"), UserIcon ("vpl"), CTRL+SHIFT+Key_F9,
       m_quanta, SLOT( slotShowVPLOnly() ),
                           ac, "show_kafka_view");
-     m_quanta->showKafkaAction->setExclusiveGroup("view");
+    m_quanta->showVPLAction->setExclusiveGroup("view");
 
-     ta =
+    m_quanta->showVPLSourceAction =
       new KToggleAction( i18n("VPL && So&urce Editors"), UserIcon ("vpl_text"), Key_F9,
                          m_quanta, SLOT( slotShowVPLAndSourceEditor() ),
                           ac, "show_kafka_and_quanta");
-     ta->setExclusiveGroup("view");
+    m_quanta->showVPLSourceAction->setExclusiveGroup("view");
     /**kafkaSelectAction = new KSelectAction(i18n("Main &View"), 0, ac,"show_kafka");
     QStringList list2;
     list2.append(i18n("&Source Editor"));

@@ -554,7 +554,7 @@ private:
   // ACTIONS
   KRecentFilesAction *projectToolbarFiles;
 
-  KToggleAction *showKafkaAction, *showDTDToolbar;
+  KToggleAction *showVPLAction, *showSourceAction, *showVPLSourceAction, *showDTDToolbar;
   KToolBarPopupAction *showPreviewAction;
 
   KAction *saveAction, *saveAllAction;
