@@ -832,6 +832,10 @@ void Document::slotCompletionDone( KTextEditor::CompletionEntry completion )
   {
     viewCursorIf->setCursorPositionReal(line,col+1);
   }
+  if (completion.type == "doctypeList")
+  {
+    viewCursorIf->setCursorPositionReal(line,col+1);
+  }
   if (completion.type == "function")
   {
     viewCursorIf->setCursorPositionReal(line,col+1);
@@ -858,7 +862,13 @@ void Document::slotFilterCompletion( KTextEditor::CompletionEntry *completion ,Q
   {
     s = *string;
     string->remove(0, string->length());
-    string->append(QuantaCommon::attrCase("public")+" \""+QuantaCommon::getDTDNameFromNickName(s)+"\"");
+    QString s2 = QString("public \""+QuantaCommon::getDTDNameFromNickName(s)+"\"");
+    DTDStruct *dtd = dtds->find(QuantaCommon::getDTDNameFromNickName(s));
+    if (dtd && !dtd->url.isEmpty())
+    {
+      s2 += " \""+dtd->url+"\"";
+    }
+    string->append(QuantaCommon::attrCase(s2));
   }
   if (completion->type == "function")
   {

@@ -876,6 +876,7 @@ void QuantaApp::readTagDir(QString &dirName)
  bool caseSensitive = dtdConfig->readBoolEntry("CaseSensitive");
  dtd->name = dtdName.lower();
  dtd->nickName = dtdConfig->readEntry("NickName", dtdName);
+ dtd->url = dtdConfig->readEntry("URL");
  dtd->inheritsTagsFrom = dtdConfig->readEntry("Inherits");
 
  dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");

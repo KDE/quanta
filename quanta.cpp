@@ -2011,7 +2011,13 @@ void QuantaApp::processDTD(QString documentType)
         uint line, col;
         w->viewCursorIf->cursorPositionReal(&line, &col);
         if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
-        w->insertText(QuantaCommon::attrCase(" public \""+w->getDTDIdentifier()+"\""));
+        DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+        QString s = " public \""+dtd->name+"\" ";
+        if (!dtd->url.isEmpty())
+        {
+          s += "\n\t\t\"" + dtd->url +"\"";
+        }
+        w->insertText(QuantaCommon::attrCase(s));
         delete tag;
       }
     }
@@ -2071,12 +2077,24 @@ void QuantaApp::slotToolsChangeDTD()
          uint line, col;
          w->viewCursorIf->cursorPositionReal(&line, &col);
          if (col > 0) w->viewCursorIf->setCursorPositionReal(line, col-1);
-         w->insertText(QuantaCommon::attrCase(" public \""+w->getDTDIdentifier()+"\""));
+         DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+         QString s = " public \""+dtd->name+"\" ";
+         if (!dtd->url.isEmpty())
+         {
+           s += "\n\t\t\"" + dtd->url +"\"";
+         }
+         w->insertText(QuantaCommon::attrCase(s));
          delete tag;
       } else
       {
         w->viewCursorIf->setCursorPositionReal(0,0);
-        w->insertText(QuantaCommon::tagCase("<!doctype")+QuantaCommon::attrCase(" public \""+w->getDTDIdentifier()+"\">\n"));
+        DTDStruct *dtd = dtds->find(w->getDTDIdentifier());
+        QString s = " public \""+dtd->name+"\" ";
+        if (!dtd->url.isEmpty())
+        {
+          s += "\n\t\t\"" + dtd->url +"\"";
+        }
+        w->insertText(QuantaCommon::tagCase("<!doctype")+QuantaCommon::attrCase(s+"\">\n"));
       }
     }
   }
