@@ -131,6 +131,8 @@ QuantaApp::QuantaApp()
 
   initActions();
   createGUI( QString::null, false );
+
+  initContextMenu();
 #endif
 	
   readOptions();
@@ -617,10 +619,19 @@ void QuantaApp::initStatusBar()
   // statusBar()->setInsertOrder(KStatusBar::RightToLeft);
 }
 
+void QuantaApp::initContextMenu()
+{
+#ifdef NEW_STUFF
+  kwritePopupMenu = (QPopupMenu *)factory()->container("documentContextPopup", this);
+  doc->setRBMenu(kwritePopupMenu);
+#endif
+}
+
 void QuantaApp::initDocument()
 {
   doc = new QuantaDoc(this,this);
 
+#ifndef NEW_STUFF
   kwritePopupMenu = new QPopupMenu();
 
   kwritePopupMenu->insertItem(UserIcon("undo"),i18n("&Undo"), ID_EDIT_UNDO );
@@ -642,6 +653,7 @@ void QuantaApp::initDocument()
   connect(kwritePopupMenu, SIGNAL(highlighted(int)), SLOT(statusCallback(int)));
 
   doc->setRBMenu(kwritePopupMenu);
+#endif
 
 }
 

@@ -129,6 +129,8 @@ class QuantaApp : public KTMainWindow
      */
     void initMenuBar();
 
+    void initContextMenu();
+
     /**
      * Creates the KActions.
      */

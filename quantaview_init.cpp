@@ -40,6 +40,12 @@
 #include "kwrite/highlight/highlight.h"
 #include "toolbar/toolbars.h"
 
+//
+// Enable this define to test the KAction/XMLGUI code (Rich).
+//
+// #define NEW_STUFF
+//
+
 QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	: QWidget( parent, name)
 {
@@ -509,6 +515,8 @@ void QuantaView::initMenu()
 	connect(mLists,    SIGNAL(activated(int)), SLOT(slotToolbarCallback(int)) );
   connect(insertMenu,SIGNAL(activated(int)), SLOT(slotToolbarCallback(int)) );
 
+#ifndef NEW_STUFF
   connect(app->editMenu, SIGNAL(activated(int)), SLOT(slotToolbarCallback(int)));
   connect(app->viewMenu, SIGNAL(activated(int)), SLOT(slotToolbarCallback(int)));
+#endif
 }
