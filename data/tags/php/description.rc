@@ -45,7 +45,7 @@ No_Name = No Variables
 Icon = abs
 SearchRx = \$+[a-zA-Z0-9_\x7f-\xff]*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*
 ClearRx = \$
-AutoCompleteAfter = \$[^\$]*$
+AutoCompleteAfter = \$+[a-zA-Z0-9_\x7f-\xff]*$
 
 [StructGroup_3]
 Name = Functions
