@@ -176,7 +176,7 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char *widgetName,
                         actionCollection(), "walkCmd" );
     (void) new KAction( "Stop walking through stylesheet",
                         Key_K,
-                        this, SLOT(walkStop_activated()),
+                        this, SLOT(walkStopCmd_activated()),
                         actionCollection(), "walkStopCmd" );
     (void) new KAction( "Trace execution of stylesheet",
                         Key_C,
