@@ -305,7 +305,6 @@ void TemplatesTreeView::slotNewDir()
       m_dirInfo.postText = "";
       writeDirInfo(startDir+"/"+createDirDlg->dirName->text()+"/.dirinfo");
    }
-   slotReload();
   }
 }
 /** No descriptions */
