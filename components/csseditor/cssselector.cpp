@@ -45,7 +45,7 @@ CSSSelector::CSSSelector(QWidget *parent, const char* name) : CSSSelectorS (pare
   Connect();
 
   kurApplyToFile->fileDialog()->setURL(Project::ref()->projectBaseURL().url());
-  kurApplyToFile->fileDialog()->setFilter( "*.html *.htm |" + i18n("HTML files") +" (*.html *.htm)\n*.xhtml |" + i18n("XHTML files")+" (*.xhtml)\n*.xml |" + i18n("XML files")+" (*.xml)\n*.*|" + i18n("All files")+" (*.*)"  );
+  kurApplyToFile->fileDialog()->setFilter( "*.html *.htm |" + i18n("HTML Files") +" (*.html *.htm)\n*.xhtml |" + i18n("XHTML Files")+" (*.xhtml)\n*.xml |" + i18n("XML Files")+" (*.xml)\n*.*|" + i18n("All Files")+" (*.*)"  );
   QWhatsThis::add((QLineEdit*)(kurApplyToFile->lineEdit()),"With this line edit you can insert the URL of the file you want to use to preview the style sheet you are editing");
 
   /*QString configDir = locate("appdata", "csseditor/config.xml");

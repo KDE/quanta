@@ -133,7 +133,7 @@ void MessageOutput::copyContent()
 void MessageOutput::saveContent()
 {
   KURL url=KFileDialog::getSaveURL(QDir::currentDirPath(),
-    i18n("*.log|Log Files (*.log)\n*|All files"), this, i18n("Save Log File"));
+    i18n("*.log|Log Files (*.log)\n*|All Files"), this, i18n("Save Log File"));
   if (url.isEmpty())
     return;
 
