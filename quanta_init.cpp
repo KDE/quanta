@@ -80,6 +80,7 @@
 #include "treeviews/doctreeview.h"
 #include "treeviews/structtreeview.h"
 #include "treeviews/templatestreeview.h"
+#include "treeviews/tagattributetree.h"
 
 #include "plugins/quantaplugininterface.h"
 #include "plugins/quantaplugin.h"
@@ -342,16 +343,18 @@ void QuantaApp::initView()
   maindock = createDockWidget( "Editor", UserIcon("textarea"  ), 0L, i18n("Editor"), 0L);
   bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Output"), 0L);
 
-  ftabdock = createDockWidget("Files", UserIcon("ftab"), 0L, "");
+  ftabdock = createDockWidget("Files", UserIcon("ftab"), 0L, i18n("Files tree view"), "");
   ftabdock->setToolTipString(i18n("Files tree view"));
-  ptabdock = createDockWidget("Project", UserIcon("ptab"), 0L, "");
+  ptabdock = createDockWidget("Project", UserIcon("ptab"), 0L, i18n("Project tree view"), "");
   ptabdock->setToolTipString(i18n("Project tree view"));
-  ttabdock = createDockWidget("Templates", UserIcon("ttab"), 0L,"");
+  ttabdock = createDockWidget("Templates", UserIcon("ttab"), 0L, i18n("Templates tree view"), "");
   ttabdock->setToolTipString(i18n("Templates tree view"));
-  stabdock = createDockWidget("Struct", BarIcon ("view_sidetree"), 0L,"");
+  stabdock = createDockWidget("Struct", BarIcon ("view_sidetree"), 0L, i18n("Structure view (DOM tree)"), "");
   stabdock->setToolTipString(i18n("Structure view (DOM tree)"));
-  dtabdock = createDockWidget("Docs", BarIcon ("contents2"), 0L,"");
+  dtabdock = createDockWidget("Docs", BarIcon ("contents2"), 0L, i18n("Documentation"), "");
   dtabdock->setToolTipString(i18n("Documentation"));
+  atabdock = createDockWidget("TagAttributes", UserIcon("tag_misc"), 0L, i18n("Attribute tree view"), "");
+  atabdock->setToolTipString(i18n("Attribute tree view"));
 
   m_oldTreeViewWidget = ptabdock;
   QStringList topStrList;
@@ -378,8 +381,8 @@ void QuantaApp::initView()
   pTab = new ProjectTreeView(ptabdock );
   tTab = new TemplatesTreeView("" , ttabdock);
   dTab = new DocTreeView(dtabdock);
-  sTab = new StructTreeView(parser, m_config, stabdock ,"struct");
-
+  sTab = new StructTreeView(m_config, stabdock ,"struct");
+  aTab = new TagAttributeTree(atabdock);
 
   rightWidgetStack = new QWidgetStack(maindock);
   bottomWidgetStack = new QWidgetStack(bottdock);
@@ -394,6 +397,7 @@ void QuantaApp::initView()
   ttabdock->setWidget(tTab);
   stabdock->setWidget(sTab);
   dtabdock->setWidget(dTab);
+  atabdock->setWidget(aTab);
 
   maindock->setFocusPolicy(QWidget::StrongFocus);
 
@@ -469,17 +473,19 @@ void QuantaApp::initView()
   setMainDockWidget( maindock );
   setView(maindock);
 
+
   maindock ->setEnableDocking( KDockWidget::DockNone );
   ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
   bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
 
-  ptabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
-  ttabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
-  stabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
-  dtabdock ->manualDock(ftabdock, KDockWidget::DockCenter);
+  ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+  ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+  KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+  dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+  atabdock->manualDock(w, KDockWidget::DockBottom, 70);
 
   KDockManager *mng = stabdock->dockManager();
-  connect(mng, SIGNAL(change()),this,SLOT(slotDockChanged()));
+  connect(mng, SIGNAL(change()), this, SLOT(slotDockChanged()));
 }
 
 
@@ -628,7 +634,7 @@ void QuantaApp::readOptions()
      statusBar()->hide();
   } else
   {
-      statusBar()->show();
+     statusBar()->show();
      showStatusbarAction->setChecked(true);
   }
   showToolbarAction  ->setChecked(m_config->readBoolEntry("Show Toolbar",   true));
@@ -1616,6 +1622,10 @@ void QuantaApp::initActions()
       new KToggleAction( i18n( "Show Structure Tree" ), BarIcon ("view_sidetree"), 0,
                          this, SLOT( slotShowSTabDock() ),
                          ac, "show_stab_tree" );
+    showATabAction =
+      new KToggleAction( i18n( "Show Attribute Tree" ), UserIcon ("tag_misc"), 0,
+                         this, SLOT( slotShowATabDock() ),
+                         ac, "show_atab_tree" );
     showDTabAction =
       new KToggleAction( i18n( "Show Documentation Tree" ), BarIcon ("contents2"), 0,
                          this, SLOT( slotShowDTabDock() ),

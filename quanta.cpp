@@ -114,6 +114,7 @@
 #include "treeviews/structtreetag.h"
 #include "treeviews/doctreeview.h"
 #include "treeviews/templatestreeview.h"
+#include "treeviews/tagattributetree.h"
 
 #include "tagdialogs/listdlg.h"
 #include "tagdialogs/tagmaildlg.h"
@@ -1251,9 +1252,13 @@ void QuantaApp::slotNewLineColumn()
 {
   QString linenumber;
   uint line, col;
-
   m_view->write()->viewCursorIf->cursorPositionReal(&line, &col);
-  sTab->showTagAtPos(line,col);
+  Node *node = parser->nodeAt(line, col);
+  if (node)
+  {
+    sTab->showTagAtPos(node);
+    aTab->newCursorPosition(node);
+  }
   linenumber.sprintf(i18n("Line: %d Col: %d"),line+1,col+1);
 
   statusBar()->changeItem(linenumber.data(), IDS_STATUS_CLM);
@@ -1292,7 +1297,9 @@ void QuantaApp::reparse(bool force)
     {
       uint line, col;
       w->viewCursorIf->cursorPositionReal(&line, &col);
-      sTab->showTagAtPos(line,col);
+      Node *node = parser->nodeAt(line, col);
+      if (node)
+         sTab->showTagAtPos(node);
     }
   }
 
@@ -1450,6 +1457,7 @@ void QuantaApp::slotShowFTabDock() { ftabdock->changeHideShowState();}
 void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
 void QuantaApp::slotShowTTabDock() { ttabdock->changeHideShowState();}
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
+void QuantaApp::slotShowATabDock() { atabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
 void QuantaApp::slotShowBottDock(bool force)
 {
@@ -1487,6 +1495,7 @@ void QuantaApp::viewMenuAboutToShow()
   showPTabAction->setChecked( ptabdock->isVisible() );
   showTTabAction->setChecked( ttabdock->isVisible() );
   showSTabAction->setChecked( stabdock->isVisible() );
+  showATabAction->setChecked( atabdock->isVisible() );
   showDTabAction->setChecked( dtabdock->isVisible() );
 }
 

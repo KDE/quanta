@@ -32,7 +32,6 @@
 
 // app includes
 #include "../parser/node.h"
-#include "../parser/parser.h"
 #include "../parser/qtag.h"
 #include "../document.h"
 #include "../resource.h"
@@ -41,7 +40,7 @@
 #include "structtreeview.h"
 #include "structtreeview.moc"
 
-StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent, const char *name )
+StructTreeView::StructTreeView(KConfig *config, QWidget *parent, const char *name )
 : KListView(parent,name)
 {
   top = 0L;
@@ -49,8 +48,6 @@ StructTreeView::StructTreeView(Parser *parser, KConfig *config, QWidget *parent,
   groupsCount = 0;
   followCursorFlag = true;
   this->config = config;
-
-  this->parser = parser;
 
   topOpened = true;
   useOpenLevelSetting = true;
@@ -576,19 +573,15 @@ void StructTreeView::slotCloseSubTree()
 }
 
 /** Show the element in tree according to cursor position (x,y) */
-void StructTreeView::showTagAtPos(int x, int y)
+void StructTreeView::showTagAtPos(Node *node)
 {
   if ( followCursorFlag )
   {
-    Node *node = parser->nodeAt(x, y);
-    if (node)
+    StructTreeTag *curTag = dynamic_cast<StructTreeTag *>(node->listItem);
+    if ( curTag )
     {
-      StructTreeTag *curTag = dynamic_cast<StructTreeTag *>(node->listItem);
-      if ( curTag )
-      {
-        ensureItemVisible(curTag);
-        setSelected(curTag, true);
-      }
+      ensureItemVisible(curTag);
+      setSelected(curTag, true);
     }
   } //if (followCursorFlag)
 }

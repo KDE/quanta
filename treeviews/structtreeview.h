@@ -38,15 +38,15 @@ class QTime;
 class StructTreeView : public KListView  {
    Q_OBJECT
 friend class QuantaApp;
-public: 
-  StructTreeView(Parser *parser, KConfig *config, QWidget *parent=0, const char *name=0);
+public:
+  StructTreeView(KConfig *config, QWidget *parent=0, const char *name=0);
   ~StructTreeView();
-  
+
 
   void setFollowCursor(bool);
   bool followCursor() { return followCursorFlag; }
   /** Show the element in tree according to cursor position (x,y) */
-  void showTagAtPos(int x, int y);
+  void showTagAtPos(Node *node);
   /** Delete the items */
   void deleteList();
   /** Set the View as... menu to dtdName. */
@@ -55,8 +55,6 @@ public:
   StructTreeTag *top;
   StructTreeTag *groups[5];
   uint groupsCount;
-  
-  Parser *parser;
 
   bool topOpened;
   bool groupOpened[5];
@@ -106,7 +104,7 @@ private:
   StructTreeTag *lastTag;
   KConfig *config;
   QStringList dtdList;
-  
+
 protected: // Protected methods
   /** Do a reparse before showing. */
   virtual void showEvent(QShowEvent*);

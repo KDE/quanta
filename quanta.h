@@ -81,6 +81,7 @@ class FilesTreeView;
 class StructTreeView;
 class ProjectTreeView;
 class TemplatesTreeView;
+class TagAttributeTree;
 class Project;
 class GrepDialog;
 class MessageOutput;
@@ -225,6 +226,7 @@ public slots:
   void slotShowPTabDock();
   void slotShowTTabDock();
   void slotShowSTabDock();
+  void slotShowATabDock();
   void slotShowDTabDock();
 
   void viewMenuAboutToShow();
@@ -397,6 +399,7 @@ private:
   FilesTreeView *fTab;
   TemplatesTreeView *tTab;
   StructTreeView *sTab;
+  TagAttributeTree *aTab;
 
   KDockWidget *leftdock;
   KDockWidget *maindock;
@@ -406,6 +409,7 @@ private:
   KDockWidget *dtabdock;
   KDockWidget *ftabdock;
   KDockWidget *stabdock;
+  KDockWidget *atabdock;
 
    /** HTML class for preview */
   WHTMLPart *htmlpart;
@@ -436,8 +440,9 @@ private:
   KRecentFilesAction *projectToolbarFiles;
 
   KToggleAction *showMessagesAction, *showTreeAction,
-    *showFTabAction,*showPTabAction,*showTTabAction,*showSTabAction,*showDTabAction,
-    *showToolbarAction,*showStatusbarAction,*showPreviewAction,*showKafkaAction;
+    *showFTabAction,*showPTabAction,*showTTabAction,*showSTabAction,*showATabAction,
+    *showDTabAction, *showToolbarAction,*showStatusbarAction,*showPreviewAction,
+    *showKafkaAction;
   KToggleAction *showDTDToolbar;
 
   KSelectAction *setEndOfLine;

@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32006">
+<kpartgui name="quanta" version="32007">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -69,6 +69,7 @@
          <Action name="show_ptab_tree"/>
          <Action name="show_ttab_tree"/>
          <Action name="show_stab_tree"/>
+         <Action name="show_atab_tree"/>
          <Action name="show_dtab_tree"/>
       </Menu>
       <Separator/>
