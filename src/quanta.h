@@ -352,6 +352,11 @@ public slots:
 
   /** Show the Document Properties Dialog */
   void slotDocumentProperties();
+  /** Show the Document Properties Dialog
+   * If forceInsertionOfMinimalTree and the user haven't modified something in the dialog,
+   * it will anyway insert a Minimal tree (HTML, BODY, ...)
+   */
+  void documentProperties(bool forceInsertionOfMinimalTree = false);
   /** No descriptions */
   void slotAutosaveTimer();
 

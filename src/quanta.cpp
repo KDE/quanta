@@ -3504,6 +3504,13 @@ void QuantaApp::slotDownloadScript()
 void QuantaApp::slotDocumentProperties()
 {
 #ifdef BUILD_KAFKAPART
+  documentProperties(false);
+#endif
+}
+
+void QuantaApp::documentProperties(bool forceInsertionOfMinimalTree)
+{
+#ifdef BUILD_KAFKAPART
   Document *w = ViewManager::ref()->activeDocument();
   if(w)
   {
@@ -3512,7 +3519,7 @@ void QuantaApp::slotDocumentProperties()
       KMessageBox::information(this, i18n("The Document Properties Dialog is only for HTML and XHTML."));
       return;
     }
-    htmlDocumentProperties htmlPropsDlg(this);
+    htmlDocumentProperties htmlPropsDlg(this, forceInsertionOfMinimalTree);
     htmlPropsDlg.exec();
   }
 #endif

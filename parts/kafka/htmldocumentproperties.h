@@ -45,11 +45,17 @@ public:
 class htmlDocumentProperties : public htmlDocumentPropertiesui
 {
 public:
-	htmlDocumentProperties( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+        /**
+         * @param forceInsertionOfBasicNodes Force the insertion of the basic Nodes (HTML, BODY, HEAD, ...) if pressing OK
+         * without having made any changes.
+         */
+	htmlDocumentProperties( QWidget* parent = 0, bool forceInsertionOfBasicNodes = false, 
+          const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
 	~htmlDocumentProperties();
 
 private slots:
-	virtual void aboutToClose();
+	virtual void accept();
+        virtual void reject();
 	virtual void newMetaItem();
 	virtual void deleteCurrentMetaItem();
 	virtual void newCSSRule();
@@ -75,7 +81,7 @@ private:
 
 	QPtrList<NodeLinkedViewItem> CSSList, metaList;
 	Node *titleNode, *htmlNode, *headNode, *linkNode, *bodyNode, *doctypeNode, *CSSNode, *xmlNode;
-	bool titleDirty, linkDirty;
+	bool titleDirty, linkDirty, m_forceInsertionOfBasicNodes;
 };
 
 #endif
