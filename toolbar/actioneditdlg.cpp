@@ -83,7 +83,7 @@ void ActionEditDlg::deleteAction()
 {
    if ( !action ) return;
    if ( KMessageBox::questionYesNo(this,"Are you sure, \nyou want to remove current action ?") == KMessageBox::Yes ) {
-       app->actions->firstChild().removeChild( action->data() );
+       app->actions()->firstChild().removeChild( action->data() );
        app->actionCollection()->remove(action);
        action = 0;
        actionsList->removeItem( actionsList->currentItem() );
@@ -94,10 +94,10 @@ void ActionEditDlg::deleteAction()
 void ActionEditDlg::newAction()
 {
    qDebug("new action");
-   QDomElement el = app->actions->createElement("action");
+   QDomElement el = app->actions()->createElement("action");
    el.setAttribute( "name", "user_"+KApplication::randomString(10) );
    el.setAttribute( "icon", "ball" );
-   app->actions->firstChild().appendChild(el);
+   app->actions()->firstChild().appendChild(el);
    
    TagAction *a = new TagAction(&el, app->view, app->actionCollection() );
    ActionListItem *it = new ActionListItem(a);

@@ -482,7 +482,7 @@ void QuantaApp::slotOptionsConfigureActions()
     QFile f( KGlobal::instance()->dirs()->saveLocation("data")+"quanta/actions.rc" );
     f.open( IO_ReadWrite | IO_Truncate );
     QTextStream qts(&f);
-    actions->save(qts,0);
+    m_actions->save(qts,0);
     f.close();
 
     }

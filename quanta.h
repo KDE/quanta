@@ -205,6 +205,8 @@ class QuantaApp : public KDockMainWindow
 	
 	  void setTitle(QString);
 
+	  	
+	  	QDomDocument *actions() { return m_actions; }
 	  	  
 	protected:
 	  KParts::BrowserExtension *browserExtension() {
@@ -281,8 +283,10 @@ class QuantaApp : public KDockMainWindow
       *closeprjAction, *insertFileAction, *insertDirAction, 
       *newPrjAction, *openPrjAction, *rescanPrjDirAction, *uploadProjectAction,
       *projectOptionAction;
+      
+      
+    QDomDocument *m_actions;
 
-    QDomDocument *actions;
 };
  
 #endif // QUANTA_H

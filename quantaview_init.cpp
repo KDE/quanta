@@ -130,17 +130,17 @@ void QuantaView::initActions()
                         this, SLOT( slotTagQuickList() ),
                         actionCollection, "tag_quick_list" );
                 
-    app->actions = new QDomDocument();
+    app->m_actions = new QDomDocument();
     QFile f( locate("appdata","actions.rc") );
     if ( !f.open( IO_ReadOnly ) )
       return;
-    if ( !app->actions->setContent( &f ) ) {
+    if ( !app->actions()->setContent( &f ) ) {
       f.close();
       return;
     }
     f.close();
 
-    QDomElement docElem = app->actions->documentElement();
+    QDomElement docElem = app->actions()->documentElement();
 
     QDomNode n = docElem.firstChild();
     while( !n.isNull() ) {
