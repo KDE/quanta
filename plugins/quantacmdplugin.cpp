@@ -137,6 +137,11 @@ bool QuantaCmdPlugin::run()
     connect(m_process, SIGNAL(receivedStdout(KProcess *, char *, int)), SLOT(writeStdout(KProcess *, char *, int)));
     connect(m_process, SIGNAL(receivedStderr(KProcess *, char *, int)), SLOT(writeStderr(KProcess *, char *, int)));
     connect(m_process, SIGNAL(processExited(KProcess *)), SLOT(cleanupProcess(KProcess *)));
+    if(outputWindow() == i18n("Message Window"))
+    {
+      quantaApp->slotShowBottDock(true);
+    }
+
     if(!m_process->start(KProcess::NotifyOnExit, KProcess::AllOutput))
     {
       qWarning("Unable to start process");

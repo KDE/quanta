@@ -163,6 +163,11 @@ void TagAction::insertTag()
     connect( proc, SIGNAL(receivedStderr(   KProcess*,char*,int)), this,
                  SLOT(  slotGetScriptError(KProcess*,char*,int)));
 
+    if (scriptOutputDest == "message" || scriptErrorDest == "message")
+    {
+      quantaApp->slotShowBottDock(true);
+    }
+
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
       QString buffer;
