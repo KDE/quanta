@@ -1054,7 +1054,7 @@ void BaseTreeView::saveLayout(KConfig *config, const QString &group)
       // remember the root url so that I find the branch on restore
       folderList.append(btb->rootUrl().url());
       btb->addOpenFolder(&folderList);
-      config->writeEntry("OpenFolderList" + QString::number(i), folderList);
+      config->writePathEntry("OpenFolderList" + QString::number(i), folderList);
     }
   }
   config->writeEntry("NumOpenFolderList", i);
