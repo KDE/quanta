@@ -18,15 +18,12 @@
 // QT includes
 #include <qdir.h>
 
+// KDE includes
+#include <kiconloader.h>
+
 // app includes
 #include "projecttreefile.h"
 #include "projecttreefolder.h"
-
-// include images
-#include "pix/html.xpm"
-#include "pix/image.xpm"
-#include "pix/txt.xpm"
-#include "pix/java.xpm"
 
 extern QString fileMaskHtml;
 extern QString fileMaskText;
@@ -47,10 +44,10 @@ ProjectTreeFile::~ProjectTreeFile(){
 /**  */
 void ProjectTreeFile::setIcon(QString name)
 {
-	if ( QDir::match( fileMaskHtml,  name) ) setPixmap( 0, QPixmap((const char**)html_xpm) );
-  if ( QDir::match( fileMaskText,  name) ) setPixmap( 0, QPixmap((const char**)txt_xpm) );
-  if ( QDir::match( fileMaskImage, name) ) setPixmap( 0, QPixmap((const char**)image_xpm) );
-  if ( QDir::match( fileMaskJava,  name) ) setPixmap( 0, QPixmap((const char**)java_xpm) );
+  if ( QDir::match( fileMaskHtml,  name) ) setPixmap( 0, SmallIcon("www")   );
+  if ( QDir::match( fileMaskText,  name) ) setPixmap( 0, SmallIcon("txt")   );
+  if ( QDir::match( fileMaskImage, name) ) setPixmap( 0, SmallIcon("image") );
+  if ( QDir::match( fileMaskJava,  name) ) setPixmap( 0, SmallIcon("info")  );
 }
 
 /** used for sorting */

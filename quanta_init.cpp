@@ -419,13 +419,6 @@ void QuantaApp::initMenuBar()
   projectMenu->insertItem(i18n("&Upload project..."),   ID_PROJECT_UPLOAD_PROJECT);
   projectMenu->insertItem(i18n("&Project options..."), ID_PROJECT_PROPERTIES);
 //  projectMenu->insertItem(i18n("Rescan project's directory"), ID_PROJECT_RESCAN_FILES);
-//  projectMenu->insertItem(UserIcon("file_properties"), i18n("&File properties"), ID_PROJECT_FILE_PROPERTIES);
-//  projectMenu->insertSeparator();
-//  projectMenu->insertItem(i18n("Weblint"), ID_FILE_LINT);
-//  projectMenu->insertSeparator();
-  //projectMenu->insertItem(i18n("Upload file"),   ID_PROJECT_UPLOAD_FILE);
-//  projectMenu->insertItem(i18n("Upload project"),ID_PROJECT_UPLOAD_PROJECT);
-//  projectMenu->insertSeparator();
 
   ///////////////////////////////////////////////////////////////////
   // menuBar entry bookmarksmenu
@@ -453,35 +446,19 @@ void QuantaApp::initMenuBar()
   optionsMenu->insertSeparator();
   optionsMenu->insertItem(UserIcon("options"), i18n("&General Options..."),  ID_OPTIONS );
 
-
   ///////////////////////////////////////////////////////////////////
-  // menuBar entry helpMenu
-  helpMenu_ = helpMenu(	"Quanta+ Web Development Enviroment\n\n"\
-  											"Version 2.0beta4\n"\
-  											"(c) 2000 by\n"\
-  											"Dmitry Poplavsky\n"\
-  											"Alexander Yakovlev\n"\
-  											"Eric Laffoon\n\n"\
-  											"pdima@kde.org\n"\
-  											"yshurik@kde.org\n"\
-  											"sequitur@kde.org\n\n"\
-  											"http://quanta.sourceforge.net/"
-  											);
 
-  ///////////////////////////////////////////////////////////////////
-  // MENUBAR CONFIGURATION
-  // insert your popup menus with the according menubar entries in the order
-  // they will appear later from left to right
   menuBar()->insertItem(i18n(" &File "), fileMenu);
   menuBar()->insertItem(i18n(" &Edit "), editMenu);
   menuBar()->insertItem(i18n(" &Tool "), toolMenu);
   menuBar()->insertItem(i18n(" &View "), viewMenu);
   menuBar()->insertItem(i18n(" &Project "), projectMenu);
+  #warning NEED_BOOKMARS_VERY_NEED_!!!
   //menuBar()->insertItem(i18n(" &Bookmarks "), bookmarksMenu);
   menuBar()->insertItem(i18n(" &Options "), optionsMenu);
 
   menuBar()->insertSeparator();
-  menuBar()->insertItem(i18n("&Help"), helpMenu_);
+  menuBar()->insertItem(i18n("&Help"), helpMenu(QString::null,false));
 
 
   ///////////////////////////////////////////////////////////////////
@@ -520,35 +497,6 @@ void QuantaApp::initToolBar()
   
   ///////////////////////////////////////////////////////////////////
   // TOOLBAR
-  toolBar()->insertButton(UserIcon("new"),     ID_FILE_NEW,      true, i18n("New File"));
-  toolBar()->insertButton(UserIcon("open"),    ID_FILE_OPEN,     true, i18n("Open File"));
-  toolBar()->insertButton(UserIcon("openprj"), ID_PROJECT_OPEN,  true, i18n("Open Project"));
-
-  toolBar()->insertSeparator();
-
-  toolBar()->insertButton(UserIcon("save"),    ID_FILE_SAVE,     true, i18n("Save File"));
-  toolBar()->insertButton(UserIcon("save_all"),ID_FILE_SAVE_ALL, true, i18n("Save All Files"));
-
-  toolBar()->insertSeparator();
-  toolBar()->insertSeparator();
-
-  toolBar()->insertButton(UserIcon("cut"),   ID_EDIT_CUT, true, i18n("Cut"));
-  toolBar()->insertButton(UserIcon("copy"),  ID_EDIT_COPY, true, i18n("Copy"));
-  toolBar()->insertButton(UserIcon("paste"), ID_EDIT_PASTE, true, i18n("Paste"));
-
-  toolBar()->insertButton(UserIcon("undo"),   ID_EDIT_UNDO,   true, i18n("Undo"));
-  toolBar()->insertButton(UserIcon("redo"),   ID_EDIT_REDO,   true, i18n("Redo"));
-
-  toolBar()->insertButton(UserIcon("spellcheck"),   ID_EDIT_SPELL,   true, i18n("Spell Checker"));
-
-  toolBar()->insertSeparator();
-  toolBar()->insertSeparator();
-
-  toolBar()->insertButton(UserIcon("find"),  		ID_EDIT_SEARCH,  			true, i18n("Search"));
-  toolBar()->insertButton(UserIcon("findnext"),	ID_EDIT_SEARCH_AGAIN, true, i18n("Search Again"));
-
-  toolBar()->insertSeparator();
-  toolBar()->insertSeparator();
 
   toolBar()->insertButton(UserIcon("tree_win"),   ID_VIEW_TREE,     true, i18n("View tree"));
   toolBar()->insertButton(UserIcon("preview"),    ID_VIEW_PREVIEW,  true, i18n("Preview"));
@@ -557,19 +505,52 @@ void QuantaApp::initToolBar()
   toolBar()->setToggle(ID_VIEW_TREE);
   toolBar()->setToggle(ID_VIEW_MES);
 
-  toolBar()->insertButton(UserIcon("back"),      ID_VIEW_BACK,    true, i18n("Back"));
-  toolBar()->insertButton(UserIcon("forward"),   ID_VIEW_FORWARD, true, i18n("Forward"));
-  toolBar()->insertButton(UserIcon("repaint"),   ID_VIEW_REPAINT, true, i18n("Refresh Preview"));
+  toolBar()->insertButton(BarIcon("back"),      ID_VIEW_BACK,    true, i18n("Back"));
+  toolBar()->insertButton(BarIcon("forward"),   ID_VIEW_FORWARD, true, i18n("Forward"));
+  toolBar()->insertButton(BarIcon("reload"),    ID_VIEW_REPAINT, true, i18n("Reload Preview"));
+  
+  toolBar()->setFullSize(false);
+  
+  toolbar1 = new KToolBar(this);
+  toolbar1->setFullSize(false);
+  
+  toolbar1->insertButton(UserIcon("new"),     ID_FILE_NEW,      true, i18n("New File"));
+  toolbar1->insertButton(UserIcon("open"),    ID_FILE_OPEN,     true, i18n("Open File"));
+  toolbar1->insertButton(UserIcon("openprj"), ID_PROJECT_OPEN,  true, i18n("Open Project"));
 
-  toolBar()->insertSeparator();
-  toolBar()->insertSeparator();
+  toolbar1->insertSeparator();
 
-  toolBar()->insertButton(UserIcon("close"),    ID_FILE_CLOSE,  true, i18n("Close File"));
-  toolBar()->alignItemRight(ID_FILE_CLOSE);
+  toolbar1->insertButton(UserIcon("save"),    ID_FILE_SAVE,     true, i18n("Save File"));
+  toolbar1->insertButton(UserIcon("save_all"),ID_FILE_SAVE_ALL, true, i18n("Save All Files"));
+  
+  addToolBar(toolbar1);
+  
+  toolbar2 = new KToolBar(this);
+  toolbar2->setFullSize(false);
+  
+  toolbar2->insertButton(UserIcon("cut"),   ID_EDIT_CUT, true, i18n("Cut"));
+  toolbar2->insertButton(UserIcon("copy"),  ID_EDIT_COPY, true, i18n("Copy"));
+  toolbar2->insertButton(UserIcon("paste"), ID_EDIT_PASTE, true, i18n("Paste"));
 
-  ///////////////////////////////////////////////////////////////////
-  // CONNECT THE TOOLBAR SLOTS WITH SIGNALS - add new created toolbars by their according number
-  // connect for invoking the slot actions
+  toolbar2->insertButton(UserIcon("undo"),   ID_EDIT_UNDO,   true, i18n("Undo"));
+  toolbar2->insertButton(UserIcon("redo"),   ID_EDIT_REDO,   true, i18n("Redo"));
+
+  toolbar2->insertButton(UserIcon("spellcheck"),   ID_EDIT_SPELL,   true, i18n("Spell Checker"));
+
+  toolbar2->insertSeparator();
+  toolbar2->insertSeparator();
+
+  toolbar2->insertButton(UserIcon("find"),  		ID_EDIT_SEARCH,  			true, i18n("Search"));
+  toolbar2->insertButton(UserIcon("findnext"),	ID_EDIT_SEARCH_AGAIN, true, i18n("Search Again"));
+  
+  addToolBar(toolbar2);
+  
+  connect(toolbar1, SIGNAL(clicked(int)), SLOT(commandCallback(int)));
+  connect(toolbar1, SIGNAL(pressed(int)), SLOT(statusCallback(int)));
+  
+  connect(toolbar2, SIGNAL(clicked(int)), SLOT(commandCallback(int)));
+  connect(toolbar2, SIGNAL(pressed(int)), SLOT(statusCallback(int)));
+  
   connect(toolBar(), SIGNAL(clicked(int)), SLOT(commandCallback(int)));
   connect(toolBar(), SIGNAL(pressed(int)), SLOT(statusCallback(int)));
 }
@@ -594,12 +575,16 @@ void QuantaApp::initDocument()
 
   kwritePopupMenu = new QPopupMenu();
 
-  kwritePopupMenu->insertItem(UserIcon("cut"), 	i18n("Cu&t"), 	 ID_EDIT_CUT );
-  kwritePopupMenu->insertItem(UserIcon("copy"), 	i18n("&Copy"), ID_EDIT_COPY );
-  kwritePopupMenu->insertItem(UserIcon("paste"), i18n("&Paste"), ID_EDIT_PASTE );
-  kwritePopupMenu->insertSeparator();
   kwritePopupMenu->insertItem(UserIcon("undo"),i18n("&Undo"), ID_EDIT_UNDO );
   kwritePopupMenu->insertItem(UserIcon("redo"),i18n("&Redo"), ID_EDIT_REDO );
+  kwritePopupMenu->insertSeparator();
+  kwritePopupMenu->insertItem(UserIcon("cut"), 	i18n("Cu&t"), 	 ID_EDIT_CUT );
+  kwritePopupMenu->insertItem(UserIcon("copy"), 	i18n("&Copy"),  ID_EDIT_COPY );
+  kwritePopupMenu->insertItem(UserIcon("paste"), i18n("&Paste"), ID_EDIT_PASTE );
+  kwritePopupMenu->insertSeparator();
+  kwritePopupMenu->insertItem(UserIcon("open"),       i18n("Open File..."),ID_FILE_OPEN);
+  kwritePopupMenu->insertItem(UserIcon("save"),       i18n("Save"),        ID_FILE_SAVE);
+  kwritePopupMenu->insertItem(SmallIcon("fileclose"), i18n("Close"),       ID_FILE_CLOSE );
   kwritePopupMenu->insertSeparator();
   kwritePopupMenu->insertItem( i18n("Context Help"),  		ID_CONTEXT_HELP );
   kwritePopupMenu->insertItem( i18n("Tag Attributes"),  	ID_ATTRIB_POPUP);
@@ -837,6 +822,8 @@ void QuantaApp::enableCommand(int id_)
   // enable menu and toolbar functions by their ID's
   menuBar()->setItemEnabled(id_, true);
   toolBar()->setItemEnabled(id_, true);
+  toolbar1->setItemEnabled(id_, true);
+  toolbar2->setItemEnabled(id_, true);
 }
 
 void QuantaApp::disableCommand(int id_)
@@ -845,6 +832,8 @@ void QuantaApp::disableCommand(int id_)
   // disable menu and toolbar functions by their ID's
   menuBar()->setItemEnabled(id_, false);
   toolBar()->setItemEnabled(id_, false);
+  toolbar1->setItemEnabled(id_, false);
+  toolbar2->setItemEnabled(id_, false);
 }
 
 /** check button/item in stat */
@@ -854,6 +843,8 @@ void QuantaApp::checkCommand(int id_, bool stat)
   viewMenu ->setItemChecked( id_, stat);
   editMenu ->setItemChecked( id_, stat);
 	toolBar()->setButton(      id_, stat);
+	toolbar1->setButton(      id_, stat);
+	toolbar2->setButton(      id_, stat);
 }
 
 void QuantaApp::addRecentFile(const QString &file)
@@ -919,6 +910,8 @@ void QuantaApp::saveOptions()
   doc->write()->writeConfig(config);
   config->writeEntry("Geometry", size());
   config->writeEntry("Show Toolbar", toolBar()->isVisible());
+  config->writeEntry("Show Toolbar File", toolbar1->isVisible());
+  config->writeEntry("Show Toolbar Edit", toolbar2->isVisible());
   config->writeEntry("Show Statusbar",statusBar()->isVisible());
   config->writeEntry("ToolBarPos", (int) toolBar()->barPos());
   config->writeEntry("Recent Files", recentFiles);
@@ -995,14 +988,6 @@ void QuantaApp::readOptions()
 
   sTab->setFollowCursor( config->readBoolEntry("Follow Cursor", true ) );
 
-  // bar status settings
-  bool bViewToolbar = config->readBoolEntry("Show Toolbar", true);
-  viewMenu->setItemChecked(ID_VIEW_TOOLBAR, bViewToolbar);
-  if(!bViewToolbar)
-  {
-     enableToolBar(KToolBar::Hide);
-  }
-	
   bool bViewStatusbar = config->readBoolEntry("Show Statusbar", true);
   viewMenu->setItemChecked(ID_VIEW_STATUSBAR, bViewStatusbar);
   if(!bViewStatusbar)

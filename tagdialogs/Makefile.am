@@ -54,21 +54,13 @@ EXTRA_DIST = \
 		filecombo.h\
 		pictureview.cpp\
 		pictureview.h\
-		tagadlg.moc.cpp\
 		tagattr.cpp\
 		tagattr.h\
 		tagdialog.cpp\
 		tagdialog.h\
-		tagfontdlg.moc.cpp\
-		tagform.moc.cpp\
-		tagformbutton.moc.cpp\
-		tagforminput.moc.cpp\
-		tagformtext.moc.cpp\
-		tagformtextareadlg.moc.cpp\
 		tagimgdlg.cpp\
 		tagimgdlg.h\
 		tagimgdlgdata.cpp\
-		tagmaildlg.moc.cpp\
 		tagquicklistdlg.cpp\
 		tagquicklistdlg.h\
 		tagquicklistdlgdata.cpp\
@@ -78,12 +70,8 @@ EXTRA_DIST = \
 		tagquicktable.cpp\
 		tagquicktable.h\
 		tagquicktabledata.cpp\
-		tagtabledlg.moc.cpp\
-		tagtablehead.moc.cpp\
-		tagtablerow.moc.cpp\
 		tagwidget.cpp\
 		tagwidget.h\
-		tagwidget.moc.cpp\
 		tagxml.cpp\
 		tagxml.h
 ##############################################################

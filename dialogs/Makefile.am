@@ -25,7 +25,6 @@ EXTRA_DIST = \
 		filemasks.h\
 		filemaskss.cpp\
 		filemaskss.h\
-		filesmask.moc.cpp\
 		grepdialog.cpp\
 		grepdialog.h\
 		parseroptions.cpp\
@@ -36,7 +35,6 @@ EXTRA_DIST = \
 		previewoptions.h\
 		previewoptionss.cpp\
 		previewoptionss.h\
-		styleoptions.moc.cpp\
 		styleoptionss.cpp\
 		styleoptionss.h
 ##############################################################

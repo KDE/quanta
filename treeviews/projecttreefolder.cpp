@@ -15,19 +15,19 @@
  *                                                                         *
  ***************************************************************************/
 
+// KDE includes
+#include <kiconloader.h>
+
 // app includes
 #include "projecttreefile.h"
 #include "projecttreefolder.h"
-
-#include "pix/folder.xpm"
-#include "pix/folder_open.xpm"
 
 ProjectTreeFolder::ProjectTreeFolder( ProjectTreeFolder *parent, const char *name)
   : FilesTreeFolder( parent, name )
 {
   fileList.setAutoDelete( true );
 
-  setPixmap( 0, QPixmap((const char**)folder_xpm) );
+  setPixmap( 0, SmallIcon("folder") );
 
   QString fname = name;
 
@@ -48,7 +48,7 @@ ProjectTreeFolder::ProjectTreeFolder( QListView *parent, const char *name, const
 {
   fileList.setAutoDelete( true );
 
-  setPixmap( 0, QPixmap((const char**)folder_xpm) );
+  setPixmap( 0, SmallIcon("folder") );
 
   path = dir;
 }
@@ -81,9 +81,9 @@ void ProjectTreeFolder::setOpen( bool o )
   QListViewItem::setOpen( o );
 //  if (p) {
   	if (o)
-  		setPixmap( 0, QPixmap((const char**)folder_open_xpm) );
+  		setPixmap( 0, SmallIcon("folder_open") );
   	else
-  		setPixmap( 0, QPixmap((const char**)folder_xpm) );
+  		setPixmap( 0, SmallIcon("folder") );
 //  }
   opened = o;
 }

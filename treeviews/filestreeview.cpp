@@ -34,8 +34,6 @@
 #include "filestreeview.h"
 
 // include icons
-#include "pix/home.xpm"
-#include "pix/folder_red.xpm"
 #include "pix/folder_top.xpm"
 
 extern QString fileMaskHtml;
@@ -58,12 +56,12 @@ FilesTreeView::FilesTreeView( QString dir, QStrList topList, QWidget *parent, co
 
 	setFocusPolicy(QWidget::ClickFocus);
 
-	rootDir = new FilesTreeFolder( this , "Root", "/");
-	rootDir->setPixmap( 0, QPixmap((const char**)folder_red_xpm));
+	rootDir = new FilesTreeFolder( this , "Root Directory", "/");
+	rootDir->setPixmap( 0, SmallIcon("folder"));
 	rootDir->setOpen( false);
   	
- 	homeDir = new FilesTreeFolder( this , "Home", dir);
-	homeDir->setPixmap( 0, QPixmap((const char**)home_xpm));
+ 	homeDir = new FilesTreeFolder( this , "Home Directory", dir);
+	homeDir->setPixmap( 0, SmallIcon("folder_home"));
 	homeDir->setOpen( true );
 	
 	fileMenu -> insertItem( i18n("List mode"), this ,SLOT(slotNewMode()));

@@ -19,16 +19,12 @@
 #include <qdir.h>
 #include <qpixmap.h>
 
+// KDE includes
+#include <kiconloader.h>
+
 // app includes
 #include "filestreefile.h"
 #include "filestreefolder.h"
-
-// include images
-#include "pix/html.xpm"
-#include "pix/image.xpm"
-#include "pix/txt.xpm"
-#include "pix/java.xpm"
-#include "pix/folder.xpm"
 
 extern QString fileMaskHtml;
 extern QString fileMaskText;
@@ -56,16 +52,16 @@ FilesTreeFile::~FilesTreeFile(){
 /** set icon of item  */
 void FilesTreeFile::setIcon( QString name )
 {
-	if ( QDir::match( fileMaskHtml,  name) ) setPixmap( 0, QPixmap((const char**)html_xpm) );
-  if ( QDir::match( fileMaskText,  name) ) setPixmap( 0, QPixmap((const char**)txt_xpm) );
-  if ( QDir::match( fileMaskImage, name) ) setPixmap( 0, QPixmap((const char**)image_xpm) );
-  if ( QDir::match( fileMaskJava,  name) ) setPixmap( 0, QPixmap((const char**)java_xpm) );
+  if ( QDir::match( fileMaskHtml,  name) ) setPixmap( 0, SmallIcon("www")   );
+  if ( QDir::match( fileMaskText,  name) ) setPixmap( 0, SmallIcon("txt")   );
+  if ( QDir::match( fileMaskImage, name) ) setPixmap( 0, SmallIcon("image") );
+  if ( QDir::match( fileMaskJava,  name) ) setPixmap( 0, SmallIcon("info")  );
 }
 
 /** set icon of item  */
 void FilesTreeFile::setDirIcon()
 {
-  setPixmap( 0, QPixmap((const char**)folder_xpm) );
+  setPixmap( 0, SmallIcon("folder") );
   isDir = true;
 }
 

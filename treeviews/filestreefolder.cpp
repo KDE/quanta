@@ -25,10 +25,8 @@
 #include <qfileinfo.h>
 #include <qpixmap.h>
 
-// include icons
-#include "pix/folder.xpm"
-#include "pix/folder_open.xpm"
-#include "pix/folder_locked.xpm"
+// KDE includes
+#include <kiconloader.h>
 
 extern QString fileMaskHtml;
 extern QString fileMaskText;
@@ -71,7 +69,7 @@ void FilesTreeFolder::setOpen( bool open )
 	  readable = false;
 	  setExpandable( false );
 	
-	  setPixmap( 0, QPixmap((const char**)folder_locked_xpm) );
+	  setPixmap( 0, SmallIcon("folder_locked") );
 	  return;
 	}
 
@@ -92,7 +90,7 @@ void FilesTreeFolder::setOpen( bool open )
 		for ( it = dirList.begin(); it != dirList.end(); ++it )
 		{
 		  ditem = new FilesTreeFolder( this, *it );
-		  ditem->setPixmap( 0, QPixmap((const char**)folder_xpm) );
+		  ditem->setPixmap( 0, SmallIcon("folder") );
 		}
 		
 		thisDir.setFilter( QDir::Files);
@@ -118,10 +116,8 @@ void FilesTreeFolder::setOpen( bool open )
 
   if ( parentFolder)
   {
-  	if ( open )
-  		setPixmap( 0, QPixmap((const char**)folder_open_xpm) );
-  	else
-  		setPixmap( 0, QPixmap((const char**)folder_xpm) );
+  	  if ( open ) setPixmap( 0, SmallIcon("folder_open") );
+  	  else        setPixmap( 0, SmallIcon("folder") );
   }
 
   opened = open;

@@ -38,7 +38,6 @@ EXTRA_DIST = \
 		projectnewgeneral.h\
 		projectnewgenerals.cpp\
 		projectnewgenerals.h\
-		projectnewgetfiles.moc.cpp\
 		projectnewlocal.cpp\
 		projectnewlocal.h\
 		projectnewlocals.cpp\

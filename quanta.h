@@ -316,6 +316,10 @@ class QuantaApp : public KTMainWindow
     QStrList recentFiles;
     QStrList recentProjects;
 
+    /** tool bars */
+    KToolBar *toolbar1;
+    KToolBar *toolbar2;
+    
     /** the configuration object of the application */
     KConfig *config;
     /** the key accelerator container */

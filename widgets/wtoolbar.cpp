@@ -39,14 +39,14 @@ void WToolBar::fixingSize()
 	setBarPos( Floating);	
 	setBarPos( Top);
 	
-	enableMoving(false);
-	enableFloating(false);
+	//enableMoving(false);
+	//enableFloating(false);
 	
 	setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Minimum ) );
 }
 
 void WToolBar::insertSeparator()
-{
+{  
 #ifdef OLD_SEPARATORS
 	QFrame *f  = new QFrame (this);
 	QWidget *w1= new QWidget(this);
@@ -61,5 +61,5 @@ void WToolBar::insertSeparator()
   insertWidget( 7,0,  w2);
 #else
   insertLineSeparator();
-#endif
+#endif 
 }

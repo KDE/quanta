@@ -49,27 +49,28 @@ int main(int argc, char *argv[])
 		aboutData( "quanta", I18N_NOOP("Quanta"),
 		VERSION, description, KAboutData::License_GPL,
 		"(c) 2000, Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon");
-		aboutData.addAuthor("Dmitry Poplavsky",0, "pdima@kde.org");
-		aboutData.addAuthor("Alexander Yakovlev",0, "yshurik@kde.org");
-		aboutData.addAuthor("Eric Laffoon",0, "sequitur@kde.org");
+		
+ 	aboutData.addAuthor("Dmitry Poplavsky",0, "pdima@kde.org");
+ 	aboutData.addAuthor("Alexander Yakovlev",0, "yshurik@kde.org");
+ 	aboutData.addAuthor("Eric Laffoon",0, "sequitur@kde.org");
 
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
-
-	KApplication app;
 	
+	KApplication app;
+
 	QFrame *f = new QFrame( 0L, QString("Quanta")+VERSION,
 													QWidget::WStyle_NoBorder | QWidget::WStyle_Customize );
 
   QPixmap pm( UserIcon("quantalogo") );
-
+  
   f->setBackgroundPixmap(pm);
-  f->setGeometry(	QApplication::desktop()->width ()/2-160,
-  						    QApplication::desktop()->height()/2-120,
-  						    320, 240 );
+  f->setGeometry( QApplication::desktop()->width ()/2-160,
+                  QApplication::desktop()->height()/2-120,
+  						     320, 240 );
   f->setLineWidth(0);
-  						
   f->show();
+  
 
   qInitNetworkProtocols();
 	
@@ -81,9 +82,10 @@ int main(int argc, char *argv[])
   {
     QuantaApp *quanta = new QuantaApp();
 
-    delete f;
-
     quanta->show();
+    
+    delete f;
+    
     quanta->openLastFiles();
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();

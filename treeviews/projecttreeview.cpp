@@ -34,8 +34,6 @@
 #include "projecttreefolder.h"
 #include "projecttreeview.h"
 
-#include "pix/folder_blue.xpm"
-
 extern QString fileMaskHtml;
 extern QString fileMaskJava;
 extern QString fileMaskText;
@@ -55,7 +53,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	setFocusPolicy(QWidget::ClickFocus);
 	
 	projectDir =  new ProjectTreeFolder( this, "No project", basePath);
-	projectDir -> setPixmap( 0, QPixmap((const char**)folder_blue_xpm));
+	projectDir -> setPixmap( 0, SmallIcon("folder"));
 	projectDir -> setOpen( true );
 	
 	fileMenu = new QPopupMenu();
@@ -191,7 +189,7 @@ void ProjectTreeView::slotReloadTree( QStringList fileList, bool newtree, bool )
 	{
 		if ( projectDir ) delete projectDir;
 		projectDir =  new ProjectTreeFolder( this, projectName, basePath);
-		projectDir -> setPixmap( 0, QPixmap((const char**)folder_blue_xpm));
+		projectDir -> setPixmap( 0, SmallIcon("folder"));
 		projectDir -> setOpen( true );
 	}
 	
