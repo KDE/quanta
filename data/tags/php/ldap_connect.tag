@@ -1,0 +1,6 @@
+<!DOCTYPE tags>
+<tags><tag name="ldap_connect" type="function" returnType="resource">
+<attr name="hostname" type="string" status="optional"></attr>
+<attr name="port" type="int" status="optional"></attr>
+</tag>
+</tags>
