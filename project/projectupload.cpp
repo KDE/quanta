@@ -45,7 +45,6 @@ ProjectUpload::ProjectUpload( Project* prg, QWidget* parent,  const char* name, 
 	QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
 	
 	QDateTime stime;
-	
 	stime.setTime_t(1);
 	
 	QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
@@ -83,6 +82,7 @@ ProjectUpload::~ProjectUpload(){
 
 void ProjectUpload::startUpload()
 {
+	stopUpload = false;
 	QDomElement uploadEl = p->dom.firstChild().firstChild().namedItem("upload").toElement();
 	
 	uploadEl.setAttribute("remote_host", lineHost->text() );
@@ -107,6 +107,8 @@ void ProjectUpload::startUpload()
 
 void ProjectUpload::upload()
 {
+	if ( stopUpload ) return;
+		
   for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() ) {
   		if ( it->isSelected() ) {	
   			currentFile = it->text(0);
@@ -129,7 +131,7 @@ void ProjectUpload::upload()
   			//debug( QString(op) );
   			
  			op.copy( sfrom, sto );
- 			//op.copy( sfrom, op );
+ 			// op.copy( sfrom, op );
  			
   			labelCurFile->setText( currentFile );
   			ProgressBar1->setProgress( 0 );
@@ -142,23 +144,34 @@ void ProjectUpload::upload()
 
 void ProjectUpload::uploadFinished( QNetworkOperation *res )
 {
+   if ( !res )  	return;
    if ( res->state() == QNetworkProtocol::StFailed) {
-   	 //KMessageBox::error(this, "Operation failed");
-   	 //return;
+   	 // KMessageBox::error(this, res->protocolDetail() );
+   	 // stopUpload = true;
    	 debug( res->protocolDetail() );
+   	 return;
    }
 
    if ( res->state() == QNetworkProtocol::StDone) {
 
-     for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() ) {
+     for ( QListViewItem *it = list->firstChild(); it; it = it->nextSibling() )
     		if ( it->text(0) == currentFile ) {
     			it->setSelected(false);
     			it->repaint();
+      			
+    			//update upload time
+    			QDomNodeList nl = p->dom.firstChild().firstChild().childNodes();
+    			for ( unsigned int i=0; i<nl.count(); i++ ) {
+						QDomElement el = nl.item(i).toElement();
+						if ( el.nodeName() == "item"  &&  el.attribute("url") == currentFile ) {
+							QDateTime stime;
+							stime.setTime_t(1);
+							el.setAttribute( "upload_time", stime.secsTo( QDateTime::currentDateTime() ) );
+						}
+				}
     		}
-     }
-   	 upload();
+   	upload();
    }
-
 }
 
 void ProjectUpload::uploadProgress (int bytesDone, int bytesTotal, QNetworkOperation * ) {

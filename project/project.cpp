@@ -591,50 +591,11 @@ void Project::upload()
 {
 	if ( !hasProject() ) return;
 	
+	emit saveAllFiles();
+	
 	ProjectUpload *dlg = new ProjectUpload(this, 0,i18n("Upload project's files..."), true);
-	
-/*	QStringList::Iterator it;
-	QStringList files = fileNameList();
-	
-	dlg->list->setMultiSelection(true);
-		
- 	for ( it = files.begin(); it != files.end(); ++it )
-	{
-		new QListViewItem( dlg->list, *it );
-	}
-	*/
-	if (dlg->exec())
-	{
-		/*QStringList uploadList;
-		QListViewItemIterator it( dlg->list );
-		
-    for ( ; it.current(); ++it )
-    {	
-			if ( it.current()->isSelected() )
-				uploadList.append( basePath+it.current()->text(0));
-		}
-		
-		QUrl url( dlg->lineUrl->text() );
-		url.setUser( dlg->lineUser->text() );
-		url.setPassword( dlg->linePasswd->text() );
-		url.setProtocol( "ftp" );
-		url.setPort(21);
-		
-		static QUrlOperator op;
-		
-		op.copy( uploadList, url.toString() );
-		
-		//KURL::List list( uploadList );
-		//KIO ::Job *job = KIO::copy( list, KURL( url ) );
-  	//connect( job, SIGNAL( result( KIO::Job *) ), this , SLOT( slotUploadFinished( KIO::Job *) ) );
-*/  	
-	}
-	
+	dlg->exec();
 	delete dlg;
-}
-
-void Project::slotUploadFinished( KIO::Job *)
-{
 }
 
 void Project::slotGetWgetExited(KProcess*)

@@ -60,7 +60,6 @@ public slots:
   void loadProject(QString fname);
   void options();
   void upload();
-  void slotUploadFinished( KIO::Job *);
 
   void addFiles();
   void addDirectory();

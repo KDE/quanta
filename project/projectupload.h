@@ -52,6 +52,7 @@ private:
   QStringList madeDirs;
   Project *p;
   QUrlOperator op;
+  bool stopUpload;
 
 
 
