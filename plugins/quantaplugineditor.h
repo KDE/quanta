@@ -25,8 +25,6 @@
 
 /* OTHER INCLUDES */
 #include "quantaplugin.h"
-#include "quantakpartplugin.h"
-#include "quantacmdplugin.h"
 #include "plugineditor.h"
 
 /**Editor for the plugins that manages configuration

@@ -138,7 +138,6 @@
 #include <kencodingfiledialog.h>
 #endif
 
-#include "plugins/quantakpartplugin.h"
 #include "plugins/quantaplugininterface.h"
 
 // from kfiledialog.cpp - avoid qt warning in STDERR (~/.xsessionerrors)

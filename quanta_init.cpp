@@ -82,8 +82,6 @@
 
 #include "plugins/quantaplugininterface.h"
 #include "plugins/quantaplugin.h"
-#include "plugins/quantakpartplugin.h"
-#include "plugins/quantacmdplugin.h"
 #include "plugins/quantaplugineditor.h"
 
 #include "plugins/php3dbg/debugger.h"

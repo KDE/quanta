@@ -392,17 +392,23 @@ Adds the backslash before the special chars (like ?, *, . ) so the returned
 string can be used in regular expressions.*/
 QString QuantaCommon::makeRxCompatible(const QString& s)
 {
-  const uint max = 5;
+  const uint max = 7;
   const QRegExp rxs[max]={QRegExp("\\?"),
                         QRegExp("\\*"),
                         QRegExp("\\."),
                         QRegExp("\\^"),
-                        QRegExp("\\$")};
+                        QRegExp("\\$"),
+                        QRegExp("\\{"),
+                        QRegExp("\\}")
+                        };
   const QString strs[max]={QString("\\?"),
                          QString("\\*"),
                          QString("\\."),
                          QString("\\^"),
-                         QString("\\$")};
+                         QString("\\$"),
+                         QString("\\{"),
+                         QString("\\}")
+                         };
   QString str = s;
   for (uint i = 0; i < max - 1; i++)
   {

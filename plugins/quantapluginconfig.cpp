@@ -34,8 +34,6 @@
 /* OTHER INCLUDES */
 #include "quantapluginconfig.h"
 #include "quantaplugin.h"
-#include "quantakpartplugin.h"
-#include "quantacmdplugin.h"
 #include "quantaplugininterface.h"
 
 QuantaPluginConfig::QuantaPluginConfig(QWidget *a_parent, const char *a_name)
