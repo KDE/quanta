@@ -43,7 +43,8 @@ quanta_SOURCES = \
 		quantadoc.cpp\
 		quantaview.cpp\
 		quantaview_init.cpp\
-		quantaview_slots.cpp
+		quantaview_slots.cpp\
+		quanta_actions.cpp
 EXTRA_DIST = \
 		document.cpp\
 		document.h\
@@ -60,7 +61,10 @@ EXTRA_DIST = \
 		quantaview.h\
 		quantaview_init.cpp\
 		quantaview_slots.cpp\
-		resource.h
+		resource.h\
+		quanta_actions.cpp\
+		quanta_actions.h\
+		quantaui.rc
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$
@@ -68,6 +72,9 @@ EXTRA_DIST = \
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/Development/
 	$(INSTALL_DATA) $(srcdir)/quanta.desktop $(kde_appsdir)/Development/quanta.desktop
+	$(mkinstalldirs) $(kde_datadir)/quanta/
+	$(INSTALL_DATA) $(srcdir)/quantaui.rc $(kde_datadir)/quanta/quantaui.rc
 
 uninstall-local:
 	-rm -f $(kde_appsdir)/Development/quanta.desktop
+	-rm -f $(kde_datadir)/quanta/quantaui.rc

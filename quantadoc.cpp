@@ -439,6 +439,12 @@ Document* QuantaDoc::write()
 	return app->view->write();
 }
 
+// options of kwrite
+void QuantaDoc::editorOptions()
+{
+  write()->editorOptions();
+}
+
 /** returns the kwrite document */
 QString QuantaDoc::basePath()
 {

@@ -1501,7 +1501,9 @@ KWrite::KWrite(KWriteDoc *doc, QWidget *parent, const char * name, bool HandleOw
 
   setupActions();
 
-  setXMLFile( "kwriteui.rc" );
+// quanta fix  
+//  setXMLFile( "kwriteui.rc" );
+// wnd of quanta fix
 
   // some defaults
   configFlags = KWriteView::cfAutoIndent | KWriteView::cfSpaceIndent | KWriteView::cfBackspaceIndents

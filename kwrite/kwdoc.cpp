@@ -170,7 +170,9 @@ KWriteDoc::KWriteDoc(HlManager *hlManager, const QString &path,
     {
       // We are embedded in konqueror, let's provide an XML file and actions.
       (void)new KWriteBrowserExtension( this );
-      setXMLFile( "kwrite_browser.rc" );
+// quanta fix      
+//      setXMLFile( "kwrite_browser.rc" );
+// end of quanta fix
 
       KStdAction::selectAll( view, SLOT( selectAll() ), actionCollection(), "select_all" );
       (void)new KAction( i18n( "Unselect all" ), 0, view, SLOT( deselectAll() ), actionCollection(), "unselect_all" );

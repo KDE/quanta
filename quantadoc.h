@@ -135,6 +135,8 @@ class QuantaDoc : public QObject
     void slotInsertCoreAttrib( int id );
     void slotInsertEventsAttrib( int id );
     void slotAttribPopup();
+    
+    void editorOptions();
  	
   signals:
   	void openedFiles(QStringList);
