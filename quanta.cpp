@@ -1444,7 +1444,7 @@ void QuantaApp::bookmarkMenuAboutToShow()
 
 void QuantaApp::gotoBookmark (int n)
 {
-  view->gotoMark (markList.at(n));
+  view->gotoMark(markList.at(n));
 }
 
 /** No descriptions */

@@ -91,8 +91,8 @@
     </Menu>
          
   <Menu name="bookmarks" noMerge="1"><text>&amp;Bookmarks</text>
-    <Action name="edit_bookmarkToggle" />
-    <Action name="edit_bookmarksClear" />
+    <Action name="bookmarks_toggle" />
+    <Action name="bookmarks_clear" />
     <Separator />
   </Menu>
 
