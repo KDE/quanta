@@ -394,6 +394,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     }
     currentNode = createTextNode(currentNode, el, ec, parentNode);
   } else
+  if (el != endLine || ec != endCol)
     currentNode = createTextNode(currentNode, endLine, endCol, parentNode);
   if (!rootNode)
     rootNode = currentNode;
