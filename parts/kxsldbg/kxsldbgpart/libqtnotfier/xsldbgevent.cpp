@@ -25,7 +25,7 @@
 #include <libxslt/xsltInternals.h>
 
 #include "../libxsldbg/xsldbgevent.h"
-#include "../libxsldbg/xsldbgdebuggerbase.h"
+#include "xsldbgdebuggerbase.h"
 #include "../libxsldbg/arraylist.h"
 #include "../libxsldbg/breakpoint.h"
 #include "../libxsldbg/xsldbgmsg.h"

@@ -22,7 +22,7 @@
 #include <qglobal.h>
 #include <qstringlist.h>
 
-#include "../libxsldbg/xsldbgdebuggerbase.h"
+#include "xsldbgdebuggerbase.h"
 
 XsldbgDebuggerBase::XsldbgDebuggerBase()
   : QObject(0L, "XsldbgDebuggerBase")

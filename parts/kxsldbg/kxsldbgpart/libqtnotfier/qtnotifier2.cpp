@@ -19,7 +19,7 @@
 
 #include "../libxsldbg/xsldbgevent.h"
 #include "../libxsldbg/qtnotifier2.h"
-#include "../libxsldbg/xsldbgdebuggerbase.h"
+#include "xsldbgdebuggerbase.h"
 #include "../libxsldbg/xsldbgthread.h"
 
 XsldbgDebuggerBase *_debugger = 0L;

@@ -20,7 +20,7 @@
 
 #include <qevent.h>
 #include "libxsldbg/xsldbgmsg.h"   /* needed for XsldbgMessageEnum */
-#include "libxsldbg/xsldbgdebuggerbase.h"
+#include "libqtnotfier/xsldbgdebuggerbase.h"
 
 #include "xsldbginspector.h"
 
