@@ -62,9 +62,10 @@ void SpecialCharDialog::filterChars(const QString& filter)
   if (filter.isEmpty())
     CharsListBox->insertStringList(m_charList);
   else {
-    QRegExp reg( QString("\\b%1\\b").arg(filter) );
+    QRegExp p_reg( QString("\\b%1\\b").arg(filter) );
+    QString p_begin = QString("%1 ").arg(filter);
     for (QStringList::ConstIterator it = m_charList.begin(); it != m_charList.end(); ++it)
-      if ((*it).contains(reg))
+      if ( (*it).contains(p_reg) || (*it).startsWith(p_begin) )
         CharsListBox->insertItem(*it);
   }
   if (CharsListBox->currentItem() == -1 && CharsListBox->count())
