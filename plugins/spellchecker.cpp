@@ -165,6 +165,7 @@ void SpellChecker::corrected( const QString& originalword, const QString& newwor
         QString lineText = editIf->textLine(line);
         lineText.remove(col,originalword.length());
         lineText.insert(col, newword);
+        m_currentDoc->setReadWrite(true);
 #ifdef BUILD_KAFKAPART
         if (editIfExt)
           editIfExt->editBegin();
@@ -175,9 +176,7 @@ void SpellChecker::corrected( const QString& originalword, const QString& newwor
         if (editIfExt)
           editIfExt->editEnd();
 #endif
-  kapp->processEvents();
-//        m_currentDoc->removeText( line, col, line, col + originalword.length() );
-//        m_currentDoc->insertText( line, col, newword );
+        m_currentDoc->setReadWrite(false);
 }
 
 void SpellChecker::spellResult( const QString& )
