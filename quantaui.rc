@@ -230,18 +230,6 @@
     <Separator/>
   </ToolBar>
   
-  <ToolBar name="charStylesToolBar" hidden="true">
-  <text>Character Styles ToolBar</text>
-    <Action name="tag_b"/>
-    <Action name="tag_i"/>
-    <Action name="tag_u"/>
-    <Action name="tag_sub"/>
-    <Action name="tag_sup"/>
-    <Separator lineSeparator="true"/>
-    <Action name="tag_font_inc"/>
-    <Action name="tag_font_dec"/>
-  </ToolBar>
-
   <ToolBar name="standard" tabname="Standard">
   <text>Standard</text>
     <Action name="tag_quick_start"/>
