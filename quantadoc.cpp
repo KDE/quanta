@@ -174,7 +174,7 @@ void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding, b
       changeFileTabName();
       quantaApp->fileRecent->addURL( w->url() );
 
-      quantaApp->repaintPreview();
+      quantaApp->slotRepaintPreview();
 
       w->kate_view->setIconBorder(qConfig.iconBar);
       w->kate_view->setLineNumbersOn(qConfig.lineNumbers);

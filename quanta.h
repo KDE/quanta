@@ -245,13 +245,11 @@ public slots:
   void slotDockChanged();
 
   /** repaint preview */
-  void repaintPreview( bool clear = false);
+  void slotRepaintPreview();
   /** show preview ( F6 )*/
   void slotShowPreview();
   void slotShowPreviewWidget(bool show);
   void slotShowProjectTree();
-  /** Repaint preview ( slot ) */
-  void slotViewRepaint();
 
   void slotShowBottDock(bool force = false);
   void slotShowProblemsDock();

@@ -593,17 +593,9 @@ void QuantaApp::slotStatusMsg(const QString &msg)
   statusbarTimer->start(10000, true);
 }
 
-/** Repaint preview */
-void QuantaApp::slotViewRepaint()
-{
-  repaintPreview( true );
-}
-
 /** repaint preview */
-void QuantaApp::repaintPreview( bool clear )
+void QuantaApp::slotRepaintPreview()
 {
-  static QString oldtext = "";
-
   WHTMLPart *part = m_htmlPart;
   QWidgetStack *s = widgetStackOfHtmlPart();
 
@@ -613,11 +605,6 @@ void QuantaApp::repaintPreview( bool clear )
   if (!m_view->writeExists()) return;
 
   previewCopyMade = false;
-
-  if ( clear )
- {
-    oldtext = "";
-  }
 
   KHTMLView *html = part->view();
   int xOffset = html->contentsX(), yOffset = html->contentsY();
@@ -671,12 +658,11 @@ void QuantaApp::repaintPreview( bool clear )
 
       url = m_project->urlWithPrefix(url);
 
-      part->begin(url, xOffset, yOffset );
-      part->openURL( url );
+      part->begin(url, xOffset, yOffset);
+      part->openURL(url);
     } else  //the document is Untitled, preview the text from it
     {
       QString text = w->editIf->text();
-      if ( text == oldtext ) return;
       if ( text.isEmpty() )
       {
         text = i18n( "<center><h3>The current document is empty...</h3></center>" );
@@ -684,7 +670,6 @@ void QuantaApp::repaintPreview( bool clear )
       if (m_noFramesPreview)
       {
       }
-      oldtext = text;
       part->begin( projectBaseURL(), xOffset, yOffset );
       part->write( text );
     }
@@ -940,7 +925,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (s->id(s->visibleWidget()) == 1)
   {
-   repaintPreview(true);
+    slotRepaintPreview();
   }
   #ifdef BUILD_KAFKAPART
   m_view->updateViews();
@@ -1301,7 +1286,7 @@ void QuantaApp::slotOptions()
     m_htmlPart->write( "" );
     m_htmlPart->end();
 
-    repaintPreview(true);
+    slotRepaintPreview();
     reparse(true);
 
   }
@@ -1372,7 +1357,7 @@ void QuantaApp::slotShowPreview()
       slotShowBottDock(true);
     }
     slotShowPreviewWidget(true);
-    repaintPreview(false);
+    slotRepaintPreview();
     m_previewVisible = true;
   } else
   {

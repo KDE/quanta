@@ -1937,7 +1937,7 @@ void QuantaApp::initActions()
 
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),
-                        this, SLOT( slotViewRepaint() ),
+                        this, SLOT(slotRepaintPreview()),
                         ac, "reload" );
 
     (void) new KAction( i18n( "View with &Netscape" ), "netscape", CTRL+ALT+Key_F6,
