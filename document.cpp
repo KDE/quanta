@@ -953,16 +953,27 @@ QValueList<KTextEditor::CompletionEntry>* Document::getTagCompletions(int line, 
     case Script: completion.type = "script";
                  break;
   }
+  Node *node = parser->nodeAt(line, col);
+  if (node)
+      node = node->parent;
+  if (node && node->tag->type != Tag::XmlTag)
+      node = 0L;
+  QTag *parentQTag= 0L;
+  if (node)
+      parentQTag = QuantaCommon::tagFromDTD(node->tag->dtd, node->tag->name);
   QString textLine = editIf->textLine(line).left(col);
   QString word = findWordRev(textLine, completionDTD).upper();
   completion.userdata = word +"|";
   QStringList tagNameList;
+  QString tagName;
   QDictIterator<QTag> it(*(completionDTD->tagsList));
   for( ; it.current(); ++it )
   {
-    if (it.current()->name().upper().startsWith(word))
+    tagName = it.current()->name();
+    if (tagName.upper().startsWith(word))
     {
-      tagNameList += it.current()->name();
+      if (!parentQTag || (parentQTag && parentQTag->isChild(tagName)))
+          tagNameList += it.current()->name();
     }
   }
 

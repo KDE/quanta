@@ -172,3 +172,9 @@ Attribute* QTag::attribute(const QString& name)
 
  return attr;
 }
+
+bool QTag::isChild(const QString& tag)
+{
+  QString tagName = parentDTD->caseSensitive ? tag : tag.upper();
+  return (childTags.isEmpty() || childTags.contains(tagName));
+}

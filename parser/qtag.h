@@ -213,6 +213,9 @@ public:
   bool isSingle();
   /** No descriptions */
   bool isOptional();
+  /** Returns true if tag is a possible child of this tag, or if
+  there are no children defined */
+  bool isChild(const QString& tag);
 #ifdef BUILD_KAFKAPART
   /** temporary kafkapart functions */
   void setCanBeDeleted(bool b) {_canBeDeleted = b;}
