@@ -6,7 +6,7 @@
 #include "listener.h"
 #include <qsocketnotifier.h>
 
-PHP4Debugger::PHP4Debugger( QObject * parent=0, const char * name=0 )
+PHP4Debugger::PHP4Debugger( QObject * parent, const char * name )
   :QObject(parent,name)
 {
 }
