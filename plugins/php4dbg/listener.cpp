@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream.h>
 #include <qstring.h>
 #include <klocale.h>
 #include <cstdarg>

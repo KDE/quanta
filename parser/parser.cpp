@@ -25,7 +25,6 @@
 //standard library includes
 #include <stdio.h>
 #include <ctype.h>
-#include <iostream.h>
 
 //app includes
 #include "parser.h"
@@ -34,6 +33,8 @@
 #include "../resource.h"
 #include "../quantacommon.h"
 #include "../document.h"
+
+#include <kdebug.h>
 
 Parser::Parser()
 {
@@ -71,13 +72,14 @@ Node *Parser::parse(Document *w)
     Only for debugging purposes. */
 void Parser::coutTree(Node *node, int indent)
 {
+ QString output;
  while (node)
  {
-   for (int i =0; i < indent; i++)
-    cout << " ";
-   if (node->tag->type != Tag::Text) cout << node->tag->name;
-   else cout << node->tag->tagStr();
-   cout << " (" << node->tag->type << ")\n";
+	output="";
+   for (int i =0; i < indent; i++) output +=" ";
+   if (node->tag->type != Tag::Text) output += node->tag->name;
+   else output+= node->tag->tagStr();
+   kdDebug(24000) <<output<<" (" << node->tag->type << ")"<<endl;
    if (node->child) coutTree(node->child, indent + 4);
    node = node->next;
  }

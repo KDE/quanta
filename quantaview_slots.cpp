@@ -18,7 +18,6 @@
 
 // standard header
 #include <time.h>
-#include <iostream.h>
 
 // include files for QT
 #include <qdir.h>

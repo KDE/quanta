@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 #include <stdlib.h>
-#include <iostream.h>
 
 #include <klocale.h>
 

@@ -21,7 +21,6 @@
 // unix includes
 #include <time.h>
 #include <unistd.h>
-#include <iostream.h>
 
 // include QT files
 #include <qdict.h>

@@ -23,6 +23,7 @@
 #include <kiconloader.h>
 #include <kcmdlineargs.h>
 #include <ksimpleconfig.h>
+#include <kdebug.h>
 
 // qt includes
 #include <qpixmap.h>
@@ -133,7 +134,9 @@ int main(int argc, char *argv[])
   } else {
 	app = new KQApplication;
   }
+
   qInitNetworkProtocols();
 
+  kdDebug(24000)<<"Calling app->exec()"<<endl;
   return app->exec();
 }

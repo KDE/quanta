@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <iostream.h>
 
 #include <qfile.h>
 #include <qregexp.h>
@@ -28,7 +27,6 @@
 #include "dtd.h"
 #include "../quantacommon.h"
 
-#define kdDebug() kdDebug(14211)
 
 DTD::DTD(KURL file, QString dir)
 {
@@ -60,17 +58,17 @@ void DTD::printContents()
 {
   for ( QStringList::Iterator tagIt = tags.begin(); tagIt != tags.end(); ++tagIt ) {
     QString tag = *tagIt;
-    cout << tag << endl;
+    kdDebug(24000) << tag << endl;
     AttributeList *attributes = getTagAttributes(tag);
     for ( uint i = 0; i < attributes->count(); i++)
     {
       Attribute *attribute = attributes->at(i);
-      cout << "  " << attribute->name << ": ";
+      kdDebug(24000) << "  " << attribute->name << ": ";
       for (uint j = 0; j < attribute->values.count(); j++)
       {
-        cout << attribute->values[j] << ", ";
+        kdDebug(24000) << attribute->values[j] << ", ";
       }
-      cout << endl;
+      kdDebug(24000) << endl;
     }
   }
 }
@@ -96,7 +94,7 @@ void DTD::writeTagFiles()
 
       file.close();
     } else {
-      kdDebug() << "Unable to write tag file: " << file.name() << endl;
+      kdDebug(24000) << "Unable to write tag file: " << file.name() << endl;
     }
   }
 }
@@ -156,13 +154,13 @@ void DTD::parseDTD(QString fileName)
         parseDTD(line + ".ent");
       } else
       {
-        kdDebug() << "Unknown tag: " << line << endl;
+        kdDebug(24000) << "Unknown tag: " << line << endl;
       }
 
       if (it != lines.end()) ++it;
     }
   } else {
-    kdDebug() << "Can not find file" << endl;
+    kdDebug(24000) << "Can not find file" << endl;
   }
 }
 
@@ -341,7 +339,7 @@ void DTD::parseDTDReplace(QString *value) {
     if (replaceValue != 0L) {
       value->replace(begin, end-begin+1, *replaceValue);
     } else {
-      kdDebug() << "Can not find entity: " << replaceText << endl;
+      kdDebug(24000) << "Can not find entity: " << replaceText << endl;
       return;
     }
 
