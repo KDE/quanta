@@ -699,6 +699,9 @@ void QuantaView::slotCopy ()
   {
     dynamic_cast<KTextEditor::ClipboardInterface*>(write()->view())->copy();
   }
+  QClipboard *cb = QApplication::clipboard();
+  QString text = cb->text(QClipboard::Selection);
+  cb->setText(text, QClipboard::Clipboard);
 }
 
 void QuantaView::slotPaste ()
