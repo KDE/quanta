@@ -10,7 +10,7 @@ CaseSensitive = true
 
 [Toolbars]
 Location = html
-Names = standard, fonts, tables, lists, forms, other
+Names = standard, style, tables, lists, forms, other
 
 [Page1]
 Title = Core and i18n
