@@ -21,7 +21,6 @@
 #include <qlineedit.h>
 #include <qregexp.h>
 #include <qstring.h>
-#include <qapplication.h>
 
 //kde includes
 #include <kconfig.h>
@@ -70,7 +69,7 @@ DTDParser::~DTDParser()
 bool DTDParser::parse()
 {
   QString fileName = QString::null;
-  if (!KIO::NetAccess::download(m_dtdURL, fileName, qApp->mainWidget()))
+  if (!KIO::NetAccess::download(m_dtdURL, fileName))
   {
     KMessageBox::error(0, i18n("<qt>Cannot download the DTD from <b>%1</b>.</qt>").arg( m_dtdURL.prettyURL(0, KURL::StripFileProtocol)));
     return false;
