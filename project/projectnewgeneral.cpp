@@ -127,24 +127,6 @@ void ProjectNewGeneral::slotChangeNames( const QString &text )
   while( (i=fname.find(" ")) >=0 ) fname.remove(i,1);
 
   linePrjFile->setText( fname+".webprj" );
-
-  QString dir = "";
-  QString oldDir = linePrjDir->text();
-  QString homeDir = QDir::homeDirPath()+"/";
-  if (oldDir. startsWith(homeDir))
-  {
-    oldDir.remove(0, homeDir.length());
-  }
-
-  if (comboProtocol->currentText() == i18n("Local"))
-  {
-    dir =  homeDir+oldDir;
-  }  else
-  {
-    dir = oldDir;
-  }
-
-  linePrjDir ->setText(dir);
 }
 
 QString ProjectNewGeneral::type()
