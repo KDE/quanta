@@ -558,6 +558,9 @@ void Tag::setDtd(const DTDStruct *dtd)
 
 bool Tag::isInsideScript(const QString &str)
 {
+  if (!m_dtd)
+    return false; //happens when the DTD is not known yet, e.g in Document::findDTDName
+
   //This detects if the last char from str is inside a script area or not, to
   //treat cases like <a href="<? echo "foo" ?>"> correctly
   //TODO: speed up if you can...
