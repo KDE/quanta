@@ -656,6 +656,7 @@ QMap<QString,QString> ShorthandFormer::expand( QString propertyName, QString pro
   if( propertyName == "border")
     return  expandBorderProp(foundValues);   
   
+  return QMap<QString,QString>();
 }
 
 QMap<QString,QString> ShorthandFormer::expandCueProp(QStringList l){
