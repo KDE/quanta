@@ -17,13 +17,14 @@
 
 // KDE Includes
 #include <klocale.h>
+#include <kdebug.h>
 
 // Quanta includes
 #include "variableslistview.h"
 #include "debuggervariable.h"
 
 VariablesListView::VariablesListView(QWidget *parent, const char *name)
- : KListView(parent, name)//QListView(parent, name)
+ : KListView(parent, name)
 {
   addColumn(i18n("Name"));
   addColumn(i18n("Value"));
@@ -107,6 +108,7 @@ void VariablesListView::addChild(KListViewItem* parent, DebuggerVariable* var)
   for(child = list.first(); child; child = list.next())
   {
     item = new KListViewItem(parent);
+    var->setItem(item);
     item->setText(0, child->name());
     
     switch(child->type())
@@ -128,15 +130,141 @@ void VariablesListView::addChild(KListViewItem* parent, DebuggerVariable* var)
 
 void VariablesListView::parsePHPVariables(const QString &varstring)
 {
-  int pos = 0;
-  setVariables(parsePHPVariables(varstring, &pos, 0));
-}
-
-QPtrList<DebuggerVariable>  VariablesListView::parsePHPVariables(const QString &varstring, int* pos, int level) {
-
-  QPtrList<DebuggerVariable> newlist;
-  return newlist;
+  QString str = varstring;
+  DebuggerVariable* var = parsePHPVariables(str);
+  if(var)
+    addVariable(var);
 
 }
+DebuggerVariable* VariablesListView::parsePHPVariables(QString &str) {
+
+  QString key, data;
+  QString tempstring;
+  int length;
+  DebuggerVariable* debuggervar = NULL;
+ 
+  // get type of key
+  QString type = str.left(1);
+  str.remove(0, 2);
+   
+  // Strings
+  if(type == "s")
+  {
+    // Get length of key
+    tempstring = str.left(str.find(':'));
+    str.remove(0, str.find(':') + 1);
+    length = tempstring.toUInt();
+  
+    key = str.left(length + 1);
+    key.remove(0, 1);        // remove starting quote
+    str.remove(0, length + 3);
+  }
+  else if(type == "i")
+  {
+    key = str.left(str.find(';'));
+    str.remove(0, str.find(';') + 1);
+    
+  }
+  
+  // Get type of data
+  type = str.left(1);
+  str.remove(0, 2);
+   
+  if(type == "i")
+  {
+    /* Example:
+      s:4:"$row";i:6;
+    */
+    data = str.left(str.find(';'));
+    str.remove(0, str.find(';') + 1);
+    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Scalar);
+    
+  } 
+  else if(type == "s") 
+  {
+    /* Example:
+      s:7:"$strvar";s:16:"This is a string";
+    */
+    
+    // Get length of string
+    tempstring = str.left(str.find(':'));
+    str.remove(0, str.find(':') + 1);
+    length = tempstring.toUInt();
+  
+    data = str.left(length + 1);
+    data.remove(0, 1);        // remove starting quote
+    str.remove(0, length + 3);  
+    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Scalar);
+  }
+  else if(type == "a")
+  {
+    /* Example:
+      s:6:"$array";a:5:{s:11:"Ingredients";a:3:{i:0;s:8:"potatoes";i:1;s:4:"salt";i:2;s:6:"pepper";}s:6:"Guests";a:4:{i:0;s:5:"Fiona";i:1;s:4:"Tori";i:2;s:4:"Neil";i:3;s:4:"Nick";}s:4:"Dogs";a:4:{i:0;s:5:"Kitty";i:1;s:5:"Tessy";i:2;s:5:"Fanny";i:3;s:5:"Cosmo";}s:7:"Numbers";a:6:{i:0;i:1;i:1;i:2;i:2;i:3;i:3;i:9;i:4;i:8;i:5;i:7;}s:6:"Letter";s:1:"L";}
+    */
+    
+    // Get length of array
+    tempstring = str.left(str.find(':'));
+    str.remove(0, str.find(':') + 2);
+    length = tempstring.toUInt();
+    
+    QPtrList<DebuggerVariable> vars ;
+    while(length > 0)
+    {
+      length --;
+      DebuggerVariable* var = parsePHPVariables(str);
+      if(var)
+        vars.append(var);
+        
+    }
+    str.remove(0, 1);
+    debuggervar = new DebuggerVariable(key, vars, DebuggerVariableTypes::Array);
+  }
+  else if(type == "d")
+  {
+    /* Example:
+      s:9:"$floatvar";d:12.5600000000000004973799150320701301097869873046875;"
+    */
+    data = str.left(str.find(';'));
+    str.remove(0, str.find(';') + 1);
+    debuggervar = new DebuggerVariable(key, data, DebuggerVariableTypes::Scalar);
+
+  } 
+  else if(type == "-")
+  {
+    debuggervar = new DebuggerVariable(key,  i18n("<Undefined>"), DebuggerVariableTypes::Scalar);
+  } 
+  else
+  {
+    debuggervar = new DebuggerVariable(key, i18n("<Unimplemented type>"), DebuggerVariableTypes::Scalar);
+  }
+ 
+  return debuggervar;
+
+}
+
+// This function should be called before watches are update (if they're updated in a batch)
+// so that postWatchUpdate can remove obsolete variables from the list
+/*void VariablesListView::preWatchUpdate() 
+{
+  DebuggerVariable* v;
+  for( v = m_variablesList.first(); v; v = m_variablesList.next())  
+    v->touch();
+}*/
+
+// This function removes obsolete variables from the tree
+/*void VariablesListView::postWatchUpdate()
+{
+  DebuggerVariable* v;
+  for( v = m_variablesList.last(); v; v = m_variablesList.prev())  
+    if(v->touched())
+    {
+      if(v->item())
+      {
+        delete v->item();
+        v->setItem(NULL);
+      }
+      m_variablesList.remove();
+    }
+}*/
 
 #include "variableslistview.moc"

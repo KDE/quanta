@@ -67,19 +67,30 @@ void QuantaDebuggerInterface::fileOpened(QString file)
   m_manager->fileOpened(file);
 }
 
-DebuggerVariable* QuantaDebuggerInterface::newDebuggerVariable(const QString& name, const QString& value, int type)
+/*DebuggerVariable* QuantaDebuggerInterface::newDebuggerVariable(const QString& name, const QString& value, int type)
 {
   return new DebuggerVariable(name, value, type);
-}
+}*/
 
-void QuantaDebuggerInterface::addVariable(DebuggerVariable* var)
+/*void QuantaDebuggerInterface::addVariable(DebuggerVariable* var)
 {
   m_manager->UI()->addVariable(var);
-}
+}*/
 
 void QuantaDebuggerInterface::parsePHPVariables(const QString &varstring)
 {
   m_manager->UI()->parsePHPVariables(varstring);
 }
+
+/*
+void QuantaDebuggerInterface::preWatchUpdate() 
+{
+  m_manager->UI()->preWatchUpdate();
+}
+
+void QuantaDebuggerInterface::postWatchUpdate()
+{
+  m_manager->UI()->postWatchUpdate();
+}*/
 
 #include "quantadebuggerinterface.moc"

@@ -30,12 +30,18 @@ class DebuggerUI : public QObject
   Q_OBJECT
   
   public:
-      DebuggerUI(QObject *parent = 0, const char *name = 0);
+    DebuggerUI(QObject *parent = 0, const char *name = 0);
+
+    // Watches      
+    void preWatchUpdate();
+    void postWatchUpdate();
+
+    void setVariables(const QPtrList<DebuggerVariable>&);    
+    void addVariable(DebuggerVariable* var);
+    void parsePHPVariables(const QString &);
+
       
-      void setVariables(const QPtrList<DebuggerVariable>&);    
-      void addVariable(DebuggerVariable* var);
-      void parsePHPVariables(const QString &);
-      
+            
   private:    
     VariablesListView* m_variablesListView;
     

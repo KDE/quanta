@@ -203,9 +203,17 @@ void QuantaDebuggerGubed::slotReadyRead()
       sendCommand("havesource", "");
       debuggingState(true);
     }
+    else if(m_command == "sendingwatches")
+    {
+      //debuggerInterface()->preWatchUpdate();
+    }
     else if(m_command == "watch")
     {
       showWatch(data);
+    }
+    else if(m_command == "sentwatches")
+    {
+      //debuggerInterface()->postWatchUpdate();
     }
     else
       // Unimplemented command - log to debug output

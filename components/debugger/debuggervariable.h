@@ -21,6 +21,7 @@
 
 #include <qstring.h>
 #include <qptrlist.h> 
+#include <klistview.h>
 
 namespace DebuggerVariableTypes {
 
@@ -59,6 +60,12 @@ public:
   void setReference(bool ref);
   bool isReference();
   
+  void touch() { m_touched = true;};
+  bool touched() { return m_touched;};
+  
+  void setItem(KListViewItem* item) { m_item = item;};
+  KListViewItem*  item() { return m_item;};
+  
 private:  
   ValueList_t m_valueList;
   
@@ -66,5 +73,8 @@ private:
   QString m_value;
   int     m_type;  
   bool    m_isReference;
+  long    m_touched;
+  
+  KListViewItem* m_item;
 };
 #endif

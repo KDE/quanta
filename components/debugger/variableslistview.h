@@ -26,27 +26,29 @@ class DebuggerVariable;
 
 class VariablesListView : public KListView
 {
-Q_OBJECT
-public:
+  Q_OBJECT
+  
+  public:
     VariablesListView(QWidget *parent = 0, const char *name = 0);
     ~VariablesListView();
   
-  void setVariables(const QPtrList<DebuggerVariable>& vars);
-  void addVariable(DebuggerVariable* variable);
-  void parsePHPVariables(const QString &varstring);
-  
-  void clear();
-  
-  //void allowValueChange(bool);
-  //bool isValueChangeable();
-signals:
-  void valueChanged(DebuggerVariable*);
-  
-private:  
-  void addChild(KListViewItem* parent, DebuggerVariable* var);
-  QPtrList<DebuggerVariable> parsePHPVariables(const QString &varstring, int* pos, int level);
-  
-  QPtrList<DebuggerVariable> m_variablesList;
+    //void preWatchUpdate();
+    //void postWatchUpdate();
+    
+    void setVariables(const QPtrList<DebuggerVariable>& vars);
+    void addVariable(DebuggerVariable* variable);
+    void parsePHPVariables(const QString &varstring);
+
+    void clear();
+    
+  signals:
+    void valueChanged(DebuggerVariable*);
+    
+  private:  
+    void addChild(KListViewItem* parent, DebuggerVariable* var);
+    DebuggerVariable* parsePHPVariables(QString &str);
+    
+    QPtrList<DebuggerVariable> m_variablesList;
 };
 
 #endif

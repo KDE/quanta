@@ -43,9 +43,15 @@ class DebuggerInterface : public QObject {
     virtual void enableAction(QString action, bool enable) = 0;
     virtual void fileOpened(QString file) = 0;
 
-    virtual DebuggerVariable* newDebuggerVariable(const QString& name, const QString& value, int type) = 0;  
-    virtual void addVariable(DebuggerVariable*) = 0;
+    // Watch handling
+    //virtual void preWatchUpdate() = 0;
+    //virtual void postWatchUpdate() = 0;
+    
+    //virtual DebuggerVariable* newDebuggerVariable(const QString& name, const QString& value, int type) = 0;  
+    //virtual void addVariable(DebuggerVariable*) = 0;
     virtual void parsePHPVariables(const QString &) = 0;
+    
+    
 };
 
 #endif

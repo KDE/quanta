@@ -55,4 +55,15 @@ void DebuggerUI::parsePHPVariables(const QString &varstring)
   m_variablesListView->parsePHPVariables(varstring);
 }
 
+
+/*void DebuggerUI::preWatchUpdate() 
+{
+  m_variablesListView->preWatchUpdate();
+}
+
+void DebuggerUI::postWatchUpdate()
+{
+  m_variablesListView->postWatchUpdate();
+}*/
+
 #include "debuggerui.moc"

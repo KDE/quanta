@@ -18,18 +18,18 @@
 #include "debuggervariable.h"
 
 DebuggerVariable::DebuggerVariable()
-  : m_type(DebuggerVariableTypes::Scalar), m_isReference(false)
+  : m_type(DebuggerVariableTypes::Scalar), m_isReference(false), m_item(NULL)
 {
 }
 
 DebuggerVariable::DebuggerVariable(const QString& name)  
-  : m_type(DebuggerVariableTypes::Scalar), m_isReference(false)
+  : m_type(DebuggerVariableTypes::Scalar), m_isReference(false), m_item(NULL)
 {
   m_name = name;
 }
 
 DebuggerVariable::DebuggerVariable(const QString& name, const QString& value, int type)
-  : m_isReference(false)
+  : m_isReference(false), m_item(NULL)
 {
   m_name  = name;
   m_value = value;
@@ -37,7 +37,7 @@ DebuggerVariable::DebuggerVariable(const QString& name, const QString& value, in
 }
 
 DebuggerVariable::DebuggerVariable(const QString& name, const ValueList_t& values, int type)
-  : m_isReference(false)
+  : m_isReference(false), m_item(NULL)
 {
   m_name = name;
   m_valueList = values;
