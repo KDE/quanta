@@ -74,10 +74,12 @@ KQApplication::KQApplication()
    }
    else */
    {
-     if (args->isSet("logo")) splash = new KSplash();
      quantaApp = new QuantaApp();
+     KConfig *config = quantaApp->config();
+     config->setGroup("General Options");
+     if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
+         splash = new KSplash();
      setMainWidget(quantaApp);
-     //QTimer::singleShot(10, this, SLOT( slotInit()));
      slotInit();
    }
 }
@@ -118,11 +120,12 @@ int KQUniqueApplication::newInstance()
   else
   {
     splash = 0L;
-    if (args->isSet("logo")) splash = new KSplash();
-
     quantaApp = new QuantaApp();
+    KConfig *config = quantaApp->config();
+    config->setGroup("General Options");
+    if (config->readBoolEntry("Show Splash", true) && args->isSet("logo"))
+        splash = new KSplash();
     setMainWidget(quantaApp);
-   // QTimer::singleShot(10, this, SLOT( slotInit()));
     slotInit();
   }
 

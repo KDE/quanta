@@ -1007,6 +1007,8 @@ void QuantaApp::slotOptions()
   fileMasks->showDTDSelectDialog->setChecked(qConfig.showDTDSelectDialog);
   m_config->setGroup("Notification Messages");
   fileMasks->warnBinaryOpening->setChecked(m_config->readEntry("Open Everything") != "Yes");
+  m_config->setGroup("General Options");
+  fileMasks->showSplash->setChecked(m_config->readBoolEntry("Show Splash", true));
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
   fileMasks->encodingCombo->insertStringList( availableEncodingNames );
@@ -1110,6 +1112,8 @@ void QuantaApp::slotOptions()
     qConfig.showDTDSelectDialog = fileMasks->showDTDSelectDialog->isChecked();
     m_config->setGroup("Notification Messages");
     m_config->writeEntry("Open Everything", fileMasks->warnBinaryOpening->isChecked() ? "" : "Yes");
+    m_config->setGroup("General Options");
+    m_config->writeEntry("Show Splash", fileMasks->showSplash->isChecked());
 
     qConfig.defaultEncoding = fileMasks->encodingCombo->currentText();
 

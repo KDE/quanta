@@ -811,8 +811,10 @@ void QuantaApp::openLastFiles()
   KURL u;
   QuantaCommon::setUrl(u, pu);
   bool isPrj = true;
-  if ( pu.isEmpty())    isPrj = false;
-  if ( u.isMalformed()) isPrj = false;
+  if (pu.isEmpty())
+     isPrj = false;
+  if (!u.isValid())
+     isPrj = false;
 
   m_config->setGroup("General Options");
 
@@ -1705,7 +1707,7 @@ void QuantaApp::initActions()
                                          ac, "file_open_recent");
 #endif
     fileRecent->setMaxItems(32);
-    fileRecent->setWhatsThis(i18n("Open File"));
+    fileRecent->setToolTip(i18n("Open / Open Recent"));
     connect(fileRecent, SIGNAL(activated()), this, SLOT(slotFileOpen()));
 
     (void) new KAction( i18n( "Close All" ), 0, this,
@@ -1916,7 +1918,7 @@ void QuantaApp::initActions()
     m_project->projectRecent->setIcon("folder_new");
 #endif
     m_project->projectRecent->setMaxItems(32);
-    m_project->projectRecent->setWhatsThis(i18n("Open Project"));
+    m_project->projectRecent->setToolTip(i18n("Open / Open Recent Project"));
     connect(m_project->projectRecent, SIGNAL(activated()), m_project, SLOT(slotOpenProject()));
 
 
