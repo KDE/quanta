@@ -788,8 +788,6 @@ Node *SAParser::parsingDone()
       n->next = s_next;
       if (s_next)
         s_next->prev = n;
-      if (n->parent != m_currentNode)  
-        n->prev = m_currentNode; 
       m_currentNode = m_currentNode->nextSibling();
       if (m_currentNode)
       {
