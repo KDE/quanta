@@ -211,21 +211,30 @@ void Document::changeTagAttribute(Tag *tag, const QString& attrName, const QStri
   {
     int endCol;
     value = tag->attributeValue(index);
+    int aLine, aCol;
+    tag->attributeNamePos(index, aLine, aCol);
     tag->attributeValuePos(index, line, col);
-    endCol = col + value.length();
-    if (attrValue.isEmpty())
+    if (line == aLine && col == aCol)
     {
-       tag->attributeNamePos(index, line, col);
-       endCol++;
-    }
-    reparseEnabled = false;
-    QString textLine = editIf->textLine(line);
-    while (col > 1 && textLine[col-1].isSpace())
-      col--;
+      col += tag->attribute(index).length();
+      value = QString("=") + qConfig.attrValueQuotation + attrValue + qConfig.attrValueQuotation;
+    } else
+    {
+      endCol = col + value.length();
+      if (attrValue.isEmpty())
+      {
+        tag->attributeNamePos(index, line, col);
+        endCol++;
+      }
+      reparseEnabled = false;
+      QString textLine = editIf->textLine(line);
+      while (col > 1 && textLine[col-1].isSpace())
+        col--;
 
-    editIf->removeText(line, col, line, endCol);
-    reparseEnabled = true;
-    value = attrValue;
+      editIf->removeText(line, col, line, endCol);
+      reparseEnabled = true;
+      value = attrValue;
+    }
   } else
   {
     tag->endPos(line, col);

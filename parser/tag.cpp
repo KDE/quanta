@@ -126,7 +126,7 @@ void Tag::parse(const QString &p_tagStr, Document *p_write)
       } else
       {
         attr.quoted = false;
-        valueStartPos = pos + 1;
+        valueStartPos = pos;
         while (pos < m_tagStr.length() && !m_tagStr[pos].isSpace())
           pos++;
         attr.value = m_tagStr.mid(valueStartPos, pos - valueStartPos -1);
