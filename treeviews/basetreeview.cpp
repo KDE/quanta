@@ -34,6 +34,7 @@
 #include <kaction.h>
 #include <kdebug.h>
 #include <krun.h>
+#include <kinputdialog.h>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kopenwith.h>
@@ -1172,6 +1173,48 @@ void BaseTreeView::slotCreateSiteTemplate()
    if (error)
      KMessageBox::error(this, i18n("<qt>There was an error while creating the site template tarball.<br>Check that you can read the files from <i>%1</i>, you have write access to <i>%2</i> and that you have enough free space in your temporary folder.</qt>").arg(url.prettyURL(0, KURL::StripFileProtocol)).arg(targetURL.prettyURL(0, KURL::StripFileProtocol)), i18n("Template Creation Error"));
    delete tempFile;
+}
+
+void BaseTreeView::slotCreateFolder()
+{
+  bool ok;
+  QString folderName = KInputDialog::getText(i18n("Create New Folder"), i18n("Folder name:"), "", &ok, this);
+  if (ok)
+  {
+    KURL url = currentURL();
+    if (currentKFileTreeViewItem()->isDir())
+      url.setPath(url.path() + "/" + folderName + "/");
+    else
+      url.setPath(url.directory() + "/" + folderName +"/");
+    QuantaNetAccess::mkdir(url, this, -1);
+  }
+}
+
+void BaseTreeView::slotCreateFile()
+{
+  bool ok;
+  QString fileName = KInputDialog::getText(i18n("Create New File"), i18n("File name:"), "", &ok, this);
+  if (ok)
+  {
+    KURL url = currentURL();
+    if (currentKFileTreeViewItem()->isDir())
+      url.setPath(url.path() + "/" + fileName);
+    else
+      url.setPath(url.directory() + "/" + fileName);
+    if (QExtFileInfo::exists(url))
+    {
+      KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>").arg(fileName), i18n("Error creating file"));
+      return;
+    }
+    KTempFile *tempFile = new KTempFile(tmpDir);
+    tempFile->setAutoDelete(true);
+    tempFile->close();
+    if (QuantaNetAccess::copy(KURL::fromPathOrURL(tempFile->name()), url, this));
+    {
+      emit openFile(url);
+    }
+    delete tempFile;
+  }
 }
 
 #include "basetreeview.moc"

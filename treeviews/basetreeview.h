@@ -253,6 +253,14 @@ protected slots:
   create a site template tarball from the selected directory
   */
   virtual void slotCreateSiteTemplate();
+  /**
+   Creates a folder under the current item
+   */
+  virtual void slotCreateFolder();
+  /**
+  Creates a file under the current item
+   */
+  virtual void slotCreateFile();
 
 protected:
   /**

@@ -93,6 +93,8 @@ public slots: // Public slots
 protected slots:
   void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
   void slotRenameItem(QListViewItem* kvtvi, const QString & newText, int col);
+  virtual void slotCreateFolder();
+  virtual void slotCreateFile();
 
 signals: // Signals
   void removeFromProject( const KURL& );
@@ -161,7 +163,6 @@ private slots: // Private slots
   void slotOptions();
   /** No descriptions */
   void slotRescan();
-  void slotCreateFolder();
   void slotRemoveFromProject(int askForRemove = 1);
   void slotUploadSingleURL();
   void slotAlwaysUpload();

@@ -87,11 +87,16 @@ FilesTreeView::FilesTreeView(KConfig *config, QWidget *parent, const char *name)
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
 
+  KPopupMenu *createNewMenu = new KPopupMenu(this);
+  createNewMenu->insertItem(SmallIcon("folder_new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
+  createNewMenu->insertItem(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
+
   m_folderMenu = new KPopupMenu();
 
   m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("New Top &Folder..."), this, SLOT(slotNewTopFolder()));
   m_menuTop = m_folderMenu->insertItem(i18n("&Add Folder to Top"), this, SLOT(slotAddToTop()));
   m_folderMenu->insertItem(i18n("Create Site &Template..."), this, SLOT(slotCreateSiteTemplate()));
+  m_folderMenu->insertItem(SmallIcon("empty"), i18n("&Create New"), createNewMenu);
   m_folderMenu->insertSeparator();
   m_insertFolderInProject = m_folderMenu->insertItem(i18n("&Insert in Project..."), this, SLOT(slotInsertDirInProject()));
   m_folderMenu->insertItem(SmallIcon("editcopy"), i18n("&Copy"), this, SLOT(slotCopy()));

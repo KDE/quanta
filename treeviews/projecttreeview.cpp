@@ -29,6 +29,7 @@
 #include <kdebug.h>
 #include <kpopupmenu.h>
 #include <kpropertiesdialog.h>
+#include <ktempfile.h>
 #include <kapplication.h>
 #include <kstringhandler.h>
 
@@ -136,9 +137,13 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_fileMenu->insertItem(i18n("Upload &Status"), m_uploadStatusMenu);
   m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
 
+  KPopupMenu *createNewMenu = new KPopupMenu(this);
+  createNewMenu->insertItem(SmallIcon("folder_new"), i18n("F&older..."), this, SLOT(slotCreateFolder()));
+  createNewMenu->insertItem(SmallIcon("document"), i18n("&File..."), this, SLOT(slotCreateFile()));
+
   m_folderMenu = new KPopupMenu(this);
 
-  m_folderMenu->insertItem(SmallIcon("folder_new"), i18n("&Create Folder..."), this, SLOT(slotCreateFolder()));
+  m_folderMenu->insertItem(SmallIcon("empty"), i18n("&Create New"), createNewMenu);
   m_folderMenu->insertSeparator();
   m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("&Delete"), this, SLOT(slotDelete()));
   m_folderMenu->insertItem(i18n("&Remove From Project"), this, SLOT(slotRemoveFromProject(int)));
@@ -151,7 +156,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   m_folderMenu->insertItem(SmallIcon("info"), i18n("&Properties"), this, SLOT(slotProperties()));
 
   m_projectMenu = new KPopupMenu(this);
-  m_projectMenu->insertItem(SmallIcon("folder_new"), i18n("&Create Folder..."), this, SLOT(slotCreateFolder()));
+  m_projectMenu->insertItem(SmallIcon("empty"), i18n("&Create New"), createNewMenu);
   m_projectMenu->insertSeparator();
   m_projectMenu->insertItem(SmallIcon("up"), i18n("&Upload Project..."), this, SLOT(slotUploadProject()));
   m_projectMenu->insertItem(SmallIcon("reload"), i18n("Re&scan Project Folder..."), this, SLOT(slotRescan()));
@@ -373,6 +378,34 @@ void ProjectTreeView::slotCreateFolder()
      {
         emit insertToProject(url);
      }
+  }
+}
+
+void ProjectTreeView::slotCreateFile()
+{
+  bool ok;
+  QString fileName = KInputDialog::getText(i18n("Create New File"), i18n("File name:"), "", &ok, this);
+  if (ok)
+  {
+    KURL url = currentURL();
+    if (currentKFileTreeViewItem()->isDir())
+      url.setPath(url.path() + "/" + fileName);
+    else
+      url.setPath(url.directory() + "/" + fileName);
+    if (QExtFileInfo::exists(url))
+    {
+      KMessageBox::error(this, i18n("<qt>Cannot create file, because a file named <b>%1</b> already exists.</qt>").arg(fileName), i18n("Error creating file"));
+      return;
+    }
+    KTempFile *tempFile = new KTempFile(tmpDir);
+    tempFile->setAutoDelete(true);
+    tempFile->close();
+    if (QExtFileInfo::copy(KURL::fromPathOrURL(tempFile->name()), url));
+    {
+      emit insertToProject(url);
+      emit openFile(url);
+    }
+    delete tempFile;
   }
 }
 
