@@ -1417,6 +1417,28 @@ void QuantaApp::slotShowProjectTree()
       ptabdock->changeHideShowState();
 }
 
+void QuantaApp::newCursorPosition(QString file, int lineNumber, int columnNumber)
+{
+  idleTimer->start(250, true);
+  QString linenumber;
+  linenumber = i18n("Line: %1 Col: %2").arg(lineNumber).arg(columnNumber);
+  statusBar()->changeItem(linenumber, IDS_STATUS_CLM);
+  statusBar()->changeItem(i18n(" R/O "),IDS_INS_OVR);
+  statusBar()->changeItem("",IDS_MODIFIED);
+}
+
+void QuantaApp::newDebuggerPosition(QString file, int lineNumber)
+{
+    newCursorPosition(file, lineNumber, 0);
+}
+
+void  QuantaApp::openFile(QString file, int lineNumber, int columnNumber)
+{
+  gotoFileAndLine(file, lineNumber);
+  setCursorPosition(lineNumber, columnNumber);
+  slotNewStatus();
+}
+
 void QuantaApp::slotNewLineColumn()
 {
   idleTimer->start(250, true);

@@ -63,6 +63,15 @@ QXsldbgView::~QXsldbgView()
   delete markPixMap;
   delete hashPixMap;			
 }
+
+
+void QXsldbgView::show()
+{
+    QScrollView::show();
+    setFocus(); 
+    emit cursorPositionChanged(getLineNo(), getRowNo());
+}
+
  
 void QXsldbgView::setDocument(QXsldbgDoc *doc)
 {

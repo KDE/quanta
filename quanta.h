@@ -160,6 +160,10 @@ public:
   /** Return the list of opened URLs and their editor interface numbers*/
   QStringList openedURLs() const;
   QStringList tagAreas(const QString& name, bool includeCoordinates, bool skipFoundContent) const;
+  /** Capture DCOP signals from KXsldbgPart or similar plugin */
+  void newCursorPosition(QString file, int lineNumber, int columnNumber);
+  void newDebuggerPosition(QString file, int lineNumber);
+  void openFile(QString file, int lineNumber, int columnNumber);
 
   /** reparse current document and initialize node. */
   void reparse(bool force);

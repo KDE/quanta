@@ -31,6 +31,9 @@ Q_OBJECT
   int getRowNo() {return _row;};
   QRect cursorRect() {return _cursorRect;};
   void repaintAll();
+
+public slots:
+ void show();
  
  protected:
   void drawContents(QPainter* p, int clipx, int clipy, int clipw, int cliph);

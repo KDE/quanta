@@ -66,6 +66,8 @@
 #include "quantadoc.h"
 #include "resource.h"
 #include "document.h"
+#include <kapplication.h> 
+#include <dcopclient.h>
 
 #include "project/project.h"
 
@@ -125,6 +127,11 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManager
   m_spellChecker = new SpellChecker();
   idleTimer = new QTimer(this);
   connect(idleTimer, SIGNAL(timeout()), SLOT(slotIdleTimerExpired()));
+
+  // connect up signals from KXXsldbgPart
+  connectDCOPSignal(0, 0, "debuggerPositionChangedQString,int)", "newDebuggerPosition(QString,int)", false );
+  connectDCOPSignal(0, 0, "editorPositionChanged(QString,int,int)", "newCursorPosition(QString,int,int)", false );
+  connectDCOPSignal(0, 0, "openFile(QString,int,int)", "openFile(QString,int,int)", false); 
 }
 
 QuantaApp::~QuantaApp()
