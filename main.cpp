@@ -47,7 +47,9 @@ int main(int argc, char *argv[])
 		aboutData( "quanta", I18N_NOOP("Quanta"),
 		VERSION, description, KAboutData::License_GPL,
 		"(c) 2000, Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon");
-		aboutData.addAuthor("Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon",0, "pdima@users.sourceforge.net,yshurik@linuxfan.com,sequitur@easystreet.com");
+		aboutData.addAuthor("Dmitry Poplavsky",0, "pdima@kde.org");
+		aboutData.addAuthor("Alexander Yakovlev",0, "yshurik@kde.org");
+		aboutData.addAuthor("Eric Laffoon",0, "sequitur@kde.org");
 
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
