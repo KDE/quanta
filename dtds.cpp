@@ -976,3 +976,5 @@ const DTDStruct * DTDs::DTDfromMimeType(const QString &mimetype)
   }
   return 0L;
 }
+
+#include "dtds.moc"

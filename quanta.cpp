@@ -688,6 +688,7 @@ void QuantaApp::slotRepaintPreview()
     }
    }
  part->end();
+ part->setEncoding(dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding(), true);
  part->show();
 }
 

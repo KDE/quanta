@@ -544,7 +544,6 @@ int Document::createTempFile()
  tempFile = new KTempFile(tmpDir);
  tempFile->setAutoDelete(true);
  tempFile->textStream()->setCodec(QTextCodec::codecForName(dynamic_cast<KTextEditor::EncodingInterface*>(m_doc)->encoding()));
-
  * (tempFile->textStream()) << editIf->text();
 
  m_tempFileName = QFileInfo(*(tempFile->file())).filePath();
@@ -1897,7 +1896,9 @@ void Document::slotDelayedTextChanged(bool forced)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
       node = parser->nodeAt(line, column, false);
-      if (node && node->tag->name != currentNode->tag->name && (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) && node->tag->validXMLTag)
+      if (node && 
+          node->tag->nameSpace + node->tag->name != currentNode->tag->nameSpace + currentNode->tag->name &&
+          (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd) && node->tag->validXMLTag)
       {
         int bl, bc, bl2, bc2;
         node->tag->beginPos(bl, bc);
@@ -1929,24 +1930,28 @@ void Document::slotDelayedTextChanged(bool forced)
           {
             if (node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd)
             {
-              if (node->tag->name == currentNode->tag->name )
+              if (node->tag->nameSpace + node->tag->name == currentNode->tag->nameSpace + currentNode->tag->name )
               {
                 num++;
               }
-              if ( updateClosing && QuantaCommon::closesTag(currentNode->tag, node->tag) ||
-                  !updateClosing && QuantaCommon::closesTag(node->tag, currentNode->tag) )
+              if ( (updateClosing && QuantaCommon::closesTag(currentNode->tag, node->tag)) ||
+                  (!updateClosing && QuantaCommon::closesTag(node->tag, currentNode->tag)) )
               {
                 num--;
               }
               if (num == 0)
               {
                 reparseEnabled = false;
-                node->tag->namePos(bl, bc);
+                node->tag->beginPos(bl, bc);
+                bc++;
 #ifdef BUILD_KAFKAPART
                 if(editIfExt)
                   editIfExt->editBegin();
 #endif
-                editIf->removeText(bl, bc, bl, bc + node->tag->name.length());
+                int len = node->tag->name.length();
+                if (!node->tag->nameSpace.isEmpty())
+                  len += 1 + node->tag->nameSpace.length();
+                editIf->removeText(bl, bc, bl, bc + len);
                 if (updateClosing)
                 {
                   editIf->insertText(bl, bc, "/"+newName);

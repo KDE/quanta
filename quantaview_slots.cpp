@@ -190,7 +190,7 @@ void QuantaView::slotInsertCSS()
       parentNode = parentNode->parent;
   QString fullDocument = w->editIf->text().stripWhiteSpace();
 
-  if (styleNode && styleNode->tag->name.lower() == "style")  //inside <style> invoke the selector editor
+  if (styleNode && styleNode->tag->name.lower() == "style" && styleNode->next)  //inside <style> invoke the selector editor
   {
     styleNode->tag->endPos(bLine, bCol);
     QString header(w->text(0, 0, bLine, bCol));// beginning part of the file

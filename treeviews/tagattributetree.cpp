@@ -282,8 +282,11 @@ void TagAttributeTree::setCurrentNode(Node *node)
 //  if (!node->tag->nameSpace.isEmpty())
   if(node->tag->type == Tag::XmlTag || node->tag->type == Tag::XmlTagEnd)
   {
+    QString nameSpace = node->tag->nameSpace;
+    if (node->tag->type == Tag::XmlTagEnd)
+     nameSpace.remove('/');
     group = new TopLevelItem(this, group, i18n("Namespace"));
-    item = new AttributeNameSpaceItem(this, group, i18n("name"), node->tag->nameSpace);
+    item = new AttributeNameSpaceItem(this, group, i18n("name"), nameSpace);
     group->setOpen(true);
   }
   if (qTag)
@@ -371,7 +374,10 @@ void TagAttributeTree::editorContentChanged()
     rebuildEnabled = false;
     if (dynamic_cast<AttributeNameSpaceItem*>(item))
     {
-      m_node->tag->write()->changeTagNamespace(m_node->tag, item->editorText());
+      QString nameSpace = item->editorText();
+      if (!nameSpace.isEmpty() && m_node->tag->type == Tag::XmlTagEnd)
+        nameSpace.prepend('/');
+      m_node->tag->write()->changeTagNamespace(m_node->tag, nameSpace);
     } else
     {
 #ifdef BUILD_KAFKAPART
