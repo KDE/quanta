@@ -42,8 +42,9 @@
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/clipboardinterface.h>
 #include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/markinterface.h>
 
-#if (KDE_VERSION > 308)
+#if (KDE_VERSION > 308)               
 #include <ktexteditor/dynwordwrapinterface.h>
 #endif
 
@@ -773,17 +774,31 @@ void QuantaView::slotSpellcheck ()
 
 void QuantaView::toggleBookmark ()
 {
-  write()->kate_view->toggleBookmark();
+  KTextEditor::MarkInterface *markIf = dynamic_cast<KTextEditor::MarkInterface*>(write()->doc());
+  uint line, col;
+  write()->viewCursorIf->cursorPositionReal(&line, &col);
+  int mark = markIf->mark(line);
+  if (mark == KTextEditor::MarkInterface::markType01)
+  {
+    markIf->removeMark(line, mark);
+  } else
+  {
+    markIf->addMark(line, KTextEditor::MarkInterface::markType01);
+  }
 }
 
 void QuantaView::clearBookmarks ()
 {
-  write()->kate_doc->clearMarks();
+  dynamic_cast<KTextEditor::MarkInterface*>(write()->doc())->clearMarks();
 }
 
 void QuantaView::gotoMark (KTextEditor::Mark *mark)
 {
-  write()->kate_view->gotoMark (mark);
+  if (mark->type == KTextEditor::MarkInterface::markType01)
+  {
+    Document *w = write();
+    w->viewCursorIf->setCursorPositionReal(mark->line, 0);
+  }
 }
 
 void QuantaView::toggleIconBorder ()
