@@ -165,7 +165,7 @@
                                 <cstring>templateNameEdit</cstring>
                             </property>
                             <property name="toolTip" stdset="0">
-                                <string>Template name or match name to look fo</string>
+                                <string>Template name or match name to look for</string>
                             </property>
                         </widget>
                         <widget class="QLayoutWidget" row="4" column="1">
