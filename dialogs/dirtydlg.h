@@ -40,6 +40,7 @@ protected: // Protected attributes
   KURL m_src;
   KURL m_dest;
   bool m_busy;
+  int  m_permissions;
 protected slots: // Protected slots
   /** No descriptions */
    void slotOKPressed();

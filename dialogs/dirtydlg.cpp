@@ -24,6 +24,8 @@
 #include <kprocess.h>
 #include <kio/job.h>
 #include <kio/jobclasses.h>
+#include <kio/netaccess.h>
+#include <kfileitem.h>
 
 //app includes
 #include "dirtydlg.h"
@@ -63,7 +65,11 @@ void DirtyDlg::slotCompareDone(KProcess* proc)
 {
  delete proc;
 
- KIO::FileCopyJob *job = KIO::file_move(m_dest, m_src, -1, true, false,false );
+ KIO::UDSEntry entry;
+ KIO::NetAccess::stat(m_src, entry);
+ KFileItem item(entry, m_src, false, true);
+ m_permissions = item.permissions();
+ KIO::FileCopyJob *job = KIO::file_move(m_dest, m_src, m_permissions, true, false,false );
  connect( job, SIGNAL(result( KIO::Job *)),
                  SLOT  (slotResult( KIO::Job *)));
 }
@@ -72,6 +78,7 @@ void DirtyDlg::slotCompareDone(KProcess* proc)
 /** No descriptions */
 void DirtyDlg::slotResult(KIO::Job *)
 {
+ KIO::chmod(m_src, m_permissions);
  m_busy = false;
  accept();
 }
