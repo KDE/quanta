@@ -183,6 +183,8 @@ public slots:
   void slotFileSaveSelectionAsLocalTemplate();
   void slotFileSaveSelectionAsProjectTemplate();
   void slotFileSaveAll();
+  void slotFileReload();
+  void slotFileReloadAll();
   void slotFileClose();
   void slotFileCloseAll();
   void slotFilePrint();

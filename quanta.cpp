@@ -345,6 +345,24 @@ void QuantaApp::slotFileSaveAll()
   slotUpdateStatus(m_view->write());
 }
 
+void QuantaApp::slotFileReload()
+{
+  if (!m_view->writeExists() || !m_doc->saveModified())
+      return;
+  Document *w = m_view->write();
+  if (!w->isUntitled() && w->isModified())
+  {
+    w->setModified(false);
+    w->doc()->openURL(w->url());
+    reparse(true);
+  }
+}
+
+void QuantaApp::slotFileReloadAll()
+{
+//TODO: Implement it!
+}
+
 void QuantaApp::slotFileClose()
 {
   if (m_view->writeExists())

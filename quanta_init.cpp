@@ -1666,9 +1666,13 @@ void QuantaApp::initActions()
 
     KStdAction::saveAs( this, SLOT( slotFileSaveAs() ), ac );
 
-    saveAllAction = new KAction( i18n( "Save All..." ), UserIcon("save_all"), SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
+    saveAllAction = new KAction( i18n( "Save All..." ), UserIconSet("save_all"), SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
                         this, SLOT( slotFileSaveAll() ),
                         ac, "file_save_all" );
+    (void)  new KAction(i18n("Reloa&d"), UserIconSet("reload"), CTRL+Key_F5, this,
+                        SLOT(slotFileReload()), ac, "file_reload");
+//    (void)  new KAction(i18n("Reload All "), 0, 0, this,
+//                        SLOT(slotFileReloadAll()), ac, "file_reload_all");
 
     saveAsLocalTemplateAction = new KAction( i18n( "Save as Local Template..." ), 0,
                         this, SLOT( slotFileSaveAsLocalTemplate() ),
