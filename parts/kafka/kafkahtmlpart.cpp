@@ -444,6 +444,7 @@ void KafkaWidget::keyReturn(bool specialPressed)
     << m_currentNode.nodeValue().string() << " : " << d->m_cursorOffset << endl;
 #endif
 
+    QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
 }
 
 bool KafkaWidget::eventFilter(QObject *, QEvent *event)
