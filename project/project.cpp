@@ -388,7 +388,7 @@ void Project::insertFiles( KURL::List files )
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 
-  emit statusMsg(i18n("Done."));
+  emit statusMsg(QString::null);
   emit newStatus();
 }
 
@@ -848,7 +848,7 @@ void Project::loadProjectXML()
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 
-  emit statusMsg(i18n("Done."));
+  emit statusMsg(QString::null);
 
   emit newProjectLoaded(projectName, baseURL, templateURL);
   emit reloadTree(m_projectFiles, true);
@@ -1052,7 +1052,7 @@ void Project::slotRenamed(const KURL& oldURL, const KURL& newURL)
   progressBar->setValue(0);
   progressBar->setTextEnabled(false);
 
-  emit statusMsg(i18n("Done."));
+  emit statusMsg(QString::null);
   m_modified = true;
 
   emit reloadTree(m_projectFiles, false);
@@ -1101,6 +1101,7 @@ void Project::slotRemove(const KURL& urlToRemove)
 /** create new project */
 void Project::slotNewProject()
 {
+  slotCloseProject();
   wiz = new QWizard(m_parent, "new", true);
   wiz->setCaption(i18n("New Project Wizard"));
   wiz->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -1148,14 +1149,11 @@ void Project::slotNewProject()
            wiz, SLOT(setBackEnabled(QWidget*,bool)));
 
   QStringList lst = DTDs::ref()->nickNameList(true);
-  uint pos = 0;
-  for (uint i = 0; i < lst.count(); i++)
-  {
-    pnf->dtdCombo->insertItem(lst[i]);
-    if (lst[i] == DTDs::ref()->getDTDNickNameFromName(qConfig.defaultDocType.lower()))
-       pos = i;
-  }
-  pnf->dtdCombo->setCurrentItem(pos);
+  pnf->dtdCombo->insertStringList(lst);
+  QString defaultDTDName = DTDs::ref()->getDTDNickNameFromName(qConfig.defaultDocType.lower());
+  int pos = lst.findIndex(defaultDTDName);
+  if (pos >= 0)
+    pnf->dtdCombo->setCurrentItem(pos);
 
   QStringList availableEncodingNames(KGlobal::charsets()->availableEncodingNames());
   pnf->encodingCombo->insertStringList( availableEncodingNames );
@@ -1191,7 +1189,6 @@ void Project::slotSelectProjectType(const QString &title)
 
 void Project::slotAcceptCreateProject()
 {
-  slotCloseProject();
   bool errorOccured = false;
 
   projectName = png->linePrjName->text();
@@ -1199,11 +1196,22 @@ void Project::slotAcceptCreateProject()
 
   KURL oldBaseURL = baseURL;
   baseURL = KURL::fromPathOrURL(basePath);
-  baseURL.setHost(png->lineHost->text());
-  baseURL.setUser(png->lineUser->text());
-  baseURL.setPass(png->linePasswd->text());
-  baseURL.setPort(png->linePort->text().toInt());
-  baseURL.setProtocol(png->comboProtocol->currentText());
+  /*
+     it is important to set the fields only if there is some input
+     otherwise you set them to an empty string and the treeview will
+     not recognize it as parent url because:
+                 QString::Null != ""
+  */
+  if (png->lineHost->text() != "")
+    baseURL.setHost(png->lineHost->text());
+  if (png->lineUser->text() != "")
+    baseURL.setUser(png->lineUser->text());
+  if (png->linePasswd->text() != "")
+    baseURL.setPass(png->linePasswd->text());
+  if (png->linePort->text() != "")
+    baseURL.setPort(png->linePort->text().toInt());
+  if (png->comboProtocol->currentText() != "")
+    baseURL.setProtocol(png->comboProtocol->currentText());
   if (baseURL.protocol() == i18n("Local")) baseURL.setProtocol("file");
   baseURL.adjustPath(1);
   if (!baseURL.path().startsWith("/")) baseURL.setPath("/"+baseURL.path());

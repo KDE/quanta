@@ -117,7 +117,7 @@ ProjectTreeView::ProjectTreeView(KActionCollection *ac,
   m_fileMenu->insertItem(i18n("Rename..."), this, SLOT(slotRename()));
   m_fileMenu->insertSeparator();
   m_fileMenu->insertItem(SmallIcon("info"), i18n("&Properties..."), this, SLOT(slotProperties()));
- 
+
   m_folderMenu = new KPopupMenu(this);
 
   m_folderMenu->insertItem(SmallIcon("editdelete"), i18n("Remove From &Disc (and Project)"), this, SLOT(slotRemove()));
@@ -198,10 +198,12 @@ void ProjectTreeView::slotReload()
       m_projectNameStr += "["+m_baseURL.protocol()+"://"+m_baseURL.user()+"@"+m_baseURL.host()+"]";
     }
     m_projectDir =  new ProjectTreeBranch( this, m_baseURL, m_projectNameStr, UserIcon("ptab"), true);
+    m_projectDir->root()->setText(1, m_baseURL.prettyURL());
     setDragEnabled(true);
     setRootIsDecorated(true);
   } else {
     m_projectDir =  new ProjectTreeBranch( this, m_baseURL, i18n("No Project"), UserIcon("ptab"), true);
+    m_projectDir->root()->setText(1, "");
     setDragEnabled(false);
     setRootIsDecorated(false);
   }
@@ -228,12 +230,14 @@ void ProjectTreeView::slotNewProjectLoaded(const QString &name, const KURL &base
   m_projectName = name;
   if (!m_projectName.isNull())
   {
-    m_projectDir->root()->setText( 0, name);
+    m_projectDir->root()->setText(0, m_projectName);
+    m_projectDir->root()->setText(1, m_baseURL.prettyURL());
     setDragEnabled(true);
   }
   else
   {
-    m_projectDir->root()->setText( 0, i18n("No Project"));
+    m_projectDir->root()->setText(0, i18n("No Project"));
+    m_projectDir->root()->setText(1, "");
     setDragEnabled(false);
   }
 }
@@ -325,7 +329,7 @@ void ProjectTreeView::slotRename()
     QString oldName;
     QString caption;
     bool folder = false;
-    if ( currentKFileTreeViewItem()->isDir()) 
+    if ( currentKFileTreeViewItem()->isDir())
     {
       caption = i18n("Rename Folder");
       oldName = m_oldURL.fileName(true);
@@ -334,8 +338,8 @@ void ProjectTreeView::slotRename()
     {
       oldName = m_oldURL.fileName();
       caption = i18n("Rename File");
-    }      
-    
+    }
+
     KLineEditDlg dlg(i18n("Enter the new name:"), oldName, this);
     dlg.setCaption(caption);
     if (dlg.exec())
@@ -365,7 +369,7 @@ void ProjectTreeView::slotRename()
           KIO::SimpleJob *job = KIO::rename( oldURL, newURL, true );
           connect(job, SIGNAL( result( KIO::Job *) ), SLOT(slotRenameFinished( KIO::Job *)));
         }
-      }  
+      }
     }
   }
 }

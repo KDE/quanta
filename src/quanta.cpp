@@ -903,6 +903,8 @@ void QuantaApp::slotNewStatus()
 
     saveAction   ->setEnabled(m_doc->isModified());
     saveAllAction->setEnabled(m_doc->isModifiedAll());
+    if (Project::ref()->isModified())
+        Project::ref()->slotSaveProject();
 
     bool projectExists = Project::ref()->hasProject();
 
