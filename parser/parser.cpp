@@ -666,7 +666,7 @@ Node *Parser::parse(Document *w)
       m_node = parseArea(0, 0, maxLines, w->editIf->lineLength(maxLines), &lastNode);
   kdDebug(24000) << "New parser ("<< maxLines << " lines): " << t.elapsed() << " ms\n";
 //  t.restart();
-  //parseForGroups();
+//  parseForGroups();
 //  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
   t.restart();
   parseIncludedFiles();
@@ -1622,7 +1622,7 @@ Node *Parser::rebuild(Document *w)
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
 //  t.restart();
-  //parseForGroups();
+//  parseForGroups();
 //  kdDebug(24000) << "Group parser " << t.elapsed() << " ms\n";
  /*
  treeSize = 0;
