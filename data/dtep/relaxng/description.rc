@@ -6,10 +6,6 @@ NumOfPages = 0
 CaseSensitive = true
 Family = 1
 
-[Toolbars]
-Location = none
-Names = blah
-
 [Extra rules]
 Single Tag Style = XML
 
