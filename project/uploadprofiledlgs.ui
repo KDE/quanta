@@ -18,8 +18,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>563</width>
-            <height>199</height>
+            <width>575</width>
+            <height>206</height>
         </rect>
     </property>
     <property name="caption">
@@ -29,81 +29,11 @@
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
-        <widget class="KPushButton" row="4" column="5" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>okButton</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="minimumSize">
-                <size>
-                    <width>90</width>
-                    <height>0</height>
-                </size>
-            </property>
-            <property name="text">
-                <string>&amp;OK</string>
-            </property>
-            <property name="accel">
-                <string>Alt+O</string>
-            </property>
-            <property name="autoDefault">
-                <bool>true</bool>
-            </property>
-        </widget>
         <widget class="QLineEdit" row="3" column="1" rowspan="1" colspan="7">
             <property name="name">
                 <cstring>linePath</cstring>
             </property>
         </widget>
-        <widget class="KPushButton" row="4" column="7">
-            <property name="name">
-                <cstring>cancelButton</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="minimumSize">
-                <size>
-                    <width>90</width>
-                    <height>0</height>
-                </size>
-            </property>
-            <property name="text">
-                <string>&amp;Cancel</string>
-            </property>
-            <property name="accel">
-                <string>Alt+C</string>
-            </property>
-        </widget>
-        <spacer row="4" column="0" rowspan="1" colspan="5">
-            <property name="name">
-                <cstring>spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>370</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
         <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>lineUser</cstring>
@@ -216,6 +146,76 @@
                 <cstring>comboProtocol</cstring>
             </property>
         </widget>
+        <widget class="KPushButton" row="5" column="7">
+            <property name="name">
+                <cstring>cancelButton</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>90</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>&amp;Cancel</string>
+            </property>
+            <property name="accel">
+                <string>Alt+C</string>
+            </property>
+        </widget>
+        <widget class="KPushButton" row="5" column="5" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>okButton</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>90</width>
+                    <height>0</height>
+                </size>
+            </property>
+            <property name="text">
+                <string>&amp;OK</string>
+            </property>
+            <property name="accel">
+                <string>Alt+O</string>
+            </property>
+            <property name="autoDefault">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <spacer row="5" column="0" rowspan="1" colspan="5">
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>370</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
         <widget class="QCheckBox" row="2" column="6" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>keepPasswd</cstring>
@@ -236,6 +236,17 @@
                 <string>&lt;qt&gt;If you check this box, the password will be saved in the local Quanta configuration file, so every time you start Quanta and load this project, the password will be loaded and you don't have to enter it. Altough the local configuration file is readable only by you and the password
 is obscured, saving the password in any file is a security risk. Use this option at your own risk.&lt;br&gt;
 &lt;i&gt;Note:&lt;/i&gt; due to the security concerns, the password is not present in the project file, and moving the project files to another computer or uploading the project to a server will not move/upload the password to the new place.&lt;/qt&gt;</string>
+            </property>
+        </widget>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="4">
+            <property name="name">
+                <cstring>defaultProfile</cstring>
+            </property>
+            <property name="text">
+                <string>Use as &amp;default profile</string>
+            </property>
+            <property name="accel">
+                <string>Alt+D</string>
             </property>
         </widget>
     </grid>
@@ -263,6 +274,7 @@ is obscured, saving the password in any file is a security risk. Use this option
     <tabstop>linePasswd</tabstop>
     <tabstop>keepPasswd</tabstop>
     <tabstop>linePath</tabstop>
+    <tabstop>defaultProfile</tabstop>
     <tabstop>okButton</tabstop>
     <tabstop>cancelButton</tabstop>
 </tabstops>

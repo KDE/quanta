@@ -55,6 +55,6 @@ void ProjectOptions::buttonEditProfiles_clicked()
 {
    ProjectUpload* dlg = new ProjectUpload(KURL(), true);
    dlg->exec();
-   profileLabel->setText(dlg->comboProfile->currentText());
+   profileLabel->setText(dlg->defaultProfile());
    delete dlg;
 }

@@ -42,6 +42,7 @@ class ProjectUpload : public ProjectUploadS
 public:
   ProjectUpload(const KURL& url, bool showOnlyProfiles = false, const char * name = 0);
   ~ProjectUpload();
+  QString defaultProfile();
 
 protected slots:
   void startUpload();

@@ -627,6 +627,8 @@ void ProjectUpload::fillProfileDlg(UploadProfileDlgS *profileDlg)
     profileDlg->linePasswd->clear();
     profileDlg->keepPasswd->setChecked(false);
   }
+  if (m_profilesNode.toElement().attribute("defaultProfile") ==  profileDlg->lineProfileName->text())
+    profileDlg->defaultProfile->setChecked(true);
 }
 
 void ProjectUpload::readProfileDlg(UploadProfileDlgS *profileDlg)
@@ -641,7 +643,8 @@ void ProjectUpload::readProfileDlg(UploadProfileDlgS *profileDlg)
   m_project->savePassword(profileDlg->comboProtocol->currentText() + "://" + profileDlg->lineUser->text() + "@" + profileDlg->lineHost->text(), passwd,  profileDlg->keepPasswd->isChecked());
   m_lastEditedProfileElement = m_currentProfileElement;
   m_lastPassword = passwd;
-  m_profilesNode.toElement().setAttribute("defaultProfile", profileDlg->lineProfileName->text());
+  if (profileDlg->defaultProfile->isChecked())
+    m_profilesNode.toElement().setAttribute("defaultProfile", profileDlg->lineProfileName->text());
 }
 
 void ProjectUpload::slotNewProfileSelected(const QString& profileName)
@@ -659,8 +662,12 @@ void ProjectUpload::slotNewProfileSelected(const QString& profileName)
         break;
       }
   }
-  m_profilesNode.toElement().setAttribute("defaultProfile", profileName);
   m_project->setModified(true);
+}
+
+QString ProjectUpload::defaultProfile()
+{
+  return m_profilesNode.toElement().attribute("defaultProfile");
 }
 
 void ProjectUpload::reject()
