@@ -39,6 +39,7 @@
 #include "kafkacommon.h"
 #include "wkafkapart.h"
 #include "undoredo.h"
+#include "cursors.h"
 #include "htmldocumentproperties.h"
 
 #include "viewmanager.h"
@@ -384,6 +385,8 @@ void htmlDocumentProperties::accept()
 	NodeModifsSet *modifs = new NodeModifsSet();
 	KURL url, baseURL;
 	QString finalURL;
+        NodeSelection *cursorPos;
+        bool goUp;
 	//TODO:see for !doctype
 
         QuantaView *view = ViewManager::ref()->activeView();
@@ -546,10 +549,21 @@ void htmlDocumentProperties::accept()
 
         if(m_forceInsertionOfBasicNodes)
           addBasicNodes(modifs);
+          
+        //Set the cursor at the beginning of the document.
+        goUp = false;
+        node = kafkaCommon::getNextNode(bodyNode, goUp, bodyNode);
+        while(node && node->tag->type != Tag::Text)
+          node = kafkaCommon::getNextNode(node, goUp, bodyNode);
+        cursorPos = new NodeSelection();
+        cursorPos->setCursorNode(node?node:bodyNode);
+        cursorPos->setCursorOffset(0);
 
-	view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+	view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif, cursorPos);
 
-	view->reloadBothViews();
+        delete cursorPos;
+
+	//view->reloadBothViews();
 
 	done(0);
 }

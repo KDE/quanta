@@ -24,6 +24,7 @@
 #include "node.h"
 
 class Document;
+class NodeSelection;
 class NodeSelectionInd;
 
 /**
@@ -273,9 +274,11 @@ public:
    * the kafka/quanta editor is modified.
    * @param modifs The new modification set to add to the undo/redo stack.
    * @param modifLocation Specifies where the modification was made
+   * @param selection If given, and if modifLocation == SourceModif, it will synchronize the cursor
+   * and the selection to 'selection'. Only work when the focus is in VPL for the moment.
    * cf undoRedo::modificationLocation.
    */
-  void addNewModifsSet(NodeModifsSet *modifs, int modifLocation);
+  void addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSelection *selection = 0L);
 
   /**
    * TEMPORARY function.
@@ -339,8 +342,9 @@ public:
   /**
    * Synchronize the cursor position and the selection of the kafka view by translating
    * the cursor position and selection of the quanta view.
+   * @param selection Synchronize the selection and the cursor position to "selection".
    */
-  void syncKafkaCursorAndSelection();
+  void syncKafkaCursorAndSelection(NodeSelection *selection);
 
   /**
    * Synchronize the cursor position and the selection of the quanta view by translating
@@ -351,10 +355,9 @@ public:
   /**
   * Reload kafka from the current document.
   * @param force If set to true, it will reload kafka even if it is already up to date.
-  * @param syncKafkaCursor If set to true, it will try to sync the kafka cursor from the
-  * quanta one.
+  * @param selection If given, it will synchronize the selection and the cursor position to 'selection'.
   */
-  void reloadKafkaEditor(bool force = false, bool syncKafkaCursor = true);
+  void reloadKafkaEditor(bool force = false, NodeSelection *selection = 0L);
 
   /**
    * Reload the quanta editor from kafka.

@@ -19,6 +19,37 @@
  #define CURSORS_H
  
  /**
+  * This represents a Node selection : StartNode and StartOffset, endNode and endOffset.
+  * IT can also only hold the cursor. If so, cursorNodeEndSel() will be empty.
+  * TODO: selection support
+  */
+ class NodeSelection
+ {
+ public:
+   NodeSelection(Node* node = 0L, int offset = 0){m_cursorNode = node; m_cursorOffset = offset;}
+   ~NodeSelection(){}
+   
+   /**
+    * @return Return the Node when the selection start (and where the cursor is if 
+    * m_cursorAtSelectionStart).
+    */
+   Node* cursorNode(){return m_cursorNode;}
+   void setCursorNode(Node* node){m_cursorNode = node;}
+   
+   /**
+    * @return Returns the offset of the cursor where the selection begin (and where the cursor is if 
+    * m_cursorAtSelectionStart)
+    */
+   int cursorOffset(){return m_cursorOffset;}
+   void setCursorOffset(int offset){m_cursorOffset = offset;}
+   
+ private:
+  Node* m_cursorNode, *m_cursorNodeEndSel;
+  int m_cursorOffset, m_cursorOffsetEndSel;
+  bool m_cursorAtSelectionStart;
+ };
+ 
+ /**
  * This represents a Node selection : startNode and startOffset, endNode and endOffset.
  * The difference with NodeSelection is that it don't store the Node address of startNode
  * and endNode, but it store the Node position of the Node tree e.g. it is the first child

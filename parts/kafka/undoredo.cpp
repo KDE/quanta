@@ -166,7 +166,7 @@ undoRedo::~undoRedo()
 #endif
 }
 
-void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
+void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation, NodeSelection *selection)
 {
 #ifdef LIGHT_DEBUG
   kdDebug(25001)<< "undoRedo::addNewModifsSet() - NodeModifsSet type: " << modifLocation << endl;
@@ -291,7 +291,7 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
     if(curFocus == QuantaView::SourceFocus)
       reloadQuantaEditor();
     else
-      reloadKafkaEditor();
+      reloadKafkaEditor(false, selection);
   }
 #ifdef HEAVY_DEBUG
   kdDebug(25001)<<"-------------------------------------------------------------------------------"<< endl;
@@ -860,7 +860,7 @@ bool undoRedo::undoNodeModifInKafka(NodeModif */**_nodeModif*/)
   return true;
 }
 
-void undoRedo::reloadKafkaEditor(bool force, bool syncKafkaCursor)
+void undoRedo::reloadKafkaEditor(bool force, NodeSelection *selection)
 {
 #ifdef LIGHT_DEBUG
   kdDebug(25001)<< "undoRedo::reloadKafkaEditor()" << endl;
@@ -868,8 +868,7 @@ void undoRedo::reloadKafkaEditor(bool force, bool syncKafkaCursor)
 
   if(kafkaIterator == documentIterator && !force)
   {
-    if(syncKafkaCursor)
-      syncKafkaCursorAndSelection();
+    syncKafkaCursorAndSelection(selection);
     return;
   }
 
@@ -878,8 +877,7 @@ void undoRedo::reloadKafkaEditor(bool force, bool syncKafkaCursor)
 
   kafkaInterface->reloadDocument();
 
-  if(syncKafkaCursor)
-    syncKafkaCursorAndSelection();
+  syncKafkaCursorAndSelection(selection);
 }
 
 void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor, bool encodeText)
@@ -1332,7 +1330,7 @@ bool undoRedo::syncQuantaView()
   return true;
 }
 
-void undoRedo::syncKafkaCursorAndSelection()
+void undoRedo::syncKafkaCursorAndSelection(NodeSelection *selection)
 {
   QuantaView *view = ViewManager::ref()->activeView();
   KafkaWidget *kafkaPart = KafkaDocument::ref()->getKafkaWidget();
@@ -1350,11 +1348,21 @@ void undoRedo::syncKafkaCursorAndSelection()
   setSelection(tempRange);*/
 
   //Translate and set the cursor.
-  view->document()->viewCursorIf->cursorPositionReal(&curLine, &curCol);
-  KafkaDocument::ref()->translateQuantaIntoKafkaCursorPosition(curLine,
-      curCol, node, offset);
-  kafkaPart->setCurrentNode(node, offset);
-
+  if(selection)
+  {
+    KafkaDocument::ref()->translateNodeIntoKafkaCursorPosition(selection->cursorNode(),
+      selection->cursorOffset(), node, (long&)offset);
+    Node* nodeuh = selection->cursorNode();
+    kafkaPart->setCurrentNode(node, offset);
+  }
+  else
+  {
+    view->document()->viewCursorIf->cursorPositionReal(&curLine, &curCol);
+    KafkaDocument::ref()->translateQuantaIntoKafkaCursorPosition(curLine,
+    curCol, node, offset);
+    kafkaPart->setCurrentNode(node, offset);
+  }
+        
   //Translate and set the selection.
   //quantaApp->view()->write()->selectionIf()
 }
