@@ -1261,8 +1261,6 @@ void QuantaApp::slotOptions()
     qConfig.spellConfig->setReplaceAllList(spellOptions->replaceAllList());
     qConfig.spellConfig->setClient(spellOptions->client());
 
-//    checkCommand( ID_VIEW_PREVIEW, false );
-
     slotShowPreviewWidget(false);
     qConfig.previewPosition = previewOptions->position();
 
@@ -3731,6 +3729,7 @@ void QuantaApp::saveOptions()
 #endif
     m_config->writeEntry("Version", VERSION); // version
     m_config->writeEntry("Close Buttons", qConfig.showCloseButtons);
+    m_config->writeEntry("MDI mode", "IDEAl"); //FIXME: save the actual mode
 
     m_config->deleteGroup("RecentFiles");
     fileRecent->saveEntries(m_config);
@@ -3743,12 +3742,11 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Expand Level", qConfig.expandLevel);
     m_config->writeEntry("Show DTD Select Dialog", qConfig.showDTDSelectDialog);
 
-    m_config->setGroup("Quanta View");
     Project::ref()->writeConfig(m_config); // project
     manager()->writeConfig(m_config);
-    //saveMainWindowSettings(m_config);
-    writeDockConfig(m_config);
+//    saveMainWindowSettings(m_config);
     SpellChecker::ref()->writeConfig(m_config);
+    writeDockConfig(m_config);
     m_config->sync();
   }
 }

@@ -188,7 +188,7 @@ void QuantaInit::initQuanta()
     }
   }
 
-//  applyMainWindowSettings(m_config);
+  //m_quanta->applyMainWindowSettings(m_config);
 
   m_quanta->m_tagsMenu = new QPopupMenu(m_quanta);
   m_quanta->editTagAction->plug(m_quanta->m_tagsMenu);
@@ -580,9 +580,6 @@ void QuantaInit::readOptions()
   qConfig.expandLevel = m_config->readNumEntry("Expand Level", 4);
   qConfig.showDTDSelectDialog = m_config->readBoolEntry("Show DTD Select Dialog", true);
 
-  m_config->setGroup("Quanta View");
-  m_quanta->manager()->readConfig(m_config);
-
   m_quanta->m_previewVisible = false;
   m_quanta->m_noFramesPreview = false;
 #ifdef BUILD_KAFKAPART
@@ -590,13 +587,14 @@ void QuantaInit::readOptions()
 #endif
 
   Project::ref()->readConfig(m_config); // project
-
-  m_config->setGroup  ("General Options");
   SpellChecker::ref()->readConfig(m_config);
-  m_quanta->readDockConfig(m_config);
 
   m_config->setGroup  ("General Options");
   QString layout = m_config->readEntry("Window layout", "Custom");
+  QString mdiMode = m_config->readEntry("MDI mode", "");
+  if (!mdiMode.isEmpty())
+      m_quanta->readDockConfig(m_config);
+
   m_quanta->layoutDockWidgets(layout);
   qConfig.windowLayout = layout;
 
