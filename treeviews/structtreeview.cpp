@@ -99,7 +99,7 @@ StructTreeView::StructTreeView(QWidget *parent, const char *name )
   popupMenu -> setItemChecked ( followCursorId, followCursor() );
 
 
-  connect( this, SIGNAL(mouseButtonClicked(int, QListViewItem*, const QPoint&, int)),
+  connect( this, SIGNAL(mouseButtonPressed(int, QListViewItem*, const QPoint&, int)),
            this, SLOT  (slotMouseClicked(int, QListViewItem*, const QPoint&, int)));
 
   connect( this, SIGNAL(doubleClicked(QListViewItem *)), SLOT(slotDoubleClicked(QListViewItem *)));
