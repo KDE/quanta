@@ -42,9 +42,12 @@
 #include <kwizard.h>
 #include <klocale.h>
 #include <kaction.h>
+#include <ktempfile.h>
 #include <kstdaction.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
+#include <kio/job.h>
+#include <kio/netaccess.h>
 
 // application headers
 #include "copyto.h"
@@ -252,8 +255,6 @@ void Project::openProject(const KURL &url)
   
   closeProject();
   loadProject ( url );
-  
-  emit newStatus();
 }
 
 /** save project file */
@@ -275,22 +276,42 @@ bool Project::saveProject()
 		}
 	}
   
+	QString fn;
+	KTempFile *tmp;
+	
   if ( !url.isLocalFile() )
   {
+    tmp = new KTempFile;
+    fn   = tmp->name();
   }
   else
   {
-    QString fn = url.url();
-    
+    fn = url.url();
     if ( fn.left(5) == "file:" ) fn.remove(0,5);
-    
-    QFile f( fn );
-    if ( !f.open( IO_ReadWrite | IO_Truncate ) )
+  }
+  
+  QFile f( fn );
+  if ( !f.open( IO_ReadWrite | IO_Truncate ) )
+  {
+    return false;
+  }
+  QTextStream qts( &f );
+  dom.save( qts, 0);
+  f.close();
+  
+  if ( !url.isLocalFile() )
+  {
+    if ( KIO::NetAccess::upload( tmp->name(), url ) )
     {
-      return false;
+      emit statusMsg( i18n( "Wrote project %1..." ).arg( url.url() ) );
     }
-    QTextStream qts( &f );
-    dom.save( qts, 0);
+    else
+    {
+      emit statusMsg( QString::null );
+      KMessageBox::error( this, KIO::NetAccess::lastErrorString() );
+    }
+
+    delete tmp;
   }
   
   emit newStatus();
@@ -323,6 +344,9 @@ void Project::loadProject(const KURL &url)
 {
   KURL u(url);
 
+  this->url =KURL();
+  this->name=QString::null;
+  
   if (u.isMalformed()) 
   {
       QString s = i18n("Malformed URL\n%1").arg(url.prettyURL());
@@ -332,7 +356,7 @@ void Project::loadProject(const KURL &url)
 
   if ( !url.isLocalFile() )
   {
-    emit statusMsg(i18n("Loading..."));
+    emit statusMsg(i18n("Loading project %s").arg(url.url()));
 
     // clear
     QByteArray b;
@@ -370,7 +394,6 @@ void Project::loadProject(const KURL &url)
     
     loadProjectXML();
   }
-
 }
 
 void Project::slotProjectReadFinish(KIO::Job *job)
@@ -432,7 +455,9 @@ void Project::loadProjectXML()
   emit setBasePath		( basePath );
   emit setProjectName	( name );
   emit reloadTree 		( fileNameList(true), true, false );
-  emit   showTree       ();
+  
+  emit showTree();
+  emit newStatus();
 }
 
 // slot for insert file

@@ -145,7 +145,7 @@ void QuantaDoc::openDocument(const KURL& url)
     app->fileRecent->addURL( url );
   }
   
-  changeFileTabName(defUrl);
+  changeFileTabName(defUrl,url.url());
   
   emit title( url.url() );
   emit newStatus();
@@ -500,10 +500,10 @@ void QuantaDoc::nextDocument()
  	tab->showPage( new_d );
 }
 
-void QuantaDoc::changeFileTabName( QString oldUrl )
+void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
 {
-	QString newUrl = url().url();
-
+	if ( newUrl.isNull() ) newUrl = url().url();
+         
 	if ( app->view->writeTab->tabLabel(write()) != QExtFileInfo::shortName( newUrl )) 
 	  app->view->writeTab->changeTab( write(), QExtFileInfo::shortName( newUrl ));
 	

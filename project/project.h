@@ -141,8 +141,6 @@ private:
 	ProjectNewFinal 		*pnf;
 	
   QBuffer buff;
-
-  KTempFile *m_tempSaveFile;
 };
 
 #endif

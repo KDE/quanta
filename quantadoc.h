@@ -79,7 +79,7 @@ class QuantaDoc : public QObject
 		
   private:
     bool newDocument (const KURL&);
-    void changeFileTabName(QString);
+    void changeFileTabName(QString oldUrl, QString newUrl = QString::null );
     Document *newWrite(QWidget *parent);
 	
   public slots:
