@@ -32,7 +32,6 @@
 // app includes
 #include "servertreeview.h"
 #include "resource.h"
-//#include "quanta.h"
 #include "project.h"
 #include "qextfileinfo.h"
 

@@ -269,6 +269,7 @@ void ProjectTreeView::slotMenu(KListView *listView, QListViewItem *item, const Q
       }
     }
   } else
+  if (!m_projectName.isNull())
   {
     setSelected(firstChild(), true);
     m_projectMenu->popup(point);

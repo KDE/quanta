@@ -20,6 +20,8 @@
 
 #include "quantabookmarks.h"
 
+#include <kapplication.h>
+#include <kconfig.h>
 #include <klocale.h>
 #include <kaction.h>
 #include <kdebug.h>
@@ -59,13 +61,15 @@ static void ssort( QMemArray<uint> &a, int max )
 
 // TODO add a insort() or bubble_sort - more efficient for aboutToShow() ?
 
-QuantaBookmarks::QuantaBookmarks(Sorting sort )
-  : QObject( ViewManager::ref(), "bookmarks" )
-  , m_sorting( sort )
+QuantaBookmarks::QuantaBookmarks(ViewManager *parent,Sorting sort, bool onlyFromActualDocument )
+  : QObject( parent, "bookmarks" )
+  , m_sorting(sort)
+  , m_onlyFromActualDocument(onlyFromActualDocument)
 {
-  m_viewManager = ViewManager::ref();
+  m_viewManager = parent;
   _tries=0;
   m_bookmarksMenu = 0L;
+  m_doc = 0L;
 }
 
 QuantaBookmarks::~QuantaBookmarks()
@@ -74,32 +78,36 @@ QuantaBookmarks::~QuantaBookmarks()
 
 void QuantaBookmarks::createActions( KActionCollection* ac )
 {
+  m_bookmarksMenu = (new KActionMenu(i18n("&Bookmarks"), ac, "bookmarks"))->popupMenu();
+  init(ac);
+}
+
+void QuantaBookmarks::init(KActionCollection* ac)
+{
   m_bookmarkToggle = new KToggleAction(
-    i18n("Set &Bookmark"), "bookmark", CTRL+Key_B,
-    this, SLOT(toggleBookmark()),
-    ac, "bookmarks_toggle" );
+      i18n("Set &Bookmark"), "bookmark", CTRL+Key_B,
+  this, SLOT(toggleBookmark()),
+  ac, "bookmarks_toggle" );
   m_bookmarkToggle->setWhatsThis(i18n("If a line has no bookmark then add one, otherwise remove it."));
   m_bookmarkToggle->setCheckedState( i18n("Clear &Bookmark") );
 
   m_bookmarkClear = new KAction(
-    i18n("Clear &All Bookmarks"), 0,
-    this, SLOT(clearBookmarks()),
-    ac, "bookmarks_clear");
+      i18n("Clear &All Bookmarks"), 0,
+  this, SLOT(clearBookmarks()),
+  ac, "bookmarks_clear");
   m_bookmarkClear->setWhatsThis(i18n("Remove all bookmarks of the current document."));
 
   m_goNext = new KAction(
-    i18n("Next Bookmark"), "next", ALT + Key_PageDown,
-    this, SLOT(goNext()),
-    ac, "bookmarks_next");
+      i18n("Next Bookmark"), "next", ALT + Key_PageDown,
+  this, SLOT(goNext()),
+  ac, "bookmarks_next");
   m_goNext->setWhatsThis(i18n("Go to the next bookmark."));
 
   m_goPrevious = new KAction(
-    i18n("Previous Bookmark"), "previous", ALT + Key_PageUp,
-    this, SLOT(goPrevious()),
-    ac, "bookmarks_previous");
+      i18n("Previous Bookmark"), "previous", ALT + Key_PageUp,
+  this, SLOT(goPrevious()),
+  ac, "bookmarks_previous");
   m_goPrevious->setWhatsThis(i18n("Go to the previous bookmark."));
-
-  m_bookmarksMenu = (new KActionMenu(i18n("&Bookmarks"), ac, "bookmarks"))->popupMenu();
 
   //connect the aboutToShow() and aboutToHide() signals with
   //the bookmarkMenuAboutToShow() and bookmarkMenuAboutToHide() slots
@@ -109,9 +117,18 @@ void QuantaBookmarks::createActions( KActionCollection* ac )
   marksChanged ();
 }
 
+void QuantaBookmarks::setBookmarksMenu(QPopupMenu* bookmarksMenu)
+    
+{
+  m_bookmarksMenu = bookmarksMenu;
+  init();
+}
+
 void QuantaBookmarks::toggleBookmark ()
 {
-  Document *doc = m_viewManager->activeDocument();
+  Document *doc = m_doc;
+  if (!doc)
+    doc = m_viewManager->activeDocument();
   if (doc && doc->markIf)
   {
     uint mark = doc->markIf->mark(doc->viewCursorIf->cursorLine());
@@ -155,10 +172,10 @@ int QuantaBookmarks::insertBookmarks(QPopupMenu& menu, Document *doc, bool inser
     QMemArray<uint> sortArray( m.count() );
     QPtrListIterator<KTextEditor::Mark> it( m );
   
-    if ( it.count() > 0 )
+    if ( it.count() > 0 && insertNavigationItems)
       menu.insertSeparator();
   
-    for( int i = 0; *it; ++it, ++i )
+    for( int i = 0; *it; ++it)
     {
       if( (*it)->type & KTextEditor::MarkInterface::markType01 )
       {
@@ -172,7 +189,10 @@ int QuantaBookmarks::insertBookmarks(QPopupMenu& menu, Document *doc, bool inser
         {
           sortArray[i] = (*it)->line;
           ssort( sortArray, i );
-          idx = sortArray.find( (*it)->line ) + 3;
+          idx = sortArray.find( (*it)->line );
+          if (insertNavigationItems)
+            idx += 3;
+          i++;
         }
   
         menu.insertItem(
@@ -221,6 +241,12 @@ int QuantaBookmarks::insertBookmarks(QPopupMenu& menu, Document *doc, bool inser
 
 void QuantaBookmarks::bookmarkMenuAboutToShow()
 {
+  KConfig *config = kapp->config();
+  if (config->hasGroup("Kate View Defaults"))
+  {
+    config->setGroup("Kate View Defaults");
+    m_sorting = config->readNumEntry("Bookmark Menu Sorting", 0) == 0 ? Position : Creation;
+  }
   for (uint i = 0; i < m_othersMenuList.count(); i++)
   {
     delete m_othersMenuList[i];
@@ -230,37 +256,44 @@ void QuantaBookmarks::bookmarkMenuAboutToShow()
   m_bookmarksMenu->clear();
   marksChanged();
   
-  Document *doc = m_viewManager->activeDocument();
+  Document *doc = m_doc;
+  if (!doc)
+    doc = m_viewManager->activeDocument();
   QValueList<Document*> openedDocuments = m_viewManager->openedDocuments();
   if (doc && doc->markIf)
   {
     QPtrList<KTextEditor::Mark> m = doc->markIf->marks();
   
-    m_bookmarkToggle->setChecked( doc->markIf->mark( doc->viewCursorIf->cursorLine() )
-                                  & KTextEditor::MarkInterface::markType01 );
-    m_bookmarkToggle->plug( m_bookmarksMenu );
-    m_bookmarkClear->plug( m_bookmarksMenu );
+    if (!m_onlyFromActualDocument)
+    {
+      m_bookmarkToggle->setChecked( doc->markIf->mark( doc->viewCursorIf->cursorLine() )
+                                    & KTextEditor::MarkInterface::markType01 );
+      m_bookmarkToggle->plug( m_bookmarksMenu );
+      m_bookmarkClear->plug( m_bookmarksMenu );
+    }
   
-  
-    insertBookmarks(*m_bookmarksMenu, doc);
-    if (openedDocuments.count() > 1)
+    insertBookmarks(*m_bookmarksMenu, doc, !m_onlyFromActualDocument);
+    if (openedDocuments.count() > 1 && !m_onlyFromActualDocument)
       m_bookmarksMenu->insertSeparator();
   } 
-  int i = 0;
-  for (QValueList<Document*>::Iterator it = openedDocuments.begin(); it != openedDocuments.end(); ++it)
+  if (!m_onlyFromActualDocument)
   {
-    if (*it != doc)
+    int i = 0;
+    for (QValueList<Document*>::Iterator it = openedDocuments.begin(); it != openedDocuments.end(); ++it)
     {
-      QPopupMenu *menu = new QPopupMenu(m_bookmarksMenu);
-      m_bookmarksMenu->insertItem((*it)->url().fileName(), menu);
-      if (insertBookmarks(*menu, *it, false) > 0)
-      {        
-        m_othersMenuList.append(menu);
-        m_others.append(*it);
-        i++;
-      } else
-        delete menu;
-    }     
+      if (*it != doc)
+      {
+        QPopupMenu *menu = new QPopupMenu(m_bookmarksMenu);
+        m_bookmarksMenu->insertItem((*it)->url().fileName(), menu);
+        if (insertBookmarks(*menu, *it, false) > 0)
+        {        
+          m_othersMenuList.append(menu);
+          m_others.append(*it);
+          i++;
+        } else
+          delete menu;
+      }     
+    }
   }
 }
 
@@ -279,7 +312,9 @@ void QuantaBookmarks::bookmarkMenuAboutToHide()
 
 void QuantaBookmarks::goNext()
 {
-  Document *doc = m_viewManager->activeDocument();
+  Document *doc = m_doc;
+  if (!doc)
+    doc = m_viewManager->activeDocument();
   if (doc && doc->markIf)
   {
     QPtrList<KTextEditor::Mark> m = doc->markIf->marks();
@@ -300,7 +335,9 @@ void QuantaBookmarks::goNext()
 
 void QuantaBookmarks::goPrevious()
 {
-  Document *doc = m_viewManager->activeDocument();
+  Document *doc = m_doc;
+  if (!doc)
+    doc = m_viewManager->activeDocument();
   if (doc && doc->markIf)
   {
     QPtrList<KTextEditor::Mark> m = doc->markIf->marks();
@@ -321,7 +358,9 @@ void QuantaBookmarks::goPrevious()
 
 void QuantaBookmarks::gotoLineNumber(int line)
 {
-  Document *doc = m_viewManager->activeDocument();
+  Document *doc = m_doc;
+  if (!doc)
+    doc = m_viewManager->activeDocument();
   const QObject *s = sender();
   for (uint i = 0; i < m_othersMenuList.count(); i++)
   {
@@ -340,7 +379,9 @@ void QuantaBookmarks::gotoLineNumber(int line)
 
 void QuantaBookmarks::marksChanged ()
 {
-  Document *doc = m_viewManager->activeDocument();
+  Document *doc = m_doc;
+  if (!doc)
+    doc = m_viewManager->activeDocument();
   if (doc && doc->markIf)
   {
     m_bookmarkClear->setEnabled( !doc->markIf->marks().isEmpty() );

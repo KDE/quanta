@@ -46,16 +46,19 @@ class QuantaBookmarks : public QObject
 
   public:
     enum Sorting { Position, Creation };
-    QuantaBookmarks(Sorting sort=Position );
+    QuantaBookmarks(ViewManager *parent, Sorting sort=Position, bool onlyFromActualDocument = false );
     virtual ~QuantaBookmarks();
 
     void createActions( KActionCollection* );
+    void setBookmarksMenu(QPopupMenu* bookmarksMenu);
 
     QuantaBookmarks::Sorting sorting() { return m_sorting; };
     void setSorting( Sorting s ) { m_sorting = s; };
+    void setDocument(Document *doc) {m_doc = doc;}
 
   protected:
     int insertBookmarks(QPopupMenu& menu, Document *doc, bool insertNavigationItems = true);
+    void init(KActionCollection* ac = 0L);
 
   private slots:
     void toggleBookmark();
@@ -84,6 +87,8 @@ class QuantaBookmarks : public QObject
     QValueList<QPopupMenu*> m_othersMenuList;
     QValueList<Document*> m_others;
     ViewManager*  m_viewManager;
+    Document *m_doc;
+    bool m_onlyFromActualDocument;
 
     uint _tries;
 };

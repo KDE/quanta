@@ -20,6 +20,7 @@
 //forward declarations
 class Document;
 class QuantaView;
+class QuantaBookmarks;
 class KafkaDocument;
 class KPopupMenu;
 
@@ -101,6 +102,9 @@ signals:
   /** emitted when a view was closed */
   void documentClosed(const KURL&);
   void eventHappened(const QString&, const QString&, const QString& );
+  /** emitted when all files were closed. The argument is true if the closes
+  was successful, false if the unser canceled the closing */
+  void filesClosed(bool);
 
 private slots:
  /** called before the file list menu shows up, so it can be updated */
@@ -125,9 +129,13 @@ private:
   QuantaView *m_documentationView; ///< Contains the view which holds the documentation browser
   KPopupMenu *m_tabPopup; ///< the menu which pops up when the user clicks on a view tab
   KPopupMenu *m_fileListPopup; ///< a menu containing the opened views as menu items
+  KPopupMenu *m_bookmarksMenu;
+  QuantaBookmarks *m_bookmarks;
+    
   QuantaView *m_contextView; ///<the tab where the context menu was requested
   bool m_separatorVisible;
   int m_cvsMenuId;
+  int m_bookmarksMenuId;
 };
 
 #endif

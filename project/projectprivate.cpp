@@ -1081,6 +1081,11 @@ void ProjectPrivate::slotNewProject()
 void ProjectPrivate::slotCloseProject()
 {
   if (!parent->hasProject()) return;
+  parent->closeFiles();
+}
+
+void ProjectPrivate::closeProject()
+{
   emit eventHappened("before_project_close", baseURL.url(), QString::null);
   if (!uploadProjectFile())
   {
@@ -1094,7 +1099,6 @@ void ProjectPrivate::slotCloseProject()
   config->setGroup("Projects");
   config->writePathEntry("Last Project", QString::null);
   init();
-  parent->closeFiles();
   parent->newProjectLoaded(projectName, baseURL, templateURL);
   parent->reloadTree( &(m_projectFiles), true, QStringList());
   adjustActions();

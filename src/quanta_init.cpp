@@ -356,6 +356,7 @@ void QuantaInit::initProject()
   connect(m_project, SIGNAL(reloadTree(ProjectList *, bool, const QStringList &)),
           pTab, SLOT(slotReloadTree(ProjectList *, bool, const QStringList &)));
   connect(m_project, SIGNAL(closeFiles()), ViewManager::ref(), SLOT(closeAll()));
+  connect(ViewManager::ref(), SIGNAL(filesClosed(bool)), m_project, SLOT(slotFilesClosed(bool)));
   connect(m_project, SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
 
   connect(m_quanta->fTab, SIGNAL(insertDirInProject(const KURL&)),
@@ -1020,7 +1021,7 @@ void QuantaInit::initActions()
     connect(m_quanta->doc(), SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
     connect(ViewManager::ref(), SIGNAL(eventHappened(const QString&, const QString&, const QString& )), QPEvents::ref(m_quanta), SLOT(slotEventHappened(const QString&, const QString&, const QString& )));
 
-    QuantaBookmarks *m_bookmarks = new QuantaBookmarks();
+    QuantaBookmarks *m_bookmarks = new QuantaBookmarks(ViewManager::ref(m_quanta));
     m_bookmarks->createActions(ac);
     connect(m_bookmarks, SIGNAL(gotoFileAndLine(const QString&, int, int)), m_quanta, SLOT(gotoFileAndLine(const QString&, int, int)));
 }

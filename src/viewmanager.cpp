@@ -27,6 +27,7 @@
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/popupmenuinterface.h>
 #include <ktexteditor/editorchooser.h>
+#include <ktexteditor/markinterface.h>
 #include <kio/netaccess.h>
 
 
@@ -43,6 +44,7 @@
 #include "project.h"
 #include "resource.h"
 #include "quanta.h"
+#include "quantabookmarks.h"
 #include "toolbartabwidget.h"
 #include "parser.h"
 #include "qextfileinfo.h"
@@ -74,6 +76,11 @@ ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, na
     m_fileListPopup = new KPopupMenu(quantaApp);
     connect(m_fileListPopup, SIGNAL(aboutToShow()), this, SLOT(slotFileListPopupAboutToShow()));
     connect(m_fileListPopup, SIGNAL(activated(int)), this, SLOT(slotFileListPopupItemActivated(int)));
+    m_bookmarks = new QuantaBookmarks(this, QuantaBookmarks::Position, true);
+    m_bookmarksMenu = new KPopupMenu(quantaApp);
+    m_bookmarks->setBookmarksMenu(m_bookmarksMenu);
+    connect(m_bookmarks, SIGNAL(gotoFileAndLine(const QString&, int, int)), quantaApp, SLOT(gotoFileAndLine(const QString&, int, int)));
+    m_bookmarksMenuId = m_tabPopup->insertItem(SmallIconSet("bookmark"), i18n("&Bookmarks"), m_bookmarksMenu);
     m_tabPopup->insertItem(i18n("&Switch To"), m_fileListPopup);
     m_contextView = 0L;
     m_cvsMenuId = -1;
@@ -434,6 +441,7 @@ bool ViewManager::closeAll(bool createNew)
             if (filesToSave.contains(w->url()))
               if (!view->saveModified(false))
               {
+                emit filesClosed(false);
                 return false;  //save aborted
               }
             w->setModified(false);
@@ -443,6 +451,7 @@ bool ViewManager::closeAll(bool createNew)
       }
     } else
     {
+      emit filesClosed(false);
       return false;  //save aborted
     }
   }
@@ -477,6 +486,7 @@ bool ViewManager::closeAll(bool createNew)
                connect(quantaApp, SIGNAL(viewActivated (KMdiChildView *)), this, SLOT(slotViewActivated(KMdiChildView*)));
                connect(quantaApp, SIGNAL(lastChildViewClosed()), this, SLOT(slotLastViewClosed()));
                view->activated();
+               emit filesClosed(false);
                 return false;
               }
           } else
@@ -495,6 +505,7 @@ bool ViewManager::closeAll(bool createNew)
       createNewDocument();
       quantaApp->slotNewStatus();
   }
+  emit filesClosed(true);
   return true; 
 }
 
@@ -575,8 +586,24 @@ void ViewManager::slotTabContextMenu(QWidget *widget, const QPoint& point)
        m_tabPopup->setItemVisible(DELETE_ID, false);
        m_separatorVisible = false;
    }
-#ifdef ENABLE_CVSSERVICE
+   bool bookmarksFound = false;
    Document *w = m_contextView->document();
+   if (w && w->markIf)
+   {
+     m_bookmarks->setDocument(w);           
+     QPtrList<KTextEditor::Mark> m = w->markIf->marks();
+     QPtrListIterator<KTextEditor::Mark> it(m);
+     for(; *it; ++it)
+     {
+       if ((*it)->type & KTextEditor::MarkInterface::markType01)
+       {
+         bookmarksFound = true;
+         break;
+       }
+     }
+   }  
+   m_tabPopup->setItemVisible(m_bookmarksMenuId, bookmarksFound);
+#ifdef ENABLE_CVSSERVICE
    if (w && w->url().isLocalFile() && !w->isUntitled() && CVSService::ref()->exists())
    {
      if (m_cvsMenuId == -1)
