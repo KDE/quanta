@@ -347,6 +347,8 @@ kNodeAttrs* KafkaDocument::connectDomNodeToQuantaNode(DOM::Node domNode, Node *n
 		_domNode.nodeName().string());*/
 	else
 		name = domNode.nodeName().string().lower();
+ 
+    kdDebug(23100) << "KafkaDocument::connectDomNodeToQuantaNode() - domNode name: |" << name << "|" << endl;
 
 	props = new kNodeAttrs();
 
@@ -499,16 +501,24 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 	Node *n, *parent;
 	int i;
 
-//     This is a hack to not created DOM::Nodes from quanta empty nodes if outside body, because KHTML
-//     moves a node in that condition into the body and then the trees become desynchronized.
-    bool isInsideBody = false;
-    if(!m_currentDoc->defaultDTD()->name.contains("HTML", false))
-        isInsideBody = true;
-    else
-        isInsideBody = kafkaCommon::hasParent(node, "body");
+//     Don't create DOM::Nodes from Quanta empty nodes outside the body or inside other not allowed element, or KHTML
+//     will give us problems.
+    bool canInsertEmptyNode = false;
+    if(node->tag->type == Tag::Empty)
+    {
+        if(!m_currentDoc->defaultDTD()->name.contains("HTML", false))
+            canInsertEmptyNode = true;
+        else
+            canInsertEmptyNode = kafkaCommon::hasParent(node, "body");
+        
+        Node* parent_node = node->parent;
+        QTag* parent_node_description_tag = QuantaCommon::tagFromDTD(parent_node);
+        if(parent_node_description_tag && !parent_node_description_tag->isChild(node, true, true))
+            canInsertEmptyNode = false;
+    }
     
     if(node->tag->type == Tag::XmlTag || 
-       ((node->tag->type == Tag::Text || (node->tag->type == Tag::Empty && isInsideBody)) && !node->insideSpecial))
+       ((node->tag->type == Tag::Text || (node->tag->type == Tag::Empty && canInsertEmptyNode)) && !node->insideSpecial))
     {
 		str = node->tag->name.lower();
 

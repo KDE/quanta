@@ -235,7 +235,7 @@ public:
   there are no children defined and if trueIfNoChildsDefined is set to true. */
   bool isChild(const QString& tag, bool trueIfNoChildsDefined = true);
   //prefer using this variant, it handle Text, Empty, XmlTagEnd nodes!
-  bool isChild(Node *node, bool trueIfNoChildsDefined = true);
+  bool isChild(Node *node, bool trueIfNoChildsDefined = true, bool treatEmptyNodesAsText = false);
   /*** Returns the list of parent of this tag. */
   QPtrList<QTag> parents();
 

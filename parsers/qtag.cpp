@@ -210,7 +210,7 @@ bool QTag::isChild(const QString& tag, bool trueIfNoChildsDefined)
     return (!childTags.isEmpty() && childTags.contains(tagName));
 }
 
-bool QTag::isChild(Node *node, bool trueIfNoChildsDefined)
+bool QTag::isChild(Node *node, bool trueIfNoChildsDefined, bool treatEmptyNodesAsText)
 {
   QString nodeName;
 
@@ -223,8 +223,15 @@ bool QTag::isChild(Node *node, bool trueIfNoChildsDefined)
     else
       return(!childTags.isEmpty() && (childTags.contains("#text") || childTags.contains("#TEXT")));
   }
-  else if(node->tag->type == Tag::Empty)
-    return true;
+  else if(node->tag->type == Tag::Empty && !treatEmptyNodesAsText)
+      return true;
+  else if(node->tag->type == Tag::Empty && treatEmptyNodesAsText)
+  {
+      if(trueIfNoChildsDefined)
+          return(childTags.isEmpty() || childTags.contains("#text") || childTags.contains("#TEXT"));
+      else
+          return(!childTags.isEmpty() && (childTags.contains("#text") || childTags.contains("#TEXT")));      
+  }
   else if(node->tag->type == Tag::XmlTagEnd)
   {
     nodeName = node->tag->name;
