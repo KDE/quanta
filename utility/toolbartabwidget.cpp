@@ -31,6 +31,8 @@
 #include <kdebug.h>
 
 //app includes
+#include "quanta.h"
+#include "resource.h"
 #include "toolbartabwidget.h"
 
 ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, WFlags f)
@@ -41,6 +43,13 @@ ToolbarTabWidget::ToolbarTabWidget(QWidget * parent, const char * name, WFlags f
   m_popupMenu->insertItem(i18n("Remove Toolbar"), this, SLOT(slotRemoveToolbar()));
   m_popupMenu->insertItem(i18n("Rename Toolbar..."), this, SLOT(slotRenameToolbar()));
   m_popupMenu->insertItem(i18n("Edit Toolbar..."), this, SLOT(slotEditToolbar()));
+
+  connect(this, SIGNAL(removeToolbar(const QString&)),
+          quantaApp, SLOT(slotRemoveToolbar(const QString&)));
+  connect(this, SIGNAL(renameToolbar(const QString&)),
+          quantaApp, SLOT(slotRenameToolbar(const QString&)));
+  connect(this, SIGNAL(editToolbar(const QString&)),
+          quantaApp, SLOT(slotConfigureToolbars(const QString&)));
 }
 
 void ToolbarTabWidget::insertTab(QWidget * child, const QString & label )

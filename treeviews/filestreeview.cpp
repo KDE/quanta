@@ -54,7 +54,7 @@
 #include "quantacommon.h"
 #include "quantadoc.h"
 #include "qextfileinfo.h"
-
+#include "viewmanager.h"
 
 //FilesTreeViewItem implementation
 FilesTreeViewItem::FilesTreeViewItem( KFileTreeViewItem *parent, KFileItem* item, KFileTreeBranch *brnch )
@@ -64,12 +64,12 @@ FilesTreeViewItem::FilesTreeViewItem( KFileTreeViewItem *parent, KFileItem* item
 
 QString FilesTreeViewItem::key(int column, bool ascending) const
 {
-  if (ascending) 
+  if (ascending)
     if (isDir())
       return text(column).prepend(" ");
     else
       return text(column);
-  else  
+  else
     if (isDir())
       return text(column);
     else
@@ -91,23 +91,23 @@ void FilesTreeViewItem::paintCell(QPainter *p, const QColorGroup &cg,
   {
     QFont f = p->font();
     if (quantaApp)
-      f.setBold(quantaApp->doc()->isOpened(url()));
+      f.setBold(ViewManager::ref()->isOpened(url()));
     p->setFont(f);
   } else
   {
     int h, s, v;
-#if KDE_IS_VERSION(3,1,90)    
+#if KDE_IS_VERSION(3,1,90)
     p->pen().color().getHsv(&h, &s, &v);
 #else
     p->pen().color().getHsv(h, s, v);
-#endif    
+#endif
     v = (v < 155 ? v + 100 : 255);
     _cg.setColor(QColorGroup::Text, QColor(h, s, v, QColor::Hsv));
   };
   KFileTreeViewItem::paintCell( p, _cg, column, width, align );
 }
-    
-    
+
+
 //FilesTreeBranch implementation
 FilesTreeBranch::FilesTreeBranch(KFileTreeView *parent, const KURL& url,
                                  const QString& name, const QPixmap& pix,
@@ -154,10 +154,10 @@ FilesTreeView::FilesTreeView(QWidget *parent, const char *name)
   m_action = 0L;
 }
 
-FilesTreeView::FilesTreeView(KConfig *config, KActionCollection *ac, KDockWidget *parent, const char *name)
+FilesTreeView::FilesTreeView(KConfig *config, KActionCollection *ac, QWidget *parent, const char *name)
   : KFileTreeView(parent, name)
 {
-  m_dock = parent;
+//  m_dock = parent;
   m_action = new KToggleAction( i18n("Show Files Tree"), UserIcon("ftab"), 0,
                                 this, SLOT( slotToggleShow() ),
                                 ac, "show_ftab_tree" );
@@ -169,7 +169,7 @@ FilesTreeView::FilesTreeView(KConfig *config, KActionCollection *ac, KDockWidget
   setAcceptDrops(true);
   setShowSortIndicator(true);
   setDragEnabled(true);
-  
+
   connect(this, SIGNAL(dropped(KURL::List&, KURL&)),
           this, SLOT(slotDropped(KURL::List&, KURL&)));
 
@@ -697,7 +697,7 @@ void FilesTreeView::slotProperties()
 {
   KURL url = currentURL();
   if (url.isEmpty()) return;
-    
+
   KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
   const FileInfoDlg* fileInfoDlg = 0L;
   if (!currentKFileTreeViewItem()->isDir())
@@ -787,7 +787,7 @@ void FilesTreeView::slotNewProjectLoaded(const QString &name, const KURL &baseUR
 
 bool FilesTreeView::isFileOpen(const KURL &url)
 {
-  return quantaApp->doc()->isOpened(url);
+  return ViewManager::ref()->isOpened(url);
 }
 
 bool FilesTreeView::isPathInClipboard()

@@ -23,11 +23,14 @@
 #include <qobject.h>
 
 // include files for KDE
+#include <kparts/dockmainwindow.h>
 
 //app includes
 
+class KMdiToolViewAccessor;
 
 class QuantaApp;
+class ViewManager;
 class ProjectTreeView;
 class TemplatesTreeView;
 class ScriptTreeView;
@@ -71,11 +74,10 @@ private:
   void initView();
   void initProject();
 
+  KMdiToolViewAccessor* addToolTreeView(QWidget *widget, const QString &name, const QPixmap &icon, KDockWidget::DockPosition position);
+
   /** Initialize the plugin architecture. */
   void initPlugins();
-  void connectDockSignals(QObject *obj);
-  ProjectTreeView *pTab;
-  TemplatesTreeView *tTab;
   /** search for s in autosaveUrls and return a file path */
   QString searchPathListEntry(const QString& backedUpUrl, const QString& autosavedUrls);
   /** Retrieves hashed path from the name of a backup file */
@@ -84,9 +86,10 @@ private:
   QString retrievePID(const QString& filename);
   /** Retrieves the non hashed part of the name of a backup file */
   QString retrieveBaseFileName(const QString& filename);
+  ProjectTreeView *pTab;
+  TemplatesTreeView *tTab;
   // config
   KConfig *m_config;
-
 };
 
 #endif // QUANTA_H

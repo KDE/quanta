@@ -54,7 +54,7 @@ public slots:
 
 signals:
 
-  void enableMessages(bool);
+  void enableMessagesWidget();
 
   void messages(const QString& );
   /** No descriptions */

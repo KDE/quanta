@@ -84,7 +84,7 @@ class FilesTreeView : public KFileTreeView {
 public:
   FilesTreeView(QWidget *parent = 0L, const char *name = 0L);
   FilesTreeView(KConfig *config, KActionCollection *ac,
-                KDockWidget *parent, const char *name = 0L);
+                QWidget *parent, const char *name = 0L);
   virtual ~FilesTreeView();
   KURL::List topURLList;
 
@@ -123,7 +123,7 @@ protected slots:
   void slotDropped (KURL::List&, KURL&);
   void slotToggleShow()
   {
-    if (m_dock) m_dock->changeHideShowState();
+//    if (m_dock) m_dock->changeHideShowState();
   };
 
 protected:

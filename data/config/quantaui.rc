@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32037">
+<kpartgui name="quanta" version="32038">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -157,6 +157,9 @@
       <Action name="conf_actions"/>
       <Action name="conf_toolbars"/>
       <Action name="keys_bind"/>
+      <Separator/>
+      <Action name="kmdi_toolview_menu" />
+      <Action name="kmdi_tooldock_menu" />
     </Menu>
 
     <Menu name="help" noMerge="1"><text>&amp;Help</text>

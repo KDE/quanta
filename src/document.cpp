@@ -65,6 +65,7 @@
 #include "quantaview.h"
 #include "structtreeview.h"
 #include "qextfileinfo.h"
+#include "viewmanager.h"
 
 #ifdef BUILD_KAFKAPART
 #include "undoredo.h"
@@ -173,7 +174,8 @@ void Document::resizeEvent(QResizeEvent *e)
   {
     int w = wd->width() -5 ;
     int h = wd->height() - 9;
-    quantaApp->view()->resize(w,h);
+    if (ViewManager::ref()->activeView())
+      ViewManager::ref()->activeView()->resize(w,h);//FIXME:
   }
 }
 

@@ -4,11 +4,11 @@ KAFKAINCLUDE = -I$(top_srcdir)/quanta/parts/kafka -I$(top_builddir)/quanta/parts
 endif
 
 # Make merging simple
-LIB_KMDI = 
+LIB_KMDI = -lkmdi
 
 bin_PROGRAMS = quanta_be
 
-quanta_be_SOURCES = quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp main.cpp document.cpp kqapp.cpp quanta.cpp dcopwindowmanagerif.skel dcopsettingsif.skel dcopquantaif.skel dcopsettings.cpp dtds.cpp dcopquanta.cpp
+quanta_be_SOURCES = quanta_init.cpp quantaview.cpp quantadoc.cpp quantaview_slots.cpp main.cpp document.cpp kqapp.cpp quanta.cpp dcopwindowmanagerif.skel dcopsettingsif.skel dcopquantaif.skel dcopsettings.cpp dtds.cpp dcopquanta.cpp viewmanager.cpp
 
 
 quanta_be_LDADD = $(top_builddir)/quanta/project/libproject.la \
@@ -88,7 +88,7 @@ messages: rc.cpp
 	cat extrafiles | perl -e 'while(<STDIN>) { if (/\<action .* text="(.*)"/) { print "i18n(\"$$1\");\n"; }}' >> rc.cpp
 	(cd ../data && $(PREPARETIPS) >> ../src/tips.cpp)
 	$(XGETTEXT) rc.cpp tips.cpp `cat files` -o $(podir)/quanta.pot
-	rm -f extrafiles tips.cpp files dirs 
+	rm -f extrafiles tips.cpp files dirs
 
 # this is where the kdelnk file will go
 kdelnkdir = $(kde_appsdir)/Development

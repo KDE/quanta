@@ -48,7 +48,7 @@ public:
    *
    */
   static TemplatesTreeView* const ref(KActionCollection *ac = 0L,
-                                      KDockWidget *parent = 0L, const char *name = 0L)
+                                      QWidget *parent = 0L, const char *name = 0L)
   {
     static TemplatesTreeView *m_ref;
     if (!m_ref) m_ref = new TemplatesTreeView (ac, parent, name);
@@ -116,7 +116,7 @@ private:
    *  construction and reference
    */
   TemplatesTreeView(KActionCollection *ac,
-                    KDockWidget *parent, const char *name = 0L);
+                    QWidget *parent, const char *name = 0L);
   FilesTreeBranch *m_projectDir;
   int m_deleteMenuId;
   int m_openId;

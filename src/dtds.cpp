@@ -41,6 +41,7 @@
 #include "document.h"
 #include "quanta.h"
 #include "quantaview.h"
+#include "viewmanager.h"
 
 #include "dtds.h"
 
@@ -864,10 +865,10 @@ void DTDs::slotLoadDTD()
       if (readTagDir(dirName))
       {
           QString family = dtdcfg.readEntry("Family", "1");
-          if (family == "1" && quantaApp->view()->writeExists() &&
+          Document *w = ViewManager::ref()->activeView()->document();
+          if (family == "1" && w &&
               KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
           {
-            Document *w = quantaApp->view()->write();
             w->setDTDIdentifier(dtdName);
             quantaApp->loadToolbarForDTD(w->getDTDIdentifier()); //fixme: make signal no direct call
             emit forceReparse();
@@ -909,10 +910,10 @@ void DTDs::slotLoadDTEP()
         target.setPath(destDir + src.fileName());
         KIO::copy( src, target, false); //don't care about the result
       }
-      if (family == "1" && quantaApp->view()->writeExists() &&
+      Document *w = ViewManager::ref()->activeView()->document();
+      if (family == "1" && w &&
           KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
       {
-        Document *w = quantaApp->view()->write();
         w->setDTDIdentifier(dtdName);
         quantaApp->loadToolbarForDTD(w->getDTDIdentifier()); //fixme: make signal no direct call
         emit forceReparse();

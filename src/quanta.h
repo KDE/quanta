@@ -40,6 +40,8 @@
 #include <kate/document.h>
 #include <kparts/dockmainwindow.h>
 
+#include <kmdimainfrm.h>
+
 //app includes
 #include "dcopwindowmanagerif.h"
 
@@ -104,7 +106,7 @@ typedef struct ToolbarEntry{
 /**
   * The base class for Quanta application windows.
   */
-class QuantaApp : public KParts::DockMainWindow, public DCOPWindowManagerIf
+class QuantaApp : public KMdiMainFrm, public DCOPWindowManagerIf
 {
   Q_OBJECT
 
@@ -115,18 +117,15 @@ public:
   ~QuantaApp();
 
   QuantaDoc  *doc() const {return m_doc; }
-  QuantaView *view() const {return m_view;}
   QPopupMenu *tagsMenu() const {return m_tagsMenu;}
   KConfig *config() const {return m_config;}
-  QWidgetStack *rightWidget() const {return rightWidgetStack;}
-  QWidgetStack *bottomWidget() const {return bottomWidgetStack;}
 
 //TODO: check if we really need these "get" methods (and get rid o get)
   MessageOutput *messageOutput() const {return m_messageOutput;}
   MessageOutput *problemOutput() const {return m_problemOutput;}
 
   PHPDebuggerInterface *debugger() const {return m_debugger;}
-
+  KParts::PartManager *partManager() {return m_partManager;}
 /*  QPopupMenu *toolbarMenu(const QString& name);*/
 
   /** Returns the output dock widget */
@@ -174,6 +173,17 @@ public:
     /** tabs for left panel */
   DocTreeView *dTab;
   EnhancedTagAttributeTree *aTab;
+
+/**
+   * Show a TagDialog of Node tag, with attrs attr.
+   * @param tag The name of the new Node to create.
+   * @param attr The string containing the attrs of the new Node to create.
+   * @return Returns a new Node created according to the contents of the TagDialog.
+   */
+  Node *showTagDialogAndReturnNode(const QString &tag, const QString &attr = QString::null);
+  /** Returns the baseURL of the document. */
+  KURL baseURL();
+
 
 signals: // Signals
   /** signal used to hide the splash screen */
@@ -223,32 +233,18 @@ public slots:
 
   void slotNewStatus();
   void slotNewLineColumn();
-  void slotUpdateStatus(QWidget*);
-  void slotClosePage(QWidget*);
-
-  void slotDockStatusChanged();
-  void slotDockChanged();
+//  void slotUpdateStatus(QWidget*);FIXME:
 
   /** repaint preview */
   void slotRepaintPreview();
   /** show preview ( F6 )*/
   void slotShowPreview();
   void slotShowPreviewWidget(bool show);
-  void slotShowProjectTree();
 
-  void slotShowBottDock(bool force = false);
-  void slotShowMainDock(bool force = false);
-  void slotShowProblemsDock(bool force = false);
-  void slotShowSTabDock();
-  void slotShowATabDock();
-  void slotShowDTabDock();
+  void slotShowMessagesView();
+  void slotShowProblemsView();
 
-
-  void viewMenuAboutToShow();
-  void settingsMenuAboutToShow();
   void slotContextMenuAboutToShow();
-
-  void slotEnableMessageWidget(bool enable);
 
   /** options slots */
   void slotOptions();
@@ -364,6 +360,46 @@ protected slots:
 
   /** connected to the part manager, activates a new part */
   void slotActivePartChanged(KParts::Part * );
+
+  void slotTagMail();
+  void slotTagQuickList();
+  void slotTagEditTable();
+  void slotTagColor();
+  void slotTagDate();
+  void slotTagSelect();
+  /** Add the starting and closing text for a
+  user specified tag. */
+  void slotTagMisc();
+  void slotEditCurrentTag();
+  void slotSelectTagArea();
+  void slotSelectTagArea(Node *node);
+
+  void slotInsertCSS();
+  void slotFrameWizard();
+  void slotViewInKFM();
+  void slotViewInLynx();
+
+  void slotPasteHTMLQuoted();
+  void slotPasteURLEncoded();
+  void slotInsertChar(const QString &selected);
+
+/** Kate related slots */
+//Edit
+  void slotUndo ();
+  void slotRedo ();
+
+//Tools
+  void slotSpellcheck ();
+
+  //Breakpoint
+  void debugToggleBreakpoint();
+  void debugClearBreakpoints();
+  void debugGotoBreakpoint (KTextEditor::Mark *mark);
+
+  void slotShowSourceEditor();
+  void slotShowVPLAndSourceEditor();
+  void slotShowVPLOnly();
+
 protected:
   /** Ask for save all the modified user toolbars. */
   bool removeToolbars();
@@ -395,6 +431,7 @@ private:
   /** Message output window */
   MessageOutput *m_messageOutput;
   MessageOutput *m_problemOutput;
+  KMdiToolViewAccessor* m_messageOutputView;
 
   // Debugger
   PHPDebuggerInterface *m_debugger;
@@ -406,23 +443,6 @@ private:
   // config
   KConfig *m_config;
 
-  /** widget stack for left panel */
-  QWidgetStack *rightWidgetStack;
-  QWidgetStack *bottomWidgetStack;
-
-
-  KDockWidget *leftdock;
-  KDockWidget *maindock;
-  KDockWidget *bottdock;
-  KDockWidget *problemsdock;
-  KDockWidget *ptabdock;
-  KDockWidget *ttabdock;
-  KDockWidget *dtabdock;
-  KDockWidget *ftabdock;
-  KDockWidget *stabdock;
-  KDockWidget *atabdock;
-  KDockWidget *scripttabdock;
-
    /** HTML class for preview */
   WHTMLPart *m_htmlPart;
   WHTMLPart *m_htmlPartDoc;
@@ -432,7 +452,6 @@ private:
 
   // DOC & VIEW
   QuantaDoc  *m_doc;
-  QuantaView *m_view;
 
   bool exitingFlag;
 
@@ -442,17 +461,12 @@ private:
   // ACTIONS
   KRecentFilesAction *projectToolbarFiles;
 
-  KToggleAction *showMessagesAction, *showProblemsAction,
-    *showSTabAction, *showATabAction, *showDTabAction,
-    *showStatusbarAction,
-    *showKafkaAction, *showDTDToolbar;
+  KToggleAction *showStatusbarAction, *showKafkaAction, *showDTDToolbar;
   KToolBarPopupAction *showPreviewAction;
 
   KAction *saveAction, *saveAllAction;
 
   KAction *editTagAction, *selectTagAreaAction;
-
-  QPopupMenu* pm_set;
 
   QDomDocument* m_actions;
 

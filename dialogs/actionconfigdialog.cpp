@@ -78,7 +78,7 @@ ActionConfigDialog::ActionConfigDialog( QWidget* parent, const char* name, bool 
   QListViewItem *item, *oldItem = allActionsItem;
   KAction *action;
   QString toolbarName;
-  ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
+  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->label(i);
@@ -154,7 +154,7 @@ void ActionConfigDialog::slotAddToolbar()
   quantaApp->slotAddToolbar();
   QString toolbarName;
   QListViewItem *item;
-  ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
+  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   for (int i = 0; i < tb->count(); i++)
   {
     toolbarName = tb->label(i);
@@ -205,7 +205,7 @@ void ActionConfigDialog::slotEditToolbar()
 
     //update the tree view
     KAction *action;
-    ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
+    ToolbarTabWidget *tb = ToolbarTabWidget::ref();
     for (int i = 0; i < tb->count(); i++)
     {
       toolbarName = tb->label(i);
@@ -308,7 +308,7 @@ void ActionConfigDialog::slotSelectionChanged(QListViewItem *item)
       toolbarListBox->clear();
       int current = 0;
       int count = 0;
-      ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
+      ToolbarTabWidget *tb = ToolbarTabWidget::ref();
       for (int i = 0; i < tb->count(); i++)
       {
         QString toolbarName = tb->label(i);
@@ -582,7 +582,7 @@ void ActionConfigDialog::saveCurrentAction()
         break;
       }
   }
-  ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
+  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   for (int i = 0; i < tb->count(); i++)
   {
     QString toolbarName = tb->label(i);
@@ -804,7 +804,7 @@ void ActionConfigDialog::slotApply()
 
 void ActionConfigDialog::slotAddContainerToolbar()
 {
-  ToolbarTabWidget *tb = quantaApp->view()->toolbarTab();
+  ToolbarTabWidget *tb = ToolbarTabWidget::ref();
   int i;
 
   QStringList lst;

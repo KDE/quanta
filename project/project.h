@@ -126,7 +126,6 @@ public slots:
 
   void slotSelectProjectType(const QString &);
 
-  void slotEnableMessages(bool enable);
   void slotGetMessages(const QString&);
 
   void slotRescanPrjDir();
@@ -152,7 +151,7 @@ signals:
   void setLocalFiles( bool );
 
   void messages(const QString& );
-  void enableMessageWidget(bool);
+  void enableMessageWidget();
 
   void saveAllFiles();
   void newStatus();
@@ -170,7 +169,7 @@ public:
   KURL baseURL;
   KURL templateURL;
   KURL toolbarURL;
-  
+
   QString debugServerBasedir;
   QString debugLocalBasedir;
   QString debugServerHost;

@@ -45,10 +45,10 @@
 #include "tagmaildlg.h"
 
 ScriptTreeView::ScriptTreeView(KActionCollection *ac,
-                               KDockWidget *parent, const char *name )
+                               QWidget *parent, const char *name )
   : FilesTreeView(parent,name)
 {
-  m_dock = parent;
+//  m_dock = parent;
   m_action = new KToggleAction( i18n("Show Scripts Tree"), SmallIcon("run"), 0,
                                 this, SLOT( slotToggleShow() ),
                                 ac, "show_scripttab_tree" );
@@ -61,7 +61,7 @@ ScriptTreeView::ScriptTreeView(KActionCollection *ac,
   addColumn(i18n("Scripts"), -1);
   addColumn("");
   setFullWidth(true);
-  
+
   KURL url;
   url.setPath(qConfig.globalDataDir + resourceDir + "scripts/");
 

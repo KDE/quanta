@@ -30,7 +30,12 @@ class ToolbarTabWidget: public QTabWidget
 public:
   QWidgetStack *m_widgetStack;
 
-  ToolbarTabWidget(QWidget * parent = 0, const char * name = 0, WFlags f = 0);
+  static ToolbarTabWidget* const ref(QWidget *parent = 0L, const char *name = 0L)
+  {
+    static ToolbarTabWidget *m_ref;
+    if (!m_ref) m_ref = new ToolbarTabWidget (parent, name);
+    return m_ref;
+  }
   virtual ~ToolbarTabWidget(){};
 
   virtual void insertTab(QWidget * child, const QString & label);
@@ -61,6 +66,10 @@ protected:
   KPopupMenu *m_popupMenu;
   QTabBar *m_tabBar;
   QPtrList<QWidget> toolbarList;
+
+private:
+  ToolbarTabWidget(QWidget * parent = 0, const char * name = 0, WFlags f = 0);
+
 };
 
 class QuantaToolBar: public KToolBar

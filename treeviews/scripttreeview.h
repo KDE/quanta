@@ -45,7 +45,7 @@ class ScriptTreeView : public FilesTreeView  {
 
 public:
    ScriptTreeView(KActionCollection *ac,
-                  KDockWidget *parent, const char *name = 0L);
+                  QWidget *parent, const char *name = 0L);
   ~ScriptTreeView();
 
 public slots:

@@ -49,6 +49,8 @@
 #include "undoredo.h"
 #endif
 
+#include "viewmanager.h"
+
 EditableTree::EditableTree(QWidget *parent, const char *name)
 : KListView(parent, name)
 {
@@ -253,7 +255,7 @@ void TagAttributeTree::setCurrentNode(Node *node)
 #ifdef BUILD_KAFKAPART
 #ifdef HEAVY_DEBUG
   kafkaCommon::coutTree(baseNode, 2);
-  quantaApp->view()->getKafkaInterface()->coutLinkTree(baseNode, 2);
+  quantaApp->view()->kafkaInterface()->coutLinkTree(baseNode, 2);
 #endif
 #endif
   AttributeItem *item = 0L;
@@ -380,7 +382,7 @@ void TagAttributeTree::editorContentChanged()
     } else
     {
 #ifdef BUILD_KAFKAPART
-    if(quantaApp->view()->hadLastFocus() == QuantaView::quantaFocus)
+    if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::SourceFocus)
     {
 #endif
       m_node->tag->write()->changeTagAttribute(m_node->tag, item->text(0), item->editorText());
@@ -437,19 +439,20 @@ void TagAttributeTree::editorContentChanged()
          m_node->tag->cleanStrBuilt = false;
          nodeModified = true;
       }
+      QuantaView *view = ViewManager::ref()->activeView();
       if(nodeModified)
       {
         //delete the corresponding DOM::Node.
         if(m_node->rootNode())
         {
           domNode = *m_node->rootNode();
-          quantaApp->view()->getKafkaInterface()->disconnectDomNodeFromQuantaNode(domNode);
+          view->kafkaDocument()->disconnectDomNodeFromQuantaNode(domNode);
           domNode.parentNode().removeChild(domNode);
         }
         if(m_node->leafNode() && m_node->rootNode() && *m_node->rootNode() != *m_node->leafNode())
         {
           domNode = *m_node->leafNode();
-          quantaApp->view()->getKafkaInterface()->disconnectDomNodeFromQuantaNode(domNode);
+          view->kafkaDocument()->disconnectDomNodeFromQuantaNode(domNode);
           domNode.parentNode().removeChild(domNode);
         }
         if(m_node->rootNode())
@@ -459,7 +462,7 @@ void TagAttributeTree::editorContentChanged()
           delete m_node->leafNode();
         m_node->setLeafNode(0L);
 
-        quantaApp->view()->getKafkaInterface()->buildKafkaNodeFromNode(m_node);
+        view->kafkaDocument()->buildKafkaNodeFromNode(m_node);
         if(!domNode.isNull() && m_node->leafNode())
         {
            while(!domNode.firstChild().isNull())
@@ -467,7 +470,7 @@ void TagAttributeTree::editorContentChanged()
         }
 
         modifs->addNodeModif(modif);
-        quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+        view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
       }
 #ifdef HEAVY_DEBUG
         kafkaCommon::coutTree(baseNode, 2);
@@ -583,14 +586,14 @@ void EnhancedTagAttributeTree::showCaption()
   {
     if(curNode->tag->type == Tag::XmlTag || curNode->tag->type == Tag::XmlTagEnd ||
       curNode->tag->type == Tag::ScriptTag)
-#if KDE_IS_VERSION(3,1,90)      
+#if KDE_IS_VERSION(3,1,90)
     {
       QString s = i18n("Current Tag : <b>%1</b>").arg(curNode->tag->name);
       nodeName->setText(KStringHandler::rPixelSqueeze(s, nodeName->fontMetrics(), attrTree->width()- 50));
     }
 #else
       nodeName->setText(i18n("Current Tag : <b>%1</b>").arg(KStringHandler::rsqueeze(curNode->tag->name, 30)));
-#endif      
+#endif
     else if(curNode->tag->type == Tag::Text)
       nodeName->setText(i18n("Current Tag : <b>text</b>"));
     else if(curNode->tag->type == Tag::Comment)
@@ -602,6 +605,9 @@ void EnhancedTagAttributeTree::showCaption()
 
 void EnhancedTagAttributeTree::deleteSubTree()
 {
+  QuantaView *view = ViewManager::ref()->activeView();
+  if(!curNode || !view->document())
+    return;
 #ifdef BUILD_KAFKAPART
   Node *oldCurNode;
   NodeModifsSet *modifs;
@@ -609,21 +615,18 @@ void EnhancedTagAttributeTree::deleteSubTree()
   DOM::Node domNode;
   QValueList<int> loc;
 
-  if(!curNode || !quantaApp->view()->writeExists())
-    return;
-
   //Save the cursor position in kafka/quanta
-  if(quantaApp->view()->hadLastFocus() == QuantaView::quantaFocus)
+  if(view->hadLastFocus() == QuantaView::SourceFocus)
     curNode->tag->beginPos(curLine, curCol);
   else
   {
-    quantaApp->view()->getKafkaInterface()->getKafkaWidget()->getCurrentNode(domNode, offset);
+    view->kafkaDocument()->getKafkaWidget()->getCurrentNode(domNode, offset);
     if(!domNode.previousSibling().isNull())
       domNode = domNode.previousSibling();
     else if(!domNode.parentNode().isNull())
       domNode = domNode.parentNode();
     else
-      domNode = quantaApp->view()->getKafkaInterface()->getKafkaWidget()->document();
+      domNode = view->kafkaDocument()->getKafkaWidget()->document();
     if(domNode.nodeType() == DOM::Node::TEXT_NODE)
       offset = domNode.nodeValue().length();
     else
@@ -639,23 +642,21 @@ void EnhancedTagAttributeTree::deleteSubTree()
   modifs = new NodeModifsSet();
   kafkaCommon::extractAndDeleteNode(oldCurNode, modifs);
 
-  quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+  view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
   //set the cursor position in kafka/quanta
-  if(quantaApp->view()->hadLastFocus() == QuantaView::quantaFocus)
-    quantaApp->view()->write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+  if(view->hadLastFocus() == QuantaView::SourceFocus)
+    view->document()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
   else
   {
     domNode = kafkaCommon::getNodeFromLocation(loc,
-      quantaApp->view()->getKafkaInterface()->getKafkaWidget()->document());
-    quantaApp->view()->getKafkaInterface()->getKafkaWidget()->setCurrentNode(domNode, offset);
+    view->kafkaDocument()->getKafkaWidget()->document());
+    view->kafkaDocument()->getKafkaWidget()->setCurrentNode(domNode, offset);
   }
 
 #else
 
   //Quick code for the 3.1.x users
-  if(!curNode || !quantaApp->view()->writeExists())
-    return;
 
   Node *oldNode;
   int bCol, bLine, eCol, eLine;
@@ -676,12 +677,16 @@ void EnhancedTagAttributeTree::deleteSubTree()
   else
     oldNode->tag->endPos(eLine, eCol);
 
-  quantaApp->view()->write()->editIf->removeText(bLine, bCol, eLine, eCol+1);
+  view->document()->editIf->removeText(bLine, bCol, eLine, eCol+1);
 #endif
 }
 
 void EnhancedTagAttributeTree::deleteNode()
 {
+  QuantaView *view = ViewManager::ref()->activeView();
+  if(!curNode || !view->document())
+    return;
+
 #ifdef BUILD_KAFKAPART
   Node *oldCurNode, *oldCurNodeParent, *child;
   QTag *oldCurNodeParentQTag;
@@ -690,21 +695,18 @@ void EnhancedTagAttributeTree::deleteNode()
   QValueList<int> loc;
   NodeModifsSet *modifs;
 
-  if(!curNode || !quantaApp->view()->writeExists())
-    return;
-
   //Save the cursor position in kafka/quanta
-  if(quantaApp->view()->hadLastFocus() == QuantaView::quantaFocus)
+  if(view->hadLastFocus() == QuantaView::SourceFocus)
     curNode->tag->beginPos(curLine, curCol);
   else
   {
-    quantaApp->view()->getKafkaInterface()->getKafkaWidget()->getCurrentNode(domNode, offset);
+    view->kafkaDocument()->getKafkaWidget()->getCurrentNode(domNode, offset);
     if(!domNode.previousSibling().isNull())
       domNode = domNode.previousSibling();
     else if(!domNode.parentNode().isNull())
       domNode = domNode.parentNode();
     else
-      domNode = quantaApp->view()->getKafkaInterface()->getKafkaWidget()->document();
+      domNode = view->kafkaDocument()->getKafkaWidget()->document();
     if(domNode.nodeType() == DOM::Node::TEXT_NODE)
       offset = domNode.nodeValue().length();
     else
@@ -743,24 +745,21 @@ void EnhancedTagAttributeTree::deleteNode()
     }
   }
 
-  quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+  view->document()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
   //set the cursor position in kafka/quanta
-  if(quantaApp->view()->hadLastFocus() == QuantaView::quantaFocus)
-    quantaApp->view()->write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+  if(view->hadLastFocus() == QuantaView::SourceFocus)
+    view->document()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
   else
   {
     domNode = kafkaCommon::getNodeFromLocation(loc,
-      quantaApp->view()->getKafkaInterface()->getKafkaWidget()->document());
-    quantaApp->view()->getKafkaInterface()->getKafkaWidget()->setCurrentNode(domNode, offset);
+    view->kafkaDocument()->getKafkaWidget()->document());
+    view->kafkaDocument()->getKafkaWidget()->setCurrentNode(domNode, offset);
   }
 
 #else
   //Quick code for 3.1.x users
   //Without kafka, all is more text-based, so we can avoid removing Nodes with wrong DTD relationship.
-
-  if(!curNode || !quantaApp->view()->writeExists())
-    return;
 
   Node *oldNode;
   int bCol, bLine, eCol, eLine;
@@ -772,12 +771,12 @@ void EnhancedTagAttributeTree::deleteNode()
   {
     oldNode->getClosingNode()->tag->beginPos(bLine, bCol);
     oldNode->getClosingNode()->tag->endPos(eLine, eCol);
-    quantaApp->view()->write()->editIf->removeText(bLine, bCol, eLine, eCol+1);
+    view->document()->editIf->removeText(bLine, bCol, eLine, eCol+1);
   }
 
   oldNode->tag->beginPos(bLine, bCol);
   oldNode->tag->endPos(eLine, eCol);
-  quantaApp->view()->write()->editIf->removeText(bLine, bCol, eLine, eCol+1);
+  view->document()->editIf->removeText(bLine, bCol, eLine, eCol+1);
 
 #endif
 }

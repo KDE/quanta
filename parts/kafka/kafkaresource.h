@@ -20,7 +20,7 @@
 
 /**
  * A few globals variables avoiding to use the quantaApp global variables :
- * quantaApp->view()->getKafkaInterface()->getKafkaPart()...
+ * quantaApp->view()->kafkaInterface()->getKafkaPart()...
  * Also a (little) step torwards kafka independance from the quanta code (to be able to make it a kpart, at last!)
  */
 

@@ -66,7 +66,7 @@
 #include <kpassdlg.h>
 #include <kstringhandler.h>
 #include <kdeversion.h>
-#include <kmainwindow.h> 
+#include <kmainwindow.h>
 
 #if KDE_IS_VERSION(3, 1, 90)
 #include <kinputdialog.h>
@@ -94,6 +94,8 @@
 #include "quanta.h" //TODO: should get rid of it
 #include "dtds.h"
 
+#include "viewmanager.h"
+
 Project::Project(KMainWindow *parent)
         : QObject()
 {
@@ -105,7 +107,7 @@ Project::Project(KMainWindow *parent)
 
 Project::~Project()
 {
-  if (hasProject()) 
+  if (hasProject())
     slotSaveProject();
 }
 
@@ -707,7 +709,7 @@ void Project::loadProjectXML()
   debugServerHost = no.firstChild().nodeValue();
   no = projectNode.namedItem("debugserverport");
   debugServerPort = no.firstChild().nodeValue();
-  
+
   no = projectNode.namedItem("templates");
   tmpString = no.firstChild().nodeValue();
   templateURL = baseURL;
@@ -1105,7 +1107,7 @@ void Project::slotNewProject()
   wiz = new QWizard(m_parent, "new", true);
   wiz->setCaption(i18n("New Project Wizard"));
   wiz->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-  
+
   png = new ProjectNewGeneral( wiz );
 
   stack = new QWidgetStack( wiz );
@@ -1139,8 +1141,8 @@ void Project::slotNewProject()
   connect( wiz, SIGNAL(selected(const QString &)),
           this, SLOT  (slotSelectProjectType(const QString &)));
 
-  connect( pnw, SIGNAL(enableMessages(bool)),
-          this, SLOT  (slotEnableMessages(bool)));
+  connect( pnw, SIGNAL(enableMessagesWidget()),
+          this, SIGNAL  (enableMessageWidget()));
   connect( pnw, SIGNAL(messages(const QString&)),
           this, SLOT  (slotGetMessages(const QString&)));
   connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
@@ -1470,13 +1472,13 @@ void Project::slotOptions()
     projectName = optionsPage.linePrjName->text();
     author    = optionsPage.lineAuthor ->text();
     email      = optionsPage.lineEmail  ->text();
-    
+
     // Debugger
     debugServerBasedir = optionsPage.lineDebugServerBasedir->text();
     debugLocalBasedir = optionsPage.lineDebugLocalBasedir->text();
     debugServerHost = optionsPage.lineDebugServerHost->text();
     debugServerPort = optionsPage.lineDebugServerPort->text();
-    
+
     m_defaultDTD = DTDs::ref()->getDTDNameFromNickName(optionsPage.dtdCombo->currentText()).lower();
     m_defaultEncoding  = optionsPage.encodingCombo->currentText();
 
@@ -1551,7 +1553,7 @@ void Project::slotOptions()
     dom.firstChild().firstChild().appendChild( el );
     el.appendChild( dom.createTextNode( debugServerPort ) );
 
-    
+
     excludeStr = optionsPage.lineExclude->text();
     el = dom.firstChild().firstChild().namedItem("exclude").toElement();
     if (!el.isNull())
@@ -1690,12 +1692,6 @@ void Project::slotUploadURL(const KURL& urlToUpload)
   dlg->show();
 }
 
-void Project::slotEnableMessages(bool enable)
-{
-  emit enableMessageWidget(enable);
-}
-
-
 void Project::slotGetMessages(const QString& data)
 {
   emit messages(data);
@@ -1739,9 +1735,7 @@ void Project::openCurrentView()
    QDomNodeList nl = dom.elementsByTagName("projectview");
    QDomElement el;
    QuantaDoc* doc = quantaApp->doc();
-   QuantaView* view = quantaApp->view();
    doc->blockSignals(true);
-   view->writeTab()->blockSignals(true);
    for (uint i = 0; i < nl.count(); i++)
    {
       el = nl.item(i).cloneNode().toElement();
@@ -1769,10 +1763,9 @@ void Project::openCurrentView()
       }
    }
    doc->blockSignals(false);
-   view->writeTab()->blockSignals(false);
-   Document *w = view->write();
+   Document *w = ViewManager::ref()->activeView()->document();
    quantaApp->setCaption(w->url().prettyURL() );
-   quantaApp->slotUpdateStatus(w);
+   //FIXME: quantaApp->slotUpdateStatus(w);
  }
 }
 
@@ -1842,22 +1835,24 @@ void Project::slotSaveAsProjectView(bool askForName)
     QDomElement el = dom.createElement("projectview");
     el.setAttribute("name", currentProjectView);
     QDomElement item;
-    QTabWidget *tab = quantaApp->view()->writeTab();
-    for (int i = 0; i < tab->count(); i++)
-    {
-      Document *w = dynamic_cast<Document *>(tab->page(i));
-      if (!w) {
-        continue;
-      }
-      KURL url = w->url();
-      url = QExtFileInfo::toRelative(url, baseURL);
-      if (!w->isUntitled() && m_projectFiles.contains(url))
-      {
-       item = dom.createElement("viewitem");
-       item.setAttribute("url", QuantaCommon::qUrl(url) );
-       el.appendChild(item);
-      }
+    KMdiIterator<KMdiChildView*> *it = quantaApp->createIterator();
+    QuantaView *view;
+    for (it->first(); !it->isDone(); it->next()) {
+        view = dynamic_cast<QuantaView*>(it->currentItem());
+        if (view && view->document())
+        {
+            Document *w = view->document();
+            KURL url = w->url();
+            url = QExtFileInfo::toRelative(url, baseURL);
+            if (!w->isUntitled() && m_projectFiles.contains(url))
+            {
+                item = dom.createElement("viewitem");
+                item.setAttribute("url", QuantaCommon::qUrl(url) );
+                el.appendChild(item);
+            }
+        }
     }
+    delete it;
 
     KURL::List toolbarList = quantaApp->userToolbarFiles();
     for (uint i =0 ; i < toolbarList.count(); i++)
@@ -1960,12 +1955,13 @@ KURL Project::projectBaseURL()
      result = baseURL;
   } else
   {
-    if  ( !quantaApp->view()->writeExists() || quantaApp->view()->write()->isUntitled() )
+    Document *w = ViewManager::ref()->activeView()->document();
+    if  ( !w || w->isUntitled() )
     {
       result = QExtFileInfo::home();
     } else
     {
-       result = QExtFileInfo::path(quantaApp->view()->write()->url());
+       result = QExtFileInfo::path(w->url());
     }
   }
   return result;

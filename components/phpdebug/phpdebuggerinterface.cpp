@@ -11,7 +11,7 @@
  *   This program is free software; you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
  *   the Free Software Foundation; either version 2 of the License, or      *
- *   (at your option) any later version.                                    *                     
+ *   (at your option) any later version.                                    *
  *                                                                          *
  ***************************************************************************/
 
@@ -22,10 +22,13 @@
 #include <kmessagebox.h>
 
 #include "quanta.h"
+#include "quantaview.h"
 #include "quantadoc.h"
 #include "document.h"
 #include "resource.h"
 #include "project.h"
+#include "viewmanager.h"
+
 #include "phpdebuggerinterface.h"
 #include "phpdebugsocket.h"
 #include "phpdebuggubed.h"
@@ -39,12 +42,12 @@ PHPDebuggerInterface::PHPDebuggerInterface ()
   // This will change when put in loadable module
   m_debugsocket = new PHPDebugGubed(this);
   uint cap = m_debugsocket->getCapabilities();
-  
+
   // Get actioncollection and add appropriate actions depending on capabilities of the debugger
   KActionCollection *ac = quantaApp->actionCollection();
   ac->action("debug_breakpoints_toggle")->setEnabled(cap & CapBreakpoints);
   ac->action("debug_breakpoints_clear")->setEnabled(cap & CapClearAllBreakpoints);
-  
+
   if(cap & CapRunDisplay)
     new KAction(i18n("&Run"), SmallIcon("debug_run"), 0,
           this, SLOT(slotDebugRun()), ac, "debug_run");
@@ -76,17 +79,17 @@ PHPDebuggerInterface::PHPDebuggerInterface ()
     new KAction(i18n("Disconnect"), SmallIcon("debug_disconnect"), 0,
           this, SLOT(slotDebugDisconnect()), ac, "debug_disconnect");
   }
-  
+
   // Disable all debugactions that need a session (ie not breakpoints, etc)
   enableAction("*", false);
 }
 
 void PHPDebuggerInterface::enableAction(QString action, bool enable)
 {
-  
+
   if(action == "*")
   {
-    // Enable/Disable all session related actions + connect/disconnect  
+    // Enable/Disable all session related actions + connect/disconnect
     enableAction("debug_run", enable);
     enableAction("debug_leap", enable);
     enableAction("debug_pause", enable);
@@ -95,7 +98,7 @@ void PHPDebuggerInterface::enableAction(QString action, bool enable)
     enableAction("debug_stepinto", enable);
     enableAction("debug_stepout", enable);
     enableAction("debug_skip", enable);
-    
+
     enableAction("debug_connect", enable);
     enableAction("debug_disconnect", enable);
   }
@@ -253,7 +256,10 @@ void PHPDebuggerInterface::setMark(QString filename, long line, bool set, int ma
 {
    if(!filename.isEmpty())
    {
-      ::Document* qdoc = quantaApp->doc()->isOpened(filename);
+      ::Document* qdoc = 0L;
+      QuantaView *view = ViewManager::ref()->isOpened(filename);
+      if (view)
+        qdoc = view->document();
       if(qdoc)
       {
          KTextEditor::Document* doc = qdoc->doc();
@@ -276,7 +282,7 @@ void PHPDebuggerInterface::setMark(QString filename, long line, bool set, int ma
 bool PHPDebuggerInterface::showStatus(QString message, bool log)
 {
    quantaApp->slotStatusMsg(m_debugsocket->getName() + ": " + message);
-   
+
    if(log)
    {
      if(!message.endsWith("\n"))

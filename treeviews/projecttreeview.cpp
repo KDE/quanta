@@ -78,10 +78,10 @@ KFileTreeViewItem* ProjectTreeBranch::createTreeViewItem(KFileTreeViewItem *pare
 
 //ProjectTreeView implementation
 ProjectTreeView::ProjectTreeView(KActionCollection *ac,
-                                 KDockWidget *parent, const char *name )
+                                 QWidget *parent, const char *name )
   : FilesTreeView(parent,name)
 {
-  m_dock = parent;
+//  m_dock = parent;
   m_action = new KToggleAction( i18n("Show Project Tree"), UserIcon("ptab"), 0,
                                 this, SLOT( slotToggleShow() ),
                                 ac, "show_ptab_tree" );

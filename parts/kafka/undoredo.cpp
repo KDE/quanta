@@ -37,6 +37,7 @@
 #include "kafkaresource.h"
 
 #include "undoredo.h"
+#include "viewmanager.h"
 
 NodeModif::NodeModif()
 {
@@ -235,8 +236,8 @@ void undoRedo::addNewModifsSet(NodeModifsSet *modifs, int modifLocation)
 		else if(modifLocation == undoRedo::NodeTreeModif)
 		{
 			documentIterator.toLast();
-			curFocus = quantaApp->view()->hadLastFocus();
-			if(curFocus == QuantaView::quantaFocus)
+			curFocus = ViewManager::ref()->activeView()->hadLastFocus();
+			if(curFocus == QuantaView::SourceFocus)
 				reloadQuantaEditor();
 			else
 				reloadKafkaEditor();
@@ -412,7 +413,7 @@ bool undoRedo::UndoNodeModif(NodeModif &/**_nodeModif*/, bool /**undoTextModifs*
 	QValueList<int> loc;
 	Tag *_tag;
 	QString text, totalText;
-	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
+	KafkaDocument *kafkaInterface = quantaApp->view()->kafkaInterface();
 
 	if(_nodeModif.type == undoRedo::NodeTreeAdded)
 	{
@@ -985,8 +986,8 @@ bool undoRedo::UndoNodeModifInKafka(NodeModif &/**_nodeModif*/)
 	Tag *_tag;
 	DOM::Node domNode, domNode2, dn, dm;
 	bool goUp;
-	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
-	KafkaWidget *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaWidget();
+	KafkaDocument *kafkaInterface = quantaApp->view()->kafkaInterface();
+	KafkaWidget *kafkaPart = quantaApp->view()->kafkaInterface()->getKafkaWidget();
 
 	if(_nodeModif.type == undoRedo::NodeTreeAdded)
 	{
@@ -1246,9 +1247,8 @@ void undoRedo::reloadKafkaEditor(bool force, bool syncKafkaCursor)
 	}
 
 	kafkaIterator = documentIterator;
-	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
+	KafkaDocument *kafkaInterface = ViewManager::ref()->activeView()->kafkaDocument();
 
-	Document *m_doc = kafkaInterface->getCurrentDoc();
 	kafkaInterface->reloadDocument();
 
 	if(syncKafkaCursor)
@@ -1260,7 +1260,7 @@ void undoRedo::reloadQuantaEditor(bool force, bool syncQuantaCursor)
 	QString text, allText;
 	Node *node = baseNode, *child;
 	int bCol, bLine, eCol, eLine, bCol2, bLine2, bCol3, bLine3, eCol3, eLine3, i;
-	KafkaDocument *kafkaInterface = quantaApp->view()->getKafkaInterface();
+	KafkaDocument *kafkaInterface = ViewManager::ref()->activeView()->kafkaDocument();
 	bool updateClosing, goUp;
 
 #ifdef LIGHT_DEBUG
@@ -1698,13 +1698,14 @@ bool undoRedo::syncQuantaView()
 
 void undoRedo::syncKafkaCursorAndSelection()
 {
-	KafkaWidget *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaWidget();
+        QuantaView *view = ViewManager::ref()->activeView();
+	KafkaWidget *kafkaPart = view->kafkaDocument()->getKafkaWidget();
 	DOM::Node node;
 	int offset;
 	uint curLine, curCol/**, curLine2, curCol2*/;
 	/**DOM::Range range(kafkaPart) = kafkaPart->selection();*/
 
-	if(!quantaApp->view()->getKafkaInterface()->isLoaded())
+	if(!view->kafkaDocument()->isLoaded())
 		return;
 
 	/**DOM::Range tempRange(document());
@@ -1713,8 +1714,8 @@ void undoRedo::syncKafkaCursorAndSelection()
 	setSelection(tempRange);*/
 
 	//Translate and set the cursor.
-	quantaApp->view()->write()->viewCursorIf->cursorPositionReal(&curLine, &curCol);
-	quantaApp->view()->getKafkaInterface()->translateQuantaIntoKafkaCursorPosition(curLine,
+	view->document()->viewCursorIf->cursorPositionReal(&curLine, &curCol);
+	view->kafkaDocument()->translateQuantaIntoKafkaCursorPosition(curLine,
 		curCol, node, offset);
 	kafkaPart->setCurrentNode(node, offset);
 
@@ -1724,7 +1725,8 @@ void undoRedo::syncKafkaCursorAndSelection()
 
 void undoRedo::syncQuantaCursorAndSelection()
 {
-	KafkaWidget *kafkaPart = quantaApp->view()->getKafkaInterface()->getKafkaWidget();
+        QuantaView *view = ViewManager::ref()->activeView();
+	KafkaWidget *kafkaPart = view->kafkaDocument()->getKafkaWidget();
 	int curCol, curLine, curCol2, curLine2;
 	uint oldCurCol, oldCurLine;
 	DOM::Node domNode, domNodeEnd;
@@ -1733,20 +1735,20 @@ void undoRedo::syncQuantaCursorAndSelection()
 	DOM::Range range(kafkaPart);
 
 	//Translate and set the cursor.
-	quantaApp->view()->getKafkaInterface()->getKafkaWidget()->getCurrentNode(domNode, offset);
- 	quantaApp->view()->getKafkaInterface()->translateKafkaIntoQuantaCursorPosition(domNode,
+	view->kafkaDocument()->getKafkaWidget()->getCurrentNode(domNode, offset);
+ 	view->kafkaDocument()->translateKafkaIntoQuantaCursorPosition(domNode,
 		offset, curLine, curCol);
-	quantaApp->view()->write()->viewCursorIf->cursorPositionReal(&oldCurLine, &oldCurCol);
+	view->document()->viewCursorIf->cursorPositionReal(&oldCurLine, &oldCurCol);
 	if(oldCurCol != (uint)curCol || oldCurLine != (uint)curLine)
- 		quantaApp->view()->write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+ 		view->document()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
 
 	//Translate and set the selection
 	kafkaPart->selection(domNode, offsetBegin, domNodeEnd, offsetEnd);
-	quantaApp->view()->getKafkaInterface()->translateKafkaIntoQuantaCursorPosition(
+	view->kafkaDocument()->translateKafkaIntoQuantaCursorPosition(
 		domNode, (int)offsetBegin, curLine, curCol);
-	quantaApp->view()->getKafkaInterface()->translateKafkaIntoQuantaCursorPosition(
+	view->kafkaDocument()->translateKafkaIntoQuantaCursorPosition(
 		domNodeEnd, (int)offsetEnd, curLine2, curCol2);
-	quantaApp->view()->write()->selectionIf->setSelection(curLine, curCol, curLine2, curCol2);
+	view->document()->selectionIf->setSelection(curLine, curCol, curLine2, curCol2);
 }
 
 void undoRedo::debugOutput()

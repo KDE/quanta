@@ -98,7 +98,7 @@ void ProjectNewWeb::slotStart()
 {
   if ( !start )
   {
-    emit enableMessages(true);
+    emit enableMessagesWidget();
 
     if (QExtFileInfo::createDir( baseURL))
     {

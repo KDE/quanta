@@ -40,37 +40,18 @@ public:
 
   bool newDocument(const KURL&, bool switchToExisting = true);
   void openDocument(const KURL&, const QString& a_encoding = QString::null, bool switchToExisting = true);
-  bool saveDocument(const KURL&);
-  void closeDocument();
 
   void prevDocument();
   void nextDocument();
-
-  bool isModified();
-  bool isModifiedAll();
-  void setModified(bool flag = true);
-  /** Check if url is opened or not. */
-  Document* isOpened(const KURL& url);
-
-  // "save modified" - asks the user
-  // for saving if the document is modified
-  bool saveModified();
-  bool saveAll(bool dont_ask=true);
 
   // for kwrites
   void readConfig(KConfig *);
   void writeConfig(KConfig *);
 
-  KURL::List openedFiles(bool noUntitled=true);
   void changeFileTabName(const KURL& newURL = KURL());
-
-private:
-  Document *write() const;
-  Document *newWrite();
 
 public slots:
   /** close documents. */
-  void closeAll();
   /** show popup menu with list of attributes for current tag */
   void slotInsertAttrib( int id );
   void slotAttribPopup();
@@ -79,19 +60,15 @@ public slots:
   void invertSelect();
   /** Called when a file on the disk has changed. */
   void slotFileDirty(const QString& fileName);
-  void slotOpeningCompleted();  
-  void slotSavingCompleted();  
-  void slotSavingFailed(const QString& error);  
+  void slotOpeningCompleted();
 
 signals:
   void newStatus();
-  void title(QString);
   void hideSplash();
   void documentClosed();
 
 private:
   KPopupMenu *attribMenu;
-  bool m_saveResult;
   bool m_eventLoopStarted;
 };
 

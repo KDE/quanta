@@ -108,10 +108,10 @@ KFileTreeViewItem* TemplatesTreeBranch::createTreeViewItem(KFileTreeViewItem *pa
 
 
 TemplatesTreeView::TemplatesTreeView(KActionCollection *ac,
-                                     KDockWidget *parent, const char *name )
+                                     QWidget *parent, const char *name )
   : FilesTreeView(parent,name), m_projectDir(0)
 {
-  m_dock = parent;
+//  m_dock = parent;
   m_action = new KToggleAction( i18n("Show Templates Tree"), UserIcon("ttab"), 0,
                                 this, SLOT( slotToggleShow() ),
                                 ac, "show_ttab_tree" );

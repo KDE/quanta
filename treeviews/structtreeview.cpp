@@ -40,6 +40,7 @@
 #include "quantaview.h"
 #include "quantacommon.h"
 #include "dtds.h"
+#include "viewmanager.h"
 
 #include "structtreetag.h"
 #include "structtreeview.h"
@@ -205,7 +206,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
 
       }
     }
-    
+
     //go to the child node, if it exists
     if (currentNode->child)
     {
@@ -397,15 +398,16 @@ void StructTreeView::slotGotoTag( QListViewItem *item )
     }
     int el, ec;
     tag->endPos(el, ec);
-/*    
+/*
     kdDebug(24000) << "Node area: " << line << ", " << col << ", " << el << ", " << ec << endl;
     kdDebug(24000) << "Node type: " << tag->type << endl;
     kdDebug(24000) << "Node str: " << tag->tagStr() << endl;
     kdDebug(24000) << "Node cleanstr: " << tag->cleanStr << endl;
-*/    
+*/
     emit newCursorPosition(line, col + 1);
-    if (quantaApp->view()->writeExists())
-      quantaApp->view()->write()->view()->setFocus();
+    Document *w = ViewManager::ref()->activeView()->document();
+    if (w)
+      w->view()->setFocus();
     delete tag;
   }
 }
@@ -535,7 +537,7 @@ void StructTreeView::slotSelectTag()
         {
           tag->endPos(eLine, eCol);
         } else
-        { 
+        {
           emit selectTagArea(it->node);
           return;
         }

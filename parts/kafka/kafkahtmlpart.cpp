@@ -51,6 +51,8 @@
 #include "tagattributetree.h"
 #include "kafkahtmlpart.moc"
 
+#include "viewmanager.h"
+
 class KafkaWidgetPrivate
 {
 public:
@@ -1714,8 +1716,7 @@ void KafkaWidget::slotNewCursorPos(const DOM::Node &domNode, long offset)
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<<"KafkaWidget::slotNewCursorPos() offset : " << d->m_cursorOffset << endl;
 #endif
-	if(quantaApp->aTab && quantaApp->view() &&
-		quantaApp->view()->hadLastFocus() == QuantaView::kafkaFocus)
+	if(quantaApp->aTab && ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
 		quantaApp->aTab->setCurrentNode(w->getNode(domNode));
 }
 

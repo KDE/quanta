@@ -32,6 +32,8 @@ class QString;
 
 class KToggleAction;
 
+class QuantaView;
+
 class QuantaPlugin : public QObject
 {
   Q_OBJECT
@@ -110,9 +112,11 @@ protected:
   bool m_isRunning;
   KParts::ReadOnlyPart *m_part;
   bool m_readOnlyPart;
+  QuantaView *m_view;
 private: // Private attributes
   /**  */
   QString m_standardName;
+
 };
 
 #endif

@@ -48,6 +48,8 @@
 #include "dtds.h"
 #include "structtreetag.h"
 
+#include "viewmanager.h"
+
 //kde includes
 #include <kapplication.h>
 #include <kdebug.h>
@@ -462,7 +464,7 @@ Node *Parser::parse(Document *w, bool force)
   t.start();
 #ifdef BUILD_KAFKAPART
   //If VPL is loaded, there shouldn't be any rebuild
-  if(quantaApp->view()->hadLastFocus() == QuantaView::kafkaFocus && !force)
+  if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus && !force)
     return m_node;
 #endif
 
@@ -503,7 +505,7 @@ Node *Parser::parse(Document *w, bool force)
 #ifdef BUILD_KAFKAPART
  //We need to reload Kafka to refresh the DOM::Node->Node links.
  //FIXME: make a function which only update the DOM::Node->Node links.
- quantaApp->view()->reloadKafkaView(true);
+  ViewManager::ref()->activeView()->reloadVPLView(true);
 #endif
 
  emit nodeTreeChanged();
@@ -962,7 +964,7 @@ Node *Parser::rebuild(Document *w)
 
 #ifdef BUILD_KAFKAPART
   //If VPL is loaded, there shouldn't be any rebuild
-  if(quantaApp->view()->hadLastFocus() == QuantaView::kafkaFocus)
+  if(ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
     return m_node;
 
  NodeModifsSet *modifs = new NodeModifsSet();

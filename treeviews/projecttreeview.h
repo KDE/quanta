@@ -52,7 +52,7 @@ public:
    *
    */
   static ProjectTreeView* const ref(KActionCollection *ac = 0L,
-                                    KDockWidget *parent = 0L, const char *name = 0L)
+                                    QWidget *parent = 0L, const char *name = 0L)
   {
     static ProjectTreeView *m_ref;
     if (!m_ref) m_ref = new ProjectTreeView (ac, parent, name);
@@ -63,7 +63,7 @@ public:
 
 public slots: // Public slots
   void slotOpen();
-  void slotLoadToolbar();  
+  void slotLoadToolbar();
   void slotRemove();
 
   void slotMenu(KListView *listView, QListViewItem *item, const QPoint &point);
@@ -91,7 +91,7 @@ private:
    *  construction and reference
    */
   ProjectTreeView(KActionCollection *ac,
-                  KDockWidget *parent, const char *name);
+                  QWidget *parent, const char *name);
 
   ProjectTreeBranch *m_projectDir;
   KURL m_oldURL;

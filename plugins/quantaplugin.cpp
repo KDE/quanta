@@ -47,6 +47,8 @@
 #include "messageoutput.h"
 #include "project.h"
 
+#include "viewmanager.h"
+
 
 QuantaPlugin::QuantaPlugin()
  : m_isRunning(false)
@@ -55,6 +57,7 @@ QuantaPlugin::QuantaPlugin()
  m_action = 0L;
  m_icon = "";
  m_part = 0L;
+ m_view = 0L;
 }
 
 QuantaPlugin::~QuantaPlugin()
@@ -109,15 +112,15 @@ bool QuantaPlugin::load()
   QWidget *targetWidget;
   if(ow == i18n("Editor Tab"))
   {
-    targetWidget = quantaApp->view();
+     targetWidget = quantaApp; //FIXME:
   } else
   if(ow == i18n("Editor Frame"))
   {
-    targetWidget = quantaApp->rightWidget();
+//FIXME:   targetWidget = quantaApp->rightWidget();
   }
   else if(ow == i18n("Message Frame"))
   {
-    targetWidget = quantaApp->bottomWidget();
+//FIXME:    targetWidget = quantaApp->bottomWidget();
   }
   else
   {
@@ -146,14 +149,15 @@ bool QuantaPlugin::run()
   if(isLoaded())
   {
     bool result = true;
-    if (quantaApp->view()->writeExists())
+    QuantaView *view = ViewManager::ref()->activeView();
+    if (view->document())
     {
       switch (m_input)
       {
-        case 1: { result = m_part->openURL(quantaApp->view()->write()->url());
+        case 1: { result = m_part->openURL(view->document()->url());
                   break;
                 }
-        case 2: { KURL url = quantaApp->view()->write()->url();
+        case 2: { KURL url = view->document()->url();
                   url.setPath(url.directory());
                   url.adjustPath(1);
                   result = m_part->openURL(url);
@@ -161,15 +165,15 @@ bool QuantaPlugin::run()
                 }
         case 3: { KURL url;
                   if ( Project::ref()->hasProject() &&
-                       (Project::ref()->contains(quantaApp->view()->write()->url()) ||
-                        quantaApp->view()->write()->isUntitled())
+                       (Project::ref()->contains(view->document()->url()) ||
+                        view->document()->isUntitled())
                      )
                   {
                     url = Project::ref()->projectBaseURL();
                   }
                   else
                   {
-                    url = quantaApp->view()->write()->url();
+                    url = view->document()->url();
                     url.setPath(url.directory());
                     url.adjustPath(1);
                   }
@@ -352,10 +356,12 @@ void QuantaPlugin::setIcon(const QString& a_icon)
 
 void QuantaPlugin::addWidget()
 {
+//FIXME:
+/*
   QString ow = outputWindow();
   if(ow == i18n("Message Frame"))
   {
-    QWidgetStack *stack = quantaApp->bottomWidget();
+   QWidgetStack *stack = quantaApp->bottomWidget();
     stack->addWidget(m_part->widget(), 3);
     stack->raiseWidget(m_part->widget());
   }
@@ -364,23 +370,17 @@ void QuantaPlugin::addWidget()
     QWidgetStack *stack = quantaApp->rightWidget();
     stack->addWidget(m_part->widget(), 3);
     stack->raiseWidget(m_part->widget());
-  } else if (ow == i18n("Editor Tab"))
+  } else if (ow == i18n("Editor Tab")) */
   {
-    QuantaView *view = quantaApp->view();
-    QWidget *w = m_part->widget();
-    view->addWrite(w, m_name);
-    if (qConfig.showCloseButtons)
-      view->writeTab()->changeTab(w, SmallIcon("fileclose"), m_name);
-    else
-      view->writeTab()->changeTab(w, UserIcon(m_icon), m_name);
-    view->writeTab()->showPage(w);
+    m_view = ViewManager::ref()->createView();
+    m_view->addPlugin(this);
   }
-
-  m_part->widget()->show();
 }
 
 void QuantaPlugin::removeWidget()
 {
+//FIXME:
+  /*
   QString ow = outputWindow();
   if(ow == i18n("Message Frame"))
   {
@@ -394,9 +394,9 @@ void QuantaPlugin::removeWidget()
     stack->removeWidget(m_part->widget());
     stack->raiseWidget(0);
   }
-  else if(ow == i18n("Editor Tab"))
+  else if(ow == i18n("Editor Tab")) */
   {
-    quantaApp->view()->writeTab()->removePage(m_part->widget());
+    ViewManager::ref()->removeView(m_view);
   }
 }
 

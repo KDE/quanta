@@ -20,11 +20,12 @@
 #include "document.h"
 #include "resource.h"
 #include "quantacommon.h"
- 
+#include "viewmanager.h"
+
 DCOPSettings::DCOPSettings() : DCOPObject("SettingsIf")
 {
 }
- 
+
 QString DCOPSettings::encoding()
 {
   QString encoding = quantaApp->defaultEncoding();
@@ -34,10 +35,11 @@ QString DCOPSettings::encoding()
 
 QString DCOPSettings::dtep()
 {
-  if (quantaApp->view()->writeExists()) 
-    return quantaApp->view()->write()->defaultDTD()->nickName;
+  Document *w = ViewManager::ref()->activeView()->document();
+  if (w)
+    return w->defaultDTD()->nickName;
   else
-    return qConfig.defaultDocType;  
+    return qConfig.defaultDocType;
 }
 
 
