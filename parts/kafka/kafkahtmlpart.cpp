@@ -1197,9 +1197,14 @@ void KafkaWidget::keyBackspace()
         DOM::DOMString nodeText = m_currentNode.nodeValue();
         DOM::DOMString textSplitted = nodeText.split(d->m_cursorOffset);
         nodeText.split(d->m_cursorOffset - 1);
+        
+#ifdef LIGHT_DEBUG
+        kdDebug(25001) << nodeText.string() << textSplitted.string() << endl;
+#endif
+        
         m_currentNode.setNodeValue(nodeText + textSplitted);
         m_currentNode.parentNode().applyChanges();
-        d->m_cursorOffset--;
+        --(d->m_cursorOffset);
         emit domNodeModified(m_currentNode, m_modifs);
         postprocessCursorPosition();
         setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
@@ -1289,6 +1294,17 @@ void KafkaWidget::keyBackspace()
 #endif
 
         attrs = w->getAttrs(_nodePrev);
+        if(!attrs)
+        {
+            kdError(25001) << "NULL kNodeAttrs instance: attrs = w->getAttrs(_nodePrev);" << endl;
+            kafkaCommon::coutDomTree(_nodePrev, 3);
+            return; 
+            // FIXME Understand why this happen.
+//             Test case:
+//             1. Write two words in a new VPL document and make the first one a link;
+//             2. Put the cursor at most right and then press backspace until it crashes
+//             When you get to the link the cursor stays in the same plave and you have press it several times until it crashes.
+        }
 
         //If this Node can't be deleted, we stop here.
         if(!attrs->cbDel())
