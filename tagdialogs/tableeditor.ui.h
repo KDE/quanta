@@ -335,7 +335,6 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
         newNum++;
         m_tbody->parse("<tbody>", m_write);
       }
-      tableRowTags.clear();
       nRow++;
       m_rowSpin->setValue(nRow);
       nCol = 0;
@@ -360,7 +359,9 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           tableNode.merged = false;
           tableRowTags.append(tableNode);
         }
-        m_tableTags->append(tableRowTags);
+        if (!tableRowTags.isEmpty())
+          m_tableTags->append(tableRowTags);
+        tableRowTags.clear();
       }
     }
     else if (tagName == "th" || tagName == "td")
@@ -451,10 +452,10 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
     }
     n = n->nextSibling();
   }
-  if (missingBody) {
+/*  if (missingBody) { //Hm, why do we need it? I don't remember now. ;-)
       rowSpinBox->setValue(nRow);
       colSpinBox->setValue(maxCol);
-  }
+  } */
   //by default the current page is the data handling page
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
@@ -539,10 +540,12 @@ QString TableEditor::readModifiedTable()
 {
   QString tableString;
   tableString = m_table->toString();
-  tableString += indent(2);
-  tableString += "<" + QuantaCommon::tagCase("caption") + ">";
-  tableString += captionText->text();
-  tableString += "</" + QuantaCommon::tagCase("caption") + ">";
+  if (!captionText->text().isEmpty()) {
+    tableString += indent(2);
+    tableString += "<" + QuantaCommon::tagCase("caption") + ">";
+    tableString += captionText->text();
+    tableString += "</" + QuantaCommon::tagCase("caption") + ">";
+  }
   for (QValueList<Tag*>::Iterator it = m_colTags.begin(); it != m_colTags.end(); ++it) {
     tableString += indent(2);
     tableString += (*it)->toString();
@@ -592,7 +595,6 @@ QString TableEditor::readModifiedTable()
   tableString += "</" + QuantaCommon::tagCase(m_tbody->name) +">";
   tableString += "\n";
   tableString += "</" + QuantaCommon::tagCase(m_table->name) + ">";
-  tableString += "\n";
 
   //kdDebug(24000) << tableString << endl;
   return tableString;
