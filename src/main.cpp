@@ -55,6 +55,7 @@ static KCmdLineOptions options[] =
   { "+[File]", I18N_NOOP("File to open"), 0 },
   { "unique", I18N_NOOP("Whether we start as a one-instance application"), 0 },
   { "nologo", I18N_NOOP("Do not show the nice logo during startup"), 0 },
+  { "resetlayout", I18N_NOOP("Reset the layout of the user interface to the default"), 0},
   KCmdLineLastOption
   // INSERT YOUR COMMANDLINE OPTIONS HERE
 };
