@@ -85,9 +85,6 @@ public:
   a non-Document object */
   Document *document() {return m_document;};
 
-  /** Returns the VPL (Kafka) document associated with the view */
-  KafkaDocument *kafkaDocument() {return m_kafkaDocument;}
-
   /**Adds a QuantaPlugin object to the view.*/
   void addPlugin(QuantaPlugin *plugin);
 

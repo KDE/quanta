@@ -46,16 +46,20 @@ struct DTDStruct;
  * kafka tree.
  * By Quanta Node, i mean Node (cf quanta/parser/node.h)
  * By Kafka Node, i mean DOM::Node (cf <dom/dom_node.h>)
+ * It is a singleton class.
  */
 class KafkaDocument : public QObject
 {
 Q_OBJECT
 public:
+        /** Returns a reference to the KafkaDocument object */
+        static KafkaDocument* const ref(QWidget *parent = 0L, QWidget *widgetParent = 0L, const char *name = 0L)
+        {
+          static KafkaDocument *m_ref;
+          if (!m_ref) m_ref = new KafkaDocument(parent, widgetParent, name);
+          return m_ref;
+        }
 
-	/**
-	 * Create a KafkaWidget.
-	 */
-	KafkaDocument(QWidget *parent, QWidget *widgetParent, const char *name);
 	~KafkaDocument();
 
 
@@ -404,7 +408,12 @@ public:
 	NodeEnhancer *mainEnhancer;
 
 private:
-	QMap<QString, QString> decodedChars;
+	/**
+	 * Create a KafkaWidget.
+	 */
+	KafkaDocument(QWidget *parent, QWidget *widgetParent, const char *name);
+
+        QMap<QString, QString> decodedChars;
 	QMap<QString, QString> encodedChars;
 	QPtrDict<kNodeAttrs> domNodeProps;
 	KafkaWidget *m_kafkaPart;

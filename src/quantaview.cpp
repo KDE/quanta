@@ -122,7 +122,6 @@ QuantaView::~QuantaView()
       m_plugin->unload();
       m_plugin->m_action->setChecked(false);
     }
-    delete m_kafkaDocument;
     delete m_document;
     delete m_plugin;
 }
@@ -165,8 +164,7 @@ void QuantaView::addDocument(Document *document)
     setCaption(m_document->url().fileName());
 
 #ifdef BUILD_KAFKAPART
-   m_kafkaDocument = new KafkaDocument(0, 0, "KafkaPart");
-   m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
+   m_kafkaDocument =KafkaDocument::ref();
    m_kafkaDocument->getKafkaWidget()->view()->reparent(m_VPLArea, 0, QPoint(), false);
 
   connect(m_kafkaDocument->getKafkaWidget(), SIGNAL(hasFocus(bool)),

@@ -199,7 +199,7 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 			text += node->tag->tagStr();
 			node = kafkaCommon::getNextNode(node, b, titleNode);
 		}
-		title->setText(ViewManager::ref()->activeView()->kafkaDocument()->getDecodedText(text));
+		title->setText(KafkaDocument::ref()->getDecodedText(text));
 	}
 
 	//set the link
@@ -412,7 +412,7 @@ void htmlDocumentProperties::aboutToClose()
 				view->document(), titleNode, 0L, 0L, modifs);
 		}
 		else
-			node->tag->setStr(view->kafkaDocument()->getEncodedText(title->text()));
+			node->tag->setStr(KafkaDocument::ref()->getEncodedText(title->text()));
 	}
 
 	//set the METAs if necessary

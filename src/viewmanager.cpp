@@ -37,6 +37,8 @@
 
 ViewManager::ViewManager(QObject *parent, const char *name) : QObject(parent, name)
 {
+   KafkaDocument *m_kafkaDocument = KafkaDocument::ref(0, 0, "KafkaPart");
+   m_kafkaDocument->getKafkaWidget()->view()->setMinimumHeight(50);
 
 
 }

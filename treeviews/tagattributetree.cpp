@@ -446,13 +446,13 @@ void TagAttributeTree::editorContentChanged()
         if(m_node->rootNode())
         {
           domNode = *m_node->rootNode();
-          view->kafkaDocument()->disconnectDomNodeFromQuantaNode(domNode);
+          KafkaDocument::ref()->disconnectDomNodeFromQuantaNode(domNode);
           domNode.parentNode().removeChild(domNode);
         }
         if(m_node->leafNode() && m_node->rootNode() && *m_node->rootNode() != *m_node->leafNode())
         {
           domNode = *m_node->leafNode();
-          view->kafkaDocument()->disconnectDomNodeFromQuantaNode(domNode);
+          KafkaDocument::ref()->disconnectDomNodeFromQuantaNode(domNode);
           domNode.parentNode().removeChild(domNode);
         }
         if(m_node->rootNode())
@@ -462,7 +462,7 @@ void TagAttributeTree::editorContentChanged()
           delete m_node->leafNode();
         m_node->setLeafNode(0L);
 
-        view->kafkaDocument()->buildKafkaNodeFromNode(m_node);
+        KafkaDocument::ref()->buildKafkaNodeFromNode(m_node);
         if(!domNode.isNull() && m_node->leafNode())
         {
            while(!domNode.firstChild().isNull())
@@ -620,13 +620,13 @@ void EnhancedTagAttributeTree::deleteSubTree()
     curNode->tag->beginPos(curLine, curCol);
   else
   {
-    view->kafkaDocument()->getKafkaWidget()->getCurrentNode(domNode, offset);
+    KafkaDocument::ref()->getKafkaWidget()->getCurrentNode(domNode, offset);
     if(!domNode.previousSibling().isNull())
       domNode = domNode.previousSibling();
     else if(!domNode.parentNode().isNull())
       domNode = domNode.parentNode();
     else
-      domNode = view->kafkaDocument()->getKafkaWidget()->document();
+      domNode = KafkaDocument::ref()->getKafkaWidget()->document();
     if(domNode.nodeType() == DOM::Node::TEXT_NODE)
       offset = domNode.nodeValue().length();
     else
@@ -650,8 +650,8 @@ void EnhancedTagAttributeTree::deleteSubTree()
   else
   {
     domNode = kafkaCommon::getNodeFromLocation(loc,
-    view->kafkaDocument()->getKafkaWidget()->document());
-    view->kafkaDocument()->getKafkaWidget()->setCurrentNode(domNode, offset);
+    KafkaDocument::ref()->getKafkaWidget()->document());
+    KafkaDocument::ref()->getKafkaWidget()->setCurrentNode(domNode, offset);
   }
 
 #else
@@ -700,13 +700,13 @@ void EnhancedTagAttributeTree::deleteNode()
     curNode->tag->beginPos(curLine, curCol);
   else
   {
-    view->kafkaDocument()->getKafkaWidget()->getCurrentNode(domNode, offset);
+    KafkaDocument::ref()->getKafkaWidget()->getCurrentNode(domNode, offset);
     if(!domNode.previousSibling().isNull())
       domNode = domNode.previousSibling();
     else if(!domNode.parentNode().isNull())
       domNode = domNode.parentNode();
     else
-      domNode = view->kafkaDocument()->getKafkaWidget()->document();
+      domNode = KafkaDocument::ref()->getKafkaWidget()->document();
     if(domNode.nodeType() == DOM::Node::TEXT_NODE)
       offset = domNode.nodeValue().length();
     else
@@ -753,8 +753,8 @@ void EnhancedTagAttributeTree::deleteNode()
   else
   {
     domNode = kafkaCommon::getNodeFromLocation(loc,
-    view->kafkaDocument()->getKafkaWidget()->document());
-    view->kafkaDocument()->getKafkaWidget()->setCurrentNode(domNode, offset);
+    KafkaDocument::ref()->getKafkaWidget()->document());
+    KafkaDocument::ref()->getKafkaWidget()->setCurrentNode(domNode, offset);
   }
 
 #else

@@ -524,7 +524,7 @@ void TagAction::insertOutputInTheNodeTree(QString str1, QString str2, Node *node
 		kdDebug(25001)<< "TagAction::insertOutputInTheNodeTree() - str1 : " << str1 <<
 			" - str2 : " << str2 << endl;
 #endif
-	KafkaDocument *wkafka = m_view->kafkaDocument();
+	KafkaDocument *wkafka = KafkaDocument::ref();
 	KafkaWidget *kafkaPart = wkafka->getKafkaWidget();
 	NodeModifsSet *modifs;
 	DOM::Node domNode, domStartContainer, domEndContainer;
