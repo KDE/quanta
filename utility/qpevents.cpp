@@ -40,7 +40,7 @@ QPEvents::QPEvents(QObject *parent, const char *name)
    m_eventNames["after_upload"] = i18n("After upload");
    m_eventNames["after_project_add"] = i18n("After addition to project");
    m_eventNames["after_project_remove"] = i18n("After removal from project");
-   m_eventNames["after_commit"] = i18n("After comitting to CVS");
+   m_eventNames["after_commit"] = i18n("After committing to CVS");
 
    m_actionNames["email"] = i18n("Send email");
    m_actionNames["log"] = i18n("Log event");
