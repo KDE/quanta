@@ -74,6 +74,10 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
         - possibility of as-you-type replacing of accented chars [#23164]
         - add support for upload profiles [#54366]
         - move the selection to the current file in the project tree [#62878]
+        - new DCOP interfaces and methods:
+             QString WindowManagerIf::documentFolderForURL(QString url);
+             QString WindowManagerIf::urlWithPreviewPrefix(QString url);
+
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:

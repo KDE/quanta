@@ -3698,6 +3698,12 @@ QString QuantaApp::documentFolderForURL(QString url)
   return Project::ref()->documentFolderForURL(u).url();
 }
 
+QString QuantaApp::urlWithPreviewPrefix(QString url)
+{
+  KURL u = KURL::fromPathOrURL(url);
+  return Project::ref()->urlWithPrefix(u).url();
+}
+
 void QuantaApp::slotAutosaveTimer()
 {
   m_config->reparseConfiguration();

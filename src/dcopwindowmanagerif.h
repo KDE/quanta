@@ -35,6 +35,7 @@ class DCOPWindowManagerIf : virtual public DCOPObject
   virtual void openFile(QString file, int lineNumber, int columnNumber) = 0;
   virtual QString saveCurrentFile() = 0;
   virtual QString documentFolderForURL(QString url) = 0;
+  virtual QString urlWithPreviewPrefix(QString url) = 0;
 };
 
 #endif

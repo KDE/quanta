@@ -1698,7 +1698,7 @@ void Project::slotRescanPrjDir()
 /** Returns the relative url with the prefix inserted. */
 KURL Project::urlWithPrefix(const KURL& url)
 {
-  KURL returnUrl;
+  KURL returnUrl = url;
 
   if (usePreviewPrefix)
   {
@@ -1708,9 +1708,6 @@ KURL Project::urlWithPrefix(const KURL& url)
       returnUrl = previewPrefix;
       returnUrl.setPath(previewPrefix.path(1) + tempUrl.path());
     }
-  } else
-  {
-     returnUrl = url;
   }
   return returnUrl;
 }
