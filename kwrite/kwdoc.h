@@ -269,6 +269,7 @@ class KWriteDoc : public KTextEditor::Document {
     QColor &cursorCol(int x, int y);
     QFont &getTextFont(int x, int y);
     void paintTextLine(QPainter &, int line, int xStart, int xEnd, bool showTabs);
+    void paintTextLine(QPainter &,int,int, int line, int xStart, int xEnd, bool showTabs);
 //    void printTextLine(QPainter &, int line, int xEnd, int y);
 
     void setURL( const KURL &url, bool updateHighlight );

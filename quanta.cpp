@@ -98,7 +98,7 @@ void QuantaApp::slotFileOpen()
 {
   KURL url = KFileDialog::getOpenURL( QDir::homeDirPath(), QString::null, this);
     
-  slotFileOpen( url );
+  if ( !url.url().isEmpty() ) slotFileOpen( url );
 }
 
 void QuantaApp::slotFileOpen( KURL &url )
@@ -771,16 +771,20 @@ void QuantaApp::slotFtpClient()
 */	
 }
 
-void QuantaApp::slotShowBottDock() { bottdock->changeHideShowState();}
 void QuantaApp::slotShowLeftDock() { ftabdock->changeHideShowState();}
 void QuantaApp::slotShowFTabDock() { ftabdock->changeHideShowState();}
 void QuantaApp::slotShowPTabDock() { ptabdock->changeHideShowState();}
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
+void QuantaApp::slotShowBottDock() 
+{ 
+  if ( bottdock->parent() == 0L )
+       bottdock->manualDock(maindock, KDockWidget::DockBottom, 80);
+  else bottdock->changeHideShowState();
+}
 
 void QuantaApp::settingsMenuAboutToShow()
 {
-  showTreeAction    ->setChecked( ftabdock->isVisible() );
   showMessagesAction->setChecked( bottdock->isVisible() );
 }
 

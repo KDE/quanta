@@ -444,6 +444,12 @@ void QuantaApp::readOptions()
   resize( config->readSizeEntry("Geometry", &QSize(800,580)));
   
   readDockConfig();
+  
+//  if ( !bottdock->isVisible() ) { 
+//    bottdock ->manualDock(maindock, KDockWidget::DockBottom);
+//    bottdock ->changeHideShowState();
+//  }
+//  if ( !ftabdock->isVisible() ) ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
 }
 
 void QuantaApp::openLastFiles()
@@ -530,13 +536,8 @@ void QuantaApp::initActions()
 {
     // File actions
     //
-    (void) new KAction( i18n( "&New" ), UserIcon("new"), KStdAccel::key(KStdAccel::New),
-                        this, SLOT( slotFileNew() ),
-                        actionCollection(), "file_new" );
-    
-    (void) new KAction( i18n( "&Open" ), UserIcon("open"), KStdAccel::key(KStdAccel::Open),
-                        this, SLOT( slotFileOpen() ),
-                        actionCollection(), "file_open" );
+    KStdAction::openNew( this, SLOT( slotFileNew()  ), actionCollection(), "file_new" );
+    KStdAction::open   ( this, SLOT( slotFileOpen() ), actionCollection(), "file_open" );
                         
     fileRecent =
       KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
@@ -562,13 +563,8 @@ void QuantaApp::initActions()
 
     // Edit actions
     //
-    undoAction = new KAction( i18n( "&Undo" ), UserIcon("undo"), KStdAccel::key(KStdAccel::Undo),
-                        doc, SLOT( undo() ),
-                        actionCollection(), "edit_undo" );
-                        
-    redoAction = new KAction( i18n( "&Redo" ), UserIcon("redo"), KStdAccel::key(KStdAccel::Redo),
-                        doc, SLOT( redo() ),
-                        actionCollection(), "edit_redo" );
+    undoAction = KStdAction::undo( doc, SLOT( undo() ), actionCollection(), "edit_undo" );
+    redoAction = KStdAction::redo( doc, SLOT( redo() ), actionCollection(), "edit_redo" );
 
     KAction *undoRedo 
       = new KAction( i18n( "Undo/Redo &History..."), 0, 
@@ -577,17 +573,9 @@ void QuantaApp::initActions()
                                      
     undoRedo->setGroup( "edit_undo_merge" );
     
-    cutAction = new KAction( i18n( "Cu&t" ), UserIcon("cut"), KStdAccel::key(KStdAccel::Cut),
-                        doc, SLOT( cut() ),
-                        actionCollection(), "edit_cut" );
-                        
-    copyAction = new KAction( i18n( "&Copy" ), UserIcon("copy"), KStdAccel::key(KStdAccel::Copy),
-                        doc, SLOT( copy() ),
-                        actionCollection(), "edit_copy" );   
-                        
-    (void) new KAction( i18n( "&Paste" ), UserIcon("paste"), KStdAccel::key(KStdAccel::Paste),
-                        doc, SLOT( paste() ),
-                        actionCollection(), "edit_paste" );                    
+    cutAction  = KStdAction::cut  ( doc, SLOT( cut() ),  actionCollection(), "edit_cut" );
+    copyAction = KStdAction::copy ( doc, SLOT( copy() ), actionCollection(), "edit_copy" );   
+                 KStdAction::paste( doc, SLOT( paste() ),actionCollection(), "edit_paste" );                    
                         
     KStdAction::selectAll( doc, SLOT( selectAll()), actionCollection());
 
@@ -604,10 +592,7 @@ void QuantaApp::initActions()
                                doc, SLOT( verticalSelect()),
                                actionCollection(), "vertical_selection" );
                                
-    (void) new KAction( i18n( "&Find" ), UserIcon("find"), KStdAccel::key(KStdAccel::Find),
-                        doc, SLOT( find() ),
-                        actionCollection(), "edit_find" );
-                        
+    KStdAction::find( doc, SLOT( find() ), actionCollection(), "edit_find" );
     findNextAction = KStdAction::findNext( doc, SLOT( findAgain()), actionCollection());
     KStdAction::replace ( doc, SLOT( replace()),   actionCollection());
 
@@ -618,9 +603,7 @@ void QuantaApp::initActions()
 
     // Tool actions
     //
-    (void) new KAction( i18n( "&Go To Line..." ), CTRL+Key_G, 
-                        doc, SLOT( gotoLine() ),
-                        actionCollection(), "goto_line" );
+    KStdAction::gotoLine( doc, SLOT( gotoLine() ), actionCollection(), "goto_line" );
 
     (void) new KAction( i18n( "&Indent" ), ALT+SHIFT+Key_Right, 
                         doc, SLOT( indent() ),
@@ -726,11 +709,11 @@ void QuantaApp::initActions()
 
     // Project actions
     //
-    (void) new KAction( i18n( "&New Project..." ), SmallIcon("idea"), 0, 
+    (void) new KAction( i18n( "&New Project..." ), 0, 
                         project, SLOT( newProject() ),
                         actionCollection(), "new_project" );
                         
-    (void) new KAction( i18n( "&Open Project..." ), UserIcon("openprj"), 0,
+    (void) new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
                         project, SLOT( openProject() ),
                         actionCollection(), "open_project" );
                         

@@ -143,6 +143,7 @@ KWriteView::KWriteView(KWrite *write, KWriteDoc *doc, bool HandleOwnDND)
 
   QWidget::setCursor(ibeamCursor);
   setBackgroundMode(NoBackground);
+  //setBackgroundColor( doc->colors[4] );
   KCursor::setAutoHideCursor( this, true );
 
   setFocusPolicy(StrongFocus);
@@ -1320,7 +1321,8 @@ void KWriteView::paintEvent(QPaintEvent *e) {
 //    updateR.x(),updateR.y(), updateR.width(), updateR.height() );
 
   QPainter paint;
-  paint.begin(drawBuffer);
+//  paint.begin(drawBuffer);
+  paint.begin(this);
 
   xStart = xPos-2 + updateR.x();
   xEnd = xStart + updateR.width();
@@ -1331,9 +1333,10 @@ void KWriteView::paintEvent(QPaintEvent *e) {
   yEnd = updateR.y() + updateR.height();
 
   while (y < yEnd) {
-    kWriteDoc->paintTextLine(paint, line, xStart, xEnd, kWrite->configFlags & cfShowTabs);
+//    kWriteDoc->paintTextLine(paint, line, xStart, xEnd, kWrite->configFlags & cfShowTabs);
+    kWriteDoc->paintTextLine(paint,updateR.x(), y, line, xStart, xEnd, kWrite->configFlags & cfShowTabs);
 //    if (cursorOn && line == cursor.y) paintCursor(paint,cXPos - xStart,h);
-    bitBlt(this, updateR.x(), y, drawBuffer, 0, 0, updateR.width(), h);
+//    bitBlt(this, updateR.x(), y, drawBuffer, 0, 0, updateR.width(), h);
 
     line++;
     y += h;

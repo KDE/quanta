@@ -2042,6 +2042,141 @@ void KWriteDoc::paintTextLine(QPainter &paint, int line, int xStart, int xEnd,
 //printf(" %d %d\n", tv2.tv_usec - tv1.tv_usec, tv3.tv_usec - tv2.tv_usec);
 }
 
+void KWriteDoc::paintTextLine(QPainter &paint,int xx, int yy, int line, int xStart, int xEnd,
+  bool showTabs) {
+
+  int y;
+  TextLine::Ptr textLine;
+  int len;
+  const QChar *s;
+  int z, x;
+  QChar ch;
+  Attribute *a = 0L;
+  int attr, nextAttr;
+  int xs;
+  int xc, zc;
+
+//  struct timeval tv1, tv2, tv3; //for profiling
+//  struct timezone tz;
+
+  y = 0;//line*fontHeight - yPos;
+  if (line > lastLine()) {
+    paint.fillRect(0+xx, y+yy, xEnd - xStart,fontHeight, colors[4]);
+    return;
+  }
+
+  textLine = getTextLine(line);
+  len = textLine->length();
+  s = textLine->getText();
+
+  // skip to first visible character
+  x = 0;
+  z = 0;
+  do {
+    xc = x;
+    zc = z;
+    if (z == len) break;
+    ch = s[z];//textLine->getChar(z);
+    if (ch == '\t') {
+      x += m_tabWidth - (x % m_tabWidth);
+    } else {
+      a = &m_attribs[textLine->getAttr(z)];
+      x += a->fm.width(ch);//a->width(ch);
+    }
+    z++;
+  } while (x <= xStart);
+
+//gettimeofday(&tv1, &tz);
+
+  // draw background
+  xs = xStart;
+  attr = textLine->getRawAttr(zc);
+  while (x < xEnd) {
+    nextAttr = textLine->getRawAttr(z);
+    if ((nextAttr ^ attr) & (taSelectMask | 256)) {
+      paint.fillRect(xs - xStart+xx, y+yy, x - xs, fontHeight, colors[attr >> taShift]);
+      xs = x;
+      attr = nextAttr;
+    }
+    if (z == len) break;
+    ch = s[z];//textLine->getChar(z);
+    if (ch == '\t') {
+      x += m_tabWidth - (x % m_tabWidth);
+    } else {
+      a = &m_attribs[attr & taAttrMask];
+      x += a->fm.width(ch);//a->width(ch);
+    }
+    z++;
+  }
+  paint.fillRect(xs - xStart+xx, y+yy, xEnd - xs, fontHeight, colors[attr >> taShift]);
+  len = z; //reduce length to visible length
+
+//gettimeofday(&tv2, &tz);
+
+  // draw text
+  x = xc;
+  z = zc;
+  y += fontAscent;// -1;
+  attr = -1;
+  while (z < len) {
+    ch = s[z];//textLine->getChar(z);
+    if (ch == '\t') {
+      if (z > zc) {
+        //this should cause no copy at all
+        QConstString str((QChar *) &s[zc], z - zc /*+1*/);
+        QString s = str.string();
+        paint.drawText(x - xStart+xx, y+yy, s);
+        x += a->fm.width(s);//a->width(s);//&s[zc], z - zc);
+      }
+      zc = z +1;
+
+      if (showTabs) {
+        nextAttr = textLine->getRawAttr(z);
+        if (nextAttr != attr) {
+          attr = nextAttr;
+          a = &m_attribs[attr & taAttrMask];
+
+          if (attr & taSelectMask) paint.setPen(a->selCol);
+            else paint.setPen(a->col);
+          paint.setFont(a->font);
+        }
+
+//        paint.drawLine(x - xStart, y -2, x - xStart, y);
+//        paint.drawLine(x - xStart, y, x - xStart + 2, y);
+        paint.drawPoint(x - xStart+xx, y+yy);
+        paint.drawPoint(x - xStart +1+xx, y+yy);
+        paint.drawPoint(x - xStart+xx, y -1+yy);
+      }
+      x += m_tabWidth - (x % m_tabWidth);
+    } else {
+      nextAttr = textLine->getRawAttr(z);
+      if (nextAttr != attr) {
+        if (z > zc) {
+          QConstString str((QChar *) &s[zc], z - zc /*+1*/);
+          QString s = str.string();
+          paint.drawText(x - xStart+xx, y+yy, s);
+          x += a->fm.width(s);//a->width(s);//&s[zc], z - zc);
+          zc = z;
+        }
+        attr = nextAttr;
+        a = &m_attribs[attr & taAttrMask];
+
+        if (attr & taSelectMask) paint.setPen(a->selCol);
+          else paint.setPen(a->col);
+        paint.setFont(a->font);
+      }
+    }
+    z++;
+  }
+  if (z > zc) {
+    QConstString str((QChar *) &s[zc], z - zc /*+1*/);
+    paint.drawText(x - xStart+xx, y+yy, str.string());
+  }
+//gettimeofday(&tv3, &tz);
+//printf(" %d %d\n", tv2.tv_usec - tv1.tv_usec, tv3.tv_usec - tv2.tv_usec);
+}
+
+
 /*
 void KWriteDoc::printTextLine(QPainter &paint, int line, int xEnd, int y) {
   TextLine::Ptr textLine;

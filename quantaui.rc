@@ -158,7 +158,6 @@
     <Menu name="settings"><text>&amp;Settings</text>
       <Action name="view_toolbar"/>
       <Action name="view_statusbar"/>
-      <Action name="show_tree"/>
       <Action name="show_messages"/>
       <Separator/>
       <Action name="editor_options"/>
