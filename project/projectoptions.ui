@@ -304,6 +304,18 @@
         <receiver>TextLabel1_4</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>buttonTmpl</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectOptions</receiver>
+        <slot>buttonTmpl_clicked()</slot>
+    </connection>
+    <connection>
+        <sender>buttonToolbar</sender>
+        <signal>clicked()</signal>
+        <receiver>ProjectOptions</receiver>
+        <slot>buttonToolbar_clicked()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>linePrjName</tabstop>
@@ -320,5 +332,12 @@
     <tabstop>checkPrefix</tabstop>
     <tabstop>linePrefix</tabstop>
 </tabstops>
+<includes>
+    <include location="local" impldecl="in implementation">projectoptions.ui.h</include>
+</includes>
+<slots>
+    <slot>buttonTmpl_clicked()</slot>
+    <slot>buttonToolbar_clicked()</slot>
+</slots>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
