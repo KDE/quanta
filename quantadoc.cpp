@@ -146,8 +146,16 @@ bool QuantaDoc::newDocument( const KURL& url )
   return true;
 }
 
-void QuantaDoc::openDocument(const KURL& url, QString encoding)
+void QuantaDoc::openDocument(const KURL& urlToOpen, QString encoding)
 {
+  KURL url = urlToOpen;
+  if (url.isLocalFile())
+  {
+    QString path = QDir(url.path()).canonicalPath();
+    if (!path.isEmpty())
+        url.setPath(path);
+  }
+
 //  Document *ww = write();
   //kdDebug() << k_funcinfo << "Encoding is: " << encoding << endl;
   if ( !newDocument( url )) return;

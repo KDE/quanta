@@ -75,7 +75,7 @@ void Parser::coutTree(Node *node, int indent)
  QString output;
  while (node)
  {
-	output="";
+        output="";
    for (int i =0; i < indent; i++) output +=" ";
    if (node->tag->type != Tag::Text) output += node->tag->name;
    else output+= node->tag->tagStr();
@@ -177,7 +177,7 @@ Node * Parser::subParse( Node * parent, int &line, int &col )
                    firstNode = node;
                if ( prevNode )
                    prevNode->next = node;
-               tag->type = Tag::CSS;    
+               tag->type = Tag::CSS;
                node->tag = tag;
                node->prev = prevNode;
                node->next = 0L;
@@ -277,7 +277,7 @@ void Parser::rebuildDTDList()
   uint line, col;
   write->viewCursorIf->cursorPositionReal(&line, &col);
   QString start, end;
-  DTDListNode dtdNode;  
+  DTDListNode dtdNode;
   for (uint i = 0; i < dtdList.count(); i++)
   {
     dtdNode = dtdList[i];
