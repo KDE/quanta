@@ -151,9 +151,9 @@ void ProjectUpload::slotBuildTree()
          modified.append( u );
          it->setSelected(true);
        }
+       totalProgress->setValue(i);
      }
    }
-   totalProgress->advance(1);
  }
 
  list->slotSelectFile();

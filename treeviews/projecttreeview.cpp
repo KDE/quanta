@@ -50,6 +50,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
   setRootIsDecorated( true );
   header()->hide();
   setSorting( 0 );
+  urlList.clear();
 
   setFrameStyle( Panel | Sunken );
   setLineWidth( 2 );
@@ -57,7 +58,7 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 
 	setFocusPolicy(QWidget::ClickFocus);
 	
-	projectDir =  new ProjectTreeFolder( this, i18n("No project"), baseURL);
+	projectDir =  new ProjectTreeFolder( this, i18n("No project"), KURL());
 	projectDir -> setPixmap( 0, SmallIcon("folder"));
 	projectDir -> setOpen( true );
 
@@ -106,10 +107,10 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
           this, SLOT  (slotSelectFile(QListViewItem *)));
 
 	connect(this, SIGNAL(rightButtonPressed(QListViewItem*, const QPoint&, int)),
-            this, SLOT  (slotMenu(QListViewItem*, const QPoint&, int)));
+          this, SLOT  (slotMenu(QListViewItem*, const QPoint&, int)));
 
 	connect(this, SIGNAL(open(QListViewItem *)),
-            this, SLOT(slotSelectFile(QListViewItem *)));
+          this, SLOT(slotSelectFile(QListViewItem *)));
 }
 
 ProjectTreeView::~ProjectTreeView(){
@@ -180,13 +181,8 @@ void ProjectTreeView::slotSetProjectName( QString name )
 
 void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNewTree)
 {
-  quantaApp->statusBar()->changeItem( i18n("Building the project tree...") , IDS_STATUS);
-  progressBar->setTotalSteps(a_urlList.count()*2-2);
-  progressBar->setValue(0);
-  progressBar->setTextEnabled(true);
   if (buildNewTree)
   {
-    progressBar->setTotalSteps(a_urlList.count()-1);
     if (projectDir) delete projectDir;
     QString projectNameStr = projectName+" ";
     if (projectName != i18n("No Project"))
@@ -199,86 +195,14 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
        projectNameStr += "["+baseURL.protocol()+"://"+baseURL.user()+"@"+baseURL.host()+"]";
      }
     }
-    projectDir = new ProjectTreeFolder(this, projectNameStr, baseURL);
+    projectDir = new ProjectTreeFolder(this, projectNameStr, KURL());
     projectDir->setPixmap( 0, UserIcon("mini-modules") );
-    projectDir->setOpen( true );  
   }
+  projectDir->setOpen( false );
+  urlList = a_urlList;
 
 //first add all the new files to the treeview
-	int pos;
-
-	ProjectTreeFolder *newFolder = 0L;
-	ProjectTreeFolder *folder = projectDir;
-
-  urlList = a_urlList;
-	KURL url;
-	KURL::List::Iterator it;
-  uint col;
-  for ( it = urlList.begin(); it != urlList.end(); ++it )
-	{
-    url = *it;
-    folder = projectDir;
-    QString path = url.path();
-   col = 0;
-    //insert first the directories
-    while ( ( pos = path.find('/', col)) > 0 )
-    {
-      QString dir = path.mid(col, pos - col);
-      newFolder = 0L;
-      QListViewItem *item = folder->firstChild();
-      while( item && !newFolder)
-      {
-        if ( dir == item->text(0) ) //get the correct dir to insert into
-        {
-        	newFolder = dynamic_cast<ProjectTreeFolder *>(item);
-          break;
-        }
-        item = item->nextSibling();
-      }
-
-      if ( !newFolder ) 
-      {
-        KURL u = url;
-        u.setPath(url.path().left(pos)+"/");
-      	newFolder = new ProjectTreeFolder( folder, u); //no dir was found, so create it
-      }
-
-      folder = newFolder;
-      col = pos+1;
-    } //while 
-
-    if ( col < path.length()) 
-    {
-//      if ( (pos = path.find("/")) > 0) path = path.left(pos);
-//      else
-      path = url.fileName();
-      QListViewItem *item = folder->firstChild();
-      bool neednew = true;
-      while( item && neednew)
-      {
-        if ( path == item->text(0) ) neednew = false; //it is already present
-        item = item->nextSibling();
-      }
-      if (folder->text(0) == "CVS") neednew = false;
-  //    if (fname.isEmpty()) neednew = false;
-
-      if ( neednew )
-      {
-  /*      if ( (pos = url.path().find("/")) > 0)
-        {
-          KURL u = url;
-          u.setPath(url.path().left(pos)+"/");
-        	newFolder = new ProjectTreeFolder( folder, u); //no dir was found, so create it
-        } else*/
-        {
-        ProjectTreeFile *item = new ProjectTreeFile( folder, url.fileName(), url );
-        item->setIcon(url);//QExtFileInfo::toAbsolute(url, baseURL));
-        }
-      }       
-    }
-    progressBar->advance(1);
-  }
-    
+/*
 //now remove all the invalid items for the treeview
  if (!buildNewTree)
  {
@@ -310,7 +234,11 @@ void ProjectTreeView::slotReloadTree( const KURL::List &a_urlList, bool buildNew
   }
  }
   progressBar->setValue(0);
-  progressBar->setTextEnabled(false);
+  progressBar->setTextEnabled(false);*/
+
+  if (!buildNewTree) slotRemoveDeleted();
+
+  projectDir->setOpen(true);
 
   projectDir->sortChildItems(0,true);
   quantaApp->slotStatusMsg( i18n("Ready."));
@@ -439,5 +367,94 @@ void ProjectTreeView::slotUploadProject()
 {
   emit uploadProject();
 }
+
+/** Open a subfolder. */
+void ProjectTreeView::openFolder(ProjectTreeFolder *folder)
+{
+  progressBar->setTotalSteps(urlList.count()-1);
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(true);
+
+  QString path = folder->url.path();
+  QString name;
+  int pos;
+  bool isFolder;
+  for (uint i = 0; i < urlList.count(); i++)
+  {
+    KURL u = urlList[i];
+    name = u.path();
+    if (name.startsWith(path)) 
+    {
+      name.remove(0, path.length());
+      if (!name.isEmpty())
+      {
+        if ( (pos = name.find("/")) > 0)
+        {
+          name = name.left(pos);
+          isFolder = true;
+        }
+        else
+        {
+          name = u.fileName();
+          isFolder = false;
+        }
+
+        QListViewItem *item = folder->firstChild();
+        bool neednew = true;
+        while( item && neednew)
+        {
+          if ( name == item->text(0) ) neednew = false; //it is already present
+          item = item->nextSibling();
+        }
+        if (neednew)
+        {
+          if (isFolder)
+          {
+            u.setPath(path+name+"/");
+            new ProjectTreeFolder(this, folder, u); //no dir was found, so create it
+          } else
+          {
+            ProjectTreeFile *item = new ProjectTreeFile( folder, name, u );
+            item->setIcon(u);//QExtFileInfo::toAbsolute(url, baseURL));
+          }
+          progressBar->setValue(i);
+        }
+      }  
+    }
+  }
+  progressBar->setValue(0);
+  progressBar->setTextEnabled(false);
+}
+
+/** Remove all the deleted - from the project - url's from the treeview. */
+void ProjectTreeView::slotRemoveDeleted()
+{
+  ProjectTreeFolder *folderItem;
+  ProjectTreeFile *fileItem;
+  QListViewItem *item;
+  KURL url;
+  QListViewItemIterator iter(this);
+  for ( ; iter.current(); ++iter )
+  {
+    item = iter.current();
+    folderItem = dynamic_cast<ProjectTreeFolder *> (item);
+    if ( folderItem )
+    {
+      url = folderItem->url;
+    } else
+    {
+      fileItem = dynamic_cast<ProjectTreeFile *> (item);
+      if ( fileItem )
+      {
+        url = fileItem->url;
+      }
+    }
+    if (!urlList.contains(url) && item != projectDir)
+    {
+      delete item;
+    }
+  }
+}
+
 
 #include "projecttreeview.moc"

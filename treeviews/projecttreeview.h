@@ -40,6 +40,8 @@ class ProjectTreeView : public FilesTreeView  {
 public: 
 	ProjectTreeView(QWidget *parent=0, const char *name=0);
 	virtual ~ProjectTreeView();
+  /** Open a subfolder. */
+  void openFolder(ProjectTreeFolder *folder);
 	
 	
 public slots: // Public slots
@@ -59,6 +61,8 @@ public slots: // Public slots
   void slotRescan();
   /** Bring up the project options dialog */
   void slotOptions();
+  /** Remove all the deleted - from the project - url's from the treeview. */
+  void slotRemoveDeleted();
 
 signals: // Signals
 	void open( QListViewItem *name );

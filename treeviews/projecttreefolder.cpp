@@ -21,9 +21,10 @@
 // app includes
 #include "projecttreefile.h"
 #include "projecttreefolder.h"
+#include "projecttreeview.h"
 
-ProjectTreeFolder::ProjectTreeFolder( ProjectTreeFolder *parent, const KURL& p_url)
-  : FilesTreeFolder(0, parent, p_url )     
+ProjectTreeFolder::ProjectTreeFolder(QListView *parentListView, ProjectTreeFolder *parent, const KURL& p_url)
+  : FilesTreeFolder(parentListView, parent, p_url )     
 {
   filesTreeList.setAutoDelete( true );
 
@@ -31,19 +32,20 @@ ProjectTreeFolder::ProjectTreeFolder( ProjectTreeFolder *parent, const KURL& p_u
 	else                    setPixmap( 0, SmallIcon("folder") );
   
   QString fname = name;
-
+  parentView =  dynamic_cast<ProjectTreeView*>(parentListView);
   url = p_url;
   url.adjustPath(1);
 }
 
-ProjectTreeFolder::ProjectTreeFolder( QListView *parent, const QString &name, const KURL &p_url)
-    : FilesTreeFolder( parent, name, p_url)
+ProjectTreeFolder::ProjectTreeFolder(QListView *parentListView, const QString &name, const KURL &p_url)
+    : FilesTreeFolder( parentListView, name, p_url)
 {
   filesTreeList.setAutoDelete( true );
 
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
 	else                    setPixmap( 0, SmallIcon("folder") );
 
+  parentView =  dynamic_cast<ProjectTreeView*>(parentListView);
   url = p_url;
   url.adjustPath(1);
 }
@@ -60,15 +62,18 @@ void ProjectTreeFolder::insertItem(ProjectTreeFile *item, const KURL& url)
 
 void ProjectTreeFolder::setOpen( bool open )
 {
-  QListViewItem::setOpen( open );
+  if (open)
+  {
+    parentView->openFolder(this);
+  }
   
+  QListViewItem::setOpen( open );
   if (open)
     setPixmap( 0, SmallIcon("folder_open") );
   else
     setPixmap( 0, SmallIcon("folder") );
   	
   if ( text(0) == "CVS" ) setPixmap( 0, SmallIcon("log") );
-
 }
 
 

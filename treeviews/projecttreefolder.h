@@ -27,12 +27,14 @@
   *@author Yacovlev Alexander & Dmitry Poplavsky & Andras Mantia
   */
 
+class ProjectTreeView;
+
 class ProjectTreeFolder : public FilesTreeFolder  {
 friend class Project;
 
 public:
-	ProjectTreeFolder( ProjectTreeFolder *parent, const KURL& p_url);
-	ProjectTreeFolder( QListView *parent, const QString& name, const KURL& p_url);
+	ProjectTreeFolder( QListView *parentListView, ProjectTreeFolder *parent, const KURL& p_url);
+	ProjectTreeFolder( QListView *parentListView, const QString& name, const KURL& p_url);
 	~ProjectTreeFolder();
 	
   virtual void setOpen( bool open);
@@ -48,6 +50,9 @@ public:
   QPtrList<ProjectTreeFile> filesTreeList;
   /**  */
   QString path;
+
+protected:
+  ProjectTreeView *parentView;
 };
 
 #endif

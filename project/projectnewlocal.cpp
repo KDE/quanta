@@ -268,7 +268,7 @@ void ProjectNewLocal::slotReloadTree( KURL::List fileList, bool newtree)
       }
 
       if ( !newFolder )
-      	newFolder = new ProjectTreeFolder( folder, KURL(dir)); //TODO
+      	newFolder = new ProjectTreeFolder(listFiles, folder, KURL(dir)); //TODO
       	
       folder = newFolder;
       fname.remove(0,pos+1);
