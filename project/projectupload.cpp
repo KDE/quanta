@@ -144,7 +144,7 @@ void ProjectUpload::slotBuildTree()
    if (startUrl.isEmpty() || (s.startsWith(strUrl) && isDirectory) || s == strUrl)
    {
      QuantaCommon::setUrl(u, s);
-     absUrl.setPath(m_project->baseURL.path(1)+u.path());
+     absUrl.setPath(m_project->baseURL.path(1)+u.path(-1));
      KFileItem *p_item = projectDirFiles.find(absUrl.url());
      if (!p_item)
        continue;       
