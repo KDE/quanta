@@ -60,12 +60,13 @@ KQApplication::KQApplication()
    KGlobal::dirs()->addPrefix(PREFIX);
 
    if (args->isSet("logo")) splash = new KSplash();
-
+/*
    if (isRestored())
    {
      RESTORE(QuantaApp);
    }
    else
+*/   
    {
      quantaApp = new QuantaApp();
      setMainWidget(quantaApp);
