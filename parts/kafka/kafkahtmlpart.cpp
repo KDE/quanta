@@ -894,7 +894,7 @@ bool KafkaHTMLPart::eventFilter(QObject *object, QEvent *event)
 						insertText(keyevent->text(), -1);
 					makeCursorVisible();
 				}
-				kdDebug(25001)<< "NAMEEEEEEEEEEEEEEEEEE" << m_currentNode.nodeName().string().lower() << endl;
+				//kdDebug(25001)<< "NAME : " << m_currentNode.nodeName().string().lower() << endl;
 				//if(keyevent->key() == Qt::Key_Space)
 				forgetEvent = true;
 				d->stuckCursorHorizontalPos = false;

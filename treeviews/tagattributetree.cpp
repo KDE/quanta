@@ -32,10 +32,16 @@
 #include "../document.h"
 #include "../quantaview.h"
 #ifdef BUILD_KAFKAPART
-#include "../resource.h"
-#include "../quanta.h"
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qtooltip.h>
 #include <dom/dom_node.h>
 #include <kdebug.h>
+#include <kpushbutton.h>
+#include <kaction.h>
+#include <kiconloader.h>
+#include "../resource.h"
+#include "../quanta.h"
 #include "../parser/tag.h"
 #include "../parser/node.h"
 #include "../parts/kafka/wkafkapart.h"
@@ -420,7 +426,7 @@ void TagAttributeTree::editorContentChanged()
         }
 
         modifs.NodeModifList.append(modif);
-        quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, true);
+        quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
       }
 #ifdef HEAVY_DEBUG
         kafkaCommon::coutTree(baseNode, 2);
@@ -471,6 +477,138 @@ void TagAttributeTree::slotExpanded(QListViewItem *item)
 void TagAttributeTree::slotDelayedSetCurrentNode()
 {
   setCurrentNode(m_newNode);
+}
+
+EnhancedTagAttributeTree::EnhancedTagAttributeTree(QWidget *parent, const char *name)
+: QWidget(parent, name)
+{
+#ifdef BUILD_KAFKAPART
+  mainLayout = new QVBoxLayout(this, 11, 6, "Main Layout");
+  topLayout = new QHBoxLayout(0, 0, 6, "Top Layout");
+
+  nodeName = new QLabel(this, "Node Name");
+  /**nodeName->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, 0, 0,
+    nodeName->sizePolicy().hasHeightForWidth()));*/
+  topLayout->addWidget(nodeName);
+  /**QSpacerItem *spacer = new QSpacerItem(50, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  topLayout->addItem(spacer);*/
+
+  deleteTag = new KPushButton(this, "Delete Tag");
+  deleteTag->setPixmap(SmallIcon("editdelete"));
+  deleteTag->setMaximumHeight(32);
+  deleteTag->setMaximumWidth(32);
+  QToolTip::add(deleteTag, i18n("Delete the current tag only."));
+  topLayout->addWidget(deleteTag);
+
+  deleteAll = new KPushButton(this, "Delete All");
+  deleteAll->setPixmap(SmallIcon("editdelete"));
+  deleteAll->setMaximumHeight(32);
+  deleteAll->setMaximumWidth(32);
+  QToolTip::add(deleteAll, i18n("Delete the current tag and all its children."));
+  topLayout->addWidget(deleteAll);
+
+  mainLayout->addLayout(topLayout);
+
+  attrTree = new TagAttributeTree(this, "TagAttributeTree");
+  mainLayout->addWidget(attrTree);
+  //resize( QSize(100, 100).expandedTo(minimumSizeHint()) );
+
+
+  connect(attrTree, SIGNAL(newNodeSelected(Node *)), this, SLOT(NodeSelected(Node *)));
+  connect(deleteTag, SIGNAL(clicked()), this, SLOT(deleteNode()));
+  connect(deleteAll, SIGNAL(clicked()), this, SLOT(deleteSubTree()));
+#endif
+}
+
+EnhancedTagAttributeTree::~EnhancedTagAttributeTree()
+{
+
+}
+
+void EnhancedTagAttributeTree::setCurrentNode(Node *node)
+{
+#ifdef BUILD_KAFKAPART
+  curNode = node;
+  attrTree->setCurrentNode(node);
+  showCaption();
+  #endif
+}
+
+void EnhancedTagAttributeTree::NodeSelected(Node *node)
+{
+#ifdef BUILD_KAFKAPART
+  curNode = node;
+  showCaption();
+  emit newNodeSelected(node);
+#endif
+}
+
+void EnhancedTagAttributeTree::showCaption()
+{
+#ifdef BUILD_KAFKAPART
+  if(curNode)
+  {
+    if(curNode->tag->type == Tag::XmlTag || curNode->tag->type == Tag::XmlTagEnd ||
+      curNode->tag->type == Tag::ScriptTag)
+      nodeName->setText(QString(i18n("Current Tag : <b>%1</b>")).arg(curNode->tag->name));
+    else if(curNode->tag->type == Tag::Text)
+      nodeName->setText(i18n("Current Tag : <b>text</b>"));
+    else if(curNode->tag->type == Tag::Comment)
+      nodeName->setText(i18n("Current Tag : <b>comment</b>"));
+    else
+      nodeName->setText(i18n("Current Tag :"));
+  }
+ #endif
+}
+
+void EnhancedTagAttributeTree::deleteSubTree()
+{
+#ifdef BUILD_KAFKAPART
+  Node *oldCurNode;
+  NodeModifsSet modifs;
+  modifs.cursorX = 0;
+  modifs.cursorY = 0;
+  modifs.cursorX2 = 0;
+  modifs.cursorY2 = 0;
+  modifs.isModified = true;//TODO
+
+  oldCurNode = curNode;
+  /**if(curNode)
+    curNode = curNode->parent;
+  else*/
+    curNode = 0L;
+  attrTree->setCurrentNode(curNode);
+  kafkaCommon::extractAndDeleteNode(oldCurNode, modifs);
+
+  quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+  //quantaApp->view()->reloadBothViews();
+  #endif
+}
+
+void EnhancedTagAttributeTree::deleteNode()
+{
+#ifdef BUILD_KAFKAPART
+  Node *oldCurNode;
+  NodeModifsSet modifs;
+  modifs.cursorX = 0;
+  modifs.cursorY = 0;
+  modifs.cursorX2 = 0;
+  modifs.cursorY2 = 0;
+  modifs.isModified = true;//TODO
+
+  oldCurNode = curNode;
+  /**if(curNode && curNode->child)
+    curNode = curNode->child;
+  else if(curNode)
+    curNode = curNode->parent;
+  else*/
+    curNode = 0L;
+  attrTree->setCurrentNode(curNode);
+  kafkaCommon::extractAndDeleteNode(oldCurNode, modifs, false);
+
+  quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+  //quantaApp->view()->reloadBothViews();
+  #endif
 }
 
 #include "tagattributetree.moc"

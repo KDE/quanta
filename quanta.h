@@ -84,7 +84,11 @@ class StructTreeView;
 class ProjectTreeView;
 class TemplatesTreeView;
 class ScriptTreeView;
+#ifdef BUILD_KAFKAPART
+class EnhancedTagAttributeTree;
+#else
 class TagAttributeTree;
+#endif
 class Project;
 class GrepDialog;
 class MessageOutput;
@@ -180,7 +184,11 @@ public:
   FilesTreeView *fTab;
   TemplatesTreeView *tTab;
   StructTreeView *sTab;
+#ifdef BUILD_KAFKAPART
+  EnhancedTagAttributeTree *aTab;
+#else
   TagAttributeTree *aTab;
+#endif
   ScriptTreeView *scriptTab;
 
 signals: // Signals

@@ -28,32 +28,34 @@
     <location col="1" row="4" colspan="2" />
   </attr>
 <children>
-<child name="address" />
-<child name="area" />
-<child name="blockquote" />
-<child name="del" />
-<child name="div" />
-<child name="dl" />
-<child name="fieldset" />
-<child name="form" />
-<child name="h1" />
-<child name="h2" />
-<child name="h3" />
-<child name="h4" />
-<child name="h5" />
-<child name="h6" />
-<child name="hr" />
-<child name="ins" />
-<child name="noscript" />
-<child name="ol" />
-<child name="p" />
-<child name="pre" />
-<child name="script" />
-<child name="table" />
-<child name="ul" />
+ <child name="p" />
+  <child name="h1" />
+ <child name="h2" />
+ <child name="h3" />
+ <child name="h4" />
+ <child name="h5" />
+ <child name="h6" />
+ <child name="ul" />
+ <child name="ol" />
+ <child name="dir" />
+ <child name="menu" />
+ <child name="pre" />
+ <child name="dl" />
+ <child name="div" />
+ <child name="center" />
+ <child name="noscript" />
+ <child name="noframes" />
+ <child name="blockquote" />
+ <child name="form" />
+ <child name="isindex" />
+ <child name="hr" />
+ <child name="table" />
+ <child name="fieldset" />
+ <child name="address" />
+ <child name="area" />
 </children>
-
 </tag>
+
 <tag name="meta" hasI18n="1" single="1">
 
    <attr name="name" type="input">

@@ -106,6 +106,10 @@ public:
 #ifdef BUILD_KAFKAPART
   /** Reloads both views ONLY when changes have been made to the Node tree ONLY. */
   void reloadBothViews();
+  /** reload the Kafka view from the Node Tree. Set force to true if you want to reload even if not necessary. */
+  void reloadKafkaView(bool force = false);
+  /** reload the Quanta view from the Node Tree. Set force to true if you want to reload even if not necessary. */
+  void reloadQuantaView(bool force = false);
 #endif
 
   /** Resize the current view */

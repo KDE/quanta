@@ -38,6 +38,9 @@
 #include "../quantacommon.h"
 #include "../resource.h"
 #include "../parser/qtag.h"
+#ifdef BUILD_KAFKAPART
+#include "../parts/kafka/kafkacommon.h"
+#endif
 
 TagDialog::TagDialog(QTag* dtdTag, Tag *tag, KURL a_baseURL)
     : QTabDialog( 0L, "tagdialog", true)
@@ -380,6 +383,23 @@ void TagDialog::insertTag(Document *w, bool insertInLine)
     w->insertTag( newTag, secondPartOfTag);
   }
 }
+
+#ifdef BUILD_KAFKAPART
+Node *TagDialog::buildNode(Document *w)
+{
+	Node *node;
+	QString attrStr("");
+	QDictIterator<QString> it( *dict );
+
+
+	node = kafkaCommon::createNode(dtdTag->name(), "", Tag::XmlTag, w);
+
+	while (it.current())
+		node->tag->editAttribute(QuantaCommon::attrCase(it.currentKey()), *it.current());
+
+	return node;
+}
+#endif
 
 void TagDialog::showEvent(QShowEvent *ev)
 {

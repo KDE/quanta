@@ -405,7 +405,11 @@ void QuantaApp::initView()
       topList.append(url);
 
   fTab = new FilesTreeView(topList, ftabdock);
+#ifdef BUILD_KAFKAPART
+  aTab = new EnhancedTagAttributeTree(atabdock);
+#else
   aTab = new TagAttributeTree(atabdock);
+#endif
   pTab = new ProjectTreeView(ptabdock );
   tTab = new TemplatesTreeView("" , ttabdock);
   dTab = new DocTreeView(dtabdock);
@@ -1869,7 +1873,7 @@ void QuantaApp::initActions()
       ta->setExclusiveGroup("view");
 
      showKafkaAction =
-      new KToggleAction( i18n( "&VPL Editor (experimental)"), UserIcon ("vpl"), CTRL+SHIFT+Key_F9,
+      new KToggleAction( i18n( "&VPL Editor"), UserIcon ("vpl"), CTRL+SHIFT+Key_F9,
       m_view, SLOT( slotShowKafkaPart() ),
                           ac, "show_kafka_view");
      showKafkaAction->setExclusiveGroup("view");

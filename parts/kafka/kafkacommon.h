@@ -96,7 +96,7 @@ public:
 	 * Gets the location of a Node in a pointer-independant suit of ints e.g. 1,3,5 means
 	 * that the node is the fifth child of the third child of the root Node. Efficient when
 	 * deleting the Node tree and rebuilding it when switching between Documents.
-	 * @param _node The Node we want the location.
+	 * @param node The Node we want the location.
 	 * @return Returns the location.
 	 */
 	static QValueList<int> getLocation(Node* node);
@@ -108,23 +108,205 @@ public:
 	 */
 	static Node* getNodeFromLocation(QValueList<int> loc);
 
-	/**void createNode(QString nodeName, int nodeType, Document *doc,
-		Node *nodeCreated, Node* closingNodeCreated);*/
+	/**
+	 * Get the node corresponding to a sublocation.
+	 * @param loc A location of a Node.
+	 * @locOffset We want the (totalNumberOfParent - locOffset)th parent of Node.
+	 * @return Returns a parent of the node pointed by loc.
+	 */
+	static Node* getNodeFromSubLocation(QValueList<int> loc, int locOffset);
 
 	/**
-	 * Create a Node of name NodeName, of type nodeType, (see tag.h) connected to the document doc,
-	 * create its closing Node if necessary and then insert them with parent as Node's parent
-	 * and nextSibling as Node's next sibling.
+	 * Create a simple Node, without taking care of building the closing Node.
+	 */
+	static Node* createNode(QString nodeName, QString tagString, int nodeType, Document *doc);
+
+	/**
+	 * Insert node in the tree. WARNING This function will log that node was created.
+	 * @param node The node to insert.
+	 * @param parentNode This Node will be the parent of node.
+	 * @param nextSibling This Node will be the next Sibling of Node. If null, node will be appened at
+	 * the child list of parentNode.
+	 * @param modifs The changes made are logged into modifs.
+	 */
+	static void insertNode(Node *node, Node* parentNode, Node* nextSibling, NodeModifsSet &modifs);
+
+	/**
+	 * It behaves essentially like the above function except that it can "surround" a set of Nodes with the
+	 * new Node. Thus, the closing Node is created if necessary.
+	 * nextSibling and nextEndSibling MUST have the same parent. If not, use the
+	 * DTDinsertNode.
+	 * This function does not try to know if the location of the new Node is valid.
+	 * @param newNode The new Node to insert.
+	 * @param parent The parent of the Node.
+	 * @param nextSibling The next sibling of the Node.
+	 * @param nextEndSibling The next sibling of the closing Node if created. If nextEndSibling ==
+	 * nextSibling, the closing Node will be placed at the right of the newly created Node.
+	 * All the Nodes between the new Node and its closing Tag will be moved as childs of the new Node.
 	 * @param modifs The changes made are logged into modifs.
 	 * @return Returns a pointer to the newly created Node.
 	 */
-	static Node *createAndInsertNode(QString nodeName, int nodeType, Document *doc,
-		Node *parent, Node *nextSibling, NodeModifsSet &modifs);
+	static Node *insertNode(Node *newNode, Node *parent, Node *nextSibling, Node *nextEndSibling,
+		NodeModifsSet &modifs);
 
 	/**
-	 * Extract a Node, including its childs, from a Tree and delete it.
+	 * It behaves essentially like the above function except that it can split the endNodeToSurround and
+	 * startNodeToSurround if necessary, according to the offsets.
+	 * startNodeToSurround et endNodeToSurround MUST have the same parent. If not, use the
+	 * DTDinsertNode.
+	 * This function does not try to know if the location of the new Node is valid.
+	 * @param startNodeToSurround The first Node which will be enclosed by the new Node.
+	 * @param endNodeToSurround The last Node which will be enclosed by the new Node.
+	 * @param startOffset The first Node will be splitted at offset startOffset, the right part will be enclosed.
+	 * @param endOffset The last Node will be splitted at offset endOffset, the left part will be enclosed.
 	 */
-	static void extractAndDeleteNode(Node *node, NodeModifsSet &modifs);
+	static bool insertNode(Node *newNode, Node *parent, Node *startNodeToSurround,
+		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet &modifs);
+
+	/**
+	 * It behaves essentially like the above function except that it will insert the new Node only if the DTD
+	 * allows it.
+	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
+	 */
+	static bool DTDinsertNode(Node *newNode, Node *parent, Node *startNodeToSurround,
+		Node *endNodeToSurround, int startOffset, int endOffset, NodeModifsSet &modifs);
+
+	/**
+	 * It behaves essentially like the above function except that the new Tag can surround any subtree. If
+	 * necessary, several copies of the Node will be used.
+	 * This function takes care of the DTD validity of the Nodes created.
+	 * This is the key function making the toolbars working.
+	 * @param startNode The first Node which must be surrounded by the new Node.
+	 * @param startOffset If firstNode is a text, specify at which offset the new Node must begin to surround.
+	 * @param endNode The last Node which must be surrounded by the new Node.
+	 * @param endOffset If endNode is a text, specify at which offset the new Node must stop to surround.
+	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
+	 */
+	static bool DTDinsertNode(Node *newNode, Node *startNode, int startOffset, Node *endNode,
+		int endOffset, NodeModifsSet &modifs);
+
+	/**
+	 * Create a Node of name nodeName, of type nodeType, (see tag.h) connected to the document doc,
+	 * and nextSibling as Node's next sibling.
+	 * create its closing Node if necessary and then insert them with parent as Node's parent.
+	 * nextSibling and nextEndSibling MUST have the same parent. If not, use the
+	 * DTDcreateAndInsertNode.
+	 * This function does not try to know if the location of the new Node is valid.
+	 * @param nodeName The node's name of the node to create.
+	 * @param tagString The string of the tag.
+	 * @param nodeType The type of the Node cf Tag::TokenType.
+	 * @param doc The Node belongs to this Document.
+	 * @param parent The parent of the Node.
+	 * @param nextSibling The next sibling of the Node.
+	 * @param nextEndSibling The next sibling of the closing Node if created. If nextEndSibling ==
+	 * nextSibling, the closing Node will be placed at the right of the newly created Node.
+	 * All the Nodes between the new Node and its closing Tag will be moved as childs of the new Node.
+	 * @param modifs The changes made are logged into modifs.
+	 * @return Returns a pointer to the newly created Node.
+	 */
+	static Node *createAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+		Node *parent, Node *nextSibling, Node *nextEndSibling, NodeModifsSet &modifs);
+
+	/**
+	 * It behaves essentially like the above function except that if necessary, it will split the Nodes.
+	 * startNodeToSurround et endNodeToSurround MUST have the same parent. If not, use the
+	 * DTDcreateAndInsertNode.
+	 * This function does not try to know if the location of the new Node is valid.
+	 * @param startNodeToSurround The first Node which will be enclosed by the new Node.
+	 * @param endNodeToSurround The last Node which will be enclosed by the new Node.
+	 * @param startOffset The first Node will be splitted at offset startOffset, the right part will be enclosed.
+	 * @param endOffset The last Node will be splitted at offset endOffset, the left part will be enclosed.
+	 */
+	static Node *createAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+		Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset, int endOffset,
+		NodeModifsSet &modifs);
+
+	/**
+	 * It behaves essentially like the above function except that it will insert the new Node only if the DTD
+	 * allows it.
+	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
+	 */
+	static bool DTDcreateAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+		Node *parent, Node *startNodeToSurround, Node *endNodeToSurround, int startOffset, int endOffset,
+		NodeModifsSet &modifs);
+
+	/**
+	 * It behaves essentially like the above function except that the new Tag can surround any subtree. If
+	 * necessary, several copies of the Node will be used.
+	 * This function takes care of the DTD validity of the Nodes created.
+	 * This is the key function making the toolbars working.
+	 * @param startNode The first Node which must be surrounded by the new Node.
+	 * @param startOffset If firstNode is a text, specify at which offset the new Node must begin to surround.
+	 * @param endNode The last Node which must be surrounded by the new Node.
+	 * @param endOffset If endNode is a text, specify at which offset the new Node must stop to surround.
+	 * @return Returns false if it wasn't possible to insert the tag because e.g. of an invalid parent.
+	 */
+	static bool DTDcreateAndInsertNode(QString nodeName, QString tagString, int nodeType, Document *doc,
+		Node *startNode, int startOffset, Node *endNode, int endOffset, NodeModifsSet &modifs);
+
+	/**
+	 * For internal use. From startNode to endNode, it add where possible/necessary a new Node in order
+	 * to surround the maximum of Nodes. This is used by the above function. This function calls itself.
+	 * @param currentNode This node is currently examined.
+	 * @param addingStarted Specifies if we have begun to add the new Node.
+	 * @level The relative level of the current Node Sibling (level 0 : root Node, level 1 : childs, and so on...)
+	 * MUST BE set to 0.
+	 */
+	static bool addNodeRecursively(Node *newNode, Node* startNode, Node *endNode, Node* currentNode,
+		bool &addingStarted, int level, NodeModifsSet &modifs);
+
+	/**
+	 * Create a copy of Node. This is a custom copy function with some pointers set to NULL like listItem
+	 * @param node The node to duplicate.
+	 * @return Returns the duplicated Node. I wonder if i should always write so obvious things ;-)
+	 */
+	static Node *duplicateNode(Node *node);
+
+	/**
+	 * Extract a Node from the Node Tree. WARNING this will log that the Node was deleted.
+	 * @param node The node to delete.
+	 * @param modifs The changes made are logged into modifs.
+	 * @param deleteChilds If we delete or move up the children. WARNING: it don't check
+	 * if the children of node are legal childs of the parent of node.
+	 * @param mergeAndFormat Specify if we should merge Text/Empty Noded and apply formatting
+	 * by creating some Empty Nodes.
+	 * @return Returns the node extracted with its childs
+	 */
+	static Node* extractNode(Node *node, NodeModifsSet &modifs, bool deleteChildren = true,
+		bool mergeAndFormat = true);
+
+	/**
+	 * Extract and delete Node from the Tree.
+	 * It behaves essentially the above function except that it also delete node.
+	 * @param deleteClosingTag Delete the closingTag if node isn't single.
+	 */
+	static void extractAndDeleteNode(Node *node, NodeModifsSet &modifs, bool deleteChildren = true,
+		bool deleteClosingTag = true, bool mergeAndFormat = true);
+
+	/**
+	 * Moves a Node somewhere else.
+	 * @param nodeToMove The node to move :-)
+	 * @param newParent The new parent of nodeToMove.
+	 * @param newNextSibling The new next Sibling of nodeToMove.
+	 * @param modifs The changes made are logged into modifs.
+	 */
+	static void moveNode(Node *nodeToMove, Node *newParent, Node *newNextSibling, NodeModifsSet &modifs);
+
+	/**
+	 * Split a Text Node at offset offset. If offset or n is invalid, nothing is done.
+	 * @param n The Node to split.
+	 * @param offset Where to split the node.
+	 * @param modifs The change made are logged into modifs.
+	 * @return Returns if the node was splitted.
+	 */
+	static bool splitNode(Node *n, int offset, NodeModifsSet &modifs);
+
+	/**
+	 * If n and n2 are both Text or Empty Nodes, merge them into one.
+	 * @param modifs The changes made are logged into modifs.
+	 * @return Returns true if the Nodes were merged, else false.
+	 */
+	static bool mergeNodes(Node *n, Node *n2, NodeModifsSet &modifs);
 
 	/**
 	 * Get the display type of a Node. NOT a official list, more a little hack to

@@ -16,42 +16,49 @@
     </attr>
 
 <children>
-<child name="a" />
-<child name="abbr" />
-<child name="acronym" />
-<child name="b" />
-<child name="bdo" />
-<child name="big" />
-<child name="br" />
-<child name="button" />
-<child name="cite" />
-<child name="code" />
-<child name="del" />
-<child name="dfn" />
-<child name="em" />
-<child name="i" />
-<child name="img" />
-<child name="input" />
-<child name="ins" />
-<child name="kbd" />
-<child name="label" />
-<child name="map" />
-<child name="object" />
-<child name="q" />
-<child name="samp" />
-<child name="script" />
-<child name="select" />
-<child name="small" />
-<child name="span" />
-<child name="strong" />
-<child name="sub" />
-<child name="sup" />
-<child name="textarea" />
-<child name="tt" />
-<child name="var" />
-</children>
+ <child name="#PCDATA" />
+ <child name="tt" />
+ <child name="i" />
+ <child name="b" />
+ <child name="u" />
+ <child name="s" />
+ <child name="strike" />
+ <child name="big" />
+ <child name="small" />
+  <child name="em" />
+ <child name="strong" />
+ <child name="dfn" />
+ <child name="code" />
+ <child name="samp" />
+ <child name="kbd" />
+ <child name="var" />
+ <child name="cite" />
+ <child name="abbr" />
+ <child name="acronym" />
+  <child name="a" />
+ <child name="img" />
+ <child name="applet" />
+ <child name="object" />
+ <child name="font" />
+ <child name="basefont" />
+ <child name="br" />
+ <child name="script" />
+ <child name="map" />
+ <child name="q" />
+ <child name="sub" />
+ <child name="sup" />
+ <child name="span" />
+ <child name="bdo" />
+ <child name="iframe" />
+  <child name="input" />
+ <child name="select" />
+ <child name="textarea" />
+ <child name="label" />
+ <child name="button" />
+ </children>
 
 </tag>
+
 <tag name="h2" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="align" type="list">
@@ -67,42 +74,48 @@
     </attr>
 
 <children>
-<child name="a" />
-<child name="abbr" />
-<child name="acronym" />
-<child name="b" />
-<child name="bdo" />
-<child name="big" />
-<child name="br" />
-<child name="button" />
-<child name="cite" />
-<child name="code" />
-<child name="del" />
-<child name="dfn" />
-<child name="em" />
-<child name="i" />
-<child name="img" />
-<child name="input" />
-<child name="ins" />
-<child name="kbd" />
-<child name="label" />
-<child name="map" />
-<child name="object" />
-<child name="q" />
-<child name="samp" />
-<child name="script" />
-<child name="select" />
-<child name="small" />
-<child name="span" />
-<child name="strong" />
-<child name="sub" />
-<child name="sup" />
-<child name="textarea" />
-<child name="tt" />
-<child name="var" />
-</children>
-
+ <child name="#PCDATA" />
+ <child name="tt" />
+ <child name="i" />
+ <child name="b" />
+ <child name="u" />
+ <child name="s" />
+ <child name="strike" />
+ <child name="big" />
+ <child name="small" />
+  <child name="em" />
+ <child name="strong" />
+ <child name="dfn" />
+ <child name="code" />
+ <child name="samp" />
+ <child name="kbd" />
+ <child name="var" />
+ <child name="cite" />
+ <child name="abbr" />
+ <child name="acronym" />
+  <child name="a" />
+ <child name="img" />
+ <child name="applet" />
+ <child name="object" />
+ <child name="font" />
+ <child name="basefont" />
+ <child name="br" />
+ <child name="script" />
+ <child name="map" />
+ <child name="q" />
+ <child name="sub" />
+ <child name="sup" />
+ <child name="span" />
+ <child name="bdo" />
+ <child name="iframe" />
+  <child name="input" />
+ <child name="select" />
+ <child name="textarea" />
+ <child name="label" />
+ <child name="button" />
+ </children>
 </tag>
+
 <tag name="h3" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="align" type="list">
@@ -118,42 +131,49 @@
     </attr>
 
 <children>
-<child name="a" />
-<child name="abbr" />
-<child name="acronym" />
-<child name="b" />
-<child name="bdo" />
-<child name="big" />
-<child name="br" />
-<child name="button" />
-<child name="cite" />
-<child name="code" />
-<child name="del" />
-<child name="dfn" />
-<child name="em" />
-<child name="i" />
-<child name="img" />
-<child name="input" />
-<child name="ins" />
-<child name="kbd" />
-<child name="label" />
-<child name="map" />
-<child name="object" />
-<child name="q" />
-<child name="samp" />
-<child name="script" />
-<child name="select" />
-<child name="small" />
-<child name="span" />
-<child name="strong" />
-<child name="sub" />
-<child name="sup" />
-<child name="textarea" />
-<child name="tt" />
-<child name="var" />
-</children>
+ <child name="#PCDATA" />
+ <child name="tt" />
+ <child name="i" />
+ <child name="b" />
+ <child name="u" />
+ <child name="s" />
+ <child name="strike" />
+ <child name="big" />
+ <child name="small" />
+  <child name="em" />
+ <child name="strong" />
+ <child name="dfn" />
+ <child name="code" />
+ <child name="samp" />
+ <child name="kbd" />
+ <child name="var" />
+ <child name="cite" />
+ <child name="abbr" />
+ <child name="acronym" />
+  <child name="a" />
+ <child name="img" />
+ <child name="applet" />
+ <child name="object" />
+ <child name="font" />
+ <child name="basefont" />
+ <child name="br" />
+ <child name="script" />
+ <child name="map" />
+ <child name="q" />
+ <child name="sub" />
+ <child name="sup" />
+ <child name="span" />
+ <child name="bdo" />
+ <child name="iframe" />
+  <child name="input" />
+ <child name="select" />
+ <child name="textarea" />
+ <child name="label" />
+ <child name="button" />
+ </children>
 
 </tag>
+
 <tag name="h4" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="align" type="list">
@@ -169,42 +189,49 @@
     </attr>
 
 <children>
-<child name="a" />
-<child name="abbr" />
-<child name="acronym" />
-<child name="b" />
-<child name="bdo" />
-<child name="big" />
-<child name="br" />
-<child name="button" />
-<child name="cite" />
-<child name="code" />
-<child name="del" />
-<child name="dfn" />
-<child name="em" />
-<child name="i" />
-<child name="img" />
-<child name="input" />
-<child name="ins" />
-<child name="kbd" />
-<child name="label" />
-<child name="map" />
-<child name="object" />
-<child name="q" />
-<child name="samp" />
-<child name="script" />
-<child name="select" />
-<child name="small" />
-<child name="span" />
-<child name="strong" />
-<child name="sub" />
-<child name="sup" />
-<child name="textarea" />
-<child name="tt" />
-<child name="var" />
-</children>
+ <child name="#PCDATA" />
+ <child name="tt" />
+ <child name="i" />
+ <child name="b" />
+ <child name="u" />
+ <child name="s" />
+ <child name="strike" />
+ <child name="big" />
+ <child name="small" />
+  <child name="em" />
+ <child name="strong" />
+ <child name="dfn" />
+ <child name="code" />
+ <child name="samp" />
+ <child name="kbd" />
+ <child name="var" />
+ <child name="cite" />
+ <child name="abbr" />
+ <child name="acronym" />
+  <child name="a" />
+ <child name="img" />
+ <child name="applet" />
+ <child name="object" />
+ <child name="font" />
+ <child name="basefont" />
+ <child name="br" />
+ <child name="script" />
+ <child name="map" />
+ <child name="q" />
+ <child name="sub" />
+ <child name="sup" />
+ <child name="span" />
+ <child name="bdo" />
+ <child name="iframe" />
+  <child name="input" />
+ <child name="select" />
+ <child name="textarea" />
+ <child name="label" />
+ <child name="button" />
+ </children>
 
 </tag>
+
 <tag name="h5" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="align" type="list">
@@ -220,42 +247,49 @@
     </attr>
 
 <children>
-<child name="a" />
-<child name="abbr" />
-<child name="acronym" />
-<child name="b" />
-<child name="bdo" />
-<child name="big" />
-<child name="br" />
-<child name="button" />
-<child name="cite" />
-<child name="code" />
-<child name="del" />
-<child name="dfn" />
-<child name="em" />
-<child name="i" />
-<child name="img" />
-<child name="input" />
-<child name="ins" />
-<child name="kbd" />
-<child name="label" />
-<child name="map" />
-<child name="object" />
-<child name="q" />
-<child name="samp" />
-<child name="script" />
-<child name="select" />
-<child name="small" />
-<child name="span" />
-<child name="strong" />
-<child name="sub" />
-<child name="sup" />
-<child name="textarea" />
-<child name="tt" />
-<child name="var" />
-</children>
+ <child name="#PCDATA" />
+ <child name="tt" />
+ <child name="i" />
+ <child name="b" />
+ <child name="u" />
+ <child name="s" />
+ <child name="strike" />
+ <child name="big" />
+ <child name="small" />
+  <child name="em" />
+ <child name="strong" />
+ <child name="dfn" />
+ <child name="code" />
+ <child name="samp" />
+ <child name="kbd" />
+ <child name="var" />
+ <child name="cite" />
+ <child name="abbr" />
+ <child name="acronym" />
+  <child name="a" />
+ <child name="img" />
+ <child name="applet" />
+ <child name="object" />
+ <child name="font" />
+ <child name="basefont" />
+ <child name="br" />
+ <child name="script" />
+ <child name="map" />
+ <child name="q" />
+ <child name="sub" />
+ <child name="sup" />
+ <child name="span" />
+ <child name="bdo" />
+ <child name="iframe" />
+  <child name="input" />
+ <child name="select" />
+ <child name="textarea" />
+ <child name="label" />
+ <child name="button" />
+ </children>
 
 </tag>
+
 <tag name="h6" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="align" type="list">
@@ -271,42 +305,49 @@
     </attr>
 
 <children>
-<child name="a" />
-<child name="abbr" />
-<child name="acronym" />
-<child name="b" />
-<child name="bdo" />
-<child name="big" />
-<child name="br" />
-<child name="button" />
-<child name="cite" />
-<child name="code" />
-<child name="del" />
-<child name="dfn" />
-<child name="em" />
-<child name="i" />
-<child name="img" />
-<child name="input" />
-<child name="ins" />
-<child name="kbd" />
-<child name="label" />
-<child name="map" />
-<child name="object" />
-<child name="q" />
-<child name="samp" />
-<child name="script" />
-<child name="select" />
-<child name="small" />
-<child name="span" />
-<child name="strong" />
-<child name="sub" />
-<child name="sup" />
-<child name="textarea" />
-<child name="tt" />
-<child name="var" />
-</children>
+ <child name="#PCDATA" />
+ <child name="tt" />
+ <child name="i" />
+ <child name="b" />
+ <child name="u" />
+ <child name="s" />
+ <child name="strike" />
+ <child name="big" />
+ <child name="small" />
+  <child name="em" />
+ <child name="strong" />
+ <child name="dfn" />
+ <child name="code" />
+ <child name="samp" />
+ <child name="kbd" />
+ <child name="var" />
+ <child name="cite" />
+ <child name="abbr" />
+ <child name="acronym" />
+  <child name="a" />
+ <child name="img" />
+ <child name="applet" />
+ <child name="object" />
+ <child name="font" />
+ <child name="basefont" />
+ <child name="br" />
+ <child name="script" />
+ <child name="map" />
+ <child name="q" />
+ <child name="sub" />
+ <child name="sup" />
+ <child name="span" />
+ <child name="bdo" />
+ <child name="iframe" />
+  <child name="input" />
+ <child name="select" />
+ <child name="textarea" />
+ <child name="label" />
+ <child name="button" />
+ </children>
 
 </tag>
+
 <tag name="head" hasI18n="1">
 
     <attr name="profile" type="url">
@@ -316,16 +357,18 @@
     </attr>
 
 <children>
-<child name="base" />
-<child name="link" />
-<child name="meta" usage="required" />
-<child name="object" />
 <child name="title" usage="required" />
+<child name="isindex" />
+<child name="base" />
 <child name="script" />
-<child name="style" />
+ <child name="style" />
+ <child name="meta" />
+ <child name="link" />
+ <child name="object" />
 </children>
 
 </tag>
+
 <tag name="hr" hasScript="1" hasCore="1" single="1">
 
     <attr name="align" type="list">
@@ -362,6 +405,7 @@
 
 
 </tag>
+
 <tag name="html" hasI18n="1">
 
     <attr name="version" type="input">

@@ -34,14 +34,6 @@ struct XMLStructGroup;
 
 #ifdef BUILD_KAFKAPART
 #include <dom/dom_node.h>
-//not used yet
-typedef struct domNodeStruct
-   {
-    int type;
-    DOM::Node domNode;
-    int beginOffset;
-    int endOffset;
-   };
 #endif
 
 class Node;
@@ -77,11 +69,34 @@ public:
  /** Returns the next node, or the parent's next, if next doesn't exists,
   or the granparent's next, if parent's next doesn't exists, etc. */
  Node *nextNotChild();
+
+/** DOM like functions cf dom/dom_node.h */
+ QString nodeName();
+ QString nodeValue();
+ void setNodeValue(QString value);
+ Node* parentNode() {return parent;}
+ Node* firstChild() {return child;}
+ Node* lastChild();
+ Node* DOMpreviousSibling() {return prev;}
+ Node* DOMnextSibling() {return next;}
+ /**Node* insertBefore(Node *newChild, Node *refChild);
+ Node* replaceChild(Node *newChild, Node *oldChild);
+ Node* removeChild(Node *oldChild);
+ Node* appendChild(Node *newChild);*/
+ bool hasChildNodes() {return child;}
+
+ /** Others functions. */
+ #ifdef BUILD_KAFKAPART
+ // check if Node has node in its child subtree (and grand-child,...)
+ bool hasForChild(Node *node);
+ #endif
+ void setParent(Node *nodeParent) {parent = nodeParent;}
+ //If Node is of type XmlTag, return the corresponding XmlTagEnd if available
+ Node *getClosingNode();
+
  int size();
 
  #ifdef BUILD_KAFKAPART
- QList<domNodeStruct> vList;
- QList<domNodeStruct> hList;
  DOM::Node _rootNode;
  DOM::Node _leafNode;
  Node* _closingNode;

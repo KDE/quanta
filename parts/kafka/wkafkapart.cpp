@@ -305,7 +305,7 @@ void WKafkaPart::slotDomNodeInserted(DOM::Node _domNode, bool insertChilds)
 			tmpDomNode = kafkaCommon::getNextDomNode(tmpDomNode, b, false, _domNode);
 		}
 	}
-	_currentDoc->docUndoRedo->addNewModifsSet(modifs, true);
+	_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "WKafkaPart::slotDomNodeInserted() in " << t.elapsed() <<
@@ -377,7 +377,7 @@ void WKafkaPart::slotDomNodeModified(DOM::Node _domNode)
 	buildNodeFromKafkaNode(_node, _domNode);
 
 	modifs.NodeModifList.append(modif);
-	_currentDoc->docUndoRedo->addNewModifsSet(modifs, true);
+	_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "WKafkaPart::slotDomNodeModified() in " << t.elapsed() <<
@@ -592,7 +592,7 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChil
 		modif.tag = _tag;
 		modifs.NodeModifList.append(modif);
 		_node->prev->tag->setStr(_node->prev->tag->tagStr() + _node->tag->tagStr());
-		_node->prev->tag->cleanStrBuilt = false;
+		//_node->prev->tag->cleanStrBuilt = false;
 		if(!(_node->tag->type == Tag::Empty && _node->prev->tag->type == Tag::Empty))
 			_node->prev->tag->type = Tag::Text;
 		modif.type = undoRedo::NodeRemoved;
@@ -612,7 +612,7 @@ void WKafkaPart::slotDomNodeAboutToBeRemoved(DOM::Node _domNode, bool deleteChil
 		modif.node = _node;
 		modif.location = kafkaCommon::getLocation(_node);
 	}
-	_currentDoc->docUndoRedo->addNewModifsSet(modifs, true);
+	_currentDoc->docUndoRedo->addNewModifsSet(modifs, undoRedo::KafkaModif);
 
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "WKafkaPart::slotDomNodeDeleted() in " << t.elapsed() <<
@@ -1274,17 +1274,16 @@ void WKafkaPart::slotdomNodeNewCursorPos(DOM::Node _domNode, int offset)
 	//emit newCursorPosition(line, col);
 }
 
-void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
+void WKafkaPart::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDomNode, int offset, int &line, int &col)
 {
-	DOM::Node _currentDomNode;
 	Node *_currentNode;
 	QString decodedText, encodedChar, currentLine, currentChar;
 	QChar curChar, oldChar;
-	int offset, currentOffset = 0;
+	int currentOffset;
 	int curLine, curCol, endLine, endCol;
 	bool waitForSpace = false, found = false;
 
-	_kafkaPart->getCurrentNode(_currentDomNode, offset);
+	//_kafkaPart->getCurrentNode(_currentDomNode, offset);
 	currentOffset = offset;
 	if(_currentDomNode.isNull())
 	{
@@ -1386,15 +1385,13 @@ void WKafkaPart::getQuantaCursorPosition(int &line, int &col)
 	return;
 }
 
-void WKafkaPart::getKafkaCursorPosition(DOM::Node &domNode, int &offset)
+void WKafkaPart::translateQuantaIntoKafkaCursorPosition(uint curLine, uint curCol, DOM::Node &domNode, int &offset)
 {
 	Node *node;
 	int bCol, bLine, eCol, eLine, col, line;
-	uint curCol, curLine;
 	QString curChar, decodedChar, currentLine;
 	bool lookForEntity, lookForSpaces, found;
 
-	_currentDoc->viewCursorIf->cursorPositionReal(&curLine, &curCol);
 	node = baseNode;
 	while(node)
 	{

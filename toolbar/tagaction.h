@@ -60,6 +60,18 @@ public:
     void setOutputFile(QFile* file);
     void setInputFileName(const QString& fileName);
     void execute();
+#ifdef BUILD_KAFKAPART
+    /**
+     * This function take the output of the TagAction, parse it into Nodes and insert it
+     * in the Node tree. Then kafka will take care of updating itself from the Node Tree.
+     */
+    void insertOutputInTheNodeTree(QString str1, QString str2 = "");
+
+    /**
+     * This function is TEMPORARY and try to insert Tag only when possible/necessary
+     */
+    void insertTag(QString str1, QString str2 = "");
+#endif
 
 public slots:
     virtual void insertTag(bool inputFromFile = false, bool outputToFile = false);

@@ -211,20 +211,22 @@ public:
 	Node *searchCorrespondingNode(DOM::Node _domNode);
 
 	/**
-	 * Returns the cursor position in the kafka editor corresponding to the cursor
-	 * position in the Quanta editor.
+	 * Returns the kafka cursor position corresponding to the quanta cursor position.
+	 * @param line The quanta line cursor position.
+	 * @param col The quanta column cursor position.
 	 * @param domNode Returns the DOM::Node in which the cursor is located.
 	 * @param offset Returns the offset of the cursor.
 	 */
-	void getKafkaCursorPosition(DOM::Node &domNode, int &offset);
+	void translateQuantaIntoKafkaCursorPosition(uint line, uint col, DOM::Node &domNode, int &offset);
 
 	/**
-	 * Returns the cursor position in the Quanta editor corresponding to the cursor
-	 * position in the kafka editor.
+	 * Returns the quanta cursor position corresponding to the kafka cursor position.
+	 * @param domNode The kafka DOM::Node cursor position.
+	 * @param offset The kafka offset cursor position.
 	 * @param line Returns the line cursor position.
 	 * @param col Returns the col cursor position.
 	 */
-	void getQuantaCursorPosition(int &line, int &col);
+	void translateKafkaIntoQuantaCursorPosition(DOM::Node domNode, int offset, int &line, int &col);
 
 	/**
 	 * In order to have khtml works whatever DTD is loaded, they must always exists

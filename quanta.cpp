@@ -1345,6 +1345,9 @@ void QuantaApp::slotIdleTimerExpired()
     {
       sTab->showTagAtPos(node);
     }
+#ifdef BUILD_KAFKAPART
+    if(view()->hadLastFocus() == QuantaView::quantaFocus)
+#endif
     aTab->setCurrentNode(node);
   }
 }

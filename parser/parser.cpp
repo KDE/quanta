@@ -1348,7 +1348,7 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo->addNewModifsSet(modifs, false);
+   w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
 #endif
    return parse(w);
  } else
@@ -1464,7 +1464,7 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo->addNewModifsSet(modifs, false);
+   w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
 #endif
    return parse(w);
 
@@ -1619,7 +1619,7 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo->addNewModifsSet(modifs, false);
+   w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
 #endif
    return parse(w);
 
@@ -1668,7 +1668,7 @@ Node *Parser::rebuild(Document *w)
    modif.type = undoRedo::NodeTreeAdded;
    modif.node = 0L;
    modifs.NodeModifList.append(modif);
-   w->docUndoRedo->addNewModifsSet(modifs, false);
+   w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
 #endif
    return parse(w);
    }
@@ -1781,7 +1781,7 @@ Node *Parser::rebuild(Document *w)
    coutTree(baseNode,  2);
    kdDebug(24000)<< "************* End User Modification *****************" << endl;*/
 #ifdef BUILD_KAFKAPART
-   w->docUndoRedo->addNewModifsSet(modifs, false);
+   w->docUndoRedo->addNewModifsSet(modifs, undoRedo::SourceModif);
 #endif
  }
   kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";

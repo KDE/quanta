@@ -30,7 +30,7 @@ class Document;
 typedef struct NodeModif
 {
 	/** For all : Type of the Node modification : Added, removed, modified, moved,...
-	with or without the Node's childs */
+	cf undoRedo::NodeModification */
 	int type;
 	/** For all: Location of the Node added/modified/removed/moved */
 	QValueList<int> location;
@@ -66,7 +66,7 @@ typedef struct NodeModifsSet
 };
 
 /**
- * This class, basically a new undo/redo system, also help WKafkaPart to synchronize the
+ * This class, basically a new undo/redo system, also helps WKafkaPart to synchronize the
  * kafka and quanta view.
  */
 class undoRedo : public QValueList<NodeModifsSet>, public QObject
@@ -80,13 +80,24 @@ public:
 
 	~undoRedo();
 
+	/** The enumeration of all possible location where modifications can occur */
+	enum modificationLocation {
+		// A modification was made in the source view (kate).
+		SourceModif = 0,
+		// A modification was made directly in the node Tree.
+		NodeTreeModif,
+		// A modification was made in the VPL view (kafka).
+		KafkaModif
+	};
+
 	/**
 	 * Adds a new set of Node modification. This should be called whenever
 	 * the kafka/quanta editor is modified.
 	 * @param modifs The new modification set to add to the undo/redo stack.
-	 * @param kafkaModifSet Specifies if the ModifSet comes from kafka.
+	 * @param modifLocation Specifies where the modification was made
+	 * cf undoRedo::modificationLocation.
 	 */
-	void addNewModifsSet(NodeModifsSet modifs, bool kafkaModifSet);
+	void addNewModifsSet(NodeModifsSet modifs, int modifLocation);
 
 	/**
 	 * Ignores the ModifSet that will come in the number'th position. Useful when
@@ -94,13 +105,13 @@ public:
 	 * thus parser::rebuild will be called two times.
 	 * @param number Specifies the position of the ModifsSet to ignore.
 	 */
-	 void dontAddModifsSet(int number) {_dontAddModifSet = number;}
+	 void dontAddModifsSet(int number) {m_dontAddModifSet = number;}
 
 	/**
 	 * Merges the next ModifsSet with the previous one. Useful when autocompletion
 	 * makes parser::rebuild() to be called again.
 	 */
-	 void mergeNextModifsSet() {_mergeNext = true;}
+	 void mergeNextModifsSet() {m_mergeNext = true;}
 
 	/**
 	 * Makes the undo operation.
@@ -130,6 +141,18 @@ public:
 	 */
 	 bool syncQuantaView();
 
+	 /**
+	  * Synchronize the cursor position and the selection of the kafka view by translating
+	  * the cursor position and selection of the quanta view.
+	  */
+	void syncKafkaCursorAndSelection();
+
+	 /**
+	  * Synchronize the cursor position and the selection of the quanta view by translating
+	  * the cursor position and selection of the kafka view.
+	  */
+	void syncQuantaCursorAndSelection();
+
         /**
 	 * Reload kafka from the current document.
 	 * @param force If set to true, it will reload kafka even if it is already up to date.
@@ -140,7 +163,7 @@ public:
 	 * Reload the quanta editor from kafka.
 	 * @param force If set to true, it will reload quanta even if it is already up to date.
 	 */
-	void reloadQuantaEditor(bool force = false);		 
+	void reloadQuantaEditor(bool force = false);
 	 
 	/** All the possible Node modifications */
 	enum NodeModification {
@@ -220,15 +243,23 @@ private:
 	void debugOutput();
 
 private:
-	int _listLimit;
-	bool _merging;
-	bool addingText;
-	QValueList<int> _currentLoc;
-	QValueList<NodeModifsSet>::iterator editorIterator;
+	/**
+	 * The undoRedo list iterators which point the current location of each component in
+	 * the undoRedo list.
+	 * documentIterator point the current location of the Node Tree.
+	 * sourceIterator point the current location of the source view (kate).
+	 * kafkaIterator point the current location of the VPL view (kafka).
+	 */
+	QValueList<NodeModifsSet>::iterator documentIterator;
+	QValueList<NodeModifsSet>::iterator sourceIterator;
 	QValueList<NodeModifsSet>::iterator kafkaIterator;
-	Document *_doc;
-	bool _mergeNext;
-	int _dontAddModifSet;
+	int m_listLimit;
+	bool m_merging;
+	bool addingText;
+	QValueList<int> m_currentLoc;
+	Document *m_doc;
+	bool m_mergeNext;
+	int m_dontAddModifSet;
 };
 
 #endif

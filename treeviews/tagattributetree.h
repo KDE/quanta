@@ -25,6 +25,10 @@ class KListView;
 class QListViewItem;
 class ParentItem;
 class Node;
+class QLabel;
+class KPushButton;
+class QHBoxLayout;
+class QVBoxLayout;
 
 class EditableTree : public KListView {
 Q_OBJECT
@@ -101,6 +105,37 @@ private:
   Node *m_newNode;
   bool rebuildEnabled;
   ParentItem *m_parentItem;
+};
+
+//An enhanced TagAttributeTree with the tag name and buttons to delete the tag.
+class EnhancedTagAttributeTree : public QWidget
+{
+Q_OBJECT
+public:
+  EnhancedTagAttributeTree(QWidget *parent = 0, const char *name = 0);
+  virtual ~EnhancedTagAttributeTree();
+
+  void setCurrentNode(Node *node);
+  Node *node() const {return attrTree->node();}
+
+signals:
+  void newNodeSelected(Node *node);
+
+private slots:
+  void NodeSelected(Node *node);
+  void deleteNode();
+  void deleteSubTree();
+
+private:
+  void showCaption();
+
+  QLabel *nodeName;
+  KPushButton* deleteAll;
+  KPushButton* deleteTag;
+  TagAttributeTree *attrTree;
+  QVBoxLayout *mainLayout;
+  QHBoxLayout *topLayout;
+  Node *curNode;
 };
 
 #endif

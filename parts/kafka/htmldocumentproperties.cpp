@@ -49,12 +49,15 @@ htmlDocumentProperties::htmlDocumentProperties( QWidget* parent, const char* nam
 	int index;
 	KURL url, baseURL;
 
-	//set all the "defaul" property to false
-	metaItemsAdd->setDefault(false);
-	metaItemsDelete->setDefault(false);
-	cssRulesAdd->setDefault(false);
-	cssRulesEdit->setDefault(false);
-	cssRulesDelete->setDefault(false);
+	//set the "autodefault" property
+	metaItemsAdd->setAutoDefault(false);
+	metaItemsDelete->setAutoDefault(false);
+	cssRulesAdd->setAutoDefault(false);
+	cssRulesEdit->setAutoDefault(false);
+	cssRulesDelete->setAutoDefault(false);
+	cssStylesheet->button()->setAutoDefault(false);
+	cancel->setAutoDefault(false);
+	ok->setAutoDefault(true);
 
 	//set the current DTD name
 	currentDTD->setText(quantaApp->view()->write()->defaultDTD()->nickName);
@@ -339,8 +342,8 @@ void htmlDocumentProperties::aboutToClose()
 		{
 			addBasicNodes(modifs);
 			//create title
-			titleNode = kafkaCommon::createAndInsertNode("title", Tag::XmlTag, quantaApp->view()->write(),
-				headNode, 0L, modifs);
+			titleNode = kafkaCommon::createAndInsertNode("title", "", Tag::XmlTag, quantaApp->view()->write(),
+				headNode, 0L, 0L, modifs);
 		}
 		node = titleNode->child;
 		if(node && (node->next || node->tag->type != Tag::Text))
@@ -355,9 +358,8 @@ void htmlDocumentProperties::aboutToClose()
 		if(!titleNode->child)
 		{
 			//create text!
-			node = kafkaCommon::createAndInsertNode("", Tag::Text, quantaApp->view()->write(),
-				titleNode, 0L, modifs);
-			node->tag->setStr(title->text());
+			node = kafkaCommon::createAndInsertNode("", title->text(),Tag::Text, quantaApp->view()->write(),
+				titleNode, 0L, 0L, modifs);
 		}
 		else
 			node->tag->setStr(quantaApp->view()->getKafkaInterface()->getEncodedText(title->text()));
@@ -389,8 +391,8 @@ void htmlDocumentProperties::aboutToClose()
 					{
 						addBasicNodes(modifs);
 						//create the meta!!
-						node = kafkaCommon::createAndInsertNode("meta", Tag::XmlTag,
-							quantaApp->view()->write(), headNode, 0L, modifs);
+						node = kafkaCommon::createAndInsertNode("meta", "",Tag::XmlTag,
+							quantaApp->view()->write(), headNode, 0L, 0L, modifs);
 					}
 					else
 						node = 0L;
@@ -440,13 +442,12 @@ void htmlDocumentProperties::aboutToClose()
 						addBasicCssNodes(modifs);
 						//create the CSS Nodes!
 						node = kafkaCommon::createAndInsertNode(
-							(static_cast<AttributeItem *>(item))->editorText(0), Tag::ScriptStructureBegin,
-							quantaApp->view()->write(), CSSNode, 0L, modifs);
-						(void)kafkaCommon::createAndInsertNode("", Tag::Text, quantaApp->view()->write(),
-							node, 0L, modifs);
-						nodeNext = kafkaCommon::createAndInsertNode("", Tag::ScriptStructureEnd,
-							quantaApp->view()->write(), CSSNode, 0L, modifs);
-						nodeNext->tag->setStr("}");
+							(static_cast<AttributeItem *>(item))->editorText(0), "",Tag::ScriptStructureBegin,
+							quantaApp->view()->write(), CSSNode, 0L, 0L, modifs);
+						(void)kafkaCommon::createAndInsertNode("#text", "",Tag::Text,
+							quantaApp->view()->write(), node, 0L, 0L, modifs);
+						nodeNext = kafkaCommon::createAndInsertNode("", "}",Tag::ScriptStructureEnd,
+							quantaApp->view()->write(), CSSNode, 0L, 0L, modifs);
 					}
 					else
 						node = 0L;
@@ -471,8 +472,8 @@ void htmlDocumentProperties::aboutToClose()
 		{
 			//create LINK
 			addBasicNodes(modifs);
-			linkNode = kafkaCommon::createAndInsertNode("link", Tag::XmlTag, quantaApp->view()->write(),
-				headNode, 0L, modifs);
+			linkNode = kafkaCommon::createAndInsertNode("link", "",Tag::XmlTag, quantaApp->view()->write(),
+				headNode, 0L, 0L, modifs);
 		}
 		//modify it!
 		QuantaCommon::setUrl(url, cssStylesheet->url());
@@ -488,10 +489,9 @@ void htmlDocumentProperties::aboutToClose()
 		linkNode->tag->cleanStrBuilt = false;
 	}
 
-	//TODO: can't be true neither false!!
-	quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, true);
+	quantaApp->view()->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
 
-	quantaApp->view()->reloadBothViews();
+	//quantaApp->view()->reloadBothViews();
 
 	close();
 }
@@ -501,8 +501,8 @@ void htmlDocumentProperties::addBasicCssNodes(NodeModifsSet &modifs)
 	if(CSSNode || !htmlNode || !headNode)
 		return;
 	//TODO:quick hack, modify createAndInsertNode
-	CSSNode = kafkaCommon::createAndInsertNode("style", Tag::XmlTag, quantaApp->view()->write(),
-		headNode, 0L, modifs);
+	CSSNode = kafkaCommon::createAndInsertNode("style", "", Tag::XmlTag, quantaApp->view()->write(),
+		headNode, 0L, 0L, modifs);
 	CSSNode->tag->type = Tag::ScriptTag;
 	CSSNode->tag->name = "style |  block";
 }
@@ -524,8 +524,8 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet &modifs)
 		//if the HTML node is not present, create it
 		allTheNodes = baseNode;
 		baseNode = 0L;
-		htmlNode = kafkaCommon::createAndInsertNode("html", Tag::XmlTag, quantaApp->view()->write(),
-			0L, 0L, modifs);
+		htmlNode = kafkaCommon::createAndInsertNode("html", "", Tag::XmlTag, quantaApp->view()->write(),
+			0L, 0L, 0L, modifs);
 		htmlNode->child = allTheNodes;
 		while(allTheNodes)
 		{
@@ -538,14 +538,14 @@ void htmlDocumentProperties::addBasicNodes(NodeModifsSet &modifs)
 	//Create the HEAD Node.
 	allTheNodes = htmlNode->child;
 	htmlNode->child = 0L;
-	headNode = kafkaCommon::createAndInsertNode("head", Tag::XmlTag, quantaApp->view()->write(),
-		htmlNode, 0L, modifs);
+	headNode = kafkaCommon::createAndInsertNode("head", "", Tag::XmlTag, quantaApp->view()->write(),
+		htmlNode, 0L, 0L, modifs);
 
 	if(!bodyNode && htmlNodeCreated)
 	{
 		//let's create BODY to take all the Nodes which can't be in the newly created HTML
-		bodyNode = kafkaCommon::createAndInsertNode("body", Tag::XmlTag, quantaApp->view()->write(),
-			htmlNode, 0L, modifs);
+		bodyNode = kafkaCommon::createAndInsertNode("body", "", Tag::XmlTag, quantaApp->view()->write(),
+			htmlNode, 0L, 0L, modifs);
 		bodyNodeCreated = true;
 	}
 

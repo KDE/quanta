@@ -52,6 +52,13 @@
 #include "../quantacommon.h"
 #include "../resource.h"
 #include "../qextfileinfo.h"
+#ifdef BUILD_KAFKAPART
+#include "../parts/kafka/kafkacommon.h"
+#include "../parts/kafka/kafkahtmlpart.h"
+#include "../parts/kafka/wkafkapart.h"
+#include "../parts/kafka/undoredo.h"
+#include "../parser/tag.h"
+#endif
 
 MyProcess::MyProcess():KProcess()
 {
@@ -91,6 +98,9 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
      return;
 
   QString space="";
+#ifdef BUILD_KAFKAPART
+  QString output;
+#endif
   unsigned int line, col;
 
   Document *w = m_view->write();
@@ -116,7 +126,12 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
      if ( otag.attribute("useDialog","false") == "true" && QuantaCommon::isKnownTag(w->defaultDTD()->name, name))
      {
+#ifdef BUILD_KAFKAPART
+
+#else
        m_view->insertNewTag(name, attr, xtag.attribute("inLine","true") == "true");
+       //FIXME: get the output
+#endif
      }
      else
      {
@@ -144,15 +159,28 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
        {
          if ( xtag.attribute("inLine","true") == "true" )
          {
+#ifdef BUILD_KAFKAPART
+           /** FIXME this is quick and temporary */
+           insertOutputInTheNodeTree(s1, s2);
+#else
            w->insertTag( s1, s2 );
+#endif
          }
          else
          {
+#ifdef BUILD_KAFKAPART
+           insertOutputInTheNodeTree(s1, s2);
+#else
            w->insertTag( s1+"\n"+space+"  ", "\n"+space+s2 );
+#endif
          }
        }
        else
+#ifdef BUILD_KAFKAPART
+         insertOutputInTheNodeTree(s1, s2);
+#else
          w->insertTag( s1 );
+#endif
      }
   }
 
@@ -452,6 +480,82 @@ void TagAction::slotTimeout()
   timer->start(180*1000, true);
 }
 
+#ifdef BUILD_KAFKAPART
+void TagAction::insertOutputInTheNodeTree(QString str1, QString str2)
+{
+#ifdef LIGHT_DEBUG
+	kdDebug(25001)<< "TagAction::insertOutputInTheNodeTree() - str1 : " << str1 <<
+		" - str2 : " << str2 << endl;
+#endif
+	KafkaHTMLPart *kafkaPart = m_view->getKafkaInterface()->getKafkaPart();
+	WKafkaPart *wkafka = m_view->getKafkaInterface();
+	NodeModifsSet modifs;
+	DOM::Node domNode;
+	DOM::Range range;
+	QString tagName;
+	QTag *qtag;
+	Node *node, *startContainer, *endContainer;
+	int offset;
+
+	modifs.cursorX = 0;
+	modifs.cursorY = 0;
+	modifs.cursorX2 = 0;
+	modifs.cursorY2 = 0;
+	modifs.isModified = true;//TODO:determine this
+
+	if(m_view->hadLastFocus() == QuantaView::kafkaFocus)
+	{
+		//m_view->reloadQuantaView();
+
+		tagName = str1.mid(1, str1.length() - 2);
+		kafkaPart->getCurrentNode(domNode, offset);
+		node = wkafka->searchCorrespondingNode(domNode);
+		kdDebug(25001)<< "BOO"<< endl;
+		if(!node)
+			return;
+			kdDebug(25001)<< "BOO2"<< endl;
+		qtag = QuantaCommon::tagFromDTD(quantaApp->view()->write()->defaultDTD(),
+			domNode.nodeName().string());
+		range = kafkaPart->selection();
+		if(kafkaPart->hasSelection())
+		{
+		kdDebug(25001)<< "BOO3"<< endl;
+			startContainer = wkafka->searchCorrespondingNode(range.startContainer());
+			endContainer = wkafka->searchCorrespondingNode(range.endContainer());
+			if(!startContainer || !endContainer)
+				return;
+				kdDebug(25001)<< "BOO4-2"<< endl;
+			kafkaCommon::DTDcreateAndInsertNode(tagName, "", Tag::XmlTag, m_view->write(),
+				startContainer, range.startOffset(), endContainer, range.endOffset(), modifs);
+		}
+		else
+		{
+		kdDebug(25001)<< "BOO4"<< endl;
+			if(kafkaCommon::getNodeType(tagName) != kafkaCommon::inlineDisplay)
+			{
+				if((qtag && qtag->isChild(tagName)) || domNode.nodeType() == DOM::Node::TEXT_NODE)
+				{
+					kafkaCommon::splitNode(node, offset, modifs);
+					kafkaCommon::createAndInsertNode(tagName, "", Tag::XmlTag, m_view->write(),
+						node->parent, node->next, node->next, modifs);
+				}
+			}
+		}
+
+		m_view->write()->docUndoRedo->addNewModifsSet(modifs, undoRedo::NodeTreeModif);
+		m_view->reloadKafkaView();
+	}
+	else
+		m_view->write()->insertTag(str1, str2);
+}
+
+void TagAction::insertTag(QString , QString )
+{
+	//TEMPORARY and dirty Function to insert Tag.
+	//It reload quanta, insert the tag if necessary/possible and refresh kafka
+
+}
+#endif
 
 #include "tagaction.moc"
 #include "myprocess.moc"

@@ -77,10 +77,10 @@
 <child name="thead" />
 <child name="tfoot" />
 <child name="tbody" />
-<child name="tr" />
 </children>
 
 </tag>
+
 <tag name="tbody" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="align" type="list">
@@ -123,6 +123,7 @@
 </children>
 
 </tag>
+
 <tag name="td" hasScript="1" hasCore="1" hasI18n="1" optional="1">
 
     <attr name="width" type="input">
@@ -224,60 +225,72 @@
         <stoppingtag name="th" />
     </stoppingtags>
 <children>
-<child name="a" />
-<child name="abbr" />
-<child name="acronym" />
-<child name="address" />
-<child name="b" />
-<child name="bdo" />
-<child name="big" />
-<child name="blockquote" />
-<child name="br" />
-<child name="button" />
-<child name="cite" />
-<child name="code" />
-<child name="del" />
-<child name="dfn" />
-<child name="div" />
-<child name="dl" />
-<child name="em" />
-<child name="fieldset" />
-<child name="form" />
-<child name="h1" />
-<child name="h2" />
-<child name="h3" />
-<child name="h4" />
-<child name="h5" />
-<child name="h6" />
-<child name="hr" />
-<child name="i" />
-<child name="img" />
-<child name="input" />
-<child name="ins" />
-<child name="kbd" />
-<child name="label" />
-<child name="map" />
-<child name="noscript" />
-<child name="object" />
-<child name="ol" />
-<child name="p" />
-<child name="pre" />
-<child name="q" />
-<child name="samp" />
-<child name="script" />
-<child name="select" />
-<child name="small" />
-<child name="span" />
-<child name="strong" />
-<child name="sub" />
-<child name="sup" />
-<child name="table" />
-<child name="textarea" />
-<child name="tt" />
-<child name="ul" />
-<child name="var" />
+ <child name="#PCDATA" />
+  <child name="tt" />
+ <child name="i" />
+ <child name="b" />
+ <child name="u" />
+ <child name="s" />
+ <child name="strike" />
+ <child name="big" />
+ <child name="small" />
+  <child name="em" />
+ <child name="strong" />
+ <child name="dfn" />
+ <child name="code" />
+ <child name="samp" />
+ <child name="kbd" />
+ <child name="var" />
+ <child name="cite" />
+ <child name="abbr" />
+ <child name="acronym" />
+  <child name="a" />
+ <child name="img" />
+ <child name="applet" />
+ <child name="object" />
+ <child name="font" />
+ <child name="basefont" />
+ <child name="br" />
+ <child name="script" />
+ <child name="map" />
+ <child name="q" />
+ <child name="sub" />
+ <child name="sup" />
+ <child name="span" />
+ <child name="bdo" />
+ <child name="iframe" />
+  <child name="input" />
+ <child name="select" />
+ <child name="textarea" />
+ <child name="label" />
+ <child name="button" />
+  <child name="p" />
+  <child name="h1" />
+ <child name="h2" />
+ <child name="h3" />
+ <child name="h4" />
+ <child name="h5" />
+ <child name="h6" />
+ <child name="ul" />
+ <child name="ol" />
+ <child name="dir" />
+ <child name="menu" />
+ <child name="pre" />
+ <child name="dl" />
+ <child name="div" />
+ <child name="center" />
+ <child name="noscript" />
+ <child name="noframes" />
+ <child name="blockquote" />
+ <child name="form" />
+ <child name="isindex" />
+ <child name="hr" />
+ <child name="table" />
+ <child name="fieldset" />
+ <child name="address" />
 </children>
 </tag>
+
 <tag name="textarea" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="name" type="input">
@@ -321,8 +334,11 @@
     <attr name="onselect"> </attr>
     <attr name="onchange"> </attr>
 
-
+<children>
+<child name="#PCDATA" />
+</children>
 </tag>
+
 <tag name="tfoot" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="align" type="list">
@@ -362,6 +378,7 @@
 <child name="tr" />
 </children>
 </tag>
+
 <tag name="th" hasScript="1" hasCore="1" hasI18n="1" optional="1">
 
     <attr name="width" type="input">
@@ -462,61 +479,72 @@
 		<stoppingtag name="th" />
 	</stoppingtags>
 <children>
-<child name="a" />
-<child name="abbr" />
-<child name="acronym" />
-<child name="address" />
-<child name="b" />
-<child name="bdo" />
-<child name="big" />
-<child name="blockquote" />
-<child name="br" />
-<child name="button" />
-<child name="cite" />
-<child name="code" />
-<child name="del" />
-<child name="dfn" />
-<child name="div" />
-<child name="dl" />
-<child name="em" />
-<child name="fieldset" />
-<child name="form" />
-<child name="h1" />
-<child name="h2" />
-<child name="h3" />
-<child name="h4" />
-<child name="h5" />
-<child name="h6" />
-<child name="hr" />
-<child name="i" />
-<child name="img" />
-<child name="input" />
-<child name="ins" />
-<child name="kbd" />
-<child name="label" />
-<child name="map" />
-<child name="noscript" />
-<child name="object" />
-<child name="ol" />
-<child name="p" />
-<child name="pre" />
-<child name="q" />
-<child name="samp" />
-<child name="script" />
-<child name="select" />
-<child name="small" />
-<child name="span" />
-<child name="strong" />
-<child name="sub" />
-<child name="sup" />
-<child name="table" />
-<child name="textarea" />
-<child name="tt" />
-<child name="ul" />
-<child name="var" />
+ <child name="#PCDATA" />
+  <child name="tt" />
+ <child name="i" />
+ <child name="b" />
+ <child name="u" />
+ <child name="s" />
+ <child name="strike" />
+ <child name="big" />
+ <child name="small" />
+  <child name="em" />
+ <child name="strong" />
+ <child name="dfn" />
+ <child name="code" />
+ <child name="samp" />
+ <child name="kbd" />
+ <child name="var" />
+ <child name="cite" />
+ <child name="abbr" />
+ <child name="acronym" />
+  <child name="a" />
+ <child name="img" />
+ <child name="applet" />
+ <child name="object" />
+ <child name="font" />
+ <child name="basefont" />
+ <child name="br" />
+ <child name="script" />
+ <child name="map" />
+ <child name="q" />
+ <child name="sub" />
+ <child name="sup" />
+ <child name="span" />
+ <child name="bdo" />
+ <child name="iframe" />
+  <child name="input" />
+ <child name="select" />
+ <child name="textarea" />
+ <child name="label" />
+ <child name="button" />
+  <child name="p" />
+  <child name="h1" />
+ <child name="h2" />
+ <child name="h3" />
+ <child name="h4" />
+ <child name="h5" />
+ <child name="h6" />
+ <child name="ul" />
+ <child name="ol" />
+ <child name="dir" />
+ <child name="menu" />
+ <child name="pre" />
+ <child name="dl" />
+ <child name="div" />
+ <child name="center" />
+ <child name="noscript" />
+ <child name="noframes" />
+ <child name="blockquote" />
+ <child name="form" />
+ <child name="isindex" />
+ <child name="hr" />
+ <child name="table" />
+ <child name="fieldset" />
+ <child name="address" />
 </children>
-
 </tag>
+
 <tag name="thead" hasScript="1" hasCore="1" hasI18n="1">
 
     <attr name="align" type="list">
@@ -556,7 +584,14 @@
 <child name="tr" />
 </children>
 </tag>
-<tag name="title" hasI18n="1" />
+
+<tag name="title" hasI18n="1" >
+
+<children>
+<child name="#PCDATA" />
+</children>
+</tag>
+
 <tag name="tr" hasScript="1" hasCore="1" hasI18n="1" optional="1">
 
     <attr name="align" type="list">
@@ -602,41 +637,48 @@
 <child name="td" />
 </children>
 </tag>
+
 <tag name="tt" hasCore="1" hasI18n="1" hasScript="1">
 <children>
-<child name="a" />
-<child name="abbr" />
-<child name="acronym" />
-<child name="b" />
-<child name="bdo" />
-<child name="big" />
-<child name="br" />
-<child name="button" />
-<child name="cite" />
-<child name="code" />
-<child name="del" />
-<child name="dfn" />
-<child name="em" />
-<child name="i" />
-<child name="img" />
-<child name="input" />
-<child name="ins" />
-<child name="kbd" />
-<child name="label" />
-<child name="map" />
-<child name="object" />
-<child name="q" />
-<child name="samp" />
-<child name="script" />
-<child name="select" />
-<child name="small" />
-<child name="span" />
-<child name="strong" />
-<child name="sub" />
-<child name="sup" />
-<child name="textarea" />
-<child name="tt" />
-<child name="var" />
+<child name="#PCDATA" />
+ <child name="tt" />
+ <child name="i" />
+ <child name="b" />
+ <child name="u" />
+ <child name="s" />
+ <child name="strike" />
+ <child name="big" />
+ <child name="small" />
+  <child name="em" />
+ <child name="strong" />
+ <child name="dfn" />
+ <child name="code" />
+ <child name="samp" />
+ <child name="kbd" />
+ <child name="var" />
+ <child name="cite" />
+ <child name="abbr" />
+ <child name="acronym" />
+  <child name="a" />
+ <child name="img" />
+ <child name="applet" />
+ <child name="object" />
+ <child name="font" />
+ <child name="basefont" />
+ <child name="br" />
+ <child name="script" />
+ <child name="map" />
+ <child name="q" />
+ <child name="sub" />
+ <child name="sup" />
+ <child name="span" />
+ <child name="bdo" />
+ <child name="iframe" />
+  <child name="input" />
+ <child name="select" />
+ <child name="textarea" />
+ <child name="label" />
+ <child name="button" />
 </children>
 </tag>
 </TAGS>

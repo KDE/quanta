@@ -70,6 +70,10 @@ public:
   QString getAttribute(const QString& attr);
   /** Insert the new tag into the Document*/
   void insertTag(Document *w, bool insertInLine = true);
+#ifdef BUILD_KAFKAPART
+  /** build and return the new Node.*/
+  Node *buildNode(Document *w);
+#endif
 
 public:
 

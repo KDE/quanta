@@ -3,28 +3,25 @@
 <TAGS>
 <tag name="noscript" hasCore="1" hasI18n="1" hasScript="1">
 <children>
-<child name="address" />
-<child name="blockquote" />
-<child name="del" />
-<child name="di" />
-<child name="dl" />
-<child name="fieldset" />
-<child name="form" />
-<child name="h1" />
-<child name="h2" />
-<child name="h3" />
-<child name="h4" />
-<child name="h5" />
-<child name="h6" />
-<child name="hr" />
-<child name="ins" />
-<child name="noscript" />
-<child name="ol" />
 <child name="p" />
-<child name="pre" />
-<child name="script" />
-<child name="table" />
-<child name="ul" />
-</children>
+ <child name="h1" />
+ <child name="h2" />
+ <child name="h3" />
+ <child name="h4" />
+ <child name="h5" />
+ <child name="h6" />
+ <child name="ul" />
+ <child name="ol" />
+ <child name="pre" />
+ <child name="dl" />
+ <child name="div" />
+ <child name="noscript" />
+ <child name="blockquote" />
+ <child name="form" />
+ <child name="hr" />
+ <child name="table" />
+ <child name="fieldset" />
+ <child name="address" />
+ </children>
 </tag>
 </TAGS>

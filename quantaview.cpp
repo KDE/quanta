@@ -445,8 +445,19 @@ void QuantaView::insertTag( const char *tag)
 /** Reloads both views ONLY when changes have been made to the Node tree ONLY. */
 void QuantaView::reloadBothViews()
 {
-	write()->docUndoRedo->reloadQuantaEditor();
-	write()->docUndoRedo->reloadKafkaEditor(true);
+	  write()->docUndoRedo->reloadQuantaEditor();
+	  write()->docUndoRedo->reloadKafkaEditor();
+}
+/** reload the Kafka view from the Node Tree. Set force to true if you want to reload even if not necessary. */
+void QuantaView::reloadKafkaView(bool force)
+{
+	write()->docUndoRedo->reloadKafkaEditor(force);
+}
+
+/** reload the Quanta view from the Node Tree. Set force to true if you want to reload even if not necessary. */
+void QuantaView::reloadQuantaView(bool force)
+{
+	write()->docUndoRedo->reloadQuantaEditor(force);
 }
 #endif
 
@@ -472,8 +483,8 @@ void QuantaView::slotShowQuantaEditor()
     kafkaInterface->getKafkaPart()->view()->hide();
     kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
     write()->docUndoRedo->reloadQuantaEditor();
-    kafkaInterface->getQuantaCursorPosition(curLine, curCol);
-    write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+    /**kafkaInterface->getQuantaCursorPosition(curLine, curCol);
+    write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);*/
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
     write()->view()->reparent(write(), 0, QPoint(), true);
@@ -490,8 +501,8 @@ void QuantaView::slotShowQuantaEditor()
     if(kafkaInterface->getKafkaPart()->view()->hasFocus())
     {
     	write()->docUndoRedo->reloadQuantaEditor();
-	kafkaInterface->getQuantaCursorPosition(curLine, curCol);
-	write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+	/**kafkaInterface->getQuantaCursorPosition(curLine, curCol);
+	write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);*/
     }
     if(kafkaInterface->isLoaded())
       kafkaInterface->unloadDocument();
@@ -540,8 +551,9 @@ void QuantaView::slotShowKafkaPart()
     write()->view()->reparent(0, 0, QPoint(), false);
     if(!kafkaInterface->isLoaded())
       kafkaInterface->loadDocument(write());
-    kafkaInterface->getKafkaCursorPosition(node, offset);
-    kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);
+    write()->docUndoRedo->syncKafkaCursorAndSelection();
+    /**kafkaInterface->getKafkaCursorPosition(node, offset);
+    kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);*/
     kafkaInterface->getKafkaPart()->view()->reparent(write(), 0, QPoint(), true);
     oldViewsLayout = currentViewsLayout;
     currentViewsLayout = QuantaView::KafkaViewOnly;
@@ -644,14 +656,16 @@ void QuantaView::slotShowKafkaAndQuanta()
   {
     if(write()->view()->hasFocus())
     {
-      kafkaInterface->getKafkaCursorPosition(node, offset);
-      kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);
+      write()->docUndoRedo->syncKafkaCursorAndSelection();
+      /**kafkaInterface->getKafkaCursorPosition(node, offset);
+      kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);*/
       kafkaInterface->getKafkaPart()->view()->setFocus();
     }
     else if(kafkaInterface->getKafkaPart()->view()->hasFocus())
     {
-      kafkaInterface->getQuantaCursorPosition(curLine, curCol);
-      write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+      write()->docUndoRedo->syncQuantaCursorAndSelection();
+      /**kafkaInterface->getQuantaCursorPosition(curLine, curCol);
+      write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);*/
       write()->view()->setFocus();
     }
   }
@@ -723,23 +737,24 @@ void QuantaView::timerEvent( QTimerEvent *e )
 
   if (kafkaInterface->isLoaded() && currentViewsLayout == QuantaView::QuantaAndKafkaViews && writeExists())
   {
-    if(e->timerId() == kafkaUpdateTimer && write()->view()->hasFocus())
+    if(e->timerId() == kafkaUpdateTimer && hadLastFocus() == quantaFocus/**write()->view()->hasFocus()*/)
     {
       //Update kafka view
       //write()->docUndoRedo->syncKafkaView();
       write()->docUndoRedo->reloadKafkaEditor();
-      kafkaInterface->getKafkaCursorPosition(node, offset);
-      kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);
+      /**kafkaInterface->getKafkaCursorPosition(node, offset);
+      kafkaInterface->getKafkaPart()->setCurrentNode(node, offset);*/
     }
-    else if(e->timerId() == quantaUpdateTimer && kafkaInterface->getKafkaPart()->view()->hasFocus())
+    else if(e->timerId() == quantaUpdateTimer &&  hadLastFocus() == kafkaFocus
+      /**kafkaInterface->getKafkaPart()->view()->hasFocus()*/)
     {
       //Update quanta view
       //write()->docUndoRedo->syncQuantaView();
       write()->docUndoRedo->reloadQuantaEditor();
-      kafkaInterface->getQuantaCursorPosition(curLine, curCol);
+      /**kafkaInterface->getQuantaCursorPosition(curLine, curCol);
       write()->viewCursorIf->cursorPositionReal(&oldCurLine, &oldCurCol);
       if(oldCurCol != (uint)curCol || oldCurLine != (uint)curLine)
-        write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);
+        write()->viewCursorIf->setCursorPositionReal((uint)curLine, (uint)curCol);*/
     }
   }
 }

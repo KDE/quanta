@@ -21,6 +21,9 @@
 #include "node.h"
 #include "tag.h"
 #include "qtag.h"
+#ifdef BUILD_KAFKAPART
+#include "../parts/kafka/kafkacommon.h"
+#endif
 
 Node::Node( Node *parent )
 {
@@ -152,6 +155,72 @@ Node *Node::nextNotChild()
 
     return n;
   }
+}
+
+QString Node::nodeName()
+{
+	if(tag)
+		return tag->name;
+	return "";
+}
+
+QString Node::nodeValue()
+{
+	if(tag)
+		return tag->tagStr();
+	return "";
+}
+
+void Node::setNodeValue(QString value)
+{
+	if(!tag)
+		tag = new Tag();
+	tag->setStr(value);
+}
+
+Node* Node::lastChild()
+{
+	Node *n;
+	n = child;
+	while(n)
+		n = n->next;
+	return n;
+}
+
+#ifdef BUILD_KAFKAPART
+bool Node::hasForChild(Node *node)
+{
+	Node *n;
+	bool goUp = false;
+
+	if(child)
+	{
+		n = child;
+		goUp = false;
+		while(n)
+		{
+			if(n == node)
+				return true;
+			n = kafkaCommon::getNextNode(n, goUp, this);
+		}
+	}
+	return false;
+
+}
+#endif
+
+Node *Node::getClosingNode()
+{
+	Node* n = next;
+
+	if(tag && tag->type == Tag::XmlTag && !tag->single)
+	{
+		while(n->tag->type == Tag::Empty)
+			n = n->next;
+		if(n->tag->type == Tag::XmlTagEnd && n->tag->name == ("/" + tag->name))
+			return n;
+	}
+	return 0L;
 }
 
 int Node::size()
