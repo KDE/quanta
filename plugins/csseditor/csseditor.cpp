@@ -441,7 +441,7 @@ void CSSEditor::setMiniEditors(QListViewItem* i)
             if( typeName == "uri") {
               ps->setURIEditor();
               if(values.item(k).toElement().attribute("mode") == "multi")
-                ps->getURIEditor()->setMode(multi);
+                ps->getURIEditor()->setMode(Multi);
             }
                 
             if( typeName == "edit") {

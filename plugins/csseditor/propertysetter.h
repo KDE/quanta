@@ -63,7 +63,7 @@ class multipleSpinBox : public QHBox{
 };
 
  
-enum mode{ multi, single };
+enum mode{ Multi, Single };
     
 class URIEditor : public QHBox {
   Q_OBJECT

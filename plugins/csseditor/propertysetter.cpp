@@ -208,7 +208,7 @@ void propertySetter::addButton(){
 
 URIEditor::URIEditor(QWidget *parent, const char* name) : QHBox(parent,name)
 {
-  Mode = single;
+  Mode = Single;
   label = new QLabel(this);
   le = new QLineEdit(this);
   pb = new KPushButton(this);
@@ -222,7 +222,7 @@ URIEditor::URIEditor(QWidget *parent, const char* name) : QHBox(parent,name)
   pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
   setSpacing( KDialog::spacingHint() );
 
-  if( Mode == single )
+  if( Mode == Single )
     connect(le, SIGNAL(textChanged ( const QString & )), this, SLOT(URI(const QString&)));
   connect(pb, SIGNAL(clicked()), this, SLOT(openFileDialog()));
 }
@@ -244,7 +244,7 @@ void URIEditor::openFileDialog(){
   QFileDialog* fd = new QFileDialog( this, "file dialog", TRUE );
   bool multi=false;
 
-  if( Mode == single){
+  if( Mode == Single){
         fd->setMode(QFileDialog::ExistingFile);
        }
   else {
