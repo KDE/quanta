@@ -1,6 +1,4 @@
-SUBDIRS = scripts others html 
-
-EXTRA_DIST = dirinfo 
+SUBDIRS = scripts others html
 
 templatestextdir = $(kde_datadir)/quanta/templates/text
 templatestext_DATA = dirinfo

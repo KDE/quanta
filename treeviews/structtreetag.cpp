@@ -50,7 +50,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
   static const QString space = " ";
   static const QRegExp nbspRx("&nbsp;|\\n");
   node = a_node;
-  MessageOutput *appMessages = quantaApp->getMessageOutput();
+  MessageOutput *appMessages = quantaApp->problemOutput();
   if (node)
   {
     Tag *tag = node->tag;
@@ -115,7 +115,7 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
               {
                 node->tag->write()->setErrorMark(line);
                 QString parentTagName = node->tag->dtd->caseSensitive ? node->parent->tag->name : node->parent->tag->name.upper();
-                appMessages->showMessage(i18n("Error in line %1: %2 isn't a possible child of %3.\n").arg(line + 1).arg(qTagName).arg(parentTagName));
+                appMessages->showMessage(i18n("Line %1: %2 isn't a possible child of %3.\n").arg(line + 1).arg(qTagName).arg(parentTagName));
               }
               QString nextTagName;
               if (node->next)
@@ -129,12 +129,12 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                  )
               {
                 node->tag->write()->setErrorMark(line);
-                appMessages->showMessage(i18n("Error in line %1: Closing tag for %2 is missing.\n").arg(line + 1).arg(qTagName));
+                appMessages->showMessage(i18n("Line %1: Closing tag for %2 is missing.\n").arg(line + 1).arg(qTagName));
               } else
-              if (!parentQTag)
+              if (!parentQTag && node->tag->name.upper() != "!DOCTYPE")
               {
                 node->tag->write()->setErrorMark(line);
-                appMessages->showMessage(i18n("Error in line %1: %2 is not part of %3.\n").arg(line + 1).arg(qTagName).arg(node->tag->dtd->nickName));
+                appMessages->showMessage(i18n("Line %1: %2 is not part of %3.\n").arg(line + 1).arg(qTagName).arg(node->tag->dtd->nickName));
               }
 
               break;

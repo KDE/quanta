@@ -245,6 +245,13 @@
 <children>
 <child name="col" usage="required" />
 </children>
+    <stoppingtags>
+        <stoppingtag name="colgroup" />
+        <stoppingtag name="tbody" />
+        <stoppingtag name="thead" />
+        <stoppingtag name="tfoot" />
+        <stoppingtag name="tr" />
+    </stoppingtags>
 
 </tag>
 </TAGS>

@@ -29,48 +29,47 @@
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
   */
-  
+
 class KProcess;
 class KURL;
 
 class ProjectNewWeb : public ProjectNewWebS  {
    Q_OBJECT
-public: 
+public:
   ProjectNewWeb(QWidget *parent=0, const char *name=0);
   ~ProjectNewWeb();
-  
+
 public slots:
   void enableStart(const QString&);
   void setCommandL(const QString&);
   void setBaseURL(const KURL& a_baseURL);
-  
+
   void slotStart();
-  
+
   QStringList files();
-  
+
   void slotGetWgetExited(KProcess *);
   void slotGetWgetOutput(KProcess *proc, char *buffer, int buflen);
-  
+
   virtual void resizeEvent( QResizeEvent * );
-  
+
 signals:
 
-  void enableMessages();
-  void disableMessages();
-  
-  void messages( QString );
+  void enableMessages(bool);
+
+  void messages(const QString& );
   /** No descriptions */
   void enableNextButton(QWidget *,bool);
 
 private:
   KURL baseURL;
-  
+
   bool start;
-  
+
   KProcess *proc;
-  
+
   QStringList filesList;
-  
+
 private slots: // Private slots
   /** No descriptions */
   void setProtocol(const QString& protocol);

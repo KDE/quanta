@@ -119,7 +119,7 @@ void StructTreeView::buildTree(Node *baseNode, int openLevel)
 {
 //  if (baseNode)
   {
-    quantaApp->getMessageOutput()->showMessage(i18n("\n"));
+    quantaApp->problemOutput()->clear();
     top = new StructTreeTag( this, i18n("Document Structure") );
     top->setOpen(topOpened);
 

@@ -648,7 +648,7 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
 
     if ( scriptOutputDest == "message" )
     {
-      MessageOutput *msgoutput = quantaApp->getMessageOutput();
+      MessageOutput *msgoutput = quantaApp->messageOutput();
         if ( beginOfScriptOutput )
         {
           //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
@@ -697,7 +697,7 @@ void QuantaView::slotGetScriptError(KProcess *, char *buffer, int buflen)
 
     if ( scriptErrorDest == "message" )
     {
-      MessageOutput *msgoutput = quantaApp->getMessageOutput();
+      MessageOutput *msgoutput = quantaApp->messageOutput();
       if ( beginOfScriptError ) {
           //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
           //  quantaApp->slotViewMes();

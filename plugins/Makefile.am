@@ -6,5 +6,5 @@ METASOURCES = AUTO
 
 libplugins_la_SOURCES = spellchecker.cpp quantaplugininterface.cpp quantaplugineditor.cpp quantapluginconfig.cpp quantaplugin.cpp plugineditor.ui pluginconfig.ui
 
-SUBDIRS = weblint php3dbg php4dbg framewizard csseditor
+SUBDIRS = php3dbg php4dbg framewizard csseditor
 

@@ -263,6 +263,15 @@
         <tooltip>alignment character offset</tooltip>
         <location col="1" row="5" />
     </attr>
+    <stoppingtags>
+        <stoppingtag name="colgroup" />
+        <stoppingtag name="tbody" />
+        <stoppingtag name="thead" />
+        <stoppingtag name="tfoot" />
+        <stoppingtag name="tr" />
+    </stoppingtags>
+    
+    
 <children>
 <child name="col" />
 </children>

@@ -1,14 +1,9 @@
-####### kdevelop will overwrite this part!!! (begin)##########
 bin_PROGRAMS = kxsldbg xsldbg
 
-## INCLUDES were found outside kdevelop specific part
-
 kxsldbg_SOURCES = kxsldbg.cpp main.cpp
-kxsldbg_LDADD   = ./kxsldbgpart/libqtnotfier/libqtnotfier.la ./kxsldbgpart/libkxsldbgpart.la ./kxsldbgpart/libxsldbg/libxsldbg.la  $(LIB_KDEUI) $(LIBXSLT_LIBS) $(LIBXML_LIBS) 
+kxsldbg_LDADD   = ./kxsldbgpart/libqtnotfier/libqtnotfier.la ./kxsldbgpart/libkxsldbgpart.la ./kxsldbgpart/libxsldbg/libxsldbg.la  $(LIB_KDEUI) $(LIBXSLT_LIBS) $(LIBXML_LIBS)
 
 SUBDIRS = kxsldbgpart
-
-EXTRA_DIST = main.cpp xsldbgmain.c simpleio.c kxsldbg.cpp kxsldbg.h kxsldbg.desktop kxsldbg_shell.rc
 
 applnk_DATA = kxsldbg.desktop
 applnkdir = $(kde_appsdir)/Development
@@ -27,7 +22,6 @@ xsldbg_LDADD = kxsldbgpart/libxsldbg/libxsldbg.la  kxsldbgpart/libqtnotfier/libq
 # the library search path.
 xsldbg_LDFLAGS = $(all_libraries)
 
-####### kdevelop will overwrite this part!!! (end)############
 # These paths are KDE specific. Use them:
 # kde_appsdir         Where your application's menu entry (.desktop) should go to.
 # kde_icondir         Where your icon should go to - better use KDE_ICON.

@@ -1,6 +1,4 @@
-SUBDIRS = images others 
-
-EXTRA_DIST = dirinfo 
+SUBDIRS = images others
 
 templatesbinariesdir = $(kde_datadir)/quanta/templates/binaries
 templatesbinaries_DATA = dirinfo

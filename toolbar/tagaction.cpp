@@ -83,7 +83,7 @@ TagAction::TagAction( QDomElement *element, KActionCollection *parent)
   }
   setIcon( s );
   loopStarted = false;
-  m_appMessages = quantaApp->getMessageOutput();
+  m_appMessages = quantaApp->messageOutput();
   if ( m_view )
       connect( this, SIGNAL(activated()), SLOT(insertTag()) );
 }
@@ -360,6 +360,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   {
     if ( firstOutput )
     {
+      quantaApp->slotShowBottDock(true);
       m_appMessages->showMessage( i18n( "\"%1\" script output:\n" ).arg(tag.attribute("text")) );
     }
     m_appMessages->showMessage( text );

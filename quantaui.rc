@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="quanta" version="32021">
+<kpartgui name="quanta" version="32022">
   <MenuBar noMerge="1">
 
     <Menu name="file" noMerge="1"><text>&amp;File</text>
@@ -80,6 +80,7 @@
       <Action name="view_dtd_toolbar"/>
       <Action name="view_statusbar"/>
       <Action name="show_messages"/>
+      <Action name="show_problems"/>
       <Separator />
       <Action name="view_border"/>
       <Action name="view_line_numbers"/>

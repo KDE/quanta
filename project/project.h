@@ -109,9 +109,8 @@ public slots:
 
   void slotSelectProjectType(const QString &);
 
-  void slotEnableMessages();
-  void slotDisableMessages();
-  void slotGetMessages(QString);
+  void slotEnableMessages(bool enable);
+  void slotGetMessages(const QString&);
 
   void slotRescanPrjDir();
   /** Saves a project view (group of files & toolbars) asking for a name if askForName==true. */
@@ -127,7 +126,7 @@ signals:
   void closeFiles();
 
   void setBaseURL( const KURL& url );
-  void setProjectName( QString );
+  void setProjectName(const QString&);
 
   void showTree();
   void reloadTree(const KURL::List &, bool);
@@ -135,8 +134,7 @@ signals:
   void setLocalFiles( bool );
 
   void messages(const QString& );
-  void selectMessageWidget();
-  void disableMessageWidget();
+  void enableMessageWidget(bool);
 
   void saveAllFiles();
   void newStatus();

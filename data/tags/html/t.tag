@@ -77,6 +77,7 @@
 <child name="thead" />
 <child name="tfoot" />
 <child name="tbody" />
+<child name="tr" />
 </children>
 
 </tag>

@@ -133,7 +133,8 @@ public:
   SpellChecker *spellChecker() const {return m_spellChecker;}
   TemplatesTreeView *gettTab() const {return tTab;}
   StructTreeView *getsTab() const {return sTab;}
-  MessageOutput *getMessageOutput() const {return messageOutput;}
+  MessageOutput *messageOutput() const {return m_messageOutput;}
+  MessageOutput *problemOutput() const {return m_problemOutput;}
 
   QPopupMenu *toolbarMenu(const QString& name);
   ToolbarEntry *toolbarByURL(const KURL& url);
@@ -174,7 +175,7 @@ public:
     //return the old Cursor position
   void oldCursorPos(uint &line, uint &col) {line = oldCursorLine; col = oldCursorCol;}
   /** search for s in autosaveUrls and return a file path */
-  QString searchPathListEntry(QString s,QString autosaveUrls);
+  QString searchPathListEntry(const QString& s, const QString& autosaveUrls);
   /** if there are backup files, ask user whether wants to restore them or to mantain the originals */
   void recoverCrashed();
 
@@ -224,7 +225,6 @@ public slots:
   void slotInsertTag(const KURL&, DirInfo);
 
   void slotEditFindInFiles();
-  void slotToolSyntaxCheck();
   void openLastFiles();
   /// open url in documentation window
   void openDoc(QString url );
@@ -258,6 +258,7 @@ public slots:
   void slotViewRepaint();
 
   void slotShowBottDock(bool force = false);
+  void slotShowProblemsDock();
   void slotShowFTabDock();
   void slotShowPTabDock();
   void slotShowTTabDock();
@@ -274,8 +275,7 @@ public slots:
   void bookmarkMenuAboutToShow();
   void gotoBookmark(int n);
 
-  void slotMessageWidgetEnable();
-  void slotMessageWidgetDisable();
+  void slotEnableMessageWidget(bool enable);
 
   /** options slots */
   void slotOptions();
@@ -293,7 +293,6 @@ public slots:
   void gotoFileAndLine(const QString& filename, int line );
 
   void selectArea(int line1, int col1, int line2, int col2);
-  void autoComplete();
 
   void slotShowOpenFileList();
   /** No descriptions */
@@ -408,7 +407,7 @@ protected:
   void initView();
   void initProject();
   void initTagDict();
-  
+
   /** Reads the tags for the tag files. Returns the number of read tags. */
   uint readTagFile(const QString& fileName, DTDStruct* parentDTD, QTagList *tagList);
   /** Parse the dom document and retrieve the tag attributes */
@@ -428,11 +427,13 @@ protected:
   void loadToolbarForDTD(const QString& dtdName);
   void setTitle(const QString&);
   void connectDockSignals(QObject *obj);
+  void layoutDockWidgets(const QString &layout);
 
 
 private:
-  /** Messaage output window */
-  MessageOutput *messageOutput;
+  /** Message output window */
+  MessageOutput *m_messageOutput;
+  MessageOutput *m_problemOutput;
 
   QPopupMenu *m_pluginMenu;
   QPopupMenu *m_tagsMenu;
@@ -450,6 +451,7 @@ private:
   KDockWidget *leftdock;
   KDockWidget *maindock;
   KDockWidget *bottdock;
+  KDockWidget *problemsdock;
   KDockWidget *ptabdock;
   KDockWidget *ttabdock;
   KDockWidget *dtabdock;
@@ -483,7 +485,8 @@ private:
   // ACTIONS
   KRecentFilesAction *projectToolbarFiles;
 
-  KToggleAction *showMessagesAction, *showScriptTabAction,
+  KToggleAction *showMessagesAction, *showProblemsAction,
+    *showScriptTabAction,
     *showFTabAction, *showPTabAction, *showTTabAction,
     *showSTabAction, *showATabAction, *showDTabAction,
     *showStatusbarAction, *showPreviewAction,

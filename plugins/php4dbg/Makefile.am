@@ -1,11 +1,4 @@
-####### kdevelop will overwrite this part!!! (begin)##########
-
-SUBDIRS = dbgbase 
-
-EXTRA_DIST = idesite.cpp debugger.cpp listener.h listener.cpp thread.h idesite.h thread.cpp debugger.h 
-
-####### kdevelop will overwrite this part!!! (end)############
-
+SUBDIRS = dbgbase
 noinst_LTLIBRARIES = libphp4dbg.la
 
 INCLUDES = -I$(top_srcdir)/quanta/plugins/php4dbg/dbgbase $(all_includes)

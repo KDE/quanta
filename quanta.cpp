@@ -1214,30 +1214,7 @@ void QuantaApp::slotOptions()
     qConfig.previewPosition = previewOptions->position();
 
     QString layout = previewOptions->layout();
-    if (layout == "Default")
-    {
-      ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
-      bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
-
-      ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-      ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-      scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-      dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-      KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-      atabdock->manualDock(w, KDockWidget::DockBottom, 70);
-    } else
-    if (layout == "Tabbed")
-    {
-      ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
-      bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
-
-      ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-      ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-      scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-      dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-      stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-      atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    }
+    layoutDockWidgets(layout);
     qConfig.windowLayout = layout;
 
     m_htmlPart->closeURL();
@@ -1491,20 +1468,7 @@ void QuantaApp::slotDockChanged()
       if (m_view->writeExists()) m_view->write()->view()->setFocus();
     }
   }
-/*  if (stabdock->isVisible() && m_view->writeExists())
-  {
-    Document *w = m_view->write();
-    sTab->setParsingDTD(w->parsingDTD());
-    int expandLevel = qConfig.expandLevel;
-    if (expandLevel == 0)
-        expandLevel = 40;
-    sTab->slotReparse(w, baseNode , expandLevel );
-    uint line, col;
-    w->viewCursorIf->cursorPositionReal(&line, &col);
-    Node *node = parser->nodeAt(line, col);
-    if (node)
-        sTab->showTagAtPos(node);
-  } */
+  showMessagesAction->setChecked(bottdock->isVisible());
 }
 
 void QuantaApp::selectArea(int line1, int col1, int line2, int col2)
@@ -1587,6 +1551,7 @@ void QuantaApp::slotShowScriptTabDock() { scripttabdock->changeHideShowState();}
 void QuantaApp::slotShowSTabDock() { stabdock->changeHideShowState();}
 void QuantaApp::slotShowATabDock() { atabdock->changeHideShowState();}
 void QuantaApp::slotShowDTabDock() { dtabdock->changeHideShowState();}
+void QuantaApp::slotShowProblemsDock() { problemsdock->changeHideShowState();}
 void QuantaApp::slotShowBottDock(bool force)
 {
   if ( bottdock->parent() == 0L )
@@ -1601,6 +1566,8 @@ void QuantaApp::slotShowBottDock(bool force)
     else
     {
       showMessagesAction->setChecked(true);
+      if (!bottdock->isVisible())
+        bottdock->changeHideShowState();
       bottdock->show();
     }
   }
@@ -1626,43 +1593,9 @@ void QuantaApp::viewMenuAboutToShow()
   showSTabAction->setChecked( stabdock->isVisible() );
   showATabAction->setChecked( atabdock->isVisible() );
   showDTabAction->setChecked( dtabdock->isVisible() );
+  showProblemsAction->setChecked(problemsdock->isVisible());
 }
 
-void QuantaApp::slotToolSyntaxCheck()
-{
-  if (m_view->writeExists())
-  {
-  //  slotFileSave();
-    Document *w = m_view->write();
-
-    if ( m_doc->isModified() )
-    {
-      w->saveIt();
-    }
-
-    if ( !w->isUntitled() )
-    {
-      QString fname = w->url().prettyURL();
-      if ( fname.left(5) == "file:" ) fname.remove(0,5);
-
-      KProcess *p = new KProcess();
-      *p << "perl";
-      *p << locate("appdata","plugins/weblint");
-      *p << "-x" << "Netscape";
-      *p << fname;
-
-      connect( p, SIGNAL(processExited(KProcess *)),
-              messageOutput, SLOT(weblintFinished()) );
-      connect( p, SIGNAL(processExited(KProcess *)),
-              this, SLOT(slotSyntaxCheckDone()) );
-      connect( p, SIGNAL(receivedStdout(KProcess *, char *, int)),
-              messageOutput, SLOT( processWebLint(KProcess *, char *, int)) );
-
-
-      p->start( KProcess::NotifyOnExit, KProcess::Stdout);
-    }
-  }
-}
 
 QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomElement &element, int &id )
 {
@@ -1765,20 +1698,10 @@ void QuantaApp::slotForward()
   if ( s->id( s->visibleWidget()) == 2 ) m_htmlPartDoc->forward();
 }
 
-void QuantaApp::slotMessageWidgetEnable()
+void QuantaApp::slotEnableMessageWidget(bool enable)
 {
-  if ( !bottdock->isVisible() )
+  if (!bottdock->isVisible() == enable)
     bottdock->changeHideShowState();
-}
-
-void QuantaApp::slotMessageWidgetDisable()
-{
-  if ( bottdock->isVisible() )
-    bottdock->changeHideShowState();
-}
-
-void QuantaApp::autoComplete()
-{
 }
 
 void QuantaApp::slotShowOpenFileList()
@@ -2872,7 +2795,7 @@ void QuantaApp::processDTD(const QString& documentType)
 
   if (!w->isUntitled())
   {
-    messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL()));
+    m_messageOutput->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(QuantaCommon::getDTDNickNameFromName(w->getDTDIdentifier())).arg(w->url().prettyURL()));
   }
   loadToolbarForDTD(w->getDTDIdentifier());
   sTab->useOpenLevelSetting = true;
@@ -3629,7 +3552,7 @@ void QuantaApp::slotAutosaveTimer()
 
 }
 
-QString QuantaApp::searchPathListEntry(QString s,QString autosaveUrls)
+QString QuantaApp::searchPathListEntry(const QString& s, const QString& autosaveUrls)
 {
 KURL k(s);
 
@@ -3646,6 +3569,35 @@ KURL k(s);
   return QString::null;
 }
 
+void QuantaApp::layoutDockWidgets(const QString &layout)
+{
+  if (layout == "Default")
+  {
+    ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
+    bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
+    problemsdock->manualDock(bottdock, KDockWidget::DockCenter);
+
+    ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    atabdock->manualDock(w, KDockWidget::DockBottom, 70);
+  } else
+  if (layout == "Tabbed")
+  {
+    ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
+    bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
+    problemsdock->manualDock(bottdock, KDockWidget::DockCenter);
+
+    ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+    atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
+  }
+}
 
 #include "quanta.moc"
 

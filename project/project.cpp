@@ -1045,12 +1045,10 @@ void Project::slotNewProject()
   connect( wiz, SIGNAL(selected(const QString &)),
           this, SLOT  (slotSelectProjectType(const QString &)));
 
-  connect( pnw, SIGNAL(enableMessages()),
-          this, SLOT  (slotEnableMessages()));
-  connect( pnw, SIGNAL(disableMessages()),
-          this, SLOT  (slotDisableMessages()));
-  connect( pnw, SIGNAL(messages(QString)),
-          this, SLOT  (slotGetMessages(QString)));
+  connect( pnw, SIGNAL(enableMessages(bool)),
+          this, SLOT  (slotEnableMessages(bool)));
+  connect( pnw, SIGNAL(messages(const QString&)),
+          this, SLOT  (slotGetMessages(const QString&)));
   connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
            wiz, SLOT(setNextEnabled(QWidget*,bool)));
   connect( pnw, SIGNAL(enableNextButton(QWidget *,bool)),
@@ -1558,17 +1556,13 @@ void Project::slotUploadURL(const KURL& urlToUpload)
   dlg->show();
 }
 
-void Project::slotEnableMessages()
+void Project::slotEnableMessages(bool enable)
 {
-  emit selectMessageWidget();
+  emit enableMessageWidget(enable);
 }
 
-void Project::slotDisableMessages()
-{
-  emit disableMessageWidget();
-}
 
-void Project::slotGetMessages(QString data)
+void Project::slotGetMessages(const QString& data)
 {
   emit messages(data);
 }

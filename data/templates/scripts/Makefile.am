@@ -1,6 +1,4 @@
-SUBDIRS = php perl javascript 
-
-EXTRA_DIST = dirinfo 
+SUBDIRS = php perl javascript
 
 templatesscriptsdir = $(kde_datadir)/quanta/templates/scripts
 templatesscripts_DATA = dirinfo

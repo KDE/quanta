@@ -224,7 +224,9 @@ void QuantaApp::initQuanta()
 
   connect(guiFactory()->container("popup_editor", quantaApp), SIGNAL(aboutToShow()), this, SLOT(slotContextMenuAboutToShow()));
 
-  connect(messageOutput, SIGNAL(clicked(const QString&,int)),
+  connect(m_messageOutput, SIGNAL(clicked(const QString&,int)),
+          this, SLOT(gotoFileAndLine(const QString&,int)));
+  connect(m_problemOutput, SIGNAL(clicked(const QString&,int)),
           this, SLOT(gotoFileAndLine(const QString&,int)));
 
   refreshTimer = new QTimer( this );
@@ -307,8 +309,8 @@ void QuantaApp::initProject()
           pTab,     SLOT  (slotReloadTree(const KURL::List &,bool)));
   connect(m_project,  SIGNAL(setBaseURL(const KURL&)),
           pTab,     SLOT  (slotSetBaseURL(const KURL&)));
-  connect(m_project,  SIGNAL(setProjectName(QString)),
-          pTab,     SLOT  (slotSetProjectName(QString)));
+  connect(m_project,  SIGNAL(setProjectName(const QString&)),
+          pTab,     SLOT  (slotSetProjectName(const QString&)));
   connect(m_project,  SIGNAL(closeFiles()),
           m_doc,      SLOT  (closeAll()));
   connect(m_project,  SIGNAL(showTree()),
@@ -337,13 +339,11 @@ void QuantaApp::initProject()
   connect(pTab,     SIGNAL(uploadProject()),
           m_project,  SLOT  (slotUpload()));
 
-  connect(m_project,  SIGNAL(selectMessageWidget()),
-          this,     SLOT  (slotMessageWidgetEnable()));
-  connect(m_project,  SIGNAL(disableMessageWidget()),
-          this,     SLOT  (slotMessageWidgetDisable()));
+  connect(m_project,  SIGNAL(enableMessageWidget(bool)),
+          this,     SLOT  (slotEnableMessageWidget(bool)));
 
   connect(m_project,  SIGNAL(messages(const QString&)),
-          messageOutput, SLOT(showMessage(const QString&)));
+          m_messageOutput, SLOT(showMessage(const QString&)));
 
   connect(m_project,  SIGNAL(saveAllFiles()),
           this, SLOT(slotFileSaveAll()));
@@ -362,7 +362,10 @@ void QuantaApp::initView()
   // connect the widget to your document to display document contents.
 
   maindock = createDockWidget( "Editor", UserIcon("textarea"  ), 0L, i18n("Editor"), 0L);
-  bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Output"), 0L);
+  bottdock = createDockWidget( "Output", UserIcon("output_win"), 0L, i18n("Message output"), 0L);
+  bottdock->setToolTipString(i18n("Message output"));
+  problemsdock = createDockWidget( "Problems", SmallIcon("stop"), 0L, i18n("Problem reporter"), 0L);
+  problemsdock->setToolTipString(i18n("Problem reporter"));
 
   atabdock = createDockWidget("TagAttributes", UserIcon("tag_misc"), 0L, i18n("Attribute tree view"), "");
   atabdock->setToolTipString(i18n("Attribute tree view"));
@@ -444,12 +447,17 @@ void QuantaApp::initView()
   rightWidgetStack->addWidget(m_htmlPartDoc->view(), 2);
   rightWidgetStack->raiseWidget(0);
 
-  messageOutput = new MessageOutput(bottomWidgetStack);
-  messageOutput->setFocusPolicy(QWidget::NoFocus);
+  m_messageOutput = new MessageOutput(bottomWidgetStack);
+  m_messageOutput->setFocusPolicy(QWidget::NoFocus);
+  m_messageOutput->showMessage(i18n("Message Window...\n"));
 
-  bottomWidgetStack->addWidget(messageOutput, 0);
+  bottomWidgetStack->addWidget(m_messageOutput, 0);
 //  bottomWidgetStack->addWidget( m_htmlPart   ->view(), 1 );
 //  bottomWidgetStack->addWidget( htmlPartDoc->view(), 2 );
+
+  m_problemOutput = new MessageOutput(problemsdock);
+  m_problemOutput->setFocusPolicy(QWidget::NoFocus);
+  problemsdock->setWidget(m_problemOutput);
 
   connect(fTab, SIGNAL(openFile  (const KURL &, const QString&)),
           this, SLOT(slotFileOpen(const KURL &, const QString&)));
@@ -517,24 +525,15 @@ void QuantaApp::initView()
   setMainDockWidget( maindock );
   setView(maindock);
 
-
-  maindock ->setEnableDocking( KDockWidget::DockNone );
-  ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
-  bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
-
-  ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-  ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-  scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-  dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-  KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-  atabdock->manualDock(w, KDockWidget::DockBottom, 70);
   qConfig.windowLayout = "Default";
+  layoutDockWidgets(qConfig.windowLayout);
   KDockManager *mng = ftabdock->dockManager();
   connect(mng, SIGNAL(change()), this, SLOT(slotDockChanged()));
 
 //signal docking ststus changes
   connectDockSignals(maindock);
   connectDockSignals(bottdock);
+  connectDockSignals(problemsdock);
   connectDockSignals(ftabdock);
   connectDockSignals(ptabdock);
   connectDockSignals(ttabdock);
@@ -767,30 +766,7 @@ void QuantaApp::readOptions()
 
   m_config->setGroup  ("General Options");
   QString layout = m_config->readEntry("Window layout", "Custom");
-  if (layout == "Default")
-  {
-    ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
-    bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
-
-    ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    KDockWidget *w = stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    atabdock->manualDock(w, KDockWidget::DockBottom, 70);
-  } else
-  if (layout == "Tabbed")
-  {
-    ftabdock ->manualDock(maindock, KDockWidget::DockLeft,   30);
-    bottdock ->manualDock(maindock, KDockWidget::DockBottom, 80);
-
-    ptabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    ttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    scripttabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    dtabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    stabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-    atabdock->manualDock(ftabdock, KDockWidget::DockCenter);
-  }
+  layoutDockWidgets(layout);
   qConfig.windowLayout = layout;
 
 }
@@ -801,16 +777,16 @@ void QuantaApp::enablePhp3Debug(bool enable)
     dbg3 = new PHP3Debugger( phpDebugPort,0,0);
 
     connect( dbg3,          SIGNAL(newConnect()),
-             messageOutput, SLOT(newPhpConnect()) );
+             m_messageOutput, SLOT(newPhpConnect()) );
     connect( dbg3,          SIGNAL(endConnect()),
-             messageOutput, SLOT(endPhpConnect()) );
+             m_messageOutput, SLOT(endPhpConnect()) );
     connect( dbg3,          SIGNAL(data(QString)),
-             messageOutput, SLOT(phpDebug(QString)) );
+             m_messageOutput, SLOT(phpDebug(QString)) );
 
     if ( !dbg3->ok() )
-        messageOutput->insertItem(i18n("Can't bind port %1, PHP3 debugger disabled").arg(phpDebugPort));
+        m_messageOutput->insertItem(i18n("Can't bind port %1, PHP3 debugger disabled").arg(phpDebugPort));
     else
-        messageOutput->insertItem(i18n("PHP3 debugger listens at port %1").arg(phpDebugPort));
+        m_messageOutput->insertItem(i18n("PHP3 debugger listens at port %1").arg(phpDebugPort));
     debuggerStyle = "PHP3";
   } else delete dbg3;
 }
@@ -820,7 +796,7 @@ void QuantaApp::enablePhp4Debug(bool enable)
   if (enable) {
     dbg4 = new PHP4Debugger(0L,0L);
     connect( dbg4,          SIGNAL(message(QString)),
-             messageOutput, SLOT(php4Debug(QString)) );
+             m_messageOutput, SLOT(php4Debug(QString)) );
     dbg4->init();
     debuggerStyle = "PHP4";
   } else delete dbg4;
@@ -1826,10 +1802,6 @@ void QuantaApp::initActions()
                         ac, "tools_document_properties" );
 #endif
 
- /*   (void) new KAction( i18n( "Weblint &Syntax Check" ), 0,
-                        this, SLOT( slotToolSyntaxCheck() ),
-                        ac, "syntax_check" );
-*/
     // View actions
 
     showFTabAction =
@@ -1865,6 +1837,10 @@ void QuantaApp::initActions()
       new KToggleAction( i18n( "Show &Messages" ), "output_win", CTRL+Key_M,
                          this, SLOT( slotShowBottDock() ),
                          ac, "show_messages" );
+    showProblemsAction =
+      new KToggleAction( i18n( "Show &Problem Reporter" ), "stop", 0,
+                         this, SLOT( slotShowProblemsDock() ),
+                         ac, "show_problems" );
 
     #ifdef BUILD_KAFKAPART
     KToggleAction *ta;

@@ -49,12 +49,6 @@ public slots:
   /** php4 debugger stuff */
   void php4Debug(const QString& s);
 
-
-  /** weblint stuff */
-  void processWebLint( KProcess *, char *, int );
-  void weblintFinished();
-
-
 public:
   uint maxItems() const { return max_items; }
   void setMaxItems( uint items ) {  max_items = items; }

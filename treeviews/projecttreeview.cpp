@@ -176,7 +176,7 @@ void ProjectTreeView::slotSetBaseURL( const KURL& url )
   baseURL = url;
 }
 
-void ProjectTreeView::slotSetProjectName( QString name )
+void ProjectTreeView::slotSetProjectName(const QString& name )
 {
   projectName = name;
   projectDir->setText( 0, name);

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Jan 12 2001
     copyright            : (C) 2001 by Dmitry Poplavsky
-                           (C) 2002 Andras Mantia <amantia@freemail.hu>
+                           (C) 2002, 2003 Andras Mantia <amantia@freemail.hu>
     email                : dima@kde.org
  ***************************************************************************/
 
@@ -25,7 +25,7 @@ MessageItem::MessageItem( QListBox * listbox, const QString &text, int line, con
 {
   lineDefined = ( line!=-1 );
 }
-  
+
 int MessageItem::line()
 {
   if ( lineDefined ) {
@@ -38,10 +38,10 @@ int MessageItem::line()
       return lineNumber;
     int pos2 = pos;
     while ( s[pos2].isDigit() ) pos2++;
-    
+
     QString snum = s.mid( pos, pos2-pos );
     return snum.toInt();
-    
+
   }
 }
 

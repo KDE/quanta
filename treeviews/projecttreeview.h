@@ -58,7 +58,7 @@ public slots: // Public slots
   void slotMenu(QListViewItem*, const QPoint&, int);
   void slotReloadTree(const KURL::List &a_urlList, bool buildNewtree);
   void slotSetBaseURL( const KURL& url );
-  void slotSetProjectName( QString name );
+  void slotSetProjectName(const QString& name );
   /** No descriptions */
   void slotRescan();
   /** Bring up the project options dialog */

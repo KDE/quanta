@@ -1,6 +1,4 @@
-SUBDIRS = php html docbook 
-
-EXTRA_DIST = dirinfo 
+SUBDIRS = php html docbook
 
 templatespagesdir = $(kde_datadir)/quanta/templates/pages
 templatespages_DATA = dirinfo

@@ -3,7 +3,7 @@
                              -------------------
     begin                : Fri Oct 27 2000
     copyright            : (C) 2000 by Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon
-                           (C) 2002 Andras Mantia
+                           (C) 2002, 2003 Andras Mantia
     email                : pdima@users.sourceforge.net,yshurik@penguinpowered.com,sequitur@easystreet.com, amantia@freemail.hu
  ***************************************************************************/
 
@@ -99,7 +99,7 @@ void ProjectNewWeb::slotStart()
 {
   if ( !start )
   {
-    emit enableMessages();
+    emit enableMessages(true);
 
     if (QExtFileInfo::createDir( baseURL))
     {

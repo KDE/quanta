@@ -28,8 +28,6 @@ MessageOutput::MessageOutput(QWidget *parent, const char *name )
   : QListBox(parent,name)
 {
   max_items = 200;
-  insertItem( i18n("Message Window...") );
-  insertItem("");
 
   QPalette pal = palette();
   pal.setColor(QColorGroup::HighlightedText, pal.color(QPalette::Normal, QColorGroup::Text));
@@ -37,7 +35,6 @@ MessageOutput::MessageOutput(QWidget *parent, const char *name )
   setPalette(pal);
   setFocusPolicy( NoFocus );
 
-//  connect( this, SIGNAL(pressed(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
   connect( this, SIGNAL(selected(QListBoxItem*)), SLOT(clickItem(QListBoxItem*)) );
 }
 
@@ -129,44 +126,6 @@ void MessageOutput::newPhpConnect()
 void MessageOutput::endPhpConnect()
 {
    insertItem("");
-}
-
-// if p!=0 store output, else show it
-void MessageOutput::processWebLint( KProcess *p, char *buffer, int len )
-{
-  static QString s = "";
-
-  if ( p ) {
-    QString text(buffer);
-    text.truncate(len);
-    s += text;
-  }
-  else {
-    int endPos;
-    if ( s.right(1) == "\n" )
-      s.remove( s.length()-1,1 );
-    if ( s.left(1) == "\n" )
-      s.remove( 0,1 );
-
-    while ( ( endPos = s.find('\n') ) != -1 ) {
-      new MessageItemWebLint( this, s.left(endPos) );
-      s.remove(0,endPos+1);
-    }
-    if( ! s.isEmpty() ) {
-      new MessageItemWebLint( this, s );
-    }
-   // setBottomItem(count()-1);
-    s = "";
-  }
-  setBottomItem(count()>0?count()-1:0);
-
-}
-
-void MessageOutput::weblintFinished()
-{
-   clear();
-   processWebLint(0,0,0); // show output
-   new MessageItemWebLint( this, i18n("Syntax check done.") );
 }
 
 #include "messageoutput.moc"

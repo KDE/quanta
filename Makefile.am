@@ -15,15 +15,11 @@ KAFKALIB = $(top_builddir)/quanta/parts/kafka/libkafkalibrary.la
 endif
 
 # Make merging simple
-LIB_KMDI = 
+LIB_KMDI =
 
 quanta_LDADD = $(LIB_KMDI) $(top_builddir)/quanta/project/libproject.la $(top_builddir)/quanta/plugins/libplugins.la $(top_builddir)/quanta/widgets/libwidgets.la $(top_builddir)/quanta/parser/libparser.la $(top_builddir)/quanta/treeviews/libtreeviews.la $(top_builddir)/quanta/toolbar/libtoolbar.la $(top_builddir)/quanta/tagdialogs/libtagdialogs.la $(top_builddir)/quanta/dialogs/libdialogs.la $(top_builddir)/quanta/messages/libmessages.la $(top_builddir)/quanta/plugins/php4dbg/libphp4dbg.la $(top_builddir)/quanta/plugins/php4dbg/dbgbase/libdbgbase.la $(top_builddir)/quanta/plugins/framewizard/libframewizard.la $(top_builddir)/quanta/plugins/csseditor/libcsseditor.la $(top_builddir)/quanta/plugins/php3dbg/libphp3dbg.la -lkatepartinterfaces  $(KAFKALIB) $(LIB_KABC) $(LIB_KSPELL) $(LIB_KHTML)
 
 
-
-
-
-####### kdevelop will overwrite this part!!! (end)############
 quanta_METASOURCES = AUTO
 
 # the library search path.
