@@ -206,8 +206,8 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
   nCol = nRow = maxCol = 0;
   bool countRows = false;
   bool missingBody = false;
-  QSpinBox *rowSpin = 0L;
-  QSpinBox *colSpin = 0L;
+  m_rowSpin = 0L;
+  m_colSpin = 0L;
   m_dataTable = 0L;
   QValueList<TableNode> tableRowTags;
   TableNode mergeMatrix[100][100];
@@ -249,8 +249,8 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
     {
       headerCheckBox->setChecked(true);
       countRows = true;
-      rowSpin = headerRowSpinBox;
-      colSpin = headerColSpinBox;
+      m_rowSpin = headerRowSpinBox;
+      m_colSpin = headerColSpinBox;
       m_dataTable= headerTableData;
       m_tableTags = m_tableHeaderTags;
       m_tableRows = m_tableHeaderRows;
@@ -267,15 +267,15 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
       headerColSpinBox->setValue(maxCol);
       countRows = false;
       nCol = nRow = maxCol = 0;
-      rowSpin = 0L;
-      colSpin = 0L;
+      m_rowSpin = 0L;
+      m_colSpin = 0L;
       m_dataTable = 0L;
     }
     else if (tagName == "tfoot")
     {
       footerCheckBox->setChecked(true);
-      rowSpin = footerRowSpinBox;
-      colSpin = footerColSpinBox;
+      m_rowSpin = footerRowSpinBox;
+      m_colSpin = footerColSpinBox;
       m_tableTags = m_tableFooterTags;
       m_tableRows = m_tableFooterRows;
       m_dataTable = footerTableData;
@@ -293,14 +293,14 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
       footerColSpinBox->setValue(maxCol);
       countRows = false;
       nCol = nRow = maxCol = 0;
-      rowSpin = 0L;
-      colSpin = 0L;
+      m_rowSpin = 0L;
+      m_colSpin = 0L;
       m_dataTable = 0L;
     }
     else if (tagName == "tbody")
     {
-      rowSpin = rowSpinBox;
-      colSpin = colSpinBox;
+      m_rowSpin = rowSpinBox;
+      m_colSpin = colSpinBox;
       m_tableTags = m_tableDataTags;
       m_tableRows = m_tableDataRows;
       m_dataTable = tableData;
@@ -316,8 +316,8 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
       nCol = nRow = maxCol = 0;
       m_tableTags = 0L;
       m_tableRows = 0L;
-      rowSpin = 0L;
-      colSpin = 0L;
+      m_rowSpin = 0L;
+      m_colSpin = 0L;
       m_dataTable = 0L;
     }
     else if (tagName == "tr")
@@ -325,8 +325,8 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
       if (!countRows)
       {
         missingBody = true;
-        rowSpin = rowSpinBox;
-        colSpin = colSpinBox;
+        m_rowSpin = rowSpinBox;
+        m_colSpin = colSpinBox;
         m_tableTags = m_tableDataTags;
         m_tableRows = m_tableDataRows;
         m_dataTable = tableData;
@@ -337,7 +337,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
       }
       tableRowTags.clear();
       nRow++;
-      rowSpin->setValue(nRow);
+      m_rowSpin->setValue(nRow);
       nCol = 0;
       tableNode.node = new Node(0L);
       tableNode.node->tag = new Tag(*(n->tag));
@@ -369,8 +369,8 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
       {
         int col = nCol;
         while (mergeMatrix[nRow - 1][col].node != 0L) {
-          if (colSpin->value() < col)
-              colSpin->setValue(col);
+          if (m_colSpin->value() < col)
+              m_colSpin->setValue(col);
           TableNode tableN = mergeMatrix[nRow - 1][col];
           Node *n = tableN.node;
           m_dataTable->setText(nRow - 1, col, i18n("Merged with (%1, %2).").arg(tableN.mergedRow).arg(tableN.mergedCol));
@@ -386,11 +386,11 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           nCol++;
         }
         nCol++;
-        if (rowSpin && colSpin && m_dataTable)
+        if (m_rowSpin && m_colSpin && m_dataTable)
         {
-          rowSpin->setValue(nRow);
-          if (colSpin->value() < nCol)
-            colSpin->setValue(nCol);
+          m_rowSpin->setValue(nRow);
+          if (m_colSpin->value() < nCol)
+            m_colSpin->setValue(nCol);
           m_dataTable->setText(nRow - 1, nCol - 1, tagContent(n));
           tableNode.node = new Node(0L);
           tableNode.node->tag = new Tag(*(n->tag));
@@ -408,8 +408,8 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
           if (ok & colValue > 1)
           {
             nCol += (colValue - 1);
-            if (colSpin->value() < nCol)
-              colSpin->setValue(nCol);
+            if (m_colSpin->value() < nCol)
+              m_colSpin->setValue(nCol);
             for (int i = 0; i < colValue - 1; i++)
             {
               m_dataTable->setText(nRow - 1, lastCol + i, i18n("Merged with (%1, %2).").arg(nRow).arg(lastCol));
@@ -459,8 +459,8 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
   m_dataTable = tableData;
-  rowSpin = rowSpinBox;
-  colSpin = colSpinBox;
+  m_rowSpin = rowSpinBox;
+  m_colSpin = colSpinBox;
 
   //create the thead, tbody, tfoot tags if they were not present in the parsed area
   if (!m_thead) {
@@ -511,18 +511,24 @@ void TableEditor::slotTabChanged( QWidget *w)
       m_tableTags = m_tableDataTags;
       m_tableRows = m_tableDataRows;
       m_dataTable = tableData;
+      m_colSpin = colSpinBox;
+      m_rowSpin = rowSpinBox;
       break;
     }
    case 1: {
       m_tableTags = m_tableHeaderTags;
       m_tableRows = m_tableHeaderRows;
       m_dataTable = headerTableData;
+      m_colSpin = headerColSpinBox;
+      m_rowSpin = headerRowSpinBox;
       break;
     }
      case 2: {
       m_tableTags = m_tableFooterTags;
       m_tableRows = m_tableFooterRows;
       m_dataTable = footerTableData;
+      m_colSpin = footerColSpinBox;
+      m_rowSpin = footerRowSpinBox;
       break;
     }
   }
@@ -652,6 +658,7 @@ QString TableEditor::tagContent(Node *node)
   if (node->next)
   {
     node->next->tag->beginPos(el, ec);
+    ec--;
   }
   else
   {
@@ -708,7 +715,7 @@ void TableEditor::slotInsertRow()
     else
       m_tableTags->append(tableRowTags);
   }
-  rowSpinBox->setValue(num + 1);
+  m_rowSpin->setValue(num + 1);
 }
 
 
@@ -735,7 +742,7 @@ void TableEditor::slotInsertCol()
       (*it).append(tableNode);
     }
   }
-  colSpinBox->setValue(num + 1);
+  m_colSpin->setValue(num + 1);
 }
 
 
