@@ -316,7 +316,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
       m_appMessages->clear();
-      m_appMessages->showMessage( i18n("\"%1\" script started.\n").arg(tag.attribute("text")) );
+      m_appMessages->showMessage( i18n("\"%1\" script started.\n").arg(actionText()) );
       if (!inputFromFile)
       {
         if ( inputType == "current" || inputType == "selected" )
@@ -382,7 +382,7 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
     if ( firstOutput )
     {
       quantaApp->slotShowBottDock(true);
-      m_appMessages->showMessage( i18n( "\"%1\" script output:\n" ).arg(tag.attribute("text")) );
+      m_appMessages->showMessage( i18n( "\"%1\" script output:\n" ).arg( actionText() ) );
     }
     m_appMessages->showMessage( text );
   } else
@@ -442,7 +442,7 @@ void TagAction::slotGetScriptError( KProcess *, char *buffer, int buflen )
     if ( firstError )
     {
       quantaApp->slotShowBottDock(true);
-      m_appMessages->showMessage( i18n( "\"%1\" script output:\n" ).arg(tag.attribute("text")) );
+      m_appMessages->showMessage( i18n( "\"%1\" script output:\n" ).arg(actionText()) );
     }
     m_appMessages->showMessage( text );
   }
@@ -466,6 +466,17 @@ void TagAction::setInputFileName(const QString& fileName)
   m_inputFileName = fileName;
 }
 
+QString TagAction::actionText()
+{
+   QString t = tag.attribute("text");
+   int pos = t.find('&');
+   if (pos < (int)t.length()-1 && t[pos+1] != '&')
+     return t.remove(pos, 1);
+   else 
+     return t;
+}
+
+
 void TagAction::slotProcessExited(KProcess *)
 {
   if (loopStarted)
@@ -473,7 +484,7 @@ void TagAction::slotProcessExited(KProcess *)
     qApp->exit_loop();
     loopStarted = false;
   }
-  m_appMessages->showMessage( i18n("\nThe \"%1\" script has exited.\n").arg(tag.attribute("text")) );
+  m_appMessages->showMessage( i18n("\nThe \"%1\" script has exited.\n").arg(actionText()) );
 }
 
 void TagAction::execute()
@@ -492,7 +503,7 @@ void TagAction::execute()
 /** Timeout occurred while waiting for some network function to return. */
 void TagAction::slotTimeout()
 {
-  if (KMessageBox::warningYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(tag.attribute("text")), i18n("Action Not Responding")) == KMessageBox::Yes)
+  if (KMessageBox::warningYesNo(quantaApp, i18n("<qt>The filtering action <b>%1</b> seems to be locked.<br>Do you want to terminate it?</qt>").arg(actionText()), i18n("Action Not Responding")) == KMessageBox::Yes)
   {
     if (::kill(-proc->pid(), SIGTERM))
     {

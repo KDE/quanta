@@ -60,6 +60,10 @@ public:
     void setOutputFile(QFile* file);
     void setInputFileName(const QString& fileName);
     void execute();
+    /**
+     * Remove accelerator from tag action name *
+     */ 
+    QString actionText();
 #ifdef BUILD_KAFKAPART
     /**
      * This function take the output of the TagAction, parse it into Nodes and insert it
