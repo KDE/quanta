@@ -778,6 +778,16 @@ void Project::upload()
 	delete dlg;
 }
 
+void Project::uploadFile(QString file)
+{
+	emit saveAllFiles();
+	QString fname = QExtFileInfo::toRelative( file, basePath);
+	
+	ProjectUpload *dlg = new ProjectUpload(fname, this, 0, i18n("Upload project's files..."));
+	dlg->exec();
+	delete dlg;
+}
+
 void Project::slotEnableMessages()
 {
   emit selectMessageWidget();

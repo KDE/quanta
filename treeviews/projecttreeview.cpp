@@ -29,6 +29,7 @@
 #include <kopenwith.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <kdebug.h>
 
 // app includes
 #include "projecttreefile.h"
@@ -65,13 +66,16 @@ ProjectTreeView::ProjectTreeView(QWidget *parent, const char *name )
 	fileMenu -> insertSeparator();
 	fileMenu -> insertItem(	UserIcon("delete"),i18n("Remove from disc"), 	 this ,SLOT(slotRemove()));
 	fileMenu -> insertItem(					  			   i18n("Remove from project"),this ,SLOT(slotRemoveFromProject()));
+	fileMenu -> insertSeparator();
+	fileMenu -> insertItem(i18n("Upload file..."),this,SLOT(slotUploadSingleFile()));
 
 	folderMenu = new QPopupMenu();
 	
 	folderMenu -> insertItem( UserIcon("open"),  i18n("&Open"), 		this ,SLOT(slotOpen()));
-	folderMenu -> insertSeparator();
+ 	folderMenu -> insertSeparator();
 	folderMenu -> insertItem(	UserIcon("delete"),i18n("Remove from disc"), 	 this ,SLOT(slotRemove()));
 	folderMenu -> insertItem(					  			   i18n("Remove from project"),this ,SLOT(slotRemoveFromProject()));
+
 //	folderMenu -> insertItem( i18n("Properties"),   this ,SLOT(slotProperties()));
 
 	connect(  this, SIGNAL(doubleClicked(QListViewItem *)),
@@ -326,7 +330,7 @@ void ProjectTreeView::slotRemoveFromProject()
 	if ( !currentItem() ) return;
 	
 	if ( KMessageBox::warningYesNo(this,"Do you really want to remove \n"+currentFileName()+"\nfrom project ?") != KMessageBox::Yes ) 
-	  return;
+		return;
 	
 	ProjectTreeFolder *d = dynamic_cast<ProjectTreeFolder *>( currentItem() );
 	if ( d ) {
@@ -341,4 +345,10 @@ void ProjectTreeView::slotRemoveFromProject()
 		delete( f );
 		return;
 	}
+}
+
+void ProjectTreeView::slotUploadSingleFile()
+{
+	if ( !currentItem() ) return;
+	emit uploadSingleFile( currentFileName() );
 }

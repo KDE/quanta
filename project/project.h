@@ -70,6 +70,7 @@ public slots:
   void loadProject(const KURL &url);
   void options();
   void upload();
+  void uploadFile(QString);
 
   void addFiles();
   void addDirectory();

@@ -176,7 +176,7 @@ void QuantaApp::statusBarTimeout()
 
 void QuantaApp::initDocument()
 {
-  doc = new QuantaDoc(this,this);
+  doc = new QuantaDoc(this,this);  
   connect(doc, SIGNAL(newStatus()),    this, SLOT(slotNewStatus()));
 }
 
@@ -211,6 +211,8 @@ void QuantaApp::initProject()
           project,  SLOT  (slotRemoveFile(QString)));
   connect(pTab,      SIGNAL(removeFolderFromProject(QString)),
           project,  SLOT  (slotRemoveFolder(QString)));
+  connect(pTab,      SIGNAL(uploadSingleFile(QString)),
+          project,  SLOT  (uploadFile(QString)));
           
   connect(project,  SIGNAL(selectMessageWidget()),
           this,      SLOT  (slotSelectMessageWidget()));
@@ -260,7 +262,7 @@ void QuantaApp::initView()
 
   rightWidgetStack = new QWidgetStack( maindock );
 
-  view = new QuantaView( this, rightWidgetStack );
+  view = new QuantaView( this, rightWidgetStack );   
   view->app = this;
   view->doc = doc;
   
