@@ -84,19 +84,33 @@ void QuantaView::updateToolBars( ToolBars *t)
   wtoolbars.clear();
 
   // insert toolbars
-  for ( int i=0; i < t->count(); i++ ) {
+  for ( int i=0; i < t->count(); i++ ) 
+  {
     WToolBar *tb = new WToolBar(app);
     tb -> setFocusPolicy(QWidget::NoFocus);
     wtoolbars.append(tb);
 
     QDomNodeList list = t->actions(i);
-    for ( unsigned int ai=0; ai<list.count(); ai++ ) {
+    for ( unsigned int ai=0; ai<list.count(); ai++ ) 
+    {
 
       QDomElement el = list.item(ai).toElement();
       int id = el.attribute("id","-1").toInt();
 
-      if ( el.attribute("type") != "separator")
-        tb->insertButton( t->actionIcon(id),  el.attribute("id","-1").toInt(), true, i18n( el.attribute("name","") ));
+      if ( el.attribute("type") != "separator") 
+      {
+        QString tooltip = el.attribute("name","");
+        
+        QDomNodeList nl = el.childNodes();
+        for ( unsigned int i=0; i<nl.count(); i++ )
+        {
+       		QDomElement el = nl.item(i).toElement();
+       		if ( el.nodeName() == "tooltip" )	tooltip = el.text();
+        }
+        tooltip.replace( QRegExp("&lt;"), "<" );
+        
+        tb->insertButton( t->actionIcon(id),  el.attribute("id","-1").toInt(), true, i18n( tooltip ));
+      }
       else
         tb->insertSeparator();
     }

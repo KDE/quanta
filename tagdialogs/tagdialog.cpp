@@ -52,7 +52,7 @@ extern bool useCloseTag; // use close tag if optional
 
 
 TagDialog::TagDialog( Document *write, QString tag ,QString attr,bool insertInLine )
-    : QTabDialog( 0L, tag)
+    : QTabDialog( 0L, tag, true)
 {
   this->write = write;
   dict = new QDict<QString>(1,false);
