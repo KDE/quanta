@@ -160,8 +160,8 @@ void QuantaApp::initProject()
 {
   project = new Project(this);
   
-  connect(project,  SIGNAL(openFile    (KURL &)),
-          this,     SLOT  (slotFileOpen(KURL &)));
+  connect(project,  SIGNAL(openFile    (const KURL &)),
+          this,     SLOT  (slotFileOpen(const KURL &)));
   connect(project,  SIGNAL(reloadTree(QStringList,bool,bool)),
           pTab,     SLOT  (slotReloadTree(QStringList,bool,bool)));
   connect(project,  SIGNAL(setBasePath(QString)),
@@ -273,10 +273,10 @@ void QuantaApp::initView()
   rightWidgetStack->addWidget( htmlPartDoc->view(), 2 );
   rightWidgetStack->raiseWidget(0);
 
-  connect(   fTTab,SIGNAL(openFile  (KURL &)),
-            this, SLOT(slotFileOpen(KURL &)));
-  connect(   fLTab,SIGNAL(openFile  (KURL &)),
-            this, SLOT(slotFileOpen(KURL &)));
+  connect(   fTTab,SIGNAL(openFile  (const KURL &)),
+            this, SLOT(slotFileOpen(const KURL &)));
+  connect(   fLTab,SIGNAL(openFile  (const KURL &)),
+            this, SLOT(slotFileOpen(const KURL &)));
             
   connect(   fTTab,SIGNAL(openImage(QString)),
             this, SLOT  (slotImageOpen(QString)));
@@ -288,8 +288,8 @@ void QuantaApp::initView()
   connect(  fTTab,SIGNAL(changeMode()),
             this, SLOT(slotSwapLeftPanelMode()));
             
-  connect(   pTab, SIGNAL(openFile  (KURL &)),
-            this, SLOT(slotFileOpen(KURL &)));
+  connect(   pTab, SIGNAL(openFile  (const KURL &)),
+            this, SLOT(slotFileOpen(const KURL &)));
   connect(   pTab, SIGNAL(openImage  (QString)),
             this, SLOT(slotImageOpen(QString)));
             

@@ -97,7 +97,7 @@ public slots:
   
 signals:
 	
-	void openFile				 ( KURL& );
+	void openFile				 ( const KURL& );
 	void closeFiles			 ();
 	
 	void setBasePath		 ( QString );

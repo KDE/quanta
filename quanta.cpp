@@ -102,7 +102,7 @@ void QuantaApp::slotFileOpen()
   if ( !url.url().isEmpty() ) slotFileOpen( url );
 }
 
-void QuantaApp::slotFileOpen( KURL &url )
+void QuantaApp::slotFileOpen( const KURL &url )
 {
   doc->openDocument( url );
 }

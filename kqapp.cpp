@@ -63,12 +63,11 @@ KQApplication::KQApplication()
 
      KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-	 if (args->count())
-	 {
-	   KURL url(args->arg(0));
-       quanta->slotFileOpen( url );
-	 }
-	 args->clear();
+     for (int i = 0; i < args->count(); i++ )
+     {
+       quanta->slotFileOpen( args->url(i) );
+     }
+     args->clear();
    }
    delete splash;
 }
@@ -107,9 +106,8 @@ int KQUniqueApplication::newInstance()
   // process URLs...
   QuantaApp *mainWin = static_cast<QuantaApp*>(mainWidget());
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  if (args->count()>0) {
-    KURL url=args->url(0);    // we take only one URL
-    mainWin->slotFileOpen(url);
+  for (int i = 0; i < args->count(); i++) {
+    mainWin->slotFileOpen(args->url(i));
   }
 
   return 0;

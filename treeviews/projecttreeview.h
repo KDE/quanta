@@ -62,7 +62,7 @@ public slots: // Public slots
 signals: // Signals
 	void activatePreview();
 	void open( QListViewItem *name );
-  void openFile ( KURL& );
+  void openFile ( const KURL& );
   void openImage( QString );
   void insertTag( QString );
   void removeFileFromProject( QString );

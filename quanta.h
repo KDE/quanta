@@ -121,7 +121,7 @@ class QuantaApp : public KDockMainWindow
     
     void slotFileNew ();
     void slotFileOpen();
-    void slotFileOpen( KURL & );
+    void slotFileOpen( const KURL & );
     void slotFileSave    ();
     void slotFileSaveAs  ();
     void slotFileSaveAll ();

@@ -80,10 +80,23 @@ int main(int argc, char *argv[])
   KCmdLineArgs::init( argc, argv, &aboutData );
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
+  // this defeats the purpose of KCmdLineArgs, but there is no other
+  // way around, I'm afraid.
+  const char *uniq = "--unique";
+  bool isUnique = false;
+  for ( int i = 1; i < argc; i++ ) {
+    if ( strcmp(argv[i], uniq) == 0 ) {
+      isUnique = true;
+      KUniqueApplication::addCmdLineOptions(); // before calling parsedArgs!
+      break;
+    }
+  }
+
+
   KApplication *app;
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-  if (args->isSet("unique")) {
+  if (isUnique) {
 	if (!KQUniqueApplication::start())
 		exit(0);
 	app = new KQUniqueApplication;
