@@ -175,7 +175,11 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       m_tableTags = m_tableHeaderTags;
       m_tableRows = m_tableHeaderRows;
       tableArea = 0;
-      m_thead = new Tag(*(n->tag));
+      if (m_thead) { //there was already a <thead> tag in the area
+        nRow = m_dataTable->numRows();
+      } else {
+        m_thead = new Tag(*(n->tag));
+      }
     }
     else if (tagName == "/thead")
     {
@@ -198,7 +202,11 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
       m_dataTable = footerTableData;
       countRows = true;
       tableArea = 2;
-      m_tfoot = new Tag(*(n->tag));
+      if (m_tfoot) { //there was already a <tfoot> tag in the area
+        nRow = m_dataTable->numRows();
+      } else {
+        m_tfoot = new Tag(*(n->tag));
+      }
     }
     else if (tagName == "/tfoot")
     {
@@ -313,6 +321,21 @@ void TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol )
   m_tableTags = m_tableDataTags;
   m_tableRows = m_tableDataRows;
   m_dataTable = tableData;
+
+  //create the thead, tbody, tfoot tags if they were not present in the parsed area
+  if (!m_thead) {
+    m_thead = new Tag();
+    m_thead->parse("<thead>", m_write);
+  }
+  if (!m_tfoot) {
+    m_tfoot = new Tag();
+    m_tfoot->parse("<tfoot>", m_write);
+  }
+  if (!m_tbody) {
+    m_tbody = new Tag();
+    m_tbody->parse("<tbody>", m_write);
+  }
+
   //just for testing
   /*
   for (uint i = 0; i < m_tableDataTags.count(); i++)

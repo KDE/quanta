@@ -178,7 +178,7 @@
                             <cstring>colSpinBox</cstring>
                         </property>
                         <property name="value">
-                            <number>1</number>
+                            <number>0</number>
                         </property>
                     </widget>
                     <widget class="QSpinBox" row="0" column="1">
@@ -186,7 +186,7 @@
                             <cstring>rowSpinBox</cstring>
                         </property>
                         <property name="value">
-                            <number>1</number>
+                            <number>0</number>
                         </property>
                     </widget>
                     <widget class="QTable" row="4" column="0" rowspan="1" colspan="4">
@@ -197,10 +197,10 @@
                             <enum>AutoOneFit</enum>
                         </property>
                         <property name="numRows">
-                            <number>1</number>
+                            <number>0</number>
                         </property>
                         <property name="numCols">
-                            <number>1</number>
+                            <number>0</number>
                         </property>
                     </widget>
                     <spacer row="0" column="2">
@@ -291,7 +291,7 @@
                                     <enum>AutoOneFit</enum>
                                 </property>
                                 <property name="numRows">
-                                    <number>1</number>
+                                    <number>0</number>
                                 </property>
                                 <property name="numCols">
                                     <number>0</number>
@@ -319,10 +319,10 @@
                                     <cstring>headerRowSpinBox</cstring>
                                 </property>
                                 <property name="minValue">
-                                    <number>1</number>
+                                    <number>0</number>
                                 </property>
                                 <property name="value">
-                                    <number>1</number>
+                                    <number>0</number>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="0" column="0">
@@ -439,7 +439,7 @@
                                     <enum>AutoOneFit</enum>
                                 </property>
                                 <property name="numRows">
-                                    <number>1</number>
+                                    <number>0</number>
                                 </property>
                                 <property name="numCols">
                                     <number>0</number>
@@ -450,10 +450,10 @@
                                     <cstring>footerRowSpinBox</cstring>
                                 </property>
                                 <property name="minValue">
-                                    <number>1</number>
+                                    <number>0</number>
                                 </property>
                                 <property name="value">
-                                    <number>1</number>
+                                    <number>0</number>
                                 </property>
                             </widget>
                             <widget class="QLabel" row="0" column="0">
@@ -564,14 +564,14 @@
     <connection>
         <sender>headerColSpinBox</sender>
         <signal>valueChanged(int)</signal>
-        <receiver>headerTableData</receiver>
-        <slot>setNumCols(int)</slot>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveCol(int)</slot>
     </connection>
     <connection>
         <sender>headerRowSpinBox</sender>
         <signal>valueChanged(int)</signal>
-        <receiver>headerTableData</receiver>
-        <slot>setNumRows(int)</slot>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveRow(int)</slot>
     </connection>
     <connection>
         <sender>rowSpinBox</sender>
@@ -594,14 +594,14 @@
     <connection>
         <sender>footerRowSpinBox</sender>
         <signal>valueChanged(int)</signal>
-        <receiver>footerTableData</receiver>
-        <slot>setNumRows(int)</slot>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveRow(int)</slot>
     </connection>
     <connection>
         <sender>footerColSpinBox</sender>
         <signal>valueChanged(int)</signal>
-        <receiver>footerTableData</receiver>
-        <slot>setNumCols(int)</slot>
+        <receiver>TableEditor</receiver>
+        <slot>slotAddRemoveCol(int)</slot>
     </connection>
     <connection>
         <sender>tableData</sender>
@@ -743,7 +743,7 @@
     <function access="protected" returnType="QString">tableToString()</function>
     <function access="protected" returnType="QString">tagContent( Node * node )</function>
     <function access="protected">deleteList( QValueList&lt;TableNode&gt; * table )</function>
-    <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt; &gt; * matrix )</function>
+    <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt;&gt; * matrix )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
