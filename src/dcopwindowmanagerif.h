@@ -36,6 +36,8 @@ class DCOPWindowManagerIf : virtual public DCOPObject
   virtual QString saveCurrentFile() = 0;
   virtual QString documentFolderForURL(const QString &url) = 0;
   virtual QString urlWithPreviewPrefix(const QString &url) = 0;
+  virtual void addFileToProject(const QString &url) = 0;
+  virtual void addFolderToProject(const QString &url) = 0;
 };
 
 #endif

@@ -3750,6 +3750,22 @@ QString QuantaApp::urlWithPreviewPrefix(const QString &url)
   return Project::ref()->urlWithPrefix(u).url();
 }
 
+void QuantaApp::addFileToProject(const QString &url)
+{
+  if (Project::ref()->hasProject())
+  {
+    Project::ref()->slotInsertFile(KURL::fromPathOrURL(url));
+  }
+}
+
+void QuantaApp::addFolderToProject(const QString &url)
+{
+  if (Project::ref()->hasProject())
+  {
+    Project::ref()->slotAddDirectory(KURL::fromPathOrURL(url), true);
+  }
+}
+
 void QuantaApp::slotAutosaveTimer()
 {
   m_config->reparseConfiguration();

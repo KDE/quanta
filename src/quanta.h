@@ -156,6 +156,8 @@ public:
   QStringList tagAreas(const QString& name, bool includeCoordinates, bool skipFoundContent) const;
   QString documentFolderForURL(const QString &url);
   QString urlWithPreviewPrefix(const QString &url);
+  void addFileToProject(const QString &url);
+  void addFolderToProject(const QString &url);
   /** Capture DCOP signals from KXsldbgPart or similar plugin */
   void newCursorPosition(const QString &file, int lineNumber, int columnNumber);
   void newDebuggerPosition(const QString &file, int lineNumber);
