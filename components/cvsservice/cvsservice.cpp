@@ -50,6 +50,7 @@ CVSService::~CVSService()
 {
   if (m_cvsService)
     m_cvsService->quit();
+  delete m_cvsService;
   delete m_menu;
   delete m_repository;
   m_repository = 0L;
