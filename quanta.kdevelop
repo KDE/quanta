@@ -36,7 +36,7 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
       <envvars>
         <envvar value="1" name="WANT_AUTOCONF_2_5" />
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
@@ -47,8 +47,8 @@
       <cxxflags>\s-O0 -g3 -Wall</cxxflags>
     </compiler>
     <run>
-      <mainprogram>quanta/quanta_be</mainprogram>
-      <programargs/>
+      <mainprogram>quanta/src/quanta_be</mainprogram>
+      <programargs></programargs>
       <terminal>false</terminal>
       <envvars/>
       <directoryradio>build</directoryradio>
@@ -59,67 +59,67 @@
     <configurations>
       <default>
         <configargs>--enable-debug=full --without-kommander --prefix=/opt/kde3</configargs>
-        <builddir>/home/andris/development/build/kde-head/quanta</builddir>
-        <ccompiler>GccOptions</ccompiler>
-        <cxxcompiler>GppOptions</cxxcompiler>
-        <f77compiler>G77Options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
+        <builddir>/home/andris/development/build/kde-head/kdewebdev</builddir>
+        <ccompiler>kdevgccoptions</ccompiler>
+        <cxxcompiler>kdevgppoptions</cxxcompiler>
+        <f77compiler>kdevpgf77options</f77compiler>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
         <cflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cxxflags>
-        <f77flags/>
-        <topsourcedir/>
-        <cppflags/>
-        <ldflags/>
+        <f77flags></f77flags>
+        <topsourcedir></topsourcedir>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
       </default>
       <withkommander>
         <configargs>--enable-debug=full --prefix=/opt/kde3</configargs>
-        <builddir>/home/andris/development/build/kde-head/quanta</builddir>
-        <topsourcedir/>
-        <ccompiler>GccOptions</ccompiler>
-        <cxxcompiler>GppOptions</cxxcompiler>
-        <f77compiler>G77Options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
+        <builddir>/home/andris/development/build/kde-head/kdewebdev</builddir>
+        <topsourcedir></topsourcedir>
+        <ccompiler>kdevgccoptions</ccompiler>
+        <cxxcompiler>kdevgppoptions</cxxcompiler>
+        <f77compiler>kdevpgf77options</f77compiler>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
         <cflags>-DKDE_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT</cxxflags>
-        <f77flags/>
-        <cppflags/>
-        <ldflags/>
+        <f77flags></f77flags>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
       </withkommander>
       <all>
         <configargs>--enable-debug=full --with-kafkapart --prefix=/opt/kde3</configargs>
-        <builddir>/home/andris/build/kde-head/quanta</builddir>
-        <topsourcedir/>
+        <builddir>/home/andris/development/build/kde-head/kdewebdev</builddir>
+        <topsourcedir></topsourcedir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
         <cflags>-DKDE_NO_COMPAT</cflags>
         <cxxflags>-DKDE_NO_COMPAT</cxxflags>
-        <f77flags/>
-        <cppflags/>
-        <ldflags/>
+        <f77flags></f77flags>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
       </all>
       <withoutkafka>
         <configargs>--enable-debug=full --without-kommander --without-kafkapart --prefix=/opt/kde3</configargs>
-        <builddir>/home/andris/development/build/kde-head/quanta-simple</builddir>
-        <topsourcedir/>
-        <cppflags/>
-        <ldflags/>
+        <builddir>/home/andris/development/build/kde-head/kdewebdev-simple</builddir>
+        <topsourcedir></topsourcedir>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
-        <cflags/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
+        <cflags></cflags>
         <cxxflags>-DKDE_NO_COMPAT -DQT_NO_COMPAT</cxxflags>
-        <f77flags/>
+        <f77flags></f77flags>
       </withoutkafka>
     </configurations>
     <makeenvvars>
@@ -166,16 +166,16 @@
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
-      <dbgshell/>
-      <programargs/>
+      <dbgshell></dbgshell>
+      <programargs></programargs>
       <gdbpath>/usr/bin/</gdbpath>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
       <runappinappdirectory>true</runappinappdirectory>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
     </general>
     <display>
       <staticmembers>false</staticmembers>

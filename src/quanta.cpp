@@ -445,9 +445,11 @@ void QuantaApp::slotFileSaveAll()
   for (int i = docTab->count() -1; i >=0; i--)
   {
     w = dynamic_cast<Document*>(docTab->page(i));
-    w->removeBackup(m_config);
+    if (w)
+      w->removeBackup(m_config);
   }
-  slotUpdateStatus(m_view->write());
+  if (m_view->writeExists())
+    slotUpdateStatus(m_view->write());
 }
 
 void QuantaApp::slotFileReload()
@@ -778,6 +780,8 @@ void QuantaApp::slotInsertTag(const KURL& url, DirInfo dirInfo)
 /** slot for new modify flag */
 void QuantaApp::slotNewStatus()
 {
+  fileRecent->setEnabled(true);
+  m_project->projectRecent->setEnabled(true);
   if (m_view->writeExists())
   {
     Document *w = m_view->write();
