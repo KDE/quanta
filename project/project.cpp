@@ -23,14 +23,18 @@
 
 // include QT files
 #include <qcheckbox.h>
+#include <qlabel.h>
+#include <qlayout.h>
 
 // include files for KDE
+#include <kactionclasses.h>
 #include <kapplication.h>
 #include <kcharsets.h>
 #include <kdirwatch.h>
 #include <kio/netaccess.h>
 #include <klineedit.h>
 #include <klocale.h>
+#include <kmainwindow.h>
 #include <kmessagebox.h>
 #include <kparts/componentfactory.h>
 #include <kprogress.h>
@@ -45,7 +49,6 @@
 #include "dtdselectdialog.h"
 #include "eventconfigurationdlg.h"
 #include "qextfileinfo.h"
-#include "quanta.h"
 #include "quantacommon.h"
 #include "projectprivate.h"
 #include "projectupload.h"
@@ -1165,9 +1168,9 @@ bool Project::eventsEnabled()
 
 void Project::slotShowProjectToolbar(bool show)
 {
-  if (quantaApp && quantaApp->factory())
+  if (d->m_mainWindow && d->m_mainWindow->factory())
   {
-    QWidget *w = quantaApp->factory()->container("project_toolbar", quantaApp);
+    QWidget *w = d->m_mainWindow->factory()->container("project_toolbar", d->m_mainWindow);
     if (w)
     {
       if (show && m_projectToolbarVisible)
