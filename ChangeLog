@@ -1,6 +1,6 @@
 This files contains the changes since Quanta 2.0 until the current 3.3.x series.
 
-Version 3.3.2 (Release date: xx-10-2004; Started 07-10-2004):
+Version 3.3.2 (Release date: 06-12-2004; Started 07-10-2004):
   - bugfixes:
         - don't crash after editing a cell of a newly inserted row/column in the
           table editor
@@ -19,11 +19,11 @@ Version 3.3.2 (Release date: xx-10-2004; Started 07-10-2004):
           only with the mouse through the selection. [#92936]
 	- don't show directories that were removed from the project in the upload
 	  dialog [#87186]
-	- don't show the Upload File item in the tab context menu if the current item 
+	- don't show the Upload File item in the tab context menu if the current item
 	  is not part of a project.
 	- parse PHP statements ending with a one-line comment ( //comment ?>)
 	  correctly [#80289]
-  
+
   - improvements:
   	 - recognize one-line PHP comments starting with #
 	 - autocomplete PHP functions after @
