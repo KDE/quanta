@@ -178,6 +178,8 @@ void DebuggerManager::initActions()
   new KAction(i18n("Set Value of Variable"), SmallIcon("edit"), 0,
               this, SLOT(slotVariableSet()), ac, "debug_variable_setdialog");
 
+  enableAction("*", false);
+
 }
 
 void DebuggerManager::initClientActions()
