@@ -27,8 +27,8 @@
 
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
-  
-//app includes 
+
+//app includes
 #include "spellchecker.h"
 #include "../quantacommon.h"
 #include "../resource.h"
@@ -43,7 +43,6 @@ SpellChecker::~SpellChecker(){
 /** Write the KSpell configuration into the Quanta configuration file. */
 void SpellChecker::writeConfig(KConfig *config)
 {
-#if (KDE_VERSION > 308)
   config->setGroup("Spelling");
   config->writeEntry("Dictionary", qConfig.spellConfig->dictionary());
   config->writeEntry("NoRootAffix", qConfig.spellConfig->noRootAffix());
@@ -53,13 +52,11 @@ void SpellChecker::writeConfig(KConfig *config)
   config->writeEntry("IgnoreList", qConfig.spellConfig->ignoreList());
   config->writeEntry("ReplaceAllList", qConfig.spellConfig->replaceAllList());
   config->writeEntry("Client", qConfig.spellConfig->client());
-#endif
 }
 
 /** Read the KSpell configuration from the Quanta configuration file. */
 void SpellChecker::readConfig(KConfig *config)
 {
-#if (KDE_VERSION > 308)
   KSpellConfig *defaultConfig = new KSpellConfig();
 
   config->setGroup("Spelling");
@@ -81,9 +78,8 @@ void SpellChecker::readConfig(KConfig *config)
   qConfig.spellConfig->setReplaceAllList(replaceAllList);
   int client = config->readNumEntry("Client", defaultConfig->client());
   qConfig.spellConfig->setClient(client);
-  
+
   delete defaultConfig;
-#endif  
 }
 
 /** No descriptions */
@@ -105,7 +101,7 @@ void SpellChecker::spellCheck(KTextEditor::Document *document)
               this, SLOT(corrected(const QString&, const QString&, unsigned int)) );
      connect( m_kspell, SIGNAL(done(const QString&)),
               this, SLOT(spellResult(const QString&)) );
-    
+
   }
 }
 

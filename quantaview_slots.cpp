@@ -45,10 +45,7 @@
 #include <ktexteditor/clipboardinterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/markinterface.h>
-
-#if (KDE_VERSION > 308)
 #include <ktexteditor/dynwordwrapinterface.h>
-#endif
 
 // application specific includes
 #include "quantacommon.h"
@@ -547,7 +544,7 @@ void QuantaView::slotGetScriptOutput(KProcess *, char *buffer, int buflen)
     {
       MessageOutput *msgoutput = quantaApp->getMessageOutput();
         if ( beginOfScriptOutput )
-	{
+        {
           //if ( !quantaApp->viewMenu->isItemChecked(ID_VIEW_MES) )
           //  quantaApp->slotViewMes();
           msgoutput->clear();
@@ -841,11 +838,7 @@ void QuantaView::slotSpellcheck ()
 {
   if (writeExists())
   {
-#if KDE_VERSION >= 308
     quantaApp->spellChecker()->spellCheck(write()->doc());
-#else
-    write()->kate_doc->spellcheck();
-#endif
   }
 }
 
@@ -898,13 +891,11 @@ void QuantaView::toggleIconBorder ()
 
 void QuantaView::toggleDynamicWordWrap()
 {
-#if (KDE_VERSION > 308)
   if (writeExists())
   {
     qConfig.dynamicWordWrap = !qConfig.dynamicWordWrap ;
     dynamic_cast<KTextEditor::DynWordWrapInterface *>(write()->view())->setDynWordWrap(qConfig.dynamicWordWrap);
   }
-#endif
 }
 
 void QuantaView::toggleLineNumbers()
@@ -931,9 +922,7 @@ void QuantaView::slotEditorOptions()
     qConfig.dynamicWordWrap = config->readBoolEntry("DynamicWordWrap",false);
     quantaApp->viewBorder->setChecked(qConfig.iconBar);
     quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
-#if (KDE_VERSION > 308)
     quantaApp->viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
-#endif
   }
 }
 

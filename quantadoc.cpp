@@ -45,12 +45,9 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/clipboardinterface.h>
 #include <ktexteditor/selectioninterface.h>
-
-#if KDE_VERSION >= 308
 #include <ktexteditor/encodinginterface.h>
 #include <ktexteditor/dynwordwrapinterface.h>
 #include <ktexteditor/editorchooser.h>
-#endif
 
 #include <kparts/componentfactory.h>
 
@@ -129,10 +126,8 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
     quantaApp->viewBorder->setChecked(qConfig.iconBar);
     quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
 
-  #if (KDE_VERSION > 308)
     dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
     quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
-  #endif
   }
   else // select opened
   if (switchToExisting)
@@ -164,11 +159,7 @@ void QuantaDoc::openDocument(const KURL& url, const QString &a_encoding, bool sw
     if (encoding.isEmpty())
         encoding = quantaApp->defaultEncoding();
 
-    #if KDE_VERSION >= 308
-      dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
-    #else
-      w->kate_doc->setEncoding(encoding);
-    #endif
+    dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->setEncoding(encoding);
 
     if (w->doc()->openURL( url ))
     {
@@ -184,10 +175,8 @@ void QuantaDoc::openDocument(const KURL& url, const QString &a_encoding, bool sw
       quantaApp->viewBorder->setChecked(qConfig.iconBar);
       quantaApp->viewLineNumbers->setChecked(qConfig.lineNumbers);
 
-    #if (KDE_VERSION > 308)
       dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->setDynWordWrap(qConfig.dynamicWordWrap);
       quantaApp->viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
-    #endif
 
       w->createTempFile();
       w->view()->setFocus();
@@ -439,29 +428,16 @@ Document* QuantaDoc::newWrite()
 
   QString fname = i18n("Untitled%1.").arg(i)+dtd->defaultExtension;
 
-#if KDE_VERSION > 308
   KTextEditor::Document *doc = KTextEditor::createDocument ("libkatepart", this, "Kate::Document");
 /*                               KTextEditor::EditorChooser::createDocument(
                                 quantaApp->view->writeTab(),
                                 "KTextEditor::Document"
                                 );*/
-#else
-  KTextEditor::Document *doc = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>(
-                               "KTextEditor/Document",
-                               QString::null,
-                               quantaApp->view->writeTab(), 0,
-                               quantaApp->view->writeTab(), 0 );
-#endif
-
   Document *w = new Document(quantaApp->projectBaseURL(), doc, quantaApp->project(),
                              quantaApp->m_pluginInterface, quantaApp->view()->writeTab());
 
   QString encoding = quantaApp->defaultEncoding();
-#if KDE_VERSION >= 308
   dynamic_cast<KTextEditor::EncodingInterface*>(doc)->setEncoding(encoding);
-#else
-  w->kate_doc->setEncoding(encoding);
-#endif
 
   KTextEditor::View * v = w->view();
 

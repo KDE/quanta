@@ -238,14 +238,8 @@ void ProjectNewLocal::slotAddFolder()
 //I think this is a KDE bug
   QExtFileInfo::createDir( baseURL );
   KURL dirURL ;
-  #if KDE_VERSION < 308
-    QString dirName = KFileDialog::getExistingDirectory(
-       baseURL.url(),  this, i18n("Insert Directory in Project"));
-    QuantaCommon::setUrl(dirURL, dirName);
-  #else
-     dirURL = KFileDialog::getExistingURL(
-       baseURL.url(),  this, i18n("Insert Directory in Project"));
-  #endif
+  dirURL = KFileDialog::getExistingURL(
+           baseURL.url(),  this, i18n("Insert Directory in Project"));
 
   if ( !dirURL.isEmpty() )
   {
@@ -296,7 +290,7 @@ void ProjectNewLocal::slotInsertFilesAfterCopying(const KURL& rdir, CopyTo* dlg)
      {
        fileList.append(files[i]);
        QListViewItem *it = listView->addItem(files[i], "", "");
-       if (it)  it->setSelected(true); 
+       if (it)  it->setSelected(true);
        progressBar->setValue(i);
      }
   }
@@ -316,5 +310,5 @@ void ProjectNewLocal::slotClearList()
   fileList.clear();
   checkInsert->setChecked(false);
 }
-   
+
 #include "projectnewlocal.moc"

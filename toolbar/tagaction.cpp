@@ -153,7 +153,7 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
       QString fname = w->url().url();
       if ( fname.left(5) == "file:")
         fname.remove(0,5);
-      command.replace( QRegExp("%f"), fname );
+      command.replace("%f", fname );
     }
 
     pid_t pid = getpid();
@@ -233,11 +233,9 @@ void TagAction::slotGetScriptOutput( KProcess *, char *buffer, int buflen )
   {
      if ( firstOutput )
      {
-#if (KDE_VERSION >= 309)
        int line = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndLine();
        int col = dynamic_cast<KTextEditor::SelectionInterfaceExt*>(w->doc())->selEndCol();
        w->viewCursorIf->setCursorPositionReal(line, col);
-#endif
        w->selectionIf->removeSelectedText();
      }
      w->insertTag( text );

@@ -74,12 +74,8 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/printinterface.h>
 #include <ktexteditor/popupmenuinterface.h>
-
-#if (KDE_VERSION > 308)
 #include <ktexteditor/dynwordwrapinterface.h>
 #include <ktexteditor/encodinginterface.h>
-#endif
-
 
 #include <kate/view.h>
 
@@ -234,11 +230,7 @@ bool QuantaApp::slotFileSaveAs()
     KURL oldURL = w->url();
     w->checkDirtyStatus();
     fileWatcher->stopScan();
-    #if KDE_VERSION >= 308
-      QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
-    #else
-      QString myEncoding = w->kate_doc->encoding();
-    #endif
+    QString myEncoding =  dynamic_cast<KTextEditor::EncodingInterface*>(w->doc())->encoding();
 
     KateFileDialog dialog(projectBaseURL().url(), myEncoding, this, i18n ("Save File"), KateFileDialog::saveDialog);
     KateFileDialogData data = dialog.exec();
@@ -646,10 +638,8 @@ void QuantaApp::slotNewStatus()
     viewBorder->setChecked(w->kate_view->iconBorder());
     viewLineNumbers->setChecked(w->kate_view->lineNumbersOn());
 
-#if (KDE_VERSION > 308)
      //viewFoldingMarkers->setChecked(w->kate_view->lineNumbersOn());
-     viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
-#endif
+    viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(w->view())->dynWordWrap());
     if (setHighlight) setHighlight->updateMenu (w->kate_doc);
 
     QIconSet floppyIcon( UserIcon("save_small"));
@@ -748,10 +738,8 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
 
-#if (KDE_VERSION > 308)
   dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->setDynWordWrap(qConfig.dynamicWordWrap);
   viewDynamicWordWrap->setChecked(dynamic_cast<KTextEditor::DynWordWrapInterface*>(currentWrite->view())->dynWordWrap());
-#endif
 
   QWidgetStack *s = widgetStackOfHtmlPart();
   if (s->id(s->visibleWidget()) == 1)
@@ -992,11 +980,10 @@ void QuantaApp::slotOptions()
   if (debuggerStyle=="PHP3") debuggerOptions->radioPhp3->setChecked(true);
   if (debuggerStyle=="None") debuggerOptions->checkDebugger->setChecked(false);
 
-#if KDE_VERSION > 308
 //Spelling options
-    page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
-    KSpellConfig *spellOptions = new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
-#endif
+  page=kd->addVBoxPage(i18n("Spelling"), QString::null, BarIcon("spellcheck", KIcon::SizeMedium ) );
+  KSpellConfig *spellOptions = new KSpellConfig( (QWidget *)page, 0L, qConfig.spellConfig, false );
+
   kd->adjustSize();
   if ( kd->exec() )
   {
@@ -1049,7 +1036,6 @@ void QuantaApp::slotOptions()
 
     abbreviationOptions->saveTemplates();
 
-#if KDE_VERSION > 308
     qConfig.spellConfig->setDictionary(spellOptions->dictionary());
     qConfig.spellConfig->setNoRootAffix(spellOptions->noRootAffix());
     qConfig.spellConfig->setRunTogether(spellOptions->runTogether());
@@ -1058,7 +1044,6 @@ void QuantaApp::slotOptions()
     qConfig.spellConfig->setIgnoreList(spellOptions->ignoreList());
     qConfig.spellConfig->setReplaceAllList(spellOptions->replaceAllList());
     qConfig.spellConfig->setClient(spellOptions->client());
-#endif
 
     QWidgetStack *s;
     if ( htmlPart() )

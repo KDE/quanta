@@ -86,19 +86,12 @@ ProjectNewGeneral::~ProjectNewGeneral(){
 
 void ProjectNewGeneral::slotButtonDir()
 {
- #if KDE_VERSION < 308
-   QString text = KFileDialog::getExistingDirectory(linePrjDir->text(), this,
-                              i18n("Select Project Directory"));
-   if(!text.isEmpty())
-     linePrjDir->setText(text);
- #else
    KURL url = KFileDialog::getExistingURL(linePrjDir->text(), this,
                               i18n("Select Project Directory"));
    if (!url.isEmpty())
    {
      linePrjDir->setText(url.url());
-   }                              
- #endif
+   }
 }
 
 void ProjectNewGeneral::slotLinePrjFile( const QString & )
@@ -143,7 +136,7 @@ void ProjectNewGeneral::slotChangeNames( const QString &text )
   {
     oldDir.remove(0, homeDir.length());
   }
-  
+
   if (comboProtocol->currentText() == i18n("Local"))
   {
     dir =  homeDir+oldDir;
@@ -151,7 +144,7 @@ void ProjectNewGeneral::slotChangeNames( const QString &text )
   {
     dir = oldDir;
   }
-  
+
   linePrjDir ->setText(dir);
 }
 
@@ -170,36 +163,22 @@ void ProjectNewGeneral::setMargin(int i)
 
 void ProjectNewGeneral::slotButtonTmpl()
 {
- #if KDE_VERSION < 308
-   QString text = KFileDialog::getExistingDirectory(linePrjTmpl->text(), this,
-                              i18n("Select Project Template Directory"));
-   if(!text.isEmpty())
-     linePrjTmpl->setText(text);
- #else
    KURL url = KFileDialog::getExistingURL(linePrjTmpl->text(), this,
                               i18n("Select Project Template Directory"));
    if (!url.isEmpty())
    {
      linePrjTmpl->setText(url.url());
    }
- #endif
-}                                          
+}
 
 void ProjectNewGeneral::slotButtonToolbar()
 {
- #if KDE_VERSION < 308
-   QString text = KFileDialog::getExistingDirectory(linePrjToolbar->text(), this,
-                              i18n("Select Project Toolbar & Actions Directory"));
-   if(!text.isEmpty())
-     linePrjToolbar->setText(text);
- #else
    KURL url = KFileDialog::getExistingURL(linePrjToolbar->text(), this,
                               i18n("Select Project Toolbar & Actions Directory"));
    if (!url.isEmpty())
    {
      linePrjToolbar->setText(url.url());
    }
- #endif
 }
 
 void ProjectNewGeneral::slotLinePrjToolbar(const QString &Str)

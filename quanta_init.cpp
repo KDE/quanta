@@ -692,9 +692,7 @@ void QuantaApp::readOptions()
   qConfig.dynamicWordWrap = m_config->readBoolEntry("DynamicWordWrap",false);
   viewBorder->setChecked(qConfig.iconBar);
   viewLineNumbers->setChecked(qConfig.lineNumbers);
-#if (KDE_VERSION > 308)
   viewDynamicWordWrap->setChecked(qConfig.dynamicWordWrap);
-#endif
   manager()->readConfig(m_config);
 
   showPreviewAction  ->setChecked( false );
@@ -1583,12 +1581,10 @@ void QuantaApp::initActions()
    (void) new KAction(i18n("Ti&p of the Day"), "idea", "", this,
       SLOT(slotHelpTip()), ac, "help_tip");
 
-  #if (KDE_VERSION > 308)
 //    viewFoldingMarkes =  new KToggleAction(i18n("Show Folding &Markers"), Key_F9, m_view,
 //                              SLOT(toggleFoldingMarkers()), ac, "view_folding_markers");
-    viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F10, m_view,
+  viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F10, m_view,
                               SLOT(toggleDynamicWordWrap()), ac, "view_dynamic_word_wrap");
-  #endif
 
   (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0,
                       m_view, SLOT( slotEditorOptions() ), ac, "editor_options" );
