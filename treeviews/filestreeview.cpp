@@ -152,7 +152,7 @@ KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
   {
     if (url.isLocalFile() && url.equals(KURL(QDir::homeDirPath()), true))
     {
-      newBrnch = new BaseTreeBranch(this, url, i18n("Home Folder"), SmallIcon(fileItem.iconName()), true);
+      newBrnch = new BaseTreeBranch(this, url, i18n("Home Folder"), SmallIcon("folder_home"), true);
     } else
     {
       QString s = url.fileName();
