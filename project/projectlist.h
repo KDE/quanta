@@ -36,23 +36,23 @@ class ProjectList : public ProjectUrlList
 public:
   /** 1009 is a guess for maximum files in an average project, this number should be prime (@ref QDict)
   */
-  ProjectList( int size = 1009 ); 
+  ProjectList( int size = 1009 );
   ~ProjectList() {};
 
   typedef QDictIterator<ProjectURL> Iterator;
 
   /** resets @ref m_baseURL */
   void clear();
-  
+
   /**
        reads entries from the dom tree
        invalid entries gets removed!
        @return true if an old structure was found
    */
-  bool readFromXML(const QDomDocument &dom, const KURL &baseURL,
+  bool readFromXML(QDomDocument &dom, const KURL &baseURL,
                      const KURL &templateURL, const QRegExp &excludeRx);
   /**
-       @return the relative URL 
+       @return the relative URL
   */
   KURL toRelative(const KURL &url) const
   {
@@ -61,8 +61,8 @@ public:
 
   /**
       removes an url from the list and deletes the corresponding node
-  
-       @return true if url was in list 
+
+       @return true if url was in list
   */
   bool removeFromListAndXML(const KURL &url);
 
@@ -73,15 +73,15 @@ public:
   /**   @return pointer to the entry or 0 if not found
   */
   ProjectURL * find(const KURL &url) const;
-  
+
   /**
         Attention: never delete the object you have given here because the
         container takes ownership and deletes it later!
-  
+
         @param the ProjectURL to add to the container
   */
   void insert(ProjectURL *url);
-  
+
   /**   @return true if url is in container and a folder
   */
   bool isFolder(const KURL &url) const;
@@ -94,7 +94,7 @@ private:
        use insert(ProjectURL *url) instead.
   */
   void insert(const QString & key, const ProjectURL * item);
-  
+
   /**
        private because I want to control the key.
        use find(const KURL &url) instead.
@@ -105,7 +105,7 @@ private:
        private because I want to control the key.
   */
   bool remove ( const QString & key );
-  
+
   /**
        private because I want to control the key.
   */

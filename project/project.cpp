@@ -2271,7 +2271,7 @@ void Project::slotUploadStatusChanged(const KURL& url, int status)
   ProjectList::Iterator it( d->m_projectFiles );
   for ( ; it.current(); ++it)
   {
-    if ( it.currentKey().startsWith(urlStr) )
+    if ( it.currentKey().startsWith(urlStr) || it.currentKey() + "/" == urlStr)
     {
       it.current()->uploadStatus = status;
       el = it.current()->domElement;

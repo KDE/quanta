@@ -39,7 +39,7 @@ void ProjectList::clear()
   ProjectUrlList::clear();
 }
 
-bool ProjectList::readFromXML(const QDomDocument &dom, const KURL &baseURL,
+bool ProjectList::readFromXML(QDomDocument &dom, const KURL &baseURL,
                                  const KURL &templateURL, const QRegExp &excludeRx)
 {
   clear();  // empty the list
@@ -108,6 +108,17 @@ bool ProjectList::readFromXML(const QDomDocument &dom, const KURL &baseURL,
       }
     }
     progressBar->advance(1);
+  }
+  ProjectURL *proUrl = find(baseURL);
+  if (!proUrl)
+  {
+      el = dom.createElement("item");
+      el.setAttribute("url", "");
+      el.setAttribute("uploadstatus", "1");
+      dom.firstChild().firstChild().appendChild(el);
+      insert(baseURL.url(-1), new ProjectURL(baseURL, "", ProjectURL::AlwaysUpload,
+                                             true, el));
+      modified = true;
   }
   progressBar->setTotalSteps(1);
   progressBar->setValue(0);
