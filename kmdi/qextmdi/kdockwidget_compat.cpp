@@ -1398,6 +1398,9 @@ void KDockWidget::setForcedFixedWidth(int w)
 	if (!parent()) return;
 	if (parent()->inherits("KDockSplitter"))
 		static_cast<KDockSplitter*>(parent()->qt_cast("KDockSplitter"))->setForcedFixedWidth(this,w);
+	else {
+		kdDebug()<<"setForcedFixedWidth: PARENT IS NOT A KDOCKSPLITTER"<<endl;
+	}
 }
 
 void KDockWidget::setForcedFixedHeight(int h)
@@ -1407,6 +1410,10 @@ void KDockWidget::setForcedFixedHeight(int h)
 	if (!parent()) return;
 	if (parent()->inherits("KDockSplitter"))
 		static_cast<KDockSplitter*>(parent()->qt_cast("KDockSplitter"))->setForcedFixedHeight(this,h);
+	else {
+		kdDebug()<<"setForcedFixedHeight: PARENT IS NOT A KDOCKSPLITTER"<<endl;
+	}
+
 }
 
 int KDockWidget::forcedFixedWidth()
@@ -2319,7 +2326,7 @@ void KDockManager::writeConfig(QDomElement &base)
     QString mainWidgetStr;
 
     // collect widget names
-    QStrList nList;
+    QStringList nList;
     QObjectListIt it(*childDock);
     KDockWidget *obj1;
     while ( (obj1=(KDockWidget*)it.current()) ) {
@@ -2329,19 +2336,34 @@ void KDockManager::writeConfig(QDomElement &base)
         ++it;
     }
 
-    nList.first();
-    while ( nList.current() ) {
-        KDockWidget *obj = getDockWidgetFromName( nList.current() );
-        if (obj->isGroup && (nameList.find( obj->firstName.latin1() ) == -1
+    for (QObjectListIt it(d->containerDocks);it.current();++it)
+    {
+        KDockContainer* dc = dynamic_cast<KDockContainer*>(((KDockWidget*)it.current())->widget);
+        if (dc) {
+                dc->prepareSave(nList);
+        }
+    }
+
+    QStringList::Iterator nListIt=nList.begin();
+    while ( nListIt!=nList.end() ) {
+        KDockWidget *obj = getDockWidgetFromName( *nListIt);
+        if ((obj->isGroup && (!obj->d->isContainer)) && (nameList.find( obj->firstName.latin1() ) == -1
                              || nameList.find(obj->lastName.latin1()) == -1)) {
             // Skip until children are saved (why?)
-            nList.next();
+            ++nListIt;
+//            nList.next();
 //falk?            if ( !nList.current() ) nList.first();
             continue;
         }
 
         QDomElement groupEl;
-
+	if (obj->d->isContainer) {
+      		KDockContainer* x = dynamic_cast<KDockContainer*>(obj->widget);
+       		if (x) {
+			groupEl=doc.createElement("dockContainer");
+          		x->save(groupEl);
+       		}
+    	} else
         if (obj->isGroup) {
             //// Save a group
             groupEl = doc.createElement("splitGroup");
@@ -2359,6 +2381,10 @@ void KDockManager::writeConfig(QDomElement &base)
                 list.append( ((KDockTabGroup*)obj->widget)->page( i )->name() );
             groupEl.appendChild(createListEntry(doc, "tabs", "tab", list));
             groupEl.appendChild(createNumberEntry(doc, "currentTab", ((KDockTabGroup*)obj->widget)->currentPageIndex()));
+            if (!obj->parent()) {
+                groupEl.appendChild(createStringEntry(doc, "dockBackTo", obj->formerBrotherDockWidget ? obj->formerBrotherDockWidget->name() : ""));
+                groupEl.appendChild(createNumberEntry(doc, "dockBackToPos", obj->formerDockPos));
+            }
         } else {
             //// Save an ordinary dock widget
             groupEl = doc.createElement("dock");
@@ -2383,8 +2409,8 @@ void KDockManager::writeConfig(QDomElement &base)
 
         base.appendChild(groupEl);
         nameList.append(obj->name());
-        nList.remove();
-        nList.first();
+        nList.remove(nListIt);
+        nListIt=nList.begin();
     }
 
     if (main->inherits("KDockWidget_Compat::KDockMainWindow") || main->inherits("KDockMainWindow")) {
@@ -2405,7 +2431,8 @@ void KDockManager::readConfig(QDomElement &base)
 {
     if (base.namedItem("group").isNull()
         && base.namedItem("tabgroup").isNull()
-        && base.namedItem("dock").isNull()) {
+        && base.namedItem("dock").isNull()
+	&& base.namedItem("dockContainer").isNull()) {
         activate();
         return;
     }
@@ -2464,6 +2491,23 @@ void KDockManager::readConfig(QDomElement &base)
     while (!childEl.isNull() ) {
         KDockWidget *obj = 0;
     
+	if (childEl.tagName() == "dockContainer") {
+		
+		KDockWidget *cont=getDockWidgetFromName(stringEntry(childEl, "name"));
+		kdDebug()<<"dockContainer: "<<stringEntry(childEl,"name")<<endl;
+		if (!(cont->d->isContainer)) {
+			kdDebug()<<"restoration of dockContainer is only supported for already existing dock containers"<<endl;
+		} else {
+			KDockContainer *dc=dynamic_cast<KDockContainer*>(cont->getWidget());
+			if (!dc) kdDebug()<<"Error while trying to handle dockcontainer configuration restoration"<<endl;
+				else {
+					dc->load(childEl);
+					removeFromAutoCreateList(cont);
+				}
+			
+		}
+	}
+	else
         if (childEl.tagName() == "splitGroup") {
             // Read a group
             QString name = stringEntry(childEl, "name");
@@ -2532,7 +2576,7 @@ void KDockManager::readConfig(QDomElement &base)
     while (!childEl.isNull() ) {
         KDockWidget *obj = 0;
 
-        if (childEl.tagName() != "dock") {
+        if (childEl.tagName() != "dock" && childEl.tagName() != "tabGroup") {
             childEl = childEl.nextSibling().toElement();
             continue;            
         }
@@ -2545,6 +2589,7 @@ void KDockManager::readConfig(QDomElement &base)
                 obj->formerBrotherDockWidget = getDockWidgetFromName(name);
             }
             obj->formerDockPos = KDockWidget::DockPosition(numberEntry(childEl, "dockBackToPos"));
+            obj->updateHeader();
         }
         childEl = childEl.nextSibling().toElement();  
     }
@@ -2694,6 +2739,8 @@ void KDockManager::writeConfig( KConfig* c, QString group )
           c->writeEntry( cname+":parent", "___null___");
           c->writeEntry( cname+":geometry", QRect(obj->frameGeometry().topLeft(), obj->size()) );
           c->writeEntry( cname+":visible", obj->isVisible());
+          c->writeEntry( cname+":dockBackTo", obj->formerBrotherDockWidget ? obj->formerBrotherDockWidget->name() : "");
+          c->writeEntry( cname+":dockBackToPos", obj->formerDockPos);
         } else {
           c->writeEntry( cname+":parent", "yes");
         }
@@ -3088,25 +3135,24 @@ void KDockManager::drawDragRectangle()
   d->oldDragRect = d->dragRect;
 }
 
-
 void KDockManager::setSpecialLeftDockContainer(KDockWidget* container) {
 	d->leftContainer=container;
 }
-	
+
 void KDockManager::setSpecialTopDockContainer(KDockWidget* container) {
 	d->topContainer=container;
 }
-		
+
 void KDockManager::setSpecialRightDockContainer(KDockWidget* container) {
 	d->rightContainer=container;
 
 }
-			
+
 void KDockManager::setSpecialBottomDockContainer(KDockWidget* container) {
 	d->bottomContainer=container;
 }
-				
-				
+
+
 KDockArea::KDockArea( QWidget* parent, const char *name)
 :QWidget( parent, name)
 {
@@ -3322,6 +3368,8 @@ void KDockContainer::setPixmap(KDockWidget*,const QPixmap&){;}
 void KDockContainer::load (KConfig*, const QString&){;}
 void KDockContainer::save (KConfig*, const QString&){;}
 #endif
+void KDockContainer::load (QDomElement&){;}
+void KDockContainer::save (QDomElement&){;}
 void KDockContainer::prepareSave(QStringList &names)
 {
 
@@ -3440,6 +3488,20 @@ void KDockSplitter::activate(QWidget *c0, QWidget *c1)
   	setForcedFixedWidth(((KDockWidget*)child1),((KDockWidget*)child1)->forcedFixedWidth());
 	//QTimer::singleShot(100,this,SLOT(delayedResize()));
   }
+
+  if (((KDockWidget*)child0)->forcedFixedHeight()!=-1)
+  {
+  	setForcedFixedHeight(((KDockWidget*)child0),((KDockWidget*)child0)->forcedFixedHeight());
+	//QTimer::singleShot(100,this,SLOT(delayedResize()));
+  }
+  else
+  if (((KDockWidget*)child1)->forcedFixedHeight()!=-1)
+  {
+  	setForcedFixedHeight(((KDockWidget*)child1),((KDockWidget*)child1)->forcedFixedHeight());
+	//QTimer::singleShot(100,this,SLOT(delayedResize()));
+  }
+
+
 }
 
 /*
@@ -3562,7 +3624,7 @@ void KDockSplitter::resizeEvent(QResizeEvent *ev)
   if (initialised){
     int factor = (mHighResolution)? 10000:100;
     // real resize event, recalculate xpos
-    if (ev && mKeepSize && isVisible()) {
+    if (ev && mKeepSize  && isVisible()) {
 //	kdDebug()<<"mKeepSize : "<< ((m_orientation == Horizontal) ? "Horizontal":"Vertical") <<endl;
 
       if (ev->oldSize().width() != ev->size().width())
@@ -3578,9 +3640,9 @@ void KDockSplitter::resizeEvent(QResizeEvent *ev)
           else
           {
 //	kdDebug()<<"!mKeepSize : "<< ((m_orientation == Horizontal) ? "Horizontal":"Vertical") <<endl;
-	if (ev && isVisible()) {
+	if (/*ev &&*/ isVisible()){
 		if (m_orientation == Horizontal) {
-			if (ev->oldSize().height() != ev->size().height())
+			/*if (ev->oldSize().height() != ev->size().height())*/
 			{
 			  if (fixedHeight0!=-1)
 				xpos=fixedHeight0*factor/height();
@@ -3591,7 +3653,7 @@ void KDockSplitter::resizeEvent(QResizeEvent *ev)
 		}
 		else
 		{
-	        	if (ev->oldSize().width() != ev->size().width())
+	        	/*if (ev->oldSize().width() != ev->size().width())*/
 			{
 			  if (fixedWidth0!=-1)
 				xpos=fixedWidth0*factor/width();

@@ -24,6 +24,7 @@
 #include <qwidget.h>
 #include <qstringlist.h>
 #include <qmap.h>
+#include <qdom.h>
 #include <qpushbutton.h>
 #include <kmdidockwidget.h>
 
@@ -36,7 +37,7 @@ class KMdiDockContainer: public QWidget, public KMdiDockContainerBase
   Q_OBJECT
 
   public:
-    KMdiDockContainer(QWidget *parent, QWidget *win, int position);
+    KMdiDockContainer(QWidget *parent, QWidget *win, int position, int flags);
     virtual ~KMdiDockContainer();
     KDockWidget *parentDockWidget();
 
@@ -52,6 +53,9 @@ class KMdiDockContainer: public QWidget, public KMdiDockContainerBase
     virtual void save(KConfig *,const QString& group_or_prefix);
     virtual void load(KConfig *,const QString& group_or_prefix);
 #endif
+    virtual void save(QDomElement&);
+    virtual void load(QDomElement&);
+
 
   public slots:
     void init();
@@ -75,6 +79,8 @@ class KMdiDockContainer: public QWidget, public KMdiDockContainerBase
 	QMap<int,KMdiDockWidget*> m_revMap;
 	QMap<KMdiDockWidget*,KDockButton_Private*> m_overlapButtons;
     QStringList itemNames;
+    QMap<QString,QString> tabCaptions;
+    QMap<QString,QString> tabTooltips;
     int m_inserted;
     int m_delayedRaise;
     bool m_vertical;
