@@ -275,8 +275,11 @@ bool SAParser::slotParseOneLine()
                   ParserCommon::appendAreaToTextNode(m_write, s_currentContext.area, s_currentNode);
                 else
                   s_currentNode = ParserCommon::createTextNode(m_write, s_currentNode, s_line, specialAreaPos, s_currentContext.parentNode);
-                s_currentNode->insideSpecial = true;
-                s_currentNode->specialInsideXml = m_specialInsideXml;
+                if (s_currentNode)
+                {
+                  s_currentNode->insideSpecial = true;
+                  s_currentNode->specialInsideXml = m_specialInsideXml;
+                }
               }
               //create a toplevel node for the included special area
               AreaStruct area(s_line, specialAreaPos, s_line, specialAreaPos + foundText.length() - 1);

@@ -485,7 +485,7 @@ bool QuantaApp::slotFileSaveAs()
       if(ViewManager::ref()->activeView() &&
             ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
         w->docUndoRedo->reloadQuantaEditor();
-      
+
       w->docUndoRedo->fileSaved();
 #endif
 //      slotUpdateStatus(w); //FIXME:
@@ -568,7 +568,7 @@ void QuantaApp::saveAsTemplate(bool projectTemplate,bool selectionOnly)
   if(ViewManager::ref()->activeView() &&
         ViewManager::ref()->activeView()->hadLastFocus() == QuantaView::VPLFocus)
     w->docUndoRedo->reloadQuantaEditor();
-      
+
   w->docUndoRedo->fileSaved();
 #endif
 }
@@ -1126,7 +1126,7 @@ void QuantaApp::slotOptions()
 
   // Environment options
   //TODO FileMasks name is not good anymore
-  page=kd->addVBoxPage(i18n("Environment"), QString::null, BarIcon("files", KIcon::SizeMedium ) );
+  page=kd->addVBoxPage(i18n("Environment"), QString::null, UserIcon("files", KIcon::SizeMedium ) );
   FileMasks *fileMasks = new FileMasks((QWidget *)page);
 
   fileMasks->lineMarkup->setText( qConfig.markupMimeTypes );
@@ -1158,6 +1158,16 @@ void QuantaApp::slotOptions()
        break;
      }
   }
+  QStringList lst = DTDs::ref()->nickNameList(true);
+  uint pos = 0;
+  for (uint i = 0; i < lst.count(); i++)
+  {
+    fileMasks->defaultDTDCombo->insertItem(lst[i]);
+    if (lst[i] == DTDs::ref()->getDTDNickNameFromName(qConfig.defaultDocType.lower()))
+       pos = i;
+  }
+  fileMasks->defaultDTDCombo->setCurrentItem(pos);
+
   // Preview options
   page=kd->addVBoxPage(i18n("User Interface"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
   PreviewOptions *uiOptions = new PreviewOptions( (QWidget *)page );
@@ -1172,21 +1182,12 @@ void QuantaApp::slotOptions()
 
 #ifdef BUILD_KAFKAPART
   //kafka options
-  page = kd->addVBoxPage(i18n("VPL View"), QString::null, BarIcon("files", KIcon::SizeMedium));
+  page = kd->addVBoxPage(i18n("VPL View"), QString::null, UserIcon("vpl_text", KIcon::SizeMedium));
   KafkaSyncOptions *kafkaOptions = new KafkaSyncOptions( m_config, (QWidget *)page );
 #endif
 
   page=kd->addVBoxPage(i18n("Parser"), QString::null, BarIcon("kcmsystem", KIcon::SizeMedium ) );
   ParserOptions *parserOptions = new ParserOptions( m_config, (QWidget *)page );
-  QStringList lst = DTDs::ref()->nickNameList();
-  uint pos = 0;
-  for (uint i = 0; i < lst.count(); i++)
-  {
-    fileMasks->defaultDTDCombo->insertItem(lst[i]);
-    if (lst[i] == DTDs::ref()->getDTDNickNameFromName(qConfig.defaultDocType.lower()))
-       pos = i;
-  }
-  fileMasks->defaultDTDCombo->setCurrentItem(pos);
 
   parserOptions->refreshFrequency->setValue(qConfig.refreshFrequency);
   parserOptions->instantUpdate->setChecked(qConfig.instantUpdate);
