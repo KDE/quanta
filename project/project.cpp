@@ -230,7 +230,7 @@ bool Project::createEmptyDom()
 
   if (! projectURL.isLocalFile())
   {
-    KTempFile *tempFile = new KTempFile();
+    KTempFile *tempFile = new KTempFile(tmpDir);
     tempFile->setAutoDelete(true);
     *(tempFile->textStream()) << str;
     tempFile->close();
@@ -352,20 +352,19 @@ bool Project::slotSaveProject()
   {
     // remove old opened files
     QDomElement  el;
-  	QDomNodeList nl = dom.firstChild().firstChild().childNodes();
-  	
-  	for ( unsigned int i=0; i<nl.count(); i++ )
+    QDomNodeList nl = dom.firstChild().firstChild().childNodes();
+
+    for ( unsigned int i=0; i<nl.count(); i++ )
     {
-  		el = nl.item(i).toElement();
-  		if ( el.nodeName() == "openfile" )
-  		{
-  			el.parentNode().removeChild( el );
-  			i--;
-  		}
-  	}
+      el = nl.item(i).toElement();
+      if ( el.nodeName() == "openfile" )
+      {
+        el.parentNode().removeChild( el );
+        i--;
+      }
+    }
   
-  	KTempFile *tmpFile;
-    tmpFile = new KTempFile;
+    KTempFile *tmpFile = new KTempFile(tmpDir);
     tmpFile->setAutoDelete(true);
     dom.save(*(tmpFile->textStream()), 0);
     tmpFile->close();

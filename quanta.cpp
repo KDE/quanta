@@ -1567,7 +1567,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    userToolbarsCount++;
 
    //Change the name also in the XML File -> create a temp XML file
-   KTempFile* tempFile = new KTempFile();
+   KTempFile* tempFile = new KTempFile(tmpDir);
    tempFile->setAutoDelete(true);
 
    nodeList = toolbarDom->elementsByTagName("ToolBar");
@@ -1846,7 +1846,7 @@ void QuantaApp::slotAddToolbar()
   QString name = dlg.text();
 
 
-  KTempFile* tempFile = new KTempFile();
+  KTempFile* tempFile = new KTempFile(tmpDir);
   tempFile->setAutoDelete(true);
   * (tempFile->textStream()) << QString("<!DOCTYPE kpartgui SYSTEM \"kpartgui.dtd\">\n<kpartgui name=\"quanta\" version=\"2\">\n<ToolBar name=\"%1\" tabname=\"%2\">\n<text>%3</text>\n</ToolBar>\n</kpartgui>\n")\
                .arg(name.lower()).arg(name).arg(name);
@@ -1927,7 +1927,7 @@ void QuantaApp::slotSendToolbar()
   QStringList toolbarFile;
 
   QString prefix="quanta";
-  KTempFile* tempFile = new KTempFile(locateLocal("tmp", prefix), toolbarExtension);;
+  KTempFile* tempFile = new KTempFile(tmpDir, toolbarExtension);;
   tempFile->setAutoDelete(true);
   KURL tempURL;
   tempURL.setPath(tempFile->name());
@@ -2454,7 +2454,7 @@ void QuantaApp::slotEmailDTD()
   QStringList dtdFile;
 
   QString prefix="quanta";
-  KTempFile* tempFile = new KTempFile(locateLocal("tmp", prefix), ".tgz");
+  KTempFile* tempFile = new KTempFile(tmpDir, ".tgz");
   tempFile->setAutoDelete(true);
 
 //pack the .tag files and the description.rc into a .tgz file

@@ -38,6 +38,7 @@
 
 
 QConfig qConfig; //holds the main configuration settings
+QString tmpDir;
 
 extern QuantaApp *quantaApp;
 

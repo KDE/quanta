@@ -728,7 +728,7 @@ int Document::checkOverwrite(KURL u)
 int Document::createTempFile()
 {
  closeTempFile();
- tempFile = new KTempFile();
+ tempFile = new KTempFile(tmpDir);
  tempFile->setAutoDelete(true);
  * (tempFile->textStream()) << editIf->text();
 
@@ -755,7 +755,7 @@ void Document::clearTempFile()
 {
 // tempFile->unlink();
  delete tempFile;
- tempFile = new KTempFile();
+ tempFile = new KTempFile(tmpDir);
 }
 /** No descriptions */
 QString Document::tempFileName()

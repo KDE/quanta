@@ -29,6 +29,7 @@ class KProgress;
 class QuantaApp;
 
 extern QConfig qConfig;
+extern QString tmpDir;
 
 extern QDict<DTDStruct> *dtds;
 extern QRegExp scriptBeginRx;

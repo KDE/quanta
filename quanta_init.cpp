@@ -38,6 +38,7 @@
 #include <kiconloader.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
+#include <kglobal.h>
 #include <kmenubar.h>
 #include <klocale.h>
 #include <kconfig.h>
@@ -49,6 +50,8 @@
 #include <kparts/componentfactory.h>
 #include <kprogress.h>
 #include <kspell.h>
+
+#include <kio/netaccess.h>
 
 // application specific includes
 
@@ -129,6 +132,9 @@ QuantaApp::~QuantaApp()
 
  toolbarList.clear();
  delete spellChecker;
+ QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
+ QDir dir;
+ dir.rmdir(tmpDirs[0] + "quanta");
 }
 
 
@@ -136,6 +142,11 @@ QuantaApp::~QuantaApp()
 void QuantaApp::initQuanta()
 {
   parser = new Parser();
+
+  QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
+  QDir dir;
+  dir.mkdir(tmpDirs[0] + "quanta");
+  tmpDir = tmpDirs[0] + "quanta/quanta";
 
   initTagDict  ();
   initStatusBar();

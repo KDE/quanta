@@ -334,7 +334,7 @@ void TemplatesTreeView::contentsDropEvent(QDropEvent *e)
          QString fileName = dlg->urlRequester->url();
          KURL url;
          QuantaCommon::setUrl(url, fileName);
-         KTempFile* tempFile = new KTempFile();
+         KTempFile* tempFile = new KTempFile(tmpDir);
          tempFile->setAutoDelete(true);
           * (tempFile->textStream()) << content;
          tempFile->close();
