@@ -886,7 +886,7 @@ void SAParser::slotParseNodeInDetail()
         parseArea(area, m_currentNode->tag->tagStr(), "", m_currentNode, true, m_synchronous);
     } else
     {
-      Node *node = m_currentNode;
+//       Node *node = m_currentNode;
       m_currentNode = m_currentNode->nextSibling();
       if (m_currentNode)
       {
