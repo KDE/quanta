@@ -50,7 +50,13 @@ Parser::~Parser()
 {
 }
 
-Node* Parser::scriptParser(Node *startNode)
+/** Searches for scripts inside the text from startNode. It looks only for the
+script begin/and delimiters, and not for the <script> or other special tags.
+Useful when parsing for script inside scripts, or inside the quoted attribute 
+values of the xml tags.
+ Returns: true if a script area is found, false if the parsed text does not
+contain any scripts. */
+bool Parser::scriptParser(Node *startNode)
 {
  
   QString foundText;
@@ -68,6 +74,7 @@ Node* Parser::scriptParser(Node *startNode)
   startNode->tag->beginPos(node_bl, node_bc);
   startNode->tag->endPos(node_el, node_ec);
   Node *currentNode = 0L;
+  bool found = false;
   
   while (pos != -1)
   {
@@ -132,6 +139,7 @@ Node* Parser::scriptParser(Node *startNode)
           node->prev = currentNode;
         }
         currentNode = node;
+        found = true;
 
         parseInside(node); 
 
@@ -140,6 +148,8 @@ Node* Parser::scriptParser(Node *startNode)
         pos = -1;
     }
   }
+  
+  return found;
 }
 
 Node *Parser::newParse(Document *w)
@@ -434,6 +444,7 @@ Node *Parser::newParse(Document *w)
 
 void Parser::parseInside(Node *startNode)
 {
+
  const QString quotationStr = "\\\\\"|\\\\'";
   
  QRegExp commentsRx;
@@ -454,6 +465,39 @@ void Parser::parseInside(Node *startNode)
  // with spaces so they will not mess up our parsing
  int pos = 0;
  int l;
+
+ /* parse this special node for scripts. If a script is found inside, then
+ replace the script area with spaces, so it won't mess up our block searching.
+ */
+ if (scriptParser(startNode))
+ {
+    int col = 0;
+    QString specialEndStr;
+      while (pos != -1)
+      {
+        pos = str.find(m_dtd->specialAreaStartRx, col); //FIXME: m_dtd nem jo...
+        if (pos != -1)
+        {
+          QString foundText = m_dtd->specialAreaStartRx.cap();
+          for (uint i = 0; i < m_dtd->specialAreaBegin.count(); i++)
+          {
+            if (m_dtd->specialAreaBegin[i] == foundText)
+            {
+              specialEndStr = m_dtd->specialAreaEnd[i];
+              break;
+            }
+          }
+          l = str.find(specialEndStr, pos);
+          for (int j = pos; j < l ; j++)
+          {
+            str[j] = ' ';
+          }
+          col = l;
+        }
+      }
+  }
+     
+ pos = 0; 
  while (pos != -1)
  {
    pos = commentsRx.search(str, pos);
@@ -554,12 +598,18 @@ void Parser::parseInside(Node *startNode)
           node->prev = 0L;
         } else
         {
+          if (!currentNode)
+          {
+            currentNode = rootNode->child;
+            while (currentNode->next)
+               currentNode = currentNode->next;
+          }
           node->prev = currentNode;
           currentNode->next = node;
         }
         node->tag = tag;
         
-        scriptParser(node);
+        //scriptParser(node);
         
         currentNode = node;
       } 
@@ -590,6 +640,7 @@ void Parser::parseInside(Node *startNode)
             lastPos2 = pos + s.length();
           }
         }
+        bLine += name.contains("\n");
         pos = 0;
         if (matchNum != 0) 
             lastPos2 = str.length();

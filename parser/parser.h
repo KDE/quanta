@@ -45,7 +45,7 @@ public:
 	Parser();
 	~Parser();
 	
-  Node *scriptParser(Node *startNode);
+  bool scriptParser(Node *startNode);
   /** Parse the whole text from Document w and build the internal structure tree from Nodes */  
 	Node *newParse( Document *w);
   void parseInside(Node *startNode);
