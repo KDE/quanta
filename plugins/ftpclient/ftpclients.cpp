@@ -7,6 +7,7 @@
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 #include "ftpclients.h"
+#include "ftpclientview.h"
 
 #include <ktoolbar.h>
 #include <qcombobox.h>
@@ -77,7 +78,7 @@ FtpClientS::FtpClientS( QWidget* parent,  const char* name, WFlags fl )
     Layout10_2->addWidget( buttonRemote );
     Layout21->addLayout( Layout10_2 );
 
-    listViewRemote = new QListView( this, "listViewRemote" );
+    listViewRemote = new FtpClientView( this );
     listViewRemote->addColumn( i18n( "File Name" ) );
     listViewRemote->addColumn( i18n( "Size" ) );
     listViewRemote->addColumn( i18n( "Time" ) );
@@ -143,7 +144,7 @@ FtpClientS::FtpClientS( QWidget* parent,  const char* name, WFlags fl )
     Layout10->addWidget( buttonLocal );
     Layout20->addLayout( Layout10 );
 
-    listViewLocal = new QListView( this, "listViewLocal" );
+    listViewLocal = new FtpClientView( this );
     listViewLocal->addColumn( i18n( "File Name" ) );
     listViewLocal->addColumn( i18n( "Size" ) );
     listViewLocal->addColumn( i18n( "Time" ) );

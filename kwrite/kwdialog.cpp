@@ -369,7 +369,7 @@ void EditConfigTab::getData(KWrite *kWrite)
 // quanta addons
 // *******************************************************************
 // ADDED FOR NO ANY TAB IN EDITOR ;)
-  opt[1]->setChecked( true );
+//  opt[1]->setChecked( true );
 // *******************************************************************
 // end of quanta addons
 // *******************************************************************

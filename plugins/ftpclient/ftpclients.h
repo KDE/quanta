@@ -18,10 +18,10 @@ class KToolBar;
 class QComboBox;
 class QGroupBox;
 class QLabel;
-class QListView;
-class QListViewItem;
 class QProgressBar;
 class QPushButton;
+class FtpClientView;
+class FtpClientViewItem;
 
 class FtpClientS : public QWidget
 { 
@@ -35,7 +35,7 @@ public:
     QLabel* TextLabel3_2;
     QComboBox* comboDirRemote;
     QPushButton* buttonRemote;
-    QListView* listViewRemote;
+    FtpClientView* listViewRemote;
     KToolBar* toolBar;
     QGroupBox* GroupBox3;
     QLabel* statusText;
@@ -43,7 +43,7 @@ public:
     QLabel* TextLabel3;
     QComboBox* comboDirLocal;
     QPushButton* buttonLocal;
-    QListView* listViewLocal;
+    FtpClientView* listViewLocal;
     QProgressBar* progress;
 
 protected:

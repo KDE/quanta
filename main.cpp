@@ -67,6 +67,10 @@ int main(int argc, char *argv[])
     "Cool splash screen for quanta",
     "mat.colton@web-xs.de");
     
+  aboutData.addCredit("Claus Hindsgaul",
+    "Danish translation",
+    "claus_h@image.dk");
+    
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 	

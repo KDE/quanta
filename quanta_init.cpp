@@ -154,6 +154,11 @@ QuantaApp::QuantaApp()
 	  messageOutput->insertItem("\nPhp Debugger:\t\tSorry, but I can't listen port N "+
 	    s.sprintf("%i",phpDebugPort)+"\n" );
 	}
+	else {
+	  QString s;
+	  messageOutput->insertItem("\nPhp Debugger listens port N "+
+	    s.sprintf("%i",phpDebugPort)+"\n" );
+	}
 
   ///////////////////////////////////////////////////////////////////
   // disable menu and toolbar items at startup
@@ -1074,8 +1079,8 @@ void QuantaApp::readOptions()
   int mode = config->readNumEntry("Left panel mode", 0);
   if ( mode == 0 || mode == 1 ) fTab->raiseWidget(mode);
 
-  hSplit->setPos( config->readNumEntry("HSplit position", 1000) );
-  vSplit->setPos( config->readNumEntry("VSplit position", 250 ) );
+  hSplit->setPos( config->readNumEntry("HSplit position", 850) );
+  vSplit->setPos( config->readNumEntry("VSplit position", 300 ) );
 
   phpDebugPort = config->readNumEntry("PHP Debugger Port", 7869 );
   

@@ -779,12 +779,12 @@ void KWriteDoc::loadFile(QIODevice &dev) {
 // quanta highlightings
 // *******************************************************************
         // REMOVED      
-        //textLine->append(&ch, 1);
-        if ( s == '\t' ) {
+        textLine->append(&ch, 1);
+/*        if ( s == '\t' ) {
           ch = ' ';
           for (int i=0;i<tabChars;i++)
             textLine->append( &ch, 1);
-        } else textLine->append( &ch, 1);
+        } else textLine->append( &ch, 1);*/
 // *******************************************************************
 // end of quanta highlightings
 // *******************************************************************        

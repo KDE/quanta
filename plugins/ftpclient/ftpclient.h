@@ -32,6 +32,7 @@ private slots:
   void slotLocalStart( QNetworkOperation * );
   void slotLocalFinished( QNetworkOperation * );
  
+  void slotLocalStart(const QString&);
 };
     
 #endif

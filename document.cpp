@@ -54,42 +54,6 @@ QString Document::fileName()
   	return filename;
 }
 
-/** Insert tag in cursor position and set cursor between s1 and s2 */
-/*void Document::insert_Tag( char* s1,  char * s2 ){
-	int line,col; // cursor position
-	VConfig c;
-
-		
-  if ( s2 ) { // use 2 tags
-  	// QString marked = markedText();
-  	if ( !hasMarkedText() ) {
-  		kWriteView ->getVConfig(c);
-		  kWriteDoc->insert( c, s1);
-  	}
-  	else {
-  		cut();
-  		kWriteView ->getVConfig(c);
-		  kWriteDoc->insert( c, s1);
-		  paste();
-  	}
-  	
-  	col = currentColumn();
-  	line = currentLine();
-  	kWriteView ->getVConfig(c);
-	  kWriteDoc->insert( c, s2);
-	  setCursorPosition(line,col);
-  }
-  else {  // using only 1 tag
-  	kWriteView ->getVConfig(c);
-	  kWriteDoc->insert( c, s1);
-  }
-
-
-  kWriteDoc->updateViews();
-	
-}
-*/
-/** insert tag in document  */
 
 void Document::insertTag(QString s1,QString s2)
 {
@@ -298,8 +262,22 @@ QString Document::getTagAttrValue(int i)
 QString Document::currentTag()
 {
   tagAttrNum = 0;
-  int x = currentColumn();
+  
   int y = currentLine();
+  int ox = currentColumn(); // need to reorganise ;)
+  
+  QString t = getLine(y);
+  int x=0, i=0;
+  
+  int tab = kWriteDoc->tabChars;
+  
+  while (i<ox) 
+  {
+    if (t[x] == '\t' ) i = ((i+tab)/tab)*tab;
+    else               i++;
+    x++;
+  }
+  
 
   QString begTag = findBeginOfTag( QString(""), x, y); // find begin
   QString endTag = findEndOfTag(   QString(""), x, y); // end

@@ -4,23 +4,26 @@
 ##############################################################
 
 libdir = ${kde_libraries}/quanta/plugins
-lib_LTLIBRARIES =libproject.la
+lib_LTLIBRARIES =libftpclient.la
 
 
-libproject_la_LDFLAGS = -module 
+libftpclient_la_LDFLAGS = -module 
 
 INCLUDES = $(all_includes)\
 		-I$(top_srcdir)/quanta/plugins/weblint
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
-libproject_la_METASOURCES = AUTO
-libproject_la_SOURCES = \
+libftpclient_la_METASOURCES = AUTO
+libftpclient_la_SOURCES = \
 		ftpclients.cpp\
-		ftpclient.cpp
+		ftpclient.cpp\
+		ftpclientview.cpp
 EXTRA_DIST = \
 		ftpclients.cpp\
 		ftpclients.h\
 		ftpclient.cpp\
-		ftpclient.h
+		ftpclient.h\
+		ftpclientview.cpp\
+		ftpclientview.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$
