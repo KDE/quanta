@@ -468,10 +468,10 @@ void QuantaInit::initView()
 //FIXME:
 /*
   connect(m_quanta->m_htmlPart, SIGNAL(onURL(const QString&)),
-              m_quanta, SLOT(slotStatusMsg(const QString&)));
+              m_quanta, SLOT(slotStatusMsg(const QString&))); */
   connect(m_quanta->m_htmlPartDoc, SIGNAL(onURL(const QString&)),
                  m_quanta, SLOT(slotStatusMsg(const QString&)));
-*/
+
   connect(sTab, SIGNAL(newCursorPosition(int,int)), m_quanta, SLOT(setCursorPosition(int,int)));
   connect(sTab, SIGNAL(selectArea(int,int,int,int)), m_quanta, SLOT( selectArea(int,int,int,int)));
   connect(sTab, SIGNAL(selectTagArea(Node*)), m_quanta, SLOT(slotSelectTagArea(Node*)));

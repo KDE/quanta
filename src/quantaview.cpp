@@ -683,14 +683,12 @@ void QuantaView::activated()
     parser->setSAParserEnabled(false);
     quantaApp->slotReloadStructTreeView(); //FIXME
     if (m_plugin)
-//        quantaApp->partManager()->setActivePart(m_plugin->part(), m_plugin->widget());
-    quantaApp->guiFactory()->addClient(m_plugin->part());
+       quantaApp->partManager()->setActivePart(m_plugin->part(), m_plugin->widget());
     return;
   }
   ToolbarTabWidget::ref()->reparent(this, 0, QPoint(), qConfig.enableDTDToolbar);
   m_viewLayout->addWidget(ToolbarTabWidget::ref(), 0 , 0);
-  //quantaApp->partManager()->setActivePart(m_document->doc(), m_document->view());
-  quantaApp->guiFactory()->addClient(m_document->view());
+  quantaApp->partManager()->setActivePart(m_document->doc(), m_document->view());
   m_document->checkDirtyStatus();
   StructTreeView::ref()->useOpenLevelSetting = true;
   quantaApp->loadToolbarForDTD(m_document->getDTDIdentifier());
@@ -708,13 +706,7 @@ void QuantaView::deactivated()
         quantaApp->statusBar()->changeItem("", IDS_STATUS);
         quantaApp->statusBar()->show();
       }
-      quantaApp->guiFactory()->removeClient(m_plugin->part());
   } else
-  if (m_document)
-  {
-    quantaApp->guiFactory()->removeClient(m_document->view());
-  }
-
 }
 
 bool QuantaView::saveModified()

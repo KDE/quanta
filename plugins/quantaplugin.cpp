@@ -301,7 +301,6 @@ bool QuantaPlugin::unload()
   disconnect( m_part, SIGNAL(setStatusBarText(const QString &)),
            quantaApp, SLOT(slotStatusMsg( const QString & )));
 
-  quantaApp->guiFactory()->removeClient(m_part);
   delete m_part;
   m_part = 0;
   setRunning(false);
