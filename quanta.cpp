@@ -657,14 +657,6 @@ void QuantaApp::slotNewStatus()
  }
 }
 
-/** slot for new undo flag */
-void QuantaApp::slotNewUndo()
-{
-/*!!!!  int state = view->write()->undoState();
-
-  undoAction->setEnabled(state & 1);
-  redoAction->setEnabled(state & 2);*/
-}
 
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
@@ -690,7 +682,6 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   if (newWrite != m_view->oldWrite && sTab)
     sTab->useOpenLevelSetting = true;
   reparse(true);
-  //slotNewUndo();
   slotNewStatus();
   slotNewLineColumn();
 
@@ -1287,21 +1278,6 @@ void QuantaApp::openDoc( QString url )
 
    oldUrl = url;
 }
-/*
-void QuantaApp::updateNavButtons( bool back, bool forward )
-{
-
-   if ( back )
-       enableCommand(ID_VIEW_BACK);
-   else
-       disableCommand(ID_VIEW_BACK);
-
-   if ( forward )
-       enableCommand(ID_VIEW_FORWARD);
-   else
-       disableCommand(ID_VIEW_FORWARD);
-
-} */
 
 void QuantaApp::slotContextHelp()
 {
@@ -2607,11 +2583,9 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
           p_toolbar = iter.current();
           if (p_toolbar->url == url || p_toolbar->url == urlLocal)
           {
-       //     slotRemoveToolbar(iter.currentKey());
             guiFactory()->removeClient(p_toolbar->guiClient);
-            //m_view->toolbarTab()->removePage(p_toolbar->name);
             p_toolbar->visible = false;
-            if (p_toolbar->menu) delete p_toolbar->menu;
+            delete p_toolbar->menu;
             p_toolbar->menu = 0L;
             break;
           }
@@ -2639,7 +2613,6 @@ void QuantaApp::loadToolbarForDTD(const QString& dtdName)
         }
       }
    }
-
    m_view->toolbarTab()->setCurrentPage(0);
  }
 

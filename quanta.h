@@ -191,7 +191,6 @@ public slots:
   /// open url in documentation window
   void openDoc(QString url );
 
-//  void updateNavButtons( bool back, bool forward );
   void slotContextHelp();
 
   void slotBack();
@@ -203,7 +202,6 @@ public slots:
   void statusBarTimeout();
   void slotStatusMsg(const QString &text);
 
-  void slotNewUndo();
   void slotNewStatus();
   void slotNewLineColumn();
   void slotUpdateStatus(QWidget*);

@@ -455,12 +455,10 @@ void QuantaApp::initView()
               this, SLOT(slotStatusMsg(const QString&)));
   connect(htmlPartDoc, SIGNAL(onURL(const QString&)),
                  this, SLOT(slotStatusMsg(const QString&)));
-//  connect(  htmlPartDoc,    SIGNAL(updateStatus(bool, bool)), SLOT(updateNavButtons( bool, bool)));
 
   connect(m_view, SIGNAL(newCurPos()), this, SLOT(slotNewLineColumn()));
 
   connect(sTab, SIGNAL(newCursorPosition(int,int)), SLOT(setCursorPosition(int,int)));
-//  connect( sTab, SIGNAL(onTag(const QString &)), SLOT( slotStatusHelpMsg(const QString &)));
   connect(sTab, SIGNAL(selectArea(int,int,int,int)), SLOT( selectArea(int,int,int,int)));
   connect(sTab, SIGNAL(needReparse()), SLOT(slotForceReparse()));
   connect(sTab, SIGNAL(parsingDTDChanged(const QString&)), SLOT(slotParsingDTDChanged(const QString&)));
@@ -1423,85 +1421,86 @@ void QuantaApp::initTagDict()
 
 void QuantaApp::initActions()
 {
+  KActionCollection *ac = actionCollection();
 
     editTagAction = new KAction( i18n( "&Edit Current Tag..." ), CTRL+Key_E,
                         m_view, SLOT( slotEditCurrentTag() ),
-                        actionCollection(), "edit_current_tag" );
+                        ac, "edit_current_tag" );
     new KAction( i18n( "E&xpand Abbreviation" ), CTRL+Key_J,
                         this, SLOT( slotExpandAbbreviation() ),
-                        actionCollection(), "expand_abbreviation" );
+                        ac, "expand_abbreviation" );
 
     //Kate actions
 
 //Edit menu
-    editUndo = KStdAction::undo(m_view, SLOT(slotUndo()),actionCollection());
-    editRedo = KStdAction::redo(m_view, SLOT(slotRedo()), actionCollection());
+    editUndo = KStdAction::undo(m_view, SLOT(slotUndo()), ac);
+    editRedo = KStdAction::redo(m_view, SLOT(slotRedo()), ac);
 
-    KStdAction::cut(m_view, SLOT(slotCut()), actionCollection());
-    KStdAction::copy(m_view, SLOT(slotCopy()), actionCollection()) ;
-    KStdAction::paste(m_view, SLOT(slotPaste()), actionCollection());
+    KStdAction::cut(m_view, SLOT(slotCut()), ac);
+    KStdAction::copy(m_view, SLOT(slotCopy()), ac) ;
+    KStdAction::paste(m_view, SLOT(slotPaste()), ac);
 
-    KStdAction::selectAll(m_view, SLOT(slotSelectAll()), actionCollection());
-    KStdAction::deselect(m_view, SLOT(slotDeselectAll()),actionCollection());
+    KStdAction::selectAll(m_view, SLOT(slotSelectAll()), ac);
+    KStdAction::deselect(m_view, SLOT(slotDeselectAll()), ac);
     (void) new KAction( i18n( "&Toggle Block Selection" ), Key_F4, m_view,
-                        SLOT( toggleVertical() ), actionCollection(), "set_verticalSelect" );
-    new KAction(i18n("Toggle &Insert"), Key_Insert, m_view, SLOT(toggleInsert()), actionCollection(), "set_insert" );
+                        SLOT( toggleVertical() ), ac, "set_verticalSelect" );
+    new KAction(i18n("Toggle &Insert"), Key_Insert, m_view, SLOT(toggleInsert()), ac, "set_insert" );
 
 
-    KStdAction::find(m_view, SLOT(slotFind()), actionCollection());
-    KStdAction::findNext(m_view, SLOT(slotFindAgain()), actionCollection());
-    KStdAction::findPrev(m_view, SLOT(slotFindAgainB()), actionCollection(), "edit_find_prev");
-    KStdAction::replace(m_view, SLOT(slotReplace()), actionCollection());
+    KStdAction::find(m_view, SLOT(slotFind()), ac);
+    KStdAction::findNext(m_view, SLOT(slotFindAgain()), ac);
+    KStdAction::findPrev(m_view, SLOT(slotFindAgainB()), ac, "edit_find_prev");
+    KStdAction::replace(m_view, SLOT(slotReplace()), ac);
 
     new KAction(i18n("&Indent"), "indent", CTRL+Key_I, m_view,
-                SLOT(slotIndent()), actionCollection(), "edit_indent");
+                SLOT(slotIndent()), ac, "edit_indent");
     new KAction(i18n("&Unindent"), "unindent", CTRL+SHIFT+Key_I, m_view,
-                SLOT(slotUnIndent()), actionCollection(), "edit_unindent");
+                SLOT(slotUnIndent()), ac, "edit_unindent");
     new KAction(i18n("&Clean Indentation"), "cleanindent", 0, m_view,
-                SLOT(slotCleanIndent()), actionCollection(), "edit_cleanindent");
+                SLOT(slotCleanIndent()), ac, "edit_cleanindent");
 
     new KAction(i18n("Co&mment"),  CTRL+Qt::Key_NumberSign,
-                m_view, SLOT(slotComment()), actionCollection(), "edit_comment");
+                m_view, SLOT(slotComment()), ac, "edit_comment");
     new KAction(i18n("Unc&omment"),
                 CTRL+SHIFT+Qt::Key_NumberSign, m_view, SLOT(slotUnComment()),
-                actionCollection(), "edit_uncomment");
+                ac, "edit_uncomment");
     new KAction(i18n("Apply Word Wrap"), "", 0, m_view, SLOT(slotApplyWordWrap()),
-                actionCollection(), "edit_apply_wordwrap");
+                ac, "edit_apply_wordwrap");
 
 
 
 //Tools menu
-    KStdAction::gotoLine(m_view, SLOT(slotGotoLine()), actionCollection(), "edit_goto_line");
-    KStdAction::spelling(m_view, SLOT(slotSpellcheck()), actionCollection());
+    KStdAction::gotoLine(m_view, SLOT(slotGotoLine()), ac, "edit_goto_line");
+    KStdAction::spelling(m_view, SLOT(slotSpellcheck()), ac);
 
 //Bookmarks
     bookmarkToggle = new KAction(i18n("Toggle &Bookmark"), Qt::CTRL+Qt::Key_B,
-          m_view, SLOT(toggleBookmark()), actionCollection(), "bookmarks_toggle");
+          m_view, SLOT(toggleBookmark()), ac, "bookmarks_toggle");
     bookmarkClear = new KAction(i18n("Clear Bookmarks"), 0, m_view,
-          SLOT(clearBookmarks()), actionCollection(), "bookmarks_clear");
+          SLOT(clearBookmarks()), ac, "bookmarks_clear");
 
 //Settings
   viewBorder =  new KToggleAction(i18n("Show &Icon Border"), Qt::SHIFT+Qt::Key_F9, m_view,
-                    SLOT(toggleIconBorder()), actionCollection(), "view_border");
+                    SLOT(toggleIconBorder()), ac, "view_border");
   viewLineNumbers =  new KToggleAction(i18n("Show &Line Numbers"), Key_F11, m_view,
-                        SLOT(toggleLineNumbers()), actionCollection(), "view_line_numbers");
+                        SLOT(toggleLineNumbers()), ac, "view_line_numbers");
 
 //help
    (void) new KAction(i18n("Ti&p of the Day"), "idea", "", this,
-      SLOT(slotHelpTip()), actionCollection(), "help_tip");
+      SLOT(slotHelpTip()), ac, "help_tip");
 
   #if (KDE_VERSION > 308)
 //    viewFoldingMarkes =  new KToggleAction(i18n("Show Folding &Markers"), Key_F9, m_view,
-//                              SLOT(toggleFoldingMarkers()), actionCollection(), "view_folding_markers");
+//                              SLOT(toggleFoldingMarkers()), ac, "view_folding_markers");
     viewDynamicWordWrap = new KToggleAction(i18n("&Dynamic Word Wrap"), Key_F10, m_view,
-                              SLOT(toggleDynamicWordWrap()), actionCollection(), "view_dynamic_word_wrap");
+                              SLOT(toggleDynamicWordWrap()), ac, "view_dynamic_word_wrap");
   #endif
 
   (void) new KAction( i18n( "Configure &Editor..." ), SmallIcon("configure"), 0,
-                      m_view, SLOT( slotEditorOptions() ), actionCollection(), "editor_options" );
+                      m_view, SLOT( slotEditorOptions() ), ac, "editor_options" );
 
 
-    setEndOfLine = new KSelectAction(i18n("&End of Line"), 0, actionCollection(),"set_eol");
+    setEndOfLine = new KSelectAction(i18n("&End of Line"), 0, ac,"set_eol");
     connect(setEndOfLine, SIGNAL(activated(int)), m_view, SLOT(setEol(int)));
     connect(setEndOfLine->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(setEOLMenuAboutToShow()));
 
@@ -1514,250 +1513,252 @@ void QuantaApp::initActions()
 
     // File actions
     //
-    KStdAction::openNew( this, SLOT( slotFileNew()  ), actionCollection());
-    KStdAction::open   ( this, SLOT( slotFileOpen() ), actionCollection(), "file_open");
-    KStdAction::close  ( this, SLOT( slotFileClose()), actionCollection());
+    KStdAction::openNew( this, SLOT( slotFileNew()  ), ac);
+    KStdAction::open   ( this, SLOT( slotFileOpen() ), ac, "file_open");
+    KStdAction::close  ( this, SLOT( slotFileClose()), ac);
 
     fileRecent =  KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)),
-                                         actionCollection(), "file_open_recent");
+                                         ac, "file_open_recent");
     fileRecent->setMaxItems(32);
 
     (void) new KAction( i18n( "Close All" ), 0, this,
                         SLOT( slotFileCloseAll() ),
-                        actionCollection(), "file_close_all" );
+                        ac, "file_close_all" );
 
-    saveAction = KStdAction::save(this, SLOT( slotFileSave() ),actionCollection());
+    saveAction = KStdAction::save(this, SLOT( slotFileSave() ), ac);
 
-    KStdAction::saveAs( this, SLOT( slotFileSaveAs() ), actionCollection() );
+    KStdAction::saveAs( this, SLOT( slotFileSaveAs() ), ac );
 
     saveAllAction = new KAction( i18n( "Save All..." ), UserIcon("save_all"), SHIFT+KStdAccel::shortcut(KStdAccel::Save).keyCodeQt(),
                         this, SLOT( slotFileSaveAll() ),
-                        actionCollection(), "file_save_all" );
+                        ac, "file_save_all" );
 
     saveAsLocalTemplateAction = new KAction( i18n( "Save as Local Template..." ), 0,
                         this, SLOT( slotFileSaveAsLocalTemplate() ),
-                        actionCollection(), "save_local_template" );
+                        ac, "save_local_template" );
     saveAsProjectTemplateAction = new KAction( i18n( "Save as Project Template..." ), 0,
                         this, SLOT( slotFileSaveAsProjectTemplate() ),
-                        actionCollection(), "save_project_template" );
+                        ac, "save_project_template" );
 
     saveSelectionAsLocalTemplateAction = new KAction( i18n( "Save Selection to Local Template File..." ), 0,
                         this, SLOT( slotFileSaveSelectionAsLocalTemplate() ),
-                        actionCollection(), "save_selection_local_template" );
+                        ac, "save_selection_local_template" );
     saveSelectionAsProjectTemplateAction = new KAction( i18n( "Save Selection to Project Template File..." ), 0,
                         this, SLOT( slotFileSaveSelectionAsProjectTemplate() ),
-                        actionCollection(), "save_selection_project_template" );
+                        ac, "save_selection_project_template" );
 
-    KStdAction::print( this, SLOT( slotFilePrint() ), actionCollection() );
+    KStdAction::print( this, SLOT( slotFilePrint() ), ac );
 
-    KStdAction::quit( this, SLOT( slotFileQuit() ), actionCollection() );
+    KStdAction::quit( this, SLOT( slotFileQuit() ), ac );
 
-   (void) new KAction( i18n( "&File List" ), ALT+Key_0,this, SLOT( slotShowOpenFileList() ),
-                        actionCollection(), "file_list" );
+   (void) new KAction( i18n( "&File List" ), ALT+Key_0, this,
+                       SLOT( slotShowOpenFileList() ), ac, "file_list" );
 
     // Edit actions
  /*
     KAction *undoRedo
       = new KAction( i18n( "Undo/Redo &History..."), 0,
                      doc, SLOT( undoHistory()),
-                     actionCollection(), "undo_history" );
+                     ac, "undo_history" );
 
     undoRedo->setGroup( "edit_undo_merge" ); */
 
     (void) new KAction( i18n( "Find in Files..." ),
                         UserIcon("find"), CTRL+ALT+Key_F,
                         this, SLOT( slotEditFindInFiles() ),
-                        actionCollection(), "find_in_files" );
+                        ac, "find_in_files" );
 
     // Tool actions
 
     (void) new KAction( i18n( "&Context Help..." ), CTRL+Key_H,
                         this, SLOT( slotContextHelp() ),
-                        actionCollection(), "context_help" );
+                        ac, "context_help" );
 
     (void) new KAction( i18n( "&Quanta Homepage" ), 0,
                         this, SLOT( slotHelpHomepage() ),
-                        actionCollection(), "help_homepage" );
+                        ac, "help_homepage" );
 
     (void) new KAction( i18n( "Make &Donation" ), 0,
                         this, SLOT( slotMakeDonation() ),
-                        actionCollection(), "help_donation" );
+                        ac, "help_donation" );
 
     (void) new KAction( i18n( "Tag &Attributes" ), ALT+Key_Down,
                         m_doc, SLOT( slotAttribPopup() ),
-                        actionCollection(), "tag_attributes" );
+                        ac, "tag_attributes" );
 
     (void) new KAction( i18n( "&Change DTD Type" ), 0,
                         this, SLOT( slotToolsChangeDTD() ),
-                        actionCollection(), "tools_change_dtd" );
+                        ac, "tools_change_dtd" );
 
     (void) new KAction( i18n( "Send DTD in E-&Mail" ), 0,
                         this, SLOT( slotEmailDTD() ),
-                        actionCollection(), "tools_send_dtd" );
+                        ac, "tools_send_dtd" );
 
     (void) new KAction( i18n( "&Syntax Check" ), 0,
                         this, SLOT( slotToolSyntaxCheck() ),
-                        actionCollection(), "syntax_check" );
+                        ac, "syntax_check" );
 
     // View actions
 
     showFTabAction =
       new KToggleAction( i18n( "Show Files Tree" ), UserIcon("ftab"), 0,
                          this, SLOT( slotShowFTabDock() ),
-                         actionCollection(), "show_ftab_tree" );
+                         ac, "show_ftab_tree" );
     showPTabAction =
       new KToggleAction( i18n( "Show Project Tree" ), UserIcon("ptab"), 0,
                          this, SLOT( slotShowPTabDock() ),
-                         actionCollection(), "show_ptab_tree" );
+                         ac, "show_ptab_tree" );
     showTTabAction =
       new KToggleAction( i18n( "Show Templates Tree" ), UserIcon("ttab"), 0,
                          this, SLOT( slotShowTTabDock() ),
-                         actionCollection(), "show_ttab_tree" );
+                         ac, "show_ttab_tree" );
     showSTabAction =
       new KToggleAction( i18n( "Show Structure Tree" ), BarIcon ("view_sidetree"), 0,
                          this, SLOT( slotShowSTabDock() ),
-                         actionCollection(), "show_stab_tree" );
+                         ac, "show_stab_tree" );
     showDTabAction =
       new KToggleAction( i18n( "Show Documentation Tree" ), BarIcon ("contents2"), 0,
                          this, SLOT( slotShowDTabDock() ),
-                         actionCollection(), "show_dtab_tree" );
+                         ac, "show_dtab_tree" );
 
     showMessagesAction =
       new KToggleAction( i18n( "Show &Messages" ), "output_win", CTRL+Key_M,
                          this, SLOT( slotShowBottDock() ),
-                         actionCollection(), "show_messages" );
+                         ac, "show_messages" );
 
     showPreviewAction =
       new KToggleAction( i18n( "Pr&eview" ), "preview", Key_F6,
                          this, SLOT( slotShowPreview() ),
-                         actionCollection(), "show_preview" );
+                         ac, "show_preview" );
 
     #ifdef BUILD_KAFKAPART
     showKafkaAction =
       new KToggleAction( i18n( "&Visual editor (experimental)"), "kafka_view", Key_F12,
                          this, SLOT( slotShowKafkaPart() ),
-                         actionCollection(), "show_kafka_view");
+                         ac, "show_kafka_view");
     #endif
 
     (void) new KAction( i18n( "&Reload Preview" ), "reload",
                         KStdAccel::shortcut(KStdAccel::Reload).keyCodeQt(),
                         this, SLOT( slotViewRepaint() ),
-                        actionCollection(), "reload" );
+                        ac, "reload" );
 
     (void) new KAction( i18n( "View with Net&scape" ), "netscape", ALT+Key_F6,
                         m_view, SLOT( slotViewInNetscape() ),
-                        actionCollection(), "view_with_netscape" );
+                        ac, "view_with_netscape" );
 
     (void) new KAction( i18n( "View with &Konqueror" ), "konqueror", CTRL+Key_F6,
                         m_view, SLOT( slotViewInKFM() ),
-                        actionCollection(), "view_with_konqueror" );
+                        ac, "view_with_konqueror" );
 
     (void) new KAction( i18n( "View with L&ynx" ), "terminal", SHIFT+Key_F6,
                         m_view, SLOT( slotViewInLynx() ),
-                        actionCollection(), "view_with_lynx" );
+                        ac, "view_with_lynx" );
 
     (void) new KAction( i18n( "&Previous File" ), "1leftarrow", KStdAccel::back(),
                         this, SLOT( slotBack() ),
-                        actionCollection(), "previous_file" );
+                        ac, "previous_file" );
 
     (void) new KAction( i18n( "&Next File" ), "1rightarrow", KStdAccel::forward(),
                         this, SLOT( slotForward() ),
-                        actionCollection(), "next_file" );
+                        ac, "next_file" );
 
     // Project actions
     //
     newPrjAction = new KAction( i18n( "&New Project..." ), 0,
                         m_project, SLOT( slotNewProject() ),
-                        actionCollection(), "project_new" );
+                        ac, "project_new" );
 
     openPrjAction = new KAction( i18n( "&Open Project..." ), BarIcon("folder_new"), 0,
                         m_project, SLOT( slotOpenProject() ),
-                        actionCollection(), "project_open" );
+                        ac, "project_open" );
 
     m_project -> projectRecent =
       KStdAction::openRecent(m_project, SLOT(slotOpenProject(const KURL&)),
-                             actionCollection(), "project_open_recent");
+                             ac, "project_open_recent");
     m_project->projectRecent->setText(i18n("Open Recent Project"));
     m_project->projectRecent->setMaxItems(32);
 
     saveprjAction =  new KAction( i18n( "&Save Project" ), SmallIcon("save"), 0,
                          m_project, SLOT( slotSaveProject() ),
-                         actionCollection(), "project_save" );
+                         ac, "project_save" );
 
     closeprjAction =  new KAction( i18n( "&Close Project" ), SmallIcon("fileclose"), 0,
                          m_project, SLOT( slotCloseProject() ),
-                         actionCollection(), "project_close" );
+                         ac, "project_close" );
 
 
     openPrjViewAction = new KAction( i18n( "Open Project View..." ), 0,
                         m_project, SLOT( slotOpenProjectView() ),
-                        actionCollection(), "project_view_open" );
+                        ac, "project_view_open" );
 
     savePrjViewAction = new KAction( i18n( "Save Project View" ), 0,
                         m_project, SLOT( slotSaveProjectView() ),
-                        actionCollection(), "project_view_save" );
+                        ac, "project_view_save" );
     saveAsPrjViewAction = new KAction( i18n( "Save Project View As..." ), 0,
                         m_project, SLOT( slotSaveAsProjectView() ),
-                        actionCollection(), "project_view_save_as" );
+                        ac, "project_view_save_as" );
 
 
 
     insertFileAction = new KAction( i18n( "&Insert Files..." ), 0,
                         m_project, SLOT( slotAddFiles() ),
-                        actionCollection(), "project_insert_file" );
+                        ac, "project_insert_file" );
 
     insertDirAction = new KAction( i18n( "&Insert Directory..." ), 0,
                         m_project, SLOT( slotAddDirectory() ),
-                        actionCollection(), "project_insert_directory" );
+                        ac, "project_insert_directory" );
 
     rescanPrjDirAction = new KAction( i18n( "&Rescan Project Directory" ), SmallIcon("reload"), 0,
                         m_project, SLOT( slotRescanPrjDir() ),
-                        actionCollection(), "project_rescan" );
+                        ac, "project_rescan" );
 
     uploadProjectAction = new KAction( i18n( "&Upload Project" ), Key_F8,
                         m_project, SLOT( slotUpload() ),
-                        actionCollection(), "project_upload" );
+                        ac, "project_upload" );
 
     projectOptionAction = new KAction( i18n( "&Project Options" ), Key_F7,
                         m_project, SLOT( slotOptions() ),
-                        actionCollection(), "project_options" );
+                        ac, "project_options" );
 
     // Options actions
     //
-    showToolbarAction   = KStdAction::showToolbar  ( this, SLOT( slotViewToolBar() ),   actionCollection(), "view_toolbar" );
-    showStatusbarAction = KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), actionCollection(), "view_statusbar" );
+    showToolbarAction   = KStdAction::showToolbar  ( this, SLOT( slotViewToolBar() ), ac, "view_toolbar" );
+    showStatusbarAction = KStdAction::showStatusbar( this, SLOT( slotViewStatusBar() ), ac, "view_statusbar" );
 
 
     (void) new KAction( i18n( "Configure &Actions..." ), UserIcon("ball"),0,
                         this, SLOT( slotOptionsConfigureActions() ),
-                        actionCollection(), "conf_actions" );
+                        ac, "conf_actions" );
 
-    KStdAction::keyBindings      ( this, SLOT( slotOptionsConfigureKeys() ),     actionCollection(), "keys_bind" );
-    KStdAction::configureToolbars( this, SLOT( slotOptionsConfigureToolbars() ), actionCollection(), "conf_toolbars" );
-    KStdAction::preferences      ( this, SLOT( slotOptions() ),                  actionCollection(), "general_options" );
+    KStdAction::keyBindings      ( this, SLOT( slotOptionsConfigureKeys() ), ac, "keys_bind" );
+    KStdAction::configureToolbars( this, SLOT( slotOptionsConfigureToolbars() ), ac, "conf_toolbars" );
+    KStdAction::preferences      ( this, SLOT( slotOptions() ), ac, "general_options" );
 
     // Toolbars actions
     projectToolbarFiles = new KRecentFilesAction(i18n("Load &Project Toolbar"),0,this, SLOT(slotLoadToolbarFile(const KURL&)),
-                           actionCollection(), "toolbars_load_project");
+                           ac, "toolbars_load_project");
 
-    new KAction(i18n("Load &Global Toolbar..."), 0, this, SLOT(slotLoadGlobalToolbar()), actionCollection(), "toolbars_load_global");
-    new KAction(i18n("Load &Local Toolbar..."), 0, this, SLOT(slotLoadToolbar()), actionCollection(), "toolbars_load_user");
-    new KAction(i18n("Save as &Local Toolbar..."),  0, this, SLOT(slotSaveLocalToolbar()), actionCollection(), "toolbars_save_local");
-    new KAction(i18n("Save as &Project Toolbar..."),  0, this, SLOT(slotSaveProjectToolbar()), actionCollection(), "toolbars_save_project");
-    new KAction(i18n("&Add User Toolbar"),  0, this, SLOT(slotAddToolbar()), actionCollection(), "toolbars_add");
-    new KAction(i18n("&Remove User Toolbar"),  0, this, SLOT(slotRemoveToolbar()), actionCollection(), "toolbars_remove");
-    new KAction(i18n("Re&name User Toolbar"),  0, this, SLOT(slotRenameToolbar()), actionCollection(), "toolbars_rename");
-    new KAction(i18n("Send Toolbar in E-&Mail"),  0, this, SLOT(slotSendToolbar()), actionCollection(), "toolbars_send");
+    new KAction(i18n("Load &Global Toolbar..."), 0, this, SLOT(slotLoadGlobalToolbar()), ac, "toolbars_load_global");
+    new KAction(i18n("Load &Local Toolbar..."), 0, this, SLOT(slotLoadToolbar()), ac, "toolbars_load_user");
+    new KAction(i18n("Save as &Local Toolbar..."), 0, this, SLOT(slotSaveLocalToolbar()), ac, "toolbars_save_local");
+    new KAction(i18n("Save as &Project Toolbar..."), 0, this, SLOT(slotSaveProjectToolbar()), ac, "toolbars_save_project");
+    new KAction(i18n("&Add User Toolbar"),  0, this, SLOT(slotAddToolbar()), ac, "toolbars_add");
+    new KAction(i18n("&Remove User Toolbar"), 0, this, SLOT(slotRemoveToolbar()), ac, "toolbars_remove");
+    new KAction(i18n("Re&name User Toolbar"), 0, this, SLOT(slotRenameToolbar()), ac, "toolbars_rename");
+    new KAction(i18n("Send Toolbar in E-&Mail"), 0, this, SLOT(slotSendToolbar()), ac, "toolbars_send");
 
-    showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"),0, actionCollection(), "view_dtd_toolbar");//,view,SLOT(slotHideToolbar()),actionCollection(),"view_dtd_toolbar");
+    showDTDToolbar=new KToggleAction(i18n("Show DTD Toolbar"), 0, ac, "view_dtd_toolbar");
     connect(showDTDToolbar, SIGNAL(toggled(bool)), this, SLOT(slotToggleDTDToolbar(bool)));
 
 
-    new KAction(i18n("Complete Text"),CTRL+Key_Space,this,SLOT(slotShowCompletion()),actionCollection(),"show_completion");
-    new KAction(i18n("Completion Hints"),CTRL+SHIFT+Key_Space,this,SLOT(slotShowCompletionHint()),actionCollection(),"show_completion_hint");
+    new KAction(i18n("Complete Text"), CTRL+Key_Space,
+                this, SLOT(slotShowCompletion()), ac,"show_completion");
+    new KAction(i18n("Completion Hints"), CTRL+SHIFT+Key_Space,
+                this, SLOT(slotShowCompletionHint()), ac,"show_completion_hint");
 
-    KStdAction::back   ( this, SLOT( slotBack() ),    actionCollection(), "w_back" );
-    KStdAction::forward( this, SLOT( slotForward() ), actionCollection(), "w_forward" );
+    KStdAction::back(this, SLOT( slotBack() ), ac, "w_back");
+    KStdAction::forward(this, SLOT( slotForward() ), ac, "w_forward");
 
     m_actions = new QDomDocument();
 //load the global actions
@@ -1772,7 +1773,7 @@ void QuantaApp::initActions()
         while( !n.isNull() ) {
           QDomElement e = n.toElement(); // try to convert the node to an element.
           if( !e.isNull() ) { // the node was really an element.
-              new TagAction( &e, actionCollection());
+              new TagAction( &e, ac);
           }
           n = n.nextSibling();
         }
@@ -1796,8 +1797,8 @@ void QuantaApp::initActions()
             QDomElement e = n.toElement(); // try to convert the node to an element.
             if( !e.isNull())
             { // the node was really an element.
-                delete actionCollection()->action(e.attribute("name"));
-                new TagAction( &e, actionCollection());
+                delete ac->action(e.attribute("name"));
+                new TagAction( &e, ac);
             }
             n = n.nextSibling();
           }
