@@ -1000,6 +1000,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions(cons
 
               //list specified attributes for this tag
               AttributeList *list = tag->attributes();
+              QValueList<KTextEditor::CompletionEntry> tempCompletions;
+              QStringList nameList;
               for (uint i = 0; i < list->count(); i++)
               {
                 QString item = list->at(i)->name;
@@ -1007,7 +1009,8 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions(cons
                 {
                   completion.text = QuantaCommon::attrCase(item);
                   completion.comment = list->at(i)->type;
-                  completions->append( completion );
+                  tempCompletions.append( completion );
+                  nameList.append(completion.text);
                 }
               }
 
@@ -1022,7 +1025,7 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions(cons
                   {
                     completion.text = QuantaCommon::attrCase(name);
                     completion.comment = attrs->at(j)->type;
-                    completions->append( completion );
+                    tempCompletions.append( completion );
                   }
                 }
               }
@@ -1034,8 +1037,21 @@ QValueList<KTextEditor::CompletionEntry>* Document::getAttributeCompletions(cons
                 {
                 completion.type = "doctypeList";
                 completion.text = it.current()->nickName;
-                completions->append(completion);
+                tempCompletions.append(completion);
                 }
+              }
+              //below isn't fast, but enough here. May be better with QMap<QString, KTextEditor::CompletionEntry>
+              nameList.sort();
+              for ( QStringList::Iterator it = nameList.begin(); it != nameList.end(); ++it )
+              {
+                 for (QValueList<KTextEditor::CompletionEntry>::Iterator compIt = tempCompletions.begin(); compIt != tempCompletions.end(); ++compIt)
+                 {
+                   if ( (*compIt).text == *it)
+                   {
+                     completions->append(*compIt);
+                     break;
+                   }
+                 }
               }
               break;
             }
@@ -2068,15 +2084,15 @@ QString Document::hashedFilePath(const QString& p)
            int c = int(p[0]);
            return QString::number(c,10)+"P";
           }
-     
+
   case 2: {
            int c = int(p[1])*2;
            return QString::number(c,10)+"P";
           }
-     
+
   default:{
            uint i;
-           int sign = 1, 
+           int sign = 1,
 	       sum = 0;
            for (i = 0; i < (p.length()-1); i++)
            {
@@ -2087,7 +2103,7 @@ QString Document::hashedFilePath(const QString& p)
            else                 return QString::number(sum*(-1),10)+"n";
           }
  }
- 
+
 }
 
 #include "document.moc"
