@@ -517,9 +517,9 @@ void QuantaInit::initView()
 
 KMdiToolViewAccessor* QuantaInit::addToolTreeView(QWidget *widget, const QString &name, const QPixmap &icon, KDockWidget::DockPosition position)
 {
-   widget->setIcon(icon);
-   widget->setCaption(name);
-   return m_quanta->addToolWindow(widget, position, m_quanta->getMainDockWidget());
+  widget->setIcon(icon);
+  widget->setCaption(name);
+  return m_quanta->addToolWindow(widget, position, m_quanta->getMainDockWidget());
 }
 
 void QuantaInit::readOptions()

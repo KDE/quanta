@@ -51,6 +51,7 @@
 // include files for KDE
 #include <kapplication.h>
 #include <kaboutdata.h>
+#include <kaccelmanager.h>
 #include <kbugreport.h>
 #include <kcolordialog.h>
 #include <kcombobox.h>
@@ -4697,6 +4698,9 @@ void QuantaApp::initTabWidget(bool closeButtonsOnly)
 {
 #if KDE_IS_VERSION(3,2,90) || defined(COMPAT_KMDI)
     KTabWidget *tab = tabWidget();
+#if KDE_VERSION > KDE_MAKE_VERSION(3,3,90)
+    KAcceleratorManager::setNoAccel(tab);
+#endif
     if (tab)
     {
         if (qConfig.showCloseButtons == "ShowAlways")

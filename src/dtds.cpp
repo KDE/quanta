@@ -217,7 +217,8 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
     readTagFile(dirName + "common.tag", dtd, 0L);
   bool idleTimerStatus = quantaApp->enableIdleTimer(false);
   KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*.tag");
-  quantaApp->enableIdleTimer(idleTimerStatus);
+  if (quantaApp)
+    quantaApp->enableIdleTimer(idleTimerStatus);
   QString tmpStr;
   for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
   {
