@@ -677,7 +677,7 @@ void QuantaInit::initActions()
     m_quanta->selectTagAreaAction = new KAction( i18n( "&Select Current Tag Area" ), 0,
                         m_quanta, SLOT( slotSelectTagArea() ),
                         ac, "select_tag_area" );
-    new KAction( i18n( "E&xpand Abbreviation" ), CTRL+Key_J,
+    new KAction( i18n( "E&xpand Abbreviation" ), CTRL+SHIFT+Key_J,
                         m_quanta, SLOT( slotExpandAbbreviation() ),
                         ac, "expand_abbreviation" );
 

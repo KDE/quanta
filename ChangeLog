@@ -26,8 +26,26 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
     - performance:
         - parse the included files less often
 
-    - behavioral changes:
+    - behavioral/user interface changes:
       - remove  the < and > from the entered misc. tags.
+      - expand abbreviation is CTRL-SHIFT-J
+      - some menu items were restructured:
+            - File: Close/Close All moved under Window
+            - Edit: Indent/Unindent/Clean Indentation/Comment/Uncomment/Spelling moved under Tools
+            - View: Tree Views/Show Messages/Show Problem Reporter replaced with Tool Views
+            - Project: Project Options renamed to Project Properties
+            - Plugins: Edit moved to Settings->Configure Plugins
+                            Validate removed (plugins are automatically validates when you configure them)
+            - Tools: List Opened Files replaced with the Window menu
+            - editor context menu: Close/Close Other Tabs/Reload/Upload/Delete File moved to the
+                        tab context menu
+            - new tab context menu containing the above and Close All/Switch To...
+      - some dialogs were restructued:
+            - Configure Quanta: Environment->Show close buttons on tabs moved to User Interface
+                                          Layout renamed to User Interface
+                                          Layout->Window Layout replaced with Reset window layout to the default...
+      - new MDI modes: Toplevel / Childframe / Tab Page (like the old one ) and the new default IDEAl mode
+
 
     - new features:
       - Next / Previous Bookmark actions
@@ -36,11 +54,13 @@ Version 3.3 BE (Release date: xx-xx-2004; Started 26-01-2004):
       - allow closing of opened files from the treeviews
       - add description field for project files
       - Select Current Tag Area action created
+      - option to control loading of last opened files/project on startup
 
     - enhancements:
       - improve multiline script autocompletion
       - warn if there is a closing tag without opening tag in the document
       - show also the column number in the error reporting dialog
+      - multiline, formatted CSS insertion from the CSS editor dialog
 
 Version 3.2.2 (Release data: xx-xx-2004; Started 01-03-2004):
     - bugfixes:
