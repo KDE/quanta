@@ -140,7 +140,6 @@ void CVSService::slotCommit()
 
 void CVSService::slotCommit(const QStringList &files)
 {
-   emit showMessage(i18n("Running CVS commit..."), false);
    m_commitDlg->fileList->clear();
    m_commitDlg->fileList->insertStringList(files);
    m_commitDlg->logEdit->clear();
@@ -151,6 +150,7 @@ void CVSService::slotCommit(const QStringList &files)
       if (message != m_commitDlg->messageCombo->currentText())
           m_commitDlg->messageCombo->insertItem(message, 0);
       emit clearMessages();
+      emit showMessage(i18n("Running CVS commit..."), false);
       m_files = files;
       DCOPRef job = m_cvsService->commit(files, message, true);
       m_cvsCommand = "commit";
