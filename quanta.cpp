@@ -68,6 +68,7 @@
 #include <kdeversion.h>
 #include <ktip.h>
 #include <kparts/componentfactory.h>
+#include <kio/netaccess.h>
 
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
@@ -1066,24 +1067,14 @@ void QuantaApp::slotShowPreview()
     }
     s->raiseWidget(id);
 
-//FIXME:
-//Restore the original doc from the temp file.
-//We should find a better synchronous method to copy the temp file to the current one.
-//which works also for non local files
     fileWatcher->stopScan();
     if (m_doc->isModified())
     {
+
       KURL origUrl = w->url();
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());
-
-      KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
-                                    QString::null,
-                                    this, 0,
-                                    this, 0 );
-      doc2->openURL(tempUrl);
-      doc2->saveAs(origUrl);
-      delete doc2;
+      KIO::NetAccess::file_copy(tempUrl, origUrl, -1, true, false, this);
     }
     fileWatcher->startScan();
   }
@@ -1637,10 +1628,6 @@ void QuantaApp::slotSyntaxCheckDone()
 {
   if (m_view->writeExists())
   {
-  //FIXME:
-  //Restore the original doc from the temp file.
-  //We should find a better synchronous method to copy the temp file to the current one.
-  //A method for this is also a good idea.
     Document *w = m_view->write();
 
     fileWatcher->stopScan();
@@ -1649,14 +1636,7 @@ void QuantaApp::slotSyntaxCheckDone()
       KURL origUrl = w->url();
       KURL tempUrl;
       tempUrl.setPath(w->tempFileName());
-
-      KTextEditor::Document *doc2 = KParts::ComponentFactory::createPartInstanceFromQuery<KTextEditor::Document>( "KTextEditor/Document",
-                                    QString::null,
-                                    this, 0,
-                                    this, 0 );
-      doc2->openURL(tempUrl);
-      doc2->saveAs(origUrl);
-      delete doc2;
+      KIO::NetAccess::file_copy(tempUrl, origUrl, -1, true, false, this);
     }
     fileWatcher->startScan();
   }
