@@ -290,7 +290,7 @@ void kafkaCommon::applyIndentation(Node *node, int nbOfSpaces, int nbOfTabs, Nod
     while(parent)
     {
         if(getNodeDisplay(parent, true) == kafkaCommon::blockDisplay)
-            nonInlineDepth++;
+            ++nonInlineDepth;
         parent = parent->parent;
     }
 
