@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>DTEPEditDlgS</class>
 <comment>/***************************************************************************
  *                                                                         *
@@ -317,7 +317,7 @@
                             <cstring>textLabel10</cstring>
                         </property>
                         <property name="text">
-                            <string>Autoloaded toolbars:</string>
+                            <string>&amp;Autoloaded toolbars:</string>
                         </property>
                         <property name="buddy" stdset="0">
                             <cstring>toolbarsEdit</cstring>
@@ -519,7 +519,7 @@
                     <cstring>tab</cstring>
                 </property>
                 <attribute name="title">
-                    <string>&amp;Pages</string>
+                    <string>P&amp;ages</string>
                 </attribute>
                 <grid>
                     <property name="name">
@@ -1268,7 +1268,7 @@ Example: &lt;b&gt;Tags=style(type[text/css])&lt;/b&gt; means that both &lt;b&gt;
                                                 <string>Regular expression that finds the beginning or end of a structure</string>
                                             </property>
                                             <property name="whatsThis" stdset="0">
-                                                <string>Regular expression that finds the beginning or end of a structure. This is usually the combination of &lt;b&gt;Structure beginning&lt;/b&gt; and &lt;b&gt;Structure end&lt;/b&gt;, like &lt;b&gt;\\{&amp;nbsp;|&amp;nbsp;\\}&lt;/b&gt;</string>
+                                                <string>Regular expression that finds the beginning or end of a structure. This is usually the combination of &lt;b&gt;Structure beginning&lt;/b&gt; and &lt;b&gt;Structure end&lt;/b&gt;, like &lt;b&gt;\{&amp;nbsp;|&amp;nbsp;\}&lt;/b&gt;</string>
                                             </property>
                                         </widget>
                                         <widget class="QLabel" row="4" column="0">
@@ -1302,7 +1302,7 @@ Example: &lt;b&gt;Tags=style(type[text/css])&lt;/b&gt; means that both &lt;b&gt;
                                                 <string>Comma separated list of the local scope defining keywords</string>
                                             </property>
                                             <property name="whatsThis" stdset="0">
-                                              <string>Comma separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b&gt;function&lt;/b&gt;, it means that elements, like variables found under a &lt;b&gt;function&lt;/b&gt; are local, relative to the node that holds the &lt;b&gt;function&lt;/b&gt;.</string>
+                                                <string>Comma separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b&gt;function&lt;/b&gt;, it means that elements, like variables found under a &lt;b&gt;function&lt;/b&gt; are local, relative to the node that holds the &lt;b&gt;function&lt;/b&gt;.</string>
                                             </property>
                                         </widget>
                                         <widget class="KLineEdit" row="3" column="1" rowspan="1" colspan="3">
@@ -1313,7 +1313,7 @@ Example: &lt;b&gt;Tags=style(type[text/css])&lt;/b&gt; means that both &lt;b&gt;
                                                 <string>Comma separated list of the local scope defining keywords</string>
                                             </property>
                                             <property name="whatsThis" stdset="0">
-                                              <string>Comma separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b&gt;function&lt;/b&gt;, it means that elements, like variables found under a &lt;b&gt;function&lt;/b&gt; are local, relative to the node that holds the &lt;b&gt;function&lt;/b&gt;.</string>
+                                                <string>Comma separated list of the local scope defining keywords. Other structure group elements found under a structure node that was created based on a keyword from this list are treated as local elements. For example if this list contains &lt;b&gt;function&lt;/b&gt;, it means that elements, like variables found under a &lt;b&gt;function&lt;/b&gt; are local, relative to the node that holds the &lt;b&gt;function&lt;/b&gt;.</string>
                                             </property>
                                         </widget>
                                         <widget class="KLineEdit" row="2" column="1" rowspan="1" colspan="3">
@@ -1479,7 +1479,7 @@ Example:&lt;br&gt;
                                                 <string>Regular expression that finds the beginning or end of a structure</string>
                                             </property>
                                             <property name="whatsThis" stdset="0">
-                                                <string>Regular expression that finds the beginning or end of a structure. This is usually the combination of &lt;b&gt;Structure beginning&lt;/b&gt; and &lt;b&gt;Structure end&lt;/b&gt;, like &lt;b&gt;\\{&amp;nbsp;|&amp;nbsp;\\}&lt;/b&gt;</string>
+                                                <string>Regular expression that finds the beginning or end of a structure. This is usually the combination of &lt;b&gt;Structure beginning&lt;/b&gt; and &lt;b&gt;Structure end&lt;/b&gt;, like &lt;b&gt;\{&amp;nbsp;|&amp;nbsp;\}&lt;/b&gt;</string>
                                             </property>
                                         </widget>
                                     </grid>

@@ -166,7 +166,7 @@ void DTEPEditDlg::readParserRules()
     xmlStyleTags->setChecked(m_config->readEntry("Single Tag Style", "xml").lower() == "xml");
   } else
   {
-    attributesAfterEdit->setText(m_config->readEntry("AttributeAutoCompletionAfter"));
+    attributesAfterEdit->setText(m_config->readEntry("AttributeAutoCompleteAfter"));
     membersAfterEdit->setText(m_config->readEntry("MemberAutoCompleteAfter"));
   }
   
@@ -306,7 +306,7 @@ void DTEPEditDlg::writeParserRules(KConfig *config)
     writeEntry(config, "Single Tag Style", xmlStyleTags->isChecked() ? "xml" : "html");
   } else
   {
-    writeEntry(config, "AttributeAutoCompletionAfter", attributesAfterEdit->text());
+    writeEntry(config, "AttributeAutoCompleteAfter", attributesAfterEdit->text());
     writeEntry(config, "MemberAutoCompleteAfter", membersAfterEdit->text());
   }
   
