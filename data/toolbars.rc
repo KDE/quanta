@@ -8,33 +8,38 @@
    <tag useDialog="false" >&lt;b></tag>
    <xtag use="true" inLine="true" >&lt;/b></xtag>
    <tooltip>The &lt;b>B&lt;/b> element suggests that text be rendered as &lt;i>bold text&lt;/i>.
-     &lt;br>- common attributes</tooltip>
+     &lt;br>- common attributes
+   </tooltip>
   </action>
   <action useTextButton="0" textButton="" icon="tag_i" type="tag" id="1002" name="Italic" >
    <tag useDialog="false" >&lt;i></tag>
    <xtag use="true" inLine="true" >&lt;/i></xtag>
    <tooltip>The &lt;b>I&lt;/b> element suggests that text be rendered as &lt;i>italic text&lt;/i>.
-     &lt;br>- common attributes</tooltip>
+     &lt;br>- common attributes
+   </tooltip>
   </action>
   <action icon="tag_u" type="tag" id="1003" name="Underline" >
    <tag>&lt;u></tag>
    <xtag use="true" >&lt;/u></xtag>
    <tooltip>The &lt;b>U&lt;/b> element, deprecated in HTML 4.0, suggests that text be rendered as &lt;i>underlined text&lt;/i>.
-     &lt;br>- common attributes</tooltip>
+     &lt;br>- common attributes
+   </tooltip>
   </action>
   <action type="separator" id="0" />
   <action icon="tag_br" type="tag" id="1004" name="New line" >
    <tag>&lt;br></tag>
-   <tooltip>The &lt;b>BR&lt;/b> element forces a &lt;i>break&lt;/i> in the current line of text. 
-     &lt;br>- CLEAR=[ left | all | right | none ] (clear floating objects) 
-     &lt;br>- core attributes</tooltip>
+   <tooltip>The &lt;b>BR&lt;/b> element forces a &lt;i>break&lt;/i> in the current line of text.
+     &lt;br>- CLEAR=[ left | all | right | none ] (clear floating objects)
+     &lt;br>- core attributes
+   </tooltip>
   </action>
   <action icon="tag_p" type="tag" id="1005" name="Paragraph" >
    <tag>&lt;p></tag>
    <xtag use="true" >&lt;/p></xtag>
    <tooltip>The &lt;b>P&lt;/b> element defines a &lt;i>paragraph&lt;/i>.
-    &lt;br>- ALIGN=[ left | center | right | justify ] (horizontal alignment)
-    &lt;br>- common attributes</tooltip>
+     &lt;br>- ALIGN=[ left | center | right | justify ] (horizontal alignment)
+     &lt;br>- common attributes
+   </tooltip>
   </action>
   <action icon="tag_nbsp" type="text" id="1006" name="Non breaking space" >
    <text>&amp;nbsp;</text>
@@ -43,33 +48,56 @@
   <action icon="tag_a" type="tag" id="1007" name="Anchor" >
    <tag useDialog="true" >&lt;a></tag>
    <xtag use="true" >&lt;/a></xtag>
+   <tooltip>The &lt;b>A&lt;/b> element denotes an &lt;i>anchor&lt;/i>--a hypertext link or the destination of a link.
+     The &lt;b>HREF&lt;/b> attribute specifies a hypertext link to another resource, such as an &lt;i>HTML&lt;/i> document or a &lt;i>JPEG&lt;/i> image.
+   </tooltip>
   </action>
   <action icon="tag_image" type="tag" id="1008" name="Image" >
    <tag useDialog="true" >&lt;img></tag>
+   <tooltip>The &lt;b>IMG&lt;/b> element specifies an &lt;i>inline&lt;/i> image.
+     The required &lt;b>SRC&lt;/b> attribute specifies the location of the image.
+   </tooltip>
   </action>
   <action icon="tag_hr" type="tag" id="1009" name="Horisontal rule" >
    <tag>&lt;hr></tag>
+   <tooltip>The &lt;b>HR&lt;/b> element defines a &lt;i>horizontal rule&lt;/i> for visual browsers.
+     While this element is inherently presentational, it can be used structurally as a section divider.
+   </tooltip>
   </action>
   <action icon="tag_comm" type="tag" id="1010" name="Comment" >
    <tag>&lt;!--</tag>
    <xtag use="true" >--></xtag>
+   <tooltip>The &lt;b>!-- -->&lt;/b> element &lt;i>comment&lt;/i> a text inside.
+   </tooltip>
   </action>
   <action type="separator" id="0" />
   <action useTextButton="0" textButton="" icon="div_left" type="tag" id="1011" name="Align left" >
-   <tag useDialog="true" >&lt;div align=&quot;left&quot; use=3></tag>
+   <tag>&lt;div align=&quot;left&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
+   <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>left&lt;/i>
+     suggests the horizontal alignment for the content of the division to &lt;i>left&lt;/i.
+   </tooltip>
   </action>
   <action icon="div_center" type="tag" id="1012" name="Align center" >
    <tag>&lt;div align=&quot;center&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
+   <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>center&lt;/i> or &lt;b>CENTER&lt;/b>
+     suggests the horizontal alignment for the content of the division to &lt;i>center&lt;/i.
+   </tooltip>
   </action>
   <action icon="div_right" type="tag" id="1013" name="Align right" >
    <tag>&lt;div align=&quot;right&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
+   <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>right&lt;/i>
+     suggests the horizontal alignment for the content of the division to &lt;i>right&lt;/i.
+   </tooltip>
   </action>
   <action icon="div_justify" type="tag" id="1014" name="Align justify" >
    <tag>&lt;div align=&quot;justify&quot;></tag>
    <xtag use="true" >&lt;/div></xtag>
+   <tooltip>The &lt;b>DIV ALIGN&lt;/b>=&lt;i>justify&lt;/i>
+     suggests the horizontal alignment for the content of the division to &lt;i>justify&lt;/i.
+   </tooltip>
   </action>
  </tabbar>
  <tabbar name="Fonts" >
