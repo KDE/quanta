@@ -1555,6 +1555,8 @@ void KafkaWidget::keyBackspace()
                     {
                         m_currentNode = m_currentNode.previousSibling();
                         d->m_cursorOffset = 0;
+                        
+                        QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
                     }
                     else if(!m_currentNode.nextSibling().isNull())
                     {
