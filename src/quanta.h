@@ -261,7 +261,6 @@ public slots:
 
   void selectArea(int line1, int col1, int line2, int col2);
 
-  void slotShowOpenFileList();
   /** No descriptions */
   void slotInsertFile(const KURL&);
   /** No descriptions */

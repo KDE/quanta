@@ -492,7 +492,6 @@ void ViewManager::slotCloseView()
 
 void ViewManager::slotCloseRequest(QWidget *widget)
 {
-  kdDebug(24000) << widget << endl;
    QuantaView *view = dynamic_cast<QuantaView *>(widget);
    if (view)
       removeView(view, false, true);

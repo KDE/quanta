@@ -416,13 +416,10 @@ void Node::detachNode()
         ++it;
     }
   }
-  //FIXME:
-
   if (listItem)
   {
     static_cast<StructTreeTag*>(listItem)->node = 0L;
     static_cast<StructTreeTag*>(listItem)->groupTag = 0L;
   }
-
   groupElementLists.clear();
 }

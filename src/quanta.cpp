@@ -1677,36 +1677,6 @@ void QuantaApp::slotForward()
    }
 }
 
-void QuantaApp::slotShowOpenFileList()
-{
-  KURL::List fileList;
-  QStringList openList;
-  KURL url;
-  KURL baseURL = Project::ref()->projectBaseURL();
-  fileList = ViewManager::ref()->openedFiles(false);
-
-  for (uint i = 0; i < fileList.count(); i++)
-  {
-    url = fileList[i];
-    if (Project::ref()->hasProject())
-    {
-      url = QExtFileInfo::toRelative(url, baseURL);
-      if (url.protocol() == baseURL.protocol())
-         url.setProtocol("");
-    }
-    openList.append(url.prettyURL());
-  }
-
-  ListDlg listDlg(openList);
-  if (listDlg.exec())
-  {
-    KURL docURL= fileList[listDlg.getEntryNum()];
-    QuantaView *view = ViewManager::ref()->isOpened(docURL);
-    if (view)
-      view->activate();
-  }
-}
-
 /** No descriptions */
 void QuantaApp::slotInsertFile(const KURL& url)
 {

@@ -745,9 +745,6 @@ void QuantaInit::initActions()
 
     KStdAction::quit( m_quanta, SLOT( slotFileQuit() ), ac );
 
-   (void) new KAction( i18n( "&List Opened Files..." ), ALT+Key_0, m_quanta,
-                       SLOT( slotShowOpenFileList() ), ac, "file_list" );
-
     // Edit actions
 
     (void) new KAction( i18n( "Find in Files..." ),
@@ -871,10 +868,10 @@ void QuantaInit::initActions()
 
     (void) new KAction( i18n( "Configure &Actions..." ), UserIcon("ball"),0,
                         m_quanta, SLOT( slotOptionsConfigureActions() ),
-                        ac, "conf_actions" );
+                        ac, "configure_actions" );
 
-    KStdAction::keyBindings      ( m_quanta, SLOT( slotOptionsConfigureKeys() ), ac, "keys_bind" );
-    KStdAction::configureToolbars( m_quanta, SLOT( slotOptionsConfigureToolbars() ), ac, "conf_toolbars" );
+    KStdAction::keyBindings      ( m_quanta, SLOT( slotOptionsConfigureKeys() ), ac, "configure_shortcuts" );
+    KStdAction::configureToolbars( m_quanta, SLOT( slotOptionsConfigureToolbars() ), ac, "configure_toolbars" );
     KStdAction::preferences      ( m_quanta, SLOT( slotOptions() ), ac, "general_options" );
 
     // Toolbars actions

@@ -18,6 +18,7 @@
 /* KDE INCLUDES */
 #include <kconfig.h>
 #include <kstandarddirs.h>
+#include <kmainwindow.h>
 #include <klocale.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
@@ -40,6 +41,9 @@ QuantaPluginInterface::QuantaPluginInterface(QWidget *parent)
 {
   m_pluginMenu = new QPopupMenu(parent);
   m_parent = parent;
+   (void) new KAction( i18n( "Configure &Plugins..." ), 0, 0,
+                        this, SLOT( slotPluginsEdit() ),
+                        ((KMainWindow*)parent)->actionCollection(), "configure_plugins" );
 
   // m_plugins.setAutoDelete(TRUE);
 }
@@ -202,9 +206,6 @@ void QuantaPluginInterface::buildPluginMenu()
 {
   m_pluginMenu->clear();
 //  m_pluginMenu->setCheckable(TRUE);
-  m_pluginMenu->insertItem(i18n("&Edit"), this, SLOT(slotPluginsEdit()), 0);
-  m_pluginMenu->insertItem(i18n("&Validate"), this, SLOT(slotPluginsValidate()), 0);
-  m_pluginMenu->insertSeparator();
 
   QDictIterator<QuantaPlugin> it(m_plugins);
   for(;it.current() != 0;++it)
@@ -231,24 +232,36 @@ void QuantaPluginInterface::slotPluginsEdit()
   setPlugins(editor->plugins());
   writeConfig();
   buildPluginMenu();
+  slotPluginsValidate();
 }
 
 void QuantaPluginInterface::slotPluginsValidate()
 {
+  QValueList<QuantaPlugin*> invalidPlugins;
   QDictIterator<QuantaPlugin> it(m_plugins);
   for(;it.current();++it)
   {
     if(!QuantaPlugin::validatePlugin(it.current()))
     {
-      int answer = KMessageBox::warningYesNo(m_parent, i18n("You have plugins installed that are not currently valid. Do you want to edit the plugins?"), i18n("Invalid Plugins"));
+       invalidPlugins.append(it.current());
+    }
+  }
+  uint invalidCount = invalidPlugins.count();
+  if (invalidCount > 0)
+  {
+     QString invalidNames;
+     for (uint i=0; i < invalidCount; i++)
+     {
+         invalidNames += "<br>" + invalidPlugins[i]->name();
+     }
+     int answer = KMessageBox::warningYesNo(m_parent, i18n("<qt>The following plugins seems to be invalid:<b>%1</b>.<br><br>Do you want to edit the plugins?</qt>").arg(invalidNames), i18n("Invalid Plugins"));
       if(answer == KMessageBox::Yes)
       {
         slotPluginsEdit();
       }
       return;
-    }
-  }
-  emit statusMsg(i18n("All plugins validated successfully."));
+  } else
+     emit statusMsg(i18n("All plugins validated successfully."));
 }
 
 
