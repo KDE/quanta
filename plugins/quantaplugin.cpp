@@ -58,6 +58,7 @@ QuantaPlugin::QuantaPlugin()
  m_icon = "";
  m_part = 0L;
  m_view = 0L;
+ m_pluginToolView = 0L;
 }
 
 QuantaPlugin::~QuantaPlugin()
@@ -110,28 +111,11 @@ bool QuantaPlugin::load()
 
   QFileInfo partInfo(loc);
   QString ow = outputWindow();
-  QWidget *targetWidget;
-  if(ow == i18n("Editor Tab"))
-  {
-     targetWidget = quantaApp;
-  } else
-  if(ow == i18n("Editor Frame"))
-  {
-//FIXME:   targetWidget = quantaApp->rightWidget();
-  }
-  else if(ow == i18n("Message Frame"))
-  {
-//FIXME:    targetWidget = quantaApp->bottomWidget();
-  }
-  else
-  {
-    KMessageBox::error(quantaApp, i18n("Invalid output window setting."));
-    return false;
-  }
+  QWidget *m_targetWidget =  new QWidget(quantaApp);
   if (m_readOnlyPart)
-    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), targetWidget, 0, targetWidget, 0 );
+      m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(partInfo.baseName().latin1(), m_targetWidget, 0, m_targetWidget, 0 );
   else
-    m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadWritePart>(partInfo.baseName().latin1(), targetWidget, 0, targetWidget, 0 );
+      m_part = KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadWritePart>(partInfo.baseName().latin1(), m_targetWidget, 0, m_targetWidget, 0 );
   if(!m_part)
   {
     KMessageBox::error(quantaApp, i18n("<qt>The <b>%1</b> plugin could not be loaded.<br>Possible reasons are:<br>    - <b>%2</b> is not installed;<br>    - the file <i>%3</i> is not installed or it is not reachable.").arg(m_name).arg(m_name).arg(m_fileName));
@@ -303,6 +287,8 @@ bool QuantaPlugin::unload(bool remove)
 
   delete m_part;
   m_part = 0;
+  delete m_targetWidget;
+  m_targetWidget = 0L;
   setRunning(false);
 
   emit pluginStopped();
@@ -359,21 +345,14 @@ void QuantaPlugin::setIcon(const QString& a_icon)
 
 void QuantaPlugin::addWidget()
 {
-//FIXME:
-/*
   QString ow = outputWindow();
-  if(ow == i18n("Message Frame"))
+  if(ow == i18n("Separate Toolview"))
   {
-   QWidgetStack *stack = quantaApp->bottomWidget();
-    stack->addWidget(m_part->widget(), 3);
-    stack->raiseWidget(m_part->widget());
-  }
-  else if (ow == i18n("Editor Frame"))
-  {
-    QWidgetStack *stack = quantaApp->rightWidget();
-    stack->addWidget(m_part->widget(), 3);
-    stack->raiseWidget(m_part->widget());
-  } else if (ow == i18n("Editor Tab")) */
+    m_part->widget()->setCaption(m_name);
+    m_part->widget()->setIcon(m_icon);
+    m_pluginToolView = quantaApp->addToolWindow(m_part->widget(), KDockWidget::DockBottom, quantaApp->getMainDockWidget());
+    m_pluginToolView->show();
+  } else
   {
     m_view = ViewManager::ref()->createView();
     m_view->addPlugin(this);
@@ -382,22 +361,13 @@ void QuantaPlugin::addWidget()
 
 void QuantaPlugin::removeWidget()
 {
-//FIXME:
-  /*
   QString ow = outputWindow();
-  if(ow == i18n("Message Frame"))
+  if(ow == i18n("Separate Toolview"))
   {
-    QWidgetStack *stack = quantaApp->bottomWidget();
-    stack->removeWidget(m_part->widget());
-    stack->raiseWidget(0);
-  }
-  else if(ow == i18n("Editor Frame"))
-  {
-    QWidgetStack *stack = quantaApp->rightWidget();
-    stack->removeWidget(m_part->widget());
-    stack->raiseWidget(0);
-  }
-  else if(ow == i18n("Editor Tab")) */
+       delete m_pluginToolView;
+       m_pluginToolView = 0L;
+       ViewManager::ref()->activeView()->setFocus();
+  } else
   {
     ViewManager::ref()->removeView(m_view, true);
   }

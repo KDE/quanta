@@ -31,6 +31,7 @@ class QString;
   */
 
 class KToggleAction;
+class KMdiToolViewAccessor;
 
 class QuantaView;
 
@@ -118,9 +119,9 @@ protected:
   QuantaView *m_view;
   KToggleAction *m_action;
 private: // Private attributes
-  /**  */
   QString m_standardName;
-
+  KMdiToolViewAccessor* m_pluginToolView;
+  QWidget *m_targetWidget; //this will be the parent, used only to make the plugin widget hidden until addWidget is called
 };
 
 #endif

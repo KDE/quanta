@@ -98,16 +98,10 @@ void QuantaPluginInterface::readConfigFile(const QString& configFile)
     newPlugin->setLocation(config->readEntry("Location"));
     newPlugin->setIcon(config->readEntry("Icon"));
     QString type = config->readEntry("OutputWindow");
-    if (type == "Editor Tab" || type == "Editor View")
-      type = i18n("Editor Tab"); //TODO: Remove the check against Editor View after 3.2
-    if (type == "Editor Frame")
-      type = i18n("Editor Frame");
-    if (type == "Message Frame" || type == "Output Dock")
-      type = i18n("Message Frame");//TODO: Remove the check against Output Dock after 3.2
-    if (type == "Message Window")
-      type = i18n("Message Window");
-    if (type == "Konsole")
-      type = i18n("Konsole");
+    if (type == "Message Frame" || type == "Separate Toolview")
+      type = i18n("Separate Toolview");
+    else
+      type = i18n("Editor Tab");
     newPlugin->setOutputWindow(type);
     newPlugin->setInput(config->readNumEntry("Input", 0));
     newPlugin->setReadOnlyPart(config->readBoolEntry("ReadOnly", true));
@@ -157,10 +151,7 @@ void QuantaPluginInterface::writeConfig()
       config->writeEntry("Icon", curPlugin->icon());
       QString type = curPlugin->outputWindow();
       if (type == i18n("Editor Tab")) type = "Editor Tab";
-      if (type == i18n("Editor Frame")) type = "Editor Frame";
-      if (type == i18n("Message Frame")) type = "Message Frame";
-      if (type == i18n("Message Window")) type = "Message Window";
-      if (type == i18n("Konsole")) type = "Konsole";
+      if (type == i18n("Separate Toolview")) type = "Separate Toolview";
       config->writeEntry("OutputWindow", type);
       config->writeEntry("Input", curPlugin->input());
       config->writeEntry("Standard", curPlugin->isStandard());

@@ -43,7 +43,7 @@ QuantaPluginConfig::QuantaPluginConfig(QWidget *a_parent, const char *a_name)
 
   QStringList windows;
   i18n("Message Area Tab");
-  windows << i18n("Editor Tab") << i18n("Editor Frame") << i18n("Message Frame");
+  windows << i18n("Editor Tab") << i18n("Separate Toolview");
   m_pluginConfigWidget->outputWindow->insertStringList(windows);
   m_pluginConfigWidget->iconButton->setStrictIconSize(false);
 
