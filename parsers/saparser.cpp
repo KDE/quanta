@@ -331,7 +331,10 @@ bool SAParser::slotParseOneLine()
 
           s_currentContext.area.eLine = s_line;
           s_currentContext.area.eCol = areaEndPos - 1;
-          if (s_fullParse)
+          //Always create a node between the opening and closing special area nodes.
+          //This fixes the "commnet loss" bug when editing in VPL and autocompletion
+          //for simple special areas like <? a ?>
+          if (s_fullParse || !s_parentNode->child)
           {
             if ( s_currentNode &&
                 (s_currentNode->tag->type == Tag::Text ||
@@ -886,33 +889,6 @@ void SAParser::slotParseNodeInDetail()
     {
       Node *node = m_currentNode;
       m_currentNode = m_currentNode->nextSibling();
-      if (node && node->tag && node->tag->type == Tag::Comment) //node and node->tag might be 0 when closing the document...
-      {
-         Node *commentNode = new Node(node);
-         int line, col;
-         AreaStruct area;
-         node->tag->endPos(line, col);
-         area.bLine = line;
-         area.bCol = col + 1;
-         if (m_currentNode)
-           m_currentNode->tag->beginPos(line, col);
-        else
-         {
-            line = m_write->editIf->numLines() - 1;
-            col = m_write->editIf->lineLength(area.eLine);
-         }
-         area.eLine = line;
-         area.eCol = col - 1;
-         if (area.eCol < 0)
-         {
-             area.eLine--;
-             area.eCol = m_write->editIf->lineLength(area.eLine);
-         }
-         Tag *tag = new Tag(area, m_write, node->tag->dtd(), false);
-         commentNode->tag = tag;
-         commentNode->insideSpecial = true;
-         node->child = commentNode;
-      }
       if (m_currentNode)
       {
 #ifdef DEBUG_PARSER
