@@ -87,10 +87,6 @@
 #include "parser/parser.h"
 #include "dialogs/filemasks.h"
 
-#define UI_VERSION 32002 //3.2.0, v.01; modify this whenever something incompatible
-                         //change is made to quantaui.rc. And of course, update
-                         //the version in quantaui.rc!
-
 QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta"), DCOPObject("WindowManagerIf")
 {
   quantaStarted = true;
@@ -161,30 +157,6 @@ void QuantaApp::initQuanta()
   initActions();
 
   readOptions();
-
-//Check for an existing quanatui.rc
-  QString uiFileName = locateLocal("appdata","quantaui.rc");
-  if (QFileInfo(uiFileName).exists())
-  {
-    QDomDocument doc;
-     QFile f( uiFileName );
-     f.open( IO_ReadOnly );
-     if ( doc.setContent( &f ) )
-     {
-       f.close();
-       QDomElement el = doc.firstChild().toElement();
-       bool ok;
-       uint uiversion = el.attribute("version","0").toUInt(&ok);
-       if ( uiversion != UI_VERSION || !ok)
-       {
-         ::rename(QFile::encodeName(uiFileName), QFile::encodeName(uiFileName+".old"));
-       }
-     } else
-     {
-       f.close();
-     }
-  }
-
 
   m_pluginInterface = new QuantaPluginInterface();
 
