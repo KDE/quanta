@@ -22,11 +22,16 @@
 #include <kapplication.h>
 #include <klistview.h>
 #include <klocale.h>
+#include <kurlrequester.h>
 
 //app includes
 #include "tagattributeitems.h"
 #include "tagattributetree.h"
-#include "../parser/qtag.h"
+#include "../parser/node.h"
+#include "../parser/tag.h"
+#include "../document.h"
+#include "../quantacommon.h"
+#include "../qextfileinfo.h"
 
 TopLevelItem::TopLevelItem(KListView* parent, const QString &title)
 : KListViewItem(parent, title)
@@ -73,11 +78,10 @@ AttributeItem::AttributeItem(QListViewItem* parent, const QString &title, const 
   lin = 0L;
 }
 
-AttributeItem::AttributeItem(TagAttributeTree* listView, DTDStruct *dtd, QListViewItem* parent, const QString &title, const QString& title2)
+AttributeItem::AttributeItem(TagAttributeTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
 : KListViewItem(parent, title, title2)
 {
   m_listView = listView;
-  m_dtd = dtd;
   lin = new QLineEdit( m_listView->viewport() );
   QObject::connect( lin, SIGNAL( returnPressed() ), m_listView, SLOT( editorContentChanged() ) );
   lin->hide();
@@ -137,14 +141,13 @@ void AttributeItem::placeEditor( QWidget *w )
 }
 
 //Boolean attribute item
-AttributeBoolItem::AttributeBoolItem(TagAttributeTree* listView, DTDStruct *dtd, QListViewItem* parent, const QString &title, const QString& title2)
+AttributeBoolItem::AttributeBoolItem(TagAttributeTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
 : AttributeItem(parent, title, title2)
 {
   m_listView = listView;
-  m_dtd = dtd;
   combo = new QComboBox( m_listView->viewport() );
-  combo->insertItem(m_dtd->booleanTrue);
-  combo->insertItem(m_dtd->booleanFalse);
+  combo->insertItem(m_listView->node()->tag->dtd->booleanTrue);
+  combo->insertItem(m_listView->node()->tag->dtd->booleanFalse);
   combo->hide();
   QObject::connect( combo, SIGNAL( activated(int) ), m_listView, SLOT( editorContentChanged() ) );
  }
@@ -163,7 +166,7 @@ void AttributeBoolItem::showEditor()
 {
   placeEditor(combo);
   combo->show();
-  if (text(1) == m_dtd->booleanTrue)
+  if (text(1) == m_listView->node()->tag->dtd->booleanTrue)
       combo->setCurrentItem(0);
   else
       combo->setCurrentItem(1);
@@ -175,4 +178,49 @@ void AttributeBoolItem::hideEditor()
   m_listView->editorContentChanged();
   setText(1, combo->currentText());
   combo->hide();
+}
+
+//Boolean attribute item
+AttributeUrlItem::AttributeUrlItem(TagAttributeTree* listView, QListViewItem* parent, const QString &title, const QString& title2)
+: AttributeItem(parent, title, title2)
+{
+  m_listView = listView;
+  urlRequester = new KURLRequester( m_listView->viewport() );
+  urlRequester->setMode(KFile::File | KFile::ExistingOnly );
+  urlRequester->hide();
+  QObject::connect( urlRequester, SIGNAL( returnPressed() ), m_listView, SLOT( editorContentChanged() ) );
+ }
+
+AttributeUrlItem::~AttributeUrlItem()
+{
+  delete urlRequester;
+}
+
+QString AttributeUrlItem::editorText()
+{
+  KURL url;
+  QuantaCommon::setUrl(url, urlRequester->url());
+  url = QExtFileInfo::toRelative(url, m_listView->node()->tag->write()->url());
+  QString s = url.url();
+  if (url.protocol() == m_listView->node()->tag->write()->url().protocol())
+    s.remove(0, url.protocol().length() + 1);
+  return s;
+}
+
+void AttributeUrlItem::showEditor()
+{
+  placeEditor(urlRequester);
+  urlRequester->show();
+  KURL url;
+  QuantaCommon::setUrl(url, text(1));
+  url= QExtFileInfo::toAbsolute(url, m_listView->node()->tag->write()->url());
+  urlRequester->setURL(url.url());
+  urlRequester->setFocus();
+}
+
+void AttributeUrlItem::hideEditor()
+{
+  m_listView->editorContentChanged();
+  setText(1, editorText());
+  urlRequester->hide();
 }

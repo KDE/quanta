@@ -13,13 +13,14 @@
 #ifndef TAGATTRIBUTEITEM_H
 #define TAGATTRIBUTEITEM_H
 
+class KURLRequester;
 class KListView;
 class KListViewItem;
 class QListViewItem;
 class QLineEdit;
 class QComboBox;
+
 class TagAttributeTree;
-struct DTDStruct;
 
 class TopLevelItem : public KListViewItem
 {
@@ -40,7 +41,7 @@ class AttributeItem : public KListViewItem
 {
 public:
     AttributeItem(QListViewItem* parent, const QString& title, const QString& title2);
-    AttributeItem(TagAttributeTree *listView, DTDStruct *dtd, QListViewItem* parent, const QString& title, const QString& title2);
+    AttributeItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
 
     virtual ~AttributeItem();
     virtual void showEditor();
@@ -54,7 +55,6 @@ protected:
                     int column, int width, int align );
 
     TagAttributeTree *m_listView;
-    DTDStruct *m_dtd;
 
 private:
     QLineEdit* lin;
@@ -63,7 +63,7 @@ private:
 class AttributeBoolItem : public AttributeItem
 {
 public:
-    AttributeBoolItem(TagAttributeTree *listView, DTDStruct *dtd, QListViewItem* parent, const QString& title, const QString& title2);
+    AttributeBoolItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
 
     virtual ~AttributeBoolItem();
     virtual void showEditor();
@@ -72,6 +72,20 @@ public:
 
 private:
     QComboBox* combo;
+};
+
+class AttributeUrlItem : public AttributeItem
+{
+public:
+    AttributeUrlItem(TagAttributeTree *listView, QListViewItem* parent, const QString& title, const QString& title2);
+
+    virtual ~AttributeUrlItem();
+    virtual void showEditor();
+    virtual void hideEditor();
+    virtual QString editorText();
+
+private:
+    KURLRequester* urlRequester;
 };
 
 

@@ -34,6 +34,7 @@ public:
 
   void newCursorPosition(Node *node);
   virtual void setCurrentItem( QListViewItem *i );
+  Node *node() const {return m_node;}
 
 public slots:
   void editorContentChanged();

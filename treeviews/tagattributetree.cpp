@@ -62,10 +62,14 @@ void TagAttributeTree::newCursorPosition(Node *node)
       Attribute *attr = qTag->attributeAt(i);
       if (attr->type == "check")
       {
-        item = new AttributeBoolItem(this, node->tag->dtd, group, attr->name, node->tag->attributeValue(attr->name));
+        item = new AttributeBoolItem(this, group, attr->name, node->tag->attributeValue(attr->name));
+      } else
+      if (attr->type == "url")
+      {
+        item = new AttributeUrlItem(this, group, attr->name, node->tag->attributeValue(attr->name));
       } else
       {
-        item = new AttributeItem(this, node->tag->dtd, group, attr->name, node->tag->attributeValue(attr->name));
+        item = new AttributeItem(this, group, attr->name, node->tag->attributeValue(attr->name));
       }
       item->setRenameEnabled(1, true);
     }
@@ -76,13 +80,18 @@ void TagAttributeTree::newCursorPosition(Node *node)
       AttributeList *groupAttrs = qTag->parentDTD->commonAttrs->find(qTag->commonGroups[i]);
       for (uint j = 0; j < groupAttrs->count(); j++)
       {
-        attrName = groupAttrs->at(j)->name;
-        if (groupAttrs->at(j)->type == "check")
+        Attribute *attr = groupAttrs->at(j);
+        attrName = attr->name;
+        if (attr->type == "check")
         {
-          item = new AttributeBoolItem(this, node->tag->dtd, group, attrName, node->tag->attributeValue(attrName));
+          item = new AttributeBoolItem(this, group, attrName, node->tag->attributeValue(attrName));
+        } else
+        if (attr->type == "url")
+        {
+          item = new AttributeUrlItem(this, group, attr->name, node->tag->attributeValue(attr->name));
         } else
         {
-          item = new AttributeItem(this, node->tag->dtd, group, attrName, node->tag->attributeValue(attrName));
+          item = new AttributeItem(this, group, attrName, node->tag->attributeValue(attrName));
         }
         item->setRenameEnabled(1, true);
       }
