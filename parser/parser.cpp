@@ -169,8 +169,8 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
   Node *rootNode = 0L;
   Node *parentNode = a_node;
   Node *currentNode = a_node;
-  //if (currentNode)
-      //parentNode = currentNode->parent;
+  if (currentNode && currentNode->tag->type != Tag::XmlTag)
+      parentNode = currentNode->parent;
   Tag *tag;
   textLine.append(write->text(startLine, startCol, startLine, write->editIf->lineLength(startLine)));
   while (line <= endLine)
@@ -372,7 +372,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       }
       QString s = write->text(el, ec + 1, tagStartLine, tagStartPos -1);
 
-      if (el !=0 || ec !=0)
+      if (!s.isEmpty() && (el !=0 || ec !=0))
       {
         textTag = new Tag();
         textTag->setStr(s);
@@ -397,24 +397,46 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           goUp = false;
         } else
         {
-          node = new Node(parentNode);
-          if (currentNode && currentNode != parentNode)
+          if ( currentNode &&
+               ( currentNode->tag->type == Tag::Empty ||
+                 currentNode->tag->type == Tag::Text) )     //merge two consquenttext or empty nodes
           {
-            currentNode->next = node;
-            node->prev = currentNode;
+            currentNode->tag->beginPos(el, ec);
+            currentNode->tag->setTagPosition(el, ec, tagStartLine, tagStartPos -1);
+            s = write->text(el, ec, tagStartLine, tagStartPos -1);
+            currentNode->tag->setStr(s);
+            if (s.simplifyWhiteSpace().isEmpty())
+            {
+              currentNode->tag->type = Tag::Empty;
+            } else
+            {
+              currentNode->tag->type = Tag::Text;
+            }
+            delete textTag;
+            textTag = 0L;
           } else
           {
-            if (parentNode)
-                parentNode->child = node;
+            node = new Node(parentNode);
+            if (currentNode && currentNode != parentNode)
+            {
+              currentNode->next = node;
+              node->prev = currentNode;
+            } else
+            {
+              if (parentNode)
+                  parentNode->child = node;
+            }
+            if (!textTag->single)
+                parentNode = node;
           }
-          if (!textTag->single)
-              parentNode = node;
         }
-
-        node->tag = textTag;
-        currentNode = node;
-        if (!rootNode)
-            rootNode = node;
+        if (textTag)
+        {
+          node->tag = textTag;
+          currentNode = node;
+          if (!rootNode)
+              rootNode = node;
+        }
       }
 
       if (goUp)
@@ -481,7 +503,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     currentNode->tag->endPos(el, ec);
   }
   QString s = write->text(el, ec + 1, endLine, endCol);
-  if ( /*!s.isEmpty() &&*/ (el !=0 || ec !=0) )
+  if ( !s.isEmpty() && (el !=0 || ec !=0) )
   {
     textTag = new Tag();
     textTag->setStr(s);
@@ -506,22 +528,46 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       goUp = false;
     } else
     {
-      node = new Node(parentNode);
-      if (currentNode && currentNode != parentNode)
+      if ( currentNode &&
+          ( currentNode->tag->type == Tag::Empty ||
+            currentNode->tag->type == Tag::Text) )     //merge two consquenttext or empty nodes
       {
-        currentNode->next = node;
-        node->prev = currentNode;
+        currentNode->tag->beginPos(el, ec);
+        currentNode->tag->setTagPosition(el, ec, endLine, endCol);
+        s = write->text(el, ec, endLine, endCol);
+        currentNode->tag->setStr(s);
+        if (s.simplifyWhiteSpace().isEmpty())
+        {
+          currentNode->tag->type = Tag::Empty;
+        } else
+        {
+          currentNode->tag->type = Tag::Text;
+        }
+        delete textTag;
+        textTag = 0L;
       } else
       {
-        if (parentNode)
-            parentNode->child = node;
+        node = new Node(parentNode);
+        if (currentNode && currentNode != parentNode)
+        {
+          currentNode->next = node;
+          node->prev = currentNode;
+        } else
+        {
+          if (parentNode)
+              parentNode->child = node;
+        }
+        if (!textTag->single)
+            parentNode = node;
       }
-      if (!textTag->single)
-          parentNode = node;
     }
-
-    node->tag = textTag;
-    currentNode = node;
+    if (textTag)
+    {
+      node->tag = textTag;
+      currentNode = node;
+      if (!rootNode)
+          rootNode = node;
+    }
   }
 
   *lastNode = currentNode;
@@ -1172,6 +1218,10 @@ Node *Parser::rebuild(Document *w)
 
    QString invalidStr = QString("Invalid area: %1,%2,%3,%4").arg(bLine).arg(bCol).arg(eLine).arg(eCol);
    kdDebug(24000) << invalidStr << "\n";
+   if (firstNode)
+      kdDebug(24000) << "firstNode: " << firstNode->tag->tagStr() << "\n";
+   if (firstNode)
+      kdDebug(24000) << "lastNode: " << lastNode->tag->tagStr() << "\n";
 
    Node *lastInserted = 0L;
    node = parseArea(bLine, bCol, eLine, eCol, &lastInserted, firstNode);
@@ -1224,11 +1274,13 @@ Node *Parser::rebuild(Document *w)
       lastNode = lastNode->next;
     } else
     {
-      lastNode = lastNode->parent;
+      //lastNode = lastNode->parent;
       while (lastNode)
       {
         if (lastNode->parent && lastNode->parent->next)
         {
+//      if (node->parent)
+//          node = node->parent;
           lastNode = lastNode->parent->next;
           break;
         } else
@@ -1241,8 +1293,8 @@ Node *Parser::rebuild(Document *w)
     }
    }
 
-   coutTree(m_node, 2);
-   cout << endl;
+//   coutTree(m_node, 2);
+//   cout << endl;
  }
  kdDebug(24000) << "Rebuild: " << t.elapsed() << " ms \n";
  return m_node;
