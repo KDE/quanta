@@ -174,7 +174,7 @@ pointer must be deleted by the caller!! */
 };
 
 
-#ifdef KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
 //backported classes from CVS HEAD. I just don't want to create new files for
 //this temporary present classes.
 class KPasteAction: public KAction

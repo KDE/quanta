@@ -503,7 +503,7 @@ void QuantaCommon::normalizeStructure(QString f,QStringList& l)
   }
 }
 
-#ifdef KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
+#if KDE_VERSION < KDE_MAKE_VERSION(3,1,92)
 KPasteAction::KPasteAction( const QString& text,
                             const QString& icon,
                             const KShortcut& cut,
