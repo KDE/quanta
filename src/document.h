@@ -225,9 +225,15 @@ signals:
  /** Emitted when the internal text editor got the focus */
   void editorGotFocus();
 
+private slots:
+  void slotReplaceChar();
+
 private:
 
   QString untitledUrl;
+  int m_replaceLine;
+  int m_replaceCol;
+  QString m_replaceStr;
 
   QString         spellText;
   QValueList<int> *spellPos;

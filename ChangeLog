@@ -45,7 +45,8 @@ Version 3.3 BE 3 (Release date: xx-xx-2004; Started 07-05-2004):
              - Never: the item is never selected for upload
              - Confirm: the item is selected for upload if it was modified, but a second confirmation
                              is needed by the user.
-        - dragging a tab holding a document put the document URL in the drag object [#80649]
+        - dragging a tab holding a document puts the document URL in the drag object [#80649]
+        - possibility of as-you-type replacing of accented chars [#23164]
 
 Version 3.3 BE 2 (Release date: 07-05-2004; Started 26-01-2004):
     - bugfixes:

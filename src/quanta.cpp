@@ -1104,6 +1104,7 @@ void QuantaApp::slotOptions()
   styleOptionsS->optionalTagAutoClose->setChecked( qConfig.closeOptionalTags );
   styleOptionsS->useAutoCompletion->setChecked( qConfig.useAutoCompletion );
   styleOptionsS->tagUpdateClosing->setChecked(qConfig.updateClosingTags);
+  styleOptionsS->replaceAccented->setChecked(qConfig.replaceAccented);
 
   // Environment options
   //TODO FileMasks name is not good anymore
@@ -1192,6 +1193,7 @@ void QuantaApp::slotOptions()
     qConfig.closeOptionalTags = styleOptionsS->optionalTagAutoClose->isChecked();
     qConfig.useAutoCompletion = styleOptionsS->useAutoCompletion->isChecked();
     qConfig.updateClosingTags = styleOptionsS->tagUpdateClosing->isChecked();
+    qConfig.replaceAccented = styleOptionsS->replaceAccented->isChecked();
 
     qConfig.markupMimeTypes = fileMasks->lineMarkup->text();
     qConfig.scriptMimeTypes = fileMasks->lineScript->text();
@@ -3868,6 +3870,7 @@ void QuantaApp::saveOptions()
     m_config->writeEntry("Close tags", qConfig.closeTags);
     m_config->writeEntry("Auto completion", qConfig.useAutoCompletion);
     m_config->writeEntry("Update Closing Tags", qConfig.updateClosingTags);
+    m_config->writeEntry("Replace Accented Chars", qConfig.replaceAccented);
 
     m_config->writeEntry("Default encoding", qConfig.defaultEncoding);
     m_config->writeEntry("Default DTD", qConfig.defaultDocType);

@@ -97,6 +97,7 @@ public:
           QString quantaPID;
           bool showHiddenFiles;  ///< show hidden files in files treeview?
           QMap<QString, Abbreviation> abbreviations; ///< the abbreviation groups
+          bool replaceAccented; ///< replace or not the accented characters
 
           //spelling options
           KSpellConfig *spellConfig;

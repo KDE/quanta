@@ -573,6 +573,7 @@ void QuantaInit::readOptions()
   qConfig.closeTags = m_config->readBoolEntry("Close tags", true);
   qConfig.useAutoCompletion = m_config->readBoolEntry("Auto completion",true);
   qConfig.updateClosingTags = m_config->readBoolEntry("Update Closing Tags", true);
+  qConfig.replaceAccented = m_config->readBoolEntry("Replace Accented Chars", false);
 
   qConfig.defaultEncoding = m_config->readEntry("Default encoding", QTextCodec::codecForLocale()->name());
 
