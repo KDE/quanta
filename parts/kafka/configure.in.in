@@ -1,29 +1,42 @@
-# Process user input to configure
-build_wysiwyg="yes"
-#AC_ARG_WITH(kafkapart,
-#[  --without-kafkapart     don't build the WYSIWYG editor mode (requires KDE 3.2)],
-#[case "${enableval}" in
-#       no) build_wysiwyg="yes" ;;
-#       yes)  build_wysiwyg="no" ;;
-#       *)   build_wysiwyg="no" ;;
-#     esac])
+build_vpl="yes"
 
-KDE_VERSION=""
-AC_MSG_CHECKING(for KDE version)
-KDE_VERSION=`$KDECONFIG --version | grep KDE`
-AC_MSG_RESULT("$KDE_VERSION")
-if test "x`echo $KDE_VERSION | grep 3.1.9`" = "x"; then
- if test "x`echo $KDE_VERSION | grep 3.2`" = "x"; then
-  if test "x`echo $KDE_VERSION | grep 3.3`" = "x"; then
-    echo "The KDE version is too old, WYSIWYG mode disabled!"
-    build_wysiwyg="no"
-  fi    
- fi    
-fi
+#build_vpl="no"
+AC_DEFUN([QUANTA_CHECK_VPL],
+[
+  AC_MSG_CHECKING(whether VPL can be compiled)
+  AC_CACHE_VAL(ac_cv_vpl_setup,
+  [
+    AC_LANG_SAVE
+    AC_LANG_CPLUSPLUS
+    save_CXXFLAGS="$CXXFLAGS"
+    CXXFLAGS="$KDE_INCLUDES $QT_INCLUDES"
 
-if test "$build_wysiwyg" = "yes"; then
-  CXXFLAGS="$CXXFLAGS -DBUILD_KAFKAPART"
-fi
+    AC_TRY_LINK([
+      #include <kdeversion.h>
+    ],
+    [
+      #if KDE_VERSION < ((3<<16) | (1<<8) | (90))
+         KDE_choke me
+      #endif
+    ],
+      ac_cv_vpl_setup=yes,
+      ac_cv_vpl_setup=no
+    )
+    CXXFLAGS="$save_CXXFLAGS"
+    AC_LANG_RESTORE
+   ])
 
-  AM_CONDITIONAL(BUILD_WYSIWYG, test "$build_wysiwyg" = "yes")
+  if test "$ac_cv_vpl_setup" = "yes"; then
+    build_vpl="yes"
+    CXXFLAGS="$CXXFLAGS -DBUILD_KAFKAPART"
+    AC_MSG_RESULT(yes)
+  else
+    AC_MSG_RESULT(no)
+  fi
+
+])
+
+#QUANTA_CHECK_VPL
+
+AM_CONDITIONAL(BUILD_WYSIWYG, test "$build_vpl" = "yes")
 
