@@ -50,6 +50,7 @@
 #include <kparts/componentfactory.h>
 #include <kprogress.h>
 #include <kspell.h>
+#include <kdebug.h>
 
 #include <kio/netaccess.h>
 
@@ -133,8 +134,14 @@ QuantaApp::~QuantaApp()
  toolbarList.clear();
  delete spellChecker;
  QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
+ tmpDir = tmpDirs[0];
+ for (uint i = 0; i < tmpDirs.count(); i++)
+ {
+   if (tmpDirs[i].contains("kde-"))
+      tmpDir = tmpDirs[i];
+ }
  QDir dir;
- dir.rmdir(tmpDirs[0] + "quanta");
+ dir.rmdir(tmpDir + "quanta");
 }
 
 
@@ -145,8 +152,14 @@ void QuantaApp::initQuanta()
 
   QStringList tmpDirs = KGlobal::dirs()->resourceDirs("tmp");
   QDir dir;
-  dir.mkdir(tmpDirs[0] + "quanta");
-  tmpDir = tmpDirs[0] + "quanta/quanta";
+  tmpDir = tmpDirs[0];
+  for (uint i = 0; i < tmpDirs.count(); i++)
+  {
+    if (tmpDirs[i].contains("kde-"))
+       tmpDir = tmpDirs[i];
+  }
+  dir.mkdir(tmpDir + "quanta");
+  tmpDir += "quanta/quanta";
 
   initTagDict  ();
   initStatusBar();
