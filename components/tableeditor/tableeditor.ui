@@ -20,7 +20,7 @@
             <x>0</x>
             <y>0</y>
             <width>695</width>
-            <height>759</height>
+            <height>763</height>
         </rect>
     </property>
     <property name="caption">
@@ -705,6 +705,24 @@
         <receiver>TableEditor</receiver>
         <slot>slotHelpInvoked()</slot>
     </connection>
+    <connection>
+        <sender>tableData</sender>
+        <signal>valueChanged(int,int)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotEditCellText(int,int)</slot>
+    </connection>
+    <connection>
+        <sender>headerTableData</sender>
+        <signal>valueChanged(int,int)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotEditCellText(int,int)</slot>
+    </connection>
+    <connection>
+        <sender>footerTableData</sender>
+        <signal>valueChanged(int,int)</signal>
+        <receiver>TableEditor</receiver>
+        <slot>slotEditCellText(int,int)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>rowSpinBox</tabstop>
@@ -798,6 +816,7 @@
     <slot>slotUnmergeCells()</slot>
     <slot>slotEditChildTable()</slot>
     <slot access="protected">slotHelpInvoked()</slot>
+    <slot>slotEditCellText(int r, int c)</slot>
 </slots>
 <functions>
     <function>init()</function>
@@ -812,6 +831,7 @@
     <function>createNewTable( Document * write, const DTDStruct * dtd )</function>
     <function access="protected">deleteList( QValueList&lt;TableNode&gt; * table )</function>
     <function access="protected">deleteMatrix( QValueList&lt;QValueList&lt;TableNode&gt; &gt; * matrix )</function>
+    <function>configureTable(QTable*)</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

@@ -154,6 +154,11 @@ void TableEditor::slotEditCell()
   }
 }
 
+void TableEditor::slotEditCellText( int r, int )
+{
+   m_dataTable->adjustRow(r);
+}
+
 
 void TableEditor::slotEditRow()
 {
@@ -471,7 +476,7 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
   m_dataTable = tableData;
   m_rowSpin = rowSpinBox;
   m_colSpin = colSpinBox;
-
+  
   //create the thead, tbody, tfoot tags if they were not present in the parsed area
   if (!m_thead) {
     m_thead = new Tag();
@@ -484,6 +489,10 @@ bool TableEditor::setTableArea( int bLine, int bCol, int eLine, int eCol, Parser
     m_tfoot->parse("<tfoot>", m_write);
   }
   m_createNodes = true; //enable cell/row creation
+  
+  configureTable(tableData);
+  configureTable(headerTableData);
+  configureTable(footerTableData);
   return true;
 }
 
@@ -542,6 +551,7 @@ void TableEditor::slotTabChanged( QWidget *w)
       break;
     }
   }
+  configureTable(m_dataTable);
 }
 
 
@@ -1094,3 +1104,20 @@ void TableEditor::slotHelpInvoked()
 //FIXME: "tag-mail" should be replaced with the real help section tag
    kapp->invokeHelp("table-editor","quanta");
 }
+
+
+void TableEditor::configureTable( QTable * table )
+{
+  if (!table)
+    return;
+  for (int r=0; r<table->numRows(); r++) {
+    table->adjustRow(r);
+    for (int c=0; c<table->numCols(); c++)
+      if (table->item(r, c)) 
+        table->item(r, c)->setWordWrap(true);
+  }
+  table->setColumnMovingEnabled(true);
+  table->setRowMovingEnabled(true);
+}
+
+
