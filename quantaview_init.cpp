@@ -195,7 +195,24 @@ void QuantaView::initActions()
     (void) new KAction( i18n( "Insert CSS..." ),"mini-modules", 0,
                         this, SLOT( slotInsertCSS() ),
                         actionCollection, "insert_css" );
-                        
+
+    // special-character combo
+    KSelectAction* char_action = new KSelectAction( actionCollection, "insert_char" );
+    connect( char_action, SIGNAL(activated(const QString &)),
+             this, SLOT(slotInsertChar(const QString &)) );
+    QStringList char_list;
+    QFile file( locate("appdata","chars") );
+    if ( file.open(IO_ReadOnly) ) {    // file opened successfully
+        QTextStream t( &file );        // use a text stream
+        QString s;
+        while ( !t.eof() ) {           // until end of file...
+            char_list << t.readLine(); // line excluding '\n'
+        }
+        f.close();
+    }
+    char_action->setItems(char_list);
+    char_action->setComboWidth(150);
+
 //    qDebug("ctrl+enter: " + QString::number(CTRL+Key_Enter) );
 }
 

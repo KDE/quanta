@@ -781,4 +781,10 @@ void QuantaView::setEol(int which)
    write()->kate_view->setEol( which );
 }
 
-
+/** insert special character */
+void QuantaView::slotInsertChar(const QString &selected){
+	int begin = selected.find("(")+1;
+    int length = selected.find(")") - begin;
+	QString part = selected.mid(begin, length);
+    write()->insertTag(part);
+}
