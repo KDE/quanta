@@ -14,7 +14,8 @@ libmessages_a_SOURCES = \
 		messageoutput.cpp\
 		messageitem.cpp\
 		messageitemphp.cpp\
-		messageitemweblint.cpp
+		messageitemweblint.cpp\
+		messageitemphp4.cpp
 EXTRA_DIST = \
 		messageoutput.cpp\
 		messageoutput.h\
@@ -23,7 +24,9 @@ EXTRA_DIST = \
 		messageitemphp.cpp\
 		messageitemphp.h\
 		messageitemweblint.cpp\
-		messageitemweblint.h
+		messageitemweblint.h\
+		messageitemphp4.cpp\
+		messageitemphp4.h
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$

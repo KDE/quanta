@@ -40,10 +40,14 @@ public slots:
 	void showMessage( QString s );
 	void addToLastItem( QString s );
 	
-	/** php debugger stuff */
+	/** php3 debugger stuff */
 	void phpDebug(QString s);
 	void newPhpConnect();
 	void endPhpConnect();
+	
+	/** php4 debugger stuff */
+	void php4Debug(QString s);
+	
 	
 	/** weblint stuff */
 	void processWebLint( KProcess *, char *, int );

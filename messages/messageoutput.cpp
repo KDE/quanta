@@ -20,6 +20,7 @@
 #include "messageoutput.h"
 #include "messageitem.h"
 #include "messageitemphp.h"
+#include "messageitemphp4.h"
 #include "messageitemweblint.h"
 
 MessageOutput::MessageOutput(QWidget *parent, const char *name )
@@ -110,6 +111,11 @@ void MessageOutput::phpDebug( QString s)
      setBottomItem(count()-1);
    }
    
+}
+
+void MessageOutput::php4Debug( QString s)
+{
+  new MessageItemPHP4( this, s );
 }
 
 void MessageOutput::newPhpConnect()
