@@ -64,7 +64,6 @@ Document::Document(const QString& basePath, KTextEditor::Document *doc, QWidget 
   selectionIf = dynamic_cast<KTextEditor::SelectionInterface *>(_doc);
   viewCursorIf = dynamic_cast<KTextEditor::ViewCursorInterface *>(_view);
   codeCompletionIf = dynamic_cast<KTextEditor::CodeCompletionInterface *>(_view);
-//  searchIf = dynamic_cast<KTextEditor::SearchInterface *>(_view);
   this->basePath = basePath;
   tempFile = 0;
   dtdName = "";
@@ -115,8 +114,60 @@ void Document::insertTag(QString s1,QString s2)
   insertText(s2, FALSE); // don't adjust cursor, thereby leaving it in the middle of tag
 }
 
+/** return a pointet to the Node according to p_line, p_col (or current cursor pos, if both are -1)  */
+Node *Document::nodeAt(int p_line, int p_col)
+{
+  Node *foundNode = 0L;
+  if (baseNode)
+  {
+    uint line;
+    uint col;
+    if ( (p_line < 0) && (p_col < 0))
+    {
+      viewCursorIf->cursorPositionReal(&line, &col);
+    } else
+    {
+      line = p_line;
+      col = p_col;
+    }
+    Node *currentNode = baseNode;
+    int bLine, bCol, eLine, eCol;
+    int foundPos; //-1 before, 0 between, 1 after
+    while (currentNode && !foundNode)
+    {
+      currentNode->tag->beginPos(bLine, bCol);
+      currentNode->tag->endPos(eLine, eCol);
+      foundPos = QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol);
+      switch (foundPos)
+      {
+        case 0: {
+                  foundNode = currentNode;
+                  break;
+                }
+        case 1: {
+                  if (currentNode->next) currentNode = currentNode->next;
+                  else currentNode = currentNode->child;
+                  break;
+                }
+        case -1:{
+                  if (currentNode->prev)
+                  {
+                    currentNode = currentNode->prev->child;
+                  }
+                  break;
+                }
+      } //switch
+    }  //while
+    if (!foundNode)
+    {
+      KMessageBox::error(this, i18n("Node for current position not found.\n This should never happen."));
+    }
+  } //if
+  return foundNode;
+}
+
 /** Return a node Tag accroding to line,col (or current cursor pos if line==col==-1) */
-Tag *Document::currentTag(int p_line, int p_col)
+Tag *Document::tagAt(int p_line, int p_col)
 {
   uint line;
   uint col;
@@ -124,6 +175,7 @@ Tag *Document::currentTag(int p_line, int p_col)
   if ( (p_line < 0) && (p_col < 0))
   {
     viewCursorIf->cursorPositionReal(&line, &col);
+    col++;
   } else
   {
     line = p_line;
@@ -314,7 +366,6 @@ Tag *Document::findScriptStruct(int line, int col)
   return tag;
 }
 
-#include <iostream.h>
 Tag *Document::findXMLTag(int line, int col)
 {
   Tag *tag = 0L;
@@ -322,11 +373,38 @@ Tag *Document::findXMLTag(int line, int col)
   int bLine, bCol, eLine, eCol;
   bLine = bCol = eLine = eCol = 0;
   QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>","i");
-  QString foundText = find(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
+  int sLine = line;
+  int sCol = col;
+  bool tagFound = false;
+  //search backwards
+  QString foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
   if (!foundText.isEmpty())
   {
-    if (line == bLine && col == bCol) //we found a tag
+    if (QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
     {
+      tagFound = true;
+    } else
+    {
+      sLine = eLine;
+      sCol = eCol+1;
+    }
+  } else
+  {
+    sLine = sCol = 0;
+  }
+  //if not found, search forward
+  if (!tagFound)
+  {
+   foundText = find(xmlTagRx, sLine, sCol, bLine, bCol, eLine, eCol);
+   if (!foundText.isEmpty() &&
+       QuantaCommon::isBetween(line, col, bLine, bCol, eLine, eCol) == 0)
+   {
+      tagFound = true;
+   }
+  }
+
+  if (tagFound) //build the Tag object
+  {
       tag = new Tag();
       tag->setTagPosition(bLine, bCol,eLine, eCol);
       tag->parse(foundText, this);
@@ -334,35 +412,12 @@ Tag *Document::findXMLTag(int line, int col)
       if (tag->name[0] == '/') tag->type =  Tag::XmlTagEnd;
       if (tag->name == "!--") tag->type = Tag::Comment;
       if (foundText.right(2) == "/>") tag->single = true;
-    } else  //the tag is ahead us, use a Text until that
-    {
-      tag = new Tag();
-      bCol--;
-      if (bCol < 0)
-      {
-        bLine = (bLine > 0)?bLine-1:0;
-        bCol = editIf->lineLength(bLine);
-      }
-      tag->setTagPosition(line, col, bLine, bCol);
-      QString s = text(line, col, bLine, bCol);
-      s.replace(QRegExp("\\n"),"");
-      s = s.stripWhiteSpace();
-      if (s.isEmpty() || s == " ")  //whitespaces are not text
-      {
-        tag->type = 100;
-      } else
-      {
-        tag->type = Tag::Text;
-        tag->setStr(s);
-        tag->setWrite(this);
-        tag->name = "Text";
-      }
-
-    }
   }
+
   return tag;
 }
 
+//findXMLTag must be called before
 Tag *Document::findText(int line, int col)
 {
   int bLine = 0;
@@ -370,6 +425,60 @@ Tag *Document::findText(int line, int col)
   int eLine = 0;
   int eCol = 0;
   Tag *tag = 0L;
+  int t_bLine, t_bCol, t_eLine, t_eCol;
+  t_bLine = t_bCol = t_eLine = t_eCol = -1;
+
+  QRegExp xmlTagRx("<([^>]*(\"([^\"]*(<[^\"]*>)+[^\"<]*)*\")*('([^']*(<[^']*>)+[^'<]*)*')*[^>]*)*>","i");
+
+  //search backwards
+  QString foundText = findRev(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
+  if (!foundText.isEmpty())
+  {
+    t_bCol = eCol+1;
+    t_bLine = eLine;
+    if (t_bCol > editIf->lineLength(eLine))
+    {
+      t_bCol = 0;
+      t_bLine++;
+    }
+  } else
+  {
+    t_bCol = t_bLine = 0;
+  }
+  foundText = find(xmlTagRx, line, col, bLine, bCol, eLine, eCol);
+  if (!foundText.isEmpty())
+  {
+    t_eCol = bCol-1;
+    t_eLine = bLine;
+    if (t_eCol < 0 )
+    {
+      t_eLine = (t_eLine > 0)?t_eLine -1:0;
+      t_eCol = editIf->lineLength(t_eLine);
+    }
+  } else
+  {
+    t_eLine = editIf->numLines()-1;
+    t_eCol = editIf->lineLength(t_eLine);
+  }
+
+  tag = new Tag();
+  tag->setTagPosition(t_bLine, t_bCol, t_eLine, t_eCol);
+  QString s = text(t_bLine, t_bCol, t_eLine, t_eCol);
+  s.replace(QRegExp("\\n"),"");
+  s = s.stripWhiteSpace();
+  if (s.isEmpty() || s == " ")  //whitespaces are not text
+  {
+    tag->type = 100;
+  } else
+  {
+    tag->type = Tag::Text;
+    tag->setStr(s);
+    tag->setWrite(this);
+    tag->name = "Text";
+  }
+ return tag;
+
+/*
   int origLine = line;
   int pos = -1;
   QString textLine;
@@ -425,7 +534,7 @@ Tag *Document::findText(int line, int col)
     tag->single = true;
   }
 
-  return tag;
+  return tag; */
 }
 
 /** Change the current tag's attributes with those from dict */
@@ -433,29 +542,35 @@ void Document::changeCurrentTag( QDict<QString> *dict )
 {
   QDictIterator<QString> it( *dict ); // iterator for dict
   QDict<QString> oldAttr(1,false);
-  Tag *tag = currentTag();
-  if (!tag) return;
-  QString tagStr = "";
-  while ( it.current() )  // for insert new attr
+/*  Node *node = nodeAt(); //get node at current position
+  if (!node || !node->tag) return;
+  Tag *tag = node->tag;*/
+  Tag *tag = tagAt();
+  if (tag)
   {
-    QString attr = QuantaCommon::attrCase(it.currentKey());
-    QString *val = it.current();
-    QString attrval;
+    QString tagStr = "";
+    while ( it.current() )  // for insert new attr
+    {
+      QString attr = QuantaCommon::attrCase(it.currentKey());
+      QString *val = it.current();
+      QString attrval;
 
-    if ( val->isEmpty() )  // for checkboxes ( without val) don't print =""
-        attrval = QString(" ")+attr;
-    else
-        attrval = QString(" ")+attr+"=\""+*val+"\"";
-    tagStr = attrval + tagStr;
-    ++it;
+      if ( val->isEmpty() )  // for checkboxes ( without val) don't print =""
+          attrval = QString(" ")+attr;
+      else
+          attrval = QString(" ")+attr+"=\""+*val+"\"";
+      tagStr = attrval + tagStr;
+      ++it;
+    }
+    tagStr = "<"+QuantaCommon::tagCase(tag->name)+tagStr+">";
+    int bLine, bCol, eLine, eCol;
+    tag->beginPos(bLine,bCol);
+    tag->endPos(eLine,eCol);
+    editIf->removeText(bLine, bCol, eLine, eCol);
+    editIf->insertText(bLine, bCol, tagStr);
+    delete tag;
   }
-  tagStr = "<"+QuantaCommon::tagCase(tag->name)+tagStr+">";
-  int bLine, bCol, eLine, eCol;
-  tag->beginPos(bLine,bCol);
-  tag->endPos(eLine,eCol);
-  editIf->removeText(bLine, bCol, eLine, eCol);
-  editIf->insertText(bLine, bCol, tagStr);
-  delete tag;
+//  parser->update(node); //very important to call
 }
 
 // return global( on the desktop ) position of text cursor
@@ -466,15 +581,21 @@ QPoint Document::getGlobalCursorPos()
 
 void Document::insertAttrib(QString attr)
 {
-  Tag * tag = currentTag();
+//  Node *node = nodeAt(); //get node at current position
+//  if (!node || !node->tag) return;
+//  Tag *tag = node->tag;
+  int line, col;
+  Tag *tag = tagAt();
   if (tag)
   {
-   int line, col;
-   tag->endPos(line, col);
-   viewCursorIf->setCursorPositionReal( line, col - 1 );
-   insertTag( QString(" ") + QuantaCommon::attrCase(attr) + "=\"", QString( "\"" ) );
-   delete tag;
+    tag->endPos(line, col);
+    viewCursorIf->setCursorPositionReal( line, col - 1 );
+    insertTag( QString(" ") + QuantaCommon::attrCase(attr) + "=\"", QString( "\"" ) );
+    delete tag;
   }
+//  tag->beginPos(line, col);
+//  parser->update(node); //very important to call
+//  parser->coutTree(baseNode,4);
 }
 
 /**  */
@@ -1085,6 +1206,40 @@ QString Document::find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol,
    if (s != foundText) //debug, error
    {
      KMessageBox::error(this,"Found: "+foundText+"\nRead: "+s);
+   }
+ }
+
+ return foundText;
+}
+
+QString Document::findRev(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol)
+{
+ QString textToSearch = text(0,0, sLine, sCol);
+ int pos = rx.searchRev(textToSearch);
+ QString foundText = "";
+ if (pos != -1)
+ {
+   foundText = rx.cap();
+   QString s = textToSearch.left(pos);
+   int linesUntilFound = s.contains("\n");
+   fbLine = linesUntilFound;
+   s = s.remove(0,s.findRev("\n")+1);
+   fbCol = s.length();
+   int linesInFound = foundText.contains("\n");
+   s = foundText;
+   s = s.remove(0,s.findRev("\n")+1);
+   feCol = s.length()-1;
+   feLine = fbLine + linesInFound;
+   if (linesInFound == 0)
+   {
+       feCol = feCol + fbCol;
+   }
+   if (fbCol < 0) fbCol = 0;
+   if (feCol < 0) feCol = 0;
+   s = text(fbLine, fbCol, feLine, feCol);
+   if (s != foundText) //debug, error
+   {
+     KMessageBox::error(this,"FindRev\nFound: "+foundText+"\nRead: "+s);
    }
  }
 

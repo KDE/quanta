@@ -25,6 +25,7 @@
 #include <qdict.h>
 #include "parser/qtag.h"
 #include "parser/node.h"
+#include "parser/parser.h"
 
 extern QDict<DTDStruct> *dtds;
 
@@ -41,5 +42,6 @@ extern QString fileMaskJava;
 extern QString fileMaskText;
 extern QString fileMaskImage;
 extern Node *baseNode;
+extern Parser *parser;
 
 #endif // RESOURCE_H

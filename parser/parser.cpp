@@ -224,12 +224,40 @@ void Parser::deleteNode()
 /** Go to the next column, or to the next line if we are at the end of line */
 void Parser::nextPos(int &line, int &col)
 {
-  if (col < write->editIf->lineLength(line))
+  if (col < write->editIf->lineLength(line) - 1)
   {
       col++;
   } else
   {
       col = 0;
       line++;
+  }
+}
+/** Update the internal node tree starting from the specified node. */
+void Parser::update(Node *fromNode)
+{
+  if (fromNode)
+  {
+    int bLine, bCol, eLine, eCol;
+    bLine = bCol = 0;
+    if (fromNode->prev)
+    {
+      Node *node = fromNode->prev;
+      while (node->child) node = node->child;
+      node->tag->endPos(bLine, bCol);
+      nextPos(bLine, bCol);
+    }
+    Tag *oldTag = fromNode->tag;
+    oldTag->endPos(eLine, eCol);
+    Tag *newTag = write->tagAt(bLine, bCol);
+    int nLine, nCol; //the new ending position of the tag
+    newTag->endPos(nLine, nCol);
+    if (nLine != eLine || nCol != eCol) //the end of tag has moved, so move the following also
+    {
+      fromNode->tag = newTag;
+      delete oldTag;
+      if (fromNode->child) update(fromNode->child);
+      else if (fromNode->next) update(fromNode->next);
+    }
   }
 }

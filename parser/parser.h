@@ -43,6 +43,8 @@ public:
   void coutTree(Node *node, int indent);
   /** Delete the internal m_node */
   void deleteNode();
+  /** Update the internal node tree starting from the specified node. */
+  void update(Node *fromNode);
 
 	QString m_text;  //FIXME: having an internal copy of text is absolutely useless
 private:

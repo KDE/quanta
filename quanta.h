@@ -343,8 +343,6 @@ class QuantaApp : public KDockMainWindow
 	bool exitingFlag;
 
     /** parsered tree of document  */
-    Node   *node;
-    Parser *parser;
 
     QTimer *statusbarTimer;
 

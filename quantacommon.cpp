@@ -42,6 +42,7 @@ QDict<AttributeList> *tagsDict;
 QDict<DTDStruct> *dtds; //holds all the known tags with attributes for each DTD.
 
 Node *baseNode;
+Parser *parser;
 
 QuantaCommon::QuantaCommon(){
 }
@@ -280,16 +281,19 @@ QString QuantaCommon::getDTDNickNameFromName(QString name)
   return nickName;
 }
 
-/** Returns true if the (line,col) is inside the area specified by the other arguments. */
-bool QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol)
+  /** Returns 0 if the (line,col) is inside the area specified by the other arguments,
+      -1 if it is before the area and 1 if it is after. */
+int QuantaCommon::isBetween(int line, int col, int bLine, int bCol, int eLine, int eCol)
 {
-  bool between = false;
-  if ( ( line > bLine && line < eLine ) ||
+  int pos = 0;
+  if (line < bLine || (line == bLine && (col < bCol) )) pos = -1; //it is before
+  if (line > eLine || (line == eLine && (col > eCol) )) pos = 1;  //it is after
+/*  if ( ( line > bLine && line < eLine ) ||
        ( line == bLine && line < eLine && col >= bCol) ||
        ( line > bLine && line == eLine && col <= eCol) ||
         ( line == bLine && line == eLine && col >=bCol && col <=eCol) )
  {
-   between = true;
- }
- return between;
+   result = 0;  //between
+ }*/
+ return pos;
 }

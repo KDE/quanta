@@ -411,7 +411,7 @@ void StructTreeView::showTagAtPos(int x, int y)
         int bLine, bCol, eLine, eCol;
         tag->beginPos(bLine,bCol);
         tag->endPos(eLine, eCol);
-        if (QuantaCommon::isBetween(x,y,bLine,bCol,eLine,eCol))
+        if (QuantaCommon::isBetween(x,y,bLine,bCol,eLine,eCol) == 0)
         {
          curTag = item;
         }

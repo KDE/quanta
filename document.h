@@ -31,8 +31,6 @@
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/codecompletioninterface.h>
-//#include <ktexteditor/searchinterface.h>
-
 
 /**
   *@author Dmitry Poplavsky & Alexander Yakovlev & Eric Laffoon & Andras Mantia
@@ -44,6 +42,7 @@ class KConfig;
 class QStringList;
 class KTempFile;
 class Tag;
+class Node;
 
 class Document : public QWidget{
    Q_OBJECT
@@ -59,9 +58,9 @@ public:
   bool isUntitled();
   void setUntitledUrl(QString);
   /** Return a node Tag accroding to line,col (or current cursor pos if line==col==-1) */
-  Tag *currentTag(int p_line=-1, int p_col=-1);
-  /** return qstring with tag at line,col for parse */
-  Tag *tagAt(int line, int col) {return currentTag(line,col);}
+  Tag *tagAt(int p_line = -1, int p_col = -1);
+  /** return a pointet to the Node according to p_line, p_col (or current cursor pos, if both are -1)  */
+  Node *nodeAt(int p_line = -1, int p_col = -1);
   /** Returns tag name at specified position */
   QString getTagNameAt( int line, int col );
 
@@ -85,6 +84,7 @@ public:
 
   QPoint getGlobalCursorPos();
   QString find(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
+  QString findRev(QRegExp& rx, int sLine, int sCol, int& fbLine, int&fbCol, int &feLine, int&feCol);
   /** Get the view of the document */
   KTextEditor::View* view();
   /** Get the KTextEditor::Document of the document */
@@ -137,7 +137,6 @@ work correctly. */
   KTextEditor::SelectionInterface *selectionIf;
   KTextEditor::EditInterface *editIf;
   KTextEditor::CodeCompletionInterface *codeCompletionIf;
-//  KTextEditor::SearchInterface *searchIf;
 
   Kate::Document *kate_doc;
   Kate::View *kate_view;

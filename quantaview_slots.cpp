@@ -71,30 +71,35 @@ void QuantaView::slotEditCurrentTag()
   w->viewCursorIf->cursorPositionReal(&line, &col);
   QString dtdName = w->findDTDName(line, 0); //call currentTag, so should be before
 
-  Tag *tag = w->currentTag();
-  if (!tag) return;
-  QString tagName = tag->name;
-  if ( QuantaCommon::isKnownTag(dtdName,tagName) )
+//  Node *node = w->nodeAt(); //get node at current position
+//  if (!node || !node->tag) return;
+//  Tag *tag = node->tag;
+  Tag *tag = w->tagAt();
+  if (tag)
   {
-    TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtdName,tagName), tag );
-
-    if (dlg->exec())
+    QString tagName = tag->name;
+    if ( QuantaCommon::isKnownTag(dtdName,tagName) )
     {
-     w->changeCurrentTag( dlg->getAttributes() );
-     int eLine, eCol;
-     tag->endPos(eLine, eCol);
-     w->viewCursorIf->setCursorPositionReal(eLine, eCol);
-    }
+      TagDialog *dlg = new TagDialog( QuantaCommon::tagFromDTD(dtdName,tagName), tag );
 
-    delete dlg;
+      if (dlg->exec())
+      {
+       w->changeCurrentTag( dlg->getAttributes() );
+       int eLine, eCol;
+       tag->endPos(eLine, eCol);
+       w->viewCursorIf->setCursorPositionReal(eLine, eCol);
+      }
+
+      delete dlg;
+    }
+    else
+    {
+      QString message = i18n("Unknown tag: ");
+      message += tagName;
+      app->slotStatusMsg( message.data() );
+    }
+    delete tag;
   }
-  else
-  {
-    QString message = i18n("Unknown tag: ");
-    message += tagName;
-    app->slotStatusMsg( message.data() );
-  }
-  delete tag;
 }
 
 /** edit tag */
