@@ -68,3 +68,10 @@ EXTRA_DIST = \
 ##############################################################
 ####                  END KDEStudio part                  ####
 #2########################################################!@#$
+
+install-data-local:
+	$(mkinstalldirs) $(kde_appsdir)/Applications/
+	$(INSTALL_DATA) $(srcdir)/quanta.desktop $(kde_appsdir)/Applications/quanta.desktop
+
+uninstall-local:
+	-rm -f $(kde_appsdir)/Applications/quanta.desktop

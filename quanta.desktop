@@ -2,11 +2,11 @@
 [KDE Desktop Entry]
 Type=Application
 Exec=quanta -caption "%c" %i %m  
-Icon=quanta.xpm
+Icon=quanta.png
 MiniIcon=quanta.png
 DocPath=quanta/index.html
 Comment=Powerful HTML-editor
-Comment[de]=
+Comment[de]=Powerful HTML-editor
 Terminal=0
 Name=Quanta
 Name[de]=Quanta
