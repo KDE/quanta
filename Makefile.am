@@ -6,7 +6,7 @@ SUBDIRS = plugins messages phpdebug toolbar data widgets treeviews tagdialogs pr
 bin_PROGRAMS = quanta
 
 
-quanta_LDFLAGS = $(all_libraries)
+quanta_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 quanta_LDADD = \
 		$(top_builddir)/quanta/kwrite/libkwrite.a\
 		$(top_builddir)/quanta/kwrite/highlight/libhighlight.a\
@@ -19,15 +19,8 @@ quanta_LDADD = \
 		$(top_builddir)/quanta/toolbar/libtoolbar.a\
 		$(top_builddir)/quanta/phpdebug/libphpdebug.a\
 		$(top_builddir)/quanta/messages/libmessages.a\
-		-lSM -lICE\
-		-lX11 $\
-		-lpng -lz -lm\
-		-ljpeg\
-		-lqt $ $ -lXext $ $\
-		-lkdeui\
-		-lkfile\
-		-lkhtml\
-		-lkspell
+		$(LIB_KHTML) $(LIB_KFILE) -lkspell
+
 LDFLAGS =  -s -lktexteditor
 INCLUDES = $(all_includes)
 DEFS = -I. -I$(srcdir) -I$(top_srcdir)
