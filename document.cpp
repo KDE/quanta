@@ -1436,7 +1436,7 @@ void Document::codeCompletionRequested()
 }
 
 /** Bring up the code completion tooltip. */
-1void Document::codeCompletionHintRequested()
+void Document::codeCompletionHintRequested()
 {
   uint line, col;
   viewCursorIf->cursorPositionReal(&line, &col);
