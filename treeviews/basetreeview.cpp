@@ -244,13 +244,21 @@ void BaseTreeBranch::addOpenFolder(QStringList* openFolder)
         continue;
       };
     };
-    // go up if no sibling available
-    if (! item->nextSibling())
-      item = dynamic_cast<KFileTreeViewItem *>(item->parent());
+    // move up in the tree
+    while (item && item != root())
+    {
+      if (item->nextSibling())
+      {
+        item = dynamic_cast<KFileTreeViewItem *>(item->nextSibling());
+        break;
+      }
+      else
+      {
+        item = dynamic_cast<KFileTreeViewItem *>(item->parent());
+      }
+    }
     if (item == root())
       break;
-    if (item)
-      item = dynamic_cast<KFileTreeViewItem *>(item->nextSibling());
   };
 }
 
