@@ -424,6 +424,15 @@ bool QuantaApp::slotFileSaveAs()
 
     KURL saveAsUrl;
 
+    if(fTab->isVisible())
+    {
+      saveAsUrl = fTab->currentURL();
+      if (fTab->currentKFileTreeViewItem() && fTab->currentKFileTreeViewItem()->isDir())
+      {
+        saveAsUrl.adjustPath(+1);
+      }
+      gotPath = true;
+    } else
     if(ProjectTreeView::ref()->isVisible())
     {
       saveAsUrl = ProjectTreeView::ref()->currentURL();
@@ -433,20 +442,16 @@ bool QuantaApp::slotFileSaveAs()
       }
       gotPath = true;
     }
-    else if(fTab->isVisible())
-    {
-      saveAsUrl = fTab->currentURL();
-      if (fTab->currentKFileTreeViewItem() && fTab->currentKFileTreeViewItem()->isDir())
-      {
-        saveAsUrl.adjustPath(+1);
-      }
-      gotPath = true;
-    }
-
     if (!gotPath || saveAsUrl.isEmpty())
-      saveAsUrl = Project::ref()->projectBaseURL();
-
-    saveAsUrl.setFileName( oldURL.fileName() );
+    {
+      if (w->isUntitled())
+      {
+        saveAsUrl = Project::ref()->projectBaseURL();
+        saveAsUrl.adjustPath(+1);
+        saveAsUrl.setFileName( oldURL.fileName() );
+      } else
+        saveAsUrl = oldURL;
+    }
 
     KEncodingFileDialog::Result data;
     data = KEncodingFileDialog::getSaveURLAndEncoding(myEncoding, saveAsUrl.url(),
