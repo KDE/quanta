@@ -255,21 +255,21 @@ FilesTreeView::~FilesTreeView()
 KFileTreeBranch* FilesTreeView::newBranch(const KURL& url)
 {
   FilesTreeBranch* newBrnch = 0;
+  KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
   if (url.isLocalFile() && url.path() == "/")
   {
-    newBrnch = new FilesTreeBranch(this, url, i18n("Root Folder"), SmallIcon("folder_red"), true);
+    newBrnch = new FilesTreeBranch(this, url, i18n("Root Folder"), SmallIcon(fileItem.iconName()), true);
   } else
   {
     if (url.isLocalFile() && url.equals(KURL(QDir::homeDirPath()), true))
     {
-      newBrnch = new FilesTreeBranch(this, url, i18n("Home Folder"), SmallIcon("folder_home"), true);
+      newBrnch = new FilesTreeBranch(this, url, i18n("Home Folder"), SmallIcon(fileItem.iconName()), true);
     } else
     {
       QString s = url.fileName();
       if (s.isEmpty())
         s = "/";
       s += " ["+url.prettyURL()+"]";
-      KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
       newBrnch = new FilesTreeBranch(this, url, s, SmallIcon(fileItem.iconName()), true);
     }
   }
@@ -691,8 +691,8 @@ void FilesTreeView::slotProperties()
 {
   KURL url = currentURL();
   if (url.isEmpty()) return;
-
-  KPropertiesDialog *propDlg = new KPropertiesDialog( url, this, 0L, false, false); //autodeletes itself
+  KFileItem fileItem(KFileItem::Unknown, KFileItem::Unknown, url);
+  KPropertiesDialog *propDlg = new KPropertiesDialog(&fileItem, this, 0L, false, false); //autodeletes itself
   const FileInfoDlg* fileInfoDlg = 0L;
   if (!currentKFileTreeViewItem()->isDir())
   {
