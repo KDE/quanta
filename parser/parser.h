@@ -121,6 +121,7 @@ private:
   int oldMaxLines;
   int treeSize;
   KDirWatch *includeWatch;
+  QMap<QString, XMLStructGroup>::ConstIterator xmlGroupIt;
 
   /** Print the doc structure tree to the standard output.
       Only for debugging purposes. */

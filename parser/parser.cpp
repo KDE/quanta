@@ -526,7 +526,6 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
           parentNode = node;
 
       node->tag = tag;
-
       if (tag->type == Tag::NeedsParsing)
       {
         if (tag->name.lower().startsWith("comment"))
@@ -542,6 +541,25 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
       }
       else if (tag->type == Tag::XmlTag)
            {
+             xmlGroupIt = node->tag->dtd->xmlStructTreeGroups.find(tag->name.lower());
+             if (xmlGroupIt != node->tag->dtd->xmlStructTreeGroups.end())
+             {
+                XMLStructGroup group = xmlGroupIt.data();
+                Tag *newTag = new Tag(*node->tag);
+                QString title = "";
+                for (uint j = 0; j < group.attributes.count(); j++)
+                {
+                  if (newTag->hasAttribute(group.attributes[j]))
+                  {
+                      title.append(newTag->attributeValue(group.attributes[j]).left(100));
+                      title.append(" | ");
+                  }
+                }
+                title = title.left(title.length()-3);
+                title.remove('\n');
+                newTag->name = title;
+                node->groupTag = newTag;
+             }
              //search for scripts inside the XML tag
              scriptParser(node);
            }
