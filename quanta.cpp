@@ -373,6 +373,13 @@ void QuantaApp::slotNewStatus()
   saveAction   ->setEnabled(doc->isModified());
   saveAllAction->setEnabled(doc->isModified());
   
+  closeprjAction     ->setEnabled(project->hasProject());
+  insertFileAction   ->setEnabled(project->hasProject());
+  insertDirAction    ->setEnabled(project->hasProject());
+  rescanPrjDirAction ->setEnabled(project->hasProject());
+  uploadProjectAction->setEnabled(project->hasProject());
+  projectOptionAction->setEnabled(project->hasProject());
+  
   int eol = doc->write()->getEol()-1;
   eol = eol>=0? eol: 0;
   

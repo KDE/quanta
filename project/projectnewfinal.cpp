@@ -36,6 +36,6 @@ ProjectNewFinal::~ProjectNewFinal(){
 
 void ProjectNewFinal::setMargin(int i)
 {
-  ProjectNewFinalSLayout->setMargin(i);
+  layout()->setMargin(i);
 }
 

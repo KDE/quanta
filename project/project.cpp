@@ -98,7 +98,6 @@ QStringList Project::fileNameList(bool check)
 
 void Project::insertFile( QString rname, bool repaint )
 {
-	if ( !hasProject() ) return;
   if ( rname.left(5) == "file:" ) rname.remove(0,5);
 
   QString fname = QExtFileInfo::toRelative( rname, basePath);
@@ -142,15 +141,12 @@ void Project::insertFile( QString rname, bool repaint )
 /** insert files from dir recursive */
 void Project::insertFiles( QString path, QString mask )
 {
-	if ( !hasProject() ) return;
 	insertFiles( QExtFileInfo::allFiles( path, mask ));
 }
 
 /** insert files */
 void Project::insertFiles( QStringList files )
 {
-  if ( !hasProject() ) return;
-
   QStringList::Iterator it;
   for ( it = files.begin(); it != files.end(); ++it )
 	{
@@ -181,8 +177,6 @@ void Project::insertFiles( QStringList files )
 
 void Project::createEmptyDom()
 {
-	if ( !hasProject()  ) return;
-
   QFile f( projectFileName );
   if ( !f.open( IO_WriteOnly ) )
   {
@@ -207,13 +201,12 @@ void Project::readConfig (KConfig *config)
 {
   config->setGroup  ("Projects");
   QString url = config->readEntry("Last Project");
+  projectRecent->loadEntries(config, "RecentProjects");
   
   if ( url.isEmpty()) return;
   
   closeProject();
   loadProject ( url );
-  
-  projectRecent->loadEntries(config, "RecentProjects");
 }
 
 void Project::writeConfig(KConfig *config)
@@ -245,6 +238,8 @@ void Project::openProject()
     KURL url(fileToOpen);
     projectRecent->addURL( url );
   }
+  
+  emit newStatus();
 }
 
 void Project::openProject(const KURL &url)
@@ -253,6 +248,8 @@ void Project::openProject(const KURL &url)
   
   closeProject();
   loadProject ( url.url() );
+  
+  emit newStatus();
 }
 
 /** save project file */
@@ -284,13 +281,16 @@ bool Project::saveProject()
 	// insert new opened files
 	
   dom.save( qts, 0);
+  
+  emit newStatus();
+  
   return true;
 }
 
 /** close project and edited files */
 void Project::closeProject()
 {
-  if ( hasProject() ) saveProject();
+  saveProject();
 
   dom.clear();
 
@@ -301,6 +301,8 @@ void Project::closeProject()
   emit reloadTree 		( fileNameList(), true, false );
 
   projectFileName = QString::null;
+  
+  emit newStatus();
 }
 
 /** load project from file: name */
@@ -364,8 +366,6 @@ void Project::insertFile( QString name )
 /** dialog for add files */
 void Project::addFiles()
 {
-	if ( !hasProject() ) return;
-	
 	KURL::List list = KFileDialog::getOpenURLs(
 		basePath,	i18n("*"), this, i18n("Insert files in project..."));
 		
@@ -396,8 +396,6 @@ void Project::addFiles()
 
 void Project::addDirectory()
 {
-	if ( !hasProject() ) return;
-	
 	QString dir = KFileDialog::getExistingDirectory(
 		basePath, this, i18n("Insert directory in project..."));
 	
@@ -530,6 +528,8 @@ void Project::newProject()
 	if ( wiz->exec() ) slotAcceptCreateProject();
 	
 	delete wiz;
+	
+	emit newStatus();
 }
 
 void Project::slotSelectProjectType(const QString &title)
@@ -606,8 +606,6 @@ void Project::slotAcceptCreateProject()
 
 void Project::options()
 {
-	if ( !hasProject() ) return;
-	
 	QTabDialog *dlg = new QTabDialog(0L, i18n("Project options"), true);
 
 	png = new ProjectNewGeneral( dlg );
@@ -671,8 +669,6 @@ void Project::options()
 
 void Project::upload()
 {
-	if ( !hasProject() ) return;
-	
 	emit saveAllFiles();
 	
 	ProjectUpload *dlg = new ProjectUpload(this, 0,i18n("Upload project's files..."), true);
@@ -697,8 +693,6 @@ void Project::slotGetMessages(QString data)
 
 void Project::slotRescanPrjDir()
 {
-  if ( !hasProject() ) return;
-	
 	RescanPrj *dlg = new RescanPrj( fileNameList(), basePath, this, i18n("New files in project's dir..."));
 	if ( dlg->exec() )
 	{

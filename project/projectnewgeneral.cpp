@@ -88,6 +88,6 @@ QString ProjectNewGeneral::type()
 
 void ProjectNewGeneral::setMargin(int i)
 {
-  ProjectNewGeneralSLayout->setMargin(i);
+  layout()->setMargin(i);
 }
 

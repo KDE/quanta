@@ -47,12 +47,12 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Tag *tag, QString name )
 	}
 	
 	if ( sname.left(3) == "img" ) {
-		setPixmap( 0, UserIcon("image") );
+		setPixmap( 0, SmallIcon("image") );
 		setText(0, space + tag->attrValue("src") );
 	}
 		
 	if ( sname == "a" ) {
-		setPixmap( 0, UserIcon("html") );
+		setPixmap( 0, SmallIcon("www") );
 		if ( tag->haveAttrib("href") )
 			setText(0,space + "href "+ tag->attrValue("href"));
 		if ( tag->haveAttrib("name") )

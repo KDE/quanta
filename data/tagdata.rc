@@ -22,7 +22,7 @@ Optional tags=P,DT,DD,LI,COLGROUP,THEAD,TFOOT,TR,TD,TH,OPTION,
 
 HTML=version,
 HEAD=profile,
-BODY=background,bgcolor,text,link,vlink,alink,onload,onunload,
+BODY=background,bgcolor,text,link,vlink,alink,onload,onunload,topmargin,leftmargin,marginwidth,marginheight,
 FRAMESET=rows,cols,onload,onunload,border,frameborder,marginwidth,marginheight,framespacing,
 BASE=href,target,
 ISINDEX=prompt,

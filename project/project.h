@@ -105,6 +105,7 @@ signals:
   void disableMessageWidget	();
 
   void saveAllFiles();
+  void newStatus();
 
 public:
   QDomDocument dom;

@@ -224,7 +224,9 @@ void QuantaApp::initProject()
 					messageOutput, SLOT(showMessage(QString)));
 
 	connect(project,	SIGNAL(saveAllFiles()),
-					this, SLOT(slotFileSaveAll()));					
+					this, SLOT(slotFileSaveAll()));
+	connect(project,	SIGNAL(newStatus()),
+					this, SLOT(slotNewStatus()));
 }
 
 void QuantaApp::initView()
