@@ -26,6 +26,7 @@
 // qt includes
 #include <qcolor.h>
 #include <qlineedit.h>
+#include <qpushbutton.h>
 
 // kde includes
 #include <kfiledialog.h>
