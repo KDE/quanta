@@ -488,10 +488,10 @@ bool SAParser::slotParseOneLine()
           Node *node = new Node(s_parentNode->parent);
           nodeNum++;
           s_parentNode->next = node;
-          node->prev = s_parentNode;
+          node->prev = s_parentNode;          
           node->tag = tag;
           node->closesPrevious = true;
-
+            
           if (s_fullParse)  
           {
             g_node = s_parentNode->child;
@@ -501,6 +501,7 @@ bool SAParser::slotParseOneLine()
 #endif            
             slotParseForScriptGroup();
           }
+          kdDebug(24000) << "tagStr(2) " << tag->tagStr() << " next: " << node->next << " prev:" << node->prev << endl;
             
           m_lastParsedNode = node;
           s_useReturnVars = true;
@@ -680,7 +681,7 @@ bool SAParser::slotParseOneLine()
   } else
   {
 #ifdef DEBUG_PARSER  
-    kdDebug(24000) << "Calling parsingDone from slotParseOneLine." <<
+    kdDebug(24000) << "Calling parsingDone from slotParseOneLine." << endl;
 #endif    
     parsingDone();
     return false; //parsing finished
@@ -799,7 +800,7 @@ Node *SAParser::parsingDone()
         n->next = s_next;
         if (s_next)
           s_next->prev = n;
-        n->prev = m_currentNode; 
+        n->prev = s_parentNode; 
         m_currentNode = n->nextSibling();
         if (m_currentNode)
         {
@@ -886,7 +887,7 @@ void SAParser::parseInDetail(bool synchronous)
 {
   //synchronous = true; //for testing. Uncomment to test the parser in synchronous mode
 #ifdef DEBUG_PARSER  
-  kdDebug(24000) << "slotParseInDetail. Enabled: " << m_parsingEnabled << endl; 
+  kdDebug(24000) << "parseInDetail. Enabled: " << m_parsingEnabled << endl; 
 #endif  
   if (!m_parsingEnabled)
   {
@@ -988,7 +989,12 @@ void SAParser::slotParseForScriptGroup()
       return;
     }
     else
+    {
+#ifdef DEBUG_PARSER      
+        kdDebug(24000) << "Calling slotParseForScriptGroup from slotParseForScriptGroup." << endl;
+#endif        
       QTimer::singleShot(50, this, SLOT(slotParseForScriptGroup()));
+    }
   } else
   {
 #ifdef DEBUG_PARSER  
