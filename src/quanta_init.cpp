@@ -305,7 +305,7 @@ void QuantaInit::initQuanta()
 void QuantaInit::initToolBars()
 {
  if (m_quanta->toolbarList.count() == 0)
-     m_quanta->loadToolbarForDTD(Project::ref()->defaultDTD());
+   m_quanta->slotLoadToolbarForDTD(Project::ref()->defaultDTD());
 }
 
 void QuantaInit::initStatusBar()

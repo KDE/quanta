@@ -29,9 +29,10 @@
 #include "eventeditordlg.h"
 #include "qpevents.h"
 
-EventConfigurationDlg::EventConfigurationDlg(QWidget* parent, const char* name, WFlags fl)
+EventConfigurationDlg::EventConfigurationDlg(KActionCollection *actionCollection, QWidget* parent, const char* name, WFlags fl)
 : EventConfigurationDlgS(parent,name,fl)
 {
+  m_actionCollection = actionCollection;
 }
 
 EventConfigurationDlg::~EventConfigurationDlg()
@@ -99,7 +100,7 @@ void EventConfigurationDlg::saveEvents(QDomDocument dom)
 void EventConfigurationDlg::slotAddEvent()
 {
    KDialogBase editDlg(this, "add_event", true, i18n("New Event"), KDialogBase::Ok | KDialogBase::Cancel);
-   EventEditorDlg eventDlg(&editDlg);
+   EventEditorDlg eventDlg(m_actionCollection, &editDlg);
    editDlg.setMainWidget(&eventDlg);
    if (editDlg.exec())
    {
@@ -118,7 +119,7 @@ void EventConfigurationDlg::slotEditEvent()
    QListViewItem *item = eventsListView->currentItem();
    if (!item) return;
    KDialogBase editDlg(this, "edit_event", true, i18n("Edit Event"), KDialogBase::Ok | KDialogBase::Cancel);
-   EventEditorDlg eventDlg(&editDlg);
+   EventEditorDlg eventDlg(m_actionCollection, &editDlg);
    editDlg.setMainWidget(&eventDlg);
    eventDlg.setEvent(item->text(0));
    eventDlg.setAction(item->text(1));

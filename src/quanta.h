@@ -170,8 +170,6 @@ public:
 
   //return the old Cursor position
   void oldCursorPos(uint &line, uint &col) {line = oldCursorLine; col = oldCursorCol;}
-  /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
-  void loadToolbarForDTD(const QString& dtdName);
 
   QStringList selectors(const QString& tag);
   QStringList idSelectors();
@@ -194,7 +192,6 @@ public:
   /** Returns the baseURL of the document. */
   KURL baseURL();
 
-  bool enableIdleTimer(bool enable);
   void startIdleTimer();
 
   /** Called when a document was closed. Resets some variables. */
@@ -310,6 +307,8 @@ public slots:
   void slotSaveLocalToolbar();
   /** Saves a toolbar as project specific. */
   void slotSaveProjectToolbar();
+  /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
+  void slotLoadToolbarForDTD(const QString& dtdName);
   /** Load an user toolbar from the disk. */
   void slotLoadToolbarFile(const KURL& url);
   /** Load an user toolbar from the disk. */
@@ -385,6 +384,8 @@ public slots:
 
   /** Called when the preview or documentation part is deleted. */
   void slotHTMLPartDeleted(QObject *object);
+  
+  bool slotEnableIdleTimer(bool enable);
 
 //Overridden KMdiMainFrm slots
   virtual void closeAllViews();

@@ -808,7 +808,7 @@ void QuantaView::activated()
   quantaApp->partManager()->setActivePart(m_document->doc(), m_document->view());
   m_document->checkDirtyStatus();
   StructTreeView::ref()->useOpenLevelSetting = true;
-  quantaApp->loadToolbarForDTD(m_document->getDTDIdentifier());
+  quantaApp->slotLoadToolbarForDTD(m_document->getDTDIdentifier());
 
   //TEMP : If the activated document is not a (X)HTML document, disable smartTagInsertion
   //Will be removed when VPL will support every DTD

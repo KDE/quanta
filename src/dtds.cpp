@@ -40,7 +40,6 @@
 #include "resource.h"
 #include "dtdparser.h"
 #include "document.h"
-#include "quanta.h"
 #include "viewmanager.h"
 
 #include "dtds.h"
@@ -52,9 +51,12 @@ const QString m_rcFilename("description.rc");
   This constructor reads the dictionary of known dtd's, the attributes and tags will be loaded
   on the first access to one dtd.
 */
-DTDs::DTDs()
+DTDs::DTDs(QObject *parent)
+  :QObject(parent)
 {
-  connect(this, SIGNAL(hideSplash()), quantaApp, SLOT(slotHideSplash()));
+  connect(this, SIGNAL(hideSplash()), parent, SLOT(slotHideSplash()));
+  connect(this, SIGNAL(enableIdleTimer(bool)), parent, SLOT(slotEnableIdleTimer(bool)));
+  connect(this, SIGNAL(loadToolbarForDTD(const QString&)), parent, SLOT(slotLoadToolbarForDTD(const QString&)));
 //  kdDebug(24000) << "dtds::dtds" << endl;
   m_dict = new QDict<DTDStruct>(119, false); //optimized for max 119 DTD. This should be enough.
   m_dict->setAutoDelete(true);
@@ -183,7 +185,6 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   if (!QFile::exists(dtd->fileName)) return false;
 
   kapp->setOverrideCursor( QCursor(Qt::WaitCursor) );
-//  quantaApp->slotStatusMsg(i18n("Loading DTD's..."));
 
   KConfig *dtdConfig = new KConfig(dtd->fileName, true);
 
@@ -215,10 +216,9 @@ bool DTDs::readTagDir2(DTDStruct *dtd)
   QString dirName = dirURL.path(1);
   if (QFile::exists(dirName + "common.tag"))
     readTagFile(dirName + "common.tag", dtd, 0L);
-  bool idleTimerStatus = quantaApp->enableIdleTimer(false);
+  emit enableIdleTimer(false);
   KURL::List files = QExtFileInfo::allFilesRelative(dirURL, "*.tag");
-  if (quantaApp)
-    quantaApp->enableIdleTimer(idleTimerStatus);
+  emit enableIdleTimer(true);
   QString tmpStr;
   for ( KURL::List::Iterator it_f = files.begin(); it_f != files.end(); ++it_f )
   {
@@ -867,7 +867,7 @@ void DTDs::slotLoadDTD()
               KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
           {
             w->setDTDIdentifier(dtdName);
-            quantaApp->loadToolbarForDTD(w->getDTDIdentifier()); //fixme: make signal no direct call
+            emit loadToolbarForDTD(w->getDTDIdentifier());
             emit forceReparse();
           }
       }
@@ -911,7 +911,7 @@ void DTDs::slotLoadDTEP(const QString &_dirName, bool askForAutoload)
         KMessageBox::questionYesNo(0L, i18n("<qt>Use the newly loaded <b>%1</b> DTD for the current document?</qt>").arg(nickName), i18n("Change DTD")) == KMessageBox::Yes)
     {
       w->setDTDIdentifier(dtdName);
-      quantaApp->loadToolbarForDTD(w->getDTDIdentifier()); //fixme: make signal no direct call
+      emit loadToolbarForDTD(w->getDTDIdentifier());
       emit forceReparse();
     }
   }

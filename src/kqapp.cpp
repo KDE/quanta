@@ -199,7 +199,7 @@ void KQApplicationPrivate::init()
 {
   if (quantaApp->quantaStarted)
   {
-    quantaApp->enableIdleTimer(false);
+    quantaApp->slotEnableIdleTimer(false);
     quantaApp->m_quantaInit->initQuanta();
     quantaApp->show();
 
@@ -233,7 +233,7 @@ void KQApplicationPrivate::init()
   sp = 0L;
   delete quantaApp->m_quantaInit;
   quantaApp->m_quantaInit = 0L;
-  quantaApp->enableIdleTimer(true);
+  quantaApp->slotEnableIdleTimer(true);
 }
 
 #include "kqapp.moc"

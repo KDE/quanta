@@ -568,7 +568,7 @@ void Project::slotOptions()
 
 //add the event configuration page
   page = optionsDlg.addPage(i18n("Event Configuration"));
-  EventConfigurationDlg eventsPage(page);
+  EventConfigurationDlg eventsPage(d->m_mainWindow->actionCollection(), page);
   topLayout = new QVBoxLayout( page, 0, KDialog::spacingHint() );
   topLayout->addWidget(&eventsPage);
   eventsPage.initEvents(d->m_events);

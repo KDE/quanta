@@ -28,8 +28,6 @@
 #include "eventeditordlg.h"
 #include "qpevents.h"
 #include "project.h"
-#include "resource.h"
-#include "quanta.h"
 #include "tagaction.h"
 
 extern QString simpleMemberStr;
@@ -37,12 +35,13 @@ extern QString taskLeaderStr;
 extern QString teamLeaderStr;
 extern QString subprojectLeaderStr;
 
-EventEditorDlg::EventEditorDlg(QWidget* parent, const char* name, WFlags fl)
+EventEditorDlg::EventEditorDlg(KActionCollection *actionCollection, QWidget* parent, const char* name, WFlags fl)
 : EventEditorDlgS(parent,name,fl)
 {
-   eventCombo->insertStringList(QPEvents::ref()->eventNames());
-   actionCombo->insertStringList(QPEvents::ref()->actionNames());
-   slotActionChanged(actionCombo->currentText());
+  m_actionCollection = actionCollection;
+  eventCombo->insertStringList(QPEvents::ref()->eventNames());
+  actionCombo->insertStringList(QPEvents::ref()->actionNames());
+  slotActionChanged(actionCombo->currentText());
 }
 
 EventEditorDlg::~EventEditorDlg()
@@ -345,9 +344,9 @@ void EventEditorDlg::slotActionChanged(const QString &name)
        QString s;
        QStringList items;
        QRegExp r("\\&(?!\\&)");
-       for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
+       for (uint i = 0; i < m_actionCollection->count(); i++)
        {
-          action = dynamic_cast<TagAction*>(quantaApp->actionCollection()->action(i));
+          action = dynamic_cast<TagAction*>(m_actionCollection->action(i));
           if (action && action->type() == "script")
           {
              s = action->text().replace(r, "");
@@ -367,9 +366,9 @@ void EventEditorDlg::slotActionChanged(const QString &name)
        QString s;
        QRegExp r("\\&(?!\\&)");
        QStringList items;
-       for (uint i = 0; i < quantaApp->actionCollection()->count(); i++)
+       for (uint i = 0; i < m_actionCollection->count(); i++)
        {
-          KAction *a = quantaApp->actionCollection()->action(i);
+          KAction *a = m_actionCollection->action(i);
           action = dynamic_cast<TagAction*>(a);
           if (!action || action->type() != "script")
           {

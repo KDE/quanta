@@ -201,6 +201,7 @@ QuantaApp::QuantaApp(int mdiMode) : DCOPObject("WindowManagerIf"), KMdiMainFrm( 
   m_quantaInit = new QuantaInit(this);
   dcopSettings = new DCOPSettings;
   dcopQuanta = new DCOPQuanta;
+  DTDs::ref(this);
   quantaStarted = true;
   tempFileList.setAutoDelete(true);
   toolbarList.setAutoDelete(true);
@@ -1533,7 +1534,7 @@ void QuantaApp::startIdleTimer()
       idleTimer->start(500, true);
 }
 
-bool QuantaApp::enableIdleTimer(bool enable)
+bool QuantaApp::slotEnableIdleTimer(bool enable)
 {
    bool status = m_idleTimerEnabled;
    if (enable)
@@ -2929,7 +2930,7 @@ void QuantaApp::slotChangeDTD()
       }
     }
 
-    loadToolbarForDTD(w->getDTDIdentifier());
+    slotLoadToolbarForDTD(w->getDTDIdentifier());
     QuantaView *view = ViewManager::ref()->activeView();
     if (view)
       view->activated();
@@ -3011,7 +3012,7 @@ void QuantaApp::slotHelpUserList()
 }
 
 /** Loads the toolbars for dtd named dtdName and unload the ones belonging to oldDtdName. */
-void QuantaApp::loadToolbarForDTD(const QString& dtdName)
+void QuantaApp::slotLoadToolbarForDTD(const QString& dtdName)
 {
   const DTDStruct *oldDtd = 0L;
 
@@ -4041,7 +4042,7 @@ void QuantaApp::slotEditCurrentTag()
     baseNode = parser->rebuild(w);
   //avoid reparsing while the dialog is shown
   typingInProgress = true;
-  enableIdleTimer(false);
+  slotEnableIdleTimer(false);
   uint line,col;
   w->viewCursorIf->cursorPositionReal(&line, &col);
   Node *node = parser->nodeAt(line, col, false);
@@ -4065,7 +4066,7 @@ void QuantaApp::slotEditCurrentTag()
     }
   }
   typingInProgress = false;
-  enableIdleTimer(true);
+  slotEnableIdleTimer(true);
   if (isUnknown)
   {
     QString message = i18n("Unknown tag: %1").arg(tagName);

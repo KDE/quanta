@@ -2812,7 +2812,7 @@ void Document::processDTD(const QString& documentType)
   {
     quantaApp->messageOutput()->showMessage(i18n("\"%1\" is used for \"%2\".\n").arg(DTDs::ref()->getDTDNickNameFromName(dtdName)).arg(url().prettyURL(0, KURL::StripFileProtocol)));
   }
-  quantaApp->loadToolbarForDTD(dtdName);
+  quantaApp->slotLoadToolbarForDTD(dtdName);
   StructTreeView::ref()->useOpenLevelSetting = true;
   delete tag;
 }

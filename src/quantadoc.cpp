@@ -148,7 +148,7 @@ bool QuantaDoc::newDocument( const KURL& url, bool switchToExisting )
 void QuantaDoc::openDocument(const KURL& urlToOpen, const QString &a_encoding,
 bool switchToExisting)
 {
-  bool idleTimerStatus = quantaApp->enableIdleTimer(false);
+  bool idleTimerStatus = quantaApp->slotEnableIdleTimer(false);
   KURL url = urlToOpen;
   if (url.isLocalFile())
   {
@@ -159,7 +159,7 @@ bool switchToExisting)
   QString encoding = a_encoding;
   if (!newDocument(url, switchToExisting))
   {
-     quantaApp->enableIdleTimer(idleTimerStatus);
+     quantaApp->slotEnableIdleTimer(idleTimerStatus);
      return;
   }
   Document *w = ViewManager::ref()->activeDocument();
@@ -206,7 +206,7 @@ bool switchToExisting)
     }
     emit newStatus();
   }
-  quantaApp->enableIdleTimer(idleTimerStatus);
+  quantaApp->slotEnableIdleTimer(idleTimerStatus);
 }
 
 void QuantaDoc::slotOpeningFailed(const KURL &url)

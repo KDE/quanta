@@ -56,10 +56,10 @@ public:
    *  since this class is a singleton you must use this function to access it
    *  @return the class pointer
    */
-  static DTDs* ref()
+  static DTDs* ref(QObject *parent = 0L)
   {
     static DTDs *m_ref;
-    if (!m_ref) m_ref = new DTDs();
+    if (!m_ref) m_ref = new DTDs(parent);
     return m_ref;
   }
 
@@ -153,6 +153,11 @@ signals:
 
   /** DTD has changed need reparse */
   void forceReparse();
+  
+  /** Enable/disbale the idle timer*/
+  void enableIdleTimer(bool);
+  
+  void loadToolbarForDTD(const QString&);
 
 private:
 
@@ -160,7 +165,7 @@ private:
    *  If you need the class use DTDs::ref() for
    *  construction and reference
    */
-  DTDs();
+  DTDs(QObject *parent);
 
 
   /** Reads the tag files and the description.rc from tagDir in order to

@@ -20,6 +20,7 @@
 #include "eventconfigurationdlgs.h"
 
 class QDomDocument;
+class KActionCollection;
 struct EventAction;
 typedef  QMap<QString, QValueList<EventAction> > EventActions;
 
@@ -28,7 +29,7 @@ class EventConfigurationDlg : public EventConfigurationDlgS
   Q_OBJECT
 
 public:
-  EventConfigurationDlg(QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
+  EventConfigurationDlg(KActionCollection *actionCollection, QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
   ~EventConfigurationDlg();
   void initEvents(EventActions *events);
   void saveEvents(QDomDocument dom);
@@ -39,6 +40,7 @@ public slots:
    void slotDeleteEvent();
 
 protected:
+  KActionCollection *m_actionCollection;
 
 protected slots:
 

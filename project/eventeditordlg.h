@@ -21,6 +21,7 @@
 #include "eventeditordlgs.h"
 
 class QLabel;
+class KActionCollection;
 class KComboBox;
 
 class EventEditorDlg : public EventEditorDlgS
@@ -28,7 +29,7 @@ class EventEditorDlg : public EventEditorDlgS
   Q_OBJECT
 
 public:
-  EventEditorDlg(QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
+  EventEditorDlg(KActionCollection *actionCollection, QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
   ~EventEditorDlg();
   void setEvent(const QString &name);
   void setAction(const QString &name);
@@ -46,6 +47,7 @@ protected:
 
    QMap<QString, QString> m_scriptActions;
    QMap<QString, QString> m_otherActions;
+   KActionCollection *m_actionCollection;
 
 protected slots:
 
