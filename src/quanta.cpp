@@ -2138,6 +2138,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    QString i18nName = i18n(name.utf8());
    QString origName = name;
    bool found = false;
+   bool nameModified = false;
    int count = 2;
    do
    {
@@ -2150,10 +2151,11 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
        nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
        for (uint i = 0; i < nodeList.count(); i++)
        {
-         if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
+         if ((nodeList.item(i).cloneNode().toElement().attribute("name").lower() ) == name.lower())
          {
            newName = origName + QString(" (%1)").arg(count);
            i18nName = i18n(origName.utf8()) + QString(" (%1)").arg(count);
+           nameModified = true;
            count++;
            found = true;
            break;
@@ -2175,6 +2177,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    QDomDocument *dom = new QDomDocument();
    dom->setContent(toolbarDom->toString());
    p_toolbar->dom = dom;
+   p_toolbar->nameModified = nameModified;
 
    userToolbarsCount++;
 
@@ -2565,6 +2568,7 @@ void QuantaApp::slotAddToolbar()
   p_toolbar->name = name;
   p_toolbar->user = true;
   p_toolbar->visible = true;
+  p_toolbar->nameModified = false;
   p_toolbar->menu = new QPopupMenu;
   m_tagsMenu->insertItem(p_toolbar->name, p_toolbar->menu);
   toolbarList.insert(name.lower(), p_toolbar);
@@ -3137,6 +3141,17 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
      QString s2 = toolbarGUI->domDocument().toString();
      s1.remove(i18ntabnameRx);
      s2.remove(i18ntabnameRx);
+     if (p_toolbar->nameModified)
+     {
+       QRegExp tabnameRx("\\stabname=\"[^\"]*\"");
+       tabnameRx.search(s2);
+       QString name1 = tabnameRx.cap();
+       name1.remove(" tab");
+       QString name2 = name1;
+       name2.remove(QRegExp("[\\s]\\([0-9]+\\)"));
+       s2.replace(name1, name2);
+       s2.replace(name1.lower(), name2.lower());
+     }
      bool useToolbarGUI = true;
      if ( s1 != s2 /*|| actionsModified */)
      {
