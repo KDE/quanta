@@ -130,6 +130,10 @@ int main(int argc, char *argv[])
     I18N_NOOP("XSLT tags, XSLT debugger"),
     "k_isdale@tpg.com.au");
 
+  aboutData.addCredit("Lukas Masek",
+    I18N_NOOP("Splash screen for 3.2"),
+    "luci@sh.ground.cz");
+
   KCmdLineArgs::init( argc, argv, &aboutData );
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
