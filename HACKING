@@ -28,4 +28,16 @@ to Quanta please try to follow the below rules:
    Implementation file:
      #include "foo.h"
 14. Use .h and .cpp for file extension.
+15. Use layouts when creating UI files, otherwise the UI components are not resized when you
+      resize the main widget, translated interfaces or when you use another widget style the
+      dialog might look bad. The simple way to do this is in Qt Designer: click on an empty space
+      and Ctrl-G. Do it first for every container style widget (boxes, frames, tabwidget tabs, etc.)
+      Try to resize the dialog after you preview it.
+16. Make the tab order in widgets logical. Preview it and press tabs to see in which order are the
+      components focused.
+17. 15 and 16 is valid for Kommander scripts as well.
+18. Include the moc files in the .cpp files: use
+        #include "qobject_derivated_class_file.moc"
+      at the end of the cpp files.
 
+Last, but not least read the howto's and faq's on http://developer.kde.org
