@@ -1405,17 +1405,19 @@ Node *Parser::rebuild(Document *w)
          while (node->next)
               node = node->next;
        }
-       if (next && closesPrevious)
+       if (next && closesPrevious) //if there is a node after the deleted one and the deleted node closed the previous one
        {
-         if (prev->child)
+         if (prev->child) //if the previous node has a child, append the next node after the last child
          {
             next->prev = node;
             node->next = next;
-         } else
+         } else // else append it as the fist child of the previous
          {
            prev->child = next;
            next->prev = 0L;
          }
+         //all the nodes after the previous are going UNDER the previous, as the one closing node was deleted
+         //and the tree starting with next is moved under prev (see the above lines)
          prev->next = 0L;
          Node *n = next;
          while (n)

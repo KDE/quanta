@@ -2676,7 +2676,22 @@ void QuantaApp::processDTD(const QString& documentType)
       delete dlg;
    } else //DOCTYPE not found in file
    {
-     w->setDTDIdentifier(projectDTD);
+     QString mimetype = KMimeType::findByURL(w->url())->name();
+     QDictIterator<DTDStruct> it(*dtds);
+     DTDStruct *currdtd = 0L;
+     for( ; it.current(); ++it )
+     {
+       currdtd = it.current();
+       if (currdtd->toplevel && currdtd->mimeTypes.contains(mimetype))
+       {
+         break;
+       }
+       currdtd = 0L;
+     }
+     if (currdtd)
+        w->setDTDIdentifier(currdtd->name);
+     else
+        w->setDTDIdentifier(projectDTD);
    }
  } else //dtdName is read from the method's parameter
  {

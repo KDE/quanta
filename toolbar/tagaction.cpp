@@ -60,7 +60,9 @@ MyProcess::MyProcess(QObject* parent, const char *name):KProcess(parent, name)
 }
 
 int MyProcess::commSetupDoneC()
-{ ::setpgid(pid_, 0); return KProcess::commSetupDoneC();
+{
+  ::setpgid(pid_, 0);
+  return KProcess::commSetupDoneC();
 }
 
 TagAction::TagAction( QDomElement *element, KActionCollection *parent)
@@ -224,7 +226,6 @@ void TagAction::insertTag(bool inputFromFile, bool outputToFile)
 
     if (proc->start(KProcess::NotifyOnExit, KProcess::All))
     {
-      //::setpgid(proc->pid(), 0);
       if (!inputFromFile)
       {
         if ( inputType == "current" || inputType == "selected" )

@@ -2,6 +2,7 @@
 Name = text/css
 NickName = CSS
 DefaultExtension = css
+MimeTypes = text/css
 Groups =
 NumOfPages = 0
 CaseSensitive = true

@@ -91,6 +91,7 @@ typedef struct DTDStruct
      QString doctypeStr;              //the string that appears right after !doctype
      QString inheritsTagsFrom;        //Inherited DTD name
      QString defaultExtension;        //default extension when creating new files
+     QStringList mimeTypes;
      bool caseSensitive;              //the tags&attributes in DTD are case sensitive or not
      int family;                      //xml, script type
      bool toplevel;                 //true if the DTD can be the main DTD of a document. Always true for XML like DTD's

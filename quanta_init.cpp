@@ -1071,6 +1071,7 @@ void QuantaApp::readTagDir(QString &dirName)
  dtd->inheritsTagsFrom = dtdConfig->readEntry("Inherits");
 
  dtd->defaultExtension = dtdConfig->readEntry("DefaultExtension", "html");
+ dtd->mimeTypes = dtdConfig->readListEntry("MimeTypes");
  dtd->caseSensitive = caseSensitive;
  dtd->family = dtdConfig->readNumEntry("Family", Xml);
  if (dtd->family != Xml)
