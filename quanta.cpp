@@ -806,6 +806,8 @@ void QuantaApp::slotNewStatus()
     QIconSet mimeIcon (KMimeType::pixmapForURL(w->url(), 0, KIcon::Small));
     if (mimeIcon.isNull())
       mimeIcon = QIconSet(SmallIcon("document"));
+    bool block=wTab->signalsBlocked();
+    wTab->blockSignals(true);
 #if KDE_IS_VERSION(3,1,90)
     if (qConfig.showCloseButtons)
     {
@@ -829,10 +831,8 @@ void QuantaApp::slotNewStatus()
 //a tab eg. at the end, and it won't be visible now. This is really confusing.
 //I thought it is fixed in QT 3.x, but it is not. :-(
     int pageId = wTab->currentPageIndex();
-    bool block=wTab->signalsBlocked();
-    wTab->blockSignals(true);
-    wTab->setCurrentPage(pageId-1);
-    wTab->setCurrentPage(pageId);
+//    wTab->setCurrentPage(pageId-1);
+//    wTab->setCurrentPage(pageId);
     wTab->blockSignals(block);
  }
 }
@@ -865,7 +865,8 @@ void QuantaApp::slotClosePage(QWidget *w)
 void QuantaApp::slotUpdateStatus(QWidget* w)
 {
 //remove the GUI of the plugin, if the last visible tab was a plugin
-  QString tabTitle =m_view->writeTab()->tabLabel(m_view->oldTab);
+  QTabWidget *wTab = view()->writeTab();
+  QString tabTitle = wTab->tabLabel(m_view->oldTab);
   QuantaPlugin *plugin = m_pluginInterface->plugin(tabTitle);
   if (plugin)
   {
@@ -884,7 +885,7 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
   if (!newWrite)
   {
 //add the GUI for the currently visible plugin
-    tabTitle = m_view->writeTab()->tabLabel(w);
+    tabTitle = wTab->tabLabel(w);
     plugin = m_pluginInterface->plugin(tabTitle);
     if (plugin)
        plugin->showGui(true);
@@ -904,9 +905,9 @@ void QuantaApp::slotUpdateStatus(QWidget* w)
 
   Document *currentWrite = m_view->write();
 #ifdef BUILD_KAFKAPART
-   m_view->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
+   m_view->resize(wTab->size().width()-5, wTab->size().height()-35);
 #else
-   currentWrite->view()->resize(m_view->writeTab()->size().width()-5, m_view->writeTab()->size().height()-35);
+   currentWrite->view()->resize(wTab->size().width()-5, wTab->size().height()-35);
 #endif
 
   m_view->oldWrite = currentWrite;

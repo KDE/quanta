@@ -1126,9 +1126,18 @@ KURL QuantaView::baseURL()
 
 void QuantaView::slotCloseOtherTabs()
 {
-  for (int i = 0; i < m_writeTab->count(); i++)
+  bool block = m_writeTab->signalsBlocked();
+  m_writeTab->blockSignals(true);
+  QWidget *w = m_writeTab->currentPage();
+  int i = 0;
+  while (m_writeTab->count() > 1)
   {
-    if (i != m_writeTab->currentPageIndex())
+    if (w != m_writeTab->page(i))
+    {
       quantaApp->slotClosePage(m_writeTab->page(i));
+      i = 0;
+    } else
+      i++;
   }
+  m_writeTab->blockSignals(block);
 }
