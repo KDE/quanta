@@ -38,6 +38,7 @@
 #include <qdom.h>
 #include <qspinbox.h>
 #include <qeventloop.h>
+#include <qfontmetrics.h>
 
 // include files for KDE
 #include <kcombobox.h>
@@ -58,6 +59,7 @@
 #include <kpopupmenu.h>
 #include <kpushbutton.h>
 #include <kprocess.h>
+#include <kprogress.h>
 #include <ktempfile.h>
 #include <kdebug.h>
 #include <ktar.h>
@@ -70,6 +72,7 @@
 #include <ktip.h>
 #include <kmimetype.h>
 #include <kparts/componentfactory.h>
+#include <kstringhandler.h>
 
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/encodinginterface.h>
@@ -583,7 +586,11 @@ void QuantaApp::slotHelpTip()
 void QuantaApp::slotStatusMsg(const QString &msg)
 {
   statusbarTimer->stop();
-  statusBar()->changeItem(" " + msg, IDS_STATUS);
+#if KDE_IS_VERSION(3,1,90)
+  statusBar()->changeItem(" " + KStringHandler::cPixelSqueeze(msg, statusBar()->fontMetrics(), progressBar->x() - 20), IDS_STATUS);
+#else
+  statusBar()->changeItem(" " + KStringHandler::csqueeze(msg, progressBar->x() / statusBar()->fontMetrics().width('a')), IDS_STATUS);
+#endif
   statusBar()->repaint();
   kapp->processEvents();
   statusbarTimer->start(10000, true);
