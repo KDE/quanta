@@ -26,8 +26,8 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <kmultipledrag.h> 
-//#include <kglobal.h>
-//#include <kcharsets.h>
+#include <kglobal.h>
+#include <kcharsets.h>
 
 #include <qregexp.h>
 #include <qfile.h>
@@ -831,7 +831,10 @@ QString KafkaDocument::getDecodedChar(const QString &encodedChar)
 {
 	QMap<QString, QString>::Iterator it = encodedChars.find(encodedChar);
 	if(it == encodedChars.end())
-		return "";
+        {
+          //try this
+	  return KGlobal::charsets()->resolveEntities(encodedChar);;
+        }
 	return it.data();
 }
 
@@ -1585,7 +1588,7 @@ void KafkaDocument::translateNodeIntoKafkaCursorPosition(Node *node, int offset,
 			else if(curChar[0].isSpace())
 				lookForSpaces = true;
 			found = false;
-			while(!found)
+			while(!found && col < offset)
 			{
 				if((lookForEntity && curChar == ";") ||
 					!(lookForSpaces || lookForEntity))

@@ -568,6 +568,7 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
         case Key_BackTab:
             break;
         case Key_Return:
+        case Key_Enter:
 #ifdef LIGHT_DEBUG
 
             kdDebug(25001)<< "KafkaWidget::eventFilter() Return" << endl;
@@ -576,8 +577,6 @@ bool KafkaWidget::eventFilter(QObject *, QEvent *event)
                 removeSelection();
             keyReturn(keyevent->state() & ControlButton);
             d->stuckCursorHorizontalPos = false;
-            break;
-        case Key_Enter:
             break;
         case Key_Insert:
             break;

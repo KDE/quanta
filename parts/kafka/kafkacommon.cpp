@@ -1421,6 +1421,7 @@ bool kafkaCommon::DTDinsertNode(Node *newNode, Node *startNode, int startOffset,
                 endOffset -= startOffset;
             }
             startNode = startNode->nextSibling();
+            startOffset = 0;
         }
         else if(startOffset == (signed)startNode->tag->tagStr().length())
         {
