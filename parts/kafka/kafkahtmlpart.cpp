@@ -314,11 +314,11 @@ void KafkaHTMLPart::insertText(DOM::Node node, const QString &text, int position
 		}
 	}
 			document().updateRendering();
-	QTimer::singleShot(0, this, SLOT(slotDelaledSetCaretPosition()));
+	QTimer::singleShot(0, this, SLOT(slotDelayedSetCaretPosition()));
 	//setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 }
 
-void KafkaHTMLPart::slotDelaledSetCaretPosition()
+void KafkaHTMLPart::slotDelayedSetCaretPosition()
 {
 	setCaretPosition(m_currentNode, (long)d->m_cursorOffset);
 	emit domNodeNewCursorPos(m_currentNode, d->m_cursorOffset);

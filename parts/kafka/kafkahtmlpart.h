@@ -230,7 +230,7 @@ public slots:
 	 * Called to set the cursor Position with a QTimer::singleShot() after calling
 	 *  document->updateRendering()
 	 */
-	void slotDelaledSetCaretPosition();
+	void slotDelayedSetCaretPosition();
 
 signals:
 	/**
