@@ -174,6 +174,13 @@ typedef struct DTDStruct
      QStringList toolbars;
 /*A list with abbreviations in the for of: <template templatename, code> */
      QMap<QString, QString> abbreviations;
+
+/* True if foo-foo2 should be considered as one word. False (default) otherwise. */
+     bool minusAllowedInWord;
+
+     QString tagAutoCompleteAfter;
+     QString attrAutoCompleteAfter;
+     QString attributeSeparator;
     };
 
 class QTag {

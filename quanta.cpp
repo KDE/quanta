@@ -1385,7 +1385,8 @@ QWidget* QuantaApp::createContainer( QWidget *parent, int index, const QDomEleme
 
     tb->adjustSize();
     m_view->toolbarTab()->insertTab(tb, i18n(tabname));
-    m_view->toolbarTab()->setFixedHeight(tb->minimumSizeHint().height()+m_view->toolbarTab()->tabHeight());
+    if (tb->minimumSizeHint().height() > 20)
+      m_view->toolbarTab()->setFixedHeight(tb->minimumSizeHint().height()+m_view->toolbarTab()->tabHeight());
     qInstallMsgHandler( oldHandler );
 
     connect(tb, SIGNAL(removeAction(const QString&, const QString&)),
@@ -1942,7 +1943,7 @@ void QuantaApp::slotAddToolbar()
   tempFile->close();
 
   ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
-  factory()->addClient(toolbarGUI);
+  guiFactory()->addClient(toolbarGUI);
   m_view->toolbarTab()->setCurrentPage(m_view->toolbarTab()->count()-1);
   tempFileList.append(tempFile);
   ToolbarEntry *p_toolbar = new ToolbarEntry;

@@ -140,7 +140,7 @@ work correctly. */
   /** No descriptions */
   void parseVariables();
   /** Find the word until the first word boundary backwards */
-  QString findWordRev(const QString& textToSearch);
+  QString findWordRev(const QString& textToSearch, DTDStruct *dtd = 0L);
 
   bool oldstat;
   bool busy;
@@ -190,27 +190,29 @@ private:
 
   int spellMoved;
   QString dtdName;
+  /*The DTD valid in the place where the completion was invoked.*/
+  DTDStruct *completionDTD;
 
   /** Brings up list of code completions */
   void showCodeCompletions( QValueList<KTextEditor::CompletionEntry> *completions );
   /** Get list of possibile variable name completions */
-  QValueList<KTextEditor::CompletionEntry>* getVariableCompletions(DTDStruct *dtd, int line, int col);
+  QValueList<KTextEditor::CompletionEntry>* getVariableCompletions(int line, int col);
   /** Get list of possibile tag name completions */
-  QValueList<KTextEditor::CompletionEntry>* getTagCompletions(DTDStruct *dtd, int line, int col);
+  QValueList<KTextEditor::CompletionEntry>* getTagCompletions(int line, int col);
   /** Get list of possibile tag attribute completions */
-  QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions( DTDStruct *dtd, QString tagName, QString startsWith=QString::null);
+  QValueList<KTextEditor::CompletionEntry>* getAttributeCompletions(const QString& tagName,const QString& startsWith=QString::null);
   /** Get list of possibile tag attribute value completions */
-  QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions( DTDStruct *dtd, QString tagName, QString attribute, QString startsWith=QString::null);
+  QValueList<KTextEditor::CompletionEntry>* getAttributeValueCompletions(const QString& tagName, const QString& attribute, const QString& startsWith=QString::null);
   /** Get list of possibile completions in normal text input (nt creating a tag) */
   QValueList<KTextEditor::CompletionEntry>* getCharacterCompletions();
   /** Called whenever a user inputs text in an XML type document. */
-  bool xmlAutoCompletion(DTDStruct*,int , int , const QString & );
+  bool xmlAutoCompletion(int , int , const QString & );
   /** Called whenever a user inputs text in a script type document. */
-  bool scriptAutoCompletion(DTDStruct*,int , int , const QString & );
+  bool scriptAutoCompletion(int , int , const QString & );
   /** Invoke code completion dialog for XML like tags according to the position (line, col), using DTD dtd. */
-  bool xmlCodeCompletion(DTDStruct *dtd, int line, int col);
+  bool xmlCodeCompletion(int line, int col);
   /** Code completion is manually invoked for script type languages. */
-  bool scriptCodeCompletion(DTDStruct *dtd, int line, int col);
+  bool scriptCodeCompletion(int line, int col);
   /** Returns list of values for attribute */
   QStringList* tagAttributeValues(const QString& dtdName, const QString& tag, const QString& attribute);
 protected: // Protected attributes
