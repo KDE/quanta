@@ -300,7 +300,8 @@ Tag *Document::findStruct(int line, int col, const QRegExp& keywordRx)
       QRegExp fnRx = QRegExp("function[\\s]*",false);
       if (tag->name.contains(fnRx)) //it is a function
       {
-        QString name = tag->name.replace(fnRx,"");
+        QString name = tag->name;
+        name.replace(fnRx,"");
         QString paramStr = name.mid(name.find('(')+1);
         paramStr = paramStr.left(paramStr.find(')',-1));
         name = name.left(name.find('(')).stripWhiteSpace();
