@@ -100,8 +100,8 @@ QuantaView::QuantaView(QWidget *parent, const char *name )
   oldWrite = 0L;
   oldTab = 0L;
 
-  currentViewsLayout = QuantaView::QuantaViewOnly;//TODO: load it from the config
   #ifdef BUILD_KAFKAPART
+  currentViewsLayout = QuantaView::QuantaViewOnly;//TODO: load it from the config
   kafkaInterface = new WKafkaPart(0, 0, "KafkaHTMLPart");
   kafkaInterface->getKafkaPart()->view()->setMinimumHeight(50);
   #endif
@@ -129,6 +129,8 @@ Document* QuantaView::write()
 /** Add new kwrite class to writeStack and return id in stack */
 void QuantaView::addWrite( QWidget* w , QString label )
 {
+#ifdef BUILD_KAFKAPART
+
   int oldLayout;
 
   oldLayout = currentViewsLayout;
@@ -147,10 +149,12 @@ void QuantaView::addWrite( QWidget* w , QString label )
     if(oldLayout == QuantaView::QuantaAndKafkaViews)
       delete splitter;
   }
+#endif
   QIconSet emptyIcon ( UserIcon("empty16x16"));
   m_writeTab->addTab  ( w,  emptyIcon,  label.section("/",-1) );
   m_writeTab->setTabToolTip(w, label);
   m_writeTab->showPage( w );
+#ifdef BUILD_KAFKAPART
   if(oldLayout == QuantaView::QuantaAndKafkaViews)
   {
     slotShowKafkaAndQuanta();
@@ -159,6 +163,7 @@ void QuantaView::addWrite( QWidget* w , QString label )
   {
     slotShowKafkaPart();
   }
+#endif
   if (dynamic_cast<Document *>(w))
   {
     connect( dynamic_cast<Document*>(w)->view(),
@@ -169,6 +174,7 @@ void QuantaView::addWrite( QWidget* w , QString label )
 /** remove KWrite class from stack, return id of new KWrite */
 QWidget* QuantaView::removeWrite()
 {
+#ifdef BUILD_KAFKAPART
   int oldLayout;
 
   oldTab = 0L;
@@ -176,9 +182,11 @@ QWidget* QuantaView::removeWrite()
   currentViewsLayout = QuantaView::QuantaViewOnly;
   if(oldLayout == QuantaView::QuantaAndKafkaViews)
     _splittSizes = splitter->sizes();
+#endif
   if (writeExists())
   {
-      if(oldLayout != QuantaView::QuantaViewOnly)
+#ifdef BUILD_KAFKAPART
+    if(oldLayout != QuantaView::QuantaViewOnly)
     {
       kafkaInterface->getKafkaPart()->view()->hide();
       kafkaInterface->getKafkaPart()->view()->reparent(0, 0, QPoint(), false);
@@ -190,6 +198,7 @@ QWidget* QuantaView::removeWrite()
       if(oldLayout == QuantaView::QuantaAndKafkaViews)
         delete splitter;
     }
+#endif
     Document *w = write();
     m_writeTab->removePage(w);
     delete w;
@@ -197,6 +206,7 @@ QWidget* QuantaView::removeWrite()
   {
     m_writeTab->removePage( m_writeTab->currentPage() );
   }*/
+#ifdef BUILD_KAFKAPART
   if(!writeExists())
   {
   //no more view, going back to the quanta editor view
@@ -212,12 +222,14 @@ QWidget* QuantaView::removeWrite()
   {
     slotShowKafkaPart();
   }
+#endif
   oldWrite = dynamic_cast<Document*>(m_writeTab->currentPage()); //don't call write() here
   return oldWrite;
 }
 
 void QuantaView::updateViews()
 {
+#ifdef BUILD_KAFKAPART
   int oldLayout;
   Document *_doc;
   if(oldTab)
@@ -258,6 +270,7 @@ void QuantaView::updateViews()
        slotShowKafkaPart();
      }
    }
+#endif
 }
 
 void QuantaView::initActions()
@@ -380,9 +393,9 @@ void QuantaView::insertTag( const char *tag)
   }
 }
 
-   #ifdef BUILD_KAFKAPART
 void QuantaView::slotShowQuantaEditor()
 {
+#ifdef BUILD_KAFKAPART
   if(!writeExists())
     return;
   int id = quantaApp->rightWidget()->id(quantaApp->rightWidget()->visibleWidget());
@@ -414,10 +427,12 @@ void QuantaView::slotShowQuantaEditor()
     write()->view()->show();
     delete splitter;
   }
+#endif
 }
 
 void QuantaView::slotShowKafkaPart()
 {
+#ifdef BUILD_KAFKAPART
   if(!writeExists())
     return;
   int id = quantaApp->rightWidget()->id(quantaApp->rightWidget()->visibleWidget());
@@ -449,10 +464,12 @@ void QuantaView::slotShowKafkaPart()
     kafkaInterface->getKafkaPart()->view()->show();
     delete splitter;
   }
+#endif
 }
 
 void QuantaView::slotShowKafkaAndQuanta()
 {
+#ifdef BUILD_KAFKAPART
   if(!writeExists())
     return;
   int id = quantaApp->rightWidget()->id(quantaApp->rightWidget()->visibleWidget());
@@ -488,8 +505,10 @@ void QuantaView::slotShowKafkaAndQuanta()
   else
     return;
   currentViewsLayout = QuantaView::QuantaAndKafkaViews;
+#endif
 }
-  #endif
+
+#ifdef BUILD_KAFKAPART
 
 void QuantaView::resize(int width, int height)
 {
@@ -500,5 +519,6 @@ void QuantaView::resize(int width, int height)
   else if(currentViewsLayout == QuantaView::QuantaAndKafkaViews)
     splitter->resize(width,height);
 }
+#endif
 
 #include "quantaview.moc"

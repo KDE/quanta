@@ -68,6 +68,8 @@ public:
   void addWrite( QWidget* w , QString label );
   /** remove KWrite class from stack, return id of new KWrite */
   QWidget* removeWrite();
+#ifdef BUILD_KAFKAPART
+
   /** Return the WKafkaPart */
   WKafkaPart *getkafkaPart() {return kafkaInterface;}
   /** Return the curren views layout*/
@@ -79,11 +81,12 @@ public:
     KafkaViewOnly
   };
 
-  /** Update the views when the current page changed. Called by quantaApp::slotUpdateStatus. */
-  void updateViews();
-
   /** Resize the current view */
   void resize(int width, int height);
+#endif
+
+  /** Update the views when the current page changed. Called by quantaApp::slotUpdateStatus. */
+  void updateViews();
 
   /** initialise tags menu */
   void initMenu();
@@ -170,12 +173,10 @@ public slots:
   void slotEditorOptions();
   void setEol(int);
 
-   #ifdef BUILD_KAFKAPART
   //views
   void slotShowQuantaEditor();
   void slotShowKafkaPart();
   void slotShowKafkaAndQuanta();
-  #endif
 
 signals:
   void newCurPos();
@@ -195,10 +196,12 @@ private:
   int column;
   QString space;
 
-  /** Kafka stuff */
+#ifdef BUILD_KAFKAPART
+/** Kafka stuff */
   WKafkaPart *kafkaInterface;
   QSplitter *splitter;
   QValueList<int> _splittSizes;
+#endif
 
   int currentViewsLayout;
   bool beginOfScriptOutput;
