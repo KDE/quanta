@@ -3,6 +3,9 @@ This files contains the changes since Quanta 2.0 until the current 3.3.x series.
 Version 3.3.3 (Release date: xx-xx-2005; Started 30-11-2004):
  - bugfixes:
         - correctly select modified files for upload [#94167]
+	- remove the "autocomplete PHP functions after @" feature and restore
+	  PHP autocompletion
+
 
 Version 3.3.2 (Release date: 06-12-2004; Started 07-10-2004):
   - bugfixes:
