@@ -60,9 +60,10 @@ K_EXPORT_COMPONENT_FACTORY( libkxsldbgpart, KXsldbgPartFactory )
 KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char * /*widgetName*/,
                                   QObject *parent, const char *name,
                                   const QStringList & /*args*/ )
-  : KParts::ReadOnlyPart(parent, name)
+  : KParts::ReadOnlyPart(parent, name), DCOPObject("KXsldbgPart")
 {
     currentLineNo = 0;
+    currentColumnNo = 0;
     inspector = 0L;
     debugger = 0L;
     configWidget = 0L;
@@ -73,9 +74,11 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char * /*widgetName*/,
     QHBox *h = new QHBox(frame);
     newXPath = new QLineEdit(h);
     xPathBtn = new QPushButton(i18n("Goto XPath"), h);
+/* Disable searching as searching documentation is not ready
     h = new QHBox(frame);
     newSearch = new QLineEdit(h);
     searchBtn = new QPushButton(i18n("Search"), h);
+*/
     h = new QHBox(frame);
     newEvaluate = new QLineEdit(h);
     evaluateBtn = new QPushButton(i18n("Evaluate"), h);
@@ -85,6 +88,8 @@ KXsldbgPart::KXsldbgPart( QWidget *parentWidget, const char * /*widgetName*/,
     m_editWidget = new QXsldbgView( splitter);
     connect(m_editWidget, SIGNAL(cursorPositionChanged(int, int)),
             this, SLOT(editWidget_cursorPositionChanged(int, int)));
+    connect(m_editWidget,SIGNAL(openFile(QString, int, int)), 
+	    this,  SLOT(emitOpenFile(QString, int, int)));
     m_editWidget->setDocument(0L);
     outputview = new XsldbgOutputView(splitter);
     setWidget(frame);
@@ -464,6 +469,13 @@ void KXsldbgPart::createInspector()
     }
 }
 
+void KXsldbgPart::emitOpenFile(QString file, int line, int row)
+{
+    QByteArray params;
+    QDataStream stream(params, IO_WriteOnly);
+    stream << file << line << row;
+    emitDCOPSignal("openFile(QString,int,int)", params); 
+}
 void KXsldbgPart::continueCmd_activated()
 {
     if ( checkDebugger() )
@@ -612,18 +624,25 @@ KXsldbgPart::lineNoChanged(QString fileName, int lineNumber, bool breakpoint)
   /* Did we stop at a breakpoint if so move the marker */
   if (breakpoint) {
     m_editWidget->setMarkerPosition(lineNumber, 0);
-    emit  newDebuggerPosition(currentFileName, lineNumber);
+    QByteArray params;
+    QDataStream stream(params, IO_WriteOnly);
+    stream << currentFileName << lineNumber;
+    emitDCOPSignal("debuggerPositionChanged(QString,int)", params);
   }
 
   /* Move cursor and update status bar */
   m_editWidget->setCursorPosition( lineNumber, 0 );
 }
 
-void KXsldbgPart::editWidget_cursorPositionChanged( int lineNumber, int /*column*/)
+void KXsldbgPart::editWidget_cursorPositionChanged( int lineNumber, int columnNumber)
 {
-  if (currentLineNo != lineNumber + 1) {
+  if ((currentLineNo != lineNumber + 1) || (columnNumber != currentColumnNo )) {
     currentLineNo = lineNumber + 1;
-    emit  newCursorPosition(currentFileName, lineNumber);
+    currentColumnNo = columnNumber;
+    QByteArray params;
+    QDataStream stream(params, IO_WriteOnly);
+    stream << currentFileName << lineNumber << columnNumber;
+    emitDCOPSignal("editorPositionChanged(QString,int,int)", params);
   }
 
 }

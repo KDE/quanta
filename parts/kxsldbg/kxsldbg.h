@@ -7,6 +7,9 @@
 
 #include <kapplication.h>
 #include <kparts/mainwindow.h>
+#include <dcopobject.h> 
+#include <dcopclient.h> 
+#include "kxsldbgif.h"
 
 class KToggleAction;
 
@@ -18,9 +21,10 @@ class KToggleAction;
  * @author Keith Isdale <k_isdale@tpg.com.au>
  * @version 0.4
  */
-class KXsldbg : public KParts::MainWindow
+class KXsldbg : public KParts::MainWindow, public KXsldbgIf
 {
     Q_OBJECT
+
 public:
     /**
      * Default Constructor
@@ -31,6 +35,12 @@ public:
      * Default Destructor
      */
     virtual ~KXsldbg();
+
+    /**
+	KxsldbgIf implementation 
+    */ 
+    void newCursorPosition(QString file, int lineNumber, int columnNumber=0);
+    void newDebuggerPosition(QString file, int lineNumber);
 
 protected:
     /**
@@ -54,8 +64,6 @@ private slots:
 
     void applyNewToolbarConfig();
 
-    void newCursorPosition(const QString &file, int lineNumber);
-    void newDebuggerPosition(const QString &file, int lineNumber);
 
 private:
     void setupAccel();

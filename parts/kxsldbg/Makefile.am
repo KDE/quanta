@@ -1,6 +1,8 @@
-bin_PROGRAMS = kxsldbg xsldbg
+bin_PROGRAMS = kxsldbg
 
-kxsldbg_SOURCES = kxsldbg.cpp main.cpp
+kxsldbg_SOURCES = kxsldbg.cpp main.cpp kxsldbgif.skel
+noinst_HEADERS = kxsldbg.h
+include_HEADERS = kxsldbgif.h
 kxsldbg_LDADD   = ./kxsldbgpart/libqtnotfier/libqtnotfier.la ./kxsldbgpart/libkxsldbgpart.la ./kxsldbgpart/libxsldbg/libxsldbg.la  $(LIB_KDEUI) $(LIBXSLT_LIBS) $(LIBXML_LIBS)
 
 SUBDIRS = kxsldbgpart
@@ -8,19 +10,21 @@ SUBDIRS = kxsldbgpart
 applnk_DATA = kxsldbg.desktop
 applnkdir = $(kde_appsdir)/Development
 
-xsldbg_SOURCES = \
-	xsldbgmain.c  \
-	simpleio.c
-
-xsldbg_CFLAGS = $(XSLDBG_CFLAGS) $(all_includes)
-
-xsldbg_DEPENDENCIES  = kxsldbgpart/libxsldbg/libxsldbg.la kxsldbgpart/libqtnotfier/libqtnotfier.la
-
-# use of configure defined libraries
-xsldbg_LDADD = kxsldbgpart/libxsldbg/libxsldbg.la  kxsldbgpart/libqtnotfier/libqtnotfier.la $(LIB_QT) $(LIBXSLT_LIBS) $(LIBXML_LIBS)
-
-# the library search path.
-xsldbg_LDFLAGS = $(all_libraries)
+# Disable building xsldbg application as documentation for it is not ready
+#
+#xsldbg_SOURCES = \
+#	xsldbgmain.c  \
+#	simpleio.c
+#
+#xsldbg_CFLAGS = $(XSLDBG_CFLAGS) $(all_includes)
+#
+#xsldbg_DEPENDENCIES  = kxsldbgpart/libxsldbg/libxsldbg.la kxsldbgpart/libqtnotfier/libqtnotfier.la
+#
+## use of configure defined libraries
+#xsldbg_LDADD = kxsldbgpart/libxsldbg/libxsldbg.la  kxsldbgpart/libqtnotfier/libqtnotfier.la $(LIB_QT) $(LIBXSLT_LIBS) $(LIBXML_LIBS)
+#
+## the library search path.
+#xsldbg_LDFLAGS = $(all_libraries)
 
 # These paths are KDE specific. Use them:
 # kde_appsdir         Where your application's menu entry (.desktop) should go to.

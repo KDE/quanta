@@ -19,7 +19,7 @@
 #include <kstatusbar.h>
 
 KXsldbg::KXsldbg()
-    : KParts::MainWindow( 0L, "kxsldbg" )
+    : KParts::MainWindow( 0L, "kxsldbg" ), DCOPObject("KXsldbg")
 {
     // set the shell's ui resource file
     setXMLFile("kxsldbg_shell.rc");
@@ -51,10 +51,9 @@ KXsldbg::KXsldbg()
             createGUI(m_part);
 
 	    // connect up signals
-	    connect(m_part, SIGNAL(newCursorPosition(const QString &, int)),
-		    this, SLOT(newCursorPosition(const QString &, int)));
-	    connect(m_part, SIGNAL(newDebuggerPosition(const QString &, int)),
-		    this, SLOT(newDebuggerPosition(const QString &, int)));
+	    kapp->dcopClient()->attach();
+	    connectDCOPSignal(0, 0, "debuggerPositionChanged(QString,int)", "newDebuggerPosition(QString,int)", false );
+	    connectDCOPSignal(0, 0, "editorPositionChanged(QString,int,int)", "newCursorPosition(QString,int,int)", false );
         }
 
     }
@@ -140,18 +139,16 @@ void KXsldbg::applyNewToolbarConfig()
 }
 
 
-
-void KXsldbg::newCursorPosition(const QString &file, int lineNumber)
+void KXsldbg::newCursorPosition(QString file, int lineNumber, int columnNumber)
 {
     statusBar()->clear();
-    statusBar()->message( i18n("Line: %1 %2").arg(lineNumber).arg(file));
+    statusBar()->message( i18n("File: %1  Line: %2  Col: %3").arg(file).arg(lineNumber).arg(columnNumber));
 }
 
-void KXsldbg::newDebuggerPosition(const QString &file, int lineNumber)
+void KXsldbg::newDebuggerPosition(QString file, int lineNumber)
 {
-    statusBar()->clear();
-    statusBar()->message( i18n("Stopped at line: %1 %2").arg(lineNumber).arg(file) );
-
+    // maybe do something extra here later
+    newCursorPosition(file, lineNumber);
 }
 
 #include "kxsldbg.moc"

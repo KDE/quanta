@@ -7,6 +7,9 @@
 #include <qmainwindow.h>
 #include "xsldbgdebugger.h"
 #include "xsldbginspector.h"
+#include <dcopclient.h>
+#include "kxsldbg_partif.h" 
+
 class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
@@ -39,9 +42,10 @@ typedef QDict<QXsldbgDoc> XsldbgDocDict;
  * @author Keith Isdale <k_isdale@tpg.com.au>
  * @version 0.1
  */
-class KXsldbgPart : public KParts::ReadOnlyPart
+class KXsldbgPart : public KParts::ReadOnlyPart, public KXsldbgPartIf 
 {
     Q_OBJECT
+
 public:
     /**
      * Default constructor
@@ -62,15 +66,12 @@ public:
      * @returns TRUE if debugger is ready, otherwise FALSE
      */
     bool checkDebugger();
-    void lookupSystemID( QString systemID);
+    void lookupSystemID(QString systemID);
     void lookupPublicID(QString publicID);
     void createInspector();
 
-signals:
-    void newCursorPosition(const QString &file, int lineNumber); 
-    void newDebuggerPosition(const QString &file, int lineNumber); 
-
 public slots:
+    void emitOpenFile(QString file, int line, int row);
     void slotLookupSystemID();
     void slotLookupPublicID();
     void walkCmd_activated();
@@ -104,7 +105,7 @@ public slots:
     virtual void lineNoChanged( QString fileName, int lineNumber,
 				bool breakpoint );
     virtual void editWidget_cursorPositionChanged( int lineNumber,
-						   int column );
+						   int columnNumber );
 
     void addBreakPoint(int lineNumber);
     void enableBreakPoint(int lineNumber);
@@ -143,7 +144,7 @@ private:
     QLineEdit *newXPath, *newSearch, *newEvaluate;
     QGridLayout* qxsldbgLayout;
 
-    int currentLineNo;
+    int currentLineNo, currentColumnNo;
     XsldbgDocDict docDictionary;
     XsldbgInspector *inspector;
     XsldbgDebugger *debugger;

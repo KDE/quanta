@@ -42,6 +42,7 @@ Q_OBJECT
 
  signals:
   void cursorPositionChanged(int para, int pos);
+  void openFile(QString fileName, int lineNumber, int columnNumber);
   void addBreakPoint(int lineNumber);
   void enableBreakPoint(int lineNumber);
   void deleteBreakPoint(int lineNumber);
