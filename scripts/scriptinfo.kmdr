@@ -15,346 +15,348 @@
     <property name="caption">
         <string>Quanta Script Info Generator</string>
     </property>
-    <widget class="TabWidget">
+    <grid>
         <property name="name">
-            <cstring>TabWidget1</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>1</y>
-                <width>470</width>
-                <height>529</height>
-            </rect>
+        <property name="margin">
+            <number>11</number>
         </property>
-        <widget class="QWidget">
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="TabWidget" row="0" column="0">
             <property name="name">
-                <cstring>tab</cstring>
+                <cstring>TabWidget1</cstring>
             </property>
-            <attribute name="title">
-                <string>Enter Info</string>
-            </attribute>
-            <grid>
+            <widget class="QWidget">
                 <property name="name">
-                    <cstring>unnamed</cstring>
+                    <cstring>tab</cstring>
                 </property>
-                <property name="margin">
-                    <number>11</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLabel" row="0" column="1" rowspan="1" colspan="2">
+                <attribute name="title">
+                    <string>Enter Info</string>
+                </attribute>
+                <grid>
                     <property name="name">
-                        <cstring>TextLabel1_3</cstring>
+                        <cstring>unnamed</cstring>
                     </property>
-                    <property name="font">
-                        <font>
-                            <family>helvetica [Adobe]</family>
-                            <bold>1</bold>
-                            <italic>1</italic>
-                        </font>
+                    <property name="margin">
+                        <number>11</number>
                     </property>
-                    <property name="text">
-                        <string>Please fill in all fields</string>
+                    <property name="spacing">
+                        <number>6</number>
                     </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Script Name:</string>
-                    </property>
-                </widget>
-                <widget class="LineEdit" row="1" column="1">
-                    <property name="name">
-                        <cstring>Name</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>@widgetText</string>
-                        </stringlist>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Enter the script name with the extention</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="8" column="0">
-                    <property name="name">
-                        <cstring>TextLabel5</cstring>
-                    </property>
-                    <property name="text">
-                        <string>About Script:</string>
-                    </property>
-                </widget>
-                <widget class="TextEdit" row="8" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>about</cstring>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>&lt;about&gt;@widgetText&lt;/about&gt;</string>
-                        </stringlist>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Formatting may be done with XHTML tags</string>
-                    </property>
-                </widget>
-                <widget class="LineEdit" row="5" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>website</cstring>
-                    </property>
-                    <property name="text">
-                        <string>http://</string>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>&lt;website&gt;@widgetText&lt;/website&gt;</string>
-                        </stringlist>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>The location of your up to date file on the web</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>TextLabel2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Script Author:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="7" column="0">
-                    <property name="name">
-                        <cstring>TextLabel4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Script License:</string>
-                    </property>
-                </widget>
-                <widget class="FileSelector" row="9" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>FileSelector1</cstring>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>@widgetText/@Name.info</string>
-                        </stringlist>
-                    </property>
-                    <property name="selectionType">
-                        <enum>Directory</enum>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Select the directory to write the .info file to</string>
-                    </property>
-                </widget>
-                <widget class="ComboBox" row="7" column="1" rowspan="1" colspan="2">
-                    <item>
-                        <property name="text">
-                            <string>GPL</string>
+                    <widget class="QLabel" row="0" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>TextLabel1_3</cstring>
                         </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>LGPL</string>
+                        <property name="font">
+                            <font>
+                                <family>helvetica [Adobe]</family>
+                                <bold>1</bold>
+                                <italic>1</italic>
+                            </font>
                         </property>
-                    </item>
-                    <item>
                         <property name="text">
-                            <string>BSD</string>
+                            <string>Please fill in all fields</string>
                         </property>
-                    </item>
-                    <item>
+                    </widget>
+                    <widget class="QLabel" row="1" column="0">
+                        <property name="name">
+                            <cstring>TextLabel1</cstring>
+                        </property>
                         <property name="text">
-                            <string>Public Domain</string>
+                            <string>Script Name:</string>
                         </property>
-                    </item>
-                    <item>
+                    </widget>
+                    <widget class="LineEdit" row="1" column="1">
+                        <property name="name">
+                            <cstring>Name</cstring>
+                        </property>
+                        <property name="sizePolicy">
+                            <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                            </sizepolicy>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>@widgetText</string>
+                            </stringlist>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Enter the script name with the extention</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="8" column="0">
+                        <property name="name">
+                            <cstring>TextLabel5</cstring>
+                        </property>
                         <property name="text">
-                            <string>Other</string>
+                            <string>About Script:</string>
                         </property>
-                    </item>
-                    <property name="name">
-                        <cstring>license</cstring>
-                    </property>
-                    <property name="editable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>&lt;license&gt;@widgetText&lt;/license&gt;</string>
-                        </stringlist>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>If other include in about</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1_4</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Editor/Executor:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0">
-                    <property name="name">
-                        <cstring>TextLabel3</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Author Email:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="5" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Web Address:</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="6" column="0">
-                    <property name="name">
-                        <cstring>TextLabel2_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Version Number:</string>
-                    </property>
-                </widget>
-                <widget class="LineEdit" row="3" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>Author</cstring>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>&lt;author&gt;@widgetText&lt;/author&gt;</string>
-                        </stringlist>
-                    </property>
-                </widget>
-                <widget class="LineEdit" row="4" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>email</cstring>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>&lt;email&gt;@widgetText&lt;/email&gt;</string>
-                        </stringlist>
-                    </property>
-                </widget>
-                <widget class="LineEdit" row="6" column="1">
-                    <property name="name">
-                        <cstring>version</cstring>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>&lt;version&gt;@widgetText&lt;/version&gt;</string>
-                        </stringlist>
-                    </property>
-                </widget>
-                <widget class="ComboBox" row="2" column="1">
-                    <item>
+                    </widget>
+                    <widget class="TextEdit" row="8" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>about</cstring>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>&lt;about&gt;@widgetText&lt;/about&gt;</string>
+                            </stringlist>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Formatting may be done with XHTML tags</string>
+                        </property>
+                    </widget>
+                    <widget class="LineEdit" row="5" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>website</cstring>
+                        </property>
                         <property name="text">
-                            <string></string>
+                            <string>http://</string>
                         </property>
-                    </item>
-                    <item>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>&lt;website&gt;@widgetText&lt;/website&gt;</string>
+                            </stringlist>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>The location of your up to date file on the web</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="3" column="0">
+                        <property name="name">
+                            <cstring>TextLabel2</cstring>
+                        </property>
                         <property name="text">
-                            <string>kmdr-editor</string>
+                            <string>Script Author:</string>
                         </property>
-                    </item>
-                    <item>
+                    </widget>
+                    <widget class="QLabel" row="7" column="0">
+                        <property name="name">
+                            <cstring>TextLabel4</cstring>
+                        </property>
                         <property name="text">
-                            <string>kwrite</string>
+                            <string>Script License:</string>
                         </property>
-                    </item>
-                    <item>
+                    </widget>
+                    <widget class="FileSelector" row="9" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>FileSelector1</cstring>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>@widgetText/@Name.info</string>
+                            </stringlist>
+                        </property>
+                        <property name="selectionType">
+                            <enum>Directory</enum>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Select the directory to write the .info file to</string>
+                        </property>
+                    </widget>
+                    <widget class="ComboBox" row="7" column="1" rowspan="1" colspan="2">
+                        <item>
+                            <property name="text">
+                                <string>GPL</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>LGPL</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>BSD</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>Public Domain</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>Other</string>
+                            </property>
+                        </item>
+                        <property name="name">
+                            <cstring>license</cstring>
+                        </property>
+                        <property name="editable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>&lt;license&gt;@widgetText&lt;/license&gt;</string>
+                            </stringlist>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>If other include in about</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="2" column="0">
+                        <property name="name">
+                            <cstring>TextLabel1_4</cstring>
+                        </property>
                         <property name="text">
-                            <string>kate</string>
+                            <string>Editor/Executor:</string>
                         </property>
-                    </item>
-                    <item>
+                    </widget>
+                    <widget class="QLabel" row="4" column="0">
+                        <property name="name">
+                            <cstring>TextLabel3</cstring>
+                        </property>
                         <property name="text">
-                            <string>kdevelop</string>
+                            <string>Author Email:</string>
                         </property>
-                    </item>
-                    <property name="name">
-                        <cstring>editor</cstring>
-                    </property>
-                    <property name="editable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>@widgetText</string>
-                        </stringlist>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Optional: Editor other than Quanta to use for this script</string>
-                    </property>
-                </widget>
-                <widget class="ComboBox" row="2" column="2">
-                    <item>
+                    </widget>
+                    <widget class="QLabel" row="5" column="0">
+                        <property name="name">
+                            <cstring>TextLabel1_2</cstring>
+                        </property>
                         <property name="text">
-                            <string></string>
+                            <string>Web Address:</string>
                         </property>
-                    </item>
-                    <item>
+                    </widget>
+                    <widget class="QLabel" row="6" column="0">
+                        <property name="name">
+                            <cstring>TextLabel2_2</cstring>
+                        </property>
                         <property name="text">
-                            <string>kmdr-executor</string>
+                            <string>Version Number:</string>
                         </property>
-                    </item>
-                    <item>
+                    </widget>
+                    <widget class="LineEdit" row="3" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>Author</cstring>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>&lt;author&gt;@widgetText&lt;/author&gt;</string>
+                            </stringlist>
+                        </property>
+                    </widget>
+                    <widget class="LineEdit" row="4" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>email</cstring>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>&lt;email&gt;@widgetText&lt;/email&gt;</string>
+                            </stringlist>
+                        </property>
+                    </widget>
+                    <widget class="LineEdit" row="6" column="1">
+                        <property name="name">
+                            <cstring>version</cstring>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>&lt;version&gt;@widgetText&lt;/version&gt;</string>
+                            </stringlist>
+                        </property>
+                    </widget>
+                    <widget class="ComboBox" row="2" column="1">
+                        <item>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>kmdr-editor</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>kwrite</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>kate</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>kdevelop</string>
+                            </property>
+                        </item>
+                        <property name="name">
+                            <cstring>editor</cstring>
+                        </property>
+                        <property name="editable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>@widgetText</string>
+                            </stringlist>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Optional: Editor other than Quanta to use for this script</string>
+                        </property>
+                    </widget>
+                    <widget class="ComboBox" row="2" column="2">
+                        <item>
+                            <property name="text">
+                                <string></string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>kmdr-executor</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>perl</string>
+                            </property>
+                        </item>
+                        <item>
+                            <property name="text">
+                                <string>php</string>
+                            </property>
+                        </item>
+                        <property name="name">
+                            <cstring>executor</cstring>
+                        </property>
+                        <property name="editable">
+                            <bool>true</bool>
+                        </property>
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>@widgetText</string>
+                            </stringlist>
+                        </property>
+                        <property name="toolTip" stdset="0">
+                            <string>Optional: External program executor</string>
+                        </property>
+                    </widget>
+                    <widget class="QLabel" row="9" column="0">
+                        <property name="name">
+                            <cstring>TextLabel6</cstring>
+                        </property>
                         <property name="text">
-                            <string>perl</string>
+                            <string>Script Location:</string>
                         </property>
-                    </item>
-                    <item>
+                    </widget>
+                    <widget class="CloseButton" row="10" column="1" rowspan="1" colspan="2">
+                        <property name="name">
+                            <cstring>CloseButton1</cstring>
+                        </property>
                         <property name="text">
-                            <string>php</string>
+                            <string>Write File</string>
                         </property>
-                    </item>
-                    <property name="name">
-                        <cstring>executor</cstring>
-                    </property>
-                    <property name="editable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>@widgetText</string>
-                        </stringlist>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Optional: External program executor</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="9" column="0">
-                    <property name="name">
-                        <cstring>TextLabel6</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Script Location:</string>
-                    </property>
-                </widget>
-                <widget class="CloseButton" row="10" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>CloseButton1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Write File</string>
-                    </property>
-                    <property name="associations" stdset="0">
-                        <stringlist>
-                            <string>options=""
+                        <property name="associations" stdset="0">
+                            <stringlist>
+                                <string>options=""
 if [ "@editor" ] || [ "@executor" ]; then
 #  echo "@editor @executor"
 #  editor=''
@@ -382,35 +384,37 @@ $options&lt;name&gt;@Name&lt;/name&gt;
 @license
 @about
 &lt;/INFO&gt;" &gt; @FileSelector1</string>
-                        </stringlist>
-                    </property>
-                    <property name="writeStdout">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>tab</cstring>
-            </property>
-            <attribute name="title">
-                <string>About</string>
-            </attribute>
-            <widget class="TextEdit">
+                            </stringlist>
+                        </property>
+                        <property name="writeStdout">
+                            <bool>true</bool>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
+            <widget class="QWidget">
                 <property name="name">
-                    <cstring>TextEdit3</cstring>
+                    <cstring>tab</cstring>
                 </property>
-                <property name="geometry">
-                    <rect>
-                        <x>5</x>
-                        <y>10</y>
-                        <width>457</width>
-                        <height>470</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;/head&gt;&lt;body style="font-size:11pt;font-family:helvetica"&gt;
+                <attribute name="title">
+                    <string>About</string>
+                </attribute>
+                <grid>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
+                        <number>11</number>
+                    </property>
+                    <property name="spacing">
+                        <number>6</number>
+                    </property>
+                    <widget class="TextEdit" row="0" column="0">
+                        <property name="name">
+                            <cstring>TextEdit3</cstring>
+                        </property>
+                        <property name="text">
+                            <string>&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;/head&gt;&lt;body style="font-size:10pt;font-family:Arial"&gt;
 &lt;p style="margin-top:16px"&gt;&lt;span style="font-weight:600"&gt;Quanta Plus Submitter Info Files&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;The purpose of these files is to provide developers with proper credit, expose licensing information and give users thumbnail information about scripts and templates at a glance. We ask that you try to do several things here.&lt;/p&gt;
 &lt;ul type="disc"&gt;&lt;li&gt;Fill in all the fields. They are all there for a reason.&lt;/li&gt;
@@ -420,10 +424,12 @@ $options&lt;name&gt;@Name&lt;/name&gt;
 &lt;p align="center"&gt;Quanta Resource Maintainer - (none at this time)&lt;br /&gt;Lead Developer - Andras Mantia &lt;a href="mailto:amantia@freemail.hu?subject=ScriptInfo"&gt;amantia@freemail.hu&lt;/a&gt;&lt;br /&gt;Project Lead - Eric Laffoon &lt;a href="mailto:sequitur@kde.org?subject=ScriptInfo"&gt;sequitur@kde.org&lt;/a&gt;&lt;/p&gt;
 &lt;/body&gt;&lt;/html&gt;
 </string>
-                </property>
+                        </property>
+                    </widget>
+                </grid>
             </widget>
         </widget>
-    </widget>
+    </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
