@@ -3045,6 +3045,7 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
      //check if the toolbar's XML GUI was modified or not
      QString s1 = p_toolbar->dom->toString();
      QString s2 = toolbarGUI->domDocument().toString();
+     bool useToolbarGUI = true;
      if ( s1 != s2 /*|| actionsModified */)
      {
       int result;
@@ -3090,6 +3091,11 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
                     return false;
                 break;
              }
+        case KMessageBox::No:
+             {
+               useToolbarGUI = false;
+               break;
+             }
         case KMessageBox::Cancel: return false;
 
       }
@@ -3097,7 +3103,10 @@ bool QuantaApp::slotRemoveToolbar(const QString& name)
      guiFactory()->removeClient(toolbarGUI);
      delete p_toolbar->menu;
 //unplug the actions and remove them if they are not used in other places
-     nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
+     if (useToolbarGUI)
+       nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
+     else
+       nodeList = p_toolbar->dom->elementsByTagName("Action");
      for (uint i = 0; i < nodeList.count(); i++)
      {
        action = actionCollection()->action(nodeList.item(i).toElement().attribute("name"));

@@ -1811,6 +1811,8 @@ void Document::slotDelayedTextChanged()
           bool updateClosing = (currentNode->tag->type == Tag::XmlTag);
           int num = 1;
           QString newName = node->tag->name;
+          if (!node->tag->nameSpace.isEmpty())
+            newName.prepend(node->tag->nameSpace + ":");
           if (updateClosing)
             node = node->nextSibling();
           else

@@ -457,7 +457,9 @@ Format QuantaCommon::findFormatByFileContent( const QString &fileName )
 {
   Format result;
   result.compression = Format::NoCompression;
-  KMimeType::Ptr mime = KMimeType::findByFileContent(fileName);
+  KMimeType::Ptr mime = findByPath(fileName);
+  if (mime->name() == "application/octet-stream")
+     mime =  findByFileContent(fileName);
 
   result.text = mime->name().startsWith("text/");
   QVariant v = mime->property("X-KDE-text");
