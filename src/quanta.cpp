@@ -1164,7 +1164,7 @@ void QuantaApp::slotOptions()
   fileMasks->defaultDTDCombo->setCurrentItem(pos);
 
   // Preview options
-  page=kd->addVBoxPage(i18n("User Interface"), QString::null, BarIcon("kview", KIcon::SizeMedium ) );
+  page=kd->addVBoxPage(i18n("User Interface"), QString::null, BarIcon("view_choose", KIcon::SizeMedium ) );
   PreviewOptions *uiOptions = new PreviewOptions( (QWidget *)page );
 
   uiOptions->setPosition(qConfig.previewPosition);
@@ -1199,7 +1199,7 @@ void QuantaApp::slotOptions()
   parserOptions->showClosingTags->setChecked(qConfig.showClosingTags);
   parserOptions->spinExpand->setValue(qConfig.expandLevel);
 
-  page = kd->addVBoxPage(i18n("Abbreviations"), QString::null, BarIcon("source", KIcon::SizeMedium));
+  page = kd->addVBoxPage(i18n("Abbreviations"), QString::null, BarIcon("fontsizeup", KIcon::SizeMedium));
   AbbreviationDlg *abbreviationOptions = new AbbreviationDlg((QWidget*)(page));
 
   bool reloadTrees = false;
