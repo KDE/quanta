@@ -168,14 +168,15 @@ void QuantaView::addWrite( QWidget* w , QString label )
   QIconSet emptyIcon ( UserIcon("empty16x16"));
   m_writeTab->addTab  ( w,  emptyIcon,  label.section("/",-1) );
   m_writeTab->setTabToolTip(w, label);
+  Document *wr = dynamic_cast<Document *>(w);
 #ifdef BUILD_KAFKAPART
-  if(dynamic_cast<Document *>(w))
-    connect((dynamic_cast<Document *>(w))->view(), SIGNAL(gotFocus(Kate::View *)),
+  if (wr)
+    connect(wr->view(), SIGNAL(gotFocus(Kate::View *)),
       this, SLOT(slotQuantaGetFocus(Kate::View *)));
 #endif
   m_writeTab->showPage( w );
 #ifdef BUILD_KAFKAPART
-  if(write()->defaultDTD()->name.contains("HTML", false) == 0)
+  if(writeExists() && write()->defaultDTD()->name.contains("HTML", false) == 0)
   {
     slotShowQuantaEditor();
   }
@@ -188,9 +189,9 @@ void QuantaView::addWrite( QWidget* w , QString label )
     slotShowKafkaPart();
   }
 #endif
-  if (dynamic_cast<Document *>(w))
+  if (wr)
   {
-    connect( dynamic_cast<Document*>(w)->view(),
+    connect( wr->view(),
              SIGNAL(cursorPositionChanged()), this, SLOT(slotNewCurPos()));
   }
 }
