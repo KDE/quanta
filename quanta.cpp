@@ -2357,7 +2357,7 @@ void QuantaApp::slotSendToolbar()
         message = mailDlg->titleEdit->text();
     } else
     {
-      KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error sending e-mail"));
+      KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error Sending Email"));
       delete mailDlg;
       return;
     }
@@ -3209,7 +3209,7 @@ void QuantaApp::slotEmailDTD()
           message = mailDlg->titleEdit->text();
     } else
     {
-      KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error sending e-mail"));
+      KMessageBox::error(this,i18n("No destination address was specified./n Sending is aborted."),i18n("Error Sending Email"));
       delete mailDlg;
       return;
     }
