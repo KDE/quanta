@@ -1649,6 +1649,9 @@ bool kafkaCommon::addNodeRecursively(Node *newNode, Node *leafNode,
 
 Node *kafkaCommon::duplicateNode(Node *node)
 {
+    if(!node)
+        return 0;
+    
     Node *newNode;
 
     if(!node)
