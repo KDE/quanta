@@ -44,10 +44,9 @@
 #include "../quanta.h"
 #include "../tagdialogs/tagmaildlg.h"
 
-ScriptTreeView::ScriptTreeView(const KURL& projectBaseURL, QWidget *parent, const char *name )
+ScriptTreeView::ScriptTreeView(QWidget *parent, const char *name )
   : FilesTreeView(parent,name)
 {
-  m_baseURL = projectBaseURL;
   excludeFilterRx.setPattern("*.info");
 
   KURL url;
@@ -239,7 +238,7 @@ void ScriptTreeView::slotSendScriptInMail()
     tar.close();
 
     tempFile->close();
-    quantaApp->tempFileList.append(tempFile);
+    tempFileList.append(tempFile);
 
     QStringList attachmentFile;
     attachmentFile += tempFile->name();

@@ -390,7 +390,7 @@ void QuantaApp::initView()
   tTab = new TemplatesTreeView("" , ttabdock);
   dTab = new DocTreeView(dtabdock);
   sTab = new StructTreeView(m_config, stabdock ,"struct");
-  scriptTab = new ScriptTreeView("", scripttabdock);
+  scriptTab = new ScriptTreeView(scripttabdock);
 
   rightWidgetStack = new QWidgetStack(maindock);
   bottomWidgetStack = new QWidgetStack(bottdock);

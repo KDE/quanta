@@ -730,7 +730,7 @@ KURL TemplatesTreeView::filterTemplate()
    filterAction->setInputFileName(url.path());
    filterAction->execute();
    tempFile->close();
-   quantaApp->tempFileList.append(tempFile);
+   tempFileList.append(tempFile);
    url.setPath(tempFile->name());
  }
  return url;

@@ -27,6 +27,7 @@
 #include "../parser/tag.h"
 #include "../parser/node.h"
 #include "../resource.h"
+#include "../quantacommon.h"
 #include "../document.h"
 
 

@@ -28,10 +28,12 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kprotocolinfo.h>
+#include <kprogress.h>
+#include <ktempfile.h>
 
 #include "quantacommon.h"
 
-#include "resource.h"
+//#include "resource.h"
 
 
 QConfig qConfig; //holds the main configuration settings
@@ -46,9 +48,10 @@ Parser *parser;
 KDirWatch *fileWatcher;
 KProgress *progressBar;
 
-const QString toolbarExtension = ".toolbar.tgz";
-const QRegExp newLineRx("\\n");
+QString toolbarExtension = ".toolbar.tgz";
+QRegExp newLineRx("\\n");
 QStringList charList; //hold the list of the &char; chars. See the data/chars file.
+QPtrList<KTempFile> tempFileList;
 
 QuantaCommon::QuantaCommon(){
 }

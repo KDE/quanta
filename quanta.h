@@ -512,7 +512,6 @@ protected: // Protected attributes
   KURL urlUnderCursor;
 
 public: //TODO: check if it's worth to make a read method for them
-  QPtrList<KTempFile> tempFileList;
   QDict<ToolbarEntry> toolbarList;
   KToggleAction *viewBorder;
   KToggleAction *viewLineNumbers;

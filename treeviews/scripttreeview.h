@@ -26,7 +26,7 @@ class FilesTreeFolder;
 class ScriptTreeView : public FilesTreeView  {
    Q_OBJECT
 public:
-   ScriptTreeView(const KURL& projectBaseURL, QWidget *parent=0, const char *name=0);
+   ScriptTreeView(QWidget *parent=0, const char *name=0);
   ~ScriptTreeView();
 
 public slots:
@@ -45,7 +45,6 @@ signals:
 private:
   KURL infoFile(const KURL& a_url);
 
-  KURL m_baseURL;
   FilesTreeFolder *m_globalDir;
   FilesTreeFolder *m_localDir;
 

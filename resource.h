@@ -19,16 +19,20 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "quantacommon.h"
+//qt includes
+#include <qdict.h>
 
 class KDirWatch;
 class KProgress;
 class QuantaApp;
 class QStringList;
+class KTempFile;
+
+class Node;
+class Parser;
+struct QConfig;
+struct DTDStruct;
+
 
 extern QConfig qConfig;
 extern QString tmpDir;
@@ -42,9 +46,10 @@ extern Parser *parser;
 
 extern KDirWatch *fileWatcher;
 
-extern const QString toolbarExtension;
-extern const QRegExp newLineRx;
+extern QString toolbarExtension;
+extern QRegExp newLineRx;
 extern QStringList charList; //hold the list of the &char; chars. See the data/chars file.
+extern QPtrList<KTempFile> tempFileList;
 
 extern KProgress *progressBar;
 extern QuantaApp *quantaApp;
