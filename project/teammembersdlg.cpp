@@ -57,7 +57,7 @@ void TeamMembersDlg::slotAddMember()
         QString role = memberDlg.roleCombo->currentText();
         QString task = memberDlg.taskEdit->text();
         QString subProject = memberDlg.subprojectCombo->currentText();
-        if (name)
+        if (name.isEmpty())
         {
            KMessageBox::error(this, i18n("The member name cannot be empty."));
            addDlg.show();
@@ -146,7 +146,7 @@ void TeamMembersDlg::slotDeleteMember()
 {
    QListViewItem *item =membersListView->currentItem();
    if (!item) return;
-   if (KMessageBox::questionYesNo(this, i18n("<qt>Are you sure that you want to remove <b>%1</b> from the project team?</qt>").arg(item->text(0)), i18n("Delete Member")) == KMessageBox::Yes)
+   if (KMessageBox::warningYesNo(this, i18n("<qt>Are you sure that you want to remove <b>%1</b> from the project team?</qt>").arg(item->text(0)), i18n("Delete Member")) == KMessageBox::Yes)
    {
       delete item;
    }
@@ -167,7 +167,7 @@ bool TeamMembersDlg::checkDuplicates(const QString &role, const QString &task, c
               (role == i18n(subprojectLeaderStr.utf8()) && it.current()->text(4) == subProject)
              ) )
         {
-            if (KMessageBox::questionYesNo(this, i18n("<qt>The <b>%1</b> role is already assigned to <b>%2</b>. Do you want to reassign it to the current member?</qt>").arg(role).arg(it.current()->text(0))) == KMessageBox::Yes)
+            if (KMessageBox::warningYesNo(this, i18n("<qt>The <b>%1</b> role is already assigned to <b>%2</b>. Do you want to reassign it to the current member?</qt>").arg(role).arg(it.current()->text(0))) == KMessageBox::Yes)
             {
               it.current()->setText(2, i18n(simpleMemberStr.utf8()));
               return true;
