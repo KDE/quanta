@@ -56,68 +56,13 @@ propertySetter::propertySetter(QWidget *parent, const char *name ) : QHBox(paren
 
 }
 propertySetter::~propertySetter(){
-  /*list.clear();
-  if(pb) delete pb;
-  pb=0;*/
   reset();
 }
 
 void propertySetter::reset(){
   if(!list.isEmpty())
     list.clear();
- /* if(cb) {
-    delete cb;
-    cb=0;
-  }
-  if(le) {
-    delete le;
-    le=0;
-  }
-  if(sb) {
-    delete sb;
-    sb=0;
-  }
-  if(lE) {
-    delete lE;
-    lE=0;
-  }
-  if(dlE) {
-    delete dlE;
-    dlE=0;
-  }
-  if(dpe) {
-    delete dpe;
-    dpe=0;
-  }
-  if(dcbe) {
-    delete dcbe;
-    dcbe=0;
-  }
-  if(pe) {
-    delete pe;
-    pe=0;
-  }
-  if(ue) {
-    delete ue;
-    ue=0;
-  }
-  if(fe) {
-    delete fe;
-    fe=0;
-  }
-  if(te) {
-    delete te;
-    te=0;
-  }
-  if(ae) {
-    delete ae;
-    ae=0;
-  }
-  if(cr) {
-    delete cr;
-    cr=0;
-  }
-*/
+
   if(pb) {
     delete pb;
     pb=0;
@@ -248,16 +193,16 @@ void propertySetter::Show(){
 void propertySetter::addButton(){
 
   pb = new KPushButton(this);
-  Q_CHECK_PTR( pb );
-  pb->hide();
-  QString arrow = locate("appdata","csseditor/data/ar.png");
-//  QIconSet iconSet(QPixmap(arrow));
-//  QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
+  //pb->hide();
+  //QString arrow = locate("appdata","csseditor/data/ar.png");
+  QIconSet iconSet = SmallIconSet(QString::fromLatin1("2rightarrow"));
+  QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
 
-//  pb->setIconSet(iconSet);
-  QPixmap pixMap(arrow);
-  pb->setPixmap(pixMap);
+  pb->setIconSet(iconSet);
+  //QPixmap pixMap(arrow);
+  //pb->setPixmap(pixMap);
   pb->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
+  pb->hide();
   connect(pb, SIGNAL(clicked()), this ,SLOT(Show()));
 }
 

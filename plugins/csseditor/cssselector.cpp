@@ -237,7 +237,6 @@ void CSSSelector::loadExistingStyleSection(/*QMap<QString,QString> m*/QString s)
   QString tempStr=QString::null;
 
   QString atRuleType(QString::null);
-  bool flag=false;
 
 
   while(atPos){

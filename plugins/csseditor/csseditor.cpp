@@ -17,7 +17,7 @@
 #include "csseditor.h"
 #include <qlistview.h>
 #include <qlayout.h>
-#include <klocale.h>
+
 #include <qtabwidget.h>
 #include <qfile.h>
 #include <qpushbutton.h>
@@ -25,14 +25,21 @@
 #include <qlineedit.h>
 #include <qtextedit.h>
 #include <qhbox.h>
-#include "propertysetter.h"
-#include <khtml_part.h>
-#include <khtmlview.h>
+
+
 #include <qregexp.h>
 #include <qtextstream.h>
+
+#include <klocale.h>
+#include <khtml_part.h>
+#include <khtmlview.h>
 #include <kstandarddirs.h>
+#include <ktempfile.h>
+
+#include "propertysetter.h"
 #include "qmyhighlighter.h"
 #include "csseditor_globals.h" 
+#include "../../resource.h"
 
 
 
@@ -137,8 +144,9 @@ void CSSEditor::buildListView(QDomNodeList l, QListView *lv){
   }
 } 
 
+
 void CSSEditor::activatePreview() { 
-previewer->openURL(testFileName); 
+previewer->openURL(testFile->name()); 
 }
 
 void CSSEditor::initialize()
@@ -149,29 +157,10 @@ void CSSEditor::initialize()
 
   display->setReadOnly(true);
   
-
-  QFile testFile(testFileName);
-  if ( testFile.open( IO_WriteOnly ) ) {
-    QTextStream stream( &testFile );
-    if(!selectorName.isEmpty()){
-      stream << ( inlineHeader + selectorName + " { " + selectorProperties + " } "+ inlineSelector + inlineFooter);
-      QStringList props=QStringList::split(";",selectorProperties);
-      //props.pop_back();
-      QString temp(selectorName + " {\n\t ");
-      for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) 
-        temp+=((*it).section(":",0,0).stripWhiteSpace() + " : " + (*it).section(":",1,1)+";\n\t");
-      temp.truncate(temp.length()-1);
-      temp+="}";
-      display->setText(temp);
-      
-    }
-    else {
-      stream << ( inlineHeader + inlineSelector + inlineFooter);
-    }
-    testFile.close();
-  }
- 
-    
+  QBoxLayout *fPreviewLayout = new QBoxLayout(fPreview,QBoxLayout::LeftToRight);
+  previewer=new KHTMLPart(fPreview);
+  fPreviewLayout->addWidget(previewer->view());
+  
   QFile file( configFile );
   if ( !file.open( IO_ReadOnly ) ) {
     return;
@@ -213,27 +202,28 @@ void CSSEditor::initialize()
   } // end while  
 
   Connect();
+  
+  testFile = new KTempFile(tmpDir,".html");
+  testFile->setAutoDelete(true);
+  
+  previewer->openURL(testFile->name());
 
-  QBoxLayout *fPreviewLayout = new QBoxLayout(fPreview,QBoxLayout::LeftToRight);
-  previewer=new KHTMLPart(fPreview);
-  fPreviewLayout->addWidget(previewer->view());
-  previewer->openURL(testFileName);
-
- QBoxLayout *fEditingLayout = new QBoxLayout(fEditing,QBoxLayout::LeftToRight);
+  QBoxLayout *fEditingLayout = new QBoxLayout(fEditing,QBoxLayout::LeftToRight);
   
   ps = new propertySetter(fEditing);
   fEditingLayout->addWidget(ps);
   connect(ps, SIGNAL(valueChanged(const QString&)), this, SLOT(checkProperty(const QString&)));
   
- if( selectorName ){
+  if( !selectorName.isEmpty() ){
+ 
+    *(testFile->textStream()) << ( inlineHeader + selectorName + " { " + selectorProperties + " } "+ inlineSelector + inlineFooter);
+            
     QStringList props=QStringList::split(";",selectorProperties);
-    qWarning("ci sono %d proprieta",props.count());
-   // props.pop_back();
-    
+    QString temp(selectorName + " {\n\t ");
     for ( QStringList::Iterator it = props.begin(); it != props.end(); ++it ) {
       addProperty((*it).section(":",0,0).stripWhiteSpace(),(*it).section(":",1,1));
-     
-      activatePreview();
+      temp+=((*it).section(":",0,0).stripWhiteSpace() + " : " + (*it).section(":",1,1)+";\n\t");
+      
       if( (currentProp = static_cast<myCheckListItem*>(lvVisual->findItem( (*it).section(":",0,0).stripWhiteSpace(),0 )) )) {
         currentProp->setOn(true);
         if( currentProp->depth() ) {
@@ -289,7 +279,14 @@ void CSSEditor::initialize()
         }
       }
     }
+    temp.truncate(temp.length()-1);
+    temp+="}";
+    display->setText(temp);
   }
+  else {
+     *(testFile->textStream()) << ( inlineHeader + inlineSelector + inlineFooter);
+    }
+    testFile->close();
 }
 
 CSSEditor::CSSEditor(QWidget *parent, const char *name) : CSSEditorS(parent, name){
@@ -305,23 +302,14 @@ CSSEditor::CSSEditor( QString s, QWidget* parent, const char *name) : CSSEditorS
 }
 
 CSSEditor::~CSSEditor() { 
-  if(QFile::exists(testFileName)) {
-    if(QFile::remove(testFileName));
-  }
-  if(myhi) {
     delete myhi;
-    myhi=0;
+    delete ps;
+    delete previewer;
+    if(testFile){
+      delete testFile;
+      testFile=0;
     }
     
-  if(ps) {
-    delete ps;
-    ps=0;
-    }
-  
-  if(previewer) {
-    delete previewer;
-    previewer=0;
-    }  
 }
 
 void CSSEditor::setMiniEditors(QListViewItem* i)
@@ -520,101 +508,42 @@ QString CSSEditor::generateProperties(){
 void CSSEditor::updatePreview()
 {
   QString toDisplay;
-  QFile file(testFileName);
   
-  if ( file.open( IO_WriteOnly ) ) {
-    QTextStream stream( &file );
-  
-    if(!selectorName.isEmpty()){
+  delete testFile;
+  testFile=0;
+  testFile = new KTempFile(tmpDir,".html");
+  testFile->setAutoDelete(true);
+  qWarning(testFile->name());
+     
+  if(!selectorName.isEmpty()){
       toDisplay= ( selectorName +" {\n\t" );
-      stream << inlineHeader << selectorName << " { \n ";
+      *(testFile->textStream()) << inlineHeader << selectorName << " { \n ";
       
       QMap<QString,QString>::Iterator it;
       for ( it = properties.begin(); it != properties.end(); ++it ) {
         QString s( it.key() + " : " + it.data() + ";");
-        stream << s;
+        *(testFile->textStream()) << s;
         toDisplay += (s + "\n\t");
       }
-      stream << "};" << inlineSelector<<inlineFooter;
+      *(testFile->textStream()) << "}" << inlineSelector<<inlineFooter;
     }
   
     else {
       toDisplay = " {\n\t";
-      stream << inlineHeader << " style=\"";
+      *(testFile->textStream()) << inlineHeader << " style=\"";
       QMap<QString,QString>::Iterator it;
       for ( it = properties.begin(); it != properties.end(); ++it ) {
         QString s( it.key() + " : " + it.data() + ";");
-        stream << s;
+        *(testFile->textStream()) << s;
         toDisplay += (s + "\n\t");
       }
-      stream << "\">" << inlineFooter;
+      *(testFile->textStream()) << "\">" << inlineFooter;
     }
     display->setText(toDisplay+"}");
-    file.close();
-
-    }
+    testFile->close();
     activatePreview();
 }
 
-/*void CSSEditor::updateTestFile()
-{
-  QFile file(testFileName);
-  
-  if ( file.open( IO_WriteOnly ) ) {
-    QTextStream stream( &file );
-  
-    if(!selectorName.isEmpty()){
-      stream << inlineHeader << selectorName << " { \n ";
-      
-      QMap<QString,QString>::Iterator it;
-      for ( it = properties.begin(); it != properties.end(); ++it ) {
-        QString s( it.key() + " : " + it.data() + ";");
-        stream << s;
-      }
-      stream << "};" << inlineSelector<<inlineFooter;
-    }
-  
-    else {
-      QMap<QString,QString>::Iterator it;
-      for ( it = properties.begin(); it != properties.end(); ++it )
-      {
-        QString s( it.key() + " : " + it.data() + ";");
-        stream << s;
-        }
-    }
-    file.close();
-
-    }
-     activatePreview();
-}
-*/
-
-/*void CSSEditor::updateDisplay()
-{
-  QString toDisplay;
-  
-  if(!selectorName.isEmpty()){
-    toDisplay = ( selectorName +" {\n\t" );
-      
-    QMap<QString,QString>::Iterator it;
-    for ( it = properties.begin(); it != properties.end(); ++it ) {
-        QString s( it.key() + " : " + it.data() + ";");
-        toDisplay += (s + "\n\t");
-    }
-  }
-  
-  else {
-    toDisplay = " {\n\t";
-    QMap<QString,QString>::Iterator it;
-    for ( it = properties.begin(); it != properties.end(); ++it ) {
-        QString s( it.key() + " : " + it.data() + ";");
-        toDisplay += (s + "\n\t");
-    }
-  }
-
-  display->setText(toDisplay+"}");
-}
-*/
   
 
 #include "csseditor.moc"

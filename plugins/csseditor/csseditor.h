@@ -37,6 +37,7 @@ class QListViewItem;
 class QDomNodeList;
 class QVariant;
 class QMyHighlighter;
+class KTempFile;
 
 class myCheckListItem : public QCheckListItem
 {
@@ -63,6 +64,7 @@ class CSSEditor : public CSSEditorS
 {
   Q_OBJECT
   private:
+    KTempFile *testFile;
     QMyHighlighter *myhi;
     propertySetter *ps;
     myCheckListItem *currentProp;
@@ -116,7 +118,6 @@ class CSSEditor : public CSSEditorS
   signals:
 
     void signalUpdatePreview();
-    //void activatePreview();
 };
 
 #endif

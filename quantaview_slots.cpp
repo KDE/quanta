@@ -174,18 +174,26 @@ void QuantaView::slotInsertCSS()
   Document *w = write();
 
   uint line, col;
-  w->viewCursorIf->cursorPositionReal(&line, &col);
-  Node * node = parser->nodeAt(line, col);
   int bLine, bCol, eLine, eCol;
-  node->tag->endPos(bLine,bCol);
-  node->next->tag->endPos(eLine,eCol);
+  bLine = bCol = eLine = eCol = 0;
+  w->viewCursorIf->cursorPositionReal(&line, &col);
+  Node *node = parser->nodeAt(line, col);
+  if (node)
+      node->tag->endPos(bLine,bCol);
+  if (node && node->next)
+    node->next->tag->endPos(eLine,eCol);
+  else
+  {
+    eLine = bLine;
+    eCol = bCol;
+  }
 
   const QString header(w->text(0, 0,bLine, bCol));// beginning part of the file
   const QString footer("</style>"+w->text(eLine, eCol+1,200,200)); // ending part of the file
+  if (node)
+      node->tag->endPos(bLine,bCol);
 
-  node->tag->endPos(bLine,bCol);
-
-  if(node->tag->name.contains("style")) {
+  if(node && node->tag->name.contains("style")) {
     node->next->tag->beginPos(eLine,eCol);
     QString styleTagContent(w->text(bLine, bCol+1, eLine, eCol-1));// <style></style> block content
 
@@ -217,17 +225,21 @@ void QuantaView::slotInsertCSS()
     CSSEditor *dlg = new CSSEditor(this);
 
     dlg->setInlineHeader(w->text(0, 0,bLine, bCol-1));
-    node->tag->endPos(eLine,eCol);
+    if (node)
+        node->tag->endPos(eLine, eCol);
     dlg->setInlineSelector(w->text(bLine, bCol, eLine, eCol));
 
     dlg->initialize();
     if( dlg->exec() ){
 
       QDict<QString> attr;
+      attr.setAutoDelete(true);
       //need to read other tag attributes and add style
       attr.insert("style",new QString( dlg->generateProperties() ) );
-
-      w->changeTag(node->tag, &attr);
+      if (node)
+          w->changeTag(node->tag, &attr);
+      else
+          w->insertText(*attr["style"]); //FIXME!!
     }
     delete dlg;
    }
