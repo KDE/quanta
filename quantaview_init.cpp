@@ -63,15 +63,13 @@ QuantaView::QuantaView( QuantaApp *app, QWidget *parent, const char *name )
 	toolbarStack-> setFocusPolicy(QWidget::NoFocus);
 #ifdef USE_KDOCKTABGROUP
    writeTab = new KDockTabGroup(this);
-   connect( writeTab,	SIGNAL(pageSelected (QWidget*)), app, SLOT(slotUpdateStatus(QWidget*)));  connect( tabBar,		SIGNAL(selected(int)), toolbarStack, SLOT(raiseWidget(int)));
-   connect( writeTab,	SIGNAL(pageSelected (QWidget*)), app, SLOT(reparse()));
 #else
   writeTab = new QTabWidget(this);
   writeTab ->setTabPosition( QTabWidget::Bottom );
+#endif
 //  connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(slotUpdateStatus(const QString &)));
   connect( writeTab,	SIGNAL(currentChanged(QWidget*)), app, SLOT(slotUpdateStatus(QWidget*)));
   connect( writeTab,	SIGNAL(selected(const QString &)), app, SLOT(reparse()));
-#endif
   writeTab ->setFocusPolicy( QWidget::NoFocus );
              
   layout->addWidget( tabBar       ,0,0);
@@ -99,25 +97,15 @@ void QuantaView::print(QPrinter *pPrinter)
 /** return current KWrite class */
 Document* QuantaView::write()
 {
-#ifdef USE_KDOCKTABGROUP
-  return ( Document* )writeTab->visiblePage();
-#else
   return ( Document* )writeTab->currentPage();
-#endif
-
 }
 
 /** Add new kwrite class to writeStack and return id in stack */
 void QuantaView::addWrite( Document* w , QString label )
 {
-#ifdef    USE_KDOCKTABGROUP
-	writeTab->insertPage(w, label);
-	writeTab->setVisiblePage(w);
-#else
 	QIconSet emptyIcon ( UserIcon("empty1x16"));
 	writeTab->addTab  ( w,  emptyIcon,  label );
 	writeTab->showPage( w );
-#endif
 	
 	connect( w, SIGNAL(newCurPos()), this, SLOT(slotNewCurPos()));
 }

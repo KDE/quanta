@@ -155,11 +155,9 @@ bool QuantaDoc::newDocument( const KURL& url )
   else // select opened
   {
   	 Document *w = docList->find( furl );	
-#ifdef USE_KDOCKTABGROUP
-  	app ->view->writeTab->setVisiblePage( w );
-#else
+
     app ->view->writeTab->showPage( w );
-#endif
+
   	return false; // don't need loadURL
   }    
   return true;
@@ -188,11 +186,7 @@ void QuantaDoc::finishLoadURL(KWrite *_w)
  	  ++it;
  	}
  	
-#ifdef USE_KDOCKTABGROUP
-  	app ->view->writeTab->setVisiblePage( w );
-#else
     app ->view->writeTab->showPage( w );
-#endif
  	
  changeFileTabName(defUrl);
   
@@ -235,11 +229,7 @@ bool QuantaDoc::saveAll(bool dont_ask)
   bool flagsave = true;
 
 //FIXME: I don't like the switching through the pages... We must optimize this. (Andras)
-#ifdef USE_KDOCKTABGROUP
-  Document *currentDoc = static_cast<Document*>(app ->view->writeTab->visiblePage());
-#else
  Document *currentDoc = static_cast<Document*>(app ->view->writeTab->currentPage());
-#endif
 
   QDictIterator<Document> it( *docList );
 
@@ -247,11 +237,8 @@ bool QuantaDoc::saveAll(bool dont_ask)
   {
     if ( w->isModified() ) 
     {
-#ifdef USE_KDOCKTABGROUP
-  	app ->view->writeTab->setVisiblePage( w );
-#else
+
     app ->view->writeTab->showPage( w );
-#endif
 
       QString oldUrl = w->url().url();
 
@@ -268,11 +255,8 @@ bool QuantaDoc::saveAll(bool dont_ask)
     ++it;
   }
 
-#ifdef USE_KDOCKTABGROUP
-  	app ->view->writeTab->setVisiblePage( currentDoc );
-#else
     app ->view->writeTab->showPage( currentDoc );
-#endif
+
   return flagsave;
 }
 
@@ -532,11 +516,10 @@ void QuantaDoc::prevDocument()
 {
 #ifdef   USE_KDOCKTABGROUP
   KDockTabGroup *tab = app->view->writeTab;
-  Document *d = dynamic_cast <Document*> (tab->visiblePage());
 #else
   QTabWidget *tab = app->view->writeTab;
-  Document *d =dynamic_cast<Document*>(tab->currentPage());
 #endif
+  Document *d =dynamic_cast<Document*>(tab->currentPage());
 
   Document *new_d;
 
@@ -553,22 +536,18 @@ void QuantaDoc::prevDocument()
  		new_d = it.current();
  	}
 
-#ifdef 	USE_KDOCKTABGROUP
-	tab->setVisiblePage( new_d );
-#else
  	tab->showPage( new_d );
-#endif
 }
 
 void QuantaDoc::nextDocument()
 {
 #ifdef   USE_KDOCKTABGROUP
   KDockTabGroup *tab = app->view->writeTab;
-  Document *d = dynamic_cast <Document*> (tab->visiblePage());
 #else
   QTabWidget *tab = app->view->writeTab;
-  Document *d =dynamic_cast<Document*>(tab->currentPage());
 #endif
+  Document *d =dynamic_cast<Document*>(tab->currentPage());
+
   Document *new_d = 0 , *prev = 0;
 
   QDictIterator<Document> it(*docList);
@@ -588,24 +567,15 @@ void QuantaDoc::nextDocument()
  	if ( prev )
  		new_d = prev;
  	
-#ifdef 	USE_KDOCKTABGROUP
-	tab->setVisiblePage( new_d );
-#else
  	tab->showPage( new_d );
-#endif
 }
 
 void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
 {
 	if ( newUrl.isNull() ) newUrl = url().url();
          
-#ifdef USE_KDOCKTABGROUP
-	if ( app->view->writeTab->pageCaption(write()) != QExtFileInfo::shortName( newUrl ))
-		  app->view->writeTab->setPageCaption( write(), QExtFileInfo::shortName( newUrl ));
-#else
 	if ( app->view->writeTab->tabLabel(write()) != QExtFileInfo::shortName( newUrl ))
 		  app->view->writeTab->changeTab( write(), QExtFileInfo::shortName( newUrl ));
-#endif
 	
   if ( oldUrl != newUrl )
   {
@@ -656,13 +626,9 @@ void QuantaDoc::changeFileTabName( QString oldUrl, QString newUrl )
         }
     }     	
  		
-#ifdef USE_KDOCKTABGROUP
- 		if ( app->view->writeTab->pageCaption(it1.current()) != shortUrl)
- 		  app->view->writeTab->setPageCaption( it1.current() , shortUrl );
-#else
 		if ( app->view->writeTab->tabLabel(it1.current()) != shortUrl)
  		  app->view->writeTab->changeTab( it1.current() , shortUrl );
-#endif 		
+
  		++it1;
  	}
 }

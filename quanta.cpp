@@ -462,20 +462,10 @@ void QuantaApp::slotNewStatus()
 
 #ifdef USE_KDOCKTABGROUP
   KDockTabGroup *wTab = view->writeTab;
-  int pageId = wTab->visiblePageId();
-  Document *w = static_cast<Document*>(wTab->visiblePage());
-  if (w->isModified())
-  {
-   	 wTab->setPixmap(pageId, floppyIcon.pixmap());
-  }
-  else
-  {
-     wTab->setPixmap(pageId, QPixmap(0,0));
-  }
+  Document *w = static_cast<Document*>(wTab->currentPage());
 #else
   QTabWidget *wTab = view->writeTab;
   Document *w = static_cast<Document*>(wTab->currentPage());
-
  if ( w->isModified() )
 	  wTab->changeTab( w,  floppyIcon, wTab->tabLabel(w));
  else 	
@@ -1091,11 +1081,7 @@ void QuantaApp::slotShowOpenFileList()
 //This "complex" read-out is due to the reversed list.
   QString docName= fileList[openList.count() - listDlg.getEntryNum() - 1];
 
-#ifdef USE_KDOCKTABGROUP
-  view->writeTab->setVisiblePage(view->doc->docList->find(docName));
-#else
   view->writeTab->showPage(view->doc->docList->find(docName));
-#endif
 }
 /** No descriptions */
 void QuantaApp::slotNewProjectLoaded()
