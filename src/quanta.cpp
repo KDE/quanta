@@ -3615,7 +3615,7 @@ void QuantaApp::slotUploadFile(QuantaView *view)
   if (!view)
     view = ViewManager::ref()->activeView();
   bool quick = true;
-  if (KMessageBox::questionYesNo(this, i18n("Do you want to review the upload?"), i18n("Enable Quick Upload"), i18n("Review"), KStdGuiItem::no(), "DisableQuickUpload") == KMessageBox::No)
+  if (KMessageBox::questionYesNo(this, i18n("Do you want to review the upload?"), i18n("Enable Quick Upload"), i18n("Review"), KStdGuiItem::no(), "EnableQuickUpload") == KMessageBox::Yes)
     quick = false;
   Project::ref()->slotUploadURL(view->document()->url(), quick);
 }
