@@ -1410,7 +1410,6 @@ void Document::slotDelayedTextChanged()
     if (qConfig.updateClosingTags)
     {
       viewCursorIf->cursorPositionReal(&line, &column);
-      kdDebug(24000) << "line: " << line << " column: " << column <<"\n";
       node = parser->nodeAt(line, column, false);
       if (node)
       {

@@ -258,7 +258,8 @@ bool QuantaDoc::saveAll(bool dont_ask)
     w = dynamic_cast<Document*>(docTab->page(i));
     if ( w->isModified() )
     {
-      if (!w->url().path().isEmpty()) fileWatcher->removeFile(w->url().path());
+      if (!w->isUntitled())
+          fileWatcher->removeFile(w->url().path());
       docTab->showPage(w);
       if ( dont_ask && !w->isUntitled())
       {
@@ -284,7 +285,7 @@ void QuantaDoc::closeDocument()
   {
     Document *w = write();
     w->closeTempFile();
-    if (!w->url().path().isEmpty())
+    if (!w->isUntitled())
        fileWatcher->removeFile(w->url().path());
     if ( !quantaApp->view->removeWrite()) openDocument( KURL() );
   }
@@ -301,7 +302,8 @@ void QuantaDoc::closeAll()
       {
         w = write();
         w->closeTempFile();
-        if (!w->url().path().isEmpty()) fileWatcher->removeFile(w->url().path());
+        if (!w->isUntitled())
+            fileWatcher->removeFile(w->url().path());
       } else
       {
         return; //save failed, so don't close anything
