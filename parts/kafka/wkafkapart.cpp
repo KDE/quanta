@@ -572,7 +572,7 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 			{
 				n = node;
 				n = kafkaCommon::getPrevNodeNE(n);
-				while(n && (n->tag->type == Tag::XmlTagEnd || 
+				while(n && (n->tag->type == Tag::XmlTagEnd ||
 					(n->tag->type == Tag::XmlTag && kafkaCommon::isInline(n->tag->name) &&
                                         !n->tag->single)))
 					n = kafkaCommon::getPrevNodeNE(n);
@@ -582,9 +582,9 @@ bool KafkaDocument::buildKafkaNodeFromNode(Node *node, bool insertNode)
 					if(nodeValue.length() > 0 && nodeValue[nodeValue.length() - 1].isSpace())
 						removeLeftWhitespaces = true;
 				}
-				
+
 			}
-			
+
 			removeRightWhitespaces = false;
 			n = node;
 			parent = node->parent;
@@ -747,6 +747,9 @@ Node * KafkaDocument::buildNodeFromKafkaNode(DOM::Node domNode, Node *nodeParent
 #ifdef LIGHT_DEBUG
 	kdDebug(25001)<< "Node* KafkaDocument::buildNodeFromKafkaNode() - DOM::Node 2xNode* int: " <<
 		beginOffset << " Node* int: " << endOffset << " NodeModifsSet " << endl;
+#else
+        Q_UNUSED(beginOffset);
+        Q_UNUSED(endOffset);
 #endif
 	DOM::Node *ptDomNode;
 	Node *node;
@@ -1421,7 +1424,7 @@ void KafkaDocument::translateKafkaIntoQuantaCursorPosition(DOM::Node _currentDom
 			{
 				//The tag is single, there shouldn't be any (tag, x) location, but the old way
 				//was (tag,0) for left of the tag and (tag,1) for the right of the tag)
-				
+
 				if(offset == 1)
 				{
 					_currentNode->tag->endPos(curLine, curCol);

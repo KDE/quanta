@@ -43,7 +43,7 @@ class TLPEditor : public QHBox { //editor with a line text and a button calling 
     void setLabelText(QString);
     QLineEdit* lineEdit() const { return m_le; }
     KPushButton* button() const { return m_pb; }
-    virtual void setInitialValue(const QString& s){}
+    virtual void setInitialValue(const QString& s){Q_UNUSED(s);}
 
   signals:
     void valueChanged(const QString&);
@@ -53,7 +53,7 @@ class fontEditor : public TLPEditor{
   Q_OBJECT
   private:
     QString m_initialValue;
-    
+
   public:
     fontEditor(QWidget *parent, const char* name=0);
     virtual void setInitialValue(const QString& s) { m_initialValue = s; }
@@ -77,7 +77,7 @@ class URIEditor : public TLPEditor {
     URIEditor(QWidget *parent, const char* name=0);
     void setMode(const mode& m) { m_Mode = m ; }
     void setResourceType(const  URIResourceType& r) { m_resourceType = r ; }
-    virtual void setInitialValue(const QString& s){}
+    virtual void setInitialValue(const QString& s){Q_UNUSED(s);}
 
   public slots:
     void URI(const QString&);

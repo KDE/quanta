@@ -210,6 +210,7 @@ void propertySetter::setColorRequester(const QString& s)
 
 void propertySetter::setPredefinedColorListEditor(const QString& s)
 {
+  Q_UNUSED(s);
   m_pcb = new QComboBox(this);
   m_pcb->insertStringList(CSSEditorGlobals::HTMLColors);
   connect(m_pcb, SIGNAL(activated(const QString&)), this, SIGNAL(valueChanged(const QString&)));

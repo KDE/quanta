@@ -540,7 +540,7 @@ Node *Parser::parse(Document *w, bool force)
 void Parser::coutTree(Node *node, int indent)
 {
     QString output;
-    int bLine, bCol, eLine, eCol, j;
+    int bLine, bCol, eLine, eCol;
     if (!node)
         kdDebug(24000)<< "undoRedo::coutTree() - bad node!" << endl;
     while (node)

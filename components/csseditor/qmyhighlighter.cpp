@@ -26,6 +26,7 @@ QMyHighlighter::~QMyHighlighter(){
 /*****************************************************************************/
 int QMyHighlighter::highlightParagraph( const QString & text, int endStateOfLastPara )
 {
+  Q_UNUSED(endStateOfLastPara);
   //QRegExp pattern("\\s*\\{([\\w\\s\\d:;-\"]*)\\}\\s*");
   QRegExp pattern("([#:\\.\\w]*)\\s*\\{");
   int pos=pattern.search(text,0);
