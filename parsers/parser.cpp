@@ -140,11 +140,14 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         if (!rootNode)
             rootNode = currentNode;
         QString foundText = m_dtd->specialAreaStartRx.cap();
-        if (parentNode && parentNode == currentNode) //some strange cases, but it's possible, eg.: <a href="<? foo ?>""></a><input size="<? foo ?>" >
-           parentNode = parentNode->parent;
         //create a toplevel node for the special area
         AreaStruct area(line, specialStartPos, line, specialStartPos + foundText.length() - 1);
         Node *node = ParserCommon::createScriptTagNode(write, area, foundText, m_dtd, parentNode, currentNode);
+        if (node->parent && node->prev == node->parent) //some strange cases, but it's possible, eg.: <a href="<? foo ?>""></a><input size="<? foo ?>" >
+        {
+           node->prev->next = 0L;
+           node->prev = 0L;
+         }
         if (node->tag->name.lower().startsWith("comment"))
           node->tag->type = Tag::Comment;
 
@@ -177,7 +180,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
         while (line <= endLine && openNum > 0)
         {
           textLine = ParserCommon::getLine(write, line, endLine, endCol);
-	  uint textLineLen = textLine.length();
+          uint textLineLen = textLine.length();
           for (uint i = sCol; i < textLineLen; i++)
           {
             if (i == 0 || (i > 0 && textLine[i-1] != '\\'))
@@ -1102,7 +1105,7 @@ Node *Parser::rebuild(Document *w)
 #ifdef BUILD_KAFKAPART
         //here, lastNode is at the pos of lastInserted.
         modif = new NodeModif();
-	modif->setType(NodeModif::NodeRemoved);
+        modif->setType(NodeModif::NodeRemoved);
         modif->setLocation(kafkaCommon::getLocation(lastNode));
         if(lastInserted->prev)
           lastInserted->prev->next = 0L;
@@ -1116,13 +1119,13 @@ Node *Parser::rebuild(Document *w)
         modif->setNode(lastInserted);
         modifs->addNodeModif(modif);
 
-	modif = new NodeModif();
-	modif->setType(NodeModif::NodeModified);
+        modif = new NodeModif();
+        modif->setType(NodeModif::NodeModified);
         modif->setLocation(kafkaCommon::getLocation(lastNode));
         modif->setTag(_tag);
         modifs->addNodeModif(modif);
 #else
-	lastInserted->removeAll = false;
+        lastInserted->removeAll = false;
         delete lastInserted;
         nodeNum--;
 #endif

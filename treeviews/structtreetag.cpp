@@ -176,7 +176,10 @@ StructTreeTag::StructTreeTag(StructTreeTag *parent, Node *a_node, const QString 
                 int line, col;
                 node->tag->beginPos(line, col);
                 QString qTagName = node->tag->dtd()->caseSensitive ? node->tag->name : node->tag->name.upper();
-                if (!node->prev || (node->prev && node->prev->tag->type != Tag::XmlTag))
+                QString qPrevTagName;
+                if (node->prev)
+                 qPrevTagName = node->tag->dtd()->caseSensitive ? node->prev->tag->name : node->prev->tag->name.upper();
+                if (!node->prev || qTagName != "/" + qPrevTagName)
                 {
                   node->tag->write()->setErrorMark(line);
                   appMessages->showMessage(i18n("Line %1, column %2: Opening tag for %3 is missing.").arg(line + 1).arg(col + 1).arg(qTagName));
