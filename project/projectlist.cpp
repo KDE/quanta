@@ -72,7 +72,7 @@ bool ProjectList::readFromXML(QDomDocument &dom, const KURL &baseURL,
     url = QExtFileInfo::toAbsolute(url, baseURL);
     if ( el.nodeName() == "item" )
     {
-      if (excludeRx.exactMatch(path))
+      if (excludeRx.exactMatch(path) || find(url.url(-1)))
       {
         el.parentNode().removeChild(el);
         modified = true;

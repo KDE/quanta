@@ -152,6 +152,7 @@ void ProjectUpload::slotBuildTree()
  KIO::UDSEntry entry;
  QString strUrl = QuantaCommon::qUrl(startUrl);
  bool isDirectory = strUrl.endsWith("/");
+ bool forceUpload = !startUrl.isEmpty();
  QString s;
  QDomElement el;
  QDomNodeList nl = m_project->dom()->elementsByTagName("item");
@@ -188,6 +189,8 @@ void ProjectUpload::slotBuildTree()
        int modifiedTime = item.time(KIO::UDS_MODIFICATION_TIME);
        el.setAttribute("modified_time", modifiedTime);
        int uploadStatus = el.attribute("uploadstatus", "1").toInt();
+       if (forceUpload && uploadStatus == 0)
+        uploadStatus = 1;
        if (uploadedTime != modifiedTime && uploadStatus != 0)
        {
          modified.append( u );
