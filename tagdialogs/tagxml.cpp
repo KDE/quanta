@@ -44,7 +44,7 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
      	
      //debug( n.nodeName() );
 
-     QDomElement el = location.toElement();
+     QDomElement el = location.cloneNode().toElement();
      	
      int row = el.attribute("row","0").toInt();
      int col = el.attribute("col","0").toInt();
@@ -52,7 +52,7 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
      int rowspan = el.attribute("rowspan","1").toInt()-1;
 
      location = findChild(n,"textlocation");
-     el = location.toElement();
+     el = location.cloneNode().toElement();
      int textrow = el.attribute("row","0").toInt();
      int textcol = el.attribute("col","0").toInt();
      int textcolspan = el.attribute("colspan","1").toInt()-1;
@@ -85,7 +85,7 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
      if ( n.nodeName() == "label" ) //a static label
      {
      	  QLabel *label = new QLabel(this);
-     	  QDomElement ltext = findChild(n,"text").toElement();
+     	  QDomElement ltext = findChild(n,"text").cloneNode().toElement();
      	  if ( !ltext.isNull() )
      	  	label->setText( ltext.text().isEmpty() ? QString("") : (ltext.text()+":") );
 
@@ -100,10 +100,10 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
      if ( n.nodeName() == "attr" ) //an attribute
      {
 
-     		QDomElement el = n.toElement();
+     		QDomElement el = n.cloneNode().toElement();
         QString type = el.attribute("type","input");
 
-     	  QDomElement ltext = findChild(n,"text").toElement();
+     	  QDomElement ltext = findChild(n,"text").cloneNode().toElement();
      	  if ( !ltext.isNull() && (type!="check") ) //if there is a text label for the attribute
         {
      	    QLabel *label = new QLabel(this);
@@ -137,7 +137,7 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
         	 QCheckBox *w = new QCheckBox(this);
         	 grid->addMultiCellWidget( w, row, row+rowspan, col,  col+colspan );
         	
-        	 QDomElement ltext = findChild(n,"text").toElement();
+        	 QDomElement ltext = findChild(n,"text").cloneNode().toElement();
 		     	 if ( !ltext.isNull() )
     	 	  	 w->setText( ltext.text() );
         	
@@ -197,7 +197,7 @@ Tagxml::Tagxml( QDomDocument &d, DTDStruct *dtd, QWidget *parent, const char *na
 
      if ( n.nodeName() == "spacer")
      {
-     	 QDomElement el = n.toElement();
+     	 QDomElement el = n.cloneNode().toElement();
      	
      	 QSpacerItem* spacer;
      	

@@ -16,6 +16,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <iostream.h> 
 // include files for QT
 #include <qdir.h>
 #include <qprinter.h>
@@ -694,7 +695,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
     if (result == QDialog::Accepted)
     {
       nodeList = guiClient->domDocument().elementsByTagName("ToolBar");
-      name = nodeList.item(0).toElement().attribute("tabname");
+      name = nodeList.item(0).cloneNode().toElement().attribute("tabname");
       toolbarMenuList.remove(name.lower());
       menu = new QPopupMenu;
       //remove all inserted toolbars
@@ -704,7 +705,7 @@ void QuantaApp::slotOptionsConfigureToolbars()
     nodeList = guiClient->domDocument().elementsByTagName("Action");
     for (uint j = 0; j < nodeList.count(); j++)
     {
-      actionName = nodeList.item(j).toElement().attribute("name");
+      actionName = nodeList.item(j).cloneNode().toElement().attribute("name");
       action = actionCollection()->action(actionName);
       if (action)
       {
@@ -1501,7 +1502,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
 
 
  QDomNodeList nodeList = toolbarDom->elementsByTagName("ToolBar");
- QString name = nodeList.item(0).toElement().attribute("tabname");
+ QString name = nodeList.item(0).cloneNode().toElement().attribute("tabname");
 
 //search for another toolbar with the same name
  QPtrList<KXMLGUIClient> xml_clients = factory()->clients();
@@ -1511,7 +1512,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
    nodeList = xml_clients.at(index)->domDocument().elementsByTagName("ToolBar");
    for (uint i = 0; i < nodeList.count(); i++)
    {
-    if ((nodeList.item(i).toElement().attribute("name") ) == name.lower())
+    if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == name.lower())
     {
       QString newName;
       do
@@ -1545,7 +1546,9 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
  nodeList = actionDom.elementsByTagName("action");
  for (uint i = 0; i < nodeList.count(); i++)
  {
-   QDomElement el = nodeList.item(i).toElement();
+   QDomNode node = nodeList.item(i).cloneNode();
+   QDomElement el = node.toElement();
+   cout << el.text() << "\n";
    QString actionName = el.attribute("name");
    //if there is no such action yet, add to the available actions
    if (! actionCollection()->action(actionName))
@@ -1580,7 +1583,7 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
  nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
  for (uint i = 0; i < nodeList.count(); i++)
  {
-    action = actionCollection()->action(nodeList.item(i).toElement().attribute("name") );
+    action = actionCollection()->action(nodeList.item(i).cloneNode().toElement().attribute("name") );
     if (action)
     {
       toolbarGUI->actionCollection()->insert(action);
@@ -1671,14 +1674,14 @@ QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
       for (uint i = 0; i < nodeList.count(); i++)
       {
       //find the actual toolbar in the XML GUI
-       if ((nodeList.item(i).toElement().attribute("name") ) == toolbarName.lower())
+       if ((nodeList.item(i).cloneNode().toElement().attribute("name") ) == toolbarName.lower())
        {
           nodeList.item(i).save(toolStr,2);
           //find the actions registered to the toolbar
           QDomNode n = nodeList.item(i).firstChild();
           while (! n.isNull())
           {
-           QDomElement e = n.toElement();
+           QDomElement e = n.cloneNode().toElement();
            if (e.tagName()=="Action")
            {
             actionNameList += e.attribute("name");
@@ -1689,7 +1692,7 @@ QString QuantaApp::saveToolBar(QString& toolbarName, QString destFile)
           nodeList2 = actions()->elementsByTagName("action");
           for (uint k =0; k < nodeList2.count(); k++)
           {
-            if (actionNameList.contains(nodeList2.item(k).toElement().attribute("name")) > 0)
+            if (actionNameList.contains(nodeList2.item(k).cloneNode().toElement().attribute("name")) > 0)
             {
                 nodeList2.item(k).save(actStr,1);
             }
@@ -1772,8 +1775,10 @@ void QuantaApp::slotSaveToolbar(bool localToolbar, QString toolbarToSave)
     	query = doc->write()->checkOverwrite( url );
     } else
     {
-      KMessageBox::sorry(0,i18n("You must save the toolbars in one of the following directories: \n\n%1\n%2")
-      											 .arg(locateLocal("data","quanta/toolbars/")).arg(projectToolbarsDir));
+      QString dirStr = locateLocal("data","quanta/toolbars/");
+      if (!localToolbar) dirStr = projectToolbarsDir;
+      KMessageBox::sorry(0,i18n("You must save the toolbars in the following directory: \n\n%1")
+      											 .arg(dirStr));
       query = KMessageBox::No;
     }
   } while (query != KMessageBox::Yes);

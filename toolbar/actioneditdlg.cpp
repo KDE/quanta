@@ -118,7 +118,7 @@ void ActionEditDlg::deleteAction()
       for (uint j = 0; j < nodeList.count(); j++)
       {
         //we found a toolbar that contains the action
-        if (nodeList.item(j).toElement().attribute("name") == actionText)
+        if (nodeList.item(j).cloneNode().toElement().attribute("name") == actionText)
         {
           nodeList.item(j).parentNode().removeChild(nodeList.item(j));
           guiClient->actionCollection()->remove(action);
@@ -308,7 +308,7 @@ void ActionEditDlg::saveAction( TagAction *a )
       for (uint j = 0; j < nodeList.count(); j++)
       {
         //we found the right toolbar
-        if (nodeList.item(j).toElement().attribute("name") == tabName)
+        if (nodeList.item(j).cloneNode().toElement().attribute("name") == tabName)
         {
           guiClient = guiClients.at(i);
           foundNode = nodeList.item(j);

@@ -36,9 +36,9 @@ Attr_list::Attr_list( QDomElement *el, QWidget *w )
 	 combo = (QComboBox *)w;
 	
 	 		
-   for ( QDomElement n = el->firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
+   for ( QDomElement n = el->firstChild().cloneNode().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
   	  if ( n.tagName() == "items" ) {
-  	     QDomElement item = n.firstChild().toElement();
+  	     QDomElement item = n.firstChild().cloneNode().toElement();
   	     while ( !item.isNull() ) {
   	     		combo->insertItem( item.text() );
   	     		item = item.nextSibling().toElement();

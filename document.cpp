@@ -822,6 +822,22 @@ QString Document::getTagNameAt(DTDStruct *dtd, int line, int col )
  if (tag)
  {
    name = tag->name;
+   if (tag->type == Tag::Text)
+   {
+     QString s = tag->tagStr();
+     int pos = s.find("<");
+     if (pos !=-1)
+     {
+       s.remove(0,pos - 1);
+       Tag *tag2 = new Tag();
+       tag2->parse(s, this);
+       name = tag2->name;
+       delete tag2;
+     } else
+     {
+       name = "";
+     }
+   }
    delete tag;
  }
  return name;
