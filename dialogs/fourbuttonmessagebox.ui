@@ -66,6 +66,14 @@
                     <property name="name">
                         <cstring>user3Button</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
                     <property name="text">
                         <string>&amp;Don't Save</string>
                     </property>
@@ -117,6 +125,12 @@
         <signal>clicked()</signal>
         <receiver>FourButtonMessageBox</receiver>
         <slot>user2Button_clicked()</slot>
+    </connection>
+    <connection>
+        <sender>user3Button</sender>
+        <signal>clicked()</signal>
+        <receiver>FourButtonMessageBox</receiver>
+        <slot>user3Button_clicked()</slot>
     </connection>
 </connections>
 <includes>
