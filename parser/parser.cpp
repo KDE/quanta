@@ -184,7 +184,7 @@ Node *Parser::parseArea(int startLine, int startCol, int endLine, int endCol, No
     if (endLine > 0)
         endLine--;
     lastLineLength = write->editIf->lineLength(endLine) - 1;
-    endCol = lastLineLength;
+    endCol = lastLineLength + 1;
   } else
     lastLineLength = write->editIf->lineLength(endLine) - 1;
   int specialAreaCount = m_dtd->specialAreas.count();
