@@ -459,9 +459,9 @@ void KafkaDocument::setCursorAndSelection(NodeSelectionInd *nodeSelection)
   startNode = kafkaCommon::getNodeFromLocation(nodeSelection->cursorNode());
   endNode = kafkaCommon::getNodeFromLocation(nodeSelection->cursorNodeEndSel());
   
-  if(startNode)
+  if(startNode && startNode->rootNode())
     startDomNode = *(startNode->rootNode());
-  if(endNode)
+  if(endNode && endNode->rootNode())
     endDomNode = *(endNode->rootNode());
   translateNodeIntoKafkaCursorPosition(startNode, nodeSelection->cursorOffset(), foo, (long&)startOffset);
   translateNodeIntoKafkaCursorPosition(endNode, nodeSelection->cursorOffsetEndSel(), foo, (long&)endOffset);
