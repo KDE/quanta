@@ -383,12 +383,15 @@ private:
   QPtrList<KTempFile> tempFileList;
   QDict<KXMLGUIClient> toolbarGUIClientList;
   QDict<QDomDocument> toolbarDomList;
+  QDict<QPopupMenu> toolbarMenuList;
 
   uint userToolbarsCount;
   /**  */
   bool previewCopyMade;
   /**  */
   KTempFile *previewTmpFile;
+  /**  */
+  QPopupMenu * tagsMenu;
 
 signals: // Signals
   /** The tree views should be updated due to some changes on the disk. */

@@ -91,6 +91,7 @@ QuantaApp::QuantaApp() : KDockMainWindow(0L,"Quanta")
   tempFileList.setAutoDelete(true);
   toolbarGUIClientList.setAutoDelete(true);
   toolbarDomList.setAutoDelete(true);
+  toolbarMenuList.setAutoDelete(true);
   userToolbarsCount = 0;
   baseNode = 0L;
 
@@ -152,6 +153,8 @@ void QuantaApp::initQuanta()
 
 
   createGUI( QString::null, false );
+  tagsMenu = new QPopupMenu(this);
+  menuBar()->insertItem(i18n("&Tags"),tagsMenu,-1,5);
 
   pm_set  = (QPopupMenu*)guiFactory()->container("settings", this);
   connect(pm_set, SIGNAL(aboutToShow()), this, SLOT(settingsMenuAboutToShow()));

@@ -1497,7 +1497,8 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
 //create the new toolbar GUI from the temp file
  ToolbarXMLGUI * toolbarGUI = new ToolbarXMLGUI(tempFile->name());
 
-//Plug in the actions
+//Plug in the actions & build the menu
+ QPopupMenu *menu = new QPopupMenu;
  KAction *action;
  nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
  for (uint i = 0; i < nodeList.count(); i++)
@@ -1506,15 +1507,15 @@ void QuantaApp::slotLoadToolbarFile(const KURL& url)
     if (action)
     {
       toolbarGUI->actionCollection()->insert(action);
+      action->plug(menu);
     }
  }
+ tagsMenu->insertItem(name,menu);
+ toolbarMenuList.insert(name.lower(),menu);
 
  factory()->addClient(toolbarGUI);
 
  view->toolbarTab->setCurrentPage(view->toolbarTab->count()-1);
-
- nodeList = toolbarGUI->domDocument().elementsByTagName("Action");
-
 
  tempFileList.append(tempFile);
  toolbarGUIClientList.insert(name.lower(),toolbarGUI);
@@ -1786,6 +1787,7 @@ void QuantaApp::slotRemoveToolbar()
     factory()->removeClient(toolbarGUI);
     toolbarGUIClientList.remove(res.lower());
     toolbarDomList.remove(res.lower());
+    toolbarMenuList.remove(res.lower());
    }
  }
 
